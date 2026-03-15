@@ -81,7 +81,7 @@ export async function analyzeInteraction(
     };
   }
 
-  // Step 2: Resolve all medications via OpenFDA
+  // Step 2: Resolve all medications via OpenFDA (with Gemini fallback for Turkish brands)
   const resolvedMeds = await Promise.all(
     medications.map(async (med) => {
       const drugInfo = await searchDrug(med.trim());
@@ -92,6 +92,7 @@ export async function analyzeInteraction(
         warnings: drugInfo?.warnings || [],
         fdaInteractions: drugInfo?.interactions || [],
         verified: !!drugInfo,
+        source: drugInfo?.source || "unknown",
       };
     })
   );
@@ -118,6 +119,7 @@ export async function analyzeInteraction(
         warnings: drugInfo?.warnings || [],
         fdaInteractions: drugInfo?.interactions || [],
         verified: !!drugInfo,
+        source: drugInfo?.source || "unknown",
       };
     })
   );
@@ -238,6 +240,7 @@ function buildGeminiPrompt(
     warnings: string[];
     fdaInteractions: string[];
     verified: boolean;
+    source: string;
   }>,
   concern: string,
   profile: UserProfileForInteraction | null,
@@ -255,8 +258,10 @@ function buildGeminiPrompt(
     if (med.activeIngredients.length > 0) {
       prompt += ` [Active: ${med.activeIngredients.join(", ")}]`;
     }
-    if (!med.verified) {
-      prompt += ` [⚠️ Not found in OpenFDA — use your knowledge]`;
+    if (med.source === "gemini_fallback") {
+      prompt += ` [Resolved via AI — not in FDA database]`;
+    } else if (!med.verified) {
+      prompt += ` [⚠️ Not found in any database — use your knowledge carefully]`;
     }
     prompt += `\n`;
     if (med.fdaInteractions.length > 0) {
@@ -304,22 +309,9 @@ Analyze the drug-herb interactions and provide recommendations.
 - If the user's concern might be a SIDE EFFECT of their medication, say so
 - Consider the user's profile (pregnancy, kidney, liver, age, allergies)
 
-IMPORTANT: Return ONLY valid JSON matching this schema:
-{
-  "recommendations": [
-    {
-      "herb": "Herb Name",
-      "safety": "safe" | "caution" | "dangerous",
-      "reason": "Brief explanation",
-      "mechanism": "Pharmacological mechanism",
-      "dosage": "Specific dosage if safe, null if dangerous",
-      "duration": "Max duration if safe, null if dangerous",
-      "interactions": ["Interaction with Drug X via CYP3A4"],
-      "sources": [{"title": "Article title", "url": "PubMed URL", "year": "2024"}]
-    }
-  ],
-  "generalAdvice": "Overall safety advice for this combination"
-}`;
+CRITICAL: Return ONLY a raw JSON object. No markdown, no code fences, no text before or after.
+The JSON must match this schema exactly:
+{"recommendations":[{"herb":"Herb Name","safety":"safe","reason":"Brief explanation","mechanism":"Pharmacological mechanism","dosage":"Specific dosage if safe, null if dangerous","duration":"Max duration if safe, null if dangerous","interactions":["Interaction with Drug X via CYP3A4"],"sources":[{"title":"Article title","url":"https://pubmed.ncbi.nlm.nih.gov/PMID/","year":"2024"}]}],"generalAdvice":"Overall safety advice"}`;
 
   return prompt;
 }
@@ -329,15 +321,72 @@ function parseGeminiResponse(response: string): {
   generalAdvice: string;
 } {
   try {
-    // Extract JSON from response (Gemini might wrap it in markdown)
-    const jsonMatch = response.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
+    // Step 1: Strip markdown code fences if present
+    let cleaned = response
+      .replace(/^```(?:json)?\s*\n?/gim, "")
+      .replace(/\n?```\s*$/gim, "")
+      .trim();
+
+    // Step 2: Try parsing the whole thing as JSON first
+    let parsed: Record<string, unknown> | null = null;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      // Step 3: Extract JSON object with balanced brace matching
+      const startIdx = cleaned.indexOf("{");
+      if (startIdx === -1) {
+        console.error("No JSON object found in response:", cleaned.substring(0, 200));
+        return { recommendations: [], generalAdvice: "Unable to parse analysis. Please try again." };
+      }
+
+      let depth = 0;
+      let endIdx = -1;
+      for (let i = startIdx; i < cleaned.length; i++) {
+        if (cleaned[i] === "{") depth++;
+        else if (cleaned[i] === "}") {
+          depth--;
+          if (depth === 0) {
+            endIdx = i;
+            break;
+          }
+        }
+      }
+
+      if (endIdx === -1) {
+        // Try to fix truncated JSON by closing open structures
+        cleaned = cleaned.substring(startIdx);
+        cleaned = cleaned.replace(/,\s*$/, ""); // remove trailing comma
+        const openBraces = (cleaned.match(/{/g) || []).length;
+        const closeBraces = (cleaned.match(/}/g) || []).length;
+        const openBrackets = (cleaned.match(/\[/g) || []).length;
+        const closeBrackets = (cleaned.match(/]/g) || []).length;
+        cleaned += "]".repeat(Math.max(0, openBrackets - closeBrackets));
+        cleaned += "}".repeat(Math.max(0, openBraces - closeBraces));
+
+        try {
+          parsed = JSON.parse(cleaned);
+        } catch {
+          console.error("Failed to fix truncated JSON:", cleaned.substring(0, 300));
+          return { recommendations: [], generalAdvice: "Unable to parse analysis. Please try again." };
+        }
+      } else {
+        try {
+          parsed = JSON.parse(cleaned.substring(startIdx, endIdx + 1));
+        } catch {
+          console.error("Extracted JSON is invalid:", cleaned.substring(startIdx, Math.min(startIdx + 300, endIdx + 1)));
+          return { recommendations: [], generalAdvice: "Unable to parse analysis. Please try again." };
+        }
+      }
+    }
+
+    if (!parsed) {
       return { recommendations: [], generalAdvice: "Unable to parse analysis. Please try again." };
     }
 
-    const parsed = JSON.parse(jsonMatch[0]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data = parsed as any;
 
-    const recommendations: HerbRecommendation[] = (parsed.recommendations || []).map(
+    const recommendations: HerbRecommendation[] = (data.recommendations || []).map(
       (rec: Record<string, unknown>) => ({
         herb: String(rec.herb || "Unknown"),
         safety: validateSafety(String(rec.safety || "caution")),
@@ -364,7 +413,7 @@ function parseGeminiResponse(response: string): {
 
     return {
       recommendations,
-      generalAdvice: String(parsed.generalAdvice || parsed.general_advice || ""),
+      generalAdvice: String(data.generalAdvice || data.general_advice || ""),
     };
   } catch (error) {
     console.error("Failed to parse Gemini response:", error);

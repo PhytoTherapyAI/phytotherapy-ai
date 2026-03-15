@@ -27,27 +27,28 @@ Given the user's medications and health concern, analyze potential drug-herb int
 
 For each herb you consider:
 1. Check if it interacts with ANY of the user's medications
-2. Rate safety: ✅ SAFE, ⚠️ CAUTION, ❌ DANGEROUS
-3. Explain the mechanism of interaction
-4. Provide dosage if safe
-5. Cite PubMed sources
+2. Rate safety: "safe", "caution", or "dangerous"
+3. Explain the pharmacological mechanism of interaction
+4. Provide specific dosage if safe
+5. Cite PubMed sources with URLs
 
-Format your response as structured JSON with this schema:
+CRITICAL: You MUST respond with ONLY a raw JSON object. No markdown, no code fences, no explanation text before or after. Just the JSON object itself.
+
+The JSON MUST match this exact schema:
 {
-  "medications_analyzed": ["drug1", "drug2"],
-  "concern": "user's health concern",
   "recommendations": [
     {
       "herb": "Herb Name",
-      "safety": "safe|caution|dangerous",
-      "reason": "Why this rating",
-      "dosage": "If safe, recommended dosage",
-      "duration": "Maximum duration",
-      "interactions": ["List of interactions with user's drugs"],
-      "sources": ["PubMed links"]
+      "safety": "safe",
+      "reason": "Brief explanation of why this rating",
+      "mechanism": "Pharmacological mechanism (e.g., CYP3A4 inhibition)",
+      "dosage": "Specific dosage if safe, null if dangerous",
+      "duration": "Maximum duration if safe, null if dangerous",
+      "interactions": ["Interaction description with specific drug"],
+      "sources": [{"title": "Article title", "url": "https://pubmed.ncbi.nlm.nih.gov/PMID/", "year": "2024"}]
     }
   ],
-  "general_advice": "Overall safety note"
+  "generalAdvice": "Overall safety advice for this combination"
 }`;
 
 export const BLOOD_TEST_PROMPT = `You are Phytotherapy.ai's Blood Test Analysis Engine.
