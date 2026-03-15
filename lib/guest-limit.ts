@@ -3,7 +3,7 @@
 
 const GUEST_QUERY_KEY = "phytotherapy_guest_queries";
 const GUEST_SESSION_KEY = "phytotherapy_guest_session";
-const MAX_GUEST_QUERIES = 2;
+const MAX_GUEST_QUERIES = 5;
 
 interface GuestQueryData {
   count: number;

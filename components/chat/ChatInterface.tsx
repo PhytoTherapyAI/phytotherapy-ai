@@ -93,7 +93,7 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
           id: crypto.randomUUID(),
           role: "assistant",
           content:
-            "🔒 **You've reached your free query limit.**\n\nGuest users can ask up to 2 questions. To continue with unlimited access and personalized recommendations:\n\n👉 **[Create a free account](/auth/login)**\n\nYour data is encrypted and you can delete it anytime.",
+            "🔒 **You've reached your free query limit.**\n\nGuest users can ask up to 5 questions. To continue with unlimited access and personalized recommendations:\n\n👉 **[Create a free account](/auth/login)**\n\nYour data is encrypted and you can delete it anytime.",
         };
         setMessages((prev) => [...prev, userMsg, limitMsg]);
         setInput("");
