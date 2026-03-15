@@ -101,6 +101,16 @@ export default function InteractionCheckerPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
+      {/* Static Emergency Banner */}
+      <div className="mb-6 flex items-center gap-2.5 rounded-lg border border-red-200 bg-red-50/80 px-4 py-3 dark:border-red-800/50 dark:bg-red-950/30">
+        <Phone className="h-4 w-4 shrink-0 text-red-600" />
+        <p className="text-sm text-red-700 dark:text-red-400">
+          If you are experiencing a life-threatening emergency, call{" "}
+          <a href="tel:112" className="font-semibold underline">112</a> /{" "}
+          <a href="tel:911" className="font-semibold underline">911</a> immediately.
+        </p>
+      </div>
+
       {/* Page Header */}
       <div className="mb-8">
         <div className="mb-4 flex items-center gap-3">
