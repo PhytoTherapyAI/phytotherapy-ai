@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
 
     // Step 2: Get user profile if authenticated
     let profileContext = "";
+    let hasMedications = false;
     const authHeader = request.headers.get("authorization");
     let userId: string | null = null;
 
@@ -76,6 +77,8 @@ export async function POST(request: NextRequest) {
             .select("allergen, severity")
             .eq("user_id", user.id);
 
+          hasMedications = !!(meds && meds.length > 0);
+
           if (profile) {
             profileContext = `\n\nUSER PROFILE (cross-check all recommendations against this):`;
             if (profile.age) profileContext += `\n- Age: ${profile.age}`;
@@ -84,8 +87,8 @@ export async function POST(request: NextRequest) {
             if (profile.is_breastfeeding) profileContext += `\n- ⚠️ BREASTFEEDING`;
             if (profile.kidney_disease) profileContext += `\n- ⚠️ KIDNEY DISEASE`;
             if (profile.liver_disease) profileContext += `\n- ⚠️ LIVER DISEASE`;
-            if (meds && meds.length > 0) {
-              profileContext += `\n- Medications: ${meds.map((m: { generic_name: string | null; brand_name: string | null }) => m.generic_name || m.brand_name).join(", ")}`;
+            if (hasMedications) {
+              profileContext += `\n- Medications: ${meds!.map((m: { generic_name: string | null; brand_name: string | null }) => m.generic_name || m.brand_name).join(", ")}`;
             }
             if (allergies && allergies.length > 0) {
               profileContext += `\n- Allergies: ${allergies.map((a: { allergen: string }) => a.allergen).join(", ")}`;
@@ -137,9 +140,23 @@ export async function POST(request: NextRequest) {
     fullPrompt += `\n\nUSER'S QUESTION:\n${message}`;
 
     // Step 5: Stream Gemini response
-    const systemPromptFull = SYSTEM_PROMPT + (profileContext
-      ? "\n\nIMPORTANT: A user profile is provided. Cross-check ALL recommendations against their medications, allergies, and health conditions."
-      : "\n\nNOTE: This user has no profile loaded. Provide general information only. For personalized recommendations, suggest they create a profile.");
+    let systemPromptFull = SYSTEM_PROMPT;
+
+    if (profileContext && hasMedications) {
+      systemPromptFull += "\n\nIMPORTANT: A user profile is provided. Cross-check ALL recommendations against their medications, allergies, and health conditions.";
+    } else {
+      // Guest user OR authenticated user without medications saved
+      systemPromptFull += `\n\nCRITICAL SAFETY RULE — NO DOSAGE ADVICE:
+This user has NOT added any medications to their profile (or is a guest user).
+When they ask about herbal supplements, herbs, or natural remedies:
+- DO explain what the research says about effectiveness (cite PubMed)
+- DO explain the mechanism of action
+- DO NOT give specific dosage recommendations (no mg, no "X times per day", no duration)
+- Instead of dosage, ALWAYS say: "Studies show [herb name] may be effective at certain doses, however [herb name] can interact with many medications. Please add your medications to your profile for a safe, personalized dosage recommendation."
+- If the user is a guest, add: "Sign up at /auth/login to create your health profile — it takes less than 2 minutes."
+- You may still mention general evidence grades (A, B, C) and cite sources.
+This rule exists because giving dosage advice without knowing the user's medications is unsafe.`;
+    }
 
     const stream = await askGeminiStream(fullPrompt, systemPromptFull);
 

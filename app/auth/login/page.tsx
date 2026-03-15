@@ -3,8 +3,9 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Leaf, Mail, Lock, User, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Leaf, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { createBrowserClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,6 +36,7 @@ function LoginContent() {
       ? "Authentication failed. Please try again."
       : null
   );
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   // Login form
@@ -52,6 +54,7 @@ function LoginContent() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null);
     setIsLoading(true);
 
     const { error } = await signInWithEmail(loginEmail, loginPassword);
@@ -59,13 +62,17 @@ function LoginContent() {
       setError(error);
       setIsLoading(false);
     } else {
+      // Small delay to let onAuthStateChange propagate before redirect
+      await new Promise((r) => setTimeout(r, 300));
       router.push(redirect);
+      router.refresh();
     }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccessMessage(null);
 
     if (signupPassword !== signupConfirm) {
       setError("Passwords do not match");
@@ -79,21 +86,44 @@ function LoginContent() {
     setIsLoading(true);
     const { error } = await signUpWithEmail(signupEmail, signupPassword, signupName);
     if (error) {
-      setError(error);
+      // Handle "User already registered" more gracefully
+      if (error.toLowerCase().includes("already registered") || error.toLowerCase().includes("already exists")) {
+        setError("An account with this email already exists. Please sign in instead.");
+      } else {
+        setError(error);
+      }
       setIsLoading(false);
     } else {
-      router.push("/onboarding");
+      // Supabase might require email confirmation depending on settings
+      // Try to redirect; if no session yet, show confirmation message
+      await new Promise((r) => setTimeout(r, 500));
+      const sb = createBrowserClient();
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        router.push("/onboarding");
+        router.refresh();
+      } else {
+        // Email confirmation is required
+        setSuccessMessage("✅ Account created! Please check your email to confirm your account, then sign in.");
+        setIsLoading(false);
+        setSignupName("");
+        setSignupEmail("");
+        setSignupPassword("");
+        setSignupConfirm("");
+      }
     }
   };
 
   const handleGoogleLogin = async () => {
     setError(null);
+    setSuccessMessage(null);
     setIsLoading(true);
     const { error } = await signInWithGoogle();
     if (error) {
       setError(error);
       setIsLoading(false);
     }
+    // Google OAuth will redirect to /auth/callback — no router.push needed here
   };
 
   return (
@@ -117,6 +147,13 @@ function LoginContent() {
             <Alert variant="destructive" className="mb-4">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {successMessage && (
+            <Alert className="mb-4 border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+              <CheckCircle2 className="h-4 w-4" />
+              <AlertDescription>{successMessage}</AlertDescription>
             </Alert>
           )}
 
