@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { DisclaimerBanner } from "@/components/layout/disclaimer-banner";
+import { AuthProvider } from "@/lib/auth-context";
+import { MedicationUpdateDialog } from "@/components/layout/medication-update-dialog";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -38,10 +40,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <DisclaimerBanner />
-        <Header />
-        <main className="min-h-[calc(100vh-12rem)]">{children}</main>
-        <Footer />
+        <AuthProvider>
+          <DisclaimerBanner />
+          <Header />
+          <main className="min-h-[calc(100vh-12rem)]">{children}</main>
+          <Footer />
+          <MedicationUpdateDialog />
+        </AuthProvider>
       </body>
     </html>
   );
