@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Shield,
   Search,
@@ -10,11 +10,14 @@ import {
   Pill,
   Leaf,
   Heart,
+  Phone,
+  ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DrugInput } from "@/components/interaction/DrugInput";
 import { InteractionResult } from "@/components/interaction/InteractionResult";
 import { useAuth } from "@/lib/auth-context";
+import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
 import type { InteractionResult as InteractionResultType } from "@/lib/interaction-engine";
 
 const EXAMPLE_QUERIES = [
@@ -48,8 +51,11 @@ export default function InteractionCheckerPage() {
   const [result, setResult] = useState<InteractionResultType | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Real-time red flag detection on concern text — runs on every keystroke
+  const redFlagCheck = useMemo(() => checkRedFlags(concern), [concern]);
+
   const handleAnalyze = async () => {
-    if (medications.length === 0 || !concern.trim()) return;
+    if (medications.length === 0 || !concern.trim() || redFlagCheck.isEmergency) return;
 
     setIsLoading(true);
     setError(null);
@@ -166,7 +172,11 @@ export default function InteractionCheckerPage() {
             placeholder="Describe your symptom or health goal (e.g., 'I have trouble sleeping', 'I want to reduce my cholesterol naturally', 'I feel anxious and stressed')"
             rows={3}
             maxLength={1000}
-            className="w-full resize-none rounded-lg border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+            className={`w-full resize-none rounded-lg border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 ${
+              redFlagCheck.isEmergency
+                ? "border-red-500 ring-2 ring-red-500/30 focus:border-red-500 focus:ring-red-500/30"
+                : "focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+            }`}
           />
           <div className="flex justify-end">
             <span className="text-xs text-muted-foreground">
@@ -175,17 +185,62 @@ export default function InteractionCheckerPage() {
           </div>
         </div>
 
-        {/* Analyze Button */}
+        {/* 🚨 Red Flag Emergency Banner — instant, no button press needed */}
+        {redFlagCheck.isEmergency && (
+          <div className="rounded-xl border-2 border-red-500 bg-red-50 p-5 dark:bg-red-950/40">
+            <div className="flex items-start gap-3">
+              <div className="shrink-0 rounded-full bg-red-600 p-2.5">
+                <ShieldAlert className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-red-800 dark:text-red-200">
+                  🚨 Emergency Warning
+                </h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-red-700 dark:text-red-300">
+                  {getEmergencyMessage(redFlagCheck.language)}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <a
+                    href="tel:112"
+                    className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
+                  >
+                    <Phone className="h-4 w-4" />
+                    {redFlagCheck.language === "tr" ? "112'yi Ara" : "Call 911 / 112"}
+                  </a>
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-red-300 bg-red-100 px-3 py-2 text-xs font-medium text-red-800 dark:border-red-700 dark:bg-red-900/50 dark:text-red-300">
+                    <ShieldAlert className="h-3.5 w-3.5" />
+                    {redFlagCheck.language === "tr"
+                      ? "Bitkisel takviyeler bu durumda kullanılamaz"
+                      : "Herbal supplements cannot be used in this situation"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Analyze Button — disabled when emergency detected */}
         <Button
           onClick={handleAnalyze}
-          disabled={isLoading || medications.length === 0 || !concern.trim()}
-          className="w-full gap-2 bg-emerald-600 py-6 text-base font-medium hover:bg-emerald-700"
+          disabled={isLoading || medications.length === 0 || !concern.trim() || redFlagCheck.isEmergency}
+          className={`w-full gap-2 py-6 text-base font-medium ${
+            redFlagCheck.isEmergency
+              ? "bg-gray-400 cursor-not-allowed hover:bg-gray-400"
+              : "bg-emerald-600 hover:bg-emerald-700"
+          }`}
           size="lg"
         >
           {isLoading ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
               Analyzing interactions...
+            </>
+          ) : redFlagCheck.isEmergency ? (
+            <>
+              <ShieldAlert className="h-5 w-5" />
+              {redFlagCheck.language === "tr"
+                ? "Acil durum — Analiz devre dışı"
+                : "Emergency detected — Analysis disabled"}
             </>
           ) : (
             <>
@@ -197,7 +252,7 @@ export default function InteractionCheckerPage() {
         </Button>
 
         {/* Profile note */}
-        {!isAuthenticated && (
+        {!isAuthenticated && !redFlagCheck.isEmergency && (
           <p className="text-center text-xs text-muted-foreground">
             💡 <a href="/auth/login" className="text-emerald-600 underline hover:text-emerald-700">Sign in</a>{" "}
             to get personalized safety checks based on your health profile (pregnancy, allergies, kidney/liver conditions).
@@ -205,8 +260,8 @@ export default function InteractionCheckerPage() {
         )}
       </div>
 
-      {/* Example Queries */}
-      {!result && !isLoading && (
+      {/* Example Queries — hidden during emergency */}
+      {!result && !isLoading && !redFlagCheck.isEmergency && (
         <div className="mb-8">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Sparkles className="h-4 w-4" />
