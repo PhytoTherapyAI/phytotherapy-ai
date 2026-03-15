@@ -1,4 +1,4 @@
-import { askGemini } from "@/lib/gemini";
+import { askGeminiJSON } from "@/lib/gemini";
 
 const OPENFDA_BASE = "https://api.fda.gov/drug";
 
@@ -98,14 +98,10 @@ If you don't know this medication, respond with: {"genericName": null, "activeIn
 
     const systemPrompt = `You are a pharmaceutical database. You know international drug brand names including Turkish brands (e.g., Glifor=Metformin, Coraspin=Aspirin, Euthyrox=Levothyroxine, Arveles=Dexketoprofen, Majezik=Flurbiprofen, Apranax=Naproxen, Lustral=Sertraline, Cipralex=Escitalopram, Concor=Bisoprolol, Beloc=Metoprolol, Glucobay=Acarbose, Lantus=Insulin Glargine). Respond ONLY with raw JSON, no markdown fences.`;
 
-    const response = await askGemini(prompt, systemPrompt);
+    const response = await askGeminiJSON(prompt, systemPrompt);
 
-    // Extract JSON
-    const cleaned = response.replace(/```json\s*/gi, "").replace(/```\s*/gi, "").trim();
-    const jsonMatch = cleaned.match(/\{[\s\S]*?\}/);
-    if (!jsonMatch) return null;
-
-    const parsed = JSON.parse(jsonMatch[0]);
+    // With responseMimeType: "application/json", response is already clean JSON
+    const parsed = JSON.parse(response);
     if (!parsed.genericName) return null;
 
     return {

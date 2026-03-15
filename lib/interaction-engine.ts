@@ -1,6 +1,6 @@
 import { searchDrug } from "@/lib/openfda";
 import { searchPubMed } from "@/lib/pubmed";
-import { askGemini } from "@/lib/gemini";
+import { askGeminiJSON } from "@/lib/gemini";
 import { INTERACTION_PROMPT } from "@/lib/prompts";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
 
@@ -151,8 +151,8 @@ export async function analyzeInteraction(
     }))
   );
 
-  // Step 7: Get Gemini analysis
-  const geminiResponse = await askGemini(geminiPrompt, INTERACTION_PROMPT);
+  // Step 7: Get Gemini analysis (JSON mode — guaranteed valid JSON)
+  const geminiResponse = await askGeminiJSON(geminiPrompt, INTERACTION_PROMPT);
 
   // Step 8: Parse response
   const parsed = parseGeminiResponse(geminiResponse);
@@ -320,89 +320,109 @@ function parseGeminiResponse(response: string): {
   recommendations: HerbRecommendation[];
   generalAdvice: string;
 } {
+  const fail = (reason: string, detail: string) => {
+    console.error(`[parseGeminiResponse] ${reason}:`, detail);
+    return {
+      recommendations: [],
+      generalAdvice: "Unable to parse analysis. Please try again.",
+    };
+  };
+
   try {
-    // Step 1: Strip markdown code fences if present
+    // With responseMimeType: "application/json", Gemini returns pure JSON.
+    // But we still add fallback layers for safety.
+
+    // Layer 1: Strip any accidental markdown fences or surrounding text
     let cleaned = response
-      .replace(/^```(?:json)?\s*\n?/gim, "")
-      .replace(/\n?```\s*$/gim, "")
+      .replace(/^[\s\S]*?(?=\{)/m, "")  // everything before first {
+      .replace(/```/g, "")
       .trim();
 
-    // Step 2: Try parsing the whole thing as JSON first
-    let parsed: Record<string, unknown> | null = null;
-    try {
-      parsed = JSON.parse(cleaned);
-    } catch {
-      // Step 3: Extract JSON object with balanced brace matching
-      const startIdx = cleaned.indexOf("{");
-      if (startIdx === -1) {
-        console.error("No JSON object found in response:", cleaned.substring(0, 200));
-        return { recommendations: [], generalAdvice: "Unable to parse analysis. Please try again." };
-      }
+    if (!cleaned.startsWith("{")) {
+      return fail("No JSON object start", response.substring(0, 300));
+    }
 
+    // Layer 2: Try direct parse
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let data: any = null;
+    try {
+      data = JSON.parse(cleaned);
+    } catch (e1) {
+      // Layer 3: Find balanced JSON — string-aware brace matching
       let depth = 0;
+      let inString = false;
+      let escape = false;
       let endIdx = -1;
-      for (let i = startIdx; i < cleaned.length; i++) {
-        if (cleaned[i] === "{") depth++;
-        else if (cleaned[i] === "}") {
+
+      for (let i = 0; i < cleaned.length; i++) {
+        const ch = cleaned[i];
+        if (escape) { escape = false; continue; }
+        if (ch === "\\") { escape = true; continue; }
+        if (ch === '"') { inString = !inString; continue; }
+        if (inString) continue;
+        if (ch === "{") depth++;
+        else if (ch === "}") {
           depth--;
-          if (depth === 0) {
-            endIdx = i;
-            break;
-          }
+          if (depth === 0) { endIdx = i; break; }
         }
       }
 
-      if (endIdx === -1) {
-        // Try to fix truncated JSON by closing open structures
-        cleaned = cleaned.substring(startIdx);
-        cleaned = cleaned.replace(/,\s*$/, ""); // remove trailing comma
-        const openBraces = (cleaned.match(/{/g) || []).length;
-        const closeBraces = (cleaned.match(/}/g) || []).length;
-        const openBrackets = (cleaned.match(/\[/g) || []).length;
-        const closeBrackets = (cleaned.match(/]/g) || []).length;
-        cleaned += "]".repeat(Math.max(0, openBrackets - closeBrackets));
-        cleaned += "}".repeat(Math.max(0, openBraces - closeBraces));
-
+      if (endIdx > 0) {
         try {
-          parsed = JSON.parse(cleaned);
-        } catch {
-          console.error("Failed to fix truncated JSON:", cleaned.substring(0, 300));
-          return { recommendations: [], generalAdvice: "Unable to parse analysis. Please try again." };
+          data = JSON.parse(cleaned.substring(0, endIdx + 1));
+        } catch (e2) {
+          return fail("Balanced extraction failed", `${e2} | ${cleaned.substring(0, 300)}`);
         }
       } else {
+        // Layer 4: Truncated JSON — try auto-closing
+        cleaned = cleaned.replace(/,\s*$/, "");
+        // Remove last incomplete key-value if it ends mid-string
+        cleaned = cleaned.replace(/,\s*"[^"]*"?\s*:?\s*"?[^"]*$/, "");
+        const missingBrackets = Math.max(0, (cleaned.match(/\[/g) || []).length - (cleaned.match(/]/g) || []).length);
+        const missingBraces = Math.max(0, (cleaned.match(/\{/g) || []).length - (cleaned.match(/\}/g) || []).length);
+        cleaned += '"'.repeat(0); // don't add quotes, just close structures
+        cleaned += "]".repeat(missingBrackets);
+        cleaned += "}".repeat(missingBraces);
+
         try {
-          parsed = JSON.parse(cleaned.substring(startIdx, endIdx + 1));
-        } catch {
-          console.error("Extracted JSON is invalid:", cleaned.substring(startIdx, Math.min(startIdx + 300, endIdx + 1)));
-          return { recommendations: [], generalAdvice: "Unable to parse analysis. Please try again." };
+          data = JSON.parse(cleaned);
+        } catch (e3) {
+          return fail("Auto-close failed", `${e3} | first=${e1} | len=${response.length}`);
         }
       }
     }
 
-    if (!parsed) {
-      return { recommendations: [], generalAdvice: "Unable to parse analysis. Please try again." };
+    if (!data || typeof data !== "object") {
+      return fail("Parsed value is not an object", typeof data);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data = parsed as any;
+    // Extract recommendations array
+    const recs = Array.isArray(data.recommendations) ? data.recommendations : [];
 
-    const recommendations: HerbRecommendation[] = (data.recommendations || []).map(
-      (rec: Record<string, unknown>) => ({
+    const recommendations: HerbRecommendation[] = recs.map(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (rec: any) => ({
         herb: String(rec.herb || "Unknown"),
         safety: validateSafety(String(rec.safety || "caution")),
         reason: String(rec.reason || ""),
         mechanism: String(rec.mechanism || ""),
-        dosage: rec.dosage ? String(rec.dosage) : null,
-        duration: rec.duration ? String(rec.duration) : null,
+        dosage: rec.dosage != null ? String(rec.dosage) : null,
+        duration: rec.duration != null ? String(rec.duration) : null,
         interactions: Array.isArray(rec.interactions)
           ? rec.interactions.map(String)
           : [],
         sources: Array.isArray(rec.sources)
-          ? rec.sources.map((s: Record<string, unknown>) => ({
-              title: String(s.title || ""),
-              url: String(s.url || ""),
-              year: String(s.year || ""),
-            }))
+          ? rec.sources.map(
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (s: any) =>
+                typeof s === "string"
+                  ? { title: "", url: s, year: "" }
+                  : {
+                      title: String(s.title || ""),
+                      url: String(s.url || s.link || ""),
+                      year: String(s.year || s.date || ""),
+                    }
+            )
           : [],
       })
     );
@@ -413,14 +433,12 @@ function parseGeminiResponse(response: string): {
 
     return {
       recommendations,
-      generalAdvice: String(data.generalAdvice || data.general_advice || ""),
+      generalAdvice: String(
+        data.generalAdvice || data.general_advice || data.generalNote || ""
+      ),
     };
   } catch (error) {
-    console.error("Failed to parse Gemini response:", error);
-    return {
-      recommendations: [],
-      generalAdvice: "Analysis completed but results could not be formatted. Please try again.",
-    };
+    return fail("Unexpected error", String(error));
   }
 }
 
