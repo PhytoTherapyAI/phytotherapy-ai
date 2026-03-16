@@ -132,8 +132,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    // Immediately clear state so UI updates without waiting for onAuthStateChange
+    try {
+      await supabase.auth.signOut({ scope: "global" });
+    } catch (err) {
+      console.error("Sign out error (forcing clear):", err);
+    }
+    // Always clear state regardless of signOut success
     setState({
       user: null,
       session: null,
@@ -143,7 +147,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       needsOnboarding: false,
       needsMedicationUpdate: false,
     });
-    // Redirect to landing page
+    // Force clear any remaining Supabase data from localStorage
+    if (typeof window !== "undefined") {
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && (key.startsWith("sb-") || key.includes("supabase"))) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
+    }
+    // Full page reload to landing — ensures clean state everywhere
     window.location.href = "/";
   };
 

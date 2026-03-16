@@ -57,15 +57,21 @@ function LoginContent() {
     setSuccessMessage(null);
     setIsLoading(true);
 
-    const { error } = await signInWithEmail(loginEmail, loginPassword);
-    if (error) {
-      setError(error);
-      setIsLoading(false);
-    } else {
+    try {
+      const { error } = await signInWithEmail(loginEmail, loginPassword);
+      if (error) {
+        setError(error);
+        setIsLoading(false);
+        return;
+      }
       // Small delay to let onAuthStateChange propagate before redirect
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 500));
       router.push(redirect);
       router.refresh();
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An unexpected error occurred. Please try again.");
+      setIsLoading(false);
     }
   };
 
@@ -84,18 +90,18 @@ function LoginContent() {
     }
 
     setIsLoading(true);
-    const { error } = await signUpWithEmail(signupEmail, signupPassword, signupName);
-    if (error) {
-      // Handle "User already registered" more gracefully
-      if (error.toLowerCase().includes("already registered") || error.toLowerCase().includes("already exists")) {
-        setError("An account with this email already exists. Please sign in instead.");
-      } else {
-        setError(error);
+    try {
+      const { error } = await signUpWithEmail(signupEmail, signupPassword, signupName);
+      if (error) {
+        if (error.toLowerCase().includes("already registered") || error.toLowerCase().includes("already exists")) {
+          setError("An account with this email already exists. Please sign in instead.");
+        } else {
+          setError(error);
+        }
+        setIsLoading(false);
+        return;
       }
-      setIsLoading(false);
-    } else {
       // Supabase might require email confirmation depending on settings
-      // Try to redirect; if no session yet, show confirmation message
       await new Promise((r) => setTimeout(r, 500));
       const sb = createBrowserClient();
       const { data: { session } } = await sb.auth.getSession();
@@ -103,14 +109,17 @@ function LoginContent() {
         router.push("/onboarding");
         router.refresh();
       } else {
-        // Email confirmation is required
-        setSuccessMessage("✅ Account created! Please check your email to confirm your account, then sign in.");
+        setSuccessMessage("Account created! Please check your email to confirm your account, then sign in.");
         setIsLoading(false);
         setSignupName("");
         setSignupEmail("");
         setSignupPassword("");
         setSignupConfirm("");
       }
+    } catch (err) {
+      console.error("Signup error:", err);
+      setError("An unexpected error occurred. Please try again.");
+      setIsLoading(false);
     }
   };
 
@@ -118,12 +127,18 @@ function LoginContent() {
     setError(null);
     setSuccessMessage(null);
     setIsLoading(true);
-    const { error } = await signInWithGoogle();
-    if (error) {
-      setError(error);
+    try {
+      const { error } = await signInWithGoogle();
+      if (error) {
+        setError(error);
+        setIsLoading(false);
+      }
+      // Google OAuth will redirect to /auth/callback — no router.push needed here
+    } catch (err) {
+      console.error("Google login error:", err);
+      setError("Failed to connect to Google. Please try again.");
       setIsLoading(false);
     }
-    // Google OAuth will redirect to /auth/callback — no router.push needed here
   };
 
   return (
