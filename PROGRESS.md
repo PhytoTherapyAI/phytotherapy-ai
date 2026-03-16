@@ -13,10 +13,12 @@
 | Sprint 3 — İlaç Etkileşim Motoru | ✅ Tamamlandı | Mart 2026 |
 | Sprint 4 — Sağlık Asistanı RAG | ✅ Tamamlandı | Mart 2026 |
 | Sprint 5 — Kan Tahlili + PDF | ✅ Tamamlandı | 16 Mart 2026 |
-| Sprint 6 — Mimari Birleştirme | 🔄 Sırada | — |
-| Sprint 7 — Tasarım v2 | 📋 Planlandı | — |
+| Sprint 6 — Mimari Birleştirme | 🔄 Devam Ediyor | 16 Mart 2026 |
+| Sprint 7 — Tasarım v2 | 📋 Sırada | — |
 | Sprint 8 — Güvenlik + Yasal | 📋 Planlandı | — |
 | Sprint 9 — Hackathon Hazırlık | 📋 Planlandı | — |
+
+**Hackathon: 11-12 Nisan 2026 — 26 gün kaldı**
 
 ---
 
@@ -77,11 +79,6 @@
 
 **Dosyalar:** lib/openfda.ts, lib/interaction-engine.ts, lib/prompts.ts, app/api/interaction/route.ts, components/interaction/*, app/interaction-checker/page.tsx
 
-**Bugfix'ler:**
-- Gemini JSON parse hatası → responseMimeType: "application/json" + maxOutputTokens: 8192
-- Türkçe ilaç adı tanınmama → Gemini fallback cascade
-- Kırmızı kod sadece butona basınca → useMemo ile real-time tespit
-
 ---
 
 ## ✅ Sprint 4 — Sağlık Asistanı RAG
@@ -89,28 +86,13 @@
 **Kapsam:** PubMed canlı sorgu + Gemini streaming chat
 
 - [x] /api/chat endpoint (Gemini streaming + profil context + PubMed RAG)
-  - Red flag check → profil çekme → PubMed arama → Gemini stream
-  - Konuşma geçmişi (son 6 mesaj) context olarak gönderilir
-  - hasMedications flag: ilaç profili yoksa doz tavsiyesi verilmez
-- [x] /api/pubmed endpoint (doğrudan PubMed arama)
-- [x] ChatInterface bileşeni
-  - Streaming response gösterimi
-  - Auto-scroll, auto-resize textarea
-  - Client-side kırmızı kod filtresi
-  - Misafir modu: kişisel sorgu engelleme + 5 sorgu limiti
-  - Clear chat butonu
+- [x] ChatInterface bileşeni (streaming, auto-scroll, red flag filtresi)
 - [x] MessageBubble bileşeni (markdown rendering, streaming cursor)
 - [x] SourceCard bileşeni (PubMed referans kartları)
-- [x] Health assistant sayfası (/health-assistant) — örnek sorularla
-- [x] Doz güvenlik kuralı: profilde ilaç yoksa veya misafirse doz tavsiyesi verilmez
+- [x] Health assistant sayfası (/health-assistant)
+- [x] Doz güvenlik kuralı: profilde ilaç yoksa doz tavsiyesi verilmez
 
 **Dosyalar:** app/api/chat/route.ts, app/api/pubmed/route.ts, components/chat/*, app/health-assistant/page.tsx
-
-**Ek düzeltmeler:**
-- Login race condition: 300ms delay + router.refresh()
-- Email confirmation handling: signup sonrası session kontrolü
-- "Already registered" daha anlaşılır hata mesajı
-- Misafir limiti 2 → 5 (test kolaylığı)
 
 ---
 
@@ -118,53 +100,70 @@
 
 **Kapsam:** Kan tahlili analizi, yaşam koçluğu, doktor raporu PDF
 
-- [x] blood-reference.ts: 30 markör, 9 kategori
-  - Lipid Panel: Total Cholesterol, LDL, HDL, Triglycerides
-  - Vitaminler: D, B12, Folate
-  - Mineraller: Ferritin, Iron, Magnesium, Calcium, Zinc
-  - Metabolik: HbA1c, Fasting Glucose, Insulin, Uric Acid
-  - Tiroid: TSH, Free T4, Free T3
-  - İnflamasyon: CRP, ESR
-  - Karaciğer: ALT, AST, GGT
-  - Böbrek: Creatinine, BUN
-  - Kan Sayımı: Hemoglobin, WBC, Platelets
-  - Cinsiyet bazlı referans aralıkları
-  - analyzeValue() helper: optimal/borderline/low/high status
-- [x] /api/blood-analysis endpoint
-  - Referans aralığı kontrolü + Gemini JSON analiz
-  - Supplement önerileri + yaşam koçluğu + doktor tartışma noktaları
-  - İlaç profili farkındalığı (doz güvenliği)
+- [x] blood-reference.ts: 30 markör, 9 kategori (cinsiyet bazlı referans aralıkları)
+- [x] /api/blood-analysis endpoint (referans + Gemini analiz)
 - [x] /api/generate-pdf endpoint (@react-pdf/renderer)
-- [x] DoctorReport PDF bileşeni
-  - A4 profesyonel layout
-  - Hasta bilgisi, sonuç tablosu, supplement önerileri, yaşam tavsiyeleri
-  - PubMed kaynakları, disclaimer, footer
-- [x] BloodTestForm bileşeni
-  - 9 kategori, genişletilebilir paneller
-  - Cinsiyet seçimi (referans aralıkları için)
-  - Demo veri doldurma butonu
-  - Sayısal doğrulama
-- [x] ResultDashboard bileşeni
-  - 4 sekmeli panel: Results / Supplements / Lifestyle / For Your Doctor
-  - Skor kartları (optimal, attention, recommendations)
-  - Status badge'leri (✅ Optimal, 🟡 Borderline, 🔴 High/Low)
-  - Evidence grade badge'leri (A/B/C)
-  - PDF indirme butonu
-- [x] Blood test sayfası (/blood-test) — tam UI + emergency banner
+- [x] DoctorReport PDF bileşeni (A4 profesyonel layout)
+- [x] BloodTestForm bileşeni (9 kategori, demo veri, sayısal doğrulama)
+- [x] ResultDashboard bileşeni (4 sekme: Results/Supplements/Lifestyle/Doctor)
+- [x] Blood test sayfası (/blood-test)
+- [x] Chat kutusuna dosya/fotoğraf yükleme + OCR
 
-**Dosyalar:** lib/blood-reference.ts, app/api/blood-analysis/route.ts, app/api/generate-pdf/route.ts, components/pdf/DoctorReport.tsx, components/blood-test/BloodTestForm.tsx, components/blood-test/ResultDashboard.tsx, app/blood-test/page.tsx
+**Dosyalar:** lib/blood-reference.ts, app/api/blood-analysis/route.ts, app/api/generate-pdf/route.ts, components/pdf/DoctorReport.tsx, components/blood-test/*, app/blood-test/page.tsx
 
 ---
 
-## 🔄 Sprint 6 — Mimari Birleştirme + Auth Fix (Sırada)
+## 🔄 Sprint 6 — Mimari Birleştirme + Auth Fix (DEVAM EDİYOR)
 
-**Planlanan kapsam:**
-- [ ] Onboarding wizard → login sonrası otomatik tetikleme
+**Kapsam:** Auth akışı, hata yönetimi, Gemini API stabilizasyonu, onboarding düzeltmeleri
+
+### Tamamlanan
+- [x] Login → onboarding_complete kontrolü → /onboarding yönlendirmesi ✅
+- [x] Sign in / Sign out tam düzeltme (global signout, localStorage temizleme) ✅
+- [x] OAuth callback onboarding kontrolü ✅
+- [x] Sağlık dışı mesajlara nazik yönlendirme (off-topic handling) ✅
+- [x] Konuşma geçmişi yan panel — ConversationHistory bileşeni (son 20 konuşma) ✅
+- [x] Gemini retry + exponential backoff + model fallback (2.0-flash → 2.5-flash) ✅
+- [x] TR→EN PubMed sözlük (70+ Türkçe sağlık terimi → İngilizce) ✅
+- [x] PubMed timeout (8s) + error handling (boş döner, crash etmez) ✅
+- [x] Chat API streaming error handling (JSON 500 yerine streaming text mesajı) ✅
+- [x] Onboarding medication/allergy kayıt hatası düzeltildi ✅
+  - Profil artık EN SON güncellenir (meds → allergies → consent → profile)
+  - Auth session doğrulaması eklendi
+  - Delete-then-insert retry güvenliği
+
+### Bekleyen
+- [ ] **API quota test** — Gemini billing aktif mi? (yarın test edilecek)
 - [ ] Tek chat router — intent detection
-- [ ] Konuşma geçmişi Supabase'e kayıt + yükleme
-- [ ] İlaç profili → chat context'ine otomatik ekleme
+- [ ] İlaç profili → chat context otomatik ekleme
+- [ ] Her girişte "İlaç listeniz hâlâ aynı mı?" dialog'u
 - [ ] Profil sayfası tam çalışır
-- [ ] Her girişte "İlaç listeniz aynı mı?" dialog'u
+
+### Bugfix Kaydı (Sprint 6)
+| Bug | Sebep | Çözüm |
+|-----|-------|-------|
+| Tüm chat mesajları "Something went wrong" | gemini-2.5-flash free tier 20 req/day, 429 sonrası JSON 500 | gemini-2.0-flash primary (1500/gün) + streaming error response |
+| gemini-2.0-flash da tükendi | Free tier tüm modeller tükendi | Retry + fallback chain + QUOTA_EXHAUSTED mesajı |
+| Türkçe sağlık soruları başarısız | PubMed Türkçe keyword bulamıyor + timeout crash | TR→EN sözlük + 8s timeout + try/catch |
+| Login sonrası onboarding atlanıyor | Session propagation race condition | Retry getUser() 3x + window.location.href |
+| Medication/allergy kaydedilmiyor | Profil onboarding_complete=true ÖNCE güncelleniyor | Save sırası: meds → allergies → consent → profile (LAST) |
+
+---
+
+## 📋 Sprint 7 — Tasarım v2 (SIRADA)
+
+**Kapsam:** phytotherapy_v2.png referansıyla tam UI overhaul
+
+- [ ] Cormorant Garamond + DM Sans + DM Mono font sistemi
+- [ ] CSS variables ile renk sistemi (light/dark)
+- [ ] Dark/Light mode toggle navbar sağında (ay/güneş ikonu, localStorage)
+- [ ] Hero bölümü: Sol arama (⌘K) + sağ botanik SVG (EKG + molekül)
+- [ ] Trust strip (5 madde, yeşil checkmark)
+- [ ] Feature kartları (01/02/03/04, Cormorant başlık)
+- [ ] Navbar: logo sol, linkler orta, auth+toggle sağ
+- [ ] Responsive mobile-first
+- [ ] Loading skeleton + error states
+- [ ] Animasyonlar (subtle hover, fade-in)
 
 ---
 
@@ -178,7 +177,7 @@ phytotherapy-ai/
 │   ├── globals.css
 │   ├── auth/
 │   │   ├── login/page.tsx              # Login + Signup
-│   │   └── callback/route.ts           # OAuth callback
+│   │   └── callback/page.tsx           # OAuth callback
 │   ├── onboarding/page.tsx             # 7-step wizard
 │   ├── profile/page.tsx                # User profile
 │   ├── interaction-checker/page.tsx    # Drug-herb interaction
@@ -194,6 +193,7 @@ phytotherapy-ai/
 │   ├── ui/                              # shadcn/ui (16 components)
 │   ├── chat/
 │   │   ├── ChatInterface.tsx
+│   │   ├── ConversationHistory.tsx      # NEW — yan panel geçmişi
 │   │   ├── MessageBubble.tsx
 │   │   └── SourceCard.tsx
 │   ├── interaction/
@@ -203,18 +203,21 @@ phytotherapy-ai/
 │   ├── blood-test/
 │   │   ├── BloodTestForm.tsx
 │   │   └── ResultDashboard.tsx
+│   ├── onboarding/
+│   │   ├── OnboardingWizard.tsx         # FIXED — save order
+│   │   └── steps/                       # 8 step components
 │   ├── pdf/
 │   │   └── DoctorReport.tsx
 │   └── layout/                          # Header, Footer
 ├── lib/
-│   ├── gemini.ts                        # Gemini API (ask, askJSON, askStream)
-│   ├── pubmed.ts                        # PubMed E-utilities
+│   ├── gemini.ts                        # UPDATED — retry + fallback
+│   ├── pubmed.ts                        # UPDATED — timeout + error handling
 │   ├── openfda.ts                       # OpenFDA + Gemini fallback
 │   ├── safety-filter.ts                 # Red flag detection (EN + TR)
 │   ├── interaction-engine.ts            # 8-step interaction pipeline
 │   ├── blood-reference.ts              # 30 markers, 9 categories
-│   ├── prompts.ts                       # System prompts
-│   ├── auth-context.tsx                 # Auth provider
+│   ├── prompts.ts                       # UPDATED — off-topic handling
+│   ├── auth-context.tsx                 # UPDATED — global signout
 │   ├── supabase.ts                      # Browser + Server clients
 │   ├── guest-limit.ts                   # Guest query tracking
 │   ├── database.types.ts                # Supabase types
@@ -222,8 +225,9 @@ phytotherapy-ai/
 ├── supabase/
 │   └── schema.sql                       # 7 tables + RLS + triggers
 ├── public/
+│   └── phytotherapy_v2.png              # Tasarım referansı
 ├── .env.local
-├── CLAUDE.md                            # v5.0 — proje anayasası
+├── CLAUDE.md                            # v6.0 — proje anayasası
 ├── PROGRESS.md                          # Bu dosya
 ├── package.json
 ├── tailwind.config.ts
@@ -233,10 +237,15 @@ phytotherapy-ai/
 
 ---
 
-## Git Commit Geçmişi
+## Git Commit Geçmişi (Son)
 
 | Commit | Mesaj |
 |--------|-------|
+| `7ea9b25` | Fix medications and allergies not saving during onboarding |
+| — | Add retry with exponential backoff and model fallback for Gemini API |
+| — | Fix Turkish health queries + PubMed error handling + streaming errors |
+| — | Add conversation history sidebar + off-topic handling + onboarding redirect |
+| — | Fix sign in/out + auth flow |
 | `e7575e6` | Sprint 5: Blood Test Analysis with PDF doctor report |
 | `a20b05a` | Safety: no dosage advice without medication profile + fix login flow |
 | `b71e2c3` | Increase guest query limit from 2 to 5 for testing |
@@ -251,3 +260,4 @@ phytotherapy-ai/
 ---
 
 *Hackathon: 11-12 Nisan 2026 — 26 gün kaldı*
+*Yarın: Gemini API quota testi → Sprint 7 Tasarım v2'ye geçiş*

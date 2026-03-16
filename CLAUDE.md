@@ -1,4 +1,4 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v5.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v6.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
@@ -7,9 +7,9 @@
 - **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026
 - **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı)
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle Sprint 10'da)
-- **Deploy:** Vercel ✅ (canlı) + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
-- **AI Motor:** Google Gemini API (gemini-2.5-flash)
-- **İşletim Sistemi:** Windows
+- **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
+- **AI Motor:** Google Gemini API (gemini-2.0-flash primary + gemini-2.5-flash fallback)
+- **OS:** Windows
 - **GitHub:** github.com/PhytoTherapyAI/phytotherapy-ai
 
 ---
@@ -26,8 +26,8 @@
 2. **Kanıta dayalı** — PubMed, NIH, WHO dışında kaynak yok.
 3. **Doktoru bypass etme, güçlendir** — Teşhis koymaz, karar destek asistanıdır.
 4. **Şeffaflık** — Her öneri makale referansıyla gelir.
-5. **Kimseyi boş gönderme** — Her zaman genel bilgi + doktora yönlendirme kombinasyonu.
-6. **İlaç profili olmadan doz tavsiyesi verilmez** — Profil eksikse: "Bu madde birçok ilaçla etkileşebilir, lütfen ilaçlarınızı ekleyin."
+5. **Kimseyi boş gönderme** — Her zaman genel bilgi + doktora yönlendirme.
+6. **İlaç profili olmadan doz tavsiyesi verilmez** — "Bu madde birçok ilaçla etkileşebilir, ilaçlarınızı ekleyin."
 
 ---
 
@@ -37,7 +37,7 @@
 Frontend:     Next.js 14 (App Router) + Tailwind CSS + shadcn/ui
 Backend:      Next.js API Routes (serverless — Vercel)
 Database:     Supabase (PostgreSQL) ✅ — tüm tablolar kurulu
-AI Engine:    Google Gemini API (gemini-2.5-flash)
+AI Engine:    Google Gemini API (gemini-2.0-flash primary + gemini-2.5-flash fallback)
 Tıbbi Veri:   PubMed E-utilities API
 İlaç Veri:    OpenFDA API
 PDF:          @react-pdf/renderer
@@ -50,9 +50,6 @@ OS:           Windows
 
 ## Mimari — Tek AI Asistan + Özel Modlar
 
-### Ana Felsefe
-Tek akıllı chat arayüzü tüm özellikleri karşılar. Alt menüde özel modlara hızlı erişim var ama hepsi aynı altyapıyı kullanır.
-
 ### Intent Detection (Gemini Router)
 Kullanıcı mesajı → Gemini intent belirler:
 - **İlaç etkileşimi** → OpenFDA + PubMed motoru
@@ -60,13 +57,25 @@ Kullanıcı mesajı → Gemini intent belirler:
 - **Genel sağlık sorusu** → PubMed RAG
 - **Dosya/görsel yüklendi** → OCR + ilgili analiz
 - **Acil semptom** → Kırmızı kod (AI'dan ÖNCE çalışır)
+- **Sağlık dışı mesaj** → "I'm specialized in health topics. Feel free to ask anything health-related!"
+
+### Dil Desteği
+- Sistem EN ve TR sorularına otomatik yanıt verir
+- Kullanıcı Türkçe yazarsa Türkçe, İngilizce yazarsa İngilizce cevap
+- TR/EN UI toggle Sprint 10'da navbar'a eklenir
 
 ### Dosya ve Görsel Yükleme
-Chat kutusuna entegre:
+Chat kutusuna entegre (sol alt köşe):
 - 📎 PDF yükleme (kan tahlili, reçete)
 - 📷 Fotoğraf çekme / galeri seçimi (ilaç kutusu, tahlil kağıdı)
 - OCR ile metin çıkarma → Gemini analizi
 - Desteklenen: PDF, JPG, PNG, HEIC
+
+### Konuşma Geçmişi (Yan Panel)
+- Health assistant'da sol/sağ kenar paneli
+- Son 10 konuşma Supabase query_history'den yüklenir
+- Konuşmaya tıklayınca yüklenir
+- Misafir modunda gösterilmez
 
 ---
 
@@ -95,183 +104,147 @@ Metin:      DM Sans
 Mono:       DM Mono (kbd kısayolları için)
 ```
 
+### Dark/Light Mode
+- Navbar sağında toggle butonu — ay ☽ / güneş ○ ikonu
+- localStorage'da hatırlanır
+- Her renk CSS variable ile tanımlanır — hardcode yasak
+- Koyu mod: #141a16 arka plan, yeşil tonları daha parlak (#5aac74)
+- Açık mod: #faf9f6 arka plan, derin yeşil (#3c7a52)
+
 ### Tasarım Prensipleri
 - Premium + sakin + yatıştırıcı his
-- **Projeye özgü motifler:** Botanik illüstrasyon + EKG çizgisi + molekül bağ noktaları
-- Hero bölümünde: Sol taraf canlı arama kutusu, sağ taraf botanik SVG illüstrasyon
-- EKG çizgisi botanik bitkinin üzerinden geçer — "doğa + tıp" mesajı
-- Light/Dark mode toggle navbar'da — her renk CSS variable ile tanımlanır
-- Mobile-first
-- Referans: phytotherapy_v2.png (proje klasöründe)
+- **Projeye özgü motifler:**
+  - Botanik illüstrasyon (zarif tek bitki, altın çiçek)
+  - EKG çizgisi botanik bitkinin üzerinden geçer
+  - Molekül bağ noktaları köşelerde dekoratif
+  - Tıbbi artı (+) işareti ince vurgu olarak
+- **Hero bölümü:**
+  - Sol: Eyebrow badge + H1 başlık + açıklama + arama kutusu + quick tags
+  - Sağ: Botanik SVG illüstrasyon (EKG + molekül + botanik birleşimi)
+  - ⌘K kısayolu arama kutusunda
+- **Trust strip:** 5 madde, her biri yeşil checkmark ile
+- **Feature kartları:** 01/02/03/04 numaralı, Cormorant başlık
+- Light/Dark mode toggle navbar sağında
+- Mobile-first responsive
+- Referans: public/phytotherapy_v2.png
+
+### Navigasyon
+```
+Logo (sol) | Interaction Checker | Health Assistant | Blood Test Analysis | [Auth] | [Theme Toggle]
+```
+- Giriş yapılmamışsa: Sign In + Sign Up butonları
+- Giriş yapılmışsa: Avatar dropdown (isim, email, Profile Settings, Sign Out)
+- Sign out sonrası landing page'e yönlendir, session temizle
 
 ---
 
-## Kullanıcı Akışı (Kesinleşmiş)
+## Kullanıcı Akışı
 
-### Misafir Modu (Kayıtsız)
-- **5 sorgu hakkı** (test için 5 olarak güncellendi)
-- Sadece genel bilgi soruları yanıtlanır
+### Misafir Modu (5 sorgu hakkı)
+- Genel bilgi soruları → yanıtla (EN ve TR)
 - Kişisel öneri → "Güvenli öneri için ilaç profilin gerekiyor. Kayıt ol."
-- Doz tavsiyesi verilmez → "Bu madde birçok ilaçla etkileşebilir, ilaçlarınızı ekleyin"
+- Doz tavsiyesi → "Bu madde birçok ilaçla etkileşebilir, ilaçlarınızı ekleyin"
+- Konuşma geçmişi gösterilmez
 - 6. sorguda kayıt duvarı
 
-### Kayıt Sonrası — Onboarding Wizard
-**Login sonrası otomatik tetiklenir — atlanamaz.**
+### Login Sonrası Akış
+1. Login → onboarding_complete kontrolü
+2. False ise → /onboarding sayfasına otomatik yönlendir
+3. Onboarding tamamlanınca → ana sayfaya dön
 
-#### KATMAN 1 — Zorunlu (7 Adım)
+### Onboarding Wizard — Katman 1 (Zorunlu, 7 Adım)
 | Adım | İçerik |
 |------|--------|
-| 1 | Ad, yaş, cinsiyet + **18 yaş kontrolü** (altındaysa farklı akış) |
-| 2 | Aktif ilaçlar ("kullanmıyorum" da zorunlu beyan) |
-| 3 | Alerjiler ("alerjim yok" da zorunlu beyan) |
-| 4 | Gebelik/emzirme durumu (zorunlu) |
-| 5 | Alkol/sigara kullanımı (zorunlu) |
-| 6 | Böbrek/karaciğer hastalığı + son 3 ayda ameliyat + kronik hastalıklar |
-| 7 | Sorumluluk reddi metni + dijital imza (checkbox + timestamp → Supabase) |
+| 1 | Ad, yaş, cinsiyet + 18 yaş kontrolü |
+| 2 | Aktif ilaçlar (zorunlu beyan) |
+| 3 | Alerjiler (zorunlu beyan) |
+| 4 | Gebelik/emzirme |
+| 5 | Alkol/sigara |
+| 6 | Böbrek/karaciğer + ameliyat + kronik hastalıklar |
+| 7 | Sorumluluk reddi + dijital imza → Supabase |
 
-#### KATMAN 2 — İsteğe Bağlı ("Önerilerini kişiselleştir")
-- Takviye/vitamin kullanımı
-- Beslenme şekli (vegan, glutensiz vs.)
-- Egzersiz sıklığı
-- Uyku düzeni
-- Boy, kilo, kan grubu
+### Onboarding Wizard — Katman 2 (İsteğe Bağlı)
+Takviye, beslenme, egzersiz, uyku, boy/kilo/kan grubu
 
-### İlaç Profili Güncelleme Sistemi
-- **Her girişte:** "İlaç listeniz hâlâ aynı mı?" — tek tıkla "Evet" veya "Güncelle"
-- **30 günde bir:** Zorunlu güncelleme onayı — atlanamaz
-- **Otomatik tespit:** Sorguda profilde olmayan ilaç → "Bu ilacı profilinize ekleyelim mi?"
-
-### Tam Erişim Sonrası
-- Her sorguda profil otomatik çekilir, çapraz kontrol yapılır
-- Konuşma geçmişi Supabase'e kaydedilir (query_history)
-- Favorilere ekleme
-- Doktora gönder (PDF + email)
-- İlaç hatırlatıcısı
+### İlaç Güncelleme
+- Her girişte: "Hâlâ aynı mı?" tek tıkla
+- 30 günde bir: Zorunlu güncelleme
+- Sorguda yeni ilaç: "Ekleyelim mi?"
 
 ---
 
 ## Güvenlik Mimarisi — 3 Katman
 
-### Katman 1: Kırmızı Kod Filtresi (AI'dan ÖNCE)
-
-**Her sayfada sabit banner:**
-> "If you are experiencing a life-threatening emergency, call 112 / 911 immediately."
-
-**Acil kelime tespit edilince:**
-- Tam ekran kırmızı emergency modal açılır
-- "I understand this is an emergency" butonuna basılana kadar sistem kilitlenir
-- Check Interactions butonu disable edilir
-- İlaç yazılmış olsa bile override eder — analiz yapılmaz
+### Katman 1: Kırmızı Kod (AI'dan ÖNCE)
+- Her sayfada sabit kırmızı banner
+- Acil kelime → tam ekran emergency modal
+- "I understand this is an emergency" butonuna kadar sistem kilitli
+- İlaç yazılmış olsa bile override — analiz yapılmaz
 
 ```typescript
-const RED_FLAGS_EN = [
-  'chest pain', 'heart attack', 'shortness of breath', "can't breathe",
-  'loss of consciousness', 'unconscious', 'seizure', 'stroke',
-  'heavy bleeding', 'suicidal', 'suicide', 'poisoning', 'overdose',
-  'sudden vision loss', 'paralysis', 'anaphylaxis'
-];
-const RED_FLAGS_TR = [
-  'göğüs ağrısı', 'kalp krizi', 'nefes darlığı', 'nefes alamıyorum',
-  'bilinç kaybı', 'bayıldı', 'nöbet', 'felç', 'inme',
-  'kanama', 'intihar', 'zehirlenme', 'doz aşımı',
-  'ani görme kaybı', 'anafilaksi'
-];
+const RED_FLAGS_EN = ['chest pain','heart attack','shortness of breath',
+  "can't breathe",'loss of consciousness','unconscious','seizure','stroke',
+  'heavy bleeding','suicidal','suicide','poisoning','overdose',
+  'sudden vision loss','paralysis','anaphylaxis'];
+const RED_FLAGS_TR = ['göğüs ağrısı','kalp krizi','nefes darlığı',
+  'nefes alamıyorum','bilinç kaybı','bayıldı','nöbet','felç','inme',
+  'kanama','intihar','zehirlenme','doz aşımı','ani görme kaybı','anafilaksi'];
 ```
 
 ### Katman 2: İlaç Etkileşim Motoru ✅
-- OpenFDA: marka adı → etken madde (Glifor → Metformin) — Türkçe çalışıyor
-- Hybrid: OpenFDA + Gemini bilgi boşluklarını doldurur
-- Profildeki TÜM ilaçlarla çapraz kontrol
+- OpenFDA: marka adı → etken madde (Türkçe çalışıyor)
+- Hybrid: OpenFDA + Gemini
 - SafetyBadge: ✅ Safe / ⚠️ Caution / ❌ Dangerous
 
-### Katman 3: RAG Motoru ✅
-- PubMed API → makaleler → Gemini (temperature: 0)
-- Kaynaksız = "Insufficient scientific evidence"
-- Tıklanabilir PubMed referans kartları
-
----
-
-## KVKK / Güvenlik
-
-### Veri
-- Minimum veri + şifreli saklama (Supabase encrypted)
-- Her veri için "neden topluyoruz?" prensibi
-- Max 2 yıl saklama, otomatik silme
-
-### Teknik
-- API anahtarları sadece server-side (.env.local)
-- HTTPS zorunlu (Vercel)
-- Rate limiting: dakikada max 10 sorgu
-- Input sanitization: SQL injection koruması
-- Vercel DDoS koruması
-
-### Kullanıcı Hakları
-- "Verilerimi sil" butonu — tek tıkla tam silme
-- "Verilerimi indir" butonu
-- Dijital onay timestamp Supabase'de
-
-### Yasal Belgeler (Sprint 8)
-- Gizlilik Politikası (TR + EN)
-- Kullanım Koşulları
-- Çerez Politikası
-- Tıbbi Sorumluluk Reddi
-
-### Disclaimer
-- **Her öneri sonunda:** "⚠️ This information is not medical advice. Consult your healthcare provider."
-- **Onboarding'de:** Uzun sorumluluk reddi + dijital imza
-- **Eksik profil:** "Recommendation limited — complete your profile."
+### Katman 3: RAG ✅
+- PubMed → Gemini (temperature:0) → kaynak kartları
 
 ---
 
 ## Sistem Promptu (Gemini)
 
 ```
-You are Phytotherapy.ai — an evidence-based health assistant bridging modern medicine and phytotherapy.
+You are Phytotherapy.ai — evidence-based integrative health assistant.
 
-CORE RULES:
-1. ONLY PubMed, NIH, WHO sources. No others.
+RULES:
+1. Only PubMed/NIH/WHO. Never fabricate.
 2. Every recommendation: Dosage + Frequency + Max Duration + PubMed link.
-3. No evidence = "Insufficient scientific evidence." NEVER fabricate.
-4. NOT a doctor. Cannot diagnose. Always: "Consult your healthcare provider."
-5. NO DOSAGE without medication profile → say: "This herb can interact with many medications. Please add your medications to your profile first."
-6. Drug-herb: Safe ✅ reason | Risky ❌ reason + alternative.
-7. Symptom = drug side effect → "Consult doctor for dose adjustment." No herbs.
-8. NEVER send empty — always general info + referral.
+3. NO DOSAGE without medication profile → "This herb interacts with many drugs. Add medications first."
+4. Not a doctor. Always: "Consult your healthcare provider."
+5. Drug-herb: Safe ✅ / Risky ❌ + alternative.
+6. Never send empty — general info + referral always.
+7. Non-health message → "I'm specialized in health and phytotherapy. Feel free to ask anything health-related!"
+8. Always respond in user's language (EN or TR automatically).
 
 INTENT DETECTION:
-- Drug interaction query → OpenFDA + PubMed interaction data
-- Blood test values present → reference ranges + lifestyle advice + PDF offer
-- General health question → PubMed RAG
-- File/image uploaded → OCR extract → analyze accordingly
+- Drug interaction → OpenFDA + PubMed
+- Blood test values → reference ranges + lifestyle + PDF offer
+- General health → PubMed RAG
+- File uploaded → OCR + analyze
+- Non-health → friendly redirect
 
-PROFILE AWARENESS:
-- Cross-check: medications, allergies, kidney/liver, pregnancy, alcohol/smoking.
-- Incomplete → "Recommendation limited due to incomplete profile."
-
-EMERGENCY: chest pain, breathing difficulty, consciousness loss, bleeding, suicidal → 112/911. No herbs. No analysis.
-
-EVIDENCE GRADING: A (strong RCTs) | B (limited RCTs) | C (case reports/traditional)
-
-RESPONSE FORMAT:
-- Match user language (EN/TR)
-- Empathetic, clear, never cold
-- End: "⚠️ Do not apply without consulting your healthcare provider"
-- Cite PubMed with clickable links
-- Structure: Assessment → Recommendations → Safety Notes → Sources
+PROFILE: Cross-check medications, allergies, kidney/liver, pregnancy, alcohol/smoking.
+EMERGENCY: → 112/911. No herbs. No analysis.
+EVIDENCE: A (RCTs) | B (limited) | C (traditional)
+FORMAT: Match EN/TR | empathetic | ⚠️ disclaimer | PubMed links
 ```
 
 ---
 
-## Supabase Tablo Yapısı ✅ (Kurulu)
+## KVKK / Güvenlik
+- Minimum veri + şifreli saklama
+- Rate limiting: 10/dakika
+- Input sanitization
+- "Verilerimi sil" + "Verilerimi indir" (Sprint 8)
+- Max 2 yıl saklama
+- Dijital onay timestamp Supabase'de
 
-```sql
-user_profiles      -- profil, onboarding, consent
-user_medications   -- aktif ilaçlar
-user_allergies     -- alerjiler
-query_history      -- konuşma geçmişi + favoriler
-blood_tests        -- kan tahlili geçmişi + PDF URL
-consent_records    -- dijital imza kayıtları
-guest_queries      -- misafir sorgu takibi
+---
+
+## Supabase Tabloları ✅
+```
+user_profiles, user_medications, user_allergies,
+query_history, blood_tests, consent_records, guest_queries
 ```
 
 ---
@@ -279,159 +252,123 @@ guest_queries      -- misafir sorgu takibi
 ## Sprint Planı
 
 ### ✅ Sprint 1 — Altyapı (TAMAMLANDI)
-- [x] Next.js 14 + Tailwind + shadcn/ui
-- [x] GitHub + Vercel deploy + phytotherapy.ai domain
-- [x] lib/gemini.ts, safety-filter.ts, pubmed.ts, openfda.ts
-- [x] Landing page iskeleti + header + footer + disclaimer
+- [x] Next.js 14 + Vercel + domain + tüm lib/ dosyaları
 
 ### ✅ Sprint 2 — Auth + Onboarding (TAMAMLANDI)
-- [x] Supabase tabloları kuruldu
-- [x] Email auth çalışıyor (Supabase redirect URL düzeltildi)
-- [x] Onboarding wizard (7 adım) yazıldı
-- [x] Misafir modu (5 sorgu limiti)
-- [x] Dijital imza + consent kaydı
+- [x] Supabase tablolar + email auth + onboarding wizard (7 adım)
+- [x] Misafir modu (5 sorgu) + dijital imza
 
 ### ✅ Sprint 3 — İlaç Etkileşim Motoru (TAMAMLANDI)
-- [x] OpenFDA entegrasyonu — Türkçe marka adı çevirisi çalışıyor
-- [x] Gemini hybrid analiz
-- [x] SafetyBadge: Safe / Caution / Dangerous
-- [x] Acil banner eklendi
-- [x] Emergency modal (tam ekran, kırmızı)
+- [x] OpenFDA + Gemini hybrid + SafetyBadge
+- [x] Acil banner + emergency modal
 
 ### ✅ Sprint 4 — Sağlık Asistanı RAG (TAMAMLANDI)
-- [x] Gemini streaming chat
-- [x] PubMed canlı sorgu
-- [x] Kaynak kartları (SourceCard)
-- [x] Kırmızı kod filtresi chat'te çalışıyor
-- [x] İlaç profili olmadan doz tavsiyesi verilmiyor
+- [x] Gemini streaming + PubMed + kaynak kartları
+- [x] Kırmızı kod filtresi + doz tavsiyesi kısıtı
 
 ### ✅ Sprint 5 — Kan Tahlili + Dosya Yükleme (TAMAMLANDI)
-- [x] blood-reference.ts (referans aralıkları)
-- [x] /api/blood-analysis
-- [x] /api/generate-pdf
-- [x] BloodTestForm + ResultDashboard + LifestyleAdvice
-- [x] DoctorReport PDF (@react-pdf/renderer)
-- [x] Chat kutusuna dosya/fotoğraf yükleme (PDF, JPG, PNG)
-- [x] OCR entegrasyonu
+- [x] blood-reference.ts + /api/blood-analysis + PDF
+- [x] Chat kutusuna 📎 dosya + 📷 fotoğraf yükleme + OCR
 
-### 🔄 Sprint 6 — Mimari Birleştirme + Auth Fix
-- [ ] Onboarding wizard → login sonrası otomatik tetikleme (şu an bağlı değil)
-- [ ] Tek chat router — intent detection tüm modları kapsar
-- [ ] Konuşma geçmişi Supabase'e kayıt + yükleme
-- [ ] İlaç profili → chat context'ine otomatik ekleme
-- [ ] Profil sayfası tam çalışır hale getir
-- [ ] Her girişte "İlaç listeniz aynı mı?" dialog'u
+### 🔄 Sprint 6 — Mimari Birleştirme + Auth Fix (DEVAM EDİYOR)
+- [x] Login → onboarding_complete false ise /onboarding'e yönlendir ✅
+- [x] Sign in / Sign out düzeltildi ✅
+- [x] Sağlık dışı mesajlara nazik yönlendirme ✅
+- [x] Konuşma geçmişi yan panel (son 20 konuşma, Supabase'den) ✅
+- [x] Gemini retry + model fallback (2.0-flash → 2.5-flash) ✅
+- [x] TR→EN PubMed sözlük (70+ terim) ✅
+- [x] PubMed timeout + error handling ✅
+- [x] Onboarding medication/allergy kayıt hatası düzeltildi ✅
+- [ ] API quota test (Gemini billing aktif mi?) ← YARIN
+- [ ] Tek chat router — intent detection
+- [ ] İlaç profili → chat context otomatik
+- [ ] Her girişte "İlaç listeniz hâlâ aynı mı?" dialog — tek tıkla "Evet" veya "Güncelle"
+- [ ] Profil sayfası tam çalışır
 
 ### 🔄 Sprint 7 — Tasarım v2 Implementasyonu
-- [ ] phytotherapy_v2.png referans alınarak tüm sayfalara uygula
-- [ ] Cormorant Garamond + DM Sans + DM Mono font sistemi
-- [ ] Dark/Light mode toggle (localStorage) — CSS variables
-- [ ] Hero: Sol canlı arama kutusu + sağ botanik SVG illüstrasyon
-- [ ] EKG çizgisi botanik üzerinden geçer
-- [ ] Trust strip, feature kartları v2 tasarım
-- [ ] Responsive (mobile-first)
-- [ ] Loading states + skeleton + error handling
-- [ ] Animasyonlar (subtle, premium)
+- [ ] public/phytotherapy_v2.png referans alınarak tüm sayfalara uygula
+- [ ] Cormorant Garamond + DM Sans + DM Mono
+- [ ] Dark/Light mode toggle navbar sağında (ay/güneş ikonu, localStorage)
+- [ ] Hero: Sol arama kutusu (⌘K) + sağ botanik SVG
+- [ ] EKG çizgisi + molekül noktaları + tıbbi artı motifi
+- [ ] Trust strip + feature kartları (01/02/03/04)
+- [ ] Navbar: logo sol, linkler orta, auth+toggle sağ
+- [ ] Navbar'a dil seçimi toggle (🇬🇧 EN / 🇹🇷 TR bayrak ikonu)
+- [ ] Responsive mobile-first
+- [ ] Loading skeleton + error states
+- [ ] Animasyonlar (subtle hover, fade-in)
 
 ### 🔄 Sprint 8 — Güvenlik + Yasal
-- [ ] Rate limiting (dakikada 10 sorgu)
-- [ ] Input sanitization
-- [ ] Gizlilik Politikası sayfası (TR + EN)
-- [ ] Kullanım Koşulları sayfası
-- [ ] Tıbbi Sorumluluk Reddi sayfası
-- [ ] "Verilerimi sil" + "Verilerimi indir" butonları
-- [ ] İlaç hatırlatıcısı (notification)
-- [ ] 30 günlük zorunlu ilaç güncelleme sistemi
+- [ ] Rate limiting + input sanitization
+- [ ] Privacy Policy + Terms (TR+EN)
+- [ ] "Verilerimi sil/indir"
+- [ ] İlaç hatırlatıcısı + 30 günlük zorunlu güncelleme
 
 ### 🔄 Sprint 9 — Hackathon Hazırlık
-- [ ] 3 demo senaryosu provası
+- [ ] 3 demo prova (Metformin+uyku / Berberine / Kan tahlili)
 - [ ] Pitch deck (10 slayt)
-- [ ] Yedek planlar (API çökerse ne olur?)
-- [ ] Final performans testi
-- [ ] SEO meta tags
+- [ ] Yedek planlar + performans testi + SEO
 
 ---
 
 ### 🚀 SONRASI BLOĞU
 
 #### Sprint 10 — Çok Dil + Google Auth
-- [ ] TR/EN dil toggle navbar'da
-- [ ] Google OAuth entegrasyonu
-- [ ] AR dil desteği (ileride)
+- [ ] TR/EN dil toggle navbar'da (bayrak ikonu)
+- [ ] Google OAuth
+- [ ] AR desteği (ileride)
 
 #### Sprint 11 — Gebelik + Özel Modlar
-- [ ] Gebelik modu: özel güvenlik filtresi
-- [ ] Emzirme modu: özel güvenlik filtresi
+- [ ] Gebelik + emzirme modu
 - [ ] 18 yaş altı farklı akış
 
 #### Sprint 12 — Kullanıcı Paneli
-- [ ] Profil dashboard
-- [ ] Sorgu geçmişi görünümü
-- [ ] Favoriler
+- [ ] Profil dashboard + sorgu geçmişi + favoriler
 - [ ] Doktora gönder (PDF + email)
 
 #### Sprint 13 — Takip Sistemi
-- [ ] Semptom günlüğü
-- [ ] Periyodik kan tahlili takibi
+- [ ] Semptom günlüğü + kan tahlili takibi
 - [ ] Trend grafikleri (recharts)
 - [ ] OCR reçete okuma (gelişmiş)
 
 #### Sprint 14 — Büyüme
-- [ ] PWA / mobil hazırlık
-- [ ] Analytics dashboard
-- [ ] Abonelik modeli altyapısı
+- [ ] PWA + analytics + abonelik altyapısı
 
 ---
 
 ## Demo Senaryoları (Hackathon)
 
-### Demo 1 — İlaç Etkileşimi (Canlı — Jüri kendi ilacını yazar)
-- Input: "I take Metformin and Lisinopril. I have trouble sleeping."
-- Beklenen: ❌ St. John's Wort (CYP3A4) → ✅ Valerian Root (300-600mg, 4 hafta max)
+### Demo 1 — İlaç Etkileşimi (Canlı)
+- "I take Metformin and Lisinopril. I have trouble sleeping."
+- Beklenen: ❌ St. John's Wort → ✅ Valerian Root 300-600mg
 
 ### Demo 2 — Serbest Soru
-- Input: "Does berberine work for blood sugar control?"
-- Beklenen: Grade A evidence + dozaj + PubMed linkleri
+- "Does berberine work for blood sugar control?"
+- Beklenen: Grade A + PubMed linkleri
 
 ### Demo 3 — Kan Tahlili
-- Input: Cholesterol 240, Vitamin D 14, Ferritin 8, HbA1c 6.8
-- Beklenen: Detaylı analiz + yaşam koçluğu + PDF indir
-
----
-
-## Pitch Deck (Sprint 9)
-
-1. **Problem** — Yıllık X kişi herb-drug etkileşiminden acile gidiyor
-2. **Solution** — Phytotherapy.ai: 3 katmanlı güvenlik + kanıta dayalı öneri
-3. **Demo** — Canlı (jüri kendi ilacını yazar)
-4. **Technology** — Gemini + PubMed RAG + OpenFDA
-5. **Safety** — 3 katman güvenlik mimarisi
-6. **Market** — Global bitkisel tıp pazarı büyüklüğü
-7. **Traction** — phytotherapy.ai canlı, X kullanıcı
-8. **Team** — 3 tıp öğrencisi + AI
-9. **Roadmap** — 14 sprint planı
-10. **Ask** — Ne istiyoruz?
+- Cholesterol 240, Vitamin D 14, Ferritin 8, HbA1c 6.8
+- Beklenen: Analiz + koçluk + PDF
 
 ---
 
 ## Geliştirme Kuralları
 
-1. Güvenlik katmanları her özellikten önce kontrol edilir
-2. Tıbbi öneri kaynaksız gösterilmez
-3. Mobile-first — v2 PNG referans alınır
-4. API anahtarları sadece server-side (.env.local)
+1. Güvenlik katmanları her özellikten önce
+2. Tıbbi öneri kaynaksız yok
+3. Mobile-first — v2 PNG referans
+4. API anahtarları sadece server-side
 5. TypeScript strict — `any` yasak
-6. Her API endpoint'te error handling
-7. Windows path separator dikkat
-8. Git commit mesajları İngilizce
-9. Her sprint sonunda PROGRESS.md güncelle
-10. Dark mode için her renk CSS variable ile tanımlanır
-11. Kimseyi boş gönderme — her zaman genel bilgi + yönlendirme
-12. Onboarding atlanamaz — login sonrası otomatik tetiklenir
-13. **İlaç profili olmadan doz tavsiyesi verilmez**
-14. **Chat'e dosya/fotoğraf yükleme mevcut**
-15. **Tek chat router — intent detection tüm modları kapsar**
-16. **Misafir modunda 5 sorgu hakkı**
+6. Her endpoint'te error handling
+7. Git commit İngilizce
+8. Her sprint sonunda PROGRESS.md güncelle
+9. Dark mode CSS variable zorunlu — hardcode yasak
+10. Kimseyi boş gönderme
+11. Onboarding atlanamaz — login sonrası otomatik
+12. İlaç profili olmadan doz tavsiyesi yok
+13. EN ve TR sorularına otomatik yanıt (dil algılama)
+14. Sağlık dışı mesaj → nazik yönlendirme, hata değil
+15. Konuşma geçmişi yan panelde gösterilir
 
 ---
 
@@ -448,5 +385,5 @@ NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
 
 ---
 
-*Son güncelleme: Mart 2026 v5.0 — Tüm konuşma kararları dahil.*
-*Sprint 1-5 tamamlandı. Sıradaki: Sprint 6 — Mimari Birleştirme + Auth Fix*
+*Son güncelleme: 16 Mart 2026 v6.0*
+*Sprint 1-5 tamamlandı. Sprint 6 devam ediyor — API quota testi yarın. Sıradaki: Sprint 7 — Tasarım v2*
