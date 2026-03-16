@@ -14,12 +14,14 @@ export function useLanguage() {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "tr") setLang("tr");
     setMounted(true);
+    console.log("[Lang] Mounted, stored lang:", stored ?? "en (default)");
   }, []);
 
   const toggleLang = useCallback(() => {
     setLang((prev) => {
       const next: Lang = prev === "en" ? "tr" : "en";
       localStorage.setItem(STORAGE_KEY, next);
+      console.log("[Lang] Toggled:", prev, "→", next);
       return next;
     });
   }, []);
@@ -30,22 +32,30 @@ export function useLanguage() {
 export function LanguageToggle() {
   const { lang, toggleLang, mounted } = useLanguage();
 
-  // Avoid hydration mismatch
+  // Avoid hydration mismatch — render placeholder during SSR
   if (!mounted) {
     return (
       <div className="flex h-8 w-14 items-center justify-center rounded-full" />
     );
   }
 
+  const flag = lang === "en" ? "🇬🇧" : "🇹🇷";
+  const label = lang === "en" ? "EN" : "TR";
+
   return (
     <button
       type="button"
-      onClick={toggleLang}
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log("[Lang] Button clicked, current:", lang);
+        toggleLang();
+      }}
       className="flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       aria-label={`Switch to ${lang === "en" ? "Turkish" : "English"}`}
     >
-      <span className="text-base leading-none">{lang === "en" ? "\ud83c\uddec\ud83c\udde7" : "\ud83c\uddf9\ud83c\uddf7"}</span>
-      <span className="font-semibold">{lang === "en" ? "EN" : "TR"}</span>
+      <span className="text-base leading-none">{flag}</span>
+      <span className="font-semibold">{label}</span>
     </button>
   );
 }

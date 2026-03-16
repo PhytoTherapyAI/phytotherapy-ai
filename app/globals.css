@@ -140,14 +140,15 @@
   html {
     @apply scroll-smooth;
   }
-  h1, h2, h3 {
-    font-family: var(--font-heading), 'Cormorant Garamond', Georgia, serif;
+  h1, h2, h3, h4 {
+    font-family: var(--font-heading), 'Cormorant Garamond', Georgia, serif !important;
   }
 }
 
-/* Heading font utility */
-.font-heading {
-  font-family: var(--font-heading), Georgia, serif;
+/* Heading font utility — also applies to card titles */
+.font-heading,
+[data-slot="card-title"] {
+  font-family: var(--font-heading), 'Cormorant Garamond', Georgia, serif !important;
 }
 
 /* Smooth theme transition */
