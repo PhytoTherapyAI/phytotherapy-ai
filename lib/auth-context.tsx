@@ -133,6 +133,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    // Immediately clear state so UI updates without waiting for onAuthStateChange
+    setState({
+      user: null,
+      session: null,
+      profile: null,
+      isLoading: false,
+      isAuthenticated: false,
+      needsOnboarding: false,
+      needsMedicationUpdate: false,
+    });
+    // Redirect to landing page
+    window.location.href = "/";
   };
 
   const refreshProfile = async () => {
