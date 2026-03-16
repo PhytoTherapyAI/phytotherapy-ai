@@ -12,32 +12,21 @@ export function LanguageToggle() {
     setReady(true);
   }, []);
 
-  if (!ready) return <div className="h-8 w-16" />;
-
-  const handleClick = () => {
-    const next = lang === "en" ? "tr" : "en";
-    setLang(next);
-    localStorage.setItem("lang", next);
-  };
+  if (!ready) return <div className="h-8 w-12" />;
 
   return (
     <button
       type="button"
-      onClick={handleClick}
-      className="flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      onClick={() => {
+        const next = lang === "en" ? "tr" : "en";
+        setLang(next);
+        localStorage.setItem("lang", next);
+      }}
+      className="flex h-8 cursor-pointer items-center gap-1 rounded-full px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       aria-label={lang === "en" ? "Switch to Turkish" : "Switch to English"}
     >
-      {lang === "en" ? (
-        <>
-          <span className="text-base leading-none">🇺🇸</span>
-          <span className="font-semibold">EN</span>
-        </>
-      ) : (
-        <>
-          <span className="text-base leading-none">🇹🇷</span>
-          <span className="font-semibold">TR</span>
-        </>
-      )}
+      <span className="text-sm">{lang === "en" ? "🇺🇸" : "🇹🇷"}</span>
+      <span>{lang === "en" ? "EN" : "TR"}</span>
     </button>
   );
 }
