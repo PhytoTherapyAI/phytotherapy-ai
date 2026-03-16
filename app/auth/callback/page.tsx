@@ -35,8 +35,18 @@ export default function AuthCallbackPage() {
       }
 
       if (session) {
-        // Session is ready — redirect to home or onboarding
-        router.replace("/");
+        // Check if user needs onboarding
+        const { data: profile } = await supabase
+          .from("user_profiles")
+          .select("onboarding_complete")
+          .eq("id", session.user.id)
+          .single();
+
+        if (!profile || !profile.onboarding_complete) {
+          router.replace("/onboarding");
+        } else {
+          router.replace("/");
+        }
         return;
       }
 

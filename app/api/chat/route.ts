@@ -207,7 +207,15 @@ This rule exists because giving dosage advice without knowing the user's medicat
           }
         } catch (error) {
           console.error("Stream error:", error);
-          controller.enqueue(encoder.encode("\n\n⚠️ An error occurred while generating the response. Please try again."));
+          const errMsg = error instanceof Error ? error.message : "";
+          // If Gemini safety filter or content policy blocked the request, show friendly message
+          if (errMsg.includes("SAFETY") || errMsg.includes("blocked") || errMsg.includes("RECITATION") || errMsg.includes("content policy")) {
+            controller.enqueue(encoder.encode(
+              "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice."
+            ));
+          } else {
+            controller.enqueue(encoder.encode("\n\n⚠️ An error occurred while generating the response. Please try again."));
+          }
           controller.close();
         }
       },

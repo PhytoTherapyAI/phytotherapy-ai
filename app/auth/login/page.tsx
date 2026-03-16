@@ -64,8 +64,22 @@ function LoginContent() {
         setIsLoading(false);
         return;
       }
-      // Small delay to let onAuthStateChange propagate before redirect
+      // Wait for onAuthStateChange to propagate, then check onboarding status
       await new Promise((r) => setTimeout(r, 500));
+      const sb = createBrowserClient();
+      const { data: { user } } = await sb.auth.getUser();
+      if (user) {
+        const { data: profile } = await sb
+          .from("user_profiles")
+          .select("onboarding_complete")
+          .eq("id", user.id)
+          .single();
+        if (!profile || !profile.onboarding_complete) {
+          router.push("/onboarding");
+          router.refresh();
+          return;
+        }
+      }
       router.push(redirect);
       router.refresh();
     } catch (err) {
