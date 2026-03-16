@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { askGeminiStream } from "@/lib/gemini";
+import { askGeminiStream, askGeminiStreamMultimodal } from "@/lib/gemini";
+import type { GeminiFilePart } from "@/lib/gemini";
 import { searchPubMed } from "@/lib/pubmed";
 import { SYSTEM_PROMPT } from "@/lib/prompts";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
@@ -10,7 +11,7 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { message, history } = body;
+    const { message, history, files } = body;
 
     if (!message || typeof message !== "string" || message.trim().length === 0) {
       return new Response(JSON.stringify({ error: "Message is required" }), {
@@ -158,7 +159,25 @@ When they ask about herbal supplements, herbs, or natural remedies:
 This rule exists because giving dosage advice without knowing the user's medications is unsafe.`;
     }
 
-    const stream = await askGeminiStream(fullPrompt, systemPromptFull);
+    // Step 5b: Process uploaded files for multimodal Gemini call
+    const geminiFiles: GeminiFilePart[] = [];
+    if (Array.isArray(files) && files.length > 0) {
+      for (const file of files) {
+        if (file.base64 && file.mimeType) {
+          geminiFiles.push({
+            mimeType: file.mimeType,
+            base64: file.base64,
+          });
+        }
+      }
+      // Add file context to prompt
+      fullPrompt += `\n\nThe user has uploaded ${files.length} file(s). Please analyze the content of these files and incorporate the findings into your response. If the file is a blood test report, lab result, or medical document, extract the relevant values and provide evidence-based recommendations.`;
+    }
+
+    // Use multimodal streaming if files are present, otherwise standard text streaming
+    const stream = geminiFiles.length > 0
+      ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles)
+      : await askGeminiStream(fullPrompt, systemPromptFull);
 
     // Convert Gemini stream to web ReadableStream
     const encoder = new TextEncoder();

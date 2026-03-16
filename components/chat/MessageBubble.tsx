@@ -1,12 +1,17 @@
 "use client";
 
-import { User, Leaf, Loader2 } from "lucide-react";
+import { User, Leaf, Loader2, FileText, Image as ImageIcon } from "lucide-react";
 
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";
   content: string;
   isStreaming?: boolean;
+  attachments?: Array<{
+    name: string;
+    type: "pdf" | "image";
+    preview?: string;
+  }>;
 }
 
 interface MessageBubbleProps {
@@ -41,10 +46,30 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             : "border bg-card"
         }`}
       >
+        {/* File attachments */}
+        {message.attachments && message.attachments.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {message.attachments.map((att, i) => (
+              <div key={i} className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-xs ${
+                isUser ? "bg-emerald-700/50" : "bg-muted"
+              }`}>
+                {att.type === "pdf" ? (
+                  <FileText className="h-3.5 w-3.5" />
+                ) : att.preview ? (
+                  <img src={att.preview} alt={att.name} className="h-6 w-6 rounded object-cover" />
+                ) : (
+                  <ImageIcon className="h-3.5 w-3.5" />
+                )}
+                <span className="max-w-[100px] truncate">{att.name}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {message.isStreaming && message.content === "" ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Thinking...
+            Analyzing{message.attachments?.length ? " your file" : ""}...
           </div>
         ) : (
           <div

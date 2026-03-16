@@ -60,60 +60,58 @@ export function Header() {
             </Link>
           ))}
 
-          {/* Auth section */}
-          {!isLoading && (
-            <>
-              {isAuthenticated ? (
-                <div className="relative" ref={userMenuRef}>
-                  <button
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-medium text-emerald-700 transition-colors hover:bg-emerald-200"
-                  >
-                    {initials}
-                  </button>
+          {/* Auth section — always show Sign In, even while loading */}
+          {isAuthenticated && !isLoading ? (
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-medium text-emerald-700 transition-colors hover:bg-emerald-200"
+              >
+                {initials}
+              </button>
 
-                  {userMenuOpen && (
-                    <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-lg border bg-background shadow-lg">
-                      <div className="border-b p-3">
-                        {profile?.full_name && (
-                          <p className="text-sm font-medium">{profile.full_name}</p>
-                        )}
-                        <p className="text-xs text-muted-foreground">{user?.email}</p>
-                      </div>
-                      <div className="p-1">
-                        <Link
-                          href="/profile"
-                          className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
-                          onClick={() => setUserMenuOpen(false)}
-                        >
-                          <Settings className="h-4 w-4" />
-                          Profile Settings
-                        </Link>
-                      </div>
-                      <div className="border-t p-1">
-                        <button
-                          className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
-                          onClick={() => {
-                            signOut();
-                            setUserMenuOpen(false);
-                          }}
-                        >
-                          <LogOut className="h-4 w-4" />
-                          Sign Out
-                        </button>
-                      </div>
-                    </div>
-                  )}
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-lg border bg-background shadow-lg">
+                  <div className="border-b p-3">
+                    {profile?.full_name && (
+                      <p className="text-sm font-medium">{profile.full_name}</p>
+                    )}
+                    <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  </div>
+                  <div className="p-1">
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <Settings className="h-4 w-4" />
+                      Profile Settings
+                    </Link>
+                  </div>
+                  <div className="border-t p-1">
+                    <button
+                      className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                      onClick={() => {
+                        signOut();
+                        setUserMenuOpen(false);
+                      }}
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </button>
+                  </div>
                 </div>
-              ) : (
-                <Link href="/auth/login">
-                  <Button size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700">
-                    <LogIn className="h-4 w-4" />
-                    Sign In
-                  </Button>
-                </Link>
               )}
-            </>
+            </div>
+          ) : (
+            !isAuthenticated && (
+              <Link href="/auth/login">
+                <Button size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700">
+                  <LogIn className="h-4 w-4" />
+                  Sign In
+                </Button>
+              </Link>
+            )
           )}
         </nav>
 
@@ -141,32 +139,32 @@ export function Header() {
             </Link>
           ))}
 
-          {!isLoading && (
-            <div className="mt-2 border-t pt-2">
-              {isAuthenticated ? (
-                <>
-                  <div className="flex items-center gap-2 py-2">
-                    <User className="h-4 w-4 text-emerald-600" />
-                    <span className="text-sm">{profile?.full_name || user?.email}</span>
-                  </div>
-                  <Link
-                    href="/profile"
-                    className="block py-2 text-sm text-muted-foreground hover:text-foreground"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Profile Settings
-                  </Link>
-                  <button
-                    className="block w-full py-2 text-left text-sm text-red-600 hover:text-red-700"
-                    onClick={() => {
-                      signOut();
-                      setMobileOpen(false);
-                    }}
-                  >
-                    Sign Out
-                  </button>
-                </>
-              ) : (
+          <div className="mt-2 border-t pt-2">
+            {isAuthenticated && !isLoading ? (
+              <>
+                <div className="flex items-center gap-2 py-2">
+                  <User className="h-4 w-4 text-emerald-600" />
+                  <span className="text-sm">{profile?.full_name || user?.email}</span>
+                </div>
+                <Link
+                  href="/profile"
+                  className="block py-2 text-sm text-muted-foreground hover:text-foreground"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  Profile Settings
+                </Link>
+                <button
+                  className="block w-full py-2 text-left text-sm text-red-600 hover:text-red-700"
+                  onClick={() => {
+                    signOut();
+                    setMobileOpen(false);
+                  }}
+                >
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              !isAuthenticated && (
                 <Link
                   href="/auth/login"
                   className="block py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700"
@@ -174,9 +172,9 @@ export function Header() {
                 >
                   Sign In / Sign Up
                 </Link>
-              )}
-            </div>
-          )}
+              )
+            )}
+          </div>
         </nav>
       )}
     </header>

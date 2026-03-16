@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Loader2, Trash2, Phone } from "lucide-react";
+import { Send, Loader2, Trash2, Phone, Paperclip, Camera, X, FileText, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageBubble, ChatMessage } from "./MessageBubble";
 import { useAuth } from "@/lib/auth-context";
@@ -13,6 +13,32 @@ import {
   isPersonalQuery,
 } from "@/lib/guest-limit";
 
+interface AttachedFile {
+  id: string;
+  file: File;
+  name: string;
+  type: "pdf" | "image";
+  preview?: string; // base64 data URL for image preview
+  base64?: string;  // base64 content for API
+}
+
+const ACCEPTED_FILE_TYPES = ".pdf,.jpg,.jpeg,.png,.heic";
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // Strip data URL prefix to get raw base64
+      const base64 = result.split(",")[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 interface ChatInterfaceProps {
   className?: string;
 }
@@ -22,8 +48,11 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -40,9 +69,49 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
     }
   }, [input]);
 
+  const handleFileSelect = useCallback(async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    for (const file of Array.from(files)) {
+      // Validate size
+      if (file.size > MAX_FILE_SIZE) {
+        alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+        continue;
+      }
+
+      // Determine type
+      const isPdf = file.type === "application/pdf";
+      const isImage = file.type.startsWith("image/");
+      if (!isPdf && !isImage) {
+        alert(`File "${file.name}" is not supported. Please use PDF, JPG, or PNG.`);
+        continue;
+      }
+
+      const base64 = await fileToBase64(file);
+      const preview = isImage ? `data:${file.type};base64,${base64}` : undefined;
+
+      setAttachedFiles((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          file,
+          name: file.name,
+          type: isPdf ? "pdf" : "image",
+          preview,
+          base64,
+        },
+      ]);
+    }
+  }, []);
+
+  const removeFile = useCallback((id: string) => {
+    setAttachedFiles((prev) => prev.filter((f) => f.id !== id));
+  }, []);
+
   const sendMessage = useCallback(async () => {
     const trimmed = input.trim();
-    if (!trimmed || isStreaming) return;
+    const hasFiles = attachedFiles.length > 0;
+    if ((!trimmed && !hasFiles) || isStreaming) return;
 
     // Red flag check — client-side
     const redFlag = checkRedFlags(trimmed);
@@ -103,11 +172,22 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
       recordGuestQuery(trimmed);
     }
 
+    // Build display content for user message
+    const fileNames = attachedFiles.map((f) => f.name);
+    const displayContent = hasFiles
+      ? `${trimmed || "Analyze this file"}${fileNames.length > 0 ? `\n\n📎 ${fileNames.join(", ")}` : ""}`
+      : trimmed;
+
     // Add user message
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
       role: "user",
-      content: trimmed,
+      content: displayContent,
+      attachments: attachedFiles.map((f) => ({
+        name: f.name,
+        type: f.type,
+        preview: f.preview,
+      })),
     };
 
     const assistantId = crypto.randomUUID();
@@ -118,8 +198,12 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
       isStreaming: true,
     };
 
+    // Capture files before clearing
+    const filesToSend = [...attachedFiles];
+
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
     setInput("");
+    setAttachedFiles([]);
     setIsStreaming(true);
 
     try {
@@ -136,10 +220,24 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
         content: m.content,
       }));
 
+      // Include file data if present
+      const filesPayload = filesToSend.length > 0
+        ? filesToSend.map((f) => ({
+            name: f.name,
+            type: f.type,
+            mimeType: f.file.type,
+            base64: f.base64,
+          }))
+        : undefined;
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers,
-        body: JSON.stringify({ message: trimmed, history: historyForApi }),
+        body: JSON.stringify({
+          message: trimmed || `Please analyze the uploaded file(s): ${fileNames.join(", ")}`,
+          history: historyForApi,
+          files: filesPayload,
+        }),
       });
 
       if (!res.ok) {
@@ -188,7 +286,7 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
     } finally {
       setIsStreaming(false);
     }
-  }, [input, isStreaming, isAuthenticated, session, messages]);
+  }, [input, isStreaming, isAuthenticated, session, messages, attachedFiles]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -256,14 +354,99 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
           </div>
         )}
 
+        {/* Attached files preview */}
+        {attachedFiles.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {attachedFiles.map((f) => (
+              <div
+                key={f.id}
+                className="group relative flex items-center gap-2 rounded-lg border bg-muted/50 px-3 py-1.5"
+              >
+                {f.type === "pdf" ? (
+                  <FileText className="h-4 w-4 text-red-500" />
+                ) : f.preview ? (
+                  <img
+                    src={f.preview}
+                    alt={f.name}
+                    className="h-8 w-8 rounded object-cover"
+                  />
+                ) : (
+                  <ImageIcon className="h-4 w-4 text-blue-500" />
+                )}
+                <span className="max-w-[120px] truncate text-xs">{f.name}</span>
+                <button
+                  type="button"
+                  onClick={() => removeFile(f.id)}
+                  className="ml-1 rounded-full p-0.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Hidden file inputs */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={ACCEPTED_FILE_TYPES}
+          multiple
+          className="hidden"
+          onChange={(e) => {
+            handleFileSelect(e.target.files);
+            e.target.value = ""; // Reset so same file can be re-selected
+          }}
+        />
+        <input
+          ref={cameraInputRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          className="hidden"
+          onChange={(e) => {
+            handleFileSelect(e.target.files);
+            e.target.value = "";
+          }}
+        />
+
         <div className="flex items-end gap-2">
+          {/* File upload buttons */}
+          <div className="flex gap-0.5">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isStreaming}
+              className="h-11 w-11 text-muted-foreground hover:text-emerald-600"
+              title="Attach file (PDF, JPG, PNG)"
+            >
+              <Paperclip className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              onClick={() => cameraInputRef.current?.click()}
+              disabled={isStreaming}
+              className="h-11 w-11 text-muted-foreground hover:text-emerald-600"
+              title="Take photo"
+            >
+              <Camera className="h-4 w-4" />
+            </Button>
+          </div>
+
           <textarea
             ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isStreaming}
-            placeholder="Ask a health question (e.g., 'Does omega-3 reduce inflammation?')"
+            placeholder={attachedFiles.length > 0
+              ? "Add a message or just send the file..."
+              : "Ask a health question (e.g., 'Does omega-3 reduce inflammation?')"
+            }
             rows={1}
             className="max-h-[150px] min-h-[44px] flex-1 resize-none rounded-lg border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
           />
@@ -281,7 +464,7 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
             )}
             <Button
               onClick={sendMessage}
-              disabled={isStreaming || !input.trim()}
+              disabled={isStreaming || (!input.trim() && attachedFiles.length === 0)}
               className="h-11 w-11 bg-emerald-600 hover:bg-emerald-700"
               size="icon"
             >
