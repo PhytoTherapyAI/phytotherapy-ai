@@ -39,17 +39,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   const fetchProfile = useCallback(async (userId: string): Promise<UserProfile | null> => {
-    const { data, error } = await supabase
-      .from("user_profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
+    try {
+      console.log("[Auth] Fetching profile for:", userId);
 
-    if (error) {
-      console.error("Error fetching profile:", error.message);
+      const profilePromise = supabase
+        .from("user_profiles")
+        .select("*")
+        .eq("id", userId)
+        .single();
+
+      // Race with timeout to prevent hanging forever
+      const timeoutPromise = new Promise<null>((resolve) => {
+        setTimeout(() => {
+          console.warn("[Auth] Profile fetch timed out after 8s");
+          resolve(null);
+        }, 8000);
+      });
+
+      const result = await Promise.race([profilePromise, timeoutPromise]);
+
+      if (!result || !("data" in result)) {
+        return null; // Timed out
+      }
+
+      const { data, error } = result;
+
+      if (error) {
+        console.error("[Auth] Profile fetch error:", error.message);
+        return null;
+      }
+      console.log("[Auth] Profile fetched:", data?.full_name, "onboarding:", data?.onboarding_complete);
+      return data as UserProfile;
+    } catch (err) {
+      console.error("[Auth] Profile fetch exception:", err);
       return null;
     }
-    return data as UserProfile;
   }, []);
 
   const checkMedicationUpdate = useCallback((profile: UserProfile | null): boolean => {
@@ -63,7 +87,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateState = useCallback(async (user: User | null, session: Session | null) => {
+    console.log("[Auth] updateState called:", { hasUser: !!user, hasSession: !!session });
+
     if (!user) {
+      console.log("[Auth] No user — setting unauthenticated state");
       setState({
         user: null,
         session: null,
@@ -76,7 +103,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Set authenticated immediately (even before profile loads) to prevent UI flash
+    setState((prev) => ({
+      ...prev,
+      user,
+      session,
+      isAuthenticated: true,
+      isLoading: true, // still loading profile
+    }));
+
     const profile = await fetchProfile(user.id);
+    console.log("[Auth] Final state: authenticated=true, profile=", profile?.full_name ?? "null");
     setState({
       user,
       session,
@@ -90,19 +127,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Listen for auth changes
   useEffect(() => {
+    console.log("[Auth] AuthProvider mounted — checking session...");
+
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      updateState(session?.user ?? null, session);
-    });
+    supabase.auth.getSession()
+      .then(({ data: { session }, error }) => {
+        if (error) {
+          console.error("[Auth] getSession error:", error.message);
+          setState((prev) => ({ ...prev, isLoading: false }));
+          return;
+        }
+        console.log("[Auth] getSession result:", session ? "has session" : "no session");
+        updateState(session?.user ?? null, session);
+      })
+      .catch((err) => {
+        console.error("[Auth] getSession exception:", err);
+        setState((prev) => ({ ...prev, isLoading: false }));
+      });
 
     // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
+        console.log("[Auth] onAuthStateChange:", event, session ? "has session" : "no session");
         await updateState(session?.user ?? null, session);
       }
     );
 
-    return () => subscription.unsubscribe();
+    // Safety timeout — if loading takes more than 10s, force it to false
+    const safetyTimeout = setTimeout(() => {
+      setState((prev) => {
+        if (prev.isLoading) {
+          console.warn("[Auth] Safety timeout — forcing isLoading to false");
+          return { ...prev, isLoading: false };
+        }
+        return prev;
+      });
+    }, 10000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(safetyTimeout);
+    };
   }, [updateState]);
 
   const signInWithEmail = async (email: string, password: string) => {

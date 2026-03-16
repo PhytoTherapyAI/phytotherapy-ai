@@ -18,6 +18,9 @@ export function Header() {
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, isLoading, user, profile, signOut } = useAuth();
 
+  // Debug logging — remove after auth is stable
+  console.log("[Header] Auth state:", { isLoading, isAuthenticated, user: user?.email ?? null, profile: profile?.full_name ?? null });
+
   const initials = profile?.full_name
     ? profile.full_name
         .split(" ")
