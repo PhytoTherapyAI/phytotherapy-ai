@@ -1,5 +1,27 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
+// Clean up any corrupted Supabase localStorage entries that cause
+// "Unexpected end of input" JSON.parse errors on client init
+function cleanCorruptLocalStorage() {
+  if (typeof window === "undefined") return;
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const key = localStorage.key(i);
+      if (key && (key.startsWith("sb-") || key.includes("supabase"))) {
+        try {
+          const val = localStorage.getItem(key);
+          if (val) JSON.parse(val); // Test if valid JSON
+        } catch {
+          console.warn("[Supabase] Removing corrupted localStorage key:", key);
+          localStorage.removeItem(key);
+        }
+      }
+    }
+  } catch {
+    // Ignore errors during cleanup
+  }
+}
+
 // Singleton browser client — uses anon key, respects RLS
 // IMPORTANT: Must be a singleton so auth listeners and operations share the same instance
 let browserClient: SupabaseClient | null = null;
@@ -13,6 +35,9 @@ export function createBrowserClient(): SupabaseClient {
   if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error("Missing Supabase environment variables");
   }
+
+  // Clean corrupted entries before creating client
+  cleanCorruptLocalStorage();
 
   browserClient = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {

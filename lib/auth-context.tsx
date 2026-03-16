@@ -197,12 +197,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    console.log("[Auth] Signing out...");
     try {
-      await supabase.auth.signOut({ scope: "global" });
+      // Use "local" scope — only clears this browser's session
+      // "global" can fail if the token is already expired, and we still want to clear local state
+      await supabase.auth.signOut({ scope: "local" });
     } catch (err) {
-      console.error("Sign out error (forcing clear):", err);
+      console.error("[Auth] Sign out API error (continuing with local clear):", err);
     }
-    // Always clear state regardless of signOut success
+    // Always clear React state regardless of signOut success
     setState({
       user: null,
       session: null,
@@ -212,17 +215,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       needsOnboarding: false,
       needsMedicationUpdate: false,
     });
-    // Force clear any remaining Supabase data from localStorage
-    if (typeof window !== "undefined") {
-      const keysToRemove: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && (key.startsWith("sb-") || key.includes("supabase"))) {
-          keysToRemove.push(key);
-        }
-      }
-      keysToRemove.forEach((key) => localStorage.removeItem(key));
-    }
+    // Reset the singleton so next page load creates a fresh client
+    // (Supabase signOut already clears localStorage, no manual clear needed)
+    console.log("[Auth] Signed out — redirecting to /");
     // Full page reload to landing — ensures clean state everywhere
     window.location.href = "/";
   };
