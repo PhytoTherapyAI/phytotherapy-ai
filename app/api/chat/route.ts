@@ -187,8 +187,10 @@ This rule exists because giving dosage advice without knowing the user's medicat
       const errMsg = geminiError instanceof Error ? geminiError.message : "Unknown error";
 
       let userMessage: string;
-      if (errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("rate")) {
-        userMessage = "⚠️ Our AI service is experiencing high demand right now. Please wait a moment and try again.\n\nIn the meantime, you can browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research.";
+      if (errMsg.includes("QUOTA_EXHAUSTED")) {
+        userMessage = "⚠️ **Daily AI quota reached.** Our free-tier API limit has been exceeded for today.\n\nThe quota resets at midnight Pacific Time. In the meantime:\n- Browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research\n- Try again in a few hours\n\nWe're working on upgrading our capacity!";
+      } else if (errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("rate")) {
+        userMessage = "⚠️ Our AI service is temporarily busy. Please wait 30 seconds and try again.\n\nIn the meantime, you can browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research.";
       } else if (errMsg.includes("SAFETY") || errMsg.includes("blocked")) {
         userMessage = "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice.";
       } else {
