@@ -96,9 +96,9 @@
 .dark {
   --background: #141a16;
   --foreground: #dde8de;
-  --card: #1a221c;
+  --card: #1c2420;
   --card-foreground: #dde8de;
-  --popover: #1a221c;
+  --popover: #1c2420;
   --popover-foreground: #dde8de;
   --primary: #5aac74;
   --primary-foreground: #141a16;
@@ -109,8 +109,8 @@
   --accent: #1f2b22;
   --accent-foreground: #5aac74;
   --destructive: #ef4444;
-  --border: rgba(130, 180, 145, 0.12);
-  --input: rgba(130, 180, 145, 0.15);
+  --border: rgba(90, 172, 116, 0.15);
+  --input: rgba(90, 172, 116, 0.18);
   --ring: #5aac74;
   --brand: #5aac74;
   --brand-foreground: #141a16;
@@ -120,13 +120,13 @@
   --chart-3: #d4b87a;
   --chart-4: #8aab8e;
   --chart-5: #3c7a52;
-  --sidebar: #1a221c;
+  --sidebar: #1c2420;
   --sidebar-foreground: #dde8de;
   --sidebar-primary: #5aac74;
   --sidebar-primary-foreground: #141a16;
   --sidebar-accent: #1f2b22;
   --sidebar-accent-foreground: #5aac74;
-  --sidebar-border: rgba(130, 180, 145, 0.12);
+  --sidebar-border: rgba(90, 172, 116, 0.15);
   --sidebar-ring: #5aac74;
 }
 
@@ -139,6 +139,9 @@
   }
   html {
     @apply scroll-smooth;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-heading), 'Cormorant Garamond', Georgia, serif;
   }
 }
 

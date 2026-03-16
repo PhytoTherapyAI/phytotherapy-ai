@@ -45,7 +45,7 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         {/* Logo — Phyto=foreground, therapy=gold, .ai=green */}
         <Link href="/" className="flex items-center gap-2">
-          <Leaf className="h-5 w-5 text-gold" />
+          <Leaf className="h-5 w-5 text-primary" />
           <span className="font-heading text-xl font-semibold tracking-tight">
             Phyto<span className="text-gold">therapy</span>
             <span className="text-primary">.ai</span>

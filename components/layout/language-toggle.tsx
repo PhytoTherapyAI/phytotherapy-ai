@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 type Lang = "en" | "tr";
 
@@ -8,44 +8,44 @@ const STORAGE_KEY = "phyto-lang";
 
 export function useLanguage() {
   const [lang, setLang] = useState<Lang>("en");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
-    if (stored === "en" || stored === "tr") {
-      setLang(stored);
-    }
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === "tr") setLang("tr");
+    setMounted(true);
   }, []);
 
-  const toggleLang = () => {
-    const next: Lang = lang === "en" ? "tr" : "en";
-    setLang(next);
-    localStorage.setItem(STORAGE_KEY, next);
-  };
+  const toggleLang = useCallback(() => {
+    setLang((prev) => {
+      const next: Lang = prev === "en" ? "tr" : "en";
+      localStorage.setItem(STORAGE_KEY, next);
+      return next;
+    });
+  }, []);
 
-  return { lang, toggleLang };
+  return { lang, toggleLang, mounted };
 }
 
 export function LanguageToggle() {
-  const { lang, toggleLang } = useLanguage();
+  const { lang, toggleLang, mounted } = useLanguage();
+
+  // Avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="flex h-8 w-14 items-center justify-center rounded-full" />
+    );
+  }
 
   return (
     <button
       type="button"
       onClick={toggleLang}
-      className="flex h-8 items-center gap-1 rounded-full px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      className="flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
       aria-label={`Switch to ${lang === "en" ? "Turkish" : "English"}`}
     >
-      {lang === "en" ? (
-        <>
-          <span className="text-sm" role="img" aria-label="English">🇬🇧</span>
-          <span>EN</span>
-        </>
-      ) : (
-        <>
-          <span className="text-sm" role="img" aria-label="Turkish">🇹🇷</span>
-          <span>TR</span>
-        </>
-      )}
+      <span className="text-base leading-none">{lang === "en" ? "\ud83c\uddec\ud83c\udde7" : "\ud83c\uddf9\ud83c\uddf7"}</span>
+      <span className="font-semibold">{lang === "en" ? "EN" : "TR"}</span>
     </button>
   );
 }
