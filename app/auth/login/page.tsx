@@ -58,30 +58,41 @@ function LoginContent() {
     setIsLoading(true);
 
     try {
+      const sb = createBrowserClient();
       const { error } = await signInWithEmail(loginEmail, loginPassword);
       if (error) {
         setError(error);
         setIsLoading(false);
         return;
       }
-      // Wait for onAuthStateChange to propagate, then check onboarding status
-      await new Promise((r) => setTimeout(r, 500));
-      const sb = createBrowserClient();
-      const { data: { user } } = await sb.auth.getUser();
+
+      // Wait for session to propagate, then check onboarding status
+      // Try up to 3 times with increasing delay to handle slow session propagation
+      let user = null;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        await new Promise((r) => setTimeout(r, 300 * (attempt + 1)));
+        const { data } = await sb.auth.getUser();
+        if (data?.user) {
+          user = data.user;
+          break;
+        }
+      }
+
       if (user) {
         const { data: profile } = await sb
           .from("user_profiles")
           .select("onboarding_complete")
           .eq("id", user.id)
           .single();
+
         if (!profile || !profile.onboarding_complete) {
-          router.push("/onboarding");
-          router.refresh();
+          window.location.href = "/onboarding";
           return;
         }
       }
-      router.push(redirect);
-      router.refresh();
+
+      // Use window.location for hard navigation — ensures clean state
+      window.location.href = redirect;
     } catch (err) {
       console.error("Login error:", err);
       setError("An unexpected error occurred. Please try again.");

@@ -184,15 +184,17 @@ This rule exists because giving dosage advice without knowing the user's medicat
     const readable = new ReadableStream({
       async start(controller) {
         try {
+          let fullResponse = "";
           for await (const chunk of stream) {
             const text = chunk.text();
             if (text) {
+              fullResponse += text;
               controller.enqueue(encoder.encode(text));
             }
           }
           controller.close();
 
-          // Save query to history (fire and forget)
+          // Save query + response to history (fire and forget)
           if (userId) {
             try {
               const supabase = createServerClient();
@@ -200,6 +202,7 @@ This rule exists because giving dosage advice without knowing the user's medicat
                 user_id: userId,
                 query_text: message,
                 query_type: "general" as const,
+                response_text: fullResponse.substring(0, 10000), // cap at 10k chars
               });
             } catch {
               // Non-critical — don't fail the response
@@ -237,6 +240,40 @@ This rule exists because giving dosage advice without knowing the user's medicat
   }
 }
 
+// Common Turkish health terms → English for PubMed
+const TR_TO_EN: Record<string, string> = {
+  "spor": "exercise", "egzersiz": "exercise",
+  "uyku": "sleep", "uykusuzluk": "insomnia",
+  "stres": "stress", "anksiyete": "anxiety",
+  "kilo": "weight", "zayıflama": "weight loss", "diyet": "diet",
+  "vitamin": "vitamin", "takviye": "supplement",
+  "protein": "protein", "kas": "muscle",
+  "enerji": "energy", "yorgunluk": "fatigue",
+  "ağrı": "pain", "baş ağrısı": "headache", "mide": "stomach",
+  "sindirim": "digestion", "bağırsak": "gut", "kabızlık": "constipation",
+  "tansiyon": "blood pressure", "kolesterol": "cholesterol",
+  "şeker": "blood sugar", "diyabet": "diabetes",
+  "bağışıklık": "immunity", "soğuk algınlığı": "common cold",
+  "cilt": "skin", "saç": "hair", "tırnak": "nail",
+  "eklem": "joint", "kemik": "bone", "osteoporoz": "osteoporosis",
+  "kalp": "heart", "damar": "cardiovascular",
+  "karaciğer": "liver", "böbrek": "kidney",
+  "demir": "iron", "ferritin": "ferritin",
+  "omega": "omega-3", "balık yağı": "fish oil",
+  "probiyotik": "probiotic", "prebiyotik": "prebiotic",
+  "zerdeçal": "turmeric", "kurkumin": "curcumin",
+  "zencefil": "ginger", "sarımsak": "garlic",
+  "kediotu": "valerian", "papatya": "chamomile",
+  "ekinezya": "echinacea", "ginseng": "ginseng",
+  "ashwagandha": "ashwagandha", "melatonin": "melatonin",
+  "kreatin": "creatine", "kafein": "caffeine",
+  "workout": "pre-workout", "antrenman": "exercise training",
+  "performans": "performance", "dayanıklılık": "endurance",
+  "toparlanma": "recovery", "almak": "supplementation",
+  "kullanmak": "use", "içmek": "intake",
+  "istiyorum": "", "yapıyorum": "", "alıyorum": "",
+};
+
 function buildPubMedSearchQuery(message: string): string {
   // Extract health-related keywords, strip filler words
   const stopWords = new Set([
@@ -249,14 +286,35 @@ function buildPubMedSearchQuery(message: string): string {
     "just", "also", "too", "much", "many", "some", "any", "all", "most",
     "want", "need", "like", "know", "think", "help", "take", "use",
     "ben", "benim", "bir", "ve", "ile", "için", "ne", "nasıl", "mi",
+    "mı", "mu", "mü", "da", "de", "bu", "şu", "çok", "daha",
+    "istiyorum", "yapıyorum", "alıyorum", "kullanıyorum", "var", "yok",
   ]);
 
-  const words = message.toLowerCase()
+  let lowerMsg = message.toLowerCase();
+
+  // Translate Turkish health terms to English for PubMed
+  const translatedTerms: string[] = [];
+  for (const [tr, en] of Object.entries(TR_TO_EN)) {
+    if (lowerMsg.includes(tr) && en) {
+      translatedTerms.push(en);
+    }
+  }
+
+  const words = lowerMsg
     .replace(/[^\w\sğüşıöçĞÜŞİÖÇ-]/g, "")
     .split(/\s+/)
     .filter((w) => w.length > 2 && !stopWords.has(w));
 
-  const keywords = words.slice(0, 6).join(" ");
+  // Merge: translated English terms + any remaining English keywords from the message
+  const englishWords = words.filter((w) => /^[a-z-]+$/i.test(w));
+  const allKeywords = [...new Set([...translatedTerms, ...englishWords])];
+
+  const keywords = allKeywords.slice(0, 6).join(" ");
+
+  if (!keywords.trim()) {
+    // Fallback: use the first meaningful words
+    return "(herbal supplement) AND (evidence-based)";
+  }
 
   // Add phytotherapy/supplement context
   return `(${keywords}) AND (phytotherapy OR herbal OR supplement OR evidence-based)`;

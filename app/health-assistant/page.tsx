@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { Sparkles } from "lucide-react";
 import { ChatInterface } from "@/components/chat/ChatInterface";
+import { ConversationHistory } from "@/components/chat/ConversationHistory";
 
 const EXAMPLE_QUESTIONS = [
   "Does omega-3 actually reduce inflammation?",
@@ -13,19 +15,32 @@ const EXAMPLE_QUESTIONS = [
 ];
 
 export default function HealthAssistantPage() {
+  const [loadConversation, setLoadConversation] = useState<{
+    query: string;
+    response: string | null;
+  } | null>(null);
+
+  const handleSelectConversation = (query: string, response: string | null) => {
+    // Use a new object reference each time to trigger the effect even for the same conversation
+    setLoadConversation({ query, response });
+  };
+
   return (
     <main className="mx-auto max-w-4xl px-4 py-8">
       {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-emerald-50 p-3 dark:bg-emerald-950">
-          <Sparkles className="h-6 w-6 text-emerald-600" />
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="rounded-lg bg-emerald-50 p-3 dark:bg-emerald-950">
+            <Sparkles className="h-6 w-6 text-emerald-600" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">Health Assistant</h1>
+            <p className="text-sm text-muted-foreground">
+              Ask evidence-based health questions — powered by PubMed research
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-2xl font-bold">Health Assistant</h1>
-          <p className="text-sm text-muted-foreground">
-            Ask evidence-based health questions — powered by PubMed research
-          </p>
-        </div>
+        <ConversationHistory onSelectConversation={handleSelectConversation} />
       </div>
 
       {/* Example Questions */}
@@ -60,7 +75,10 @@ export default function HealthAssistantPage() {
       </div>
 
       {/* Chat Interface */}
-      <ChatInterface className="h-[calc(100vh-280px)] min-h-[500px]" />
+      <ChatInterface
+        className="h-[calc(100vh-280px)] min-h-[500px]"
+        loadConversation={loadConversation}
+      />
 
       {/* Disclaimer */}
       <p className="mt-4 text-center text-xs text-muted-foreground">

@@ -41,9 +41,11 @@ function fileToBase64(file: File): Promise<string> {
 
 interface ChatInterfaceProps {
   className?: string;
+  onMessagesChange?: (messages: ChatMessage[]) => void;
+  loadConversation?: { query: string; response: string | null } | null;
 }
 
-export function ChatInterface({ className }: ChatInterfaceProps) {
+export function ChatInterface({ className, onMessagesChange, loadConversation }: ChatInterfaceProps) {
   const { isAuthenticated, session } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -60,6 +62,27 @@ export function ChatInterface({ className }: ChatInterfaceProps) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Load conversation from history
+  useEffect(() => {
+    if (loadConversation) {
+      const loaded: ChatMessage[] = [
+        {
+          id: crypto.randomUUID(),
+          role: "user",
+          content: loadConversation.query,
+        },
+      ];
+      if (loadConversation.response) {
+        loaded.push({
+          id: crypto.randomUUID(),
+          role: "assistant",
+          content: loadConversation.response,
+        });
+      }
+      setMessages(loaded);
+    }
+  }, [loadConversation]);
 
   // Auto-resize textarea
   useEffect(() => {
