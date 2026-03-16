@@ -168,9 +168,83 @@ export function OnboardingWizard({ profile }: Props) {
     setIsSubmitting(true);
     try {
       const supabase = createBrowserClient();
-      const userId = profile.id;
 
-      // 1. Update profile
+      // Verify we have an active auth session (required for RLS policies)
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        console.error("Auth error during onboarding save:", authError);
+        alert("Your session has expired. Please sign in again.");
+        router.push("/auth/login");
+        return;
+      }
+
+      const userId = user.id;
+      console.log("[Onboarding] Saving for user:", userId);
+
+      // 1. Save medications FIRST (before marking onboarding complete)
+      if (data.medications.length > 0) {
+        // Delete existing medications first (safe for retry)
+        await supabase.from("user_medications").delete().eq("user_id", userId);
+
+        const medsToInsert = data.medications.map((med) => ({
+          user_id: userId,
+          brand_name: med.brand_name,
+          generic_name: med.generic_name,
+          dosage: med.dosage,
+          frequency: med.frequency,
+          is_active: true,
+        }));
+        console.log("[Onboarding] Inserting medications:", medsToInsert);
+
+        const { error: medError } = await supabase
+          .from("user_medications")
+          .insert(medsToInsert);
+
+        if (medError) {
+          console.error("[Onboarding] Medication insert error:", medError);
+          alert("Failed to save medications. Please try again. Error: " + medError.message);
+          return;
+        }
+        console.log("[Onboarding] Medications saved successfully");
+      }
+
+      // 2. Save allergies SECOND
+      if (data.allergies.length > 0) {
+        // Delete existing allergies first (safe for retry)
+        await supabase.from("user_allergies").delete().eq("user_id", userId);
+
+        const allergiesToInsert = data.allergies.map((allergy) => ({
+          user_id: userId,
+          allergen: allergy.allergen,
+          severity: allergy.severity,
+        }));
+        console.log("[Onboarding] Inserting allergies:", allergiesToInsert);
+
+        const { error: allergyError } = await supabase
+          .from("user_allergies")
+          .insert(allergiesToInsert);
+
+        if (allergyError) {
+          console.error("[Onboarding] Allergy insert error:", allergyError);
+          alert("Failed to save allergies. Please try again. Error: " + allergyError.message);
+          return;
+        }
+        console.log("[Onboarding] Allergies saved successfully");
+      }
+
+      // 3. Save consent record (non-critical — don't block on failure)
+      try {
+        await supabase.from("consent_records").insert({
+          user_id: userId,
+          consent_type: "medical_disclaimer",
+          consent_text: "User agreed to medical disclaimer and terms of service during onboarding.",
+        });
+        console.log("[Onboarding] Consent record saved");
+      } catch (consentErr) {
+        console.error("[Onboarding] Consent save failed (non-critical):", consentErr);
+      }
+
+      // 4. Update profile LAST — only after medications and allergies are saved
       const { error: profileError } = await supabase
         .from("user_profiles")
         .update({
@@ -193,7 +267,7 @@ export function OnboardingWizard({ profile }: Props) {
           exercise_frequency: data.exercise_frequency || null,
           sleep_quality: data.sleep_quality || null,
           supplements: data.supplements,
-          // System
+          // System — marked LAST so incomplete data doesn't get skipped
           onboarding_complete: true,
           onboarding_layer2_complete: isLayer2,
           consent_timestamp: new Date().toISOString(),
@@ -201,41 +275,11 @@ export function OnboardingWizard({ profile }: Props) {
         })
         .eq("id", userId);
 
-      if (profileError) throw profileError;
-
-      // 2. Save medications
-      if (data.medications.length > 0) {
-        const { error: medError } = await supabase.from("user_medications").insert(
-          data.medications.map((med) => ({
-            user_id: userId,
-            brand_name: med.brand_name,
-            generic_name: med.generic_name,
-            dosage: med.dosage,
-            frequency: med.frequency,
-          }))
-        );
-        if (medError) throw medError;
+      if (profileError) {
+        console.error("[Onboarding] Profile update error:", profileError);
+        throw profileError;
       }
-
-      // 3. Save allergies
-      if (data.allergies.length > 0) {
-        const { error: allergyError } = await supabase.from("user_allergies").insert(
-          data.allergies.map((allergy) => ({
-            user_id: userId,
-            allergen: allergy.allergen,
-            severity: allergy.severity,
-          }))
-        );
-        if (allergyError) throw allergyError;
-      }
-
-      // 4. Save consent record
-      const { error: consentError } = await supabase.from("consent_records").insert({
-        user_id: userId,
-        consent_type: "medical_disclaimer",
-        consent_text: "User agreed to medical disclaimer and terms of service during onboarding.",
-      });
-      if (consentError) throw consentError;
+      console.log("[Onboarding] Profile updated — onboarding complete!");
 
       // 5. Refresh profile in context and redirect
       await refreshProfile();
