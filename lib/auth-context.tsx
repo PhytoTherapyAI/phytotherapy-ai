@@ -16,7 +16,7 @@ interface AuthState {
 }
 
 interface AuthContextType extends AuthState {
-  signInWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
+  signInWithEmail: (email: string, password: string) => Promise<{ error: string | null; user: User | null; session: Session | null }>;
   signUpWithEmail: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
   signInWithGoogle: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
@@ -106,8 +106,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [updateState]);
 
   const signInWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error?.message ?? null };
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    return { error: error?.message ?? null, user: data?.user ?? null, session: data?.session ?? null };
   };
 
   const signUpWithEmail = async (email: string, password: string, fullName: string) => {

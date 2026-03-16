@@ -42,10 +42,11 @@ export default function AuthCallbackPage() {
           .eq("id", session.user.id)
           .single();
 
+        // Hard navigation to ensure AuthProvider picks up the new session
         if (!profile || !profile.onboarding_complete) {
-          router.replace("/onboarding");
+          window.location.href = "/onboarding";
         } else {
-          router.replace("/");
+          window.location.href = "/";
         }
         return;
       }

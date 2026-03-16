@@ -59,36 +59,47 @@ function LoginContent() {
 
     try {
       const sb = createBrowserClient();
-      const { error } = await signInWithEmail(loginEmail, loginPassword);
+      const { error, user } = await signInWithEmail(loginEmail, loginPassword);
       if (error) {
         setError(error);
         setIsLoading(false);
         return;
       }
 
-      // Wait for session to propagate, then check onboarding status
-      // Try up to 3 times with increasing delay to handle slow session propagation
-      let user = null;
-      for (let attempt = 0; attempt < 3; attempt++) {
-        await new Promise((r) => setTimeout(r, 300 * (attempt + 1)));
+      if (!user) {
+        // Fallback: if signInWithPassword didn't return user, try getUser
+        await new Promise((r) => setTimeout(r, 500));
         const { data } = await sb.auth.getUser();
-        if (data?.user) {
-          user = data.user;
-          break;
+        if (!data?.user) {
+          setError("Sign in succeeded but session was not established. Please try again.");
+          setIsLoading(false);
+          return;
         }
-      }
-
-      if (user) {
+        // Use fallback user for onboarding check
         const { data: profile } = await sb
           .from("user_profiles")
           .select("onboarding_complete")
-          .eq("id", user.id)
+          .eq("id", data.user.id)
           .single();
 
         if (!profile || !profile.onboarding_complete) {
           window.location.href = "/onboarding";
           return;
         }
+        window.location.href = redirect;
+        return;
+      }
+
+      // Check onboarding status with the user returned from signIn
+      const { data: profile } = await sb
+        .from("user_profiles")
+        .select("onboarding_complete")
+        .eq("id", user.id)
+        .single();
+
+      if (!profile || !profile.onboarding_complete) {
+        window.location.href = "/onboarding";
+        return;
       }
 
       // Use window.location for hard navigation — ensures clean state
@@ -131,8 +142,9 @@ function LoginContent() {
       const sb = createBrowserClient();
       const { data: { session } } = await sb.auth.getSession();
       if (session) {
-        router.push("/onboarding");
-        router.refresh();
+        // Hard navigation to ensure clean auth state on onboarding page
+        window.location.href = "/onboarding";
+        return;
       } else {
         setSuccessMessage("Account created! Please check your email to confirm your account, then sign in.");
         setIsLoading(false);
