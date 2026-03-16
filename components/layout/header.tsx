@@ -5,7 +5,7 @@ import { Leaf, Menu, X, LogIn, User, LogOut, Settings } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import { LanguageToggle } from "@/components/layout/language-toggle";
+import { LanguageToggle, useLang } from "@/components/layout/language-toggle";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -19,6 +19,13 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, isLoading, user, profile, signOut } = useAuth();
+  const { lang } = useLang()
+
+  const navLabels: Record<string, { en: string; tr: string }> = {
+    '/interaction-checker': { en: 'Interaction Checker', tr: 'Etkileşim Denetleyici' },
+    '/health-assistant': { en: 'Health Assistant', tr: 'Sağlık Asistanı' },
+    '/blood-test': { en: 'Blood Test Analysis', tr: 'Kan Tahlili Analizi' },
+  }
 
   const initials = profile?.full_name
     ? profile.full_name
@@ -44,11 +51,19 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         {/* Logo — Phyto=foreground, therapy=gold, .ai=green */}
-        <Link href="/" className="flex items-center gap-2">
-          <Leaf className="h-5 w-5 text-primary" />
-          <span className="font-heading text-xl font-semibold tracking-tight">
-            Phyto<span className="text-gold">therapy</span>
-            <span className="text-primary">.ai</span>
+        <Link href="/" className="flex items-center gap-2 group">
+          <Leaf
+            className="h-[18px] w-[18px] transition-all duration-300 group-hover:scale-110"
+            style={{ color: 'var(--logo-accent, #c4a86c)' }}
+          />
+          <span style={{
+            fontFamily: '"DM Serif Display", "Palatino Linotype", Georgia, serif',
+            fontSize: '1.18rem',
+            fontWeight: 400,
+            letterSpacing: '0.01em',
+            lineHeight: 1,
+          }}>
+            <span style={{ color: 'var(--foreground)' }}>Phyto</span><span style={{ color: 'var(--logo-accent, #c4a86c)' }}>therapy</span><span style={{ color: 'var(--primary)' }}>.ai</span>
           </span>
         </Link>
 
@@ -60,7 +75,7 @@ export function Header() {
               href={link.href}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              {link.label}
+              {lang === 'en' ? navLabels[link.href].en : navLabels[link.href].tr}
             </Link>
           ))}
         </nav>
@@ -97,7 +112,7 @@ export function Header() {
                       onClick={() => setUserMenuOpen(false)}
                     >
                       <Settings className="h-4 w-4" />
-                      Profile Settings
+                      {lang === 'tr' ? 'Profil Ayarları' : 'Profile Settings'}
                     </Link>
                   </div>
                   <div className="border-t p-1">
@@ -109,7 +124,7 @@ export function Header() {
                       }}
                     >
                       <LogOut className="h-4 w-4" />
-                      Sign Out
+                      {lang === 'tr' ? 'Çıkış Yap' : 'Sign Out'}
                     </button>
                   </div>
                 </div>
@@ -119,7 +134,7 @@ export function Header() {
             <Link href="/auth/login">
               <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90">
                 <LogIn className="h-4 w-4" />
-                Get Started
+                {lang === 'tr' ? 'Başla' : 'Get Started'}
               </Button>
             </Link>
           )}
@@ -148,7 +163,7 @@ export function Header() {
               className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
               onClick={() => setMobileOpen(false)}
             >
-              {link.label}
+              {lang === 'en' ? navLabels[link.href].en : navLabels[link.href].tr}
             </Link>
           ))}
 
@@ -166,7 +181,7 @@ export function Header() {
                   className="block py-2 text-sm text-muted-foreground hover:text-foreground"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Profile Settings
+                  {lang === 'tr' ? 'Profil Ayarları' : 'Profile Settings'}
                 </Link>
                 <button
                   className="block w-full py-2 text-left text-sm text-red-600 hover:text-red-700"
@@ -175,7 +190,7 @@ export function Header() {
                     await signOut();
                   }}
                 >
-                  Sign Out
+                  {lang === 'tr' ? 'Çıkış Yap' : 'Sign Out'}
                 </button>
               </>
             ) : (
@@ -184,7 +199,7 @@ export function Header() {
                 className="block py-2 text-sm font-medium text-primary hover:text-primary/80"
                 onClick={() => setMobileOpen(false)}
               >
-                Sign In / Sign Up
+                {lang === 'tr' ? 'Giriş / Kayıt' : 'Sign In / Sign Up'}
               </Link>
             )}
           </div>
