@@ -1,4 +1,4 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v6.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v7.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
@@ -6,7 +6,7 @@
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
 - **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026
 - **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı)
-- **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle Sprint 10'da)
+- **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
 - **AI Motor:** Google Gemini API (gemini-2.0-flash primary + gemini-2.5-flash fallback)
 - **OS:** Windows
@@ -62,7 +62,7 @@ Kullanıcı mesajı → Gemini intent belirler:
 ### Dil Desteği
 - Sistem EN ve TR sorularına otomatik yanıt verir
 - Kullanıcı Türkçe yazarsa Türkçe, İngilizce yazarsa İngilizce cevap
-- TR/EN UI toggle Sprint 10'da navbar'a eklenir
+- TR/EN dil toggle navbar'da ✅ (🇺🇸 EN / 🇹🇷 TR, localStorage persist, mounted guard ile hydration-safe)
 
 ### Dosya ve Görsel Yükleme
 Chat kutusuna entegre (sol alt köşe):
@@ -81,20 +81,21 @@ Chat kutusuna entegre (sol alt köşe):
 
 ## Tasarım Sistemi (Kesinleşmiş — v2)
 
-### Renkler
+### Renkler (Kesinleşmiş — Sprint 7 sonrası)
 ```
-Açık mod arka plan:    #faf9f6
+Açık mod arka plan:    #faf9f6  (warm cream)
 Koyu mod arka plan:    #141a16  ("karanlık orman" — boğucu değil)
+Koyu mod kartlar:      #1c2420  (forest card)
 Ana yeşil (light):     #3c7a52
-Ana yeşil (dark):      #5aac74
-Açık yeşil metin:      #8aab8e  (dark mod açıklamalar)
-Tag/link (dark):       #7aab82
-Altın vurgu (light):   #b8965a
+Ana yeşil (dark):      #5aac74  (parlak yeşil — botanik SVG dahil)
+Açık yeşil metin:      #8aab8e  (dark mod açıklamalar / muted-foreground)
+Altın vurgu (light):   #b8965a  (logo "therapy" + hero "nature's")
 Altın vurgu (dark):    #c9a86c
 Koyu metin (light):    #141a15
-Açık metin (dark):     #e8f0e9
+Açık metin (dark):     #dde8de  (foreground)
 İkincil (light):       #5a6b5c
 İkincil (dark):        #8aab8e
+Kenar çizgileri (dark): rgba(90,172,116,0.15)
 ```
 
 ### Fontlar
@@ -119,9 +120,9 @@ Mono:       DM Mono (kbd kısayolları için)
   - Molekül bağ noktaları köşelerde dekoratif
   - Tıbbi artı (+) işareti ince vurgu olarak
 - **Hero bölümü:**
-  - Sol: Eyebrow badge + H1 başlık + açıklama + arama kutusu + quick tags
+  - Sol: H1 başlık + açıklama + arama kutusu (⌘K) + quick tags
   - Sağ: Botanik SVG illüstrasyon (EKG + molekül + botanik birleşimi)
-  - ⌘K kısayolu arama kutusunda
+  - Eyebrow badges kaldırıldı (Science/Species/Wiki)
 - **Trust strip:** 5 madde, her biri yeşil checkmark ile
 - **Feature kartları:** 01/02/03/04 numaralı, Cormorant başlık
 - Light/Dark mode toggle navbar sağında
@@ -130,7 +131,7 @@ Mono:       DM Mono (kbd kısayolları için)
 
 ### Navigasyon
 ```
-Logo (sol) | Interaction Checker | Health Assistant | Blood Test Analysis | [Auth] | [Theme Toggle]
+Logo (sol) | Interaction Checker | Health Assistant | Blood Test Analysis | [Auth] | [Lang Toggle] | [Theme Toggle]
 ```
 - Giriş yapılmamışsa: Sign In + Sign Up butonları
 - Giriş yapılmışsa: Avatar dropdown (isim, email, Profile Settings, Sign Out)
@@ -270,7 +271,7 @@ query_history, blood_tests, consent_records, guest_queries
 - [x] blood-reference.ts + /api/blood-analysis + PDF
 - [x] Chat kutusuna 📎 dosya + 📷 fotoğraf yükleme + OCR
 
-### 🔄 Sprint 6 — Mimari Birleştirme + Auth Fix (DEVAM EDİYOR)
+### ✅ Sprint 6 — Mimari Birleştirme + Auth Fix (TAMAMLANDI)
 - [x] Login → onboarding_complete false ise /onboarding'e yönlendir ✅
 - [x] Sign in / Sign out düzeltildi ✅
 - [x] Sağlık dışı mesajlara nazik yönlendirme ✅
@@ -279,24 +280,31 @@ query_history, blood_tests, consent_records, guest_queries
 - [x] TR→EN PubMed sözlük (70+ terim) ✅
 - [x] PubMed timeout + error handling ✅
 - [x] Onboarding medication/allergy kayıt hatası düzeltildi ✅
-- [ ] API quota test (Gemini billing aktif mi?) ← YARIN
+- [x] fetchProfile RLS fix — getUser() ile token doğrulama ✅
+- [ ] API quota test (Gemini billing aktif mi?)
 - [ ] Tek chat router — intent detection
 - [ ] İlaç profili → chat context otomatik
-- [ ] Her girişte "İlaç listeniz hâlâ aynı mı?" dialog — tek tıkla "Evet" veya "Güncelle"
+- [ ] Her girişte "İlaç listeniz hâlâ aynı mı?" dialog
 - [ ] Profil sayfası tam çalışır
 
-### 🔄 Sprint 7 — Tasarım v2 Implementasyonu
-- [ ] public/phytotherapy_v2.png referans alınarak tüm sayfalara uygula
-- [ ] Cormorant Garamond + DM Sans + DM Mono
-- [ ] Dark/Light mode toggle navbar sağında (ay/güneş ikonu, localStorage)
-- [ ] Hero: Sol arama kutusu (⌘K) + sağ botanik SVG
-- [ ] EKG çizgisi + molekül noktaları + tıbbi artı motifi
-- [ ] Trust strip + feature kartları (01/02/03/04)
-- [ ] Navbar: logo sol, linkler orta, auth+toggle sağ
-- [ ] Navbar'a dil seçimi toggle (🇬🇧 EN / 🇹🇷 TR bayrak ikonu)
-- [ ] Responsive mobile-first
-- [ ] Loading skeleton + error states
-- [ ] Animasyonlar (subtle hover, fade-in)
+### ✅ Sprint 7 — Tasarım v2 Implementasyonu (TAMAMLANDI)
+- [x] public/phytotherapy_v2.png referans alınarak tüm sayfalara uygulandı ✅
+- [x] Cormorant Garamond + DM Sans + DM Mono font sistemi ✅
+- [x] Dark/Light mode toggle navbar sağında (Moon/Sun ikonu, localStorage) ✅
+- [x] ThemeProvider bileşeni (prefers-color-scheme fallback, smooth transition) ✅
+- [x] Hero: Sol metin + arama kutusu (⌘K) + quick tags / Sağ botanik SVG ✅
+- [x] BotanicalHero SVG: bitki + EKG çizgisi + molekül noktaları + tıbbi artı ✅
+- [x] Trust strip + feature kartları (01/02/03/04) ✅
+- [x] Navbar: logo sol, linkler orta, auth + lang toggle + theme toggle sağ ✅
+- [x] Dil toggle (🇺🇸 EN / 🇹🇷 TR, localStorage persist, mounted guard) ✅
+- [x] Dark mode: #141a16 background, #1c2420 cards, #dde8de text, rgba(90,172,116,0.15) borders ✅
+- [x] Logo renkleri: Phyto=foreground, therapy=#b8965a gold, .ai=#3c7a52/#5aac74 ✅
+- [x] Botanik SVG rengi #5aac74 parlak yeşile güncellendi ✅
+- [x] Eyebrow badges (Science/Species/Wiki) kaldırıldı ✅
+- [x] Emerald→Primary renk göçü (25+ dosya) ✅
+- [x] Responsive mobile-first ✅
+- [x] Loading skeleton + error states ✅
+- [x] Animasyonlar (subtle hover, fade-in) ✅
 
 ### 🔄 Sprint 8 — Güvenlik + Yasal
 - [ ] Rate limiting + input sanitization
@@ -314,7 +322,8 @@ query_history, blood_tests, consent_records, guest_queries
 ### 🚀 SONRASI BLOĞU
 
 #### Sprint 10 — Çok Dil + Google Auth
-- [ ] TR/EN dil toggle navbar'da (bayrak ikonu)
+- [x] TR/EN dil toggle navbar'da (bayrak ikonu) ✅ — Sprint 7'de tamamlandı
+- [ ] UI çeviri sistemi (lang context → tüm sayfalar)
 - [ ] Google OAuth
 - [ ] AR desteği (ileride)
 
@@ -385,5 +394,5 @@ NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
 
 ---
 
-*Son güncelleme: 16 Mart 2026 v6.0*
-*Sprint 1-5 tamamlandı. Sprint 6 devam ediyor — API quota testi yarın. Sıradaki: Sprint 7 — Tasarım v2*
+*Son güncelleme: 16 Mart 2026 v7.0*
+*Sprint 1-7 tamamlandı. Sıradaki: Sprint 8 — Güvenlik + Yasal*

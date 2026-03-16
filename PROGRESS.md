@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 16 Mart 2026
+> Son güncelleme: 16 Mart 2026 (v7.0)
 
 ---
 
@@ -145,32 +145,39 @@
 
 ## ✅ Sprint 7 — Tasarım v2
 
-**Kapsam:** phytotherapy_v2.png referansıyla tam UI overhaul
+**Kapsam:** phytotherapy_v2.png referansıyla tam UI overhaul + dark mode + dil toggle + renk göçü
 
 - [x] Font sistemi: Cormorant Garamond (başlıklar, serif italic) + DM Sans (body) + DM Mono (mono)
-- [x] CSS variables ile renk sistemi — light (#faf9f6 warm cream) + dark (#141a16 forest green)
+- [x] CSS variables ile renk sistemi — light (#faf9f6 warm cream) + dark (#141a16 dark forest)
 - [x] Dark/Light mode toggle — navbar sağında (Moon/Sun ikonu, localStorage persist)
-- [x] ThemeProvider bileşeni (prefers-color-scheme fallback, smooth transition)
+- [x] ThemeProvider bileşeni (prefers-color-scheme fallback, smooth transition, SSR-safe)
 - [x] Hero bölümü: Sol metin + arama kutusu + quick tags / Sağ botanik SVG
 - [x] BotanicalHero SVG: bitki + yapraklar + altın çiçek + EKG çizgisi + molekül noktaları + tıbbi artı
-- [x] Eyebrow badges (Science, Species, Wiki)
+- [x] Eyebrow badges kaldırıldı (Science/Species/Wiki → gereksiz)
 - [x] Trust strip (5 madde, yeşil checkmark)
 - [x] Feature kartları (01/02/03/04 numaralı, Cormorant başlık, hover efektleri)
-- [x] Navbar: logo (Cormorant) sol, linkler orta, auth+toggle sağ
+- [x] Navbar: logo (Cormorant) sol, linkler orta, auth + lang toggle + theme toggle sağ
 - [x] "Get Started" CTA butonu (sign in yönlendirme)
 - [x] Footer: disclaimer + brand renkleri
 - [x] Disclaimer banner: CSS variable renkleri
 - [x] Responsive mobile-first (flex-col-reverse hero, mobile hamburger + theme toggle)
 - [x] Debug console.log'lar kaldırıldı (header)
+- [x] Dil toggle (🇺🇸 EN / 🇹🇷 TR) — mounted guard ile hydration-safe, localStorage persist
+- [x] Dark mode softened: background #141a16, cards #1c2420, text #dde8de, muted #8aab8e, borders rgba(90,172,116,0.15)
+- [x] Logo renkleri: Phyto=foreground, therapy=#b8965a gold, .ai=#3c7a52 light / #5aac74 dark
+- [x] Botanik SVG: --brand fallback #5aac74 parlak yeşile güncellendi
+- [x] Emerald→Primary CSS variable göçü (25+ dosya: chat, interaction, blood-test, onboarding, auth, profile, common)
 
-### Renk Paleti
+### Renk Paleti (Kesinleşmiş)
 | Token | Light | Dark |
 |-------|-------|------|
 | background | #faf9f6 | #141a16 |
+| foreground | #141a15 | #dde8de |
 | primary | #3c7a52 | #5aac74 |
 | gold | #b8965a | #c9a86c |
 | muted-foreground | #5a6b5c | #8aab8e |
 | card | #ffffff | #1c2420 |
+| border | rgba(60,122,82,0.15) | rgba(90,172,116,0.15) |
 
 ### Font Sistemi
 | Kullanım | Font | CSS Variable |
@@ -179,7 +186,16 @@
 | Body text | DM Sans | --font-sans |
 | Monospace | DM Mono | --font-mono |
 
-**Dosyalar:** app/layout.tsx, app/globals.css, app/page.tsx, components/layout/header.tsx, components/layout/footer.tsx, components/layout/theme-provider.tsx, components/layout/theme-toggle.tsx, components/layout/disclaimer-banner.tsx, components/illustrations/botanical-hero.tsx
+### Bugfix Kaydı (Sprint 7)
+| Bug | Sebep | Çözüm |
+|-----|-------|-------|
+| useTheme SSR crash | Static prerender ThemeProvider dışında | useTheme() safe defaults döndürür (throw yok) |
+| Auth avatar kaybolma | initAuth + onAuthStateChange race condition | INITIAL_SESSION skip + initialDone flag |
+| Language toggle "TR TR" | SSR/client hydration mismatch | mounted guard + return null until client |
+| Dark mode too harsh | #1a211c hala koyu | User specs: #141a16 bg, #1c2420 cards, #dde8de text |
+| Font overrides bozuldu | CSS @import + !important conflicts | Reverted — Next.js font system yeterli |
+
+**Dosyalar:** app/layout.tsx, app/globals.css, app/page.tsx, components/layout/header.tsx, components/layout/footer.tsx, components/layout/theme-provider.tsx, components/layout/theme-toggle.tsx, components/layout/language-toggle.tsx, components/layout/disclaimer-banner.tsx, components/illustrations/botanical-hero.tsx + 25 emerald→primary göç dosyası
 
 ---
 
@@ -243,6 +259,7 @@ phytotherapy-ai/
 │       ├── disclaimer-banner.tsx        # UPDATED — CSS variable colors
 │       ├── theme-provider.tsx           # NEW — dark/light mode context
 │       ├── theme-toggle.tsx             # NEW — Moon/Sun toggle button
+│       ├── language-toggle.tsx          # NEW — 🇺🇸 EN / 🇹🇷 TR toggle
 │       └── medication-update-dialog.tsx
 ├── lib/
 │   ├── gemini.ts
@@ -275,15 +292,20 @@ phytotherapy-ai/
 
 | Commit | Mesaj |
 |--------|-------|
-| — | Sprint 7: Design v2 — Cormorant/DM Sans fonts, dark/light mode, botanical hero, new landing page |
+| `4e4bcdd` | Replace language toggle with mounted guard to fix TR TR duplication |
+| `27373dc` | Fix language toggle hydration — single text node with suppressHydrationWarning |
+| `2f85054` | Revert font overrides, fix language toggle duplicate, keep dark mode |
+| `0fca268` | Fix fonts, dark mode, and language toggle — complete rewrite |
+| `00a67a4` | Fix heading fonts with !important + card titles, add lang toggle debug logs |
+| `01f55d3` | Fix language toggle, global heading fonts, logo leaf, dark mode refinement |
+| `3b61581` | Design fixes: softer dark mode, language toggle, SVG color, remove badges |
+| `ea440eb` | Fix design consistency: logo colors, dark mode contrast, fonts, auth avatar |
+| `4af1224` | Sprint 7: Design v2 — new brand identity, dark/light mode, botanical hero |
 | `ece56a8` | Fix fetchProfile RLS failure — use getUser() instead of getSession() |
 | `e37d064` | Update CLAUDE.md to v6.0 and refresh PROGRESS.md |
 | `7ea9b25` | Fix medications and allergies not saving during onboarding |
-| — | Add retry with exponential backoff and model fallback for Gemini API |
-| — | Fix Turkish health queries + PubMed error handling + streaming errors |
-| — | Add conversation history sidebar + off-topic handling + onboarding redirect |
 
 ---
 
 *Hackathon: 11-12 Nisan 2026 — 26 gün kaldı*
-*Sprint 7 tamamlandı. Sıradaki: Sprint 8 — Güvenlik + Yasal*
+*Sprint 1-7 tamamlandı. Sıradaki: Sprint 8 — Güvenlik + Yasal*
