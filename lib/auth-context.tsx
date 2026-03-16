@@ -129,21 +129,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     console.log("[Auth] AuthProvider mounted — checking session...");
 
-    // Get initial session
-    supabase.auth.getSession()
-      .then(({ data: { session }, error }) => {
-        if (error) {
-          console.error("[Auth] getSession error:", error.message);
+    // Use getUser() instead of getSession() to ensure the Supabase client
+    // validates the token server-side and sets internal auth headers.
+    // getSession() only reads localStorage and doesn't guarantee auth headers
+    // are set for subsequent RLS-protected queries.
+    async function initAuth() {
+      try {
+        // Step 1: getUser() validates token + sets client auth state
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) {
+          console.log("[Auth] getUser: no valid user", userError?.message);
           setState((prev) => ({ ...prev, isLoading: false }));
           return;
         }
-        console.log("[Auth] getSession result:", session ? "has session" : "no session");
-        updateState(session?.user ?? null, session);
-      })
-      .catch((err) => {
-        console.error("[Auth] getSession exception:", err);
+        // Step 2: Now get session (token is already validated by getUser)
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log("[Auth] getUser result: authenticated as", user.email);
+        await updateState(user, session);
+      } catch (err) {
+        console.error("[Auth] initAuth exception:", err);
         setState((prev) => ({ ...prev, isLoading: false }));
-      });
+      }
+    }
+
+    initAuth();
 
     // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
