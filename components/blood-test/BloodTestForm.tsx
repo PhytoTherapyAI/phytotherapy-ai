@@ -99,7 +99,7 @@ export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
               onClick={() => setGender(gender === g ? null : g)}
               className={`rounded-lg border px-4 py-2 text-sm transition-colors ${
                 gender === g
-                  ? "border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                  ? "border-primary bg-primary/10 text-primary"
                   : "hover:border-muted-foreground/50"
               }`}
             >
@@ -138,7 +138,7 @@ export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
                   ({markers.length} markers)
                 </span>
                 {filledInCat > 0 && (
-                  <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                     {filledInCat} filled
                   </span>
                 )}
@@ -192,7 +192,7 @@ export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
           <Button
             type="submit"
             disabled={isLoading || filledCount === 0}
-            className="gap-2 bg-emerald-600 hover:bg-emerald-700"
+            className="gap-2 bg-primary hover:bg-primary/90"
           >
             {isLoading ? (
               <>

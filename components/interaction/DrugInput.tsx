@@ -44,7 +44,7 @@ export function DrugInput({ medications, onMedicationsChange, disabled }: DrugIn
   return (
     <div className="space-y-3">
       <label className="flex items-center gap-2 text-sm font-medium">
-        <Pill className="h-4 w-4 text-emerald-600" />
+        <Pill className="h-4 w-4 text-primary" />
         Your Medications
       </label>
 
@@ -54,14 +54,14 @@ export function DrugInput({ medications, onMedicationsChange, disabled }: DrugIn
           {medications.map((med, index) => (
             <span
               key={index}
-              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300"
+              className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
             >
               <Pill className="h-3 w-3" />
               {med}
               {!disabled && (
                 <button
                   onClick={() => removeMedication(index)}
-                  className="ml-0.5 rounded-full p-0.5 hover:bg-emerald-200 dark:hover:bg-emerald-800"
+                  className="ml-0.5 rounded-full p-0.5 hover:bg-primary/20"
                   aria-label={`Remove ${med}`}
                 >
                   <X className="h-3 w-3" />
@@ -87,14 +87,14 @@ export function DrugInput({ medications, onMedicationsChange, disabled }: DrugIn
                 ? "Enter medication name (e.g., Metformin, Lisinopril)"
                 : "Add another medication..."
             }
-            className="w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
           />
         </div>
         <Button
           type="button"
           onClick={addMedication}
           disabled={disabled || !inputValue.trim()}
-          className="gap-1 bg-emerald-600 hover:bg-emerald-700"
+          className="gap-1 bg-primary hover:bg-primary/90"
           size="default"
         >
           <Plus className="h-4 w-4" />

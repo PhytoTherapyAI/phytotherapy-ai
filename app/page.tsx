@@ -97,7 +97,7 @@ export default function Home() {
             <h1 className="font-heading text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               Science meets{" "}
               <br className="hidden sm:block" />
-              <em className="font-heading not-italic text-gold" style={{ fontStyle: "italic" }}>
+              <em className="font-heading" style={{ fontStyle: "italic", color: "var(--gold)" }}>
                 nature&apos;s
               </em>{" "}
               <span className="text-primary">healing</span>

@@ -99,7 +99,7 @@ export default function BloodTestPage() {
           <FlaskConical className="h-6 w-6 text-purple-600" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold">Blood Test Analysis</h1>
+          <h1 className="font-heading text-2xl font-semibold">Blood Test Analysis</h1>
           <p className="text-sm text-muted-foreground">
             Enter your blood test values for evidence-based supplement & lifestyle recommendations
           </p>
@@ -135,7 +135,7 @@ export default function BloodTestPage() {
             <h2 className="text-lg font-semibold">Your Results</h2>
             <button
               onClick={() => setData(null)}
-              className="text-sm text-emerald-600 hover:underline"
+              className="text-sm text-primary hover:underline"
             >
               ← Run New Analysis
             </button>

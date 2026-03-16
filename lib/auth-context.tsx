@@ -128,37 +128,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Listen for auth changes
   useEffect(() => {
     console.log("[Auth] AuthProvider mounted — checking session...");
+    let initialDone = false;
 
-    // Use getUser() instead of getSession() to ensure the Supabase client
-    // validates the token server-side and sets internal auth headers.
+    // Use getUser() to validate token server-side and set internal auth headers.
     // getSession() only reads localStorage and doesn't guarantee auth headers
     // are set for subsequent RLS-protected queries.
     async function initAuth() {
       try {
-        // Step 1: getUser() validates token + sets client auth state
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         if (userError || !user) {
           console.log("[Auth] getUser: no valid user", userError?.message);
           setState((prev) => ({ ...prev, isLoading: false }));
           return;
         }
-        // Step 2: Now get session (token is already validated by getUser)
         const { data: { session } } = await supabase.auth.getSession();
-        console.log("[Auth] getUser result: authenticated as", user.email);
+        console.log("[Auth] initAuth: authenticated as", user.email);
         await updateState(user, session);
       } catch (err) {
         console.error("[Auth] initAuth exception:", err);
         setState((prev) => ({ ...prev, isLoading: false }));
+      } finally {
+        initialDone = true;
       }
     }
 
     initAuth();
 
-    // Subscribe to auth changes
+    // Subscribe to auth changes — skip INITIAL_SESSION since initAuth handles it.
+    // For subsequent events (SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED), validate
+    // token first to ensure RLS works.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log("[Auth] onAuthStateChange:", event, session ? "has session" : "no session");
-        await updateState(session?.user ?? null, session);
+        console.log("[Auth] onAuthStateChange:", event);
+        // Skip INITIAL_SESSION — initAuth handles it with getUser() for RLS
+        if (event === "INITIAL_SESSION") return;
+        // For SIGNED_OUT, clear state immediately
+        if (event === "SIGNED_OUT" || !session?.user) {
+          await updateState(null, null);
+          return;
+        }
+        // For sign-in or token refresh, wait for initAuth if still running
+        if (!initialDone) {
+          console.log("[Auth] Skipping event — initAuth still running");
+          return;
+        }
+        // Validate token before profile fetch to ensure RLS works
+        await supabase.auth.getUser();
+        await updateState(session.user, session);
       }
     );
 

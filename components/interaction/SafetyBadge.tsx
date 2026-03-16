@@ -11,10 +11,10 @@ const config = {
   safe: {
     icon: ShieldCheck,
     label: "Safe",
-    bg: "bg-emerald-50 dark:bg-emerald-950/50",
-    text: "text-emerald-700 dark:text-emerald-400",
-    border: "border-emerald-200 dark:border-emerald-800",
-    ring: "ring-emerald-500/20",
+    bg: "bg-primary/10",
+    text: "text-primary",
+    border: "border-primary/20",
+    ring: "ring-primary/20",
   },
   caution: {
     icon: ShieldAlert,

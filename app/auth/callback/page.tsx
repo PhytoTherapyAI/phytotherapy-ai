@@ -76,7 +76,7 @@ export default function AuthCallbackPage() {
         </p>
         <button
           onClick={() => router.push("/auth/login")}
-          className="mt-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+          className="mt-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
         >
           Back to Sign In
         </button>
@@ -86,9 +86,9 @@ export default function AuthCallbackPage() {
 
   return (
     <div className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center gap-4">
-      <Leaf className="h-10 w-10 animate-pulse text-emerald-600" />
+      <Leaf className="h-10 w-10 animate-pulse text-primary" />
       <div className="flex items-center gap-2">
-        <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
+        <Loader2 className="h-4 w-4 animate-spin text-primary" />
         <span className="text-sm text-muted-foreground">Completing sign in...</span>
       </div>
     </div>

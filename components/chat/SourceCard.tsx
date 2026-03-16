@@ -30,10 +30,10 @@ export function SourceCard({ sources }: SourceCardProps) {
             rel="noopener noreferrer"
             className="flex items-start gap-2 rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-muted"
           >
-            <ExternalLink className="mt-0.5 h-3 w-3 shrink-0 text-emerald-600" />
+            <ExternalLink className="mt-0.5 h-3 w-3 shrink-0 text-primary" />
             <span className="line-clamp-2 text-muted-foreground hover:text-foreground">
               {source.title}
-              {source.year && <span className="ml-1 text-emerald-600">({source.year})</span>}
+              {source.year && <span className="ml-1 text-primary">({source.year})</span>}
             </span>
           </a>
         ))}

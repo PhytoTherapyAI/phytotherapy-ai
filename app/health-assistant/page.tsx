@@ -30,11 +30,11 @@ export default function HealthAssistantPage() {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-emerald-50 p-3 dark:bg-emerald-950">
-            <Sparkles className="h-6 w-6 text-emerald-600" />
+          <div className="rounded-lg bg-primary/10 p-3">
+            <Sparkles className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Health Assistant</h1>
+            <h1 className="font-heading text-2xl font-semibold">Health Assistant</h1>
             <p className="text-sm text-muted-foreground">
               Ask evidence-based health questions — powered by PubMed research
             </p>
@@ -52,7 +52,7 @@ export default function HealthAssistantPage() {
           {EXAMPLE_QUESTIONS.map((q) => (
             <button
               key={q}
-              className="rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-emerald-500 hover:text-emerald-600"
+              className="rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
               onClick={() => {
                 // Find the textarea and set its value
                 const textarea = document.querySelector("textarea");

@@ -64,7 +64,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
                 <span className="text-muted-foreground">({med.genericName})</span>
               )}
               {med.verified ? (
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
               ) : (
                 <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
               )}
@@ -130,7 +130,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* Safe Herbs */}
       {safeHerbs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-emerald-700 dark:text-emerald-400">
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-primary">
             <CheckCircle2 className="h-5 w-5" />
             Safe Alternatives ({safeHerbs.length})
           </h3>
@@ -177,7 +177,7 @@ function HerbCard({ herb }: HerbCardProps) {
       ? "border-red-200 dark:border-red-800"
       : herb.safety === "caution"
         ? "border-amber-200 dark:border-amber-800"
-        : "border-emerald-200 dark:border-emerald-800";
+        : "border-primary/20";
 
   return (
     <div className={`rounded-xl border ${borderColor} bg-card p-5 transition-shadow hover:shadow-md`}>
@@ -225,13 +225,13 @@ function HerbCard({ herb }: HerbCardProps) {
       {herb.safety !== "dangerous" && (herb.dosage || herb.duration) && (
         <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
           {herb.dosage && (
-            <div className="flex items-start gap-2 rounded-lg bg-emerald-50 px-3 py-2 dark:bg-emerald-950/30">
-              <Pill className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
+            <div className="flex items-start gap-2 rounded-lg bg-primary/10 px-3 py-2">
+              <Pill className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               <div>
-                <span className="text-xs font-medium uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+                <span className="text-xs font-medium uppercase tracking-wide text-primary">
                   Dosage
                 </span>
-                <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
+                <p className="text-sm font-medium text-primary">
                   {herb.dosage}
                 </p>
               </div>

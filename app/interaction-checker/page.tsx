@@ -114,11 +114,11 @@ export default function InteractionCheckerPage() {
       {/* Page Header */}
       <div className="mb-8">
         <div className="mb-4 flex items-center gap-3">
-          <div className="rounded-lg bg-emerald-50 p-3 dark:bg-emerald-950">
-            <Shield className="h-6 w-6 text-emerald-600" />
+          <div className="rounded-lg bg-primary/10 p-3">
+            <Shield className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold md:text-3xl">
+            <h1 className="font-heading text-2xl font-semibold md:text-3xl">
               Drug-Herb Interaction Checker
             </h1>
             <p className="text-sm text-muted-foreground md:text-base">
@@ -131,7 +131,7 @@ export default function InteractionCheckerPage() {
         {/* How it works */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
               1
             </div>
             <div className="flex items-center gap-2 text-sm">
@@ -140,7 +140,7 @@ export default function InteractionCheckerPage() {
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
               2
             </div>
             <div className="flex items-center gap-2 text-sm">
@@ -149,7 +149,7 @@ export default function InteractionCheckerPage() {
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
               3
             </div>
             <div className="flex items-center gap-2 text-sm">
@@ -172,7 +172,7 @@ export default function InteractionCheckerPage() {
         {/* Concern Input */}
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-medium">
-            <Heart className="h-4 w-4 text-emerald-600" />
+            <Heart className="h-4 w-4 text-primary" />
             What&apos;s your health concern?
           </label>
           <textarea
@@ -185,7 +185,7 @@ export default function InteractionCheckerPage() {
             className={`w-full resize-none rounded-lg border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 ${
               redFlagCheck.isEmergency
                 ? "border-red-500 ring-2 ring-red-500/30 focus:border-red-500 focus:ring-red-500/30"
-                : "focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+                : "focus:border-primary focus:ring-2 focus:ring-primary/20"
             }`}
           />
           <div className="flex justify-end">
@@ -236,7 +236,7 @@ export default function InteractionCheckerPage() {
           className={`w-full gap-2 py-6 text-base font-medium ${
             redFlagCheck.isEmergency
               ? "bg-gray-400 cursor-not-allowed hover:bg-gray-400"
-              : "bg-emerald-600 hover:bg-emerald-700"
+              : "bg-primary hover:bg-primary/90"
           }`}
           size="lg"
         >
@@ -264,7 +264,7 @@ export default function InteractionCheckerPage() {
         {/* Profile note — hidden while auth is loading */}
         {!authLoading && !isAuthenticated && !redFlagCheck.isEmergency && (
           <p className="text-center text-xs text-muted-foreground">
-            💡 <a href="/auth/login" className="text-emerald-600 underline hover:text-emerald-700">Sign in</a>{" "}
+            💡 <a href="/auth/login" className="text-primary underline hover:text-primary/80">Sign in</a>{" "}
             to get personalized safety checks based on your health profile (pregnancy, allergies, kidney/liver conditions).
           </p>
         )}
@@ -282,13 +282,13 @@ export default function InteractionCheckerPage() {
               <button
                 key={i}
                 onClick={() => loadExample(example)}
-                className="group flex items-center gap-3 rounded-lg border bg-card p-3 text-left text-sm transition-all hover:border-emerald-300 hover:shadow-sm dark:hover:border-emerald-700"
+                className="group flex items-center gap-3 rounded-lg border bg-card p-3 text-left text-sm transition-all hover:border-primary/30 hover:shadow-sm"
               >
-                <div className="rounded-md bg-emerald-50 p-1.5 dark:bg-emerald-950">
-                  <Pill className="h-4 w-4 text-emerald-600" />
+                <div className="rounded-md bg-primary/10 p-1.5">
+                  <Pill className="h-4 w-4 text-primary" />
                 </div>
                 <div className="flex-1">
-                  <span className="font-medium group-hover:text-emerald-700 dark:group-hover:text-emerald-400">
+                  <span className="font-medium group-hover:text-primary">
                     {example.label}
                   </span>
                   <p className="text-xs text-muted-foreground">
@@ -305,7 +305,7 @@ export default function InteractionCheckerPage() {
       {/* Loading State */}
       {isLoading && (
         <div className="flex flex-col items-center justify-center rounded-xl border bg-card p-12">
-          <Loader2 className="mb-4 h-10 w-10 animate-spin text-emerald-600" />
+          <Loader2 className="mb-4 h-10 w-10 animate-spin text-primary" />
           <h3 className="mb-2 text-lg font-semibold">Analyzing Interactions...</h3>
           <div className="space-y-1 text-center text-sm text-muted-foreground">
             <p>🔍 Looking up your medications in FDA database</p>

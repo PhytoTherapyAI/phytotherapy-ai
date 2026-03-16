@@ -58,7 +58,7 @@ export function MedicationUpdateDialog() {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Pill className="h-5 w-5 text-emerald-600" />
+            <Pill className="h-5 w-5 text-primary" />
             Medication Check-In
           </DialogTitle>
           <DialogDescription>
@@ -78,7 +78,7 @@ export function MedicationUpdateDialog() {
           </Button>
           <Button
             onClick={handleUpdate}
-            className="gap-2 bg-emerald-600 hover:bg-emerald-700"
+            className="gap-2 bg-primary hover:bg-primary/90"
           >
             Update my medications
           </Button>

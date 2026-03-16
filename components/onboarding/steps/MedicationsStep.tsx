@@ -76,7 +76,7 @@ export function MedicationsStep({ data, updateData }: Props) {
                   className="flex items-center justify-between rounded-lg border p-3"
                 >
                   <div className="flex items-center gap-3">
-                    <Pill className="h-4 w-4 text-emerald-600" />
+                    <Pill className="h-4 w-4 text-primary" />
                     <div>
                       <p className="font-medium">
                         {med.brand_name || med.generic_name}

@@ -120,7 +120,7 @@ export function ConversationHistory({ onSelectConversation }: ConversationHistor
             {/* Header */}
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div className="flex items-center gap-2">
-                <History className="h-4 w-4 text-emerald-600" />
+                <History className="h-4 w-4 text-primary" />
                 <h3 className="font-semibold">Conversation History</h3>
               </div>
               <Button

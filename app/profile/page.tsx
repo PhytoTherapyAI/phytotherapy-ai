@@ -50,14 +50,14 @@ export default function ProfilePage() {
   if (isLoading || !profile) {
     return (
       <div className="flex min-h-[calc(100vh-12rem)] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="mb-6 text-3xl font-bold">Profile Settings</h1>
+      <h1 className="font-heading mb-6 text-3xl font-semibold">Profile Settings</h1>
 
       {/* Personal Info */}
       <Card className="mb-6">

@@ -42,12 +42,12 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        {/* Logo */}
+        {/* Logo — Phyto=foreground, therapy=gold, .ai=green */}
         <Link href="/" className="flex items-center gap-2">
-          <Leaf className="h-5 w-5 text-primary" />
+          <Leaf className="h-5 w-5 text-gold" />
           <span className="font-heading text-xl font-semibold tracking-tight">
-            Phyto<span className="text-primary">therapy</span>
-            <span className="text-muted-foreground">.ai</span>
+            Phyto<span className="text-gold">therapy</span>
+            <span className="text-primary">.ai</span>
           </span>
         </Link>
 

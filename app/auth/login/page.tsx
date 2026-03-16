@@ -17,7 +17,7 @@ export default function LoginPage() {
   return (
     <Suspense fallback={
       <div className="flex min-h-[calc(100vh-12rem)] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     }>
       <LoginContent />
@@ -183,9 +183,9 @@ function LoginContent() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-2 flex items-center gap-2">
-            <Leaf className="h-6 w-6 text-emerald-600" />
+            <Leaf className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">
-              Phyto<span className="text-emerald-600">therapy</span>.ai
+              Phyto<span className="text-primary">therapy</span>.ai
             </span>
           </div>
           <CardTitle className="text-2xl">Welcome</CardTitle>
@@ -203,7 +203,7 @@ function LoginContent() {
           )}
 
           {successMessage && (
-            <Alert className="mb-4 border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-200">
+            <Alert className="mb-4 border-primary/20 bg-primary/10 text-primary">
               <CheckCircle2 className="h-4 w-4" />
               <AlertDescription>{successMessage}</AlertDescription>
             </Alert>
@@ -294,7 +294,7 @@ function LoginContent() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                   {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
@@ -375,7 +375,7 @@ function LoginContent() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                   {isLoading ? "Creating account..." : "Create Account"}
                 </Button>
 

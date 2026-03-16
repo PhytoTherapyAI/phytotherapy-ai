@@ -16,7 +16,7 @@ export function ConsentStep({ data, updateData }: Props) {
       {/* Medical Disclaimer */}
       <div className="rounded-lg border bg-muted/30 p-4">
         <div className="mb-3 flex items-center gap-2">
-          <Shield className="h-5 w-5 text-emerald-600" />
+          <Shield className="h-5 w-5 text-primary" />
           <h3 className="font-semibold">Medical Disclaimer</h3>
         </div>
         <div className="space-y-3 text-sm text-muted-foreground">
@@ -48,7 +48,7 @@ export function ConsentStep({ data, updateData }: Props) {
       {/* Data Privacy Summary */}
       <div className="rounded-lg border bg-muted/30 p-4">
         <div className="mb-3 flex items-center gap-2">
-          <FileText className="h-5 w-5 text-emerald-600" />
+          <FileText className="h-5 w-5 text-primary" />
           <h3 className="font-semibold">Data Privacy</h3>
         </div>
         <div className="space-y-2 text-sm text-muted-foreground">
@@ -63,7 +63,7 @@ export function ConsentStep({ data, updateData }: Props) {
       </div>
 
       {/* Consent Checkbox */}
-      <div className="rounded-lg border-2 border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950">
+      <div className="rounded-lg border-2 border-primary/20 bg-primary/10 p-4">
         <div className="flex items-start space-x-3">
           <Checkbox
             id="consent"

@@ -27,12 +27,12 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       <div
         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
           isUser
-            ? "bg-emerald-100 dark:bg-emerald-900"
-            : "bg-emerald-600"
+            ? "bg-primary/10"
+            : "bg-primary"
         }`}
       >
         {isUser ? (
-          <User className="h-4 w-4 text-emerald-700 dark:text-emerald-300" />
+          <User className="h-4 w-4 text-primary" />
         ) : (
           <Leaf className="h-4 w-4 text-white" />
         )}
@@ -42,7 +42,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-3 ${
           isUser
-            ? "bg-emerald-600 text-white"
+            ? "bg-primary text-white"
             : "border bg-card"
         }`}
       >
@@ -51,7 +51,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           <div className="mb-2 flex flex-wrap gap-2">
             {message.attachments.map((att, i) => (
               <div key={i} className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-xs ${
-                isUser ? "bg-emerald-700/50" : "bg-muted"
+                isUser ? "bg-primary/70" : "bg-muted"
               }`}>
                 {att.type === "pdf" ? (
                   <FileText className="h-3.5 w-3.5" />
@@ -76,7 +76,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             className={`prose prose-sm max-w-none ${
               isUser
                 ? "prose-invert"
-                : "prose-emerald dark:prose-invert"
+                : "dark:prose-invert"
             }`}
           >
             <FormattedContent content={message.content} />
@@ -84,7 +84,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         )}
 
         {message.isStreaming && message.content !== "" && (
-          <span className="ml-1 inline-block h-4 w-1 animate-pulse rounded-full bg-emerald-500" />
+          <span className="ml-1 inline-block h-4 w-1 animate-pulse rounded-full bg-primary" />
         )}
       </div>
     </div>
@@ -114,7 +114,7 @@ function FormattedContent({ content }: { content: string }) {
         if (line.match(/^[-•*]\s/))
           return (
             <div key={i} className="flex gap-2 pl-1">
-              <span className="mt-1 text-emerald-500">•</span>
+              <span className="mt-1 text-primary">•</span>
               <span className="text-sm">{formatInline(line.replace(/^[-•*]\s/, ""))}</span>
             </div>
           );
@@ -124,7 +124,7 @@ function FormattedContent({ content }: { content: string }) {
         if (numMatch)
           return (
             <div key={i} className="flex gap-2 pl-1">
-              <span className="mt-0 min-w-[1.25rem] text-sm font-medium text-emerald-600">{numMatch[1]}.</span>
+              <span className="mt-0 min-w-[1.25rem] text-sm font-medium text-primary">{numMatch[1]}.</span>
               <span className="text-sm">{formatInline(line.replace(/^\d+[.)]\s/, ""))}</span>
             </div>
           );
@@ -169,7 +169,7 @@ function formatInline(text: string): React.ReactNode {
           href={linkMatch[2]}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-emerald-600 underline hover:text-emerald-700"
+          className="text-primary underline hover:text-primary/80"
         >
           {linkMatch[1]}
         </a>

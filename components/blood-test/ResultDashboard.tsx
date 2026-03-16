@@ -106,7 +106,7 @@ export function ResultDashboard({
       {/* Score Overview */}
       <div className="grid gap-4 sm:grid-cols-3">
         <ScoreCard
-          icon={<CheckCircle2 className="h-5 w-5 text-emerald-600" />}
+          icon={<CheckCircle2 className="h-5 w-5 text-primary" />}
           label="Optimal"
           value={optimalCount}
           total={totalMarkers}
@@ -223,7 +223,7 @@ export function ResultDashboard({
                         href={src.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs text-emerald-600 hover:underline"
+                        className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
                       >
                         <BookOpen className="h-3 w-3" />
                         {src.title ? `${src.title.substring(0, 50)}...` : `PubMed (${src.year})`}
@@ -275,18 +275,18 @@ export function ResultDashboard({
           </div>
 
           {/* Download PDF */}
-          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950">
-            <h4 className="mb-2 font-semibold text-emerald-800 dark:text-emerald-200">
+          <div className="rounded-lg border border-primary/20 bg-primary/10 p-4">
+            <h4 className="mb-2 font-semibold text-primary">
               Doctor Bridge — PDF Report
             </h4>
-            <p className="mb-3 text-sm text-emerald-700 dark:text-emerald-300">
+            <p className="mb-3 text-sm text-primary">
               Download a professional PDF report to share with your healthcare provider. It includes
               all test results, recommendations, and PubMed sources in a medical-friendly format.
             </p>
             <Button
               onClick={handleDownloadPdf}
               disabled={isPdfLoading}
-              className="gap-2 bg-emerald-600 hover:bg-emerald-700"
+              className="gap-2 bg-primary hover:bg-primary/90"
             >
               {isPdfLoading ? (
                 <>
@@ -349,8 +349,8 @@ function ScoreCard({
 function StatusBadge({ status, label }: { status: string; label: string }) {
   const config: Record<string, { bg: string; text: string; icon: React.ReactNode }> = {
     optimal: {
-      bg: "bg-emerald-100 dark:bg-emerald-900",
-      text: "text-emerald-700 dark:text-emerald-300",
+      bg: "bg-primary/10",
+      text: "text-primary",
       icon: <CheckCircle2 className="h-3 w-3" />,
     },
     borderline_low: {
@@ -389,7 +389,7 @@ function StatusBadge({ status, label }: { status: string; label: string }) {
 
 function EvidenceBadge({ grade }: { grade: string }) {
   const colors: Record<string, string> = {
-    A: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300",
+    A: "bg-primary/10 text-primary",
     B: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
     C: "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
   };

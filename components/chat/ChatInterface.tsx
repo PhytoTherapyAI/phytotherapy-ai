@@ -344,8 +344,8 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
       >
         {messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center text-center">
-            <div className="mb-4 rounded-full bg-emerald-100 p-4 dark:bg-emerald-900">
-              <svg className="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="mb-4 rounded-full bg-primary/10 p-4">
+              <svg className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
               </svg>
             </div>
@@ -371,7 +371,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
                 ? `${remaining} free ${remaining === 1 ? "query" : "queries"} remaining`
                 : "Free queries used up"}
             </span>
-            <a href="/auth/login" className="text-emerald-600 hover:underline">
+            <a href="/auth/login" className="text-primary hover:underline">
               Sign up for unlimited
             </a>
           </div>
@@ -442,7 +442,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
               size="icon"
               onClick={() => fileInputRef.current?.click()}
               disabled={isStreaming}
-              className="h-11 w-11 text-muted-foreground hover:text-emerald-600"
+              className="h-11 w-11 text-muted-foreground hover:text-primary"
               title="Attach file (PDF, JPG, PNG)"
             >
               <Paperclip className="h-4 w-4" />
@@ -453,7 +453,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
               size="icon"
               onClick={() => cameraInputRef.current?.click()}
               disabled={isStreaming}
-              className="h-11 w-11 text-muted-foreground hover:text-emerald-600"
+              className="h-11 w-11 text-muted-foreground hover:text-primary"
               title="Take photo"
             >
               <Camera className="h-4 w-4" />
@@ -471,7 +471,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
               : "Ask a health question (e.g., 'Does omega-3 reduce inflammation?')"
             }
             rows={1}
-            className="max-h-[150px] min-h-[44px] flex-1 resize-none rounded-lg border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+            className="max-h-[150px] min-h-[44px] flex-1 resize-none rounded-lg border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
           />
           <div className="flex gap-1">
             {messages.length > 0 && !isStreaming && (
@@ -488,7 +488,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
             <Button
               onClick={sendMessage}
               disabled={isStreaming || (!input.trim() && attachedFiles.length === 0)}
-              className="h-11 w-11 bg-emerald-600 hover:bg-emerald-700"
+              className="h-11 w-11 bg-primary hover:bg-primary/90"
               size="icon"
             >
               {isStreaming ? (

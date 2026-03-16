@@ -297,9 +297,9 @@ export function OnboardingWizard({ profile }: Props) {
       {/* Header */}
       <div className="text-center">
         <div className="mx-auto mb-3 flex items-center justify-center gap-2">
-          <Leaf className="h-6 w-6 text-emerald-600" />
+          <Leaf className="h-6 w-6 text-primary" />
           <span className="text-lg font-bold">
-            Phyto<span className="text-emerald-600">therapy</span>.ai
+            Phyto<span className="text-primary">therapy</span>.ai
           </span>
         </div>
         <h1 className="text-2xl font-bold">Set Up Your Health Profile</h1>
@@ -360,7 +360,7 @@ export function OnboardingWizard({ profile }: Props) {
           <Button
             onClick={handleNext}
             disabled={!canProceed() || isSubmitting}
-            className="bg-emerald-600 hover:bg-emerald-700"
+            className="bg-primary hover:bg-primary/90"
           >
             {isSubmitting ? (
               "Saving..."
