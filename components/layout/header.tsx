@@ -66,14 +66,15 @@ export function Header() {
           ) : isAuthenticated ? (
             <div className="relative" ref={userMenuRef}>
               <button
+                type="button"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-medium text-emerald-700 transition-colors hover:bg-emerald-200"
+                className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-medium text-emerald-700 transition-colors hover:bg-emerald-200 cursor-pointer"
               >
                 {initials}
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-lg border bg-background shadow-lg">
+                <div className="absolute right-0 top-full z-[100] mt-2 w-56 rounded-lg border bg-background shadow-lg">
                   <div className="border-b p-3">
                     {profile?.full_name && (
                       <p className="text-sm font-medium">{profile.full_name}</p>

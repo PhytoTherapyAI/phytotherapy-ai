@@ -44,7 +44,7 @@ const EXAMPLE_QUERIES = [
 ];
 
 export default function InteractionCheckerPage() {
-  const { isAuthenticated, session } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, session } = useAuth();
   const [medications, setMedications] = useState<string[]>([]);
   const [concern, setConcern] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -261,8 +261,8 @@ export default function InteractionCheckerPage() {
           )}
         </Button>
 
-        {/* Profile note */}
-        {!isAuthenticated && !redFlagCheck.isEmergency && (
+        {/* Profile note — hidden while auth is loading */}
+        {!authLoading && !isAuthenticated && !redFlagCheck.isEmergency && (
           <p className="text-center text-xs text-muted-foreground">
             💡 <a href="/auth/login" className="text-emerald-600 underline hover:text-emerald-700">Sign in</a>{" "}
             to get personalized safety checks based on your health profile (pregnancy, allergies, kidney/liver conditions).
