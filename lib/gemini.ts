@@ -4,7 +4,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function askGemini(prompt: string, systemPrompt: string) {
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     generationConfig: {
       temperature: 0,
@@ -22,7 +22,7 @@ export async function askGemini(prompt: string, systemPrompt: string) {
  */
 export async function askGeminiJSON(prompt: string, systemPrompt: string) {
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     generationConfig: {
       temperature: 0,
@@ -37,7 +37,7 @@ export async function askGeminiJSON(prompt: string, systemPrompt: string) {
 
 export async function askGeminiStream(prompt: string, systemPrompt: string) {
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     generationConfig: {
       temperature: 0,
@@ -64,7 +64,7 @@ export async function askGeminiStreamMultimodal(
   files: GeminiFilePart[]
 ) {
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.0-flash",
     systemInstruction: systemPrompt,
     generationConfig: {
       temperature: 0,

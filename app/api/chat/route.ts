@@ -175,9 +175,40 @@ This rule exists because giving dosage advice without knowing the user's medicat
     }
 
     // Use multimodal streaming if files are present, otherwise standard text streaming
-    const stream = geminiFiles.length > 0
-      ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles)
-      : await askGeminiStream(fullPrompt, systemPromptFull);
+    let stream;
+    try {
+      stream = geminiFiles.length > 0
+        ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles)
+        : await askGeminiStream(fullPrompt, systemPromptFull);
+    } catch (geminiError) {
+      // Gemini call failed (rate limit, API key, network, etc.)
+      // Return a streaming response with the error message instead of a 500
+      console.error("Gemini API call failed:", geminiError);
+      const errMsg = geminiError instanceof Error ? geminiError.message : "Unknown error";
+
+      let userMessage: string;
+      if (errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("rate")) {
+        userMessage = "⚠️ Our AI service is experiencing high demand right now. Please wait a moment and try again.\n\nIn the meantime, you can browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research.";
+      } else if (errMsg.includes("SAFETY") || errMsg.includes("blocked")) {
+        userMessage = "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice.";
+      } else {
+        userMessage = "⚠️ An error occurred while connecting to our AI service. Please try again in a few moments.";
+      }
+
+      const fallbackStream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(new TextEncoder().encode(userMessage));
+          controller.close();
+        },
+      });
+      return new Response(fallbackStream, {
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Transfer-Encoding": "chunked",
+          "Cache-Control": "no-cache",
+        },
+      });
+    }
 
     // Convert Gemini stream to web ReadableStream
     const encoder = new TextEncoder();
@@ -186,23 +217,27 @@ This rule exists because giving dosage advice without knowing the user's medicat
         try {
           let fullResponse = "";
           for await (const chunk of stream) {
-            const text = chunk.text();
-            if (text) {
-              fullResponse += text;
-              controller.enqueue(encoder.encode(text));
+            try {
+              const text = chunk.text();
+              if (text) {
+                fullResponse += text;
+                controller.enqueue(encoder.encode(text));
+              }
+            } catch {
+              // chunk.text() can throw if no text content — skip
             }
           }
           controller.close();
 
           // Save query + response to history (fire and forget)
-          if (userId) {
+          if (userId && fullResponse.length > 0) {
             try {
               const supabase = createServerClient();
               await supabase.from("query_history").insert({
                 user_id: userId,
                 query_text: message,
                 query_type: "general" as const,
-                response_text: fullResponse.substring(0, 10000), // cap at 10k chars
+                response_text: fullResponse.substring(0, 10000),
               });
             } catch {
               // Non-critical — don't fail the response
@@ -211,11 +246,12 @@ This rule exists because giving dosage advice without knowing the user's medicat
         } catch (error) {
           console.error("Stream error:", error);
           const errMsg = error instanceof Error ? error.message : "";
-          // If Gemini safety filter or content policy blocked the request, show friendly message
           if (errMsg.includes("SAFETY") || errMsg.includes("blocked") || errMsg.includes("RECITATION") || errMsg.includes("content policy")) {
             controller.enqueue(encoder.encode(
               "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice."
             ));
+          } else if (errMsg.includes("429") || errMsg.includes("quota")) {
+            controller.enqueue(encoder.encode("⚠️ Our AI service is experiencing high demand. Please wait a moment and try again."));
           } else {
             controller.enqueue(encoder.encode("\n\n⚠️ An error occurred while generating the response. Please try again."));
           }
@@ -232,11 +268,23 @@ This rule exists because giving dosage advice without knowing the user's medicat
       },
     });
   } catch (error) {
-    console.error("Chat API error:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to process your question. Please try again." }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    // This should rarely be reached now — only for truly unexpected errors
+    console.error("Chat API unexpected error:", error);
+    // Return a streaming text response instead of JSON 500 to avoid "Something went wrong"
+    const errorStream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode(
+          "⚠️ An unexpected error occurred. Please refresh the page and try again."
+        ));
+        controller.close();
+      },
+    });
+    return new Response(errorStream, {
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Transfer-Encoding": "chunked",
+      },
+    });
   }
 }
 

@@ -300,7 +300,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
           m.id === assistantId
             ? {
                 ...m,
-                content: "⚠️ Something went wrong. Please try again.",
+                content: "⚠️ Could not connect to the server. Please check your internet connection and try again.",
                 isStreaming: false,
               }
             : m
