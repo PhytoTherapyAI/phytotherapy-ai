@@ -1,20 +1,30 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans, DM_Mono } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { DisclaimerBanner } from "@/components/layout/disclaimer-banner";
 import { AuthProvider } from "@/lib/auth-context";
+import { ThemeProvider } from "@/components/layout/theme-provider";
 import { MedicationUpdateDialog } from "@/components/layout/medication-update-dialog";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-heading",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dmSans = DM_Sans({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const dmMono = DM_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -36,17 +46,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${cormorant.variable} ${dmSans.variable} ${dmMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <DisclaimerBanner />
-          <Header />
-          <main className="min-h-[calc(100vh-12rem)]">{children}</main>
-          <Footer />
-          <MedicationUpdateDialog />
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <DisclaimerBanner />
+            <Header />
+            <main className="min-h-[calc(100vh-12rem)]">{children}</main>
+            <Footer />
+            <MedicationUpdateDialog />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

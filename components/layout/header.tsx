@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Leaf, Menu, X, LogIn, User, LogOut, Settings } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -17,9 +18,6 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, isLoading, user, profile, signOut } = useAuth();
-
-  // Debug logging — remove after auth is stable
-  console.log("[Header] Auth state:", { isLoading, isAuthenticated, user: user?.email ?? null, profile: profile?.full_name ?? null });
 
   const initials = profile?.full_name
     ? profile.full_name
@@ -44,14 +42,16 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <Leaf className="h-6 w-6 text-emerald-600" />
-          <span className="text-xl font-bold">
-            Phyto<span className="text-emerald-600">therapy</span>.ai
+          <Leaf className="h-5 w-5 text-primary" />
+          <span className="font-heading text-xl font-semibold tracking-tight">
+            Phyto<span className="text-primary">therapy</span>
+            <span className="text-muted-foreground">.ai</span>
           </span>
         </Link>
 
-        {/* Desktop nav */}
+        {/* Desktop nav — center links */}
         <nav className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
             <Link
@@ -62,8 +62,12 @@ export function Header() {
               {link.label}
             </Link>
           ))}
+        </nav>
 
-          {/* Auth section — show nothing while loading to prevent flash */}
+        {/* Desktop right — auth + theme toggle */}
+        <div className="hidden items-center gap-3 md:flex">
+          <ThemeToggle />
+
           {isLoading ? (
             <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
           ) : isAuthenticated ? (
@@ -71,7 +75,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-xs font-medium text-emerald-700 transition-colors hover:bg-emerald-200 cursor-pointer"
+                className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary transition-colors hover:bg-primary/20 cursor-pointer"
               >
                 {initials}
               </button>
@@ -111,22 +115,24 @@ export function Header() {
             </div>
           ) : (
             <Link href="/auth/login">
-              <Button size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700">
+              <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90">
                 <LogIn className="h-4 w-4" />
-                Sign In
+                Get Started
               </Button>
             </Link>
           )}
-        </nav>
+        </div>
 
-        {/* Mobile toggle */}
-        <button
-          className="md:hidden"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        {/* Mobile right — theme toggle + hamburger */}
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile nav */}
@@ -149,7 +155,7 @@ export function Header() {
             ) : isAuthenticated ? (
               <>
                 <div className="flex items-center gap-2 py-2">
-                  <User className="h-4 w-4 text-emerald-600" />
+                  <User className="h-4 w-4 text-primary" />
                   <span className="text-sm">{profile?.full_name || user?.email}</span>
                 </div>
                 <Link
@@ -172,7 +178,7 @@ export function Header() {
             ) : (
               <Link
                 href="/auth/login"
-                className="block py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700"
+                className="block py-2 text-sm font-medium text-primary hover:text-primary/80"
                 onClick={() => setMobileOpen(false)}
               >
                 Sign In / Sign Up
