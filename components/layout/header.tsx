@@ -60,8 +60,10 @@ export function Header() {
             </Link>
           ))}
 
-          {/* Auth section — always show Sign In, even while loading */}
-          {isAuthenticated && !isLoading ? (
+          {/* Auth section — show nothing while loading to prevent flash */}
+          {isLoading ? (
+            <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+          ) : isAuthenticated ? (
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -104,14 +106,12 @@ export function Header() {
               )}
             </div>
           ) : (
-            !isAuthenticated && (
-              <Link href="/auth/login">
-                <Button size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700">
-                  <LogIn className="h-4 w-4" />
-                  Sign In
-                </Button>
-              </Link>
-            )
+            <Link href="/auth/login">
+              <Button size="sm" className="gap-2 bg-emerald-600 hover:bg-emerald-700">
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </Button>
+            </Link>
           )}
         </nav>
 
@@ -140,7 +140,9 @@ export function Header() {
           ))}
 
           <div className="mt-2 border-t pt-2">
-            {isAuthenticated && !isLoading ? (
+            {isLoading ? (
+              <div className="h-6 w-24 animate-pulse rounded bg-muted" />
+            ) : isAuthenticated ? (
               <>
                 <div className="flex items-center gap-2 py-2">
                   <User className="h-4 w-4 text-emerald-600" />
@@ -164,15 +166,13 @@ export function Header() {
                 </button>
               </>
             ) : (
-              !isAuthenticated && (
-                <Link
-                  href="/auth/login"
-                  className="block py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Sign In / Sign Up
-                </Link>
-              )
+              <Link
+                href="/auth/login"
+                className="block py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700"
+                onClick={() => setMobileOpen(false)}
+              >
+                Sign In / Sign Up
+              </Link>
             )}
           </div>
         </nav>
