@@ -5,6 +5,7 @@ import { Leaf, Menu, X, LogIn, User, LogOut, Settings } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { LanguageToggle } from "@/components/layout/language-toggle";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
@@ -66,6 +67,7 @@ export function Header() {
 
         {/* Desktop right — auth + theme toggle */}
         <div className="hidden items-center gap-3 md:flex">
+          <LanguageToggle />
           <ThemeToggle />
 
           {isLoading ? (
@@ -125,6 +127,7 @@ export function Header() {
 
         {/* Mobile right — theme toggle + hamburger */}
         <div className="flex items-center gap-2 md:hidden">
+          <LanguageToggle />
           <ThemeToggle />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}

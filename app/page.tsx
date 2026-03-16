@@ -81,18 +81,6 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl flex-col-reverse items-center gap-8 px-4 py-12 md:flex-row md:gap-12 md:py-20">
           {/* Left — text + search */}
           <div className="flex-1 text-center md:text-left">
-            {/* Eyebrow badges */}
-            <div className="mb-6 flex flex-wrap justify-center gap-2 md:justify-start">
-              {["Science", "Species", "Wiki"].map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-primary"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-
             {/* Main heading */}
             <h1 className="font-heading text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               Science meets{" "}

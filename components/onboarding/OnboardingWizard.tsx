@@ -302,7 +302,7 @@ export function OnboardingWizard({ profile }: Props) {
             Phyto<span className="text-primary">therapy</span>.ai
           </span>
         </div>
-        <h1 className="text-2xl font-bold">Set Up Your Health Profile</h1>
+        <h1 className="font-heading text-2xl font-bold">Set Up Your Health Profile</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           This helps us give you safe, personalized recommendations
         </p>
