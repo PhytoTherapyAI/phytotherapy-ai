@@ -1,27 +1,27 @@
-"use client";
-
-import { useState, useEffect } from "react";
+'use client'
+import { useState, useEffect } from 'react'
 
 export function LanguageToggle() {
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState<'en' | 'tr'>('en')
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setLang(localStorage.getItem("lang") || "en");
-  }, []);
+    setMounted(true)
+    const saved = localStorage.getItem('lang') as 'en' | 'tr'
+    if (saved) setLang(saved)
+  }, [])
+
+  if (!mounted) return null
+
+  const toggle = () => {
+    const next = lang === 'en' ? 'tr' : 'en'
+    setLang(next)
+    localStorage.setItem('lang', next)
+  }
 
   return (
-    <button
-      type="button"
-      onClick={() => {
-        const next = lang === "en" ? "tr" : "en";
-        setLang(next);
-        localStorage.setItem("lang", next);
-      }}
-      className="flex h-8 cursor-pointer items-center gap-1.5 rounded-full px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-      aria-label={lang === "en" ? "Switch to Turkish" : "Switch to English"}
-      suppressHydrationWarning
-    >
-      {lang === "tr" ? "🇹🇷 TR" : "🇺🇸 EN"}
+    <button onClick={toggle} className="text-sm font-medium">
+      {lang === 'en' ? '🇺🇸 EN' : '🇹🇷 TR'}
     </button>
-  );
+  )
 }
