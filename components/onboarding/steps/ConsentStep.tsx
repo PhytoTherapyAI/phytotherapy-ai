@@ -3,6 +3,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Shield, FileText } from "lucide-react";
+import { useLang } from "@/components/layout/language-toggle";
 import type { OnboardingData } from "../OnboardingWizard";
 
 interface Props {
@@ -11,37 +12,69 @@ interface Props {
 }
 
 export function ConsentStep({ data, updateData }: Props) {
+  const { lang } = useLang();
+  const tr = lang === "tr";
+
   return (
     <div className="space-y-6">
       {/* Medical Disclaimer */}
       <div className="rounded-lg border bg-muted/30 p-4">
         <div className="mb-3 flex items-center gap-2">
           <Shield className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold">Medical Disclaimer</h3>
+          <h3 className="font-semibold">{tr ? "Tıbbi Sorumluluk Reddi" : "Medical Disclaimer"}</h3>
         </div>
         <div className="space-y-3 text-sm text-muted-foreground">
-          <p>
-            Phytotherapy.ai is a <strong>wellness and decision-support tool</strong>, not a medical device.
-            It does not diagnose, treat, cure, or prevent any disease.
-          </p>
-          <p>
-            All recommendations are based on published scientific literature (PubMed, NIH, WHO) and
-            are provided for <strong>informational purposes only</strong>.
-          </p>
-          <p>
-            <strong>You must consult your healthcare provider</strong> before starting, stopping, or
-            changing any medication, supplement, or herbal product. This is especially important if you:
-          </p>
-          <ul className="ml-4 list-disc space-y-1">
-            <li>Take prescription medications</li>
-            <li>Have chronic health conditions</li>
-            <li>Are pregnant, breastfeeding, or planning pregnancy</li>
-            <li>Are scheduled for surgery</li>
-          </ul>
-          <p>
-            Phytotherapy.ai and its developers are <strong>not liable</strong> for any health outcomes
-            resulting from the use of information provided by this service.
-          </p>
+          {tr ? (
+            <>
+              <p>
+                Phytotherapy.ai bir <strong>sağlık ve karar destek aracıdır</strong>, tıbbi cihaz değildir.
+                Herhangi bir hastalığı teşhis etmez, tedavi etmez, iyileştirmez veya önlemez.
+              </p>
+              <p>
+                Tüm öneriler yayınlanmış bilimsel literatüre (PubMed, NIH, WHO) dayanır ve
+                yalnızca <strong>bilgilendirme amaçlıdır</strong>.
+              </p>
+              <p>
+                Herhangi bir ilaç, takviye veya bitkisel ürünü başlatmadan, durdurmadan veya değiştirmeden
+                önce <strong>sağlık uzmanınıza danışmalısınız</strong>. Bu özellikle şu durumlarda önemlidir:
+              </p>
+              <ul className="ml-4 list-disc space-y-1">
+                <li>Reçeteli ilaç kullanıyorsanız</li>
+                <li>Kronik sağlık sorunlarınız varsa</li>
+                <li>Hamile, emziren veya hamilelik planlıyorsanız</li>
+                <li>Ameliyat planlanıyorsa</li>
+              </ul>
+              <p>
+                Phytotherapy.ai ve geliştiricileri, bu hizmet tarafından sağlanan bilgilerin kullanımından
+                kaynaklanan herhangi bir sağlık sonucundan <strong>sorumlu değildir</strong>.
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                Phytotherapy.ai is a <strong>wellness and decision-support tool</strong>, not a medical device.
+                It does not diagnose, treat, cure, or prevent any disease.
+              </p>
+              <p>
+                All recommendations are based on published scientific literature (PubMed, NIH, WHO) and
+                are provided for <strong>informational purposes only</strong>.
+              </p>
+              <p>
+                <strong>You must consult your healthcare provider</strong> before starting, stopping, or
+                changing any medication, supplement, or herbal product. This is especially important if you:
+              </p>
+              <ul className="ml-4 list-disc space-y-1">
+                <li>Take prescription medications</li>
+                <li>Have chronic health conditions</li>
+                <li>Are pregnant, breastfeeding, or planning pregnancy</li>
+                <li>Are scheduled for surgery</li>
+              </ul>
+              <p>
+                Phytotherapy.ai and its developers are <strong>not liable</strong> for any health outcomes
+                resulting from the use of information provided by this service.
+              </p>
+            </>
+          )}
         </div>
       </div>
 
@@ -49,15 +82,26 @@ export function ConsentStep({ data, updateData }: Props) {
       <div className="rounded-lg border bg-muted/30 p-4">
         <div className="mb-3 flex items-center gap-2">
           <FileText className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold">Data Privacy</h3>
+          <h3 className="font-semibold">{tr ? "Veri Gizliliği" : "Data Privacy"}</h3>
         </div>
         <div className="space-y-2 text-sm text-muted-foreground">
-          <p>Your health data is:</p>
+          <p>{tr ? "Sağlık verileriniz:" : "Your health data is:"}</p>
           <ul className="ml-4 list-disc space-y-1">
-            <li>Encrypted and stored securely on Supabase servers</li>
-            <li>Only accessible by you — never shared with third parties</li>
-            <li>Deletable at any time via your profile settings</li>
-            <li>Retained for a maximum of 2 years</li>
+            {tr ? (
+              <>
+                <li>Supabase sunucularında şifrelenmiş ve güvenli olarak saklanır</li>
+                <li>Yalnızca sizin erişebileceğiniz — üçüncü taraflarla paylaşılmaz</li>
+                <li>Profil ayarlarınızdan istediğiniz zaman silinebilir</li>
+                <li>En fazla 2 yıl saklanır</li>
+              </>
+            ) : (
+              <>
+                <li>Encrypted and stored securely on Supabase servers</li>
+                <li>Only accessible by you — never shared with third parties</li>
+                <li>Deletable at any time via your profile settings</li>
+                <li>Retained for a maximum of 2 years</li>
+              </>
+            )}
           </ul>
         </div>
       </div>
@@ -72,9 +116,9 @@ export function ConsentStep({ data, updateData }: Props) {
             className="mt-1"
           />
           <Label htmlFor="consent" className="text-sm font-normal leading-relaxed">
-            I have read and understood the Medical Disclaimer and Data Privacy notice above.
-            I understand that Phytotherapy.ai is not a substitute for professional medical advice,
-            and I will consult my healthcare provider before acting on any recommendations.
+            {tr
+              ? "Yukarıdaki Tıbbi Sorumluluk Reddi ve Veri Gizliliği bildirimini okudum ve anladım. Phytotherapy.ai'nin profesyonel tıbbi tavsiyenin yerini almadığını anlıyorum ve herhangi bir öneriyi uygulamadan önce sağlık uzmanıma danışacağım."
+              : "I have read and understood the Medical Disclaimer and Data Privacy notice above. I understand that Phytotherapy.ai is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations."}
           </Label>
         </div>
       </div>

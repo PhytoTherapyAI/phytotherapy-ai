@@ -1,0 +1,94 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { searchTurkishDrugs } from '@/lib/turkish-drugs'
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+export async function GET(req: NextRequest) {
+  const q = req.nextUrl.searchParams.get('q') || ''
+  if (q.length < 2) return NextResponse.json([])
+
+  const results: any[] = []
+  const seen = new Set<string>()
+
+  const addResult = (r: any) => {
+    const key = r.brandName.toLowerCase()
+    if (!seen.has(key) && r.brandName.length > 1) {
+      seen.add(key)
+      results.push(r)
+    }
+  }
+
+  // 1. TİTCK local list
+  const local = searchTurkishDrugs(q)
+  local.forEach(addResult)
+  if (results.length >= 8) return NextResponse.json(results.slice(0, 8))
+
+  // 2. RxNorm (NIH — global)
+  try {
+    const rx = await fetch(
+      `https://rxnav.nlm.nih.gov/REST/drugs.json?name=${encodeURIComponent(q)}`,
+      { signal: AbortSignal.timeout(3000) }
+    )
+    if (rx.ok) {
+      const rxData = await rx.json()
+      ;(rxData.drugGroup?.conceptGroup || [])
+        .flatMap((g: any) => g.conceptProperties || [])
+        .filter((p: any) => p.name)
+        .forEach((p: any) => addResult({
+          brandName: p.name,
+          genericName: p.synonym || p.name,
+          fullName: p.name,
+          company: '',
+          atc: '',
+          source: 'rxnorm',
+        }))
+    }
+  } catch { /* RxNorm timeout — continue */ }
+  if (results.length >= 8) return NextResponse.json(results.slice(0, 8))
+
+  // 3. OpenFDA
+  try {
+    const fda = await fetch(
+      `https://api.fda.gov/drug/label.json?search=openfda.brand_name:${encodeURIComponent(q)}*&limit=8`,
+      { signal: AbortSignal.timeout(3000) }
+    )
+    if (fda.ok) {
+      const fdaData = await fda.json()
+      ;(fdaData.results || []).forEach((r: any) => {
+        const brandName = r.openfda?.brand_name?.[0]
+        if (brandName) addResult({
+          brandName,
+          genericName: r.openfda?.generic_name?.[0] || brandName,
+          fullName: brandName,
+          company: r.openfda?.manufacturer_name?.[0] || '',
+          atc: '',
+          source: 'fda',
+        })
+      })
+    }
+  } catch { /* OpenFDA timeout — continue */ }
+  if (results.length >= 8) return NextResponse.json(results.slice(0, 8))
+
+  // 4. DailyMed (NLM)
+  try {
+    const dm = await fetch(
+      `https://dailymed.nlm.nih.gov/dailymed/services/v2/spls.json?drug_name=${encodeURIComponent(q)}&pagesize=8`,
+      { signal: AbortSignal.timeout(3000) }
+    )
+    if (dm.ok) {
+      const dmData = await dm.json()
+      ;(dmData.data || []).forEach((r: any) => {
+        if (r.title) addResult({
+          brandName: r.title.split(' ')[0],
+          genericName: r.title,
+          fullName: r.title,
+          company: r.author?.[0]?.name || '',
+          atc: '',
+          source: 'dailymed',
+        })
+      })
+    }
+  } catch { /* DailyMed timeout — continue */ }
+
+  return NextResponse.json(results.slice(0, 8))
+}

@@ -10,6 +10,8 @@ import {
   CATEGORY_INFO,
   type BloodTestCategory,
 } from "@/lib/blood-reference";
+import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface BloodTestFormProps {
   onSubmit: (values: Record<string, number>, gender: "male" | "female" | null) => void;
@@ -28,7 +30,20 @@ const CATEGORY_ORDER: BloodTestCategory[] = [
   "blood_count",
 ];
 
+const CATEGORY_TX_KEYS: Record<string, string> = {
+  "lipid": "cat.lipid",
+  "vitamin": "cat.vitamin",
+  "mineral": "cat.mineral",
+  "metabolic": "cat.metabolic",
+  "thyroid": "cat.thyroid",
+  "inflammation": "cat.inflammation",
+  "liver": "cat.liver",
+  "kidney": "cat.kidney",
+  "blood_count": "cat.blood_count",
+};
+
 export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
+  const { lang } = useLang()
   const [values, setValues] = useState<Record<string, string>>({});
   const [gender, setGender] = useState<"male" | "female" | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
@@ -89,7 +104,7 @@ export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
       {/* Gender Selection */}
       <div className="rounded-lg border bg-card p-4">
         <Label className="mb-3 block text-sm font-medium">
-          Biological Sex (for gender-specific reference ranges)
+          {tx('btf.genderLabel', lang)}
         </Label>
         <div className="flex gap-3">
           {(["male", "female"] as const).map((g) => (
@@ -103,7 +118,7 @@ export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
                   : "hover:border-muted-foreground/50"
               }`}
             >
-              {g === "male" ? "Male" : "Female"}
+              {g === "male" ? tx('btf.male', lang) : tx('btf.female', lang)}
             </button>
           ))}
         </div>
@@ -113,8 +128,7 @@ export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
       <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 text-sm text-blue-800 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-200">
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         <p>
-          Enter the values from your blood test report. You only need to fill in the markers
-          you have — leave the rest blank. At least 1 value is required.
+          {tx('btf.info', lang)}
         </p>
       </div>
 
@@ -133,13 +147,13 @@ export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
               className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-muted/50"
             >
               <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold">{info.label}</span>
+                <span className="text-sm font-semibold">{CATEGORY_TX_KEYS[cat] ? tx(CATEGORY_TX_KEYS[cat], lang) : info.label}</span>
                 <span className="text-xs text-muted-foreground">
-                  ({markers.length} markers)
+                  ({markers.length} {tx('btf.markers', lang)})
                 </span>
                 {filledInCat > 0 && (
                   <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                    {filledInCat} filled
+                    {filledInCat} {tx('btf.filled', lang)}
                   </span>
                 )}
               </div>
@@ -155,7 +169,9 @@ export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
                         htmlFor={marker.id}
                         className="text-xs font-medium text-muted-foreground"
                       >
-                        {marker.name}{" "}
+                        {tx(`marker.${marker.id}`, lang) !== `marker.${marker.id}`
+                          ? tx(`marker.${marker.id}`, lang)
+                          : marker.name}{" "}
                         <span className="text-[10px]">
                           ({marker.ranges.optimal_low}-{marker.ranges.optimal_high}{" "}
                           {marker.unit})
@@ -197,18 +213,18 @@ export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Analyzing...
+                {tx('btf.analyzing', lang)}
               </>
             ) : (
               <>
                 <FlaskConical className="h-4 w-4" />
-                Analyze ({filledCount} markers)
+                {tx('btf.analyze', lang)} ({filledCount} {tx('btf.markers', lang)})
               </>
             )}
           </Button>
 
           <Button type="button" variant="outline" size="sm" onClick={fillDemo}>
-            Fill Demo Data
+            {tx('btf.fillDemo', lang)}
           </Button>
         </div>
 
@@ -218,7 +234,7 @@ export function BloodTestForm({ onSubmit, isLoading }: BloodTestFormProps) {
             onClick={() => setValues({})}
             className="text-xs text-muted-foreground hover:text-foreground"
           >
-            Clear all
+            {tx('btf.clearAll', lang)}
           </button>
         )}
       </div>

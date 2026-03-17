@@ -63,7 +63,8 @@ export interface InteractionResult {
 export async function analyzeInteraction(
   medications: string[],
   concern: string,
-  profile: UserProfileForInteraction | null
+  profile: UserProfileForInteraction | null,
+  lang: string = "en"
 ): Promise<InteractionResult> {
   // Step 1: Red flag check — BEFORE anything else
   const redFlagCheck = checkRedFlags(concern);
@@ -127,7 +128,7 @@ export async function analyzeInteraction(
   const allMeds = [...resolvedMeds, ...resolvedProfileMeds];
 
   // Step 4: Build profile warnings
-  const profileWarnings = buildProfileWarnings(profile);
+  const profileWarnings = buildProfileWarnings(profile, lang);
 
   // Step 5: Search PubMed for relevant research
   const allGenericNames = allMeds
@@ -148,7 +149,8 @@ export async function analyzeInteraction(
       abstract: a.abstract,
       url: a.url,
       year: a.year,
-    }))
+    })),
+    lang
   );
 
   // Step 7: Get Gemini analysis (JSON mode — guaranteed valid JSON)
@@ -169,8 +171,9 @@ export async function analyzeInteraction(
     recommendations: parsed.recommendations,
     profileWarnings,
     generalAdvice: parsed.generalAdvice,
-    disclaimer:
-      "⚠️ This information is for educational purposes only and does not replace professional medical advice. Always consult your healthcare provider before using any herbal supplements, especially alongside prescription medications.",
+    disclaimer: lang === "tr"
+      ? "⚠️ Bu bilgi yalnızca eğitim amaçlıdır ve profesyonel tıbbi tavsiyenin yerini tutmaz. Herhangi bir bitkisel takviye kullanmadan önce, özellikle reçeteli ilaçlarla birlikte, sağlık uzmanınıza danışın."
+      : "⚠️ This information is for educational purposes only and does not replace professional medical advice. Always consult your healthcare provider before using any herbal supplements, especially alongside prescription medications.",
   };
 }
 
@@ -178,48 +181,57 @@ export async function analyzeInteraction(
 // Helper Functions
 // ============================================
 
-function buildProfileWarnings(profile: UserProfileForInteraction | null): string[] {
+function buildProfileWarnings(profile: UserProfileForInteraction | null, lang: string = "en"): string[] {
   const warnings: string[] = [];
+  const tr = lang === "tr";
   if (!profile) {
-    warnings.push(
-      "Your health profile is not available. Recommendations are limited — complete your profile for personalized safety checks."
+    warnings.push(tr
+      ? "Sağlık profiliniz mevcut değil. Kişiselleştirilmiş güvenlik kontrolleri için profilinizi tamamlayın."
+      : "Your health profile is not available. Complete your profile for personalized safety checks."
     );
     return warnings;
   }
 
   if (profile.is_pregnant) {
-    warnings.push(
-      "🤰 You are pregnant. Many herbs are contraindicated during pregnancy. Extra caution applied."
+    warnings.push(tr
+      ? "🤰 Hamilesiniz. Birçok bitki hamilelikte kontrendikedir. Ekstra dikkat uygulandı."
+      : "🤰 You are pregnant. Many herbs are contraindicated during pregnancy. Extra caution applied."
     );
   }
   if (profile.is_breastfeeding) {
-    warnings.push(
-      "🤱 You are breastfeeding. Herbs can pass into breast milk. Extra caution applied."
+    warnings.push(tr
+      ? "🤱 Emziriyorsunuz. Bitkiler anne sütüne geçebilir. Ekstra dikkat uygulandı."
+      : "🤱 You are breastfeeding. Herbs can pass into breast milk. Extra caution applied."
     );
   }
   if (profile.kidney_disease) {
-    warnings.push(
-      "🫘 Kidney disease detected. Some herbs are nephrotoxic or alter drug clearance. Doses may need adjustment."
+    warnings.push(tr
+      ? "🫘 Böbrek hastalığı tespit edildi. Bazı bitkiler nefrotoksik veya ilaç atılımını etkiler."
+      : "🫘 Kidney disease detected. Some herbs are nephrotoxic or alter drug clearance."
     );
   }
   if (profile.liver_disease) {
-    warnings.push(
-      "🫁 Liver disease detected. Many herbs are hepatotoxic or affect drug metabolism. Extra caution applied."
+    warnings.push(tr
+      ? "🫁 Karaciğer hastalığı tespit edildi. Birçok bitki hepatotoksik veya ilaç metabolizmasını etkiler."
+      : "🫁 Liver disease detected. Many herbs are hepatotoxic or affect drug metabolism."
     );
   }
   if (profile.age && profile.age >= 65) {
-    warnings.push(
-      "👴 Age 65+. Drug metabolism slows with age — lower doses may be appropriate."
+    warnings.push(tr
+      ? "👴 65 yaş üzeri. Yaşla birlikte ilaç metabolizması yavaşlar — daha düşük dozlar uygun olabilir."
+      : "👴 Age 65+. Drug metabolism slows with age — lower doses may be appropriate."
     );
   }
   if (profile.age && profile.age < 18) {
-    warnings.push(
-      "👶 Under 18. Pediatric dosing is different — consult a pediatrician before any herbal use."
+    warnings.push(tr
+      ? "👶 18 yaş altı. Pediatrik dozlama farklıdır — herhangi bir bitkisel kullanımdan önce pediatristinize danışın."
+      : "👶 Under 18. Pediatric dosing is different — consult a pediatrician before any herbal use."
     );
   }
   if (profile.allergies && profile.allergies.length > 0) {
-    warnings.push(
-      `⚠️ Known allergies: ${profile.allergies.join(", ")}. Cross-reactivity checked.`
+    warnings.push(tr
+      ? `⚠️ Bilinen alerjiler: ${profile.allergies.join(", ")}. Çapraz reaktivite kontrol edildi.`
+      : `⚠️ Known allergies: ${profile.allergies.join(", ")}. Cross-reactivity checked.`
     );
   }
 
@@ -250,9 +262,14 @@ function buildGeminiPrompt(
     abstract: string;
     url: string;
     year: string;
-  }>
+  }>,
+  lang: string = "en"
 ): string {
-  let prompt = `## USER'S MEDICATIONS\n`;
+  const topLangRule = lang === "tr"
+    ? "KRİTİK KURAL: Tüm yanıtları Türkçe ver. Bitki isimleri, açıklamalar, mekanizmalar, etkileşimler, dozaj bilgisi dahil her şey Türkçe olmalı. Latince bitki isimleri parantez içinde kalabilir.\n\n"
+    : "Respond in English.\n\n";
+
+  let prompt = topLangRule + `## USER'S MEDICATIONS\n`;
   for (const med of medications) {
     prompt += `- ${med.brandName} (${med.genericName})`;
     if (med.activeIngredients.length > 0) {
@@ -300,6 +317,10 @@ function buildGeminiPrompt(
     }
   }
 
+  const langInstruction = lang === "tr"
+    ? "IMPORTANT: You MUST respond in TURKISH (Türkçe). All text values in the JSON — reason, mechanism, dosage, duration, interactions, generalAdvice — must be written in Turkish. Only herb names and source titles/URLs can remain in English/Latin."
+    : "IMPORTANT: You MUST respond in ENGLISH. All text values in the JSON must be written in English.";
+
   prompt += `\n## INSTRUCTIONS
 Analyze the drug-herb interactions and provide recommendations.
 - For EACH herb considered, check against ALL medications listed above
@@ -308,6 +329,8 @@ Analyze the drug-herb interactions and provide recommendations.
 - Use the PubMed articles provided as sources — include their URLs
 - If the user's concern might be a SIDE EFFECT of their medication, say so
 - Consider the user's profile (pregnancy, kidney, liver, age, allergies)
+
+${langInstruction}
 
 CRITICAL: Return ONLY a raw JSON object. No markdown, no code fences, no text before or after.
 The JSON must match this schema exactly:
@@ -324,7 +347,7 @@ function parseGeminiResponse(response: string): {
     console.error(`[parseGeminiResponse] ${reason}:`, detail);
     return {
       recommendations: [],
-      generalAdvice: "Unable to parse analysis. Please try again.",
+      generalAdvice: "Analiz tamamlanamadı. Lütfen tekrar deneyin. / Unable to parse analysis. Please try again.",
     };
   };
 

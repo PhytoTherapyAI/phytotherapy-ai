@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { createBrowserClient } from "@/lib/supabase";
+import { clearDailyMedCheck } from "@/lib/daily-med-check";
 import type { User, Session } from "@supabase/supabase-js";
 import type { UserProfile } from "@/lib/database.types";
 
@@ -12,7 +13,7 @@ interface AuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
   needsOnboarding: boolean;
-  needsMedicationUpdate: boolean;
+  needsMedicationUpdate: boolean;    // 15-day medication refresh (Supabase)
 }
 
 interface AuthContextType extends AuthState {
@@ -48,7 +49,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq("id", userId)
         .single();
 
-      // Race with timeout to prevent hanging forever
       const timeoutPromise = new Promise<null>((resolve) => {
         setTimeout(() => {
           console.warn("[Auth] Profile fetch timed out after 8s");
@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await Promise.race([profilePromise, timeoutPromise]);
 
       if (!result || !("data" in result)) {
-        return null; // Timed out
+        return null;
       }
 
       const { data, error } = result;
@@ -76,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // 15-day check: medication list needs refresh
   const checkMedicationUpdate = useCallback((profile: UserProfile | null): boolean => {
     if (!profile || !profile.onboarding_complete) return false;
     if (!profile.last_medication_update) return true;
@@ -83,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const lastUpdate = new Date(profile.last_medication_update);
     const now = new Date();
     const daysSinceUpdate = (now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24);
-    return daysSinceUpdate >= 30;
+    return daysSinceUpdate >= 15;
   }, []);
 
   const updateState = useCallback(async (user: User | null, session: Session | null) => {
@@ -103,13 +104,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // Set authenticated immediately (even before profile loads) to prevent UI flash
     setState((prev) => ({
       ...prev,
       user,
       session,
       isAuthenticated: true,
-      isLoading: true, // still loading profile
+      isLoading: true,
     }));
 
     const profile = await fetchProfile(user.id);
@@ -125,14 +125,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, [fetchProfile, checkMedicationUpdate]);
 
-  // Listen for auth changes
   useEffect(() => {
     console.log("[Auth] AuthProvider mounted — checking session...");
     let initialDone = false;
 
-    // Use getUser() to validate token server-side and set internal auth headers.
-    // getSession() only reads localStorage and doesn't guarantee auth headers
-    // are set for subsequent RLS-protected queries.
     async function initAuth() {
       try {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
@@ -154,31 +150,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initAuth();
 
-    // Subscribe to auth changes — skip INITIAL_SESSION since initAuth handles it.
-    // For subsequent events (SIGNED_IN, SIGNED_OUT, TOKEN_REFRESHED), validate
-    // token first to ensure RLS works.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log("[Auth] onAuthStateChange:", event);
-        // Skip INITIAL_SESSION — initAuth handles it with getUser() for RLS
         if (event === "INITIAL_SESSION") return;
-        // For SIGNED_OUT, clear state immediately
         if (event === "SIGNED_OUT" || !session?.user) {
           await updateState(null, null);
           return;
         }
-        // For sign-in or token refresh, wait for initAuth if still running
         if (!initialDone) {
           console.log("[Auth] Skipping event — initAuth still running");
           return;
         }
-        // Validate token before profile fetch to ensure RLS works
         await supabase.auth.getUser();
         await updateState(session.user, session);
       }
     );
 
-    // Safety timeout — if loading takes more than 10s, force it to false
     const safetyTimeout = setTimeout(() => {
       setState((prev) => {
         if (prev.isLoading) {
@@ -224,13 +212,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     console.log("[Auth] Signing out...");
     try {
-      // Use "local" scope — only clears this browser's session
-      // "global" can fail if the token is already expired, and we still want to clear local state
       await supabase.auth.signOut({ scope: "local" });
     } catch (err) {
       console.error("[Auth] Sign out API error (continuing with local clear):", err);
     }
-    // Always clear React state regardless of signOut success
+    clearDailyMedCheck();
     setState({
       user: null,
       session: null,
@@ -240,10 +226,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       needsOnboarding: false,
       needsMedicationUpdate: false,
     });
-    // Reset the singleton so next page load creates a fresh client
-    // (Supabase signOut already clears localStorage, no manual clear needed)
     console.log("[Auth] Signed out — redirecting to /");
-    // Full page reload to landing — ensures clean state everywhere
     window.location.href = "/";
   };
 

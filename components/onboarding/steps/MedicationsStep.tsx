@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Plus, X, Pill } from "lucide-react";
+import { Plus, X, Pill, Loader2 } from "lucide-react";
+import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
+
+interface DrugSuggestion {
+  brandName: string;
+  genericName: string;
+}
 
 interface Props {
   data: OnboardingData;
@@ -15,10 +22,102 @@ interface Props {
 }
 
 export function MedicationsStep({ data, updateData }: Props) {
+  const { lang } = useLang();
   const [brandName, setBrandName] = useState("");
   const [genericName, setGenericName] = useState("");
   const [dosage, setDosage] = useState("");
   const [frequency, setFrequency] = useState("");
+
+  // Autocomplete state for brand name
+  const [brandSuggestions, setBrandSuggestions] = useState<DrugSuggestion[]>([]);
+  const [showBrandSuggestions, setShowBrandSuggestions] = useState(false);
+  const [isBrandSearching, setIsBrandSearching] = useState(false);
+  const [highlightIndex, setHighlightIndex] = useState(-1);
+  const brandInputRef = useRef<HTMLInputElement>(null);
+  const brandDropdownRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Fetch drug suggestions
+  const fetchSuggestions = useCallback(async (query: string) => {
+    if (query.length < 2) {
+      setBrandSuggestions([]);
+      setShowBrandSuggestions(false);
+      return;
+    }
+    setIsBrandSearching(true);
+    try {
+      const res = await fetch(`/api/drug-search?q=${encodeURIComponent(query)}`);
+      const results: DrugSuggestion[] = await res.json();
+      setBrandSuggestions(results);
+      setShowBrandSuggestions(results.length > 0);
+      setHighlightIndex(-1);
+    } catch {
+      setBrandSuggestions([]);
+      setShowBrandSuggestions(false);
+    } finally {
+      setIsBrandSearching(false);
+    }
+  }, []);
+
+  // Debounced brand name search
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchSuggestions(brandName.trim());
+    }, 300);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [brandName, fetchSuggestions]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        brandDropdownRef.current &&
+        !brandDropdownRef.current.contains(e.target as Node) &&
+        brandInputRef.current &&
+        !brandInputRef.current.contains(e.target as Node)
+      ) {
+        setShowBrandSuggestions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectSuggestion = (suggestion: DrugSuggestion) => {
+    setBrandName(suggestion.brandName);
+    if (suggestion.genericName && suggestion.genericName.toLowerCase() !== suggestion.brandName.toLowerCase()) {
+      setGenericName(suggestion.genericName);
+    }
+    setBrandSuggestions([]);
+    setShowBrandSuggestions(false);
+  };
+
+  const handleBrandKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (showBrandSuggestions && brandSuggestions.length > 0) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setHighlightIndex((prev) => (prev < brandSuggestions.length - 1 ? prev + 1 : 0));
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setHighlightIndex((prev) => (prev > 0 ? prev - 1 : brandSuggestions.length - 1));
+        return;
+      }
+      if (e.key === "Enter" && highlightIndex >= 0) {
+        e.preventDefault();
+        selectSuggestion(brandSuggestions[highlightIndex]);
+        return;
+      }
+      if (e.key === "Escape") {
+        setShowBrandSuggestions(false);
+        return;
+      }
+    }
+  };
 
   const addMedication = () => {
     if (!brandName.trim() && !genericName.trim()) return;
@@ -38,6 +137,8 @@ export function MedicationsStep({ data, updateData }: Props) {
     setGenericName("");
     setDosage("");
     setFrequency("");
+    setBrandSuggestions([]);
+    setShowBrandSuggestions(false);
   };
 
   const removeMedication = (index: number) => {
@@ -60,7 +161,7 @@ export function MedicationsStep({ data, updateData }: Props) {
           }
         />
         <Label htmlFor="no-meds" className="text-sm font-normal">
-          I don&apos;t take any medications
+          {tx('onb.noMeds', lang)}
         </Label>
       </div>
 
@@ -69,7 +170,9 @@ export function MedicationsStep({ data, updateData }: Props) {
           {/* Current medications list */}
           {data.medications.length > 0 && (
             <div className="space-y-2">
-              <Label className="text-sm text-muted-foreground">Your medications:</Label>
+              <Label className="text-sm text-muted-foreground">
+                {tx('onb.yourMeds', lang)}
+              </Label>
               {data.medications.map((med, index) => (
                 <div
                   key={index}
@@ -104,40 +207,76 @@ export function MedicationsStep({ data, updateData }: Props) {
 
           {/* Add medication form */}
           <div className="space-y-3 rounded-lg border border-dashed p-4">
-            <p className="text-sm font-medium">Add a medication</p>
+            <p className="text-sm font-medium">{tx('onb.addMed', lang)}</p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-1">
-                <Label htmlFor="brand" className="text-xs">Brand Name</Label>
-                <Input
-                  id="brand"
-                  placeholder="e.g., Glifor, Coumadin"
-                  value={brandName}
-                  onChange={(e) => setBrandName(e.target.value)}
-                />
+                <Label htmlFor="brand" className="text-xs">{tx('onb.brandName', lang)}</Label>
+                <div className="relative">
+                  <Input
+                    ref={brandInputRef}
+                    id="brand"
+                    placeholder={tx('onb.brandPlaceholder', lang)}
+                    value={brandName}
+                    onChange={(e) => setBrandName(e.target.value)}
+                    onKeyDown={handleBrandKeyDown}
+                    onFocus={() => {
+                      if (brandSuggestions.length > 0) setShowBrandSuggestions(true);
+                    }}
+                    autoComplete="off"
+                  />
+                  {isBrandSearching && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                    </div>
+                  )}
+                  {showBrandSuggestions && brandSuggestions.length > 0 && (
+                    <div
+                      ref={brandDropdownRef}
+                      className="absolute left-0 right-0 top-full z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border bg-background shadow-lg"
+                    >
+                      {brandSuggestions.map((s, i) => (
+                        <button
+                          key={`${s.brandName}-${i}`}
+                          type="button"
+                          onClick={() => selectSuggestion(s)}
+                          className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-muted/50 ${
+                            i === highlightIndex ? "bg-muted/50" : ""
+                          }`}
+                        >
+                          <Pill className="h-3 w-3 shrink-0 text-primary" />
+                          <span className="font-medium">{s.brandName}</span>
+                          {s.genericName && s.genericName.toLowerCase() !== s.brandName.toLowerCase() && (
+                            <span className="text-xs text-muted-foreground">({s.genericName})</span>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="space-y-1">
-                <Label htmlFor="generic" className="text-xs">Generic / Active Ingredient</Label>
+                <Label htmlFor="generic" className="text-xs">{tx('onb.genericName', lang)}</Label>
                 <Input
                   id="generic"
-                  placeholder="e.g., Metformin, Warfarin"
+                  placeholder={tx('onb.genericPlaceholder', lang)}
                   value={genericName}
                   onChange={(e) => setGenericName(e.target.value)}
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="dosage" className="text-xs">Dosage (optional)</Label>
+                <Label htmlFor="dosage" className="text-xs">{tx('onb.dosageLabel', lang)}</Label>
                 <Input
                   id="dosage"
-                  placeholder="e.g., 500mg, 10mg"
+                  placeholder={tx('onb.dosagePlaceholder', lang)}
                   value={dosage}
                   onChange={(e) => setDosage(e.target.value)}
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="freq" className="text-xs">Frequency (optional)</Label>
+                <Label htmlFor="freq" className="text-xs">{tx('onb.freqLabel', lang)}</Label>
                 <Input
                   id="freq"
-                  placeholder="e.g., twice daily, once at night"
+                  placeholder={tx('onb.freqPlaceholder', lang)}
                   value={frequency}
                   onChange={(e) => setFrequency(e.target.value)}
                 />
@@ -150,14 +289,14 @@ export function MedicationsStep({ data, updateData }: Props) {
               disabled={!brandName.trim() && !genericName.trim()}
             >
               <Plus className="mr-2 h-4 w-4" />
-              Add Medication
+              {tx('onb.addMedBtn', lang)}
             </Button>
           </div>
         </>
       )}
 
       <p className="text-xs text-muted-foreground">
-        We check every herbal recommendation against your medications for safety. This information is encrypted and only visible to you.
+        {tx('onb.medPrivacy', lang)}
       </p>
     </div>
   );

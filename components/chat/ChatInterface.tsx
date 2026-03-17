@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Loader2, Trash2, Phone, Paperclip, Camera, X, FileText, Image as ImageIcon } from "lucide-react";
+import { Send, Loader2, Trash2, Paperclip, Camera, X, FileText, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageBubble, ChatMessage } from "./MessageBubble";
 import { useAuth } from "@/lib/auth-context";
+import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
 import {
   canGuestQuery,
@@ -47,6 +49,7 @@ interface ChatInterfaceProps {
 
 export function ChatInterface({ className, onMessagesChange, loadConversation }: ChatInterfaceProps) {
   const { isAuthenticated, session } = useAuth();
+  const { lang } = useLang()
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -98,7 +101,9 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
     for (const file of Array.from(files)) {
       // Validate size
       if (file.size > MAX_FILE_SIZE) {
-        alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+        alert(lang === "tr"
+          ? `"${file.name}" dosyası çok büyük. Maksimum boyut 10MB.`
+          : `File "${file.name}" is too large. Maximum size is 10MB.`);
         continue;
       }
 
@@ -106,7 +111,9 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
       const isPdf = file.type === "application/pdf";
       const isImage = file.type.startsWith("image/");
       if (!isPdf && !isImage) {
-        alert(`File "${file.name}" is not supported. Please use PDF, JPG, or PNG.`);
+        alert(lang === "tr"
+          ? `"${file.name}" desteklenmiyor. Lütfen PDF, JPG veya PNG kullanın.`
+          : `File "${file.name}" is not supported. Please use PDF, JPG, or PNG.`);
         continue;
       }
 
@@ -125,7 +132,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
         },
       ]);
     }
-  }, []);
+  }, [lang]);
 
   const removeFile = useCallback((id: string) => {
     setAttachedFiles((prev) => prev.filter((f) => f.id !== id));
@@ -147,7 +154,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
       const emergencyMsg: ChatMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: `🚨 **${redFlag.language === "tr" ? "ACİL UYARI" : "EMERGENCY WARNING"}**\n\n${getEmergencyMessage(redFlag.language)}`,
+        content: `🚨 **${tx('chat.emergencyTitle', lang)}**\n\n${getEmergencyMessage(redFlag.language)}`,
       };
       setMessages((prev) => [...prev, userMsg, emergencyMsg]);
       setInput("");
@@ -166,8 +173,9 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
         const blockMsg: ChatMessage = {
           id: crypto.randomUUID(),
           role: "assistant",
-          content:
-            "🔒 **Personalized recommendations require a health profile.**\n\nTo ensure your safety, I need to know your medications, allergies, and health conditions before giving personal advice.\n\n👉 **[Sign up](/auth/login)** — it takes less than 2 minutes!\n\nIn the meantime, I can answer general health questions like:\n- \"Does omega-3 reduce inflammation?\"\n- \"What is the evidence for turmeric?\"\n- \"How does valerian root work for sleep?\"",
+          content: lang === "tr"
+            ? "🔒 **Kişiselleştirilmiş öneriler için sağlık profili gereklidir.**\n\nGüvenliğiniz için kişisel tavsiye vermeden önce ilaçlarınızı, alerjilerinizi ve sağlık durumunuzu bilmem gerekiyor.\n\n👉 **[Kayıt olun](/auth/login)** — 2 dakikadan kısa sürer!\n\nBu sürede genel sağlık sorularını yanıtlayabilirim:\n- \"Omega-3 iltihabı azaltır mı?\"\n- \"Zerdeçal için kanıtlar nelerdir?\"\n- \"Kediotu kökü uyku için nasıl çalışır?\""
+            : "🔒 **Personalized recommendations require a health profile.**\n\nTo ensure your safety, I need to know your medications, allergies, and health conditions before giving personal advice.\n\n👉 **[Sign up](/auth/login)** — it takes less than 2 minutes!\n\nIn the meantime, I can answer general health questions like:\n- \"Does omega-3 reduce inflammation?\"\n- \"What is the evidence for turmeric?\"\n- \"How does valerian root work for sleep?\"",
         };
         setMessages((prev) => [...prev, userMsg, blockMsg]);
         setInput("");
@@ -184,8 +192,9 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
         const limitMsg: ChatMessage = {
           id: crypto.randomUUID(),
           role: "assistant",
-          content:
-            "🔒 **You've reached your free query limit.**\n\nGuest users can ask up to 5 questions. To continue with unlimited access and personalized recommendations:\n\n👉 **[Create a free account](/auth/login)**\n\nYour data is encrypted and you can delete it anytime.",
+          content: lang === "tr"
+            ? "🔒 **Ücretsiz sorgu limitinize ulaştınız.**\n\nMisafir kullanıcılar en fazla 5 soru sorabilir. Sınırsız erişim ve kişiselleştirilmiş öneriler için:\n\n👉 **[Ücretsiz hesap oluşturun](/auth/login)**\n\nVerileriniz şifrelenir ve istediğiniz zaman silebilirsiniz."
+            : "🔒 **You've reached your free query limit.**\n\nGuest users can ask up to 5 questions. To continue with unlimited access and personalized recommendations:\n\n👉 **[Create a free account](/auth/login)**\n\nYour data is encrypted and you can delete it anytime.",
         };
         setMessages((prev) => [...prev, userMsg, limitMsg]);
         setInput("");
@@ -198,7 +207,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
     // Build display content for user message
     const fileNames = attachedFiles.map((f) => f.name);
     const displayContent = hasFiles
-      ? `${trimmed || "Analyze this file"}${fileNames.length > 0 ? `\n\n📎 ${fileNames.join(", ")}` : ""}`
+      ? `${trimmed || (lang === "tr" ? "Bu dosyayı analiz et" : "Analyze this file")}${fileNames.length > 0 ? `\n\n📎 ${fileNames.join(", ")}` : ""}`
       : trimmed;
 
     // Add user message
@@ -257,9 +266,10 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
         method: "POST",
         headers,
         body: JSON.stringify({
-          message: trimmed || `Please analyze the uploaded file(s): ${fileNames.join(", ")}`,
+          message: trimmed || (lang === "tr" ? `Yüklenen dosyayı analiz et: ${fileNames.join(", ")}` : `Please analyze the uploaded file(s): ${fileNames.join(", ")}`),
           history: historyForApi,
           files: filesPayload,
+          lang,
         }),
       });
 
@@ -300,7 +310,9 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
           m.id === assistantId
             ? {
                 ...m,
-                content: "⚠️ Could not connect to the server. Please check your internet connection and try again.",
+                content: lang === "tr"
+                  ? "⚠️ Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin."
+                  : "⚠️ Could not connect to the server. Please check your internet connection and try again.",
                 isStreaming: false,
               }
             : m
@@ -309,7 +321,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
     } finally {
       setIsStreaming(false);
     }
-  }, [input, isStreaming, isAuthenticated, session, messages, attachedFiles]);
+  }, [input, isStreaming, isAuthenticated, session, messages, attachedFiles, lang]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -326,20 +338,10 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
 
   return (
     <div className={`flex flex-col ${className || ""}`}>
-      {/* Static Emergency Banner */}
-      <div className="flex items-center gap-2.5 rounded-t-xl border border-b-0 bg-red-50/80 px-4 py-2.5 dark:bg-red-950/30">
-        <Phone className="h-3.5 w-3.5 shrink-0 text-red-600" />
-        <p className="text-xs text-red-700 dark:text-red-400">
-          If you are experiencing a life-threatening emergency, call{" "}
-          <a href="tel:112" className="font-semibold underline">112</a> /{" "}
-          <a href="tel:911" className="font-semibold underline">911</a> immediately.
-        </p>
-      </div>
-
       {/* Messages area */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto border border-b-0 bg-background p-4 space-y-4"
+        className="flex-1 overflow-y-auto rounded-t-xl border border-b-0 bg-background p-4 space-y-4"
         style={{ minHeight: "400px", maxHeight: "60vh" }}
       >
         {messages.length === 0 && (
@@ -349,9 +351,11 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
               </svg>
             </div>
-            <h3 className="mb-2 text-lg font-semibold">Ask me anything about health & herbs</h3>
+            <h3 className="mb-2 text-lg font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+              {tx('chat.emptyTitle', lang)}
+            </h3>
             <p className="max-w-sm text-sm text-muted-foreground">
-              I use PubMed research to give you evidence-based answers about supplements, herbs, and nutrition.
+              {tx('chat.emptyDesc', lang)}
             </p>
           </div>
         )}
@@ -368,11 +372,11 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
           <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
             <span>
               {remaining > 0
-                ? `${remaining} free ${remaining === 1 ? "query" : "queries"} remaining`
-                : "Free queries used up"}
+                ? `${remaining} ${tx('chat.freeRemaining', lang)}`
+                : tx('chat.freeUsedUp', lang)}
             </span>
             <a href="/auth/login" className="text-primary hover:underline">
-              Sign up for unlimited
+              {tx('chat.signUpUnlimited', lang)}
             </a>
           </div>
         )}
@@ -443,7 +447,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
               onClick={() => fileInputRef.current?.click()}
               disabled={isStreaming}
               className="h-11 w-11 text-muted-foreground hover:text-primary"
-              title="Attach file (PDF, JPG, PNG)"
+              title={lang === "tr" ? "Dosya ekle (PDF, JPG, PNG)" : "Attach file (PDF, JPG, PNG)"}
             >
               <Paperclip className="h-4 w-4" />
             </Button>
@@ -454,7 +458,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
               onClick={() => cameraInputRef.current?.click()}
               disabled={isStreaming}
               className="h-11 w-11 text-muted-foreground hover:text-primary"
-              title="Take photo"
+              title={lang === "tr" ? "Fotoğraf çek" : "Take photo"}
             >
               <Camera className="h-4 w-4" />
             </Button>
@@ -467,8 +471,8 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
             onKeyDown={handleKeyDown}
             disabled={isStreaming}
             placeholder={attachedFiles.length > 0
-              ? "Add a message or just send the file..."
-              : "Ask a health question (e.g., 'Does omega-3 reduce inflammation?')"
+              ? tx('chat.placeholderFile', lang)
+              : tx('chat.placeholderDefault', lang)
             }
             rows={1}
             className="max-h-[150px] min-h-[44px] flex-1 resize-none rounded-lg border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
@@ -480,7 +484,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
                 size="icon"
                 onClick={clearChat}
                 className="h-11 w-11 text-muted-foreground hover:text-destructive"
-                title="Clear chat"
+                title={lang === "tr" ? "Sohbeti temizle" : "Clear chat"}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

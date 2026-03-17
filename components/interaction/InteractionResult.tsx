@@ -13,6 +13,8 @@ import {
   BookOpen,
 } from "lucide-react";
 import { SafetyBadge } from "./SafetyBadge";
+import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import type { InteractionResult as InteractionResultType } from "@/lib/interaction-engine";
 
 interface InteractionResultProps {
@@ -20,6 +22,8 @@ interface InteractionResultProps {
 }
 
 export function InteractionResult({ result }: InteractionResultProps) {
+  const { lang } = useLang()
+
   // Emergency state
   if (result.isEmergency) {
     return (
@@ -29,7 +33,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
             <ShieldAlert className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-red-800 dark:text-red-300">
+            <h3 className="text-lg font-bold text-red-800 dark:text-red-300" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
               🚨 Emergency Warning
             </h3>
             <p className="mt-2 text-red-700 dark:text-red-400">
@@ -49,9 +53,9 @@ export function InteractionResult({ result }: InteractionResultProps) {
     <div className="space-y-6">
       {/* Medications Analyzed */}
       <div className="rounded-xl border bg-card p-5">
-        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
           <Pill className="h-4 w-4" />
-          Medications Analyzed
+          {tx('ir.medsAnalyzed', lang)}
         </h3>
         <div className="flex flex-wrap gap-2">
           {result.medicationsAnalyzed.map((med, i) => (
@@ -74,8 +78,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
         {result.medicationsAnalyzed.some((m) => !m.verified) && (
           <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
             <AlertTriangle className="mr-1 inline h-3 w-3" />
-            Some medications were not found in FDA database. Analysis based on AI
-            knowledge — verify with your pharmacist.
+            {tx('ir.medsNotFound', lang)}
           </p>
         )}
       </div>
@@ -83,9 +86,9 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* Profile Warnings */}
       {result.profileWarnings.length > 0 && (
         <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-5 dark:border-amber-800 dark:bg-amber-950/20">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
             <ShieldAlert className="h-4 w-4" />
-            Profile-Based Safety Alerts
+            {tx('ir.profileAlerts', lang)}
           </h3>
           <ul className="space-y-2">
             {result.profileWarnings.map((warning, i) => (
@@ -104,9 +107,9 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* Dangerous Herbs */}
       {dangerousHerbs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-red-700 dark:text-red-400">
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-red-700 dark:text-red-400" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
             <XCircle className="h-5 w-5" />
-            Avoid These ({dangerousHerbs.length})
+            {tx('ir.avoidThese', lang)} ({dangerousHerbs.length})
           </h3>
           {dangerousHerbs.map((herb, i) => (
             <HerbCard key={i} herb={herb} />
@@ -117,9 +120,9 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* Caution Herbs */}
       {cautionHerbs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-amber-700 dark:text-amber-400">
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-amber-700 dark:text-amber-400" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
             <AlertTriangle className="h-5 w-5" />
-            Use with Caution ({cautionHerbs.length})
+            {tx('ir.useWithCaution', lang)} ({cautionHerbs.length})
           </h3>
           {cautionHerbs.map((herb, i) => (
             <HerbCard key={i} herb={herb} />
@@ -130,9 +133,9 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* Safe Herbs */}
       {safeHerbs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-primary">
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-primary" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
             <CheckCircle2 className="h-5 w-5" />
-            Safe Alternatives ({safeHerbs.length})
+            {tx('ir.safeAlternatives', lang)} ({safeHerbs.length})
           </h3>
           {safeHerbs.map((herb, i) => (
             <HerbCard key={i} herb={herb} />
@@ -143,9 +146,9 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* General Advice */}
       {result.generalAdvice && (
         <div className="rounded-xl border bg-blue-50/50 p-5 dark:bg-blue-950/20">
-          <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-400">
+          <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-400" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
             <BookOpen className="h-4 w-4" />
-            General Advice
+            {tx('ir.generalAdvice', lang)}
           </h3>
           <p className="text-sm text-blue-800 dark:text-blue-300">
             {result.generalAdvice}
@@ -172,6 +175,7 @@ interface HerbCardProps {
 }
 
 function HerbCard({ herb }: HerbCardProps) {
+  const { lang } = useLang()
   const borderColor =
     herb.safety === "dangerous"
       ? "border-red-200 dark:border-red-800"
@@ -182,7 +186,7 @@ function HerbCard({ herb }: HerbCardProps) {
   return (
     <div className={`rounded-xl border ${borderColor} bg-card p-5 transition-shadow hover:shadow-md`}>
       <div className="mb-3 flex items-start justify-between gap-3">
-        <h4 className="text-lg font-semibold">{herb.herb}</h4>
+        <h4 className="text-lg font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>{herb.herb}</h4>
         <SafetyBadge safety={herb.safety} />
       </div>
 
@@ -194,7 +198,7 @@ function HerbCard({ herb }: HerbCardProps) {
           <Beaker className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
           <div>
             <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Mechanism
+              {tx('ir.mechanism', lang)}
             </span>
             <p className="text-sm">{herb.mechanism}</p>
           </div>
@@ -205,7 +209,7 @@ function HerbCard({ herb }: HerbCardProps) {
       {herb.interactions.length > 0 && (
         <div className="mb-3">
           <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Interactions
+            {tx('ir.interactions', lang)}
           </span>
           <ul className="space-y-1">
             {herb.interactions.map((interaction, i) => (
@@ -229,7 +233,7 @@ function HerbCard({ herb }: HerbCardProps) {
               <Pill className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               <div>
                 <span className="text-xs font-medium uppercase tracking-wide text-primary">
-                  Dosage
+                  {tx('ir.dosage', lang)}
                 </span>
                 <p className="text-sm font-medium text-primary">
                   {herb.dosage}
@@ -242,7 +246,7 @@ function HerbCard({ herb }: HerbCardProps) {
               <Clock className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
               <div>
                 <span className="text-xs font-medium uppercase tracking-wide text-blue-700 dark:text-blue-400">
-                  Max Duration
+                  {tx('ir.maxDuration', lang)}
                 </span>
                 <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
                   {herb.duration}
@@ -257,7 +261,7 @@ function HerbCard({ herb }: HerbCardProps) {
       {herb.sources.length > 0 && (
         <div>
           <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Sources
+            {tx('ir.sources', lang)}
           </span>
           <div className="flex flex-wrap gap-2">
             {herb.sources.map((source, i) => (

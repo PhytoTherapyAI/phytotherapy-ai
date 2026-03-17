@@ -11,7 +11,7 @@ export const maxDuration = 60;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { message, history, files } = body;
+    const { message, history, files, lang } = body;
 
     if (!message || typeof message !== "string" || message.trim().length === 0) {
       return new Response(JSON.stringify({ error: "Message is required" }), {
@@ -143,6 +143,11 @@ export async function POST(request: NextRequest) {
     // Step 5: Stream Gemini response
     let systemPromptFull = SYSTEM_PROMPT;
 
+    // Language instruction — MUST come first so Gemini responds in the correct language
+    if (lang === "tr") {
+      systemPromptFull += "\n\nKRİTİK DİL KURALI: Tüm yanıtlarını TÜRKÇE ver. Başlıklar, açıklamalar, öneriler, uyarılar dahil her şey Türkçe olmalı. Latince/İngilizce terimler parantez içinde kalabilir. Kullanıcı Türkçe yazdığında her zaman Türkçe yanıt ver.";
+    }
+
     if (profileContext && hasMedications) {
       systemPromptFull += "\n\nIMPORTANT: A user profile is provided. Cross-check ALL recommendations against their medications, allergies, and health conditions.";
     } else {
@@ -186,15 +191,24 @@ This rule exists because giving dosage advice without knowing the user's medicat
       console.error("Gemini API call failed:", geminiError);
       const errMsg = geminiError instanceof Error ? geminiError.message : "Unknown error";
 
+      const isTr = lang === "tr";
       let userMessage: string;
       if (errMsg.includes("QUOTA_EXHAUSTED")) {
-        userMessage = "⚠️ **Daily AI quota reached.** Our free-tier API limit has been exceeded for today.\n\nThe quota resets at midnight Pacific Time. In the meantime:\n- Browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research\n- Try again in a few hours\n\nWe're working on upgrading our capacity!";
+        userMessage = isTr
+          ? "⚠️ Günlük AI kullanım limitine ulaşıldı. Birkaç saat içinde tekrar deneyin. Bu sürede PubMed'de doğrudan araştırma yapabilirsiniz: [pubmed.ncbi.nlm.nih.gov](https://pubmed.ncbi.nlm.nih.gov)"
+          : "⚠️ **Daily AI quota reached.** Our free-tier API limit has been exceeded for today.\n\nThe quota resets at midnight Pacific Time. In the meantime:\n- Browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research\n- Try again in a few hours\n\nWe're working on upgrading our capacity!";
       } else if (errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("rate")) {
-        userMessage = "⚠️ Our AI service is temporarily busy. Please wait 30 seconds and try again.\n\nIn the meantime, you can browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research.";
+        userMessage = isTr
+          ? "⚠️ AI servisimiz geçici olarak yoğun. Lütfen 30 saniye bekleyip tekrar deneyin.\n\nBu sürede [PubMed](https://pubmed.ncbi.nlm.nih.gov/) üzerinden doğrudan araştırma yapabilirsiniz."
+          : "⚠️ Our AI service is temporarily busy. Please wait 30 seconds and try again.\n\nIn the meantime, you can browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research.";
       } else if (errMsg.includes("SAFETY") || errMsg.includes("blocked")) {
-        userMessage = "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice.";
+        userMessage = isTr
+          ? "Kanıta dayalı sağlık ve fitoterapi soruları konusunda uzmanım. Diğer konularda yardımcı olamam, ancak sağlıkla ilgili her şeyi sorabilirsiniz! Örneğin: takviye önerileri, ilaç-bitki etkileşimleri, kan tahlili yorumlama veya yaşam tarzı tavsiyeleri."
+          : "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice.";
       } else {
-        userMessage = "⚠️ An error occurred while connecting to our AI service. Please try again in a few moments.";
+        userMessage = isTr
+          ? "⚠️ AI servisimize bağlanırken bir hata oluştu. Lütfen birkaç dakika sonra tekrar deneyin."
+          : "⚠️ An error occurred while connecting to our AI service. Please try again in a few moments.";
       }
 
       const fallbackStream = new ReadableStream({
@@ -248,14 +262,22 @@ This rule exists because giving dosage advice without knowing the user's medicat
         } catch (error) {
           console.error("Stream error:", error);
           const errMsg = error instanceof Error ? error.message : "";
+          const isTr2 = lang === "tr";
           if (errMsg.includes("SAFETY") || errMsg.includes("blocked") || errMsg.includes("RECITATION") || errMsg.includes("content policy")) {
-            controller.enqueue(encoder.encode(
-              "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice."
+            controller.enqueue(encoder.encode(isTr2
+              ? "Kanıta dayalı sağlık ve fitoterapi soruları konusunda uzmanım. Diğer konularda yardımcı olamam, ancak sağlıkla ilgili her şeyi sorabilirsiniz!"
+              : "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice."
             ));
           } else if (errMsg.includes("429") || errMsg.includes("quota")) {
-            controller.enqueue(encoder.encode("⚠️ Our AI service is experiencing high demand. Please wait a moment and try again."));
+            controller.enqueue(encoder.encode(isTr2
+              ? "⚠️ Günlük AI kullanım limitine ulaşıldı. Birkaç saat içinde tekrar deneyin."
+              : "⚠️ Daily AI quota reached. Please try again in a few hours."
+            ));
           } else {
-            controller.enqueue(encoder.encode("\n\n⚠️ An error occurred while generating the response. Please try again."));
+            controller.enqueue(encoder.encode(isTr2
+              ? "\n\n⚠️ Yanıt oluşturulurken bir hata oluştu. Lütfen tekrar deneyin."
+              : "\n\n⚠️ An error occurred while generating the response. Please try again."
+            ));
           }
           controller.close();
         }
@@ -276,7 +298,7 @@ This rule exists because giving dosage advice without knowing the user's medicat
     const errorStream = new ReadableStream({
       start(controller) {
         controller.enqueue(new TextEncoder().encode(
-          "⚠️ An unexpected error occurred. Please refresh the page and try again."
+          "⚠️ Beklenmeyen bir hata oluştu. / An unexpected error occurred. Please refresh the page."
         ));
         controller.close();
       },

@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { History, MessageSquare, ChevronRight, ChevronLeft, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
+import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
 
 interface ConversationEntry {
@@ -20,6 +22,7 @@ interface ConversationHistoryProps {
 
 export function ConversationHistory({ onSelectConversation }: ConversationHistoryProps) {
   const { isAuthenticated, session } = useAuth();
+  const { lang } = useLang()
   const [isOpen, setIsOpen] = useState(false);
   const [conversations, setConversations] = useState<ConversationEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -98,7 +101,7 @@ export function ConversationHistory({ onSelectConversation }: ConversationHistor
         title="Conversation history"
       >
         <History className="h-4 w-4" />
-        <span className="hidden sm:inline">History</span>
+        <span className="hidden sm:inline">{tx('ch.history', lang)}</span>
         {isOpen ? (
           <ChevronLeft className="h-3 w-3" />
         ) : (
@@ -121,7 +124,7 @@ export function ConversationHistory({ onSelectConversation }: ConversationHistor
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div className="flex items-center gap-2">
                 <History className="h-4 w-4 text-primary" />
-                <h3 className="font-semibold">Conversation History</h3>
+                <h3 className="font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>{tx('ch.title', lang)}</h3>
               </div>
               <Button
                 variant="ghost"
@@ -142,9 +145,9 @@ export function ConversationHistory({ onSelectConversation }: ConversationHistor
               ) : conversations.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center px-4">
                   <MessageSquare className="mb-3 h-8 w-8 text-muted-foreground/50" />
-                  <p className="text-sm font-medium text-muted-foreground">No conversations yet</p>
+                  <p className="text-sm font-medium text-muted-foreground">{tx('ch.empty', lang)}</p>
                   <p className="mt-1 text-xs text-muted-foreground/70">
-                    Your health questions will appear here
+                    {tx('ch.emptyDesc', lang)}
                   </p>
                 </div>
               ) : (
@@ -180,7 +183,7 @@ export function ConversationHistory({ onSelectConversation }: ConversationHistor
             {conversations.length > 0 && (
               <div className="border-t px-4 py-2">
                 <p className="text-center text-xs text-muted-foreground">
-                  Showing last {conversations.length} conversations
+                  {tx('ch.showingLast', lang)} {conversations.length} {tx('ch.conversations', lang)}
                 </p>
               </div>
             )}

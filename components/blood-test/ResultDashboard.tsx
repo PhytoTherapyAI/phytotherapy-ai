@@ -21,6 +21,8 @@ import {
   type BloodTestResult,
   type BloodTestCategory,
 } from "@/lib/blood-reference";
+import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 // ============================================
 // Types
@@ -71,6 +73,7 @@ export function ResultDashboard({
   abnormalCount,
   optimalCount,
 }: ResultDashboardProps) {
+  const { lang } = useLang()
   const [isPdfLoading, setIsPdfLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"results" | "supplements" | "lifestyle" | "doctor">(
     "results"
@@ -107,21 +110,21 @@ export function ResultDashboard({
       <div className="grid gap-4 sm:grid-cols-3">
         <ScoreCard
           icon={<CheckCircle2 className="h-5 w-5 text-primary" />}
-          label="Optimal"
+          label={tx('rd.optimal', lang)}
           value={optimalCount}
           total={totalMarkers}
           color="emerald"
         />
         <ScoreCard
           icon={<AlertTriangle className="h-5 w-5 text-amber-600" />}
-          label="Needs Attention"
+          label={tx('rd.needsAttention', lang)}
           value={abnormalCount}
           total={totalMarkers}
           color="amber"
         />
         <ScoreCard
           icon={<Stethoscope className="h-5 w-5 text-blue-600" />}
-          label="Recommendations"
+          label={tx('rd.recommendations', lang)}
           value={analysis.supplementRecommendations.length}
           total={null}
           color="blue"
@@ -130,17 +133,17 @@ export function ResultDashboard({
 
       {/* Summary */}
       <div className="rounded-lg border bg-card p-4">
-        <h3 className="mb-2 font-semibold">Summary</h3>
+        <h3 className="mb-2 font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>{tx('rd.summary', lang)}</h3>
         <p className="text-sm text-muted-foreground leading-relaxed">{analysis.summary}</p>
       </div>
 
       {/* Tab Navigation */}
       <div className="flex gap-1 rounded-lg border bg-muted/30 p-1">
         {[
-          { id: "results" as const, label: "Test Results", icon: <Heart className="h-3.5 w-3.5" /> },
-          { id: "supplements" as const, label: "Supplements", icon: <Pill className="h-3.5 w-3.5" /> },
-          { id: "lifestyle" as const, label: "Lifestyle", icon: <TrendingUp className="h-3.5 w-3.5" /> },
-          { id: "doctor" as const, label: "For Your Doctor", icon: <Stethoscope className="h-3.5 w-3.5" /> },
+          { id: "results" as const, label: tx('rd.tabResults', lang), icon: <Heart className="h-3.5 w-3.5" /> },
+          { id: "supplements" as const, label: tx('rd.tabSupplements', lang), icon: <Pill className="h-3.5 w-3.5" /> },
+          { id: "lifestyle" as const, label: tx('rd.tabLifestyle', lang), icon: <TrendingUp className="h-3.5 w-3.5" /> },
+          { id: "doctor" as const, label: tx('rd.tabDoctor', lang), icon: <Stethoscope className="h-3.5 w-3.5" /> },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -195,7 +198,7 @@ export function ResultDashboard({
         <div className="space-y-4">
           {analysis.supplementRecommendations.length === 0 ? (
             <div className="rounded-lg border bg-card p-8 text-center text-muted-foreground">
-              No supplement recommendations — your values look good!
+              {tx('rd.noSupplements', lang)}
             </div>
           ) : (
             analysis.supplementRecommendations.map((rec, i) => (
@@ -207,11 +210,11 @@ export function ResultDashboard({
                 <p className="mb-3 text-sm text-muted-foreground">{rec.reason}</p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   <div className="rounded-md bg-muted/50 px-3 py-2">
-                    <span className="text-xs text-muted-foreground">Dosage</span>
+                    <span className="text-xs text-muted-foreground">{tx('rd.dosage', lang)}</span>
                     <p className="text-sm font-medium">{rec.dosage}</p>
                   </div>
                   <div className="rounded-md bg-muted/50 px-3 py-2">
-                    <span className="text-xs text-muted-foreground">Duration</span>
+                    <span className="text-xs text-muted-foreground">{tx('rd.duration', lang)}</span>
                     <p className="text-sm font-medium">{rec.duration}</p>
                   </div>
                 </div>
@@ -241,7 +244,7 @@ export function ResultDashboard({
         <div className="space-y-3">
           {analysis.lifestyleAdvice.length === 0 ? (
             <div className="rounded-lg border bg-card p-8 text-center text-muted-foreground">
-              No specific lifestyle changes recommended.
+              {tx('rd.noLifestyle', lang)}
             </div>
           ) : (
             analysis.lifestyleAdvice.map((item, i) => (
@@ -262,9 +265,9 @@ export function ResultDashboard({
       {activeTab === "doctor" && (
         <div className="space-y-4">
           <div className="rounded-lg border bg-card p-4">
-            <h4 className="mb-3 font-semibold">Points to Discuss with Your Doctor</h4>
+            <h4 className="mb-3 font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>{tx('rd.doctorTitle', lang)}</h4>
             {analysis.doctorDiscussion.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No specific discussion points identified.</p>
+              <p className="text-sm text-muted-foreground">{tx('rd.noDoctor', lang)}</p>
             ) : (
               <ol className="list-decimal space-y-2 pl-5 text-sm">
                 {analysis.doctorDiscussion.map((point, i) => (
@@ -276,12 +279,11 @@ export function ResultDashboard({
 
           {/* Download PDF */}
           <div className="rounded-lg border border-primary/20 bg-primary/10 p-4">
-            <h4 className="mb-2 font-semibold text-primary">
-              Doctor Bridge — PDF Report
+            <h4 className="mb-2 font-semibold text-primary" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+              {tx('rd.pdfTitle', lang)}
             </h4>
             <p className="mb-3 text-sm text-primary">
-              Download a professional PDF report to share with your healthcare provider. It includes
-              all test results, recommendations, and PubMed sources in a medical-friendly format.
+              {tx('rd.pdfDesc', lang)}
             </p>
             <Button
               onClick={handleDownloadPdf}
@@ -291,12 +293,12 @@ export function ResultDashboard({
               {isPdfLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Generating PDF...
+                  {tx('rd.pdfLoading', lang)}
                 </>
               ) : (
                 <>
                   <FileDown className="h-4 w-4" />
-                  Download PDF for Doctor
+                  {tx('rd.pdfBtn', lang)}
                 </>
               )}
             </Button>
@@ -306,7 +308,7 @@ export function ResultDashboard({
 
       {/* Disclaimer */}
       <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-xs text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
-        <p className="font-semibold">⚠️ Important Disclaimer</p>
+        <p className="font-semibold">⚠️ {tx('rd.disclaimerTitle', lang)}</p>
         <p className="mt-1">{analysis.disclaimer}</p>
       </div>
     </div>

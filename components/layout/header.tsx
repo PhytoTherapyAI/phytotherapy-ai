@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Leaf, Menu, X, LogIn, User, LogOut, Settings } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { Leaf, Menu, X, LogIn, User, LogOut, Settings, AlertTriangle, Check, RefreshCw } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageToggle, useLang } from "@/components/layout/language-toggle";
 import { Button } from "@/components/ui/button";
+import { tx } from "@/lib/translations";
+import { createBrowserClient } from "@/lib/supabase";
 
 const navLinks = [
   { href: "/interaction-checker", label: "Interaction Checker" },
@@ -18,13 +20,41 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const { isAuthenticated, isLoading, user, profile, signOut } = useAuth();
+  const { isAuthenticated, isLoading, user, profile, signOut, needsMedicationUpdate, refreshProfile } = useAuth();
   const { lang } = useLang()
+  const [showMedReminder, setShowMedReminder] = useState(false);
+  const [dismissingReminder, setDismissingReminder] = useState(false);
 
-  const navLabels: Record<string, { en: string; tr: string }> = {
-    '/interaction-checker': { en: 'Interaction Checker', tr: 'Etkileşim Denetleyici' },
-    '/health-assistant': { en: 'Health Assistant', tr: 'Sağlık Asistanı' },
-    '/blood-test': { en: 'Blood Test Analysis', tr: 'Kan Tahlili Analizi' },
+  // Show reminder when needsMedicationUpdate is true
+  useEffect(() => {
+    if (needsMedicationUpdate && isAuthenticated && !isLoading) {
+      setShowMedReminder(true);
+    } else {
+      setShowMedReminder(false);
+    }
+  }, [needsMedicationUpdate, isAuthenticated, isLoading]);
+
+  const dismissReminder = useCallback(async () => {
+    setDismissingReminder(true);
+    try {
+      const supabase = createBrowserClient();
+      await supabase
+        .from("user_profiles")
+        .update({ last_medication_update: new Date().toISOString() })
+        .eq("id", user?.id ?? "");
+      setShowMedReminder(false);
+      await refreshProfile();
+    } catch {
+      // silently fail
+    } finally {
+      setDismissingReminder(false);
+    }
+  }, [user?.id, refreshProfile]);
+
+  const navLabels: Record<string, string> = {
+    '/interaction-checker': tx('nav.interaction', lang),
+    '/health-assistant': tx('nav.assistant', lang),
+    '/blood-test': tx('nav.bloodtest', lang),
   }
 
   const initials = profile?.full_name
@@ -48,6 +78,7 @@ export function Header() {
   }, []);
 
   return (
+    <>
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         {/* Logo — Phyto=foreground, therapy=gold, .ai=green */}
@@ -75,7 +106,7 @@ export function Header() {
               href={link.href}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
-              {lang === 'en' ? navLabels[link.href].en : navLabels[link.href].tr}
+              {navLabels[link.href]}
             </Link>
           ))}
         </nav>
@@ -112,7 +143,7 @@ export function Header() {
                       onClick={() => setUserMenuOpen(false)}
                     >
                       <Settings className="h-4 w-4" />
-                      {lang === 'tr' ? 'Profil Ayarları' : 'Profile Settings'}
+                      {tx('nav.profileSettings', lang)}
                     </Link>
                   </div>
                   <div className="border-t p-1">
@@ -124,7 +155,7 @@ export function Header() {
                       }}
                     >
                       <LogOut className="h-4 w-4" />
-                      {lang === 'tr' ? 'Çıkış Yap' : 'Sign Out'}
+                      {tx('nav.signOut', lang)}
                     </button>
                   </div>
                 </div>
@@ -134,7 +165,7 @@ export function Header() {
             <Link href="/auth/login">
               <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90">
                 <LogIn className="h-4 w-4" />
-                {lang === 'tr' ? 'Başla' : 'Get Started'}
+                {tx('nav.getStarted', lang)}
               </Button>
             </Link>
           )}
@@ -163,7 +194,7 @@ export function Header() {
               className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
               onClick={() => setMobileOpen(false)}
             >
-              {lang === 'en' ? navLabels[link.href].en : navLabels[link.href].tr}
+              {navLabels[link.href]}
             </Link>
           ))}
 
@@ -181,7 +212,7 @@ export function Header() {
                   className="block py-2 text-sm text-muted-foreground hover:text-foreground"
                   onClick={() => setMobileOpen(false)}
                 >
-                  {lang === 'tr' ? 'Profil Ayarları' : 'Profile Settings'}
+                  {tx('nav.profileSettings', lang)}
                 </Link>
                 <button
                   className="block w-full py-2 text-left text-sm text-red-600 hover:text-red-700"
@@ -190,7 +221,7 @@ export function Header() {
                     await signOut();
                   }}
                 >
-                  {lang === 'tr' ? 'Çıkış Yap' : 'Sign Out'}
+                  {tx('nav.signOut', lang)}
                 </button>
               </>
             ) : (
@@ -199,12 +230,47 @@ export function Header() {
                 className="block py-2 text-sm font-medium text-primary hover:text-primary/80"
                 onClick={() => setMobileOpen(false)}
               >
-                {lang === 'tr' ? 'Giriş / Kayıt' : 'Sign In / Sign Up'}
+                {tx('nav.signInUp', lang)}
               </Link>
             )}
           </div>
         </nav>
       )}
     </header>
+
+    {/* Medication update reminder banner */}
+    {showMedReminder && (
+      <div className="border-b bg-amber-50 dark:bg-amber-950/30">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+          <p className="flex-1 text-sm text-amber-800 dark:text-amber-300">
+            {tx('medReminder.text', lang)}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1 text-xs text-amber-700 hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-900/40"
+              onClick={dismissReminder}
+              disabled={dismissingReminder}
+            >
+              <Check className="h-3 w-3" />
+              {tx('medReminder.yesCurrent', lang)}
+            </Button>
+            <Link href="/profile?tab=medications">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 gap-1 border-amber-300 text-xs text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/40"
+              >
+                <RefreshCw className="h-3 w-3" />
+                {tx('medReminder.update', lang)}
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

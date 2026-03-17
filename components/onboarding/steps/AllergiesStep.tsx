@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, X, AlertTriangle } from "lucide-react";
+import { useLang } from "@/components/layout/language-toggle";
 import type { OnboardingData } from "../OnboardingWizard";
 
 interface Props {
@@ -23,6 +24,8 @@ const severityColors: Record<string, string> = {
 };
 
 export function AllergiesStep({ data, updateData }: Props) {
+  const { lang } = useLang();
+  const tr = lang === "tr";
   const [allergen, setAllergen] = useState("");
   const [severity, setSeverity] = useState("mild");
 
@@ -54,7 +57,7 @@ export function AllergiesStep({ data, updateData }: Props) {
           }
         />
         <Label htmlFor="no-allergies" className="text-sm font-normal">
-          I have no known allergies
+          {tr ? "Bilinen alerjim yok" : "I have no known allergies"}
         </Label>
       </div>
 
@@ -78,42 +81,44 @@ export function AllergiesStep({ data, updateData }: Props) {
           )}
 
           <div className="space-y-3 rounded-lg border border-dashed p-4">
-            <p className="text-sm font-medium">Add an allergy</p>
+            <p className="text-sm font-medium">{tr ? "Alerji ekle" : "Add an allergy"}</p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-1">
-                <Label htmlFor="allergen" className="text-xs">Allergen</Label>
+                <Label htmlFor="allergen" className="text-xs">{tr ? "Alerjen" : "Allergen"}</Label>
                 <Input
                   id="allergen"
-                  placeholder="e.g., Penicillin, Chamomile, Nuts"
+                  placeholder={tr ? "ör. Penisilin, Papatya, Fındık" : "e.g., Penicillin, Chamomile, Nuts"}
                   value={allergen}
                   onChange={(e) => setAllergen(e.target.value)}
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">Severity</Label>
+                <Label className="text-xs">{tr ? "Şiddet" : "Severity"}</Label>
                 <Select value={severity} onValueChange={(v) => v && setSeverity(v)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="mild">Mild</SelectItem>
-                    <SelectItem value="moderate">Moderate</SelectItem>
-                    <SelectItem value="severe">Severe</SelectItem>
-                    <SelectItem value="anaphylaxis">Anaphylaxis</SelectItem>
+                    <SelectItem value="mild">{tr ? "Hafif" : "Mild"}</SelectItem>
+                    <SelectItem value="moderate">{tr ? "Orta" : "Moderate"}</SelectItem>
+                    <SelectItem value="severe">{tr ? "Şiddetli" : "Severe"}</SelectItem>
+                    <SelectItem value="anaphylaxis">{tr ? "Anafilaksi" : "Anaphylaxis"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={addAllergy} disabled={!allergen.trim()}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Allergy
+              {tr ? "Alerji Ekle" : "Add Allergy"}
             </Button>
           </div>
         </>
       )}
 
       <p className="text-xs text-muted-foreground">
-        Herbal products may cross-react with known allergies. We filter recommendations accordingly.
+        {tr
+          ? "Bitkisel ürünler bilinen alerjilerle çapraz reaksiyon verebilir. Önerilerimizi buna göre filtreliyoruz."
+          : "Herbal products may cross-react with known allergies. We filter recommendations accordingly."}
       </p>
     </div>
   );

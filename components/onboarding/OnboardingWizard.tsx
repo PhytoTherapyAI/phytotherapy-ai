@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowLeft, ArrowRight, Leaf, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
+import { useLang } from "@/components/layout/language-toggle";
+import { confirmOnboardingRefresh, confirmDailyMed } from "@/lib/daily-med-check";
 import type { UserProfile } from "@/lib/database.types";
 
 // Step components
@@ -20,21 +22,36 @@ import { MedicalHistoryStep } from "@/components/onboarding/steps/MedicalHistory
 import { ConsentStep } from "@/components/onboarding/steps/ConsentStep";
 import { OptionalProfileStep } from "@/components/onboarding/steps/OptionalProfileStep";
 
-const LAYER1_STEPS = [
-  { id: "basic", title: "Basic Information", description: "Tell us about yourself" },
-  { id: "medications", title: "Current Medications", description: "Active medications you take" },
-  { id: "allergies", title: "Allergies", description: "Known allergies" },
-  { id: "pregnancy", title: "Pregnancy & Breastfeeding", description: "Reproductive health status" },
-  { id: "substances", title: "Alcohol & Smoking", description: "Substance use information" },
-  { id: "medical", title: "Medical History", description: "Key health conditions" },
-  { id: "consent", title: "Terms & Consent", description: "Medical disclaimer agreement" },
-];
+// Bilingual step definitions
+function getSteps(lang: "en" | "tr") {
+  if (lang === "tr") {
+    return [
+      { id: "basic", title: "Temel Bilgiler", description: "Kendiniz hakkında bilgi verin" },
+      { id: "medications", title: "Mevcut İlaçlar", description: "Kullandığınız aktif ilaçlar" },
+      { id: "allergies", title: "Alerjiler", description: "Bilinen alerjileriniz" },
+      { id: "pregnancy", title: "Gebelik & Emzirme", description: "Üreme sağlığı durumu" },
+      { id: "substances", title: "Alkol & Sigara", description: "Madde kullanım bilgisi" },
+      { id: "medical", title: "Tıbbi Geçmiş", description: "Önemli sağlık durumları" },
+      { id: "consent", title: "Şartlar & Onay", description: "Tıbbi sorumluluk reddi" },
+    ];
+  }
+  return [
+    { id: "basic", title: "Basic Information", description: "Tell us about yourself" },
+    { id: "medications", title: "Current Medications", description: "Active medications you take" },
+    { id: "allergies", title: "Allergies", description: "Known allergies" },
+    { id: "pregnancy", title: "Pregnancy & Breastfeeding", description: "Reproductive health status" },
+    { id: "substances", title: "Alcohol & Smoking", description: "Substance use information" },
+    { id: "medical", title: "Medical History", description: "Key health conditions" },
+    { id: "consent", title: "Terms & Consent", description: "Medical disclaimer agreement" },
+  ];
+}
 
-const LAYER2_STEP = {
-  id: "optional",
-  title: "Personalize (Optional)",
-  description: "Help us give better recommendations",
-};
+function getLayer2Step(lang: "en" | "tr") {
+  if (lang === "tr") {
+    return { id: "optional", title: "Kişiselleştir (İsteğe Bağlı)", description: "Daha iyi öneriler için yardımcı olun" };
+  }
+  return { id: "optional", title: "Personalize (Optional)", description: "Help us give better recommendations" };
+}
 
 export interface OnboardingData {
   // Step 1: Basic info
@@ -103,6 +120,7 @@ interface Props {
 export function OnboardingWizard({ profile }: Props) {
   const router = useRouter();
   const { refreshProfile } = useAuth();
+  const { lang } = useLang();
   const [currentStep, setCurrentStep] = useState(0);
   const [showLayer2, setShowLayer2] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -110,6 +128,9 @@ export function OnboardingWizard({ profile }: Props) {
     ...defaultData,
     full_name: profile.full_name ?? "",
   });
+
+  const LAYER1_STEPS = getSteps(lang);
+  const LAYER2_STEP = getLayer2Step(lang);
 
   const totalSteps = showLayer2 ? LAYER1_STEPS.length + 1 : LAYER1_STEPS.length;
   const isLayer2 = currentStep === LAYER1_STEPS.length;
@@ -122,30 +143,20 @@ export function OnboardingWizard({ profile }: Props) {
 
   const canProceed = (): boolean => {
     switch (currentStep) {
-      case 0: // Basic info
-        return !!data.full_name.trim() && data.age !== null && data.age >= 18 && !!data.gender;
-      case 1: // Medications
-        return data.no_medications || data.medications.length > 0;
-      case 2: // Allergies
-        return data.no_allergies || data.allergies.length > 0;
-      case 3: // Pregnancy
-        return true; // Booleans always have a value
-      case 4: // Substances
-        return !!data.alcohol_use && !!data.smoking_use;
-      case 5: // Medical history
-        return true; // Booleans default to false
-      case 6: // Consent
-        return data.consent_agreed;
-      case 7: // Optional
-        return true;
-      default:
-        return false;
+      case 0: return !!data.full_name.trim() && data.age !== null && data.age >= 18 && !!data.gender;
+      case 1: return data.no_medications || data.medications.length > 0;
+      case 2: return data.no_allergies || data.allergies.length > 0;
+      case 3: return true;
+      case 4: return !!data.alcohol_use && !!data.smoking_use;
+      case 5: return true;
+      case 6: return data.consent_agreed;
+      case 7: return true;
+      default: return false;
     }
   };
 
   const handleNext = async () => {
     if (currentStep === LAYER1_STEPS.length - 1 && !showLayer2) {
-      // End of Layer 1 — ask about Layer 2
       setShowLayer2(true);
       setCurrentStep(LAYER1_STEPS.length);
       return;
@@ -156,7 +167,6 @@ export function OnboardingWizard({ profile }: Props) {
       return;
     }
 
-    // Final step — save everything
     await saveOnboarding();
   };
 
@@ -169,11 +179,10 @@ export function OnboardingWizard({ profile }: Props) {
     try {
       const supabase = createBrowserClient();
 
-      // Verify we have an active auth session (required for RLS policies)
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (authError || !user) {
         console.error("Auth error during onboarding save:", authError);
-        alert("Your session has expired. Please sign in again.");
+        alert(lang === "tr" ? "Oturumunuz sona erdi. Lütfen tekrar giriş yapın." : "Your session has expired. Please sign in again.");
         router.push("/auth/login");
         return;
       }
@@ -181,9 +190,8 @@ export function OnboardingWizard({ profile }: Props) {
       const userId = user.id;
       console.log("[Onboarding] Saving for user:", userId);
 
-      // 1. Save medications FIRST (before marking onboarding complete)
+      // 1. Save medications
       if (data.medications.length > 0) {
-        // Delete existing medications first (safe for retry)
         await supabase.from("user_medications").delete().eq("user_id", userId);
 
         const medsToInsert = data.medications.map((med) => ({
@@ -194,7 +202,6 @@ export function OnboardingWizard({ profile }: Props) {
           frequency: med.frequency,
           is_active: true,
         }));
-        console.log("[Onboarding] Inserting medications:", medsToInsert);
 
         const { error: medError } = await supabase
           .from("user_medications")
@@ -202,15 +209,13 @@ export function OnboardingWizard({ profile }: Props) {
 
         if (medError) {
           console.error("[Onboarding] Medication insert error:", medError);
-          alert("Failed to save medications. Please try again. Error: " + medError.message);
+          alert(lang === "tr" ? "İlaçlar kaydedilemedi. Tekrar deneyin." : "Failed to save medications. Please try again.");
           return;
         }
-        console.log("[Onboarding] Medications saved successfully");
       }
 
-      // 2. Save allergies SECOND
+      // 2. Save allergies
       if (data.allergies.length > 0) {
-        // Delete existing allergies first (safe for retry)
         await supabase.from("user_allergies").delete().eq("user_id", userId);
 
         const allergiesToInsert = data.allergies.map((allergy) => ({
@@ -218,7 +223,6 @@ export function OnboardingWizard({ profile }: Props) {
           allergen: allergy.allergen,
           severity: allergy.severity,
         }));
-        console.log("[Onboarding] Inserting allergies:", allergiesToInsert);
 
         const { error: allergyError } = await supabase
           .from("user_allergies")
@@ -226,25 +230,23 @@ export function OnboardingWizard({ profile }: Props) {
 
         if (allergyError) {
           console.error("[Onboarding] Allergy insert error:", allergyError);
-          alert("Failed to save allergies. Please try again. Error: " + allergyError.message);
+          alert(lang === "tr" ? "Alerjiler kaydedilemedi. Tekrar deneyin." : "Failed to save allergies. Please try again.");
           return;
         }
-        console.log("[Onboarding] Allergies saved successfully");
       }
 
-      // 3. Save consent record (non-critical — don't block on failure)
+      // 3. Save consent record
       try {
         await supabase.from("consent_records").insert({
           user_id: userId,
           consent_type: "medical_disclaimer",
           consent_text: "User agreed to medical disclaimer and terms of service during onboarding.",
         });
-        console.log("[Onboarding] Consent record saved");
       } catch (consentErr) {
         console.error("[Onboarding] Consent save failed (non-critical):", consentErr);
       }
 
-      // 4. Update profile LAST — only after medications and allergies are saved
+      // 4. Update profile
       const { error: profileError } = await supabase
         .from("user_profiles")
         .update({
@@ -259,7 +261,6 @@ export function OnboardingWizard({ profile }: Props) {
           liver_disease: data.liver_disease,
           recent_surgery: data.recent_surgery,
           chronic_conditions: data.chronic_conditions,
-          // Layer 2
           height_cm: data.height_cm,
           weight_kg: data.weight_kg,
           blood_group: data.blood_group || null,
@@ -267,7 +268,6 @@ export function OnboardingWizard({ profile }: Props) {
           exercise_frequency: data.exercise_frequency || null,
           sleep_quality: data.sleep_quality || null,
           supplements: data.supplements,
-          // System — marked LAST so incomplete data doesn't get skipped
           onboarding_complete: true,
           onboarding_layer2_complete: isLayer2,
           consent_timestamp: new Date().toISOString(),
@@ -279,14 +279,17 @@ export function OnboardingWizard({ profile }: Props) {
         console.error("[Onboarding] Profile update error:", profileError);
         throw profileError;
       }
-      console.log("[Onboarding] Profile updated — onboarding complete!");
 
-      // 5. Refresh profile in context and redirect
+      // 5. Mark 30-day refresh + daily as confirmed in localStorage
+      confirmOnboardingRefresh();
+      confirmDailyMed();
+
+      // 6. Refresh profile and redirect
       await refreshProfile();
       router.push("/");
     } catch (error) {
       console.error("Onboarding save error:", error);
-      alert("Failed to save your information. Please try again.");
+      alert(lang === "tr" ? "Bilgileriniz kaydedilemedi. Tekrar deneyin." : "Failed to save your information. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -298,13 +301,17 @@ export function OnboardingWizard({ profile }: Props) {
       <div className="text-center">
         <div className="mx-auto mb-3 flex items-center justify-center gap-2">
           <Leaf className="h-6 w-6 text-primary" />
-          <span className="text-lg font-bold">
-            Phyto<span className="text-primary">therapy</span>.ai
+          <span className="font-sans-heading text-lg font-bold">
+            Phyto<span className="text-[#b8965a] dark:text-[#c9a86c]">therapy</span><span className="text-primary">.ai</span>
           </span>
         </div>
-        <h1 className="font-heading text-2xl font-bold">Set Up Your Health Profile</h1>
+        <h1 className="font-sans-heading text-2xl font-bold">
+          {lang === "tr" ? "Sağlık Profilinizi Oluşturun" : "Set Up Your Health Profile"}
+        </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          This helps us give you safe, personalized recommendations
+          {lang === "tr"
+            ? "Güvenli ve kişiselleştirilmiş öneriler sunmamızı sağlar"
+            : "This helps us give you safe, personalized recommendations"}
         </p>
       </div>
 
@@ -312,7 +319,7 @@ export function OnboardingWizard({ profile }: Props) {
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">
-            Step {currentStep + 1} of {totalSteps}
+            {lang === "tr" ? `Adım ${currentStep + 1} / ${totalSteps}` : `Step ${currentStep + 1} of ${totalSteps}`}
           </span>
           <span className="font-medium">{currentStepInfo.title}</span>
         </div>
@@ -322,7 +329,7 @@ export function OnboardingWizard({ profile }: Props) {
       {/* Step Content */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 font-sans-heading">
             {currentStepInfo.title}
           </CardTitle>
           <CardDescription>{currentStepInfo.description}</CardDescription>
@@ -347,13 +354,13 @@ export function OnboardingWizard({ profile }: Props) {
           disabled={currentStep === 0 || isSubmitting}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
+          {lang === "tr" ? "Geri" : "Back"}
         </Button>
 
         <div className="flex gap-2">
           {isLayer2 && (
             <Button variant="ghost" onClick={handleSkipLayer2} disabled={isSubmitting}>
-              Skip for now
+              {lang === "tr" ? "Şimdilik atla" : "Skip for now"}
             </Button>
           )}
 
@@ -363,15 +370,15 @@ export function OnboardingWizard({ profile }: Props) {
             className="bg-primary hover:bg-primary/90"
           >
             {isSubmitting ? (
-              "Saving..."
+              lang === "tr" ? "Kaydediliyor..." : "Saving..."
             ) : currentStep >= totalSteps - 1 ? (
               <>
                 <CheckCircle2 className="mr-2 h-4 w-4" />
-                Complete
+                {lang === "tr" ? "Tamamla" : "Complete"}
               </>
             ) : (
               <>
-                Next
+                {lang === "tr" ? "İleri" : "Next"}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </>
             )}

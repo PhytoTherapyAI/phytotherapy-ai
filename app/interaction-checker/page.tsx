@@ -12,44 +12,72 @@ import {
   Heart,
   Phone,
   ShieldAlert,
+  Download,
+  LogIn,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DrugInput } from "@/components/interaction/DrugInput";
 import { InteractionResult } from "@/components/interaction/InteractionResult";
 import { useAuth } from "@/lib/auth-context";
+import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
 import type { InteractionResult as InteractionResultType } from "@/lib/interaction-engine";
+import type { UserMedication } from "@/lib/database.types";
+import { createBrowserClient } from "@/lib/supabase";
 
 const EXAMPLE_QUERIES = [
-  {
-    medications: ["Metformin"],
-    concern: "I have trouble sleeping at night",
-    label: "Metformin + Sleep Issues",
-  },
-  {
-    medications: ["Warfarin"],
-    concern: "I want to try herbal supplements for joint pain",
-    label: "Warfarin + Joint Pain",
-  },
-  {
-    medications: ["Lisinopril", "Metformin"],
-    concern: "I feel anxious and stressed lately",
-    label: "Multiple Meds + Anxiety",
-  },
-  {
-    medications: ["Sertraline"],
-    concern: "I want something natural to boost my energy",
-    label: "Sertraline + Low Energy",
-  },
+  { medications: ["Metformin"], concernKey: "ic.ex1.concern", labelKey: "ic.ex1.label" },
+  { medications: ["Warfarin"], concernKey: "ic.ex2.concern", labelKey: "ic.ex2.label" },
+  { medications: ["Lisinopril", "Metformin"], concernKey: "ic.ex3.concern", labelKey: "ic.ex3.label" },
+  { medications: ["Sertraline"], concernKey: "ic.ex4.concern", labelKey: "ic.ex4.label" },
 ];
 
 export default function InteractionCheckerPage() {
-  const { isAuthenticated, isLoading: authLoading, session } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, session, profile } = useAuth();
+  const { lang } = useLang()
   const [medications, setMedications] = useState<string[]>([]);
   const [concern, setConcern] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<InteractionResultType | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const [profileMedsLoaded, setProfileMedsLoaded] = useState(false);
+
+  const loadMedicationsFromProfile = async () => {
+    if (!profile) return;
+    setLoadingProfile(true);
+    try {
+      const supabase = createBrowserClient();
+      const { data } = await supabase
+        .from("user_medications")
+        .select("*")
+        .eq("user_id", profile.id)
+        .eq("is_active", true);
+      if (data && data.length > 0) {
+        const medNames = (data as UserMedication[]).map(
+          (m) => m.brand_name || m.generic_name || ""
+        ).filter(Boolean);
+        // Merge with existing, avoiding duplicates
+        setMedications((prev) => {
+          const existing = new Set(prev.map((s) => s.toLowerCase()));
+          const merged = [...prev];
+          for (const name of medNames) {
+            if (!existing.has(name.toLowerCase())) {
+              merged.push(name);
+              existing.add(name.toLowerCase());
+            }
+          }
+          return merged;
+        });
+        setProfileMedsLoaded(true);
+      }
+    } catch (err) {
+      console.error("Failed to load profile medications:", err);
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
 
   // Real-time red flag detection on concern text — runs on every keystroke
   const redFlagCheck = useMemo(() => checkRedFlags(concern), [concern]);
@@ -73,7 +101,7 @@ export default function InteractionCheckerPage() {
       const res = await fetch("/api/interaction", {
         method: "POST",
         headers,
-        body: JSON.stringify({ medications, concern: concern.trim() }),
+        body: JSON.stringify({ medications, concern: concern.trim(), lang }),
       });
 
       if (!res.ok) {
@@ -94,23 +122,13 @@ export default function InteractionCheckerPage() {
 
   const loadExample = (example: (typeof EXAMPLE_QUERIES)[0]) => {
     setMedications(example.medications);
-    setConcern(example.concern);
+    setConcern(tx(example.concernKey, lang));
     setResult(null);
     setError(null);
   };
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
-      {/* Static Emergency Banner */}
-      <div className="mb-6 flex items-center gap-2.5 rounded-lg border border-red-200 bg-red-50/80 px-4 py-3 dark:border-red-800/50 dark:bg-red-950/30">
-        <Phone className="h-4 w-4 shrink-0 text-red-600" />
-        <p className="text-sm text-red-700 dark:text-red-400">
-          If you are experiencing a life-threatening emergency, call{" "}
-          <a href="tel:112" className="font-semibold underline">112</a> /{" "}
-          <a href="tel:911" className="font-semibold underline">911</a> immediately.
-        </p>
-      </div>
-
       {/* Page Header */}
       <div className="mb-8">
         <div className="mb-4 flex items-center gap-3">
@@ -118,12 +136,11 @@ export default function InteractionCheckerPage() {
             <Shield className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="font-heading text-2xl font-semibold md:text-3xl">
-              Drug-Herb Interaction Checker
+            <h1 className="font-sans-heading text-2xl font-bold md:text-3xl">
+              {tx('ic.title', lang)}
             </h1>
             <p className="text-sm text-muted-foreground md:text-base">
-              Enter your medications and describe your concern — we&apos;ll find safe
-              herbal alternatives backed by science.
+              {tx('ic.subtitle', lang)}
             </p>
           </div>
         </div>
@@ -136,7 +153,7 @@ export default function InteractionCheckerPage() {
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Pill className="h-4 w-4 text-muted-foreground" />
-              Add your medications
+              {tx('ic.step1', lang)}
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
@@ -145,7 +162,7 @@ export default function InteractionCheckerPage() {
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Heart className="h-4 w-4 text-muted-foreground" />
-              Describe your concern
+              {tx('ic.step2', lang)}
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
@@ -154,7 +171,7 @@ export default function InteractionCheckerPage() {
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Leaf className="h-4 w-4 text-muted-foreground" />
-              Get safe alternatives
+              {tx('ic.step3', lang)}
             </div>
           </div>
         </div>
@@ -169,17 +186,56 @@ export default function InteractionCheckerPage() {
           disabled={isLoading}
         />
 
+        {/* Load from Profile / Guest CTA */}
+        {!authLoading && (
+          <div className="flex items-center gap-2">
+            {isAuthenticated ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadMedicationsFromProfile}
+                disabled={loadingProfile || profileMedsLoaded}
+                className="gap-2 text-xs"
+              >
+                {loadingProfile ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : profileMedsLoaded ? (
+                  <Pill className="h-3.5 w-3.5 text-primary" />
+                ) : (
+                  <Download className="h-3.5 w-3.5" />
+                )}
+                {profileMedsLoaded
+                  ? (lang === "tr" ? "✓ Profil ilaçları yüklendi" : "✓ Profile meds loaded")
+                  : tx("ic.loadFromProfile", lang)}
+              </Button>
+            ) : (
+              <a
+                href="/auth/login"
+                className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              >
+                <LogIn className="h-3.5 w-3.5" />
+                {tx("ic.loadFromProfileGuest", lang)}
+              </a>
+            )}
+          </div>
+        )}
+
+        {/* Safety Warning */}
+        <div className="rounded-lg border border-amber-200 bg-amber-50/80 p-3 text-xs text-amber-800 dark:border-amber-800/40 dark:bg-amber-950/20 dark:text-amber-300">
+          {tx("ic.medWarning", lang)}
+        </div>
+
         {/* Concern Input */}
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-sm font-medium">
             <Heart className="h-4 w-4 text-primary" />
-            What&apos;s your health concern?
+            {tx('ic.concernLabel', lang)}
           </label>
           <textarea
             value={concern}
             onChange={(e) => setConcern(e.target.value)}
             disabled={isLoading}
-            placeholder="Describe your symptom or health goal (e.g., 'I have trouble sleeping', 'I want to reduce my cholesterol naturally', 'I feel anxious and stressed')"
+            placeholder={tx('ic.concernPlaceholder', lang)}
             rows={3}
             maxLength={1000}
             className={`w-full resize-none rounded-lg border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 ${
@@ -203,7 +259,7 @@ export default function InteractionCheckerPage() {
                 <ShieldAlert className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-red-800 dark:text-red-200">
+                <h3 className="text-lg font-bold text-red-800 dark:text-red-200" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
                   🚨 Emergency Warning
                 </h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-red-700 dark:text-red-300">
@@ -215,13 +271,11 @@ export default function InteractionCheckerPage() {
                     className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700"
                   >
                     <Phone className="h-4 w-4" />
-                    {redFlagCheck.language === "tr" ? "112'yi Ara" : "Call 911 / 112"}
+                    {tx('ic.emergencyCall', lang)}
                   </a>
                   <span className="inline-flex items-center gap-1.5 rounded-lg border border-red-300 bg-red-100 px-3 py-2 text-xs font-medium text-red-800 dark:border-red-700 dark:bg-red-900/50 dark:text-red-300">
                     <ShieldAlert className="h-3.5 w-3.5" />
-                    {redFlagCheck.language === "tr"
-                      ? "Bitkisel takviyeler bu durumda kullanılamaz"
-                      : "Herbal supplements cannot be used in this situation"}
+                    {tx('ic.emergencyHerbal', lang)}
                   </span>
                 </div>
               </div>
@@ -243,19 +297,17 @@ export default function InteractionCheckerPage() {
           {isLoading ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Analyzing interactions...
+              {tx('ic.analyzing', lang)}
             </>
           ) : redFlagCheck.isEmergency ? (
             <>
               <ShieldAlert className="h-5 w-5" />
-              {redFlagCheck.language === "tr"
-                ? "Acil durum — Analiz devre dışı"
-                : "Emergency detected — Analysis disabled"}
+              {tx('ic.emergencyDisabled', lang)}
             </>
           ) : (
             <>
               <Search className="h-5 w-5" />
-              Check Interactions
+              {tx('ic.checkBtn', lang)}
               <ArrowRight className="h-4 w-4" />
             </>
           )}
@@ -264,8 +316,8 @@ export default function InteractionCheckerPage() {
         {/* Profile note — hidden while auth is loading */}
         {!authLoading && !isAuthenticated && !redFlagCheck.isEmergency && (
           <p className="text-center text-xs text-muted-foreground">
-            💡 <a href="/auth/login" className="text-primary underline hover:text-primary/80">Sign in</a>{" "}
-            to get personalized safety checks based on your health profile (pregnancy, allergies, kidney/liver conditions).
+            💡 <a href="/auth/login" className="text-primary underline hover:text-primary/80">{tx('ic.signIn', lang)}</a>{" "}
+            {tx('ic.signInNote', lang)}
           </p>
         )}
       </div>
@@ -273,9 +325,9 @@ export default function InteractionCheckerPage() {
       {/* Example Queries — hidden during emergency */}
       {!result && !isLoading && !redFlagCheck.isEmergency && (
         <div className="mb-8">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
             <Sparkles className="h-4 w-4" />
-            Try an example
+            {tx('ic.tryExample', lang)}
           </h3>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {EXAMPLE_QUERIES.map((example, i) => (
@@ -289,10 +341,10 @@ export default function InteractionCheckerPage() {
                 </div>
                 <div className="flex-1">
                   <span className="font-medium group-hover:text-primary">
-                    {example.label}
+                    {tx(example.labelKey, lang)}
                   </span>
                   <p className="text-xs text-muted-foreground">
-                    {example.concern}
+                    {tx(example.concernKey, lang)}
                   </p>
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
@@ -306,11 +358,13 @@ export default function InteractionCheckerPage() {
       {isLoading && (
         <div className="flex flex-col items-center justify-center rounded-xl border bg-card p-12">
           <Loader2 className="mb-4 h-10 w-10 animate-spin text-primary" />
-          <h3 className="mb-2 text-lg font-semibold">Analyzing Interactions...</h3>
+          <h3 className="mb-2 text-lg font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+            {tx('ic.loadingTitle', lang)}
+          </h3>
           <div className="space-y-1 text-center text-sm text-muted-foreground">
-            <p>🔍 Looking up your medications in FDA database</p>
-            <p>📚 Searching PubMed for relevant research</p>
-            <p>🧬 Running AI safety analysis</p>
+            <p>🔍 {tx('ic.loadingFda', lang)}</p>
+            <p>📚 {tx('ic.loadingPubmed', lang)}</p>
+            <p>🧬 {tx('ic.loadingAi', lang)}</p>
           </div>
         </div>
       )}
@@ -318,8 +372,8 @@ export default function InteractionCheckerPage() {
       {/* Error State */}
       {error && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-950/30">
-          <h3 className="mb-2 font-semibold text-red-800 dark:text-red-300">
-            Analysis Failed
+          <h3 className="mb-2 font-semibold text-red-800 dark:text-red-300" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+            {tx('ic.errorTitle', lang)}
           </h3>
           <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
           <Button
@@ -328,7 +382,7 @@ export default function InteractionCheckerPage() {
             size="sm"
             className="mt-3"
           >
-            Try Again
+            {tx('ic.tryAgain', lang)}
           </Button>
         </div>
       )}

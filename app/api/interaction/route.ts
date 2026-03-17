@@ -7,7 +7,7 @@ export const maxDuration = 60; // Allow up to 60s for Gemini + PubMed
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { medications, concern } = body;
+    const { medications, concern, lang } = body;
 
     // Validate input
     if (!medications || !Array.isArray(medications) || medications.length === 0) {
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Run the interaction engine
-    const result = await analyzeInteraction(medications, concern.trim(), profile);
+    const result = await analyzeInteraction(medications, concern.trim(), profile, lang || "en");
 
     return NextResponse.json(result);
   } catch (error) {

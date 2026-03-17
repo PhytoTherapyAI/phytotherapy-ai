@@ -1,6 +1,8 @@
 "use client";
 
 import { User, Leaf, Loader2, FileText, Image as ImageIcon } from "lucide-react";
+import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 export interface ChatMessage {
   id: string;
@@ -19,6 +21,7 @@ interface MessageBubbleProps {
 }
 
 export function MessageBubble({ message }: MessageBubbleProps) {
+  const { lang } = useLang();
   const isUser = message.role === "user";
 
   return (
@@ -69,7 +72,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         {message.isStreaming && message.content === "" ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Loader2 className="h-4 w-4 animate-spin" />
-            Analyzing{message.attachments?.length ? " your file" : ""}...
+            {message.attachments?.length ? tx('chat.analyzingFile', lang) : tx('chat.analyzing', lang)}
           </div>
         ) : (
           <div
