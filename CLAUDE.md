@@ -338,6 +338,7 @@ query_history, blood_tests, consent_records, guest_queries
 #### Sprint 10 — Çok Dil + Google Auth
 - [x] TR/EN dil toggle navbar'da (bayrak ikonu) ✅ — Sprint 7'de tamamlandı
 - [x] UI çeviri sistemi (lang context → tüm sayfalar) ✅ — Sprint 7.5'te tamamlandı
+- [x] Tek dosyalı dil sistemi: SUPPORTED_LANGUAGES + tx() — yeni dil = 1 config satırı + çeviriler ✅
 - [ ] Google OAuth
 - [ ] AR desteği (ileride)
 

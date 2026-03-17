@@ -1,23 +1,25 @@
 'use client'
 import { createContext, useContext, useState, useEffect, useRef } from 'react'
+import { SUPPORTED_LANGUAGES, DEFAULT_LANG, type Lang } from '@/lib/translations'
 
-type Lang = 'en' | 'tr'
 type LangContextType = { lang: Lang; setLang: (l: Lang) => void }
 
 export const LanguageContext = createContext<LangContextType>({
-  lang: 'en',
+  lang: DEFAULT_LANG,
   setLang: () => {},
 })
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>('en')
+  const [lang, setLangState] = useState<Lang>(DEFAULT_LANG)
   const [mounted, setMounted] = useState(false)
+
+  const validCodes = SUPPORTED_LANGUAGES.map((l) => l.code) as readonly string[]
 
   useEffect(() => {
     setMounted(true)
-    const saved = localStorage.getItem('lang') as Lang
-    if (saved === 'en' || saved === 'tr') setLangState(saved)
-  }, [])
+    const saved = localStorage.getItem('lang')
+    if (saved && validCodes.includes(saved)) setLangState(saved as Lang)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const setLang = (l: Lang) => {
     setLangState(l)
@@ -47,10 +49,8 @@ function LangFlag({ flag, label }: { flag: string | null; label: string }) {
   return <img src={`https://flagcdn.com/w20/${flag}.png`} width={16} height={12} alt={label} />
 }
 
-const LANGUAGES = [
-  { code: 'en', label: 'English', short: 'EN', flag: null },
-  { code: 'tr', label: 'Türkçe', short: 'TR', flag: 'tr' },
-] as const
+// Dil listesi artık lib/translations.ts'den geliyor — tek noktadan yönetim
+const LANGUAGES = SUPPORTED_LANGUAGES
 
 export function LanguageToggle() {
   const { lang, setLang } = useLang()
@@ -100,16 +100,16 @@ export function LanguageToggle() {
               key={l.code}
               type="button"
               onClick={() => {
-                setLang(l.code)
+                setLang(l.code as Lang)
                 setOpen(false)
               }}
               className={`flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-xs transition-colors hover:bg-muted ${
-                lang === l.code ? 'text-primary font-semibold' : 'text-foreground'
+                lang === (l.code as string) ? 'text-primary font-semibold' : 'text-foreground'
               }`}
             >
               <LangFlag flag={l.flag} label={l.label} />
               {l.label}
-              {lang === l.code && (
+              {lang === (l.code as string) && (
                 <svg className="ml-auto h-3.5 w-3.5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>

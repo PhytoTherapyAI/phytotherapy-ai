@@ -1,14 +1,44 @@
 // ============================================
-// Centralized Translation System
+// Centralized Translation System — v2.0
 // ============================================
-// Usage: import { tx } from "@/lib/translations"
-//        tx("key", lang)  →  returns string for current language
+//
+// 🌍 YENİ DİL EKLEMEK İÇİN:
+//
+// 1. SUPPORTED_LANGUAGES dizisine yeni dil ekle (aşağıda)
+// 2. Lang type'a yeni dili ekle
+// 3. Her çeviri key'ine yeni dil alanını ekle
+// 4. Bitti! Navbar toggle ve tüm sayfalar otomatik çalışır.
+//
+// Örnek: Arapça eklemek için:
+//   - SUPPORTED_LANGUAGES'a { code: "ar", label: "العربية", short: "AR", flag: "sa" } ekle
+//   - Lang type'a "ar" ekle
+//   - Her key'e ar: "..." ekle
+//
 // ============================================
 
-type Lang = "en" | "tr"
+// ── Desteklenen Diller ──────────────────────
+// Yeni dil eklerken SADECE buraya satır ekle + aşağıdaki t objesine çevirileri ekle
+export const SUPPORTED_LANGUAGES = [
+  { code: "en" as const, label: "English", short: "EN", flag: null, dir: "ltr" },
+  { code: "tr" as const, label: "Türkçe", short: "TR", flag: "tr", dir: "ltr" },
+  // { code: "ar", label: "العربية", short: "AR", flag: "sa", dir: "rtl" },
+  // { code: "de", label: "Deutsch", short: "DE", flag: "de", dir: "ltr" },
+] as const
 
-const t: Record<string, { en: string; tr: string }> = {
-  // ── Global / Shared ──
+export type Lang = (typeof SUPPORTED_LANGUAGES)[number]["code"]
+export const DEFAULT_LANG: Lang = "en"
+
+// ── Çeviri Tipi ─────────────────────────────
+// Her key'in tüm desteklenen dillerde çevirisi olmalı
+type TranslationEntry = Record<Lang, string>
+
+// ── Çeviriler ───────────────────────────────
+// Yeni dil eklerken her key'e yeni alan ekle (örn: ar: "...")
+const t: Record<string, TranslationEntry> = {
+
+  // ══════════════════════════════════════════
+  // Global / Shared
+  // ══════════════════════════════════════════
   "emergency.banner": {
     en: "If you are experiencing a life-threatening emergency, call 112 / 911 immediately.",
     tr: "Hayati tehlike yaşıyorsanız hemen 112 / 911'i arayın.",
@@ -34,7 +64,9 @@ const t: Record<string, { en: string; tr: string }> = {
     tr: "Kanıta dayalı bütünleştirici tıp · Hakemli araştırmalarla desteklenir",
   },
 
-  // ── Header / Nav ──
+  // ══════════════════════════════════════════
+  // Header / Nav
+  // ══════════════════════════════════════════
   "nav.interaction": { en: "Interaction Checker", tr: "Etkileşim Denetleyici" },
   "nav.assistant": { en: "Health Assistant", tr: "Sağlık Asistanı" },
   "nav.bloodtest": { en: "Blood Test Analysis", tr: "Kan Tahlili Analizi" },
@@ -43,7 +75,9 @@ const t: Record<string, { en: string; tr: string }> = {
   "nav.profileSettings": { en: "Profile Settings", tr: "Profil Ayarları" },
   "nav.signOut": { en: "Sign Out", tr: "Çıkış Yap" },
 
-  // ── Interaction Checker ──
+  // ══════════════════════════════════════════
+  // Interaction Checker
+  // ══════════════════════════════════════════
   "ic.title": { en: "Drug-Herb Interaction Checker", tr: "İlaç-Bitki Etkileşim Denetleyicisi" },
   "ic.subtitle": {
     en: "Enter your medications and describe your concern — we'll find safe herbal alternatives backed by science.",
@@ -73,7 +107,9 @@ const t: Record<string, { en: string; tr: string }> = {
   },
   "ic.tryExample": { en: "Try an example", tr: "Örnek deneyin" },
 
-  // ── Health Assistant ──
+  // ══════════════════════════════════════════
+  // Health Assistant
+  // ══════════════════════════════════════════
   "ha.title": { en: "Health Assistant", tr: "Sağlık Asistanı" },
   "ha.subtitle": {
     en: "Ask evidence-based health questions — powered by PubMed research",
@@ -81,7 +117,9 @@ const t: Record<string, { en: string; tr: string }> = {
   },
   "ha.tryAsking": { en: "Try asking:", tr: "Şunu sormayı deneyin:" },
 
-  // ── Blood Test ──
+  // ══════════════════════════════════════════
+  // Blood Test
+  // ══════════════════════════════════════════
   "bt.title": { en: "Blood Test Analysis", tr: "Kan Tahlili Analizi" },
   "bt.subtitle": {
     en: "Enter your blood test values for evidence-based supplement & lifestyle recommendations",
@@ -97,7 +135,9 @@ const t: Record<string, { en: string; tr: string }> = {
   "bt.yourResults": { en: "Your Results", tr: "Sonuçlarınız" },
   "bt.runNew": { en: "Run New Analysis", tr: "Yeni Analiz Yap" },
 
-  // ── BloodTestForm ──
+  // ══════════════════════════════════════════
+  // BloodTestForm
+  // ══════════════════════════════════════════
   "btf.genderLabel": {
     en: "Biological Sex (for gender-specific reference ranges)",
     tr: "Biyolojik Cinsiyet (cinsiyete özgü referans aralıkları için)",
@@ -115,7 +155,9 @@ const t: Record<string, { en: string; tr: string }> = {
   "btf.fillDemo": { en: "Fill Demo Data", tr: "Demo Veri Doldur" },
   "btf.clearAll": { en: "Clear all", tr: "Temizle" },
 
-  // ── BloodTestForm Category Labels ──
+  // ══════════════════════════════════════════
+  // BloodTestForm Category Labels
+  // ══════════════════════════════════════════
   "cat.lipid": { en: "Lipid Panel", tr: "Lipid Paneli" },
   "cat.vitamin": { en: "Vitamins", tr: "Vitaminler" },
   "cat.mineral": { en: "Minerals", tr: "Mineraller" },
@@ -126,7 +168,9 @@ const t: Record<string, { en: string; tr: string }> = {
   "cat.kidney": { en: "Kidney", tr: "Böbrek" },
   "cat.blood_count": { en: "Blood Count", tr: "Kan Sayımı" },
 
-  // ── Marker Names (blood test markers) ──
+  // ══════════════════════════════════════════
+  // Marker Names (blood test markers)
+  // ══════════════════════════════════════════
   "marker.total_cholesterol": { en: "Total Cholesterol", tr: "Toplam Kolesterol" },
   "marker.ldl": { en: "LDL Cholesterol", tr: "LDL Kolesterol" },
   "marker.hdl": { en: "HDL Cholesterol", tr: "HDL Kolesterol" },
@@ -158,7 +202,9 @@ const t: Record<string, { en: string; tr: string }> = {
   "marker.wbc": { en: "White Blood Cells", tr: "Beyaz Kan Hücreleri" },
   "marker.platelets": { en: "Platelets", tr: "Trombositler" },
 
-  // ── ResultDashboard ──
+  // ══════════════════════════════════════════
+  // ResultDashboard
+  // ══════════════════════════════════════════
   "rd.optimal": { en: "Optimal", tr: "Optimal" },
   "rd.needsAttention": { en: "Needs Attention", tr: "Dikkat Gerekli" },
   "rd.recommendations": { en: "Recommendations", tr: "Öneriler" },
@@ -191,7 +237,9 @@ const t: Record<string, { en: string; tr: string }> = {
   "rd.pdfBtn": { en: "Download PDF for Doctor", tr: "Doktor İçin PDF İndir" },
   "rd.disclaimerTitle": { en: "Important Disclaimer", tr: "Önemli Sorumluluk Reddi" },
 
-  // ── DrugInput ──
+  // ══════════════════════════════════════════
+  // DrugInput
+  // ══════════════════════════════════════════
   "di.label": { en: "Your Medications", tr: "İlaçlarınız" },
   "di.add": { en: "Add", tr: "Ekle" },
   "di.placeholderEmpty": {
@@ -204,7 +252,9 @@ const t: Record<string, { en: string; tr: string }> = {
     tr: "Marka adı (Advil, Glifor) veya etken madde adı (Ibuprofen, Metformin) girin. Etken maddeleri otomatik olarak belirleyeceğiz.",
   },
 
-  // ── ChatInterface ──
+  // ══════════════════════════════════════════
+  // ChatInterface
+  // ══════════════════════════════════════════
   "chat.emptyTitle": { en: "Ask me anything about health & herbs", tr: "Sağlık ve bitkiler hakkında her şeyi sorun" },
   "chat.emptyDesc": {
     en: "I use PubMed research to give you evidence-based answers about supplements, herbs, and nutrition.",
@@ -219,7 +269,9 @@ const t: Record<string, { en: string; tr: string }> = {
     tr: "Bir sağlık sorusu sorun (örn. 'Omega-3 iltihabı azaltır mı?')",
   },
 
-  // ── ConversationHistory ──
+  // ══════════════════════════════════════════
+  // ConversationHistory
+  // ══════════════════════════════════════════
   "ch.history": { en: "History", tr: "Geçmiş" },
   "ch.title": { en: "Conversation History", tr: "Konuşma Geçmişi" },
   "ch.empty": { en: "No conversations yet", tr: "Henüz konuşma yok" },
@@ -227,7 +279,9 @@ const t: Record<string, { en: string; tr: string }> = {
   "ch.showingLast": { en: "Showing last", tr: "Son" },
   "ch.conversations": { en: "conversations", tr: "konuşma gösteriliyor" },
 
-  // ── InteractionResult ──
+  // ══════════════════════════════════════════
+  // InteractionResult
+  // ══════════════════════════════════════════
   "ir.medsAnalyzed": { en: "Medications Analyzed", tr: "Analiz Edilen İlaçlar" },
   "ir.medsNotFound": {
     en: "Some medications were not found in FDA database. Analysis based on AI knowledge — verify with your pharmacist.",
@@ -244,11 +298,17 @@ const t: Record<string, { en: string; tr: string }> = {
   "ir.maxDuration": { en: "Max Duration", tr: "Maksimum Süre" },
   "ir.sources": { en: "Sources", tr: "Kaynaklar" },
 
-  // ── Emergency Banner (shared across pages) ──
+  // ══════════════════════════════════════════
+  // Emergency
+  // ══════════════════════════════════════════
   "emergency.callPre": { en: "If you are experiencing a life-threatening emergency, call", tr: "Hayati tehlike yaşıyorsanız hemen" },
   "emergency.callPost": { en: "immediately.", tr: "numaralı hattı arayın." },
+  "ic.emergencyCall": { en: "Call 112 Now", tr: "Hemen 112'yi Ara" },
+  "ic.emergencyHerbal": { en: "Herbal analysis disabled", tr: "Bitkisel analiz devre dışı" },
 
-  // ── Landing Page (app/page.tsx) ──
+  // ══════════════════════════════════════════
+  // Landing Page
+  // ══════════════════════════════════════════
   "lp.heroHeading1": { en: "Science meets", tr: "Bilim ile" },
   "lp.heroHeadingItalic": { en: "nature\u2019s", tr: "doğanın şifası" },
   "lp.heroHeadingEnd": { en: "healing", tr: "buluşuyor" },
@@ -261,21 +321,15 @@ const t: Record<string, { en: string; tr: string }> = {
   "lp.featureTitle1": { en: "Four pillars of", tr: "Bütünleştirici sağlığın" },
   "lp.featureTitle2": { en: "integrative health", tr: "dört temel direği" },
   "lp.explore": { en: "Explore", tr: "Keşfet" },
-
-  // Landing page quick tags
   "lp.tag1": { en: "Medication interactions", tr: "İlaç etkileşimleri" },
   "lp.tag2": { en: "Omega-3 & inflammation", tr: "Omega-3 ve iltihap" },
   "lp.tag3": { en: "Valerian & sleep", tr: "Kediotu ve uyku" },
   "lp.tag4": { en: "Herbal & sedatives", tr: "Bitkisel ve sakinleştiriciler" },
-
-  // Landing page trust strip
   "lp.trust1": { en: "Evidence-backed research", tr: "Hakemli araştırmalara dayalı" },
   "lp.trust2": { en: "No diagnosis — decision support", tr: "Teşhis değil — karar desteği" },
   "lp.trust3": { en: "Instant safety PDF export", tr: "Doktora hazır PDF çıktısı" },
   "lp.trust4": { en: "KVKK & GDPR compliant", tr: "KVKK & GDPR uyumlu" },
   "lp.trust5": { en: "Harvard health system (CSI)", tr: "Harvard Sağlık Sistemi (CSI)" },
-
-  // Landing page feature cards
   "lp.feat1.title": { en: "Drug-Herb Interaction Engine", tr: "İlaç–Bitki Etkileşim Motoru" },
   "lp.feat1.desc": {
     en: "Resolves your meds via OpenFDA and lets you know which herbs are safe, risky, or dangerous — all citing PubMed.",
@@ -297,7 +351,9 @@ const t: Record<string, { en: string; tr: string }> = {
     tr: "Acil durum tespiti, ilaç taraması ve yapay zeka güvenlik katmanları — üç aşama, gerçek zamanlı, güven öncelikli.",
   },
 
-  // ── Example Queries (health-assistant) ──
+  // ══════════════════════════════════════════
+  // Example Queries (health-assistant)
+  // ══════════════════════════════════════════
   "ha.ex1": { en: "Does omega-3 actually reduce inflammation?", tr: "Omega-3 gerçekten iltihabı azaltır mı?" },
   "ha.ex2": { en: "What is the evidence for turmeric (curcumin)?", tr: "Zerdeçal (kurkumin) için kanıtlar nelerdir?" },
   "ha.ex3": { en: "How does valerian root work for sleep?", tr: "Kediotu kökü uyku için nasıl çalışır?" },
@@ -305,7 +361,9 @@ const t: Record<string, { en: string; tr: string }> = {
   "ha.ex5": { en: "What are the benefits of ashwagandha?", tr: "Ashwagandha'nın faydaları nelerdir?" },
   "ha.ex6": { en: "Does ginger help with nausea?", tr: "Zencefil mide bulantısına yardımcı olur mu?" },
 
-  // ── Example Queries (interaction-checker) ──
+  // ══════════════════════════════════════════
+  // Example Queries (interaction-checker)
+  // ══════════════════════════════════════════
   "ic.ex1.concern": { en: "I have trouble sleeping at night", tr: "Geceleri uyumakta güçlük çekiyorum" },
   "ic.ex1.label": { en: "Metformin + Sleep Issues", tr: "Metformin + Uyku Sorunları" },
   "ic.ex2.concern": { en: "I want to try herbal supplements for joint pain", tr: "Eklem ağrısı için bitkisel takviye denemek istiyorum" },
@@ -315,21 +373,16 @@ const t: Record<string, { en: string; tr: string }> = {
   "ic.ex4.concern": { en: "I want something natural to boost my energy", tr: "Enerjimi artırmak için doğal bir şey istiyorum" },
   "ic.ex4.label": { en: "Sertraline + Low Energy", tr: "Sertralin + Düşük Enerji" },
 
-  // ── Chat loading states ──
+  // ══════════════════════════════════════════
+  // Chat loading / emergency
+  // ══════════════════════════════════════════
   "chat.analyzing": { en: "Analyzing...", tr: "Analiz ediliyor..." },
   "chat.analyzingFile": { en: "Analyzing your file...", tr: "Dosyanız analiz ediliyor..." },
-
-  // ── Chat emergency ──
   "chat.emergencyTitle": { en: "EMERGENCY WARNING", tr: "ACİL UYARI" },
 
-  // ── Emergency modal (interaction-checker) ──
-  "ic.emergencyCall": { en: "Call 112 Now", tr: "Hemen 112'yi Ara" },
-  "ic.emergencyHerbal": {
-    en: "Herbal analysis disabled",
-    tr: "Bitkisel analiz devre dışı",
-  },
-
-  // ── Onboarding — Medications Step ──
+  // ══════════════════════════════════════════
+  // Onboarding — Medications Step
+  // ══════════════════════════════════════════
   "onb.noMeds": { en: "I don't take any medications", tr: "Herhangi bir ilaç kullanmıyorum" },
   "onb.yourMeds": { en: "Your medications:", tr: "İlaçlarınız:" },
   "onb.addMed": { en: "Add a medication", tr: "İlaç ekle" },
@@ -347,7 +400,9 @@ const t: Record<string, { en: string; tr: string }> = {
     tr: "Her bitkisel öneriyi ilaçlarınızla güvenlik açısından kontrol ederiz. Bu bilgi şifrelenmiş olup yalnızca size görünürdür.",
   },
 
-  // ── Medication Update Reminder ──
+  // ══════════════════════════════════════════
+  // Medication Update Dialogs
+  // ══════════════════════════════════════════
   "medReminder.text": {
     en: "It's been over 30 days since you last updated your medications. Are they still the same?",
     tr: "İlaçlarınızı en son 30 günden fazla önce güncellediniz. Hâlâ aynı mı?",
@@ -355,32 +410,7 @@ const t: Record<string, { en: string; tr: string }> = {
   "medReminder.yesCurrent": { en: "Yes, still current", tr: "Evet, aynı" },
   "medReminder.update": { en: "Update medications", tr: "İlaçları güncelle" },
 
-  // ── Profile Page ──
-  "profile.title": { en: "Profile Settings", tr: "Profil Ayarları" },
-  "profile.personalInfo": { en: "Personal Information", tr: "Kişisel Bilgiler" },
-  "profile.name": { en: "Name", tr: "Ad Soyad" },
-  "profile.email": { en: "Email", tr: "E-posta" },
-  "profile.age": { en: "Age", tr: "Yaş" },
-  "profile.gender": { en: "Gender", tr: "Cinsiyet" },
-  "profile.activeMeds": { en: "Active Medications", tr: "Aktif İlaçlar" },
-  "profile.lastUpdated": { en: "Last updated:", tr: "Son güncelleme:" },
-  "profile.addMed": { en: "Add Medication", tr: "İlaç Ekle" },
-  "profile.noMeds": { en: "No medications recorded", tr: "Kayıtlı ilaç yok" },
-  "profile.confirmCurrent": { en: "Confirm medications are current", tr: "İlaçların güncel olduğunu onayla" },
-  "profile.allergies": { en: "Allergies", tr: "Alerjiler" },
-  "profile.noAllergies": { en: "No allergies recorded", tr: "Kayıtlı alerji yok" },
-  "profile.healthFlags": { en: "Health Flags", tr: "Sağlık Durumu" },
-  "profile.noFlags": { en: "No health flags", tr: "Sağlık durumu kaydı yok" },
-  "profile.dataPrivacy": { en: "Data & Privacy", tr: "Veri ve Gizlilik" },
-  "profile.dataDesc": { en: "Manage your data according to GDPR/KVKK", tr: "KVKK/GDPR kapsamında verilerinizi yönetin" },
-  "profile.downloadData": { en: "Download My Data", tr: "Verilerimi İndir" },
-  "profile.deleteAccount": { en: "Delete My Account", tr: "Hesabımı Sil" },
-  "profile.dataNote": {
-    en: "Your data is encrypted and stored securely. It will be automatically deleted after 2 years of inactivity.",
-    tr: "Verileriniz şifrelenmiş olarak güvenli bir şekilde saklanır. 2 yıl hareketsizlik sonrası otomatik silinir.",
-  },
-
-  // ── Daily Medication Check ──
+  // Daily
   "dailyMed.title": { en: "Daily Medication Confirmation", tr: "Günlük İlaç Onayı" },
   "dailyMed.description": {
     en: "Before continuing, please confirm your medications haven't changed since yesterday.",
@@ -394,7 +424,7 @@ const t: Record<string, { en: string; tr: string }> = {
     tr: "Güvenliğiniz için, Sağlık Asistanını kullanmadan önce ilaç listenizin güncel olduğunu onaylayın.",
   },
 
-  // ── 15-Day Medication Refresh ──
+  // 15-day
   "refresh15.title": { en: "Medication List Review", tr: "İlaç Listesi Kontrolü" },
   "refresh15.desc": {
     en: "It's been over 15 days since you last reviewed your medication list. Please confirm or update your medications to continue.",
@@ -407,7 +437,7 @@ const t: Record<string, { en: string; tr: string }> = {
   "refresh15.confirmSame": { en: "No changes — same medications", tr: "İlaçlarım aynı, değişiklik yok" },
   "refresh15.update": { en: "Update My Medications", tr: "İlaçlarımı Güncelle" },
 
-  // ── 30-Day Full Onboarding Refresh ──
+  // 30-day
   "refresh30.title": { en: "Monthly Health Profile Review", tr: "Aylık Sağlık Profili Kontrolü" },
   "refresh30.desc": {
     en: "It's been 30 days since your last profile review. Please confirm your medications and health status are still accurate.",
@@ -440,35 +470,63 @@ const t: Record<string, { en: string; tr: string }> = {
   "refresh30.complete": { en: "Complete Review", tr: "Kontrolü Tamamla" },
   "refresh30.updateHealth": { en: "Update Health Info", tr: "Sağlık Bilgilerini Güncelle" },
 
-  // ── Interaction Checker: Load from Profile ──
+  // ══════════════════════════════════════════
+  // Interaction Checker: Load from Profile
+  // ══════════════════════════════════════════
   "ic.loadFromProfile": { en: "Load My Medications", tr: "İlaçlarımı Yükle" },
-  "ic.loadFromProfileDesc": {
-    en: "Auto-fill from your profile",
-    tr: "Profilden otomatik doldur",
-  },
+  "ic.loadFromProfileDesc": { en: "Auto-fill from your profile", tr: "Profilden otomatik doldur" },
   "ic.loadFromProfileGuest": {
     en: "Sign in to load your medications automatically",
     tr: "İlaçlarınızı otomatik yüklemek için oturum açın",
   },
   "ic.medWarning": {
-    en: "⚠️ If you're seeking advice for a symptom, make sure all your medications are entered completely. Incomplete lists may lead to unsafe recommendations.",
-    tr: "⚠️ Bir semptom için tavsiye alıyorsanız, tüm ilaçlarınızı eksiksiz girdiğinizden emin olun. Eksik listeler güvensiz önerilere yol açabilir.",
+    en: "\u26a0\ufe0f If you're seeking advice for a symptom, make sure all your medications are entered completely. Incomplete lists may lead to unsafe recommendations.",
+    tr: "\u26a0\ufe0f Bir semptom için tavsiye alıyorsanız, tüm ilaçlarınızı eksiksiz girdiğinizden emin olun. Eksik listeler güvensiz önerilere yol açabilir.",
+  },
+
+  // ══════════════════════════════════════════
+  // Profile Page
+  // ══════════════════════════════════════════
+  "profile.title": { en: "Profile Settings", tr: "Profil Ayarları" },
+  "profile.personalInfo": { en: "Personal Information", tr: "Kişisel Bilgiler" },
+  "profile.name": { en: "Name", tr: "Ad Soyad" },
+  "profile.email": { en: "Email", tr: "E-posta" },
+  "profile.age": { en: "Age", tr: "Yaş" },
+  "profile.gender": { en: "Gender", tr: "Cinsiyet" },
+  "profile.activeMeds": { en: "Active Medications", tr: "Aktif İlaçlar" },
+  "profile.lastUpdated": { en: "Last updated:", tr: "Son güncelleme:" },
+  "profile.addMed": { en: "Add Medication", tr: "İlaç Ekle" },
+  "profile.noMeds": { en: "No medications recorded", tr: "Kayıtlı ilaç yok" },
+  "profile.confirmCurrent": { en: "Confirm medications are current", tr: "İlaçların güncel olduğunu onayla" },
+  "profile.allergies": { en: "Allergies", tr: "Alerjiler" },
+  "profile.noAllergies": { en: "No allergies recorded", tr: "Kayıtlı alerji yok" },
+  "profile.healthFlags": { en: "Health Flags", tr: "Sağlık Durumu" },
+  "profile.noFlags": { en: "No health flags", tr: "Sağlık durumu kaydı yok" },
+  "profile.dataPrivacy": { en: "Data & Privacy", tr: "Veri ve Gizlilik" },
+  "profile.dataDesc": { en: "Manage your data according to GDPR/KVKK", tr: "KVKK/GDPR kapsamında verilerinizi yönetin" },
+  "profile.downloadData": { en: "Download My Data", tr: "Verilerimi İndir" },
+  "profile.deleteAccount": { en: "Delete My Account", tr: "Hesabımı Sil" },
+  "profile.dataNote": {
+    en: "Your data is encrypted and stored securely. It will be automatically deleted after 2 years of inactivity.",
+    tr: "Verileriniz şifrelenmiş olarak güvenli bir şekilde saklanır. 2 yıl hareketsizlik sonrası otomatik silinir.",
   },
 }
 
+// ══════════════════════════════════════════
+// API
+// ══════════════════════════════════════════
+
 /**
  * Translation helper — returns the string for the given key and language.
- * Falls back to English if key not found.
+ * Falls back to English, then to the key itself.
  */
 export function tx(key: string, lang: Lang): string {
   const entry = t[key]
-  if (!entry) return key // fallback: show key itself
-  return lang === "tr" ? entry.tr : entry.en
+  if (!entry) return key
+  return entry[lang] ?? entry[DEFAULT_LANG] ?? key
 }
 
 /**
- * Export the raw translations object for cases where
- * you need to access both languages or iterate keys.
+ * Export the raw translations object for iteration.
  */
 export { t }
-export type { Lang }
