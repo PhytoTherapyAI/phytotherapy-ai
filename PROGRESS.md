@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 16 Mart 2026 (v7.0)
+> Son güncelleme: 17 Mart 2026 (v8.0)
 
 ---
 
@@ -15,10 +15,11 @@
 | Sprint 5 — Kan Tahlili + PDF | ✅ Tamamlandı | 16 Mart 2026 |
 | Sprint 6 — Mimari Birleştirme | ✅ Tamamlandı | 16 Mart 2026 |
 | Sprint 7 — Tasarım v2 | ✅ Tamamlandı | 16 Mart 2026 |
+| Sprint 7.5 — 3 Katmanlı İlaç Kontrolü + TR/EN | ✅ Tamamlandı | 17 Mart 2026 |
 | Sprint 8 — Güvenlik + Yasal | 📋 Sırada | — |
 | Sprint 9 — Hackathon Hazırlık | 📋 Planlandı | — |
 
-**Hackathon: 11-12 Nisan 2026 — 26 gün kaldı**
+**Hackathon: 11-12 Nisan 2026 — 25 gün kaldı**
 
 ---
 
@@ -199,6 +200,37 @@
 
 ---
 
+## ✅ Sprint 7.5 — 3 Katmanlı İlaç Kontrolü + TR/EN + Profil Düzenleme
+
+**Kapsam:** İlaç/profil güncelleme sistemi, tam çeviri, profil sayfası düzenleme
+
+- [x] 3 katmanlı ilaç kontrol sistemi (günlük + 15 gün + 30 gün)
+  - Günlük: localStorage, hafif "İlaçlarınız güncel mi?" dialogu, X ile kapatılabilir
+  - 15 gün: Supabase `last_medication_update`, tam ilaç formu (ekleme/silme/autocomplete), zorunlu
+  - 30 gün: localStorage, mini onboarding (ilaçlar + sağlık durumu), 2 adımlı, zorunlu
+- [x] lib/translations.ts — TR/EN çeviri sistemi (~100 key)
+- [x] lib/daily-med-check.ts — localStorage günlük/30 günlük kontrol utility
+- [x] lib/turkish-drugs.ts + public/drugs-tr.json — Türkçe ilaç veritabanı
+- [x] /api/drug-search — OpenFDA + Türkçe ilaç autocomplete endpoint
+- [x] Profil sayfası tam sağlık profili düzenleme (alerjiler, gebelik, madde kullanımı, tıbbi geçmiş, yaşam tarzı)
+- [x] Select dropdown Türkçe gösterim düzeltmesi (base-ui custom span rendering)
+- [x] Onboarding wizard tam TR/EN desteği
+- [x] Tüm sayfalar bilingual: landing, chat, interaction, blood-test, onboarding, profile
+- [x] Statik acil durum banner'ları kaldırıldı (sadece keyword-triggered emergency modal kaldı)
+- [x] Interaction checker tam TR/EN + Türkçe ilaç arama
+
+### Bugfix Kaydı (Sprint 7.5)
+| Bug | Sebep | Çözüm |
+|-----|-------|-------|
+| Select dropdown İngilizce gösteriyor | base-ui SelectValue internal value render | Custom `<span>` + display map pattern |
+| 15 gün dialogu tetiklenmiyor | test endpoint `user_id` vs `id` kolon hatası | `.eq("id", userId)` düzeltmesi |
+| TypeScript spread type error | `string \| null` from base-ui onValueChange | `v &&` guard + explicit HealthFormState interface |
+| Sign out sonrası günlük tekrar soruyor | `clearDailyMedCheck()` on sign out | Tasarıma uygun — yeni oturumda tekrar sorulmalı |
+
+**Dosyalar:** lib/daily-med-check.ts (NEW), lib/translations.ts (NEW), lib/turkish-drugs.ts (NEW), public/drugs-tr.json (NEW), app/api/drug-search/route.ts (NEW), components/layout/medication-update-dialog.tsx (REWRITE), app/profile/page.tsx (MAJOR), components/onboarding/steps/*.tsx (ALL), app/*.tsx (ALL)
+
+---
+
 ## 📋 Sprint 8 — Güvenlik + Yasal (SIRADA)
 
 **Kapsam:** Rate limiting, input sanitization, yasal sayfalar
@@ -206,7 +238,6 @@
 - [ ] Rate limiting + input sanitization
 - [ ] Privacy Policy + Terms (TR+EN)
 - [ ] "Verilerimi sil/indir"
-- [ ] İlaç hatırlatıcısı + 30 günlük zorunlu güncelleme
 
 ---
 
@@ -229,6 +260,7 @@ phytotherapy-ai/
 │   └── api/
 │       ├── chat/route.ts
 │       ├── interaction/route.ts
+│       ├── drug-search/route.ts            # NEW — OpenFDA + TR drug autocomplete
 │       ├── pubmed/route.ts
 │       ├── blood-analysis/route.ts
 │       └── generate-pdf/route.ts
@@ -271,13 +303,17 @@ phytotherapy-ai/
 │   ├── prompts.ts
 │   ├── auth-context.tsx
 │   ├── supabase.ts
+│   ├── daily-med-check.ts                 # NEW — localStorage daily/30-day check
+│   ├── translations.ts                    # NEW — TR/EN translation system
+│   ├── turkish-drugs.ts                   # NEW — Turkish drug database
 │   ├── guest-limit.ts
 │   ├── database.types.ts
 │   └── utils.ts
 ├── supabase/
 │   └── schema.sql
 ├── public/
-│   └── phytotherapy_v2.png
+│   ├── phytotherapy_v2.png
+│   └── drugs-tr.json                      # NEW — Turkish drug names database
 ├── .env.local
 ├── CLAUDE.md
 ├── PROGRESS.md
@@ -292,6 +328,8 @@ phytotherapy-ai/
 
 | Commit | Mesaj |
 |--------|-------|
+| `b839070` | Sprint 8: 3-tier medication verification, TR/EN translations, profile editing, UI improvements |
+| `28a24a9` | Sprint 7: design v2, dark mode, language toggle, logo font, translations |
 | `4e4bcdd` | Replace language toggle with mounted guard to fix TR TR duplication |
 | `27373dc` | Fix language toggle hydration — single text node with suppressHydrationWarning |
 | `2f85054` | Revert font overrides, fix language toggle duplicate, keep dark mode |
@@ -307,5 +345,5 @@ phytotherapy-ai/
 
 ---
 
-*Hackathon: 11-12 Nisan 2026 — 26 gün kaldı*
-*Sprint 1-7 tamamlandı. Sıradaki: Sprint 8 — Güvenlik + Yasal*
+*Hackathon: 11-12 Nisan 2026 — 25 gün kaldı*
+*Sprint 1-7.5 tamamlandı. Sıradaki: Sprint 8 — Güvenlik + Yasal*

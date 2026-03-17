@@ -1,4 +1,4 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v7.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v8.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
@@ -167,17 +167,22 @@ Logo (sol) | Interaction Checker | Health Assistant | Blood Test Analysis | [Aut
 ### Onboarding Wizard — Katman 2 (İsteğe Bağlı)
 Takviye, beslenme, egzersiz, uyku, boy/kilo/kan grubu
 
-### İlaç Güncelleme
-- Her girişte: "Hâlâ aynı mı?" tek tıkla
-- 30 günde bir: Zorunlu güncelleme
-- Sorguda yeni ilaç: "Ekleyelim mi?"
+### İlaç & Profil Güncelleme — 3 Katmanlı Kontrol ✅
+| Katman | Süre | Depolama | Bloklar | Kapatılabilir |
+|--------|------|----------|---------|---------------|
+| Günlük ilaç onayı | Her gün | localStorage | Sadece Health Assistant | ✅ X ile |
+| İlaç güncellemesi | 15 gün | Supabase `last_medication_update` | Sign-in dialogu | ❌ Zorunlu |
+| Onboarding yenileme | 30 gün | localStorage | Tüm site | ❌ Zorunlu |
+
+- **Günlük**: Hafif "İlaçlarınız güncel mi?" dialogu. Evet → devam. Güncelle → profil sayfası.
+- **15 gün**: Tam ilaç formu (ekleme/silme/autocomplete). Mevcut ilaçlar listesi + yeni ekleme.
+- **30 gün**: Mini onboarding (ilaçlar + sağlık durumu). 2 adımlı zorunlu kontrol.
 
 ---
 
 ## Güvenlik Mimarisi — 3 Katman
 
 ### Katman 1: Kırmızı Kod (AI'dan ÖNCE)
-- Her sayfada sabit kırmızı banner
 - Acil kelime → tam ekran emergency modal
 - "I understand this is an emergency" butonuna kadar sistem kilitli
 - İlaç yazılmış olsa bile override — analiz yapılmaz
@@ -281,11 +286,6 @@ query_history, blood_tests, consent_records, guest_queries
 - [x] PubMed timeout + error handling ✅
 - [x] Onboarding medication/allergy kayıt hatası düzeltildi ✅
 - [x] fetchProfile RLS fix — getUser() ile token doğrulama ✅
-- [ ] API quota test (Gemini billing aktif mi?)
-- [ ] Tek chat router — intent detection
-- [ ] İlaç profili → chat context otomatik
-- [ ] Her girişte "İlaç listeniz hâlâ aynı mı?" dialog
-- [ ] Profil sayfası tam çalışır
 
 ### ✅ Sprint 7 — Tasarım v2 Implementasyonu (TAMAMLANDI)
 - [x] public/phytotherapy_v2.png referans alınarak tüm sayfalara uygulandı ✅
@@ -306,11 +306,25 @@ query_history, blood_tests, consent_records, guest_queries
 - [x] Loading skeleton + error states ✅
 - [x] Animasyonlar (subtle hover, fade-in) ✅
 
+### ✅ Sprint 7.5 — 3 Katmanlı İlaç Kontrolü + TR/EN + Profil Düzenleme (TAMAMLANDI)
+- [x] 3 katmanlı ilaç kontrol sistemi: günlük (localStorage) + 15 gün (Supabase) + 30 gün (localStorage) ✅
+- [x] 15 gün modu: Tam ilaç formu (ekleme/silme/OpenFDA autocomplete) ✅
+- [x] 30 gün modu: Mini onboarding (ilaçlar + sağlık durumu 2 adımlı kontrol) ✅
+- [x] Günlük mod: Hafif onay dialogu, X ile kapatılabilir ✅
+- [x] lib/translations.ts — TR/EN çeviri sistemi tüm sayfalar için ✅
+- [x] lib/daily-med-check.ts — localStorage günlük/30 günlük kontrol ✅
+- [x] lib/turkish-drugs.ts + public/drugs-tr.json — Türkçe ilaç veritabanı ✅
+- [x] /api/drug-search — OpenFDA + Türkçe ilaç autocomplete ✅
+- [x] Profil sayfası sağlık profili düzenleme (alerji, gebelik, madde kullanımı, tıbbi geçmiş, yaşam tarzı) ✅
+- [x] Select dropdown Türkçe gösterim düzeltmesi (custom span rendering) ✅
+- [x] Onboarding wizard tam TR/EN desteği ✅
+- [x] Statik acil durum banner'ları kaldırıldı (chat, interaction-checker, blood-test) ✅
+- [x] Tüm sayfalar bilingual: landing, chat, interaction, blood-test, onboarding, profile ✅
+
 ### 🔄 Sprint 8 — Güvenlik + Yasal
 - [ ] Rate limiting + input sanitization
 - [ ] Privacy Policy + Terms (TR+EN)
 - [ ] "Verilerimi sil/indir"
-- [ ] İlaç hatırlatıcısı + 30 günlük zorunlu güncelleme
 
 ### 🔄 Sprint 9 — Hackathon Hazırlık
 - [ ] 3 demo prova (Metformin+uyku / Berberine / Kan tahlili)
@@ -323,7 +337,7 @@ query_history, blood_tests, consent_records, guest_queries
 
 #### Sprint 10 — Çok Dil + Google Auth
 - [x] TR/EN dil toggle navbar'da (bayrak ikonu) ✅ — Sprint 7'de tamamlandı
-- [ ] UI çeviri sistemi (lang context → tüm sayfalar)
+- [x] UI çeviri sistemi (lang context → tüm sayfalar) ✅ — Sprint 7.5'te tamamlandı
 - [ ] Google OAuth
 - [ ] AR desteği (ileride)
 
@@ -394,5 +408,5 @@ NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
 
 ---
 
-*Son güncelleme: 16 Mart 2026 v7.0*
-*Sprint 1-7 tamamlandı. Sıradaki: Sprint 8 — Güvenlik + Yasal*
+*Son güncelleme: 17 Mart 2026 v8.0*
+*Sprint 1-7.5 tamamlandı. Sıradaki: Sprint 8 — Güvenlik + Yasal*
