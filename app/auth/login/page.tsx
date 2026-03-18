@@ -9,9 +9,12 @@ import { createBrowserClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 export default function LoginPage() {
   return (
@@ -29,6 +32,7 @@ function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuth();
+  const { lang } = useLang();
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(
@@ -38,6 +42,7 @@ function LoginContent() {
   );
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
 
   // Login form
   const [loginEmail, setLoginEmail] = useState("");
@@ -292,6 +297,17 @@ function LoginContent() {
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="remember-me"
+                    checked={rememberMe}
+                    onCheckedChange={(checked) => setRememberMe(checked === true)}
+                  />
+                  <Label htmlFor="remember-me" className="text-sm font-normal text-muted-foreground cursor-pointer">
+                    {tx("cal.rememberMe", lang)}
+                  </Label>
                 </div>
 
                 <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>

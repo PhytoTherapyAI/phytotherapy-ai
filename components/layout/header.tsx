@@ -14,6 +14,7 @@ const navLinks = [
   { href: "/interaction-checker", label: "Interaction Checker" },
   { href: "/health-assistant", label: "Health Assistant" },
   { href: "/blood-test", label: "Blood Test Analysis" },
+  { href: "/calendar", label: "Calendar" },
 ];
 
 export function Header() {
@@ -55,6 +56,7 @@ export function Header() {
     '/interaction-checker': tx('nav.interaction', lang),
     '/health-assistant': tx('nav.assistant', lang),
     '/blood-test': tx('nav.bloodtest', lang),
+    '/calendar': tx('nav.calendar', lang),
   }
 
   const initials = profile?.full_name

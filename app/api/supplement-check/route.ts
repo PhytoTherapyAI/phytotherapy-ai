@@ -1,0 +1,121 @@
+import { NextRequest } from "next/server"
+import { askGeminiJSON } from "@/lib/gemini"
+import { createServerClient } from "@/lib/supabase"
+import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
+import { sanitizeInput } from "@/lib/sanitize"
+
+export const maxDuration = 30
+
+export async function POST(request: NextRequest) {
+  try {
+    const clientIP = getClientIP(request)
+    const rateCheck = checkRateLimit(`supplement:${clientIP}`, 10, 60_000)
+    if (!rateCheck.allowed) {
+      return new Response(JSON.stringify({ error: "Too many requests" }), {
+        status: 429,
+        headers: { "Content-Type": "application/json" },
+      })
+    }
+
+    const body = await request.json()
+    const supplementName = sanitizeInput(body.supplement || "")
+    const lang = body.lang || "en"
+
+    if (!supplementName || supplementName.length < 2) {
+      return new Response(JSON.stringify({ error: "Supplement name required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      })
+    }
+
+    // Get user profile if authenticated
+    let profileContext = ""
+    const authHeader = request.headers.get("authorization")
+
+    if (authHeader?.startsWith("Bearer ")) {
+      try {
+        const token = authHeader.replace("Bearer ", "")
+        const supabase = createServerClient()
+        const { data: { user } } = await supabase.auth.getUser(token)
+
+        if (user) {
+          const [profileRes, medsRes, allergiesRes] = await Promise.all([
+            supabase.from("user_profiles").select("*").eq("id", user.id).single(),
+            supabase.from("user_medications").select("brand_name, generic_name, dosage").eq("user_id", user.id).eq("is_active", true),
+            supabase.from("user_allergies").select("allergen, severity").eq("user_id", user.id),
+          ])
+
+          if (profileRes.data) {
+            const p = profileRes.data
+            profileContext += `\nUSER PROFILE:`
+            if (p.age) profileContext += `\n- Age: ${p.age}`
+            if (p.gender) profileContext += `\n- Gender: ${p.gender}`
+            if (p.is_pregnant) profileContext += `\n- ⚠️ PREGNANT`
+            if (p.is_breastfeeding) profileContext += `\n- ⚠️ BREASTFEEDING`
+            if (p.kidney_disease) profileContext += `\n- ⚠️ KIDNEY DISEASE`
+            if (p.liver_disease) profileContext += `\n- ⚠️ LIVER DISEASE`
+          }
+          if (medsRes.data && medsRes.data.length > 0) {
+            profileContext += `\n- Active medications: ${medsRes.data.map((m: { generic_name: string | null; brand_name: string | null }) => m.generic_name || m.brand_name).join(", ")}`
+          }
+          if (allergiesRes.data && allergiesRes.data.length > 0) {
+            profileContext += `\n- Allergies: ${allergiesRes.data.map((a: { allergen: string }) => a.allergen).join(", ")}`
+          }
+        }
+      } catch {
+        // Continue without profile
+      }
+    }
+
+    const prompt = `Analyze the supplement "${supplementName}" for this user.
+${profileContext}
+
+CRITICAL: Return ONLY a raw JSON object. No markdown, no code fences.
+
+{
+  "supplement": "${supplementName}",
+  "safety": "safe" | "caution" | "dangerous",
+  "recommendedDose": "specific dose (e.g., 500mg, 1 capsule)",
+  "frequency": "how often (e.g., once daily, twice daily)",
+  "personalizedNote": "brief note about why this dose for THIS specific user (max 2 sentences, ${lang === "tr" ? "IN TURKISH" : "in English"})",
+  "warningMessage": "if dangerous/caution: friendly warning message like a caring friend would say (${lang === "tr" ? "IN TURKISH" : "in English"}). null if safe",
+  "interactions": ["list of drug interactions if any"],
+  "evidenceGrade": "A" | "B" | "C"
+}`
+
+    const systemPrompt = `You are Phytotherapy.ai's supplement safety checker.
+Analyze supplements considering the user's medications, allergies, and health conditions.
+- "safe" = no known interactions, evidence supports use
+- "caution" = mild interaction risk or limited evidence
+- "dangerous" = significant interaction with user's medications, contraindicated for their conditions, or allergic risk
+Be specific about dosing based on the user's profile. ${lang === "tr" ? "Respond in Turkish for personalizedNote and warningMessage." : ""}`
+
+    const response = await askGeminiJSON(prompt, systemPrompt)
+
+    try {
+      const result = JSON.parse(response)
+      return new Response(JSON.stringify(result), {
+        headers: { "Content-Type": "application/json" },
+      })
+    } catch {
+      return new Response(JSON.stringify({
+        supplement: supplementName,
+        safety: "caution",
+        recommendedDose: "Consult your healthcare provider",
+        frequency: "As directed",
+        personalizedNote: lang === "tr"
+          ? "Bu takviye için kişiselleştirilmiş doz bilgisi şu an alınamadı. Sağlık profesyonelinize danışın."
+          : "Personalized dosing info unavailable. Please consult your healthcare provider.",
+        warningMessage: null,
+        interactions: [],
+        evidenceGrade: "C",
+      }), { headers: { "Content-Type": "application/json" } })
+    }
+  } catch (error) {
+    console.error("Supplement check error:", error)
+    return new Response(JSON.stringify({ error: "Failed to check supplement" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    })
+  }
+}

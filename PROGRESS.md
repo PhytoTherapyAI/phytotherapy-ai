@@ -260,7 +260,73 @@
 
 ---
 
-## 📋 Sprint 9 — Takvim Hub (SIRADA)
+## 🔄 Sprint 9 — Takvim Hub (DEVAM EDİYOR)
+
+**Kapsam:** Merkezi sağlık takvimi — ilaç takibi, takviye, su, vital, görevler, bildirimler
+
+### ✅ Tamamlanan (Sprint 9a)
+- [x] Takvim sayfası (/calendar) — 3 tab (Bugün/Takvim/Sağlık Ölçümleri)
+- [x] İlaç kutucuk sistemi (tıklanabilir, optimistic update, animasyonlu)
+- [x] Takviye paneli (AI güvenlik kontrolü, profil bazlı doz, renk kodlu: yeşil/sarı/kırmızı)
+- [x] Su takibi (SVG damla dolum, gradient progress bar, hedef ayarlama, esprili mesajlar)
+- [x] Vital takibi (tansiyon/şeker/kilo/nabız) + dialog
+- [x] Etkinlik ekleme (7 tür + tekrar + hızlı ekle chip'leri)
+- [x] Streak sistemi (🔥 ardışık gün takibi)
+- [x] İlaç tamamlama animasyonu + motivasyon mesajları
+- [x] Çan ikonu (tıklanabilir tooltip — "yakında")
+- [x] Ay takvim grid'i (renkli noktalar, gün tıklama)
+- [x] Supabase migration: calendar_events, daily_logs, water_intake, vital_records
+- [x] Navbar'a Calendar linki
+- [x] ~90 çeviri key'i (cal.*)
+- [x] API: /api/calendar, /api/daily-log, /api/supplement-check (rate limited)
+- [x] Login "Oturumu açık tut" checkbox
+- [x] Tüm sayfa başlıkları italic Cormorant tutarlılığı
+
+### 📋 Yapılacak (Sprint 9b — Sonraki Oturum)
+
+**İlaç Animasyonu v2:**
+- [ ] Tam ekran confetti/ripple efekti (ilaç tamamlandığında)
+- [ ] Kişiye özel mesajlar (isimle hitap: "Harika Taha! 💊")
+- [ ] Mesajlar daha çeşitli ve yaratıcı
+
+**Çan Bildirimi (Gerçek):**
+- [ ] Çan tıklanınca saat seçim paneli açılsın
+- [ ] Seçilen saati localStorage + Supabase'de sakla
+- [ ] "Zoretanin — 09:00" formatında gösterim
+
+**Su Tüketimi v3:**
+- [ ] Boy/kilo bazlı kişisel alt-üst limit (su zehirlenmesi koruması)
+- [ ] Üst limitte su ekleme engelleme + uyarı mesajı
+- [ ] Bardak sayı barını geri getir (yatay uzun barı kaldır)
+- [ ] Su damlası SVG'yi +/- butonları arasına taşı
+- [ ] Her su eklemede mini sayfa animasyonları (confetti/ripple)
+- [ ] Daha çeşitli motivasyon mesajları (her seferinde farklı)
+- [ ] Barem aşıldığında esprili mesaj çeşitliliği artırılacak
+
+**Otomatik Dil Algılama:**
+- [ ] navigator.language ile sistem dilini algıla
+- [ ] İlk ziyarette otomatik TR/EN seçimi
+
+**Ek Özellikler:**
+- [ ] Haftalık özet kartı (kaç gün ilaç/su hedefi karşılandı)
+- [ ] Takvim tab'ında günlere emoji (✅ tamam / ⚠️ eksik)
+- [ ] Etkinlik silme/düzenleme
+- [ ] Telefon takvimi .ics export
+- [ ] Dark mode su damlası glow efekti
+- [ ] İlaç saati geçtiğinde uyarı banner'ı
+
+### Yeni Dosyalar (Sprint 9a)
+- `app/calendar/page.tsx` — Takvim Hub sayfası (3 tab)
+- `components/calendar/TodayView.tsx` — Bugün sekmesi (ilaç+takviye+etkinlik+su)
+- `components/calendar/MonthView.tsx` — Ay takvim grid'i
+- `components/calendar/AddEventDialog.tsx` — Etkinlik ekleme
+- `components/calendar/AddVitalDialog.tsx` — Vital kayıt
+- `components/calendar/AddSupplementDialog.tsx` — Takviye yönetimi (AI kontrolü)
+- `components/calendar/WaterTracker.tsx` — Su takip bileşeni
+- `app/api/calendar/route.ts` — Calendar events API
+- `app/api/daily-log/route.ts` — Daily log API
+- `app/api/supplement-check/route.ts` — AI takviye güvenlik kontrolü
+- `supabase/migrations/sprint9_calendar.sql` — 4 yeni tablo + RLS
 
 ---
 
@@ -280,13 +346,16 @@ phytotherapy-ai/
 │   ├── interaction-checker/page.tsx
 │   ├── health-assistant/page.tsx
 │   ├── blood-test/page.tsx
+│   ├── privacy/page.tsx                   # S8 — Gizlilik Politikası (TR+EN)
+│   ├── terms/page.tsx                     # S8 — Kullanım Koşulları (TR+EN)
 │   └── api/
 │       ├── chat/route.ts
 │       ├── interaction/route.ts
-│       ├── drug-search/route.ts            # NEW — OpenFDA + TR drug autocomplete
+│       ├── drug-search/route.ts
 │       ├── pubmed/route.ts
 │       ├── blood-analysis/route.ts
-│       └── generate-pdf/route.ts
+│       ├── generate-pdf/route.ts
+│       └── user-data/route.ts             # S8 — KVKK veri export/delete
 ├── components/
 │   ├── ui/                              # shadcn/ui (16 components)
 │   ├── illustrations/
@@ -315,7 +384,8 @@ phytotherapy-ai/
 │       ├── theme-provider.tsx           # NEW — dark/light mode context
 │       ├── theme-toggle.tsx             # NEW — Moon/Sun toggle button
 │       ├── language-toggle.tsx          # NEW — 🇺🇸 EN / 🇹🇷 TR toggle
-│       └── medication-update-dialog.tsx
+│       ├── medication-update-dialog.tsx
+│       └── cookie-consent.tsx          # S8 — Cookie consent banner
 ├── lib/
 │   ├── gemini.ts
 │   ├── pubmed.ts
@@ -329,6 +399,8 @@ phytotherapy-ai/
 │   ├── daily-med-check.ts                 # NEW — localStorage daily/30-day check
 │   ├── translations.ts                    # NEW — TR/EN translation system
 │   ├── turkish-drugs.ts                   # NEW — Turkish drug database
+│   ├── rate-limit.ts                     # S8 — Sliding window rate limiter
+│   ├── sanitize.ts                       # S8 — XSS/injection sanitization
 │   ├── guest-limit.ts
 │   ├── database.types.ts
 │   └── utils.ts
@@ -351,6 +423,7 @@ phytotherapy-ai/
 
 | Commit | Mesaj |
 |--------|-------|
+| `c478ade` | Sprint 8: security, legal pages, assistant v2, collapsible sources, cookie consent |
 | `63e407f` | Refactor i18n: single-file language system with SUPPORTED_LANGUAGES config |
 | `7d72385` | Update CLAUDE.md v8.0 and PROGRESS.md — Sprint 7.5 complete |
 | `b839070` | Sprint 8: 3-tier medication verification, TR/EN translations, profile editing, UI improvements |
@@ -370,5 +443,5 @@ phytotherapy-ai/
 
 ---
 
-*Hackathon: 11-12 Nisan 2026 — 25 gün kaldı*
-*Sprint 1-7.5 tamamlandı. Sıradaki: Sprint 8 — Güvenlik + Yasal*
+*Hackathon: 11-12 Nisan 2026 — 24 gün kaldı*
+*Sprint 1-8 tamamlandı. Sıradaki: Sprint 9 — Takvim Hub*

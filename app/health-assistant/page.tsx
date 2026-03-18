@@ -77,7 +77,7 @@ export default function HealthAssistantPage() {
             <Sparkles className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="font-sans-heading text-2xl font-bold">
+            <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
               {tx('ha.title', lang)}
             </h1>
             <p className="text-sm text-muted-foreground">

@@ -136,7 +136,7 @@ export default function InteractionCheckerPage() {
             <Shield className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="font-sans-heading text-2xl font-bold md:text-3xl">
+            <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
               {tx('ic.title', lang)}
             </h1>
             <p className="text-sm text-muted-foreground md:text-base">
