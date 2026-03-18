@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog"
-import { tx, type Lang } from "@/lib/translations"
+import { tx, txRandom, txMessages, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { AddEventDialog, eventTypeColor } from "./AddEventDialog"
 import { AddVitalDialog } from "./AddVitalDialog"
@@ -249,6 +249,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
   const [addVitalOpen, setAddVitalOpen] = useState(false)
   const [addSupplementOpen, setAddSupplementOpen] = useState(false)
   const [presetEventType, setPresetEventType] = useState<string | undefined>(undefined)
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null)
 
   // Animations
   const [justCompletedMed, setJustCompletedMed] = useState<string | null>(null)
@@ -609,6 +610,32 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
         </div>
       )}
 
+      {/* ═══ Overdue Medication Warning ═══ */}
+      {(() => {
+        const now = new Date()
+        const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`
+        const overdueMeds = medications.filter((m) => {
+          const reminder = medReminders[m.id]
+          if (!reminder) return false
+          return reminder < currentTime && !isMedCompleted(m.id)
+        })
+        if (overdueMeds.length === 0) return null
+        return (
+          <div className="flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 animate-pulse">
+            <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                {tr ? `${overdueMeds.map((m) => m.brand_name || m.generic_name).join(", ")} saati geçti!`
+                     : `${overdueMeds.map((m) => m.brand_name || m.generic_name).join(", ")} overdue!`}
+              </p>
+              <p className="text-xs text-amber-500/70">
+                {tr ? "İlacını almayı unutma!" : "Don't forget to take your medication!"}
+              </p>
+            </div>
+          </div>
+        )
+      })()}
+
       {/* ═══ Daily Progress ═══ */}
       <div className="flex items-center gap-3 rounded-xl border bg-primary/5 px-4 py-3">
         <Sparkles className="h-5 w-5 text-primary shrink-0" />
@@ -881,7 +908,8 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           ) : (
             <div className="space-y-2">
               {events.filter((e) => e.event_type !== "supplement").map((evt) => (
-                <div key={evt.id} className="flex items-start gap-3 rounded-xl border px-4 py-3 transition-colors hover:bg-muted/30 group">
+                <div key={evt.id} className="flex items-start gap-3 rounded-xl border px-4 py-3 transition-colors hover:bg-muted/30 group cursor-pointer"
+                  onClick={() => { setEditingEvent(evt); setAddEventOpen(true) }}>
                   <span className={`mt-1.5 inline-block h-3 w-3 shrink-0 rounded-full ${eventTypeColor(evt.event_type)}`} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground truncate">{evt.title}</p>
@@ -891,7 +919,8 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                     </div>
                   </div>
                   <button
-                    onClick={async () => {
+                    onClick={async (e) => {
+                      e.stopPropagation()
                       const supabase = createBrowserClient()
                       await supabase.from("calendar_events").delete().eq("id", evt.id).eq("user_id", userId)
                       fetchData()
@@ -946,7 +975,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                     </Button>
 
                     <div className="relative flex flex-col items-center gap-2">
-                      <div className={`relative h-24 w-20 transition-transform ${waterBounce ? "scale-110" : "scale-100"}`}
+                      <div className={`relative h-24 w-20 transition-transform ${waterBounce ? "scale-110" : "scale-100"} dark:drop-shadow-[0_0_12px_rgba(96,165,250,0.3)]`}
                         style={{ transitionDuration: "400ms", transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}>
                         <svg viewBox="0 0 64 80" className="h-full w-full drop-shadow-sm">
                           <defs>
@@ -1148,7 +1177,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       </div>
 
       {/* Dialogs */}
-      <AddEventDialog userId={userId} lang={lang} open={addEventOpen} onOpenChange={setAddEventOpen} onSaved={fetchData} selectedDate={today} presetEventType={presetEventType} />
+      <AddEventDialog userId={userId} lang={lang} open={addEventOpen} onOpenChange={(o) => { setAddEventOpen(o); if (!o) setEditingEvent(null) }} onSaved={fetchData} selectedDate={today} presetEventType={presetEventType} editEvent={editingEvent} />
       <AddVitalDialog userId={userId} lang={lang} open={addVitalOpen} onOpenChange={setAddVitalOpen} onSaved={fetchData} />
       <AddSupplementDialog userId={userId} lang={lang} open={addSupplementOpen} onOpenChange={setAddSupplementOpen} onSaved={fetchData} />
     </div>

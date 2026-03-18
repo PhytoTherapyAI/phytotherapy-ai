@@ -68,11 +68,11 @@ export function ConversationHistory({ onSelectConversation }: ConversationHistor
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    if (diffMins < 1) return tx("time.justNow", lang);
+    if (diffMins < 60) return `${diffMins} ${tx("time.minsAgo", lang)}`;
+    if (diffHours < 24) return `${diffHours} ${tx("time.hoursAgo", lang)}`;
+    if (diffDays < 7) return `${diffDays} ${tx("time.daysAgo", lang)}`;
+    return date.toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { month: "short", day: "numeric" });
   };
 
   const getTypeIcon = (type: string) => {
@@ -98,7 +98,7 @@ export function ConversationHistory({ onSelectConversation }: ConversationHistor
         size="sm"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2"
-        title="Conversation history"
+        title={tx("chat.historyTitle", lang)}
       >
         <History className="h-4 w-4" />
         <span className="hidden sm:inline">{tx('ch.history', lang)}</span>

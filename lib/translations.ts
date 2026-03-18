@@ -660,6 +660,90 @@ const t: Record<string, TranslationEntry> = {
   "cal.waterLimit": { en: "Daily upper limit reached! Too much water can be dangerous.", tr: "Günlük üst limite ulaştın! Fazla su tehlikeli olabilir." },
   "cal.personalRange": { en: "Personal range", tr: "Kişisel aralık" },
   "cal.exportIcs": { en: "Export to Calendar (.ics)", tr: "Takvime Aktar (.ics)" },
+  "cal.confirm": { en: "Confirm", tr: "Onayla" },
+  "cal.currentReminder": { en: "Current reminder:", tr: "Mevcut hatırlatma:" },
+  "cal.whenRemind": { en: "when should I remind you?", tr: "ne zaman hatırlatayım?" },
+  "cal.setGoal": { en: "Set Goal", tr: "Hedef Belirle" },
+  "cal.yourRange": { en: "Your range", tr: "Kişisel aralığın" },
+  "cal.mlMode": { en: "mL", tr: "mL" },
+  "cal.glassMode": { en: "Glass", tr: "Bardak" },
+  "cal.addMl": { en: "Add", tr: "Ekle" },
+  "cal.waterWarnTitle": { en: "Please don't drink more! You risk water intoxication.", tr: "Lütfen daha fazla içmeyin! Su zehirlenmesi geçirebilirsiniz." },
+  "cal.profileSups": { en: "From your profile:", tr: "Profilindeki takviyeler:" },
+
+  // ══════════════════════════════════════════
+  // Login & Auth
+  // ══════════════════════════════════════════
+  "auth.welcome": { en: "Welcome", tr: "Hoş Geldiniz" },
+  "auth.subtitle": { en: "Sign in to get personalized, evidence-based recommendations", tr: "Kişiselleştirilmiş, kanıta dayalı öneriler almak için giriş yapın" },
+  "auth.googleContinue": { en: "Continue with Google", tr: "Google ile Devam Et" },
+  "auth.or": { en: "Or", tr: "Veya" },
+  "auth.signIn": { en: "Sign In", tr: "Giriş Yap" },
+  "auth.signUp": { en: "Sign Up", tr: "Kayıt Ol" },
+  "auth.email": { en: "Email", tr: "E-posta" },
+  "auth.password": { en: "Password", tr: "Şifre" },
+  "auth.signingIn": { en: "Signing in...", tr: "Giriş yapılıyor..." },
+  "auth.fullName": { en: "Full Name", tr: "Ad Soyad" },
+  "auth.namePlaceholder": { en: "John Doe", tr: "Adınız Soyadınız" },
+  "auth.emailPlaceholder": { en: "name@email.com", tr: "ornek@email.com" },
+  "auth.passwordPlaceholder": { en: "Min. 6 characters", tr: "En az 6 karakter" },
+  "auth.confirmPassword": { en: "Confirm Password", tr: "Şifre Tekrar" },
+  "auth.createAccount": { en: "Create Account", tr: "Hesap Oluştur" },
+  "auth.creatingAccount": { en: "Creating account...", tr: "Hesap oluşturuluyor..." },
+  "auth.termsText": { en: "By signing up, you agree to our", tr: "Kayıt olarak" },
+  "auth.termsLink": { en: "Terms of Service", tr: "Kullanım Koşulları" },
+  "auth.and": { en: "and", tr: "ve" },
+  "auth.privacyLink": { en: "Privacy Policy", tr: "Gizlilik Politikası" },
+  "auth.termsAccept": { en: "", tr: "'nı kabul etmiş olursunuz." },
+  "auth.errAuthFailed": { en: "Authentication failed. Please try again.", tr: "Kimlik doğrulama başarısız. Lütfen tekrar deneyin." },
+  "auth.errSessionFailed": { en: "Sign in succeeded but session was not established. Please try again.", tr: "Giriş başarılı ancak oturum oluşturulamadı. Tekrar deneyin." },
+  "auth.errUnexpected": { en: "An unexpected error occurred. Please try again.", tr: "Beklenmeyen bir hata oluştu. Tekrar deneyin." },
+  "auth.errPasswordMismatch": { en: "Passwords do not match", tr: "Şifreler eşleşmiyor" },
+  "auth.errPasswordShort": { en: "Password must be at least 6 characters", tr: "Şifre en az 6 karakter olmalı" },
+  "auth.errEmailExists": { en: "An account with this email already exists. Please sign in instead.", tr: "Bu e-posta ile bir hesap zaten mevcut. Lütfen giriş yapın." },
+  "auth.successCreated": { en: "Account created! Please check your email to confirm your account, then sign in.", tr: "Hesap oluşturuldu! E-postanızı kontrol edip hesabınızı onaylayın, ardından giriş yapın." },
+  "auth.errGoogle": { en: "Failed to connect to Google. Please try again.", tr: "Google'a bağlanılamadı. Tekrar deneyin." },
+  "auth.callbackFailed": { en: "Authentication Failed", tr: "Kimlik Doğrulama Başarısız" },
+  "auth.callbackError": { en: "Something went wrong during sign in. Please try again.", tr: "Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin." },
+  "auth.backToSignIn": { en: "Back to Sign In", tr: "Giriş Sayfasına Dön" },
+  "auth.completingSignIn": { en: "Completing sign in...", tr: "Giriş tamamlanıyor..." },
+
+  // ══════════════════════════════════════════
+  // Guest Wall
+  // ══════════════════════════════════════════
+  "guest.personalTitle": { en: "Account Required for Personal Recommendations", tr: "Kişisel Öneriler İçin Hesap Gerekli" },
+  "guest.limitTitle": { en: "Free Queries Used Up", tr: "Ücretsiz Sorgular Tükendi" },
+  "guest.personalDesc": { en: "To give you safe, personalized recommendations, we need your medication profile. Sign up — it takes less than 2 minutes.", tr: "Güvenli, kişiselleştirilmiş öneriler sunabilmemiz için ilaç profilinize ihtiyacımız var. Kayıt olun — 2 dakikadan kısa sürer." },
+  "guest.limitDesc": { en: "You've used your 2 free queries. Sign up for unlimited access to evidence-based recommendations.", tr: "2 ücretsiz sorgu hakkınızı kullandınız. Kanıta dayalı önerilere sınırsız erişim için kayıt olun." },
+  "guest.signUpFree": { en: "Sign Up Free", tr: "Ücretsiz Kayıt Ol" },
+  "guest.alreadyHave": { en: "Already have an account?", tr: "Zaten hesabınız var mı?" },
+  "guest.signInLink": { en: "Sign in", tr: "Giriş yap" },
+
+  // ══════════════════════════════════════════
+  // Safety Badge
+  // ══════════════════════════════════════════
+  "safety.safe": { en: "Safe", tr: "Güvenli" },
+  "safety.caution": { en: "Caution", tr: "Dikkatli Kullanın" },
+  "safety.dangerous": { en: "Dangerous", tr: "Tehlikeli" },
+  "safety.gradeA": { en: "Grade A", tr: "Kanıt A" },
+  "safety.gradeB": { en: "Grade B", tr: "Kanıt B" },
+  "safety.gradeC": { en: "Grade C", tr: "Kanıt C" },
+  "safety.emergencyWarning": { en: "🚨 Emergency Warning", tr: "🚨 Acil Durum Uyarısı" },
+
+  // ══════════════════════════════════════════
+  // Chat
+  // ══════════════════════════════════════════
+  "chat.sources": { en: "Sources", tr: "Kaynaklar" },
+  "chat.historyTitle": { en: "Conversation history", tr: "Konuşma geçmişi" },
+  "time.justNow": { en: "Just now", tr: "Az önce" },
+  "time.minsAgo": { en: "m ago", tr: "dk önce" },
+  "time.hoursAgo": { en: "h ago", tr: "sa önce" },
+  "time.daysAgo": { en: "d ago", tr: "gün önce" },
+
+  // ══════════════════════════════════════════
+  // Interaction
+  // ══════════════════════════════════════════
+  "di.slotsRemaining": { en: "slots remaining", tr: "ilaç daha eklenebilir" },
 }
 
 // ══════════════════════════════════════════
@@ -677,6 +761,134 @@ export function tx(key: string, lang: Lang): string {
 }
 
 /**
+ * Get a random message from a language-keyed message array.
+ * Used for fun/motivational messages (water, meds, etc.)
+ *
+ * To add a new language: add the language key to each array in MESSAGE_ARRAYS below.
+ */
+export function txRandom(key: string, lang: Lang): string {
+  const arr = MESSAGE_ARRAYS[key]
+  if (!arr) return key
+  const langArr = arr[lang] ?? arr[DEFAULT_LANG]
+  if (!langArr || langArr.length === 0) return key
+  return langArr[Math.floor(Math.random() * langArr.length)]
+}
+
+export function txMessages(key: string, lang: Lang): string[] {
+  const arr = MESSAGE_ARRAYS[key]
+  if (!arr) return []
+  return arr[lang] ?? arr[DEFAULT_LANG] ?? []
+}
+
+// ══════════════════════════════════════════
+// Message Arrays — fun/motivational messages
+// ══════════════════════════════════════════
+// 🌍 YENİ DİL EKLERKEN: Her diziye yeni dil key'i ekle
+
+const MESSAGE_ARRAYS: Record<string, Record<string, string[]>> = {
+  "msg.waterDone": {
+    en: [
+      "🎉 Daily goal reached! Your cells are partying!",
+      "🏆 Water champion! Hydration level: BOSS!",
+      "💪 Hydration master! Glow mode activated!",
+      "🌊 Goal crushed! Your kidneys are doing a happy dance!",
+      "💧 Perfectly hydrated! Skin is glowing!",
+      "🐬 Dolphin level hydration! Smooth sailing!",
+    ],
+    tr: [
+      "🎉 Günlük hedefe ulaştın! Hücrelerin parti yapıyor!",
+      "🏆 Su şampiyonu! Hidrasyon seviyesi: BOSS!",
+      "💪 Hidrasyon ustası! Parlama modu aktif!",
+      "🌊 Hedef ezildi! Böbreklerin mutluluk dansı yapıyor!",
+      "💧 Mükemmel hidrasyon! Cilt parlıyor!",
+      "🐬 Yunus seviye hidrasyon! Harika gidiyorsun!",
+    ],
+  },
+  "msg.waterOver": {
+    en: [
+      "😄 Overachiever! Water lover!",
+      "🐟 Growing gills? Just kidding — amazing!",
+      "🌊 Your kidneys are sending thank you cards!",
+      "💧 Above and beyond! Hydration hero!",
+      "🏊 Olympic swimmer level hydration!",
+      "🧊 Ice cold dedication! You're unstoppable!",
+      "🫧 Bubble level unlocked! Keep flowing!",
+      "🌈 Your cells are throwing a pool party!",
+      "🚿 At this rate you'll need a snorkel!",
+      "💎 Diamond tier hydration achieved!",
+      "🐠 The fish are jealous of your water intake!",
+      "🌊 Tsunami of health incoming!",
+      "🧜 Mermaid/Merman transformation: 87% complete!",
+      "💦 Even camels are impressed right now!",
+      "🌴 Your body is basically an oasis at this point!",
+      "🎮 Achievement unlocked: Hydration Overlord!",
+      "🛁 Your blood is so clean it sparkles!",
+      "🔱 Poseidon just followed you on Instagram!",
+      "🎪 Your bladder is planning a protest march!",
+      "🏆 Hall of Fame: Water Drinking Division!",
+    ],
+    tr: [
+      "😄 Hedefin üstündesin! Su aşığı!",
+      "🐟 Solungaç mı çıkarıyorsun? Şaka — harikasın!",
+      "🌊 Böbreklerin teşekkür kartı gönderiyor!",
+      "💧 Hedefin ötesinde! Hidrasyon kahramanısın!",
+      "🏊 Olimpik yüzücü seviye hidrasyon!",
+      "🧊 Buz gibi kararlılık! Durdurulamıyorsun!",
+      "🫧 Kabarcık seviyesi açıldı! Akmaya devam!",
+      "🌈 Hücrelerin havuz partisi veriyor!",
+      "🚿 Bu gidişle şnorkele ihtiyacın olacak!",
+      "💎 Elmas seviye hidrasyon kazanıldı!",
+      "🐠 Balıklar su içme kapasiteni kıskanıyor!",
+      "🌊 Sağlık tsunamisi yaklaşıyor!",
+      "🧜 Deniz kızı/erkeği dönüşümü: %87 tamamlandı!",
+      "💦 Develer bile etkilendi şu an!",
+      "🌴 Vücudun artık bir vaha resmen!",
+      "🎮 Başarım açıldı: Hidrasyon Lordu!",
+      "🛁 Kanın o kadar temiz ki pırıl pırıl!",
+      "🔱 Poseidon seni Instagram'da takip etti!",
+      "🎪 Mesanen protesto yürüyüşü planlıyor!",
+      "🏆 Şöhretler Salonu: Su İçme Dalı!",
+    ],
+  },
+  "msg.waterSplash": {
+    en: ["Nice sip! 💧", "Splash! 🌊", "Glug glug! 💦", "+1 glass! 💧", "Refreshing! 🥤", "H₂O power! 💙", "Keep it up! 💧", "Hydrated! 💦", "Your body loves this! 🫧", "Flow state! 🌊"],
+    tr: ["Güzel yudum! 💧", "Şıp! 🌊", "Glu glu! 💦", "+1 bardak! 💧", "Ferahlatıcı! 🥤", "H₂O gücü! 💙", "Devam! 💧", "Hidratasyon! 💦", "Vücudun bunu seviyor! 🫧", "Akış modunda! 🌊"],
+  },
+  "msg.medDone": {
+    en: [
+      "Another one down! 💊", "Legend! Your body is cheering! 👏", "Took your meds? You're a hero! 🦸",
+      "Discipline on point today! 🎯", "Pop pop pop! Steady steps to health! 🚀",
+      "Your meds love you back! 💚", "One more down! Consistency = superpower! 💪",
+      "Check! Your health routine is fire! 💣", "You're on a roll today! ✨",
+      "Meds taken, soul fed! Your body thanks you 🙏", "Your doctor would be proud! 👨‍⚕️",
+      "Got it! Easy peasy! 😎", "Meds? Done. You? Incredible! 🌟", "Health bar filled! +10 HP! 🎮",
+    ],
+    tr: [
+      "Bi ilacı daha hallettin! 💊", "Efsane! Vücudun alkışlıyor! 👏", "İlaç mı aldın? Sen bir kahramansın! 🦸",
+      "Bugün de disiplini bozmadın! 🎯", "Hap hap hap! Sağlık yolunda emin adımlar! 🚀",
+      "İlaçların seni seviyor! 💚", "Bi' hap daha gitti! Düzenli kullanım = süper güç! 💪",
+      "Check! Sağlık rutinin bomba! 💣", "Bugün formundasın! ✨",
+      "İlaç aldın, gönül aldın! Vücudun teşekkür ediyor 🙏", "Doktorun görse gurur duyardı! 👨‍⚕️",
+      "Tamam, bi tane daha gitti! Kolay gelsin! 😎", "İlaç? Alındı. Sen? Muhteşemsin! 🌟", "Sağlık bar'ın doldu! +10 HP! 🎮",
+    ],
+  },
+  "msg.allMedsDone": {
+    en: [
+      "🎉 All meds taken! You're a legend!",
+      "🏆 Perfect score! Nothing missed! Bravo!",
+      "💯 100% complete! Boss fight won!",
+      "🌟 All done! Health level up!",
+    ],
+    tr: [
+      "🎉 Bugünkü tüm ilaçlarını aldın! Sen bir efsanesin!",
+      "🏆 Tam puan! Bugün eksiksiz! Bravo!",
+      "💯 %100 tamamlama! Boss fight kazanıldı!",
+      "🌟 Hepsini hallettin! Sağlık level atladın!",
+    ],
+  },
+}
+
+/**
  * Export the raw translations object for iteration.
  */
-export { t }
+export { t, MESSAGE_ARRAYS }

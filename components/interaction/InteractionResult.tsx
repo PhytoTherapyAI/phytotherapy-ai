@@ -34,7 +34,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
           </div>
           <div>
             <h3 className="text-lg font-bold text-red-800 dark:text-red-300" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
-              {lang === "tr" ? "🚨 Acil Durum Uyarısı" : "🚨 Emergency Warning"}
+              {tx('safety.emergencyWarning', lang)}
             </h3>
             <p className="mt-2 text-red-700 dark:text-red-400">
               {result.emergencyMessage}

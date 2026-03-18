@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { ExternalLink, BookOpen, ChevronDown } from "lucide-react";
+import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface Source {
   title: string;
@@ -15,6 +17,7 @@ interface SourceCardProps {
 
 export function SourceCard({ sources }: SourceCardProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { lang } = useLang();
 
   if (sources.length === 0) return null;
 
@@ -25,7 +28,7 @@ export function SourceCard({ sources }: SourceCardProps) {
         className="flex w-full items-center gap-1.5 rounded-lg border bg-muted/30 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground transition-colors hover:bg-muted/50"
       >
         <BookOpen className="h-3.5 w-3.5" />
-        <span>Sources ({sources.length})</span>
+        <span>{tx("chat.sources", lang)} ({sources.length})</span>
         <ChevronDown
           className={`ml-auto h-3.5 w-3.5 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""

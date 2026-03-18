@@ -251,7 +251,7 @@ export function DrugInput({ medications, onMedicationsChange, disabled }: DrugIn
         <p className="text-xs text-amber-700 dark:text-amber-400">
           {tx('di.hint', lang)}
           {medications.length >= 15 && (
-            <span className="font-medium"> ({lang === "tr" ? `${20 - medications.length} ilaç daha eklenebilir` : `${20 - medications.length} slots remaining`})</span>
+            <span className="font-medium"> ({20 - medications.length} {tx("di.slotsRemaining", lang)})</span>
           )}
         </p>
       </div>

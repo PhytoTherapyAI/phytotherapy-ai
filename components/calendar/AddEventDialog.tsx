@@ -28,14 +28,25 @@ export type CalendarEventType =
 
 export type RecurrenceType = "none" | "daily" | "weekly" | "monthly"
 
+interface EditEvent {
+  id: string
+  event_type: string
+  title: string
+  description: string | null
+  event_date: string
+  event_time: string | null
+  recurrence: string
+}
+
 interface AddEventDialogProps {
   userId: string
   lang: Lang
   open: boolean
   onOpenChange: (open: boolean) => void
   onSaved: () => void
-  selectedDate?: string // YYYY-MM-DD
+  selectedDate?: string
   presetEventType?: string
+  editEvent?: EditEvent | null
 }
 
 export function AddEventDialog({
@@ -46,6 +57,7 @@ export function AddEventDialog({
   onSaved,
   selectedDate,
   presetEventType,
+  editEvent,
 }: AddEventDialogProps) {
   const [eventType, setEventType] = useState<CalendarEventType>("appointment")
   const [title, setTitle] = useState("")
@@ -56,17 +68,28 @@ export function AddEventDialog({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const isEdit = !!editEvent
+
   useEffect(() => {
     if (open) {
-      setDate(selectedDate || new Date().toISOString().split("T")[0])
-      setTitle("")
-      setDescription("")
-      setTime("")
-      setRecurrence("none")
-      setEventType((presetEventType as CalendarEventType) || "appointment")
+      if (editEvent) {
+        setTitle(editEvent.title)
+        setDescription(editEvent.description || "")
+        setDate(editEvent.event_date)
+        setTime(editEvent.event_time || "")
+        setRecurrence((editEvent.recurrence as RecurrenceType) || "none")
+        setEventType((editEvent.event_type as CalendarEventType) || "appointment")
+      } else {
+        setDate(selectedDate || new Date().toISOString().split("T")[0])
+        setTitle("")
+        setDescription("")
+        setTime("")
+        setRecurrence("none")
+        setEventType((presetEventType as CalendarEventType) || "appointment")
+      }
       setError(null)
     }
-  }, [open, selectedDate, presetEventType])
+  }, [open, selectedDate, presetEventType, editEvent])
 
   const eventTypes: { value: CalendarEventType; labelKey: string }[] = [
     { value: "medication", labelKey: "cal.eventType.medication" },
@@ -100,18 +123,21 @@ export function AddEventDialog({
 
     try {
       const supabase = createBrowserClient()
-      const { error: insertError } = await supabase.from("calendar_events").insert({
-        user_id: userId,
+      const payload = {
         event_type: eventType,
         title: title.trim(),
         description: description.trim() || null,
         event_date: date,
         event_time: time || null,
         recurrence,
-      })
+      }
 
-      if (insertError) {
-        throw insertError
+      const { error: dbError } = isEdit
+        ? await supabase.from("calendar_events").update(payload).eq("id", editEvent!.id).eq("user_id", userId)
+        : await supabase.from("calendar_events").insert({ user_id: userId, ...payload })
+
+      if (dbError) {
+        throw dbError
       }
 
       onSaved()
@@ -130,7 +156,7 @@ export function AddEventDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CalendarPlus className="h-5 w-5 text-primary" />
-            {tx("cal.addEventTitle", lang)}
+            {isEdit ? (lang === "tr" ? "Etkinliği Düzenle" : "Edit Event") : tx("cal.addEventTitle", lang)}
           </DialogTitle>
           <DialogDescription>{tx("cal.addEventDesc", lang)}</DialogDescription>
         </DialogHeader>
