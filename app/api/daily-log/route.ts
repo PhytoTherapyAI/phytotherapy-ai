@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       .from("water_intake")
       .select("*")
       .eq("user_id", user.id)
-      .eq("date", date)
+      .eq("intake_date", date)
       .single()
 
     return NextResponse.json({
@@ -185,7 +185,7 @@ export async function PATCH(request: NextRequest) {
       .from("water_intake")
       .select("id")
       .eq("user_id", user.id)
-      .eq("date", date)
+      .eq("intake_date", date)
       .single()
 
     if (existing) {
@@ -208,7 +208,7 @@ export async function PATCH(request: NextRequest) {
       .from("water_intake")
       .insert({
         user_id: user.id,
-        date,
+        intake_date: date,
         glasses,
       })
       .select()

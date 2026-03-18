@@ -571,7 +571,7 @@ const t: Record<string, TranslationEntry> = {
   "cal.addMedsProfile": { en: "Add medications in Profile", tr: "Profil'den ilaç ekleyin" },
   "cal.noEvents": { en: "No events for this day.", tr: "Bu gün için etkinlik yok." },
   "cal.addEvent": { en: "Add Event", tr: "Etkinlik Ekle" },
-  "cal.addVital": { en: "Record Vital", tr: "Vital Kaydet" },
+  "cal.addVital": { en: "Add Measurement", tr: "Ölçüm Ekle" },
   "cal.glasses": { en: "glasses", tr: "bardak" },
   "cal.target": { en: "target", tr: "hedef" },
   "cal.completed": { en: "completed", tr: "tamamlandı" },
@@ -650,6 +650,16 @@ const t: Record<string, TranslationEntry> = {
   "cal.noEventsDesc": { en: "Your day is clear! Add an event to get started.", tr: "Gününüz boş! Başlamak için bir etkinlik ekleyin." },
   "cal.notifSoon": { en: "Notifications coming soon", tr: "Bildirimler yakında" },
   "cal.medsTaken": { en: "taken", tr: "alındı" },
+
+  // Sprint 9b — New keys
+  "cal.reminderTime": { en: "Reminder Time", tr: "Hatırlatma Saati" },
+  "cal.remove": { en: "Remove", tr: "Kaldır" },
+  "cal.delete": { en: "Delete", tr: "Sil" },
+  "cal.thisWeek": { en: "This Week", tr: "Bu Hafta" },
+  "cal.daysComplete": { en: "days complete", tr: "gün tamam" },
+  "cal.waterLimit": { en: "Daily upper limit reached! Too much water can be dangerous.", tr: "Günlük üst limite ulaştın! Fazla su tehlikeli olabilir." },
+  "cal.personalRange": { en: "Personal range", tr: "Kişisel aralık" },
+  "cal.exportIcs": { en: "Export to Calendar (.ics)", tr: "Takvime Aktar (.ics)" },
 }
 
 // ══════════════════════════════════════════

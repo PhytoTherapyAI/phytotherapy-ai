@@ -9,7 +9,7 @@ import { ArrowLeft, ArrowRight, Leaf, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
-import { confirmOnboardingRefresh, confirmDailyMed } from "@/lib/daily-med-check";
+import { markFirstLoginDone } from "@/lib/daily-med-check";
 import type { UserProfile } from "@/lib/database.types";
 
 // Step components
@@ -56,6 +56,7 @@ function getLayer2Step(lang: "en" | "tr") {
 export interface OnboardingData {
   // Step 1: Basic info
   full_name: string;
+  birth_date: string;
   age: number | null;
   gender: string;
   // Step 2: Medications
@@ -89,6 +90,7 @@ export interface OnboardingData {
 
 const defaultData: OnboardingData = {
   full_name: "",
+  birth_date: "",
   age: null,
   gender: "",
   medications: [],
@@ -129,28 +131,42 @@ export function OnboardingWizard({ profile }: Props) {
     full_name: profile.full_name ?? "",
   });
 
-  const LAYER1_STEPS = getSteps(lang);
+  const ALL_LAYER1_STEPS = getSteps(lang);
   const LAYER2_STEP = getLayer2Step(lang);
+
+  // Skip pregnancy step (index 3) if user is male
+  const skipPregnancy = data.gender === "male";
+  const LAYER1_STEPS = skipPregnancy
+    ? ALL_LAYER1_STEPS.filter((_, i) => i !== 3)
+    : ALL_LAYER1_STEPS;
 
   const totalSteps = showLayer2 ? LAYER1_STEPS.length + 1 : LAYER1_STEPS.length;
   const isLayer2 = currentStep === LAYER1_STEPS.length;
   const currentStepInfo = isLayer2 ? LAYER2_STEP : LAYER1_STEPS[currentStep];
   const progress = ((currentStep + 1) / totalSteps) * 100;
 
+  // Map visible step index to original step index for rendering
+  const getOriginalStepIndex = (visibleIndex: number): number => {
+    if (!skipPregnancy) return visibleIndex;
+    // Steps: 0=basic, 1=meds, 2=allergies, [skip 3=pregnancy], 3=substances, 4=medical, 5=consent
+    return visibleIndex >= 3 ? visibleIndex + 1 : visibleIndex;
+  };
+  const origStep = getOriginalStepIndex(currentStep);
+
   const updateData = (updates: Partial<OnboardingData>) => {
     setData((prev) => ({ ...prev, ...updates }));
   };
 
   const canProceed = (): boolean => {
-    switch (currentStep) {
-      case 0: return !!data.full_name.trim() && data.age !== null && data.age >= 18 && !!data.gender;
+    switch (origStep) {
+      case 0: return !!data.full_name.trim() && !!data.birth_date && data.age !== null && data.age >= 18 && !!data.gender;
       case 1: return data.no_medications || data.medications.length > 0;
       case 2: return data.no_allergies || data.allergies.length > 0;
-      case 3: return true;
+      case 3: return true; // pregnancy
       case 4: return !!data.alcohol_use && !!data.smoking_use;
-      case 5: return true;
+      case 5: return true; // medical history
       case 6: return data.consent_agreed;
-      case 7: return true;
+      case 7: return true; // layer 2
       default: return false;
     }
   };
@@ -251,6 +267,7 @@ export function OnboardingWizard({ profile }: Props) {
         .from("user_profiles")
         .update({
           full_name: data.full_name,
+          birth_date: data.birth_date || null,
           age: data.age,
           gender: data.gender,
           is_pregnant: data.is_pregnant,
@@ -280,9 +297,8 @@ export function OnboardingWizard({ profile }: Props) {
         throw profileError;
       }
 
-      // 5. Mark 30-day refresh + daily as confirmed in localStorage
-      confirmOnboardingRefresh();
-      confirmDailyMed();
+      // 5. Mark first login as done + confirm all checks
+      markFirstLoginDone();
 
       // 6. Refresh profile and redirect
       await refreshProfile();
@@ -335,13 +351,13 @@ export function OnboardingWizard({ profile }: Props) {
           <CardDescription>{currentStepInfo.description}</CardDescription>
         </CardHeader>
         <CardContent>
-          {currentStep === 0 && <BasicInfoStep data={data} updateData={updateData} />}
-          {currentStep === 1 && <MedicationsStep data={data} updateData={updateData} />}
-          {currentStep === 2 && <AllergiesStep data={data} updateData={updateData} />}
-          {currentStep === 3 && <PregnancyStep data={data} updateData={updateData} />}
-          {currentStep === 4 && <SubstanceStep data={data} updateData={updateData} />}
-          {currentStep === 5 && <MedicalHistoryStep data={data} updateData={updateData} />}
-          {currentStep === 6 && <ConsentStep data={data} updateData={updateData} />}
+          {origStep === 0 && <BasicInfoStep data={data} updateData={updateData} />}
+          {origStep === 1 && <MedicationsStep data={data} updateData={updateData} />}
+          {origStep === 2 && <AllergiesStep data={data} updateData={updateData} />}
+          {origStep === 3 && !skipPregnancy && <PregnancyStep data={data} updateData={updateData} />}
+          {origStep === 4 && <SubstanceStep data={data} updateData={updateData} />}
+          {origStep === 5 && <MedicalHistoryStep data={data} updateData={updateData} />}
+          {origStep === 6 && <ConsentStep data={data} updateData={updateData} />}
           {isLayer2 && <OptionalProfileStep data={data} updateData={updateData} />}
         </CardContent>
       </Card>

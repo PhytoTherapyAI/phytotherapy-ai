@@ -43,6 +43,21 @@ const POPULAR_SUPPLEMENTS = [
   "Vitamin C", "Coenzyme Q10", "Creatine", "Collagen", "Fish Oil",
 ]
 
+const FREQ_MAP: Record<string, string> = {
+  "once daily": "günde bir kez", "twice daily": "günde iki kez", "three times daily": "günde üç kez",
+  "daily": "günlük", "weekly": "haftalık", "as needed": "gerektiğinde",
+  "with meals": "yemeklerle birlikte", "before meals": "yemeklerden önce", "after meals": "yemeklerden sonra",
+  "with food": "yemekle birlikte", "on empty stomach": "aç karnına", "before bed": "yatmadan önce",
+}
+function translateSupDesc(desc: string, tr: boolean): string {
+  if (!tr || !desc) return desc
+  let result = desc
+  for (const [en, trVal] of Object.entries(FREQ_MAP)) {
+    result = result.replace(new RegExp(en, "gi"), trVal)
+  }
+  return result
+}
+
 export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved }: AddSupplementDialogProps) {
   const tr = lang === "tr"
   const [query, setQuery] = useState("")
@@ -142,7 +157,11 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
         },
       })
       onSaved()
-      onOpenChange(false)
+      // Stay in dialog, reset form for another supplement
+      setCheckResult(null)
+      setQuery("")
+      setTime("")
+      fetchSaved()
     } catch {
       // ignore
     } finally {
@@ -313,7 +332,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                       {(() => { const Icon = cfg.icon; return <Icon className={`h-4 w-4 ${cfg.color}`} /> })()}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{sup.title}</p>
-                        {sup.description && <p className="text-xs text-muted-foreground truncate">{sup.description}</p>}
+                        {sup.description && <p className="text-xs text-muted-foreground truncate">{translateSupDesc(sup.description, tr)}</p>}
                       </div>
                       <button
                         onClick={async () => {

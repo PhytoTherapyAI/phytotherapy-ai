@@ -1,8 +1,9 @@
 -- ============================================
 -- Sprint 9: Calendar Hub Tables
+-- Column names match frontend & API code exactly
 -- ============================================
 
--- 8. Calendar Events (medications, supplements, appointments, etc.)
+-- 1. Calendar Events (medications, supplements, appointments, etc.)
 CREATE TABLE IF NOT EXISTS calendar_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
@@ -21,58 +22,58 @@ CREATE TABLE IF NOT EXISTS calendar_events (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_calendar_events_user_date ON calendar_events(user_id, event_date);
+CREATE INDEX IF NOT EXISTS idx_calendar_events_user_date ON calendar_events(user_id, event_date);
 
--- 9. Daily Logs (medication check-ins, daily tasks)
+-- 2. Daily Logs (medication check-ins, supplement check-ins)
+-- Code uses: item_type, item_id, item_name, completed
 CREATE TABLE IF NOT EXISTS daily_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
   log_date DATE NOT NULL DEFAULT CURRENT_DATE,
-  log_type TEXT NOT NULL CHECK (log_type IN ('medication', 'supplement', 'task', 'mood', 'energy', 'sleep')),
-  reference_id UUID, -- FK to medication/supplement if applicable
-  reference_name TEXT, -- display name
-  dose_index INTEGER DEFAULT 0, -- which dose of the day (0=first, 1=second, etc.)
-  is_completed BOOLEAN DEFAULT FALSE,
+  item_type TEXT NOT NULL,
+  item_id TEXT NOT NULL,
+  item_name TEXT NOT NULL,
+  completed BOOLEAN DEFAULT FALSE,
   completed_at TIMESTAMPTZ,
-  value TEXT, -- for mood/energy/sleep: score or note
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(user_id, log_date, log_type, reference_id, dose_index)
+  UNIQUE(user_id, log_date, item_type, item_id)
 );
 
-CREATE INDEX idx_daily_logs_user_date ON daily_logs(user_id, log_date);
+CREATE INDEX IF NOT EXISTS idx_daily_logs_user_date ON daily_logs(user_id, log_date);
 
--- 10. Water Intake
+-- 3. Water Intake
+-- Code uses: intake_date, glasses, target_glasses
 CREATE TABLE IF NOT EXISTS water_intake (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
   intake_date DATE NOT NULL DEFAULT CURRENT_DATE,
-  glasses INTEGER NOT NULL DEFAULT 0, -- number of glasses (250ml each)
+  glasses INTEGER NOT NULL DEFAULT 0,
   target_glasses INTEGER DEFAULT 8,
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(user_id, intake_date)
 );
 
-CREATE INDEX idx_water_intake_user_date ON water_intake(user_id, intake_date);
+CREATE INDEX IF NOT EXISTS idx_water_intake_user_date ON water_intake(user_id, intake_date);
 
--- 11. Vital Records
+-- 4. Vital Records
+-- Code uses: vital_type, value, systolic, diastolic, notes, recorded_at
 CREATE TABLE IF NOT EXISTS vital_records (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
-  record_date DATE NOT NULL DEFAULT CURRENT_DATE,
   vital_type TEXT NOT NULL CHECK (vital_type IN (
     'blood_pressure', 'blood_sugar', 'weight', 'heart_rate', 'temperature', 'spo2'
   )),
-  value_primary DECIMAL NOT NULL, -- systolic / glucose / weight / bpm / temp / spo2
-  value_secondary DECIMAL, -- diastolic (for blood pressure)
-  unit TEXT NOT NULL,
+  value DECIMAL,
+  systolic DECIMAL,
+  diastolic DECIMAL,
   notes TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  recorded_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_vital_records_user_date ON vital_records(user_id, record_date);
+CREATE INDEX IF NOT EXISTS idx_vital_records_user_date ON vital_records(user_id, recorded_at);
 
 -- ============================================
--- RLS Policies for new tables
+-- RLS Policies
 -- ============================================
 
 ALTER TABLE calendar_events ENABLE ROW LEVEL SECURITY;

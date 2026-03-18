@@ -67,19 +67,24 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const langInstr = lang === "tr"
+      ? "ALL text fields (recommendedDose, frequency, personalizedNote, warningMessage, interactions) MUST be IN TURKISH."
+      : "All text fields in English."
+
     const prompt = `Analyze the supplement "${supplementName}" for this user.
 ${profileContext}
 
 CRITICAL: Return ONLY a raw JSON object. No markdown, no code fences.
+${langInstr}
 
 {
   "supplement": "${supplementName}",
   "safety": "safe" | "caution" | "dangerous",
-  "recommendedDose": "specific dose (e.g., 500mg, 1 capsule)",
-  "frequency": "how often (e.g., once daily, twice daily)",
-  "personalizedNote": "brief note about why this dose for THIS specific user (max 2 sentences, ${lang === "tr" ? "IN TURKISH" : "in English"})",
-  "warningMessage": "if dangerous/caution: friendly warning message like a caring friend would say (${lang === "tr" ? "IN TURKISH" : "in English"}). null if safe",
-  "interactions": ["list of drug interactions if any"],
+  "recommendedDose": "specific dose in user's language (e.g., ${lang === "tr" ? "günde 500mg" : "500mg daily"})",
+  "frequency": "how often in user's language (e.g., ${lang === "tr" ? "günde bir kez" : "once daily"})",
+  "personalizedNote": "brief note about why this dose for THIS specific user (max 2 sentences)",
+  "warningMessage": "if dangerous/caution: friendly warning like a caring friend. null if safe",
+  "interactions": ["list of drug interactions in user's language"],
   "evidenceGrade": "A" | "B" | "C"
 }`
 

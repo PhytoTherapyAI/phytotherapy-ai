@@ -18,7 +18,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true)
     const saved = localStorage.getItem('lang')
-    if (saved && validCodes.includes(saved)) setLangState(saved as Lang)
+    if (saved && validCodes.includes(saved)) {
+      setLangState(saved as Lang)
+    } else {
+      // Auto-detect browser language on first visit
+      try {
+        const browserLang = navigator.language?.toLowerCase() || ''
+        const detected = browserLang.startsWith('tr') ? 'tr' : 'en'
+        setLangState(detected as Lang)
+        localStorage.setItem('lang', detected)
+      } catch { /* fallback to default */ }
+    }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const setLang = (l: Lang) => {

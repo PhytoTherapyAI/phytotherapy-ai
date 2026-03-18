@@ -11,6 +11,7 @@ export type ConsentType = "terms_of_service" | "privacy_policy" | "medical_discl
 export interface UserProfile {
   id: string;
   full_name: string | null;
+  birth_date: string | null;
   age: number | null;
   gender: Gender | null;
   is_pregnant: boolean;

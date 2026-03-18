@@ -9,6 +9,7 @@ import {
   Loader2,
   LogIn,
   Plus,
+  Download,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -31,6 +32,51 @@ interface VitalRecord {
   diastolic?: number
   notes: string | null
   recorded_at: string
+}
+
+// ── ICS Export ──
+function generateICS(events: Array<{ title: string; event_date: string; event_time: string | null; description: string | null; event_type: string }>): string {
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Phytotherapy.ai//Calendar//EN",
+    "CALSCALE:GREGORIAN",
+  ]
+
+  for (const evt of events) {
+    const dateClean = evt.event_date.replace(/-/g, "")
+    const dtStart = evt.event_time
+      ? `${dateClean}T${evt.event_time.replace(":", "")}00`
+      : dateClean
+    const dtEnd = evt.event_time
+      ? `${dateClean}T${String(parseInt(evt.event_time.split(":")[0]) + 1).padStart(2, "0")}${evt.event_time.split(":")[1]}00`
+      : dateClean
+
+    lines.push("BEGIN:VEVENT")
+    lines.push(`DTSTART:${dtStart}`)
+    lines.push(`DTEND:${dtEnd}`)
+    lines.push(`SUMMARY:${evt.title}`)
+    if (evt.description) lines.push(`DESCRIPTION:${evt.description.replace(/\n/g, "\\n")}`)
+    lines.push(`CATEGORIES:${evt.event_type}`)
+    lines.push(`UID:${evt.event_date}-${Math.random().toString(36).slice(2)}@phytotherapy.ai`)
+    lines.push("END:VEVENT")
+  }
+
+  lines.push("END:VCALENDAR")
+  return lines.join("\r\n")
+}
+
+function downloadICS(events: Array<{ title: string; event_date: string; event_time: string | null; description: string | null; event_type: string }>) {
+  const ics = generateICS(events)
+  const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = "phytotherapy-calendar.ics"
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
 }
 
 function VitalIcon({ type }: { type: string }) {
@@ -75,6 +121,26 @@ export default function CalendarPage() {
   const [vitals, setVitals] = useState<VitalRecord[]>([])
   const [vitalsLoading, setVitalsLoading] = useState(false)
   const [addVitalOpen, setAddVitalOpen] = useState(false)
+  const [allEvents, setAllEvents] = useState<Array<{ title: string; event_date: string; event_time: string | null; description: string | null; event_type: string }>>([])
+
+  // Fetch all events for ICS export
+  const fetchAllEvents = useCallback(async () => {
+    if (!profile?.id) return
+    try {
+      const supabase = createBrowserClient()
+      const { data } = await supabase
+        .from("calendar_events")
+        .select("title, event_date, event_time, description, event_type")
+        .eq("user_id", profile.id)
+        .order("event_date", { ascending: true })
+        .limit(500)
+      if (data) setAllEvents(data)
+    } catch { /* ignore */ }
+  }, [profile?.id])
+
+  useEffect(() => {
+    if (profile?.id) fetchAllEvents()
+  }, [profile?.id, fetchAllEvents])
 
   const fetchVitals = useCallback(async () => {
     if (!profile?.id) return
@@ -165,19 +231,27 @@ export default function CalendarPage() {
 
         {/* Today Tab */}
         <TabsContent value="today" className="mt-6">
-          <TodayView userId={profile.id} lang={lang} />
+          <TodayView userId={profile.id} lang={lang} userName={profile.full_name} userWeight={profile.weight_kg} userHeight={profile.height_cm} userSupplements={profile.supplements} />
         </TabsContent>
 
         {/* Calendar Tab */}
         <TabsContent value="calendar" className="mt-6">
           <MonthView userId={profile.id} lang={lang} />
+          {allEvents.length > 0 && (
+            <div className="mt-4">
+              <Button variant="outline" className="w-full rounded-xl h-11" onClick={() => downloadICS(allEvents)}>
+                <Download className="h-4 w-4 mr-2" />
+                {tx("cal.exportIcs", lang)}
+              </Button>
+            </div>
+          )}
         </TabsContent>
 
         {/* Vitals Tab */}
         <TabsContent value="vitals" className="mt-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-heading text-lg font-semibold text-foreground">
+              <h3 className="font-heading text-lg font-bold italic text-foreground">
                 {tx("cal.recentVitals", lang)}
               </h3>
               <Button
