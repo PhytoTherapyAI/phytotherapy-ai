@@ -239,7 +239,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                     {checkResult.supplement} — {safetyConfig[checkResult.safety].label}
                   </span>
                   <span className="ml-auto text-xs text-muted-foreground">
-                    Grade {checkResult.evidenceGrade}
+                    {tr ? "Kanıt" : "Grade"} {checkResult.evidenceGrade}
                   </span>
                 </div>
 
