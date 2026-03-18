@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 19 Mart 2026 (v9.0)
+> Son güncelleme: 18 Mart 2026 (v9.5 — Sprint 9 tamamlandı)
 
 ---
 
@@ -17,7 +17,8 @@
 | Sprint 7 — Tasarım v2 | ✅ Tamamlandı | 16 Mart 2026 |
 | Sprint 7.5 — 3 Katmanlı İlaç Kontrolü + TR/EN | ✅ Tamamlandı | 17 Mart 2026 |
 | Sprint 8 — Güvenlik + Yasal + Asistan v2 | ✅ Tamamlandı | 19 Mart 2026 |
-| Sprint 9 — Takvim Hub | 📋 Sırada | — |
+| Sprint 9 — Takvim Hub | ✅ Tamamlandı | 18 Mart 2026 |
+| Sprint 10 — Sağlık Skorları + Özet | 📋 Sırada | — |
 
 **Hackathon: 11-12 Nisan 2026 — 24 gün kaldı**
 
@@ -260,73 +261,71 @@
 
 ---
 
-## 🔄 Sprint 9 — Takvim Hub (DEVAM EDİYOR)
+## ✅ Sprint 9 — Takvim Hub
 
 **Kapsam:** Merkezi sağlık takvimi — ilaç takibi, takviye, su, vital, görevler, bildirimler
 
-### ✅ Tamamlanan (Sprint 9a)
+### Sprint 9a — Temel Altyapı
 - [x] Takvim sayfası (/calendar) — 3 tab (Bugün/Takvim/Sağlık Ölçümleri)
 - [x] İlaç kutucuk sistemi (tıklanabilir, optimistic update, animasyonlu)
 - [x] Takviye paneli (AI güvenlik kontrolü, profil bazlı doz, renk kodlu: yeşil/sarı/kırmızı)
-- [x] Su takibi (SVG damla dolum, gradient progress bar, hedef ayarlama, esprili mesajlar)
+- [x] Su takibi (SVG damla dolum, gradient progress bar, hedef ayarlama)
 - [x] Vital takibi (tansiyon/şeker/kilo/nabız) + dialog
 - [x] Etkinlik ekleme (7 tür + tekrar + hızlı ekle chip'leri)
 - [x] Streak sistemi (🔥 ardışık gün takibi)
-- [x] İlaç tamamlama animasyonu + motivasyon mesajları
-- [x] Çan ikonu (tıklanabilir tooltip — "yakında")
 - [x] Ay takvim grid'i (renkli noktalar, gün tıklama)
 - [x] Supabase migration: calendar_events, daily_logs, water_intake, vital_records
-- [x] Navbar'a Calendar linki
-- [x] ~90 çeviri key'i (cal.*)
 - [x] API: /api/calendar, /api/daily-log, /api/supplement-check (rate limited)
-- [x] Login "Oturumu açık tut" checkbox
-- [x] Tüm sayfa başlıkları italic Cormorant tutarlılığı
 
-### 📋 Yapılacak (Sprint 9b — Sonraki Oturum)
+### Sprint 9b — Animasyonlar, Hatırlatıcı, Su v5, i18n Merkezileştirme
+- [x] Full-page confetti (50 parçacık) tüm ilaçlar tamamlandığında
+- [x] 14 kişiye özel mizahi mesaj (isimle hitap, TR/EN)
+- [x] Çan hatırlatma sistemi — Dialog UI, saat seçimi, hızlı preset'ler, Onayla butonu
+- [x] Hatırlatma localStorage + Supabase calendar_events'e kaydediliyor
+- [x] İlaç saati geçtiğinde amber uyarı banner'ı (pulse animasyon)
+- [x] Su Tüketimi v5 — bardak/ml modu toggle, slider (50ml adım, 1000ml max, yuvarlak handle)
+- [x] Kişisel su limiti (boy/kilo bazlı min/max), kişisel min default hedef
+- [x] Su zehirlenmesi koruması — üst limitte ekleme engeli + uyarı
+- [x] 20+ esprili hedef aşımı mesajı, her seviye için 4+ çeşitli mesaj
+- [x] Progress bar altında ml etiketleri, damla yanında ml gösterimi
+- [x] Dark mode su damlası glow efekti
+- [x] Hedef Belirle dialog (Target icon, kişisel aralık gösterimi)
+- [x] Profildeki takviyeler otomatik gösterim (chip'ler)
+- [x] Takviye açıklamaları İngilizce→Türkçe çeviri katmanı
+- [x] Takviye API tüm alanları kullanıcı diline göre döndürüyor
+- [x] Takviye ekleme sonrası dialog açık kalıyor (sıfırlanıyor)
+- [x] Etkinlik silme (hover trash icon) + düzenleme (tıkla→edit dialog)
+- [x] Haftalık özet kartı (MonthView'da ilaç/su tamamlama istatistiği)
+- [x] Takvim günlerine emoji (✅ tamam / ⚠️ kısmen)
+- [x] Telefon takvimi .ics export
+- [x] Otomatik dil algılama (navigator.language)
+- [x] Onboarding: doğum tarihi (otomatik yaş), erkekse gebelik atlanıyor
+- [x] Med-check fix: ilk üyelik 30 gün sorunu, login tekrar sorma
+- [x] Vitals: "Son Vital Kayıtları" italic font, "Ölçüm Ekle" butonu
+- [x] i18n merkezileştirme — tüm inline ternary'ler tx() key'lerine taşındı
+- [x] Login sayfası tam Türkçe (24+ yer), auth callback, GuestWall, SafetyBadge, SourceCard, ConversationHistory
+- [x] MESSAGE_ARRAYS sistemi — txRandom()/txMessages() API
+- [x] Yeni dil = sadece translations.ts düzenle
+- [x] Çeviri denetimi: UI %99.5+ kapsama
 
-**İlaç Animasyonu v2:**
-- [ ] Tam ekran confetti/ripple efekti (ilaç tamamlandığında)
-- [ ] Kişiye özel mesajlar (isimle hitap: "Harika Taha! 💊")
-- [ ] Mesajlar daha çeşitli ve yaratıcı
-
-**Çan Bildirimi (Gerçek):**
-- [ ] Çan tıklanınca saat seçim paneli açılsın
-- [ ] Seçilen saati localStorage + Supabase'de sakla
-- [ ] "Zoretanin — 09:00" formatında gösterim
-
-**Su Tüketimi v3:**
-- [ ] Boy/kilo bazlı kişisel alt-üst limit (su zehirlenmesi koruması)
-- [ ] Üst limitte su ekleme engelleme + uyarı mesajı
-- [ ] Bardak sayı barını geri getir (yatay uzun barı kaldır)
-- [ ] Su damlası SVG'yi +/- butonları arasına taşı
-- [ ] Her su eklemede mini sayfa animasyonları (confetti/ripple)
-- [ ] Daha çeşitli motivasyon mesajları (her seferinde farklı)
-- [ ] Barem aşıldığında esprili mesaj çeşitliliği artırılacak
-
-**Otomatik Dil Algılama:**
-- [ ] navigator.language ile sistem dilini algıla
-- [ ] İlk ziyarette otomatik TR/EN seçimi
-
-**Ek Özellikler:**
-- [ ] Haftalık özet kartı (kaç gün ilaç/su hedefi karşılandı)
-- [ ] Takvim tab'ında günlere emoji (✅ tamam / ⚠️ eksik)
-- [ ] Etkinlik silme/düzenleme
-- [ ] Telefon takvimi .ics export
-- [ ] Dark mode su damlası glow efekti
-- [ ] İlaç saati geçtiğinde uyarı banner'ı
-
-### Yeni Dosyalar (Sprint 9a)
-- `app/calendar/page.tsx` — Takvim Hub sayfası (3 tab)
-- `components/calendar/TodayView.tsx` — Bugün sekmesi (ilaç+takviye+etkinlik+su)
-- `components/calendar/MonthView.tsx` — Ay takvim grid'i
-- `components/calendar/AddEventDialog.tsx` — Etkinlik ekleme
-- `components/calendar/AddVitalDialog.tsx` — Vital kayıt
-- `components/calendar/AddSupplementDialog.tsx` — Takviye yönetimi (AI kontrolü)
-- `components/calendar/WaterTracker.tsx` — Su takip bileşeni
-- `app/api/calendar/route.ts` — Calendar events API
-- `app/api/daily-log/route.ts` — Daily log API
-- `app/api/supplement-check/route.ts` — AI takviye güvenlik kontrolü
-- `supabase/migrations/sprint9_calendar.sql` — 4 yeni tablo + RLS
+### Yeni/Güncellenen Dosyalar (Sprint 9)
+- `components/calendar/TodayView.tsx` — Bugün sekmesi (tam yeniden yazıldı — v5)
+- `components/calendar/MonthView.tsx` — Ay takvim + haftalık özet + emoji + silme
+- `components/calendar/AddEventDialog.tsx` — Etkinlik ekleme/düzenleme (edit modu)
+- `components/calendar/AddSupplementDialog.tsx` — Takviye yönetimi + çeviri katmanı
+- `lib/translations.ts` — ~300 key + MESSAGE_ARRAYS + txRandom/txMessages
+- `lib/daily-med-check.ts` — markFirstLoginDone(), 1.5s delay
+- `lib/database.types.ts` — birth_date eklendi
+- `components/onboarding/steps/BasicInfoStep.tsx` — Doğum tarihi input
+- `components/onboarding/OnboardingWizard.tsx` — Erkek→gebelik atlama
+- `app/auth/login/page.tsx` — Tam tx() çeviri
+- `app/auth/callback/page.tsx` — Tam tx() çeviri
+- `components/common/GuestWall.tsx` — Tam tx() çeviri
+- `components/interaction/SafetyBadge.tsx` — Tam tx() çeviri
+- `components/chat/SourceCard.tsx` — Kaynaklar çevirisi
+- `components/chat/ConversationHistory.tsx` — Zaman formatları çevirisi
+- `app/api/supplement-check/route.ts` — Tüm alanlar kullanıcı dilinde
+- `supabase/migrations/sprint9_calendar.sql` — Kod ile eşleşen kolon isimleri
 
 ---
 
@@ -444,4 +443,4 @@ phytotherapy-ai/
 ---
 
 *Hackathon: 11-12 Nisan 2026 — 24 gün kaldı*
-*Sprint 1-8 tamamlandı. Sıradaki: Sprint 9 — Takvim Hub*
+*Sprint 1-9 tamamlandı. Sıradaki: Sprint 10 — Sağlık Skorları + Özet*
