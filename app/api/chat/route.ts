@@ -5,15 +5,33 @@ import { searchPubMed } from "@/lib/pubmed";
 import { SYSTEM_PROMPT } from "@/lib/prompts";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
 import { createServerClient } from "@/lib/supabase";
+import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { sanitizeInput } from "@/lib/sanitize";
 
 export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { message, history, files, lang } = body;
+    // Rate limiting — 10 requests per minute per IP
+    const clientIP = getClientIP(request);
+    const rateCheck = checkRateLimit(`chat:${clientIP}`, 10, 60_000);
+    if (!rateCheck.allowed) {
+      return new Response(JSON.stringify({
+        error: `Too many requests. Please wait ${rateCheck.resetInSeconds} seconds.`,
+      }), {
+        status: 429,
+        headers: {
+          "Content-Type": "application/json",
+          "Retry-After": String(rateCheck.resetInSeconds),
+        },
+      });
+    }
 
-    if (!message || typeof message !== "string" || message.trim().length === 0) {
+    const body = await request.json();
+    const { history, files, lang } = body;
+    const message = sanitizeInput(body.message);
+
+    if (!message || message.length === 0) {
       return new Response(JSON.stringify({ error: "Message is required" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },

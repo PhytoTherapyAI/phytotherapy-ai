@@ -1,13 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { searchPubMed } from "@/lib/pubmed";
+import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { sanitizeInput } from "@/lib/sanitize";
 
 export async function GET(request: NextRequest) {
   try {
+    // Rate limiting — 20 requests per minute
+    const clientIP = getClientIP(request);
+    const rateCheck = checkRateLimit(`pubmed:${clientIP}`, 20, 60_000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: `Too many requests. Please wait ${rateCheck.resetInSeconds} seconds.` },
+        { status: 429, headers: { "Retry-After": String(rateCheck.resetInSeconds) } }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
-    const query = searchParams.get("q");
+    const query = sanitizeInput(searchParams.get("q") || "");
     const limit = parseInt(searchParams.get("limit") || "5", 10);
 
-    if (!query || query.trim().length === 0) {
+    if (!query || query.length === 0) {
       return NextResponse.json(
         { error: "Query parameter 'q' is required" },
         { status: 400 }

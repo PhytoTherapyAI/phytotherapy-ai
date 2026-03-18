@@ -1,11 +1,22 @@
 import { NextRequest } from "next/server";
 import ReactPDF from "@react-pdf/renderer";
 import { DoctorReport } from "@/components/pdf/DoctorReport";
+import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 
 export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting — 5 PDFs per minute per IP
+    const clientIP = getClientIP(request);
+    const rateCheck = checkRateLimit(`pdf:${clientIP}`, 5, 60_000);
+    if (!rateCheck.allowed) {
+      return new Response(
+        JSON.stringify({ error: `Too many requests. Please wait ${rateCheck.resetInSeconds} seconds.` }),
+        { status: 429, headers: { "Content-Type": "application/json", "Retry-After": String(rateCheck.resetInSeconds) } }
+      );
+    }
+
     const body = await request.json();
     const { results, analysis, patientInfo } = body;
 

@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { searchTurkishDrugs } from '@/lib/turkish-drugs'
+import { checkRateLimit, getClientIP } from '@/lib/rate-limit'
+import { sanitizeInput } from '@/lib/sanitize'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export async function GET(req: NextRequest) {
-  const q = req.nextUrl.searchParams.get('q') || ''
+  // Rate limiting — 30 requests per minute for autocomplete (higher limit)
+  const clientIP = getClientIP(req)
+  const rateCheck = checkRateLimit(`drug-search:${clientIP}`, 30, 60_000)
+  if (!rateCheck.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': String(rateCheck.resetInSeconds) } }
+    )
+  }
+
+  const q = sanitizeInput(req.nextUrl.searchParams.get('q') || '')
   if (q.length < 2) return NextResponse.json([])
 
   const results: any[] = []

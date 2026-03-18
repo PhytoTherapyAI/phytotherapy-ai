@@ -5,6 +5,7 @@ import { ShieldCheck, ShieldAlert, ShieldX } from "lucide-react";
 interface SafetyBadgeProps {
   safety: "safe" | "caution" | "dangerous";
   size?: "sm" | "md" | "lg";
+  evidenceGrade?: "A" | "B" | "C" | null;
 }
 
 const config = {
@@ -40,7 +41,13 @@ const sizeConfig = {
   lg: { icon: "h-5 w-5", text: "text-base", padding: "px-3 py-1.5", gap: "gap-2" },
 };
 
-export function SafetyBadge({ safety, size = "md" }: SafetyBadgeProps) {
+const gradeLabels: Record<string, string> = {
+  A: "Grade A",
+  B: "Grade B",
+  C: "Grade C",
+};
+
+export function SafetyBadge({ safety, size = "md", evidenceGrade }: SafetyBadgeProps) {
   const c = config[safety];
   const s = sizeConfig[size];
   const Icon = c.icon;
@@ -51,6 +58,11 @@ export function SafetyBadge({ safety, size = "md" }: SafetyBadgeProps) {
     >
       <Icon className={s.icon} />
       {c.label}
+      {evidenceGrade && (
+        <span className="ml-0.5 opacity-70">
+          · {gradeLabels[evidenceGrade] || evidenceGrade}
+        </span>
+      )}
     </span>
   );
 }

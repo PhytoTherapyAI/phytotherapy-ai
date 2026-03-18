@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 17 Mart 2026 (v8.0)
+> Son güncelleme: 19 Mart 2026 (v9.0)
 
 ---
 
@@ -16,10 +16,10 @@
 | Sprint 6 — Mimari Birleştirme | ✅ Tamamlandı | 16 Mart 2026 |
 | Sprint 7 — Tasarım v2 | ✅ Tamamlandı | 16 Mart 2026 |
 | Sprint 7.5 — 3 Katmanlı İlaç Kontrolü + TR/EN | ✅ Tamamlandı | 17 Mart 2026 |
-| Sprint 8 — Güvenlik + Yasal | 📋 Sırada | — |
-| Sprint 9 — Hackathon Hazırlık | 📋 Planlandı | — |
+| Sprint 8 — Güvenlik + Yasal + Asistan v2 | ✅ Tamamlandı | 19 Mart 2026 |
+| Sprint 9 — Takvim Hub | 📋 Sırada | — |
 
-**Hackathon: 11-12 Nisan 2026 — 25 gün kaldı**
+**Hackathon: 11-12 Nisan 2026 — 24 gün kaldı**
 
 ---
 
@@ -218,6 +218,7 @@
 - [x] Tüm sayfalar bilingual: landing, chat, interaction, blood-test, onboarding, profile
 - [x] Statik acil durum banner'ları kaldırıldı (sadece keyword-triggered emergency modal kaldı)
 - [x] Interaction checker tam TR/EN + Türkçe ilaç arama
+- [x] i18n refactored: SUPPORTED_LANGUAGES + Lang type + tx() tek dosyada (lib/translations.ts) — yeni dil eklemek = 1 config satırı + çeviriler
 
 ### Bugfix Kaydı (Sprint 7.5)
 | Bug | Sebep | Çözüm |
@@ -231,13 +232,35 @@
 
 ---
 
-## 📋 Sprint 8 — Güvenlik + Yasal (SIRADA)
+## ✅ Sprint 8 — Güvenlik + Yasal + Asistan v2
 
-**Kapsam:** Rate limiting, input sanitization, yasal sayfalar
+**Kapsam:** Rate limiting, input sanitization, yasal sayfalar, sistem promptu v2, collapsible kaynaklar, renk kodlu supplement
 
-- [ ] Rate limiting + input sanitization
-- [ ] Privacy Policy + Terms (TR+EN)
-- [ ] "Verilerimi sil/indir"
+- [x] Rate limiting — 7/7 API route (chat, interaction, blood, drug-search, pubmed, pdf, user-data)
+- [x] Input sanitization — XSS/injection koruması (lib/sanitize.ts)
+- [x] Privacy Policy sayfası — /privacy (TR+EN, 10 bölüm, KVKK/GDPR uyumlu)
+- [x] Terms of Service sayfası — /terms (TR+EN, 12 bölüm, sorumluluk sınırlaması, garanti reddi)
+- [x] Verilerimi indir — /api/user-data GET (JSON export, tüm tablolar)
+- [x] Hesabımı sil — /api/user-data DELETE (tüm veri + auth user silme)
+- [x] Profil sayfası fonksiyonel export/delete butonları
+- [x] Sistem promptu v2 — arkadaş tonu, conversation/knowledge/mixed modlar, profil farkındalığı
+- [x] Collapsible kaynak paneli — SourceCard varsayılan kapalı, tıkla aç
+- [x] SafetyBadge evidence grade — A/B/C kanıt düzeyi gösterimi
+- [x] Cookie consent banner — KVKK/GDPR zorunlu, localStorage hatırlama
+- [x] Onboarding consent'e Terms + Privacy linkleri + güncellenmiş kabul metni
+- [x] Footer'a Privacy Policy + Terms of Service linkleri
+
+### Yeni Dosyalar (Sprint 8)
+- `lib/rate-limit.ts` — In-memory sliding window rate limiter
+- `lib/sanitize.ts` — XSS/injection sanitization
+- `app/privacy/page.tsx` — Gizlilik Politikası (TR+EN)
+- `app/terms/page.tsx` — Kullanım Koşulları (TR+EN)
+- `app/api/user-data/route.ts` — KVKK veri export/delete API
+- `components/layout/cookie-consent.tsx` — Cookie consent banner
+
+---
+
+## 📋 Sprint 9 — Takvim Hub (SIRADA)
 
 ---
 
@@ -328,6 +351,8 @@ phytotherapy-ai/
 
 | Commit | Mesaj |
 |--------|-------|
+| `63e407f` | Refactor i18n: single-file language system with SUPPORTED_LANGUAGES config |
+| `7d72385` | Update CLAUDE.md v8.0 and PROGRESS.md — Sprint 7.5 complete |
 | `b839070` | Sprint 8: 3-tier medication verification, TR/EN translations, profile editing, UI improvements |
 | `28a24a9` | Sprint 7: design v2, dark mode, language toggle, logo font, translations |
 | `4e4bcdd` | Replace language toggle with mounted guard to fix TR TR duplication |

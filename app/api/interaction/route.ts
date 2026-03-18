@@ -1,23 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeInteraction, UserProfileForInteraction } from "@/lib/interaction-engine";
 import { createServerClient } from "@/lib/supabase";
+import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { sanitizeInput, sanitizeArray } from "@/lib/sanitize";
 
 export const maxDuration = 60; // Allow up to 60s for Gemini + PubMed
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting — 10 requests per minute per IP
+    const clientIP = getClientIP(request);
+    const rateCheck = checkRateLimit(`interaction:${clientIP}`, 10, 60_000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: `Too many requests. Please wait ${rateCheck.resetInSeconds} seconds.` },
+        { status: 429, headers: { "Retry-After": String(rateCheck.resetInSeconds) } }
+      );
+    }
+
     const body = await request.json();
-    const { medications, concern, lang } = body;
+    const medications = sanitizeArray(body.medications);
+    const concern = sanitizeInput(body.concern || "");
+    const { lang } = body;
 
     // Validate input
-    if (!medications || !Array.isArray(medications) || medications.length === 0) {
+    if (medications.length === 0) {
       return NextResponse.json(
         { error: "At least one medication is required" },
         { status: 400 }
       );
     }
 
-    if (!concern || typeof concern !== "string" || concern.trim().length === 0) {
+    if (!concern || concern.length === 0) {
       return NextResponse.json(
         { error: "Health concern is required" },
         { status: 400 }

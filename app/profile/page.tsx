@@ -36,6 +36,8 @@ export default function ProfilePage() {
 
   // Add medication state
   const [isAddingMed, setIsAddingMed] = useState(false);
+  const [exportingData, setExportingData] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const [newBrandName, setNewBrandName] = useState("");
   const [newGenericName, setNewGenericName] = useState("");
   const [newDosage, setNewDosage] = useState("");
@@ -1061,13 +1063,65 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button variant="outline" className="gap-2">
-              <Download className="h-4 w-4" />
-              {tx('profile.downloadData', lang)}
+            <Button
+              variant="outline"
+              className="gap-2"
+              disabled={exportingData}
+              onClick={async () => {
+                setExportingData(true)
+                try {
+                  const supabase = createBrowserClient()
+                  const { data: { session } } = await supabase.auth.getSession()
+                  if (!session) return
+                  const res = await fetch("/api/user-data", {
+                    headers: { Authorization: `Bearer ${session.access_token}` },
+                  })
+                  if (!res.ok) throw new Error("Export failed")
+                  const blob = await res.blob()
+                  const url = URL.createObjectURL(blob)
+                  const a = document.createElement("a")
+                  a.href = url
+                  a.download = `phytotherapy-data-${new Date().toISOString().split("T")[0]}.json`
+                  a.click()
+                  URL.revokeObjectURL(url)
+                } catch {
+                  alert(tr ? "Veri indirme başarısız" : "Data export failed")
+                } finally {
+                  setExportingData(false)
+                }
+              }}
+            >
+              {exportingData ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+              {exportingData ? tx('data.exporting', lang) : tx('profile.downloadData', lang)}
             </Button>
-            <Button variant="destructive" className="gap-2">
-              <Trash2 className="h-4 w-4" />
-              {tx('profile.deleteAccount', lang)}
+            <Button
+              variant="destructive"
+              className="gap-2"
+              disabled={deletingAccount}
+              onClick={async () => {
+                const confirmText = tr ? "SİL" : "DELETE"
+                const input = prompt(tx('data.deleteConfirm', lang))
+                if (input !== confirmText) return
+                setDeletingAccount(true)
+                try {
+                  const supabase = createBrowserClient()
+                  const { data: { session } } = await supabase.auth.getSession()
+                  if (!session) return
+                  const res = await fetch("/api/user-data", {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${session.access_token}` },
+                  })
+                  if (!res.ok) throw new Error("Delete failed")
+                  await supabase.auth.signOut()
+                  router.push("/")
+                } catch {
+                  alert(tr ? "Hesap silme başarısız" : "Account deletion failed")
+                  setDeletingAccount(false)
+                }
+              }}
+            >
+              {deletingAccount ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+              {deletingAccount ? tx('data.deleting', lang) : tx('profile.deleteAccount', lang)}
             </Button>
           </div>
           <Separator className="my-4" />

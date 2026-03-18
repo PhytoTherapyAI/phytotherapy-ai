@@ -7,6 +7,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/components/layout/language-toggle";
 import { MedicationUpdateDialog } from "@/components/layout/medication-update-dialog";
+import { CookieConsent } from "@/components/layout/cookie-consent";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -66,6 +67,7 @@ export default function RootLayout({
               <main className="min-h-[calc(100vh-12rem)]">{children}</main>
               <Footer />
               <MedicationUpdateDialog />
+              <CookieConsent />
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>

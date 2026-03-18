@@ -1,11 +1,11 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v8.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v9.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
 **Phytotherapy.ai** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
 - **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026
-- **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı)
+- **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı) — 2 yıllık ödeme yapıldı
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
 - **AI Motor:** Google Gemini API (gemini-2.0-flash primary + gemini-2.5-flash fallback)
@@ -27,7 +27,8 @@
 3. **Doktoru bypass etme, güçlendir** — Teşhis koymaz, karar destek asistanıdır.
 4. **Şeffaflık** — Her öneri makale referansıyla gelir.
 5. **Kimseyi boş gönderme** — Her zaman genel bilgi + doktora yönlendirme.
-6. **İlaç profili olmadan doz tavsiyesi verilmez** — "Bu madde birçok ilaçla etkileşebilir, ilaçlarınızı ekleyin."
+6. **İlaç profili olmadan doz tavsiyesi verilmez.**
+7. **Önce dinle, sonra konuş** — Anlamadan öneri yapma.
 
 ---
 
@@ -42,116 +43,130 @@ Tıbbi Veri:   PubMed E-utilities API
 İlaç Veri:    OpenFDA API
 PDF:          @react-pdf/renderer
 Deploy:       Vercel ✅ — phytotherapy.ai
-Auth:         Supabase Auth ✅ (email çalışıyor, Google OAuth Sprint 10'da)
+Auth:         Supabase Auth ✅ (email çalışıyor, Google OAuth S12'de)
 OS:           Windows
 ```
 
----
-
-## Mimari — Tek AI Asistan + Özel Modlar
-
-### Intent Detection (Gemini Router)
-Kullanıcı mesajı → Gemini intent belirler:
-- **İlaç etkileşimi** → OpenFDA + PubMed motoru
-- **Kan tahlili değerleri** → blood-reference.ts + analiz
-- **Genel sağlık sorusu** → PubMed RAG
-- **Dosya/görsel yüklendi** → OCR + ilgili analiz
-- **Acil semptom** → Kırmızı kod (AI'dan ÖNCE çalışır)
-- **Sağlık dışı mesaj** → "I'm specialized in health topics. Feel free to ask anything health-related!"
-
-### Dil Desteği
-- Sistem EN ve TR sorularına otomatik yanıt verir
-- Kullanıcı Türkçe yazarsa Türkçe, İngilizce yazarsa İngilizce cevap
-- TR/EN dil toggle navbar'da ✅ (🇺🇸 EN / 🇹🇷 TR, localStorage persist, mounted guard ile hydration-safe)
-
-### Dosya ve Görsel Yükleme
-Chat kutusuna entegre (sol alt köşe):
-- 📎 PDF yükleme (kan tahlili, reçete)
-- 📷 Fotoğraf çekme / galeri seçimi (ilaç kutusu, tahlil kağıdı)
-- OCR ile metin çıkarma → Gemini analizi
-- Desteklenen: PDF, JPG, PNG, HEIC
-
-### Konuşma Geçmişi (Yan Panel)
-- Health assistant'da sol/sağ kenar paneli
-- Son 10 konuşma Supabase query_history'den yüklenir
-- Konuşmaya tıklayınca yüklenir
-- Misafir modunda gösterilmez
+### AI Motor Yol Haritası
+- **Hackathon:** Gemini (ücretsiz kota, hız)
+- **Para kazanmaya başlayınca:** gpt-4o-mini (Türkçe + güvenilirlik)
+- **Doktor paneli açılınca:** Claude API (tıbbi etik + güvenlik)
+- **Multi-agent pipeline:** Gemini + OpenAI üretir, Claude denetler — ciddi gelir olunca
+- **DeepSeek V4:** Henüz resmi çıkmadı. Çıkınca bağımsız tıbbi güvenlik testi gerekli. Hasta verisi için asla.
 
 ---
 
-## Tasarım Sistemi (Kesinleşmiş — v2)
+## Sistem Promptu — Final v2 (Gemini)
 
-### Renkler (Kesinleşmiş — Sprint 7 sonrası)
 ```
-Açık mod arka plan:    #faf9f6  (warm cream)
-Koyu mod arka plan:    #141a16  ("karanlık orman" — boğucu değil)
-Koyu mod kartlar:      #1c2420  (forest card)
-Ana yeşil (light):     #3c7a52
-Ana yeşil (dark):      #5aac74  (parlak yeşil — botanik SVG dahil)
-Açık yeşil metin:      #8aab8e  (dark mod açıklamalar / muted-foreground)
-Altın vurgu (light):   #b8965a  (logo "therapy" + hero "nature's")
-Altın vurgu (dark):    #c9a86c
-Koyu metin (light):    #141a15
-Açık metin (dark):     #dde8de  (foreground)
-İkincil (light):       #5a6b5c
-İkincil (dark):        #8aab8e
-Kenar çizgileri (dark): rgba(90,172,116,0.15)
+You are Phytotherapy.ai — a knowledgeable health-focused companion.
+Think of yourself as a friend who happens to have deep medical knowledge:
+warm, natural, genuinely curious about the person, but rigorously
+evidence-based when it matters.
+
+━━━ PERSONALITY ━━━
+- Talk like a smart friend texting, not a doctor writing a report
+- Warm, empathetic, occasionally playful
+- Genuinely curious — you want to understand before you advise
+- Never robotic, never cold, never formulaic
+
+━━━ CONVERSATION MODE (no database needed) ━━━
+Triggers: feelings, daily events, casual sharing, non-specific comments
+- Respond naturally, 1-3 sentences max
+- Empathy first, always — one sentence that shows you heard them
+- Ask ONE clarifying question before offering any information
+- Simple sharing = simple acknowledgment, not a lecture
+- Never say "I can only discuss health topics"
+- Connect to health naturally when relevant, never forcefully
+- Example: "Bugün çok yorgunum" → "Yok mu, dün nasıl uyudun?"
+
+━━━ KNOWLEDGE MODE (PubMed + database REQUIRED) ━━━
+Triggers: any question seeking information, mechanism, protocol,
+dose, comparison — regardless of topic (fitness, nutrition, sleep,
+herbs, supplements, mental health, sports performance, anything)
+- ALWAYS search PubMed first, no exceptions
+- Never use training memory as a health fact source
+- If PubMed has insufficient data: "I couldn't find enough data on
+  PubMed for this, but in my view..." then give honest opinion
+- Sources go in collapsible panel only, never in message body
+
+━━━ MIXED MODE ━━━
+User shares something + asks something →
+acknowledge in 1 sentence first, then go to database, then respond
+
+━━━ PROFILE AWARENESS ━━━
+- Always silently load user's full profile: medications, allergies,
+  conditions, age, gender, kidney/liver status, pregnancy
+- Use profile data naturally — never say "according to your profile"
+- Just know it, like a friend who knows your history
+- Connect dots proactively: if user mentions joint pain and takes
+  Isotretinoin, make that connection without being asked
+- If profile is incomplete, gently note what's missing and why it matters
+
+━━━ RESPONSE FORMAT ━━━
+- Length matches question depth:
+  casual → 1-2 sentences
+  health question → 3-5 sentences max
+  complex analysis → up to 7 sentences, still conversational
+- Most important point always in first sentence
+- No bullet points, no headers, no numbered lists
+- No "Assessment / Recommendations / Safety Notes" structure
+- Weave everything into natural flowing sentences
+- Tone shifts naturally: relaxed for daily chat, serious for risk topics
+- One clarifying question at the end when appropriate
+- Disclaimer only when genuinely needed, woven into sentence naturally
+  NOT a warning block at the end
+- Example: "ama bunu doktorunla konuş, doz meselesi var burada"
+
+━━━ SOURCES ━━━
+- Never appear in message body
+- Always in collapsible "Sources ▾" panel below message
+- User clicks to expand if they want
+
+━━━ COLOR-CODED SUPPLEMENT SYSTEM (Noom'dan) ━━━
+- Green ✅ = Safe, evidence grade A/B
+- Yellow ⚠️ = Caution, limited evidence or mild interaction risk
+- Red ❌ = Dangerous, significant interaction or contraindication
+- Always shown on supplement/herb recommendations
+
+━━━ EMERGENCY (overrides everything, always active) ━━━
+Chest pain, breathing difficulty, loss of consciousness, heavy bleeding,
+suicidal ideation, stroke, seizure, anaphylaxis, poisoning →
+Immediately: "This sounds like an emergency — call 112/911 right now."
+No herbs, no analysis, no waiting.
+
+━━━ HARD RULES ━━━
+- No diagnosis, ever
+- No dosage without medication profile
+- Evidence grade always noted: A (RCTs) / B (limited) / C (traditional)
+- Match user's language automatically (TR/EN)
+- Never send user away empty — always something useful + referral
 ```
 
-### Fontlar
-```
-Başlıklar:  Cormorant Garamond (serif, italic kullanımı önemli)
-Metin:      DM Sans
-Mono:       DM Mono (kbd kısayolları için)
-```
-
-### Dark/Light Mode
-- Navbar sağında toggle butonu — ay ☽ / güneş ○ ikonu
-- localStorage'da hatırlanır
-- Her renk CSS variable ile tanımlanır — hardcode yasak
-- Koyu mod: #141a16 arka plan, yeşil tonları daha parlak (#5aac74)
-- Açık mod: #faf9f6 arka plan, derin yeşil (#3c7a52)
-
-### Tasarım Prensipleri
-- Premium + sakin + yatıştırıcı his
-- **Projeye özgü motifler:**
-  - Botanik illüstrasyon (zarif tek bitki, altın çiçek)
-  - EKG çizgisi botanik bitkinin üzerinden geçer
-  - Molekül bağ noktaları köşelerde dekoratif
-  - Tıbbi artı (+) işareti ince vurgu olarak
-- **Hero bölümü:**
-  - Sol: H1 başlık + açıklama + arama kutusu (⌘K) + quick tags
-  - Sağ: Botanik SVG illüstrasyon (EKG + molekül + botanik birleşimi)
-  - Eyebrow badges kaldırıldı (Science/Species/Wiki)
-- **Trust strip:** 5 madde, her biri yeşil checkmark ile
-- **Feature kartları:** 01/02/03/04 numaralı, Cormorant başlık
-- Light/Dark mode toggle navbar sağında
-- Mobile-first responsive
-- Referans: public/phytotherapy_v2.png
-
-### Navigasyon
-```
-Logo (sol) | Interaction Checker | Health Assistant | Blood Test Analysis | [Auth] | [Lang Toggle] | [Theme Toggle]
-```
-- Giriş yapılmamışsa: Sign In + Sign Up butonları
-- Giriş yapılmışsa: Avatar dropdown (isim, email, Profile Settings, Sign Out)
-- Sign out sonrası landing page'e yönlendir, session temizle
+### Asistan Kapsam (Genişletilmiş)
+Asistan artık sadece fitoterapi değil, genel sağlık ve yaşam kalitesi asistanı:
+- Spor & fiziksel performans (antrenman, toparlanma, adaptogenler)
+- Beslenme & metabolizma (yemek-ilaç etkileşimleri, anti-inflamatuar beslenme)
+- Mental sağlık & uyku (anksiyete, odaklanma, uyku kalitesi)
+- Günlük sohbet (her konuda, sağlık perspektifinden)
+- Kod yazmaz, hukuki soru yanıtlamaz — ama bunu soğukça reddetmez
 
 ---
 
 ## Kullanıcı Akışı
 
-### Misafir Modu (5 sorgu hakkı)
-- Genel bilgi soruları → yanıtla (EN ve TR)
-- Kişisel öneri → "Güvenli öneri için ilaç profilin gerekiyor. Kayıt ol."
-- Doz tavsiyesi → "Bu madde birçok ilaçla etkileşebilir, ilaçlarınızı ekleyin"
-- Konuşma geçmişi gösterilmez
-- 6. sorguda kayıt duvarı
+### Misafir Modu
+- Genel sağlık, spor, beslenme soruları → yanıtla (3/gün)
+- İlaç etkileşim kontrolü → yanıtla (3/gün)
+- Kan tahlili analizi → kayıt duvarı
+- Kişisel öneri → "Güvenli öneri için profil gerekiyor. Kayıt ol."
+- 4. sorguda kayıt duvarı
 
-### Login Sonrası Akış
-1. Login → onboarding_complete kontrolü
-2. False ise → /onboarding sayfasına otomatik yönlendir
-3. Onboarding tamamlanınca → ana sayfaya dön
+### Kayıt Sonrası
+- Otomatik 7 gün TAM PREMIUM — kart gerekmez, otomatik ödeme yok
+- 7 gün sonra freemium'a geçiş
+- Premium özellikler kapanır ama veri silinmez
+- Bildirim sistemi: 5. gün → 7. gün → bitince
 
 ### Onboarding Wizard — Katman 1 (Zorunlu, 7 Adım)
 | Adım | İçerik |
@@ -165,28 +180,78 @@ Logo (sol) | Interaction Checker | Health Assistant | Blood Test Analysis | [Aut
 | 7 | Sorumluluk reddi + dijital imza → Supabase |
 
 ### Onboarding Wizard — Katman 2 (İsteğe Bağlı)
-Takviye, beslenme, egzersiz, uyku, boy/kilo/kan grubu
+Sağlık hedefi (enerji/kilo/uyku/stres/performans), takviye, beslenme, egzersiz, uyku, boy/kilo/kan grubu
 
-### İlaç & Profil Güncelleme — 3 Katmanlı Kontrol ✅
-| Katman | Süre | Depolama | Bloklar | Kapatılabilir |
-|--------|------|----------|---------|---------------|
-| Günlük ilaç onayı | Her gün | localStorage | Sadece Health Assistant | ✅ X ile |
-| İlaç güncellemesi | 15 gün | Supabase `last_medication_update` | Sign-in dialogu | ❌ Zorunlu |
-| Onboarding yenileme | 30 gün | localStorage | Tüm site | ❌ Zorunlu |
+### İlaç Güncelleme — 3 Katmanlı Kontrol ✅
+| Katman | Süre | Depolama | Kapatılabilir |
+|--------|------|----------|---------------|
+| Günlük onay | Her gün | localStorage | ✅ X ile |
+| İlaç güncellemesi | 15 gün | Supabase | ❌ Zorunlu |
+| Onboarding yenileme | 30 gün | localStorage | ❌ Zorunlu |
 
-- **Günlük**: Hafif "İlaçlarınız güncel mi?" dialogu. Evet → devam. Güncelle → profil sayfası.
-- **15 gün**: Tam ilaç formu (ekleme/silme/autocomplete). Mevcut ilaçlar listesi + yeni ekleme.
-- **30 gün**: Mini onboarding (ilaçlar + sağlık durumu). 2 adımlı zorunlu kontrol.
+---
+
+## Freemium Mimarisi (Final)
+
+### 7 Günlük Trial
+- Kayıt olunca otomatik 7 gün TAM premium
+- Kart gerekmez, otomatik ödeme yok
+- 7 gün sonra freemium'a düşer
+- Veri asla silinmez
+- Bildirim: 5. gün + 7. gün + bitince
+
+### Planlar
+
+| Plan | Profil | Fiyat | Hedef |
+|------|--------|-------|-------|
+| Misafir | 1 sınırlı (3/gün) | Ücretsiz | Merak uyandır |
+| Üye Free | 1 tam | Ücretsiz | Günlük kullanım |
+| Premium | 3 (kendin+2) | ₺99/ay veya ₺899/yıl (%24) | Ana gelir |
+| Aile Paketi | 6 (2+4) | ₺179/ay veya ₺1.699/yıl | Aile geliri |
+| Doktor Paketi | Çoklu hasta | ₺499/ay veya ₺3.999/yıl | B2B |
+
+### Doktor Paketi Onay Süreci
+- TC kimlik + diploma fotoğrafı VEYA TTB sicil numarası
+- Manuel onay (başta ekip onaylıyor, sonra otomatize edilir)
+- Klinik fatura edilebilir ("sağlık yönetim yazılımı")
+
+### Free Özellikleri (Sabit — Asla Geri Alınmaz)
+**Asistan:** Tüm sağlık soruları 20/gün, kişisel öneri, sohbet sınırsız
+**Takvim:** İlaç & takviye kutucukları, su takibi, vital takibi, günlük görevler, push bildirimleri, telefon takvimi (.ics), spor/randevu/operasyon ekleme
+**Araçlar:** Kan tahlili 3/ay, PDF rapor 3/ay, günlük sağlık skoru, vital trend grafikleri, kalori ihtiyacı hesaplama, sorgu geçmişi
+**Aile:** 1 ek profil (temel)
+
+### Premium Özellikleri (3 Katman)
+**Katman 1 — Akıllı Asistan:**
+Asistan sınırsız, AI örüntü tespiti (haftalık), kişisel sabah/akşam protokolü, haftalık AI koçluk raporu
+
+**Katman 2 — Derin Takip:**
+Biyolojik yaş skoru + trend, metabolik portföy (4 alan), washout/cycling sistemi, boss fight protokolleri, semptom pattern tespiti, kan tahlili & PDF sınırsız, doktor PDF + email gönderimi, barcode supplement tarama, aile profili tam yönetim (3 kişi), ebeveyn denetim modu, doktor paylaşım paneli
+
+**Katman 3 — Sosyal & Viral:**
+Biyolojik yaş paylaşım kartı, haftalık özet paylaşım kartı, protokol tamamlama kartı, mevsimsel hazırlık kartı, yıllık Wrapped, anonim karşılaştırma skoru, öncelikli destek
+
+### Premium Tease Sistemi
+- 14. gün: "Bu hafta 2 örüntü tespit ettim, görmek ister misin?" bildirimi
+- 21. gün: "Ashwagandha washout yaklaşıyor" uyarısı
+- 30. gün: "Biyolojik yaş skorun güncellendi" — görmek için premium
+- Sürekli: Premium özellikler kilitli ama görünür
+
+### Hate Riski Sıfırlama
+- Baştan ne verirsen onu ver, sonradan alma
+- Beta kullanıcılarına 3 ay premium hediye (launch'ta)
+- Aile üyesi ekleme free — yönetim premium belirliyor
+
+### Aile Profili Kuralı
+- Eklenen aile üyesi için ne yapabiliyorsan, onlar için de aynısı
+- Fark sadece profil sayısında: Free=2, Premium=3, Aile=6
+- Ebeveyn denetim modu (18 yaş altı) premium ama ücretsiz erişilebilir güvenlik için
 
 ---
 
 ## Güvenlik Mimarisi — 3 Katman
 
 ### Katman 1: Kırmızı Kod (AI'dan ÖNCE)
-- Acil kelime → tam ekran emergency modal
-- "I understand this is an emergency" butonuna kadar sistem kilitli
-- İlaç yazılmış olsa bile override — analiz yapılmaz
-
 ```typescript
 const RED_FLAGS_EN = ['chest pain','heart attack','shortness of breath',
   "can't breathe",'loss of consciousness','unconscious','seizure','stroke',
@@ -196,44 +261,13 @@ const RED_FLAGS_TR = ['göğüs ağrısı','kalp krizi','nefes darlığı',
   'nefes alamıyorum','bilinç kaybı','bayıldı','nöbet','felç','inme',
   'kanama','intihar','zehirlenme','doz aşımı','ani görme kaybı','anafilaksi'];
 ```
+Acil kelime → tam ekran emergency modal → "I understand this is an emergency" butonuna kadar kilitli.
 
 ### Katman 2: İlaç Etkileşim Motoru ✅
-- OpenFDA: marka adı → etken madde (Türkçe çalışıyor)
-- Hybrid: OpenFDA + Gemini
-- SafetyBadge: ✅ Safe / ⚠️ Caution / ❌ Dangerous
+OpenFDA + Gemini hybrid. Renk kodlu SafetyBadge: ✅ Yeşil (güvenli) / ⚠️ Sarı (dikkat) / ❌ Kırmızı (tehlikeli)
 
 ### Katman 3: RAG ✅
-- PubMed → Gemini (temperature:0) → kaynak kartları
-
----
-
-## Sistem Promptu (Gemini)
-
-```
-You are Phytotherapy.ai — evidence-based integrative health assistant.
-
-RULES:
-1. Only PubMed/NIH/WHO. Never fabricate.
-2. Every recommendation: Dosage + Frequency + Max Duration + PubMed link.
-3. NO DOSAGE without medication profile → "This herb interacts with many drugs. Add medications first."
-4. Not a doctor. Always: "Consult your healthcare provider."
-5. Drug-herb: Safe ✅ / Risky ❌ + alternative.
-6. Never send empty — general info + referral always.
-7. Non-health message → "I'm specialized in health and phytotherapy. Feel free to ask anything health-related!"
-8. Always respond in user's language (EN or TR automatically).
-
-INTENT DETECTION:
-- Drug interaction → OpenFDA + PubMed
-- Blood test values → reference ranges + lifestyle + PDF offer
-- General health → PubMed RAG
-- File uploaded → OCR + analyze
-- Non-health → friendly redirect
-
-PROFILE: Cross-check medications, allergies, kidney/liver, pregnancy, alcohol/smoking.
-EMERGENCY: → 112/911. No herbs. No analysis.
-EVIDENCE: A (RCTs) | B (limited) | C (traditional)
-FORMAT: Match EN/TR | empathetic | ⚠️ disclaimer | PubMed links
-```
+PubMed → Gemini (temperature:0) → collapsible kaynak paneli
 
 ---
 
@@ -244,6 +278,7 @@ FORMAT: Match EN/TR | empathetic | ⚠️ disclaimer | PubMed links
 - "Verilerimi sil" + "Verilerimi indir" (Sprint 8)
 - Max 2 yıl saklama
 - Dijital onay timestamp Supabase'de
+- Sağlık verisi Supabase encrypted kolonda
 
 ---
 
@@ -255,144 +290,274 @@ query_history, blood_tests, consent_records, guest_queries
 
 ---
 
-## Sprint Planı
+## Tam Özellik Listesi
 
-### ✅ Sprint 1 — Altyapı (TAMAMLANDI)
-- [x] Next.js 14 + Vercel + domain + tüm lib/ dosyaları
+### Asistan
+Sağlık + spor + beslenme + mental sağlık + günlük sohbet, PubMed zorunlu, arkadaş tonu, profil farkındalığı, collapsible kaynak paneli, renk kodlu supplement sistemi, acil tespit her modda aktif
 
-### ✅ Sprint 2 — Auth + Onboarding (TAMAMLANDI)
-- [x] Supabase tablolar + email auth + onboarding wizard (7 adım)
-- [x] Misafir modu (5 sorgu) + dijital imza
+### İlaç & Etkileşim
+OpenFDA + Gemini hybrid, Türkçe ilaç adları, marka→etken madde, renk kodlu SafetyBadge, ilaç fotoğraflama→otomatik profil, barcode supplement tarama, 3 katmanlı güncelleme kontrolü
+NOT: Reçete OCR çıkarıldı — Türkiye'de güvenilir çalışmaz, güvenlik riski
 
-### ✅ Sprint 3 — İlaç Etkileşim Motoru (TAMAMLANDI)
-- [x] OpenFDA + Gemini hybrid + SafetyBadge
-- [x] Acil banner + emergency modal
+### Kan Tahlili
+30 markör, 9 kategori, cinsiyet bazlı referans, AI yorumu, yaşam koçluğu, PDF doktor raporu, birim otomatik düzeltme (AI)
 
-### ✅ Sprint 4 — Sağlık Asistanı RAG (TAMAMLANDI)
-- [x] Gemini streaming + PubMed + kaynak kartları
-- [x] Kırmızı kod filtresi + doz tavsiyesi kısıtı
+### Takvim Hub (Merkezi Sağlık Hub'ı)
+- Ay/hafta/gün görünümü
+- İlaç kutucuk sistemi (doz kadar kutu, tik atma)
+- Çan ikonu → bildirim seçimi (hangi doz, hangi saat)
+- Takviye takibi (aynı altyapı)
+- Su takibi + teşvik mesajları
+- Vital takibi (tansiyon, şeker, kilo)
+- Spor / randevu / semptom notu ekleme
+- Planlı operasyon girişi
+- Telefon takvimi entegrasyonu (.ics — iOS/Android)
+- Finishable günlük görevler (Woebot'tan)
+- 1 hafta sessizlik hatırlatması
+- PWA push notification
+- Sabah: "İlaçların güncel mi?" sorusu → sonra günlük özet kartı
 
-### ✅ Sprint 5 — Kan Tahlili + Dosya Yükleme (TAMAMLANDI)
-- [x] blood-reference.ts + /api/blood-analysis + PDF
-- [x] Chat kutusuna 📎 dosya + 📷 fotoğraf yükleme + OCR
+### Sağlık Skorları
+- Biyolojik yaş skoru (Gemini hesaplama) — PREMIUM
+- Günlük sağlık skoru (0-100) — FREE
+- Washout/cycling geri sayımı — PREMIUM
+- Mikro check-in (enerji/uyku/şişkinlik) — FREE
+- Metabolik portföy (4 alan: Enerji/Stres/Uyku/Bağışıklık) — PREMIUM
+- Semptom pattern tespiti (AI haftalık) — PREMIUM
+- Kalori ihtiyacı hesaplama tool'u (tek seferlik) — FREE
+- Ana sayfa günlük özet kartı — FREE
+- Sabah özeti push bildirimi — FREE
+- Haftalık özet formatı (Fitbit'ten) — PREMIUM
 
-### ✅ Sprint 6 — Mimari Birleştirme + Auth Fix (TAMAMLANDI)
-- [x] Login → onboarding_complete false ise /onboarding'e yönlendir ✅
-- [x] Sign in / Sign out düzeltildi ✅
-- [x] Sağlık dışı mesajlara nazik yönlendirme ✅
-- [x] Konuşma geçmişi yan panel (son 20 konuşma, Supabase'den) ✅
-- [x] Gemini retry + model fallback (2.0-flash → 2.5-flash) ✅
-- [x] TR→EN PubMed sözlük (70+ terim) ✅
-- [x] PubMed timeout + error handling ✅
-- [x] Onboarding medication/allergy kayıt hatası düzeltildi ✅
-- [x] fetchProfile RLS fix — getUser() ile token doğrulama ✅
+### Viral & Oyunlaştırma
+- Biyolojik yaş paylaşım kartı — PREMIUM
+- Haftalık özet paylaşım kartı — PREMIUM
+- İlaç etkileşimi tespit anı kartı — PREMIUM
+- Protokol tamamlama kartı — PREMIUM
+- Boss Fight protokolleri (bahar alerjisi, sınav haftası) — PREMIUM
+- Mevsimsel hazırlık kartı — PREMIUM
+- Yıllık Wrapped (Aralık'a hazır) — PREMIUM
+- Gamification rozetler — FREE
+- Anonim karşılaştırma skoru — PREMIUM
 
-### ✅ Sprint 7 — Tasarım v2 Implementasyonu (TAMAMLANDI)
-- [x] public/phytotherapy_v2.png referans alınarak tüm sayfalara uygulandı ✅
-- [x] Cormorant Garamond + DM Sans + DM Mono font sistemi ✅
-- [x] Dark/Light mode toggle navbar sağında (Moon/Sun ikonu, localStorage) ✅
-- [x] ThemeProvider bileşeni (prefers-color-scheme fallback, smooth transition) ✅
-- [x] Hero: Sol metin + arama kutusu (⌘K) + quick tags / Sağ botanik SVG ✅
-- [x] BotanicalHero SVG: bitki + EKG çizgisi + molekül noktaları + tıbbi artı ✅
-- [x] Trust strip + feature kartları (01/02/03/04) ✅
-- [x] Navbar: logo sol, linkler orta, auth + lang toggle + theme toggle sağ ✅
-- [x] Dil toggle (🇺🇸 EN / 🇹🇷 TR, localStorage persist, mounted guard) ✅
-- [x] Dark mode: #141a16 background, #1c2420 cards, #dde8de text, rgba(90,172,116,0.15) borders ✅
-- [x] Logo renkleri: Phyto=foreground, therapy=#b8965a gold, .ai=#3c7a52/#5aac74 ✅
-- [x] Botanik SVG rengi #5aac74 parlak yeşile güncellendi ✅
-- [x] Eyebrow badges (Science/Species/Wiki) kaldırıldı ✅
-- [x] Emerald→Primary renk göçü (25+ dosya) ✅
-- [x] Responsive mobile-first ✅
-- [x] Loading skeleton + error states ✅
-- [x] Animasyonlar (subtle hover, fade-in) ✅
+### Profil & Aile
+- 7 adım onboarding, dijital imza
+- Sağlık hedefi seçimi (onboarding katman 2)
+- Aile profili — Free: 1 ek, Premium: 3 kişi, Aile paketi: 6 kişi
+- Ebeveyn-çocuk (18 yaş kuralı otomatik)
+- Google OAuth — S12'de
+- Tarayıcı dili otomatik algılama — S12'de
 
-### ✅ Sprint 7.5 — 3 Katmanlı İlaç Kontrolü + TR/EN + Profil Düzenleme (TAMAMLANDI)
-- [x] 3 katmanlı ilaç kontrol sistemi: günlük (localStorage) + 15 gün (Supabase) + 30 gün (localStorage) ✅
-- [x] 15 gün modu: Tam ilaç formu (ekleme/silme/OpenFDA autocomplete) ✅
-- [x] 30 gün modu: Mini onboarding (ilaçlar + sağlık durumu 2 adımlı kontrol) ✅
-- [x] Günlük mod: Hafif onay dialogu, X ile kapatılabilir ✅
-- [x] lib/translations.ts — TR/EN çeviri sistemi tüm sayfalar için ✅
-- [x] lib/daily-med-check.ts — localStorage günlük/30 günlük kontrol ✅
-- [x] lib/turkish-drugs.ts + public/drugs-tr.json — Türkçe ilaç veritabanı ✅
-- [x] /api/drug-search — OpenFDA + Türkçe ilaç autocomplete ✅
-- [x] Profil sayfası sağlık profili düzenleme (alerji, gebelik, madde kullanımı, tıbbi geçmiş, yaşam tarzı) ✅
-- [x] Select dropdown Türkçe gösterim düzeltmesi (custom span rendering) ✅
-- [x] Onboarding wizard tam TR/EN desteği ✅
-- [x] Statik acil durum banner'ları kaldırıldı (chat, interaction-checker, blood-test) ✅
-- [x] Tüm sayfalar bilingual: landing, chat, interaction, blood-test, onboarding, profile ✅
+### B2B
+- Doktor paneli (hasta takip, ziyaret özeti AI, uyum skoru)
+- Hasta davet linki
+- Yeni ilaç yazarken etkileşim uyarısı
+- Klinik çoklu hesap
+- Sigorta wellbeing altyapısı
+- E-Nabız manuel import (PDF/OCR — şimdi)
+- E-Nabız resmi başvuru (Sağlık Bakanlığı — hackathon sonrası)
+- E-Nabız FHIR entegrasyonu (2027 hedefi)
+- Gerçek dünya kanıt verisi modülü (opt-in, anonim, KVKK uyumlu)
+- Yan etki erken sinyal sistemi
 
-### 🔄 Sprint 8 — Güvenlik + Yasal
-- [ ] Rate limiting + input sanitization
-- [ ] Privacy Policy + Terms (TR+EN)
-- [ ] "Verilerimi sil/indir"
-
-### 🔄 Sprint 9 — Hackathon Hazırlık
-- [ ] 3 demo prova (Metformin+uyku / Berberine / Kan tahlili)
-- [ ] Pitch deck (10 slayt)
-- [ ] Yedek planlar + performans testi + SEO
+### Teknik
+- Rate limiting, input sanitization
+- KVKK uyumu (verilerimi sil/indir, dijital imza)
+- Privacy Policy + Terms (TR+EN) — Sprint 8
+- PWA (şimdi) → React Native (S21)
+- Apple Health + Google Fit entegrasyonu (S20)
+- Wearable (ileride)
 
 ---
 
-### 🚀 SONRASI BLOĞU
+## Sprint Planı
 
-#### Sprint 10 — Çok Dil + Google Auth
-- [x] TR/EN dil toggle navbar'da (bayrak ikonu) ✅ — Sprint 7'de tamamlandı
-- [x] UI çeviri sistemi (lang context → tüm sayfalar) ✅ — Sprint 7.5'te tamamlandı
-- [x] Tek dosyalı dil sistemi: SUPPORTED_LANGUAGES + tx() — yeni dil = 1 config satırı + çeviriler ✅
-- [ ] Google OAuth
-- [ ] AR desteği (ileride)
+### ✅ S1–S7.5 — TAMAMLANDI
+Next.js, Auth, Onboarding (7 adım), İlaç etkileşim motoru, Chat RAG, Kan tahlili, Tasarım v2 (dark/light), TR/EN çeviri sistemi, 3 katmanlı ilaç kontrolü, Türkçe ilaç veritabanı
 
-#### Sprint 11 — Gebelik + Özel Modlar
-- [ ] Gebelik + emzirme modu
-- [ ] 18 yaş altı farklı akış
+### 🔄 HACKATHON BLOĞU (25 gün → 12 Nisan)
 
-#### Sprint 12 — Kullanıcı Paneli
-- [ ] Profil dashboard + sorgu geçmişi + favoriler
-- [ ] Doktora gönder (PDF + email)
+**Sprint 8 — Güvenlik + Yasal + Asistan v2** ← BU AKŞAM
+- Rate limiting (10/dak) + input sanitization
+- Privacy Policy + Terms (TR+EN)
+- Verilerimi sil / indir
+- Sistem promptu v2 (arkadaş tonu — yukarıdaki prompt)
+- Collapsible kaynak paneli (SourceCard güncelleme)
+- Renk kodlu supplement sistemi (SafetyBadge genişletme)
 
-#### Sprint 13 — Takip Sistemi
-- [ ] Semptom günlüğü + kan tahlili takibi
-- [ ] Trend grafikleri (recharts)
-- [ ] OCR reçete okuma (gelişmiş)
+**Sprint 9 — Takvim Hub**
+- Ay/hafta/gün görünümü
+- İlaç kutucuk sistemi (doz kadar kutu)
+- Çan ikonu → bildirim seçimi
+- Takviye takibi, su takibi, vital + butonu
+- Spor / randevu / semptom / operasyon ekleme
+- Telefon takvimi (.ics)
+- Finishable günlük görevler
+- PWA push notification altyapısı
+- 1 hafta sessizlik hatırlatması
+- Sabah ilaç sorusu → günlük özet kartı
 
-#### Sprint 14 — Büyüme
-- [ ] PWA + analytics + abonelik altyapısı
+**Sprint 10 — Sağlık Skorları + Özet**
+- Biyolojik yaş skoru (Gemini)
+- Günlük sağlık skoru (0-100)
+- Washout geri sayımı
+- Mikro check-in
+- Metabolik portföy (4 alan)
+- Kalori ihtiyacı hesaplama tool'u
+- Semptom pattern tespiti
+- Ana sayfa günlük özet kartı
+- Sabah özeti push bildirimi
+- Haftalık özet formatı + paylaşım kartı
+
+**Sprint 11 — Viral + Oyunlaştırma**
+- Biyolojik yaş paylaşım kartı
+- İlaç etkileşimi tespit anı kartı
+- Protokol tamamlama kartı
+- Boss Fight protokolleri
+- Mevsimsel hazırlık kartı
+- Aile profili + ebeveyn-çocuk (18 yaş kuralı)
+- İlaç fotoğraflama → otomatik profil
+- Barcode supplement tarama
+
+**Sprint 12 — Freemium Altyapısı**
+- Pricing sayfası (gösterim, henüz aktif değil)
+- 7 gün trial sistemi (otomatik açılış, kart gerekmez)
+- Premium tease bildirimleri (14/21/30. gün)
+- Plan katman altyapısı + kilitleme sistemi
+- Google OAuth
+- Tarayıcı dili otomatik algılama
+
+**Sprint 13 — Hackathon Hazırlık**
+- 3 demo prova (Metformin+uyku / Berberine / Kan tahlili)
+- Pitch deck (10 slayt)
+- Yedek planlar (API çökerse?)
+- Performans testi + SEO
+- Final kontrol listesi
+
+### 🚀 HACKATHON SONRASI
+
+**Para Bloğu (Nisan sonu → Ağustos)**
+- S14: Freemium aktif (İyzico, premium kilitleri, beta kullanıcılarına 3 ay hediye)
+- S15: Kullanıcı paneli (dashboard, geçmiş, favoriler, gamification rozetler, anonim skor)
+- S16: Yıllık Wrapped altyapısı + affiliate supplement linkleri (şeffaf) + aile paketi
+
+**B2B Bloğu (Eylül → Kasım)**
+- S17: Doktor paneli (hasta takip, ziyaret özeti AI, uyum skoru, abonelik)
+- S18: Operasyon takibi + sigorta wellbeing altyapısı + E-Nabız import
+- S19: Gerçek dünya veri modülü + yan etki sinyal sistemi + analytics
+
+**Mobil Bloğu (Aralık 2026 →)**
+- S20: PWA olgunlaştırma (push tam, offline, Apple Health/Google Fit)
+- S21: React Native (App Store + Play Store, wearable, E-Nabız FHIR 2027)
+
+---
+
+## Monetizasyon Stratejisi
+
+### Pazar Önceliği
+1. Türkiye (önce) — güçlü product-market fit, yerel ilaç veritabanı, MENA boşluğu
+2. İngiltere / Almanya (AB regülasyonu daha tanıdık)
+3. ABD (en sona — HIPAA, FDA, liability çok karmaşık)
+
+### Gelir Fazları
+- **Faz 1 (0-3 ay):** Tamamen ücretsiz, kullanıcı büyüt
+- **Faz 2 (4-6. ay):** Premium açılır (İyzico entegrasyonu)
+- **Faz 3 (6-12. ay):** Doktor B2B aboneliği
+- **Faz 4 (12. ay+):** Sigorta görüşmeleri, yatırım turu
+
+### Gelir Modelleri
+- B2C freemium (bireysel)
+- B2B doktor/klinik aboneliği
+- Sigorta wellbeing programı entegrasyonu
+- Affiliate supplement linkleri (şeffaf — asla ödeme karşılığı öneri)
+- Gerçek dünya kanıt verisi (opt-in, anonim, KVKK uyumlu)
+- **Veri satışı: KESİNLİKLE YOK**
+
+### Altyapı Maliyetleri
+- 500 kullanıcıya kadar: Ücretsiz (Vercel + Supabase free tier)
+- 1000 kullanıcı: ~₺1.700/ay
+- 10.000 kullanıcı: ~₺5.000/ay
+- Başlangıç sermayesi: ₺25.000 yeterli
+- Break-even: 1000 kullanıcı + %8 premium
+
+---
+
+## Rakip Analizi (Özet)
+
+| Rakip | Ne yapıyor | Bizim farkımız |
+|-------|-----------|----------------|
+| Ada Health | Semptom checker, klinik onaylı | Bitkisel tıp yok, günlük takip yok, soğuk |
+| Babylon Health | AI triage + doktor konsültasyonu | Çok pahalı, bitkisel yok, finansal sıkıntı |
+| Noom | Kilo + davranış değişimi | Sadece kilo, ilaç/bitkisel bilgisi yok |
+| Woebot | Mental sağlık CBT | Sadece mental, fiziksel sağlık yok |
+| Fitbit Premium | Wearable + AI insights | Cihaz bağımlı, ilaç/bitkisel sıfır |
+
+**Fark:** Hiçbir rakip modern tıp + bitkisel tıp + ilaç etkileşimi + kişisel profil + sohbet asistanını tek platformda birleştirmiyor.
+
+### Rakiplerden Alınan Özellikler
+- **Noom'dan:** Renk kodlu supplement sistemi (yeşil/sarı/kırmızı)
+- **Woebot'tan:** Finishable günlük görevler, yargılamayan ton
+- **Fitbit'ten:** Haftalık özet formatı, trend görselleştirme
+
+---
+
+## Etik & Yasal Çerçeve
+
+### Sınırlar
+- ✅ Genel sağlık bilgisi, ilaç etkileşimleri, supplement önerileri
+- ✅ Kan tahlili yorumlama, yaşam tarzı koçluğu
+- ❌ Teşhis koyma — asla
+- ❌ Tedavi öneri — asla
+- ❌ Reçete yazma — asla
+
+### Güvenli Çerçeveleme
+- "AI doktorunuz" değil, "sağlık asistanınız"
+- Her öneri sonunda bağlamsal disclaimer (sabit blok değil)
+- Onboarding dijital imzası Supabase'de kayıtlı
+- Hackathon için danışman hocadan görüş alınması önerilir
+
+### Hackathon Stratejisi
+- Tüm özellikler demo sırasında açık (freemium kısıtı yok)
+- Pricing sayfası gösterimde ama aktif değil
+- "Şu an beta, lansman sonrası bu model devreye giriyor" açıklaması
 
 ---
 
 ## Demo Senaryoları (Hackathon)
 
-### Demo 1 — İlaç Etkileşimi (Canlı)
-- "I take Metformin and Lisinopril. I have trouble sleeping."
-- Beklenen: ❌ St. John's Wort → ✅ Valerian Root 300-600mg
+### Demo 1 — İlaç Etkileşimi (Canlı, jüri kendi ilacını yazar)
+- Input: "I take Metformin and Lisinopril. I have trouble sleeping."
+- Beklenen: ❌ St. John's Wort (CYP3A4) → ✅ Valerian Root 300-600mg, 4 hafta max
 
 ### Demo 2 — Serbest Soru
-- "Does berberine work for blood sugar control?"
-- Beklenen: Grade A + PubMed linkleri
+- Input: "Does berberine work for blood sugar control?"
+- Beklenen: Grade A evidence + dozaj + collapsible PubMed linkleri
 
 ### Demo 3 — Kan Tahlili
-- Cholesterol 240, Vitamin D 14, Ferritin 8, HbA1c 6.8
-- Beklenen: Analiz + koçluk + PDF
+- Input: Cholesterol 240, Vitamin D 14, Ferritin 8, HbA1c 6.8
+- Beklenen: Detaylı analiz + yaşam koçluğu + PDF indir
 
 ---
 
 ## Geliştirme Kuralları
 
-1. Güvenlik katmanları her özellikten önce
-2. Tıbbi öneri kaynaksız yok
-3. Mobile-first — v2 PNG referans
-4. API anahtarları sadece server-side
+1. Güvenlik katmanları her özellikten önce kontrol edilir
+2. Tıbbi öneri kaynaksız gösterilmez
+3. Mobile-first tasarım
+4. API anahtarları sadece .env.local + server-side
 5. TypeScript strict — `any` yasak
-6. Her endpoint'te error handling
-7. Git commit İngilizce
+6. Her API endpoint'te error handling
+7. Git commit mesajları İngilizce
 8. Her sprint sonunda PROGRESS.md güncelle
-9. Dark mode CSS variable zorunlu — hardcode yasak
-10. Kimseyi boş gönderme
+9. Dark mode için her renk CSS variable ile tanımlanır — hardcode yasak
+10. Kimseyi boş gönderme — her zaman genel bilgi + yönlendirme
 11. Onboarding atlanamaz — login sonrası otomatik
 12. İlaç profili olmadan doz tavsiyesi yok
-13. EN ve TR sorularına otomatik yanıt (dil algılama)
-14. Sağlık dışı mesaj → nazik yönlendirme, hata değil
+13. EN ve TR sorularına otomatik yanıt
+14. Sağlık dışı mesaj → nazik sohbet, yönlendirme değil
 15. Konuşma geçmişi yan panelde gösterilir
+16. Reçete OCR yapılmaz — güvenlik riski
+17. DeepSeek hasta verisi için asla kullanılmaz
 
 ---
 
@@ -409,5 +574,6 @@ NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
 
 ---
 
-*Son güncelleme: 17 Mart 2026 v8.0*
-*Sprint 1-7.5 tamamlandı. Sıradaki: Sprint 8 — Güvenlik + Yasal*
+*Son güncelleme: 18 Mart 2026 v9.0*
+*Sprint 1-7.5 tamamlandı. Sıradaki: Sprint 8 — Güvenlik + Yasal + Asistan v2*
+*Hackathon: 11-12 Nisan 2026 — 25 gün kaldı*

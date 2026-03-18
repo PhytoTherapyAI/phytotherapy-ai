@@ -3,6 +3,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Shield, FileText } from "lucide-react";
+import Link from "next/link";
 import { useLang } from "@/components/layout/language-toggle";
 import type { OnboardingData } from "../OnboardingWizard";
 
@@ -106,6 +107,17 @@ export function ConsentStep({ data, updateData }: Props) {
         </div>
       </div>
 
+      {/* Legal Links */}
+      <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+        <Link href="/terms" target="_blank" className="underline transition-colors hover:text-foreground">
+          {tr ? "Kullanım Koşulları" : "Terms of Service"}
+        </Link>
+        <span>·</span>
+        <Link href="/privacy" target="_blank" className="underline transition-colors hover:text-foreground">
+          {tr ? "Gizlilik Politikası" : "Privacy Policy"}
+        </Link>
+      </div>
+
       {/* Consent Checkbox */}
       <div className="rounded-lg border-2 border-primary/20 bg-primary/10 p-4">
         <div className="flex items-start space-x-3">
@@ -117,8 +129,8 @@ export function ConsentStep({ data, updateData }: Props) {
           />
           <Label htmlFor="consent" className="text-sm font-normal leading-relaxed">
             {tr
-              ? "Yukarıdaki Tıbbi Sorumluluk Reddi ve Veri Gizliliği bildirimini okudum ve anladım. Phytotherapy.ai'nin profesyonel tıbbi tavsiyenin yerini almadığını anlıyorum ve herhangi bir öneriyi uygulamadan önce sağlık uzmanıma danışacağım."
-              : "I have read and understood the Medical Disclaimer and Data Privacy notice above. I understand that Phytotherapy.ai is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations."}
+              ? "Yukarıdaki Tıbbi Sorumluluk Reddi ve Veri Gizliliği bildirimini okudum, Kullanım Koşulları ile Gizlilik Politikasını kabul ediyorum. Phytotherapy.ai'nin profesyonel tıbbi tavsiyenin yerini almadığını anlıyorum ve herhangi bir öneriyi uygulamadan önce sağlık uzmanıma danışacağım."
+              : "I have read and understood the Medical Disclaimer and Data Privacy notice above. I accept the Terms of Service and Privacy Policy. I understand that Phytotherapy.ai is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations."}
           </Label>
         </div>
       </div>

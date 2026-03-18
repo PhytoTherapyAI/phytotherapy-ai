@@ -1,6 +1,7 @@
 'use client'
 
 import { Leaf } from "lucide-react";
+import Link from "next/link";
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 
@@ -20,6 +21,17 @@ export function Footer() {
             <Leaf className="h-4 w-4 text-primary" />
             <span className="font-heading">© {new Date().getFullYear()} Phytotherapy.ai</span>
           </div>
+
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <Link href="/privacy" className="transition-colors hover:text-foreground">
+              {tx('footer.privacy', lang)}
+            </Link>
+            <span className="text-border">|</span>
+            <Link href="/terms" className="transition-colors hover:text-foreground">
+              {tx('footer.terms', lang)}
+            </Link>
+          </div>
+
           <p className="text-xs text-muted-foreground">
             {tx('footer.tagline', lang)}
           </p>

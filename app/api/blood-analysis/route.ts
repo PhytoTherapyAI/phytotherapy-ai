@@ -8,6 +8,7 @@ import {
   type BloodTestResult,
   type BloodTestCategory,
 } from "@/lib/blood-reference";
+import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 
 export const maxDuration = 60;
 
@@ -52,6 +53,16 @@ interface GeminiAnalysis {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting — 10 requests per minute per IP
+    const clientIP = getClientIP(request);
+    const rateCheck = checkRateLimit(`blood:${clientIP}`, 10, 60_000);
+    if (!rateCheck.allowed) {
+      return new Response(
+        JSON.stringify({ error: `Too many requests. Please wait ${rateCheck.resetInSeconds} seconds.` }),
+        { status: 429, headers: { "Content-Type": "application/json", "Retry-After": String(rateCheck.resetInSeconds) } }
+      );
+    }
+
     const body: BloodTestInput = await request.json();
     const { values, gender } = body;
 
