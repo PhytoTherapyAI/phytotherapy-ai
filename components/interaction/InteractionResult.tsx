@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -11,10 +12,15 @@ import {
   Info,
   ShieldAlert,
   BookOpen,
+  Plus,
+  Loader2,
+  Check,
 } from "lucide-react";
 import { SafetyBadge } from "./SafetyBadge";
 import { useLang } from "@/components/layout/language-toggle";
+import { useAuth } from "@/lib/auth-context";
 import { tx } from "@/lib/translations";
+import { createBrowserClient } from "@/lib/supabase";
 import type { InteractionResult as InteractionResultType } from "@/lib/interaction-engine";
 
 interface InteractionResultProps {
@@ -23,6 +29,42 @@ interface InteractionResultProps {
 
 export function InteractionResult({ result }: InteractionResultProps) {
   const { lang } = useLang()
+  const { user, isAuthenticated } = useAuth()
+
+  const addToSupplements = async (herbName: string, dose: string | undefined, safety: string) => {
+    if (!user) return false
+    try {
+      const supabase = createBrowserClient()
+      // Check if already exists
+      const { data: existing } = await supabase
+        .from("calendar_events")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("event_type", "supplement")
+        .ilike("title", `%${herbName}%`)
+        .limit(1)
+
+      if (existing && existing.length > 0) return false // Already exists
+
+      await supabase.from("calendar_events").insert({
+        user_id: user.id,
+        event_type: "supplement",
+        title: herbName,
+        description: dose || "",
+        event_date: new Date().toISOString().split("T")[0],
+        recurrence: "daily",
+        metadata: {
+          safety,
+          dose: dose || "",
+          frequency: "daily",
+          addedFromInteraction: true,
+        },
+      })
+      return true
+    } catch {
+      return false
+    }
+  }
 
   // Emergency state
   if (result.isEmergency) {
@@ -125,7 +167,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
             {tx('ir.useWithCaution', lang)} ({cautionHerbs.length})
           </h3>
           {cautionHerbs.map((herb, i) => (
-            <HerbCard key={i} herb={herb} />
+            <HerbCard key={i} herb={herb} showAdd={isAuthenticated} onAdd={addToSupplements} />
           ))}
         </div>
       )}
@@ -138,7 +180,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
             {tx('ir.safeAlternatives', lang)} ({safeHerbs.length})
           </h3>
           {safeHerbs.map((herb, i) => (
-            <HerbCard key={i} herb={herb} />
+            <HerbCard key={i} herb={herb} showAdd={isAuthenticated} onAdd={addToSupplements} />
           ))}
         </div>
       )}
@@ -172,16 +214,30 @@ export function InteractionResult({ result }: InteractionResultProps) {
 
 interface HerbCardProps {
   herb: InteractionResultType["recommendations"][0];
+  showAdd?: boolean;
+  onAdd?: (name: string, dose: string | undefined, safety: string) => Promise<boolean>;
 }
 
-function HerbCard({ herb }: HerbCardProps) {
+function HerbCard({ herb, showAdd, onAdd }: HerbCardProps) {
   const { lang } = useLang()
+  const [adding, setAdding] = useState(false)
+  const [added, setAdded] = useState(false)
+  const tr = lang === "tr"
+
   const borderColor =
     herb.safety === "dangerous"
       ? "border-red-200 dark:border-red-800"
       : herb.safety === "caution"
         ? "border-amber-200 dark:border-amber-800"
         : "border-primary/20";
+
+  const handleAdd = async () => {
+    if (!onAdd || adding || added) return
+    setAdding(true)
+    const ok = await onAdd(herb.herb, herb.dosage || undefined, herb.safety)
+    setAdding(false)
+    if (ok) setAdded(true)
+  }
 
   return (
     <div className={`rounded-xl border ${borderColor} bg-card p-5 transition-shadow hover:shadow-md`}>
@@ -255,6 +311,31 @@ function HerbCard({ herb }: HerbCardProps) {
             </div>
           )}
         </div>
+      )}
+
+      {/* Add to Supplements button (safe/caution only) */}
+      {showAdd && herb.safety !== "dangerous" && (
+        <button
+          onClick={handleAdd}
+          disabled={adding || added}
+          className={`mb-3 flex w-full items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
+            added
+              ? "bg-primary/10 text-primary border border-primary/30"
+              : "border border-dashed border-primary/40 text-primary hover:bg-primary/5 hover:border-primary active:scale-[0.98]"
+          }`}
+        >
+          {adding ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : added ? (
+            <Check className="h-4 w-4" />
+          ) : (
+            <Plus className="h-4 w-4" />
+          )}
+          {added
+            ? (tr ? "Takviyelerine eklendi!" : "Added to your supplements!")
+            : (tr ? "Takviyelerime ekle" : "Add to my supplements")
+          }
+        </button>
       )}
 
       {/* Sources */}

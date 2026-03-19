@@ -317,6 +317,11 @@ const t: Record<string, TranslationEntry> = {
     tr: "Dünyanın ilk kanıta dayalı bütünleştirici sağlık asistanı \u2014 ilaç etkileşimlerini kontrol edin, kan tahlillerinizi yorumlayın ve bilimsel kaynaklara dayalı güvenli fitoterapi önerileri alın.",
   },
   "lp.searchPlaceholder": { en: "Enter a drug or health question...", tr: "İlaç adı veya sağlık sorunuzu yazın..." },
+  "lp.chatPlaceholder": { en: "Ask me anything about health...", tr: "Sağlık hakkında bir şey sor..." },
+  "lp.assistantTitle": { en: "Health Assistant", tr: "Sağlık Asistanı" },
+  "lp.assistantSubtitle": { en: "Evidence-based, personalized for you", tr: "Kanıta dayalı, sana özel" },
+  "lp.assistantGreeting": { en: "Hi {name}! How can I help you today? Ask me about supplements, medications, nutrition, sleep — anything health related.", tr: "Merhaba {name}! Bugün nasıl yardımcı olabilirim? Takviye, ilaç, beslenme, uyku — sağlıkla ilgili her şeyi sorabilirsin." },
+  "lp.assistantGreetingGeneric": { en: "Hi! How can I help you today? Ask me about supplements, medications, nutrition, sleep — anything health related.", tr: "Merhaba! Bugün nasıl yardımcı olabilirim? Takviye, ilaç, beslenme, uyku — sağlıkla ilgili her şeyi sorabilirsin." },
   "lp.searchButton": { en: "Check Now", tr: "Sorgula" },
   "lp.featureTitle1": { en: "Four pillars of", tr: "Bütünleştirici sağlığın" },
   "lp.featureTitle2": { en: "integrative health", tr: "dört temel direği" },
@@ -639,6 +644,7 @@ const t: Record<string, TranslationEntry> = {
 
   // Nav
   "nav.calendar": { en: "Calendar", tr: "Takvim" },
+  "nav.dashboard": { en: "Dashboard", tr: "Panel" },
 
   // Calendar extras
   "cal.rememberMe": { en: "Remember me", tr: "Oturumu açık tut" },
@@ -744,6 +750,122 @@ const t: Record<string, TranslationEntry> = {
   // Interaction
   // ══════════════════════════════════════════
   "di.slotsRemaining": { en: "slots remaining", tr: "ilaç daha eklenebilir" },
+
+  // ══════════════════════════════════════════
+  // Sprint 10 — Health Scores & Check-in
+  // ══════════════════════════════════════════
+
+  // Micro Check-in
+  "checkin.title": { en: "Daily Check-in", tr: "Günlük Check-in" },
+  "checkin.subtitle": { en: "How are you feeling today?", tr: "Bugün kendini nasıl hissediyorsun?" },
+  "checkin.energy": { en: "How's your energy?", tr: "Enerjin nasıl?" },
+  "checkin.sleep": { en: "How did you sleep?", tr: "Nasıl uyudun?" },
+  "checkin.mood": { en: "How's your mood?", tr: "Ruh halin nasıl?" },
+  "checkin.body": { en: "How does your body feel?", tr: "Vücudun nasıl hissediyor?" },
+  "checkin.veryBad": { en: "Awful", tr: "Kötü" },
+  "checkin.bad": { en: "Meh", tr: "Eh" },
+  "checkin.okay": { en: "Okay", tr: "İdare" },
+  "checkin.good": { en: "Good", tr: "İyi" },
+  "checkin.great": { en: "Great!", tr: "Harika!" },
+  "checkin.back": { en: "Back", tr: "Geri" },
+  "checkin.next": { en: "Next", tr: "İleri" },
+  "checkin.later": { en: "Later", tr: "Sonra" },
+  "checkin.save": { en: "Save", tr: "Kaydet" },
+  "checkin.saving": { en: "Saving...", tr: "Kaydediliyor..." },
+
+  // Daily Summary Card
+  "summary.hi": { en: "Hi", tr: "Merhaba" },
+  "summary.todayOverview": { en: "Your daily health overview", tr: "Günlük sağlık özeti" },
+  "summary.seeAll": { en: "See all", tr: "Tümünü gör" },
+  "summary.meds": { en: "Medications", tr: "İlaçlar" },
+  "summary.water": { en: "Water", tr: "Su" },
+  "summary.checkin": { en: "Check-in", tr: "Check-in" },
+  "summary.done": { en: "Done", tr: "Tamam" },
+  "summary.pending": { en: "Pending", tr: "Bekliyor" },
+  "summary.vsYesterday": { en: "vs yesterday", tr: "düne göre" },
+  "summary.dayStreak": { en: "day streak", tr: "gün seri" },
+  "summary.completeCheckin": { en: "Complete check-in to boost score", tr: "Skoru artırmak için check-in yap" },
+  "summary.doCheckin": { en: "Check-in now", tr: "Check-in yap" },
+  "summary.label.excellent": { en: "Excellent! You're on fire!", tr: "Mükemmel! Bugün formundasın!" },
+  "summary.label.great": { en: "Great job today!", tr: "Harika gidiyorsun!" },
+  "summary.label.good": { en: "Good day so far!", tr: "İyi gidiyorsun!" },
+  "summary.label.fair": { en: "Room to improve — keep going!", tr: "Daha iyisini yapabilirsin — devam!" },
+  "summary.label.needsWork": { en: "Let's get started!", tr: "Haydi başlayalım!" },
+  "summary.healthScore": { en: "Health Score", tr: "Sağlık Skoru" },
+  "summary.noData": { en: "Complete your first check-in to see your health score", tr: "Sağlık skorunu görmek için ilk check-in'ini tamamla" },
+
+  // Dashboard
+  "dashboard.title": { en: "Health Dashboard", tr: "Sağlık Paneli" },
+  "dashboard.weeklyTrend": { en: "Weekly Trend", tr: "Haftalık Trend" },
+  "dashboard.breakdown": { en: "Score Breakdown", tr: "Skor Dağılımı" },
+  "dashboard.checkinSection": { en: "Check-in", tr: "Check-in" },
+  "dashboard.adherenceSection": { en: "Med Adherence", tr: "İlaç Uyumu" },
+  "dashboard.waterSection": { en: "Hydration", tr: "Hidrasyon" },
+  "dashboard.vitalsSection": { en: "Vitals", tr: "Vital Kayıt" },
+
+  // Calorie Calculator
+  "calorie.title": { en: "Calorie Calculator", tr: "Kalori Hesaplayıcı" },
+  "calorie.subtitle": { en: "Estimate your daily calorie needs", tr: "Günlük kalori ihtiyacını hesapla" },
+  "calorie.age": { en: "Age", tr: "Yaş" },
+  "calorie.gender": { en: "Gender", tr: "Cinsiyet" },
+  "calorie.male": { en: "Male", tr: "Erkek" },
+  "calorie.female": { en: "Female", tr: "Kadın" },
+  "calorie.height": { en: "Height (cm)", tr: "Boy (cm)" },
+  "calorie.weight": { en: "Weight (kg)", tr: "Kilo (kg)" },
+  "calorie.activity": { en: "Activity Level", tr: "Aktivite Seviyesi" },
+  "calorie.sedentary": { en: "Sedentary", tr: "Hareketsiz" },
+  "calorie.light": { en: "Lightly active", tr: "Hafif aktif" },
+  "calorie.moderate": { en: "Moderately active", tr: "Orta aktif" },
+  "calorie.active": { en: "Very active", tr: "Çok aktif" },
+  "calorie.extra": { en: "Extra active", tr: "Ekstra aktif" },
+  "calorie.calculate": { en: "Calculate", tr: "Hesapla" },
+  "calorie.result": { en: "Your daily calorie need", tr: "Günlük kalori ihtiyacın" },
+  "calorie.maintain": { en: "Maintain weight", tr: "Kilo koruma" },
+  "calorie.lose": { en: "Lose weight", tr: "Kilo verme" },
+  "calorie.gain": { en: "Gain weight", tr: "Kilo alma" },
+  "calorie.kcal": { en: "kcal/day", tr: "kcal/gün" },
+  "calorie.disclaimer": { en: "Based on Mifflin-St Jeor equation. Consult your doctor for personalized advice.", tr: "Mifflin-St Jeor formülüne göre. Kişisel tavsiye için doktorunuza danışın." },
+
+  // Biological Age
+  "bioage.title": { en: "Biological Age", tr: "Biyolojik Yaş" },
+  "bioage.locked": { en: "Unlock with Premium", tr: "Premium ile aç" },
+  "bioage.description": { en: "Calculate your biological age based on your health data", tr: "Sağlık verilerine göre biyolojik yaşını hesapla" },
+  "bioage.calculate": { en: "Calculate My Age", tr: "Yaşımı Hesapla" },
+  "bioage.calculating": { en: "Analyzing...", tr: "Analiz ediliyor..." },
+  "bioage.actual": { en: "Actual Age", tr: "Gerçek Yaş" },
+  "bioage.biological": { en: "Bio Age", tr: "Biyo Yaş" },
+  "bioage.younger": { en: "You're {n} years younger than your age!", tr: "Yaşından {n} yıl gençsin!" },
+  "bioage.older": { en: "You're {n} years older — let's improve!", tr: "Yaşından {n} yıl büyüksün — iyileştirelim!" },
+
+  // Metabolic Portfolio
+  "metabolic.title": { en: "Metabolic Portfolio", tr: "Metabolik Portföy" },
+  "metabolic.subtitle": { en: "Your 4-domain health overview", tr: "4 alan sağlık özeti" },
+  "metabolic.energy": { en: "Energy", tr: "Enerji" },
+  "metabolic.stress": { en: "Stress", tr: "Stres" },
+  "metabolic.sleep": { en: "Sleep", tr: "Uyku" },
+  "metabolic.immunity": { en: "Immunity", tr: "Bağışıklık" },
+
+  // Washout Countdown
+  "washout.title": { en: "Supplement Cycling", tr: "Takviye Döngüsü" },
+  "washout.subtitle": { en: "Track your supplement cycling periods", tr: "Takviye döngü sürelerin" },
+  "washout.none": { en: "No supplements with cycling rules detected", tr: "Döngü kuralı olan takviye bulunamadı" },
+  "washout.days": { en: "days", tr: "gün" },
+  "washout.daysLeft": { en: "days left", tr: "gün kaldı" },
+  "washout.breakTime": { en: "Time for a break!", tr: "Mola zamanı!" },
+
+  // Weekly Summary
+  "weekly.title": { en: "Weekly Summary", tr: "Haftalık Özet" },
+  "weekly.avgScore": { en: "Avg. Score", tr: "Ort. Skor" },
+  "weekly.bestDay": { en: "Best Day", tr: "En İyi Gün" },
+  "weekly.medAdherence": { en: "Med Adherence", tr: "İlaç Uyumu" },
+  "weekly.waterAvg": { en: "Water Avg", tr: "Su Ort." },
+  "weekly.share": { en: "Share", tr: "Paylaş" },
+  "weekly.noData": { en: "Complete check-ins this week to see your summary", tr: "Bu haftanın özetini görmek için check-in yap" },
+
+  // Symptom Pattern
+  "pattern.title": { en: "AI Pattern Detection", tr: "AI Örüntü Tespiti" },
+  "pattern.subtitle": { en: "Trends detected from your check-in data", tr: "Check-in verilerinden tespit edilen trendler" },
+  "pattern.noData": { en: "Need at least 3 days of check-ins to detect patterns", tr: "Örüntü tespiti için en az 3 gün check-in gerekli" },
 }
 
 // ══════════════════════════════════════════

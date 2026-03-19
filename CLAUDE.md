@@ -372,8 +372,8 @@ NOT: Reçete OCR çıkarıldı — Türkiye'de güvenilir çalışmaz, güvenlik
 
 ## Sprint Planı
 
-### ✅ S1–S9 — TAMAMLANDI
-Next.js, Auth, Onboarding (7 adım + doğum tarihi), İlaç etkileşim motoru, Chat RAG, Kan tahlili, Tasarım v2 (dark/light), TR/EN çeviri sistemi (merkezi tx() + MESSAGE_ARRAYS), 3 katmanlı ilaç kontrolü, Türkçe ilaç veritabanı, Güvenlik + Yasal sayfalar, Takvim Hub (ilaç/takviye/su/vital/etkinlik takibi, hatırlatıcı, confetti animasyonlar, .ics export)
+### ✅ S1–S10b — TAMAMLANDI
+Next.js, Auth, Onboarding (7 adım + doğum tarihi), İlaç etkileşim motoru, Chat RAG, Kan tahlili, Tasarım v2 (dark/light), TR/EN çeviri sistemi (merkezi tx() + MESSAGE_ARRAYS), 3 katmanlı ilaç kontrolü, Türkçe ilaç veritabanı, Güvenlik + Yasal sayfalar, Takvim Hub (ilaç/takviye/su/vital/etkinlik takibi, hatırlatıcı, confetti animasyonlar, .ics export, 2-sütun layout), Sağlık Skorları + Dashboard (günlük skor 0-100, mikro check-in, biyolojik yaş otomatik cache, metabolik portföy, washout takvimden gerçek veri, kalori hesaplama, semptom pattern, haftalık özet, streak fix), Ana sayfa yeniden tasarım (auth: 2x2 grid summary+asistan+hero+görsel), Navbar sadeleştirme, Takviye Sistemi Tam (200+ katalog, 80+ doz DB, 60+ TR↔EN map, dropdown arama, AI güvenlik kontrolü, doz ayar + otomatik birim, toggle alınma takibi, streak, confetti, bell hatırlatıcı tek akış, overdue uyarı, renk kodlu etkileşim, sınırsız döngü, panel-takvim senkron, etkileşim denetleyicisinden tek tıkla ekleme)
 
 ### 🔄 HACKATHON BLOĞU (25 gün → 12 Nisan)
 
@@ -574,6 +574,6 @@ NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
 
 ---
 
-*Son güncelleme: 18 Mart 2026 v9.5*
-*Sprint 1-9 tamamlandı. Sıradaki: Sprint 10 — Sağlık Skorları + Özet*
-*Hackathon: 11-12 Nisan 2026 — 24 gün kaldı*
+*Son güncelleme: 19 Mart 2026 v10.7*
+*Sprint 1-10b tam tamamlandı. Sıradaki: Sprint 11 — Viral + Oyunlaştırma*
+*Hackathon: 11-12 Nisan 2026 — 23 gün kaldı*

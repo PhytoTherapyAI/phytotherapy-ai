@@ -1,13 +1,14 @@
 "use client"
 
-import { useState, useEffect, useRef, useCallback } from "react"
-import { Loader2, Leaf, ShieldCheck, ShieldAlert, ShieldX, Clock, X, Search } from "lucide-react"
+import { useState, useEffect, useRef, useCallback, useMemo } from "react"
+import { Loader2, Leaf, ShieldCheck, ShieldAlert, ShieldX, Clock, X, Search, Bell } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
+import { getSupplementDisplayName, findSupplementInfo, parseDoseToMg, formatDoseWithUnit, SUPPLEMENT_NAME_MAP, SUPPLEMENT_NAME_TR } from "@/lib/supplement-data"
 
 interface AddSupplementDialogProps {
   userId: string
@@ -37,12 +38,6 @@ interface SavedSupplement {
   created_at: string
 }
 
-const POPULAR_SUPPLEMENTS = [
-  "Omega-3", "Vitamin D", "Magnesium", "Zinc", "Iron",
-  "B12", "Probiotics", "Turmeric", "Ashwagandha", "Melatonin",
-  "Vitamin C", "Coenzyme Q10", "Creatine", "Collagen", "Fish Oil",
-]
-
 const FREQ_MAP: Record<string, string> = {
   "once daily": "günde bir kez", "twice daily": "günde iki kez", "three times daily": "günde üç kez",
   "daily": "günlük", "weekly": "haftalık", "as needed": "gerektiğinde",
@@ -58,6 +53,25 @@ function translateSupDesc(desc: string, tr: boolean): string {
   return result
 }
 
+// Catalog loaded from JSON at runtime
+let _catalogCache: string[] | null = null
+async function loadCatalog(): Promise<string[]> {
+  if (_catalogCache) return _catalogCache
+  try {
+    const res = await fetch("/supplements-catalog.json")
+    if (!res.ok) return []
+    const data = await res.json()
+    const items: string[] = []
+    for (const cat of Object.values(data.categories) as Array<{ items: string[] }>) {
+      items.push(...cat.items)
+    }
+    _catalogCache = items
+    return items
+  } catch {
+    return []
+  }
+}
+
 export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved }: AddSupplementDialogProps) {
   const tr = lang === "tr"
   const [query, setQuery] = useState("")
@@ -65,9 +79,56 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
   const [saving, setSaving] = useState(false)
   const [checkResult, setCheckResult] = useState<SupplementCheck | null>(null)
   const [time, setTime] = useState("")
+  const [enableReminder, setEnableReminder] = useState(false)
+  const [customDose, setCustomDose] = useState("")
   const [savedSupplements, setSavedSupplements] = useState<SavedSupplement[]>([])
   const [loadingSaved, setLoadingSaved] = useState(true)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [catalog, setCatalog] = useState<string[]>([])
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Load catalog once
+  useEffect(() => {
+    loadCatalog().then(setCatalog)
+  }, [])
+
+  // Dropdown suggestions — filter catalog by query, show translated names
+  const dropdownItems = useMemo(() => {
+    if (!query || query.length < 1) return []
+    const q = query.toLowerCase()
+    const savedNames = savedSupplements.map(s => s.title.toLowerCase())
+
+    const matches: Array<{ en: string; display: string }> = []
+    const seen = new Set<string>()
+
+    // Search in catalog
+    for (const name of catalog) {
+      const lower = name.toLowerCase()
+      if (seen.has(lower)) continue
+      if (savedNames.some(s => lower.includes(s) || s.includes(lower))) continue
+
+      // Extract clean name (remove parenthetical)
+      const cleanName = name.split("(")[0].trim()
+      const displayName = getSupplementDisplayName(cleanName, lang)
+
+      if (lower.includes(q) || displayName.toLowerCase().includes(q)) {
+        seen.add(lower)
+        matches.push({ en: name, display: displayName !== cleanName ? displayName : name })
+      }
+    }
+
+    // Also check TR→EN map for Turkish queries
+    for (const [trName, enName] of Object.entries(SUPPLEMENT_NAME_MAP)) {
+      if (trName.includes(q) && !seen.has(enName.toLowerCase())) {
+        if (!savedNames.some(s => s.includes(enName.toLowerCase()))) {
+          seen.add(enName.toLowerCase())
+          matches.push({ en: enName, display: tr ? trName.charAt(0).toUpperCase() + trName.slice(1) : enName })
+        }
+      }
+    }
+    return matches.slice(0, 10)
+  }, [query, savedSupplements, catalog, lang, tr])
 
   // Load saved supplements
   const fetchSaved = useCallback(async () => {
@@ -95,10 +156,12 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
       setCheckResult(null)
       setQuery("")
       setTime("")
+      setCustomDose("")
+      setEnableReminder(false)
     }
   }, [open, fetchSaved])
 
-  // Check supplement safety
+  // Check supplement safety via AI
   const checkSupplement = async (name: string) => {
     if (name.length < 2) return
     setChecking(true)
@@ -117,6 +180,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
       if (res.ok) {
         const result = await res.json()
         setCheckResult(result as SupplementCheck)
+        setCustomDose(result.recommendedDose || "")
       }
     } catch {
       // ignore
@@ -125,15 +189,42 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
     }
   }
 
-  // Debounced search
+  // Show dropdown while typing — AI only on selection or Enter
   const handleQueryChange = (val: string) => {
     setQuery(val)
     setCheckResult(null)
+    setShowDropdown(val.length >= 1)
     if (debounceRef.current) clearTimeout(debounceRef.current)
-    if (val.length >= 3) {
-      debounceRef.current = setTimeout(() => checkSupplement(val), 800)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && query.length >= 2 && !checking) {
+      setShowDropdown(false)
+      if (debounceRef.current) clearTimeout(debounceRef.current)
+      checkSupplement(query)
     }
   }
+
+  const selectFromDropdown = (name: string) => {
+    setQuery(name)
+    setShowDropdown(false)
+    checkSupplement(name)
+  }
+
+  // Overdose check for custom dose
+  const overdoseWarning = useMemo(() => {
+    if (!customDose.trim() || !checkResult) return null
+    const info = findSupplementInfo(checkResult.supplement)
+    if (info.maxDoseValue === 0) return null
+    const userDose = parseDoseToMg(customDose)
+    if (userDose <= 0) return null
+    if (userDose > info.maxDoseValue) {
+      return tr
+        ? `Girdiğiniz doz (${customDose}) maksimum güvenli dozun (${info.maxDose}) üzerinde!`
+        : `Your dose (${customDose}) exceeds the maximum safe dose (${info.maxDose})!`
+    }
+    return null
+  }, [customDose, checkResult, tr])
 
   // Save supplement
   const saveSupplement = async () => {
@@ -141,26 +232,29 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
     setSaving(true)
     try {
       const supabase = createBrowserClient()
+      const rawDose = customDose.trim() || checkResult.recommendedDose
+      const doseToSave = formatDoseWithUnit(rawDose, checkResult.supplement)
       await supabase.from("calendar_events").insert({
         user_id: userId,
         event_type: "supplement",
         title: checkResult.supplement,
-        description: `${checkResult.recommendedDose} · ${checkResult.frequency}`,
+        description: `${doseToSave} · ${checkResult.frequency}`,
         event_date: new Date().toISOString().split("T")[0],
-        event_time: time || null,
+        event_time: (enableReminder && time) ? time : null,
         recurrence: "daily",
         metadata: {
           safety: checkResult.safety,
-          dose: checkResult.recommendedDose,
+          dose: doseToSave,
           frequency: checkResult.frequency,
           evidenceGrade: checkResult.evidenceGrade,
         },
       })
       onSaved()
-      // Stay in dialog, reset form for another supplement
       setCheckResult(null)
       setQuery("")
       setTime("")
+      setCustomDose("")
+      setEnableReminder(false)
       fetchSaved()
     } catch {
       // ignore
@@ -184,7 +278,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
             {tr ? "Takviye Yönetimi" : "Supplement Manager"}
           </DialogTitle>
           <DialogDescription>
-            {tr ? "Takviye arayın, güvenlik kontrolü yapın ve takip listesine ekleyin." : "Search supplements, check safety, and add to your tracking list."}
+            {tr ? "Takviye adı yazın — asistan profilinize göre analiz edecek." : "Type a supplement name — assistant will analyze it for your profile."}
           </DialogDescription>
         </DialogHeader>
 
@@ -193,29 +287,50 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder={tr ? "Takviye adı yazın (ör. Omega-3, D Vitamini)" : "Type supplement name (e.g., Omega-3, Vitamin D)"}
+              ref={inputRef}
+              placeholder={tr ? "Takviye adı yazın (ör. kreatin, omega-3...)" : "Type supplement name (e.g. creatine, omega-3...)"}
               value={query}
               onChange={(e) => handleQueryChange(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="pl-10"
+              autoFocus
             />
-          </div>
 
-          {/* Popular supplements */}
-          {!query && !checkResult && (
-            <div className="space-y-2">
-              <p className="text-xs text-muted-foreground">{tr ? "Popüler takviyeler:" : "Popular supplements:"}</p>
-              <div className="flex flex-wrap gap-1.5">
-                {POPULAR_SUPPLEMENTS.slice(0, 10).map((s) => (
+            {/* Dropdown suggestions */}
+            {showDropdown && !checking && !checkResult && dropdownItems.length > 0 && (
+              <div className="absolute top-full left-0 right-0 z-50 mt-1 rounded-xl border bg-card shadow-xl max-h-56 overflow-y-auto">
+                {dropdownItems.map((item) => (
                   <button
-                    key={s}
-                    onClick={() => { setQuery(s); checkSupplement(s) }}
-                    className="rounded-full border px-2.5 py-1 text-xs text-muted-foreground transition-all hover:border-primary hover:text-primary active:scale-95"
+                    key={item.en}
+                    onClick={() => selectFromDropdown(item.en)}
+                    className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm transition-colors hover:bg-primary/5 active:bg-primary/10"
                   >
-                    {s}
+                    <Leaf className="h-3.5 w-3.5 text-primary/50 shrink-0" />
+                    <span className="font-medium">{item.display}</span>
+                    {item.display !== item.en && (
+                      <span className="ml-auto text-[10px] text-muted-foreground/50">{item.en}</span>
+                    )}
                   </button>
                 ))}
+                {/* Always show "analyze custom" option at bottom */}
+                {query.length >= 2 && (
+                  <button
+                    onClick={() => { setShowDropdown(false); checkSupplement(query) }}
+                    className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm border-t transition-colors hover:bg-muted/50"
+                  >
+                    <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <span className="text-muted-foreground">{tr ? `"${query}" için asistan analizi` : `Analyze "${query}"`}</span>
+                  </button>
+                )}
               </div>
-            </div>
+            )}
+          </div>
+
+          {/* Hint */}
+          {!query && !checkResult && !checking && (
+            <p className="text-xs text-muted-foreground text-center py-2">
+              {tr ? "Yazmaya başlayın, listeden seçin veya Enter'a basın" : "Start typing, pick from list or press Enter"}
+            </p>
           )}
 
           {/* Loading */}
@@ -223,7 +338,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
             <div className="flex items-center justify-center gap-2 py-6">
               <Loader2 className="h-5 w-5 animate-spin text-primary" />
               <span className="text-sm text-muted-foreground">
-                {tr ? "Proflinize göre analiz ediliyor..." : "Analyzing based on your profile..."}
+                {tr ? "Profiline göre analiz ediliyor..." : "Analyzing based on your profile..."}
               </span>
             </div>
           )}
@@ -236,27 +351,22 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                 <div className="flex items-center gap-2 mb-2">
                   {(() => { const Icon = safetyConfig[checkResult.safety].icon; return <Icon className={`h-5 w-5 ${safetyConfig[checkResult.safety].color}`} /> })()}
                   <span className={`font-semibold ${safetyConfig[checkResult.safety].color}`}>
-                    {checkResult.supplement} — {safetyConfig[checkResult.safety].label}
+                    {getSupplementDisplayName(checkResult.supplement, lang)} — {safetyConfig[checkResult.safety].label}
                   </span>
                   <span className="ml-auto text-xs text-muted-foreground">
                     {tr ? "Kanıt" : "Grade"} {checkResult.evidenceGrade}
                   </span>
                 </div>
 
-                {/* Dose recommendation */}
-                <div className="rounded-lg bg-card/50 p-3 mt-2">
-                  <p className="text-sm font-medium text-foreground">
-                    {checkResult.recommendedDose} · {checkResult.frequency}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {checkResult.personalizedNote}
-                  </p>
-                </div>
+                {/* Personalized note */}
+                <p className="text-sm text-foreground/80 mt-2">
+                  {checkResult.personalizedNote}
+                </p>
 
                 {/* Warning */}
                 {checkResult.warningMessage && (
                   <div className="mt-2 rounded-lg bg-card/50 p-3">
-                    <p className={`text-sm ${checkResult.safety === "dangerous" ? "text-red-500" : "text-amber-500"}`}>
+                    <p className={`text-sm ${checkResult.safety === "dangerous" ? "text-red-500" : "text-amber-600 dark:text-amber-400"}`}>
                       {checkResult.warningMessage}
                     </p>
                   </div>
@@ -275,13 +385,85 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                 )}
               </div>
 
-              {/* Time input */}
+              {/* Dose adjustment + time — only for non-dangerous */}
               {checkResult.safety !== "dangerous" && (
-                <div>
-                  <Label className="text-sm">{tr ? "Ne zaman alacaksınız?" : "When will you take it?"}</Label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-32" />
+                <div className="space-y-3 rounded-xl border p-4">
+                  {/* Dose input */}
+                  <div>
+                    <Label className="text-xs font-medium mb-1.5 block">
+                      {tr ? "Günlük doz" : "Daily dose"}
+                    </Label>
+                    <input
+                      type="text"
+                      value={customDose}
+                      onChange={(e) => setCustomDose(e.target.value)}
+                      onBlur={() => {
+                        // Auto-format: if user typed just a number, add unit
+                        if (customDose && checkResult) {
+                          setCustomDose(formatDoseWithUnit(customDose, checkResult.supplement))
+                        }
+                      }}
+                      placeholder={checkResult.recommendedDose}
+                      className={`w-full rounded-lg border bg-background px-3 py-2.5 text-base font-medium outline-none focus:ring-2 ${
+                        overdoseWarning
+                          ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
+                          : "focus:border-primary focus:ring-primary/20"
+                      }`}
+                    />
+                    <div className="mt-2 rounded-lg bg-primary/5 border border-primary/10 px-3 py-2">
+                      <p className="text-sm text-primary font-medium">
+                        🤖 {tr ? "Asistan önerisi" : "Assistant suggestion"}
+                      </p>
+                      <p className="text-sm text-foreground/80 mt-0.5">
+                        {checkResult.recommendedDose} · {checkResult.frequency}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Overdose warning */}
+                  {overdoseWarning && (
+                    <div className="flex items-start gap-2 rounded-lg border border-red-500/30 bg-red-500/10 p-2.5">
+                      <ShieldX className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500" />
+                      <p className="text-xs text-red-600 dark:text-red-400">{overdoseWarning}</p>
+                    </div>
+                  )}
+
+                  {/* Time input — merged with reminder */}
+                  <div>
+                    <Label className="text-xs font-medium mb-1.5 flex items-center gap-1.5">
+                      <Clock className="h-3 w-3" />
+                      {tr ? "Ne zaman alacaksınız?" : "When will you take it?"}
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-32" />
+                      <div className="flex gap-1">
+                        {["08:00", "12:00", "21:00"].map((t) => (
+                          <button key={t} onClick={() => setTime(t)}
+                            className={`rounded-full px-2 py-1 text-[10px] font-medium transition-all ${
+                              time === t ? "bg-primary text-white" : "border bg-card hover:border-primary hover:text-primary"
+                            }`}>
+                            {t}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Reminder toggle — only shows when time is set */}
+                    {time && (
+                      <button
+                        onClick={() => setEnableReminder(!enableReminder)}
+                        className={`mt-2 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all w-full ${
+                          enableReminder
+                            ? "bg-primary/10 text-primary border border-primary/30"
+                            : "border text-muted-foreground hover:border-primary hover:text-primary"
+                        }`}
+                      >
+                        <Bell className={`h-4 w-4 ${enableReminder ? "text-primary" : ""}`} />
+                        {enableReminder
+                          ? (tr ? `${time} saatinde bildirim gelecek` : `Notification at ${time}`)
+                          : (tr ? "Bildirim al" : "Get notified")
+                        }
+                      </button>
+                    )}
                   </div>
                 </div>
               )}
@@ -294,7 +476,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                   </Button>
                 ) : (
                   <>
-                    <Button variant="outline" className="flex-1" onClick={() => { setCheckResult(null); setQuery("") }}>
+                    <Button variant="outline" className="flex-1" onClick={() => { setCheckResult(null); setQuery(""); setCustomDose("") }}>
                       {tx("cal.cancel", lang)}
                     </Button>
                     <Button className="flex-1" onClick={saveSupplement} disabled={saving}>
@@ -331,7 +513,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                     <div key={sup.id} className="flex items-center gap-2 rounded-lg border px-3 py-2">
                       {(() => { const Icon = cfg.icon; return <Icon className={`h-4 w-4 ${cfg.color}`} /> })()}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{sup.title}</p>
+                        <p className="text-sm font-medium truncate">{getSupplementDisplayName(sup.title, lang)}</p>
                         {sup.description && <p className="text-xs text-muted-foreground truncate">{translateSupDesc(sup.description, tr)}</p>}
                       </div>
                       <button

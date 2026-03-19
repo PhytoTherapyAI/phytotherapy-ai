@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 18 Mart 2026 (v9.5 — Sprint 9 tamamlandı)
+> Son güncelleme: 19 Mart 2026 (v10.7 — Sprint 10b tam tamamlandı)
 
 ---
 
@@ -18,9 +18,11 @@
 | Sprint 7.5 — 3 Katmanlı İlaç Kontrolü + TR/EN | ✅ Tamamlandı | 17 Mart 2026 |
 | Sprint 8 — Güvenlik + Yasal + Asistan v2 | ✅ Tamamlandı | 19 Mart 2026 |
 | Sprint 9 — Takvim Hub | ✅ Tamamlandı | 18 Mart 2026 |
-| Sprint 10 — Sağlık Skorları + Özet | 📋 Sırada | — |
+| Sprint 10a — Sağlık Skorları + Dashboard | ✅ Tamamlandı | 19 Mart 2026 |
+| Sprint 10b — Takviye İyileştirmeleri | ✅ Tamamlandı | 19 Mart 2026 |
+| Sprint 11 — Viral + Oyunlaştırma | 📋 Sırada | — |
 
-**Hackathon: 11-12 Nisan 2026 — 24 gün kaldı**
+**Hackathon: 11-12 Nisan 2026 — 23 gün kaldı**
 
 ---
 
@@ -329,6 +331,137 @@
 
 ---
 
+## ✅ Sprint 10a — Sağlık Skorları + Dashboard + Takviye Döngüsü
+
+**Kapsam:** Günlük sağlık skoru, mikro check-in, dashboard, biyolojik yaş, metabolik portföy, kalori hesaplama
+
+### Sprint 10a — Temel Altyapı (FREE)
+- [x] Günlük sağlık skoru (0-100) — 4 bileşenden hesaplama (check-in 40pt + ilaç uyumu 30pt + su 15pt + vital 15pt)
+- [x] Mikro check-in dialog — 4 soru (enerji/uyku/ruh hali/sindirim), emoji seçim, günde 1 kez
+- [x] Ana sayfa günlük özet kartı — skor dairesi, ilaç/su/check-in durumu, trend, streak
+- [x] Kalori ihtiyacı hesaplama tool'u — Mifflin-St Jeor formülü, cinsiyet/yaş/boy/kilo/aktivite
+- [x] Sabah özeti push bildirimi — localStorage tabanlı, 6-10 arası tetikleme
+- [x] Dashboard sayfası (/dashboard) — tüm skor bileşenlerini birleştiren ana panel
+- [x] Navbar'a Dashboard linki eklendi
+
+### Sprint 10b — Premium Özellikler
+- [x] Biyolojik yaş skoru — profil verilerinden hesaplama (egzersiz, uyku, sigara, alkol, BMI, kronik hastalık)
+- [x] Metabolik portföy (4 alan: Enerji/Stres/Uyku/Bağışıklık) — check-in verilerinden görselleştirme
+- [x] Washout/cycling geri sayım — supplement döngü takibi (ashwagandha, rhodiola, melatonin vb.)
+- [x] Semptom pattern tespiti — 14 günlük check-in trendlerinden AI analiz (iyileşme/kötüleşme/korelasyon)
+- [x] Haftalık özet kartı — 7 günlük bar chart, ortalama skor, en iyi gün, paylaş butonu
+- [x] Premium kilitli gösterim — Lock ikonu + PREMIUM badge, blur overlay
+
+### Yeni/Güncellenen Dosyalar (Sprint 10)
+- `app/dashboard/page.tsx` — Sağlık paneli sayfası (8 bileşen)
+- `app/api/check-in/route.ts` — Mikro check-in CRUD API (rate limited)
+- `app/api/health-score/route.ts` — Sağlık skoru hesaplama API
+- `app/api/biological-age/route.ts` — Biyolojik yaş hesaplama API (premium)
+- `components/dashboard/MicroCheckIn.tsx` — 4 adımlı check-in dialog
+- `components/dashboard/MicroCheckInWrapper.tsx` — Auth-aware wrapper + sabah bildirimi
+- `components/dashboard/DailySummaryCard.tsx` — Ana sayfa özet kartı (skor + trend)
+- `components/dashboard/CalorieCalculator.tsx` — Kalori hesaplama aracı
+- `components/dashboard/BiologicalAgeCard.tsx` — Biyolojik yaş kartı (premium)
+- `components/dashboard/MetabolicPortfolio.tsx` — 4 alan metabolik portföy (premium)
+- `components/dashboard/WashoutCountdown.tsx` — Supplement döngü takibi (premium)
+- `components/dashboard/WeeklySummaryCard.tsx` — Haftalık özet + bar chart (premium)
+- `components/dashboard/SymptomPatternCard.tsx` — AI pattern detection (premium)
+- `lib/health-score.ts` — Sağlık skoru hesaplama motoru
+- `lib/notifications.ts` — Push notification helper
+- `lib/database.types.ts` — DailyCheckIn type eklendi
+- `lib/translations.ts` — ~80 yeni key (check-in, dashboard, calorie, bioage, metabolic, washout, weekly, pattern)
+- `supabase/migrations/sprint10_health_scores.sql` — daily_check_ins tablosu + RLS
+
+### Sprint 10a — Ek İyileştirmeler (Aynı Oturum)
+- [x] Ana sayfa yeniden tasarım (auth: 2x2 grid — summary+asistan / hero yazı+görsel)
+- [x] Navbar sadeleştirme (Panel ayrı buton, kısa isimler)
+- [x] Check-in butonu belirginleştirme (turuncu CTA, tam genişlik)
+- [x] Loading spinner (auth resolve beklerken guest→auth flash engeli)
+- [x] Takviye döngüsü takvimden gerçek veri (calendar_events'ten fetch)
+- [x] Profil takviyeleri otomatik ekleme (onboarding supplements → calendar_events sync)
+- [x] Doz ayarlama dialog (önerilen doz, overdoz uyarı, döngü süresi seçimi, sınırsız, kaldırma)
+- [x] Biyolojik yaş otomatik hesaplama + günlük cache (localStorage)
+- [x] Metabolik portföy check-in verisi bağlantısı
+- [x] Duplikat takviye koruması (normalize matching + client-side dedup)
+- `lib/supplement-data.ts` — Takviye referans verileri (doz, max doz, döngü)
+- `components/dashboard/SupplementDoseDialog.tsx` — Doz ayarlama dialog
+
+---
+
+## ✅ Sprint 10b — Takviye İyileştirmeleri (Tam)
+
+**Kapsam:** Takviye sistemi tam entegrasyon — toggle, streak, hatırlatıcı, dropdown arama, doz ayar, 2-sütun layout, etkileşim butonları, kapsamlı veritabanı
+
+### Temel Takviye Sistemi
+- [x] Kaydet persist doğrulandı (RLS politikaları doğru, session akışı çalışıyor)
+- [x] Takviye tıklanabilir toggle — ilaç gibi daily_logs'a kaydedilir (optimistic update + animasyon)
+- [x] Takviye streak takibi (🔥 ardışık gün sayacı, ilaç streak'ten bağımsız)
+- [x] Takviye confetti animasyonu — tüm takviyeler tamamlanınca patlar
+- [x] Takviye kişisel mesajlar — 7 Türkçe + 7 İngilizce esprili tamamlama mesajı
+- [x] Takviye çan hatırlatma — saat girince "Bildirim al" butonu çıkıyor, tek akış
+- [x] Takviye overdue uyarı banner'ı — saat geçtiyse + henüz alınmadıysa pulse animasyon
+- [x] Takviye-ilaç etkileşim görüntüleme — renk kodlu nokta (yeşil/sarı/kırmızı) her takviye yanında
+- [x] Takviye ilerleme badge — X/Y tamamlama sayacı + ✓ hepsi tamam
+- [x] Günlük ilerleme kartı güncellendi — ilaç + takviye birlikte gösterim
+
+### Takviye Ekleme & Arama
+- [x] Dropdown öneri listesi — yazarken anlık filtre (200+ takviye kataloğundan)
+- [x] AI profil analizi — seçim sonrası güvenlik kontrolü (safe/caution/dangerous)
+- [x] İlk eklemede doz ayarlama — input + overdoz uyarı + asistan önerisi
+- [x] Otomatik birim algılama — sadece sayı girince birim eklenir (8 → "8 gram")
+- [x] "Asistan önerisi" kartı — belirgin yeşil kutu, recommendedDose + frequency
+- [x] Saat + bildirim birleşik akış — saat girince çan butonu çıkar, çift input yok
+- [x] Takviye dialog temizlendi — dropdown yok iken hint text, autoFocus
+
+### Kapsamlı Takviye Veritabanı
+- [x] `supplements-catalog.json` — 200+ takviye, 9 kategori (NIH ODS, PubMed, WHO kaynaklı)
+  - Vitaminler (18), Mineraller (21), Amino Asitler (21), Bitkisel (55)
+  - Spor (33), Yağ Asitleri (13), Probiyotik (16), Antioksidanlar (16), Özel (38)
+- [x] `supplement-data.ts` — 80+ takviye doz bilgisi (recommendedDose, maxDose, cycleDays, unit)
+- [x] Türkçe↔İngilizce isim haritası — 60+ çift yönlü eşleşme
+  - tirozin→L-Tyrosine, teanin→L-Theanine, arjinin→L-Arginine, glutamin→L-Glutamine vb.
+- [x] `formatDoseWithUnit()` — otomatik birim tespiti (mg/g/IU/mcg/CFU)
+- [x] Türkçe arama — "tirozin", "çörek otu", "zerdeçal" vb. doğrudan bulunur
+
+### Takvim Layout & UX
+- [x] 2-sütun yatay layout — Sol: Check-in+İlaçlar+Takviyeler | Sağ: Etkinlikler+Su
+- [x] Takvim genişliği = Dashboard genişliği (max-w-6xl, gap-6)
+- [x] Check-in kartı — yapıldıysa ✅ "Check-in tamamlandı", buton gizlenir
+- [x] Check-in streak düzeltildi — API'den ardışık gün hesaplaması (health-score endpoint)
+- [x] Takviye kaybolma sorunu fix — recurring supplement events de fetch ediliyor
+- [x] Takviye doz düzenleme — ✎ ikonu tıklanabilir, dialog ile düzenleme
+- [x] Sınırsız döngü fix — "0 gün" yerine "∞ Sınırsız", progress bar gizlenir
+
+### Panel (Dashboard) Senkronizasyon
+- [x] "Takviye Ekle" butonu → AddSupplementDialog açıyor (text input yerine)
+- [x] SupplementDoseDialog — bell hatırlatıcı, döngü süresi düzenleme, DB'den yükleme
+- [x] WashoutCountdown — bell+saat gösterimi, sınırsız döngü desteği
+- [x] Navbar: "Panel" butonu diğer linklerle aynı stilde
+- [x] Akşam hatırlatma — saat 20:00'den sonra alınmamış ilaç/takviye bildirimi
+
+### Etkileşim Denetleyicisi Entegrasyonu
+- [x] "Takviyelerime Ekle" butonu — güvenli/dikkatli bitki kartlarında
+- [x] Tek tıkla önerilen dozla calendar_events'e kayıt
+- [x] Eklendiyse ✓ gösterimi, duplicate koruması
+- [x] Tehlikeli (kırmızı) kartlarda buton gizli
+
+### Yeni/Güncellenen Dosyalar (Sprint 10b)
+- `components/calendar/TodayView.tsx` — 2-sütun layout, toggle, streak, confetti, bell, overdue, checkin, dose edit (MAJOR)
+- `components/calendar/AddSupplementDialog.tsx` — Dropdown arama, AI analiz, doz ayar, bildirim (REWRITE)
+- `components/dashboard/WashoutCountdown.tsx` — Bell, sınırsız döngü, Türkçe isim (MAJOR)
+- `components/dashboard/SupplementDoseDialog.tsx` — Bell hatırlatıcı, döngü düzenleme, DB yükleme (REWRITE)
+- `components/dashboard/DailySummaryCard.tsx` — Streak fix (API'den)
+- `components/interaction/InteractionResult.tsx` — "Takviyelerime ekle" butonu (MAJOR)
+- `components/layout/header.tsx` — Panel butonu stili düzeltme
+- `app/calendar/page.tsx` — max-w-6xl, header stili dashboard ile aynı
+- `app/dashboard/page.tsx` — AddSupplementDialog entegrasyonu
+- `app/api/health-score/route.ts` — Streak hesaplama eklendi
+- `app/api/supplement-check/route.ts` — Daha doğal prompt (arkadaş tonu)
+- `lib/supplement-data.ts` — 80+ takviye doz DB, 60+ TR↔EN map, formatDoseWithUnit() (MAJOR)
+- `public/supplements-catalog.json` — 200+ takviye, 9 kategori kataloğu (NEW)
+
+---
+
 ## Dosya Yapısı (Güncel)
 
 ```
@@ -347,6 +480,7 @@ phytotherapy-ai/
 │   ├── blood-test/page.tsx
 │   ├── privacy/page.tsx                   # S8 — Gizlilik Politikası (TR+EN)
 │   ├── terms/page.tsx                     # S8 — Kullanım Koşulları (TR+EN)
+│   ├── dashboard/page.tsx                 # S10 — Sağlık paneli
 │   └── api/
 │       ├── chat/route.ts
 │       ├── interaction/route.ts
@@ -354,7 +488,10 @@ phytotherapy-ai/
 │       ├── pubmed/route.ts
 │       ├── blood-analysis/route.ts
 │       ├── generate-pdf/route.ts
-│       └── user-data/route.ts             # S8 — KVKK veri export/delete
+│       ├── user-data/route.ts             # S8 — KVKK veri export/delete
+│       ├── check-in/route.ts              # S10 — Mikro check-in API
+│       ├── health-score/route.ts          # S10 — Sağlık skoru API
+│       └── biological-age/route.ts        # S10 — Biyolojik yaş API
 ├── components/
 │   ├── ui/                              # shadcn/ui (16 components)
 │   ├── illustrations/
@@ -374,6 +511,16 @@ phytotherapy-ai/
 │   ├── onboarding/
 │   │   ├── OnboardingWizard.tsx
 │   │   └── steps/
+│   ├── dashboard/                         # S10 — Sağlık Skorları
+│   │   ├── MicroCheckIn.tsx               # Check-in dialog (4 soru)
+│   │   ├── MicroCheckInWrapper.tsx        # Auth wrapper + sabah bildirimi
+│   │   ├── DailySummaryCard.tsx           # Günlük özet kartı
+│   │   ├── CalorieCalculator.tsx          # Kalori hesaplama
+│   │   ├── BiologicalAgeCard.tsx          # Biyolojik yaş (premium)
+│   │   ├── MetabolicPortfolio.tsx         # 4 alan portföy (premium)
+│   │   ├── WashoutCountdown.tsx           # Takviye döngü (premium)
+│   │   ├── WeeklySummaryCard.tsx          # Haftalık özet (premium)
+│   │   └── SymptomPatternCard.tsx         # AI pattern tespiti (premium)
 │   ├── pdf/
 │   │   └── DoctorReport.tsx
 │   └── layout/
@@ -402,9 +549,14 @@ phytotherapy-ai/
 │   ├── sanitize.ts                       # S8 — XSS/injection sanitization
 │   ├── guest-limit.ts
 │   ├── database.types.ts
+│   ├── health-score.ts                   # S10 — Sağlık skoru hesaplama motoru
+│   ├── notifications.ts                  # S10 — Push notification helper
 │   └── utils.ts
 ├── supabase/
-│   └── schema.sql
+│   ├── schema.sql
+│   └── migrations/
+│       ├── sprint9_calendar.sql
+│       └── sprint10_health_scores.sql    # S10 — daily_check_ins tablosu
 ├── public/
 │   ├── phytotherapy_v2.png
 │   └── drugs-tr.json                      # NEW — Turkish drug names database
@@ -442,5 +594,5 @@ phytotherapy-ai/
 
 ---
 
-*Hackathon: 11-12 Nisan 2026 — 24 gün kaldı*
-*Sprint 1-9 tamamlandı. Sıradaki: Sprint 10 — Sağlık Skorları + Özet*
+*Hackathon: 11-12 Nisan 2026 — 23 gün kaldı*
+*Sprint 1-10b tamamlandı. Sıradaki: Sprint 11 — Viral + Oyunlaştırma*

@@ -18,6 +18,7 @@ import { AddEventDialog, eventTypeColor } from "./AddEventDialog"
 import { AddVitalDialog } from "./AddVitalDialog"
 import { AddSupplementDialog } from "./AddSupplementDialog"
 import type { UserMedication } from "@/lib/database.types"
+import { getSupplementDisplayName } from "@/lib/supplement-data"
 
 interface TodayViewProps {
   userId: string
@@ -105,6 +106,47 @@ function allMedsDoneMessages(name: string | null, tr: boolean): string[] {
     n ? `🏆 ${n}, perfect score! Nothing missed! Bravo!` : "🏆 Perfect score!",
     n ? `💯 ${n}, 100% complete! Boss fight won!` : "💯 100% complete! Boss fight won!",
     "🌟 All done! Health level up!",
+  ]
+}
+
+// ── Fun supplement messages ──
+function supMessages(name: string | null, tr: boolean): string[] {
+  const n = name?.split(" ")[0] || ""
+  if (tr) {
+    return [
+      n ? `${n}, takviye alındı! 🌿` : "Takviye alındı! 🌿",
+      "Doğanın gücü seninle! 💚",
+      n ? `${n}, sağlık yatırımı yapıyorsun! 📈` : "Sağlık yatırımı yapıyorsun! 📈",
+      "Yeşil ışık! Takviye tamam! ✅",
+      "Vücudun teşekkür ediyor! 🙏",
+      n ? `${n}, harika! Düzenli kullanım = sonuç! 💪` : "Harika! Düzenli kullanım = sonuç! 💪",
+      "Bir adım daha sağlığa! 🌱",
+    ]
+  }
+  return [
+    n ? `${n}, supplement taken! 🌿` : "Supplement taken! 🌿",
+    "Nature's power is with you! 💚",
+    n ? `${n}, investing in your health! 📈` : "Investing in your health! 📈",
+    "Green light! Supplement done! ✅",
+    "Your body thanks you! 🙏",
+    n ? `${n}, great! Consistency = results! 💪` : "Great! Consistency = results! 💪",
+    "One step closer to health! 🌱",
+  ]
+}
+
+function allSupsDoneMessages(name: string | null, tr: boolean): string[] {
+  const n = name?.split(" ")[0] || ""
+  if (tr) {
+    return [
+      n ? `🎉 ${n}, tüm takviyeleri aldın! Muhteşem!` : "🎉 Tüm takviyeler tamam!",
+      n ? `🏆 ${n}, takviye şampiyonu!` : "🏆 Takviye şampiyonu!",
+      "🌿 Tüm takviyeler alındı! Doğanın gücü seninle!",
+    ]
+  }
+  return [
+    n ? `🎉 ${n}, all supplements taken! Amazing!` : "🎉 All supplements done!",
+    n ? `🏆 ${n}, supplement champion!` : "🏆 Supplement champion!",
+    "🌿 All supplements taken! Nature's power is with you!",
   ]
 }
 
@@ -257,6 +299,21 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
   const [showConfetti, setShowConfetti] = useState(false)
   const [allDoneMsg, setAllDoneMsg] = useState<string | null>(null)
 
+  // Supplement toggle + streak + animation
+  const [togglingSupId, setTogglingSupId] = useState<string | null>(null)
+  const [justCompletedSup, setJustCompletedSup] = useState<string | null>(null)
+  const [supMessage, setSupMessage] = useState<string | null>(null)
+  const [supStreak, setSupStreak] = useState(0)
+  const [allSupsDoneMsg, setAllSupsDoneMsg] = useState<string | null>(null)
+
+  // Supplement bell reminder
+  const [bellSupId, setBellSupId] = useState<string | null>(null)
+  const [supReminders, setSupReminders] = useState<Record<string, string>>({})
+  const [pendingSupBellTime, setPendingSupBellTime] = useState("")
+
+  // Check-in status
+  const [checkinDone, setCheckinDone] = useState(false)
+
   // Water
   const [glasses, setGlasses] = useState(0)
   const [waterTarget, setWaterTarget] = useState(0)
@@ -290,6 +347,8 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
     try {
       const saved = localStorage.getItem(`med-reminders-${userId}`)
       if (saved) setMedReminders(JSON.parse(saved))
+      const savedSup = localStorage.getItem(`sup-reminders-${userId}`)
+      if (savedSup) setSupReminders(JSON.parse(savedSup))
     } catch { /* ignore */ }
   }, [userId])
 
@@ -344,6 +403,38 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
     } catch { /* ignore */ }
   }
 
+  // Supplement bell helpers
+  const confirmSupReminder = (supId: string) => {
+    if (!pendingSupBellTime) return
+    const updated = { ...supReminders, [supId]: pendingSupBellTime }
+    setSupReminders(updated)
+    localStorage.setItem(`sup-reminders-${userId}`, JSON.stringify(updated))
+    saveSupReminderToDb(supId, pendingSupBellTime)
+    setBellSupId(null)
+  }
+
+  const removeSupReminder = async (supId: string) => {
+    const updated = { ...supReminders }
+    delete updated[supId]
+    setSupReminders(updated)
+    localStorage.setItem(`sup-reminders-${userId}`, JSON.stringify(updated))
+    // Also clear event_time in DB
+    try {
+      const supabase = createBrowserClient()
+      await supabase.from("calendar_events").update({ event_time: null }).eq("id", supId).eq("user_id", userId)
+      fetchData()
+    } catch { /* ignore */ }
+    setBellSupId(null)
+  }
+
+  const saveSupReminderToDb = async (supId: string, time: string) => {
+    try {
+      const supabase = createBrowserClient()
+      await supabase.from("calendar_events").update({ event_time: time }).eq("id", supId).eq("user_id", userId)
+      fetchData()
+    } catch { /* ignore */ }
+  }
+
   // When bell dialog opens, initialize pending time
   useEffect(() => {
     if (bellMedId) {
@@ -351,19 +442,33 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
     }
   }, [bellMedId, medReminders])
 
+  useEffect(() => {
+    if (bellSupId) {
+      const sup = events.find((e) => e.id === bellSupId)
+      setPendingSupBellTime(supReminders[bellSupId] || sup?.event_time || "")
+    }
+  }, [bellSupId, supReminders, events])
+
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
       const supabase = createBrowserClient()
-      const [medsRes, logsRes, eventsRes, waterRes] = await Promise.all([
+      const [medsRes, logsRes, eventsRes, recurringSupsRes, waterRes] = await Promise.all([
         supabase.from("user_medications").select("*").eq("user_id", userId).eq("is_active", true),
         supabase.from("daily_logs").select("*").eq("user_id", userId).eq("log_date", today),
         supabase.from("calendar_events").select("*").eq("user_id", userId).eq("event_date", today),
+        // Also fetch ALL recurring supplement events (they may have been added on a different date)
+        supabase.from("calendar_events").select("*").eq("user_id", userId).eq("event_type", "supplement").eq("recurrence", "daily"),
         supabase.from("water_intake").select("glasses, target_glasses").eq("user_id", userId).eq("intake_date", today).single(),
       ])
       if (medsRes.data) setMedications(medsRes.data as UserMedication[])
       if (logsRes.data) setDailyLogs(logsRes.data as DailyLog[])
-      if (eventsRes.data) setEvents(eventsRes.data as CalendarEvent[])
+      // Merge today's events with recurring supplements (dedup by id)
+      const todayEvents = (eventsRes.data || []) as CalendarEvent[]
+      const recurringSups = (recurringSupsRes.data || []) as CalendarEvent[]
+      const seenIds = new Set(todayEvents.map(e => e.id))
+      const merged = [...todayEvents, ...recurringSups.filter(s => !seenIds.has(s.id))]
+      setEvents(merged)
       if (waterRes.data) {
         setGlasses(waterRes.data.glasses ?? 0)
         if (waterRes.data.target_glasses) {
@@ -374,7 +479,21 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
         }
       }
 
-      // Streak
+      // Check-in status
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.access_token) {
+          const ciRes = await fetch(`/api/check-in?date=${today}`, {
+            headers: { Authorization: `Bearer ${session.access_token}` },
+          })
+          if (ciRes.ok) {
+            const ciData = await ciRes.json()
+            setCheckinDone(!!ciData.checkIn)
+          }
+        }
+      } catch { /* ignore */ }
+
+      // Streak (medication)
       try {
         const { data: recentLogs } = await supabase.from("daily_logs")
           .select("log_date, completed").eq("user_id", userId).eq("item_type", "medication")
@@ -391,6 +510,24 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           setStreak(s)
         }
       } catch { /* ignore */ }
+
+      // Streak (supplement)
+      try {
+        const { data: supLogs } = await supabase.from("daily_logs")
+          .select("log_date, completed").eq("user_id", userId).eq("item_type", "supplement")
+          .eq("completed", true).order("log_date", { ascending: false }).limit(60)
+        if (supLogs) {
+          const uniqueDays = [...new Set(supLogs.map((l: { log_date: string }) => l.log_date))]
+          let s = 0
+          const d2 = new Date()
+          for (let i = 0; i < 30; i++) {
+            const dateStr = d2.toISOString().split("T")[0]
+            if (uniqueDays.includes(dateStr)) { s++ } else if (i > 0) { break }
+            d2.setDate(d2.getDate() - 1)
+          }
+          setSupStreak(s)
+        }
+      } catch { /* ignore */ }
     } catch (err) {
       console.error("Failed to fetch today data:", err)
     } finally {
@@ -400,6 +537,38 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
   }, [userId, today])
 
   useEffect(() => { fetchData() }, [fetchData])
+
+  // Evening reminder — if meds/supps not taken by 20:00, show browser notification
+  useEffect(() => {
+    const checkEvening = () => {
+      const hour = new Date().getHours()
+      if (hour < 20) return // Only after 8 PM
+      const dismissed = sessionStorage.getItem(`evening-reminder-${today}`)
+      if (dismissed) return
+
+      const hasPendingMeds = medications.some(m => !dailyLogs.some(l => l.item_type === "medication" && l.item_id === m.id && l.completed))
+      const pendingSups = events.filter(e => e.event_type === "supplement").filter(s => !dailyLogs.some(l => l.item_type === "supplement" && l.item_id === s.id && l.completed))
+
+      if (hasPendingMeds || pendingSups.length > 0) {
+        if ("Notification" in window && Notification.permission === "granted") {
+          const msg = tr
+            ? `Bugün henüz almadığın ilaç/takviye var!`
+            : `You have untaken meds/supplements today!`
+          new Notification("Phytotherapy.ai", { body: msg, icon: "/icon-192.png" })
+        }
+        sessionStorage.setItem(`evening-reminder-${today}`, "true")
+      }
+    }
+    const timer = setTimeout(checkEvening, 3000) // Check 3s after load
+    return () => clearTimeout(timer)
+  }, [medications, dailyLogs, events, today, tr])
+
+  // Listen for checkin-complete to hide the card
+  useEffect(() => {
+    const handler = () => { setCheckinDone(true); fetchData() }
+    window.addEventListener("checkin-complete", handler)
+    return () => window.removeEventListener("checkin-complete", handler)
+  }, [fetchData])
 
   const medMsgs = useMemo(() => medMessages(userName ?? null, tr), [userName, tr])
   const allDoneMsgs = useMemo(() => allMedsDoneMessages(userName ?? null, tr), [userName, tr])
@@ -457,6 +626,65 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
   const isMedCompleted = (medId: string) => dailyLogs.some((l) => l.item_type === "medication" && l.item_id === medId && l.completed)
   const completedMeds = medications.filter((m) => isMedCompleted(m.id)).length
   const allMedsDone = medications.length > 0 && completedMeds === medications.length
+
+  // Supplement completion
+  const isSupCompleted = (supId: string) => dailyLogs.some((l) => l.item_type === "supplement" && l.item_id === supId && l.completed)
+  const supplementEvents = events.filter((e) => e.event_type === "supplement")
+  const completedSups = supplementEvents.filter((s) => isSupCompleted(s.id)).length
+  const allSupsDone = supplementEvents.length > 0 && completedSups === supplementEvents.length
+
+  const supMsgs = useMemo(() => supMessages(userName ?? null, tr), [userName, tr])
+  const allSupDoneMsgs = useMemo(() => allSupsDoneMessages(userName ?? null, tr), [userName, tr])
+
+  // ── Supplement toggle with animation ──
+  const toggleSupplement = async (sup: CalendarEvent) => {
+    const supName = getSupplementDisplayName(sup.title, lang)
+    const existing = dailyLogs.find((l) => l.item_type === "supplement" && l.item_id === sup.id)
+    const wasCompleted = existing?.completed ?? false
+    setTogglingSupId(sup.id)
+
+    // Optimistic
+    if (existing) {
+      setDailyLogs((prev) => prev.map((l) => l.id === existing.id ? { ...l, completed: !l.completed } : l))
+    } else {
+      setDailyLogs((prev) => [...prev, { id: `temp-sup-${sup.id}`, user_id: userId, log_date: today, item_type: "supplement", item_id: sup.id, item_name: supName, completed: true }])
+    }
+
+    if (!wasCompleted) {
+      setJustCompletedSup(sup.id)
+      setSupMessage(getRandom(supMsgs))
+      setTimeout(() => { setJustCompletedSup(null); setSupMessage(null) }, 2500)
+
+      // Check all supplements done
+      const willBeComplete = supplementEvents.every((s) =>
+        s.id === sup.id || dailyLogs.some((l) => l.item_type === "supplement" && l.item_id === s.id && l.completed)
+      )
+      if (willBeComplete && supplementEvents.length > 1) {
+        setTimeout(() => {
+          setShowConfetti(true)
+          setAllSupsDoneMsg(getRandom(allSupDoneMsgs))
+          setTimeout(() => setAllSupsDoneMsg(null), 3500)
+        }, 600)
+      }
+    }
+
+    try {
+      const supabase = createBrowserClient()
+      if (existing) {
+        await supabase.from("daily_logs").update({ completed: !existing.completed }).eq("id", existing.id)
+      } else {
+        const { error: insertError } = await supabase.from("daily_logs").insert({
+          user_id: userId, log_date: today, item_type: "supplement", item_id: sup.id, item_name: supName, completed: true,
+        })
+        if (insertError) {
+          await supabase.from("daily_logs").update({ completed: true })
+            .eq("user_id", userId).eq("log_date", today).eq("item_type", "supplement").eq("item_id", sup.id)
+        }
+      }
+      const { data: freshLogs } = await supabase.from("daily_logs").select("*").eq("user_id", userId).eq("log_date", today)
+      if (freshLogs) setDailyLogs(freshLogs as DailyLog[])
+    } catch { fetchData() } finally { setTogglingSupId(null) }
+  }
 
   // ── Water ──
   const isAtLimit = glasses >= waterLimits.max
@@ -592,14 +820,33 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
     (s) => !calendarSupNames.includes(s.toLowerCase())
   )
 
+  // Supplement dose editing state
+  const [editingSupDose, setEditingSupDose] = useState<CalendarEvent | null>(null)
+  const [editDose, setEditDose] = useState("")
+  const [editDoseSaving, setEditDoseSaving] = useState(false)
+
   if (loading) {
     return <div className="flex items-center justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
   }
 
   const bellMed = bellMedId ? medications.find((m) => m.id === bellMedId) : null
 
+  const saveSupDose = async () => {
+    if (!editingSupDose || !editDose.trim()) return
+    setEditDoseSaving(true)
+    try {
+      const supabase = createBrowserClient()
+      await supabase.from("calendar_events").update({
+        description: editDose,
+        metadata: { ...((editingSupDose.metadata as Record<string, unknown>) || {}), dose: editDose },
+      }).eq("id", editingSupDose.id)
+      setEditingSupDose(null)
+      fetchData()
+    } catch { /* ignore */ } finally { setEditDoseSaving(false) }
+  }
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* Full-page confetti */}
       <ConfettiOverlay show={showConfetti} onDone={() => setShowConfetti(false)} />
 
@@ -641,9 +888,10 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
         <Sparkles className="h-5 w-5 text-primary shrink-0" />
         <div className="flex-1">
           <p className="text-sm font-medium text-foreground">
-            {allMedsDone && glasses >= waterTarget
+            {allMedsDone && allSupsDone && glasses >= waterTarget
               ? (tr ? "Bugün harikasın! Tüm görevler tamam." : "Amazing day! All tasks done.")
-              : (tr ? `Bugünkü ilerleme: ${completedMeds}/${medications.length} ilaç` : `Today: ${completedMeds}/${medications.length} meds`)}
+              : (tr ? `Bugünkü ilerleme: ${completedMeds}/${medications.length} ilaç · ${completedSups}/${supplementEvents.length} takviye`
+                    : `Today: ${completedMeds}/${medications.length} meds · ${completedSups}/${supplementEvents.length} supps`)}
           </p>
         </div>
         {streak > 0 && (
@@ -652,8 +900,44 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
             <span className="text-xs font-bold text-amber-500">{streak}</span>
           </div>
         )}
-        {allMedsDone && glasses >= waterTarget && <span className="text-lg">🎉</span>}
+        {allMedsDone && allSupsDone && glasses >= waterTarget && <span className="text-lg">🎉</span>}
       </div>
+
+      {/* ═══ 2-Column Layout ═══ */}
+      <div className="grid gap-6 md:grid-cols-2">
+
+      {/* ══ LEFT COLUMN: Check-in + Meds + Supplements ══ */}
+      <div className="space-y-6">
+
+      {/* ═══ Daily Check-in (Sprint 10) ═══ */}
+      <Card className={checkinDone ? "border-primary/20" : "border-amber-500/20"}>
+        <CardContent className="flex items-center gap-3 p-4">
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${checkinDone ? "bg-primary/10" : "bg-amber-500/10"}`}>
+            {checkinDone
+              ? <Check className="h-5 w-5 text-primary" />
+              : <Sparkles className="h-5 w-5 text-amber-500" />
+            }
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium">
+              {checkinDone ? (tr ? "Check-in tamamlandı" : "Check-in complete") : tx("checkin.title", lang)}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {checkinDone ? (tr ? "Bugünkü durumun kaydedildi!" : "Today's status recorded!") : tx("checkin.subtitle", lang)}
+            </p>
+          </div>
+          {!checkinDone && (
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-amber-500/30 text-amber-600 hover:bg-amber-500/10"
+              onClick={() => window.dispatchEvent(new Event("open-checkin"))}
+            >
+              {tx("summary.doCheckin", lang)}
+            </Button>
+          )}
+        </CardContent>
+      </Card>
 
       {/* ═══ Medications ═══ */}
       <Card>
@@ -820,6 +1104,39 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
         </DialogContent>
       </Dialog>
 
+      {/* All supplements done celebration */}
+      {allSupsDoneMsg && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[90] rounded-2xl bg-primary px-6 py-3 text-sm font-medium text-white shadow-2xl animate-bounce">
+          {allSupsDoneMsg}
+        </div>
+      )}
+
+      {/* ═══ Overdue Supplement Warning ═══ */}
+      {(() => {
+        const now = new Date()
+        const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`
+        const overdueSups = supplementEvents.filter((s) => {
+          const reminder = supReminders[s.id] || s.event_time
+          if (!reminder) return false
+          return reminder < currentTime && !isSupCompleted(s.id)
+        })
+        if (overdueSups.length === 0) return null
+        return (
+          <div className="flex items-center gap-3 rounded-xl border border-primary/30 bg-primary/10 px-4 py-3 animate-pulse">
+            <Leaf className="h-5 w-5 text-primary shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-primary">
+                {tr ? `${overdueSups.map((s) => getSupplementDisplayName(s.title, lang)).join(", ")} saati geçti!`
+                     : `${overdueSups.map((s) => getSupplementDisplayName(s.title, lang)).join(", ")} overdue!`}
+              </p>
+              <p className="text-xs text-primary/70">
+                {tr ? "Takviyeni almayı unutma!" : "Don't forget to take your supplement!"}
+              </p>
+            </div>
+          </div>
+        )
+      })()}
+
       {/* ═══ Supplements ═══ */}
       <Card>
         <CardHeader className="pb-3">
@@ -828,10 +1145,22 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
               <Leaf className="h-4 w-4 text-primary" />
               {tx("cal.supplements", lang)}
             </span>
-            <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => setAddSupplementOpen(true)}>
-              <Plus className="h-3.5 w-3.5 mr-1" />
-              {tr ? "Ekle" : "Add"}
-            </Button>
+            <div className="flex items-center gap-2">
+              {supStreak > 0 && (
+                <span className="flex items-center gap-1 text-xs text-primary">
+                  <Flame className="h-3 w-3" /> {supStreak} {tr ? "gün" : "days"}
+                </span>
+              )}
+              {supplementEvents.length > 0 && (
+                <Badge variant={allSupsDone ? "default" : "secondary"} className={allSupsDone ? "bg-primary text-white" : ""}>
+                  {allSupsDone ? "✓" : `${completedSups}/${supplementEvents.length}`}
+                </Badge>
+              )}
+              <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => setAddSupplementOpen(true)}>
+                <Plus className="h-3.5 w-3.5 mr-1" />
+                {tr ? "Ekle" : "Add"}
+              </Button>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -850,7 +1179,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
               </div>
             </div>
           )}
-          {events.filter((e) => e.event_type === "supplement").length === 0 && profileSupsNotInCalendar.length === 0 ? (
+          {supplementEvents.length === 0 && profileSupsNotInCalendar.length === 0 ? (
             <div className="text-center py-4">
               <Leaf className="mx-auto h-8 w-8 text-muted-foreground/30 mb-2" />
               <p className="text-sm text-muted-foreground">
@@ -859,20 +1188,145 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
             </div>
           ) : (
             <div className="space-y-2">
-              {events.filter((e) => e.event_type === "supplement").map((sup) => (
-                <div key={sup.id} className="flex items-center gap-3 rounded-xl border px-4 py-3">
-                  <Leaf className="h-4 w-4 text-primary shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{sup.title}</p>
-                    {sup.description && <p className="text-xs text-muted-foreground truncate">{translateSupDesc(sup.description, tr)}</p>}
+              {supplementEvents.map((sup) => {
+                const completed = isSupCompleted(sup.id)
+                const isToggling = togglingSupId === sup.id
+                const justDone = justCompletedSup === sup.id
+                const reminderTime = supReminders[sup.id] || sup.event_time
+                const safety = (sup.metadata as Record<string, string>)?.safety
+                const safetyColor = safety === "caution" ? "text-amber-500" : safety === "dangerous" ? "text-red-500" : "text-primary"
+                return (
+                  <div key={sup.id} className="relative">
+                    <button
+                      type="button"
+                      onClick={() => !isToggling && toggleSupplement(sup)}
+                      disabled={isToggling}
+                      className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-300 ${
+                        justDone ? "scale-[1.03] border-primary bg-primary/15 shadow-lg shadow-primary/10" :
+                        completed ? "bg-primary/5 border-primary/30" :
+                        "hover:bg-muted/50 hover:border-primary/20 active:scale-[0.97]"
+                      }`}
+                    >
+                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                        completed ? "border-primary bg-primary scale-110" : "border-muted-foreground/30"
+                      }`}>
+                        {isToggling ? <Loader2 className="h-3.5 w-3.5 animate-spin text-white" />
+                         : completed ? <Check className="h-4 w-4 text-white" /> : null}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium truncate transition-all ${completed ? "text-muted-foreground line-through" : "text-foreground"}`}>
+                          <span className={safetyColor}>●</span> {getSupplementDisplayName(sup.title, lang)}
+                        </p>
+                        <div className="flex items-center gap-2">
+                          {sup.description && (
+                            <span
+                              role="link"
+                              tabIndex={0}
+                              onClick={(e) => { e.stopPropagation(); setEditingSupDose(sup); setEditDose(sup.description || "") }}
+                              onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); setEditingSupDose(sup); setEditDose(sup.description || "") } }}
+                              className="text-xs text-muted-foreground truncate hover:text-primary hover:underline transition-colors cursor-pointer"
+                            >
+                              {translateSupDesc(sup.description, tr)} ✎
+                            </span>
+                          )}
+                          {reminderTime && (
+                            <span className="flex items-center gap-0.5 text-xs text-primary/70">
+                              <Clock className="h-3 w-3" /> {reminderTime}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div
+                        onClick={(e) => { e.stopPropagation(); setBellSupId(sup.id) }}
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors cursor-pointer ${
+                          reminderTime ? "text-primary bg-primary/10" : "text-muted-foreground/40 hover:text-primary hover:bg-primary/10"
+                        }`}
+                      >
+                        <Bell className="h-4 w-4" />
+                      </div>
+                    </button>
+                    {/* Completion message — floats above */}
+                    {justDone && supMessage && (
+                      <div className="absolute -top-10 left-1/2 -translate-x-1/2 rounded-2xl bg-primary px-4 py-1.5 text-xs font-medium text-white shadow-xl z-20 whitespace-nowrap animate-bounce">
+                        {supMessage}
+                      </div>
+                    )}
                   </div>
-                  {sup.event_time && <span className="text-xs text-muted-foreground">{sup.event_time}</span>}
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </CardContent>
       </Card>
+
+      {/* ═══ Supplement Bell Reminder Dialog ═══ */}
+      <Dialog open={!!bellSupId} onOpenChange={(o) => !o && setBellSupId(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bell className="h-5 w-5 text-primary" />
+              {tr ? "Hatırlatma Saati" : "Reminder Time"}
+            </DialogTitle>
+          </DialogHeader>
+          {bellSupId && (() => {
+            const sup = events.find((e) => e.id === bellSupId)
+            if (!sup) return null
+            return (
+              <div className="space-y-5">
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{getSupplementDisplayName(sup.title, lang)}</span>
+                  {" — "}{tr ? "ne zaman hatırlatayım?" : "when should I remind you?"}
+                </p>
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-muted-foreground shrink-0" />
+                  <input
+                    type="time"
+                    value={pendingSupBellTime}
+                    onChange={(e) => setPendingSupBellTime(e.target.value)}
+                    className="flex-1 rounded-xl border bg-background px-4 py-3 text-base text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {["07:00", "08:00", "09:00", "12:00", "18:00", "21:00", "22:00"].map((t) => (
+                    <button key={t} onClick={() => setPendingSupBellTime(t)}
+                      className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                        pendingSupBellTime === t ? "bg-primary text-white shadow-sm" : "border bg-card hover:border-primary hover:text-primary"
+                      }`}>
+                      {t}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-2 pt-1">
+                  {supReminders[bellSupId] && (
+                    <Button variant="outline" className="text-red-500 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950"
+                      onClick={() => removeSupReminder(bellSupId)}>
+                      {tr ? "Kaldır" : "Remove"}
+                    </Button>
+                  )}
+                  <Button className="flex-1" onClick={() => confirmSupReminder(bellSupId)}
+                    disabled={!pendingSupBellTime}>
+                    <Check className="h-4 w-4 mr-1.5" />
+                    {tr ? "Onayla" : "Confirm"}
+                  </Button>
+                </div>
+                {supReminders[bellSupId] && (
+                  <div className="rounded-lg bg-primary/5 border border-primary/10 p-3 text-center">
+                    <p className="text-xs text-muted-foreground">{tr ? "Mevcut hatırlatma:" : "Current reminder:"}</p>
+                    <p className="text-sm font-medium text-primary mt-0.5">
+                      {getSupplementDisplayName(sup.title, lang)} — {supReminders[bellSupId]}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )
+          })()}
+        </DialogContent>
+      </Dialog>
+
+      </div>{/* END LEFT COLUMN */}
+
+      {/* ══ RIGHT COLUMN: Events + Water + Quick Actions ══ */}
+      <div className="space-y-6">
 
       {/* ═══ Events ═══ */}
       <Card>
@@ -1175,6 +1629,42 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           {tx("cal.recordHealth", lang)}
         </Button>
       </div>
+
+      </div>{/* END RIGHT COLUMN */}
+      </div>{/* END 2-Column Grid */}
+
+      {/* Supplement Dose Edit Dialog */}
+      <Dialog open={!!editingSupDose} onOpenChange={(o) => !o && setEditingSupDose(null)}>
+        <DialogContent className="sm:max-w-xs">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Leaf className="h-5 w-5 text-primary" />
+              {tr ? "Doz Ayarla" : "Adjust Dose"}
+            </DialogTitle>
+          </DialogHeader>
+          {editingSupDose && (
+            <div className="space-y-4">
+              <p className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">{getSupplementDisplayName(editingSupDose.title, lang)}</span>
+              </p>
+              <div>
+                <label className="mb-1.5 block text-xs font-medium">{tr ? "Günlük doz" : "Daily dose"}</label>
+                <input
+                  type="text"
+                  value={editDose}
+                  onChange={(e) => setEditDose(e.target.value)}
+                  placeholder={editingSupDose.description || (tr ? "ör: 500mg" : "e.g. 500mg")}
+                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  autoFocus
+                />
+              </div>
+              <Button className="w-full" onClick={saveSupDose} disabled={editDoseSaving || !editDose.trim()}>
+                {editDoseSaving ? "..." : (tr ? "Kaydet" : "Save")}
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Dialogs */}
       <AddEventDialog userId={userId} lang={lang} open={addEventOpen} onOpenChange={(o) => { setAddEventOpen(o); if (!o) setEditingEvent(null) }} onSaved={fetchData} selectedDate={today} presetEventType={presetEventType} editEvent={editingEvent} />

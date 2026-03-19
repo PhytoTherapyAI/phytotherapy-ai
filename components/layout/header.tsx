@@ -11,11 +11,12 @@ import { tx } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
 
 const navLinks = [
-  { href: "/interaction-checker", label: "Interaction Checker" },
-  { href: "/health-assistant", label: "Health Assistant" },
-  { href: "/blood-test", label: "Blood Test Analysis" },
-  { href: "/calendar", label: "Calendar" },
+  { href: "/interaction-checker", labelKey: "nav.interaction" },
+  { href: "/health-assistant", labelKey: "nav.assistant" },
+  { href: "/blood-test", labelKey: "nav.bloodtest" },
+  { href: "/calendar", labelKey: "nav.calendar" },
 ];
+// Dashboard/Panel gets its own button style
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -26,7 +27,6 @@ export function Header() {
   const [showMedReminder, setShowMedReminder] = useState(false);
   const [dismissingReminder, setDismissingReminder] = useState(false);
 
-  // Show reminder when needsMedicationUpdate is true
   useEffect(() => {
     if (needsMedicationUpdate && isAuthenticated && !isLoading) {
       setShowMedReminder(true);
@@ -52,13 +52,6 @@ export function Header() {
     }
   }, [user?.id, refreshProfile]);
 
-  const navLabels: Record<string, string> = {
-    '/interaction-checker': tx('nav.interaction', lang),
-    '/health-assistant': tx('nav.assistant', lang),
-    '/blood-test': tx('nav.bloodtest', lang),
-    '/calendar': tx('nav.calendar', lang),
-  }
-
   const initials = profile?.full_name
     ? profile.full_name
         .split(" ")
@@ -68,7 +61,6 @@ export function Header() {
         .slice(0, 2)
     : user?.email?.[0]?.toUpperCase() ?? "U";
 
-  // Close user menu on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
@@ -83,7 +75,7 @@ export function Header() {
     <>
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        {/* Logo — Phyto=foreground, therapy=gold, .ai=green */}
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <Leaf
             className="h-[18px] w-[18px] transition-all duration-300 group-hover:scale-110"
@@ -100,20 +92,28 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Desktop nav — center links */}
-        <nav className="hidden items-center gap-6 md:flex">
+        {/* Desktop nav */}
+        <nav className="hidden items-center gap-5 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-semibold text-foreground/80 transition-colors hover:text-foreground"
             >
-              {navLabels[link.href]}
+              {tx(link.labelKey, lang)}
             </Link>
           ))}
+          {isAuthenticated && (
+            <Link
+              href="/dashboard"
+              className="text-sm font-semibold text-foreground/80 transition-colors hover:text-foreground"
+            >
+              {tx("nav.dashboard", lang)}
+            </Link>
+          )}
         </nav>
 
-        {/* Desktop right — auth + theme toggle */}
+        {/* Desktop right */}
         <div className="hidden items-center gap-3 md:flex">
           <LanguageToggle />
           <ThemeToggle />
@@ -173,7 +173,7 @@ export function Header() {
           )}
         </div>
 
-        {/* Mobile right — theme toggle + hamburger */}
+        {/* Mobile right */}
         <div className="flex items-center gap-2 md:hidden">
           <LanguageToggle />
           <ThemeToggle />
@@ -196,9 +196,18 @@ export function Header() {
               className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
               onClick={() => setMobileOpen(false)}
             >
-              {navLabels[link.href]}
+              {tx(link.labelKey, lang)}
             </Link>
           ))}
+          {isAuthenticated && (
+            <Link
+              href="/dashboard"
+              className="block py-2 text-sm font-semibold text-primary hover:text-primary/80"
+              onClick={() => setMobileOpen(false)}
+            >
+              {tx("nav.dashboard", lang)}
+            </Link>
+          )}
 
           <div className="mt-2 border-t pt-2">
             {isLoading ? (

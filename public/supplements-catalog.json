@@ -1,0 +1,133 @@
+{
+  "version": "1.0",
+  "source": "NIH ODS, PubMed, WHO Monographs, EFSA",
+  "lastUpdated": "2026-03-19",
+  "categories": {
+    "vitamins": {
+      "tr": "Vitaminler",
+      "items": [
+        "Vitamin A", "Vitamin B1 (Thiamine)", "Vitamin B2 (Riboflavin)", "Vitamin B3 (Niacin)",
+        "Vitamin B5 (Pantothenic Acid)", "Vitamin B6 (Pyridoxine)", "Vitamin B7 (Biotin)",
+        "Vitamin B9 (Folic Acid)", "Vitamin B12 (Cobalamin)", "Vitamin C (Ascorbic Acid)",
+        "Vitamin D3 (Cholecalciferol)", "Vitamin D2 (Ergocalciferol)", "Vitamin E (Tocopherol)",
+        "Vitamin K1 (Phylloquinone)", "Vitamin K2 (Menaquinone)", "Beta Carotene",
+        "Methylfolate (5-MTHF)", "Methylcobalamin"
+      ]
+    },
+    "minerals": {
+      "tr": "Mineraller",
+      "items": [
+        "Magnesium", "Magnesium Glycinate", "Magnesium Citrate", "Magnesium L-Threonate",
+        "Zinc", "Zinc Picolinate", "Iron", "Iron Bisglycinate", "Calcium", "Calcium Citrate",
+        "Selenium", "Chromium", "Chromium Picolinate", "Potassium", "Manganese",
+        "Copper", "Iodine", "Molybdenum", "Boron", "Phosphorus", "Silica"
+      ]
+    },
+    "aminoAcids": {
+      "tr": "Amino Asitler",
+      "items": [
+        "L-Arginine", "L-Glutamine", "L-Lysine", "L-Theanine", "L-Tyrosine",
+        "L-Carnitine", "Acetyl L-Carnitine (ALCAR)", "L-Tryptophan", "L-Citrulline",
+        "BCAA (Branched Chain Amino Acids)", "EAA (Essential Amino Acids)",
+        "Glycine", "Taurine", "N-Acetyl Cysteine (NAC)", "L-Ornithine",
+        "L-Methionine", "L-Histidine", "L-Proline", "Beta Alanine",
+        "HMB (Beta-Hydroxy Beta-Methylbutyrate)", "D-Aspartic Acid"
+      ]
+    },
+    "herbs": {
+      "tr": "Bitkisel Takviyeler",
+      "items": [
+        "Ashwagandha (Withania somnifera)", "Turmeric (Curcumin)", "Ginger (Zingiber)",
+        "Ginseng (Panax)", "Rhodiola Rosea", "Maca Root", "Holy Basil (Tulsi)",
+        "Bacopa Monnieri", "Ginkgo Biloba", "Lion's Mane Mushroom",
+        "Reishi Mushroom", "Cordyceps Mushroom", "Chaga Mushroom", "Turkey Tail Mushroom",
+        "Echinacea", "Elderberry (Sambucus)", "Milk Thistle (Silymarin)",
+        "Valerian Root", "Passionflower", "Chamomile Extract", "Lemon Balm (Melissa)",
+        "Saw Palmetto", "Tribulus Terrestris", "Fenugreek", "Black Cohosh",
+        "St. John's Wort (Hypericum)", "Gotu Kola", "Astragalus",
+        "Cat's Claw (Una de Gato)", "Hawthorn Berry", "Olive Leaf Extract",
+        "Oregano Oil", "Garlic Extract (Allicin)", "Green Tea Extract (EGCG)",
+        "Berberine", "Boswellia (Indian Frankincense)", "Devil's Claw",
+        "Dong Quai", "Licorice Root (DGL)", "Nettle Root", "Pine Bark Extract (Pycnogenol)",
+        "Schisandra Berry", "Shatavari", "Tongkat Ali (Eurycoma)", "Mucuna Pruriens",
+        "Shilajit", "Moringa", "Triphala", "Guduchi (Tinospora)",
+        "Andrographis", "Artichoke Extract", "Dandelion Root",
+        "Marshmallow Root", "Slippery Elm", "Psyllium Husk",
+        "Senna Leaf", "Cascara Sagrada", "Aloe Vera Extract",
+        "Black Seed Oil (Nigella sativa)", "Evening Primrose Oil",
+        "Borage Oil", "Flaxseed Oil", "Hemp Seed Oil",
+        "Cinnamon Extract (Ceylon)", "Bitter Melon", "Gymnema Sylvestre",
+        "Banaba Leaf", "White Mulberry Leaf"
+      ]
+    },
+    "sports": {
+      "tr": "Spor Takviyeleri",
+      "items": [
+        "Creatine Monohydrate", "Creatine HCL", "Beta Alanine",
+        "Citrulline Malate", "L-Citrulline", "Caffeine Anhydrous",
+        "Pre-Workout Complex", "BCAA 2:1:1", "EAA Complex",
+        "Whey Protein Isolate", "Whey Protein Concentrate", "Casein Protein",
+        "Plant Protein (Pea+Rice)", "Collagen Peptides",
+        "Glutamine", "HMB", "Betaine (Trimethylglycine)",
+        "Nitric Oxide Booster", "Agmatine Sulfate", "Peak ATP",
+        "Electrolyte Complex", "Dextrose", "Maltodextrin",
+        "CLA (Conjugated Linoleic Acid)", "L-Carnitine Tartrate",
+        "Yohimbine", "Synephrine", "Capsaicin Extract",
+        "Tart Cherry Extract", "Beetroot Powder", "Ashwagandha KSM-66",
+        "Rhodiola Extract", "Phosphatidic Acid"
+      ]
+    },
+    "fattyAcids": {
+      "tr": "Yağ Asitleri",
+      "items": [
+        "Omega-3 (EPA/DHA)", "Fish Oil", "Krill Oil", "Algae DHA",
+        "Cod Liver Oil", "Omega-3-6-9 Complex",
+        "MCT Oil", "Coconut Oil Extract",
+        "CLA (Conjugated Linoleic Acid)", "GLA (Gamma Linolenic Acid)",
+        "Flaxseed Oil (ALA)", "Phosphatidylserine", "Phosphatidylcholine"
+      ]
+    },
+    "probioticsDigestion": {
+      "tr": "Probiyotik ve Sindirim",
+      "items": [
+        "Probiotics (Multi-strain)", "Lactobacillus Acidophilus",
+        "Bifidobacterium Lactis", "Saccharomyces Boulardii",
+        "Soil-Based Probiotics (SBO)", "Spore-Based Probiotics",
+        "Prebiotic Fiber (Inulin)", "Prebiotic FOS",
+        "Digestive Enzymes", "Betaine HCL", "Ox Bile",
+        "Psyllium Husk", "Acacia Fiber", "Glucomannan",
+        "Slippery Elm", "Marshmallow Root", "L-Glutamine (Gut)"
+      ]
+    },
+    "antioxidants": {
+      "tr": "Antioksidanlar",
+      "items": [
+        "Coenzyme Q10 (CoQ10)", "Ubiquinol", "Alpha Lipoic Acid (ALA)",
+        "Resveratrol", "Quercetin", "Astaxanthin", "Glutathione (Liposomal)",
+        "PQQ (Pyrroloquinoline Quinone)", "Pterostilbene",
+        "Grape Seed Extract (OPC)", "Pine Bark Extract",
+        "Superoxide Dismutase (SOD)", "Catalase",
+        "Lutein", "Zeaxanthin", "Lycopene"
+      ]
+    },
+    "specialtyCompounds": {
+      "tr": "Özel Bileşikler",
+      "items": [
+        "Melatonin", "5-HTP", "GABA", "DHEA", "Pregnenolone",
+        "Collagen Type I & III", "Collagen Type II",
+        "Hyaluronic Acid", "Glucosamine", "Chondroitin", "MSM",
+        "SAMe (S-Adenosyl Methionine)", "NADH", "NMN (Nicotinamide Mononucleotide)",
+        "NR (Nicotinamide Riboside)", "Spermidine",
+        "Spirulina", "Chlorella", "Blue-Green Algae", "Wheatgrass",
+        "Bee Pollen", "Royal Jelly", "Propolis",
+        "Activated Charcoal", "Bentonite Clay", "Diatomaceous Earth",
+        "Iodine (Lugol's)", "Selenium (Selenomethionine)",
+        "DIM (Diindolylmethane)", "I3C (Indole-3-Carbinol)",
+        "Calcium D-Glucarate", "Sulforaphane (Broccoli Extract)",
+        "Apigenin", "Rutin", "Hesperidin",
+        "Serrapeptase", "Nattokinase", "Lumbrokinase",
+        "Monolaurin", "Colostrum", "Lactoferrin"
+      ]
+    }
+  }
+}

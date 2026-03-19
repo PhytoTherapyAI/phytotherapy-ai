@@ -87,6 +87,19 @@ export interface ConsentRecord {
   timestamp: string;
 }
 
+export interface DailyCheckIn {
+  id: string;
+  user_id: string;
+  check_date: string;
+  energy_level: number | null;
+  sleep_quality: number | null;
+  mood: number | null;
+  bloating: number | null;
+  notes: string | null;
+  health_score: number | null;
+  created_at: string;
+}
+
 // Supabase Database type for typed client
 export interface Database {
   public: {
