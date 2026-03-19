@@ -559,7 +559,8 @@ phytotherapy-ai/
 │       └── sprint10_health_scores.sql    # S10 — daily_check_ins tablosu
 ├── public/
 │   ├── phytotherapy_v2.png
-│   └── drugs-tr.json                      # NEW — Turkish drug names database
+│   ├── drugs-tr.json                      # Turkish drug names database
+│   └── supplements-catalog.json           # S10b — 200+ supplement catalog (9 categories)
 ├── .env.local
 ├── CLAUDE.md
 ├── PROGRESS.md
@@ -574,25 +575,19 @@ phytotherapy-ai/
 
 | Commit | Mesaj |
 |--------|-------|
+| `8d0d185` | Sprint 10 complete: health dashboard, supplement system, 2-column calendar |
+| `f009207` | Update CLAUDE.md v9.5 and PROGRESS.md — Sprint 9 complete |
+| `fdc2598` | Sprint 9b complete: centralized i18n, event editing, glow, overdue warning |
+| `328952c` | Fix remaining translation gaps — Emergency Warning, slots remaining, Grade |
+| `3dbe0b0` | Sprint 9b: Calendar Hub v2 — animations, bell reminders, water tracker v5, onboarding fixes |
+| `6386dfb` | Sprint 9a: Calendar Hub — medication tracking, supplements, water, vitals, events |
 | `c478ade` | Sprint 8: security, legal pages, assistant v2, collapsible sources, cookie consent |
 | `63e407f` | Refactor i18n: single-file language system with SUPPORTED_LANGUAGES config |
-| `7d72385` | Update CLAUDE.md v8.0 and PROGRESS.md — Sprint 7.5 complete |
 | `b839070` | Sprint 8: 3-tier medication verification, TR/EN translations, profile editing, UI improvements |
 | `28a24a9` | Sprint 7: design v2, dark mode, language toggle, logo font, translations |
-| `4e4bcdd` | Replace language toggle with mounted guard to fix TR TR duplication |
-| `27373dc` | Fix language toggle hydration — single text node with suppressHydrationWarning |
-| `2f85054` | Revert font overrides, fix language toggle duplicate, keep dark mode |
-| `0fca268` | Fix fonts, dark mode, and language toggle — complete rewrite |
-| `00a67a4` | Fix heading fonts with !important + card titles, add lang toggle debug logs |
-| `01f55d3` | Fix language toggle, global heading fonts, logo leaf, dark mode refinement |
-| `3b61581` | Design fixes: softer dark mode, language toggle, SVG color, remove badges |
-| `ea440eb` | Fix design consistency: logo colors, dark mode contrast, fonts, auth avatar |
 | `4af1224` | Sprint 7: Design v2 — new brand identity, dark/light mode, botanical hero |
-| `ece56a8` | Fix fetchProfile RLS failure — use getUser() instead of getSession() |
-| `e37d064` | Update CLAUDE.md to v6.0 and refresh PROGRESS.md |
-| `7ea9b25` | Fix medications and allergies not saving during onboarding |
 
 ---
 
 *Hackathon: 11-12 Nisan 2026 — 23 gün kaldı*
-*Sprint 1-10b tamamlandı. Sıradaki: Sprint 11 — Viral + Oyunlaştırma*
+*Sprint 1-10b tam tamamlandı. Sıradaki: Sprint 11 — Viral + Oyunlaştırma*
