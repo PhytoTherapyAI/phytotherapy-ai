@@ -116,20 +116,20 @@ export default function OperationsPage() {
           className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
-          {lang === "tr" ? "Operasyon Ekle" : "Add Operation"}
+          {tx("operations.add", lang)}
         </button>
       </div>
 
       {/* Add Operation Form */}
       {showAdd && (
         <div className="mb-6 rounded-xl border bg-card p-5">
-          <h3 className="mb-3 font-semibold">{lang === "tr" ? "Yeni Operasyon" : "New Operation"}</h3>
+          <h3 className="mb-3 font-semibold">{tx("operations.new", lang)}</h3>
           <div className="grid gap-3 sm:grid-cols-2">
             <input
               type="text"
               value={newOp.name}
               onChange={(e) => setNewOp({ ...newOp, name: e.target.value })}
-              placeholder={lang === "tr" ? "Operasyon adı" : "Operation name"}
+              placeholder={tx("operations.namePlaceholder", lang)}
               className="rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
             />
             <input
@@ -142,7 +142,7 @@ export default function OperationsPage() {
           <textarea
             value={newOp.notes}
             onChange={(e) => setNewOp({ ...newOp, notes: e.target.value })}
-            placeholder={lang === "tr" ? "Notlar (isteğe bağlı)" : "Notes (optional)"}
+            placeholder={tx("operations.notesPlaceholder", lang)}
             className="mt-3 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
             rows={2}
           />
@@ -151,13 +151,13 @@ export default function OperationsPage() {
               onClick={addOperation}
               className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
-              {lang === "tr" ? "Kaydet" : "Save"}
+              {tx("operations.save", lang)}
             </button>
             <button
               onClick={() => setShowAdd(false)}
               className="rounded-lg bg-muted px-4 py-2 text-sm font-medium hover:bg-muted/80"
             >
-              {lang === "tr" ? "İptal" : "Cancel"}
+              {tx("operations.cancel", lang)}
             </button>
           </div>
         </div>
@@ -168,7 +168,7 @@ export default function OperationsPage() {
         <div className="rounded-xl border bg-card p-8 text-center">
           <Scissors className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
           <p className="text-sm text-muted-foreground">
-            {lang === "tr" ? "Planlanmış operasyon yok" : "No upcoming operations"}
+            {tx("operations.noOps", lang)}
           </p>
         </div>
       ) : (
@@ -190,7 +190,7 @@ export default function OperationsPage() {
                       <Calendar className="h-3.5 w-3.5" />
                       {new Date(op.date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { month: "long", day: "numeric", year: "numeric" })}
                       <span className={`font-medium ${days <= 7 ? "text-red-500" : "text-blue-500"}`}>
-                        ({isUpcoming ? `${days} ${lang === "tr" ? "gün kaldı" : "days left"}` : lang === "tr" ? "Geçmiş" : "Past"})
+                        ({isUpcoming ? `${days} ${tx("operations.daysLeft", lang)}` : tx("operations.past", lang)})
                       </span>
                     </div>
                   </div>
@@ -204,7 +204,7 @@ export default function OperationsPage() {
                   <div className="p-4">
                     <h4 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-red-600 dark:text-red-400">
                       <AlertTriangle className="h-4 w-4" />
-                      {lang === "tr" ? "Ameliyat Öncesi Kesilmesi Gereken Takviyeler" : "Supplements to Stop Before Surgery"}
+                      {tx("operations.stopBefore", lang)}
                     </h4>
                     <div className="space-y-2">
                       {STOP_BEFORE_SURGERY.map((s) => {
@@ -222,7 +222,7 @@ export default function OperationsPage() {
                               {shouldStopNow ? (
                                 <span className="flex items-center gap-1 text-xs font-medium text-red-500">
                                   <AlertTriangle className="h-3 w-3" />
-                                  {lang === "tr" ? "ŞİMDİ KES" : "STOP NOW"}
+                                  {tx("operations.stopNow", lang)}
                                 </span>
                               ) : (
                                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -247,17 +247,13 @@ export default function OperationsPage() {
       <div className="mt-10 rounded-2xl border bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 p-6">
         <h2 className="flex items-center gap-2 text-lg font-semibold">
           <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-          {lang === "tr" ? "Sigorta Wellbeing Programı" : "Insurance Wellbeing Program"}
+          {tx("operations.insurance", lang)}
         </h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          {lang === "tr"
-            ? "Sigorta şirketleri ile wellbeing entegrasyonu yakında. Sağlık takip verileriniz (anonim) sigorta indirimi için kullanılabilecek."
-            : "Insurance wellbeing integration coming soon. Your health tracking data (anonymous) can be used for insurance discounts."}
+          {tx("operations.insuranceDesc", lang)}
         </p>
         <div className="mt-3 rounded-lg bg-background/80 p-3 text-xs text-muted-foreground">
-          {lang === "tr"
-            ? "Bu özellik opt-in bazlıdır. Verileriniz yalnızca izninizle paylaşılır."
-            : "This feature is opt-in only. Your data is shared only with your consent."}
+          {tx("operations.insuranceOptIn", lang)}
         </div>
       </div>
     </div>

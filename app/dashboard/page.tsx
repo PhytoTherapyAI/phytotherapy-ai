@@ -15,8 +15,31 @@ import { WeeklySummaryCard } from "@/components/dashboard/WeeklySummaryCard"
 import { SymptomPatternCard } from "@/components/dashboard/SymptomPatternCard"
 import { BossFightCard } from "@/components/dashboard/BossFightCard"
 import { SeasonalCard } from "@/components/dashboard/SeasonalCard"
-import { Activity, Loader2 } from "lucide-react"
+import {
+  Activity,
+  Loader2,
+  Clock,
+  Trophy,
+  BarChart3,
+  Scissors,
+  FileText,
+  AlertTriangle,
+  Sparkles,
+  Stethoscope,
+} from "lucide-react"
+import Link from "next/link"
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog"
+
+const TOOL_LINKS = [
+  { href: "/history", icon: Clock, labelKey: "nav.history" },
+  { href: "/badges", icon: Trophy, labelKey: "badges.title" },
+  { href: "/analytics", icon: BarChart3, labelKey: "analytics.title" },
+  { href: "/operations", icon: Scissors, labelKey: "operations.title" },
+  { href: "/enabiz", icon: FileText, labelKey: "enabiz.title" },
+  { href: "/side-effects", icon: AlertTriangle, labelKey: "sideeffect.title" },
+  { href: "/wrapped", icon: Sparkles, labelKey: "wrapped.title" },
+  { href: "/doctor", icon: Stethoscope, labelKey: "doctor.title" },
+]
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -146,6 +169,28 @@ export default function DashboardPage() {
             lang={lang}
             userConditions={profile.chronic_conditions || []}
           />
+        </div>
+      </div>
+
+      {/* Tools Grid */}
+      <div>
+        <h2 className="mb-3 text-lg font-semibold">{tx("dashboard.tools", lang)}</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {TOOL_LINKS.map((tool) => {
+            const Icon = tool.icon
+            return (
+              <Link
+                key={tool.href}
+                href={tool.href}
+                className="flex flex-col items-center gap-2 rounded-xl border bg-card p-4 text-center transition-all hover:border-primary/30 hover:shadow-sm"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                  <Icon className="h-5 w-5 text-primary" />
+                </div>
+                <span className="text-xs font-medium">{tx(tool.labelKey, lang)}</span>
+              </Link>
+            )
+          })}
         </div>
       </div>
 

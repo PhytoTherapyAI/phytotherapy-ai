@@ -7,13 +7,22 @@ import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { BADGES, evaluateBadges, calculateAnonymousScore, type UserStats } from "@/lib/badges"
-import { Trophy, Lock, Loader2, Users } from "lucide-react"
+import { Trophy, Lock, Loader2, Users, Crown, TrendingUp } from "lucide-react"
+
+interface LeaderboardData {
+  rank: number
+  total: number
+  percentile: number
+  topScores: number[]
+  userScore: number
+}
 
 export default function BadgesPage() {
   const router = useRouter()
   const { user, isAuthenticated, isLoading } = useAuth()
   const { lang } = useLang()
   const [stats, setStats] = useState<UserStats | null>(null)
+  const [leaderboard, setLeaderboard] = useState<LeaderboardData | null>(null)
   const [loading, setLoading] = useState(true)
 
   const fetchStats = useCallback(async () => {
@@ -50,6 +59,22 @@ export default function BadgesPage() {
 
     setStats(userStats)
     setLoading(false)
+
+    // Fetch leaderboard
+    try {
+      const supabase = createBrowserClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.access_token) {
+        const res = await fetch("/api/leaderboard", {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        if (res.ok) {
+          setLeaderboard(await res.json())
+        }
+      }
+    } catch {
+      // leaderboard is optional
+    }
   }, [user])
 
   useEffect(() => {
@@ -104,20 +129,70 @@ export default function BadgesPage() {
           </div>
           <div>
             <h3 className="font-semibold">
-              {lang === "tr" ? "Sağlık Etkileşim Puanı" : "Health Engagement Score"}
+              {tx("badges.engagementScore", lang)}
             </h3>
             <p className="text-sm text-muted-foreground">
-              {lang === "tr"
-                ? "Anonim olarak hesaplanır — topluluk ortalamasıyla karşılaştırın"
-                : "Calculated anonymously — compare with community average"}
+              {tx("badges.engagementDesc", lang)}
             </p>
             <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
               <Users className="h-3.5 w-3.5" />
-              {lang === "tr" ? "Topluluk ortalaması: 42" : "Community average: 42"}
+              {tx("badges.communityAvg", lang)}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Global Leaderboard */}
+      {leaderboard && (
+        <div className="mb-8 rounded-2xl border bg-card p-6">
+          <h3 className="mb-4 flex items-center gap-2 font-semibold">
+            <Crown className="h-5 w-5 text-amber-500" />
+            {tx("badges.leaderboard", lang)}
+          </h3>
+          <div className="mb-4 grid grid-cols-3 gap-3">
+            <div className="rounded-xl bg-muted/50 p-3 text-center">
+              <p className="text-2xl font-bold text-primary">#{leaderboard.rank}</p>
+              <p className="text-[10px] text-muted-foreground">{tx("badges.yourRank", lang)}</p>
+            </div>
+            <div className="rounded-xl bg-muted/50 p-3 text-center">
+              <p className="text-2xl font-bold text-primary">{leaderboard.percentile}%</p>
+              <p className="text-[10px] text-muted-foreground">{tx("badges.percentile", lang)}</p>
+            </div>
+            <div className="rounded-xl bg-muted/50 p-3 text-center">
+              <p className="text-2xl font-bold text-muted-foreground">{leaderboard.total}</p>
+              <p className="text-[10px] text-muted-foreground">{tx("badges.totalUsers", lang)}</p>
+            </div>
+          </div>
+          {leaderboard.topScores.length > 0 && (
+            <div>
+              <p className="mb-2 text-xs font-medium text-muted-foreground">{tx("badges.topScores", lang)}</p>
+              <div className="space-y-1.5">
+                {leaderboard.topScores.map((score, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="w-5 text-xs font-bold text-muted-foreground">{i + 1}</span>
+                    <div className="h-2.5 flex-1 rounded-full bg-muted">
+                      <div
+                        className={`h-2.5 rounded-full transition-all ${
+                          score === leaderboard.userScore ? "bg-primary" : "bg-primary/40"
+                        }`}
+                        style={{ width: `${score}%` }}
+                      />
+                    </div>
+                    <span className={`w-8 text-right text-xs font-medium ${
+                      score === leaderboard.userScore ? "text-primary" : "text-muted-foreground"
+                    }`}>
+                      {score}
+                    </span>
+                    {score === leaderboard.userScore && (
+                      <TrendingUp className="h-3 w-3 text-primary" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Earned Badges */}
       {earned.length > 0 && (

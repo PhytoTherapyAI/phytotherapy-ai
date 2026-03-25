@@ -147,18 +147,18 @@ export default function AnalyticsPage() {
         <>
           {/* Summary Stats */}
           <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-5">
-            <MiniStat icon={<FlaskConical className="h-4 w-4 text-blue-500" />} value={data.totalQueries} label={lang === "tr" ? "Sorgu" : "Queries"} />
-            <MiniStat icon={<Calendar className="h-4 w-4 text-purple-500" />} value={data.totalCheckIns} label={lang === "tr" ? "Check-in" : "Check-ins"} />
-            <MiniStat icon={<Zap className="h-4 w-4 text-amber-500" />} value={data.avgEnergy} label={lang === "tr" ? "Ort. Enerji" : "Avg Energy"} suffix="/5" />
-            <MiniStat icon={<Moon className="h-4 w-4 text-indigo-500" />} value={data.avgSleep} label={lang === "tr" ? "Ort. Uyku" : "Avg Sleep"} suffix="/5" />
-            <MiniStat icon={<Activity className="h-4 w-4 text-green-500" />} value={data.avgMood} label={lang === "tr" ? "Ort. Ruh Hali" : "Avg Mood"} suffix="/5" />
+            <MiniStat icon={<FlaskConical className="h-4 w-4 text-blue-500" />} value={data.totalQueries} label={tx("analytics.queries", lang)} />
+            <MiniStat icon={<Calendar className="h-4 w-4 text-purple-500" />} value={data.totalCheckIns} label={tx("analytics.checkIns", lang)} />
+            <MiniStat icon={<Zap className="h-4 w-4 text-amber-500" />} value={data.avgEnergy} label={tx("analytics.avgEnergy", lang)} suffix="/5" />
+            <MiniStat icon={<Moon className="h-4 w-4 text-indigo-500" />} value={data.avgSleep} label={tx("analytics.avgSleep", lang)} suffix="/5" />
+            <MiniStat icon={<Activity className="h-4 w-4 text-green-500" />} value={data.avgMood} label={tx("analytics.avgMood", lang)} suffix="/5" />
           </div>
 
           {/* Query Activity Chart (simple bar) */}
           <div className="mb-6 rounded-xl border bg-card p-5">
             <h3 className="mb-4 flex items-center gap-2 font-semibold">
               <BarChart3 className="h-5 w-5 text-primary" />
-              {lang === "tr" ? "Haftalık Sorgu Aktivitesi" : "Weekly Query Activity"}
+              {tx("analytics.weeklyActivity", lang)}
             </h3>
             {data.queriesByWeek.length > 0 ? (
               <div className="flex items-end gap-2 h-32">
@@ -180,7 +180,7 @@ export default function AnalyticsPage() {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-8">
-                {lang === "tr" ? "Bu dönemde veri yok" : "No data for this period"}
+                {tx("analytics.noData", lang)}
               </p>
             )}
           </div>
@@ -189,7 +189,7 @@ export default function AnalyticsPage() {
           <div className="rounded-xl border bg-card p-5">
             <h3 className="mb-4 flex items-center gap-2 font-semibold">
               <TrendingUp className="h-5 w-5 text-primary" />
-              {lang === "tr" ? "Check-in Trendleri" : "Check-in Trends"}
+              {tx("analytics.checkInTrends", lang)}
             </h3>
             {data.checkInTrends.length > 0 ? (
               <div className="space-y-3">
@@ -206,14 +206,14 @@ export default function AnalyticsPage() {
                   </div>
                 ))}
                 <div className="flex items-center gap-4 pt-2 text-[10px] text-muted-foreground">
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded bg-amber-400" /> {lang === "tr" ? "Enerji" : "Energy"}</span>
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded bg-indigo-400" /> {lang === "tr" ? "Uyku" : "Sleep"}</span>
-                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded bg-green-400" /> {lang === "tr" ? "Ruh Hali" : "Mood"}</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded bg-amber-400" /> {tx("analytics.energy", lang)}</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded bg-indigo-400" /> {tx("analytics.sleep", lang)}</span>
+                  <span className="flex items-center gap-1"><span className="h-2 w-2 rounded bg-green-400" /> {tx("analytics.mood", lang)}</span>
                 </div>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-8">
-                {lang === "tr" ? "Check-in verisi yok" : "No check-in data"}
+                {tx("analytics.noCheckInData", lang)}
               </p>
             )}
           </div>

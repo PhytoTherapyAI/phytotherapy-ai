@@ -131,7 +131,7 @@ export default function DoctorPage() {
           {isVerified && (
             <div className="flex items-center gap-1.5 rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
               <Shield className="h-3.5 w-3.5" />
-              {lang === "tr" ? "Doğrulanmış" : "Verified"}
+              {tx("doctor.verified", lang)}
             </div>
           )}
         </div>
@@ -153,14 +153,12 @@ export default function DoctorPage() {
                   className="mt-3 flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-600"
                 >
                   <Upload className="h-4 w-4" />
-                  {lang === "tr" ? "Belge Yükle" : "Upload Document"}
+                  {tx("doctor.uploadDoc", lang)}
                 </button>
                 {showVerification && (
                   <div className="mt-3 rounded-lg border bg-background p-4">
                     <p className="text-sm text-muted-foreground">
-                      {lang === "tr"
-                        ? "TC kimlik + diploma fotoğrafı veya TTB sicil numarası gönderin. Manuel onay 24 saat içinde yapılır."
-                        : "Send your ID + diploma photo or TTB registration number. Manual verification within 24 hours."}
+                      {tx("doctor.verificationInstructions", lang)}
                     </p>
                     <input
                       type="file"
@@ -168,7 +166,7 @@ export default function DoctorPage() {
                       className="mt-2 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-primary/10 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary"
                     />
                     <p className="mt-2 text-xs text-muted-foreground">
-                      {lang === "tr" ? "Desteklenen: JPG, PNG, PDF (maks 10MB)" : "Supported: JPG, PNG, PDF (max 10MB)"}
+                      {tx("doctor.supportedFormats", lang)}
                     </p>
                   </div>
                 )}
@@ -179,10 +177,10 @@ export default function DoctorPage() {
 
         {/* Stats */}
         <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <StatCard icon={<Users className="h-5 w-5 text-blue-500" />} value={patients.filter(p => p.status === "active").length} label={lang === "tr" ? "Aktif Hasta" : "Active Patients"} />
-          <StatCard icon={<ClipboardList className="h-5 w-5 text-green-500" />} value={patients.length} label={lang === "tr" ? "Toplam" : "Total"} />
-          <StatCard icon={<TrendingUp className="h-5 w-5 text-purple-500" />} value={patients.length > 0 ? Math.round(patients.reduce((a, p) => a + (p.compliance_score || 0), 0) / patients.length) : 0} label={lang === "tr" ? "Ort. Uyum" : "Avg. Compliance"} />
-          <StatCard icon={<FileText className="h-5 w-5 text-amber-500" />} value={0} label={lang === "tr" ? "Bu Hafta Ziyaret" : "Visits This Week"} />
+          <StatCard icon={<Users className="h-5 w-5 text-blue-500" />} value={patients.filter(p => p.status === "active").length} label={tx("doctor.activePatients", lang)} />
+          <StatCard icon={<ClipboardList className="h-5 w-5 text-green-500" />} value={patients.length} label={tx("doctor.total", lang)} />
+          <StatCard icon={<TrendingUp className="h-5 w-5 text-purple-500" />} value={patients.length > 0 ? Math.round(patients.reduce((a, p) => a + (p.compliance_score || 0), 0) / patients.length) : 0} label={tx("doctor.avgCompliance", lang)} />
+          <StatCard icon={<FileText className="h-5 w-5 text-amber-500" />} value={0} label={tx("doctor.visitsThisWeek", lang)} />
         </div>
 
         {/* Invite Patient */}

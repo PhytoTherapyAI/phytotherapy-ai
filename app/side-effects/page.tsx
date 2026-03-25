@@ -120,7 +120,7 @@ export default function SideEffectsPage() {
           className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" />
-          {lang === "tr" ? "Bildir" : "Report"}
+          {tx("sideeffect.report", lang)}
         </button>
       </div>
 
@@ -130,36 +130,36 @@ export default function SideEffectsPage() {
           {submitted ? (
             <div className="flex items-center gap-2 text-green-600">
               <CheckCircle2 className="h-5 w-5" />
-              <span className="font-medium">{lang === "tr" ? "Rapor gönderildi. Teşekkürler!" : "Report submitted. Thank you!"}</span>
+              <span className="font-medium">{tx("sideeffect.submitted", lang)}</span>
             </div>
           ) : (
             <>
-              <h3 className="mb-3 font-semibold">{lang === "tr" ? "Yan Etki Bildirimi" : "Side Effect Report"}</h3>
+              <h3 className="mb-3 font-semibold">{tx("sideeffect.reportTitle", lang)}</h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 <input
                   type="text"
                   value={form.supplement}
                   onChange={(e) => setForm({ ...form, supplement: e.target.value })}
-                  placeholder={lang === "tr" ? "Takviye adı *" : "Supplement name *"}
+                  placeholder={tx("sideeffect.supplementName", lang)}
                   className="rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
                 />
                 <input
                   type="text"
                   value={form.medication}
                   onChange={(e) => setForm({ ...form, medication: e.target.value })}
-                  placeholder={lang === "tr" ? "İlaç adı (varsa)" : "Medication name (if any)"}
+                  placeholder={tx("sideeffect.medicationName", lang)}
                   className="rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
                 />
               </div>
               <textarea
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                placeholder={lang === "tr" ? "Yaşadığınız yan etkiyi açıklayın *" : "Describe the side effect you experienced *"}
+                placeholder={tx("sideeffect.descPlaceholder", lang)}
                 className="mt-3 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
                 rows={3}
               />
               <div className="mt-3 flex items-center gap-3">
-                <span className="text-sm font-medium">{lang === "tr" ? "Şiddet:" : "Severity:"}</span>
+                <span className="text-sm font-medium">{tx("sideeffect.severity", lang)}</span>
                 {(["mild", "moderate", "severe"] as const).map((s) => (
                   <button
                     key={s}
@@ -168,16 +168,14 @@ export default function SideEffectsPage() {
                       form.severity === s ? severityColors[s] : "bg-muted text-muted-foreground"
                     }`}
                   >
-                    {s === "mild" ? (lang === "tr" ? "Hafif" : "Mild") :
-                     s === "moderate" ? (lang === "tr" ? "Orta" : "Moderate") :
-                     (lang === "tr" ? "Şiddetli" : "Severe")}
+                    {tx(`sideeffect.${s}`, lang)}
                   </button>
                 ))}
               </div>
               <div className="mt-3 flex items-center gap-2">
                 <Eye className="h-3.5 w-3.5 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">
-                  {lang === "tr" ? "Raporunuz anonim olarak topluluk verisine eklenir" : "Your report is added anonymously to community data"}
+                  {tx("sideeffect.anonymousNote", lang)}
                 </span>
               </div>
               <button
@@ -186,7 +184,7 @@ export default function SideEffectsPage() {
                 className="mt-3 flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
               >
                 <Send className="h-4 w-4" />
-                {lang === "tr" ? "Gönder" : "Submit"}
+                {tx("sideeffect.submit", lang)}
               </button>
             </>
           )}
@@ -197,7 +195,7 @@ export default function SideEffectsPage() {
       <div className="mb-6 rounded-xl border bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-950/10 dark:to-orange-950/10 p-5">
         <h3 className="mb-3 flex items-center gap-2 font-semibold">
           <BarChart3 className="h-5 w-5 text-amber-500" />
-          {lang === "tr" ? "Topluluk Sinyalleri" : "Community Signals"}
+          {tx("sideeffect.communitySignals", lang)}
         </h3>
         <div className="space-y-2">
           {COMMUNITY_SIGNALS.map((signal, i) => (
@@ -218,9 +216,7 @@ export default function SideEffectsPage() {
           ))}
         </div>
         <p className="mt-3 text-[10px] text-muted-foreground">
-          {lang === "tr"
-            ? "* Bu sinyaller anonim topluluk verisinden otomatik tespit edilir. Tıbbi tavsiye değildir."
-            : "* These signals are automatically detected from anonymous community data. Not medical advice."}
+          {tx("sideeffect.signalDisclaimer", lang)}
         </p>
       </div>
 
@@ -228,7 +224,7 @@ export default function SideEffectsPage() {
       <div className="rounded-xl border bg-card">
         <div className="border-b p-4">
           <h3 className="font-semibold">
-            {lang === "tr" ? "Raporlarım" : "My Reports"} ({reports.length})
+            {tx("sideeffect.myReports", lang)} ({reports.length})
           </h3>
         </div>
         {loading ? (
@@ -239,7 +235,7 @@ export default function SideEffectsPage() {
           <div className="p-8 text-center">
             <Shield className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
             <p className="text-sm text-muted-foreground">
-              {lang === "tr" ? "Henüz rapor yok" : "No reports yet"}
+              {tx("sideeffect.noReports", lang)}
             </p>
           </div>
         ) : (

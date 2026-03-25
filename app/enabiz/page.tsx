@@ -57,7 +57,7 @@ export default function EnabizPage() {
 
       setImported(mockData)
     } catch {
-      setError(lang === "tr" ? "PDF okunamadı. Lütfen geçerli bir E-Nabız PDF'i yükleyin." : "Could not read PDF. Please upload a valid E-Nabız PDF.")
+      setError(tx("enabiz.error", lang))
     } finally {
       setImporting(false)
     }
@@ -83,28 +83,28 @@ export default function EnabizPage() {
       {/* How it works */}
       <div className="mb-6 rounded-xl border bg-card p-5">
         <h3 className="mb-3 font-semibold">
-          {lang === "tr" ? "Nasıl çalışır?" : "How it works"}
+          {tx("enabiz.howItWorks", lang)}
         </h3>
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="flex items-start gap-2">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">1</div>
             <div>
-              <p className="text-sm font-medium">{lang === "tr" ? "E-Nabız'a giriş yapın" : "Log into E-Nabız"}</p>
-              <p className="text-xs text-muted-foreground">{lang === "tr" ? "enabiz.gov.tr" : "enabiz.gov.tr"}</p>
+              <p className="text-sm font-medium">{tx("enabiz.step1", lang)}</p>
+              <p className="text-xs text-muted-foreground">enabiz.gov.tr</p>
             </div>
           </div>
           <div className="flex items-start gap-2">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">2</div>
             <div>
-              <p className="text-sm font-medium">{lang === "tr" ? "Tahlillerinizi PDF olarak indirin" : "Download your results as PDF"}</p>
-              <p className="text-xs text-muted-foreground">{lang === "tr" ? "Laboratuvar Sonuçları bölümünden" : "From Lab Results section"}</p>
+              <p className="text-sm font-medium">{tx("enabiz.step2", lang)}</p>
+              <p className="text-xs text-muted-foreground">{tx("enabiz.step2Desc", lang)}</p>
             </div>
           </div>
           <div className="flex items-start gap-2">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">3</div>
             <div>
-              <p className="text-sm font-medium">{lang === "tr" ? "Buraya yükleyin" : "Upload here"}</p>
-              <p className="text-xs text-muted-foreground">{lang === "tr" ? "AI otomatik çıkarır" : "AI extracts automatically"}</p>
+              <p className="text-sm font-medium">{tx("enabiz.step3", lang)}</p>
+              <p className="text-xs text-muted-foreground">{tx("enabiz.step3Desc", lang)}</p>
             </div>
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function EnabizPage() {
                 {importing ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  lang === "tr" ? "İçe Aktar" : "Import"
+                  tx("enabiz.import", lang)
                 )}
               </button>
             </div>
@@ -155,7 +155,7 @@ export default function EnabizPage() {
           <div className="flex items-center gap-2 border-b p-4">
             <CheckCircle2 className="h-5 w-5 text-green-500" />
             <h3 className="font-semibold">
-              {lang === "tr" ? `${imported.length} kayıt içe aktarıldı` : `${imported.length} records imported`}
+              {`${imported.length} ${tx("enabiz.recordsImported", lang)}`}
             </h3>
           </div>
           <div className="divide-y">
@@ -176,7 +176,7 @@ export default function EnabizPage() {
               className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
             >
               <FileText className="h-4 w-4" />
-              {lang === "tr" ? "Kan Tahlili Analizine Git" : "Go to Blood Test Analysis"}
+              {tx("enabiz.goToBloodTest", lang)}
             </button>
           </div>
         </div>
@@ -187,11 +187,9 @@ export default function EnabizPage() {
         <div className="flex items-start gap-2">
           <Shield className="mt-0.5 h-4 w-4 shrink-0 text-green-500" />
           <div>
-            <p className="text-sm font-medium">{lang === "tr" ? "Veri Güvenliği" : "Data Security"}</p>
+            <p className="text-sm font-medium">{tx("enabiz.dataSecurity", lang)}</p>
             <p className="text-xs text-muted-foreground">
-              {lang === "tr"
-                ? "PDF'iniz sadece veri çıkarma için işlenir ve saklanmaz. Çıkarılan veriler şifreli olarak hesabınızda depolanır."
-                : "Your PDF is processed only for data extraction and is not stored. Extracted data is stored encrypted in your account."}
+              {tx("enabiz.dataSecurityDesc", lang)}
             </p>
           </div>
         </div>
