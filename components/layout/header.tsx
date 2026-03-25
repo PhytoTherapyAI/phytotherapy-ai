@@ -18,7 +18,6 @@ const allLinks = [
   { href: "/interaction-checker", labelKey: "nav.interaction" },
   { href: "/blood-test", labelKey: "nav.bloodtest" },
   { href: "/calorie", labelKey: "nav.calorie" },
-  { href: "/pricing", labelKey: "nav.pricing" },
 ];
 
 export function Header() {

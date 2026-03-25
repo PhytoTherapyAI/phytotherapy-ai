@@ -1075,6 +1075,16 @@ const t: Record<string, TranslationEntry> = {
   "doctor.total": { en: "Total", tr: "Toplam" },
   "doctor.avgCompliance": { en: "Avg. Compliance", tr: "Ort. Uyum" },
   "doctor.visitsThisWeek": { en: "Visits This Week", tr: "Bu Hafta Ziyaret" },
+  "doctor.joinTitle": { en: "Join Your Doctor", tr: "Doktorunuza Katılın" },
+  "doctor.joinDesc": { en: "Enter the invite code from your doctor to connect your health profile.", tr: "Sağlık profilinizi bağlamak için doktorunuzdan aldığınız davet kodunu girin." },
+  "doctor.joinSuccess": { en: "Successfully connected to your doctor!", tr: "Doktorunuza başarıyla bağlandınız!" },
+  "doctor.invalidCode": { en: "Invalid or expired invite code.", tr: "Geçersiz veya süresi dolmuş davet kodu." },
+  "doctor.cantJoinSelf": { en: "You cannot accept your own invite.", tr: "Kendi davetinizi kabul edemezsiniz." },
+  "doctor.joinError": { en: "Something went wrong. Please try again.", tr: "Bir hata oluştu. Lütfen tekrar deneyin." },
+  "doctor.tryAgain": { en: "Try again", tr: "Tekrar dene" },
+  "doctor.inviteCode": { en: "Invite Code", tr: "Davet Kodu" },
+  "doctor.acceptInvite": { en: "Accept Invite", tr: "Daveti Kabul Et" },
+  "doctor.enterCode": { en: "Enter invite code (e.g. DR-ABC123)", tr: "Davet kodunu girin (ör. DR-ABC123)" },
 
   // ══════════════════════════════════════════
   // Operations & E-Nabız — Sprint 18

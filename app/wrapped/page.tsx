@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
-import { PremiumGate } from "@/components/premium/PremiumGate"
+import { ShareCardBase } from "@/components/share/ShareCardBase"
 import {
   Calendar,
   FlaskConical,
@@ -34,7 +34,7 @@ interface WrappedData {
 
 export default function WrappedPage() {
   const router = useRouter()
-  const { user, isAuthenticated, isLoading, premiumStatus } = useAuth()
+  const { user, isAuthenticated, isLoading } = useAuth()
   const { lang } = useLang()
   const [data, setData] = useState<WrappedData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -118,9 +118,6 @@ export default function WrappedPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <PremiumGate feature="yearly_wrapped" status={premiumStatus} fallback="teaser"
-        teaserText={lang === "tr" ? "Yıllık Wrapped premium kullanıcılara özel" : "Yearly Wrapped is a Premium feature"}>
-
         <div className="text-center mb-8">
           <Sparkles className="mx-auto h-12 w-12 text-amber-500 mb-3" />
           <h1 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
@@ -130,6 +127,11 @@ export default function WrappedPage() {
         </div>
 
         {data && (
+          <ShareCardBase
+            lang={lang}
+            fileName="phytotherapy-wrapped.png"
+            shareTitle={lang === "tr" ? "Sağlık Yılım — Phytotherapy.ai" : "My Health Year — Phytotherapy.ai"}
+          >
           <div className="space-y-4">
             {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -211,16 +213,9 @@ export default function WrappedPage() {
               </div>
             )}
 
-            {/* Share button */}
-            <div className="flex justify-center pt-4">
-              <button className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-primary/80 px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow transition-all hover:shadow-lg">
-                <Share2 className="h-4 w-4" />
-                {lang === "tr" ? "Paylaş" : "Share"}
-              </button>
-            </div>
           </div>
+          </ShareCardBase>
         )}
-      </PremiumGate>
     </div>
   )
 }

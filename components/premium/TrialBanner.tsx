@@ -9,6 +9,9 @@ import type { PremiumStatus } from "@/lib/premium"
 export function TrialBanner({ status }: { status: PremiumStatus }) {
   const { lang } = useLang()
 
+  // Hackathon mode: never show trial banner
+  return null
+
   // Don't show if not on trial or already premium
   if (!status.isTrialActive || status.plan !== "free") return null
 

@@ -90,32 +90,13 @@ export function getPremiumStatus(profile: {
     };
   }
 
-  // Check trial status
-  const trialStart = profile.trial_started_at || profile.created_at;
-  if (!trialStart) {
-    return {
-      plan: "free",
-      isTrialActive: false,
-      trialEndsAt: null,
-      trialDaysLeft: 0,
-      isPremium: false,
-    };
-  }
-
-  const trialStartDate = new Date(trialStart);
-  const trialEndDate = new Date(trialStartDate);
-  trialEndDate.setDate(trialEndDate.getDate() + TRIAL_DAYS);
-
-  const now = new Date();
-  const daysLeft = Math.max(0, Math.ceil((trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-  const isTrialActive = now < trialEndDate;
-
+  // Hackathon mode: all features unlocked for demo
   return {
     plan: "free",
-    isTrialActive,
-    trialEndsAt: trialEndDate.toISOString(),
-    trialDaysLeft: daysLeft,
-    isPremium: isTrialActive,
+    isTrialActive: true,
+    trialEndsAt: null,
+    trialDaysLeft: 999,
+    isPremium: true,
   };
 }
 

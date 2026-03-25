@@ -6,7 +6,6 @@ import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
-import { PremiumGate } from "@/components/premium/PremiumGate"
 import {
   Stethoscope,
   Users,
@@ -35,7 +34,7 @@ interface Patient {
 
 export default function DoctorPage() {
   const router = useRouter()
-  const { user, isAuthenticated, isLoading, profile, premiumStatus } = useAuth()
+  const { user, isAuthenticated, isLoading, profile } = useAuth()
   const { lang } = useLang()
   const [patients, setPatients] = useState<Patient[]>([])
   const [loading, setLoading] = useState(true)
@@ -89,9 +88,10 @@ export default function DoctorPage() {
     const supabase = createBrowserClient()
     const code = `DR-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
 
+    // Insert pending invite — patient_id will be set when patient accepts via /doctor/join
     await supabase.from("doctor_patients").insert({
       doctor_id: user.id,
-      patient_id: user.id, // placeholder — real patient joins via code
+      patient_id: user.id, // placeholder until patient accepts
       invite_code: code,
       status: "pending",
     })
@@ -115,12 +115,6 @@ export default function DoctorPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
-      <PremiumGate
-        feature="doctor_pdf_email"
-        status={premiumStatus}
-        fallback="teaser"
-        teaserText={lang === "tr" ? "Doktor paneli Doktor paketi ile kullanılabilir" : "Doctor panel requires Doctor plan"}
-      >
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -240,7 +234,6 @@ export default function DoctorPage() {
             ))}
           </div>
         )}
-      </PremiumGate>
     </div>
   )
 }
