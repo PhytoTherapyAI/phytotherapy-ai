@@ -11,7 +11,6 @@ import {
   Star,
   StarOff,
   Trash2,
-  Filter,
   Clock,
   FlaskConical,
   Shield,
@@ -49,14 +48,28 @@ export default function HistoryPage() {
   const fetchHistory = useCallback(async () => {
     if (!user) return
     setLoading(true)
-    const supabase = createBrowserClient()
-    const { data } = await supabase
-      .from("query_history")
-      .select("id, query_text, response_text, query_type, is_favorite, created_at")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(200)
-    setItems((data as HistoryItem[]) || [])
+    try {
+      const supabase = createBrowserClient()
+      // Try with is_favorite first, fallback without it if column doesn't exist
+      const result = await supabase
+        .from("query_history")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(200)
+
+      const data = (result.data || []).map((item: Record<string, unknown>) => ({
+        id: item.id as string,
+        query_text: (item.query_text as string) || "",
+        response_text: (item.response_text as string) || null,
+        query_type: (item.query_type as string) || "general",
+        is_favorite: (item.is_favorite as boolean) ?? false,
+        created_at: item.created_at as string,
+      }))
+      setItems(data as HistoryItem[])
+    } catch {
+      setItems([])
+    }
     setLoading(false)
   }, [user])
 
@@ -68,21 +81,45 @@ export default function HistoryPage() {
     if (user) fetchHistory()
   }, [user, fetchHistory])
 
-  const toggleFavorite = async (id: string, current: boolean) => {
-    const supabase = createBrowserClient()
-    await supabase
-      .from("query_history")
-      .update({ is_favorite: !current })
-      .eq("id", id)
+  const toggleFavorite = async (e: React.MouseEvent, id: string, current: boolean) => {
+    e.stopPropagation()
+    // Optimistic update
     setItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, is_favorite: !current } : item))
     )
+    try {
+      const supabase = createBrowserClient()
+      await supabase
+        .from("query_history")
+        .update({ is_favorite: !current })
+        .eq("id", id)
+    } catch {
+      // Revert on failure
+      setItems((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, is_favorite: current } : item))
+      )
+    }
   }
 
-  const deleteItem = async (id: string) => {
-    const supabase = createBrowserClient()
-    await supabase.from("query_history").delete().eq("id", id)
+  const deleteItem = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    // Optimistic remove
+    const backup = items
     setItems((prev) => prev.filter((item) => item.id !== id))
+    try {
+      const supabase = createBrowserClient()
+      const { error } = await supabase.from("query_history").delete().eq("id", id)
+      if (error) {
+        console.error("[History] Delete failed:", error.message)
+        setItems(backup) // revert
+      }
+    } catch {
+      setItems(backup)
+    }
+  }
+
+  const toggleExpand = (id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id))
   }
 
   const filtered = items.filter((item) => {
@@ -164,9 +201,10 @@ export default function HistoryPage() {
             const isExpanded = expandedId === item.id
             return (
               <div key={item.id} className="rounded-xl border bg-card transition-all hover:shadow-sm">
-                <div
-                  className="flex cursor-pointer items-start gap-3 p-4"
-                  onClick={() => setExpandedId(isExpanded ? null : item.id)}
+                <button
+                  type="button"
+                  className="flex w-full items-start gap-3 p-4 text-left"
+                  onClick={() => toggleExpand(item.id)}
                 >
                   <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                     <Icon className="h-4 w-4 text-primary" />
@@ -188,9 +226,12 @@ export default function HistoryPage() {
                     <p className="mt-1 text-sm font-medium line-clamp-2">{item.query_text}</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); toggleFavorite(item.id, item.is_favorite) }}
-                      className="rounded-md p-1 transition-colors hover:bg-muted"
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => toggleFavorite(e, item.id, item.is_favorite)}
+                      onKeyDown={(e) => { if (e.key === "Enter") toggleFavorite(e as unknown as React.MouseEvent, item.id, item.is_favorite) }}
+                      className="rounded-md p-1.5 transition-colors hover:bg-muted cursor-pointer"
                       title={item.is_favorite ? tx("history.unfavorite", lang) : tx("history.favorite", lang)}
                     >
                       {item.is_favorite ? (
@@ -198,27 +239,36 @@ export default function HistoryPage() {
                       ) : (
                         <StarOff className="h-4 w-4 text-muted-foreground" />
                       )}
-                    </button>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); deleteItem(item.id) }}
-                      className="rounded-md p-1 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/30"
+                    </span>
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => deleteItem(e, item.id)}
+                      onKeyDown={(e) => { if (e.key === "Enter") deleteItem(e as unknown as React.MouseEvent, item.id) }}
+                      className="rounded-md p-1.5 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/30 cursor-pointer"
                       title={tx("history.delete", lang)}
                     >
                       <Trash2 className="h-4 w-4" />
-                    </button>
+                    </span>
                     {isExpanded ? (
                       <ChevronUp className="h-4 w-4 text-muted-foreground" />
                     ) : (
                       <ChevronDown className="h-4 w-4 text-muted-foreground" />
                     )}
                   </div>
-                </div>
-                {isExpanded && item.response_text && (
+                </button>
+                {isExpanded && (
                   <div className="border-t px-4 py-3">
-                    <div className="max-h-60 overflow-y-auto text-sm text-muted-foreground whitespace-pre-wrap">
-                      {item.response_text.slice(0, 2000)}
-                      {item.response_text.length > 2000 && "..."}
-                    </div>
+                    {item.response_text ? (
+                      <div className="max-h-60 overflow-y-auto text-sm text-muted-foreground whitespace-pre-wrap">
+                        {item.response_text.slice(0, 2000)}
+                        {item.response_text.length > 2000 && "..."}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">
+                        {lang === "tr" ? "Yanıt kaydedilmemiş" : "No response saved"}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>

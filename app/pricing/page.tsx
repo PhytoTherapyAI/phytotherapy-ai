@@ -117,7 +117,7 @@ export default function PricingPage() {
           )
           const perMonth = plan.id === "free" ? 0 : (
             billing === "yearly"
-              ? Math.round((PRICING[plan.id as keyof typeof PRICING]?.yearly || 0) / 12)
+              ? Math.round(((PRICING[plan.id as keyof typeof PRICING]?.yearly || 0) / 12) * 100) / 100
               : PRICING[plan.id as keyof typeof PRICING]?.monthly
           )
 
@@ -156,12 +156,12 @@ export default function PricingPage() {
                 ) : (
                   <>
                     <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-bold">₺{perMonth}</span>
+                      <span className="text-3xl font-bold">₺{Number(perMonth).toFixed(2)}</span>
                       <span className="text-sm text-muted-foreground">/{tx("pricing.mo", lang)}</span>
                     </div>
                     {billing === "yearly" && (
                       <p className="mt-0.5 text-xs text-muted-foreground">
-                        ₺{price}/{tx("pricing.yr", lang)} · {tx("pricing.savePercent", lang).replace("{pct}", String(PRICING[plan.id as keyof typeof PRICING]?.yearlySavings))}
+                        ₺{Number(price).toFixed(2)}/{tx("pricing.yr", lang)} · {tx("pricing.savePercent", lang).replace("{pct}", String(PRICING[plan.id as keyof typeof PRICING]?.yearlySavings))}
                       </p>
                     )}
                   </>

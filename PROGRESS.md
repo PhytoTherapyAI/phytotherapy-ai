@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 25 Mart 2026 (v20.0 — Sprint 1-20 tamamlandı, hackathon + post-hackathon feature set complete)
+> Son güncelleme: 26 Mart 2026 (v20.1 — Sprint 1-20 kod tamamlandı, S14-20 fix/polish devam ediyor)
 
 ---
 
@@ -24,13 +24,20 @@
 | Sprint 11b — Fixler + İyileştirmeler | ✅ Tamamlandı | 25 Mart 2026 |
 | Sprint 12 — Yeni Özellikler + Auth | ✅ Tamamlandı | 25 Mart 2026 |
 | Sprint 13 — Hackathon Hazırlık | ✅ Tamamlandı | 25 Mart 2026 |
-| Sprint 14 — Freemium Altyapısı | ✅ Tamamlandı | 25 Mart 2026 |
-| Sprint 15 — Kullanıcı Paneli | ✅ Tamamlandı | 25 Mart 2026 |
-| Sprint 16 — Wrapped + Affiliate | ✅ Tamamlandı | 25 Mart 2026 |
-| Sprint 17 — Doktor Paneli | ✅ Tamamlandı | 25 Mart 2026 |
-| Sprint 18 — Operasyonlar + E-Nabız | ✅ Tamamlandı | 25 Mart 2026 |
-| Sprint 19 — Veri Modülü + Analitik | ✅ Tamamlandı | 25 Mart 2026 |
-| Sprint 20 — PWA | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 14 — Freemium Altyapısı | ✅ Kod Hazır | 25 Mart 2026 |
+| Sprint 15 — Kullanıcı Paneli | 🔧 Fix Gerekli | 26 Mart 2026 |
+| Sprint 16 — Wrapped + Affiliate | ✅ Kod Hazır (erişim linki eksik) | 25 Mart 2026 |
+| Sprint 17 — Doktor Paneli | ✅ Kod Hazır (erişim linki eksik) | 25 Mart 2026 |
+| Sprint 18 — Operasyonlar + E-Nabız | ✅ Kod Hazır (erişim linki eksik) | 25 Mart 2026 |
+| Sprint 19 — Veri Modülü + Analitik | ✅ Kod Hazır (erişim linki eksik) | 25 Mart 2026 |
+| Sprint 20 — PWA | ✅ Tamamlandı (SW fix uygulandı) | 26 Mart 2026 |
+
+### ⚠️ Bilinen Sorunlar (SPRINT-14-20-FIXES.md)
+- **Supabase migration çalıştırılmadı** → DB bağımlı özellikler çalışmıyor
+- **Yeni sayfalar navbar/dashboard'da link yok** → URL bilmeden erişilemiyor
+- **Leaderboard eksik** → Badges sayfasına global sıralama eklenmeli
+- **Çeviri eksikleri** → Bazı sayfalarda hardcoded İngilizce stringler
+- **History düzeltildi** → Favori/silme/expand bug'ları fixlendi (26 Mart)
 
 **Hackathon: 11-12 Nisan 2026 — 17 gün kaldı**
 

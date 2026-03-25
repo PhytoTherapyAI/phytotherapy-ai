@@ -156,20 +156,20 @@ export const FAMILY_LIMITS = {
 // ── Pricing ──────────────────────────────────
 export const PRICING = {
   premium: {
-    monthly: 99, // TRY
-    yearly: 899,
-    yearlySavings: 24, // percent
+    monthly: 99.99,
+    yearly: 899.99,
+    yearlySavings: 25, // percent
     currency: "TRY",
   },
   family: {
-    monthly: 179,
-    yearly: 1699,
+    monthly: 179.99,
+    yearly: 1699.99,
     yearlySavings: 21,
     currency: "TRY",
   },
   doctor: {
-    monthly: 499,
-    yearly: 3999,
+    monthly: 499.99,
+    yearly: 3999.99,
     yearlySavings: 33,
     currency: "TRY",
   },
