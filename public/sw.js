@@ -1,25 +1,22 @@
-// Service Worker — Phytotherapy.ai PWA — Sprint 20
-const CACHE_NAME = 'phytotherapy-v1';
+// Service Worker — Phytotherapy.ai PWA — Sprint 20 v2
+// Conservative approach: only cache static assets, never Next.js chunks
+const CACHE_NAME = 'phytotherapy-v2';
 const OFFLINE_URL = '/offline';
 
-// Assets to cache immediately on install
+// Only cache truly static assets
 const PRECACHE_URLS = [
-  '/',
-  '/offline',
   '/manifest.json',
 ];
 
-// Install — precache essential assets
+// Install
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_URLS);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS))
   );
   self.skipWaiting();
 });
 
-// Activate — clean up old caches
+// Activate — clean ALL old caches (including v1 that may have bad data)
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -33,59 +30,56 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch — network first, cache fallback
+// Fetch — NEVER intercept Next.js assets or HTML navigation
+// Only provide offline fallback for navigation requests when network fails
 self.addEventListener('fetch', (event) => {
-  // Skip non-GET requests
   if (event.request.method !== 'GET') return;
 
-  // Skip API calls and auth
   const url = new URL(event.request.url);
-  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/auth/')) return;
 
-  event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        // Clone and cache successful responses
-        if (response.ok) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, clone);
-          });
-        }
-        return response;
-      })
-      .catch(() => {
-        // Try cache
-        return caches.match(event.request).then((cached) => {
-          if (cached) return cached;
-          // Fallback to offline page for navigation
-          if (event.request.mode === 'navigate') {
-            return caches.match(OFFLINE_URL);
-          }
-          return new Response('Offline', { status: 503 });
+  // NEVER touch Next.js internals, API routes, or auth
+  if (
+    url.pathname.startsWith('/_next/') ||
+    url.pathname.startsWith('/api/') ||
+    url.pathname.startsWith('/auth/') ||
+    url.pathname.includes('__next') ||
+    url.pathname.includes('webpack')
+  ) {
+    return;
+  }
+
+  // Only handle navigation requests (HTML pages) with network-only + offline fallback
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return caches.match(OFFLINE_URL) || new Response('Offline', {
+          status: 503,
+          headers: { 'Content-Type': 'text/html' },
         });
       })
-  );
+    );
+    return;
+  }
+
+  // Everything else: network only, no caching
 });
 
 // Push notifications
 self.addEventListener('push', (event) => {
   if (!event.data) return;
-
-  const data = event.data.json();
-  const options = {
-    body: data.body || '',
-    icon: '/icon-192.png',
-    badge: '/icon-192.png',
-    tag: data.tag || 'phytotherapy',
-    data: { url: data.url || '/' },
-    actions: data.actions || [],
-    vibrate: [200, 100, 200],
-  };
-
-  event.waitUntil(
-    self.registration.showNotification(data.title || 'Phytotherapy.ai', options)
-  );
+  try {
+    const data = event.data.json();
+    event.waitUntil(
+      self.registration.showNotification(data.title || 'Phytotherapy.ai', {
+        body: data.body || '',
+        icon: '/icon-192.png',
+        tag: data.tag || 'phytotherapy',
+        data: { url: data.url || '/' },
+      })
+    );
+  } catch (e) {
+    // Silently fail
+  }
 });
 
 // Notification click
@@ -95,9 +89,7 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     self.clients.matchAll({ type: 'window' }).then((clients) => {
       for (const client of clients) {
-        if (client.url === url && 'focus' in client) {
-          return client.focus();
-        }
+        if (client.url === url && 'focus' in client) return client.focus();
       }
       return self.clients.openWindow(url);
     })

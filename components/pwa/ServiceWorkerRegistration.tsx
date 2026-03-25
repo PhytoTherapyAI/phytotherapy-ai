@@ -6,28 +6,31 @@ export function ServiceWorkerRegistration() {
   useEffect(() => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) return
 
-    // Register service worker
-    navigator.serviceWorker
-      .register("/sw.js")
-      .then((registration) => {
+    // First: unregister any old/broken service workers and clear caches
+    async function cleanAndRegister() {
+      try {
+        // Clear all caches from previous SW versions
+        const cacheNames = await caches.keys()
+        await Promise.all(cacheNames.map((name) => caches.delete(name)))
+
+        // Register the new (safe) service worker
+        const registration = await navigator.serviceWorker.register("/sw.js", {
+          updateViaCache: "none", // Always fetch fresh SW
+        })
         console.log("[SW] Registered:", registration.scope)
 
-        // Check for updates periodically
-        setInterval(() => {
-          registration.update()
-        }, 60 * 60 * 1000) // Every hour
-      })
-      .catch((error) => {
+        // Force update check
+        registration.update()
+      } catch (error) {
         console.error("[SW] Registration failed:", error)
-      })
+      }
+    }
+
+    cleanAndRegister()
 
     // Listen for online/offline events
-    const handleOnline = () => {
-      document.documentElement.classList.remove("offline")
-    }
-    const handleOffline = () => {
-      document.documentElement.classList.add("offline")
-    }
+    const handleOnline = () => document.documentElement.classList.remove("offline")
+    const handleOffline = () => document.documentElement.classList.add("offline")
 
     window.addEventListener("online", handleOnline)
     window.addEventListener("offline", handleOffline)
