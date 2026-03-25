@@ -1,4 +1,4 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v9.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v12.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
@@ -43,7 +43,7 @@ Tıbbi Veri:   PubMed E-utilities API
 İlaç Veri:    OpenFDA API
 PDF:          @react-pdf/renderer
 Deploy:       Vercel ✅ — phytotherapy.ai
-Auth:         Supabase Auth ✅ (email çalışıyor, Google OAuth S12'de)
+Auth:         Supabase Auth ✅ (email çalışıyor, Google OAuth kod hazır — credentials gerekli)
 OS:           Windows
 ```
 
@@ -372,83 +372,60 @@ NOT: Reçete OCR çıkarıldı — Türkiye'de güvenilir çalışmaz, güvenlik
 
 ## Sprint Planı
 
-### ✅ S1–S10b — TAMAMLANDI
+### ✅ S1–S13 — TAMAMLANDI
 Next.js, Auth, Onboarding (7 adım + doğum tarihi), İlaç etkileşim motoru, Chat RAG, Kan tahlili, Tasarım v2 (dark/light), TR/EN çeviri sistemi (merkezi tx() + MESSAGE_ARRAYS), 3 katmanlı ilaç kontrolü, Türkçe ilaç veritabanı, Güvenlik + Yasal sayfalar, Takvim Hub (ilaç/takviye/su/vital/etkinlik takibi, hatırlatıcı, confetti animasyonlar, .ics export, 2-sütun layout), Sağlık Skorları + Dashboard (günlük skor 0-100, mikro check-in, biyolojik yaş otomatik cache, metabolik portföy, washout takvimden gerçek veri, kalori hesaplama, semptom pattern, haftalık özet, streak fix), Ana sayfa yeniden tasarım (auth: 2x2 grid summary+asistan+hero+görsel), Navbar sadeleştirme, Takviye Sistemi Tam (200+ katalog, 80+ doz DB, 60+ TR↔EN map, dropdown arama, AI güvenlik kontrolü, doz ayar + otomatik birim, toggle alınma takibi, streak, confetti, bell hatırlatıcı tek akış, overdue uyarı, renk kodlu etkileşim, sınırsız döngü, panel-takvim senkron, etkileşim denetleyicisinden tek tıkla ekleme)
 
-### 🔄 HACKATHON BLOĞU (25 gün → 12 Nisan)
+### ✅ HACKATHON BLOĞU (Tamamlandı — 25 Mart 2026)
 
-**Sprint 8 — Güvenlik + Yasal + Asistan v2** ← BU AKŞAM
-- Rate limiting (10/dak) + input sanitization
-- Privacy Policy + Terms (TR+EN)
-- Verilerimi sil / indir
-- Sistem promptu v2 (arkadaş tonu — yukarıdaki prompt)
-- Collapsible kaynak paneli (SourceCard güncelleme)
-- Renk kodlu supplement sistemi (SafetyBadge genişletme)
+**Sprint 8 — Güvenlik + Yasal + Asistan v2** ✅
+**Sprint 9 — Takvim Hub** ✅
+**Sprint 10 — Sağlık Skorları + Özet** ✅
+**Sprint 11a — Viral + Oyunlaştırma** ✅
+**Sprint 11b — Fixler + İyileştirmeler** ✅
+**Sprint 12 — Yeni Özellikler + Auth** ✅
+**Sprint 13 — Hackathon Hazırlık** ✅
 
-**Sprint 9 — Takvim Hub**
-- Ay/hafta/gün görünümü
-- İlaç kutucuk sistemi (doz kadar kutu)
-- Çan ikonu → bildirim seçimi
-- Takviye takibi, su takibi, vital + butonu
-- Spor / randevu / semptom / operasyon ekleme
-- Telefon takvimi (.ics)
-- Finishable günlük görevler
-- PWA push notification altyapısı
-- 1 hafta sessizlik hatırlatması
-- Sabah ilaç sorusu → günlük özet kartı
+**Sprint 11 Özet:**
+- ✅ Paylaşım kartı altyapısı + 4 paylaşım kartı (biyolojik yaş, etkileşim anı, protokol, haftalık)
+- ✅ Boss Fight protokolleri (6 boss, günlük task'lar, ilerleme takibi)
+- ✅ Mevsimsel hazırlık kartı + profil bazlı etkileşim uyarısı
+- ✅ Aile profili sayfası + gradient UI + Supabase migration (SQL çalıştırıldı)
+- ✅ İlaç tarayıcı + barkod tarayıcı (Gemini Vision + Open Food Facts)
+- ✅ Navbar: Hamburger kaldırıldı, 6 link direkt görünür, sağa hizalı
+- ✅ TR çeviriler: biyolojik yaş, kan tahlili StatusBadge/EvidenceBadge, washout
+- ✅ Etkileşim checker → takviyelerime ekle fix (cycleDays/breakDays metadata)
+- ✅ İlaç tarayıcı profil sayfasına taşındı
+- ✅ Takviye döngü bilgisi + özelleştirme
 
-**Sprint 10 — Sağlık Skorları + Özet**
-- Biyolojik yaş skoru (Gemini)
-- Günlük sağlık skoru (0-100)
-- Washout geri sayımı
-- Mikro check-in
-- Metabolik portföy (4 alan)
-- Kalori ihtiyacı hesaplama tool'u
-- Semptom pattern tespiti
-- Ana sayfa günlük özet kartı
-- Sabah özeti push bildirimi
-- Haftalık özet formatı + paylaşım kartı
+**Sprint 12 Özet:**
+- ✅ Google OAuth (kod hazır, Supabase Dashboard credentials gerekli — ertelendi)
+- ✅ Tarayıcı dili otomatik algılama (navigator.language)
+- ✅ Kan tahlili PDF upload (Gemini Vision + birim dönüştürme)
+- ✅ Gelişmiş kalori hesaplayıcı (BMI + US Navy body fat + kilo trend)
+- ✅ Boss Fight + Seasonal Card profil bazlı ilaç etkileşim uyarısı
+- ✅ SEO (Open Graph + Twitter Card meta tags)
 
-**Sprint 11 — Viral + Oyunlaştırma**
-- Biyolojik yaş paylaşım kartı
-- İlaç etkileşimi tespit anı kartı
-- Protokol tamamlama kartı
-- Boss Fight protokolleri
-- Mevsimsel hazırlık kartı
-- Aile profili + ebeveyn-çocuk (18 yaş kuralı)
-- İlaç fotoğraflama → otomatik profil
-- Barcode supplement tarama
+**Sprint 13 Özet:**
+- ✅ 3 demo senaryosu hazır (HACKATHON-PREP.md)
+- ✅ Pitch deck 10 slayt planı
+- ✅ 4 yedek plan (API/Supabase/internet/laptop)
+- ✅ SEO + performans kontrol listesi
 
-**Sprint 12 — Freemium Altyapısı**
-- Pricing sayfası (gösterim, henüz aktif değil)
-- 7 gün trial sistemi (otomatik açılış, kart gerekmez)
-- Premium tease bildirimleri (14/21/30. gün)
-- Plan katman altyapısı + kilitleme sistemi
-- Google OAuth
-- Tarayıcı dili otomatik algılama
+### 🚀 HACKATHON SONRASI (S14–S21)
 
-**Sprint 13 — Hackathon Hazırlık**
-- 3 demo prova (Metformin+uyku / Berberine / Kan tahlili)
-- Pitch deck (10 slayt)
-- Yedek planlar (API çökerse?)
-- Performans testi + SEO
-- Final kontrol listesi
+**Para Bloğu (Nisan sonu → Ağustos 2026)**
+- S14: Freemium altyapısı — Pricing sayfası, 7 gün trial otomatik, premium tease bildirimleri, İyzico ödeme entegrasyonu, özellik kilitleme sistemi
+- S15: Kullanıcı paneli — gelişmiş dashboard, sorgu geçmişi, favoriler, gamification rozetler, anonim karşılaştırma skoru
+- S16: Yıllık Wrapped altyapısı + affiliate supplement linkleri (şeffaf, asla ödeme karşılığı öneri) + aile paketi fiyatlandırma
 
-### 🚀 HACKATHON SONRASI
+**B2B Bloğu (Eylül → Kasım 2026)**
+- S17: Doktor paneli — hasta takip, ziyaret özeti AI, uyum skoru, TC/diploma doğrulama, abonelik
+- S18: Operasyon takibi + sigorta wellbeing altyapısı + E-Nabız manuel import (PDF/OCR)
+- S19: Gerçek dünya kanıt verisi modülü (opt-in, anonim, KVKK) + yan etki erken sinyal sistemi + analytics
 
-**Para Bloğu (Nisan sonu → Ağustos)**
-- S14: Freemium aktif (İyzico, premium kilitleri, beta kullanıcılarına 3 ay hediye)
-- S15: Kullanıcı paneli (dashboard, geçmiş, favoriler, gamification rozetler, anonim skor)
-- S16: Yıllık Wrapped altyapısı + affiliate supplement linkleri (şeffaf) + aile paketi
-
-**B2B Bloğu (Eylül → Kasım)**
-- S17: Doktor paneli (hasta takip, ziyaret özeti AI, uyum skoru, abonelik)
-- S18: Operasyon takibi + sigorta wellbeing altyapısı + E-Nabız import
-- S19: Gerçek dünya veri modülü + yan etki sinyal sistemi + analytics
-
-**Mobil Bloğu (Aralık 2026 →)**
-- S20: PWA olgunlaştırma (push tam, offline, Apple Health/Google Fit)
-- S21: React Native (App Store + Play Store, wearable, E-Nabız FHIR 2027)
+**Mobil Bloğu (Aralık 2026 → 2027)**
+- S20: PWA olgunlaştırma — push notification tam, offline mode, Apple Health + Google Fit entegrasyonu
+- S21: React Native — App Store + Play Store, wearable entegrasyonu, E-Nabız FHIR (2027 hedefi)
 
 ---
 
@@ -574,6 +551,8 @@ NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
 
 ---
 
-*Son güncelleme: 19 Mart 2026 v10.7*
-*Sprint 1-10b tam tamamlandı. Sıradaki: Sprint 11 — Viral + Oyunlaştırma*
-*Hackathon: 11-12 Nisan 2026 — 23 gün kaldı*
+*Son güncelleme: 25 Mart 2026 v12.0*
+*Sprint 1-13 tam tamamlandı. Tüm pre-hackathon özellikler hazır.*
+*Hackathon: 11-12 Nisan 2026 — 17 gün kaldı*
+*Google OAuth: Supabase Dashboard'dan Google Cloud credentials eklenmesi gerekli (ertelendi).*
+*Family SQL: Supabase Dashboard'dan çalıştırıldı ✅*

@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Calculator, Flame, TrendingDown, TrendingUp, Minus } from "lucide-react"
+import { Calculator, Flame, TrendingDown, TrendingUp, Minus, Ruler, Scale } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
 
 interface CalorieCalculatorProps {
@@ -23,6 +23,11 @@ const ACTIVITY_MULTIPLIERS: Record<ActivityLevel, number> = {
   extra: 1.9,
 }
 
+interface WeightEntry {
+  date: string
+  weight: number
+}
+
 export function CalorieCalculator({
   lang,
   defaultAge,
@@ -38,6 +43,32 @@ export function CalorieCalculator({
   const [weight, setWeight] = useState(defaultWeight ?? 70)
   const [activity, setActivity] = useState<ActivityLevel>("moderate")
   const [result, setResult] = useState<number | null>(null)
+  const tr = lang === "tr"
+
+  // Advanced body measurements
+  const [waist, setWaist] = useState<number>(0)
+  const [neck, setNeck] = useState<number>(0)
+  const [hip, setHip] = useState<number>(0) // for females
+  const [showAdvanced, setShowAdvanced] = useState(false)
+
+  // Weight tracking
+  const [weightHistory, setWeightHistory] = useState<WeightEntry[]>([])
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("weight-history")
+      if (saved) setWeightHistory(JSON.parse(saved))
+    } catch { /* ignore */ }
+  }, [])
+
+  const saveWeight = () => {
+    const today = new Date().toISOString().split("T")[0]
+    const updated = [...weightHistory.filter(e => e.date !== today), { date: today, weight }]
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-30) // Keep last 30 entries
+    setWeightHistory(updated)
+    localStorage.setItem("weight-history", JSON.stringify(updated))
+  }
 
   const calculate = () => {
     // Mifflin-St Jeor equation
@@ -49,7 +80,33 @@ export function CalorieCalculator({
     }
     const tdee = Math.round(bmr * ACTIVITY_MULTIPLIERS[activity])
     setResult(tdee)
+    saveWeight()
   }
+
+  // BMI calculation
+  const bmi = height > 0 ? (weight / ((height / 100) ** 2)) : 0
+  const bmiCategory = bmi < 18.5 ? (tr ? "Zayıf" : "Underweight")
+    : bmi < 25 ? (tr ? "Normal" : "Normal")
+    : bmi < 30 ? (tr ? "Fazla Kilolu" : "Overweight")
+    : (tr ? "Obez" : "Obese")
+  const bmiColor = bmi < 18.5 ? "text-blue-500" : bmi < 25 ? "text-green-500" : bmi < 30 ? "text-amber-500" : "text-red-500"
+
+  // Body fat estimation (US Navy method)
+  const bodyFat = (() => {
+    if (!waist || !neck || !height) return null
+    if (gender === "male") {
+      if (waist <= neck) return null
+      return Math.round((495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(height)) - 450) * 10) / 10
+    } else {
+      if (!hip || (waist + hip) <= neck) return null
+      return Math.round((495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(height)) - 450) * 10) / 10
+    }
+  })()
+
+  // Weight trend
+  const weightTrend = weightHistory.length >= 2
+    ? weightHistory[weightHistory.length - 1].weight - weightHistory[0].weight
+    : null
 
   const activityOptions: { key: ActivityLevel; labelKey: string }[] = [
     { key: "sedentary", labelKey: "calorie.sedentary" },
@@ -126,6 +183,87 @@ export function CalorieCalculator({
           </div>
         </div>
 
+        {/* BMI Display */}
+        {height > 0 && weight > 0 && (
+          <div className="flex items-center justify-between rounded-lg border bg-muted/30 px-3 py-2">
+            <span className="text-xs text-muted-foreground">BMI</span>
+            <div className="flex items-center gap-2">
+              <span className={`text-sm font-bold ${bmiColor}`}>{bmi.toFixed(1)}</span>
+              <span className={`text-[10px] ${bmiColor}`}>{bmiCategory}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Advanced measurements toggle */}
+        <button
+          onClick={() => setShowAdvanced(!showAdvanced)}
+          className="flex items-center gap-1.5 text-xs text-primary hover:underline"
+        >
+          <Ruler className="h-3 w-3" />
+          {showAdvanced
+            ? (tr ? "Gelişmiş ölçümleri gizle" : "Hide advanced measurements")
+            : (tr ? "Vücut yağ oranı hesapla" : "Calculate body fat %")
+          }
+        </button>
+
+        {showAdvanced && (
+          <div className="space-y-3 rounded-lg border bg-muted/20 p-3">
+            <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+              {tr ? "US Navy Metodu — Vücut Yağ Oranı" : "US Navy Method — Body Fat %"}
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1 block text-[10px] text-muted-foreground">
+                  {tr ? "Bel (cm)" : "Waist (cm)"}
+                </label>
+                <input
+                  type="number"
+                  value={waist || ""}
+                  onChange={(e) => setWaist(Number(e.target.value))}
+                  placeholder="cm"
+                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-[10px] text-muted-foreground">
+                  {tr ? "Boyun (cm)" : "Neck (cm)"}
+                </label>
+                <input
+                  type="number"
+                  value={neck || ""}
+                  onChange={(e) => setNeck(Number(e.target.value))}
+                  placeholder="cm"
+                  className="w-full rounded-lg border bg-background px-3 py-2 text-sm"
+                />
+              </div>
+              {gender === "female" && (
+                <div className="col-span-2">
+                  <label className="mb-1 block text-[10px] text-muted-foreground">
+                    {tr ? "Kalça (cm)" : "Hip (cm)"}
+                  </label>
+                  <input
+                    type="number"
+                    value={hip || ""}
+                    onChange={(e) => setHip(Number(e.target.value))}
+                    placeholder="cm"
+                    className="w-full rounded-lg border bg-background px-3 py-2 text-sm"
+                  />
+                </div>
+              )}
+            </div>
+            {bodyFat !== null && (
+              <div className="rounded-lg border bg-background px-3 py-2 text-center">
+                <span className="text-xs text-muted-foreground">{tr ? "Tahmini Vücut Yağ Oranı" : "Estimated Body Fat"}</span>
+                <p className={`text-xl font-bold ${
+                  bodyFat < 15 ? "text-blue-500" : bodyFat < 25 ? "text-green-500" : bodyFat < 35 ? "text-amber-500" : "text-red-500"
+                }`}>
+                  {bodyFat}%
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Activity level */}
         <div>
           <label className="mb-2 block text-xs text-muted-foreground">{tx("calorie.activity", lang)}</label>
@@ -176,9 +314,52 @@ export function CalorieCalculator({
               </div>
             </div>
             <p className="text-center text-[10px] text-muted-foreground">{tx("calorie.kcal", lang)}</p>
-            <p className="text-center text-[10px] text-muted-foreground italic">{tx("calorie.disclaimer", lang)}</p>
           </div>
         )}
+
+        {/* Weight Trend */}
+        {weightHistory.length >= 2 && (
+          <div className="rounded-lg border p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                <Scale className="h-3 w-3" />
+                {tr ? "Kilo Trendi" : "Weight Trend"}
+              </span>
+              {weightTrend !== null && (
+                <span className={`text-xs font-bold ${weightTrend < 0 ? "text-green-500" : weightTrend > 0 ? "text-amber-500" : "text-muted-foreground"}`}>
+                  {weightTrend > 0 ? "+" : ""}{weightTrend.toFixed(1)} kg
+                </span>
+              )}
+            </div>
+            {/* Simple bar chart */}
+            <div className="flex items-end gap-1 h-12">
+              {weightHistory.slice(-14).map((entry, i) => {
+                const min = Math.min(...weightHistory.map(e => e.weight))
+                const max = Math.max(...weightHistory.map(e => e.weight))
+                const range = max - min || 1
+                const pct = ((entry.weight - min) / range) * 100
+                return (
+                  <div
+                    key={i}
+                    className="flex-1 rounded-t bg-primary/60 transition-all"
+                    style={{ height: `${Math.max(10, pct)}%` }}
+                    title={`${entry.date}: ${entry.weight}kg`}
+                  />
+                )
+              })}
+            </div>
+            <div className="flex justify-between mt-1">
+              <span className="text-[9px] text-muted-foreground">
+                {weightHistory[Math.max(0, weightHistory.length - 14)]?.date}
+              </span>
+              <span className="text-[9px] text-muted-foreground">
+                {weightHistory[weightHistory.length - 1]?.date}
+              </span>
+            </div>
+          </div>
+        )}
+
+        <p className="text-center text-[10px] text-muted-foreground italic">{tx("calorie.disclaimer", lang)}</p>
       </CardContent>
     </Card>
   )

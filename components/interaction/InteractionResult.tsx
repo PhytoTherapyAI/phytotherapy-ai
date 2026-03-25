@@ -15,13 +15,17 @@ import {
   Plus,
   Loader2,
   Check,
+  Share2,
 } from "lucide-react";
 import { SafetyBadge } from "./SafetyBadge";
 import { useLang } from "@/components/layout/language-toggle";
 import { useAuth } from "@/lib/auth-context";
 import { tx } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
+import { findSupplementInfo } from "@/lib/supplement-data";
 import type { InteractionResult as InteractionResultType } from "@/lib/interaction-engine";
+import { InteractionShareCard } from "@/components/share/InteractionShareCard";
+import { ShareModal } from "@/components/share/ShareModal";
 
 interface InteractionResultProps {
   result: InteractionResultType;
@@ -30,38 +34,48 @@ interface InteractionResultProps {
 export function InteractionResult({ result }: InteractionResultProps) {
   const { lang } = useLang()
   const { user, isAuthenticated } = useAuth()
+  const [showShareCard, setShowShareCard] = useState(false)
 
   const addToSupplements = async (herbName: string, dose: string | undefined, safety: string) => {
     if (!user) return false
     try {
       const supabase = createBrowserClient()
-      // Check if already exists
+      // Check if already exists - exact match on title
       const { data: existing } = await supabase
         .from("calendar_events")
         .select("id")
         .eq("user_id", user.id)
         .eq("event_type", "supplement")
-        .ilike("title", `%${herbName}%`)
+        .eq("title", herbName)
         .limit(1)
 
       if (existing && existing.length > 0) return false // Already exists
 
-      await supabase.from("calendar_events").insert({
+      const today = new Date().toISOString().split("T")[0]
+      const info = findSupplementInfo(herbName)
+      const { error } = await supabase.from("calendar_events").insert({
         user_id: user.id,
         event_type: "supplement",
         title: herbName,
-        description: dose || "",
-        event_date: new Date().toISOString().split("T")[0],
+        description: dose || info.recommendedDose,
+        event_date: today,
         recurrence: "daily",
         metadata: {
           safety,
-          dose: dose || "",
+          dose: dose || info.recommendedDose,
           frequency: "daily",
+          cycleDays: info.cycleDays,
+          breakDays: info.breakDays,
           addedFromInteraction: true,
         },
       })
+      if (error) {
+        console.error("Add supplement error:", error)
+        return false
+      }
       return true
-    } catch {
+    } catch (err) {
+      console.error("Add supplement exception:", err)
       return false
     }
   }
@@ -204,6 +218,30 @@ export function InteractionResult({ result }: InteractionResultProps) {
           {result.disclaimer}
         </p>
       </div>
+
+      {/* Share this moment button */}
+      {(dangerousHerbs.length > 0 || cautionHerbs.length > 0) && (
+        <button
+          onClick={() => setShowShareCard(true)}
+          className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/30 px-4 py-3 text-sm font-medium text-primary transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98]"
+        >
+          <Share2 className="h-4 w-4" />
+          {tx("share.interaction.btn", lang)}
+        </button>
+      )}
+
+      {/* Share modal — portal-based */}
+      <ShareModal open={showShareCard} onClose={() => setShowShareCard(false)}>
+        <InteractionShareCard
+          lang={lang}
+          medications={result.medicationsAnalyzed.map(m => m.brandName)}
+          dangerousCount={dangerousHerbs.length}
+          cautionCount={cautionHerbs.length}
+          safeCount={safeHerbs.length}
+          topDangerousHerb={dangerousHerbs[0]?.herb}
+          concern={result.concern}
+        />
+      </ShareModal>
     </div>
   );
 }
@@ -332,8 +370,8 @@ function HerbCard({ herb, showAdd, onAdd }: HerbCardProps) {
             <Plus className="h-4 w-4" />
           )}
           {added
-            ? (tr ? "Takviyelerine eklendi!" : "Added to your supplements!")
-            : (tr ? "Takviyelerime ekle" : "Add to my supplements")
+            ? tx("ir.addedToSupplements", lang)
+            : tx("ir.addToSupplements", lang)
           }
         </button>
       )}

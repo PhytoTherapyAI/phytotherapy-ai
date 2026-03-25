@@ -7,12 +7,14 @@ import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { DailySummaryCard } from "@/components/dashboard/DailySummaryCard"
-import { CalorieCalculator } from "@/components/dashboard/CalorieCalculator"
+// CalorieCalculator moved to tools menu
 import { BiologicalAgeCard } from "@/components/dashboard/BiologicalAgeCard"
 import { MetabolicPortfolio } from "@/components/dashboard/MetabolicPortfolio"
 import { WashoutCountdown } from "@/components/dashboard/WashoutCountdown"
 import { WeeklySummaryCard } from "@/components/dashboard/WeeklySummaryCard"
 import { SymptomPatternCard } from "@/components/dashboard/SymptomPatternCard"
+import { BossFightCard } from "@/components/dashboard/BossFightCard"
+import { SeasonalCard } from "@/components/dashboard/SeasonalCard"
 import { Activity, Loader2 } from "lucide-react"
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog"
 
@@ -96,12 +98,10 @@ export default function DashboardPage() {
             userName={profile.full_name}
           />
 
-          <CalorieCalculator
+          <WeeklySummaryCard
+            userId={user.id}
             lang={lang}
-            defaultAge={chronologicalAge}
-            defaultGender={profile.gender}
-            defaultHeight={profile.height_cm}
-            defaultWeight={profile.weight_kg}
+            isPremium={isPremium}
           />
 
           <WashoutCountdown
@@ -121,6 +121,7 @@ export default function DashboardPage() {
             lang={lang}
             isPremium={isPremium}
             chronologicalAge={chronologicalAge}
+            userName={profile.full_name ?? undefined}
           />
 
           <MetabolicPortfolio
@@ -135,10 +136,15 @@ export default function DashboardPage() {
             isPremium={isPremium}
           />
 
-          <WeeklySummaryCard
+          <BossFightCard
             userId={user.id}
             lang={lang}
             isPremium={isPremium}
+          />
+
+          <SeasonalCard
+            lang={lang}
+            userConditions={profile.chronic_conditions || []}
           />
         </div>
       </div>

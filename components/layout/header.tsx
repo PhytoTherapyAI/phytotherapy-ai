@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Leaf, Menu, X, LogIn, User, LogOut, Settings, AlertTriangle, Check, RefreshCw } from "lucide-react";
+import { Leaf, LogIn, User, Users, LogOut, Settings, AlertTriangle, Check, RefreshCw, Droplets, Calculator, FlaskConical, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -10,13 +10,16 @@ import { Button } from "@/components/ui/button";
 import { tx } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
 
-const navLinks = [
-  { href: "/interaction-checker", labelKey: "nav.interaction" },
+// All nav links — shown directly in desktop, in mobile drawer
+const allLinks = [
+  { href: "/family", labelKey: "family.title" },
   { href: "/health-assistant", labelKey: "nav.assistant" },
-  { href: "/blood-test", labelKey: "nav.bloodtest" },
   { href: "/calendar", labelKey: "nav.calendar" },
+  { href: "/interaction-checker", labelKey: "nav.interaction" },
+  { href: "/blood-test", labelKey: "nav.bloodtest" },
+  { href: "/calorie", labelKey: "nav.calorie" },
+  { href: "/pricing", labelKey: "nav.pricing" },
 ];
-// Dashboard/Panel gets its own button style
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -74,9 +77,9 @@ export function Header() {
   return (
     <>
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+      <div className="mx-auto flex h-16 max-w-6xl items-center px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href="/" className="flex items-center gap-2 group shrink-0">
           <Leaf
             className="h-[18px] w-[18px] transition-all duration-300 group-hover:scale-110"
             style={{ color: 'var(--logo-accent, #c4a86c)' }}
@@ -92,13 +95,13 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-5 md:flex">
-          {navLinks.map((link) => (
+        {/* Desktop nav — all links visible, pushed right */}
+        <nav className="ml-auto hidden items-center gap-3 lg:flex">
+          {allLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-semibold text-foreground/80 transition-colors hover:text-foreground"
+              className="whitespace-nowrap text-[13px] font-semibold text-foreground/80 transition-colors hover:text-foreground"
             >
               {tx(link.labelKey, lang)}
             </Link>
@@ -106,15 +109,15 @@ export function Header() {
           {isAuthenticated && (
             <Link
               href="/dashboard"
-              className="text-sm font-semibold text-foreground/80 transition-colors hover:text-foreground"
+              className="whitespace-nowrap text-[13px] font-semibold text-foreground/80 transition-colors hover:text-foreground"
             >
               {tx("nav.dashboard", lang)}
             </Link>
           )}
         </nav>
 
-        {/* Desktop right */}
-        <div className="hidden items-center gap-3 md:flex">
+        {/* Desktop right controls */}
+        <div className="ml-3 hidden items-center gap-2 lg:flex">
           <LanguageToggle />
           <ThemeToggle />
 
@@ -147,6 +150,22 @@ export function Header() {
                       <Settings className="h-4 w-4" />
                       {tx('nav.profileSettings', lang)}
                     </Link>
+                    <Link
+                      href="/history"
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      {tx('nav.history', lang)}
+                    </Link>
+                    <Link
+                      href="/badges"
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <FlaskConical className="h-4 w-4" />
+                      {tx('badges.title', lang)}
+                    </Link>
                   </div>
                   <div className="border-t p-1">
                     <button
@@ -174,7 +193,7 @@ export function Header() {
         </div>
 
         {/* Mobile right */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="ml-auto flex items-center gap-2 lg:hidden">
           <LanguageToggle />
           <ThemeToggle />
           <button
@@ -188,8 +207,8 @@ export function Header() {
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <nav className="border-t px-4 py-4 md:hidden">
-          {navLinks.map((link) => (
+        <nav className="border-t px-4 py-4 lg:hidden">
+          {allLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -199,10 +218,11 @@ export function Header() {
               {tx(link.labelKey, lang)}
             </Link>
           ))}
+
           {isAuthenticated && (
             <Link
               href="/dashboard"
-              className="block py-2 text-sm font-semibold text-primary hover:text-primary/80"
+              className="mt-2 block border-t pt-2 text-sm font-semibold text-primary hover:text-primary/80"
               onClick={() => setMobileOpen(false)}
             >
               {tx("nav.dashboard", lang)}

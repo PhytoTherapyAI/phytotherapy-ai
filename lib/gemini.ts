@@ -97,6 +97,42 @@ export interface GeminiFilePart {
   base64: string;
 }
 
+/**
+ * Ask Gemini with file attachments (non-streaming, JSON output).
+ * Used for PDF/image analysis like blood test extraction.
+ */
+export async function askGeminiJSONMultimodal(
+  prompt: string,
+  systemPrompt: string,
+  files: GeminiFilePart[]
+) {
+  return retryWithFallback(async (modelName: string) => {
+    const model = genAI.getGenerativeModel({
+      model: modelName,
+      systemInstruction: systemPrompt,
+      generationConfig: {
+        temperature: 0,
+        maxOutputTokens: 8192,
+        responseMimeType: "application/json",
+      },
+    });
+
+    const parts: Array<{ text: string } | { inlineData: { mimeType: string; data: string } }> = [];
+    for (const file of files) {
+      parts.push({
+        inlineData: {
+          mimeType: file.mimeType,
+          data: file.base64,
+        },
+      });
+    }
+    parts.push({ text: prompt });
+
+    const result = await model.generateContent({ contents: [{ role: "user", parts }] });
+    return result.response.text();
+  });
+}
+
 export async function askGeminiStreamMultimodal(
   prompt: string,
   systemPrompt: string,

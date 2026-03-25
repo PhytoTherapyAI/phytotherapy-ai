@@ -183,7 +183,7 @@ export function ResultDashboard({
                         <span className="text-sm font-mono">
                           {result.value} <span className="text-xs text-muted-foreground">{result.marker.unit}</span>
                         </span>
-                        <StatusBadge status={result.status} label={result.statusLabel} />
+                        <StatusBadge status={result.status} label={result.statusLabel} lang={lang} />
                       </div>
                     </div>
                   ))}
@@ -205,7 +205,7 @@ export function ResultDashboard({
               <div key={i} className="rounded-lg border bg-card p-4">
                 <div className="mb-2 flex items-start justify-between">
                   <h4 className="font-semibold">{rec.supplement}</h4>
-                  <EvidenceBadge grade={rec.evidenceGrade} />
+                  <EvidenceBadge grade={rec.evidenceGrade} lang={lang} />
                 </div>
                 <p className="mb-3 text-sm text-muted-foreground">{rec.reason}</p>
                 <div className="grid gap-2 sm:grid-cols-2">
@@ -348,7 +348,7 @@ function ScoreCard({
   );
 }
 
-function StatusBadge({ status, label }: { status: string; label: string }) {
+function StatusBadge({ status, label, lang }: { status: string; label: string; lang: string }) {
   const config: Record<string, { bg: string; text: string; icon: React.ReactNode }> = {
     optimal: {
       bg: "bg-primary/10",
@@ -377,19 +377,29 @@ function StatusBadge({ status, label }: { status: string; label: string }) {
     },
   };
 
+  // TR status label map
+  const statusLabels: Record<string, Record<string, string>> = {
+    optimal: { en: "Optimal", tr: "Optimal" },
+    low: { en: "Low", tr: "Düşük" },
+    high: { en: "High", tr: "Yüksek" },
+    borderline_low: { en: "Borderline Low", tr: "Sınırda Düşük" },
+    borderline_high: { en: "Borderline High", tr: "Sınırda Yüksek" },
+  };
+
   const c = config[status] || config["optimal"];
+  const translatedLabel = statusLabels[status]?.[lang] ?? label;
 
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${c.bg} ${c.text}`}
     >
       {c.icon}
-      {label}
+      {translatedLabel}
     </span>
   );
 }
 
-function EvidenceBadge({ grade }: { grade: string }) {
+function EvidenceBadge({ grade, lang }: { grade: string; lang: string }) {
   const colors: Record<string, string> = {
     A: "bg-primary/10 text-primary",
     B: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
@@ -398,7 +408,7 @@ function EvidenceBadge({ grade }: { grade: string }) {
 
   return (
     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${colors[grade] || colors.C}`}>
-      Grade {grade}
+      {lang === "tr" ? `Kanıt ${grade}` : `Grade ${grade}`}
     </span>
   );
 }

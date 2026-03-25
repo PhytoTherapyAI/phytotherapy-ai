@@ -37,6 +37,13 @@ export interface UserProfile {
   last_medication_update: string | null;
   created_at: string;
   updated_at: string;
+  // Premium — Sprint 14
+  plan: "free" | "premium" | "family" | "doctor" | null;
+  trial_started_at: string | null;
+  premium_expires_at: string | null;
+  // Doctor verification — Sprint 17
+  is_doctor_verified: boolean;
+  doctor_license_url: string | null;
 }
 
 export interface UserMedication {
@@ -98,6 +105,51 @@ export interface DailyCheckIn {
   notes: string | null;
   health_score: number | null;
   created_at: string;
+}
+
+// ── Family Profiles — Sprint 11 ──────────────
+export type FamilyRelationship = "spouse" | "child" | "parent" | "sibling" | "other";
+
+export interface FamilyMember {
+  id: string;
+  owner_id: string;
+  full_name: string;
+  birth_date: string | null;
+  age: number | null;
+  gender: Gender | null;
+  relationship: FamilyRelationship;
+  is_minor: boolean;
+  is_pregnant: boolean;
+  is_breastfeeding: boolean;
+  alcohol_use: AlcoholUse;
+  smoking_use: SmokingUse;
+  kidney_disease: boolean;
+  liver_disease: boolean;
+  chronic_conditions: string[];
+  supplements: string[];
+  height_cm: number | null;
+  weight_kg: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FamilyMedication {
+  id: string;
+  family_member_id: string;
+  brand_name: string | null;
+  generic_name: string | null;
+  dosage: string | null;
+  frequency: string | null;
+  is_active: boolean;
+  added_at: string;
+}
+
+export interface FamilyAllergy {
+  id: string;
+  family_member_id: string;
+  allergen: string;
+  severity: AllergySeverity;
+  added_at: string;
 }
 
 // Supabase Database type for typed client

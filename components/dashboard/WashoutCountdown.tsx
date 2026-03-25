@@ -3,12 +3,14 @@
 import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Lock, Timer, AlertCircle, Settings2, Plus, Bell } from "lucide-react"
+import { Lock, Timer, AlertCircle, Settings2, Plus, Bell, Share2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { findSupplementInfo, getSupplementDisplayName } from "@/lib/supplement-data"
 import { SupplementDoseDialog } from "./SupplementDoseDialog"
+import { ProtocolShareCard } from "@/components/share/ProtocolShareCard"
+import { ShareModal } from "@/components/share/ShareModal"
 
 interface WashoutCountdownProps {
   userId: string
@@ -42,7 +44,9 @@ function mapToCycles(events: Array<{ id: string; title: string; description: str
     const customBreakDays = (meta?.breakDays as number) || info.breakDays
 
     const startDate = new Date(event.created_at)
-    const daysUsed = Math.max(0, Math.floor((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)))
+    // Count days since start (inclusive — today counts as day 1)
+    const rawDays = Math.floor((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+    const daysUsed = Math.max(1, rawDays + 1) // Day 1 = creation day
     const daysLeft = customCycleDays === 0 ? -1 : Math.max(0, customCycleDays - daysUsed)
     const percentage = customCycleDays === 0 ? 0 : Math.min((daysUsed / customCycleDays) * 100, 100)
     const dose = (meta?.dose as string) || event.description || ""
@@ -67,6 +71,7 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
   const [supplements, setSupplements] = useState<SupplementCycle[]>([])
   const [loading, setLoading] = useState(true)
   const [editingSupplement, setEditingSupplement] = useState<SupplementCycle | null>(null)
+  const [shareProtocol, setShareProtocol] = useState<SupplementCycle | null>(null)
   const [showAddInput, setShowAddInput] = useState(false)
   const [newSuppName, setNewSuppName] = useState("")
   const [adding, setAdding] = useState(false)
@@ -250,17 +255,38 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
                       <Bell className="h-3 w-3" /> {supp.reminderTime}
                     </span>
                   )}
-                  {supp.daysLeft <= 7 && supp.cycleDays > 0 && (
+                  {supp.daysLeft === 0 && supp.cycleDays > 0 && (
+                    <span
+                      role="button"
+                      onClick={(e) => { e.stopPropagation(); setShareProtocol(supp) }}
+                      className="flex items-center gap-0.5 rounded-md bg-purple-500/10 px-1.5 py-0.5 text-[10px] font-medium text-purple-600 hover:bg-purple-500/20 transition-colors"
+                    >
+                      <Share2 className="h-3 w-3" /> {tx("share.share", lang)}
+                    </span>
+                  )}
+                  {supp.daysLeft <= 7 && supp.daysLeft > 0 && supp.cycleDays > 0 && (
                     <AlertCircle className="h-3.5 w-3.5 text-amber-500" />
                   )}
                   <Settings2 className="h-3 w-3 text-muted-foreground" />
                 </div>
               </div>
               {supp.dose && (
-                <p className="mt-0.5 text-[10px] text-muted-foreground">{supp.dose}</p>
+                <p className="mt-1 text-sm font-semibold text-primary/80">{supp.dose}</p>
               )}
-              {/* Progress bar — hide for unlimited */}
-              {supp.cycleDays > 0 && (
+              {/* Progress bar or completion banner */}
+              {supp.cycleDays > 0 && supp.daysLeft === 0 ? (
+                <div className="mt-2 rounded-lg bg-green-500/10 border border-green-500/30 px-3 py-2 text-center">
+                  <p className="text-sm font-bold text-green-600 dark:text-green-400">
+                    🏆 {tx("washout.cycleComplete", lang)}
+                  </p>
+                  <p className="text-[10px] text-green-600/70 dark:text-green-400/70">
+                    {supp.breakDays > 0
+                      ? tx("washout.takeBreak", lang).replace("{n}", String(supp.breakDays))
+                      : tx("washout.readyNewCycle", lang)
+                    }
+                  </p>
+                </div>
+              ) : supp.cycleDays > 0 ? (
                 <div className="mt-2 h-1.5 rounded-full bg-muted/50">
                   <div
                     className={`h-full rounded-full transition-all ${
@@ -270,7 +296,7 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
                     style={{ width: `${supp.percentage}%` }}
                   />
                 </div>
-              )}
+              ) : null}
               <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
                 <span>
                   {supp.cycleDays === 0
@@ -280,7 +306,7 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
                 </span>
                 <span>
                   {supp.cycleDays === 0
-                    ? (lang === "tr" ? "∞ Sınırsız" : "∞ Unlimited")
+                    ? tx("washout.unlimited", lang)
                     : supp.daysLeft > 0
                       ? `${supp.daysLeft} ${tx("washout.daysLeft", lang)}`
                       : tx("washout.breakTime", lang)
@@ -333,6 +359,17 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
         }}
       />
     )}
+
+    <ShareModal open={!!shareProtocol} onClose={() => setShareProtocol(null)}>
+      {shareProtocol && (
+        <ProtocolShareCard
+          lang={lang}
+          supplementName={getSupplementDisplayName(shareProtocol.name, lang)}
+          cycleDays={shareProtocol.cycleDays}
+          streakDays={shareProtocol.daysUsed}
+        />
+      )}
+    </ShareModal>
     </>
   )
 }

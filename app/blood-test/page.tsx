@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { FlaskConical } from "lucide-react";
+import { useState, useRef } from "react";
+import { FlaskConical, Upload, FileText, Loader2, X } from "lucide-react";
 import { BloodTestForm } from "@/components/blood-test/BloodTestForm";
 import { ResultDashboard } from "@/components/blood-test/ResultDashboard";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { Button } from "@/components/ui/button";
 import type { BloodTestResult, BloodTestCategory } from "@/lib/blood-reference";
 
 interface AnalysisResponse {
@@ -48,6 +49,9 @@ export default function BloodTestPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<AnalysisResponse | null>(null);
+  const [pdfUploading, setPdfUploading] = useState(false);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (
     values: Record<string, number>,
@@ -118,6 +122,98 @@ export default function BloodTestPage() {
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
           <p className="font-semibold">{tx('bt.analysisError', lang)}</p>
           <p>{error}</p>
+        </div>
+      )}
+
+      {/* PDF Upload Section */}
+      {!data && (
+        <div className="mb-6 rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 p-6">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="rounded-full bg-primary/10 p-3">
+              <Upload className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="font-semibold">{lang === "tr" ? "PDF Yükle" : "Upload PDF"}</h3>
+              <p className="text-xs text-muted-foreground">
+                {lang === "tr"
+                  ? "Kan tahlili PDF'inizi yükleyin — AI otomatik olarak değerleri çıkaracak"
+                  : "Upload your blood test PDF — AI will automatically extract values"
+                }
+              </p>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0]
+                if (file) setPdfFile(file)
+              }}
+            />
+            {pdfFile ? (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 rounded-lg border bg-background px-3 py-2 text-sm">
+                  <FileText className="h-4 w-4 text-primary" />
+                  <span className="max-w-[200px] truncate">{pdfFile.name}</span>
+                  <button onClick={() => setPdfFile(null)}>
+                    <X className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
+                  </button>
+                </div>
+                <Button
+                  size="sm"
+                  onClick={async () => {
+                    if (!pdfFile) return
+                    setPdfUploading(true)
+                    setError(null)
+                    try {
+                      const formData = new FormData()
+                      formData.append("file", pdfFile)
+                      formData.append("lang", lang)
+                      const headers: Record<string, string> = {}
+                      if (isAuthenticated && session?.access_token) {
+                        headers["Authorization"] = `Bearer ${session.access_token}`
+                      }
+                      const res = await fetch("/api/blood-test-pdf", {
+                        method: "POST",
+                        headers,
+                        body: formData,
+                      })
+                      if (!res.ok) {
+                        const err = await res.json()
+                        throw new Error(err.error || "PDF extraction failed")
+                      }
+                      const result = await res.json()
+                      setData(result)
+                      setPdfFile(null)
+                    } catch (err) {
+                      setError(err instanceof Error ? err.message : "PDF upload failed")
+                    } finally {
+                      setPdfUploading(false)
+                    }
+                  }}
+                  disabled={pdfUploading}
+                  className="gap-1.5"
+                >
+                  {pdfUploading ? (
+                    <><Loader2 className="h-3.5 w-3.5 animate-spin" /> {lang === "tr" ? "Analiz..." : "Analyzing..."}</>
+                  ) : (
+                    lang === "tr" ? "Analiz Et" : "Analyze"
+                  )}
+                </Button>
+              </div>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                className="gap-1.5"
+              >
+                <Upload className="h-3.5 w-3.5" />
+                {lang === "tr" ? "PDF veya Fotoğraf Seç" : "Choose PDF or Photo"}
+              </Button>
+            )}
+          </div>
         </div>
       )}
 

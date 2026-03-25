@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
-import { getSupplementDisplayName, findSupplementInfo, parseDoseToMg, formatDoseWithUnit, SUPPLEMENT_NAME_MAP, SUPPLEMENT_NAME_TR } from "@/lib/supplement-data"
+import { getSupplementDisplayName, findSupplementInfo, parseDoseToMg, formatDoseWithUnit, SUPPLEMENT_NAME_MAP, SUPPLEMENT_NAME_TR, type SupplementInfo } from "@/lib/supplement-data"
 
 interface AddSupplementDialogProps {
   userId: string
@@ -81,6 +81,8 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
   const [time, setTime] = useState("")
   const [enableReminder, setEnableReminder] = useState(false)
   const [customDose, setCustomDose] = useState("")
+  const [customCycleDays, setCustomCycleDays] = useState<number | null>(null)
+  const [suppInfo, setSuppInfo] = useState<SupplementInfo | null>(null)
   const [savedSupplements, setSavedSupplements] = useState<SavedSupplement[]>([])
   const [loadingSaved, setLoadingSaved] = useState(true)
   const [showDropdown, setShowDropdown] = useState(false)
@@ -181,6 +183,9 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
         const result = await res.json()
         setCheckResult(result as SupplementCheck)
         setCustomDose(result.recommendedDose || "")
+        const info = findSupplementInfo(result.supplement || name)
+        setSuppInfo(info)
+        setCustomCycleDays(info.cycleDays)
       }
     } catch {
       // ignore
@@ -234,6 +239,8 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
       const supabase = createBrowserClient()
       const rawDose = customDose.trim() || checkResult.recommendedDose
       const doseToSave = formatDoseWithUnit(rawDose, checkResult.supplement)
+      const info = suppInfo || findSupplementInfo(checkResult.supplement)
+      const cycleDays = customCycleDays ?? info.cycleDays
       await supabase.from("calendar_events").insert({
         user_id: userId,
         event_type: "supplement",
@@ -247,6 +254,9 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
           dose: doseToSave,
           frequency: checkResult.frequency,
           evidenceGrade: checkResult.evidenceGrade,
+          cycleDays: cycleDays,
+          breakDays: info.breakDays,
+          unlimited: cycleDays === 0,
         },
       })
       onSaved()
@@ -254,6 +264,8 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
       setQuery("")
       setTime("")
       setCustomDose("")
+      setCustomCycleDays(null)
+      setSuppInfo(null)
       setEnableReminder(false)
       fetchSaved()
     } catch {
@@ -465,6 +477,63 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                       </button>
                     )}
                   </div>
+                </div>
+              )}
+
+              {/* Cycle/Break info + customization */}
+              {checkResult.safety !== "dangerous" && suppInfo && (
+                <div className="rounded-xl border p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-xs font-semibold">
+                      {tr ? "Döngü Bilgisi" : "Cycle Info"}
+                    </span>
+                  </div>
+
+                  {/* Cycle recommendation */}
+                  <div className="rounded-lg bg-blue-500/5 border border-blue-500/10 px-3 py-2">
+                    <p className="text-sm text-blue-800 dark:text-blue-300">
+                      🤖 {tr ? "Asistan önerisi" : "Recommendation"}: {" "}
+                      {suppInfo.cycleDays > 0
+                        ? (tr
+                            ? `${suppInfo.cycleDays} gün kullanın, ${suppInfo.breakDays} gün mola verin`
+                            : `Use for ${suppInfo.cycleDays} days, take ${suppInfo.breakDays}-day break`)
+                        : (tr ? "Süresiz kullanılabilir (döngü gerektirmez)" : "Can be used indefinitely (no cycling needed)")
+                      }
+                    </p>
+                  </div>
+
+                  {/* Custom cycle days */}
+                  <div className="flex items-center gap-3">
+                    <Label className="text-xs font-medium whitespace-nowrap">
+                      {tr ? "Döngü süresi:" : "Cycle duration:"}
+                    </Label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min="0"
+                        max="365"
+                        value={customCycleDays ?? suppInfo.cycleDays}
+                        onChange={(e) => {
+                          const v = parseInt(e.target.value)
+                          setCustomCycleDays(isNaN(v) ? 0 : v)
+                        }}
+                        className="w-16 rounded-lg border bg-background px-2 py-1.5 text-sm text-center outline-none focus:border-primary"
+                      />
+                      <span className="text-xs text-muted-foreground">{tr ? "gün" : "days"}</span>
+                    </div>
+                    {suppInfo.breakDays > 0 && (
+                      <span className="text-xs text-muted-foreground">
+                        + {suppInfo.breakDays} {tr ? "gün mola" : "day break"}
+                      </span>
+                    )}
+                  </div>
+
+                  {customCycleDays === 0 && (
+                    <p className="text-[10px] text-muted-foreground">
+                      {tr ? "0 = Döngü yok, süresiz kullanım" : "0 = No cycling, unlimited use"}
+                    </p>
+                  )}
                 </div>
               )}
 

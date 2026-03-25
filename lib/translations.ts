@@ -645,6 +645,7 @@ const t: Record<string, TranslationEntry> = {
   // Nav
   "nav.calendar": { en: "Calendar", tr: "Takvim" },
   "nav.dashboard": { en: "Dashboard", tr: "Panel" },
+  "nav.calorie": { en: "Calorie Calculator", tr: "Kalori Hesaplayıcı" },
 
   // Calendar extras
   "cal.rememberMe": { en: "Remember me", tr: "Oturumu açık tut" },
@@ -862,10 +863,233 @@ const t: Record<string, TranslationEntry> = {
   "weekly.share": { en: "Share", tr: "Paylaş" },
   "weekly.noData": { en: "Complete check-ins this week to see your summary", tr: "Bu haftanın özetini görmek için check-in yap" },
 
+  // ══════════════════════════════════════════
+  // Share Cards — Sprint 11
+  // ══════════════════════════════════════════
+  "share.share": { en: "Share", tr: "Paylaş" },
+  "share.download": { en: "Download", tr: "İndir" },
+  "share.copy": { en: "Copy", tr: "Kopyala" },
+  "share.copied": { en: "Copied!", tr: "Kopyalandı!" },
+  "share.bioage.title": { en: "My Biological Age", tr: "Biyolojik Yaşım" },
+  "share.bioage.yearsYounger": { en: "years younger!", tr: "yıl daha genç!" },
+  "share.bioage.yearsOlder": { en: "years older", tr: "yıl daha büyük" },
+  "share.bioage.btn": { en: "Share Your Age", tr: "Yaşını Paylaş" },
+  "share.interaction.title": { en: "Safety Alert Detected!", tr: "Güvenlik Uyarısı Tespit Edildi!" },
+  "share.interaction.subtitle": { en: "This app may have saved my health", tr: "Bu uygulama sağlığımı korumuş olabilir" },
+  "share.interaction.detected": { en: "interactions detected", tr: "etkileşim tespit edildi" },
+  "share.interaction.btn": { en: "Share This Moment", tr: "Bu Anı Paylaş" },
+  "share.protocol.title": { en: "Protocol Complete!", tr: "Protokol Tamamlandı!" },
+  "share.protocol.subtitle": { en: "supplement cycle completed", tr: "takviye döngüsü tamamlandı" },
+  "share.protocol.streak": { en: "day streak", tr: "günlük seri" },
+  "share.protocol.btn": { en: "Share Achievement", tr: "Başarıyı Paylaş" },
+
+  // ══════════════════════════════════════════
+  // Family Profiles — Sprint 11
+  // ══════════════════════════════════════════
+  "family.title": { en: "Family Profiles", tr: "Aile Profilleri" },
+  "family.subtitle": { en: "Manage health profiles for your family", tr: "Aileniz için sağlık profillerini yönetin" },
+  "family.add": { en: "Add Family Member", tr: "Aile Üyesi Ekle" },
+  "family.empty": { en: "No family members added yet", tr: "Henüz aile üyesi eklenmedi" },
+  "family.limitReached": { en: "Upgrade to Premium for more profiles", tr: "Daha fazla profil için Premium'a geçin" },
+  "family.minorWarning": { en: "Parental oversight mode active", tr: "Ebeveyn denetim modu aktif" },
+
+  // Boss Fight — Sprint 11
+  "boss.title": { en: "Boss Fight", tr: "Boss Fight" },
+  "boss.choose": { en: "Choose Your Boss", tr: "Boss Seç" },
+  "boss.todayTasks": { en: "Today's Tasks", tr: "Bugünün Görevleri" },
+  "boss.progress": { en: "Overall Progress", tr: "Genel İlerleme" },
+  "boss.abandon": { en: "Abandon protocol", tr: "Protokolü bırak" },
+  "boss.complete": { en: "COMPLETE", tr: "TAMAMLANDI" },
+  "boss.start": { en: "Start!", tr: "Başla!" },
+
+  // Seasonal — Sprint 11
+  "seasonal.title": { en: "Seasonal Prep", tr: "Mevsimsel Hazırlık" },
+  "seasonal.subtitle": { en: "Season-specific health tips", tr: "Mevsime özel sağlık önerileri" },
+
+  // Scanner — Sprint 11
+  "scanner.title": { en: "Medication Scanner", tr: "İlaç Tarayıcı" },
+  "scanner.subtitle": { en: "Take a photo of your medication box", tr: "İlaç kutunuzun fotoğrafını çekin" },
+  "scanner.takePhoto": { en: "Take Photo", tr: "Fotoğraf Çek" },
+  "scanner.uploadPhoto": { en: "Upload Photo", tr: "Fotoğraf Yükle" },
+  "scanner.analyzing": { en: "Analyzing medication...", tr: "İlaç analiz ediliyor..." },
+  "scanner.barcodeTitle": { en: "Barcode Scanner", tr: "Barkod Tarayıcı" },
+  "scanner.barcodeSubtitle": { en: "Scan supplement barcode to add", tr: "Takviye barkodunu tarayarak ekleyin" },
+  "scanner.startScan": { en: "Start Scanning", tr: "Taramayı Başlat" },
+
   // Symptom Pattern
   "pattern.title": { en: "AI Pattern Detection", tr: "AI Örüntü Tespiti" },
   "pattern.subtitle": { en: "Trends detected from your check-in data", tr: "Check-in verilerinden tespit edilen trendler" },
   "pattern.noData": { en: "Need at least 3 days of check-ins to detect patterns", tr: "Örüntü tespiti için en az 3 gün check-in gerekli" },
+
+  // Sprint 11b — BiologicalAge card TR
+  "bioage.recalculate": { en: "Recalculate", tr: "Yeniden Hesapla" },
+
+  // Sprint 11b — Blood test result dashboard TR additions
+  "rd.evidenceGrade": { en: "Grade", tr: "Kanıt Düzeyi" },
+  "rd.statusOptimal": { en: "Optimal", tr: "Optimal" },
+  "rd.statusLow": { en: "Low", tr: "Düşük" },
+  "rd.statusHigh": { en: "High", tr: "Yüksek" },
+  "rd.statusBorderlineLow": { en: "Borderline Low", tr: "Sınırda Düşük" },
+  "rd.statusBorderlineHigh": { en: "Borderline High", tr: "Sınırda Yüksek" },
+
+  // Sprint 11b — Interaction checker add supplement
+  "ir.addToSupplements": { en: "Add to my supplements", tr: "Takviyelerime ekle" },
+  "ir.addedToSupplements": { en: "Added to your supplements!", tr: "Takviyelerine eklendi!" },
+
+  // Sprint 11b — Washout cycle complete
+  "washout.cycleComplete": { en: "Cycle Complete!", tr: "Döngü Tamamlandı!" },
+  "washout.takeBreak": { en: "Take a {n}-day break", tr: "{n} gün mola verin" },
+  "washout.readyNewCycle": { en: "Ready for a new cycle", tr: "Yeni döngü başlatabilirsiniz" },
+  "washout.unlimited": { en: "∞ Unlimited", tr: "∞ Sınırsız" },
+
+  // Sprint 11b — Family profile enhanced
+  "family.healthScore": { en: "Health Score", tr: "Sağlık Skoru" },
+  "family.medications": { en: "Medications", tr: "İlaçlar" },
+  "family.noMedications": { en: "No medications recorded", tr: "Kayıtlı ilaç yok" },
+  "family.switchProfile": { en: "Switch to this profile", tr: "Bu profile geç" },
+  "family.mainAccount": { en: "Main Account", tr: "Ana Hesap" },
+  "family.deleteConfirm": { en: "Remove this member?", tr: "Bu üyeyi kaldır?" },
+
+  // Sprint 11b — Scanner moved to medication flow
+  "scanner.photoOrUpload": { en: "Photo or Upload", tr: "Fotoğraf / Yükle" },
+  "scanner.scanMedication": { en: "Scan Medication", tr: "İlaç Tara" },
+
+  // ══════════════════════════════════════════
+  // Premium / Freemium — Sprint 14
+  // ══════════════════════════════════════════
+  "premium.featureLocked": { en: "Premium Feature", tr: "Premium Özellik" },
+  "premium.upgradeCta": { en: "Upgrade to Premium", tr: "Premium'a Geç" },
+  "premium.badge": { en: "Premium", tr: "Premium" },
+
+  "trial.activeBanner": { en: "You have {days} days left in your free trial — enjoy all Premium features!", tr: "Ücretsiz denemenizin {days} günü kaldı — tüm Premium özelliklerden yararlanın!" },
+  "trial.expiringBanner": { en: "Your trial expires in {days} days! Upgrade now to keep Premium features.", tr: "Denemeniz {days} gün içinde sona eriyor! Premium özellikleri korumak için şimdi yükseltin." },
+  "trial.upgradeNow": { en: "Upgrade Now", tr: "Şimdi Yükselt" },
+  "trial.expired": { en: "Your trial has expired", tr: "Deneme süreniz sona erdi" },
+
+  "pricing.title": { en: "Choose Your Plan", tr: "Planınızı Seçin" },
+  "pricing.subtitle": { en: "Start with 7 days free — no credit card required", tr: "7 gün ücretsiz başlayın — kredi kartı gerekmez" },
+  "pricing.monthly": { en: "Monthly", tr: "Aylık" },
+  "pricing.yearly": { en: "Yearly", tr: "Yıllık" },
+  "pricing.saveTag": { en: "Save up to 33%", tr: "%33'e kadar tasarruf" },
+  "pricing.mo": { en: "mo", tr: "ay" },
+  "pricing.yr": { en: "yr", tr: "yıl" },
+  "pricing.free": { en: "Free", tr: "Ücretsiz" },
+  "pricing.savePercent": { en: "Save {pct}%", tr: "%{pct} tasarruf" },
+  "pricing.mostPopular": { en: "Most Popular", tr: "En Popüler" },
+  "pricing.getStartedFree": { en: "Get Started Free", tr: "Ücretsiz Başla" },
+  "pricing.comingSoon": { en: "Coming Soon", tr: "Yakında" },
+  "pricing.trialTitle": { en: "7-Day Free Trial on Every Paid Plan", tr: "Her Ücretli Planda 7 Gün Ücretsiz Deneme" },
+  "pricing.trialDesc": { en: "Sign up and get instant access to all Premium features for 7 days. No credit card needed. If you love it, upgrade anytime.", tr: "Kayıt olun ve 7 gün boyunca tüm Premium özelliklere anında erişin. Kredi kartı gerekmez. Beğenirseniz istediğiniz zaman yükseltin." },
+  "pricing.trialPoint1": { en: "No credit card required", tr: "Kredi kartı gerekmez" },
+  "pricing.trialPoint2": { en: "Cancel anytime", tr: "İstediğiniz zaman iptal" },
+  "pricing.trialPoint3": { en: "Your data is never deleted", tr: "Verileriniz asla silinmez" },
+  "pricing.faqTitle": { en: "Frequently Asked Questions", tr: "Sıkça Sorulan Sorular" },
+  "pricing.faq1q": { en: "What happens after the trial?", tr: "Deneme süresinden sonra ne olur?" },
+  "pricing.faq1a": { en: "You'll automatically switch to the Free plan. No charges, no data loss. All your data stays safe.", tr: "Otomatik olarak Ücretsiz plana geçersiniz. Ücret yok, veri kaybı yok. Tüm verileriniz güvende kalır." },
+  "pricing.faq2q": { en: "Can I change plans later?", tr: "Planımı daha sonra değiştirebilir miyim?" },
+  "pricing.faq2a": { en: "Yes! You can upgrade, downgrade, or cancel anytime from your profile settings.", tr: "Evet! Profil ayarlarınızdan istediğiniz zaman yükseltebilir, düşürebilir veya iptal edebilirsiniz." },
+  "pricing.faq3q": { en: "Is my health data safe?", tr: "Sağlık verilerim güvende mi?" },
+  "pricing.faq3a": { en: "Absolutely. All data is encrypted and stored in compliance with KVKK/GDPR. We never sell your data.", tr: "Kesinlikle. Tüm veriler şifrelenmiş olarak KVKK/GDPR uyumlu şekilde saklanır. Verilerinizi asla satmayız." },
+  "pricing.faq4q": { en: "What payment methods do you accept?", tr: "Hangi ödeme yöntemlerini kabul ediyorsunuz?" },
+  "pricing.faq4a": { en: "We'll support credit/debit cards via Iyzico when payments go live. Currently in beta — all features are free!", tr: "Ödemeler aktifleştiğinde Iyzico üzerinden kredi/banka kartı destekleyeceğiz. Şu an beta — tüm özellikler ücretsiz!" },
+
+  "pricing.free.name": { en: "Free", tr: "Ücretsiz" },
+  "pricing.free.tagline": { en: "Essential health tools", tr: "Temel sağlık araçları" },
+  "pricing.free.features": {
+    en: "20 health queries/day|Medication & supplement calendar|Water & vital tracking|3 blood tests/month|3 PDF reports/month|Daily health score|Calorie calculator|1 family profile",
+    tr: "20 sağlık sorgusu/gün|İlaç & takviye takvimi|Su & vital takibi|3 kan tahlili/ay|3 PDF rapor/ay|Günlük sağlık skoru|Kalori hesaplama|1 aile profili",
+  },
+  "pricing.premium.name": { en: "Premium", tr: "Premium" },
+  "pricing.premium.tagline": { en: "Full health intelligence", tr: "Tam sağlık zekası" },
+  "pricing.premium.features": {
+    en: "Everything in Free|Unlimited queries & blood tests|AI pattern detection|Biological age score & trend|Metabolic portfolio|Washout/cycling system|Boss fight protocols|Symptom pattern AI|Doctor PDF & email|Barcode supplement scan|3 family profiles|Share cards & Wrapped",
+    tr: "Ücretsiz'deki her şey|Sınırsız sorgu & kan tahlili|AI örüntü tespiti|Biyolojik yaş skoru & trend|Metabolik portföy|Washout/döngü sistemi|Boss fight protokolleri|Semptom örüntü AI|Doktor PDF & e-posta|Barkod takviye tarama|3 aile profili|Paylaşım kartları & Wrapped",
+  },
+  "pricing.family.name": { en: "Family", tr: "Aile" },
+  "pricing.family.tagline": { en: "Health for the whole family", tr: "Tüm aile için sağlık" },
+  "pricing.family.features": {
+    en: "Everything in Premium|6 family profiles (2+4)|Parental supervision mode|Shared family dashboard|Cross-family interaction check|Family health timeline",
+    tr: "Premium'daki her şey|6 aile profili (2+4)|Ebeveyn denetim modu|Paylaşımlı aile paneli|Çapraz aile etkileşim kontrolü|Aile sağlık zaman çizelgesi",
+  },
+  "pricing.doctor.name": { en: "Doctor", tr: "Doktor" },
+  "pricing.doctor.tagline": { en: "Professional clinical tools", tr: "Profesyonel klinik araçları" },
+  "pricing.doctor.features": {
+    en: "Everything in Family|Multi-patient management|AI visit summary|Compliance scoring|Patient invite links|New Rx interaction alerts|Clinic multi-account|Insurance integration ready",
+    tr: "Aile'deki her şey|Çoklu hasta yönetimi|AI ziyaret özeti|Uyum puanlaması|Hasta davet linkleri|Yeni Rx etkileşim uyarıları|Klinik çoklu hesap|Sigorta entegrasyonu hazır",
+  },
+
+  "nav.pricing": { en: "Pricing", tr: "Fiyatlar" },
+  "nav.history": { en: "History", tr: "Geçmiş" },
+
+  // ══════════════════════════════════════════
+  // User Panel — Sprint 15
+  // ══════════════════════════════════════════
+  "history.title": { en: "Query History", tr: "Sorgu Geçmişi" },
+  "history.subtitle": { en: "Your past health queries and AI responses", tr: "Geçmiş sağlık sorgularınız ve AI yanıtları" },
+  "history.noResults": { en: "No queries yet. Start by asking a health question!", tr: "Henüz sorgu yok. Bir sağlık sorusu sorarak başlayın!" },
+  "history.interaction": { en: "Interaction Check", tr: "Etkileşim Kontrolü" },
+  "history.general": { en: "Health Query", tr: "Sağlık Sorgusu" },
+  "history.blood_test": { en: "Blood Test", tr: "Kan Tahlili" },
+  "history.favorite": { en: "Favorite", tr: "Favori" },
+  "history.unfavorite": { en: "Unfavorite", tr: "Favoriden Çıkar" },
+  "history.delete": { en: "Delete", tr: "Sil" },
+  "history.all": { en: "All", tr: "Tümü" },
+  "history.favorites": { en: "Favorites", tr: "Favoriler" },
+  "history.search": { en: "Search queries...", tr: "Sorguları ara..." },
+
+  // ══════════════════════════════════════════
+  // Badges / Gamification — Sprint 15
+  // ══════════════════════════════════════════
+  "badges.title": { en: "Achievement Badges", tr: "Başarı Rozetleri" },
+  "badges.subtitle": { en: "Track your health journey milestones", tr: "Sağlık yolculuğu kilometre taşlarınızı takip edin" },
+  "badges.earned": { en: "Earned", tr: "Kazanıldı" },
+  "badges.locked": { en: "Locked", tr: "Kilitli" },
+  "badges.progress": { en: "Progress", tr: "İlerleme" },
+
+  // ══════════════════════════════════════════
+  // Doctor Panel — Sprint 17
+  // ══════════════════════════════════════════
+  "doctor.title": { en: "Doctor Panel", tr: "Doktor Paneli" },
+  "doctor.subtitle": { en: "Manage your patients and track compliance", tr: "Hastalarınızı yönetin ve uyumu takip edin" },
+  "doctor.patients": { en: "Patients", tr: "Hastalar" },
+  "doctor.addPatient": { en: "Invite Patient", tr: "Hasta Davet Et" },
+  "doctor.visitSummary": { en: "AI Visit Summary", tr: "AI Ziyaret Özeti" },
+  "doctor.compliance": { en: "Compliance Score", tr: "Uyum Puanı" },
+  "doctor.noPatients": { en: "No patients yet. Send an invite link to get started.", tr: "Henüz hasta yok. Başlamak için bir davet linki gönderin." },
+  "doctor.verification": { en: "Doctor Verification", tr: "Doktor Doğrulama" },
+  "doctor.verificationDesc": { en: "Upload your medical license or TTB registration to verify your account.", tr: "Hesabınızı doğrulamak için diplomanızı veya TTB kaydınızı yükleyin." },
+
+  // ══════════════════════════════════════════
+  // Operations & E-Nabız — Sprint 18
+  // ══════════════════════════════════════════
+  "operations.title": { en: "Upcoming Operations", tr: "Yaklaşan Operasyonlar" },
+  "operations.subtitle": { en: "Pre & post-operative supplement management", tr: "Ameliyat öncesi & sonrası takviye yönetimi" },
+  "enabiz.title": { en: "E-Nabız Import", tr: "E-Nabız İçe Aktarma" },
+  "enabiz.subtitle": { en: "Import your health records from E-Nabız", tr: "Sağlık kayıtlarınızı E-Nabız'dan içe aktarın" },
+  "enabiz.uploadPdf": { en: "Upload E-Nabız PDF", tr: "E-Nabız PDF Yükle" },
+
+  // ══════════════════════════════════════════
+  // Analytics & Data — Sprint 19
+  // ══════════════════════════════════════════
+  "analytics.title": { en: "Health Analytics", tr: "Sağlık Analitiği" },
+  "analytics.subtitle": { en: "Insights from your health data", tr: "Sağlık verilerinizden içgörüler" },
+  "sideeffect.title": { en: "Side Effect Monitor", tr: "Yan Etki Monitörü" },
+  "sideeffect.subtitle": { en: "Early signal detection from community data", tr: "Topluluk verisinden erken sinyal tespiti" },
+
+  // ══════════════════════════════════════════
+  // PWA — Sprint 20
+  // ══════════════════════════════════════════
+  "pwa.installPrompt": { en: "Install Phytotherapy.ai", tr: "Phytotherapy.ai'yi Yükle" },
+  "pwa.installDesc": { en: "Add to your home screen for quick access", tr: "Hızlı erişim için ana ekranınıza ekleyin" },
+  "pwa.install": { en: "Install", tr: "Yükle" },
+  "pwa.dismiss": { en: "Not now", tr: "Şimdi değil" },
+  "pwa.offline": { en: "You're offline — some features may be limited", tr: "Çevrimdışısınız — bazı özellikler sınırlı olabilir" },
+
+  // ══════════════════════════════════════════
+  // Wrapped — Sprint 16
+  // ══════════════════════════════════════════
+  "wrapped.title": { en: "Your Health Year in Review", tr: "Sağlık Yılınız Özet" },
+  "wrapped.subtitle": { en: "A look back at your health journey", tr: "Sağlık yolculuğunuza bir bakış" },
 }
 
 // ══════════════════════════════════════════

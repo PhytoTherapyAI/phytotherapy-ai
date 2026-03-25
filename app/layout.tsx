@@ -9,6 +9,9 @@ import { LanguageProvider } from "@/components/layout/language-toggle";
 import { MedicationUpdateDialog } from "@/components/layout/medication-update-dialog";
 import { CookieConsent } from "@/components/layout/cookie-consent";
 import { MicroCheckInWrapper } from "@/components/dashboard/MicroCheckInWrapper";
+import { TrialBannerWrapper } from "@/components/premium/TrialBannerWrapper";
+import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
+import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -47,7 +50,34 @@ export const metadata: Metadata = {
     "drug interaction",
     "evidence-based",
     "health assistant",
+    "supplement safety",
+    "blood test analysis",
+    "integrative medicine",
   ],
+  metadataBase: new URL("https://phytotherapy.ai"),
+  openGraph: {
+    title: "Phytotherapy.ai — Evidence-Based Integrative Medicine Assistant",
+    description: "AI-powered health companion bridging modern medicine and evidence-based phytotherapy. Check drug-herb interactions, analyze blood tests, and get personalized health guidance.",
+    url: "https://phytotherapy.ai",
+    siteName: "Phytotherapy.ai",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Phytotherapy.ai",
+    description: "The world's first evidence-based integrative medicine assistant.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Phytotherapy.ai",
+  },
 };
 
 export default function RootLayout({
@@ -65,11 +95,14 @@ export default function RootLayout({
             <AuthProvider>
               <DisclaimerBanner />
               <Header />
+              <TrialBannerWrapper />
               <main className="flex min-h-[calc(100vh-12rem)] flex-col">{children}</main>
               <Footer />
               <MedicationUpdateDialog />
               <MicroCheckInWrapper />
               <CookieConsent />
+              <PWAInstallPrompt />
+              <ServiceWorkerRegistration />
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>

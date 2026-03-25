@@ -5,6 +5,7 @@ import { createBrowserClient } from "@/lib/supabase";
 import { clearDailyMedCheck } from "@/lib/daily-med-check";
 import type { User, Session } from "@supabase/supabase-js";
 import type { UserProfile } from "@/lib/database.types";
+import { getPremiumStatus, type PremiumStatus } from "@/lib/premium";
 
 interface AuthState {
   user: User | null;
@@ -14,6 +15,7 @@ interface AuthState {
   isAuthenticated: boolean;
   needsOnboarding: boolean;
   needsMedicationUpdate: boolean;    // 15-day medication refresh (Supabase)
+  premiumStatus: PremiumStatus;
 }
 
 interface AuthContextType extends AuthState {
@@ -29,6 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const supabase = createBrowserClient();
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const defaultPremium: PremiumStatus = { plan: "free", isTrialActive: false, trialEndsAt: null, trialDaysLeft: 0, isPremium: false };
   const [state, setState] = useState<AuthState>({
     user: null,
     session: null,
@@ -37,6 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated: false,
     needsOnboarding: false,
     needsMedicationUpdate: false,
+    premiumStatus: defaultPremium,
   });
 
   const fetchProfile = useCallback(async (userId: string): Promise<UserProfile | null> => {
@@ -100,6 +104,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: false,
         needsOnboarding: false,
         needsMedicationUpdate: false,
+        premiumStatus: defaultPremium,
       });
       return;
     }
@@ -122,6 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: true,
       needsOnboarding: !profile?.onboarding_complete,
       needsMedicationUpdate: checkMedicationUpdate(profile),
+      premiumStatus: getPremiumStatus(profile),
     });
   }, [fetchProfile, checkMedicationUpdate]);
 
@@ -225,6 +231,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: false,
       needsOnboarding: false,
       needsMedicationUpdate: false,
+      premiumStatus: defaultPremium,
     });
     console.log("[Auth] Signed out — redirecting to /");
     window.location.href = "/";
@@ -238,6 +245,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profile,
         needsOnboarding: !profile?.onboarding_complete,
         needsMedicationUpdate: checkMedicationUpdate(profile),
+        premiumStatus: getPremiumStatus(profile),
       }));
     }
   };

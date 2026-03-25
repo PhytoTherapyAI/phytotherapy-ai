@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Lock, BarChart3, Share2, Trophy, Droplets, Pill } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
+import { WeeklyShareCard } from "@/components/share/WeeklyShareCard"
+import { ShareModal } from "@/components/share/ShareModal"
 
 interface WeeklySummaryCardProps {
   userId: string
@@ -32,6 +34,7 @@ const DAY_NAMES_TR = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"]
 export function WeeklySummaryCard({ userId, lang, isPremium = false }: WeeklySummaryCardProps) {
   const [data, setData] = useState<WeekData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [showShareCard, setShowShareCard] = useState(false)
 
   const fetchWeekData = useCallback(async () => {
     try {
@@ -190,11 +193,23 @@ export function WeeklySummaryCard({ userId, lang, isPremium = false }: WeeklySum
         </div>
 
         {/* Share button */}
-        <Button variant="outline" size="sm" className="w-full" disabled>
+        <Button variant="outline" size="sm" className="w-full" onClick={() => setShowShareCard(true)}>
           <Share2 className="mr-2 h-3 w-3" />
           {tx("weekly.share", lang)}
         </Button>
       </CardContent>
+
+      <ShareModal open={showShareCard && !!data} onClose={() => setShowShareCard(false)}>
+        {data && (
+          <WeeklyShareCard
+            lang={lang}
+            avgScore={data.avgScore}
+            bestScore={data.bestScore}
+            totalCheckIns={data.totalCheckIns}
+            days={data.days}
+          />
+        )}
+      </ShareModal>
     </Card>
   )
 }

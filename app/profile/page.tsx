@@ -17,10 +17,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   User, Pill, AlertTriangle, Heart, Shield, Trash2, Download,
-  Plus, X, Loader2, CheckCircle2, Settings, Save, Baby, Wine,
-  Cigarette, Stethoscope, Sparkles,
+  Plus, X, Loader2, CheckCircle2, Check, Settings, Save, Baby, Wine,
+  Cigarette, Stethoscope, Sparkles, Camera,
 } from "lucide-react";
 import type { UserMedication, UserAllergy, AllergySeverity } from "@/lib/database.types";
+import { MedicationScanner } from "@/components/scanner/MedicationScanner";
 
 interface DrugSuggestion {
   brandName: string;
@@ -55,6 +56,8 @@ export default function ProfilePage() {
 
   // Confirm state
   const [confirming, setConfirming] = useState(false);
+  // Scanner state
+  const [showScanner, setShowScanner] = useState(false);
 
   // Health profile editing state
   const [editingHealth, setEditingHealth] = useState(false);
@@ -354,6 +357,7 @@ export default function ProfilePage() {
     }
   };
 
+  const [medConfirmed, setMedConfirmed] = useState(false);
   const confirmMedicationsCurrent = async () => {
     if (!profile) return;
     setConfirming(true);
@@ -363,12 +367,14 @@ export default function ProfilePage() {
         .from("user_profiles")
         .update({ last_medication_update: new Date().toISOString() })
         .eq("id", profile.id);
-      await refreshProfile();
+      // Don't await refreshProfile — it can hang with timeout
+      refreshProfile().catch(() => {});
+      setMedConfirmed(true);
+      setTimeout(() => setMedConfirmed(false), 3000);
     } catch (err) {
       console.error("Failed to confirm medications:", err);
-    } finally {
-      setConfirming(false);
     }
+    setConfirming(false);
   };
 
   if (isLoading || !profile) {
@@ -430,19 +436,44 @@ export default function ProfilePage() {
               </CardDescription>
             </div>
             {!isAddingMed && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-1"
-                onClick={() => setIsAddingMed(true)}
-              >
-                <Plus className="h-4 w-4" />
-                {tx('profile.addMed', lang)}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1"
+                  onClick={() => setShowScanner(!showScanner)}
+                >
+                  <Camera className="h-4 w-4" />
+                  {tx('scanner.scanMedication', lang)}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1"
+                  onClick={() => setIsAddingMed(true)}
+                >
+                  <Plus className="h-4 w-4" />
+                  {tx('profile.addMed', lang)}
+                </Button>
+              </div>
             )}
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
+          {/* Medication Scanner */}
+          {showScanner && user && (
+            <MedicationScanner
+              userId={user.id}
+              lang={lang as "en" | "tr"}
+              onMedicationFound={(brand, generic, dose) => {
+                setNewBrandName(brand);
+                setNewGenericName(generic);
+                setNewDosage(dose);
+                setIsAddingMed(true);
+                setShowScanner(false);
+              }}
+            />
+          )}
           {/* Medication list */}
           {medications.length === 0 && !isAddingMed ? (
             <p className="text-sm text-muted-foreground">
@@ -595,21 +626,28 @@ export default function ProfilePage() {
           {/* Confirm medications are current */}
           <Separator />
           <Button
-            variant="outline"
+            variant={medConfirmed ? "default" : "outline"}
             size="sm"
-            className="gap-2 border-primary/30 text-primary hover:bg-primary/10"
+            className={`gap-2 ${medConfirmed ? "bg-green-500 hover:bg-green-600 text-white" : "border-primary/30 text-primary hover:bg-primary/10"}`}
             onClick={confirmMedicationsCurrent}
-            disabled={confirming}
+            disabled={confirming || medConfirmed}
           >
             {confirming ? (
               <Loader2 className="h-4 w-4 animate-spin" />
+            ) : medConfirmed ? (
+              <Check className="h-4 w-4" />
             ) : (
               <CheckCircle2 className="h-4 w-4" />
             )}
-            {tx('profile.confirmCurrent', lang)}
+            {medConfirmed
+              ? (lang === "tr" ? "Doğrulandı!" : "Confirmed!")
+              : tx('profile.confirmCurrent', lang)
+            }
           </Button>
         </CardContent>
       </Card>
+
+      {/* Scanners moved to /scanner page via Tools menu */}
 
       {/* Allergies */}
       <Card className="mb-6">
@@ -1130,6 +1168,8 @@ export default function ProfilePage() {
           </p>
         </CardContent>
       </Card>
+
+      {/* Scanners removed — kept for mobile app later */}
     </div>
   );
 }

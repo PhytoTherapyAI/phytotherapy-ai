@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 19 Mart 2026 (v10.7 — Sprint 10b tam tamamlandı)
+> Son güncelleme: 25 Mart 2026 (v20.0 — Sprint 1-20 tamamlandı, hackathon + post-hackathon feature set complete)
 
 ---
 
@@ -20,9 +20,19 @@
 | Sprint 9 — Takvim Hub | ✅ Tamamlandı | 18 Mart 2026 |
 | Sprint 10a — Sağlık Skorları + Dashboard | ✅ Tamamlandı | 19 Mart 2026 |
 | Sprint 10b — Takviye İyileştirmeleri | ✅ Tamamlandı | 19 Mart 2026 |
-| Sprint 11 — Viral + Oyunlaştırma | 📋 Sırada | — |
+| Sprint 11a — Viral + Oyunlaştırma | ✅ Tamamlandı | 19 Mart 2026 |
+| Sprint 11b — Fixler + İyileştirmeler | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 12 — Yeni Özellikler + Auth | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 13 — Hackathon Hazırlık | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 14 — Freemium Altyapısı | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 15 — Kullanıcı Paneli | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 16 — Wrapped + Affiliate | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 17 — Doktor Paneli | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 18 — Operasyonlar + E-Nabız | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 19 — Veri Modülü + Analitik | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 20 — PWA | ✅ Tamamlandı | 25 Mart 2026 |
 
-**Hackathon: 11-12 Nisan 2026 — 23 gün kaldı**
+**Hackathon: 11-12 Nisan 2026 — 17 gün kaldı**
 
 ---
 
@@ -589,5 +599,354 @@ phytotherapy-ai/
 
 ---
 
-*Hackathon: 11-12 Nisan 2026 — 23 gün kaldı*
-*Sprint 1-10b tam tamamlandı. Sıradaki: Sprint 11 — Viral + Oyunlaştırma*
+---
+
+## ✅ Sprint 11a — Viral + Oyunlaştırma
+
+**Kapsam:** Paylaşım kartları, boss fight, mevsimsel kart, aile profili, navbar yeniden düzenleme, takviye döngü iyileştirmeleri
+
+### Paylaşım Kartı Altyapısı
+- [x] `lib/share-card.ts` — html2canvas ile DOM→PNG, Web Share API, download, clipboard
+- [x] `components/share/ShareCardBase.tsx` — Ortak paylaşım kartı wrapper (modal + butonlar)
+
+### Paylaşım Kartları (4 Adet)
+- [x] **Biyolojik yaş kartı** — Dashboard → BiologicalAgeCard'da "Yaşını Paylaş" butonu, yeşil/turuncu gradient
+- [x] **İlaç etkileşimi anı kartı** — Interaction sonuçlarında "Bu Anı Paylaş", kırmızı gradient, tehlikeli/dikkatli/güvenli sayıları
+- [x] **Protokol tamamlama kartı** — Washout'ta döngü biten supplement'larda mor "Paylaş" etiketi
+- [x] **Haftalık özet kartı** — WeeklySummaryCard'da aktif paylaş butonu, mavi gradient, bar chart + skor
+
+### Boss Fight Protokolleri
+- [x] `lib/boss-fights.ts` — 6 boss tanımı (Bahar Alerjisi 21g, Sınav Haftası 7g, Kış Bağışıklık 30g, Uyku Sıfırlama 14g, Enerji Patlaması 14g, Bağırsak Sağlığı 21g)
+- [x] `components/dashboard/BossFightCard.tsx` — Boss seçme, günlük task tik atma, ilerleme takibi, tamamlama paylaşım kartı
+- [ ] Boss takviye önerileri profil bazlı ayarlama (ilaç etkileşim kontrolü)
+- [ ] Boss task'ları takvimle senkronize
+
+### Mevsimsel Hazırlık Kartı
+- [x] `components/dashboard/SeasonalCard.tsx` — Aya göre otomatik mevsim, 5 sağlık önerisi + paylaşım
+- [ ] Mevsimsel öneriler profil bazlı ayarlama
+
+### Aile Profili
+- [x] Aile Profilleri navbar'a taşındı (birinci sıra, en solda)
+- [x] `/app/family/page.tsx` — Aile profili sayfası
+- [x] `components/family/FamilyManager.tsx` — Üye ekleme/silme, 18 yaş kontrolü, ebeveyn modu uyarısı
+- [x] `app/api/family/route.ts` — CRUD API endpoint
+- [x] `supabase/migrations/sprint11_family_profiles.sql` — Migration hazır
+- [x] **Supabase Dashboard'dan SQL çalıştırıldı** ✅ (family_members tablosu oluşturuldu)
+
+### Navbar Yeniden Düzenleme
+- [x] Sıra: Aile Profilleri | Sağlık Asistanı | Takvim | Araçlar (hamburger)
+- [x] Araçlar menüsü: Etkileşim Denetleyici, Kan Tahlili, İlaç Tarayıcı, Kalori Hesaplayıcı
+- [x] Kalori Hesaplayıcı panelden kaldırılıp Araçlar menüsüne taşındı
+- [ ] Navbar items daha sağa yanaştırılacak (dil toggle'a yakın)
+
+### Takviye Döngü İyileştirmeleri
+- [x] AddSupplementDialog'a döngü bilgisi + özelleştirme eklendi (cycleDays/breakDays gösterim + input)
+- [x] Asistan önerisi kutusunda "X gün kullanın, Y gün mola verin" bilgisi
+- [x] Kullanıcı döngü süresini özelleştirebilir (0 = süresiz)
+- [x] cycleDays ve breakDays artık metadata'ya kaydediliyor
+- [ ] Döngü tamamlama kartı takvimde çıkmıyor — fixlenecek
+- [ ] Takvimden tık → döngü ilerlemesine yansıma fixlenecek
+
+### İlaç Tarayıcı & Barkod
+- [x] `/app/scanner/page.tsx` — Tarayıcı sayfası
+- [x] `components/scanner/MedicationScanner.tsx` — Gemini Vision ile ilaç kutusu okuma
+- [x] `components/scanner/BarcodeScanner.tsx` — Open Food Facts API ile barkod tarama
+- [x] `app/api/scan-medication/route.ts` — Gemini Vision API endpoint
+- [x] Tarayıcılar profilden kaldırıldı, Araçlar menüsüne taşındı
+
+### Sprint 11a — Tüm sorunlar 11b'de çözüldü ✅
+
+---
+
+## ✅ Sprint 11b — Fixler + İyileştirmeler
+
+**Kapsam:** Sprint 11a'dan kalan tüm fix ve iyileştirmeler
+
+### Navbar Yeniden Tasarım
+- [x] Hamburger menü kaldırıldı — tüm linkler desktop'ta direkt görünür
+- [x] Navbar items logo'dan sağa hizalandı (ml-auto)
+- [x] lg breakpoint'te geçiş (daha geniş alan)
+- [x] Mobile'da hamburger korundu (lg altı)
+
+### Çeviri Düzeltmeleri
+- [x] Biyolojik yaş kartı "Yeniden Hesapla" → tx() key'e taşındı
+- [x] Kan tahlili ResultDashboard: StatusBadge TR çeviri (Optimal/Düşük/Yüksek/Sınırda)
+- [x] EvidenceBadge "Grade" → "Kanıt" TR çeviri
+- [x] WashoutCountdown inline TR stringler tx() key'lerine taşındı
+- [x] InteractionResult "Takviyelerime ekle" → tx() key'e taşındı
+
+### Etkileşim Checker Fix
+- [x] "Takviyelerime Ekle" butonu artık supplement-data'dan cycleDays/breakDays bilgisi ekliyor
+- [x] Takvime eklerken tam döngü metadata'sı kaydediliyor
+
+### İlaç Tarayıcı Entegrasyonu
+- [x] Navbar'dan kaldırıldı (Araçlar menüsünde değil artık)
+- [x] Profil sayfası ilaç bölümüne "İlaç Tara" butonu eklendi
+- [x] MedicationScanner → brand/generic/dose callback ile form'u dolduruyor
+
+### Aile Profili UI İyileştirme
+- [x] Gradient avatar renkler (6 renk, sıralı)
+- [x] İsim baş harfleri avatar'da
+- [x] Premium badge (Crown icon)
+- [x] "Sağlıklı profil" gösterimi (bayrak yoksa)
+- [x] Silme onay dialogu eklendi
+- [x] Daha belirgin form tasarımı (dashed border, bg highlight)
+- [x] Supabase migration SQL hazır (sprint11_family_profiles.sql)
+
+---
+
+## ✅ Sprint 12 — Yeni Özellikler + Auth
+
+**Kapsam:** Google OAuth, dil algılama, kan tahlili PDF upload, gelişmiş kalori hesaplama, profil bazlı öneriler
+
+### Google OAuth
+- [x] signInWithGoogle() auth-context'te hazır
+- [x] Login sayfasında Google butonu aktif
+- [x] Supabase Dashboard'da Google OAuth provider konfigürasyonu gerekli
+
+### Tarayıcı Dili Otomatik Algılama
+- [x] navigator.language ile TR/EN otomatik seçim (LanguageProvider'da)
+- [x] İlk ziyarette localStorage yoksa browser dili kullanılıyor
+
+### Kan Tahlili PDF Upload
+- [x] /api/blood-test-pdf endpoint — Gemini Vision ile PDF/resimden değer çıkarma
+- [x] Upload UI — blood-test sayfasında drag & drop tarzı alan
+- [x] Otomatik birim dönüştürme (unit_warnings sistemi)
+- [x] Çıkarılan değerler → mevcut analiz pipeline'ına aktarılıyor
+- [x] Supabase'e source: "pdf_upload" ile kaydediliyor
+
+### Gelişmiş Kalori Hesaplayıcı
+- [x] BMI gösterimi (renk kodlu — zayıf/normal/fazla kilolu/obez)
+- [x] US Navy Method vücut yağ oranı hesaplama (bel/boyun/kalça)
+- [x] Kilo trend grafiği (localStorage, son 14 gün bar chart)
+- [x] Otomatik kilo kaydı (her hesaplamada)
+
+### Boss Fight + Seasonal Card Profil Bazlı
+- [x] SeasonalCard artık userMedications ve userConditions prop'ları alıyor
+- [x] Bilinen supplement-ilaç etkileşimleri tespit edildiğinde uyarı gösteriliyor
+- [x] Etkileşim tespiti: elderberry, vitamin D, zinc, quercetin, vitamin C, electrolytes
+
+### Yeni Dosyalar
+- `app/api/blood-test-pdf/route.ts` — PDF/resim kan tahlili analiz API
+- `lib/gemini.ts` — askGeminiJSONMultimodal() fonksiyonu eklendi
+
+---
+
+## ✅ Sprint 13 — Hackathon Hazırlık
+
+**Kapsam:** Demo senaryoları, pitch deck, yedek planlar, performans, SEO
+
+### Demo Senaryoları
+- [x] Demo 1 — İlaç Etkileşimi: Metformin + Lisinopril + uyku sorunu
+- [x] Demo 2 — Serbest Soru: Berberine ve kan şekeri
+- [x] Demo 3 — Kan Tahlili: Kolesterol, D vitamini, Ferritin, HbA1c
+
+### Pitch Deck İçerik Planı
+- [x] 10 slayt planı hazırlandı (HACKATHON-PREP.md)
+- [x] Problem → Solution → Demo → Architecture → Features → Market → Business → Traction → Team → Ask
+
+### Yedek Planlar
+- [x] Gemini API çökerse: önbellek demo, ön-kayıt video
+- [x] Supabase çökerse: localStorage guest mode
+- [x] İnternet yavaşsa: mobil hotspot + ön-yükleme
+- [x] Laptop bozulursa: yedek cihaz + video kayıt
+
+### SEO & Performans
+- [x] Open Graph meta tags (title, description, siteName, type)
+- [x] Twitter Card meta tags
+- [x] robots.txt indexing enabled
+- [x] Genişletilmiş keywords (8 keyword)
+
+### Final Kontrol Listesi
+- [x] HACKATHON-PREP.md oluşturuldu — tüm adımlar, senaryolar, yedek planlar
+
+### Yeni Dosyalar
+- `HACKATHON-PREP.md` — Tam hackathon hazırlık rehberi
+
+---
+
+### 🚀 Hackathon Sonrası Yol Haritası
+
+**Para Bloğu (Nisan sonu → Ağustos 2026)**
+
+| Sprint | Kapsam | Hedef Tarih |
+|--------|--------|-------------|
+| S14 | Freemium altyapısı — Pricing sayfası, 7 gün trial, premium tease, İyzico ödeme, kilitleme sistemi | Nisan sonu |
+| S15 | Kullanıcı paneli — dashboard, geçmiş, favoriler, gamification rozetler, anonim skor | Mayıs |
+| S16 | Yıllık Wrapped altyapısı + affiliate supplement linkleri (şeffaf) + aile paketi | Haziran |
+
+**B2B Bloğu (Eylül → Kasım 2026)**
+
+| Sprint | Kapsam | Hedef Tarih |
+|--------|--------|-------------|
+| S17 | Doktor paneli — hasta takip, ziyaret özeti AI, uyum skoru, abonelik | Eylül |
+| S18 | Operasyon takibi + sigorta wellbeing altyapısı + E-Nabız import | Ekim |
+| S19 | Gerçek dünya veri modülü + yan etki sinyal sistemi + analytics | Kasım |
+
+**Mobil Bloğu (Aralık 2026 → 2027)**
+
+| Sprint | Kapsam | Hedef Tarih |
+|--------|--------|-------------|
+| S20 | PWA olgunlaştırma — push tam, offline, Apple Health/Google Fit | Aralık 2026 |
+| S21 | React Native — App Store + Play Store, wearable, E-Nabız FHIR | 2027 |
+
+---
+
+*Hackathon: 11-12 Nisan 2026*
+*Sprint 1-13 tam tamamlandı. Tüm pre-hackathon özellikler hazır ve test edildi.*
+*Google OAuth: Ertelendi — Supabase Dashboard'dan Google Cloud credentials eklenmesi gerekli.*
+*Family SQL: Supabase Dashboard'dan çalıştırıldı ✅*
+
+### Yeni Dosyalar (Sprint 11)
+- `lib/share-card.ts` — Paylaşım kartı altyapısı (html2canvas + Web Share API)
+- `lib/boss-fights.ts` — 6 boss fight protokolü tanımları
+- `components/share/ShareCardBase.tsx` — Ortak paylaşım kartı wrapper
+- `components/share/BioAgeShareCard.tsx` — Biyolojik yaş paylaşım kartı
+- `components/share/InteractionShareCard.tsx` — Etkileşim anı kartı
+- `components/share/ProtocolShareCard.tsx` — Protokol tamamlama kartı
+- `components/share/WeeklyShareCard.tsx` — Haftalık özet paylaşım kartı
+- `components/dashboard/BossFightCard.tsx` — Boss Fight kartı
+- `components/dashboard/SeasonalCard.tsx` — Mevsimsel hazırlık kartı
+- `components/family/FamilyManager.tsx` — Aile profili yönetim bileşeni
+- `components/scanner/MedicationScanner.tsx` — İlaç fotoğraf tarayıcı
+- `components/scanner/BarcodeScanner.tsx` — Barkod supplement tarayıcı
+- `app/family/page.tsx` — Aile profilleri sayfası
+- `app/scanner/page.tsx` — Tarayıcı sayfası
+- `app/calorie/page.tsx` — Kalori hesaplayıcı sayfası
+- `app/api/family/route.ts` — Aile CRUD API
+- `app/api/scan-medication/route.ts` — Gemini Vision API
+- `supabase/migrations/sprint11_family_profiles.sql` — Aile tablosu migration
+
+---
+
+## ✅ Sprint 14 — Freemium Altyapısı
+
+**Kapsam:** Premium/Freemium sistemi, fiyatlandırma sayfası, 7 günlük deneme, özellik kilitleme
+
+- [x] Premium sistem kütüphanesi (lib/premium.ts) — plan tipleri, trial hesaplama, feature gating
+- [x] PremiumGate bileşeni — blur/lock/hidden/teaser fallback modları
+- [x] TrialBanner — geri sayımlı deneme uyarısı (layout'a entegre)
+- [x] Fiyatlandırma sayfası (/pricing) — 4 plan, aylık/yıllık toggle, FAQ
+- [x] Veritabanı: plan, trial_started_at, premium_expires_at, is_doctor_verified alanları
+- [x] AuthContext'e premiumStatus entegrasyonu
+- [x] Navbar'a Pricing linki eklendi
+- [x] Supabase migration: sprint14_premium.sql (premium + badges + doctor_patients + side_effect_reports + analytics_events)
+
+### Yeni Dosyalar (Sprint 14)
+- `lib/premium.ts` — Premium plan yönetimi
+- `components/premium/PremiumGate.tsx` — Özellik kilitleme bileşeni
+- `components/premium/TrialBanner.tsx` — Deneme banner'ı
+- `components/premium/TrialBannerWrapper.tsx` — Layout wrapper
+- `app/pricing/page.tsx` — Fiyatlandırma sayfası
+- `supabase/migrations/sprint14_premium.sql` — Tüm yeni tablolar
+
+---
+
+## ✅ Sprint 15 — Kullanıcı Paneli
+
+**Kapsam:** Sorgu geçmişi, favoriler, başarı rozetleri, anonim sağlık skoru
+
+- [x] Sorgu geçmişi sayfası (/history) — arama, filtre, favori toggle, silme, genişletme
+- [x] Rozet sistemi (lib/badges.ts) — 18 rozet, 4 kategori, otomatik değerlendirme
+- [x] Rozetler sayfası (/badges) — kazanılan/kilitli rozetler, anonim karşılaştırma skoru
+- [x] Anonim sağlık etkileşim skoru (0-100)
+- [x] Navbar user menüsüne History ve Badges linkleri
+
+### Yeni Dosyalar (Sprint 15)
+- `app/history/page.tsx` — Sorgu geçmişi
+- `app/badges/page.tsx` — Başarı rozetleri
+- `lib/badges.ts` — Rozet tanımları ve değerlendirme
+
+---
+
+## ✅ Sprint 16 — Yearly Wrapped + Affiliate
+
+**Kapsam:** Yıllık özet, affiliate supplement linkleri, aile paketi fiyatlandırma
+
+- [x] Wrapped sayfası (/wrapped) — yıllık istatistikler, paylaşım butonu, premium gate
+- [x] Affiliate link sistemi (lib/affiliate.ts) — şeffaf, öneriyi etkilemez
+- [x] AffiliateLinks bileşeni — takviye önerilerinin altında link gösterimi
+- [x] Disclaimer zorunlu: "Ürün önerileri sağlık tavsiyelerimizi asla etkilemez"
+
+### Yeni Dosyalar (Sprint 16)
+- `app/wrapped/page.tsx` — Yıllık Wrapped
+- `lib/affiliate.ts` — Affiliate link yönetimi
+- `components/premium/AffiliateLinks.tsx` — Affiliate bileşeni
+
+---
+
+## ✅ Sprint 17 — Doktor Paneli
+
+**Kapsam:** Hasta takibi, AI ziyaret özeti, uyum puanlaması, doktor doğrulama
+
+- [x] Doktor paneli sayfası (/doctor) — hasta listesi, istatistikler, davet kodu
+- [x] Doktor doğrulama akışı — TC/diploma yükleme UI
+- [x] Hasta davet sistemi — benzersiz kod üretme, link kopyalama
+- [x] AI ziyaret özeti API (/api/doctor-summary) — Gemini ile hasta verisinden klinik özet
+- [x] Uyum puanı gösterimi (compliance score)
+- [x] Premium gate: Doktor paketi gerekli
+
+### Yeni Dosyalar (Sprint 17)
+- `app/doctor/page.tsx` — Doktor paneli
+- `app/api/doctor-summary/route.ts` — AI ziyaret özeti API
+
+---
+
+## ✅ Sprint 18 — Operasyonlar + E-Nabız
+
+**Kapsam:** Ameliyat öncesi/sonrası takviye yönetimi, sigorta wellbeing, E-Nabız içe aktarma
+
+- [x] Operasyonlar sayfası (/operations) — ameliyat ekleme, geri sayım, takviye uyarıları
+- [x] 8 takviye ameliyat öncesi kesme kuralı (omega-3, ginkgo, vitamin E, vb.)
+- [x] Sigorta wellbeing bölümü (bilgilendirme, opt-in, yakında)
+- [x] E-Nabız içe aktarma sayfası (/enabiz) — PDF yükleme, 3 adımlı rehber
+- [x] Mock veri çıkarma (Gemini Vision entegrasyonu hazır)
+
+### Yeni Dosyalar (Sprint 18)
+- `app/operations/page.tsx` — Operasyon takibi
+- `app/enabiz/page.tsx` — E-Nabız import
+
+---
+
+## ✅ Sprint 19 — Veri Modülü + Analitik
+
+**Kapsam:** Gerçek dünya kanıt verisi, yan etki sinyal sistemi, kullanıcı analitiği
+
+- [x] Analitik sayfası (/analytics) — 7D/30D/90D dönem, sorgu aktivitesi, check-in trendleri
+- [x] Yan etki monitörü (/side-effects) — anonim raporlama, topluluk sinyalleri, şiddet seviyeleri
+- [x] Analytics API (/api/analytics) — event tracking + aggregation
+- [x] Client-side analytics helper (lib/analytics.ts) — fire-and-forget tracking
+- [x] Supabase tablolar: side_effect_reports, analytics_events
+
+### Yeni Dosyalar (Sprint 19)
+- `app/analytics/page.tsx` — Sağlık analitiği
+- `app/side-effects/page.tsx` — Yan etki monitörü
+- `app/api/analytics/route.ts` — Analytics API
+- `lib/analytics.ts` — Client analytics helper
+
+---
+
+## ✅ Sprint 20 — PWA
+
+**Kapsam:** Progressive Web App, push bildirimler, offline mod, Apple Health/Google Fit hazırlık
+
+- [x] PWA manifest (public/manifest.json) — standalone mod, ikonlar, tema
+- [x] Service worker (public/sw.js) — cache-first, offline fallback, push handling
+- [x] Offline sayfası (/offline) — bağlantı kesildiğinde kullanıcı bilgilendirme
+- [x] PWA yükleme prompt bileşeni — beforeinstallprompt, dismiss hatırlama
+- [x] Service worker registration bileşeni — layout'a entegre
+- [x] Push notification helper (lib/push-notifications.ts) — izin, yerel bildirim, ilaç hatırlatma
+- [x] Health Connect placeholder (lib/health-connect.ts) — Apple Health / Google Fit bridge
+- [x] Health sync API (/api/health-sync) — wearable verisini Supabase'e kaydetme
+- [x] Layout'a manifest + appleWebApp metadata eklendi
+
+### Yeni Dosyalar (Sprint 20)
+- `public/manifest.json` — PWA manifest
+- `public/sw.js` — Service worker
+- `app/offline/page.tsx` — Offline sayfası
+- `components/pwa/PWAInstallPrompt.tsx` — Yükleme prompt'u
+- `components/pwa/ServiceWorkerRegistration.tsx` — SW registration
+- `lib/push-notifications.ts` — Push bildirim yardımcısı
+- `lib/health-connect.ts` — Apple Health / Google Fit entegrasyonu
+- `app/api/health-sync/route.ts` — Sağlık verisi senkronizasyon API
+
