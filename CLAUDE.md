@@ -551,8 +551,8 @@ NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
 
 ---
 
-*Son güncelleme: 25 Mart 2026 v12.0*
-*Sprint 1-13 tam tamamlandı. Tüm pre-hackathon özellikler hazır.*
-*Hackathon: 11-12 Nisan 2026 — 17 gün kaldı*
-*Google OAuth: Supabase Dashboard'dan Google Cloud credentials eklenmesi gerekli (ertelendi).*
-*Family SQL: Supabase Dashboard'dan çalıştırıldı ✅*
+*Son güncelleme: 26 Mart 2026 v12.1*
+*Sprint 1-20 tamamlandı. Hackathon polish Phase 1 bitti, Phase 2-6 devam edecek.*
+*Hackathon: 11-12 Nisan 2026 — 16 gün kaldı*
+*Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
+*Dashboard tools grid, leaderboard, çeviri fixleri, wrapped share, doktor davet düzeltildi.*

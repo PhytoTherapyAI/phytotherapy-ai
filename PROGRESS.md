@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 26 Mart 2026 (v20.1 — Sprint 1-20 kod tamamlandı, S14-20 fix/polish devam ediyor)
+> Son güncelleme: 26 Mart 2026 (v20.2 — S14-20 fixler tamamlandı, hackathon polish başladı)
 
 ---
 
@@ -25,21 +25,33 @@
 | Sprint 12 — Yeni Özellikler + Auth | ✅ Tamamlandı | 25 Mart 2026 |
 | Sprint 13 — Hackathon Hazırlık | ✅ Tamamlandı | 25 Mart 2026 |
 | Sprint 14 — Freemium Altyapısı | ✅ Kod Hazır | 25 Mart 2026 |
-| Sprint 15 — Kullanıcı Paneli | 🔧 Fix Gerekli | 26 Mart 2026 |
-| Sprint 16 — Wrapped + Affiliate | ✅ Kod Hazır (erişim linki eksik) | 25 Mart 2026 |
-| Sprint 17 — Doktor Paneli | ✅ Kod Hazır (erişim linki eksik) | 25 Mart 2026 |
-| Sprint 18 — Operasyonlar + E-Nabız | ✅ Kod Hazır (erişim linki eksik) | 25 Mart 2026 |
-| Sprint 19 — Veri Modülü + Analitik | ✅ Kod Hazır (erişim linki eksik) | 25 Mart 2026 |
+| Sprint 15 — Kullanıcı Paneli | ✅ Tamamlandı | 26 Mart 2026 |
+| Sprint 16 — Wrapped + Affiliate | ✅ Tamamlandı (share fix + premium kaldırıldı) | 26 Mart 2026 |
+| Sprint 17 — Doktor Paneli | ✅ Tamamlandı (invite fix + /doctor/join) | 26 Mart 2026 |
+| Sprint 18 — Operasyonlar + E-Nabız | ✅ Tamamlandı (çeviriler tamamlandı) | 26 Mart 2026 |
+| Sprint 19 — Veri Modülü + Analitik | ✅ Tamamlandı (çeviriler tamamlandı) | 26 Mart 2026 |
 | Sprint 20 — PWA | ✅ Tamamlandı (SW fix uygulandı) | 26 Mart 2026 |
+| Hackathon Polish — Phase 1 | ✅ Tamamlandı | 26 Mart 2026 |
+| Hackathon Polish — Phase 2-6 | 🔧 Devam Edecek | — |
 
-### ⚠️ Bilinen Sorunlar (SPRINT-14-20-FIXES.md)
-- **Supabase migration çalıştırılmadı** → DB bağımlı özellikler çalışmıyor
-- **Yeni sayfalar navbar/dashboard'da link yok** → URL bilmeden erişilemiyor
-- **Leaderboard eksik** → Badges sayfasına global sıralama eklenmeli
-- **Çeviri eksikleri** → Bazı sayfalarda hardcoded İngilizce stringler
-- **History düzeltildi** → Favori/silme/expand bug'ları fixlendi (26 Mart)
+### ✅ 26 Mart Fixler (v20.2)
+- **Dashboard tools grid eklendi** → 8 kartlık link grid (tüm yeni sayfalar erişilebilir)
+- **Leaderboard API + UI** → /api/leaderboard + badges sayfasında global sıralama
+- **71 çeviri key eklendi** → operations, enabiz, analytics, side-effects, doctor, badges sayfaları
+- **Premium gate'ler kaldırıldı** → Wrapped + Doctor sayfaları açık (hackathon modu)
+- **isPremium = true force** → Tüm özellikler açık
+- **Pricing navbar'dan çıkarıldı** → TrialBanner devre dışı
+- **Wrapped share düzeltildi** → ShareCardBase ile share/download/copy çalışıyor
+- **Doktor davet düzeltildi** → /doctor/join sayfası eklendi, hasta kodu ile katılabiliyor
 
-**Hackathon: 11-12 Nisan 2026 — 17 gün kaldı**
+### 🔧 Kalan İşler (Phase 2-6)
+- CSS animasyon altyapısı (fadeInUp, scaleIn, typingBounce)
+- Landing page yeniden tasarım (hero, trust strip, stats section)
+- Chat UX iyileştirmesi (typing dots, mesaj balonları, quick chips)
+- Dashboard + tüm panel sayfaları polish
+- Demo modu (jüri için tek tıkla dolu hesap)
+
+**Hackathon: 11-12 Nisan 2026 — 16 gün kaldı**
 
 ---
 
