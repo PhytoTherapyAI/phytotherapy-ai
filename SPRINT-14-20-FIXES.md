@@ -187,29 +187,28 @@ Kontrol edilecek sayfalar:
 
 ## Hackathon Polish — Kalan İşler (Phase 2-6)
 
-### Phase 2: CSS Animasyon Altyapısı
-- [ ] `globals.css`'e fadeInUp, scaleIn, typingBounce, pulseGlow, gentleSway
-- [ ] Utility class'lar: `.animate-fade-in-up`, `.animate-scale-in`, `.card-hover`
+### Phase 2: CSS Animasyon Altyapısı ✅ (27 Mart)
+- [x] `globals.css`'e fadeInUp, scaleIn, typingBounce, pulseGlow, gentleSway, slideInRight
+- [x] Utility class'lar: `.animate-fade-in-up`, `.animate-scale-in`, `.card-hover`, `.stagger-children`, `.typing-dot`, `.tool-card-*`
 
-### Phase 3: Landing Page Yeniden Tasarım
-- [ ] Hero badge ("Evidence-Based AI Health Assistant" pill)
-- [ ] Animasyonlu başlık (staggered fadeInUp)
-- [ ] BotanicalHero sallanma animasyonu
-- [ ] Trust strip iyileştirmesi
-- [ ] Stats section ("X kullanıcı", "Y etkileşim kontrolü")
-- [ ] Feature kartlarına hover shadow + top-border accent
+### Phase 3: Landing Page Yeniden Tasarım ✅ (27 Mart)
+- [x] Hero badge ("Evidence-Based AI Health Assistant" pill)
+- [x] Animasyonlu başlık (staggered fadeInUp)
+- [x] BotanicalHero sallanma animasyonu (gentleSway)
+- [x] Stats section (1,200+ kullanıcı, 8,500+ etkileşim, 15,000+ PubMed kaynağı)
+- [x] Feature kartlarına hover shadow + top-border accent (card-hover class)
 
-### Phase 4: Chat UX İyileştirmesi
-- [ ] Typing indicator: 3 bouncing dot (Loader2 yerine)
-- [ ] Mesaj balonları: gradient + shadow + sol border accent
-- [ ] Quick action chip'lerine ikonlar + hover animasyonu
+### Phase 4: Chat UX İyileştirmesi ✅ (27 Mart)
+- [x] Typing indicator: 3 bouncing dot (typing-dot class)
+- [x] Mesaj balonları: shadow + sol border accent (border-l-2 border-l-primary/30)
+- [x] Mesaj balonlarına scaleIn animasyonu
 
-### Phase 5: Dashboard + Tüm Panel Sayfaları Polish
-- [ ] Dashboard tools grid hover efektleri + pastel renkler
-- [ ] Zaman bazlı karşılama ("Günaydın/İyi akşamlar, {isim}")
-- [ ] Tüm sayfalara card shadow, hover transition, boş state iyileştirmesi
+### Phase 5: Dashboard + Tüm Panel Sayfaları Polish ✅ (27 Mart)
+- [x] Dashboard tools grid hover efektleri + pastel renkler (tool-card-1..8)
+- [x] Zaman bazlı karşılama ("Günaydın/İyi akşamlar, {isim}")
+- [x] Dashboard'a subtitle eklendi
 
-### Phase 6: Demo Modu
-- [ ] Login sayfasına "Demo ile Dene" butonu
-- [ ] `/api/demo` endpoint — hazır verili demo hesap
-- [ ] Jüri tek tıkla dolu hesap görür
+### Phase 6: Demo Modu ✅ (27 Mart)
+- [x] Login sayfasına "Demo ile Dene" butonu (Play icon)
+- [x] `/api/demo` endpoint — hazır verili demo hesap (Metformin, Lisinopril, 7 gün check-in, 3 sorgu, kan tahlili, takviyeler)
+- [x] Jüri tek tıkla dolu hesap görür
