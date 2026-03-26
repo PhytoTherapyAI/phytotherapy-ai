@@ -174,10 +174,42 @@ Kontrol edilecek sayfalar:
 
 ## Öncelik Sırası
 
-1. **Supabase migration çalıştır** (tüm DB bağımlı özellikler için)
-2. **Dashboard'a tool linkleri ekle** (sayfaların erişilebilir olması için)
-3. **Leaderboard API + UI** (badges sayfasına)
-4. **Çeviri eksiklerini tamamla** (tüm sayfalar)
-5. **Operations'ı Supabase'e taşı** (localStorage → DB)
-6. **E-Nabız gerçek PDF parsing** (Gemini Vision)
-7. **Iyzico ödeme entegrasyonu** (pricing sayfası)
+1. ~~**Supabase migration çalıştır**~~ → ✅ SQL hazır, kullanıcı çalıştıracak
+2. ~~**Dashboard'a tool linkleri ekle**~~ → ✅ 8 kartlık grid eklendi (26 Mart)
+3. ~~**Leaderboard API + UI**~~ → ✅ /api/leaderboard + badges UI (26 Mart)
+4. ~~**Çeviri eksiklerini tamamla**~~ → ✅ 71 yeni key, 6 sayfa (26 Mart)
+5. ~~**Premium gate kaldır**~~ → ✅ Wrapped + Doctor açık, isPremium=true (26 Mart)
+6. ~~**Wrapped share fix**~~ → ✅ ShareCardBase entegre (26 Mart)
+7. ~~**Doktor davet fix**~~ → ✅ /doctor/join sayfası eklendi (26 Mart)
+8. ~~**Pricing kaldır**~~ → ✅ Navbar'dan çıkarıldı, TrialBanner devre dışı (26 Mart)
+
+---
+
+## Hackathon Polish — Kalan İşler (Phase 2-6)
+
+### Phase 2: CSS Animasyon Altyapısı
+- [ ] `globals.css`'e fadeInUp, scaleIn, typingBounce, pulseGlow, gentleSway
+- [ ] Utility class'lar: `.animate-fade-in-up`, `.animate-scale-in`, `.card-hover`
+
+### Phase 3: Landing Page Yeniden Tasarım
+- [ ] Hero badge ("Evidence-Based AI Health Assistant" pill)
+- [ ] Animasyonlu başlık (staggered fadeInUp)
+- [ ] BotanicalHero sallanma animasyonu
+- [ ] Trust strip iyileştirmesi
+- [ ] Stats section ("X kullanıcı", "Y etkileşim kontrolü")
+- [ ] Feature kartlarına hover shadow + top-border accent
+
+### Phase 4: Chat UX İyileştirmesi
+- [ ] Typing indicator: 3 bouncing dot (Loader2 yerine)
+- [ ] Mesaj balonları: gradient + shadow + sol border accent
+- [ ] Quick action chip'lerine ikonlar + hover animasyonu
+
+### Phase 5: Dashboard + Tüm Panel Sayfaları Polish
+- [ ] Dashboard tools grid hover efektleri + pastel renkler
+- [ ] Zaman bazlı karşılama ("Günaydın/İyi akşamlar, {isim}")
+- [ ] Tüm sayfalara card shadow, hover transition, boş state iyileştirmesi
+
+### Phase 6: Demo Modu
+- [ ] Login sayfasına "Demo ile Dene" butonu
+- [ ] `/api/demo` endpoint — hazır verili demo hesap
+- [ ] Jüri tek tıkla dolu hesap görür
