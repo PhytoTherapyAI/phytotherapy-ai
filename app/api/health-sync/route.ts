@@ -4,15 +4,26 @@ import { createServerClient } from "@/lib/supabase"
 // Health data sync endpoint for Apple Health / Google Fit data
 export async function POST(req: NextRequest) {
   try {
-    const { userId, data, source } = await req.json()
-
-    if (!userId || !data) {
-      return NextResponse.json({ error: "userId and data required" }, { status: 400 })
+    // Auth check
+    const authHeader = req.headers.get("authorization")
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const token = authHeader.replace("Bearer ", "")
     const supabase = createServerClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
 
-    // Store health sync data as a daily check-in supplement
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { data, source } = await req.json()
+
+    if (!data) {
+      return NextResponse.json({ error: "data required" }, { status: 400 })
+    }
+
     const today = new Date().toISOString().split("T")[0]
 
     // Upsert into daily_check_ins with health connect data
@@ -25,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     // Log the sync event
     await supabase.from("analytics_events").insert({
-      user_id: userId,
+      user_id: user.id,
       event_type: "health_sync",
       event_data: {
         source,

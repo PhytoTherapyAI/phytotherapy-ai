@@ -266,7 +266,7 @@ export default function HistoryPage() {
                       </div>
                     ) : (
                       <p className="text-sm text-muted-foreground italic">
-                        {lang === "tr" ? "Yanıt kaydedilmemiş" : "No response saved"}
+                        {tx("history.noResponse", lang)}
                       </p>
                     )}
                   </div>

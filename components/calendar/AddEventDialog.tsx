@@ -110,11 +110,11 @@ export function AddEventDialog({
 
   const handleSave = async () => {
     if (!title.trim()) {
-      setError(lang === "tr" ? "Başlık gereklidir." : "Title is required.")
+      setError(tx("cal.titleRequired", lang))
       return
     }
     if (!date) {
-      setError(lang === "tr" ? "Tarih gereklidir." : "Date is required.")
+      setError(tx("cal.dateRequired", lang))
       return
     }
 
@@ -144,7 +144,7 @@ export function AddEventDialog({
       onOpenChange(false)
     } catch (err) {
       console.error("Failed to save event:", err)
-      setError(lang === "tr" ? "Etkinlik kaydedilemedi." : "Failed to save event.")
+      setError(tx("cal.eventSaveFailed", lang))
     } finally {
       setSaving(false)
     }
@@ -156,7 +156,7 @@ export function AddEventDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CalendarPlus className="h-5 w-5 text-primary" />
-            {isEdit ? (lang === "tr" ? "Etkinliği Düzenle" : "Edit Event") : tx("cal.addEventTitle", lang)}
+            {isEdit ? tx("cal.editEventTitle", lang) : tx("cal.addEventTitle", lang)}
           </DialogTitle>
           <DialogDescription>{tx("cal.addEventDesc", lang)}</DialogDescription>
         </DialogHeader>

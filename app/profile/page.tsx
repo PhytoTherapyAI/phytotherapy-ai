@@ -432,7 +432,7 @@ export default function ProfilePage() {
                 {tx('profile.lastUpdated', lang)}{" "}
                 {profile.last_medication_update
                   ? new Date(profile.last_medication_update).toLocaleDateString()
-                  : (lang === "tr" ? "Hiçbir zaman" : "Never")}
+                  : tx("profile.never", lang)}
               </CardDescription>
             </div>
             {!isAddingMed && (
@@ -640,7 +640,7 @@ export default function ProfilePage() {
               <CheckCircle2 className="h-4 w-4" />
             )}
             {medConfirmed
-              ? (lang === "tr" ? "Doğrulandı!" : "Confirmed!")
+              ? tx("profile.confirmed", lang)
               : tx('profile.confirmCurrent', lang)
             }
           </Button>
@@ -683,11 +683,11 @@ export default function ProfilePage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
-          {profile.is_pregnant && <Badge variant="outline">{lang === "tr" ? "Hamile" : "Pregnant"}</Badge>}
-          {profile.is_breastfeeding && <Badge variant="outline">{lang === "tr" ? "Emziriyor" : "Breastfeeding"}</Badge>}
-          {profile.kidney_disease && <Badge variant="destructive">{lang === "tr" ? "Böbrek Hastalığı" : "Kidney Disease"}</Badge>}
-          {profile.liver_disease && <Badge variant="destructive">{lang === "tr" ? "Karaciğer Hastalığı" : "Liver Disease"}</Badge>}
-          {profile.recent_surgery && <Badge variant="outline">{lang === "tr" ? "Yakın Ameliyat" : "Recent Surgery"}</Badge>}
+          {profile.is_pregnant && <Badge variant="outline">{tx("profile.pregnant", lang)}</Badge>}
+          {profile.is_breastfeeding && <Badge variant="outline">{tx("profile.breastfeeding", lang)}</Badge>}
+          {profile.kidney_disease && <Badge variant="destructive">{tx("profile.kidneyDisease", lang)}</Badge>}
+          {profile.liver_disease && <Badge variant="destructive">{tx("profile.liverDisease", lang)}</Badge>}
+          {profile.recent_surgery && <Badge variant="outline">{tx("profile.recentSurgery", lang)}</Badge>}
           {profile.chronic_conditions.map((c) => (
             <Badge key={c} variant="secondary">{c}</Badge>
           ))}

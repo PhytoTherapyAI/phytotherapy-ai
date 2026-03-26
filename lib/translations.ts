@@ -386,6 +386,7 @@ const t: Record<string, TranslationEntry> = {
   // Chat loading / emergency
   // ══════════════════════════════════════════
   "chat.analyzing": { en: "Analyzing...", tr: "Analiz ediliyor..." },
+  "chat.analyzeFile": { en: "Analyze this file", tr: "Bu dosyayı analiz et" },
   "chat.analyzingFile": { en: "Analyzing your file...", tr: "Dosyanız analiz ediliyor..." },
   "chat.emergencyTitle": { en: "EMERGENCY WARNING", tr: "ACİL UYARI" },
 
@@ -483,6 +484,7 @@ const t: Record<string, TranslationEntry> = {
   // Interaction Checker: Load from Profile
   // ══════════════════════════════════════════
   "ic.loadFromProfile": { en: "Load My Medications", tr: "İlaçlarımı Yükle" },
+  "ic.profileMedsLoaded": { en: "✓ Profile meds loaded", tr: "✓ Profil ilaçları yüklendi" },
   "ic.loadFromProfileDesc": { en: "Auto-fill from your profile", tr: "Profilden otomatik doldur" },
   "ic.loadFromProfileGuest": {
     en: "Sign in to load your medications automatically",
@@ -510,6 +512,13 @@ const t: Record<string, TranslationEntry> = {
   "profile.allergies": { en: "Allergies", tr: "Alerjiler" },
   "profile.noAllergies": { en: "No allergies recorded", tr: "Kayıtlı alerji yok" },
   "profile.healthFlags": { en: "Health Flags", tr: "Sağlık Durumu" },
+  "profile.never": { en: "Never", tr: "Hiçbir zaman" },
+  "profile.confirmed": { en: "Confirmed!", tr: "Doğrulandı!" },
+  "profile.pregnant": { en: "Pregnant", tr: "Hamile" },
+  "profile.breastfeeding": { en: "Breastfeeding", tr: "Emziriyor" },
+  "profile.kidneyDisease": { en: "Kidney Disease", tr: "Böbrek Hastalığı" },
+  "profile.liverDisease": { en: "Liver Disease", tr: "Karaciğer Hastalığı" },
+  "profile.recentSurgery": { en: "Recent Surgery", tr: "Yakın Ameliyat" },
   "profile.noFlags": { en: "No health flags", tr: "Sağlık durumu kaydı yok" },
   "profile.dataPrivacy": { en: "Data & Privacy", tr: "Veri ve Gizlilik" },
   "profile.dataDesc": { en: "Manage your data according to GDPR/KVKK", tr: "KVKK/GDPR kapsamında verilerinizi yönetin" },
@@ -598,6 +607,14 @@ const t: Record<string, TranslationEntry> = {
 
   // Add Event Dialog
   "cal.addEventTitle": { en: "Add Event", tr: "Etkinlik Ekle" },
+  "cal.editEventTitle": { en: "Edit Event", tr: "Etkinliği Düzenle" },
+  "cal.titleRequired": { en: "Title is required.", tr: "Başlık gereklidir." },
+  "cal.dateRequired": { en: "Date is required.", tr: "Tarih gereklidir." },
+  "cal.eventSaveFailed": { en: "Failed to save event.", tr: "Etkinlik kaydedilemedi." },
+  "cal.validValues": { en: "Enter valid values.", tr: "Geçerli değerler girin." },
+  "cal.valueRequired": { en: "Value is required.", tr: "Değer gereklidir." },
+  "cal.validValue": { en: "Enter a valid value.", tr: "Geçerli bir değer girin." },
+  "cal.vitalSaveFailed": { en: "Failed to save vital record.", tr: "Vital kaydedilemedi." },
   "cal.addEventDesc": {
     en: "Create a new health event or reminder.",
     tr: "Yeni bir sağlık etkinliği veya hatırlatıcı oluşturun.",
@@ -1031,6 +1048,7 @@ const t: Record<string, TranslationEntry> = {
 
   "nav.pricing": { en: "Pricing", tr: "Fiyatlar" },
   "nav.history": { en: "History", tr: "Geçmiş" },
+  "history.noResponse": { en: "No response saved", tr: "Yanıt kaydedilmemiş" },
 
   // ══════════════════════════════════════════
   // User Panel — Sprint 15

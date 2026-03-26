@@ -89,17 +89,17 @@ export function AddVitalDialog({
       const sys = Number(systolic)
       const dia = Number(diastolic)
       if (isNaN(sys) || isNaN(dia) || sys <= 0 || dia <= 0) {
-        setError(lang === "tr" ? "Geçerli değerler girin." : "Enter valid values.")
+        setError(tx("cal.validValues", lang))
         return
       }
     } else {
       if (!value) {
-        setError(lang === "tr" ? "Değer gereklidir." : "Value is required.")
+        setError(tx("cal.valueRequired", lang))
         return
       }
       const num = Number(value)
       if (isNaN(num) || num <= 0) {
-        setError(lang === "tr" ? "Geçerli bir değer girin." : "Enter a valid value.")
+        setError(tx("cal.validValue", lang))
         return
       }
     }
@@ -135,7 +135,7 @@ export function AddVitalDialog({
       onOpenChange(false)
     } catch (err) {
       console.error("Failed to save vital:", err)
-      setError(lang === "tr" ? "Vital kaydedilemedi." : "Failed to save vital record.")
+      setError(tx("cal.vitalSaveFailed", lang))
     } finally {
       setSaving(false)
     }

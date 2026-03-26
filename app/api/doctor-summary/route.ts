@@ -4,13 +4,27 @@ import { askGemini } from "@/lib/gemini"
 
 export async function POST(req: NextRequest) {
   try {
-    const { patientId, doctorId } = await req.json()
-
-    if (!patientId || !doctorId) {
-      return NextResponse.json({ error: "Missing patientId or doctorId" }, { status: 400 })
+    // Auth check — verify the requester IS the doctor
+    const authHeader = req.headers.get("authorization")
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    const token = authHeader.replace("Bearer ", "")
     const supabase = createServerClient()
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { patientId } = await req.json()
+
+    if (!patientId) {
+      return NextResponse.json({ error: "Missing patientId" }, { status: 400 })
+    }
+
+    const doctorId = user.id // Use authenticated user as doctor
 
     // Verify doctor-patient relationship
     const { data: relationship } = await supabase

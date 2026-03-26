@@ -205,7 +205,7 @@ export default function InteractionCheckerPage() {
                   <Download className="h-3.5 w-3.5" />
                 )}
                 {profileMedsLoaded
-                  ? (lang === "tr" ? "✓ Profil ilaçları yüklendi" : "✓ Profile meds loaded")
+                  ? tx("ic.profileMedsLoaded", lang)
                   : tx("ic.loadFromProfile", lang)}
               </Button>
             ) : (

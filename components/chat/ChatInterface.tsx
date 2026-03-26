@@ -207,7 +207,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
     // Build display content for user message
     const fileNames = attachedFiles.map((f) => f.name);
     const displayContent = hasFiles
-      ? `${trimmed || (lang === "tr" ? "Bu dosyayı analiz et" : "Analyze this file")}${fileNames.length > 0 ? `\n\n📎 ${fileNames.join(", ")}` : ""}`
+      ? `${trimmed || tx("chat.analyzeFile", lang)}${fileNames.length > 0 ? `\n\n📎 ${fileNames.join(", ")}` : ""}`
       : trimmed;
 
     // Add user message

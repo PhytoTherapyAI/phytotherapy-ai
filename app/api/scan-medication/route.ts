@@ -1,10 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit
+    const clientIP = getClientIP(req)
+    const rateCheck = checkRateLimit(`scan:${clientIP}`, 5, 60_000)
+    if (!rateCheck.allowed) {
+      return NextResponse.json({ error: `Too many requests. Please wait ${rateCheck.resetInSeconds} seconds.` }, { status: 429 })
+    }
+
     const { image, lang } = await req.json()
 
     if (!image) {
