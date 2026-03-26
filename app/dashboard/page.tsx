@@ -105,11 +105,19 @@ export default function DashboardPage() {
   const [addSupOpen, setAddSupOpen] = useState(false)
   const [supRefreshKey, setSupRefreshKey] = useState(0)
 
+  // Time-based greeting
+  const hour = new Date().getHours()
+  const greetingKey = hour < 12 ? "dashboard.morning" : hour < 18 ? "dashboard.afternoon" : "dashboard.evening"
+  const firstName = profile.full_name?.split(" ")[0] || ""
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 animate-fade-in-up">
         <Activity className="h-6 w-6 text-primary" />
-        <h1 className="text-2xl font-semibold">{tx("dashboard.title", lang)}</h1>
+        <div>
+          <h1 className="text-2xl font-semibold">{tx(greetingKey, lang).replace("{name}", firstName)}</h1>
+          <p className="text-sm text-muted-foreground">{tx("dashboard.subtitle", lang)}</p>
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -173,18 +181,18 @@ export default function DashboardPage() {
       </div>
 
       {/* Tools Grid */}
-      <div>
+      <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
         <h2 className="mb-3 text-lg font-semibold">{tx("dashboard.tools", lang)}</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {TOOL_LINKS.map((tool) => {
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 stagger-children">
+          {TOOL_LINKS.map((tool, idx) => {
             const Icon = tool.icon
             return (
               <Link
                 key={tool.href}
                 href={tool.href}
-                className="flex flex-col items-center gap-2 rounded-xl border bg-card p-4 text-center transition-all hover:border-primary/30 hover:shadow-sm"
+                className={`card-hover flex flex-col items-center gap-2 rounded-xl border p-4 text-center tool-card-${idx + 1}`}
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/60 dark:bg-white/10 shadow-sm">
                   <Icon className="h-5 w-5 text-primary" />
                 </div>
                 <span className="text-xs font-medium">{tx(tool.labelKey, lang)}</span>

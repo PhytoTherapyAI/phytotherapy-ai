@@ -43,10 +43,10 @@ export function MessageBubble({ message }: MessageBubbleProps) {
 
       {/* Message content */}
       <div
-        className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+        className={`max-w-[85%] rounded-2xl px-4 py-3 animate-scale-in ${
           isUser
-            ? "bg-primary text-white"
-            : "border bg-card"
+            ? "bg-primary text-white shadow-sm"
+            : "border-l-2 border-l-primary/30 border border-border bg-card shadow-sm"
         }`}
       >
         {/* File attachments */}
@@ -70,9 +70,15 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         )}
 
         {message.isStreaming && message.content === "" ? (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            {message.attachments?.length ? tx('chat.analyzingFile', lang) : tx('chat.analyzing', lang)}
+          <div className="flex items-center gap-3 py-1 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <span className="typing-dot" />
+              <span className="typing-dot" />
+              <span className="typing-dot" />
+            </div>
+            <span className="text-xs">
+              {message.attachments?.length ? tx('chat.analyzingFile', lang) : tx('chat.analyzing', lang)}
+            </span>
           </div>
         ) : (
           <div

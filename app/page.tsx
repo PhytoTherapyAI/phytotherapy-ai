@@ -13,6 +13,9 @@ import {
   CheckCircle2,
   MessageCircle,
   Send,
+  Users,
+  Activity,
+  BookOpen,
 } from "lucide-react";
 import { BotanicalHero } from "@/components/illustrations/botanical-hero";
 import { useLang } from "@/components/layout/language-toggle";
@@ -155,7 +158,7 @@ export default function Home() {
             </div>
 
             {/* Bottom Right — Botanical Illustration */}
-            <div className="flex items-start justify-center pb-6 md:-mt-8 md:pb-8">
+            <div className="flex items-start justify-center pb-6 md:-mt-8 md:pb-8 animate-gentle-sway">
               <BotanicalHero className="h-auto w-full max-w-[280px]" />
             </div>
           </div>
@@ -218,13 +221,19 @@ export default function Home() {
     );
   }
 
-  // ─── GUEST LAYOUT (original) ───
+  // ─── GUEST LAYOUT ───
   return (
     <div className="flex flex-col">
       {/* ===== HERO ===== */}
       <section className="relative overflow-hidden">
         <div className="mx-auto flex max-w-6xl flex-col-reverse items-center gap-8 px-4 py-12 md:flex-row md:gap-12 md:py-20">
-          <div className="flex-1 text-center md:text-left">
+          <div className="flex-1 text-center md:text-left stagger-children">
+            {/* Hero Badge */}
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary">
+              <Activity className="h-3.5 w-3.5" />
+              {tx('lp.heroBadge', lang)}
+            </div>
+
             <h1 className="font-heading text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               {tx('lp.heroHeading1', lang)}{" "}
               <br className="hidden sm:block" />
@@ -251,7 +260,7 @@ export default function Home() {
               </div>
               <button
                 type="submit"
-                className="shrink-0 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                className="shrink-0 rounded-lg bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 animate-pulse-glow"
               >
                 {tx('lp.searchButton', lang)}
               </button>
@@ -262,7 +271,7 @@ export default function Home() {
                 <Link
                   key={tag.key}
                   href={tag.href}
-                  className="rounded-full border px-3 py-1 text-xs text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
+                  className="rounded-full border px-3 py-1 text-xs text-muted-foreground transition-all hover:border-primary/30 hover:text-primary hover:-translate-y-0.5"
                 >
                   {tx(tag.key, lang)}
                 </Link>
@@ -270,14 +279,41 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="w-56 shrink-0 sm:w-72 md:w-80 lg:w-96">
+          <div className="w-56 shrink-0 sm:w-72 md:w-80 lg:w-96 animate-gentle-sway">
             <BotanicalHero className="h-auto w-full" />
           </div>
         </div>
       </section>
 
+      {/* ===== STATS STRIP ===== */}
+      <section className="border-y bg-primary/5">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-12 gap-y-4 px-4 py-6">
+          <div className="flex items-center gap-2.5 text-center">
+            <Users className="h-5 w-5 text-primary" />
+            <div>
+              <div className="text-lg font-bold text-foreground">1,200+</div>
+              <div className="text-[11px] text-muted-foreground">{tx('lp.statUsers', lang)}</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2.5 text-center">
+            <Shield className="h-5 w-5 text-primary" />
+            <div>
+              <div className="text-lg font-bold text-foreground">8,500+</div>
+              <div className="text-[11px] text-muted-foreground">{tx('lp.statInteractions', lang)}</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2.5 text-center">
+            <BookOpen className="h-5 w-5 text-primary" />
+            <div>
+              <div className="text-lg font-bold text-foreground">15,000+</div>
+              <div className="text-[11px] text-muted-foreground">{tx('lp.statSources', lang)}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ===== TRUST STRIP ===== */}
-      <section className="border-y bg-muted/30">
+      <section className="bg-muted/30">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-3 px-4 py-4">
           {TRUST_KEYS.map((key) => (
             <div key={key} className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -290,7 +326,7 @@ export default function Home() {
 
       {/* ===== FEATURES ===== */}
       <section className="mx-auto max-w-6xl px-4 py-16 md:py-24">
-        <div className="mb-12 text-center">
+        <div className="mb-12 text-center animate-fade-in-up">
           <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
             {tx('lp.featureTitle1', lang)}{" "}
             <em className="font-heading" style={{ fontStyle: "italic" }}>
@@ -299,12 +335,13 @@ export default function Home() {
           </h2>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 stagger-children">
           {FEATURES.map((feature) => (
             <Link
               key={feature.num}
               href={feature.href}
-              className="group relative rounded-xl border bg-card p-6 transition-all hover:border-primary/30 hover:shadow-lg"
+              className="card-hover group relative rounded-xl border border-transparent bg-card p-6 transition-all hover:border-primary/20"
+              style={{ borderTop: '3px solid var(--primary)' }}
             >
               <span className="font-heading absolute right-4 top-4 text-4xl font-bold text-muted/60">
                 {feature.num}

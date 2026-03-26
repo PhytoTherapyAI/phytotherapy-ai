@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Leaf, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Leaf, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle2, Play } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -101,6 +101,24 @@ function LoginContent() {
     } catch (err) {
       console.error("Signup error:", err);
       setError(tx("auth.errUnexpected", lang));
+      setIsLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setError(null);
+    setSuccessMessage(null);
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/demo", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || "Demo login failed"); setIsLoading(false); return; }
+      // Sign in with demo credentials
+      const { error } = await signInWithEmail(data.email, data.password);
+      if (error) { setError(error); setIsLoading(false); return; }
+      window.location.href = "/";
+    } catch {
+      setError("Demo login failed. Please try again.");
       setIsLoading(false);
     }
   };
@@ -241,6 +259,22 @@ function LoginContent() {
               </form>
             </TabsContent>
           </Tabs>
+
+          {/* Demo Button */}
+          <div className="mt-4 border-t pt-4">
+            <Button
+              variant="outline"
+              className="w-full gap-2 border-primary/30 text-primary hover:bg-primary/5"
+              onClick={handleDemoLogin}
+              disabled={isLoading}
+            >
+              <Play className="h-4 w-4" />
+              {tx("auth.tryDemo", lang)}
+            </Button>
+            <p className="mt-2 text-center text-[11px] text-muted-foreground">
+              {tx("auth.demoDesc", lang)}
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
