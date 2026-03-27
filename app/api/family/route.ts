@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
-
 // Max family members per plan tier
 const FAMILY_LIMITS: Record<string, number> = {
   free: 1,
@@ -13,10 +8,12 @@ const FAMILY_LIMITS: Record<string, number> = {
   family: 6,
 }
 
-function getUserIdFromToken(req: NextRequest): string | null {
-  const auth = req.headers.get("authorization")
-  if (!auth?.startsWith("Bearer ")) return null
-  return null // Will be resolved via Supabase auth
+function getServiceClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  )
 }
 
 export async function GET(req: NextRequest) {
@@ -27,6 +24,7 @@ export async function GET(req: NextRequest) {
     }
 
     const token = auth.replace("Bearer ", "")
+    const supabase = getServiceClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -39,7 +37,6 @@ export async function GET(req: NextRequest) {
       .order("created_at", { ascending: true })
 
     if (error) {
-      // Table might not exist yet — guide user
       if (error.message?.includes("does not exist") || error.code === "42P01") {
         return NextResponse.json({ members: [], needsMigration: true })
       }
@@ -60,6 +57,7 @@ export async function POST(req: NextRequest) {
     }
 
     const token = auth.replace("Bearer ", "")
+    const supabase = getServiceClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -133,6 +131,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const token = auth.replace("Bearer ", "")
+    const supabase = getServiceClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

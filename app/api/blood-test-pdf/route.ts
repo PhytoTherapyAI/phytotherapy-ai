@@ -185,8 +185,9 @@ Total markers: ${totalMarkers}, Abnormal: ${abnormalCount}, Optimal: ${optimalCo
     const authHeader = req.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       try {
+        const token = authHeader.replace("Bearer ", "");
         const supabase = createServerClient();
-        const { data: { user } } = await supabase.auth.getUser();
+        const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
           await supabase.from("blood_tests").insert({
             user_id: user.id,

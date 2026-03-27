@@ -123,7 +123,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
         setShowAddForm(false)
         await fetchMembers()
       } else {
-        alert(data.error || "Failed to add family member")
+        alert(data.error || tx("family.addError", lang))
       }
     } catch {
       // silently fail
@@ -133,7 +133,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
   }
 
   const handleDelete = async (memberId: string) => {
-    if (!confirm(tr ? "Bu üyeyi kaldırmak istediğinize emin misiniz?" : "Are you sure you want to remove this member?")) return
+    if (!confirm(tx("family.confirmRemove", lang))) return
     setDeleting(memberId)
     try {
       const supabase = createBrowserClient()

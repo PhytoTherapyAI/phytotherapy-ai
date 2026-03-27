@@ -205,8 +205,8 @@ export default function HistoryPage() {
           icon={Clock}
           title={tx("history.noResults", lang)}
           description={filter === "favorites"
-            ? (lang === "tr" ? "Henüz favori eklemediniz" : "No favorites yet")
-            : (lang === "tr" ? "Sorularınız burada görünecek" : "Your queries will appear here")}
+            ? tx("history.noFavorites", lang)
+            : tx("history.noQueries", lang)}
         />
       ) : (
         <div className="space-y-3">

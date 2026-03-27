@@ -58,6 +58,14 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Cleanup stream on unmount
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -101,9 +109,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
     for (const file of Array.from(files)) {
       // Validate size
       if (file.size > MAX_FILE_SIZE) {
-        alert(lang === "tr"
-          ? `"${file.name}" dosyası çok büyük. Maksimum boyut 10MB.`
-          : `File "${file.name}" is too large. Maximum size is 10MB.`);
+        alert(`"${file.name}" ${tx("chat.fileTooLarge", lang)}`);
         continue;
       }
 
@@ -111,9 +117,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
       const isPdf = file.type === "application/pdf";
       const isImage = file.type.startsWith("image/");
       if (!isPdf && !isImage) {
-        alert(lang === "tr"
-          ? `"${file.name}" desteklenmiyor. Lütfen PDF, JPG veya PNG kullanın.`
-          : `File "${file.name}" is not supported. Please use PDF, JPG, or PNG.`);
+        alert(`"${file.name}" ${tx("chat.fileUnsupported", lang)}`);
         continue;
       }
 
@@ -262,9 +266,14 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
           }))
         : undefined;
 
+      abortControllerRef.current?.abort();
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
       const res = await fetch("/api/chat", {
         method: "POST",
         headers,
+        signal: controller.signal,
         body: JSON.stringify({
           message: trimmed || `${tx("chat.analyzeFile", lang)} ${fileNames.join(", ")}`,
           history: historyForApi,

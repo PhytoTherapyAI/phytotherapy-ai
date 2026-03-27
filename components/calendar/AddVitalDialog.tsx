@@ -224,9 +224,7 @@ export function AddVitalDialog({
             <Input
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder={
-                lang === "tr" ? "ör. Yemekten sonra" : "e.g., After meal"
-              }
+              placeholder={tx("vital.notesPlaceholder", lang)}
               maxLength={300}
             />
           </div>

@@ -27,6 +27,11 @@ export async function POST(req: NextRequest) {
 // Get aggregated analytics (admin/doctor use)
 export async function GET(req: NextRequest) {
   try {
+    const auth = req.headers.get("authorization")
+    if (!auth?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     const { searchParams } = new URL(req.url)
     const eventType = searchParams.get("type")
     const days = parseInt(searchParams.get("days") || "30")

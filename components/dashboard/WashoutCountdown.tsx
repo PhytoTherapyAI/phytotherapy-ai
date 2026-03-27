@@ -226,7 +226,7 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
               className="flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
             >
               <Plus className="h-3.5 w-3.5" />
-              {lang === "tr" ? "Takviye Ekle" : "Add"}
+              {tx("washout.add", lang)}
             </button>
             <Badge variant="secondary" className="text-[10px]">PREMIUM</Badge>
           </div>
@@ -324,7 +324,7 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
               type="text"
               value={newSuppName}
               onChange={(e) => setNewSuppName(e.target.value)}
-              placeholder={lang === "tr" ? "Takviye adı..." : "Supplement name..."}
+              placeholder={tx("washout.suppPlaceholder", lang)}
               className="flex-1 rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
               onKeyDown={(e) => e.key === "Enter" && addSupplement(newSuppName)}
               autoFocus
@@ -334,7 +334,7 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
               onClick={() => addSupplement(newSuppName)}
               disabled={adding || !newSuppName.trim()}
             >
-              {adding ? "..." : (lang === "tr" ? "Ekle" : "Add")}
+              {adding ? "..." : tx("washout.addBtn", lang)}
             </Button>
             <Button size="sm" variant="ghost" onClick={() => { setShowAddInput(false); setNewSuppName("") }}>
               ✕

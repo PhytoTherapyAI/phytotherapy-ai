@@ -1300,6 +1300,25 @@ const t: Record<string, TranslationEntry> = {
 
   // Evidence Grade
   "evidence.grade": { en: "Grade", tr: "Kanıt" },
+
+  // ══════════════════════════════════════════
+  // Remaining Hardcoded — Phase 7 Cleanup
+  // ══════════════════════════════════════════
+  "history.noFavorites": { en: "No favorites yet", tr: "Henüz favori eklemediniz" },
+  "history.noQueries": { en: "Your queries will appear here", tr: "Sorularınız burada görünecek" },
+  "profile.cancel": { en: "Cancel", tr: "İptal" },
+  "profile.save": { en: "Save", tr: "Kaydet" },
+  "profile.healthDesc": { en: "Update your allergies, pregnancy status, substance use, chronic conditions, and lifestyle info here.", tr: "Alerjiler, gebelik, madde kullanımı, kronik hastalıklar ve yaşam tarzı bilgilerinizi buradan güncelleyin." },
+  "profile.exportFailed": { en: "Data export failed", tr: "Veri indirme başarısız" },
+  "profile.deleteFailed": { en: "Account deletion failed", tr: "Hesap silme başarısız" },
+  "vital.notesPlaceholder": { en: "e.g., After meal", tr: "ör. Yemekten sonra" },
+  "family.confirmRemove": { en: "Are you sure you want to remove this member?", tr: "Bu üyeyi kaldırmak istediğinize emin misiniz?" },
+  "family.addError": { en: "Failed to add family member", tr: "Aile üyesi eklenemedi" },
+  "chat.fileTooLarge": { en: "is too large. Maximum size is 10MB.", tr: "dosyası çok büyük. Maksimum boyut 10MB." },
+  "chat.fileUnsupported": { en: "is not supported. Please use PDF, JPG, or PNG.", tr: "desteklenmiyor. Lütfen PDF, JPG veya PNG kullanın." },
+  "washout.add": { en: "Add", tr: "Takviye Ekle" },
+  "washout.suppPlaceholder": { en: "Supplement name...", tr: "Takviye adı..." },
+  "washout.addBtn": { en: "Add", tr: "Ekle" },
 }
 
 // ══════════════════════════════════════════

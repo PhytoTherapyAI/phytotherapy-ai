@@ -67,7 +67,12 @@ If unreadable: {"error": "Cannot read", "confidence": "low"}`
       })
     }
 
-    const parsed = JSON.parse(jsonMatch[0])
+    let parsed
+    try {
+      parsed = JSON.parse(jsonMatch[0])
+    } catch {
+      return NextResponse.json({ error: "Could not parse medication info", raw: text }, { status: 422 })
+    }
     return NextResponse.json(parsed)
   } catch (error) {
     return NextResponse.json(

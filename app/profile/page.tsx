@@ -617,7 +617,7 @@ export default function ProfilePage() {
                   }}
                 >
                   <X className="h-4 w-4 mr-1" />
-                  {lang === "tr" ? "İptal" : "Cancel"}
+                  {tx("profile.cancel", lang)}
                 </Button>
               </div>
             </div>
@@ -1123,7 +1123,7 @@ export default function ProfilePage() {
                   a.click()
                   URL.revokeObjectURL(url)
                 } catch {
-                  alert(tr ? "Veri indirme başarısız" : "Data export failed")
+                  alert(tx("profile.exportFailed", lang))
                 } finally {
                   setExportingData(false)
                 }
@@ -1153,7 +1153,7 @@ export default function ProfilePage() {
                   await supabase.auth.signOut()
                   router.push("/")
                 } catch {
-                  alert(tr ? "Hesap silme başarısız" : "Account deletion failed")
+                  alert(tx("profile.deleteFailed", lang))
                   setDeletingAccount(false)
                 }
               }}
