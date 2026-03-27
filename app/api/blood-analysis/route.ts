@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body: BloodTestInput = await request.json();
-    const { values, gender } = body;
+    const body = await request.json();
+    const { values, gender, lang } = body as BloodTestInput & { lang?: string };
 
     if (!values || typeof values !== "object" || Object.keys(values).length === 0) {
       return new Response(
@@ -140,7 +140,8 @@ export async function POST(request: NextRequest) {
     const prompt = buildAnalysisPrompt(results, abnormal, profileContext, hasMedications);
 
     // Step 4: Get Gemini analysis
-    const systemPrompt = BLOOD_TEST_PROMPT + (hasMedications
+    const userLang = lang === "tr" ? "Turkish" : "English";
+    const systemPrompt = BLOOD_TEST_PROMPT + `\n\nIMPORTANT: Respond entirely in ${userLang}.` + (hasMedications
       ? "\n\nThe user has medications on file. Cross-check all supplement recommendations against their medications."
       : "\n\nIMPORTANT: The user has NO medications on file. For supplement dosages, add a note: 'Please add your medications to your profile for personalized safety checks.'");
 

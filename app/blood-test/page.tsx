@@ -72,7 +72,7 @@ export default function BloodTestPage() {
       const res = await fetch("/api/blood-analysis", {
         method: "POST",
         headers,
-        body: JSON.stringify({ values, gender }),
+        body: JSON.stringify({ values, gender, lang }),
       });
 
       if (!res.ok) {
