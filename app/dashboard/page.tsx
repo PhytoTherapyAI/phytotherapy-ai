@@ -111,16 +111,16 @@ export default function DashboardPage() {
   const firstName = profile.full_name?.split(" ")[0] || ""
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
+    <div className="mx-auto max-w-7xl px-4 py-6 md:px-8 lg:px-12 space-y-8">
       <div className="flex items-center gap-3 animate-fade-in-up">
-        <Activity className="h-6 w-6 text-primary" />
+        <Activity className="h-7 w-7 text-primary" />
         <div>
-          <h1 className="text-2xl font-semibold">{tx(greetingKey, lang).replace("{name}", firstName)}</h1>
-          <p className="text-sm text-muted-foreground">{tx("dashboard.subtitle", lang)}</p>
+          <h1 className="text-2xl md:text-3xl font-semibold">{tx(greetingKey, lang).replace("{name}", firstName)}</h1>
+          <p className="text-sm md:text-base text-muted-foreground">{tx("dashboard.subtitle", lang)}</p>
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 lg:gap-8 md:grid-cols-2">
         {/* Left column */}
         <div className="space-y-6">
           <DailySummaryCard
@@ -182,8 +182,8 @@ export default function DashboardPage() {
 
       {/* Tools Grid */}
       <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-        <h2 className="mb-3 text-lg font-semibold">{tx("dashboard.tools", lang)}</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 stagger-children">
+        <h2 className="mb-4 text-lg md:text-xl font-semibold">{tx("dashboard.tools", lang)}</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 stagger-children">
           {TOOL_LINKS.map((tool, idx) => {
             const Icon = tool.icon
             return (

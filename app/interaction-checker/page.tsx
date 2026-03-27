@@ -129,7 +129,7 @@ export default function InteractionCheckerPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 md:py-12">
+    <div className="mx-auto max-w-5xl px-4 md:px-8 py-8 md:py-12">
       {/* Page Header */}
       <div className="mb-8">
         <div className="mb-4 flex items-center gap-3">

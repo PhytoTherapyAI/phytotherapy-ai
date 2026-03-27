@@ -31,7 +31,7 @@ export default function ScannerPage() {
   if (!user) return null
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
       <div className="flex items-center gap-3 mb-6">
         <Camera className="h-6 w-6 text-primary" />
         <h1 className="text-2xl font-semibold">{tx("scanner.title", lang)}</h1>

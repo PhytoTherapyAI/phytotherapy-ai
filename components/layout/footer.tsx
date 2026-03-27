@@ -10,7 +10,7 @@ export function Footer() {
 
   return (
     <footer className="border-t">
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mx-auto max-w-7xl px-4 md:px-8 py-8">
         {/* Disclaimer */}
         <div className="mb-6 rounded-lg border border-gold/20 bg-gold/5 p-4 text-sm text-muted-foreground">
           <strong className="text-foreground">{tx('footer.disclaimer.label', lang)}</strong> {tx('footer.disclaimer.text', lang)}

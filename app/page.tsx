@@ -179,7 +179,7 @@ export default function Home() {
         </div>
 
         {/* ===== FEATURES ===== */}
-        <section className="mx-auto max-w-6xl px-4 py-12 md:py-16">
+        <section className="mx-auto max-w-7xl px-4 md:px-8 py-12 md:py-16">
           <div className="mb-8 text-center">
             <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
               {tx('lp.featureTitle1', lang)}{" "}
@@ -325,7 +325,7 @@ export default function Home() {
       </section>
 
       {/* ===== FEATURES ===== */}
-      <section className="mx-auto max-w-6xl px-4 py-16 md:py-24">
+      <section className="mx-auto max-w-7xl px-4 md:px-8 py-16 md:py-24">
         <div className="mb-12 text-center animate-fade-in-up">
           <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
             {tx('lp.featureTitle1', lang)}{" "}

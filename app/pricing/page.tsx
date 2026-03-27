@@ -66,7 +66,7 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12">
+    <div className="mx-auto max-w-7xl px-4 md:px-8 py-12">
       {/* Header */}
       <div className="mb-10 text-center">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg">

@@ -8,7 +8,7 @@ export default function TermsPage() {
   const isTr = lang === "tr"
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16">
+    <div className="mx-auto max-w-4xl px-4 md:px-8 py-16">
       {/* Header */}
       <div className="mb-12 border-b border-border/50 pb-8">
         <h1 className="font-heading text-4xl font-bold italic tracking-tight">

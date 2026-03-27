@@ -386,7 +386,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
       <h1 className="font-heading mb-6 text-3xl font-semibold">
         {tx('profile.title', lang)}
       </h1>
