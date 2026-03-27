@@ -210,13 +210,13 @@ export default function InteractionCheckerPage() {
                   : tx("ic.loadFromProfile", lang)}
               </Button>
             ) : (
-              <a
+              <Link
                 href="/auth/login"
                 className="inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
               >
                 <LogIn className="h-3.5 w-3.5" />
                 {tx("ic.loadFromProfileGuest", lang)}
-              </a>
+              </Link>
             )}
           </div>
         )}
