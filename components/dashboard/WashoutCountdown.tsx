@@ -89,14 +89,13 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
         .order("created_at", { ascending: true })
 
       const calendarSupps = data || []
-      const calendarNames = calendarSupps.map(e => e.title.toLowerCase())
+      const normalize = (s: string) => s.toLowerCase().replace(/[-_\s\d]/g, "").replace(/mg|iu|mcg|ml/gi, "")
+      const calendarNamesNorm = calendarSupps.map(e => normalize(e.title))
 
       // Auto-add profile supplements that aren't in calendar yet
-      // Normalize names for comparison (case-insensitive, partial match)
-      const normalize = (s: string) => s.toLowerCase().replace(/[-_\s]/g, "")
       const missingFromProfile = profileSupplements.filter(ps => {
         const pn = normalize(ps)
-        return !calendarNames.some(cn => normalize(cn).includes(pn) || pn.includes(normalize(cn)))
+        return !calendarNamesNorm.some(cn => cn.includes(pn) || pn.includes(cn))
       })
 
       if (missingFromProfile.length > 0) {
@@ -140,7 +139,7 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
       // Deduplicate by normalized name (keep first occurrence)
       const seen = new Set<string>()
       const deduped = calendarSupps.filter(e => {
-        const key = e.title.toLowerCase().replace(/[-_\s]/g, "")
+        const key = normalize(e.title)
         if (seen.has(key)) return false
         seen.add(key)
         return true

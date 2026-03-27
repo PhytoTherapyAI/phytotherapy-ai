@@ -468,7 +468,16 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       const recurringSups = (recurringSupsRes.data || []) as CalendarEvent[]
       const seenIds = new Set(todayEvents.map(e => e.id))
       const merged = [...todayEvents, ...recurringSups.filter(s => !seenIds.has(s.id))]
-      setEvents(merged)
+      // Dedup supplements by normalized title (keep first occurrence)
+      const seenSuppNames = new Set<string>()
+      const deduped = merged.filter(e => {
+        if (e.event_type !== "supplement") return true
+        const key = e.title.toLowerCase().replace(/[-_\s]/g, "")
+        if (seenSuppNames.has(key)) return false
+        seenSuppNames.add(key)
+        return true
+      })
+      setEvents(deduped)
       if (waterRes.data) {
         setGlasses(waterRes.data.glasses ?? 0)
         if (waterRes.data.target_glasses) {
