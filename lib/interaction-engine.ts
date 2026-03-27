@@ -366,8 +366,7 @@ function parseGeminiResponse(response: string): {
     }
 
     // Layer 2: Try direct parse
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let data: any = null;
+    let data: Record<string, unknown> | null = null;
     try {
       data = JSON.parse(cleaned);
     } catch (e1) {

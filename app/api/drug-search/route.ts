@@ -3,7 +3,36 @@ import { searchTurkishDrugs } from '@/lib/turkish-drugs'
 import { checkRateLimit, getClientIP } from '@/lib/rate-limit'
 import { sanitizeInput } from '@/lib/sanitize'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+interface DrugResult {
+  brandName: string
+  genericName: string
+  fullName: string
+  company: string
+  atc: string
+  source: string
+}
+
+interface RxConceptProperty {
+  name?: string
+  synonym?: string
+}
+
+interface RxConceptGroup {
+  conceptProperties?: RxConceptProperty[]
+}
+
+interface FdaResult {
+  openfda?: {
+    brand_name?: string[]
+    generic_name?: string[]
+    manufacturer_name?: string[]
+  }
+}
+
+interface DailyMedResult {
+  title?: string
+  author?: { name?: string }[]
+}
 
 export async function GET(req: NextRequest) {
   // Rate limiting — 30 requests per minute for autocomplete (higher limit)
@@ -19,10 +48,11 @@ export async function GET(req: NextRequest) {
   const q = sanitizeInput(req.nextUrl.searchParams.get('q') || '')
   if (q.length < 2) return NextResponse.json([])
 
-  const results: any[] = []
+  const results: DrugResult[] = []
   const seen = new Set<string>()
 
-  const addResult = (r: any) => {
+  const addResult = (r: DrugResult) => {
+    if (!r.brandName) return
     const key = r.brandName.toLowerCase()
     if (!seen.has(key) && r.brandName.length > 1) {
       seen.add(key)
@@ -43,13 +73,13 @@ export async function GET(req: NextRequest) {
     )
     if (rx.ok) {
       const rxData = await rx.json()
-      ;(rxData.drugGroup?.conceptGroup || [])
-        .flatMap((g: any) => g.conceptProperties || [])
-        .filter((p: any) => p.name)
-        .forEach((p: any) => addResult({
-          brandName: p.name,
-          genericName: p.synonym || p.name,
-          fullName: p.name,
+      ;((rxData.drugGroup?.conceptGroup || []) as RxConceptGroup[])
+        .flatMap((g) => g.conceptProperties || [])
+        .filter((p) => p.name)
+        .forEach((p) => addResult({
+          brandName: p.name || '',
+          genericName: p.synonym || p.name || '',
+          fullName: p.name || '',
           company: '',
           atc: '',
           source: 'rxnorm',
@@ -66,7 +96,7 @@ export async function GET(req: NextRequest) {
     )
     if (fda.ok) {
       const fdaData = await fda.json()
-      ;(fdaData.results || []).forEach((r: any) => {
+      ;((fdaData.results || []) as FdaResult[]).forEach((r) => {
         const brandName = r.openfda?.brand_name?.[0]
         if (brandName) addResult({
           brandName,
@@ -89,7 +119,7 @@ export async function GET(req: NextRequest) {
     )
     if (dm.ok) {
       const dmData = await dm.json()
-      ;(dmData.data || []).forEach((r: any) => {
+      ;((dmData.data || []) as DailyMedResult[]).forEach((r) => {
         if (r.title) addResult({
           brandName: r.title.split(' ')[0],
           genericName: r.title,

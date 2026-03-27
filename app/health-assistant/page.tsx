@@ -29,15 +29,18 @@ export default function HealthAssistantPage() {
     response: string | null;
   } | null>(null);
   const [confirmingDaily, setConfirmingDaily] = useState(false);
+  const [chatKey, setChatKey] = useState(0);
 
   const handleSelectConversation = (query: string, response: string | null) => {
     setLoadConversation({ query, response });
   };
 
-  // Show daily blocker ONLY when:
-  // - User is authenticated with completed onboarding
-  // - No 15-day or 30-day check pending (those are handled by global dialog)
-  // - Daily check not yet confirmed today
+  const handleNewConversation = () => {
+    setLoadConversation(null);
+    setChatKey((prev) => prev + 1);
+  };
+
+  // Show daily blocker
   const showDailyBlocker =
     isAuthenticated &&
     !isLoading &&
@@ -69,111 +72,134 @@ export default function HealthAssistantPage() {
   };
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-primary/10 p-3">
-            <Sparkles className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-              {tx('ha.title', lang)}
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              {tx('ha.subtitle', lang)}
-            </p>
-          </div>
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
+      {/* Left Sidebar — conversation history (desktop only) */}
+      {isAuthenticated && (
+        <div className="hidden w-64 shrink-0 lg:block">
+          <ConversationHistory
+            onSelectConversation={handleSelectConversation}
+            onNewConversation={handleNewConversation}
+            sidebar
+          />
         </div>
-        <ConversationHistory onSelectConversation={handleSelectConversation} />
-      </div>
+      )}
 
-      {/* Example Questions */}
-      <div className="mb-4">
-        <p className="mb-2 text-xs font-medium text-muted-foreground">
-          {tx('ha.tryAsking', lang)}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {EXAMPLE_QUESTION_KEYS.map((key) => {
-            const q = tx(key, lang);
-            return (
-              <button
-                key={key}
-                className="rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-                onClick={() => {
-                  const textarea = document.querySelector("textarea");
-                  if (textarea) {
-                    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-                      window.HTMLTextAreaElement.prototype,
-                      "value"
-                    )?.set;
-                    nativeInputValueSetter?.call(textarea, q);
-                    textarea.dispatchEvent(new Event("input", { bubbles: true }));
-                    textarea.dispatchEvent(new Event("change", { bubbles: true }));
-                    textarea.focus();
-                  }
-                }}
-              >
-                {q}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Chat Interface with Daily Check Overlay */}
-      <div className="relative">
-        <ChatInterface
-          className="h-[calc(100vh-280px)] min-h-[500px]"
-          loadConversation={loadConversation}
-        />
-
-        {/* Daily medication check blocker overlay */}
-        {showDailyBlocker && (
-          <div className="absolute inset-0 z-20 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-sm">
-            <div className="mx-4 max-w-sm rounded-xl border bg-card p-6 shadow-lg">
-              <div className="mb-4 flex items-center gap-3">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <Pill className="h-5 w-5 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold">
-                  {tx("dailyMed.blockerTitle", lang)}
-                </h3>
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-4xl px-4 py-8">
+          {/* Header */}
+          <div className="mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="rounded-lg bg-primary/10 p-3">
+                <Sparkles className="h-6 w-6 text-primary" />
               </div>
-              <p className="mb-5 text-sm text-muted-foreground">
-                {tx("dailyMed.blockerDesc", lang)}
-              </p>
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <Button
-                  variant="outline"
-                  onClick={handleDailyConfirm}
-                  disabled={confirmingDaily}
-                  className="gap-2"
-                >
-                  {confirmingDaily ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <CheckCircle2 className="h-4 w-4" />
-                  )}
-                  {tx("dailyMed.confirmSame", lang)}
-                </Button>
-                <Button
-                  onClick={handleDailyUpdate}
-                  className="gap-2 bg-primary hover:bg-primary/90"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  {tx("dailyMed.update", lang)}
-                </Button>
+              <div>
+                <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
+                  {tx('ha.title', lang)}
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  {tx('ha.subtitle', lang)}
+                </p>
               </div>
             </div>
+            {/* Mobile: drawer toggle */}
+            <div className="lg:hidden">
+              <ConversationHistory
+                onSelectConversation={handleSelectConversation}
+                onNewConversation={handleNewConversation}
+              />
+            </div>
           </div>
-        )}
-      </div>
 
-      {/* Disclaimer */}
-      <p className="mt-4 text-center text-xs text-muted-foreground">
-        ⚠️ {tx('disclaimer.tool', lang)}
-      </p>
-    </main>
+          {/* Example Questions */}
+          <div className="mb-4">
+            <p className="mb-2 text-xs font-medium text-muted-foreground">
+              {tx('ha.tryAsking', lang)}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {EXAMPLE_QUESTION_KEYS.map((key) => {
+                const q = tx(key, lang);
+                return (
+                  <button
+                    key={key}
+                    className="rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                    onClick={() => {
+                      const textarea = document.querySelector("textarea");
+                      if (textarea) {
+                        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                          window.HTMLTextAreaElement.prototype,
+                          "value"
+                        )?.set;
+                        nativeInputValueSetter?.call(textarea, q);
+                        textarea.dispatchEvent(new Event("input", { bubbles: true }));
+                        textarea.dispatchEvent(new Event("change", { bubbles: true }));
+                        textarea.focus();
+                      }
+                    }}
+                  >
+                    {q}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Chat Interface with Daily Check Overlay */}
+          <div className="relative">
+            <ChatInterface
+              key={chatKey}
+              className="h-[calc(100vh-280px)] min-h-[500px]"
+              loadConversation={loadConversation}
+            />
+
+            {/* Daily medication check blocker overlay */}
+            {showDailyBlocker && (
+              <div className="absolute inset-0 z-20 flex items-center justify-center rounded-lg bg-background/80 backdrop-blur-sm">
+                <div className="mx-4 max-w-sm rounded-xl border bg-card p-6 shadow-lg">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="rounded-full bg-primary/10 p-2">
+                      <Pill className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold">
+                      {tx("dailyMed.blockerTitle", lang)}
+                    </h3>
+                  </div>
+                  <p className="mb-5 text-sm text-muted-foreground">
+                    {tx("dailyMed.blockerDesc", lang)}
+                  </p>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Button
+                      variant="outline"
+                      onClick={handleDailyConfirm}
+                      disabled={confirmingDaily}
+                      className="gap-2"
+                    >
+                      {confirmingDaily ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <CheckCircle2 className="h-4 w-4" />
+                      )}
+                      {tx("dailyMed.confirmSame", lang)}
+                    </Button>
+                    <Button
+                      onClick={handleDailyUpdate}
+                      className="gap-2 bg-primary hover:bg-primary/90"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      {tx("dailyMed.update", lang)}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Disclaimer */}
+          <p className="mt-4 text-center text-xs text-muted-foreground">
+            ⚠️ {tx('disclaimer.tool', lang)}
+          </p>
+        </div>
+      </main>
+    </div>
   );
 }

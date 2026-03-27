@@ -7,7 +7,14 @@ const supabaseAdmin = createClient(
   { db: { schema: "public" } }
 )
 
-export async function POST() {
+export async function POST(request: Request) {
+  // Security: Only allow in development or with admin secret
+  const authHeader = request.headers.get("authorization")
+  const adminSecret = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (process.env.NODE_ENV === "production" && authHeader !== `Bearer ${adminSecret}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
   const results: string[] = []
 
   // Check if family_members table exists

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { History, MessageSquare, ChevronRight, ChevronLeft, Loader2, Trash2 } from "lucide-react";
+import { History, MessageSquare, ChevronRight, ChevronLeft, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
@@ -18,9 +18,12 @@ interface ConversationEntry {
 
 interface ConversationHistoryProps {
   onSelectConversation: (query: string, response: string | null) => void;
+  onNewConversation?: () => void;
+  /** Render as a persistent sidebar instead of toggle+drawer */
+  sidebar?: boolean;
 }
 
-export function ConversationHistory({ onSelectConversation }: ConversationHistoryProps) {
+export function ConversationHistory({ onSelectConversation, onNewConversation, sidebar }: ConversationHistoryProps) {
   const { isAuthenticated, session } = useAuth();
   const { lang } = useLang()
   const [isOpen, setIsOpen] = useState(false);
@@ -38,7 +41,7 @@ export function ConversationHistory({ onSelectConversation }: ConversationHistor
         .select("id, query_text, query_type, response_text, created_at")
         .eq("user_id", session.user.id)
         .order("created_at", { ascending: false })
-        .limit(20);
+        .limit(30);
 
       if (error) {
         console.error("Error fetching history:", error);
@@ -53,12 +56,12 @@ export function ConversationHistory({ onSelectConversation }: ConversationHistor
     }
   }, [isAuthenticated, session?.user?.id]);
 
-  // Fetch when panel opens
+  // Fetch on mount for sidebar mode, or when panel opens for drawer mode
   useEffect(() => {
-    if (isOpen) {
+    if (sidebar || isOpen) {
       fetchHistory();
     }
-  }, [isOpen, fetchHistory]);
+  }, [sidebar, isOpen, fetchHistory]);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -90,6 +93,123 @@ export function ConversationHistory({ onSelectConversation }: ConversationHistor
 
   if (!isAuthenticated) return null;
 
+  // Group conversations by date
+  const groupByDate = (entries: ConversationEntry[]) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const weekAgo = new Date(today);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+
+    const groups: { label: string; items: ConversationEntry[] }[] = [];
+    const todayItems: ConversationEntry[] = [];
+    const yesterdayItems: ConversationEntry[] = [];
+    const weekItems: ConversationEntry[] = [];
+    const olderItems: ConversationEntry[] = [];
+
+    for (const entry of entries) {
+      const date = new Date(entry.created_at);
+      if (date.toDateString() === today.toDateString()) {
+        todayItems.push(entry);
+      } else if (date.toDateString() === yesterday.toDateString()) {
+        yesterdayItems.push(entry);
+      } else if (date > weekAgo) {
+        weekItems.push(entry);
+      } else {
+        olderItems.push(entry);
+      }
+    }
+
+    if (todayItems.length) groups.push({ label: lang === "tr" ? "Bugün" : "Today", items: todayItems });
+    if (yesterdayItems.length) groups.push({ label: lang === "tr" ? "Dün" : "Yesterday", items: yesterdayItems });
+    if (weekItems.length) groups.push({ label: lang === "tr" ? "Bu Hafta" : "This Week", items: weekItems });
+    if (olderItems.length) groups.push({ label: lang === "tr" ? "Daha Eski" : "Older", items: olderItems });
+
+    return groups;
+  };
+
+  // ─── SIDEBAR MODE ───
+  if (sidebar) {
+    const groups = groupByDate(conversations);
+    return (
+      <div className="flex h-full flex-col border-r bg-muted/30">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b px-3 py-3">
+          <div className="flex items-center gap-2">
+            <History className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-semibold">{tx('ch.title', lang)}</h3>
+          </div>
+          {onNewConversation && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onNewConversation}
+              className="h-7 w-7"
+              title={lang === "tr" ? "Yeni sohbet" : "New chat"}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          ) : conversations.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+              <MessageSquare className="mb-3 h-8 w-8 text-muted-foreground/50" />
+              <p className="text-sm font-medium text-muted-foreground">{tx('ch.empty', lang)}</p>
+              <p className="mt-1 text-xs text-muted-foreground/70">
+                {tx('ch.emptyDesc', lang)}
+              </p>
+            </div>
+          ) : (
+            <div className="py-1">
+              {groups.map((group) => (
+                <div key={group.label}>
+                  <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                    {group.label}
+                  </p>
+                  {group.items.map((conv) => (
+                    <button
+                      key={conv.id}
+                      onClick={() => onSelectConversation(conv.query_text, conv.response_text)}
+                      className="group flex w-full items-start gap-2 rounded-md px-3 py-2 text-left transition-colors hover:bg-muted/80 mx-1"
+                      style={{ width: "calc(100% - 8px)" }}
+                    >
+                      <span className="mt-0.5 text-xs">{getTypeIcon(conv.query_type)}</span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-medium leading-snug line-clamp-2">
+                          {truncate(conv.query_text, 60)}
+                        </p>
+                        <p className="mt-0.5 text-[10px] text-muted-foreground">
+                          {formatDate(conv.created_at)}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        {conversations.length > 0 && (
+          <div className="border-t px-3 py-2">
+            <p className="text-center text-[10px] text-muted-foreground">
+              {conversations.length} {tx('ch.conversations', lang)}
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ─── DRAWER MODE (mobile / toggle button) ───
   return (
     <>
       {/* Toggle button */}

@@ -133,12 +133,9 @@ export default function BloodTestPage() {
               <Upload className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold">{lang === "tr" ? "PDF Yükle" : "Upload PDF"}</h3>
+              <h3 className="font-semibold">{tx('bt.uploadPdf', lang)}</h3>
               <p className="text-xs text-muted-foreground">
-                {lang === "tr"
-                  ? "Kan tahlili PDF'inizi yükleyin — AI otomatik olarak değerleri çıkaracak"
-                  : "Upload your blood test PDF — AI will automatically extract values"
-                }
+                {tx('bt.uploadPdfDesc', lang)}
               </p>
             </div>
             <input
@@ -196,9 +193,9 @@ export default function BloodTestPage() {
                   className="gap-1.5"
                 >
                   {pdfUploading ? (
-                    <><Loader2 className="h-3.5 w-3.5 animate-spin" /> {lang === "tr" ? "Analiz..." : "Analyzing..."}</>
+                    <><Loader2 className="h-3.5 w-3.5 animate-spin" /> {tx('bt.analyzing', lang)}</>
                   ) : (
-                    lang === "tr" ? "Analiz Et" : "Analyze"
+                    tx('bt.analyze', lang)
                   )}
                 </Button>
               </div>
@@ -210,7 +207,7 @@ export default function BloodTestPage() {
                 className="gap-1.5"
               >
                 <Upload className="h-3.5 w-3.5" />
-                {lang === "tr" ? "PDF veya Fotoğraf Seç" : "Choose PDF or Photo"}
+                {tx('bt.choosePdf', lang)}
               </Button>
             )}
           </div>

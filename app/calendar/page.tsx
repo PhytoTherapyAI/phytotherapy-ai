@@ -19,6 +19,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
+import { NotificationSettings } from "@/components/pwa/NotificationSettings"
 import { TodayView } from "@/components/calendar/TodayView"
 import { MonthView } from "@/components/calendar/MonthView"
 import { AddVitalDialog } from "@/components/calendar/AddVitalDialog"
@@ -333,6 +334,11 @@ export default function CalendarPage() {
           />
         </TabsContent>
       </Tabs>
+
+      {/* Notification Settings */}
+      <div className="mt-6">
+        <NotificationSettings />
+      </div>
     </div>
   )
 }

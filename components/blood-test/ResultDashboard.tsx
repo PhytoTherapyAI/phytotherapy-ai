@@ -23,6 +23,7 @@ import {
 } from "@/lib/blood-reference";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { BloodTestShareCard } from "@/components/share/BloodTestShareCard";
 
 // ============================================
 // Types
@@ -305,6 +306,18 @@ export function ResultDashboard({
           </div>
         </div>
       )}
+
+      {/* Share Card */}
+      <BloodTestShareCard
+        lang={lang}
+        totalMarkers={totalMarkers}
+        abnormalCount={abnormalCount}
+        optimalCount={optimalCount}
+        topFindings={analysis.abnormalFindings.slice(0, 3).map((f) => ({
+          marker: f.marker,
+          status: f.status,
+        }))}
+      />
 
       {/* Disclaimer */}
       <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-xs text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">

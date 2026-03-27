@@ -30,7 +30,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("phyto-theme", next);
       document.documentElement.classList.add("transitioning");
       document.documentElement.classList.toggle("dark", next === "dark");
-      setTimeout(() => document.documentElement.classList.remove("transitioning"), 300);
+      setTimeout(() => document.documentElement.classList.remove("transitioning"), 500);
       return next;
     });
   }, []);

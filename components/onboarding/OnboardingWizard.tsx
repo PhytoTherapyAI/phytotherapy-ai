@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Leaf, CheckCircle2 } from "lucide-react";
+import {
+  ArrowLeft, ArrowRight, Leaf, CheckCircle2,
+  User, Pill, AlertTriangle, Baby, Wine, HeartPulse, FileCheck, Sparkles,
+} from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import { markFirstLoginDone } from "@/lib/daily-med-check";
 import type { UserProfile } from "@/lib/database.types";
 
@@ -21,6 +24,8 @@ import { SubstanceStep } from "@/components/onboarding/steps/SubstanceStep";
 import { MedicalHistoryStep } from "@/components/onboarding/steps/MedicalHistoryStep";
 import { ConsentStep } from "@/components/onboarding/steps/ConsentStep";
 import { OptionalProfileStep } from "@/components/onboarding/steps/OptionalProfileStep";
+
+const STEP_ICONS = [User, Pill, AlertTriangle, Baby, Wine, HeartPulse, FileCheck];
 
 // Bilingual step definitions
 function getSteps(lang: "en" | "tr") {
@@ -126,6 +131,8 @@ export function OnboardingWizard({ profile }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [showLayer2, setShowLayer2] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [animating, setAnimating] = useState(false);
+  const [slideDir, setSlideDir] = useState<"left" | "right">("left");
   const [data, setData] = useState<OnboardingData>({
     ...defaultData,
     full_name: profile.full_name ?? "",
@@ -140,6 +147,11 @@ export function OnboardingWizard({ profile }: Props) {
     ? ALL_LAYER1_STEPS.filter((_, i) => i !== 3)
     : ALL_LAYER1_STEPS;
 
+  // Icon indices adjusted for skipped pregnancy
+  const stepIconIndices = skipPregnancy
+    ? [0, 1, 2, 4, 5, 6]
+    : [0, 1, 2, 3, 4, 5, 6];
+
   const totalSteps = showLayer2 ? LAYER1_STEPS.length + 1 : LAYER1_STEPS.length;
   const isLayer2 = currentStep === LAYER1_STEPS.length;
   const currentStepInfo = isLayer2 ? LAYER2_STEP : LAYER1_STEPS[currentStep];
@@ -148,7 +160,6 @@ export function OnboardingWizard({ profile }: Props) {
   // Map visible step index to original step index for rendering
   const getOriginalStepIndex = (visibleIndex: number): number => {
     if (!skipPregnancy) return visibleIndex;
-    // Steps: 0=basic, 1=meds, 2=allergies, [skip 3=pregnancy], 3=substances, 4=medical, 5=consent
     return visibleIndex >= 3 ? visibleIndex + 1 : visibleIndex;
   };
   const origStep = getOriginalStepIndex(currentStep);
@@ -171,19 +182,34 @@ export function OnboardingWizard({ profile }: Props) {
     }
   };
 
+  const animateStep = (dir: "left" | "right", cb: () => void) => {
+    setSlideDir(dir);
+    setAnimating(true);
+    setTimeout(() => {
+      cb();
+      setAnimating(false);
+    }, 200);
+  };
+
   const handleNext = async () => {
     if (currentStep === LAYER1_STEPS.length - 1 && !showLayer2) {
-      setShowLayer2(true);
-      setCurrentStep(LAYER1_STEPS.length);
+      animateStep("left", () => {
+        setShowLayer2(true);
+        setCurrentStep(LAYER1_STEPS.length);
+      });
       return;
     }
 
     if (currentStep < totalSteps - 1) {
-      setCurrentStep((prev) => prev + 1);
+      animateStep("left", () => setCurrentStep((prev) => prev + 1));
       return;
     }
 
     await saveOnboarding();
+  };
+
+  const handleBack = () => {
+    animateStep("right", () => setCurrentStep((prev) => Math.max(0, prev - 1)));
   };
 
   const handleSkipLayer2 = async () => {
@@ -198,13 +224,12 @@ export function OnboardingWizard({ profile }: Props) {
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (authError || !user) {
         console.error("Auth error during onboarding save:", authError);
-        alert(lang === "tr" ? "Oturumunuz sona erdi. Lütfen tekrar giriş yapın." : "Your session has expired. Please sign in again.");
+        alert(tx("onb.sessionExpired", lang));
         router.push("/auth/login");
         return;
       }
 
       const userId = user.id;
-      console.log("[Onboarding] Saving for user:", userId);
 
       // 1. Save medications
       if (data.medications.length > 0) {
@@ -225,7 +250,7 @@ export function OnboardingWizard({ profile }: Props) {
 
         if (medError) {
           console.error("[Onboarding] Medication insert error:", medError);
-          alert(lang === "tr" ? "İlaçlar kaydedilemedi. Tekrar deneyin." : "Failed to save medications. Please try again.");
+          alert(tx("onb.medSaveError", lang));
           return;
         }
       }
@@ -246,7 +271,7 @@ export function OnboardingWizard({ profile }: Props) {
 
         if (allergyError) {
           console.error("[Onboarding] Allergy insert error:", allergyError);
-          alert(lang === "tr" ? "Alerjiler kaydedilemedi. Tekrar deneyin." : "Failed to save allergies. Please try again.");
+          alert(tx("onb.allergySaveError", lang));
           return;
         }
       }
@@ -305,16 +330,18 @@ export function OnboardingWizard({ profile }: Props) {
       router.push("/");
     } catch (error) {
       console.error("Onboarding save error:", error);
-      alert(lang === "tr" ? "Bilgileriniz kaydedilemedi. Tekrar deneyin." : "Failed to save your information. Please try again.");
+      alert(tx("onb.saveError", lang));
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const CurrentStepIcon = isLayer2 ? Sparkles : STEP_ICONS[stepIconIndices[currentStep]] || User;
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="text-center">
+      <div className="text-center animate-in fade-in duration-500">
         <div className="mx-auto mb-3 flex items-center justify-center gap-2">
           <Leaf className="h-6 w-6 text-primary" />
           <span className="font-sans-heading text-lg font-bold">
@@ -322,61 +349,124 @@ export function OnboardingWizard({ profile }: Props) {
           </span>
         </div>
         <h1 className="font-sans-heading text-2xl font-bold">
-          {lang === "tr" ? "Sağlık Profilinizi Oluşturun" : "Set Up Your Health Profile"}
+          {tx("onb.setupTitle", lang)}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {lang === "tr"
-            ? "Güvenli ve kişiselleştirilmiş öneriler sunmamızı sağlar"
-            : "This helps us give you safe, personalized recommendations"}
+          {tx("onb.setupDesc", lang)}
         </p>
       </div>
 
-      {/* Progress */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">
-            {lang === "tr" ? `Adım ${currentStep + 1} / ${totalSteps}` : `Step ${currentStep + 1} of ${totalSteps}`}
-          </span>
-          <span className="font-medium">{currentStepInfo.title}</span>
+      {/* Step Progress Indicators */}
+      <div className="flex items-center justify-center gap-1.5">
+        {LAYER1_STEPS.map((step, i) => {
+          const StepIcon = STEP_ICONS[stepIconIndices[i]] || User;
+          const isCompleted = i < currentStep;
+          const isCurrent = i === currentStep && !isLayer2;
+          return (
+            <div key={step.id} className="flex items-center">
+              <div
+                className={`flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 ${
+                  isCompleted
+                    ? "bg-primary text-primary-foreground scale-90"
+                    : isCurrent
+                      ? "bg-primary/15 text-primary ring-2 ring-primary/30 scale-110"
+                      : "bg-muted text-muted-foreground scale-90"
+                }`}
+              >
+                {isCompleted ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <StepIcon className="h-3.5 w-3.5" />
+                )}
+              </div>
+              {i < LAYER1_STEPS.length - 1 && (
+                <div
+                  className={`mx-0.5 h-0.5 w-4 rounded-full transition-colors duration-300 sm:w-6 ${
+                    i < currentStep ? "bg-primary" : "bg-muted"
+                  }`}
+                />
+              )}
+            </div>
+          );
+        })}
+        {showLayer2 && (
+          <>
+            <div className={`mx-0.5 h-0.5 w-4 rounded-full transition-colors duration-300 sm:w-6 ${
+              isLayer2 ? "bg-primary" : "bg-muted"
+            }`} />
+            <div className={`flex h-8 w-8 items-center justify-center rounded-full transition-all duration-300 ${
+              isLayer2
+                ? "bg-primary/15 text-primary ring-2 ring-primary/30 scale-110"
+                : "bg-muted text-muted-foreground scale-90"
+            }`}>
+              <Sparkles className="h-3.5 w-3.5" />
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Progress bar */}
+      <div className="space-y-1">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span>{tx("onb.stepOf", lang)} {currentStep + 1} {tx("onb.of", lang)} {totalSteps}</span>
+          <span className="font-medium text-foreground">{Math.round(progress)}%</span>
         </div>
-        <Progress value={progress} className="h-2" />
+        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-primary to-primary/70 transition-all duration-500 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
       </div>
 
       {/* Step Content */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 font-sans-heading">
-            {currentStepInfo.title}
-          </CardTitle>
-          <CardDescription>{currentStepInfo.description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {origStep === 0 && <BasicInfoStep data={data} updateData={updateData} />}
-          {origStep === 1 && <MedicationsStep data={data} updateData={updateData} />}
-          {origStep === 2 && <AllergiesStep data={data} updateData={updateData} />}
-          {origStep === 3 && !skipPregnancy && <PregnancyStep data={data} updateData={updateData} />}
-          {origStep === 4 && <SubstanceStep data={data} updateData={updateData} />}
-          {origStep === 5 && <MedicalHistoryStep data={data} updateData={updateData} />}
-          {origStep === 6 && <ConsentStep data={data} updateData={updateData} />}
-          {isLayer2 && <OptionalProfileStep data={data} updateData={updateData} />}
-        </CardContent>
-      </Card>
+      <div
+        className={`transition-all duration-200 ${
+          animating
+            ? slideDir === "left"
+              ? "translate-x-[-8px] opacity-0"
+              : "translate-x-[8px] opacity-0"
+            : "translate-x-0 opacity-100"
+        }`}
+      >
+        <Card className="border-primary/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2.5 font-sans-heading">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                <CurrentStepIcon className="h-4 w-4 text-primary" />
+              </div>
+              {currentStepInfo.title}
+            </CardTitle>
+            <CardDescription>{currentStepInfo.description}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {origStep === 0 && <BasicInfoStep data={data} updateData={updateData} />}
+            {origStep === 1 && <MedicationsStep data={data} updateData={updateData} />}
+            {origStep === 2 && <AllergiesStep data={data} updateData={updateData} />}
+            {origStep === 3 && !skipPregnancy && <PregnancyStep data={data} updateData={updateData} />}
+            {origStep === 4 && <SubstanceStep data={data} updateData={updateData} />}
+            {origStep === 5 && <MedicalHistoryStep data={data} updateData={updateData} />}
+            {origStep === 6 && <ConsentStep data={data} updateData={updateData} />}
+            {isLayer2 && <OptionalProfileStep data={data} updateData={updateData} />}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Navigation */}
       <div className="flex items-center justify-between">
         <Button
           variant="outline"
-          onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
+          onClick={handleBack}
           disabled={currentStep === 0 || isSubmitting}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          {lang === "tr" ? "Geri" : "Back"}
+          {tx("onb.back", lang)}
         </Button>
 
         <div className="flex gap-2">
           {isLayer2 && (
             <Button variant="ghost" onClick={handleSkipLayer2} disabled={isSubmitting}>
-              {lang === "tr" ? "Şimdilik atla" : "Skip for now"}
+              {tx("onb.skipForNow", lang)}
             </Button>
           )}
 
@@ -386,15 +476,15 @@ export function OnboardingWizard({ profile }: Props) {
             className="bg-primary hover:bg-primary/90"
           >
             {isSubmitting ? (
-              lang === "tr" ? "Kaydediliyor..." : "Saving..."
+              tx("onb.saving", lang)
             ) : currentStep >= totalSteps - 1 ? (
               <>
                 <CheckCircle2 className="mr-2 h-4 w-4" />
-                {lang === "tr" ? "Tamamla" : "Complete"}
+                {tx("onb.complete", lang)}
               </>
             ) : (
               <>
-                {lang === "tr" ? "İleri" : "Next"}
+                {tx("onb.next", lang)}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </>
             )}

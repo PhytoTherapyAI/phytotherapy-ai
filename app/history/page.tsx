@@ -19,6 +19,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react"
+import { EmptyState } from "@/components/ui/empty-state"
 
 interface HistoryItem {
   id: string
@@ -186,14 +187,27 @@ export default function HistoryPage() {
 
       {/* Results */}
       {loading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="rounded-xl border bg-card p-4">
+              <div className="flex items-start gap-3">
+                <div className="skeleton h-8 w-8 rounded-lg" />
+                <div className="flex-1 space-y-2">
+                  <div className="skeleton h-3 w-24" />
+                  <div className="skeleton h-4 w-3/4" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-xl border bg-card p-8 text-center">
-          <Clock className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
-          <p className="text-sm text-muted-foreground">{tx("history.noResults", lang)}</p>
-        </div>
+        <EmptyState
+          icon={Clock}
+          title={tx("history.noResults", lang)}
+          description={filter === "favorites"
+            ? (lang === "tr" ? "Henüz favori eklemediniz" : "No favorites yet")
+            : (lang === "tr" ? "Sorularınız burada görünecek" : "Your queries will appear here")}
+        />
       ) : (
         <div className="space-y-3">
           {filtered.map((item) => {

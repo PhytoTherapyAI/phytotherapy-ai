@@ -1199,6 +1199,41 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   "wrapped.title": { en: "Your Health Year in Review", tr: "Sağlık Yılınız Özet" },
   "wrapped.subtitle": { en: "A look back at your health journey", tr: "Sağlık yolculuğunuza bir bakış" },
+  "wrapped.shareTitle": { en: "My Health Year — Phytotherapy.ai", tr: "Sağlık Yılım — Phytotherapy.ai" },
+  "wrapped.queries": { en: "Queries", tr: "Sorgu" },
+  "wrapped.interactionChecks": { en: "Interaction Checks", tr: "Etkileşim Kontrolü" },
+  "wrapped.checkIns": { en: "Check-ins", tr: "Check-in" },
+  "wrapped.bloodTests": { en: "Blood Tests", tr: "Kan Tahlili" },
+  "wrapped.yearSummary": { en: "Your Year in Numbers", tr: "Yıl Özetiniz" },
+  "wrapped.daysActive": { en: "days active", tr: "gün aktif" },
+  "wrapped.longestStreak": { en: "longest streak", tr: "en uzun seri" },
+  "wrapped.mostUsed": { en: "Most Used Features", tr: "En Çok Kullanılan" },
+
+  // ══════════════════════════════════════════
+  // Onboarding Wizard
+  // ══════════════════════════════════════════
+  "onb.setupTitle": { en: "Set Up Your Health Profile", tr: "Sağlık Profilinizi Oluşturun" },
+  "onb.setupDesc": { en: "This helps us give you safe, personalized recommendations", tr: "Güvenli ve kişiselleştirilmiş öneriler sunmamızı sağlar" },
+  "onb.stepOf": { en: "Step", tr: "Adım" },
+  "onb.of": { en: "of", tr: "/" },
+  "onb.back": { en: "Back", tr: "Geri" },
+  "onb.next": { en: "Next", tr: "İleri" },
+  "onb.skipForNow": { en: "Skip for now", tr: "Şimdilik atla" },
+  "onb.saving": { en: "Saving...", tr: "Kaydediliyor..." },
+  "onb.complete": { en: "Complete", tr: "Tamamla" },
+  "onb.sessionExpired": { en: "Your session has expired. Please sign in again.", tr: "Oturumunuz sona erdi. Lütfen tekrar giriş yapın." },
+  "onb.medSaveError": { en: "Failed to save medications. Please try again.", tr: "İlaçlar kaydedilemedi. Tekrar deneyin." },
+  "onb.allergySaveError": { en: "Failed to save allergies. Please try again.", tr: "Alerjiler kaydedilemedi. Tekrar deneyin." },
+  "onb.saveError": { en: "Failed to save your information. Please try again.", tr: "Bilgileriniz kaydedilemedi. Tekrar deneyin." },
+
+  // ══════════════════════════════════════════
+  // Blood Test — PDF Upload
+  // ══════════════════════════════════════════
+  "bt.uploadPdf": { en: "Upload PDF", tr: "PDF Yükle" },
+  "bt.uploadPdfDesc": { en: "Upload your blood test PDF — AI will automatically extract values", tr: "Kan tahlili PDF'inizi yükleyin — AI otomatik olarak değerleri çıkaracak" },
+  "bt.analyzing": { en: "Analyzing...", tr: "Analiz..." },
+  "bt.analyze": { en: "Analyze", tr: "Analiz Et" },
+  "bt.choosePdf": { en: "Choose PDF or Photo", tr: "PDF veya Fotoğraf Seç" },
 }
 
 // ══════════════════════════════════════════
