@@ -197,7 +197,11 @@ export default function WrappedPage() {
                       <span className="text-lg font-bold text-muted-foreground">#{i + 1}</span>
                       <div className="flex-1">
                         <div className="flex justify-between text-sm">
-                          <span className="font-medium capitalize">{qt.type.replace("_", " ")}</span>
+                          <span className="font-medium capitalize">
+                            {lang === "tr"
+                              ? ({ general: "Genel Soru", interaction: "Etkileşim", blood_test: "Kan Tahlili" }[qt.type] || qt.type.replace("_", " "))
+                              : qt.type.replace("_", " ")}
+                          </span>
                           <span className="text-muted-foreground">{qt.count}x</span>
                         </div>
                         <div className="mt-1 h-2 rounded-full bg-muted">
