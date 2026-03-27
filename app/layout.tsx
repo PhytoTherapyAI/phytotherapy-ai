@@ -96,7 +96,7 @@ export default function RootLayout({
               <DisclaimerBanner />
               <Header />
               <TrialBannerWrapper />
-              <main className="flex min-h-[calc(100vh-12rem)] flex-col">{children}</main>
+              <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-hidden">{children}</main>
               <Footer />
               <MedicationUpdateDialog />
               <MicroCheckInWrapper />

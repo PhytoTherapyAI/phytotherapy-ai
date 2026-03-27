@@ -90,7 +90,7 @@ export default function BloodTestPage() {
   };
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-4 py-8">
       {/* Header */}
       <div className="mb-6 flex items-center gap-3">
         <div className="rounded-lg bg-purple-50 p-3 dark:bg-purple-950">
@@ -244,6 +244,6 @@ export default function BloodTestPage() {
       <p className="mt-6 text-center text-xs text-muted-foreground">
         ⚠️ {tx('disclaimer.tool', lang)}
       </p>
-    </main>
+    </div>
   );
 }
