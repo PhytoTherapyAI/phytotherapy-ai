@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import {
   Shield,
   Search,
@@ -316,7 +317,7 @@ export default function InteractionCheckerPage() {
         {/* Profile note — hidden while auth is loading */}
         {!authLoading && !isAuthenticated && !redFlagCheck.isEmergency && (
           <p className="text-center text-xs text-muted-foreground">
-            💡 <a href="/auth/login" className="text-primary underline hover:text-primary/80">{tx('ic.signIn', lang)}</a>{" "}
+            💡 <Link href="/auth/login" className="text-primary underline hover:text-primary/80">{tx('ic.signIn', lang)}</Link>{" "}
             {tx('ic.signInNote', lang)}
           </p>
         )}

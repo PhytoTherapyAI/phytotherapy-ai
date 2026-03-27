@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Link from "next/link";
 import { FlaskConical, Upload, FileText, Loader2, X } from "lucide-react";
 import { BloodTestForm } from "@/components/blood-test/BloodTestForm";
 import { ResultDashboard } from "@/components/blood-test/ResultDashboard";
@@ -110,9 +111,9 @@ export default function BloodTestPage() {
         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
           <p>
             <strong>{tx('bt.guestMode', lang)}</strong> {tx('bt.guestText', lang)}{" "}
-            <a href="/auth/login" className="font-semibold underline">
+            <Link href="/auth/login" className="font-semibold underline">
               {tx('bt.createAccount', lang)}
-            </a>.
+            </Link>.
           </p>
         </div>
       )}

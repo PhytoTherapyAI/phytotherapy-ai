@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { Cookie } from "lucide-react"
@@ -34,9 +35,9 @@ export function CookieConsent() {
         <Cookie className="hidden h-5 w-5 shrink-0 text-primary sm:block" />
         <p className="text-center text-xs text-muted-foreground sm:text-left">
           {tx("cookie.text", lang)}{" "}
-          <a href="/privacy" className="underline transition-colors hover:text-foreground">
+          <Link href="/privacy" className="underline transition-colors hover:text-foreground">
             {tx("footer.privacy", lang)}
-          </a>
+          </Link>
         </p>
         <button
           onClick={accept}

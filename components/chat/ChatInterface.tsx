@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { Send, Loader2, Trash2, Paperclip, Camera, X, FileText, Image as ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageBubble, ChatMessage } from "./MessageBubble";
@@ -384,9 +385,9 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
                 ? `${remaining} ${tx('chat.freeRemaining', lang)}`
                 : tx('chat.freeUsedUp', lang)}
             </span>
-            <a href="/auth/login" className="text-primary hover:underline">
+            <Link href="/auth/login" className="text-primary hover:underline">
               {tx('chat.signUpUnlimited', lang)}
-            </a>
+            </Link>
           </div>
         )}
 
