@@ -705,6 +705,8 @@ const t: Record<string, TranslationEntry> = {
   "auth.welcome": { en: "Welcome", tr: "Hoş Geldiniz" },
   "auth.subtitle": { en: "Sign in to get personalized, evidence-based recommendations", tr: "Kişiselleştirilmiş, kanıta dayalı öneriler almak için giriş yapın" },
   "auth.googleContinue": { en: "Continue with Google", tr: "Google ile Devam Et" },
+  "auth.facebookContinue": { en: "Continue with Facebook", tr: "Facebook ile Devam Et" },
+  "auth.errFacebook": { en: "Facebook login failed. Please try again.", tr: "Facebook girişi başarısız. Tekrar deneyin." },
   "auth.or": { en: "Or", tr: "Veya" },
   "auth.signIn": { en: "Sign In", tr: "Giriş Yap" },
   "auth.signUp": { en: "Sign Up", tr: "Kayıt Ol" },
