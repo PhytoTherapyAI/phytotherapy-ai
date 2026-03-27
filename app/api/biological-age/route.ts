@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
     }
 
     // BMI check
-    if (profile?.height_cm && profile?.weight_kg) {
+    if (profile?.height_cm > 0 && profile?.weight_kg > 0) {
       const bmi = profile.weight_kg / Math.pow(profile.height_cm / 100, 2)
       if (bmi >= 18.5 && bmi <= 24.9) {
         ageModifier -= 2
