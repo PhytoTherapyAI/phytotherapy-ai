@@ -49,7 +49,7 @@ export default function DoctorPage() {
   const [summaryData, setSummaryData] = useState<Record<string, string>>({})
 
   const isVerified = profile?.is_doctor_verified === true
-  const tr = lang === "tr"
+  const tr = lang === "tr" // kept for toLocaleDateString only
 
   const fetchPatients = useCallback(async () => {
     if (!user) return
@@ -133,10 +133,10 @@ export default function DoctorPage() {
         const data = await res.json()
         setSummaryData((prev) => ({ ...prev, [patientId]: data.summary || data.error }))
       } else {
-        setSummaryData((prev) => ({ ...prev, [patientId]: tr ? "Özet oluşturulamadı." : "Could not generate summary." }))
+        setSummaryData((prev) => ({ ...prev, [patientId]: tx("doctor.summaryFailed", lang) }))
       }
     } catch {
-      setSummaryData((prev) => ({ ...prev, [patientId]: tr ? "Bağlantı hatası." : "Connection error." }))
+      setSummaryData((prev) => ({ ...prev, [patientId]: tx("doctor.connectionError", lang) }))
     } finally {
       setSummaryLoading(null)
     }
@@ -255,7 +255,7 @@ export default function DoctorPage() {
                           className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground"
                         >
                           {copiedCode === patient.invite_code ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
-                          {copiedCode === patient.invite_code ? (tr ? "Kopyalandı!" : "Copied!") : (tr ? "Link kopyala" : "Copy link")}
+                          {copiedCode === patient.invite_code ? tx("doctor.copied", lang) : tx("doctor.copyLink", lang)}
                         </button>
                         <button
                           onClick={() => setShowQR(showQR === patient.invite_code ? null : patient.invite_code)}
@@ -284,7 +284,7 @@ export default function DoctorPage() {
                       ) : (
                         <Brain className="h-3 w-3" />
                       )}
-                      {tr ? "AI Özet" : "AI Summary"}
+                      {tx("doctor.aiSummary", lang)}
                     </Button>
                   )}
                   {patient.compliance_score !== undefined && patient.status === "active" && (
@@ -300,7 +300,7 @@ export default function DoctorPage() {
               {showQR === patient.invite_code && patient.invite_code && (
                 <div className="mt-3 flex flex-col items-center gap-2 rounded-lg border bg-muted/30 p-4">
                   <p className="text-xs text-muted-foreground">
-                    {tr ? "Hasta bu QR kodu tarayarak katılabilir" : "Patient can scan this QR to join"}
+                    {tx("doctor.qrDesc", lang)}
                   </p>
                   <img
                     src={generateQRUrl(patient.invite_code)}
@@ -312,7 +312,7 @@ export default function DoctorPage() {
                     onClick={() => setShowQR(null)}
                     className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                   >
-                    <X className="h-3 w-3" /> {tr ? "Kapat" : "Close"}
+                    <X className="h-3 w-3" /> {tx("doctor.close", lang)}
                   </button>
                 </div>
               )}
@@ -323,7 +323,7 @@ export default function DoctorPage() {
                   <div className="flex items-center gap-1.5 mb-2">
                     <Brain className="h-3.5 w-3.5 text-primary" />
                     <span className="text-xs font-semibold text-primary">
-                      {tr ? "AI Hasta Özeti" : "AI Patient Summary"}
+                      {tx("doctor.aiPatientSummary", lang)}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">

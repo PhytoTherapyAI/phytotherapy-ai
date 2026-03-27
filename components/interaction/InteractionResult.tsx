@@ -89,7 +89,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
             <ShieldAlert className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-red-800 dark:text-red-300" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+            <h3 className="text-lg font-bold text-red-800 dark:text-red-300">
               {tx('safety.emergencyWarning', lang)}
             </h3>
             <p className="mt-2 text-red-700 dark:text-red-400">
@@ -109,7 +109,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
     <div className="space-y-6">
       {/* Medications Analyzed */}
       <div className="rounded-xl border bg-card p-5">
-        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+        <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
           <Pill className="h-4 w-4" />
           {tx('ir.medsAnalyzed', lang)}
         </h3>
@@ -142,7 +142,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* Profile Warnings */}
       {result.profileWarnings.length > 0 && (
         <div className="rounded-xl border border-amber-200 bg-amber-50/50 p-5 dark:border-amber-800 dark:bg-amber-950/20">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400">
             <ShieldAlert className="h-4 w-4" />
             {tx('ir.profileAlerts', lang)}
           </h3>
@@ -163,7 +163,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* Dangerous Herbs */}
       {dangerousHerbs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-red-700 dark:text-red-400" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-red-700 dark:text-red-400">
             <XCircle className="h-5 w-5" />
             {tx('ir.avoidThese', lang)} ({dangerousHerbs.length})
           </h3>
@@ -176,7 +176,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* Caution Herbs */}
       {cautionHerbs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-amber-700 dark:text-amber-400" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-amber-700 dark:text-amber-400">
             <AlertTriangle className="h-5 w-5" />
             {tx('ir.useWithCaution', lang)} ({cautionHerbs.length})
           </h3>
@@ -189,7 +189,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* Safe Herbs */}
       {safeHerbs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="flex items-center gap-2 text-lg font-semibold text-primary" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-primary">
             <CheckCircle2 className="h-5 w-5" />
             {tx('ir.safeAlternatives', lang)} ({safeHerbs.length})
           </h3>
@@ -202,7 +202,7 @@ export function InteractionResult({ result }: InteractionResultProps) {
       {/* General Advice */}
       {result.generalAdvice && (
         <div className="rounded-xl border bg-blue-50/50 p-5 dark:bg-blue-950/20">
-          <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-400" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+          <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-400">
             <BookOpen className="h-4 w-4" />
             {tx('ir.generalAdvice', lang)}
           </h3>
@@ -280,7 +280,7 @@ function HerbCard({ herb, showAdd, onAdd }: HerbCardProps) {
   return (
     <div className={`rounded-xl border ${borderColor} bg-card p-5 transition-shadow hover:shadow-md`}>
       <div className="mb-3 flex items-start justify-between gap-3">
-        <h4 className="text-lg font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>{herb.herb}</h4>
+        <h4 className="text-lg font-semibold">{herb.herb}</h4>
         <SafetyBadge safety={herb.safety} />
       </div>
 

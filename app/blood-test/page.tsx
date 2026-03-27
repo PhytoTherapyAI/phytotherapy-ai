@@ -218,7 +218,7 @@ export default function BloodTestPage() {
       {data ? (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>{tx('bt.yourResults', lang)}</h2>
+            <h2 className="text-lg font-semibold">{tx('bt.yourResults', lang)}</h2>
             <button
               onClick={() => setData(null)}
               className="text-sm text-primary hover:underline"

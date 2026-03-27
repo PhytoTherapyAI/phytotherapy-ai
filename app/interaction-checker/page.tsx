@@ -259,7 +259,7 @@ export default function InteractionCheckerPage() {
                 <ShieldAlert className="h-6 w-6 text-white" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-red-800 dark:text-red-200" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+                <h3 className="text-lg font-bold text-red-800 dark:text-red-200">
                   🚨 Emergency Warning
                 </h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-red-700 dark:text-red-300">
@@ -325,7 +325,7 @@ export default function InteractionCheckerPage() {
       {/* Example Queries — hidden during emergency */}
       {!result && !isLoading && !redFlagCheck.isEmergency && (
         <div className="mb-8">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Sparkles className="h-4 w-4" />
             {tx('ic.tryExample', lang)}
           </h3>
@@ -358,7 +358,7 @@ export default function InteractionCheckerPage() {
       {isLoading && (
         <div className="flex flex-col items-center justify-center rounded-xl border bg-card p-12">
           <Loader2 className="mb-4 h-10 w-10 animate-spin text-primary" />
-          <h3 className="mb-2 text-lg font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+          <h3 className="mb-2 text-lg font-semibold">
             {tx('ic.loadingTitle', lang)}
           </h3>
           <div className="space-y-1 text-center text-sm text-muted-foreground">
@@ -372,7 +372,7 @@ export default function InteractionCheckerPage() {
       {/* Error State */}
       {error && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 dark:border-red-800 dark:bg-red-950/30">
-          <h3 className="mb-2 font-semibold text-red-800 dark:text-red-300" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+          <h3 className="mb-2 font-semibold text-red-800 dark:text-red-300">
             {tx('ic.errorTitle', lang)}
           </h3>
           <p className="text-sm text-red-700 dark:text-red-400">{error}</p>

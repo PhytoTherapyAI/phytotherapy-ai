@@ -266,7 +266,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
         method: "POST",
         headers,
         body: JSON.stringify({
-          message: trimmed || (lang === "tr" ? `Yüklenen dosyayı analiz et: ${fileNames.join(", ")}` : `Please analyze the uploaded file(s): ${fileNames.join(", ")}`),
+          message: trimmed || `${tx("chat.analyzeFile", lang)} ${fileNames.join(", ")}`,
           history: historyForApi,
           files: filesPayload,
           lang,
@@ -351,7 +351,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
               </svg>
             </div>
-            <h3 className="mb-2 text-lg font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+            <h3 className="mb-2 text-lg font-semibold">
               {tx('chat.emptyTitle', lang)}
             </h3>
             <p className="max-w-sm text-sm text-muted-foreground">
@@ -447,7 +447,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
               onClick={() => fileInputRef.current?.click()}
               disabled={isStreaming}
               className="h-11 w-11 text-muted-foreground hover:text-primary"
-              title={lang === "tr" ? "Dosya ekle (PDF, JPG, PNG)" : "Attach file (PDF, JPG, PNG)"}
+              title={tx("chat.attachFile", lang)}
             >
               <Paperclip className="h-4 w-4" />
             </Button>
@@ -458,7 +458,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
               onClick={() => cameraInputRef.current?.click()}
               disabled={isStreaming}
               className="h-11 w-11 text-muted-foreground hover:text-primary"
-              title={lang === "tr" ? "Fotoğraf çek" : "Take photo"}
+              title={tx("chat.takePhoto", lang)}
             >
               <Camera className="h-4 w-4" />
             </Button>
@@ -484,7 +484,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
                 size="icon"
                 onClick={clearChat}
                 className="h-11 w-11 text-muted-foreground hover:text-destructive"
-                title={lang === "tr" ? "Sohbeti temizle" : "Clear chat"}
+                title={tx("chat.clearChat", lang)}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>

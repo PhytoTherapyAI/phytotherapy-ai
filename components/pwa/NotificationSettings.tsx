@@ -35,7 +35,6 @@ export function NotificationSettings({ medications = [] }: Props) {
 
   const handleToggle = async () => {
     if (!settings.enabled) {
-      // Enable
       const granted = await requestNotificationPermission()
       setPermission(granted ? "granted" : "denied")
       if (granted) {
@@ -45,7 +44,6 @@ export function NotificationSettings({ medications = [] }: Props) {
         initializeNotifications(medications, lang)
       }
     } else {
-      // Disable
       clearAllScheduled()
       const updated = { ...settings, enabled: false }
       setSettings(updated)
@@ -65,8 +63,6 @@ export function NotificationSettings({ medications = [] }: Props) {
 
   if (!supported) return null
 
-  const tr = lang === "tr"
-
   return (
     <div className="rounded-xl border p-4 space-y-4">
       <div className="flex items-center justify-between">
@@ -77,7 +73,7 @@ export function NotificationSettings({ medications = [] }: Props) {
             <BellOff className="h-4 w-4 text-muted-foreground" />
           )}
           <h3 className="text-sm font-semibold">
-            {tr ? "Bildirimler" : "Notifications"}
+            {tx("notif.title", lang)}
           </h3>
         </div>
         <Button
@@ -86,17 +82,13 @@ export function NotificationSettings({ medications = [] }: Props) {
           onClick={handleToggle}
           className="gap-1.5"
         >
-          {settings.enabled
-            ? (tr ? "Açık" : "On")
-            : (tr ? "Kapalı" : "Off")}
+          {settings.enabled ? tx("notif.on", lang) : tx("notif.off", lang)}
         </Button>
       </div>
 
       {permission === "denied" && (
         <p className="text-xs text-red-500">
-          {tr
-            ? "Bildirimler tarayıcı tarafından engellendi. Tarayıcı ayarlarından izin verin."
-            : "Notifications blocked by browser. Enable in browser settings."}
+          {tx("notif.blocked", lang)}
         </p>
       )}
 
@@ -107,7 +99,7 @@ export function NotificationSettings({ medications = [] }: Props) {
             <div className="flex items-center gap-2">
               <Pill className="h-3.5 w-3.5 text-muted-foreground" />
               <span className="text-xs">
-                {tr ? "İlaç hatırlatıcısı" : "Medication reminders"}
+                {tx("notif.medReminders", lang)}
               </span>
             </div>
             <input
@@ -123,7 +115,7 @@ export function NotificationSettings({ medications = [] }: Props) {
             <div className="flex items-center gap-2">
               <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
               <span className="text-xs">
-                {tr ? "Günlük check-in hatırlatıcısı" : "Daily check-in reminder"}
+                {tx("notif.dailyCheckIn", lang)}
               </span>
             </div>
             <input
@@ -139,7 +131,7 @@ export function NotificationSettings({ medications = [] }: Props) {
             <div className="space-y-1">
               <Label className="flex items-center gap-1 text-[10px] text-muted-foreground">
                 <Clock className="h-3 w-3" />
-                {tr ? "Sabah saati" : "Morning time"}
+                {tx("notif.morningTime", lang)}
               </Label>
               <Input
                 type="time"
@@ -151,7 +143,7 @@ export function NotificationSettings({ medications = [] }: Props) {
             <div className="space-y-1">
               <Label className="flex items-center gap-1 text-[10px] text-muted-foreground">
                 <Clock className="h-3 w-3" />
-                {tr ? "Akşam saati" : "Evening time"}
+                {tx("notif.eveningTime", lang)}
               </Label>
               <Input
                 type="time"

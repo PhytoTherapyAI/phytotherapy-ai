@@ -244,7 +244,7 @@ export function ConversationHistory({ onSelectConversation, onNewConversation, s
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div className="flex items-center gap-2">
                 <History className="h-4 w-4 text-primary" />
-                <h3 className="font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>{tx('ch.title', lang)}</h3>
+                <h3 className="font-semibold">{tx('ch.title', lang)}</h3>
               </div>
               <Button
                 variant="ghost"

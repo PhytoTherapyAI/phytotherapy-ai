@@ -134,7 +134,7 @@ export function ResultDashboard({
 
       {/* Summary */}
       <div className="rounded-lg border bg-card p-4">
-        <h3 className="mb-2 font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>{tx('rd.summary', lang)}</h3>
+        <h3 className="mb-2 font-semibold">{tx('rd.summary', lang)}</h3>
         <p className="text-sm text-muted-foreground leading-relaxed">{analysis.summary}</p>
       </div>
 
@@ -266,7 +266,7 @@ export function ResultDashboard({
       {activeTab === "doctor" && (
         <div className="space-y-4">
           <div className="rounded-lg border bg-card p-4">
-            <h4 className="mb-3 font-semibold" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>{tx('rd.doctorTitle', lang)}</h4>
+            <h4 className="mb-3 font-semibold">{tx('rd.doctorTitle', lang)}</h4>
             {analysis.doctorDiscussion.length === 0 ? (
               <p className="text-sm text-muted-foreground">{tx('rd.noDoctor', lang)}</p>
             ) : (
@@ -280,7 +280,7 @@ export function ResultDashboard({
 
           {/* Download PDF */}
           <div className="rounded-lg border border-primary/20 bg-primary/10 p-4">
-            <h4 className="mb-2 font-semibold text-primary" style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600 }}>
+            <h4 className="mb-2 font-semibold text-primary">
               {tx('rd.pdfTitle', lang)}
             </h4>
             <p className="mb-3 text-sm text-primary">

@@ -386,7 +386,7 @@ const t: Record<string, TranslationEntry> = {
   // Chat loading / emergency
   // ══════════════════════════════════════════
   "chat.analyzing": { en: "Analyzing...", tr: "Analiz ediliyor..." },
-  "chat.analyzeFile": { en: "Analyze this file", tr: "Bu dosyayı analiz et" },
+  "chat.analyzeFile": { en: "Please analyze the uploaded file(s):", tr: "Yüklenen dosyayı analiz et:" },
   "chat.analyzingFile": { en: "Analyzing your file...", tr: "Dosyanız analiz ediliyor..." },
   "chat.emergencyTitle": { en: "EMERGENCY WARNING", tr: "ACİL UYARI" },
 
@@ -1234,6 +1234,56 @@ const t: Record<string, TranslationEntry> = {
   "bt.analyzing": { en: "Analyzing...", tr: "Analiz..." },
   "bt.analyze": { en: "Analyze", tr: "Analiz Et" },
   "bt.choosePdf": { en: "Choose PDF or Photo", tr: "PDF veya Fotoğraf Seç" },
+
+  // ══════════════════════════════════════════
+  // Onboarding Steps — BasicInfo
+  // ══════════════════════════════════════════
+  // ══════════════════════════════════════════
+  // Chat Interface — Extra
+  // ══════════════════════════════════════════
+  // ══════════════════════════════════════════
+  // Doctor Panel — Extra
+  // ══════════════════════════════════════════
+  "doctor.summaryFailed": { en: "Could not generate summary.", tr: "Özet oluşturulamadı." },
+  "doctor.connectionError": { en: "Connection error.", tr: "Bağlantı hatası." },
+  "doctor.copied": { en: "Copied!", tr: "Kopyalandı!" },
+  "doctor.copyLink": { en: "Copy link", tr: "Link kopyala" },
+  "doctor.aiSummary": { en: "AI Summary", tr: "AI Özet" },
+  "doctor.qrDesc": { en: "Patient can scan this QR to join", tr: "Hasta bu QR kodu tarayarak katılabilir" },
+  "doctor.close": { en: "Close", tr: "Kapat" },
+  "doctor.aiPatientSummary": { en: "AI Patient Summary", tr: "AI Hasta Özeti" },
+
+  // ══════════════════════════════════════════
+  // Notification Settings
+  // ══════════════════════════════════════════
+  "notif.title": { en: "Notifications", tr: "Bildirimler" },
+  "notif.on": { en: "On", tr: "Açık" },
+  "notif.off": { en: "Off", tr: "Kapalı" },
+  "notif.blocked": { en: "Notifications blocked by browser. Enable in browser settings.", tr: "Bildirimler tarayıcı tarafından engellendi. Tarayıcı ayarlarından izin verin." },
+  "notif.medReminders": { en: "Medication reminders", tr: "İlaç hatırlatıcısı" },
+  "notif.dailyCheckIn": { en: "Daily check-in reminder", tr: "Günlük check-in hatırlatıcısı" },
+  "notif.morningTime": { en: "Morning time", tr: "Sabah saati" },
+  "notif.eveningTime": { en: "Evening time", tr: "Akşam saati" },
+
+  "chat.attachFile": { en: "Attach file (PDF, JPG, PNG)", tr: "Dosya ekle (PDF, JPG, PNG)" },
+  "chat.takePhoto": { en: "Take photo", tr: "Fotoğraf çek" },
+  "chat.clearChat": { en: "Clear chat", tr: "Sohbeti temizle" },
+
+  // ══════════════════════════════════════════
+  // Onboarding Steps — BasicInfo
+  // ══════════════════════════════════════════
+  "onb.fullName": { en: "Full Name *", tr: "Ad Soyad *" },
+  "onb.fullNamePlaceholder": { en: "Enter your full name", tr: "Adınızı ve soyadınızı girin" },
+  "onb.birthDate": { en: "Date of Birth *", tr: "Doğum Tarihi *" },
+  "onb.yourAge": { en: "Your age:", tr: "Yaşınız:" },
+  "onb.ageWarning": { en: "You must be 18 or older to use this service. Our recommendations are designed for adults only.", tr: "Bu hizmeti kullanmak için 18 yaşında veya daha büyük olmalısınız. Önerilerimiz yalnızca yetişkinler için tasarlanmıştır." },
+  "onb.gender": { en: "Gender *", tr: "Cinsiyet *" },
+  "onb.genderPlaceholder": { en: "Select your gender", tr: "Cinsiyetinizi seçin" },
+  "onb.male": { en: "Male", tr: "Erkek" },
+  "onb.female": { en: "Female", tr: "Kadın" },
+  "onb.other": { en: "Other", tr: "Diğer" },
+  "onb.preferNotToSay": { en: "Prefer not to say", tr: "Belirtmek istemiyorum" },
+  "onb.requiredFields": { en: "* Required fields. This information helps us provide safe, age-and-gender-appropriate recommendations.", tr: "* Zorunlu alanlar. Bu bilgiler yaşa ve cinsiyete uygun güvenli öneriler sunmamızı sağlar." },
 }
 
 // ══════════════════════════════════════════

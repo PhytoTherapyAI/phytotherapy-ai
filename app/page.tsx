@@ -203,7 +203,7 @@ export default function Home() {
                   <feature.icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="mb-2 text-base font-semibold leading-snug tracking-tight">
-                  <span style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600, fontSize: '1rem', display: 'block' }}>
+                  <span className="block text-base font-semibold">
                     {tx(feature.titleKey, lang)}
                   </span>
                 </h3>
@@ -350,7 +350,7 @@ export default function Home() {
                 <feature.icon className="h-5 w-5 text-primary" />
               </div>
               <h3 className="mb-2 text-base font-semibold leading-snug tracking-tight">
-                <span style={{ fontFamily: '"DM Sans", system-ui, sans-serif', fontWeight: 600, fontSize: '1rem', display: 'block' }}>
+                <span className="block text-base font-semibold">
                   {tx(feature.titleKey, lang)}
                 </span>
               </h3>

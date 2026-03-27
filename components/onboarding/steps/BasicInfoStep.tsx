@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
 
 interface Props {
@@ -27,7 +28,6 @@ function calcAge(birthDate: string): number | null {
 
 export function BasicInfoStep({ data, updateData }: Props) {
   const { lang } = useLang();
-  const tr = lang === "tr";
 
   const handleBirthDateChange = (value: string) => {
     updateData({ birth_date: value, age: calcAge(value) });
@@ -44,17 +44,17 @@ export function BasicInfoStep({ data, updateData }: Props) {
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="full-name">{tr ? "Ad Soyad *" : "Full Name *"}</Label>
+        <Label htmlFor="full-name">{tx("onb.fullName", lang)}</Label>
         <Input
           id="full-name"
-          placeholder={tr ? "Adınızı ve soyadınızı girin" : "Enter your full name"}
+          placeholder={tx("onb.fullNamePlaceholder", lang)}
           value={data.full_name}
           onChange={(e) => updateData({ full_name: e.target.value })}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="birth-date">{tr ? "Doğum Tarihi *" : "Date of Birth *"}</Label>
+        <Label htmlFor="birth-date">{tx("onb.birthDate", lang)}</Label>
         <Input
           id="birth-date"
           type="date"
@@ -65,40 +65,36 @@ export function BasicInfoStep({ data, updateData }: Props) {
         />
         {data.age !== null && data.age >= 0 && (
           <p className="text-xs text-muted-foreground">
-            {tr ? `Yaşınız: ${data.age}` : `Your age: ${data.age}`}
+            {tx("onb.yourAge", lang)} {data.age}
           </p>
         )}
         {ageWarning && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              {tr
-                ? "Bu hizmeti kullanmak için 18 yaşında veya daha büyük olmalısınız. Önerilerimiz yalnızca yetişkinler için tasarlanmıştır."
-                : "You must be 18 or older to use this service. Our recommendations are designed for adults only."}
+              {tx("onb.ageWarning", lang)}
             </AlertDescription>
           </Alert>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label>{tr ? "Cinsiyet *" : "Gender *"}</Label>
+        <Label>{tx("onb.gender", lang)}</Label>
         <Select value={data.gender} onValueChange={(v) => v && updateData({ gender: v })}>
           <SelectTrigger>
-            <SelectValue placeholder={tr ? "Cinsiyetinizi seçin" : "Select your gender"} />
+            <SelectValue placeholder={tx("onb.genderPlaceholder", lang)} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="male">{tr ? "Erkek" : "Male"}</SelectItem>
-            <SelectItem value="female">{tr ? "Kadın" : "Female"}</SelectItem>
-            <SelectItem value="other">{tr ? "Diğer" : "Other"}</SelectItem>
-            <SelectItem value="prefer_not_to_say">{tr ? "Belirtmek istemiyorum" : "Prefer not to say"}</SelectItem>
+            <SelectItem value="male">{tx("onb.male", lang)}</SelectItem>
+            <SelectItem value="female">{tx("onb.female", lang)}</SelectItem>
+            <SelectItem value="other">{tx("onb.other", lang)}</SelectItem>
+            <SelectItem value="prefer_not_to_say">{tx("onb.preferNotToSay", lang)}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <p className="text-xs text-muted-foreground">
-        {tr
-          ? "* Zorunlu alanlar. Bu bilgiler yaşa ve cinsiyete uygun güvenli öneriler sunmamızı sağlar."
-          : "* Required fields. This information helps us provide safe, age-and-gender-appropriate recommendations."}
+        {tx("onb.requiredFields", lang)}
       </p>
     </div>
   );
