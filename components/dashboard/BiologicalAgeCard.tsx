@@ -26,6 +26,33 @@ export interface BioAgeResult {
 
 const CACHE_KEY = "bioage-cache"
 
+const FACTOR_TR: Record<string, string> = {
+  "Regular exercise": "Düzenli egzersiz",
+  "Moderate exercise": "Orta düzey egzersiz",
+  "Low physical activity": "Düşük fiziksel aktivite",
+  "Good sleep quality": "İyi uyku kalitesi",
+  "Poor sleep quality": "Kötü uyku kalitesi",
+  "Active smoking": "Aktif sigara kullanımı",
+  "Former smoker": "Eski sigara kullanıcısı",
+  "Heavy alcohol use": "Yoğun alkol kullanımı",
+  "No alcohol": "Alkol kullanmıyor",
+  "Active supplement use": "Aktif takviye kullanımı",
+  "High energy levels": "Yüksek enerji seviyesi",
+  "Healthy BMI": "Sağlıklı VKİ",
+  "High BMI": "Yüksek VKİ",
+  "Underweight BMI": "Düşük VKİ",
+}
+
+function translateFactor(label: string, lang: Lang): string {
+  if (lang === "tr") {
+    // Handle dynamic labels like "2 chronic condition(s)"
+    const match = label.match(/^(\d+) chronic condition\(s\)$/)
+    if (match) return `${match[1]} kronik hastalık`
+    return FACTOR_TR[label] || label
+  }
+  return label
+}
+
 export function BiologicalAgeCard({
   userId,
   lang,
@@ -155,7 +182,7 @@ export function BiologicalAgeCard({
                 <div className="space-y-1">
                   {result.factors.map((f, i) => (
                     <div key={i} className="flex items-center justify-between text-[11px]">
-                      <span className="text-muted-foreground">{f.label}</span>
+                      <span className="text-muted-foreground">{translateFactor(f.label, lang)}</span>
                       <span className={f.impact === "positive" ? "text-green-500" : "text-amber-500"}>
                         {f.impact === "positive" ? "↓" : "↑"}
                       </span>
