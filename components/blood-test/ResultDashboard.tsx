@@ -412,7 +412,7 @@ function StatusBadge({ status, label, lang }: { status: string; label: string; l
   );
 }
 
-function EvidenceBadge({ grade, lang }: { grade: string; lang: string }) {
+function EvidenceBadge({ grade, lang }: { grade: string; lang: "en" | "tr" }) {
   const colors: Record<string, string> = {
     A: "bg-primary/10 text-primary",
     B: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
@@ -421,7 +421,7 @@ function EvidenceBadge({ grade, lang }: { grade: string; lang: string }) {
 
   return (
     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${colors[grade] || colors.C}`}>
-      {lang === "tr" ? `Kanıt ${grade}` : `Grade ${grade}`}
+      {tx('evidence.grade', lang)} {grade}
     </span>
   );
 }

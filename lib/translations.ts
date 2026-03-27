@@ -1284,6 +1284,22 @@ const t: Record<string, TranslationEntry> = {
   "onb.other": { en: "Other", tr: "Diğer" },
   "onb.preferNotToSay": { en: "Prefer not to say", tr: "Belirtmek istemiyorum" },
   "onb.requiredFields": { en: "* Required fields. This information helps us provide safe, age-and-gender-appropriate recommendations.", tr: "* Zorunlu alanlar. Bu bilgiler yaşa ve cinsiyete uygun güvenli öneriler sunmamızı sağlar." },
+
+  // Allergies Step
+  "onb.noAllergies": { en: "I have no known allergies", tr: "Bilinen alerjim yok" },
+  "onb.addAllergy": { en: "Add an allergy", tr: "Alerji ekle" },
+  "onb.allergen": { en: "Allergen", tr: "Alerjen" },
+  "onb.allergenPlaceholder": { en: "e.g., Penicillin, Chamomile, Nuts", tr: "ör. Penisilin, Papatya, Fındık" },
+  "onb.severity": { en: "Severity", tr: "Şiddet" },
+  "onb.mild": { en: "Mild", tr: "Hafif" },
+  "onb.moderate": { en: "Moderate", tr: "Orta" },
+  "onb.severe": { en: "Severe", tr: "Şiddetli" },
+  "onb.anaphylaxis": { en: "Anaphylaxis", tr: "Anafilaksi" },
+  "onb.addAllergyBtn": { en: "Add Allergy", tr: "Alerji Ekle" },
+  "onb.allergyNote": { en: "Herbal products may cross-react with known allergies. We filter recommendations accordingly.", tr: "Bitkisel ürünler bilinen alerjilerle çapraz reaksiyon verebilir. Önerilerimizi buna göre filtreliyoruz." },
+
+  // Evidence Grade
+  "evidence.grade": { en: "Grade", tr: "Kanıt" },
 }
 
 // ══════════════════════════════════════════
