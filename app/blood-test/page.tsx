@@ -93,7 +93,7 @@ export default function BloodTestPage() {
       {/* Header */}
       <div className="mb-6 flex items-center gap-3">
         <div className="rounded-lg bg-purple-50 p-3 dark:bg-purple-950">
-          <FlaskConical className="h-6 w-6 text-purple-600" />
+          <FlaskConical className="h-6 w-6 text-purple-600 dark:text-purple-400" />
         </div>
         <div>
           <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">

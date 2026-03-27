@@ -9,7 +9,6 @@ import { createBrowserClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -40,8 +39,6 @@ function LoginContent() {
   );
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(true);
-
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [signupName, setSignupName] = useState("");
@@ -198,10 +195,7 @@ function LoginContent() {
                     </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox id="remember-me" checked={rememberMe} onCheckedChange={(checked) => setRememberMe(checked === true)} />
-                  <Label htmlFor="remember-me" className="text-sm font-normal text-muted-foreground cursor-pointer">{tx("cal.rememberMe", lang)}</Label>
-                </div>
+                {/* Supabase handles session persistence automatically */}
                 <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                   {isLoading ? tx("auth.signingIn", lang) : tx("auth.signIn", lang)}
                 </Button>
