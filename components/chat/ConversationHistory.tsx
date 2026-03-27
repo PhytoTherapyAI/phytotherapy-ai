@@ -120,10 +120,10 @@ export function ConversationHistory({ onSelectConversation, onNewConversation, s
       }
     }
 
-    if (todayItems.length) groups.push({ label: lang === "tr" ? "Bugün" : "Today", items: todayItems });
-    if (yesterdayItems.length) groups.push({ label: lang === "tr" ? "Dün" : "Yesterday", items: yesterdayItems });
-    if (weekItems.length) groups.push({ label: lang === "tr" ? "Bu Hafta" : "This Week", items: weekItems });
-    if (olderItems.length) groups.push({ label: lang === "tr" ? "Daha Eski" : "Older", items: olderItems });
+    if (todayItems.length) groups.push({ label: tx("ch.today", lang), items: todayItems });
+    if (yesterdayItems.length) groups.push({ label: tx("ch.yesterday", lang), items: yesterdayItems });
+    if (weekItems.length) groups.push({ label: tx("ch.thisWeek", lang), items: weekItems });
+    if (olderItems.length) groups.push({ label: tx("ch.older", lang), items: olderItems });
 
     return groups;
   };
@@ -145,7 +145,7 @@ export function ConversationHistory({ onSelectConversation, onNewConversation, s
               size="icon"
               onClick={onNewConversation}
               className="h-7 w-7"
-              title={lang === "tr" ? "Yeni sohbet" : "New chat"}
+              title={tx("ch.newChat", lang)}
             >
               <Plus className="h-4 w-4" />
             </Button>

@@ -194,13 +194,13 @@ export function BarcodeScanner({ userId, lang, onSupplementFound }: BarcodeScann
               </div>
               <div className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1">
                 <p className="text-[10px] text-white">
-                  {tr ? "Barkodu çerçeveye hizalayın" : "Align barcode within frame"}
+                  {tx("scan.alignBarcode", lang)}
                 </p>
               </div>
             </div>
             <Button size="sm" variant="outline" className="w-full" onClick={() => { stopCamera(); setMode("idle") }}>
               <X className="mr-1.5 h-3 w-3" />
-              {tr ? "İptal" : "Cancel"}
+              {tx("scan.cancel", lang)}
             </Button>
           </div>
         )}
@@ -210,7 +210,7 @@ export function BarcodeScanner({ userId, lang, onSupplementFound }: BarcodeScann
           <div className="flex flex-col items-center gap-3 py-6">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">
-              {tr ? "Ürün aranıyor..." : "Looking up product..."}
+              {tx("scan.lookingUp", lang)}
             </p>
           </div>
         )}
@@ -223,7 +223,7 @@ export function BarcodeScanner({ userId, lang, onSupplementFound }: BarcodeScann
                 <div className="flex items-center justify-between">
                   <Badge variant="secondary" className="text-[9px] bg-green-100 text-green-700">
                     <CheckCircle2 className="mr-0.5 h-2.5 w-2.5" />
-                    {tr ? "Bulundu" : "Found"}
+                    {tx("scan.found", lang)}
                   </Badge>
                   <span className="text-[10px] text-muted-foreground">{product.barcode}</span>
                 </div>
@@ -246,8 +246,8 @@ export function BarcodeScanner({ userId, lang, onSupplementFound }: BarcodeScann
                     <Plus className="mr-1.5 h-3.5 w-3.5" />
                   )}
                   {added
-                    ? (tr ? "Eklendi!" : "Added!")
-                    : (tr ? "Takviyelerime ekle" : "Add to supplements")
+                    ? tx("scan.addedSupplement", lang)
+                    : tx("scan.addToSupplements", lang)
                   }
                 </Button>
               </div>
@@ -256,7 +256,7 @@ export function BarcodeScanner({ userId, lang, onSupplementFound }: BarcodeScann
                 <AlertTriangle className="h-4 w-4 text-amber-500 mt-0.5" />
                 <div>
                   <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
-                    {tr ? "Ürün bulunamadı" : "Product not found"}
+                    {tx("scan.notFound", lang)}
                   </p>
                   <p className="text-[10px] text-amber-600 dark:text-amber-500">
                     {tr ? `Barkod: ${product.barcode}` : `Barcode: ${product.barcode}`}
@@ -267,7 +267,7 @@ export function BarcodeScanner({ userId, lang, onSupplementFound }: BarcodeScann
 
             <Button size="sm" variant="outline" className="w-full" onClick={reset}>
               <RotateCcw className="mr-1.5 h-3 w-3" />
-              {tr ? "Tekrar tara" : "Scan again"}
+              {tx("scan.scanAgain", lang)}
             </Button>
           </div>
         )}

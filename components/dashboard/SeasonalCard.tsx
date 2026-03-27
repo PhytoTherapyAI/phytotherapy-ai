@@ -141,11 +141,11 @@ export function SeasonalCard({ lang, userMedications = [], userConditions = [] }
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             {season.icon}
-            {tr ? `${season.name.tr} Hazırlık` : `${season.name.en} Prep`}
+            {season.name[lang]} {tx("seasonal.prep", lang)}
             <Badge variant="secondary" className="ml-auto text-[10px]">{season.emoji}</Badge>
           </CardTitle>
           <p className="text-xs text-muted-foreground">
-            {tr ? "Mevsime özel sağlık önerileri" : "Season-specific health tips"}
+            {tx("seasonal.tips", lang)}
           </p>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -159,7 +159,7 @@ export function SeasonalCard({ lang, userMedications = [], userConditions = [] }
                   <p className="text-[10px] text-muted-foreground">{tip.detail[lang]}</p>
                   {interactionWarning && (
                     <p className="text-[10px] font-medium text-amber-600 dark:text-amber-400 mt-0.5">
-                      ⚠️ {tr ? "İlaçlarınızla etkileşebilir — doktorunuza danışın" : "May interact with your medications — consult your doctor"}
+                      ⚠️ {tx("seasonal.interactionWarn", lang)}
                     </p>
                   )}
                 </div>
@@ -181,7 +181,7 @@ export function SeasonalCard({ lang, userMedications = [], userConditions = [] }
         <ShareCardBase
           lang={lang}
           fileName={`seasonal-${seasonId}.png`}
-          shareTitle={tr ? `${season.name.tr} Sağlık Önerileri` : `${season.name.en} Health Tips`}
+          shareTitle={`${season.name[lang]} ${tx("seasonal.tips", lang)}`}
           shareText={
             tr
               ? `${season.emoji} ${season.name.tr} mevsimi için sağlık önerilerimi paylaşıyorum!`
@@ -206,10 +206,10 @@ export function SeasonalCard({ lang, userMedications = [], userConditions = [] }
                 <span className="text-sm font-semibold tracking-wide opacity-90">Phytotherapy.ai</span>
               </div>
               <h2 className="mb-1 text-xl font-extrabold">
-                {season.emoji} {tr ? `${season.name.tr} Hazırlık` : `${season.name.en} Prep Guide`}
+                {season.emoji} {season.name[lang]} {tx("seasonal.prepGuide", lang)}
               </h2>
               <p className="mb-5 text-sm opacity-80">
-                {tr ? "Mevsime özel sağlık önerileri" : "Season-specific health recommendations"}
+                {tx("seasonal.recommendations", lang)}
               </p>
               <div className="space-y-2">
                 {season.tips.map((tip, i) => (

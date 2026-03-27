@@ -2,6 +2,7 @@
 
 import { ExternalLink, Info } from "lucide-react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { getAffiliateLinks, AFFILIATE_DISCLAIMER } from "@/lib/affiliate"
 
 interface AffiliateLinksProps {
@@ -19,7 +20,7 @@ export function AffiliateLinks({ supplementName }: AffiliateLinksProps) {
       <div className="flex items-center gap-1.5 mb-2">
         <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
         <span className="text-xs font-medium text-muted-foreground">
-          {lang === "tr" ? "Nereden alınır?" : "Where to buy?"}
+          {tx("affiliate.whereToBuy", lang)}
         </span>
       </div>
       <div className="flex flex-wrap gap-2">

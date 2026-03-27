@@ -1,7 +1,7 @@
 "use client"
 
 import { ShareCardBase } from "./ShareCardBase"
-import { type Lang } from "@/lib/translations"
+import { tx, type Lang } from "@/lib/translations"
 import { CheckCircle2, AlertTriangle, TrendingUp } from "lucide-react"
 
 interface BloodTestShareCardProps {
@@ -29,7 +29,7 @@ export function BloodTestShareCard({
     <ShareCardBase
       lang={lang}
       fileName="blood-test-results.png"
-      shareTitle={tr ? "Kan Tahlili Sonuçlarım" : "My Blood Test Results"}
+      shareTitle={tx("share.bloodTest.title", lang)}
       shareText={
         tr
           ? `${totalMarkers} markörden ${optimalCount} tanesi optimal aralıkta! 🩸`
@@ -44,7 +44,7 @@ export function BloodTestShareCard({
               Phytotherapy.ai
             </p>
             <h3 className="text-lg font-bold">
-              {tr ? "Kan Tahlili Özeti" : "Blood Test Summary"}
+              {tx("share.bloodTest.summary", lang)}
             </h3>
             {userName && (
               <p className="text-xs text-muted-foreground">{userName}</p>
@@ -85,7 +85,7 @@ export function BloodTestShareCard({
             </div>
             <p className="text-lg font-bold">{totalMarkers}</p>
             <p className="text-[9px] text-muted-foreground">
-              {tr ? "Toplam" : "Total"}
+              {tx("share.bloodTest.total", lang)}
             </p>
           </div>
           <div className="rounded-xl bg-white/60 p-3 text-center dark:bg-white/5">
@@ -94,7 +94,7 @@ export function BloodTestShareCard({
             </div>
             <p className="text-lg font-bold text-green-600">{optimalCount}</p>
             <p className="text-[9px] text-muted-foreground">
-              {tr ? "Optimal" : "Optimal"}
+              {tx("share.bloodTest.optimal", lang)}
             </p>
           </div>
           <div className="rounded-xl bg-white/60 p-3 text-center dark:bg-white/5">
@@ -103,7 +103,7 @@ export function BloodTestShareCard({
             </div>
             <p className="text-lg font-bold text-amber-600">{abnormalCount}</p>
             <p className="text-[9px] text-muted-foreground">
-              {tr ? "Anormal" : "Abnormal"}
+              {tx("share.bloodTest.abnormal", lang)}
             </p>
           </div>
         </div>
@@ -112,7 +112,7 @@ export function BloodTestShareCard({
         {topFindings.length > 0 && (
           <div className="space-y-1.5">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {tr ? "Öne Çıkanlar" : "Key Findings"}
+              {tx("share.bloodTest.keyFindings", lang)}
             </p>
             {topFindings.slice(0, 3).map((f, i) => (
               <div key={i} className="flex items-center gap-2 rounded-lg bg-white/50 px-3 py-1.5 text-xs dark:bg-white/5">

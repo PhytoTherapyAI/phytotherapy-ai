@@ -28,7 +28,7 @@ export function BioAgeShareCard({
     <ShareCardBase
       lang={lang}
       fileName={`bioage-${biologicalAge}.png`}
-      shareTitle={tr ? "Biyolojik Yaşım" : "My Biological Age"}
+      shareTitle={tx("share.bioage.title", lang)}
       shareText={
         isYounger
           ? (tr
@@ -124,8 +124,8 @@ export function BioAgeShareCard({
                   <span className="opacity-90">{f.label}</span>
                   <span className="font-bold">
                     {f.impact === "positive"
-                      ? (tr ? "↓ Gençleştiriyor" : "↓ Younger")
-                      : (tr ? "↑ Yaşlandırıyor" : "↑ Older")
+                      ? `↓ ${tx("share.bioage.younger", lang)}`
+                      : `↑ ${tx("share.bioage.older", lang)}`
                     }
                   </span>
                 </div>

@@ -24,7 +24,7 @@ export function ProtocolShareCard({
     <ShareCardBase
       lang={lang}
       fileName={`protocol-${supplementName.toLowerCase().replace(/\s+/g, "-")}.png`}
-      shareTitle={tr ? "Protokol Tamamlandı!" : "Protocol Complete!"}
+      shareTitle={tx("share.protocol.title", lang)}
       shareText={
         tr
           ? `${cycleDays} günlük ${supplementName} protokolümü tamamladım! 🏆`
@@ -73,7 +73,7 @@ export function ProtocolShareCard({
           >
             <p className="text-2xl font-extrabold">{supplementName}</p>
             <p className="mt-1 text-sm opacity-80">
-              {cycleDays} {tr ? "gün" : "days"} {tx("share.protocol.subtitle", lang)}
+              {cycleDays} {tx("share.protocol.days", lang)} {tx("share.protocol.subtitle", lang)}
             </p>
           </div>
 
@@ -86,10 +86,10 @@ export function ProtocolShareCard({
               <span className="text-3xl">🏆</span>
               <div>
                 <p className="text-lg font-extrabold">
-                  {tr ? "Tamamlandı!" : "Complete!"}
+                  {tx("share.protocol.complete", lang)}
                 </p>
                 <p className="text-xs opacity-80">
-                  {cycleDays}/{cycleDays} {tr ? "gün" : "days"}
+                  {cycleDays}/{cycleDays} {tx("share.protocol.days", lang)}
                 </p>
               </div>
             </div>
@@ -107,10 +107,7 @@ export function ProtocolShareCard({
 
           {/* Motivational */}
           <p className="mb-4 text-center text-sm italic opacity-70">
-            {tr
-              ? "Disiplin ve tutarlılık — sağlık yolculuğunun temeli."
-              : "Discipline and consistency — the foundation of your health journey."
-            }
+            {tx("share.protocol.motivational", lang)}
           </p>
 
           {/* Footer */}

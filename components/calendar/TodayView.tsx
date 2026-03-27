@@ -897,7 +897,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
         <div className="flex-1">
           <p className="text-sm font-medium text-foreground">
             {allMedsDone && allSupsDone && glasses >= waterTarget
-              ? (tr ? "Bugün harikasın! Tüm görevler tamam." : "Amazing day! All tasks done.")
+              ? tx("cal.allDoneToday", lang)
               : (tr ? `Bugünkü ilerleme: ${completedMeds}/${medications.length} ilaç · ${completedSups}/${supplementEvents.length} takviye`
                     : `Today: ${completedMeds}/${medications.length} meds · ${completedSups}/${supplementEvents.length} supps`)}
           </p>
@@ -958,7 +958,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
             <div className="flex items-center gap-2">
               {streak > 0 && (
                 <span className="flex items-center gap-1 text-xs text-amber-500">
-                  <Flame className="h-3 w-3" /> {streak} {tr ? "gün" : "days"}
+                  <Flame className="h-3 w-3" /> {streak} {tx("cal.daysStreak", lang)}
                 </span>
               )}
               {medications.length > 0 && (
@@ -1155,7 +1155,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
             <div className="flex items-center gap-2">
               {supStreak > 0 && (
                 <span className="flex items-center gap-1 text-xs text-primary">
-                  <Flame className="h-3 w-3" /> {supStreak} {tr ? "gün" : "days"}
+                  <Flame className="h-3 w-3" /> {supStreak} {tx("cal.daysStreak", lang)}
                 </span>
               )}
               {supplementEvents.length > 0 && (
@@ -1562,7 +1562,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                 <div className="flex items-center gap-2 rounded-lg bg-amber-500/10 border border-amber-500/20 p-3">
                   <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
                   <p className="text-xs text-amber-600 dark:text-amber-400">
-                    {tr ? "Lütfen daha fazla içmeyin! Su zehirlenmesi geçirebilirsiniz." : "Please don't drink more! You risk water intoxication."}
+                    {tx("cal.waterWarnTitle", lang)}
                   </p>
                 </div>
               )}
@@ -1660,7 +1660,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                   type="text"
                   value={editDose}
                   onChange={(e) => setEditDose(e.target.value)}
-                  placeholder={editingSupDose.description || (tr ? "ör: 500mg" : "e.g. 500mg")}
+                  placeholder={editingSupDose.description || tx("cal.doseExample", lang)}
                   className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                   autoFocus
                 />

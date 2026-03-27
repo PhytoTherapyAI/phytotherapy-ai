@@ -27,7 +27,7 @@ export function WeeklyShareCard({
     <ShareCardBase
       lang={lang}
       fileName={`weekly-summary-${Date.now()}.png`}
-      shareTitle={tr ? "Haftalık Sağlık Özetim" : "My Weekly Health Summary"}
+      shareTitle={tx("weekly.title", lang)}
       shareText={
         tr
           ? `Bu hafta ortalama sağlık skorum ${avgScore}/100! 🌿`
@@ -121,10 +121,10 @@ export function WeeklyShareCard({
               style={{ background: "rgba(255,255,255,0.25)" }}
             >
               {avgScore >= 80
-                ? (tr ? "🌟 Harika hafta!" : "🌟 Great week!")
+                ? `🌟 ${tx("share.weekly.great", lang)}`
                 : avgScore >= 60
-                  ? (tr ? "👍 İyi gidiyorsun!" : "👍 Keep going!")
-                  : (tr ? "💪 Gelişmeye devam!" : "💪 Room to grow!")
+                  ? `👍 ${tx("share.weekly.keepGoing", lang)}`
+                  : `💪 ${tx("share.weekly.roomToGrow", lang)}`
               }
             </div>
           </div>

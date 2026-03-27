@@ -1527,6 +1527,170 @@ const t: Record<string, TranslationEntry> = {
   "washout.add": { en: "Add", tr: "Takviye Ekle" },
   "washout.suppPlaceholder": { en: "Supplement name...", tr: "Takviye adı..." },
   "washout.addBtn": { en: "Add", tr: "Ekle" },
+
+  // ══════════════════════════════════════════
+  // Onboarding — OptionalProfileStep
+  // ══════════════════════════════════════════
+  "onb.optionalHint": { en: "These details help us personalize your recommendations. You can skip this and fill it later.", tr: "Bu bilgiler önerilerimizi kişiselleştirmemize yardımcı olur. Atlayıp daha sonra doldurabilirsiniz." },
+  "onb.heightLabel": { en: "Height (cm)", tr: "Boy (cm)" },
+  "onb.heightPlaceholder": { en: "e.g., 175", tr: "ör. 175" },
+  "onb.weightLabel": { en: "Weight (kg)", tr: "Kilo (kg)" },
+  "onb.weightPlaceholder": { en: "e.g., 70", tr: "ör. 70" },
+  "onb.bloodGroup": { en: "Blood Group", tr: "Kan Grubu" },
+  "onb.bloodGroupPlaceholder": { en: "Select blood group", tr: "Kan grubunuzu seçin" },
+  "onb.dietType": { en: "Diet Type", tr: "Diyet Türü" },
+  "onb.dietPlaceholder": { en: "Select your diet", tr: "Diyetinizi seçin" },
+  "onb.exerciseFreq": { en: "Exercise Frequency", tr: "Egzersiz Sıklığı" },
+  "onb.exercisePlaceholder": { en: "How often do you exercise?", tr: "Ne sıklıkta egzersiz yapıyorsunuz?" },
+  "onb.sleepQuality": { en: "Sleep Quality", tr: "Uyku Kalitesi" },
+  "onb.sleepPlaceholder": { en: "How well do you sleep?", tr: "Uyku kaliteniz nasıl?" },
+  "onb.supplements": { en: "Current Supplements / Vitamins", tr: "Mevcut Takviyeler / Vitaminler" },
+  "onb.otherSupplement": { en: "Other supplement...", tr: "Diğer takviye..." },
+
+  // ══════════════════════════════════════════
+  // Onboarding — SubstanceStep
+  // ══════════════════════════════════════════
+  "onb.alcoholUse": { en: "Alcohol Use", tr: "Alkol Kullanımı" },
+  "onb.alcNone": { en: "None", tr: "Kullanmıyorum" },
+  "onb.alcOccasional": { en: "Occasional (social drinking)", tr: "Ara sıra (sosyal içici)" },
+  "onb.alcRegular": { en: "Regular (several times a week)", tr: "Düzenli (haftada birkaç kez)" },
+  "onb.alcHeavy": { en: "Heavy (daily)", tr: "Ağır (günlük)" },
+  "onb.smokingUse": { en: "Smoking", tr: "Sigara Kullanımı" },
+  "onb.smkNone": { en: "Never smoked", tr: "Hiç içmedim" },
+  "onb.smkFormer": { en: "Former smoker (quit)", tr: "Eski içici (bıraktım)" },
+  "onb.smkCurrent": { en: "Current smoker", tr: "Aktif içici" },
+  "onb.substanceNote": { en: "Alcohol and smoking can interact with both medications and herbal supplements. This information helps us provide safer recommendations.", tr: "Alkol ve sigara hem ilaçlarla hem de bitkisel takviyelerle etkileşebilir. Bu bilgi daha güvenli öneriler sunmamızı sağlar." },
+
+  // ══════════════════════════════════════════
+  // Onboarding — MedicalHistoryStep
+  // ══════════════════════════════════════════
+  "onb.criticalConditions": { en: "Critical Conditions", tr: "Kritik Durumlar" },
+  "onb.kidneyDisease": { en: "Kidney disease", tr: "Böbrek hastalığı" },
+  "onb.liverDisease": { en: "Liver disease", tr: "Karaciğer hastalığı" },
+  "onb.recentSurgery": { en: "Surgery or hospitalization in the last 3 months", tr: "Son 3 ayda ameliyat veya hastaneye yatış" },
+  "onb.chronicConditions": { en: "Chronic Conditions", tr: "Kronik Hastalıklar" },
+  "onb.otherCondition": { en: "Other condition...", tr: "Diğer hastalık..." },
+  "onb.medHistoryNote": { en: "Kidney and liver conditions significantly affect how herbs are metabolized. This ensures we never recommend anything that could worsen your condition.", tr: "Böbrek ve karaciğer hastalıkları bitkilerin metabolizmasını önemli ölçüde etkiler. Bu bilgi durumunuzu kötüleştirebilecek hiçbir şey önermememizi sağlar." },
+
+  // ══════════════════════════════════════════
+  // Onboarding — PregnancyStep
+  // ══════════════════════════════════════════
+  "onb.pregnantQ": { en: "Are you currently pregnant?", tr: "Şu anda hamile misiniz?" },
+  "onb.breastfeedingQ": { en: "Are you currently breastfeeding?", tr: "Şu anda emziriyor musunuz?" },
+  "onb.yes": { en: "Yes", tr: "Evet" },
+  "onb.no": { en: "No", tr: "Hayır" },
+  "onb.pregnancyWarning": { en: "Many herbal products are unsafe during pregnancy and breastfeeding. Our system will apply extra safety filters to all recommendations for your protection.", tr: "Birçok bitkisel ürün gebelik ve emzirme döneminde güvenli değildir. Sistemimiz tüm önerilere ekstra güvenlik filtreleri uygulayacaktır." },
+  "onb.pregnancyNote": { en: "This information activates additional safety filters. Many commonly used herbs are contraindicated during pregnancy and lactation.", tr: "Bu bilgi ek güvenlik filtrelerini etkinleştirir. Yaygın kullanılan birçok bitki gebelik ve emzirme döneminde kontrendikedir." },
+
+  // ══════════════════════════════════════════
+  // Onboarding — ConsentStep
+  // ══════════════════════════════════════════
+  "onb.disclaimerTitle": { en: "Medical Disclaimer", tr: "Tıbbi Sorumluluk Reddi" },
+  "onb.dataPrivacy": { en: "Data Privacy", tr: "Veri Gizliliği" },
+  "onb.dataIntro": { en: "Your health data is:", tr: "Sağlık verileriniz:" },
+  "onb.termsLink": { en: "Terms of Service", tr: "Kullanım Koşulları" },
+  "onb.privacyLink": { en: "Privacy Policy", tr: "Gizlilik Politikası" },
+
+  // ══════════════════════════════════════════
+  // Calorie Calculator — extra keys
+  // ══════════════════════════════════════════
+  "calorie.bmiUnderweight": { en: "Underweight", tr: "Zayıf" },
+  "calorie.bmiNormal": { en: "Normal", tr: "Normal" },
+  "calorie.bmiOverweight": { en: "Overweight", tr: "Fazla Kilolu" },
+  "calorie.bmiObese": { en: "Obese", tr: "Obez" },
+  "calorie.hideAdvanced": { en: "Hide advanced measurements", tr: "Gelişmiş ölçümleri gizle" },
+  "calorie.calcBodyFat": { en: "Calculate body fat %", tr: "Vücut yağ oranı hesapla" },
+  "calorie.usNavy": { en: "US Navy Method — Body Fat %", tr: "US Navy Metodu — Vücut Yağ Oranı" },
+  "calorie.waist": { en: "Waist (cm)", tr: "Bel (cm)" },
+  "calorie.neck": { en: "Neck (cm)", tr: "Boyun (cm)" },
+  "calorie.hip": { en: "Hip (cm)", tr: "Kalça (cm)" },
+  "calorie.estBodyFat": { en: "Estimated Body Fat", tr: "Tahmini Vücut Yağ Oranı" },
+  "calorie.weightTrend": { en: "Weight Trend", tr: "Kilo Trendi" },
+
+  // ══════════════════════════════════════════
+  // Scanner — extra keys
+  // ══════════════════════════════════════════
+  "scan.capture": { en: "Capture", tr: "Çek" },
+  "scan.analysisFailed": { en: "Analysis failed", tr: "Analiz başarısız" },
+  "scan.connectionError": { en: "Connection error", tr: "Bağlantı hatası" },
+  "scan.brand": { en: "Brand", tr: "Marka" },
+  "scan.active": { en: "Active", tr: "Etken Madde" },
+  "scan.dosage": { en: "Dosage", tr: "Doz" },
+  "scan.form": { en: "Form", tr: "Form" },
+  "scan.addedToProfile": { en: "Added to profile!", tr: "Profiline eklendi!" },
+  "scan.addToMeds": { en: "Add to my medications", tr: "İlaç profilime ekle" },
+  "scan.tryAgain": { en: "Try again", tr: "Tekrar dene" },
+  "scan.alignBarcode": { en: "Align barcode within frame", tr: "Barkodu çerçeveye hizalayın" },
+  "scan.cancel": { en: "Cancel", tr: "İptal" },
+  "scan.lookingUp": { en: "Looking up product...", tr: "Ürün aranıyor..." },
+  "scan.found": { en: "Found", tr: "Bulundu" },
+  "scan.addedSupplement": { en: "Added!", tr: "Eklendi!" },
+  "scan.addToSupplements": { en: "Add to supplements", tr: "Takviyelerime ekle" },
+  "scan.notFound": { en: "Product not found", tr: "Ürün bulunamadı" },
+  "scan.scanAgain": { en: "Scan again", tr: "Tekrar tara" },
+
+  // ══════════════════════════════════════════
+  // Share Cards — extra keys
+  // ══════════════════════════════════════════
+  "share.bloodTest.title": { en: "My Blood Test Results", tr: "Kan Tahlili Sonuçlarım" },
+  "share.bloodTest.summary": { en: "Blood Test Summary", tr: "Kan Tahlili Özeti" },
+  "share.bloodTest.total": { en: "Total", tr: "Toplam" },
+  "share.bloodTest.optimal": { en: "Optimal", tr: "Optimal" },
+  "share.bloodTest.abnormal": { en: "Abnormal", tr: "Anormal" },
+  "share.bloodTest.keyFindings": { en: "Key Findings", tr: "Öne Çıkanlar" },
+  "share.interaction.medsChecked": { en: "Medications Checked", tr: "Kontrol Edilen İlaçlar" },
+  "share.interaction.dangerous": { en: "Dangerous", tr: "Tehlikeli" },
+  "share.interaction.caution": { en: "Caution", tr: "Dikkatli" },
+  "share.interaction.safe": { en: "Safe", tr: "Güvenli" },
+  "share.interaction.criticalFinding": { en: "Critical Finding", tr: "Kritik Tespit" },
+  "share.weekly.great": { en: "Great week!", tr: "Harika hafta!" },
+  "share.weekly.keepGoing": { en: "Keep going!", tr: "İyi gidiyorsun!" },
+  "share.weekly.roomToGrow": { en: "Room to grow!", tr: "Gelişmeye devam!" },
+  "share.protocol.complete": { en: "Complete!", tr: "Tamamlandı!" },
+  "share.protocol.days": { en: "days", tr: "gün" },
+  "share.protocol.motivational": { en: "Discipline and consistency — the foundation of your health journey.", tr: "Disiplin ve tutarlılık — sağlık yolculuğunun temeli." },
+  "share.bioage.younger": { en: "Younger", tr: "Gençleştiriyor" },
+  "share.bioage.older": { en: "Older", tr: "Yaşlandırıyor" },
+
+  // ══════════════════════════════════════════
+  // Seasonal — extra keys
+  // ══════════════════════════════════════════
+  "seasonal.prep": { en: "Prep", tr: "Hazırlık" },
+  "seasonal.tips": { en: "Season-specific health tips", tr: "Mevsime özel sağlık önerileri" },
+  "seasonal.interactionWarn": { en: "May interact with your medications — consult your doctor", tr: "İlaçlarınızla etkileşebilir — doktorunuza danışın" },
+  "seasonal.prepGuide": { en: "Prep Guide", tr: "Hazırlık" },
+  "seasonal.recommendations": { en: "Season-specific health recommendations", tr: "Mevsime özel sağlık önerileri" },
+
+  // ══════════════════════════════════════════
+  // MonthView — extra keys
+  // ══════════════════════════════════════════
+  "cal.thisWeekLabel": { en: "This Week", tr: "Bu Hafta" },
+  "cal.medsComplete": { en: "days meds complete", tr: "gün ilaç tamam" },
+  "cal.waterComplete": { en: "days water complete", tr: "gün su tamam" },
+
+  // ══════════════════════════════════════════
+  // Operations — extra
+  // ══════════════════════════════════════════
+  "operations.dBefore": { en: "d before", tr: "gün önce" },
+
+  // ══════════════════════════════════════════
+  // Affiliate
+  // ══════════════════════════════════════════
+  "affiliate.whereToBuy": { en: "Where to buy?", tr: "Nereden alınır?" },
+
+  // ══════════════════════════════════════════
+  // TodayView — extra keys
+  // ══════════════════════════════════════════
+  "cal.allDoneToday": { en: "Amazing day! All tasks done.", tr: "Bugün harikasın! Tüm görevler tamam." },
+  "cal.daysStreak": { en: "days", tr: "gün" },
+  "cal.doseExample": { en: "e.g. 500mg", tr: "ör: 500mg" },
+
+  // ══════════════════════════════════════════
+  // BossFight — extra keys
+  // ══════════════════════════════════════════
+  "boss.days": { en: "days", tr: "gün" },
+  "boss.tasks": { en: "tasks", tr: "görev" },
+
 }
 
 // ══════════════════════════════════════════

@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Shield, FileText } from "lucide-react";
 import Link from "next/link";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
 
 interface Props {
@@ -22,7 +23,7 @@ export function ConsentStep({ data, updateData }: Props) {
       <div className="rounded-lg border bg-muted/30 p-4">
         <div className="mb-3 flex items-center gap-2">
           <Shield className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold">{tr ? "Tıbbi Sorumluluk Reddi" : "Medical Disclaimer"}</h3>
+          <h3 className="font-semibold">{tx("onb.disclaimerTitle", lang)}</h3>
         </div>
         <div className="space-y-3 text-sm text-muted-foreground">
           {tr ? (
@@ -83,10 +84,10 @@ export function ConsentStep({ data, updateData }: Props) {
       <div className="rounded-lg border bg-muted/30 p-4">
         <div className="mb-3 flex items-center gap-2">
           <FileText className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold">{tr ? "Veri Gizliliği" : "Data Privacy"}</h3>
+          <h3 className="font-semibold">{tx("onb.dataPrivacy", lang)}</h3>
         </div>
         <div className="space-y-2 text-sm text-muted-foreground">
-          <p>{tr ? "Sağlık verileriniz:" : "Your health data is:"}</p>
+          <p>{tx("onb.dataIntro", lang)}</p>
           <ul className="ml-4 list-disc space-y-1">
             {tr ? (
               <>
@@ -110,11 +111,11 @@ export function ConsentStep({ data, updateData }: Props) {
       {/* Legal Links */}
       <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
         <Link href="/terms" target="_blank" className="underline transition-colors hover:text-foreground">
-          {tr ? "Kullanım Koşulları" : "Terms of Service"}
+          {tx("onb.termsLink", lang)}
         </Link>
         <span>·</span>
         <Link href="/privacy" target="_blank" className="underline transition-colors hover:text-foreground">
-          {tr ? "Gizlilik Politikası" : "Privacy Policy"}
+          {tx("onb.privacyLink", lang)}
         </Link>
       </div>
 

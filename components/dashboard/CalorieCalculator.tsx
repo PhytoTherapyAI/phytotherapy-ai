@@ -85,10 +85,10 @@ export function CalorieCalculator({
 
   // BMI calculation
   const bmi = height > 0 ? (weight / ((height / 100) ** 2)) : 0
-  const bmiCategory = bmi < 18.5 ? (tr ? "Zayıf" : "Underweight")
-    : bmi < 25 ? (tr ? "Normal" : "Normal")
-    : bmi < 30 ? (tr ? "Fazla Kilolu" : "Overweight")
-    : (tr ? "Obez" : "Obese")
+  const bmiCategory = bmi < 18.5 ? tx("calorie.bmiUnderweight", lang)
+    : bmi < 25 ? tx("calorie.bmiNormal", lang)
+    : bmi < 30 ? tx("calorie.bmiOverweight", lang)
+    : tx("calorie.bmiObese", lang)
   const bmiColor = bmi < 18.5 ? "text-blue-500" : bmi < 25 ? "text-green-500" : bmi < 30 ? "text-amber-500" : "text-red-500"
 
   // Body fat estimation (US Navy method)
@@ -201,20 +201,20 @@ export function CalorieCalculator({
         >
           <Ruler className="h-3 w-3" />
           {showAdvanced
-            ? (tr ? "Gelişmiş ölçümleri gizle" : "Hide advanced measurements")
-            : (tr ? "Vücut yağ oranı hesapla" : "Calculate body fat %")
+            ? tx("calorie.hideAdvanced", lang)
+            : tx("calorie.calcBodyFat", lang)
           }
         </button>
 
         {showAdvanced && (
           <div className="space-y-3 rounded-lg border bg-muted/20 p-3">
             <p className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-              {tr ? "US Navy Metodu — Vücut Yağ Oranı" : "US Navy Method — Body Fat %"}
+              {tx("calorie.usNavy", lang)}
             </p>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="mb-1 block text-[10px] text-muted-foreground">
-                  {tr ? "Bel (cm)" : "Waist (cm)"}
+                  {tx("calorie.waist", lang)}
                 </label>
                 <input
                   type="number"
@@ -226,7 +226,7 @@ export function CalorieCalculator({
               </div>
               <div>
                 <label className="mb-1 block text-[10px] text-muted-foreground">
-                  {tr ? "Boyun (cm)" : "Neck (cm)"}
+                  {tx("calorie.neck", lang)}
                 </label>
                 <input
                   type="number"
@@ -239,7 +239,7 @@ export function CalorieCalculator({
               {gender === "female" && (
                 <div className="col-span-2">
                   <label className="mb-1 block text-[10px] text-muted-foreground">
-                    {tr ? "Kalça (cm)" : "Hip (cm)"}
+                    {tx("calorie.hip", lang)}
                   </label>
                   <input
                     type="number"
@@ -253,7 +253,7 @@ export function CalorieCalculator({
             </div>
             {bodyFat !== null && (
               <div className="rounded-lg border bg-background px-3 py-2 text-center">
-                <span className="text-xs text-muted-foreground">{tr ? "Tahmini Vücut Yağ Oranı" : "Estimated Body Fat"}</span>
+                <span className="text-xs text-muted-foreground">{tx("calorie.estBodyFat", lang)}</span>
                 <p className={`text-xl font-bold ${
                   bodyFat < 15 ? "text-blue-500" : bodyFat < 25 ? "text-green-500" : bodyFat < 35 ? "text-amber-500" : "text-red-500"
                 }`}>
@@ -323,7 +323,7 @@ export function CalorieCalculator({
             <div className="flex items-center justify-between mb-2">
               <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                 <Scale className="h-3 w-3" />
-                {tr ? "Kilo Trendi" : "Weight Trend"}
+                {tx("calorie.weightTrend", lang)}
               </span>
               {weightTrend !== null && (
                 <span className={`text-xs font-bold ${weightTrend < 0 ? "text-green-500" : weightTrend > 0 ? "text-amber-500" : "text-muted-foreground"}`}>

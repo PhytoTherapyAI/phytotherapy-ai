@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Plus, X, Stethoscope } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
 
 interface Props {
@@ -64,7 +65,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
       <div className="space-y-3">
         <Label className="flex items-center gap-2">
           <Stethoscope className="h-4 w-4" />
-          {tr ? "Kritik Durumlar" : "Critical Conditions"}
+          {tx("onb.criticalConditions", lang)}
         </Label>
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
@@ -73,7 +74,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
               checked={data.kidney_disease}
               onCheckedChange={(checked) => updateData({ kidney_disease: checked === true })}
             />
-            <Label htmlFor="kidney" className="font-normal">{tr ? "Böbrek hastalığı" : "Kidney disease"}</Label>
+            <Label htmlFor="kidney" className="font-normal">{tx("onb.kidneyDisease", lang)}</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -81,7 +82,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
               checked={data.liver_disease}
               onCheckedChange={(checked) => updateData({ liver_disease: checked === true })}
             />
-            <Label htmlFor="liver" className="font-normal">{tr ? "Karaciğer hastalığı" : "Liver disease"}</Label>
+            <Label htmlFor="liver" className="font-normal">{tx("onb.liverDisease", lang)}</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -90,14 +91,14 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
               onCheckedChange={(checked) => updateData({ recent_surgery: checked === true })}
             />
             <Label htmlFor="surgery" className="font-normal">
-              {tr ? "Son 3 ayda ameliyat veya hastaneye yatış" : "Surgery or hospitalization in the last 3 months"}
+              {tx("onb.recentSurgery", lang)}
             </Label>
           </div>
         </div>
       </div>
 
       <div className="space-y-3">
-        <Label>{tr ? "Kronik Hastalıklar" : "Chronic Conditions"}</Label>
+        <Label>{tx("onb.chronicConditions", lang)}</Label>
         <div className="flex flex-wrap gap-2">
           {commonConditions.map((condition) => (
             <Badge
@@ -126,7 +127,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
 
         <div className="flex gap-2">
           <Input
-            placeholder={tr ? "Diğer hastalık..." : "Other condition..."}
+            placeholder={tx("onb.otherCondition", lang)}
             value={customCondition}
             onChange={(e) => setCustomCondition(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustomCondition())}
@@ -138,9 +139,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
       </div>
 
       <p className="text-xs text-muted-foreground">
-        {tr
-          ? "Böbrek ve karaciğer hastalıkları bitkilerin metabolizmasını önemli ölçüde etkiler. Bu bilgi durumunuzu kötüleştirebilecek hiçbir şey önermememizi sağlar."
-          : "Kidney and liver conditions significantly affect how herbs are metabolized. This ensures we never recommend anything that could worsen your condition."}
+        {tx("onb.medHistoryNote", lang)}
       </p>
     </div>
   );

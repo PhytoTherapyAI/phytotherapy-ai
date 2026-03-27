@@ -107,11 +107,11 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
         setResult(data)
         setMode("result")
       } else {
-        setResult({ error: tr ? "Analiz başarısız" : "Analysis failed" })
+        setResult({ error: tx("scan.analysisFailed", lang) })
         setMode("result")
       }
     } catch {
-      setResult({ error: tr ? "Bağlantı hatası" : "Connection error" })
+      setResult({ error: tx("scan.connectionError", lang) })
       setMode("result")
     }
   }
@@ -198,7 +198,7 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
             <div className="flex gap-2">
               <Button size="sm" className="flex-1" onClick={capturePhoto}>
                 <Camera className="mr-1.5 h-3.5 w-3.5" />
-                {tr ? "Çek" : "Capture"}
+                {tx("scan.capture", lang)}
               </Button>
               <Button size="sm" variant="outline" onClick={() => { stopCamera(); setMode("idle") }}>
                 <X className="h-3.5 w-3.5" />
@@ -232,7 +232,7 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
               <>
                 <div className="rounded-lg border p-3 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">{tr ? "Marka" : "Brand"}</span>
+                    <span className="text-xs text-muted-foreground">{tx("scan.brand", lang)}</span>
                     <Badge
                       variant="secondary"
                       className={`text-[9px] ${
@@ -248,18 +248,18 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
 
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
-                      <span className="text-[10px] text-muted-foreground">{tr ? "Etken Madde" : "Active"}</span>
+                      <span className="text-[10px] text-muted-foreground">{tx("scan.active", lang)}</span>
                       <p className="font-medium">{result.generic_name || "—"}</p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-muted-foreground">{tr ? "Doz" : "Dosage"}</span>
+                      <span className="text-[10px] text-muted-foreground">{tx("scan.dosage", lang)}</span>
                       <p className="font-medium">{result.dosage || "—"}</p>
                     </div>
                   </div>
 
                   {result.form && (
                     <div>
-                      <span className="text-[10px] text-muted-foreground">{tr ? "Form" : "Form"}</span>
+                      <span className="text-[10px] text-muted-foreground">{tx("scan.form", lang)}</span>
                       <p className="text-sm">{result.form}</p>
                     </div>
                   )}
@@ -281,8 +281,8 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
                       <Plus className="mr-1.5 h-3.5 w-3.5" />
                     )}
                     {added
-                      ? (tr ? "Profiline eklendi!" : "Added to profile!")
-                      : (tr ? "İlaç profilime ekle" : "Add to my medications")
+                      ? tx("scan.addedToProfile", lang)
+                      : tx("scan.addToMeds", lang)
                     }
                   </Button>
                 )}
@@ -291,7 +291,7 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
 
             <Button size="sm" variant="outline" className="w-full" onClick={reset}>
               <RotateCcw className="mr-1.5 h-3 w-3" />
-              {tr ? "Tekrar dene" : "Try again"}
+              {tx("scan.tryAgain", lang)}
             </Button>
           </div>
         )}

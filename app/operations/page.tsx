@@ -227,7 +227,7 @@ export default function OperationsPage() {
                               ) : (
                                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
                                   <Clock className="h-3 w-3" />
-                                  {s.daysBefore}d before
+                                  {s.daysBefore} {tx("operations.dBefore", lang)}
                                 </span>
                               )}
                             </div>

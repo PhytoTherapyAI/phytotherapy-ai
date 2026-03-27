@@ -29,7 +29,7 @@ export function InteractionShareCard({
     <ShareCardBase
       lang={lang}
       fileName={`interaction-alert-${Date.now()}.png`}
-      shareTitle={tr ? "Güvenlik Uyarısı!" : "Safety Alert!"}
+      shareTitle={tx("share.interaction.title", lang)}
       shareText={
         tr
           ? `Phytotherapy.ai ${totalInteractions} ilaç-bitki etkileşimi tespit etti! 🛡️`
@@ -76,7 +76,7 @@ export function InteractionShareCard({
             style={{ background: "rgba(255,255,255,0.15)" }}
           >
             <p className="mb-1 text-[10px] uppercase tracking-wider opacity-70">
-              {tr ? "Kontrol Edilen İlaçlar" : "Medications Checked"}
+              {tx("share.interaction.medsChecked", lang)}
             </p>
             <p className="text-sm font-bold">
               {medications.slice(0, 3).join(", ")}
@@ -92,7 +92,7 @@ export function InteractionShareCard({
             >
               <p className="text-2xl font-extrabold">{dangerousCount}</p>
               <p className="text-[10px] opacity-80">
-                {tr ? "Tehlikeli" : "Dangerous"}
+                {tx("share.interaction.dangerous", lang)}
               </p>
             </div>
             <div
@@ -101,7 +101,7 @@ export function InteractionShareCard({
             >
               <p className="text-2xl font-extrabold">{cautionCount}</p>
               <p className="text-[10px] opacity-80">
-                {tr ? "Dikkatli" : "Caution"}
+                {tx("share.interaction.caution", lang)}
               </p>
             </div>
             <div
@@ -110,7 +110,7 @@ export function InteractionShareCard({
             >
               <p className="text-2xl font-extrabold text-green-200">{safeCount}</p>
               <p className="text-[10px] opacity-80">
-                {tr ? "Güvenli" : "Safe"}
+                {tx("share.interaction.safe", lang)}
               </p>
             </div>
           </div>
@@ -122,7 +122,7 @@ export function InteractionShareCard({
               style={{ background: "rgba(0,0,0,0.15)" }}
             >
               <p className="text-[10px] uppercase tracking-wider opacity-60">
-                {tr ? "Kritik Tespit" : "Critical Finding"}
+                {tx("share.interaction.criticalFinding", lang)}
               </p>
               <p className="text-sm font-bold">
                 ❌ {topDangerousHerb}

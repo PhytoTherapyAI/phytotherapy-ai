@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, X, Sparkles } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx, type Lang } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
 
 interface Props {
@@ -84,29 +85,27 @@ export function OptionalProfileStep({ data, updateData }: Props) {
     <div className="space-y-6">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Sparkles className="h-4 w-4 text-primary" />
-        {tr
-          ? "Bu bilgiler önerilerimizi kişiselleştirmemize yardımcı olur. Atlayıp daha sonra doldurabilirsiniz."
-          : "These details help us personalize your recommendations. You can skip this and fill it later."}
+        {tx("onb.optionalHint", lang)}
       </div>
 
       {/* Physical measurements */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="height">{tr ? "Boy (cm)" : "Height (cm)"}</Label>
+          <Label htmlFor="height">{tx("onb.heightLabel", lang)}</Label>
           <Input
             id="height"
             type="number"
-            placeholder={tr ? "ör. 175" : "e.g., 175"}
+            placeholder={tx("onb.heightPlaceholder", lang)}
             value={data.height_cm ?? ""}
             onChange={(e) => updateData({ height_cm: e.target.value ? parseInt(e.target.value) : null })}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="weight">{tr ? "Kilo (kg)" : "Weight (kg)"}</Label>
+          <Label htmlFor="weight">{tx("onb.weightLabel", lang)}</Label>
           <Input
             id="weight"
             type="number"
-            placeholder={tr ? "ör. 70" : "e.g., 70"}
+            placeholder={tx("onb.weightPlaceholder", lang)}
             value={data.weight_kg ?? ""}
             onChange={(e) => updateData({ weight_kg: e.target.value ? parseFloat(e.target.value) : null })}
           />
@@ -114,10 +113,10 @@ export function OptionalProfileStep({ data, updateData }: Props) {
       </div>
 
       <div className="space-y-2">
-        <Label>{tr ? "Kan Grubu" : "Blood Group"}</Label>
+        <Label>{tx("onb.bloodGroup", lang)}</Label>
         <Select value={data.blood_group} onValueChange={(v) => v && updateData({ blood_group: v })}>
           <SelectTrigger>
-            <SelectValue placeholder={tr ? "Kan grubunuzu seçin" : "Select blood group"} />
+            <SelectValue placeholder={tx("onb.bloodGroupPlaceholder", lang)} />
           </SelectTrigger>
           <SelectContent>
             {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((group) => (
@@ -128,12 +127,12 @@ export function OptionalProfileStep({ data, updateData }: Props) {
       </div>
 
       <div className="space-y-2">
-        <Label>{tr ? "Diyet Türü" : "Diet Type"}</Label>
+        <Label>{tx("onb.dietType", lang)}</Label>
         <Select value={data.diet_type} onValueChange={(v) => v && updateData({ diet_type: v })}>
           <SelectTrigger>
             {data.diet_type && dietLabels[data.diet_type]
               ? <span>{dietLabels[data.diet_type][l]}</span>
-              : <SelectValue placeholder={tr ? "Diyetinizi seçin" : "Select your diet"} />}
+              : <SelectValue placeholder={tx("onb.dietPlaceholder", lang)} />}
           </SelectTrigger>
           <SelectContent>
             {Object.entries(dietLabels).map(([val, labels]) => (
@@ -144,12 +143,12 @@ export function OptionalProfileStep({ data, updateData }: Props) {
       </div>
 
       <div className="space-y-2">
-        <Label>{tr ? "Egzersiz Sıklığı" : "Exercise Frequency"}</Label>
+        <Label>{tx("onb.exerciseFreq", lang)}</Label>
         <Select value={data.exercise_frequency} onValueChange={(v) => v && updateData({ exercise_frequency: v })}>
           <SelectTrigger>
             {data.exercise_frequency && exerciseLabels[data.exercise_frequency]
               ? <span>{exerciseLabels[data.exercise_frequency][l]}</span>
-              : <SelectValue placeholder={tr ? "Ne sıklıkta egzersiz yapıyorsunuz?" : "How often do you exercise?"} />}
+              : <SelectValue placeholder={tx("onb.exercisePlaceholder", lang)} />}
           </SelectTrigger>
           <SelectContent>
             {Object.entries(exerciseLabels).map(([val, labels]) => (
@@ -160,12 +159,12 @@ export function OptionalProfileStep({ data, updateData }: Props) {
       </div>
 
       <div className="space-y-2">
-        <Label>{tr ? "Uyku Kalitesi" : "Sleep Quality"}</Label>
+        <Label>{tx("onb.sleepQuality", lang)}</Label>
         <Select value={data.sleep_quality} onValueChange={(v) => v && updateData({ sleep_quality: v })}>
           <SelectTrigger>
             {data.sleep_quality && sleepLabels[data.sleep_quality]
               ? <span>{sleepLabels[data.sleep_quality][l]}</span>
-              : <SelectValue placeholder={tr ? "Uyku kaliteniz nasıl?" : "How well do you sleep?"} />}
+              : <SelectValue placeholder={tx("onb.sleepPlaceholder", lang)} />}
           </SelectTrigger>
           <SelectContent>
             {Object.entries(sleepLabels).map(([val, labels]) => (
@@ -177,7 +176,7 @@ export function OptionalProfileStep({ data, updateData }: Props) {
 
       {/* Supplements */}
       <div className="space-y-3">
-        <Label>{tr ? "Mevcut Takviyeler / Vitaminler" : "Current Supplements / Vitamins"}</Label>
+        <Label>{tx("onb.supplements", lang)}</Label>
         <div className="flex flex-wrap gap-2">
           {commonSupplements.map((supplement) => (
             <Badge
@@ -200,7 +199,7 @@ export function OptionalProfileStep({ data, updateData }: Props) {
         </div>
         <div className="flex gap-2">
           <Input
-            placeholder={tr ? "Diğer takviye..." : "Other supplement..."}
+            placeholder={tx("onb.otherSupplement", lang)}
             value={customSupplement}
             onChange={(e) => setCustomSupplement(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustomSupplement())}

@@ -241,7 +241,7 @@ export function MonthView({ userId, lang }: MonthViewProps) {
         <Card className="border-primary/20 bg-primary/5">
           <CardContent className="py-3 px-4">
             <p className="text-xs font-medium text-foreground mb-1.5">
-              {tr ? "📊 Bu Hafta" : "📊 This Week"}
+              📊 {tx("cal.thisWeekLabel", lang)}
             </p>
             <div className="flex gap-4 text-xs text-muted-foreground">
               <span>💊 {tr ? `${weekly.medDays}/${weekly.totalDays} gün ilaç tamam` : `${weekly.medDays}/${weekly.totalDays} days meds complete`}</span>
@@ -364,7 +364,7 @@ export function MonthView({ userId, lang }: MonthViewProps) {
                       onClick={() => deleteEvent(evt.id)}
                       disabled={deletingId === evt.id}
                       className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10 text-muted-foreground"
-                      title={tr ? "Sil" : "Delete"}
+                      title={tx("cal.delete", lang)}
                     >
                       {deletingId === evt.id ? (
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />

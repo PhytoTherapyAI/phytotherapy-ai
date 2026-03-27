@@ -415,7 +415,7 @@ function BossFightShareCard({ lang, boss }: { lang: Lang; boss: BossFight }) {
             <span className="text-4xl">🏆</span>
             <div>
               <p className="text-lg font-extrabold">{tx("boss.complete", lang)}!</p>
-              <p className="text-xs opacity-80">{boss.duration} {tr ? "gün" : "days"} · {boss.tasks.length} {tr ? "görev" : "tasks"}</p>
+              <p className="text-xs opacity-80">{boss.duration} {tx("boss.days", lang)} · {boss.tasks.length} {tx("boss.tasks", lang)}</p>
             </div>
           </div>
           <div className="mb-4 rounded-xl px-4 py-3 text-center" style={{ background: "rgba(255,255,255,0.15)" }}>
