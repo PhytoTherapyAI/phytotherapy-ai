@@ -219,13 +219,13 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                         <span className="text-sm font-semibold">{member.full_name}</span>
                         {member.is_minor && (
                           <Badge variant="secondary" className="text-[9px] bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-                            {tr ? "Reşit değil" : "Minor"}
+                            {tx("family.minor", lang)}
                           </Badge>
                         )}
                       </div>
                       <p className="text-[11px] text-muted-foreground">
                         {RELATIONSHIP_LABELS[member.relationship]?.[lang] || member.relationship}
-                        {age !== null && ` · ${age} ${tr ? "yaş" : "yrs"}`}
+                        {age !== null && ` · ${age} ${tx("family.ageUnit", lang)}`}
                         {member.gender && ` · ${GENDER_LABELS[member.gender]?.[lang] || member.gender}`}
                       </p>
                     </div>
@@ -243,22 +243,22 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                         {member.is_pregnant && (
                           <Badge className="text-[9px] bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400 border-0">
                             <Heart className="mr-0.5 h-2.5 w-2.5" />
-                            {tr ? "Hamile" : "Pregnant"}
+                            {tx("family.pregnantFlag", lang)}
                           </Badge>
                         )}
                         {member.is_breastfeeding && (
                           <Badge className="text-[9px] bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400 border-0">
-                            {tr ? "Emziriyor" : "Breastfeeding"}
+                            {tx("family.breastfeedingFlag", lang)}
                           </Badge>
                         )}
                         {member.kidney_disease && (
                           <Badge className="text-[9px] bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-0">
-                            {tr ? "Böbrek" : "Kidney"}
+                            {tx("family.kidneyFlag", lang)}
                           </Badge>
                         )}
                         {member.liver_disease && (
                           <Badge className="text-[9px] bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-0">
-                            {tr ? "Karaciğer" : "Liver"}
+                            {tx("family.liverFlag", lang)}
                           </Badge>
                         )}
                         {member.chronic_conditions?.map((c, i) => (
@@ -267,7 +267,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                         {!member.is_pregnant && !member.is_breastfeeding && !member.kidney_disease && !member.liver_disease && (!member.chronic_conditions || member.chronic_conditions.length === 0) && (
                           <span className="text-[10px] text-muted-foreground flex items-center gap-1">
                             <Sparkles className="h-3 w-3 text-green-500" />
-                            {tr ? "Sağlıklı profil" : "Healthy profile"}
+                            {tx("family.healthy", lang)}
                           </span>
                         )}
                       </div>
@@ -296,7 +296,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                         ) : (
                           <Trash2 className="mr-1.5 h-3 w-3" />
                         )}
-                        {tr ? "Profili Sil" : "Remove Profile"}
+                        {tx("family.removeProfile", lang)}
                       </Button>
                     </div>
                   )}
@@ -320,20 +320,20 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
             {showAddForm && (
               <div className="space-y-3 rounded-xl border-2 border-dashed border-primary/30 p-4 bg-primary/5">
                 <p className="text-sm font-semibold text-primary">
-                  {tr ? "Yeni Aile Üyesi" : "New Family Member"}
+                  {tx("family.newMember", lang)}
                 </p>
                 <input
                   type="text"
                   value={form.full_name}
                   onChange={(e) => setForm(f => ({ ...f, full_name: e.target.value }))}
-                  placeholder={tr ? "Ad Soyad" : "Full Name"}
+                  placeholder={tx("family.namePlaceholder", lang)}
                   className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary/30"
                   autoFocus
                 />
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                      {tr ? "Doğum Tarihi" : "Birth Date"}
+                      {tx("family.birthDate", lang)}
                     </label>
                     <input
                       type="date"
@@ -344,14 +344,14 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                   </div>
                   <div>
                     <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                      {tr ? "Cinsiyet" : "Gender"}
+                      {tx("family.genderLabel", lang)}
                     </label>
                     <select
                       value={form.gender}
                       onChange={(e) => setForm(f => ({ ...f, gender: e.target.value as Gender }))}
                       className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
                     >
-                      <option value="">{tr ? "Seçiniz" : "Select"}</option>
+                      <option value="">{tx("family.selectGender", lang)}</option>
                       {Object.entries(GENDER_LABELS).map(([key, label]) => (
                         <option key={key} value={key}>{label[lang]}</option>
                       ))}
@@ -360,7 +360,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                 </div>
                 <div>
                   <label className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                    {tr ? "Yakınlık" : "Relationship"}
+                    {tx("family.relationship", lang)}
                   </label>
                   <select
                     value={form.relationship}
@@ -376,7 +376,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                   type="text"
                   value={form.chronic_conditions}
                   onChange={(e) => setForm(f => ({ ...f, chronic_conditions: e.target.value }))}
-                  placeholder={tr ? "Kronik hastalıklar (virgülle ayır)" : "Chronic conditions (comma-separated)"}
+                  placeholder={tx("family.chronicPlaceholder", lang)}
                   className="w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:border-primary"
                 />
                 <div className="flex items-center gap-4">
@@ -387,7 +387,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                       onChange={(e) => setForm(f => ({ ...f, is_pregnant: e.target.checked }))}
                       className="rounded"
                     />
-                    {tr ? "Hamile" : "Pregnant"}
+                    {tx("family.pregnantFlag", lang)}
                   </label>
                   <label className="flex items-center gap-1.5 text-xs cursor-pointer">
                     <input
@@ -396,16 +396,16 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                       onChange={(e) => setForm(f => ({ ...f, is_breastfeeding: e.target.checked }))}
                       className="rounded"
                     />
-                    {tr ? "Emziriyor" : "Breastfeeding"}
+                    {tx("family.breastfeedingFlag", lang)}
                   </label>
                 </div>
                 <div className="flex gap-2 pt-1">
                   <Button className="flex-1 bg-primary hover:bg-primary/90" onClick={handleAdd} disabled={saving || !form.full_name.trim()}>
                     {saving ? <Loader2 className="mr-1.5 h-3 w-3 animate-spin" /> : <Plus className="mr-1.5 h-3 w-3" />}
-                    {tr ? "Kaydet" : "Save"}
+                    {tx("profile.save", lang)}
                   </Button>
                   <Button variant="outline" onClick={() => setShowAddForm(false)}>
-                    {tr ? "İptal" : "Cancel"}
+                    {tx("profile.cancel", lang)}
                   </Button>
                 </div>
               </div>

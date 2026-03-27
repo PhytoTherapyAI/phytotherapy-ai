@@ -710,11 +710,11 @@ export default function ProfilePage() {
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              {tr ? "Sağlık Profilini Düzenle" : "Edit Health Profile"}
+              {tx("profile.editHealthProfile", lang)}
             </CardTitle>
             {!editingHealth ? (
               <Button variant="outline" size="sm" onClick={startEditingHealth}>
-                {tr ? "Düzenle" : "Edit"}
+                {tx("profile.edit", lang)}
               </Button>
             ) : (
               <div className="flex gap-2">
@@ -725,18 +725,16 @@ export default function ProfilePage() {
                   className="gap-1 bg-primary hover:bg-primary/90"
                 >
                   {savingHealth ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                  {tr ? "Kaydet" : "Save"}
+                  {tx("profile.save", lang)}
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => setEditingHealth(false)}>
-                  {tr ? "İptal" : "Cancel"}
+                  {tx("profile.cancel", lang)}
                 </Button>
               </div>
             )}
           </div>
           <CardDescription>
-            {tr
-              ? "Alerjiler, gebelik, madde kullanımı, kronik hastalıklar ve yaşam tarzı bilgilerinizi buradan güncelleyebilirsiniz."
-              : "Update your allergies, pregnancy status, substance use, chronic conditions, and lifestyle info here."}
+            {tx("profile.editHealthDesc", lang)}
           </CardDescription>
         </CardHeader>
 
@@ -746,7 +744,7 @@ export default function ProfilePage() {
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <AlertTriangle className="h-4 w-4" />
-                {tr ? "Alerjiler" : "Allergies"}
+                {tx("profile.allergies", lang)}
               </Label>
               <div className="flex flex-wrap gap-2">
                 {allergies.map((allergy) => (
@@ -756,12 +754,12 @@ export default function ProfilePage() {
                   </Badge>
                 ))}
                 {allergies.length === 0 && (
-                  <p className="text-sm text-muted-foreground">{tr ? "Alerji yok" : "No allergies"}</p>
+                  <p className="text-sm text-muted-foreground">{tx("profile.noAllergies", lang)}</p>
                 )}
               </div>
               <div className="flex gap-2">
                 <Input
-                  placeholder={tr ? "Alerjen adı..." : "Allergen name..."}
+                  placeholder={tx("profile.allergenPlaceholder", lang)}
                   value={newAllergen}
                   onChange={(e) => setNewAllergen(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addAllergy())}
@@ -772,10 +770,10 @@ export default function ProfilePage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="mild">{tr ? "Hafif" : "Mild"}</SelectItem>
-                    <SelectItem value="moderate">{tr ? "Orta" : "Moderate"}</SelectItem>
-                    <SelectItem value="severe">{tr ? "Şiddetli" : "Severe"}</SelectItem>
-                    <SelectItem value="anaphylaxis">{tr ? "Anafilaksi" : "Anaphylaxis"}</SelectItem>
+                    <SelectItem value="mild">{tx("profile.severityMild", lang)}</SelectItem>
+                    <SelectItem value="moderate">{tx("profile.severityModerate", lang)}</SelectItem>
+                    <SelectItem value="severe">{tx("profile.severitySevere", lang)}</SelectItem>
+                    <SelectItem value="anaphylaxis">{tx("profile.severityAnaphylaxis", lang)}</SelectItem>
                   </SelectContent>
                 </Select>
                 <Button variant="outline" size="sm" onClick={addAllergy} disabled={!newAllergen.trim()}>
@@ -790,7 +788,7 @@ export default function ProfilePage() {
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <Baby className="h-4 w-4" />
-                {tr ? "Gebelik / Emzirme" : "Pregnancy / Breastfeeding"}
+                {tx("profile.pregnancyBreastfeeding", lang)}
               </Label>
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
@@ -799,7 +797,7 @@ export default function ProfilePage() {
                     checked={healthForm.is_pregnant}
                     onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, is_pregnant: c === true }))}
                   />
-                  <Label htmlFor="edit-pregnant" className="font-normal">{tr ? "Hamile" : "Pregnant"}</Label>
+                  <Label htmlFor="edit-pregnant" className="font-normal">{tx("profile.pregnant", lang)}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -807,7 +805,7 @@ export default function ProfilePage() {
                     checked={healthForm.is_breastfeeding}
                     onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, is_breastfeeding: c === true }))}
                   />
-                  <Label htmlFor="edit-bf" className="font-normal">{tr ? "Emziriyor" : "Breastfeeding"}</Label>
+                  <Label htmlFor="edit-bf" className="font-normal">{tx("profile.breastfeeding", lang)}</Label>
                 </div>
               </div>
             </div>
@@ -819,21 +817,21 @@ export default function ProfilePage() {
               <div className="space-y-3">
                 <Label className="flex items-center gap-2 text-base font-semibold">
                   <Wine className="h-4 w-4" />
-                  {tr ? "Alkol" : "Alcohol"}
+                  {tx("profile.alcohol", lang)}
                 </Label>
                 <RadioGroup
                   value={healthForm.alcohol_use}
                   onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, alcohol_use: v }))}
                 >
                   {[
-                    { value: "none", en: "None", tr: "Kullanmıyorum" },
-                    { value: "occasional", en: "Occasional", tr: "Ara sıra" },
-                    { value: "regular", en: "Regular", tr: "Düzenli" },
-                    { value: "heavy", en: "Heavy", tr: "Ağır" },
+                    { value: "none", key: "profile.alcoholNone" },
+                    { value: "occasional", key: "profile.alcoholOccasional" },
+                    { value: "regular", key: "profile.alcoholRegular" },
+                    { value: "heavy", key: "profile.alcoholHeavy" },
                   ].map((opt) => (
                     <div key={opt.value} className="flex items-center space-x-2">
                       <RadioGroupItem value={opt.value} id={`edit-alc-${opt.value}`} />
-                      <Label htmlFor={`edit-alc-${opt.value}`} className="font-normal">{tr ? opt.tr : opt.en}</Label>
+                      <Label htmlFor={`edit-alc-${opt.value}`} className="font-normal">{tx(opt.key, lang)}</Label>
                     </div>
                   ))}
                 </RadioGroup>
@@ -841,20 +839,20 @@ export default function ProfilePage() {
               <div className="space-y-3">
                 <Label className="flex items-center gap-2 text-base font-semibold">
                   <Cigarette className="h-4 w-4" />
-                  {tr ? "Sigara" : "Smoking"}
+                  {tx("profile.smoking", lang)}
                 </Label>
                 <RadioGroup
                   value={healthForm.smoking_use}
                   onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, smoking_use: v }))}
                 >
                   {[
-                    { value: "none", en: "Never", tr: "Hiç içmedim" },
-                    { value: "former", en: "Former", tr: "Eski içici" },
-                    { value: "current", en: "Current", tr: "Aktif içici" },
+                    { value: "none", key: "profile.smokingNever" },
+                    { value: "former", key: "profile.smokingFormer" },
+                    { value: "current", key: "profile.smokingCurrent" },
                   ].map((opt) => (
                     <div key={opt.value} className="flex items-center space-x-2">
                       <RadioGroupItem value={opt.value} id={`edit-smk-${opt.value}`} />
-                      <Label htmlFor={`edit-smk-${opt.value}`} className="font-normal">{tr ? opt.tr : opt.en}</Label>
+                      <Label htmlFor={`edit-smk-${opt.value}`} className="font-normal">{tx(opt.key, lang)}</Label>
                     </div>
                   ))}
                 </RadioGroup>
@@ -867,7 +865,7 @@ export default function ProfilePage() {
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <Stethoscope className="h-4 w-4" />
-                {tr ? "Tıbbi Geçmiş" : "Medical History"}
+                {tx("profile.medicalHistory", lang)}
               </Label>
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
@@ -876,7 +874,7 @@ export default function ProfilePage() {
                     checked={healthForm.kidney_disease}
                     onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, kidney_disease: c === true }))}
                   />
-                  <Label htmlFor="edit-kidney" className="font-normal">{tr ? "Böbrek hastalığı" : "Kidney disease"}</Label>
+                  <Label htmlFor="edit-kidney" className="font-normal">{tx("profile.kidneyDisease", lang)}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -884,7 +882,7 @@ export default function ProfilePage() {
                     checked={healthForm.liver_disease}
                     onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, liver_disease: c === true }))}
                   />
-                  <Label htmlFor="edit-liver" className="font-normal">{tr ? "Karaciğer hastalığı" : "Liver disease"}</Label>
+                  <Label htmlFor="edit-liver" className="font-normal">{tx("profile.liverDisease", lang)}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -892,11 +890,11 @@ export default function ProfilePage() {
                     checked={healthForm.recent_surgery}
                     onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, recent_surgery: c === true }))}
                   />
-                  <Label htmlFor="edit-surgery" className="font-normal">{tr ? "Son 3 ayda ameliyat" : "Recent surgery (last 3 months)"}</Label>
+                  <Label htmlFor="edit-surgery" className="font-normal">{tx("profile.recentSurgery", lang)}</Label>
                 </div>
               </div>
               <div className="mt-2">
-                <Label className="text-sm">{tr ? "Kronik Hastalıklar" : "Chronic Conditions"}</Label>
+                <Label className="text-sm">{tx("profile.chronicConditions", lang)}</Label>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {["Diabetes", "Hypertension", "Asthma", "Heart Disease", "Thyroid Disorder", "Arthritis", "Depression", "Anxiety", "COPD", "Epilepsy"].map((c) => (
                     <Badge
@@ -905,12 +903,18 @@ export default function ProfilePage() {
                       className="cursor-pointer transition-colors"
                       onClick={() => toggleCondition(c)}
                     >
-                      {tr ? ({
-                        "Diabetes": "Diyabet", "Hypertension": "Hipertansiyon", "Asthma": "Astım",
-                        "Heart Disease": "Kalp Hastalığı", "Thyroid Disorder": "Tiroid Bozukluğu",
-                        "Arthritis": "Artrit", "Depression": "Depresyon", "Anxiety": "Anksiyete",
-                        "COPD": "KOAH", "Epilepsy": "Epilepsi",
-                      } as Record<string, string>)[c] || c : c}
+                      {({
+                        "Diabetes": tx("profile.conditionDiabetes", lang),
+                        "Hypertension": tx("profile.conditionHypertension", lang),
+                        "Asthma": tx("profile.conditionAsthma", lang),
+                        "Heart Disease": tx("profile.conditionHeartDisease", lang),
+                        "Thyroid Disorder": tx("profile.conditionThyroid", lang),
+                        "Arthritis": tx("profile.conditionArthritis", lang),
+                        "Depression": tx("profile.conditionDepression", lang),
+                        "Anxiety": tx("profile.conditionAnxiety", lang),
+                        "COPD": tx("profile.conditionCOPD", lang),
+                        "Epilepsy": tx("profile.conditionEpilepsy", lang),
+                      } as Record<string, string>)[c] || c}
                     </Badge>
                   ))}
                   {healthForm.chronic_conditions
@@ -924,7 +928,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="mt-2 flex gap-2">
                   <Input
-                    placeholder={tr ? "Diğer hastalık..." : "Other condition..."}
+                    placeholder={tx("profile.otherConditionPlaceholder", lang)}
                     value={newCondition}
                     onChange={(e) => setNewCondition(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustomCondition())}
@@ -942,24 +946,24 @@ export default function ProfilePage() {
             <div className="space-y-4">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <Sparkles className="h-4 w-4" />
-                {tr ? "Yaşam Tarzı" : "Lifestyle"}
+                {tx("profile.lifestyle", lang)}
               </Label>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
-                  <Label className="text-sm">{tr ? "Boy (cm)" : "Height (cm)"}</Label>
+                  <Label className="text-sm">{tx("profile.height", lang)}</Label>
                   <Input
                     type="number"
-                    placeholder={tr ? "ör. 175" : "e.g., 175"}
+                    placeholder={tx("profile.heightPlaceholder", lang)}
                     value={healthForm.height_cm ?? ""}
                     onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, height_cm: e.target.value ? parseInt(e.target.value) : null }))}
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-sm">{tr ? "Kilo (kg)" : "Weight (kg)"}</Label>
+                  <Label className="text-sm">{tx("profile.weight", lang)}</Label>
                   <Input
                     type="number"
-                    placeholder={tr ? "ör. 70" : "e.g., 70"}
+                    placeholder={tx("profile.weightPlaceholder", lang)}
                     value={healthForm.weight_kg ?? ""}
                     onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, weight_kg: e.target.value ? parseFloat(e.target.value) : null }))}
                   />
@@ -968,10 +972,10 @@ export default function ProfilePage() {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
-                  <Label className="text-sm">{tr ? "Kan Grubu" : "Blood Group"}</Label>
+                  <Label className="text-sm">{tx("profile.bloodGroup", lang)}</Label>
                   <Select value={healthForm.blood_group} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, blood_group: v }))}>
                     <SelectTrigger>
-                      <SelectValue placeholder={tr ? "Seçin" : "Select"} />
+                      <SelectValue placeholder={tx("profile.select", lang)} />
                     </SelectTrigger>
                     <SelectContent>
                       {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((g) => (
@@ -981,26 +985,26 @@ export default function ProfilePage() {
                   </Select>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-sm">{tr ? "Diyet Türü" : "Diet Type"}</Label>
+                  <Label className="text-sm">{tx("profile.dietType", lang)}</Label>
                   <Select value={healthForm.diet_type} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, diet_type: v }))}>
                     <SelectTrigger>
                       {healthForm.diet_type ? (
-                        <span>{({ regular: tr ? "Normal" : "Regular", vegetarian: tr ? "Vejetaryen" : "Vegetarian", vegan: "Vegan", keto: "Keto", gluten_free: tr ? "Glutensiz" : "Gluten-free", halal: tr ? "Helal" : "Halal", other: tr ? "Diğer" : "Other" } as Record<string, string>)[healthForm.diet_type] || healthForm.diet_type}</span>
+                        <span>{({ regular: tx("profile.dietRegular", lang), vegetarian: tx("profile.dietVegetarian", lang), vegan: tx("profile.dietVegan", lang), keto: tx("profile.dietKeto", lang), gluten_free: tx("profile.dietGlutenFree", lang), halal: tx("profile.dietHalal", lang), other: tx("profile.dietOther", lang) } as Record<string, string>)[healthForm.diet_type] || healthForm.diet_type}</span>
                       ) : (
-                        <SelectValue placeholder={tr ? "Seçin" : "Select"} />
+                        <SelectValue placeholder={tx("profile.select", lang)} />
                       )}
                     </SelectTrigger>
                     <SelectContent>
                       {[
-                        { v: "regular", en: "Regular", tr: "Normal" },
-                        { v: "vegetarian", en: "Vegetarian", tr: "Vejetaryen" },
-                        { v: "vegan", en: "Vegan", tr: "Vegan" },
-                        { v: "keto", en: "Keto", tr: "Keto" },
-                        { v: "gluten_free", en: "Gluten-free", tr: "Glutensiz" },
-                        { v: "halal", en: "Halal", tr: "Helal" },
-                        { v: "other", en: "Other", tr: "Diğer" },
+                        { v: "regular", key: "profile.dietRegular" },
+                        { v: "vegetarian", key: "profile.dietVegetarian" },
+                        { v: "vegan", key: "profile.dietVegan" },
+                        { v: "keto", key: "profile.dietKeto" },
+                        { v: "gluten_free", key: "profile.dietGlutenFree" },
+                        { v: "halal", key: "profile.dietHalal" },
+                        { v: "other", key: "profile.dietOther" },
                       ].map((opt) => (
-                        <SelectItem key={opt.v} value={opt.v}>{tr ? opt.tr : opt.en}</SelectItem>
+                        <SelectItem key={opt.v} value={opt.v}>{tx(opt.key, lang)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -1009,46 +1013,46 @@ export default function ProfilePage() {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="space-y-1">
-                  <Label className="text-sm">{tr ? "Egzersiz" : "Exercise"}</Label>
+                  <Label className="text-sm">{tx("profile.exercise", lang)}</Label>
                   <Select value={healthForm.exercise_frequency} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, exercise_frequency: v }))}>
                     <SelectTrigger>
                       {healthForm.exercise_frequency ? (
-                        <span>{({ sedentary: tr ? "Hareketsiz" : "Sedentary", light: tr ? "Hafif (1-2/hafta)" : "Light (1-2x/week)", moderate: tr ? "Orta (3-4/hafta)" : "Moderate (3-4x/week)", active: tr ? "Aktif (5+/hafta)" : "Active (5+x/week)", athlete: tr ? "Sporcu" : "Athlete" } as Record<string, string>)[healthForm.exercise_frequency] || healthForm.exercise_frequency}</span>
+                        <span>{({ sedentary: tx("profile.exerciseSedentary", lang), light: tx("profile.exerciseLight", lang), moderate: tx("profile.exerciseModerate", lang), active: tx("profile.exerciseActive", lang), athlete: tx("profile.exerciseAthlete", lang) } as Record<string, string>)[healthForm.exercise_frequency] || healthForm.exercise_frequency}</span>
                       ) : (
-                        <SelectValue placeholder={tr ? "Seçin" : "Select"} />
+                        <SelectValue placeholder={tx("profile.select", lang)} />
                       )}
                     </SelectTrigger>
                     <SelectContent>
                       {[
-                        { v: "sedentary", en: "Sedentary", tr: "Hareketsiz" },
-                        { v: "light", en: "Light (1-2x/week)", tr: "Hafif (1-2/hafta)" },
-                        { v: "moderate", en: "Moderate (3-4x/week)", tr: "Orta (3-4/hafta)" },
-                        { v: "active", en: "Active (5+x/week)", tr: "Aktif (5+/hafta)" },
-                        { v: "athlete", en: "Athlete", tr: "Sporcu" },
+                        { v: "sedentary", key: "profile.exerciseSedentary" },
+                        { v: "light", key: "profile.exerciseLight" },
+                        { v: "moderate", key: "profile.exerciseModerate" },
+                        { v: "active", key: "profile.exerciseActive" },
+                        { v: "athlete", key: "profile.exerciseAthlete" },
                       ].map((opt) => (
-                        <SelectItem key={opt.v} value={opt.v}>{tr ? opt.tr : opt.en}</SelectItem>
+                        <SelectItem key={opt.v} value={opt.v}>{tx(opt.key, lang)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-sm">{tr ? "Uyku" : "Sleep"}</Label>
+                  <Label className="text-sm">{tx("profile.sleep", lang)}</Label>
                   <Select value={healthForm.sleep_quality} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, sleep_quality: v }))}>
                     <SelectTrigger>
                       {healthForm.sleep_quality ? (
-                        <span>{({ good: tr ? "İyi (7-9 saat)" : "Good (7-9 hours)", fair: tr ? "Orta" : "Fair", poor: tr ? "Kötü" : "Poor", insomnia: tr ? "Uykusuzluk" : "Insomnia" } as Record<string, string>)[healthForm.sleep_quality] || healthForm.sleep_quality}</span>
+                        <span>{({ good: tx("profile.sleepGood", lang), fair: tx("profile.sleepFair", lang), poor: tx("profile.sleepPoor", lang), insomnia: tx("profile.sleepInsomnia", lang) } as Record<string, string>)[healthForm.sleep_quality] || healthForm.sleep_quality}</span>
                       ) : (
-                        <SelectValue placeholder={tr ? "Seçin" : "Select"} />
+                        <SelectValue placeholder={tx("profile.select", lang)} />
                       )}
                     </SelectTrigger>
                     <SelectContent>
                       {[
-                        { v: "good", en: "Good (7-9 hours)", tr: "İyi (7-9 saat)" },
-                        { v: "fair", en: "Fair", tr: "Orta" },
-                        { v: "poor", en: "Poor", tr: "Kötü" },
-                        { v: "insomnia", en: "Insomnia", tr: "Uykusuzluk" },
+                        { v: "good", key: "profile.sleepGood" },
+                        { v: "fair", key: "profile.sleepFair" },
+                        { v: "poor", key: "profile.sleepPoor" },
+                        { v: "insomnia", key: "profile.sleepInsomnia" },
                       ].map((opt) => (
-                        <SelectItem key={opt.v} value={opt.v}>{tr ? opt.tr : opt.en}</SelectItem>
+                        <SelectItem key={opt.v} value={opt.v}>{tx(opt.key, lang)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -1057,7 +1061,7 @@ export default function ProfilePage() {
 
               {/* Supplements */}
               <div className="space-y-2">
-                <Label className="text-sm">{tr ? "Takviyeler" : "Supplements"}</Label>
+                <Label className="text-sm">{tx("profile.supplements", lang)}</Label>
                 <div className="flex flex-wrap gap-2">
                   {["Vitamin D", "Vitamin B12", "Iron", "Omega-3", "Magnesium", "Zinc", "Probiotics", "Multivitamin"].map((s) => (
                     <Badge
@@ -1066,11 +1070,16 @@ export default function ProfilePage() {
                       className="cursor-pointer transition-colors"
                       onClick={() => toggleSupplement(s)}
                     >
-                      {tr ? ({
-                        "Vitamin D": "D Vitamini", "Vitamin B12": "B12 Vitamini", "Iron": "Demir",
-                        "Omega-3": "Omega-3", "Magnesium": "Magnezyum", "Zinc": "Çinko",
-                        "Probiotics": "Probiyotikler", "Multivitamin": "Multivitamin",
-                      } as Record<string, string>)[s] || s : s}
+                      {({
+                        "Vitamin D": tx("profile.suppVitaminD", lang),
+                        "Vitamin B12": tx("profile.suppVitaminB12", lang),
+                        "Iron": tx("profile.suppIron", lang),
+                        "Omega-3": tx("profile.suppOmega3", lang),
+                        "Magnesium": tx("profile.suppMagnesium", lang),
+                        "Zinc": tx("profile.suppZinc", lang),
+                        "Probiotics": tx("profile.suppProbiotics", lang),
+                        "Multivitamin": tx("profile.suppMultivitamin", lang),
+                      } as Record<string, string>)[s] || s}
                     </Badge>
                   ))}
                 </div>
@@ -1082,9 +1091,7 @@ export default function ProfilePage() {
         {!editingHealth && (
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              {tr
-                ? "Sağlık profilinizi güncellemek için \"Düzenle\" butonuna tıklayın."
-                : "Click \"Edit\" to update your health profile."}
+              {tx("profile.editHealthHint", lang)}
             </p>
           </CardContent>
         )}
@@ -1137,7 +1144,7 @@ export default function ProfilePage() {
               className="gap-2"
               disabled={deletingAccount}
               onClick={async () => {
-                const confirmText = tr ? "SİL" : "DELETE"
+                const confirmText = tx("profile.deleteConfirmText", lang)
                 const input = prompt(tx('data.deleteConfirm', lang))
                 if (input !== confirmText) return
                 setDeletingAccount(true)

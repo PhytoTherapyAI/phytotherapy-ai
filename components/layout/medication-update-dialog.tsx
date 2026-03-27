@@ -311,8 +311,6 @@ export function MedicationUpdateDialog() {
 
   if (!mode) return null;
 
-  const tr = lang === "tr";
-
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
@@ -386,22 +384,22 @@ export function MedicationUpdateDialog() {
                 <div className="flex flex-wrap gap-2 text-xs">
                   {profile?.is_pregnant && (
                     <span className="rounded-full bg-primary/10 px-2 py-1 text-primary">
-                      {tr ? "Hamile" : "Pregnant"}
+                      {tx("med.pregnantFlag", lang)}
                     </span>
                   )}
                   {profile?.is_breastfeeding && (
                     <span className="rounded-full bg-primary/10 px-2 py-1 text-primary">
-                      {tr ? "Emziriyor" : "Breastfeeding"}
+                      {tx("med.breastfeedingFlag", lang)}
                     </span>
                   )}
                   {profile?.kidney_disease && (
                     <span className="rounded-full bg-red-100 px-2 py-1 text-red-700 dark:bg-red-950 dark:text-red-400">
-                      {tr ? "Böbrek Hastalığı" : "Kidney Disease"}
+                      {tx("med.kidneyFlag", lang)}
                     </span>
                   )}
                   {profile?.liver_disease && (
                     <span className="rounded-full bg-red-100 px-2 py-1 text-red-700 dark:bg-red-950 dark:text-red-400">
-                      {tr ? "Karaciğer Hastalığı" : "Liver Disease"}
+                      {tx("med.liverFlag", lang)}
                     </span>
                   )}
                   {(profile?.chronic_conditions || []).map((c) => (
@@ -411,7 +409,7 @@ export function MedicationUpdateDialog() {
                   ))}
                   {!profile?.is_pregnant && !profile?.is_breastfeeding && !profile?.kidney_disease && !profile?.liver_disease && (profile?.chronic_conditions || []).length === 0 && (
                     <span className="text-muted-foreground">
-                      {tr ? "Kayıtlı sağlık durumu yok" : "No health flags recorded"}
+                      {tx("med.noFlags", lang)}
                     </span>
                   )}
                 </div>
@@ -452,7 +450,7 @@ export function MedicationUpdateDialog() {
                     size="sm"
                     onClick={() => setOnboardingStep(0)}
                   >
-                    {tr ? "← Geri" : "← Back"}
+                    {tx("med.back", lang)}
                   </Button>
                 </div>
               </div>
@@ -466,12 +464,10 @@ export function MedicationUpdateDialog() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Pill className="h-5 w-5 text-primary" />
-                {tr ? "İlaç Listesi Güncellemesi" : "Medication List Update"}
+                {tx("med.title15", lang)}
               </DialogTitle>
               <DialogDescription>
-                {tr
-                  ? "İlaç listenizi gözden geçirin. Yeni ilaç ekleyebilir veya kullanmadıklarınızı kaldırabilirsiniz. Tamamlandığında onaylayın."
-                  : "Review your medication list. You can add new medications or remove ones you no longer take. Confirm when done."}
+                {tx("med.desc15", lang)}
               </DialogDescription>
             </DialogHeader>
 
@@ -485,7 +481,7 @@ export function MedicationUpdateDialog() {
                 {medications.length > 0 ? (
                   <div className="space-y-2">
                     <Label className="text-sm text-muted-foreground">
-                      {tr ? "Mevcut ilaçlarınız:" : "Your current medications:"}
+                      {tx("med.currentMeds", lang)}
                     </Label>
                     {medications.map((med) => (
                       <div
@@ -519,25 +515,25 @@ export function MedicationUpdateDialog() {
                   </div>
                 ) : (
                   <div className="rounded-lg border border-dashed p-4 text-center text-sm text-muted-foreground">
-                    {tr ? "Kayıtlı ilaç bulunamadı" : "No medications recorded"}
+                    {tx("med.empty", lang)}
                   </div>
                 )}
 
                 {/* Add medication form */}
                 <div className="space-y-3 rounded-lg border border-dashed p-4">
                   <p className="text-sm font-medium">
-                    {tr ? "Yeni ilaç ekle" : "Add new medication"}
+                    {tx("med.addNew", lang)}
                   </p>
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div className="space-y-1">
                       <Label htmlFor="brand-15" className="text-xs">
-                        {tr ? "Marka Adı" : "Brand Name"}
+                        {tx("med.brandLabel", lang)}
                       </Label>
                       <div className="relative">
                         <Input
                           ref={brandInputRef}
                           id="brand-15"
-                          placeholder={tr ? "ör. Glifor, Coraspin" : "e.g., Metformin, Aspirin"}
+                          placeholder={tx("med.brandPlaceholder", lang)}
                           value={brandName}
                           onChange={(e) => setBrandName(e.target.value)}
                           onKeyDown={handleBrandKeyDown}
@@ -578,33 +574,33 @@ export function MedicationUpdateDialog() {
                     </div>
                     <div className="space-y-1">
                       <Label htmlFor="generic-15" className="text-xs">
-                        {tr ? "Etken Madde" : "Generic Name"}
+                        {tx("med.genericLabel", lang)}
                       </Label>
                       <Input
                         id="generic-15"
-                        placeholder={tr ? "ör. Metformin" : "e.g., Metformin"}
+                        placeholder={tx("med.genericPlaceholder", lang)}
                         value={genericName}
                         onChange={(e) => setGenericName(e.target.value)}
                       />
                     </div>
                     <div className="space-y-1">
                       <Label htmlFor="dosage-15" className="text-xs">
-                        {tr ? "Doz" : "Dosage"}
+                        {tx("med.dosageLabel", lang)}
                       </Label>
                       <Input
                         id="dosage-15"
-                        placeholder={tr ? "ör. 500mg" : "e.g., 500mg"}
+                        placeholder={tx("med.dosagePlaceholder", lang)}
                         value={dosage}
                         onChange={(e) => setDosage(e.target.value)}
                       />
                     </div>
                     <div className="space-y-1">
                       <Label htmlFor="freq-15" className="text-xs">
-                        {tr ? "Kullanım Sıklığı" : "Frequency"}
+                        {tx("med.freqLabel", lang)}
                       </Label>
                       <Input
                         id="freq-15"
-                        placeholder={tr ? "ör. Günde 2 kez" : "e.g., Twice daily"}
+                        placeholder={tx("med.freqPlaceholder", lang)}
                         value={frequency}
                         onChange={(e) => setFrequency(e.target.value)}
                       />
@@ -617,7 +613,7 @@ export function MedicationUpdateDialog() {
                     disabled={!brandName.trim() && !genericName.trim()}
                   >
                     <Plus className="mr-2 h-4 w-4" />
-                    {tr ? "İlaç Ekle" : "Add Medication"}
+                    {tx("med.addBtn", lang)}
                   </Button>
                 </div>
 
@@ -633,7 +629,7 @@ export function MedicationUpdateDialog() {
                     ) : (
                       <CheckCircle2 className="h-4 w-4" />
                     )}
-                    {tr ? "İlaçlarımı Onaylıyorum" : "Confirm My Medications"}
+                    {tx("med.confirmBtn", lang)}
                   </Button>
                 </div>
               </div>
@@ -663,7 +659,7 @@ export function MedicationUpdateDialog() {
               >
                 <CheckCircle2 className="h-4 w-4" />
                 {isConfirming
-                  ? (tr ? "Onaylanıyor..." : "Confirming...")
+                  ? tx("med.confirming", lang)
                   : tx("dailyMed.confirmSame", lang)}
               </Button>
               <Button
