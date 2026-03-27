@@ -51,6 +51,8 @@ export default function DashboardPage() {
     mood: number | null
     bloating: number | null
   } | null>(null)
+  const [addSupOpen, setAddSupOpen] = useState(false)
+  const [supRefreshKey, setSupRefreshKey] = useState(0)
 
   // Fetch today's check-in for metabolic portfolio
   const fetchCheckIn = useCallback(async () => {
@@ -102,8 +104,6 @@ export default function DashboardPage() {
     : profile.age
 
   const isPremium = true
-  const [addSupOpen, setAddSupOpen] = useState(false)
-  const [supRefreshKey, setSupRefreshKey] = useState(0)
 
   // Time-based greeting
   const hour = new Date().getHours()
