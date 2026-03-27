@@ -587,10 +587,14 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                       </div>
                       <button
                         onClick={async () => {
-                          const supabase = createBrowserClient()
-                          await supabase.from("calendar_events").delete().eq("id", sup.id)
-                          fetchSaved()
-                          onSaved()
+                          try {
+                            const supabase = createBrowserClient()
+                            await supabase.from("calendar_events").delete().eq("id", sup.id)
+                            fetchSaved()
+                            onSaved()
+                          } catch (e) {
+                            console.error("Failed to remove supplement:", e)
+                          }
                         }}
                         className="text-muted-foreground/40 hover:text-red-500 transition-colors"
                       >

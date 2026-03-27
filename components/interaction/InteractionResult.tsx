@@ -272,9 +272,14 @@ function HerbCard({ herb, showAdd, onAdd }: HerbCardProps) {
   const handleAdd = async () => {
     if (!onAdd || adding || added) return
     setAdding(true)
-    const ok = await onAdd(herb.herb, herb.dosage || undefined, herb.safety)
-    setAdding(false)
-    if (ok) setAdded(true)
+    try {
+      const ok = await onAdd(herb.herb, herb.dosage || undefined, herb.safety)
+      if (ok) setAdded(true)
+    } catch (e) {
+      console.error("Failed to add supplement:", e)
+    } finally {
+      setAdding(false)
+    }
   }
 
   return (
