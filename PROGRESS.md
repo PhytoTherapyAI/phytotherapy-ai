@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 26 Mart 2026 (v20.2 — S14-20 fixler tamamlandı, hackathon polish başladı)
+> Son güncelleme: 27 Mart 2026 (v21.0 — Phase 2-6 tamamlandı, bug fix sprint bitti, Phase 7-13 planlandı)
 
 ---
 
@@ -32,7 +32,9 @@
 | Sprint 19 — Veri Modülü + Analitik | ✅ Tamamlandı (çeviriler tamamlandı) | 26 Mart 2026 |
 | Sprint 20 — PWA | ✅ Tamamlandı (SW fix uygulandı) | 26 Mart 2026 |
 | Hackathon Polish — Phase 1 | ✅ Tamamlandı | 26 Mart 2026 |
-| Hackathon Polish — Phase 2-6 | 🔧 Devam Edecek | — |
+| Hackathon Polish — Phase 2-6 | ✅ Tamamlandı | 27 Mart 2026 |
+| Bug Fix Sprint | ✅ Tamamlandı | 27 Mart 2026 |
+| Hackathon Finalizasyon — Phase 7-13 | 🔧 Planlandı | — |
 
 ### ✅ 26 Mart Fixler (v20.2)
 - **Dashboard tools grid eklendi** → 8 kartlık link grid (tüm yeni sayfalar erişilebilir)
@@ -44,14 +46,33 @@
 - **Wrapped share düzeltildi** → ShareCardBase ile share/download/copy çalışıyor
 - **Doktor davet düzeltildi** → /doctor/join sayfası eklendi, hasta kodu ile katılabiliyor
 
-### 🔧 Kalan İşler (Phase 2-6)
-- CSS animasyon altyapısı (fadeInUp, scaleIn, typingBounce)
-- Landing page yeniden tasarım (hero, trust strip, stats section)
-- Chat UX iyileştirmesi (typing dots, mesaj balonları, quick chips)
-- Dashboard + tüm panel sayfaları polish
-- Demo modu (jüri için tek tıkla dolu hesap)
+### ✅ 27 Mart — Phase 2-6 + Bug Fix Sprint (v21.0)
 
-**Hackathon: 11-12 Nisan 2026 — 16 gün kaldı**
+**UI Polish:**
+- CSS animasyonları: fadeInUp, scaleIn, typingBounce, pulseGlow, gentleSway + utility class'lar
+- Landing page: hero badge, stats strip (1200+ kullanıcı), staggered animasyonlar, feature card accent
+- Chat UX: 3 bouncing typing dot, mesaj balonları sol border accent + shadow
+- Dashboard: zaman bazlı karşılama, pastel tool kartları, hover efektleri
+- Demo modu: /api/demo + login sayfasına "Demo Hesabı Dene" butonu
+
+**Bug Fixler:**
+- 15 hardcoded `lang === "tr" ? ...` → tx() çağrısına çevrildi (6 dosya)
+- 18 yeni çeviri key'i eklendi
+- API güvenlik: health-sync auth eklendi (eskiden herkes veri sync edebiliyordu)
+- API güvenlik: doctor-summary auth + doctorId token'dan alınıyor
+- API güvenlik: scan-medication rate limiting eklendi (5/dk)
+
+### 🔧 Kalan İşler — Hackathon Finalizasyon (Phase 7-13)
+
+**Phase 7:** Kalan hardcoded çeviriler (onboarding, blood-test, wrapped)
+**Phase 8:** Onboarding akışı iyileştirmesi (animasyon, progress bar, ilaç autocomplete)
+**Phase 9:** Chat geçmişi yan panel (sol taraf konuşma listesi, tıkla → yükle)
+**Phase 10:** Paylaşım kartları genişletme (kan tahlili paylaş, responsive dark mode)
+**Phase 11:** PWA push bildirimi (ilaç hatırlatıcısı, check-in hatırlatıcısı)
+**Phase 12:** Doktor paneli iyileştirmesi (gerçek hasta listesi, QR davet, AI özet)
+**Phase 13:** UX polish (boş state illüstrasyonları, smooth dark/light geçiş, loading skeleton)
+
+**Hackathon: 11-12 Nisan 2026 — 15 gün kaldı**
 
 ---
 

@@ -212,3 +212,48 @@ Kontrol edilecek sayfalar:
 - [x] Login sayfasına "Demo ile Dene" butonu (Play icon)
 - [x] `/api/demo` endpoint — hazır verili demo hesap (Metformin, Lisinopril, 7 gün check-in, 3 sorgu, kan tahlili, takviyeler)
 - [x] Jüri tek tıkla dolu hesap görür
+
+### Bug Fix Sprint ✅ (27 Mart)
+- [x] 15 hardcoded `lang === "tr" ? ...` → `tx()` çağrısına çevrildi (6 dosya)
+- [x] 18 yeni çeviri key'i eklendi
+- [x] API güvenlik: health-sync auth eklendi
+- [x] API güvenlik: doctor-summary auth + doctorId token'dan alınıyor
+- [x] API güvenlik: scan-medication rate limiting eklendi (5/dk)
+
+---
+
+## Son Sprint — Hackathon Finalizasyon (Phase 7-13)
+
+### Phase 7: Kalan Hardcoded Çeviriler
+- [ ] `OnboardingWizard.tsx` — 4 alert mesajı tx() yap
+- [ ] `blood-test/page.tsx` — buton etiketleri tx() yap
+- [ ] `wrapped/page.tsx` — ~15 string tx() yap
+
+### Phase 8: Onboarding Akışı İyileştirmesi
+- [ ] Welcome animasyonu + progress bar güzelleştirme
+- [ ] Adım kartlarına ikonlar + daha iyi UI
+- [ ] İlaç arama dropdown (free text → autocomplete)
+
+### Phase 9: Chat Geçmişi Yan Panel
+- [ ] Sohbet sayfasında sol tarafta geçmiş konuşmalar listesi
+- [ ] Tıkla → o konuşmayı yükle
+- [ ] Yeni konuşma başlat butonu
+
+### Phase 10: Paylaşım Kartları Genişletme
+- [ ] Kan tahlili sonuçlarını paylaş kartı
+- [ ] Mevcut paylaşım kartlarını iyileştir (responsive, dark mode)
+
+### Phase 11: PWA Push Bildirimi
+- [ ] İlaç hatırlatıcısı push notification
+- [ ] Günlük check-in hatırlatıcısı
+- [ ] Service worker notification API entegrasyonu
+
+### Phase 12: Doktor Paneli İyileştirmesi
+- [ ] Hasta listesi gerçek Supabase verisinden
+- [ ] Hasta davet → QR kod veya kopyalanabilir link
+- [ ] AI ziyaret özeti oluştur butonu çalışır hale getir
+
+### Phase 13: UX Polish — Son Dokunuşlar
+- [ ] Her sayfada boş state illüstrasyonu + yönlendirme
+- [ ] Dark/Light mode geçiş animasyonu (smooth transition)
+- [ ] Tüm sayfalarda loading skeleton iyileştirmesi
