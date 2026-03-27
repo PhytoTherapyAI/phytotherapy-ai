@@ -1,16 +1,17 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v12.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v13.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
 **Phytotherapy.ai** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **15 gün kaldı**
 - **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı) — 2 yıllık ödeme yapıldı
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
 - **AI Motor:** Google Gemini API (gemini-2.0-flash primary + gemini-2.5-flash fallback)
 - **OS:** Windows
 - **GitHub:** github.com/PhytoTherapyAI/phytotherapy-ai
+- **Hackathon modu:** Premium gate'ler kaldırıldı, isPremium=true, pricing navbar'dan çıktı, tüm özellikler açık
 
 ---
 
@@ -411,12 +412,66 @@ Next.js, Auth, Onboarding (7 adım + doğum tarihi), İlaç etkileşim motoru, C
 - ✅ 4 yedek plan (API/Supabase/internet/laptop)
 - ✅ SEO + performans kontrol listesi
 
+### ✅ HACKATHON POLISH (Tamamlandı — 26-27 Mart 2026)
+
+**26 Mart — Phase 1 (S14-20 Fixler):**
+- ✅ Dashboard tools grid (8 kart), Leaderboard API + UI, 71 çeviri key
+- ✅ Premium gate'ler kaldırıldı, Wrapped share fix, Doktor davet fix (/doctor/join)
+
+**27 Mart — Phase 2-6 (UI Polish + Demo):**
+- ✅ CSS animasyonları (fadeInUp, scaleIn, typingBounce, pulseGlow, gentleSway)
+- ✅ Landing page: hero badge, stats strip, staggered animasyonlar, feature card top-border
+- ✅ Chat UX: 3 bouncing typing dot, mesaj balonları sol border accent + shadow
+- ✅ Dashboard: zaman bazlı karşılama, pastel tool kartları, hover efektleri
+- ✅ Demo modu: /api/demo + login'de "Demo Hesabı Dene" butonu
+
+**27 Mart — Bug Fix Sprint:**
+- ✅ 15 hardcoded `lang === "tr" ? ...` → tx() (profile, calendar, chat, history, interaction)
+- ✅ 18 yeni çeviri key'i eklendi
+- ✅ API güvenlik: health-sync auth, doctor-summary auth, scan-medication rate limiting
+
+### 🔧 HACKATHON FİNALİZASYON — Yapılacaklar (Phase 7-13)
+
+**Phase 7: Kalan Hardcoded Çeviriler**
+- [ ] `OnboardingWizard.tsx` — 4 alert mesajı tx() yap
+- [ ] `blood-test/page.tsx` — buton etiketleri tx() yap
+- [ ] `wrapped/page.tsx` — ~15 string tx() yap
+
+**Phase 8: Onboarding Akışı İyileştirmesi**
+- [ ] Welcome animasyonu + progress bar güzelleştirme
+- [ ] Adım kartlarına ikonlar + daha iyi UI
+- [ ] İlaç arama dropdown (free text → autocomplete)
+
+**Phase 9: Chat Geçmişi Yan Panel**
+- [ ] Sohbet sayfasında sol tarafta geçmiş konuşmalar listesi
+- [ ] Tıkla → o konuşmayı yükle
+- [ ] Yeni konuşma başlat butonu
+
+**Phase 10: Paylaşım Kartları Genişletme**
+- [ ] Kan tahlili sonuçlarını paylaş kartı
+- [ ] Mevcut paylaşım kartlarını iyileştir (responsive, dark mode)
+
+**Phase 11: PWA Push Bildirimi**
+- [ ] İlaç hatırlatıcısı push notification
+- [ ] Günlük check-in hatırlatıcısı
+- [ ] Service worker notification API entegrasyonu
+
+**Phase 12: Doktor Paneli İyileştirmesi**
+- [ ] Hasta listesi gerçek Supabase verisinden
+- [ ] Hasta davet → QR kod veya kopyalanabilir link
+- [ ] AI ziyaret özeti butonu çalışır hale getir
+
+**Phase 13: UX Polish — Son Dokunuşlar**
+- [ ] Her sayfada boş state illüstrasyonu + yönlendirme
+- [ ] Dark/Light mode geçiş animasyonu (smooth transition)
+- [ ] Tüm sayfalarda loading skeleton iyileştirmesi
+
 ### 🚀 HACKATHON SONRASI (S14–S21)
 
 **Para Bloğu (Nisan sonu → Ağustos 2026)**
-- S14: Freemium altyapısı — Pricing sayfası, 7 gün trial otomatik, premium tease bildirimleri, İyzico ödeme entegrasyonu, özellik kilitleme sistemi
-- S15: Kullanıcı paneli — gelişmiş dashboard, sorgu geçmişi, favoriler, gamification rozetler, anonim karşılaştırma skoru
-- S16: Yıllık Wrapped altyapısı + affiliate supplement linkleri (şeffaf, asla ödeme karşılığı öneri) + aile paketi fiyatlandırma
+- S14: Freemium altyapısı — İyzico ödeme entegrasyonu, özellik kilitleme sistemi
+- S15: Kullanıcı paneli — favoriler, gamification rozetler, anonim karşılaştırma skoru
+- S16: Yıllık Wrapped altyapısı + affiliate supplement linkleri + aile paketi fiyatlandırma
 
 **B2B Bloğu (Eylül → Kasım 2026)**
 - S17: Doktor paneli — hasta takip, ziyaret özeti AI, uyum skoru, TC/diploma doğrulama, abonelik
@@ -495,7 +550,8 @@ Next.js, Auth, Onboarding (7 adım + doğum tarihi), İlaç etkileşim motoru, C
 
 ### Hackathon Stratejisi
 - Tüm özellikler demo sırasında açık (freemium kısıtı yok)
-- Pricing sayfası gösterimde ama aktif değil
+- Pricing navbar'dan çıkarıldı, TrialBanner devre dışı
+- Demo modu: Login sayfasında "Demo Hesabı Dene" butonu → /api/demo ile hazır verili hesap
 - "Şu an beta, lansman sonrası bu model devreye giriyor" açıklaması
 
 ---
@@ -551,8 +607,8 @@ NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
 
 ---
 
-*Son güncelleme: 26 Mart 2026 v12.1*
-*Sprint 1-20 tamamlandı. Hackathon polish Phase 1 bitti, Phase 2-6 devam edecek.*
-*Hackathon: 11-12 Nisan 2026 — 16 gün kaldı*
+*Son güncelleme: 27 Mart 2026 v13.0*
+*Sprint 1-20 + Phase 1-6 tamamlandı. Bug fix sprint bitti. Phase 7-13 planlandı.*
+*Hackathon: 11-12 Nisan 2026 — 15 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
-*Dashboard tools grid, leaderboard, çeviri fixleri, wrapped share, doktor davet düzeltildi.*
+*Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*
