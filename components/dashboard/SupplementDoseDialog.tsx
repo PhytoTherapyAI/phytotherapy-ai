@@ -5,7 +5,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { type Lang } from "@/lib/translations"
+import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { findSupplementInfo, parseDoseToMg, getSupplementDisplayName } from "@/lib/supplement-data"
 import { Pill, Clock, Sparkles, AlertTriangle, Timer, Trash2, Bell } from "lucide-react"
@@ -145,15 +145,15 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
           {/* Current cycle info */}
           <div className="rounded-lg bg-muted/30 p-3 text-xs text-muted-foreground space-y-1">
             <div className="flex justify-between">
-              <span>{tr ? "Kullanıldı" : "Used"}</span>
-              <span className="font-medium text-foreground">{supplement.daysUsed} {tr ? "gün" : "days"}</span>
+              <span>{tx("supp.used", lang)}</span>
+              <span className="font-medium text-foreground">{supplement.daysUsed} {tx("supp.days", lang)}</span>
             </div>
             <div className="flex justify-between">
-              <span>{tr ? "Kalan" : "Remaining"}</span>
+              <span>{tx("supp.remaining", lang)}</span>
               <span className={`font-medium ${supplement.daysLeft <= 7 && supplement.daysLeft > 0 ? "text-amber-500" : "text-foreground"}`}>
                 {cycleDays === 0
-                  ? (tr ? "Sınırsız" : "Unlimited")
-                  : `${Math.max(0, cycleDays - supplement.daysUsed)} ${tr ? "gün" : "days"}`
+                  ? tx("supp.unlimitedDisp", lang)
+                  : `${Math.max(0, cycleDays - supplement.daysUsed)} ${tx("supp.days", lang)}`
                 }
               </span>
             </div>
@@ -165,7 +165,7 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
               <div>
                 <p className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                  {tr ? "Döngü süresi doldu!" : "Cycle period expired!"}
+                  {tx("supp.expired", lang)}
                 </p>
                 <p className="text-[10px] text-muted-foreground">
                   {tr ? `${breakDays} gün mola vermeniz önerilir.` : `A ${breakDays}-day break is recommended.`}
@@ -179,10 +179,10 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
             <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
               <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
               <div className="flex-1">
-                <p className="text-xs font-medium">{tr ? "Asistan önerisi" : "Assistant suggestion"}</p>
+                <p className="text-xs font-medium">{tx("supp.suggestion", lang)}</p>
                 <p className="text-base font-semibold text-primary">{info.recommendedDose}</p>
                 <p className="mt-0.5 text-[10px] text-muted-foreground">
-                  {tr ? `Maks güvenli: ${info.maxDose}` : `Max safe: ${info.maxDose}`}
+                  {`${tx("supp.maxSafe", lang)} ${info.maxDose}`}
                 </p>
               </div>
             </div>
@@ -190,12 +190,12 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
 
           {/* Dose input */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium">{tr ? "Günlük doz" : "Daily dose"}</label>
+            <label className="mb-1.5 block text-xs font-medium">{tx("supp.doseLabel", lang)}</label>
             <input
               type="text"
               value={dose}
               onChange={(e) => setDose(e.target.value)}
-              placeholder={info.recommendedDose !== "-" ? info.recommendedDose : (tr ? "ör: 500mg" : "e.g. 500mg")}
+              placeholder={info.recommendedDose !== "-" ? info.recommendedDose : tx("supp.dosePlaceholder", lang)}
               className={`w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 ${
                 overdoseWarning
                   ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
@@ -215,7 +215,7 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
           <div>
             <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium">
               <Clock className="h-3 w-3" />
-              {tr ? "Kullanım saati" : "Time of use"}
+              {tx("supp.timeLabel", lang)}
             </label>
             <div className="flex items-center gap-2">
               <input
@@ -248,7 +248,7 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
                 <Bell className={`h-4 w-4 ${enableReminder ? "text-primary" : ""}`} />
                 {enableReminder
                   ? (tr ? `${time} saatinde bildirim gelecek` : `Notification at ${time}`)
-                  : (tr ? "Bildirim al" : "Get notified")
+                  : tx("supp.notifGet", lang)
                 }
               </button>
             )}
@@ -258,7 +258,7 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
           <div>
             <label className="mb-1.5 flex items-center gap-1.5 text-xs font-medium">
               <Timer className="h-3 w-3" />
-              {tr ? "Döngü süresi" : "Cycle duration"}
+              {tx("supp.cycleDuration", lang)}
             </label>
             {info.cycleDays > 0 && (
               <p className="mb-2 text-[10px] text-muted-foreground">
@@ -276,7 +276,7 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
                       : "text-muted-foreground hover:border-primary/30"
                   }`}
                 >
-                  {days} {tr ? "gün" : "d"}
+                  {days} {tx("supp.days", lang)}
                 </button>
               ))}
               <button
@@ -287,7 +287,7 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
                     : "text-muted-foreground hover:border-primary/30"
                 }`}
               >
-                ∞ {tr ? "Sınırsız" : "No limit"}
+                ∞ {tx("supp.noLimit", lang)}
               </button>
             </div>
 
@@ -302,14 +302,14 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
                   max={365}
                   className="w-28 rounded-lg border bg-background px-3 py-1.5 text-xs outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
-                <span className="text-[10px] text-muted-foreground">{tr ? "gün" : "days"}</span>
+                <span className="text-[10px] text-muted-foreground">{tx("supp.days", lang)}</span>
               </div>
             )}
           </div>
 
           {/* Save */}
           <Button className="w-full" onClick={handleSave} disabled={saving || !dose.trim()}>
-            {saving ? (tr ? "Kaydediliyor..." : "Saving...") : (tr ? "Kaydet" : "Save")}
+            {saving ? tx("supp.saving", lang) : tx("profile.save", lang)}
           </Button>
 
           {/* Remove */}
@@ -317,10 +317,10 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
             <div className="flex gap-2">
               <Button variant="destructive" size="sm" className="flex-1" onClick={handleRemove} disabled={removing}>
                 <Trash2 className="mr-1.5 h-3 w-3" />
-                {removing ? "..." : (tr ? "Evet, Kaldır" : "Yes, Remove")}
+                {removing ? "..." : tx("supp.removeConfirm", lang)}
               </Button>
               <Button variant="outline" size="sm" className="flex-1" onClick={() => setConfirmRemove(false)}>
-                {tr ? "Vazgeç" : "Cancel"}
+                {tx("profile.cancel", lang)}
               </Button>
             </div>
           ) : (
@@ -329,7 +329,7 @@ export function SupplementDoseDialog({ lang, supplement, onClose, onSave, onRemo
               className="flex w-full items-center justify-center gap-1.5 py-2 text-xs text-muted-foreground transition-colors hover:text-red-500"
             >
               <Trash2 className="h-3 w-3" />
-              {tr ? "Takviyeyi kaldır" : "Remove supplement"}
+              {tx("supp.removeLabel", lang)}
             </button>
           )}
         </div>

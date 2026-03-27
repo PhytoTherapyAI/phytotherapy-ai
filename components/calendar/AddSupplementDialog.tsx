@@ -276,9 +276,9 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
   }
 
   const safetyConfig = {
-    safe: { icon: ShieldCheck, color: "text-primary", bg: "bg-primary/10 border-primary/30", label: tr ? "Güvenli" : "Safe" },
-    caution: { icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-500/10 border-amber-500/30", label: tr ? "Dikkatli Kullanın" : "Use with Caution" },
-    dangerous: { icon: ShieldX, color: "text-red-500", bg: "bg-red-500/10 border-red-500/30", label: tr ? "Önerilmez" : "Not Recommended" },
+    safe: { icon: ShieldCheck, color: "text-primary", bg: "bg-primary/10 border-primary/30", label: tx("supp.safe", lang) },
+    caution: { icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-500/10 border-amber-500/30", label: tx("supp.caution", lang) },
+    dangerous: { icon: ShieldX, color: "text-red-500", bg: "bg-red-500/10 border-red-500/30", label: tx("supp.dangerous", lang) },
   }
 
   return (
@@ -287,10 +287,10 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Leaf className="h-5 w-5 text-primary" />
-            {tr ? "Takviye Yönetimi" : "Supplement Manager"}
+            {tx("supp.title", lang)}
           </DialogTitle>
           <DialogDescription>
-            {tr ? "Takviye adı yazın — asistan profilinize göre analiz edecek." : "Type a supplement name — assistant will analyze it for your profile."}
+            {tx("supp.desc", lang)}
           </DialogDescription>
         </DialogHeader>
 
@@ -300,7 +300,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               ref={inputRef}
-              placeholder={tr ? "Takviye adı yazın (ör. kreatin, omega-3...)" : "Type supplement name (e.g. creatine, omega-3...)"}
+              placeholder={tx("supp.placeholder", lang)}
               value={query}
               onChange={(e) => handleQueryChange(e.target.value)}
               onKeyDown={handleKeyDown}
@@ -341,7 +341,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
           {/* Hint */}
           {!query && !checkResult && !checking && (
             <p className="text-xs text-muted-foreground text-center py-2">
-              {tr ? "Yazmaya başlayın, listeden seçin veya Enter'a basın" : "Start typing, pick from list or press Enter"}
+              {tx("supp.hint", lang)}
             </p>
           )}
 
@@ -350,7 +350,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
             <div className="flex items-center justify-center gap-2 py-6">
               <Loader2 className="h-5 w-5 animate-spin text-primary" />
               <span className="text-sm text-muted-foreground">
-                {tr ? "Profiline göre analiz ediliyor..." : "Analyzing based on your profile..."}
+                {tx("supp.checking", lang)}
               </span>
             </div>
           )}
@@ -366,7 +366,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                     {getSupplementDisplayName(checkResult.supplement, lang)} — {safetyConfig[checkResult.safety].label}
                   </span>
                   <span className="ml-auto text-xs text-muted-foreground">
-                    {tr ? "Kanıt" : "Grade"} {checkResult.evidenceGrade}
+                    {tx("evidence.grade", lang)} {checkResult.evidenceGrade}
                   </span>
                 </div>
 
@@ -388,7 +388,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                 {checkResult.interactions.length > 0 && (
                   <div className="mt-2">
                     <p className="text-xs font-medium text-muted-foreground mb-1">
-                      {tr ? "Etkileşimler:" : "Interactions:"}
+                      {tx("supp.interactions", lang)}
                     </p>
                     {checkResult.interactions.map((int, i) => (
                       <p key={i} className="text-xs text-muted-foreground">• {int}</p>
@@ -403,7 +403,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                   {/* Dose input */}
                   <div>
                     <Label className="text-xs font-medium mb-1.5 block">
-                      {tr ? "Günlük doz" : "Daily dose"}
+                      {tx("supp.doseLabel", lang)}
                     </Label>
                     <input
                       type="text"
@@ -424,7 +424,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                     />
                     <div className="mt-2 rounded-lg bg-primary/5 border border-primary/10 px-3 py-2">
                       <p className="text-sm text-primary font-medium">
-                        🤖 {tr ? "Asistan önerisi" : "Assistant suggestion"}
+                        🤖 {tx("supp.suggestion", lang)}
                       </p>
                       <p className="text-sm text-foreground/80 mt-0.5">
                         {checkResult.recommendedDose} · {checkResult.frequency}
@@ -444,7 +444,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                   <div>
                     <Label className="text-xs font-medium mb-1.5 flex items-center gap-1.5">
                       <Clock className="h-3 w-3" />
-                      {tr ? "Ne zaman alacaksınız?" : "When will you take it?"}
+                      {tx("supp.timing", lang)}
                     </Label>
                     <div className="flex items-center gap-2">
                       <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-32" />
@@ -472,7 +472,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                         <Bell className={`h-4 w-4 ${enableReminder ? "text-primary" : ""}`} />
                         {enableReminder
                           ? (tr ? `${time} saatinde bildirim gelecek` : `Notification at ${time}`)
-                          : (tr ? "Bildirim al" : "Get notified")
+                          : tx("supp.notifGet", lang)
                         }
                       </button>
                     )}
@@ -486,19 +486,19 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     <span className="text-xs font-semibold">
-                      {tr ? "Döngü Bilgisi" : "Cycle Info"}
+                      {tx("supp.cycleLabel", lang)}
                     </span>
                   </div>
 
                   {/* Cycle recommendation */}
                   <div className="rounded-lg bg-blue-500/5 border border-blue-500/10 px-3 py-2">
                     <p className="text-sm text-blue-800 dark:text-blue-300">
-                      🤖 {tr ? "Asistan önerisi" : "Recommendation"}: {" "}
+                      🤖 {tx("supp.suggestion", lang)}: {" "}
                       {suppInfo.cycleDays > 0
                         ? (tr
                             ? `${suppInfo.cycleDays} gün kullanın, ${suppInfo.breakDays} gün mola verin`
                             : `Use for ${suppInfo.cycleDays} days, take ${suppInfo.breakDays}-day break`)
-                        : (tr ? "Süresiz kullanılabilir (döngü gerektirmez)" : "Can be used indefinitely (no cycling needed)")
+                        : tx("supp.unlimited", lang)
                       }
                     </p>
                   </div>
@@ -506,7 +506,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                   {/* Custom cycle days */}
                   <div className="flex items-center gap-3">
                     <Label className="text-xs font-medium whitespace-nowrap">
-                      {tr ? "Döngü süresi:" : "Cycle duration:"}
+                      {tx("supp.cycleDuration", lang)}
                     </Label>
                     <div className="flex items-center gap-2">
                       <input
@@ -520,18 +520,18 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                         }}
                         className="w-16 rounded-lg border bg-background px-2 py-1.5 text-sm text-center outline-none focus:border-primary"
                       />
-                      <span className="text-xs text-muted-foreground">{tr ? "gün" : "days"}</span>
+                      <span className="text-xs text-muted-foreground">{tx("supp.days", lang)}</span>
                     </div>
                     {suppInfo.breakDays > 0 && (
                       <span className="text-xs text-muted-foreground">
-                        + {suppInfo.breakDays} {tr ? "gün mola" : "day break"}
+                        + {suppInfo.breakDays} {tx("supp.dayBreak", lang)}
                       </span>
                     )}
                   </div>
 
                   {customCycleDays === 0 && (
                     <p className="text-[10px] text-muted-foreground">
-                      {tr ? "0 = Döngü yok, süresiz kullanım" : "0 = No cycling, unlimited use"}
+                      {tx("supp.cycleZero", lang)}
                     </p>
                   )}
                 </div>
@@ -541,7 +541,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
               <div className="flex gap-2">
                 {checkResult.safety === "dangerous" ? (
                   <Button variant="destructive" className="flex-1" onClick={() => { setCheckResult(null); setQuery("") }}>
-                    {tr ? "Farklı Takviye Dene" : "Try Different Supplement"}
+                    {tx("supp.tryDiff", lang)}
                   </Button>
                 ) : (
                   <>
@@ -550,7 +550,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                     </Button>
                     <Button className="flex-1" onClick={saveSupplement} disabled={saving}>
                       {saving ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <Leaf className="h-4 w-4 mr-1" />}
-                      {tr ? "Listeye Ekle" : "Add to List"}
+                      {tx("supp.addToList", lang)}
                     </Button>
                   </>
                 )}
@@ -563,7 +563,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
         {!checkResult && !checking && (
           <div className="mt-4 border-t pt-4">
             <h4 className="text-sm font-medium text-foreground mb-2">
-              {tr ? "Aktif Takviyelerim" : "My Active Supplements"}
+              {tx("supp.active", lang)}
             </h4>
             {loadingSaved ? (
               <div className="flex items-center justify-center py-4">
@@ -571,7 +571,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
               </div>
             ) : savedSupplements.length === 0 ? (
               <p className="text-xs text-muted-foreground text-center py-4">
-                {tr ? "Henüz takviye eklenmemiş." : "No supplements added yet."}
+                {tx("supp.empty", lang)}
               </p>
             ) : (
               <div className="space-y-2 max-h-40 overflow-y-auto">

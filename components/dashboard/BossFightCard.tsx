@@ -161,7 +161,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
           {/* Progress */}
           <div className="space-y-1.5">
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{tr ? "Genel İlerleme" : "Overall Progress"}</span>
+              <span>{tx("boss.overallProgress", lang)}</span>
               <span className="font-bold">{progress.overallPercent}%</span>
             </div>
             <Progress value={progress.overallPercent} className="h-2.5" />
@@ -170,7 +170,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
           {/* Today's tasks header */}
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold">
-              {tr ? "Bugünün Görevleri" : "Today's Tasks"}
+              {tx("boss.todayTasks", lang)}
             </p>
             <Badge variant={allDone ? "default" : "secondary"} className={`text-xs ${allDone ? "bg-green-500" : ""}`}>
               {progress.todayCompleted}/{progress.totalTasks}
@@ -217,7 +217,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
             onClick={abandonBoss}
             className="w-full text-center text-xs text-muted-foreground hover:text-red-500 transition-colors pt-1"
           >
-            {tr ? "Protokolü bırak" : "Abandon protocol"}
+            {tx("boss.abandon", lang)}
           </button>
         </CardContent>
       </Card>
@@ -234,7 +234,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
               <Trophy className="h-5 w-5 text-amber-500" />
               {currentBoss.name[lang]}
               <Badge className="ml-auto bg-amber-500/20 text-amber-600 border-amber-500/30 text-xs font-bold">
-                {tr ? "TAMAMLANDI" : "COMPLETE"}
+                {tx("boss.complete", lang)}
               </Badge>
             </CardTitle>
           </CardHeader>
@@ -250,7 +250,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
                 {tx("share.share", lang)}
               </Button>
               <Button size="sm" variant="outline" className="flex-1" onClick={() => { saveBoss(null); setViewMode("select") }}>
-                {tr ? "Yeni Boss" : "New Boss"}
+                {tx("boss.newBoss", lang)}
               </Button>
             </div>
           </CardContent>
@@ -275,7 +275,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
             <span className="text-xl">{selectedBoss.icon}</span>
             <span className="text-sm font-bold">{selectedBoss.name[lang]}</span>
             <Badge variant="secondary" className="ml-auto text-xs">
-              {selectedBoss.duration} {tr ? "gün" : "days"}
+              {selectedBoss.duration} {tx("supp.days", lang)}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -283,7 +283,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
           <p className="text-sm text-muted-foreground">{selectedBoss.description[lang]}</p>
 
           <div className="space-y-2">
-            <p className="text-sm font-semibold">{tr ? "Görevler:" : "Tasks:"}</p>
+            <p className="text-sm font-semibold">{tx("boss.tasksLabel", lang)}</p>
             {selectedBoss.tasks.map((task, i) => (
               <div key={i} className="flex items-center gap-3 rounded-xl border bg-muted/20 px-4 py-3">
                 {taskTypeIcon(task.type)}
@@ -302,7 +302,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
 
           <Button className="w-full" onClick={() => startBoss(selectedBoss)}>
             <Swords className="mr-2 h-4 w-4" />
-            {tr ? "Mücadeleye Başla!" : "Start the Fight!"}
+            {tx("boss.start", lang)}
           </Button>
         </CardContent>
       </Card>
@@ -316,13 +316,13 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <Swords className="h-4 w-4 text-red-500" />
-            <span className="text-sm font-bold">{tr ? "Boss Seç" : "Choose Your Boss"}</span>
+            <span className="text-sm font-bold">{tx("boss.choose", lang)}</span>
             <button onClick={() => setViewMode("idle")} className="ml-auto text-muted-foreground hover:text-foreground transition-colors">
               <X className="h-4 w-4" />
             </button>
           </CardTitle>
           <p className="text-xs text-muted-foreground">
-            {tr ? "Bir protokol seç ve sağlık macerana başla" : "Pick a protocol and start your health adventure"}
+            {tx("boss.intro", lang)}
           </p>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -339,15 +339,15 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
               </div>
               <div className="flex flex-col items-end gap-1">
                 <Badge variant="secondary" className="text-[10px]">
-                  {boss.duration} {tr ? "gün" : "days"}
+                  {boss.duration} {tx("supp.days", lang)}
                 </Badge>
                 <span className={`text-[10px] font-medium ${
                   boss.difficulty === "easy" ? "text-green-500" :
                   boss.difficulty === "medium" ? "text-amber-500" : "text-red-500"
                 }`}>
-                  {boss.difficulty === "easy" ? (tr ? "Kolay" : "Easy") :
-                   boss.difficulty === "medium" ? (tr ? "Orta" : "Medium") :
-                   (tr ? "Zor" : "Hard")}
+                  {boss.difficulty === "easy" ? tx("boss.easy", lang) :
+                   boss.difficulty === "medium" ? tx("boss.medium", lang) :
+                   tx("boss.hard", lang)}
                 </span>
               </div>
               <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -368,13 +368,13 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
           <Badge variant="secondary" className="ml-auto text-[10px]">PREMIUM</Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground">
-          {tr ? "Durumsal sağlık protokolleri — mücadeleye hazır mısın?" : "Situational health protocols — ready to fight?"}
+          {tx("boss.intro", lang)}
         </p>
       </CardHeader>
       <CardContent>
         <Button className="w-full" onClick={() => setViewMode("select")}>
           <Swords className="mr-2 h-4 w-4" />
-          {tr ? "Boss Seç" : "Choose Your Boss"}
+          {tx("boss.choose", lang)}
         </Button>
       </CardContent>
     </Card>
@@ -414,7 +414,7 @@ function BossFightShareCard({ lang, boss }: { lang: Lang; boss: BossFight }) {
           <div className="mb-6 flex items-center justify-center gap-3 rounded-xl px-5 py-4" style={{ background: "rgba(255,255,255,0.2)" }}>
             <span className="text-4xl">🏆</span>
             <div>
-              <p className="text-lg font-extrabold">{tr ? "TAMAMLANDI!" : "COMPLETE!"}</p>
+              <p className="text-lg font-extrabold">{tx("boss.complete", lang)}!</p>
               <p className="text-xs opacity-80">{boss.duration} {tr ? "gün" : "days"} · {boss.tasks.length} {tr ? "görev" : "tasks"}</p>
             </div>
           </div>

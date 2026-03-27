@@ -881,11 +881,10 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
             <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
-                {tr ? `${overdueMeds.map((m) => m.brand_name || m.generic_name).join(", ")} saati geçti!`
-                     : `${overdueMeds.map((m) => m.brand_name || m.generic_name).join(", ")} overdue!`}
+                {`${overdueMeds.map((m) => m.brand_name || m.generic_name).join(", ")} ${tx("cal.overdueAlert", lang)}`}
               </p>
               <p className="text-xs text-amber-500/70">
-                {tr ? "İlacını almayı unutma!" : "Don't forget to take your medication!"}
+                {tx("cal.dontForgetMeds", lang)}
               </p>
             </div>
           </div>
@@ -929,10 +928,10 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium">
-              {checkinDone ? (tr ? "Check-in tamamlandı" : "Check-in complete") : tx("checkin.title", lang)}
+              {checkinDone ? tx("cal.checkinComplete", lang) : tx("checkin.title", lang)}
             </p>
             <p className="text-xs text-muted-foreground">
-              {checkinDone ? (tr ? "Bugünkü durumun kaydedildi!" : "Today's status recorded!") : tx("checkin.subtitle", lang)}
+              {checkinDone ? tx("cal.checkinRecorded", lang) : tx("checkin.subtitle", lang)}
             </p>
           </div>
           {!checkinDone && (
@@ -1051,14 +1050,14 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5 text-primary" />
-              {tr ? "Hatırlatma Saati" : "Reminder Time"}
+              {tx("cal.reminderTime", lang)}
             </DialogTitle>
           </DialogHeader>
           {bellMed && (
             <div className="space-y-5">
               <p className="text-sm text-muted-foreground">
                 <span className="font-medium text-foreground">{bellMed.brand_name || bellMed.generic_name}</span>
-                {" — "}{tr ? "ne zaman hatırlatayım?" : "when should I remind you?"}
+                {" — "}{tx("cal.reminderQuestion", lang)}
               </p>
 
               {/* Time input */}
@@ -1089,20 +1088,20 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                 {medReminders[bellMed.id] && (
                   <Button variant="outline" className="text-red-500 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950"
                     onClick={() => removeReminder(bellMed.id)}>
-                    {tr ? "Kaldır" : "Remove"}
+                    {tx("cal.removeReminder", lang)}
                   </Button>
                 )}
                 <Button className="flex-1" onClick={() => confirmReminder(bellMed.id)}
                   disabled={!pendingBellTime}>
                   <Check className="h-4 w-4 mr-1.5" />
-                  {tr ? "Onayla" : "Confirm"}
+                  {tx("cal.confirmReminder", lang)}
                 </Button>
               </div>
 
               {/* Current reminder info */}
               {medReminders[bellMed.id] && (
                 <div className="rounded-lg bg-primary/5 border border-primary/10 p-3 text-center">
-                  <p className="text-xs text-muted-foreground">{tr ? "Mevcut hatırlatma:" : "Current reminder:"}</p>
+                  <p className="text-xs text-muted-foreground">{tx("cal.currentReminder", lang)}</p>
                   <p className="text-sm font-medium text-primary mt-0.5">
                     {bellMed.brand_name || bellMed.generic_name} — {medReminders[bellMed.id]}
                   </p>
@@ -1135,11 +1134,10 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
             <Leaf className="h-5 w-5 text-primary shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-primary">
-                {tr ? `${overdueSups.map((s) => getSupplementDisplayName(s.title, lang)).join(", ")} saati geçti!`
-                     : `${overdueSups.map((s) => getSupplementDisplayName(s.title, lang)).join(", ")} overdue!`}
+                {`${overdueSups.map((s) => getSupplementDisplayName(s.title, lang)).join(", ")} ${tx("cal.overdueAlert", lang)}`}
               </p>
               <p className="text-xs text-primary/70">
-                {tr ? "Takviyeni almayı unutma!" : "Don't forget to take your supplement!"}
+                {tx("cal.dontForgetSupp", lang)}
               </p>
             </div>
           </div>
@@ -1167,7 +1165,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
               )}
               <Button size="sm" variant="outline" className="h-8 rounded-full" onClick={() => setAddSupplementOpen(true)}>
                 <Plus className="h-3.5 w-3.5 mr-1" />
-                {tr ? "Ekle" : "Add"}
+                {tx("cal.addSuppBtn", lang)}
               </Button>
             </div>
           </CardTitle>
@@ -1177,7 +1175,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           {profileSupsNotInCalendar.length > 0 && (
             <div className="mb-3 rounded-lg bg-primary/5 border border-primary/10 p-3">
               <p className="text-xs text-muted-foreground mb-2">
-                {tr ? "Profilindeki takviyeler:" : "From your profile:"}
+                {tx("cal.fromProfile", lang)}
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {profileSupsNotInCalendar.map((s) => (
@@ -1192,7 +1190,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
             <div className="text-center py-4">
               <Leaf className="mx-auto h-8 w-8 text-muted-foreground/30 mb-2" />
               <p className="text-sm text-muted-foreground">
-                {tr ? "Takviye ekleyin — profilinize göre güvenlik kontrolü yapılır." : "Add supplements — safety checked against your profile."}
+                {tx("cal.addSuppHint", lang)}
               </p>
             </div>
           ) : (
@@ -1274,7 +1272,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5 text-primary" />
-              {tr ? "Hatırlatma Saati" : "Reminder Time"}
+              {tx("cal.reminderTime", lang)}
             </DialogTitle>
           </DialogHeader>
           {bellSupId && (() => {
@@ -1284,7 +1282,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
               <div className="space-y-5">
                 <p className="text-sm text-muted-foreground">
                   <span className="font-medium text-foreground">{getSupplementDisplayName(sup.title, lang)}</span>
-                  {" — "}{tr ? "ne zaman hatırlatayım?" : "when should I remind you?"}
+                  {" — "}{tx("cal.reminderQuestion", lang)}
                 </p>
                 <div className="flex items-center gap-3">
                   <Clock className="h-5 w-5 text-muted-foreground shrink-0" />
@@ -1309,18 +1307,18 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                   {supReminders[bellSupId] && (
                     <Button variant="outline" className="text-red-500 border-red-200 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950"
                       onClick={() => removeSupReminder(bellSupId)}>
-                      {tr ? "Kaldır" : "Remove"}
+                      {tx("cal.removeReminder", lang)}
                     </Button>
                   )}
                   <Button className="flex-1" onClick={() => confirmSupReminder(bellSupId)}
                     disabled={!pendingSupBellTime}>
                     <Check className="h-4 w-4 mr-1.5" />
-                    {tr ? "Onayla" : "Confirm"}
+                    {tx("cal.confirmReminder", lang)}
                   </Button>
                 </div>
                 {supReminders[bellSupId] && (
                   <div className="rounded-lg bg-primary/5 border border-primary/10 p-3 text-center">
-                    <p className="text-xs text-muted-foreground">{tr ? "Mevcut hatırlatma:" : "Current reminder:"}</p>
+                    <p className="text-xs text-muted-foreground">{tx("cal.currentReminder", lang)}</p>
                     <p className="text-sm font-medium text-primary mt-0.5">
                       {getSupplementDisplayName(sup.title, lang)} — {supReminders[bellSupId]}
                     </p>
@@ -1389,7 +1387,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                       fetchData()
                     }}
                     className="shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10 text-muted-foreground/40"
-                    title={tr ? "Sil" : "Delete"}
+                    title={tx("cal.deleteEvent", lang)}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
@@ -1414,12 +1412,12 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                 onClick={() => { setWaterMode(waterMode === "glass" ? "ml" : "glass"); setMlInput(0) }}
                 className="flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium text-muted-foreground transition-all hover:border-blue-400 hover:text-blue-500"
               >
-                {waterMode === "glass" ? "mL" : (tr ? "Bardak" : "Glass")}
+                {waterMode === "glass" ? "mL" : tx("cal.waterUnit", lang)}
                 <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" /></svg>
               </button>
               <Button variant="outline" size="sm" className="h-8 rounded-full gap-1.5" onClick={() => setTargetDialogOpen(true)}>
                 <Target className="h-3.5 w-3.5" />
-                {tr ? `Hedef Belirle: ${waterTarget}` : `Set Goal: ${waterTarget}`}
+                {`${tx("cal.setGoalTitle", lang)}: ${waterTarget}`}
               </Button>
             </div>
           </CardTitle>
@@ -1600,7 +1598,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Target className="h-5 w-5 text-blue-400" />
-              {tr ? "Hedef Belirle" : "Set Goal"}
+              {tx("cal.setGoalTitle", lang)}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
@@ -1648,7 +1646,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Leaf className="h-5 w-5 text-primary" />
-              {tr ? "Doz Ayarla" : "Adjust Dose"}
+              {tx("cal.adjustDose", lang)}
             </DialogTitle>
           </DialogHeader>
           {editingSupDose && (
@@ -1657,7 +1655,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                 <span className="font-medium text-foreground">{getSupplementDisplayName(editingSupDose.title, lang)}</span>
               </p>
               <div>
-                <label className="mb-1.5 block text-xs font-medium">{tr ? "Günlük doz" : "Daily dose"}</label>
+                <label className="mb-1.5 block text-xs font-medium">{tx("cal.dailyDose", lang)}</label>
                 <input
                   type="text"
                   value={editDose}
@@ -1668,7 +1666,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                 />
               </div>
               <Button className="w-full" onClick={saveSupDose} disabled={editDoseSaving || !editDose.trim()}>
-                {editDoseSaving ? "..." : (tr ? "Kaydet" : "Save")}
+                {editDoseSaving ? "..." : tx("cal.saveDose", lang)}
               </Button>
             </div>
           )}
