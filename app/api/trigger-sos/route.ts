@@ -132,20 +132,22 @@ ${locationUrl ? `📍 KONUM: ${locationUrl}` : "📍 Konum bilgisi mevcut değil
 Bu mesaj Phytotherapy.ai tarafından otomatik gönderilmiştir.`;
 
     // 6. Log SOS event to Supabase
-    await supabase.from("sos_events").insert({
-      user_id: userId,
-      alert_type: alertType,
-      severity,
-      details,
-      vital_data: vitalData || null,
-      location: location || null,
-      contacts_notified: emergencyContacts?.map((c) => c.id) || [],
-      message_sent: sosMessage,
-      created_at: new Date().toISOString(),
-    }).catch(() => {
+    try {
+      await supabase.from("sos_events").insert({
+        user_id: userId,
+        alert_type: alertType,
+        severity,
+        details,
+        vital_data: vitalData || null,
+        location: location || null,
+        contacts_notified: emergencyContacts?.map((c: any) => c.id) || [],
+        message_sent: sosMessage,
+        created_at: new Date().toISOString(),
+      });
+    } catch {
       // Table might not exist yet — silent fail, SOS still works
       console.warn("[SOS] sos_events table not found — logging skipped");
-    });
+    }
 
     // 7. Send notifications to emergency contacts
     // ─── PRODUCTION: Uncomment one of these integrations ───
