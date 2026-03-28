@@ -85,13 +85,13 @@ export default function SnoringApneaPage() {
                 onClick={() => { const a = [...answers]; a[i] = true; setAnswers(a); setResult(null); }}
                 className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${answers[i] === true ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-500"}`}
               >
-                {lang === "tr" ? "Evet" : "Yes"}
+                {tx("common.yes", lang)}
               </button>
               <button
                 onClick={() => { const a = [...answers]; a[i] = false; setAnswers(a); setResult(null); }}
                 className={`px-4 py-1.5 rounded-lg text-sm font-medium transition ${answers[i] === false ? "bg-gray-600 text-white" : "bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-500"}`}
               >
-                {lang === "tr" ? "Hayir" : "No"}
+                {tx("common.no", lang)}
               </button>
             </div>
           </div>

@@ -94,7 +94,7 @@ export default function HairNailHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("hair.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -135,7 +135,7 @@ export default function HairNailHealthPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">{lang === "tr" ? "Sure" : "Duration"}</label>
+            <label className="block text-sm font-medium mb-1">{tx("common.duration", lang)}</label>
             <select
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
@@ -183,7 +183,7 @@ export default function HairNailHealthPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "İlaç Etkileri" : "Medication Effects"}
+                  {tx("common.medicationEffects", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {analysis.medicationEffects.map((eff, i) => (
@@ -251,7 +251,7 @@ export default function HairNailHealthPage() {
             {/* Supplements */}
             {analysis.supplements?.length > 0 && (
               <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Takviyeler" : "Supplements"}</h2>
+                <h2 className="text-lg font-semibold">{tx("common.supplements", lang)}</h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {analysis.supplements.map((sup, i) => (
                     <div key={i} className="border rounded-xl p-4 space-y-1">
@@ -288,7 +288,7 @@ export default function HairNailHealthPage() {
             {analysis.whenToSeeDoctor?.length > 0 && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 space-y-3">
                 <h2 className="text-lg font-semibold text-red-700 dark:text-red-400 flex items-center gap-2">
-                  <ShieldAlert className="w-5 h-5" /> {lang === "tr" ? "Doktora Başvurun" : "See a Doctor If"}
+                  <ShieldAlert className="w-5 h-5" /> {tx("common.seeDoctor", lang)}
                 </h2>
                 {analysis.whenToSeeDoctor.map((item, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm text-red-700 dark:text-red-400">
@@ -301,7 +301,7 @@ export default function HairNailHealthPage() {
             {analysis.sources?.length > 0 && (
               <div className="bg-card border rounded-2xl p-4">
                 <button onClick={() => setShowSources(!showSources)} className="text-sm font-medium text-muted-foreground hover:text-foreground">
-                  {lang === "tr" ? "Kaynaklar" : "Sources"} ({analysis.sources.length}) {showSources ? "▴" : "▾"}
+                  {tx("common.sources", lang)} ({analysis.sources.length}) {showSources ? "▴" : "▾"}
                 </button>
                 {showSources && (
                   <div className="mt-3 space-y-1">

@@ -111,7 +111,7 @@ export default function FamilyHealthTreePage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("familytree.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -190,7 +190,7 @@ export default function FamilyHealthTreePage() {
             size="lg"
           >
             {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Analiz ediliyor..." : "Analyzing..."}</>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
             ) : (
               <><Sparkles className="mr-2 h-5 w-5" />{tx("familytree.analyze", lang)}</>
             )}

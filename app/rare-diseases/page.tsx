@@ -96,7 +96,7 @@ export default function RareDiseasesPage() {
 
           {/* Symptoms */}
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{lang === "tr" ? "Semptomlar" : "Symptoms"}</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{tx("common.symptoms", lang)}</h3>
             <div className="flex flex-wrap gap-2">
               {result.symptoms?.map((s, i) => (
                 <span key={i} className="px-3 py-1 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 rounded-full text-xs">{s}</span>

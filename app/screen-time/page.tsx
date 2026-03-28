@@ -79,10 +79,10 @@ const QUIZ: QuizQuestion[] = [
   },
 ];
 
-function getAssessmentResult(score: number, lang: string): { label: string; color: string; advice: string } {
+function getAssessmentResult(score: number, lang: "en" | "tr"): { label: string; color: string; advice: string } {
   if (score <= 3) {
     return {
-      label: lang === "tr" ? "Düşük Risk" : "Low Risk",
+      label: tx("common.lowRisk", lang),
       color: "text-green-600 dark:text-green-400",
       advice: lang === "tr"
         ? "Ekran kullaniminiz sağlıkli gorunuyor. Iyi aliskanliklarinizi sürdürun!"
@@ -91,7 +91,7 @@ function getAssessmentResult(score: number, lang: string): { label: string; colo
   }
   if (score <= 7) {
     return {
-      label: lang === "tr" ? "Orta Risk" : "Moderate Risk",
+      label: tx("common.moderateRisk", lang),
       color: "text-amber-600 dark:text-amber-400",
       advice: lang === "tr"
         ? "Ekran kullaniminizi azaltmak için bazi adimlar atmaniz oneriliyor."
@@ -99,7 +99,7 @@ function getAssessmentResult(score: number, lang: string): { label: string; colo
     };
   }
   return {
-    label: lang === "tr" ? "Yüksek Risk" : "High Risk",
+    label: tx("common.highRisk", lang),
     color: "text-red-600 dark:text-red-400",
     advice: lang === "tr"
       ? "Ekran kullaniminiz goz sağlığınizi olumsuz etkiliyor olabilir. Asagidaki ipuclarini uygulayın."
@@ -168,7 +168,7 @@ export default function ScreenTimePage() {
             <div className="flex items-center justify-center gap-4 mb-3">
               <div className="text-center">
                 <p className="text-3xl font-bold text-violet-600 dark:text-violet-400">20</p>
-                <p className="text-xs text-muted-foreground">{lang === "tr" ? "dakika" : "minutes"}</p>
+                <p className="text-xs text-muted-foreground">{tx("common.minutes", lang)}</p>
               </div>
               <span className="text-xl text-muted-foreground">-</span>
               <div className="text-center">

@@ -122,7 +122,7 @@ export default function MensHealthPage() {
         <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-8 text-center dark:border-blue-800 dark:bg-blue-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-blue-400" />
           <p className="text-lg font-medium text-blue-700 dark:text-blue-300">
-            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
+            {tx("common.loginToUse2", lang)}
           </p>
         </div>
       </div>
@@ -143,13 +143,13 @@ export default function MensHealthPage() {
 
       {/* Age */}
       <div className="mb-6 rounded-xl border bg-card p-4 shadow-sm">
-        <label className="mb-1 block text-sm font-semibold text-muted-foreground">{lang === "tr" ? "Yas" : "Age"}</label>
+        <label className="mb-1 block text-sm font-semibold text-muted-foreground">{tx("common.age", lang)}</label>
         <input type="number" min={18} max={100} value={age} onChange={(e) => setAge(Number(e.target.value))} className="w-24 rounded-lg border bg-background px-3 py-2 text-center text-lg font-bold" />
       </div>
 
       {/* Symptoms */}
       <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">{lang === "tr" ? "Semptomlar" : "Symptoms"}</h2>
+        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">{tx("common.symptoms", lang)}</h2>
         <div className="flex flex-wrap gap-2">
           {symptoms.map((s) => (
             <button
@@ -180,7 +180,7 @@ export default function MensHealthPage() {
                   }}
                   className={`rounded-full px-4 py-1 text-sm font-semibold transition-colors ${adamAnswers[qi] ? "bg-blue-500 text-white" : "bg-gray-100 dark:bg-gray-800"}`}
                 >
-                  {adamAnswers[qi] ? (lang === "tr" ? "Evet" : "Yes") : (lang === "tr" ? "Hayir" : "No")}
+                  {adamAnswers[qi] ? tx("common.yes", lang) : tx("common.no", lang)}
                 </button>
               </div>
             ))}
@@ -190,7 +190,7 @@ export default function MensHealthPage() {
 
       <Button onClick={handleAnalyze} disabled={isLoading} className="mb-6 w-full bg-blue-600 hover:bg-blue-700 text-white" size="lg">
         {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Analiz ediliyor..." : "Analyzing..."}</>
+          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
         ) : (
           <><Shield className="mr-2 h-5 w-5" />{tx("mens.analyze", lang)}</>
         )}
@@ -258,7 +258,7 @@ export default function MensHealthPage() {
           {result.supplementSuggestions?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {lang === "tr" ? "Takviye Önerileri" : "Supplement Suggestions"}
+                {tx("common.supplementSuggestions", lang)}
               </h3>
               {result.supplementSuggestions.map((supp, i) => (
                 <div key={i} className="mb-3 rounded-lg border p-3 last:mb-0">

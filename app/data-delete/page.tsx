@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 export default function DataDeletePage() {
   const { lang } = useLang();
@@ -78,7 +79,7 @@ export default function DataDeletePage() {
                 {dataCategories.map((cat, i) => (
                   <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
                     <span className="text-sm">{isTr ? cat.tr : cat.en}</span>
-                    <Badge variant="outline">{cat.count} {isTr ? "kayit" : "records"}</Badge>
+                    <Badge variant="outline">{cat.count} {tx("common.records", lang)}</Badge>
                   </div>
                 ))}
               </div>
@@ -107,7 +108,7 @@ export default function DataDeletePage() {
               {deleteText === "DELETE" && <div className="flex items-center gap-2 mt-4 text-green-600"><CheckCircle2 className="w-4 h-4" /><span className="text-sm">{isTr ? "Onay kodu doğru" : "Confirmation code correct"}</span></div>}
             </Card>
             <div className="flex gap-3">
-              <Button variant="outline" className="flex-1" onClick={() => setStep(1)}><ArrowLeft className="w-4 h-4 mr-2" /> {isTr ? "Geri" : "Back"}</Button>
+              <Button variant="outline" className="flex-1" onClick={() => setStep(1)}><ArrowLeft className="w-4 h-4 mr-2" /> {tx("common.back", lang)}</Button>
               <Button className="flex-1 bg-red-500 hover:bg-red-600" disabled={deleteText !== "DELETE"} onClick={() => setStep(3)}>{isTr ? "Son Adim" : "Final Step"} <ArrowRight className="w-4 h-4 ml-2" /></Button>
             </div>
           </div>
@@ -125,7 +126,7 @@ export default function DataDeletePage() {
               </label>
             </Card>
             <div className="flex gap-3">
-              <Button variant="outline" className="flex-1" onClick={() => setStep(2)}><ArrowLeft className="w-4 h-4 mr-2" /> {isTr ? "Geri" : "Back"}</Button>
+              <Button variant="outline" className="flex-1" onClick={() => setStep(2)}><ArrowLeft className="w-4 h-4 mr-2" /> {tx("common.back", lang)}</Button>
               <Button className="flex-1 bg-red-600 hover:bg-red-700" disabled={!confirmed} onClick={handleDelete}><Trash2 className="w-4 h-4 mr-2" /> {isTr ? "Hesabimi Sil" : "Delete My Account"}</Button>
             </div>
           </div>

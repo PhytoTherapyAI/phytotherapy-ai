@@ -70,7 +70,7 @@ export default function LiverMonitorPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("liver.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
           <Button onClick={() => window.location.href = "/auth/login"}><LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}</Button>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function LiverMonitorPage() {
 
             {/* Lab Interpretation */}
             <div className="bg-card border rounded-2xl p-6 space-y-4">
-              <h2 className="text-lg font-semibold">{lang === "tr" ? "Laboratuvar Yorumlama" : "Lab Interpretation"}</h2>
+              <h2 className="text-lg font-semibold">{tx("common.labInterpretation", lang)}</h2>
               <div className="grid sm:grid-cols-2 gap-3">
                 {Object.entries(analysis.labInterpretation || {}).map(([key, val]) => (
                   <div key={key} className="bg-muted/50 rounded-xl p-3">
@@ -194,7 +194,7 @@ export default function LiverMonitorPage() {
             {/* Recommendations */}
             {analysis.recommendations?.length > 0 && (
               <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Öneriler" : "Recommendations"}</h2>
+                <h2 className="text-lg font-semibold">{tx("common.recommendations", lang)}</h2>
                 <div className="grid gap-3">
                   {analysis.recommendations.map((rec, i) => (
                     <div key={i} className="bg-muted/50 rounded-xl p-4">
@@ -216,7 +216,7 @@ export default function LiverMonitorPage() {
             {/* Supplements */}
             {analysis.supplements?.length > 0 && (
               <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Takviyeler" : "Supplements"}</h2>
+                <h2 className="text-lg font-semibold">{tx("common.supplements", lang)}</h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {analysis.supplements.map((sup, i) => (
                     <div key={i} className="border rounded-xl p-4 space-y-1">
@@ -240,7 +240,7 @@ export default function LiverMonitorPage() {
             {analysis.whenToSeeDoctor?.length > 0 && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 space-y-3">
                 <h2 className="text-lg font-semibold text-red-700 dark:text-red-400 flex items-center gap-2">
-                  <ShieldAlert className="w-5 h-5" /> {lang === "tr" ? "Doktora Başvurun" : "See a Doctor If"}
+                  <ShieldAlert className="w-5 h-5" /> {tx("common.seeDoctor", lang)}
                 </h2>
                 {analysis.whenToSeeDoctor.map((item, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm text-red-700 dark:text-red-400">
@@ -253,7 +253,7 @@ export default function LiverMonitorPage() {
             {analysis.sources?.length > 0 && (
               <div className="bg-card border rounded-2xl p-4">
                 <button onClick={() => setShowSources(!showSources)} className="text-sm font-medium text-muted-foreground hover:text-foreground">
-                  {lang === "tr" ? "Kaynaklar" : "Sources"} ({analysis.sources.length}) {showSources ? "▴" : "▾"}
+                  {tx("common.sources", lang)} ({analysis.sources.length}) {showSources ? "▴" : "▾"}
                 </button>
                 {showSources && <div className="mt-3 space-y-1">{analysis.sources.map((src, i) => (
                   <a key={i} href={src.url} target="_blank" rel="noopener noreferrer" className="block text-xs text-blue-600 hover:underline truncate">{src.title}</a>

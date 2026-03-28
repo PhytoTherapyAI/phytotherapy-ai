@@ -535,7 +535,7 @@ function EntryCard({
   const [expanded, setExpanded] = useState(false);
   const moodEmoji = MOOD_EMOJIS.find((m) => m.value === entry.mood)?.emoji || "\uD83D\uDE10";
   const preview = entry.content.length > 120 ? entry.content.slice(0, 120) + "..." : entry.content;
-  const dateStr = new Date(entry.date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", {
+  const dateStr = new Date(entry.date).toLocaleDateString(tx("common.locale", lang as "en" | "tr"), {
     weekday: "short",
     month: "short",
     day: "numeric",

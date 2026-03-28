@@ -100,7 +100,7 @@ export default function MenopausePanelPage() {
         <div className="rounded-xl border border-purple-200 bg-purple-50/50 p-8 text-center dark:border-purple-800 dark:bg-purple-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-purple-400" />
           <p className="text-lg font-medium text-purple-700 dark:text-purple-300">
-            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
+            {tx("common.loginToUse2", lang)}
           </p>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function MenopausePanelPage() {
 
       {/* Age */}
       <div className="mb-6 rounded-xl border bg-card p-4 shadow-sm">
-        <label className="mb-1 block text-sm font-semibold text-muted-foreground">{lang === "tr" ? "Yas" : "Age"}</label>
+        <label className="mb-1 block text-sm font-semibold text-muted-foreground">{tx("common.age", lang)}</label>
         <input
           type="number"
           min={35}
@@ -172,7 +172,7 @@ export default function MenopausePanelPage() {
 
       <Button onClick={handleAnalyze} disabled={isLoading} className="mb-6 w-full bg-purple-600 hover:bg-purple-700 text-white" size="lg">
         {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Analiz ediliyor..." : "Analyzing..."}</>
+          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
         ) : (
           <><Leaf className="mr-2 h-5 w-5" />{tx("menopause.analyze", lang)}</>
         )}

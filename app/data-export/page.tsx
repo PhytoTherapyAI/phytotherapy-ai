@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface DataCategory { id: string; icon: React.ReactNode; en: string; tr: string; descEn: string; descTr: string; count: number; size: string; selected: boolean; }
 
@@ -53,8 +54,8 @@ export default function DataExportPage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">{isTr ? "Veri Kategorileri" : "Data Categories"}</h2>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => selectAll(true)}>{isTr ? "Tumunu Sec" : "Select All"}</Button>
-            <Button variant="outline" size="sm" onClick={() => selectAll(false)}>{isTr ? "Temizle" : "Clear"}</Button>
+            <Button variant="outline" size="sm" onClick={() => selectAll(true)}>{tx("common.selectAll", lang)}</Button>
+            <Button variant="outline" size="sm" onClick={() => selectAll(false)}>{tx("common.clear", lang)}</Button>
           </div>
         </div>
         <div className="space-y-2 mb-6">
@@ -67,7 +68,7 @@ export default function DataExportPage() {
                 <div className="text-xs text-gray-500">{isTr ? cat.descTr : cat.descEn}</div>
               </div>
               <div className="text-right">
-                <Badge variant="outline">{cat.count} {isTr ? "kayit" : "records"}</Badge>
+                <Badge variant="outline">{cat.count} {tx("common.records", lang)}</Badge>
                 <div className="text-xs text-gray-400 mt-1">{cat.size}</div>
               </div>
             </Card>
@@ -75,7 +76,7 @@ export default function DataExportPage() {
         </div>
         <Card className="p-4 mb-6">
           <div className="flex items-center justify-between">
-            <div><span className="text-sm font-medium">{isTr ? "Secili:" : "Selected:"} {selectedCount}/{categories.length}</span><p className="text-xs text-gray-500">{totalRecords} {isTr ? "kayit" : "records"}</p></div>
+            <div><span className="text-sm font-medium">{isTr ? "Secili:" : "Selected:"} {selectedCount}/{categories.length}</span><p className="text-xs text-gray-500">{totalRecords} {tx("common.records", lang)}</p></div>
             <div className="flex items-center gap-2 text-xs text-gray-400"><Clock className="w-3.5 h-3.5" />{isTr ? "~5 saniye" : "~5 seconds"}</div>
           </div>
         </Card>

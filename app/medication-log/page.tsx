@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -183,7 +184,7 @@ export default function MedicationLogPage() {
                           </div>
                           <p className="text-xs text-muted-foreground flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            {new Date(change.date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US")}
+                            {new Date(change.date).toLocaleDateString(tx("common.locale", lang))}
                           </p>
                           {(change.previousDose || change.newDose) && (
                             <p className="text-sm mt-1">{change.previousDose} → {change.newDose}</p>

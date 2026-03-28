@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { ChefHat, Search, Flame, Droplets, Snowflake, Zap, AlertTriangle } from "lucide-react"
+import { tx } from "@/lib/translations"
 
 interface FoodPrepTip {
   food: { en: string; tr: string }
@@ -69,7 +70,7 @@ export default function FoodPrepPage() {
           {["all", "enhances", "preserves"].map(f => (
             <button key={f} onClick={() => setFilter(f)}
               className={`px-3 py-1.5 rounded-full text-sm transition-colors ${filter === f ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}>
-              {f === "all" ? (lang === "tr" ? "Tümü" : "All") : IMPACT_CONFIG[f as keyof typeof IMPACT_CONFIG]?.label[lang]}
+              {f === "all" ? tx("common.all", lang) : IMPACT_CONFIG[f as keyof typeof IMPACT_CONFIG]?.label[lang]}
             </button>
           ))}
         </div>

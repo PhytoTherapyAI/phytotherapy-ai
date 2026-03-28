@@ -126,7 +126,7 @@ export default function YogaMeditationPage() {
                 <div className="flex items-center gap-2 mb-0.5">
                   <p className="font-semibold text-gray-900 dark:text-white">{g.condition[lang]}</p>
                   <span className={`px-2 py-0.5 rounded text-xs font-medium ${g.grade === "A" ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"}`}>
-                    {lang === "tr" ? "Kanit" : "Evidence"} {g.grade}
+                    {tx("common.evidence", lang)} {g.grade}
                   </span>
                 </div>
                 <p className="text-xs text-gray-500">{g.poses.length} {lang === "tr" ? "poz" : "poses"}</p>

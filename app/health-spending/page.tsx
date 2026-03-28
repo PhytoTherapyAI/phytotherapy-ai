@@ -242,7 +242,7 @@ export default function HealthSpendingPage() {
                   <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                     {exp.description || (lang === "tr" ? cat.tr : cat.en)}
                   </p>
-                  <p className="text-xs text-gray-400">{new Date(exp.date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US")}</p>
+                  <p className="text-xs text-gray-400">{new Date(exp.date).toLocaleDateString(tx("common.locale", lang))}</p>
                 </div>
                 <span className="text-sm font-bold text-gray-900 dark:text-white whitespace-nowrap">
                   {exp.amount.toLocaleString("tr-TR")} TL

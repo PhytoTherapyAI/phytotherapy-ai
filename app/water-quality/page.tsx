@@ -206,7 +206,7 @@ export default function WaterQualityPage() {
                   {hasKidneyDisease && item.warn && (
                     <p className="mt-1 text-xs text-red-600 dark:text-red-400">
                       <AlertTriangle className="mr-0.5 inline h-3 w-3" />
-                      {lang === "tr" ? "Dikkat" : "Caution"}
+                      {tx("common.caution", lang)}
                     </p>
                   )}
                 </div>

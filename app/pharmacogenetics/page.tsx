@@ -353,7 +353,7 @@ export default function PharmacogeneticsPage() {
                 className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
               >
                 {showSources ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                {lang === "tr" ? "Kaynaklar" : "Sources"} ({result.sources.length})
+                {tx("common.sources", lang)} ({result.sources.length})
               </button>
               {showSources && (
                 <div className="mt-2 space-y-1">

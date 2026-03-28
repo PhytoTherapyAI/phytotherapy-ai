@@ -119,7 +119,7 @@ export default function AddictionRecoveryPage() {
         <div className="rounded-xl border border-green-200 bg-green-50/50 p-8 text-center dark:border-green-800 dark:bg-green-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-green-400" />
           <p className="text-lg font-medium text-green-700 dark:text-green-300">
-            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
+            {tx("common.loginToUse2", lang)}
           </p>
         </div>
       </div>
@@ -303,7 +303,7 @@ export default function AddictionRecoveryPage() {
         size="lg"
       >
         {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Analiz ediliyor..." : "Analyzing..."}</>
+          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
         ) : (
           <><Shield className="mr-2 h-5 w-5" />{lang === "tr" ? "Destek Al" : "Get Support"}</>
         )}

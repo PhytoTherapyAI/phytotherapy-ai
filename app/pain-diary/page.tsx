@@ -362,8 +362,8 @@ export default function PainDiaryPage() {
             />
             <div className="mt-1 flex justify-between text-xs text-muted-foreground">
               <span>{lang === "tr" ? "Hafif" : "Mild"}</span>
-              <span>{lang === "tr" ? "Orta" : "Moderate"}</span>
-              <span>{lang === "tr" ? "Siddetli" : "Severe"}</span>
+              <span>{tx("common.moderate", lang)}</span>
+              <span>{tx("common.severe", lang)}</span>
             </div>
           </div>
 
@@ -459,7 +459,7 @@ export default function PainDiaryPage() {
           {/* Notes */}
           <div>
             <label className="mb-2 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {lang === "tr" ? "Notlar" : "Notes"}
+              {tx("common.notes", lang)}
             </label>
             <textarea
               value={notes}
@@ -494,7 +494,7 @@ export default function PainDiaryPage() {
             {isSaving ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {lang === "tr" ? "Kaydediliyor..." : "Saving..."}
+                {tx("common.saving", lang)}
               </>
             ) : (
               tx("pain.logPain", lang)
@@ -723,7 +723,7 @@ export default function PainDiaryPage() {
               {analysis.recommendations && analysis.recommendations.length > 0 && (
                 <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
                   <h3 className="mb-2 text-sm font-semibold text-red-700 dark:text-red-400">
-                    {lang === "tr" ? "Öneriler" : "Recommendations"}
+                    {tx("common.recommendations", lang)}
                   </h3>
                   <ul className="space-y-1">
                     {analysis.recommendations.map((r, i) => (
@@ -741,7 +741,7 @@ export default function PainDiaryPage() {
                 <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
                   <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-red-700 dark:text-red-400">
                     <ShieldAlert className="h-3.5 w-3.5" />
-                    {lang === "tr" ? "Doktora Ne Zaman Gidin" : "When to See a Doctor"}
+                    {tx("common.whenToSeeDoctor", lang)}
                   </h3>
                   <ul className="space-y-1">
                     {analysis.whenToSeeDoctor.map((s, i) => (
@@ -762,7 +762,7 @@ export default function PainDiaryPage() {
                     className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                   >
                     {showSources ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                    {lang === "tr" ? "Kaynaklar" : "Sources"} ({analysis.sources.length})
+                    {tx("common.sources", lang)} ({analysis.sources.length})
                   </button>
                   {showSources && (
                     <div className="mt-2 space-y-1">

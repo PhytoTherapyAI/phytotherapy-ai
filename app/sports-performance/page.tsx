@@ -397,7 +397,7 @@ export default function SportsPerformancePage() {
                           </span>
                           <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${safetyBadge(s.safety)}`}>
                             {s.safety === "safe" ? (lang === "tr" ? "Güvenli" : "Safe") :
-                             s.safety === "caution" ? (lang === "tr" ? "Dikkat" : "Caution") :
+                             s.safety === "caution" ? tx("common.caution", lang) :
                              (lang === "tr" ? "Kacinilmali" : "Avoid")}
                           </span>
                         </div>
@@ -413,7 +413,7 @@ export default function SportsPerformancePage() {
                           <p>{s.timing}</p>
                         </div>
                         <div>
-                          <p className="font-medium">{lang === "tr" ? "Sure" : "Duration"}</p>
+                          <p className="font-medium">{tx("common.duration", lang)}</p>
                           <p>{s.duration}</p>
                         </div>
                       </div>
@@ -569,7 +569,7 @@ export default function SportsPerformancePage() {
           {result.sources?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Kaynaklar" : "Sources"}
+                title={tx("common.sources", lang)}
                 icon={Info}
                 sectionKey="sources"
                 count={result.sources.length}

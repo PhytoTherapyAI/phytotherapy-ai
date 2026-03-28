@@ -367,7 +367,7 @@ export default function RehabilitationPage() {
               {tx("rehab.createProgram", lang)}
             </Button>
             <Button variant="ghost" onClick={() => setShowCreateForm(false)}>
-              {lang === "tr" ? "Kapat" : "Cancel"}
+              {tx("common.close", lang)}
             </Button>
           </div>
         </div>
@@ -586,7 +586,7 @@ export default function RehabilitationPage() {
                             {tx("rehab.logEntry", lang)}
                           </Button>
                           <Button variant="ghost" onClick={() => setShowLogForm(null)}>
-                            {lang === "tr" ? "Kapat" : "Cancel"}
+                            {tx("common.close", lang)}
                           </Button>
                         </div>
                       </div>

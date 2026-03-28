@@ -313,7 +313,7 @@ export default function DoctorReferralPage() {
                     {stats.monthlyBreakdown.map((m) => {
                       const pct = maxBarValue > 0 ? (m.count / maxBarValue) * 100 : 0;
                       const monthLabel = new Date(m.month + "-01").toLocaleDateString(
-                        lang === "tr" ? "tr-TR" : "en-US",
+                        tx("common.locale", lang),
                         { month: "short" }
                       );
                       return (

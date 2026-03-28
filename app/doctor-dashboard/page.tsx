@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface Patient { id: string; name: string; age: number; compliance: number; lastVisit: string; conditions: string[]; risk: "low" | "medium" | "high"; medications: number; }
 
@@ -46,7 +47,7 @@ export default function DoctorDashboardPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           <Card className="p-4 text-center"><Users className="w-6 h-6 text-indigo-500 mx-auto mb-1" /><div className="text-2xl font-bold">{patients.length}</div><div className="text-xs text-gray-500">{isTr ? "Toplam Hasta" : "Total Patients"}</div></Card>
           <Card className="p-4 text-center"><CheckCircle2 className="w-6 h-6 text-green-500 mx-auto mb-1" /><div className="text-2xl font-bold text-green-600">{avgCompliance}%</div><div className="text-xs text-gray-500">{isTr ? "Ort. Uyum" : "Avg Compliance"}</div></Card>
-          <Card className="p-4 text-center"><AlertTriangle className="w-6 h-6 text-red-500 mx-auto mb-1" /><div className="text-2xl font-bold text-red-600">{highRisk}</div><div className="text-xs text-gray-500">{isTr ? "Yüksek Risk" : "High Risk"}</div></Card>
+          <Card className="p-4 text-center"><AlertTriangle className="w-6 h-6 text-red-500 mx-auto mb-1" /><div className="text-2xl font-bold text-red-600">{highRisk}</div><div className="text-xs text-gray-500">{tx("common.highRisk", lang)}</div></Card>
           <Card className="p-4 text-center"><Clock className="w-6 h-6 text-orange-500 mx-auto mb-1" /><div className="text-2xl font-bold text-orange-600">2</div><div className="text-xs text-gray-500">{isTr ? "Takip Geciken" : "Overdue Follow-up"}</div></Card>
         </div>
 

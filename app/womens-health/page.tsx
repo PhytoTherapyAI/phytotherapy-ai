@@ -446,7 +446,7 @@ export default function WomensHealthPage() {
                     <div>
                       <p className="font-medium text-sm">{c.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {c.start_date} ({daysSinceStart} {lang === "tr" ? "gun" : "days"})
+                        {c.start_date} ({daysSinceStart} {tx("common.days", lang)})
                       </p>
                     </div>
                     {annualReviewDue && (
@@ -712,7 +712,7 @@ export default function WomensHealthPage() {
                     </p>
                     <p className="font-bold text-sm text-pink-600">
                       {analysis.averageCycleLength
-                        ? `${analysis.averageCycleLength} ${lang === "tr" ? "gun" : "days"}`
+                        ? `${analysis.averageCycleLength} ${tx("common.days", lang)}`
                         : "—"}
                     </p>
                   </div>
@@ -835,7 +835,7 @@ export default function WomensHealthPage() {
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-sm font-medium">
-                          {start.toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", {
+                          {start.toLocaleDateString(tx("common.locale", lang), {
                             month: "short",
                             day: "numeric",
                             year: "numeric",
@@ -843,7 +843,7 @@ export default function WomensHealthPage() {
                           {end && (
                             <>
                               {" — "}
-                              {end.toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", {
+                              {end.toLocaleDateString(tx("common.locale", lang), {
                                 month: "short",
                                 day: "numeric",
                               })}
@@ -852,7 +852,7 @@ export default function WomensHealthPage() {
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {duration !== null
-                            ? `${duration} ${lang === "tr" ? "gun" : "days"}`
+                            ? `${duration} ${tx("common.days", lang)}`
                             : lang === "tr" ? "devam ediyor" : "ongoing"}
                         </span>
                       </div>

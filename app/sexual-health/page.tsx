@@ -106,7 +106,7 @@ export default function SexualHealthPage() {
         <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-8 text-center dark:border-slate-800 dark:bg-slate-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-slate-400" />
           <p className="text-lg font-medium text-slate-700 dark:text-slate-300">
-            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
+            {tx("common.loginToUse2", lang)}
           </p>
         </div>
       </div>
@@ -128,15 +128,15 @@ export default function SexualHealthPage() {
       {/* Age + Gender */}
       <div className="mb-6 grid grid-cols-2 gap-4">
         <div className="rounded-xl border bg-card p-4 shadow-sm">
-          <label className="mb-1 block text-sm font-semibold text-muted-foreground">{lang === "tr" ? "Yas" : "Age"}</label>
+          <label className="mb-1 block text-sm font-semibold text-muted-foreground">{tx("common.age", lang)}</label>
           <input type="number" min={18} max={100} value={age} onChange={(e) => setAge(Number(e.target.value))} className="w-24 rounded-lg border bg-background px-3 py-2 text-center text-lg font-bold" />
         </div>
         <div className="rounded-xl border bg-card p-4 shadow-sm">
-          <label className="mb-1 block text-sm font-semibold text-muted-foreground">{lang === "tr" ? "Cinsiyet" : "Gender"}</label>
+          <label className="mb-1 block text-sm font-semibold text-muted-foreground">{tx("common.gender", lang)}</label>
           <div className="flex gap-2">
             {[
-              { value: "male", label: lang === "tr" ? "Erkek" : "Male" },
-              { value: "female", label: lang === "tr" ? "Kadin" : "Female" },
+              { value: "male", label: tx("common.male", lang) },
+              { value: "female", label: tx("common.female", lang) },
               { value: "not_specified", label: lang === "tr" ? "Belirtmiyorum" : "Prefer not to say" },
             ].map((g) => (
               <button
@@ -175,7 +175,7 @@ export default function SexualHealthPage() {
 
       <Button onClick={handleAnalyze} disabled={isLoading} className="mb-6 w-full bg-slate-700 hover:bg-slate-800 text-white dark:bg-slate-600 dark:hover:bg-slate-500" size="lg">
         {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Analiz ediliyor..." : "Analyzing..."}</>
+          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
         ) : (
           <><Pill className="mr-2 h-5 w-5" />{tx("sexual.analyze", lang)}</>
         )}
@@ -264,7 +264,7 @@ export default function SexualHealthPage() {
           {result.recommendations?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-slate-700 dark:text-slate-300">
-                {lang === "tr" ? "Öneriler" : "Recommendations"}
+                {tx("common.recommendations", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.recommendations.map((rec, i) => (

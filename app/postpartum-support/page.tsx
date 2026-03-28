@@ -151,7 +151,7 @@ export default function PostpartumSupportPage() {
         <div className="rounded-xl border border-purple-200 bg-purple-50/50 p-8 text-center dark:border-purple-800 dark:bg-purple-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-purple-400" />
           <p className="text-lg font-medium text-purple-700 dark:text-purple-300">
-            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
+            {tx("common.loginToUse2", lang)}
           </p>
         </div>
       </div>
@@ -232,7 +232,7 @@ export default function PostpartumSupportPage() {
                 breastfeeding ? "bg-purple-500 text-white" : "bg-gray-100 dark:bg-gray-800"
               }`}
             >
-              {breastfeeding ? (lang === "tr" ? "Evet" : "Yes") : (lang === "tr" ? "Hayir" : "No")}
+              {breastfeeding ? tx("common.yes", lang) : tx("common.no", lang)}
             </button>
           </div>
           <div className="rounded-xl border bg-card p-4 shadow-sm">

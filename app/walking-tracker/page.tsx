@@ -79,7 +79,7 @@ export default function WalkingTrackerPage() {
           <h3 className="font-semibold text-green-800 dark:text-green-300 flex items-center gap-2">
             <Target className="w-4 h-4" /> {lang === "tr" ? "Haftalık Hedef" : "Weekly Target"}
           </h3>
-          <span className="text-sm text-green-600 dark:text-green-400">{weekMinutes} / {WHO_TARGET_MINUTES} {lang === "tr" ? "dk" : "min"}</span>
+          <span className="text-sm text-green-600 dark:text-green-400">{weekMinutes} / {WHO_TARGET_MINUTES} {tx("common.min", lang)}</span>
         </div>
         <div className="w-full h-4 bg-green-200 dark:bg-green-800 rounded-full overflow-hidden mb-3">
           <div className="h-full bg-green-500 rounded-full transition-all duration-500" style={{ width: `${weekProgress}%` }} />
@@ -95,7 +95,7 @@ export default function WalkingTrackerPage() {
           </div>
           <div>
             <p className="text-2xl font-bold text-green-700 dark:text-green-300">{weekMinutes}</p>
-            <p className="text-xs text-green-600">{lang === "tr" ? "dakika" : "minutes"}</p>
+            <p className="text-xs text-green-600">{tx("common.minutes", lang)}</p>
           </div>
         </div>
       </div>
@@ -160,7 +160,7 @@ export default function WalkingTrackerPage() {
                 <span className="text-xs text-gray-400">{entry.date}</span>
                 {entry.steps > 0 && <span className="text-sm text-gray-700 dark:text-gray-300">{entry.steps.toLocaleString()} {lang === "tr" ? "adim" : "steps"}</span>}
                 {entry.distance > 0 && <span className="text-sm text-gray-500">{entry.distance} km</span>}
-                {entry.duration > 0 && <span className="text-sm text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3" />{entry.duration}{lang === "tr" ? "dk" : "min"}</span>}
+                {entry.duration > 0 && <span className="text-sm text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3" />{entry.duration}{tx("common.min", lang)}</span>}
               </div>
               <button onClick={() => deleteEntry(entry.id)} className="text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
             </div>

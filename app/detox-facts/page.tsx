@@ -121,7 +121,7 @@ export default function DetoxFactsPage() {
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className={`text-xs font-medium ${vs.color}`}>{vs.label[lang]}</span>
                       <span className="text-xs text-gray-400">|</span>
-                      <span className="text-xs text-gray-500">{lang === "tr" ? "Kanit" : "Evidence"}: {item.grade}</span>
+                      <span className="text-xs text-gray-500">{tx("common.evidence", lang)}: {item.grade}</span>
                     </div>
                   </div>
                 </div>
@@ -138,7 +138,7 @@ export default function DetoxFactsPage() {
                     <p className="text-sm text-gray-700 dark:text-gray-300">{item.reality[lang]}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">{lang === "tr" ? "Kanit" : "Evidence"}</p>
+                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">{tx("common.evidence", lang)}</p>
                     <p className="text-sm text-gray-700 dark:text-gray-300">{item.evidence[lang]}</p>
                   </div>
                   {item.safetyNote && (

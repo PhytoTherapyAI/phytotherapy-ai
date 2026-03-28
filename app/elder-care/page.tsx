@@ -292,7 +292,7 @@ export default function ElderCarePage() {
                   )}
                   {result.polypharmacy.recommendations?.length > 0 && (
                     <div>
-                      <p className="mb-1 text-xs font-semibold text-green-600 dark:text-green-400">{lang === "tr" ? "Öneriler" : "Recommendations"}</p>
+                      <p className="mb-1 text-xs font-semibold text-green-600 dark:text-green-400">{tx("common.recommendations", lang)}</p>
                       {result.polypharmacy.recommendations.map((r, i) => (
                         <div key={i} className="flex items-start gap-2 text-sm mb-1">
                           <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 text-green-500" />
@@ -461,7 +461,7 @@ export default function ElderCarePage() {
           {result.exercise?.recommendations?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Egzersiz Önerileri" : "Exercise Recommendations"}
+                title={tx("common.exerciseRecs", lang)}
                 icon={Dumbbell}
                 sectionKey="exercise"
                 count={result.exercise.recommendations.length}

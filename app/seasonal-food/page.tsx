@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Apple, Leaf, Sun, Snowflake, Flower, TreeDeciduous, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { tx } from "@/lib/translations"
 
 interface SeasonalItem {
   name: { en: string; tr: string }
@@ -74,7 +75,7 @@ export default function SeasonalFoodPage() {
 
         <div className="flex gap-2 mb-4 justify-center flex-wrap">
           <Button size="sm" variant={selectedSeason === "all" ? "default" : "outline"} onClick={() => setSelectedSeason("all")}>
-            {lang === "tr" ? "Tümü" : "All"}
+            {tx("common.all", lang)}
           </Button>
           {SEASONS.map(s => {
             const Icon = s.icon

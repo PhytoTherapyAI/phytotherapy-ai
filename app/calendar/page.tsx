@@ -289,11 +289,11 @@ export default function CalendarPage() {
                 {vitals.map((vital) => {
                   const recordedDate = new Date(vital.recorded_at)
                   const dateStr = recordedDate.toLocaleDateString(
-                    lang === "tr" ? "tr-TR" : "en-US",
+                    tx("common.locale", lang),
                     { day: "numeric", month: "short", year: "numeric" }
                   )
                   const timeStr = recordedDate.toLocaleTimeString(
-                    lang === "tr" ? "tr-TR" : "en-US",
+                    tx("common.locale", lang),
                     { hour: "2-digit", minute: "2-digit" }
                   )
 

@@ -150,7 +150,7 @@ export default function PetHealthPage() {
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-gray-900 dark:text-white text-sm">{d.name[lang]}</p>
                     <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${severityColor(d.severity)}`}>
-                      {d.severity === "high" ? (lang === "tr" ? "Yüksek" : "High") : d.severity === "moderate" ? (lang === "tr" ? "Orta" : "Moderate") : (lang === "tr" ? "Düşük" : "Low")}
+                      {d.severity === "high" ? tx("common.high", lang) : d.severity === "moderate" ? tx("common.moderate", lang) : tx("common.low", lang)}
                     </span>
                   </div>
                   <p className="text-xs text-gray-400">{d.source[lang]}</p>
@@ -165,7 +165,7 @@ export default function PetHealthPage() {
                   <p className="text-sm text-gray-700 dark:text-gray-300">{d.transmission[lang]}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-gray-500 uppercase mb-1">{lang === "tr" ? "Semptomlar" : "Symptoms"}</p>
+                  <p className="text-xs font-medium text-gray-500 uppercase mb-1">{tx("common.symptoms", lang)}</p>
                   <p className="text-sm text-gray-700 dark:text-gray-300">{d.symptoms[lang]}</p>
                 </div>
                 <div>

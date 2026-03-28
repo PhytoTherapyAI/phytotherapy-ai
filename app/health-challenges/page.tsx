@@ -231,7 +231,7 @@ export default function HealthChallengesPage() {
                         <span className={`font-bold ${c.color}`}>{getStreak(state.completedDays)}</span>
                       </div>
                     )}
-                    <span className="text-xs text-gray-400">{c.days} {lang === "tr" ? "gun" : "days"}</span>
+                    <span className="text-xs text-gray-400">{c.days} {tx("common.days", lang)}</span>
                   </div>
                 </button>
 

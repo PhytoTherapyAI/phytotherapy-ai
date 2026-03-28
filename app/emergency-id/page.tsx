@@ -154,7 +154,7 @@ export default function EmergencyIdPage() {
                     {gender && (
                       <div className="row flex justify-between items-center py-1.5 border-b border-gray-100 dark:border-gray-700">
                         <span className="label text-sm font-medium text-gray-500 dark:text-gray-400">
-                          {lang === "tr" ? "Cinsiyet" : "Gender"}
+                          {tx("common.gender", lang)}
                         </span>
                         <span className="value text-sm text-gray-900 dark:text-white">{gender}</span>
                       </div>

@@ -417,7 +417,7 @@ export default function SupplementMarketplacePage() {
                 {/* Badges */}
                 <div className="flex flex-wrap gap-2 mb-3">
                   <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${GRADE_COLORS[supplement.evidenceGrade]}`}>
-                    {lang === "tr" ? "Kanit" : "Evidence"} {supplement.evidenceGrade}
+                    {tx("common.evidence", lang)} {supplement.evidenceGrade}
                   </span>
                   {supplement.pharmacyQuality && (
                     <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 flex items-center gap-1">

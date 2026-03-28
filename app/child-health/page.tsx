@@ -430,7 +430,7 @@ export default function ChildHealthPage() {
           {result.whenToSeeDoctor?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Doktora Ne Zaman Gidin" : "When to See a Doctor"}
+                title={tx("common.whenToSeeDoctor", lang)}
                 icon={Stethoscope}
                 sectionKey="doctor"
                 count={result.whenToSeeDoctor.length}
@@ -494,7 +494,7 @@ export default function ChildHealthPage() {
           {result.sources?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Kaynaklar" : "Sources"}
+                title={tx("common.sources", lang)}
                 icon={Info}
                 sectionKey="sources"
                 count={result.sources.length}

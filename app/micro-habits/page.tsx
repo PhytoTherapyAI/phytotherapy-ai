@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -175,7 +176,7 @@ export default function MicroHabitsPage() {
                     </p>
                     <div className="flex items-center gap-3 mt-2">
                       <Badge variant="outline" className="text-xs">
-                        <Flame className="w-3 h-3 mr-1 text-orange-500" />{habit.streak} {lang === "tr" ? "gün" : "days"}
+                        <Flame className="w-3 h-3 mr-1 text-orange-500" />{habit.streak} {tx("common.days", lang)}
                       </Badge>
                       <div className="flex gap-0.5">
                         {Array.from({ length: habit.maxLevel + 1 }).map((_, i) => (

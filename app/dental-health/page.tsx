@@ -135,7 +135,7 @@ export default function DentalHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("dental.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -231,10 +231,10 @@ export default function DentalHealthPage() {
                     }`}
                   >
                     {effect.severity === "high"
-                      ? lang === "tr" ? "Yüksek Risk" : "High Risk"
+                      ? tx("common.highRisk", lang)
                       : effect.severity === "moderate"
-                      ? lang === "tr" ? "Orta Risk" : "Moderate Risk"
-                      : lang === "tr" ? "Düşük Risk" : "Low Risk"}
+                      ? tx("common.moderateRisk", lang)
+                      : tx("common.lowRisk", lang)}
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">

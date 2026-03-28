@@ -172,7 +172,7 @@ export default function AnalyticsPage() {
                         <div className="h-full w-full rounded-t bg-primary transition-all" />
                       </div>
                       <span className="text-[9px] text-muted-foreground">
-                        {new Date(w.week).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { month: "short", day: "numeric" })}
+                        {new Date(w.week).toLocaleDateString(tx("common.locale", lang), { month: "short", day: "numeric" })}
                       </span>
                     </div>
                   )
@@ -196,7 +196,7 @@ export default function AnalyticsPage() {
                 {data.checkInTrends.slice(-7).map((c) => (
                   <div key={c.date} className="flex items-center gap-3">
                     <span className="w-20 text-xs text-muted-foreground">
-                      {new Date(c.date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { month: "short", day: "numeric" })}
+                      {new Date(c.date).toLocaleDateString(tx("common.locale", lang), { month: "short", day: "numeric" })}
                     </span>
                     <div className="flex flex-1 gap-2">
                       <MetricBar value={c.energy} max={5} color="bg-amber-400" label="E" />

@@ -84,7 +84,7 @@ export default function ShiftWorkerPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("shift.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -139,7 +139,7 @@ export default function ShiftWorkerPage() {
             size="lg"
           >
             {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Plan oluşturuluyor..." : "Generating plan..."}</>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.generating", lang)}</>
             ) : (
               <><Sparkles className="mr-2 h-5 w-5" />{tx("shift.generate", lang)}</>
             )}
@@ -255,7 +255,7 @@ export default function ShiftWorkerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Pill className="w-5 h-5 text-green-500" />
-                  {lang === "tr" ? "Takviye Önerileri" : "Supplement Suggestions"}
+                  {tx("common.supplementSuggestions", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.supplementSuggestions.map((supp, i) => (
@@ -282,7 +282,7 @@ export default function ShiftWorkerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-3">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Dumbbell className="w-5 h-5 text-green-500" />
-                  {lang === "tr" ? "Egzersiz Önerileri" : "Exercise Recommendations"}
+                  {tx("common.exerciseRecs", lang)}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-3">

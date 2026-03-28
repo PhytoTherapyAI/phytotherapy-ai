@@ -253,7 +253,7 @@ export default function SideEffectsPage() {
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">{report.effect_description}</p>
                 <p className="mt-1 text-[10px] text-muted-foreground">
-                  {new Date(report.reported_at).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US")}
+                  {new Date(report.reported_at).toLocaleDateString(tx("common.locale", lang))}
                 </p>
               </div>
             ))}

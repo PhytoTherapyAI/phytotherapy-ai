@@ -188,7 +188,7 @@ export default function OperationsPage() {
                     <h3 className="font-semibold">{op.name}</h3>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Calendar className="h-3.5 w-3.5" />
-                      {new Date(op.date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { month: "long", day: "numeric", year: "numeric" })}
+                      {new Date(op.date).toLocaleDateString(tx("common.locale", lang), { month: "long", day: "numeric", year: "numeric" })}
                       <span className={`font-medium ${days <= 7 ? "text-red-500" : "text-blue-500"}`}>
                         ({isUpcoming ? `${days} ${tx("operations.daysLeft", lang)}` : tx("operations.past", lang)})
                       </span>

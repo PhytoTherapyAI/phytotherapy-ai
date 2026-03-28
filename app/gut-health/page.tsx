@@ -367,7 +367,7 @@ export default function GutHealthPage() {
             <div className="rounded-lg border p-4">
               <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
                 <Pill className="h-4 w-4 text-emerald-500" />
-                {lang === "tr" ? "İlaç Etkileri" : "Medication Effects"}
+                {tx("common.medicationEffects", lang)}
               </h3>
               <ul className="space-y-1">
                 {result.medicationEffects.map((m, i) => (
@@ -396,7 +396,7 @@ export default function GutHealthPage() {
             <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
               <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-red-700 dark:text-red-400">
                 <ShieldAlert className="h-3.5 w-3.5" />
-                {lang === "tr" ? "Doktora Ne Zaman Gidin" : "When to See a Doctor"}
+                {tx("common.whenToSeeDoctor", lang)}
               </h3>
               <ul className="space-y-1">
                 {result.whenToSeeDoctor.map((s, i) => (
@@ -417,7 +417,7 @@ export default function GutHealthPage() {
                 className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
               >
                 {showSources ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                {lang === "tr" ? "Kaynaklar" : "Sources"} ({result.sources.length})
+                {tx("common.sources", lang)} ({result.sources.length})
               </button>
               {showSources && (
                 <div className="mt-2 space-y-1">

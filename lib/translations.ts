@@ -3462,6 +3462,100 @@ const valueMarketplaceKeys: Record<string, TranslationEntry> = {
 }
 Object.assign(t, valueMarketplaceKeys)
 
+// ══════════════════════════════════════════
+// Common / Shared Tool Keys
+// ══════════════════════════════════════════
+const commonToolKeys: Record<string, TranslationEntry> = {
+  // Auth
+  "common.loginToUse": { en: "Please log in to use this tool", tr: "Bu aracı kullanmak için giriş yapın" },
+  "common.loginToUse2": { en: "Please sign in to use this tool.", tr: "Bu aracı kullanmak için giriş yapın." },
+  "common.signIn": { en: "Sign In", tr: "Giriş Yap" },
+  // Actions
+  "common.save": { en: "Save", tr: "Kaydet" },
+  "common.saving": { en: "Saving...", tr: "Kaydediliyor..." },
+  "common.cancel": { en: "Cancel", tr: "İptal" },
+  "common.close": { en: "Close", tr: "Kapat" },
+  "common.delete": { en: "Delete", tr: "Sil" },
+  "common.edit": { en: "Edit", tr: "Düzenle" },
+  "common.add": { en: "Add", tr: "Ekle" },
+  "common.analyze": { en: "Analyze", tr: "Analiz Et" },
+  "common.analyzing": { en: "Analyzing...", tr: "Analiz ediliyor..." },
+  "common.generate": { en: "Generate", tr: "Oluştur" },
+  "common.generating": { en: "Generating plan...", tr: "Plan oluşturuluyor..." },
+  "common.search": { en: "Search", tr: "Ara" },
+  "common.reset": { en: "Reset", tr: "Sıfırla" },
+  "common.refresh": { en: "Refresh", tr: "Yenile" },
+  "common.download": { en: "Download", tr: "İndir" },
+  "common.share": { en: "Share", tr: "Paylaş" },
+  "common.back": { en: "Back", tr: "Geri" },
+  "common.next": { en: "Next", tr: "İleri" },
+  "common.submit": { en: "Submit", tr: "Gönder" },
+  "common.loading": { en: "Loading...", tr: "Yükleniyor..." },
+  "common.showMore": { en: "Show More", tr: "Daha Fazla" },
+  "common.showLess": { en: "Show Less", tr: "Daha Az" },
+  // Common labels
+  "common.date": { en: "Date", tr: "Tarih" },
+  "common.time": { en: "Time", tr: "Saat" },
+  "common.duration": { en: "Duration", tr: "Süre" },
+  "common.notes": { en: "Notes", tr: "Notlar" },
+  "common.notesOptional": { en: "Notes (optional)...", tr: "Notlar (opsiyonel)..." },
+  "common.type": { en: "Type", tr: "Tür" },
+  "common.status": { en: "Status", tr: "Durum" },
+  "common.name": { en: "Name", tr: "Ad" },
+  "common.description": { en: "Description", tr: "Açıklama" },
+  "common.category": { en: "Category", tr: "Kategori" },
+  "common.all": { en: "All", tr: "Tümü" },
+  "common.yes": { en: "Yes", tr: "Evet" },
+  "common.no": { en: "No", tr: "Hayır" },
+  "common.age": { en: "Age", tr: "Yaş" },
+  "common.gender": { en: "Gender", tr: "Cinsiyet" },
+  "common.male": { en: "Male", tr: "Erkek" },
+  "common.female": { en: "Female", tr: "Kadın" },
+  "common.days": { en: "days", tr: "gün" },
+  "common.minutes": { en: "minutes", tr: "dakika" },
+  "common.min": { en: "min", tr: "dk" },
+  "common.hours": { en: "hours", tr: "saat" },
+  // Medical common
+  "common.sources": { en: "Sources", tr: "Kaynaklar" },
+  "common.recommendations": { en: "Recommendations", tr: "Öneriler" },
+  "common.symptoms": { en: "Symptoms", tr: "Semptomlar" },
+  "common.supplements": { en: "Supplements", tr: "Takviyeler" },
+  "common.supplementSuggestions": { en: "Supplement Suggestions", tr: "Takviye Önerileri" },
+  "common.evidence": { en: "Evidence", tr: "Kanıt" },
+  "common.seeDoctor": { en: "See a Doctor If", tr: "Doktora Başvurun" },
+  "common.whenToSeeDoctor": { en: "When to See a Doctor", tr: "Doktora Ne Zaman Gidin" },
+  "common.medicationEffects": { en: "Medication Effects", tr: "İlaç Etkileri" },
+  "common.labInterpretation": { en: "Lab Interpretation", tr: "Laboratuvar Yorumlama" },
+  "common.exerciseRecs": { en: "Exercise Recommendations", tr: "Egzersiz Önerileri" },
+  "common.caution": { en: "Caution", tr: "Dikkat" },
+  "common.showAnalysis": { en: "Show Analysis", tr: "Analizi Göster" },
+  "common.hideAnalysis": { en: "Hide Analysis", tr: "Analizi Gizle" },
+  // Risk levels
+  "common.high": { en: "High", tr: "Yüksek" },
+  "common.moderate": { en: "Moderate", tr: "Orta" },
+  "common.low": { en: "Low", tr: "Düşük" },
+  "common.good": { en: "Good", tr: "İyi" },
+  "common.severe": { en: "Severe", tr: "Şiddetli" },
+  "common.highRisk": { en: "High Risk", tr: "Yüksek Risk" },
+  "common.moderateRisk": { en: "Moderate Risk", tr: "Orta Risk" },
+  "common.lowRisk": { en: "Low Risk", tr: "Düşük Risk" },
+  "common.atRisk": { en: "At Risk", tr: "Risk" },
+  "common.normal": { en: "Normal", tr: "Normal" },
+  // Locale
+  "common.locale": { en: "en-US", tr: "tr-TR" },
+  // Common page-level keys used across many pages
+  "common.profile": { en: "Profile", tr: "Profil" },
+  "common.connecting": { en: "Connecting...", tr: "Bağlanıyor..." },
+  "common.comingSoon": { en: "Coming Soon", tr: "Yakında" },
+  "common.selectAll": { en: "Select All", tr: "Tümünü Seç" },
+  "common.clear": { en: "Clear", tr: "Temizle" },
+  "common.continue": { en: "Continue", tr: "Devam Et" },
+  "common.confirm": { en: "Confirm", tr: "Onayla" },
+  "common.records": { en: "records", tr: "kayıt" },
+  "common.online": { en: "Online", tr: "Çevrimiçi" },
+}
+Object.assign(t, commonToolKeys)
+
 /**
  * Export the raw translations object for iteration.
  */

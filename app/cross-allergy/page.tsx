@@ -4,7 +4,7 @@ import { useState } from "react";
 import { AlertTriangle, ChevronDown, ChevronUp, Shield, Flower2, Bug, Shell, Apple, Milk } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, Lang } from "@/lib/translations";
 
 interface CrossAllergyGroup {
   primary: { en: string; tr: string };
@@ -121,10 +121,10 @@ const riskBadge = (risk: "high" | "moderate" | "low") => {
   return "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400";
 };
 
-const riskLabel = (risk: string, lang: string) => {
-  if (risk === "high") return lang === "tr" ? "Yüksek" : "High";
-  if (risk === "moderate") return lang === "tr" ? "Orta" : "Moderate";
-  return lang === "tr" ? "Düşük" : "Low";
+const riskLabel = (risk: string, lang: Lang) => {
+  if (risk === "high") return tx("common.high", lang);
+  if (risk === "moderate") return tx("common.moderate", lang);
+  return tx("common.low", lang);
 };
 
 export default function CrossAllergyPage() {

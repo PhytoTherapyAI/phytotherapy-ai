@@ -123,7 +123,7 @@ export default function PTSDSupportPage() {
         <div className="rounded-xl border border-teal-200 bg-teal-50/50 p-8 text-center dark:border-teal-800 dark:bg-teal-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-teal-400" />
           <p className="text-lg font-medium text-teal-700 dark:text-teal-300">
-            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
+            {tx("common.loginToUse2", lang)}
           </p>
         </div>
       </div>
@@ -389,7 +389,7 @@ export default function PTSDSupportPage() {
           {result.recommendations && result.recommendations.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-teal-700 dark:text-teal-300">
-                {lang === "tr" ? "Öneriler" : "Recommendations"}
+                {tx("common.recommendations", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.recommendations.map((rec, i) => (

@@ -53,10 +53,10 @@ function calculateSafeTime(skinType: number, uvIndex: number): number {
   return Math.max(5, Math.round((st.burnTime / uvIndex) * 0.67));
 }
 
-function getUVCategory(uv: number, lang: string): { label: string; color: string } {
-  if (uv <= 2) return { label: lang === "tr" ? "Düşük" : "Low", color: "text-green-600 dark:text-green-400" };
-  if (uv <= 5) return { label: lang === "tr" ? "Orta" : "Moderate", color: "text-amber-600 dark:text-amber-400" };
-  if (uv <= 7) return { label: lang === "tr" ? "Yüksek" : "High", color: "text-orange-600 dark:text-orange-400" };
+function getUVCategory(uv: number, lang: "en" | "tr"): { label: string; color: string } {
+  if (uv <= 2) return { label: tx("common.low", lang), color: "text-green-600 dark:text-green-400" };
+  if (uv <= 5) return { label: tx("common.moderate", lang), color: "text-amber-600 dark:text-amber-400" };
+  if (uv <= 7) return { label: tx("common.high", lang), color: "text-orange-600 dark:text-orange-400" };
   if (uv <= 10) return { label: lang === "tr" ? "Çok Yüksek" : "Very High", color: "text-red-600 dark:text-red-400" };
   return { label: lang === "tr" ? "Aşırı" : "Extreme", color: "text-purple-600 dark:text-purple-400" };
 }

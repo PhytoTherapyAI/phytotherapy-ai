@@ -109,7 +109,7 @@ export default function PregnancyTrackerPage() {
         <div className="rounded-xl border border-pink-200 bg-pink-50/50 p-8 text-center dark:border-pink-800 dark:bg-pink-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-pink-400" />
           <p className="text-lg font-medium text-pink-700 dark:text-pink-300">
-            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
+            {tx("common.loginToUse2", lang)}
           </p>
         </div>
       </div>
@@ -168,7 +168,7 @@ export default function PregnancyTrackerPage() {
       {/* Symptoms */}
       <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
         <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
-          {lang === "tr" ? "Semptomlar" : "Symptoms"}
+          {tx("common.symptoms", lang)}
         </h2>
         <div className="flex flex-wrap gap-2">
           {symptoms.map((s) => (
@@ -208,7 +208,7 @@ export default function PregnancyTrackerPage() {
         size="lg"
       >
         {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Analiz ediliyor..." : "Analyzing..."}</>
+          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
         ) : (
           <><Baby className="mr-2 h-5 w-5" />{tx("pregnancy.analyze", lang)}</>
         )}

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -155,7 +156,7 @@ export default function BiomarkerTrendsPage() {
           {(["6m", "1y", "3y", "all"] as const).map(range => (
             <Button key={range} size="sm" variant={timeRange === range ? "default" : "outline"}
               onClick={() => setTimeRange(range)}>
-              {range === "all" ? (lang === "tr" ? "Tümü" : "All") : range}
+              {range === "all" ? tx("common.all", lang) : range}
             </Button>
           ))}
         </div>
@@ -210,7 +211,7 @@ export default function BiomarkerTrendsPage() {
                           <div className="flex-1">
                             <p className="font-medium text-sm text-foreground">{name}</p>
                             <p className="text-xs text-muted-foreground">
-                              {new Date(latest.date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US")}
+                              {new Date(latest.date).toLocaleDateString(tx("common.locale", lang))}
                             </p>
                           </div>
                           <div className="flex items-center gap-3">

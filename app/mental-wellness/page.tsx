@@ -407,7 +407,7 @@ export default function MentalWellnessPage() {
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : null}
             {saving
-              ? (lang === "tr" ? "Kaydediliyor..." : "Saving...")
+              ? tx("common.saving", lang)
               : (lang === "tr" ? "Kaydet" : "Save Check-in")}
           </Button>
           {saved && (
@@ -428,7 +428,7 @@ export default function MentalWellnessPage() {
           <div className="grid grid-cols-7 gap-2">
             {last7Days.map((r) => {
               const d = new Date(r.date + "T00:00:00");
-              const dayLabel = d.toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { weekday: "short" });
+              const dayLabel = d.toLocaleDateString(tx("common.locale", lang), { weekday: "short" });
               return (
                 <div
                   key={r.date}
@@ -603,7 +603,7 @@ export default function MentalWellnessPage() {
             {analysis.recommendations.length > 0 && (
               <div>
                 <h3 className="mb-2 text-sm font-semibold text-teal-600 dark:text-teal-400">
-                  {lang === "tr" ? "Öneriler" : "Recommendations"}
+                  {tx("common.recommendations", lang)}
                 </h3>
                 <ul className="space-y-1">
                   {analysis.recommendations.map((r, i) => (

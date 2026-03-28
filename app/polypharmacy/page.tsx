@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -201,9 +202,9 @@ export default function PolypharmacyPage() {
                         <div>
                           <h4 className="font-medium text-sm">{lang === "tr" ? risk.categoryTr : risk.category}</h4>
                           <Badge className={`mt-1 ${LEVEL_COLORS[risk.level]}`}>
-                            {risk.level === "low" ? (lang === "tr" ? "Düşük" : "Low") :
-                             risk.level === "medium" ? (lang === "tr" ? "Orta" : "Medium") :
-                             (lang === "tr" ? "Yüksek" : "High")}
+                            {risk.level === "low" ? tx("common.low", lang) :
+                             risk.level === "medium" ? tx("common.moderate", lang) :
+                             tx("common.high", lang)}
                           </Badge>
                         </div>
                       </div>

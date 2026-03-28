@@ -345,7 +345,7 @@ export default function SleepAnalysisPage() {
           {/* Date */}
           <div>
             <label className="mb-1 block text-sm font-medium text-muted-foreground">
-              {lang === "tr" ? "Tarih" : "Date"}
+              {tx("common.date", lang)}
             </label>
             <input
               type="date"
@@ -481,7 +481,7 @@ export default function SleepAnalysisPage() {
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder={lang === "tr" ? "Notlar (opsiyonel)..." : "Notes (optional)..."}
+            placeholder={tx("common.notesOptional", lang)}
             rows={2}
             maxLength={500}
             className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400 dark:border-gray-700 dark:bg-gray-800"
@@ -497,7 +497,7 @@ export default function SleepAnalysisPage() {
           {isSaving ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {lang === "tr" ? "Kaydediliyor..." : "Saving..."}
+              {tx("common.saving", lang)}
             </>
           ) : (
             <>
@@ -518,7 +518,7 @@ export default function SleepAnalysisPage() {
           <div className="space-y-2">
             {last7.map((r) => {
               const dayLabel = new Date(r.date + "T00:00:00").toLocaleDateString(
-                lang === "tr" ? "tr-TR" : "en-US",
+                tx("common.locale", lang),
                 { weekday: "short", day: "numeric", month: "short" }
               );
               return (
@@ -584,8 +584,8 @@ export default function SleepAnalysisPage() {
                 >
                   {showAnalysis ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                   {showAnalysis
-                    ? lang === "tr" ? "Analizi Gizle" : "Hide Analysis"
-                    : lang === "tr" ? "Analizi Göster" : "Show Analysis"
+                    ? tx("common.hideAnalysis", lang)
+                    : tx("common.showAnalysis", lang)
                   }
                 </button>
 
@@ -680,7 +680,7 @@ export default function SleepAnalysisPage() {
                     {analysis.medicationEffects.length > 0 && (
                       <div>
                         <h3 className="mb-2 text-sm font-semibold">
-                          {lang === "tr" ? "İlaç Etkileri" : "Medication Effects"}
+                          {tx("common.medicationEffects", lang)}
                         </h3>
                         <ul className="space-y-1">
                           {analysis.medicationEffects.map((m, i) => (
@@ -697,7 +697,7 @@ export default function SleepAnalysisPage() {
                     {analysis.recommendations.length > 0 && (
                       <div>
                         <h3 className="mb-2 text-sm font-semibold">
-                          {lang === "tr" ? "Öneriler" : "Recommendations"}
+                          {tx("common.recommendations", lang)}
                         </h3>
                         <ul className="space-y-1">
                           {analysis.recommendations.map((r, i) => (
@@ -732,7 +732,7 @@ export default function SleepAnalysisPage() {
           <div className="space-y-3">
             {recentLogs.map((r) => {
               const dayLabel = new Date(r.date + "T00:00:00").toLocaleDateString(
-                lang === "tr" ? "tr-TR" : "en-US",
+                tx("common.locale", lang),
                 { weekday: "long", day: "numeric", month: "short" }
               );
               return (

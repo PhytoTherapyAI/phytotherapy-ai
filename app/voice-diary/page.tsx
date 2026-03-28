@@ -77,7 +77,7 @@ export default function VoiceDiaryPage() {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = lang === "tr" ? "tr-TR" : "en-US";
+    recognition.lang = tx("common.locale", lang);
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
       let transcript = "";
@@ -119,7 +119,7 @@ export default function VoiceDiaryPage() {
       setIsRecording(false);
     } else {
       // Update language before starting
-      recognitionRef.current.lang = lang === "tr" ? "tr-TR" : "en-US";
+      recognitionRef.current.lang = tx("common.locale", lang);
       try {
         recognitionRef.current.start();
         setIsRecording(true);
@@ -159,7 +159,7 @@ export default function VoiceDiaryPage() {
 
   const formatDate = (isoString: string) => {
     const d = new Date(isoString);
-    return d.toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", {
+    return d.toLocaleDateString(tx("common.locale", lang), {
       year: "numeric",
       month: "short",
       day: "numeric",

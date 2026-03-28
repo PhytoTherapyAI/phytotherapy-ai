@@ -102,7 +102,7 @@ export default function ADHDManagementPage() {
         <div className="rounded-xl border border-orange-200 bg-orange-50/50 p-8 text-center dark:border-orange-800 dark:bg-orange-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-orange-400" />
           <p className="text-lg font-medium text-orange-700 dark:text-orange-300">
-            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
+            {tx("common.loginToUse2", lang)}
           </p>
         </div>
       </div>
@@ -242,7 +242,7 @@ export default function ADHDManagementPage() {
                 exerciseToday ? "bg-green-500 text-white" : "bg-gray-100 dark:bg-gray-800"
               }`}
             >
-              {exerciseToday ? (lang === "tr" ? "Evet" : "Yes") : (lang === "tr" ? "Hayir" : "No")}
+              {exerciseToday ? tx("common.yes", lang) : tx("common.no", lang)}
             </button>
           </div>
         </div>
@@ -256,7 +256,7 @@ export default function ADHDManagementPage() {
         size="lg"
       >
         {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Analiz ediliyor..." : "Analyzing..."}</>
+          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
         ) : (
           <><Zap className="mr-2 h-5 w-5" />{tx("adhd.analyze", lang)}</>
         )}
@@ -317,7 +317,7 @@ export default function ADHDManagementPage() {
           {result.supplementSuggestions?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-orange-700 dark:text-orange-300">
-                {lang === "tr" ? "Takviye Önerileri" : "Supplement Suggestions"}
+                {tx("common.supplementSuggestions", lang)}
               </h3>
               <div className="space-y-3">
                 {result.supplementSuggestions.map((supp, i) => (

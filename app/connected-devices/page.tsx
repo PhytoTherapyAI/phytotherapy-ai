@@ -14,6 +14,7 @@ import {
   Scale, Flame, BarChart3, Wind, Gauge, ExternalLink,
 } from "lucide-react"
 import Link from "next/link"
+import { tx } from "@/lib/translations"
 
 const METRIC_ICONS: Record<string, any> = { Heart, Footprints, Moon, Droplets, Activity, Zap, Thermometer, Scale, Flame, BarChart3, Wind, Gauge }
 
@@ -108,7 +109,7 @@ export default function ConnectedDevicesPage() {
     <div className="min-h-screen bg-background">
       <div className="max-w-2xl mx-auto px-4 md:px-8 py-8">
         <Link href="/profile" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" />{lang === "tr" ? "Profil" : "Profile"}
+          <ArrowLeft className="w-4 h-4" />{tx("common.profile", lang)}
         </Link>
 
         {/* Header */}
@@ -170,7 +171,7 @@ export default function ConnectedDevicesPage() {
                         <div className="flex items-center gap-3 mt-1 text-[11px] text-muted-foreground">
                           <span className="flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            {t("last_sync")}: {new Date(conn.lastSync).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US")}
+                            {t("last_sync")}: {new Date(conn.lastSync).toLocaleDateString(tx("common.locale", lang))}
                           </span>
                           <span>{conn.records} {t("records")}</span>
                         </div>
@@ -277,7 +278,7 @@ export default function ConnectedDevicesPage() {
               <Button className="flex-1 gap-2" onClick={() => handleConnect(consentModal)} disabled={connecting}
                 style={{ backgroundColor: consentModal.color }}>
                 {connecting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                {connecting ? (lang === "tr" ? "Bağlanıyor..." : "Connecting...") : consent.agree}
+                {connecting ? tx("common.connecting", lang) : consent.agree}
               </Button>
             </div>
           </Card>

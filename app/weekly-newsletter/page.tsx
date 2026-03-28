@@ -200,7 +200,7 @@ export default function WeeklyNewsletterPage() {
     if (user) localStorage.setItem(`newsletter_prefs_${user.id}`, JSON.stringify(updated));
   };
 
-  const formatDate = (d: string) => new Date(d).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { month: "short", day: "numeric" });
+  const formatDate = (d: string) => new Date(d).toLocaleDateString(tx("common.locale", lang), { month: "short", day: "numeric" });
 
   const trendDiff = currentNewsletter
     ? currentNewsletter.healthScoreTrend.current - currentNewsletter.healthScoreTrend.previous
@@ -222,7 +222,7 @@ export default function WeeklyNewsletterPage() {
           {lang === "tr" ? "Haftalık bülteninizi görmek için giriş yapın." : "Sign in to view your weekly health newsletter."}
         </p>
         <Link href="/login">
-          <Button>{lang === "tr" ? "Giriş Yap" : "Sign In"}</Button>
+          <Button>{tx("common.signIn", lang)}</Button>
         </Link>
       </div>
     );

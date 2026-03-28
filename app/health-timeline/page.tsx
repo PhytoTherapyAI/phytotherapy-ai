@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -129,7 +130,7 @@ export default function HealthTimelinePage() {
               <input type="date" className="w-full px-3 py-2 rounded border border-border bg-background" value={newEvent.date || ""} onChange={e => setNewEvent({ ...newEvent, date: e.target.value })} />
               <input className="w-full px-3 py-2 rounded border border-border bg-background" placeholder={lang === "tr" ? "Başlık" : "Title"} value={newEvent.title || ""} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })} />
               <input className="w-full px-3 py-2 rounded border border-border bg-background" placeholder={lang === "tr" ? "Detay (opsiyonel)" : "Details (optional)"} value={newEvent.details || ""} onChange={e => setNewEvent({ ...newEvent, details: e.target.value })} />
-              <Button onClick={addEvent} disabled={!newEvent.title}>{lang === "tr" ? "Kaydet" : "Save"}</Button>
+              <Button onClick={addEvent} disabled={!newEvent.title}>{tx("common.save", lang)}</Button>
             </div>
           </Card>
         )}
@@ -155,7 +156,7 @@ export default function HealthTimelinePage() {
                           <Icon className="w-3.5 h-3.5" />
                         </div>
                         <div className="text-xs font-mono text-muted-foreground mb-1">
-                          {new Date(event.date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { month: "short", day: "numeric" })}
+                          {new Date(event.date).toLocaleDateString(tx("common.locale", lang), { month: "short", day: "numeric" })}
                         </div>
                         <Card className="p-3">
                           <div className="flex items-center justify-between">

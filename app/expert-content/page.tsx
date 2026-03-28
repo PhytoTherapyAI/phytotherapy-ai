@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -61,7 +62,7 @@ export default function ExpertContentPage() {
 
   const formatDate = (date?: string) => {
     if (!date) return ""
-    return new Date(date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { month: "short", day: "numeric", year: "numeric" })
+    return new Date(date).toLocaleDateString(tx("common.locale", lang), { month: "short", day: "numeric", year: "numeric" })
   }
 
   return (

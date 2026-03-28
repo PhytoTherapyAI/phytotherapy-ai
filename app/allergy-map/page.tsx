@@ -404,7 +404,7 @@ export default function AllergyMapPage() {
             {/* Symptoms */}
             <div>
               <label className="mb-1 block text-xs font-medium">
-                {lang === "tr" ? "Semptomlar" : "Symptoms"}
+                {tx("common.symptoms", lang)}
               </label>
               <div className="flex flex-wrap gap-1.5">
                 {commonSymptoms.map((s) => (
@@ -441,7 +441,7 @@ export default function AllergyMapPage() {
             {/* Notes */}
             <div>
               <label className="mb-1 block text-xs font-medium">
-                {lang === "tr" ? "Notlar" : "Notes"}
+                {tx("common.notes", lang)}
               </label>
               <textarea
                 value={formNotes}

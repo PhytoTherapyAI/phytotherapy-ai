@@ -229,7 +229,7 @@ export default function HistoryPage() {
                         {tx(`history.${item.query_type || "general"}`, lang)}
                       </span>
                       <span className="text-[10px] text-muted-foreground">
-                        {new Date(item.created_at).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", {
+                        {new Date(item.created_at).toLocaleDateString(tx("common.locale", lang), {
                           month: "short",
                           day: "numeric",
                           hour: "2-digit",

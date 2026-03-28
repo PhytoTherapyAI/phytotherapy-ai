@@ -200,7 +200,7 @@ export default function CardiovascularRiskPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("cardio.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -231,7 +231,7 @@ export default function CardiovascularRiskPage() {
 
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">{lang === "tr" ? "Yas" : "Age"}</label>
+              <label className="block text-sm font-medium mb-1">{tx("common.age", lang)}</label>
               <input
                 type="number"
                 value={age}
@@ -242,14 +242,14 @@ export default function CardiovascularRiskPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">{lang === "tr" ? "Cinsiyet" : "Gender"}</label>
+              <label className="block text-sm font-medium mb-1">{tx("common.gender", lang)}</label>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
                 className="w-full px-3 py-2 border rounded-lg bg-background"
               >
-                <option value="male">{lang === "tr" ? "Erkek" : "Male"}</option>
-                <option value="female">{lang === "tr" ? "Kadin" : "Female"}</option>
+                <option value="male">{tx("common.male", lang)}</option>
+                <option value="female">{tx("common.female", lang)}</option>
               </select>
             </div>
             <div>
@@ -350,9 +350,9 @@ export default function CardiovascularRiskPage() {
               {/* Risk Bar */}
               <div className="w-full max-w-md mx-auto">
                 <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                  <span>{lang === "tr" ? "Düşük" : "Low"}</span>
-                  <span>{lang === "tr" ? "Orta" : "Moderate"}</span>
-                  <span>{lang === "tr" ? "Yüksek" : "High"}</span>
+                  <span>{tx("common.low", lang)}</span>
+                  <span>{tx("common.moderate", lang)}</span>
+                  <span>{tx("common.high", lang)}</span>
                 </div>
                 <div className="w-full h-3 rounded-full bg-gradient-to-r from-green-400 via-amber-400 to-red-500 relative">
                   <div

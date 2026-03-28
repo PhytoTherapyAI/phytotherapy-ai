@@ -148,7 +148,7 @@ export default function AntiInflammatoryPage() {
           {/* Recommendations */}
           {result.recommendations?.length > 0 && (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{lang === "tr" ? "Öneriler" : "Recommendations"}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{tx("common.recommendations", lang)}</h3>
               <div className="space-y-2">
                 {result.recommendations.map((r, i) => (
                   <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">

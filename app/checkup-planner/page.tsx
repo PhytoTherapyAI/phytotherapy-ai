@@ -82,7 +82,7 @@ export default function CheckupPlannerPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("checkup.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -108,16 +108,16 @@ export default function CheckupPlannerPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium">{lang === "tr" ? "Yas" : "Age"}</label>
+              <label className="text-sm font-medium">{tx("common.age", lang)}</label>
               <input type="number" min="18" max="100" value={age} onChange={(e) => setAge(e.target.value)}
                 className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="text-sm font-medium">{lang === "tr" ? "Cinsiyet" : "Gender"}</label>
+              <label className="text-sm font-medium">{tx("common.gender", lang)}</label>
               <select value={gender} onChange={(e) => setGender(e.target.value)}
                 className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="male">{lang === "tr" ? "Erkek" : "Male"}</option>
-                <option value="female">{lang === "tr" ? "Kadin" : "Female"}</option>
+                <option value="male">{tx("common.male", lang)}</option>
+                <option value="female">{tx("common.female", lang)}</option>
               </select>
             </div>
           </div>
@@ -138,7 +138,7 @@ export default function CheckupPlannerPage() {
 
           <Button onClick={handleGenerate} disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white" size="lg">
             {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Plan oluşturuluyor..." : "Generating plan..."}</>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.generating", lang)}</>
             ) : (
               <><Sparkles className="mr-2 h-5 w-5" />{tx("checkup.generate", lang)}</>
             )}

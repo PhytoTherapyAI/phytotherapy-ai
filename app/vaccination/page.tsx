@@ -375,7 +375,7 @@ export default function VaccinationPage() {
                 type="text"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder={lang === "tr" ? "Notlar" : "Notes"}
+                placeholder={tx("common.notes", lang)}
                 className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:border-green-400 focus:outline-none focus:ring-1 focus:ring-green-400"
               />
             </div>
@@ -391,7 +391,7 @@ export default function VaccinationPage() {
               {isSaving ? "..." : tx("vacc.addVaccine", lang)}
             </Button>
             <Button variant="ghost" onClick={() => setShowForm(false)}>
-              {lang === "tr" ? "Kapat" : "Cancel"}
+              {tx("common.close", lang)}
             </Button>
           </div>
         </div>
