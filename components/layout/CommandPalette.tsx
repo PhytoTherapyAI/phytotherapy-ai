@@ -77,6 +77,7 @@ interface SearchResult {
   categoryLabel: { en: string; tr: string }
   icon: any
   items: (SearchItem & { highlightedTitle: string })[]
+  isAiMatch?: boolean
 }
 
 function performSearch(query: string, lang: string): SearchResult[] {
@@ -158,12 +159,81 @@ export function CommandPalette() {
 
   // Debounced search
   const [debouncedQuery, setDebouncedQuery] = useState("")
+  const [semanticResults, setSemanticResults] = useState<SearchResult[]>([])
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchMethod, setSearchMethod] = useState<"local" | "ai">("local")
+
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedQuery(query), 150)
+    const timer = setTimeout(() => setDebouncedQuery(query), 200)
     return () => clearTimeout(timer)
   }, [query])
 
-  const results = useMemo(() => performSearch(debouncedQuery, lang), [debouncedQuery, lang])
+  // Local search (instant)
+  const localResults = useMemo(() => performSearch(debouncedQuery, lang), [debouncedQuery, lang])
+
+  // Semantic search (API, debounced)
+  useEffect(() => {
+    if (!debouncedQuery || debouncedQuery.length < 3) {
+      setSemanticResults([])
+      setSearchMethod("local")
+      return
+    }
+    let cancelled = false
+    const fetchSemantic = async () => {
+      setIsSearching(true)
+      try {
+        const res = await fetch("/api/semantic-search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: debouncedQuery, limit: 6 }),
+        })
+        if (!res.ok || cancelled) return
+        const data = await res.json()
+        if (cancelled) return
+        if (data.results?.length > 0) {
+          // Convert API results to SearchResult format
+          const grouped: Record<string, (SearchItem & { highlightedTitle: string })[]> = {}
+          data.results.forEach((r: any) => {
+            const type = r.contentType === "doctor" ? "doctors" : r.contentType === "article" ? "articles" : r.contentType === "supplement" || r.contentType === "herb" ? "supplements" : "tools"
+            if (!grouped[type]) grouped[type] = []
+            grouped[type].push({
+              id: `ai-${r.contentId}`,
+              type: r.contentType,
+              title: lang === "tr" && r.titleTr ? r.titleTr : r.title,
+              subtitle: lang === "tr" && r.descriptionTr ? r.descriptionTr : r.description || "",
+              href: r.href,
+              meta: r.metadata?.dosage || r.metadata?.evidence ? `${r.metadata.evidence || ""} · ${r.metadata.dosage || ""}` : `${Math.round(r.similarity * 100)}% match`,
+              highlightedTitle: lang === "tr" && r.titleTr ? r.titleTr : r.title,
+              image: r.contentType === "doctor" ? r.title.split(" ").map((w: string) => w[0]).slice(0, 2).join("") : undefined,
+            })
+          })
+          const categoryIcons: Record<string, any> = { doctors: Stethoscope, articles: FileText, supplements: Leaf, tools: Sparkles, conditions: Brain }
+          const categoryLabels: Record<string, { en: string; tr: string }> = {
+            doctors: { en: "Expert Doctors", tr: "Uzman Doktorlar" },
+            articles: { en: "Articles & Content", tr: "Makaleler & İçerikler" },
+            supplements: { en: "Supplements & Herbs", tr: "Takviye & Bitkiler" },
+            tools: { en: "Health Tools", tr: "Sağlık Araçları" },
+            conditions: { en: "Conditions", tr: "Durumlar" },
+          }
+          const aiResults: SearchResult[] = Object.entries(grouped).map(([cat, items]) => ({
+            category: cat,
+            categoryLabel: categoryLabels[cat] || { en: cat, tr: cat },
+            icon: categoryIcons[cat] || Sparkles,
+            items,
+            isAiMatch: true,
+          }))
+          setSemanticResults(aiResults)
+          setSearchMethod(data.method === "vector" ? "ai" : "local")
+        }
+      } catch { /* silent fail, local results still work */ }
+      if (!cancelled) setIsSearching(false)
+    }
+    fetchSemantic()
+    return () => { cancelled = true }
+  }, [debouncedQuery, lang])
+
+  // Merge results: semantic first (if available), then local
+  const results = semanticResults.length > 0 ? semanticResults : localResults
   const flatItems = useMemo(() => results.flatMap(r => r.items), [results])
 
   // Cmd+K / Ctrl+K to open + custom event from trigger button
@@ -251,6 +321,9 @@ export function CommandPalette() {
               autoComplete="off"
               spellCheck={false}
             />
+            {isSearching && (
+              <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+            )}
             {query && (
               <button onClick={() => setQuery("")} className="p-1 rounded hover:bg-muted">
                 <X className="w-4 h-4 text-muted-foreground" />
@@ -276,6 +349,11 @@ export function CommandPalette() {
                           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                             {group.categoryLabel[lang as "en" | "tr"]}
                           </span>
+                          {(group as any).isAiMatch && (
+                            <Badge className="text-[9px] bg-violet-500/10 text-violet-600 border-violet-500/30 gap-0.5">
+                              <Sparkles className="w-2.5 h-2.5" />AI
+                            </Badge>
+                          )}
                           <Badge variant="outline" className="text-[9px] ml-auto">{group.items.length}</Badge>
                         </div>
 
