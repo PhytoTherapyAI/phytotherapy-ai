@@ -1,451 +1,1082 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useLang } from "@/components/layout/language-toggle"
 import {
   Building2,
   TrendingUp,
-  Shield,
+  TrendingDown,
   BarChart3,
-  Users,
-  Briefcase,
   Globe,
   ArrowUpRight,
   Sparkles,
   LineChart,
-  Database,
   Zap,
-  CheckCircle2,
-  Mail,
-  ChevronDown,
-  ChevronUp,
+  Shield,
+  FileText,
   FlaskConical,
   Leaf,
-  DollarSign,
-  Target,
-  PieChart,
   Activity,
+  Loader2,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Scale,
+  Beaker,
+  Search,
+  ChevronRight,
 } from "lucide-react"
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart as RechartsLineChart,
+  Line,
+  ComposedChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts"
+import type {
+  PhytoCompany,
+  BotanicalTrend,
+  PatentFiling,
+  RegulatoryUpdate,
+  SectorEvent,
+  MarketKPI,
+  CorrelationData,
+} from "@/lib/market-intelligence-data"
 
-// ─── Mock Market Intelligence Data ───
-const MARKET_TRENDS = [
-  { name: "Curcumin (BCM-95)", data: [2.1, 2.4, 2.8, 3.1, 3.6, 4.2, 4.9, 5.3], growth: "+156%", marketCap: "$5.3B", trend: "up" as const },
-  { name: "Ashwagandha (KSM-66)", data: [1.8, 2.0, 2.5, 3.0, 3.4, 3.9, 4.5, 5.1], growth: "+183%", marketCap: "$5.1B", trend: "up" as const },
-  { name: "Berberine", data: [0.8, 0.9, 1.1, 1.4, 1.7, 2.1, 2.6, 3.2], growth: "+300%", marketCap: "$3.2B", trend: "up" as const },
-  { name: "Elderberry", data: [1.2, 1.5, 2.0, 2.4, 2.2, 2.1, 2.3, 2.5], growth: "+108%", marketCap: "$2.5B", trend: "stable" as const },
-  { name: "CBD Extract", data: [4.5, 5.2, 5.8, 5.5, 5.0, 4.8, 5.1, 5.4], growth: "+20%", marketCap: "$5.4B", trend: "stable" as const },
-  { name: "Lion's Mane", data: [0.3, 0.4, 0.6, 0.9, 1.3, 1.8, 2.4, 3.0], growth: "+900%", marketCap: "$3.0B", trend: "up" as const },
+// ─── Constants ──────────────────────────────
+
+const CHART_COLORS = [
+  "#10b981", "#3b82f6", "#8b5cf6", "#f59e0b",
+  "#ef4444", "#06b6d4", "#ec4899", "#84cc16",
 ]
 
-const COMPANIES = [
-  { name: "Indena S.p.A.", country: "Italy", focus: "Standardized Extracts", marketCap: "$2.1B", growth: "+18%", stage: "Public", patents: 340 },
-  { name: "Sabinsa Corporation", country: "USA/India", focus: "Curcumin, Bioperine", marketCap: "$890M", growth: "+24%", stage: "Private", patents: 220 },
-  { name: "Ixoreal Biomed (KSM-66)", country: "India", focus: "Ashwagandha", marketCap: "$450M", growth: "+42%", stage: "Private", patents: 45 },
-  { name: "Naturex (Givaudan)", country: "France", focus: "Botanical Extracts", marketCap: "$1.8B", growth: "+12%", stage: "Acquired", patents: 180 },
-  { name: "Layn Natural", country: "China/USA", focus: "Monk Fruit, Stevia", marketCap: "$620M", growth: "+31%", stage: "Pre-IPO", patents: 95 },
-  { name: "Verdure Sciences", country: "USA", focus: "Longvida Curcumin", marketCap: "$180M", growth: "+28%", stage: "Private", patents: 38 },
-  { name: "PLT Health Solutions", country: "USA", focus: "Adaptogen Blends", marketCap: "$340M", growth: "+22%", stage: "Private", patents: 52 },
-  { name: "Euromed", country: "Spain", focus: "Mediterranean Extracts", marketCap: "$290M", growth: "+15%", stage: "Private", patents: 75 },
-]
+type TabId = "overview" | "trends" | "companies" | "patents" | "ai"
 
-const AI_INSIGHTS = [
-  {
-    type: "trend" as const,
-    icon: TrendingUp,
-    color: "text-green-600 dark:text-green-400",
-    bg: "bg-green-50 dark:bg-green-950/30",
-  },
-  {
-    type: "bottleneck" as const,
-    icon: Target,
-    color: "text-amber-600 dark:text-amber-400",
-    bg: "bg-amber-50 dark:bg-amber-950/30",
-  },
-  {
-    type: "opportunity" as const,
-    icon: Sparkles,
-    color: "text-blue-600 dark:text-blue-400",
-    bg: "bg-blue-50 dark:bg-blue-950/30",
-  },
-  {
-    type: "risk" as const,
-    icon: Shield,
-    color: "text-red-600 dark:text-red-400",
-    bg: "bg-red-50 dark:bg-red-950/30",
-  },
-]
+interface AIAnalysis {
+  earlySignals: {
+    signal: string
+    signalTr?: string
+    confidence: "high" | "medium" | "low"
+    botanical: string
+  }[]
+  sectorOutlook: {
+    summary: string
+    summaryTr?: string
+    bullishFactors: string[]
+    bullishFactorsTr?: string[]
+    bearishFactors: string[]
+    bearishFactorsTr?: string[]
+  }
+  riskAlerts: {
+    risk: string
+    riskTr?: string
+    severity: "high" | "medium" | "low"
+    sector: string
+  }[]
+}
 
-const ENTERPRISE_PLANS = [
-  {
-    id: "insurance",
-    icon: Shield,
-    color: "from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30",
-    border: "border-blue-200 dark:border-blue-800",
-  },
-  {
-    id: "pharma",
-    icon: FlaskConical,
-    color: "from-purple-50 to-violet-50 dark:from-purple-950/30 dark:to-violet-950/30",
-    border: "border-purple-200 dark:border-purple-800",
-  },
-  {
-    id: "clinic",
-    icon: Building2,
-    color: "from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30",
-    border: "border-green-200 dark:border-green-800",
-  },
-  {
-    id: "research",
-    icon: Database,
-    color: "from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30",
-    border: "border-amber-200 dark:border-amber-800",
-  },
-]
-
-const YEARS = ["2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026*"]
+// ─── Page Component ─────────────────────────
 
 export default function EnterprisePage() {
   const { lang } = useLang()
   const isTr = lang === "tr"
-  const [activeTab, setActiveTab] = useState<"overview" | "market" | "companies">("overview")
-  const [expandedInsight, setExpandedInsight] = useState<number | null>(null)
 
-  const insightTexts = [
-    {
-      title: isTr ? "Adaptogen Pazarı Patlaması" : "Adaptogen Market Explosion",
-      summary: isTr
-        ? "Ashwagandha ve Lion's Mane küresel arama hacmi 2023-2026 arasında 3x arttı. Nootropik + adaptogen kesişimi en hızlı büyüyen segment."
-        : "Ashwagandha and Lion's Mane global search volume tripled 2023-2026. Nootropic + adaptogen crossover is the fastest growing segment.",
-      detail: isTr
-        ? "KSM-66 patentli Ashwagandha'nın klinik çalışma sayısı 2024'te 35'e ulaştı (2019: 8). Lion's Mane NGF (Sinir Büyüme Faktörü) üzerindeki etkileri nedeniyle nörobilim alanında dikkat çekiyor."
-        : "KSM-66 patented Ashwagandha clinical studies reached 35 in 2024 (2019: 8). Lion's Mane is attracting neuroscience attention due to NGF effects.",
-    },
-    {
-      title: isTr ? "Hammadde Arz Darboğazı" : "Raw Material Supply Bottleneck",
-      summary: isTr
-        ? "Berberine hammadde fiyatları %40 arttı — Çin'deki tarım alanı kısıtlamaları ve artan talep. Alternatif kaynak arayışı hızlandı."
-        : "Berberine raw material prices increased 40% — Chinese farmland restrictions and rising demand. Alternative sourcing accelerated.",
-      detail: isTr
-        ? "Berberine ana kaynağı Coptis chinensis (Huanglian) yetiştiriciliği Sichuan'da %30 azaldı. Hindistan ve Vietnam alternatifleri 2-3 yıl içinde üretime hazır."
-        : "Berberine main source Coptis chinensis (Huanglian) cultivation decreased 30% in Sichuan. India and Vietnam alternatives ready in 2-3 years.",
-    },
-    {
-      title: isTr ? "Personalized Supplement Fırsatı" : "Personalized Supplement Opportunity",
-      summary: isTr
-        ? "Farmakogenetik tabanlı kişiselleştirilmiş takviye pazarı 2026'da $4.2B'a ulaşacak. CYP450 genotipleme maliyeti $50'ın altına düştü."
-        : "Pharmacogenomics-based personalized supplement market to reach $4.2B by 2026. CYP450 genotyping cost dropped below $50.",
-      detail: isTr
-        ? "23andMe, AncestryDNA verileriyle entegre takviye önerisi yapan platform sayısı 2'den 12'ye çıktı. Phytotherapy.ai bu alanda ilk fitoterapi odaklı çözüm."
-        : "Platforms integrating with 23andMe/AncestryDNA data for supplement recommendations grew from 2 to 12. Phytotherapy.ai is the first phytotherapy-focused solution.",
-    },
-    {
-      title: isTr ? "Regülasyon Riski: EU Novel Food" : "Regulatory Risk: EU Novel Food",
-      summary: isTr
-        ? "AB Novel Food düzenlemesi 2025'te sıkılaştı. CBD, kratom ve bazı adaptogenler yeniden değerlendiriliyor. Pazar belirsizliği %15 büyüme kaybına neden oldu."
-        : "EU Novel Food regulation tightened in 2025. CBD, kratom and some adaptogens under re-evaluation. Market uncertainty caused 15% growth loss.",
-      detail: isTr
-        ? "Ashwagandha AB'de şu an serbest ama Danimarka ve İtalya kısıtlama önerdi. Şirketler için AB pazar erişimi risk altında."
-        : "Ashwagandha currently unrestricted in EU but Denmark and Italy proposed restrictions. EU market access at risk for companies.",
-    },
+  const [activeTab, setActiveTab] = useState<TabId>("overview")
+
+  // Data states
+  const [kpis, setKpis] = useState<MarketKPI[]>([])
+  const [events, setEvents] = useState<SectorEvent[]>([])
+  const [botanicals, setBotanicals] = useState<BotanicalTrend[]>([])
+  const [companies, setCompanies] = useState<PhytoCompany[]>([])
+  const [correlation, setCorrelation] = useState<CorrelationData[]>([])
+  const [patents, setPatents] = useState<PatentFiling[]>([])
+  const [regulatory, setRegulatory] = useState<RegulatoryUpdate[]>([])
+  const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null)
+
+  // Loading states
+  const [loadingOverview, setLoadingOverview] = useState(true)
+  const [loadingTrends, setLoadingTrends] = useState(true)
+  const [loadingCompanies, setLoadingCompanies] = useState(false)
+  const [loadingPatents, setLoadingPatents] = useState(false)
+  const [loadingAI, setLoadingAI] = useState(false)
+
+  const [selectedCorrelation, setSelectedCorrelation] = useState(0)
+
+  // ─── Data Fetching ──────────────────────────
+
+  const fetchSection = useCallback(async (section: string) => {
+    try {
+      const res = await fetch(`/api/market-intelligence?section=${section}`)
+      if (!res.ok) return null
+      return await res.json()
+    } catch {
+      return null
+    }
+  }, [])
+
+  // Load overview + trends on mount
+  useEffect(() => {
+    async function loadInitial() {
+      const [overviewData, trendsData] = await Promise.all([
+        fetchSection("overview"),
+        fetchSection("trends"),
+      ])
+      if (overviewData) {
+        setKpis(overviewData.kpis || [])
+        setEvents(overviewData.events || [])
+      }
+      if (trendsData) {
+        setBotanicals(trendsData.botanicals || [])
+      }
+      setLoadingOverview(false)
+      setLoadingTrends(false)
+    }
+    loadInitial()
+  }, [fetchSection])
+
+  // Lazy load on tab switch
+  useEffect(() => {
+    if (activeTab === "companies" && companies.length === 0 && !loadingCompanies) {
+      setLoadingCompanies(true)
+      fetchSection("companies").then((data) => {
+        if (data) {
+          setCompanies(data.companies || [])
+          setCorrelation(data.correlation || [])
+        }
+        setLoadingCompanies(false)
+      })
+    }
+    if (activeTab === "patents" && patents.length === 0 && !loadingPatents) {
+      setLoadingPatents(true)
+      fetchSection("patents").then((data) => {
+        if (data) {
+          setPatents(data.patents || [])
+          setRegulatory(data.regulatory || [])
+        }
+        setLoadingPatents(false)
+      })
+    }
+  }, [activeTab, companies.length, patents.length, loadingCompanies, loadingPatents, fetchSection])
+
+  const runAIAnalysis = async () => {
+    setLoadingAI(true)
+    try {
+      const res = await fetch("/api/market-intelligence/analyze", { method: "POST" })
+      if (res.ok) {
+        const data = await res.json()
+        setAiAnalysis(data)
+      }
+    } catch {
+      // silent
+    }
+    setLoadingAI(false)
+  }
+
+  // ─── Tab Config ─────────────────────────────
+
+  const TABS: { id: TabId; label: string; labelTr: string; icon: typeof BarChart3 }[] = [
+    { id: "overview", label: "Market Overview", labelTr: "Pazar Genel Bakis", icon: BarChart3 },
+    { id: "trends", label: "Trending Botanicals", labelTr: "Trend Bitkiler", icon: TrendingUp },
+    { id: "companies", label: "Company Tracker", labelTr: "Sirket Takibi", icon: Globe },
+    { id: "patents", label: "Patent & Regulation", labelTr: "Patent & Regulasyon", icon: Scale },
+    { id: "ai", label: "AI Analysis", labelTr: "AI Analiz", icon: Sparkles },
   ]
+
+  // ─── Helpers ────────────────────────────────
+
+  const eventTypeColor = (type: string) => {
+    switch (type) {
+      case "IPO": return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+      case "M&A": return "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+      case "Funding": return "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300"
+      case "Partnership": return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+      default: return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+    }
+  }
+
+  const impactColor = (level: string) => {
+    switch (level) {
+      case "high": return "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
+      case "medium": return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+      case "low": return "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
+      default: return "bg-gray-100 text-gray-700"
+    }
+  }
+
+  const confidenceColor = (c: string) => {
+    switch (c) {
+      case "high": return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+      case "medium": return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+      case "low": return "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+      default: return "bg-gray-100 text-gray-700"
+    }
+  }
+
+  const statusBadge = (status: string) => {
+    switch (status) {
+      case "Granted": case "Approved":
+        return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+      case "Filed": case "Pending":
+        return "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+      case "Under Review":
+        return "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+      default:
+        return "bg-gray-100 text-gray-700"
+    }
+  }
+
+  const jurisdictionBadge = (j: string) => {
+    switch (j) {
+      case "USPTO": return "bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400"
+      case "EPO": return "bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400"
+      case "WIPO": return "bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-400"
+      default: return "bg-gray-50 text-gray-600"
+    }
+  }
+
+  // ─── Sector performance data for bar chart ──
+
+  const sectorPerformanceData = [
+    { sector: isTr ? "Takviyeler" : "Supplements", growth: 12.4, revenue: 18.2 },
+    { sector: isTr ? "Bitkisel Ilac" : "Herbal Pharma", growth: 9.8, revenue: 8.6 },
+    { sector: isTr ? "Fonksiyonel Gida" : "Functional Food", growth: 11.2, revenue: 10.4 },
+    { sector: isTr ? "Kozmetik" : "Cosmeceuticals", growth: 7.5, revenue: 5.9 },
+  ]
+
+  // Public companies for the pie chart
+  const pieData = companies
+    .filter((c) => c.marketCapBillions > 0)
+    .map((c) => ({ name: c.symbol || c.name.split(" ")[0], value: c.marketCapBillions }))
+
+  // ─── Render ─────────────────────────────────
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
-      {/* Hero */}
-      <div className="mb-10 text-center">
+      {/* Hero Header */}
+      <div className="mb-8 text-center">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5">
           <Building2 className="h-7 w-7 text-primary" />
         </div>
-        <h1 className="font-heading text-3xl font-bold md:text-4xl">
-          {isTr ? "Kurumsal Çözümler & Pazar İstihbaratı" : "Enterprise Solutions & Market Intelligence"}
+        <h1 className="font-heading text-3xl font-bold tracking-tight md:text-4xl">
+          {isTr ? "Pazar Istihbarat Merkezi" : "Market Intelligence Hub"}
         </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+        <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">
           {isTr
-            ? "Sigorta şirketleri, ilaç firmaları, klinikler ve yatırımcılar için veri odaklı sağlık çözümleri. Biyoteknoloji pazar trendleri, hammadde analizi ve AI destekli içgörüler."
-            : "Data-driven health solutions for insurance companies, pharma, clinics and investors. Biotech market trends, raw material analysis and AI-powered insights."}
+            ? "Fitoterapi ve biyoteknoloji sektorunde yatirim odakli pazar verileri, trend analizi ve AI destekli icerikler."
+            : "Investment-focused market data, trend analysis and AI-powered insights for the phytotherapy & biotech sector."}
         </p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="mb-8 flex justify-center">
+      <div className="mb-8 flex justify-center overflow-x-auto">
         <div className="inline-flex rounded-xl bg-muted p-1">
-          {[
-            { id: "overview" as const, label: isTr ? "Kurumsal Planlar" : "Enterprise Plans", icon: Briefcase },
-            { id: "market" as const, label: isTr ? "Pazar Trendleri" : "Market Trends", icon: LineChart },
-            { id: "companies" as const, label: isTr ? "Şirket Radarı" : "Company Radar", icon: Globe },
-          ].map((tab) => (
+          {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+              className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-all sm:px-4 sm:text-sm ${
                 activeTab === tab.id
                   ? "bg-background text-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <tab.icon className="h-4 w-4" />
-              {tab.label}
+              <tab.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              {isTr ? tab.labelTr : tab.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* ─── TAB 1: Enterprise Plans ─── */}
+      {/* ═══════════════════════════════════════
+          TAB 1: MARKET OVERVIEW
+          ═══════════════════════════════════════ */}
       {activeTab === "overview" && (
-        <div className="space-y-8">
-          {/* Enterprise Plan Cards */}
-          <div className="grid gap-5 md:grid-cols-2">
-            {ENTERPRISE_PLANS.map((plan) => {
-              const Icon = plan.icon
-              const titles: Record<string, { tr: string; en: string }> = {
-                insurance: { tr: "Sigorta Şirketleri", en: "Insurance Companies" },
-                pharma: { tr: "İlaç & Biyoteknoloji", en: "Pharma & Biotech" },
-                clinic: { tr: "Klinikler & Hastaneler", en: "Clinics & Hospitals" },
-                research: { tr: "Araştırma Kuruluşları", en: "Research Institutions" },
-              }
-              const descs: Record<string, { tr: string; en: string }> = {
-                insurance: {
-                  tr: "Wellbeing programı entegrasyonu, popülasyon sağlık verileri, ilaç uyum skorları, maliyet tasarruf analitiği. Anonim ve KVKK uyumlu.",
-                  en: "Wellbeing program integration, population health data, medication adherence scores, cost savings analytics. Anonymous and GDPR compliant.",
-                },
-                pharma: {
-                  tr: "Gerçek dünya kanıt verileri (RWE), yan etki erken sinyal sistemi, ilaç-bitki etkileşim veritabanı API erişimi, klinik araştırma desteği.",
-                  en: "Real-world evidence data (RWE), adverse event early signal system, drug-herb interaction database API, clinical research support.",
-                },
-                clinic: {
-                  tr: "Doktor paneli, hasta takip sistemi, AI ziyaret özeti, çoklu hesap yönetimi, klinik faturalandırma desteği.",
-                  en: "Doctor panel, patient tracking system, AI visit summaries, multi-account management, clinical billing support.",
-                },
-                research: {
-                  tr: "Anonim sağlık veri seti erişimi, popülasyon trend analizi, fitoterapi etkinlik verileri, akademik API.",
-                  en: "Anonymous health dataset access, population trend analysis, phytotherapy efficacy data, academic API.",
-                },
-              }
-              const features: Record<string, string[]> = {
-                insurance: [
-                  isTr ? "Anonim popülasyon analitiği" : "Anonymous population analytics",
-                  isTr ? "İlaç uyum skoru takibi" : "Medication adherence scoring",
-                  isTr ? "Wellbeing ROI hesaplama" : "Wellbeing ROI calculation",
-                  isTr ? "Özel API entegrasyonu" : "Custom API integration",
-                ],
-                pharma: [
-                  isTr ? "Yan etki sinyal tespiti" : "Adverse event signal detection",
-                  isTr ? "İlaç-bitki etkileşim DB" : "Drug-herb interaction DB",
-                  isTr ? "Gerçek dünya kanıt verisi" : "Real-world evidence data",
-                  isTr ? "Farmakovijilans desteği" : "Pharmacovigilance support",
-                ],
-                clinic: [
-                  isTr ? "Sınırsız hasta profili" : "Unlimited patient profiles",
-                  isTr ? "AI klinik özet raporları" : "AI clinical summary reports",
-                  isTr ? "Doktor arası yönlendirme" : "Inter-doctor referral",
-                  isTr ? "EHR entegrasyonu (FHIR)" : "EHR integration (FHIR)",
-                ],
-                research: [
-                  isTr ? "Anonim veri seti erişimi" : "Anonymous dataset access",
-                  isTr ? "Trend analiz API" : "Trend analysis API",
-                  isTr ? "Kohort oluşturma araçları" : "Cohort building tools",
-                  isTr ? "Akademik yayın desteği" : "Academic publication support",
-                ],
-              }
+        <div className="space-y-8 animate-in fade-in duration-300">
+          {loadingOverview ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <>
+              {/* KPI Cards */}
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+                {kpis.map((kpi, i) => {
+                  const icons = [Leaf, TrendingUp, Beaker, FileText, Shield]
+                  const Icon = icons[i] || Activity
+                  return (
+                    <div
+                      key={i}
+                      className="group rounded-xl border bg-card p-4 transition-all hover:border-primary/30 hover:shadow-md"
+                    >
+                      <div className="mb-2 flex items-center justify-between">
+                        <Icon className="h-4 w-4 text-muted-foreground" />
+                        <span
+                          className={`flex items-center gap-0.5 text-xs font-semibold ${
+                            kpi.changeDirection === "up"
+                              ? "text-emerald-600 dark:text-emerald-400"
+                              : kpi.changeDirection === "down"
+                              ? "text-red-500"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {kpi.changeDirection === "up" && <TrendingUp className="h-3 w-3" />}
+                          {kpi.changeDirection === "down" && <TrendingDown className="h-3 w-3" />}
+                          {kpi.change}
+                        </span>
+                      </div>
+                      <div className="font-mono text-xl font-bold tracking-tight md:text-2xl">
+                        {kpi.value}
+                      </div>
+                      <div className="mt-1 text-[11px] leading-tight text-muted-foreground">
+                        {isTr ? kpi.labelTr : kpi.label}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
 
-              return (
-                <div key={plan.id} className={`rounded-xl border bg-gradient-to-br ${plan.color} ${plan.border} p-6`}>
-                  <div className="mb-4 flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-background/80">
-                      <Icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold">{isTr ? titles[plan.id]?.tr : titles[plan.id]?.en}</h3>
-                    </div>
-                  </div>
-                  <p className="mb-4 text-sm text-muted-foreground">
-                    {isTr ? descs[plan.id]?.tr : descs[plan.id]?.en}
-                  </p>
-                  <ul className="mb-5 space-y-2">
-                    {features[plan.id]?.map((f, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm">
-                        <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-primary" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="text-sm font-semibold text-muted-foreground">
-                    {isTr ? "Özel fiyatlandırma" : "Custom pricing"}
-                  </div>
+              {/* Sector Performance Bar Chart */}
+              <div className="rounded-xl border bg-card p-6">
+                <h3 className="mb-4 flex items-center gap-2 font-semibold">
+                  <BarChart3 className="h-5 w-5 text-primary" />
+                  {isTr ? "Sektor Performansi" : "Sector Performance"}
+                </h3>
+                <div className="h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={sectorPerformanceData} barGap={8}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis dataKey="sector" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                      <YAxis tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "hsl(var(--card))",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: 8,
+                          fontSize: 12,
+                        }}
+                      />
+                      <Legend wrapperStyle={{ fontSize: 12 }} />
+                      <Bar
+                        dataKey="growth"
+                        name={isTr ? "Buyume (%)" : "Growth (%)"}
+                        fill="#10b981"
+                        radius={[4, 4, 0, 0]}
+                      />
+                      <Bar
+                        dataKey="revenue"
+                        name={isTr ? "Gelir ($B)" : "Revenue ($B)"}
+                        fill="#3b82f6"
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
-              )
-            })}
-          </div>
+              </div>
 
-          {/* Contact CTA */}
-          <div className="rounded-xl border bg-gradient-to-br from-primary/5 to-primary/10 p-8 text-center">
-            <h3 className="mb-2 text-xl font-bold">
-              {isTr ? "Kurumsal Demo Talep Edin" : "Request Enterprise Demo"}
-            </h3>
-            <p className="mb-5 text-sm text-muted-foreground">
-              {isTr
-                ? "Şirketinize özel çözüm için ekibimizle iletişime geçin."
-                : "Contact our team for a solution tailored to your organization."}
-            </p>
-            <a
-              href="mailto:enterprise@phytotherapy.ai"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-primary/90 hover:shadow-lg"
-            >
-              <Mail className="h-4 w-4" />
-              enterprise@phytotherapy.ai
-            </a>
-          </div>
+              {/* Sector Events Timeline */}
+              <div className="rounded-xl border bg-card p-6">
+                <h3 className="mb-5 flex items-center gap-2 font-semibold">
+                  <Clock className="h-5 w-5 text-primary" />
+                  {isTr ? "Sektor Olaylari" : "Sector Events"}
+                </h3>
+                <div className="relative space-y-0">
+                  {/* Vertical line */}
+                  <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-border" />
+                  {events.map((event, i) => (
+                    <div key={i} className="relative flex gap-4 pb-5 last:pb-0">
+                      {/* Dot */}
+                      <div className="relative z-10 mt-1.5 h-[15px] w-[15px] flex-shrink-0 rounded-full border-2 border-primary bg-background" />
+                      <div className="flex-1 rounded-lg border bg-background/50 p-3 transition-colors hover:bg-muted/30">
+                        <div className="mb-1 flex flex-wrap items-center gap-2">
+                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${eventTypeColor(event.type)}`}>
+                            {event.type}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground">{event.date}</span>
+                          {event.valueBillions && (
+                            <span className="font-mono text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                              ${event.valueBillions >= 1
+                                ? `${event.valueBillions}B`
+                                : `${Math.round(event.valueBillions * 1000)}M`}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm font-semibold">{event.company}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {isTr ? event.detailTr : event.detail}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
 
-      {/* ─── TAB 2: Market Trends ─── */}
-      {activeTab === "market" && (
-        <div className="space-y-6">
-          {/* AI Insights */}
-          <div className="grid gap-4 md:grid-cols-2">
-            {AI_INSIGHTS.map((insight, i) => {
-              const Icon = insight.icon
-              const text = insightTexts[i]
-              const isExpanded = expandedInsight === i
-              return (
-                <div key={i} className={`rounded-xl border ${insight.bg} p-5`}>
-                  <div className="mb-2 flex items-center gap-2">
-                    <Icon className={`h-5 w-5 ${insight.color}`} />
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      {isTr
-                        ? ["Yükselen Trend", "Arz Darboğazı", "Fırsat", "Risk"][i]
-                        : ["Rising Trend", "Supply Bottleneck", "Opportunity", "Risk"][i]}
-                    </span>
-                  </div>
-                  <h4 className="mb-1 text-sm font-bold">{text.title}</h4>
-                  <p className="text-xs text-muted-foreground">{text.summary}</p>
-                  {isExpanded && (
-                    <p className="mt-2 text-xs text-muted-foreground/80 border-t pt-2">{text.detail}</p>
-                  )}
-                  <button
-                    onClick={() => setExpandedInsight(isExpanded ? null : i)}
-                    className="mt-2 flex items-center gap-1 text-xs font-medium text-primary"
-                  >
-                    {isExpanded ? (isTr ? "Kapat" : "Less") : (isTr ? "Detay" : "More")}
-                    {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                  </button>
-                </div>
-              )
-            })}
-          </div>
-
-          {/* Market Trend Cards (Simplified chart with CSS bars) */}
-          <div>
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-bold">
-              <LineChart className="h-5 w-5 text-primary" />
-              {isTr ? "Hammadde Pazar Büyüklüğü (Milyar $)" : "Raw Material Market Size (Billion $)"}
-            </h3>
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {MARKET_TRENDS.map((item) => {
-                const max = Math.max(...item.data)
-                return (
-                  <div key={item.name} className="rounded-xl border bg-card p-4">
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="text-sm font-bold">{item.name}</span>
-                      <span className={`text-xs font-bold ${item.trend === "up" ? "text-green-600" : "text-amber-600"}`}>
-                        {item.growth}
-                      </span>
-                    </div>
-                    {/* Mini bar chart */}
-                    <div className="mb-2 flex items-end gap-[3px]" style={{ height: 48 }}>
-                      {item.data.map((val, j) => (
-                        <div
-                          key={j}
-                          className={`flex-1 rounded-t-sm transition-all ${
-                            j === item.data.length - 1
-                              ? "bg-primary"
-                              : "bg-primary/30"
-                          }`}
-                          style={{ height: `${(val / max) * 100}%` }}
+      {/* ═══════════════════════════════════════
+          TAB 2: TRENDING PHYTOCHEMICALS
+          ═══════════════════════════════════════ */}
+      {activeTab === "trends" && (
+        <div className="space-y-8 animate-in fade-in duration-300">
+          {loadingTrends ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <>
+              {/* Main Area Chart */}
+              <div className="rounded-xl border bg-card p-6">
+                <h3 className="mb-4 flex items-center gap-2 font-semibold">
+                  <LineChart className="h-5 w-5 text-primary" />
+                  {isTr ? "PubMed Yayin Trendi (12 Ay)" : "PubMed Publication Trends (12 Months)"}
+                </h3>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart>
+                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                      <XAxis
+                        dataKey="month"
+                        allowDuplicatedCategory={false}
+                        tick={{ fontSize: 11 }}
+                        stroke="hsl(var(--muted-foreground))"
+                      />
+                      <YAxis tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: "hsl(var(--card))",
+                          border: "1px solid hsl(var(--border))",
+                          borderRadius: 8,
+                          fontSize: 12,
+                        }}
+                      />
+                      <Legend wrapperStyle={{ fontSize: 11 }} />
+                      {botanicals.map((b, i) => (
+                        <Area
+                          key={b.name}
+                          data={b.monthlyData}
+                          type="monotone"
+                          dataKey="publications"
+                          name={b.name}
+                          stroke={CHART_COLORS[i]}
+                          fill={CHART_COLORS[i]}
+                          fillOpacity={0.08}
+                          strokeWidth={2}
                         />
                       ))}
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Botanical Cards Grid */}
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {botanicals.map((b, i) => {
+                  const isEarlySignal = b.growthPercent > 100
+                  return (
+                    <div
+                      key={b.name}
+                      className={`group relative rounded-xl border bg-card p-4 transition-all hover:shadow-md ${
+                        isEarlySignal ? "border-amber-300 dark:border-amber-700" : ""
+                      }`}
+                    >
+                      {isEarlySignal && (
+                        <div className="absolute -top-2.5 right-3 flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow">
+                          <Zap className="h-3 w-3" />
+                          {isTr ? "Erken Sinyal" : "Early Signal"}
+                        </div>
+                      )}
+                      <div className="mb-3 flex items-center justify-between">
+                        <span className="text-sm font-bold">{b.name}</span>
+                        <span
+                          className={`font-mono text-sm font-bold ${
+                            b.trendDirection === "up"
+                              ? "text-emerald-600 dark:text-emerald-400"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          +{b.growthPercent}%
+                        </span>
+                      </div>
+                      {/* Mini Sparkline */}
+                      <div className="mb-3 h-12">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <RechartsLineChart data={b.monthlyData}>
+                            <Line
+                              type="monotone"
+                              dataKey="publications"
+                              stroke={CHART_COLORS[i]}
+                              strokeWidth={2}
+                              dot={false}
+                            />
+                          </RechartsLineChart>
+                        </ResponsiveContainer>
+                      </div>
+                      <div className="flex justify-between text-[11px] text-muted-foreground">
+                        <span>
+                          {isTr ? "Yayin:" : "Pubs:"}{" "}
+                          <span className="font-mono font-semibold text-foreground">
+                            {b.pubmedCountCurrent.toLocaleString()}
+                          </span>
+                        </span>
+                        <span>
+                          {isTr ? "Pazar:" : "Market:"}{" "}
+                          <span className="font-mono font-semibold text-foreground">
+                            ${b.marketSizeBillions}B
+                          </span>
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                      <span>2019</span>
-                      <span className="font-bold text-foreground">{item.marketCap}</span>
-                      <span>2026</span>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
+                  )
+                })}
+              </div>
+            </>
+          )}
         </div>
       )}
 
-      {/* ─── TAB 3: Company Radar ─── */}
+      {/* ═══════════════════════════════════════
+          TAB 3: COMPANY TRACKER
+          ═══════════════════════════════════════ */}
       {activeTab === "companies" && (
-        <div>
-          <h3 className="mb-4 flex items-center gap-2 text-lg font-bold">
-            <Globe className="h-5 w-5 text-primary" />
-            {isTr ? "Biyoteknoloji & Fitoterapi Şirket Radarı" : "Biotech & Phytotherapy Company Radar"}
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/50 text-left">
-                  <th className="px-4 py-3 font-semibold">{isTr ? "Şirket" : "Company"}</th>
-                  <th className="px-4 py-3 font-semibold">{isTr ? "Ülke" : "Country"}</th>
-                  <th className="px-4 py-3 font-semibold">{isTr ? "Odak Alanı" : "Focus Area"}</th>
-                  <th className="px-4 py-3 font-semibold text-right">{isTr ? "Pazar Değeri" : "Market Cap"}</th>
-                  <th className="px-4 py-3 font-semibold text-right">{isTr ? "Büyüme" : "Growth"}</th>
-                  <th className="px-4 py-3 font-semibold text-right">{isTr ? "Patent" : "Patents"}</th>
-                  <th className="px-4 py-3 font-semibold">{isTr ? "Durum" : "Stage"}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {COMPANIES.map((company, i) => (
-                  <tr key={i} className="border-b transition-colors hover:bg-muted/30">
-                    <td className="px-4 py-3 font-semibold">{company.name}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{company.country}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{company.focus}</td>
-                    <td className="px-4 py-3 text-right font-mono font-semibold">{company.marketCap}</td>
-                    <td className="px-4 py-3 text-right font-mono font-semibold text-green-600">{company.growth}</td>
-                    <td className="px-4 py-3 text-right font-mono">{company.patents}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        company.stage === "Public" ? "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300"
-                        : company.stage === "Pre-IPO" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300"
-                        : company.stage === "Acquired" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
-                        : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                      }`}>
-                        {company.stage}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Market Stats */}
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {[
-              { label: isTr ? "Global Fitoterapi Pazarı" : "Global Phytotherapy Market", value: "$42.6B", sub: "2026", icon: Leaf },
-              { label: isTr ? "Yıllık Büyüme (CAGR)" : "Annual Growth (CAGR)", value: "8.7%", sub: "2021-2026", icon: TrendingUp },
-              { label: isTr ? "Aktif Patent" : "Active Patents", value: "12,400+", sub: isTr ? "Dünya geneli" : "Worldwide", icon: FlaskConical },
-              { label: isTr ? "Klinik Çalışma" : "Clinical Trials", value: "3,200+", sub: "ClinicalTrials.gov", icon: Activity },
-            ].map((stat, i) => (
-              <div key={i} className="rounded-xl border bg-card p-4 text-center">
-                <stat.icon className="mx-auto mb-2 h-5 w-5 text-primary" />
-                <div className="text-xl font-bold">{stat.value}</div>
-                <div className="text-xs text-muted-foreground">{stat.label}</div>
-                <div className="text-[10px] text-muted-foreground/60">{stat.sub}</div>
+        <div className="space-y-8 animate-in fade-in duration-300">
+          {loadingCompanies ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <>
+              {/* Company Table */}
+              <div className="rounded-xl border bg-card">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b bg-muted/50 text-left">
+                        <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          {isTr ? "Sirket" : "Company"}
+                        </th>
+                        <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          {isTr ? "Fiyat" : "Price"}
+                        </th>
+                        <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          {isTr ? "Degisim" : "Change"}
+                        </th>
+                        <th className="hidden px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground md:table-cell">
+                          {isTr ? "Pazar Deg." : "Mkt Cap"}
+                        </th>
+                        <th className="hidden px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground lg:table-cell">
+                          {isTr ? "52H Aralik" : "52W Range"}
+                        </th>
+                        <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          {isTr ? "Durum" : "Status"}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {companies.map((c, i) => {
+                        const rangePercent =
+                          c.week52High > 0
+                            ? ((c.currentPrice - c.week52Low) / (c.week52High - c.week52Low)) * 100
+                            : 0
+                        return (
+                          <tr key={i} className="border-b transition-colors hover:bg-muted/30">
+                            <td className="px-4 py-3">
+                              <div className="font-semibold">{c.name}</div>
+                              <div className="text-xs text-muted-foreground">
+                                {c.symbol} {c.exchange !== "N/A" ? `| ${c.exchange}` : ""}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3 text-right font-mono font-semibold">
+                              {c.currentPrice > 0 ? `$${c.currentPrice.toFixed(2)}` : "---"}
+                            </td>
+                            <td className="px-4 py-3 text-right">
+                              {c.currentPrice > 0 ? (
+                                <span
+                                  className={`font-mono font-semibold ${
+                                    c.dailyChangePercent >= 0
+                                      ? "text-emerald-600 dark:text-emerald-400"
+                                      : "text-red-500"
+                                  }`}
+                                >
+                                  {c.dailyChangePercent >= 0 ? "+" : ""}
+                                  {c.dailyChangePercent.toFixed(2)}%
+                                </span>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">N/A</span>
+                              )}
+                            </td>
+                            <td className="hidden px-4 py-3 text-right font-mono font-semibold md:table-cell">
+                              ${c.marketCapBillions >= 1
+                                ? `${c.marketCapBillions}B`
+                                : `${Math.round(c.marketCapBillions * 1000)}M`}
+                            </td>
+                            <td className="hidden px-4 py-3 lg:table-cell">
+                              {c.week52High > 0 ? (
+                                <div className="flex items-center gap-2">
+                                  <span className="font-mono text-[10px] text-muted-foreground">
+                                    ${c.week52Low.toFixed(0)}
+                                  </span>
+                                  <div className="relative h-2 w-20 overflow-hidden rounded-full bg-muted">
+                                    <div
+                                      className="absolute left-0 top-0 h-full rounded-full bg-primary"
+                                      style={{ width: `${Math.min(rangePercent, 100)}%` }}
+                                    />
+                                  </div>
+                                  <span className="font-mono text-[10px] text-muted-foreground">
+                                    ${c.week52High.toFixed(0)}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-xs text-muted-foreground">---</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3">
+                              <span
+                                className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                                  c.ipoStatus === "Public"
+                                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                                    : c.ipoStatus === "Pre-IPO"
+                                    ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+                                    : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                                }`}
+                              >
+                                {c.ipoStatus}
+                              </span>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            ))}
-          </div>
+
+              {/* Charts Row: Pie + Correlation */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Market Cap Distribution Pie */}
+                <div className="rounded-xl border bg-card p-6">
+                  <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
+                    <Activity className="h-4 w-4 text-primary" />
+                    {isTr ? "Pazar Degeri Dagilimi" : "Market Cap Distribution"}
+                  </h3>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={pieData}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={90}
+                          innerRadius={45}
+                          paddingAngle={2}
+                          label={({ name, value }) => `${name} $${value}B`}
+                          labelLine={{ strokeWidth: 1 }}
+                        >
+                          {pieData.map((_, i) => (
+                            <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "hsl(var(--card))",
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: 8,
+                            fontSize: 12,
+                          }}
+                          formatter={(value) => [`$${value}B`, isTr ? "Pazar Degeri" : "Market Cap"] as [string, string]}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* Correlation Chart */}
+                <div className="rounded-xl border bg-card p-6">
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="flex items-center gap-2 text-sm font-semibold">
+                      <Search className="h-4 w-4 text-primary" />
+                      {isTr ? "Arama Hacmi vs Hisse Fiyati" : "Search Volume vs Stock Price"}
+                    </h3>
+                    {correlation.length > 0 && (
+                      <div className="flex gap-1">
+                        {correlation.map((c, i) => (
+                          <button
+                            key={c.symbol}
+                            onClick={() => setSelectedCorrelation(i)}
+                            className={`rounded px-2 py-0.5 text-[10px] font-bold transition-all ${
+                              selectedCorrelation === i
+                                ? "bg-primary text-white"
+                                : "bg-muted text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            {c.symbol}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {correlation.length > 0 && (
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <ComposedChart data={correlation[selectedCorrelation].data}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                          <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                          <YAxis
+                            yAxisId="left"
+                            tick={{ fontSize: 11 }}
+                            stroke="hsl(var(--muted-foreground))"
+                            label={{ value: isTr ? "Arama" : "Search", angle: -90, position: "insideLeft", fontSize: 10 }}
+                          />
+                          <YAxis
+                            yAxisId="right"
+                            orientation="right"
+                            tick={{ fontSize: 11 }}
+                            stroke="hsl(var(--muted-foreground))"
+                            label={{ value: isTr ? "Fiyat ($)" : "Price ($)", angle: 90, position: "insideRight", fontSize: 10 }}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: "hsl(var(--card))",
+                              border: "1px solid hsl(var(--border))",
+                              borderRadius: 8,
+                              fontSize: 12,
+                            }}
+                          />
+                          <Legend wrapperStyle={{ fontSize: 11 }} />
+                          <Bar
+                            yAxisId="left"
+                            dataKey="searchVolume"
+                            name={isTr ? "Google Trends" : "Google Trends"}
+                            fill="#8b5cf6"
+                            fillOpacity={0.6}
+                            radius={[2, 2, 0, 0]}
+                          />
+                          <Line
+                            yAxisId="right"
+                            type="monotone"
+                            dataKey="stockPrice"
+                            name={isTr ? "Hisse Fiyati" : "Stock Price"}
+                            stroke="#10b981"
+                            strokeWidth={2.5}
+                            dot={{ fill: "#10b981", r: 3 }}
+                          />
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════
+          TAB 4: PATENT & REGULATION
+          ═══════════════════════════════════════ */}
+      {activeTab === "patents" && (
+        <div className="space-y-8 animate-in fade-in duration-300">
+          {loadingPatents ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <>
+              {/* Summary Stat Cards */}
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                {[
+                  {
+                    label: isTr ? "Toplam Patent" : "Total Patents",
+                    value: patents.length.toString(),
+                    icon: FileText,
+                    color: "text-blue-500",
+                  },
+                  {
+                    label: isTr ? "Onaylanan" : "Granted",
+                    value: patents.filter((p) => p.status === "Granted").length.toString(),
+                    icon: CheckCircle2,
+                    color: "text-emerald-500",
+                  },
+                  {
+                    label: isTr ? "Inceleme Altinda" : "Under Review",
+                    value: patents.filter((p) => p.status === "Under Review").length.toString(),
+                    icon: Clock,
+                    color: "text-amber-500",
+                  },
+                  {
+                    label: isTr ? "Regulasyon Guncelleme" : "Regulatory Updates",
+                    value: regulatory.length.toString(),
+                    icon: Scale,
+                    color: "text-violet-500",
+                  },
+                ].map((stat, i) => (
+                  <div key={i} className="rounded-xl border bg-card p-4">
+                    <stat.icon className={`mb-2 h-5 w-5 ${stat.color}`} />
+                    <div className="font-mono text-2xl font-bold">{stat.value}</div>
+                    <div className="text-xs text-muted-foreground">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Patent List */}
+              <div className="rounded-xl border bg-card">
+                <div className="border-b px-5 py-3">
+                  <h3 className="flex items-center gap-2 text-sm font-semibold">
+                    <FileText className="h-4 w-4 text-primary" />
+                    {isTr ? "Son Patent Basvurulari" : "Recent Patent Filings"}
+                  </h3>
+                </div>
+                <div className="divide-y">
+                  {patents.map((p) => (
+                    <div key={p.id} className="flex items-start gap-3 px-5 py-3 transition-colors hover:bg-muted/30">
+                      <ChevronRight className="mt-0.5 h-4 w-4 flex-shrink-0 text-muted-foreground" />
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-semibold leading-snug">
+                          {isTr ? p.titleTr : p.title}
+                        </div>
+                        <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                          <span className="text-xs text-muted-foreground">{p.company}</span>
+                          <span className="text-muted-foreground">|</span>
+                          <span className="text-xs text-muted-foreground">{p.filingDate}</span>
+                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${jurisdictionBadge(p.jurisdiction)}`}>
+                            {p.jurisdiction}
+                          </span>
+                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${statusBadge(p.status)}`}>
+                            {p.status}
+                          </span>
+                          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                            {p.botanical}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Regulatory Updates */}
+              <div>
+                <h3 className="mb-4 flex items-center gap-2 font-semibold">
+                  <Shield className="h-5 w-5 text-primary" />
+                  {isTr ? "Regulasyon Guncellemeleri" : "Regulatory Updates"}
+                </h3>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {regulatory.map((r) => (
+                    <div key={r.id} className="rounded-xl border bg-card p-4 transition-all hover:shadow-md">
+                      <div className="mb-2 flex items-center gap-2">
+                        <span className="rounded bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                          {r.agency}
+                        </span>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${impactColor(r.impactLevel)}`}>
+                          {r.impactLevel === "high"
+                            ? (isTr ? "Yuksek Etki" : "High Impact")
+                            : r.impactLevel === "medium"
+                            ? (isTr ? "Orta Etki" : "Medium Impact")
+                            : (isTr ? "Dusuk Etki" : "Low Impact")}
+                        </span>
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${statusBadge(r.status)}`}>
+                          {r.status}
+                        </span>
+                      </div>
+                      <h4 className="mb-1 text-sm font-semibold">{isTr ? r.titleTr : r.title}</h4>
+                      <p className="text-xs leading-relaxed text-muted-foreground">
+                        {isTr ? r.summaryTr : r.summary}
+                      </p>
+                      <div className="mt-2 flex items-center gap-2 text-[11px] text-muted-foreground">
+                        <span>{r.type}</span>
+                        <span>|</span>
+                        <span>{r.date}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════
+          TAB 5: AI ANALYSIS
+          ═══════════════════════════════════════ */}
+      {activeTab === "ai" && (
+        <div className="space-y-8 animate-in fade-in duration-300">
+          {!aiAnalysis && !loadingAI && (
+            <div className="rounded-xl border bg-gradient-to-br from-primary/5 to-violet-500/5 p-10 text-center">
+              <Sparkles className="mx-auto mb-4 h-12 w-12 text-primary opacity-80" />
+              <h3 className="mb-2 text-xl font-bold">
+                {isTr ? "AI Pazar Analizi" : "AI Market Analysis"}
+              </h3>
+              <p className="mx-auto mb-6 max-w-lg text-sm text-muted-foreground">
+                {isTr
+                  ? "Gemini AI, en son botanik yayin trendlerini, sirket verilerini ve regulasyon degisikliklerini analiz ederek yatirim sinyalleri uretir."
+                  : "Gemini AI analyzes the latest botanical publication trends, company data and regulatory changes to generate investment-relevant signals."}
+              </p>
+              <button
+                onClick={runAIAnalysis}
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
+              >
+                <Zap className="h-4 w-4" />
+                {isTr ? "Analiz Olustur" : "Generate Analysis"}
+              </button>
+            </div>
+          )}
+
+          {loadingAI && (
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="mb-4 h-10 w-10 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">
+                {isTr ? "AI analiz ediliyor..." : "AI analyzing market data..."}
+              </p>
+            </div>
+          )}
+
+          {aiAnalysis && !loadingAI && (
+            <>
+              {/* Early Signals */}
+              <div>
+                <h3 className="mb-4 flex items-center gap-2 font-semibold">
+                  <Zap className="h-5 w-5 text-amber-500" />
+                  {isTr ? "Erken Sinyaller" : "Early Signals"}
+                </h3>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {aiAnalysis.earlySignals.map((s, i) => (
+                    <div key={i} className="rounded-xl border bg-card p-4 transition-all hover:shadow-md">
+                      <div className="mb-2 flex items-center gap-2">
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${confidenceColor(s.confidence)}`}>
+                          {s.confidence === "high"
+                            ? (isTr ? "Yuksek Guven" : "High Confidence")
+                            : s.confidence === "medium"
+                            ? (isTr ? "Orta Guven" : "Medium Confidence")
+                            : (isTr ? "Dusuk Guven" : "Low Confidence")}
+                        </span>
+                        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                          {s.botanical}
+                        </span>
+                      </div>
+                      <p className="text-sm leading-relaxed">
+                        {isTr ? (s.signalTr || s.signal) : s.signal}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sector Outlook — Bullish/Bearish Split */}
+              <div className="rounded-xl border bg-card p-6">
+                <h3 className="mb-3 flex items-center gap-2 font-semibold">
+                  <ArrowUpRight className="h-5 w-5 text-primary" />
+                  {isTr ? "Sektor Gorunumu" : "Sector Outlook"}
+                </h3>
+                <p className="mb-5 text-sm text-muted-foreground">
+                  {isTr
+                    ? (aiAnalysis.sectorOutlook.summaryTr || aiAnalysis.sectorOutlook.summary)
+                    : aiAnalysis.sectorOutlook.summary}
+                </p>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {/* Bullish */}
+                  <div className="rounded-lg bg-emerald-50 p-4 dark:bg-emerald-950/20">
+                    <h4 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-emerald-700 dark:text-emerald-400">
+                      <TrendingUp className="h-4 w-4" />
+                      {isTr ? "Yukselis Faktorleri" : "Bullish Factors"}
+                    </h4>
+                    <ul className="space-y-1.5">
+                      {(isTr
+                        ? (aiAnalysis.sectorOutlook.bullishFactorsTr || aiAnalysis.sectorOutlook.bullishFactors)
+                        : aiAnalysis.sectorOutlook.bullishFactors
+                      ).map((f, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs">
+                          <CheckCircle2 className="mt-0.5 h-3 w-3 flex-shrink-0 text-emerald-600" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  {/* Bearish */}
+                  <div className="rounded-lg bg-red-50 p-4 dark:bg-red-950/20">
+                    <h4 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-red-700 dark:text-red-400">
+                      <TrendingDown className="h-4 w-4" />
+                      {isTr ? "Dusus Faktorleri" : "Bearish Factors"}
+                    </h4>
+                    <ul className="space-y-1.5">
+                      {(isTr
+                        ? (aiAnalysis.sectorOutlook.bearishFactorsTr || aiAnalysis.sectorOutlook.bearishFactors)
+                        : aiAnalysis.sectorOutlook.bearishFactors
+                      ).map((f, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs">
+                          <AlertTriangle className="mt-0.5 h-3 w-3 flex-shrink-0 text-red-500" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Risk Alerts */}
+              <div>
+                <h3 className="mb-4 flex items-center gap-2 font-semibold">
+                  <AlertTriangle className="h-5 w-5 text-red-500" />
+                  {isTr ? "Risk Uyarilari" : "Risk Alerts"}
+                </h3>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {aiAnalysis.riskAlerts.map((r, i) => (
+                    <div
+                      key={i}
+                      className={`rounded-xl border-l-4 bg-card p-4 ${
+                        r.severity === "high"
+                          ? "border-l-red-500"
+                          : r.severity === "medium"
+                          ? "border-l-amber-500"
+                          : "border-l-gray-400"
+                      }`}
+                    >
+                      <div className="mb-2 flex items-center gap-2">
+                        <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${impactColor(r.severity)}`}>
+                          {r.severity}
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">{r.sector}</span>
+                      </div>
+                      <p className="text-sm leading-relaxed">
+                        {isTr ? (r.riskTr || r.risk) : r.risk}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Re-run Button */}
+              <div className="text-center">
+                <button
+                  onClick={runAIAnalysis}
+                  className="inline-flex items-center gap-2 rounded-lg border px-5 py-2 text-xs font-medium text-muted-foreground transition-all hover:border-primary hover:text-primary"
+                >
+                  <FlaskConical className="h-3.5 w-3.5" />
+                  {isTr ? "Yeniden Analiz Et" : "Re-run Analysis"}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
 
       {/* Disclaimer */}
       <div className="mt-10 rounded-xl border bg-muted/30 p-5 text-center text-xs text-muted-foreground">
         {isTr
-          ? "Bu sayfadaki pazar verileri ve şirket bilgileri kamuya açık kaynaklardan derlenmiş tahmini değerlerdir. Yatırım tavsiyesi niteliği taşımaz. Yatırım kararlarınızda profesyonel danışmanlık alınız."
+          ? "Bu sayfadaki pazar verileri ve sirket bilgileri kamuya acik kaynaklardan derlenmis tahmini degerlerdir. Yatirim tavsiyesi niteliginde degildir. Yatirim kararlarinizda profesyonel danismanlik aliniz."
           : "Market data and company information on this page are estimates compiled from public sources. This does not constitute investment advice. Seek professional guidance for investment decisions."}
       </div>
     </div>

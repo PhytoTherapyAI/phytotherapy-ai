@@ -19,6 +19,8 @@ export const maxDuration = 60;
 interface BloodTestInput {
   values: Record<string, number>; // markerId -> value
   gender?: "male" | "female" | null;
+  testDate?: string | null; // ISO date string or approximate period
+  testDateApprox?: "last3months" | "last6months" | "lastYear" | "olderThanYear" | null;
 }
 
 interface GeminiAnalysis {
@@ -45,6 +47,23 @@ interface GeminiAnalysis {
   }>;
   doctorDiscussion: string[];
   disclaimer: string;
+  triage?: {
+    timeWarning?: {
+      testAge: "recent" | "months_old" | "year_old" | "very_old";
+      message: string;
+      messageTr: string;
+    };
+    specialtyRecommendations: Array<{
+      specialty: string;
+      specialtyTr: string;
+      probability: number;
+      reason: string;
+      reasonTr: string;
+      urgency: "routine" | "soon" | "urgent";
+      keyMarkers: string[];
+    }>;
+    overallUrgency: "routine" | "soon" | "urgent" | "emergency";
+  };
 }
 
 // ============================================
@@ -64,7 +83,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { values, gender, lang } = body as BloodTestInput & { lang?: string };
+    const { values, gender, lang, testDate, testDateApprox } = body as BloodTestInput & { lang?: string };
 
     if (!values || typeof values !== "object" || Object.keys(values).length === 0) {
       return new Response(
@@ -137,7 +156,7 @@ export async function POST(request: NextRequest) {
 
     // Step 3: Build Gemini prompt
     const abnormal = results.filter((r) => r.status !== "optimal");
-    const prompt = buildAnalysisPrompt(results, abnormal, profileContext, hasMedications);
+    const prompt = buildAnalysisPrompt(results, abnormal, profileContext, hasMedications, testDate, testDateApprox);
 
     // Step 4: Get Gemini analysis
     const userLang = lang === "tr" ? "Turkish" : "English";
@@ -170,6 +189,7 @@ export async function POST(request: NextRequest) {
         success: true,
         results: categorized,
         analysis,
+        triage: analysis.triage,
         totalMarkers: results.length,
         abnormalCount: abnormal.length,
         optimalCount: results.length - abnormal.length,
@@ -193,9 +213,25 @@ function buildAnalysisPrompt(
   results: BloodTestResult[],
   abnormal: BloodTestResult[],
   profileContext: string,
-  hasMedications: boolean
+  hasMedications: boolean,
+  testDate?: string | null,
+  testDateApprox?: string | null
 ): string {
   let prompt = "## BLOOD TEST RESULTS\n\n";
+
+  // Add test date context
+  if (testDate) {
+    prompt += `TEST DATE: ${testDate}\n`;
+  } else if (testDateApprox) {
+    const approxMap: Record<string, string> = {
+      last3months: "Within the last 3 months",
+      last6months: "Within the last 6 months",
+      lastYear: "Within the last year",
+      olderThanYear: "More than 1 year old",
+    };
+    prompt += `TEST DATE (approximate): ${approxMap[testDateApprox] || "Unknown"}\n`;
+  }
+  prompt += "\n";
 
   for (const r of results) {
     const emoji = r.status === "optimal" ? "✅" : r.status === "high" || r.status === "low" ? "🔴" : "🟡";
@@ -245,8 +281,37 @@ CRITICAL: Return ONLY a raw JSON object matching this schema:
     }
   ],
   "doctorDiscussion": ["Point 1 to discuss with doctor", "Point 2..."],
-  "disclaimer": "Standard medical disclaimer"
-}`;
+  "disclaimer": "Standard medical disclaimer",
+  "triage": {
+    "timeWarning": {
+      "testAge": "recent | months_old | year_old | very_old",
+      "message": "Compassionate message about test date relevance (English)",
+      "messageTr": "Turkish version of the message"
+    },
+    "specialtyRecommendations": [
+      {
+        "specialty": "Endocrinology",
+        "specialtyTr": "Endokrinoloji",
+        "probability": 75,
+        "reason": "Why this specialty (English)",
+        "reasonTr": "Turkish reason",
+        "urgency": "routine | soon | urgent",
+        "keyMarkers": ["TSH", "Free T4"]
+      }
+    ],
+    "overallUrgency": "routine | soon | urgent | emergency"
+  }
+}
+
+TRIAGE RULES:
+- Always recommend at least 1 specialty, max 4
+- Probabilities must sum to approximately 100%
+- If test date is >6 months old, add timeWarning recommending fresh tests
+- If test date is >1 year old, emphasize trend value over diagnostic value
+- If no test date provided, set timeWarning.testAge to "recent" and skip the warning message
+- Consider user's existing conditions and medications when recommending specialties
+- Common mappings: abnormal TSH/T4 → Endocrinology, low iron/B12/ferritin → Hematology, high HbA1c/glucose → Endocrinology+Diabetology, abnormal liver enzymes → Gastroenterology, abnormal kidney markers → Nephrology, abnormal lipids → Cardiology+Internal Medicine
+- "urgency" based on how far values deviate from normal ranges`;
 
   return prompt;
 }
@@ -295,6 +360,31 @@ function parseGeminiBloodAnalysis(response: string): GeminiAnalysis {
         data.disclaimer ||
           "This analysis is for educational purposes only. Consult your healthcare provider before making any changes to your treatment."
       ),
+      triage: data.triage
+        ? {
+            timeWarning: data.triage.timeWarning
+              ? {
+                  testAge: String(data.triage.timeWarning.testAge || "recent") as "recent" | "months_old" | "year_old" | "very_old",
+                  message: String(data.triage.timeWarning.message || ""),
+                  messageTr: String(data.triage.timeWarning.messageTr || ""),
+                }
+              : undefined,
+            specialtyRecommendations: Array.isArray(data.triage.specialtyRecommendations)
+              ? data.triage.specialtyRecommendations.map((s: Record<string, unknown>) => ({
+                  specialty: String(s.specialty || ""),
+                  specialtyTr: String(s.specialtyTr || ""),
+                  probability: Number(s.probability || 0),
+                  reason: String(s.reason || ""),
+                  reasonTr: String(s.reasonTr || ""),
+                  urgency: (["routine", "soon", "urgent"].includes(String(s.urgency)) ? s.urgency : "routine") as "routine" | "soon" | "urgent",
+                  keyMarkers: Array.isArray(s.keyMarkers) ? s.keyMarkers.map(String) : [],
+                }))
+              : [],
+            overallUrgency: (["routine", "soon", "urgent", "emergency"].includes(String(data.triage?.overallUrgency))
+              ? data.triage.overallUrgency
+              : "routine") as "routine" | "soon" | "urgent" | "emergency",
+          }
+        : undefined,
     };
   } catch (error) {
     console.error("Failed to parse blood analysis:", error);

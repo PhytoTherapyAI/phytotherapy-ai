@@ -3044,6 +3044,25 @@ const t: Record<string, TranslationEntry> = {
   "emergencyid.generate": { en: "Generate Card", tr: "Kart Olustur" },
   "emergencyid.print": { en: "Print Card", tr: "Karti Yazdir" },
 
+  // ── Smart Triage ──
+  "triage.title": { en: "Smart Triage", tr: "Ak\u0131ll\u0131 Y\u00F6nlendirme" },
+  "triage.subtitle": { en: "AI-recommended specialist consultations", tr: "AI \u00F6nerili uzman kons\u00FCltasyonlar\u0131" },
+  "triage.testDate": { en: "Test Date", tr: "Tahlil Tarihi" },
+  "triage.dontRemember": { en: "I don't remember the exact date", tr: "Tam tarihi hat\u0131rlam\u0131yorum" },
+  "triage.last3months": { en: "Last 3 months", tr: "Son 3 ay" },
+  "triage.last6months": { en: "Last 6 months", tr: "Son 6 ay" },
+  "triage.lastYear": { en: "Last year", tr: "Son 1 y\u0131l" },
+  "triage.olderThanYear": { en: "More than a year", tr: "1 y\u0131ldan eski" },
+  "triage.routine": { en: "Routine", tr: "Rutin" },
+  "triage.soon": { en: "See Soon", tr: "Yak\u0131nda Gidin" },
+  "triage.urgent": { en: "Urgent", tr: "Acil" },
+  "triage.probability": { en: "Probability", tr: "Olas\u0131l\u0131k" },
+  "triage.keyMarkers": { en: "Key Markers", tr: "Ana G\u00F6stergeler" },
+  "triage.overallUrgency": { en: "Overall Urgency", tr: "Genel Aciliyet" },
+
+  // ── About Page ──
+  "nav.about": { en: "About", tr: "Hakk\u0131m\u0131zda" },
+
   // ── J5: Health Spending ──
   "nav.healthSpending": { en: "Spending", tr: "Harcama" },
   "spending.title": { en: "Health Spending Tracker", tr: "Saglik Harcama Takibi" },

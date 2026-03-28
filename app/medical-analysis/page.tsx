@@ -10,6 +10,10 @@ import {
   Loader2,
   X,
   RotateCcw,
+  Stethoscope,
+  AlertTriangle,
+  Calendar,
+  Clock,
 } from "lucide-react";
 import { BloodTestForm } from "@/components/blood-test/BloodTestForm";
 import { ResultDashboard } from "@/components/blood-test/ResultDashboard";
@@ -49,6 +53,23 @@ interface AnalysisResponse {
     }>;
     doctorDiscussion: string[];
     disclaimer: string;
+  };
+  triage?: {
+    timeWarning?: {
+      testAge: "recent" | "months_old" | "year_old" | "very_old";
+      message: string;
+      messageTr: string;
+    };
+    specialtyRecommendations: Array<{
+      specialty: string;
+      specialtyTr: string;
+      probability: number;
+      reason: string;
+      reasonTr: string;
+      urgency: "routine" | "soon" | "urgent";
+      keyMarkers: string[];
+    }>;
+    overallUrgency: "routine" | "soon" | "urgent" | "emergency";
   };
   totalMarkers: number;
   abnormalCount: number;
@@ -170,6 +191,10 @@ function BloodTestTab({
   const [pdfUploading, setPdfUploading] = useState(false);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [testDate, setTestDate] = useState<string>("");
+  const [dontRememberDate, setDontRememberDate] = useState(false);
+  const [testDateApprox, setTestDateApprox] = useState<string>("");
+  const isTr = lang === "tr";
 
   const handleSubmit = async (
     values: Record<string, number>,
@@ -187,7 +212,13 @@ function BloodTestTab({
       const res = await fetch("/api/blood-analysis", {
         method: "POST",
         headers,
-        body: JSON.stringify({ values, gender, lang }),
+        body: JSON.stringify({
+          values,
+          gender,
+          lang,
+          testDate: dontRememberDate ? null : testDate || null,
+          testDateApprox: dontRememberDate ? testDateApprox || null : null,
+        }),
       });
       if (!res.ok) {
         const err = await res.json();
@@ -208,6 +239,69 @@ function BloodTestTab({
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
           <p className="font-semibold">{tx("bt.analysisError", lang)}</p>
           <p>{error}</p>
+        </div>
+      )}
+
+      {/* Test Date Picker */}
+      {!data && (
+        <div className="mb-6 rounded-xl border bg-muted/20 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Calendar className="h-4 w-4 text-primary" />
+            <h3 className="text-sm font-semibold">
+              {isTr ? "Tahlil Tarihi" : "Test Date"}
+            </h3>
+            <span className="text-xs text-muted-foreground">
+              ({isTr ? "iste\u011Fe ba\u011Fl\u0131" : "optional"})
+            </span>
+          </div>
+
+          {!dontRememberDate && (
+            <input
+              type="date"
+              value={testDate}
+              onChange={(e) => setTestDate(e.target.value)}
+              max={new Date().toISOString().split("T")[0]}
+              className="mb-3 w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-auto"
+            />
+          )}
+
+          <label className="flex items-center gap-2 cursor-pointer text-sm text-muted-foreground mb-3">
+            <input
+              type="checkbox"
+              checked={dontRememberDate}
+              onChange={(e) => {
+                setDontRememberDate(e.target.checked);
+                if (e.target.checked) setTestDate("");
+                if (!e.target.checked) setTestDateApprox("");
+              }}
+              className="rounded border-gray-300"
+            />
+            {isTr ? "Tam tarihi hat\u0131rlam\u0131yorum" : "I don't remember the exact date"}
+          </label>
+
+          {dontRememberDate && (
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: "last3months", en: "Last 3 months", tr: "Son 3 ay" },
+                { value: "last6months", en: "Last 6 months", tr: "Son 6 ay" },
+                { value: "lastYear", en: "Last year", tr: "Son 1 y\u0131l" },
+                { value: "olderThanYear", en: "More than a year", tr: "1 y\u0131ldan eski" },
+              ].map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setTestDateApprox(testDateApprox === opt.value ? "" : opt.value)}
+                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                    testDateApprox === opt.value
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border hover:border-primary/40 hover:text-primary"
+                  }`}
+                >
+                  {isTr ? opt.tr : opt.en}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -329,6 +423,11 @@ function BloodTestTab({
             abnormalCount={data.abnormalCount}
             optimalCount={data.optimalCount}
           />
+
+          {/* Smart Triage Section */}
+          {data.triage && data.triage.specialtyRecommendations?.length > 0 && (
+            <TriageSection triage={data.triage} lang={lang} />
+          )}
         </div>
       ) : (
         <BloodTestForm onSubmit={handleSubmit} isLoading={isLoading} />
@@ -338,6 +437,158 @@ function BloodTestTab({
         ⚠️ {tx("disclaimer.tool", lang)}
       </p>
     </>
+  );
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Smart Triage Section
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function TriageSection({
+  triage,
+  lang,
+}: {
+  triage: NonNullable<AnalysisResponse["triage"]>;
+  lang: Lang;
+}) {
+  const isTr = lang === "tr";
+
+  const urgencyConfig = {
+    routine: {
+      label: isTr ? "Rutin" : "Routine",
+      color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
+      border: "border-green-200 dark:border-green-800",
+    },
+    soon: {
+      label: isTr ? "Yak\u0131nda Gidin" : "See Soon",
+      color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+      border: "border-amber-200 dark:border-amber-800",
+    },
+    urgent: {
+      label: isTr ? "Acil" : "Urgent",
+      color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+      border: "border-red-200 dark:border-red-800",
+    },
+    emergency: {
+      label: isTr ? "Acil Durum" : "Emergency",
+      color: "bg-red-200 text-red-800 dark:bg-red-900/50 dark:text-red-300",
+      border: "border-red-300 dark:border-red-700",
+    },
+  };
+
+  const getBarColor = (prob: number) => {
+    if (prob > 50) return "bg-green-500";
+    if (prob >= 25) return "bg-amber-500";
+    return "bg-blue-500";
+  };
+
+  return (
+    <div className="mt-8 space-y-4">
+      {/* Overall urgency banner */}
+      {(triage.overallUrgency === "urgent" || triage.overallUrgency === "emergency") && (
+        <div
+          className={`flex items-center gap-3 rounded-lg border p-4 ${urgencyConfig[triage.overallUrgency].border} ${urgencyConfig[triage.overallUrgency].color}`}
+        >
+          <AlertTriangle className="h-5 w-5 shrink-0" />
+          <div>
+            <p className="font-semibold">
+              {isTr ? "Genel Aciliyet" : "Overall Urgency"}: {urgencyConfig[triage.overallUrgency].label}
+            </p>
+            <p className="text-sm opacity-80">
+              {isTr
+                ? "Sonu\u00E7lar\u0131n\u0131z\u0131 m\u00FCmk\u00FCn olan en k\u0131sa s\u00FCrede bir uzmanla payla\u015Fman\u0131z\u0131 \u00F6neriyoruz."
+                : "We recommend sharing your results with a specialist as soon as possible."}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Time warning */}
+      {triage.timeWarning && triage.timeWarning.testAge !== "recent" && triage.timeWarning.message && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/30">
+          <Clock className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+          <p className="text-sm text-amber-800 dark:text-amber-200">
+            {isTr ? triage.timeWarning.messageTr : triage.timeWarning.message}
+          </p>
+        </div>
+      )}
+
+      {/* Heading */}
+      <div className="flex items-center gap-2">
+        <Stethoscope className="h-5 w-5 text-primary" />
+        <h3 className="text-lg font-semibold">
+          {isTr ? "Ak\u0131ll\u0131 Y\u00F6nlendirme" : "Smart Triage"}
+        </h3>
+        <span className="text-xs text-muted-foreground">
+          {isTr ? "AI \u00F6nerili uzman kons\u00FCltasyonlar\u0131" : "AI-recommended specialist consultations"}
+        </span>
+      </div>
+
+      {/* Specialty Cards Grid */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        {triage.specialtyRecommendations.map((spec, idx) => {
+          const urg = urgencyConfig[spec.urgency];
+          return (
+            <div
+              key={idx}
+              className={`rounded-xl border p-4 transition-shadow hover:shadow-md ${urg.border}`}
+            >
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <h4 className="font-bold text-base">
+                  {isTr ? spec.specialtyTr : spec.specialty}
+                </h4>
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${urg.color}`}
+                >
+                  {urg.label}
+                </span>
+              </div>
+
+              {/* Probability bar */}
+              <div className="mb-2">
+                <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                  <span>{isTr ? "Olas\u0131l\u0131k" : "Probability"}</span>
+                  <span className="font-medium">{spec.probability}%</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className={`h-full rounded-full transition-all ${getBarColor(spec.probability)}`}
+                    style={{ width: `${spec.probability}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Reason */}
+              <p className="text-sm text-muted-foreground mb-2">
+                {isTr ? spec.reasonTr : spec.reason}
+              </p>
+
+              {/* Key Markers */}
+              {spec.keyMarkers.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="text-xs text-muted-foreground">
+                    {isTr ? "Ana G\u00F6stergeler:" : "Key Markers:"}
+                  </span>
+                  {spec.keyMarkers.map((marker, mIdx) => (
+                    <span
+                      key={mIdx}
+                      className="rounded-md bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary"
+                    >
+                      {marker}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="text-center text-xs text-muted-foreground">
+        {isTr
+          ? "Bu y\u00F6nlendirmeler AI tahminidir ve bir doktorun de\u011Ferlendirmesinin yerini tutmaz."
+          : "These recommendations are AI-generated estimates and do not replace a doctor's evaluation."}
+      </p>
+    </div>
   );
 }
 
