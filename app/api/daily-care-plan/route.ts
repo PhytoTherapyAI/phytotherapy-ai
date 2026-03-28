@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
-import { createRateLimiter } from "@/lib/rate-limit";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
-
-const limiter = createRateLimiter(5, 60000);
 
 const DAILY_CARE_PROMPT = `You are generating a personalized daily care plan for a Phytotherapy.ai user.
 
@@ -50,7 +48,8 @@ SAFETY RULES:
 
 export async function GET(req: Request) {
   // Rate limit
-  const { allowed } = await limiter(req);
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  const { allowed } = checkRateLimit(`daily-care:${ip}`, 5, 60000);
   if (!allowed) {
     return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
   }
