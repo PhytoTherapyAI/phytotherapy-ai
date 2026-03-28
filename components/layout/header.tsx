@@ -133,6 +133,9 @@ const toolLinks = [
   { href: "/insurance-guide", labelKey: "nav.insuranceGuide" },
   { href: "/military-health", labelKey: "nav.militaryHealth" },
   { href: "/pharmacy-finder", labelKey: "nav.pharmacyFinder" },
+  // Education & Business
+  { href: "/courses", labelKey: "nav.courses" },
+  { href: "/enterprise", labelKey: "nav.enterprise" },
 ];
 
 // All links combined for mobile

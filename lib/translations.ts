@@ -3022,6 +3022,8 @@ const t: Record<string, TranslationEntry> = {
 
   // ── J1: Pharmacy Finder ──
   "nav.pharmacyFinder": { en: "Pharmacy", tr: "Eczane" },
+  "nav.courses": { en: "Courses", tr: "Egitimler" },
+  "nav.enterprise": { en: "Enterprise", tr: "Kurumsal" },
   "pharmacy.title": { en: "Pharmacy Finder", tr: "Eczane Bulucu" },
   "pharmacy.subtitle": { en: "Find pharmacies and medication equivalents", tr: "Eczane ve ilac esdegeri bulun" },
 
