@@ -168,6 +168,8 @@ const toolLinks = [
   { href: "/healthy-recipes", labelKey: "nav.healthyRecipes" },
   { href: "/data-export", labelKey: "nav.dataExport" },
   { href: "/privacy-controls", labelKey: "nav.privacyControls" },
+  // Value & Marketplace
+  { href: "/value-marketplace", labelKey: "nav.valueMarketplace" },
 ];
 
 // All links combined for mobile

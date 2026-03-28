@@ -3417,6 +3417,51 @@ const healthAnalyticsKeys: Record<string, TranslationEntry> = {
 }
 Object.assign(t, healthAnalyticsKeys)
 
+// ══════════════════════════════════════════
+// Value-Based Marketplace
+// ══════════════════════════════════════════
+const valueMarketplaceKeys: Record<string, TranslationEntry> = {
+  "nav.valueMarketplace": { en: "Value Marketplace", tr: "Deger Pazaryeri" },
+  "value.title": { en: "Value-Based Marketplace", tr: "Deger Odakli Pazaryeri" },
+  "value.subtitle": { en: "Pay for outcomes, not just products", tr: "Sadece urune degil, sonuca odeme yapin" },
+  "value.marketplace": { en: "Marketplace", tr: "Pazaryeri" },
+  "value.productDetail": { en: "Product Detail", tr: "Urun Detayi" },
+  "value.escrow": { en: "My Escrow Accounts", tr: "Guvence Hesaplarim" },
+  "value.riskReward": { en: "Risk & Reward", tr: "Risk & Odul" },
+  "value.valueScore": { en: "Value Score", tr: "Deger Puani" },
+  "value.sortBy": { en: "Sort by", tr: "Sirala" },
+  "value.successRate": { en: "Success Rate", tr: "Basari Orani" },
+  "value.evidenceGrade": { en: "Evidence", tr: "Kanit" },
+  "value.standardPrice": { en: "Standard Price", tr: "Standart Fiyat" },
+  "value.valuePrice": { en: "Value Price", tr: "Deger Fiyati" },
+  "value.outcomePrice": { en: "Outcome-Based", tr: "Sonuc Odakli" },
+  "value.guarantee": { en: "Outcome Guarantee", tr: "Sonuc Garantisi" },
+  "value.escrowPeriod": { en: "Evaluation Period", tr: "Degerlendirme Suresi" },
+  "value.refundPercent": { en: "Refund if no improvement", tr: "Iyilesme olmazsa iade" },
+  "value.smartContract": { en: "Smart Contract", tr: "Akilli Sozlesme" },
+  "value.kpiTargets": { en: "KPI Targets", tr: "KPI Hedefleri" },
+  "value.baseline": { en: "Baseline", tr: "Baslangic" },
+  "value.target": { en: "Target", tr: "Hedef" },
+  "value.actual": { en: "Actual", tr: "Gerceklesen" },
+  "value.held": { en: "Held", tr: "Tutulan" },
+  "value.released": { en: "Released", tr: "Serbest" },
+  "value.refunded": { en: "Refunded", tr: "Iade" },
+  "value.providerBonus": { en: "Provider Bonus", tr: "Saglayici Bonusu" },
+  "value.goldProvider": { en: "Gold Provider", tr: "Altin Saglayici" },
+  "value.howItWorks": { en: "How Escrow Works", tr: "Guvence Nasil Calisir" },
+  "value.step1": { en: "Purchase with escrow protection", tr: "Guvence korumasiyla satin alin" },
+  "value.step2": { en: "System monitors your health metrics", tr: "Sistem saglik metriklerinizi izler" },
+  "value.step3": { en: "AI evaluates improvement at evaluation date", tr: "AI degerlendirme tarihinde iyilesmeyi degerlendirir" },
+  "value.step4": { en: "Payment released or refund initiated", tr: "Odeme serbest birakilir veya iade baslatilir" },
+  "value.viewDetails": { en: "View Details", tr: "Detaylari Gor" },
+  "value.buyStandard": { en: "Buy Standard", tr: "Standart Satin Al" },
+  "value.buyValue": { en: "Buy Value", tr: "Deger Fiyatiyla Al" },
+  "value.buyOutcome": { en: "Buy with Guarantee", tr: "Garantili Satin Al" },
+  "value.formula": { en: "Value Score Formula", tr: "Deger Puani Formulu" },
+  "value.loginRequired": { en: "Sign in to access the marketplace", tr: "Pazaryerine erismek icin giris yapin" },
+}
+Object.assign(t, valueMarketplaceKeys)
+
 /**
  * Export the raw translations object for iteration.
  */
