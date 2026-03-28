@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Leaf, LogIn, User, Users, LogOut, Settings, AlertTriangle, Check, RefreshCw, Droplets, Calculator, FlaskConical, Menu, X } from "lucide-react";
+import { Leaf, LogIn, User, LogOut, Settings, AlertTriangle, Check, RefreshCw, FlaskConical, Menu, X, ChevronDown, Wrench } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -10,22 +10,49 @@ import { Button } from "@/components/ui/button";
 import { tx } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
 
-// All nav links — shown directly in desktop, in mobile drawer
-const allLinks = [
-  { href: "/family", labelKey: "family.title" },
+// Main nav links (always visible)
+const mainLinks = [
   { href: "/health-assistant", labelKey: "nav.assistant" },
   { href: "/calendar", labelKey: "nav.calendar" },
   { href: "/interaction-checker", labelKey: "nav.interaction" },
+];
+
+// Tools dropdown items
+const toolLinks = [
   { href: "/medical-analysis", labelKey: "nav.medicalAnalysis" },
   { href: "/body-analysis", labelKey: "nav.bodyAnalysis" },
   { href: "/symptom-checker", labelKey: "nav.symptomChecker" },
   { href: "/food-interaction", labelKey: "nav.foodInteraction" },
+  { href: "/supplement-compare", labelKey: "nav.supCompare" },
+  { href: "/interaction-map", labelKey: "nav.intMap" },
+  { href: "/health-goals", labelKey: "nav.healthGoals" },
+  { href: "/prospectus-reader", labelKey: "nav.prospectus" },
+  { href: "/sleep-analysis", labelKey: "nav.sleepAnalysis" },
+  { href: "/mental-wellness", labelKey: "nav.mentalWellness" },
+  { href: "/nutrition", labelKey: "nav.nutrition" },
+  { href: "/womens-health", labelKey: "nav.womensHealth" },
+  { href: "/chronic-care", labelKey: "nav.chronicCare" },
+  { href: "/allergy-map", labelKey: "nav.allergyMap" },
+  { href: "/appointment-prep", labelKey: "nav.appointmentPrep" },
+  { href: "/travel-health", labelKey: "nav.travelHealth" },
+  { href: "/vaccination", labelKey: "nav.vaccination" },
+  { href: "/rehabilitation", labelKey: "nav.rehabilitation" },
+  { href: "/seasonal-health", labelKey: "nav.seasonalHealth" },
+];
+
+// All links combined for mobile
+const allMobileLinks = [
+  ...mainLinks,
+  { href: "/family", labelKey: "family.title" },
+  ...toolLinks,
 ];
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const toolsRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, isLoading, user, profile, signOut, needsMedicationUpdate, refreshProfile } = useAuth();
   const { lang } = useLang()
   const [showMedReminder, setShowMedReminder] = useState(false);
@@ -70,6 +97,9 @@ export function Header() {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setUserMenuOpen(false);
       }
+      if (toolsRef.current && !toolsRef.current.contains(event.target as Node)) {
+        setToolsOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -96,9 +126,9 @@ export function Header() {
           </span>
         </Link>
 
-        {/* Desktop nav — all links visible, pushed right */}
+        {/* Desktop nav */}
         <nav className="ml-8 hidden items-center gap-4 xl:gap-5 lg:flex">
-          {allLinks.map((link) => (
+          {mainLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -107,6 +137,41 @@ export function Header() {
               {tx(link.labelKey, lang)}
             </Link>
           ))}
+          <Link
+            href="/family"
+            className="whitespace-nowrap text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
+          >
+            {tx("family.title", lang)}
+          </Link>
+
+          {/* Tools dropdown */}
+          <div className="relative" ref={toolsRef}>
+            <button
+              onClick={() => setToolsOpen(!toolsOpen)}
+              className="flex items-center gap-1 whitespace-nowrap text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
+            >
+              <Wrench className="h-3.5 w-3.5" />
+              {tx("nav.tools", lang)}
+              <ChevronDown className={`h-3 w-3 transition-transform ${toolsOpen ? "rotate-180" : ""}`} />
+            </button>
+            {toolsOpen && (
+              <div className="absolute left-0 top-full z-[100] mt-2 w-64 max-h-[70vh] overflow-y-auto rounded-lg border bg-background shadow-lg">
+                <div className="p-1">
+                  {toolLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="block rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-muted hover:text-foreground"
+                      onClick={() => setToolsOpen(false)}
+                    >
+                      {tx(link.labelKey, lang)}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {isAuthenticated && (
             <Link
               href="/dashboard"
@@ -118,7 +183,7 @@ export function Header() {
         </nav>
 
         {/* Desktop right controls */}
-        <div className="ml-3 hidden items-center gap-2 lg:flex">
+        <div className="ml-auto hidden items-center gap-2 lg:flex">
           <LanguageToggle />
           <ThemeToggle />
 
@@ -210,8 +275,8 @@ export function Header() {
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <nav className="border-t px-4 py-4 lg:hidden">
-          {allLinks.map((link) => (
+        <nav className="max-h-[70vh] overflow-y-auto border-t px-4 py-4 lg:hidden">
+          {allMobileLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
