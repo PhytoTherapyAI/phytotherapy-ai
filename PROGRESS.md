@@ -108,17 +108,97 @@
 - Wrapped sayfa query type TR çevirisi
 - Remember Me checkbox kaldırıldı (non-functional)
 
-### 🔧 Sıradaki — Phase 14-20
+### 🔧 Sıradaki — Kritik Fixler + 85 Yeni Tool
 
-**Phase 14:** Sayfa birleştirmeleri (Kan Tahlili+Radyoloji → /medical-analysis, Kalori+BMI+Kilo → /body-analysis)
-**Phase 15:** Semptom Checker (AI triage: acil/doktor/evde bekle)
-**Phase 16:** Besin-İlaç Etkileşim Kontrolü (greyfurt+statin, kafein+ilaç vs.)
-**Phase 17:** Takviye Karşılaştırma (Omega-3 vs Krill Oil yan yana)
-**Phase 18:** İlaç Etkileşim Haritası (görsel ağ grafiği, D3.js/react-force-graph)
-**Phase 19:** Sağlık Hedefi Koçu (AI plan oluşturma, milestone takibi)
-**Phase 20:** İlaç Prospektüs Okuyucu (gelecek)
+**ÖNCELİK 0 — Kritik Fixler:**
+- [ ] Google OAuth: `exchangeCodeForSession` çift çağrı sorunu — `detectSessionInUrl:true` ile çakışıyor
+- [ ] Facebook OAuth: aynı PKCE sorunu
+- [ ] Dil algılama: localStorage'daki eski değer navigator.language'ı eziyor
+- [ ] Mahkeme referansı: İstanbul Çağlayan → Tüketici Mahkemeleri ✅ (28 Mart)
 
+**FAZE A — Temel 12 Tool (NEW-TOOLS-PROMPTS.md TOOL 1-12):**
+| # | Tool | Sayfa | Durum |
+|---|------|-------|-------|
+| 1 | Uyku Kalitesi Analizi | /sleep-analysis | ⬜ |
+| 2 | İlaç Prospektüs Okuyucu | /profile (ek tab) | ⬜ |
+| 3 | Kadın Sağlığı + Kontraseptif | /womens-health | ⬜ |
+| 4 | Stres & Mental Wellness | /mental-wellness | ⬜ |
+| 5 | Beslenme Günlüğü | /nutrition | ⬜ |
+| 6 | Kronik Hastalık Paneli | /chronic-care | ⬜ |
+| 7 | Doktor Randevu Hazırlığı | /appointment-prep | ⬜ |
+| 8 | Aşı Takvimi | /vaccination | ⬜ |
+| 9 | Seyahat Sağlık | /travel-health | ⬜ |
+| 10 | Alerji Haritası | /allergy-map | ⬜ |
+| 11 | Rehabilitasyon | /rehabilitation | ⬜ |
+| 12 | Mevsimsel Rehber | /seasonal-health | ⬜ |
+
+**FAZE B — İleri 8 Tool (NEW-TOOLS-PROMPTS.md TOOL 13-20):**
+| # | Tool | Entegrasyon | Durum |
+|---|------|-------------|-------|
+| 13 | Bağırsak Sağlığı & Mikrobiyom | /gut-health | ⬜ |
+| 14 | Cilt Sağlığı Analizi | /skin-health | ⬜ |
+| 15 | Farmakogenetik Profil | /pharmacogenomics | ⬜ |
+| 16 | Ağrı Yönetim Günlüğü | /pain-journal | ⬜ |
+| 17 | Yaşlı Bakım Modu | Aile profili adaptasyonu (65+) | ⬜ |
+| 18 | Çocuk Sağlığı Modu | Aile profili adaptasyonu (0-12) | ⬜ |
+| 19 | Spor Performans & Toparlanma | /body-analysis tab ekleme | ⬜ |
+| 20 | Ses ile Sağlık Günlüğü | /voice-journal + platform geneli mic | ⬜ |
+
+**FAZE C — 65 Genişleme Tool (TOOL-IDEAS-FULL.md):**
+
+*Günlük Yaşam & Alışkanlık (9):*
+A1 Su Kalitesi Rehberi, A2 Kafein Takip, A3 Alkol Takip, A4 Sigara Bırakma Koçu,
+A5 Nefes Egzersizi, A6 Duruş & Ergonomi, A7 Ekran Süresi, A8 Aralıklı Oruç, A9 Güneş Maruziyeti
+
+*Organ Sistemleri (10):*
+B1 Göz Sağlığı, B2 Kulak & İşitme, B3 Diş & Ağız, B4 Saç & Tırnak, B5 Diyabetik Ayak,
+B6 Böbrek Dashboard, B7 Karaciğer Monitör, B8 Tiroid Dashboard, B9 Kardiyovasküler Risk, B10 Akciğer Monitör
+
+*Mental Sağlık Detay (5):*
+C1 Anksiyete Araç Seti, C2 Depresyon Tarama, C3 ADHD Yönetim, C4 PTSD Takip, C5 Bağımlılık İyileşme
+
+*Kadın & Erkek Sağlığı (5):*
+D1 Gebelik Takip, D2 Postpartum Destek, D3 Menopoz Paneli, D4 Erkek Sağlığı, D5 Cinsel Sağlık
+
+*Yaşam Dönemleri (4):*
+E1 Üniversite Öğrenci Paketi, E2 Askerlik Rehberi, E3 Emeklilik Geçişi, E4 Yeni Ebeveyn
+
+*Çevresel & Durumsal (4):*
+F1 Hava Kalitesi, F2 Gürültü Maruziyeti, F3 Jet Lag Optimizasyon, F4 Vardiyalı Çalışan
+
+*Koruyucu & Tarama (4):*
+G1 Kanser Tarama Hatırlatıcı, G2 Aile Sağlık Ağacı, G3 Check-up Planlayıcı, G4 Genetik Risk
+
+*Eğitim & Okuryazarlık (5):*
+H1 Tıbbi Terim Sözlüğü, H2 İlaç Bilgi Merkezi, H3 Doktora Anlatma Rehberi, H4 Haber Doğrulama, H5 İlk Yardım
+
+*Sosyal & Topluluk (4):*
+I1 Soru-Cevap Forum, I2 Challenge Platformu, I3 Destek Grupları, I4 Yas Desteği
+
+*Pratik Araçlar (5):*
+J1 Eczane Bulucu, J2 SGK Kapsam Rehberi, J3 Tıbbi Kayıt Organizatör, J4 Acil Kimlik Kartı, J5 Sağlık Harcama
+
+*İleri Teknoloji (5):*
+K1 Wearable Hub, K2 Proaktif AI Asistan, K3 AR İlaç Tarayıcı, K4 Klinik Araştırma Bulucu, K5 İkinci Görüş Hazırlayıcı
+
+*Beslenme Detay (5):*
+L1 Çapraz Alerji Rehberi, L2 Detoks Gerçekleri, L3 Besin Etiket Okuyucu, L4 Anti-İnflamatuar Koç, L5 Hidrasyon Optimizasyon
+
+*Uyku Detay (3):*
+M1 Rüya Günlüğü, M2 Horlama & Apne Tarama, M3 Sirkadyen Ritim
+
+*Hareket & Terapi (3):*
+N1 Stretching Oluşturucu, N2 Yürüyüş Analizi, N3 Yoga & Meditasyon
+
+*Nadir & Değerli (4):*
+O1 Nadir Hastalık Bilgi, O2 Kan/Organ Bağışı, O3 Engelli Birey Asistanı, O4 Göçmen Sağlık
+
+*Bonus (1):*
+P1 Evcil Hayvan-İnsan Sağlık
+
+**Toplam: 85 yeni tool (20 detaylı prompt + 65 fikir)**
 **Hackathon: 11-12 Nisan 2026 — 14 gün kaldı**
+**Detaylı prompt'lar: NEW-TOOLS-PROMPTS.md**
 
 ---
 
