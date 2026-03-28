@@ -11,6 +11,7 @@ import { tx } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
 import { MegaMenu } from "@/components/layout/mega-menu/MegaMenu";
 import { MobileMegaMenu } from "@/components/layout/mega-menu/MobileMegaMenu";
+import { CommandPalette, CommandPaletteTrigger } from "@/components/layout/CommandPalette";
 
 // Main nav links (always visible)
 const mainLinks = [
@@ -185,6 +186,7 @@ export function Header() {
   const { lang } = useLang()
   const [showMedReminder, setShowMedReminder] = useState(false);
   const [dismissingReminder, setDismissingReminder] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useEffect(() => {
     if (needsMedicationUpdate && isAuthenticated && !isLoading) {
@@ -297,6 +299,7 @@ export function Header() {
 
         {/* Desktop right controls */}
         <div className="ml-auto hidden items-center gap-2 lg:flex">
+          <CommandPaletteTrigger />
           <LanguageToggle />
           <ThemeToggle />
 
@@ -495,6 +498,7 @@ export function Header() {
         </div>
       </div>
     )}
+    <CommandPalette />
     </>
   );
 }
