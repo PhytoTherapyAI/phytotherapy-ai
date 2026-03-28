@@ -1691,6 +1691,45 @@ const t: Record<string, TranslationEntry> = {
   "boss.days": { en: "days", tr: "gün" },
   "boss.tasks": { en: "tasks", tr: "görev" },
 
+  // ══════════════════════════════════════════
+  // Radiology Analysis
+  // ══════════════════════════════════════════
+  "nav.radiology": { en: "Radiology", tr: "Radyoloji" },
+  "rad.title": { en: "Radiology Analysis", tr: "Radyoloji Analizi" },
+  "rad.subtitle": { en: "Upload your radiology image or report for a plain-language explanation of findings", tr: "Radyoloji görüntünüzü veya raporunuzu yükleyin — bulgular halk dilinde açıklansın" },
+  "rad.guestMode": { en: "Guest mode:", tr: "Misafir modu:" },
+  "rad.guestText": { en: "Sign in to save your analyses and get personalized interpretations.", tr: "Analizlerinizi kaydetmek ve kişisel yorumlar almak için giriş yapın." },
+  "rad.upload": { en: "Upload Image or Report", tr: "Görüntü veya Rapor Yükle" },
+  "rad.uploadDesc": { en: "Supports X-ray, CT, MRI, ultrasound images and radiology reports (PDF)", tr: "Röntgen, BT, MR, ultrason görüntüleri ve radyoloji raporları (PDF) desteklenir" },
+  "rad.chooseFile": { en: "Choose Image or PDF", tr: "Görüntü veya PDF Seç" },
+  "rad.analyzing": { en: "Analyzing image...", tr: "Görüntü analiz ediliyor..." },
+  "rad.analyze": { en: "Analyze", tr: "Analiz Et" },
+  "rad.yourResults": { en: "Your Analysis Results", tr: "Analiz Sonuçlarınız" },
+  "rad.runNew": { en: "New Analysis", tr: "Yeni Analiz" },
+  "rad.imageType": { en: "Image Type", tr: "Görüntü Tipi" },
+  "rad.xray": { en: "X-Ray", tr: "Röntgen" },
+  "rad.ct": { en: "CT Scan", tr: "BT Tarama" },
+  "rad.mri": { en: "MRI", tr: "MR" },
+  "rad.ultrasound": { en: "Ultrasound", tr: "Ultrason" },
+  "rad.report": { en: "Report (PDF)", tr: "Rapor (PDF)" },
+  "rad.urgencyNormal": { en: "No Urgent Findings", tr: "Acil Bulgu Yok" },
+  "rad.urgencyAttention": { en: "Needs Attention", tr: "Dikkat Gerekli" },
+  "rad.urgencyUrgent": { en: "Urgent — See Your Doctor", tr: "Acil — Doktora Başvurun" },
+  "rad.tabFindings": { en: "Findings", tr: "Bulgular" },
+  "rad.tabGlossary": { en: "Medical Glossary", tr: "Tıbbi Sözlük" },
+  "rad.tabDoctor": { en: "For Your Doctor", tr: "Doktorunuz İçin" },
+  "rad.summary": { en: "Summary", tr: "Özet" },
+  "rad.region": { en: "Region", tr: "Bölge" },
+  "rad.observation": { en: "Observation", tr: "Gözlem" },
+  "rad.medicalTerm": { en: "Medical Term", tr: "Tıbbi Terim" },
+  "rad.limitations": { en: "Limitations", tr: "Kısıtlamalar" },
+  "rad.limitationsDesc": { en: "What cannot be determined from this image alone", tr: "Bu görüntüden tek başına belirlenemeyen şeyler" },
+  "rad.downloadPdf": { en: "Download Doctor Report", tr: "Doktor Raporu İndir" },
+  "rad.findings": { en: "findings", tr: "bulgu" },
+  "rad.noFindings": { en: "No significant findings detected.", tr: "Önemli bir bulgu tespit edilmedi." },
+  "rad.disclaimer": { en: "This analysis is for educational purposes only. It is NOT a radiological diagnosis. A qualified radiologist must interpret all medical images. Always consult your healthcare provider.", tr: "Bu analiz yalnızca eğitim amaçlıdır. Radyolojik tanı DEĞİLDİR. Tüm tıbbi görüntüler nitelikli bir radyolog tarafından yorumlanmalıdır. Her zaman sağlık profesyonelinize danışın." },
+  "rad.error": { en: "Analysis failed. Please try again.", tr: "Analiz başarısız. Lütfen tekrar deneyin." },
+
 }
 
 // ══════════════════════════════════════════

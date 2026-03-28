@@ -17,6 +17,7 @@ const allLinks = [
   { href: "/calendar", labelKey: "nav.calendar" },
   { href: "/interaction-checker", labelKey: "nav.interaction" },
   { href: "/blood-test", labelKey: "nav.bloodtest" },
+  { href: "/radiology", labelKey: "nav.radiology" },
   { href: "/calorie", labelKey: "nav.calorie" },
 ];
 

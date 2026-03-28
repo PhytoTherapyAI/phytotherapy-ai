@@ -26,6 +26,7 @@ import {
   AlertTriangle,
   Sparkles,
   Stethoscope,
+  Scan,
 } from "lucide-react"
 import Link from "next/link"
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog"
@@ -39,6 +40,7 @@ const TOOL_LINKS = [
   { href: "/side-effects", icon: AlertTriangle, labelKey: "sideeffect.title" },
   { href: "/wrapped", icon: Sparkles, labelKey: "wrapped.title" },
   { href: "/doctor", icon: Stethoscope, labelKey: "doctor.title" },
+  { href: "/radiology", icon: Scan, labelKey: "rad.title" },
 ]
 
 export default function DashboardPage() {
