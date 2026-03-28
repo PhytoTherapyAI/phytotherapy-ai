@@ -1,10 +1,10 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v14.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v15.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
 **Phytotherapy.ai** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
-- **Ekip:** 2 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **13 gün kaldı**
+- **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **14 gün kaldı**
 - **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı) — 2 yıllık ödeme yapıldı
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
@@ -48,6 +48,11 @@ Monitoring:   Sentry ✅ (error tracking + session replay + tracing)
 E2E Testing:  Playwright ✅ (54 sayfa + 6 API testi)
 Deploy:       Vercel ✅ — phytotherapy.ai
 Auth:         Supabase Auth ✅ (email + Google OAuth + Facebook OAuth)
+Email:        Resend ✅ (verification approval/rejection emails)
+Vector DB:    Supabase pgvector ✅ (semantic search embeddings)
+FHIR:         HL7 FHIR R4 ✅ (hospital interoperability)
+Bot:          Twilio WhatsApp + Telegram Bot API ✅
+Cron:         Vercel Cron Jobs ✅ (daily health plan 09:00 TR)
 OS:           Windows
 ```
 
@@ -695,9 +700,80 @@ NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
 
 ---
 
-*Son güncelleme: 27 Mart 2026 v13.0*
-*Sprint 1-13 + Phase 1-13 tamamlandı. Radyoloji Analizi eklendi. i18n %92 merkezi (640+ key).*
+---
+
+## Bu Oturumda Eklenen Büyük Modüller (28-29 Mart 2026)
+
+### Navigasyon Yeniden Yapılandırma
+- `lib/tools-hierarchy.ts` — 14 kategori, 135+ modül JSON
+- Mega Menü (desktop: 4 sütun grid + hover popover, mobile: akordeon)
+- `/tools` Hub sayfası (aranabilir kategori grid)
+- Command Palette (`Cmd+K` Spotlight-tarzı arama + semantik search)
+
+### Klinik Testler (`/clinical-tests`)
+- 7 uluslararası test: PHQ-9, GAD-7, ASRS, PSS-10, ISI, WHO-5, AUDIT
+- Typeform-tarzı tek soru/ekran UI + kriz tespiti (Q9 → 112 overlay)
+- `lib/clinical-tests-data.ts` + `components/clinical/`
+
+### Healthcare Talent Hub (`/talent-hub`)
+- 4 adımlı CV wizard + profesyonel profil kartları
+- KYC doğrulama (`/talent-hub/verify`) + drag-drop belge yükleme
+- Güvenli depolama: AES-256 encrypted path + 15dk signed URL + audit trail
+
+### Premium Yayıncı Portalı (`/creator-studio`)
+- Rich text editör + 4 fiyatlandırma planı (Observer→Enterprise)
+- Akıllı video URL (YouTube/Vimeo regex + canlı önizleme)
+- AI SEO Copilot (split-view, gerçek zamanlı skor 0-100)
+- `/expert-content` okuyucu görünümü
+
+### Omnichannel Bot (WhatsApp + Telegram)
+- `/connect-assistant` — kanal seçimi + QR bağlantı
+- `/api/bot-webhook` — mesaj alma + görev tamamlama tespiti
+- `/api/bot-send` — Vercel Cron 09:00 günlük plan gönderimi
+
+### FHIR R4 Birlikte Çalışabilirlik
+- `lib/fhir/` — types, terminology-map (SNOMED+RxNorm+LOINC), converters
+- `/api/fhir` — FHIR bundle export + e-Nabız formatı + import
+- 10 bitki SNOMED kodu, 20 LOINC tahlil kodu, 12 SNOMED hastalık
+
+### KVKK/GDPR Uyumluluk
+- `lib/consent-management.ts` — 6 rıza amacı, katmanlı aydınlatma, SHA-256 dijital imza
+- `/share-data` — 4 adımlı veri paylaşım akışı + Zero Trust erişim
+- `/api/consent` — grant/withdraw/list API
+- Güvenli belge depolama: magic bytes doğrulama, encrypted DB path
+
+### Entegre Bakım Yolları (Harvard HVHS C6)
+- `lib/care-pathways.ts` — risk stratifikasyon (0-100), 3 tier, varyans analizi
+- 3 bakım paketi: Diyabet, Uyku, Kardiyovasküler
+- `/health-roadmap` — kişisel yol haritası UI
+
+### Küresel Kıyaslama (Harvard HVHS Benchmarking)
+- `lib/global-benchmark.ts` — 9 G20+ ülke, 10 HVHS bileşeni
+- `/global-benchmark` — SVG radar chart + simülasyon motoru
+- 4 vaka çalışması: Singapur, Hollanda, İtalya, Japonya
+
+### Diğer Yeni Özellikler
+- E-posta sistemi (Resend: onay/ret şablonları, dark mode)
+- Acil durum kişileri (`/emergency-contacts` + `SOSCard`)
+- Cihaz entegrasyonu (`/connected-devices` — 8 sağlayıcı + OAuth)
+- İlgi alanı onboarding (`/interests` — 24 baloncuk, 3 kategori)
+- Aylık ROI kartı (`MonthlyROICard` — Spotify Wrapped tarzı)
+- Fake Door testi (`FakeDoorTest` — premium talep ölçümü)
+- 60+ yeni sayfa (Faze C/D/E/F)
+- 1,170+ Türkçe karakter düzeltmesi
+
+### Toplam Proje Durumu
+- **317+ sayfa/route** aktif
+- **135+ araç** 14 kategoride organize
+- **640+ çeviri key'i** (TR+EN)
+- Build temiz, tüm commitler push edilmiş
+- Vercel + Supabase + GitHub tam entegre
+
+---
+
+*Son güncelleme: 29 Mart 2026 v15.0*
+*Sprint 1-13 + Phase 1-13 + 28-29 Mart oturumları tamamlandı.*
+*317+ sayfa, 14 kategori mega menü, 7 klinik test, FHIR R4, KVKK rıza yönetimi.*
 *Hackathon: 11-12 Nisan 2026 — 14 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
 *Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*
-*Phase 14-20 planlandı — sayfa birleştirmeleri, semptom checker, besin-ilaç etkileşimi, takviye karşılaştırma, etkileşim haritası, sağlık koçu.*
