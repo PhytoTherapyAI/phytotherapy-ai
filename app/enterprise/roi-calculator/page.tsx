@@ -25,7 +25,7 @@ export default function ROICalculatorPage() {
   const benefits = [
     { en: "Medication compliance monitoring", tr: "İlaç uyum takibi", pct: "23%" },
     { en: "Early intervention alerts", tr: "Erken mudahale uyarıları", pct: "18%" },
-    { en: "Preventive health screening", tr: "Onleyici saglik taramasi", pct: "15%" },
+    { en: "Preventive health screening", tr: "Onleyici sağlık taramasi", pct: "15%" },
     { en: "Drug interaction prevention", tr: "İlaç etkilesimi onleme", pct: "12%" },
     { en: "Employee engagement boost", tr: "Calisan katilimi artisi", pct: "31%" },
   ];
@@ -37,7 +37,7 @@ export default function ROICalculatorPage() {
           <Calculator className="w-8 h-8 text-emerald-600" />
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "ROI Hesaplayici" : "ROI Calculator"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Sigorta ve kurumsal saglik yatirimi getirisi" : "Insurance & corporate health investment returns"}</p>
+            <p className="text-sm text-gray-500">{isTr ? "Sigorta ve kurumsal sağlık yatirimi getirisi" : "Insurance & corporate health investment returns"}</p>
           </div>
         </div>
 

@@ -20,7 +20,7 @@ export default function APIMarketplacePage() {
     { id: "3", name: "Blood Test Analysis", method: "POST", path: "/api/v1/bloodtest/analyze", descEn: "AI-powered blood test interpretation", descTr: "AI destekli kan tahlili yorumlama", price: "$0.05/req", category: "analysis" },
     { id: "4", name: "Supplement Safety", method: "POST", path: "/api/v1/supplements/check", descEn: "Check supplement safety with medications", descTr: "Takviye güvenligini ilaclarla kontrol et", price: "$0.02/req", category: "safety" },
     { id: "5", name: "Generic Alternatives", method: "GET", path: "/api/v1/drugs/alternatives", descEn: "Find generic drug alternatives with pricing", descTr: "Jenerik ilac alternatiflerini fiyatla bul", price: "$0.01/req", category: "data" },
-    { id: "6", name: "Health Score", method: "POST", path: "/api/v1/health/score", descEn: "Calculate comprehensive health score", descTr: "Kapsamli saglik skoru hesapla", price: "$0.03/req", category: "analysis" },
+    { id: "6", name: "Health Score", method: "POST", path: "/api/v1/health/score", descEn: "Calculate comprehensive health score", descTr: "Kapsamli sağlık skoru hesapla", price: "$0.03/req", category: "analysis" },
   ];
 
   const pricing = [

@@ -20,7 +20,7 @@ const PHARMACY_LINKS = [
     nameTr: "e-Nabiz Eczane Bulucu",
     url: "https://enabiz.gov.tr",
     descEn: "Government health portal with nearby pharmacy search",
-    descTr: "Devlet saglik portali ile yakin eczane arama",
+    descTr: "Devlet sağlık portali ile yakin eczane arama",
     icon: <Search className="w-5 h-5" />,
   },
   {

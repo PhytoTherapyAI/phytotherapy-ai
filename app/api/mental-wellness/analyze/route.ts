@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
           alertLevel: "red",
           professionalReferral: true,
           crisisMessage: lang === "tr"
-            ? "Kayitlarinizda endise verici ifadeler tespit edildi. Lutfen hemen bir ruh sağlığı uzmaniyla veya kriz hattı (182) ile iletisime gecin. Yalniz degilsiniz."
+            ? "Kayıtlarinizda endise verici ifadeler tespit edildi. Lutfen hemen bir ruh sağlığı uzmaniyla veya kriz hattı (182) ile iletisime gecin. Yalniz degilsiniz."
             : "We detected concerning language in your entries. Please reach out to a mental health professional or crisis line (988) immediately. You are not alone.",
         },
       });

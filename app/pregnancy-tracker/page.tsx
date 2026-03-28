@@ -40,9 +40,9 @@ const PREGNANCY_SYMPTOMS_EN = [
   "Frequent urination", "Cramping", "Spotting",
 ];
 const PREGNANCY_SYMPTOMS_TR = [
-  "Bulanti", "Yorgunluk", "Bel ağrısi", "Sisman", "Bas ağrısi",
-  "Mide yanmasi", "Kabizlik", "Uykusuzluk", "Ruh hali degisikligi",
-  "Sik idrara cikma", "Kramp", "Lekelenme",
+  "Bulantı", "Yorgunluk", "Bel ağrısi", "Şişman", "Bas ağrısi",
+  "Mide yanması", "Kabızlık", "Uykusuzluk", "Ruh hali değişikliği",
+  "Sık idrara çıkma", "Kramp", "Lekelenme",
 ];
 
 export default function PregnancyTrackerPage() {
@@ -109,7 +109,7 @@ export default function PregnancyTrackerPage() {
         <div className="rounded-xl border border-pink-200 bg-pink-50/50 p-8 text-center dark:border-pink-800 dark:bg-pink-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-pink-400" />
           <p className="text-lg font-medium text-pink-700 dark:text-pink-300">
-            {lang === "tr" ? "Bu araci kullanmak için giris yapin." : "Please sign in to use this tool."}
+            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
           </p>
         </div>
       </div>
@@ -194,7 +194,7 @@ export default function PregnancyTrackerPage() {
         <textarea
           value={concerns}
           onChange={(e) => setConcerns(e.target.value)}
-          placeholder={lang === "tr" ? "Endiselerinizi yazin (istege bagli)..." : "Write your concerns (optional)..."}
+          placeholder={lang === "tr" ? "Endişelerinizi yazın (isteğe bağlı)..." : "Write your concerns (optional)..."}
           className="w-full rounded-lg border bg-background px-4 py-3 text-sm"
           rows={3}
         />

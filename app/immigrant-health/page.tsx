@@ -18,10 +18,10 @@ const SECTIONS: GuideSection[] = [
     title: { en: "How to Access Healthcare", tr: "Sağlık Hizmetlerine Nasil Erisirsiniz" },
     color: "text-teal-500",
     content: [
-      { title: { en: "Step 1: Register at Immigration Office", tr: "Adim 1: Goc Idaresine Kayit" }, desc: { en: "Get your temporary protection ID or residence permit from the Provincial Directorate of Migration Management.", tr: "Il Goc Idaresi Mudurlugu'nden gecici koruma kimliginizi veya ikamet izninizi aliniz." } },
-      { title: { en: "Step 2: Register at a Family Health Center (ASM)", tr: "Adim 2: Aile Sağlık Merkezi'ne (ASM) Kayit" }, desc: { en: "Go to the nearest ASM with your ID to register with a family doctor. This is free.", tr: "En yakin ASM'ye kimliginizle gidin, aile hekimine kayit yaptirin. Bu ucretsizdir." } },
-      { title: { en: "Step 3: Get Your SGK Coverage", tr: "Adim 3: SGK Kapsamina Girin" }, desc: { en: "Temporary protection holders receive free healthcare through SGK. Registration at immigration office activates this.", tr: "Gecici koruma sahipleri SGK uzerinden ucretsiz saglik hizmeti alir. Goc idaresindeki kayit bunu aktive eder." } },
-      { title: { en: "Emergency: No Registration Needed", tr: "Acil: Kayit Gerekli Degil" }, desc: { en: "Emergency rooms (Acil Servis) cannot refuse anyone regardless of legal status. Call 112 for emergencies.", tr: "Acil servisler yasal durumdan bagimsiz olarak kimseyi geri ceviremez. Aciller için 112'yi arayın." } },
+      { title: { en: "Step 1: Register at Immigration Office", tr: "Adim 1: Goc Idaresine Kayıt" }, desc: { en: "Get your temporary protection ID or residence permit from the Provincial Directorate of Migration Management.", tr: "Il Goc Idaresi Mudurlugu'nden gecici koruma kimliginizi veya ikamet izninizi aliniz." } },
+      { title: { en: "Step 2: Register at a Family Health Center (ASM)", tr: "Adim 2: Aile Sağlık Merkezi'ne (ASM) Kayıt" }, desc: { en: "Go to the nearest ASM with your ID to register with a family doctor. This is free.", tr: "En yakin ASM'ye kimliginizle gidin, aile hekimine kayıt yaptirin. Bu ucretsizdir." } },
+      { title: { en: "Step 3: Get Your SGK Coverage", tr: "Adim 3: SGK Kapsamina Girin" }, desc: { en: "Temporary protection holders receive free healthcare through SGK. Registration at immigration office activates this.", tr: "Gecici koruma sahipleri SGK uzerinden ucretsiz sağlık hizmeti alir. Goc idaresindeki kayıt bunu aktive eder." } },
+      { title: { en: "Emergency: No Registration Needed", tr: "Acil: Kayıt Gerekli Degil" }, desc: { en: "Emergency rooms (Acil Servis) cannot refuse anyone regardless of legal status. Call 112 for emergencies.", tr: "Acil servisler yasal durumdan bagimsiz olarak kimseyi geri ceviremez. Aciller için 112'yi arayın." } },
     ],
   },
   {
@@ -29,7 +29,7 @@ const SECTIONS: GuideSection[] = [
     title: { en: "Vaccination Catch-Up", tr: "Asi Tamamlama" },
     color: "text-blue-500",
     content: [
-      { title: { en: "Children's Vaccines", tr: "Cocuk Asilari" }, desc: { en: "Free childhood vaccination program at ASMs. Bring any previous vaccination records. Catch-up schedules available for missed vaccines.", tr: "ASM'lerde ucretsiz cocukluk cagi asi programı. Onceki asi kayitlarinizi getirin. Kacirilmis asilar için tamamlama programlari mevcuttur." } },
+      { title: { en: "Children's Vaccines", tr: "Cocuk Asilari" }, desc: { en: "Free childhood vaccination program at ASMs. Bring any previous vaccination records. Catch-up schedules available for missed vaccines.", tr: "ASM'lerde ucretsiz cocukluk cagi asi programı. Onceki asi kayıtlarinizi getirin. Kacirilmis asilar için tamamlama programlari mevcuttur." } },
       { title: { en: "Adult Vaccinations", tr: "Yetiskin Asilari" }, desc: { en: "Hepatitis B, tetanus, and seasonal flu vaccines available free. COVID-19 vaccines at ASMs.", tr: "Hepatit B, tetanoz ve mevsimsel grip asilari ucretsiz mevcuttur. COVID-19 asilari ASM'lerde." } },
       { title: { en: "Pregnancy Vaccinations", tr: "Gebelik Asilari" }, desc: { en: "Td vaccine (tetanus-diphtheria) required during pregnancy. Free at ASMs.", tr: "Gebelikte Td asisi (tetanoz-difteri) gereklidir. ASM'lerde ucretsizdir." } },
     ],
@@ -50,7 +50,7 @@ const SECTIONS: GuideSection[] = [
     color: "text-red-500",
     content: [
       { title: { en: "112 - Emergency (Ambulance/Fire/Police)", tr: "112 - Acil (Ambulans/Itfaiye/Polis)" }, desc: { en: "Available 24/7. Multilingual operators available in some cities.", tr: "7/24 kullanilabilir. Bazi sehirlerde cok dilli operatorler mevcuttur." } },
-      { title: { en: "182 - SABIM (Patient Rights)", tr: "182 - SABIM (Hasta Haklari)" }, desc: { en: "Report healthcare access issues, file complaints about denied service.", tr: "Sağlık hizmeti erisim sorunlarini bildirin, reddedilen hizmet hakkinda sikayet dosyalayin." } },
+      { title: { en: "182 - SABIM (Patient Rights)", tr: "182 - SABIM (Hasta Haklari)" }, desc: { en: "Report healthcare access issues, file complaints about denied service.", tr: "Sağlık hizmeti erisim sorunlarıni bildirin, reddedilen hizmet hakkinda sikayet dosyalayin." } },
       { title: { en: "183 - Social Support Line", tr: "183 - Sosyal Destek Hattı" }, desc: { en: "Social services information, disability services, family support.", tr: "Sosyal hizmetler bilgisi, engelli hizmetleri, aile desteği." } },
       { title: { en: "157 - Human Trafficking Hotline", tr: "157 - Insan Ticareti Yardim Hattı" }, desc: { en: "Confidential reporting and assistance for trafficking victims.", tr: "Insan ticareti magdurlari için gizli bildirim ve yardim." } },
     ],
@@ -60,9 +60,9 @@ const SECTIONS: GuideSection[] = [
     title: { en: "Useful Resources", tr: "Faydali Kaynaklar" },
     color: "text-amber-500",
     content: [
-      { title: { en: "UNHCR Turkey", tr: "UNHCR Türkiye" }, desc: { en: "UN Refugee Agency - legal support, registration assistance, healthcare guidance.", tr: "BM Multeci Ajansi - hukuki destek, kayit yardimi, saglik hizmeti rehberligi." } },
-      { title: { en: "IOM Turkey", tr: "IOM Türkiye" }, desc: { en: "International Organization for Migration - health assessments, travel health.", tr: "Uluslararasi Goc Orgutu - saglik degerlendirmeleri, seyahat sağlığı." } },
-      { title: { en: "Community Health Centers (SASAM)", tr: "Toplum Sağlık Merkezleri (SASAM)" }, desc: { en: "Migrant health centers in major cities with interpreters.", tr: "Buyuk sehirlerde tercumanli gocmen saglik merkezleri." } },
+      { title: { en: "UNHCR Turkey", tr: "UNHCR Türkiye" }, desc: { en: "UN Refugee Agency - legal support, registration assistance, healthcare guidance.", tr: "BM Multeci Ajansi - hukuki destek, kayıt yardimi, sağlık hizmeti rehberligi." } },
+      { title: { en: "IOM Turkey", tr: "IOM Türkiye" }, desc: { en: "International Organization for Migration - health assessments, travel health.", tr: "Uluslararasi Goc Orgutu - sağlık degerlendirmeleri, seyahat sağlığı." } },
+      { title: { en: "Community Health Centers (SASAM)", tr: "Toplum Sağlık Merkezleri (SASAM)" }, desc: { en: "Migrant health centers in major cities with interpreters.", tr: "Buyuk sehirlerde tercumanli gocmen sağlık merkezleri." } },
     ],
   },
 ];
@@ -121,7 +121,7 @@ export default function ImmigrantHealthPage() {
         <p className="font-bold text-red-800 dark:text-red-300 text-lg">112</p>
         <p className="text-sm text-red-700 dark:text-red-400">
           {lang === "tr"
-            ? "Acil durumlarda 112'yi arayın. Kayit veya kimlik gerekmez."
+            ? "Acil durumlarda 112'yi arayın. Kayıt veya kimlik gerekmez."
             : "Call 112 for emergencies. No registration or ID required."}
         </p>
       </div>

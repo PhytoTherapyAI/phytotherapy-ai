@@ -30,7 +30,7 @@ const DISEASES: ZoonoticDisease[] = [
     name: { en: "Ringworm (Dermatophytosis)", tr: "Saclı Deri Mantarı (Dermatofitoz)" },
     source: { en: "Cats, Dogs, Rabbits", tr: "Kediler, Kopekler, Tavsanlar" },
     transmission: { en: "Direct skin contact with infected animal or contaminated surfaces", tr: "Enfekte hayvan veya kontamine yuzeylerle doğrudan cilt temasi" },
-    symptoms: { en: "Red, itchy, ring-shaped rash on skin", tr: "Ciltte kirmizi, kasintili, halka seklinde dokuuntu" },
+    symptoms: { en: "Red, itchy, ring-shaped rash on skin", tr: "Ciltte kirmizi, kaşıntıli, halka seklinde dokuuntu" },
     prevention: { en: "Wash hands after handling pets. Treat pet infections promptly. Don't share towels.", tr: "Evcil hayvanlara dokunduktan sonra ellerinizi yikayiniz. Hayvan enfeksiyonlarini derhal tedavi ediniz." },
     riskGroups: { en: "Children and immunosuppressed patients", tr: "Cocuklar ve immunsuprese hastalar" },
     severity: "low",

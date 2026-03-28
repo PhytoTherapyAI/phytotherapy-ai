@@ -56,7 +56,7 @@ const SYMPTOM_OPTIONS = [
   { value: "redness", en: "Redness", tr: "Kizariklik" },
   { value: "blurry_vision", en: "Blurry Vision", tr: "Bulanik Gorme" },
   { value: "light_sensitivity", en: "Light Sensitivity", tr: "Isik Hassasiyeti" },
-  { value: "itching", en: "Itching", tr: "Kasinti" },
+  { value: "itching", en: "Itching", tr: "Kaşıntı" },
   { value: "tearing", en: "Excessive Tearing", tr: "Asiri Yasarma" },
 ];
 
@@ -111,7 +111,7 @@ export default function EyeHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("eye.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>

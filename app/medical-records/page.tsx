@@ -24,7 +24,7 @@ const FEATURES = [
     titleEn: "QR Code Sharing",
     titleTr: "QR Kod ile Paylaşım",
     descEn: "Share specific records with your doctor via secure QR code — no email needed",
-    descTr: "Belirli kayitlari güvenli QR kod ile doktorunuzla paylasin — e-posta gerekmez",
+    descTr: "Belirli kayıtlari güvenli QR kod ile doktorunuzla paylasin — e-posta gerekmez",
   },
   {
     icon: <Shield className="w-6 h-6" />,
@@ -38,7 +38,7 @@ const FEATURES = [
     titleEn: "Family Access",
     titleTr: "Aile Erisimi",
     descEn: "Share records with family members or caregivers with granular permissions",
-    descTr: "Kayitlari aile uyeleri veya bakicilarla detayli izinlerle paylasin",
+    descTr: "Kayıtlari aile uyeleri veya bakicilarla detayli izinlerle paylasin",
   },
   {
     icon: <FileText className="w-6 h-6" />,

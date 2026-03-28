@@ -123,7 +123,7 @@ export default function PTSDSupportPage() {
         <div className="rounded-xl border border-teal-200 bg-teal-50/50 p-8 text-center dark:border-teal-800 dark:bg-teal-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-teal-400" />
           <p className="text-lg font-medium text-teal-700 dark:text-teal-300">
-            {lang === "tr" ? "Bu araci kullanmak için giris yapin." : "Please sign in to use this tool."}
+            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
           </p>
         </div>
       </div>

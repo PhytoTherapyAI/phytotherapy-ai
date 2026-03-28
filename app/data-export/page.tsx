@@ -20,10 +20,10 @@ export default function DataExportPage() {
     { id: "chat", icon: <MessageSquare className="w-5 h-5" />, en: "Chat History", tr: "Sohbet Geçmişi", descEn: "All AI conversations", descTr: "Tum AI konusmalari", count: 47, size: "128 KB", selected: true },
     { id: "blood", icon: <Activity className="w-5 h-5" />, en: "Blood Tests", tr: "Kan Tahlilleri", descEn: "Lab results and analyses", descTr: "Laboratuvar sonuçlari", count: 3, size: "15 KB", selected: true },
     { id: "calendar", icon: <Calendar className="w-5 h-5" />, en: "Calendar Data", tr: "Takvim Verileri", descEn: "Events, reminders, tracking", descTr: "Etkinlikler, hatirlaticilar", count: 28, size: "12 KB", selected: true },
-    { id: "supplements", icon: <FileText className="w-5 h-5" />, en: "Supplement Log", tr: "Takviye Kayitlari", descEn: "Supplement intake history", descTr: "Takviye kullanim geçmişi", count: 156, size: "22 KB", selected: true },
-    { id: "family", icon: <Users className="w-5 h-5" />, en: "Family Profiles", tr: "Aile Profilleri", descEn: "Family member health data", descTr: "Aile uyesi saglik verileri", count: 2, size: "6 KB", selected: true },
+    { id: "supplements", icon: <FileText className="w-5 h-5" />, en: "Supplement Log", tr: "Takviye Kayıtlari", descEn: "Supplement intake history", descTr: "Takviye kullanim geçmişi", count: 156, size: "22 KB", selected: true },
+    { id: "family", icon: <Users className="w-5 h-5" />, en: "Family Profiles", tr: "Aile Profilleri", descEn: "Family member health data", descTr: "Aile uyesi sağlık verileri", count: 2, size: "6 KB", selected: true },
     { id: "scores", icon: <Activity className="w-5 h-5" />, en: "Health Scores", tr: "Sağlık Skorlari", descEn: "Daily scores, bio age", descTr: "Günlük skorlar, biyolojik yas", count: 90, size: "18 KB", selected: true },
-    { id: "consent", icon: <Shield className="w-5 h-5" />, en: "Consent Records", tr: "Onay Kayitlari", descEn: "Legal agreements", descTr: "Yasal sozlesmeler", count: 1, size: "1 KB", selected: true },
+    { id: "consent", icon: <Shield className="w-5 h-5" />, en: "Consent Records", tr: "Onay Kayıtlari", descEn: "Legal agreements", descTr: "Yasal sozlesmeler", count: 1, size: "1 KB", selected: true },
   ]);
   const toggleCategory = (id: string) => setCategories(prev => prev.map(c => c.id === id ? { ...c, selected: !c.selected } : c));
   const selectAll = (val: boolean) => setCategories(prev => prev.map(c => ({ ...c, selected: val })));

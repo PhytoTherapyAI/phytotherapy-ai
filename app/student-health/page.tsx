@@ -61,7 +61,7 @@ const STRESS_TIPS: StressTip[] = [
       { en: "Frozen vegetables are as nutritious as fresh — cheaper and no waste", tr: "Dondurulmus sebzeler taze kadar besleyici — daha ucuz ve israf yok" },
       { en: "Legumes (lentils, chickpeas): protein + iron + fiber — pennies per serving", tr: "Baklagiller (mercimek, nohut): protein + demir + lif — porsiyon basi kuruslar" },
       { en: "Bananas: potassium, B6, quick energy — cheapest fruit in most countries", tr: "Muz: potasyum, B6, hizli enerji — cogu ulkede en ucuz meyve" },
-      { en: "Meal prep Sundays: cook in bulk, portion, freeze — saves money + time + health", tr: "Pazar hazirlik: toplu pisirin, porsiyonlayin, dondurun — para + zaman + saglik kazanin" },
+      { en: "Meal prep Sundays: cook in bulk, portion, freeze — saves money + time + health", tr: "Pazar hazirlik: toplu pisirin, porsiyonlayin, dondurun — para + zaman + sağlık kazanin" },
     ],
   },
   {
@@ -134,7 +134,7 @@ export default function StudentHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("student.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>

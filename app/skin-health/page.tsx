@@ -73,7 +73,7 @@ const AREAS = [
   { key: "cheeks", label: { en: "Cheeks", tr: "Yanaklar" } },
   { key: "chin", label: { en: "Chin", tr: "Cene" } },
   { key: "neck", label: { en: "Neck", tr: "Boyun" } },
-  { key: "chest", label: { en: "Chest", tr: "Gogus" } },
+  { key: "chest", label: { en: "Chest", tr: "Göğüs" } },
   { key: "back", label: { en: "Back", tr: "Sirt" } },
   { key: "arms", label: { en: "Arms", tr: "Kollar" } },
   { key: "legs", label: { en: "Legs", tr: "Bacaklar" } },
@@ -147,7 +147,7 @@ export default function SkinHealthPage() {
         <div className="rounded-xl border-2 border-dashed border-pink-200 bg-pink-50/50 p-12 text-center dark:border-pink-800 dark:bg-pink-950/20">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-pink-400" />
           <p className="text-sm text-muted-foreground">
-            {lang === "tr" ? "Cilt analizi için giris yapin" : "Sign in to analyze your skin health"}
+            {lang === "tr" ? "Cilt analizi için giriş yapın" : "Sign in to analyze your skin health"}
           </p>
         </div>
       </div>
@@ -251,7 +251,7 @@ export default function SkinHealthPage() {
             <textarea
               value={currentSkincare}
               onChange={(e) => setCurrentSkincare(e.target.value)}
-              placeholder={lang === "tr" ? "Mevcut cilt bakim rutininizi yazin..." : "Describe your current skincare routine..."}
+              placeholder={lang === "tr" ? "Mevcut cilt bakim rutininizi yazın..." : "Describe your current skincare routine..."}
               className="w-full rounded-xl border bg-background p-3 text-sm placeholder:text-muted-foreground focus:border-pink-400 focus:outline-none focus:ring-1 focus:ring-pink-400"
               rows={3}
             />

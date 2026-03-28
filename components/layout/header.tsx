@@ -407,59 +407,45 @@ export function Header() {
               {tx("family.title", lang)}
             </Link>
           </div>
+          {/* Auth section — prominent, at the top of mobile menu */}
+          <div className="px-4 py-3 border-b border-border">
+            {isLoading ? (
+              <div className="h-10 animate-pulse rounded-lg bg-muted" />
+            ) : isAuthenticated ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
+                    {profile?.full_name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2) || "U"}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium">{profile?.full_name || user?.email}</p>
+                    <Link href="/dashboard" onClick={() => setMobileOpen(false)}
+                      className="text-xs text-primary">{tx("nav.dashboard", lang)}</Link>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Link href="/profile" onClick={() => setMobileOpen(false)}
+                    className="p-2 rounded-lg hover:bg-muted"><Settings className="h-4 w-4 text-muted-foreground" /></Link>
+                  <button onClick={async () => { setMobileOpen(false); try { await signOut(); } catch (e) { console.error(e); } }}
+                    className="p-2 rounded-lg hover:bg-muted"><LogOut className="h-4 w-4 text-red-500" /></button>
+                </div>
+              </div>
+            ) : (
+              <Link href="/auth/login" onClick={() => setMobileOpen(false)}>
+                <Button className="w-full gap-2 bg-primary hover:bg-primary/90">
+                  <LogIn className="h-4 w-4" />
+                  {tx('nav.signInUp', lang)}
+                </Button>
+              </Link>
+            )}
+          </div>
+
           {/* Mega Menu Categories */}
-          <div className="border-t mt-2 pt-2">
+          <div className="border-t mt-1 pt-2">
             <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
               {tx("nav.tools", lang)}
             </p>
             <MobileMegaMenu onNavigate={() => setMobileOpen(false)} />
-          </div>
-
-          {isAuthenticated && (
-            <Link
-              href="/dashboard"
-              className="mt-2 block border-t pt-2 text-sm font-semibold text-primary hover:text-primary/80"
-              onClick={() => setMobileOpen(false)}
-            >
-              {tx("nav.dashboard", lang)}
-            </Link>
-          )}
-
-          <div className="mt-2 border-t pt-2">
-            {isLoading ? (
-              <div className="h-6 w-24 animate-pulse rounded bg-muted" />
-            ) : isAuthenticated ? (
-              <>
-                <div className="flex items-center gap-2 py-2">
-                  <User className="h-4 w-4 text-primary" />
-                  <span className="text-sm">{profile?.full_name || user?.email}</span>
-                </div>
-                <Link
-                  href="/profile"
-                  className="block py-2 text-sm text-muted-foreground hover:text-foreground"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {tx('nav.profileSettings', lang)}
-                </Link>
-                <button
-                  className="block w-full py-2 text-left text-sm text-red-600 hover:text-red-700"
-                  onClick={async () => {
-                    setMobileOpen(false);
-                    try { await signOut(); } catch (e) { console.error("Sign out failed:", e); }
-                  }}
-                >
-                  {tx('nav.signOut', lang)}
-                </button>
-              </>
-            ) : (
-              <Link
-                href="/auth/login"
-                className="block py-2 text-sm font-medium text-primary hover:text-primary/80"
-                onClick={() => setMobileOpen(false)}
-              >
-                {tx('nav.signInUp', lang)}
-              </Link>
-            )}
           </div>
         </nav>
       )}

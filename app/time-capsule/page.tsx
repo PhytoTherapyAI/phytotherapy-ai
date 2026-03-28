@@ -386,7 +386,7 @@ export default function TimeCapsulePage() {
               maxLength={1000}
               placeholder={
                 lang === "tr"
-                  ? "Gelecekteki ben, umarim seni daha saglikli ve mutlu buluyorum..."
+                  ? "Gelecekteki ben, umarim seni daha sağlıkli ve mutlu buluyorum..."
                   : "Dear future me, I hope you are healthier and happier..."
               }
               className="w-full rounded-xl border bg-card px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 resize-none"
@@ -449,7 +449,7 @@ export default function TimeCapsulePage() {
             </p>
             <p className="text-xs text-muted-foreground">
               {lang === "tr"
-                ? "Mevcut saglik verilerin otomatik olarak kaydedilecek."
+                ? "Mevcut sağlık verilerin otomatik olarak kaydedilecek."
                 : "Your current health data will be saved automatically."}
             </p>
             <div className="flex gap-4 text-sm">
@@ -502,7 +502,7 @@ export default function TimeCapsulePage() {
           </h1>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
             {lang === "tr"
-              ? "Gelecege bir mektup yaz, saglik hedeflerini kaydet. Zaman geldiginde gerçek verilerle karşılastir."
+              ? "Gelecege bir mektup yaz, sağlık hedeflerini kaydet. Zaman geldiginde gerçek verilerle karşılastir."
               : "Write a letter to your future self, save your health goals. Compare with real data when the time comes."}
           </p>
         </div>

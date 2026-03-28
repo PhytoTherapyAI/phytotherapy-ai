@@ -153,7 +153,7 @@ export default function WalkingTrackerPage() {
       {/* Recent Entries */}
       {entries.length > 0 && (
         <div className="space-y-2">
-          <h3 className="font-semibold text-gray-900 dark:text-white">{lang === "tr" ? "Son Kayitlar" : "Recent Entries"}</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">{lang === "tr" ? "Son Kayıtlar" : "Recent Entries"}</h3>
           {entries.slice(0, 10).map((entry) => (
             <div key={entry.id} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-4">

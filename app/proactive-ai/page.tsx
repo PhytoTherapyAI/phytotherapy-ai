@@ -40,7 +40,7 @@ const MOCK_ALERTS = [
 ];
 
 const FEATURES = [
-  { icon: Brain, title: { en: "Pattern Recognition", tr: "Oruntusu Tanima" }, desc: { en: "AI analyzes your health data over time to find meaningful patterns", tr: "AI saglik verilerinizi zaman icinde analiz ederek anlamli oruntuler bulur" } },
+  { icon: Brain, title: { en: "Pattern Recognition", tr: "Oruntusu Tanima" }, desc: { en: "AI analyzes your health data over time to find meaningful patterns", tr: "AI sağlık verilerinizi zaman icinde analiz ederek anlamli oruntuler bulur" } },
   { icon: Bell, title: { en: "Smart Notifications", tr: "Akilli Bildirimler" }, desc: { en: "Get alerts only when something genuinely needs your attention", tr: "Sadece gerçekten dikkatinizi gerektiren durumlarda uyarı aliniz" } },
   { icon: Shield, title: { en: "Risk Prevention", tr: "Risk Onleme" }, desc: { en: "Early warnings about potential drug interactions or deficiencies", tr: "Potansiyel ilac etkilesimleri veya eksiklikler hakkinda erken uyarılar" } },
   { icon: TrendingUp, title: { en: "Trend Analysis", tr: "Trend Analizi" }, desc: { en: "Track biomarker trends across multiple blood tests", tr: "Birden fazla kan tahlilinde biyobelirtec trendlerini takip ediniz" } },

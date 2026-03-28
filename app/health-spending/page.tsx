@@ -272,7 +272,7 @@ export default function HealthSpendingPage() {
           </h3>
           <p className="text-sm text-emerald-700 dark:text-emerald-300">
             {lang === "tr"
-              ? "Türkiye'de saglik harcamalari yillik gelir vergisi beyannamesinde indirim olarak gosterilebilir. SGK katilim paylari, ilac, ozel hastane, dis ve goz masraflari için fatura ve makbuzlarinizi saklayin. Yillik toplam gelirin %10'unu gecmeyen saglik harcamalari indirilebilir."
+              ? "Türkiye'de sağlık harcamalari yillik gelir vergisi beyannamesinde indirim olarak gosterilebilir. SGK katilim paylari, ilac, ozel hastane, dis ve goz masraflari için fatura ve makbuzlarinizi saklayin. Yillik toplam gelirin %10'unu gecmeyen sağlık harcamalari indirilebilir."
               : "In Turkey, health expenses can be deducted in annual income tax returns. Keep receipts for SGK copays, medications, private hospital visits, dental and eye care. Health expenses up to 10% of annual income may be deductible."}
           </p>
         </div>

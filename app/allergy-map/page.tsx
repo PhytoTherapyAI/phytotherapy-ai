@@ -65,7 +65,7 @@ const COMMON_SYMPTOMS_EN = [
 ];
 
 const COMMON_SYMPTOMS_TR = [
-  "Urtiker", "Kasinti", "Sislik", "Dokutu", "Bulanti", "Kusma",
+  "Ürtiker", "Kaşıntı", "Şişlik", "Dokutu", "Bulantı", "Kusma",
   "İshal", "Hapşırma", "Burun akıntısı", "Hırıltılı solunum", "Bas ağrısi",
   "Karin ağrısi", "Bogaz sıkışması", "Nefes darlığı",
 ];

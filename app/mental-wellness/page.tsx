@@ -389,7 +389,7 @@ export default function MentalWellnessPage() {
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder={lang === "tr" ? "Bugun nasil hissediyorsun? (istege bagli)" : "How are you feeling today? (optional)"}
+            placeholder={lang === "tr" ? "Bugun nasil hissediyorsun? (isteğe bağlı)" : "How are you feeling today? (optional)"}
             maxLength={1000}
             rows={3}
             className="w-full rounded-lg border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 dark:border-gray-700"

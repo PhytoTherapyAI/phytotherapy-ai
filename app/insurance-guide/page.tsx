@@ -82,7 +82,7 @@ const SECTIONS: AccordionSection[] = [
       "Pregnancy follow-ups: all visits and standard tests covered.",
     ],
     contentTr: [
-      "Aile saglik merkezlerinde (ASM) yillik ucretsiz check-up.",
+      "Aile sağlık merkezlerinde (ASM) yillik ucretsiz check-up.",
       "Icerir: kan sayimi, kan sekeri, kolesterol, idrar testi.",
       "Kanser taramalari: mamografi (40+), smear testi (30+), kolon kanseri (50+).",
       "Kemik yogunlugu taramasi 65+ veya risk faktorlu kadinlarda kapsanir.",

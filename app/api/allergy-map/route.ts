@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
 
       if (fallbackError) {
         return NextResponse.json(
-          { error: lang === "tr" ? "Kayit başarısiz" : "Failed to save" },
+          { error: lang === "tr" ? "Kayıt başarısiz" : "Failed to save" },
           { status: 500 }
         );
       }
@@ -207,7 +207,7 @@ async function handleCrossCheck(supabase: any, userId: string, lang: string) {
       crossCheck: {
         conflicts: [],
         warnings: [],
-        summary: lang === "tr" ? "Kayitli alerji bulunamadi." : "No allergies on record.",
+        summary: lang === "tr" ? "Kayıtli alerji bulunamadi." : "No allergies on record.",
       },
     });
   }

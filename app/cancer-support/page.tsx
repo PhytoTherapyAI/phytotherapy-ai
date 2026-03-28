@@ -35,18 +35,18 @@ const sections: Section[] = [
     id: "nausea",
     icon: <Frown className="w-5 h-5" />,
     titleEN: "Nausea & Vomiting Management",
-    titleTR: "Bulanti ve Kusma Yönetimi",
+    titleTR: "Bulantı ve Kusma Yönetimi",
     badgeEN: "Most Common",
     badgeTR: "En Yaygin",
     badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
     items: [
       { en: "Eat small, frequent meals (5-6/day) rather than 3 large meals", tr: "3 buyuk ogun yerine kucuk sik öğünler (gunde 5-6) yiyin", type: "tip" },
-      { en: "Ginger tea or ginger candies can help mild nausea (evidence grade B)", tr: "Zencefil cayi veya zencefil sekeri hafif bulantiya yardımcı olabilir (kanit derecesi B)", type: "tip" },
-      { en: "Avoid strong smells — eat cold or room temperature foods if smells trigger nausea", tr: "Guclu kokulardan kacinin — kokular bulanti tetikliyorsa soguk veya oda sicakliginda yiyin" },
+      { en: "Ginger tea or ginger candies can help mild nausea (evidence grade B)", tr: "Zencefil cayi veya zencefil sekeri hafif bulantıya yardımcı olabilir (kanit derecesi B)", type: "tip" },
+      { en: "Avoid strong smells — eat cold or room temperature foods if smells trigger nausea", tr: "Guclu kokulardan kacinin — kokular bulantı tetikliyorsa soguk veya oda sicakliginda yiyin" },
       { en: "Stay upright for 30 minutes after eating — do not lie down immediately", tr: "Yedikten sonra 30 dakika dik durun — hemen uzanmayin" },
-      { en: "Crackers or dry toast before getting out of bed can prevent morning nausea", tr: "Yataktan kalkmadan kraker veya kuru tost sabah bulantisini onleyebilir" },
+      { en: "Crackers or dry toast before getting out of bed can prevent morning nausea", tr: "Yataktan kalkmadan kraker veya kuru tost sabah bulantısini onleyebilir" },
       { en: "Take anti-nausea medications BEFORE chemotherapy as prescribed, not after", tr: "Anti-emetik ilaçları reçete edildigi gibi kemoterapiden ÖNCE alin, sonra degil", type: "warning" },
-      { en: "Peppermint aromatherapy may reduce acute nausea episodes", tr: "Nane aromaterapi akut bulanti ataklarini azaltabilir", type: "tip" },
+      { en: "Peppermint aromatherapy may reduce acute nausea episodes", tr: "Nane aromaterapi akut bulantı ataklarini azaltabilir", type: "tip" },
       { en: "Acupressure wristbands (P6 point) show modest benefit in some studies", tr: "Akupresur bileklikleri (P6 noktasi) bazi çalışmalarda modest fayda gosterir" },
       { en: "Hydration is critical — sip water, broth, or electrolyte drinks throughout the day", tr: "Hidrasyon kritiktir — gun boyunca su, et suyu veya elektrolit icecekleri yudumlayın" },
       { en: "Report persistent vomiting (>24 hours) to your oncology team immediately", tr: "Devam eden kusmayi (>24 saat) hemen onkoloji ekibinize bildirin", type: "danger" },
@@ -90,7 +90,7 @@ const sections: Section[] = [
       { en: "Anemia is a common cause — check hemoglobin regularly", tr: "Anemi yaygin bir nedendir — hemoglobini düzenli kontrol edin" },
       { en: "Adequate protein intake helps maintain muscle mass and energy", tr: "Yeterli protein alimi kas kutlesini ve enerjiyi korumaya yardımcı olur" },
       { en: "Mindfulness and yoga show moderate benefit for cancer fatigue", tr: "Farkindalik ve yoga kanser yorgunlugunda orta derecede fayda gosterir", type: "tip" },
-      { en: "Keep a fatigue diary — rate 1-10 daily to identify patterns and triggers", tr: "Yorgunluk gunlugu tutun — oruntuler ve tetikleyicileri belirlemek için gunluk 1-10 derecelendirin" },
+      { en: "Keep a fatigue diary — rate 1-10 daily to identify patterns and triggers", tr: "Yorgunluk günlüğü tutun — oruntuler ve tetikleyicileri belirlemek için gunluk 1-10 derecelendirin" },
       { en: "Depression can mimic or worsen fatigue — screen regularly", tr: "Depresyon yorgunlugu taklit edebilir veya kotulesirebilir — düzenli taranin" },
     ],
   },
@@ -132,7 +132,7 @@ const sections: Section[] = [
       { en: "Fish oil at standard doses (1-2g/day) is generally considered safe — verify with team", tr: "Standart dozlarda balik yagi (1-2g/gun) genellikle güvenli kabul edilir — ekibinizle doğrulayin", type: "tip" },
       { en: "Vitamin D supplementation is often recommended but dose should be prescribed", tr: "D vitamini takviyesi genellikle onerilir ancak dozu reçete edilmelidir" },
       { en: "Probiotics may help with treatment-related diarrhea but avoid if neutropenic", tr: "Probiyotikler tedaviye bagli ishale yardımcı olabilir ancak notropenik ise kaçinin", type: "warning" },
-      { en: "Ginger for nausea is generally safe at culinary doses — concentrated supplements need approval", tr: "Bulanti için zencefil mutfak dozlarinda genellikle güvenlidir — konsantre takviyeler onay gerektirir" },
+      { en: "Ginger for nausea is generally safe at culinary doses — concentrated supplements need approval", tr: "Bulantı için zencefil mutfak dozlarinda genellikle güvenlidir — konsantre takviyeler onay gerektirir" },
       { en: "Keep a list of ALL supplements you take and bring it to every oncology appointment", tr: "Aldiginiz TUM takviyelerin listesini tutun ve her onkoloji randevusuna getirin" },
     ],
   },
@@ -151,7 +151,7 @@ const sections: Section[] = [
       { en: "Talk to your family openly — they need guidance on how to support you", tr: "Ailenizle acikca konusun — sizi nasil destekleyecekleri konusunda rehberlige ihtiyacları var" },
       { en: "Palliative care is NOT end-of-life care — it improves quality of life at any stage", tr: "Palyatif bakim yasam sonu bakimi DEGILDIR — her asamada yasam kalitesini iyileştirir" },
       { en: "Creative activities (art, music, writing) provide therapeutic benefit during treatment", tr: "Yaratici aktiviteler (sanat, muzik, yazma) tedavi sirasinda terapotik fayda saglar" },
-      { en: "Sexual health concerns are common and treatable — bring them up with your doctor", tr: "Cinsel saglik endisleri yaygındır ve tedavi edilebilir — doktorunuzla gorusun" },
+      { en: "Sexual health concerns are common and treatable — bring them up with your doctor", tr: "Cinsel sağlık endisleri yaygındır ve tedavi edilebilir — doktorunuzla gorusun" },
       { en: "Financial toxicity is real — ask about social work services for assistance", tr: "Finansal toksisite gerçektir — yardim için sosyal hizmet servislerini sorun" },
       { en: "Children can be told in age-appropriate ways — oncology social workers can help", tr: "Cocuklara yasa uygun sekilde anlatilebilir — onkoloji sosyal calisanlari yardımcı olabilir" },
       { en: "Cancer survivorship care plan should be discussed before treatment ends", tr: "Kanser hayatta kalma bakim plani tedavi bitmeden gorusulmeli" },
@@ -219,7 +219,7 @@ export default function CancerSupportPage() {
             <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
             <p className="text-sm text-red-800 dark:text-red-200">
               {lang === "tr"
-                ? "ONEMLI: Kanser tedavisi sirasinda herhangi bir takviye, bitkisel urun veya diyet degisikligi yapmadan ÖNCE mutlaka onkoloji ekibinize danisin. Bircok takviye kemoterapiyle etkilesir."
+                ? "ONEMLI: Kanser tedavisi sirasinda herhangi bir takviye, bitkisel urun veya diyet değişikliği yapmadan ÖNCE mutlaka onkoloji ekibinize danisin. Bircok takviye kemoterapiyle etkilesir."
                 : "IMPORTANT: ALWAYS consult your oncology team before starting ANY supplement, herbal product, or diet change during cancer treatment. Many supplements interact with chemotherapy."}
             </p>
           </div>

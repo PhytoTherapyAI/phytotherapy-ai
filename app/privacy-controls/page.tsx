@@ -14,8 +14,8 @@ export default function PrivacyControlsPage() {
   const isTr = lang === "tr";
   const [settings, setSettings] = useState<PrivacySetting[]>([
     { id: "research_optin", en: "Research Contribution", tr: "Araştırma Katilimi", descEn: "Allow anonymized data for medical research", descTr: "Anonimlestirilmis verilerinizin tibbi araştırmalarda kullanilmasina izin verin", enabled: false, category: "data" },
-    { id: "doctor_sharing", en: "Doctor Data Sharing", tr: "Doktor Veri Paylaşımi", descEn: "Allow your doctor to view your health data", descTr: "Doktorunuzun saglik verilerinizi görüntülemesine izin verin", enabled: true, category: "sharing" },
-    { id: "family_view", en: "Family Member Visibility", tr: "Aile Uyesi Gorunurlugu", descEn: "Allow family members to see your health summary", descTr: "Aile uyelerinin saglik ozetinizi gormesine izin verin", enabled: true, category: "sharing" },
+    { id: "doctor_sharing", en: "Doctor Data Sharing", tr: "Doktor Veri Paylaşımi", descEn: "Allow your doctor to view your health data", descTr: "Doktorunuzun sağlık verilerinizi görüntülemesine izin verin", enabled: true, category: "sharing" },
+    { id: "family_view", en: "Family Member Visibility", tr: "Aile Uyesi Gorunurlugu", descEn: "Allow family members to see your health summary", descTr: "Aile uyelerinin sağlık ozetinizi gormesine izin verin", enabled: true, category: "sharing" },
     { id: "analytics", en: "Usage Analytics", tr: "Kullanim Analitigi", descEn: "Help improve the app with anonymous usage data", descTr: "Anonim kullanim verileriyle uygulamayi iyilestirmeye yardim edin", enabled: true, category: "data" },
     { id: "ai_training", en: "AI Model Training", tr: "AI Model Egitimi", descEn: "Allow data for AI improvement (always anonymized)", descTr: "AI iyilestirmesi için veri kullanilmasina izin verin (her zaman anonim)", enabled: false, category: "data" },
     { id: "location", en: "Location Services", tr: "Konum Hizmetleri", descEn: "Enable location for pharmacy finder feature", descTr: "Eczane bulucu ozelligi için konumu etkinlestirin", enabled: false, category: "device" },

@@ -74,7 +74,7 @@ const LOCATIONS = [
   { key: "neck", label: { en: "Neck", tr: "Boyun" } },
   { key: "upper_back", label: { en: "Upper Back", tr: "Ust Sirt" } },
   { key: "lower_back", label: { en: "Lower Back", tr: "Bel" } },
-  { key: "chest", label: { en: "Chest", tr: "Gogus" } },
+  { key: "chest", label: { en: "Chest", tr: "Göğüs" } },
   { key: "abdomen", label: { en: "Abdomen", tr: "Karin" } },
   { key: "shoulder", label: { en: "Shoulder", tr: "Omuz" } },
   { key: "elbow", label: { en: "Elbow", tr: "Dirsek" } },
@@ -516,7 +516,7 @@ export default function PainDiaryPage() {
           ) : (
             <>
               <p className="text-xs text-muted-foreground">
-                {lang === "tr" ? `Son 30 gunde ${records.length} kayit` : `${records.length} records in last 30 days`}
+                {lang === "tr" ? `Son 30 gunde ${records.length} kayıt` : `${records.length} records in last 30 days`}
               </p>
               {records.map((r) => {
                 const loc = LOCATIONS.find((l) => l.key === r.location);

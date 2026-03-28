@@ -26,11 +26,11 @@ interface ChecklistItem {
 }
 
 const PREP_CHECKLIST: Omit<ChecklistItem, "done">[] = [
-  { id: "med_report", label: { en: "Get comprehensive medical report from family doctor", tr: "Aile hekiminden kapsamli saglik raporu alin" } },
+  { id: "med_report", label: { en: "Get comprehensive medical report from family doctor", tr: "Aile hekiminden kapsamli sağlık raporu alin" } },
   { id: "dental", label: { en: "Complete all dental work (fillings, wisdom teeth)", tr: "Tum dis işlemlerini tamamlayın (dolgular, yirmi yaslik disler)" } },
   { id: "eye_exam", label: { en: "Eye examination and updated prescription if needed", tr: "Goz muayenesi ve gerekiyorsa reçete guncellemesi" } },
   { id: "blood_test", label: { en: "Full blood panel (CBC, metabolic, thyroid, Vitamin D)", tr: "Tam kan paneli (hemogram, metabolik, tiroid, D vitamini)" } },
-  { id: "vaccines", label: { en: "Vaccination records up to date (see list below)", tr: "Asi kayitlari guncel (asagidaki listeye bakin)" } },
+  { id: "vaccines", label: { en: "Vaccination records up to date (see list below)", tr: "Asi kayıtlari guncel (asagidaki listeye bakin)" } },
   { id: "chronic_meds", label: { en: "3-month supply of chronic medications + doctor letter", tr: "Kronik ilaçların 3 aylik tedariği + doktor raporu" } },
   { id: "allergy_doc", label: { en: "Document all allergies (medications, food, environmental)", tr: "Tum alerjileri belgeleyin (ilac, gida, cevresel)" } },
   { id: "mental_screen", label: { en: "Mental health screening — address anxiety/depression before service", tr: "Ruh sağlığı taramasi — hizmet öncesi kaygı/depresyonu ele alin" } },
@@ -66,7 +66,7 @@ const SECTIONS: Section[] = [
     icon: <Pill className="w-5 h-5 text-blue-500" />,
     title: { en: "Chronic Medication Supply Planning", tr: "Kronik İlaç Tedarik Planlamasi" },
     items: [
-      { en: "Get a military medical board letter documenting all chronic conditions and medications", tr: "Tum kronik hastalıklari ve ilaçları belgeleyen askeri saglik kurulu raporu alin" },
+      { en: "Get a military medical board letter documenting all chronic conditions and medications", tr: "Tum kronik hastalıklari ve ilaçları belgeleyen askeri sağlık kurulu raporu alin" },
       { en: "Request 90-day supply from your doctor before service", tr: "Hizmetten once doktorunuzdan 90 gunluk tedarik isteyin" },
       { en: "Carry medications in original packaging with pharmacy labels", tr: "İlaçlari eczane etiketli orijinal ambalajinda tasiyin" },
       { en: "Insulin/temperature-sensitive meds: request cold chain transport arrangements", tr: "Insulin/sicakliga duyarlı ilaclar: soguk zincir tasima duzenlemesi isteyin" },
@@ -122,7 +122,7 @@ export default function MilitaryHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("military.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -180,7 +180,7 @@ export default function MilitaryHealthPage() {
           </div>
           {progress === 100 && (
             <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl text-green-700 dark:text-green-400 font-medium">
-              {lang === "tr" ? "Tum saglik hazirliklari tamamlandi!" : "All health preparations complete!"}
+              {lang === "tr" ? "Tum sağlık hazirliklari tamamlandi!" : "All health preparations complete!"}
             </div>
           )}
         </div>

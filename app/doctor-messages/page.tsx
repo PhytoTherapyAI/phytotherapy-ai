@@ -75,7 +75,7 @@ export default function DoctorMessagesPage() {
                 </div>
                 <div className="p-3 border-t flex gap-2">
                   <Button variant="ghost" size="sm"><Paperclip className="w-4 h-4" /></Button>
-                  <input className="flex-1 rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Mesaj yazin..." : "Type a message..."} value={newMessage} onChange={e => setNewMessage(e.target.value)} />
+                  <input className="flex-1 rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Mesaj yazın..." : "Type a message..."} value={newMessage} onChange={e => setNewMessage(e.target.value)} />
                   <Button size="sm" disabled={!newMessage.trim()}><Send className="w-4 h-4" /></Button>
                 </div>
               </Card>

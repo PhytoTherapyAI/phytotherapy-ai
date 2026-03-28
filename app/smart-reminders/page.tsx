@@ -131,7 +131,7 @@ const DRUG_TIMING_RULES: Record<string, DrugTimingRule> = {
   },
   sertraline: {
     stomach: "with_food", bestTime: "morning", mealRelation: "with",
-    timing: { en: "Morning with food to reduce nausea", tr: "Bulantiyi azaltmak için sabah yemekle" },
+    timing: { en: "Morning with food to reduce nausea", tr: "Bulantıyi azaltmak için sabah yemekle" },
   },
   escitalopram: {
     stomach: "any", bestTime: "morning", mealRelation: "independent",

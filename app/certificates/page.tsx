@@ -48,7 +48,7 @@ const CERTIFICATES: Certificate[] = [
     titleEn: "Health Score Champion",
     titleTr: "Sağlık Skoru Sampiyonu",
     descEn: "Achieved a health score of 90 or above",
-    descTr: "90 ve uzerinde saglik skoru elde ettin",
+    descTr: "90 ve uzerinde sağlık skoru elde ettin",
     icon: <Trophy className="w-8 h-8" />,
     color: "text-yellow-600 dark:text-yellow-400",
     bgGradient: "from-yellow-500/10 to-amber-500/10",
@@ -59,7 +59,7 @@ const CERTIFICATES: Certificate[] = [
     titleEn: "7-Day Health Streak",
     titleTr: "7 Günlük Sağlık Serisi",
     descEn: "Maintained a 7-day streak of daily health check-ins",
-    descTr: "7 gun ust uste gunluk saglik takibini tamamladin",
+    descTr: "7 gun ust uste gunluk sağlık takibini tamamladin",
     icon: <Flame className="w-8 h-8" />,
     color: "text-orange-600 dark:text-orange-400",
     bgGradient: "from-orange-500/10 to-red-500/10",
@@ -92,7 +92,7 @@ const CERTIFICATES: Certificate[] = [
     titleEn: "Health Quiz Master",
     titleTr: "Sağlık Quiz Ustasi",
     descEn: "Answered 20 health quiz questions correctly",
-    descTr: "20 saglik quiz sorusunu doğru yanitledin",
+    descTr: "20 sağlık quiz sorusunu doğru yanitledin",
     icon: <Award className="w-8 h-8" />,
     color: "text-emerald-600 dark:text-emerald-400",
     bgGradient: "from-emerald-500/10 to-green-500/10",
@@ -321,7 +321,7 @@ export default function CertificatesPage() {
         <Card className="p-4 bg-muted/50 text-center">
           <p className="text-sm text-muted-foreground">
             {t
-              ? "Daha fazla sertifika kazanmak için saglik hedeflerini takip etmeye devam et!"
+              ? "Daha fazla sertifika kazanmak için sağlık hedeflerini takip etmeye devam et!"
               : "Keep tracking your health goals to unlock more certificates!"}
           </p>
         </Card>

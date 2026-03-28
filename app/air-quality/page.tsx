@@ -56,7 +56,7 @@ const AQI_LEVELS: AQILevel[] = [
     color: "text-orange-700 dark:text-orange-400",
     bgColor: "bg-orange-50",
     darkBgColor: "dark:bg-orange-900/20",
-    general: { en: "Sensitive groups may experience health effects. General public less likely affected.", tr: "Hassas gruplar saglik etkileri yasayabilir. Genel halk daha az etkilenir." },
+    general: { en: "Sensitive groups may experience health effects. General public less likely affected.", tr: "Hassas gruplar sağlık etkileri yasayabilir. Genel halk daha az etkilenir." },
     sensitive: { en: "Asthma/COPD: reduce outdoor time. Use preventive inhaler before going out.", tr: "Astim/KOAH: dis mekan suresini azaltin. Disari cikmadan once koruyucu inhaler kullanin." },
     exercise: { en: "Sensitive groups: indoor exercise only. Others: limit intense outdoor activity to 1 hour.", tr: "Hassas gruplar: sadece ic mekan egzersizi. Digerleri: yogun dis mekan aktivitesini 1 saatle sinirlayin." },
     mask: { en: "N95 recommended for sensitive groups. KN95 acceptable alternative.", tr: "Hassas gruplar için N95 oneriler. KN95 kabul edilebilir alternatif." },
@@ -67,7 +67,7 @@ const AQI_LEVELS: AQILevel[] = [
     color: "text-red-700 dark:text-red-400",
     bgColor: "bg-red-50",
     darkBgColor: "dark:bg-red-900/20",
-    general: { en: "Everyone may experience health effects. Sensitive groups: serious effects.", tr: "Herkes saglik etkileri yasayabilir. Hassas gruplar: ciddi etkiler." },
+    general: { en: "Everyone may experience health effects. Sensitive groups: serious effects.", tr: "Herkes sağlık etkileri yasayabilir. Hassas gruplar: ciddi etkiler." },
     sensitive: { en: "Asthma/COPD: stay indoors with air purifier. Emergency inhaler accessible at all times.", tr: "Astim/KOAH: hava temizleyici ile ic mekanda kalin. Acil inhaler her zaman ulasılabilir olsun." },
     exercise: { en: "All groups: move exercise indoors. No outdoor running or cycling.", tr: "Tum gruplar: egzersizi ic mekana tasiyin. Dis mekanda kosu veya bisiklet yok." },
     mask: { en: "N95 mandatory outdoors. Surgical masks are NOT effective for PM2.5.", tr: "Dis mekanda N95 zorunlu. Cerrahi maskeler PM2.5 için etkili DEGILDIR." },
@@ -117,7 +117,7 @@ export default function AirQualityPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("air.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>

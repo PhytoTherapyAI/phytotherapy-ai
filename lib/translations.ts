@@ -72,6 +72,9 @@ const t: Record<string, TranslationEntry> = {
   "nav.bloodtest": { en: "Blood Test Analysis", tr: "Kan Tahlili Analizi" },
   "nav.getStarted": { en: "Get Started", tr: "Başla" },
   "nav.signInUp": { en: "Sign In / Sign Up", tr: "Giriş / Kayıt" },
+  "nav.login": { en: "Sign In", tr: "Giriş Yap" },
+  "nav.loginRequired": { en: "Please sign in to use this tool.", tr: "Bu aracı kullanmak için giriş yapın." },
+  "nav.loginToAccess": { en: "Sign in to access this feature", tr: "Bu özelliğe erişmek için giriş yapın" },
   "nav.profileSettings": { en: "Profile Settings", tr: "Profil Ayarları" },
   "nav.signOut": { en: "Sign Out", tr: "Çıkış Yap" },
 

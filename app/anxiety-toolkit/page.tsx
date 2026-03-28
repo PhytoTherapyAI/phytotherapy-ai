@@ -63,8 +63,8 @@ const SYMPTOMS_EN = [
 ];
 const SYMPTOMS_TR = [
   "Hizli kalp atisi", "Terleme", "Titreme", "Nefes darlığı",
-  "Gogus sıkışması", "Bulanti", "Bas donmesi", "Kas gerginligi",
-  "Odaklanma guclugu", "Uyku sorunlari", "Yorgunluk", "Sinirlilik",
+  "Göğüs sıkışması", "Bulantı", "Bas dönmesi", "Kas gerginliği",
+  "Odaklanma güçlüğü", "Uyku sorunları", "Yorgunluk", "Sinirlilik",
 ];
 
 export default function AnxietyToolkitPage() {
@@ -143,7 +143,7 @@ export default function AnxietyToolkitPage() {
         <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-8 text-center dark:border-blue-800 dark:bg-blue-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-blue-400" />
           <p className="text-lg font-medium text-blue-700 dark:text-blue-300">
-            {lang === "tr" ? "Bu araci kullanmak için giris yapin." : "Please sign in to use this tool."}
+            {lang === "tr" ? "Bu aracı kullanmak için giriş yapın." : "Please sign in to use this tool."}
           </p>
         </div>
       </div>

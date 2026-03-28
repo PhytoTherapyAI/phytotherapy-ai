@@ -59,7 +59,7 @@ const KEYWORD_MAP: Record<string, TagCategory> = {
   headache: "symptom", migraine: "symptom", nausea: "symptom", pain: "symptom",
   fatigue: "symptom", dizziness: "symptom", fever: "symptom", cough: "symptom",
   cramp: "symptom", bloating: "symptom", rash: "symptom", allergy: "symptom",
-  "bas ağrısi": "symptom", mide: "symptom", bulanti: "symptom", ağrı: "symptom",
+  "bas ağrısi": "symptom", mide: "symptom", bulantı: "symptom", ağrı: "symptom",
   yorgunluk: "symptom", ates: "symptom", oksuruk: "symptom", sisman: "symptom",
   happy: "mood", sad: "mood", anxious: "mood", stressed: "mood", calm: "mood",
   angry: "mood", depressed: "mood", nervous: "mood", relaxed: "mood",
@@ -284,10 +284,10 @@ export default function HealthDiaryPage() {
         <div className="text-center space-y-4 max-w-md">
           <BookOpen className="w-16 h-16 mx-auto text-emerald-500" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {t("Health Diary", "Sağlık Gunlugu")}
+            {t("Health Diary", "Sağlık Günlüğü")}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            {t("Sign in to start your health diary.", "Sağlık gunlugunuze başlamak için giris yapin.")}
+            {t("Sign in to start your health diary.", "Sağlık günlüğünuze başlamak için giriş yapın.")}
           </p>
           <Button onClick={() => (window.location.href = "/")}>
             <LogIn className="w-4 h-4 mr-2" />
@@ -309,10 +309,10 @@ export default function HealthDiaryPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                {t("Health Diary", "Sağlık Gunlugu")}
+                {t("Health Diary", "Sağlık Günlüğü")}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t("Track your daily health journey", "Günlük saglik yolculugunuzu takip edin")}
+                {t("Track your daily health journey", "Günlük sağlık yolculugunuzu takip edin")}
               </p>
             </div>
           </div>
@@ -370,7 +370,7 @@ export default function HealthDiaryPage() {
               onChange={(e) => setContent(e.target.value)}
               placeholder={t(
                 "Write about your day... How did you feel? Any symptoms? What did you eat? How was your sleep?",
-                "Gununuz hakkinda yazin... Nasil hissettiniz? Belirti var mi? Ne yediniz? Uykunuz nasil?"
+                "Gununuz hakkinda yazın... Nasil hissettiniz? Belirti var mi? Ne yediniz? Uykunuz nasil?"
               )}
               rows={6}
               className="w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"

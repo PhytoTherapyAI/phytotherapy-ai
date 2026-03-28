@@ -341,7 +341,7 @@ export default function WomensHealthPage() {
         <h1 className="mb-2 text-2xl font-bold">{tx("wh.title", lang)}</h1>
         <p className="text-muted-foreground">
           {lang === "tr"
-            ? "Bu ozellik kadin saglik takibi için tasarlanmistir."
+            ? "Bu ozellik kadin sağlık takibi için tasarlanmistir."
             : "This feature is designed for female health tracking."}
         </p>
       </div>
@@ -581,7 +581,7 @@ export default function WomensHealthPage() {
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder={lang === "tr" ? "Notlar (istege bagli)..." : "Notes (optional)..."}
+                  placeholder={lang === "tr" ? "Notlar (isteğe bağlı)..." : "Notes (optional)..."}
                   rows={2}
                   maxLength={500}
                   className="w-full rounded-lg border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-pink-400 focus:outline-none focus:ring-1 focus:ring-pink-400"

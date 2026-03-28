@@ -26,7 +26,7 @@ const FOOT_CHECKLIST: Omit<ChecklistItem, "done">[] = [
   {
     id: "inspect_top",
     label: { en: "Inspect top of both feet", tr: "Her iki ayagin ust kismini kontrol edin" },
-    description: { en: "Look for swelling, color changes, blisters", tr: "Sislik, renk degisikligi, su toplamalarina bakin" },
+    description: { en: "Look for swelling, color changes, blisters", tr: "Şişlik, renk değişikliği, su toplamalarina bakin" },
   },
   {
     id: "inspect_bottom",
@@ -41,7 +41,7 @@ const FOOT_CHECKLIST: Omit<ChecklistItem, "done">[] = [
   {
     id: "inspect_nails",
     label: { en: "Check toenails", tr: "Ayak tirnaklarini kontrol edin" },
-    description: { en: "Look for ingrown nails, discoloration, thickening", tr: "Batan tirnak, renk degisikligi, kalinlasmaya bakin" },
+    description: { en: "Look for ingrown nails, discoloration, thickening", tr: "Batan tirnak, renk değişikliği, kalinlasmaya bakin" },
   },
   {
     id: "sensation",
@@ -76,9 +76,9 @@ const FOOT_CHECKLIST: Omit<ChecklistItem, "done">[] = [
 ];
 
 const EMERGENCY_SIGNS: Array<{ label: { en: string; tr: string }; color: string }> = [
-  { label: { en: "Color change (black, blue, or white areas)", tr: "Renk degisikligi (siyah, mavi veya beyaz alanlar)" }, color: "text-red-600" },
+  { label: { en: "Color change (black, blue, or white areas)", tr: "Renk değişikliği (siyah, mavi veya beyaz alanlar)" }, color: "text-red-600" },
   { label: { en: "Open wound or sore that won't heal", tr: "Kapanmayan acik yara" }, color: "text-red-600" },
-  { label: { en: "Sudden severe swelling", tr: "Ani şiddetli sislik" }, color: "text-red-600" },
+  { label: { en: "Sudden severe swelling", tr: "Ani şiddetli şişlik" }, color: "text-red-600" },
   { label: { en: "Red streaks from a wound", tr: "Yaradan yayilan kirmizi cizgiler" }, color: "text-red-600" },
   { label: { en: "Warmth with redness (possible infection)", tr: "Kizariklikla birlikte isilik (olasi enfeksiyon)" }, color: "text-red-600" },
   { label: { en: "Fever with foot wound", tr: "Ayak yarasiyla birlikte ates" }, color: "text-red-600" },
@@ -141,7 +141,7 @@ export default function DiabeticFootPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("dfoot.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>

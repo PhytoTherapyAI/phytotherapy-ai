@@ -85,7 +85,7 @@ function getAssessmentResult(score: number, lang: string): { label: string; colo
       label: lang === "tr" ? "Düşük Risk" : "Low Risk",
       color: "text-green-600 dark:text-green-400",
       advice: lang === "tr"
-        ? "Ekran kullaniminiz saglikli gorunuyor. Iyi aliskanliklarinizi sürdürun!"
+        ? "Ekran kullaniminiz sağlıkli gorunuyor. Iyi aliskanliklarinizi sürdürun!"
         : "Your screen habits look healthy. Keep up the good practices!",
     };
   }

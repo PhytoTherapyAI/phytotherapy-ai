@@ -224,7 +224,7 @@ export default function VoiceDiaryPage() {
         <textarea
           value={currentText}
           onChange={(e) => setCurrentText(e.target.value)}
-          placeholder={lang === "tr" ? "Konusun veya yazin..." : "Speak or type..."}
+          placeholder={lang === "tr" ? "Konusun veya yazın..." : "Speak or type..."}
           rows={4}
           className="w-full rounded-lg border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400"
         />

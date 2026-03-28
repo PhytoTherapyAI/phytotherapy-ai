@@ -23,7 +23,7 @@ export default function DataDeletePage() {
     { en: "Supplement tracking data", tr: "Takviye takip verileri", count: 15 },
     { en: "Family member profiles", tr: "Aile uyesi profilleri", count: 2 },
     { en: "Health scores & analytics", tr: "Sağlık skorlari ve analizler", count: 90 },
-    { en: "Consent & legal records", tr: "Onay ve yasal kayitlar", count: 1 },
+    { en: "Consent & legal records", tr: "Onay ve yasal kayıtlar", count: 1 },
   ];
 
   const handleDelete = () => { if (deleteText === "DELETE" && confirmed) setDeleted(true); };
@@ -102,7 +102,7 @@ export default function DataDeletePage() {
             <Card className="p-6">
               <ShieldAlert className="w-12 h-12 text-red-500 mx-auto mb-4" />
               <h3 className="text-lg font-bold text-center mb-2">{isTr ? "Onay Gerekli" : "Confirmation Required"}</h3>
-              <p className="text-sm text-gray-500 text-center mb-6">{isTr ? "Devam etmek için asagiya DELETE yazin." : "Type DELETE below to confirm."}</p>
+              <p className="text-sm text-gray-500 text-center mb-6">{isTr ? "Devam etmek için asagiya DELETE yazın." : "Type DELETE below to confirm."}</p>
               <input className="w-full rounded-lg border-2 border-red-200 px-4 py-3 text-center text-lg font-mono tracking-widest dark:bg-gray-800 dark:border-red-800 focus:border-red-500 focus:outline-none" placeholder="DELETE" value={deleteText} onChange={e => setDeleteText(e.target.value.toUpperCase())} />
               {deleteText === "DELETE" && <div className="flex items-center gap-2 mt-4 text-green-600"><CheckCircle2 className="w-4 h-4" /><span className="text-sm">{isTr ? "Onay kodu doğru" : "Confirmation code correct"}</span></div>}
             </Card>

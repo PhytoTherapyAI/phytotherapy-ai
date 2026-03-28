@@ -23,7 +23,7 @@ export default function PharmaRWEPage() {
 
   const sideEffects = [
     { en: "GI disturbance", tr: "GI bozuklugu", pct: 23, severity: "mild" },
-    { en: "Dizziness", tr: "Bas donmesi", pct: 12, severity: "mild" },
+    { en: "Dizziness", tr: "Bas dönmesi", pct: 12, severity: "mild" },
     { en: "Fatigue", tr: "Yorgunluk", pct: 8, severity: "mild" },
     { en: "Muscle pain", tr: "Kas ağrısi", pct: 5, severity: "moderate" },
     { en: "Hepatic concern", tr: "Karaciger endisesi", pct: 2, severity: "serious" },

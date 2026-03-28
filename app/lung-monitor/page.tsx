@@ -35,7 +35,7 @@ const SYMPTOM_OPTIONS = [
   { value: "shortness_of_breath", en: "Shortness of Breath", tr: "Nefes Darligi" },
   { value: "cough", en: "Chronic Cough", tr: "Kronik Oksuruk" },
   { value: "phlegm", en: "Phlegm/Mucus", tr: "Balgam" },
-  { value: "chest_tightness", en: "Chest Tightness", tr: "Gogus Sikismasi" },
+  { value: "chest_tightness", en: "Chest Tightness", tr: "Göğüs Sikismasi" },
   { value: "night_cough", en: "Night Cough", tr: "Gece Oksurugu" },
 ];
 
@@ -103,7 +103,7 @@ export default function LungMonitorPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("lung.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}><LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}</Button>
         </div>
       </div>

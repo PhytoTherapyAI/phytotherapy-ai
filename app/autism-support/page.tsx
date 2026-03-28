@@ -153,7 +153,7 @@ export default function AutismSupportPage() {
               <h2 className="text-lg font-semibold mb-3">{isTr ? "Yeni Not Ekle" : "Add New Note"}</h2>
               <div className="flex gap-2 mb-3">{(["happy", "neutral", "upset"] as const).map(m => (<Button key={m} variant={newNoteMood === m ? "default" : "outline"} size="sm" onClick={() => setNewNoteMood(m)}>{moodIcon(m)}</Button>))}</div>
               <div className="flex gap-2">
-                <input className="flex-1 rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Bugunun notlarini yazin..." : "Write observations..."} value={newNote} onChange={e => setNewNote(e.target.value)} onKeyDown={e => e.key === "Enter" && addNote()} />
+                <input className="flex-1 rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Bugünün notlarını yazın..." : "Write observations..."} value={newNote} onChange={e => setNewNote(e.target.value)} onKeyDown={e => e.key === "Enter" && addNote()} />
                 <Button onClick={addNote} size="sm"><Plus className="w-4 h-4" /></Button>
               </div>
             </Card>

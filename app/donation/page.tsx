@@ -156,7 +156,7 @@ export default function DonationPage() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-gray-400 text-center py-2">{lang === "tr" ? "Kayit yok" : "No records"}</p>
+          <p className="text-sm text-gray-400 text-center py-2">{lang === "tr" ? "Kayıt yok" : "No records"}</p>
         )}
       </div>
 
@@ -181,11 +181,11 @@ export default function DonationPage() {
         <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{lang === "tr" ? "Organ Bagisi" : "Organ Donation"}</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
           {lang === "tr"
-            ? "Türkiye'de organ bagisi için E-Nabiz uzerinden veya herhangi bir saglik kurulusunda kayit yaptirabilirsiniz. Bir donor 8 kisiinin hayatini kurtarabilir."
+            ? "Türkiye'de organ bagisi için E-Nabiz uzerinden veya herhangi bir sağlık kurulusunda kayıt yaptirabilirsiniz. Bir donor 8 kisiinin hayatini kurtarabilir."
             : "In Turkey, you can register for organ donation through E-Nabiz or at any healthcare facility. One donor can save up to 8 lives."}
         </p>
         <a href="https://enabiz.gov.tr" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-red-600 hover:text-red-700 font-medium">
-          {lang === "tr" ? "E-Nabiz'da Kayit Ol" : "Register on E-Nabiz"} <ExternalLink className="w-3.5 h-3.5" />
+          {lang === "tr" ? "E-Nabiz'da Kayıt Ol" : "Register on E-Nabiz"} <ExternalLink className="w-3.5 h-3.5" />
         </a>
       </div>
 

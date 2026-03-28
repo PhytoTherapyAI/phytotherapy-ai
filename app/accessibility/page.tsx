@@ -28,7 +28,7 @@ const SECTIONS: Section[] = [
     title: { en: "Voice & Audio", tr: "Ses & Isitsel" },
     color: "text-purple-500",
     items: [
-      { title: { en: "Voice Input (Coming Soon)", tr: "Sesli Giris (Yakinda)" }, desc: { en: "Describe your symptoms or ask health questions using your voice. Planned for future updates.", tr: "Sesyinizi kullanarak semptomlarinizi anlatin veya saglik sorulari sorun. Gelecek guncellemeler için planlaniyor." } },
+      { title: { en: "Voice Input (Coming Soon)", tr: "Sesli Giris (Yakinda)" }, desc: { en: "Describe your symptoms or ask health questions using your voice. Planned for future updates.", tr: "Sesyinizi kullanarak semptomlarinizi anlatin veya sağlık soruları sorun. Gelecek guncellemeler için planlaniyor." } },
       { title: { en: "Text-to-Speech", tr: "Metin Okuma" }, desc: { en: "Use your device's built-in text-to-speech to have AI responses read aloud.", tr: "AI yanitlarinin sesli okunmasi için cihazinizin yerlesik metin okuma ozelligini kullaniniz." } },
     ],
   },
@@ -37,7 +37,7 @@ const SECTIONS: Section[] = [
     title: { en: "Simplified UI Mode (Concept)", tr: "Basitlestirilmis Arayuz (Konsept)" },
     color: "text-green-500",
     items: [
-      { title: { en: "Large Buttons", tr: "Buyuk Dugmeler" }, desc: { en: "Planned: A simplified view with larger touch targets for users with motor difficulties.", tr: "Planlanan: Motor guclugu olan kullanicilar için daha buyuk dokunma hedefleriyle basitlestirilmis gorunum." } },
+      { title: { en: "Large Buttons", tr: "Buyuk Dugmeler" }, desc: { en: "Planned: A simplified view with larger touch targets for users with motor difficulties.", tr: "Planlanan: Motor güçlüğü olan kullanicilar için daha buyuk dokunma hedefleriyle basitlestirilmis gorunum." } },
       { title: { en: "Reduced Complexity", tr: "Azaltilmis Karmasiklik" }, desc: { en: "Planned: Essential features only, removing advanced options for easier navigation.", tr: "Planlanan: Daha kolay navigasyon için gelismis secenekleri kaldirarak yalnizca temel ozellikler." } },
     ],
   },
@@ -56,7 +56,7 @@ const SECTIONS: Section[] = [
     title: { en: "Disability Rights (Turkey)", tr: "Engelli Haklari (Türkiye)" },
     color: "text-amber-500",
     items: [
-      { title: { en: "Health Report", tr: "Sağlık Raporu" }, desc: { en: "Disability health report: Apply at any state hospital. Required for benefits.", tr: "Engelli saglik raporu: Herhangi bir devlet hastanesinde basvuru. Haklar için gerekli." } },
+      { title: { en: "Health Report", tr: "Sağlık Raporu" }, desc: { en: "Disability health report: Apply at any state hospital. Required for benefits.", tr: "Engelli sağlık raporu: Herhangi bir devlet hastanesinde basvuru. Haklar için gerekli." } },
       { title: { en: "Tax Exemptions", tr: "Vergi Muafiyetleri" }, desc: { en: "Income tax reduction based on disability level. Vehicle purchase tax exemption for 90%+ disability.", tr: "Engellilik duzeyine gore gelir vergisi indirimi. %90+ engelliler için arac alim vergisi muafiyeti." } },
       { title: { en: "Free Public Transport", tr: "Ucretsiz Toplu Tasima" }, desc: { en: "Free public transport in most Turkish cities for disability card holders.", tr: "Çoğu Turk sehrinde engelli karti sahipleri için ucretsiz toplu tasima." } },
       { title: { en: "Home Care Salary", tr: "Evde Bakim Maasi" }, desc: { en: "Monthly payment for caregivers of severely disabled individuals. Apply at SYDV.", tr: "Agir engelli bireylerin bakicilari için aylik odeme. SYDV'ye basvurun." } },

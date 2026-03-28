@@ -286,7 +286,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
       { en: "Stock up on immune support supplements", tr: "Bağışıklik destek takviyeleri stoklayın" },
       { en: "Prepare cold and flu home remedies", tr: "Soguk alginligi ve grip için ev ilaçları hazirlayin" },
       { en: "Check heating system and indoor air quality", tr: "Isitma sistemini ve ic hava kalitesini kontrol edin" },
-      { en: "Review winter health insurance coverage", tr: "Kis saglik sigortasi kapsamini gözden geçirin" },
+      { en: "Review winter health insurance coverage", tr: "Kis sağlık sigortasi kapsamini gözden geçirin" },
     ],
   },
 };
@@ -508,7 +508,7 @@ export default function SeasonalHealthPage() {
             <h3 className="text-sm font-semibold">{tx("seasonal.bossFight", lang)}</h3>
             <p className="text-xs text-muted-foreground">
               {lang === "tr"
-                ? "Mevsimsel saglik gorevleri için Boss Fight protokollerine goz atin!"
+                ? "Mevsimsel sağlık gorevleri için Boss Fight protokollerine goz atin!"
                 : "Check out Boss Fight protocols for seasonal health challenges!"}
             </p>
           </div>

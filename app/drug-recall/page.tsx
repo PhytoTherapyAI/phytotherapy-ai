@@ -34,7 +34,7 @@ const RECALL_DATABASE: RecallEntry[] = [
   { id: "r9", drugName: "Amoxicillin 500mg", genericName: "amoxicillin", reason: { en: "Reduced potency detected before expiration date", tr: "Son kullanma tarihinden once azalmis potens tespit edildi" }, date: "2026-01-10", severity: "moderate", action: { en: "Get new prescription filled, report to pharmacist", tr: "Yeni recete yazdirin, eczaciya bildirin" }, source: "EMA" },
   { id: "r10", drugName: "Amlodipine 5mg", genericName: "amlodipine", reason: { en: "Foreign particle found in select batches", tr: "Belirli partilerde yabanci parcacik bulundu" }, date: "2026-01-05", severity: "moderate", action: { en: "Check lot number, return affected batch to pharmacy", tr: "Lot numarasini kontrol edin, etkilenen partiyi eczaneye iade edin" }, source: "FDA", lot: "AML-2025-1198" },
   { id: "r11", drugName: "Levothyroxine 50mcg", genericName: "levothyroxine", reason: { en: "Sub-potent tablets detected in quality testing", tr: "Kalite testinde düşük potensli tabletler tespit edildi" }, date: "2025-12-28", severity: "critical", action: { en: "Get thyroid levels checked, switch to verified batch", tr: "Tiroid degerlerini kontrol ettirin, doğrulanmis partiye gecin" }, source: "FDA" },
-  { id: "r12", drugName: "Pantoprazole 40mg", genericName: "pantoprazole", reason: { en: "Discoloration observed in tablets", tr: "Tabletlerde renk degisikligi gozlemlendi" }, date: "2025-12-15", severity: "low", action: { en: "Visual inspection - discolored tablets should not be taken", tr: "Gorsel kontrol - rengi degismis tabletler alinmamali" }, source: "TITCK" },
+  { id: "r12", drugName: "Pantoprazole 40mg", genericName: "pantoprazole", reason: { en: "Discoloration observed in tablets", tr: "Tabletlerde renk değişikliği gozlemlendi" }, date: "2025-12-15", severity: "low", action: { en: "Visual inspection - discolored tablets should not be taken", tr: "Gorsel kontrol - rengi degismis tabletler alinmamali" }, source: "TITCK" },
 ]
 
 const tx: Record<string, { en: string; tr: string }> = {
@@ -53,7 +53,7 @@ const tx: Record<string, { en: string; tr: string }> = {
   source: { en: "Source", tr: "Kaynak" },
   lot: { en: "Lot", tr: "Lot" },
   back: { en: "Back", tr: "Geri" },
-  loginHint: { en: "Log in to check against your medication profile", tr: "İlaç profilinizle kontrol etmek için giris yapin" },
+  loginHint: { en: "Log in to check against your medication profile", tr: "İlaç profilinizle kontrol etmek için giriş yapın" },
 }
 
 export default function DrugRecallPage() {

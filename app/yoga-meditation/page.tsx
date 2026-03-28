@@ -21,8 +21,8 @@ const YOGA_GUIDES: YogaGuide[] = [
     description: { en: "Strong evidence (RCTs) for yoga improving chronic low back pain. Comparable to physical therapy.", tr: "Yoganin kronik bel ağrısini iyilestirdigi için guclu kanit (RCT'ler). Fizyoterapiye denk." },
     poses: [
       { name: { en: "Cat-Cow", tr: "Kedi-Inek" }, duration: "2 min", note: { en: "Gentle spinal flexion-extension", tr: "Hafif omurga fleksiyon-ekstensiyon" } },
-      { name: { en: "Sphinx Pose", tr: "Sfenks Pozu" }, duration: "1 min", note: { en: "Mild backbend, good for disc issues", tr: "Hafif sirt bukulmesi, disk sorunlari için iyi" } },
-      { name: { en: "Supine Twist", tr: "Sirt Ustu Burgu" }, duration: "1 min each side", note: { en: "Releases lower back tension", tr: "Alt sirt gerginligini serbest birakir" } },
+      { name: { en: "Sphinx Pose", tr: "Sfenks Pozu" }, duration: "1 min", note: { en: "Mild backbend, good for disc issues", tr: "Hafif sirt bukulmesi, disk sorunları için iyi" } },
+      { name: { en: "Supine Twist", tr: "Sirt Ustu Burgu" }, duration: "1 min each side", note: { en: "Releases lower back tension", tr: "Alt sirt gerginliğini serbest birakir" } },
       { name: { en: "Bridge Pose", tr: "Kopru Pozu" }, duration: "30 sec x3", note: { en: "Strengthens glutes and core", tr: "Kalca ve karni guclendirir" } },
     ],
   },

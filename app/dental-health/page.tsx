@@ -85,7 +85,7 @@ const MED_ORAL_EFFECTS: MedEffect[] = [
     category: "Chemotherapy",
     medications: ["Methotrexate", "5-FU", "Doxorubicin", "Cyclophosphamide"],
     effect: { en: "Oral mucositis, ulcers, infection risk", tr: "Oral mukozit, ulserler, enfeksiyon riski" },
-    risk: { en: "Painful mouth sores, difficulty eating, secondary infections", tr: "Agirili agiz yaralari, yeme guclugu, sekonder enfeksiyonlar" },
+    risk: { en: "Painful mouth sores, difficulty eating, secondary infections", tr: "Agirili agiz yaralari, yeme güçlüğü, sekonder enfeksiyonlar" },
     prevention: { en: "Soft toothbrush, salt-water rinse, avoid spicy/acidic foods, cryotherapy during infusion", tr: "Yumusak dis fircasi, tuzlu su gargarasi, baharatli/asitli gidalardan kacinin" },
     severity: "high",
   },
@@ -135,7 +135,7 @@ export default function DentalHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("dental.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>

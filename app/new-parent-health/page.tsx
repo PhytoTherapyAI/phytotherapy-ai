@@ -49,7 +49,7 @@ const SECTIONS: Section[] = [
       { en: "Alternate arms frequently — repetitive strain on one side causes asymmetric pain", tr: "Kollarinizi sik sik degistirin — tek tarafta tekrarlayan zorlanma asimetrik ağrıya yol acar" },
       { en: "De Quervain's tenosynovitis ('mother's thumb'): support wrist during lifting, use entire hand", tr: "De Quervain tenosinoviti ('anne basparmaği'): kaldirirken bilegi destekleyin, tum eli kullanin" },
       { en: "Ergonomic feeding: support arms with pillows, keep spine neutral, feet flat on floor", tr: "Ergonomik besleme: kollarinizi yastikla destekleyin, omurga nötr, ayaklar yerde duz" },
-      { en: "3x daily stretches: cat-cow, doorway chest opener, wrist flexor/extensor stretches", tr: "Günlük 3x esneme: kedi-inek, kapi gogus acici, bilek fleksor/ekstensor esnemeleri" },
+      { en: "3x daily stretches: cat-cow, doorway chest opener, wrist flexor/extensor stretches", tr: "Günlük 3x esneme: kedi-inek, kapi göğüs acici, bilek fleksor/ekstensor esnemeleri" },
       { en: "Baby carrier with hip support distributes weight — reduces back strain by 40%", tr: "Kalca destekli bebek tasiyicisi agirligi dagitir — sirt zorlanmasini %40 azaltir" },
       { en: "If wrist pain persists 2+ weeks: see physiotherapist — splinting helps significantly", tr: "Bilek ağrısi 2+ hafta devam ederse: fizyoterapiste gidin — atel önemli ölçüde yardımcı olur" },
     ],
@@ -77,7 +77,7 @@ const SECTIONS: Section[] = [
       { en: "Physical intimacy timeline varies: 6 weeks minimum post-birth, but emotional readiness is personal", tr: "Fiziksel yakinlik sureci degisir: dogumdan sonra minimum 6 hafta, ama duygusal hazirlik kişiseldir" },
       { en: "Individual time is not selfish: each parent needs 2-3 hours/week of personal time", tr: "Bireysel zaman bencillik degildir: her ebeveynin haftada 2-3 saat kişisel zamana ihtiyaci vardir" },
       { en: "Ask for help from family/friends — specific requests ('bring dinner Tuesday') work better than vague ones", tr: "Aile/arkadaslardan yardim isteyin — belirli istekler ('sali aksamyemegi getirin') belirsiz olanlardan daha iyi calisir" },
-      { en: "If arguing increases significantly, couples counseling early prevents larger problems", tr: "Tartismalar önemli ölçüde artarsa, erken cift terapisi daha buyuk sorunlari onler" },
+      { en: "If arguing increases significantly, couples counseling early prevents larger problems", tr: "Tartismalar önemli ölçüde artarsa, erken cift terapisi daha buyuk sorunları onler" },
     ],
   },
 ];
@@ -107,7 +107,7 @@ export default function NewParentHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("newparent.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu aracı kullanmak için giriş yapın" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -231,7 +231,7 @@ export default function NewParentHealthPage() {
               <p className="text-sm mt-1">
                 {burnoutScore >= 5
                   ? lang === "tr"
-                    ? "Yüksek tukenmislik belirtileri. Bir saglik uzmanina danismaniz onerilir."
+                    ? "Yüksek tukenmislik belirtileri. Bir sağlık uzmanina danismaniz onerilir."
                     : "High burnout indicators. We recommend speaking to a healthcare provider."
                   : burnoutScore >= 3
                   ? lang === "tr"

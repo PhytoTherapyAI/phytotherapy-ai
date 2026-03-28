@@ -49,7 +49,7 @@ export default function DoctorAnalyticsPage() {
             <BarChart3 className="w-8 h-8 text-violet-600" />
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Hasta Analitigi" : "Patient Analytics"}</h1>
-              <p className="text-sm text-gray-500">{isTr ? "Populasyon saglik gostergeleri" : "Population health indicators"}</p>
+              <p className="text-sm text-gray-500">{isTr ? "Populasyon sağlık gostergeleri" : "Population health indicators"}</p>
             </div>
           </div>
           <div className="flex gap-1">{["7d", "30d", "90d"].map(p => (<Button key={p} variant={period === p ? "default" : "outline"} size="sm" onClick={() => setPeriod(p)}>{p}</Button>))}</div>

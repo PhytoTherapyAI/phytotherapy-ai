@@ -208,7 +208,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "Berberine HCl",
     category: "herbal",
     evidenceGrade: "A",
-    uses: { en: "Blood sugar, cholesterol, metabolic health", tr: "Kan sekeri, kolesterol, metabolik saglik" },
+    uses: { en: "Blood sugar, cholesterol, metabolic health", tr: "Kan sekeri, kolesterol, metabolik sağlık" },
     brands: [
       { name: "Thorne", form: "Capsule" },
       { name: "NOW Foods", form: "Capsule" },
@@ -484,7 +484,7 @@ export default function SupplementMarketplacePage() {
         {/* Affiliate Disclaimer */}
         <div className="mt-8 text-center text-xs text-gray-400 dark:text-gray-500 max-w-xl mx-auto">
           {lang === "tr"
-            ? "Bu linkler kolaylik amaciyla sunulmaktadir. Urun onerileri saglik tavsiyelerimizi asla etkilemez."
+            ? "Bu linkler kolaylik amaciyla sunulmaktadir. Urun onerileri sağlık tavsiyelerimizi asla etkilemez."
             : "These links are provided for convenience only. Product suggestions never influence our health recommendations."}
         </div>
 
