@@ -32,6 +32,7 @@ import {
   Beaker,
   Network,
   Target,
+  BookOpen,
 } from "lucide-react"
 import Link from "next/link"
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog"
@@ -51,6 +52,7 @@ const TOOL_LINKS = [
   { href: "/supplement-compare", icon: Beaker, labelKey: "nav.supCompare" },
   { href: "/interaction-map", icon: Network, labelKey: "nav.intMap" },
   { href: "/health-goals", icon: Target, labelKey: "nav.healthGoals" },
+  { href: "/prospectus-reader", icon: BookOpen, labelKey: "nav.prospectus" },
 ]
 
 export default function DashboardPage() {

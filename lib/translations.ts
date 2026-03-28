@@ -1798,6 +1798,32 @@ const t: Record<string, TranslationEntry> = {
   "goals.warnings": { en: "Warnings", tr: "Uyarılar" },
   "goals.newGoal": { en: "Set a New Goal", tr: "Yeni Hedef Belirle" },
 
+  // Prospectus Reader
+  // ══════════════════════════════════════════
+  "nav.prospectus": { en: "Prospectus Reader", tr: "Prospektüs Okuyucu" },
+  "prospectus.title": { en: "Prospectus Reader", tr: "Prospektüs Okuyucu" },
+  "prospectus.subtitle": { en: "Photograph a medication leaflet and get a plain-language summary", tr: "İlaç prospektüsünü fotoğraflayın, halk dilinde özet alın" },
+  "prospectus.upload": { en: "Upload Prospectus Photo", tr: "Prospektüs Fotoğrafı Yükle" },
+  "prospectus.uploadDesc": { en: "Take a photo of the medication box, leaflet, or prospectus (JPEG, PNG, PDF)", tr: "İlaç kutusu, kullanma kılavuzu veya prospektüs fotoğrafı çekin (JPEG, PNG, PDF)" },
+  "prospectus.chooseFile": { en: "Choose Photo or PDF", tr: "Fotoğraf veya PDF Seç" },
+  "prospectus.reading": { en: "Reading prospectus...", tr: "Prospektüs okunuyor..." },
+  "prospectus.readBtn": { en: "Read Prospectus", tr: "Prospektüsü Oku" },
+  "prospectus.scanNew": { en: "Scan Another", tr: "Başka Bir Tane Tara" },
+  "prospectus.profileAlerts": { en: "Profile Alerts", tr: "Profil Uyarıları" },
+  "prospectus.summary": { en: "Quick Summary", tr: "Kısa Özet" },
+  "prospectus.activeIngredient": { en: "Active Ingredient", tr: "Etken Madde" },
+  "prospectus.category": { en: "Category", tr: "Kategori" },
+  "prospectus.whatItDoes": { en: "What It Does", tr: "Ne İşe Yarar" },
+  "prospectus.dosage": { en: "Dosage", tr: "Dozaj" },
+  "prospectus.sideEffects": { en: "Side Effects", tr: "Yan Etkiler" },
+  "prospectus.commonSE": { en: "COMMON", tr: "YAYGIN" },
+  "prospectus.seriousSE": { en: "SERIOUS — See a doctor", tr: "CİDDİ — Doktora gidin" },
+  "prospectus.rareSE": { en: "RARE", tr: "NADİR" },
+  "prospectus.interactions": { en: "Drug Interactions", tr: "İlaç Etkileşimleri" },
+  "prospectus.warnings": { en: "Warnings", tr: "Uyarılar" },
+  "prospectus.contraindications": { en: "Do NOT Use If", tr: "Kullanmayın Eğer" },
+  "prospectus.storage": { en: "Storage", tr: "Saklama Koşulları" },
+
   // Radiology Analysis
   // ══════════════════════════════════════════
   "nav.radiology": { en: "Radiology", tr: "Radyoloji" },
