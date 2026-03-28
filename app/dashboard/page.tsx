@@ -7,6 +7,7 @@ import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { DailySummaryCard } from "@/components/dashboard/DailySummaryCard"
+import { DailyCareCard } from "@/components/dashboard/DailyCareCard"
 // CalorieCalculator moved to tools menu
 import { BiologicalAgeCard } from "@/components/dashboard/BiologicalAgeCard"
 import { MetabolicPortfolio } from "@/components/dashboard/MetabolicPortfolio"
@@ -139,6 +140,8 @@ export default function DashboardPage() {
       <div className="grid gap-6 lg:gap-8 md:grid-cols-2">
         {/* Left column */}
         <div className="space-y-6">
+          <DailyCareCard />
+
           <DailySummaryCard
             userId={user.id}
             lang={lang}
