@@ -17,8 +17,9 @@ const mainLinks = [
   { href: "/interaction-checker", labelKey: "nav.interaction" },
 ];
 
-// Tools dropdown items
+// Tools dropdown items — all 85 tools organized by category
 const toolLinks = [
+  // Core Analysis
   { href: "/medical-analysis", labelKey: "nav.medicalAnalysis" },
   { href: "/body-analysis", labelKey: "nav.bodyAnalysis" },
   { href: "/symptom-checker", labelKey: "nav.symptomChecker" },
@@ -27,17 +28,111 @@ const toolLinks = [
   { href: "/interaction-map", labelKey: "nav.intMap" },
   { href: "/health-goals", labelKey: "nav.healthGoals" },
   { href: "/prospectus-reader", labelKey: "nav.prospectus" },
+  // Tracking
   { href: "/sleep-analysis", labelKey: "nav.sleepAnalysis" },
   { href: "/mental-wellness", labelKey: "nav.mentalWellness" },
   { href: "/nutrition", labelKey: "nav.nutrition" },
-  { href: "/womens-health", labelKey: "nav.womensHealth" },
+  { href: "/pain-diary", labelKey: "nav.painDiary" },
+  { href: "/voice-diary", labelKey: "nav.voiceDiary" },
+  // Health Conditions
   { href: "/chronic-care", labelKey: "nav.chronicCare" },
   { href: "/allergy-map", labelKey: "nav.allergyMap" },
+  { href: "/gut-health", labelKey: "nav.gutHealth" },
+  { href: "/skin-health", labelKey: "nav.skinHealth" },
+  { href: "/pharmacogenetics", labelKey: "nav.pharmacogenetics" },
+  // Women & Men
+  { href: "/womens-health", labelKey: "nav.womensHealth" },
+  { href: "/pregnancy-tracker", labelKey: "nav.pregnancyTracker" },
+  { href: "/postpartum-support", labelKey: "nav.postpartum" },
+  { href: "/menopause-panel", labelKey: "nav.menopause" },
+  { href: "/mens-health", labelKey: "nav.mensHealth" },
+  { href: "/sexual-health", labelKey: "nav.sexualHealth" },
+  // Mental Health
+  { href: "/anxiety-toolkit", labelKey: "nav.anxietyToolkit" },
+  { href: "/depression-screening", labelKey: "nav.depressionScreening" },
+  { href: "/adhd-management", labelKey: "nav.adhdManagement" },
+  { href: "/ptsd-support", labelKey: "nav.ptsdSupport" },
+  { href: "/addiction-recovery", labelKey: "nav.addictionRecovery" },
+  { href: "/grief-support", labelKey: "nav.griefSupport" },
+  // Organ Systems
+  { href: "/eye-health", labelKey: "nav.eyeHealth" },
+  { href: "/ear-health", labelKey: "nav.earHealth" },
+  { href: "/dental-health", labelKey: "nav.dentalHealth" },
+  { href: "/hair-nail-health", labelKey: "nav.hairNail" },
+  { href: "/kidney-dashboard", labelKey: "nav.kidneyDashboard" },
+  { href: "/liver-monitor", labelKey: "nav.liverMonitor" },
+  { href: "/thyroid-dashboard", labelKey: "nav.thyroidDashboard" },
+  { href: "/cardiovascular-risk", labelKey: "nav.cardiovascularRisk" },
+  { href: "/lung-monitor", labelKey: "nav.lungMonitor" },
+  { href: "/diabetic-foot", labelKey: "nav.diabeticFoot" },
+  // Daily Habits
+  { href: "/caffeine-tracker", labelKey: "nav.caffeineTracker" },
+  { href: "/alcohol-tracker", labelKey: "nav.alcoholTracker" },
+  { href: "/smoking-cessation", labelKey: "nav.smokingCessation" },
+  { href: "/intermittent-fasting", labelKey: "nav.intermittentFasting" },
+  { href: "/breathing-exercises", labelKey: "nav.breathingExercises" },
+  { href: "/hydration", labelKey: "nav.hydration" },
+  // Fitness & Movement
+  { href: "/sports-performance", labelKey: "nav.sportsPerf" },
+  { href: "/stretching", labelKey: "nav.stretching" },
+  { href: "/walking-tracker", labelKey: "nav.walkingTracker" },
+  { href: "/yoga-meditation", labelKey: "nav.yogaMeditation" },
+  { href: "/posture-ergonomics", labelKey: "nav.postureErgonomics" },
+  // Medical Tools
   { href: "/appointment-prep", labelKey: "nav.appointmentPrep" },
-  { href: "/travel-health", labelKey: "nav.travelHealth" },
   { href: "/vaccination", labelKey: "nav.vaccination" },
   { href: "/rehabilitation", labelKey: "nav.rehabilitation" },
+  { href: "/emergency-id", labelKey: "nav.emergencyId" },
+  { href: "/first-aid", labelKey: "nav.firstAid" },
+  // Screening & Prevention
+  { href: "/cancer-screening", labelKey: "nav.cancerScreening" },
+  { href: "/checkup-planner", labelKey: "nav.checkupPlanner" },
+  { href: "/family-health-tree", labelKey: "nav.familyTree" },
+  { href: "/genetic-risk", labelKey: "nav.geneticRisk" },
+  // Life Stages
+  { href: "/child-health", labelKey: "nav.childHealth" },
+  { href: "/elder-care", labelKey: "nav.elderCare" },
+  { href: "/student-health", labelKey: "nav.studentHealth" },
+  { href: "/new-parent-health", labelKey: "nav.newParentHealth" },
+  { href: "/retirement-health", labelKey: "nav.retirementHealth" },
+  // Environment & Travel
+  { href: "/travel-health", labelKey: "nav.travelHealth" },
   { href: "/seasonal-health", labelKey: "nav.seasonalHealth" },
+  { href: "/sun-exposure", labelKey: "nav.sunExposure" },
+  { href: "/air-quality", labelKey: "nav.airQuality" },
+  { href: "/jet-lag", labelKey: "nav.jetLag" },
+  { href: "/shift-worker", labelKey: "nav.shiftWorker" },
+  // Education & Info
+  { href: "/medical-dictionary", labelKey: "nav.medicalDictionary" },
+  { href: "/drug-info", labelKey: "nav.drugInfo" },
+  { href: "/doctor-communication", labelKey: "nav.doctorComm" },
+  { href: "/health-news-verifier", labelKey: "nav.newsVerifier" },
+  // Nutrition Detail
+  { href: "/label-reader", labelKey: "nav.labelReader" },
+  { href: "/anti-inflammatory", labelKey: "nav.antiInflammatory" },
+  { href: "/cross-allergy", labelKey: "nav.crossAllergy" },
+  { href: "/detox-facts", labelKey: "nav.detoxFacts" },
+  { href: "/water-quality", labelKey: "nav.waterQuality" },
+  // Sleep Detail
+  { href: "/dream-diary", labelKey: "nav.dreamDiary" },
+  { href: "/snoring-apnea", labelKey: "nav.snoringApnea" },
+  { href: "/circadian-rhythm", labelKey: "nav.circadianRhythm" },
+  // Specialized
+  { href: "/clinical-trials", labelKey: "nav.clinicalTrials" },
+  { href: "/second-opinion", labelKey: "nav.secondOpinion" },
+  { href: "/rare-diseases", labelKey: "nav.rareDiseases" },
+  { href: "/donation", labelKey: "nav.donation" },
+  { href: "/pet-health", labelKey: "nav.petHealth" },
+  { href: "/immigrant-health", labelKey: "nav.immigrantHealth" },
+  { href: "/accessibility", labelKey: "nav.accessibility" },
+  // Tracking & Social
+  { href: "/health-spending", labelKey: "nav.healthSpending" },
+  { href: "/health-challenges", labelKey: "nav.challenges" },
+  { href: "/noise-exposure", labelKey: "nav.noiseExposure" },
+  { href: "/screen-time", labelKey: "nav.screenTime" },
+  { href: "/insurance-guide", labelKey: "nav.insuranceGuide" },
+  { href: "/military-health", labelKey: "nav.militaryHealth" },
+  { href: "/pharmacy-finder", labelKey: "nav.pharmacyFinder" },
 ];
 
 // All links combined for mobile

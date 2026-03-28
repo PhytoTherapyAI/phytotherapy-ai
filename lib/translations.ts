@@ -2759,6 +2759,297 @@ const t: Record<string, TranslationEntry> = {
   "sexual.screening": { en: "STI Screening", tr: "Cinsel Yolla Bulasan Hastalik Taramasi" },
   "sexual.analyze": { en: "Check Medications", tr: "Ilaclari Kontrol Et" },
 
+  // ── Student Health ──
+  "nav.studentHealth": { en: "Student Health", tr: "Ogrenci Sagligi" },
+  "student.title": { en: "Student Health Pack", tr: "Ogrenci Saglik Paketi" },
+  "student.subtitle": { en: "Exam stress, nutrition & wellness for students", tr: "Sinav stresi, beslenme ve ogrenci sagligi" },
+
+  // ── Military Health ──
+  "nav.militaryHealth": { en: "Military Health", tr: "Askerlik Sagligi" },
+  "military.title": { en: "Military Health Guide", tr: "Askerlik Saglik Rehberi" },
+  "military.subtitle": { en: "Health preparation for military service", tr: "Askerlik icin saglik hazirligi" },
+
+  // ── Retirement Health ──
+  "nav.retirementHealth": { en: "Retirement Health", tr: "Emeklilik Sagligi" },
+  "retirement.title": { en: "Retirement Health Plan", tr: "Emeklilik Saglik Plani" },
+  "retirement.subtitle": { en: "Screening and wellness plan for 55+", tr: "55+ yas tarama ve saglik plani" },
+  "retirement.generate": { en: "Generate Plan", tr: "Plan Olustur" },
+
+  // ── New Parent Health ──
+  "nav.newParentHealth": { en: "New Parent", tr: "Yeni Ebeveyn" },
+  "newparent.title": { en: "New Parent Health", tr: "Yeni Ebeveyn Sagligi" },
+  "newparent.subtitle": { en: "Taking care of yourself while caring for baby", tr: "Bebege bakarken kendinize bakin" },
+
+  // ── Air Quality ──
+  "nav.airQuality": { en: "Air Quality", tr: "Hava Kalitesi" },
+  "air.title": { en: "Air Quality Guide", tr: "Hava Kalitesi Rehberi" },
+  "air.subtitle": { en: "AQI levels, health advice & exercise safety", tr: "AQI seviyeleri, saglik onerileri ve egzersiz guvenligi" },
+
+  // ── Noise Exposure ──
+  "nav.noiseExposure": { en: "Noise", tr: "Gurultu" },
+  "noise.title": { en: "Noise Exposure Tracker", tr: "Gurultu Maruziyeti" },
+  "noise.subtitle": { en: "Protect your hearing from noise damage", tr: "Isitmenizi gurultu hasarindan koruyun" },
+
+  // ── Jet Lag ──
+  "nav.jetLag": { en: "Jet Lag", tr: "Jet Lag" },
+  "jetlag.title": { en: "Jet Lag Optimizer", tr: "Jet Lag Optimizasyonu" },
+  "jetlag.subtitle": { en: "Timezone adjustment plan with medication timing", tr: "Ilac zamanlama ile saat dilimi uyum plani" },
+  "jetlag.origin": { en: "Origin Timezone", tr: "Cikis Saat Dilimi" },
+  "jetlag.destination": { en: "Destination Timezone", tr: "Varis Saat Dilimi" },
+  "jetlag.generate": { en: "Generate Plan", tr: "Plan Olustur" },
+
+  // ── Shift Worker ──
+  "nav.shiftWorker": { en: "Shift Work", tr: "Vardiyali Calisma" },
+  "shift.title": { en: "Shift Worker Coach", tr: "Vardiyali Calisan Kocu" },
+  "shift.subtitle": { en: "Circadian rhythm management for shift workers", tr: "Vardiyali calisanlar icin sirkadyen ritim yonetimi" },
+  "shift.pattern": { en: "Shift Pattern", tr: "Vardiya Duzeni" },
+  "shift.generate": { en: "Get Plan", tr: "Plan Al" },
+
+  // ── Cancer Screening ──
+  "nav.cancerScreening": { en: "Cancer Screening", tr: "Kanser Tarama" },
+  "cancer.title": { en: "Cancer Screening Planner", tr: "Kanser Tarama Planlayici" },
+  "cancer.subtitle": { en: "Age & risk-based screening schedule", tr: "Yas ve risk bazli tarama takvimi" },
+  "cancer.generate": { en: "Generate Schedule", tr: "Takvim Olustur" },
+
+  // ── Family Health Tree ──
+  "nav.familyTree": { en: "Family Tree", tr: "Aile Agaci" },
+  "familytree.title": { en: "Family Health Tree", tr: "Aile Saglik Agaci" },
+  "familytree.subtitle": { en: "Hereditary risk analysis from family history", tr: "Aile gecmisinden kalitsal risk analizi" },
+  "familytree.addMember": { en: "Add Family Member", tr: "Aile Uyesi Ekle" },
+  "familytree.analyze": { en: "Analyze Risks", tr: "Riskleri Analiz Et" },
+
+  // ── Check-up Planner ──
+  "nav.checkupPlanner": { en: "Check-up", tr: "Check-up" },
+  "checkup.title": { en: "Check-up Planner", tr: "Check-up Planlayici" },
+  "checkup.subtitle": { en: "Personalized annual test plan", tr: "Kisisel yillik test plani" },
+  "checkup.generate": { en: "Generate Plan", tr: "Plan Olustur" },
+
+  // ── Genetic Risk ──
+  "nav.geneticRisk": { en: "Genetic Risk", tr: "Genetik Risk" },
+  "genetic.title": { en: "Genetic Risk Profile", tr: "Genetik Risk Profili" },
+  "genetic.subtitle": { en: "Disease risk scores from family history", tr: "Aile gecmisinden hastalik risk skorlari" },
+  "genetic.analyze": { en: "Analyze Risk", tr: "Risk Analiz Et" },
+
+  // ── K1: Wearable Hub ──
+  "nav.wearableHub": { en: "Wearables", tr: "Giyilebilir" },
+  "wearable.title": { en: "Wearable Hub", tr: "Giyilebilir Cihaz Merkezi" },
+  "wearable.comingSoon": { en: "Wearable integration coming soon!", tr: "Giyilebilir cihaz entegrasyonu yakinda!" },
+  "wearable.subtitle": { en: "Connect your health devices for continuous monitoring", tr: "Surekli izleme icin saglik cihazlarinizi baglayiniz" },
+
+  // ── K2: Proactive AI ──
+  "nav.proactiveAi": { en: "Proactive AI", tr: "Proaktif AI" },
+  "proactive.title": { en: "Proactive AI Assistant", tr: "Proaktif AI Asistan" },
+  "proactive.comingSoon": { en: "AI that notices before you ask — coming soon!", tr: "Siz sormadan fark eden AI — yakinda!" },
+  "proactive.subtitle": { en: "AI-powered pattern detection and early warnings", tr: "AI destekli oruntusu tespiti ve erken uyarilar" },
+
+  // ── K3: AR Scanner ──
+  "nav.arScanner": { en: "AR Scanner", tr: "AR Tarayici" },
+  "ar.title": { en: "AR Drug Scanner", tr: "AR Ilac Tarayici" },
+  "ar.comingSoon": { en: "Augmented reality drug scanner coming soon!", tr: "Artirilmis gerceklik ilac tarayici yakinda!" },
+  "ar.subtitle": { en: "Point your camera at any medication for instant info", tr: "Kameranizi herhangi bir ilaca tutun, aninda bilgi alin" },
+
+  // ── K4: Clinical Trials ──
+  "nav.clinicalTrials": { en: "Clinical Trials", tr: "Klinik Arastirma" },
+  "trials.title": { en: "Clinical Trial Finder", tr: "Klinik Arastirma Bulucu" },
+  "trials.subtitle": { en: "Find relevant clinical trials for your condition", tr: "Durumunuza uygun klinik arastirmalari bulun" },
+  "trials.search": { en: "Search Trials", tr: "Arastirma Ara" },
+  "trials.condition": { en: "Condition or disease", tr: "Durum veya hastalik" },
+  "trials.location": { en: "Location (optional)", tr: "Konum (istege bagli)" },
+
+  // ── K5: Second Opinion ──
+  "nav.secondOpinion": { en: "Second Opinion", tr: "Ikinci Gorus" },
+  "secondopinion.title": { en: "Second Opinion Prep", tr: "Ikinci Gorus Hazirligi" },
+  "secondopinion.subtitle": { en: "Prepare a structured package for specialist consultation", tr: "Uzman konsultasyonu icin yapilandirilmis paket hazirlayin" },
+  "secondopinion.generate": { en: "Prepare Package", tr: "Paket Hazirla" },
+  "secondopinion.concern": { en: "What concern do you want a second opinion on?", tr: "Hangi konuda ikinci gorus almak istiyorsunuz?" },
+
+  // ── L1: Cross Allergy ──
+  "nav.crossAllergy": { en: "Cross Allergy", tr: "Capraz Alerji" },
+  "crossallergy.title": { en: "Cross-Allergy Guide", tr: "Capraz Alerji Rehberi" },
+  "crossallergy.subtitle": { en: "Hidden allergen connections you should know", tr: "Bilmeniz gereken gizli alerjen baglantilari" },
+
+  // ── L2: Detox Facts ──
+  "nav.detoxFacts": { en: "Detox Facts", tr: "Detoks Gercekleri" },
+  "detox.title": { en: "Detox: Facts vs Fiction", tr: "Detoks: Gercekler vs Kurgu" },
+  "detox.subtitle": { en: "Evidence-based guide to detox claims", tr: "Detoks iddialarina kanita dayali rehber" },
+
+  // ── L3: Label Reader ──
+  "nav.labelReader": { en: "Label Reader", tr: "Etiket Okuyucu" },
+  "label.title": { en: "Food Label Reader", tr: "Besin Etiketi Okuyucu" },
+  "label.subtitle": { en: "Decode ingredients and find hidden risks", tr: "Icerikleri cozun, gizli riskleri bulun" },
+  "label.analyze": { en: "Analyze Label", tr: "Etiketi Analiz Et" },
+  "label.productName": { en: "Product name (optional)", tr: "Urun adi (istege bagli)" },
+  "label.ingredients": { en: "Paste ingredients list here...", tr: "Icerik listesini buraya yapistiriniz..." },
+
+  // ── L4: Anti-Inflammatory ──
+  "nav.antiInflammatory": { en: "Anti-Inflammatory", tr: "Anti-Inflamatuar" },
+  "antiinflam.title": { en: "Anti-Inflammatory Coach", tr: "Anti-Inflamatuar Koc" },
+  "antiinflam.subtitle": { en: "Reduce inflammation through diet and lifestyle", tr: "Diyet ve yasam tarziyla iltihablanmayi azaltin" },
+  "antiinflam.analyze": { en: "Analyze Diet", tr: "Diyeti Analiz Et" },
+  "antiinflam.diet": { en: "Describe your typical daily diet...", tr: "Tipik gunluk diyetinizi anlatiniz..." },
+  "antiinflam.crp": { en: "CRP level (mg/L, optional)", tr: "CRP degeri (mg/L, istege bagli)" },
+
+  // ── L5: Hydration ──
+  "nav.hydration": { en: "Hydration", tr: "Hidrasyon" },
+  "hydration.title": { en: "Hydration Optimizer", tr: "Hidrasyon Optimizasyonu" },
+  "hydration.subtitle": { en: "Weight-based water needs with medication adjustments", tr: "Kilo bazli su ihtiyaci ve ilac ayarlamalari" },
+  "hydration.weight": { en: "Your weight (kg)", tr: "Kilonuz (kg)" },
+  "hydration.calculate": { en: "Calculate", tr: "Hesapla" },
+
+  // ── M1: Dream Diary ──
+  "nav.dreamDiary": { en: "Dream Diary", tr: "Ruya Gunlugu" },
+  "dream.title": { en: "Dream Diary", tr: "Ruya Gunlugu" },
+  "dream.subtitle": { en: "Record and analyze your dreams", tr: "Ruyalarinizi kaydedin ve analiz edin" },
+  "dream.save": { en: "Save Entry", tr: "Kaydi Kaydet" },
+  "dream.analyze": { en: "Analyze with AI", tr: "AI ile Analiz Et" },
+  "dream.placeholder": { en: "Describe your dream...", tr: "Ruyanizi anlatiniz..." },
+
+  // ── M2: Snoring/Apnea ──
+  "nav.snoringApnea": { en: "Snoring/Apnea", tr: "Horlama/Apne" },
+  "snoring.title": { en: "Snoring & Sleep Apnea", tr: "Horlama & Uyku Apnesi" },
+  "snoring.subtitle": { en: "STOP-BANG screening questionnaire", tr: "STOP-BANG tarama anketi" },
+  "snoring.calculate": { en: "Calculate Risk", tr: "Risk Hesapla" },
+
+  // ── M3: Circadian Rhythm ──
+  "nav.circadianRhythm": { en: "Circadian", tr: "Sirkadyen" },
+  "circadian.title": { en: "Circadian Rhythm Guide", tr: "Sirkadyen Ritim Rehberi" },
+  "circadian.subtitle": { en: "Optimize your daily schedule by chronotype", tr: "Kronotipinize gore gunluk programinizi optimize edin" },
+
+  // ── N1: Stretching ──
+  "nav.stretching": { en: "Stretching", tr: "Esneme" },
+  "stretch.title": { en: "Stretching Builder", tr: "Esneme Rutini Olusturucu" },
+  "stretch.subtitle": { en: "Custom stretch routines for your pain points", tr: "Agri noktalarina ozel esneme rutinleri" },
+  "stretch.start": { en: "Start Timer", tr: "Zamanlayiciyi Baslat" },
+
+  // ── N2: Walking Tracker ──
+  "nav.walkingTracker": { en: "Walking", tr: "Yuruyus" },
+  "walking.title": { en: "Walking Tracker", tr: "Yuruyus Takipcisi" },
+  "walking.subtitle": { en: "Track steps and meet WHO activity targets", tr: "Adimlari takip edin, WHO aktivite hedeflerini karsilayin" },
+  "walking.addEntry": { en: "Add Entry", tr: "Kayit Ekle" },
+
+  // ── N3: Yoga ──
+  "nav.yogaMeditation": { en: "Yoga", tr: "Yoga" },
+  "yoga.title": { en: "Yoga & Meditation", tr: "Yoga & Meditasyon" },
+  "yoga.subtitle": { en: "Evidence-based yoga and guided meditation", tr: "Kanita dayali yoga ve rehberli meditasyon" },
+
+  // ── O1: Rare Diseases ──
+  "nav.rareDiseases": { en: "Rare Diseases", tr: "Nadir Hastaliklar" },
+  "rare.title": { en: "Rare Disease Info", tr: "Nadir Hastalik Bilgisi" },
+  "rare.subtitle": { en: "Information and resources for rare diseases", tr: "Nadir hastaliklar icin bilgi ve kaynaklar" },
+  "rare.search": { en: "Search disease...", tr: "Hastalik arayiniz..." },
+  "rare.searchBtn": { en: "Search", tr: "Ara" },
+
+  // ── O2: Donation ──
+  "nav.donation": { en: "Donation", tr: "Bagis" },
+  "donation.title": { en: "Blood & Organ Donation", tr: "Kan & Organ Bagisi" },
+  "donation.subtitle": { en: "Donation guide and compatibility info", tr: "Bagis rehberi ve uyumluluk bilgisi" },
+
+  // ── O3: Accessibility ──
+  "nav.accessibility": { en: "Accessibility", tr: "Erisilebilirlik" },
+  "access.title": { en: "Accessibility Assistant", tr: "Erisilebilirlik Asistani" },
+  "access.subtitle": { en: "Adaptive health tools and disability resources", tr: "Uyarlanabilir saglik araclari ve engelli kaynaklari" },
+
+  // ── O4: Immigrant Health ──
+  "nav.immigrantHealth": { en: "Immigrant Health", tr: "Gocmen Sagligi" },
+  "immigrant.title": { en: "Immigrant Health Guide", tr: "Gocmen Saglik Rehberi" },
+  "immigrant.subtitle": { en: "Navigate the Turkish healthcare system", tr: "Turk saglik sisteminde yol bulun" },
+
+  // ── P1: Pet Health ──
+  "nav.petHealth": { en: "Pet Health", tr: "Evcil Hayvan" },
+  "pet.title": { en: "Pet & Human Health", tr: "Evcil Hayvan & Insan Sagligi" },
+  "pet.subtitle": { en: "Zoonotic risks and pet owner health guide", tr: "Zoonotik riskler ve evcil hayvan sahibi saglik rehberi" },
+
+  // ── Shared tool keys ──
+  "tool.comingSoon": { en: "Coming Soon", tr: "Yakinda" },
+  "tool.learnMore": { en: "Learn More", tr: "Daha Fazla Bilgi" },
+  "tool.loginRequired": { en: "Please log in to use this feature", tr: "Bu ozelligi kullanmak icin giris yapiniz" },
+  "tool.noResults": { en: "No results found", tr: "Sonuc bulunamadi" },
+  "tool.loading": { en: "Analyzing...", tr: "Analiz ediliyor..." },
+
+  // ── H1: Medical Dictionary ──
+  "nav.medicalDictionary": { en: "Medical Dictionary", tr: "Tibbi Sozluk" },
+  "meddict.title": { en: "Medical Dictionary", tr: "Tibbi Terim Sozlugu" },
+  "meddict.subtitle": { en: "Medical terms explained in simple language", tr: "Tibbi terimler basit dilde aciklanir" },
+  "meddict.search": { en: "Search a medical term...", tr: "Tibbi terim arayin..." },
+  "meddict.explain": { en: "Explain", tr: "Acikla" },
+
+  // ── H2: Drug Info Center ──
+  "nav.drugInfo": { en: "Drug Info", tr: "Ilac Bilgi" },
+  "druginfo.title": { en: "Drug Information Center", tr: "Ilac Bilgi Merkezi" },
+  "druginfo.subtitle": { en: "Everything about your medication in plain language", tr: "Ilaciniz hakkinda her sey sade dilde" },
+  "druginfo.search": { en: "Enter drug name...", tr: "Ilac adi girin..." },
+  "druginfo.lookup": { en: "Look Up", tr: "Ara" },
+
+  // ── H3: Doctor Communication ──
+  "nav.doctorComm": { en: "Doctor Prep", tr: "Doktor Hazirlik" },
+  "doctorcomm.title": { en: "Doctor Communication Coach", tr: "Doktora Anlatma Kocu" },
+  "doctorcomm.subtitle": { en: "Learn to describe symptoms effectively", tr: "Semptomlari etkili anlatmayi ogrenin" },
+  "doctorcomm.describe": { en: "Describe your symptoms...", tr: "Semptomlarinizi anlatin..." },
+  "doctorcomm.coach": { en: "Coach Me", tr: "Kocluk Yap" },
+
+  // ── H4: Health News Verifier ──
+  "nav.newsVerifier": { en: "News Check", tr: "Haber Kontrol" },
+  "news.title": { en: "Health News Verifier", tr: "Saglik Haberi Dogrulayici" },
+  "news.subtitle": { en: "Is this health claim backed by evidence?", tr: "Bu saglik iddiasi kanita dayali mi?" },
+  "news.claim": { en: "Paste the health claim...", tr: "Saglik iddiasini yapistirin..." },
+  "news.verify": { en: "Verify", tr: "Dogrula" },
+
+  // ── H5: First Aid ──
+  "nav.firstAid": { en: "First Aid", tr: "Ilk Yardim" },
+  "firstaid.title": { en: "First Aid Guide", tr: "Ilk Yardim Rehberi" },
+  "firstaid.subtitle": { en: "Step-by-step emergency procedures", tr: "Adim adim acil durum prosedurleri" },
+  "firstaid.call112": { en: "Call 112", tr: "112'yi Ara" },
+
+  // ── I1: Health Forum ──
+  "nav.forum": { en: "Forum", tr: "Forum" },
+  "forum.title": { en: "Health Forum", tr: "Saglik Forumu" },
+  "forum.comingSoon": { en: "Community forum coming soon!", tr: "Topluluk forumu yakinda!" },
+
+  // ── I2: Health Challenges ──
+  "nav.challenges": { en: "Challenges", tr: "Challenge" },
+  "challenges.title": { en: "Health Challenges", tr: "Saglik Challenge'lari" },
+  "challenges.subtitle": { en: "Fun health challenges with streaks", tr: "Streak'li eglenceli saglik gorevleri" },
+
+  // ── I3: Support Groups ──
+  "nav.supportGroups": { en: "Support Groups", tr: "Destek Gruplari" },
+  "support.title": { en: "Support Groups", tr: "Destek Gruplari" },
+  "support.comingSoon": { en: "Support groups coming soon!", tr: "Destek gruplari yakinda!" },
+
+  // ── I4: Grief Support ──
+  "nav.griefSupport": { en: "Grief Support", tr: "Yas Destegi" },
+  "grief.title": { en: "Grief Support", tr: "Yas Destegi" },
+  "grief.subtitle": { en: "Guidance through the stages of grief", tr: "Yas surecinde rehberlik" },
+
+  // ── J1: Pharmacy Finder ──
+  "nav.pharmacyFinder": { en: "Pharmacy", tr: "Eczane" },
+  "pharmacy.title": { en: "Pharmacy Finder", tr: "Eczane Bulucu" },
+  "pharmacy.subtitle": { en: "Find pharmacies and medication equivalents", tr: "Eczane ve ilac esdegeri bulun" },
+
+  // ── J2: Insurance Guide ──
+  "nav.insuranceGuide": { en: "Insurance", tr: "Sigorta" },
+  "insurance.title": { en: "Insurance Guide", tr: "Sigorta Rehberi" },
+  "insurance.subtitle": { en: "SGK coverage and private insurance info", tr: "SGK kapsami ve ozel sigorta bilgisi" },
+
+  // ── J3: Medical Records ──
+  "nav.medicalRecords": { en: "Records", tr: "Kayitlar" },
+  "records.title": { en: "Medical Records", tr: "Tibbi Kayitlar" },
+  "records.comingSoon": { en: "Document organizer coming soon!", tr: "Belge organizatoru yakinda!" },
+
+  // ── J4: Emergency ID ──
+  "nav.emergencyId": { en: "Emergency ID", tr: "Acil Kimlik" },
+  "emergencyid.title": { en: "Emergency ID Card", tr: "Acil Kimlik Karti" },
+  "emergencyid.subtitle": { en: "Shareable card with vital info for emergencies", tr: "Acil durumlar icin paylasilabilir hayati bilgi karti" },
+  "emergencyid.generate": { en: "Generate Card", tr: "Kart Olustur" },
+  "emergencyid.print": { en: "Print Card", tr: "Karti Yazdir" },
+
+  // ── J5: Health Spending ──
+  "nav.healthSpending": { en: "Spending", tr: "Harcama" },
+  "spending.title": { en: "Health Spending Tracker", tr: "Saglik Harcama Takibi" },
+  "spending.subtitle": { en: "Track medication, supplement & doctor expenses", tr: "Ilac, takviye ve doktor masraflarini takip edin" },
+  "spending.addExpense": { en: "Add Expense", tr: "Harcama Ekle" },
+  "spending.monthly": { en: "Monthly Total", tr: "Aylik Toplam" },
+  "spending.yearly": { en: "Yearly Total", tr: "Yillik Toplam" },
+
 }
 
 // ══════════════════════════════════════════
