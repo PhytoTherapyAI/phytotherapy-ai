@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { VideoUrlInput } from "@/components/content/VideoUrlInput"
+import { SeoAssistant } from "@/components/content/SeoAssistant"
 import { type ParsedVideo } from "@/lib/video-utils"
 import {
   PRICING_PLANS, CONTENT_CATEGORIES, CREDIT_COSTS, MOCK_CONTENT,
@@ -162,7 +163,7 @@ export default function CreatorStudioPage() {
   if (view === "editor") {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-3xl mx-auto px-4 md:px-8 py-8">
+        <div className="max-w-5xl mx-auto px-4 md:px-8 py-8">
           <button onClick={() => setView("dashboard")} className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
             <ArrowLeft className="w-4 h-4" />{t("dashboard")}
           </button>
@@ -189,8 +190,10 @@ export default function CreatorStudioPage() {
             ))}
           </div>
 
-          {/* Editor form */}
-          <div className="space-y-5">
+          {/* Split View: Editor + SEO Assistant */}
+          <div className="flex gap-6">
+          {/* Left: Editor */}
+          <div className="flex-1 min-w-0 space-y-5">
             {/* Title */}
             <Input value={title} onChange={e => setTitle(e.target.value)} placeholder={t("title_ph")}
               className="h-14 text-xl font-semibold border-0 border-b rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary" />
@@ -279,6 +282,18 @@ export default function CreatorStudioPage() {
               <Badge variant="outline">{lang === "tr" ? "Türkçe" : "English"}</Badge>
             </div>
           </div>
+          {/* Right: SEO Assistant Sidebar */}
+          <div className="hidden lg:block w-72 shrink-0 sticky top-20 self-start">
+            <SeoAssistant
+              title={title}
+              summary={summary}
+              body={body}
+              tags={tags}
+              lang={lang}
+              onTitleSuggestion={(suggested) => setTitle(suggested)}
+            />
+          </div>
+          </div>{/* end split view */}
 
           {/* Actions */}
           <div className="flex gap-3 mt-8 pt-6 border-t">
