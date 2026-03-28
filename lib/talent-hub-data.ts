@@ -37,6 +37,79 @@ export interface ProfessionalProfile {
   isPublic: boolean
   createdAt: string
   updatedAt: string
+  // Verification
+  verification?: VerificationRecord
+}
+
+// ── Verification System ──
+export type VerificationStatus = "unverified" | "pending" | "approved" | "rejected"
+export type DocumentType = "diploma_registration" | "institution_id" | "edevlet_certificate" | "ttb_license" | "other"
+
+export interface VerificationDocument {
+  id: string
+  type: DocumentType
+  fileName: string
+  fileSize: number // bytes
+  mimeType: string
+  uploadedAt: string
+  url?: string // storage URL
+}
+
+export interface VerificationRecord {
+  status: VerificationStatus
+  submittedAt?: string
+  reviewedAt?: string
+  reviewedBy?: string // admin user id
+  rejectionReason?: string
+  documents: VerificationDocument[]
+  diplomaRegistrationNumber?: string
+  ttbSicilNumber?: string
+  notes?: string
+}
+
+export const DOCUMENT_TYPES: { id: DocumentType; label: { en: string; tr: string }; description: { en: string; tr: string }; required: boolean; accepts: string }[] = [
+  {
+    id: "diploma_registration",
+    label: { en: "Diploma Registration Number", tr: "Diploma Tescil Numarası" },
+    description: { en: "Ministry of Health diploma registration number (required)", tr: "Sağlık Bakanlığı diploma tescil numarası (zorunlu)" },
+    required: true,
+    accepts: "",
+  },
+  {
+    id: "institution_id",
+    label: { en: "Institution ID Card (Photo)", tr: "Kurum Kimlik Kartı (Fotoğraf)" },
+    description: { en: "Photo of your hospital/clinic/university ID card", tr: "Hastane/klinik/üniversite kimlik kartınızın fotoğrafı" },
+    required: false,
+    accepts: "image/*",
+  },
+  {
+    id: "edevlet_certificate",
+    label: { en: "e-Government Graduation Certificate", tr: "e-Devlet Mezuniyet Belgesi" },
+    description: { en: "PDF from e-Devlet (turkiye.gov.tr) confirming your degree", tr: "e-Devlet'ten (turkiye.gov.tr) alınan mezuniyet belgesi PDF" },
+    required: false,
+    accepts: ".pdf",
+  },
+  {
+    id: "ttb_license",
+    label: { en: "TTB/TEB Registration", tr: "TTB/TEB Sicil Belgesi" },
+    description: { en: "Turkish Medical Association or Pharmacists Association registration", tr: "Türk Tabipleri Birliği veya Eczacılar Birliği sicil belgesi" },
+    required: false,
+    accepts: ".pdf,image/*",
+  },
+  {
+    id: "other",
+    label: { en: "Other Supporting Document", tr: "Diğer Destekleyici Belge" },
+    description: { en: "Any additional document that verifies your professional status", tr: "Profesyonel statünüzü doğrulayan ek herhangi bir belge" },
+    required: false,
+    accepts: ".pdf,image/*,.doc,.docx",
+  },
+]
+
+export const VERIFICATION_STATUS_CONFIG: Record<VerificationStatus, { label: { en: string; tr: string }; color: string; bgColor: string; icon: string }> = {
+  unverified: { label: { en: "Unverified", tr: "Doğrulanmamış" }, color: "text-gray-500", bgColor: "bg-gray-100 dark:bg-gray-800", icon: "ShieldQuestion" },
+  pending: { label: { en: "Under Review", tr: "İnceleniyor" }, color: "text-amber-600", bgColor: "bg-amber-50 dark:bg-amber-950/30", icon: "Clock" },
+  approved: { label: { en: "Verified Professional", tr: "Onaylı Profesyonel" }, color: "text-emerald-600", bgColor: "bg-emerald-50 dark:bg-emerald-950/30", icon: "BadgeCheck" },
+  rejected: { label: { en: "Rejected", tr: "Reddedildi" }, color: "text-red-600", bgColor: "bg-red-50 dark:bg-red-950/30", icon: "ShieldX" },
 }
 
 // ── Profession Options ──
