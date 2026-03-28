@@ -191,8 +191,7 @@ export default function HealthRoadmapPage() {
             const isSelected = selectedPackage === pkg.id
             return (
               <Card key={pkg.id}
-                className={`p-5 cursor-pointer transition-all ${isSelected ? "ring-2" : "hover:shadow-md"}`}
-                style={isSelected ? { ringColor: pkg.color } : {}}
+                className={`p-5 cursor-pointer transition-all ${isSelected ? "ring-2 ring-primary" : "hover:shadow-md"}`}
                 onClick={() => setSelectedPackage(isSelected ? null : pkg.id)}>
                 <div className="flex items-start gap-4">
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${pkg.color}15` }}>
