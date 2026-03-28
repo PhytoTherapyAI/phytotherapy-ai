@@ -186,9 +186,9 @@ export default function EnterprisePage() {
   // ─── Tab Config ─────────────────────────────
 
   const TABS: { id: TabId; label: string; labelTr: string; icon: typeof BarChart3 }[] = [
-    { id: "overview", label: "Market Overview", labelTr: "Pazar Genel Bakis", icon: BarChart3 },
+    { id: "overview", label: "Market Overview", labelTr: "Pazar Genel Bakış", icon: BarChart3 },
     { id: "trends", label: "Trending Botanicals", labelTr: "Trend Bitkiler", icon: TrendingUp },
-    { id: "companies", label: "Company Tracker", labelTr: "Sirket Takibi", icon: Globe },
+    { id: "companies", label: "Company Tracker", labelTr: "Şirket Takibi", icon: Globe },
     { id: "patents", label: "Patent & Regulation", labelTr: "Patent & Regulasyon", icon: Scale },
     { id: "ai", label: "AI Analysis", labelTr: "AI Analiz", icon: Sparkles },
   ]
@@ -249,7 +249,7 @@ export default function EnterprisePage() {
 
   const sectorPerformanceData = [
     { sector: isTr ? "Takviyeler" : "Supplements", growth: 12.4, revenue: 18.2 },
-    { sector: isTr ? "Bitkisel Ilac" : "Herbal Pharma", growth: 9.8, revenue: 8.6 },
+    { sector: isTr ? "Bitkisel İlaç" : "Herbal Pharma", growth: 9.8, revenue: 8.6 },
     { sector: isTr ? "Fonksiyonel Gida" : "Functional Food", growth: 11.2, revenue: 10.4 },
     { sector: isTr ? "Kozmetik" : "Cosmeceuticals", growth: 7.5, revenue: 5.9 },
   ]
@@ -269,7 +269,7 @@ export default function EnterprisePage() {
           <Building2 className="h-7 w-7 text-primary" />
         </div>
         <h1 className="font-heading text-3xl font-bold tracking-tight md:text-4xl">
-          {isTr ? "Pazar Istihbarat Merkezi" : "Market Intelligence Hub"}
+          {isTr ? "Pazar İstihbarat Merkezi" : "Market Intelligence Hub"}
         </h1>
         <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">
           {isTr
@@ -369,7 +369,7 @@ export default function EnterprisePage() {
                       <Legend wrapperStyle={{ fontSize: 12 }} />
                       <Bar
                         dataKey="growth"
-                        name={isTr ? "Buyume (%)" : "Growth (%)"}
+                        name={isTr ? "Büyüme (%)" : "Growth (%)"}
                         fill="#10b981"
                         radius={[4, 4, 0, 0]}
                       />
@@ -388,7 +388,7 @@ export default function EnterprisePage() {
               <div className="rounded-xl border bg-card p-6">
                 <h3 className="mb-5 flex items-center gap-2 font-semibold">
                   <Clock className="h-5 w-5 text-primary" />
-                  {isTr ? "Sektor Olaylari" : "Sector Events"}
+                  {isTr ? "Sektör Olayları" : "Sector Events"}
                 </h3>
                 <div className="relative space-y-0">
                   {/* Vertical line */}
@@ -440,7 +440,7 @@ export default function EnterprisePage() {
               <div className="rounded-xl border bg-card p-6">
                 <h3 className="mb-4 flex items-center gap-2 font-semibold">
                   <LineChart className="h-5 w-5 text-primary" />
-                  {isTr ? "PubMed Yayin Trendi (12 Ay)" : "PubMed Publication Trends (12 Months)"}
+                  {isTr ? "PubMed Yayın Trendi (12 Ay)" : "PubMed Publication Trends (12 Months)"}
                 </h3>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -525,7 +525,7 @@ export default function EnterprisePage() {
                       </div>
                       <div className="flex justify-between text-[11px] text-muted-foreground">
                         <span>
-                          {isTr ? "Yayin:" : "Pubs:"}{" "}
+                          {isTr ? "Yayın:" : "Pubs:"}{" "}
                           <span className="font-mono font-semibold text-foreground">
                             {b.pubmedCountCurrent.toLocaleString()}
                           </span>
@@ -564,19 +564,19 @@ export default function EnterprisePage() {
                     <thead>
                       <tr className="border-b bg-muted/50 text-left">
                         <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          {isTr ? "Sirket" : "Company"}
+                          {isTr ? "Şirket" : "Company"}
                         </th>
                         <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                           {isTr ? "Fiyat" : "Price"}
                         </th>
                         <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          {isTr ? "Degisim" : "Change"}
+                          {isTr ? "Değişim" : "Change"}
                         </th>
                         <th className="hidden px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground md:table-cell">
                           {isTr ? "Pazar Deg." : "Mkt Cap"}
                         </th>
                         <th className="hidden px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground lg:table-cell">
-                          {isTr ? "52H Aralik" : "52W Range"}
+                          {isTr ? "52H Aralık" : "52W Range"}
                         </th>
                         <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                           {isTr ? "Durum" : "Status"}
@@ -668,7 +668,7 @@ export default function EnterprisePage() {
                 <div className="rounded-xl border bg-card p-6">
                   <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
                     <Activity className="h-4 w-4 text-primary" />
-                    {isTr ? "Pazar Degeri Dağılımi" : "Market Cap Distribution"}
+                    {isTr ? "Pazar Değeri Dağılımı" : "Market Cap Distribution"}
                   </h3>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
@@ -696,7 +696,7 @@ export default function EnterprisePage() {
                             borderRadius: 8,
                             fontSize: 12,
                           }}
-                          formatter={(value) => [`$${value}B`, isTr ? "Pazar Degeri" : "Market Cap"] as [string, string]}
+                          formatter={(value) => [`$${value}B`, isTr ? "Pazar Değeri" : "Market Cap"] as [string, string]}
                         />
                       </PieChart>
                     </ResponsiveContainer>
@@ -817,7 +817,7 @@ export default function EnterprisePage() {
                     color: "text-amber-500",
                   },
                   {
-                    label: isTr ? "Regulasyon Güncelleme" : "Regulatory Updates",
+                    label: isTr ? "Regülasyon Güncelleme" : "Regulatory Updates",
                     value: regulatory.length.toString(),
                     icon: Scale,
                     color: "text-violet-500",
@@ -871,7 +871,7 @@ export default function EnterprisePage() {
               <div>
                 <h3 className="mb-4 flex items-center gap-2 font-semibold">
                   <Shield className="h-5 w-5 text-primary" />
-                  {isTr ? "Regulasyon Güncellemeleri" : "Regulatory Updates"}
+                  {isTr ? "Regülasyon Güncellemeleri" : "Regulatory Updates"}
                 </h3>
                 <div className="grid gap-4 md:grid-cols-2">
                   {regulatory.map((r) => (

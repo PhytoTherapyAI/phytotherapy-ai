@@ -60,7 +60,7 @@ const t: Record<string, TranslationEntry> = {
     tr: "Phytotherapy.ai bir eğitim amaçlı sağlık aracıdır; tıbbi teşhis veya tedavi sunmaz. Tüm öneriler yayımlanmış bilimsel araştırmalara dayanır. Herhangi bir takviye başlamadan veya ilaç değişikliği yapmadan önce sağlık profesyonelinize danışın.",
   },
   "footer.tagline": {
-    en: "Evidence-based integrative medicine · Backed by peer-reviewed research",
+    en: "Evidence-based integrative mediçine · Backed by peer-reviewed research",
     tr: "Kanıta dayalı bütünleştirici tıp · Hakemli araştırmalarla desteklenir",
   },
 
@@ -994,59 +994,59 @@ const t: Record<string, TranslationEntry> = {
   "trial.upgradeNow": { en: "Upgrade Now", tr: "Şimdi Yükselt" },
   "trial.expired": { en: "Your trial has expired", tr: "Deneme süreniz sona erdi" },
 
-  "pricing.title": { en: "Choose Your Plan", tr: "Planınızı Seçin" },
-  "pricing.subtitle": { en: "Start with 7 days free — no credit card required", tr: "7 gün ücretsiz başlayın — kredi kartı gerekmez" },
-  "pricing.monthly": { en: "Monthly", tr: "Aylık" },
-  "pricing.yearly": { en: "Yearly", tr: "Yıllık" },
-  "pricing.saveTag": { en: "Save up to 33%", tr: "%33'e kadar tasarruf" },
-  "pricing.mo": { en: "mo", tr: "ay" },
-  "pricing.yr": { en: "yr", tr: "yıl" },
-  "pricing.free": { en: "Free", tr: "Ücretsiz" },
-  "pricing.savePercent": { en: "Save {pct}%", tr: "%{pct} tasarruf" },
-  "pricing.mostPopular": { en: "Most Popular", tr: "En Popüler" },
-  "pricing.getStartedFree": { en: "Get Started Free", tr: "Ücretsiz Başla" },
-  "pricing.comingSoon": { en: "Coming Soon", tr: "Yakında" },
-  "pricing.trialTitle": { en: "7-Day Free Trial on Every Paid Plan", tr: "Her Ücretli Planda 7 Gün Ücretsiz Deneme" },
-  "pricing.trialDesc": { en: "Sign up and get instant access to all Premium features for 7 days. No credit card needed. If you love it, upgrade anytime.", tr: "Kayıt olun ve 7 gün boyunca tüm Premium özelliklere anında erişin. Kredi kartı gerekmez. Beğenirseniz istediğiniz zaman yükseltin." },
-  "pricing.trialPoint1": { en: "No credit card required", tr: "Kredi kartı gerekmez" },
-  "pricing.trialPoint2": { en: "Cancel anytime", tr: "İstediğiniz zaman iptal" },
-  "pricing.trialPoint3": { en: "Your data is never deleted", tr: "Verileriniz asla silinmez" },
-  "pricing.faqTitle": { en: "Frequently Asked Questions", tr: "Sıkça Sorulan Sorular" },
-  "pricing.faq1q": { en: "What happens after the trial?", tr: "Deneme süresinden sonra ne olur?" },
-  "pricing.faq1a": { en: "You'll automatically switch to the Free plan. No charges, no data loss. All your data stays safe.", tr: "Otomatik olarak Ücretsiz plana geçersiniz. Ücret yok, veri kaybı yok. Tüm verileriniz güvende kalır." },
-  "pricing.faq2q": { en: "Can I change plans later?", tr: "Planımı daha sonra değiştirebilir miyim?" },
-  "pricing.faq2a": { en: "Yes! You can upgrade, downgrade, or cancel anytime from your profile settings.", tr: "Evet! Profil ayarlarınızdan istediğiniz zaman yükseltebilir, düşürebilir veya iptal edebilirsiniz." },
-  "pricing.faq3q": { en: "Is my health data safe?", tr: "Sağlık verilerim güvende mi?" },
-  "pricing.faq3a": { en: "Absolutely. All data is encrypted and stored in compliance with KVKK/GDPR. We never sell your data.", tr: "Kesinlikle. Tüm veriler şifrelenmiş olarak KVKK/GDPR uyumlu şekilde saklanır. Verilerinizi asla satmayız." },
-  "pricing.faq4q": { en: "What payment methods do you accept?", tr: "Hangi ödeme yöntemlerini kabul ediyorsunuz?" },
-  "pricing.faq4a": { en: "We'll support credit/debit cards via Iyzico when payments go live. Currently in beta — all features are free!", tr: "Ödemeler aktifleştiğinde Iyzico üzerinden kredi/banka kartı destekleyeceğiz. Şu an beta — tüm özellikler ücretsiz!" },
+  "priçing.title": { en: "Choose Your Plan", tr: "Planınızı Seçin" },
+  "priçing.subtitle": { en: "Start with 7 days free — no credit card required", tr: "7 gün ücretsiz başlayın — kredi kartı gerekmez" },
+  "priçing.monthly": { en: "Monthly", tr: "Aylık" },
+  "priçing.yearly": { en: "Yearly", tr: "Yıllık" },
+  "priçing.saveTag": { en: "Save up to 33%", tr: "%33'e kadar tasarruf" },
+  "priçing.mo": { en: "mo", tr: "ay" },
+  "priçing.yr": { en: "yr", tr: "yıl" },
+  "priçing.free": { en: "Free", tr: "Ücretsiz" },
+  "priçing.savePercent": { en: "Save {pct}%", tr: "%{pct} tasarruf" },
+  "priçing.mostPopular": { en: "Most Popular", tr: "En Popüler" },
+  "priçing.getStartedFree": { en: "Get Started Free", tr: "Ücretsiz Başla" },
+  "priçing.comingSoon": { en: "Coming Soon", tr: "Yakında" },
+  "priçing.trialTitle": { en: "7-Day Free Trial on Every Paid Plan", tr: "Her Ücretli Planda 7 Gün Ücretsiz Deneme" },
+  "priçing.trialDesc": { en: "Sign up and get instant access to all Premium features for 7 days. No credit card needed. If you love it, upgrade anytime.", tr: "Kayıt olun ve 7 gün boyunca tüm Premium özelliklere anında erişin. Kredi kartı gerekmez. Beğenirseniz istediğiniz zaman yükseltin." },
+  "priçing.trialPoint1": { en: "No credit card required", tr: "Kredi kartı gerekmez" },
+  "priçing.trialPoint2": { en: "Cancel anytime", tr: "İstediğiniz zaman iptal" },
+  "priçing.trialPoint3": { en: "Your data is never deleted", tr: "Verileriniz asla silinmez" },
+  "priçing.faqTitle": { en: "Frequently Asked Questions", tr: "Sıkça Sorulan Sorular" },
+  "priçing.faq1q": { en: "What happens after the trial?", tr: "Deneme süresinden sonra ne olur?" },
+  "priçing.faq1a": { en: "You'll automatically switch to the Free plan. No charges, no data loss. All your data stays safe.", tr: "Otomatik olarak Ücretsiz plana geçersiniz. Ücret yok, veri kaybı yok. Tüm verileriniz güvende kalır." },
+  "priçing.faq2q": { en: "Can I change plans later?", tr: "Planımı daha sonra değiştirebilir miyim?" },
+  "priçing.faq2a": { en: "Yes! You can upgrade, downgrade, or cancel anytime from your profile settings.", tr: "Evet! Profil ayarlarınızdan istediğiniz zaman yükseltebilir, düşürebilir veya iptal edebilirsiniz." },
+  "priçing.faq3q": { en: "Is my health data safe?", tr: "Sağlık verilerim güvende mi?" },
+  "priçing.faq3a": { en: "Absolutely. All data is encrypted and stored in compliance with KVKK/GDPR. We never sell your data.", tr: "Kesinlikle. Tüm veriler şifrelenmiş olarak KVKK/GDPR uyumlu şekilde saklanır. Verilerinizi asla satmayız." },
+  "priçing.faq4q": { en: "What payment methods do you accept?", tr: "Hangi ödeme yöntemlerini kabul ediyorsunuz?" },
+  "priçing.faq4a": { en: "We'll support credit/debit cards via Iyzico when payments go live. Currently in beta — all features are free!", tr: "Ödemeler aktifleştiğinde Iyzico üzerinden kredi/banka kartı destekleyeceğiz. Şu an beta — tüm özellikler ücretsiz!" },
 
-  "pricing.free.name": { en: "Free", tr: "Ücretsiz" },
-  "pricing.free.tagline": { en: "Essential health tools", tr: "Temel sağlık araçları" },
-  "pricing.free.features": {
+  "priçing.free.name": { en: "Free", tr: "Ücretsiz" },
+  "priçing.free.tagline": { en: "Essential health tools", tr: "Temel sağlık araçları" },
+  "priçing.free.features": {
     en: "20 health queries/day|Medication & supplement calendar|Water & vital tracking|3 blood tests/month|3 PDF reports/month|Daily health score|Calorie calculator|1 family profile",
     tr: "20 sağlık sorgusu/gün|İlaç & takviye takvimi|Su & vital takibi|3 kan tahlili/ay|3 PDF rapor/ay|Günlük sağlık skoru|Kalori hesaplama|1 aile profili",
   },
-  "pricing.premium.name": { en: "Premium", tr: "Premium" },
-  "pricing.premium.tagline": { en: "Full health intelligence", tr: "Tam sağlık zekası" },
-  "pricing.premium.features": {
+  "priçing.premium.name": { en: "Premium", tr: "Premium" },
+  "priçing.premium.tagline": { en: "Full health intelligence", tr: "Tam sağlık zekası" },
+  "priçing.premium.features": {
     en: "Everything in Free|Unlimited queries & blood tests|AI pattern detection|Biological age score & trend|Metabolic portfolio|Washout/cycling system|Boss fight protocols|Symptom pattern AI|Doctor PDF & email|Barcode supplement scan|3 family profiles|Share cards & Wrapped",
     tr: "Ücretsiz'deki her şey|Sınırsız sorgu & kan tahlili|AI örüntü tespiti|Biyolojik yaş skoru & trend|Metabolik portföy|Washout/döngü sistemi|Boss fight protokolleri|Semptom örüntü AI|Doktor PDF & e-posta|Barkod takviye tarama|3 aile profili|Paylaşım kartları & Wrapped",
   },
-  "pricing.family.name": { en: "Family", tr: "Aile" },
-  "pricing.family.tagline": { en: "Health for the whole family", tr: "Tüm aile için sağlık" },
-  "pricing.family.features": {
+  "priçing.family.name": { en: "Family", tr: "Aile" },
+  "priçing.family.tagline": { en: "Health for the whole family", tr: "Tüm aile için sağlık" },
+  "priçing.family.features": {
     en: "Everything in Premium|6 family profiles (2+4)|Parental supervision mode|Shared family dashboard|Cross-family interaction check|Family health timeline",
     tr: "Premium'daki her şey|6 aile profili (2+4)|Ebeveyn denetim modu|Paylaşımlı aile paneli|Çapraz aile etkileşim kontrolü|Aile sağlık zaman çizelgesi",
   },
-  "pricing.doctor.name": { en: "Doctor", tr: "Doktor" },
-  "pricing.doctor.tagline": { en: "Professional clinical tools", tr: "Profesyonel klinik araçları" },
-  "pricing.doctor.features": {
+  "priçing.doctor.name": { en: "Doctor", tr: "Doktor" },
+  "priçing.doctor.tagline": { en: "Professional clinical tools", tr: "Profesyonel klinik araçları" },
+  "priçing.doctor.features": {
     en: "Everything in Family|Multi-patient management|AI visit summary|Compliance scoring|Patient invite links|New Rx interaction alerts|Clinic multi-account|Insurance integration ready",
     tr: "Aile'deki her şey|Çoklu hasta yönetimi|AI ziyaret özeti|Uyum puanlaması|Hasta davet linkleri|Yeni Rx etkileşim uyarıları|Klinik çoklu hesap|Sigorta entegrasyonu hazır",
   },
 
-  "nav.pricing": { en: "Pricing", tr: "Fiyatlar" },
+  "nav.priçing": { en: "Priçing", tr: "Fiyatlar" },
   "nav.history": { en: "History", tr: "Geçmiş" },
   "history.noResponse": { en: "No response saved", tr: "Yanıt kaydedilmemiş" },
 
@@ -1069,7 +1069,7 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   // Badges / Gamification — Sprint 15
   // ══════════════════════════════════════════
-  "badges.title": { en: "Achievement Badges", tr: "Başarı Rozetleri" },
+  "badges.title": { en: "Achievement Badges", tr: "Başarı Rözetleri" },
   "badges.subtitle": { en: "Track your health journey milestones", tr: "Sağlık yolculuğu kilometre taşlarınızı takip edin" },
   "badges.earned": { en: "Earned", tr: "Kazanıldı" },
   "badges.locked": { en: "Locked", tr: "Kilitli" },
@@ -2739,49 +2739,49 @@ const t: Record<string, TranslationEntry> = {
   "menopause.subtitle": { en: "Symptom tracking, supplements & bone health", tr: "Semptom takibi, takviyeler ve kemik sagligi" },
   "menopause.symptoms": { en: "Symptoms", tr: "Semptomlar" },
   "menopause.mrsScore": { en: "MRS Score", tr: "MRS Skoru" },
-  "menopause.boneHealth": { en: "Bone Health", tr: "Kemik Sagligi" },
+  "menopause.boneHealth": { en: "Bone Health", tr: "Kemik Sağlığı" },
   "menopause.analyze": { en: "Analyze Symptoms", tr: "Semptom Analizi" },
 
   // ══════════════════════════════════════════
   // Men's Health
   // ══════════════════════════════════════════
-  "nav.mensHealth": { en: "Men's Health", tr: "Erkek Sagligi" },
-  "mens.title": { en: "Men's Health", tr: "Erkek Sagligi" },
+  "nav.mensHealth": { en: "Men's Health", tr: "Erkek Sağlığı" },
+  "mens.title": { en: "Men's Health", tr: "Erkek Sağlığı" },
   "mens.subtitle": { en: "Testosterone, prostate & medication effects", tr: "Testosteron, prostat ve ilac etkileri" },
   "mens.adam": { en: "ADAM Score", tr: "ADAM Skoru" },
-  "mens.prostate": { en: "Prostate Health", tr: "Prostat Sagligi" },
+  "mens.prostate": { en: "Prostate Health", tr: "Prostat Sağlığı" },
   "mens.medEffects": { en: "Medication Effects", tr: "Ilac Etkileri" },
   "mens.analyze": { en: "Get Assessment", tr: "Degerlendirme Al" },
 
   // ══════════════════════════════════════════
   // Sexual Health
   // ══════════════════════════════════════════
-  "nav.sexualHealth": { en: "Sexual Health", tr: "Cinsel Saglik" },
-  "sexual.title": { en: "Sexual Health", tr: "Cinsel Saglik" },
+  "nav.sexualHealth": { en: "Sexual Health", tr: "Cinsel Sağlık" },
+  "sexual.title": { en: "Sexual Health", tr: "Cinsel Sağlık" },
   "sexual.subtitle": { en: "Medication effects, screening & safety", tr: "Ilac etkileri, tarama ve guvenlik" },
   "sexual.medEffects": { en: "Medication Sexual Effects", tr: "Ilaclarin Cinsel Etkileri" },
   "sexual.screening": { en: "STI Screening", tr: "Cinsel Yolla Bulasan Hastalik Taramasi" },
   "sexual.analyze": { en: "Check Medications", tr: "Ilaclari Kontrol Et" },
 
   // ── Student Health ──
-  "nav.studentHealth": { en: "Student Health", tr: "Ogrenci Sagligi" },
-  "student.title": { en: "Student Health Pack", tr: "Ogrenci Saglik Paketi" },
+  "nav.studentHealth": { en: "Student Health", tr: "Öğrenci Sağlığı" },
+  "student.title": { en: "Student Health Pack", tr: "Öğrenci Sağlık Paketi" },
   "student.subtitle": { en: "Exam stress, nutrition & wellness for students", tr: "Sinav stresi, beslenme ve ogrenci sagligi" },
 
   // ── Military Health ──
-  "nav.militaryHealth": { en: "Military Health", tr: "Askerlik Sagligi" },
-  "military.title": { en: "Military Health Guide", tr: "Askerlik Saglik Rehberi" },
-  "military.subtitle": { en: "Health preparation for military service", tr: "Askerlik icin saglik hazirligi" },
+  "nav.militaryHealth": { en: "Military Health", tr: "Askerlik Sağlığı" },
+  "military.title": { en: "Military Health Guide", tr: "Askerlik Sağlık Rehberi" },
+  "military.subtitle": { en: "Health preparation for military service", tr: "Askerlik için saglik hazirligi" },
 
   // ── Retirement Health ──
-  "nav.retirementHealth": { en: "Retirement Health", tr: "Emeklilik Sagligi" },
-  "retirement.title": { en: "Retirement Health Plan", tr: "Emeklilik Saglik Plani" },
+  "nav.retirementHealth": { en: "Retirement Health", tr: "Emeklilik Sağlığı" },
+  "retirement.title": { en: "Retirement Health Plan", tr: "Emeklilik Sağlık Planı" },
   "retirement.subtitle": { en: "Screening and wellness plan for 55+", tr: "55+ yas tarama ve saglik plani" },
   "retirement.generate": { en: "Generate Plan", tr: "Plan Olustur" },
 
   // ── New Parent Health ──
   "nav.newParentHealth": { en: "New Parent", tr: "Yeni Ebeveyn" },
-  "newparent.title": { en: "New Parent Health", tr: "Yeni Ebeveyn Sagligi" },
+  "newparent.title": { en: "New Parent Health", tr: "Yeni Ebeveyn Sağlığı" },
   "newparent.subtitle": { en: "Taking care of yourself while caring for baby", tr: "Bebege bakarken kendinize bakin" },
 
   // ── Air Quality ──
@@ -2790,9 +2790,9 @@ const t: Record<string, TranslationEntry> = {
   "air.subtitle": { en: "AQI levels, health advice & exercise safety", tr: "AQI seviyeleri, saglik onerileri ve egzersiz guvenligi" },
 
   // ── Noise Exposure ──
-  "nav.noiseExposure": { en: "Noise", tr: "Gurultu" },
-  "noise.title": { en: "Noise Exposure Tracker", tr: "Gurultu Maruziyeti" },
-  "noise.subtitle": { en: "Protect your hearing from noise damage", tr: "Isitmenizi gurultu hasarindan koruyun" },
+  "nav.noiseExposure": { en: "Noise", tr: "Gürültü" },
+  "noise.title": { en: "Noise Exposure Tracker", tr: "Gürültü Maruziyeti" },
+  "noise.subtitle": { en: "Protect your hearing from noise damage", tr: "İşitmenizi gürültü hasarından koruyun" },
 
   // ── Jet Lag ──
   "nav.jetLag": { en: "Jet Lag", tr: "Jet Lag" },
@@ -2805,7 +2805,7 @@ const t: Record<string, TranslationEntry> = {
   // ── Shift Worker ──
   "nav.shiftWorker": { en: "Shift Work", tr: "Vardiyali Calisma" },
   "shift.title": { en: "Shift Worker Coach", tr: "Vardiyali Calisan Kocu" },
-  "shift.subtitle": { en: "Circadian rhythm management for shift workers", tr: "Vardiyali calisanlar icin sirkadyen ritim yonetimi" },
+  "shift.subtitle": { en: "Circadian rhythm management for shift workers", tr: "Vardiyali calisanlar için sirkadyen ritim yonetimi" },
   "shift.pattern": { en: "Shift Pattern", tr: "Vardiya Duzeni" },
   "shift.generate": { en: "Get Plan", tr: "Plan Al" },
 
@@ -2816,8 +2816,8 @@ const t: Record<string, TranslationEntry> = {
   "cancer.generate": { en: "Generate Schedule", tr: "Takvim Olustur" },
 
   // ── Family Health Tree ──
-  "nav.familyTree": { en: "Family Tree", tr: "Aile Agaci" },
-  "familytree.title": { en: "Family Health Tree", tr: "Aile Saglik Agaci" },
+  "nav.familyTree": { en: "Family Tree", tr: "Aile Ağacı" },
+  "familytree.title": { en: "Family Health Tree", tr: "Aile Sağlık Ağacı" },
   "familytree.subtitle": { en: "Hereditary risk analysis from family history", tr: "Aile gecmisinden kalitsal risk analizi" },
   "familytree.addMember": { en: "Add Family Member", tr: "Aile Uyesi Ekle" },
   "familytree.analyze": { en: "Analyze Risks", tr: "Riskleri Analiz Et" },
@@ -2838,7 +2838,7 @@ const t: Record<string, TranslationEntry> = {
   "nav.wearableHub": { en: "Wearables", tr: "Giyilebilir" },
   "wearable.title": { en: "Wearable Hub", tr: "Giyilebilir Cihaz Merkezi" },
   "wearable.comingSoon": { en: "Wearable integration coming soon!", tr: "Giyilebilir cihaz entegrasyonu yakinda!" },
-  "wearable.subtitle": { en: "Connect your health devices for continuous monitoring", tr: "Surekli izleme icin saglik cihazlarinizi baglayiniz" },
+  "wearable.subtitle": { en: "Connect your health devices for continuous monitoring", tr: "Surekli izleme için saglik cihazlarinizi baglayiniz" },
 
   // ── K2: Proactive AI ──
   "nav.proactiveAi": { en: "Proactive AI", tr: "Proaktif AI" },
@@ -2863,7 +2863,7 @@ const t: Record<string, TranslationEntry> = {
   // ── K5: Second Opinion ──
   "nav.secondOpinion": { en: "Second Opinion", tr: "Ikinci Gorus" },
   "secondopinion.title": { en: "Second Opinion Prep", tr: "Ikinci Gorus Hazirligi" },
-  "secondopinion.subtitle": { en: "Prepare a structured package for specialist consultation", tr: "Uzman konsultasyonu icin yapilandirilmis paket hazirlayin" },
+  "secondopinion.subtitle": { en: "Prepare a structured package for specialist consultation", tr: "Uzman konsultasyonu için yapilandirilmis paket hazirlayin" },
   "secondopinion.generate": { en: "Prepare Package", tr: "Paket Hazirla" },
   "secondopinion.concern": { en: "What concern do you want a second opinion on?", tr: "Hangi konuda ikinci gorus almak istiyorsunuz?" },
 
@@ -2883,7 +2883,7 @@ const t: Record<string, TranslationEntry> = {
   "label.subtitle": { en: "Decode ingredients and find hidden risks", tr: "Icerikleri cozun, gizli riskleri bulun" },
   "label.analyze": { en: "Analyze Label", tr: "Etiketi Analiz Et" },
   "label.productName": { en: "Product name (optional)", tr: "Urun adi (istege bagli)" },
-  "label.ingredients": { en: "Paste ingredients list here...", tr: "Icerik listesini buraya yapistiriniz..." },
+  "label.ingredients": { en: "Paste ingredients list here...", tr: "Icerik listesini buraya yapıştırıniz..." },
 
   // ── L4: Anti-Inflammatory ──
   "nav.antiInflammatory": { en: "Anti-Inflammatory", tr: "Anti-Inflamatuar" },
@@ -2939,7 +2939,7 @@ const t: Record<string, TranslationEntry> = {
   // ── O1: Rare Diseases ──
   "nav.rareDiseases": { en: "Rare Diseases", tr: "Nadir Hastaliklar" },
   "rare.title": { en: "Rare Disease Info", tr: "Nadir Hastalik Bilgisi" },
-  "rare.subtitle": { en: "Information and resources for rare diseases", tr: "Nadir hastaliklar icin bilgi ve kaynaklar" },
+  "rare.subtitle": { en: "Information and resources for rare diseases", tr: "Nadir hastaliklar için bilgi ve kaynaklar" },
   "rare.search": { en: "Search disease...", tr: "Hastalik arayiniz..." },
   "rare.searchBtn": { en: "Search", tr: "Ara" },
 
@@ -2954,19 +2954,19 @@ const t: Record<string, TranslationEntry> = {
   "access.subtitle": { en: "Adaptive health tools and disability resources", tr: "Uyarlanabilir saglik araclari ve engelli kaynaklari" },
 
   // ── O4: Immigrant Health ──
-  "nav.immigrantHealth": { en: "Immigrant Health", tr: "Gocmen Sagligi" },
-  "immigrant.title": { en: "Immigrant Health Guide", tr: "Gocmen Saglik Rehberi" },
+  "nav.immigrantHealth": { en: "Immigrant Health", tr: "Göçmen Sağlığı" },
+  "immigrant.title": { en: "Immigrant Health Guide", tr: "Göçmen Sağlık Rehberi" },
   "immigrant.subtitle": { en: "Navigate the Turkish healthcare system", tr: "Turk saglik sisteminde yol bulun" },
 
   // ── P1: Pet Health ──
   "nav.petHealth": { en: "Pet Health", tr: "Evcil Hayvan" },
-  "pet.title": { en: "Pet & Human Health", tr: "Evcil Hayvan & Insan Sagligi" },
+  "pet.title": { en: "Pet & Human Health", tr: "Evcil Hayvan & İnsan Sağlığı" },
   "pet.subtitle": { en: "Zoonotic risks and pet owner health guide", tr: "Zoonotik riskler ve evcil hayvan sahibi saglik rehberi" },
 
   // ── Shared tool keys ──
   "tool.comingSoon": { en: "Coming Soon", tr: "Yakinda" },
   "tool.learnMore": { en: "Learn More", tr: "Daha Fazla Bilgi" },
-  "tool.loginRequired": { en: "Please log in to use this feature", tr: "Bu ozelligi kullanmak icin giris yapiniz" },
+  "tool.loginRequired": { en: "Please log in to use this feature", tr: "Bu ozelligi kullanmak için giriş yapiniz" },
   "tool.noResults": { en: "No results found", tr: "Sonuc bulunamadi" },
   "tool.loading": { en: "Analyzing...", tr: "Analiz ediliyor..." },
 
@@ -2993,10 +2993,10 @@ const t: Record<string, TranslationEntry> = {
 
   // ── H4: Health News Verifier ──
   "nav.newsVerifier": { en: "News Check", tr: "Haber Kontrol" },
-  "news.title": { en: "Health News Verifier", tr: "Saglik Haberi Dogrulayici" },
+  "news.title": { en: "Health News Verifier", tr: "Sağlık Haberi Doğrulayici" },
   "news.subtitle": { en: "Is this health claim backed by evidence?", tr: "Bu saglik iddiasi kanita dayali mi?" },
-  "news.claim": { en: "Paste the health claim...", tr: "Saglik iddiasini yapistirin..." },
-  "news.verify": { en: "Verify", tr: "Dogrula" },
+  "news.claim": { en: "Paste the health claim...", tr: "Sağlık iddiasını yapıştırın..." },
+  "news.verify": { en: "Verify", tr: "Doğrula" },
 
   // ── H5: First Aid ──
   "nav.firstAid": { en: "First Aid", tr: "Ilk Yardim" },
@@ -3006,12 +3006,12 @@ const t: Record<string, TranslationEntry> = {
 
   // ── I1: Health Forum ──
   "nav.forum": { en: "Forum", tr: "Forum" },
-  "forum.title": { en: "Health Forum", tr: "Saglik Forumu" },
+  "forum.title": { en: "Health Forum", tr: "Sağlık Forumu" },
   "forum.comingSoon": { en: "Community forum coming soon!", tr: "Topluluk forumu yakinda!" },
 
   // ── I2: Health Challenges ──
   "nav.challenges": { en: "Challenges", tr: "Challenge" },
-  "challenges.title": { en: "Health Challenges", tr: "Saglik Challenge'lari" },
+  "challenges.title": { en: "Health Challenges", tr: "Sağlık Challenge'lari" },
   "challenges.subtitle": { en: "Fun health challenges with streaks", tr: "Streak'li eglenceli saglik gorevleri" },
 
   // ── I3: Support Groups ──
@@ -3022,14 +3022,14 @@ const t: Record<string, TranslationEntry> = {
   // ── I4: Grief Support ──
   "nav.griefSupport": { en: "Grief Support", tr: "Yas Destegi" },
   "grief.title": { en: "Grief Support", tr: "Yas Destegi" },
-  "grief.subtitle": { en: "Guidance through the stages of grief", tr: "Yas surecinde rehberlik" },
+  "grief.subtitle": { en: "Guidance through the stages of grief", tr: "Yas sürecinde rehberlik" },
 
   // ── J1: Pharmacy Finder ──
   "nav.pharmacyFinder": { en: "Pharmacy", tr: "Eczane" },
-  "nav.courses": { en: "Courses", tr: "Egitimler" },
+  "nav.courses": { en: "Courses", tr: "Eğitimler" },
   "nav.enterprise": { en: "Enterprise", tr: "Kurumsal" },
   "pharmacy.title": { en: "Pharmacy Finder", tr: "Eczane Bulucu" },
-  "pharmacy.subtitle": { en: "Find pharmacies and medication equivalents", tr: "Eczane ve ilac esdegeri bulun" },
+  "pharmacy.subtitle": { en: "Find pharmacies and medication equivalents", tr: "Eczane ve ilaç eşdeğeri bulun" },
 
   // ── J2: Insurance Guide ──
   "nav.insuranceGuide": { en: "Insurance", tr: "Sigorta" },
@@ -3044,7 +3044,7 @@ const t: Record<string, TranslationEntry> = {
   // ── J4: Emergency ID ──
   "nav.emergencyId": { en: "Emergency ID", tr: "Acil Kimlik" },
   "emergencyid.title": { en: "Emergency ID Card", tr: "Acil Kimlik Karti" },
-  "emergencyid.subtitle": { en: "Shareable card with vital info for emergencies", tr: "Acil durumlar icin paylasilabilir hayati bilgi karti" },
+  "emergencyid.subtitle": { en: "Shareable card with vital info for emergencies", tr: "Acil durumlar için paylasilabilir hayati bilgi karti" },
   "emergencyid.generate": { en: "Generate Card", tr: "Kart Olustur" },
   "emergencyid.print": { en: "Print Card", tr: "Karti Yazdir" },
 
@@ -3069,7 +3069,7 @@ const t: Record<string, TranslationEntry> = {
 
   // ── J5: Health Spending ──
   "nav.healthSpending": { en: "Spending", tr: "Harcama" },
-  "spending.title": { en: "Health Spending Tracker", tr: "Saglik Harcama Takibi" },
+  "spending.title": { en: "Health Spending Tracker", tr: "Sağlık Harcama Takibi" },
   "spending.subtitle": { en: "Track medication, supplement & doctor expenses", tr: "Ilac, takviye ve doktor masraflarini takip edin" },
   "spending.addExpense": { en: "Add Expense", tr: "Harcama Ekle" },
   "spending.monthly": { en: "Monthly Total", tr: "Aylik Toplam" },
@@ -3077,7 +3077,7 @@ const t: Record<string, TranslationEntry> = {
 
   // ── N9: Emergency Mode ──
   "emergencyMode.call112": { en: "CALL 112 NOW", tr: "HEMEN 112'YI ARA" },
-  "emergencyMode.criticalInfo": { en: "Critical Health Info", tr: "Kritik Saglik Bilgileri" },
+  "emergencyMode.criticalInfo": { en: "Critical Health Info", tr: "Kritik Sağlık Bilgileri" },
   "emergencyMode.name": { en: "Full Name", tr: "Ad Soyad" },
   "emergencyMode.bloodType": { en: "Blood Type", tr: "Kan Grubu" },
   "emergencyMode.allergies": { en: "Allergies", tr: "Alerjiler" },
@@ -3092,13 +3092,13 @@ const t: Record<string, TranslationEntry> = {
   "emergencyMode.share": { en: "Share Info", tr: "Bilgi Paylas" },
   "emergencyMode.copied": { en: "Copied!", tr: "Kopyalandi!" },
   "emergencyMode.showQR": { en: "Show QR Code", tr: "QR Kod Goster" },
-  "emergencyMode.qrHint": { en: "Scan to view emergency info", tr: "Acil bilgileri gormek icin tarayin" },
-  "emergencyMode.footer": { en: "Data cached locally for offline access. Update your profile to keep info current.", tr: "Veriler cevirim disi erisim icin yerel olarak saklanir. Bilgileri guncel tutmak icin profilinizi guncelleyin." },
+  "emergencyMode.qrHint": { en: "Scan to view emergency info", tr: "Acil bilgileri görmek için tarayın" },
+  "emergencyMode.footer": { en: "Data cached locally for offline access. Update your profile to keep info current.", tr: "Veriler cevirim disi erisim için yerel olarak saklanir. Bilgileri guncel tutmak için profilinizi guncelleyin." },
 
   // ── N19: QR Profile Sharing ──
-  "qrProfile.title": { en: "Health QR Code", tr: "Saglik QR Kodu" },
-  "qrProfile.subtitle": { en: "Generate a QR code with your health profile summary", tr: "Saglik profil ozetinizi iceren bir QR kod olusturun" },
-  "qrProfile.loginRequired": { en: "Sign in to generate your health QR code", tr: "Saglik QR kodunuzu olusturmak icin giris yapin" },
+  "qrProfile.title": { en: "Health QR Code", tr: "Sağlık QR Kodu" },
+  "qrProfile.subtitle": { en: "Generate a QR code with your health profile summary", tr: "Sağlık profil özetinizi içeren bir QR kod oluşturun" },
+  "qrProfile.loginRequired": { en: "Sign in to generate your health QR code", tr: "Sağlık QR kodunuzu oluşturmak için giriş yapin" },
   "qrProfile.selectData": { en: "Select data to include", tr: "Dahil edilecek verileri secin" },
   "qrProfile.basicInfo": { en: "Basic Info", tr: "Temel Bilgiler" },
   "qrProfile.basicInfoDesc": { en: "Name, age, gender, blood type", tr: "Ad, yas, cinsiyet, kan grubu" },
@@ -3116,7 +3116,7 @@ const t: Record<string, TranslationEntry> = {
   "qrProfile.expiry.30d": { en: "30 Days", tr: "30 Gun" },
   "qrProfile.expiry.never": { en: "No Expiry", tr: "Suresiz" },
   "qrProfile.generate": { en: "Generate QR Code", tr: "QR Kod Olustur" },
-  "qrProfile.scanHint": { en: "Scan this code with any phone camera to view health info", tr: "Saglik bilgilerini gormek icin herhangi bir telefonla tarayin" },
+  "qrProfile.scanHint": { en: "Scan this code with any phone camera to view health info", tr: "Sağlık bilgilerini görmek için herhangi bir telefonla tarayın" },
   "qrProfile.download": { en: "Download", tr: "Indir" },
   "qrProfile.print": { en: "Print", tr: "Yazdir" },
   "qrProfile.preview": { en: "Preview", tr: "Onizleme" },
