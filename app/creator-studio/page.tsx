@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { VideoUrlInput } from "@/components/content/VideoUrlInput"
+import { type ParsedVideo } from "@/lib/video-utils"
 import {
   PRICING_PLANS, CONTENT_CATEGORIES, CREDIT_COSTS, MOCK_CONTENT,
   type ContentType, type SubscriptionTier, type PricingPlan,
@@ -199,15 +201,13 @@ export default function CreatorStudioPage() {
               <p className="text-xs text-muted-foreground text-right mt-1">{summary.length}/160</p>
             </div>
 
-            {/* Video URL (if video type) */}
+            {/* Smart Video URL Input with Live Preview */}
             {editorType === "video" && (
-              <div>
-                <label className="text-sm font-medium mb-1 block">{t("video_url")}</label>
-                <div className="flex gap-2">
-                  <Link2 className="w-5 h-5 text-muted-foreground mt-2.5" />
-                  <Input value={videoUrl} onChange={e => setVideoUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." className="flex-1" />
-                </div>
-              </div>
+              <VideoUrlInput
+                value={videoUrl}
+                onChange={(url, parsed) => setVideoUrl(url)}
+                lang={lang}
+              />
             )}
 
             {/* Cover image */}

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { MOCK_CONTENT, CONTENT_CATEGORIES } from "@/lib/publisher-data"
+import { VideoPlayerCard } from "@/components/content/VideoUrlInput"
 import {
   Search, Eye, Heart, Bookmark, Clock, BadgeCheck, Video, FileText,
   MessageCircle, Share2, ChevronRight, Filter, Leaf, Apple, Brain,
@@ -113,18 +114,15 @@ export default function ExpertContentPage() {
               const readTime = Math.ceil((content.summary?.length || 100) / 20)
               return (
                 <Card key={content.id} className="overflow-hidden hover:shadow-lg transition-all duration-300 group">
-                  {/* Video thumbnail placeholder */}
-                  {isVideo && (
-                    <div className="relative bg-gray-900 aspect-video flex items-center justify-center">
-                      <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                        <Video className="w-8 h-8 text-white" />
-                      </div>
-                      {content.videoDuration && (
-                        <Badge className="absolute bottom-3 right-3 bg-black/70 text-white text-xs">
-                          {Math.floor(content.videoDuration / 60)}:{String(content.videoDuration % 60).padStart(2, "0")}
-                        </Badge>
-                      )}
-                    </div>
+                  {/* Embedded Video Player */}
+                  {isVideo && content.videoUrl && (
+                    <VideoPlayerCard
+                      platform={content.videoUrl.includes("vimeo") ? "vimeo" : "youtube"}
+                      videoId={content.videoUrl.includes("vimeo")
+                        ? (content.videoUrl.match(/\/(\d+)/)?.[1] || "")
+                        : (content.videoUrl.match(/embed\/([a-zA-Z0-9_-]+)/)?.[1] || "placeholder")
+                      }
+                    />
                   )}
 
                   <div className="p-5">
