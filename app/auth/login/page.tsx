@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Leaf, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle2, Play } from "lucide-react";
+import { Leaf, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle2, Play, Gift, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -46,7 +46,21 @@ function LoginContent() {
   const [signupPassword, setSignupPassword] = useState("");
   const [signupConfirm, setSignupConfirm] = useState("");
 
+  // Referral code state
+  const [showReferral, setShowReferral] = useState(false);
+  const [referralCode, setReferralCode] = useState(searchParams.get("ref") || "");
+  const [referralApplied, setReferralApplied] = useState(false);
+  const [referralError, setReferralError] = useState<string | null>(null);
+  const [applyingCode, setApplyingCode] = useState(false);
+
   const redirect = searchParams.get("redirect") ?? "/";
+
+  // Auto-expand if ref param exists
+  useEffect(() => {
+    if (searchParams.get("ref")) {
+      setShowReferral(true);
+    }
+  }, [searchParams]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,6 +155,32 @@ function LoginContent() {
       console.error("Facebook login error:", err);
       setError(tx("auth.errFacebook", lang));
       setIsLoading(false);
+    }
+  };
+
+  const handleApplyReferral = async () => {
+    if (!referralCode.trim()) return;
+    setApplyingCode(true);
+    setReferralError(null);
+    try {
+      const res = await fetch("/api/referral", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "redeem", code: referralCode.trim().toUpperCase() }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setReferralError(data.error || tx("redeem.invalid", lang));
+        setApplyingCode(false);
+        return;
+      }
+      // Store in localStorage for post-signup processing
+      localStorage.setItem("referral_code", referralCode.trim().toUpperCase());
+      setReferralApplied(true);
+    } catch {
+      setReferralError(tx("redeem.invalid", lang));
+    } finally {
+      setApplyingCode(false);
     }
   };
 
@@ -288,6 +328,62 @@ function LoginContent() {
             <p className="mt-2 text-center text-[11px] text-muted-foreground">
               {tx("auth.demoDesc", lang)}
             </p>
+          </div>
+
+          {/* Referral Code Section */}
+          <div className="mt-4 border-t pt-4">
+            <button
+              type="button"
+              className="flex w-full items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setShowReferral(!showReferral)}
+            >
+              <Gift className="h-4 w-4" />
+              {tx("redeem.title", lang)}
+              {showReferral ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+            </button>
+
+            {showReferral && (
+              <div className="mt-3 space-y-2">
+                {referralApplied ? (
+                  <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-950/20 dark:text-green-300">
+                    <CheckCircle2 className="h-4 w-4 shrink-0" />
+                    {tx("redeem.applied", lang)}
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder={tx("redeem.placeholder", lang)}
+                        value={referralCode}
+                        onChange={(e) => {
+                          setReferralCode(e.target.value);
+                          setReferralError(null);
+                        }}
+                        onKeyDown={(e) => e.key === "Enter" && handleApplyReferral()}
+                        className="font-mono text-sm uppercase"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleApplyReferral}
+                        disabled={!referralCode.trim() || applyingCode}
+                        className="shrink-0 gap-1 border-primary/30 text-primary"
+                      >
+                        {applyingCode ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Gift className="h-4 w-4" />
+                        )}
+                        {tx("redeem.apply", lang)}
+                      </Button>
+                    </div>
+                    {referralError && (
+                      <p className="text-xs text-destructive">{referralError}</p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
