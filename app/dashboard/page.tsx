@@ -33,27 +33,29 @@ import {
   Network,
   Target,
   BookOpen,
+  Microscope, Pill, Leaf, Brain, UtensilsCrossed, Moon, Dumbbell,
+  Users, ShieldCheck, MessageCircle, ArrowRight,
 } from "lucide-react"
 import Link from "next/link"
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog"
+import { TOOL_CATEGORIES } from "@/lib/tools-hierarchy"
+import { Badge } from "@/components/ui/badge"
 
-const TOOL_LINKS = [
+// Quick-access utility links (non-category items)
+const QUICK_LINKS = [
   { href: "/history", icon: Clock, labelKey: "nav.history" },
   { href: "/badges", icon: Trophy, labelKey: "badges.title" },
   { href: "/analytics", icon: BarChart3, labelKey: "analytics.title" },
   { href: "/operations", icon: Scissors, labelKey: "operations.title" },
-  { href: "/enabiz", icon: FileText, labelKey: "enabiz.title" },
-  { href: "/side-effects", icon: AlertTriangle, labelKey: "sideeffect.title" },
   { href: "/wrapped", icon: Sparkles, labelKey: "wrapped.title" },
   { href: "/doctor", icon: Stethoscope, labelKey: "doctor.title" },
-  { href: "/medical-analysis", icon: Scan, labelKey: "nav.medicalAnalysis" },
-  { href: "/symptom-checker", icon: HeartPulse, labelKey: "nav.symptomChecker" },
-  { href: "/food-interaction", icon: Apple, labelKey: "nav.foodInteraction" },
-  { href: "/supplement-compare", icon: Beaker, labelKey: "nav.supCompare" },
-  { href: "/interaction-map", icon: Network, labelKey: "nav.intMap" },
-  { href: "/health-goals", icon: Target, labelKey: "nav.healthGoals" },
-  { href: "/prospectus-reader", icon: BookOpen, labelKey: "nav.prospectus" },
 ]
+
+// Icon mapping for categories on dashboard
+const CATEGORY_ICON_MAP: Record<string, any> = {
+  Microscope, Pill, Leaf, Brain, UtensilsCrossed, Moon, Dumbbell,
+  HeartPulse, Users, BarChart3, ShieldCheck, Stethoscope, MessageCircle,
+}
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -194,22 +196,41 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Tools Grid */}
+      {/* Health Tool Categories */}
       <div className="animate-fade-in-up" style={{ animationDelay: '200ms' }}>
-        <h2 className="mb-4 text-lg md:text-xl font-semibold">{tx("dashboard.tools", lang)}</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 stagger-children">
-          {TOOL_LINKS.map((tool, idx) => {
-            const Icon = tool.icon
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg md:text-xl font-semibold">{tx("dashboard.tools", lang)}</h2>
+          <Link href="/tools" className="text-xs text-primary hover:underline flex items-center gap-1">
+            {lang === "tr" ? "Tüm Araçlar" : "All Tools"} <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 stagger-children">
+          {TOOL_CATEGORIES.slice(0, 8).map((cat, idx) => {
+            const Icon = CATEGORY_ICON_MAP[cat.icon] || Sparkles
             return (
-              <Link
-                key={tool.href}
-                href={tool.href}
-                className={`card-hover flex flex-col items-center gap-2 rounded-xl border p-4 text-center tool-card-${idx + 1}`}
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/60 dark:bg-white/10 shadow-sm">
-                  <Icon className="h-5 w-5 text-primary" />
+              <Link key={cat.id} href={cat.modules[0]?.href || `/${cat.slug}`}
+                className={`card-hover flex flex-col gap-2 rounded-xl border p-4 tool-card-${idx + 1}`}
+                style={{ borderTopColor: cat.color, borderTopWidth: "2px" }}>
+                <div className="flex items-center justify-between">
+                  <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${cat.bgLight} ${cat.bgDark}`}>
+                    <Icon className="h-4.5 w-4.5" style={{ color: cat.color }} />
+                  </div>
+                  <Badge variant="outline" className="text-[10px] h-5">{cat.modules.length}</Badge>
                 </div>
-                <span className="text-xs font-medium">{tx(tool.labelKey, lang)}</span>
+                <span className="text-xs font-medium text-foreground">{cat.title[lang]}</span>
+              </Link>
+            )
+          })}
+        </div>
+        {/* Quick Links */}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {QUICK_LINKS.map(link => {
+            const Icon = link.icon
+            return (
+              <Link key={link.href} href={link.href}
+                className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors">
+                <Icon className="h-3 w-3" />
+                {tx(link.labelKey, lang)}
               </Link>
             )
           })}

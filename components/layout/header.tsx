@@ -9,6 +9,8 @@ import { LanguageToggle, useLang } from "@/components/layout/language-toggle";
 import { Button } from "@/components/ui/button";
 import { tx } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
+import { MegaMenu } from "@/components/layout/mega-menu/MegaMenu";
+import { MobileMegaMenu } from "@/components/layout/mega-menu/MobileMegaMenu";
 
 // Main nav links (always visible)
 const mainLinks = [
@@ -270,8 +272,8 @@ export function Header() {
             {tx("family.title", lang)}
           </Link>
 
-          {/* Tools dropdown */}
-          <div className="relative" ref={toolsRef}>
+          {/* Tools Mega Menu */}
+          <div className="relative">
             <button
               onClick={() => setToolsOpen(!toolsOpen)}
               className="flex items-center gap-1 whitespace-nowrap text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
@@ -280,23 +282,8 @@ export function Header() {
               {tx("nav.tools", lang)}
               <ChevronDown className={`h-3 w-3 transition-transform ${toolsOpen ? "rotate-180" : ""}`} />
             </button>
-            {toolsOpen && (
-              <div className="absolute left-0 top-full z-[100] mt-2 w-64 max-h-[70vh] overflow-y-auto rounded-lg border bg-background shadow-lg">
-                <div className="p-1">
-                  {toolLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="block rounded-md px-3 py-2 text-sm text-foreground/80 hover:bg-muted hover:text-foreground"
-                      onClick={() => setToolsOpen(false)}
-                    >
-                      {tx(link.labelKey, lang)}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
+          <MegaMenu open={toolsOpen} onClose={() => setToolsOpen(false)} />
 
           {isAuthenticated && (
             <Link
@@ -401,17 +388,29 @@ export function Header() {
 
       {/* Mobile nav */}
       {mobileOpen && (
-        <nav className="max-h-[70vh] overflow-y-auto border-t px-4 py-4 lg:hidden">
-          {allMobileLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
+        <nav className="max-h-[80vh] overflow-y-auto border-t py-2 lg:hidden">
+          {/* Main links */}
+          <div className="px-4 py-2 space-y-1">
+            {mainLinks.map((link) => (
+              <Link key={link.href} href={link.href}
+                className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => setMobileOpen(false)}>
+                {tx(link.labelKey, lang)}
+              </Link>
+            ))}
+            <Link href="/family"
               className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-              onClick={() => setMobileOpen(false)}
-            >
-              {tx(link.labelKey, lang)}
+              onClick={() => setMobileOpen(false)}>
+              {tx("family.title", lang)}
             </Link>
-          ))}
+          </div>
+          {/* Mega Menu Categories */}
+          <div className="border-t mt-2 pt-2">
+            <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+              {tx("nav.tools", lang)}
+            </p>
+            <MobileMegaMenu onNavigate={() => setMobileOpen(false)} />
+          </div>
 
           {isAuthenticated && (
             <Link
