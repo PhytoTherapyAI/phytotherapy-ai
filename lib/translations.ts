@@ -1692,6 +1692,112 @@ const t: Record<string, TranslationEntry> = {
   "boss.tasks": { en: "tasks", tr: "görev" },
 
   // ══════════════════════════════════════════
+  // Medical Analysis (combined page)
+  // ══════════════════════════════════════════
+  "nav.medicalAnalysis": { en: "Medical Analysis", tr: "Tıbbi Analiz" },
+  "nav.bodyAnalysis": { en: "Body & Nutrition", tr: "Vücut & Beslenme" },
+  "medAnalysis.title": { en: "Medical Analysis", tr: "Tıbbi Analiz" },
+  "medAnalysis.subtitle": { en: "Blood test analysis and radiology image interpretation", tr: "Kan tahlili analizi ve radyoloji görüntü yorumlama" },
+  "bodyAnalysis.title": { en: "Body & Nutrition", tr: "Vücut & Beslenme" },
+  "bodyAnalysis.subtitle": { en: "BMI, body fat, calorie needs and weight tracking", tr: "BMI, vücut yağı, kalori ihtiyacı ve kilo takibi" },
+
+  // Symptom Checker
+  // ══════════════════════════════════════════
+  "nav.symptomChecker": { en: "Symptom Checker", tr: "Semptom Kontrolü" },
+  "symptom.title": { en: "Symptom Checker", tr: "Semptom Kontrolü" },
+  "symptom.subtitle": { en: "Describe your symptoms for an AI-guided assessment", tr: "Semptomlarınızı yazın, AI destekli değerlendirme alın" },
+  "symptom.disclaimer": { en: "This tool does not diagnose. It helps you understand symptoms and decide on urgency. Always consult a doctor for medical concerns.", tr: "Bu araç teşhis koymaz. Semptomlarınızı anlamanıza ve aciliyeti değerlendirmenize yardımcı olur. Tıbbi endişeleriniz için her zaman doktorunuza danışın." },
+  "symptom.commonSymptoms": { en: "Common symptoms:", tr: "Yaygın semptomlar:" },
+  "symptom.describeLabel": { en: "Describe your symptoms", tr: "Semptomlarınızı açıklayın" },
+  "symptom.placeholder": { en: "E.g., I've had a headache for 3 days, mostly in the morning, with mild nausea...", tr: "Örn: 3 gündür baş ağrım var, genellikle sabahları, hafif bulantı ile birlikte..." },
+  "symptom.analyzing": { en: "Analyzing symptoms...", tr: "Semptomlar analiz ediliyor..." },
+  "symptom.analyzeBtn": { en: "Check Symptoms", tr: "Semptomları Kontrol Et" },
+  "symptom.triageDoctor": { en: "See a Doctor", tr: "Doktora Gidin" },
+  "symptom.triageHome": { en: "Monitor at Home", tr: "Evde Takip Edin" },
+  "symptom.urgency": { en: "Urgency", tr: "Aciliyet" },
+  "symptom.possibleCauses": { en: "Possible Causes", tr: "Olası Nedenler" },
+  "symptom.recommendations": { en: "Recommendations", tr: "Öneriler" },
+  "symptom.whenToSeeDoctor": { en: "When to see a doctor", tr: "Doktora ne zaman gitmeli" },
+  "symptom.selfCare": { en: "Self-care tips", tr: "Evde bakım önerileri" },
+  "symptom.medicationNote": { en: "Medication Note", tr: "İlaç Notu" },
+  "symptom.sources": { en: "Sources", tr: "Kaynaklar" },
+  "symptom.newCheck": { en: "New Symptom Check", tr: "Yeni Semptom Kontrolü" },
+
+  // Food-Drug Interaction
+  // ══════════════════════════════════════════
+  "nav.foodInteraction": { en: "Food Interactions", tr: "Besin Etkileşimleri" },
+  "foodInt.title": { en: "Food-Drug Interactions", tr: "Besin-İlaç Etkileşimleri" },
+  "foodInt.subtitle": { en: "Check if your foods interact with your medications", tr: "Besinlerinizin ilaçlarınızla etkileşimini kontrol edin" },
+  "foodInt.commonFoods": { en: "Common foods to check:", tr: "Kontrol edilecek yaygın besinler:" },
+  "foodInt.addPlaceholder": { en: "Add a food or beverage...", tr: "Besin veya içecek ekleyin..." },
+  "foodInt.add": { en: "Add", tr: "Ekle" },
+  "foodInt.loginNote": { en: "Sign in to automatically check against your medication profile.", tr: "İlaç profilinizle otomatik kontrol için giriş yapın." },
+  "foodInt.analyzing": { en: "Checking interactions...", tr: "Etkileşimler kontrol ediliyor..." },
+  "foodInt.checkBtn": { en: "Check Interactions", tr: "Etkileşimleri Kontrol Et" },
+  "foodInt.results": { en: "Results", tr: "Sonuçlar" },
+  "foodInt.mechanism": { en: "Mechanism", tr: "Mekanizma" },
+  "foodInt.recommendation": { en: "Recommendation", tr: "Öneri" },
+  "foodInt.timing": { en: "Timing", tr: "Zamanlama" },
+
+  // Supplement Comparison
+  // ══════════════════════════════════════════
+  "nav.supCompare": { en: "Compare Supplements", tr: "Takviye Karşılaştır" },
+  "supCompare.title": { en: "Supplement Comparison", tr: "Takviye Karşılaştırma" },
+  "supCompare.subtitle": { en: "Compare two supplements side by side with evidence-based analysis", tr: "İki takviyeyi kanıta dayalı analiz ile yan yana karşılaştırın" },
+  "supCompare.placeholder1": { en: "First supplement...", tr: "İlk takviye..." },
+  "supCompare.placeholder2": { en: "Second supplement...", tr: "İkinci takviye..." },
+  "supCompare.popularPairs": { en: "Popular comparisons:", tr: "Popüler karşılaştırmalar:" },
+  "supCompare.comparing": { en: "Comparing...", tr: "Karşılaştırılıyor..." },
+  "supCompare.compareBtn": { en: "Compare", tr: "Karşılaştır" },
+  "supCompare.results": { en: "Comparison Results", tr: "Karşılaştırma Sonuçları" },
+  "supCompare.grade": { en: "Grade", tr: "Kanıt" },
+  "supCompare.benefits": { en: "Benefits", tr: "Faydaları" },
+  "supCompare.dosage": { en: "Dosage", tr: "Dozaj" },
+  "supCompare.absorption": { en: "Absorption", tr: "Emilim" },
+  "supCompare.sideEffects": { en: "Side Effects", tr: "Yan Etkiler" },
+  "supCompare.cost": { en: "Cost", tr: "Maliyet" },
+  "supCompare.bestFor": { en: "Best for", tr: "En uygun" },
+  "supCompare.verdict": { en: "Verdict", tr: "Sonuç" },
+  "supCompare.keyDiff": { en: "Key differences:", tr: "Temel farklar:" },
+  "supCompare.canCombine": { en: "Can combine", tr: "Birlikte kullanılabilir" },
+  "supCompare.personalRec": { en: "Personalized Recommendation", tr: "Kişisel Öneri" },
+
+  // Interaction Map
+  // ══════════════════════════════════════════
+  "nav.intMap": { en: "Interaction Map", tr: "Etkileşim Haritası" },
+  "intMap.title": { en: "Drug Interaction Map", tr: "İlaç Etkileşim Haritası" },
+  "intMap.subtitle": { en: "Visual network graph of your medication interactions", tr: "İlaçlarınızın etkileşim ağ grafiği" },
+  "intMap.loginRequired": { en: "Sign in to generate your personalized interaction map from your medication profile.", tr: "İlaç profilinizden kişisel etkileşim haritası oluşturmak için giriş yapın." },
+  "intMap.description": { en: "Generate a visual map showing how all your medications interact with each other.", tr: "Tüm ilaçlarınızın birbiriyle nasıl etkileştiğini gösteren görsel bir harita oluşturun." },
+  "intMap.generating": { en: "Generating map...", tr: "Harita oluşturuluyor..." },
+  "intMap.generateBtn": { en: "Generate Interaction Map", tr: "Etkileşim Haritası Oluştur" },
+  "intMap.safe": { en: "Safe", tr: "Güvenli" },
+  "intMap.caution": { en: "Caution", tr: "Dikkat" },
+  "intMap.dangerous": { en: "Dangerous", tr: "Tehlikeli" },
+  "intMap.allInteractions": { en: "All Interactions", tr: "Tüm Etkileşimler" },
+  "intMap.regenerate": { en: "Regenerate Map", tr: "Haritayı Yeniden Oluştur" },
+
+  // Health Goals
+  // ══════════════════════════════════════════
+  "nav.healthGoals": { en: "Health Coach", tr: "Sağlık Koçu" },
+  "goals.title": { en: "Health Goal Coach", tr: "Sağlık Hedefi Koçu" },
+  "goals.subtitle": { en: "Set a goal, get a personalized weekly action plan", tr: "Hedef belirleyin, kişisel haftalık aksiyon planı alın" },
+  "goals.popularGoals": { en: "Popular goals:", tr: "Popüler hedefler:" },
+  "goals.describeGoal": { en: "Describe your health goal", tr: "Sağlık hedefinizi açıklayın" },
+  "goals.placeholder": { en: "E.g., I want to lower my cholesterol without medication...", tr: "Örn: İlaç kullanmadan kolesterolümü düşürmek istiyorum..." },
+  "goals.timeframe": { en: "Timeframe", tr: "Süre" },
+  "goals.generating": { en: "Creating your plan...", tr: "Planınız oluşturuluyor..." },
+  "goals.generateBtn": { en: "Create My Plan", tr: "Planımı Oluştur" },
+  "goals.milestones": { en: "Milestones", tr: "Hedef Noktaları" },
+  "goals.week": { en: "Week", tr: "Hafta" },
+  "goals.nutrition": { en: "Nutrition", tr: "Beslenme" },
+  "goals.exercise": { en: "Exercise", tr: "Egzersiz" },
+  "goals.supplements": { en: "Supplements", tr: "Takviyeler" },
+  "goals.lifestyle": { en: "Lifestyle", tr: "Yaşam Tarzı" },
+  "goals.tracking": { en: "Track Daily", tr: "Günlük Takip" },
+  "goals.warnings": { en: "Warnings", tr: "Uyarılar" },
+  "goals.newGoal": { en: "Set a New Goal", tr: "Yeni Hedef Belirle" },
+
   // Radiology Analysis
   // ══════════════════════════════════════════
   "nav.radiology": { en: "Radiology", tr: "Radyoloji" },

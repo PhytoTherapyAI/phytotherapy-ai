@@ -27,6 +27,11 @@ import {
   Sparkles,
   Stethoscope,
   Scan,
+  HeartPulse,
+  Apple,
+  Beaker,
+  Network,
+  Target,
 } from "lucide-react"
 import Link from "next/link"
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog"
@@ -40,7 +45,12 @@ const TOOL_LINKS = [
   { href: "/side-effects", icon: AlertTriangle, labelKey: "sideeffect.title" },
   { href: "/wrapped", icon: Sparkles, labelKey: "wrapped.title" },
   { href: "/doctor", icon: Stethoscope, labelKey: "doctor.title" },
-  { href: "/radiology", icon: Scan, labelKey: "rad.title" },
+  { href: "/medical-analysis", icon: Scan, labelKey: "nav.medicalAnalysis" },
+  { href: "/symptom-checker", icon: HeartPulse, labelKey: "nav.symptomChecker" },
+  { href: "/food-interaction", icon: Apple, labelKey: "nav.foodInteraction" },
+  { href: "/supplement-compare", icon: Beaker, labelKey: "nav.supCompare" },
+  { href: "/interaction-map", icon: Network, labelKey: "nav.intMap" },
+  { href: "/health-goals", icon: Target, labelKey: "nav.healthGoals" },
 ]
 
 export default function DashboardPage() {

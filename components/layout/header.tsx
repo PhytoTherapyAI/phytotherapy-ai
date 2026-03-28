@@ -16,9 +16,10 @@ const allLinks = [
   { href: "/health-assistant", labelKey: "nav.assistant" },
   { href: "/calendar", labelKey: "nav.calendar" },
   { href: "/interaction-checker", labelKey: "nav.interaction" },
-  { href: "/blood-test", labelKey: "nav.bloodtest" },
-  { href: "/radiology", labelKey: "nav.radiology" },
-  { href: "/calorie", labelKey: "nav.calorie" },
+  { href: "/medical-analysis", labelKey: "nav.medicalAnalysis" },
+  { href: "/body-analysis", labelKey: "nav.bodyAnalysis" },
+  { href: "/symptom-checker", labelKey: "nav.symptomChecker" },
+  { href: "/food-interaction", labelKey: "nav.foodInteraction" },
 ];
 
 export function Header() {
