@@ -17,11 +17,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setMounted(true)
+    const manuallySet = localStorage.getItem('lang_manually_set') === 'true'
     const saved = localStorage.getItem('lang')
-    if (saved && validCodes.includes(saved)) {
+
+    if (manuallySet && saved && validCodes.includes(saved)) {
+      // User has explicitly chosen a language — respect their choice
       setLangState(saved as Lang)
     } else {
-      // Auto-detect browser language on first visit
+      // No manual selection — always detect from browser language
       try {
         const browserLang = navigator.language?.toLowerCase() || ''
         const detected = browserLang.startsWith('tr') ? 'tr' : 'en'
@@ -34,6 +37,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const setLang = (l: Lang) => {
     setLangState(l)
     localStorage.setItem('lang', l)
+    localStorage.setItem('lang_manually_set', 'true')
   }
 
   if (!mounted) return <>{children}</>

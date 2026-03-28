@@ -17,23 +17,11 @@ export default function AuthCallbackPage() {
 
     async function handleCallback() {
       try {
-        // Step 1: Check for PKCE code in URL (OAuth redirect)
-        const url = new URL(window.location.href);
-        const code = url.searchParams.get("code");
+        // detectSessionInUrl: true in supabase config handles code exchange automatically.
+        // We just wait for the session to be available — no manual exchangeCodeForSession.
 
-        if (code) {
-          // Exchange the PKCE code for a session
-          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-          if (exchangeError) {
-            console.error("[Auth Callback] Code exchange failed:", exchangeError);
-            setError(true);
-            return;
-          }
-        }
-
-        // Step 2: Wait for session to be available
         let attempts = 0;
-        const maxAttempts = 20;
+        const maxAttempts = 40;
 
         const checkSession = async () => {
           const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -71,11 +59,11 @@ export default function AuthCallbackPage() {
             setError(true);
             return;
           }
-          setTimeout(checkSession, 500);
+          setTimeout(checkSession, 250);
         };
 
-        // Small delay to let Supabase client process the tokens
-        setTimeout(checkSession, 300);
+        // Small delay to let Supabase client process the URL tokens
+        setTimeout(checkSession, 200);
       } catch (err) {
         console.error("[Auth Callback] Unexpected error:", err);
         setError(true);
