@@ -357,7 +357,18 @@ export default function ProfilePage() {
     }
   };
 
-  const [medConfirmed, setMedConfirmed] = useState(false);
+  const MED_CONFIRM_KEY = "phyto_med_profile_confirmed";
+  const isMedRecentlyConfirmed = (): boolean => {
+    if (typeof window === "undefined") return false;
+    try {
+      const stored = localStorage.getItem(MED_CONFIRM_KEY);
+      if (!stored) return false;
+      const confirmedAt = new Date(stored).getTime();
+      return Date.now() - confirmedAt < 24 * 60 * 60 * 1000; // 24 hours
+    } catch { return false; }
+  };
+  const [medConfirmed, setMedConfirmed] = useState(isMedRecentlyConfirmed);
+
   const confirmMedicationsCurrent = async () => {
     if (!profile) return;
     setConfirming(true);
@@ -367,10 +378,9 @@ export default function ProfilePage() {
         .from("user_profiles")
         .update({ last_medication_update: new Date().toISOString() })
         .eq("id", profile.id);
-      // Don't await refreshProfile — it can hang with timeout
       refreshProfile().catch(() => {});
+      localStorage.setItem(MED_CONFIRM_KEY, new Date().toISOString());
       setMedConfirmed(true);
-      setTimeout(() => setMedConfirmed(false), 3000);
     } catch (err) {
       console.error("Failed to confirm medications:", err);
     }
