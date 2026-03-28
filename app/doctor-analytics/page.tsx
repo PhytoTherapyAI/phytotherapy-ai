@@ -67,7 +67,7 @@ export default function DoctorAnalyticsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Card className="p-4">
-            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2"><PieChart className="w-4 h-4" /> {isTr ? "Hastalik Dagilimi" : "Condition Distribution"}</h3>
+            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2"><PieChart className="w-4 h-4" /> {isTr ? "Hastalık Dagilimi" : "Condition Distribution"}</h3>
             <div className="space-y-3">
               {conditions.map(c => (
                 <div key={c.name} className="flex items-center gap-3">
@@ -96,7 +96,7 @@ export default function DoctorAnalyticsPage() {
         </div>
 
         <Card className="p-4">
-          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {isTr ? "Uyarilar ve Bildirimler" : "Alerts & Notifications"}</h3>
+          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {isTr ? "Uyarılar ve Bildirimler" : "Alerts & Notifications"}</h3>
           <div className="space-y-2">
             {alerts.map((a, i) => (
               <div key={i} className={"flex items-center gap-3 p-3 rounded-lg " + (a.type === "critical" ? "bg-red-50 dark:bg-red-900/20" : a.type === "warning" ? "bg-yellow-50 dark:bg-yellow-900/20" : "bg-green-50 dark:bg-green-900/20")}>

@@ -35,7 +35,7 @@ const sections: Section[] = [
     id: "nausea",
     icon: <Frown className="w-5 h-5" />,
     titleEN: "Nausea & Vomiting Management",
-    titleTR: "Bulanti ve Kusma Yonetimi",
+    titleTR: "Bulanti ve Kusma Yönetimi",
     badgeEN: "Most Common",
     badgeTR: "En Yaygin",
     badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
@@ -77,7 +77,7 @@ const sections: Section[] = [
     id: "fatigue",
     icon: <Heart className="w-5 h-5" />,
     titleEN: "Fatigue & Energy Management",
-    titleTR: "Yorgunluk ve Enerji Yonetimi",
+    titleTR: "Yorgunluk ve Enerji Yönetimi",
     badgeEN: "80-100% affected",
     badgeTR: "%80-100 etkilenir",
     badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
@@ -105,13 +105,13 @@ const sections: Section[] = [
     items: [
       { en: "Protein is priority: aim for 1.0-1.5 g/kg/day (eggs, fish, chicken, legumes)", tr: "Protein onceliklidir: gunde 1.0-1.5 g/kg hedefleyin (yumurta, balik, tavuk, baklagiller)" },
       { en: "Calorie needs increase by 20-30% during active treatment", tr: "Aktif tedavi sirasinda kalori ihtiyaci %20-30 artar" },
-      { en: "If appetite is low: add olive oil, nut butter, avocado to meals for calorie density", tr: "Istah dusukse: kalori yogunlugu icin yemeklere zeytinyagi, findik ezmesi, avokado ekleyin" },
+      { en: "If appetite is low: add olive oil, nut butter, avocado to meals for calorie density", tr: "Istah düşükse: kalori yogunlugu icin yemeklere zeytinyagi, findik ezmesi, avokado ekleyin" },
       { en: "Stay hydrated: 8-10 cups/day, more if vomiting or diarrhea", tr: "Hidrasyon saglayin: gunde 8-10 bardak, kusma veya ishal varsa daha fazla" },
-      { en: "Avoid raw or undercooked foods when white blood cell count is low (neutropenia diet)", tr: "Beyaz kan hucresi sayisi dusukken cig veya az pismis yiyeceklerden kacinin (notropeni diyeti)", type: "warning" },
+      { en: "Avoid raw or undercooked foods when white blood cell count is low (neutropenia diet)", tr: "Beyaz kan hucresi sayisi düşükken cig veya az pismis yiyeceklerden kacinin (notropeni diyeti)", type: "warning" },
       { en: "Vitamin D status should be monitored — deficiency is very common in cancer patients", tr: "D vitamini durumu izlenmeli — kanser hastalarinda eksiklik cok yaygindir" },
       { en: "Small, calorie-dense snacks between meals: nuts, cheese, smoothies, yogurt", tr: "Ogunler arasi kucuk, kalori yogun atistirmaliklar: kuruyemis, peynir, smoothie, yogurt" },
       { en: "Consider oral nutritional supplements (ONS) if losing >5% body weight in 3 months", tr: "3 ayda >%5 kilo kaybediyorsaniz oral nutrisyonel supplementler (ONS) dusunun" },
-      { en: "Limit alcohol completely during treatment — it impairs healing and liver function", tr: "Tedavi sirasinda alkolden tamamen kacinin — iyilesmeyi ve karaciger islevi bozar", type: "warning" },
+      { en: "Limit alcohol completely during treatment — it impairs healing and liver function", tr: "Tedavi sirasinda alkolden tamamen kacinin — iyilesmeyi ve karaciger işlevi bozar", type: "warning" },
       { en: "A dietitian referral is recommended for all cancer patients during treatment", tr: "Tedavi sirasinda tum kanser hastalarina diyetisyen sevki onerilir" },
     ],
   },
@@ -119,20 +119,20 @@ const sections: Section[] = [
     id: "supplements",
     icon: <Shield className="w-5 h-5" />,
     titleEN: "Supplement Safety During Cancer Treatment",
-    titleTR: "Kanser Tedavisinde Takviye Guvenligi",
+    titleTR: "Kanser Tedavisinde Takviye Güvenligi",
     badgeEN: "DANGER ZONE",
     badgeTR: "TEHLIKE BOLGESI",
     badgeColor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
     items: [
       { en: "MOST supplements are NOT safe during chemotherapy — always ask your oncologist", tr: "COGU takviye kemoterapi sirasinda GUVENLI DEGILDIR — her zaman onkolojistinize sorun", type: "danger" },
-      { en: "High-dose antioxidants (vitamin C, E, beta-carotene) may REDUCE chemo effectiveness", tr: "Yuksek doz antioksidanlar (C vitamini, E, beta-karoten) kemoterapi etkinligini AZALTABILIR", type: "danger" },
+      { en: "High-dose antioxidants (vitamin C, E, beta-carotene) may REDUCE chemo effectiveness", tr: "Yüksek doz antioksidanlar (C vitamini, E, beta-karoten) kemoterapi etkinligini AZALTABILIR", type: "danger" },
       { en: "St. John's Wort interacts with MANY chemo drugs — strictly FORBIDDEN", tr: "Sari Kantaron BIRCOK kemoterapi ilacı ile etkilesir — kesinlikle YASAKTIR", type: "danger" },
-      { en: "Green tea extract in high doses can interfere with bortezomib (Velcade)", tr: "Yuksek dozda yesil cay ekstresi bortezomib (Velcade) ile etkilesebilir", type: "warning" },
+      { en: "Green tea extract in high doses can interfere with bortezomib (Velcade)", tr: "Yüksek dozda yesil cay ekstresi bortezomib (Velcade) ile etkilesebilir", type: "warning" },
       { en: "Turmeric/curcumin supplements may affect blood clotting and some drug metabolism", tr: "Zerdecal/kurkumin takviyeleri kan pitilasmasini ve bazi ilac metabolizmasini etkileyebilir", type: "warning" },
-      { en: "Fish oil at standard doses (1-2g/day) is generally considered safe — verify with team", tr: "Standart dozlarda balik yagi (1-2g/gun) genellikle guvenli kabul edilir — ekibinizle dogrulayin", type: "tip" },
+      { en: "Fish oil at standard doses (1-2g/day) is generally considered safe — verify with team", tr: "Standart dozlarda balik yagi (1-2g/gun) genellikle güvenli kabul edilir — ekibinizle dogrulayin", type: "tip" },
       { en: "Vitamin D supplementation is often recommended but dose should be prescribed", tr: "D vitamini takviyesi genellikle onerilir ancak dozu reçete edilmelidir" },
       { en: "Probiotics may help with treatment-related diarrhea but avoid if neutropenic", tr: "Probiyotikler tedaviye bagli ishale yardimci olabilir ancak notropenik ise kaçinin", type: "warning" },
-      { en: "Ginger for nausea is generally safe at culinary doses — concentrated supplements need approval", tr: "Bulanti icin zencefil mutfak dozlarinda genellikle guvenlidir — konsantre takviyeler onay gerektirir" },
+      { en: "Ginger for nausea is generally safe at culinary doses — concentrated supplements need approval", tr: "Bulanti icin zencefil mutfak dozlarinda genellikle güvenlidir — konsantre takviyeler onay gerektirir" },
       { en: "Keep a list of ALL supplements you take and bring it to every oncology appointment", tr: "Aldiginiz TUM takviyelerin listesini tutun ve her onkoloji randevusuna getirin" },
     ],
   },
@@ -203,12 +203,12 @@ export default function CancerSupportPage() {
           </div>
           <h1 className="text-3xl font-bold text-foreground">
             {lang === "tr"
-              ? "Kanser Tedavisi Yan Etki Yonetimi"
+              ? "Kanser Tedavisi Yan Etki Yönetimi"
               : "Cancer Treatment Side Effect Management"}
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
             {lang === "tr"
-              ? "Kemoterapi ve radyoterapi yan etkilerini yonetmek, beslenme, takviye guvenligi ve duygusal destek icin rehber."
+              ? "Kemoterapi ve radyoterapi yan etkilerini yonetmek, beslenme, takviye güvenligi ve duygusal destek icin rehber."
               : "Guide for managing chemotherapy and radiotherapy side effects, nutrition, supplement safety, and emotional support."}
           </p>
         </div>

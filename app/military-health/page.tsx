@@ -34,7 +34,7 @@ const PREP_CHECKLIST: Omit<ChecklistItem, "done">[] = [
   { id: "chronic_meds", label: { en: "3-month supply of chronic medications + doctor letter", tr: "Kronik ilaclarin 3 aylik tedariği + doktor raporu" } },
   { id: "allergy_doc", label: { en: "Document all allergies (medications, food, environmental)", tr: "Tum alerjileri belgeleyin (ilac, gida, cevresel)" } },
   { id: "mental_screen", label: { en: "Mental health screening — address anxiety/depression before service", tr: "Ruh sagligi taramasi — hizmet oncesi kaygi/depresyonu ele alin" } },
-  { id: "fitness_test", label: { en: "Baseline fitness assessment (VO2 max, strength benchmarks)", tr: "Temel fiziksel degerlendirme (VO2 max, kuvvet olcumleri)" } },
+  { id: "fitness_test", label: { en: "Baseline fitness assessment (VO2 max, strength benchmarks)", tr: "Temel fiziksel degerlendirme (VO2 max, kuvvet ölçümleri)" } },
   { id: "skin_check", label: { en: "Dermatology check — pre-existing skin conditions documented", tr: "Dermatoloji kontrolu — mevcut cilt rahatsizliklari belgeleyin" } },
 ];
 
@@ -51,7 +51,7 @@ const VACCINATIONS: VaccineInfo[] = [
   { name: { en: "Meningococcal (ACWY)", tr: "Meningokok (ACWY)" }, required: true, note: { en: "Required for communal living environments", tr: "Topluluk yasam ortamlari icin zorunlu" } },
   { name: { en: "Influenza (seasonal)", tr: "Influenza (mevsimsel)" }, required: true, note: { en: "Annual vaccination, especially important in barracks", tr: "Yıllık asilama, ozellikle kisla ortaminda onemli" } },
   { name: { en: "COVID-19 (updated booster)", tr: "COVID-19 (guncel rapel)" }, required: false, note: { en: "Recommended, especially for group settings", tr: "Özellikle grup ortamlari icin onerilen" } },
-  { name: { en: "Varicella (Chickenpox)", tr: "Varisella (Sucicegi)" }, required: false, note: { en: "If no history of disease or vaccination", tr: "Hastalik veya asilama gecmisi yoksa" } },
+  { name: { en: "Varicella (Chickenpox)", tr: "Varisella (Sucicegi)" }, required: false, note: { en: "If no history of disease or vaccination", tr: "Hastalık veya asilama geçmişi yoksa" } },
   { name: { en: "MMR (Measles-Mumps-Rubella)", tr: "KKK (Kizamik-Kabakulak-Kizamikçik)" }, required: false, note: { en: "2 doses if born after 1980 without immunity proof", tr: "1980 sonrasi dogumlu ve bagisiklik kaniti yoksa 2 doz" } },
 ];
 
@@ -66,7 +66,7 @@ const SECTIONS: Section[] = [
     icon: <Pill className="w-5 h-5 text-blue-500" />,
     title: { en: "Chronic Medication Supply Planning", tr: "Kronik İlaç Tedarik Planlamasi" },
     items: [
-      { en: "Get a military medical board letter documenting all chronic conditions and medications", tr: "Tum kronik hastaliklari ve ilaclari belgeleyen askeri saglik kurulu raporu alin" },
+      { en: "Get a military medical board letter documenting all chronic conditions and medications", tr: "Tum kronik hastalıklari ve ilaclari belgeleyen askeri saglik kurulu raporu alin" },
       { en: "Request 90-day supply from your doctor before service", tr: "Hizmetten once doktorunuzdan 90 gunluk tedarik isteyin" },
       { en: "Carry medications in original packaging with pharmacy labels", tr: "İlaçlari eczane etiketli orijinal ambalajinda tasiyin" },
       { en: "Insulin/temperature-sensitive meds: request cold chain transport arrangements", tr: "Insulin/sicakliga duyarli ilaclar: soguk zincir tasima duzenlemesi isteyin" },
@@ -80,10 +80,10 @@ const SECTIONS: Section[] = [
     items: [
       { en: "Start 8-12 weeks before service — progressive overload, avoid injury", tr: "Hizmetten 8-12 hafta once baslayin — kademeli artis, sakatlanktan kacinin" },
       { en: "Focus on: running endurance (5K-10K), push-ups, sit-ups, pull-ups", tr: "Odaklanin: kosu dayanikliligi (5K-10K), sinav, mekik, baris" },
-      { en: "Rucking: start with 10kg, increase 2kg/week — builds functional endurance", tr: "Agirlikli yuruyus: 10kg ile baslayin, haftalik 2kg artirin — fonksiyonel dayaniklilik gelistirir" },
+      { en: "Rucking: start with 10kg, increase 2kg/week — builds functional endurance", tr: "Ağırlıkli yuruyus: 10kg ile baslayin, haftalik 2kg artirin — fonksiyonel dayaniklilik gelistirir" },
       { en: "Foot care: break in boots 4+ weeks before, moisture-wicking socks, blister prevention", tr: "Ayak bakimi: botlari 4+ hafta once alistierin, nemi uzaklastiran coraplar, su toplamasini onleyin" },
       { en: "Nutrition: increase protein to 1.6g/kg, complex carbs, hydration 3L/day minimum", tr: "Beslenme: proteini 1.6g/kg'a cikarin, kompleks karbonhidratlar, min 3L/gun hidrasyon" },
-      { en: "Sleep: establish 22:00-06:00 cycle now — military schedule starts early", tr: "Uyku: simdi 22:00-06:00 dongusu kurun — askeri program erken baslar" },
+      { en: "Sleep: establish 22:00-06:00 cycle now — military schedule starts early", tr: "Uyku: simdi 22:00-06:00 döngüsü kurun — askeri program erken baslar" },
     ],
   },
   {

@@ -33,17 +33,17 @@ const RECALL_DATABASE: RecallEntry[] = [
   { id: "r8", drugName: "Atorvastatin 20mg", genericName: "atorvastatin", reason: { en: "Mislabeled dosage strength on bottle", tr: "Sisede yanlis dozaj gucu etiketi" }, date: "2026-01-18", severity: "moderate", action: { en: "Verify tablet markings match prescribed dose", tr: "Tablet isaretlerinin recelenen dozla eslesmesini dogrulayin" }, source: "FDA" },
   { id: "r9", drugName: "Amoxicillin 500mg", genericName: "amoxicillin", reason: { en: "Reduced potency detected before expiration date", tr: "Son kullanma tarihinden once azalmis potens tespit edildi" }, date: "2026-01-10", severity: "moderate", action: { en: "Get new prescription filled, report to pharmacist", tr: "Yeni recete yazdirin, eczaciya bildirin" }, source: "EMA" },
   { id: "r10", drugName: "Amlodipine 5mg", genericName: "amlodipine", reason: { en: "Foreign particle found in select batches", tr: "Belirli partilerde yabanci parcacik bulundu" }, date: "2026-01-05", severity: "moderate", action: { en: "Check lot number, return affected batch to pharmacy", tr: "Lot numarasini kontrol edin, etkilenen partiyi eczaneye iade edin" }, source: "FDA", lot: "AML-2025-1198" },
-  { id: "r11", drugName: "Levothyroxine 50mcg", genericName: "levothyroxine", reason: { en: "Sub-potent tablets detected in quality testing", tr: "Kalite testinde dusuk potensli tabletler tespit edildi" }, date: "2025-12-28", severity: "critical", action: { en: "Get thyroid levels checked, switch to verified batch", tr: "Tiroid degerlerini kontrol ettirin, dogrulanmis partiye gecin" }, source: "FDA" },
+  { id: "r11", drugName: "Levothyroxine 50mcg", genericName: "levothyroxine", reason: { en: "Sub-potent tablets detected in quality testing", tr: "Kalite testinde düşük potensli tabletler tespit edildi" }, date: "2025-12-28", severity: "critical", action: { en: "Get thyroid levels checked, switch to verified batch", tr: "Tiroid degerlerini kontrol ettirin, dogrulanmis partiye gecin" }, source: "FDA" },
   { id: "r12", drugName: "Pantoprazole 40mg", genericName: "pantoprazole", reason: { en: "Discoloration observed in tablets", tr: "Tabletlerde renk degisikligi gozlemlendi" }, date: "2025-12-15", severity: "low", action: { en: "Visual inspection - discolored tablets should not be taken", tr: "Gorsel kontrol - rengi degismis tabletler alinmamali" }, source: "TITCK" },
 ]
 
 const tx: Record<string, { en: string; tr: string }> = {
-  title: { en: "Drug Recall Alerts", tr: "İlaç Geri Cagirma Uyarilari" },
+  title: { en: "Drug Recall Alerts", tr: "İlaç Geri Cagirma Uyarılari" },
   subtitle: { en: "Stay informed about recalled medications", tr: "Geri cagirilan ilaclar hakkinda bilgi edinin" },
   affectsYou: { en: "AFFECTS YOUR MEDICATION", tr: "ILACINIZI ETKILIYOR" },
   critical: { en: "Critical", tr: "Kritik" },
   moderate: { en: "Moderate", tr: "Orta" },
-  low: { en: "Low", tr: "Dusuk" },
+  low: { en: "Low", tr: "Düşük" },
   action: { en: "Recommended Action", tr: "Onerilen Islem" },
   search: { en: "Search recalls...", tr: "Geri cagirma ara..." },
   yourMeds: { en: "Your Medications", tr: "İlaçlariniz" },

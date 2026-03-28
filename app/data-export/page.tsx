@@ -15,12 +15,12 @@ export default function DataExportPage() {
   const [exporting, setExporting] = useState(false);
   const [exported, setExported] = useState(false);
   const [categories, setCategories] = useState<DataCategory[]>([
-    { id: "profile", icon: <Heart className="w-5 h-5" />, en: "Health Profile", tr: "Sağlık Profili", descEn: "Personal info, conditions, allergies", descTr: "Kisisel bilgiler, hastaliklar, alerjiler", count: 1, size: "2 KB", selected: true },
+    { id: "profile", icon: <Heart className="w-5 h-5" />, en: "Health Profile", tr: "Sağlık Profili", descEn: "Personal info, conditions, allergies", descTr: "Kişisel bilgiler, hastalıklar, alerjiler", count: 1, size: "2 KB", selected: true },
     { id: "medications", icon: <Pill className="w-5 h-5" />, en: "Medications", tr: "İlaçlar", descEn: "Current and past medications", descTr: "Mevcut ve gecmis ilaclar", count: 8, size: "4 KB", selected: true },
-    { id: "chat", icon: <MessageSquare className="w-5 h-5" />, en: "Chat History", tr: "Sohbet Gecmisi", descEn: "All AI conversations", descTr: "Tum AI konusmalari", count: 47, size: "128 KB", selected: true },
-    { id: "blood", icon: <Activity className="w-5 h-5" />, en: "Blood Tests", tr: "Kan Tahlilleri", descEn: "Lab results and analyses", descTr: "Laboratuvar sonuclari", count: 3, size: "15 KB", selected: true },
+    { id: "chat", icon: <MessageSquare className="w-5 h-5" />, en: "Chat History", tr: "Sohbet Geçmişi", descEn: "All AI conversations", descTr: "Tum AI konusmalari", count: 47, size: "128 KB", selected: true },
+    { id: "blood", icon: <Activity className="w-5 h-5" />, en: "Blood Tests", tr: "Kan Tahlilleri", descEn: "Lab results and analyses", descTr: "Laboratuvar sonuçlari", count: 3, size: "15 KB", selected: true },
     { id: "calendar", icon: <Calendar className="w-5 h-5" />, en: "Calendar Data", tr: "Takvim Verileri", descEn: "Events, reminders, tracking", descTr: "Etkinlikler, hatirlaticilar", count: 28, size: "12 KB", selected: true },
-    { id: "supplements", icon: <FileText className="w-5 h-5" />, en: "Supplement Log", tr: "Takviye Kayitlari", descEn: "Supplement intake history", descTr: "Takviye kullanim gecmisi", count: 156, size: "22 KB", selected: true },
+    { id: "supplements", icon: <FileText className="w-5 h-5" />, en: "Supplement Log", tr: "Takviye Kayitlari", descEn: "Supplement intake history", descTr: "Takviye kullanim geçmişi", count: 156, size: "22 KB", selected: true },
     { id: "family", icon: <Users className="w-5 h-5" />, en: "Family Profiles", tr: "Aile Profilleri", descEn: "Family member health data", descTr: "Aile uyesi saglik verileri", count: 2, size: "6 KB", selected: true },
     { id: "scores", icon: <Activity className="w-5 h-5" />, en: "Health Scores", tr: "Sağlık Skorlari", descEn: "Daily scores, bio age", descTr: "Günlük skorlar, biyolojik yas", count: 90, size: "18 KB", selected: true },
     { id: "consent", icon: <Shield className="w-5 h-5" />, en: "Consent Records", tr: "Onay Kayitlari", descEn: "Legal agreements", descTr: "Yasal sozlesmeler", count: 1, size: "1 KB", selected: true },
@@ -37,7 +37,7 @@ export default function DataExportPage() {
         <div className="flex items-center gap-3 mb-6">
           <Download className="w-8 h-8 text-blue-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Verilerimi Indir" : "Export My Data"}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Verilerimi İndir" : "Export My Data"}</h1>
             <p className="text-sm text-gray-500">{isTr ? "KVKK kapsaminda veri tasima hakki" : "GDPR/KVKK right to data portability"}</p>
           </div>
         </div>
@@ -82,13 +82,13 @@ export default function DataExportPage() {
         {exported ? (
           <Card className="p-6 text-center border-green-200 bg-green-50 dark:bg-green-900/20">
             <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
-            <h3 className="font-bold text-lg mb-1">{isTr ? "Tamamlandi" : "Export Complete"}</h3>
+            <h3 className="font-bold text-lg mb-1">{isTr ? "Tamamlandı" : "Export Complete"}</h3>
             <p className="text-sm text-gray-500 mb-4">{isTr ? "Verileriniz indirildi." : "Your data has been downloaded."}</p>
-            <Button variant="outline" onClick={() => setExported(false)}>{isTr ? "Tekrar Indir" : "Download Again"}</Button>
+            <Button variant="outline" onClick={() => setExported(false)}>{isTr ? "Tekrar İndir" : "Download Again"}</Button>
           </Card>
         ) : (
           <Button className="w-full bg-blue-500 hover:bg-blue-600" disabled={selectedCount === 0 || exporting} onClick={handleExport}>
-            {exporting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {isTr ? "Hazirlaniyor..." : "Preparing..."}</> : <><Download className="w-4 h-4 mr-2" /> {isTr ? "JSON Olarak Indir" : "Download as JSON"}</>}
+            {exporting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {isTr ? "Hazirlaniyor..." : "Preparing..."}</> : <><Download className="w-4 h-4 mr-2" /> {isTr ? "JSON Olarak İndir" : "Download as JSON"}</>}
           </Button>
         )}
       </div>

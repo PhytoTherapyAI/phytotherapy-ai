@@ -38,7 +38,7 @@ interface RecoveryResult {
 }
 
 const SUBSTANCES_EN = ["Alcohol", "Tobacco", "Cannabis", "Opioids", "Stimulants", "Gambling", "Social Media", "Other"];
-const SUBSTANCES_TR = ["Alkol", "Tutun", "Esrar", "Opioidler", "Uyaricilar", "Kumar", "Sosyal Medya", "Diger"];
+const SUBSTANCES_TR = ["Alkol", "Tutun", "Esrar", "Opioidler", "Uyarıcilar", "Kumar", "Sosyal Medya", "Diger"];
 
 const TRIGGERS_EN = ["Stress", "Social pressure", "Boredom", "Loneliness", "Celebration", "Pain", "Sleep problems", "Conflict"];
 const TRIGGERS_TR = ["Stres", "Sosyal baski", "Sikinti", "Yalnizlik", "Kutlama", "Agri", "Uyku sorunu", "Catisma"];
@@ -222,7 +222,7 @@ export default function AddictionRecoveryPage() {
         {cravingLevel >= 8 && (
           <p className="mt-2 text-sm font-semibold text-red-600">
             {lang === "tr"
-              ? "Istek cok yuksek. Destekcinizi arayin veya bir toplantiya gidin."
+              ? "Istek cok yüksek. Destekcinizi arayin veya bir toplantiya gidin."
               : "Craving is very high. Call your sponsor or attend a meeting."}
           </p>
         )}

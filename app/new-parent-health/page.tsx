@@ -30,10 +30,10 @@ interface Section {
 const SECTIONS: Section[] = [
   {
     icon: <Moon className="w-5 h-5 text-blue-500" />,
-    title: { en: "Sleep Deprivation Management", tr: "Uyku Yoksunlugu Yonetimi" },
+    title: { en: "Sleep Deprivation Management", tr: "Uyku Yoksunlugu Yönetimi" },
     color: "blue",
     items: [
-      { en: "Sleep when baby sleeps — even 20-minute naps restore cognitive function", tr: "Bebek uyurken uyuyun — 20 dakikalik sekerlemeler bile bilissel islevi onarir" },
+      { en: "Sleep when baby sleeps — even 20-minute naps restore cognitive function", tr: "Bebek uyurken uyuyun — 20 dakikalik sekerlemeler bile bilissel işlevi onarir" },
       { en: "Split night shifts with partner: each person gets 1 uninterrupted 4-hour block", tr: "Gece nobetlerini es ile paylasin: her kisi 1 kesintisiz 4 saatlik blok uyusun" },
       { en: "Caffeine cutoff: no coffee after 2 PM if you want to sleep when baby sleeps at night", tr: "Kafein siniri: bebek gece uyurken uyumak istiyorsaniz saat 14:00'ten sonra kahve icmeyin" },
       { en: "Light exposure in morning (10 min bright light) helps reset disrupted circadian rhythm", tr: "Sabah isik maruziyeti (10 dk parlak isik) bozulmus sirkadyen ritmi sifirlar" },
@@ -62,7 +62,7 @@ const SECTIONS: Section[] = [
       { en: "Feeling detached from baby or resentful of parenting tasks — this is common, not a failure", tr: "Bebekten kopuk hissetmek veya ebeveynlik gorevlerine icerlemek — bu yaygindir, basarisizlik degil" },
       { en: "Physical exhaustion that doesn't improve with rest — could signal postpartum depression", tr: "Dinlenmekle duzelmeynen fiziksel bitkinlik — dogum sonrasi depresyon belirtisi olabilir" },
       { en: "Crying for no reason, persistent sadness > 2 weeks — talk to your OB/GYN", tr: "Sebepsiz aglama, 2 haftadan uzun sureli uzuntu — kadin dogum uzmaninizla konusun" },
-      { en: "Edinburgh Postnatal Depression Scale (EPDS): score > 12 = seek professional support", tr: "Edinburgh Dogum Sonrasi Depresyon Olcegi (EPDS): skor > 12 = profesyonel destek alin" },
+      { en: "Edinburgh Postnatal Depression Scale (EPDS): score > 12 = seek professional support", tr: "Edinburgh Dogum Sonrasi Depresyon Ölçeği (EPDS): skor > 12 = profesyonel destek alin" },
       { en: "Rage episodes, intrusive thoughts about harm — these require IMMEDIATE professional help", tr: "Ofke nöbetleri, zarar verme dusunceleri — bunlar ACIL profesyonel yardim gerektirir" },
       { en: "Paternal postnatal depression exists too — fathers should also self-screen", tr: "Babalarda dogum sonrasi depresyon da vardir — babalar da kendilerini tarsin" },
     ],
@@ -74,8 +74,8 @@ const SECTIONS: Section[] = [
     items: [
       { en: "Schedule 'check-in' conversations: 10 min/day about how each person is FEELING, not logistics", tr: "'Durum kontrolu' konusmalari planlayin: gunluk 10 dk her kisinin NASIL HISSETTIGINI konusun, lojistik degil" },
       { en: "Divide tasks explicitly — unspoken expectations breed resentment", tr: "Gorevleri acikca bolun — soylenmemis beklentiler kin yaratir" },
-      { en: "Physical intimacy timeline varies: 6 weeks minimum post-birth, but emotional readiness is personal", tr: "Fiziksel yakinlik sureci degisir: dogumdan sonra minimum 6 hafta, ama duygusal hazirlik kisiseldir" },
-      { en: "Individual time is not selfish: each parent needs 2-3 hours/week of personal time", tr: "Bireysel zaman bencillik degildir: her ebeveynin haftada 2-3 saat kisisel zamana ihtiyaci vardir" },
+      { en: "Physical intimacy timeline varies: 6 weeks minimum post-birth, but emotional readiness is personal", tr: "Fiziksel yakinlik sureci degisir: dogumdan sonra minimum 6 hafta, ama duygusal hazirlik kişiseldir" },
+      { en: "Individual time is not selfish: each parent needs 2-3 hours/week of personal time", tr: "Bireysel zaman bencillik degildir: her ebeveynin haftada 2-3 saat kişisel zamana ihtiyaci vardir" },
       { en: "Ask for help from family/friends — specific requests ('bring dinner Tuesday') work better than vague ones", tr: "Aile/arkadaslardan yardim isteyin — belirli istekler ('sali aksamyemegi getirin') belirsiz olanlardan daha iyi calisir" },
       { en: "If arguing increases significantly, couples counseling early prevents larger problems", tr: "Tartismalar onemli olcude artarsa, erken cift terapisi daha buyuk sorunlari onler" },
     ],
@@ -177,7 +177,7 @@ export default function NewParentHealthPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-amber-500" />
-            {lang === "tr" ? "Tukenmislik Oz Degerlendirmesi" : "Burnout Self-Assessment"}
+            {lang === "tr" ? "Tukenmislik Oz Değerlendirmesi" : "Burnout Self-Assessment"}
           </h2>
           <p className="text-sm text-muted-foreground">
             {lang === "tr"
@@ -213,7 +213,7 @@ export default function NewParentHealthPage() {
             onClick={() => setShowBurnoutResult(true)}
             className="w-full bg-amber-600 hover:bg-amber-700 text-white"
           >
-            {lang === "tr" ? "Degerlendirmeyi Gor" : "See Assessment"}
+            {lang === "tr" ? "Değerlendirmeyi Gor" : "See Assessment"}
           </Button>
           {showBurnoutResult && (
             <div
@@ -231,14 +231,14 @@ export default function NewParentHealthPage() {
               <p className="text-sm mt-1">
                 {burnoutScore >= 5
                   ? lang === "tr"
-                    ? "Yuksek tukenmislik belirtileri. Bir saglik uzmanina danismaniz onerilir."
+                    ? "Yüksek tukenmislik belirtileri. Bir saglik uzmanina danismaniz onerilir."
                     : "High burnout indicators. We recommend speaking to a healthcare provider."
                   : burnoutScore >= 3
                   ? lang === "tr"
                     ? "Orta duzeyde stres belirtileri. Kendinize zaman ayirmaya oncelik verin."
                     : "Moderate stress indicators. Prioritize self-care and personal time."
                   : lang === "tr"
-                  ? "Dusuk tukenmislik belirtileri. Kendinize bakmaya devam edin!"
+                  ? "Düşük tukenmislik belirtileri. Kendinize bakmaya devam edin!"
                   : "Low burnout indicators. Keep taking care of yourself!"}
               </p>
             </div>

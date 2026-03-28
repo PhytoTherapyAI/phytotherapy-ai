@@ -37,12 +37,12 @@ interface GeneticResult {
 
 const FAMILY_CONDITIONS = {
   en: ["Type 2 diabetes", "Heart disease", "Stroke", "Breast cancer", "Colon cancer", "Lung cancer", "Alzheimer's", "High blood pressure", "High cholesterol", "Osteoporosis", "Autoimmune disease", "Parkinson's", "Depression", "Kidney disease", "Thyroid disorder"],
-  tr: ["Tip 2 diyabet", "Kalp hastaligi", "Inme", "Meme kanseri", "Kolon kanseri", "Akciger kanseri", "Alzheimer", "Yuksek tansiyon", "Yuksek kolesterol", "Osteoporoz", "Otoimmun hastalik", "Parkinson", "Depresyon", "Bobrek hastaligi", "Tiroid bozuklugu"],
+  tr: ["Tip 2 diyabet", "Kalp hastaligi", "Inme", "Meme kanseri", "Kolon kanseri", "Akciger kanseri", "Alzheimer", "Yüksek tansiyon", "Yüksek kolesterol", "Osteoporoz", "Otoimmun hastalık", "Parkinson", "Depresyon", "Bobrek hastaligi", "Tiroid bozuklugu"],
 };
 
 const PERSONAL_FACTORS = {
   en: ["Smoker", "Overweight (BMI 25-30)", "Obese (BMI 30+)", "Sedentary lifestyle", "High stress", "Poor diet", "Excessive alcohol", "Sleep disorder", "Chronic inflammation", "Insulin resistance"],
-  tr: ["Sigara kullanici", "Fazla kilolu (BMI 25-30)", "Obez (BMI 30+)", "Hareketsiz yasam", "Yuksek stres", "Kotu beslenme", "Asiri alkol", "Uyku bozuklugu", "Kronik inflamasyon", "Insulin direnci"],
+  tr: ["Sigara kullanici", "Fazla kilolu (BMI 25-30)", "Obez (BMI 30+)", "Hareketsiz yasam", "Yüksek stres", "Kotu beslenme", "Asiri alkol", "Uyku bozuklugu", "Kronik inflamasyon", "Insulin direnci"],
 };
 
 export default function GeneticRiskPage() {
@@ -161,7 +161,7 @@ export default function GeneticRiskPage() {
 
           {/* Family History */}
           <div>
-            <label className="text-sm font-medium">{lang === "tr" ? "Ailede Gorulen Hastaliklar" : "Family Health History"}</label>
+            <label className="text-sm font-medium">{lang === "tr" ? "Ailede Gorulen Hastalıklar" : "Family Health History"}</label>
             <div className="flex flex-wrap gap-2 mt-2">
               {famConditions.map((cond, i) => (
                 <button key={i} onClick={() => toggleFamily(famConditionsEN[i])}
@@ -176,7 +176,7 @@ export default function GeneticRiskPage() {
 
           {/* Personal Factors */}
           <div>
-            <label className="text-sm font-medium">{lang === "tr" ? "Kisisel Faktorler" : "Personal Factors"}</label>
+            <label className="text-sm font-medium">{lang === "tr" ? "Kişisel Faktorler" : "Personal Factors"}</label>
             <div className="flex flex-wrap gap-2 mt-2">
               {persFactors.map((factor, i) => (
                 <button key={i} onClick={() => togglePersonal(persFactorsEN[i])}
@@ -218,7 +218,7 @@ export default function GeneticRiskPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Shield className="w-5 h-5 text-violet-500" />
-                  {lang === "tr" ? "Hastalik Risk Skorlari" : "Disease Risk Scores"}
+                  {lang === "tr" ? "Hastalık Risk Skorlari" : "Disease Risk Scores"}
                 </h2>
                 <p className="text-xs text-muted-foreground">
                   {lang === "tr" ? "1.0 = ortalama nufus riski. 2.0 = 2 kat ortalama risk." : "1.0 = average population risk. 2.0 = 2x average risk."}

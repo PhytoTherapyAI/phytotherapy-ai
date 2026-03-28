@@ -80,7 +80,7 @@ export default function DoctorPrescribePage() {
         </div>
 
         <Card className="p-4">
-          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-red-500" /> {isTr ? "Etkilesim Kontrolleri" : "Interaction Checks"}</h3>
+          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-red-500" /> {isTr ? "Etkileşim Kontrolleri" : "Interaction Checks"}</h3>
           <div className="space-y-2">
             {interactions.map((int, i) => (
               <div key={i} className={"p-3 rounded-lg " + (int.severity === "high" ? "bg-red-50 border border-red-200 dark:bg-red-900/20" : "bg-yellow-50 border border-yellow-200 dark:bg-yellow-900/20")}>

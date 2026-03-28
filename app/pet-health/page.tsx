@@ -41,14 +41,14 @@ const DISEASES: ZoonoticDisease[] = [
     transmission: { en: "Cat scratch or bite, flea bites", tr: "Kedi tirmigi veya isirmasi, pire isirmasi" },
     symptoms: { en: "Swollen lymph nodes, fever, fatigue near scratch site", tr: "Sisimmis lenf dugumleri, ates, tirmalama bolgesinde yorgunluk" },
     prevention: { en: "Avoid rough play. Trim cat nails. Treat flea infestations. Wash scratches immediately.", tr: "Sert oyundan kacininiz. Kedi tirnaklarini kesiniz. Pire istilalarini tedavi ediniz. Tirmiklari hemen yikayiniz." },
-    riskGroups: { en: "Immunosuppressed patients (can cause severe systemic disease)", tr: "Immunsuprese hastalar (ciddi sistemik hastalika neden olabilir)" },
+    riskGroups: { en: "Immunosuppressed patients (can cause severe systemic disease)", tr: "Immunsuprese hastalar (ciddi sistemik hastalıka neden olabilir)" },
     severity: "moderate",
   },
   {
     name: { en: "Leptospirosis", tr: "Leptospirozis" },
     source: { en: "Dogs, Rodents", tr: "Kopekler, Kemirgenler" },
     transmission: { en: "Contact with infected animal urine, contaminated water", tr: "Enfekte hayvan idrari, kontamine su ile temas" },
-    symptoms: { en: "High fever, headache, muscle pain, jaundice in severe cases", tr: "Yuksek ates, bas agrisi, kas agrisi, ciddi vakalarda sarillik" },
+    symptoms: { en: "High fever, headache, muscle pain, jaundice in severe cases", tr: "Yüksek ates, bas agrisi, kas agrisi, ciddi vakalarda sarillik" },
     prevention: { en: "Vaccinate dogs. Avoid stagnant water. Wear protective gear when cleaning.", tr: "Kopekleri asilayiniz. Durgun sudan kacininiz. Temizlerken koruyucu ekipman giyiniz." },
     riskGroups: { en: "Outdoor workers, farmers, flood-exposed populations", tr: "Dis mekan calisanlari, ciftciler, sel maruz nufuslar" },
     severity: "high",
@@ -138,7 +138,7 @@ export default function PetHealthPage() {
 
       {/* Zoonotic Diseases */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Zoonotik Hastaliklar" : "Zoonotic Diseases"}
+        {lang === "tr" ? "Zoonotik Hastalıklar" : "Zoonotic Diseases"}
       </h2>
       <div className="space-y-3 mb-10">
         {DISEASES.map((d, i) => (
@@ -150,7 +150,7 @@ export default function PetHealthPage() {
                   <div className="flex items-center gap-2">
                     <p className="font-semibold text-gray-900 dark:text-white text-sm">{d.name[lang]}</p>
                     <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${severityColor(d.severity)}`}>
-                      {d.severity === "high" ? (lang === "tr" ? "Yuksek" : "High") : d.severity === "moderate" ? (lang === "tr" ? "Orta" : "Moderate") : (lang === "tr" ? "Dusuk" : "Low")}
+                      {d.severity === "high" ? (lang === "tr" ? "Yüksek" : "High") : d.severity === "moderate" ? (lang === "tr" ? "Orta" : "Moderate") : (lang === "tr" ? "Düşük" : "Low")}
                     </span>
                   </div>
                   <p className="text-xs text-gray-400">{d.source[lang]}</p>

@@ -108,11 +108,11 @@ export default function SportsPerformancePage() {
 
   const handleAnalyze = async () => {
     if (!sportType) {
-      setError(lang === "tr" ? "Lutfen bir spor turu secin" : "Please select a sport type");
+      setError(lang === "tr" ? "Lütfen bir spor türü secin" : "Please select a sport type");
       return;
     }
     if (!goal) {
-      setError(lang === "tr" ? "Lutfen bir hedef secin" : "Please select a goal");
+      setError(lang === "tr" ? "Lütfen bir hedef secin" : "Please select a goal");
       return;
     }
 
@@ -358,7 +358,7 @@ export default function SportsPerformancePage() {
             <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
               <p className="mb-2 flex items-center gap-1 text-xs font-bold text-red-600 dark:text-red-400">
                 <AlertTriangle className="h-3.5 w-3.5" />
-                {lang === "tr" ? "İlaç Etkilesim Uyarilari" : "Medication Interaction Warnings"}
+                {lang === "tr" ? "İlaç Etkileşim Uyarılari" : "Medication Interaction Warnings"}
               </p>
               {result.interactionWarnings.map((w, i) => (
                 <p key={i} className="text-sm text-red-700 dark:text-red-400">- {w}</p>
@@ -396,7 +396,7 @@ export default function SportsPerformancePage() {
                             {s.evidenceGrade}
                           </span>
                           <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${safetyBadge(s.safety)}`}>
-                            {s.safety === "safe" ? (lang === "tr" ? "Guvenli" : "Safe") :
+                            {s.safety === "safe" ? (lang === "tr" ? "Güvenli" : "Safe") :
                              s.safety === "caution" ? (lang === "tr" ? "Dikkat" : "Caution") :
                              (lang === "tr" ? "Kacinilmali" : "Avoid")}
                           </span>

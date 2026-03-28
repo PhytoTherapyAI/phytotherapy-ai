@@ -29,7 +29,7 @@ const NOISE_LEVELS: NoiseLevel[] = [
   { db: 50, source: { en: "Moderate rainfall, quiet office", tr: "Orta yagmur, sessiz ofis" }, duration: { en: "Unlimited — no risk", tr: "Sinirsiz — risk yok" }, risk: "safe" },
   { db: 60, source: { en: "Normal conversation, air conditioner", tr: "Normal konusma, klima" }, duration: { en: "Unlimited — no risk", tr: "Sinirsiz — risk yok" }, risk: "safe" },
   { db: 70, source: { en: "Vacuum cleaner, busy restaurant", tr: "Elektrik supurgesi, kalabalik restoran" }, duration: { en: "Unlimited but may cause fatigue", tr: "Sinirsiz ama yorgunluga neden olabilir" }, risk: "safe" },
-  { db: 80, source: { en: "Heavy traffic, alarm clock, blender", tr: "Yogun trafik, alarm saati, blender" }, duration: { en: "Safe up to 8 hours/day", tr: "Gunde 8 saate kadar guvenli" }, risk: "caution" },
+  { db: 80, source: { en: "Heavy traffic, alarm clock, blender", tr: "Yogun trafik, alarm saati, blender" }, duration: { en: "Safe up to 8 hours/day", tr: "Gunde 8 saate kadar güvenli" }, risk: "caution" },
   { db: 85, source: { en: "Power tools, noisy restaurant", tr: "Elektrikli el aletleri, gurultulu restoran" }, duration: { en: "8 hours max — hearing damage starts", tr: "Max 8 saat — isitme hasari baslar" }, risk: "caution" },
   { db: 90, source: { en: "Lawn mower, motorcycle, shouting", tr: "Cim bicme makinesi, motosiklet, bagirma" }, duration: { en: "2.5 hours max", tr: "Max 2.5 saat" }, risk: "danger" },
   { db: 95, source: { en: "Subway train, electric drill", tr: "Metro treni, elektrikli matkap" }, duration: { en: "50 minutes max", tr: "Max 50 dakika" }, risk: "danger" },
@@ -53,7 +53,7 @@ const EARPLUG_GUIDE: EarplugType[] = [
     type: { en: "Foam earplugs", tr: "Kopuk kulak tıkaclari" },
     nrr: "25-33 dB",
     best: { en: "Sleeping, loud work environments, concerts", tr: "Uyku, gurultulu calisma ortamlari, konserler" },
-    pros: { en: "Cheapest, highest NRR, disposable", tr: "En ucuz, en yuksek NRR, tek kullanimlik" },
+    pros: { en: "Cheapest, highest NRR, disposable", tr: "En ucuz, en yüksek NRR, tek kullanimlik" },
     cons: { en: "Muffles all frequencies equally, uncomfortable long-term", tr: "Tum frekanslari esit olarak bastırır, uzun sureli rahatsiz" },
   },
   {
@@ -61,14 +61,14 @@ const EARPLUG_GUIDE: EarplugType[] = [
     nrr: "22-28 dB",
     best: { en: "Swimming, sleeping, general noise", tr: "Yuzme, uyku, genel gurultu" },
     pros: { en: "Reusable, waterproof, comfortable", tr: "Tekrar kullanilabilir, su gecirmez, rahat" },
-    cons: { en: "Lower NRR than foam", tr: "Kopuktan dusuk NRR" },
+    cons: { en: "Lower NRR than foam", tr: "Kopuktan düşük NRR" },
   },
   {
     type: { en: "Musician's earplugs (flat-response)", tr: "Muzisyen kulak tıkaclari (duz-yanit)" },
     nrr: "12-20 dB",
     best: { en: "Concerts, music practice, DJing", tr: "Konserler, muzik provasi, DJlik" },
     pros: { en: "Reduces volume evenly, preserves sound quality", tr: "Sesi esit olarak azaltir, ses kalitesini korur" },
-    cons: { en: "More expensive ($15-30), lower NRR", tr: "Daha pahali, dusuk NRR" },
+    cons: { en: "More expensive ($15-30), lower NRR", tr: "Daha pahali, düşük NRR" },
   },
   {
     type: { en: "Custom-molded earplugs", tr: "Özel kaliplanmis kulak tıkaclari" },
@@ -88,9 +88,9 @@ const TINNITUS_INFO = {
     "The 60/60 rule for earbuds: max 60% volume for max 60 minutes, then take a break.",
   ],
   tr: [
-    "Tinitus (kulaklarda cilinlama/vizildama) insanlarin %15-20'sini etkiler ve gurultu maruziyeti gecmisiyle guclu bir iliskisi vardir.",
+    "Tinitus (kulaklarda cilinlama/vizildama) insanlarin %15-20'sini etkiler ve gurultu maruziyeti geçmişiyle guclu bir iliskisi vardir.",
     "100+ dB'ye tek bir maruziyet bile kalici tinitusa yol acabilir. Hasar kumulatif ve geri donusuzdur.",
-    "Gurultulu etkinliklerden sonra cinlama yasiyorsaniz: tuy hucrelerin hasar gordugune dair bir uyari isaretiidr.",
+    "Gurultulu etkinliklerden sonra cinlama yasiyorsaniz: tuy hucrelerin hasar gordugune dair bir uyarı isaretiidr.",
     "Gurultunun neden oldugu tinitus icin tedavi yoktur — sadece yonetim stratejileri (beyaz gurultu, BDT, isitme cihazlari).",
     "Kulakliklar icin 60/60 kurali: max %60 ses, max 60 dakika, sonra mola verin.",
   ],
@@ -126,7 +126,7 @@ export default function NoiseExposurePage() {
 
   const getRiskLabel = (risk: string) => {
     switch (risk) {
-      case "safe": return { en: "Safe", tr: "Guvenli", cls: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" };
+      case "safe": return { en: "Safe", tr: "Güvenli", cls: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" };
       case "caution": return { en: "Caution", tr: "Dikkat", cls: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" };
       case "danger": return { en: "Danger", tr: "Tehlike", cls: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" };
       case "extreme": return { en: "Extreme", tr: "Asiri Tehlike", cls: "bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400" };

@@ -690,7 +690,7 @@ export default function WomensHealthPage() {
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                      {lang === "tr" ? "Duzenlilk" : "Regularity"}
+                      {lang === "tr" ? "Düzenlilk" : "Regularity"}
                     </p>
                     <p className={`font-bold text-sm ${
                       analysis.cycleRegularity === "regular"
@@ -700,7 +700,7 @@ export default function WomensHealthPage() {
                         : "text-gray-500"
                     }`}>
                       {analysis.cycleRegularity === "regular"
-                        ? lang === "tr" ? "Duzenli" : "Regular"
+                        ? lang === "tr" ? "Düzenli" : "Regular"
                         : analysis.cycleRegularity === "irregular"
                         ? lang === "tr" ? "Duzensiz" : "Irregular"
                         : lang === "tr" ? "Yetersiz veri" : "Insufficient data"}

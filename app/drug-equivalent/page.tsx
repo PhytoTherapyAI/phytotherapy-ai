@@ -60,7 +60,7 @@ const tx: Record<string, { en: string; tr: string }> = {
   totalSavings: { en: "Total Savings", tr: "Toplam Tasarruf" },
   yearly: { en: "Yearly Savings", tr: "Yıllık Tasarruf" },
   disclaimer: { en: "Always consult your doctor before switching medications. Generic equivalents contain the same active ingredient but may differ in inactive ingredients.", tr: "İlaç degistirmeden once mutlaka doktorunuza danisin. Jenerik esdegerler ayni etken maddeyi icerir ancak yardimci maddeler farklilik gosterebilir." },
-  noResults: { en: "No drugs found. Try a different search term.", tr: "İlaç bulunamadi. Farkli bir arama terimi deneyin." },
+  noResults: { en: "No drugs found. Try a different search term.", tr: "İlaç bulunamadı. Farkli bir arama terimi deneyin." },
   back: { en: "Back", tr: "Geri" },
   allDrugs: { en: "All Medications", tr: "Tum Ilaclar" },
   results: { en: "results", tr: "sonuc" },

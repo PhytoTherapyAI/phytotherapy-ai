@@ -10,7 +10,7 @@ const FEATURES = [
     titleEn: "All Documents in One Place",
     titleTr: "Tum Belgeler Tek Yerde",
     descEn: "Upload and organize lab results, prescriptions, discharge notes, and imaging reports",
-    descTr: "Tahlil sonuclari, receteler, epikriz ve goruntuleme raporlarini yukleyin ve duzenleyin",
+    descTr: "Tahlil sonuçlari, receteler, epikriz ve görüntüleme raporlarini yukleyin ve duzenleyin",
   },
   {
     icon: <Search className="w-6 h-6" />,
@@ -22,9 +22,9 @@ const FEATURES = [
   {
     icon: <QrCode className="w-6 h-6" />,
     titleEn: "QR Code Sharing",
-    titleTr: "QR Kod ile Paylasim",
+    titleTr: "QR Kod ile Paylaşım",
     descEn: "Share specific records with your doctor via secure QR code — no email needed",
-    descTr: "Belirli kayitlari guvenli QR kod ile doktorunuzla paylasin — e-posta gerekmez",
+    descTr: "Belirli kayitlari güvenli QR kod ile doktorunuzla paylasin — e-posta gerekmez",
   },
   {
     icon: <Shield className="w-6 h-6" />,
@@ -45,7 +45,7 @@ const FEATURES = [
     titleEn: "Timeline View",
     titleTr: "Zaman Cizelgesi Gorunumu",
     descEn: "See your complete medical history as a visual timeline",
-    descTr: "Tam tibbi gecmisinizi gorsel bir zaman cizelgesi olarak görün",
+    descTr: "Tam tibbi geçmişinizi gorsel bir zaman cizelgesi olarak görün",
   },
 ];
 
@@ -66,7 +66,7 @@ export default function MedicalRecordsPage() {
           </div>
           <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">
             {lang === "tr"
-              ? "Tum tibbi belgeleriniz tek bir yerde, guvenli ve duzenli. QR kodla doktorunuzla aninda paylasin."
+              ? "Tum tibbi belgeleriniz tek bir yerde, güvenli ve duzenli. QR kodla doktorunuzla aninda paylasin."
               : "All your medical documents in one place, secure and organized. Share instantly with your doctor via QR code."}
           </p>
         </div>

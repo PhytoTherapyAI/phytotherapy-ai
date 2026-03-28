@@ -41,7 +41,7 @@ const RELATIONS = {
 
 const CONDITIONS = {
   en: ["Breast cancer", "Colon cancer", "Lung cancer", "Prostate cancer", "Ovarian cancer", "Heart disease", "Stroke", "Type 2 diabetes", "Alzheimer's", "Parkinson's", "High blood pressure", "High cholesterol", "Autoimmune disease", "Thyroid disorder", "Kidney disease", "Depression", "Osteoporosis", "Melanoma"],
-  tr: ["Meme kanseri", "Kolon kanseri", "Akciger kanseri", "Prostat kanseri", "Over kanseri", "Kalp hastaligi", "Inme", "Tip 2 diyabet", "Alzheimer", "Parkinson", "Yuksek tansiyon", "Yuksek kolesterol", "Otoimmun hastalik", "Tiroid bozuklugu", "Bobrek hastaligi", "Depresyon", "Osteoporoz", "Melanom"],
+  tr: ["Meme kanseri", "Kolon kanseri", "Akciger kanseri", "Prostat kanseri", "Over kanseri", "Kalp hastaligi", "Inme", "Tip 2 diyabet", "Alzheimer", "Parkinson", "Yüksek tansiyon", "Yüksek kolesterol", "Otoimmun hastalık", "Tiroid bozuklugu", "Bobrek hastaligi", "Depresyon", "Osteoporoz", "Melanom"],
 };
 
 export default function FamilyHealthTreePage() {
@@ -207,7 +207,7 @@ export default function FamilyHealthTreePage() {
             {/* Overall Assessment */}
             <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-6">
               <h3 className="font-semibold text-emerald-700 dark:text-emerald-400 mb-2">
-                {lang === "tr" ? "Genel Degerlendirme" : "Overall Assessment"}
+                {lang === "tr" ? "Genel Değerlendirme" : "Overall Assessment"}
               </h3>
               <p className="text-sm">{result.overallRiskAssessment}</p>
             </div>

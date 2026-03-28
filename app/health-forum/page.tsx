@@ -10,7 +10,7 @@ const FEATURES = [
     titleEn: "Moderated Discussions",
     titleTr: "Moderatorlu Tartismalar",
     descEn: "All posts reviewed by health professionals for safety",
-    descTr: "Tum gonderiler saglik profesyonelleri tarafindan incelenir",
+    descTr: "Tum gönderiler saglik profesyonelleri tarafindan incelenir",
   },
   {
     icon: <Users className="w-6 h-6" />,
@@ -24,7 +24,7 @@ const FEATURES = [
     titleEn: "Evidence-Based Answers",
     titleTr: "Kanita Dayali Yanitlar",
     descEn: "AI-assisted fact-checking on health claims in posts",
-    descTr: "Gonderilerdeki saglik iddialarina AI destekli dogrulama",
+    descTr: "Gönderilerdeki saglik iddialarina AI destekli dogrulama",
   },
   {
     icon: <BookOpen className="w-6 h-6" />,
@@ -36,7 +36,7 @@ const FEATURES = [
   {
     icon: <Shield className="w-6 h-6" />,
     titleEn: "Anonymous Posting",
-    titleTr: "Anonim Paylasim",
+    titleTr: "Anonim Paylaşım",
     descEn: "Share sensitive health questions without revealing identity",
     descTr: "Kimliginizi aciklamadan hassas saglik sorulari paylasln",
   },

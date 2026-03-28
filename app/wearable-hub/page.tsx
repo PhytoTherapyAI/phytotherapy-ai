@@ -85,7 +85,7 @@ export default function WearableHubPage() {
         <ol className="space-y-2 text-sm text-violet-700 dark:text-violet-400">
           <li>1. {lang === "tr" ? "Cihazinizi baglayiniz (Apple Health / Google Fit)" : "Connect your device (Apple Health / Google Fit)"}</li>
           <li>2. {lang === "tr" ? "Veriler otomatik senkronize olur" : "Data syncs automatically"}</li>
-          <li>3. {lang === "tr" ? "AI anomalileri tespit eder ve uyarir" : "AI detects anomalies and alerts you"}</li>
+          <li>3. {lang === "tr" ? "AI anomalileri tespit eder ve uyarır" : "AI detects anomalies and alerts you"}</li>
           <li>4. {lang === "tr" ? "Sağlık skorunuz giyilebilir verilerle zenginlesir" : "Your health score enriched with wearable data"}</li>
         </ol>
       </div>

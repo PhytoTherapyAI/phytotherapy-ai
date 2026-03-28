@@ -262,7 +262,7 @@ export default function KidneyDashboardPage() {
             {analysis.whenToSeeDoctor?.length > 0 && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 space-y-3">
                 <h2 className="text-lg font-semibold text-red-700 dark:text-red-400 flex items-center gap-2">
-                  <ShieldAlert className="w-5 h-5" /> {lang === "tr" ? "Doktora Basvurun" : "See a Doctor If"}
+                  <ShieldAlert className="w-5 h-5" /> {lang === "tr" ? "Doktora Başvurun" : "See a Doctor If"}
                 </h2>
                 {analysis.whenToSeeDoctor.map((item, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm text-red-700 dark:text-red-400">

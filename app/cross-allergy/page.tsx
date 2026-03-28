@@ -95,7 +95,7 @@ const GROUPS: CrossAllergyGroup[] = [
       { item: { en: "Beef", tr: "Siğir eti" }, risk: "moderate" },
       { item: { en: "Mare's milk", tr: "Kisrak sutu" }, risk: "low" },
     ],
-    mechanism: { en: "Casein proteins are highly conserved across ruminant species", tr: "Kazein proteinleri gevisen turler arasinda yuksek oranda korunmustur" },
+    mechanism: { en: "Casein proteins are highly conserved across ruminant species", tr: "Kazein proteinleri gevisen turler arasinda yüksek oranda korunmustur" },
     prevalence: { en: "90%+ cross-reactivity between cow and goat/sheep milk", tr: "Inek ile keci/koyun sutu arasinda %90+ capraz reaktivite" },
   },
   {
@@ -111,7 +111,7 @@ const GROUPS: CrossAllergyGroup[] = [
       { item: { en: "Carbapenems", tr: "Karbapenemler" }, risk: "low" },
     ],
     mechanism: { en: "Beta-lactam ring structure shared across penicillin-class antibiotics", tr: "Penisilin sinifi antibiyotikler arasinda paylasilan beta-laktam halka yapisi" },
-    prevalence: { en: "1-2% true cross-reactivity with cephalosporins (lower than previously thought)", tr: "Sefalosporinlerle %1-2 gercek capraz reaktivite (daha once dusuunuldugunden dusuk)" },
+    prevalence: { en: "1-2% true cross-reactivity with cephalosporins (lower than previously thought)", tr: "Sefalosporinlerle %1-2 gercek capraz reaktivite (daha once dusuunuldugunden düşük)" },
   },
 ];
 
@@ -122,9 +122,9 @@ const riskBadge = (risk: "high" | "moderate" | "low") => {
 };
 
 const riskLabel = (risk: string, lang: string) => {
-  if (risk === "high") return lang === "tr" ? "Yuksek" : "High";
+  if (risk === "high") return lang === "tr" ? "Yüksek" : "High";
   if (risk === "moderate") return lang === "tr" ? "Orta" : "Moderate";
-  return lang === "tr" ? "Dusuk" : "Low";
+  return lang === "tr" ? "Düşük" : "Low";
 };
 
 export default function CrossAllergyPage() {

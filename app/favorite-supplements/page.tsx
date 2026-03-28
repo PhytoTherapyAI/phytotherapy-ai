@@ -172,7 +172,7 @@ export default function FavoriteSupplementsPage() {
           </Button>
           <span className="text-xs text-gray-400 dark:text-gray-500 self-center">
             {lang === "tr"
-              ? "Karsilastirmak icin 2 takviye secin"
+              ? "Karşılastirmak icin 2 takviye secin"
               : "Select 2 supplements to compare"}
           </span>
         </div>
@@ -227,7 +227,7 @@ export default function FavoriteSupplementsPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-1">
                     <Link href={`/interaction-checker?supplement=${encodeURIComponent(formatName(id))}`}>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg" title={lang === "tr" ? "Etkilesim Kontrol" : "Check Interactions"}>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg" title={lang === "tr" ? "Etkileşim Kontrol" : "Check Interactions"}>
                         <ShieldCheck className="w-4 h-4 text-blue-500" />
                       </Button>
                     </Link>
@@ -256,7 +256,7 @@ export default function FavoriteSupplementsPage() {
             <div className="flex items-center gap-2 mb-4">
               <Scale className="w-5 h-5 text-green-600" />
               <h2 className="font-semibold text-gray-900 dark:text-white">
-                {lang === "tr" ? "Karsilastirma" : "Quick Compare"}
+                {lang === "tr" ? "Karşılastirma" : "Quick Compare"}
               </h2>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -287,7 +287,7 @@ export default function FavoriteSupplementsPage() {
               <Link href={`/supplement-compare?s1=${encodeURIComponent(compareItems[0].name)}&s2=${encodeURIComponent(compareItems[1].name)}`}>
                 <Button size="sm" className="gap-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs">
                   <Scale className="w-3.5 h-3.5" />
-                  {lang === "tr" ? "Detayli AI Karsilastirma" : "Detailed AI Compare"}
+                  {lang === "tr" ? "Detayli AI Karşılastirma" : "Detailed AI Compare"}
                 </Button>
               </Link>
             </div>

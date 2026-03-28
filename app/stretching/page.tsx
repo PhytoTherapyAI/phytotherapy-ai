@@ -24,7 +24,7 @@ const PAIN_POINTS: PainPoint[] = [
     id: "neck", label: { en: "Neck", tr: "Boyun" },
     stretches: [
       { name: { en: "Neck Side Tilt", tr: "Boyun Yana Egilme" }, instructions: { en: "Tilt head to the right, hold. Repeat left. Keep shoulders down.", tr: "Basi saga yatirin, tutun. Sola tekrarlayin. Omuzlari asagida tutun." }, holdSeconds: 20, targetArea: "neck" },
-      { name: { en: "Chin Tuck", tr: "Cene Cekilmesi" }, instructions: { en: "Pull chin straight back creating a double chin. Hold.", tr: "Ceneyi duzce geriye cekin, cift cene olusturun. Tutun." }, holdSeconds: 10, targetArea: "neck" },
+      { name: { en: "Chin Tuck", tr: "Cene Cekilmesi" }, instructions: { en: "Pull chin straight back creating a double chin. Hold.", tr: "Ceneyi duzce geriye cekin, cift cene oluşturun. Tutun." }, holdSeconds: 10, targetArea: "neck" },
       { name: { en: "Neck Rotation", tr: "Boyun Dondurmesi" }, instructions: { en: "Slowly rotate head to look over right shoulder, then left.", tr: "Basi yavasca saga cevirin sag omzun uzerinden bakin, sonra sola." }, holdSeconds: 15, targetArea: "neck" },
     ],
   },

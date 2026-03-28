@@ -139,7 +139,7 @@ export default function ShiftWorkerPage() {
             size="lg"
           >
             {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Plan olusturuluyor..." : "Generating plan..."}</>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Plan oluşturuluyor..." : "Generating plan..."}</>
             ) : (
               <><Sparkles className="mr-2 h-5 w-5" />{tx("shift.generate", lang)}</>
             )}
@@ -168,7 +168,7 @@ export default function ShiftWorkerPage() {
                     <div className="font-medium">{result.circadianPlan.sleepWindow}</div>
                   </div>
                   <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Karanlik Donemi" : "Dark Period"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Karanlik Dönemi" : "Dark Period"}</div>
                     <div className="font-medium">{result.circadianPlan.darkPeriod}</div>
                   </div>
                   <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-3">
@@ -309,7 +309,7 @@ export default function ShiftWorkerPage() {
               <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 space-y-3">
                 <h2 className="text-lg font-semibold flex items-center gap-2 text-amber-700 dark:text-amber-400">
                   <AlertTriangle className="w-5 h-5" />
-                  {lang === "tr" ? "Tukenmislik Uyari Isaretleri" : "Burnout Warning Signs"}
+                  {lang === "tr" ? "Tukenmislik Uyarı Isaretleri" : "Burnout Warning Signs"}
                 </h2>
                 {result.warningSignsOfBurnout.map((sign, i) => (
                   <div key={i} className="flex items-start gap-2 text-sm">

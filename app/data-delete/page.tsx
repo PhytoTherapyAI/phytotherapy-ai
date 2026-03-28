@@ -17,8 +17,8 @@ export default function DataDeletePage() {
 
   const dataCategories = [
     { en: "Health profile & medications", tr: "Sağlık profili ve ilaclar", count: 12 },
-    { en: "Chat history & AI conversations", tr: "Sohbet gecmisi ve AI konusmalari", count: 47 },
-    { en: "Blood test results", tr: "Kan tahlili sonuclari", count: 3 },
+    { en: "Chat history & AI conversations", tr: "Sohbet geçmişi ve AI konusmalari", count: 47 },
+    { en: "Blood test results", tr: "Kan tahlili sonuçlari", count: 3 },
     { en: "Calendar events & reminders", tr: "Takvim etkinlikleri ve hatirlaticilar", count: 28 },
     { en: "Supplement tracking data", tr: "Takviye takip verileri", count: 15 },
     { en: "Family member profiles", tr: "Aile uyesi profilleri", count: 2 },
@@ -87,9 +87,9 @@ export default function DataDeletePage() {
               <div className="flex items-start gap-3">
                 <Lock className="w-5 h-5 text-blue-500 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-blue-700">{isTr ? "Alternatif: Veri Indirme" : "Alternative: Export Data"}</h3>
+                  <h3 className="font-semibold text-blue-700">{isTr ? "Alternatif: Veri İndirme" : "Alternative: Export Data"}</h3>
                   <p className="text-sm text-blue-600 mt-1">{isTr ? "Silmeden once verilerinizi indirebilirsiniz." : "You can download your data before deleting."}</p>
-                  <Button variant="outline" size="sm" className="mt-2">{isTr ? "Verilerimi Indir" : "Export My Data"}</Button>
+                  <Button variant="outline" size="sm" className="mt-2">{isTr ? "Verilerimi İndir" : "Export My Data"}</Button>
                 </div>
               </div>
             </Card>

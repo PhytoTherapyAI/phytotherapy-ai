@@ -132,7 +132,7 @@ export default function DonationPage() {
 
       {/* Donation History */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
-        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{lang === "tr" ? "Bagis Gecmisi" : "Donation History"}</h3>
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{lang === "tr" ? "Bagis Geçmişi" : "Donation History"}</h3>
         <div className="flex gap-2 mb-3">
           <select value={newType} onChange={(e) => setNewType(e.target.value as "blood" | "platelet" | "plasma")} className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm">
             <option value="blood">{lang === "tr" ? "Kan" : "Blood"}</option>

@@ -159,7 +159,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
     lifestyle: [
       { en: "Monitor daily pollen counts and plan outdoor activities accordingly", tr: "Günlük polen sayimlarini izleyin ve dis mekan aktivitelerini buna gore planlayin" },
       { en: "Shower and change clothes after being outdoors", tr: "Dis mekandan dondukten sonra dus alin ve elbise degistirin" },
-      { en: "Use HEPA air purifiers indoors during high pollen days", tr: "Yuksek polenli gunlerde ic mekanda HEPA hava temizleyici kullanin" },
+      { en: "Use HEPA air purifiers indoors during high pollen days", tr: "Yüksek polenli gunlerde ic mekanda HEPA hava temizleyici kullanin" },
       { en: "Start spring exercise routine gradually", tr: "Bahar egzersiz rutinine yavascak baslayin" },
       { en: "Clean and air out winter bedding", tr: "Kis yatak takimlarini temizleyin ve havalandirin" },
     ],
@@ -184,7 +184,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "During heat/exercise",
         grade: "A",
         descriptionEN: "Essential for preventing dehydration and heat-related illness during summer activities.",
-        descriptionTR: "Yaz aktiviteleri sirasinda dehidratasyon ve isiyla ilgili hastaliklari onlemek icin gereklidir.",
+        descriptionTR: "Yaz aktiviteleri sirasinda dehidratasyon ve isiyla ilgili hastalıklari onlemek icin gereklidir.",
       },
       {
         nameEN: "Vitamin C",
@@ -270,7 +270,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "Ongoing",
         grade: "B",
         descriptionEN: "Strengthens gut-immune axis before winter illness season.",
-        descriptionTR: "Kis hastalik mevsiminden once bagirsak-bagisiklik ekseni güçlendirir.",
+        descriptionTR: "Kis hastalık mevsiminden once bagirsak-bagisiklik ekseni güçlendirir.",
       },
     ],
     lifestyle: [

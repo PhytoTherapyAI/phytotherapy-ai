@@ -240,9 +240,9 @@ export default function TimeCapsulePage() {
 
           <div className="text-center space-y-2">
             <Unlock className="w-10 h-10 mx-auto text-emerald-500" />
-            <h1 className="text-2xl font-bold">{lang === "tr" ? "Zaman Kapsulun Acildi!" : "Your Time Capsule is Open!"}</h1>
+            <h1 className="text-2xl font-bold">{lang === "tr" ? "Zaman Kapsulun Açıldı!" : "Your Time Capsule is Open!"}</h1>
             <p className="text-sm text-muted-foreground">
-              {lang === "tr" ? "Olusturulma" : "Created"}: {formatDate(selected.createdAt, lang)}
+              {lang === "tr" ? "Oluşturulma" : "Created"}: {formatDate(selected.createdAt, lang)}
             </p>
           </div>
 
@@ -502,7 +502,7 @@ export default function TimeCapsulePage() {
           </h1>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
             {lang === "tr"
-              ? "Gelecege bir mektup yaz, saglik hedeflerini kaydet. Zaman geldiginde gercek verilerle karsilastir."
+              ? "Gelecege bir mektup yaz, saglik hedeflerini kaydet. Zaman geldiginde gercek verilerle karşılastir."
               : "Write a letter to your future self, save your health goals. Compare with real data when the time comes."}
           </p>
         </div>
@@ -513,14 +513,14 @@ export default function TimeCapsulePage() {
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
-          {lang === "tr" ? "Yeni Kapsul Olustur" : "Create New Capsule"}
+          {lang === "tr" ? "Yeni Kapsul Oluştur" : "Create New Capsule"}
         </Button>
 
         {/* Ready to open */}
         {ready.length > 0 && (
           <div className="space-y-3">
             <h2 className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
-              {lang === "tr" ? "Acilmaya Hazir!" : "Ready to Open!"}
+              {lang === "tr" ? "Açılmaya Hazır!" : "Ready to Open!"}
             </h2>
             {ready.map((c) => (
               <button
@@ -584,7 +584,7 @@ export default function TimeCapsulePage() {
         {opened.length > 0 && (
           <div className="space-y-3">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              {lang === "tr" ? "Acilmis Kapsuller" : "Opened Capsules"}
+              {lang === "tr" ? "Açılmış Kapsüller" : "Opened Capsules"}
             </h2>
             {opened.map((c) => (
               <button
@@ -601,7 +601,7 @@ export default function TimeCapsulePage() {
                     <span className="font-medium">{formatDate(c.createdAt, lang)}</span>
                   </div>
                   <span className="text-xs text-emerald-600 dark:text-emerald-400">
-                    {lang === "tr" ? "Acildi" : "Opened"}
+                    {lang === "tr" ? "Açıldı" : "Opened"}
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground truncate">{c.message}</p>

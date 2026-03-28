@@ -14,17 +14,17 @@ export default function NotificationPreferencesPage() {
   const isTr = lang === "tr";
   const [settings, setSettings] = useState<NotifSetting[]>([
     { id: "med_reminder", en: "Medication Reminders", tr: "İlaç Hatirlatmalari", descEn: "Daily medication intake alerts", descTr: "Günlük ilac alma uyarıları", icon: <Pill className="w-5 h-5" />, enabled: true, category: "health" },
-    { id: "supplement", en: "Supplement Reminders", tr: "Takviye Hatirlatmalari", descEn: "Supplement cycle and dosage alerts", descTr: "Takviye dongusu ve doz uyarıları", icon: <Droplets className="w-5 h-5" />, enabled: true, category: "health" },
-    { id: "washout", en: "Washout Alerts", tr: "Washout Uyarilari", descEn: "Supplement washout period notifications", descTr: "Takviye ara donem bildirimleri", icon: <Clock className="w-5 h-5" />, enabled: true, category: "health" },
+    { id: "supplement", en: "Supplement Reminders", tr: "Takviye Hatirlatmalari", descEn: "Supplement cycle and dosage alerts", descTr: "Takviye döngüsü ve doz uyarıları", icon: <Droplets className="w-5 h-5" />, enabled: true, category: "health" },
+    { id: "washout", en: "Washout Alerts", tr: "Washout Uyarılari", descEn: "Supplement washout period notifications", descTr: "Takviye ara donem bildirimleri", icon: <Clock className="w-5 h-5" />, enabled: true, category: "health" },
     { id: "blood_test", en: "Blood Test Reminders", tr: "Kan Tahlili Hatirlatmalari", descEn: "Periodic blood test notifications", descTr: "Periyodik kan tahlili bildirimleri", icon: <Calendar className="w-5 h-5" />, enabled: true, category: "health" },
     { id: "water", en: "Water Intake", tr: "Su Icme Hatirlatmasi", descEn: "Hourly hydration reminders", descTr: "Saatlik su icme hatirlatmalari", icon: <Droplets className="w-5 h-5" />, enabled: false, category: "health" },
     { id: "appointment", en: "Appointment Reminders", tr: "Randevu Hatirlatmalari", descEn: "Doctor appointment notifications", descTr: "Doktor randevu bildirimleri", icon: <Calendar className="w-5 h-5" />, enabled: true, category: "calendar" },
-    { id: "family", en: "Family Alerts", tr: "Aile Uyarilari", descEn: "Family member health notifications", descTr: "Aile uyesi saglik bildirimleri", icon: <Users className="w-5 h-5" />, enabled: true, category: "social" },
+    { id: "family", en: "Family Alerts", tr: "Aile Uyarılari", descEn: "Family member health notifications", descTr: "Aile uyesi saglik bildirimleri", icon: <Users className="w-5 h-5" />, enabled: true, category: "social" },
     { id: "challenge", en: "Challenge Updates", tr: "Meydan Okuma Guncelemeleri", descEn: "Boss fight and challenge progress", descTr: "Boss fight ve meydan okuma ilerlemesi", icon: <Trophy className="w-5 h-5" />, enabled: false, category: "social" },
-    { id: "newsletter", en: "Health Newsletter", tr: "Sağlık Bulteni", descEn: "Weekly health tips and research", descTr: "Haftalık saglik ipuclari ve arastirmalar", icon: <Mail className="w-5 h-5" />, enabled: false, category: "marketing" },
+    { id: "newsletter", en: "Health Newsletter", tr: "Sağlık Bulteni", descEn: "Weekly health tips and research", descTr: "Haftalık saglik ipuclari ve araştırmalar", icon: <Mail className="w-5 h-5" />, enabled: false, category: "marketing" },
     { id: "goals", en: "Goal Progress", tr: "Hedef İlerlemesi", descEn: "Weekly goal progress summary", descTr: "Haftalık hedef ilerleme ozeti", icon: <Target className="w-5 h-5" />, enabled: true, category: "health" },
     { id: "morning", en: "Morning Summary", tr: "Sabah Özeti", descEn: "Daily health summary card", descTr: "Günlük saglik ozet karti", icon: <Bell className="w-5 h-5" />, enabled: true, category: "health" },
-    { id: "interaction", en: "Interaction Alerts", tr: "Etkilesim Uyarilari", descEn: "New drug-supplement interaction warnings", descTr: "Yeni ilac-takviye etkilesim uyarıları", icon: <AlertTriangle className="w-5 h-5" />, enabled: true, category: "health" },
+    { id: "interaction", en: "Interaction Alerts", tr: "Etkileşim Uyarılari", descEn: "New drug-supplement interaction warnings", descTr: "Yeni ilac-takviye etkilesim uyarıları", icon: <AlertTriangle className="w-5 h-5" />, enabled: true, category: "health" },
   ]);
 
   const toggle = (id: string) => setSettings(prev => prev.map(s => s.id === id ? { ...s, enabled: !s.enabled } : s));

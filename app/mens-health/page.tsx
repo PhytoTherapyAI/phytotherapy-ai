@@ -56,7 +56,7 @@ const ADAM_TR = [
 ];
 
 const SYMPTOMS_EN = ["Fatigue", "Low libido", "Mood changes", "Muscle loss", "Weight gain", "Sleep problems", "Hair loss", "Concentration issues"];
-const SYMPTOMS_TR = ["Yorgunluk", "Dusuk cinsel istek", "Ruh hali degisikligi", "Kas kaybi", "Kilo artisi", "Uyku sorunlari", "Sac dokulmesi", "Odaklanma sorunu"];
+const SYMPTOMS_TR = ["Yorgunluk", "Düşük cinsel istek", "Ruh hali degisikligi", "Kas kaybi", "Kilo artisi", "Uyku sorunlari", "Sac dokulmesi", "Odaklanma sorunu"];
 
 export default function MensHealthPage() {
   const { isAuthenticated, session } = useAuth();
@@ -206,7 +206,7 @@ export default function MensHealthPage() {
               <p className="text-sm text-muted-foreground">{tx("mens.adam", lang)}</p>
               <p className="text-4xl font-bold">{result.adamScore}<span className="text-lg text-muted-foreground">/10</span></p>
               <span className={`mt-2 inline-block rounded-full px-3 py-1 text-xs font-semibold ${result.adamPositive ? "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300" : "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"}`}>
-                {result.adamPositive ? (lang === "tr" ? "Pozitif — Degerlendirme Onerilir" : "Positive — Evaluation Recommended") : (lang === "tr" ? "Negatif" : "Negative")}
+                {result.adamPositive ? (lang === "tr" ? "Pozitif — Değerlendirme Onerilir" : "Positive — Evaluation Recommended") : (lang === "tr" ? "Negatif" : "Negative")}
               </span>
             </div>
           )}
@@ -215,7 +215,7 @@ export default function MensHealthPage() {
           {result.testosteroneSymptomAssessment && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-2 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {lang === "tr" ? "Degerlendirme" : "Assessment"}
+                {lang === "tr" ? "Değerlendirme" : "Assessment"}
               </h3>
               <p className="text-sm text-muted-foreground">{result.testosteroneSymptomAssessment}</p>
             </div>

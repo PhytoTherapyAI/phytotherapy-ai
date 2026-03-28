@@ -231,7 +231,7 @@ export default function PregnancyTrackerPage() {
               </h3>
               <div className="mb-3 flex gap-4 text-sm">
                 <span>{lang === "tr" ? "Boy" : "Size"}: {result.fetalDevelopment.size}</span>
-                <span>{lang === "tr" ? "Agirlik" : "Weight"}: {result.fetalDevelopment.weight}</span>
+                <span>{lang === "tr" ? "Ağırlık" : "Weight"}: {result.fetalDevelopment.weight}</span>
               </div>
               <ul className="space-y-1">
                 {result.fetalDevelopment.developments.map((d, i) => (
@@ -264,7 +264,7 @@ export default function PregnancyTrackerPage() {
           {result.safeMeds && result.safeMeds.length > 0 && (
             <div className="rounded-xl border border-green-200 bg-green-50 p-6 dark:bg-green-950/20">
               <h3 className="mb-3 text-lg font-bold text-green-700 dark:text-green-300">
-                {tx("pregnancy.safeMeds", lang)} — {lang === "tr" ? "Guvenli" : "Safe"}
+                {tx("pregnancy.safeMeds", lang)} — {lang === "tr" ? "Güvenli" : "Safe"}
               </h3>
               {result.safeMeds.map((med, i) => (
                 <div key={i} className="mb-2 last:mb-0">
@@ -279,7 +279,7 @@ export default function PregnancyTrackerPage() {
           {result.safeSupplements?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-pink-700 dark:text-pink-300">
-                {lang === "tr" ? "Guvenli Takviyeler" : "Safe Supplements"}
+                {lang === "tr" ? "Güvenli Takviyeler" : "Safe Supplements"}
               </h3>
               <div className="space-y-3">
                 {result.safeSupplements.map((supp, i) => (

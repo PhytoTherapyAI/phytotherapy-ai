@@ -30,7 +30,7 @@ interface StressTip {
 const STRESS_TIPS: StressTip[] = [
   {
     icon: <Brain className="w-5 h-5 text-indigo-500" />,
-    title: { en: "Exam Stress Management", tr: "Sinav Stresi Yonetimi" },
+    title: { en: "Exam Stress Management", tr: "Sinav Stresi Yönetimi" },
     items: [
       { en: "Pomodoro technique: 25 min study, 5 min break — prevents burnout", tr: "Pomodoro teknigi: 25 dk calisma, 5 dk mola — tukenmisligi onler" },
       { en: "Avoid cramming — spaced repetition is 3x more effective for long-term memory", tr: "Son dakika calismaktan kacinin — aralikli tekrar uzun sureli hafiza icin 3 kat daha etkili" },
@@ -42,9 +42,9 @@ const STRESS_TIPS: StressTip[] = [
   },
   {
     icon: <Coffee className="w-5 h-5 text-amber-500" />,
-    title: { en: "Energy Drink & Caffeine Warnings", tr: "Enerji Icecegi ve Kafein Uyarilari" },
+    title: { en: "Energy Drink & Caffeine Warnings", tr: "Enerji Icecegi ve Kafein Uyarılari" },
     items: [
-      { en: "Safe caffeine limit: 400mg/day (about 4 cups coffee) — less for <18 yo", tr: "Guvenli kafein limiti: 400mg/gun (yaklasik 4 fincan kahve) — 18 yas alti daha az" },
+      { en: "Safe caffeine limit: 400mg/day (about 4 cups coffee) — less for <18 yo", tr: "Güvenli kafein limiti: 400mg/gun (yaklasik 4 fincan kahve) — 18 yas alti daha az" },
       { en: "Energy drinks can contain 200-300mg caffeine + taurine + guarana — additive effects", tr: "Enerji icecekleri 200-300mg kafein + taurin + guarana icerebilir — birlestirici etki" },
       { en: "Caffeine after 2 PM disrupts sleep architecture — even if you fall asleep", tr: "Saat 14:00'ten sonra kafein uyku mimarisini bozar — uyusaniz bile" },
       { en: "Mixing energy drinks with alcohol masks intoxication — extremely dangerous", tr: "Enerji iceceklerini alkol ile karistirmak sarhosu gizler — son derece tehlikeli" },
@@ -98,7 +98,7 @@ interface SubstanceInfo {
 
 const SUBSTANCE_RISKS: SubstanceInfo[] = [
   {
-    name: { en: "Prescription stimulants (Ritalin, Adderall) without prescription", tr: "Recetesiz uyarici ilaclar (Ritalin, Adderall)" },
+    name: { en: "Prescription stimulants (Ritalin, Adderall) without prescription", tr: "Recetesiz uyarıci ilaclar (Ritalin, Adderall)" },
     risk: "high",
     details: { en: "Illegal without prescription. Risk of cardiovascular events, addiction, psychosis. Does NOT improve learning — only wakefulness.", tr: "Recetesiz yasadisi. Kardiyovaskuler olay, bagimlilik, psikoz riski. Ogrenmeyi iyilestirmez — sadece uyaniklik." },
   },
@@ -115,12 +115,12 @@ const SUBSTANCE_RISKS: SubstanceInfo[] = [
   {
     name: { en: "Melatonin overuse", tr: "Asiri melatonin kullanimi" },
     risk: "low",
-    details: { en: "Safe short-term (0.5-3mg). Long-term use may suppress natural production. Not addictive but can create dependency habit.", tr: "Kisa sureli guvenli (0.5-3mg). Uzun sureli kullanim dogal uretimi baskilayabilir. Bagimlilik yapmaz ama aliskanlik olusturabilir." },
+    details: { en: "Safe short-term (0.5-3mg). Long-term use may suppress natural production. Not addictive but can create dependency habit.", tr: "Kisa sureli güvenli (0.5-3mg). Uzun sureli kullanim dogal uretimi baskilayabilir. Bagimlilik yapmaz ama aliskanlik oluşturabilir." },
   },
   {
     name: { en: "Nootropics / 'smart drugs'", tr: "Nootropikler / 'akilli ilaclar'" },
     risk: "moderate",
-    details: { en: "Most lack evidence. Racetams, modafinil: unregulated, unknown long-term effects. Omega-3, creatine: evidence-based and safe.", tr: "Cogunun kaniti yok. Rasetamlar, modafinil: duzenlemesiz, bilinmeyen uzun vadeli etkiler. Omega-3, kreatin: kanita dayali ve guvenli." },
+    details: { en: "Most lack evidence. Racetams, modafinil: unregulated, unknown long-term effects. Omega-3, creatine: evidence-based and safe.", tr: "Cogunun kaniti yok. Rasetamlar, modafinil: duzenlemesiz, bilinmeyen uzun vadeli etkiler. Omega-3, kreatin: kanita dayali ve güvenli." },
   },
 ];
 
@@ -214,10 +214,10 @@ export default function StudentHealthPage() {
                     }`}
                   >
                     {substance.risk === "high"
-                      ? lang === "tr" ? "Yuksek Risk" : "High Risk"
+                      ? lang === "tr" ? "Yüksek Risk" : "High Risk"
                       : substance.risk === "moderate"
                       ? lang === "tr" ? "Orta Risk" : "Moderate Risk"
-                      : lang === "tr" ? "Dusuk Risk" : "Low Risk"}
+                      : lang === "tr" ? "Düşük Risk" : "Low Risk"}
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">{substance.details[lang]}</p>

@@ -244,7 +244,7 @@ export default function DepressionScreeningPage() {
           size="lg"
         >
           {isLoading ? (
-            <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Hesaplaniyor..." : "Calculating..."}</>
+            <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Hesaplanıyor..." : "Calculating..."}</>
           ) : (
             <><Shield className="mr-2 h-5 w-5" />{tx("depression.analyze", lang)}</>
           )}

@@ -14,10 +14,10 @@ interface SnoringResult {
 }
 
 const QUESTIONS = [
-  { en: "S - Do you Snore loudly (louder than talking or loud enough to be heard through closed doors)?", tr: "S - Yuksek sesle horluyor musunuz (konusmadan yuksek veya kapali kapilar ardisndan duyulabilir)?" },
+  { en: "S - Do you Snore loudly (louder than talking or loud enough to be heard through closed doors)?", tr: "S - Yüksek sesle horluyor musunuz (konusmadan yüksek veya kapali kapilar ardisndan duyulabilir)?" },
   { en: "T - Do you often feel Tired, fatigued, or sleepy during daytime?", tr: "T - Gun icerisinde sik sik yorgun, bitkin veya uykulu hissediyor musunuz?" },
   { en: "O - Has anyone Observed you stop breathing during your sleep?", tr: "O - Uykunuz sirasinda nefes durmanizi birisi Gozlemledi mi?" },
-  { en: "P - Do you have or are being treated for high blood Pressure?", tr: "P - Yuksek tansiyonunuz var mi veya tedavi goruyor musunuz?" },
+  { en: "P - Do you have or are being treated for high blood Pressure?", tr: "P - Yüksek tansiyonunuz var mi veya tedavi goruyor musunuz?" },
   { en: "B - Is your BMI more than 35 kg/m2?", tr: "B - Vucut kitle indeksiniz 35 kg/m2'den fazla mi?" },
   { en: "A - Is your Age over 50 years old?", tr: "A - Yasiniz 50'nin uzerinde mi?" },
   { en: "N - Is your Neck circumference greater than 40 cm (15.7 in)?", tr: "N - Boyun cevreniz 40 cm'den fazla mi?" },

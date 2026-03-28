@@ -24,7 +24,7 @@ const dietLabels: Record<string, { en: string; tr: string; icon: React.ElementTy
   dairyFree: { en: "Dairy-Free", tr: "Sutsuz", icon: Milk },
   veganFriendly: { en: "Vegan", tr: "Vegan", icon: Leaf },
   ketoFriendly: { en: "Keto", tr: "Keto", icon: Flame },
-  fodmapSafe: { en: "Low FODMAP", tr: "Dusuk FODMAP", icon: Apple },
+  fodmapSafe: { en: "Low FODMAP", tr: "Düşük FODMAP", icon: Apple },
 };
 
 export default function LabelReaderPage() {

@@ -16,10 +16,10 @@ export default function WhiteLabelPage() {
 
   const features = [
     { icon: <Palette className="w-6 h-6" />, en: "Custom Branding", tr: "Özel Markalama", descEn: "Your logo, colors, and domain", descTr: "Logo, renkler ve domain" },
-    { icon: <Shield className="w-6 h-6" />, en: "Enterprise Security", tr: "Kurumsal Guvenlik", descEn: "SOC 2, HIPAA, KVKK compliance", descTr: "SOC 2, HIPAA, KVKK uyumu" },
+    { icon: <Shield className="w-6 h-6" />, en: "Enterprise Security", tr: "Kurumsal Güvenlik", descEn: "SOC 2, HIPAA, KVKK compliance", descTr: "SOC 2, HIPAA, KVKK uyumu" },
     { icon: <Globe className="w-6 h-6" />, en: "Multi-language", tr: "Coklu Dil", descEn: "Support for 20+ languages", descTr: "20+ dil destegi" },
     { icon: <Code className="w-6 h-6" />, en: "API Access", tr: "API Erisimi", descEn: "Full REST API and webhooks", descTr: "REST API ve webhook destegi" },
-    { icon: <Users className="w-6 h-6" />, en: "User Management", tr: "Kullanici Yonetimi", descEn: "SSO, LDAP, role-based access", descTr: "SSO, LDAP, rol bazli erisim" },
+    { icon: <Users className="w-6 h-6" />, en: "User Management", tr: "Kullanıcı Yönetimi", descEn: "SSO, LDAP, role-based access", descTr: "SSO, LDAP, rol bazli erisim" },
     { icon: <Smartphone className="w-6 h-6" />, en: "Mobile Apps", tr: "Mobil Uygulamalar", descEn: "Branded iOS and Android apps", descTr: "Markali iOS ve Android uygulamalar" },
   ];
 
@@ -67,7 +67,7 @@ export default function WhiteLabelPage() {
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-4 text-center">{isTr ? "Demo Talep Formu" : "Request Demo"}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <input className="rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Adiniz" : "Your Name"} value={name} onChange={e => setName(e.target.value)} />
+            <input className="rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Adınız" : "Your Name"} value={name} onChange={e => setName(e.target.value)} />
             <input className="rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
             <input className="rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Sirket" : "Company"} value={company} onChange={e => setCompany(e.target.value)} />
           </div>

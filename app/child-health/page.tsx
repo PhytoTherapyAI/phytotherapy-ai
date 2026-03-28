@@ -139,7 +139,7 @@ export default function ChildHealthPage() {
           bg: "bg-red-100 border-red-300 dark:bg-red-950/40 dark:border-red-800",
           text: "text-red-800 dark:text-red-300",
           icon: <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />,
-          label: lang === "tr" ? "Acil - Hemen Doktora Basvurun" : "Urgent - Seek Immediate Medical Attention",
+          label: lang === "tr" ? "Acil - Hemen Doktora Başvurun" : "Urgent - Seek Immediate Medical Attention",
         };
       case "doctor":
         return {

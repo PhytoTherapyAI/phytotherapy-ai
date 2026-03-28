@@ -29,7 +29,7 @@ export default function HealthReportCardPage() {
     { en: "Sleep 7+ hours daily", tr: "Günlük 7+ saat uyku", status: "not_started" as const },
   ];
   const trendIcon = (t: string) => t === "up" ? <TrendingUp className="w-4 h-4" /> : t === "down" ? <TrendingDown className="w-4 h-4" /> : <Minus className="w-4 h-4" />;
-  const statusBadge = (s: string) => s === "completed" ? <Badge className="bg-green-100 text-green-700">{isTr ? "Tamamlandi" : "Completed"}</Badge> : s === "in_progress" ? <Badge className="bg-yellow-100 text-yellow-700">{isTr ? "Devam Ediyor" : "In Progress"}</Badge> : <Badge className="bg-gray-100 text-gray-500">{isTr ? "Baslamadi" : "Not Started"}</Badge>;
+  const statusBadge = (s: string) => s === "completed" ? <Badge className="bg-green-100 text-green-700">{isTr ? "Tamamlandı" : "Completed"}</Badge> : s === "in_progress" ? <Badge className="bg-yellow-100 text-yellow-700">{isTr ? "Devam Ediyor" : "In Progress"}</Badge> : <Badge className="bg-gray-100 text-gray-500">{isTr ? "Baslamadi" : "Not Started"}</Badge>;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-gray-900 dark:to-gray-950 p-4 md:p-8">
@@ -88,7 +88,7 @@ export default function HealthReportCardPage() {
           <div className="flex items-start gap-3">
             <Award className="w-6 h-6 text-emerald-600" />
             <div>
-              <h3 className="font-semibold">{isTr ? "Genel Degerlendirme" : "Overall Assessment"}</h3>
+              <h3 className="font-semibold">{isTr ? "Genel Değerlendirme" : "Overall Assessment"}</h3>
               <p className="text-sm text-gray-600 mt-1">{isTr ? "Sağlık gostergeleriniz genel olarak olumlu yonde ilerliyor. HbA1c ve kolesterol degerlerinizdeki dusus dikkat cekici. D vitamini hedefinize ulastiniz. Egzersiz aliskanligi ve uyku duzeni konusunda gelisme alani var." : "Your health indicators are trending positively overall. The decline in HbA1c and cholesterol is notable. You reached your Vitamin D target. There is room for improvement in exercise habits and sleep patterns."}</p>
             </div>
           </div>

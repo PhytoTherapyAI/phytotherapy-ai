@@ -82,7 +82,7 @@ const QUIZ: QuizQuestion[] = [
 function getAssessmentResult(score: number, lang: string): { label: string; color: string; advice: string } {
   if (score <= 3) {
     return {
-      label: lang === "tr" ? "Dusuk Risk" : "Low Risk",
+      label: lang === "tr" ? "Düşük Risk" : "Low Risk",
       color: "text-green-600 dark:text-green-400",
       advice: lang === "tr"
         ? "Ekran kullaniminiz saglikli gorunuyor. Iyi aliskanliklarinizi surdurun!"
@@ -99,7 +99,7 @@ function getAssessmentResult(score: number, lang: string): { label: string; colo
     };
   }
   return {
-    label: lang === "tr" ? "Yuksek Risk" : "High Risk",
+    label: lang === "tr" ? "Yüksek Risk" : "High Risk",
     color: "text-red-600 dark:text-red-400",
     advice: lang === "tr"
       ? "Ekran kullaniminiz goz sagliginizi olumsuz etkiliyor olabilir. Asagidaki ipuclarini uygulayın."

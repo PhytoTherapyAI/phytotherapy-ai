@@ -273,7 +273,7 @@ export default function EnterprisePage() {
         </h1>
         <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">
           {isTr
-            ? "Fitoterapi ve biyoteknoloji sektorunde yatirim odakli pazar verileri, trend analizi ve AI destekli icerikler."
+            ? "Fitoterapi ve biyoteknoloji sektorunde yatirim odakli pazar verileri, trend analizi ve AI destekli içerikler."
             : "Investment-focused market data, trend analysis and AI-powered insights for the phytotherapy & biotech sector."}
         </p>
       </div>
@@ -817,7 +817,7 @@ export default function EnterprisePage() {
                     color: "text-amber-500",
                   },
                   {
-                    label: isTr ? "Regulasyon Guncelleme" : "Regulatory Updates",
+                    label: isTr ? "Regulasyon Güncelleme" : "Regulatory Updates",
                     value: regulatory.length.toString(),
                     icon: Scale,
                     color: "text-violet-500",
@@ -836,7 +836,7 @@ export default function EnterprisePage() {
                 <div className="border-b px-5 py-3">
                   <h3 className="flex items-center gap-2 text-sm font-semibold">
                     <FileText className="h-4 w-4 text-primary" />
-                    {isTr ? "Son Patent Basvurulari" : "Recent Patent Filings"}
+                    {isTr ? "Son Patent Başvurulari" : "Recent Patent Filings"}
                   </h3>
                 </div>
                 <div className="divide-y">
@@ -871,7 +871,7 @@ export default function EnterprisePage() {
               <div>
                 <h3 className="mb-4 flex items-center gap-2 font-semibold">
                   <Shield className="h-5 w-5 text-primary" />
-                  {isTr ? "Regulasyon Guncellemeleri" : "Regulatory Updates"}
+                  {isTr ? "Regulasyon Güncellemeleri" : "Regulatory Updates"}
                 </h3>
                 <div className="grid gap-4 md:grid-cols-2">
                   {regulatory.map((r) => (
@@ -882,10 +882,10 @@ export default function EnterprisePage() {
                         </span>
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${impactColor(r.impactLevel)}`}>
                           {r.impactLevel === "high"
-                            ? (isTr ? "Yuksek Etki" : "High Impact")
+                            ? (isTr ? "Yüksek Etki" : "High Impact")
                             : r.impactLevel === "medium"
                             ? (isTr ? "Orta Etki" : "Medium Impact")
-                            : (isTr ? "Dusuk Etki" : "Low Impact")}
+                            : (isTr ? "Düşük Etki" : "Low Impact")}
                         </span>
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${statusBadge(r.status)}`}>
                           {r.status}
@@ -930,7 +930,7 @@ export default function EnterprisePage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
               >
                 <Zap className="h-4 w-4" />
-                {isTr ? "Analiz Olustur" : "Generate Analysis"}
+                {isTr ? "Analiz Oluştur" : "Generate Analysis"}
               </button>
             </div>
           )}
@@ -958,10 +958,10 @@ export default function EnterprisePage() {
                       <div className="mb-2 flex items-center gap-2">
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${confidenceColor(s.confidence)}`}>
                           {s.confidence === "high"
-                            ? (isTr ? "Yuksek Guven" : "High Confidence")
+                            ? (isTr ? "Yüksek Guven" : "High Confidence")
                             : s.confidence === "medium"
                             ? (isTr ? "Orta Guven" : "Medium Confidence")
-                            : (isTr ? "Dusuk Guven" : "Low Confidence")}
+                            : (isTr ? "Düşük Guven" : "Low Confidence")}
                         </span>
                         <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                           {s.botanical}
@@ -1030,7 +1030,7 @@ export default function EnterprisePage() {
               <div>
                 <h3 className="mb-4 flex items-center gap-2 font-semibold">
                   <AlertTriangle className="h-5 w-5 text-red-500" />
-                  {isTr ? "Risk Uyarilari" : "Risk Alerts"}
+                  {isTr ? "Risk Uyarılari" : "Risk Alerts"}
                 </h3>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {aiAnalysis.riskAlerts.map((r, i) => (

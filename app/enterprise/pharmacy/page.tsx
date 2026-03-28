@@ -42,13 +42,13 @@ export default function PharmacyPage() {
           <Building className="w-8 h-8 text-green-600" />
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Eczane Entegrasyonu" : "Pharmacy Integration"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Tezgah gorunumu, stok yonetimi, eczaci destek" : "Counter display, stock management, pharmacist support"}</p>
+            <p className="text-sm text-gray-500">{isTr ? "Tezgah gorunumu, stok yönetimi, eczaci destek" : "Counter display, stock management, pharmacist support"}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           <Card className="p-3 text-center"><Package className="w-5 h-5 text-green-500 mx-auto mb-1" /><div className="text-xl font-bold">{stock.length}</div><div className="text-xs text-gray-500">{isTr ? "Toplam Urun" : "Total Products"}</div></Card>
-          <Card className="p-3 text-center border-red-200"><AlertTriangle className="w-5 h-5 text-red-500 mx-auto mb-1" /><div className="text-xl font-bold text-red-600">{lowStock.length}</div><div className="text-xs text-gray-500">{isTr ? "Dusuk Stok" : "Low Stock"}</div></Card>
+          <Card className="p-3 text-center border-red-200"><AlertTriangle className="w-5 h-5 text-red-500 mx-auto mb-1" /><div className="text-xl font-bold text-red-600">{lowStock.length}</div><div className="text-xs text-gray-500">{isTr ? "Düşük Stok" : "Low Stock"}</div></Card>
           <Card className="p-3 text-center border-orange-200"><Clock className="w-5 h-5 text-orange-500 mx-auto mb-1" /><div className="text-xl font-bold text-orange-600">{nearExpiry.length}</div><div className="text-xs text-gray-500">{isTr ? "Yaklasan SKT" : "Near Expiry"}</div></Card>
           <Card className="p-3 text-center"><Users className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">48</div><div className="text-xs text-gray-500">{isTr ? "Günlük Musteri" : "Daily Customers"}</div></Card>
         </div>
@@ -109,9 +109,9 @@ export default function PharmacyPage() {
               <p className="text-sm text-gray-600 mt-1">{isTr ? "Hasta ilac profiline gore otomatik etkilesim kontrolu ve oneriler" : "Automatic interaction checks and suggestions based on patient medication profile"}</p>
             </Card>
             {[
-              { title: isTr ? "Etkilesim Uyarisi" : "Interaction Alert", desc: isTr ? "Metformin + Kontrast madde: 48 saat ara verin" : "Metformin + Contrast: Hold for 48 hours", type: "warning" },
+              { title: isTr ? "Etkileşim Uyarısi" : "Interaction Alert", desc: isTr ? "Metformin + Kontrast madde: 48 saat ara verin" : "Metformin + Contrast: Hold for 48 hours", type: "warning" },
               { title: isTr ? "Jenerik Alternatif" : "Generic Alternative", desc: isTr ? "Lipitor yerine Atorvastatin - %66 tasarruf" : "Atorvastatin instead of Lipitor - 66% savings", type: "info" },
-              { title: isTr ? "Doz Uyarisi" : "Dose Alert", desc: isTr ? "Bobrek yetmezliginde Metformin doz ayarlamasi gerekli" : "Metformin dose adjustment needed for renal impairment", type: "warning" },
+              { title: isTr ? "Doz Uyarısi" : "Dose Alert", desc: isTr ? "Bobrek yetmezliginde Metformin doz ayarlamasi gerekli" : "Metformin dose adjustment needed for renal impairment", type: "warning" },
             ].map((a, i) => (
               <Card key={i} className={"p-4 " + (a.type === "warning" ? "border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20" : "border-blue-200 bg-blue-50 dark:bg-blue-900/20")}>
                 <h4 className="font-semibold text-sm">{a.title}</h4>

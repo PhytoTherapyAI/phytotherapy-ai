@@ -187,7 +187,7 @@ export default function ChronicCarePage() {
           {userConditions.length > 0 && (
             <div className="mb-4">
               <p className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                {lang === "tr" ? "Profilinizdeki hastaliklar" : "From your profile"}
+                {lang === "tr" ? "Profilinizdeki hastalıklar" : "From your profile"}
               </p>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {userConditions.map((uc) => {
@@ -469,7 +469,7 @@ export default function ChronicCarePage() {
             }}
             className="w-full"
           >
-            {lang === "tr" ? "Baska bir hastalik analiz et" : "Analyze another condition"}
+            {lang === "tr" ? "Baska bir hastalık analiz et" : "Analyze another condition"}
           </Button>
         </div>
       )}

@@ -135,7 +135,7 @@ export default function CancerScreeningPage() {
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium">{lang === "tr" ? "Sigara Gecmisi" : "Smoking History"}</label>
+              <label className="text-sm font-medium">{lang === "tr" ? "Sigara Geçmişi" : "Smoking History"}</label>
               <select value={smokingHistory} onChange={(e) => setSmokingHistory(e.target.value)}
                 className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-teal-500">
                 <option value="never">{lang === "tr" ? "Hic" : "Never"}</option>
@@ -148,7 +148,7 @@ export default function CancerScreeningPage() {
 
           {/* Family History */}
           <div>
-            <label className="text-sm font-medium">{lang === "tr" ? "Ailede Kanser Gecmisi" : "Family Cancer History"}</label>
+            <label className="text-sm font-medium">{lang === "tr" ? "Ailede Kanser Geçmişi" : "Family Cancer History"}</label>
             <div className="flex flex-wrap gap-2 mt-2">
               {cancerOptions.map((cancer, i) => (
                 <button
@@ -168,7 +168,7 @@ export default function CancerScreeningPage() {
 
           <Button onClick={handleGenerate} disabled={isLoading} className="w-full bg-teal-600 hover:bg-teal-700 text-white" size="lg">
             {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Takvim olusturuluyor..." : "Generating schedule..."}</>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Takvim oluşturuluyor..." : "Generating schedule..."}</>
             ) : (
               <><Sparkles className="mr-2 h-5 w-5" />{tx("cancer.generate", lang)}</>
             )}
@@ -201,7 +201,7 @@ export default function CancerScreeningPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-teal-500" />
-                  {lang === "tr" ? "Kisisel Tarama Takvimi" : "Personalized Screening Schedule"}
+                  {lang === "tr" ? "Kişisel Tarama Takvimi" : "Personalized Screening Schedule"}
                 </h2>
                 <div className="grid gap-3">
                   {result.screeningSchedule.map((item, i) => (
@@ -233,7 +233,7 @@ export default function CancerScreeningPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Users className="w-5 h-5 text-purple-500" />
-                  {lang === "tr" ? "Aile Gecmisi Risk Analizi" : "Family History Risk Analysis"}
+                  {lang === "tr" ? "Aile Geçmişi Risk Analizi" : "Family History Risk Analysis"}
                 </h2>
                 <div className="grid gap-3">
                   {result.familyRiskAnalysis.map((item, i) => (

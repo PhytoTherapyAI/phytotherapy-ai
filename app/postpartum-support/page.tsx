@@ -337,7 +337,7 @@ export default function PostpartumSupportPage() {
 
       <Button onClick={handleAnalyze} disabled={isLoading} className="mb-6 w-full bg-purple-600 hover:bg-purple-700 text-white" size="lg">
         {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Degerlendiriliyor..." : "Assessing..."}</>
+          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Değerlendiriliyor..." : "Assessing..."}</>
         ) : (
           <><Shield className="mr-2 h-5 w-5" />{tx("postpartum.analyze", lang)}</>
         )}

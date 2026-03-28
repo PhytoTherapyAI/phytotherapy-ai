@@ -20,7 +20,7 @@ const MEDICATION_EFFECTS = [
   { meds: { en: "Diuretics (Furosemide, Hydrochlorothiazide)", tr: "Diuretikler (Furosemid, Hidroklorotiyazid)" }, effect: { en: "+500-1000ml extra needed", tr: "+500-1000ml ekstra gerekli" }, icon: "increase" },
   { meds: { en: "Lithium", tr: "Lityum" }, effect: { en: "Critical: dehydration increases toxicity risk", tr: "Kritik: dehidrasyon toksisite riskini artirir" }, icon: "danger" },
   { meds: { en: "Metformin", tr: "Metformin" }, effect: { en: "+250-500ml recommended", tr: "+250-500ml onerili" }, icon: "increase" },
-  { meds: { en: "ACE inhibitors", tr: "ACE inhibitorleri" }, effect: { en: "Monitor electrolytes with high intake", tr: "Yuksek alimda elektrolitleri izleyiniz" }, icon: "monitor" },
+  { meds: { en: "ACE inhibitors", tr: "ACE inhibitorleri" }, effect: { en: "Monitor electrolytes with high intake", tr: "Yüksek alimda elektrolitleri izleyiniz" }, icon: "monitor" },
   { meds: { en: "NSAIDs (Ibuprofen)", tr: "NSAID'ler (Ibuprofen)" }, effect: { en: "Adequate water protects kidneys", tr: "Yeterli su bobrekleri korur" }, icon: "increase" },
 ];
 
@@ -104,7 +104,7 @@ export default function HydrationPage() {
             <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-semibold text-red-800 dark:text-red-300 text-sm">
-                {lang === "tr" ? "Bobrek Hastasi Uyarisi" : "Kidney Disease Warning"}
+                {lang === "tr" ? "Bobrek Hastasi Uyarısi" : "Kidney Disease Warning"}
               </p>
               <p className="text-sm text-red-700 dark:text-red-400">
                 {lang === "tr"

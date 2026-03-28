@@ -39,9 +39,9 @@ const SECTIONS: GuideSection[] = [
     title: { en: "Medication Equivalent Finder", tr: "İlaç Esdeger Bulucu" },
     color: "text-purple-500",
     content: [
-      { title: { en: "Finding Your Medication", tr: "İlaçınizi Bulma" }, desc: { en: "Use our Drug Info tool to search for your medication's Turkish equivalent. Enter the generic/active ingredient name (not brand name) for best results.", tr: "İlaçınizin Turkiye'deki essdegerini bulmak icin İlaç Bilgi aracimizi kullaniniz. En iyi sonuclar icin etken madde adini girin (marka adi degil)." } },
+      { title: { en: "Finding Your Medication", tr: "İlaçınizi Bulma" }, desc: { en: "Use our Drug Info tool to search for your medication's Turkish equivalent. Enter the generic/active ingredient name (not brand name) for best results.", tr: "İlaçınizin Turkiye'deki essdegerini bulmak icin İlaç Bilgi aracimizi kullaniniz. En iyi sonuçlar icin etken madde adini girin (marka adi degil)." } },
       { title: { en: "Prescription Requirements", tr: "Recete Gereksinimleri" }, desc: { en: "Most medications require a prescription from a Turkish doctor. Some OTC medications may differ from your home country.", tr: "Cogu ilac Turk doktor recetesi gerektirir. Bazi recetesiz ilaclar anavataninizdakinden farkli olabilir." } },
-      { title: { en: "SGK Drug Coverage", tr: "SGK İlaç Karsilamasi" }, desc: { en: "Many medications are covered by SGK with minimal copay. Ask your pharmacy about SGK coverage.", tr: "Bircok ilac SGK tarafından minimal katki payiyla karsilanir. Eczanenize SGK kapsamini sorun." } },
+      { title: { en: "SGK Drug Coverage", tr: "SGK İlaç Karşılamasi" }, desc: { en: "Many medications are covered by SGK with minimal copay. Ask your pharmacy about SGK coverage.", tr: "Bircok ilac SGK tarafından minimal katki payiyla karşılanir. Eczanenize SGK kapsamini sorun." } },
     ],
   },
   {

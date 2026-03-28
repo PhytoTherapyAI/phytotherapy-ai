@@ -13,8 +13,8 @@ export default function PrivacyControlsPage() {
   const { lang } = useLang();
   const isTr = lang === "tr";
   const [settings, setSettings] = useState<PrivacySetting[]>([
-    { id: "research_optin", en: "Research Contribution", tr: "Arastirma Katilimi", descEn: "Allow anonymized data for medical research", descTr: "Anonimlestirilmis verilerinizin tibbi arastirmalarda kullanilmasina izin verin", enabled: false, category: "data" },
-    { id: "doctor_sharing", en: "Doctor Data Sharing", tr: "Doktor Veri Paylasimi", descEn: "Allow your doctor to view your health data", descTr: "Doktorunuzun saglik verilerinizi goruntulemesine izin verin", enabled: true, category: "sharing" },
+    { id: "research_optin", en: "Research Contribution", tr: "Araştırma Katilimi", descEn: "Allow anonymized data for medical research", descTr: "Anonimlestirilmis verilerinizin tibbi araştırmalarda kullanilmasina izin verin", enabled: false, category: "data" },
+    { id: "doctor_sharing", en: "Doctor Data Sharing", tr: "Doktor Veri Paylaşımi", descEn: "Allow your doctor to view your health data", descTr: "Doktorunuzun saglik verilerinizi görüntülemesine izin verin", enabled: true, category: "sharing" },
     { id: "family_view", en: "Family Member Visibility", tr: "Aile Uyesi Gorunurlugu", descEn: "Allow family members to see your health summary", descTr: "Aile uyelerinin saglik ozetinizi gormesine izin verin", enabled: true, category: "sharing" },
     { id: "analytics", en: "Usage Analytics", tr: "Kullanim Analitigi", descEn: "Help improve the app with anonymous usage data", descTr: "Anonim kullanim verileriyle uygulamayi iyilestirmeye yardim edin", enabled: true, category: "data" },
     { id: "ai_training", en: "AI Model Training", tr: "AI Model Egitimi", descEn: "Allow data for AI improvement (always anonymized)", descTr: "AI iyilestirmesi icin veri kullanilmasina izin verin (her zaman anonim)", enabled: false, category: "data" },
@@ -44,8 +44,8 @@ export default function PrivacyControlsPage() {
   };
 
   const categories = [
-    { id: "data", en: "Data & Research", tr: "Veri ve Arastirma", icon: <Database className="w-4 h-4" /> },
-    { id: "sharing", en: "Sharing & Access", tr: "Paylasim ve Erisim", icon: <Users className="w-4 h-4" /> },
+    { id: "data", en: "Data & Research", tr: "Veri ve Araştırma", icon: <Database className="w-4 h-4" /> },
+    { id: "sharing", en: "Sharing & Access", tr: "Paylaşım ve Erisim", icon: <Users className="w-4 h-4" /> },
     { id: "device", en: "Device Permissions", tr: "Cihaz Izinleri", icon: <Lock className="w-4 h-4" /> },
   ];
 
@@ -89,7 +89,7 @@ export default function PrivacyControlsPage() {
         ))}
 
         <Card className="p-4 mb-6">
-          <h2 className="font-semibold text-sm mb-3 flex items-center gap-2"><Clock className="w-4 h-4" /> {isTr ? "Veri Saklama Suresi" : "Data Retention Period"}</h2>
+          <h2 className="font-semibold text-sm mb-3 flex items-center gap-2"><Clock className="w-4 h-4" /> {isTr ? "Veri Saklama Süresi" : "Data Retention Period"}</h2>
           <div className="grid grid-cols-3 gap-2">
             {[{ val: "6", en: "6 months", tr: "6 ay" }, { val: "12", en: "12 months", tr: "12 ay" }, { val: "24", en: "24 months", tr: "24 ay" }].map(opt => (
               <Button key={opt.val} variant={retentionPeriod === opt.val ? "default" : "outline"} size="sm" onClick={() => setRetention(opt.val)} className="w-full">{isTr ? opt.tr : opt.en}</Button>
@@ -99,7 +99,7 @@ export default function PrivacyControlsPage() {
         </Card>
 
         <div className="flex gap-3">
-          <Button variant="outline" className="flex-1"><Download className="w-4 h-4 mr-2" /> {isTr ? "Verilerimi Indir" : "Export Data"}</Button>
+          <Button variant="outline" className="flex-1"><Download className="w-4 h-4 mr-2" /> {isTr ? "Verilerimi İndir" : "Export Data"}</Button>
           <Button variant="outline" className="flex-1 text-red-500 border-red-200 hover:bg-red-50"><Trash2 className="w-4 h-4 mr-2" /> {isTr ? "Hesabimi Sil" : "Delete Account"}</Button>
         </div>
       </div>

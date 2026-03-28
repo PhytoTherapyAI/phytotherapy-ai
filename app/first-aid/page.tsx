@@ -38,7 +38,7 @@ const SECTIONS: FirstAidSection[] = [
       "Continue 30:2 ratio until help arrives or the person recovers.",
     ],
     stepsTr: [
-      "Ortamin guvenli oldugunu kontrol edin, kisiyi bilince kontrol edin.",
+      "Ortamin güvenli oldugunu kontrol edin, kisiyi bilince kontrol edin.",
       "Hemen 112'yi arayin veya birinden aramasıni isteyin.",
       "Kisiyi sert ve duz bir zemine sirt ustu yatirin.",
       "Bir elinizin topu kismini gogus kafesinin ortasina, meme uclari hizasina yerlestirin.",
@@ -150,7 +150,7 @@ const SECTIONS: FirstAidSection[] = [
       "Sikica basin ve kan sizsa bile bezi cikarmayim. Uzerine yeni ekleyin.",
       "Mumkunse yarali bolgeyi kalp seviyesinin uzerine kaldirin.",
       "Yardim gelene kadar baskiyi surdurn.",
-      "Egitimli degilseniz ve kanama bir uzuvdan hayati tehlike olusturmuyorsa turnike UYGULAMAYIN.",
+      "Egitimli degilseniz ve kanama bir uzuvdan hayati tehlike oluşturmuyorsa turnike UYGULAMAYIN.",
       "Kisiyi sicak ve sakin tutun. Sok belirtilerini izleyin.",
     ],
     warningEn: "Seek immediate medical attention for any wound that won't stop bleeding after 10 minutes of direct pressure.",

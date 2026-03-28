@@ -155,7 +155,7 @@ export default function JetLagPage() {
             size="lg"
           >
             {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Plan olusturuluyor..." : "Generating plan..."}</>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Plan oluşturuluyor..." : "Generating plan..."}</>
             ) : (
               <><Sparkles className="mr-2 h-5 w-5" />{tx("jetlag.generate", lang)}</>
             )}

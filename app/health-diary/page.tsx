@@ -269,7 +269,7 @@ export default function HealthDiaryPage() {
         if (lowMoodDays.length > entries.length * 0.3) {
           insights.push(t(
             "Over 30% of your entries have low mood scores. Consider discussing this with your doctor.",
-            "Girdilerinizin %30'undan fazlasi dusuk ruh hali skoru iceriyor. Bunu doktorunuzla gorusmeyi dusunun."
+            "Girdilerinizin %30'undan fazlasi düşük ruh hali skoru iceriyor. Bunu doktorunuzla gorusmeyi dusunun."
           ));
         }
       }
@@ -291,7 +291,7 @@ export default function HealthDiaryPage() {
           </p>
           <Button onClick={() => (window.location.href = "/")}>
             <LogIn className="w-4 h-4 mr-2" />
-            {t("Sign In", "Giris Yap")}
+            {t("Sign In", "Giriş Yap")}
           </Button>
         </div>
       </div>

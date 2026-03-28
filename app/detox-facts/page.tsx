@@ -23,7 +23,7 @@ const ITEMS: DetoxItem[] = [
     claim: { en: "Detoxifies and protects the liver", tr: "Karacigeri detoks yapar ve korur" },
     reality: { en: "Silymarin has hepatoprotective properties. Used clinically for alcoholic liver disease and mushroom poisoning. Not a general 'detox' but genuinely supports liver function.", tr: "Silimarin hepatoprotektif ozelliklere sahiptir. Alkolik karaciger hastaligi ve mantar zehirlenmesinde klinik olarak kullanilir. Genel bir 'detoks' degil ama gercekten karaciger fonksiyonunu destekler." },
     evidence: { en: "Multiple RCTs show liver enzyme improvement. Grade B evidence.", tr: "Birden fazla RCT karaciger enzim iyilesmesi gostermektedir. Derece B kanit." },
-    safetyNote: { en: "Generally safe. May interact with certain medications (statins, anticoagulants).", tr: "Genel olarak guvenli. Bazi ilaclarla (statinler, antikoagulanlar) etkilesime girebilir." },
+    safetyNote: { en: "Generally safe. May interact with certain medications (statins, anticoagulants).", tr: "Genel olarak güvenli. Bazi ilaclarla (statinler, antikoagulanlar) etkilesime girebilir." },
   },
   {
     name: { en: "Juice Cleanse / Detox Diets", tr: "Meyve Suyu Detoksu / Detoks Diyetleri" },
@@ -49,7 +49,7 @@ const ITEMS: DetoxItem[] = [
     claim: { en: "Supports liver detoxification and glutathione production", tr: "Karaciger detoksifikasyonunu ve glutatyon uretimini destekler" },
     reality: { en: "NAC is the clinical antidote for acetaminophen (paracetamol) overdose. It replenishes glutathione, the body's master antioxidant. Genuine hepatoprotective agent.", tr: "NAC, asetaminofen (parasetamol) dozasimi icin klinik antidottur. Vucudun ana antioksidani olan glutatyonu yeniler. Gercek hepatoprotektif ajan." },
     evidence: { en: "Grade A evidence for acetaminophen toxicity. Grade B for general liver support.", tr: "Asetaminofen toksisitesi icin Derece A kanit. Genel karaciger destegi icin Derece B." },
-    safetyNote: { en: "Generally safe at 600-1200mg/day. Consult doctor if on blood thinners.", tr: "Gunde 600-1200mg'da genel olarak guvenli. Kan sulandirici kullaniyorsaniz doktora danisiniz." },
+    safetyNote: { en: "Generally safe at 600-1200mg/day. Consult doctor if on blood thinners.", tr: "Gunde 600-1200mg'da genel olarak güvenli. Kan sulandirici kullaniyorsaniz doktora danisiniz." },
   },
   {
     name: { en: "Colon Cleanse / Enemas", tr: "Kolon Temizligi / Lavman" },

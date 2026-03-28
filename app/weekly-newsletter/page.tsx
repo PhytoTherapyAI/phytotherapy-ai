@@ -46,7 +46,7 @@ interface NewsletterPrefs {
 
 const WEATHER_TIPS = [
   { en: "Cold weather ahead -- keep your Vitamin D intake consistent and stay hydrated.", tr: "Soguk hava geliyor -- D vitamini alimini duzenlı tut ve bol su ic." },
-  { en: "High pollen forecast this week. Consider quercetin if cleared by your profile.", tr: "Bu hafta polen orani yuksek. Profilinize uygunsa quercetin dusunebilirsiniz." },
+  { en: "High pollen forecast this week. Consider quercetin if cleared by your profile.", tr: "Bu hafta polen orani yüksek. Profilinize uygunsa quercetin dusunebilirsiniz." },
   { en: "Sunny days ahead -- great for natural Vitamin D but don't skip sunscreen.", tr: "Gunesli gunler geliyor -- dogal D vitamini icin harika ama gunes kremini unutmayin." },
   { en: "Humidity is rising -- stay extra hydrated and watch electrolyte balance.", tr: "Nem artıyor -- ekstra su icin ve elektrolit dengesine dikkat edin." },
 ];
@@ -391,7 +391,7 @@ export default function WeeklyNewsletterPage() {
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp className="w-5 h-5 text-green-600" />
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {lang === "tr" ? "AI Kisisel Degerlendirme" : "AI Personalized Insight"}
+                  {lang === "tr" ? "AI Kişisel Değerlendirme" : "AI Personalized Insight"}
                 </h3>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">

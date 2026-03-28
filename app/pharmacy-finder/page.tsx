@@ -141,7 +141,7 @@ export default function PharmacyFinderPage() {
             </div>
           ) : searchTerm.trim().length >= 2 ? (
             <p className="text-center text-gray-400 dark:text-gray-500 py-4 text-sm">
-              {lang === "tr" ? "Sonuc bulunamadi. Lutfen ilac adini kontrol edin." : "No results found. Please check the drug name."}
+              {lang === "tr" ? "Sonuc bulunamadı. Lütfen ilac adini kontrol edin." : "No results found. Please check the drug name."}
             </p>
           ) : (
             <p className="text-center text-gray-400 dark:text-gray-500 py-4 text-sm">

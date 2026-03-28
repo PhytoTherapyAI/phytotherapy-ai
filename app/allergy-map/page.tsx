@@ -497,7 +497,7 @@ export default function AllergyMapPage() {
           {crossCheck.warnings.length > 0 && (
             <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4 dark:border-amber-800 dark:bg-amber-950/20">
               <h3 className="mb-2 text-sm font-semibold text-amber-700 dark:text-amber-400">
-                {lang === "tr" ? "Uyarilar" : "Warnings"}
+                {lang === "tr" ? "Uyarılar" : "Warnings"}
               </h3>
               {crossCheck.warnings.map((w, i) => (
                 <p key={i} className="text-xs text-amber-600 dark:text-amber-300">

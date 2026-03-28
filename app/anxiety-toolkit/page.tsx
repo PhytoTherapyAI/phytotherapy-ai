@@ -173,7 +173,7 @@ export default function AnxietyToolkitPage() {
             <div>
               <p className="font-bold text-red-700 dark:text-red-300">
                 {lang === "tr"
-                  ? "Kaygi seviyeniz cok yuksek. Lutfen profesyonel destek alin."
+                  ? "Kaygi seviyeniz cok yüksek. Lütfen profesyonel destek alin."
                   : "Your anxiety level is very high. Please seek professional support."}
               </p>
               <p className="mt-2 text-lg font-bold text-red-600">{result.crisisLine}</p>
@@ -189,7 +189,7 @@ export default function AnxietyToolkitPage() {
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-amber-600" />
             <p className="font-semibold text-amber-700 dark:text-amber-300">
               {lang === "tr"
-                ? "Kaygi seviyeniz orta-yuksek. Bir ruh sagligi uzmaniyla gorusmenizi oneririz."
+                ? "Kaygi seviyeniz orta-yüksek. Bir ruh sagligi uzmaniyla gorusmenizi oneririz."
                 : "Your anxiety level is moderate-high. We recommend speaking with a mental health professional."}
             </p>
           </div>
@@ -360,7 +360,7 @@ export default function AnxietyToolkitPage() {
           size="lg"
         >
           {isLoading ? (
-            <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Yukleniyor..." : "Loading..."}</>
+            <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Yükleniyor..." : "Loading..."}</>
           ) : (
             <><Shield className="mr-2 h-5 w-5" />{tx("anxiety.grounding", lang)}</>
           )}

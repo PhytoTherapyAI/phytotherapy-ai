@@ -455,7 +455,7 @@ export default function SupplementMarketplacePage() {
                   <Link href={`/interaction-checker?supplement=${encodeURIComponent(supplement.name)}`} className="flex-1">
                     <Button variant="outline" size="sm" className="w-full gap-1.5 rounded-lg text-xs">
                       <ShieldCheck className="w-3.5 h-3.5" />
-                      {lang === "tr" ? "Etkilesim Kontrol" : "Check Interactions"}
+                      {lang === "tr" ? "Etkileşim Kontrol" : "Check Interactions"}
                     </Button>
                   </Link>
                   {affiliateLinks.length > 0 && (
@@ -476,7 +476,7 @@ export default function SupplementMarketplacePage() {
           <div className="text-center py-16">
             <Search className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
             <p className="text-gray-500 dark:text-gray-400">
-              {lang === "tr" ? "Sonuc bulunamadi. Farkli bir arama deneyin." : "No results found. Try a different search."}
+              {lang === "tr" ? "Sonuc bulunamadı. Farkli bir arama deneyin." : "No results found. Try a different search."}
             </p>
           </div>
         )}

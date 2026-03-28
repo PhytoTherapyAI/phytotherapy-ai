@@ -28,7 +28,7 @@ interface CheckupResult {
 
 const RISK_FACTORS = {
   en: ["Family history of heart disease", "Family history of cancer", "Diabetes risk", "Obesity", "Smoker/former smoker", "High blood pressure", "Sedentary lifestyle", "High stress", "History of depression", "Chronic medication use"],
-  tr: ["Ailede kalp hastaligi", "Ailede kanser gecmisi", "Diyabet riski", "Obezite", "Sigara/eski sigara kullanici", "Yuksek tansiyon", "Hareketsiz yasam", "Yuksek stres", "Depresyon gecmisi", "Kronik ilac kullanimi"],
+  tr: ["Ailede kalp hastaligi", "Ailede kanser geçmişi", "Diyabet riski", "Obezite", "Sigara/eski sigara kullanici", "Yüksek tansiyon", "Hareketsiz yasam", "Yüksek stres", "Depresyon geçmişi", "Kronik ilac kullanimi"],
 };
 
 export default function CheckupPlannerPage() {
@@ -138,7 +138,7 @@ export default function CheckupPlannerPage() {
 
           <Button onClick={handleGenerate} disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white" size="lg">
             {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Plan olusturuluyor..." : "Generating plan..."}</>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Plan oluşturuluyor..." : "Generating plan..."}</>
             ) : (
               <><Sparkles className="mr-2 h-5 w-5" />{tx("checkup.generate", lang)}</>
             )}
@@ -195,7 +195,7 @@ export default function CheckupPlannerPage() {
                       <div className="flex items-center justify-between">
                         <span className="font-medium text-sm">{item.test}</span>
                         {item.fasting && <span className="text-xs px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-full">
-                          {lang === "tr" ? "Ac karinla" : "Fasting"}
+                          {lang === "tr" ? "Aç karnına" : "Fasting"}
                         </span>}
                       </div>
                       <p className="text-xs text-muted-foreground">{item.reason}</p>

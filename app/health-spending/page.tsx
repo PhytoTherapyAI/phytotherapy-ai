@@ -217,7 +217,7 @@ export default function HealthSpendingPage() {
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder={lang === "tr" ? "Aciklama (istege bagli)" : "Description (optional)"}
+                placeholder={lang === "tr" ? "Açıklama (isteğe bağlı)" : "Description (optional)"}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
               <Button
@@ -268,7 +268,7 @@ export default function HealthSpendingPage() {
         {/* Tax Info */}
         <div className="mt-8 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-200 dark:border-emerald-800 p-6">
           <h3 className="font-semibold text-emerald-800 dark:text-emerald-400 mb-2">
-            {lang === "tr" ? "Vergi Indirimi Bilgisi" : "Tax Deduction Info"}
+            {lang === "tr" ? "Vergi İndirimi Bilgisi" : "Tax Deduction Info"}
           </h3>
           <p className="text-sm text-emerald-700 dark:text-emerald-300">
             {lang === "tr"

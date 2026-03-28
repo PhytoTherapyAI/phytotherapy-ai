@@ -334,7 +334,7 @@ export default function SmartRemindersPage() {
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             {lang === "tr"
-              ? "İlaçlarinizin en uygun zamanlarda alinmasini saglayan kisisellestirilmis program."
+              ? "İlaçlarinizin en uygun zamanlarda alinmasini saglayan kişisellestirilmis program."
               : "Personalized schedule ensuring your medications are taken at optimal times."}
           </p>
           <Link href="/login">
@@ -360,7 +360,7 @@ export default function SmartRemindersPage() {
           </h1>
           <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
             {lang === "tr"
-              ? "İlaç ozelliklerine gore optimize edilmis kisisel programiniz"
+              ? "İlaç ozelliklerine gore optimize edilmis kişisel programiniz"
               : "Your personalized schedule optimized by drug properties"}
           </p>
         </div>
@@ -377,7 +377,7 @@ export default function SmartRemindersPage() {
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">
               {lang === "tr"
-                ? "İlaçlarinizi profilinize ekleyerek akilli zamanlama olusturun."
+                ? "İlaçlarinizi profilinize ekleyerek akilli zamanlama oluşturun."
                 : "Add your medications to your profile to generate smart scheduling."}
             </p>
             <Link href="/profile">
@@ -649,7 +649,7 @@ export default function SmartRemindersPage() {
                       ) : (
                         <p className="ml-8 text-sm text-gray-400 dark:text-gray-500 italic">
                           {lang === "tr"
-                            ? "Bu ilac icin ozel zamanlama kurali bulunamadi. Doktorunuzun onerilerine uyun."
+                            ? "Bu ilac icin ozel zamanlama kurali bulunamadı. Doktorunuzun onerilerine uyun."
                             : "No specific timing rule found for this medication. Follow your doctor's instructions."}
                         </p>
                       )}

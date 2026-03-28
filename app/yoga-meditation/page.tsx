@@ -97,7 +97,7 @@ export default function YogaMeditationPage() {
             <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-semibold text-red-800 dark:text-red-300 text-sm">
-                {lang === "tr" ? "Osteoporoz Uyarisi" : "Osteoporosis Warning"}
+                {lang === "tr" ? "Osteoporoz Uyarısi" : "Osteoporosis Warning"}
               </p>
               <p className="text-sm text-red-700 dark:text-red-400 mb-2">
                 {lang === "tr" ? "Asagidaki pozlardan kacininiz:" : "Avoid these poses:"}

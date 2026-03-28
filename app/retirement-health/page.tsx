@@ -42,7 +42,7 @@ const SCREENING_STATIC = {
     { test: "Thyroid function (TSH)", age: "60+", freq: "Every 5 years" },
   ],
   tr: [
-    { test: "Tansiyon olcumu", age: "55+", freq: "Her vizitte (en az yilda bir)" },
+    { test: "Tansiyon ölçümu", age: "55+", freq: "Her vizitte (en az yilda bir)" },
     { test: "Kolesterol paneli", age: "55+", freq: "1-2 yilda bir" },
     { test: "Kan sekeri / HbA1c", age: "55+", freq: "3 yilda bir (prediyabetse yillik)" },
     { test: "Kolonoskopi", age: "45-75", freq: "10 yilda bir (veya yillik GGK)" },
@@ -156,7 +156,7 @@ export default function RetirementHealthPage() {
             size="lg"
           >
             {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Plan olusturuluyor..." : "Generating plan..."}</>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Plan oluşturuluyor..." : "Generating plan..."}</>
             ) : (
               <><Sparkles className="mr-2 h-5 w-5" />{tx("retirement.generate", lang)}</>
             )}
@@ -198,7 +198,7 @@ export default function RetirementHealthPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Shield className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "Kisisel Check-up Plani" : "Personalized Check-up Plan"}
+                  {lang === "tr" ? "Kişisel Check-up Plani" : "Personalized Check-up Plan"}
                 </h2>
                 <div className="grid gap-3">
                   {result.checkupPlan.map((item, i) => (

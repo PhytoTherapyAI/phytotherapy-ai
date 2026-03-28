@@ -11,7 +11,7 @@ interface RoutineItem { id: string; time: string; activity: string; completed: b
 interface BehaviorNote { id: string; date: string; mood: "happy" | "neutral" | "upset"; note: string; }
 
 const SENSORY_TRIGGERS = [
-  { id: "1", cat: "Auditory", en: "Loud noises / crowds", tr: "Yuksek ses / kalabalik", severity: "high" as const, icon: <Volume2 className="w-4 h-4" /> },
+  { id: "1", cat: "Auditory", en: "Loud noises / crowds", tr: "Yüksek ses / kalabalik", severity: "high" as const, icon: <Volume2 className="w-4 h-4" /> },
   { id: "2", cat: "Visual", en: "Bright fluorescent lights", tr: "Parlak floresan isiklar", severity: "medium" as const, icon: <Sun className="w-4 h-4" /> },
   { id: "3", cat: "Tactile", en: "Certain fabric textures", tr: "Bazi kumas dokulari", severity: "medium" as const, icon: <Hand className="w-4 h-4" /> },
   { id: "4", cat: "Visual", en: "Rapid screen transitions", tr: "Hizli ekran gecisleri", severity: "low" as const, icon: <Eye className="w-4 h-4" /> },
@@ -168,7 +168,7 @@ export default function AutismSupportPage() {
         {activeSection === "resources" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { title: isTr ? "Gorsel Program Olusturucu" : "Visual Schedule Builder", desc: isTr ? "Gorsel kartlarla gunluk program" : "Create daily schedules with visual cards", color: "from-blue-500 to-blue-600" },
+              { title: isTr ? "Gorsel Program Oluşturucu" : "Visual Schedule Builder", desc: isTr ? "Gorsel kartlarla gunluk program" : "Create daily schedules with visual cards", color: "from-blue-500 to-blue-600" },
               { title: isTr ? "Sosyal Hikaye Sablonlari" : "Social Story Templates", desc: isTr ? "Yeni durumlara hazirlama" : "Preparation stories for new situations", color: "from-green-500 to-green-600" },
               { title: isTr ? "Sakinlesme Stratejileri" : "Calming Strategies", desc: isTr ? "Duyusal yuklenme icin teknikler" : "Techniques for sensory overload", color: "from-purple-500 to-purple-600" },
               { title: isTr ? "Ebeveyn Toplulugu" : "Parent Community", desc: isTr ? "Ailelerle deneyim paylasin" : "Share experiences with families", color: "from-orange-500 to-orange-600" },

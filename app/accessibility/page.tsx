@@ -19,8 +19,8 @@ const SECTIONS: Section[] = [
     color: "text-blue-500",
     items: [
       { title: { en: "Font Size Adjustment", tr: "Yazi Boyutu Ayarlama" }, desc: { en: "Use your browser's zoom (Ctrl/Cmd + to enlarge, Ctrl/Cmd - to reduce). All our pages are responsive and adapt to zoom levels.", tr: "Tarayicinizin zum'unu kullaniniz (Ctrl/Cmd + buyutmek, Ctrl/Cmd - kucultmek icin). Tum sayfalarimiz duyarlidir ve zum duzeylerine uyum saglar." } },
-      { title: { en: "High Contrast Mode", tr: "Yuksek Kontrast Modu" }, desc: { en: "Use your operating system's high contrast mode or dark mode for better readability.", tr: "Daha iyi okunabilirlik icin isletim sisteminizin yuksek kontrast modunu veya karanlik modunu kullanin." } },
-      { title: { en: "Screen Readers", tr: "Ekran Okuyucular" }, desc: { en: "Our app is built with semantic HTML and ARIA labels. Compatible with NVDA, JAWS, VoiceOver, and TalkBack.", tr: "Uygulamamiz semantik HTML ve ARIA etiketleriyle olusturulmustur. NVDA, JAWS, VoiceOver ve TalkBack ile uyumludur." } },
+      { title: { en: "High Contrast Mode", tr: "Yüksek Kontrast Modu" }, desc: { en: "Use your operating system's high contrast mode or dark mode for better readability.", tr: "Daha iyi okunabilirlik icin isletim sisteminizin yüksek kontrast modunu veya karanlik modunu kullanin." } },
+      { title: { en: "Screen Readers", tr: "Ekran Okuyucular" }, desc: { en: "Our app is built with semantic HTML and ARIA labels. Compatible with NVDA, JAWS, VoiceOver, and TalkBack.", tr: "Uygulamamiz semantik HTML ve ARIA etiketleriyle oluşturulmustur. NVDA, JAWS, VoiceOver ve TalkBack ile uyumludur." } },
     ],
   },
   {
@@ -47,7 +47,7 @@ const SECTIONS: Section[] = [
     color: "text-teal-500",
     items: [
       { title: { en: "Seated Exercises", tr: "Oturarak Egzersizler" }, desc: { en: "All stretching and yoga routines include seated alternatives for wheelchair users.", tr: "Tum esneme ve yoga rutinleri tekerlekli sandalye kullananlar icin oturarak alternatifleri icerir." } },
-      { title: { en: "Low-Impact Options", tr: "Dusuk Etkili Secenekler" }, desc: { en: "Walking tracker includes wheelchair push distance. Yoga guide includes gentle modifications.", tr: "Yuruyus takipcisi tekerlekli sandalye itme mesafesini icerir. Yoga rehberi nazik modifikasyonlar icerir." } },
+      { title: { en: "Low-Impact Options", tr: "Düşük Etkili Secenekler" }, desc: { en: "Walking tracker includes wheelchair push distance. Yoga guide includes gentle modifications.", tr: "Yuruyus takipcisi tekerlekli sandalye itme mesafesini icerir. Yoga rehberi nazik modifikasyonlar icerir." } },
       { title: { en: "Visual Impairment Exercises", tr: "Gorme Engelliler Icin Egzersiz" }, desc: { en: "Audio-guided exercises planned for future release.", tr: "Gelecek surumler icin sesli rehberli egzersizler planlaniyor." } },
     ],
   },

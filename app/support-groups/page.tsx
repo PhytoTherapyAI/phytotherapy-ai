@@ -10,7 +10,7 @@ const GROUPS = [
     nameEn: "Diabetes Support",
     nameTr: "Diyabet Destegi",
     descEn: "Share experiences managing blood sugar, medication, and lifestyle changes",
-    descTr: "Kan sekeri yonetimi, ilac ve yasam tarzi degisiklikleri deneyimlerini paylasin",
+    descTr: "Kan sekeri yönetimi, ilac ve yasam tarzi degisiklikleri deneyimlerini paylasin",
     color: "text-red-600 dark:text-red-400",
     bg: "bg-red-50 dark:bg-red-900/20",
     members: "2.4k+",
@@ -40,7 +40,7 @@ const GROUPS = [
     nameEn: "Mental Health Circle",
     nameTr: "Mental Sağlık Cemberi",
     descEn: "Anxiety, depression, stress — a safe space to share and support",
-    descTr: "Anksiyete, depresyon, stres — paylasim ve destek icin guvenli alan",
+    descTr: "Anksiyete, depresyon, stres — paylaşım ve destek icin güvenli alan",
     color: "text-teal-600 dark:text-teal-400",
     bg: "bg-teal-50 dark:bg-teal-900/20",
     members: "3.1k+",
@@ -56,12 +56,12 @@ const FEATURES_PREVIEW = [
   {
     icon: <Shield className="w-5 h-5" />,
     en: "Verified members only for privacy and safety",
-    tr: "Gizlilik ve guvenlik icin sadece dogrulanmis uyeler",
+    tr: "Gizlilik ve güvenlik icin sadece dogrulanmis uyeler",
   },
   {
     icon: <Sparkles className="w-5 h-5" />,
     en: "AI-powered misinformation detection in posts",
-    tr: "Gonderilerde AI destekli yanlis bilgi tespiti",
+    tr: "Gönderilerde AI destekli yanlis bilgi tespiti",
   },
 ];
 

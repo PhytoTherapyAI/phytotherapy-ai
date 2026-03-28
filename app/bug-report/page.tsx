@@ -21,16 +21,16 @@ interface BugReport {
 
 const tx: Record<string, { en: string; tr: string }> = {
   title: { en: "Bug Report", tr: "Hata Bildirimi" },
-  subtitle: { en: "Help us improve by reporting issues you encounter", tr: "Karsilastginiz sorunlari bildirerek gelistirmemize yardimci olun" },
+  subtitle: { en: "Help us improve by reporting issues you encounter", tr: "Karşılastginiz sorunlari bildirerek gelistirmemize yardimci olun" },
   description: { en: "Describe the bug", tr: "Hatayi aciklayin" },
   descPlaceholder: { en: "What happened? Be as specific as possible...", tr: "Ne oldu? Mumkun oldugunca detayli anlatiniz..." },
-  steps: { en: "Steps to reproduce", tr: "Yeniden olusturma adimlari" },
+  steps: { en: "Steps to reproduce", tr: "Yeniden oluşturma adimlari" },
   stepsPlaceholder: { en: "1. Go to...\n2. Click on...\n3. See error...", tr: "1. ... sayfasina gidin\n2. ... butonuna tiklayin\n3. Hatayi gorun..." },
   expected: { en: "Expected behavior", tr: "Beklenen davranis" },
   expectedPlaceholder: { en: "What should have happened instead?", tr: "Bunun yerine ne olmasi gerekiyordu?" },
   email: { en: "Email (optional)", tr: "E-posta (istege bagli)" },
   emailPlaceholder: { en: "your@email.com — for follow-up", tr: "email@adresiniz.com — geri donus icin" },
-  screenshots: { en: "Screenshots", tr: "Ekran goruntuleri" },
+  screenshots: { en: "Screenshots", tr: "Ekran görüntüleri" },
   uploadHint: { en: "Click or drag images here (max 3)", tr: "Resimleri buraya tiklayin veya surukleyin (maks 3)" },
   submit: { en: "Submit Report", tr: "Rapor Gonder" },
   required: { en: "Required", tr: "Zorunlu" },
@@ -41,7 +41,7 @@ const tx: Record<string, { en: string; tr: string }> = {
   back: { en: "Back to Dashboard", tr: "Panele Don" },
   history: { en: "Previous Reports", tr: "Onceki Raporlar" },
   noHistory: { en: "No previous reports", tr: "Onceki rapor yok" },
-  descError: { en: "Please describe the bug", tr: "Lutfen hatayi aciklayin" },
+  descError: { en: "Please describe the bug", tr: "Lütfen hatayi aciklayin" },
 }
 
 export default function BugReportPage() {

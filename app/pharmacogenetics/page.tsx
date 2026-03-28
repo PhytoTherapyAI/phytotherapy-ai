@@ -164,7 +164,7 @@ export default function PharmacogeneticsPage() {
               <Pill className="mx-auto mb-3 h-8 w-8 text-violet-400" />
               <p className="text-sm text-muted-foreground">
                 {lang === "tr"
-                  ? "Profilinizde ilac bulunamadi. Once profil sayfasindan ilaclarinizi ekleyin."
+                  ? "Profilinizde ilac bulunamadı. Once profil sayfasindan ilaclarinizi ekleyin."
                   : "No medications found in your profile. Add medications from your profile page first."}
               </p>
             </div>
@@ -332,7 +332,7 @@ export default function PharmacogeneticsPage() {
           {result.personalizedNotes && result.personalizedNotes.length > 0 && (
             <div className="rounded-lg border border-violet-200 bg-violet-50/50 p-4 dark:border-violet-800 dark:bg-violet-950/20">
               <h3 className="mb-2 text-sm font-semibold text-violet-700 dark:text-violet-400">
-                {lang === "tr" ? "Kisisel Notlar" : "Personalized Notes"}
+                {lang === "tr" ? "Kişisel Notlar" : "Personalized Notes"}
               </h3>
               <ul className="space-y-1">
                 {result.personalizedNotes.map((n, i) => (

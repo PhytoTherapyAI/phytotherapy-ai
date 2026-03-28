@@ -400,7 +400,7 @@ export default function IntermittentFastingPage() {
             className="w-full"
             onClick={() => setResult(null)}
           >
-            {lang === "tr" ? "Plani Guncelle" : "Update Plan"}
+            {lang === "tr" ? "Plani Güncelle" : "Update Plan"}
           </Button>
         </div>
       )}

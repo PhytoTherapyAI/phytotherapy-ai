@@ -179,7 +179,7 @@ export default function PTSDSupportPage() {
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-600" />
             <p className="font-semibold text-red-700 dark:text-red-300">
               {lang === "tr"
-                ? "Semptomlariniz siddetli gorunuyor. Lutfen bir travma terapistiyle gorusmek icin randevu alin."
+                ? "Semptomlariniz siddetli gorunuyor. Lütfen bir travma terapistiyle gorusmek icin randevu alin."
                 : "Your symptoms appear severe. Please consider scheduling an appointment with a trauma therapist."}
             </p>
           </div>
@@ -296,7 +296,7 @@ export default function PTSDSupportPage() {
         size="lg"
       >
         {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Degerlendiriliyor..." : "Assessing..."}</>
+          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Değerlendiriliyor..." : "Assessing..."}</>
         ) : (
           <><Shield className="mr-2 h-5 w-5" />{tx("ptsd.analyze", lang)}</>
         )}

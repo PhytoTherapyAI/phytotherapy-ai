@@ -36,7 +36,7 @@ const AQI_LEVELS: AQILevel[] = [
     darkBgColor: "dark:bg-green-900/20",
     general: { en: "Air quality is satisfactory. No health risk.", tr: "Hava kalitesi tatmin edici. Sağlık riski yok." },
     sensitive: { en: "No special precautions needed for asthma/COPD patients.", tr: "Astim/KOAH hastalari icin ozel onlem gerekmez." },
-    exercise: { en: "All outdoor activities safe. Enjoy fresh air!", tr: "Tum dis mekan aktiviteleri guvenli. Temiz havanin keyfini cikarin!" },
+    exercise: { en: "All outdoor activities safe. Enjoy fresh air!", tr: "Tum dis mekan aktiviteleri güvenli. Temiz havanin keyfini cikarin!" },
     mask: { en: "No mask needed.", tr: "Maske gerekmez." },
   },
   {
@@ -78,7 +78,7 @@ const AQI_LEVELS: AQILevel[] = [
     color: "text-purple-700 dark:text-purple-400",
     bgColor: "bg-purple-50",
     darkBgColor: "dark:bg-purple-900/20",
-    general: { en: "Health alert: everyone at risk. Reduce all outdoor exposure.", tr: "Sağlık uyarisi: herkes risk altinda. Tum dis mekan maruziyetini azaltin." },
+    general: { en: "Health alert: everyone at risk. Reduce all outdoor exposure.", tr: "Sağlık uyarısi: herkes risk altinda. Tum dis mekan maruziyetini azaltin." },
     sensitive: { en: "Asthma/COPD: do NOT go outside. Keep windows sealed. Run air purifier on max.", tr: "Astim/KOAH: disari CIKMAYIN. Pencereleri kapali tutun. Hava temizleyiciyi maksimumda calistirin." },
     exercise: { en: "Indoor exercise only. Even indoor air quality may be affected — use HEPA filter.", tr: "Sadece ic mekan egzersizi. Ic mekan hava kalitesi bile etkilenebilir — HEPA filtre kullanin." },
     mask: { en: "N95 essential. Replace every 8 hours of use. Ensure proper seal (no gaps).", tr: "N95 zorunlu. Her 8 saatlik kullanimda degistirin. Uygun sizma olmadan takildigindan emin olun." },
@@ -142,7 +142,7 @@ export default function AirQualityPage() {
         {/* AQI Input */}
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold">
-            {lang === "tr" ? "AQI Degerinizi Girin" : "Enter Your AQI Value"}
+            {lang === "tr" ? "AQI Değerinizi Girin" : "Enter Your AQI Value"}
           </h2>
           <p className="text-sm text-muted-foreground">
             {lang === "tr"

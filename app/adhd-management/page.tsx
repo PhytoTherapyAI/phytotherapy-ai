@@ -131,7 +131,7 @@ export default function ADHDManagementPage() {
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-amber-600" />
             <div>
               <p className="font-semibold text-amber-700 dark:text-amber-300">
-                {lang === "tr" ? "Kafein - Stimulan Etkilesimi" : "Caffeine - Stimulant Interaction"}
+                {lang === "tr" ? "Kafein - Stimulan Etkileşimi" : "Caffeine - Stimulant Interaction"}
               </p>
               <p className="mt-1 text-sm text-amber-600 dark:text-amber-400">
                 {result.caffeineInteraction}

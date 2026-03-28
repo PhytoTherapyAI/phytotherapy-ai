@@ -107,7 +107,7 @@ const CHALLENGES: Challenge[] = [
     rulesTr: [
       "En az 10 dakika meditasyon yapin",
       "Her tur: rehberli, nefes, vucut taramasi, farkindalik",
-      "Her gun ayni saatte yapmak aliskanlik olusturur",
+      "Her gun ayni saatte yapmak aliskanlik oluşturur",
       "Sessiz mekan tercih edilir ama zorunlu degildir",
     ],
     color: "text-purple-600 dark:text-purple-400",

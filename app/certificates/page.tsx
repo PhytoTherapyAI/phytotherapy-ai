@@ -108,7 +108,7 @@ export default function CertificatesPage() {
   const [preview, setPreview] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const userName = session?.user?.user_metadata?.full_name || session?.user?.email?.split("@")[0] || (t ? "Kullanici" : "User");
+  const userName = session?.user?.user_metadata?.full_name || session?.user?.email?.split("@")[0] || (t ? "Kullanıcı" : "User");
 
   const generateCertificate = async (cert: Certificate) => {
     setGenerating(cert.id);
@@ -273,7 +273,7 @@ export default function CertificatesPage() {
             <div className="flex gap-3 justify-center">
               <Button onClick={downloadCertificate} className="gap-2">
                 <Download className="w-4 h-4" />
-                {t ? "Indir" : "Download"}
+                {t ? "İndir" : "Download"}
               </Button>
               <Button variant="outline" onClick={shareCertificate} className="gap-2">
                 <Share2 className="w-4 h-4" />
@@ -306,9 +306,9 @@ export default function CertificatesPage() {
                       className="gap-1"
                     >
                       {generating === cert.id ? (
-                        <><Loader2 className="w-3 h-3 animate-spin" />{t ? "Olusturuluyor..." : "Generating..."}</>
+                        <><Loader2 className="w-3 h-3 animate-spin" />{t ? "Oluşturuluyor..." : "Generating..."}</>
                       ) : (
-                        <><Award className="w-3 h-3" />{t ? "Sertifika Olustur" : "Generate Certificate"}</>
+                        <><Award className="w-3 h-3" />{t ? "Sertifika Oluştur" : "Generate Certificate"}</>
                       )}
                     </Button>
                   </div>

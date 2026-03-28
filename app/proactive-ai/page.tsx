@@ -25,7 +25,7 @@ const MOCK_ALERTS = [
     icon: Zap,
     color: "text-green-500",
     bg: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800",
-    title: { en: "Supplement Cycling Alert", tr: "Takviye Dongu Uyarisi" },
+    title: { en: "Supplement Cycling Alert", tr: "Takviye Dongu Uyarısi" },
     desc: { en: "Your Ashwagandha cycle ends in 3 days. Based on your stress check-ins, a 1-week washout is recommended before restarting.", tr: "Ashwagandha dongunuz 3 gun sonra bitiyor. Stres check-in'lerinize gore yeniden baslamadan once 1 haftalik mola oneriliyor." },
     time: { en: "Today", tr: "Bugun" },
   },
@@ -41,8 +41,8 @@ const MOCK_ALERTS = [
 
 const FEATURES = [
   { icon: Brain, title: { en: "Pattern Recognition", tr: "Oruntusu Tanima" }, desc: { en: "AI analyzes your health data over time to find meaningful patterns", tr: "AI saglik verilerinizi zaman icinde analiz ederek anlamli oruntuler bulur" } },
-  { icon: Bell, title: { en: "Smart Notifications", tr: "Akilli Bildirimler" }, desc: { en: "Get alerts only when something genuinely needs your attention", tr: "Sadece gercekten dikkatinizi gerektiren durumlarda uyari aliniz" } },
-  { icon: Shield, title: { en: "Risk Prevention", tr: "Risk Onleme" }, desc: { en: "Early warnings about potential drug interactions or deficiencies", tr: "Potansiyel ilac etkilesimleri veya eksiklikler hakkinda erken uyarilar" } },
+  { icon: Bell, title: { en: "Smart Notifications", tr: "Akilli Bildirimler" }, desc: { en: "Get alerts only when something genuinely needs your attention", tr: "Sadece gercekten dikkatinizi gerektiren durumlarda uyarı aliniz" } },
+  { icon: Shield, title: { en: "Risk Prevention", tr: "Risk Onleme" }, desc: { en: "Early warnings about potential drug interactions or deficiencies", tr: "Potansiyel ilac etkilesimleri veya eksiklikler hakkinda erken uyarılar" } },
   { icon: TrendingUp, title: { en: "Trend Analysis", tr: "Trend Analizi" }, desc: { en: "Track biomarker trends across multiple blood tests", tr: "Birden fazla kan tahlilinde biyobelirtec trendlerini takip ediniz" } },
 ];
 
@@ -62,7 +62,7 @@ export default function ProactiveAIPage() {
 
       {/* Mock Alerts */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Ornek Uyarilar (Onizleme)" : "Example Alerts (Preview)"}
+        {lang === "tr" ? "Ornek Uyarılar (Onizleme)" : "Example Alerts (Preview)"}
       </h2>
       <div className="space-y-3 mb-10">
         {MOCK_ALERTS.map((a, i) => (

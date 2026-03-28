@@ -231,10 +231,10 @@ export default function DentalHealthPage() {
                     }`}
                   >
                     {effect.severity === "high"
-                      ? lang === "tr" ? "Yuksek Risk" : "High Risk"
+                      ? lang === "tr" ? "Yüksek Risk" : "High Risk"
                       : effect.severity === "moderate"
                       ? lang === "tr" ? "Orta Risk" : "Moderate Risk"
-                      : lang === "tr" ? "Dusuk Risk" : "Low Risk"}
+                      : lang === "tr" ? "Düşük Risk" : "Low Risk"}
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -270,17 +270,17 @@ export default function DentalHealthPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-3">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Heart className="w-5 h-5 text-red-500" />
-            {lang === "tr" ? "Agiz Sagligi & Kalp Baglantisi" : "Oral-Cardiovascular Link"}
+            {lang === "tr" ? "Ağız Sağlığı & Kalp Bağlantısı" : "Oral-Cardiovascular Link"}
           </h2>
           <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 space-y-2">
             <p className="text-sm">
               {lang === "tr"
-                ? "Periodontal (dis eti) hastalik, kardiyovaskuler hastalik riski ile guclu bir sekilde iliskilidir. Dis eti bakterileri kan dolasimina girerek ateroskleroz, endokardit ve kalp krizi riskini artirabilir."
+                ? "Periodontal (dis eti) hastalık, kardiyovaskuler hastalık riski ile guclu bir sekilde iliskilidir. Dis eti bakterileri kan dolasimina girerek ateroskleroz, endokardit ve kalp krizi riskini artirabilir."
                 : "Periodontal (gum) disease is strongly linked to cardiovascular disease risk. Gum bacteria can enter the bloodstream and increase risk of atherosclerosis, endocarditis, and heart attacks."}
             </p>
             <p className="text-sm font-medium">
               {lang === "tr"
-                ? "Duzenli dis bakimi sadece agiz sagligi icin degil, kalp sagliginiz icin de onemlidir."
+                ? "Düzenli dis bakimi sadece agiz sagligi icin degil, kalp sagliginiz icin de onemlidir."
                 : "Regular dental care is important not just for oral health, but for your heart health too."}
             </p>
           </div>

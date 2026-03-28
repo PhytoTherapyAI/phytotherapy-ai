@@ -26,10 +26,10 @@ const ESSENTIALS_8 = [
   { id: "active", icon: "🏃", en: "Be More Active — 150 min/week moderate", tr: "Daha Aktif Olun — Haftada 150 dk orta tempo" },
   { id: "quit", icon: "🚭", en: "Quit Tobacco", tr: "Tutun Birakin" },
   { id: "sleep", icon: "😴", en: "Get Healthy Sleep — 7-9 hours", tr: "Sağlıkli Uyku — 7-9 saat" },
-  { id: "weight", icon: "⚖️", en: "Manage Weight — BMI < 25", tr: "Kilo Yonetimi — VKI < 25" },
+  { id: "weight", icon: "⚖️", en: "Manage Weight — BMI < 25", tr: "Kilo Yönetimi — VKI < 25" },
   { id: "cholesterol", icon: "🩸", en: "Control Cholesterol — LDL < 100", tr: "Kolesterol Kontrolu — LDL < 100" },
-  { id: "sugar", icon: "📊", en: "Manage Blood Sugar — HbA1c < 5.7%", tr: "Kan Sekeri Yonetimi — HbA1c < %5.7" },
-  { id: "bp", icon: "💓", en: "Manage Blood Pressure — < 120/80", tr: "Tansiyon Yonetimi — < 120/80" },
+  { id: "sugar", icon: "📊", en: "Manage Blood Sugar — HbA1c < 5.7%", tr: "Kan Sekeri Yönetimi — HbA1c < %5.7" },
+  { id: "bp", icon: "💓", en: "Manage Blood Pressure — < 120/80", tr: "Tansiyon Yönetimi — < 120/80" },
 ];
 
 function calculateFraminghamRisk(
@@ -338,7 +338,7 @@ export default function CardiovascularRiskPage() {
               </div>
               <div className={`text-xl font-semibold ${result.categoryColor}`}>
                 {lang === "tr"
-                  ? result.details === "low" ? "Dusuk Risk" : result.details === "moderate" ? "Orta Risk" : "Yuksek Risk"
+                  ? result.details === "low" ? "Düşük Risk" : result.details === "moderate" ? "Orta Risk" : "Yüksek Risk"
                   : result.category}
               </div>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
@@ -350,9 +350,9 @@ export default function CardiovascularRiskPage() {
               {/* Risk Bar */}
               <div className="w-full max-w-md mx-auto">
                 <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                  <span>{lang === "tr" ? "Dusuk" : "Low"}</span>
+                  <span>{lang === "tr" ? "Düşük" : "Low"}</span>
                   <span>{lang === "tr" ? "Orta" : "Moderate"}</span>
-                  <span>{lang === "tr" ? "Yuksek" : "High"}</span>
+                  <span>{lang === "tr" ? "Yüksek" : "High"}</span>
                 </div>
                 <div className="w-full h-3 rounded-full bg-gradient-to-r from-green-400 via-amber-400 to-red-500 relative">
                   <div
@@ -367,7 +367,7 @@ export default function CardiovascularRiskPage() {
                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 text-sm text-left mt-4">
                   <div className="flex items-center gap-2 font-medium text-amber-700 dark:text-amber-400 mb-1">
                     <AlertTriangle className="w-4 h-4" />
-                    {lang === "tr" ? "Statin Degerlendirmesi" : "Statin Consideration"}
+                    {lang === "tr" ? "Statin Değerlendirmesi" : "Statin Consideration"}
                   </div>
                   <p className="text-muted-foreground">
                     {lang === "tr"
