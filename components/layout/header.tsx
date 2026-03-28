@@ -24,6 +24,7 @@ const mainLinks = [
 // Tools dropdown items — all 85 tools organized by category
 const toolLinks = [
   // Core Analysis
+  { href: "/health-analytics", labelKey: "nav.healthAnalytics" },
   { href: "/medical-analysis", labelKey: "nav.medicalAnalysis" },
   { href: "/body-analysis", labelKey: "nav.bodyAnalysis" },
   { href: "/symptom-checker", labelKey: "nav.symptomChecker" },
