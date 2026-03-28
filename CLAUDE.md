@@ -430,41 +430,73 @@ Next.js, Auth, Onboarding (7 adım + doğum tarihi), İlaç etkileşim motoru, C
 - ✅ 18 yeni çeviri key'i eklendi
 - ✅ API güvenlik: health-sync auth, doctor-summary auth, scan-medication rate limiting
 
-### 🔧 HACKATHON FİNALİZASYON — Yapılacaklar (Phase 7-13)
+### ✅ HACKATHON FİNALİZASYON — Phase 7-13 (TAMAMLANDI — 28 Mart 2026)
 
-**Phase 7: Kalan Hardcoded Çeviriler**
-- [ ] `OnboardingWizard.tsx` — 4 alert mesajı tx() yap
-- [ ] `blood-test/page.tsx` — buton etiketleri tx() yap
-- [ ] `wrapped/page.tsx` — ~15 string tx() yap
+**Phase 7: Hardcoded Çeviriler** ✅
+- 298 hardcoded ternary → 274'ü tx() ile merkezi çeviri sistemine taşındı
+- 240+ yeni çeviri key eklendi (EN+TR)
+- Kalan 24 ternary template literal (${variable} gerektiriyor)
 
-**Phase 8: Onboarding Akışı İyileştirmesi**
-- [ ] Welcome animasyonu + progress bar güzelleştirme
-- [ ] Adım kartlarına ikonlar + daha iyi UI
-- [ ] İlaç arama dropdown (free text → autocomplete)
+**Phase 8-13: Bug Fix + Polish + Radyoloji** ✅
+- Demo API yeniden yazıldı (35 gün gerçekçi veri)
+- Kritik API güvenlik bugları düzeltildi (family, analytics, scan-medication, blood-test-pdf)
+- Google/Facebook OAuth PKCE code exchange düzeltildi
+- ChatInterface memory leak düzeltildi (AbortController)
+- Supplement duplikasyonu düzeltildi (TodayView + WashoutCountdown)
+- Mobile horizontal overflow düzeltildi
+- Biyolojik yaş faktörleri TR çevirisi eklendi
+- Error boundary eklendi (app/error.tsx)
+- SEO: robots.txt, sitemap.xml, security headers
+- Desktop UI: max-width artırıldı, responsive padding, font iyileştirmeleri
+- Radyoloji Analizi toolu eklendi (Gemini Vision + PDF export)
+- Profil ilaç onay butonu 24 saat persist düzeltildi
+- Kan tahlili analizi dil desteği düzeltildi
 
-**Phase 9: Chat Geçmişi Yan Panel**
-- [ ] Sohbet sayfasında sol tarafta geçmiş konuşmalar listesi
-- [ ] Tıkla → o konuşmayı yükle
-- [ ] Yeni konuşma başlat butonu
+### 🔧 YENİ ÖZELLİKLER — Phase 14-20 (Planlandı)
 
-**Phase 10: Paylaşım Kartları Genişletme**
-- [ ] Kan tahlili sonuçlarını paylaş kartı
-- [ ] Mevcut paylaşım kartlarını iyileştir (responsive, dark mode)
+**Phase 14: Sayfa Birleştirmeleri**
+- [ ] Kan Tahlili + Radyoloji → `/medical-analysis` (tab'lı tek sayfa: "Tıbbi Analiz")
+- [ ] Kalori + BMI + Vücut Yağ + Kilo Takibi → `/body-analysis` (bölümlü tek sayfa: "Vücut & Beslenme")
+- [ ] Kilo trend grafiği (vital_records'tan çekip chart)
+- [ ] Eski `/blood-test`, `/radiology`, `/calorie` route'larını redirect yap
 
-**Phase 11: PWA Push Bildirimi**
-- [ ] İlaç hatırlatıcısı push notification
-- [ ] Günlük check-in hatırlatıcısı
-- [ ] Service worker notification API entegrasyonu
+**Phase 15: Semptom Checker (Triage)**
+- [ ] Semptom girişi (free text + yaygın semptom butonları)
+- [ ] AI triage: Acil / Doktora Git / Evde Bekle sınıflandırması
+- [ ] Kırmızı kod filtresi entegre (acil semptomlar → 112 yönlendirme)
+- [ ] Profil farkındalığı (ilaçlar, kronik hastalıklar)
+- [ ] Olası nedenler + ne zaman acile gitmeli listesi
 
-**Phase 12: Doktor Paneli İyileştirmesi**
-- [ ] Hasta listesi gerçek Supabase verisinden
-- [ ] Hasta davet → QR kod veya kopyalanabilir link
-- [ ] AI ziyaret özeti butonu çalışır hale getir
+**Phase 16: Besin-İlaç Etkileşim Kontrolü**
+- [ ] Besin/yiyecek girişi (greyfurt, kafein, alkol, süt ürünleri vs.)
+- [ ] Profildeki ilaçlarla otomatik çapraz kontrol
+- [ ] Renk kodlu uyarı (yeşil/sarı/kırmızı)
+- [ ] Yaygın besin-ilaç etkileşimleri veritabanı
+- [ ] PubMed kaynaklı bilgi
 
-**Phase 13: UX Polish — Son Dokunuşlar**
-- [ ] Her sayfada boş state illüstrasyonu + yönlendirme
-- [ ] Dark/Light mode geçiş animasyonu (smooth transition)
-- [ ] Tüm sayfalarda loading skeleton iyileştirmesi
+**Phase 17: Takviye Karşılaştırma Toolu**
+- [ ] İki takviyeyi yan yana karşılaştır (ör. Omega-3 vs Krill Oil)
+- [ ] Kanıt düzeyi, maliyet, emilim, yan etki karşılaştırma tablosu
+- [ ] Profil bazlı hangisi daha uygun önerisi
+- [ ] PubMed çapraz referans
+
+**Phase 18: İlaç Etkileşim Haritası (Görsel)**
+- [ ] Profildeki tüm ilaçların ağ grafiği görselleştirmesi
+- [ ] Kırmızı/sarı/yeşil çizgilerle etkileşim gösterimi
+- [ ] Tıklanabilir düğümler (ilaç detayı)
+- [ ] react-force-graph veya D3.js entegrasyonu
+
+**Phase 19: Sağlık Hedefi Koçu**
+- [ ] Hedef belirleme ("3 ayda kolesterol düşür", "kilo ver", "uyku kalitesi artır")
+- [ ] AI kişiselleştirilmiş haftalık plan oluşturma
+- [ ] Milestone takibi + takvim entegrasyonu
+- [ ] Haftalık ilerleme raporu
+- [ ] Boss Fight sistemiyle entegrasyon
+
+**Phase 20: İlaç Prospektüs Okuyucu** (Gelecek)
+- [ ] İlaç kutusu/prospektüs fotoğrafı → Gemini Vision ile metin çıkarma
+- [ ] Yan etkiler, etkileşimler, dozaj halk dilinde özet
+- [ ] Profildeki ilaçlarla çapraz kontrol
 
 ### 🚀 HACKATHON SONRASI (S14–S21)
 
@@ -608,7 +640,8 @@ NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
 ---
 
 *Son güncelleme: 27 Mart 2026 v13.0*
-*Sprint 1-20 + Phase 1-6 tamamlandı. Bug fix sprint bitti. Phase 7-13 planlandı.*
-*Hackathon: 11-12 Nisan 2026 — 15 gün kaldı*
+*Sprint 1-13 + Phase 1-13 tamamlandı. Radyoloji Analizi eklendi. i18n %92 merkezi (640+ key).*
+*Hackathon: 11-12 Nisan 2026 — 14 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
 *Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*
+*Phase 14-20 planlandı — sayfa birleştirmeleri, semptom checker, besin-ilaç etkileşimi, takviye karşılaştırma, etkileşim haritası, sağlık koçu.*

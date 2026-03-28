@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 27 Mart 2026 (v21.0 — Phase 2-6 tamamlandı, bug fix sprint bitti, Phase 7-13 planlandı)
+> Son güncelleme: 28 Mart 2026 (v22.0 — Phase 7-13 tamamlandı, Radyoloji Analizi eklendi, i18n merkezi çeviri %92, Phase 14-20 planlandı)
 
 ---
 
@@ -34,7 +34,9 @@
 | Hackathon Polish — Phase 1 | ✅ Tamamlandı | 26 Mart 2026 |
 | Hackathon Polish — Phase 2-6 | ✅ Tamamlandı | 27 Mart 2026 |
 | Bug Fix Sprint | ✅ Tamamlandı | 27 Mart 2026 |
-| Hackathon Finalizasyon — Phase 7-13 | 🔧 Planlandı | — |
+| Hackathon Finalizasyon — Phase 7-13 | ✅ Tamamlandı | 28 Mart 2026 |
+| Radyoloji Analizi | ✅ Tamamlandı | 28 Mart 2026 |
+| Phase 14-20 Yeni Özellikler | 🔧 Planlandı | — |
 
 ### ✅ 26 Mart Fixler (v20.2)
 - **Dashboard tools grid eklendi** → 8 kartlık link grid (tüm yeni sayfalar erişilebilir)
@@ -62,17 +64,61 @@
 - API güvenlik: doctor-summary auth + doctorId token'dan alınıyor
 - API güvenlik: scan-medication rate limiting eklendi (5/dk)
 
-### 🔧 Kalan İşler — Hackathon Finalizasyon (Phase 7-13)
+### ✅ 28 Mart — Phase 7-13 + Radyoloji (v22.0)
 
-**Phase 7:** Kalan hardcoded çeviriler (onboarding, blood-test, wrapped)
-**Phase 8:** Onboarding akışı iyileştirmesi (animasyon, progress bar, ilaç autocomplete)
-**Phase 9:** Chat geçmişi yan panel (sol taraf konuşma listesi, tıkla → yükle)
-**Phase 10:** Paylaşım kartları genişletme (kan tahlili paylaş, responsive dark mode)
-**Phase 11:** PWA push bildirimi (ilaç hatırlatıcısı, check-in hatırlatıcısı)
-**Phase 12:** Doktor paneli iyileştirmesi (gerçek hasta listesi, QR davet, AI özet)
-**Phase 13:** UX polish (boş state illüstrasyonları, smooth dark/light geçiş, loading skeleton)
+**Kritik Bug Fixler (17 commit):**
+- Demo API yeniden yazıldı — 35 gün check-in, 3 ilaç, 2 alerji, vitaller, su, takvim, consent
+- Family API güvenlik açığı — service role key modül seviyesinden per-request'e taşındı
+- Blood-test-pdf auth token düzeltildi
+- Scan-medication JSON.parse crash fix
+- Analytics GET endpoint auth eklendi
+- ChatInterface stream memory leak — AbortController eklendi
+- Supplement duplikasyonu — TodayView + WashoutCountdown normalize dedup
+- Google/Facebook OAuth — PKCE exchangeCodeForSession eklendi
+- Kan tahlili analizi dil desteği — lang parametresi eklendi
+- Mobile horizontal overflow — layout overflow-x-hidden
+- BMI division by zero guard
+- Profil ilaç onay butonu 24 saat persist
 
-**Hackathon: 11-12 Nisan 2026 — 15 gün kaldı**
+**i18n Merkezi Çeviri Sistemi:**
+- 298 hardcoded ternary → 274'ü tx() çağrısına dönüştürüldü (30 dosya)
+- 240+ yeni çeviri key eklendi (EN+TR)
+- Kalan 24 ternary template literal (${variable} — tx() ile yapılamaz)
+- Toplam: 640+ çeviri key'i
+
+**Yeni Özellik — Radyoloji Analizi:**
+- `/radiology` sayfası — X-ray, CT, MRI, ultrason görüntü/rapor analizi
+- Gemini Vision ile görüntü analizi
+- Bulgular halk dilinde açıklama + aciliyet badge (yeşil/sarı/kırmızı)
+- Tıbbi sözlük (terim → açıklama)
+- Doktor tartışma noktaları + PDF export
+- Full TR/EN desteği
+
+**UI/UX İyileştirmeleri:**
+- Desktop max-width artırıldı (max-w-6xl → max-w-7xl, responsive padding md:px-8)
+- Font: base 15px mobile / 16px desktop, line-height 1.6
+- Nav linkleri: 13px → 14px, gap artırıldı
+- Error boundary eklendi (app/error.tsx)
+- SEO: robots.txt, sitemap.xml, security headers (X-Frame-Options, XSS-Protection)
+- PWA manifest düzeltildi
+- Dark mode: header logout, blood-test icon renk düzeltmeleri
+- Accessibility: user menu aria-label/aria-expanded
+- Internal <a> → Next.js <Link> dönüşümü (4 dosya)
+- Biyolojik yaş faktörleri TR çevirisi
+- Wrapped sayfa query type TR çevirisi
+- Remember Me checkbox kaldırıldı (non-functional)
+
+### 🔧 Sıradaki — Phase 14-20
+
+**Phase 14:** Sayfa birleştirmeleri (Kan Tahlili+Radyoloji → /medical-analysis, Kalori+BMI+Kilo → /body-analysis)
+**Phase 15:** Semptom Checker (AI triage: acil/doktor/evde bekle)
+**Phase 16:** Besin-İlaç Etkileşim Kontrolü (greyfurt+statin, kafein+ilaç vs.)
+**Phase 17:** Takviye Karşılaştırma (Omega-3 vs Krill Oil yan yana)
+**Phase 18:** İlaç Etkileşim Haritası (görsel ağ grafiği, D3.js/react-force-graph)
+**Phase 19:** Sağlık Hedefi Koçu (AI plan oluşturma, milestone takibi)
+**Phase 20:** İlaç Prospektüs Okuyucu (gelecek)
+
+**Hackathon: 11-12 Nisan 2026 — 14 gün kaldı**
 
 ---
 
