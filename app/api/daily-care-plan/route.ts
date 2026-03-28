@@ -174,12 +174,12 @@ function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
       en: `Good morning ${name}! Let's take small but effective steps for your health today.`,
     },
     afternoon: {
-      tr: `İyi günler ${name}! Günün ikinci yarısında kendine biraz zaman ayır.`,
-      en: `Good afternoon ${name}! Take some time for yourself in the second half of the day.`,
+      tr: `Merhaba ${name}! Günün geri kalanında kendine iyi bak.`,
+      en: `Hey ${name}! Take care of yourself for the rest of the day.`,
     },
     evening: {
-      tr: `İyi akşamlar ${name}! Bugünü güzel bir şekilde tamamlayalım.`,
-      en: `Good evening ${name}! Let's wrap up today on a positive note.`,
+      tr: `İyi akşamlar ${name}! Gece dinlenmeden önce birkaç küçük adım.`,
+      en: `Good evening ${name}! A few small steps before winding down.`,
     },
   };
 
@@ -190,10 +190,10 @@ function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
         id: "fallback-nutrition",
         category: "nutrition",
         icon: "leaf",
-        title: isTr ? "Bir bardak bitki çayı iç" : "Have a cup of herbal tea",
+        title: isTr ? "Bir fincan bitki çayı iç" : "Have a cup of herbal tea",
         description: isTr
-          ? "Papatya veya ıhlamur çayı günlük stresi azaltır ve sindirime yardımcı olur. Şekersiz tercih et."
-          : "Chamomile or linden tea reduces daily stress and aids digestion. Choose unsweetened.",
+          ? "Papatya veya ıhlamur çayı stresi azaltır ve sindirimi destekler. Şekersiz olmasına dikkat et."
+          : "Chamomile or linden tea reduces stress and supports digestion. Keep it unsweetened.",
         duration: "5 min",
         evidence: null,
         priority: "medium",
@@ -214,10 +214,10 @@ function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
         id: "fallback-tracking",
         category: "tracking",
         icon: "clipboard",
-        title: isTr ? "Bugün nasıl hissediyorsun?" : "How are you feeling today?",
+        title: isTr ? "Bugün kendini nasıl hissediyorsun?" : "How are you feeling today?",
         description: isTr
-          ? "Enerji seviyeni ve ruh halini kaydet. Düzenli takip örüntüleri görmeni sağlar."
-          : "Log your energy level and mood. Regular tracking helps you spot patterns.",
+          ? "Enerji ve ruh halini kaydet. Düzenli takip, sağlığındaki örüntüleri fark etmeni sağlar."
+          : "Log your energy and mood. Regular tracking helps you notice patterns in your health.",
         duration: "1 min",
         evidence: null,
         priority: "high",
@@ -226,17 +226,17 @@ function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
         id: "fallback-wellness",
         category: "wellness",
         icon: "heart",
-        title: isTr ? "3 dakika nefes egzersizi" : "3-minute breathing exercise",
+        title: isTr ? "3 dakika nefes egzersizi yap" : "Do a 3-minute breathing exercise",
         description: isTr
-          ? "4 saniye nefes al, 7 saniye tut, 8 saniye ver. Parasempatik sistemi aktive eder, stresi azaltır."
-          : "Breathe in 4 sec, hold 7 sec, exhale 8 sec. Activates parasympathetic system, reduces stress.",
+          ? "4 saniye nefes al, 7 saniye tut, 8 saniye ver. Sinir sistemini sakinleştirir ve stresi azaltır."
+          : "Breathe in 4 sec, hold 7 sec, exhale 8 sec. Calms your nervous system and reduces stress.",
         duration: "3 min",
         evidence: null,
         priority: "low",
       },
     ],
     dailyTip: isTr
-      ? "Düzenli uyku saati, herhangi bir takviyeden daha etkili bağışıklık güçlendiricisidir."
-      : "A consistent sleep schedule is a more effective immune booster than any supplement.",
+      ? "Biliyor muydun? Düzenli uyku saati, herhangi bir takviyeden daha güçlü bir bağışıklık destekçisidir."
+      : "Did you know? A consistent sleep schedule supports your immune system more than any supplement.",
   };
 }

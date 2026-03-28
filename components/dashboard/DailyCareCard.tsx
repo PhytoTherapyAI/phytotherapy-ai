@@ -84,7 +84,7 @@ const CATEGORY_LABELS: Record<string, { tr: string; en: string }> = {
   nutrition: { tr: "Beslenme", en: "Nutrition" },
   lifestyle: { tr: "Yaşam Tarzı", en: "Lifestyle" },
   tracking: { tr: "Takip", en: "Tracking" },
-  wellness: { tr: "Wellness", en: "Wellness" },
+  wellness: { tr: "Kendine İyi Bak", en: "Wellness" },
 }
 
 export function DailyCareCard() {
@@ -199,7 +199,7 @@ export function DailyCareCard() {
             </div>
             <div className="min-w-0">
               <h3 className="text-sm font-bold leading-snug">
-                {isTr ? "Günlük Sağlık Planın" : "Your Daily Care Plan"}
+                {isTr ? "Bugünün Sağlık Planı" : "Today's Care Plan"}
               </h3>
               <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
                 {plan.greeting}
@@ -307,7 +307,7 @@ export function DailyCareCard() {
       {completionPercent === 100 && (
         <div className="mx-5 mb-4 rounded-lg bg-primary/10 px-3 py-2.5 text-center">
           <p className="text-xs font-bold text-primary">
-            {isTr ? "🎉 Tüm görevleri tamamladın! Harika iş!" : "🎉 All tasks completed! Great job!"}
+            {isTr ? "🎉 Bugünkü planını tamamladın, harikasın!" : "🎉 You completed today's plan, amazing!"}
           </p>
         </div>
       )}
