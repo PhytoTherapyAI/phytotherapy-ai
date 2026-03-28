@@ -687,6 +687,32 @@ Next.js, Auth, Onboarding (7 adım + doğum tarihi), İlaç etkileşim motoru, C
 
 ---
 
+## Önceki Oturumda Eklenen Özellikler (28 Mart — v23.0)
+
+**Yeni Sayfalar:**
+- ✅ Market Intelligence Hub (`/enterprise` — 5 tab, 1084 satır)
+- ✅ Smart Triage + Kan Tahlili branş yönlendirme (`/symptom-checker`)
+- ✅ Hakkımızda sayfası (`/about`)
+- ✅ Profil alanları (ülke/şehir/telefon/recovery email + Supabase migration)
+- ✅ Mobil landing page fix (horizontal overflow)
+- ✅ Doktor Referans Sistemi (`/doctor/referral` — affiliate kodlar, ödül kademeleri)
+- ✅ Bağlı Aile Hesapları (profilde invite/accept/remove)
+- ✅ Health Analytics & Benchmarking Dashboard (maliyet, sonuç, trend analizi)
+- ✅ Value-Based Marketplace (`/value-marketplace` — 4 tab, eskrow, ödül)
+- ✅ Research & Collaboration Hub (`/research-hub` — Harvard HVHS C10)
+
+**Altyapı:**
+- ✅ Sentry error monitoring entegrasyonu
+- ✅ Playwright E2E testler (54 sayfa + 6 API)
+- ✅ Health Check admin paneli
+- ✅ 5 katmanlı güvenlik korkuluğu (`lib/safety-guardrail.ts`)
+- ✅ PROMs/PREMs anketi (`PromsSurvey` bileşeni)
+- ✅ Kişiselleştirilmiş Günlük Sağlık Planı (`DailyCareCard`)
+- ✅ Proaktif SOS Uyarı Sistemi (`CriticalAlertModal`)
+- ✅ 4 Supabase migration çalıştırıldı
+
+---
+
 ## Environment Variables (.env.local)
 
 ```env
@@ -696,6 +722,15 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
 PUBMED_API_KEY=...
 NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
+RESEND_API_KEY=...                    # E-posta gönderimi (Resend)
+TWILIO_ACCOUNT_SID=...               # WhatsApp bot
+TWILIO_AUTH_TOKEN=...                 # WhatsApp bot
+TWILIO_WHATSAPP_FROM=...             # WhatsApp sandbox/business number
+TELEGRAM_BOT_TOKEN=...               # Telegram bot
+CRON_SECRET=...                      # Vercel Cron job auth
+GOOGLE_FIT_CLIENT_ID=...             # Google Fit OAuth
+GOOGLE_FIT_CLIENT_SECRET=...         # Google Fit OAuth
+SENTRY_DSN=...                       # Error monitoring
 ```
 
 ---
