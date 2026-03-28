@@ -38,6 +38,7 @@
 | Radyoloji Analizi | ✅ Tamamlandı | 28 Mart 2026 |
 | Phase 14-20 Yeni Özellikler | 🔧 Planlandı | — |
 | Oturum 28-29 Mart — Auth + Safety + Harvard HVHS | ✅ Tamamlandı | 28-29 Mart 2026 |
+| Oturum 28-29 Mart — 85 Tool + Enterprise + Sentry | ✅ Tamamlandı | 28-29 Mart 2026 |
 
 ### ✅ 26 Mart Fixler (v20.2)
 - **Dashboard tools grid eklendi** → 8 kartlık link grid (tüm yeni sayfalar erişilebilir)
@@ -174,30 +175,30 @@
 **FAZE A — Temel 12 Tool (NEW-TOOLS-PROMPTS.md TOOL 1-12):**
 | # | Tool | Sayfa | Durum |
 |---|------|-------|-------|
-| 1 | Uyku Kalitesi Analizi | /sleep-analysis | ⬜ |
-| 2 | İlaç Prospektüs Okuyucu | /profile (ek tab) | ⬜ |
-| 3 | Kadın Sağlığı + Kontraseptif | /womens-health | ⬜ |
-| 4 | Stres & Mental Wellness | /mental-wellness | ⬜ |
-| 5 | Beslenme Günlüğü | /nutrition | ⬜ |
-| 6 | Kronik Hastalık Paneli | /chronic-care | ⬜ |
-| 7 | Doktor Randevu Hazırlığı | /appointment-prep | ⬜ |
-| 8 | Aşı Takvimi | /vaccination | ⬜ |
-| 9 | Seyahat Sağlık | /travel-health | ⬜ |
-| 10 | Alerji Haritası | /allergy-map | ⬜ |
-| 11 | Rehabilitasyon | /rehabilitation | ⬜ |
-| 12 | Mevsimsel Rehber | /seasonal-health | ⬜ |
+| 1 | Uyku Kalitesi Analizi | /sleep-analysis | ✅ |
+| 2 | İlaç Prospektüs Okuyucu | /prospectus-reader | ✅ |
+| 3 | Kadın Sağlığı + Kontraseptif | /womens-health | ✅ |
+| 4 | Stres & Mental Wellness | /mental-wellness | ✅ |
+| 5 | Beslenme Günlüğü | /nutrition | ✅ |
+| 6 | Kronik Hastalık Paneli | /chronic-care | ✅ |
+| 7 | Doktor Randevu Hazırlığı | /appointment-prep | ✅ |
+| 8 | Aşı Takvimi | /vaccination | ✅ |
+| 9 | Seyahat Sağlık | /travel-health | ✅ |
+| 10 | Alerji Haritası | /allergy-map | ✅ |
+| 11 | Rehabilitasyon | /rehabilitation | ✅ |
+| 12 | Mevsimsel Rehber | /seasonal-health | ✅ |
 
 **FAZE B — İleri 8 Tool (NEW-TOOLS-PROMPTS.md TOOL 13-20):**
 | # | Tool | Entegrasyon | Durum |
 |---|------|-------------|-------|
-| 13 | Bağırsak Sağlığı & Mikrobiyom | /gut-health | ⬜ |
-| 14 | Cilt Sağlığı Analizi | /skin-health | ⬜ |
-| 15 | Farmakogenetik Profil | /pharmacogenomics | ⬜ |
-| 16 | Ağrı Yönetim Günlüğü | /pain-journal | ⬜ |
-| 17 | Yaşlı Bakım Modu | Aile profili adaptasyonu (65+) | ⬜ |
-| 18 | Çocuk Sağlığı Modu | Aile profili adaptasyonu (0-12) | ⬜ |
-| 19 | Spor Performans & Toparlanma | /body-analysis tab ekleme | ⬜ |
-| 20 | Ses ile Sağlık Günlüğü | /voice-journal + platform geneli mic | ⬜ |
+| 13 | Bağırsak Sağlığı & Mikrobiyom | /gut-health | ✅ |
+| 14 | Cilt Sağlığı Analizi | /skin-health | ✅ |
+| 15 | Farmakogenetik Profil | /pharmacogenetics | ✅ |
+| 16 | Ağrı Yönetim Günlüğü | /pain-diary | ✅ |
+| 17 | Yaşlı Bakım Paneli | /elder-care | ✅ |
+| 18 | Çocuk Sağlığı Rehberi | /child-health | ✅ |
+| 19 | Spor Performans | /sports-performance | ✅ |
+| 20 | Sesli Sağlık Günlüğü | /voice-diary | ✅ |
 
 **FAZE C — 65 Genişleme Tool (TOOL-IDEAS-FULL.md):**
 
@@ -251,11 +252,127 @@ O1 Nadir Hastalık Bilgi, O2 Kan/Organ Bağışı, O3 Engelli Birey Asistanı, O
 *Bonus (1):*
 P1 Evcil Hayvan-İnsan Sağlık
 
-**Toplam: 222 özellik (85 tool + 123 yeni + 14 rakip analizi)**
+**Tüm 85 tool ✅ TAMAMLANDI (28-29 Mart 2026)**
 **Hackathon: 11-12 Nisan 2026 — 13 gün kaldı**
-**Detaylı prompt'lar: NEW-TOOLS-PROMPTS.md (20 tool)**
-**Genişleme fikirleri: TOOL-IDEAS-FULL.md (65 tool)**
-**Yeni fikirler + rakip analizi: COMPLETE-FEATURE-CATALOG.md (137 yeni)**
+
+### ✅ 28-29 Mart — Mega Oturum: 85 Tool + Enterprise + Monitoring (v24.0)
+
+**ÖNCELİK 0 — Kritik Fixler:**
+- ✅ Google OAuth fix — `exchangeCodeForSession` kaldırıldı, `detectSessionInUrl:true` ile polling (250ms/40 attempt)
+- ✅ Dil algılama fix — `lang_manually_set` flag eklendi, navigator.language her zaman kullanılır
+- ✅ Courses sayfası `useState` import fix
+
+**Phase 14-19 — Sayfa Birleştirmeleri + Yeni Araçlar:**
+- ✅ `/medical-analysis` — Kan Tahlili + Radyoloji tab'lı tek sayfa
+- ✅ `/body-analysis` — Kalori + BMI + Vücut Yağ + Kilo Trend
+- ✅ `/symptom-checker` — AI triage (Acil/Doktora Git/Evde Bekle)
+- ✅ `/food-interaction` — Besin-İlaç etkileşim kontrolü
+- ✅ `/supplement-compare` — İki takviye yan yana karşılaştırma
+- ✅ `/interaction-map` — SVG ağ grafiği ilaç etkileşim haritası
+- ✅ `/health-goals` — AI haftalık aksiyon planı koçu
+- ✅ Eski URL'ler redirect (/blood-test → /medical-analysis, /calorie → /body-analysis)
+
+**Phase 20 — Prospektüs Okuyucu:**
+- ✅ `/prospectus-reader` — İlaç kutusu/prospektüs fotoğrafı → Gemini Vision → halk dilinde özet
+
+**FAZ A — 20 Temel Tool (TOOL 1-20):**
+- ✅ Uyku Analizi, Kadın Sağlığı, Mental Wellness, Beslenme Günlüğü
+- ✅ Kronik Hastalık, Alerji Haritası, Randevu Hazırlığı, Aşı Takvimi
+- ✅ Seyahat Sağlık, Rehabilitasyon, Mevsimsel Rehber
+- ✅ Bağırsak Sağlığı, Cilt Sağlığı, Farmakogenetik, Ağrı Günlüğü
+- ✅ Yaşlı Bakım, Çocuk Sağlığı, Spor Performans, Sesli Günlük
+
+**FAZ B — 24 İleri Tool (A1-A9, B1-B10, C1-C5):**
+- ✅ Günlük Yaşam: Su Kalitesi, Kafein, Alkol, Sigara Bırakma, Nefes, Duruş, Ekran, Oruç, Güneş
+- ✅ Organ: Göz, Kulak, Diş, Saç/Tırnak, Diyabetik Ayak, Böbrek, Karaciğer, Tiroid, Kalp, Akciğer
+- ✅ Mental: Anksiyete (GAD-7), Depresyon (PHQ-9), ADHD, PTSD (PCL-5), Bağımlılık
+
+**FAZ C — 41 Genişleme Tool (D1-P1):**
+- ✅ Kadın/Erkek: Gebelik, Postpartum, Menopoz, Erkek Sağlığı, Cinsel Sağlık
+- ✅ Yaşam Dönemleri: Öğrenci, Askerlik, Emeklilik, Yeni Ebeveyn
+- ✅ Çevre: Hava Kalitesi, Gürültü, Jet Lag, Vardiyalı Çalışan
+- ✅ Tarama: Kanser, Aile Ağacı, Check-up, Genetik Risk
+- ✅ Eğitim: Tıbbi Sözlük, İlaç Bilgi, Doktor İletişim, Haber Doğrulama, İlk Yardım
+- ✅ Sosyal: Forum, Challenge, Destek Grupları, Yas Desteği
+- ✅ Pratik: Eczane, Sigorta, Kayıtlar, Acil Kimlik, Harcama Takip
+- ✅ İleri: Wearable Hub, Proaktif AI, AR Tarayıcı, Klinik Araştırma, İkinci Görüş
+- ✅ Beslenme: Çapraz Alerji, Detoks, Etiket Okuyucu, Anti-İnflamatuar, Hidrasyon
+- ✅ Uyku: Rüya Günlüğü, Horlama/Apne, Sirkadyen Ritim
+- ✅ Hareket: Stretching, Yürüyüş, Yoga/Meditasyon
+- ✅ Özel: Nadir Hastalıklar, Bağış, Erişilebilirlik, Göçmen Sağlık, Evcil Hayvan
+
+**Navbar Mega Dropdown:**
+- ✅ 85+ tool kategorize edilmiş "Araçlar" dropdown menüsü
+- ✅ Ana linkler: Asistan, Takvim, Etkileşim, Hakkımızda
+- ✅ Mobil: scrollable tam liste
+
+**Sentry Error Monitoring:**
+- ✅ @sentry/nextjs entegre (client + server + edge)
+- ✅ Session replay + tracing aktif
+- ✅ /monitoring tunnel route (ad blocker bypass)
+- ✅ error.tsx + global-error.tsx Sentry capture
+
+**Playwright E2E Testler:**
+- ✅ 54 sayfa yükleme testi + 6 API testi
+- ✅ `npm run test:e2e` / `npm run test:e2e:ui`
+
+**Health Check Admin Paneli:**
+- ✅ `/admin/health-check` — Supabase, Gemini, PubMed, 10 API, 7 env var kontrolü
+- ✅ 107 sayfa tarama (parallel batches)
+- ✅ Auto-refresh (60s), filtreleme
+
+**Smart Triage (Kan Tahlili):**
+- ✅ Tarih seçici + "Hatırlamıyorum" yaklaşık dönem
+- ✅ AI branş yönlendirmesi (%75 Endokrinoloji, %25 Dahiliye gibi)
+- ✅ Aciliyet rozetleri + anahtar göstergeler
+
+**Hakkımızda Sayfası:**
+- ✅ `/about` — Vizyon, Misyon, 5 Temel Değer, Ekip, İstatistikler
+
+**Profil Alanları:**
+- ✅ Ülke, Şehir, Telefon, Kurtarma E-postası eklendi
+- ✅ DB types + migration SQL + profil formu
+
+**Mobil Landing Page Fix:**
+- ✅ CTA butonları en üstte (flex-col-reverse → flex-col)
+- ✅ Botanik çizim küçük ekranlarda gizli
+- ✅ "Get Started" + "Try Assistant" butonları prominent
+
+**PWA Logo:**
+- ✅ SVG logo (yaprak + altın→yeşil gradient, koyu arka plan)
+- ✅ manifest.json + metadata icons güncellendi
+
+**Market Intelligence Hub:**
+- ✅ `/enterprise` — 5 tab: Market Overview, Trending Botanicals, Company Tracker, Patent & Regulation, AI Analysis
+- ✅ 8 şirket + 8 botanik + 15 patent + 10 regülasyon mock data
+- ✅ Recharts grafikleri (AreaChart, BarChart, PieChart, ComposedChart)
+
+**Doktor Referans (Affiliate) Sistemi:**
+- ✅ `/doctor/referral` — DR-FIRSTNAME-XX kod, istatistik paneli, ödül kademeleri
+- ✅ Bağlı Aile Hesapları — Profilde invite/accept/remove
+- ✅ Redeem UI — Login sayfasında doktor kodu girişi
+
+**Health Analytics & Benchmarking:**
+- ✅ `/health-analytics` — 4 tab: Etki-Tepki, Anomali, Kıyaslama, Tahmin
+- ✅ Kosinüs benzerliği ile peer matching
+- ✅ Z-skoru anomali tespiti + lineer regresyon tahmin
+
+**Value-Based Marketplace:**
+- ✅ `/value-marketplace` — 4 tab: Pazaryeri, Ürün Detay, Eskrow, Risk & Ödül
+- ✅ 12 ürün value score formülü
+- ✅ Sonuç garantili eskrow ödeme modeli
+
+**Supabase Migration'lar (çalıştırılmayı bekliyor):**
+- `20260329_new_tools_tables.sql` — 10 tablo (sleep, mood, nutrition, cycle, contra, vacc, allergy, reaction, rehab prog, rehab log)
+- `20260329_contact_fields.sql` — country, city, phone, recovery_email
+- `20260328_pain_records.sql` — pain_records tablosu
+- `20260329_referral_system.sql` — referral codes, referral records, linked accounts
+
+**İstatistikler:**
+- ~300+ dosya oluşturuldu/güncellendi
+- ~50,000+ satır yeni kod
+- 85+ sayfa, 70+ API route, 1500+ çeviri key
+- 0 TypeScript build hatası
 
 **FAZE D — Rakip Analizi + Final Ekler (14 yeni):**
 F1 Davranışsal Nudge, F2 İlaç Geri Çağırma Uyarısı, F3 Doğal Afet Sağlık Modu,

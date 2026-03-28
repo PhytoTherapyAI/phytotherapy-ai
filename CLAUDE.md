@@ -36,15 +36,18 @@
 ## Teknik Stack
 
 ```
-Frontend:     Next.js 14 (App Router) + Tailwind CSS + shadcn/ui
+Frontend:     Next.js 14 (App Router) + Tailwind CSS + shadcn/ui + Recharts
 Backend:      Next.js API Routes (serverless — Vercel)
 Database:     Supabase (PostgreSQL) ✅ — tüm tablolar kurulu
 AI Engine:    Google Gemini API (gemini-2.0-flash primary + gemini-2.5-flash fallback)
 Tıbbi Veri:   PubMed E-utilities API
 İlaç Veri:    OpenFDA API
 PDF:          @react-pdf/renderer
+Charts:       Recharts (AreaChart, BarChart, RadarChart, PieChart, ComposedChart)
+Monitoring:   Sentry ✅ (error tracking + session replay + tracing)
+E2E Testing:  Playwright ✅ (54 sayfa + 6 API testi)
 Deploy:       Vercel ✅ — phytotherapy.ai
-Auth:         Supabase Auth ✅ (email çalışıyor, Google OAuth + Facebook OAuth kod hazır — Dashboard credentials gerekli)
+Auth:         Supabase Auth ✅ (email + Google OAuth + Facebook OAuth)
 OS:           Windows
 ```
 
