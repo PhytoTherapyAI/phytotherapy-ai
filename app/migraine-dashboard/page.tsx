@@ -46,7 +46,7 @@ export default function MigraineDashboardPage() {
   const tabs = [
     { id: "log", label: isTr ? "Atak Kaydi" : "Attack Log" },
     { id: "triggers", label: isTr ? "Tetikleyiciler" : "Triggers" },
-    { id: "meds", label: isTr ? "Ilac Etkisi" : "Medication Effectiveness" },
+    { id: "meds", label: isTr ? "İlaç Etkisi" : "Medication Effectiveness" },
   ];
 
   const severityColor = (s: number) => s >= 7 ? "bg-red-500" : s >= 4 ? "bg-yellow-500" : "bg-green-500";
@@ -66,7 +66,7 @@ export default function MigraineDashboardPage() {
           <Card className="p-3 text-center"><div className="text-2xl font-bold text-violet-600">{attacks.length}</div><div className="text-xs text-gray-500">{isTr ? "Bu ay" : "This month"}</div></Card>
           <Card className="p-3 text-center"><div className="text-2xl font-bold text-orange-600">{avgSeverity}/10</div><div className="text-xs text-gray-500">{isTr ? "Ort. siddet" : "Avg severity"}</div></Card>
           <Card className="p-3 text-center"><div className="text-2xl font-bold text-blue-600">{avgDuration}h</div><div className="text-xs text-gray-500">{isTr ? "Ort. sure" : "Avg duration"}</div></Card>
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-green-600">{medEffRate}%</div><div className="text-xs text-gray-500">{isTr ? "Ilac etkisi" : "Med effectiveness"}</div></Card>
+          <Card className="p-3 text-center"><div className="text-2xl font-bold text-green-600">{medEffRate}%</div><div className="text-xs text-gray-500">{isTr ? "İlaç etkisi" : "Med effectiveness"}</div></Card>
         </div>
 
         <div className="flex gap-2 mb-6">
@@ -84,7 +84,7 @@ export default function MigraineDashboardPage() {
                 <div className="grid grid-cols-2 gap-2 mt-2 text-xs">
                   <div><span className="text-gray-400">{isTr ? "Sure: " : "Duration: "}</span>{a.duration}h</div>
                   <div><span className="text-gray-400">{isTr ? "Konum: " : "Location: "}</span>{a.location}</div>
-                  <div><span className="text-gray-400">{isTr ? "Ilac: " : "Med: "}</span>{a.medication}</div>
+                  <div><span className="text-gray-400">{isTr ? "İlaç: " : "Med: "}</span>{a.medication}</div>
                   <div><span className="text-gray-400">{isTr ? "Etkili: " : "Effective: "}</span>{a.effective ? "Yes" : "No"}</div>
                 </div>
                 <div className="flex gap-1 mt-2 flex-wrap">{a.triggers.map(t => <Badge key={t} variant="outline" className="text-xs">{t}</Badge>)}</div>

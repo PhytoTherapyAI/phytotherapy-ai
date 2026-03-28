@@ -50,7 +50,7 @@ const SCREENING_STATIC = {
     { test: "Kemik yogunlugu (DEXA)", age: "65+ (K), 70+ (E)", freq: "2-3 yilda bir" },
     { test: "Goz muayenesi (glokom, katarakt)", age: "55+", freq: "1-2 yilda bir" },
     { test: "Isitme testi", age: "60+", freq: "3 yilda bir" },
-    { test: "D vitamini duzeyi", age: "55+", freq: "Yillik" },
+    { test: "D vitamini duzeyi", age: "55+", freq: "Yıllık" },
     { test: "Tiroid fonksiyonu (TSH)", age: "60+", freq: "5 yilda bir" },
   ],
 };
@@ -226,7 +226,7 @@ export default function RetirementHealthPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Brain className="w-5 h-5 text-purple-500" />
-                  {lang === "tr" ? "Bilissel Saglik Aktiviteleri" : "Cognitive Health Activities"}
+                  {lang === "tr" ? "Bilissel Sağlık Aktiviteleri" : "Cognitive Health Activities"}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {result.cognitiveBaseline.activities.map((act, i) => (
@@ -258,7 +258,7 @@ export default function RetirementHealthPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Dumbbell className="w-5 h-5 text-green-500" />
-                  {lang === "tr" ? "Egzersiz Onerileri" : "Exercise Recommendations"}
+                  {lang === "tr" ? "Egzersiz Önerileri" : "Exercise Recommendations"}
                 </h2>
                 <div className="grid gap-3">
                   {result.exerciseRecommendations.map((ex, i) => (

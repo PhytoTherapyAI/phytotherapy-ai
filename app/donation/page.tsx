@@ -113,7 +113,7 @@ export default function DonationPage() {
       {/* Medication Contraindications */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-500" /> {lang === "tr" ? "Ilac Kontrendikasyonlari" : "Medication Contraindications"}
+          <AlertTriangle className="w-4 h-4 text-amber-500" /> {lang === "tr" ? "İlaç Kontrendikasyonlari" : "Medication Contraindications"}
         </h3>
         <div className="space-y-2">
           {CONTRAINDICATION_MEDS.map((m, i) => (

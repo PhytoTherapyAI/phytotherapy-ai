@@ -239,7 +239,7 @@ export default function TalentHubPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium mb-1 block">E-posta *</label>
+                    <label className="text-sm font-medium mb-1 block">{lang === "tr" ? "E-posta" : "Email"} *</label>
                     <Input type="email" value={form.email} onChange={e => updateForm("email", e.target.value)} />
                   </div>
                   <div>

@@ -381,7 +381,7 @@ export default function SkinHealthPage() {
                 {result.skincareRoutine.weekly && result.skincareRoutine.weekly.length > 0 && (
                   <div>
                     <p className="mb-2 text-xs font-semibold text-pink-600 uppercase">
-                      {lang === "tr" ? "Haftalik" : "Weekly"}
+                      {lang === "tr" ? "Haftalık" : "Weekly"}
                     </p>
                     <div className="space-y-1.5">
                       {result.skincareRoutine.weekly.map((s, i) => (
@@ -402,7 +402,7 @@ export default function SkinHealthPage() {
             <div className="rounded-lg border p-4">
               <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
                 <Leaf className="h-4 w-4 text-pink-500" />
-                {lang === "tr" ? "Takviye Onerileri" : "Supplement Suggestions"}
+                {lang === "tr" ? "Takviye Önerileri" : "Supplement Suggestions"}
               </h3>
               <div className="space-y-2">
                 {result.supplements.map((s, i) => (
@@ -431,7 +431,7 @@ export default function SkinHealthPage() {
           {result.lifestyleFactors && result.lifestyleFactors.length > 0 && (
             <div className="rounded-lg border border-pink-200 bg-pink-50/50 p-4 dark:border-pink-800 dark:bg-pink-950/20">
               <h3 className="mb-2 text-sm font-semibold text-pink-700 dark:text-pink-400">
-                {lang === "tr" ? "Yasam Tarzi Onerileri" : "Lifestyle Tips"}
+                {lang === "tr" ? "Yasam Tarzi Önerileri" : "Lifestyle Tips"}
               </h3>
               <ul className="space-y-1">
                 {result.lifestyleFactors.map((f, i) => (

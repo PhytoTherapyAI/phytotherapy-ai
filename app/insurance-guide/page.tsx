@@ -60,8 +60,8 @@ const SECTIONS: AccordionSection[] = [
       "Aile hekimi (1. basamak): Muayene icin katilim payi yok.",
       "Devlet hastanesi (2. basamak): 0-5 TL katilim payi.",
       "Universite hastanesi (3. basamak): Daha yuksek katilim payi, sevk gerekir.",
-      "Ozel hastane (SGK anlasmali): Tipik olarak 200+ TL ek ucret.",
-      "Ilaclar: Ilac kategorisine gore %10-20 katilim payi.",
+      "Özel hastane (SGK anlasmali): Tipik olarak 200+ TL ek ucret.",
+      "İlaçlar: İlaç kategorisine gore %10-20 katilim payi.",
       "Kirmizi receteler (kontrollü): farkli katilim payi tarifesi.",
       "Kronik hastalik ilaclari: indirimli katilim payi.",
       "Emekliler: bircok hizmette indirimli veya sifir katilim payi.",
@@ -95,7 +95,7 @@ const SECTIONS: AccordionSection[] = [
     id: "private",
     icon: <Heart className="w-5 h-5" />,
     titleEn: "Private Insurance (Ozel Sigorta)",
-    titleTr: "Ozel Saglik Sigortasi",
+    titleTr: "Özel Sağlık Sigortasi",
     contentEn: [
       "Complements SGK — covers private hospital visits with less or no copay.",
       "Average cost: 3,000-15,000 TL/year depending on age and coverage.",
@@ -121,7 +121,7 @@ const SECTIONS: AccordionSection[] = [
     id: "medications",
     icon: <Pill className="w-5 h-5" />,
     titleEn: "Medication Coverage Tips",
-    titleTr: "Ilac Kapsami Ipuclari",
+    titleTr: "İlaç Kapsami Ipuclari",
     contentEn: [
       "Generic medications have lower copay than brand-name drugs.",
       "Ask your doctor to prescribe generics when available.",

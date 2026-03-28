@@ -49,8 +49,8 @@ const VACCINATIONS: VaccineInfo[] = [
   { name: { en: "Hepatitis A", tr: "Hepatit A" }, required: true, note: { en: "2-dose series if not previously vaccinated", tr: "Daha once asilanmadiysa 2 doz seri" } },
   { name: { en: "Hepatitis B", tr: "Hepatit B" }, required: true, note: { en: "3-dose series, check antibody titer", tr: "3 doz seri, antikor titresi kontrol edin" } },
   { name: { en: "Meningococcal (ACWY)", tr: "Meningokok (ACWY)" }, required: true, note: { en: "Required for communal living environments", tr: "Topluluk yasam ortamlari icin zorunlu" } },
-  { name: { en: "Influenza (seasonal)", tr: "Influenza (mevsimsel)" }, required: true, note: { en: "Annual vaccination, especially important in barracks", tr: "Yillik asilama, ozellikle kisla ortaminda onemli" } },
-  { name: { en: "COVID-19 (updated booster)", tr: "COVID-19 (guncel rapel)" }, required: false, note: { en: "Recommended, especially for group settings", tr: "Ozellikle grup ortamlari icin onerilen" } },
+  { name: { en: "Influenza (seasonal)", tr: "Influenza (mevsimsel)" }, required: true, note: { en: "Annual vaccination, especially important in barracks", tr: "Yıllık asilama, ozellikle kisla ortaminda onemli" } },
+  { name: { en: "COVID-19 (updated booster)", tr: "COVID-19 (guncel rapel)" }, required: false, note: { en: "Recommended, especially for group settings", tr: "Özellikle grup ortamlari icin onerilen" } },
   { name: { en: "Varicella (Chickenpox)", tr: "Varisella (Sucicegi)" }, required: false, note: { en: "If no history of disease or vaccination", tr: "Hastalik veya asilama gecmisi yoksa" } },
   { name: { en: "MMR (Measles-Mumps-Rubella)", tr: "KKK (Kizamik-Kabakulak-Kizamikçik)" }, required: false, note: { en: "2 doses if born after 1980 without immunity proof", tr: "1980 sonrasi dogumlu ve bagisiklik kaniti yoksa 2 doz" } },
 ];
@@ -64,11 +64,11 @@ interface Section {
 const SECTIONS: Section[] = [
   {
     icon: <Pill className="w-5 h-5 text-blue-500" />,
-    title: { en: "Chronic Medication Supply Planning", tr: "Kronik Ilac Tedarik Planlamasi" },
+    title: { en: "Chronic Medication Supply Planning", tr: "Kronik İlaç Tedarik Planlamasi" },
     items: [
       { en: "Get a military medical board letter documenting all chronic conditions and medications", tr: "Tum kronik hastaliklari ve ilaclari belgeleyen askeri saglik kurulu raporu alin" },
       { en: "Request 90-day supply from your doctor before service", tr: "Hizmetten once doktorunuzdan 90 gunluk tedarik isteyin" },
-      { en: "Carry medications in original packaging with pharmacy labels", tr: "Ilaclari eczane etiketli orijinal ambalajinda tasiyin" },
+      { en: "Carry medications in original packaging with pharmacy labels", tr: "İlaçlari eczane etiketli orijinal ambalajinda tasiyin" },
       { en: "Insulin/temperature-sensitive meds: request cold chain transport arrangements", tr: "Insulin/sicakliga duyarli ilaclar: soguk zincir tasima duzenlemesi isteyin" },
       { en: "Mental health medications: do NOT stop abruptly — discuss tapering with your doctor", tr: "Ruh sagligi ilaclari: aniden kesmeyin — doktorunuzla azaltmayi gorusun" },
       { en: "Keep a medication card in your wallet: drug name, dose, frequency, prescribing doctor", tr: "Cuzdaninizda ilac karti bulundurun: ilac adi, doz, siklik, reçete yazan doktor" },
@@ -88,7 +88,7 @@ const SECTIONS: Section[] = [
   },
   {
     icon: <Heart className="w-5 h-5 text-rose-500" />,
-    title: { en: "Post-Service Adaptation Tips", tr: "Hizmet Sonrasi Uyum Onerileri" },
+    title: { en: "Post-Service Adaptation Tips", tr: "Hizmet Sonrasi Uyum Önerileri" },
     items: [
       { en: "Gradual transition: give yourself 2-4 weeks to readjust to civilian routine", tr: "Kademeli gecis: sivil rutine yeniden uyum icin kendinize 2-4 hafta taniyin" },
       { en: "Physical detraining: reduce volume 30% per week, don't stop completely", tr: "Fiziksel antrenman azaltma: hacmi haftada %30 azaltin, tamamen birakmayin" },
@@ -149,7 +149,7 @@ export default function MilitaryHealthPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-green-500" />
-              {lang === "tr" ? "Saglik Hazirlik Kontrol Listesi" : "Health Preparation Checklist"}
+              {lang === "tr" ? "Sağlık Hazirlik Kontrol Listesi" : "Health Preparation Checklist"}
             </h2>
             <span className="text-sm font-medium text-muted-foreground">{progress}%</span>
           </div>

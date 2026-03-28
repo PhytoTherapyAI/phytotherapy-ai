@@ -126,7 +126,7 @@ const sections: Section[] = [
     items: [
       { en: "MOST supplements are NOT safe during chemotherapy — always ask your oncologist", tr: "COGU takviye kemoterapi sirasinda GUVENLI DEGILDIR — her zaman onkolojistinize sorun", type: "danger" },
       { en: "High-dose antioxidants (vitamin C, E, beta-carotene) may REDUCE chemo effectiveness", tr: "Yuksek doz antioksidanlar (C vitamini, E, beta-karoten) kemoterapi etkinligini AZALTABILIR", type: "danger" },
-      { en: "St. John's Wort interacts with MANY chemo drugs — strictly FORBIDDEN", tr: "Sari Kantaron BIRCOK kemoterapi ilaci ile etkilesir — kesinlikle YASAKTIR", type: "danger" },
+      { en: "St. John's Wort interacts with MANY chemo drugs — strictly FORBIDDEN", tr: "Sari Kantaron BIRCOK kemoterapi ilacı ile etkilesir — kesinlikle YASAKTIR", type: "danger" },
       { en: "Green tea extract in high doses can interfere with bortezomib (Velcade)", tr: "Yuksek dozda yesil cay ekstresi bortezomib (Velcade) ile etkilesebilir", type: "warning" },
       { en: "Turmeric/curcumin supplements may affect blood clotting and some drug metabolism", tr: "Zerdecal/kurkumin takviyeleri kan pitilasmasini ve bazi ilac metabolizmasini etkileyebilir", type: "warning" },
       { en: "Fish oil at standard doses (1-2g/day) is generally considered safe — verify with team", tr: "Standart dozlarda balik yagi (1-2g/gun) genellikle guvenli kabul edilir — ekibinizle dogrulayin", type: "tip" },

@@ -50,14 +50,14 @@ export default function PharmacyPage() {
           <Card className="p-3 text-center"><Package className="w-5 h-5 text-green-500 mx-auto mb-1" /><div className="text-xl font-bold">{stock.length}</div><div className="text-xs text-gray-500">{isTr ? "Toplam Urun" : "Total Products"}</div></Card>
           <Card className="p-3 text-center border-red-200"><AlertTriangle className="w-5 h-5 text-red-500 mx-auto mb-1" /><div className="text-xl font-bold text-red-600">{lowStock.length}</div><div className="text-xs text-gray-500">{isTr ? "Dusuk Stok" : "Low Stock"}</div></Card>
           <Card className="p-3 text-center border-orange-200"><Clock className="w-5 h-5 text-orange-500 mx-auto mb-1" /><div className="text-xl font-bold text-orange-600">{nearExpiry.length}</div><div className="text-xs text-gray-500">{isTr ? "Yaklasan SKT" : "Near Expiry"}</div></Card>
-          <Card className="p-3 text-center"><Users className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">48</div><div className="text-xs text-gray-500">{isTr ? "Gunluk Musteri" : "Daily Customers"}</div></Card>
+          <Card className="p-3 text-center"><Users className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">48</div><div className="text-xs text-gray-500">{isTr ? "Günlük Musteri" : "Daily Customers"}</div></Card>
         </div>
 
         <div className="flex gap-2 mb-6">{tabs.map(t => (<Button key={t.id} variant={activeTab === t.id ? "default" : "outline"} size="sm" onClick={() => setActiveTab(t.id)}>{t.label}</Button>))}</div>
 
         {activeTab === "counter" && (
           <div className="space-y-4">
-            <div className="relative"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /><input className="w-full rounded-lg border pl-10 pr-4 py-3 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Ilac ara (marka veya etken madde)..." : "Search drug (brand or generic)..."} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} /></div>
+            <div className="relative"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /><input className="w-full rounded-lg border pl-10 pr-4 py-3 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "İlaç ara (marka veya etken madde)..." : "Search drug (brand or generic)..."} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} /></div>
             <div className="space-y-2">
               {filtered.map(item => (
                 <Card key={item.id} className={"p-4 flex items-center gap-4 " + (item.stock < item.minStock ? "border-red-200" : "")}>

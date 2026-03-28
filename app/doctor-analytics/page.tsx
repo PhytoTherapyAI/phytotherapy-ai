@@ -81,7 +81,7 @@ export default function DoctorAnalyticsPage() {
           </Card>
 
           <Card className="p-4">
-            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2"><Pill className="w-4 h-4" /> {isTr ? "En Cok Kullanilan Ilaclar" : "Top Medications"}</h3>
+            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2"><Pill className="w-4 h-4" /> {isTr ? "En Çok Kullanilan Ilaclar" : "Top Medications"}</h3>
             <div className="space-y-3">
               {topMeds.map(m => (
                 <div key={m.name} className="flex items-center gap-3">

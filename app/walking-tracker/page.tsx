@@ -77,7 +77,7 @@ export default function WalkingTrackerPage() {
       <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 p-6 mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-green-800 dark:text-green-300 flex items-center gap-2">
-            <Target className="w-4 h-4" /> {lang === "tr" ? "Haftalik Hedef" : "Weekly Target"}
+            <Target className="w-4 h-4" /> {lang === "tr" ? "Haftalık Hedef" : "Weekly Target"}
           </h3>
           <span className="text-sm text-green-600 dark:text-green-400">{weekMinutes} / {WHO_TARGET_MINUTES} {lang === "tr" ? "dk" : "min"}</span>
         </div>

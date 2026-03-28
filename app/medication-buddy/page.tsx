@@ -28,7 +28,7 @@ export default function MedicationBuddyPage() {
         <div className="flex items-center gap-3 mb-6">
           <Users className="w-8 h-8 text-pink-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Ilac Arkadasi" : "Medication Buddy"}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "İlaç Arkadasi" : "Medication Buddy"}</h1>
             <p className="text-sm text-gray-500">{isTr ? "Birlikte takip edin, birbirinizi motive edin" : "Track together, motivate each other"}</p>
           </div>
         </div>
@@ -59,7 +59,7 @@ export default function MedicationBuddyPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{b.name}</span>
-                    {b.missedToday && <Badge className="bg-red-100 text-red-700">{isTr ? "Ilac kacirdi!" : "Missed dose!"}</Badge>}
+                    {b.missedToday && <Badge className="bg-red-100 text-red-700">{isTr ? "İlaç kacirdi!" : "Missed dose!"}</Badge>}
                   </div>
                   <div className="flex items-center gap-3 mt-1">
                     <span className="text-xs text-gray-500 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> {b.compliance}% {isTr ? "uyum" : "compliance"}</span>
@@ -77,7 +77,7 @@ export default function MedicationBuddyPage() {
           <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Shield className="w-4 h-4 text-blue-500" /> {isTr ? "Gizlilik Notu" : "Privacy Note"}</h3>
           <ul className="text-xs text-gray-500 space-y-1">
             <li>{isTr ? "Arkadaslariniz sadece uyum yuzdelerini gorur" : "Buddies can only see compliance percentages"}</li>
-            <li>{isTr ? "Ilac isimleri ve dozlari paylasiliamaz" : "Medication names and dosages are not shared"}</li>
+            <li>{isTr ? "İlaç isimleri ve dozlari paylasiliamaz" : "Medication names and dosages are not shared"}</li>
             <li>{isTr ? "Istediginiz zaman arkadasi cikarabilirsiniz" : "You can remove a buddy at any time"}</li>
           </ul>
         </Card>
@@ -86,7 +86,7 @@ export default function MedicationBuddyPage() {
           {[
             { icon: <Heart className="w-6 h-6 text-pink-500" />, title: isTr ? "Birlikte Daha Iyi" : "Better Together", desc: isTr ? "Buddy kullananlar %34 daha iyi uyum gosteriyor" : "Buddy users show 34% better compliance" },
             { icon: <Bell className="w-6 h-6 text-amber-500" />, title: isTr ? "Nazik Hatirlatma" : "Gentle Reminders", desc: isTr ? "Kacirilan dozlarda otomatik bildirim" : "Automatic notification for missed doses" },
-            { icon: <Shield className="w-6 h-6 text-blue-500" />, title: isTr ? "Tam Gizlilik" : "Full Privacy", desc: isTr ? "Saglik verileriniz asla paylasiliamaz" : "Your health data is never shared" },
+            { icon: <Shield className="w-6 h-6 text-blue-500" />, title: isTr ? "Tam Gizlilik" : "Full Privacy", desc: isTr ? "Sağlık verileriniz asla paylasiliamaz" : "Your health data is never shared" },
           ].map(f => (
             <Card key={f.title} className="p-4 text-center">{f.icon}<h4 className="font-semibold text-sm mt-2">{f.title}</h4><p className="text-xs text-gray-500 mt-1">{f.desc}</p></Card>
           ))}

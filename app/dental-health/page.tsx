@@ -25,7 +25,7 @@ interface ChecklistItem {
 const DAILY_CHECKLIST: Omit<ChecklistItem, "done">[] = [
   { id: "brush_morning", label: { en: "Brush teeth (morning, 2 min)", tr: "Dis fircalama (sabah, 2 dk)" } },
   { id: "brush_evening", label: { en: "Brush teeth (evening, 2 min)", tr: "Dis fircalama (aksam, 2 dk)" } },
-  { id: "floss", label: { en: "Floss once daily", tr: "Gunluk dis ipi kullanimi" } },
+  { id: "floss", label: { en: "Floss once daily", tr: "Günlük dis ipi kullanimi" } },
   { id: "mouthwash", label: { en: "Mouthwash (alcohol-free preferred)", tr: "Gargara (alkolsuz tercih edin)" } },
   { id: "tongue", label: { en: "Tongue cleaning", tr: "Dil temizligi" } },
   { id: "water", label: { en: "Drink water after meals", tr: "Yemeklerden sonra su icin" } },
@@ -94,8 +94,8 @@ const MED_ORAL_EFFECTS: MedEffect[] = [
 const VISIT_SCHEDULE = [
   { en: "Routine cleaning & checkup", tr: "Rutin temizlik ve kontrol", frequency: { en: "Every 6 months", tr: "6 ayda bir" } },
   { en: "Full mouth X-ray", tr: "Tam agiz rontgeni", frequency: { en: "Every 1-2 years", tr: "1-2 yilda bir" } },
-  { en: "Periodontal assessment", tr: "Periodontal degerlendirme", frequency: { en: "Annually (40+)", tr: "Yillik (40 yas+)" } },
-  { en: "Oral cancer screening", tr: "Agiz kanseri taramasi", frequency: { en: "Annually (especially smokers)", tr: "Yillik (ozellikle sigara icenler)" } },
+  { en: "Periodontal assessment", tr: "Periodontal degerlendirme", frequency: { en: "Annually (40+)", tr: "Yıllık (40 yas+)" } },
+  { en: "Oral cancer screening", tr: "Agiz kanseri taramasi", frequency: { en: "Annually (especially smokers)", tr: "Yıllık (ozellikle sigara icenler)" } },
 ];
 
 export default function DentalHealthPage() {
@@ -238,7 +238,7 @@ export default function DentalHealthPage() {
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  <strong>{lang === "tr" ? "Ilaclar:" : "Medications:"}</strong>{" "}
+                  <strong>{lang === "tr" ? "İlaçlar:" : "Medications:"}</strong>{" "}
                   {effect.medications.join(", ")}
                 </p>
                 <div className="grid sm:grid-cols-3 gap-2 text-sm">

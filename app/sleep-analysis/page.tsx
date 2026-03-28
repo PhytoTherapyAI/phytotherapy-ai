@@ -585,7 +585,7 @@ export default function SleepAnalysisPage() {
                   {showAnalysis ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                   {showAnalysis
                     ? lang === "tr" ? "Analizi Gizle" : "Hide Analysis"
-                    : lang === "tr" ? "Analizi Goster" : "Show Analysis"
+                    : lang === "tr" ? "Analizi Göster" : "Show Analysis"
                   }
                 </button>
 
@@ -680,7 +680,7 @@ export default function SleepAnalysisPage() {
                     {analysis.medicationEffects.length > 0 && (
                       <div>
                         <h3 className="mb-2 text-sm font-semibold">
-                          {lang === "tr" ? "Ilac Etkileri" : "Medication Effects"}
+                          {lang === "tr" ? "İlaç Etkileri" : "Medication Effects"}
                         </h3>
                         <ul className="space-y-1">
                           {analysis.medicationEffects.map((m, i) => (
@@ -697,7 +697,7 @@ export default function SleepAnalysisPage() {
                     {analysis.recommendations.length > 0 && (
                       <div>
                         <h3 className="mb-2 text-sm font-semibold">
-                          {lang === "tr" ? "Oneriler" : "Recommendations"}
+                          {lang === "tr" ? "Öneriler" : "Recommendations"}
                         </h3>
                         <ul className="space-y-1">
                           {analysis.recommendations.map((r, i) => (

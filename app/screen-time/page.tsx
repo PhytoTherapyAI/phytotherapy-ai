@@ -23,7 +23,7 @@ const QUIZ: QuizQuestion[] = [
   {
     question: {
       en: "How many hours per day do you use screens?",
-      tr: "Gunluk kac saat ekran kullaniyorsunuz?",
+      tr: "Günlük kac saat ekran kullaniyorsunuz?",
     },
     options: [
       { label: { en: "< 4 hours", tr: "< 4 saat" }, score: 0 },

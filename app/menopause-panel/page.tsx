@@ -269,7 +269,7 @@ export default function MenopausePanelPage() {
           {result.lifestyleRecommendations?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {lang === "tr" ? "Yasam Tarzi Onerileri" : "Lifestyle Recommendations"}
+                {lang === "tr" ? "Yasam Tarzi Önerileri" : "Lifestyle Recommendations"}
               </h3>
               <ul className="space-y-2">
                 {result.lifestyleRecommendations.map((rec, i) => (

@@ -15,7 +15,7 @@ interface Expense {
 }
 
 const CATEGORIES = [
-  { value: "medications", icon: <Pill className="w-4 h-4" />, en: "Medications", tr: "Ilaclar", color: "text-red-600 dark:text-red-400", bg: "bg-red-50 dark:bg-red-900/20" },
+  { value: "medications", icon: <Pill className="w-4 h-4" />, en: "Medications", tr: "İlaçlar", color: "text-red-600 dark:text-red-400", bg: "bg-red-50 dark:bg-red-900/20" },
   { value: "supplements", icon: <Leaf className="w-4 h-4" />, en: "Supplements", tr: "Takviyeler", color: "text-green-600 dark:text-green-400", bg: "bg-green-50 dark:bg-green-900/20" },
   { value: "doctor", icon: <Stethoscope className="w-4 h-4" />, en: "Doctor Visits", tr: "Doktor Ziyaretleri", color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-900/20" },
   { value: "tests", icon: <TestTube className="w-4 h-4" />, en: "Tests & Labs", tr: "Test & Tahlil", color: "text-purple-600 dark:text-purple-400", bg: "bg-purple-50 dark:bg-purple-900/20" },

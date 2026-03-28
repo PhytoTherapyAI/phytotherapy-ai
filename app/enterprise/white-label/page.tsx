@@ -15,7 +15,7 @@ export default function WhiteLabelPage() {
   const [company, setCompany] = useState("");
 
   const features = [
-    { icon: <Palette className="w-6 h-6" />, en: "Custom Branding", tr: "Ozel Markalama", descEn: "Your logo, colors, and domain", descTr: "Logo, renkler ve domain" },
+    { icon: <Palette className="w-6 h-6" />, en: "Custom Branding", tr: "Özel Markalama", descEn: "Your logo, colors, and domain", descTr: "Logo, renkler ve domain" },
     { icon: <Shield className="w-6 h-6" />, en: "Enterprise Security", tr: "Kurumsal Guvenlik", descEn: "SOC 2, HIPAA, KVKK compliance", descTr: "SOC 2, HIPAA, KVKK uyumu" },
     { icon: <Globe className="w-6 h-6" />, en: "Multi-language", tr: "Coklu Dil", descEn: "Support for 20+ languages", descTr: "20+ dil destegi" },
     { icon: <Code className="w-6 h-6" />, en: "API Access", tr: "API Erisimi", descEn: "Full REST API and webhooks", descTr: "REST API ve webhook destegi" },
@@ -26,7 +26,7 @@ export default function WhiteLabelPage() {
   const tiers = [
     { name: "Starter", price: "$999/mo", en: "Up to 500 users", tr: "500 kullaniciya kadar", features: ["Custom domain", "Logo branding", "Email support"] },
     { name: "Professional", price: "$2,499/mo", en: "Up to 5,000 users", tr: "5.000 kullaniciya kadar", features: ["Everything in Starter", "API access", "SSO/LDAP", "Priority support"], popular: true },
-    { name: "Enterprise", price: isTr ? "Ozel Fiyat" : "Custom", en: "Unlimited users", tr: "Sinirsiz kullanici", features: ["Everything in Professional", "Dedicated server", "Custom development", "SLA guarantee"] },
+    { name: "Enterprise", price: isTr ? "Özel Fiyat" : "Custom", en: "Unlimited users", tr: "Sinirsiz kullanici", features: ["Everything in Professional", "Dedicated server", "Custom development", "SLA guarantee"] },
   ];
 
   return (

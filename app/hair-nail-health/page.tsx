@@ -183,7 +183,7 @@ export default function HairNailHealthPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "Ilac Etkileri" : "Medication Effects"}
+                  {lang === "tr" ? "İlaç Etkileri" : "Medication Effects"}
                 </h2>
                 <div className="grid gap-3">
                   {analysis.medicationEffects.map((eff, i) => (

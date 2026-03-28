@@ -15,7 +15,7 @@ export default function APIMarketplacePage() {
   const [copiedSnippet, setCopiedSnippet] = useState("");
 
   const endpoints: APIEndpoint[] = [
-    { id: "1", name: "Drug Interaction Check", method: "POST", path: "/api/v1/interactions", descEn: "Check drug-drug and drug-herb interactions", descTr: "Ilac-ilac ve ilac-bitki etkilesimi kontrolu", price: "$0.02/req", category: "safety" },
+    { id: "1", name: "Drug Interaction Check", method: "POST", path: "/api/v1/interactions", descEn: "Check drug-drug and drug-herb interactions", descTr: "İlaç-ilac ve ilac-bitki etkilesimi kontrolu", price: "$0.02/req", category: "safety" },
     { id: "2", name: "PubMed Search", method: "GET", path: "/api/v1/pubmed/search", descEn: "Search PubMed for evidence-based data", descTr: "PubMed kanita dayali veri arama", price: "$0.01/req", category: "research" },
     { id: "3", name: "Blood Test Analysis", method: "POST", path: "/api/v1/bloodtest/analyze", descEn: "AI-powered blood test interpretation", descTr: "AI destekli kan tahlili yorumlama", price: "$0.05/req", category: "analysis" },
     { id: "4", name: "Supplement Safety", method: "POST", path: "/api/v1/supplements/check", descEn: "Check supplement safety with medications", descTr: "Takviye guvenligini ilaclarla kontrol et", price: "$0.02/req", category: "safety" },
@@ -26,7 +26,7 @@ export default function APIMarketplacePage() {
   const pricing = [
     { name: "Developer", reqs: "10K/mo", price: "$49/mo", features: ["All endpoints", "Rate limit: 100/min", "Email support"] },
     { name: "Business", reqs: "100K/mo", price: "$299/mo", features: ["All endpoints", "Rate limit: 1000/min", "Priority support", "Webhooks"] },
-    { name: "Enterprise", reqs: "Unlimited", price: isTr ? "Ozel" : "Custom", features: ["All endpoints", "No rate limit", "Dedicated support", "SLA", "Custom endpoints"] },
+    { name: "Enterprise", reqs: "Unlimited", price: isTr ? "Özel" : "Custom", features: ["All endpoints", "No rate limit", "Dedicated support", "SLA", "Custom endpoints"] },
   ];
 
   const codeSnippet = "curl -X POST https://api.phytotherapy.ai/v1/interactions \\\n  -H \"Authorization: Bearer YOUR_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"medications\":[\"metformin\",\"lisinopril\"],\"supplements\":[\"st_johns_wort\"]}'";
@@ -42,7 +42,7 @@ export default function APIMarketplacePage() {
           <Code className="w-8 h-8 text-gray-600" />
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "API Pazaryeri" : "API Marketplace"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Saglik AI API entegrasyonlari" : "Health AI API integrations"}</p>
+            <p className="text-sm text-gray-500">{isTr ? "Sağlık AI API entegrasyonlari" : "Health AI API integrations"}</p>
           </div>
         </div>
 

@@ -38,7 +38,7 @@ const CONCERNS_EN = [
 const CONCERNS_TR = [
   "Dusuk cinsel istek", "Ereksiyon bozuklugu", "Cinsel iliski sirasinda agri",
   "Gecikmiş orgazm", "Erken bosalma", "Vajinal kuruluk",
-  "Ilac yan etkileri", "Cinsel yolla bulasan hastalik taramasi", "Kontrasepsiyon bilgisi",
+  "İlaç yan etkileri", "Cinsel yolla bulasan hastalik taramasi", "Kontrasepsiyon bilgisi",
   "Adet duzensizligi", "Dogurganlik endisesi",
 ];
 
@@ -264,7 +264,7 @@ export default function SexualHealthPage() {
           {result.recommendations?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-slate-700 dark:text-slate-300">
-                {lang === "tr" ? "Oneriler" : "Recommendations"}
+                {lang === "tr" ? "Öneriler" : "Recommendations"}
               </h3>
               <ul className="space-y-2">
                 {result.recommendations.map((rec, i) => (

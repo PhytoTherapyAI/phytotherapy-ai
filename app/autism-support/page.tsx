@@ -91,7 +91,7 @@ export default function AutismSupportPage() {
           <div className="space-y-4">
             <Card className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold">{isTr ? "Gunluk Ilerleme" : "Daily Progress"}</h2>
+                <h2 className="text-lg font-semibold">{isTr ? "Günlük İlerleme" : "Daily Progress"}</h2>
                 <Badge variant="outline" className="text-purple-600">{completedCount}/{routines.length}</Badge>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-2"><div className="bg-purple-500 h-3 rounded-full transition-all" style={{ width: progressPct + "%" }} /></div>
@@ -131,7 +131,7 @@ export default function AutismSupportPage() {
         {activeSection === "therapy" && (
           <div className="space-y-4">
             <Card className="p-4">
-              <h2 className="text-lg font-semibold mb-4">{isTr ? "Haftalik Terapi Programi" : "Weekly Therapy Schedule"}</h2>
+              <h2 className="text-lg font-semibold mb-4">{isTr ? "Haftalık Terapi Programı" : "Weekly Therapy Schedule"}</h2>
               <div className="grid grid-cols-7 gap-2">
                 {THERAPY_SCHEDULE.map(day => (
                   <div key={day.day} className="text-center">
@@ -173,7 +173,7 @@ export default function AutismSupportPage() {
               { title: isTr ? "Sakinlesme Stratejileri" : "Calming Strategies", desc: isTr ? "Duyusal yuklenme icin teknikler" : "Techniques for sensory overload", color: "from-purple-500 to-purple-600" },
               { title: isTr ? "Ebeveyn Toplulugu" : "Parent Community", desc: isTr ? "Ailelerle deneyim paylasin" : "Share experiences with families", color: "from-orange-500 to-orange-600" },
               { title: isTr ? "IEP / BEP Takipci" : "IEP Goal Tracker", desc: isTr ? "Bireysel egitim plani hedefleri" : "Track education plan goals", color: "from-pink-500 to-pink-600" },
-              { title: isTr ? "Terapi Ilerleme Raporu" : "Therapy Progress Report", desc: isTr ? "Terapistler icin ilerleme ozeti" : "Progress summary for therapists", color: "from-teal-500 to-teal-600" },
+              { title: isTr ? "Terapi İlerleme Raporu" : "Therapy Progress Report", desc: isTr ? "Terapistler icin ilerleme ozeti" : "Progress summary for therapists", color: "from-teal-500 to-teal-600" },
             ].map(res => (<Card key={res.title} className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"><div className={"h-2 bg-gradient-to-r " + res.color} /><div className="p-4"><h3 className="font-semibold text-sm mb-1">{res.title}</h3><p className="text-xs text-gray-500">{res.desc}</p></div></Card>))}
           </div>
         )}

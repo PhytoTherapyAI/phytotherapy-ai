@@ -603,7 +603,7 @@ export default function MentalWellnessPage() {
             {analysis.recommendations.length > 0 && (
               <div>
                 <h3 className="mb-2 text-sm font-semibold text-teal-600 dark:text-teal-400">
-                  {lang === "tr" ? "Oneriler" : "Recommendations"}
+                  {lang === "tr" ? "Öneriler" : "Recommendations"}
                 </h3>
                 <ul className="space-y-1">
                   {analysis.recommendations.map((r, i) => (

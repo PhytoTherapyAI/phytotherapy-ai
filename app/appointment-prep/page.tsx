@@ -343,7 +343,7 @@ export default function AppointmentPrepPage() {
             <div className="rounded-lg border p-4">
               <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold">
                 <MessageSquare className="h-3.5 w-3.5 text-sky-500" />
-                {lang === "tr" ? "Semptom Ozeti" : "Symptom Summary"}
+                {lang === "tr" ? "Semptom Özeti" : "Symptom Summary"}
               </h3>
               <p className="text-sm leading-relaxed">{result.symptomSummary}</p>
             </div>

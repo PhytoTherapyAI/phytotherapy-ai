@@ -44,7 +44,7 @@ const TRIGGERS_EN = ["Stress", "Social pressure", "Boredom", "Loneliness", "Cele
 const TRIGGERS_TR = ["Stres", "Sosyal baski", "Sikinti", "Yalnizlik", "Kutlama", "Agri", "Uyku sorunu", "Catisma"];
 
 const SUPPORT_EN = ["AA/NA meeting", "Therapist", "Sponsor call", "Exercise", "Meditation", "Support group", "Journal", "Friend/family"];
-const SUPPORT_TR = ["AA/NA toplantisi", "Terapist", "Sponsor aramasi", "Egzersiz", "Meditasyon", "Destek grubu", "Gunluk", "Arkadas/aile"];
+const SUPPORT_TR = ["AA/NA toplantısı", "Terapist", "Sponsor araması", "Egzersiz", "Meditasyon", "Destek grubu", "Günlük", "Arkadas/aile"];
 
 export default function AddictionRecoveryPage() {
   const { isAuthenticated, session } = useAuth();
@@ -374,7 +374,7 @@ export default function AddictionRecoveryPage() {
           {result.healthBenefits?.length > 0 && (
             <div className="rounded-xl border-2 border-green-200 bg-green-50 p-6 dark:bg-green-950/20">
               <h3 className="mb-3 text-lg font-bold text-green-700 dark:text-green-300">
-                {lang === "tr" ? "Saglik Kazanimlari" : "Health Benefits"}
+                {lang === "tr" ? "Sağlık Kazanimlari" : "Health Benefits"}
               </h3>
               <ul className="space-y-2">
                 {result.healthBenefits.map((benefit, i) => (

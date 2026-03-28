@@ -258,7 +258,7 @@ export default function MensHealthPage() {
           {result.supplementSuggestions?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {lang === "tr" ? "Takviye Onerileri" : "Supplement Suggestions"}
+                {lang === "tr" ? "Takviye Önerileri" : "Supplement Suggestions"}
               </h3>
               {result.supplementSuggestions.map((supp, i) => (
                 <div key={i} className="mb-3 rounded-lg border p-3 last:mb-0">
@@ -290,7 +290,7 @@ export default function MensHealthPage() {
           {result.lifestyleRecommendations?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {lang === "tr" ? "Yasam Tarzi Onerileri" : "Lifestyle Recommendations"}
+                {lang === "tr" ? "Yasam Tarzi Önerileri" : "Lifestyle Recommendations"}
               </h3>
               <ul className="space-y-2">
                 {result.lifestyleRecommendations.map((rec, i) => (

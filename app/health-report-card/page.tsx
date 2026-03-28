@@ -26,7 +26,7 @@ export default function HealthReportCardPage() {
     { en: "Vitamin D above 30 ng/mL", tr: "D Vitamini 30 uzerine cikar", status: "completed" as const },
     { en: "Exercise 3x per week", tr: "Haftada 3 kez egzersiz", status: "in_progress" as const },
     { en: "Reduce processed food", tr: "Islenmiis gida azalt", status: "in_progress" as const },
-    { en: "Sleep 7+ hours daily", tr: "Gunluk 7+ saat uyku", status: "not_started" as const },
+    { en: "Sleep 7+ hours daily", tr: "Günlük 7+ saat uyku", status: "not_started" as const },
   ];
   const trendIcon = (t: string) => t === "up" ? <TrendingUp className="w-4 h-4" /> : t === "down" ? <TrendingDown className="w-4 h-4" /> : <Minus className="w-4 h-4" />;
   const statusBadge = (s: string) => s === "completed" ? <Badge className="bg-green-100 text-green-700">{isTr ? "Tamamlandi" : "Completed"}</Badge> : s === "in_progress" ? <Badge className="bg-yellow-100 text-yellow-700">{isTr ? "Devam Ediyor" : "In Progress"}</Badge> : <Badge className="bg-gray-100 text-gray-500">{isTr ? "Baslamadi" : "Not Started"}</Badge>;
@@ -38,7 +38,7 @@ export default function HealthReportCardPage() {
           <div className="flex items-center gap-3">
             <FileText className="w-8 h-8 text-emerald-600" />
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Yillik Saglik Raporu" : "Annual Health Report"}</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Yıllık Sağlık Raporu" : "Annual Health Report"}</h1>
               <p className="text-sm text-gray-500">{selectedYear} {isTr ? "ozet rapor" : "summary report"}</p>
             </div>
           </div>
@@ -46,7 +46,7 @@ export default function HealthReportCardPage() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-emerald-600">{complianceData.medication}%</div><div className="text-xs text-gray-500">{isTr ? "Ilac Uyumu" : "Med Compliance"}</div></Card>
+          <Card className="p-3 text-center"><div className="text-2xl font-bold text-emerald-600">{complianceData.medication}%</div><div className="text-xs text-gray-500">{isTr ? "İlaç Uyumu" : "Med Compliance"}</div></Card>
           <Card className="p-3 text-center"><div className="text-2xl font-bold text-blue-600">{complianceData.supplements}%</div><div className="text-xs text-gray-500">{isTr ? "Takviye Uyumu" : "Supplement"}</div></Card>
           <Card className="p-3 text-center"><div className="text-2xl font-bold text-purple-600">{complianceData.checkups}</div><div className="text-xs text-gray-500">{isTr ? "Doktor Ziyareti" : "Checkups"}</div></Card>
           <Card className="p-3 text-center"><div className="text-2xl font-bold text-orange-600">{complianceData.bloodTests}</div><div className="text-xs text-gray-500">{isTr ? "Kan Tahlili" : "Blood Tests"}</div></Card>
@@ -70,7 +70,7 @@ export default function HealthReportCardPage() {
         </Card>
 
         <Card className="p-4 mb-6">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"><Target className="w-5 h-5 text-emerald-600" /> {isTr ? "Saglik Hedefleri" : "Health Goals"}</h2>
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"><Target className="w-5 h-5 text-emerald-600" /> {isTr ? "Sağlık Hedefleri" : "Health Goals"}</h2>
           <div className="space-y-3">
             {goals.map((g, i) => (
               <div key={i} className="flex items-center justify-between p-3 rounded-lg border">
@@ -89,7 +89,7 @@ export default function HealthReportCardPage() {
             <Award className="w-6 h-6 text-emerald-600" />
             <div>
               <h3 className="font-semibold">{isTr ? "Genel Degerlendirme" : "Overall Assessment"}</h3>
-              <p className="text-sm text-gray-600 mt-1">{isTr ? "Saglik gostergeleriniz genel olarak olumlu yonde ilerliyor. HbA1c ve kolesterol degerlerinizdeki dusus dikkat cekici. D vitamini hedefinize ulastiniz. Egzersiz aliskanligi ve uyku duzeni konusunda gelisme alani var." : "Your health indicators are trending positively overall. The decline in HbA1c and cholesterol is notable. You reached your Vitamin D target. There is room for improvement in exercise habits and sleep patterns."}</p>
+              <p className="text-sm text-gray-600 mt-1">{isTr ? "Sağlık gostergeleriniz genel olarak olumlu yonde ilerliyor. HbA1c ve kolesterol degerlerinizdeki dusus dikkat cekici. D vitamini hedefinize ulastiniz. Egzersiz aliskanligi ve uyku duzeni konusunda gelisme alani var." : "Your health indicators are trending positively overall. The decline in HbA1c and cholesterol is notable. You reached your Vitamin D target. There is room for improvement in exercise habits and sleep patterns."}</p>
             </div>
           </div>
         </Card>

@@ -23,10 +23,10 @@ export default function ROICalculatorPage() {
   const roiPct = Math.round((netROI15 / platformCost) * 100);
 
   const benefits = [
-    { en: "Medication compliance monitoring", tr: "Ilac uyum takibi", pct: "23%" },
-    { en: "Early intervention alerts", tr: "Erken mudahale uyarilari", pct: "18%" },
+    { en: "Medication compliance monitoring", tr: "İlaç uyum takibi", pct: "23%" },
+    { en: "Early intervention alerts", tr: "Erken mudahale uyarıları", pct: "18%" },
     { en: "Preventive health screening", tr: "Onleyici saglik taramasi", pct: "15%" },
-    { en: "Drug interaction prevention", tr: "Ilac etkilesimi onleme", pct: "12%" },
+    { en: "Drug interaction prevention", tr: "İlaç etkilesimi onleme", pct: "12%" },
     { en: "Employee engagement boost", tr: "Calisan katilimi artisi", pct: "31%" },
   ];
 
@@ -50,7 +50,7 @@ export default function ROICalculatorPage() {
               <input type="range" min="50" max="10000" step="50" value={employees} onChange={e => setEmployees(Number(e.target.value))} className="w-full mt-2" />
             </div>
             <div>
-              <label className="text-sm text-gray-500">{isTr ? "Yillik Ort. Saglik Maliyeti / Calisan (TL)" : "Avg Annual Health Cost / Employee (TL)"}</label>
+              <label className="text-sm text-gray-500">{isTr ? "Yıllık Ort. Sağlık Maliyeti / Calisan (TL)" : "Avg Annual Health Cost / Employee (TL)"}</label>
               <input className="w-full rounded-lg border px-4 py-3 text-lg font-bold mt-1 dark:bg-gray-800 dark:border-gray-700" type="number" value={avgClaim} onChange={e => setAvgClaim(Number(e.target.value))} />
               <input type="range" min="500" max="10000" step="100" value={avgClaim} onChange={e => setAvgClaim(Number(e.target.value))} className="w-full mt-2" />
             </div>
@@ -61,7 +61,7 @@ export default function ROICalculatorPage() {
         {showResults && (
           <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              <Card className="p-4 text-center"><DollarSign className="w-6 h-6 text-gray-400 mx-auto mb-1" /><div className="text-xs text-gray-500">{isTr ? "Yillik Saglik Maliyeti" : "Annual Health Cost"}</div><div className="text-lg font-bold">{(annualCost/1000).toFixed(0)}K TL</div></Card>
+              <Card className="p-4 text-center"><DollarSign className="w-6 h-6 text-gray-400 mx-auto mb-1" /><div className="text-xs text-gray-500">{isTr ? "Yıllık Sağlık Maliyeti" : "Annual Health Cost"}</div><div className="text-lg font-bold">{(annualCost/1000).toFixed(0)}K TL</div></Card>
               <Card className="p-4 text-center border-green-200 bg-green-50 dark:bg-green-900/20"><TrendingUp className="w-6 h-6 text-green-500 mx-auto mb-1" /><div className="text-xs text-gray-500">{isTr ? "Tahmini Tasarruf" : "Est. Savings"}</div><div className="text-lg font-bold text-green-600">{(savings15/1000).toFixed(0)}K-{(savings25/1000).toFixed(0)}K TL</div></Card>
               <Card className="p-4 text-center"><Building2 className="w-6 h-6 text-indigo-400 mx-auto mb-1" /><div className="text-xs text-gray-500">{isTr ? "Platform Maliyeti" : "Platform Cost"}</div><div className="text-lg font-bold">{(platformCost/1000).toFixed(0)}K TL/{isTr ? "yil" : "yr"}</div></Card>
               <Card className="p-4 text-center border-emerald-200 bg-emerald-50 dark:bg-emerald-900/20"><BarChart3 className="w-6 h-6 text-emerald-500 mx-auto mb-1" /><div className="text-xs text-gray-500">{isTr ? "Net ROI" : "Net ROI"}</div><div className="text-lg font-bold text-emerald-600">{roiPct}%</div></Card>

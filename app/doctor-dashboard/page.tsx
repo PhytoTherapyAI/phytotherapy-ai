@@ -66,7 +66,7 @@ export default function DoctorDashboardPage() {
               </div>
             </Card>
             <Card className="p-4">
-              <h3 className="font-semibold mb-3">{isTr ? "Populasyon Ozeti" : "Population Overview"}</h3>
+              <h3 className="font-semibold mb-3">{isTr ? "Populasyon Özeti" : "Population Overview"}</h3>
               <div className="grid grid-cols-3 gap-3">
                 {[{ label: isTr ? "Diyabet" : "Diabetes", count: 2, color: "bg-blue-100 text-blue-700" }, { label: isTr ? "Hipertansiyon" : "Hypertension", count: 1, color: "bg-purple-100 text-purple-700" }, { label: isTr ? "Tiroid" : "Thyroid", count: 1, color: "bg-teal-100 text-teal-700" }].map(c => (
                   <div key={c.label} className="text-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800"><Badge className={c.color}>{c.count}</Badge><div className="text-xs mt-1">{c.label}</div></div>
@@ -106,7 +106,7 @@ export default function DoctorDashboardPage() {
                 <Brain className="w-6 h-6 text-indigo-600" />
                 <div>
                   <h3 className="font-semibold">{isTr ? "AI Karar Destek" : "AI Decision Support"}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{isTr ? "Hasta profillerine dayali AI uyarilari ve onerileri" : "AI-powered alerts and suggestions based on patient profiles"}</p>
+                  <p className="text-sm text-gray-600 mt-1">{isTr ? "Hasta profillerine dayali AI uyarıları ve onerileri" : "AI-powered alerts and suggestions based on patient profiles"}</p>
                 </div>
               </div>
             </Card>

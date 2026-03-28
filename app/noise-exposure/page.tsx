@@ -71,7 +71,7 @@ const EARPLUG_GUIDE: EarplugType[] = [
     cons: { en: "More expensive ($15-30), lower NRR", tr: "Daha pahali, dusuk NRR" },
   },
   {
-    type: { en: "Custom-molded earplugs", tr: "Ozel kaliplanmis kulak tıkaclari" },
+    type: { en: "Custom-molded earplugs", tr: "Özel kaliplanmis kulak tıkaclari" },
     nrr: "25-30 dB",
     best: { en: "Professional musicians, industrial workers, chronic noise exposure", tr: "Profesyonel muzisyenler, endustri calisanlari, kronik gurultu maruziyeti" },
     pros: { en: "Perfect fit, most comfortable, durable years", tr: "Mukemmel uyum, en rahat, yillarca dayanikli" },

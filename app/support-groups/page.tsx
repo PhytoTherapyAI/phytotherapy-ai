@@ -38,7 +38,7 @@ const GROUPS = [
   {
     icon: <Brain className="w-6 h-6" />,
     nameEn: "Mental Health Circle",
-    nameTr: "Mental Saglik Cemberi",
+    nameTr: "Mental Sağlık Cemberi",
     descEn: "Anxiety, depression, stress — a safe space to share and support",
     descTr: "Anksiyete, depresyon, stres — paylasim ve destek icin guvenli alan",
     color: "text-teal-600 dark:text-teal-400",

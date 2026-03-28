@@ -156,10 +156,10 @@ export default function WeeklyNewsletterPage() {
             ? "Good progress this week. A few missed doses -- try setting a specific daily reminder to boost consistency."
             : "Your compliance dipped this week. Let's identify what's making it hard and adjust your routine together.",
           tr: complianceScore >= 90
-            ? "Mukemmel bir hafta! Ilac uyumunuz cok iyi. Boyle devam edin ve takviye dongu takviminizi gozden gecirin."
+            ? "Mükemmel bir hafta! İlaç uyumunuz çok iyi. Böyle devam edin ve takviye döngü takviminizi gözden geçirin."
             : complianceScore >= 70
-            ? "Bu hafta iyi ilerleme. Birkaç atlanan doz var -- tutarliligi artirmak icin belirli bir gunluk hatirlatici deneyin."
-            : "Bu hafta uyumunuz dustu. Zorlaştiran seyleri birlikte belirleyip rutininizi ayarlayalim.",
+            ? "Bu hafta iyi ilerleme. Birkaç atlanan doz var -- tutarlılığı artırmak için belirli bir günlük hatırlatıcı deneyin."
+            : "Bu hafta uyumunuz düştü. Zorlaştiran seyleri birlikte belirleyip rutininizi ayarlayalım.",
         },
       });
 
@@ -219,10 +219,10 @@ export default function WeeklyNewsletterPage() {
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
         <Mail className="w-12 h-12 text-green-600" />
         <p className="text-center text-gray-600 dark:text-gray-400">
-          {lang === "tr" ? "Haftalik bulteninizi gormek icin giris yapin." : "Sign in to view your weekly health newsletter."}
+          {lang === "tr" ? "Haftalık bülteninizi görmek için giriş yapın." : "Sign in to view your weekly health newsletter."}
         </p>
         <Link href="/login">
-          <Button>{lang === "tr" ? "Giris Yap" : "Sign In"}</Button>
+          <Button>{lang === "tr" ? "Giriş Yap" : "Sign In"}</Button>
         </Link>
       </div>
     );
@@ -238,12 +238,12 @@ export default function WeeklyNewsletterPage() {
           <div className="flex items-center gap-3 mb-2">
             <Mail className="w-6 h-6" />
             <h1 className="text-xl font-bold">
-              {lang === "tr" ? "Haftalik Saglik Bulteni" : "Weekly Health Newsletter"}
+              {lang === "tr" ? "Haftalık Sağlık Bülteni" : "Weekly Health Newsletter"}
             </h1>
           </div>
           <p className="text-green-100 text-sm">
             {lang === "tr"
-              ? "Her Pazartesi kisisellestirilmis saglik ozetiniz"
+              ? "Her Pazartesi kişiselleştirilmiş sağlık özetiniz"
               : "Your personalized health summary every Monday"}
           </p>
         </div>
@@ -307,7 +307,7 @@ export default function WeeklyNewsletterPage() {
                   <div className="flex items-center gap-2">
                     <Activity className="w-4 h-4 text-blue-500" />
                     <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {lang === "tr" ? "Saglik Skoru:" : "Health Score:"}{" "}
+                      {lang === "tr" ? "Sağlık Skoru:" : "Health Score:"}{" "}
                       <span className="font-semibold">{nl.healthScoreTrend.current}/100</span>
                     </span>
                     <Badge variant={trendDiff >= 0 ? "default" : "destructive"} className="text-xs">
@@ -318,7 +318,7 @@ export default function WeeklyNewsletterPage() {
                   <div className="flex items-center gap-2">
                     <Pill className="w-4 h-4 text-green-500" />
                     <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {lang === "tr" ? "Ilac uyumu bu hafta" : "Medication adherence this week"}
+                      {lang === "tr" ? "İlaç uyumu bu hafta" : "Medication adherence this week"}
                     </span>
                   </div>
                 </div>

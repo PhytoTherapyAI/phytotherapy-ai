@@ -108,7 +108,7 @@ export default function PharmacyFinderPage() {
           <div className="flex items-center gap-2 mb-4">
             <Pill className="w-5 h-5 text-green-600 dark:text-green-400" />
             <h2 className="font-semibold text-gray-900 dark:text-white">
-              {lang === "tr" ? "Ilac Esdeqeri Arama" : "Medication Equivalent Search"}
+              {lang === "tr" ? "İlaç Esdeqeri Arama" : "Medication Equivalent Search"}
             </h2>
           </div>
           <div className="relative mb-4">
@@ -117,7 +117,7 @@ export default function PharmacyFinderPage() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={lang === "tr" ? "Ilac adi girin (ornegin: Paracetamol, Parol)..." : "Enter drug name (e.g., Paracetamol, Parol)..."}
+              placeholder={lang === "tr" ? "İlaç adi girin (ornegin: Paracetamol, Parol)..." : "Enter drug name (e.g., Paracetamol, Parol)..."}
               className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
@@ -154,7 +154,7 @@ export default function PharmacyFinderPage() {
         <div className="mt-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 text-center">
           <p className="text-gray-500 dark:text-gray-400 text-sm">
             {lang === "tr"
-              ? "Ilac degisimi yapmadan once mutlaka doktorunuza veya eczaciniza danisin."
+              ? "İlaç degisimi yapmadan once mutlaka doktorunuza veya eczaciniza danisin."
               : "Always consult your doctor or pharmacist before switching medications."}
           </p>
         </div>

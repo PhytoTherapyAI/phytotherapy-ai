@@ -17,7 +17,7 @@ export default function DoctorMessagesPage() {
   const [newMessage, setNewMessage] = useState("");
   const [conversations] = useState<Conversation[]>([
     { id: "1", name: "Dr. Ahmet Yilmaz", avatar: "AY", lastMessage: isTr ? "Tahlil sonuclarinizi inceledim..." : "I reviewed your lab results...", time: "10:30", unread: 1 },
-    { id: "2", name: "Dr. Elif Kaya", avatar: "EK", lastMessage: isTr ? "Ilac dozunuzu degistirdim" : "I changed your medication dose", time: "Yesterday", unread: 0 },
+    { id: "2", name: "Dr. Elif Kaya", avatar: "EK", lastMessage: isTr ? "İlaç dozunuzu degistirdim" : "I changed your medication dose", time: "Yesterday", unread: 0 },
     { id: "3", name: "Dr. Can Demir", avatar: "CD", lastMessage: isTr ? "Kontrol randevunuz icin..." : "For your follow-up appointment...", time: "Mar 25", unread: 2 },
   ]);
   const [messages] = useState<Message[]>([

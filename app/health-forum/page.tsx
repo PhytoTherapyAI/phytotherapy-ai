@@ -66,7 +66,7 @@ export default function HealthForumPage() {
           </div>
           <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">
             {lang === "tr"
-              ? "Saglik yolculugunuzda yalniz degilsiniz. Moderatorlu, kanita dayali topluluk forumumuz yakinda hizmetinizde."
+              ? "Sağlık yolculugunuzda yalniz degilsiniz. Moderatorlu, kanita dayali topluluk forumumuz yakinda hizmetinizde."
               : "You're not alone in your health journey. Our moderated, evidence-based community forum is coming soon."}
           </p>
         </div>

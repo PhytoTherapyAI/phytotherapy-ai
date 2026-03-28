@@ -211,7 +211,7 @@ export default function JetLagPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Sun className="w-5 h-5 text-yellow-500" />
-                  {lang === "tr" ? "Isik Maruziyeti Programi" : "Light Exposure Schedule"}
+                  {lang === "tr" ? "Isik Maruziyeti Programı" : "Light Exposure Schedule"}
                 </h2>
                 <div className="grid gap-3">
                   {result.lightExposureSchedule.map((item, i) => (
@@ -252,7 +252,7 @@ export default function JetLagPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Pill className="w-5 h-5 text-red-500" />
-                  {lang === "tr" ? "Ilac Zamanlama Ayarlamalari" : "Medication Timing Adjustments"}
+                  {lang === "tr" ? "İlaç Zamanlama Ayarlamalari" : "Medication Timing Adjustments"}
                 </h2>
                 <div className="grid gap-3">
                   {result.medicationAdjustments.map((med, i) => (

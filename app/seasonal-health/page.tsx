@@ -105,7 +105,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
       { en: "Wash hands frequently and ventilate rooms regularly", tr: "Elleri sik yikayin ve odalari duzenli havalandirin" },
     ],
     checklist: [
-      { en: "Get annual flu vaccination", tr: "Yillik grip asisi olun" },
+      { en: "Get annual flu vaccination", tr: "Yıllık grip asisi olun" },
       { en: "Check Vitamin D levels", tr: "D vitamini seviyelerinizi kontrol ettirin" },
       { en: "Stock up on herbal teas (ginger, echinacea)", tr: "Bitki caylari stoklayın (zencefil, ekinezya)" },
       { en: "Review winter medication storage (cold-sensitive meds)", tr: "Kis ilac saklamasini gozden gecirin (soguga duyarli ilaclar)" },
@@ -157,14 +157,14 @@ const SEASON_DATA: Record<Season, SeasonData> = {
       },
     ],
     lifestyle: [
-      { en: "Monitor daily pollen counts and plan outdoor activities accordingly", tr: "Gunluk polen sayimlarini izleyin ve dis mekan aktivitelerini buna gore planlayin" },
+      { en: "Monitor daily pollen counts and plan outdoor activities accordingly", tr: "Günlük polen sayimlarini izleyin ve dis mekan aktivitelerini buna gore planlayin" },
       { en: "Shower and change clothes after being outdoors", tr: "Dis mekandan dondukten sonra dus alin ve elbise degistirin" },
       { en: "Use HEPA air purifiers indoors during high pollen days", tr: "Yuksek polenli gunlerde ic mekanda HEPA hava temizleyici kullanin" },
       { en: "Start spring exercise routine gradually", tr: "Bahar egzersiz rutinine yavascak baslayin" },
       { en: "Clean and air out winter bedding", tr: "Kis yatak takimlarini temizleyin ve havalandirin" },
     ],
     checklist: [
-      { en: "Check allergy medication supply", tr: "Alerji ilaci stogunuzu kontrol edin" },
+      { en: "Check allergy medication supply", tr: "Alerji ilacı stogunuzu kontrol edin" },
       { en: "Clean air filters and vents at home", tr: "Evdeki hava filtrelerini ve menfezleri temizleyin" },
       { en: "Start quercetin 2 weeks before peak season", tr: "Doruk mevsimden 2 hafta once kuersetine baslayin" },
       { en: "Schedule allergy testing if needed", tr: "Gerekirse alerji testi yaptirin" },
@@ -215,11 +215,11 @@ const SEASON_DATA: Record<Season, SeasonData> = {
       },
     ],
     lifestyle: [
-      { en: "Drink at least 2.5-3L water daily, more during exercise", tr: "Gunluk en az 2.5-3L su icin, egzersiz sirasinda daha fazla" },
+      { en: "Drink at least 2.5-3L water daily, more during exercise", tr: "Günlük en az 2.5-3L su icin, egzersiz sirasinda daha fazla" },
       { en: "Apply SPF 30+ sunscreen and reapply every 2 hours", tr: "SPF 30+ gunes kremi surün ve her 2 saatte bir yenileyin" },
       { en: "Avoid strenuous outdoor activity during 11am-4pm", tr: "Saat 11-16 arasi yogun dis mekan aktivitesinden kacinin" },
       { en: "Eat water-rich fruits and vegetables (watermelon, cucumber)", tr: "Su bakimindan zengin meyve ve sebzeler tuketin (karpuz, salatalik)" },
-      { en: "Check medication storage — some need refrigeration in heat", tr: "Ilac saklamasini kontrol edin — bazilari sicakta buzdolabi gerektirir" },
+      { en: "Check medication storage — some need refrigeration in heat", tr: "İlaç saklamasini kontrol edin — bazilari sicakta buzdolabi gerektirir" },
     ],
     checklist: [
       { en: "Stock up on electrolyte solutions", tr: "Elektrolit solüsyonları stoklayın" },

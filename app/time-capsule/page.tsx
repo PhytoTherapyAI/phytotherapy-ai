@@ -268,7 +268,7 @@ export default function TimeCapsulePage() {
                     {snap.healthScore !== undefined && (
                       <div>
                         <p className="text-2xl font-bold">{snap.healthScore}</p>
-                        <p className="text-xs text-muted-foreground">{lang === "tr" ? "Saglik Skoru" : "Health Score"}</p>
+                        <p className="text-xs text-muted-foreground">{lang === "tr" ? "Sağlık Skoru" : "Health Score"}</p>
                       </div>
                     )}
                     {snap.weight !== undefined && (
@@ -294,7 +294,7 @@ export default function TimeCapsulePage() {
                       </div>
                     )}
                     {now.healthScore !== undefined && (
-                      <p className="text-xs text-muted-foreground">{lang === "tr" ? "Saglik Skoru" : "Health Score"}</p>
+                      <p className="text-xs text-muted-foreground">{lang === "tr" ? "Sağlık Skoru" : "Health Score"}</p>
                     )}
                     {now.weight !== undefined && (
                       <div className="flex items-center justify-center gap-1">
@@ -397,7 +397,7 @@ export default function TimeCapsulePage() {
           {/* Goals */}
           <div className="space-y-3">
             <label className="text-sm font-medium">
-              {lang === "tr" ? "Saglik Hedeflerin" : "Health Goals"}
+              {lang === "tr" ? "Sağlık Hedeflerin" : "Health Goals"}
             </label>
             <div className="grid grid-cols-2 gap-2">
               {GOAL_OPTIONS.map((goal) => {
@@ -445,7 +445,7 @@ export default function TimeCapsulePage() {
           {/* Snapshot preview */}
           <div className="rounded-xl border bg-card p-4 space-y-2">
             <p className="text-sm font-medium text-muted-foreground">
-              {lang === "tr" ? "Saglik Anlik Goruntusu" : "Health Snapshot"}
+              {lang === "tr" ? "Sağlık Anlik Goruntusu" : "Health Snapshot"}
             </p>
             <p className="text-xs text-muted-foreground">
               {lang === "tr"
@@ -498,7 +498,7 @@ export default function TimeCapsulePage() {
         <div className="text-center space-y-2">
           <Timer className="w-10 h-10 mx-auto text-emerald-500" />
           <h1 className="text-2xl font-bold">
-            {lang === "tr" ? "Saglik Zaman Kapsulu" : "Health Time Capsule"}
+            {lang === "tr" ? "Sağlık Zaman Kapsulu" : "Health Time Capsule"}
           </h1>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
             {lang === "tr"

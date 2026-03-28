@@ -110,7 +110,7 @@ export default function DreamDiaryPage() {
       {/* Medication-Dream Correlations */}
       <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800 p-5 mb-6">
         <h3 className="font-semibold text-indigo-800 dark:text-indigo-300 mb-3">
-          {lang === "tr" ? "Ilac-Ruya Etkileri" : "Medication-Dream Effects"}
+          {lang === "tr" ? "İlaç-Ruya Etkileri" : "Medication-Dream Effects"}
         </h3>
         <div className="space-y-2">
           {MED_DREAM_EFFECTS.map((m, i) => (

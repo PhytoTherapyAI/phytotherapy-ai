@@ -35,7 +35,7 @@ const sections: Section[] = [
     id: "medications",
     icon: <Pill className="w-5 h-5" />,
     titleEN: "Immunosuppressive Medication Compliance",
-    titleTR: "Immunsupresif Ilac Uyumu",
+    titleTR: "Immunsupresif İlaç Uyumu",
     badgeEN: "Critical",
     badgeTR: "Kritik",
     badgeColor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
@@ -46,8 +46,8 @@ const sections: Section[] = [
       { en: "Prednisone: take in morning with food to reduce stomach irritation", tr: "Prednizon: mide tahrisi azaltmak icin sabah yemekle alin" },
       { en: "NEVER skip a dose — even one missed dose increases rejection risk", tr: "ASLA doz atlamayin — tek bir atlanan doz bile red riskini arttirir", warning: true },
       { en: "If you miss a dose: take it within 2 hours, otherwise skip and take next on time", tr: "Doz kacirirseniz: 2 saat icinde alin, yoksa atlayin ve bir sonrakini zamaninda alin" },
-      { en: "Keep a medication diary — record time taken, side effects, and blood levels", tr: "Ilac gunlugu tutun — alinan saat, yan etkiler ve kan duzeyleri kaydedin" },
-      { en: "Drug level monitoring: tacrolimus levels checked weekly initially, then monthly", tr: "Ilac duzeyi izleme: takrolimus duzeyleri baslangicta haftalik, sonra aylik kontrol" },
+      { en: "Keep a medication diary — record time taken, side effects, and blood levels", tr: "İlaç gunlugu tutun — alinan saat, yan etkiler ve kan duzeyleri kaydedin" },
+      { en: "Drug level monitoring: tacrolimus levels checked weekly initially, then monthly", tr: "İlaç duzeyi izleme: takrolimus duzeyleri baslangicta haftalik, sonra aylik kontrol" },
       { en: "St. John's Wort is DANGEROUS — it reduces immunosuppressant levels dramatically", tr: "Sari Kantaron TEHLIKELIDIR — immunsupresif ilac duzeylerini dramatik olarak dusurur", warning: true },
       { en: "Grapefruit and pomelo INCREASE tacrolimus levels — avoid completely", tr: "Greyfurt ve pomelo takrolimus duzeylerini ARTTIRIR — tamamen kacinmayin", warning: true },
       { en: "Report fever, pain over transplant site, or reduced urine output immediately", tr: "Ates, nakil bolgesinde agri veya azalmis idrar cikisini hemen bildirin", warning: true },
@@ -100,20 +100,20 @@ const sections: Section[] = [
     id: "schedule",
     icon: <CalendarCheck className="w-5 h-5" />,
     titleEN: "Follow-Up & Control Schedule",
-    titleTR: "Takip ve Kontrol Programi",
+    titleTR: "Takip ve Kontrol Programı",
     badgeEN: "Ongoing",
     badgeTR: "Surekli",
     badgeColor: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
     items: [
       { en: "Week 1-4: Blood tests 2-3 times per week, clinic visit weekly", tr: "Hafta 1-4: Haftada 2-3 kez kan testi, haftalik klinik ziyareti" },
-      { en: "Month 2-3: Blood tests weekly, clinic visit every 2 weeks", tr: "Ay 2-3: Haftalik kan testi, 2 haftada bir klinik ziyareti" },
+      { en: "Month 2-3: Blood tests weekly, clinic visit every 2 weeks", tr: "Ay 2-3: Haftalık kan testi, 2 haftada bir klinik ziyareti" },
       { en: "Month 4-6: Blood tests every 2 weeks, monthly clinic visit", tr: "Ay 4-6: 2 haftada bir kan testi, aylik klinik ziyareti" },
       { en: "Month 7-12: Monthly blood tests and clinic visits", tr: "Ay 7-12: Aylik kan testleri ve klinik ziyaretleri" },
       { en: "Year 2+: Every 2-3 months for stable patients", tr: "Yil 2+: Stabil hastalar icin her 2-3 ayda bir" },
-      { en: "Annual screening: skin cancer check, cardiovascular assessment, bone density", tr: "Yillik tarama: cilt kanseri kontrolu, kardiyovaskuler degerlendirme, kemik yogunlugu" },
+      { en: "Annual screening: skin cancer check, cardiovascular assessment, bone density", tr: "Yıllık tarama: cilt kanseri kontrolu, kardiyovaskuler degerlendirme, kemik yogunlugu" },
       { en: "Kidney transplant: serum creatinine and GFR monitored at every visit", tr: "Bobrek nakli: her ziyarette serum kreatinin ve GFR izleme" },
       { en: "Liver transplant: liver function tests (ALT, AST, bilirubin) at every visit", tr: "Karaciger nakli: her ziyarette karaciger fonksiyon testleri (ALT, AST, bilirubin)" },
-      { en: "Report any illness, fever, or new medication to your transplant team", tr: "Herhangi bir hastalik, ates veya yeni ilaci nakil ekibinize bildirin" },
+      { en: "Report any illness, fever, or new medication to your transplant team", tr: "Herhangi bir hastalik, ates veya yeni ilacı nakil ekibinize bildirin" },
       { en: "Keep transplant center contact number accessible at all times", tr: "Nakil merkezi iletisim numarasini her zaman ulasılabilir tutun" },
     ],
   },
@@ -163,7 +163,7 @@ export default function OrganTransplantPage() {
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
             {lang === "tr"
-              ? "Ilac uyumu, enfeksiyon onleme, beslenme ve takip programi hakkinda kapsamli rehber."
+              ? "İlaç uyumu, enfeksiyon onleme, beslenme ve takip programi hakkinda kapsamli rehber."
               : "Comprehensive guide on medication compliance, infection prevention, nutrition, and follow-up care."}
           </p>
         </div>
@@ -175,7 +175,7 @@ export default function OrganTransplantPage() {
             <div className="text-sm text-red-800 dark:text-red-200">
               <p className="font-semibold mb-1">
                 {lang === "tr"
-                  ? "Onemli Ilac Etkilesileri"
+                  ? "Onemli İlaç Etkilesileri"
                   : "Critical Drug Interactions"}
               </p>
               <p>

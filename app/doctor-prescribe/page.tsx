@@ -47,7 +47,7 @@ export default function DoctorPrescribePage() {
         </div>
 
         <Card className="p-4 mb-6">
-          <h2 className="font-semibold text-sm mb-3 flex items-center gap-2"><Search className="w-4 h-4" /> {isTr ? "Ilac Ara" : "Search Drug"}</h2>
+          <h2 className="font-semibold text-sm mb-3 flex items-center gap-2"><Search className="w-4 h-4" /> {isTr ? "İlaç Ara" : "Search Drug"}</h2>
           <input className="w-full rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Marka veya etken madde adi..." : "Brand or generic name..."} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
           {filtered.length > 0 && <div className="mt-2 space-y-1">{filtered.map((d, i) => (<div key={i} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" onClick={() => { setSelectedDrug(d); setSearchTerm(""); }}><div><span className="font-medium text-sm">{d.brand}</span><span className="text-xs text-gray-500 ml-2">({d.generic})</span></div><Badge variant="outline">{d.category}</Badge></div>))}</div>}
         </Card>

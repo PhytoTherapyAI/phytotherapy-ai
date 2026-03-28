@@ -49,7 +49,7 @@ const SECTIONS: Section[] = [
       { en: "Alternate arms frequently — repetitive strain on one side causes asymmetric pain", tr: "Kollarinizi sik sik degistirin — tek tarafta tekrarlayan zorlanma asimetrik agriya yol acar" },
       { en: "De Quervain's tenosynovitis ('mother's thumb'): support wrist during lifting, use entire hand", tr: "De Quervain tenosinoviti ('anne basparmaği'): kaldirirken bilegi destekleyin, tum eli kullanin" },
       { en: "Ergonomic feeding: support arms with pillows, keep spine neutral, feet flat on floor", tr: "Ergonomik besleme: kollarinizi yastikla destekleyin, omurga nötr, ayaklar yerde duz" },
-      { en: "3x daily stretches: cat-cow, doorway chest opener, wrist flexor/extensor stretches", tr: "Gunluk 3x esneme: kedi-inek, kapi gogus acici, bilek fleksor/ekstensor esnemeleri" },
+      { en: "3x daily stretches: cat-cow, doorway chest opener, wrist flexor/extensor stretches", tr: "Günlük 3x esneme: kedi-inek, kapi gogus acici, bilek fleksor/ekstensor esnemeleri" },
       { en: "Baby carrier with hip support distributes weight — reduces back strain by 40%", tr: "Kalca destekli bebek tasiyicisi agirligi dagitir — sirt zorlanmasini %40 azaltir" },
       { en: "If wrist pain persists 2+ weeks: see physiotherapist — splinting helps significantly", tr: "Bilek agrisi 2+ hafta devam ederse: fizyoterapiste gidin — atel onemli olcude yardimci olur" },
     ],
@@ -69,7 +69,7 @@ const SECTIONS: Section[] = [
   },
   {
     icon: <Users className="w-5 h-5 text-indigo-500" />,
-    title: { en: "Partner Stress Tips", tr: "Es Stresi Onerileri" },
+    title: { en: "Partner Stress Tips", tr: "Es Stresi Önerileri" },
     color: "indigo",
     items: [
       { en: "Schedule 'check-in' conversations: 10 min/day about how each person is FEELING, not logistics", tr: "'Durum kontrolu' konusmalari planlayin: gunluk 10 dk her kisinin NASIL HISSETTIGINI konusun, lojistik degil" },

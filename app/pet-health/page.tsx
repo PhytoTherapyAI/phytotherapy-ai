@@ -21,7 +21,7 @@ const DISEASES: ZoonoticDisease[] = [
     name: { en: "Toxoplasmosis", tr: "Toksoplazmoz" },
     source: { en: "Cats (feces)", tr: "Kediler (dışkı)" },
     transmission: { en: "Contact with infected cat feces, contaminated soil, or undercooked meat", tr: "Enfekte kedi diskisi, kontamine toprak veya az pismis etle temas" },
-    symptoms: { en: "Usually asymptomatic in healthy adults. Flu-like symptoms possible.", tr: "Saglikli yetiskinlerde genellikle semptomsuz. Grip benzeri semptomlar mumkun." },
+    symptoms: { en: "Usually asymptomatic in healthy adults. Flu-like symptoms possible.", tr: "Sağlıkli yetiskinlerde genellikle semptomsuz. Grip benzeri semptomlar mumkun." },
     prevention: { en: "Wear gloves when cleaning litter. Wash hands after. Pregnant women should avoid litter duty.", tr: "Kum temizlerken eldiven giyiniz. Sonra ellerinizi yikayiniz. Hamile kadinlar kum temizleme gorevinden kacinmali." },
     riskGroups: { en: "CRITICAL for pregnant women (birth defects) and immunosuppressed patients", tr: "Hamile kadinlar (dogum kusuru) ve immunsuprese hastalar icin KRITIK" },
     severity: "high",

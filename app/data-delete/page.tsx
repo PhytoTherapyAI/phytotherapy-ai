@@ -16,13 +16,13 @@ export default function DataDeletePage() {
   const [deleted, setDeleted] = useState(false);
 
   const dataCategories = [
-    { en: "Health profile & medications", tr: "Saglik profili ve ilaclar", count: 12 },
+    { en: "Health profile & medications", tr: "Sağlık profili ve ilaclar", count: 12 },
     { en: "Chat history & AI conversations", tr: "Sohbet gecmisi ve AI konusmalari", count: 47 },
     { en: "Blood test results", tr: "Kan tahlili sonuclari", count: 3 },
     { en: "Calendar events & reminders", tr: "Takvim etkinlikleri ve hatirlaticilar", count: 28 },
     { en: "Supplement tracking data", tr: "Takviye takip verileri", count: 15 },
     { en: "Family member profiles", tr: "Aile uyesi profilleri", count: 2 },
-    { en: "Health scores & analytics", tr: "Saglik skorlari ve analizler", count: 90 },
+    { en: "Health scores & analytics", tr: "Sağlık skorlari ve analizler", count: 90 },
     { en: "Consent & legal records", tr: "Onay ve yasal kayitlar", count: 1 },
   ];
 

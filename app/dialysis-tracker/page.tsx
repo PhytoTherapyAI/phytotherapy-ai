@@ -29,7 +29,7 @@ const MEDICATIONS = [
   { name: "EPO Injection", tr: "EPO Enjeksiyonu", timing: "During dialysis", timingTr: "Diyaliz sirasinda", icon: <Beaker className="w-4 h-4" /> },
   { name: "Iron Supplement", tr: "Demir Takviyesi", timing: "Empty stomach", timingTr: "Bos karina", icon: <Pill className="w-4 h-4" /> },
   { name: "Calcium Supplement", tr: "Kalsiyum Takviyesi", timing: "Between meals", timingTr: "Ogununler arasi", icon: <Pill className="w-4 h-4" /> },
-  { name: "Blood Pressure Med", tr: "Tansiyon Ilaci", timing: "Morning, skip dialysis day", timingTr: "Sabah, diyaliz gunu atla", icon: <Pill className="w-4 h-4" /> },
+  { name: "Blood Pressure Med", tr: "Tansiyon İlacı", timing: "Morning, skip dialysis day", timingTr: "Sabah, diyaliz gunu atla", icon: <Pill className="w-4 h-4" /> },
 ];
 
 export default function DialysisTrackerPage() {
@@ -48,7 +48,7 @@ export default function DialysisTrackerPage() {
     { id: "sessions", icon: <Calendar className="w-4 h-4" />, label: isTr ? "Seanslar" : "Sessions" },
     { id: "fluid", icon: <GlassWater className="w-4 h-4" />, label: isTr ? "Sivi Takibi" : "Fluid Tracking" },
     { id: "food", icon: <Apple className="w-4 h-4" />, label: isTr ? "Besin Rehberi" : "Food Guide" },
-    { id: "meds", icon: <Pill className="w-4 h-4" />, label: isTr ? "Ilac Zamanlama" : "Medication Timing" },
+    { id: "meds", icon: <Pill className="w-4 h-4" />, label: isTr ? "İlaç Zamanlama" : "Medication Timing" },
   ];
 
   const levelColor = (l: string) => l === "high" ? "bg-red-100 text-red-700 dark:bg-red-900/30" : l === "medium" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30" : "bg-green-100 text-green-700 dark:bg-green-900/30";
@@ -98,7 +98,7 @@ export default function DialysisTrackerPage() {
         {activeTab === "fluid" && (
           <div className="space-y-4">
             <Card className="p-6 text-center">
-              <h2 className="text-lg font-semibold mb-4">{isTr ? "Gunluk Sivi Alimi" : "Daily Fluid Intake"}</h2>
+              <h2 className="text-lg font-semibold mb-4">{isTr ? "Günlük Sivi Alimi" : "Daily Fluid Intake"}</h2>
               <div className="relative w-40 h-40 mx-auto mb-4">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="#e5e7eb" strokeWidth="8" /><circle cx="50" cy="50" r="45" fill="none" stroke={fluidPct > 90 ? "#ef4444" : "#06b6d4"} strokeWidth="8" strokeDasharray={2 * Math.PI * 45} strokeDashoffset={2 * Math.PI * 45 * (1 - fluidPct / 100)} strokeLinecap="round" /></svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center"><span className="text-2xl font-bold">{fluidIntake}</span><span className="text-xs text-gray-500">/ {fluidLimit} ml</span></div>
@@ -135,8 +135,8 @@ export default function DialysisTrackerPage() {
         {activeTab === "meds" && (
           <div className="space-y-4">
             <Card className="p-4 border-purple-200 bg-purple-50 dark:bg-purple-900/20">
-              <h2 className="text-lg font-semibold mb-1">{isTr ? "Diyaliz Ilac Zamanlama" : "Dialysis Medication Timing"}</h2>
-              <p className="text-sm text-gray-600">{isTr ? "Ilaclarinizi dogru zamanda alin" : "Take your medications at the right time"}</p>
+              <h2 className="text-lg font-semibold mb-1">{isTr ? "Diyaliz İlaç Zamanlama" : "Dialysis Medication Timing"}</h2>
+              <p className="text-sm text-gray-600">{isTr ? "İlaçlarinizi dogru zamanda alin" : "Take your medications at the right time"}</p>
             </Card>
             {MEDICATIONS.map((med, i) => (
               <Card key={i} className="p-4 flex items-center gap-4">

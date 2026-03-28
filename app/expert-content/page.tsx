@@ -17,9 +17,9 @@ import {
 const CATEGORY_ICONS: Record<string, any> = { Leaf, Apple, Brain, Activity, Pill, Heart: Heart, Baby, Dumbbell, Sparkles, BookOpen }
 
 // Mock author data
-const AUTHORS: Record<string, { name: string; title: string; specialty: string; verified: boolean; avatar: string }> = {
-  "1": { name: "Prof. Dr. Ayşe Kara", title: "Prof.Dr.", specialty: "Endocrinology", verified: true, avatar: "AK" },
-  "2": { name: "Ecz. Mehmet Demir", title: "Ecz.", specialty: "Clinical Pharmacy", verified: true, avatar: "MD" },
+const AUTHORS: Record<string, { name: string; title: string; specialty: { en: string; tr: string }; verified: boolean; avatar: string }> = {
+  "1": { name: "Prof. Dr. Ayşe Kara", title: "Prof.Dr.", specialty: { en: "Endocrinology", tr: "Endokrinoloji" }, verified: true, avatar: "AK" },
+  "2": { name: "Ecz. Mehmet Demir", title: "Ecz.", specialty: { en: "Clinical Pharmacy", tr: "Klinik Eczacılık" }, verified: true, avatar: "MD" },
 }
 
 export default function ExpertContentPage() {
@@ -132,7 +132,7 @@ export default function ExpertContentPage() {
                         <Sparkles className="w-3 h-3" />{t("expert_content")}
                       </Badge>
                       {content.isSponsored && (
-                        <Badge variant="outline" className="text-[10px]">Sponsored</Badge>
+                        <Badge variant="outline" className="text-[10px]">{lang === "tr" ? "Sponsorlu" : "Sponsored"}</Badge>
                       )}
                     </div>
 
@@ -164,7 +164,7 @@ export default function ExpertContentPage() {
                               <BadgeCheck className="w-4 h-4 text-emerald-500" />
                             )}
                           </div>
-                          <p className="text-xs text-muted-foreground">{author?.specialty}</p>
+                          <p className="text-xs text-muted-foreground">{author?.specialty[lang as "en" | "tr"]}</p>
                         </div>
                       </div>
                       <Button variant="outline" size="sm" className="gap-1 text-xs">

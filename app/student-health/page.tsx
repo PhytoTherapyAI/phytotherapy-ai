@@ -80,7 +80,7 @@ const STRESS_TIPS: StressTip[] = [
     icon: <Users className="w-5 h-5 text-blue-500" />,
     title: { en: "Social Isolation Checklist", tr: "Sosyal Izolasyon Kontrol Listesi" },
     items: [
-      { en: "Talk to at least 1 person face-to-face daily — even brief interactions help", tr: "Gunluk en az 1 kisiyle yuz yuze konusun — kisa etkilesimler bile yardimci" },
+      { en: "Talk to at least 1 person face-to-face daily — even brief interactions help", tr: "Günlük en az 1 kisiyle yuz yuze konusun — kisa etkilesimler bile yardimci" },
       { en: "Join 1 club or activity group — shared interests reduce social anxiety", tr: "1 kulup veya etkinlik grubuna katilin — ortak ilgi alanlari sosyal kaygiyi azaltir" },
       { en: "Study groups: social connection + accountability + better learning", tr: "Calisma gruplari: sosyal baglanti + hesap verebilirlik + daha iyi ogrenme" },
       { en: "Feeling isolated for 2+ weeks? Reach out to campus counseling — it's free", tr: "2+ haftadir kendinizi izole mi hissediyorsunuz? Kampus danismanlarina ulasin — ucretsiz" },

@@ -115,7 +115,7 @@ const COMMON_RELIEF = [
   { en: "Heat", tr: "Sicak" },
   { en: "Stretching", tr: "Germe" },
   { en: "Massage", tr: "Masaj" },
-  { en: "Medication", tr: "Ilac" },
+  { en: "Medication", tr: "İlaç" },
   { en: "Deep breathing", tr: "Derin nefes" },
   { en: "Walking", tr: "Yuruyus" },
 ];
@@ -626,7 +626,7 @@ export default function PainDiaryPage() {
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[
                   { label: lang === "tr" ? "Ort. Siddet" : "Avg. Intensity", value: `${analysis.averageIntensity}/10`, color: intensityColor(analysis.averageIntensity) },
-                  { label: lang === "tr" ? "Haftalik Sik." : "Freq/Week", value: String(analysis.frequencyPerWeek), color: "text-foreground" },
+                  { label: lang === "tr" ? "Haftalık Sik." : "Freq/Week", value: String(analysis.frequencyPerWeek), color: "text-foreground" },
                   { label: lang === "tr" ? "En Sik Bolge" : "Most Common", value: analysis.mostCommonLocation, color: "text-foreground" },
                   { label: lang === "tr" ? "En Sik Tip" : "Most Common Type", value: analysis.mostCommonType, color: "text-foreground" },
                 ].map((stat, i) => (
@@ -682,7 +682,7 @@ export default function PainDiaryPage() {
                 <div className="rounded-lg border p-4">
                   <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
                     <Pill className="h-4 w-4 text-red-500" />
-                    {lang === "tr" ? "Ilac Korelasyonu" : "Medication Correlation"}
+                    {lang === "tr" ? "İlaç Korelasyonu" : "Medication Correlation"}
                   </h3>
                   <ul className="space-y-1">
                     {analysis.medicationCorrelation.map((m, i) => (
@@ -723,7 +723,7 @@ export default function PainDiaryPage() {
               {analysis.recommendations && analysis.recommendations.length > 0 && (
                 <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
                   <h3 className="mb-2 text-sm font-semibold text-red-700 dark:text-red-400">
-                    {lang === "tr" ? "Oneriler" : "Recommendations"}
+                    {lang === "tr" ? "Öneriler" : "Recommendations"}
                   </h3>
                   <ul className="space-y-1">
                     {analysis.recommendations.map((r, i) => (

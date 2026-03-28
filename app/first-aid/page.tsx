@@ -39,7 +39,7 @@ const SECTIONS: FirstAidSection[] = [
     ],
     stepsTr: [
       "Ortamin guvenli oldugunu kontrol edin, kisiyi bilince kontrol edin.",
-      "Hemen 112'yi arayin veya birinden aramasini isteyin.",
+      "Hemen 112'yi arayin veya birinden aramasıni isteyin.",
       "Kisiyi sert ve duz bir zemine sirt ustu yatirin.",
       "Bir elinizin topu kismini gogus kafesinin ortasina, meme uclari hizasina yerlestirin.",
       "Diger elinizi ustune koyun, parmaklari kenetleyin.",

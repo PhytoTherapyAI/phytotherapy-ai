@@ -38,9 +38,9 @@ const ITEMS: DetoxItem[] = [
     verdict: "partial",
     grade: "C",
     claim: { en: "Binds toxins in the gut and removes them", tr: "Bagirsaktaki toksinleri baglar ve uzaklastirir" },
-    reality: { en: "Effective for acute poisoning in emergency settings (within 1-2 hours). NOT effective for daily 'detox'. Can bind medications and nutrients, reducing their absorption.", tr: "Acil durumlarda akut zehirlenme icin etkili (1-2 saat icinde). Gunluk 'detoks' icin etkili DEGILDIR. Ilac ve besinleri baglayarak emilimlerini azaltabilir." },
-    evidence: { en: "Strong evidence for acute poisoning only. No evidence for daily use.", tr: "Sadece akut zehirlenme icin guclu kanit. Gunluk kullanim icin kanit yok." },
-    safetyNote: { en: "DANGEROUS if taken with medications — can block drug absorption!", tr: "Ilaclarla birlikte alinirsa TEHLIKELI — ilac emilimini engelleyebilir!" },
+    reality: { en: "Effective for acute poisoning in emergency settings (within 1-2 hours). NOT effective for daily 'detox'. Can bind medications and nutrients, reducing their absorption.", tr: "Acil durumlarda akut zehirlenme icin etkili (1-2 saat icinde). Günlük 'detoks' icin etkili DEGILDIR. İlaç ve besinleri baglayarak emilimlerini azaltabilir." },
+    evidence: { en: "Strong evidence for acute poisoning only. No evidence for daily use.", tr: "Sadece akut zehirlenme icin guclu kanit. Günlük kullanim icin kanit yok." },
+    safetyNote: { en: "DANGEROUS if taken with medications — can block drug absorption!", tr: "İlaçlarla birlikte alinirsa TEHLIKELI — ilac emilimini engelleyebilir!" },
   },
   {
     name: { en: "N-Acetyl Cysteine (NAC)", tr: "N-Asetil Sistein (NAC)" },

@@ -25,7 +25,7 @@ const ESSENTIALS_8 = [
   { id: "diet", icon: "🥗", en: "Eat Better — Mediterranean/DASH diet", tr: "Daha Iyi Beslenin — Akdeniz/DASH diyeti" },
   { id: "active", icon: "🏃", en: "Be More Active — 150 min/week moderate", tr: "Daha Aktif Olun — Haftada 150 dk orta tempo" },
   { id: "quit", icon: "🚭", en: "Quit Tobacco", tr: "Tutun Birakin" },
-  { id: "sleep", icon: "😴", en: "Get Healthy Sleep — 7-9 hours", tr: "Saglikli Uyku — 7-9 saat" },
+  { id: "sleep", icon: "😴", en: "Get Healthy Sleep — 7-9 hours", tr: "Sağlıkli Uyku — 7-9 saat" },
   { id: "weight", icon: "⚖️", en: "Manage Weight — BMI < 25", tr: "Kilo Yonetimi — VKI < 25" },
   { id: "cholesterol", icon: "🩸", en: "Control Cholesterol — LDL < 100", tr: "Kolesterol Kontrolu — LDL < 100" },
   { id: "sugar", icon: "📊", en: "Manage Blood Sugar — HbA1c < 5.7%", tr: "Kan Sekeri Yonetimi — HbA1c < %5.7" },

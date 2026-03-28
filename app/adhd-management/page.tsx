@@ -191,7 +191,7 @@ export default function ADHDManagementPage() {
         {/* Medication Effectiveness */}
         <div className="rounded-xl border bg-card p-6 shadow-sm">
           <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
-            {lang === "tr" ? "Ilac Etkinligi" : "Medication Effectiveness"}: {medEffectiveness}/5
+            {lang === "tr" ? "İlaç Etkinliği" : "Medication Effectiveness"}: {medEffectiveness}/5
           </h2>
           <input
             type="range"
@@ -303,7 +303,7 @@ export default function ADHDManagementPage() {
           {result.environmentTips?.length > 0 && (
             <div className="rounded-xl border-2 border-orange-200 bg-orange-50 p-6 dark:bg-orange-950/20">
               <h3 className="mb-3 text-lg font-bold text-orange-700 dark:text-orange-300">
-                {lang === "tr" ? "Cevre Onerileri" : "Environment Tips"}
+                {lang === "tr" ? "Çevre Önerileri" : "Environment Tips"}
               </h3>
               <ul className="space-y-2">
                 {result.environmentTips.map((tip, i) => (
@@ -317,7 +317,7 @@ export default function ADHDManagementPage() {
           {result.supplementSuggestions?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-orange-700 dark:text-orange-300">
-                {lang === "tr" ? "Takviye Onerileri" : "Supplement Suggestions"}
+                {lang === "tr" ? "Takviye Önerileri" : "Supplement Suggestions"}
               </h3>
               <div className="space-y-3">
                 {result.supplementSuggestions.map((supp, i) => (

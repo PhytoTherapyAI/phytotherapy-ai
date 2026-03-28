@@ -185,7 +185,7 @@ export default function ShiftWorkerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Moon className="w-5 h-5 text-indigo-500" />
-                  {lang === "tr" ? "Uyku Programi" : "Sleep Schedule"}
+                  {lang === "tr" ? "Uyku Programı" : "Sleep Schedule"}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-3">
@@ -242,7 +242,7 @@ export default function ShiftWorkerPage() {
                     <div className="font-medium">{result.caffeinePlan.lastCaffeine}</div>
                   </div>
                   <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Gunluk Max" : "Daily Max"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Günlük Max" : "Daily Max"}</div>
                     <div className="font-medium">{result.caffeinePlan.maxDaily}</div>
                   </div>
                 </div>
@@ -255,7 +255,7 @@ export default function ShiftWorkerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Pill className="w-5 h-5 text-green-500" />
-                  {lang === "tr" ? "Takviye Onerileri" : "Supplement Suggestions"}
+                  {lang === "tr" ? "Takviye Önerileri" : "Supplement Suggestions"}
                 </h2>
                 <div className="grid gap-3">
                   {result.supplementSuggestions.map((supp, i) => (
@@ -282,7 +282,7 @@ export default function ShiftWorkerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-3">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Dumbbell className="w-5 h-5 text-green-500" />
-                  {lang === "tr" ? "Egzersiz Onerileri" : "Exercise Recommendations"}
+                  {lang === "tr" ? "Egzersiz Önerileri" : "Exercise Recommendations"}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-3">

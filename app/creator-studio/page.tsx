@@ -269,7 +269,7 @@ export default function CreatorStudioPage() {
                 {tags.length < 5 && (
                   <div className="flex gap-1">
                     <Input value={tagInput} onChange={e => setTagInput(e.target.value)} onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())}
-                      placeholder="Add tag..." className="h-8 w-32 text-xs" />
+                      placeholder={lang === "tr" ? "Etiket ekle..." : "Add tag..."} className="h-8 w-32 text-xs" />
                     <Button variant="ghost" size="sm" onClick={addTag} className="h-8"><Tag className="w-3 h-3" /></Button>
                   </div>
                 )}

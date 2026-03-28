@@ -330,11 +330,11 @@ export default function SmartRemindersPage() {
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <Pill className="w-16 h-16 text-teal-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">
-            {lang === "tr" ? "Akilli Ilac Hatirlatici" : "Smart Medication Reminder"}
+            {lang === "tr" ? "Akilli İlaç Hatirlatici" : "Smart Medication Reminder"}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             {lang === "tr"
-              ? "Ilaclarinizin en uygun zamanlarda alinmasini saglayan kisisellestirilmis program."
+              ? "İlaçlarinizin en uygun zamanlarda alinmasini saglayan kisisellestirilmis program."
               : "Personalized schedule ensuring your medications are taken at optimal times."}
           </p>
           <Link href="/login">
@@ -356,11 +356,11 @@ export default function SmartRemindersPage() {
             <BellRing className="w-8 h-8 text-teal-600 dark:text-teal-400" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {lang === "tr" ? "Akilli Ilac Hatirlatici" : "Smart Medication Reminder"}
+            {lang === "tr" ? "Akilli İlaç Hatirlatici" : "Smart Medication Reminder"}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
             {lang === "tr"
-              ? "Ilac ozelliklerine gore optimize edilmis kisisel programiniz"
+              ? "İlaç ozelliklerine gore optimize edilmis kisisel programiniz"
               : "Your personalized schedule optimized by drug properties"}
           </p>
         </div>
@@ -377,12 +377,12 @@ export default function SmartRemindersPage() {
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">
               {lang === "tr"
-                ? "Ilaclarinizi profilinize ekleyerek akilli zamanlama olusturun."
+                ? "İlaçlarinizi profilinize ekleyerek akilli zamanlama olusturun."
                 : "Add your medications to your profile to generate smart scheduling."}
             </p>
             <Link href="/profile">
               <Button className="bg-teal-600 hover:bg-teal-700 text-white">
-                {lang === "tr" ? "Profilde Ilac Ekle" : "Add Medications in Profile"}
+                {lang === "tr" ? "Profilde İlaç Ekle" : "Add Medications in Profile"}
               </Button>
             </Link>
           </div>
@@ -432,7 +432,7 @@ export default function SmartRemindersPage() {
             <div className="mb-8">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-teal-500" />
-                {lang === "tr" ? "Gunluk Programiniz" : "Your Daily Schedule"}
+                {lang === "tr" ? "Günlük Programıniz" : "Your Daily Schedule"}
               </h2>
 
               <div className="relative space-y-1">
@@ -607,7 +607,7 @@ export default function SmartRemindersPage() {
             <div className="mb-8">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-teal-500" />
-                {lang === "tr" ? "Ilac Zamanlama Kilavuzu" : "Medication Timing Guide"}
+                {lang === "tr" ? "İlaç Zamanlama Kilavuzu" : "Medication Timing Guide"}
               </h2>
               <div className="space-y-3">
                 {medications.map((med) => {
@@ -663,7 +663,7 @@ export default function SmartRemindersPage() {
             <div className="p-4 rounded-xl bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-center">
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 {lang === "tr"
-                  ? "Bu program genel bilgi amaclidir. Ilac zamanlamasi icin her zaman doktorunuzun talimatlarini takip edin."
+                  ? "Bu program genel bilgi amaclidir. İlaç zamanlamasi icin her zaman doktorunuzun talimatlarini takip edin."
                   : "This schedule is for informational purposes. Always follow your doctor's instructions for medication timing."}
               </p>
             </div>

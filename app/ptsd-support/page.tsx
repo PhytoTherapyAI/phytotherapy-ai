@@ -389,7 +389,7 @@ export default function PTSDSupportPage() {
           {result.recommendations && result.recommendations.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-teal-700 dark:text-teal-300">
-                {lang === "tr" ? "Oneriler" : "Recommendations"}
+                {lang === "tr" ? "Öneriler" : "Recommendations"}
               </h3>
               <ul className="space-y-2">
                 {result.recommendations.map((rec, i) => (

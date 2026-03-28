@@ -35,7 +35,7 @@ const CERTIFICATES: Certificate[] = [
   {
     id: "med-compliance-30",
     titleEn: "30-Day Medication Compliance",
-    titleTr: "30 Gunluk Ilac Uyumu",
+    titleTr: "30 Günlük İlaç Uyumu",
     descEn: "Successfully tracked medications for 30 consecutive days",
     descTr: "30 gun boyunca ilaclarini duzgun sekilde takip ettin",
     icon: <Shield className="w-8 h-8" />,
@@ -46,7 +46,7 @@ const CERTIFICATES: Certificate[] = [
   {
     id: "health-score-90",
     titleEn: "Health Score Champion",
-    titleTr: "Saglik Skoru Sampiyonu",
+    titleTr: "Sağlık Skoru Sampiyonu",
     descEn: "Achieved a health score of 90 or above",
     descTr: "90 ve uzerinde saglik skoru elde ettin",
     icon: <Trophy className="w-8 h-8" />,
@@ -57,7 +57,7 @@ const CERTIFICATES: Certificate[] = [
   {
     id: "streak-7",
     titleEn: "7-Day Health Streak",
-    titleTr: "7 Gunluk Saglik Serisi",
+    titleTr: "7 Günlük Sağlık Serisi",
     descEn: "Maintained a 7-day streak of daily health check-ins",
     descTr: "7 gun ust uste gunluk saglik takibini tamamladin",
     icon: <Flame className="w-8 h-8" />,
@@ -90,7 +90,7 @@ const CERTIFICATES: Certificate[] = [
   {
     id: "quiz-master",
     titleEn: "Health Quiz Master",
-    titleTr: "Saglik Quiz Ustasi",
+    titleTr: "Sağlık Quiz Ustasi",
     descEn: "Answered 20 health quiz questions correctly",
     descTr: "20 saglik quiz sorusunu dogru yanitledin",
     icon: <Award className="w-8 h-8" />,

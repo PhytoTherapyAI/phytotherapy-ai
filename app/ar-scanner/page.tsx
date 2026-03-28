@@ -6,18 +6,18 @@ import { tx } from "@/lib/translations";
 
 const STEPS = [
   { icon: Camera, title: { en: "Point Camera", tr: "Kamerayi Tutun" }, desc: { en: "Aim your phone camera at any medication box or pill", tr: "Telefonunuzun kamerasini herhangi bir ilac kutusuna veya hapa tutun" } },
-  { icon: Scan, title: { en: "Instant Recognition", tr: "Anlik Tanimlama" }, desc: { en: "AI identifies the medication in real-time using WebXR", tr: "AI, WebXR kullanarak ilaci gercek zamanli olarak tanir" } },
-  { icon: Layers, title: { en: "AR Info Overlay", tr: "AR Bilgi Kaplama" }, desc: { en: "See drug info, interactions, and warnings overlaid on your camera view", tr: "Ilac bilgisi, etkileşimler ve uyarilari kamera goruntunuzun uzerinde gorun" } },
-  { icon: Pill, title: { en: "Add to Profile", tr: "Profile Ekle" }, desc: { en: "One tap to add recognized medication to your profile", tr: "Tanilan ilaci profilinize tek dokunusla ekleyiniz" } },
+  { icon: Scan, title: { en: "Instant Recognition", tr: "Anlik Tanimlama" }, desc: { en: "AI identifies the medication in real-time using WebXR", tr: "AI, WebXR kullanarak ilacı gercek zamanli olarak tanir" } },
+  { icon: Layers, title: { en: "AR Info Overlay", tr: "AR Bilgi Kaplama" }, desc: { en: "See drug info, interactions, and warnings overlaid on your camera view", tr: "İlaç bilgisi, etkileşimler ve uyarıları kamera görüntünüzün uzerinde görün" } },
+  { icon: Pill, title: { en: "Add to Profile", tr: "Profile Ekle" }, desc: { en: "One tap to add recognized medication to your profile", tr: "Tanılan ilacı profilinize tek dokunuşla ekleyiniz" } },
 ];
 
 const CAPABILITIES = [
-  { en: "Medication box recognition (brand + generic name)", tr: "Ilac kutusu tanima (marka + etken madde)" },
+  { en: "Medication box recognition (brand + generic name)", tr: "İlaç kutusu tanima (marka + etken madde)" },
   { en: "Pill shape and color identification", tr: "Hap sekli ve renk tanilama" },
   { en: "Real-time interaction check with your profile", tr: "Profilinizle gercek zamanli etkilesim kontrolu" },
   { en: "Dosage and frequency info overlay", tr: "Doz ve siklik bilgisi kaplama" },
   { en: "Barcode + QR code scanning support", tr: "Barkod + QR kod tarama destegi" },
-  { en: "Multi-language medication database", tr: "Cok dilli ilac veritabani" },
+  { en: "Multi-language medication database", tr: "Çok dilli ilac veritabani" },
 ];
 
 export default function ARScannerPage() {
@@ -43,7 +43,7 @@ export default function ARScannerPage() {
         </div>
         <Smartphone className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
         <p className="text-white text-lg font-semibold mb-2">
-          {lang === "tr" ? "WebXR Tabanli Ilac Tarayici" : "WebXR-Based Drug Scanner"}
+          {lang === "tr" ? "WebXR Tabanli İlaç Tarayici" : "WebXR-Based Drug Scanner"}
         </p>
         <p className="text-gray-400 text-sm max-w-md mx-auto">
           {lang === "tr"

@@ -752,7 +752,7 @@ export default function WomensHealthPage() {
               {analysis.phaseRecommendations.length > 0 && (
                 <div className="rounded-xl border border-pink-200 bg-white p-5 dark:border-pink-800 dark:bg-gray-900">
                   <h3 className="font-semibold mb-3 text-sm">
-                    {lang === "tr" ? "Faz Onerileri" : "Phase Recommendations"}
+                    {lang === "tr" ? "Faz Önerileri" : "Phase Recommendations"}
                   </h3>
                   <div className="space-y-3">
                     {analysis.phaseRecommendations.map((r, i) => {

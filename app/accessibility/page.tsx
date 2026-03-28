@@ -56,7 +56,7 @@ const SECTIONS: Section[] = [
     title: { en: "Disability Rights (Turkey)", tr: "Engelli Haklari (Turkiye)" },
     color: "text-amber-500",
     items: [
-      { title: { en: "Health Report", tr: "Saglik Raporu" }, desc: { en: "Disability health report: Apply at any state hospital. Required for benefits.", tr: "Engelli saglik raporu: Herhangi bir devlet hastanesinde basvuru. Haklar icin gerekli." } },
+      { title: { en: "Health Report", tr: "Sağlık Raporu" }, desc: { en: "Disability health report: Apply at any state hospital. Required for benefits.", tr: "Engelli saglik raporu: Herhangi bir devlet hastanesinde basvuru. Haklar icin gerekli." } },
       { title: { en: "Tax Exemptions", tr: "Vergi Muafiyetleri" }, desc: { en: "Income tax reduction based on disability level. Vehicle purchase tax exemption for 90%+ disability.", tr: "Engellilik duzeyine gore gelir vergisi indirimi. %90+ engelliler icin arac alim vergisi muafiyeti." } },
       { title: { en: "Free Public Transport", tr: "Ucretsiz Toplu Tasima" }, desc: { en: "Free public transport in most Turkish cities for disability card holders.", tr: "Cogu Turk sehrinde engelli karti sahipleri icin ucretsiz toplu tasima." } },
       { title: { en: "Home Care Salary", tr: "Evde Bakim Maasi" }, desc: { en: "Monthly payment for caregivers of severely disabled individuals. Apply at SYDV.", tr: "Agir engelli bireylerin bakicilari icin aylik odeme. SYDV'ye basvurun." } },
@@ -70,7 +70,7 @@ const SECTIONS: Section[] = [
     items: [
       { title: { en: "SHCEK / ASHB", tr: "SHCEK / ASHB" }, desc: { en: "Ministry of Family and Social Services: Main body for disability services in Turkey.", tr: "Aile ve Sosyal Hizmetler Bakanligi: Turkiye'de engelli hizmetleri icin ana kurum." } },
       { title: { en: "Engelli Bilgi Hatti: 183", tr: "Engelli Bilgi Hatti: 183" }, desc: { en: "Call 183 for disability-related questions and guidance in Turkey.", tr: "Turkiye'de engellilikle ilgili sorular ve yonlendirme icin 183'u arayin." } },
-      { title: { en: "WHO Disability Resources", tr: "DSO Engellilik Kaynaklari" }, desc: { en: "World Health Organization resources on disability and rehabilitation.", tr: "Dunya Saglik Orgutu engellilik ve rehabilitasyon kaynaklari." } },
+      { title: { en: "WHO Disability Resources", tr: "DSO Engellilik Kaynaklari" }, desc: { en: "World Health Organization resources on disability and rehabilitation.", tr: "Dunya Sağlık Orgutu engellilik ve rehabilitasyon kaynaklari." } },
     ],
   },
 ];

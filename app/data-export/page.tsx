@@ -15,14 +15,14 @@ export default function DataExportPage() {
   const [exporting, setExporting] = useState(false);
   const [exported, setExported] = useState(false);
   const [categories, setCategories] = useState<DataCategory[]>([
-    { id: "profile", icon: <Heart className="w-5 h-5" />, en: "Health Profile", tr: "Saglik Profili", descEn: "Personal info, conditions, allergies", descTr: "Kisisel bilgiler, hastaliklar, alerjiler", count: 1, size: "2 KB", selected: true },
-    { id: "medications", icon: <Pill className="w-5 h-5" />, en: "Medications", tr: "Ilaclar", descEn: "Current and past medications", descTr: "Mevcut ve gecmis ilaclar", count: 8, size: "4 KB", selected: true },
+    { id: "profile", icon: <Heart className="w-5 h-5" />, en: "Health Profile", tr: "Sağlık Profili", descEn: "Personal info, conditions, allergies", descTr: "Kisisel bilgiler, hastaliklar, alerjiler", count: 1, size: "2 KB", selected: true },
+    { id: "medications", icon: <Pill className="w-5 h-5" />, en: "Medications", tr: "İlaçlar", descEn: "Current and past medications", descTr: "Mevcut ve gecmis ilaclar", count: 8, size: "4 KB", selected: true },
     { id: "chat", icon: <MessageSquare className="w-5 h-5" />, en: "Chat History", tr: "Sohbet Gecmisi", descEn: "All AI conversations", descTr: "Tum AI konusmalari", count: 47, size: "128 KB", selected: true },
     { id: "blood", icon: <Activity className="w-5 h-5" />, en: "Blood Tests", tr: "Kan Tahlilleri", descEn: "Lab results and analyses", descTr: "Laboratuvar sonuclari", count: 3, size: "15 KB", selected: true },
     { id: "calendar", icon: <Calendar className="w-5 h-5" />, en: "Calendar Data", tr: "Takvim Verileri", descEn: "Events, reminders, tracking", descTr: "Etkinlikler, hatirlaticilar", count: 28, size: "12 KB", selected: true },
     { id: "supplements", icon: <FileText className="w-5 h-5" />, en: "Supplement Log", tr: "Takviye Kayitlari", descEn: "Supplement intake history", descTr: "Takviye kullanim gecmisi", count: 156, size: "22 KB", selected: true },
     { id: "family", icon: <Users className="w-5 h-5" />, en: "Family Profiles", tr: "Aile Profilleri", descEn: "Family member health data", descTr: "Aile uyesi saglik verileri", count: 2, size: "6 KB", selected: true },
-    { id: "scores", icon: <Activity className="w-5 h-5" />, en: "Health Scores", tr: "Saglik Skorlari", descEn: "Daily scores, bio age", descTr: "Gunluk skorlar, biyolojik yas", count: 90, size: "18 KB", selected: true },
+    { id: "scores", icon: <Activity className="w-5 h-5" />, en: "Health Scores", tr: "Sağlık Skorlari", descEn: "Daily scores, bio age", descTr: "Günlük skorlar, biyolojik yas", count: 90, size: "18 KB", selected: true },
     { id: "consent", icon: <Shield className="w-5 h-5" />, en: "Consent Records", tr: "Onay Kayitlari", descEn: "Legal agreements", descTr: "Yasal sozlesmeler", count: 1, size: "1 KB", selected: true },
   ]);
   const toggleCategory = (id: string) => setCategories(prev => prev.map(c => c.id === id ? { ...c, selected: !c.selected } : c));

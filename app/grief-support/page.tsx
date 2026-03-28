@@ -142,8 +142,8 @@ export default function GriefSupportPage() {
               className="w-full accent-purple-500"
             />
             <div className="flex justify-between text-xs text-gray-400 mt-1">
-              <span>{lang === "tr" ? "Cok kotu" : "Very low"}</span>
-              <span>{lang === "tr" ? "Cok iyi" : "Very good"}</span>
+              <span>{lang === "tr" ? "Çok kotu" : "Very low"}</span>
+              <span>{lang === "tr" ? "Çok iyi" : "Very good"}</span>
             </div>
           </div>
 
@@ -218,7 +218,7 @@ export default function GriefSupportPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <BookOpen className="w-5 h-5 text-purple-500" />
                   <h3 className="font-semibold text-gray-900 dark:text-white">
-                    {lang === "tr" ? "Gunluk Yazma Onerileri" : "Journal Prompts"}
+                    {lang === "tr" ? "Günlük Yazma Önerileri" : "Journal Prompts"}
                   </h3>
                 </div>
                 {result.journalPrompts.map((p, i) => (

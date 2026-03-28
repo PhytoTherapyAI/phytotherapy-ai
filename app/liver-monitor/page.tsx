@@ -194,7 +194,7 @@ export default function LiverMonitorPage() {
             {/* Recommendations */}
             {analysis.recommendations?.length > 0 && (
               <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Oneriler" : "Recommendations"}</h2>
+                <h2 className="text-lg font-semibold">{lang === "tr" ? "Öneriler" : "Recommendations"}</h2>
                 <div className="grid gap-3">
                   {analysis.recommendations.map((rec, i) => (
                     <div key={i} className="bg-muted/50 rounded-xl p-4">

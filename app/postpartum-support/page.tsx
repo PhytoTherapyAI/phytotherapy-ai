@@ -397,7 +397,7 @@ export default function PostpartumSupportPage() {
           {result.recoveryTips?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {lang === "tr" ? "Toparlanma Onerileri" : "Recovery Tips"}
+                {lang === "tr" ? "Toparlanma Önerileri" : "Recovery Tips"}
               </h3>
               {result.recoveryTips.map((tip, i) => (
                 <div key={i} className="mb-2 last:mb-0">

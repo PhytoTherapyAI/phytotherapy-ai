@@ -183,7 +183,7 @@ export default function NotificationsPage() {
               ? `${s.supplement_name} alinacak`
               : `Take ${s.supplement_name}`,
             description: lang === "tr"
-              ? "Gunluk takviyenizi almayi unutmayin"
+              ? "Günlük takviyenizi almayi unutmayin"
               : "Don't forget your daily supplement",
             time: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 30),
             read: storedRead.has(nid),
@@ -232,7 +232,7 @@ export default function NotificationsPage() {
           items.push({
             id: nid,
             type: "health",
-            title: lang === "tr" ? "Ilac listenizi guncelleyin" : "Update your medication list",
+            title: lang === "tr" ? "İlaç listenizi guncelleyin" : "Update your medication list",
             description: lang === "tr"
               ? `Son guncelleme ${daysSinceUpdate} gun once yapildi`
               : `Last updated ${daysSinceUpdate} days ago`,
@@ -250,7 +250,7 @@ export default function NotificationsPage() {
         type: "system",
         title: lang === "tr" ? "Su icmeyi unutma!" : "Stay hydrated!",
         description: lang === "tr"
-          ? "Gunluk su hedefine ulastin mi? Takvimden takip edebilirsin."
+          ? "Günlük su hedefine ulastin mi? Takvimden takip edebilirsin."
           : "Have you hit your daily water goal? Track it in your calendar.",
         time: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0),
         read: storedRead.has(nidWater),
@@ -320,8 +320,8 @@ export default function NotificationsPage() {
 
   const tabs: { key: FilterTab; label: string }[] = [
     { key: "all", label: lang === "tr" ? "Tumu" : "All" },
-    { key: "medications", label: lang === "tr" ? "Ilaclar" : "Medications" },
-    { key: "health", label: lang === "tr" ? "Saglik" : "Health" },
+    { key: "medications", label: lang === "tr" ? "İlaçlar" : "Medications" },
+    { key: "health", label: lang === "tr" ? "Sağlık" : "Health" },
     { key: "system", label: lang === "tr" ? "Sistem" : "System" },
   ]
 

@@ -230,7 +230,7 @@ export default function SportsPerformancePage() {
       {!isAuthenticated && (
         <div className="mb-6 flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50/50 p-3 text-xs text-indigo-800 dark:border-indigo-800 dark:bg-indigo-950/20 dark:text-indigo-300">
           <LogIn className="h-3.5 w-3.5 shrink-0" />
-          {lang === "tr" ? "Ilac etkilesim kontrolu icin giris yapin" : "Sign in for medication interaction checking"}
+          {lang === "tr" ? "İlaç etkilesim kontrolu icin giris yapin" : "Sign in for medication interaction checking"}
         </div>
       )}
 
@@ -358,7 +358,7 @@ export default function SportsPerformancePage() {
             <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
               <p className="mb-2 flex items-center gap-1 text-xs font-bold text-red-600 dark:text-red-400">
                 <AlertTriangle className="h-3.5 w-3.5" />
-                {lang === "tr" ? "Ilac Etkilesim Uyarilari" : "Medication Interaction Warnings"}
+                {lang === "tr" ? "İlaç Etkilesim Uyarilari" : "Medication Interaction Warnings"}
               </p>
               {result.interactionWarnings.map((w, i) => (
                 <p key={i} className="text-sm text-red-700 dark:text-red-400">- {w}</p>
@@ -370,7 +370,7 @@ export default function SportsPerformancePage() {
           {result.weeklyStructure && (
             <div className="rounded-lg border border-indigo-200 bg-indigo-50/30 p-4 dark:border-indigo-800 dark:bg-indigo-950/10">
               <p className="mb-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-                {lang === "tr" ? "Haftalik Yapi" : "Weekly Structure"}
+                {lang === "tr" ? "Haftalık Yapi" : "Weekly Structure"}
               </p>
               <p className="text-sm">{result.weeklyStructure}</p>
             </div>

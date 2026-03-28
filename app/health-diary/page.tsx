@@ -284,10 +284,10 @@ export default function HealthDiaryPage() {
         <div className="text-center space-y-4 max-w-md">
           <BookOpen className="w-16 h-16 mx-auto text-emerald-500" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {t("Health Diary", "Saglik Gunlugu")}
+            {t("Health Diary", "Sağlık Gunlugu")}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            {t("Sign in to start your health diary.", "Saglik gunlugunuze baslamak icin giris yapin.")}
+            {t("Sign in to start your health diary.", "Sağlık gunlugunuze baslamak icin giris yapin.")}
           </p>
           <Button onClick={() => (window.location.href = "/")}>
             <LogIn className="w-4 h-4 mr-2" />
@@ -309,10 +309,10 @@ export default function HealthDiaryPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                {t("Health Diary", "Saglik Gunlugu")}
+                {t("Health Diary", "Sağlık Gunlugu")}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t("Track your daily health journey", "Gunluk saglik yolculugunuzu takip edin")}
+                {t("Track your daily health journey", "Günlük saglik yolculugunuzu takip edin")}
               </p>
             </div>
           </div>

@@ -17,7 +17,7 @@ const MOCK_ALERTS = [
     icon: TrendingUp,
     color: "text-blue-500",
     bg: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800",
-    title: { en: "Medication Timing Insight", tr: "Ilac Zamanlama Icgorusu" },
+    title: { en: "Medication Timing Insight", tr: "İlaç Zamanlama Icgorusu" },
     desc: { en: "You tend to miss your evening Metformin on weekends. Setting a weekend-specific reminder could improve adherence by ~20%.", tr: "Hafta sonlari aksam Metformin'inizi atlama egiliminde-siniz. Hafta sonuna ozel hatirlatici ayarlamak uyumu ~%20 artirabilir." },
     time: { en: "Yesterday", tr: "Dun" },
   },
@@ -83,7 +83,7 @@ export default function ProactiveAIPage() {
 
       {/* Feature Grid */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Ozellikler" : "Features"}
+        {lang === "tr" ? "Özellikler" : "Features"}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {FEATURES.map((f, i) => (

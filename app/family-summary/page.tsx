@@ -123,7 +123,7 @@ export default function FamilySummaryPage() {
         <div className="flex items-center gap-3">
           <Users className="h-6 w-6 text-primary" />
           <h1 className="text-2xl font-semibold">
-            {tr ? "Aile Haftalik Ozet" : "Family Weekly Summary"}
+            {tr ? "Aile Haftalık Ozet" : "Family Weekly Summary"}
           </h1>
         </div>
         <button
@@ -163,7 +163,7 @@ export default function FamilySummaryPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  {tr ? "Aile Saglik Ortalaması" : "Family Health Average"}
+                  {tr ? "Aile Sağlık Ortalaması" : "Family Health Average"}
                 </p>
                 <p className={`text-3xl font-bold ${getScoreColor(avgScore)}`}>
                   {avgScore}
@@ -252,7 +252,7 @@ export default function FamilySummaryPage() {
                     <div className="mb-1 flex items-center gap-1.5">
                       <Pill className="h-3.5 w-3.5 text-muted-foreground" />
                       <span className="text-xs text-muted-foreground">
-                        {tr ? "Ilac Uyumu" : "Med Compliance"}
+                        {tr ? "İlaç Uyumu" : "Med Compliance"}
                       </span>
                     </div>
                     <p className="text-lg font-bold">

@@ -292,7 +292,7 @@ export default function ElderCarePage() {
                   )}
                   {result.polypharmacy.recommendations?.length > 0 && (
                     <div>
-                      <p className="mb-1 text-xs font-semibold text-green-600 dark:text-green-400">{lang === "tr" ? "Oneriler" : "Recommendations"}</p>
+                      <p className="mb-1 text-xs font-semibold text-green-600 dark:text-green-400">{lang === "tr" ? "Öneriler" : "Recommendations"}</p>
                       {result.polypharmacy.recommendations.map((r, i) => (
                         <div key={i} className="flex items-start gap-2 text-sm mb-1">
                           <CheckCircle2 className="mt-0.5 h-3 w-3 shrink-0 text-green-500" />
@@ -303,7 +303,7 @@ export default function ElderCarePage() {
                   )}
                   {result.polypharmacy.timingOptimization?.length > 0 && (
                     <div>
-                      <p className="mb-1 text-xs font-semibold text-blue-600 dark:text-blue-400">{lang === "tr" ? "Ilac Zamanlama" : "Timing Optimization"}</p>
+                      <p className="mb-1 text-xs font-semibold text-blue-600 dark:text-blue-400">{lang === "tr" ? "İlaç Zamanlama" : "Timing Optimization"}</p>
                       {result.polypharmacy.timingOptimization.map((t, i) => (
                         <div key={i} className="flex items-start gap-2 text-sm mb-1">
                           <Clock className="mt-0.5 h-3 w-3 shrink-0 text-blue-500" />
@@ -405,7 +405,7 @@ export default function ElderCarePage() {
                   {result.nutrition.hydrationGoal && (
                     <div className="rounded-lg border border-blue-200 bg-blue-50/30 p-3 dark:border-blue-900 dark:bg-blue-950/20">
                       <p className="text-xs font-medium text-blue-700 dark:text-blue-400">
-                        {lang === "tr" ? "Gunluk Su Hedefi" : "Daily Hydration"}: {result.nutrition.hydrationGoal}
+                        {lang === "tr" ? "Günlük Su Hedefi" : "Daily Hydration"}: {result.nutrition.hydrationGoal}
                       </p>
                     </div>
                   )}
@@ -461,7 +461,7 @@ export default function ElderCarePage() {
           {result.exercise?.recommendations?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Egzersiz Onerileri" : "Exercise Recommendations"}
+                title={lang === "tr" ? "Egzersiz Önerileri" : "Exercise Recommendations"}
                 icon={Dumbbell}
                 sectionKey="exercise"
                 count={result.exercise.recommendations.length}

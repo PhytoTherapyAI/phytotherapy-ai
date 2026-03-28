@@ -156,7 +156,7 @@ export default function FamilyHealthTreePage() {
                 </button>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">{lang === "tr" ? "Saglik Durumlari" : "Health Conditions"}</label>
+                <label className="text-sm font-medium text-muted-foreground">{lang === "tr" ? "Sağlık Durumlari" : "Health Conditions"}</label>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {conditions.map((cond, i) => (
                     <button
@@ -248,7 +248,7 @@ export default function FamilyHealthTreePage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Shield className="w-5 h-5 text-blue-500" />
-                  {lang === "tr" ? "Tarama Onerileri" : "Screening Recommendations"}
+                  {lang === "tr" ? "Tarama Önerileri" : "Screening Recommendations"}
                 </h2>
                 <div className="grid gap-3">
                   {result.screeningRecommendations.map((rec, i) => (

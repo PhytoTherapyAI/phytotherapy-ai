@@ -382,7 +382,7 @@ export default function IntermittentFastingPage() {
             <div className="rounded-lg border bg-card p-4">
               <h3 className="text-sm font-semibold mb-2 flex items-center gap-1.5">
                 <Utensils className="h-4 w-4 text-green-500" />
-                {lang === "tr" ? "Oruc Acma Onerileri" : "Breaking Fast Suggestions"}
+                {lang === "tr" ? "Oruc Acma Önerileri" : "Breaking Fast Suggestions"}
               </h3>
               <ul className="space-y-1.5">
                 {result.breakfastSuggestions.map((s, i) => (

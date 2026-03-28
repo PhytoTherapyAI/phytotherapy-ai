@@ -8,7 +8,7 @@ import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 
 const URINE_COLORS = [
-  { color: "#f5f5dc", label: { en: "Clear / Very Pale", tr: "Berrak / Cok Acik" }, status: { en: "Well hydrated", tr: "Iyi hidrate" }, level: "good" },
+  { color: "#f5f5dc", label: { en: "Clear / Very Pale", tr: "Berrak / Çok Acik" }, status: { en: "Well hydrated", tr: "Iyi hidrate" }, level: "good" },
   { color: "#fffacd", label: { en: "Light Yellow", tr: "Acik Sari" }, status: { en: "Optimal", tr: "Optimal" }, level: "good" },
   { color: "#ffeb3b", label: { en: "Yellow", tr: "Sari" }, status: { en: "Normal", tr: "Normal" }, level: "ok" },
   { color: "#ffc107", label: { en: "Dark Yellow", tr: "Koyu Sari" }, status: { en: "Mildly dehydrated", tr: "Hafif dehidrate" }, level: "warn" },
@@ -63,12 +63,12 @@ export default function HydrationPage() {
             <select value={activity} onChange={(e) => { setActivity(e.target.value); setCalculated(false); }} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="sedentary">{lang === "tr" ? "Hareketsiz" : "Sedentary"}</option>
               <option value="moderate">{lang === "tr" ? "Orta aktif" : "Moderately active"}</option>
-              <option value="active">{lang === "tr" ? "Cok aktif / spor" : "Very active / exercise"}</option>
+              <option value="active">{lang === "tr" ? "Çok aktif / spor" : "Very active / exercise"}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              <Coffee className="w-4 h-4 inline mr-1" /> {lang === "tr" ? "Gunluk Kafein (fincan)" : "Daily Caffeine (cups)"}
+              <Coffee className="w-4 h-4 inline mr-1" /> {lang === "tr" ? "Günlük Kafein (fincan)" : "Daily Caffeine (cups)"}
             </label>
             <select value={caffeine} onChange={(e) => { setCaffeine(e.target.value); setCalculated(false); }} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="0">0</option>
@@ -139,7 +139,7 @@ export default function HydrationPage() {
       {/* Medication Effects */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
         <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-          <Pill className="w-5 h-5 text-blue-500" /> {lang === "tr" ? "Ilac Etkileri" : "Medication Effects on Hydration"}
+          <Pill className="w-5 h-5 text-blue-500" /> {lang === "tr" ? "İlaç Etkileri" : "Medication Effects on Hydration"}
         </h3>
         <div className="space-y-3">
           {MEDICATION_EFFECTS.map((me, i) => (

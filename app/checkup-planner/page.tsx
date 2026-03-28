@@ -157,7 +157,7 @@ export default function CheckupPlannerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-blue-500" />
-                  {lang === "tr" ? "Yillik Test Plani" : "Annual Test Plan"}
+                  {lang === "tr" ? "Yıllık Test Plani" : "Annual Test Plan"}
                 </h2>
                 <div className="grid gap-3">
                   {result.annualPlan.map((item, i) => (

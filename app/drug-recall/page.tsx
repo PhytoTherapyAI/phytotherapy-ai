@@ -29,7 +29,7 @@ const RECALL_DATABASE: RecallEntry[] = [
   { id: "r4", drugName: "Valsartan", genericName: "valsartan", reason: { en: "Potential NDEA carcinogen detected in batch", tr: "Partide potansiyel NDEA kanserojen tespit edildi" }, date: "2026-02-20", severity: "critical", action: { en: "Return to pharmacy, request replacement from different manufacturer", tr: "Eczaneye iade edin, farkli uretici urununu isteyin" }, source: "FDA" },
   { id: "r5", drugName: "Acetaminophen 500mg (Parol)", genericName: "acetaminophen", reason: { en: "Dosing instructions missing from packaging", tr: "Ambalajda dozaj talimatlari eksik" }, date: "2026-02-15", severity: "moderate", action: { en: "Check lot number, contact manufacturer for correct dosing label", tr: "Lot numarasini kontrol edin, dogru dozaj etiketi icin ureticiye ulas" }, source: "TITCK", lot: "LOT-PR-2026" },
   { id: "r6", drugName: "Omeprazole 20mg", genericName: "omeprazole", reason: { en: "Cross-contamination with another active ingredient", tr: "Baska bir etkin madde ile capraz kontaminasyon" }, date: "2026-02-01", severity: "critical", action: { en: "Stop use and return to pharmacy immediately", tr: "Kullanimi durdurun ve hemen eczaneye iade edin" }, source: "TITCK" },
-  { id: "r7", drugName: "Ibuprofen 400mg", genericName: "ibuprofen", reason: { en: "Tablet hardness below specification - may dissolve too fast", tr: "Tablet sertligi spesifikasyonun altinda - cok hizli cozunebilir" }, date: "2026-01-25", severity: "low", action: { en: "No health risk, but exchange at pharmacy if concerned", tr: "Saglik riski yok ama endise duyarsaniz eczanede degistirin" }, source: "TITCK" },
+  { id: "r7", drugName: "Ibuprofen 400mg", genericName: "ibuprofen", reason: { en: "Tablet hardness below specification - may dissolve too fast", tr: "Tablet sertligi spesifikasyonun altinda - cok hizli cozunebilir" }, date: "2026-01-25", severity: "low", action: { en: "No health risk, but exchange at pharmacy if concerned", tr: "Sağlık riski yok ama endise duyarsaniz eczanede degistirin" }, source: "TITCK" },
   { id: "r8", drugName: "Atorvastatin 20mg", genericName: "atorvastatin", reason: { en: "Mislabeled dosage strength on bottle", tr: "Sisede yanlis dozaj gucu etiketi" }, date: "2026-01-18", severity: "moderate", action: { en: "Verify tablet markings match prescribed dose", tr: "Tablet isaretlerinin recelenen dozla eslesmesini dogrulayin" }, source: "FDA" },
   { id: "r9", drugName: "Amoxicillin 500mg", genericName: "amoxicillin", reason: { en: "Reduced potency detected before expiration date", tr: "Son kullanma tarihinden once azalmis potens tespit edildi" }, date: "2026-01-10", severity: "moderate", action: { en: "Get new prescription filled, report to pharmacist", tr: "Yeni recete yazdirin, eczaciya bildirin" }, source: "EMA" },
   { id: "r10", drugName: "Amlodipine 5mg", genericName: "amlodipine", reason: { en: "Foreign particle found in select batches", tr: "Belirli partilerde yabanci parcacik bulundu" }, date: "2026-01-05", severity: "moderate", action: { en: "Check lot number, return affected batch to pharmacy", tr: "Lot numarasini kontrol edin, etkilenen partiyi eczaneye iade edin" }, source: "FDA", lot: "AML-2025-1198" },
@@ -38,7 +38,7 @@ const RECALL_DATABASE: RecallEntry[] = [
 ]
 
 const tx: Record<string, { en: string; tr: string }> = {
-  title: { en: "Drug Recall Alerts", tr: "Ilac Geri Cagirma Uyarilari" },
+  title: { en: "Drug Recall Alerts", tr: "İlaç Geri Cagirma Uyarilari" },
   subtitle: { en: "Stay informed about recalled medications", tr: "Geri cagirilan ilaclar hakkinda bilgi edinin" },
   affectsYou: { en: "AFFECTS YOUR MEDICATION", tr: "ILACINIZI ETKILIYOR" },
   critical: { en: "Critical", tr: "Kritik" },
@@ -46,14 +46,14 @@ const tx: Record<string, { en: string; tr: string }> = {
   low: { en: "Low", tr: "Dusuk" },
   action: { en: "Recommended Action", tr: "Onerilen Islem" },
   search: { en: "Search recalls...", tr: "Geri cagirma ara..." },
-  yourMeds: { en: "Your Medications", tr: "Ilaclariniz" },
+  yourMeds: { en: "Your Medications", tr: "İlaçlariniz" },
   allRecalls: { en: "All Recent Recalls", tr: "Tum Son Geri Cagirmalar" },
-  noMatch: { en: "None of your medications are currently recalled", tr: "Ilaclarinizin hicbiri su anda geri cagrilmamis" },
+  noMatch: { en: "None of your medications are currently recalled", tr: "İlaçlarinizin hicbiri su anda geri cagrilmamis" },
   safe: { en: "You're safe", tr: "Guvendesiniz" },
   source: { en: "Source", tr: "Kaynak" },
   lot: { en: "Lot", tr: "Lot" },
   back: { en: "Back", tr: "Geri" },
-  loginHint: { en: "Log in to check against your medication profile", tr: "Ilac profilinizle kontrol etmek icin giris yapin" },
+  loginHint: { en: "Log in to check against your medication profile", tr: "İlaç profilinizle kontrol etmek icin giris yapin" },
 }
 
 export default function DrugRecallPage() {

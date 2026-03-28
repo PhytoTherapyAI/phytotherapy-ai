@@ -45,7 +45,7 @@ const FEATURES = [
     titleEn: "Timeline View",
     titleTr: "Zaman Cizelgesi Gorunumu",
     descEn: "See your complete medical history as a visual timeline",
-    descTr: "Tam tibbi gecmisinizi gorsel bir zaman cizelgesi olarak gorun",
+    descTr: "Tam tibbi gecmisinizi gorsel bir zaman cizelgesi olarak görün",
   },
 ];
 

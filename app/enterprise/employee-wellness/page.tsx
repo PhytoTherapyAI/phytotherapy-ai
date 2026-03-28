@@ -16,10 +16,10 @@ export default function EmployeeWellnessPage() {
   const [activeTab, setActiveTab] = useState("challenges");
 
   const challenges: Challenge[] = [
-    { id: "1", en: "10K Steps Daily Challenge", tr: "Gunluk 10K Adim", type: "steps", participants: 124, daysLeft: 12, prize: "500 TL Gift Card" },
+    { id: "1", en: "10K Steps Daily Challenge", tr: "Günlük 10K Adim", type: "steps", participants: 124, daysLeft: 12, prize: "500 TL Gift Card" },
     { id: "2", en: "Water Intake Champion", tr: "Su Icme Sampiyonu", type: "water", participants: 89, daysLeft: 5, prize: "Smart Bottle" },
-    { id: "3", en: "Medication Compliance Sprint", tr: "Ilac Uyumu Yarisi", type: "meds", participants: 67, daysLeft: 18, prize: "Health Kit" },
-    { id: "4", en: "Healthy Eating Week", tr: "Saglikli Beslenme Haftasi", type: "food", participants: 156, daysLeft: 3, prize: "Organic Box" },
+    { id: "3", en: "Medication Compliance Sprint", tr: "İlaç Uyumu Yarisi", type: "meds", participants: 67, daysLeft: 18, prize: "Health Kit" },
+    { id: "4", en: "Healthy Eating Week", tr: "Sağlıkli Beslenme Haftasi", type: "food", participants: 156, daysLeft: 3, prize: "Organic Box" },
   ];
 
   const leaderboard: LeaderboardEntry[] = [
@@ -49,7 +49,7 @@ export default function EmployeeWellnessPage() {
         <div className="flex items-center gap-3 mb-6">
           <Trophy className="w-8 h-8 text-orange-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Kurumsal Saglik Programi" : "Corporate Wellness"}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Kurumsal Sağlık Programı" : "Corporate Wellness"}</h1>
             <p className="text-sm text-gray-500">{isTr ? "Meydan okumalar, liderlik tablosu, departman yarislari" : "Challenges, leaderboard, department competitions"}</p>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function EmployeeWellnessPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           <Card className="p-3 text-center"><Users className="w-5 h-5 text-orange-500 mx-auto mb-1" /><div className="text-xl font-bold">342</div><div className="text-xs text-gray-500">{isTr ? "Katilimci" : "Participants"}</div></Card>
           <Card className="p-3 text-center"><Target className="w-5 h-5 text-green-500 mx-auto mb-1" /><div className="text-xl font-bold">86%</div><div className="text-xs text-gray-500">{isTr ? "Katilim Orani" : "Participation"}</div></Card>
-          <Card className="p-3 text-center"><TrendingUp className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">+12%</div><div className="text-xs text-gray-500">{isTr ? "Saglik Skoru" : "Health Score"}</div></Card>
+          <Card className="p-3 text-center"><TrendingUp className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">+12%</div><div className="text-xs text-gray-500">{isTr ? "Sağlık Skoru" : "Health Score"}</div></Card>
           <Card className="p-3 text-center"><Award className="w-5 h-5 text-purple-500 mx-auto mb-1" /><div className="text-xl font-bold">4</div><div className="text-xs text-gray-500">{isTr ? "Aktif Yarisma" : "Active Challenges"}</div></Card>
         </div>
 
