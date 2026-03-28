@@ -73,6 +73,14 @@ export const metadata: Metadata = {
     follow: true,
   },
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/logo-icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/logo-icon.svg", type: "image/svg+xml" },
+    ],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

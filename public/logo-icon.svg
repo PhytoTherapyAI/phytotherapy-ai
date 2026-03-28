@@ -1,67 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#0f2419"/>
-      <stop offset="100%" stop-color="#1a3a2a"/>
+      <stop offset="0%" stop-color="#111a14"/>
+      <stop offset="100%" stop-color="#0a1f10"/>
     </linearGradient>
-    <linearGradient id="leaf" x1="180" y1="100" x2="360" y2="420" gradientUnits="userSpaceOnUse">
+    <linearGradient id="leaf" x1="220" y1="80" x2="320" y2="400" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#c4a86c"/>
-      <stop offset="50%" stop-color="#16a34a"/>
-      <stop offset="100%" stop-color="#0d7a3a"/>
-    </linearGradient>
-    <linearGradient id="stem" x1="256" y1="280" x2="256" y2="440" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#16a34a"/>
-      <stop offset="100%" stop-color="#0a5c2a"/>
-    </linearGradient>
-    <linearGradient id="glow" x1="200" y1="120" x2="320" y2="300" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#c4a86c" stop-opacity="0.4"/>
-      <stop offset="100%" stop-color="#c4a86c" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#22c55e"/>
     </linearGradient>
   </defs>
 
-  <!-- Background circle -->
-  <circle cx="256" cy="256" r="248" fill="url(#bg)"/>
-  <circle cx="256" cy="256" r="248" stroke="#c4a86c" stroke-width="3" stroke-opacity="0.3" fill="none"/>
+  <!-- Clean rounded square background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
 
-  <!-- Glow effect behind leaf -->
-  <ellipse cx="260" cy="210" rx="100" ry="120" fill="url(#glow)"/>
+  <!-- Single elegant leaf — the brand mark -->
+  <path d="M256 96 C200 160, 160 240, 196 320 C212 356, 234 370, 256 360 C278 370, 300 356, 316 320 C352 240, 312 160, 256 96Z" fill="url(#leaf)"/>
 
-  <!-- Main leaf shape -->
-  <path d="M256 80 C180 140, 140 220, 180 300 C200 340, 230 350, 256 340 C282 350, 312 340, 332 300 C372 220, 332 140, 256 80Z" fill="url(#leaf)" opacity="0.95"/>
+  <!-- Minimal center vein -->
+  <line x1="256" y1="130" x2="256" y2="350" stroke="#111a14" stroke-width="2" stroke-opacity="0.25"/>
 
-  <!-- Leaf center vein -->
-  <path d="M256 110 L256 330" stroke="#0f2419" stroke-width="2.5" stroke-opacity="0.3"/>
-
-  <!-- Leaf side veins -->
-  <path d="M256 160 L210 200" stroke="#0f2419" stroke-width="1.5" stroke-opacity="0.2" stroke-linecap="round"/>
-  <path d="M256 160 L302 200" stroke="#0f2419" stroke-width="1.5" stroke-opacity="0.2" stroke-linecap="round"/>
-  <path d="M256 200 L195 250" stroke="#0f2419" stroke-width="1.5" stroke-opacity="0.2" stroke-linecap="round"/>
-  <path d="M256 200 L317 250" stroke="#0f2419" stroke-width="1.5" stroke-opacity="0.2" stroke-linecap="round"/>
-  <path d="M256 240 L205 290" stroke="#0f2419" stroke-width="1.5" stroke-opacity="0.2" stroke-linecap="round"/>
-  <path d="M256 240 L307 290" stroke="#0f2419" stroke-width="1.5" stroke-opacity="0.2" stroke-linecap="round"/>
-
-  <!-- Stem -->
-  <path d="M256 340 C256 360, 252 400, 256 430" stroke="url(#stem)" stroke-width="4" stroke-linecap="round" fill="none"/>
-
-  <!-- Digital circuit nodes (AI/tech element) -->
-  <circle cx="210" cy="200" r="4" fill="#c4a86c" opacity="0.7"/>
-  <circle cx="302" cy="200" r="4" fill="#c4a86c" opacity="0.7"/>
-  <circle cx="195" cy="250" r="4" fill="#c4a86c" opacity="0.5"/>
-  <circle cx="317" cy="250" r="4" fill="#c4a86c" opacity="0.5"/>
-  <circle cx="205" cy="290" r="3" fill="#c4a86c" opacity="0.4"/>
-  <circle cx="307" cy="290" r="3" fill="#c4a86c" opacity="0.4"/>
-
-  <!-- Small connection lines (circuit board feel) -->
-  <line x1="210" y1="200" x2="195" y2="250" stroke="#c4a86c" stroke-width="0.8" opacity="0.3"/>
-  <line x1="302" y1="200" x2="317" y2="250" stroke="#c4a86c" stroke-width="0.8" opacity="0.3"/>
-
-  <!-- Subtle DNA helix dots around the leaf -->
-  <circle cx="155" cy="180" r="2.5" fill="#c4a86c" opacity="0.25"/>
-  <circle cx="148" cy="210" r="2" fill="#c4a86c" opacity="0.2"/>
-  <circle cx="155" cy="240" r="2.5" fill="#c4a86c" opacity="0.25"/>
-  <circle cx="148" cy="270" r="2" fill="#c4a86c" opacity="0.2"/>
-  <circle cx="357" cy="180" r="2.5" fill="#c4a86c" opacity="0.25"/>
-  <circle cx="364" cy="210" r="2" fill="#c4a86c" opacity="0.2"/>
-  <circle cx="357" cy="240" r="2.5" fill="#c4a86c" opacity="0.25"/>
-  <circle cx="364" cy="270" r="2" fill="#c4a86c" opacity="0.2"/>
+  <!-- Thin elegant stem -->
+  <line x1="256" y1="360" x2="256" y2="420" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
 </svg>

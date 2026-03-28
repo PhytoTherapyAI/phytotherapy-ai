@@ -4,20 +4,25 @@
   "description": "Evidence-based integrative medicine assistant",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
+  "background_color": "#0f2419",
   "theme_color": "#16a34a",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/phytotherapy_v2.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "/logo-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ],
   "categories": ["health", "medical", "lifestyle"],
   "lang": "en",
   "dir": "ltr",
-  "screenshots": [],
   "prefer_related_applications": false
 }
