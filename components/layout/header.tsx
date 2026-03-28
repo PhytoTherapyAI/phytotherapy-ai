@@ -96,12 +96,12 @@ export function Header() {
         </Link>
 
         {/* Desktop nav — all links visible, pushed right */}
-        <nav className="ml-auto hidden items-center gap-3 lg:flex">
+        <nav className="ml-8 hidden items-center gap-4 xl:gap-5 lg:flex">
           {allLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="whitespace-nowrap text-[13px] font-semibold text-foreground/80 transition-colors hover:text-foreground"
+              className="whitespace-nowrap text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
             >
               {tx(link.labelKey, lang)}
             </Link>
@@ -109,7 +109,7 @@ export function Header() {
           {isAuthenticated && (
             <Link
               href="/dashboard"
-              className="whitespace-nowrap text-[13px] font-semibold text-foreground/80 transition-colors hover:text-foreground"
+              className="whitespace-nowrap text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
             >
               {tx("nav.dashboard", lang)}
             </Link>
