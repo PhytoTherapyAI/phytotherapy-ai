@@ -52,7 +52,7 @@ const WEATHER_TIPS = [
 ];
 
 export default function WeeklyNewsletterPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { lang } = useLang();
   const supabase = createBrowserClient();
 
