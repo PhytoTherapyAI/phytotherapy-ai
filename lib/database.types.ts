@@ -37,6 +37,11 @@ export interface UserProfile {
   last_medication_update: string | null;
   created_at: string;
   updated_at: string;
+  // Contact & Location
+  country: string | null;
+  city: string | null;
+  phone: string | null;
+  recovery_email: string | null;
   // Premium — Sprint 14
   plan: "free" | "premium" | "family" | "doctor" | null;
   trial_started_at: string | null;

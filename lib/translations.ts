@@ -327,6 +327,7 @@ const t: Record<string, TranslationEntry> = {
   "lp.featureTitle2": { en: "integrative health", tr: "dört temel direği" },
   "lp.explore": { en: "Explore", tr: "Keşfet" },
   "lp.heroBadge": { en: "Evidence-Based AI Health Assistant", tr: "Kanıta Dayalı AI Sağlık Asistanı" },
+  "lp.tryAssistant": { en: "Try Health Assistant", tr: "Sağlık Asistanını Dene" },
   "lp.statUsers": { en: "Active users", tr: "Aktif kullanıcı" },
   "lp.statInteractions": { en: "Interactions checked", tr: "Etkileşim kontrolü" },
   "lp.statSources": { en: "PubMed sources", tr: "PubMed kaynağı" },

@@ -18,7 +18,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   User, Pill, AlertTriangle, Heart, Shield, Trash2, Download,
   Plus, X, Loader2, CheckCircle2, Check, Settings, Save, Baby, Wine,
-  Cigarette, Stethoscope, Sparkles, Camera,
+  Cigarette, Stethoscope, Sparkles, Camera, MapPin,
 } from "lucide-react";
 import type { UserMedication, UserAllergy, AllergySeverity } from "@/lib/database.types";
 import { MedicationScanner } from "@/components/scanner/MedicationScanner";
@@ -78,6 +78,10 @@ export default function ProfilePage() {
     exercise_frequency: string;
     sleep_quality: string;
     supplements: string[];
+    country: string;
+    city: string;
+    phone: string;
+    recovery_email: string;
   }
   const [healthForm, setHealthForm] = useState<HealthFormState>({
     is_pregnant: false,
@@ -95,6 +99,10 @@ export default function ProfilePage() {
     exercise_frequency: "",
     sleep_quality: "",
     supplements: [],
+    country: "",
+    city: "",
+    phone: "",
+    recovery_email: "",
   });
   const [newCondition, setNewCondition] = useState("");
   const [newAllergen, setNewAllergen] = useState("");
@@ -120,6 +128,10 @@ export default function ProfilePage() {
       exercise_frequency: profile.exercise_frequency || "",
       sleep_quality: profile.sleep_quality || "",
       supplements: [...(profile.supplements || [])],
+      country: profile.country || "",
+      city: profile.city || "",
+      phone: profile.phone || "",
+      recovery_email: profile.recovery_email || "",
     });
     setEditingHealth(true);
   };
@@ -147,6 +159,10 @@ export default function ProfilePage() {
           exercise_frequency: healthForm.exercise_frequency || null,
           sleep_quality: healthForm.sleep_quality || null,
           supplements: healthForm.supplements,
+          country: healthForm.country || null,
+          city: healthForm.city || null,
+          phone: healthForm.phone || null,
+          recovery_email: healthForm.recovery_email || null,
         })
         .eq("id", profile.id);
       await refreshProfile();
@@ -1092,6 +1108,59 @@ export default function ProfilePage() {
                       } as Record<string, string>)[s] || s}
                     </Badge>
                   ))}
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Contact & Location */}
+              <div className="space-y-4">
+                <Label className="flex items-center gap-2 text-base font-semibold">
+                  <MapPin className="h-4 w-4" />
+                  {tr ? "İletişim & Konum" : "Contact & Location"}
+                </Label>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-1">
+                    <Label className="text-sm">{tr ? "Ülke" : "Country"}</Label>
+                    <Input
+                      placeholder={tr ? "Türkiye" : "Turkey"}
+                      value={healthForm.country}
+                      onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, country: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-sm">{tr ? "Şehir" : "City"}</Label>
+                    <Input
+                      placeholder={tr ? "İstanbul" : "Istanbul"}
+                      value={healthForm.city}
+                      onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, city: e.target.value }))}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="space-y-1">
+                    <Label className="text-sm">{tr ? "Telefon" : "Phone"}</Label>
+                    <Input
+                      type="tel"
+                      placeholder={tr ? "+90 5XX XXX XX XX" : "+1 (555) 000-0000"}
+                      value={healthForm.phone}
+                      onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, phone: e.target.value }))}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-sm">{tr ? "Kurtarma E-postası" : "Recovery Email"}</Label>
+                    <Input
+                      type="email"
+                      placeholder={tr ? "yedek@email.com" : "backup@email.com"}
+                      value={healthForm.recovery_email}
+                      onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, recovery_email: e.target.value }))}
+                    />
+                    <p className="text-[10px] text-muted-foreground">
+                      {tr ? "Hesap kurtarma için ikincil e-posta" : "Secondary email for account recovery"}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
