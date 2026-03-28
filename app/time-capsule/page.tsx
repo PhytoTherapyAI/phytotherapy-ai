@@ -91,7 +91,7 @@ function isReady(dateStr: string): boolean {
 }
 
 function formatDate(dateStr: string, lang: string): string {
-  return new Date(dateStr).toLocaleDateString(tx("common.locale", lang), {
+  return new Date(dateStr).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
