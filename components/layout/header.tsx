@@ -137,6 +137,33 @@ const toolLinks = [
   // Education & Business
   { href: "/courses", labelKey: "nav.courses" },
   { href: "/enterprise", labelKey: "nav.enterprise" },
+  // New Features (Phase C-F)
+  { href: "/notifications", labelKey: "nav.notifications" },
+  { href: "/time-capsule", labelKey: "nav.timeCapsule" },
+  { href: "/health-diary", labelKey: "nav.healthDiary" },
+  { href: "/biomarker-trends", labelKey: "nav.biomarkerTrends" },
+  { href: "/drug-timing", labelKey: "nav.drugTiming" },
+  { href: "/medication-schedule", labelKey: "nav.medSchedule" },
+  { href: "/polypharmacy", labelKey: "nav.polypharmacy" },
+  { href: "/medication-log", labelKey: "nav.medLog" },
+  { href: "/health-radar", labelKey: "nav.healthRadar" },
+  { href: "/health-timeline", labelKey: "nav.healthTimeline" },
+  { href: "/micro-habits", labelKey: "nav.microHabits" },
+  { href: "/migraine-dashboard", labelKey: "nav.migraineDashboard" },
+  { href: "/seasonal-food", labelKey: "nav.seasonalFood" },
+  { href: "/food-prep", labelKey: "nav.foodPrep" },
+  { href: "/fasting-monitor", labelKey: "nav.fastingMonitor" },
+  { href: "/hajj-health", labelKey: "nav.hajjHealth" },
+  { href: "/circadian-eating", labelKey: "nav.circadianEating" },
+  { href: "/social-prescription", labelKey: "nav.socialRx" },
+  { href: "/peer-mentoring", labelKey: "nav.peerMentoring" },
+  { href: "/drug-equivalent", labelKey: "nav.drugEquivalent" },
+  { href: "/drug-recall", labelKey: "nav.drugRecall" },
+  { href: "/disaster-mode", labelKey: "nav.disasterMode" },
+  { href: "/health-quiz", labelKey: "nav.healthQuiz" },
+  { href: "/healthy-recipes", labelKey: "nav.healthyRecipes" },
+  { href: "/data-export", labelKey: "nav.dataExport" },
+  { href: "/privacy-controls", labelKey: "nav.privacyControls" },
 ];
 
 // All links combined for mobile
