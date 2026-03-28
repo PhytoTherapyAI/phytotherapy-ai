@@ -180,8 +180,8 @@ export default function TermsPage() {
           </h2>
           <p>
             {isTr
-              ? "Bu koşullar Türkiye Cumhuriyeti kanunlarına tabidir. Uyuşmazlık halinde İstanbul (Çağlayan) Mahkemeleri ve İcra Daireleri yetkilidir."
-              : "These terms are governed by the laws of the Republic of Turkey. In case of disputes, Istanbul (Çağlayan) Courts and Enforcement Offices shall have jurisdiction."}
+              ? "Bu koşullar Türkiye Cumhuriyeti kanunlarına tabidir. Uyuşmazlık halinde kullanıcının yerleşim yerindeki Tüketici Hakem Heyetleri ve Tüketici Mahkemeleri yetkilidir."
+              : "These terms are governed by the laws of the Republic of Turkey. In case of disputes, the Consumer Arbitration Boards and Consumer Courts at the user's place of residence shall have jurisdiction."}
           </p>
         </section>
 
