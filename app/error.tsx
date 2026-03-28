@@ -13,6 +13,7 @@ export default function Error({
 }) {
   useEffect(() => {
     console.error("[ErrorBoundary]", error)
+    import("@sentry/nextjs").then((Sentry) => Sentry.captureException(error))
   }, [error])
 
   return (
