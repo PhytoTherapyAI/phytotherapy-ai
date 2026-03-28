@@ -44,7 +44,7 @@ Tıbbi Veri:   PubMed E-utilities API
 İlaç Veri:    OpenFDA API
 PDF:          @react-pdf/renderer
 Deploy:       Vercel ✅ — phytotherapy.ai
-Auth:         Supabase Auth ✅ (email çalışıyor, Google OAuth kod hazır — credentials gerekli)
+Auth:         Supabase Auth ✅ (email çalışıyor, Google OAuth + Facebook OAuth kod hazır — Dashboard credentials gerekli)
 OS:           Windows
 ```
 
