@@ -37,6 +37,7 @@
 | Hackathon Finalizasyon — Phase 7-13 | ✅ Tamamlandı | 28 Mart 2026 |
 | Radyoloji Analizi | ✅ Tamamlandı | 28 Mart 2026 |
 | Phase 14-20 Yeni Özellikler | 🔧 Planlandı | — |
+| Oturum 28-29 Mart — Auth + Safety + Harvard HVHS | ✅ Tamamlandı | 28-29 Mart 2026 |
 
 ### ✅ 26 Mart Fixler (v20.2)
 - **Dashboard tools grid eklendi** → 8 kartlık link grid (tüm yeni sayfalar erişilebilir)
@@ -108,7 +109,61 @@
 - Wrapped sayfa query type TR çevirisi
 - Remember Me checkbox kaldırıldı (non-functional)
 
-### 🔧 Sıradaki — Kritik Fixler + 85 Yeni Tool
+### ✅ 28-29 Mart — Oturum: Auth + Safety + Harvard HVHS (v23.0)
+
+**Auth & Platform Fixleri:**
+- ✅ Google OAuth fix — Client secret yenilendi, Testing→Production, herkese açık
+- ✅ Google Branding — App name "Phytotherapy.ai", domain doğrulandı (Search Console)
+- ✅ Google Search Console — Sitemap gönderildi (7 sayfa keşfedildi)
+- ✅ Facebook OAuth fix — email permission aktif, redirect URI eklendi, domain ayarlandı
+- ✅ Session expiry fix — visibilitychange listener (arka plan tab dönüş), TOKEN_REFRESHED handler
+- ✅ SignOut fix — scope "global", state önce temizle, localStorage fallback
+- ✅ Dil algılama fix — lang_manually_set flag (diğer session tarafından yapıldı)
+- ✅ Mahkeme referansı — İstanbul Çağlayan → Tüketici Hakem Heyetleri (terms/page.tsx)
+
+**60+ Türkçe Karakter Düzeltmesi:**
+- ✅ translations.ts: Sagligi→Sağlığı, Ogrenci→Öğrenci, Gocmen→Göçmen, Gurultu→Gürültü, icin→için, olustur→oluştur ve 50+ benzeri
+- ✅ enterprise/page.tsx: Sirket→Şirket, Degeri→Değeri, Buyume→Büyüme, Regulasyon→Regülasyon ve 13 benzeri
+
+**Yeni Sayfalar & Modüller:**
+- ✅ `/courses` — Eğitimler & Kurslar (8 kurs kartı, affiliate link hazır, kategori filtresi)
+- ✅ `/enterprise` — Kurumsal + Market Intelligence Dashboard (3 tab: planlar, pazar trendleri, şirket radarı)
+- ✅ `/research-hub` — Araştırma & İş Birliği Hub'ı (Harvard HVHS C10 — 4 tab: ortaklık, veri ambarı, validasyon hattı, ulusal vizyon)
+
+**Yeni Bileşenler:**
+- ✅ `DailyCareCard` — Kişiselleştirilmiş Günlük Sağlık Planı (4 aksiyon kartı, AI üretimli, tıkla tamamla, confetti)
+- ✅ `CriticalAlertModal` — Proaktif SOS Uyarı Sistemi (10sn geri sayım, GPS, acil kişi bildirim, 112 butonu)
+- ✅ `PromsSurvey` — PROMs/PREMs Typeform anketi (ICHOM standardı, tek soru, slider+choice)
+- ✅ `OutcomeComparisonCard` — Önce vs Sonra karşılaştırma kartı (iyileşme skoru, domain bar'lar)
+
+**Yeni API Route'ları:**
+- ✅ `/api/daily-care-plan` — AI günlük plan üretimi (profil+ilaç+vital+mood bazlı, 30dk cache)
+- ✅ `/api/trigger-sos` — SOS tetikleme (POST: bildirim gönder, PUT: wearable webhook)
+- ✅ `/api/doctor-feedback` — Doktor geri bildirim (Human-in-the-Loop, hata raporlama)
+- ✅ `/api/proms` — PROMs anket yönetimi (GET: pending survey, POST: cevap kaydet, comparison)
+
+**Yeni Güvenlik Altyapısı:**
+- ✅ `lib/safety-guardrail.ts` — 5 katmanlı güvenlik korkuluğu:
+  - Layer 1: Genişletilmiş Kırmızı Bayrak (70+ semptom EN+TR, immediate vs urgent)
+  - Layer 2: İlaç-Bitki Etkileşim (7 ilaç kategorisi, 40+ etkileşim, LETHAL/HIGH/MODERATE/LOW)
+  - Layer 3: Kontrendikasyon Taraması (gebelik, böbrek, karaciğer, yaş bazlı)
+  - Layer 4: Dozaj Limitleri (10 takviye max doz + süre)
+  - Layer 5: Şeffaflık (güven skoru, disclaimer, sınırlılıklar)
+  - Master: runSafetyGuardrail() — tüm katmanları çalıştırır, safetyScore 0-100
+
+**Planlama Dosyaları:**
+- ✅ `NEW-TOOLS-PROMPTS.md` — 20 tool detaylı prompt (SQL + AI prompt + sayfa yapısı)
+- ✅ `TOOL-IDEAS-FULL.md` — 65 genişleme tool fikri
+- ✅ `COMPLETE-FEATURE-CATALOG.md` — 137 yeni özellik (B2C 55 + B2B Doktor 25 + B2B Kurumsal 43 + Rakip 14)
+- ✅ Toplam planlanan: 222 özellik
+
+**Ne Alemde & Broşür Güncellemeleri:**
+- ✅ phytotherapy-ne-alemde.html — 20 planlanmış modül, dark/light toggle, premium başlıklar
+- ✅ phytotherapy-brochure-tr.html — Açık mod + dark toggle, güncel içerik
+- ✅ phytotherapy-brochure-en.html — Açık mod + dark toggle, güncel içerik
+- ✅ Tüm dosyalarda PubMed→akademik araştırmalar, arkadaş tonu kaldırıldı
+
+### 🔧 Sıradaki — 222 Özellik İmplementasyonu
 
 **ÖNCELİK 0 — Kritik Fixler:**
 - [ ] Google OAuth: `exchangeCodeForSession` çift çağrı sorunu — `detectSessionInUrl:true` ile çakışıyor

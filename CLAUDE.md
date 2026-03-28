@@ -1,10 +1,10 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v13.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v14.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
 **Phytotherapy.ai** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
-- **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **15 gün kaldı**
+- **Ekip:** 2 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **13 gün kaldı**
 - **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı) — 2 yıllık ödeme yapıldı
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
