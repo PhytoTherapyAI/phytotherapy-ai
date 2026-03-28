@@ -229,3 +229,38 @@
 | E24 | White-Label Platform | Kurumsal | En büyük B2B gelir potansiyeli |
 | N9 | Acil Durum Modu | Kullanıcı | Hayat kurtarır, PR/hikaye değeri çok yüksek |
 | E7 | RWE Paneli | Kurumsal | İlaç şirketleri milyon dolar öder |
+
+---
+
+# BÖLÜM 4: RAKIP ANALİZİNDEN + FİNAL EK ÖZELLİKLER (14 Yeni)
+
+> Noom, MyFitnessPal, Ada Health, USA Recalls, NHS Social Prescribing, 2026 trendlerinden alınan ve seçilen özellikler.
+
+| # | Özellik | Kaynak | Açıklama |
+|---|---------|--------|----------|
+| F1 | Davranışsal Nudge Sistemi | Davranışsal ekonomi | Sosyal kanıt: "Bu takviyeyi alan 10 kişiden 8'i 3 aydan fazla kullandı." FOMO: "Bugün ilaç alanların %92'si senden önce aldı." Zamanlama nudge: "Şimdi al, 2 saat sonra unutma riski %60 artar." Her ekranda mikro motivasyon. |
+| F2 | İlaç Geri Çağırma Uyarısı | FDA/TITCK | FDA/TITCK geri çağırma duyuruları API → profildeki ilaçla eşleşirse ANINDA kırmızı bildirim. "Kullandığınız [ilaç adı] geri çağırıldı — eczanenize başvurun, ilacı kullanmayı bırakmadan doktorunuza danışın." Hayat kurtarır. |
+| F3 | Doğal Afet Sağlık Modu | Türkiye özel | Deprem/sel sonrası otomatik aktive: acil ilaç listesi (QR ile paylaş), su güvenliği rehberi, ilk yardım offline, PTSD erken müdahale, en yakın eczane/hastane (offline harita cache), ilaç temin rehberi (muadil bulma), crush sendromu farkındalık. Türkiye deprem ülkesi — bu özellik tek başına milyonlara ulaşır. |
+| F6 | İlaç/Gıda Barkod Güvenlik Taraması | USA Recalls | Mevcut barkod tarayıcıyı genişlet: ürün tara → geri çağırma var mı, son kullanma uyarısı, saklama koşulları, profildeki alerjenlerle çakışma kontrolü. Eczanede/markette kullan. |
+| F8 | Agentic AI Asistan | 2026 trend | Proaktif AI'ın ötesinde: kullanıcı adına AKSİYON al. "Tahlil sonuçların geldi → analiz ettim → D vitaminin düşük → takviye önerisi hazır → takvime ekledim → onaylar mısın?" Tek onay ile 5 adım otomatik. |
+| F11 | Sirkadyen Yemek Zamanlama | Kronobiyoloji | Ne yediğin kadar NE ZAMAN yediğin önemli. Kronotipine göre optimal yemek saatleri: "Senin kronotipin için son yemek en geç 20:00, kahvaltıyı 08:00-09:00 arasında yap." Uyku kalitesi + metabolizma + kilo yönetimi etkisi. İlaç zamanlama ile entegre. |
+| F12 | Sosyal Reçete (Social Prescribing) | İngiltere NHS | Doktor ilaç yanında sosyal aktivite "reçete" etsin: "Haftada 2x yürüyüş grubu", "Bahçe terapisi", "Sanat atölyesi", "Gönüllülük." İngiltere'de NHS resmi olarak uyguluyor, depresyon + izolasyon + kronik ağrıda kanıtlı etki. TR'de yeni kavram — ilk biz tanıtırız. Doktor panelinde "sosyal reçete yaz" butonu. |
+| F13 | Akran Sağlık Mentorluğu | Topluluk | Aynı hastalıktan geçmiş birinden gönüllü mentor desteği: "5 yıldır diyabet yönetiyorum, yeni tanı alan birine yardımcı olabilirim." Eşleştirme: hastalık + yaş + cinsiyet. Moderasyonlu, güvenli. Destek gruplarından farklı: 1-1 ilişki, uzun vadeli. |
+| F14 | Mikro-Alışkanlık Oluşturucu | Atomic Habits | Büyük hedef yerine küçük adımlar: "Günde 1 bardak daha su iç" → 7 gün başardın → "Şimdi 2 bardak" → kademeli. Habit stacking: "İlacını aldıktan sonra 1 bardak su iç." 2 dakikalık kuralı: "Sadece 2 dakika stretching yap." Gamification rozetleri ile entegre. |
+| F15 | Sağlık Zaman Çizelgesi | UX | Tüm sağlık geçmişin tek kronolojik timeline'da: ilk ilaç başlangıcı, tahlil tarihleri, ameliyatlar, tanılar, doğumlar, ilaç değişiklikleri, önemli semptomlar. Doktora giderken "son 5 yılımın özeti" tek ekranda. Randevu hazırlık modülüyle entegre. |
+| F17 | İlaç Eşdeğer (Muadil) Bulucu | Pratik | "Xarelto çok pahalı" → "Muadili: Rivaroksaban [marka], SGK bedeli ₺X, aynı etken madde, aynı doz." Eczane fiyat karşılaştırma. OpenFDA + SGK bedel listesi. Kullanıcıya aylık yüzlerce TL tasarruf. |
+| F18 | Yıllık Sağlık Karnesi | Motivasyon | Aralık ayında: tüm yılın kapsamlı özeti. Wrapped'dan farklı: sadece eğlenceli değil, klinik olarak anlamlı. İlaç uyum yıllık %, tahlil trendleri, kilo değişimi, hedef karşılaştırma, doktora gösterilecek format. PDF export. |
+| F20 | İlaç Hatırlatma Buddy Sistemi | Sosyal | Eşin/çocuğun/arkadaşın seni izlesin: "Annem bugün ilacını almadı" → anneye otomatik hatırlatma + buddy'ye bildirim. Yaşlı bakım + uzaktan aile takibi + ilaç uyum artışı. Opt-in, izin bazlı. Aile profili ile entegre. |
+
+---
+
+# GÜNCELLENMIŞ TOPLAM
+
+| Segment | Sayı |
+|---------|------|
+| Önceki 85 tool (TOOL 1-20 + 65 genişleme) | 85 |
+| Yeni kullanıcı fikirleri (N1-N55) | 55 |
+| Yeni doktor fikirleri (D1-D25) | 25 |
+| Yeni kurumsal fikirleri (E1-E43) | 43 |
+| Rakip analizi + final ekler (F1-F20 seçilenler: 14) | 14 |
+| **TOPLAM** | **222** |
