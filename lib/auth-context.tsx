@@ -169,10 +169,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.log("[Auth] Skipping event — initAuth still running");
           return;
         }
+        // Handle token refresh — update session in state
+        if (event === "TOKEN_REFRESHED") {
+          console.log("[Auth] Token refreshed successfully");
+          setState((prev) => ({ ...prev, session }));
+          return;
+        }
         await supabase.auth.getUser();
         await updateState(session.user, session);
       }
     );
+
+    // Re-check session when tab becomes visible again (back from background)
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === "visible") {
+        console.log("[Auth] Tab became visible — refreshing session...");
+        try {
+          const { data: { session }, error } = await supabase.auth.getSession();
+          if (error || !session) {
+            console.log("[Auth] Session expired while in background");
+            // Try to refresh the token
+            const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+            if (refreshError || !refreshData.session) {
+              console.log("[Auth] Token refresh failed — signing out");
+              await updateState(null, null);
+              return;
+            }
+            console.log("[Auth] Token refreshed after background return");
+            await updateState(refreshData.session.user, refreshData.session);
+          } else {
+            // Session exists, update state silently
+            setState((prev) => ({ ...prev, session }));
+          }
+        } catch (err) {
+          console.error("[Auth] Visibility change session check error:", err);
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     const safetyTimeout = setTimeout(() => {
       setState((prev) => {
@@ -186,6 +221,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       subscription.unsubscribe();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(safetyTimeout);
     };
   }, [updateState]);
@@ -228,12 +264,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     console.log("[Auth] Signing out...");
-    try {
-      await supabase.auth.signOut({ scope: "local" });
-    } catch (err) {
-      console.error("[Auth] Sign out API error (continuing with local clear):", err);
-    }
-    clearDailyMedCheck();
+
+    // Clear state immediately for instant UI feedback
     setState({
       user: null,
       session: null,
@@ -244,6 +276,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       needsMedicationUpdate: false,
       premiumStatus: defaultPremium,
     });
+    clearDailyMedCheck();
+
+    // Sign out from Supabase (global — invalidates server session too)
+    try {
+      await supabase.auth.signOut({ scope: "global" });
+    } catch (err) {
+      console.error("[Auth] Sign out API error — clearing localStorage manually:", err);
+      // If signOut API fails, manually clear all Supabase tokens from localStorage
+      try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith("sb-") || key.includes("supabase"))) {
+            localStorage.removeItem(key);
+          }
+        }
+      } catch (storageErr) {
+        console.error("[Auth] localStorage clear error:", storageErr);
+      }
+    }
+
     console.log("[Auth] Signed out — redirecting to /");
     window.location.href = "/";
   };
