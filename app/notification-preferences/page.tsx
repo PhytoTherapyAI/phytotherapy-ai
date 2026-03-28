@@ -77,7 +77,7 @@ export default function NotificationPreferencesPage() {
             <Smartphone className="w-5 h-5 text-amber-600 mt-0.5" />
             <div>
               <h3 className="font-semibold text-sm">{isTr ? "Push Bildirimleri" : "Push Notifications"}</h3>
-              <p className="text-xs text-gray-500 mt-1">{isTr ? "Push bildirimleri icin tarayici izni gereklidir. PWA olarak yukleyerek daha iyi deneyim elde edin." : "Browser permission required for push notifications. Install as PWA for a better experience."}</p>
+              <p className="text-xs text-gray-500 mt-1">{isTr ? "Push bildirimleri için tarayici izni gereklidir. PWA olarak yukleyerek daha iyi deneyim elde edin." : "Browser permission required for push notifications. Install as PWA for a better experience."}</p>
               <Button size="sm" className="mt-2 bg-amber-500 hover:bg-amber-600">{isTr ? "Izin Ver" : "Grant Permission"}</Button>
             </div>
           </div>

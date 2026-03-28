@@ -17,8 +17,8 @@ export default function PrivacyControlsPage() {
     { id: "doctor_sharing", en: "Doctor Data Sharing", tr: "Doktor Veri Paylaşımi", descEn: "Allow your doctor to view your health data", descTr: "Doktorunuzun saglik verilerinizi görüntülemesine izin verin", enabled: true, category: "sharing" },
     { id: "family_view", en: "Family Member Visibility", tr: "Aile Uyesi Gorunurlugu", descEn: "Allow family members to see your health summary", descTr: "Aile uyelerinin saglik ozetinizi gormesine izin verin", enabled: true, category: "sharing" },
     { id: "analytics", en: "Usage Analytics", tr: "Kullanim Analitigi", descEn: "Help improve the app with anonymous usage data", descTr: "Anonim kullanim verileriyle uygulamayi iyilestirmeye yardim edin", enabled: true, category: "data" },
-    { id: "ai_training", en: "AI Model Training", tr: "AI Model Egitimi", descEn: "Allow data for AI improvement (always anonymized)", descTr: "AI iyilestirmesi icin veri kullanilmasina izin verin (her zaman anonim)", enabled: false, category: "data" },
-    { id: "location", en: "Location Services", tr: "Konum Hizmetleri", descEn: "Enable location for pharmacy finder feature", descTr: "Eczane bulucu ozelligi icin konumu etkinlestirin", enabled: false, category: "device" },
+    { id: "ai_training", en: "AI Model Training", tr: "AI Model Egitimi", descEn: "Allow data for AI improvement (always anonymized)", descTr: "AI iyilestirmesi için veri kullanilmasina izin verin (her zaman anonim)", enabled: false, category: "data" },
+    { id: "location", en: "Location Services", tr: "Konum Hizmetleri", descEn: "Enable location for pharmacy finder feature", descTr: "Eczane bulucu ozelligi için konumu etkinlestirin", enabled: false, category: "device" },
   ]);
 
   const [retentionPeriod, setRetentionPeriod] = useState("24");
@@ -65,7 +65,7 @@ export default function PrivacyControlsPage() {
             <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
             <div>
               <h3 className="font-semibold text-green-700 text-sm">{isTr ? "KVKK Uyumlu" : "GDPR/KVKK Compliant"}</h3>
-              <p className="text-xs text-green-600 mt-1">{isTr ? "Verileriniz sifrelenerek saklanir. Turkiye sunucularinda barindiriliyor." : "Your data is stored encrypted. Hosted on servers compliant with regulations."}</p>
+              <p className="text-xs text-green-600 mt-1">{isTr ? "Verileriniz sifrelenerek saklanir. Türkiye sunucularinda barindiriliyor." : "Your data is stored encrypted. Hosted on servers compliant with regulations."}</p>
             </div>
           </div>
         </Card>

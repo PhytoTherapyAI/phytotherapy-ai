@@ -8,8 +8,8 @@ export const maxDuration = 60;
 const PREECLAMPSIA_SYMPTOMS = [
   "severe headache", "vision changes", "blurred vision", "upper abdominal pain",
   "sudden swelling", "rapid weight gain", "difficulty breathing",
-  "siddetli bas agrisi", "gorme degisiklikleri", "bulanik gorme",
-  "ust karin agrisi", "ani sisman", "nefes darligi",
+  "şiddetli bas ağrısi", "gorme değişiklikleri", "bulanık gorme",
+  "ust karin ağrısi", "ani sisman", "nefes darlığı",
 ];
 
 export async function POST(request: NextRequest) {
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
           alertLevel: "red",
           emergencyAlert: true,
           emergencyMessage: lang === "tr"
-            ? "Belirttiginiz semptomlar preeklampsi veya diger ciddi bir komplikasyonun habercisi olabilir. DERHAL doktorunuzu arayin veya acil servise gidin. Gecikmeyin."
+            ? "Belirttiginiz semptomlar preeklampsi veya diger ciddi bir komplikasyonun habercisi olabilir. DERHAL doktorunuzu arayın veya acil servise gidin. Gecikmeyin."
             : "The symptoms you described may indicate preeclampsia or another serious complication. Call your doctor or go to the emergency room IMMEDIATELY. Do not delay.",
           gestationalWeek: gestational_week,
           weekInfo: null,

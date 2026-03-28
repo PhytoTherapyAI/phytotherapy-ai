@@ -16,12 +16,12 @@ interface YogaGuide {
 
 const YOGA_GUIDES: YogaGuide[] = [
   {
-    condition: { en: "Back Pain", tr: "Bel Agrisi" },
+    condition: { en: "Back Pain", tr: "Bel Ağrısi" },
     grade: "A",
-    description: { en: "Strong evidence (RCTs) for yoga improving chronic low back pain. Comparable to physical therapy.", tr: "Yoganin kronik bel agrisini iyilestirdigi icin guclu kanit (RCT'ler). Fizyoterapiye denk." },
+    description: { en: "Strong evidence (RCTs) for yoga improving chronic low back pain. Comparable to physical therapy.", tr: "Yoganin kronik bel ağrısini iyilestirdigi için guclu kanit (RCT'ler). Fizyoterapiye denk." },
     poses: [
       { name: { en: "Cat-Cow", tr: "Kedi-Inek" }, duration: "2 min", note: { en: "Gentle spinal flexion-extension", tr: "Hafif omurga fleksiyon-ekstensiyon" } },
-      { name: { en: "Sphinx Pose", tr: "Sfenks Pozu" }, duration: "1 min", note: { en: "Mild backbend, good for disc issues", tr: "Hafif sirt bukulmesi, disk sorunlari icin iyi" } },
+      { name: { en: "Sphinx Pose", tr: "Sfenks Pozu" }, duration: "1 min", note: { en: "Mild backbend, good for disc issues", tr: "Hafif sirt bukulmesi, disk sorunlari için iyi" } },
       { name: { en: "Supine Twist", tr: "Sirt Ustu Burgu" }, duration: "1 min each side", note: { en: "Releases lower back tension", tr: "Alt sirt gerginligini serbest birakir" } },
       { name: { en: "Bridge Pose", tr: "Kopru Pozu" }, duration: "30 sec x3", note: { en: "Strengthens glutes and core", tr: "Kalca ve karni guclendirir" } },
     ],
@@ -29,27 +29,27 @@ const YOGA_GUIDES: YogaGuide[] = [
   {
     condition: { en: "Anxiety", tr: "Anksiyete" },
     grade: "B",
-    description: { en: "Moderate evidence for yoga reducing anxiety symptoms. Breath-focused styles most effective.", tr: "Yoganin anksiyete semptomlarini azalttigi icin orta duzeyde kanit. Nefes odakli stiller en etkili." },
+    description: { en: "Moderate evidence for yoga reducing anxiety symptoms. Breath-focused styles most effective.", tr: "Yoganin anksiyete semptomlarini azalttigi için orta duzeyde kanit. Nefes odakli stiller en etkili." },
     poses: [
       { name: { en: "Legs Up The Wall", tr: "Bacaklar Duvarda" }, duration: "5 min", note: { en: "Activates parasympathetic nervous system", tr: "Parasempatik sinir sistemini aktive eder" } },
-      { name: { en: "Forward Fold", tr: "One Egilme" }, duration: "1 min", note: { en: "Calming, increases blood flow to brain", tr: "Sakinlestirici, beyine kan akisini arttirir" } },
+      { name: { en: "Forward Fold", tr: "One Egilme" }, duration: "1 min", note: { en: "Calming, increases blood flow to brain", tr: "Sakinlestirici, beyine kan akisini arttırır" } },
       { name: { en: "Savasana with 4-7-8 Breath", tr: "Savasana + 4-7-8 Nefes" }, duration: "5 min", note: { en: "Deep relaxation with counted breathing", tr: "Sayimli nefesle derin gevsetme" } },
     ],
   },
   {
     condition: { en: "Hypertension", tr: "Hipertansiyon" },
     grade: "B",
-    description: { en: "Moderate evidence for yoga reducing blood pressure. Avoid inversions if BP uncontrolled.", tr: "Yoganin tansiyonu dusurdugu icin orta duzeyde kanit. Tansiyon kontrol altinda degilse ters duruslardari kacinin." },
+    description: { en: "Moderate evidence for yoga reducing blood pressure. Avoid inversions if BP uncontrolled.", tr: "Yoganin tansiyonu dusürdügu için orta duzeyde kanit. Tansiyon kontrol altinda degilse ters duruslardari kacinin." },
     poses: [
       { name: { en: "Seated Forward Bend", tr: "Oturarak One Egilme" }, duration: "2 min", note: { en: "Gentle, no strain", tr: "Hafif, zorlanma yok" } },
-      { name: { en: "Corpse Pose (Savasana)", tr: "Olum Pozu (Savasana)" }, duration: "10 min", note: { en: "Proven to reduce systolic BP 4-5 mmHg", tr: "Sistolik tansiyonu 4-5 mmHg dusurdugu kanitlanmistir" } },
+      { name: { en: "Corpse Pose (Savasana)", tr: "Olum Pozu (Savasana)" }, duration: "10 min", note: { en: "Proven to reduce systolic BP 4-5 mmHg", tr: "Sistolik tansiyonu 4-5 mmHg dusürdügu kanitlanmistir" } },
     ],
   },
 ];
 
 const MEDITATION_TECHNIQUES = [
-  { name: { en: "Box Breathing (4-4-4-4)", tr: "Kutu Nefesi (4-4-4-4)" }, duration: 16, desc: { en: "Inhale 4s, hold 4s, exhale 4s, hold 4s. Used by Navy SEALs for stress.", tr: "4s nefes al, 4s tut, 4s ver, 4s tut. Stres icin Navy SEALs tarafindan kullanilir." } },
-  { name: { en: "Body Scan", tr: "Vucut Taramasi" }, duration: 300, desc: { en: "Systematically focus attention from toes to head, releasing tension.", tr: "Sistematik olarak dikkati ayak parmaklarndan basa yonlendirin, gerginligi serbest birakin." } },
+  { name: { en: "Box Breathing (4-4-4-4)", tr: "Kutu Nefesi (4-4-4-4)" }, duration: 16, desc: { en: "Inhale 4s, hold 4s, exhale 4s, hold 4s. Used by Navy SEALs for stress.", tr: "4s nefes al, 4s tut, 4s ver, 4s tut. Stres için Navy SEALs tarafindan kullanilir." } },
+  { name: { en: "Body Scan", tr: "Vücut Taraması" }, duration: 300, desc: { en: "Systematically focus attention from toes to head, releasing tension.", tr: "Sistematik olarak dikkati ayak parmaklarından başa yönlendirin, gerginliği serbest bırakın." } },
   { name: { en: "Loving-Kindness (Metta)", tr: "Sevgi-Sefkat (Metta)" }, duration: 300, desc: { en: "Send goodwill to self, loved ones, then all beings.", tr: "Kendinize, sevdiklerinize, sonra tum varliklara iyi niyet gonderin." } },
 ];
 
@@ -177,7 +177,7 @@ export default function YogaMeditationPage() {
             <div className="flex gap-3 justify-center">
               {!timerRunning ? (
                 <Button onClick={() => setTimerRunning(true)} className="bg-purple-600 hover:bg-purple-700 text-white" disabled={meditationTimer === 0}>
-                  <Play className="w-4 h-4 mr-2" /> {lang === "tr" ? "Baslat" : "Start"}
+                  <Play className="w-4 h-4 mr-2" /> {lang === "tr" ? "Başlat" : "Start"}
                 </Button>
               ) : (
                 <Button onClick={() => setTimerRunning(false)} variant="outline">

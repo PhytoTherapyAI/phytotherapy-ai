@@ -31,7 +31,7 @@ interface LungAnalysis {
 }
 
 const SYMPTOM_OPTIONS = [
-  { value: "wheezing", en: "Wheezing", tr: "Hiriltili Solunum" },
+  { value: "wheezing", en: "Wheezing", tr: "Hırıltılı Solunum" },
   { value: "shortness_of_breath", en: "Shortness of Breath", tr: "Nefes Darligi" },
   { value: "cough", en: "Chronic Cough", tr: "Kronik Oksuruk" },
   { value: "phlegm", en: "Phlegm/Mucus", tr: "Balgam" },
@@ -53,10 +53,10 @@ const TRIGGER_OPTIONS = [
 
 const ACT_QUESTIONS = [
   { en: "How much did asthma keep you from getting done at work/school/home?", tr: "Astim is/okul/evde ne kadar engel oldu?" },
-  { en: "How often have you had shortness of breath?", tr: "Ne siklikla nefes darligi yasadiniz?" },
+  { en: "How often have you had shortness of breath?", tr: "Ne siklikla nefes darlığı yasadiniz?" },
   { en: "How often did asthma symptoms wake you up at night?", tr: "Astim belirtileri sizi gece ne siklikla uyandirdi?" },
   { en: "How often have you used your rescue inhaler?", tr: "Kurtarici inhalerinizi ne siklikla kullandiniz?" },
-  { en: "How would you rate your asthma control?", tr: "Astim kontrolunuzu nasil derecelendirirsiniz?" },
+  { en: "How would you rate your asthma control?", tr: "Astim kontrolünuzu nasil derecelendirirsiniz?" },
 ];
 
 export default function LungMonitorPage() {
@@ -103,7 +103,7 @@ export default function LungMonitorPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("lung.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}><LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}</Button>
         </div>
       </div>
@@ -173,7 +173,7 @@ export default function LungMonitorPage() {
           {conditionType === "asthma" && (
             <div className="space-y-3">
               <label className="block text-sm font-medium">{tx("lung.actScore", lang)}</label>
-              <p className="text-xs text-muted-foreground">{lang === "tr" ? "Her soru icin 1 (en kotu) - 5 (en iyi) puan verin" : "Rate each question 1 (worst) to 5 (best)"}</p>
+              <p className="text-xs text-muted-foreground">{lang === "tr" ? "Her soru için 1 (en kotu) - 5 (en iyi) puan verin" : "Rate each question 1 (worst) to 5 (best)"}</p>
               {ACT_QUESTIONS.map((q, i) => (
                 <div key={i} className="bg-muted/50 rounded-xl p-3">
                   <p className="text-sm mb-2">{q[lang]}</p>

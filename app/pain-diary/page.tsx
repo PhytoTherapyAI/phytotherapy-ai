@@ -510,7 +510,7 @@ export default function PainDiaryPage() {
             <div className="rounded-xl border-2 border-dashed border-red-200 bg-red-50/50 p-8 text-center dark:border-red-800 dark:bg-red-950/20">
               <BarChart3 className="mx-auto mb-3 h-8 w-8 text-red-400" />
               <p className="text-sm text-muted-foreground">
-                {lang === "tr" ? "Henuz agri kaydi yok" : "No pain records yet"}
+                {lang === "tr" ? "Henuz ağrı kaydi yok" : "No pain records yet"}
               </p>
             </div>
           ) : (
@@ -566,7 +566,7 @@ export default function PainDiaryPage() {
                   {records.length < 7
                     ? tx("pain.needMore", lang)
                     : lang === "tr"
-                    ? `${records.length} kaydiniz var. AI analiz icin hazir.`
+                    ? `${records.length} kaydiniz var. AI analiz için hazir.`
                     : `You have ${records.length} records. Ready for AI analysis.`}
                 </p>
               </div>

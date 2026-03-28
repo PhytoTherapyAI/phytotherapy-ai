@@ -80,7 +80,7 @@ export default function AutismSupportPage() {
           <Brain className="w-8 h-8 text-purple-600" />
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Otizm Destek Merkezi" : "Autism Support Center"}</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{isTr ? "Ebeveynler icin gunluk takip ve destek araclari" : "Daily tracking and support tools for parents"}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{isTr ? "Ebeveynler için gunluk takip ve destek araclari" : "Daily tracking and support tools for parents"}</p>
           </div>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
@@ -170,10 +170,10 @@ export default function AutismSupportPage() {
             {[
               { title: isTr ? "Gorsel Program Oluşturucu" : "Visual Schedule Builder", desc: isTr ? "Gorsel kartlarla gunluk program" : "Create daily schedules with visual cards", color: "from-blue-500 to-blue-600" },
               { title: isTr ? "Sosyal Hikaye Sablonlari" : "Social Story Templates", desc: isTr ? "Yeni durumlara hazirlama" : "Preparation stories for new situations", color: "from-green-500 to-green-600" },
-              { title: isTr ? "Sakinlesme Stratejileri" : "Calming Strategies", desc: isTr ? "Duyusal yuklenme icin teknikler" : "Techniques for sensory overload", color: "from-purple-500 to-purple-600" },
+              { title: isTr ? "Sakinlesme Stratejileri" : "Calming Strategies", desc: isTr ? "Duyusal yuklenme için teknikler" : "Techniques for sensory overload", color: "from-purple-500 to-purple-600" },
               { title: isTr ? "Ebeveyn Toplulugu" : "Parent Community", desc: isTr ? "Ailelerle deneyim paylasin" : "Share experiences with families", color: "from-orange-500 to-orange-600" },
               { title: isTr ? "IEP / BEP Takipci" : "IEP Goal Tracker", desc: isTr ? "Bireysel egitim plani hedefleri" : "Track education plan goals", color: "from-pink-500 to-pink-600" },
-              { title: isTr ? "Terapi İlerleme Raporu" : "Therapy Progress Report", desc: isTr ? "Terapistler icin ilerleme ozeti" : "Progress summary for therapists", color: "from-teal-500 to-teal-600" },
+              { title: isTr ? "Terapi İlerleme Raporu" : "Therapy Progress Report", desc: isTr ? "Terapistler için ilerleme ozeti" : "Progress summary for therapists", color: "from-teal-500 to-teal-600" },
             ].map(res => (<Card key={res.title} className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"><div className={"h-2 bg-gradient-to-r " + res.color} /><div className="p-4"><h3 className="font-semibold text-sm mb-1">{res.title}</h3><p className="text-xs text-gray-500">{res.desc}</p></div></Card>))}
           </div>
         )}

@@ -41,7 +41,7 @@ const SUBSTANCES_EN = ["Alcohol", "Tobacco", "Cannabis", "Opioids", "Stimulants"
 const SUBSTANCES_TR = ["Alkol", "Tutun", "Esrar", "Opioidler", "Uyarıcilar", "Kumar", "Sosyal Medya", "Diger"];
 
 const TRIGGERS_EN = ["Stress", "Social pressure", "Boredom", "Loneliness", "Celebration", "Pain", "Sleep problems", "Conflict"];
-const TRIGGERS_TR = ["Stres", "Sosyal baski", "Sikinti", "Yalnizlik", "Kutlama", "Agri", "Uyku sorunu", "Catisma"];
+const TRIGGERS_TR = ["Stres", "Sosyal baski", "Sıkıntı", "Yalnızlık", "Kutlama", "Ağrı", "Uyku sorunu", "Çatışma"];
 
 const SUPPORT_EN = ["AA/NA meeting", "Therapist", "Sponsor call", "Exercise", "Meditation", "Support group", "Journal", "Friend/family"];
 const SUPPORT_TR = ["AA/NA toplantısı", "Terapist", "Sponsor araması", "Egzersiz", "Meditasyon", "Destek grubu", "Günlük", "Arkadas/aile"];
@@ -119,7 +119,7 @@ export default function AddictionRecoveryPage() {
         <div className="rounded-xl border border-green-200 bg-green-50/50 p-8 text-center dark:border-green-800 dark:bg-green-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-green-400" />
           <p className="text-lg font-medium text-green-700 dark:text-green-300">
-            {lang === "tr" ? "Bu araci kullanmak icin giris yapin." : "Please sign in to use this tool."}
+            {lang === "tr" ? "Bu araci kullanmak için giris yapin." : "Please sign in to use this tool."}
           </p>
         </div>
       </div>
@@ -146,7 +146,7 @@ export default function AddictionRecoveryPage() {
         <p className="text-sm font-semibold text-green-700 dark:text-green-300">
           <Phone className="mr-1.5 inline h-4 w-4" />
           {tx("recovery.emergency", lang)}{" "}
-          <span className="font-bold">{lang === "tr" ? "Kriz Hatti: 182" : "SAMHSA: 1-800-662-4357"}</span>
+          <span className="font-bold">{lang === "tr" ? "Kriz Hattı: 182" : "SAMHSA: 1-800-662-4357"}</span>
         </p>
       </div>
 
@@ -222,7 +222,7 @@ export default function AddictionRecoveryPage() {
         {cravingLevel >= 8 && (
           <p className="mt-2 text-sm font-semibold text-red-600">
             {lang === "tr"
-              ? "Istek cok yüksek. Destekcinizi arayin veya bir toplantiya gidin."
+              ? "Istek cok yüksek. Destekcinizi arayın veya bir toplantiya gidin."
               : "Craving is very high. Call your sponsor or attend a meeting."}
           </p>
         )}

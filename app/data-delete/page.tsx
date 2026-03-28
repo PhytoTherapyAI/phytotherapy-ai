@@ -67,7 +67,7 @@ export default function DataDeletePage() {
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-red-700 dark:text-red-400">{isTr ? "Dikkat: Bu islem geri alinamaz" : "Warning: This action is irreversible"}</h3>
+                  <h3 className="font-semibold text-red-700 dark:text-red-400">{isTr ? "Dikkat: Bu işlem geri alinamaz" : "Warning: This action is irreversible"}</h3>
                   <p className="text-sm text-red-600 dark:text-red-300 mt-1">{isTr ? "Hesabinizi sildiginizde tum veriler kalici olarak silinecektir." : "When you delete your account, all data will be permanently removed."}</p>
                 </div>
               </div>
@@ -102,9 +102,9 @@ export default function DataDeletePage() {
             <Card className="p-6">
               <ShieldAlert className="w-12 h-12 text-red-500 mx-auto mb-4" />
               <h3 className="text-lg font-bold text-center mb-2">{isTr ? "Onay Gerekli" : "Confirmation Required"}</h3>
-              <p className="text-sm text-gray-500 text-center mb-6">{isTr ? "Devam etmek icin asagiya DELETE yazin." : "Type DELETE below to confirm."}</p>
+              <p className="text-sm text-gray-500 text-center mb-6">{isTr ? "Devam etmek için asagiya DELETE yazin." : "Type DELETE below to confirm."}</p>
               <input className="w-full rounded-lg border-2 border-red-200 px-4 py-3 text-center text-lg font-mono tracking-widest dark:bg-gray-800 dark:border-red-800 focus:border-red-500 focus:outline-none" placeholder="DELETE" value={deleteText} onChange={e => setDeleteText(e.target.value.toUpperCase())} />
-              {deleteText === "DELETE" && <div className="flex items-center gap-2 mt-4 text-green-600"><CheckCircle2 className="w-4 h-4" /><span className="text-sm">{isTr ? "Onay kodu dogru" : "Confirmation code correct"}</span></div>}
+              {deleteText === "DELETE" && <div className="flex items-center gap-2 mt-4 text-green-600"><CheckCircle2 className="w-4 h-4" /><span className="text-sm">{isTr ? "Onay kodu doğru" : "Confirmation code correct"}</span></div>}
             </Card>
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1" onClick={() => setStep(1)}><ArrowLeft className="w-4 h-4 mr-2" /> {isTr ? "Geri" : "Back"}</Button>

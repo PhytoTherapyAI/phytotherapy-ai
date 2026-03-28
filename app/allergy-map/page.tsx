@@ -66,8 +66,8 @@ const COMMON_SYMPTOMS_EN = [
 
 const COMMON_SYMPTOMS_TR = [
   "Urtiker", "Kasinti", "Sislik", "Dokutu", "Bulanti", "Kusma",
-  "Ishal", "Hapsirma", "Burun akintisi", "Hiriltili solunum", "Bas agrisi",
-  "Karin agrisi", "Bogaz sikismasi", "Nefes darligi",
+  "İshal", "Hapşırma", "Burun akıntısı", "Hırıltılı solunum", "Bas ağrısi",
+  "Karin ağrısi", "Bogaz sıkışması", "Nefes darlığı",
 ];
 
 export default function AllergyMapPage() {
@@ -472,7 +472,7 @@ export default function AllergyMapPage() {
             <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
               <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-red-700 dark:text-red-400">
                 <AlertTriangle className="h-3.5 w-3.5" />
-                {lang === "tr" ? "Catismalar Bulundu" : "Conflicts Found"}
+                {lang === "tr" ? "Çatışmalar Bulundu" : "Conflicts Found"}
               </h3>
               <div className="space-y-2">
                 {crossCheck.conflicts.map((c, i) => (

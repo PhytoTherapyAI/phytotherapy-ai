@@ -46,7 +46,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "Omega-3 (EPA/DHA)",
     category: "vitamins",
     evidenceGrade: "A",
-    uses: { en: "Heart health, triglycerides, inflammation", tr: "Kalp sagligi, trigliserit, enflamasyon" },
+    uses: { en: "Heart health, triglycerides, inflammation", tr: "Kalp sağlığı, trigliserit, enflamasyon" },
     brands: [
       { name: "Nordic Naturals", form: "Softgel", note: "Third-party tested" },
       { name: "Solgar", form: "Softgel" },
@@ -60,7 +60,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "Vitamin D3",
     category: "vitamins",
     evidenceGrade: "A",
-    uses: { en: "Bone health, immune support, mood", tr: "Kemik sagligi, bagisiklik, ruh hali" },
+    uses: { en: "Bone health, immune support, mood", tr: "Kemik sağlığı, bağışıklik, ruh hali" },
     brands: [
       { name: "Solgar", form: "Tablet" },
       { name: "NOW Foods", form: "Softgel" },
@@ -102,7 +102,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "Probiotics (Multi-strain)",
     category: "probiotics",
     evidenceGrade: "A",
-    uses: { en: "Gut health, digestion, immune support", tr: "Bagirsak sagligi, sindirim, bagisiklik" },
+    uses: { en: "Gut health, digestion, immune support", tr: "Bağırsak sağlığı, sindirim, bağışıklik" },
     brands: [
       { name: "Culturelle", form: "Capsule" },
       { name: "Align", form: "Capsule" },
@@ -129,7 +129,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "Iron Bisglycinate",
     category: "minerals",
     evidenceGrade: "A",
-    uses: { en: "Anemia, fatigue, ferritin support", tr: "Anemi, yorgunluk, ferritin destegi" },
+    uses: { en: "Anemia, fatigue, ferritin support", tr: "Anemi, yorgunluk, ferritin desteği" },
     brands: [
       { name: "Solgar Gentle Iron", form: "Capsule", note: "Non-constipating" },
       { name: "Thorne", form: "Capsule" },
@@ -142,7 +142,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "Zinc Picolinate",
     category: "minerals",
     evidenceGrade: "A",
-    uses: { en: "Immune support, skin, wound healing", tr: "Bagisiklik, cilt, yara iyilesmesi" },
+    uses: { en: "Immune support, skin, wound healing", tr: "Bağışıklik, cilt, yara iyileşmesi" },
     brands: [
       { name: "Thorne", form: "Capsule" },
       { name: "NOW Foods", form: "Capsule" },
@@ -155,7 +155,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "Curcumin (Turmeric Extract)",
     category: "herbal",
     evidenceGrade: "B",
-    uses: { en: "Inflammation, joint pain, antioxidant", tr: "Enflamasyon, eklem agrisi, antioksidan" },
+    uses: { en: "Inflammation, joint pain, antioxidant", tr: "Enflamasyon, eklem ağrısi, antioksidan" },
     brands: [
       { name: "Meriva (Thorne)", form: "Capsule", note: "Phytosome form" },
       { name: "Jarrow Formulas", form: "Capsule" },
@@ -169,7 +169,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "CoQ10 (Ubiquinol)",
     category: "vitamins",
     evidenceGrade: "B",
-    uses: { en: "Heart health, energy, statin support", tr: "Kalp sagligi, enerji, statin destegi" },
+    uses: { en: "Heart health, energy, statin support", tr: "Kalp sağlığı, enerji, statin desteği" },
     brands: [
       { name: "Qunol", form: "Softgel" },
       { name: "Jarrow Formulas", form: "Softgel" },
@@ -182,7 +182,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "Melatonin",
     category: "amino-acids",
     evidenceGrade: "A",
-    uses: { en: "Sleep onset, jet lag, circadian rhythm", tr: "Uyku baslangici, jet lag, sirkadiyen ritim" },
+    uses: { en: "Sleep onset, jet lag, circadian rhythm", tr: "Uyku başlangıçi, jet lag, sirkadiyen ritim" },
     brands: [
       { name: "NOW Foods", form: "Sublingual" },
       { name: "Natrol", form: "Tablet" },
@@ -221,7 +221,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "Quercetin",
     category: "herbal",
     evidenceGrade: "B",
-    uses: { en: "Allergies, antioxidant, immune support", tr: "Alerjiler, antioksidan, bagisiklik destegi" },
+    uses: { en: "Allergies, antioxidant, immune support", tr: "Alerjiler, antioksidan, bağışıklik desteği" },
     brands: [
       { name: "Thorne", form: "Capsule" },
       { name: "NOW Foods", form: "Capsule" },
@@ -235,7 +235,7 @@ const MARKETPLACE_DATA: MarketplaceSupplement[] = [
     name: "Vitamin C (Buffered)",
     category: "vitamins",
     evidenceGrade: "A",
-    uses: { en: "Immune support, collagen, antioxidant", tr: "Bagisiklik, kolajen, antioksidan" },
+    uses: { en: "Immune support, collagen, antioxidant", tr: "Bağışıklik, kolajen, antioksidan" },
     brands: [
       { name: "NOW Foods", form: "Capsule" },
       { name: "Solgar Ester-C", form: "Tablet", note: "Gentle on stomach" },
@@ -314,7 +314,7 @@ export default function SupplementMarketplacePage() {
           </h1>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             {lang === "tr"
-              ? "Kanita dayali takviyeler, guvenilir markalar ve eczane kalitesi oneriler. Baslamadan once etkilesim kontrolu yapin."
+              ? "Kanita dayali takviyeler, guvenilir markalar ve eczane kalitesi oneriler. Başlamadan once etkilesim kontrolü yapin."
               : "Evidence-based supplements, trusted brands, and pharmacy-quality recommendations. Always check interactions before starting."}
           </p>
         </div>
@@ -324,7 +324,7 @@ export default function SupplementMarketplacePage() {
           <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-amber-800 dark:text-amber-300">
             {lang === "tr"
-              ? "Her zaman acik aktardan degil, eczanede satilan standardize edilmis formlari tercih edin. Herhangi bir takviyeye baslamadan once doktorunuza danisin."
+              ? "Her zaman acik aktardan degil, eczanede satilan standardize edilmis formlari tercih edin. Herhangi bir takviyeye başlamadan once doktorunuza danisin."
               : "Always choose standardized extracts from pharmacies, not herbalists. Consult your doctor before starting any supplement."}
           </p>
         </div>

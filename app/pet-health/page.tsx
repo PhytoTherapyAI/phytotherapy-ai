@@ -21,15 +21,15 @@ const DISEASES: ZoonoticDisease[] = [
     name: { en: "Toxoplasmosis", tr: "Toksoplazmoz" },
     source: { en: "Cats (feces)", tr: "Kediler (dışkı)" },
     transmission: { en: "Contact with infected cat feces, contaminated soil, or undercooked meat", tr: "Enfekte kedi diskisi, kontamine toprak veya az pismis etle temas" },
-    symptoms: { en: "Usually asymptomatic in healthy adults. Flu-like symptoms possible.", tr: "Sağlıkli yetiskinlerde genellikle semptomsuz. Grip benzeri semptomlar mumkun." },
-    prevention: { en: "Wear gloves when cleaning litter. Wash hands after. Pregnant women should avoid litter duty.", tr: "Kum temizlerken eldiven giyiniz. Sonra ellerinizi yikayiniz. Hamile kadinlar kum temizleme gorevinden kacinmali." },
-    riskGroups: { en: "CRITICAL for pregnant women (birth defects) and immunosuppressed patients", tr: "Hamile kadinlar (dogum kusuru) ve immunsuprese hastalar icin KRITIK" },
+    symptoms: { en: "Usually asymptomatic in healthy adults. Flu-like symptoms possible.", tr: "Sağlıkli yetiskinlerde genellikle semptomsuz. Grip benzeri semptomlar mümkün." },
+    prevention: { en: "Wear gloves when cleaning litter. Wash hands after. Pregnant women should avoid litter duty.", tr: "Kum temizlerken eldiven giyiniz. Sonra ellerinizi yikayiniz. Hamile kadinlar kum temizleme görevinden kacinmali." },
+    riskGroups: { en: "CRITICAL for pregnant women (birth defects) and immunosuppressed patients", tr: "Hamile kadinlar (dogum kusuru) ve immunsuprese hastalar için KRITIK" },
     severity: "high",
   },
   {
     name: { en: "Ringworm (Dermatophytosis)", tr: "Saclı Deri Mantarı (Dermatofitoz)" },
     source: { en: "Cats, Dogs, Rabbits", tr: "Kediler, Kopekler, Tavsanlar" },
-    transmission: { en: "Direct skin contact with infected animal or contaminated surfaces", tr: "Enfekte hayvan veya kontamine yuzeylerle dogrudan cilt temasi" },
+    transmission: { en: "Direct skin contact with infected animal or contaminated surfaces", tr: "Enfekte hayvan veya kontamine yuzeylerle doğrudan cilt temasi" },
     symptoms: { en: "Red, itchy, ring-shaped rash on skin", tr: "Ciltte kirmizi, kasintili, halka seklinde dokuuntu" },
     prevention: { en: "Wash hands after handling pets. Treat pet infections promptly. Don't share towels.", tr: "Evcil hayvanlara dokunduktan sonra ellerinizi yikayiniz. Hayvan enfeksiyonlarini derhal tedavi ediniz." },
     riskGroups: { en: "Children and immunosuppressed patients", tr: "Cocuklar ve immunsuprese hastalar" },
@@ -48,7 +48,7 @@ const DISEASES: ZoonoticDisease[] = [
     name: { en: "Leptospirosis", tr: "Leptospirozis" },
     source: { en: "Dogs, Rodents", tr: "Kopekler, Kemirgenler" },
     transmission: { en: "Contact with infected animal urine, contaminated water", tr: "Enfekte hayvan idrari, kontamine su ile temas" },
-    symptoms: { en: "High fever, headache, muscle pain, jaundice in severe cases", tr: "Yüksek ates, bas agrisi, kas agrisi, ciddi vakalarda sarillik" },
+    symptoms: { en: "High fever, headache, muscle pain, jaundice in severe cases", tr: "Yüksek ates, bas ağrısi, kas ağrısi, ciddi vakalarda sarillik" },
     prevention: { en: "Vaccinate dogs. Avoid stagnant water. Wear protective gear when cleaning.", tr: "Kopekleri asilayiniz. Durgun sudan kacininiz. Temizlerken koruyucu ekipman giyiniz." },
     riskGroups: { en: "Outdoor workers, farmers, flood-exposed populations", tr: "Dis mekan calisanlari, ciftciler, sel maruz nufuslar" },
     severity: "high",
@@ -57,7 +57,7 @@ const DISEASES: ZoonoticDisease[] = [
     name: { en: "Psittacosis (Parrot Fever)", tr: "Psittakoz (Papagan Hastaligi)" },
     source: { en: "Birds (parrots, budgies, pigeons)", tr: "Kuslar (papagan, muhabbet kusu, guvercin)" },
     transmission: { en: "Inhaling dried bird droppings or feather dust", tr: "Kurumus kus diskalari veya tuy tozunu soluma" },
-    symptoms: { en: "Pneumonia-like: fever, cough, headache, muscle pain", tr: "Pnomoni benzeri: ates, oksuruk, bas agrisi, kas agrisi" },
+    symptoms: { en: "Pneumonia-like: fever, cough, headache, muscle pain", tr: "Pnomoni benzeri: ates, oksuruk, bas ağrısi, kas ağrısi" },
     prevention: { en: "Clean cages regularly with wet methods. Good ventilation. Wear mask when cleaning.", tr: "Kafesleri duzzenli olarak islak yontemlerle temizleyiniz. Iyi havalandirma. Temizlerken maske takiniz." },
     riskGroups: { en: "Elderly, immunosuppressed, bird handlers", tr: "Yaslilar, immunsuprese, kus bakicilari" },
     severity: "moderate",
@@ -68,17 +68,17 @@ const BITE_PROTOCOL = [
   { en: "Wash wound immediately with soap and running water for 15 minutes", tr: "Yarayi hemen sabun ve akan suyla 15 dakika yikayiniz" },
   { en: "Apply antiseptic (povidone-iodine preferred)", tr: "Antiseptik uygulayiniz (povidon-iyot tercih)" },
   { en: "Do NOT close the wound with stitches (infection risk)", tr: "Yarayi dikisle KAPATMAYIN (enfeksiyon riski)" },
-  { en: "Go to emergency room for tetanus and rabies evaluation", tr: "Tetanoz ve kuduz degerlendirmesi icin acil servise gidiniz" },
+  { en: "Go to emergency room for tetanus and rabies evaluation", tr: "Tetanoz ve kuduz degerlendirmesi için acil servise gidiniz" },
   { en: "Report the bite to local authorities if from unknown animal", tr: "Bilinmeyen hayvandan isirmaysa yerel yetkililere bildirinniz" },
 ];
 
 const PREGNANCY_CAT_GUIDE = [
   { en: "Someone else should clean the litter box daily", tr: "Kum kabini baskasi her gun temizlemeli" },
   { en: "If you must clean it, wear gloves and wash hands thoroughly", tr: "Siz temizlemeniz gerekiyorsa eldiven giyin ve elleri iyice yikayiniz" },
-  { en: "Keep cats indoors to prevent new Toxoplasma infection", tr: "Yeni Toxoplasma enfeksiyonunu onlemek icin kedileri ic mekanda tutunuz" },
+  { en: "Keep cats indoors to prevent new Toxoplasma infection", tr: "Yeni Toxoplasma enfeksiyonunu önlemek için kedileri ic mekanda tutunuz" },
   { en: "Don't adopt new cats or handle strays during pregnancy", tr: "Hamilelik sirasinda yeni kedi sahiplenmeyin veya sokak kedilerine dokunmayiniz" },
   { en: "You do NOT need to give up your cat - just take precautions", tr: "Kedinizden vazgecmenize gerek YOK - sadece onlemlere uyunuz" },
-  { en: "Get tested for Toxoplasma antibodies (IgG/IgM) early in pregnancy", tr: "Hameligin basinda Toxoplasma antikorlari (IgG/IgM) testi yaptirin" },
+  { en: "Get tested for Toxoplasma antibodies (IgG/IgM) early in pregnancy", tr: "Hameligin başında Toxoplasma antikorlari (IgG/IgM) testi yaptirin" },
 ];
 
 const severityColor = (s: string) => {
@@ -130,7 +130,7 @@ export default function PetHealthPage() {
           <Shield className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
           <p className="text-sm text-amber-700 dark:text-amber-400">
             {lang === "tr"
-              ? "Immunsuprese hastalar zoonotik enfeksiyonlara karsi daha savunmasizdir. Evcil hayvan hijyenine ekstra dikkat ediniz ve veterinerinizle duzenlii iletisime geciniz."
+              ? "Immunsuprese hastalar zoonotik enfeksiyonlara karsi daha savunmasizdir. Evcil hayvan hijyenine ekstra dikkat ediniz ve veterinerinizle düzenlii iletisime geciniz."
               : "Immunosuppressed patients are more vulnerable to zoonotic infections. Pay extra attention to pet hygiene and consult your vet regularly."}
           </p>
         </div>

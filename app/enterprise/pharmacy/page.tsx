@@ -106,7 +106,7 @@ export default function PharmacyPage() {
           <div className="space-y-4">
             <Card className="p-4 border-blue-200 bg-blue-50 dark:bg-blue-900/20">
               <h3 className="font-semibold flex items-center gap-2"><Stethoscope className="w-5 h-5 text-blue-600" /> {isTr ? "Eczaci Karar Destek" : "Pharmacist Decision Support"}</h3>
-              <p className="text-sm text-gray-600 mt-1">{isTr ? "Hasta ilac profiline gore otomatik etkilesim kontrolu ve oneriler" : "Automatic interaction checks and suggestions based on patient medication profile"}</p>
+              <p className="text-sm text-gray-600 mt-1">{isTr ? "Hasta ilac profiline gore otomatik etkilesim kontrolü ve oneriler" : "Automatic interaction checks and suggestions based on patient medication profile"}</p>
             </Card>
             {[
               { title: isTr ? "Etkileşim Uyarısi" : "Interaction Alert", desc: isTr ? "Metformin + Kontrast madde: 48 saat ara verin" : "Metformin + Contrast: Hold for 48 hours", type: "warning" },

@@ -43,7 +43,7 @@ const PCL5_TR = [
   "Stresli deneyimin tekrarlayan, rahatsiz edici ve istenmeyen anilari",
   "Stresli deneyimi hatirlatan bir sey oldugunda cok uzgun hissetme",
   "Stresli deneyimle ilgili anilari, dusunceleri veya duygulari kacinma",
-  "Kendiniz, diger insanlar veya dunya hakkinda guclu olumsuz inanclar",
+  "Kendiniz, diger insanlar veya dünya hakkinda guclu olumsuz inanclar",
   "Asiri tetikte, dikkatli veya tedbirli olma",
 ];
 
@@ -123,7 +123,7 @@ export default function PTSDSupportPage() {
         <div className="rounded-xl border border-teal-200 bg-teal-50/50 p-8 text-center dark:border-teal-800 dark:bg-teal-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-teal-400" />
           <p className="text-lg font-medium text-teal-700 dark:text-teal-300">
-            {lang === "tr" ? "Bu araci kullanmak icin giris yapin." : "Please sign in to use this tool."}
+            {lang === "tr" ? "Bu araci kullanmak için giris yapin." : "Please sign in to use this tool."}
           </p>
         </div>
       </div>
@@ -150,7 +150,7 @@ export default function PTSDSupportPage() {
         <p className="text-sm font-medium text-teal-700 dark:text-teal-300">
           <Heart className="mr-1.5 inline h-4 w-4" />
           {lang === "tr"
-            ? "TSSB profesyonel destek gerektirir. Bu arac yardimci bir kaynaktir, terapi yerine gecmez."
+            ? "TSSB profesyonel destek gerektirir. Bu arac yardımcı bir kaynaktir, terapi yerine gecmez."
             : "PTSD requires professional support. This tool is a supportive resource, not a replacement for therapy."}
         </p>
       </div>
@@ -179,7 +179,7 @@ export default function PTSDSupportPage() {
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-600" />
             <p className="font-semibold text-red-700 dark:text-red-300">
               {lang === "tr"
-                ? "Semptomlariniz siddetli gorunuyor. Lütfen bir travma terapistiyle gorusmek icin randevu alin."
+                ? "Semptomlariniz şiddetli gorunuyor. Lütfen bir travma terapistiyle gorusmek için randevu alin."
                 : "Your symptoms appear severe. Please consider scheduling an appointment with a trauma therapist."}
             </p>
           </div>

@@ -39,7 +39,7 @@ const QUIZ: QuizQuestion[] = [
     },
     options: [
       { label: { en: "No, I stop 2+ hours before", tr: "Hayir, 2+ saat once birakiyorum" }, score: 0 },
-      { label: { en: "Yes, until 1 hour before", tr: "Evet, 1 saat oncesine kadar" }, score: 1 },
+      { label: { en: "Yes, until 1 hour before", tr: "Evet, 1 saat öncesine kadar" }, score: 1 },
       { label: { en: "Yes, right until I sleep", tr: "Evet, uyuyana kadar" }, score: 3 },
     ],
   },
@@ -72,7 +72,7 @@ const QUIZ: QuizQuestion[] = [
       tr: "20-20-20 kuralini uyguluyor musunuz?",
     },
     options: [
-      { label: { en: "Yes, regularly", tr: "Evet, duzenli olarak" }, score: 0 },
+      { label: { en: "Yes, regularly", tr: "Evet, düzenli olarak" }, score: 0 },
       { label: { en: "Sometimes", tr: "Bazen" }, score: 1 },
       { label: { en: "What's that?", tr: "O ne?" }, score: 2 },
     ],
@@ -85,7 +85,7 @@ function getAssessmentResult(score: number, lang: string): { label: string; colo
       label: lang === "tr" ? "Düşük Risk" : "Low Risk",
       color: "text-green-600 dark:text-green-400",
       advice: lang === "tr"
-        ? "Ekran kullaniminiz saglikli gorunuyor. Iyi aliskanliklarinizi surdurun!"
+        ? "Ekran kullaniminiz saglikli gorunuyor. Iyi aliskanliklarinizi sürdürun!"
         : "Your screen habits look healthy. Keep up the good practices!",
     };
   }
@@ -94,7 +94,7 @@ function getAssessmentResult(score: number, lang: string): { label: string; colo
       label: lang === "tr" ? "Orta Risk" : "Moderate Risk",
       color: "text-amber-600 dark:text-amber-400",
       advice: lang === "tr"
-        ? "Ekran kullaniminizi azaltmak icin bazi adimlar atmaniz oneriliyor."
+        ? "Ekran kullaniminizi azaltmak için bazi adimlar atmaniz oneriliyor."
         : "Consider taking some steps to reduce your screen exposure.",
     };
   }
@@ -102,7 +102,7 @@ function getAssessmentResult(score: number, lang: string): { label: string; colo
     label: lang === "tr" ? "Yüksek Risk" : "High Risk",
     color: "text-red-600 dark:text-red-400",
     advice: lang === "tr"
-      ? "Ekran kullaniminiz goz sagliginizi olumsuz etkiliyor olabilir. Asagidaki ipuclarini uygulayın."
+      ? "Ekran kullaniminiz goz sağlığınizi olumsuz etkiliyor olabilir. Asagidaki ipuclarini uygulayın."
       : "Your screen usage may be negatively affecting your eye health. Follow the tips below.",
   };
 }

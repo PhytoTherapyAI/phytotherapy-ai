@@ -130,7 +130,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz basarisiz oldu" : "Analysis failed" },
+        { error: lang === "tr" ? "Analiz başarısiz oldu" : "Analysis failed" },
         { status: 500 }
       );
     }

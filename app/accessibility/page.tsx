@@ -18,8 +18,8 @@ const SECTIONS: Section[] = [
     title: { en: "Visual Accessibility", tr: "Gorsel Erisilebilirlik" },
     color: "text-blue-500",
     items: [
-      { title: { en: "Font Size Adjustment", tr: "Yazi Boyutu Ayarlama" }, desc: { en: "Use your browser's zoom (Ctrl/Cmd + to enlarge, Ctrl/Cmd - to reduce). All our pages are responsive and adapt to zoom levels.", tr: "Tarayicinizin zum'unu kullaniniz (Ctrl/Cmd + buyutmek, Ctrl/Cmd - kucultmek icin). Tum sayfalarimiz duyarlidir ve zum duzeylerine uyum saglar." } },
-      { title: { en: "High Contrast Mode", tr: "Yüksek Kontrast Modu" }, desc: { en: "Use your operating system's high contrast mode or dark mode for better readability.", tr: "Daha iyi okunabilirlik icin isletim sisteminizin yüksek kontrast modunu veya karanlik modunu kullanin." } },
+      { title: { en: "Font Size Adjustment", tr: "Yazi Boyutu Ayarlama" }, desc: { en: "Use your browser's zoom (Ctrl/Cmd + to enlarge, Ctrl/Cmd - to reduce). All our pages are responsive and adapt to zoom levels.", tr: "Tarayicinizin zum'unu kullaniniz (Ctrl/Cmd + buyutmek, Ctrl/Cmd - kucultmek icin). Tum sayfalarimiz duyarlıdir ve zum duzeylerine uyum saglar." } },
+      { title: { en: "High Contrast Mode", tr: "Yüksek Kontrast Modu" }, desc: { en: "Use your operating system's high contrast mode or dark mode for better readability.", tr: "Daha iyi okunabilirlik için isletim sisteminizin yüksek kontrast modunu veya karanlik modunu kullanin." } },
       { title: { en: "Screen Readers", tr: "Ekran Okuyucular" }, desc: { en: "Our app is built with semantic HTML and ARIA labels. Compatible with NVDA, JAWS, VoiceOver, and TalkBack.", tr: "Uygulamamiz semantik HTML ve ARIA etiketleriyle oluşturulmustur. NVDA, JAWS, VoiceOver ve TalkBack ile uyumludur." } },
     ],
   },
@@ -28,8 +28,8 @@ const SECTIONS: Section[] = [
     title: { en: "Voice & Audio", tr: "Ses & Isitsel" },
     color: "text-purple-500",
     items: [
-      { title: { en: "Voice Input (Coming Soon)", tr: "Sesli Giris (Yakinda)" }, desc: { en: "Describe your symptoms or ask health questions using your voice. Planned for future updates.", tr: "Sesyinizi kullanarak semptomlarinizi anlatin veya saglik sorulari sorun. Gelecek guncellemeler icin planlaniyor." } },
-      { title: { en: "Text-to-Speech", tr: "Metin Okuma" }, desc: { en: "Use your device's built-in text-to-speech to have AI responses read aloud.", tr: "AI yanitlarinin sesli okunmasi icin cihazinizin yerlesik metin okuma ozelligini kullaniniz." } },
+      { title: { en: "Voice Input (Coming Soon)", tr: "Sesli Giris (Yakinda)" }, desc: { en: "Describe your symptoms or ask health questions using your voice. Planned for future updates.", tr: "Sesyinizi kullanarak semptomlarinizi anlatin veya saglik sorulari sorun. Gelecek guncellemeler için planlaniyor." } },
+      { title: { en: "Text-to-Speech", tr: "Metin Okuma" }, desc: { en: "Use your device's built-in text-to-speech to have AI responses read aloud.", tr: "AI yanitlarinin sesli okunmasi için cihazinizin yerlesik metin okuma ozelligini kullaniniz." } },
     ],
   },
   {
@@ -37,8 +37,8 @@ const SECTIONS: Section[] = [
     title: { en: "Simplified UI Mode (Concept)", tr: "Basitlestirilmis Arayuz (Konsept)" },
     color: "text-green-500",
     items: [
-      { title: { en: "Large Buttons", tr: "Buyuk Dugmeler" }, desc: { en: "Planned: A simplified view with larger touch targets for users with motor difficulties.", tr: "Planlanan: Motor guclugu olan kullanicilar icin daha buyuk dokunma hedefleriyle basitlestirilmis gorunum." } },
-      { title: { en: "Reduced Complexity", tr: "Azaltilmis Karmasiklik" }, desc: { en: "Planned: Essential features only, removing advanced options for easier navigation.", tr: "Planlanan: Daha kolay navigasyon icin gelismis secenekleri kaldirarak yalnizca temel ozellikler." } },
+      { title: { en: "Large Buttons", tr: "Buyuk Dugmeler" }, desc: { en: "Planned: A simplified view with larger touch targets for users with motor difficulties.", tr: "Planlanan: Motor guclugu olan kullanicilar için daha buyuk dokunma hedefleriyle basitlestirilmis gorunum." } },
+      { title: { en: "Reduced Complexity", tr: "Azaltilmis Karmasiklik" }, desc: { en: "Planned: Essential features only, removing advanced options for easier navigation.", tr: "Planlanan: Daha kolay navigasyon için gelismis secenekleri kaldirarak yalnizca temel ozellikler." } },
     ],
   },
   {
@@ -46,20 +46,20 @@ const SECTIONS: Section[] = [
     title: { en: "Adaptive Exercise", tr: "Uyarlanmis Egzersiz" },
     color: "text-teal-500",
     items: [
-      { title: { en: "Seated Exercises", tr: "Oturarak Egzersizler" }, desc: { en: "All stretching and yoga routines include seated alternatives for wheelchair users.", tr: "Tum esneme ve yoga rutinleri tekerlekli sandalye kullananlar icin oturarak alternatifleri icerir." } },
+      { title: { en: "Seated Exercises", tr: "Oturarak Egzersizler" }, desc: { en: "All stretching and yoga routines include seated alternatives for wheelchair users.", tr: "Tum esneme ve yoga rutinleri tekerlekli sandalye kullananlar için oturarak alternatifleri icerir." } },
       { title: { en: "Low-Impact Options", tr: "Düşük Etkili Secenekler" }, desc: { en: "Walking tracker includes wheelchair push distance. Yoga guide includes gentle modifications.", tr: "Yuruyus takipcisi tekerlekli sandalye itme mesafesini icerir. Yoga rehberi nazik modifikasyonlar icerir." } },
-      { title: { en: "Visual Impairment Exercises", tr: "Gorme Engelliler Icin Egzersiz" }, desc: { en: "Audio-guided exercises planned for future release.", tr: "Gelecek surumler icin sesli rehberli egzersizler planlaniyor." } },
+      { title: { en: "Visual Impairment Exercises", tr: "Gorme Engelliler İçin Egzersiz" }, desc: { en: "Audio-guided exercises planned for future release.", tr: "Gelecek surumler için sesli rehberli egzersizler planlaniyor." } },
     ],
   },
   {
     icon: Scale,
-    title: { en: "Disability Rights (Turkey)", tr: "Engelli Haklari (Turkiye)" },
+    title: { en: "Disability Rights (Turkey)", tr: "Engelli Haklari (Türkiye)" },
     color: "text-amber-500",
     items: [
-      { title: { en: "Health Report", tr: "Sağlık Raporu" }, desc: { en: "Disability health report: Apply at any state hospital. Required for benefits.", tr: "Engelli saglik raporu: Herhangi bir devlet hastanesinde basvuru. Haklar icin gerekli." } },
-      { title: { en: "Tax Exemptions", tr: "Vergi Muafiyetleri" }, desc: { en: "Income tax reduction based on disability level. Vehicle purchase tax exemption for 90%+ disability.", tr: "Engellilik duzeyine gore gelir vergisi indirimi. %90+ engelliler icin arac alim vergisi muafiyeti." } },
-      { title: { en: "Free Public Transport", tr: "Ucretsiz Toplu Tasima" }, desc: { en: "Free public transport in most Turkish cities for disability card holders.", tr: "Cogu Turk sehrinde engelli karti sahipleri icin ucretsiz toplu tasima." } },
-      { title: { en: "Home Care Salary", tr: "Evde Bakim Maasi" }, desc: { en: "Monthly payment for caregivers of severely disabled individuals. Apply at SYDV.", tr: "Agir engelli bireylerin bakicilari icin aylik odeme. SYDV'ye basvurun." } },
+      { title: { en: "Health Report", tr: "Sağlık Raporu" }, desc: { en: "Disability health report: Apply at any state hospital. Required for benefits.", tr: "Engelli saglik raporu: Herhangi bir devlet hastanesinde basvuru. Haklar için gerekli." } },
+      { title: { en: "Tax Exemptions", tr: "Vergi Muafiyetleri" }, desc: { en: "Income tax reduction based on disability level. Vehicle purchase tax exemption for 90%+ disability.", tr: "Engellilik duzeyine gore gelir vergisi indirimi. %90+ engelliler için arac alim vergisi muafiyeti." } },
+      { title: { en: "Free Public Transport", tr: "Ucretsiz Toplu Tasima" }, desc: { en: "Free public transport in most Turkish cities for disability card holders.", tr: "Çoğu Turk sehrinde engelli karti sahipleri için ucretsiz toplu tasima." } },
+      { title: { en: "Home Care Salary", tr: "Evde Bakim Maasi" }, desc: { en: "Monthly payment for caregivers of severely disabled individuals. Apply at SYDV.", tr: "Agir engelli bireylerin bakicilari için aylik odeme. SYDV'ye basvurun." } },
       { title: { en: "Employment Quota", tr: "Istihdam Kotasi" }, desc: { en: "Companies with 50+ employees must employ 3% disabled workers. Public sector: 4%.", tr: "50+ calisan sirketlerin %3 engelli calistirmasi zorunlu. Kamu sektoru: %4." } },
     ],
   },
@@ -68,9 +68,9 @@ const SECTIONS: Section[] = [
     title: { en: "Useful Resources", tr: "Faydali Kaynaklar" },
     color: "text-red-500",
     items: [
-      { title: { en: "SHCEK / ASHB", tr: "SHCEK / ASHB" }, desc: { en: "Ministry of Family and Social Services: Main body for disability services in Turkey.", tr: "Aile ve Sosyal Hizmetler Bakanligi: Turkiye'de engelli hizmetleri icin ana kurum." } },
-      { title: { en: "Engelli Bilgi Hatti: 183", tr: "Engelli Bilgi Hatti: 183" }, desc: { en: "Call 183 for disability-related questions and guidance in Turkey.", tr: "Turkiye'de engellilikle ilgili sorular ve yonlendirme icin 183'u arayin." } },
-      { title: { en: "WHO Disability Resources", tr: "DSO Engellilik Kaynaklari" }, desc: { en: "World Health Organization resources on disability and rehabilitation.", tr: "Dunya Sağlık Orgutu engellilik ve rehabilitasyon kaynaklari." } },
+      { title: { en: "SHCEK / ASHB", tr: "SHCEK / ASHB" }, desc: { en: "Ministry of Family and Social Services: Main body for disability services in Turkey.", tr: "Aile ve Sosyal Hizmetler Bakanligi: Türkiye'de engelli hizmetleri için ana kurum." } },
+      { title: { en: "Engelli Bilgi Hattı: 183", tr: "Engelli Bilgi Hattı: 183" }, desc: { en: "Call 183 for disability-related questions and guidance in Turkey.", tr: "Türkiye'de engellilikle ilgili sorular ve yönlendirme için 183'u arayın." } },
+      { title: { en: "WHO Disability Resources", tr: "DSO Engellilik Kaynaklari" }, desc: { en: "World Health Organization resources on disability and rehabilitation.", tr: "Dünya Sağlık Orgutu engellilik ve rehabilitasyon kaynaklari." } },
     ],
   },
 ];

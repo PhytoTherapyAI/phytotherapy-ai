@@ -21,8 +21,8 @@ const ITEMS: DetoxItem[] = [
     verdict: "works",
     grade: "B",
     claim: { en: "Detoxifies and protects the liver", tr: "Karacigeri detoks yapar ve korur" },
-    reality: { en: "Silymarin has hepatoprotective properties. Used clinically for alcoholic liver disease and mushroom poisoning. Not a general 'detox' but genuinely supports liver function.", tr: "Silimarin hepatoprotektif ozelliklere sahiptir. Alkolik karaciger hastaligi ve mantar zehirlenmesinde klinik olarak kullanilir. Genel bir 'detoks' degil ama gercekten karaciger fonksiyonunu destekler." },
-    evidence: { en: "Multiple RCTs show liver enzyme improvement. Grade B evidence.", tr: "Birden fazla RCT karaciger enzim iyilesmesi gostermektedir. Derece B kanit." },
+    reality: { en: "Silymarin has hepatoprotective properties. Used clinically for alcoholic liver disease and mushroom poisoning. Not a general 'detox' but genuinely supports liver function.", tr: "Silimarin hepatoprotektif özelliklere sahiptir. Alkolik karaciğer hastaligi ve mantar zehirlenmesinde klinik olarak kullanilir. Genel bir 'detoks' degil ama gerçekten karaciğer fonksiyonunu destekler." },
+    evidence: { en: "Multiple RCTs show liver enzyme improvement. Grade B evidence.", tr: "Birden fazla RCT karaciğer enzim iyileşmesi gostermektedir. Derece B kanit." },
     safetyNote: { en: "Generally safe. May interact with certain medications (statins, anticoagulants).", tr: "Genel olarak güvenli. Bazi ilaclarla (statinler, antikoagulanlar) etkilesime girebilir." },
   },
   {
@@ -30,16 +30,16 @@ const ITEMS: DetoxItem[] = [
     verdict: "myth",
     grade: "D",
     claim: { en: "Removes toxins from the body by drinking only juices for days", tr: "Gunlerce sadece meyve suyu icerek vucuttan toksinleri atar" },
-    reality: { en: "Your liver and kidneys already detoxify continuously. Juice cleanses provide no additional benefit, may cause blood sugar spikes, muscle loss, and nutrient deficiencies.", tr: "Karaciger ve bobrekleriniz zaten surekli detoks yapar. Meyve suyu detokslari ek fayda saglamaz, kan sekeri dalgalanmalarina, kas kaybina ve besin eksikliklerine neden olabilir." },
+    reality: { en: "Your liver and kidneys already detoxify continuously. Juice cleanses provide no additional benefit, may cause blood sugar spikes, muscle loss, and nutrient deficiencies.", tr: "Karaciger ve böbrekleriniz zaten surekli detoks yapar. Meyve suyu detokslari ek fayda saglamaz, kan sekeri dalgalanmalarina, kas kaybina ve besin eksikliklerine neden olabilir." },
     evidence: { en: "No clinical evidence supports juice cleanse detoxification. Grade D.", tr: "Meyve suyu detoksifikasyonunu destekleyen klinik kanit yoktur. Derece D." },
   },
   {
     name: { en: "Activated Charcoal", tr: "Aktif Karbon" },
     verdict: "partial",
     grade: "C",
-    claim: { en: "Binds toxins in the gut and removes them", tr: "Bagirsaktaki toksinleri baglar ve uzaklastirir" },
-    reality: { en: "Effective for acute poisoning in emergency settings (within 1-2 hours). NOT effective for daily 'detox'. Can bind medications and nutrients, reducing their absorption.", tr: "Acil durumlarda akut zehirlenme icin etkili (1-2 saat icinde). Günlük 'detoks' icin etkili DEGILDIR. İlaç ve besinleri baglayarak emilimlerini azaltabilir." },
-    evidence: { en: "Strong evidence for acute poisoning only. No evidence for daily use.", tr: "Sadece akut zehirlenme icin guclu kanit. Günlük kullanim icin kanit yok." },
+    claim: { en: "Binds toxins in the gut and removes them", tr: "Bağırsaktaki toksinleri baglar ve uzaklastirir" },
+    reality: { en: "Effective for acute poisoning in emergency settings (within 1-2 hours). NOT effective for daily 'detox'. Can bind medications and nutrients, reducing their absorption.", tr: "Acil durumlarda akut zehirlenme için etkili (1-2 saat icinde). Günlük 'detoks' için etkili DEGILDIR. İlaç ve besinleri baglayarak emilimlerini azaltabilir." },
+    evidence: { en: "Strong evidence for acute poisoning only. No evidence for daily use.", tr: "Sadece akut zehirlenme için guclu kanit. Günlük kullanim için kanit yok." },
     safetyNote: { en: "DANGEROUS if taken with medications — can block drug absorption!", tr: "İlaçlarla birlikte alinirsa TEHLIKELI — ilac emilimini engelleyebilir!" },
   },
   {
@@ -47,8 +47,8 @@ const ITEMS: DetoxItem[] = [
     verdict: "works",
     grade: "A",
     claim: { en: "Supports liver detoxification and glutathione production", tr: "Karaciger detoksifikasyonunu ve glutatyon uretimini destekler" },
-    reality: { en: "NAC is the clinical antidote for acetaminophen (paracetamol) overdose. It replenishes glutathione, the body's master antioxidant. Genuine hepatoprotective agent.", tr: "NAC, asetaminofen (parasetamol) dozasimi icin klinik antidottur. Vucudun ana antioksidani olan glutatyonu yeniler. Gercek hepatoprotektif ajan." },
-    evidence: { en: "Grade A evidence for acetaminophen toxicity. Grade B for general liver support.", tr: "Asetaminofen toksisitesi icin Derece A kanit. Genel karaciger destegi icin Derece B." },
+    reality: { en: "NAC is the clinical antidote for acetaminophen (paracetamol) overdose. It replenishes glutathione, the body's master antioxidant. Genuine hepatoprotective agent.", tr: "NAC, asetaminofen (parasetamol) dozaşımı için klinik antidottur. Vücudun ana antioksidani olan glutatyonu yeniler. Gerçek hepatoprotektif ajan." },
+    evidence: { en: "Grade A evidence for acetaminophen toxicity. Grade B for general liver support.", tr: "Asetaminofen toksisitesi için Derece A kanit. Genel karaciğer desteği için Derece B." },
     safetyNote: { en: "Generally safe at 600-1200mg/day. Consult doctor if on blood thinners.", tr: "Gunde 600-1200mg'da genel olarak güvenli. Kan sulandirici kullaniyorsaniz doktora danisiniz." },
   },
   {
@@ -56,16 +56,16 @@ const ITEMS: DetoxItem[] = [
     verdict: "myth",
     grade: "D",
     claim: { en: "Removes built-up waste and toxins from the colon", tr: "Kolonda biriken atik ve toksinleri temizler" },
-    reality: { en: "The colon naturally eliminates waste. Colon cleanses can disrupt electrolyte balance, damage gut flora, and in rare cases cause perforation. No medical indication for 'detox'.", tr: "Kolon dogal olarak atiklari atar. Kolon temizligi elektrolit dengesini bozabilir, bagirsak florasina zarar verebilir ve nadir durumlarda perforasyona neden olabilir." },
-    evidence: { en: "No evidence of benefit. Risk of harm documented. Grade D.", tr: "Fayda kaniti yok. Zarar riski belgelenistir. Derece D." },
+    reality: { en: "The colon naturally eliminates waste. Colon cleanses can disrupt electrolyte balance, damage gut flora, and in rare cases cause perforation. No medical indication for 'detox'.", tr: "Kolon doğal olarak atıkları atar. Kolon temizligi elektrolit dengesini bozabilir, bağırsak florasına zarar verebilir ve nadir durumlarda perforasyona neden olabilir." },
+    evidence: { en: "No evidence of benefit. Risk of harm documented. Grade D.", tr: "Fayda kanıtı yok. Zarar riski belgelenistir. Derece D." },
   },
   {
     name: { en: "Dandelion Root Tea", tr: "Karahindiba Koku Cayi" },
     verdict: "partial",
     grade: "C",
     claim: { en: "Detoxifies the liver and acts as a diuretic", tr: "Karacigeri detoks yapar ve diuretik olarak etki eder" },
-    reality: { en: "Has mild diuretic properties and may support bile production. Not a powerful 'detoxifier' but a reasonable liver-supportive herb with traditional use.", tr: "Hafif diuretik ozelliklere sahiptir ve safra uretimini destekleyebilir. Guclu bir 'detoksifiye edici' degil ama geleneksel kullanimli makul bir karaciger destekleyici bitki." },
-    evidence: { en: "Limited human studies. Mostly animal and in-vitro data. Grade C.", tr: "Sinirli insan calismalari. Cogunlukla hayvan ve in-vitro veriler. Derece C." },
+    reality: { en: "Has mild diuretic properties and may support bile production. Not a powerful 'detoxifier' but a reasonable liver-supportive herb with traditional use.", tr: "Hafif diuretik özelliklere sahiptir ve safra uretimini destekleyebilir. Guclu bir 'detoksifiye edici' degil ama geleneksel kullanimli makul bir karaciğer destekleyici bitki." },
+    evidence: { en: "Limited human studies. Mostly animal and in-vitro data. Grade C.", tr: "Sinirli insan çalışmalari. Çoğunlukla hayvan ve in-vitro veriler. Derece C." },
   },
   {
     name: { en: "Foot Detox Pads", tr: "Ayak Detoks Pedleri" },
@@ -99,7 +99,7 @@ export default function DetoxFactsPage() {
       <div className="mb-6 p-5 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
         <p className="text-sm text-green-800 dark:text-green-300 font-medium">
           {lang === "tr"
-            ? "Vucudunuz zaten mukemmel bir detoks sistemine sahiptir: karaciger, bobrekler, akciger, deri ve bagirsak. Cogu 'detoks' urunu bu sistemi iyilestirmez."
+            ? "Vücudunuz zaten mükemmel bir detoks sistemine sahiptir: karaciğer, böbrekler, akciğer, deri ve bağırsak. Çoğu 'detoks' ürünü bu sistemi iyilestirmez."
             : "Your body already has a perfect detox system: liver, kidneys, lungs, skin, and intestines. Most 'detox' products don't improve this system."}
         </p>
       </div>
@@ -134,7 +134,7 @@ export default function DetoxFactsPage() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">{item.claim[lang]}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">{lang === "tr" ? "Gercek" : "Reality"}</p>
+                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">{lang === "tr" ? "Gerçek" : "Reality"}</p>
                     <p className="text-sm text-gray-700 dark:text-gray-300">{item.reality[lang]}</p>
                   </div>
                   <div>

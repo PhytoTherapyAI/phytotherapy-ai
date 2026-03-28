@@ -29,7 +29,7 @@ export default function HealthReportCardPage() {
     { en: "Sleep 7+ hours daily", tr: "Günlük 7+ saat uyku", status: "not_started" as const },
   ];
   const trendIcon = (t: string) => t === "up" ? <TrendingUp className="w-4 h-4" /> : t === "down" ? <TrendingDown className="w-4 h-4" /> : <Minus className="w-4 h-4" />;
-  const statusBadge = (s: string) => s === "completed" ? <Badge className="bg-green-100 text-green-700">{isTr ? "Tamamlandı" : "Completed"}</Badge> : s === "in_progress" ? <Badge className="bg-yellow-100 text-yellow-700">{isTr ? "Devam Ediyor" : "In Progress"}</Badge> : <Badge className="bg-gray-100 text-gray-500">{isTr ? "Baslamadi" : "Not Started"}</Badge>;
+  const statusBadge = (s: string) => s === "completed" ? <Badge className="bg-green-100 text-green-700">{isTr ? "Tamamlandı" : "Completed"}</Badge> : s === "in_progress" ? <Badge className="bg-yellow-100 text-yellow-700">{isTr ? "Devam Ediyor" : "In Progress"}</Badge> : <Badge className="bg-gray-100 text-gray-500">{isTr ? "Başlamadı" : "Not Started"}</Badge>;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-gray-900 dark:to-gray-950 p-4 md:p-8">

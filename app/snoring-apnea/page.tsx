@@ -70,7 +70,7 @@ export default function SnoringApneaPage() {
         <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
         <p className="text-sm text-blue-700 dark:text-blue-400">
           {lang === "tr"
-            ? "STOP-BANG, obstruktif uyku apnesi riskini degerlendirmek icin klinik olarak dogrulanmis bir tarama aracidir."
+            ? "STOP-BANG, obstruktif uyku apnesi riskini degerlendirmek için klinik olarak doğrulanmis bir tarama aracidir."
             : "STOP-BANG is a clinically validated screening tool for assessing obstructive sleep apnea risk."}
         </p>
       </div>

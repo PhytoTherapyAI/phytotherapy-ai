@@ -21,7 +21,7 @@ const MEDICATION_EFFECTS = [
   { meds: { en: "Lithium", tr: "Lityum" }, effect: { en: "Critical: dehydration increases toxicity risk", tr: "Kritik: dehidrasyon toksisite riskini artirir" }, icon: "danger" },
   { meds: { en: "Metformin", tr: "Metformin" }, effect: { en: "+250-500ml recommended", tr: "+250-500ml onerili" }, icon: "increase" },
   { meds: { en: "ACE inhibitors", tr: "ACE inhibitorleri" }, effect: { en: "Monitor electrolytes with high intake", tr: "Yüksek alimda elektrolitleri izleyiniz" }, icon: "monitor" },
-  { meds: { en: "NSAIDs (Ibuprofen)", tr: "NSAID'ler (Ibuprofen)" }, effect: { en: "Adequate water protects kidneys", tr: "Yeterli su bobrekleri korur" }, icon: "increase" },
+  { meds: { en: "NSAIDs (Ibuprofen)", tr: "NSAID'ler (Ibuprofen)" }, effect: { en: "Adequate water protects kidneys", tr: "Yeterli su böbrekleri korur" }, icon: "increase" },
 ];
 
 export default function HydrationPage() {
@@ -108,7 +108,7 @@ export default function HydrationPage() {
               </p>
               <p className="text-sm text-red-700 dark:text-red-400">
                 {lang === "tr"
-                  ? "Bobrek hastaligi olan kisilerde sivi alimi kisitlanmalidir. Bu hesaplama sizin icin uygun olmayabilir. Nefrologunuzun belirledigi sivi limitine uyunuz."
+                  ? "Bobrek hastaligi olan kisilerde sivi alimi kisitlanmalidir. Bu hesaplama sizin için uygun olmayabilir. Nefrologunuzun belirledigi sivi limitine uyunuz."
                   : "Fluid intake may need to be restricted in kidney disease. This calculation may not apply to you. Follow the fluid limit set by your nephrologist."}
               </p>
             </div>

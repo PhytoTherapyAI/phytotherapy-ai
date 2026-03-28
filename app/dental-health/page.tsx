@@ -61,24 +61,24 @@ const MED_ORAL_EFFECTS: MedEffect[] = [
     category: "Bisphosphonates",
     medications: ["Alendronate", "Risedronate", "Zoledronic acid", "Denosumab"],
     effect: { en: "Osteonecrosis of the jaw (ONJ)", tr: "Cene osteonekrozu (ONJ)" },
-    risk: { en: "Jaw bone death after dental procedures, especially extractions", tr: "Dis islemlerinden sonra cene kemigi olumu, ozellikle cekim sonrasi" },
-    prevention: { en: "INFORM DENTIST before any procedure, complete dental work before starting bisphosphonates", tr: "Herhangi bir islem oncesi DIS HEKIMINE BILDIRIN, bifosfonat baslamadan dis islemlerini tamamlayin" },
+    risk: { en: "Jaw bone death after dental procedures, especially extractions", tr: "Dis işlemlerinden sonra cene kemigi olumu, ozellikle cekim sonrasi" },
+    prevention: { en: "INFORM DENTIST before any procedure, complete dental work before starting bisphosphonates", tr: "Herhangi bir işlem öncesi DIS HEKIMINE BİLDİRİN, bifosfonat başlamadan dis işlemlerini tamamlayın" },
     severity: "high",
   },
   {
     category: "Anticoagulants",
     medications: ["Warfarin", "Rivaroxaban", "Apixaban", "Dabigatran", "Heparin", "Aspirin"],
-    effect: { en: "Prolonged bleeding after dental procedures", tr: "Dis islemleri sonrasi uzun sureli kanama" },
+    effect: { en: "Prolonged bleeding after dental procedures", tr: "Dis işlemleri sonrasi uzun sureli kanama" },
     risk: { en: "Excessive bleeding during extraction, gum surgery", tr: "Cekim ve dis eti ameliyati sirasinda asiri kanama" },
-    prevention: { en: "Inform dentist of ALL blood thinners, may need INR check before procedures", tr: "Tum kan sulandiricilarinizi dis hekimine bildirin, islem oncesi INR kontrolu gerekebilir" },
+    prevention: { en: "Inform dentist of ALL blood thinners, may need INR check before procedures", tr: "Tum kan sulandiricilarinizi dis hekimine bildirin, işlem öncesi INR kontrolü gerekebilir" },
     severity: "moderate",
   },
   {
     category: "SSRIs / Antidepressants",
     medications: ["Fluoxetine", "Sertraline", "Paroxetine", "Venlafaxine", "Duloxetine"],
     effect: { en: "Dry mouth, bruxism (teeth grinding)", tr: "Agiz kurulugu, bruksizm (dis gicirdatma)" },
-    risk: { en: "Increased cavity risk, tooth wear, TMJ pain", tr: "Artan curuk riski, dis asinmasi, TME agrisi" },
-    prevention: { en: "Night guard for bruxism, hydration, sugar-free lozenges", tr: "Bruksizm icin gece plagi, hidrasyon, sekersiz pastiller" },
+    risk: { en: "Increased cavity risk, tooth wear, TMJ pain", tr: "Artan curuk riski, dis asinmasi, TME ağrısi" },
+    prevention: { en: "Night guard for bruxism, hydration, sugar-free lozenges", tr: "Bruksizm için gece plagi, hidrasyon, sekersiz pastiller" },
     severity: "moderate",
   },
   {
@@ -135,7 +135,7 @@ export default function DentalHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("dental.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -275,12 +275,12 @@ export default function DentalHealthPage() {
           <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 space-y-2">
             <p className="text-sm">
               {lang === "tr"
-                ? "Periodontal (dis eti) hastalık, kardiyovaskuler hastalık riski ile guclu bir sekilde iliskilidir. Dis eti bakterileri kan dolasimina girerek ateroskleroz, endokardit ve kalp krizi riskini artirabilir."
+                ? "Periodontal (dis eti) hastalık, kardiyovasküler hastalık riski ile guclu bir sekilde iliskilidir. Dis eti bakterileri kan dolasimina girerek ateroskleroz, endokardit ve kalp krizi riskini artirabilir."
                 : "Periodontal (gum) disease is strongly linked to cardiovascular disease risk. Gum bacteria can enter the bloodstream and increase risk of atherosclerosis, endocarditis, and heart attacks."}
             </p>
             <p className="text-sm font-medium">
               {lang === "tr"
-                ? "Düzenli dis bakimi sadece agiz sagligi icin degil, kalp sagliginiz icin de onemlidir."
+                ? "Düzenli dis bakimi sadece agiz sağlığı için degil, kalp sağlığıniz için de önemlidir."
                 : "Regular dental care is important not just for oral health, but for your heart health too."}
             </p>
           </div>

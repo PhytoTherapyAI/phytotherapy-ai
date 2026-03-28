@@ -37,7 +37,7 @@ const CERTIFICATES: Certificate[] = [
     titleEn: "30-Day Medication Compliance",
     titleTr: "30 Günlük İlaç Uyumu",
     descEn: "Successfully tracked medications for 30 consecutive days",
-    descTr: "30 gun boyunca ilaclarini duzgun sekilde takip ettin",
+    descTr: "30 gun boyunca ilaçlarıni duzgun sekilde takip ettin",
     icon: <Shield className="w-8 h-8" />,
     color: "text-blue-600 dark:text-blue-400",
     bgGradient: "from-blue-500/10 to-cyan-500/10",
@@ -81,7 +81,7 @@ const CERTIFICATES: Certificate[] = [
     titleEn: "Supplement Tracking Master",
     titleTr: "Takviye Takip Ustasi",
     descEn: "Tracked supplements consistently for 14 days",
-    descTr: "14 gun boyunca takviyelerini duzenli takip ettin",
+    descTr: "14 gun boyunca takviyelerini düzenli takip ettin",
     icon: <Star className="w-8 h-8" />,
     color: "text-purple-600 dark:text-purple-400",
     bgGradient: "from-purple-500/10 to-violet-500/10",
@@ -92,7 +92,7 @@ const CERTIFICATES: Certificate[] = [
     titleEn: "Health Quiz Master",
     titleTr: "Sağlık Quiz Ustasi",
     descEn: "Answered 20 health quiz questions correctly",
-    descTr: "20 saglik quiz sorusunu dogru yanitledin",
+    descTr: "20 saglik quiz sorusunu doğru yanitledin",
     icon: <Award className="w-8 h-8" />,
     color: "text-emerald-600 dark:text-emerald-400",
     bgGradient: "from-emerald-500/10 to-green-500/10",
@@ -190,7 +190,7 @@ export default function CertificatesPage() {
       // For
       ctx.fillStyle = "#64748b";
       ctx.font = "16px system-ui";
-      ctx.fillText(t ? "basarisini onurlandirilarak" : "in recognition of achieving", 600, 410);
+      ctx.fillText(t ? "başarısini onurlandirilarak" : "in recognition of achieving", 600, 410);
 
       // Achievement
       ctx.fillStyle = "#6366f1";
@@ -260,10 +260,10 @@ export default function CertificatesPage() {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
             <Award className="w-5 h-5" />
-            <span className="font-semibold">{t ? "Basari Sertifikalari" : "Achievement Certificates"}</span>
+            <span className="font-semibold">{t ? "Başarı Sertifikalari" : "Achievement Certificates"}</span>
           </div>
           <p className="text-muted-foreground text-sm">
-            {t ? "Basarilarini sertifikaya donustur ve paylas!" : "Turn your achievements into certificates and share!"}
+            {t ? "Başarılarini sertifikaya donustur ve paylas!" : "Turn your achievements into certificates and share!"}
           </p>
         </div>
 
@@ -321,7 +321,7 @@ export default function CertificatesPage() {
         <Card className="p-4 bg-muted/50 text-center">
           <p className="text-sm text-muted-foreground">
             {t
-              ? "Daha fazla sertifika kazanmak icin saglik hedeflerini takip etmeye devam et!"
+              ? "Daha fazla sertifika kazanmak için saglik hedeflerini takip etmeye devam et!"
               : "Keep tracking your health goals to unlock more certificates!"}
           </p>
         </Card>

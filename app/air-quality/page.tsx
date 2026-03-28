@@ -35,7 +35,7 @@ const AQI_LEVELS: AQILevel[] = [
     bgColor: "bg-green-50",
     darkBgColor: "dark:bg-green-900/20",
     general: { en: "Air quality is satisfactory. No health risk.", tr: "Hava kalitesi tatmin edici. Sağlık riski yok." },
-    sensitive: { en: "No special precautions needed for asthma/COPD patients.", tr: "Astim/KOAH hastalari icin ozel onlem gerekmez." },
+    sensitive: { en: "No special precautions needed for asthma/COPD patients.", tr: "Astim/KOAH hastalari için ozel onlem gerekmez." },
     exercise: { en: "All outdoor activities safe. Enjoy fresh air!", tr: "Tum dis mekan aktiviteleri güvenli. Temiz havanin keyfini cikarin!" },
     mask: { en: "No mask needed.", tr: "Maske gerekmez." },
   },
@@ -48,18 +48,18 @@ const AQI_LEVELS: AQILevel[] = [
     general: { en: "Acceptable quality. Unusually sensitive people may experience symptoms.", tr: "Kabul edilebilir kalite. Olaganustu hassas kisiler semptomlar yasayabilir." },
     sensitive: { en: "Asthma: carry rescue inhaler. COPD: monitor symptoms closely.", tr: "Astim: kurtarma inhaler yaninda tasiyin. KOAH: semptomlari yakindan izleyin." },
     exercise: { en: "Moderate outdoor exercise OK. Sensitive groups reduce prolonged exertion.", tr: "Orta duzeyde dis mekan egzersizi uygun. Hassas gruplar uzun sureli efor azaltsin." },
-    mask: { en: "Optional. N95 for sensitive individuals during extended outdoor time.", tr: "Istege bagli. Hassas bireyler icin uzun sureli dis mekan zamani N95." },
+    mask: { en: "Optional. N95 for sensitive individuals during extended outdoor time.", tr: "Istege bagli. Hassas bireyler için uzun sureli dis mekan zamani N95." },
   },
   {
     range: "101-150",
-    label: { en: "Unhealthy for Sensitive Groups", tr: "Hassas Gruplar Icin Sağlıksız" },
+    label: { en: "Unhealthy for Sensitive Groups", tr: "Hassas Gruplar İçin Sağlıksız" },
     color: "text-orange-700 dark:text-orange-400",
     bgColor: "bg-orange-50",
     darkBgColor: "dark:bg-orange-900/20",
     general: { en: "Sensitive groups may experience health effects. General public less likely affected.", tr: "Hassas gruplar saglik etkileri yasayabilir. Genel halk daha az etkilenir." },
     sensitive: { en: "Asthma/COPD: reduce outdoor time. Use preventive inhaler before going out.", tr: "Astim/KOAH: dis mekan suresini azaltin. Disari cikmadan once koruyucu inhaler kullanin." },
     exercise: { en: "Sensitive groups: indoor exercise only. Others: limit intense outdoor activity to 1 hour.", tr: "Hassas gruplar: sadece ic mekan egzersizi. Digerleri: yogun dis mekan aktivitesini 1 saatle sinirlayin." },
-    mask: { en: "N95 recommended for sensitive groups. KN95 acceptable alternative.", tr: "Hassas gruplar icin N95 oneriler. KN95 kabul edilebilir alternatif." },
+    mask: { en: "N95 recommended for sensitive groups. KN95 acceptable alternative.", tr: "Hassas gruplar için N95 oneriler. KN95 kabul edilebilir alternatif." },
   },
   {
     range: "151-200",
@@ -70,7 +70,7 @@ const AQI_LEVELS: AQILevel[] = [
     general: { en: "Everyone may experience health effects. Sensitive groups: serious effects.", tr: "Herkes saglik etkileri yasayabilir. Hassas gruplar: ciddi etkiler." },
     sensitive: { en: "Asthma/COPD: stay indoors with air purifier. Emergency inhaler accessible at all times.", tr: "Astim/KOAH: hava temizleyici ile ic mekanda kalin. Acil inhaler her zaman ulasılabilir olsun." },
     exercise: { en: "All groups: move exercise indoors. No outdoor running or cycling.", tr: "Tum gruplar: egzersizi ic mekana tasiyin. Dis mekanda kosu veya bisiklet yok." },
-    mask: { en: "N95 mandatory outdoors. Surgical masks are NOT effective for PM2.5.", tr: "Dis mekanda N95 zorunlu. Cerrahi maskeler PM2.5 icin etkili DEGILDIR." },
+    mask: { en: "N95 mandatory outdoors. Surgical masks are NOT effective for PM2.5.", tr: "Dis mekanda N95 zorunlu. Cerrahi maskeler PM2.5 için etkili DEGILDIR." },
   },
   {
     range: "201-300",
@@ -90,9 +90,9 @@ const AQI_LEVELS: AQILevel[] = [
     bgColor: "bg-rose-50",
     darkBgColor: "dark:bg-rose-900/20",
     general: { en: "Emergency conditions. Entire population affected. Stay indoors.", tr: "Acil durum kosullari. Tum nufus etkilenir. Ic mekanda kalin." },
-    sensitive: { en: "Asthma/COPD: if breathing difficulty occurs, call 112/911 immediately.", tr: "Astim/KOAH: nefes darligi olursa derhal 112'yi arayin." },
+    sensitive: { en: "Asthma/COPD: if breathing difficulty occurs, call 112/911 immediately.", tr: "Astim/KOAH: nefes darlığı olursa derhal 112'yi arayın." },
     exercise: { en: "NO exercise of any kind, indoor or outdoor, unless air purifier confirmed.", tr: "Hava temizleyici olmadan hicbir tur egzersiz YAPILMAZ, ic veya dis mekan." },
-    mask: { en: "N95 with exhalation valve for any necessary outdoor exposure. Minimize to minutes.", tr: "Zorunlu dis mekan maruziyeti icin ekshalasyon valfli N95. Dakikalarla sinirlayin." },
+    mask: { en: "N95 with exhalation valve for any necessary outdoor exposure. Minimize to minutes.", tr: "Zorunlu dis mekan maruziyeti için ekshalasyon valfli N95. Dakikalarla sinirlayin." },
   },
 ];
 
@@ -117,7 +117,7 @@ export default function AirQualityPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("air.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>

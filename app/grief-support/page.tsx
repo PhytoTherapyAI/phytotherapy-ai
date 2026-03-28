@@ -104,7 +104,7 @@ export default function GriefSupportPage() {
           className="flex items-center justify-center gap-2 bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 rounded-xl p-3 mb-6 text-sm hover:bg-purple-200 dark:hover:bg-purple-900/30 transition-colors"
         >
           <Phone className="w-4 h-4" />
-          {lang === "tr" ? "Kriz Hatti: 182 | Intihar Onleme: 182" : "Crisis Line: 988 (US) | 182 (TR)"}
+          {lang === "tr" ? "Kriz Hattı: 182 | Intihar Onleme: 182" : "Crisis Line: 988 (US) | 182 (TR)"}
         </a>
 
         {/* Stage Selection */}

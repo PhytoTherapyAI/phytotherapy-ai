@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
 
       if (fallbackError) {
         return NextResponse.json(
-          { error: lang === "tr" ? "Kayit basarisiz" : "Failed to save" },
+          { error: lang === "tr" ? "Kayit başarısiz" : "Failed to save" },
           { status: 500 }
         );
       }
@@ -253,7 +253,7 @@ RULES:
     parsed = typeof result === "string" ? JSON.parse(result) : result;
   } catch {
     return NextResponse.json(
-      { error: lang === "tr" ? "Analiz basarisiz" : "Analysis failed" },
+      { error: lang === "tr" ? "Analiz başarısiz" : "Analysis failed" },
       { status: 500 }
     );
   }

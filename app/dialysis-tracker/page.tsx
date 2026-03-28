@@ -116,7 +116,7 @@ export default function DialysisTrackerPage() {
           <div className="space-y-4">
             <Card className="p-4 border-amber-200 bg-amber-50 dark:bg-amber-900/20">
               <h2 className="text-lg font-semibold mb-1">{isTr ? "Potasyum & Fosfor Rehberi" : "Potassium & Phosphorus Guide"}</h2>
-              <p className="text-sm text-gray-600">{isTr ? "Diyaliz hastalari icin besin rehberi" : "Nutrition guide for dialysis patients"}</p>
+              <p className="text-sm text-gray-600">{isTr ? "Diyaliz hastalari için besin rehberi" : "Nutrition guide for dialysis patients"}</p>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {FOOD_GUIDE.map((food, i) => (
@@ -136,7 +136,7 @@ export default function DialysisTrackerPage() {
           <div className="space-y-4">
             <Card className="p-4 border-purple-200 bg-purple-50 dark:bg-purple-900/20">
               <h2 className="text-lg font-semibold mb-1">{isTr ? "Diyaliz İlaç Zamanlama" : "Dialysis Medication Timing"}</h2>
-              <p className="text-sm text-gray-600">{isTr ? "İlaçlarinizi dogru zamanda alin" : "Take your medications at the right time"}</p>
+              <p className="text-sm text-gray-600">{isTr ? "İlaçlarinizi doğru zamanda alin" : "Take your medications at the right time"}</p>
             </Card>
             {MEDICATIONS.map((med, i) => (
               <Card key={i} className="p-4 flex items-center gap-4">

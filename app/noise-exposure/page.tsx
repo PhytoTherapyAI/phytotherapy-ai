@@ -30,13 +30,13 @@ const NOISE_LEVELS: NoiseLevel[] = [
   { db: 60, source: { en: "Normal conversation, air conditioner", tr: "Normal konusma, klima" }, duration: { en: "Unlimited — no risk", tr: "Sinirsiz — risk yok" }, risk: "safe" },
   { db: 70, source: { en: "Vacuum cleaner, busy restaurant", tr: "Elektrik supurgesi, kalabalik restoran" }, duration: { en: "Unlimited but may cause fatigue", tr: "Sinirsiz ama yorgunluga neden olabilir" }, risk: "safe" },
   { db: 80, source: { en: "Heavy traffic, alarm clock, blender", tr: "Yogun trafik, alarm saati, blender" }, duration: { en: "Safe up to 8 hours/day", tr: "Gunde 8 saate kadar güvenli" }, risk: "caution" },
-  { db: 85, source: { en: "Power tools, noisy restaurant", tr: "Elektrikli el aletleri, gurultulu restoran" }, duration: { en: "8 hours max — hearing damage starts", tr: "Max 8 saat — isitme hasari baslar" }, risk: "caution" },
+  { db: 85, source: { en: "Power tools, noisy restaurant", tr: "Elektrikli el aletleri, gurultulu restoran" }, duration: { en: "8 hours max — hearing damage starts", tr: "Max 8 saat — isitme hasari başlar" }, risk: "caution" },
   { db: 90, source: { en: "Lawn mower, motorcycle, shouting", tr: "Cim bicme makinesi, motosiklet, bagirma" }, duration: { en: "2.5 hours max", tr: "Max 2.5 saat" }, risk: "danger" },
   { db: 95, source: { en: "Subway train, electric drill", tr: "Metro treni, elektrikli matkap" }, duration: { en: "50 minutes max", tr: "Max 50 dakika" }, risk: "danger" },
   { db: 100, source: { en: "Factory, car horn at 1m", tr: "Fabrika, 1m'de araba kornasi" }, duration: { en: "15 minutes max", tr: "Max 15 dakika" }, risk: "danger" },
   { db: 105, source: { en: "Max volume earbuds, power saw", tr: "Maksimum ses kulaklik, motorlu testere" }, duration: { en: "5 minutes max", tr: "Max 5 dakika" }, risk: "extreme" },
   { db: 110, source: { en: "Rock concert, car stereo at max", tr: "Rock konseri, max araba stereo" }, duration: { en: "2 minutes — immediate risk", tr: "2 dakika — ani risk" }, risk: "extreme" },
-  { db: 120, source: { en: "Ambulance siren, thunder", tr: "Ambulans sireni, gok gurultusu" }, duration: { en: "Pain threshold — seconds only", tr: "Agri esigi — sadece saniyeler" }, risk: "extreme" },
+  { db: 120, source: { en: "Ambulance siren, thunder", tr: "Ambulans sireni, gok gurultusu" }, duration: { en: "Pain threshold — seconds only", tr: "Ağrı esigi — sadece saniyeler" }, risk: "extreme" },
   { db: 140, source: { en: "Jet engine at 30m, gunshot", tr: "30m'de jet motoru, silah sesi" }, duration: { en: "Instant permanent damage", tr: "Aninda kalici hasar" }, risk: "extreme" },
 ];
 
@@ -52,7 +52,7 @@ const EARPLUG_GUIDE: EarplugType[] = [
   {
     type: { en: "Foam earplugs", tr: "Kopuk kulak tıkaclari" },
     nrr: "25-33 dB",
-    best: { en: "Sleeping, loud work environments, concerts", tr: "Uyku, gurultulu calisma ortamlari, konserler" },
+    best: { en: "Sleeping, loud work environments, concerts", tr: "Uyku, gurultulu çalışma ortamlari, konserler" },
     pros: { en: "Cheapest, highest NRR, disposable", tr: "En ucuz, en yüksek NRR, tek kullanimlik" },
     cons: { en: "Muffles all frequencies equally, uncomfortable long-term", tr: "Tum frekanslari esit olarak bastırır, uzun sureli rahatsiz" },
   },
@@ -91,8 +91,8 @@ const TINNITUS_INFO = {
     "Tinitus (kulaklarda cilinlama/vizildama) insanlarin %15-20'sini etkiler ve gurultu maruziyeti geçmişiyle guclu bir iliskisi vardir.",
     "100+ dB'ye tek bir maruziyet bile kalici tinitusa yol acabilir. Hasar kumulatif ve geri donusuzdur.",
     "Gurultulu etkinliklerden sonra cinlama yasiyorsaniz: tuy hucrelerin hasar gordugune dair bir uyarı isaretiidr.",
-    "Gurultunun neden oldugu tinitus icin tedavi yoktur — sadece yonetim stratejileri (beyaz gurultu, BDT, isitme cihazlari).",
-    "Kulakliklar icin 60/60 kurali: max %60 ses, max 60 dakika, sonra mola verin.",
+    "Gurultunun neden oldugu tinitus için tedavi yoktur — sadece yonetim stratejileri (beyaz gurultu, BDT, isitme cihazlari).",
+    "Kulakliklar için 60/60 kurali: max %60 ses, max 60 dakika, sonra mola verin.",
   ],
 };
 
@@ -105,7 +105,7 @@ export default function NoiseExposurePage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("noise.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -151,7 +151,7 @@ export default function NoiseExposurePage() {
         <div className="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-2xl p-6 text-center space-y-2">
           <AlertTriangle className="w-8 h-8 text-amber-500 mx-auto" />
           <h3 className="font-bold text-amber-700 dark:text-amber-400">
-            {lang === "tr" ? "85 dB = Hasar Baslangic Esigi" : "85 dB = Damage Threshold"}
+            {lang === "tr" ? "85 dB = Hasar Başlangıç Esigi" : "85 dB = Damage Threshold"}
           </h3>
           <p className="text-sm text-amber-600 dark:text-amber-300">
             {lang === "tr"
@@ -226,7 +226,7 @@ export default function NoiseExposurePage() {
           <div className="bg-purple-100 dark:bg-purple-900/30 rounded-xl p-4 text-center">
             <p className="text-sm font-medium text-purple-700 dark:text-purple-300">
               {lang === "tr"
-                ? "85+ dB ortamlarda duzenli calisiyorsaniz yilda 1 kez isitme testi yaptirin."
+                ? "85+ dB ortamlarda düzenli calisiyorsaniz yilda 1 kez isitme testi yaptirin."
                 : "If you regularly work in 85+ dB environments, get a hearing test once a year."}
             </p>
           </div>

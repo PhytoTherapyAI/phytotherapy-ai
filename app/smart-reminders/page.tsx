@@ -55,7 +55,7 @@ const DRUG_TIMING_RULES: Record<string, DrugTimingRule> = {
   },
   metformin: {
     stomach: "with_food", bestTime: "with_meals", mealRelation: "with",
-    timing: { en: "With meals to reduce GI side effects", tr: "Mide yan etkilerini azaltmak icin yemekle birlikte" },
+    timing: { en: "With meals to reduce GI side effects", tr: "Mide yan etkilerini azaltmak için yemekle birlikte" },
     specialNote: { en: "Extended-release: take with evening meal.", tr: "Uzun salimli: aksam yemegi ile alin." },
   },
   omeprazole: {
@@ -76,15 +76,15 @@ const DRUG_TIMING_RULES: Record<string, DrugTimingRule> = {
   },
   atorvastatin: {
     stomach: "any", bestTime: "evening", mealRelation: "independent",
-    timing: { en: "Evening for optimal cholesterol synthesis inhibition", tr: "Kolesterol sentez inhibisyonu icin aksam" },
+    timing: { en: "Evening for optimal cholesterol synthesis inhibition", tr: "Kolesterol sentez inhibisyonu için aksam" },
   },
   rosuvastatin: {
     stomach: "any", bestTime: "any", mealRelation: "independent",
-    timing: { en: "Any time of day, consistent timing", tr: "Gunun herhangi bir saati, tutarli zamanlama" },
+    timing: { en: "Any time of day, consistent timing", tr: "Gunun herhangi bir saati, tutarlı zamanlama" },
   },
   simvastatin: {
     stomach: "any", bestTime: "evening", mealRelation: "independent",
-    timing: { en: "Evening dose is important for this statin", tr: "Bu statin icin aksam dozu onemlidir" },
+    timing: { en: "Evening dose is important for this statin", tr: "Bu statin için aksam dozu önemlidir" },
   },
   lisinopril: {
     stomach: "any", bestTime: "morning", mealRelation: "independent",
@@ -96,7 +96,7 @@ const DRUG_TIMING_RULES: Record<string, DrugTimingRule> = {
   },
   aspirin: {
     stomach: "with_food", bestTime: "morning", mealRelation: "with",
-    timing: { en: "With breakfast to reduce stomach irritation", tr: "Mide tahrisi azaltmak icin kahvalti ile" },
+    timing: { en: "With breakfast to reduce stomach irritation", tr: "Mide tahrisi azaltmak için kahvalti ile" },
   },
   warfarin: {
     stomach: "any", bestTime: "evening", mealRelation: "independent",
@@ -111,11 +111,11 @@ const DRUG_TIMING_RULES: Record<string, DrugTimingRule> = {
   },
   calcium: {
     stomach: "with_food", bestTime: "with_meals", mealRelation: "with",
-    timing: { en: "With meals for better absorption. Split doses if >500mg.", tr: "Daha iyi emilim icin yemekle. 500mg ustuyse dozlari bolin." },
+    timing: { en: "With meals for better absorption. Split doses if >500mg.", tr: "Daha iyi emilim için yemekle. 500mg ustuyse dozlari bolin." },
   },
   vitamin_d: {
     stomach: "with_food", bestTime: "morning", mealRelation: "with",
-    timing: { en: "With a meal containing fat for absorption", tr: "Emilim icin yag iceren bir ogunle birlikte" },
+    timing: { en: "With a meal containing fat for absorption", tr: "Emilim için yag iceren bir ogunle birlikte" },
   },
   metoprolol: {
     stomach: "with_food", bestTime: "morning", mealRelation: "with",
@@ -123,7 +123,7 @@ const DRUG_TIMING_RULES: Record<string, DrugTimingRule> = {
   },
   losartan: {
     stomach: "any", bestTime: "morning", mealRelation: "independent",
-    timing: { en: "Morning, consistent timing", tr: "Sabah, tutarli zamanlama" },
+    timing: { en: "Morning, consistent timing", tr: "Sabah, tutarlı zamanlama" },
   },
   gabapentin: {
     stomach: "any", bestTime: "bedtime", mealRelation: "independent",
@@ -131,7 +131,7 @@ const DRUG_TIMING_RULES: Record<string, DrugTimingRule> = {
   },
   sertraline: {
     stomach: "with_food", bestTime: "morning", mealRelation: "with",
-    timing: { en: "Morning with food to reduce nausea", tr: "Bulantiyi azaltmak icin sabah yemekle" },
+    timing: { en: "Morning with food to reduce nausea", tr: "Bulantiyi azaltmak için sabah yemekle" },
   },
   escitalopram: {
     stomach: "any", bestTime: "morning", mealRelation: "independent",
@@ -261,12 +261,12 @@ function generateSchedule(
 
   if (hasIron && hasLevo) {
     conflicts.push(lang === "tr"
-      ? "Demir ve Levotiroksin arasinda en az 4 saat birakin"
+      ? "Demir ve Levotiroksin arasinda en az 4 saat bırakın"
       : "Keep at least 4 hours between Iron and Levothyroxine");
   }
   if (hasIron && hasCalcium) {
     conflicts.push(lang === "tr"
-      ? "Demir ve Kalsiyum arasinda en az 2 saat birakin"
+      ? "Demir ve Kalsiyum arasinda en az 2 saat bırakın"
       : "Keep at least 2 hours between Iron and Calcium");
   }
 
@@ -360,7 +360,7 @@ export default function SmartRemindersPage() {
           </h1>
           <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
             {lang === "tr"
-              ? "İlaç ozelliklerine gore optimize edilmis kişisel programiniz"
+              ? "İlaç ozelliklerine gore optimize edilmis kişisel programıniz"
               : "Your personalized schedule optimized by drug properties"}
           </p>
         </div>
@@ -565,7 +565,7 @@ export default function SmartRemindersPage() {
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       {lang === "tr"
-                        ? "Her ilac icin hatirlatma saati belirleyin"
+                        ? "Her ilac için hatirlatma saati belirleyin"
                         : "Set reminder times for each medication"}
                     </p>
                   </div>
@@ -649,7 +649,7 @@ export default function SmartRemindersPage() {
                       ) : (
                         <p className="ml-8 text-sm text-gray-400 dark:text-gray-500 italic">
                           {lang === "tr"
-                            ? "Bu ilac icin ozel zamanlama kurali bulunamadı. Doktorunuzun onerilerine uyun."
+                            ? "Bu ilac için ozel zamanlama kurali bulunamadı. Doktorunuzun onerilerine uyun."
                             : "No specific timing rule found for this medication. Follow your doctor's instructions."}
                         </p>
                       )}
@@ -663,7 +663,7 @@ export default function SmartRemindersPage() {
             <div className="p-4 rounded-xl bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-center">
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 {lang === "tr"
-                  ? "Bu program genel bilgi amaclidir. İlaç zamanlamasi icin her zaman doktorunuzun talimatlarini takip edin."
+                  ? "Bu program genel bilgi amaclidir. İlaç zamanlamasi için her zaman doktorunuzun talimatlarini takip edin."
                   : "This schedule is for informational purposes. Always follow your doctor's instructions for medication timing."}
               </p>
             </div>

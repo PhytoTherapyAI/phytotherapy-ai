@@ -218,7 +218,7 @@ export default function ChildHealthPage() {
       {!isAuthenticated && (
         <div className="mb-4 flex items-center gap-2 rounded-lg border border-sky-200 bg-sky-50/30 p-3 text-xs text-sky-800 dark:border-sky-800 dark:bg-sky-950/10 dark:text-sky-300">
           <LogIn className="h-3.5 w-3.5 shrink-0" />
-          {lang === "tr" ? "Kaydi tutmak icin giris yapin" : "Sign in to save your query history"}
+          {lang === "tr" ? "Kaydi tutmak için giris yapin" : "Sign in to save your query history"}
         </div>
       )}
 

@@ -21,7 +21,7 @@ interface BugReport {
 
 const tx: Record<string, { en: string; tr: string }> = {
   title: { en: "Bug Report", tr: "Hata Bildirimi" },
-  subtitle: { en: "Help us improve by reporting issues you encounter", tr: "Karşılastginiz sorunlari bildirerek gelistirmemize yardimci olun" },
+  subtitle: { en: "Help us improve by reporting issues you encounter", tr: "Karşılastginiz sorunlari bildirerek gelistirmemize yardımcı olun" },
   description: { en: "Describe the bug", tr: "Hatayi aciklayin" },
   descPlaceholder: { en: "What happened? Be as specific as possible...", tr: "Ne oldu? Mumkun oldugunca detayli anlatiniz..." },
   steps: { en: "Steps to reproduce", tr: "Yeniden oluşturma adimlari" },

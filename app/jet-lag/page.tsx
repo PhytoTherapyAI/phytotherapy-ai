@@ -89,7 +89,7 @@ export default function JetLagPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("jetlag.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -191,7 +191,7 @@ export default function JetLagPage() {
                 <div className="grid sm:grid-cols-3 gap-3">
                   <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-3">
                     <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Seyahat Oncesi" : "Pre-Travel"}</div>
-                    <div className="font-medium">{result.melatoninPlan.preTravelDays} {lang === "tr" ? "gun once basla" : "days before"}</div>
+                    <div className="font-medium">{result.melatoninPlan.preTravelDays} {lang === "tr" ? "gun once başla" : "days before"}</div>
                   </div>
                   <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-3">
                     <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Zamanlama" : "Timing"}</div>

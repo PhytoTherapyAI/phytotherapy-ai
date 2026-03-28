@@ -53,7 +53,7 @@ const EPDS_TR = [
   "Gulebiliyorum ve olaylarin komik tarafini gorebiliyorum",
   "Bir seyleri zevkle bekliyorum",
   "Isler ters gittiginde kendimi gereksiz yere sucluyorum",
-  "Sebepsiz yere endise ediyorum veya kaygilaniyorum",
+  "Sebepsiz yere endise ediyorum veya kaygılaniyorum",
   "Sebepsiz yere korkuyorum veya panik oluyorum",
   "Isler basima yigiliyor",
   "O kadar mutsuzum ki uyumakta zorluk cekiyorum",
@@ -93,7 +93,7 @@ export default function PostpartumSupportPage() {
   const epdsQuestions = lang === "tr" ? EPDS_TR : EPDS_EN;
 
   const CONCERNS_EN = ["Mood swings", "Anxiety", "Bonding difficulty", "Body image", "Relationship", "Breastfeeding issues", "Pain", "Fatigue"];
-  const CONCERNS_TR = ["Ruh hali degisikligi", "Kaygi", "Baglanma guclugu", "Beden imaji", "Iliski", "Emzirme sorunlari", "Agri", "Yorgunluk"];
+  const CONCERNS_TR = ["Ruh hali degisikligi", "Kaygi", "Baglanma guclugu", "Beden imaji", "Iliski", "Emzirme sorunlari", "Ağrı", "Yorgunluk"];
   const concernOptions = lang === "tr" ? CONCERNS_TR : CONCERNS_EN;
 
   const handleAnalyze = async () => {
@@ -151,7 +151,7 @@ export default function PostpartumSupportPage() {
         <div className="rounded-xl border border-purple-200 bg-purple-50/50 p-8 text-center dark:border-purple-800 dark:bg-purple-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-purple-400" />
           <p className="text-lg font-medium text-purple-700 dark:text-purple-300">
-            {lang === "tr" ? "Bu araci kullanmak icin giris yapin." : "Please sign in to use this tool."}
+            {lang === "tr" ? "Bu araci kullanmak için giris yapin." : "Please sign in to use this tool."}
           </p>
         </div>
       </div>

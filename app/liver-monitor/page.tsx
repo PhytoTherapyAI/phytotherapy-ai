@@ -70,7 +70,7 @@ export default function LiverMonitorPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("liver.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}><LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}</Button>
         </div>
       </div>
@@ -104,7 +104,7 @@ export default function LiverMonitorPage() {
             <div><label className="block text-sm font-medium mb-1">Albumin (g/dL)</label>
               <input type="number" step="0.1" value={albumin} onChange={(e) => setAlbumin(e.target.value)} placeholder="e.g. 4.2" className="w-full px-3 py-2 border rounded-lg bg-background" /></div>
           </div>
-          <h3 className="text-sm font-medium text-muted-foreground">{lang === "tr" ? "Yagli Karaciger Indeksi icin (opsiyonel)" : "For Fatty Liver Index (optional)"}</h3>
+          <h3 className="text-sm font-medium text-muted-foreground">{lang === "tr" ? "Yagli Karaciger Indeksi için (opsiyonel)" : "For Fatty Liver Index (optional)"}</h3>
           <div className="grid sm:grid-cols-2 gap-4">
             <div><label className="block text-sm font-medium mb-1">BMI</label>
               <input type="number" step="0.1" value={bmi} onChange={(e) => setBmi(e.target.value)} placeholder="e.g. 26" className="w-full px-3 py-2 border rounded-lg bg-background" /></div>

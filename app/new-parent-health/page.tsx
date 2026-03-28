@@ -37,21 +37,21 @@ const SECTIONS: Section[] = [
       { en: "Split night shifts with partner: each person gets 1 uninterrupted 4-hour block", tr: "Gece nobetlerini es ile paylasin: her kisi 1 kesintisiz 4 saatlik blok uyusun" },
       { en: "Caffeine cutoff: no coffee after 2 PM if you want to sleep when baby sleeps at night", tr: "Kafein siniri: bebek gece uyurken uyumak istiyorsaniz saat 14:00'ten sonra kahve icmeyin" },
       { en: "Light exposure in morning (10 min bright light) helps reset disrupted circadian rhythm", tr: "Sabah isik maruziyeti (10 dk parlak isik) bozulmus sirkadyen ritmi sifirlar" },
-      { en: "Accept 'good enough' sleep — perfection is the enemy of rest right now", tr: "Yeterli uykunun yeterli oldugunu kabul edin — mukemmeliyetcilik simdi dinlenmenin dusmanidir" },
-      { en: "Room-darkening curtains help both parent and baby sleep during irregular hours", tr: "Karanlik perdeler hem ebeveynin hem de bebegin duzensiz saatlerde uyumasina yardimci olur" },
+      { en: "Accept 'good enough' sleep — perfection is the enemy of rest right now", tr: "Yeterli uykunun yeterli oldugunu kabul edin — mükemmeliyetcilik simdi dinlenmenin dusmanidir" },
+      { en: "Room-darkening curtains help both parent and baby sleep during irregular hours", tr: "Karanlik perdeler hem ebeveynin hem de bebegin duzensiz saatlerde uyumasina yardımcı olur" },
     ],
   },
   {
     icon: <Heart className="w-5 h-5 text-rose-500" />,
-    title: { en: "Back & Wrist Pain from Carrying Baby", tr: "Bebek Tasimaktan Kaynaklanan Sirt ve Bilek Agrisi" },
+    title: { en: "Back & Wrist Pain from Carrying Baby", tr: "Bebek Tasimaktan Kaynaklanan Sirt ve Bilek Ağrısi" },
     color: "rose",
     items: [
-      { en: "Alternate arms frequently — repetitive strain on one side causes asymmetric pain", tr: "Kollarinizi sik sik degistirin — tek tarafta tekrarlayan zorlanma asimetrik agriya yol acar" },
+      { en: "Alternate arms frequently — repetitive strain on one side causes asymmetric pain", tr: "Kollarinizi sik sik degistirin — tek tarafta tekrarlayan zorlanma asimetrik ağrıya yol acar" },
       { en: "De Quervain's tenosynovitis ('mother's thumb'): support wrist during lifting, use entire hand", tr: "De Quervain tenosinoviti ('anne basparmaği'): kaldirirken bilegi destekleyin, tum eli kullanin" },
       { en: "Ergonomic feeding: support arms with pillows, keep spine neutral, feet flat on floor", tr: "Ergonomik besleme: kollarinizi yastikla destekleyin, omurga nötr, ayaklar yerde duz" },
       { en: "3x daily stretches: cat-cow, doorway chest opener, wrist flexor/extensor stretches", tr: "Günlük 3x esneme: kedi-inek, kapi gogus acici, bilek fleksor/ekstensor esnemeleri" },
       { en: "Baby carrier with hip support distributes weight — reduces back strain by 40%", tr: "Kalca destekli bebek tasiyicisi agirligi dagitir — sirt zorlanmasini %40 azaltir" },
-      { en: "If wrist pain persists 2+ weeks: see physiotherapist — splinting helps significantly", tr: "Bilek agrisi 2+ hafta devam ederse: fizyoterapiste gidin — atel onemli olcude yardimci olur" },
+      { en: "If wrist pain persists 2+ weeks: see physiotherapist — splinting helps significantly", tr: "Bilek ağrısi 2+ hafta devam ederse: fizyoterapiste gidin — atel önemli ölçüde yardımcı olur" },
     ],
   },
   {
@@ -59,7 +59,7 @@ const SECTIONS: Section[] = [
     title: { en: "Burnout Screening (Self-Check)", tr: "Tukenmislik Taramasi (Oz Kontrol)" },
     color: "amber",
     items: [
-      { en: "Feeling detached from baby or resentful of parenting tasks — this is common, not a failure", tr: "Bebekten kopuk hissetmek veya ebeveynlik gorevlerine icerlemek — bu yaygindir, basarisizlik degil" },
+      { en: "Feeling detached from baby or resentful of parenting tasks — this is common, not a failure", tr: "Bebekten kopuk hissetmek veya ebeveynlik gorevlerine icerlemek — bu yaygındır, başarısizlik degil" },
       { en: "Physical exhaustion that doesn't improve with rest — could signal postpartum depression", tr: "Dinlenmekle duzelmeynen fiziksel bitkinlik — dogum sonrasi depresyon belirtisi olabilir" },
       { en: "Crying for no reason, persistent sadness > 2 weeks — talk to your OB/GYN", tr: "Sebepsiz aglama, 2 haftadan uzun sureli uzuntu — kadin dogum uzmaninizla konusun" },
       { en: "Edinburgh Postnatal Depression Scale (EPDS): score > 12 = seek professional support", tr: "Edinburgh Dogum Sonrasi Depresyon Ölçeği (EPDS): skor > 12 = profesyonel destek alin" },
@@ -72,12 +72,12 @@ const SECTIONS: Section[] = [
     title: { en: "Partner Stress Tips", tr: "Es Stresi Önerileri" },
     color: "indigo",
     items: [
-      { en: "Schedule 'check-in' conversations: 10 min/day about how each person is FEELING, not logistics", tr: "'Durum kontrolu' konusmalari planlayin: gunluk 10 dk her kisinin NASIL HISSETTIGINI konusun, lojistik degil" },
+      { en: "Schedule 'check-in' conversations: 10 min/day about how each person is FEELING, not logistics", tr: "'Durum kontrolü' konusmalari planlayın: gunluk 10 dk her kisinin NASIL HISSETTIGINI konusun, lojistik degil" },
       { en: "Divide tasks explicitly — unspoken expectations breed resentment", tr: "Gorevleri acikca bolun — soylenmemis beklentiler kin yaratir" },
       { en: "Physical intimacy timeline varies: 6 weeks minimum post-birth, but emotional readiness is personal", tr: "Fiziksel yakinlik sureci degisir: dogumdan sonra minimum 6 hafta, ama duygusal hazirlik kişiseldir" },
       { en: "Individual time is not selfish: each parent needs 2-3 hours/week of personal time", tr: "Bireysel zaman bencillik degildir: her ebeveynin haftada 2-3 saat kişisel zamana ihtiyaci vardir" },
       { en: "Ask for help from family/friends — specific requests ('bring dinner Tuesday') work better than vague ones", tr: "Aile/arkadaslardan yardim isteyin — belirli istekler ('sali aksamyemegi getirin') belirsiz olanlardan daha iyi calisir" },
-      { en: "If arguing increases significantly, couples counseling early prevents larger problems", tr: "Tartismalar onemli olcude artarsa, erken cift terapisi daha buyuk sorunlari onler" },
+      { en: "If arguing increases significantly, couples counseling early prevents larger problems", tr: "Tartismalar önemli ölçüde artarsa, erken cift terapisi daha buyuk sorunlari onler" },
     ],
   },
 ];
@@ -107,7 +107,7 @@ export default function NewParentHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("newparent.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -133,7 +133,7 @@ export default function NewParentHealthPage() {
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 text-center">
           <p className="text-sm text-blue-700 dark:text-blue-300">
             {lang === "tr"
-              ? "Bu sayfa EBEVEYN sagligina odaklanir. Bebek sagligi icin Cocuk Sagligi modulune gidin."
+              ? "Bu sayfa EBEVEYN sağlığına odaklanir. Bebek sağlığı için Cocuk Sagligi modulune gidin."
               : "This page focuses on PARENT health. For baby health, visit the Child Health module."}
           </p>
           <Button

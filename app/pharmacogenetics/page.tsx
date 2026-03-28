@@ -164,7 +164,7 @@ export default function PharmacogeneticsPage() {
               <Pill className="mx-auto mb-3 h-8 w-8 text-violet-400" />
               <p className="text-sm text-muted-foreground">
                 {lang === "tr"
-                  ? "Profilinizde ilac bulunamadı. Once profil sayfasindan ilaclarinizi ekleyin."
+                  ? "Profilinizde ilac bulunamadı. Once profil sayfasindan ilaçlarınizi ekleyin."
                   : "No medications found in your profile. Add medications from your profile page first."}
               </p>
             </div>
@@ -176,7 +176,7 @@ export default function PharmacogeneticsPage() {
                   <Info className="mt-0.5 h-4 w-4 shrink-0 text-violet-500" />
                   <p className="text-xs text-violet-700 dark:text-violet-300">
                     {lang === "tr"
-                      ? "Farmakogenetik, genetik farkliliklarin ilac metabolizmasini nasil etkiledigini inceler. Bu analiz, ilaclarinizin genetik varyasyonlardan nasil etkilenebilecegini gosterir."
+                      ? "Farmakogenetik, genetik farklıliklarin ilac metabolizmasini nasil etkiledigini inceler. Bu analiz, ilaçlarınizin genetik varyasyonlardan nasil etkilenebilecegini gosterir."
                       : "Pharmacogenetics studies how genetic differences affect drug metabolism. This analysis shows which of your medications may be affected by genetic variations."}
                   </p>
                 </div>

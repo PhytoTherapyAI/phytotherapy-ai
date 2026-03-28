@@ -111,7 +111,7 @@ const GROUPS: CrossAllergyGroup[] = [
       { item: { en: "Carbapenems", tr: "Karbapenemler" }, risk: "low" },
     ],
     mechanism: { en: "Beta-lactam ring structure shared across penicillin-class antibiotics", tr: "Penisilin sinifi antibiyotikler arasinda paylasilan beta-laktam halka yapisi" },
-    prevalence: { en: "1-2% true cross-reactivity with cephalosporins (lower than previously thought)", tr: "Sefalosporinlerle %1-2 gercek capraz reaktivite (daha once dusuunuldugunden düşük)" },
+    prevalence: { en: "1-2% true cross-reactivity with cephalosporins (lower than previously thought)", tr: "Sefalosporinlerle %1-2 gerçek capraz reaktivite (daha once dusuunuldugunden düşük)" },
   },
 ];
 

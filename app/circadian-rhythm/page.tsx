@@ -16,27 +16,27 @@ interface ScheduleItem {
 
 const SCHEDULE: ScheduleItem[] = [
   { time: { morning: "05:30-06:30", evening: "07:30-08:30" }, activity: { en: "Wake up + sunlight", tr: "Uyanma + gunes isigi" }, icon: Sun, tip: { en: "Get 10-30 min bright light within 30 min of waking", tr: "Uyanmadan sonraki 30 dk icinde 10-30 dk parlak isik aliniz" } },
-  { time: { morning: "06:30-07:00", evening: "08:30-09:00" }, activity: { en: "Exercise", tr: "Egzersiz" }, icon: Dumbbell, tip: { en: "Morning exercise boosts cortisol awakening response", tr: "Sabah egzersizi kortizol uyanma yaniti arttirir" } },
-  { time: { morning: "07:00-07:30", evening: "09:00-09:30" }, activity: { en: "First caffeine", tr: "Ilk kafein" }, icon: Coffee, tip: { en: "Wait 90-120 min after waking for caffeine (cortisol peak)", tr: "Kafein icin uyanmadan 90-120 dk sonra bekleyiniz (kortizol zirvesi)" } },
-  { time: { morning: "08:00-12:00", evening: "10:00-14:00" }, activity: { en: "Peak productivity", tr: "Zirve uretkenlik" }, icon: Brain, tip: { en: "Complex tasks, deep work, important decisions", tr: "Karmasik gorevler, derin calisma, onemli kararlar" } },
+  { time: { morning: "06:30-07:00", evening: "08:30-09:00" }, activity: { en: "Exercise", tr: "Egzersiz" }, icon: Dumbbell, tip: { en: "Morning exercise boosts cortisol awakening response", tr: "Sabah egzersizi kortizol uyanma yaniti arttırır" } },
+  { time: { morning: "07:00-07:30", evening: "09:00-09:30" }, activity: { en: "First caffeine", tr: "Ilk kafein" }, icon: Coffee, tip: { en: "Wait 90-120 min after waking for caffeine (cortisol peak)", tr: "Kafein için uyanmadan 90-120 dk sonra bekleyiniz (kortizol zirvesi)" } },
+  { time: { morning: "08:00-12:00", evening: "10:00-14:00" }, activity: { en: "Peak productivity", tr: "Zirve üretkenlik" }, icon: Brain, tip: { en: "Complex tasks, deep work, important decisions", tr: "Karmasik gorevler, derin çalışma, önemli kararlar" } },
   { time: { morning: "13:00-14:00", evening: "15:00-16:00" }, activity: { en: "Post-lunch dip", tr: "Ogle sonrasi dusus" }, icon: Clock, tip: { en: "Light tasks, meetings. 20-min nap if possible (not after 3PM)", tr: "Hafif gorevler, toplantılar. Mumkunse 20 dk sekerleme (saat 15'ten sonra degil)" } },
-  { time: { morning: "14:00-17:00", evening: "16:00-20:00" }, activity: { en: "Second wind", tr: "Ikinci enerji dalgasi" }, icon: Brain, tip: { en: "Good for creative tasks and collaboration", tr: "Yaratici gorevler ve isbirligi icin iyi" } },
+  { time: { morning: "14:00-17:00", evening: "16:00-20:00" }, activity: { en: "Second wind", tr: "Ikinci enerji dalgasi" }, icon: Brain, tip: { en: "Good for creative tasks and collaboration", tr: "Yaratici gorevler ve isbirligi için iyi" } },
   { time: { morning: "14:00", evening: "16:00" }, activity: { en: "Caffeine cutoff", tr: "Kafein kesim" }, icon: Coffee, tip: { en: "No caffeine after this time (8-10h before bed)", tr: "Bu saatten sonra kafein yok (yatmadan 8-10 saat once)" } },
   { time: { morning: "19:00", evening: "21:00" }, activity: { en: "Dim lights", tr: "Isiklari kis" }, icon: Lightbulb, tip: { en: "Reduce blue light, use warm lighting, enable night mode", tr: "Mavi isigi azaltiniz, sicak aydinlatma, gece modu etkinlestiriniz" } },
   { time: { morning: "21:00-21:30", evening: "23:00-23:30" }, activity: { en: "Sleep", tr: "Uyku" }, icon: Moon, tip: { en: "7-9 hours recommended. Cool room (18-20C)", tr: "7-9 saat onerili. Serin oda (18-20C)" } },
 ];
 
 const SHIFT_WORKER_TIPS = [
-  { en: "Use blackout curtains for daytime sleep", tr: "Gunduz uykusu icin karaartma perdeleri kullaniniz" },
+  { en: "Use blackout curtains for daytime sleep", tr: "Gunduz uykusu için karaartma perdeleri kullaniniz" },
   { en: "Wear sunglasses driving home after night shift", tr: "Gece vardiyasindan sonra eve giderken gunes gozlugu takiniz" },
-  { en: "Strategic caffeine: use early in shift, stop 6h before bed", tr: "Stratejik kafein: vardiyanin basinda kullaniniz, yatmadan 6 saat once kesiniz" },
+  { en: "Strategic caffeine: use early in shift, stop 6h before bed", tr: "Stratejik kafein: vardiyanin başında kullaniniz, yatmadan 6 saat once kesiniz" },
   { en: "Melatonin 0.5-3mg 30 min before planned sleep", tr: "Planlanan uykudan 30 dk once melatonin 0.5-3mg" },
-  { en: "Keep consistent schedule even on off days when possible", tr: "Mumkun oldugunda tatil gunlerinde bile tutarli program surdrun" },
+  { en: "Keep consistent schedule even on off days when possible", tr: "Mumkun oldugunda tatil gunlerinde bile tutarlı program surdrun" },
 ];
 
 const SAD_INFO = {
   en: "Seasonal Affective Disorder (SAD) affects 1-3% of adults. Light therapy with 10,000 lux for 20-30 min within first hour of waking shows Grade A evidence. Start in early autumn before symptoms begin.",
-  tr: "Mevsimsel Duygudurum Bozuklugu (SAD) yetiskinlerin %1-3'unu etkiler. Uyanmanin ilk saatinde 20-30 dk 10.000 lux isik terapisi A derecesi kanit gostermektedir. Belirtiler baslamadan once sonbaharin basinda baslatiniz.",
+  tr: "Mevsimsel Duygudurum Bozuklugu (SAD) yetiskinlerin %1-3'unu etkiler. Uyanmanin ilk saatinde 20-30 dk 10.000 lux isik terapisi A derecesi kanit gostermektedir. Belirtiler başlamadan once sonbaharin başında başlatiniz.",
 };
 
 export default function CircadianRhythmPage() {

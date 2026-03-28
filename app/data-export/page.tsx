@@ -88,7 +88,7 @@ export default function DataExportPage() {
           </Card>
         ) : (
           <Button className="w-full bg-blue-500 hover:bg-blue-600" disabled={selectedCount === 0 || exporting} onClick={handleExport}>
-            {exporting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {isTr ? "Hazirlaniyor..." : "Preparing..."}</> : <><Download className="w-4 h-4 mr-2" /> {isTr ? "JSON Olarak İndir" : "Download as JSON"}</>}
+            {exporting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {isTr ? "Hazırlanıyor..." : "Preparing..."}</> : <><Download className="w-4 h-4 mr-2" /> {isTr ? "JSON Olarak İndir" : "Download as JSON"}</>}
           </Button>
         )}
       </div>

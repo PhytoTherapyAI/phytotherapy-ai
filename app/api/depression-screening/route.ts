@@ -80,11 +80,11 @@ export async function POST(request: NextRequest) {
             ? "PHQ-9 sonuclariniz, kendinize zarar verme dusunceleri olabilecegini gosteriyor. Lutfen hemen profesyonel destek alin. Yalniz degilsiniz ve yardim mevcuttur."
             : "Your PHQ-9 results indicate you may be having thoughts of self-harm. Please reach out for professional support immediately. You are not alone and help is available.",
           crisisLines: lang === "tr"
-            ? ["Intihar Onleme Hatti: 182", "Sağlık Bakanlığı ALO: 184"]
+            ? ["Intihar Onleme Hattı: 182", "Sağlık Bakanlığı ALO: 184"]
             : ["Suicide & Crisis Lifeline: 988", "Crisis Text Line: Text HOME to 741741"],
           recommendations: [
             lang === "tr"
-              ? "Lutfen bugun bir ruh sagligi uzmaniyla gorusun."
+              ? "Lutfen bugun bir ruh sağlığı uzmaniyla gorusun."
               : "Please speak with a mental health professional today.",
             lang === "tr"
               ? "Guvendiginiz birine nasil hissettiginizi anlatin."
@@ -174,7 +174,7 @@ Note any medications that may contribute to mood changes.`;
           score: phq9_answers[i],
         })),
         crisisLines: lang === "tr"
-          ? ["Intihar Onleme Hatti: 182", "Sağlık Bakanlığı ALO: 184"]
+          ? ["Intihar Onleme Hattı: 182", "Sağlık Bakanlığı ALO: 184"]
           : ["Suicide & Crisis Lifeline: 988", "Crisis Text Line: Text HOME to 741741"],
       },
     });

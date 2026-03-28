@@ -31,14 +31,14 @@ const SECTIONS: AccordionSection[] = [
       "Mental health: psychiatry covered, psychology sessions limited.",
     ],
     contentTr: [
-      "SGK cogu receteli ilaclari farkli katilim paylariyla kapsar (%0-20).",
+      "SGK cogu receteli ilaçları farklı katilim paylariyla kapsar (%0-20).",
       "Devlet hastanelerinde poliklinik ziyaretleri minimal katilim payiyla kapsanir.",
-      "Uzman yonlendirmesi icin once aile hekiminden sevk gerekir.",
+      "Uzman yönlendirmesi için once aile hekiminden sevk gerekir.",
       "Acil servis ziyaretleri hastane türüne bakilmaksizin her zaman kapsanir.",
-      "Dis bakim: cekim ve temel islemler kapsanir, estetik kapsanmaz.",
+      "Dis bakim: cekim ve temel işlemler kapsanir, estetik kapsanmaz.",
       "Goz muayenesi kapsanir, gozluk cercevesi kismi olarak kapsanir (receteli).",
       "Fizik tedavi: sevkle yilda 30 seansa kadar.",
-      "Ruh sagligi: psikiyatri kapsanir, psikoloji seanslari sinirlidir.",
+      "Ruh sağlığı: psikiyatri kapsanir, psikoloji seanslari sinirlidir.",
     ],
   },
   {
@@ -57,13 +57,13 @@ const SECTIONS: AccordionSection[] = [
       "Retirees: reduced or zero copay for many services.",
     ],
     contentTr: [
-      "Aile hekimi (1. basamak): Muayene icin katilim payi yok.",
+      "Aile hekimi (1. basamak): Muayene için katilim payi yok.",
       "Devlet hastanesi (2. basamak): 0-5 TL katilim payi.",
       "Universite hastanesi (3. basamak): Daha yüksek katilim payi, sevk gerekir.",
       "Özel hastane (SGK anlasmali): Tipik olarak 200+ TL ek ucret.",
       "İlaçlar: İlaç kategorisine gore %10-20 katilim payi.",
-      "Kirmizi receteler (kontrollü): farkli katilim payi tarifesi.",
-      "Kronik hastalık ilaclari: indirimli katilim payi.",
+      "Kirmizi receteler (kontrollü): farklı katilim payi tarifesi.",
+      "Kronik hastalık ilaçları: indirimli katilim payi.",
       "Emekliler: bircok hizmette indirimli veya sifir katilim payi.",
     ],
   },
@@ -87,7 +87,7 @@ const SECTIONS: AccordionSection[] = [
       "Kanser taramalari: mamografi (40+), smear testi (30+), kolon kanseri (50+).",
       "Kemik yogunlugu taramasi 65+ veya risk faktorlu kadinlarda kapsanir.",
       "Asi takvimi tum yaslara ucretsiz.",
-      "Cocuk sagligi kontrolleri: dogumdan 18 yasina duzeli takvim.",
+      "Cocuk sağlığı kontrolleri: dogumdan 18 yasina duzeli takvim.",
       "Gebelik takipleri: tum ziyaretler ve standart testler kapsanir.",
     ],
   },
@@ -112,7 +112,7 @@ const SECTIONS: AccordionSection[] = [
       "Oncu sirketler: Acibadem Sigorta, Allianz, Axa, Mapfre, Anadolu Sigorta.",
       "Mevcut hastalıklar: genellikle 1-2 yil haric tutulur.",
       "Dis ve goz: cogunlukla ayri ek paket gerektirir.",
-      "Uluslararasi kapsam: bazi planlar AB/dunya genelini icerir.",
+      "Uluslararasi kapsam: bazi planlar AB/dünya genelini icerir.",
       "Vergi indirimi: primler kismi olarak dusulebilir (limitler dahilinde).",
       "Planlari sigortam.net veya sigortaladim.com'da karşılastirin.",
     ],
@@ -134,8 +134,8 @@ const SECTIONS: AccordionSection[] = [
       "Jenerik ilaclar marka ilaclardan daha düşük katilim payina sahiptir.",
       "Mevcut oldugunda doktorunuzdan jenerik yazmasi isteyin.",
       "Bazi vitamin ve takviyeler SGK tarafindan KAPSANMAZ.",
-      "Kronik ilac: eczane ziyaretlerinden tasarruf icin 3 aylik recete alin.",
-      "Eczane uygulamalari (Ilac Takip Sistemi) recetelerinizi takip etmenize yardimci olur.",
+      "Kronik ilac: eczane ziyaretlerinden tasarruf için 3 aylik recete alin.",
+      "Eczane uygulamalari (Ilac Takip Sistemi) recetelerinizi takip etmenize yardımcı olur.",
       "Bazi ilaclar on onay gerektirir — doktorunuz bunu halledecektir.",
     ],
   },
@@ -199,7 +199,7 @@ export default function InsuranceGuidePage() {
         <div className="mt-8 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 text-center">
           <p className="text-gray-500 dark:text-gray-400 text-sm">
             {lang === "tr"
-              ? "Bilgiler genel rehberlik amaclidir. Guncel kapsam ve ucretler icin SGK veya sigorta sirketinizle iletisime gecin."
+              ? "Bilgiler genel rehberlik amaclidir. Guncel kapsam ve ucretler için SGK veya sigorta sirketinizle iletisime gecin."
               : "Information is for general guidance. Contact SGK or your insurance provider for current coverage and rates."}
           </p>
         </div>

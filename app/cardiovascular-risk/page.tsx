@@ -200,7 +200,7 @@ export default function CardiovascularRiskPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("cardio.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -343,7 +343,7 @@ export default function CardiovascularRiskPage() {
               </div>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
                 {lang === "tr"
-                  ? `Onumuzdeki 10 yil icinde kardiyovaskuler olay (kalp krizi veya inme) tahmini risk orani: %${result.score}`
+                  ? `Onumuzdeki 10 yil icinde kardiyovasküler olay (kalp krizi veya inme) tahmini risk orani: %${result.score}`
                   : `Estimated 10-year risk of cardiovascular event (heart attack or stroke): ${result.score}%`}
               </p>
 
@@ -388,7 +388,7 @@ export default function CardiovascularRiskPage() {
           </h2>
           <p className="text-sm text-muted-foreground">
             {lang === "tr"
-              ? "AHA'nin kalp sagligi icin temel 8 adimi. Hangilerini uyguluyor oldugunuzu isaretleyin."
+              ? "AHA'nin kalp sağlığı için temel 8 adimi. Hangilerini uyguluyor oldugunuzu isaretleyin."
               : "AHA's 8 key measures for heart health. Check the ones you're doing."}
           </p>
           <div className="grid gap-2">

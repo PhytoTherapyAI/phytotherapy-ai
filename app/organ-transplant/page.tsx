@@ -40,17 +40,17 @@ const sections: Section[] = [
     badgeTR: "Kritik",
     badgeColor: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
     items: [
-      { en: "Take immunosuppressants at EXACTLY the same times every day (e.g., 8AM and 8PM)", tr: "Immunsupresif ilaclari her gun TAM OLARAK ayni saatlerde alin (orn. 08:00 ve 20:00)", warning: true },
+      { en: "Take immunosuppressants at EXACTLY the same times every day (e.g., 8AM and 8PM)", tr: "Immunsupresif ilaçları her gun TAM OLARAK ayni saatlerde alin (orn. 08:00 ve 20:00)", warning: true },
       { en: "Tacrolimus: take on empty stomach, 1 hour before or 2 hours after food", tr: "Takrolimus: ac karnina, yemekten 1 saat once veya 2 saat sonra alin" },
       { en: "Mycophenolate: can cause GI upset — take with food if needed", tr: "Mikofenolat: mide rahatsizligi yapabilir — gerekirse yemekle alin" },
-      { en: "Prednisone: take in morning with food to reduce stomach irritation", tr: "Prednizon: mide tahrisi azaltmak icin sabah yemekle alin" },
-      { en: "NEVER skip a dose — even one missed dose increases rejection risk", tr: "ASLA doz atlamayin — tek bir atlanan doz bile red riskini arttirir", warning: true },
+      { en: "Prednisone: take in morning with food to reduce stomach irritation", tr: "Prednizon: mide tahrisi azaltmak için sabah yemekle alin" },
+      { en: "NEVER skip a dose — even one missed dose increases rejection risk", tr: "ASLA doz atlamayin — tek bir atlanan doz bile red riskini arttırır", warning: true },
       { en: "If you miss a dose: take it within 2 hours, otherwise skip and take next on time", tr: "Doz kacirirseniz: 2 saat icinde alin, yoksa atlayin ve bir sonrakini zamaninda alin" },
       { en: "Keep a medication diary — record time taken, side effects, and blood levels", tr: "İlaç gunlugu tutun — alinan saat, yan etkiler ve kan duzeyleri kaydedin" },
-      { en: "Drug level monitoring: tacrolimus levels checked weekly initially, then monthly", tr: "İlaç duzeyi izleme: takrolimus duzeyleri baslangicta haftalik, sonra aylik kontrol" },
+      { en: "Drug level monitoring: tacrolimus levels checked weekly initially, then monthly", tr: "İlaç duzeyi izleme: takrolimus duzeyleri başlangıçta haftalik, sonra aylik kontrol" },
       { en: "St. John's Wort is DANGEROUS — it reduces immunosuppressant levels dramatically", tr: "Sari Kantaron TEHLIKELIDIR — immunsupresif ilac duzeylerini dramatik olarak dusurur", warning: true },
       { en: "Grapefruit and pomelo INCREASE tacrolimus levels — avoid completely", tr: "Greyfurt ve pomelo takrolimus duzeylerini ARTTIRIR — tamamen kacinmayin", warning: true },
-      { en: "Report fever, pain over transplant site, or reduced urine output immediately", tr: "Ates, nakil bolgesinde agri veya azalmis idrar cikisini hemen bildirin", warning: true },
+      { en: "Report fever, pain over transplant site, or reduced urine output immediately", tr: "Ates, nakil bolgesinde ağrı veya azalmis idrar cikisini hemen bildirin", warning: true },
     ],
   },
   {
@@ -62,15 +62,15 @@ const sections: Section[] = [
     badgeTR: "Yüksek Oncelik",
     badgeColor: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200",
     items: [
-      { en: "Wash hands frequently with soap for 20+ seconds — your #1 defense", tr: "Ellerinizi 20+ saniye sabunla sik sik yikayin — en onemli savunmaniz" },
+      { en: "Wash hands frequently with soap for 20+ seconds — your #1 defense", tr: "Ellerinizi 20+ saniye sabunla sik sik yikayin — en önemli savunmaniz" },
       { en: "Avoid crowded indoor spaces for first 3-6 months post-transplant", tr: "Nakil sonrasi ilk 3-6 ay kapali kalabalik alanlardan kacinin" },
       { en: "Wear a mask in hospitals, clinics, and during flu season", tr: "Hastanelerde, kliniklerde ve grip mevsiminde maske takin" },
       { en: "Avoid gardening or soil contact without gloves — risk of fungal infections", tr: "Eldivensiz bahce isi veya toprak temasi — mantar enfeksiyonu riski" },
       { en: "No live vaccines (MMR, varicella, oral polio) — discuss all vaccines with transplant team", tr: "Canli asi yaptirilmaz (KKK, suicegi, oral polio) — tum asilari nakil ekibiyle gorusun" },
-      { en: "Dental care: prophylactic antibiotics before dental procedures", tr: "Dis bakimi: dis islemlerinden once profilaktik antibiyotik" },
+      { en: "Dental care: prophylactic antibiotics before dental procedures", tr: "Dis bakimi: dis işlemlerinden once profilaktik antibiyotik" },
       { en: "Avoid swimming in lakes, rivers, or public pools for first 6 months", tr: "Ilk 6 ay gollerde, nehirlerde veya halka acik havuzlarda yuzmeyin" },
       { en: "Pet safety: avoid cleaning cat litter (toxoplasmosis risk), bird cages", tr: "Evcil hayvan güvenligi: kedi kumu temizlemeyin (toksoplazmoz riski), kus kafesleri" },
-      { en: "Sun protection: immunosuppressants increase skin cancer risk — SPF 50+ daily", tr: "Gunes korumasi: immunsupresifler cilt kanseri riskini arttirir — gunluk SPF 50+" },
+      { en: "Sun protection: immunosuppressants increase skin cancer risk — SPF 50+ daily", tr: "Gunes korumasi: immunsupresifler cilt kanseri riskini arttırır — gunluk SPF 50+" },
       { en: "CMV and EBV monitoring is routine — attend all follow-up blood tests", tr: "CMV ve EBV izleme rutindir — tum kontrol kan testlerine gidin" },
     ],
   },
@@ -87,13 +87,13 @@ const sections: Section[] = [
       { en: "NO unpasteurized dairy products (soft cheeses, raw milk)", tr: "Pastorize edilmemis sut urunleri YOK (yumusak peynirler, cig sut)", warning: true },
       { en: "NO grapefruit, pomelo, or Seville oranges — they alter drug levels", tr: "Greyfurt, pomelo veya Türüncu portakal YOK — ilac duzeylerini degistirirler", warning: true },
       { en: "Wash all fruits and vegetables thoroughly before eating", tr: "Tum meyve ve sebzeleri yemeden once iyice yikayin" },
-      { en: "Avoid buffets and salad bars — food temperature control is uncertain", tr: "Acik bufe ve salata barlarindan kacinin — gida sicakligi kontrolu belirsizdir" },
+      { en: "Avoid buffets and salad bars — food temperature control is uncertain", tr: "Acik bufe ve salata barlarindan kacinin — gida sicakligi kontrolü belirsizdir" },
       { en: "Cook all foods to safe internal temperatures (chicken 74C, beef 71C)", tr: "Tum gıdalari güvenli ic sicakliga pisirin (tavuk 74C, et 71C)" },
       { en: "Avoid raw sprouts (alfalfa, bean sprouts) — high bacterial contamination risk", tr: "Cig filizlerden kacinin (yonca, fasulye filizi) — yüksek bakteri kontaminasyon riski" },
       { en: "Tap water is generally safe but consider filtered water in first months", tr: "Cesme suyu genellikle güvenlidir ancak ilk aylarda filtrelenmis su dusunun" },
       { en: "Limit sodium to <2g/day if on prednisone — it causes fluid retention", tr: "Prednizon kullaniyorsaniz sodyumu <2g/gun ile sinirlayin — sivi tutulumuna neden olur" },
       { en: "High-protein diet (1.3-1.5 g/kg/day) to counter prednisone muscle wasting", tr: "Prednizon kas erimesine karsi yüksek proteinli diyet (1.3-1.5 g/kg/gun)" },
-      { en: "Calcium + Vitamin D supplementation to prevent steroid-induced osteoporosis", tr: "Steroide bagli osteoporoz onleme icin Kalsiyum + D vitamini takviyesi" },
+      { en: "Calcium + Vitamin D supplementation to prevent steroid-induced osteoporosis", tr: "Steroide bagli osteoporoz onleme için Kalsiyum + D vitamini takviyesi" },
     ],
   },
   {
@@ -109,10 +109,10 @@ const sections: Section[] = [
       { en: "Month 2-3: Blood tests weekly, clinic visit every 2 weeks", tr: "Ay 2-3: Haftalık kan testi, 2 haftada bir klinik ziyareti" },
       { en: "Month 4-6: Blood tests every 2 weeks, monthly clinic visit", tr: "Ay 4-6: 2 haftada bir kan testi, aylik klinik ziyareti" },
       { en: "Month 7-12: Monthly blood tests and clinic visits", tr: "Ay 7-12: Aylik kan testleri ve klinik ziyaretleri" },
-      { en: "Year 2+: Every 2-3 months for stable patients", tr: "Yil 2+: Stabil hastalar icin her 2-3 ayda bir" },
-      { en: "Annual screening: skin cancer check, cardiovascular assessment, bone density", tr: "Yıllık tarama: cilt kanseri kontrolu, kardiyovaskuler degerlendirme, kemik yogunlugu" },
+      { en: "Year 2+: Every 2-3 months for stable patients", tr: "Yil 2+: Stabil hastalar için her 2-3 ayda bir" },
+      { en: "Annual screening: skin cancer check, cardiovascular assessment, bone density", tr: "Yıllık tarama: cilt kanseri kontrolü, kardiyovasküler degerlendirme, kemik yogunlugu" },
       { en: "Kidney transplant: serum creatinine and GFR monitored at every visit", tr: "Bobrek nakli: her ziyarette serum kreatinin ve GFR izleme" },
-      { en: "Liver transplant: liver function tests (ALT, AST, bilirubin) at every visit", tr: "Karaciger nakli: her ziyarette karaciger fonksiyon testleri (ALT, AST, bilirubin)" },
+      { en: "Liver transplant: liver function tests (ALT, AST, bilirubin) at every visit", tr: "Karaciger nakli: her ziyarette karaciğer fonksiyon testleri (ALT, AST, bilirubin)" },
       { en: "Report any illness, fever, or new medication to your transplant team", tr: "Herhangi bir hastalık, ates veya yeni ilacı nakil ekibinize bildirin" },
       { en: "Keep transplant center contact number accessible at all times", tr: "Nakil merkezi iletisim numarasini her zaman ulasılabilir tutun" },
     ],
@@ -126,16 +126,16 @@ const sections: Section[] = [
     badgeTR: "Butunsel",
     badgeColor: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
     items: [
-      { en: "Exercise: start with walking, gradually increase to 30 min/day, 5 days/week", tr: "Egzersiz: yuruyusle baslayin, kademeli olarak haftada 5 gun 30 dk'ya cikin" },
+      { en: "Exercise: start with walking, gradually increase to 30 min/day, 5 days/week", tr: "Egzersiz: yuruyusle başlayin, kademeli olarak haftada 5 gun 30 dk'ya cikin" },
       { en: "Return to work: most patients can return 3-6 months post-transplant", tr: "Ise donus: cogu hasta nakil sonrasi 3-6 ayda ise donebilir" },
       { en: "Driving: usually allowed after 4-6 weeks if medically stable", tr: "Arac kullanma: tibbi olarak stabil ise genellikle 4-6 hafta sonra izin verilir" },
       { en: "Sexual health: discuss contraception — some immunosuppressants are teratogenic", tr: "Cinsel saglik: korunmayi gorusun — bazi immunsupresifler teratojeniktir" },
       { en: "Travel: discuss with transplant team, carry medication supply + medical letter", tr: "Seyahat: nakil ekibiyle gorusun, ilac tedariqi + tibbi mektup tasiyin" },
-      { en: "Mental health: anxiety about rejection is normal — seek support groups", tr: "Ruh sagligi: red hakkinda kaygı normaldir — destek gruplari arayin" },
-      { en: "Body image changes from steroids (moon face, weight gain) are often temporary", tr: "Steroidlerden vucut imaji degisiklikleri (yuvarlak yuz, kilo) genellikle gecicidir" },
+      { en: "Mental health: anxiety about rejection is normal — seek support groups", tr: "Ruh sağlığı: red hakkinda kaygı normaldir — destek gruplari arayın" },
+      { en: "Body image changes from steroids (moon face, weight gain) are often temporary", tr: "Steroidlerden vucut imaji değişiklikleri (yuvarlak yuz, kilo) genellikle gecicidir" },
       { en: "Alcohol: strictly limited or avoided — discuss with your team", tr: "Alkol: siki olarak sinirli veya kacin — ekibinizle gorusun" },
-      { en: "Gratitude practice and journaling improve psychological outcomes", tr: "Sukran pratigi ve gunluk tutma psikolojik sonuçlari iyilestirir" },
-      { en: "Connect with transplant recipient communities for shared experiences", tr: "Paylasilan deneyimler icin nakil alici topluluklariyla baglanti kurun" },
+      { en: "Gratitude practice and journaling improve psychological outcomes", tr: "Sukran pratigi ve gunluk tutma psikolojik sonuçlari iyileştirir" },
+      { en: "Connect with transplant recipient communities for shared experiences", tr: "Paylasilan deneyimler için nakil alici topluluklariyla baglanti kurun" },
     ],
   },
 ];
@@ -163,7 +163,7 @@ export default function OrganTransplantPage() {
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
             {lang === "tr"
-              ? "İlaç uyumu, enfeksiyon onleme, beslenme ve takip programi hakkinda kapsamli rehber."
+              ? "İlaç uyumu, enfeksiyon onleme, beslenme ve takip programı hakkinda kapsamli rehber."
               : "Comprehensive guide on medication compliance, infection prevention, nutrition, and follow-up care."}
           </p>
         </div>
@@ -175,12 +175,12 @@ export default function OrganTransplantPage() {
             <div className="text-sm text-red-800 dark:text-red-200">
               <p className="font-semibold mb-1">
                 {lang === "tr"
-                  ? "Onemli İlaç Etkilesileri"
+                  ? "Önemli İlaç Etkilesileri"
                   : "Critical Drug Interactions"}
               </p>
               <p>
                 {lang === "tr"
-                  ? "Herhangi bir takviye, bitkisel urun veya yeni ilac baslamadan ONCE mutlaka nakil ekibinize danisin. Sari Kantaron, greyfurt ve bircok bitkisel urun immunsupresif ilac duzeylerini tehlikeli sekilde degistirebilir."
+                  ? "Herhangi bir takviye, bitkisel urun veya yeni ilac başlamadan ÖNCE mutlaka nakil ekibinize danisin. Sari Kantaron, greyfurt ve bircok bitkisel urun immunsupresif ilac duzeylerini tehlikeli sekilde degistirebilir."
                   : "ALWAYS consult your transplant team before starting ANY supplement, herbal product, or new medication. St. John's Wort, grapefruit, and many herbal products can dangerously alter immunosuppressant drug levels."}
               </p>
             </div>
@@ -245,7 +245,7 @@ export default function OrganTransplantPage() {
         {/* Footer */}
         <div className="text-center text-xs text-muted-foreground pt-4">
           {lang === "tr"
-            ? "Bu bilgiler genel rehberlik icin sunulmustur. Nakil ekibinizin talimatlari her zaman onceliklidir."
+            ? "Bu bilgiler genel rehberlik için sunulmustur. Nakil ekibinizin talimatlari her zaman onceliklidir."
             : "This information is provided for general guidance. Your transplant team's instructions always take priority."}
         </div>
       </div>

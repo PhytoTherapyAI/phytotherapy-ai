@@ -47,8 +47,8 @@ interface NewsletterPrefs {
 const WEATHER_TIPS = [
   { en: "Cold weather ahead -- keep your Vitamin D intake consistent and stay hydrated.", tr: "Soguk hava geliyor -- D vitamini alimini duzenlı tut ve bol su ic." },
   { en: "High pollen forecast this week. Consider quercetin if cleared by your profile.", tr: "Bu hafta polen orani yüksek. Profilinize uygunsa quercetin dusunebilirsiniz." },
-  { en: "Sunny days ahead -- great for natural Vitamin D but don't skip sunscreen.", tr: "Gunesli gunler geliyor -- dogal D vitamini icin harika ama gunes kremini unutmayin." },
-  { en: "Humidity is rising -- stay extra hydrated and watch electrolyte balance.", tr: "Nem artıyor -- ekstra su icin ve elektrolit dengesine dikkat edin." },
+  { en: "Sunny days ahead -- great for natural Vitamin D but don't skip sunscreen.", tr: "Gunesli gunler geliyor -- doğal D vitamini için harika ama gunes kremini unutmayin." },
+  { en: "Humidity is rising -- stay extra hydrated and watch electrolyte balance.", tr: "Nem artıyor -- ekstra su için ve elektrolit dengesine dikkat edin." },
 ];
 
 export default function WeeklyNewsletterPage() {

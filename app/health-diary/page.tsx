@@ -59,12 +59,12 @@ const KEYWORD_MAP: Record<string, TagCategory> = {
   headache: "symptom", migraine: "symptom", nausea: "symptom", pain: "symptom",
   fatigue: "symptom", dizziness: "symptom", fever: "symptom", cough: "symptom",
   cramp: "symptom", bloating: "symptom", rash: "symptom", allergy: "symptom",
-  "bas agrisi": "symptom", mide: "symptom", bulanti: "symptom", agri: "symptom",
+  "bas ağrısi": "symptom", mide: "symptom", bulanti: "symptom", ağrı: "symptom",
   yorgunluk: "symptom", ates: "symptom", oksuruk: "symptom", sisman: "symptom",
   happy: "mood", sad: "mood", anxious: "mood", stressed: "mood", calm: "mood",
   angry: "mood", depressed: "mood", nervous: "mood", relaxed: "mood",
   mutlu: "mood", uzgun: "mood", stresli: "mood", sakin: "mood", sinirli: "mood",
-  endiseli: "mood", kaygi: "mood",
+  endiseli: "mood", kaygı: "mood",
   ibuprofen: "medication", paracetamol: "medication", aspirin: "medication",
   metformin: "medication", vitamin: "medication", supplement: "medication",
   ilac: "medication", hap: "medication", tablet: "medication", takviye: "medication",
@@ -246,7 +246,7 @@ export default function HealthDiaryPage() {
       if (entries.length < 5) {
         insights.push(t(
           "Keep writing! At least 5 entries are needed for meaningful patterns.",
-          "Yazmaya devam et! Anlamli oruntular icin en az 5 girdi gerekli."
+          "Yazmaya devam et! Anlamli oruntular için en az 5 girdi gerekli."
         ));
       } else {
         insights.push(t(
@@ -287,7 +287,7 @@ export default function HealthDiaryPage() {
             {t("Health Diary", "Sağlık Gunlugu")}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            {t("Sign in to start your health diary.", "Sağlık gunlugunuze baslamak icin giris yapin.")}
+            {t("Sign in to start your health diary.", "Sağlık gunlugunuze başlamak için giris yapin.")}
           </p>
           <Button onClick={() => (window.location.href = "/")}>
             <LogIn className="w-4 h-4 mr-2" />
@@ -509,7 +509,7 @@ export default function HealthDiaryPage() {
               <p className="text-sm">
                 {searchQuery || selectedTagFilter
                   ? t("No entries match your search.", "Aramanizla eslesen girdi yok.")
-                  : t("No entries yet. Start writing!", "Henuz girdi yok. Yazmaya baslayin!")}
+                  : t("No entries yet. Start writing!", "Henuz girdi yok. Yazmaya başlayin!")}
               </p>
             </div>
           ) : (

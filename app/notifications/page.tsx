@@ -165,7 +165,7 @@ export default function NotificationsPage() {
                   ? `${s.supplement_name} washout yaklasti`
                   : `${s.supplement_name} washout approaching`,
                 description: lang === "tr"
-                  ? `${remaining} gun sonra mola donemi baslayacak`
+                  ? `${remaining} gun sonra mola donemi başlayacak`
                   : `Break period starts in ${remaining} day${remaining > 1 ? "s" : ""}`,
                 time: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 8, 30),
                 read: storedRead.has(nid),

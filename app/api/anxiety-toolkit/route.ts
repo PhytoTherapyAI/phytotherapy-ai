@@ -82,12 +82,12 @@ export async function POST(request: NextRequest) {
               ? "Topraklama egzersizini yapin ve nefes almaya odaklanin."
               : "Focus on the grounding exercise and controlled breathing.",
             lang === "tr"
-              ? "Panik ataklar tekrarliyorsa bir ruh sagligi uzmaniyla gorusmek onemlidir."
+              ? "Panik ataklar tekrarliyorsa bir ruh sağlığı uzmaniyla gorusmek önemlidir."
               : "If panic attacks recur, it is important to see a mental health professional.",
           ],
           alertLevel: "yellow",
           professionalReferral: true,
-          crisisLine: lang === "tr" ? "Kriz hatti: 182" : "Crisis line: 988",
+          crisisLine: lang === "tr" ? "Kriz hattı: 182" : "Crisis line: 988",
         },
       });
     }
@@ -174,7 +174,7 @@ If GAD-7 >= 15 or anxiety_level >= 9, set alertLevel to "red".`;
         panicProtocol: false,
         gad7Score,
         gad7Severity,
-        crisisLine: lang === "tr" ? "Kriz hatti: 182" : "Crisis line: 988",
+        crisisLine: lang === "tr" ? "Kriz hattı: 182" : "Crisis line: 988",
       },
     });
   } catch (err) {

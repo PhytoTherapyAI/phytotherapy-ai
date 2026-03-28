@@ -32,7 +32,7 @@ const CONTRAINDICATION_MEDS = [
   { meds: { en: "Isotretinoin (Accutane)", tr: "Izotretinoin (Accutane)" }, status: "defer", note: { en: "1-month deferral after last dose", tr: "Son dozdan 1 ay erteleme" } },
   { meds: { en: "Finasteride (Propecia)", tr: "Finasterid (Propecia)" }, status: "defer", note: { en: "1-month deferral after last dose", tr: "Son dozdan 1 ay erteleme" } },
   { meds: { en: "Antibiotics", tr: "Antibiyotikler" }, status: "defer", note: { en: "Can donate once infection is resolved and antibiotic course completed", tr: "Enfeksiyon cozulup antibiyotik kuru tamamlandiktan sonra bagis yapilabilir" } },
-  { meds: { en: "Most OTC pain relievers (Aspirin, Ibuprofen)", tr: "Cogu recetesiz agri kesiciler (Aspirin, Ibuprofen)" }, status: "ok", note: { en: "Generally OK for whole blood donation", tr: "Tam kan bagisi icin genellikle uygun" } },
+  { meds: { en: "Most OTC pain relievers (Aspirin, Ibuprofen)", tr: "Çoğu recetesiz ağrı kesiciler (Aspirin, Ibuprofen)" }, status: "ok", note: { en: "Generally OK for whole blood donation", tr: "Tam kan bagisi için genellikle uygun" } },
 ];
 
 const CENTERS = [
@@ -181,7 +181,7 @@ export default function DonationPage() {
         <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{lang === "tr" ? "Organ Bagisi" : "Organ Donation"}</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
           {lang === "tr"
-            ? "Turkiye'de organ bagisi icin E-Nabiz uzerinden veya herhangi bir saglik kurulusunda kayit yaptirabilirsiniz. Bir donor 8 kisiinin hayatini kurtarabilir."
+            ? "Türkiye'de organ bagisi için E-Nabiz uzerinden veya herhangi bir saglik kurulusunda kayit yaptirabilirsiniz. Bir donor 8 kisiinin hayatini kurtarabilir."
             : "In Turkey, you can register for organ donation through E-Nabiz or at any healthcare facility. One donor can save up to 8 lives."}
         </p>
         <a href="https://enabiz.gov.tr" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-red-600 hover:text-red-700 font-medium">

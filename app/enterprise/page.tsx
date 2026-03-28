@@ -668,7 +668,7 @@ export default function EnterprisePage() {
                 <div className="rounded-xl border bg-card p-6">
                   <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
                     <Activity className="h-4 w-4 text-primary" />
-                    {isTr ? "Pazar Degeri Dagilimi" : "Market Cap Distribution"}
+                    {isTr ? "Pazar Degeri Dağılımi" : "Market Cap Distribution"}
                   </h3>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
@@ -922,7 +922,7 @@ export default function EnterprisePage() {
               </h3>
               <p className="mx-auto mb-6 max-w-lg text-sm text-muted-foreground">
                 {isTr
-                  ? "Gemini AI, en son botanik yayin trendlerini, sirket verilerini ve regulasyon degisikliklerini analiz ederek yatirim sinyalleri uretir."
+                  ? "Gemini AI, en son botanik yayin trendlerini, sirket verilerini ve regulasyon değişikliklerini analiz ederek yatirim sinyalleri uretir."
                   : "Gemini AI analyzes the latest botanical publication trends, company data and regulatory changes to generate investment-relevant signals."}
               </p>
               <button
@@ -1076,7 +1076,7 @@ export default function EnterprisePage() {
       {/* Disclaimer */}
       <div className="mt-10 rounded-xl border bg-muted/30 p-5 text-center text-xs text-muted-foreground">
         {isTr
-          ? "Bu sayfadaki pazar verileri ve sirket bilgileri kamuya acik kaynaklardan derlenmis tahmini degerlerdir. Yatirim tavsiyesi niteliginde degildir. Yatirim kararlarinizda profesyonel danismanlik aliniz."
+          ? "Bu sayfadaki pazar verileri ve sirket bilgileri kamuya acik kaynaklardan derlenmis tahmini degerlerdir. Yatirim tavsiyesi niteliginde degildir. Yatirim kararlarinizda profesyonel danışmanlık aliniz."
           : "Market data and company information on this page are estimates compiled from public sources. This does not constitute investment advice. Seek professional guidance for investment decisions."}
       </div>
     </div>

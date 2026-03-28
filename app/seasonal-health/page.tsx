@@ -67,7 +67,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "Oct - Mar",
         grade: "A",
         descriptionEN: "Essential for bone health, immune function, and mood regulation during reduced sunlight exposure.",
-        descriptionTR: "Azalan gunes isigi doneminde kemik sagligi, bagisiklik fonksiyonu ve ruh hali duzenlenmesi icin gereklidir.",
+        descriptionTR: "Azalan gunes isigi doneminde kemik sağlığı, bağışıklik fonksiyonu ve ruh hali duzenlenmesi için gereklidir.",
       },
       {
         nameEN: "Vitamin C",
@@ -76,7 +76,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "Throughout winter",
         grade: "B",
         descriptionEN: "Supports immune defense and may reduce cold duration.",
-        descriptionTR: "Bagisiklik savunmasini destekler ve soguk alginligi suresini kisaltabilir.",
+        descriptionTR: "Bağışıklik savunmasini destekler ve soguk alginligi suresini kisaltabilir.",
       },
       {
         nameEN: "Zinc",
@@ -85,7 +85,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "During illness or 2-3 months preventive",
         grade: "A",
         descriptionEN: "Critical for immune cell function. Most effective when taken at onset of cold symptoms.",
-        descriptionTR: "Bagisiklik hucre fonksiyonu icin kritiktir. Soguk alginligi belirtilerinin baslangicindan alindiginda en etkilidir.",
+        descriptionTR: "Bağışıklik hucre fonksiyonu için kritiktir. Soguk alginligi belirtilerinin başlangıçindan alindiginda en etkilidir.",
       },
       {
         nameEN: "Elderberry",
@@ -99,18 +99,18 @@ const SEASON_DATA: Record<Season, SeasonData> = {
     ],
     lifestyle: [
       { en: "Use a light therapy lamp (10,000 lux) for 20-30 min each morning", tr: "Her sabah 20-30 dk isik terapisi lambasi kullanin (10.000 lux)" },
-      { en: "Maintain indoor humidity between 40-60% to protect airways", tr: "Hava yollarini korumak icin ic ortam nemini %40-60 arasinda tutun" },
-      { en: "Keep regular sleep schedule despite shorter days", tr: "Kisa gunlere ragmen duzenli uyku programi surdurün" },
+      { en: "Maintain indoor humidity between 40-60% to protect airways", tr: "Hava yollarini korumak için ic ortam nemini %40-60 arasinda tutun" },
+      { en: "Keep regular sleep schedule despite shorter days", tr: "Kisa gunlere ragmen düzenli uyku programı sürdürün" },
       { en: "Stay active with indoor exercise at least 3x per week", tr: "Haftada en az 3 kez ic mekan egzersizi ile aktif kalin" },
-      { en: "Wash hands frequently and ventilate rooms regularly", tr: "Elleri sik yikayin ve odalari duzenli havalandirin" },
+      { en: "Wash hands frequently and ventilate rooms regularly", tr: "Elleri sik yikayin ve odalari düzenli havalandirin" },
     ],
     checklist: [
       { en: "Get annual flu vaccination", tr: "Yıllık grip asisi olun" },
       { en: "Check Vitamin D levels", tr: "D vitamini seviyelerinizi kontrol ettirin" },
       { en: "Stock up on herbal teas (ginger, echinacea)", tr: "Bitki caylari stoklayın (zencefil, ekinezya)" },
-      { en: "Review winter medication storage (cold-sensitive meds)", tr: "Kis ilac saklamasini gozden gecirin (soguga duyarli ilaclar)" },
+      { en: "Review winter medication storage (cold-sensitive meds)", tr: "Kis ilac saklamasini gözden geçirin (soguga duyarlı ilaclar)" },
       { en: "Set up humidifier in bedroom", tr: "Yatak odasina nemlendirici kurun" },
-      { en: "Prepare warm layered clothing for outdoor activity", tr: "Dis mekan aktivitesi icin katmanli giysiler hazirlayin" },
+      { en: "Prepare warm layered clothing for outdoor activity", tr: "Dis mekan aktivitesi için katmanli giysiler hazirlayin" },
     ],
   },
   spring: {
@@ -126,7 +126,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "Start 2 weeks before allergy season",
         grade: "B",
         descriptionEN: "Natural antihistamine that stabilizes mast cells. Most effective as prevention.",
-        descriptionTR: "Mast hucrelerini stabilize eden dogal antihistaminiktir. Onleme olarak en etkilidir.",
+        descriptionTR: "Mast hücrelerini stabilize eden doğal antihistaminiktir. Onleme olarak en etkilidir.",
       },
       {
         nameEN: "Nettle Leaf",
@@ -135,7 +135,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "Throughout allergy season",
         grade: "B",
         descriptionEN: "Traditional allergy remedy with anti-inflammatory properties.",
-        descriptionTR: "Anti-inflamatuar ozelliklere sahip geleneksel alerji ilaci.",
+        descriptionTR: "Anti-inflamatuar özelliklere sahip geleneksel alerji ilaci.",
       },
       {
         nameEN: "Probiotics",
@@ -144,7 +144,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "Ongoing, minimum 8 weeks",
         grade: "B",
         descriptionEN: "Specific strains (L. rhamnosus, B. lactis) may modulate allergic immune responses.",
-        descriptionTR: "Belirli suslar (L. rhamnosus, B. lactis) alerjik bagisiklik yanitlarini duzenleyebilir.",
+        descriptionTR: "Belirli suslar (L. rhamnosus, B. lactis) alerjik bağışıklik yanitlarini duzenleyebilir.",
       },
       {
         nameEN: "Vitamin C",
@@ -153,22 +153,22 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "During allergy season",
         grade: "B",
         descriptionEN: "Acts as a natural antihistamine and supports immune balance.",
-        descriptionTR: "Dogal antihistaminik gorevi gorur ve bagisiklik dengesini destekler.",
+        descriptionTR: "Doğal antihistaminik görevi gorur ve bağışıklik dengesini destekler.",
       },
     ],
     lifestyle: [
-      { en: "Monitor daily pollen counts and plan outdoor activities accordingly", tr: "Günlük polen sayimlarini izleyin ve dis mekan aktivitelerini buna gore planlayin" },
+      { en: "Monitor daily pollen counts and plan outdoor activities accordingly", tr: "Günlük polen sayimlarini izleyin ve dis mekan aktivitelerini buna gore planlayın" },
       { en: "Shower and change clothes after being outdoors", tr: "Dis mekandan dondukten sonra dus alin ve elbise degistirin" },
       { en: "Use HEPA air purifiers indoors during high pollen days", tr: "Yüksek polenli gunlerde ic mekanda HEPA hava temizleyici kullanin" },
-      { en: "Start spring exercise routine gradually", tr: "Bahar egzersiz rutinine yavascak baslayin" },
+      { en: "Start spring exercise routine gradually", tr: "Bahar egzersiz rutinine yavascak başlayin" },
       { en: "Clean and air out winter bedding", tr: "Kis yatak takimlarini temizleyin ve havalandirin" },
     ],
     checklist: [
       { en: "Check allergy medication supply", tr: "Alerji ilacı stogunuzu kontrol edin" },
       { en: "Clean air filters and vents at home", tr: "Evdeki hava filtrelerini ve menfezleri temizleyin" },
-      { en: "Start quercetin 2 weeks before peak season", tr: "Doruk mevsimden 2 hafta once kuersetine baslayin" },
+      { en: "Start quercetin 2 weeks before peak season", tr: "Doruk mevsimden 2 hafta once kuersetine başlayin" },
       { en: "Schedule allergy testing if needed", tr: "Gerekirse alerji testi yaptirin" },
-      { en: "Review spring exercise and nutrition plan", tr: "Bahar egzersiz ve beslenme planini gozden gecirin" },
+      { en: "Review spring exercise and nutrition plan", tr: "Bahar egzersiz ve beslenme planını gözden geçirin" },
     ],
   },
   summer: {
@@ -184,7 +184,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "During heat/exercise",
         grade: "A",
         descriptionEN: "Essential for preventing dehydration and heat-related illness during summer activities.",
-        descriptionTR: "Yaz aktiviteleri sirasinda dehidratasyon ve isiyla ilgili hastalıklari onlemek icin gereklidir.",
+        descriptionTR: "Yaz aktiviteleri sirasinda dehidratasyon ve isiyla ilgili hastalıklari önlemek için gereklidir.",
       },
       {
         nameEN: "Vitamin C",
@@ -202,7 +202,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "As needed for sunburn / daily for gut",
         grade: "C",
         descriptionEN: "Topical use soothes sunburn. Oral gel may support digestive health.",
-        descriptionTR: "Topikal kullanimda gunes yanigini yatistirir. Oral jel sindirim sagligini destekleyebilir.",
+        descriptionTR: "Topikal kullanimda gunes yanigini yatistirir. Oral jel sindirim sağlığıni destekleyebilir.",
       },
       {
         nameEN: "Probiotics",
@@ -211,14 +211,14 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "Especially when traveling",
         grade: "B",
         descriptionEN: "Helps prevent traveler's diarrhea and supports gut health in heat.",
-        descriptionTR: "Gezgin ishali onlemeye yardimci olur ve sicakta bagirsak sagligini destekler.",
+        descriptionTR: "Gezgin ishali onlemeye yardımcı olur ve sicakta bağırsak sağlığıni destekler.",
       },
     ],
     lifestyle: [
       { en: "Drink at least 2.5-3L water daily, more during exercise", tr: "Günlük en az 2.5-3L su icin, egzersiz sirasinda daha fazla" },
       { en: "Apply SPF 30+ sunscreen and reapply every 2 hours", tr: "SPF 30+ gunes kremi surün ve her 2 saatte bir yenileyin" },
       { en: "Avoid strenuous outdoor activity during 11am-4pm", tr: "Saat 11-16 arasi yogun dis mekan aktivitesinden kacinin" },
-      { en: "Eat water-rich fruits and vegetables (watermelon, cucumber)", tr: "Su bakimindan zengin meyve ve sebzeler tuketin (karpuz, salatalik)" },
+      { en: "Eat water-rich fruits and vegetables (watermelon, cucumber)", tr: "Su bakımından zengin meyve ve sebzeler tuketin (karpuz, salatalik)" },
       { en: "Check medication storage — some need refrigeration in heat", tr: "İlaç saklamasini kontrol edin — bazilari sicakta buzdolabi gerektirir" },
     ],
     checklist: [
@@ -226,8 +226,8 @@ const SEASON_DATA: Record<Season, SeasonData> = {
       { en: "Check sunscreen expiry dates", tr: "Gunes kremi son kullanma tarihlerini kontrol edin" },
       { en: "Set hydration reminders on phone", tr: "Telefona su icme hatirlaticilari kurun" },
       { en: "Prepare insect repellent", tr: "Bocek kovucu hazirlayin" },
-      { en: "Review heat-sensitive medication storage", tr: "Isiya duyarli ilac saklamasini gozden gecirin" },
-      { en: "Plan outdoor exercise for early morning or evening", tr: "Dis mekan egzersizlerini sabah erkenden veya aksama planlayin" },
+      { en: "Review heat-sensitive medication storage", tr: "Isiya duyarlı ilac saklamasini gözden geçirin" },
+      { en: "Plan outdoor exercise for early morning or evening", tr: "Dis mekan egzersizlerini sabah erkenden veya aksama planlayın" },
     ],
   },
   autumn: {
@@ -243,7 +243,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "Start in September/October",
         grade: "A",
         descriptionEN: "Begin supplementation as daylight decreases to maintain optimal levels through winter.",
-        descriptionTR: "Kis boyunca optimal seviyeleri korumak icin gun isigi azaldikca takviyeye baslayin.",
+        descriptionTR: "Kis boyunca optimal seviyeleri korumak için gun isigi azaldikca takviyeye başlayin.",
       },
       {
         nameEN: "Echinacea",
@@ -261,7 +261,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "Through flu season",
         grade: "A",
         descriptionEN: "Supports immune function as cold and flu season approaches.",
-        descriptionTR: "Soguk alginligi ve grip mevsimi yaklasirken bagisiklik fonksiyonunu destekler.",
+        descriptionTR: "Soguk alginligi ve grip mevsimi yaklasirken bağışıklik fonksiyonunu destekler.",
       },
       {
         nameEN: "Probiotics",
@@ -270,23 +270,23 @@ const SEASON_DATA: Record<Season, SeasonData> = {
         duration: "Ongoing",
         grade: "B",
         descriptionEN: "Strengthens gut-immune axis before winter illness season.",
-        descriptionTR: "Kis hastalık mevsiminden once bagirsak-bagisiklik ekseni güçlendirir.",
+        descriptionTR: "Kis hastalık mevsiminden once bağırsak-bağışıklik ekseni güçlendirir.",
       },
     ],
     lifestyle: [
-      { en: "Gradually adjust to earlier darkness — maintain light exposure in mornings", tr: "Erken karanliga yavascak uyum saglayin — sabahlari isik maruziyetini surdurün" },
-      { en: "Begin immune-boosting nutrition (garlic, ginger, turmeric in cooking)", tr: "Bagisiklik guclendiren beslenmeye baslayin (yemeklerde sarimsak, zencefil, zerdecal)" },
+      { en: "Gradually adjust to earlier darkness — maintain light exposure in mornings", tr: "Erken karanliga yavascak uyum saglayin — sabahlari isik maruziyetini sürdürün" },
+      { en: "Begin immune-boosting nutrition (garlic, ginger, turmeric in cooking)", tr: "Bağışıklik guclendiren beslenmeye başlayin (yemeklerde sarimsak, zencefil, zerdecal)" },
       { en: "Get flu vaccination in October-November", tr: "Ekim-Kasim'da grip asisi olun" },
-      { en: "Start indoor exercise alternatives for rainy days", tr: "Yagmurlu gunler icin ic mekan egzersiz alternatifleri baslayin" },
-      { en: "Review and update medication supplies for winter", tr: "Kis icin ilac stoklarini gozden gecirin ve guncelleyin" },
+      { en: "Start indoor exercise alternatives for rainy days", tr: "Yagmurlu gunler için ic mekan egzersiz alternatifleri başlayin" },
+      { en: "Review and update medication supplies for winter", tr: "Kis için ilac stoklarini gözden geçirin ve guncelleyin" },
     ],
     checklist: [
       { en: "Schedule flu vaccination", tr: "Grip asisi randevusu alin" },
-      { en: "Start Vitamin D supplementation", tr: "D vitamini takviyesine baslayin" },
-      { en: "Stock up on immune support supplements", tr: "Bagisiklik destek takviyeleri stoklayın" },
-      { en: "Prepare cold and flu home remedies", tr: "Soguk alginligi ve grip icin ev ilaclari hazirlayin" },
+      { en: "Start Vitamin D supplementation", tr: "D vitamini takviyesine başlayin" },
+      { en: "Stock up on immune support supplements", tr: "Bağışıklik destek takviyeleri stoklayın" },
+      { en: "Prepare cold and flu home remedies", tr: "Soguk alginligi ve grip için ev ilaçları hazirlayin" },
       { en: "Check heating system and indoor air quality", tr: "Isitma sistemini ve ic hava kalitesini kontrol edin" },
-      { en: "Review winter health insurance coverage", tr: "Kis saglik sigortasi kapsamini gozden gecirin" },
+      { en: "Review winter health insurance coverage", tr: "Kis saglik sigortasi kapsamini gözden geçirin" },
     ],
   },
 };
@@ -408,7 +408,7 @@ export default function SeasonalHealthPage() {
           <div>
             <p className="font-medium">{tx("seasonal.profileWarning", lang)}</p>
             <p className="mt-1 text-muted-foreground">
-              {lang === "tr" ? "Aktif ilaclariniz:" : "Your active medications:"}{" "}
+              {lang === "tr" ? "Aktif ilaçlarıniz:" : "Your active medications:"}{" "}
               {userMedications.join(", ")}
             </p>
           </div>
@@ -508,7 +508,7 @@ export default function SeasonalHealthPage() {
             <h3 className="text-sm font-semibold">{tx("seasonal.bossFight", lang)}</h3>
             <p className="text-xs text-muted-foreground">
               {lang === "tr"
-                ? "Mevsimsel saglik gorevleri icin Boss Fight protokollerine goz atin!"
+                ? "Mevsimsel saglik gorevleri için Boss Fight protokollerine goz atin!"
                 : "Check out Boss Fight protocols for seasonal health challenges!"}
             </p>
           </div>

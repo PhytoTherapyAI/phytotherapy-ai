@@ -25,7 +25,7 @@ export default function PharmaRWEPage() {
     { en: "GI disturbance", tr: "GI bozuklugu", pct: 23, severity: "mild" },
     { en: "Dizziness", tr: "Bas donmesi", pct: 12, severity: "mild" },
     { en: "Fatigue", tr: "Yorgunluk", pct: 8, severity: "mild" },
-    { en: "Muscle pain", tr: "Kas agrisi", pct: 5, severity: "moderate" },
+    { en: "Muscle pain", tr: "Kas ağrısi", pct: 5, severity: "moderate" },
     { en: "Hepatic concern", tr: "Karaciger endisesi", pct: 2, severity: "serious" },
   ];
 
@@ -37,7 +37,7 @@ export default function PharmaRWEPage() {
         <div className="flex items-center gap-3 mb-6">
           <FlaskConical className="w-8 h-8 text-teal-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Gercek Dunya Kaniti" : "Real World Evidence"}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Gerçek Dünya Kaniti" : "Real World Evidence"}</h1>
             <p className="text-sm text-gray-500">{isTr ? "Anonim hasta verisinden ilac kullanim analizleri" : "Drug usage analytics from anonymized patient data"}</p>
           </div>
           <Badge className="bg-green-100 text-green-700 ml-auto"><Shield className="w-3 h-3 mr-1" />{isTr ? "Anonim & KVKK Uyumlu" : "Anonymous & KVKK Compliant"}</Badge>

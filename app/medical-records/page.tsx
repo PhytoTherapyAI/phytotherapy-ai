@@ -66,7 +66,7 @@ export default function MedicalRecordsPage() {
           </div>
           <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">
             {lang === "tr"
-              ? "Tum tibbi belgeleriniz tek bir yerde, güvenli ve duzenli. QR kodla doktorunuzla aninda paylasin."
+              ? "Tum tibbi belgeleriniz tek bir yerde, güvenli ve düzenli. QR kodla doktorunuzla aninda paylasin."
               : "All your medical documents in one place, secure and organized. Share instantly with your doctor via QR code."}
           </p>
         </div>

@@ -36,7 +36,7 @@ const CONCERNS_EN = [
   "Menstrual irregularity", "Fertility concerns",
 ];
 const CONCERNS_TR = [
-  "Düşük cinsel istek", "Ereksiyon bozuklugu", "Cinsel iliski sirasinda agri",
+  "Düşük cinsel istek", "Ereksiyon bozuklugu", "Cinsel iliski sirasinda ağrı",
   "Gecikmiş orgazm", "Erken bosalma", "Vajinal kuruluk",
   "İlaç yan etkileri", "Cinsel yolla bulasan hastalık taramasi", "Kontrasepsiyon bilgisi",
   "Adet duzensizligi", "Dogurganlik endisesi",
@@ -106,7 +106,7 @@ export default function SexualHealthPage() {
         <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-8 text-center dark:border-slate-800 dark:bg-slate-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-slate-400" />
           <p className="text-lg font-medium text-slate-700 dark:text-slate-300">
-            {lang === "tr" ? "Bu araci kullanmak icin giris yapin." : "Please sign in to use this tool."}
+            {lang === "tr" ? "Bu araci kullanmak için giris yapin." : "Please sign in to use this tool."}
           </p>
         </div>
       </div>
@@ -281,7 +281,7 @@ export default function SexualHealthPage() {
             <div className="rounded-xl border border-slate-300 bg-slate-50 p-4 dark:bg-slate-950/20">
               <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
                 {lang === "tr"
-                  ? "Endiseleriniz icin bir saglik profesyoneliyle gorusmenizi oneririz."
+                  ? "Endiseleriniz için bir saglik profesyoneliyle gorusmenizi oneririz."
                   : "We recommend discussing your concerns with a healthcare professional."}
               </p>
             </div>

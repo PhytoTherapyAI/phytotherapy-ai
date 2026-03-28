@@ -21,7 +21,7 @@ const SECTIONS: GuideSection[] = [
       { title: { en: "Step 1: Register at Immigration Office", tr: "Adim 1: Goc Idaresine Kayit" }, desc: { en: "Get your temporary protection ID or residence permit from the Provincial Directorate of Migration Management.", tr: "Il Goc Idaresi Mudurlugu'nden gecici koruma kimliginizi veya ikamet izninizi aliniz." } },
       { title: { en: "Step 2: Register at a Family Health Center (ASM)", tr: "Adim 2: Aile Sağlık Merkezi'ne (ASM) Kayit" }, desc: { en: "Go to the nearest ASM with your ID to register with a family doctor. This is free.", tr: "En yakin ASM'ye kimliginizle gidin, aile hekimine kayit yaptirin. Bu ucretsizdir." } },
       { title: { en: "Step 3: Get Your SGK Coverage", tr: "Adim 3: SGK Kapsamina Girin" }, desc: { en: "Temporary protection holders receive free healthcare through SGK. Registration at immigration office activates this.", tr: "Gecici koruma sahipleri SGK uzerinden ucretsiz saglik hizmeti alir. Goc idaresindeki kayit bunu aktive eder." } },
-      { title: { en: "Emergency: No Registration Needed", tr: "Acil: Kayit Gerekli Degil" }, desc: { en: "Emergency rooms (Acil Servis) cannot refuse anyone regardless of legal status. Call 112 for emergencies.", tr: "Acil servisler yasal durumdan bagimsiz olarak kimseyi geri ceviremez. Aciller icin 112'yi arayin." } },
+      { title: { en: "Emergency: No Registration Needed", tr: "Acil: Kayit Gerekli Degil" }, desc: { en: "Emergency rooms (Acil Servis) cannot refuse anyone regardless of legal status. Call 112 for emergencies.", tr: "Acil servisler yasal durumdan bagimsiz olarak kimseyi geri ceviremez. Aciller için 112'yi arayın." } },
     ],
   },
   {
@@ -29,7 +29,7 @@ const SECTIONS: GuideSection[] = [
     title: { en: "Vaccination Catch-Up", tr: "Asi Tamamlama" },
     color: "text-blue-500",
     content: [
-      { title: { en: "Children's Vaccines", tr: "Cocuk Asilari" }, desc: { en: "Free childhood vaccination program at ASMs. Bring any previous vaccination records. Catch-up schedules available for missed vaccines.", tr: "ASM'lerde ucretsiz cocukluk cagi asi programi. Onceki asi kayitlarinizi getirin. Kacirilmis asilar icin tamamlama programlari mevcuttur." } },
+      { title: { en: "Children's Vaccines", tr: "Cocuk Asilari" }, desc: { en: "Free childhood vaccination program at ASMs. Bring any previous vaccination records. Catch-up schedules available for missed vaccines.", tr: "ASM'lerde ucretsiz cocukluk cagi asi programı. Onceki asi kayitlarinizi getirin. Kacirilmis asilar için tamamlama programlari mevcuttur." } },
       { title: { en: "Adult Vaccinations", tr: "Yetiskin Asilari" }, desc: { en: "Hepatitis B, tetanus, and seasonal flu vaccines available free. COVID-19 vaccines at ASMs.", tr: "Hepatit B, tetanoz ve mevsimsel grip asilari ucretsiz mevcuttur. COVID-19 asilari ASM'lerde." } },
       { title: { en: "Pregnancy Vaccinations", tr: "Gebelik Asilari" }, desc: { en: "Td vaccine (tetanus-diphtheria) required during pregnancy. Free at ASMs.", tr: "Gebelikte Td asisi (tetanoz-difteri) gereklidir. ASM'lerde ucretsizdir." } },
     ],
@@ -39,8 +39,8 @@ const SECTIONS: GuideSection[] = [
     title: { en: "Medication Equivalent Finder", tr: "İlaç Esdeger Bulucu" },
     color: "text-purple-500",
     content: [
-      { title: { en: "Finding Your Medication", tr: "İlaçınizi Bulma" }, desc: { en: "Use our Drug Info tool to search for your medication's Turkish equivalent. Enter the generic/active ingredient name (not brand name) for best results.", tr: "İlaçınizin Turkiye'deki essdegerini bulmak icin İlaç Bilgi aracimizi kullaniniz. En iyi sonuçlar icin etken madde adini girin (marka adi degil)." } },
-      { title: { en: "Prescription Requirements", tr: "Recete Gereksinimleri" }, desc: { en: "Most medications require a prescription from a Turkish doctor. Some OTC medications may differ from your home country.", tr: "Cogu ilac Turk doktor recetesi gerektirir. Bazi recetesiz ilaclar anavataninizdakinden farkli olabilir." } },
+      { title: { en: "Finding Your Medication", tr: "İlaçınizi Bulma" }, desc: { en: "Use our Drug Info tool to search for your medication's Turkish equivalent. Enter the generic/active ingredient name (not brand name) for best results.", tr: "İlaçınizin Türkiye'deki essdegerini bulmak için İlaç Bilgi aracimizi kullaniniz. En iyi sonuçlar için etken madde adini girin (marka adi degil)." } },
+      { title: { en: "Prescription Requirements", tr: "Recete Gereksinimleri" }, desc: { en: "Most medications require a prescription from a Turkish doctor. Some OTC medications may differ from your home country.", tr: "Çoğu ilac Turk doktor recetesi gerektirir. Bazi recetesiz ilaclar anavataninizdakinden farklı olabilir." } },
       { title: { en: "SGK Drug Coverage", tr: "SGK İlaç Karşılamasi" }, desc: { en: "Many medications are covered by SGK with minimal copay. Ask your pharmacy about SGK coverage.", tr: "Bircok ilac SGK tarafından minimal katki payiyla karşılanir. Eczanenize SGK kapsamini sorun." } },
     ],
   },
@@ -51,8 +51,8 @@ const SECTIONS: GuideSection[] = [
     content: [
       { title: { en: "112 - Emergency (Ambulance/Fire/Police)", tr: "112 - Acil (Ambulans/Itfaiye/Polis)" }, desc: { en: "Available 24/7. Multilingual operators available in some cities.", tr: "7/24 kullanilabilir. Bazi sehirlerde cok dilli operatorler mevcuttur." } },
       { title: { en: "182 - SABIM (Patient Rights)", tr: "182 - SABIM (Hasta Haklari)" }, desc: { en: "Report healthcare access issues, file complaints about denied service.", tr: "Sağlık hizmeti erisim sorunlarini bildirin, reddedilen hizmet hakkinda sikayet dosyalayin." } },
-      { title: { en: "183 - Social Support Line", tr: "183 - Sosyal Destek Hatti" }, desc: { en: "Social services information, disability services, family support.", tr: "Sosyal hizmetler bilgisi, engelli hizmetleri, aile destegi." } },
-      { title: { en: "157 - Human Trafficking Hotline", tr: "157 - Insan Ticareti Yardim Hatti" }, desc: { en: "Confidential reporting and assistance for trafficking victims.", tr: "Insan ticareti magdurlari icin gizli bildirim ve yardim." } },
+      { title: { en: "183 - Social Support Line", tr: "183 - Sosyal Destek Hattı" }, desc: { en: "Social services information, disability services, family support.", tr: "Sosyal hizmetler bilgisi, engelli hizmetleri, aile desteği." } },
+      { title: { en: "157 - Human Trafficking Hotline", tr: "157 - Insan Ticareti Yardim Hattı" }, desc: { en: "Confidential reporting and assistance for trafficking victims.", tr: "Insan ticareti magdurlari için gizli bildirim ve yardim." } },
     ],
   },
   {
@@ -60,8 +60,8 @@ const SECTIONS: GuideSection[] = [
     title: { en: "Useful Resources", tr: "Faydali Kaynaklar" },
     color: "text-amber-500",
     content: [
-      { title: { en: "UNHCR Turkey", tr: "UNHCR Turkiye" }, desc: { en: "UN Refugee Agency - legal support, registration assistance, healthcare guidance.", tr: "BM Multeci Ajansi - hukuki destek, kayit yardimi, saglik hizmeti rehberligi." } },
-      { title: { en: "IOM Turkey", tr: "IOM Turkiye" }, desc: { en: "International Organization for Migration - health assessments, travel health.", tr: "Uluslararasi Goc Orgutu - saglik degerlendirmeleri, seyahat sagligi." } },
+      { title: { en: "UNHCR Turkey", tr: "UNHCR Türkiye" }, desc: { en: "UN Refugee Agency - legal support, registration assistance, healthcare guidance.", tr: "BM Multeci Ajansi - hukuki destek, kayit yardimi, saglik hizmeti rehberligi." } },
+      { title: { en: "IOM Turkey", tr: "IOM Türkiye" }, desc: { en: "International Organization for Migration - health assessments, travel health.", tr: "Uluslararasi Goc Orgutu - saglik degerlendirmeleri, seyahat sağlığı." } },
       { title: { en: "Community Health Centers (SASAM)", tr: "Toplum Sağlık Merkezleri (SASAM)" }, desc: { en: "Migrant health centers in major cities with interpreters.", tr: "Buyuk sehirlerde tercumanli gocmen saglik merkezleri." } },
     ],
   },
@@ -84,7 +84,7 @@ export default function ImmigrantHealthPage() {
         <Globe className="w-5 h-5 text-teal-500 mt-0.5 flex-shrink-0" />
         <p className="text-sm text-teal-700 dark:text-teal-400">
           {lang === "tr"
-            ? "Bu rehber Turkce ve Ingilizce mevcuttur. Dil degistirmek icin sag ust kosedeki dil dugmesini kullaniniz."
+            ? "Bu rehber Turkce ve Ingilizce mevcuttur. Dil degistirmek için sag ust kosedeki dil dugmesini kullaniniz."
             : "This guide is available in Turkish and English. Use the language toggle in the top right to switch."}
           <br />
           <span className="text-xs opacity-70">Arabic (planned) | Farsi (planned) | Dari (planned) | French (planned)</span>
@@ -121,7 +121,7 @@ export default function ImmigrantHealthPage() {
         <p className="font-bold text-red-800 dark:text-red-300 text-lg">112</p>
         <p className="text-sm text-red-700 dark:text-red-400">
           {lang === "tr"
-            ? "Acil durumlarda 112'yi arayin. Kayit veya kimlik gerekmez."
+            ? "Acil durumlarda 112'yi arayın. Kayit veya kimlik gerekmez."
             : "Call 112 for emergencies. No registration or ID required."}
         </p>
       </div>

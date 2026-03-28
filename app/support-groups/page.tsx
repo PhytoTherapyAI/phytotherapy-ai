@@ -10,7 +10,7 @@ const GROUPS = [
     nameEn: "Diabetes Support",
     nameTr: "Diyabet Destegi",
     descEn: "Share experiences managing blood sugar, medication, and lifestyle changes",
-    descTr: "Kan sekeri yönetimi, ilac ve yasam tarzi degisiklikleri deneyimlerini paylasin",
+    descTr: "Kan sekeri yönetimi, ilac ve yasam tarzi değişiklikleri deneyimlerini paylasin",
     color: "text-red-600 dark:text-red-400",
     bg: "bg-red-50 dark:bg-red-900/20",
     members: "2.4k+",
@@ -28,9 +28,9 @@ const GROUPS = [
   {
     icon: <Leaf className="w-6 h-6" />,
     nameEn: "IBS & Gut Health",
-    nameTr: "IBS & Bagirsak Sagligi",
+    nameTr: "IBS & Bağırsak Sagligi",
     descEn: "Navigate IBS triggers, FODMAP diets, and digestive wellness together",
-    descTr: "IBS tetikleyicileri, FODMAP diyetleri ve sindirim sagligi birlikte yonetin",
+    descTr: "IBS tetikleyicileri, FODMAP diyetleri ve sindirim sağlığı birlikte yonetin",
     color: "text-green-600 dark:text-green-400",
     bg: "bg-green-50 dark:bg-green-900/20",
     members: "1.2k+",
@@ -40,7 +40,7 @@ const GROUPS = [
     nameEn: "Mental Health Circle",
     nameTr: "Mental Sağlık Cemberi",
     descEn: "Anxiety, depression, stress — a safe space to share and support",
-    descTr: "Anksiyete, depresyon, stres — paylaşım ve destek icin güvenli alan",
+    descTr: "Anksiyete, depresyon, stres — paylaşım ve destek için güvenli alan",
     color: "text-teal-600 dark:text-teal-400",
     bg: "bg-teal-50 dark:bg-teal-900/20",
     members: "3.1k+",
@@ -56,7 +56,7 @@ const FEATURES_PREVIEW = [
   {
     icon: <Shield className="w-5 h-5" />,
     en: "Verified members only for privacy and safety",
-    tr: "Gizlilik ve güvenlik icin sadece dogrulanmis uyeler",
+    tr: "Gizlilik ve güvenlik için sadece doğrulanmis uyeler",
   },
   {
     icon: <Sparkles className="w-5 h-5" />,

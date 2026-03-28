@@ -145,7 +145,7 @@ IMPORTANT:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz basarisiz oldu, tekrar deneyin" : "Analysis failed, please try again" },
+        { error: lang === "tr" ? "Analiz başarısiz oldu, tekrar deneyin" : "Analysis failed, please try again" },
         { status: 500 }
       );
     }

@@ -147,7 +147,7 @@ export default function SkinHealthPage() {
         <div className="rounded-xl border-2 border-dashed border-pink-200 bg-pink-50/50 p-12 text-center dark:border-pink-800 dark:bg-pink-950/20">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-pink-400" />
           <p className="text-sm text-muted-foreground">
-            {lang === "tr" ? "Cilt analizi icin giris yapin" : "Sign in to analyze your skin health"}
+            {lang === "tr" ? "Cilt analizi için giris yapin" : "Sign in to analyze your skin health"}
           </p>
         </div>
       </div>

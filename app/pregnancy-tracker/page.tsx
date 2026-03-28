@@ -40,7 +40,7 @@ const PREGNANCY_SYMPTOMS_EN = [
   "Frequent urination", "Cramping", "Spotting",
 ];
 const PREGNANCY_SYMPTOMS_TR = [
-  "Bulanti", "Yorgunluk", "Bel agrisi", "Sisman", "Bas agrisi",
+  "Bulanti", "Yorgunluk", "Bel ağrısi", "Sisman", "Bas ağrısi",
   "Mide yanmasi", "Kabizlik", "Uykusuzluk", "Ruh hali degisikligi",
   "Sik idrara cikma", "Kramp", "Lekelenme",
 ];
@@ -109,7 +109,7 @@ export default function PregnancyTrackerPage() {
         <div className="rounded-xl border border-pink-200 bg-pink-50/50 p-8 text-center dark:border-pink-800 dark:bg-pink-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-pink-400" />
           <p className="text-lg font-medium text-pink-700 dark:text-pink-300">
-            {lang === "tr" ? "Bu araci kullanmak icin giris yapin." : "Please sign in to use this tool."}
+            {lang === "tr" ? "Bu araci kullanmak için giris yapin." : "Please sign in to use this tool."}
           </p>
         </div>
       </div>
@@ -139,7 +139,7 @@ export default function PregnancyTrackerPage() {
             <div>
               <p className="font-bold text-red-700 dark:text-red-300">{result.emergencyMessage}</p>
               <p className="mt-2 text-lg font-bold text-red-600">
-                {lang === "tr" ? "112'yi HEMEN arayin!" : "Call 911/112 IMMEDIATELY!"}
+                {lang === "tr" ? "112'yi HEMEN arayın!" : "Call 911/112 IMMEDIATELY!"}
               </p>
             </div>
           </div>

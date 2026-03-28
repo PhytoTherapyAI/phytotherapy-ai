@@ -230,7 +230,7 @@ export default function SportsPerformancePage() {
       {!isAuthenticated && (
         <div className="mb-6 flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50/50 p-3 text-xs text-indigo-800 dark:border-indigo-800 dark:bg-indigo-950/20 dark:text-indigo-300">
           <LogIn className="h-3.5 w-3.5 shrink-0" />
-          {lang === "tr" ? "İlaç etkilesim kontrolu icin giris yapin" : "Sign in for medication interaction checking"}
+          {lang === "tr" ? "İlaç etkilesim kontrolü için giris yapin" : "Sign in for medication interaction checking"}
         </div>
       )}
 

@@ -37,7 +37,7 @@ const CHALLENGES: Challenge[] = [
     ],
     rulesTr: [
       "Günlük en az 8 bardak (2 litre) su icin",
-      "Gune bir bardak su ile baslayin",
+      "Gune bir bardak su ile başlayin",
       "Sekerli icecekler hedefe dahil degildir",
       "Bitki caylari yarim bardak sayilir",
     ],
@@ -59,9 +59,9 @@ const CHALLENGES: Challenge[] = [
       "Replace sweets with nuts or fresh fruit",
     ],
     rulesTr: [
-      "Yiyecek ve iceceklerde eklenmis seker yok",
-      "Bütün meyvelerden gelen dogal seker serbesttir",
-      "Gizli sekerler icin etiketleri okuyun",
+      "Yiyecek ve iceceklerde eklenmis şeker yok",
+      "Bütün meyvelerden gelen doğal şeker serbesttir",
+      "Gizli sekerler için etiketleri okuyun",
       "Tatlilari findik veya taze meyveyle degistirin",
     ],
     color: "text-green-600 dark:text-green-400",
@@ -85,7 +85,7 @@ const CHALLENGES: Challenge[] = [
       "Adimlari telefon veya fitness tracker ile takip edin",
       "Yuruyus, dogada yuruyus ve kosma hepsi sayilir",
       "Gerekirse gun icine yayin",
-      "10k cok fazlaysa 5.000 ile baslayin ve artirin",
+      "10k cok fazlaysa 5.000 ile başlayin ve artirin",
     ],
     color: "text-orange-600 dark:text-orange-400",
     bgColor: "bg-orange-50 dark:bg-orange-900/20",
@@ -258,7 +258,7 @@ export default function HealthChallengesPage() {
                         onClick={() => startChallenge(c.id, c.days)}
                         className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-xl"
                       >
-                        {lang === "tr" ? "Challenge'i Baslat" : "Start Challenge"}
+                        {lang === "tr" ? "Challenge'i Başlat" : "Start Challenge"}
                       </Button>
                     ) : (
                       <>

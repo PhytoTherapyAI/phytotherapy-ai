@@ -12,7 +12,7 @@ const PHARMACY_LINKS = [
     nameTr: "Turk Eczacilar Birligi — Nobetci Eczaneler",
     url: "https://www.teb.org.tr",
     descEn: "Official on-duty pharmacy finder for all cities in Turkey",
-    descTr: "Turkiye genelinde nobetci eczane bulucu",
+    descTr: "Türkiye genelinde nobetci eczane bulucu",
     icon: <MapPin className="w-5 h-5" />,
   },
   {
@@ -28,7 +28,7 @@ const PHARMACY_LINKS = [
     nameTr: "Google Maps — Yakinlardaki Eczaneler",
     url: "https://www.google.com/maps/search/pharmacy+near+me",
     descEn: "Find pharmacies nearby with opening hours and directions",
-    descTr: "Yakinlardaki eczaneleri calisma saatleri ve yol tarifiyle bulun",
+    descTr: "Yakinlardaki eczaneleri çalışma saatleri ve yol tarifiyle bulun",
     icon: <Clock className="w-5 h-5" />,
   },
 ];
@@ -99,7 +99,7 @@ export default function PharmacyFinderPage() {
         >
           <Phone className="w-5 h-5" />
           <span className="font-medium">
-            {lang === "tr" ? "Nobetci Eczane icin 112'yi Arayin" : "Call 112 for On-Duty Pharmacy"}
+            {lang === "tr" ? "Nobetci Eczane için 112'yi Arayin" : "Call 112 for On-Duty Pharmacy"}
           </span>
         </a>
 

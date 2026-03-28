@@ -27,21 +27,21 @@ interface FavoriteSupplement {
 
 // Minimal data lookup for display (matches marketplace IDs)
 const SUPPLEMENT_INFO: Record<string, { uses: { en: string; tr: string }; evidenceGrade: string }> = {
-  "omega-3": { uses: { en: "Heart health, triglycerides", tr: "Kalp sagligi, trigliserit" }, evidenceGrade: "A" },
-  "vitamin-d3": { uses: { en: "Bone health, immune support", tr: "Kemik sagligi, bagisiklik" }, evidenceGrade: "A" },
+  "omega-3": { uses: { en: "Heart health, triglycerides", tr: "Kalp sağlığı, trigliserit" }, evidenceGrade: "A" },
+  "vitamin-d3": { uses: { en: "Bone health, immune support", tr: "Kemik sağlığı, bağışıklik" }, evidenceGrade: "A" },
   "magnesium": { uses: { en: "Sleep, muscle cramps, stress", tr: "Uyku, kas kramplari, stres" }, evidenceGrade: "A" },
   "ashwagandha": { uses: { en: "Stress, anxiety, cortisol", tr: "Stres, anksiyete, kortizol" }, evidenceGrade: "A" },
-  "probiotics": { uses: { en: "Gut health, digestion", tr: "Bagirsak sagligi, sindirim" }, evidenceGrade: "A" },
+  "probiotics": { uses: { en: "Gut health, digestion", tr: "Bağırsak sağlığı, sindirim" }, evidenceGrade: "A" },
   "vitamin-b12": { uses: { en: "Energy, nerve function", tr: "Enerji, sinir fonksiyonu" }, evidenceGrade: "A" },
   "iron-bisglycinate": { uses: { en: "Anemia, fatigue", tr: "Anemi, yorgunluk" }, evidenceGrade: "A" },
-  "zinc": { uses: { en: "Immune support, skin", tr: "Bagisiklik, cilt" }, evidenceGrade: "A" },
-  "curcumin": { uses: { en: "Inflammation, joint pain", tr: "Enflamasyon, eklem agrisi" }, evidenceGrade: "B" },
-  "coq10": { uses: { en: "Heart health, energy", tr: "Kalp sagligi, enerji" }, evidenceGrade: "B" },
-  "melatonin": { uses: { en: "Sleep onset, jet lag", tr: "Uyku baslangici, jet lag" }, evidenceGrade: "A" },
+  "zinc": { uses: { en: "Immune support, skin", tr: "Bağışıklik, cilt" }, evidenceGrade: "A" },
+  "curcumin": { uses: { en: "Inflammation, joint pain", tr: "Enflamasyon, eklem ağrısi" }, evidenceGrade: "B" },
+  "coq10": { uses: { en: "Heart health, energy", tr: "Kalp sağlığı, enerji" }, evidenceGrade: "B" },
+  "melatonin": { uses: { en: "Sleep onset, jet lag", tr: "Uyku başlangıçi, jet lag" }, evidenceGrade: "A" },
   "valerian": { uses: { en: "Sleep quality, relaxation", tr: "Uyku kalitesi, rahatlama" }, evidenceGrade: "B" },
   "berberine": { uses: { en: "Blood sugar, cholesterol", tr: "Kan sekeri, kolesterol" }, evidenceGrade: "A" },
   "quercetin": { uses: { en: "Allergies, antioxidant", tr: "Alerjiler, antioksidan" }, evidenceGrade: "B" },
-  "vitamin-c": { uses: { en: "Immune support, collagen", tr: "Bagisiklik, kolajen" }, evidenceGrade: "A" },
+  "vitamin-c": { uses: { en: "Immune support, collagen", tr: "Bağışıklik, kolajen" }, evidenceGrade: "A" },
 };
 
 const GRADE_COLORS: Record<string, string> = {
@@ -152,7 +152,7 @@ export default function FavoriteSupplementsPage() {
           <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
           <p className="text-xs text-amber-800 dark:text-amber-300">
             {lang === "tr"
-              ? "Herhangi bir takviyeye baslamadan once etkilesim kontrolu yapin ve doktorunuza danisin."
+              ? "Herhangi bir takviyeye başlamadan once etkilesim kontrolü yapin ve doktorunuza danisin."
               : "Always check interactions and consult your doctor before starting any supplement."}
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function FavoriteSupplementsPage() {
           </Button>
           <span className="text-xs text-gray-400 dark:text-gray-500 self-center">
             {lang === "tr"
-              ? "Karşılastirmak icin 2 takviye secin"
+              ? "Karşılastirmak için 2 takviye secin"
               : "Select 2 supplements to compare"}
           </span>
         </div>

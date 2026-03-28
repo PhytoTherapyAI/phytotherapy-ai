@@ -36,7 +36,7 @@ const FOOT_CHECKLIST: Omit<ChecklistItem, "done">[] = [
   {
     id: "inspect_toes",
     label: { en: "Check between all toes", tr: "Tum parmak aralarini kontrol edin" },
-    description: { en: "Look for fungal infection, moisture, cracks", tr: "Mantar enfeksiyonu, nem, catlaklar icin bakin" },
+    description: { en: "Look for fungal infection, moisture, cracks", tr: "Mantar enfeksiyonu, nem, catlaklar için bakin" },
   },
   {
     id: "inspect_nails",
@@ -45,12 +45,12 @@ const FOOT_CHECKLIST: Omit<ChecklistItem, "done">[] = [
   },
   {
     id: "sensation",
-    label: { en: "Test sensation", tr: "His kontrolu" },
+    label: { en: "Test sensation", tr: "His kontrolü" },
     description: { en: "Touch both feet — can you feel normally?", tr: "Her iki ayaginiza dokunun — normal hissediyor musunuz?" },
   },
   {
     id: "temperature",
-    label: { en: "Feel temperature", tr: "Sicaklik kontrolu" },
+    label: { en: "Feel temperature", tr: "Sicaklik kontrolü" },
     description: { en: "Are feet too hot, too cold, or normal?", tr: "Ayaklariniz cok sicak, cok soguk veya normal mi?" },
   },
   {
@@ -78,7 +78,7 @@ const FOOT_CHECKLIST: Omit<ChecklistItem, "done">[] = [
 const EMERGENCY_SIGNS: Array<{ label: { en: string; tr: string }; color: string }> = [
   { label: { en: "Color change (black, blue, or white areas)", tr: "Renk degisikligi (siyah, mavi veya beyaz alanlar)" }, color: "text-red-600" },
   { label: { en: "Open wound or sore that won't heal", tr: "Kapanmayan acik yara" }, color: "text-red-600" },
-  { label: { en: "Sudden severe swelling", tr: "Ani siddetli sislik" }, color: "text-red-600" },
+  { label: { en: "Sudden severe swelling", tr: "Ani şiddetli sislik" }, color: "text-red-600" },
   { label: { en: "Red streaks from a wound", tr: "Yaradan yayilan kirmizi cizgiler" }, color: "text-red-600" },
   { label: { en: "Warmth with redness (possible infection)", tr: "Kizariklikla birlikte isilik (olasi enfeksiyon)" }, color: "text-red-600" },
   { label: { en: "Fever with foot wound", tr: "Ayak yarasiyla birlikte ates" }, color: "text-red-600" },
@@ -99,8 +99,8 @@ const NEUROPATHY_SYMPTOMS = [
   { en: "Tingling or pins-and-needles sensation", tr: "Karisma veya igneleme hissi" },
   { en: "Burning sensation", tr: "Yanma hissi" },
   { en: "Numbness (loss of feeling)", tr: "Uyusma (his kaybi)" },
-  { en: "Sharp or stabbing pain (worse at night)", tr: "Keskin veya saplanma tarzinda agri (gece artar)" },
-  { en: "Sensitivity to touch", tr: "Dokunmaya duyarlilik" },
+  { en: "Sharp or stabbing pain (worse at night)", tr: "Keskin veya saplanma tarzinda ağrı (gece artar)" },
+  { en: "Sensitivity to touch", tr: "Dokunmaya duyarlılik" },
   { en: "Muscle weakness in feet", tr: "Ayaklarda kas gucsuzlugu" },
 ];
 
@@ -141,7 +141,7 @@ export default function DiabeticFootPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("dfoot.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -209,7 +209,7 @@ export default function DiabeticFootPage() {
           </div>
           {progress === 100 && (
             <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl text-green-700 dark:text-green-400 font-medium">
-              {lang === "tr" ? "Bugunku ayak kontrolunuzu tamamladiniz!" : "You completed today's foot check!"}
+              {lang === "tr" ? "Bugunku ayak kontrolünuzu tamamladiniz!" : "You completed today's foot check!"}
             </div>
           )}
         </div>

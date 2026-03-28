@@ -32,12 +32,12 @@ const STRESS_TIPS: StressTip[] = [
     icon: <Brain className="w-5 h-5 text-indigo-500" />,
     title: { en: "Exam Stress Management", tr: "Sinav Stresi Yönetimi" },
     items: [
-      { en: "Pomodoro technique: 25 min study, 5 min break — prevents burnout", tr: "Pomodoro teknigi: 25 dk calisma, 5 dk mola — tukenmisligi onler" },
-      { en: "Avoid cramming — spaced repetition is 3x more effective for long-term memory", tr: "Son dakika calismaktan kacinin — aralikli tekrar uzun sureli hafiza icin 3 kat daha etkili" },
-      { en: "Physical activity before study sessions increases focus by up to 20%", tr: "Calisma oncesi fiziksel aktivite odaklanmayi %20'ye kadar arttirir" },
+      { en: "Pomodoro technique: 25 min study, 5 min break — prevents burnout", tr: "Pomodoro teknigi: 25 dk çalışma, 5 dk mola — tukenmisligi onler" },
+      { en: "Avoid cramming — spaced repetition is 3x more effective for long-term memory", tr: "Son dakika çalışmaktan kacinin — aralikli tekrar uzun sureli hafiza için 3 kat daha etkili" },
+      { en: "Physical activity before study sessions increases focus by up to 20%", tr: "Calisma öncesi fiziksel aktivite odaklanmayi %20'ye kadar arttırır" },
       { en: "Deep breathing (4-7-8): inhale 4s, hold 7s, exhale 8s — activates parasympathetic", tr: "Derin nefes (4-7-8): 4s nefes al, 7s tut, 8s ver — parasempatik sistemi aktive eder" },
-      { en: "Write down worries before an exam — 'worry dump' reduces test anxiety", tr: "Sinav oncesi kaygilari yazin — 'endise bosaltma' sinav kaygisini azaltir" },
-      { en: "Progressive muscle relaxation: tense each muscle group 5s, release — repeat", tr: "Ilerleyici kas gevsetme: her kas grubunu 5s kasin, birakin — tekrarlayin" },
+      { en: "Write down worries before an exam — 'worry dump' reduces test anxiety", tr: "Sinav öncesi kaygılari yazin — 'endise bosaltma' sinav kaygısini azaltir" },
+      { en: "Progressive muscle relaxation: tense each muscle group 5s, release — repeat", tr: "Ilerleyici kas gevsetme: her kas grubunu 5s kasin, bırakın — tekrarlayin" },
     ],
   },
   {
@@ -48,7 +48,7 @@ const STRESS_TIPS: StressTip[] = [
       { en: "Energy drinks can contain 200-300mg caffeine + taurine + guarana — additive effects", tr: "Enerji icecekleri 200-300mg kafein + taurin + guarana icerebilir — birlestirici etki" },
       { en: "Caffeine after 2 PM disrupts sleep architecture — even if you fall asleep", tr: "Saat 14:00'ten sonra kafein uyku mimarisini bozar — uyusaniz bile" },
       { en: "Mixing energy drinks with alcohol masks intoxication — extremely dangerous", tr: "Enerji iceceklerini alkol ile karistirmak sarhosu gizler — son derece tehlikeli" },
-      { en: "Caffeine withdrawal: headache, irritability, fatigue — taper gradually over 1 week", tr: "Kafein yoksunlugu: bas agrisi, sinirlilik, yorgunluk — 1 haftada yavas azaltin" },
+      { en: "Caffeine withdrawal: headache, irritability, fatigue — taper gradually over 1 week", tr: "Kafein yoksunlugu: bas ağrısi, sinirlilik, yorgunluk — 1 haftada yavas azaltin" },
       { en: "Better alternatives: green tea (L-theanine + moderate caffeine), cold water splash, short walk", tr: "Daha iyi alternatifler: yesil cay (L-teanin + orta kafein), soguk su, kisa yuruyus" },
     ],
   },
@@ -56,7 +56,7 @@ const STRESS_TIPS: StressTip[] = [
     icon: <Apple className="w-5 h-5 text-green-500" />,
     title: { en: "Budget-Friendly Nutrition", tr: "Butce Dostu Beslenme" },
     items: [
-      { en: "Eggs: cheapest complete protein — 6g protein, B12, choline for brain health", tr: "Yumurta: en ucuz tam protein — 6g protein, B12, beyin sagligi icin kolin" },
+      { en: "Eggs: cheapest complete protein — 6g protein, B12, choline for brain health", tr: "Yumurta: en ucuz tam protein — 6g protein, B12, beyin sağlığı için kolin" },
       { en: "Oats: 1kg lasts 2 weeks — fiber, sustained energy, reduces cholesterol", tr: "Yulaf: 1kg 2 hafta dayanir — lif, kalici enerji, kolesterolu dusurur" },
       { en: "Frozen vegetables are as nutritious as fresh — cheaper and no waste", tr: "Dondurulmus sebzeler taze kadar besleyici — daha ucuz ve israf yok" },
       { en: "Legumes (lentils, chickpeas): protein + iron + fiber — pennies per serving", tr: "Baklagiller (mercimek, nohut): protein + demir + lif — porsiyon basi kuruslar" },
@@ -69,9 +69,9 @@ const STRESS_TIPS: StressTip[] = [
     title: { en: "Sleep Schedule Fixer", tr: "Uyku Duzeni Duzeltici" },
     items: [
       { en: "Students need 7-9 hours — even 1 hour less reduces cognitive performance by 25%", tr: "Ogrenciler 7-9 saat uykuya ihtiyac duyar — 1 saat bile az uyku bilissel performansi %25 azaltir" },
-      { en: "Fixed wake time is more important than bedtime — set alarm 7 days/week initially", tr: "Sabit kalkis saati yatis saatinden onemlidir — baslangicta haftanin 7 gunu alarm kurun" },
+      { en: "Fixed wake time is more important than bedtime — set alarm 7 days/week initially", tr: "Sabit kalkis saati yatis saatinden önemlidir — başlangıçta haftanin 7 gunu alarm kurun" },
       { en: "Blue light filter 2 hours before bed — or use amber glasses", tr: "Yatmadan 2 saat once mavi isik filtresi — veya amber gozluk kullanin" },
-      { en: "Nap rule: max 20 min, before 3 PM — longer naps create sleep inertia", tr: "Sekerleme kurali: max 20 dk, saat 15:00 oncesi — uzun sekerlemeler uyku atalesine yol acar" },
+      { en: "Nap rule: max 20 min, before 3 PM — longer naps create sleep inertia", tr: "Sekerleme kurali: max 20 dk, saat 15:00 öncesi — uzun sekerlemeler uyku atalesine yol acar" },
       { en: "Bedroom temp 18-20°C is optimal — cooler room = deeper sleep", tr: "Yatak odasi sicakligi 18-20°C optimal — serin oda = derin uyku" },
       { en: "All-nighters destroy memory consolidation — 2 hours sleep is better than none", tr: "Geceleri hic uyumamak hafiza pekistirmeyi bozar — 2 saat uyku hic uyumamaktan iyidir" },
     ],
@@ -80,12 +80,12 @@ const STRESS_TIPS: StressTip[] = [
     icon: <Users className="w-5 h-5 text-blue-500" />,
     title: { en: "Social Isolation Checklist", tr: "Sosyal Izolasyon Kontrol Listesi" },
     items: [
-      { en: "Talk to at least 1 person face-to-face daily — even brief interactions help", tr: "Günlük en az 1 kisiyle yuz yuze konusun — kisa etkilesimler bile yardimci" },
-      { en: "Join 1 club or activity group — shared interests reduce social anxiety", tr: "1 kulup veya etkinlik grubuna katilin — ortak ilgi alanlari sosyal kaygiyi azaltir" },
+      { en: "Talk to at least 1 person face-to-face daily — even brief interactions help", tr: "Günlük en az 1 kisiyle yuz yuze konusun — kisa etkilesimler bile yardımcı" },
+      { en: "Join 1 club or activity group — shared interests reduce social anxiety", tr: "1 kulup veya etkinlik grubuna katilin — ortak ilgi alanlari sosyal kaygıyi azaltir" },
       { en: "Study groups: social connection + accountability + better learning", tr: "Calisma gruplari: sosyal baglanti + hesap verebilirlik + daha iyi ogrenme" },
       { en: "Feeling isolated for 2+ weeks? Reach out to campus counseling — it's free", tr: "2+ haftadir kendinizi izole mi hissediyorsunuz? Kampus danismanlarina ulasin — ucretsiz" },
-      { en: "Regular meals with others reduce stress hormones — eat together when possible", tr: "Baskalariyla duzenli yemek stres hormonlarini azaltir — mumkunse birlikte yiyin" },
-      { en: "Volunteer work: helps others + builds social network + improves mood", tr: "Gonullu calisma: baskalarina yardim + sosyal ag + ruh hali iyilestirme" },
+      { en: "Regular meals with others reduce stress hormones — eat together when possible", tr: "Baskalariyla düzenli yemek stres hormonlarini azaltir — mümkünse birlikte yiyin" },
+      { en: "Volunteer work: helps others + builds social network + improves mood", tr: "Gonullu çalışma: baskalarina yardim + sosyal ag + ruh hali iyilestirme" },
     ],
   },
 ];
@@ -98,14 +98,14 @@ interface SubstanceInfo {
 
 const SUBSTANCE_RISKS: SubstanceInfo[] = [
   {
-    name: { en: "Prescription stimulants (Ritalin, Adderall) without prescription", tr: "Recetesiz uyarıci ilaclar (Ritalin, Adderall)" },
+    name: { en: "Prescription stimulants (Ritalin, Adderall) without prescription", tr: "Reçetesiz uyarıci ilaclar (Ritalin, Adderall)" },
     risk: "high",
-    details: { en: "Illegal without prescription. Risk of cardiovascular events, addiction, psychosis. Does NOT improve learning — only wakefulness.", tr: "Recetesiz yasadisi. Kardiyovaskuler olay, bagimlilik, psikoz riski. Ogrenmeyi iyilestirmez — sadece uyaniklik." },
+    details: { en: "Illegal without prescription. Risk of cardiovascular events, addiction, psychosis. Does NOT improve learning — only wakefulness.", tr: "Reçetesiz yasadışı. Kardiyovasküler olay, bağımlilik, psikoz riski. Öğrenmeyi iyilestirmez — sadece uyanıklık." },
   },
   {
     name: { en: "Excessive caffeine pills / pre-workout", tr: "Asiri kafein haplari / pre-workout" },
     risk: "high",
-    details: { en: ">600mg/day: anxiety, heart palpitations, insomnia, dependency. Caffeine pills make overdose easy.", tr: ">600mg/gun: kaygi, carpinti, uykusuzluk, bagimlilik. Kafein haplari doz asimini kolaylastirir." },
+    details: { en: ">600mg/day: anxiety, heart palpitations, insomnia, dependency. Caffeine pills make overdose easy.", tr: ">600mg/gun: kaygı, çarpıntı, uykusuzluk, bağımlilik. Kafein haplari doz asimini kolaylaştırır." },
   },
   {
     name: { en: "Alcohol for stress relief", tr: "Stres giderici olarak alkol" },
@@ -115,12 +115,12 @@ const SUBSTANCE_RISKS: SubstanceInfo[] = [
   {
     name: { en: "Melatonin overuse", tr: "Asiri melatonin kullanimi" },
     risk: "low",
-    details: { en: "Safe short-term (0.5-3mg). Long-term use may suppress natural production. Not addictive but can create dependency habit.", tr: "Kisa sureli güvenli (0.5-3mg). Uzun sureli kullanim dogal uretimi baskilayabilir. Bagimlilik yapmaz ama aliskanlik oluşturabilir." },
+    details: { en: "Safe short-term (0.5-3mg). Long-term use may suppress natural production. Not addictive but can create dependency habit.", tr: "Kisa sureli güvenli (0.5-3mg). Uzun sureli kullanim doğal uretimi baskilayabilir. Bağımlilik yapmaz ama aliskanlik oluşturabilir." },
   },
   {
     name: { en: "Nootropics / 'smart drugs'", tr: "Nootropikler / 'akilli ilaclar'" },
     risk: "moderate",
-    details: { en: "Most lack evidence. Racetams, modafinil: unregulated, unknown long-term effects. Omega-3, creatine: evidence-based and safe.", tr: "Cogunun kaniti yok. Rasetamlar, modafinil: duzenlemesiz, bilinmeyen uzun vadeli etkiler. Omega-3, kreatin: kanita dayali ve güvenli." },
+    details: { en: "Most lack evidence. Racetams, modafinil: unregulated, unknown long-term effects. Omega-3, creatine: evidence-based and safe.", tr: "Çoğunun kanıtı yok. Rasetamlar, modafinil: duzenlemesiz, bilinmeyen uzun vadeli etkiler. Omega-3, kreatin: kanita dayali ve güvenli." },
   },
 ];
 
@@ -134,7 +134,7 @@ export default function StudentHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("student.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -234,7 +234,7 @@ export default function StudentHealthPage() {
           </h3>
           <p className="text-sm text-muted-foreground">
             {lang === "tr"
-              ? "Kampus psikolojik danismanlik ucretsizdir. Kriz hatti: 182"
+              ? "Kampus psikolojik danışmanlık ucretsizdir. Kriz hattı: 182"
               : "Campus counseling is free. Crisis line: 988 (US) / 182 (TR)"}
           </p>
         </div>

@@ -10,7 +10,7 @@ const MOCK_ALERTS = [
     color: "text-amber-500",
     bg: "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800",
     title: { en: "Vitamin D Pattern Detected", tr: "D Vitamini Oruntusnu Tespit Edildi" },
-    desc: { en: "Your last 3 blood tests show declining Vitamin D. Current level 18 ng/mL is approaching deficiency. Consider supplementation before winter.", tr: "Son 3 kan tahliliniz dusen D vitamini gosteriyor. Mevcut seviye 18 ng/mL eksiklige yaklasiiyor. Kis oncesi takviye dusununuz." },
+    desc: { en: "Your last 3 blood tests show declining Vitamin D. Current level 18 ng/mL is approaching deficiency. Consider supplementation before winter.", tr: "Son 3 kan tahliliniz dusen D vitamini gosteriyor. Mevcut seviye 18 ng/mL eksiklige yaklasiiyor. Kis öncesi takviye dusununuz." },
     time: { en: "2 hours ago", tr: "2 saat once" },
   },
   {
@@ -26,7 +26,7 @@ const MOCK_ALERTS = [
     color: "text-green-500",
     bg: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800",
     title: { en: "Supplement Cycling Alert", tr: "Takviye Dongu Uyarısi" },
-    desc: { en: "Your Ashwagandha cycle ends in 3 days. Based on your stress check-ins, a 1-week washout is recommended before restarting.", tr: "Ashwagandha dongunuz 3 gun sonra bitiyor. Stres check-in'lerinize gore yeniden baslamadan once 1 haftalik mola oneriliyor." },
+    desc: { en: "Your Ashwagandha cycle ends in 3 days. Based on your stress check-ins, a 1-week washout is recommended before restarting.", tr: "Ashwagandha dongunuz 3 gun sonra bitiyor. Stres check-in'lerinize gore yeniden başlamadan once 1 haftalik mola oneriliyor." },
     time: { en: "Today", tr: "Bugun" },
   },
   {
@@ -41,7 +41,7 @@ const MOCK_ALERTS = [
 
 const FEATURES = [
   { icon: Brain, title: { en: "Pattern Recognition", tr: "Oruntusu Tanima" }, desc: { en: "AI analyzes your health data over time to find meaningful patterns", tr: "AI saglik verilerinizi zaman icinde analiz ederek anlamli oruntuler bulur" } },
-  { icon: Bell, title: { en: "Smart Notifications", tr: "Akilli Bildirimler" }, desc: { en: "Get alerts only when something genuinely needs your attention", tr: "Sadece gercekten dikkatinizi gerektiren durumlarda uyarı aliniz" } },
+  { icon: Bell, title: { en: "Smart Notifications", tr: "Akilli Bildirimler" }, desc: { en: "Get alerts only when something genuinely needs your attention", tr: "Sadece gerçekten dikkatinizi gerektiren durumlarda uyarı aliniz" } },
   { icon: Shield, title: { en: "Risk Prevention", tr: "Risk Onleme" }, desc: { en: "Early warnings about potential drug interactions or deficiencies", tr: "Potansiyel ilac etkilesimleri veya eksiklikler hakkinda erken uyarılar" } },
   { icon: TrendingUp, title: { en: "Trend Analysis", tr: "Trend Analizi" }, desc: { en: "Track biomarker trends across multiple blood tests", tr: "Birden fazla kan tahlilinde biyobelirtec trendlerini takip ediniz" } },
 ];

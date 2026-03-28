@@ -96,7 +96,7 @@ export default function CancerScreeningPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("cancer.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -219,7 +219,7 @@ export default function CancerScreeningPage() {
                       </div>
                       <p className="text-sm font-medium text-teal-600 dark:text-teal-400">{item.test}</p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {lang === "tr" ? "Baslangic yasi:" : "Start age:"} {item.startAge} | {item.applicability}
+                        {lang === "tr" ? "Başlangıç yasi:" : "Start age:"} {item.startAge} | {item.applicability}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">{item.notes}</p>
                     </div>

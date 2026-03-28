@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
             ? "Cok zor bir donemden gectiginizi anliyoruz. Lutfen hemen bir uzmana ulasin. Yalniz degilsiniz."
             : "We understand you're going through an incredibly difficult time. Please reach out to a professional right now. You are not alone.",
           crisisLines: lang === "tr"
-            ? ["Kriz Hatti: 182", "ALO Sosyal Destek: 183"]
+            ? ["Kriz Hattı: 182", "ALO Sosyal Destek: 183"]
             : ["Suicide & Crisis Lifeline: 988", "SAMHSA Helpline: 1-800-662-4357"],
           cleanDays: clean_days,
           milestone: null,
@@ -169,7 +169,7 @@ If craving >= 8 or relapse risk is true, set alertLevel to at least "yellow" and
         substance,
         crisisAlert: false,
         crisisLines: lang === "tr"
-          ? ["Kriz Hatti: 182", "ALO Sosyal Destek: 183", "Yesil Ay: 0800 888 0 888"]
+          ? ["Kriz Hattı: 182", "ALO Sosyal Destek: 183", "Yesil Ay: 0800 888 0 888"]
           : ["SAMHSA Helpline: 1-800-662-4357", "Crisis Line: 988", "AA Hotline: check local listings"],
       },
     });

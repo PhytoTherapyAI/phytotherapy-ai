@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     if (!records || records.length < 7) {
       return NextResponse.json(
-        { error: lang === "tr" ? "AI analiz icin en az 7 gunluk veri gerekli" : "Need at least 7 days of data for AI analysis" },
+        { error: lang === "tr" ? "AI analiz için en az 7 gunluk veri gerekli" : "Need at least 7 days of data for AI analysis" },
         { status: 400 }
       );
     }
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
           alertLevel: "red",
           professionalReferral: true,
           crisisMessage: lang === "tr"
-            ? "Kayitlarinizda endise verici ifadeler tespit edildi. Lutfen hemen bir ruh sagligi uzmaniyla veya kriz hatti (182) ile iletisime gecin. Yalniz degilsiniz."
+            ? "Kayitlarinizda endise verici ifadeler tespit edildi. Lutfen hemen bir ruh sağlığı uzmaniyla veya kriz hattı (182) ile iletisime gecin. Yalniz degilsiniz."
             : "We detected concerning language in your entries. Please reach out to a mental health professional or crisis line (988) immediately. You are not alone.",
         },
       });

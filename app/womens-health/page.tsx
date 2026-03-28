@@ -341,7 +341,7 @@ export default function WomensHealthPage() {
         <h1 className="mb-2 text-2xl font-bold">{tx("wh.title", lang)}</h1>
         <p className="text-muted-foreground">
           {lang === "tr"
-            ? "Bu ozellik kadin saglik takibi icin tasarlanmistir."
+            ? "Bu ozellik kadin saglik takibi için tasarlanmistir."
             : "This feature is designed for female health tracking."}
         </p>
       </div>

@@ -111,7 +111,7 @@ export default function FamilyHealthTreePage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("familytree.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>
@@ -296,7 +296,7 @@ export default function FamilyHealthTreePage() {
               <div className="bg-card border rounded-2xl p-6 space-y-3">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   <Lightbulb className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "Onemli Bilgiler" : "Key Insights"}
+                  {lang === "tr" ? "Önemli Bilgiler" : "Key Insights"}
                 </h2>
                 {result.keyInsights.map((insight, i) => (
                   <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">

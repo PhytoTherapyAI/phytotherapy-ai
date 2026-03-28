@@ -502,7 +502,7 @@ export default function TimeCapsulePage() {
           </h1>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
             {lang === "tr"
-              ? "Gelecege bir mektup yaz, saglik hedeflerini kaydet. Zaman geldiginde gercek verilerle karşılastir."
+              ? "Gelecege bir mektup yaz, saglik hedeflerini kaydet. Zaman geldiginde gerçek verilerle karşılastir."
               : "Write a letter to your future self, save your health goals. Compare with real data when the time comes."}
           </p>
         </div>

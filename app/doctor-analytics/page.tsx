@@ -67,7 +67,7 @@ export default function DoctorAnalyticsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Card className="p-4">
-            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2"><PieChart className="w-4 h-4" /> {isTr ? "Hastalık Dagilimi" : "Condition Distribution"}</h3>
+            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2"><PieChart className="w-4 h-4" /> {isTr ? "Hastalık Dağılımi" : "Condition Distribution"}</h3>
             <div className="space-y-3">
               {conditions.map(c => (
                 <div key={c.name} className="flex items-center gap-3">

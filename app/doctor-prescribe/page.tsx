@@ -42,7 +42,7 @@ export default function DoctorPrescribePage() {
           <Pill className="w-8 h-8 text-emerald-600" />
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Recete Asistani" : "Prescription Assistant"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Doz hesaplama, etkilesim kontrolu, jenerik alternatifleri" : "Dose calculator, interaction check, generic alternatives"}</p>
+            <p className="text-sm text-gray-500">{isTr ? "Doz hesaplama, etkilesim kontrolü, jenerik alternatifleri" : "Dose calculator, interaction check, generic alternatives"}</p>
           </div>
         </div>
 

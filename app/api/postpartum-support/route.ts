@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
             ? "EPDS sonuclariniz kendinize zarar verme dusunceleri olabilecegini gosteriyor. Dogum sonrasi donem cok zor olabilir ve yardim almak guc gosterisidir. Lutfen hemen bir uzmana ulasin."
             : "Your EPDS results indicate you may be having thoughts of self-harm. The postpartum period can be incredibly challenging and seeking help is a sign of strength. Please reach out to a professional immediately.",
           crisisLines: lang === "tr"
-            ? ["Kriz Hatti: 182", "Dogum Sonrasi Destek: Doktorunuzu arayin"]
+            ? ["Kriz Hattı: 182", "Dogum Sonrasi Destek: Doktorunuzu arayın"]
             : ["Postpartum Support International: 1-800-944-4773", "Crisis Line: 988"],
           breastfeedingSafeMeds: [],
           recoveryTips: [],
@@ -156,7 +156,7 @@ If EPDS >= 13 or mood_score <= 1, set alertLevel to "red" and professionalReferr
         breastfeeding,
         crisisAlert: false,
         crisisLines: lang === "tr"
-          ? ["Kriz Hatti: 182", "Dogum Sonrasi Destek: Doktorunuzu arayin"]
+          ? ["Kriz Hattı: 182", "Dogum Sonrasi Destek: Doktorunuzu arayın"]
           : ["Postpartum Support International: 1-800-944-4773", "Crisis Line: 988"],
       },
     });

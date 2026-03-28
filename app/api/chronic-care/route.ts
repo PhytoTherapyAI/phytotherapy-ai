@@ -191,7 +191,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz basarisiz oldu" : "Analysis failed, please try again" },
+        { error: lang === "tr" ? "Analiz başarısiz oldu" : "Analysis failed, please try again" },
         { status: 500 }
       );
     }

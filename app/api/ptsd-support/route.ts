@@ -71,10 +71,10 @@ export async function POST(request: NextRequest) {
           professionalReferral: true,
           crisisAlert: true,
           crisisMessage: lang === "tr"
-            ? "Endise verici dusunceler fark ettik. Lutfen hemen bir ruh sagligi uzmaniyla veya kriz hatti (182) ile iletisime gecin. Yalniz degilsiniz."
+            ? "Endise verici dusunceler fark ettik. Lutfen hemen bir ruh sağlığı uzmaniyla veya kriz hattı (182) ile iletisime gecin. Yalniz degilsiniz."
             : "We noticed concerning thoughts. Please reach out to a mental health professional or crisis line (988) immediately. You are not alone.",
           crisisLines: lang === "tr"
-            ? ["Kriz Hatti: 182", "Sağlık Bakanlığı ALO: 184"]
+            ? ["Kriz Hattı: 182", "Sağlık Bakanlığı ALO: 184"]
             : ["Suicide & Crisis Lifeline: 988", "Crisis Text Line: Text HOME to 741741"],
           copingStrategies: [],
           groundingExercises: [],
@@ -151,7 +151,7 @@ professionalReferral MUST always be true for PTSD.`;
         professionalReferral: true,
         crisisAlert: false,
         crisisLines: lang === "tr"
-          ? ["Kriz Hatti: 182", "Sağlık Bakanlığı ALO: 184"]
+          ? ["Kriz Hattı: 182", "Sağlık Bakanlığı ALO: 184"]
           : ["Suicide & Crisis Lifeline: 988", "Crisis Text Line: Text HOME to 741741", "Veterans Crisis Line: 1-800-273-8255 Press 1"],
       },
     });

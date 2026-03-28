@@ -24,7 +24,7 @@ const FEATURES = [
     titleEn: "Evidence-Based Answers",
     titleTr: "Kanita Dayali Yanitlar",
     descEn: "AI-assisted fact-checking on health claims in posts",
-    descTr: "Gönderilerdeki saglik iddialarina AI destekli dogrulama",
+    descTr: "Gönderilerdeki saglik iddialarina AI destekli doğrulama",
   },
   {
     icon: <BookOpen className="w-6 h-6" />,
@@ -38,7 +38,7 @@ const FEATURES = [
     titleEn: "Anonymous Posting",
     titleTr: "Anonim Paylaşım",
     descEn: "Share sensitive health questions without revealing identity",
-    descTr: "Kimliginizi aciklamadan hassas saglik sorulari paylasln",
+    descTr: "Kimliğinizi açıklamadan hassas saglik sorulari paylaşın",
   },
   {
     icon: <Bell className="w-6 h-6" />,
@@ -94,7 +94,7 @@ export default function HealthForumPage() {
           <div className="bg-green-50 dark:bg-green-900/10 rounded-2xl border border-green-200 dark:border-green-800 p-6">
             <p className="text-green-800 dark:text-green-400 font-medium">
               {lang === "tr"
-                ? "Lansman bildirimini almak icin uygulamayi kullanmaya devam edin!"
+                ? "Lansman bildirimini almak için uygulamayi kullanmaya devam edin!"
                 : "Keep using the app to be notified when we launch!"}
             </p>
           </div>

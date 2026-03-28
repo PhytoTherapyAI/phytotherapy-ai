@@ -48,7 +48,7 @@ const SYMPTOM_OPTIONS = [
   { value: "tinnitus", en: "Tinnitus (Ringing)", tr: "Tinitus (Cilinlama)" },
   { value: "hearing_loss", en: "Hearing Loss", tr: "Isitme Kaybi" },
   { value: "vertigo", en: "Vertigo / Dizziness", tr: "Vertigo / Bas Donmesi" },
-  { value: "ear_pain", en: "Ear Pain", tr: "Kulak Agrisi" },
+  { value: "ear_pain", en: "Ear Pain", tr: "Kulak Ağrısi" },
   { value: "ear_fullness", en: "Ear Fullness", tr: "Kulak Dolgunlugu" },
   { value: "discharge", en: "Ear Discharge", tr: "Kulak Akintisi" },
   { value: "itching", en: "Ear Itching", tr: "Kulak Kasintisi" },
@@ -105,7 +105,7 @@ export default function EarHealthPage() {
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center space-y-4">
           <h1 className="text-2xl font-bold">{tx("ear.title", lang)}</h1>
-          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak icin giris yapin" : "Please log in to use this tool"}</p>
+          <p className="text-muted-foreground">{lang === "tr" ? "Bu araci kullanmak için giris yapin" : "Please log in to use this tool"}</p>
           <Button onClick={() => window.location.href = "/auth/login"}>
             <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
           </Button>

@@ -102,7 +102,7 @@ export default function ADHDManagementPage() {
         <div className="rounded-xl border border-orange-200 bg-orange-50/50 p-8 text-center dark:border-orange-800 dark:bg-orange-950/30">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-orange-400" />
           <p className="text-lg font-medium text-orange-700 dark:text-orange-300">
-            {lang === "tr" ? "Bu araci kullanmak icin giris yapin." : "Please sign in to use this tool."}
+            {lang === "tr" ? "Bu araci kullanmak için giris yapin." : "Please sign in to use this tool."}
           </p>
         </div>
       </div>

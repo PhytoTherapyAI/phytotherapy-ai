@@ -17,8 +17,8 @@ export default function WhiteLabelPage() {
   const features = [
     { icon: <Palette className="w-6 h-6" />, en: "Custom Branding", tr: "Özel Markalama", descEn: "Your logo, colors, and domain", descTr: "Logo, renkler ve domain" },
     { icon: <Shield className="w-6 h-6" />, en: "Enterprise Security", tr: "Kurumsal Güvenlik", descEn: "SOC 2, HIPAA, KVKK compliance", descTr: "SOC 2, HIPAA, KVKK uyumu" },
-    { icon: <Globe className="w-6 h-6" />, en: "Multi-language", tr: "Coklu Dil", descEn: "Support for 20+ languages", descTr: "20+ dil destegi" },
-    { icon: <Code className="w-6 h-6" />, en: "API Access", tr: "API Erisimi", descEn: "Full REST API and webhooks", descTr: "REST API ve webhook destegi" },
+    { icon: <Globe className="w-6 h-6" />, en: "Multi-language", tr: "Coklu Dil", descEn: "Support for 20+ languages", descTr: "20+ dil desteği" },
+    { icon: <Code className="w-6 h-6" />, en: "API Access", tr: "API Erisimi", descEn: "Full REST API and webhooks", descTr: "REST API ve webhook desteği" },
     { icon: <Users className="w-6 h-6" />, en: "User Management", tr: "Kullanıcı Yönetimi", descEn: "SSO, LDAP, role-based access", descTr: "SSO, LDAP, rol bazli erisim" },
     { icon: <Smartphone className="w-6 h-6" />, en: "Mobile Apps", tr: "Mobil Uygulamalar", descEn: "Branded iOS and Android apps", descTr: "Markali iOS ve Android uygulamalar" },
   ];
@@ -34,7 +34,7 @@ export default function WhiteLabelPage() {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-2">
           <Building2 className="w-8 h-8 text-indigo-600" />
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "White-Label Cozum" : "White-Label Solution"}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "White-Label Çözüm" : "White-Label Solution"}</h1>
         </div>
         <p className="text-gray-500 mb-8 ml-11">{isTr ? "Phytotherapy.ai platformunu kendi markanizla sunun" : "Offer the Phytotherapy.ai platform under your own brand"}</p>
 
