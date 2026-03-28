@@ -122,6 +122,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "ptsd", title: { en: "PTSD Support", tr: "TSSB Destek" }, icon: "Shield", href: "/ptsd-support" },
       { id: "addiction", title: { en: "Addiction Recovery", tr: "Bağımlılık İyileşme" }, icon: "HeartHandshake", href: "/addiction-recovery" },
       { id: "grief", title: { en: "Grief Support", tr: "Yas Desteği" }, icon: "CloudRain", href: "/grief-support" },
+      { id: "clinical-tests", title: { en: "Clinical Tests", tr: "Klinik Testler" }, icon: "ClipboardList", href: "/clinical-tests" },
     ],
   },
 
