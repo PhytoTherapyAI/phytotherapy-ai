@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useMemo, useRef, useEffect } from "react"
+import { useState, useMemo, useRef, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useLang } from "@/components/layout/language-toggle"
-import { TOOL_CATEGORIES, searchModules, TOTAL_MODULE_COUNT, type ToolCategory } from "@/lib/tools-hierarchy"
+import { TOOL_CATEGORIES, searchModules, TOTAL_MODULE_COUNT } from "@/lib/tools-hierarchy"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -25,8 +25,9 @@ interface MegaMenuProps {
 export function MegaMenu({ open, onClose }: MegaMenuProps) {
   const { lang } = useLang()
   const [search, setSearch] = useState("")
-  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null)
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
   const panelRef = useRef<HTMLDivElement>(null)
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const searchResults = useMemo(() => {
     if (!search || search.length < 2) return null
@@ -45,9 +46,38 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
     const handler = (e: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) onClose()
     }
-    if (open) setTimeout(() => document.addEventListener("mousedown", handler), 0)
+    if (open) {
+      const timer = setTimeout(() => document.addEventListener("mousedown", handler), 50)
+      return () => { clearTimeout(timer); document.removeEventListener("mousedown", handler) }
+    }
     return () => document.removeEventListener("mousedown", handler)
   }, [open, onClose])
+
+  // Reset search when menu closes
+  useEffect(() => {
+    if (!open) { setSearch(""); setExpandedCategory(null) }
+  }, [open])
+
+  // Debounced hover with 150ms delay to prevent flicker
+  const handleMouseEnter = useCallback((catId: string) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
+    hoverTimeoutRef.current = setTimeout(() => setExpandedCategory(catId), 80)
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
+    hoverTimeoutRef.current = setTimeout(() => setExpandedCategory(null), 250)
+  }, [])
+
+  // Cancel close if mouse re-enters popover or card
+  const handlePopoverEnter = useCallback(() => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
+  }, [])
+
+  // Cleanup timeouts
+  useEffect(() => {
+    return () => { if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current) }
+  }, [])
 
   if (!open) return null
 
@@ -94,16 +124,17 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
         ) : (
           <>
             {/* Category Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {TOOL_CATEGORIES.map(cat => {
                 const Icon = ICON_MAP[cat.icon] || Sparkles
-                const isHovered = hoveredCategory === cat.id
+                const isExpanded = expandedCategory === cat.id
                 return (
                   <div key={cat.id} className="relative"
-                    onMouseEnter={() => setHoveredCategory(cat.id)}
-                    onMouseLeave={() => setHoveredCategory(null)}>
+                    onMouseEnter={() => handleMouseEnter(cat.id)}
+                    onMouseLeave={handleMouseLeave}>
+                    {/* Category Card */}
                     <Link href={cat.modules[0]?.href || `/${cat.slug}`} onClick={onClose}
-                      className={`block p-3 rounded-lg border transition-all ${isHovered ? "border-primary/50 bg-primary/5 shadow-sm" : "border-border hover:border-primary/30"}`}>
+                      className={`block p-3 rounded-lg border transition-all duration-150 ${isExpanded ? "border-primary/50 bg-primary/5 shadow-sm" : "border-border hover:border-primary/30"}`}>
                       <div className="flex items-center gap-2.5">
                         <div className={`w-8 h-8 rounded-lg ${cat.bgLight} ${cat.bgDark} flex items-center justify-center shrink-0`}>
                           <Icon className="w-4 h-4" style={{ color: cat.color }} />
@@ -115,11 +146,14 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
                       </div>
                     </Link>
 
-                    {/* Hover popover with modules */}
-                    {isHovered && (
-                      <div className="absolute left-0 top-full mt-1 z-50 w-64 bg-card border border-border rounded-lg shadow-lg p-2 animate-in fade-in zoom-in-95 duration-150"
-                        onMouseEnter={() => setHoveredCategory(cat.id)}
-                        onMouseLeave={() => setHoveredCategory(null)}>
+                    {/* Expanded Module List — seamlessly attached (no gap) */}
+                    {isExpanded && (
+                      <div
+                        className="absolute left-0 top-full z-50 w-64 bg-card border border-border rounded-b-lg shadow-lg p-2 animate-in fade-in zoom-in-95 duration-100"
+                        style={{ marginTop: "-1px" }}
+                        onMouseEnter={handlePopoverEnter}
+                        onMouseLeave={handleMouseLeave}
+                      >
                         <div className="max-h-[240px] overflow-y-auto">
                           {cat.modules.map(mod => (
                             <Link key={mod.id} href={mod.href} onClick={onClose}
