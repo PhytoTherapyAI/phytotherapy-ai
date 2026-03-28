@@ -12,6 +12,7 @@ import { MicroCheckInWrapper } from "@/components/dashboard/MicroCheckInWrapper"
 import { TrialBannerWrapper } from "@/components/premium/TrialBannerWrapper";
 import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
+import { CriticalAlertModal } from "@/components/emergency/CriticalAlertModal";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -111,6 +112,7 @@ export default function RootLayout({
               <CookieConsent />
               <PWAInstallPrompt />
               <ServiceWorkerRegistration />
+              <CriticalAlertModal />
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
