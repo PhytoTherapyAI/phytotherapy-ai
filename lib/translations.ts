@@ -2173,6 +2173,592 @@ const t: Record<string, TranslationEntry> = {
   "appt.downloadPdf": { en: "Download PDF", tr: "PDF İndir" },
   "appt.loginRequired": { en: "Sign in to prepare for your appointment", tr: "Randevu hazırlığı için giriş yapın" },
 
+  // ══════════════════════════════════════════
+  // Water Quality
+  // ══════════════════════════════════════════
+  "nav.waterQuality": { en: "Water Quality", tr: "Su Kalitesi" },
+  "water.title": { en: "Water Quality Guide", tr: "Su Kalitesi Rehberi" },
+  "water.subtitle": { en: "City water mineral content and health advice", tr: "Şehir suyu mineral içeriği ve sağlık önerileri" },
+  "water.selectCity": { en: "Select City", tr: "Şehir Seçin" },
+  "water.minerals": { en: "Mineral Content", tr: "Mineral İçeriği" },
+  "water.kidneyWarning": { en: "Kidney Health Note", tr: "Böbrek Sağlığı Notu" },
+  "water.calcium": { en: "Calcium (Ca)", tr: "Kalsiyum (Ca)" },
+  "water.magnesium": { en: "Magnesium (Mg)", tr: "Magnezyum (Mg)" },
+  "water.sodium": { en: "Sodium (Na)", tr: "Sodyum (Na)" },
+  "water.potassium": { en: "Potassium (K)", tr: "Potasyum (K)" },
+  "water.chloride": { en: "Chloride (Cl)", tr: "Klorür (Cl)" },
+  "water.hardness": { en: "Water Hardness", tr: "Su Sertliği" },
+  "water.ph": { en: "pH Level", tr: "pH Seviyesi" },
+  "water.tds": { en: "TDS (mg/L)", tr: "TDS (mg/L)" },
+  "water.kidneyNote": { en: "If you have kidney disease, consult your nephrologist about your water intake. High mineral content (especially potassium, sodium, and calcium) may require monitoring.", tr: "Böbrek hastalığınız varsa, su tüketiminiz hakkında nefrologunuza danışın. Yüksek mineral içeriği (özellikle potasyum, sodyum ve kalsiyum) izlem gerektirebilir." },
+  "water.kidneyHighSodium": { en: "High sodium content — kidney patients should be cautious", tr: "Yüksek sodyum içeriği — böbrek hastaları dikkatli olmalı" },
+  "water.kidneyHighCalcium": { en: "High calcium — may contribute to kidney stone risk", tr: "Yüksek kalsiyum — böbrek taşı riskini artırabilir" },
+  "water.kidneyHighPotassium": { en: "Elevated potassium — hyperkalemia risk for CKD patients", tr: "Yüksek potasyum — KBH hastalarında hiperkalemi riski" },
+  "water.generalTip": { en: "General Tip", tr: "Genel Bilgi" },
+  "water.generalTipText": { en: "Turkish tap water is generally safe for drinking in most cities. For optimal health, consider using a filtered pitcher. Always check local municipality reports for the latest data.", tr: "Türkiye'de çoğu şehirde musluk suyu genellikle içilebilir kalitededir. Optimum sağlık için filtrelenmiş su kullanmayı düşünün. Güncel veriler için yerel belediye raporlarını kontrol edin." },
+  "water.source": { en: "Source", tr: "Kaynak" },
+  "water.unit": { en: "mg/L", tr: "mg/L" },
+
+  // ══════════════════════════════════════════
+  // Caffeine Tracker
+  // ══════════════════════════════════════════
+  "nav.caffeineTracker": { en: "Caffeine Tracker", tr: "Kafein Takibi" },
+  "caffeine.title": { en: "Caffeine Tracker", tr: "Kafein Takipçisi" },
+  "caffeine.subtitle": { en: "Track daily caffeine and check medication interactions", tr: "Günlük kafeini takip edin, ilaç etkileşimlerini kontrol edin" },
+  "caffeine.daily": { en: "Daily Caffeine", tr: "Günlük Kafein" },
+  "caffeine.safeZone": { en: "Safe Zone: <400mg", tr: "Güvenli Bölge: <400mg" },
+  "caffeine.sleepImpact": { en: "Sleep Impact", tr: "Uyku Etkisi" },
+  "caffeine.medAlerts": { en: "Medication Alerts", tr: "İlaç Uyarıları" },
+  "caffeine.analyze": { en: "Check Caffeine", tr: "Kafein Kontrol" },
+  "caffeine.coffee": { en: "Coffee", tr: "Kahve" },
+  "caffeine.tea": { en: "Tea", tr: "Çay" },
+  "caffeine.cola": { en: "Cola", tr: "Kola" },
+  "caffeine.energyDrink": { en: "Energy Drink", tr: "Enerji İçeceği" },
+  "caffeine.preWorkout": { en: "Pre-Workout", tr: "Pre-Workout" },
+  "caffeine.chocolate": { en: "Dark Chocolate", tr: "Bitter Çikolata" },
+  "caffeine.totalMg": { en: "Total Caffeine", tr: "Toplam Kafein" },
+  "caffeine.halfLife": { en: "Half-Life Estimate", tr: "Yarılanma Ömrü Tahmini" },
+  "caffeine.recommendations": { en: "Recommendations", tr: "Öneriler" },
+  "caffeine.loginNote": { en: "Sign in to check caffeine-medication interactions from your profile.", tr: "Profildeki ilaçlarla kafein etkileşimini kontrol etmek için giriş yapın." },
+
+  // ══════════════════════════════════════════
+  // Alcohol Tracker
+  // ══════════════════════════════════════════
+  "nav.alcoholTracker": { en: "Alcohol Tracker", tr: "Alkol Takibi" },
+  "alcohol.title": { en: "Alcohol Tracker", tr: "Alkol Takipçisi" },
+  "alcohol.subtitle": { en: "Weekly intake tracking with medication safety check", tr: "Haftalık tüketim takibi ve ilaç güvenlik kontrolü" },
+  "alcohol.weeklyUnits": { en: "Weekly Units", tr: "Haftalık Birim" },
+  "alcohol.whoLimit": { en: "WHO Recommended Limit", tr: "WHO Önerilen Sınır" },
+  "alcohol.riskLevel": { en: "Risk Level", tr: "Risk Seviyesi" },
+  "alcohol.medAlerts": { en: "Medication Alerts", tr: "İlaç Uyarıları" },
+  "alcohol.analyze": { en: "Check Risk", tr: "Risk Kontrol" },
+  "alcohol.beer": { en: "Beer (330ml)", tr: "Bira (330ml)" },
+  "alcohol.wine": { en: "Wine (150ml)", tr: "Şarap (150ml)" },
+  "alcohol.spirits": { en: "Spirits (40ml)", tr: "Sert İçki (40ml)" },
+  "alcohol.cocktail": { en: "Cocktail", tr: "Kokteyl" },
+  "alcohol.liverTips": { en: "Liver Health Tips", tr: "Karaciğer Sağlığı İpuçları" },
+  "alcohol.loginNote": { en: "Sign in to check alcohol-medication interactions from your profile.", tr: "Profildeki ilaçlarla alkol etkileşimini kontrol etmek için giriş yapın." },
+
+  // ══════════════════════════════════════════
+  // Smoking Cessation
+  // ══════════════════════════════════════════
+  "nav.smokingCessation": { en: "Quit Smoking", tr: "Sigara Bırakma" },
+  "smoking.title": { en: "Smoking Cessation Coach", tr: "Sigara Bırakma Koçu" },
+  "smoking.subtitle": { en: "Track your quit journey and health recovery", tr: "Bırakma yolculuğunuzu ve sağlık toparlanmanızı takip edin" },
+  "smoking.quitDate": { en: "Quit Date", tr: "Bırakma Tarihi" },
+  "smoking.daysFree": { en: "Smoke-Free Days", tr: "Dumansız Günler" },
+  "smoking.savings": { en: "Money Saved", tr: "Tasarruf" },
+  "smoking.timeline": { en: "Health Recovery Timeline", tr: "Sağlık Toparlanma Zaman Çizelgesi" },
+  "smoking.cravingLog": { en: "Log Craving", tr: "İstek Kaydet" },
+  "smoking.dailyCigs": { en: "Cigarettes/day (before quitting)", tr: "Günlük sigara (bırakmadan önce)" },
+  "smoking.status": { en: "Current Status", tr: "Mevcut Durum" },
+  "smoking.quit": { en: "Quit", tr: "Bıraktım" },
+  "smoking.reducing": { en: "Reducing", tr: "Azaltıyorum" },
+  "smoking.planning": { en: "Planning", tr: "Planlıyorum" },
+  "smoking.nrt": { en: "Nicotine Replacement", tr: "Nikotin Replasman" },
+  "smoking.patch": { en: "Patch", tr: "Bant" },
+  "smoking.gum": { en: "Gum", tr: "Sakız" },
+  "smoking.spray": { en: "Spray", tr: "Sprey" },
+  "smoking.none": { en: "None", tr: "Yok" },
+  "smoking.analyze": { en: "Get My Plan", tr: "Planımı Oluştur" },
+  "smoking.recoveryTitle": { en: "Health Recovery", tr: "Sağlık Toparlanması" },
+  "smoking.cravingTips": { en: "Craving Management", tr: "İstek Yönetimi" },
+  "smoking.medInteractions": { en: "Medication Notes", tr: "İlaç Notları" },
+  "smoking.savingsCalc": { en: "Savings Calculator", tr: "Tasarruf Hesaplayıcı" },
+  "smoking.loginNote": { en: "Sign in for personalized medication interaction checks.", tr: "Kişiselleştirilmiş ilaç etkileşim kontrolü için giriş yapın." },
+
+  // ══════════════════════════════════════════
+  // Breathing Exercises
+  // ══════════════════════════════════════════
+  "nav.breathingExercises": { en: "Breathing", tr: "Nefes Egzersizi" },
+  "breathing.title": { en: "Breathing Exercises", tr: "Nefes Egzersizleri" },
+  "breathing.subtitle": { en: "Guided breathing techniques for calm and focus", tr: "Sakinlik ve odaklanma için rehberli nefes teknikleri" },
+  "breathing.fourSevenEight": { en: "4-7-8 Relaxation", tr: "4-7-8 Rahatlama" },
+  "breathing.boxBreathing": { en: "Box Breathing", tr: "Kutu Nefesi" },
+  "breathing.wimHof": { en: "Wim Hof Method", tr: "Wim Hof Metodu" },
+  "breathing.diaphragmatic": { en: "Diaphragmatic", tr: "Diyafram Nefesi" },
+  "breathing.start": { en: "Start", tr: "Başla" },
+  "breathing.stop": { en: "Stop", tr: "Durdur" },
+  "breathing.inhale": { en: "Inhale", tr: "Nefes Al" },
+  "breathing.hold": { en: "Hold", tr: "Tut" },
+  "breathing.exhale": { en: "Exhale", tr: "Nefes Ver" },
+  "breathing.rest": { en: "Rest", tr: "Dinlen" },
+  "breathing.rounds": { en: "Rounds", tr: "Tur" },
+  "breathing.panicProtocol": { en: "Panic Attack Protocol", tr: "Panik Atak Protokolü" },
+  "breathing.panicDesc": { en: "If you're having a panic attack, try this slow breathing pattern. Focus only on counting.", tr: "Panik atak yaşıyorsanız, bu yavaş nefes kalıbını deneyin. Sadece saymaya odaklanın." },
+  "breathing.desc478": { en: "A calming technique for anxiety and sleep. Inhale 4s, hold 7s, exhale 8s.", tr: "Anksiyete ve uyku için sakinleştirici teknik. 4sn nefes al, 7sn tut, 8sn nefes ver." },
+  "breathing.descBox": { en: "Used by Navy SEALs for focus under stress. Equal 4s phases.", tr: "Stres altında odaklanma için Navy SEAL'lerin kullandığı teknik. Eşit 4sn fazlar." },
+  "breathing.descWim": { en: "30 deep breaths, then hold. Boosts energy and cold tolerance.", tr: "30 derin nefes, sonra tut. Enerji ve soğuk toleransını artırır." },
+  "breathing.descDiaphragm": { en: "Deep belly breathing activates the parasympathetic nervous system.", tr: "Derin karın nefesi parasempatik sinir sistemini aktive eder." },
+
+  // ══════════════════════════════════════════
+  // Posture & Ergonomics
+  // ══════════════════════════════════════════
+  "nav.postureErgonomics": { en: "Posture", tr: "Duruş" },
+  "posture.title": { en: "Posture & Ergonomics", tr: "Duruş & Ergonomi" },
+  "posture.subtitle": { en: "Desk ergonomics checklist and posture tips", tr: "Masa başı ergonomi kontrol listesi ve duruş ipuçları" },
+  "posture.checklist": { en: "Ergonomics Checklist", tr: "Ergonomi Kontrol Listesi" },
+  "posture.stretches": { en: "Desk Stretches", tr: "Masa Başı Esneme" },
+  "posture.monitor": { en: "Monitor at arm's length, top of screen at eye level", tr: "Monitör kol mesafesinde, ekranın üstü göz hizasında" },
+  "posture.chair": { en: "Chair supports lower back, feet flat on floor", tr: "Sandalye beli desteklesin, ayaklar yere basmalı" },
+  "posture.keyboard": { en: "Keyboard and mouse at elbow height", tr: "Klavye ve fare dirsek hizasında" },
+  "posture.screen": { en: "No glare on screen, proper lighting", tr: "Ekranda parlama yok, uygun aydınlatma" },
+  "posture.breaks": { en: "Take a break every 30-60 minutes", tr: "Her 30-60 dakikada mola verin" },
+  "posture.wrists": { en: "Wrists straight, not bent up or down", tr: "Bilekler düz, yukarı veya aşağı bükülmemiş" },
+  "posture.commonIssues": { en: "Common Posture Issues", tr: "Yaygın Duruş Sorunları" },
+  "posture.textNeck": { en: "Text Neck", tr: "Telefon Boynu" },
+  "posture.textNeckDesc": { en: "Forward head posture from looking at screens. Causes neck and upper back pain.", tr: "Ekranlara bakmaktan kaynaklanan ileri baş duruşu. Boyun ve üst sırt ağrısına neden olur." },
+  "posture.roundedShoulders": { en: "Rounded Shoulders", tr: "Yuvarlak Omuzlar" },
+  "posture.roundedShouldersDesc": { en: "Shoulders rolled forward from prolonged sitting. Stretching pectorals helps.", tr: "Uzun süreli oturmadan omuzların öne dönmesi. Pektoral germe yardımcı olur." },
+  "posture.lowerBackPain": { en: "Lower Back Pain", tr: "Bel Ağrısı" },
+  "posture.lowerBackPainDesc": { en: "Often caused by poor lumbar support. Use a small cushion or lumbar roll.", tr: "Genellikle yetersiz bel desteğinden kaynaklanır. Küçük bir yastık veya bel rulosu kullanın." },
+
+  // ══════════════════════════════════════════
+  // Screen Time
+  // ══════════════════════════════════════════
+  "nav.screenTime": { en: "Screen Time", tr: "Ekran Süresi" },
+  "screen.title": { en: "Screen Time & Eye Health", tr: "Ekran Süresi & Göz Sağlığı" },
+  "screen.subtitle": { en: "Protect your eyes from digital strain", tr: "Gözlerinizi dijital yorgunluktan koruyun" },
+  "screen.rule202020": { en: "20-20-20 Rule", tr: "20-20-20 Kuralı" },
+  "screen.rule202020Desc": { en: "Every 20 minutes, look at something 20 feet (6 meters) away for 20 seconds. This relaxes the ciliary muscle and reduces eye strain.", tr: "Her 20 dakikada, 20 saniye boyunca 6 metre uzağa bakın. Bu siliyer kası gevşetir ve göz yorgunluğunu azaltır." },
+  "screen.blueLight": { en: "Blue Light", tr: "Mavi Işık" },
+  "screen.blueLightDesc": { en: "Blue light (380-500nm) from screens can suppress melatonin production, disrupting sleep cycles. Use night mode or blue light filters 2-3 hours before bed.", tr: "Ekranlardan gelen mavi ışık (380-500nm) melatonin üretimini baskılayarak uyku döngüsünü bozabilir. Yatmadan 2-3 saat önce gece modunu veya mavi ışık filtrelerini kullanın." },
+  "screen.tips": { en: "Reduction Tips", tr: "Azaltma İpuçları" },
+  "screen.symptoms": { en: "Eye Strain Symptoms", tr: "Göz Yorgunluğu Belirtileri" },
+  "screen.dryEyes": { en: "Dry, irritated eyes", tr: "Kuru, tahriş olmuş gözler" },
+  "screen.headache": { en: "Headaches after screen use", tr: "Ekran kullanımından sonra baş ağrısı" },
+  "screen.blurry": { en: "Blurry vision at distance", tr: "Uzağı bulanık görme" },
+  "screen.neckPain": { en: "Neck and shoulder tension", tr: "Boyun ve omuz gerginliği" },
+  "screen.sleepImpact": { en: "Sleep Impact", tr: "Uyku Etkisi" },
+  "screen.sleepImpactDesc": { en: "Screen use before bed delays sleep onset by 30-60 minutes. The brain interprets blue light as daylight, suppressing melatonin by up to 50%.", tr: "Yatmadan önce ekran kullanımı uykuya dalışı 30-60 dakika geciktirir. Beyin mavi ışığı gün ışığı olarak yorumlar ve melatonini %50'ye kadar baskılar." },
+  "screen.tip1": { en: "Enable night mode on all devices after sunset", tr: "Gün batımından sonra tüm cihazlarda gece modunu etkinleştirin" },
+  "screen.tip2": { en: "Use the 20-20-20 rule consistently", tr: "20-20-20 kuralını tutarlı uygulayın" },
+  "screen.tip3": { en: "Position screen at arm's length, slightly below eye level", tr: "Ekranı kol mesafesinde, göz seviyesinin biraz altına yerleştirin" },
+  "screen.tip4": { en: "Blink consciously — we blink 66% less when using screens", tr: "Bilinçli göz kırpın — ekran kullanırken %66 daha az göz kırpıyoruz" },
+  "screen.tip5": { en: "Use artificial tears if eyes feel dry", tr: "Gözler kuruyor hissediliyorsa suni gözyaşı kullanın" },
+  "screen.assessment": { en: "Self-Assessment", tr: "Öz Değerlendirme" },
+
+  // ══════════════════════════════════════════
+  // Intermittent Fasting
+  // ══════════════════════════════════════════
+  "nav.intermittentFasting": { en: "Fasting", tr: "Aralıklı Oruç" },
+  "fasting.title": { en: "Intermittent Fasting", tr: "Aralıklı Oruç" },
+  "fasting.subtitle": { en: "Fasting protocols with medication timing safety", tr: "İlaç zamanlama güvenliğiyle oruç protokolleri" },
+  "fasting.protocol": { en: "Protocol", tr: "Protokol" },
+  "fasting.eatingWindow": { en: "Eating Window", tr: "Yeme Penceresi" },
+  "fasting.timer": { en: "Fasting Timer", tr: "Oruç Sayacı" },
+  "fasting.medTiming": { en: "Medication Timing", tr: "İlaç Zamanlaması" },
+  "fasting.ramadanMode": { en: "Ramadan Mode", tr: "Ramazan Modu" },
+  "fasting.analyze": { en: "Check Safety", tr: "Güvenlik Kontrol" },
+  "fasting.16_8": { en: "16:8 (16h fast, 8h eat)", tr: "16:8 (16 saat oruç, 8 saat yeme)" },
+  "fasting.20_4": { en: "20:4 (20h fast, 4h eat)", tr: "20:4 (20 saat oruç, 4 saat yeme)" },
+  "fasting.5_2": { en: "5:2 (5 normal, 2 low-cal)", tr: "5:2 (5 gün normal, 2 gün düşük kalori)" },
+  "fasting.eat_stop_eat": { en: "Eat-Stop-Eat (24h)", tr: "Ye-Dur-Ye (24 saat)" },
+  "fasting.windowStart": { en: "Eating window start", tr: "Yeme penceresi başlangıcı" },
+  "fasting.windowEnd": { en: "Eating window end", tr: "Yeme penceresi bitişi" },
+  "fasting.safetyWarnings": { en: "Safety Warnings", tr: "Güvenlik Uyarıları" },
+  "fasting.fastingNow": { en: "Currently Fasting", tr: "Şu An Oruçta" },
+  "fasting.eatingNow": { en: "Currently in Eating Window", tr: "Şu An Yeme Penceresinde" },
+  "fasting.loginNote": { en: "Sign in to check fasting-medication timing interactions.", tr: "İlaç zamanlama etkileşimlerini kontrol etmek için giriş yapın." },
+
+  // ══════════════════════════════════════════
+  // Sun Exposure
+  // ══════════════════════════════════════════
+  "nav.sunExposure": { en: "Sun Exposure", tr: "Güneş Maruziyeti" },
+  "sun.title": { en: "Sun Exposure Guide", tr: "Güneş Maruziyeti Rehberi" },
+  "sun.subtitle": { en: "Safe sun time, vitamin D optimization & medication warnings", tr: "Güvenli güneşlenme süresi, D vitamini optimizasyonu ve ilaç uyarıları" },
+  "sun.skinType": { en: "Skin Type", tr: "Cilt Tipi" },
+  "sun.uvIndex": { en: "UV Index", tr: "UV İndeksi" },
+  "sun.safeTime": { en: "Safe Exposure Time", tr: "Güvenli Maruziyet Süresi" },
+  "sun.vitaminD": { en: "Vitamin D Synthesis", tr: "D Vitamini Sentezi" },
+  "sun.photosensitive": { en: "Photosensitizing Medications", tr: "Işığa Duyarlı İlaçlar" },
+  "sun.fitzpatrick1": { en: "Type I — Very fair, always burns", tr: "Tip I — Çok açık ten, her zaman yanar" },
+  "sun.fitzpatrick2": { en: "Type II — Fair, burns easily", tr: "Tip II — Açık ten, kolay yanar" },
+  "sun.fitzpatrick3": { en: "Type III — Medium, sometimes burns", tr: "Tip III — Orta ten, bazen yanar" },
+  "sun.fitzpatrick4": { en: "Type IV — Olive, rarely burns", tr: "Tip IV — Buğday ten, nadiren yanar" },
+  "sun.fitzpatrick5": { en: "Type V — Brown, very rarely burns", tr: "Tip V — Koyu ten, çok nadiren yanar" },
+  "sun.fitzpatrick6": { en: "Type VI — Dark brown/black, never burns", tr: "Tip VI — Çok koyu ten, asla yanmaz" },
+  "sun.minutes": { en: "minutes", tr: "dakika" },
+  "sun.sunscreenGuide": { en: "Sunscreen Guide", tr: "Güneş Kremi Rehberi" },
+  "sun.sunscreenTip": { en: "Use SPF 30+ broad-spectrum. Apply 15 minutes before exposure. Reapply every 2 hours.", tr: "SPF 30+ geniş spektrumlu kullanın. Güneşe çıkmadan 15 dakika önce sürün. Her 2 saatte yenileyin." },
+  "sun.vitaminDInfo": { en: "10-30 minutes of midday sun on arms and legs, 2-3 times per week, can provide adequate vitamin D for most people.", tr: "Haftada 2-3 kez, öğlen saatlerinde 10-30 dakika kol ve bacaklara güneş ışığı, çoğu kişi için yeterli D vitamini sağlayabilir." },
+  "sun.photoMeds": { en: "These medications increase sun sensitivity:", tr: "Bu ilaçlar güneş hassasiyetini artırır:" },
+  "sun.loginNote": { en: "Sign in to check if your medications cause photosensitivity.", tr: "İlaçlarınızın ışığa duyarlılık yapıp yapmadığını kontrol etmek için giriş yapın." },
+
+  // ══════════════════════════════════════════
+  // Elder Care
+  // ══════════════════════════════════════════
+  "nav.elderCare": { en: "Elder Care", tr: "Yaşlı Sağlığı" },
+  "elder.title": { en: "Elder Care Dashboard", tr: "Yaşlı Sağlığı Paneli" },
+  "elder.subtitle": { en: "Health guidance for adults 65+", tr: "65 yaş üstü sağlık rehberi" },
+  "elder.polypharmacy": { en: "Medication Review", tr: "İlaç İncelemesi" },
+  "elder.fallRisk": { en: "Fall Prevention", tr: "Düşme Önleme" },
+  "elder.cognitive": { en: "Cognitive Health", tr: "Bilişsel Sağlık" },
+  "elder.nutrition": { en: "Senior Nutrition", tr: "Yaşlı Beslenmesi" },
+  "elder.socialRisk": { en: "Social Wellbeing", tr: "Sosyal İyi Oluş" },
+  "elder.analyzing": { en: "Analyzing health profile...", tr: "Sağlık profili analiz ediliyor..." },
+  "elder.analyze": { en: "Generate Health Review", tr: "Sağlık İncelemesi Oluştur" },
+  "elder.ageNote": { en: "This tool is designed for adults 65+", tr: "Bu araç 65 yaş üstü yetişkinler için tasarlanmıştır" },
+  "elder.loginRequired": { en: "Sign in for personalized elder care", tr: "Kişisel yaşlı bakımı için giriş yapın" },
+
+  // ══════════════════════════════════════════
+  // Child Health
+  // ══════════════════════════════════════════
+  "nav.childHealth": { en: "Child Health", tr: "Çocuk Sağlığı" },
+  "child.title": { en: "Child Health Guide", tr: "Çocuk Sağlığı Rehberi" },
+  "child.subtitle": { en: "Pediatric health guidance for parents", tr: "Ebeveynler için pediatrik sağlık rehberi" },
+  "child.age": { en: "Child's Age", tr: "Çocuğun Yaşı" },
+  "child.months": { en: "months", tr: "ay" },
+  "child.years": { en: "years", tr: "yıl" },
+  "child.concern": { en: "Concern", tr: "Sorun" },
+  "child.fever": { en: "Fever", tr: "Ateş" },
+  "child.cough": { en: "Cough", tr: "Öksürük" },
+  "child.rash": { en: "Rash", tr: "Döküntü" },
+  "child.feeding": { en: "Feeding", tr: "Beslenme" },
+  "child.sleepIssue": { en: "Sleep Issues", tr: "Uyku Sorunları" },
+  "child.growth": { en: "Growth", tr: "Büyüme" },
+  "child.vaccination": { en: "Vaccination", tr: "Aşılama" },
+  "child.analyze": { en: "Get Guidance", tr: "Rehber Al" },
+  "child.analyzing": { en: "Preparing guidance...", tr: "Rehber hazırlanıyor..." },
+  "child.disclaimer": { en: "Always consult your pediatrician. This is not medical advice.", tr: "Her zaman çocuk doktorunuza danışın. Bu tıbbi tavsiye değildir." },
+
+  // ══════════════════════════════════════════
+  // Sports Performance
+  // ══════════════════════════════════════════
+  "nav.sportsPerf": { en: "Sports Performance", tr: "Spor Performansı" },
+  "sports.title": { en: "Sports Performance", tr: "Spor Performansı" },
+  "sports.subtitle": { en: "Sport-specific supplements, nutrition & recovery", tr: "Spora özel takviye, beslenme ve toparlanma" },
+  "sports.sportType": { en: "Sport Type", tr: "Spor Türü" },
+  "sports.running": { en: "Running", tr: "Koşu" },
+  "sports.swimming": { en: "Swimming", tr: "Yüzme" },
+  "sports.cycling": { en: "Cycling", tr: "Bisiklet" },
+  "sports.gym": { en: "Gym/Weights", tr: "Spor Salonu" },
+  "sports.teamSport": { en: "Team Sport", tr: "Takım Sporu" },
+  "sports.martialArts": { en: "Martial Arts", tr: "Dövüş Sanatları" },
+  "sports.goal": { en: "Goal", tr: "Hedef" },
+  "sports.endurance": { en: "Endurance", tr: "Dayanıklılık" },
+  "sports.strength": { en: "Strength", tr: "Güç" },
+  "sports.recovery": { en: "Recovery", tr: "Toparlanma" },
+  "sports.flexibility": { en: "Flexibility", tr: "Esneklik" },
+  "sports.weightLoss": { en: "Weight Loss", tr: "Kilo Verme" },
+  "sports.frequency": { en: "Training Frequency", tr: "Antrenman Sıklığı" },
+  "sports.analyze": { en: "Get Plan", tr: "Plan Al" },
+  "sports.analyzing": { en: "Creating plan...", tr: "Plan oluşturuluyor..." },
+  "sports.supplements": { en: "Supplement Plan", tr: "Takviye Planı" },
+  "sports.nutritionTiming": { en: "Nutrition Timing", tr: "Beslenme Zamanlaması" },
+  "sports.recoveryTips": { en: "Recovery Tips", tr: "Toparlanma İpuçları" },
+  "sports.warnings": { en: "Warning Signs", tr: "Uyarı İşaretleri" },
+
+  // ══════════════════════════════════════════
+  // Voice Diary
+  // ══════════════════════════════════════════
+  "nav.voiceDiary": { en: "Voice Diary", tr: "Sesli Günlük" },
+  "voice.title": { en: "Voice Health Diary", tr: "Sesli Sağlık Günlüğü" },
+  "voice.subtitle": { en: "Record your health notes by voice", tr: "Sağlık notlarınızı sesle kaydedin" },
+  "voice.record": { en: "Hold to Record", tr: "Kayıt İçin Basılı Tut" },
+  "voice.recording": { en: "Recording...", tr: "Kaydediliyor..." },
+  "voice.save": { en: "Save Entry", tr: "Kaydet" },
+  "voice.entries": { en: "My Entries", tr: "Kayıtlarım" },
+  "voice.sendToAssistant": { en: "Send to Assistant", tr: "Asistana Gönder" },
+  "voice.noEntries": { en: "No entries yet. Start recording!", tr: "Henüz kayıt yok. Kayda başlayın!" },
+  "voice.mood": { en: "How do you feel?", tr: "Nasıl hissediyorsunuz?" },
+
+  // ══════════════════════════════════════════
+  // Gut Health
+  // ══════════════════════════════════════════
+  "nav.gutHealth": { en: "Gut Health", tr: "Bağırsak Sağlığı" },
+  "gut.title": { en: "Gut Health", tr: "Bağırsak Sağlığı" },
+  "gut.subtitle": { en: "Track digestive symptoms and get personalized gut health advice", tr: "Sindirim semptomlarını takip edin, kişisel bağırsak sağlığı önerileri alın" },
+  "gut.symptoms": { en: "Symptoms", tr: "Semptomlar" },
+  "gut.bloating": { en: "Bloating", tr: "Şişkinlik" },
+  "gut.gas": { en: "Gas", tr: "Gaz" },
+  "gut.constipation": { en: "Constipation", tr: "Kabızlık" },
+  "gut.diarrhea": { en: "Diarrhea", tr: "İshal" },
+  "gut.acidReflux": { en: "Acid Reflux", tr: "Reflü" },
+  "gut.foodSensitivity": { en: "Food Sensitivity", tr: "Besin Hassasiyeti" },
+  "gut.dietType": { en: "Diet Type", tr: "Diyet Türü" },
+  "gut.antibiotics": { en: "Recent Antibiotics?", tr: "Son zamanlarda antibiyotik?" },
+  "gut.analyze": { en: "Analyze Gut Health", tr: "Bağırsak Sağlığı Analiz Et" },
+  "gut.analyzing": { en: "Analyzing...", tr: "Analiz ediliyor..." },
+  "gut.score": { en: "Gut Health Score", tr: "Bağırsak Sağlık Skoru" },
+  "gut.probiotics": { en: "Probiotic Recommendations", tr: "Probiyotik Önerileri" },
+  "gut.dietary": { en: "Dietary Suggestions", tr: "Diyet Önerileri" },
+
+  // ══════════════════════════════════════════
+  // Skin Health
+  // ══════════════════════════════════════════
+  "nav.skinHealth": { en: "Skin Health", tr: "Cilt Sağlığı" },
+  "skin.title": { en: "Skin Health", tr: "Cilt Sağlığı" },
+  "skin.subtitle": { en: "AI-powered skincare analysis and medication effect check", tr: "AI destekli cilt bakım analizi ve ilaç etkisi kontrolü" },
+  "skin.concern": { en: "Skin Concern", tr: "Cilt Sorunu" },
+  "skin.acne": { en: "Acne", tr: "Akne" },
+  "skin.eczema": { en: "Eczema", tr: "Egzama" },
+  "skin.psoriasis": { en: "Psoriasis", tr: "Sedef" },
+  "skin.rosacea": { en: "Rosacea", tr: "Rozasea" },
+  "skin.dryness": { en: "Dryness", tr: "Kuruluk" },
+  "skin.aging": { en: "Aging", tr: "Yaşlanma" },
+  "skin.severity": { en: "Severity", tr: "Şiddet" },
+  "skin.areas": { en: "Affected Areas", tr: "Etkilenen Bölgeler" },
+  "skin.routine": { en: "Current Routine", tr: "Mevcut Rutin" },
+  "skin.analyze": { en: "Analyze Skin", tr: "Cilt Analizi" },
+  "skin.analyzing": { en: "Analyzing...", tr: "Analiz ediliyor..." },
+  "skin.recommendations": { en: "Skincare Routine", tr: "Cilt Bakım Rutini" },
+  "skin.medEffects": { en: "Medication Effects on Skin", tr: "İlaçların Cilt Etkileri" },
+
+  // ══════════════════════════════════════════
+  // Pharmacogenetics
+  // ══════════════════════════════════════════
+  "nav.pharmacogenetics": { en: "Pharmacogenetics", tr: "Farmakogenetik" },
+  "pharma.title": { en: "Pharmacogenetics Guide", tr: "Farmakogenetik Rehberi" },
+  "pharma.subtitle": { en: "How your genetics may affect your medications", tr: "Genetiğiniz ilaçlarınızı nasıl etkileyebilir" },
+  "pharma.analyze": { en: "Analyze My Medications", tr: "İlaçlarımı Analiz Et" },
+  "pharma.analyzing": { en: "Analyzing genetics...", tr: "Genetik analiz ediliyor..." },
+  "pharma.affected": { en: "Genetically Affected Medications", tr: "Genetik Etkilenen İlaçlar" },
+  "pharma.enzymes": { en: "Key Enzymes", tr: "Anahtar Enzimler" },
+  "pharma.testing": { en: "Genetic Testing", tr: "Genetik Test" },
+  "pharma.loginRequired": { en: "Sign in to analyze your medications", tr: "İlaç analizi için giriş yapın" },
+
+  // ══════════════════════════════════════════
+  // Pain Diary
+  // ══════════════════════════════════════════
+  "nav.painDiary": { en: "Pain Diary", tr: "Ağrı Günlüğü" },
+  "pain.title": { en: "Pain Diary", tr: "Ağrı Günlüğü" },
+  "pain.subtitle": { en: "Track pain patterns and find triggers", tr: "Ağrı örüntülerini takip edin, tetikleyicileri bulun" },
+  "pain.logPain": { en: "Log Pain", tr: "Ağrı Kaydet" },
+  "pain.location": { en: "Location", tr: "Bölge" },
+  "pain.intensity": { en: "Intensity", tr: "Şiddet" },
+  "pain.type": { en: "Pain Type", tr: "Ağrı Tipi" },
+  "pain.sharp": { en: "Sharp", tr: "Keskin" },
+  "pain.dull": { en: "Dull", tr: "Künt" },
+  "pain.burning": { en: "Burning", tr: "Yanıcı" },
+  "pain.throbbing": { en: "Throbbing", tr: "Zonklayan" },
+  "pain.duration": { en: "Duration", tr: "Süre" },
+  "pain.triggers": { en: "Triggers", tr: "Tetikleyiciler" },
+  "pain.relief": { en: "Relief Methods", tr: "Rahatlama Yöntemleri" },
+  "pain.trend": { en: "Pain Trend", tr: "Ağrı Trendi" },
+  "pain.analyze": { en: "AI Pain Analysis", tr: "AI Ağrı Analizi" },
+  "pain.analyzing": { en: "Analyzing patterns...", tr: "Örüntüler analiz ediliyor..." },
+  "pain.saved": { en: "Pain logged!", tr: "Ağrı kaydedildi!" },
+  "pain.needMore": { en: "Need at least 7 entries for AI analysis", tr: "AI analiz için en az 7 kayıt gerekli" },
+  "pain.loginRequired": { en: "Sign in to track pain", tr: "Ağrı takibi için giriş yapın" },
+
+  // ══════════════════════════════════════════
+  // Eye Health
+  // ══════════════════════════════════════════
+  "nav.eyeHealth": { en: "Eye Health", tr: "Göz Sağlığı" },
+  "eye.title": { en: "Eye Health", tr: "Göz Sağlığı" },
+  "eye.subtitle": { en: "Track eye health and check medication risks", tr: "Göz sağlığını takip edin, ilaç risklerini kontrol edin" },
+  "eye.symptoms": { en: "Symptoms", tr: "Semptomlar" },
+  "eye.screenHours": { en: "Daily Screen Hours", tr: "Günlük Ekran Saati" },
+  "eye.medRisks": { en: "Medication Eye Risks", tr: "İlaç Göz Riskleri" },
+  "eye.screening": { en: "Screening Schedule", tr: "Kontrol Takvimi" },
+  "eye.analyze": { en: "Check Eye Health", tr: "Göz Sağlığı Kontrol" },
+
+  // ══════════════════════════════════════════
+  // Ear Health
+  // ══════════════════════════════════════════
+  "nav.earHealth": { en: "Ear Health", tr: "Kulak Sağlığı" },
+  "ear.title": { en: "Ear & Hearing", tr: "Kulak & İşitme" },
+  "ear.subtitle": { en: "Hearing protection and ototoxic medication alerts", tr: "İşitme koruması ve ototoksik ilaç uyarıları" },
+  "ear.symptoms": { en: "Symptoms", tr: "Semptomlar" },
+  "ear.noiseExposure": { en: "Noise Exposure", tr: "Gürültü Maruziyeti" },
+  "ear.ototoxic": { en: "Ototoxic Medications", tr: "Ototoksik İlaçlar" },
+  "ear.analyze": { en: "Check Hearing Health", tr: "İşitme Sağlığı Kontrol" },
+
+  // ══════════════════════════════════════════
+  // Dental Health
+  // ══════════════════════════════════════════
+  "nav.dentalHealth": { en: "Dental Health", tr: "Diş Sağlığı" },
+  "dental.title": { en: "Dental & Oral Health", tr: "Diş & Ağız Sağlığı" },
+  "dental.subtitle": { en: "Oral care and medication side effects", tr: "Ağız bakımı ve ilaç yan etkileri" },
+  "dental.checklist": { en: "Daily Checklist", tr: "Günlük Kontrol" },
+  "dental.medEffects": { en: "Medication Oral Effects", tr: "İlaç Ağız Etkileri" },
+
+  // ══════════════════════════════════════════
+  // Hair & Nail Health
+  // ══════════════════════════════════════════
+  "nav.hairNail": { en: "Hair & Nail", tr: "Saç & Tırnak" },
+  "hair.title": { en: "Hair & Nail Health", tr: "Saç & Tırnak Sağlığı" },
+  "hair.subtitle": { en: "Hair loss and nail changes — medication and nutrition check", tr: "Saç dökülmesi ve tırnak değişiklikleri — ilaç ve beslenme kontrolü" },
+  "hair.concerns": { en: "Concerns", tr: "Sorunlar" },
+  "hair.analyze": { en: "Analyze", tr: "Analiz Et" },
+
+  // ══════════════════════════════════════════
+  // Diabetic Foot
+  // ══════════════════════════════════════════
+  "nav.diabeticFoot": { en: "Diabetic Foot", tr: "Diyabetik Ayak" },
+  "dfoot.title": { en: "Diabetic Foot Care", tr: "Diyabetik Ayak Bakımı" },
+  "dfoot.subtitle": { en: "Daily foot check to prevent complications", tr: "Komplikasyonları önlemek için günlük ayak kontrolü" },
+  "dfoot.checklist": { en: "Daily Foot Check", tr: "Günlük Ayak Kontrolü" },
+  "dfoot.warning": { en: "See Doctor Immediately If", tr: "Derhal Doktora Gidin Eğer" },
+
+  // ══════════════════════════════════════════
+  // Kidney Dashboard
+  // ══════════════════════════════════════════
+  "nav.kidneyDashboard": { en: "Kidney", tr: "Böbrek" },
+  "kidney.title": { en: "Kidney Dashboard", tr: "Böbrek Paneli" },
+  "kidney.subtitle": { en: "eGFR tracking, diet restrictions & medication safety", tr: "eGFR takibi, diyet kısıtlamaları ve ilaç güvenliği" },
+  "kidney.stage": { en: "Kidney Stage", tr: "Böbrek Evresi" },
+  "kidney.diet": { en: "Dietary Restrictions", tr: "Diyet Kısıtlamaları" },
+  "kidney.medAlerts": { en: "Medication Alerts", tr: "İlaç Uyarıları" },
+  "kidney.analyze": { en: "Analyze", tr: "Analiz Et" },
+
+  // ══════════════════════════════════════════
+  // Liver Monitor
+  // ══════════════════════════════════════════
+  "nav.liverMonitor": { en: "Liver", tr: "Karaciğer" },
+  "liver.title": { en: "Liver Monitor", tr: "Karaciğer Monitörü" },
+  "liver.subtitle": { en: "Liver enzyme tracking and hepatotoxic drug alerts", tr: "Karaciğer enzim takibi ve hepatotoksik ilaç uyarıları" },
+  "liver.score": { en: "Liver Health Score", tr: "Karaciğer Sağlık Skoru" },
+  "liver.hepatotoxic": { en: "Hepatotoxic Medications", tr: "Hepatotoksik İlaçlar" },
+  "liver.fli": { en: "Fatty Liver Index", tr: "Yağlı Karaciğer İndeksi" },
+  "liver.analyze": { en: "Analyze", tr: "Analiz Et" },
+
+  // ══════════════════════════════════════════
+  // Thyroid Dashboard
+  // ══════════════════════════════════════════
+  "nav.thyroidDashboard": { en: "Thyroid", tr: "Tiroid" },
+  "thyroid.title": { en: "Thyroid Dashboard", tr: "Tiroid Paneli" },
+  "thyroid.subtitle": { en: "TSH tracking and levothyroxine timing optimization", tr: "TSH takibi ve levotiroksin zamanlama optimizasyonu" },
+  "thyroid.status": { en: "Thyroid Status", tr: "Tiroid Durumu" },
+  "thyroid.timing": { en: "Medication Timing", tr: "İlaç Zamanlaması" },
+  "thyroid.analyze": { en: "Analyze", tr: "Analiz Et" },
+
+  // ══════════════════════════════════════════
+  // Cardiovascular Risk
+  // ══════════════════════════════════════════
+  "nav.cardiovascularRisk": { en: "Heart Risk", tr: "Kalp Riski" },
+  "cardio.title": { en: "Cardiovascular Risk Calculator", tr: "Kardiyovasküler Risk Hesaplayıcı" },
+  "cardio.subtitle": { en: "10-year heart disease risk assessment", tr: "10 yıllık kalp hastalığı risk değerlendirmesi" },
+  "cardio.calculate": { en: "Calculate Risk", tr: "Risk Hesapla" },
+  "cardio.riskScore": { en: "10-Year Risk", tr: "10 Yıllık Risk" },
+  "cardio.essentials": { en: "Life's Essential 8", tr: "Hayatın Temel 8'i" },
+
+  // ══════════════════════════════════════════
+  // Lung Monitor
+  // ══════════════════════════════════════════
+  "nav.lungMonitor": { en: "Lung Monitor", tr: "Akciğer" },
+  "lung.title": { en: "Lung Monitor", tr: "Akciğer Monitörü" },
+  "lung.subtitle": { en: "Asthma ACT score, COPD CAT score & inhaler guide", tr: "Astım ACT skoru, KOAH CAT skoru ve inhaler rehberi" },
+  "lung.peakFlow": { en: "Peak Flow", tr: "Peak Flow" },
+  "lung.actScore": { en: "ACT Score (Asthma)", tr: "ACT Skoru (Astım)" },
+  "lung.catScore": { en: "CAT Score (COPD)", tr: "CAT Skoru (KOAH)" },
+  "lung.inhaler": { en: "Inhaler Technique", tr: "İnhaler Tekniği" },
+  "lung.triggers": { en: "Triggers", tr: "Tetikleyiciler" },
+  "lung.analyze": { en: "Analyze", tr: "Analiz Et" },
+
+  // ══════════════════════════════════════════
+  // Anxiety Toolkit
+  // ══════════════════════════════════════════
+  "nav.anxietyToolkit": { en: "Anxiety Toolkit", tr: "Kaygi Arac Seti" },
+  "anxiety.title": { en: "Anxiety Toolkit", tr: "Kaygi Arac Seti" },
+  "anxiety.subtitle": { en: "GAD-7 assessment, grounding & coping techniques", tr: "GAD-7 degerlendirme, topraklama ve basa cikma teknikleri" },
+  "anxiety.level": { en: "Anxiety Level", tr: "Kaygi Seviyesi" },
+  "anxiety.panicAttack": { en: "Having a panic attack?", tr: "Panik atak mi yasiyorsunuz?" },
+  "anxiety.grounding": { en: "Grounding Exercise", tr: "Topraklama Egzersizi" },
+  "anxiety.gad7": { en: "GAD-7 Score", tr: "GAD-7 Skoru" },
+  "anxiety.analyze": { en: "Get Assessment", tr: "Degerlendirme Al" },
+
+  // ══════════════════════════════════════════
+  // Depression Screening
+  // ══════════════════════════════════════════
+  "nav.depressionScreening": { en: "Depression Screening", tr: "Depresyon Tarama" },
+  "depression.title": { en: "Depression Screening", tr: "Depresyon Taramasi" },
+  "depression.subtitle": { en: "PHQ-9 validated screening questionnaire", tr: "PHQ-9 onaylanmis tarama anketi" },
+  "depression.phq9": { en: "PHQ-9 Score", tr: "PHQ-9 Skoru" },
+  "depression.severity": { en: "Severity", tr: "Siddet" },
+  "depression.crisisAlert": { en: "If you're in crisis, call 182 (TR) or 988 (US)", tr: "Kriz durumunda 182'yi arayin" },
+  "depression.analyze": { en: "Calculate Score", tr: "Skor Hesapla" },
+
+  // ══════════════════════════════════════════
+  // ADHD Management
+  // ══════════════════════════════════════════
+  "nav.adhdManagement": { en: "ADHD", tr: "DEHB" },
+  "adhd.title": { en: "ADHD Management", tr: "DEHB Yonetimi" },
+  "adhd.subtitle": { en: "Focus tracking and medication effectiveness", tr: "Odaklanma takibi ve ilac etkinligi" },
+  "adhd.focusScore": { en: "Focus Score", tr: "Odaklanma Skoru" },
+  "adhd.pomodoro": { en: "Pomodoro Count", tr: "Pomodoro Sayisi" },
+  "adhd.analyze": { en: "Analyze Focus", tr: "Odaklanma Analiz" },
+
+  // ══════════════════════════════════════════
+  // PTSD Support
+  // ══════════════════════════════════════════
+  "nav.ptsdSupport": { en: "PTSD Support", tr: "TSSB Destek" },
+  "ptsd.title": { en: "PTSD Support", tr: "TSSB Destek" },
+  "ptsd.subtitle": { en: "Trauma support with grounding and screening", tr: "Topraklama ve tarama ile travma destegi" },
+  "ptsd.triggerLog": { en: "Trigger Log", tr: "Tetikleyici Gunlugu" },
+  "ptsd.grounding": { en: "Grounding Exercises", tr: "Topraklama Egzersizleri" },
+  "ptsd.screening": { en: "PCL-5 Screening", tr: "PCL-5 Tarama" },
+  "ptsd.analyze": { en: "Get Assessment", tr: "Degerlendirme Al" },
+
+  // ══════════════════════════════════════════
+  // Addiction Recovery
+  // ══════════════════════════════════════════
+  "nav.addictionRecovery": { en: "Recovery", tr: "Iyilesme" },
+  "recovery.title": { en: "Addiction Recovery", tr: "Bagimlilik Iyilesme" },
+  "recovery.subtitle": { en: "Track your recovery journey without judgment", tr: "Iyilesme yolculugunuzu yargilamadan takip edin" },
+  "recovery.cleanDays": { en: "Clean Days", tr: "Temiz Gunler" },
+  "recovery.craving": { en: "Craving Level", tr: "Istek Seviyesi" },
+  "recovery.milestone": { en: "Milestone", tr: "Donum Noktasi" },
+  "recovery.emergency": { en: "Need Help Now?", tr: "Simdi Yardim Gerekiyor mu?" },
+
+  // ══════════════════════════════════════════
+  // Pregnancy Tracker
+  // ══════════════════════════════════════════
+  "nav.pregnancyTracker": { en: "Pregnancy", tr: "Gebelik" },
+  "pregnancy.title": { en: "Pregnancy Tracker", tr: "Gebelik Takipcisi" },
+  "pregnancy.subtitle": { en: "Week-by-week guide with medication safety", tr: "Ilac guvenligi ile hafta hafta rehber" },
+  "pregnancy.week": { en: "Gestational Week", tr: "Gebelik Haftasi" },
+  "pregnancy.development": { en: "Fetal Development", tr: "Fetal Gelisim" },
+  "pregnancy.safeMeds": { en: "Medication Safety", tr: "Ilac Guvenligi" },
+  "pregnancy.nutrition": { en: "Nutrition", tr: "Beslenme" },
+  "pregnancy.warnings": { en: "Warning Signs", tr: "Uyari Isaretleri" },
+  "pregnancy.analyze": { en: "Get Week Guide", tr: "Hafta Rehberi Al" },
+
+  // ══════════════════════════════════════════
+  // Postpartum Support
+  // ══════════════════════════════════════════
+  "nav.postpartum": { en: "Postpartum", tr: "Dogum Sonrasi" },
+  "postpartum.title": { en: "Postpartum Support", tr: "Dogum Sonrasi Destek" },
+  "postpartum.subtitle": { en: "Recovery, mood screening & breastfeeding safety", tr: "Toparlanma, ruh hali taramasi ve emzirme guvenligi" },
+  "postpartum.weeksSince": { en: "Weeks Postpartum", tr: "Dogumdan Sonra Hafta" },
+  "postpartum.epds": { en: "EPDS Score", tr: "EPDS Skoru" },
+  "postpartum.breastfeeding": { en: "Breastfeeding", tr: "Emzirme" },
+  "postpartum.medSafety": { en: "Medication Safety", tr: "Ilac Guvenligi" },
+  "postpartum.analyze": { en: "Get Assessment", tr: "Degerlendirme Al" },
+
+  // ══════════════════════════════════════════
+  // Menopause Panel
+  // ══════════════════════════════════════════
+  "nav.menopause": { en: "Menopause", tr: "Menopoz" },
+  "menopause.title": { en: "Menopause Panel", tr: "Menopoz Paneli" },
+  "menopause.subtitle": { en: "Symptom tracking, supplements & bone health", tr: "Semptom takibi, takviyeler ve kemik sagligi" },
+  "menopause.symptoms": { en: "Symptoms", tr: "Semptomlar" },
+  "menopause.mrsScore": { en: "MRS Score", tr: "MRS Skoru" },
+  "menopause.boneHealth": { en: "Bone Health", tr: "Kemik Sagligi" },
+  "menopause.analyze": { en: "Analyze Symptoms", tr: "Semptom Analizi" },
+
+  // ══════════════════════════════════════════
+  // Men's Health
+  // ══════════════════════════════════════════
+  "nav.mensHealth": { en: "Men's Health", tr: "Erkek Sagligi" },
+  "mens.title": { en: "Men's Health", tr: "Erkek Sagligi" },
+  "mens.subtitle": { en: "Testosterone, prostate & medication effects", tr: "Testosteron, prostat ve ilac etkileri" },
+  "mens.adam": { en: "ADAM Score", tr: "ADAM Skoru" },
+  "mens.prostate": { en: "Prostate Health", tr: "Prostat Sagligi" },
+  "mens.medEffects": { en: "Medication Effects", tr: "Ilac Etkileri" },
+  "mens.analyze": { en: "Get Assessment", tr: "Degerlendirme Al" },
+
+  // ══════════════════════════════════════════
+  // Sexual Health
+  // ══════════════════════════════════════════
+  "nav.sexualHealth": { en: "Sexual Health", tr: "Cinsel Saglik" },
+  "sexual.title": { en: "Sexual Health", tr: "Cinsel Saglik" },
+  "sexual.subtitle": { en: "Medication effects, screening & safety", tr: "Ilac etkileri, tarama ve guvenlik" },
+  "sexual.medEffects": { en: "Medication Sexual Effects", tr: "Ilaclarin Cinsel Etkileri" },
+  "sexual.screening": { en: "STI Screening", tr: "Cinsel Yolla Bulasan Hastalik Taramasi" },
+  "sexual.analyze": { en: "Check Medications", tr: "Ilaclari Kontrol Et" },
+
 }
 
 // ══════════════════════════════════════════
