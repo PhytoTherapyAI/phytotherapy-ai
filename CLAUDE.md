@@ -349,6 +349,53 @@ NOT: Reçete OCR çıkarıldı — Türkiye'de güvenilir çalışmaz, güvenlik
 - Google OAuth — S12'de
 - Tarayıcı dili otomatik algılama — S12'de
 
+### Kişiselleştirilmiş Günlük Sağlık Planı ✅ (v23.0)
+- Dashboard'da en üstte — kullanıcının ilk gördüğü şey
+- AI günlük 4 aksiyon kartı (beslenme, yaşam tarzı, takip, wellness)
+- Profil+ilaç+vital+mood bazlı kişiselleştirme, her gün farklı
+- Tıkla → tamamla ✅, ilerleme çubuğu, confetti 🎉, 30dk cache
+- Yenile butonu, fallback plan (AI hata verirse)
+
+### Proaktif SOS Uyarı Sistemi ✅ (v23.0)
+- CriticalAlertModal: 10sn geri sayımlı tam ekran acil uyarı
+- Wearable/platform anomali tespiti → modal tetiklenir
+- "İyiyim İptal Et" veya geri sayım bitince → acil kişilere bildirim
+- GPS konum, ilaç listesi, alerjiler, kan grubu otomatik mesajda
+- 112 direkt arama butonu, titreşim, SVG animasyonlu countdown
+- `/api/trigger-sos` — POST: bildirim gönder, PUT: wearable webhook
+- Twilio SMS / Netgsm / WhatsApp Business API hazır (production'da aktif)
+
+### Algoritmik Güvenlik Çerçevesi ✅ (v23.0)
+- `lib/safety-guardrail.ts` — 5 katmanlı güvenlik korkuluğu
+- Layer 1: Genişletilmiş Kırmızı Bayrak (70+ semptom EN+TR, immediate vs urgent)
+- Layer 2: İlaç-Bitki Etkileşim (7 ilaç kategorisi, 40+ etkileşim, LETHAL/HIGH/MODERATE/LOW)
+- Layer 3: Kontrendikasyon Taraması (gebelik, böbrek, karaciğer, yaş bazlı, 50+ bitki)
+- Layer 4: Dozaj Limitleri (10 takviye max doz + süre)
+- Layer 5: Şeffaflık (güven skoru 0-100, disclaimer, sınırlılıklar)
+- `runSafetyGuardrail()` — tüm katmanları AI'dan ÖNCE çalıştırır
+- Doktor geri bildirim sistemi (Human-in-the-Loop): `/api/doctor-feedback`
+
+### PROMs/PREMs Sonuç Ölçüm Sistemi ✅ (v23.0 — Harvard HVHS C4)
+- ICHOM standardı PROMs: Ağrı VAS, Enerji, Uyku, Mood, Aktivite, Genel Sağlık (0-100)
+- Kanada modeli PREMs: Güven, Kolaylık, Bilgi Kalitesi, Tavsiye, Yan Etki
+- Otomatik tetikleme: T0 Başlangıç → T1 1.Hafta → T2 4.Hafta → T3 Kür Sonu → T4 Takip
+- Typeform tarzı tek soru anketi (slider + choice), PromsSurvey component
+- İyileşme skoru algoritması (baseline vs current, domain bazlı)
+- OutcomeComparisonCard: Önce vs Sonra karşılaştırma (bar chart + trend okları)
+
+### Eğitimler & Kurslar ✅ (v23.0)
+- `/courses` — 8 kurs kartı (fitoterapi, aromaterapi, akupunktur, bitkisel tıp, beslenme, bütünleştirici tıp, spor, fonksiyonel)
+- Kategori filtresi, platform badge (Udemy/Sorbil), rating/öğrenci/süre/seviye
+- Affiliate link altyapısı hazır (hackathon sonrası aktif)
+
+### Kurumsal & Market Intelligence ✅ (v23.0)
+- `/enterprise` — 3 tab: Kurumsal Planlar (Sigorta/İlaç/Klinik/Araştırma) + Pazar Trendleri (hammadde chart, AI insight) + Şirket Radarı (8 biyotek tablo)
+- Bloomberg tarzı profesyonel dashboard, mock data ile
+
+### Araştırma & İş Birliği Hub'ı ✅ (v23.0 — Harvard HVHS C10)
+- `/research-hub` — 4 tab: Ortaklık Modeli (TÜSEB/TÜBİTAK/YÖK/TITCK/EMA/FDA/WHO/ACE) + Veri Ambarı (star schema, SQL örneği) + Validasyon Hattı (6 faz) + Ulusal Vizyon (NHTS uyumu)
+- Açık İnovasyon API mimarisi, k-anonymity, KVKK/GDPR
+
 ### B2B
 - Doktor paneli (hasta takip, ziyaret özeti AI, uyum skoru)
 - Hasta davet linki
@@ -368,6 +415,12 @@ NOT: Reçete OCR çıkarıldı — Türkiye'de güvenilir çalışmaz, güvenlik
 - PWA (şimdi) → React Native (S21)
 - Apple Health + Google Fit entegrasyonu (S20)
 - Wearable (ileride)
+- Google OAuth ✅ (Production, sınırsız)
+- Facebook OAuth ✅ (Development modda, Business Verification hackathon sonrası)
+- Session expiry fix ✅ (visibilitychange + TOKEN_REFRESHED + global signOut)
+- Google Search Console ✅ (domain doğrulanmış, sitemap gönderilmiş)
+- 60+ Türkçe karakter düzeltmesi ✅ (translations.ts + enterprise.tsx)
+- Mahkeme referansı: Tüketici Hakem Heyetleri ✅ (terms/page.tsx)
 
 ---
 
