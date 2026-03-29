@@ -85,7 +85,7 @@ export async function GET(req: Request) {
     // Fetch allergies
     const { data: allergies } = await supabase
       .from("user_allergies")
-      .select("allergy_name, severity")
+      .select("allergen, severity")
       .eq("user_id", userId);
 
     // Fetch recent vitals (last 7 days)
@@ -129,7 +129,7 @@ USER PROFILE:
 
 MEDICATIONS: ${medications?.map(m => `${(m.generic_name || m.brand_name)} (${m.dosage}, ${m.frequency})`).join(", ") || "none"}
 
-ALLERGIES: ${allergies?.map(a => `${a.allergy_name} (${a.severity})`).join(", ") || "none"}
+ALLERGIES: ${allergies?.map(a => `${a.allergen} (${a.severity})`).join(", ") || "none"}
 
 RECENT VITALS: ${vitals?.map(v => `${v.vital_type}: ${v.value}${v.unit} (${v.recorded_at})`).join(", ") || "none recorded recently"}
 

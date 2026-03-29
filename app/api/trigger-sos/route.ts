@@ -86,7 +86,7 @@ export async function POST(req: Request) {
     // 4. Fetch allergies
     const { data: allergies } = await supabase
       .from("user_allergies")
-      .select("allergy_name, severity")
+      .select("allergen, severity")
       .eq("user_id", userId);
 
     // 5. Build SOS message
@@ -123,7 +123,7 @@ ${vitalData?.spo2 ? `🫁 SpO2: ${vitalData.spo2}%` : ""}
 - Kan Grubu: ${profile.blood_group || "-"}
 - Kronik: ${profile.chronic_conditions?.join(", ") || "-"}
 - İlaçlar: ${medications?.map((m) => (m.generic_name || m.brand_name)).join(", ") || "-"}
-- Alerjiler: ${allergies?.map((a) => a.allergy_name).join(", ") || "-"}
+- Alerjiler: ${allergies?.map((a) => a.allergen).join(", ") || "-"}
 
 ${locationUrl ? `📍 KONUM: ${locationUrl}` : "📍 Konum bilgisi mevcut değil"}
 
