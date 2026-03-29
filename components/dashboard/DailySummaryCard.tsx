@@ -221,17 +221,37 @@ export function DailySummaryCard({ userId, lang, userName }: DailySummaryCardPro
 
         {/* Check-in CTA or streak */}
         {!components.hasCheckIn ? (
-          <button
-            onClick={() => window.dispatchEvent(new Event("open-checkin"))}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-amber-600 hover:shadow-md active:scale-[0.98]"
-          >
-            <Sparkles className="h-4 w-4" />
-            {tx("summary.doCheckin", lang)}
-          </button>
+          <div className="mt-3 space-y-2">
+            {/* Streak loss warning — Loss Aversion */}
+            {data.streak > 0 && (
+              <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950/20 px-3 py-2 animate-pulse">
+                <Flame className="h-4 w-4 text-red-500" />
+                <span className="text-xs font-medium text-red-700 dark:text-red-400">
+                  {lang === "tr"
+                    ? `${data.streak} günlük streak'ini kaybetmek üzeresin!`
+                    : `You're about to lose your ${data.streak}-day streak!`}
+                </span>
+              </div>
+            )}
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-checkin"))}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:bg-amber-600 hover:shadow-md active:scale-[0.98]"
+            >
+              <Sparkles className="h-4 w-4" />
+              {tx("summary.doCheckin", lang)}
+            </button>
+          </div>
         ) : (
-          <div className="mt-2 flex items-center justify-end gap-1 text-xs text-muted-foreground">
-            <Flame className="h-3 w-3 text-orange-500" />
-            <span>{data.streak} {tx("summary.dayStreak", lang)}</span>
+          <div className="mt-3 flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs font-medium text-orange-600 dark:text-orange-400">
+              <Flame className="h-4 w-4" />
+              <span>{data.streak} {tx("summary.dayStreak", lang)}</span>
+            </div>
+            {data.streak >= 7 && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+                🔥 {lang === "tr" ? "Harika gidiyorsun!" : "You're on fire!"}
+              </span>
+            )}
           </div>
         )}
       </CardContent>
