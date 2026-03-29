@@ -34,7 +34,7 @@ export async function GET(req: Request) {
     // Fetch user medications
     const { data: meds } = await supabase
       .from("user_medications")
-      .select("medication_name, dosage, frequency, created_at")
+      .select("brand_name, generic_name, dosage, frequency, created_at")
       .eq("user_id", user.id)
 
     // Fetch blood test results
@@ -48,7 +48,7 @@ export async function GET(req: Request) {
     // Convert medications to FHIR MedicationStatements
     const fhirMeds = (meds || []).map(med => supplementToFHIR({
       patientId: user.id,
-      supplementName: med.medication_name,
+      supplementName: med.generic_name || med.brand_name,
       dose: med.dosage || "as directed",
       frequency: med.frequency || "daily",
       startDate: med.created_at?.split("T")[0] || new Date().toISOString().split("T")[0],

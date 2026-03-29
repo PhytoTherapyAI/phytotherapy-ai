@@ -175,10 +175,10 @@ export default function DashboardPage() {
       const supabase = createBrowserClient()
       const { data } = await supabase
         .from("user_medications")
-        .select("medication_name")
+        .select("brand_name, generic_name")
         .eq("user_id", user.id)
         .eq("is_active", true)
-      if (data) setMedications(data)
+      if (data) setMedications(data.map((m: any) => ({ medication_name: m.generic_name || m.brand_name })))
     } catch { /* silent */ }
   }, [user])
 

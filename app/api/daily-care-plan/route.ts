@@ -79,7 +79,7 @@ export async function GET(req: Request) {
     // Fetch medications
     const { data: medications } = await supabase
       .from("user_medications")
-      .select("medication_name, dosage, frequency")
+      .select("brand_name, generic_name, dosage, frequency")
       .eq("user_id", userId);
 
     // Fetch allergies

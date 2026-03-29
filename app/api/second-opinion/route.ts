@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
       supabase.from("user_profiles").select("*").eq("id", user.id).single(),
       supabase.from("user_medications").select("brand_name, generic_name, dosage, frequency").eq("user_id", user.id).eq("is_active", true),
       supabase.from("user_allergies").select("allergen, severity").eq("user_id", user.id),
-      supabase.from("blood_tests").select("test_name, value, unit, status, tested_at").eq("user_id", user.id).order("tested_at", { ascending: false }).limit(20),
+      supabase.from("blood_tests").select("test_data, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5),
     ]);
 
     const profile = profileResult.data;
