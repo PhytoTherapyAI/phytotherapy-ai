@@ -140,9 +140,9 @@ export async function POST(request: NextRequest) {
       fullPrompt += "\n";
     }
 
-    // Add PubMed sources
+    // Add peer-reviewed research sources (PubMed + Europe PMC)
     if (articles.length > 0) {
-      fullPrompt += "RELEVANT PUBMED RESEARCH (cite these in your response):\n";
+      fullPrompt += "RELEVANT PEER-REVIEWED RESEARCH (cite these in your response):\n";
       for (const article of articles) {
         fullPrompt += `- "${article.title}" (${article.year}) — ${article.url}\n`;
         if (article.abstract && article.abstract !== "No abstract available") {

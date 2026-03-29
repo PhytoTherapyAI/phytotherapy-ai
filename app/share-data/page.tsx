@@ -67,6 +67,7 @@ export default function ShareDataPage() {
         }),
       })
 
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const data = await res.json()
       if (data.success) {
         setSignature(data.digitalSignature || "")

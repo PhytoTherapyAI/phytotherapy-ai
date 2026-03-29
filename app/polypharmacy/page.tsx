@@ -52,7 +52,7 @@ export default function PolypharmacyPage() {
     try {
       const supabase = createBrowserClient()
       const { data } = await supabase.from("user_medications").select("medication_name").eq("user_id", user.id)
-      if (data) setMeds(data.map((d: any) => d.medication_name))
+      if (data) setMeds((data || []).map((d: any) => d.medication_name || ""))
     } catch (e) { console.error(e) }
     setLoading(false)
   }

@@ -54,6 +54,8 @@ const PAGES = [
   "/medical-dictionary",
   "/drug-info",
   "/rare-diseases",
+  "/medication-hub",
+  "/health-guides",
   "/auth/login",
 ];
 

@@ -42,6 +42,10 @@ export default function DataExportPage() {
             <p className="text-sm text-gray-500">{isTr ? "KVKK kapsaminda veri tasima hakki" : "GDPR/KVKK right to data portability"}</p>
           </div>
         </div>
+        <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
+          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200">{isTr ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
+          <span className="text-xs text-amber-700 dark:text-amber-300">{isTr ? "Kayıt sayıları ve boyutlar hesabınıza göre değişecektir" : "Record counts and sizes will reflect your actual data"}</span>
+        </div>
         <Card className="p-4 mb-6 border-blue-200 bg-blue-50 dark:bg-blue-900/20">
           <div className="flex items-start gap-3">
             <Database className="w-5 h-5 text-blue-500 mt-0.5" />

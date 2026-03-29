@@ -59,7 +59,8 @@ const ALL_PAGES = [
   "/dream-diary", "/snoring-apnea", "/circadian-rhythm", "/stretching",
   "/walking-tracker", "/yoga-meditation", "/rare-diseases", "/donation",
   "/accessibility", "/immigrant-health", "/pet-health", "/enterprise",
-  "/courses", "/auth/login", "/profile", "/onboarding",
+  "/courses", "/medication-hub", "/health-guides",
+  "/auth/login", "/profile", "/onboarding",
 ];
 
 /* ── Helpers ──────────────────────────────────────── */

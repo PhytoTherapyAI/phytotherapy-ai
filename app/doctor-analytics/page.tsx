@@ -54,6 +54,10 @@ export default function DoctorAnalyticsPage() {
           </div>
           <div className="flex gap-1">{["7d", "30d", "90d"].map(p => (<Button key={p} variant={period === p ? "default" : "outline"} size="sm" onClick={() => setPeriod(p)}>{p}</Button>))}</div>
         </div>
+        <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
+          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200">{isTr ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
+          <span className="text-xs text-amber-700 dark:text-amber-300">{isTr ? "Gerçek hasta verisi bağlandığında güncellenir" : "Updates when connected to real patient data"}</span>
+        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {metrics.map(m => (

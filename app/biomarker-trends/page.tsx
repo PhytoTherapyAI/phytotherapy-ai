@@ -67,7 +67,10 @@ export default function BiomarkerTrendsPage() {
       if (data) {
         const allEntries: BiomarkerEntry[] = []
         data.forEach((test: any) => {
-          const results = typeof test.results === "string" ? JSON.parse(test.results) : test.results
+          let results: any = null
+          try {
+            results = typeof test.results === "string" ? JSON.parse(test.results) : test.results
+          } catch { /* malformed JSON — skip */ }
           if (results && Array.isArray(results)) {
             results.forEach((r: any) => {
               allEntries.push({

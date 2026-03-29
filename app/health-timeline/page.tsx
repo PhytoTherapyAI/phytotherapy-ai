@@ -60,9 +60,12 @@ export default function HealthTimelinePage() {
 
     // Load manual events
     const saved = localStorage.getItem(`timeline_${user?.id || "guest"}`)
-    const manual: TimelineEvent[] = saved ? JSON.parse(saved) : []
+    let manual: TimelineEvent[] = []
+    try { if (saved) manual = JSON.parse(saved) || [] } catch { /* corrupted localStorage */ }
 
-    const all = [...autoEvents, ...manual].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    const all = [...autoEvents, ...manual]
+      .filter(e => e.date) // skip events without valid date
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     setEvents(all)
     setLoading(false)
   }

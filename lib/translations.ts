@@ -3276,6 +3276,8 @@ const newNavKeys: Record<string, TranslationEntry> = {
   "nav.biomarkerTrends": { en: "Biomarker Trends", tr: "Biyobelirteç Trendleri" },
   "nav.drugTiming": { en: "Drug Timing Matrix", tr: "İlaç Zamanlama Matrisi" },
   "nav.medSchedule": { en: "Medication Schedule", tr: "İlaç Saat Planı" },
+  "nav.medicationHub": { en: "Medication Hub", tr: "İlaç Merkezi" },
+  "nav.healthGuides": { en: "Health Guides", tr: "Sağlık Rehberleri" },
   "nav.polypharmacy": { en: "Polypharmacy Risk", tr: "Polifarmasi Riski" },
   "nav.medLog": { en: "Medication Log", tr: "İlaç Değişiklik Günlüğü" },
   "nav.healthRadar": { en: "Health Radar", tr: "Sağlık Radarı" },

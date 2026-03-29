@@ -30,17 +30,29 @@ export default function FamilyPage() {
   if (!user) return null
 
   return (
-    <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
-      <div className="flex items-center gap-3 mb-6">
-        <Users className="h-6 w-6 text-primary" />
-        <h1 className="text-2xl font-semibold">{tx("family.title", lang)}</h1>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-teal-50/50 to-white dark:from-gray-950 dark:to-gray-900">
+      <div className="mx-auto max-w-3xl px-4 md:px-8 py-8 sm:py-12">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-teal-100 dark:bg-teal-900/30 mb-4">
+            <Users className="h-8 w-8 text-teal-600 dark:text-teal-400" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            {tx("family.title", lang)}
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
+            {lang === "tr"
+              ? "Ailenizin sağlık profillerini yönetin, herkes için kişiselleştirilmiş öneriler alın"
+              : "Manage your family's health profiles and get personalized recommendations for everyone"}
+          </p>
+        </div>
 
-      <FamilyManager
-        userId={user.id}
-        lang={lang}
-        isPremium={true}
-      />
+        <FamilyManager
+          userId={user.id}
+          lang={lang}
+          isPremium={true}
+        />
+      </div>
     </div>
   )
 }

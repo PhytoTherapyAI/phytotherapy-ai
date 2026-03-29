@@ -70,7 +70,7 @@ export default function AboutPage() {
     { value: "85+", label: isTr ? "Sa\u011Fl\u0131k Arac\u0131" : "Health Tools", icon: FlaskConical },
     { value: "1000+", label: isTr ? "\u00C7eviri Anahtar\u0131 (TR/EN)" : "Translation Keys (TR/EN)", icon: Globe },
     { value: "60+", label: isTr ? "API Endpoint" : "API Endpoints", icon: Cpu },
-    { value: "PubMed", label: isTr ? "Entegrasyon" : "Integration", icon: Stethoscope },
+    { value: isTr ? "Çoklu" : "Multi", label: isTr ? "Akademik Kaynak" : "Research Sources", icon: Stethoscope },
   ];
 
   return (

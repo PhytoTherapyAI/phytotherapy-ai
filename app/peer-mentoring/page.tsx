@@ -57,6 +57,7 @@ export default function PeerMentoringPage() {
           </div>
           <h1 className="text-2xl font-bold">{lang === "tr" ? "Akran Sağlık Mentorluğu" : "Peer Health Mentoring"}</h1>
           <p className="text-muted-foreground mt-1">{lang === "tr" ? "Aynı yoldan geçmiş birinden 1-1 gönüllü destek" : "1-on-1 volunteer support from someone who's been there"}</p>
+          <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{lang === "tr" ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
         </div>
 
         <Card className="p-4 mb-6 bg-green-500/5 border-green-500/30">

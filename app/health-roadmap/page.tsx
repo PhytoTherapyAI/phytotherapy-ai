@@ -47,7 +47,7 @@ export default function HealthRoadmapPage() {
       const medCount = medsRes.data?.length || 0
 
       setPatientData({
-        age: profile?.date_of_birth ? Math.floor((Date.now() - new Date(profile.date_of_birth).getTime()) / 31557600000) : 35,
+        age: (() => { try { if (profile?.date_of_birth) { const ms = Date.now() - new Date(profile.date_of_birth).getTime(); return ms > 0 ? Math.floor(ms / 31557600000) : 35; } return 35; } catch { return 35; } })(),
         gender: profile?.gender || "unknown",
         conditions: (profile?.chronic_conditions || "").split(",").filter(Boolean),
         medicationCount: medCount,

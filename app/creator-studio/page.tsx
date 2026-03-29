@@ -321,6 +321,7 @@ export default function CreatorStudioPage() {
               <PenTool className="w-6 h-6 text-primary" />{t("title")}
             </h1>
             <p className="text-muted-foreground text-sm mt-1">{t("subtitle")}</p>
+            <span className="inline-flex items-center gap-1 mt-1 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{lang === "tr" ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right">

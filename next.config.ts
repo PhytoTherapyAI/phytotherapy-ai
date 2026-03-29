@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
       { hostname: "flagcdn.com" },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/drug-timing", destination: "/medication-hub", permanent: true },
+      { source: "/medication-schedule", destination: "/medication-hub", permanent: true },
+      { source: "/smart-reminders", destination: "/medication-hub", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {
