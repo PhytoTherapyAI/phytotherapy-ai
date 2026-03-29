@@ -147,7 +147,7 @@ export default function CrossAllergyPage() {
       {userAllergies && userAllergies.length > 0 && (
         <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
           <p className="text-sm text-amber-700 dark:text-amber-400 font-medium">
-            {lang === "tr" ? "Profilinizdeki alerjiler baz alinarak ilgili gruplar vurgulanmistir." : "Relevant groups highlighted based on your profile allergies."}
+            {tx("crossAllergy.profileHighlight", lang)}
           </p>
         </div>
       )}
@@ -163,7 +163,7 @@ export default function CrossAllergyPage() {
                 <g.icon className={`w-6 h-6 ${g.color}`} />
                 <div>
                   <p className="font-semibold text-gray-900 dark:text-white">{g.primary[lang]}</p>
-                  <p className="text-xs text-gray-500">{g.crossReactive.length} {lang === "tr" ? "capraz reaktif" : "cross-reactive items"}</p>
+                  <p className="text-xs text-gray-500">{g.crossReactive.length} {tx("crossAllergy.crossReactiveItems", lang)}</p>
                 </div>
               </div>
               {expanded === i ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
@@ -180,11 +180,11 @@ export default function CrossAllergyPage() {
                 </div>
                 <div className="space-y-2 text-sm">
                   <div>
-                    <p className="font-medium text-gray-700 dark:text-gray-300">{lang === "tr" ? "Mekanizma" : "Mechanism"}</p>
+                    <p className="font-medium text-gray-700 dark:text-gray-300">{tx("crossAllergy.mechanism", lang)}</p>
                     <p className="text-gray-600 dark:text-gray-400">{g.mechanism[lang]}</p>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-700 dark:text-gray-300">{lang === "tr" ? "Prevalans" : "Prevalence"}</p>
+                    <p className="font-medium text-gray-700 dark:text-gray-300">{tx("crossAllergy.prevalence", lang)}</p>
                     <p className="text-gray-600 dark:text-gray-400">{g.prevalence[lang]}</p>
                   </div>
                 </div>

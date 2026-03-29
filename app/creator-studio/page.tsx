@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -269,7 +270,7 @@ export default function CreatorStudioPage() {
                 {tags.length < 5 && (
                   <div className="flex gap-1">
                     <Input value={tagInput} onChange={e => setTagInput(e.target.value)} onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())}
-                      placeholder={lang === "tr" ? "Etiket ekle..." : "Add tag..."} className="h-8 w-32 text-xs" />
+                      placeholder={tx("creatorStudio.addTag", lang)} className="h-8 w-32 text-xs" />
                     <Button variant="ghost" size="sm" onClick={addTag} className="h-8"><Tag className="w-3 h-3" /></Button>
                   </div>
                 )}
@@ -279,7 +280,7 @@ export default function CreatorStudioPage() {
             {/* Language */}
             <div className="flex gap-2">
               <Globe className="w-4 h-4 text-muted-foreground mt-1" />
-              <Badge variant="outline">{lang === "tr" ? "Türkçe" : "English"}</Badge>
+              <Badge variant="outline">{tx("creatorStudio.langLabel", lang)}</Badge>
             </div>
           </div>
           {/* Right: SEO Assistant Sidebar */}
@@ -321,7 +322,7 @@ export default function CreatorStudioPage() {
               <PenTool className="w-6 h-6 text-primary" />{t("title")}
             </h1>
             <p className="text-muted-foreground text-sm mt-1">{t("subtitle")}</p>
-            <span className="inline-flex items-center gap-1 mt-1 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{lang === "tr" ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
+            <span className="inline-flex items-center gap-1 mt-1 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{tx("creatorStudio.sampleData", lang)}</span>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right">

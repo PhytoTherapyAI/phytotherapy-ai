@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { CLINICAL_TESTS, TEST_CATEGORIES } from "@/lib/clinical-tests-data"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -47,12 +48,10 @@ export default function ClinicalTestsPage() {
             <ClipboardList className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
           </div>
           <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
-            {lang === "tr" ? "Klinik Değerlendirme Testleri" : "Clinical Assessment Tests"}
+            {tx("clinicalTests.title", lang)}
           </h1>
           <p className="text-muted-foreground mt-2 max-w-lg mx-auto">
-            {lang === "tr"
-              ? "Uluslararası geçerliliği olan standart klinik tarama testleri. Her sonuç bilimsel referanslarla desteklenir."
-              : "Internationally validated standard clinical screening tests. Every result is backed by scientific references."}
+            {tx("clinicalTests.subtitle", lang)}
           </p>
         </div>
 
@@ -61,9 +60,7 @@ export default function ClinicalTestsPage() {
           <div className="flex gap-3">
             <ShieldCheck className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
             <p className="text-sm text-muted-foreground">
-              {lang === "tr"
-                ? "Bu testler birer tarama aracıdır ve tıbbi teşhis yerine geçmez. Sonuçlarınızı bir sağlık profesyoneliyle paylaşmanızı öneriyoruz."
-                : "These tests are screening tools and do not replace medical diagnosis. We recommend sharing your results with a healthcare professional."}
+              {tx("clinicalTests.screeningDisclaimer", lang)}
             </p>
           </div>
         </Card>
@@ -73,7 +70,7 @@ export default function ClinicalTestsPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             className="pl-10 h-11 rounded-xl"
-            placeholder={lang === "tr" ? "Test ara..." : "Search tests..."}
+            placeholder={tx("clinicalTests.searchPlaceholder", lang)}
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -105,7 +102,7 @@ export default function ClinicalTestsPage() {
                     </div>
                     {lastResult && (
                       <Badge variant="outline" className="text-[10px]">
-                        {lang === "tr" ? "Son" : "Last"}: {lastResult.score}/{test.maxScore}
+                        {tx("clinicalTests.last", lang)}: {lastResult.score}/{test.maxScore}
                       </Badge>
                     )}
                   </div>
@@ -120,9 +117,9 @@ export default function ClinicalTestsPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {test.estimatedMinutes} {lang === "tr" ? "dk" : "min"}
+                        <Clock className="w-3 h-3" /> {test.estimatedMinutes} {tx("clinicalTests.min", lang)}
                       </span>
-                      <span>{test.questionCount} {lang === "tr" ? "soru" : "Q"}</span>
+                      <span>{test.questionCount} {tx("clinicalTests.questionShort", lang)}</span>
                     </div>
                     <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </div>
@@ -135,18 +132,18 @@ export default function ClinicalTestsPage() {
         {filtered.length === 0 && (
           <div className="text-center py-12">
             <Search className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">{lang === "tr" ? "Test bulunamadı" : "No tests found"}</p>
+            <p className="text-muted-foreground">{tx("clinicalTests.noTestsFound", lang)}</p>
           </div>
         )}
 
         {/* Stats */}
         <div className="mt-10 text-center">
           <div className="inline-flex items-center gap-4 text-xs text-muted-foreground">
-            <span>{CLINICAL_TESTS.length} {lang === "tr" ? "test" : "tests"}</span>
+            <span>{CLINICAL_TESTS.length} {tx("clinicalTests.tests", lang)}</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground" />
-            <span>{lang === "tr" ? "Uluslararası standartlar" : "International standards"}</span>
+            <span>{tx("clinicalTests.intlStandards", lang)}</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground" />
-            <span>{lang === "tr" ? "Ücretsiz" : "Free"}</span>
+            <span>{tx("clinicalTests.free", lang)}</span>
           </div>
         </div>
       </div>

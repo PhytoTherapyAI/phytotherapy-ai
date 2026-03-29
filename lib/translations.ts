@@ -3842,6 +3842,113 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "chronicCare.target": { en: "Target", tr: "Hedef" },
   "chronicCare.nextSteps": { en: "Next Steps", tr: "Sonraki Adimlar" },
   "chronicCare.analyzeAnother": { en: "Analyze another condition", tr: "Baska bir hastalık analiz et" },
+
+  // ── Circadian Eating ──
+  "circadianEating.title": { en: "Circadian Meal Timing", tr: "Sirkadyen Yemek Zamanlama" },
+  "circadianEating.subtitle": { en: "WHEN you eat matters as much as WHAT you eat", tr: "Ne yediğin kadar NE ZAMAN yediğin önemli" },
+  "circadianEating.caffeineCutoff": { en: "Caffeine Cutoff", tr: "Kafein Kesim Saati" },
+  "circadianEating.noCaffeineAfter": { en: "no caffeine after this time", tr: "bu saatten sonra kafein yok" },
+  "circadianEating.lastMeal": { en: "Last Meal", tr: "Son Yemek" },
+  "circadianEating.beforeBed": { en: "at least 3 hours before bed", tr: "yatmadan en az 3 saat önce" },
+  "circadianEating.medicationTiming": { en: "Medication Timing", tr: "İlaç Zamanlaması" },
+  "circadianEating.reviewMedTiming": { en: "If you change meal times, review medication timing too", tr: "Yemek zamanlarını değiştirirsen ilaç saatlerini de gözden geçir" },
+  "circadianEating.evidence": { en: "📚 Evidence: Circadian nutrition research shows late-night eating increases metabolic syndrome risk by 40% (Cell Metabolism 2022). Chronotype-aligned eating improves weight management and sleep quality.", tr: "📚 Kanıt: Sirkadyen beslenme araştırmaları, geç saatlerde yemenin metabolik sendrom riskini %40 artırdığını gösteriyor (Cell Metabolism 2022). Kronotipin göre beslenme kilo yönetimi ve uyku kalitesini iyileştirir." },
+
+  // ── Circadian Rhythm ──
+  "circadian.morningType": { en: "Morning Type", tr: "Sabah Tipi" },
+  "circadian.earlyRiser": { en: "Early riser", tr: "Erken kalkan" },
+  "circadian.eveningType": { en: "Evening Type", tr: "Aksam Tipi" },
+  "circadian.nightOwl": { en: "Night owl", tr: "Gec yatan" },
+  "circadian.optimalSchedule": { en: "Optimal Daily Schedule", tr: "Optimal Günlük Program" },
+  "circadian.shiftWorkers": { en: "For Shift Workers", tr: "Vardiyali Calisanlar Icin" },
+  "circadian.lightTherapy": { en: "Light Therapy & SAD", tr: "Isik Terapisi & SAD" },
+
+  // ── Clinical Tests ──
+  "clinicalTests.title": { en: "Clinical Assessment Tests", tr: "Klinik Değerlendirme Testleri" },
+  "clinicalTests.subtitle": { en: "Internationally validated standard clinical screening tests. Every result is backed by scientific references.", tr: "Uluslararası geçerliliği olan standart klinik tarama testleri. Her sonuç bilimsel referanslarla desteklenir." },
+  "clinicalTests.screeningDisclaimer": { en: "These tests are screening tools and do not replace medical diagnosis. We recommend sharing your results with a healthcare professional.", tr: "Bu testler birer tarama aracıdır ve tıbbi teşhis yerine geçmez. Sonuçlarınızı bir sağlık profesyoneliyle paylaşmanızı öneriyoruz." },
+  "clinicalTests.searchPlaceholder": { en: "Search tests...", tr: "Test ara..." },
+  "clinicalTests.last": { en: "Last", tr: "Son" },
+  "clinicalTests.min": { en: "min", tr: "dk" },
+  "clinicalTests.questionShort": { en: "Q", tr: "soru" },
+  "clinicalTests.noTestsFound": { en: "No tests found", tr: "Test bulunamadı" },
+  "clinicalTests.tests": { en: "tests", tr: "test" },
+  "clinicalTests.intlStandards": { en: "International standards", tr: "Uluslararası standartlar" },
+  "clinicalTests.free": { en: "Free", tr: "Ücretsiz" },
+  "clinicalTests.notFound": { en: "Test not found", tr: "Test bulunamadı" },
+  "clinicalTests.notFoundDesc": { en: "This test does not exist.", tr: "Bu test mevcut değil." },
+  "clinicalTests.backToTests": { en: "Back to Tests", tr: "Testlere Dön" },
+  "clinicalTests.allTests": { en: "All Tests", tr: "Tüm Testler" },
+  "clinicalTests.minutes": { en: "minutes", tr: "dakika" },
+  "clinicalTests.questions": { en: "questions", tr: "soru" },
+  "clinicalTests.howItWorks": { en: "How it works?", tr: "Nasıl çalışır?" },
+  "clinicalTests.step1": { en: "You'll see one question per screen", tr: "Her ekranda bir soru göreceksiniz" },
+  "clinicalTests.step2": { en: "Select the answer that best fits you", tr: "Size en uygun cevabı seçin" },
+  "clinicalTests.step3": { en: "You'll receive a scientific score and guidance at the end", tr: "Sonunda bilimsel puanlama ve yönlendirme alacaksınız" },
+  "clinicalTests.startTest": { en: "Start Test", tr: "Teste Başla" },
+
+  // ── Clinical Trials ──
+  "trials.conditionPlaceholder": { en: "e.g., Type 2 Diabetes, Rheumatoid Arthritis", tr: "ornegin: Tip 2 Diyabet, Romatoid Artrit" },
+  "trials.locationPlaceholder": { en: "e.g., Istanbul, Turkey", tr: "ornegin: Istanbul, Türkiye" },
+  "trials.eligibility": { en: "Eligibility", tr: "Uygunluk" },
+  "trials.relatedTerms": { en: "Related Search Terms", tr: "Ilgili Arama Terimleri" },
+
+  // ── Contact ──
+  "contact.title": { en: "Contact Us", tr: "Bize Ulasin" },
+  "contact.subtitle": { en: "Questions, suggestions, or feedback? We'd love to hear from you.", tr: "Sorulariniz, onerileriniz veya geri bildirimleriniz icin bize yazin." },
+  "contact.email": { en: "Email", tr: "E-posta" },
+  "contact.support": { en: "Support", tr: "Destek" },
+  "contact.responseTime": { en: "Response within 24 hours", tr: "24 saat icinde yanit" },
+  "contact.location": { en: "Location", tr: "Konum" },
+  "contact.messageReceived": { en: "Message received!", tr: "Mesajiniz alindi!" },
+  "contact.willGetBack": { en: "We'll get back to you as soon as possible.", tr: "En kisa surede size geri donecegiz." },
+  "contact.sendAnother": { en: "Send another message", tr: "Yeni mesaj gonder" },
+  "contact.yourName": { en: "Your Name", tr: "Adiniz" },
+  "contact.fullName": { en: "Full Name", tr: "Ad Soyad" },
+  "contact.subject": { en: "Subject", tr: "Konu" },
+  "contact.subjectPlaceholder": { en: "What is this about?", tr: "Konu basliginiz" },
+  "contact.yourMessage": { en: "Your Message", tr: "Mesajiniz" },
+  "contact.messagePlaceholder": { en: "Write your message here...", tr: "Mesajinizi buraya yazin..." },
+  "contact.send": { en: "Send Message", tr: "Gonder" },
+
+  // ── Courses ──
+  "courses.title": { en: "Courses & Education", tr: "Eğitimler & Kurslar" },
+  "courses.subtitle": { en: "Develop yourself with evidence-based health courses. Phytotherapy, aromatherapy, acupuncture and more.", tr: "Kanıta dayalı sağlık eğitimleriyle kendinizi geliştirin. Fitoterapi, aromaterapi, akupunktur ve daha fazlası." },
+  "courses.goToCourse": { en: "Go to Course", tr: "Kursa Git" },
+  "courses.disclaimer": { en: "Courses listed on this page are hosted on independent education platforms. Phytotherapy.ai is not responsible for course content. We may earn a commission from sales through affiliate links.", tr: "Bu sayfadaki kurslar bağımsız eğitim platformlarında yer almaktadır. Phytotherapy.ai bu kursların içeriklerinden sorumlu değildir. Affiliate bağlantıları üzerinden yapılan satışlardan komisyon alınabilir." },
+
+  // ── Creator Studio ──
+  "creatorStudio.addTag": { en: "Add tag...", tr: "Etiket ekle..." },
+  "creatorStudio.langLabel": { en: "English", tr: "Türkçe" },
+  "creatorStudio.sampleData": { en: "SAMPLE DATA", tr: "ÖRNEK VERİ" },
+
+  // ── Cross Allergy ──
+  "crossAllergy.profileHighlight": { en: "Relevant groups highlighted based on your profile allergies.", tr: "Profilinizdeki alerjiler baz alinarak ilgili gruplar vurgulanmistir." },
+  "crossAllergy.crossReactiveItems": { en: "cross-reactive items", tr: "capraz reaktif" },
+  "crossAllergy.mechanism": { en: "Mechanism", tr: "Mekanizma" },
+  "crossAllergy.prevalence": { en: "Prevalence", tr: "Prevalans" },
+
+  // ── Data Delete ──
+  "dataDelete.title": { en: "Delete Account", tr: "Hesabi Sil" },
+  "dataDelete.subtitle": { en: "GDPR/KVKK right to data deletion", tr: "KVKK kapsaminda veri silme hakki" },
+  "dataDelete.accountDeleted": { en: "Account Deleted", tr: "Hesabiniz Silindi" },
+  "dataDelete.deletedInfo": { en: "All your data will be permanently deleted within 30 days.", tr: "Tum verileriniz 30 gun icinde kalici olarak silinecektir." },
+  "dataDelete.gracePeriod": { en: "day grace period", tr: "gun bekleme suresi" },
+  "dataDelete.warning": { en: "Warning: This action is irreversible", tr: "Dikkat: Bu işlem geri alinamaz" },
+  "dataDelete.warningDesc": { en: "When you delete your account, all data will be permanently removed.", tr: "Hesabinizi sildiginizde tum veriler kalici olarak silinecektir." },
+  "dataDelete.dataToDelete": { en: "Data to be Deleted", tr: "Silinecek Veriler" },
+  "dataDelete.exportAlt": { en: "Alternative: Export Data", tr: "Alternatif: Veri İndirme" },
+  "dataDelete.exportDesc": { en: "You can download your data before deleting.", tr: "Silmeden once verilerinizi indirebilirsiniz." },
+  "dataDelete.exportButton": { en: "Export My Data", tr: "Verilerimi İndir" },
+  "dataDelete.continue": { en: "Continue", tr: "Devam Et" },
+  "dataDelete.confirmRequired": { en: "Confirmation Required", tr: "Onay Gerekli" },
+  "dataDelete.typeDelete": { en: "Type DELETE below to confirm.", tr: "Devam etmek için asagiya DELETE yazın." },
+  "dataDelete.codeCorrect": { en: "Confirmation code correct", tr: "Onay kodu doğru" },
+  "dataDelete.finalStep": { en: "Final Step", tr: "Son Adim" },
+  "dataDelete.finalConfirmation": { en: "Final Confirmation", tr: "Son Onay" },
+  "dataDelete.finalDesc": { en: "Clicking this button will mark your account for deletion.", tr: "Bu butona bastiginizda hesabiniz silinmek uzere isaretlenecektir." },
+  "dataDelete.understandDelete": { en: "I understand all my data will be permanently deleted.", tr: "Tum verilerimin kalici olarak silinecegini anliyorum." },
+  "dataDelete.deleteAccount": { en: "Delete My Account", tr: "Hesabimi Sil" },
 }
 Object.assign(t, commonToolKeys)
 

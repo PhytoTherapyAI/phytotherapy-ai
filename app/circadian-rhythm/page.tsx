@@ -59,9 +59,9 @@ export default function CircadianRhythmPage() {
         >
           <Sun className={`w-6 h-6 mx-auto mb-1 ${chronotype === "morning" ? "text-amber-500" : "text-gray-400"}`} />
           <p className={`text-sm font-medium ${chronotype === "morning" ? "text-amber-700 dark:text-amber-300" : "text-gray-600 dark:text-gray-400"}`}>
-            {lang === "tr" ? "Sabah Tipi" : "Morning Type"}
+            {tx("circadian.morningType", lang)}
           </p>
-          <p className="text-xs text-gray-400">{lang === "tr" ? "Erken kalkan" : "Early riser"}</p>
+          <p className="text-xs text-gray-400">{tx("circadian.earlyRiser", lang)}</p>
         </button>
         <button
           onClick={() => setChronotype("evening")}
@@ -69,16 +69,16 @@ export default function CircadianRhythmPage() {
         >
           <Moon className={`w-6 h-6 mx-auto mb-1 ${chronotype === "evening" ? "text-indigo-500" : "text-gray-400"}`} />
           <p className={`text-sm font-medium ${chronotype === "evening" ? "text-indigo-700 dark:text-indigo-300" : "text-gray-600 dark:text-gray-400"}`}>
-            {lang === "tr" ? "Aksam Tipi" : "Evening Type"}
+            {tx("circadian.eveningType", lang)}
           </p>
-          <p className="text-xs text-gray-400">{lang === "tr" ? "Gec yatan" : "Night owl"}</p>
+          <p className="text-xs text-gray-400">{tx("circadian.nightOwl", lang)}</p>
         </button>
       </div>
 
       {/* Schedule */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-          {lang === "tr" ? "Optimal Günlük Program" : "Optimal Daily Schedule"}
+          {tx("circadian.optimalSchedule", lang)}
         </h3>
         <div className="space-y-3">
           {SCHEDULE.map((s, i) => (
@@ -99,7 +99,7 @@ export default function CircadianRhythmPage() {
       {/* Shift Worker */}
       <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800 p-5 mb-6">
         <h3 className="font-semibold text-amber-800 dark:text-amber-300 mb-3 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4" /> {lang === "tr" ? "Vardiyali Calisanlar Icin" : "For Shift Workers"}
+          <AlertTriangle className="w-4 h-4" /> {tx("circadian.shiftWorkers", lang)}
         </h3>
         <ul className="space-y-2">
           {SHIFT_WORKER_TIPS.map((t, i) => (
@@ -113,7 +113,7 @@ export default function CircadianRhythmPage() {
       {/* SAD */}
       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-5">
         <h3 className="font-semibold text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-2">
-          <Lightbulb className="w-4 h-4" /> {lang === "tr" ? "Isik Terapisi & SAD" : "Light Therapy & SAD"}
+          <Lightbulb className="w-4 h-4" /> {tx("circadian.lightTherapy", lang)}
         </h3>
         <p className="text-sm text-blue-700 dark:text-blue-400">{SAD_INFO[lang]}</p>
       </div>

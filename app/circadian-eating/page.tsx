@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -65,8 +66,8 @@ export default function CircadianEatingPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Clock className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold">{lang === "tr" ? "Sirkadyen Yemek Zamanlama" : "Circadian Meal Timing"}</h1>
-          <p className="text-muted-foreground mt-1">{lang === "tr" ? "Ne yediğin kadar NE ZAMAN yediğin önemli" : "WHEN you eat matters as much as WHAT you eat"}</p>
+          <h1 className="text-2xl font-bold">{tx("circadianEating.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("circadianEating.subtitle", lang)}</p>
         </div>
 
         {/* Chronotype selector */}
@@ -105,22 +106,22 @@ export default function CircadianEatingPage() {
           <Card className="p-4 flex items-start gap-3">
             <Coffee className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium text-sm">{lang === "tr" ? "Kafein Kesim Saati" : "Caffeine Cutoff"}</p>
-              <p className="text-sm text-muted-foreground">{chronotype.caffeineStop} — {lang === "tr" ? "bu saatten sonra kafein yok" : "no caffeine after this time"}</p>
+              <p className="font-medium text-sm">{tx("circadianEating.caffeineCutoff", lang)}</p>
+              <p className="text-sm text-muted-foreground">{chronotype.caffeineStop} — {tx("circadianEating.noCaffeineAfter", lang)}</p>
             </div>
           </Card>
           <Card className="p-4 flex items-start gap-3">
             <Sunset className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium text-sm">{lang === "tr" ? "Son Yemek" : "Last Meal"}</p>
-              <p className="text-sm text-muted-foreground">{chronotype.lastMeal} — {lang === "tr" ? "yatmadan en az 3 saat önce" : "at least 3 hours before bed"}</p>
+              <p className="font-medium text-sm">{tx("circadianEating.lastMeal", lang)}</p>
+              <p className="text-sm text-muted-foreground">{chronotype.lastMeal} — {tx("circadianEating.beforeBed", lang)}</p>
             </div>
           </Card>
           <Card className="p-4 flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
             <div>
-              <p className="font-medium text-sm">{lang === "tr" ? "İlaç Zamanlaması" : "Medication Timing"}</p>
-              <p className="text-sm text-muted-foreground">{lang === "tr" ? "Yemek zamanlarını değiştirirsen ilaç saatlerini de gözden geçir" : "If you change meal times, review medication timing too"}</p>
+              <p className="font-medium text-sm">{tx("circadianEating.medicationTiming", lang)}</p>
+              <p className="text-sm text-muted-foreground">{tx("circadianEating.reviewMedTiming", lang)}</p>
             </div>
           </Card>
         </div>
@@ -128,9 +129,7 @@ export default function CircadianEatingPage() {
         {/* Evidence */}
         <Card className="p-4 mt-6 bg-primary/5 border-primary/30">
           <p className="text-xs text-muted-foreground">
-            {lang === "tr"
-              ? "📚 Kanıt: Sirkadyen beslenme araştırmaları, geç saatlerde yemenin metabolik sendrom riskini %40 artırdığını gösteriyor (Cell Metabolism 2022). Kronotipin göre beslenme kilo yönetimi ve uyku kalitesini iyileştirir."
-              : "📚 Evidence: Circadian nutrition research shows late-night eating increases metabolic syndrome risk by 40% (Cell Metabolism 2022). Chronotype-aligned eating improves weight management and sleep quality."}
+            {tx("circadianEating.evidence", lang)}
           </p>
         </Card>
       </div>

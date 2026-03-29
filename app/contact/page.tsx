@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,29 +28,27 @@ export default function ContactPage() {
             <Mail className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-3xl font-heading font-semibold">
-            {isTr ? "Bize Ulasin" : "Contact Us"}
+            {tx("contact.title", lang)}
           </h1>
           <p className="text-muted-foreground mt-2 max-w-md mx-auto">
-            {isTr
-              ? "Sorulariniz, onerileriniz veya geri bildirimleriniz icin bize yazin."
-              : "Questions, suggestions, or feedback? We'd love to hear from you."}
+            {tx("contact.subtitle", lang)}
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4 mb-10">
           <Card className="p-5 text-center">
             <Mail className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="font-medium text-sm">{isTr ? "E-posta" : "Email"}</p>
+            <p className="font-medium text-sm">{tx("contact.email", lang)}</p>
             <p className="text-xs text-muted-foreground mt-1">hello@phytotherapy.ai</p>
           </Card>
           <Card className="p-5 text-center">
             <MessageSquare className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="font-medium text-sm">{isTr ? "Destek" : "Support"}</p>
-            <p className="text-xs text-muted-foreground mt-1">{isTr ? "24 saat icinde yanit" : "Response within 24 hours"}</p>
+            <p className="font-medium text-sm">{tx("contact.support", lang)}</p>
+            <p className="text-xs text-muted-foreground mt-1">{tx("contact.responseTime", lang)}</p>
           </Card>
           <Card className="p-5 text-center">
             <MapPin className="w-6 h-6 text-primary mx-auto mb-2" />
-            <p className="font-medium text-sm">{isTr ? "Konum" : "Location"}</p>
+            <p className="font-medium text-sm">{tx("contact.location", lang)}</p>
             <p className="text-xs text-muted-foreground mt-1">Istanbul, Turkey</p>
           </Card>
         </div>
@@ -58,15 +57,13 @@ export default function ContactPage() {
           <Card className="p-8 text-center">
             <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">
-              {isTr ? "Mesajiniz alindi!" : "Message received!"}
+              {tx("contact.messageReceived", lang)}
             </h2>
             <p className="text-muted-foreground">
-              {isTr
-                ? "En kisa surede size geri donecegiz."
-                : "We'll get back to you as soon as possible."}
+              {tx("contact.willGetBack", lang)}
             </p>
             <Button className="mt-4" variant="outline" onClick={() => setSent(false)}>
-              {isTr ? "Yeni mesaj gonder" : "Send another message"}
+              {tx("contact.sendAnother", lang)}
             </Button>
           </Card>
         ) : (
@@ -75,18 +72,18 @@ export default function ContactPage() {
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium mb-1 block">
-                    {isTr ? "Adiniz" : "Your Name"}
+                    {tx("contact.yourName", lang)}
                   </label>
                   <Input
                     required
                     value={form.name}
                     onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                    placeholder={isTr ? "Ad Soyad" : "Full Name"}
+                    placeholder={tx("contact.fullName", lang)}
                   />
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1 block">
-                    {isTr ? "E-posta" : "Email"}
+                    {tx("contact.email", lang)}
                   </label>
                   <Input
                     required
@@ -99,30 +96,30 @@ export default function ContactPage() {
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">
-                  {isTr ? "Konu" : "Subject"}
+                  {tx("contact.subject", lang)}
                 </label>
                 <Input
                   required
                   value={form.subject}
                   onChange={e => setForm(f => ({ ...f, subject: e.target.value }))}
-                  placeholder={isTr ? "Konu basliginiz" : "What is this about?"}
+                  placeholder={tx("contact.subjectPlaceholder", lang)}
                 />
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">
-                  {isTr ? "Mesajiniz" : "Your Message"}
+                  {tx("contact.yourMessage", lang)}
                 </label>
                 <Textarea
                   required
                   rows={5}
                   value={form.message}
                   onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                  placeholder={isTr ? "Mesajinizi buraya yazin..." : "Write your message here..."}
+                  placeholder={tx("contact.messagePlaceholder", lang)}
                 />
               </div>
               <Button type="submit" className="w-full gap-2">
                 <Send className="w-4 h-4" />
-                {isTr ? "Gonder" : "Send Message"}
+                {tx("contact.send", lang)}
               </Button>
             </form>
           </Card>

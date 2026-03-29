@@ -34,9 +34,9 @@ export default function DataDeletePage() {
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-950 p-4 md:p-8 flex items-center justify-center">
         <Card className="p-8 text-center max-w-md">
           <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">{isTr ? "Hesabiniz Silindi" : "Account Deleted"}</h2>
-          <p className="text-sm text-gray-500 mb-4">{isTr ? "Tum verileriniz 30 gun icinde kalici olarak silinecektir." : "All your data will be permanently deleted within 30 days."}</p>
-          <Badge className="bg-yellow-100 text-yellow-700">30 {isTr ? "gun bekleme suresi" : "day grace period"}</Badge>
+          <h2 className="text-xl font-bold mb-2">{tx("dataDelete.accountDeleted", lang)}</h2>
+          <p className="text-sm text-gray-500 mb-4">{tx("dataDelete.deletedInfo", lang)}</p>
+          <Badge className="bg-yellow-100 text-yellow-700">30 {tx("dataDelete.gracePeriod", lang)}</Badge>
         </Card>
       </div>
     );
@@ -48,8 +48,8 @@ export default function DataDeletePage() {
         <div className="flex items-center gap-3 mb-6">
           <Trash2 className="w-8 h-8 text-red-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Hesabi Sil" : "Delete Account"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "KVKK kapsaminda veri silme hakki" : "GDPR/KVKK right to data deletion"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("dataDelete.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{tx("dataDelete.subtitle", lang)}</p>
           </div>
         </div>
 
@@ -68,13 +68,13 @@ export default function DataDeletePage() {
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-red-700 dark:text-red-400">{isTr ? "Dikkat: Bu işlem geri alinamaz" : "Warning: This action is irreversible"}</h3>
-                  <p className="text-sm text-red-600 dark:text-red-300 mt-1">{isTr ? "Hesabinizi sildiginizde tum veriler kalici olarak silinecektir." : "When you delete your account, all data will be permanently removed."}</p>
+                  <h3 className="font-semibold text-red-700 dark:text-red-400">{tx("dataDelete.warning", lang)}</h3>
+                  <p className="text-sm text-red-600 dark:text-red-300 mt-1">{tx("dataDelete.warningDesc", lang)}</p>
                 </div>
               </div>
             </Card>
             <Card className="p-4">
-              <h3 className="font-semibold mb-3 flex items-center gap-2"><Info className="w-4 h-4 text-blue-500" /> {isTr ? "Silinecek Veriler" : "Data to be Deleted"}</h3>
+              <h3 className="font-semibold mb-3 flex items-center gap-2"><Info className="w-4 h-4 text-blue-500" /> {tx("dataDelete.dataToDelete", lang)}</h3>
               <div className="space-y-2">
                 {dataCategories.map((cat, i) => (
                   <div key={i} className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
@@ -88,13 +88,13 @@ export default function DataDeletePage() {
               <div className="flex items-start gap-3">
                 <Lock className="w-5 h-5 text-blue-500 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-blue-700">{isTr ? "Alternatif: Veri İndirme" : "Alternative: Export Data"}</h3>
-                  <p className="text-sm text-blue-600 mt-1">{isTr ? "Silmeden once verilerinizi indirebilirsiniz." : "You can download your data before deleting."}</p>
-                  <Button variant="outline" size="sm" className="mt-2">{isTr ? "Verilerimi İndir" : "Export My Data"}</Button>
+                  <h3 className="font-semibold text-blue-700">{tx("dataDelete.exportAlt", lang)}</h3>
+                  <p className="text-sm text-blue-600 mt-1">{tx("dataDelete.exportDesc", lang)}</p>
+                  <Button variant="outline" size="sm" className="mt-2">{tx("dataDelete.exportButton", lang)}</Button>
                 </div>
               </div>
             </Card>
-            <Button className="w-full bg-red-500 hover:bg-red-600" onClick={() => setStep(2)}>{isTr ? "Devam Et" : "Continue"} <ArrowRight className="w-4 h-4 ml-2" /></Button>
+            <Button className="w-full bg-red-500 hover:bg-red-600" onClick={() => setStep(2)}>{tx("dataDelete.continue", lang)} <ArrowRight className="w-4 h-4 ml-2" /></Button>
           </div>
         )}
 
@@ -102,14 +102,14 @@ export default function DataDeletePage() {
           <div className="space-y-4">
             <Card className="p-6">
               <ShieldAlert className="w-12 h-12 text-red-500 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-center mb-2">{isTr ? "Onay Gerekli" : "Confirmation Required"}</h3>
-              <p className="text-sm text-gray-500 text-center mb-6">{isTr ? "Devam etmek için asagiya DELETE yazın." : "Type DELETE below to confirm."}</p>
+              <h3 className="text-lg font-bold text-center mb-2">{tx("dataDelete.confirmRequired", lang)}</h3>
+              <p className="text-sm text-gray-500 text-center mb-6">{tx("dataDelete.typeDelete", lang)}</p>
               <input className="w-full rounded-lg border-2 border-red-200 px-4 py-3 text-center text-lg font-mono tracking-widest dark:bg-gray-800 dark:border-red-800 focus:border-red-500 focus:outline-none" placeholder="DELETE" value={deleteText} onChange={e => setDeleteText(e.target.value.toUpperCase())} />
-              {deleteText === "DELETE" && <div className="flex items-center gap-2 mt-4 text-green-600"><CheckCircle2 className="w-4 h-4" /><span className="text-sm">{isTr ? "Onay kodu doğru" : "Confirmation code correct"}</span></div>}
+              {deleteText === "DELETE" && <div className="flex items-center gap-2 mt-4 text-green-600"><CheckCircle2 className="w-4 h-4" /><span className="text-sm">{tx("dataDelete.codeCorrect", lang)}</span></div>}
             </Card>
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1" onClick={() => setStep(1)}><ArrowLeft className="w-4 h-4 mr-2" /> {tx("common.back", lang)}</Button>
-              <Button className="flex-1 bg-red-500 hover:bg-red-600" disabled={deleteText !== "DELETE"} onClick={() => setStep(3)}>{isTr ? "Son Adim" : "Final Step"} <ArrowRight className="w-4 h-4 ml-2" /></Button>
+              <Button className="flex-1 bg-red-500 hover:bg-red-600" disabled={deleteText !== "DELETE"} onClick={() => setStep(3)}>{tx("dataDelete.finalStep", lang)} <ArrowRight className="w-4 h-4 ml-2" /></Button>
             </div>
           </div>
         )}
@@ -118,16 +118,16 @@ export default function DataDeletePage() {
           <div className="space-y-4">
             <Card className="p-6 border-red-300 bg-red-50 dark:bg-red-900/20">
               <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-center text-red-700 mb-2">{isTr ? "Son Onay" : "Final Confirmation"}</h3>
-              <p className="text-sm text-center text-gray-600 mb-6">{isTr ? "Bu butona bastiginizda hesabiniz silinmek uzere isaretlenecektir." : "Clicking this button will mark your account for deletion."}</p>
+              <h3 className="text-xl font-bold text-center text-red-700 mb-2">{tx("dataDelete.finalConfirmation", lang)}</h3>
+              <p className="text-sm text-center text-gray-600 mb-6">{tx("dataDelete.finalDesc", lang)}</p>
               <label className="flex items-start gap-3 p-3 rounded-lg border cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/30">
                 <input type="checkbox" checked={confirmed} onChange={e => setConfirmed(e.target.checked)} className="mt-1" />
-                <span className="text-sm">{isTr ? "Tum verilerimin kalici olarak silinecegini anliyorum." : "I understand all my data will be permanently deleted."}</span>
+                <span className="text-sm">{tx("dataDelete.understandDelete", lang)}</span>
               </label>
             </Card>
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1" onClick={() => setStep(2)}><ArrowLeft className="w-4 h-4 mr-2" /> {tx("common.back", lang)}</Button>
-              <Button className="flex-1 bg-red-600 hover:bg-red-700" disabled={!confirmed} onClick={handleDelete}><Trash2 className="w-4 h-4 mr-2" /> {isTr ? "Hesabimi Sil" : "Delete My Account"}</Button>
+              <Button className="flex-1 bg-red-600 hover:bg-red-700" disabled={!confirmed} onClick={handleDelete}><Trash2 className="w-4 h-4 mr-2" /> {tx("dataDelete.deleteAccount", lang)}</Button>
             </div>
           </div>
         )}

@@ -187,12 +187,10 @@ export default function CoursesPage() {
           <GraduationCap className="h-7 w-7 text-primary" />
         </div>
         <h1 className="font-heading text-3xl font-bold">
-          {isTr ? "Eğitimler & Kurslar" : "Courses & Education"}
+          {tx("courses.title", lang)}
         </h1>
         <p className="mt-2 text-muted-foreground">
-          {isTr
-            ? "Kanıta dayalı sağlık eğitimleriyle kendinizi geliştirin. Fitoterapi, aromaterapi, akupunktur ve daha fazlası."
-            : "Develop yourself with evidence-based health courses. Phytotherapy, aromatherapy, acupuncture and more."}
+          {tx("courses.subtitle", lang)}
         </p>
       </div>
 
@@ -208,7 +206,7 @@ export default function CoursesPage() {
                 : "bg-muted text-muted-foreground hover:bg-muted/80"
             }`}
           >
-            {isTr ? cat.labelTr : cat.labelEn}
+            {lang === "tr" ? cat.labelTr : cat.labelEn}
           </button>
         ))}
       </div>
@@ -250,7 +248,7 @@ export default function CoursesPage() {
               <div className="mb-3 flex items-center justify-between">
                 <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-semibold ${course.iconBg}`}>
                   <Icon className="mr-1.5 h-3.5 w-3.5" />
-                  {isTr
+                  {lang === "tr"
                     ? CATEGORIES.find(c => c.id === course.category)?.labelTr
                     : CATEGORIES.find(c => c.id === course.category)?.labelEn}
                 </span>
@@ -261,10 +259,10 @@ export default function CoursesPage() {
 
               {/* Title & Description */}
               <h3 className="mb-1.5 text-base font-bold leading-snug">
-                {isTr ? titles[course.id]?.tr : titles[course.id]?.en}
+                {lang === "tr" ? titles[course.id]?.tr : titles[course.id]?.en}
               </h3>
               <p className="mb-4 text-xs leading-relaxed text-muted-foreground line-clamp-2">
-                {isTr ? descs[course.id]?.tr : descs[course.id]?.en}
+                {lang === "tr" ? descs[course.id]?.tr : descs[course.id]?.en}
               </p>
 
               {/* Meta */}
@@ -279,7 +277,7 @@ export default function CoursesPage() {
                 </span>
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  {isTr ? course.duration : course.durationEn}
+                  {lang === "tr" ? course.duration : course.durationEn}
                 </span>
                 <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${levelColor(course.level)}`}>
                   {levelLabel(course.level)}
@@ -293,7 +291,7 @@ export default function CoursesPage() {
                 rel="noopener noreferrer"
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
               >
-                {isTr ? "Kursa Git" : "Go to Course"}
+                {tx("courses.goToCourse", lang)}
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
             </div>
@@ -304,9 +302,7 @@ export default function CoursesPage() {
       {/* Disclaimer */}
       <div className="mt-10 rounded-xl border bg-muted/30 p-5 text-center text-sm text-muted-foreground">
         <p>
-          {isTr
-            ? "Bu sayfadaki kurslar bağımsız eğitim platformlarında yer almaktadır. Phytotherapy.ai bu kursların içeriklerinden sorumlu değildir. Affiliate bağlantıları üzerinden yapılan satışlardan komisyon alınabilir."
-            : "Courses listed on this page are hosted on independent education platforms. Phytotherapy.ai is not responsible for course content. We may earn a commission from sales through affiliate links."}
+          {tx("courses.disclaimer", lang)}
         </p>
       </div>
     </div>

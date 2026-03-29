@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useParams } from "next/navigation"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { getTestById, type ClinicalTestThreshold } from "@/lib/clinical-tests-data"
 import { ClinicalTestRunner } from "@/components/clinical/ClinicalTestRunner"
 import { ClinicalTestResult } from "@/components/clinical/ClinicalTestResult"
@@ -29,11 +30,11 @@ export default function ClinicalTestPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="p-8 text-center max-w-md">
           <HelpCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-lg font-semibold mb-2">{lang === "tr" ? "Test bulunamadı" : "Test not found"}</h2>
-          <p className="text-sm text-muted-foreground mb-4">{lang === "tr" ? "Bu test mevcut değil." : "This test does not exist."}</p>
+          <h2 className="text-lg font-semibold mb-2">{tx("clinicalTests.notFound", lang)}</h2>
+          <p className="text-sm text-muted-foreground mb-4">{tx("clinicalTests.notFoundDesc", lang)}</p>
           <Link href="/clinical-tests">
             <Button variant="outline" className="gap-2">
-              <ArrowLeft className="w-4 h-4" />{lang === "tr" ? "Testlere Dön" : "Back to Tests"}
+              <ArrowLeft className="w-4 h-4" />{tx("clinicalTests.backToTests", lang)}
             </Button>
           </Link>
         </Card>
@@ -62,7 +63,7 @@ export default function ClinicalTestPage() {
         {/* Back link */}
         <Link href="/clinical-tests" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6 transition-colors">
           <ChevronLeft className="w-4 h-4" />
-          {lang === "tr" ? "Tüm Testler" : "All Tests"}
+          {tx("clinicalTests.allTests", lang)}
         </Link>
 
         {/* ── INTRO PHASE ── */}
@@ -85,29 +86,29 @@ export default function ClinicalTestPage() {
             <div className="flex justify-center gap-4 mb-8">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Clock className="w-4 h-4" />
-                <span>{test.estimatedMinutes} {lang === "tr" ? "dakika" : "minutes"}</span>
+                <span>{test.estimatedMinutes} {tx("clinicalTests.minutes", lang)}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <HelpCircle className="w-4 h-4" />
-                <span>{test.questionCount} {lang === "tr" ? "soru" : "questions"}</span>
+                <span>{test.questionCount} {tx("clinicalTests.questions", lang)}</span>
               </div>
             </div>
 
             {/* How it works */}
             <Card className="p-5 mb-6 text-left max-w-md mx-auto">
-              <h3 className="font-medium text-sm mb-3">{lang === "tr" ? "Nasıl çalışır?" : "How it works?"}</h3>
+              <h3 className="font-medium text-sm mb-3">{tx("clinicalTests.howItWorks", lang)}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex gap-2">
                   <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center shrink-0">1</span>
-                  {lang === "tr" ? "Her ekranda bir soru göreceksiniz" : "You'll see one question per screen"}
+                  {tx("clinicalTests.step1", lang)}
                 </li>
                 <li className="flex gap-2">
                   <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center shrink-0">2</span>
-                  {lang === "tr" ? "Size en uygun cevabı seçin" : "Select the answer that best fits you"}
+                  {tx("clinicalTests.step2", lang)}
                 </li>
                 <li className="flex gap-2">
                   <span className="w-5 h-5 rounded-full bg-primary/10 text-primary text-xs flex items-center justify-center shrink-0">3</span>
-                  {lang === "tr" ? "Sonunda bilimsel puanlama ve yönlendirme alacaksınız" : "You'll receive a scientific score and guidance at the end"}
+                  {tx("clinicalTests.step3", lang)}
                 </li>
               </ul>
             </Card>
@@ -122,7 +123,7 @@ export default function ClinicalTestPage() {
 
             <Button size="lg" onClick={() => setPhase("testing")}
               className="px-8 text-white" style={{ backgroundColor: test.color }}>
-              {lang === "tr" ? "Teste Başla" : "Start Test"}
+              {tx("clinicalTests.startTest", lang)}
             </Button>
 
             <p className="text-[11px] text-muted-foreground mt-3">{test.source}</p>
