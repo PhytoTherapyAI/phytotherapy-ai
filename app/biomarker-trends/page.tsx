@@ -115,27 +115,13 @@ export default function BiomarkerTrendsPage() {
     ? BIOMARKER_GROUPS
     : BIOMARKER_GROUPS.filter(g => g.category === selectedCategory)
 
-  const t = (key: string) => {
-    const map: Record<string, Record<string, string>> = {
-      title: { en: "Biomarker Trends", tr: "Biyobelirteç Trendleri" },
-      subtitle: { en: "Track all your lab results over time", tr: "Tüm tahlil sonuçlarını zaman içinde takip et" },
-      all: { en: "All Categories", tr: "Tüm Kategoriler" },
-      no_data: { en: "No lab results yet. Upload a blood test to get started.", tr: "Henüz tahlil sonucu yok. Başlamak için kan tahlili yükleyin." },
-      latest: { en: "Latest", tr: "Son" },
-      previous: { en: "Previous", tr: "Önceki" },
-      change: { en: "Change", tr: "Değişim" },
-      tests: { en: "test results", tr: "test sonucu" },
-      history: { en: "History", tr: "Geçmiş" },
-      loading: { en: "Loading biomarkers...", tr: "Biyobelirteçler yükleniyor..." },
-    }
-    return map[key]?.[lang] || key
-  }
+  // Local t() removed — using tx() from translations.ts
 
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <span className="ml-2 text-muted-foreground">{t("loading")}</span>
+        <span className="ml-2 text-muted-foreground">{tx("biomarkerTrends.loading", lang)}</span>
       </div>
     )
   }
@@ -147,10 +133,10 @@ export default function BiomarkerTrendsPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Activity className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
-          <p className="text-muted-foreground mt-1">{t("subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground">{tx("biomarkerTrends.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("biomarkerTrends.subtitle", lang)}</p>
           {entries.length > 0 && (
-            <p className="text-sm text-muted-foreground mt-2">{entries.length} {t("tests")}</p>
+            <p className="text-sm text-muted-foreground mt-2">{entries.length} {tx("biomarkerTrends.testResults", lang)}</p>
           )}
         </div>
 
@@ -168,7 +154,7 @@ export default function BiomarkerTrendsPage() {
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
           <Button size="sm" variant={selectedCategory === "all" ? "default" : "outline"}
             onClick={() => setSelectedCategory("all")}>
-            {t("all")}
+            {tx("biomarkerTrends.allCategories", lang)}
           </Button>
           {BIOMARKER_GROUPS.map(g => (
             <Button key={g.category} size="sm" variant={selectedCategory === g.category ? "default" : "outline"}
@@ -181,10 +167,10 @@ export default function BiomarkerTrendsPage() {
         {entries.length === 0 ? (
           <Card className="p-8 text-center">
             <Activity className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">{t("no_data")}</p>
+            <p className="text-muted-foreground">{tx("biomarkerTrends.noData", lang)}</p>
             <Button className="mt-4" onClick={() => window.location.href = "/blood-test"}>
               <ArrowRight className="w-4 h-4 mr-2" />
-              {lang === "tr" ? "Kan Tahlili Yükle" : "Upload Blood Test"}
+              {tx("biomarkerTrends.uploadBloodTest", lang)}
             </Button>
           </Card>
         ) : (

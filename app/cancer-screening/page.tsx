@@ -135,20 +135,20 @@ export default function CancerScreeningPage() {
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium">{lang === "tr" ? "Sigara Geçmişi" : "Smoking History"}</label>
+              <label className="text-sm font-medium">{tx("cancerScreening.smokingHistory", lang)}</label>
               <select value={smokingHistory} onChange={(e) => setSmokingHistory(e.target.value)}
                 className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-teal-500">
-                <option value="never">{lang === "tr" ? "Hic" : "Never"}</option>
-                <option value="former">{lang === "tr" ? "Birakmis" : "Former smoker"}</option>
-                <option value="current">{lang === "tr" ? "Aktif" : "Current smoker"}</option>
-                <option value="heavy">{lang === "tr" ? "Agir (20+ yil)" : "Heavy (20+ years)"}</option>
+                <option value="never">{tx("cancerScreening.never", lang)}</option>
+                <option value="former">{tx("cancerScreening.former", lang)}</option>
+                <option value="current">{tx("cancerScreening.current", lang)}</option>
+                <option value="heavy">{tx("cancerScreening.heavy", lang)}</option>
               </select>
             </div>
           </div>
 
           {/* Family History */}
           <div>
-            <label className="text-sm font-medium">{lang === "tr" ? "Ailede Kanser Geçmişi" : "Family Cancer History"}</label>
+            <label className="text-sm font-medium">{tx("cancerScreening.familyHistory", lang)}</label>
             <div className="flex flex-wrap gap-2 mt-2">
               {cancerOptions.map((cancer, i) => (
                 <button
@@ -168,7 +168,7 @@ export default function CancerScreeningPage() {
 
           <Button onClick={handleGenerate} disabled={isLoading} className="w-full bg-teal-600 hover:bg-teal-700 text-white" size="lg">
             {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Takvim oluşturuluyor..." : "Generating schedule..."}</>
+              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("cancerScreening.generating", lang)}</>
             ) : (
               <><Sparkles className="mr-2 h-5 w-5" />{tx("cancer.generate", lang)}</>
             )}
@@ -192,7 +192,7 @@ export default function CancerScreeningPage() {
                 result.riskLevel === "high" ? "text-red-500" : result.riskLevel === "elevated" ? "text-amber-500" : "text-green-500"
               }`} />
               <p className="text-lg font-bold">
-                {lang === "tr" ? "Risk Seviyesi:" : "Risk Level:"} {result.riskLevel.charAt(0).toUpperCase() + result.riskLevel.slice(1)}
+                {tx("cancerScreening.riskLevel", lang)} {result.riskLevel.charAt(0).toUpperCase() + result.riskLevel.slice(1)}
               </p>
             </div>
 
@@ -201,7 +201,7 @@ export default function CancerScreeningPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-teal-500" />
-                  {lang === "tr" ? "Kişisel Tarama Takvimi" : "Personalized Screening Schedule"}
+                  {tx("cancerScreening.screeningSchedule", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.screeningSchedule.map((item, i) => (
@@ -219,7 +219,7 @@ export default function CancerScreeningPage() {
                       </div>
                       <p className="text-sm font-medium text-teal-600 dark:text-teal-400">{item.test}</p>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {lang === "tr" ? "Başlangıç yasi:" : "Start age:"} {item.startAge} | {item.applicability}
+                        {tx("cancerScreening.startAge", lang)} {item.startAge} | {item.applicability}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">{item.notes}</p>
                     </div>
@@ -233,7 +233,7 @@ export default function CancerScreeningPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Users className="w-5 h-5 text-purple-500" />
-                  {lang === "tr" ? "Aile Geçmişi Risk Analizi" : "Family History Risk Analysis"}
+                  {tx("cancerScreening.familyRisk", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.familyRiskAnalysis.map((item, i) => (
@@ -252,7 +252,7 @@ export default function CancerScreeningPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Heart className="w-5 h-5 text-rose-500" />
-                  {lang === "tr" ? "Oz Kontrol Hatirlaticlari" : "Self-Check Reminders"}
+                  {tx("cancerScreening.selfCheck", lang)}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {result.selfCheckReminders.map((item, i) => (
@@ -271,7 +271,7 @@ export default function CancerScreeningPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Lightbulb className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "Risk Azaltma Stratejileri" : "Risk Reduction Strategies"}
+                  {tx("cancerScreening.riskReduction", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.lifestyleReductions.map((item, i) => (
@@ -291,7 +291,7 @@ export default function CancerScreeningPage() {
             {result.nextSteps?.length > 0 && (
               <div className="bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-2xl p-6 space-y-2">
                 <h3 className="font-semibold text-teal-700 dark:text-teal-400">
-                  {lang === "tr" ? "Sonraki Adimlar" : "Next Steps"}
+                  {tx("cancerScreening.nextSteps", lang)}
                 </h3>
                 {result.nextSteps.map((step, i) => (
                   <div key={i} className="flex items-start gap-2 text-sm">

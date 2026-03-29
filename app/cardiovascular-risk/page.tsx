@@ -226,7 +226,7 @@ export default function CardiovascularRiskPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-6">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Calculator className="w-5 h-5 text-rose-500" />
-            {lang === "tr" ? "Framingham Risk Hesaplayici" : "Framingham Risk Calculator"}
+            {tx("cardioRisk.framingham", lang)}
           </h2>
 
           <div className="grid sm:grid-cols-2 gap-4">
@@ -254,7 +254,7 @@ export default function CardiovascularRiskPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                {lang === "tr" ? "Toplam Kolesterol (mg/dL)" : "Total Cholesterol (mg/dL)"}
+                {tx("cardioRisk.totalCholesterol", lang)}
               </label>
               <input
                 type="number"
@@ -276,7 +276,7 @@ export default function CardiovascularRiskPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                {lang === "tr" ? "Sistolik Tansiyon (mmHg)" : "Systolic BP (mmHg)"}
+                {tx("cardioRisk.systolicBP", lang)}
               </label>
               <input
                 type="number"
@@ -296,7 +296,7 @@ export default function CardiovascularRiskPage() {
                 onChange={(e) => setIsSmoker(e.target.checked)}
                 className="rounded"
               />
-              <span className="text-sm">{lang === "tr" ? "Sigara iciyorum" : "Current smoker"}</span>
+              <span className="text-sm">{tx("cardioRisk.smoker", lang)}</span>
             </label>
             <label className="flex items-center gap-2 bg-muted/50 rounded-lg p-3 cursor-pointer">
               <input
@@ -305,7 +305,7 @@ export default function CardiovascularRiskPage() {
                 onChange={(e) => setHasDiabetes(e.target.checked)}
                 className="rounded"
               />
-              <span className="text-sm">{lang === "tr" ? "Diyabet var" : "Diabetes"}</span>
+              <span className="text-sm">{tx("cardioRisk.diabetes", lang)}</span>
             </label>
             <label className="flex items-center gap-2 bg-muted/50 rounded-lg p-3 cursor-pointer">
               <input
@@ -314,7 +314,7 @@ export default function CardiovascularRiskPage() {
                 onChange={(e) => setIsTreatedBP(e.target.checked)}
                 className="rounded"
               />
-              <span className="text-sm">{lang === "tr" ? "Tansiyon ilaci" : "BP medication"}</span>
+              <span className="text-sm">{tx("cardioRisk.bpMed", lang)}</span>
             </label>
           </div>
 
@@ -337,14 +337,10 @@ export default function CardiovascularRiskPage() {
                 {result.score}%
               </div>
               <div className={`text-xl font-semibold ${result.categoryColor}`}>
-                {lang === "tr"
-                  ? result.details === "low" ? "Düşük Risk" : result.details === "moderate" ? "Orta Risk" : "Yüksek Risk"
-                  : result.category}
+                {result.details === "low" ? tx("cardioRisk.lowRisk", lang) : result.details === "moderate" ? tx("cardioRisk.moderateRisk", lang) : tx("cardioRisk.highRisk", lang)}
               </div>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                {lang === "tr"
-                  ? `Onumuzdeki 10 yil icinde kardiyovasküler olay (kalp krizi veya inme) tahmini risk orani: %${result.score}`
-                  : `Estimated 10-year risk of cardiovascular event (heart attack or stroke): ${result.score}%`}
+                {tx("cardioRisk.riskEstimate", lang)} {lang === "tr" ? `%${result.score}` : `${result.score}%`}
               </p>
 
               {/* Risk Bar */}
@@ -367,12 +363,10 @@ export default function CardiovascularRiskPage() {
                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 text-sm text-left mt-4">
                   <div className="flex items-center gap-2 font-medium text-amber-700 dark:text-amber-400 mb-1">
                     <AlertTriangle className="w-4 h-4" />
-                    {lang === "tr" ? "Statin Değerlendirmesi" : "Statin Consideration"}
+                    {tx("cardioRisk.statinTitle", lang)}
                   </div>
                   <p className="text-muted-foreground">
-                    {lang === "tr"
-                      ? `%${result.score} risk skoru ile, ACC/AHA kilavuzlarina gore statin tedavisi tartismalidir. Doktorunuzla görüşün.`
-                      : `With a ${result.score}% risk score, statin therapy should be discussed per ACC/AHA guidelines. Talk to your doctor.`}
+                    {lang === "tr" ? `%${result.score} ` : `With a ${result.score}% `}{tx("cardioRisk.statinNote", lang)}
                   </p>
                 </div>
               )}
@@ -387,9 +381,7 @@ export default function CardiovascularRiskPage() {
             {tx("cardio.essentials", lang)}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {lang === "tr"
-              ? "AHA'nin kalp sağlığı için temel 8 adimi. Hangilerini uyguluyor olduğunuzu isaretleyin."
-              : "AHA's 8 key measures for heart health. Check the ones you're doing."}
+            {tx("cardioRisk.essentialsDesc", lang)}
           </p>
           <div className="grid gap-2">
             {ESSENTIALS_8.map((item) => (
@@ -414,7 +406,7 @@ export default function CardiovascularRiskPage() {
             ))}
           </div>
           <div className="text-center text-sm text-muted-foreground">
-            {essentialChecks.length}/8 {lang === "tr" ? "tamamlandi" : "completed"}
+            {essentialChecks.length}/8 {tx("cardioRisk.completed", lang)}
           </div>
         </div>
 

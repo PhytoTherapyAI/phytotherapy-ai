@@ -123,7 +123,7 @@ export default function CheckupPlannerPage() {
           </div>
 
           <div>
-            <label className="text-sm font-medium">{lang === "tr" ? "Risk Faktorleri" : "Risk Factors"}</label>
+            <label className="text-sm font-medium">{tx("checkupPlanner.riskFactors", lang)}</label>
             <div className="flex flex-wrap gap-2 mt-2">
               {factors.map((factor, i) => (
                 <button key={i} onClick={() => toggleFactor(factorsEN[i])}
@@ -157,7 +157,7 @@ export default function CheckupPlannerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-blue-500" />
-                  {lang === "tr" ? "Yıllık Test Plani" : "Annual Test Plan"}
+                  {tx("checkupPlanner.annualPlan", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.annualPlan.map((item, i) => (
@@ -187,7 +187,7 @@ export default function CheckupPlannerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <TestTube className="w-5 h-5 text-red-500" />
-                  {lang === "tr" ? "Kan Tahlili Paneli" : "Blood Work Panel"}
+                  {tx("checkupPlanner.bloodWork", lang)}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {result.bloodWorkPanel.map((item, i) => (
@@ -195,7 +195,7 @@ export default function CheckupPlannerPage() {
                       <div className="flex items-center justify-between">
                         <span className="font-medium text-sm">{item.test}</span>
                         {item.fasting && <span className="text-xs px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-full">
-                          {lang === "tr" ? "Aç karnına" : "Fasting"}
+                          {tx("checkupPlanner.fasting", lang)}
                         </span>}
                       </div>
                       <p className="text-xs text-muted-foreground">{item.reason}</p>
@@ -210,7 +210,7 @@ export default function CheckupPlannerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Stethoscope className="w-5 h-5 text-purple-500" />
-                  {lang === "tr" ? "Uzman Ziyaretleri" : "Specialist Visits"}
+                  {tx("checkupPlanner.specialists", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.specialistVisits.map((visit, i) => (
@@ -231,7 +231,7 @@ export default function CheckupPlannerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Syringe className="w-5 h-5 text-green-500" />
-                  {lang === "tr" ? "Asilar" : "Vaccinations"}
+                  {tx("checkupPlanner.vaccinations", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.vaccinations.map((vax, i) => (
@@ -259,7 +259,7 @@ export default function CheckupPlannerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-3">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   <Lightbulb className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "Maliyet Tasarrufu Ipuclari" : "Cost-Saving Tips"}
+                  {tx("checkupPlanner.costTips", lang)}
                 </h2>
                 {result.costSavingTips.map((tip, i) => (
                   <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">

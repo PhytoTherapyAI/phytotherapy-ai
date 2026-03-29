@@ -187,7 +187,7 @@ export default function ChronicCarePage() {
           {userConditions.length > 0 && (
             <div className="mb-4">
               <p className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                {lang === "tr" ? "Profilinizdeki hastalıklar" : "From your profile"}
+                {tx("chronicCare.fromProfile", lang)}
               </p>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {userConditions.map((uc) => {
@@ -205,7 +205,7 @@ export default function ChronicCarePage() {
                       <div className="flex-1">
                         <p className="text-sm font-semibold">{uc}</p>
                         <p className="text-xs text-muted-foreground">
-                          {lang === "tr" ? "Analiz et" : "Analyze"}
+                          {tx("chronicCare.analyze", lang)}
                         </p>
                       </div>
                       <ArrowRight className="h-4 w-4 text-muted-foreground" />
@@ -291,7 +291,7 @@ export default function ChronicCarePage() {
           {/* Adherence Score */}
           <div className="rounded-lg border p-4">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm font-medium">{lang === "tr" ? "Tedavi Uyumu" : "Adherence Score"}</span>
+              <span className="text-sm font-medium">{tx("chronicCare.adherenceScore", lang)}</span>
               <span className={`text-lg font-bold ${
                 result.adherenceScore >= 80 ? "text-green-600" : result.adherenceScore >= 50 ? "text-amber-600" : "text-red-600"
               }`}>
@@ -324,7 +324,7 @@ export default function ChronicCarePage() {
                     <div>
                       <p className="text-sm font-medium">{m.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {lang === "tr" ? "Hedef" : "Target"}: {m.targetRange}
+                        {tx("chronicCare.target", lang)}: {m.targetRange}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -418,7 +418,7 @@ export default function ChronicCarePage() {
           {result.nextSteps && result.nextSteps.length > 0 && (
             <div className="rounded-lg border border-rose-200 bg-rose-50/50 p-4 dark:border-rose-800 dark:bg-rose-950/20">
               <h3 className="mb-2 text-sm font-semibold text-rose-700 dark:text-rose-400">
-                {lang === "tr" ? "Sonraki Adimlar" : "Next Steps"}
+                {tx("chronicCare.nextSteps", lang)}
               </h3>
               <ul className="space-y-1">
                 {result.nextSteps.map((s, i) => (
@@ -469,7 +469,7 @@ export default function ChronicCarePage() {
             }}
             className="w-full"
           >
-            {lang === "tr" ? "Baska bir hastalık analiz et" : "Analyze another condition"}
+            {tx("chronicCare.analyzeAnother", lang)}
           </Button>
         </div>
       )}

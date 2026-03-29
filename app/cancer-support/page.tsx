@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -199,17 +200,13 @@ export default function CancerSupportPage() {
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-200 px-4 py-2 rounded-full text-sm font-medium">
             <Shield className="w-4 h-4" />
-            {lang === "tr" ? "Kanser Tedavi Destegi" : "Cancer Treatment Support"}
+            {tx("cancerSupport.badge", lang)}
           </div>
           <h1 className="text-3xl font-bold text-foreground">
-            {lang === "tr"
-              ? "Kanser Tedavisi Yan Etki Yönetimi"
-              : "Cancer Treatment Side Effect Management"}
+            {tx("cancerSupport.title", lang)}
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            {lang === "tr"
-              ? "Kemoterapi ve radyoterapi yan etkilerini yonetmek, beslenme, takviye güvenligi ve duygusal destek için rehber."
-              : "Guide for managing chemotherapy and radiotherapy side effects, nutrition, supplement safety, and emotional support."}
+            {tx("cancerSupport.subtitle", lang)}
           </p>
         </div>
 
@@ -218,9 +215,7 @@ export default function CancerSupportPage() {
           <div className="flex gap-3">
             <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
             <p className="text-sm text-red-800 dark:text-red-200">
-              {lang === "tr"
-                ? "ONEMLI: Kanser tedavisi sirasinda herhangi bir takviye, bitkisel urun veya diyet değişikliği yapmadan ÖNCE mutlaka onkoloji ekibinize danışın. Bircok takviye kemoterapiyle etkilesir."
-                : "IMPORTANT: ALWAYS consult your oncology team before starting ANY supplement, herbal product, or diet change during cancer treatment. Many supplements interact with chemotherapy."}
+              {tx("cancerSupport.warning", lang)}
             </p>
           </div>
         </Card>
@@ -274,9 +269,7 @@ export default function CancerSupportPage() {
 
         {/* Footer */}
         <div className="text-center text-xs text-muted-foreground pt-4">
-          {lang === "tr"
-            ? "Bu bilgiler genel rehberlik amaclıdır. Tedavi kararlari her zaman onkoloji ekibinizle birlikte alinmalidir."
-            : "This information is for general guidance. Treatment decisions should always be made together with your oncology team."}
+          {tx("cancerSupport.footer", lang)}
         </div>
       </div>
     </div>

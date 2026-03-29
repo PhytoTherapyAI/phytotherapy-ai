@@ -335,7 +335,7 @@ export default function CaffeineTrackerPage() {
               setDrinks({});
             }}
           >
-            {lang === "tr" ? "Yeni Kontrol" : "New Check"}
+            {tx("caffeineTracker.newCheck", lang)}
           </Button>
         </div>
       )}

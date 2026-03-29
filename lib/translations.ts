@@ -3738,6 +3738,110 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "autism.iepTrackerDesc": { en: "Track education plan goals", tr: "Bireysel egitim plani hedefleri" },
   "autism.therapyProgress": { en: "Therapy Progress Report", tr: "Terapi İlerleme Raporu" },
   "autism.therapyProgressDesc": { en: "Progress summary for therapists", tr: "Terapistler için ilerleme ozeti" },
+
+  // ── Biomarker Trends ──
+  "biomarkerTrends.title": { en: "Biomarker Trends", tr: "Biyobelirteç Trendleri" },
+  "biomarkerTrends.subtitle": { en: "Track all your lab results over time", tr: "Tüm tahlil sonuçlarını zaman içinde takip et" },
+  "biomarkerTrends.allCategories": { en: "All Categories", tr: "Tüm Kategoriler" },
+  "biomarkerTrends.noData": { en: "No lab results yet. Upload a blood test to get started.", tr: "Henüz tahlil sonucu yok. Başlamak için kan tahlili yükleyin." },
+  "biomarkerTrends.latest": { en: "Latest", tr: "Son" },
+  "biomarkerTrends.previous": { en: "Previous", tr: "Önceki" },
+  "biomarkerTrends.change": { en: "Change", tr: "Değişim" },
+  "biomarkerTrends.testResults": { en: "test results", tr: "test sonucu" },
+  "biomarkerTrends.history": { en: "History", tr: "Geçmiş" },
+  "biomarkerTrends.loading": { en: "Loading biomarkers...", tr: "Biyobelirteçler yükleniyor..." },
+  "biomarkerTrends.uploadBloodTest": { en: "Upload Blood Test", tr: "Kan Tahlili Yükle" },
+
+  // ── Caffeine Tracker ──
+  "caffeineTracker.newCheck": { en: "New Check", tr: "Yeni Kontrol" },
+
+  // ── Cancer Screening ──
+  "cancerScreening.smokingHistory": { en: "Smoking History", tr: "Sigara Geçmişi" },
+  "cancerScreening.never": { en: "Never", tr: "Hic" },
+  "cancerScreening.former": { en: "Former smoker", tr: "Birakmis" },
+  "cancerScreening.current": { en: "Current smoker", tr: "Aktif" },
+  "cancerScreening.heavy": { en: "Heavy (20+ years)", tr: "Agir (20+ yil)" },
+  "cancerScreening.familyHistory": { en: "Family Cancer History", tr: "Ailede Kanser Geçmişi" },
+  "cancerScreening.generating": { en: "Generating schedule...", tr: "Takvim oluşturuluyor..." },
+  "cancerScreening.riskLevel": { en: "Risk Level:", tr: "Risk Seviyesi:" },
+  "cancerScreening.screeningSchedule": { en: "Personalized Screening Schedule", tr: "Kişisel Tarama Takvimi" },
+  "cancerScreening.startAge": { en: "Start age:", tr: "Başlangıç yasi:" },
+  "cancerScreening.familyRisk": { en: "Family History Risk Analysis", tr: "Aile Geçmişi Risk Analizi" },
+  "cancerScreening.selfCheck": { en: "Self-Check Reminders", tr: "Oz Kontrol Hatirlaticlari" },
+  "cancerScreening.riskReduction": { en: "Risk Reduction Strategies", tr: "Risk Azaltma Stratejileri" },
+  "cancerScreening.nextSteps": { en: "Next Steps", tr: "Sonraki Adimlar" },
+
+  // ── Cancer Support ──
+  "cancerSupport.badge": { en: "Cancer Treatment Support", tr: "Kanser Tedavi Destegi" },
+  "cancerSupport.title": { en: "Cancer Treatment Side Effect Management", tr: "Kanser Tedavisi Yan Etki Yönetimi" },
+  "cancerSupport.subtitle": { en: "Guide for managing chemotherapy and radiotherapy side effects, nutrition, supplement safety, and emotional support.", tr: "Kemoterapi ve radyoterapi yan etkilerini yonetmek, beslenme, takviye güvenligi ve duygusal destek için rehber." },
+  "cancerSupport.warning": { en: "IMPORTANT: ALWAYS consult your oncology team before starting ANY supplement, herbal product, or diet change during cancer treatment. Many supplements interact with chemotherapy.", tr: "ONEMLI: Kanser tedavisi sirasinda herhangi bir takviye, bitkisel urun veya diyet değişikliği yapmadan ÖNCE mutlaka onkoloji ekibinize danışın. Bircok takviye kemoterapiyle etkilesir." },
+  "cancerSupport.footer": { en: "This information is for general guidance. Treatment decisions should always be made together with your oncology team.", tr: "Bu bilgiler genel rehberlik amaclıdır. Tedavi kararlari her zaman onkoloji ekibinizle birlikte alinmalidir." },
+
+  // ── Cardiovascular Risk ──
+  "cardioRisk.framingham": { en: "Framingham Risk Calculator", tr: "Framingham Risk Hesaplayici" },
+  "cardioRisk.totalCholesterol": { en: "Total Cholesterol (mg/dL)", tr: "Toplam Kolesterol (mg/dL)" },
+  "cardioRisk.systolicBP": { en: "Systolic BP (mmHg)", tr: "Sistolik Tansiyon (mmHg)" },
+  "cardioRisk.smoker": { en: "Current smoker", tr: "Sigara iciyorum" },
+  "cardioRisk.diabetes": { en: "Diabetes", tr: "Diyabet var" },
+  "cardioRisk.bpMed": { en: "BP medication", tr: "Tansiyon ilaci" },
+  "cardioRisk.lowRisk": { en: "Low Risk", tr: "Düşük Risk" },
+  "cardioRisk.moderateRisk": { en: "Moderate Risk", tr: "Orta Risk" },
+  "cardioRisk.highRisk": { en: "High Risk", tr: "Yüksek Risk" },
+  "cardioRisk.riskEstimate": { en: "Estimated 10-year risk of cardiovascular event (heart attack or stroke):", tr: "Onumuzdeki 10 yil icinde kardiyovasküler olay (kalp krizi veya inme) tahmini risk orani:" },
+  "cardioRisk.statinTitle": { en: "Statin Consideration", tr: "Statin Değerlendirmesi" },
+  "cardioRisk.statinNote": { en: "statin therapy should be discussed per ACC/AHA guidelines. Talk to your doctor.", tr: "risk skoru ile, ACC/AHA kilavuzlarina gore statin tedavisi tartismalidir. Doktorunuzla görüşün." },
+  "cardioRisk.essentialsDesc": { en: "AHA's 8 key measures for heart health. Check the ones you're doing.", tr: "AHA'nin kalp sağlığı için temel 8 adimi. Hangilerini uyguluyor olduğunuzu isaretleyin." },
+  "cardioRisk.completed": { en: "completed", tr: "tamamlandi" },
+
+  // ── Certificates ──
+  "certificates.title": { en: "Achievement Certificates", tr: "Başarı Sertifikalari" },
+  "certificates.subtitle": { en: "Turn your achievements into certificates and share!", tr: "Başarılarini sertifikaya donustur ve paylas!" },
+  "certificates.download": { en: "Download", tr: "İndir" },
+  "certificates.share": { en: "Share", tr: "Paylas" },
+  "certificates.close": { en: "Close", tr: "Kapat" },
+  "certificates.generating": { en: "Generating...", tr: "Oluşturuluyor..." },
+  "certificates.generate": { en: "Generate Certificate", tr: "Sertifika Oluştur" },
+  "certificates.keepTracking": { en: "Keep tracking your health goals to unlock more certificates!", tr: "Daha fazla sertifika kazanmak için sağlık hedeflerini takip etmeye devam et!" },
+  "certificates.achievementCert": { en: "CERTIFICATE OF ACHIEVEMENT", tr: "BASARI SERTIFIKASI" },
+  "certificates.presentedTo": { en: "This certificate is presented to", tr: "Bu sertifika sunulmustur" },
+  "certificates.inRecognition": { en: "in recognition of achieving", tr: "başarısini onurlandirilarak" },
+  "certificates.evidenceBased": { en: "Evidence-Based Health", tr: "Kanita Dayali Sağlık" },
+  "certificates.defaultUser": { en: "User", tr: "Kullanıcı" },
+
+  // ── Checkup Planner ──
+  "checkupPlanner.riskFactors": { en: "Risk Factors", tr: "Risk Faktorleri" },
+  "checkupPlanner.annualPlan": { en: "Annual Test Plan", tr: "Yıllık Test Plani" },
+  "checkupPlanner.bloodWork": { en: "Blood Work Panel", tr: "Kan Tahlili Paneli" },
+  "checkupPlanner.fasting": { en: "Fasting", tr: "Aç karnına" },
+  "checkupPlanner.specialists": { en: "Specialist Visits", tr: "Uzman Ziyaretleri" },
+  "checkupPlanner.vaccinations": { en: "Vaccinations", tr: "Asilar" },
+  "checkupPlanner.costTips": { en: "Cost-Saving Tips", tr: "Maliyet Tasarrufu Ipuclari" },
+
+  // ── Child Health ──
+  "childHealth.urgent": { en: "Urgent - Seek Immediate Medical Attention", tr: "Acil - Hemen Doktora Başvurun" },
+  "childHealth.seeDoctor": { en: "We Recommend Seeing a Doctor", tr: "Doktora Danışmanizi Oneririz" },
+  "childHealth.homeCare": { en: "Home Care May Be Sufficient", tr: "Evde Bakim Yeterli Olabilir" },
+  "childHealth.loginNote": { en: "Sign in to save your query history", tr: "Kaydı tutmak için giriş yapın" },
+  "childHealth.additionalNotes": { en: "Additional Notes (optional)", tr: "Ek Notlar (isteğe bağlı)" },
+  "childHealth.notesPlaceholder": { en: "Symptoms, duration, other details...", tr: "Belirtiler, sure, diger detaylar..." },
+  "childHealth.possibleExplanations": { en: "Possible Explanations", tr: "Olasi Nedenler" },
+  "childHealth.common": { en: "Common", tr: "Yaygin" },
+  "childHealth.lessCommon": { en: "Less Common", tr: "Daha Az Yaygin" },
+  "childHealth.rare": { en: "Rare", tr: "Nadir" },
+  "childHealth.homeCareSection": { en: "Home Care", tr: "Evde Bakim" },
+  "childHealth.whenToWorry": { en: "When to Worry", tr: "Ne Zaman Endiselenin" },
+  "childHealth.developmental": { en: "Developmental Context", tr: "Gelisim Bilgisi" },
+  "childHealth.prevention": { en: "Prevention", tr: "Onleme" },
+  "childHealth.newSearch": { en: "New Search", tr: "Yeni Arama" },
+
+  // ── Chronic Care ──
+  "chronicCare.fromProfile": { en: "From your profile", tr: "Profilinizdeki hastalıklar" },
+  "chronicCare.analyze": { en: "Analyze", tr: "Analiz et" },
+  "chronicCare.adherenceScore": { en: "Adherence Score", tr: "Tedavi Uyumu" },
+  "chronicCare.target": { en: "Target", tr: "Hedef" },
+  "chronicCare.nextSteps": { en: "Next Steps", tr: "Sonraki Adimlar" },
+  "chronicCare.analyzeAnother": { en: "Analyze another condition", tr: "Baska bir hastalık analiz et" },
 }
 Object.assign(t, commonToolKeys)
 

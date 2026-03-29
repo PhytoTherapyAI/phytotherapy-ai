@@ -139,21 +139,21 @@ export default function ChildHealthPage() {
           bg: "bg-red-100 border-red-300 dark:bg-red-950/40 dark:border-red-800",
           text: "text-red-800 dark:text-red-300",
           icon: <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />,
-          label: lang === "tr" ? "Acil - Hemen Doktora Başvurun" : "Urgent - Seek Immediate Medical Attention",
+          label: tx("childHealth.urgent", lang),
         };
       case "doctor":
         return {
           bg: "bg-amber-100 border-amber-300 dark:bg-amber-950/40 dark:border-amber-800",
           text: "text-amber-800 dark:text-amber-300",
           icon: <Stethoscope className="h-5 w-5 text-amber-600 dark:text-amber-400" />,
-          label: lang === "tr" ? "Doktora Danışmanizi Oneririz" : "We Recommend Seeing a Doctor",
+          label: tx("childHealth.seeDoctor", lang),
         };
       default:
         return {
           bg: "bg-green-100 border-green-300 dark:bg-green-950/40 dark:border-green-800",
           text: "text-green-800 dark:text-green-300",
           icon: <Home className="h-5 w-5 text-green-600 dark:text-green-400" />,
-          label: lang === "tr" ? "Evde Bakim Yeterli Olabilir" : "Home Care May Be Sufficient",
+          label: tx("childHealth.homeCare", lang),
         };
     }
   };
@@ -218,7 +218,7 @@ export default function ChildHealthPage() {
       {!isAuthenticated && (
         <div className="mb-4 flex items-center gap-2 rounded-lg border border-sky-200 bg-sky-50/30 p-3 text-xs text-sky-800 dark:border-sky-800 dark:bg-sky-950/10 dark:text-sky-300">
           <LogIn className="h-3.5 w-3.5 shrink-0" />
-          {lang === "tr" ? "Kaydı tutmak için giriş yapın" : "Sign in to save your query history"}
+          {tx("childHealth.loginNote", lang)}
         </div>
       )}
 
@@ -290,12 +290,12 @@ export default function ChildHealthPage() {
           {/* Notes */}
           <div className="mb-4">
             <label className="mb-2 block text-sm font-medium">
-              {lang === "tr" ? "Ek Notlar (isteğe bağlı)" : "Additional Notes (optional)"}
+              {tx("childHealth.additionalNotes", lang)}
             </label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder={lang === "tr" ? "Belirtiler, sure, diger detaylar..." : "Symptoms, duration, other details..."}
+              placeholder={tx("childHealth.notesPlaceholder", lang)}
               maxLength={2000}
               rows={3}
               className="w-full rounded-lg border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
@@ -357,7 +357,7 @@ export default function ChildHealthPage() {
           {result.possibleExplanations?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Olasi Nedenler" : "Possible Explanations"}
+                title={tx("childHealth.possibleExplanations", lang)}
                 icon={Info}
                 sectionKey="explanations"
                 count={result.possibleExplanations.length}
@@ -369,9 +369,9 @@ export default function ChildHealthPage() {
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium">{e.cause}</p>
                         <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${likelihoodColor(e.likelihood)}`}>
-                          {e.likelihood === "common" ? (lang === "tr" ? "Yaygin" : "Common") :
-                           e.likelihood === "less_common" ? (lang === "tr" ? "Daha Az Yaygin" : "Less Common") :
-                           (lang === "tr" ? "Nadir" : "Rare")}
+                          {e.likelihood === "common" ? tx("childHealth.common", lang) :
+                           e.likelihood === "less_common" ? tx("childHealth.lessCommon", lang) :
+                           tx("childHealth.rare", lang)}
                         </span>
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground">{e.description}</p>
@@ -386,7 +386,7 @@ export default function ChildHealthPage() {
           {result.homeCare?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Evde Bakim" : "Home Care"}
+                title={tx("childHealth.homeCareSection", lang)}
                 icon={Home}
                 sectionKey="homeCare"
                 count={result.homeCare.length}
@@ -408,7 +408,7 @@ export default function ChildHealthPage() {
           {result.whenToWorry?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Ne Zaman Endiselenin" : "When to Worry"}
+                title={tx("childHealth.whenToWorry", lang)}
                 icon={AlertTriangle}
                 sectionKey="whenToWorry"
                 count={result.whenToWorry.length}
@@ -452,7 +452,7 @@ export default function ChildHealthPage() {
           {result.developmentalInfo && (
             <div className="rounded-lg border border-sky-200 bg-sky-50/30 p-4 dark:border-sky-800 dark:bg-sky-950/10">
               <p className="mb-1 text-xs font-semibold text-sky-600 dark:text-sky-400">
-                {lang === "tr" ? "Gelisim Bilgisi" : "Developmental Context"}
+                {tx("childHealth.developmental", lang)}
               </p>
               <p className="text-sm">{result.developmentalInfo}</p>
             </div>
@@ -472,7 +472,7 @@ export default function ChildHealthPage() {
           {result.preventionTips?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Onleme" : "Prevention"}
+                title={tx("childHealth.prevention", lang)}
                 icon={CheckCircle2}
                 sectionKey="prevention"
                 count={result.preventionTips.length}
@@ -528,7 +528,7 @@ export default function ChildHealthPage() {
             }}
             className="w-full"
           >
-            {lang === "tr" ? "Yeni Arama" : "New Search"}
+            {tx("childHealth.newSearch", lang)}
           </Button>
         </div>
       )}

@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
 
 interface Certificate {
@@ -103,12 +104,12 @@ const CERTIFICATES: Certificate[] = [
 export default function CertificatesPage() {
   const { lang } = useLang();
   const { session } = useAuth();
-  const t = lang === "tr";
+  const isTr = lang === "tr";
   const [generating, setGenerating] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const userName = session?.user?.user_metadata?.full_name || session?.user?.email?.split("@")[0] || (t ? "Kullanıcı" : "User");
+  const userName = session?.user?.user_metadata?.full_name || session?.user?.email?.split("@")[0] || tx("certificates.defaultUser", lang);
 
   const generateCertificate = async (cert: Certificate) => {
     setGenerating(cert.id);
@@ -158,7 +159,7 @@ export default function CertificatesPage() {
       // Certificate title
       ctx.fillStyle = "#1e293b";
       ctx.font = "bold 16px system-ui";
-      ctx.fillText(t ? "BASARI SERTIFIKASI" : "CERTIFICATE OF ACHIEVEMENT", 600, 220);
+      ctx.fillText(tx("certificates.achievementCert", lang), 600, 220);
 
       // Divider line
       ctx.beginPath();
@@ -171,7 +172,7 @@ export default function CertificatesPage() {
       // Presented to
       ctx.fillStyle = "#64748b";
       ctx.font = "16px system-ui";
-      ctx.fillText(t ? "Bu sertifika sunulmustur" : "This certificate is presented to", 600, 290);
+      ctx.fillText(tx("certificates.presentedTo", lang), 600, 290);
 
       // User name
       ctx.fillStyle = "#1e293b";
@@ -190,20 +191,20 @@ export default function CertificatesPage() {
       // For
       ctx.fillStyle = "#64748b";
       ctx.font = "16px system-ui";
-      ctx.fillText(t ? "başarısini onurlandirilarak" : "in recognition of achieving", 600, 410);
+      ctx.fillText(tx("certificates.inRecognition", lang), 600, 410);
 
       // Achievement
       ctx.fillStyle = "#6366f1";
       ctx.font = "bold 28px system-ui";
-      ctx.fillText(t ? cert.titleTr : cert.titleEn, 600, 460);
+      ctx.fillText(isTr ? cert.titleTr : cert.titleEn, 600, 460);
 
       // Description
       ctx.fillStyle = "#64748b";
       ctx.font = "15px system-ui";
-      ctx.fillText(t ? cert.descTr : cert.descEn, 600, 500);
+      ctx.fillText(isTr ? cert.descTr : cert.descEn, 600, 500);
 
       // Date
-      const today = new Date().toLocaleDateString(t ? "tr-TR" : "en-US", { year: "numeric", month: "long", day: "numeric" });
+      const today = new Date().toLocaleDateString(isTr ? "tr-TR" : "en-US", { year: "numeric", month: "long", day: "numeric" });
       ctx.fillStyle = "#64748b";
       ctx.font = "14px system-ui";
       ctx.fillText(today, 600, 580);
@@ -223,7 +224,7 @@ export default function CertificatesPage() {
       // Footer
       ctx.fillStyle = "#94a3b8";
       ctx.font = "10px system-ui";
-      ctx.fillText("phytotherapy.ai | " + (t ? "Kanita Dayali Sağlık" : "Evidence-Based Health"), 600, 740);
+      ctx.fillText("phytotherapy.ai | " + tx("certificates.evidenceBased", lang), 600, 740);
 
       setPreview(canvas.toDataURL("image/png"));
     } finally {
@@ -260,10 +261,10 @@ export default function CertificatesPage() {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400">
             <Award className="w-5 h-5" />
-            <span className="font-semibold">{t ? "Başarı Sertifikalari" : "Achievement Certificates"}</span>
+            <span className="font-semibold">{tx("certificates.title", lang)}</span>
           </div>
           <p className="text-muted-foreground text-sm">
-            {t ? "Başarılarini sertifikaya donustur ve paylas!" : "Turn your achievements into certificates and share!"}
+            {tx("certificates.subtitle", lang)}
           </p>
         </div>
 
@@ -273,14 +274,14 @@ export default function CertificatesPage() {
             <div className="flex gap-3 justify-center">
               <Button onClick={downloadCertificate} className="gap-2">
                 <Download className="w-4 h-4" />
-                {t ? "İndir" : "Download"}
+                {tx("certificates.download", lang)}
               </Button>
               <Button variant="outline" onClick={shareCertificate} className="gap-2">
                 <Share2 className="w-4 h-4" />
-                {t ? "Paylas" : "Share"}
+                {tx("certificates.share", lang)}
               </Button>
               <Button variant="ghost" onClick={() => setPreview(null)}>
-                {t ? "Kapat" : "Close"}
+                {tx("certificates.close", lang)}
               </Button>
             </div>
           </Card>
@@ -292,8 +293,8 @@ export default function CertificatesPage() {
               <div className="flex items-start gap-4">
                 <div className={`${cert.color} shrink-0`}>{cert.icon}</div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold">{t ? cert.titleTr : cert.titleEn}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{t ? cert.descTr : cert.descEn}</p>
+                  <h3 className="font-semibold">{isTr ? cert.titleTr : cert.titleEn}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">{isTr ? cert.descTr : cert.descEn}</p>
                   <div className="flex items-center gap-3 mt-3">
                     <Badge variant="outline" className="text-xs">
                       <CheckCircle2 className="w-3 h-3 mr-1" />
@@ -306,9 +307,9 @@ export default function CertificatesPage() {
                       className="gap-1"
                     >
                       {generating === cert.id ? (
-                        <><Loader2 className="w-3 h-3 animate-spin" />{t ? "Oluşturuluyor..." : "Generating..."}</>
+                        <><Loader2 className="w-3 h-3 animate-spin" />{tx("certificates.generating", lang)}</>
                       ) : (
-                        <><Award className="w-3 h-3" />{t ? "Sertifika Oluştur" : "Generate Certificate"}</>
+                        <><Award className="w-3 h-3" />{tx("certificates.generate", lang)}</>
                       )}
                     </Button>
                   </div>
@@ -320,9 +321,7 @@ export default function CertificatesPage() {
 
         <Card className="p-4 bg-muted/50 text-center">
           <p className="text-sm text-muted-foreground">
-            {t
-              ? "Daha fazla sertifika kazanmak için sağlık hedeflerini takip etmeye devam et!"
-              : "Keep tracking your health goals to unlock more certificates!"}
+            {tx("certificates.keepTracking", lang)}
           </p>
         </Card>
       </div>
