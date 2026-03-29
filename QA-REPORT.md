@@ -102,6 +102,49 @@
 - **Bugs fixed:** 17
 - **Security fixes:** 4 (critical)
 - **Translation fixes:** 2
+
+---
+
+## Cycle 2 Started: 2026-03-29
+
+### Broken Internal Links ✅
+
+| # | Severity | File | Description | Fix |
+|---|----------|------|-------------|-----|
+| 18 | 🟡 | app/health-analytics/page.tsx | href="/login" → 404 | ✅ Fixed to /auth/login |
+| 19 | 🟡 | app/medication-hub/page.tsx | href="/login" → 404 | ✅ Fixed to /auth/login |
+| 20 | 🟡 | app/nutrition/page.tsx | href="/login" → 404 | ✅ Fixed to /auth/login |
+| 21 | 🟡 | app/smart-reminders/page.tsx | href="/login" → 404 | ✅ Fixed to /auth/login |
+| 22 | 🟡 | app/weekly-newsletter/page.tsx | href="/login" → 404 | ✅ Fixed to /auth/login |
+| 23 | 🟡 | app/value-marketplace/page.tsx | href="/login" → 404 | ✅ Fixed to /auth/login |
+
+**Commit:** `131b8e8`
+
+### Page HTTP Status Check ✅
+
+All 40+ tested routes return 200 (or expected 307 redirects).
+Missing routes /contact and /security are not linked anywhere — future work.
+
+### TR/EN Visual Tests ✅
+
+| Page | TR Mode | EN Mode |
+|------|---------|---------|
+| /health-assistant | ✅ 100% Turkish | ✅ 100% English |
+| /interaction-checker | ✅ 100% Turkish | ✅ 100% English |
+| /blood-test | ✅ | ✅ |
+| /courses | ✅ | ✅ |
+| /clinical-tests | ✅ | ✅ |
+| /enterprise | ✅ | ✅ |
+| /value-marketplace | ✅ | ✅ |
+| /tools | ✅ | ✅ |
+| /profile | ✅ | ✅ |
+
+### Cycle 2 Summary
+
+- **Bugs found:** 6 (all broken /login links)
+- **Bugs fixed:** 6
+- **Pages tested (HTTP):** 40+
+- **Pages tested (visual):** 9 additional pages in both TR/EN
 - **Fake data removed:** 11 files
 - **All API endpoints tested:** 14 endpoints verified
 - **Visual pages tested:** 11 pages across EN/TR/dark/light/mobile
