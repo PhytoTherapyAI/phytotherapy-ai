@@ -567,11 +567,5 @@ export const RISK_REWARD_TIERS: RiskRewardTier[] = [
 ];
 
 // ── Provider Leaderboard ─────────────────────────
-export const PROVIDER_LEADERBOARD: ProviderLeaderboard[] = [
-  { id: "prov-1", name: "Dr. Ayse Kaya", specialty: "Integrative Medicine", specialtyTr: "Butunlestirici Tip", successRate: 92, patientsServed: 347, bonusTier: "Gold", badge: "🏆" },
-  { id: "prov-2", name: "Dr. Mehmet Ozcan", specialty: "Clinical Nutrition", specialtyTr: "Klinik Beslenme", successRate: 87, patientsServed: 281, bonusTier: "Silver", badge: "🥈" },
-  { id: "prov-3", name: "Dr. Elena Vasquez", specialty: "Naturopathic Medicine", specialtyTr: "Naturopatik Tip", successRate: 84, patientsServed: 203, bonusTier: "Silver", badge: "🥈" },
-  { id: "prov-4", name: "Dr. Chen Wei", specialty: "Herbal Pharmacology", specialtyTr: "Bitkisel Farmakoloji", successRate: 79, patientsServed: 178, bonusTier: "Bronze" },
-  { id: "prov-5", name: "Dr. Sarah Mitchell", specialty: "Preventive Medicine", specialtyTr: "Koruyucu Hekim", successRate: 76, patientsServed: 156, bonusTier: "Bronze" },
-  { id: "prov-6", name: "Dr. Fatih Demir", specialty: "Sports Nutrition", specialtyTr: "Spor Beslenmesi", successRate: 72, patientsServed: 134, bonusTier: "Bronze" },
-];
+// Provider leaderboard — will be populated from real provider data in production
+export const PROVIDER_LEADERBOARD: ProviderLeaderboard[] = [];

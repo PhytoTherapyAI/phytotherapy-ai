@@ -205,33 +205,5 @@ export const LANGUAGES = [
   { id: "fa", label: { en: "Persian", tr: "Farsça" } },
 ]
 
-// ── Mock Data ──
-export const MOCK_PROFILES: Partial<ProfessionalProfile>[] = [
-  {
-    id: "1", fullName: "Prof. Dr. Ayşe Kara", title: "Prof.Dr.", profession: "physician",
-    specialty: "endocrinology", academicTitle: "professor", city: "Istanbul", country: "Turkey",
-    experienceYears: 22, institutionCurrent: "Istanbul University Faculty of Medicine",
-    skills: ["phytotherapy", "diabetes_management", "clinical_research", "drug_interactions"],
-    certifications: [{ name: "Phytotherapy Certificate", issuer: "TTB", year: 2019 }],
-    languages: ["tr", "en", "de"], isVerified: true, isPublic: true,
-    bio: { en: "Endocrinologist specializing in integrative diabetes management with 22 years of experience.", tr: "22 yıllık deneyimle bütünleştirici diyabet yönetiminde uzmanlaşmış endokrinolog." },
-  },
-  {
-    id: "2", fullName: "Ecz. Mehmet Demir", title: "Ecz.", profession: "pharmacist",
-    specialty: "clinical_pharmacy", academicTitle: "phd", city: "Ankara", country: "Turkey",
-    experienceYears: 12, institutionCurrent: "Hacettepe University Pharmacy",
-    skills: ["drug_interactions", "phytotherapy", "functional_medicine", "pubmed_literacy"],
-    certifications: [{ name: "Clinical Pharmacy Residency", issuer: "Hacettepe University", year: 2018 }],
-    languages: ["tr", "en"], isVerified: true, isPublic: true,
-    bio: { en: "Clinical pharmacist focused on drug-herb interactions and evidence-based phytotherapy.", tr: "İlaç-bitki etkileşimleri ve kanıta dayalı fitoterapiye odaklanan klinik eczacı." },
-  },
-  {
-    id: "3", fullName: "Dyt. Zeynep Aydın", title: "Dyt.", profession: "dietitian",
-    specialty: "clinical_nutrition", academicTitle: "md", city: "Izmir", country: "Turkey",
-    experienceYears: 8, institutionCurrent: "Ege University Hospital",
-    skills: ["clinical_nutrition", "chronic_disease", "pediatric_nutrition", "womens_health"],
-    certifications: [{ name: "Sports Nutrition Certificate", issuer: "ISSN", year: 2021 }],
-    languages: ["tr", "en"], isVerified: false, isPublic: true,
-    bio: { en: "Clinical dietitian with expertise in chronic disease nutrition and pediatric care.", tr: "Kronik hastalık beslenme ve pediatrik bakım konusunda uzman klinik diyetisyen." },
-  },
-]
+// ── Placeholder Data (will be populated from Supabase when professionals register) ──
+export const MOCK_PROFILES: Partial<ProfessionalProfile>[] = []

@@ -14,17 +14,12 @@ export default function DoctorDashboardPage() {
   const { lang } = useLang();
   const isTr = lang === "tr";
   const [activeTab, setActiveTab] = useState("overview");
-  const [patients] = useState<Patient[]>([
-    { id: "1", name: "Ayse Y.", age: 45, compliance: 94, lastVisit: "2026-03-20", conditions: ["Type 2 DM", "HTN"], risk: "low", medications: 4 },
-    { id: "2", name: "Mehmet K.", age: 62, compliance: 67, lastVisit: "2026-02-15", conditions: ["CAD", "Hyperlipidemia"], risk: "high", medications: 7 },
-    { id: "3", name: "Fatma S.", age: 38, compliance: 85, lastVisit: "2026-03-10", conditions: ["Hypothyroid"], risk: "low", medications: 2 },
-    { id: "4", name: "Ali D.", age: 55, compliance: 72, lastVisit: "2026-01-28", conditions: ["Type 2 DM", "CKD Stage 3"], risk: "high", medications: 8 },
-    { id: "5", name: "Zeynep A.", age: 29, compliance: 91, lastVisit: "2026-03-25", conditions: ["PCOS", "Iron def."], risk: "low", medications: 3 },
-  ]);
+  // Patients will be loaded from Supabase via doctor-patient links
+  const [patients] = useState<Patient[]>([]);
 
   const riskColor = (r: string) => r === "high" ? "bg-red-100 text-red-700" : r === "medium" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700";
   const compColor = (c: number) => c >= 90 ? "text-green-600" : c >= 75 ? "text-yellow-600" : "text-red-600";
-  const avgCompliance = Math.round(patients.reduce((s, p) => s + p.compliance, 0) / patients.length);
+  const avgCompliance = patients.length > 0 ? Math.round(patients.reduce((s, p) => s + p.compliance, 0) / patients.length) : 0;
   const highRisk = patients.filter(p => p.risk === "high").length;
 
   const tabs = [

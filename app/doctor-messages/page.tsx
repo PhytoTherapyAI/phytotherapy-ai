@@ -16,16 +16,8 @@ export default function DoctorMessagesPage() {
   const isTr = lang === "tr";
   const [selectedConvo, setSelectedConvo] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState("");
-  const [conversations] = useState<Conversation[]>([
-    { id: "1", name: "Dr. Ahmet Yilmaz", avatar: "AY", lastMessage: isTr ? "Tahlil sonuçlarinizi inceledim..." : "I reviewed your lab results...", time: "10:30", unread: 1 },
-    { id: "2", name: "Dr. Elif Kaya", avatar: "EK", lastMessage: isTr ? "İlaç dozunuzu değiştirdim" : "I changed your medication dose", time: "Yesterday", unread: 0 },
-    { id: "3", name: "Dr. Can Demir", avatar: "CD", lastMessage: isTr ? "Kontrol randevunuz için..." : "For your follow-up appointment...", time: "Mar 25", unread: 2 },
-  ]);
-  const [messages] = useState<Message[]>([
-    { id: "1", from: "doctor", to: "patient", text: isTr ? "Merhaba, tahlil sonuçlarinizi inceledim. HbA1c degeriniz iyiye gidiyor." : "Hello, I reviewed your lab results. Your HbA1c is improving.", time: "10:30", read: true },
-    { id: "2", from: "patient", to: "doctor", text: isTr ? "Tesekkurler doktor bey. Metformin dozumu degistirmeli miyim?" : "Thank you doctor. Should I change my Metformin dose?", time: "10:32", read: true },
-    { id: "3", from: "doctor", to: "patient", text: isTr ? "Hayir, mevcut dozu koruyalim. 3 ay sonra tekrar tahlil yapalim." : "No, let us keep the current dose. We will repeat labs in 3 months.", time: "10:35", read: false },
-  ]);
+  const [conversations] = useState<Conversation[]>([]);
+  const [messages] = useState<Message[]>([]);
 
   const activeConvo = conversations.find(c => c.id === selectedConvo);
 

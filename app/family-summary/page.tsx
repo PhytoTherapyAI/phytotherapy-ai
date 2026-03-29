@@ -60,15 +60,13 @@ export default function FamilySummaryPage() {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || "Failed to load")
 
-      // Enrich members with mock weekly summary data
+      // Map members — summary stats will come from real data in production
       const enriched: MemberSummary[] = (json.members || []).map((m: FamilyMember) => ({
         ...m,
-        healthScore: Math.floor(Math.random() * 30 + 60),
-        complianceRate: Math.floor(Math.random() * 40 + 60),
-        missedDays: Math.floor(Math.random() * 4),
-        nextAppointment: Math.random() > 0.5
-          ? new Date(Date.now() + Math.random() * 7 * 86400000).toISOString()
-          : null,
+        healthScore: null,
+        complianceRate: null,
+        missedDays: null,
+        nextAppointment: null,
       }))
 
       setMembers(enriched)

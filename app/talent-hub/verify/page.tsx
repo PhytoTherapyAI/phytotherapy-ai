@@ -221,13 +221,13 @@ export default function VerifyPage() {
           {/* Verified badge preview */}
           <Card className="p-6 mb-8 inline-block">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">AK</div>
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">AD</div>
               <div className="text-left">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">Prof. Dr. Ayşe Kara</span>
+                  <span className="font-semibold">{lang === "tr" ? "Adınız Soyadınız" : "Your Name"}</span>
                   <VerifiedBadge size="md" lang={lang} />
                 </div>
-                <p className="text-sm text-muted-foreground">Endocrinology · Physician</p>
+                <p className="text-sm text-muted-foreground">{lang === "tr" ? "Uzmanlık Alanınız" : "Your Specialty"}</p>
               </div>
             </div>
           </Card>

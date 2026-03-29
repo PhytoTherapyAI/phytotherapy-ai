@@ -24,13 +24,8 @@ interface SearchItem {
   meta?: string
 }
 
-const DOCTORS_DB: SearchItem[] = [
-  { id: "d1", type: "doctor", title: "Prof. Dr. Ayşe Kara", subtitle: "Endocrinology · Istanbul", href: "/talent-hub", image: "AK", meta: "22 yıl deneyim" },
-  { id: "d2", type: "doctor", title: "Ecz. Mehmet Demir", subtitle: "Clinical Pharmacy · Ankara", href: "/talent-hub", image: "MD", meta: "12 yıl deneyim" },
-  { id: "d3", type: "doctor", title: "Dyt. Zeynep Aydın", subtitle: "Clinical Nutrition · Izmir", href: "/talent-hub", image: "ZA", meta: "8 yıl deneyim" },
-  { id: "d4", type: "doctor", title: "Dr. Ali Yılmaz", subtitle: "Cardiology · Istanbul", href: "/talent-hub", image: "AY", meta: "15 yıl deneyim" },
-  { id: "d5", type: "doctor", title: "Prof. Dr. Fatma Şahin", subtitle: "Dermatology · Ankara", href: "/talent-hub", image: "FŞ", meta: "20 yıl deneyim" },
-]
+// Doctor search is placeholder — will be populated from Supabase in production
+const DOCTORS_DB: SearchItem[] = []
 
 const ARTICLES_DB: SearchItem[] = [
   { id: "a1", type: "article", title: "Berberine vs Metformin: A Comparative Analysis", subtitle: "Evidence-based comparison for blood sugar management", href: "/expert-content", meta: "5 min read" },

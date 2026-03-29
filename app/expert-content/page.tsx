@@ -17,10 +17,10 @@ import {
 
 const CATEGORY_ICONS: Record<string, any> = { Leaf, Apple, Brain, Activity, Pill, Heart: Heart, Baby, Dumbbell, Sparkles, BookOpen }
 
-// Mock author data
+// Authors will be loaded from Supabase in production
 const AUTHORS: Record<string, { name: string; title: string; specialty: { en: string; tr: string }; verified: boolean; avatar: string }> = {
-  "1": { name: "Prof. Dr. Ayşe Kara", title: "Prof.Dr.", specialty: { en: "Endocrinology", tr: "Endokrinoloji" }, verified: true, avatar: "AK" },
-  "2": { name: "Ecz. Mehmet Demir", title: "Ecz.", specialty: { en: "Clinical Pharmacy", tr: "Klinik Eczacılık" }, verified: true, avatar: "MD" },
+  "1": { name: "Phytotherapy.ai", title: "Editör", specialty: { en: "Evidence-Based Phytotherapy", tr: "Kanıta Dayalı Fitoterapi" }, verified: true, avatar: "PA" },
+  "2": { name: "Phytotherapy.ai", title: "Editör", specialty: { en: "Drug-Herb Interactions", tr: "İlaç-Bitki Etkileşimleri" }, verified: true, avatar: "PA" },
 }
 
 export default function ExpertContentPage() {

@@ -158,27 +158,27 @@ export const CREDIT_COSTS: Record<ContentType, number> = {
   case_study: 1,
 }
 
-// ── Mock Content ──
+// ── Sample Content (editorial — will be replaced with real submissions) ──
 export const MOCK_CONTENT: Partial<PublishedContent>[] = [
   {
     id: "1", authorId: "1", type: "article", title: "Berberine vs Metformin: A Comparative Analysis",
     summary: "Evidence-based comparison of berberine and metformin for blood sugar management in Type 2 Diabetes.",
     tags: ["berberine", "metformin", "diabetes", "evidence-based"], category: "phytotherapy",
-    status: "published", language: "en", viewCount: 1247, likeCount: 89, bookmarkCount: 34,
+    status: "published", language: "en", viewCount: 0, likeCount: 0, bookmarkCount: 0,
     creditsUsed: 1, isSponsored: false, publishedAt: "2026-03-15T10:00:00Z",
   },
   {
     id: "2", authorId: "2", type: "article", title: "İlaç-Bitki Etkileşimlerinde Güncel Yaklaşımlar",
     summary: "Klinik pratikte sık karşılaşılan ilaç-bitki etkileşimleri ve eczacının rolü.",
     tags: ["etkileşim", "eczacılık", "güvenlik"], category: "drug_interactions",
-    status: "published", language: "tr", viewCount: 892, likeCount: 67, bookmarkCount: 21,
+    status: "published", language: "tr", viewCount: 0, likeCount: 0, bookmarkCount: 0,
     creditsUsed: 1, isSponsored: false, publishedAt: "2026-03-20T14:00:00Z",
   },
   {
     id: "3", authorId: "1", type: "video", title: "Understanding Ashwagandha: Mechanisms & Clinical Evidence",
     summary: "A comprehensive video review of KSM-66 ashwagandha research for stress and anxiety.",
     tags: ["ashwagandha", "adaptogens", "stress", "anxiety"], category: "phytotherapy",
-    status: "published", language: "en", viewCount: 3421, likeCount: 245, bookmarkCount: 89,
+    status: "published", language: "en", viewCount: 0, likeCount: 0, bookmarkCount: 0,
     videoUrl: "https://www.youtube.com/embed/placeholder", videoDuration: 1200,
     creditsUsed: 2, isSponsored: false, publishedAt: "2026-03-10T09:00:00Z",
   },

@@ -187,7 +187,20 @@ export default function TalentHubPage() {
                 const q = search.toLowerCase()
                 return p.fullName?.toLowerCase().includes(q) || p.specialty?.toLowerCase().includes(q) ||
                   p.skills?.some(s => s.toLowerCase().includes(q))
-              }).map(p => <ProfileCard key={p.id} profile={p} />)}
+              }).length === 0 ? (
+                <Card className="p-8 text-center">
+                  <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="font-medium">{lang === "tr" ? "Henüz kayıtlı profesyonel yok" : "No registered professionals yet"}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{lang === "tr" ? "İlk profesyonel siz olun!" : "Be the first to register!"}</p>
+                </Card>
+              ) : (
+                MOCK_PROFILES.filter(p => {
+                  if (!search) return true
+                  const q = search.toLowerCase()
+                  return p.fullName?.toLowerCase().includes(q) || p.specialty?.toLowerCase().includes(q) ||
+                    p.skills?.some(s => s.toLowerCase().includes(q))
+                }).map(p => <ProfileCard key={p.id} profile={p} />)
+              )}
             </div>
           </>
         )}
