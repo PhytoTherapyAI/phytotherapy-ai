@@ -200,12 +200,6 @@ Bu mesaj Phytotherapy.ai tarafından otomatik gönderilmiştir.`;
     // 8. Return success with contact count
     const contactCount = emergencyContacts?.length || 0;
 
-      alertType,
-      severity,
-      contactsNotified: contactCount,
-      hasLocation: !!location,
-    });
-
     return NextResponse.json({
       success: true,
       message: `SOS alert sent to ${contactCount} emergency contact(s)`,

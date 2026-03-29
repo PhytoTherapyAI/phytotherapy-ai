@@ -64,7 +64,7 @@ const CATEGORY_EMOJI: Record<string, string> = {
 }
 
 // Personalized tool recommendations based on profile
-function getRecommendedTools(profile: any, medications: any[], lang: string) {
+function getRecommendedTools(profile: any, medications: any[], lang: "tr" | "en") {
   const recs: Array<{ href: string; title: string; reason: string; gradient: string; emoji: string }> = []
 
   // If user has medications → interaction checker
