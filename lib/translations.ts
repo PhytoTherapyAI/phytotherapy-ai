@@ -1071,6 +1071,24 @@ const t: Record<string, TranslationEntry> = {
   "history.noResponse": { en: "No response saved", tr: "Yanıt kaydedilmemiş" },
 
   // ══════════════════════════════════════════
+  // Dashboard
+  // ══════════════════════════════════════════
+  "dash.drugInteraction": { en: "Drug Interaction Check", tr: "İlaç Etkileşim Kontrolü" },
+  "dash.drugInteractionDesc": { en: "meds — check interactions", tr: "ilacın var — etkileşimleri kontrol et" },
+  "dash.cvRisk": { en: "Cardiovascular Risk Analysis", tr: "Kardiyovasküler Risk Analizi" },
+  "dash.cvRiskDesc": { en: "40+ age — monitor heart health", tr: "40+ yaş — kalp sağlığını takip et" },
+  "dash.womensHealth": { en: "Women's Health Tracker", tr: "Kadın Sağlığı Takibi" },
+  "dash.womensHealthDesc": { en: "Cycle and hormone tracking", tr: "Döngü ve hormon takibi" },
+  "dash.sleepAnalysis": { en: "Sleep Quality Analysis", tr: "Uyku Kalitesi Analizi" },
+  "dash.sleepAnalysisDesc": { en: "Optimize your sleep quality", tr: "Uyku kaliteni optimize et" },
+  "dash.nutritionLog": { en: "Nutrition Log", tr: "Beslenme Günlüğü" },
+  "dash.nutritionLogDesc": { en: "Track what you eat, find deficiencies", tr: "Ne yediğini takip et, eksiklerini bul" },
+  "dash.recommendedForYou": { en: "Recommended For You", tr: "Senin İçin Önerilen" },
+  "dash.explore": { en: "Explore", tr: "Keşfet" },
+  "dash.allTools": { en: "All Tools", tr: "Tüm Araçlar" },
+  "common.tools": { en: "tools", tr: "araç" },
+
+  // ══════════════════════════════════════════
   // User Panel — Sprint 15
   // ══════════════════════════════════════════
   "history.title": { en: "Query History", tr: "Sorgu Geçmişi" },

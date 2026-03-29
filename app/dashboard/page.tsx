@@ -71,8 +71,8 @@ function getRecommendedTools(profile: any, medications: any[], lang: string) {
   if (medications.length > 0) {
     recs.push({
       href: "/interaction-checker",
-      title: lang === "tr" ? "İlaç Etkileşim Kontrolü" : "Drug Interaction Check",
-      reason: lang === "tr" ? `${medications.length} ilacın var — etkileşimleri kontrol et` : `You have ${medications.length} meds — check interactions`,
+      title: tx("dash.drugInteraction", lang),
+      reason: `${medications.length} ${tx("dash.drugInteractionDesc", lang)}`,
       gradient: "from-pink-500/10 to-rose-500/5",
       emoji: "⚡",
     })
@@ -83,8 +83,8 @@ function getRecommendedTools(profile: any, medications: any[], lang: string) {
   if (age && age >= 40) {
     recs.push({
       href: "/cardiovascular-risk",
-      title: lang === "tr" ? "Kardiyovasküler Risk Analizi" : "Cardiovascular Risk Analysis",
-      reason: lang === "tr" ? "40+ yaş — kalp sağlığını takip et" : "40+ age — monitor heart health",
+      title: tx("dash.cvRisk", lang),
+      reason: tx("dash.cvRiskDesc", lang),
       gradient: "from-red-500/10 to-orange-500/5",
       emoji: "❤️",
     })
@@ -94,8 +94,8 @@ function getRecommendedTools(profile: any, medications: any[], lang: string) {
   if (profile.gender === "female") {
     recs.push({
       href: "/womens-health",
-      title: lang === "tr" ? "Kadın Sağlığı Takibi" : "Women's Health Tracker",
-      reason: lang === "tr" ? "Döngü ve hormon takibi" : "Cycle and hormone tracking",
+      title: tx("dash.womensHealth", lang),
+      reason: tx("dash.womensHealthDesc", lang),
       gradient: "from-purple-500/10 to-pink-500/5",
       emoji: "🌸",
     })
@@ -105,8 +105,8 @@ function getRecommendedTools(profile: any, medications: any[], lang: string) {
   if (recs.length < 3) {
     recs.push({
       href: "/sleep-analysis",
-      title: lang === "tr" ? "Uyku Kalitesi Analizi" : "Sleep Quality Analysis",
-      reason: lang === "tr" ? "Uyku kaliteni optimize et" : "Optimize your sleep quality",
+      title: tx("dash.sleepAnalysis", lang),
+      reason: tx("dash.sleepAnalysisDesc", lang),
       gradient: "from-indigo-500/10 to-blue-500/5",
       emoji: "😴",
     })
@@ -116,8 +116,8 @@ function getRecommendedTools(profile: any, medications: any[], lang: string) {
   if (recs.length < 3) {
     recs.push({
       href: "/nutrition",
-      title: lang === "tr" ? "Beslenme Günlüğü" : "Nutrition Log",
-      reason: lang === "tr" ? "Ne yediğini takip et, eksiklerini bul" : "Track what you eat, find deficiencies",
+      title: tx("dash.nutritionLog", lang),
+      reason: tx("dash.nutritionLogDesc", lang),
       gradient: "from-amber-500/10 to-yellow-500/5",
       emoji: "🥑",
     })
@@ -246,7 +246,7 @@ export default function DashboardPage() {
           <span>
             {lang === "tr"
               ? `Bugün ${socialCount.toLocaleString("tr-TR")} kişi günlük planını tamamladı`
-              : `${socialCount.toLocaleString("en-US")} people completed their daily plan today`}
+              : `${socialCount.toLocaleString("en-US")} people completed their daily plan today`}{/* locale-specific formatting — keep inline */}
           </span>
           <TrendingUp className="h-3 w-3 text-green-500" />
         </div>
@@ -267,7 +267,7 @@ export default function DashboardPage() {
         <div className="animate-fade-in-up" style={{ animationDelay: "150ms" }}>
           <div className="flex items-center gap-2 mb-3">
             <Zap className="h-4 w-4 text-amber-500" />
-            <h2 className="text-sm font-semibold">{lang === "tr" ? "Senin İçin Önerilen" : "Recommended For You"}</h2>
+            <h2 className="text-sm font-semibold">{tx("dash.recommendedForYou", lang)}</h2>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             {recommendedTools.map((tool, idx) => (
@@ -278,7 +278,7 @@ export default function DashboardPage() {
                 <h3 className="text-sm font-semibold text-foreground mb-1">{tool.title}</h3>
                 <p className="text-[11px] text-muted-foreground leading-relaxed">{tool.reason}</p>
                 <div className="mt-2 flex items-center gap-1 text-xs text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  {lang === "tr" ? "Keşfet" : "Explore"} <ArrowRight className="h-3 w-3" />
+                  {tx("dash.explore", lang)} <ArrowRight className="h-3 w-3" />
                 </div>
               </Link>
             ))}
@@ -314,7 +314,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg md:text-xl font-semibold">{tx("dashboard.tools", lang)}</h2>
           <Link href="/tools" className="text-xs text-primary hover:underline flex items-center gap-1">
-            {lang === "tr" ? "Tüm Araçlar" : "All Tools"} <ArrowRight className="w-3 h-3" />
+            {tx("dash.allTools", lang)} <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -340,7 +340,7 @@ export default function DashboardPage() {
                     <span className="text-lg">{emoji}</span>
                     <div className="flex-1 min-w-0">
                       <span className="text-xs font-semibold text-foreground block">{cat.title[lang]}</span>
-                      <span className="text-[10px] text-muted-foreground">{cat.modules.length} {lang === "tr" ? "araç" : "tools"}</span>
+                      <span className="text-[10px] text-muted-foreground">{cat.modules.length} {tx("common.tools", lang)}</span>
                     </div>
                     <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`} />
                   </div>
