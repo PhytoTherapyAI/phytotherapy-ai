@@ -132,16 +132,14 @@ export default function NewParentHealthPage() {
         {/* Focus Note */}
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 text-center">
           <p className="text-sm text-blue-700 dark:text-blue-300">
-            {lang === "tr"
-              ? "Bu sayfa EBEVEYN sağlığına odaklanir. Bebek sağlığı için Cocuk Sagligi modulune gidin."
-              : "This page focuses on PARENT health. For baby health, visit the Child Health module."}
+            {tx("newparent.focusNote", lang)}
           </p>
           <Button
             variant="link"
             onClick={() => window.location.href = "/child-health"}
             className="text-blue-600 dark:text-blue-400 mt-1"
           >
-            {lang === "tr" ? "Cocuk Sagligi" : "Child Health"} <ArrowRight className="w-4 h-4 ml-1" />
+            {tx("newparent.childHealth", lang)} <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
         </div>
 
@@ -177,12 +175,10 @@ export default function NewParentHealthPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-amber-500" />
-            {lang === "tr" ? "Tukenmislik Oz Değerlendirmesi" : "Burnout Self-Assessment"}
+            {tx("newparent.burnoutTitle", lang)}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {lang === "tr"
-              ? "Son 2 haftayi dusunun. Asagidakilerden hangileri gecerli?"
-              : "Think about the last 2 weeks. Which of the following apply?"}
+            {tx("newparent.burnoutInstruction", lang)}
           </p>
           <div className="grid gap-2">
             {BURNOUT_QUESTIONS.map((q, i) => (
@@ -213,7 +209,7 @@ export default function NewParentHealthPage() {
             onClick={() => setShowBurnoutResult(true)}
             className="w-full bg-amber-600 hover:bg-amber-700 text-white"
           >
-            {lang === "tr" ? "Değerlendirmeyi Gor" : "See Assessment"}
+            {tx("newparent.seeAssessment", lang)}
           </Button>
           {showBurnoutResult && (
             <div
@@ -230,16 +226,10 @@ export default function NewParentHealthPage() {
               </p>
               <p className="text-sm mt-1">
                 {burnoutScore >= 5
-                  ? lang === "tr"
-                    ? "Yüksek tukenmislik belirtileri. Bir sağlık uzmanina danışmaniz onerilir."
-                    : "High burnout indicators. We recommend speaking to a healthcare provider."
+                  ? tx("newparent.burnoutHigh", lang)
                   : burnoutScore >= 3
-                  ? lang === "tr"
-                    ? "Orta düzeyde stres belirtileri. Kendinize zaman ayirmaya oncelik verin."
-                    : "Moderate stress indicators. Prioritize self-care and personal time."
-                  : lang === "tr"
-                  ? "Düşük tukenmislik belirtileri. Kendinize bakmaya devam edin!"
-                  : "Low burnout indicators. Keep taking care of yourself!"}
+                  ? tx("newparent.burnoutModerate", lang)
+                  : tx("newparent.burnoutLow", lang)}
               </p>
             </div>
           )}

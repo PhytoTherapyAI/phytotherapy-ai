@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
-import { tx } from "@/lib/translations"
+import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -52,17 +52,17 @@ const TYPE_META: Record<NotificationType, { icon: typeof Bell; color: string }> 
   system: { icon: Settings, color: "text-muted-foreground" },
 }
 
-function groupLabel(date: Date, now: Date, lang: string): string {
+function groupLabel(date: Date, now: Date, lang: Lang): string {
   const diff = Math.floor((now.getTime() - date.getTime()) / 86400000)
-  if (diff === 0) return lang === "tr" ? "Bugun" : "Today"
-  if (diff === 1) return lang === "tr" ? "Dun" : "Yesterday"
-  if (diff < 7) return lang === "tr" ? "Bu Hafta" : "This Week"
-  return lang === "tr" ? "Daha Eski" : "Older"
+  if (diff === 0) return tx("notif.today", lang)
+  if (diff === 1) return tx("notif.yesterday", lang)
+  if (diff < 7) return tx("notif.thisWeek", lang)
+  return tx("notif.older", lang)
 }
 
-function relativeTime(date: Date, lang: string): string {
+function relativeTime(date: Date, lang: Lang): string {
   const mins = Math.floor((Date.now() - date.getTime()) / 60000)
-  if (mins < 1) return lang === "tr" ? "Simdi" : "Just now"
+  if (mins < 1) return tx("notif.justNow", lang)
   if (mins < 60) return `${mins}${lang === "tr" ? " dk once" : "m ago"}`
   const hrs = Math.floor(mins / 60)
   if (hrs < 24) return `${hrs}${lang === "tr" ? " sa once" : "h ago"}`
@@ -319,10 +319,10 @@ export default function NotificationsPage() {
   // ---- Tabs ----
 
   const tabs: { key: FilterTab; label: string }[] = [
-    { key: "all", label: lang === "tr" ? "Tumu" : "All" },
-    { key: "medications", label: lang === "tr" ? "İlaçlar" : "Medications" },
-    { key: "health", label: lang === "tr" ? "Sağlık" : "Health" },
-    { key: "system", label: lang === "tr" ? "Sistem" : "System" },
+    { key: "all", label: tx("notif.all", lang) },
+    { key: "medications", label: tx("notif.medications", lang) },
+    { key: "health", label: tx("notif.health", lang) },
+    { key: "system", label: tx("notif.system", lang) },
   ]
 
   // ---- Loading / Auth states ----
@@ -353,7 +353,7 @@ export default function NotificationsPage() {
             </h1>
             {unreadCount > 0 && (
               <p className="text-xs text-muted-foreground">
-                {unreadCount} {lang === "tr" ? "okunmamis" : "unread"}
+                {unreadCount} {tx("notif.unread", lang)}
               </p>
             )}
           </div>
@@ -361,7 +361,7 @@ export default function NotificationsPage() {
         {unreadCount > 0 && (
           <Button variant="ghost" size="sm" onClick={markAllRead} className="text-xs">
             <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
-            {lang === "tr" ? "Tumunu oku" : "Mark all read"}
+            {tx("notif.markAllRead", lang)}
           </Button>
         )}
       </div>
@@ -375,7 +375,7 @@ export default function NotificationsPage() {
             </div>
             <div className="min-w-0">
               <p className="text-sm font-semibold text-foreground">
-                {lang === "tr" ? "Gunaydin! Bugunun ozeti:" : "Good morning! Today's summary:"}
+                {tx("notif.goodMorning", lang)}
               </p>
               <div className="mt-1.5 flex flex-wrap gap-2">
                 {pendingMeds > 0 && (
@@ -428,12 +428,8 @@ export default function NotificationsPage() {
       {filtered.length === 0 ? (
         <EmptyState
           icon={BellOff}
-          title={lang === "tr" ? "Bildirim yok" : "No notifications"}
-          description={
-            lang === "tr"
-              ? "Tum bildirimleriniz burada gorunecek"
-              : "All your notifications will appear here"
-          }
+          title={tx("notif.noNotifications", lang)}
+          description={tx("notif.allWillAppear", lang)}
         />
       ) : (
         <div className="space-y-5">

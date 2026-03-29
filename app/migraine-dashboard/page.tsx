@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface MigraineAttack { id: string; date: string; severity: number; duration: number; aura: boolean; location: string; triggers: string[]; medication: string; effective: boolean; }
 
@@ -29,7 +30,6 @@ const TRIGGERS_DB = [
 
 export default function MigraineDashboardPage() {
   const { lang } = useLang();
-  const isTr = lang === "tr";
   const [activeTab, setActiveTab] = useState("log");
   const [attacks] = useState<MigraineAttack[]>([
     { id: "1", date: "2026-03-27", severity: 7, duration: 6, aura: true, location: "Right temple", triggers: ["Stress", "Poor sleep"], medication: "Sumatriptan 50mg", effective: true },
@@ -44,9 +44,9 @@ export default function MigraineDashboardPage() {
   const medEffRate = Math.round((attacks.filter(a => a.effective).length / attacks.length) * 100);
 
   const tabs = [
-    { id: "log", label: isTr ? "Atak Kaydi" : "Attack Log" },
-    { id: "triggers", label: isTr ? "Tetikleyiciler" : "Triggers" },
-    { id: "meds", label: isTr ? "İlaç Etkisi" : "Medication Effectiveness" },
+    { id: "log", label: tx("migraine.attackLog", lang) },
+    { id: "triggers", label: tx("migraine.triggers", lang) },
+    { id: "meds", label: tx("migraine.medEffectiveness", lang) },
   ];
 
   const severityColor = (s: number) => s >= 7 ? "bg-red-500" : s >= 4 ? "bg-yellow-500" : "bg-green-500";
@@ -57,16 +57,16 @@ export default function MigraineDashboardPage() {
         <div className="flex items-center gap-3 mb-6">
           <Brain className="w-8 h-8 text-violet-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Migren Takipci" : "Migraine Dashboard"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Ataklarinizi kaydedin, tetikleyicileri analiz edin" : "Log attacks, analyze triggers, track effectiveness"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("migraine.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{tx("migraine.subtitle", lang)}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-violet-600">{attacks.length}</div><div className="text-xs text-gray-500">{isTr ? "Bu ay" : "This month"}</div></Card>
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-orange-600">{avgSeverity}/10</div><div className="text-xs text-gray-500">{isTr ? "Ort. siddet" : "Avg severity"}</div></Card>
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-blue-600">{avgDuration}h</div><div className="text-xs text-gray-500">{isTr ? "Ort. sure" : "Avg duration"}</div></Card>
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-green-600">{medEffRate}%</div><div className="text-xs text-gray-500">{isTr ? "İlaç etkisi" : "Med effectiveness"}</div></Card>
+          <Card className="p-3 text-center"><div className="text-2xl font-bold text-violet-600">{attacks.length}</div><div className="text-xs text-gray-500">{tx("migraine.thisMonth", lang)}</div></Card>
+          <Card className="p-3 text-center"><div className="text-2xl font-bold text-orange-600">{avgSeverity}/10</div><div className="text-xs text-gray-500">{tx("migraine.avgSeverity", lang)}</div></Card>
+          <Card className="p-3 text-center"><div className="text-2xl font-bold text-blue-600">{avgDuration}h</div><div className="text-xs text-gray-500">{tx("migraine.avgDuration", lang)}</div></Card>
+          <Card className="p-3 text-center"><div className="text-2xl font-bold text-green-600">{medEffRate}%</div><div className="text-xs text-gray-500">{tx("migraine.medEffect", lang)}</div></Card>
         </div>
 
         <div className="flex gap-2 mb-6">
@@ -82,15 +82,15 @@ export default function MigraineDashboardPage() {
                   <div className="flex items-center gap-2"><div className={"w-3 h-3 rounded-full " + severityColor(a.severity)} /><span className="text-sm font-bold">{a.severity}/10</span></div>
                 </div>
                 <div className="grid grid-cols-2 gap-2 mt-2 text-xs">
-                  <div><span className="text-gray-400">{isTr ? "Sure: " : "Duration: "}</span>{a.duration}h</div>
-                  <div><span className="text-gray-400">{isTr ? "Konum: " : "Location: "}</span>{a.location}</div>
-                  <div><span className="text-gray-400">{isTr ? "İlaç: " : "Med: "}</span>{a.medication}</div>
-                  <div><span className="text-gray-400">{isTr ? "Etkili: " : "Effective: "}</span>{a.effective ? "Yes" : "No"}</div>
+                  <div><span className="text-gray-400">{tx("migraine.duration", lang)}</span>{a.duration}h</div>
+                  <div><span className="text-gray-400">{tx("migraine.location", lang)}</span>{a.location}</div>
+                  <div><span className="text-gray-400">{tx("migraine.med", lang)}</span>{a.medication}</div>
+                  <div><span className="text-gray-400">{tx("migraine.effective", lang)}</span>{a.effective ? "Yes" : "No"}</div>
                 </div>
                 <div className="flex gap-1 mt-2 flex-wrap">{a.triggers.map(t => <Badge key={t} variant="outline" className="text-xs">{t}</Badge>)}</div>
               </Card>
             ))}
-            <Card className="p-4 border-dashed border-2 flex items-center justify-center gap-2 text-gray-400 cursor-pointer"><Plus className="w-4 h-4" /> {isTr ? "Yeni atak kaydet" : "Log new attack"}</Card>
+            <Card className="p-4 border-dashed border-2 flex items-center justify-center gap-2 text-gray-400 cursor-pointer"><Plus className="w-4 h-4" /> {tx("migraine.logNew", lang)}</Card>
           </div>
         )}
 
@@ -99,7 +99,7 @@ export default function MigraineDashboardPage() {
             {TRIGGERS_DB.sort((a, b) => b.frequency - a.frequency).map(tr => (
               <Card key={tr.id} className="p-3 flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-600">{tr.icon}</div>
-                <div className="flex-1"><span className="text-sm font-medium">{isTr ? tr.tr : tr.en}</span></div>
+                <div className="flex-1"><span className="text-sm font-medium">{lang === "tr" ? tr.tr : tr.en}</span></div>
                 <div className="flex items-center gap-2">
                   <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div className="bg-violet-500 h-2 rounded-full" style={{ width: (tr.frequency / 8 * 100) + "%" }} /></div>
                   <span className="text-xs text-gray-500 w-6">{tr.frequency}x</span>
@@ -120,7 +120,7 @@ export default function MigraineDashboardPage() {
               <Card key={med.name} className="p-4">
                 <div className="flex items-center justify-between mb-2"><span className="font-medium text-sm">{med.name}</span><Badge className={med.pct >= 70 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}>{med.pct}%</Badge></div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div className={"h-2 rounded-full " + (med.pct >= 70 ? "bg-green-500" : "bg-red-500")} style={{ width: med.pct + "%" }} /></div>
-                <div className="text-xs text-gray-500 mt-1">{med.effective}/{med.uses} {isTr ? "etkili" : "effective"}</div>
+                <div className="text-xs text-gray-500 mt-1">{med.effective}/{med.uses} {tx("migraine.effectiveCount", lang)}</div>
               </Card>
             ))}
           </div>

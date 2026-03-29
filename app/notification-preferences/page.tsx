@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface NotifSetting { id: string; en: string; tr: string; descEn: string; descTr: string; icon: React.ReactNode; enabled: boolean; category: string; }
 
 export default function NotificationPreferencesPage() {
   const { lang } = useLang();
-  const isTr = lang === "tr";
   const [settings, setSettings] = useState<NotifSetting[]>([
     { id: "med_reminder", en: "Medication Reminders", tr: "İlaç Hatirlatmalari", descEn: "Daily medication intake alerts", descTr: "Günlük ilac alma uyarıları", icon: <Pill className="w-5 h-5" />, enabled: true, category: "health" },
     { id: "supplement", en: "Supplement Reminders", tr: "Takviye Hatirlatmalari", descEn: "Supplement cycle and dosage alerts", descTr: "Takviye döngüsü ve doz uyarıları", icon: <Droplets className="w-5 h-5" />, enabled: true, category: "health" },
@@ -42,26 +42,26 @@ export default function NotificationPreferencesPage() {
         <div className="flex items-center gap-3 mb-6">
           <Bell className="w-8 h-8 text-amber-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Bildirim Tercihleri" : "Notification Preferences"}</h1>
-            <p className="text-sm text-gray-500">{enabledCount}/{settings.length} {isTr ? "aktif" : "active"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("notifPref.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{enabledCount}/{settings.length} {tx("notifPref.active", lang)}</p>
           </div>
         </div>
 
         <div className="flex gap-2 mb-6">
-          <Button variant="outline" size="sm" onClick={() => setSettings(prev => prev.map(s => ({ ...s, enabled: true })))}><Bell className="w-4 h-4 mr-1" /> {isTr ? "Tumunu Ac" : "Enable All"}</Button>
-          <Button variant="outline" size="sm" onClick={() => setSettings(prev => prev.map(s => ({ ...s, enabled: false })))}><BellOff className="w-4 h-4 mr-1" /> {isTr ? "Tumunu Kapat" : "Disable All"}</Button>
+          <Button variant="outline" size="sm" onClick={() => setSettings(prev => prev.map(s => ({ ...s, enabled: true })))}><Bell className="w-4 h-4 mr-1" /> {tx("notifPref.enableAll", lang)}</Button>
+          <Button variant="outline" size="sm" onClick={() => setSettings(prev => prev.map(s => ({ ...s, enabled: false })))}><BellOff className="w-4 h-4 mr-1" /> {tx("notifPref.disableAll", lang)}</Button>
         </div>
 
         {categories.map(cat => (
           <div key={cat.id} className="mb-6">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{isTr ? cat.tr : cat.en}</h2>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{lang === "tr" ? cat.tr : cat.en}</h2>
             <div className="space-y-2">
               {settings.filter(s => s.category === cat.id).map(s => (
                 <Card key={s.id} className={"p-4 flex items-center gap-4 cursor-pointer transition-all " + (s.enabled ? "" : "opacity-50")} onClick={() => toggle(s.id)}>
                   <div className={"p-2 rounded-lg " + (s.enabled ? "bg-amber-100 text-amber-600 dark:bg-amber-900/30" : "bg-gray-100 text-gray-400")}>{s.icon}</div>
                   <div className="flex-1">
-                    <div className="font-medium text-sm">{isTr ? s.tr : s.en}</div>
-                    <div className="text-xs text-gray-500">{isTr ? s.descTr : s.descEn}</div>
+                    <div className="font-medium text-sm">{lang === "tr" ? s.tr : s.en}</div>
+                    <div className="text-xs text-gray-500">{lang === "tr" ? s.descTr : s.descEn}</div>
                   </div>
                   <div className={"w-12 h-7 rounded-full flex items-center transition-all px-1 " + (s.enabled ? "bg-amber-500 justify-end" : "bg-gray-300 justify-start")}>
                     <div className="w-5 h-5 rounded-full bg-white shadow" />
@@ -76,9 +76,9 @@ export default function NotificationPreferencesPage() {
           <div className="flex items-start gap-3">
             <Smartphone className="w-5 h-5 text-amber-600 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-sm">{isTr ? "Push Bildirimleri" : "Push Notifications"}</h3>
-              <p className="text-xs text-gray-500 mt-1">{isTr ? "Push bildirimleri için tarayici izni gereklidir. PWA olarak yukleyerek daha iyi deneyim elde edin." : "Browser permission required for push notifications. Install as PWA for a better experience."}</p>
-              <Button size="sm" className="mt-2 bg-amber-500 hover:bg-amber-600">{isTr ? "Izin Ver" : "Grant Permission"}</Button>
+              <h3 className="font-semibold text-sm">{tx("notifPref.pushTitle", lang)}</h3>
+              <p className="text-xs text-gray-500 mt-1">{tx("notifPref.pushDesc", lang)}</p>
+              <Button size="sm" className="mt-2 bg-amber-500 hover:bg-amber-600">{tx("notifPref.grantPermission", lang)}</Button>
             </div>
           </div>
         </Card>

@@ -149,7 +149,7 @@ export default function MilitaryHealthPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5 text-green-500" />
-              {lang === "tr" ? "Sağlık Hazirlik Kontrol Listesi" : "Health Preparation Checklist"}
+              {tx("military.healthChecklist", lang)}
             </h2>
             <span className="text-sm font-medium text-muted-foreground">{progress}%</span>
           </div>
@@ -180,7 +180,7 @@ export default function MilitaryHealthPage() {
           </div>
           {progress === 100 && (
             <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl text-green-700 dark:text-green-400 font-medium">
-              {lang === "tr" ? "Tum sağlık hazirliklari tamamlandi!" : "All health preparations complete!"}
+              {tx("military.allComplete", lang)}
             </div>
           )}
         </div>
@@ -189,7 +189,7 @@ export default function MilitaryHealthPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Syringe className="w-5 h-5 text-blue-500" />
-            {lang === "tr" ? "Gerekli ve Onerilen Asilar" : "Required & Recommended Vaccinations"}
+            {tx("military.vaccinations", lang)}
           </h2>
           <div className="grid gap-3">
             {VACCINATIONS.map((vax, i) => (
@@ -211,8 +211,8 @@ export default function MilitaryHealthPage() {
                     }`}
                   >
                     {vax.required
-                      ? lang === "tr" ? "Zorunlu" : "Required"
-                      : lang === "tr" ? "Onerilen" : "Recommended"}
+                      ? tx("military.required", lang)
+                      : tx("military.recommended", lang)}
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">{vax.note[lang]}</p>

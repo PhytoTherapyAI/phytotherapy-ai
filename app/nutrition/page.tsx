@@ -425,7 +425,7 @@ export default function NutritionLogPage() {
             </div>
           ) : todaysRecords.length === 0 ? (
             <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-6">
-              {lang === "tr" ? "Henüz kayıtlı öğün yok" : "No meals logged yet"}
+              {tx("nut.noMealsYet", lang)}
             </p>
           ) : (
             <div className="space-y-3">

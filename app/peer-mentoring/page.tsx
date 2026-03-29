@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -55,25 +56,23 @@ export default function PeerMentoringPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Users className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold">{lang === "tr" ? "Akran Sağlık Mentorluğu" : "Peer Health Mentoring"}</h1>
-          <p className="text-muted-foreground mt-1">{lang === "tr" ? "Aynı yoldan geçmiş birinden 1-1 gönüllü destek" : "1-on-1 volunteer support from someone who's been there"}</p>
-          <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{lang === "tr" ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
+          <h1 className="text-2xl font-bold">{tx("peer.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("peer.subtitle", lang)}</p>
+          <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{tx("peer.sampleData", lang)}</span>
         </div>
 
         <Card className="p-4 mb-6 bg-green-500/5 border-green-500/30">
           <div className="flex gap-2">
             <Shield className="w-5 h-5 text-green-500 shrink-0" />
             <p className="text-sm text-muted-foreground">
-              {lang === "tr"
-                ? "Tüm mentorlar doğrulanmış ve moderasyonlu. Tıbbi tavsiye vermezler, deneyim paylaşırlar."
-                : "All mentors are verified and moderated. They share experience, not medical advice."}
+              {tx("peer.verifiedNote", lang)}
             </p>
           </div>
         </Card>
 
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input className="pl-9" placeholder={lang === "tr" ? "Mentor ara..." : "Search mentors..."} value={search} onChange={e => setSearch(e.target.value)} />
+          <Input className="pl-9" placeholder={tx("peer.searchPlaceholder", lang)} value={search} onChange={e => setSearch(e.target.value)} />
         </div>
 
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
@@ -100,15 +99,15 @@ export default function PeerMentoringPage() {
                   </div>
                   <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline" className="text-xs">{mentor.condition}</Badge>
-                    <span className="text-xs text-muted-foreground">{mentor.years} {lang === "tr" ? "yıl deneyim" : "years experience"}</span>
+                    <span className="text-xs text-muted-foreground">{mentor.years} {tx("peer.yearsExp", lang)}</span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">{mentor.bio[lang]}</p>
                   <div className="flex items-center justify-between mt-3">
                     <span className="text-xs text-muted-foreground">
-                      <MessageCircle className="w-3 h-3 inline mr-1" />{mentor.sessions} {lang === "tr" ? "seans" : "sessions"}
+                      <MessageCircle className="w-3 h-3 inline mr-1" />{mentor.sessions} {tx("peer.sessions", lang)}
                     </span>
                     <Button size="sm">
-                      <UserPlus className="w-4 h-4 mr-1" />{lang === "tr" ? "Bağlan" : "Connect"}
+                      <UserPlus className="w-4 h-4 mr-1" />{tx("peer.connect", lang)}
                     </Button>
                   </div>
                 </div>
@@ -120,19 +119,17 @@ export default function PeerMentoringPage() {
         {filtered.length === 0 && (
           <Card className="p-8 text-center">
             <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">{lang === "tr" ? "Bu kriterlere uygun mentor bulunamadı." : "No mentors found for this criteria."}</p>
+            <p className="text-muted-foreground">{tx("peer.noResults", lang)}</p>
           </Card>
         )}
 
         <Card className="p-5 mt-6 text-center">
           <Heart className="w-8 h-8 text-primary mx-auto mb-2" />
-          <h3 className="font-semibold">{lang === "tr" ? "Mentor Olmak İster Misin?" : "Want to Become a Mentor?"}</h3>
+          <h3 className="font-semibold">{tx("peer.becomeTitle", lang)}</h3>
           <p className="text-sm text-muted-foreground mt-1">
-            {lang === "tr"
-              ? "En az 2 yıl kronik hastalık deneyimin varsa başvur"
-              : "Apply if you have 2+ years of chronic condition experience"}
+            {tx("peer.becomeDesc", lang)}
           </p>
-          <Button className="mt-3" variant="outline">{lang === "tr" ? "Başvur" : "Apply"}</Button>
+          <Button className="mt-3" variant="outline">{tx("peer.apply", lang)}</Button>
         </Card>
       </div>
     </div>

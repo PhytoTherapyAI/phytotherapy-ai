@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -154,17 +155,13 @@ export default function OrganTransplantPage() {
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 px-4 py-2 rounded-full text-sm font-medium">
             <Heart className="w-4 h-4" />
-            {lang === "tr" ? "Organ Nakli Rehberi" : "Organ Transplant Guide"}
+            {tx("organ.badge", lang)}
           </div>
           <h1 className="text-3xl font-bold text-foreground">
-            {lang === "tr"
-              ? "Organ Nakli Sonrasi Yasam"
-              : "Life After Organ Transplant"}
+            {tx("organ.title", lang)}
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            {lang === "tr"
-              ? "İlaç uyumu, enfeksiyon onleme, beslenme ve takip programı hakkinda kapsamli rehber."
-              : "Comprehensive guide on medication compliance, infection prevention, nutrition, and follow-up care."}
+            {tx("organ.subtitle", lang)}
           </p>
         </div>
 
@@ -174,14 +171,10 @@ export default function OrganTransplantPage() {
             <Ban className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
             <div className="text-sm text-red-800 dark:text-red-200">
               <p className="font-semibold mb-1">
-                {lang === "tr"
-                  ? "Önemli İlaç Etkilesileri"
-                  : "Critical Drug Interactions"}
+                {tx("organ.criticalTitle", lang)}
               </p>
               <p>
-                {lang === "tr"
-                  ? "Herhangi bir takviye, bitkisel urun veya yeni ilac başlamadan ÖNCE mutlaka nakil ekibinize danışın. Sari Kantaron, greyfurt ve bircok bitkisel urun immunsupresif ilac düzeylerini tehlikeli sekilde degistirebilir."
-                  : "ALWAYS consult your transplant team before starting ANY supplement, herbal product, or new medication. St. John's Wort, grapefruit, and many herbal products can dangerously alter immunosuppressant drug levels."}
+                {tx("organ.criticalDesc", lang)}
               </p>
             </div>
           </div>
@@ -244,9 +237,7 @@ export default function OrganTransplantPage() {
 
         {/* Footer */}
         <div className="text-center text-xs text-muted-foreground pt-4">
-          {lang === "tr"
-            ? "Bu bilgiler genel rehberlik için sunulmustur. Nakil ekibinizin talimatlari her zaman onceliklidir."
-            : "This information is provided for general guidance. Your transplant team's instructions always take priority."}
+          {tx("organ.disclaimer", lang)}
         </div>
       </div>
     </div>

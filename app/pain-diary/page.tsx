@@ -298,7 +298,7 @@ export default function PainDiaryPage() {
       <div className="mb-5 flex gap-1 rounded-lg bg-muted/50 p-1">
         {[
           { key: "log" as const, icon: Plus, label: tx("pain.logPain", lang) },
-          { key: "history" as const, icon: Calendar, label: lang === "tr" ? "Geçmiş" : "History" },
+          { key: "history" as const, icon: Calendar, label: tx("pain.history", lang) },
           { key: "analysis" as const, icon: Brain, label: tx("pain.analyze", lang) },
         ].map((tab) => (
           <button
@@ -361,7 +361,7 @@ export default function PainDiaryPage() {
               className="w-full accent-red-500"
             />
             <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-              <span>{lang === "tr" ? "Hafif" : "Mild"}</span>
+              <span>{tx("pain.mild", lang)}</span>
               <span>{tx("common.moderate", lang)}</span>
               <span>{tx("common.severe", lang)}</span>
             </div>
@@ -401,7 +401,7 @@ export default function PainDiaryPage() {
               type="text"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
-              placeholder={lang === "tr" ? "orn. 2 saat, 30 dakika" : "e.g. 2 hours, 30 minutes"}
+              placeholder={tx("pain.durationPlaceholder", lang)}
               className="w-full rounded-xl border bg-background p-3 text-sm placeholder:text-muted-foreground focus:border-red-400 focus:outline-none focus:ring-1 focus:ring-red-400"
             />
           </div>
@@ -464,7 +464,7 @@ export default function PainDiaryPage() {
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder={lang === "tr" ? "Ek notlar..." : "Additional notes..."}
+              placeholder={tx("pain.notesPlaceholder", lang)}
               className="w-full rounded-xl border bg-background p-3 text-sm placeholder:text-muted-foreground focus:border-red-400 focus:outline-none focus:ring-1 focus:ring-red-400"
               rows={2}
             />
@@ -510,7 +510,7 @@ export default function PainDiaryPage() {
             <div className="rounded-xl border-2 border-dashed border-red-200 bg-red-50/50 p-8 text-center dark:border-red-800 dark:bg-red-950/20">
               <BarChart3 className="mx-auto mb-3 h-8 w-8 text-red-400" />
               <p className="text-sm text-muted-foreground">
-                {lang === "tr" ? "Henuz ağrı kaydi yok" : "No pain records yet"}
+                {tx("pain.noRecords", lang)}
               </p>
             </div>
           ) : (
@@ -625,10 +625,10 @@ export default function PainDiaryPage() {
               {/* Stats */}
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[
-                  { label: lang === "tr" ? "Ort. Siddet" : "Avg. Intensity", value: `${analysis.averageIntensity}/10`, color: intensityColor(analysis.averageIntensity) },
-                  { label: lang === "tr" ? "Haftalık Sik." : "Freq/Week", value: String(analysis.frequencyPerWeek), color: "text-foreground" },
-                  { label: lang === "tr" ? "En Sik Bolge" : "Most Common", value: analysis.mostCommonLocation, color: "text-foreground" },
-                  { label: lang === "tr" ? "En Sik Tip" : "Most Common Type", value: analysis.mostCommonType, color: "text-foreground" },
+                  { label: tx("pain.avgIntensity", lang), value: `${analysis.averageIntensity}/10`, color: intensityColor(analysis.averageIntensity) },
+                  { label: tx("pain.freqWeek", lang), value: String(analysis.frequencyPerWeek), color: "text-foreground" },
+                  { label: tx("pain.mostCommonArea", lang), value: analysis.mostCommonLocation, color: "text-foreground" },
+                  { label: tx("pain.mostCommonType", lang), value: analysis.mostCommonType, color: "text-foreground" },
                 ].map((stat, i) => (
                   <div key={i} className="rounded-lg border p-3 text-center">
                     <p className="text-xs text-muted-foreground">{stat.label}</p>
@@ -682,7 +682,7 @@ export default function PainDiaryPage() {
                 <div className="rounded-lg border p-4">
                   <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
                     <Pill className="h-4 w-4 text-red-500" />
-                    {lang === "tr" ? "İlaç Korelasyonu" : "Medication Correlation"}
+                    {tx("pain.medCorrelation", lang)}
                   </h3>
                   <ul className="space-y-1">
                     {analysis.medicationCorrelation.map((m, i) => (
@@ -791,7 +791,7 @@ export default function PainDiaryPage() {
                 }}
                 className="w-full"
               >
-                {lang === "tr" ? "Tekrar analiz et" : "Analyze again"}
+                {tx("pain.analyzeAgain", lang)}
               </Button>
             </div>
           )}

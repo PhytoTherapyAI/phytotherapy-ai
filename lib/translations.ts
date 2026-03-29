@@ -4833,6 +4833,112 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "microHabits.daysToLevelUp": { en: "days to level up", tr: "gün sonra seviye atlama" },
   "microHabits.addHabit": { en: "Add Habit", tr: "Alışkanlık Ekle" },
   "microHabits.noHabits": { en: "No habits yet. Start small!", tr: "Henüz alışkanlık eklemedin. Küçük başla!" },
+
+  // Migraine Dashboard page
+  "migraine.title": { en: "Migraine Dashboard", tr: "Migren Takipci" },
+  "migraine.subtitle": { en: "Log attacks, analyze triggers, track effectiveness", tr: "Ataklarinizi kaydedin, tetikleyicileri analiz edin" },
+  "migraine.attackLog": { en: "Attack Log", tr: "Atak Kaydi" },
+  "migraine.triggers": { en: "Triggers", tr: "Tetikleyiciler" },
+  "migraine.medEffectiveness": { en: "Medication Effectiveness", tr: "İlaç Etkisi" },
+  "migraine.thisMonth": { en: "This month", tr: "Bu ay" },
+  "migraine.avgSeverity": { en: "Avg severity", tr: "Ort. siddet" },
+  "migraine.avgDuration": { en: "Avg duration", tr: "Ort. sure" },
+  "migraine.medEffect": { en: "Med effectiveness", tr: "İlaç etkisi" },
+  "migraine.duration": { en: "Duration: ", tr: "Sure: " },
+  "migraine.location": { en: "Location: ", tr: "Konum: " },
+  "migraine.med": { en: "Med: ", tr: "İlaç: " },
+  "migraine.effective": { en: "Effective: ", tr: "Etkili: " },
+  "migraine.logNew": { en: "Log new attack", tr: "Yeni atak kaydet" },
+  "migraine.effectiveCount": { en: "effective", tr: "etkili" },
+
+  // Military Health page
+  "military.healthChecklist": { en: "Health Preparation Checklist", tr: "Sağlık Hazirlik Kontrol Listesi" },
+  "military.allComplete": { en: "All health preparations complete!", tr: "Tum sağlık hazirliklari tamamlandi!" },
+  "military.vaccinations": { en: "Required & Recommended Vaccinations", tr: "Gerekli ve Onerilen Asilar" },
+  "military.required": { en: "Required", tr: "Zorunlu" },
+  "military.recommended": { en: "Recommended", tr: "Onerilen" },
+
+  // New Parent Health page
+  "newparent.focusNote": { en: "This page focuses on PARENT health. For baby health, visit the Child Health module.", tr: "Bu sayfa EBEVEYN sağlığına odaklanir. Bebek sağlığı için Cocuk Sagligi modulune gidin." },
+  "newparent.childHealth": { en: "Child Health", tr: "Cocuk Sagligi" },
+  "newparent.burnoutTitle": { en: "Burnout Self-Assessment", tr: "Tukenmislik Oz Değerlendirmesi" },
+  "newparent.burnoutInstruction": { en: "Think about the last 2 weeks. Which of the following apply?", tr: "Son 2 haftayi dusunun. Asagidakilerden hangileri gecerli?" },
+  "newparent.seeAssessment": { en: "See Assessment", tr: "Değerlendirmeyi Gor" },
+  "newparent.burnoutHigh": { en: "High burnout indicators. We recommend speaking to a healthcare provider.", tr: "Yüksek tukenmislik belirtileri. Bir sağlık uzmanina danışmaniz onerilir." },
+  "newparent.burnoutModerate": { en: "Moderate stress indicators. Prioritize self-care and personal time.", tr: "Orta düzeyde stres belirtileri. Kendinize zaman ayirmaya oncelik verin." },
+  "newparent.burnoutLow": { en: "Low burnout indicators. Keep taking care of yourself!", tr: "Düşük tukenmislik belirtileri. Kendinize bakmaya devam edin!" },
+
+  // Noise Exposure page
+  "noise.damageThreshold": { en: "85 dB = Damage Threshold", tr: "85 dB = Hasar Başlangıç Esigi" },
+  "noise.damageDesc": { en: "Prolonged exposure above 85 dB causes permanent hearing loss. Every 3 dB increase HALVES the safe exposure time.", tr: "85 dB uzerinde uzun sureli maruziyet kalici isitme kaybina yol acar. Her 3 dB artis maruz kalinabilecek sureyi YARILIYA indirir." },
+  "noise.decibelChart": { en: "Decibel Reference Chart", tr: "Desibel Referans Tablosu" },
+  "noise.earplugGuide": { en: "Earplug Guide", tr: "Kulak Tikaci Rehberi" },
+  "noise.bestFor": { en: "Best for:", tr: "En iyi:" },
+  "noise.tinnitusTitle": { en: "Tinnitus & Hearing Test Reminder", tr: "Tinitus ve Isitme Testi Hatirlatmasi" },
+  "noise.hearingTestReminder": { en: "If you regularly work in 85+ dB environments, get a hearing test once a year.", tr: "85+ dB ortamlarda düzenli calisiyorsaniz yilda 1 kez isitme testi yaptirin." },
+
+  // Notification Preferences page
+  "notifPref.title": { en: "Notification Preferences", tr: "Bildirim Tercihleri" },
+  "notifPref.active": { en: "active", tr: "aktif" },
+  "notifPref.enableAll": { en: "Enable All", tr: "Tumunu Ac" },
+  "notifPref.disableAll": { en: "Disable All", tr: "Tumunu Kapat" },
+  "notifPref.pushTitle": { en: "Push Notifications", tr: "Push Bildirimleri" },
+  "notifPref.pushDesc": { en: "Browser permission required for push notifications. Install as PWA for a better experience.", tr: "Push bildirimleri için tarayici izni gereklidir. PWA olarak yukleyerek daha iyi deneyim elde edin." },
+  "notifPref.grantPermission": { en: "Grant Permission", tr: "Izin Ver" },
+
+  // Notifications page
+  "notif.today": { en: "Today", tr: "Bugun" },
+  "notif.yesterday": { en: "Yesterday", tr: "Dun" },
+  "notif.thisWeek": { en: "This Week", tr: "Bu Hafta" },
+  "notif.older": { en: "Older", tr: "Daha Eski" },
+  "notif.justNow": { en: "Just now", tr: "Simdi" },
+  "notif.unread": { en: "unread", tr: "okunmamis" },
+  "notif.markAllRead": { en: "Mark all read", tr: "Tumunu oku" },
+  "notif.goodMorning": { en: "Good morning! Today's summary:", tr: "Gunaydin! Bugunun ozeti:" },
+  "notif.all": { en: "All", tr: "Tumu" },
+  "notif.medications": { en: "Medications", tr: "İlaçlar" },
+  "notif.health": { en: "Health", tr: "Sağlık" },
+  "notif.system": { en: "System", tr: "Sistem" },
+  "notif.noNotifications": { en: "No notifications", tr: "Bildirim yok" },
+  "notif.allWillAppear": { en: "All your notifications will appear here", tr: "Tum bildirimleriniz burada gorunecek" },
+
+  // Nutrition page
+  "nut.noMealsYet": { en: "No meals logged yet", tr: "Henüz kayıtlı öğün yok" },
+
+  // Organ Transplant page
+  "organ.badge": { en: "Organ Transplant Guide", tr: "Organ Nakli Rehberi" },
+  "organ.title": { en: "Life After Organ Transplant", tr: "Organ Nakli Sonrasi Yasam" },
+  "organ.subtitle": { en: "Comprehensive guide on medication compliance, infection prevention, nutrition, and follow-up care.", tr: "İlaç uyumu, enfeksiyon onleme, beslenme ve takip programı hakkinda kapsamli rehber." },
+  "organ.criticalTitle": { en: "Critical Drug Interactions", tr: "Önemli İlaç Etkilesileri" },
+  "organ.criticalDesc": { en: "ALWAYS consult your transplant team before starting ANY supplement, herbal product, or new medication. St. John's Wort, grapefruit, and many herbal products can dangerously alter immunosuppressant drug levels.", tr: "Herhangi bir takviye, bitkisel urun veya yeni ilac başlamadan ÖNCE mutlaka nakil ekibinize danışın. Sari Kantaron, greyfurt ve bircok bitkisel urun immunsupresif ilac düzeylerini tehlikeli sekilde degistirebilir." },
+  "organ.disclaimer": { en: "This information is provided for general guidance. Your transplant team's instructions always take priority.", tr: "Bu bilgiler genel rehberlik için sunulmustur. Nakil ekibinizin talimatlari her zaman onceliklidir." },
+
+  // Pain Diary page
+  "pain.history": { en: "History", tr: "Geçmiş" },
+  "pain.mild": { en: "Mild", tr: "Hafif" },
+  "pain.durationPlaceholder": { en: "e.g. 2 hours, 30 minutes", tr: "orn. 2 saat, 30 dakika" },
+  "pain.notesPlaceholder": { en: "Additional notes...", tr: "Ek notlar..." },
+  "pain.noRecords": { en: "No pain records yet", tr: "Henuz ağrı kaydi yok" },
+  "pain.medCorrelation": { en: "Medication Correlation", tr: "İlaç Korelasyonu" },
+  "pain.analyzeAgain": { en: "Analyze again", tr: "Tekrar analiz et" },
+  "pain.avgIntensity": { en: "Avg. Intensity", tr: "Ort. Siddet" },
+  "pain.freqWeek": { en: "Freq/Week", tr: "Haftalık Sik." },
+  "pain.mostCommonArea": { en: "Most Common", tr: "En Sik Bolge" },
+  "pain.mostCommonType": { en: "Most Common Type", tr: "En Sik Tip" },
+
+  // Peer Mentoring page
+  "peer.title": { en: "Peer Health Mentoring", tr: "Akran Sağlık Mentorluğu" },
+  "peer.subtitle": { en: "1-on-1 volunteer support from someone who's been there", tr: "Aynı yoldan geçmiş birinden 1-1 gönüllü destek" },
+  "peer.sampleData": { en: "SAMPLE DATA", tr: "ÖRNEK VERİ" },
+  "peer.verifiedNote": { en: "All mentors are verified and moderated. They share experience, not medical advice.", tr: "Tüm mentorlar doğrulanmış ve moderasyonlu. Tıbbi tavsiye vermezler, deneyim paylaşırlar." },
+  "peer.searchPlaceholder": { en: "Search mentors...", tr: "Mentor ara..." },
+  "peer.yearsExp": { en: "years experience", tr: "yıl deneyim" },
+  "peer.sessions": { en: "sessions", tr: "seans" },
+  "peer.connect": { en: "Connect", tr: "Bağlan" },
+  "peer.noResults": { en: "No mentors found for this criteria.", tr: "Bu kriterlere uygun mentor bulunamadı." },
+  "peer.becomeTitle": { en: "Want to Become a Mentor?", tr: "Mentor Olmak İster Misin?" },
+  "peer.becomeDesc": { en: "Apply if you have 2+ years of chronic condition experience", tr: "En az 2 yıl kronik hastalık deneyimin varsa başvur" },
+  "peer.apply": { en: "Apply", tr: "Başvur" },
 }
 Object.assign(t, commonToolKeys)
 

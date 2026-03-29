@@ -151,12 +151,10 @@ export default function NoiseExposurePage() {
         <div className="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-2xl p-6 text-center space-y-2">
           <AlertTriangle className="w-8 h-8 text-amber-500 mx-auto" />
           <h3 className="font-bold text-amber-700 dark:text-amber-400">
-            {lang === "tr" ? "85 dB = Hasar Başlangıç Esigi" : "85 dB = Damage Threshold"}
+            {tx("noise.damageThreshold", lang)}
           </h3>
           <p className="text-sm text-amber-600 dark:text-amber-300">
-            {lang === "tr"
-              ? "85 dB uzerinde uzun sureli maruziyet kalici isitme kaybina yol acar. Her 3 dB artis maruz kalinabilecek sureyi YARILIYA indirir."
-              : "Prolonged exposure above 85 dB causes permanent hearing loss. Every 3 dB increase HALVES the safe exposure time."}
+            {tx("noise.damageDesc", lang)}
           </p>
         </div>
 
@@ -164,7 +162,7 @@ export default function NoiseExposurePage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Volume2 className="w-5 h-5 text-purple-500" />
-            {lang === "tr" ? "Desibel Referans Tablosu" : "Decibel Reference Chart"}
+            {tx("noise.decibelChart", lang)}
           </h2>
           <div className="grid gap-3">
             {NOISE_LEVELS.map((level) => {
@@ -194,14 +192,14 @@ export default function NoiseExposurePage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Shield className="w-5 h-5 text-blue-500" />
-            {lang === "tr" ? "Kulak Tikaci Rehberi" : "Earplug Guide"}
+            {tx("noise.earplugGuide", lang)}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {EARPLUG_GUIDE.map((plug, i) => (
               <div key={i} className="border rounded-xl p-4 space-y-2">
                 <h3 className="font-semibold">{plug.type[lang]}</h3>
                 <p className="text-sm text-purple-600 dark:text-purple-400 font-medium">NRR: {plug.nrr}</p>
-                <p className="text-sm"><span className="font-medium">{lang === "tr" ? "En iyi:" : "Best for:"}</span> {plug.best[lang]}</p>
+                <p className="text-sm"><span className="font-medium">{tx("noise.bestFor", lang)}</span> {plug.best[lang]}</p>
                 <p className="text-xs text-green-600 dark:text-green-400">+ {plug.pros[lang]}</p>
                 <p className="text-xs text-red-600 dark:text-red-400">- {plug.cons[lang]}</p>
               </div>
@@ -213,7 +211,7 @@ export default function NoiseExposurePage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <VolumeX className="w-5 h-5 text-rose-500" />
-            {lang === "tr" ? "Tinitus ve Isitme Testi Hatirlatmasi" : "Tinnitus & Hearing Test Reminder"}
+            {tx("noise.tinnitusTitle", lang)}
           </h2>
           <div className="space-y-3">
             {TINNITUS_INFO[lang].map((info, i) => (
@@ -225,9 +223,7 @@ export default function NoiseExposurePage() {
           </div>
           <div className="bg-purple-100 dark:bg-purple-900/30 rounded-xl p-4 text-center">
             <p className="text-sm font-medium text-purple-700 dark:text-purple-300">
-              {lang === "tr"
-                ? "85+ dB ortamlarda düzenli calisiyorsaniz yilda 1 kez isitme testi yaptirin."
-                : "If you regularly work in 85+ dB environments, get a hearing test once a year."}
+              {tx("noise.hearingTestReminder", lang)}
             </p>
           </div>
         </div>
