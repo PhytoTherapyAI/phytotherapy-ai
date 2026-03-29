@@ -52,9 +52,9 @@ export default function HealthTimelinePage() {
         autoEvents.push({ id: `med-${m.medication_name}`, date: m.created_at?.split("T")[0] || "", type: "medication_start", title: m.medication_name, source: "auto" })
       })
       // Load blood tests
-      const { data: tests } = await supabase.from("blood_tests").select("test_date, id").eq("user_id", user.id)
+      const { data: tests } = await supabase.from("blood_tests").select("created_at, id").eq("user_id", user.id)
       tests?.forEach((t: any) => {
-        autoEvents.push({ id: `test-${t.id}`, date: t.test_date || "", type: "lab_test", title: lang === "tr" ? "Kan Tahlili" : "Blood Test", source: "auto" })
+        autoEvents.push({ id: `test-${t.id}`, date: t.created_at?.split("T")[0] || "", type: "lab_test", title: lang === "tr" ? "Kan Tahlili" : "Blood Test", source: "auto" })
       })
     } catch (e) { console.error(e) }
 

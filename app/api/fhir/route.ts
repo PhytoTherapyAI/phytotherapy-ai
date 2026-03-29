@@ -40,9 +40,9 @@ export async function GET(req: Request) {
     // Fetch blood test results
     const { data: tests } = await supabase
       .from("blood_tests")
-      .select("results, test_date")
+      .select("test_data, created_at")
       .eq("user_id", user.id)
-      .order("test_date", { ascending: false })
+      .order("created_at", { ascending: false })
       .limit(5)
 
     // Convert medications to FHIR MedicationStatements
@@ -57,7 +57,7 @@ export async function GET(req: Request) {
     // Convert lab results to FHIR Observations
     const fhirObs: any[] = []
     ;(tests || []).forEach((test: any) => {
-      const results = typeof test.results === "string" ? JSON.parse(test.results) : test.results
+      const results = typeof test.test_data === "string" ? JSON.parse(test.test_data) : test.test_data
       if (Array.isArray(results)) {
         results.forEach((r: any) => {
           if (r.value && !isNaN(parseFloat(r.value))) {
@@ -66,7 +66,7 @@ export async function GET(req: Request) {
               testCode: (r.name || r.marker || "unknown").toLowerCase().replace(/\s+/g, "_"),
               value: parseFloat(r.value),
               unit: r.unit || "",
-              date: test.test_date || new Date().toISOString(),
+              date: test.created_at || new Date().toISOString(),
               status: r.status || "normal",
             }))
           }

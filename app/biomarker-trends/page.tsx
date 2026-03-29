@@ -60,16 +60,16 @@ export default function BiomarkerTrendsPage() {
       const supabase = createBrowserClient()
       const { data } = await supabase
         .from("blood_tests")
-        .select("results, test_date")
+        .select("test_data, created_at")
         .eq("user_id", user.id)
-        .order("test_date", { ascending: true })
+        .order("created_at", { ascending: true })
 
       if (data) {
         const allEntries: BiomarkerEntry[] = []
         data.forEach((test: any) => {
           let results: any = null
           try {
-            results = typeof test.results === "string" ? JSON.parse(test.results) : test.results
+            results = typeof test.test_data === "string" ? JSON.parse(test.test_data) : test.test_data
           } catch { /* malformed JSON — skip */ }
           if (results && Array.isArray(results)) {
             results.forEach((r: any) => {
@@ -77,7 +77,7 @@ export default function BiomarkerTrendsPage() {
                 marker: r.name || r.marker,
                 value: parseFloat(r.value),
                 unit: r.unit || "",
-                date: test.test_date,
+                date: test.created_at,
                 status: r.status || "normal",
               })
             })
