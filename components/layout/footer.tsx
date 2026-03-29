@@ -30,6 +30,10 @@ export function Footer() {
             <Link href="/terms" className="transition-colors hover:text-foreground">
               {tx('footer.terms', lang)}
             </Link>
+            <span className="text-border">|</span>
+            <Link href="/about" className="transition-colors hover:text-foreground">
+              {lang === "tr" ? "Hakkımızda" : "About"}
+            </Link>
           </div>
 
           <p className="text-xs text-muted-foreground">
