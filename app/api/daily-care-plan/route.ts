@@ -102,10 +102,10 @@ export async function GET(req: Request) {
     const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
     const { data: checkIns } = await supabase
       .from("daily_check_ins")
-      .select("energy_level, sleep_quality, mood, bloating, date")
+      .select("energy_level, sleep_quality, mood, bloating, check_date")
       .eq("user_id", userId)
-      .gte("date", threeDaysAgo)
-      .order("date", { ascending: false })
+      .gte("check_date", threeDaysAgo)
+      .order("check_date", { ascending: false })
       .limit(3);
 
     // Build context for AI
@@ -133,7 +133,7 @@ ALLERGIES: ${allergies?.map(a => `${a.allergen} (${a.severity})`).join(", ") || 
 
 RECENT VITALS: ${vitals?.map(v => `${v.vital_type}: ${v.value}${v.unit} (${v.recorded_at})`).join(", ") || "none recorded recently"}
 
-RECENT MOOD/ENERGY: ${checkIns?.map(c => `${c.date}: energy=${c.energy_level}, sleep=${c.sleep_quality}, mood=${c.mood}`).join("; ") || "no recent check-ins"}
+RECENT MOOD/ENERGY: ${checkIns?.map(c => `${c.check_date}: energy=${c.energy_level}, sleep=${c.sleep_quality}, mood=${c.mood}`).join("; ") || "no recent check-ins"}
 
 TODAY: ${dayOfWeek}, ${dateStr} (${timeOfDay})
 LANGUAGE: ${lang === "tr" ? "Turkish" : "English"}
