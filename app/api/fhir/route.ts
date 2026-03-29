@@ -159,9 +159,11 @@ export async function POST(req: Request) {
         body.medicationCodeableConcept?.coding?.[0]?.display || "Unknown"
       await supabase.from("user_medications").upsert({
         user_id: user.id,
-        medication_name: medName,
+        brand_name: medName,
+        generic_name: medName,
         source: "fhir_import",
-      }, { onConflict: "user_id,medication_name" })
+        is_active: true,
+      }, { onConflict: "user_id,brand_name" })
       imported = 1
     }
 
