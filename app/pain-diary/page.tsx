@@ -298,7 +298,7 @@ export default function PainDiaryPage() {
       <div className="mb-5 flex gap-1 rounded-lg bg-muted/50 p-1">
         {[
           { key: "log" as const, icon: Plus, label: tx("pain.logPain", lang) },
-          { key: "history" as const, icon: Calendar, label: lang === "tr" ? "Gecmis" : "History" },
+          { key: "history" as const, icon: Calendar, label: lang === "tr" ? "Geçmiş" : "History" },
           { key: "analysis" as const, icon: Brain, label: tx("pain.analyze", lang) },
         ].map((tab) => (
           <button

@@ -68,7 +68,7 @@ const BITE_PROTOCOL = [
   { en: "Wash wound immediately with soap and running water for 15 minutes", tr: "Yarayi hemen sabun ve akan suyla 15 dakika yikayiniz" },
   { en: "Apply antiseptic (povidone-iodine preferred)", tr: "Antiseptik uygulayiniz (povidon-iyot tercih)" },
   { en: "Do NOT close the wound with stitches (infection risk)", tr: "Yarayi dikisle KAPATMAYIN (enfeksiyon riski)" },
-  { en: "Go to emergency room for tetanus and rabies evaluation", tr: "Tetanoz ve kuduz degerlendirmesi için acil servise gidiniz" },
+  { en: "Go to emergency room for tetanus and rabies evaluation", tr: "Tetanoz ve kuduz değerlendirmesi için acil servise gidiniz" },
   { en: "Report the bite to local authorities if from unknown animal", tr: "Bilinmeyen hayvandan isirmaysa yerel yetkililere bildirinniz" },
 ];
 

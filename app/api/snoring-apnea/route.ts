@@ -30,19 +30,19 @@ export async function POST(request: NextRequest) {
       risk = "low";
       riskLabel = lang === "tr" ? "Dusuk Risk" : "Low Risk";
       recommendation = lang === "tr"
-        ? "STOP-BANG skorunuz dusuk riskli. Semptomlariniz devam ederse doktorunuza danisiniz."
+        ? "STOP-BANG skorunuz dusuk riskli. Semptomlariniz devam ederse doktorunuza danışıniz."
         : "Your STOP-BANG score indicates low risk. Consult your doctor if symptoms persist.";
     } else if (score <= 4) {
       risk = "moderate";
       riskLabel = lang === "tr" ? "Orta Risk" : "Moderate Risk";
       recommendation = lang === "tr"
-        ? "STOP-BANG skorunuz orta dereceeli risk gosteriyor. Uyku laboratuvari degerlendirmesi için doktorunuza danisiniz."
+        ? "STOP-BANG skorunuz orta dereceeli risk gosteriyor. Uyku laboratuvari değerlendirmesi için doktorunuza danışıniz."
         : "Your STOP-BANG score indicates moderate risk. Consider consulting your doctor for sleep lab evaluation.";
     } else {
       risk = "high";
       riskLabel = lang === "tr" ? "Yuksek Risk" : "High Risk";
       recommendation = lang === "tr"
-        ? "STOP-BANG skorunuz yuksek risk gosteriyor. Uyku laboratuvari degerlendirmesi için doktorunuza basvurmaniz onerilir."
+        ? "STOP-BANG skorunuz yuksek risk gosteriyor. Uyku laboratuvari değerlendirmesi için doktorunuza basvurmaniz onerilir."
         : "Your STOP-BANG score indicates high risk. A sleep lab evaluation is strongly recommended. Please consult your doctor.";
     }
 

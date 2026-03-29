@@ -50,7 +50,7 @@ const PHQ9_TR = [
   "Uykuya dalmakta veya uyumakta zorluk cekme, ya da cok fazla uyuma",
   "Yorgun hissetme veya az enerjiye sahip olma",
   "Istahsizlik veya asiri yeme",
-  "Kendini kotu hissetme veya başarısiz oldugunu dusunme",
+  "Kendini kotu hissetme veya başarısiz olduğunu dusunme",
   "Bir seylere odaklanmakta zorluk cekme",
   "Yavas hareket etme/konusma veya huzursuz/yerinde duramama",
   "Olseniz daha iyi olacagini dusunme veya kendinize zarar verme dusunceleri",
@@ -300,7 +300,7 @@ export default function DepressionScreeningPage() {
                     result.alertLevel === "red" ? "text-red-700 dark:text-red-300" : "text-amber-700 dark:text-amber-300"
                   }`}>
                     {lang === "tr"
-                      ? "PHQ-9 skorunuz profesyonel degerlendirme onermektedir."
+                      ? "PHQ-9 skorunuz profesyonel değerlendirme onermektedir."
                       : "Your PHQ-9 score suggests professional evaluation is recommended."}
                   </p>
                   <div className="mt-2 space-y-1">

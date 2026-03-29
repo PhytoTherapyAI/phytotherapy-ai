@@ -411,7 +411,7 @@ export default function WeeklyNewsletterPage() {
         {activeTab === "archive" && (
           <Card className="p-5">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              {lang === "tr" ? "Gecmis Bultenler" : "Past Newsletters"}
+              {lang === "tr" ? "Geçmiş Bultenler" : "Past Newsletters"}
             </h3>
             {pastNewsletters.length > 0 ? (
               <div className="space-y-2">
@@ -437,7 +437,7 @@ export default function WeeklyNewsletterPage() {
               </div>
             ) : (
               <p className="text-sm text-gray-400 italic text-center py-8">
-                {lang === "tr" ? "Henuz gecmis bulten yok." : "No past newsletters yet."}
+                {lang === "tr" ? "Henuz geçmiş bulten yok." : "No past newsletters yet."}
               </p>
             )}
           </Card>

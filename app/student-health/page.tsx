@@ -83,7 +83,7 @@ const STRESS_TIPS: StressTip[] = [
       { en: "Talk to at least 1 person face-to-face daily — even brief interactions help", tr: "Günlük en az 1 kisiyle yuz yuze konusun — kisa etkilesimler bile yardımcı" },
       { en: "Join 1 club or activity group — shared interests reduce social anxiety", tr: "1 kulup veya etkinlik grubuna katilin — ortak ilgi alanlari sosyal kaygıyi azaltir" },
       { en: "Study groups: social connection + accountability + better learning", tr: "Calisma gruplari: sosyal baglanti + hesap verebilirlik + daha iyi ogrenme" },
-      { en: "Feeling isolated for 2+ weeks? Reach out to campus counseling — it's free", tr: "2+ haftadir kendinizi izole mi hissediyorsunuz? Kampus danismanlarina ulasin — ucretsiz" },
+      { en: "Feeling isolated for 2+ weeks? Reach out to campus counseling — it's free", tr: "2+ haftadir kendinizi izole mi hissediyorsunuz? Kampus danışmanlarina ulasin — ucretsiz" },
       { en: "Regular meals with others reduce stress hormones — eat together when possible", tr: "Baskalariyla düzenli yemek stres hormonlarini azaltir — mümkünse birlikte yiyin" },
       { en: "Volunteer work: helps others + builds social network + improves mood", tr: "Gonullu çalışma: baskalarina yardim + sosyal ag + ruh hali iyilestirme" },
     ],

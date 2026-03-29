@@ -285,7 +285,7 @@ export default function FamilyHealthTreePage() {
               <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
                 <h3 className="font-medium flex items-center gap-2 mb-1 text-amber-700 dark:text-amber-400">
                   <AlertTriangle className="w-4 h-4" />
-                  {lang === "tr" ? "Genetik Danismanlik" : "Genetic Counseling"}
+                  {lang === "tr" ? "Genetik Danışmanlik" : "Genetic Counseling"}
                 </h3>
                 <p className="text-sm text-amber-600 dark:text-amber-300">{result.geneticCounselingAdvice}</p>
               </div>

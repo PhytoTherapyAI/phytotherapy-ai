@@ -38,7 +38,7 @@ const nudgeConfig: Record<NudgeType, {
       },
       {
         en: (d) => `${d?.count || 1200}+ users improved their health score this week`,
-        tr: (d) => `Bu hafta ${d?.count || 1200}+ kullanici saglik skorunu iyilestirdi`,
+        tr: (d) => `Bu hafta ${d?.count || 1200}+ kullanici sağlık skorunu iyilestirdi`,
       },
     ],
   },

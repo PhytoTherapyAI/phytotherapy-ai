@@ -82,7 +82,7 @@ export default function ROICalculatorPage() {
 
             <Card className="p-4 border-emerald-200 bg-emerald-50 dark:bg-emerald-900/20 text-center">
               <h3 className="font-bold text-lg mb-2">{isTr ? "Demo Talep Edin" : "Request a Demo"}</h3>
-              <p className="text-sm text-gray-600 mb-4">{isTr ? "Kurumunuza ozel detayli ROI analizi için ekibimizle gorusun." : "Talk to our team for a detailed ROI analysis tailored to your organization."}</p>
+              <p className="text-sm text-gray-600 mb-4">{isTr ? "Kurumunuza ozel detayli ROI analizi için ekibimizle görüşün." : "Talk to our team for a detailed ROI analysis tailored to your organization."}</p>
               <Button className="bg-emerald-600 hover:bg-emerald-700">{isTr ? "Bize Ulasin" : "Contact Us"}</Button>
             </Card>
           </>

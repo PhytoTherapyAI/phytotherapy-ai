@@ -91,7 +91,7 @@ const TINNITUS_INFO = {
     "Tinitus (kulaklarda cilinlama/vizildama) insanlarin %15-20'sini etkiler ve gurultu maruziyeti geçmişiyle guclu bir iliskisi vardir.",
     "100+ dB'ye tek bir maruziyet bile kalici tinitusa yol acabilir. Hasar kumulatif ve geri donusuzdur.",
     "Gurultulu etkinliklerden sonra cinlama yasiyorsaniz: tuy hucrelerin hasar gordugune dair bir uyarı isaretiidr.",
-    "Gurultunun neden oldugu tinitus için tedavi yoktur — sadece yonetim stratejileri (beyaz gurultu, BDT, isitme cihazlari).",
+    "Gurultunun neden olduğu tinitus için tedavi yoktur — sadece yonetim stratejileri (beyaz gurultu, BDT, isitme cihazlari).",
     "Kulakliklar için 60/60 kurali: max %60 ses, max 60 dakika, sonra mola verin.",
   ],
 };

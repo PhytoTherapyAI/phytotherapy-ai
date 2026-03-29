@@ -371,7 +371,7 @@ export default function CardiovascularRiskPage() {
                   </div>
                   <p className="text-muted-foreground">
                     {lang === "tr"
-                      ? `%${result.score} risk skoru ile, ACC/AHA kilavuzlarina gore statin tedavisi tartismalidir. Doktorunuzla gorusun.`
+                      ? `%${result.score} risk skoru ile, ACC/AHA kilavuzlarina gore statin tedavisi tartismalidir. Doktorunuzla görüşün.`
                       : `With a ${result.score}% risk score, statin therapy should be discussed per ACC/AHA guidelines. Talk to your doctor.`}
                   </p>
                 </div>
@@ -388,7 +388,7 @@ export default function CardiovascularRiskPage() {
           </h2>
           <p className="text-sm text-muted-foreground">
             {lang === "tr"
-              ? "AHA'nin kalp sağlığı için temel 8 adimi. Hangilerini uyguluyor oldugunuzu isaretleyin."
+              ? "AHA'nin kalp sağlığı için temel 8 adimi. Hangilerini uyguluyor olduğunuzu isaretleyin."
               : "AHA's 8 key measures for heart health. Check the ones you're doing."}
           </p>
           <div className="grid gap-2">

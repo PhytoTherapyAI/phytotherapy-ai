@@ -35,9 +35,9 @@ interface Podcast {
 const CATEGORIES: Record<string, { en: string; tr: string; icon: React.ReactNode }> = {
   all: { en: "All", tr: "Tumunu", icon: <Filter className="w-4 h-4" /> },
   nutrition: { en: "Nutrition", tr: "Beslenme", icon: <Apple className="w-4 h-4" /> },
-  mental: { en: "Mental Health", tr: "Mental Saglik", icon: <Brain className="w-4 h-4" /> },
+  mental: { en: "Mental Health", tr: "Mental Sağlık", icon: <Brain className="w-4 h-4" /> },
   fitness: { en: "Fitness", tr: "Fitness", icon: <Dumbbell className="w-4 h-4" /> },
-  general: { en: "General Health", tr: "Genel Saglik", icon: <Heart className="w-4 h-4" /> },
+  general: { en: "General Health", tr: "Genel Sağlık", icon: <Heart className="w-4 h-4" /> },
 };
 
 const PODCASTS: Podcast[] = [

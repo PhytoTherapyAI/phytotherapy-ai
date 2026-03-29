@@ -358,7 +358,7 @@ export function generatePredictions(timeline: HealthTimeline[]): Prediction[] {
         "Blood sugar control is improving — berberine protocol is showing results",
         "HbA1c is trending up — discuss adjustment with your healthcare provider",
         "Kan sekeri kontrolu iyilesiyor — berberin protokolu sonuc veriyor",
-        "HbA1c yukseliyor — saglik uzmaninizla gorusun",
+        "HbA1c yukseliyor — sağlık uzmaninizla görüşün",
       ],
     },
     {

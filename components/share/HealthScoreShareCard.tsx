@@ -40,7 +40,7 @@ export function HealthScoreShareCard({
   const scoreEmoji = healthScore >= 80 ? "🌟" : healthScore >= 60 ? "💪" : "🔥"
 
   const shareText = tr
-    ? `Saglik skorum ${healthScore}/100! ${streak} gunluk seri devam ediyor 🌿`
+    ? `Sağlık skorum ${healthScore}/100! ${streak} gunluk seri devam ediyor 🌿`
     : `My health score is ${healthScore}/100! ${streak}-day streak going strong 🌿`
 
   return (
@@ -90,7 +90,7 @@ export function HealthScoreShareCard({
 
           {/* Title */}
           <h2 className="mb-6 text-lg font-bold opacity-90">
-            {tr ? "Saglik Skorum" : "My Health Score"}
+            {tr ? "Sağlık Skorum" : "My Health Score"}
           </h2>
 
           {/* Big score circle */}

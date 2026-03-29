@@ -249,7 +249,7 @@ export default function TimeCapsulePage() {
           {/* Letter */}
           <div className="rounded-xl border bg-card p-5 shadow-sm">
             <p className="text-sm font-medium text-muted-foreground mb-2">
-              {lang === "tr" ? "Gecmisten mesajin:" : "Your message from the past:"}
+              {lang === "tr" ? "Geçmişten mesajin:" : "Your message from the past:"}
             </p>
             <p className="italic text-foreground leading-relaxed">&ldquo;{selected.message}&rdquo;</p>
           </div>

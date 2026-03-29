@@ -137,7 +137,7 @@ const SECTIONS: Section[] = [
       tr: [
         "Afet sonrasi korku, kaygı ve kafasi karisiklik hissetmek NORMALDIR. Zayif degilsiniz.",
         "Yasadiklarinizi guvendiginiz birine anlatin. Kendinizi izole etmeyin.",
-        "Rutinleri mümkün oldugunca sürdürmeye çalışın: düzenli öğünler, uyku, fiziksel aktivite.",
+        "Rutinleri mümkün olduğunca sürdürmeye çalışın: düzenli öğünler, uyku, fiziksel aktivite.",
         "Afet haberleri ve sosyal medyaya maruziyeti sinirlayin. Güncellemeleri gunde sadece 2 kez kontrol edin.",
         "Topraklama teknigi: 5 gordugu, 4 dokundugu, 3 duydugu, 2 kokladigi, 1 tattigi sey saydir.",
         "Belirtiler 2 haftadan fazla surerse (kabuslar, flashback, uyusma) profesyonel yardim alin.",
@@ -201,7 +201,7 @@ const EMERGENCY_NUMBERS = [
   { name: { en: "Fire Department", tr: "Itfaiye" }, number: "110", color: "bg-amber-500" },
   { name: { en: "Police", tr: "Polis" }, number: "155", color: "bg-blue-500" },
   { name: { en: "Gendarmerie", tr: "Jandarma" }, number: "156", color: "bg-green-600" },
-  { name: { en: "Poison Control", tr: "Zehir Danisma" }, number: "114", color: "bg-purple-500" },
+  { name: { en: "Poison Control", tr: "Zehir Danışma" }, number: "114", color: "bg-purple-500" },
 ]
 
 export default function DisasterModePage() {

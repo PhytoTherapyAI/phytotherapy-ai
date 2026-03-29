@@ -198,7 +198,7 @@ export default function PostpartumSupportPage() {
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-amber-600" />
             <p className="font-semibold text-amber-700 dark:text-amber-300">
               {lang === "tr"
-                ? "EPDS skorunuz profesyonel degerlendirme onermektedir. Doktorunuzla gorusun."
+                ? "EPDS skorunuz profesyonel değerlendirme onermektedir. Doktorunuzla görüşün."
                 : "Your EPDS score suggests professional evaluation is recommended. Please talk to your doctor."}
             </p>
           </div>

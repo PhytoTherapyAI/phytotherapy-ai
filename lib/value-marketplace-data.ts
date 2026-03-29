@@ -374,7 +374,7 @@ export const SUPPLEMENT_PRODUCTS: SupplementProduct[] = [
     timeToEffectTr: "4-8 hafta",
     guaranteeAvailable: false,
     guaranteeCriteria: "Cognitive assessment score improves ≥15%",
-    guaranteeCriteriaTr: "Bilissel degerlendirme skoru ≥%15 iyilesme",
+    guaranteeCriteriaTr: "Bilissel değerlendirme skoru ≥%15 iyilesme",
     refundPercent: 0,
     escrowPeriod: 0,
     providerBonus: 6,

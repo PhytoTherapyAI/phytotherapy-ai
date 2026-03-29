@@ -46,10 +46,10 @@ const sections: Section[] = [
       { en: "Prednisone: take in morning with food to reduce stomach irritation", tr: "Prednizon: mide tahrisi azaltmak için sabah yemekle alin" },
       { en: "NEVER skip a dose — even one missed dose increases rejection risk", tr: "ASLA doz atlamayin — tek bir atlanan doz bile red riskini arttırır", warning: true },
       { en: "If you miss a dose: take it within 2 hours, otherwise skip and take next on time", tr: "Doz kacirirseniz: 2 saat icinde alin, yoksa atlayin ve bir sonrakini zamaninda alin" },
-      { en: "Keep a medication diary — record time taken, side effects, and blood levels", tr: "İlaç günlüğü tutun — alinan saat, yan etkiler ve kan duzeyleri kaydedin" },
-      { en: "Drug level monitoring: tacrolimus levels checked weekly initially, then monthly", tr: "İlaç duzeyi izleme: takrolimus duzeyleri başlangıçta haftalik, sonra aylik kontrol" },
-      { en: "St. John's Wort is DANGEROUS — it reduces immunosuppressant levels dramatically", tr: "Sari Kantaron TEHLIKELIDIR — immunsupresif ilac duzeylerini dramatik olarak dusurur", warning: true },
-      { en: "Grapefruit and pomelo INCREASE tacrolimus levels — avoid completely", tr: "Greyfurt ve pomelo takrolimus duzeylerini ARTTIRIR — tamamen kacinmayin", warning: true },
+      { en: "Keep a medication diary — record time taken, side effects, and blood levels", tr: "İlaç günlüğü tutun — alinan saat, yan etkiler ve kan düzeyleri kaydedin" },
+      { en: "Drug level monitoring: tacrolimus levels checked weekly initially, then monthly", tr: "İlaç düzeyi izleme: takrolimus düzeyleri başlangıçta haftalik, sonra aylik kontrol" },
+      { en: "St. John's Wort is DANGEROUS — it reduces immunosuppressant levels dramatically", tr: "Sari Kantaron TEHLIKELIDIR — immunsupresif ilac düzeylerini dramatik olarak dusurur", warning: true },
+      { en: "Grapefruit and pomelo INCREASE tacrolimus levels — avoid completely", tr: "Greyfurt ve pomelo takrolimus düzeylerini ARTTIRIR — tamamen kacinmayin", warning: true },
       { en: "Report fever, pain over transplant site, or reduced urine output immediately", tr: "Ates, nakil bolgesinde ağrı veya azalmis idrar cikisini hemen bildirin", warning: true },
     ],
   },
@@ -66,7 +66,7 @@ const sections: Section[] = [
       { en: "Avoid crowded indoor spaces for first 3-6 months post-transplant", tr: "Nakil sonrasi ilk 3-6 ay kapali kalabalik alanlardan kacinin" },
       { en: "Wear a mask in hospitals, clinics, and during flu season", tr: "Hastanelerde, kliniklerde ve grip mevsiminde maske takin" },
       { en: "Avoid gardening or soil contact without gloves — risk of fungal infections", tr: "Eldivensiz bahce isi veya toprak temasi — mantar enfeksiyonu riski" },
-      { en: "No live vaccines (MMR, varicella, oral polio) — discuss all vaccines with transplant team", tr: "Canli asi yaptirilmaz (KKK, suicegi, oral polio) — tum asilari nakil ekibiyle gorusun" },
+      { en: "No live vaccines (MMR, varicella, oral polio) — discuss all vaccines with transplant team", tr: "Canli asi yaptirilmaz (KKK, suicegi, oral polio) — tum asilari nakil ekibiyle görüşün" },
       { en: "Dental care: prophylactic antibiotics before dental procedures", tr: "Dis bakimi: dis işlemlerinden once profilaktik antibiyotik" },
       { en: "Avoid swimming in lakes, rivers, or public pools for first 6 months", tr: "Ilk 6 ay gollerde, nehirlerde veya halka acik havuzlarda yuzmeyin" },
       { en: "Pet safety: avoid cleaning cat litter (toxoplasmosis risk), bird cages", tr: "Evcil hayvan güvenligi: kedi kumu temizlemeyin (toksoplazmoz riski), kus kafesleri" },
@@ -85,7 +85,7 @@ const sections: Section[] = [
     items: [
       { en: "NO raw or undercooked meat, poultry, fish, or eggs — infection risk", tr: "CIG veya az pismis et, kumes hayvani, balik veya yumurta YOK — enfeksiyon riski", warning: true },
       { en: "NO unpasteurized dairy products (soft cheeses, raw milk)", tr: "Pastorize edilmemis sut urunleri YOK (yumusak peynirler, cig sut)", warning: true },
-      { en: "NO grapefruit, pomelo, or Seville oranges — they alter drug levels", tr: "Greyfurt, pomelo veya Türüncu portakal YOK — ilac duzeylerini degistirirler", warning: true },
+      { en: "NO grapefruit, pomelo, or Seville oranges — they alter drug levels", tr: "Greyfurt, pomelo veya Türüncu portakal YOK — ilac düzeylerini degistirirler", warning: true },
       { en: "Wash all fruits and vegetables thoroughly before eating", tr: "Tum meyve ve sebzeleri yemeden once iyice yikayin" },
       { en: "Avoid buffets and salad bars — food temperature control is uncertain", tr: "Acik bufe ve salata barlarindan kacinin — gida sicakligi kontrolü belirsizdir" },
       { en: "Cook all foods to safe internal temperatures (chicken 74C, beef 71C)", tr: "Tum gıdalari güvenli ic sicakliga pisirin (tavuk 74C, et 71C)" },
@@ -110,7 +110,7 @@ const sections: Section[] = [
       { en: "Month 4-6: Blood tests every 2 weeks, monthly clinic visit", tr: "Ay 4-6: 2 haftada bir kan testi, aylik klinik ziyareti" },
       { en: "Month 7-12: Monthly blood tests and clinic visits", tr: "Ay 7-12: Aylik kan testleri ve klinik ziyaretleri" },
       { en: "Year 2+: Every 2-3 months for stable patients", tr: "Yil 2+: Stabil hastalar için her 2-3 ayda bir" },
-      { en: "Annual screening: skin cancer check, cardiovascular assessment, bone density", tr: "Yıllık tarama: cilt kanseri kontrolü, kardiyovasküler degerlendirme, kemik yogunlugu" },
+      { en: "Annual screening: skin cancer check, cardiovascular assessment, bone density", tr: "Yıllık tarama: cilt kanseri kontrolü, kardiyovasküler değerlendirme, kemik yogunlugu" },
       { en: "Kidney transplant: serum creatinine and GFR monitored at every visit", tr: "Bobrek nakli: her ziyarette serum kreatinin ve GFR izleme" },
       { en: "Liver transplant: liver function tests (ALT, AST, bilirubin) at every visit", tr: "Karaciger nakli: her ziyarette karaciğer fonksiyon testleri (ALT, AST, bilirubin)" },
       { en: "Report any illness, fever, or new medication to your transplant team", tr: "Herhangi bir hastalık, ates veya yeni ilacı nakil ekibinize bildirin" },
@@ -129,11 +129,11 @@ const sections: Section[] = [
       { en: "Exercise: start with walking, gradually increase to 30 min/day, 5 days/week", tr: "Egzersiz: yuruyusle başlayin, kademeli olarak haftada 5 gun 30 dk'ya cikin" },
       { en: "Return to work: most patients can return 3-6 months post-transplant", tr: "Ise donus: cogu hasta nakil sonrasi 3-6 ayda ise donebilir" },
       { en: "Driving: usually allowed after 4-6 weeks if medically stable", tr: "Arac kullanma: tibbi olarak stabil ise genellikle 4-6 hafta sonra izin verilir" },
-      { en: "Sexual health: discuss contraception — some immunosuppressants are teratogenic", tr: "Cinsel sağlık: korunmayi gorusun — bazi immunsupresifler teratojeniktir" },
-      { en: "Travel: discuss with transplant team, carry medication supply + medical letter", tr: "Seyahat: nakil ekibiyle gorusun, ilac tedariqi + tibbi mektup tasiyin" },
+      { en: "Sexual health: discuss contraception — some immunosuppressants are teratogenic", tr: "Cinsel sağlık: korunmayi görüşün — bazi immunsupresifler teratojeniktir" },
+      { en: "Travel: discuss with transplant team, carry medication supply + medical letter", tr: "Seyahat: nakil ekibiyle görüşün, ilac tedariqi + tibbi mektup tasiyin" },
       { en: "Mental health: anxiety about rejection is normal — seek support groups", tr: "Ruh sağlığı: red hakkinda kaygı normaldir — destek gruplari arayın" },
       { en: "Body image changes from steroids (moon face, weight gain) are often temporary", tr: "Steroidlerden vucut imaji değişiklikleri (yuvarlak yuz, kilo) genellikle gecicidir" },
-      { en: "Alcohol: strictly limited or avoided — discuss with your team", tr: "Alkol: siki olarak sinirli veya kacin — ekibinizle gorusun" },
+      { en: "Alcohol: strictly limited or avoided — discuss with your team", tr: "Alkol: siki olarak sinirli veya kacin — ekibinizle görüşün" },
       { en: "Gratitude practice and journaling improve psychological outcomes", tr: "Sukran pratigi ve gunluk tutma psikolojik sonuçlari iyileştirir" },
       { en: "Connect with transplant recipient communities for shared experiences", tr: "Paylasilan deneyimler için nakil alici topluluklariyla baglanti kurun" },
     ],
@@ -180,7 +180,7 @@ export default function OrganTransplantPage() {
               </p>
               <p>
                 {lang === "tr"
-                  ? "Herhangi bir takviye, bitkisel urun veya yeni ilac başlamadan ÖNCE mutlaka nakil ekibinize danisin. Sari Kantaron, greyfurt ve bircok bitkisel urun immunsupresif ilac duzeylerini tehlikeli sekilde degistirebilir."
+                  ? "Herhangi bir takviye, bitkisel urun veya yeni ilac başlamadan ÖNCE mutlaka nakil ekibinize danışın. Sari Kantaron, greyfurt ve bircok bitkisel urun immunsupresif ilac düzeylerini tehlikeli sekilde degistirebilir."
                   : "ALWAYS consult your transplant team before starting ANY supplement, herbal product, or new medication. St. John's Wort, grapefruit, and many herbal products can dangerously alter immunosuppressant drug levels."}
               </p>
             </div>

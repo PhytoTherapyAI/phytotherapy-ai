@@ -41,7 +41,7 @@ const PCL5_EN = [
 ];
 const PCL5_TR = [
   "Stresli deneyimin tekrarlayan, rahatsiz edici ve istenmeyen anilari",
-  "Stresli deneyimi hatirlatan bir sey oldugunda cok uzgun hissetme",
+  "Stresli deneyimi hatirlatan bir sey olduğunda cok uzgun hissetme",
   "Stresli deneyimle ilgili anilari, dusunceleri veya duygulari kacinma",
   "Kendiniz, diger insanlar veya dünya hakkinda guclu olumsuz inanclar",
   "Asiri tetikte, dikkatli veya tedbirli olma",
@@ -179,7 +179,7 @@ export default function PTSDSupportPage() {
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-600" />
             <p className="font-semibold text-red-700 dark:text-red-300">
               {lang === "tr"
-                ? "Semptomlariniz şiddetli gorunuyor. Lütfen bir travma terapistiyle gorusmek için randevu alin."
+                ? "Semptomlariniz şiddetli gorunuyor. Lütfen bir travma terapistiyle görüşmek için randevu alin."
                 : "Your symptoms appear severe. Please consider scheduling an appointment with a trauma therapist."}
             </p>
           </div>
@@ -265,7 +265,7 @@ export default function PTSDSupportPage() {
         {/* Avoidance + Grounding */}
         <div className="mt-4">
           <label className="mb-2 block text-xs font-semibold text-muted-foreground">
-            {lang === "tr" ? "Kacinma Duzeyi" : "Avoidance Level"}: {avoidanceLevel}/10
+            {lang === "tr" ? "Kacinma Düzeyi" : "Avoidance Level"}: {avoidanceLevel}/10
           </label>
           <input
             type="range"

@@ -281,7 +281,7 @@ export default function SexualHealthPage() {
             <div className="rounded-xl border border-slate-300 bg-slate-50 p-4 dark:bg-slate-950/20">
               <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
                 {lang === "tr"
-                  ? "Endiseleriniz için bir sağlık profesyoneliyle gorusmenizi oneririz."
+                  ? "Endiseleriniz için bir sağlık profesyoneliyle görüşmenizi oneririz."
                   : "We recommend discussing your concerns with a healthcare professional."}
               </p>
             </div>

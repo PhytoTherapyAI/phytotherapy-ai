@@ -151,10 +151,10 @@ const sections: Section[] = [
       { en: "Talk to your family openly — they need guidance on how to support you", tr: "Ailenizle acikca konusun — sizi nasil destekleyecekleri konusunda rehberlige ihtiyacları var" },
       { en: "Palliative care is NOT end-of-life care — it improves quality of life at any stage", tr: "Palyatif bakim yasam sonu bakimi DEGILDIR — her asamada yasam kalitesini iyileştirir" },
       { en: "Creative activities (art, music, writing) provide therapeutic benefit during treatment", tr: "Yaratici aktiviteler (sanat, muzik, yazma) tedavi sirasinda terapotik fayda saglar" },
-      { en: "Sexual health concerns are common and treatable — bring them up with your doctor", tr: "Cinsel sağlık endisleri yaygındır ve tedavi edilebilir — doktorunuzla gorusun" },
+      { en: "Sexual health concerns are common and treatable — bring them up with your doctor", tr: "Cinsel sağlık endisleri yaygındır ve tedavi edilebilir — doktorunuzla görüşün" },
       { en: "Financial toxicity is real — ask about social work services for assistance", tr: "Finansal toksisite gerçektir — yardim için sosyal hizmet servislerini sorun" },
       { en: "Children can be told in age-appropriate ways — oncology social workers can help", tr: "Cocuklara yasa uygun sekilde anlatilebilir — onkoloji sosyal calisanlari yardımcı olabilir" },
-      { en: "Cancer survivorship care plan should be discussed before treatment ends", tr: "Kanser hayatta kalma bakim plani tedavi bitmeden gorusulmeli" },
+      { en: "Cancer survivorship care plan should be discussed before treatment ends", tr: "Kanser hayatta kalma bakim plani tedavi bitmeden görüşülmeli" },
     ],
   },
 ];
@@ -219,7 +219,7 @@ export default function CancerSupportPage() {
             <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
             <p className="text-sm text-red-800 dark:text-red-200">
               {lang === "tr"
-                ? "ONEMLI: Kanser tedavisi sirasinda herhangi bir takviye, bitkisel urun veya diyet değişikliği yapmadan ÖNCE mutlaka onkoloji ekibinize danisin. Bircok takviye kemoterapiyle etkilesir."
+                ? "ONEMLI: Kanser tedavisi sirasinda herhangi bir takviye, bitkisel urun veya diyet değişikliği yapmadan ÖNCE mutlaka onkoloji ekibinize danışın. Bircok takviye kemoterapiyle etkilesir."
                 : "IMPORTANT: ALWAYS consult your oncology team before starting ANY supplement, herbal product, or diet change during cancer treatment. Many supplements interact with chemotherapy."}
             </p>
           </div>

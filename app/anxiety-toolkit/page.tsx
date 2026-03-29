@@ -189,7 +189,7 @@ export default function AnxietyToolkitPage() {
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-amber-600" />
             <p className="font-semibold text-amber-700 dark:text-amber-300">
               {lang === "tr"
-                ? "Kaygi seviyeniz orta-yüksek. Bir ruh sağlığı uzmaniyla gorusmenizi oneririz."
+                ? "Kaygi seviyeniz orta-yüksek. Bir ruh sağlığı uzmaniyla görüşmenizi oneririz."
                 : "Your anxiety level is moderate-high. We recommend speaking with a mental health professional."}
             </p>
           </div>

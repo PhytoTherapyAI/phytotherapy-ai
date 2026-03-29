@@ -143,7 +143,7 @@ export default function WalkingTrackerPage() {
             <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
             <p className="text-sm text-amber-700 dark:text-amber-400">
               {lang === "tr"
-                ? "0.8 m/s'nin altindaki yuruyus hizi sarkopeni (kas kaybi) riski isareti olabilir. Doktorunuza danisiniz."
+                ? "0.8 m/s'nin altindaki yuruyus hizi sarkopeni (kas kaybi) riski isareti olabilir. Doktorunuza danışıniz."
                 : "Walking speed below 0.8 m/s may indicate sarcopenia (muscle loss) risk. Consult your doctor."}
             </p>
           </div>

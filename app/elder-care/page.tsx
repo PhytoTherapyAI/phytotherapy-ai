@@ -491,7 +491,7 @@ export default function ElderCarePage() {
             onClick={() => setResult(null)}
             className="w-full"
           >
-            {lang === "tr" ? "Yeni Inceleme" : "New Review"}
+            {lang === "tr" ? "Yeni İnceleme" : "New Review"}
           </Button>
         </div>
       )}

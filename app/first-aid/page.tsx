@@ -38,7 +38,7 @@ const SECTIONS: FirstAidSection[] = [
       "Continue 30:2 ratio until help arrives or the person recovers.",
     ],
     stepsTr: [
-      "Ortamin güvenli oldugunu kontrol edin, kisiyi bilince kontrol edin.",
+      "Ortamin güvenli olduğunu kontrol edin, kisiyi bilince kontrol edin.",
       "Hemen 112'yi arayın veya birinden aramasıni isteyin.",
       "Kisiyi sert ve duz bir zemine sirt ustu yatirin.",
       "Bir elinizin topu kismini göğüs kafesinin ortasina, meme uclari hizasina yerlestirin.",
@@ -173,7 +173,7 @@ const SECTIONS: FirstAidSection[] = [
       "Monitor breathing and be prepared to start CPR if needed.",
     ],
     stepsTr: [
-      "Hemen 112 veya Zehir Danisma Merkezini (114) arayın.",
+      "Hemen 112 veya Zehir Danışma Merkezini (114) arayın.",
       "Zehiri tanimlamayin calsin (mumkunse kutu/etiketi saklayin).",
       "Tip profesyoneli soylemedikce KUSTURMAYIN.",
       "Kisi bilincini kaybettiyse iyileşme (yan yatis) pozisyonuna getirin.",
@@ -262,7 +262,7 @@ const SECTIONS: FirstAidSection[] = [
       "Yarayi atel ile sabitleyin (tahta, dergi veya sarili giysi kullanin).",
       "Sismeyi azaltmak için beze sarilmis buz uygulayin (20 dakika acik, 20 kapali).",
       "Yaranin altinda kan dolasimini kontrol edin (nabiz, renk, his).",
-      "Acik kiriklar (kemik deriden disari) icin: temiz pansuman ortin, kemigi geri itmeyin.",
+      "Acik kiriklar (kemik deriden dışarı) icin: temiz pansuman ortin, kemigi geri itmeyin.",
       "Sok için onlem alin: sicak tutun, bacaklar yukarda (omurga yaralanmasi yoksa).",
     ],
   },
@@ -292,7 +292,7 @@ const SECTIONS: FirstAidSection[] = [
       "Kisi iyi gorunse bile hastaneye gitmeli (ikincil bogulma riski).",
     ],
     warningEn: "Secondary (dry) drowning can occur hours later. Always seek medical evaluation after a drowning incident.",
-    warningTr: "Ikincil (kuru) bogulma saatler sonra ortaya cikabilir. Bogulma olayindan sonra mutlaka tibbi degerlendirme yaptirin.",
+    warningTr: "Ikincil (kuru) bogulma saatler sonra ortaya cikabilir. Bogulma olayindan sonra mutlaka tibbi değerlendirme yaptirin.",
   },
 ];
 

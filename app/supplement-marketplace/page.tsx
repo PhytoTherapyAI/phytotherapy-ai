@@ -324,7 +324,7 @@ export default function SupplementMarketplacePage() {
           <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-amber-800 dark:text-amber-300">
             {lang === "tr"
-              ? "Her zaman acik aktardan degil, eczanede satilan standardize edilmis formlari tercih edin. Herhangi bir takviyeye başlamadan once doktorunuza danisin."
+              ? "Her zaman acik aktardan degil, eczanede satilan standardize edilmis formlari tercih edin. Herhangi bir takviyeye başlamadan once doktorunuza danışın."
               : "Always choose standardized extracts from pharmacies, not herbalists. Consult your doctor before starting any supplement."}
           </p>
         </div>

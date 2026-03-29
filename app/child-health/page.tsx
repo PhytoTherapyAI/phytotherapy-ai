@@ -146,7 +146,7 @@ export default function ChildHealthPage() {
           bg: "bg-amber-100 border-amber-300 dark:bg-amber-950/40 dark:border-amber-800",
           text: "text-amber-800 dark:text-amber-300",
           icon: <Stethoscope className="h-5 w-5 text-amber-600 dark:text-amber-400" />,
-          label: lang === "tr" ? "Doktora Danismanizi Oneririz" : "We Recommend Seeing a Doctor",
+          label: lang === "tr" ? "Doktora Danışmanizi Oneririz" : "We Recommend Seeing a Doctor",
         };
       default:
         return {

@@ -380,7 +380,7 @@ export default function ValueMarketplacePage() {
                       </div>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
                         {isTr
-                          ? "Klinik etkinlik RCT verilerinden, guvenlik profili yan etki oranlarindan, hasta sonuclari PROMs verilerinden ve maliyet etkinligi QALY basina maliyetten hesaplanir."
+                          ? "Klinik etkinlik RCT verilerinden, güvenlik profili yan etki oranlarindan, hasta sonuclari PROMs verilerinden ve maliyet etkinligi QALY basina maliyetten hesaplanir."
                           : "Clinical efficacy is derived from RCT data, safety profile from adverse event rates, patient outcomes from PROMs data, and cost efficiency from cost-per-QALY calculations."
                         }
                       </p>
@@ -430,7 +430,7 @@ export default function ValueMarketplacePage() {
                       <RadarChart
                         data={[
                           { axis: isTr ? "Etkinlik" : "Efficacy", value: selectedProduct.clinicalEfficacy, fullMark: 100 },
-                          { axis: isTr ? "Guvenlik" : "Safety", value: selectedProduct.safetyProfile, fullMark: 100 },
+                          { axis: isTr ? "Güvenlik" : "Safety", value: selectedProduct.safetyProfile, fullMark: 100 },
                           { axis: isTr ? "Sonuclar" : "Outcomes", value: selectedProduct.patientOutcomeScore, fullMark: 100 },
                           { axis: isTr ? "Maliyet" : "Cost Eff.", value: Math.round(100 - selectedProduct.costPerQALY / 50), fullMark: 100 },
                           { axis: isTr ? "Kanit" : "Evidence", value: selectedProduct.evidenceGrade === "A" ? 95 : selectedProduct.evidenceGrade === "B" ? 70 : 45, fullMark: 100 },
@@ -452,7 +452,7 @@ export default function ValueMarketplacePage() {
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {[
-                      { label: isTr ? "RCT Sayisi" : "RCT Count", value: selectedProduct.rctCount.toString(), sub: isTr ? "calisma" : "studies" },
+                      { label: isTr ? "RCT Sayisi" : "RCT Count", value: selectedProduct.rctCount.toString(), sub: isTr ? "çalışma" : "studies" },
                       { label: tx("value.successRate", lang), value: `${selectedProduct.successRate}%`, sub: isTr ? "hedef sonuc" : "target outcome" },
                       { label: isTr ? "Ort. Iyilesme" : "Avg. Improvement", value: `${selectedProduct.avgImprovementPercent}%`, sub: isTr ? "iyilesme" : "improvement" },
                       { label: isTr ? "Etki Suresi" : "Time to Effect", value: isTr ? selectedProduct.timeToEffectTr : selectedProduct.timeToEffect, sub: "" },
@@ -583,7 +583,7 @@ export default function ValueMarketplacePage() {
                         </Button>
                         {!selectedProduct.guaranteeAvailable && (
                           <p className="text-xs text-gray-400 text-center mt-2">
-                            {isTr ? "Bu urun icin garanti henuz mevcut degil" : "Guarantee not yet available for this product"}
+                            {isTr ? "Bu urun için garanti henuz mevcut degil" : "Guarantee not yet available for this product"}
                           </p>
                         )}
                       </div>
@@ -784,8 +784,8 @@ export default function ValueMarketplacePage() {
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                       {[
                         { n: 1, icon: <ShoppingCart className="w-4 h-4" />, text: isTr ? "Hasta guvence ile satin alir" : "Patient purchases with escrow" },
-                        { n: 2, icon: <TrendingUp className="w-4 h-4" />, text: isTr ? "Sistem saglik metriklerini izler (PROMs)" : "System monitors health metrics (PROMs)" },
-                        { n: 3, icon: <Sparkles className="w-4 h-4" />, text: isTr ? "AI degerlendirme tarihinde KPI basarisini degerlendirir" : "AI evaluates KPI achievement at evaluation date" },
+                        { n: 2, icon: <TrendingUp className="w-4 h-4" />, text: isTr ? "Sistem sağlık metriklerini izler (PROMs)" : "System monitors health metrics (PROMs)" },
+                        { n: 3, icon: <Sparkles className="w-4 h-4" />, text: isTr ? "AI değerlendirme tarihinde KPI basarisini değerlendirir" : "AI evaluates KPI achievement at evaluation date" },
                         { n: 4, icon: <CheckCircle2 className="w-4 h-4" />, text: isTr ? "Akilli sozlesme odemeyi serbest birakir veya iade baslatir" : "Smart contract releases payment or initiates refund" },
                       ].map((s) => (
                         <div key={s.n} className="flex items-start gap-2">
@@ -915,7 +915,7 @@ export default function ValueMarketplacePage() {
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
-                      { icon: <TrendingUp className="w-5 h-5 text-emerald-500" />, title: isTr ? "Sonuc Odulu" : "Outcome Reward", desc: isTr ? "Her basarili hasta sonucu icin kredi" : "Credits for each successful patient outcome" },
+                      { icon: <TrendingUp className="w-5 h-5 text-emerald-500" />, title: isTr ? "Sonuc Odulu" : "Outcome Reward", desc: isTr ? "Her basarili hasta sonucu için kredi" : "Credits for each successful patient outcome" },
                       { icon: <Users className="w-5 h-5 text-blue-500" />, title: isTr ? "Hacim Bonusu" : "Volume Bonus", desc: isTr ? "Daha fazla hasta = daha yuksek bonus kademesi" : "More patients = higher bonus tier" },
                       { icon: <Award className="w-5 h-5 text-amber-500" />, title: isTr ? "Altin Saglayici" : "Gold Provider", desc: isTr ? "%90+ basari = %15 bonus + rozet" : "90%+ success = 15% bonus + badge" },
                     ].map((item, i) => (

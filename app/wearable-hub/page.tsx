@@ -17,7 +17,7 @@ const METRICS = [
   { key: "Steps", icon: Footprints, desc: { en: "Daily step count synced to walking tracker", tr: "Yuruyus takipcisiyle senkronize gunluk adim sayisi" }, color: "text-green-500" },
   { key: "Sleep", icon: Moon, desc: { en: "Sleep stages, duration, and quality scoring", tr: "Uyku evreleri, sure ve kalite puanlamasi" }, color: "text-indigo-500" },
   { key: "SpO2", icon: Activity, desc: { en: "Blood oxygen saturation tracking", tr: "Kan oksijen saturasyonu takibi" }, color: "text-blue-500" },
-  { key: "HRV", icon: Activity, desc: { en: "Heart rate variability for stress assessment", tr: "Stres degerlendirmesi için kalp hizi degiskenligi" }, color: "text-amber-500" },
+  { key: "HRV", icon: Activity, desc: { en: "Heart rate variability for stress assessment", tr: "Stres değerlendirmesi için kalp hizi degiskenligi" }, color: "text-amber-500" },
 ];
 
 export default function WearableHubPage() {

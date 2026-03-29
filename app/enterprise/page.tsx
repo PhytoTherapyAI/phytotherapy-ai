@@ -811,7 +811,7 @@ export default function EnterprisePage() {
                     color: "text-emerald-500",
                   },
                   {
-                    label: isTr ? "Inceleme Altinda" : "Under Review",
+                    label: isTr ? "İnceleme Altinda" : "Under Review",
                     value: patents.filter((p) => p.status === "Under Review").length.toString(),
                     icon: Clock,
                     color: "text-amber-500",

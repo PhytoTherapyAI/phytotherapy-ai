@@ -152,7 +152,7 @@ export default function FavoriteSupplementsPage() {
           <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
           <p className="text-xs text-amber-800 dark:text-amber-300">
             {lang === "tr"
-              ? "Herhangi bir takviyeye başlamadan once etkilesim kontrolü yapin ve doktorunuza danisin."
+              ? "Herhangi bir takviyeye başlamadan once etkilesim kontrolü yapin ve doktorunuza danışın."
               : "Always check interactions and consult your doctor before starting any supplement."}
           </p>
         </div>

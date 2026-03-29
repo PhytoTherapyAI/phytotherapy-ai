@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
               ? "Topraklama egzersizini yapin ve nefes almaya odaklanin."
               : "Focus on the grounding exercise and controlled breathing.",
             lang === "tr"
-              ? "Panik ataklar tekrarliyorsa bir ruh sağlığı uzmaniyla gorusmek önemlidir."
+              ? "Panik ataklar tekrarliyorsa bir ruh sağlığı uzmaniyla görüşmek önemlidir."
               : "If panic attacks recur, it is important to see a mental health professional.",
           ],
           alertLevel: "yellow",

@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
             : ["Suicide & Crisis Lifeline: 988", "Crisis Text Line: Text HOME to 741741"],
           recommendations: [
             lang === "tr"
-              ? "Lutfen bugun bir ruh sağlığı uzmaniyla gorusun."
+              ? "Lutfen bugun bir ruh sağlığı uzmaniyla görüşün."
               : "Please speak with a mental health professional today.",
             lang === "tr"
               ? "Guvendiginiz birine nasil hissettiginizi anlatin."

@@ -17,7 +17,7 @@ export default function DataExportPage() {
   const [exported, setExported] = useState(false);
   const [categories, setCategories] = useState<DataCategory[]>([
     { id: "profile", icon: <Heart className="w-5 h-5" />, en: "Health Profile", tr: "Sağlık Profili", descEn: "Personal info, conditions, allergies", descTr: "Kişisel bilgiler, hastalıklar, alerjiler", count: 1, size: "2 KB", selected: true },
-    { id: "medications", icon: <Pill className="w-5 h-5" />, en: "Medications", tr: "İlaçlar", descEn: "Current and past medications", descTr: "Mevcut ve gecmis ilaclar", count: 8, size: "4 KB", selected: true },
+    { id: "medications", icon: <Pill className="w-5 h-5" />, en: "Medications", tr: "İlaçlar", descEn: "Current and past medications", descTr: "Mevcut ve geçmiş ilaclar", count: 8, size: "4 KB", selected: true },
     { id: "chat", icon: <MessageSquare className="w-5 h-5" />, en: "Chat History", tr: "Sohbet Geçmişi", descEn: "All AI conversations", descTr: "Tum AI konusmalari", count: 47, size: "128 KB", selected: true },
     { id: "blood", icon: <Activity className="w-5 h-5" />, en: "Blood Tests", tr: "Kan Tahlilleri", descEn: "Lab results and analyses", descTr: "Laboratuvar sonuçlari", count: 3, size: "15 KB", selected: true },
     { id: "calendar", icon: <Calendar className="w-5 h-5" />, en: "Calendar Data", tr: "Takvim Verileri", descEn: "Events, reminders, tracking", descTr: "Etkinlikler, hatirlaticilar", count: 28, size: "12 KB", selected: true },

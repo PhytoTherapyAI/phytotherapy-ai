@@ -28,13 +28,13 @@ interface ChecklistItem {
 const PREP_CHECKLIST: Omit<ChecklistItem, "done">[] = [
   { id: "med_report", label: { en: "Get comprehensive medical report from family doctor", tr: "Aile hekiminden kapsamli sağlık raporu alin" } },
   { id: "dental", label: { en: "Complete all dental work (fillings, wisdom teeth)", tr: "Tum dis işlemlerini tamamlayın (dolgular, yirmi yaslik disler)" } },
-  { id: "eye_exam", label: { en: "Eye examination and updated prescription if needed", tr: "Goz muayenesi ve gerekiyorsa reçete guncellemesi" } },
+  { id: "eye_exam", label: { en: "Eye examination and updated prescription if needed", tr: "Goz muayenesi ve gerekiyorsa reçete güncellemesi" } },
   { id: "blood_test", label: { en: "Full blood panel (CBC, metabolic, thyroid, Vitamin D)", tr: "Tam kan paneli (hemogram, metabolik, tiroid, D vitamini)" } },
   { id: "vaccines", label: { en: "Vaccination records up to date (see list below)", tr: "Asi kayıtlari guncel (asagidaki listeye bakin)" } },
   { id: "chronic_meds", label: { en: "3-month supply of chronic medications + doctor letter", tr: "Kronik ilaçların 3 aylik tedariği + doktor raporu" } },
   { id: "allergy_doc", label: { en: "Document all allergies (medications, food, environmental)", tr: "Tum alerjileri belgeleyin (ilac, gida, cevresel)" } },
   { id: "mental_screen", label: { en: "Mental health screening — address anxiety/depression before service", tr: "Ruh sağlığı taramasi — hizmet öncesi kaygı/depresyonu ele alin" } },
-  { id: "fitness_test", label: { en: "Baseline fitness assessment (VO2 max, strength benchmarks)", tr: "Temel fiziksel degerlendirme (VO2 max, kuvvet ölçümleri)" } },
+  { id: "fitness_test", label: { en: "Baseline fitness assessment (VO2 max, strength benchmarks)", tr: "Temel fiziksel değerlendirme (VO2 max, kuvvet ölçümleri)" } },
   { id: "skin_check", label: { en: "Dermatology check — pre-existing skin conditions documented", tr: "Dermatoloji kontrolü — mevcut cilt rahatsizliklari belgeleyin" } },
 ];
 
@@ -70,7 +70,7 @@ const SECTIONS: Section[] = [
       { en: "Request 90-day supply from your doctor before service", tr: "Hizmetten once doktorunuzdan 90 gunluk tedarik isteyin" },
       { en: "Carry medications in original packaging with pharmacy labels", tr: "İlaçlari eczane etiketli orijinal ambalajinda tasiyin" },
       { en: "Insulin/temperature-sensitive meds: request cold chain transport arrangements", tr: "Insulin/sicakliga duyarlı ilaclar: soguk zincir tasima duzenlemesi isteyin" },
-      { en: "Mental health medications: do NOT stop abruptly — discuss tapering with your doctor", tr: "Ruh sağlığı ilaçları: aniden kesmeyin — doktorunuzla azaltmayi gorusun" },
+      { en: "Mental health medications: do NOT stop abruptly — discuss tapering with your doctor", tr: "Ruh sağlığı ilaçları: aniden kesmeyin — doktorunuzla azaltmayi görüşün" },
       { en: "Keep a medication card in your wallet: drug name, dose, frequency, prescribing doctor", tr: "Cuzdaninizda ilac karti bulundurun: ilac adi, doz, siklik, reçete yazan doktor" },
     ],
   },
@@ -93,7 +93,7 @@ const SECTIONS: Section[] = [
       { en: "Gradual transition: give yourself 2-4 weeks to readjust to civilian routine", tr: "Kademeli gecis: sivil rutine yeniden uyum için kendinize 2-4 hafta taniyin" },
       { en: "Physical detraining: reduce volume 30% per week, don't stop completely", tr: "Fiziksel antrenman azaltma: hacmi haftada %30 azaltin, tamamen birakmayin" },
       { en: "Sleep adjustment may take 1-2 weeks — use light exposure and melatonin timing", tr: "Uyku uyumu 1-2 hafta alabilir — isik maruziyeti ve melatonin zamanlamasiyla destekleyin" },
-      { en: "Watch for: persistent irritability, nightmares, hypervigilance — talk to a professional", tr: "Dikkat: surekli sinirlilik, kabus, asiri tedbirlilik — bir uzmana danisin" },
+      { en: "Watch for: persistent irritability, nightmares, hypervigilance — talk to a professional", tr: "Dikkat: surekli sinirlilik, kabus, asiri tedbirlilik — bir uzmana danışın" },
       { en: "Social reintegration: reconnect gradually, share experiences at your own pace", tr: "Sosyal yeniden entegrasyon: kademeli baglanin, deneyimleri kendi hizinizda paylasin" },
       { en: "Free PTSD screening available — early intervention is critical", tr: "Ucretsiz PTSD taramasi mevcut — erken mudahale kritik oneme sahiptir" },
     ],

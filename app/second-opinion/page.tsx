@@ -88,7 +88,7 @@ export default function SecondOpinionPage() {
           value={concern}
           onChange={(e) => setConcern(e.target.value)}
           rows={4}
-          placeholder={lang === "tr" ? "ornegin: Doktorum diz ameliyati onerdi, ikinci bir gorus almak istiyorum..." : "e.g., My doctor recommended knee surgery, I want a second opinion..."}
+          placeholder={lang === "tr" ? "ornegin: Doktorum diz ameliyati önerdi, ikinci bir görüş almak istiyorum..." : "e.g., My doctor recommended knee surgery, I want a second opinion..."}
           className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-sky-500 outline-none resize-none"
         />
         <Button

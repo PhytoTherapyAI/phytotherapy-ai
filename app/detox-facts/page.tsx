@@ -49,7 +49,7 @@ const ITEMS: DetoxItem[] = [
     claim: { en: "Supports liver detoxification and glutathione production", tr: "Karaciger detoksifikasyonunu ve glutatyon uretimini destekler" },
     reality: { en: "NAC is the clinical antidote for acetaminophen (paracetamol) overdose. It replenishes glutathione, the body's master antioxidant. Genuine hepatoprotective agent.", tr: "NAC, asetaminofen (parasetamol) dozaşımı için klinik antidottur. Vücudun ana antioksidani olan glutatyonu yeniler. Gerçek hepatoprotektif ajan." },
     evidence: { en: "Grade A evidence for acetaminophen toxicity. Grade B for general liver support.", tr: "Asetaminofen toksisitesi için Derece A kanit. Genel karaciğer desteği için Derece B." },
-    safetyNote: { en: "Generally safe at 600-1200mg/day. Consult doctor if on blood thinners.", tr: "Gunde 600-1200mg'da genel olarak güvenli. Kan sulandirici kullaniyorsaniz doktora danisiniz." },
+    safetyNote: { en: "Generally safe at 600-1200mg/day. Consult doctor if on blood thinners.", tr: "Gunde 600-1200mg'da genel olarak güvenli. Kan sulandirici kullaniyorsaniz doktora danışıniz." },
   },
   {
     name: { en: "Colon Cleanse / Enemas", tr: "Kolon Temizligi / Lavman" },

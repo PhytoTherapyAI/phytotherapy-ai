@@ -232,9 +232,9 @@ export default function NotificationsPage() {
           items.push({
             id: nid,
             type: "health",
-            title: lang === "tr" ? "İlaç listenizi guncelleyin" : "Update your medication list",
+            title: lang === "tr" ? "İlaç listenizi güncelleyin" : "Update your medication list",
             description: lang === "tr"
-              ? `Son guncelleme ${daysSinceUpdate} gun once yapildi`
+              ? `Son güncelleme ${daysSinceUpdate} gun once yapildi`
               : `Last updated ${daysSinceUpdate} days ago`,
             time: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7, 0),
             read: storedRead.has(nid),

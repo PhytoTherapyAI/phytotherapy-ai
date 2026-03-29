@@ -23,7 +23,7 @@ const tx: Record<string, { en: string; tr: string }> = {
   title: { en: "Bug Report", tr: "Hata Bildirimi" },
   subtitle: { en: "Help us improve by reporting issues you encounter", tr: "Karşılastginiz sorunları bildirerek gelistirmemize yardımcı olun" },
   description: { en: "Describe the bug", tr: "Hatayi aciklayin" },
-  descPlaceholder: { en: "What happened? Be as specific as possible...", tr: "Ne oldu? Mumkun oldugunca detayli anlatiniz..." },
+  descPlaceholder: { en: "What happened? Be as specific as possible...", tr: "Ne oldu? Mumkun olduğunca detayli anlatiniz..." },
   steps: { en: "Steps to reproduce", tr: "Yeniden oluşturma adimlari" },
   stepsPlaceholder: { en: "1. Go to...\n2. Click on...\n3. See error...", tr: "1. ... sayfasina gidin\n2. ... butonuna tiklayin\n3. Hatayi gorun..." },
   expected: { en: "Expected behavior", tr: "Beklenen davranis" },

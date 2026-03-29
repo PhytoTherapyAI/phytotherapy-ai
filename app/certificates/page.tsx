@@ -223,7 +223,7 @@ export default function CertificatesPage() {
       // Footer
       ctx.fillStyle = "#94a3b8";
       ctx.font = "10px system-ui";
-      ctx.fillText("phytotherapy.ai | " + (t ? "Kanita Dayali Saglik" : "Evidence-Based Health"), 600, 740);
+      ctx.fillText("phytotherapy.ai | " + (t ? "Kanita Dayali Sağlık" : "Evidence-Based Health"), 600, 740);
 
       setPreview(canvas.toDataURL("image/png"));
     } finally {

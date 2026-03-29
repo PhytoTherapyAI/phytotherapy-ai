@@ -58,7 +58,7 @@ export default function HydrationPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              <Activity className="w-4 h-4 inline mr-1" /> {lang === "tr" ? "Aktivite Duzeyi" : "Activity Level"}
+              <Activity className="w-4 h-4 inline mr-1" /> {lang === "tr" ? "Aktivite Düzeyi" : "Activity Level"}
             </label>
             <select value={activity} onChange={(e) => { setActivity(e.target.value); setCalculated(false); }} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="sedentary">{lang === "tr" ? "Hareketsiz" : "Sedentary"}</option>

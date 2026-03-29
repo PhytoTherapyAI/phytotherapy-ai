@@ -2656,12 +2656,12 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   "nav.anxietyToolkit": { en: "Anxiety Toolkit", tr: "Kaygi Arac Seti" },
   "anxiety.title": { en: "Anxiety Toolkit", tr: "Kaygi Arac Seti" },
-  "anxiety.subtitle": { en: "GAD-7 assessment, grounding & coping techniques", tr: "GAD-7 degerlendirme, topraklama ve basa cikma teknikleri" },
+  "anxiety.subtitle": { en: "GAD-7 assessment, grounding & coping techniques", tr: "GAD-7 değerlendirme, topraklama ve basa cikma teknikleri" },
   "anxiety.level": { en: "Anxiety Level", tr: "Kaygi Seviyesi" },
   "anxiety.panicAttack": { en: "Having a panic attack?", tr: "Panik atak mi yasiyorsunuz?" },
   "anxiety.grounding": { en: "Grounding Exercise", tr: "Topraklama Egzersizi" },
   "anxiety.gad7": { en: "GAD-7 Score", tr: "GAD-7 Skoru" },
-  "anxiety.analyze": { en: "Get Assessment", tr: "Degerlendirme Al" },
+  "anxiety.analyze": { en: "Get Assessment", tr: "Değerlendirme Al" },
 
   // ══════════════════════════════════════════
   // Depression Screening
@@ -2693,7 +2693,7 @@ const t: Record<string, TranslationEntry> = {
   "ptsd.triggerLog": { en: "Trigger Log", tr: "Tetikleyici Gunlugu" },
   "ptsd.grounding": { en: "Grounding Exercises", tr: "Topraklama Egzersizleri" },
   "ptsd.screening": { en: "PCL-5 Screening", tr: "PCL-5 Tarama" },
-  "ptsd.analyze": { en: "Get Assessment", tr: "Degerlendirme Al" },
+  "ptsd.analyze": { en: "Get Assessment", tr: "Değerlendirme Al" },
 
   // ══════════════════════════════════════════
   // Addiction Recovery
@@ -2711,10 +2711,10 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   "nav.pregnancyTracker": { en: "Pregnancy", tr: "Gebelik" },
   "pregnancy.title": { en: "Pregnancy Tracker", tr: "Gebelik Takipcisi" },
-  "pregnancy.subtitle": { en: "Week-by-week guide with medication safety", tr: "Ilac guvenligi ile hafta hafta rehber" },
+  "pregnancy.subtitle": { en: "Week-by-week guide with medication safety", tr: "Ilac güvenligi ile hafta hafta rehber" },
   "pregnancy.week": { en: "Gestational Week", tr: "Gebelik Haftasi" },
   "pregnancy.development": { en: "Fetal Development", tr: "Fetal Gelisim" },
-  "pregnancy.safeMeds": { en: "Medication Safety", tr: "Ilac Guvenligi" },
+  "pregnancy.safeMeds": { en: "Medication Safety", tr: "Ilac Güvenligi" },
   "pregnancy.nutrition": { en: "Nutrition", tr: "Beslenme" },
   "pregnancy.warnings": { en: "Warning Signs", tr: "Uyari Isaretleri" },
   "pregnancy.analyze": { en: "Get Week Guide", tr: "Hafta Rehberi Al" },
@@ -2724,12 +2724,12 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   "nav.postpartum": { en: "Postpartum", tr: "Dogum Sonrasi" },
   "postpartum.title": { en: "Postpartum Support", tr: "Dogum Sonrasi Destek" },
-  "postpartum.subtitle": { en: "Recovery, mood screening & breastfeeding safety", tr: "Toparlanma, ruh hali taramasi ve emzirme guvenligi" },
+  "postpartum.subtitle": { en: "Recovery, mood screening & breastfeeding safety", tr: "Toparlanma, ruh hali taramasi ve emzirme güvenligi" },
   "postpartum.weeksSince": { en: "Weeks Postpartum", tr: "Dogumdan Sonra Hafta" },
   "postpartum.epds": { en: "EPDS Score", tr: "EPDS Skoru" },
   "postpartum.breastfeeding": { en: "Breastfeeding", tr: "Emzirme" },
-  "postpartum.medSafety": { en: "Medication Safety", tr: "Ilac Guvenligi" },
-  "postpartum.analyze": { en: "Get Assessment", tr: "Degerlendirme Al" },
+  "postpartum.medSafety": { en: "Medication Safety", tr: "Ilac Güvenligi" },
+  "postpartum.analyze": { en: "Get Assessment", tr: "Değerlendirme Al" },
 
   // ══════════════════════════════════════════
   // Menopause Panel
@@ -2751,14 +2751,14 @@ const t: Record<string, TranslationEntry> = {
   "mens.adam": { en: "ADAM Score", tr: "ADAM Skoru" },
   "mens.prostate": { en: "Prostate Health", tr: "Prostat Sağlığı" },
   "mens.medEffects": { en: "Medication Effects", tr: "Ilac Etkileri" },
-  "mens.analyze": { en: "Get Assessment", tr: "Degerlendirme Al" },
+  "mens.analyze": { en: "Get Assessment", tr: "Değerlendirme Al" },
 
   // ══════════════════════════════════════════
   // Sexual Health
   // ══════════════════════════════════════════
   "nav.sexualHealth": { en: "Sexual Health", tr: "Cinsel Sağlık" },
   "sexual.title": { en: "Sexual Health", tr: "Cinsel Sağlık" },
-  "sexual.subtitle": { en: "Medication effects, screening & safety", tr: "Ilac etkileri, tarama ve guvenlik" },
+  "sexual.subtitle": { en: "Medication effects, screening & safety", tr: "Ilac etkileri, tarama ve güvenlik" },
   "sexual.medEffects": { en: "Medication Sexual Effects", tr: "Ilaclarin Cinsel Etkileri" },
   "sexual.screening": { en: "STI Screening", tr: "Cinsel Yolla Bulasan Hastalik Taramasi" },
   "sexual.analyze": { en: "Check Medications", tr: "Ilaclari Kontrol Et" },
@@ -2771,12 +2771,12 @@ const t: Record<string, TranslationEntry> = {
   // ── Military Health ──
   "nav.militaryHealth": { en: "Military Health", tr: "Askerlik Sağlığı" },
   "military.title": { en: "Military Health Guide", tr: "Askerlik Sağlık Rehberi" },
-  "military.subtitle": { en: "Health preparation for military service", tr: "Askerlik için saglik hazirligi" },
+  "military.subtitle": { en: "Health preparation for military service", tr: "Askerlik için sağlık hazirligi" },
 
   // ── Retirement Health ──
   "nav.retirementHealth": { en: "Retirement Health", tr: "Emeklilik Sağlığı" },
   "retirement.title": { en: "Retirement Health Plan", tr: "Emeklilik Sağlık Planı" },
-  "retirement.subtitle": { en: "Screening and wellness plan for 55+", tr: "55+ yas tarama ve saglik plani" },
+  "retirement.subtitle": { en: "Screening and wellness plan for 55+", tr: "55+ yas tarama ve sağlık plani" },
   "retirement.generate": { en: "Generate Plan", tr: "Plan Olustur" },
 
   // ── New Parent Health ──
@@ -2787,7 +2787,7 @@ const t: Record<string, TranslationEntry> = {
   // ── Air Quality ──
   "nav.airQuality": { en: "Air Quality", tr: "Hava Kalitesi" },
   "air.title": { en: "Air Quality Guide", tr: "Hava Kalitesi Rehberi" },
-  "air.subtitle": { en: "AQI levels, health advice & exercise safety", tr: "AQI seviyeleri, saglik onerileri ve egzersiz guvenligi" },
+  "air.subtitle": { en: "AQI levels, health advice & exercise safety", tr: "AQI seviyeleri, sağlık onerileri ve egzersiz güvenligi" },
 
   // ── Noise Exposure ──
   "nav.noiseExposure": { en: "Noise", tr: "Gürültü" },
@@ -2818,7 +2818,7 @@ const t: Record<string, TranslationEntry> = {
   // ── Family Health Tree ──
   "nav.familyTree": { en: "Family Tree", tr: "Aile Ağacı" },
   "familytree.title": { en: "Family Health Tree", tr: "Aile Sağlık Ağacı" },
-  "familytree.subtitle": { en: "Hereditary risk analysis from family history", tr: "Aile gecmisinden kalitsal risk analizi" },
+  "familytree.subtitle": { en: "Hereditary risk analysis from family history", tr: "Aile geçmişinden kalitsal risk analizi" },
   "familytree.addMember": { en: "Add Family Member", tr: "Aile Uyesi Ekle" },
   "familytree.analyze": { en: "Analyze Risks", tr: "Riskleri Analiz Et" },
 
@@ -2831,14 +2831,14 @@ const t: Record<string, TranslationEntry> = {
   // ── Genetic Risk ──
   "nav.geneticRisk": { en: "Genetic Risk", tr: "Genetik Risk" },
   "genetic.title": { en: "Genetic Risk Profile", tr: "Genetik Risk Profili" },
-  "genetic.subtitle": { en: "Disease risk scores from family history", tr: "Aile gecmisinden hastalik risk skorlari" },
+  "genetic.subtitle": { en: "Disease risk scores from family history", tr: "Aile geçmişinden hastalik risk skorlari" },
   "genetic.analyze": { en: "Analyze Risk", tr: "Risk Analiz Et" },
 
   // ── K1: Wearable Hub ──
   "nav.wearableHub": { en: "Wearables", tr: "Giyilebilir" },
   "wearable.title": { en: "Wearable Hub", tr: "Giyilebilir Cihaz Merkezi" },
   "wearable.comingSoon": { en: "Wearable integration coming soon!", tr: "Giyilebilir cihaz entegrasyonu yakinda!" },
-  "wearable.subtitle": { en: "Connect your health devices for continuous monitoring", tr: "Surekli izleme için saglik cihazlarinizi baglayiniz" },
+  "wearable.subtitle": { en: "Connect your health devices for continuous monitoring", tr: "Surekli izleme için sağlık cihazlarinizi baglayiniz" },
 
   // ── K2: Proactive AI ──
   "nav.proactiveAi": { en: "Proactive AI", tr: "Proaktif AI" },
@@ -2861,11 +2861,11 @@ const t: Record<string, TranslationEntry> = {
   "trials.location": { en: "Location (optional)", tr: "Konum (istege bagli)" },
 
   // ── K5: Second Opinion ──
-  "nav.secondOpinion": { en: "Second Opinion", tr: "Ikinci Gorus" },
-  "secondopinion.title": { en: "Second Opinion Prep", tr: "Ikinci Gorus Hazirligi" },
+  "nav.secondOpinion": { en: "Second Opinion", tr: "Ikinci Görüş" },
+  "secondopinion.title": { en: "Second Opinion Prep", tr: "Ikinci Görüş Hazirligi" },
   "secondopinion.subtitle": { en: "Prepare a structured package for specialist consultation", tr: "Uzman konsultasyonu için yapilandirilmis paket hazirlayin" },
   "secondopinion.generate": { en: "Prepare Package", tr: "Paket Hazirla" },
-  "secondopinion.concern": { en: "What concern do you want a second opinion on?", tr: "Hangi konuda ikinci gorus almak istiyorsunuz?" },
+  "secondopinion.concern": { en: "What concern do you want a second opinion on?", tr: "Hangi konuda ikinci görüş almak istiyorsunuz?" },
 
   // ── L1: Cross Allergy ──
   "nav.crossAllergy": { en: "Cross Allergy", tr: "Capraz Alerji" },
@@ -2951,17 +2951,17 @@ const t: Record<string, TranslationEntry> = {
   // ── O3: Accessibility ──
   "nav.accessibility": { en: "Accessibility", tr: "Erisilebilirlik" },
   "access.title": { en: "Accessibility Assistant", tr: "Erisilebilirlik Asistani" },
-  "access.subtitle": { en: "Adaptive health tools and disability resources", tr: "Uyarlanabilir saglik araclari ve engelli kaynaklari" },
+  "access.subtitle": { en: "Adaptive health tools and disability resources", tr: "Uyarlanabilir sağlık araclari ve engelli kaynaklari" },
 
   // ── O4: Immigrant Health ──
   "nav.immigrantHealth": { en: "Immigrant Health", tr: "Göçmen Sağlığı" },
   "immigrant.title": { en: "Immigrant Health Guide", tr: "Göçmen Sağlık Rehberi" },
-  "immigrant.subtitle": { en: "Navigate the Turkish healthcare system", tr: "Turk saglik sisteminde yol bulun" },
+  "immigrant.subtitle": { en: "Navigate the Turkish healthcare system", tr: "Turk sağlık sisteminde yol bulun" },
 
   // ── P1: Pet Health ──
   "nav.petHealth": { en: "Pet Health", tr: "Evcil Hayvan" },
   "pet.title": { en: "Pet & Human Health", tr: "Evcil Hayvan & İnsan Sağlığı" },
-  "pet.subtitle": { en: "Zoonotic risks and pet owner health guide", tr: "Zoonotik riskler ve evcil hayvan sahibi saglik rehberi" },
+  "pet.subtitle": { en: "Zoonotic risks and pet owner health guide", tr: "Zoonotik riskler ve evcil hayvan sahibi sağlık rehberi" },
 
   // ── Shared tool keys ──
   "tool.comingSoon": { en: "Coming Soon", tr: "Yakinda" },
@@ -2994,7 +2994,7 @@ const t: Record<string, TranslationEntry> = {
   // ── H4: Health News Verifier ──
   "nav.newsVerifier": { en: "News Check", tr: "Haber Kontrol" },
   "news.title": { en: "Health News Verifier", tr: "Sağlık Haberi Doğrulayici" },
-  "news.subtitle": { en: "Is this health claim backed by evidence?", tr: "Bu saglik iddiasi kanita dayali mi?" },
+  "news.subtitle": { en: "Is this health claim backed by evidence?", tr: "Bu sağlık iddiasi kanita dayali mi?" },
   "news.claim": { en: "Paste the health claim...", tr: "Sağlık iddiasını yapıştırın..." },
   "news.verify": { en: "Verify", tr: "Doğrula" },
 
@@ -3012,7 +3012,7 @@ const t: Record<string, TranslationEntry> = {
   // ── I2: Health Challenges ──
   "nav.challenges": { en: "Challenges", tr: "Challenge" },
   "challenges.title": { en: "Health Challenges", tr: "Sağlık Challenge'lari" },
-  "challenges.subtitle": { en: "Fun health challenges with streaks", tr: "Streak'li eglenceli saglik gorevleri" },
+  "challenges.subtitle": { en: "Fun health challenges with streaks", tr: "Streak'li eglenceli sağlık gorevleri" },
 
   // ── I3: Support Groups ──
   "nav.supportGroups": { en: "Support Groups", tr: "Destek Gruplari" },
@@ -3093,7 +3093,7 @@ const t: Record<string, TranslationEntry> = {
   "emergencyMode.copied": { en: "Copied!", tr: "Kopyalandi!" },
   "emergencyMode.showQR": { en: "Show QR Code", tr: "QR Kod Goster" },
   "emergencyMode.qrHint": { en: "Scan to view emergency info", tr: "Acil bilgileri görmek için tarayın" },
-  "emergencyMode.footer": { en: "Data cached locally for offline access. Update your profile to keep info current.", tr: "Veriler cevirim disi erisim için yerel olarak saklanir. Bilgileri guncel tutmak için profilinizi guncelleyin." },
+  "emergencyMode.footer": { en: "Data cached locally for offline access. Update your profile to keep info current.", tr: "Veriler cevirim disi erisim için yerel olarak saklanir. Bilgileri guncel tutmak için profilinizi güncelleyin." },
 
   // ── N19: QR Profile Sharing ──
   "qrProfile.title": { en: "Health QR Code", tr: "Sağlık QR Kodu" },
@@ -3438,7 +3438,7 @@ const valueMarketplaceKeys: Record<string, TranslationEntry> = {
   "value.valuePrice": { en: "Value Price", tr: "Deger Fiyati" },
   "value.outcomePrice": { en: "Outcome-Based", tr: "Sonuc Odakli" },
   "value.guarantee": { en: "Outcome Guarantee", tr: "Sonuc Garantisi" },
-  "value.escrowPeriod": { en: "Evaluation Period", tr: "Degerlendirme Suresi" },
+  "value.escrowPeriod": { en: "Evaluation Period", tr: "Değerlendirme Suresi" },
   "value.refundPercent": { en: "Refund if no improvement", tr: "Iyilesme olmazsa iade" },
   "value.smartContract": { en: "Smart Contract", tr: "Akilli Sozlesme" },
   "value.kpiTargets": { en: "KPI Targets", tr: "KPI Hedefleri" },
@@ -3452,15 +3452,15 @@ const valueMarketplaceKeys: Record<string, TranslationEntry> = {
   "value.goldProvider": { en: "Gold Provider", tr: "Altin Saglayici" },
   "value.howItWorks": { en: "How Escrow Works", tr: "Guvence Nasil Calisir" },
   "value.step1": { en: "Purchase with escrow protection", tr: "Guvence korumasiyla satin alin" },
-  "value.step2": { en: "System monitors your health metrics", tr: "Sistem saglik metriklerinizi izler" },
-  "value.step3": { en: "AI evaluates improvement at evaluation date", tr: "AI degerlendirme tarihinde iyilesmeyi degerlendirir" },
+  "value.step2": { en: "System monitors your health metrics", tr: "Sistem sağlık metriklerinizi izler" },
+  "value.step3": { en: "AI evaluates improvement at evaluation date", tr: "AI değerlendirme tarihinde iyilesmeyi değerlendirir" },
   "value.step4": { en: "Payment released or refund initiated", tr: "Odeme serbest birakilir veya iade baslatilir" },
   "value.viewDetails": { en: "View Details", tr: "Detaylari Gor" },
   "value.buyStandard": { en: "Buy Standard", tr: "Standart Satin Al" },
   "value.buyValue": { en: "Buy Value", tr: "Deger Fiyatiyla Al" },
   "value.buyOutcome": { en: "Buy with Guarantee", tr: "Garantili Satin Al" },
   "value.formula": { en: "Value Score Formula", tr: "Deger Puani Formulu" },
-  "value.loginRequired": { en: "Sign in to access the marketplace", tr: "Pazaryerine erismek icin giris yapin" },
+  "value.loginRequired": { en: "Sign in to access the marketplace", tr: "Pazaryerine erismek için giris yapin" },
 }
 Object.assign(t, valueMarketplaceKeys)
 

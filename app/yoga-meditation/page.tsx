@@ -29,7 +29,7 @@ const YOGA_GUIDES: YogaGuide[] = [
   {
     condition: { en: "Anxiety", tr: "Anksiyete" },
     grade: "B",
-    description: { en: "Moderate evidence for yoga reducing anxiety symptoms. Breath-focused styles most effective.", tr: "Yoganin anksiyete semptomlarini azalttigi için orta duzeyde kanit. Nefes odakli stiller en etkili." },
+    description: { en: "Moderate evidence for yoga reducing anxiety symptoms. Breath-focused styles most effective.", tr: "Yoganin anksiyete semptomlarini azalttigi için orta düzeyde kanit. Nefes odakli stiller en etkili." },
     poses: [
       { name: { en: "Legs Up The Wall", tr: "Bacaklar Duvarda" }, duration: "5 min", note: { en: "Activates parasympathetic nervous system", tr: "Parasempatik sinir sistemini aktive eder" } },
       { name: { en: "Forward Fold", tr: "One Egilme" }, duration: "1 min", note: { en: "Calming, increases blood flow to brain", tr: "Sakinlestirici, beyine kan akisini arttırır" } },
@@ -39,7 +39,7 @@ const YOGA_GUIDES: YogaGuide[] = [
   {
     condition: { en: "Hypertension", tr: "Hipertansiyon" },
     grade: "B",
-    description: { en: "Moderate evidence for yoga reducing blood pressure. Avoid inversions if BP uncontrolled.", tr: "Yoganin tansiyonu dusürdügu için orta duzeyde kanit. Tansiyon kontrol altinda degilse ters duruslardari kacinin." },
+    description: { en: "Moderate evidence for yoga reducing blood pressure. Avoid inversions if BP uncontrolled.", tr: "Yoganin tansiyonu dusürdügu için orta düzeyde kanit. Tansiyon kontrol altinda degilse ters duruslardari kacinin." },
     poses: [
       { name: { en: "Seated Forward Bend", tr: "Oturarak One Egilme" }, duration: "2 min", note: { en: "Gentle, no strain", tr: "Hafif, zorlanma yok" } },
       { name: { en: "Corpse Pose (Savasana)", tr: "Olum Pozu (Savasana)" }, duration: "10 min", note: { en: "Proven to reduce systolic BP 4-5 mmHg", tr: "Sistolik tansiyonu 4-5 mmHg dusürdügu kanitlanmistir" } },

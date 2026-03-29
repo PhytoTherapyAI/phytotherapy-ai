@@ -18,7 +18,7 @@ const SECTIONS: Section[] = [
     title: { en: "Visual Accessibility", tr: "Gorsel Erisilebilirlik" },
     color: "text-blue-500",
     items: [
-      { title: { en: "Font Size Adjustment", tr: "Yazi Boyutu Ayarlama" }, desc: { en: "Use your browser's zoom (Ctrl/Cmd + to enlarge, Ctrl/Cmd - to reduce). All our pages are responsive and adapt to zoom levels.", tr: "Tarayicinizin zum'unu kullaniniz (Ctrl/Cmd + buyutmek, Ctrl/Cmd - kucultmek icin). Tum sayfalarimiz duyarlıdir ve zum duzeylerine uyum saglar." } },
+      { title: { en: "Font Size Adjustment", tr: "Yazi Boyutu Ayarlama" }, desc: { en: "Use your browser's zoom (Ctrl/Cmd + to enlarge, Ctrl/Cmd - to reduce). All our pages are responsive and adapt to zoom levels.", tr: "Tarayicinizin zum'unu kullaniniz (Ctrl/Cmd + buyutmek, Ctrl/Cmd - kucultmek icin). Tum sayfalarimiz duyarlıdir ve zum düzeylerine uyum saglar." } },
       { title: { en: "High Contrast Mode", tr: "Yüksek Kontrast Modu" }, desc: { en: "Use your operating system's high contrast mode or dark mode for better readability.", tr: "Daha iyi okunabilirlik için isletim sisteminizin yüksek kontrast modunu veya karanlik modunu kullanin." } },
       { title: { en: "Screen Readers", tr: "Ekran Okuyucular" }, desc: { en: "Our app is built with semantic HTML and ARIA labels. Compatible with NVDA, JAWS, VoiceOver, and TalkBack.", tr: "Uygulamamiz semantik HTML ve ARIA etiketleriyle oluşturulmustur. NVDA, JAWS, VoiceOver ve TalkBack ile uyumludur." } },
     ],
@@ -28,7 +28,7 @@ const SECTIONS: Section[] = [
     title: { en: "Voice & Audio", tr: "Ses & Isitsel" },
     color: "text-purple-500",
     items: [
-      { title: { en: "Voice Input (Coming Soon)", tr: "Sesli Giris (Yakinda)" }, desc: { en: "Describe your symptoms or ask health questions using your voice. Planned for future updates.", tr: "Sesyinizi kullanarak semptomlarinizi anlatin veya sağlık soruları sorun. Gelecek guncellemeler için planlaniyor." } },
+      { title: { en: "Voice Input (Coming Soon)", tr: "Sesli Giris (Yakinda)" }, desc: { en: "Describe your symptoms or ask health questions using your voice. Planned for future updates.", tr: "Sesyinizi kullanarak semptomlarinizi anlatin veya sağlık soruları sorun. Gelecek güncellemeler için planlaniyor." } },
       { title: { en: "Text-to-Speech", tr: "Metin Okuma" }, desc: { en: "Use your device's built-in text-to-speech to have AI responses read aloud.", tr: "AI yanitlarinin sesli okunmasi için cihazinizin yerlesik metin okuma ozelligini kullaniniz." } },
     ],
   },
@@ -57,10 +57,10 @@ const SECTIONS: Section[] = [
     color: "text-amber-500",
     items: [
       { title: { en: "Health Report", tr: "Sağlık Raporu" }, desc: { en: "Disability health report: Apply at any state hospital. Required for benefits.", tr: "Engelli sağlık raporu: Herhangi bir devlet hastanesinde basvuru. Haklar için gerekli." } },
-      { title: { en: "Tax Exemptions", tr: "Vergi Muafiyetleri" }, desc: { en: "Income tax reduction based on disability level. Vehicle purchase tax exemption for 90%+ disability.", tr: "Engellilik duzeyine gore gelir vergisi indirimi. %90+ engelliler için arac alim vergisi muafiyeti." } },
+      { title: { en: "Tax Exemptions", tr: "Vergi Muafiyetleri" }, desc: { en: "Income tax reduction based on disability level. Vehicle purchase tax exemption for 90%+ disability.", tr: "Engellilik düzeyine gore gelir vergisi indirimi. %90+ engelliler için arac alim vergisi muafiyeti." } },
       { title: { en: "Free Public Transport", tr: "Ucretsiz Toplu Tasima" }, desc: { en: "Free public transport in most Turkish cities for disability card holders.", tr: "Çoğu Turk sehrinde engelli karti sahipleri için ucretsiz toplu tasima." } },
       { title: { en: "Home Care Salary", tr: "Evde Bakim Maasi" }, desc: { en: "Monthly payment for caregivers of severely disabled individuals. Apply at SYDV.", tr: "Agir engelli bireylerin bakicilari için aylik odeme. SYDV'ye basvurun." } },
-      { title: { en: "Employment Quota", tr: "Istihdam Kotasi" }, desc: { en: "Companies with 50+ employees must employ 3% disabled workers. Public sector: 4%.", tr: "50+ calisan sirketlerin %3 engelli calistirmasi zorunlu. Kamu sektoru: %4." } },
+      { title: { en: "Employment Quota", tr: "Istihdam Kotasi" }, desc: { en: "Companies with 50+ employees must employ 3% disabled workers. Public sector: 4%.", tr: "50+ calisan sirketlerin %3 engelli çalıştırmasi zorunlu. Kamu sektoru: %4." } },
     ],
   },
   {

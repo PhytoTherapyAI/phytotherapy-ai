@@ -31,7 +31,7 @@ const SHIFT_WORKER_TIPS = [
   { en: "Wear sunglasses driving home after night shift", tr: "Gece vardiyasindan sonra eve giderken gunes gozlugu takiniz" },
   { en: "Strategic caffeine: use early in shift, stop 6h before bed", tr: "Stratejik kafein: vardiyanin başında kullaniniz, yatmadan 6 saat once kesiniz" },
   { en: "Melatonin 0.5-3mg 30 min before planned sleep", tr: "Planlanan uykudan 30 dk once melatonin 0.5-3mg" },
-  { en: "Keep consistent schedule even on off days when possible", tr: "Mumkun oldugunda tatil gunlerinde bile tutarlı program surdrun" },
+  { en: "Keep consistent schedule even on off days when possible", tr: "Mumkun olduğunda tatil gunlerinde bile tutarlı program surdrun" },
 ];
 
 const SAD_INFO = {

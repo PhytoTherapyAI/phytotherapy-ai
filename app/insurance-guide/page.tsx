@@ -132,7 +132,7 @@ const SECTIONS: AccordionSection[] = [
     ],
     contentTr: [
       "Jenerik ilaclar marka ilaclardan daha düşük katilim payina sahiptir.",
-      "Mevcut oldugunda doktorunuzdan jenerik yazmasi isteyin.",
+      "Mevcut olduğunda doktorunuzdan jenerik yazmasi isteyin.",
       "Bazi vitamin ve takviyeler SGK tarafindan KAPSANMAZ.",
       "Kronik ilac: eczane ziyaretlerinden tasarruf için 3 aylik recete alin.",
       "Eczane uygulamalari (Ilac Takip Sistemi) recetelerinizi takip etmenize yardımcı olur.",

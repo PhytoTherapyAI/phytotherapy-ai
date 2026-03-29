@@ -154,7 +154,7 @@ export default function PharmacyFinderPage() {
         <div className="mt-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 text-center">
           <p className="text-gray-500 dark:text-gray-400 text-sm">
             {lang === "tr"
-              ? "İlaç degisimi yapmadan once mutlaka doktorunuza veya eczaciniza danisin."
+              ? "İlaç degisimi yapmadan once mutlaka doktorunuza veya eczaciniza danışın."
               : "Always consult your doctor or pharmacist before switching medications."}
           </p>
         </div>

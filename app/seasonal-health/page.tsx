@@ -215,7 +215,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
       },
     ],
     lifestyle: [
-      { en: "Drink at least 2.5-3L water daily, more during exercise", tr: "Günlük en az 2.5-3L su icin, egzersiz sirasinda daha fazla" },
+      { en: "Drink at least 2.5-3L water daily, more during exercise", tr: "Günlük en az 2.5-3L su için, egzersiz sirasinda daha fazla" },
       { en: "Apply SPF 30+ sunscreen and reapply every 2 hours", tr: "SPF 30+ gunes kremi surün ve her 2 saatte bir yenileyin" },
       { en: "Avoid strenuous outdoor activity during 11am-4pm", tr: "Saat 11-16 arasi yogun dis mekan aktivitesinden kacinin" },
       { en: "Eat water-rich fruits and vegetables (watermelon, cucumber)", tr: "Su bakımından zengin meyve ve sebzeler tuketin (karpuz, salatalik)" },
@@ -278,7 +278,7 @@ const SEASON_DATA: Record<Season, SeasonData> = {
       { en: "Begin immune-boosting nutrition (garlic, ginger, turmeric in cooking)", tr: "Bağışıklik guclendiren beslenmeye başlayin (yemeklerde sarimsak, zencefil, zerdecal)" },
       { en: "Get flu vaccination in October-November", tr: "Ekim-Kasim'da grip asisi olun" },
       { en: "Start indoor exercise alternatives for rainy days", tr: "Yagmurlu gunler için ic mekan egzersiz alternatifleri başlayin" },
-      { en: "Review and update medication supplies for winter", tr: "Kis için ilac stoklarini gözden geçirin ve guncelleyin" },
+      { en: "Review and update medication supplies for winter", tr: "Kis için ilac stoklarini gözden geçirin ve güncelleyin" },
     ],
     checklist: [
       { en: "Schedule flu vaccination", tr: "Grip asisi randevusu alin" },

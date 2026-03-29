@@ -358,7 +358,7 @@ export default function HealthAnalyticsPage() {
             ) : (
               <p className="text-sm text-muted-foreground">
                 {isTr
-                  ? "Verileriniz uzerinde yapay zeka destekli icgoruler olusturmak icin butona tiklayin."
+                  ? "Verileriniz uzerinde yapay zeka destekli icgoruler olusturmak için butona tiklayin."
                   : "Click the button to generate AI-powered insights from your health data."}
               </p>
             )}

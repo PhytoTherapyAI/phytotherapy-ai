@@ -50,7 +50,7 @@ const SCREENING_STATIC = {
     { test: "Kemik yogunlugu (DEXA)", age: "65+ (K), 70+ (E)", freq: "2-3 yilda bir" },
     { test: "Goz muayenesi (glokom, katarakt)", age: "55+", freq: "1-2 yilda bir" },
     { test: "Isitme testi", age: "60+", freq: "3 yilda bir" },
-    { test: "D vitamini duzeyi", age: "55+", freq: "Yıllık" },
+    { test: "D vitamini düzeyi", age: "55+", freq: "Yıllık" },
     { test: "Tiroid fonksiyonu (TSH)", age: "60+", freq: "5 yilda bir" },
   ],
 };

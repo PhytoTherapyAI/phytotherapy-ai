@@ -37,7 +37,7 @@ const SECTIONS: Section[] = [
       { en: "Split night shifts with partner: each person gets 1 uninterrupted 4-hour block", tr: "Gece nobetlerini es ile paylasin: her kisi 1 kesintisiz 4 saatlik blok uyusun" },
       { en: "Caffeine cutoff: no coffee after 2 PM if you want to sleep when baby sleeps at night", tr: "Kafein siniri: bebek gece uyurken uyumak istiyorsaniz saat 14:00'ten sonra kahve icmeyin" },
       { en: "Light exposure in morning (10 min bright light) helps reset disrupted circadian rhythm", tr: "Sabah isik maruziyeti (10 dk parlak isik) bozulmus sirkadyen ritmi sifirlar" },
-      { en: "Accept 'good enough' sleep — perfection is the enemy of rest right now", tr: "Yeterli uykunun yeterli oldugunu kabul edin — mükemmeliyetcilik simdi dinlenmenin dusmanidir" },
+      { en: "Accept 'good enough' sleep — perfection is the enemy of rest right now", tr: "Yeterli uykunun yeterli olduğunu kabul edin — mükemmeliyetcilik simdi dinlenmenin dusmanidir" },
       { en: "Room-darkening curtains help both parent and baby sleep during irregular hours", tr: "Karanlik perdeler hem ebeveynin hem de bebegin duzensiz saatlerde uyumasina yardımcı olur" },
     ],
   },
@@ -231,11 +231,11 @@ export default function NewParentHealthPage() {
               <p className="text-sm mt-1">
                 {burnoutScore >= 5
                   ? lang === "tr"
-                    ? "Yüksek tukenmislik belirtileri. Bir sağlık uzmanina danismaniz onerilir."
+                    ? "Yüksek tukenmislik belirtileri. Bir sağlık uzmanina danışmaniz onerilir."
                     : "High burnout indicators. We recommend speaking to a healthcare provider."
                   : burnoutScore >= 3
                   ? lang === "tr"
-                    ? "Orta duzeyde stres belirtileri. Kendinize zaman ayirmaya oncelik verin."
+                    ? "Orta düzeyde stres belirtileri. Kendinize zaman ayirmaya oncelik verin."
                     : "Moderate stress indicators. Prioritize self-care and personal time."
                   : lang === "tr"
                   ? "Düşük tukenmislik belirtileri. Kendinize bakmaya devam edin!"

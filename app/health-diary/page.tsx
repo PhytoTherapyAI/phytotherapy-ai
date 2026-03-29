@@ -269,7 +269,7 @@ export default function HealthDiaryPage() {
         if (lowMoodDays.length > entries.length * 0.3) {
           insights.push(t(
             "Over 30% of your entries have low mood scores. Consider discussing this with your doctor.",
-            "Girdilerinizin %30'undan fazlasi düşük ruh hali skoru iceriyor. Bunu doktorunuzla gorusmeyi dusunun."
+            "Girdilerinizin %30'undan fazlasi düşük ruh hali skoru iceriyor. Bunu doktorunuzla görüşmeyi dusunun."
           ));
         }
       }

@@ -94,7 +94,7 @@ const MED_ORAL_EFFECTS: MedEffect[] = [
 const VISIT_SCHEDULE = [
   { en: "Routine cleaning & checkup", tr: "Rutin temizlik ve kontrol", frequency: { en: "Every 6 months", tr: "6 ayda bir" } },
   { en: "Full mouth X-ray", tr: "Tam agiz rontgeni", frequency: { en: "Every 1-2 years", tr: "1-2 yilda bir" } },
-  { en: "Periodontal assessment", tr: "Periodontal degerlendirme", frequency: { en: "Annually (40+)", tr: "Yıllık (40 yas+)" } },
+  { en: "Periodontal assessment", tr: "Periodontal değerlendirme", frequency: { en: "Annually (40+)", tr: "Yıllık (40 yas+)" } },
   { en: "Oral cancer screening", tr: "Agiz kanseri taramasi", frequency: { en: "Annually (especially smokers)", tr: "Yıllık (ozellikle sigara icenler)" } },
 ];
 

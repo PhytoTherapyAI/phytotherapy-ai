@@ -61,7 +61,7 @@ const SECTIONS: GuideSection[] = [
     color: "text-amber-500",
     content: [
       { title: { en: "UNHCR Turkey", tr: "UNHCR Türkiye" }, desc: { en: "UN Refugee Agency - legal support, registration assistance, healthcare guidance.", tr: "BM Multeci Ajansi - hukuki destek, kayıt yardimi, sağlık hizmeti rehberligi." } },
-      { title: { en: "IOM Turkey", tr: "IOM Türkiye" }, desc: { en: "International Organization for Migration - health assessments, travel health.", tr: "Uluslararasi Goc Orgutu - sağlık degerlendirmeleri, seyahat sağlığı." } },
+      { title: { en: "IOM Turkey", tr: "IOM Türkiye" }, desc: { en: "International Organization for Migration - health assessments, travel health.", tr: "Uluslararasi Goc Orgutu - sağlık değerlendirmeleri, seyahat sağlığı." } },
       { title: { en: "Community Health Centers (SASAM)", tr: "Toplum Sağlık Merkezleri (SASAM)" }, desc: { en: "Migrant health centers in major cities with interpreters.", tr: "Buyuk sehirlerde tercumanli gocmen sağlık merkezleri." } },
     ],
   },
