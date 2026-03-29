@@ -132,7 +132,7 @@ export default function GutHealthPage() {
         <div className="rounded-xl border-2 border-dashed border-emerald-200 bg-emerald-50/50 p-12 text-center dark:border-emerald-800 dark:bg-emerald-950/20">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-emerald-400" />
           <p className="text-sm text-muted-foreground">
-            {lang === "tr" ? "Bağırsak sağlığı analizi için giriş yapın" : "Sign in to analyze your gut health"}
+            {tx("gutHealth.loginMessage", lang)}
           </p>
         </div>
       </div>
@@ -284,7 +284,7 @@ export default function GutHealthPage() {
             <div className="rounded-lg border p-4">
               <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
                 <Stethoscope className="h-4 w-4 text-emerald-500" />
-                {lang === "tr" ? "Tespit Edilen Örüntüler" : "Detected Patterns"}
+                {tx("gutHealth.detectedPatterns", lang)}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {result.patterns.map((p, i) => (
@@ -385,7 +385,7 @@ export default function GutHealthPage() {
             <div className="rounded-lg border border-emerald-200 bg-emerald-50/50 p-4 dark:border-emerald-800 dark:bg-emerald-950/20">
               <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
                 <Brain className="h-3.5 w-3.5" />
-                {lang === "tr" ? "Bağırsak-Beyin Bağlantısı" : "Gut-Brain Connection"}
+                {tx("gutHealth.gutBrain", lang)}
               </h3>
               <p className="text-xs text-emerald-600 dark:text-emerald-300">{result.gutBrainConnection}</p>
             </div>
@@ -447,7 +447,7 @@ export default function GutHealthPage() {
             }}
             className="w-full"
           >
-            {lang === "tr" ? "Yeni analiz yap" : "Start new analysis"}
+            {tx("gutHealth.newAnalysis", lang)}
           </Button>
         </div>
       )}

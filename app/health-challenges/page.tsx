@@ -241,7 +241,7 @@ export default function HealthChallengesPage() {
                     {/* Rules */}
                     <div className={`${c.bgColor} rounded-xl p-4`}>
                       <h4 className={`text-sm font-semibold ${c.color} mb-2`}>
-                        {lang === "tr" ? "Kurallar" : "Rules"}
+                        {tx("challenges.rules", lang)}
                       </h4>
                       <ul className="space-y-1">
                         {(lang === "tr" ? c.rulesTr : c.rulesEn).map((r, i) => (
@@ -258,7 +258,7 @@ export default function HealthChallengesPage() {
                         onClick={() => startChallenge(c.id, c.days)}
                         className="w-full bg-orange-600 hover:bg-orange-700 text-white rounded-xl"
                       >
-                        {lang === "tr" ? "Challenge'i Başlat" : "Start Challenge"}
+                        {tx("challenges.start", lang)}
                       </Button>
                     ) : (
                       <>
@@ -301,7 +301,7 @@ export default function HealthChallengesPage() {
                           className="flex items-center gap-1 text-sm text-gray-400 hover:text-red-500 transition-colors mx-auto"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
-                          {lang === "tr" ? "Sifirla" : "Reset"}
+                          {tx("challenges.reset", lang)}
                         </button>
                       </>
                     )}

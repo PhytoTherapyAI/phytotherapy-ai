@@ -161,7 +161,7 @@ export default function GeneticRiskPage() {
 
           {/* Family History */}
           <div>
-            <label className="text-sm font-medium">{lang === "tr" ? "Ailede Gorulen Hastalıklar" : "Family Health History"}</label>
+            <label className="text-sm font-medium">{tx("geneticRisk.familyHistory", lang)}</label>
             <div className="flex flex-wrap gap-2 mt-2">
               {famConditions.map((cond, i) => (
                 <button key={i} onClick={() => toggleFamily(famConditionsEN[i])}
@@ -176,7 +176,7 @@ export default function GeneticRiskPage() {
 
           {/* Personal Factors */}
           <div>
-            <label className="text-sm font-medium">{lang === "tr" ? "Kişisel Faktorler" : "Personal Factors"}</label>
+            <label className="text-sm font-medium">{tx("geneticRisk.personalFactors", lang)}</label>
             <div className="flex flex-wrap gap-2 mt-2">
               {persFactors.map((factor, i) => (
                 <button key={i} onClick={() => togglePersonal(persFactorsEN[i])}
@@ -208,7 +208,7 @@ export default function GeneticRiskPage() {
             {/* Overall Profile */}
             <div className="bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 rounded-2xl p-6">
               <h3 className="font-semibold text-violet-700 dark:text-violet-400 mb-2">
-                {lang === "tr" ? "Genel Risk Profili" : "Overall Risk Profile"}
+                {tx("geneticRisk.overallProfile", lang)}
               </h3>
               <p className="text-sm">{result.overallProfile}</p>
             </div>
@@ -218,10 +218,10 @@ export default function GeneticRiskPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Shield className="w-5 h-5 text-violet-500" />
-                  {lang === "tr" ? "Hastalık Risk Skorlari" : "Disease Risk Scores"}
+                  {tx("geneticRisk.diseaseScores", lang)}
                 </h2>
                 <p className="text-xs text-muted-foreground">
-                  {lang === "tr" ? "1.0 = ortalama nufus riski. 2.0 = 2 kat ortalama risk." : "1.0 = average population risk. 2.0 = 2x average risk."}
+                  {tx("geneticRisk.scoreExplanation", lang)}
                 </p>
                 <div className="grid gap-4">
                   {result.riskScores.map((risk, i) => (
@@ -244,18 +244,18 @@ export default function GeneticRiskPage() {
                         />
                       </div>
                       <div className="grid sm:grid-cols-2 gap-2 text-sm">
-                        <div><span className="text-muted-foreground">{lang === "tr" ? "Nufus riski:" : "Population risk:"}</span> {risk.populationRisk}</div>
-                        <div><span className="text-muted-foreground">{lang === "tr" ? "Sizin riskiniz:" : "Your risk:"}</span> {risk.yourEstimatedRisk}</div>
+                        <div><span className="text-muted-foreground">{tx("geneticRisk.populationRisk", lang)}</span> {risk.populationRisk}</div>
+                        <div><span className="text-muted-foreground">{tx("geneticRisk.yourRisk", lang)}</span> {risk.yourEstimatedRisk}</div>
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {lang === "tr" ? "Guvenilirlik:" : "Confidence:"} {risk.confidence} | {lang === "tr" ? "Faktorler:" : "Factors:"} {risk.keyFactors.join(", ")}
+                        {tx("geneticRisk.confidence", lang)} {risk.confidence} | {tx("geneticRisk.factors", lang)} {risk.keyFactors.join(", ")}
                       </div>
                       {/* Reduction Strategies */}
                       {risk.reductionStrategies?.length > 0 && (
                         <div className="bg-white/60 dark:bg-gray-900/40 rounded-lg p-3 space-y-1">
                           <div className="text-xs font-medium flex items-center gap-1">
                             <TrendingDown className="w-3 h-3" />
-                            {lang === "tr" ? "Risk Azaltma" : "Risk Reduction"}
+                            {tx("geneticRisk.riskReduction", lang)}
                           </div>
                           {risk.reductionStrategies.map((strat, si) => (
                             <div key={si} className="flex items-center justify-between text-xs">
@@ -276,7 +276,7 @@ export default function GeneticRiskPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-3">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "Oncelikli Aksiyonlar" : "High Priority Actions"}
+                  {tx("geneticRisk.priorityActions", lang)}
                 </h2>
                 {result.highPriorityActions.map((action, i) => (
                   <div key={i} className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
@@ -292,7 +292,7 @@ export default function GeneticRiskPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <TestTube className="w-5 h-5 text-purple-500" />
-                  {lang === "tr" ? "Onerilen Genetik Testler" : "Recommended Genetic Tests"}
+                  {tx("geneticRisk.recommendedTests", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.geneticTestsRecommended.map((test, i) => (

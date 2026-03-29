@@ -4454,6 +4454,111 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "foodPrep.title": { en: "Food Prep Guide", tr: "Besin Hazırlama Rehberi" },
   "foodPrep.subtitle": { en: "How cooking method affects nutrient value", tr: "Pişirme yöntemi besin değerini nasıl etkiler" },
   "foodPrep.searchPlaceholder": { en: "Search food...", tr: "Besin ara..." },
+
+  // Genetic Risk
+  "geneticRisk.familyHistory": { en: "Family Health History", tr: "Ailede Gorulen Hastalıklar" },
+  "geneticRisk.personalFactors": { en: "Personal Factors", tr: "Kişisel Faktorler" },
+  "geneticRisk.overallProfile": { en: "Overall Risk Profile", tr: "Genel Risk Profili" },
+  "geneticRisk.diseaseScores": { en: "Disease Risk Scores", tr: "Hastalık Risk Skorlari" },
+  "geneticRisk.scoreExplanation": { en: "1.0 = average population risk. 2.0 = 2x average risk.", tr: "1.0 = ortalama nufus riski. 2.0 = 2 kat ortalama risk." },
+  "geneticRisk.populationRisk": { en: "Population risk:", tr: "Nufus riski:" },
+  "geneticRisk.yourRisk": { en: "Your risk:", tr: "Sizin riskiniz:" },
+  "geneticRisk.confidence": { en: "Confidence:", tr: "Guvenilirlik:" },
+  "geneticRisk.factors": { en: "Factors:", tr: "Faktorler:" },
+  "geneticRisk.riskReduction": { en: "Risk Reduction", tr: "Risk Azaltma" },
+  "geneticRisk.priorityActions": { en: "High Priority Actions", tr: "Oncelikli Aksiyonlar" },
+  "geneticRisk.recommendedTests": { en: "Recommended Genetic Tests", tr: "Onerilen Genetik Testler" },
+
+  // Grief Support
+  "griefSupport.crisisLine": { en: "Crisis Line: 988 (US) | 182 (TR)", tr: "Kriz Hattı: 182 | Intihar Onleme: 182" },
+  "griefSupport.stageQuestion": { en: "Which stage do you feel you're in?", tr: "Kendinizi hangi asamada hissediyorsunuz?" },
+  "griefSupport.moodVeryLow": { en: "Very low", tr: "Çok kotu" },
+  "griefSupport.moodVeryGood": { en: "Very good", tr: "Çok iyi" },
+  "griefSupport.getSupport": { en: "Get Support", tr: "Destek Al" },
+  "griefSupport.copingStrategies": { en: "Coping Strategies", tr: "Basa Cikma Stratejileri" },
+  "griefSupport.selfCare": { en: "Self-Care Actions", tr: "Oz Bakim" },
+  "griefSupport.journalPrompts": { en: "Journal Prompts", tr: "Günlük Yazma Önerileri" },
+  "griefSupport.seekHelp": { en: "When to Seek Professional Help", tr: "Profesyonel Yardim Ne Zaman?" },
+
+  // Gut Health
+  "gutHealth.loginMessage": { en: "Sign in to analyze your gut health", tr: "Bağırsak sağlığı analizi için giriş yapın" },
+  "gutHealth.detectedPatterns": { en: "Detected Patterns", tr: "Tespit Edilen Örüntüler" },
+  "gutHealth.gutBrain": { en: "Gut-Brain Connection", tr: "Bağırsak-Beyin Bağlantısı" },
+  "gutHealth.newAnalysis": { en: "Start new analysis", tr: "Yeni analiz yap" },
+
+  // Hair & Nail Health
+  "hairNail.statusGood": { en: "Good", tr: "Iyi" },
+  "hairNail.statusCaution": { en: "Caution", tr: "Dikkat" },
+  "hairNail.statusNeedsEval": { en: "Needs Evaluation", tr: "Değerlendirme Gerekli" },
+  "hairNail.nutritionalDef": { en: "Possible Nutritional Deficiencies", tr: "Olasi Besin Eksiklikleri" },
+  "hairNail.recommendedLabs": { en: "Recommended Lab Tests", tr: "Onerilen Testler" },
+  "hairNail.lifestyleTips": { en: "Lifestyle Tips", tr: "Yasam Tarzı Ipuclari" },
+
+  // Hajj Health
+  "hajjHealth.title": { en: "Hajj & Umrah Health Guide", tr: "Hac & Umre Sağlık Rehberi" },
+  "hajjHealth.subtitle": { en: "Comprehensive health preparation for safe worship", tr: "Güvenli ibadet için kapsamlı sağlık hazırlığı" },
+  "hajjHealth.chronicWarning": { en: "If you have chronic conditions, consult your doctor before travel", tr: "Kronik hastalığınız varsa seyahat öncesi mutlaka doktorunuza danışın" },
+  "hajjHealth.packingList": { en: "Essential Packing List", tr: "Yanınızda Bulunması Gerekenler" },
+
+  // Health Analytics
+  "analytics2.recommendations": { en: "Recommendations", tr: "Oneriler" },
+  "analytics2.aiClickPrompt": { en: "Click the button to generate AI-powered insights from your health data.", tr: "Verileriniz uzerinde yapay zeka destekli icgoruler olusturmak için butona tiklayin." },
+  "analytics2.metricTimeline": { en: "Metric Timeline", tr: "Metrik Zaman Cizelgesi" },
+  "analytics2.anomalyTimeline": { en: "Anomaly Timeline", tr: "Anomali Zaman Cizelgesi" },
+  "analytics2.deviation": { en: "Deviation", tr: "Sapma" },
+  "analytics2.profileComparison": { en: "Profile Comparison", tr: "Profil Karsilastirmasi" },
+  "analytics2.deepSleepH": { en: "Deep Sleep (h)", tr: "Derin Uyku (h)" },
+  "analytics2.energy": { en: "Energy", tr: "Enerji" },
+  "analytics2.sleepEnergy": { en: "Sleep / Energy", tr: "Uyku / Enerji" },
+  "analytics2.heartRateBpm": { en: "Heart Rate (bpm)", tr: "Kalp Hizi (bpm)" },
+  "analytics2.anomalyLabel": { en: "Anomaly", tr: "Anomali" },
+  "analytics2.actual": { en: "Actual", tr: "Gercek" },
+  "analytics2.projected": { en: "Projected", tr: "Tahmin" },
+  "analytics2.actualData": { en: "Actual data", tr: "Gercek veri" },
+  "analytics2.projectionLabel": { en: "Projection", tr: "Projeksiyon" },
+  "analytics2.withOmega3": { en: "With Omega-3", tr: "Omega-3 ile" },
+  "analytics2.you": { en: "You", tr: "Siz" },
+  "analytics2.evidenceLabel": { en: "Evidence", tr: "Kanit" },
+  "analytics2.improving": { en: "Improving", tr: "Iyilesiyor" },
+  "analytics2.declining": { en: "Declining", tr: "Kotu" },
+  "analytics2.stable": { en: "Stable", tr: "Stabil" },
+  "analytics2.now": { en: "Now", tr: "Simdi" },
+  "analytics2.3months": { en: "3 Mo", tr: "3 Ay" },
+  "analytics2.6months": { en: "6 Mo", tr: "6 Ay" },
+  "analytics2.whatIfDesc": { en: "See how adding Omega-3 (2g/day EPA+DHA) to your current protocol could affect your CRP and energy levels.", tr: "Mevcut protokolunuze Omega-3 (2g/gun EPA+DHA) eklerseniz CRP ve enerji seviyelerinizin nasil degisecegini gorun." },
+
+  // Health Challenges
+  "challenges.rules": { en: "Rules", tr: "Kurallar" },
+  "challenges.start": { en: "Start Challenge", tr: "Challenge'i Başlat" },
+  "challenges.reset": { en: "Reset", tr: "Sifirla" },
+
+  // Health Diary
+  "diary.title": { en: "Health Diary", tr: "Sağlık Günlüğü" },
+  "diary.subtitle": { en: "Track your daily health journey", tr: "Günlük sağlık yolculugunuzu takip edin" },
+  "diary.loginPrompt": { en: "Sign in to start your health diary.", tr: "Sağlık günlüğünuze başlamak için giriş yapın." },
+  "diary.signIn": { en: "Sign In", tr: "Giriş Yap" },
+  "diary.cancel": { en: "Cancel", tr: "Iptal" },
+  "diary.newEntry": { en: "New Entry", tr: "Yeni Girdi" },
+  "diary.howFeeling": { en: "How are you feeling?", tr: "Nasil hissediyorsunuz?" },
+  "diary.placeholder": { en: "Write about your day... How did you feel? Any symptoms? What did you eat? How was your sleep?", tr: "Gununuz hakkinda yazın... Nasil hissettiniz? Belirti var mi? Ne yediniz? Uykunuz nasil?" },
+  "diary.saveEntry": { en: "Save Entry", tr: "Girdiyi Kaydet" },
+  "diary.searchEntries": { en: "Search entries...", tr: "Girdilerde ara..." },
+  "diary.aiInsights": { en: "AI Insights", tr: "AI Analiz" },
+  "diary.patternInsights": { en: "Pattern Insights", tr: "Oruntu Analizi" },
+  "diary.analyzingEntries": { en: "Analyzing your entries...", tr: "Girdileriniz analiz ediliyor..." },
+  "diary.topTopics": { en: "Top Topics", tr: "One Cikan Konular" },
+  "diary.clearFilter": { en: "Clear filter", tr: "Filtreyi temizle" },
+  "diary.noMatch": { en: "No entries match your search.", tr: "Aramanizla eslesen girdi yok." },
+  "diary.noEntries": { en: "No entries yet. Start writing!", tr: "Henuz girdi yok. Yazmaya başlayin!" },
+  "diary.showLess": { en: "Show less", tr: "Daha az" },
+  "diary.showMore": { en: "Show more", tr: "Daha fazla" },
+  "diary.keepWriting": { en: "Keep writing! At least 5 entries are needed for meaningful patterns.", tr: "Yazmaya devam et! Anlamli oruntular için en az 5 girdi gerekli." },
+  "diary.sleepCorrelation": { en: "Sleep mentions correlate with symptom entries - consider tracking sleep quality more closely.", tr: "Uyku ile belirtiler arasinda korelasyon var - uyku kalitesini daha yakindan takip etmeyi deneyin." },
+  "diary.lowMoodWarning": { en: "Over 30% of your entries have low mood scores. Consider discussing this with your doctor.", tr: "Girdilerinizin %30'undan fazlasi düşük ruh hali skoru iceriyor. Bunu doktorunuzla görüşmeyi dusunun." },
+
+  // Health Forum
+  "forum.description": { en: "You're not alone in your health journey. Our moderated, evidence-based community forum is coming soon.", tr: "Sağlık yolculugunuzda yalniz degilsiniz. Moderatorlu, kanita dayali topluluk forumumuz yakinda hizmetinizde." },
+  "forum.launchNotify": { en: "Keep using the app to be notified when we launch!", tr: "Lansman bildirimini almak için uygulamayi kullanmaya devam edin!" },
 }
 Object.assign(t, commonToolKeys)
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -93,15 +94,13 @@ export default function HajjHealthPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <span className="text-3xl">🕋</span>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{lang === "tr" ? "Hac & Umre Sağlık Rehberi" : "Hajj & Umrah Health Guide"}</h1>
-          <p className="text-muted-foreground mt-1">{lang === "tr" ? "Güvenli ibadet için kapsamlı sağlık hazırlığı" : "Comprehensive health preparation for safe worship"}</p>
+          <h1 className="text-2xl font-bold text-foreground">{tx("hajjHealth.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("hajjHealth.subtitle", lang)}</p>
         </div>
 
         <Card className="p-4 mb-6 border-primary/30 bg-primary/5">
           <p className="text-sm font-medium text-center">
-            {lang === "tr"
-              ? "⚕️ Kronik hastalığınız varsa seyahat öncesi mutlaka doktorunuza danışın"
-              : "⚕️ If you have chronic conditions, consult your doctor before travel"}
+            {"⚕️ "}{tx("hajjHealth.chronicWarning", lang)}
           </p>
         </Card>
 
@@ -144,7 +143,7 @@ export default function HajjHealthPage() {
         </div>
 
         <Card className="p-4 mt-6">
-          <h3 className="font-semibold mb-3">{lang === "tr" ? "Yanınızda Bulunması Gerekenler" : "Essential Packing List"}</h3>
+          <h3 className="font-semibold mb-3">{tx("hajjHealth.packingList", lang)}</h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
             {[
               { en: "All medications (2x supply)", tr: "Tüm ilaçlar (2 kat)" },

@@ -105,8 +105,6 @@ function setLocalEntries(entries: DiaryEntry[]) {
 export default function HealthDiaryPage() {
   const { isAuthenticated, session } = useAuth();
   const { lang } = useLang();
-  const t = (en: string, tr: string) => (lang === "tr" ? tr : en);
-
   const [entries, setEntries] = useState<DiaryEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -244,39 +242,31 @@ export default function HealthDiaryPage() {
 
       const insights: string[] = [];
       if (entries.length < 5) {
-        insights.push(t(
-          "Keep writing! At least 5 entries are needed for meaningful patterns.",
-          "Yazmaya devam et! Anlamli oruntular için en az 5 girdi gerekli."
-        ));
+        insights.push(tx("diary.keepWriting", lang));
       } else {
-        insights.push(t(
-          `Average mood over ${entries.length} entries: ${moodAvg}/5`,
-          `${entries.length} girdi uzerinden ortalama ruh hali: ${moodAvg}/5`
-        ));
+        insights.push(lang === "tr"
+          ? `${entries.length} girdi uzerinden ortalama ruh hali: ${moodAvg}/5`
+          : `Average mood over ${entries.length} entries: ${moodAvg}/5`
+        );
         if (topSymptoms.length > 0) {
-          insights.push(t(
-            `Most frequent symptoms: ${topSymptoms.map(([s, c]) => `${s} (${c}x)`).join(", ")}`,
-            `En sik belirtiler: ${topSymptoms.map(([s, c]) => `${s} (${c}x)`).join(", ")}`
-          ));
+          const symptomStr = topSymptoms.map(([s, c]) => `${s} (${c}x)`).join(", ");
+          insights.push(lang === "tr"
+            ? `En sik belirtiler: ${symptomStr}`
+            : `Most frequent symptoms: ${symptomStr}`
+          );
         }
         if (sleepEntries.length > 0 && symptomEntries.length > 0) {
-          insights.push(t(
-            "Sleep mentions correlate with symptom entries - consider tracking sleep quality more closely.",
-            "Uyku ile belirtiler arasinda korelasyon var - uyku kalitesini daha yakindan takip etmeyi deneyin."
-          ));
+          insights.push(tx("diary.sleepCorrelation", lang));
         }
         const lowMoodDays = entries.filter((e) => e.mood <= 2);
         if (lowMoodDays.length > entries.length * 0.3) {
-          insights.push(t(
-            "Over 30% of your entries have low mood scores. Consider discussing this with your doctor.",
-            "Girdilerinizin %30'undan fazlasi düşük ruh hali skoru iceriyor. Bunu doktorunuzla görüşmeyi dusunun."
-          ));
+          insights.push(tx("diary.lowMoodWarning", lang));
         }
       }
       setInsightText(insights.join("\n\n"));
       setInsightLoading(false);
     }, 800);
-  }, [entries, t]);
+  }, [entries, lang]);
 
   if (!isAuthenticated) {
     return (
@@ -284,14 +274,14 @@ export default function HealthDiaryPage() {
         <div className="text-center space-y-4 max-w-md">
           <BookOpen className="w-16 h-16 mx-auto text-emerald-500" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {t("Health Diary", "Sağlık Günlüğü")}
+            {tx("diary.title", lang)}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
-            {t("Sign in to start your health diary.", "Sağlık günlüğünuze başlamak için giriş yapın.")}
+            {tx("diary.loginPrompt", lang)}
           </p>
           <Button onClick={() => (window.location.href = "/")}>
             <LogIn className="w-4 h-4 mr-2" />
-            {t("Sign In", "Giriş Yap")}
+            {tx("diary.signIn", lang)}
           </Button>
         </div>
       </div>
@@ -309,10 +299,10 @@ export default function HealthDiaryPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                {t("Health Diary", "Sağlık Günlüğü")}
+                {tx("diary.title", lang)}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t("Track your daily health journey", "Günlük sağlık yolculugunuzu takip edin")}
+                {tx("diary.subtitle", lang)}
               </p>
             </div>
           </div>
@@ -321,7 +311,7 @@ export default function HealthDiaryPage() {
             className="bg-emerald-600 hover:bg-emerald-700 text-white"
           >
             {showForm ? <X className="w-4 h-4 mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
-            {showForm ? t("Cancel", "Iptal") : t("New Entry", "Yeni Girdi")}
+            {showForm ? tx("diary.cancel", lang) : tx("diary.newEntry", lang)}
           </Button>
         </div>
 
@@ -341,7 +331,7 @@ export default function HealthDiaryPage() {
             {/* Mood Selector */}
             <div>
               <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {t("How are you feeling?", "Nasil hissediyorsunuz?")}
+                {tx("diary.howFeeling", lang)}
               </p>
               <div className="flex gap-2">
                 {MOOD_EMOJIS.map((m) => (
@@ -368,10 +358,7 @@ export default function HealthDiaryPage() {
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder={t(
-                "Write about your day... How did you feel? Any symptoms? What did you eat? How was your sleep?",
-                "Gununuz hakkinda yazın... Nasil hissettiniz? Belirti var mi? Ne yediniz? Uykunuz nasil?"
-              )}
+              placeholder={tx("diary.placeholder", lang)}
               rows={6}
               className="w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
             />
@@ -401,7 +388,7 @@ export default function HealthDiaryPage() {
               ) : (
                 <BookOpen className="w-4 h-4 mr-2" />
               )}
-              {t("Save Entry", "Girdiyi Kaydet")}
+              {tx("diary.saveEntry", lang)}
             </Button>
           </div>
         )}
@@ -414,7 +401,7 @@ export default function HealthDiaryPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("Search entries...", "Girdilerde ara...")}
+              placeholder={tx("diary.searchEntries", lang)}
               className="w-full pl-9 pr-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400"
             />
           </div>
@@ -424,7 +411,7 @@ export default function HealthDiaryPage() {
             className="flex items-center gap-2"
           >
             <Sparkles className="w-4 h-4" />
-            {t("AI Insights", "AI Analiz")}
+            {tx("diary.aiInsights", lang)}
           </Button>
         </div>
 
@@ -435,7 +422,7 @@ export default function HealthDiaryPage() {
               <div className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                 <h3 className="font-semibold text-purple-900 dark:text-purple-200">
-                  {t("Pattern Insights", "Oruntu Analizi")}
+                  {tx("diary.patternInsights", lang)}
                 </h3>
               </div>
               <button onClick={() => setShowInsights(false)}>
@@ -445,7 +432,7 @@ export default function HealthDiaryPage() {
             {insightLoading ? (
               <div className="flex items-center gap-2 text-purple-600 dark:text-purple-300">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                {t("Analyzing your entries...", "Girdileriniz analiz ediliyor...")}
+                {tx("diary.analyzingEntries", lang)}
               </div>
             ) : (
               <div className="text-sm text-purple-800 dark:text-purple-200 whitespace-pre-line leading-relaxed">
@@ -460,7 +447,7 @@ export default function HealthDiaryPage() {
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-100 dark:border-gray-700 p-4">
             <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
               <Tag className="w-4 h-4" />
-              {t("Top Topics", "One Cikan Konular")}
+              {tx("diary.topTopics", lang)}
             </h3>
             <div className="flex flex-wrap gap-2">
               {tagCloud.map(([label, { count, category }]) => (
@@ -487,7 +474,7 @@ export default function HealthDiaryPage() {
                   onClick={() => setSelectedTagFilter(null)}
                   className="px-3 py-1 rounded-full text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 underline"
                 >
-                  {t("Clear filter", "Filtreyi temizle")}
+                  {tx("diary.clearFilter", lang)}
                 </button>
               )}
             </div>
@@ -497,7 +484,7 @@ export default function HealthDiaryPage() {
         {/* Entries List */}
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            {t(`Entries (${filteredEntries.length})`, `Girdiler (${filteredEntries.length})`)}
+            {lang === "tr" ? `Girdiler (${filteredEntries.length})` : `Entries (${filteredEntries.length})`}
           </h3>
           {loading ? (
             <div className="flex items-center justify-center py-12">
@@ -508,13 +495,13 @@ export default function HealthDiaryPage() {
               <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-40" />
               <p className="text-sm">
                 {searchQuery || selectedTagFilter
-                  ? t("No entries match your search.", "Aramanizla eslesen girdi yok.")
-                  : t("No entries yet. Start writing!", "Henuz girdi yok. Yazmaya başlayin!")}
+                  ? tx("diary.noMatch", lang)
+                  : tx("diary.noEntries", lang)}
               </p>
             </div>
           ) : (
             filteredEntries.map((entry) => (
-              <EntryCard key={entry.id} entry={entry} lang={lang} t={t} />
+              <EntryCard key={entry.id} entry={entry} lang={lang} />
             ))
           )}
         </div>
@@ -526,11 +513,9 @@ export default function HealthDiaryPage() {
 function EntryCard({
   entry,
   lang,
-  t,
 }: {
   entry: DiaryEntry;
-  lang: string;
-  t: (en: string, tr: string) => string;
+  lang: "en" | "tr";
 }) {
   const [expanded, setExpanded] = useState(false);
   const moodEmoji = MOOD_EMOJIS.find((m) => m.value === entry.mood)?.emoji || "\uD83D\uDE10";
@@ -562,12 +547,12 @@ function EntryCard({
               {expanded ? (
                 <>
                   <ChevronUp className="w-3 h-3" />
-                  {t("Show less", "Daha az")}
+                  {tx("diary.showLess", lang)}
                 </>
               ) : (
                 <>
                   <ChevronDown className="w-3 h-3" />
-                  {t("Show more", "Daha fazla")}
+                  {tx("diary.showMore", lang)}
                 </>
               )}
             </button>

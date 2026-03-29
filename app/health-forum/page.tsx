@@ -65,9 +65,7 @@ export default function HealthForumPage() {
             {tx("forum.comingSoon", lang)}
           </div>
           <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">
-            {lang === "tr"
-              ? "Sağlık yolculugunuzda yalniz degilsiniz. Moderatorlu, kanita dayali topluluk forumumuz yakinda hizmetinizde."
-              : "You're not alone in your health journey. Our moderated, evidence-based community forum is coming soon."}
+            {tx("forum.description", lang)}
           </p>
         </div>
 
@@ -93,9 +91,7 @@ export default function HealthForumPage() {
         <div className="mt-10 text-center">
           <div className="bg-green-50 dark:bg-green-900/10 rounded-2xl border border-green-200 dark:border-green-800 p-6">
             <p className="text-green-800 dark:text-green-400 font-medium">
-              {lang === "tr"
-                ? "Lansman bildirimini almak için uygulamayi kullanmaya devam edin!"
-                : "Keep using the app to be notified when we launch!"}
+              {tx("forum.launchNotify", lang)}
             </p>
           </div>
         </div>

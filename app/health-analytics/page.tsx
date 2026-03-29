@@ -337,7 +337,7 @@ export default function HealthAnalyticsPage() {
                 {aiData.recommendations && aiData.recommendations.length > 0 && (
                   <div className="mt-4">
                     <p className="text-sm font-medium mb-2 text-muted-foreground">
-                      {isTr ? "Oneriler" : "Recommendations"}
+                      {tx("analytics2.recommendations", lang)}
                     </p>
                     <div className="space-y-2">
                       {aiData.recommendations.map((rec, i) => (
@@ -357,9 +357,7 @@ export default function HealthAnalyticsPage() {
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">
-                {isTr
-                  ? "Verileriniz uzerinde yapay zeka destekli icgoruler olusturmak için butona tiklayin."
-                  : "Click the button to generate AI-powered insights from your health data."}
+                {tx("analytics2.aiClickPrompt", lang)}
               </p>
             )}
           </div>
@@ -468,7 +466,7 @@ function ImpactResponseTab({
       {/* Main Composed Chart */}
       <div className="rounded-2xl border border-border/40 bg-card/50 p-5">
         <h3 className="text-sm font-semibold mb-4 text-muted-foreground uppercase tracking-wider">
-          {isTr ? "Metrik Zaman Cizelgesi" : "Metric Timeline"}
+          {tx("analytics2.metricTimeline", lang)}
         </h3>
         <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -486,7 +484,7 @@ function ImpactResponseTab({
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" opacity={0.3} />
               <XAxis dataKey="dateLabel" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} interval="preserveStartEnd" />
               <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} domain={[0, 8]} label={{ value: "CRP / HbA1c", angle: -90, position: "insideLeft", style: { fontSize: 10, fill: "var(--muted-foreground)" } }} />
-              <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} domain={[0, 10]} label={{ value: isTr ? "Uyku / Enerji" : "Sleep / Energy", angle: 90, position: "insideRight", style: { fontSize: 10, fill: "var(--muted-foreground)" } }} />
+              <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} domain={[0, 10]} label={{ value: tx("analytics2.sleepEnergy", lang), angle: 90, position: "insideRight", style: { fontSize: 10, fill: "var(--muted-foreground)" } }} />
               <Tooltip content={<ChartTooltip />} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
 
@@ -509,8 +507,8 @@ function ImpactResponseTab({
 
               <Area yAxisId="left" type="monotone" dataKey="crp" name="CRP (mg/L)" stroke="#10b981" fill="url(#crpGrad)" strokeWidth={2} dot={false} />
               <Line yAxisId="left" type="monotone" dataKey="hba1c" name="HbA1c (%)" stroke="#f59e0b" strokeWidth={2} dot={false} />
-              <Area yAxisId="right" type="monotone" dataKey="deepSleep" name={isTr ? "Derin Uyku (h)" : "Deep Sleep (h)"} stroke="#6366f1" fill="url(#sleepGrad)" strokeWidth={2} dot={false} />
-              <Line yAxisId="right" type="monotone" dataKey="energyScore" name={isTr ? "Enerji" : "Energy"} stroke="#ec4899" strokeWidth={1.5} dot={false} strokeDasharray="4 2" />
+              <Area yAxisId="right" type="monotone" dataKey="deepSleep" name={tx("analytics2.deepSleepH", lang)} stroke="#6366f1" fill="url(#sleepGrad)" strokeWidth={2} dot={false} />
+              <Line yAxisId="right" type="monotone" dataKey="energyScore" name={tx("analytics2.energy", lang)} stroke="#ec4899" strokeWidth={1.5} dot={false} strokeDasharray="4 2" />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -535,7 +533,7 @@ function ImpactResponseTab({
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                     c.grade === "A" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"
                   }`}>
-                    {isTr ? "Kanit" : "Evidence"} {c.grade}
+                    {tx("analytics2.evidenceLabel", lang)} {c.grade}
                   </span>
                 </div>
                 <div className="flex items-baseline gap-2 mb-1">
@@ -635,7 +633,7 @@ function AnomalyTab({
       {chartData.length > 0 && (
         <div className="rounded-2xl border border-border/40 bg-card/50 p-5">
           <h3 className="text-sm font-semibold mb-4 text-muted-foreground uppercase tracking-wider">
-            {isTr ? "Anomali Zaman Cizelgesi" : "Anomaly Timeline"}
+            {tx("analytics2.anomalyTimeline", lang)}
           </h3>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -645,12 +643,12 @@ function AnomalyTab({
                 <YAxis tick={{ fontSize: 10, fill: "var(--muted-foreground)" }} />
                 <Tooltip content={<ChartTooltip />} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Line type="monotone" dataKey="heartRate" name={isTr ? "Kalp Hizi (bpm)" : "Heart Rate (bpm)"} stroke="#6366f1" strokeWidth={1.5} dot={false} />
+                <Line type="monotone" dataKey="heartRate" name={tx("analytics2.heartRateBpm", lang)} stroke="#6366f1" strokeWidth={1.5} dot={false} />
                 <Line type="monotone" dataKey="crp" name="CRP (mg/L)" stroke="#10b981" strokeWidth={1.5} dot={false} />
                 <Line
                   type="monotone"
                   dataKey="anomalyHR"
-                  name={isTr ? "Anomali" : "Anomaly"}
+                  name={tx("analytics2.anomalyLabel", lang)}
                   stroke="transparent"
                   dot={{ r: 6, fill: "#ef4444", stroke: "#ef4444", strokeWidth: 2 }}
                   activeDot={{ r: 8, fill: "#ef4444" }}
@@ -702,7 +700,7 @@ function AnomalyTab({
                 <span className="font-mono font-semibold ml-1 text-foreground">{a.value}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">{isTr ? "Sapma" : "Deviation"}:</span>
+                <span className="text-muted-foreground">{tx("analytics2.deviation", lang)}:</span>
                 <span className="font-mono font-semibold ml-1">{a.deviation.toFixed(1)} SD</span>
               </div>
             </div>
@@ -776,7 +774,7 @@ function BenchmarkTab({
         {/* Radar */}
         <div className="rounded-2xl border border-border/40 bg-card/50 p-5">
           <h3 className="text-sm font-semibold mb-4 text-muted-foreground uppercase tracking-wider">
-            {isTr ? "Profil Karsilastirmasi" : "Profile Comparison"}
+            {tx("analytics2.profileComparison", lang)}
           </h3>
           <div className="h-[320px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -784,7 +782,7 @@ function BenchmarkTab({
                 <PolarGrid stroke="var(--border)" opacity={0.4} />
                 <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11, fill: "var(--muted-foreground)" }} />
                 <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9, fill: "var(--muted-foreground)" }} />
-                <Radar name={isTr ? "Siz" : "You"} dataKey="user" stroke="#10b981" fill="#10b981" fillOpacity={0.2} strokeWidth={2} />
+                <Radar name={tx("analytics2.you", lang)} dataKey="user" stroke="#10b981" fill="#10b981" fillOpacity={0.2} strokeWidth={2} />
                 <Radar name={tx("analytics2.peerAverage", lang)} dataKey="peerAvg" stroke="#6b7280" fill="#6b7280" fillOpacity={0.05} strokeWidth={1} strokeDasharray="4 4" />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
               </RadarChart>
@@ -974,10 +972,10 @@ function PredictionTab({
               <Area type="monotone" dataKey="lowerBound" stroke="transparent" fill="#6366f1" fillOpacity={0.08} />
 
               {/* Actual line */}
-              <Area type="monotone" dataKey="actual" name={isTr ? "Gercek" : "Actual"} stroke="#10b981" fill="url(#actualGrad)" strokeWidth={2} dot={false} />
+              <Area type="monotone" dataKey="actual" name={tx("analytics2.actual", lang)} stroke="#10b981" fill="url(#actualGrad)" strokeWidth={2} dot={false} />
 
               {/* Projected line */}
-              <Line type="monotone" dataKey="projected" name={isTr ? "Tahmin" : "Projected"} stroke="#6366f1" strokeWidth={2} strokeDasharray="6 3" dot={false} />
+              <Line type="monotone" dataKey="projected" name={tx("analytics2.projected", lang)} stroke="#6366f1" strokeWidth={2} strokeDasharray="6 3" dot={false} />
 
               {/* Omega-3 what-if */}
               {omega3Enabled && (
@@ -988,14 +986,14 @@ function PredictionTab({
         </div>
         <div className="flex items-center gap-4 mt-3 text-[10px] text-muted-foreground">
           <span className="flex items-center gap-1">
-            <span className="h-0.5 w-4 bg-emerald-500 rounded" /> {isTr ? "Gercek veri" : "Actual data"}
+            <span className="h-0.5 w-4 bg-emerald-500 rounded" /> {tx("analytics2.actualData", lang)}
           </span>
           <span className="flex items-center gap-1">
-            <span className="h-0.5 w-4 bg-indigo-500 rounded" style={{ backgroundImage: "repeating-linear-gradient(90deg, #6366f1 0, #6366f1 4px, transparent 4px, transparent 7px)" }} /> {isTr ? "Projeksiyon" : "Projection"}
+            <span className="h-0.5 w-4 bg-indigo-500 rounded" style={{ backgroundImage: "repeating-linear-gradient(90deg, #6366f1 0, #6366f1 4px, transparent 4px, transparent 7px)" }} /> {tx("analytics2.projectionLabel", lang)}
           </span>
           {omega3Enabled && (
             <span className="flex items-center gap-1">
-              <span className="h-0.5 w-4 bg-cyan-500 rounded" /> {isTr ? "Omega-3 ile" : "With Omega-3"}
+              <span className="h-0.5 w-4 bg-cyan-500 rounded" /> {tx("analytics2.withOmega3", lang)}
             </span>
           )}
         </div>
@@ -1015,24 +1013,24 @@ function PredictionTab({
                 <div className="flex items-center gap-1.5">
                   <TrendIcon className={`h-4 w-4 ${trendColor}`} />
                   <span className={`text-xs font-bold ${trendColor}`}>
-                    {p.trend === "improving" ? (isTr ? "Iyilesiyor" : "Improving") : p.trend === "declining" ? (isTr ? "Kotu" : "Declining") : (isTr ? "Stabil" : "Stable")}
+                    {p.trend === "improving" ? tx("analytics2.improving", lang) : p.trend === "declining" ? tx("analytics2.declining", lang) : tx("analytics2.stable", lang)}
                   </span>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 mb-3">
                 <div className="text-center">
-                  <p className="text-[10px] text-muted-foreground mb-0.5">{isTr ? "Simdi" : "Now"}</p>
+                  <p className="text-[10px] text-muted-foreground mb-0.5">{tx("analytics2.now", lang)}</p>
                   <p className="text-lg font-bold font-mono">{p.currentValue}</p>
                   <p className="text-[9px] text-muted-foreground">{p.unit}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-[10px] text-muted-foreground mb-0.5">{isTr ? "3 Ay" : "3 Mo"}</p>
+                  <p className="text-[10px] text-muted-foreground mb-0.5">{tx("analytics2.3months", lang)}</p>
                   <p className="text-lg font-bold font-mono text-indigo-400">{p.predictedValue3m}</p>
                   <p className="text-[9px] text-muted-foreground">{p.unit}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-[10px] text-muted-foreground mb-0.5">{isTr ? "6 Ay" : "6 Mo"}</p>
+                  <p className="text-[10px] text-muted-foreground mb-0.5">{tx("analytics2.6months", lang)}</p>
                   <p className="text-lg font-bold font-mono text-purple-400">{p.predictedValue6m}</p>
                   <p className="text-[9px] text-muted-foreground">{p.unit}</p>
                 </div>
@@ -1056,9 +1054,7 @@ function PredictionTab({
           <h3 className="text-sm font-semibold">{tx("analytics2.whatIf", lang)}</h3>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
-          {isTr
-            ? "Mevcut protokolunuze Omega-3 (2g/gun EPA+DHA) eklerseniz CRP ve enerji seviyelerinizin nasil degisecegini gorun."
-            : "See how adding Omega-3 (2g/day EPA+DHA) to your current protocol could affect your CRP and energy levels."}
+          {tx("analytics2.whatIfDesc", lang)}
         </p>
         <button
           onClick={() => setOmega3Enabled(!omega3Enabled)}

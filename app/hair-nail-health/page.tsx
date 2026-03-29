@@ -171,9 +171,9 @@ export default function HairNailHealthPage() {
                 "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
               }`}>
                 {analysis.alertLevel === "green" ? <CheckCircle2 className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
-                {analysis.alertLevel === "green" ? (lang === "tr" ? "Iyi" : "Good") :
-                 analysis.alertLevel === "yellow" ? (lang === "tr" ? "Dikkat" : "Caution") :
-                 (lang === "tr" ? "Değerlendirme Gerekli" : "Needs Evaluation")}
+                {analysis.alertLevel === "green" ? tx("hairNail.statusGood", lang) :
+                 analysis.alertLevel === "yellow" ? tx("hairNail.statusCaution", lang) :
+                 tx("hairNail.statusNeedsEval", lang)}
               </div>
               <p className="text-sm">{analysis.overallAssessment}</p>
             </div>
@@ -210,7 +210,7 @@ export default function HairNailHealthPage() {
             {/* Nutritional Deficiencies */}
             {analysis.nutritionalDeficiencies?.length > 0 && (
               <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Olasi Besin Eksiklikleri" : "Possible Nutritional Deficiencies"}</h2>
+                <h2 className="text-lg font-semibold">{tx("hairNail.nutritionalDef", lang)}</h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {analysis.nutritionalDeficiencies.map((def, i) => (
                     <div key={i} className="bg-muted/50 rounded-xl p-4 space-y-1">
@@ -235,7 +235,7 @@ export default function HairNailHealthPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   <TestTube className="w-5 h-5 text-blue-500" />
-                  {lang === "tr" ? "Onerilen Testler" : "Recommended Lab Tests"}
+                  {tx("hairNail.recommendedLabs", lang)}
                 </h2>
                 <div className="grid gap-2">
                   {analysis.recommendedLabs.map((lab, i) => (
@@ -275,7 +275,7 @@ export default function HairNailHealthPage() {
             {/* Lifestyle */}
             {analysis.lifestyleTips?.length > 0 && (
               <div className="bg-card border rounded-2xl p-6 space-y-3">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Yasam Tarzı Ipuclari" : "Lifestyle Tips"}</h2>
+                <h2 className="text-lg font-semibold">{tx("hairNail.lifestyleTips", lang)}</h2>
                 {analysis.lifestyleTips.map((tip, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm">
                     <Sparkles className="w-4 h-4 text-pink-500 flex-shrink-0" /> {tip}

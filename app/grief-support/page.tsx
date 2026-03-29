@@ -104,13 +104,13 @@ export default function GriefSupportPage() {
           className="flex items-center justify-center gap-2 bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 rounded-xl p-3 mb-6 text-sm hover:bg-purple-200 dark:hover:bg-purple-900/30 transition-colors"
         >
           <Phone className="w-4 h-4" />
-          {lang === "tr" ? "Kriz Hattı: 182 | Intihar Onleme: 182" : "Crisis Line: 988 (US) | 182 (TR)"}
+          {tx("griefSupport.crisisLine", lang)}
         </a>
 
         {/* Stage Selection */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-purple-100 dark:border-gray-700 p-6 mb-6">
           <h3 className="font-medium text-gray-900 dark:text-white mb-3">
-            {lang === "tr" ? "Kendinizi hangi asamada hissediyorsunuz?" : "Which stage do you feel you're in?"}
+            {tx("griefSupport.stageQuestion", lang)}
           </h3>
           <div className="flex flex-wrap gap-2 mb-6">
             {STAGES.map((s) => (
@@ -142,8 +142,8 @@ export default function GriefSupportPage() {
               className="w-full accent-purple-500"
             />
             <div className="flex justify-between text-xs text-gray-400 mt-1">
-              <span>{lang === "tr" ? "Çok kotu" : "Very low"}</span>
-              <span>{lang === "tr" ? "Çok iyi" : "Very good"}</span>
+              <span>{tx("griefSupport.moodVeryLow", lang)}</span>
+              <span>{tx("griefSupport.moodVeryGood", lang)}</span>
             </div>
           </div>
 
@@ -153,7 +153,7 @@ export default function GriefSupportPage() {
             className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl"
           >
             {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Heart className="w-5 h-5 mr-2" />}
-            {lang === "tr" ? "Destek Al" : "Get Support"}
+            {tx("griefSupport.getSupport", lang)}
           </Button>
         </div>
 
@@ -184,7 +184,7 @@ export default function GriefSupportPage() {
             {result.copingStrategies?.length > 0 && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-purple-100 dark:border-gray-700 p-6">
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  {lang === "tr" ? "Basa Cikma Stratejileri" : "Coping Strategies"}
+                  {tx("griefSupport.copingStrategies", lang)}
                 </h3>
                 <ul className="space-y-2">
                   {result.copingStrategies.map((s, i) => (
@@ -200,7 +200,7 @@ export default function GriefSupportPage() {
             {result.selfCareActions?.length > 0 && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-purple-100 dark:border-gray-700 p-6">
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  {lang === "tr" ? "Oz Bakim" : "Self-Care Actions"}
+                  {tx("griefSupport.selfCare", lang)}
                 </h3>
                 <div className="flex flex-wrap gap-2">
                   {result.selfCareActions.map((a, i) => (
@@ -218,7 +218,7 @@ export default function GriefSupportPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <BookOpen className="w-5 h-5 text-purple-500" />
                   <h3 className="font-semibold text-gray-900 dark:text-white">
-                    {lang === "tr" ? "Günlük Yazma Önerileri" : "Journal Prompts"}
+                    {tx("griefSupport.journalPrompts", lang)}
                   </h3>
                 </div>
                 {result.journalPrompts.map((p, i) => (
@@ -231,7 +231,7 @@ export default function GriefSupportPage() {
             {result.whenToSeekHelp?.length > 0 && (
               <div className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl border border-amber-200 dark:border-amber-800 p-6">
                 <h3 className="font-semibold text-amber-800 dark:text-amber-400 mb-3">
-                  {lang === "tr" ? "Profesyonel Yardim Ne Zaman?" : "When to Seek Professional Help"}
+                  {tx("griefSupport.seekHelp", lang)}
                 </h3>
                 <ul className="space-y-2">
                   {result.whenToSeekHelp.map((w, i) => (
