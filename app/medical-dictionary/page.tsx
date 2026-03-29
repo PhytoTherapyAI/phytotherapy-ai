@@ -145,7 +145,7 @@ export default function MedicalDictionaryPage() {
               <div className="flex items-center gap-2 mb-3">
                 <Brain className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <h2 className="font-semibold text-gray-900 dark:text-white">
-                  {lang === "tr" ? "Basit Anlatım" : "In Simple Terms"}
+                  {tx("meddict.simpleTerms", lang)}
                 </h2>
               </div>
               <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">{result.plainLanguage}</p>
@@ -156,7 +156,7 @@ export default function MedicalDictionaryPage() {
               <div className="flex items-center gap-2 mb-3">
                 <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <h2 className="font-semibold text-gray-900 dark:text-white">
-                  {lang === "tr" ? "Tıbbi Tanım" : "Medical Definition"}
+                  {tx("meddict.medicalDef", lang)}
                 </h2>
               </div>
               <p className="text-gray-700 dark:text-gray-300">{result.medicalDefinition}</p>
@@ -174,7 +174,7 @@ export default function MedicalDictionaryPage() {
             {result.commonUsage && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-blue-100 dark:border-gray-700 p-6">
                 <h2 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  {lang === "tr" ? "Doktorlar Nasıl Kullanır?" : "How Doctors Use This Term"}
+                  {tx("meddict.howDoctorsUse", lang)}
                 </h2>
                 <p className="text-gray-700 dark:text-gray-300">{result.commonUsage}</p>
               </div>
@@ -184,7 +184,7 @@ export default function MedicalDictionaryPage() {
             {result.whenToWorry && (
               <div className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl border border-amber-200 dark:border-amber-800 p-6">
                 <h2 className="font-semibold text-amber-800 dark:text-amber-400 mb-2">
-                  {lang === "tr" ? "Ne Zaman Endişelenmeli?" : "When to Be Concerned"}
+                  {tx("meddict.whenConcerned", lang)}
                 </h2>
                 <p className="text-amber-700 dark:text-amber-300">{result.whenToWorry}</p>
               </div>
@@ -196,7 +196,7 @@ export default function MedicalDictionaryPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <Link2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   <h2 className="font-semibold text-gray-900 dark:text-white">
-                    {lang === "tr" ? "İlgili Terimler" : "Related Terms"}
+                    {tx("meddict.relatedTerms", lang)}
                   </h2>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -220,7 +220,7 @@ export default function MedicalDictionaryPage() {
         {!result && !isLoading && !error && (
           <div className="text-center py-12 text-gray-400 dark:text-gray-500">
             <Search className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>{lang === "tr" ? "Bir tıbbi terim arayın" : "Search for a medical term"}</p>
+            <p>{tx("meddict.searchPrompt", lang)}</p>
           </div>
         )}
       </div>

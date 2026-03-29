@@ -389,7 +389,7 @@ export default function MentalWellnessPage() {
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder={lang === "tr" ? "Bugun nasil hissediyorsun? (isteğe bağlı)" : "How are you feeling today? (optional)"}
+            placeholder={tx("mw.notesPlaceholder", lang)}
             maxLength={1000}
             rows={3}
             className="w-full rounded-lg border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 dark:border-gray-700"
@@ -408,7 +408,7 @@ export default function MentalWellnessPage() {
             ) : null}
             {saving
               ? tx("common.saving", lang)
-              : (lang === "tr" ? "Kaydet" : "Save Check-in")}
+              : tx("mw.saveCheckin", lang)}
           </Button>
           {saved && (
             <span className="flex items-center gap-1 text-sm text-green-600">
@@ -543,7 +543,7 @@ export default function MentalWellnessPage() {
             {analysis.patterns.length > 0 && (
               <div>
                 <h3 className="mb-2 text-sm font-semibold text-teal-600 dark:text-teal-400">
-                  {lang === "tr" ? "Tespit Edilen Oruntler" : "Detected Patterns"}
+                  {tx("mw.detectedPatterns", lang)}
                 </h3>
                 <ul className="space-y-1">
                   {analysis.patterns.map((p, i) => (

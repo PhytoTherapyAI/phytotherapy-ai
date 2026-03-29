@@ -341,12 +341,10 @@ export default function MedicationHubPage() {
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <Pill className="w-16 h-16 text-teal-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">
-            {lang === "tr" ? "İlaç Yönetim Merkezi" : "Medication Hub"}
+            {tx("medHub.title", lang)}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {lang === "tr"
-              ? "İlaçlarınızın zamanlama, etkileşim ve hatırlatıcılarını tek yerden yönetin."
-              : "Manage your medication timing, interactions and reminders in one place."}
+            {tx("medHub.description", lang)}
           </p>
           <Link href="/auth/login">
             <Button className="bg-teal-600 hover:bg-teal-700 text-white">
@@ -367,12 +365,10 @@ export default function MedicationHubPage() {
             <Pill className="w-8 h-8 text-teal-600 dark:text-teal-400" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {lang === "tr" ? "İlaç Yönetim Merkezi" : "Medication Hub"}
+            {tx("medHub.title", lang)}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-            {lang === "tr"
-              ? "Zamanlama, etkileşim matrisi ve hatırlatıcılar"
-              : "Scheduling, interaction matrix and reminders"}
+            {tx("medHub.subtitle", lang)}
           </p>
         </div>
 
@@ -406,16 +402,14 @@ export default function MedicationHubPage() {
           <div className="text-center py-16">
             <Pill className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
             <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              {lang === "tr" ? "Henüz ilaç eklenmemiş" : "No medications added yet"}
+              {tx("medHub.noMeds", lang)}
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">
-              {lang === "tr"
-                ? "İlaçlarınızı profilinize ekleyerek başlayın."
-                : "Add your medications to your profile to get started."}
+              {tx("medHub.noMedsDesc", lang)}
             </p>
             <Link href="/profile">
               <Button className="bg-teal-600 hover:bg-teal-700 text-white">
-                {lang === "tr" ? "Profilde İlaç Ekle" : "Add Medications in Profile"}
+                {tx("medHub.addInProfile", lang)}
               </Button>
             </Link>
           </div>
@@ -433,7 +427,7 @@ export default function MedicationHubPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium text-teal-600 dark:text-teal-400 uppercase tracking-wide mb-1">
-                          {lang === "tr" ? "Sıradaki" : "Next Up"}
+                          {tx("medHub.nextUp", lang)}
                         </p>
                         <p className="text-base font-semibold text-gray-900 dark:text-white">
                           {nextSlot.medications.map(m => m.name).join(", ")}
@@ -468,7 +462,7 @@ export default function MedicationHubPage() {
                 <div className="mb-8">
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <Clock className="w-5 h-5 text-teal-500" />
-                    {lang === "tr" ? "Günlük Programınız" : "Your Daily Schedule"}
+                    {tx("medHub.dailySchedule", lang)}
                   </h2>
 
                   <div className="relative space-y-1">
@@ -542,7 +536,7 @@ export default function MedicationHubPage() {
                                     {med.rule?.enhancedBy === "vitamin_c" && (
                                       <p className="text-xs text-green-700 dark:text-green-400 ml-6 flex items-center gap-1">
                                         <CheckCircle2 className="w-3 h-3" />
-                                        {lang === "tr" ? "C vitamini emilimi artırır" : "Vitamin C enhances absorption"}
+                                        {tx("medHub.vitCAbsorption", lang)}
                                       </p>
                                     )}
                                   </div>
@@ -559,7 +553,7 @@ export default function MedicationHubPage() {
                 {/* Color Legend */}
                 <div className="mb-8 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                   <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                    {lang === "tr" ? "Renk Kodları" : "Color Legend"}
+                    {tx("medHub.colorLegend", lang)}
                   </h3>
                   <div className="grid grid-cols-2 gap-2">
                     {(["before", "with", "after", "independent"] as const).map(rel => (
@@ -594,7 +588,7 @@ export default function MedicationHubPage() {
                 <div className="mb-8">
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <ShieldCheck className="w-5 h-5 text-teal-500" />
-                    {lang === "tr" ? "İlaç Zamanlama Kılavuzu" : "Medication Timing Guide"}
+                    {tx("medHub.timingGuide", lang)}
                   </h2>
                   <div className="space-y-3">
                     {medications.map((med) => {
@@ -649,9 +643,7 @@ export default function MedicationHubPage() {
                             </div>
                           ) : (
                             <p className="ml-8 text-sm text-gray-400 dark:text-gray-500 italic">
-                              {lang === "tr"
-                                ? "Bu ilaç için özel zamanlama kuralı bulunamadı. Doktorunuzun önerilerine uyun."
-                                : "No specific timing rule found. Follow your doctor's instructions."}
+                              {tx("medHub.noTimingRule", lang)}
                             </p>
                           )}
                         </div>
@@ -664,7 +656,7 @@ export default function MedicationHubPage() {
                 <div className="mb-8">
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <Timer className="w-5 h-5 text-teal-500" />
-                    {lang === "tr" ? "Tam Zamanlama Veritabanı" : "Full Timing Database"}
+                    {tx("medHub.timingDatabase", lang)}
                   </h2>
                   <div className="space-y-2">
                     {Object.entries(DRUG_TIMING_RULES).map(([key, rule]) => {
@@ -733,12 +725,10 @@ export default function MedicationHubPage() {
                       <BellRing className="w-5 h-5 text-teal-500" />
                       <div className="text-left">
                         <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {lang === "tr" ? "Bildirim Ayarları" : "Notification Settings"}
+                          {tx("medHub.notifSettings", lang)}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {lang === "tr"
-                            ? "Her ilaç için hatırlatma saati belirleyin"
-                            : "Set reminder times for each medication"}
+                          {tx("medHub.notifSettingsDesc", lang)}
                         </p>
                       </div>
                     </div>
@@ -767,9 +757,7 @@ export default function MedicationHubPage() {
                         </div>
                       ))}
                       <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                        {lang === "tr"
-                          ? "PWA push bildirimleri yakın bir sürümde etkinleştirilecektir."
-                          : "PWA push notifications will be enabled in an upcoming release."}
+                        {tx("medHub.pushNotifNote", lang)}
                       </p>
                     </div>
                   )}
@@ -779,7 +767,7 @@ export default function MedicationHubPage() {
                 <div className="mb-8 space-y-3">
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <Clock className="w-5 h-5 text-teal-500" />
-                    {lang === "tr" ? "Hatırlatma Programı" : "Reminder Schedule"}
+                    {tx("medHub.reminderSchedule", lang)}
                   </h2>
                   {slots.map((slot, idx) => (
                     <div key={idx} className="flex items-center gap-4 p-3 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
@@ -806,9 +794,7 @@ export default function MedicationHubPage() {
             {/* Disclaimer (all tabs) */}
             <div className="p-4 rounded-xl bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-center">
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {lang === "tr"
-                  ? "Bu program genel bilgi amaçlıdır. İlaç zamanlaması için her zaman doktorunuzun talimatlarını takip edin."
-                  : "This schedule is for informational purposes. Always follow your doctor's instructions for medication timing."}
+                {tx("medHub.disclaimer", lang)}
               </p>
             </div>
           </>

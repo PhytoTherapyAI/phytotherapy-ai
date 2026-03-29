@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -139,7 +140,7 @@ export default function MedicationSchedulePage() {
             <Pill className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
             <p className="text-muted-foreground">{t("no_meds")}</p>
             <Button className="mt-4" onClick={() => window.location.href = "/profile"}>
-              {lang === "tr" ? "Profil'e Git" : "Go to Profile"}
+              {tx("medSchedule.goToProfile", lang)}
             </Button>
           </Card>
         ) : (
@@ -147,7 +148,7 @@ export default function MedicationSchedulePage() {
             {!generated ? (
               <div className="text-center">
                 <Card className="p-6 mb-4">
-                  <p className="text-sm text-muted-foreground mb-2">{lang === "tr" ? "Profildeki ilaçların" : "Your medications"}:</p>
+                  <p className="text-sm text-muted-foreground mb-2">{tx("medSchedule.yourMeds", lang)}:</p>
                   <div className="flex flex-wrap gap-2 justify-center">
                     {userMeds.map(m => <Badge key={m} variant="outline"><Pill className="w-3 h-3 mr-1" />{m}</Badge>)}
                   </div>

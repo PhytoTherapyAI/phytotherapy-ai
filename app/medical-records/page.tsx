@@ -65,9 +65,7 @@ export default function MedicalRecordsPage() {
             {tx("records.comingSoon", lang)}
           </div>
           <p className="text-gray-600 dark:text-gray-400 max-w-lg mx-auto">
-            {lang === "tr"
-              ? "Tum tibbi belgeleriniz tek bir yerde, güvenli ve düzenli. QR kodla doktorunuzla aninda paylasin."
-              : "All your medical documents in one place, secure and organized. Share instantly with your doctor via QR code."}
+            {tx("records.description", lang)}
           </p>
         </div>
 
@@ -93,9 +91,7 @@ export default function MedicalRecordsPage() {
         <div className="mt-10 text-center">
           <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
             <p className="text-slate-700 dark:text-slate-400 font-medium">
-              {lang === "tr"
-                ? "Belge organizatoru yakinda geliyor. Su an kan tahlillerinizi ve radyoloji raporlarinizi Tibbi Analiz sayfamizdan yukleyebilirsiniz."
-                : "Document organizer coming soon. You can currently upload blood tests and radiology reports from our Medical Analysis page."}
+              {tx("records.ctaMessage", lang)}
             </p>
           </div>
         </div>

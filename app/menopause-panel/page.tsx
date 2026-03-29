@@ -141,7 +141,7 @@ export default function MenopausePanelPage() {
               <p className="mb-2 text-sm font-medium">{lang === "tr" ? symptom.tr : symptom.en}</p>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs text-muted-foreground">{lang === "tr" ? "Siklik (0-10)" : "Frequency (0-10)"}</label>
+                  <label className="text-xs text-muted-foreground">{tx("menopause.frequency", lang)}</label>
                   <input
                     type="range"
                     min={0}
@@ -153,7 +153,7 @@ export default function MenopausePanelPage() {
                   <span className="text-xs font-bold">{symptoms[symptom.key]?.frequency || 0}</span>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground">{lang === "tr" ? "Siddet (0-3)" : "Severity (0-3)"}</label>
+                  <label className="text-xs text-muted-foreground">{tx("menopause.severity", lang)}</label>
                   <input
                     type="range"
                     min={0}
@@ -189,7 +189,7 @@ export default function MenopausePanelPage() {
             <p className="mt-2 text-sm text-muted-foreground">{result.mrsInterpretation}</p>
             {result.hasHRT && (
               <span className="mt-2 inline-block rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-900 dark:text-purple-300">
-                {lang === "tr" ? "HRT Kullaniliyor" : "On HRT"}
+                {tx("menopause.onHRT", lang)}
               </span>
             )}
           </div>
@@ -198,7 +198,7 @@ export default function MenopausePanelPage() {
           {result.symptomAnalysis?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {lang === "tr" ? "Semptom Analizi" : "Symptom Analysis"}
+                {tx("menopause.symptomAnalysis", lang)}
               </h3>
               {result.symptomAnalysis.map((sa, i) => (
                 <div key={i} className="mb-3 rounded-lg border p-3 last:mb-0">
@@ -220,13 +220,13 @@ export default function MenopausePanelPage() {
           {result.supplementPlan?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {lang === "tr" ? "Takviye Plani" : "Supplement Plan"}
+                {tx("menopause.supplementPlan", lang)}
               </h3>
               {result.supplementPlan.map((supp, i) => (
                 <div key={i} className="mb-3 rounded-lg border p-3 last:mb-0">
                   <p className="font-semibold">{supp.name} — {supp.dose}</p>
                   <p className="text-xs text-muted-foreground">{supp.evidence}</p>
-                  <p className="text-xs text-purple-600 dark:text-purple-400">{lang === "tr" ? "Sure" : "Duration"}: {supp.duration}</p>
+                  <p className="text-xs text-purple-600 dark:text-purple-400">{tx("menopause.duration", lang)}: {supp.duration}</p>
                   {supp.caution && <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">{supp.caution}</p>}
                 </div>
               ))}
@@ -241,12 +241,12 @@ export default function MenopausePanelPage() {
                 {tx("menopause.boneHealth", lang)}
               </h3>
               <div className="space-y-2 text-sm">
-                <p><strong>{lang === "tr" ? "Kalsiyum" : "Calcium"}:</strong> {result.boneHealthPlan.calciumNeeded}</p>
-                <p><strong>{lang === "tr" ? "D Vitamini" : "Vitamin D"}:</strong> {result.boneHealthPlan.vitaminD}</p>
+                <p><strong>{tx("menopause.calcium", lang)}:</strong> {result.boneHealthPlan.calciumNeeded}</p>
+                <p><strong>{tx("menopause.vitaminD", lang)}:</strong> {result.boneHealthPlan.vitaminD}</p>
                 <p><strong>DEXA:</strong> {result.boneHealthPlan.dexaRecommendation}</p>
                 {result.boneHealthPlan.exercise?.length > 0 && (
                   <div>
-                    <strong>{lang === "tr" ? "Egzersiz" : "Exercise"}:</strong>
+                    <strong>{tx("menopause.exercise", lang)}:</strong>
                     <ul className="mt-1 space-y-1 pl-4">
                       {result.boneHealthPlan.exercise.map((ex, i) => (
                         <li key={i} className="text-purple-800 dark:text-purple-200">{ex}</li>
@@ -269,7 +269,7 @@ export default function MenopausePanelPage() {
           {result.lifestyleRecommendations?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {lang === "tr" ? "Yasam Tarzi Önerileri" : "Lifestyle Recommendations"}
+                {tx("menopause.lifestyle", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.lifestyleRecommendations.map((rec, i) => (

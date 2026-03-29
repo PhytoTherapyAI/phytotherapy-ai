@@ -206,7 +206,7 @@ export default function MensHealthPage() {
               <p className="text-sm text-muted-foreground">{tx("mens.adam", lang)}</p>
               <p className="text-4xl font-bold">{result.adamScore}<span className="text-lg text-muted-foreground">/10</span></p>
               <span className={`mt-2 inline-block rounded-full px-3 py-1 text-xs font-semibold ${result.adamPositive ? "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300" : "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"}`}>
-                {result.adamPositive ? (lang === "tr" ? "Pozitif — Değerlendirme Onerilir" : "Positive — Evaluation Recommended") : (lang === "tr" ? "Negatif" : "Negative")}
+                {result.adamPositive ? tx("mens.adamPositive", lang) : tx("mens.adamNegative", lang)}
               </span>
             </div>
           )}
@@ -215,7 +215,7 @@ export default function MensHealthPage() {
           {result.testosteroneSymptomAssessment && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-2 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {lang === "tr" ? "Değerlendirme" : "Assessment"}
+                {tx("mens.assessment", lang)}
               </h3>
               <p className="text-sm text-muted-foreground">{result.testosteroneSymptomAssessment}</p>
             </div>
@@ -232,7 +232,7 @@ export default function MensHealthPage() {
                 <div key={i} className="mb-3 rounded-lg border border-amber-300 p-3 last:mb-0 dark:border-amber-700">
                   <p className="font-semibold">{me.medication}</p>
                   <p className="text-sm text-muted-foreground">{me.effect}</p>
-                  <p className="text-xs text-amber-600 dark:text-amber-400">{lang === "tr" ? "Gorulen oran" : "Prevalence"}: {me.prevalence}</p>
+                  <p className="text-xs text-amber-600 dark:text-amber-400">{tx("mens.prevalence", lang)}: {me.prevalence}</p>
                   <p className="text-xs font-medium">{me.action}</p>
                 </div>
               ))}
@@ -274,7 +274,7 @@ export default function MensHealthPage() {
           {result.labTestsRecommended?.length > 0 && (
             <div className="rounded-xl border-2 border-blue-200 bg-blue-50 p-6 dark:bg-blue-950/20">
               <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {lang === "tr" ? "Onerilen Testler" : "Recommended Lab Tests"}
+                {tx("mens.recommendedTests", lang)}
               </h3>
               <ul className="space-y-1">
                 {result.labTestsRecommended.map((test, i) => (
@@ -290,7 +290,7 @@ export default function MensHealthPage() {
           {result.lifestyleRecommendations?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {lang === "tr" ? "Yasam Tarzi Önerileri" : "Lifestyle Recommendations"}
+                {tx("mens.lifestyle", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.lifestyleRecommendations.map((rec, i) => (

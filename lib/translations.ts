@@ -4742,6 +4742,97 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "medAnalysis.seeSoon": { en: "See Soon", tr: "Yakinda Gidin" },
   "medAnalysis.urgent": { en: "Urgent", tr: "Acil" },
   "medAnalysis.emergency": { en: "Emergency", tr: "Acil Durum" },
+
+  // Medical Dictionary page
+  "meddict.simpleTerms": { en: "In Simple Terms", tr: "Basit Anlatım" },
+  "meddict.medicalDef": { en: "Medical Definition", tr: "Tıbbi Tanım" },
+  "meddict.howDoctorsUse": { en: "How Doctors Use This Term", tr: "Doktorlar Nasıl Kullanır?" },
+  "meddict.whenConcerned": { en: "When to Be Concerned", tr: "Ne Zaman Endişelenmeli?" },
+  "meddict.relatedTerms": { en: "Related Terms", tr: "İlgili Terimler" },
+  "meddict.searchPrompt": { en: "Search for a medical term", tr: "Bir tıbbi terim arayın" },
+
+  // Medical Records page
+  "records.description": { en: "All your medical documents in one place, secure and organized. Share instantly with your doctor via QR code.", tr: "Tum tibbi belgeleriniz tek bir yerde, güvenli ve düzenli. QR kodla doktorunuzla aninda paylasin." },
+  "records.ctaMessage": { en: "Document organizer coming soon. You can currently upload blood tests and radiology reports from our Medical Analysis page.", tr: "Belge organizatoru yakinda geliyor. Su an kan tahlillerinizi ve radyoloji raporlarinizi Tibbi Analiz sayfamizdan yukleyebilirsiniz." },
+
+  // Medication Buddy page
+  "medBuddy.title": { en: "Medication Buddy", tr: "İlaç Arkadasi" },
+  "medBuddy.subtitle": { en: "Track together, motivate each other", tr: "Birlikte takip edin, birbirinizi motive edin" },
+  "medBuddy.inviteCode": { en: "Your Invite Code", tr: "Davet Kodunuz" },
+  "medBuddy.shareCode": { en: "Share this code with your buddy", tr: "Bu kodu arkadasinizla paylasin" },
+  "medBuddy.enterCode": { en: "Enter Buddy Code", tr: "Arkadas Kodu Gir" },
+  "medBuddy.yourBuddies": { en: "Your Buddies", tr: "Arkadaslariniz" },
+  "medBuddy.missedDose": { en: "Missed dose!", tr: "İlaç kacirdi!" },
+  "medBuddy.compliance": { en: "compliance", tr: "uyum" },
+  "medBuddy.sendReminder": { en: "Send Reminder", tr: "Hatirlatma Gonder" },
+  "medBuddy.privacyNote": { en: "Privacy Note", tr: "Gizlilik Notu" },
+  "medBuddy.privacyNote1": { en: "Buddies can only see compliance percentages", tr: "Arkadaslariniz sadece uyum yuzdelerini gorur" },
+  "medBuddy.privacyNote2": { en: "Medication names and dosages are not shared", tr: "İlaç isimleri ve dozlari paylasiliamaz" },
+  "medBuddy.privacyNote3": { en: "You can remove a buddy at any time", tr: "Istediginiz zaman arkadasi cikarabilirsiniz" },
+  "medBuddy.betterTogether": { en: "Better Together", tr: "Birlikte Daha Iyi" },
+  "medBuddy.betterTogetherDesc": { en: "Buddy users show 34% better compliance", tr: "Buddy kullananlar %34 daha iyi uyum gosteriyor" },
+  "medBuddy.gentleReminders": { en: "Gentle Reminders", tr: "Nazik Hatirlatma" },
+  "medBuddy.gentleRemindersDesc": { en: "Automatic notification for missed doses", tr: "Kacirilan dozlarda otomatik bildirim" },
+  "medBuddy.fullPrivacy": { en: "Full Privacy", tr: "Tam Gizlilik" },
+  "medBuddy.fullPrivacyDesc": { en: "Your health data is never shared", tr: "Sağlık verileriniz asla paylasiliamaz" },
+
+  // Medication Hub page
+  "medHub.title": { en: "Medication Hub", tr: "İlaç Yönetim Merkezi" },
+  "medHub.description": { en: "Manage your medication timing, interactions and reminders in one place.", tr: "İlaçlarınızın zamanlama, etkileşim ve hatırlatıcılarını tek yerden yönetin." },
+  "medHub.subtitle": { en: "Scheduling, interaction matrix and reminders", tr: "Zamanlama, etkileşim matrisi ve hatırlatıcılar" },
+  "medHub.noMeds": { en: "No medications added yet", tr: "Henüz ilaç eklenmemiş" },
+  "medHub.noMedsDesc": { en: "Add your medications to your profile to get started.", tr: "İlaçlarınızı profilinize ekleyerek başlayın." },
+  "medHub.addInProfile": { en: "Add Medications in Profile", tr: "Profilde İlaç Ekle" },
+  "medHub.nextUp": { en: "Next Up", tr: "Sıradaki" },
+  "medHub.dailySchedule": { en: "Your Daily Schedule", tr: "Günlük Programınız" },
+  "medHub.vitCAbsorption": { en: "Vitamin C enhances absorption", tr: "C vitamini emilimi artırır" },
+  "medHub.colorLegend": { en: "Color Legend", tr: "Renk Kodları" },
+  "medHub.timingGuide": { en: "Medication Timing Guide", tr: "İlaç Zamanlama Kılavuzu" },
+  "medHub.noTimingRule": { en: "No specific timing rule found. Follow your doctor's instructions.", tr: "Bu ilaç için özel zamanlama kuralı bulunamadı. Doktorunuzun önerilerine uyun." },
+  "medHub.timingDatabase": { en: "Full Timing Database", tr: "Tam Zamanlama Veritabanı" },
+  "medHub.notifSettings": { en: "Notification Settings", tr: "Bildirim Ayarları" },
+  "medHub.notifSettingsDesc": { en: "Set reminder times for each medication", tr: "Her ilaç için hatırlatma saati belirleyin" },
+  "medHub.pushNotifNote": { en: "PWA push notifications will be enabled in an upcoming release.", tr: "PWA push bildirimleri yakın bir sürümde etkinleştirilecektir." },
+  "medHub.reminderSchedule": { en: "Reminder Schedule", tr: "Hatırlatma Programı" },
+  "medHub.disclaimer": { en: "This schedule is for informational purposes. Always follow your doctor's instructions for medication timing.", tr: "Bu program genel bilgi amaçlıdır. İlaç zamanlaması için her zaman doktorunuzun talimatlarını takip edin." },
+
+  // Medication Schedule page
+  "medSchedule.goToProfile": { en: "Go to Profile", tr: "Profil'e Git" },
+  "medSchedule.yourMeds": { en: "Your medications", tr: "Profildeki ilaçların" },
+
+  // Menopause Panel page
+  "menopause.frequency": { en: "Frequency (0-10)", tr: "Siklik (0-10)" },
+  "menopause.severity": { en: "Severity (0-3)", tr: "Siddet (0-3)" },
+  "menopause.onHRT": { en: "On HRT", tr: "HRT Kullaniliyor" },
+  "menopause.symptomAnalysis": { en: "Symptom Analysis", tr: "Semptom Analizi" },
+  "menopause.supplementPlan": { en: "Supplement Plan", tr: "Takviye Plani" },
+  "menopause.duration": { en: "Duration", tr: "Sure" },
+  "menopause.calcium": { en: "Calcium", tr: "Kalsiyum" },
+  "menopause.vitaminD": { en: "Vitamin D", tr: "D Vitamini" },
+  "menopause.exercise": { en: "Exercise", tr: "Egzersiz" },
+  "menopause.lifestyle": { en: "Lifestyle Recommendations", tr: "Yasam Tarzi Önerileri" },
+
+  // Men's Health page
+  "mens.adamPositive": { en: "Positive — Evaluation Recommended", tr: "Pozitif — Değerlendirme Onerilir" },
+  "mens.adamNegative": { en: "Negative", tr: "Negatif" },
+  "mens.assessment": { en: "Assessment", tr: "Değerlendirme" },
+  "mens.prevalence": { en: "Prevalence", tr: "Gorulen oran" },
+  "mens.recommendedTests": { en: "Recommended Lab Tests", tr: "Onerilen Testler" },
+  "mens.lifestyle": { en: "Lifestyle Recommendations", tr: "Yasam Tarzi Önerileri" },
+
+  // Mental Wellness page
+  "mw.notesPlaceholder": { en: "How are you feeling today? (optional)", tr: "Bugun nasil hissediyorsun? (isteğe bağlı)" },
+  "mw.saveCheckin": { en: "Save Check-in", tr: "Kaydet" },
+  "mw.detectedPatterns": { en: "Detected Patterns", tr: "Tespit Edilen Oruntler" },
+
+  // Micro Habits page
+  "microHabits.title": { en: "Micro-Habit Builder", tr: "Mikro-Alışkanlık Oluşturucu" },
+  "microHabits.subtitle": { en: "Small steps, big changes — the Atomic Habits method", tr: "Küçük adımlar, büyük değişimler — Atomic Habits yöntemi" },
+  "microHabits.twoMinRule": { en: "🎯 2-Minute Rule: Keep each habit under 2 minutes. Master in 7 days, then level up.", tr: "🎯 2 Dakika Kuralı: Her alışkanlığı 2 dakikadan kısa tut. 7 günde ustalaş, sonra seviye atla." },
+  "microHabits.level": { en: "Level", tr: "Seviye" },
+  "microHabits.daysToLevelUp": { en: "days to level up", tr: "gün sonra seviye atlama" },
+  "microHabits.addHabit": { en: "Add Habit", tr: "Alışkanlık Ekle" },
+  "microHabits.noHabits": { en: "No habits yet. Start small!", tr: "Henüz alışkanlık eklemedin. Küçük başla!" },
 }
 Object.assign(t, commonToolKeys)
 

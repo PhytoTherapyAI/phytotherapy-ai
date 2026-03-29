@@ -148,15 +148,13 @@ export default function MicroHabitsPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Sparkles className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold">{lang === "tr" ? "Mikro-Alışkanlık Oluşturucu" : "Micro-Habit Builder"}</h1>
-          <p className="text-muted-foreground mt-1">{lang === "tr" ? "Küçük adımlar, büyük değişimler — Atomic Habits yöntemi" : "Small steps, big changes — the Atomic Habits method"}</p>
+          <h1 className="text-2xl font-bold">{tx("microHabits.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("microHabits.subtitle", lang)}</p>
         </div>
 
         <Card className="p-4 mb-6 bg-primary/5 border-primary/30">
           <p className="text-sm text-center">
-            {lang === "tr"
-              ? "🎯 2 Dakika Kuralı: Her alışkanlığı 2 dakikadan kısa tut. 7 günde ustalaş, sonra seviye atla."
-              : "🎯 2-Minute Rule: Keep each habit under 2 minutes. Master in 7 days, then level up."}
+            {tx("microHabits.twoMinRule", lang)}
           </p>
         </Card>
 
@@ -172,7 +170,7 @@ export default function MicroHabitsPage() {
                       <h3 className="font-semibold text-sm">{habit.title[lang]}</h3>
                     </div>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {lang === "tr" ? "Seviye" : "Level"} {habit.currentLevel + 1}: {habit.levels[habit.currentLevel][lang]}
+                      {tx("microHabits.level", lang)} {habit.currentLevel + 1}: {habit.levels[habit.currentLevel][lang]}
                     </p>
                     <div className="flex items-center gap-3 mt-2">
                       <Badge variant="outline" className="text-xs">
@@ -185,7 +183,7 @@ export default function MicroHabitsPage() {
                       </div>
                       {habit.currentLevel < habit.maxLevel && (
                         <span className="text-xs text-muted-foreground">
-                          {7 - (habit.streak % 7)} {lang === "tr" ? "gün sonra seviye atlama" : "days to level up"}
+                          {7 - (habit.streak % 7)} {tx("microHabits.daysToLevelUp", lang)}
                         </span>
                       )}
                     </div>
@@ -200,7 +198,7 @@ export default function MicroHabitsPage() {
         )}
 
         <Button onClick={() => setShowTemplates(!showTemplates)} className="w-full mb-6" variant={showTemplates ? "outline" : "default"}>
-          <Plus className="w-4 h-4 mr-2" />{lang === "tr" ? "Alışkanlık Ekle" : "Add Habit"}
+          <Plus className="w-4 h-4 mr-2" />{tx("microHabits.addHabit", lang)}
         </Button>
 
         {showTemplates && (
@@ -222,7 +220,7 @@ export default function MicroHabitsPage() {
         {habits.length === 0 && !showTemplates && (
           <Card className="p-8 text-center">
             <Target className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">{lang === "tr" ? "Henüz alışkanlık eklemedin. Küçük başla!" : "No habits yet. Start small!"}</p>
+            <p className="text-muted-foreground">{tx("microHabits.noHabits", lang)}</p>
           </Card>
         )}
       </div>
