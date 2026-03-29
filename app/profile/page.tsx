@@ -1240,22 +1240,22 @@ export default function ProfilePage() {
               <div className="space-y-4">
                 <Label className="flex items-center gap-2 text-base font-semibold">
                   <MapPin className="h-4 w-4" />
-                  {tr ? "İletişim & Konum" : "Contact & Location"}
+                  {tx("profile.contactLocation", lang)}
                 </Label>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-1">
-                    <Label className="text-sm">{tr ? "Ülke" : "Country"}</Label>
+                    <Label className="text-sm">{tx("profile.country", lang)}</Label>
                     <Input
-                      placeholder={tr ? "Türkiye" : "Turkey"}
+                      placeholder={tx("profile.countryPlaceholder", lang)}
                       value={healthForm.country}
                       onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, country: e.target.value }))}
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-sm">{tr ? "Şehir" : "City"}</Label>
+                    <Label className="text-sm">{tx("profile.city", lang)}</Label>
                     <Input
-                      placeholder={tr ? "İstanbul" : "Istanbul"}
+                      placeholder={tx("profile.cityPlaceholder", lang)}
                       value={healthForm.city}
                       onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, city: e.target.value }))}
                     />
@@ -1264,24 +1264,24 @@ export default function ProfilePage() {
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-1">
-                    <Label className="text-sm">{tr ? "Telefon" : "Phone"}</Label>
+                    <Label className="text-sm">{tx("profile.phone", lang)}</Label>
                     <Input
                       type="tel"
-                      placeholder={tr ? "+90 5XX XXX XX XX" : "+1 (555) 000-0000"}
+                      placeholder={tx("profile.phonePlaceholder", lang)}
                       value={healthForm.phone}
                       onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, phone: e.target.value }))}
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-sm">{tr ? "Kurtarma E-postası" : "Recovery Email"}</Label>
+                    <Label className="text-sm">{tx("profile.recoveryEmail", lang)}</Label>
                     <Input
                       type="email"
-                      placeholder={tr ? "yedek@email.com" : "backup@email.com"}
+                      placeholder={tx("profile.recoveryPlaceholder", lang)}
                       value={healthForm.recovery_email}
                       onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, recovery_email: e.target.value }))}
                     />
                     <p className="text-[10px] text-muted-foreground">
-                      {tr ? "Hesap kurtarma için ikincil e-posta" : "Secondary email for account recovery"}
+                      {tx("profile.recoveryDesc", lang)}
                     </p>
                   </div>
                 </div>
@@ -1497,13 +1497,13 @@ function EmergencyContactsSection({ lang, userId }: { lang: "en" | "tr"; userId:
           <div>
             <CardTitle className="flex items-center gap-2">
               <Phone className="h-5 w-5 text-red-500" />
-              {tr ? "Acil Durum Kişileri" : "Emergency Contacts"}
+              {tx("profile.emergencyContacts", lang)}
             </CardTitle>
-            <CardDescription>{tr ? "Sağlık acilinde ulaşılacak kişiler" : "People to contact in a health emergency"}</CardDescription>
+            <CardDescription>{tx("profile.emergencyDesc", lang)}</CardDescription>
           </div>
           {contacts.length < 5 && !showForm && (
             <Button size="sm" variant="outline" onClick={() => { setShowForm(true); setEditingId(null); setForm({ name: "", relationship: "spouse", phoneNumber: "" }); }}>
-              <Plus className="h-4 w-4 mr-1" />{tr ? "Ekle" : "Add"}
+              <Plus className="h-4 w-4 mr-1" />{tx("profile.add", lang)}
             </Button>
           )}
         </div>
@@ -1511,7 +1511,7 @@ function EmergencyContactsSection({ lang, userId }: { lang: "en" | "tr"; userId:
       <CardContent className="space-y-3">
         {saved && (
           <div className="flex items-center gap-2 text-xs text-green-600 bg-green-50 dark:bg-green-950/20 px-3 py-1.5 rounded-lg">
-            <Check className="h-3 w-3" />{tr ? "Kaydedildi!" : "Saved!"}
+            <Check className="h-3 w-3" />{tx("profile.saved", lang)}
           </div>
         )}
 
@@ -1519,12 +1519,12 @@ function EmergencyContactsSection({ lang, userId }: { lang: "en" | "tr"; userId:
         {showForm && (
           <div className="space-y-3 p-4 rounded-lg border-2 border-dashed border-primary/30 bg-primary/5">
             <div>
-              <Label className="text-xs">{tr ? "Ad Soyad" : "Full Name"} *</Label>
+              <Label className="text-xs">{tx("profile.fullName", lang)} *</Label>
               <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                placeholder={tr ? "Örn: Ahmet Yılmaz" : "e.g. John Doe"} className="mt-1" />
+                placeholder={tx("profile.fullNamePlaceholder", lang)} className="mt-1" />
             </div>
             <div>
-              <Label className="text-xs">{tr ? "Yakınlık" : "Relationship"}</Label>
+              <Label className="text-xs">{tx("profile.relationship", lang)}</Label>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 mt-1">
                 {EC_RELATIONSHIPS.map(rel => (
                   <button key={rel.id} onClick={() => setForm({ ...form, relationship: rel.id })}
@@ -1537,16 +1537,16 @@ function EmergencyContactsSection({ lang, userId }: { lang: "en" | "tr"; userId:
               </div>
             </div>
             <div>
-              <Label className="text-xs">{tr ? "Telefon" : "Phone"} *</Label>
+              <Label className="text-xs">{tx("profile.phone", lang)} *</Label>
               <Input value={form.phoneNumber} onChange={e => setForm({ ...form, phoneNumber: e.target.value })}
                 type="tel" placeholder="+90 5XX XXX XX XX" className="mt-1 font-mono" />
             </div>
             <div className="flex gap-2">
               <Button size="sm" onClick={editingId ? updateContact : addContact} disabled={!form.name || !form.phoneNumber} className="gap-1">
-                <Save className="h-3.5 w-3.5" />{tr ? "Kaydet" : "Save"}
+                <Save className="h-3.5 w-3.5" />{tx("profile.save", lang)}
               </Button>
               <Button size="sm" variant="outline" onClick={() => { setShowForm(false); setEditingId(null); }}>
-                {tr ? "İptal" : "Cancel"}
+                {tx("profile.cancel", lang)}
               </Button>
             </div>
           </div>
@@ -1556,7 +1556,7 @@ function EmergencyContactsSection({ lang, userId }: { lang: "en" | "tr"; userId:
         {contacts.length === 0 && !showForm && (
           <div className="text-center py-6">
             <Shield className="h-10 w-10 text-muted-foreground/30 mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">{tr ? "Henüz acil durum kişisi yok" : "No emergency contacts yet"}</p>
+            <p className="text-sm text-muted-foreground">{tx("profile.noEmergency", lang)}</p>
           </div>
         )}
 
@@ -1573,7 +1573,7 @@ function EmergencyContactsSection({ lang, userId }: { lang: "en" | "tr"; userId:
                 <div className="flex items-center gap-1.5">
                   <span className="text-sm font-medium">{contact.name}</span>
                   {contact.isPrimary && (
-                    <Badge className="text-[9px] bg-red-100 text-red-600 border-0 px-1.5">{tr ? "Birincil" : "Primary"}</Badge>
+                    <Badge className="text-[9px] bg-red-100 text-red-600 border-0 px-1.5">{tx("profile.primary", lang)}</Badge>
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground">{relLabel} · <span className="font-mono">{contact.phoneNumber}</span></p>
@@ -1584,7 +1584,7 @@ function EmergencyContactsSection({ lang, userId }: { lang: "en" | "tr"; userId:
                 </a>
                 <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => startEdit(contact)}><Edit3 className="h-3 w-3" /></Button>
                 {!contact.isPrimary && (
-                  <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => setPrimary(contact.id)} title={tr ? "Birincil yap" : "Set primary"}>
+                  <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => setPrimary(contact.id)} title={tx("profile.setPrimary", lang)}>
                     <Star className="h-3 w-3" />
                   </Button>
                 )}
@@ -1599,7 +1599,7 @@ function EmergencyContactsSection({ lang, userId }: { lang: "en" | "tr"; userId:
         {contacts.length > 0 && (
           <p className="text-[11px] text-muted-foreground flex items-center gap-1">
             <AlertTriangle className="h-3 w-3 text-amber-500" />
-            {tr ? "Acil durum kişileriniz Acil Kimlik kartınızda gösterilir" : "Emergency contacts appear on your Emergency ID card"}
+            {tx("profile.emergencyNote", lang)}
           </p>
         )}
       </CardContent>

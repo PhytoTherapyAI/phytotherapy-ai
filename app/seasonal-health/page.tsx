@@ -408,7 +408,7 @@ export default function SeasonalHealthPage() {
           <div>
             <p className="font-medium">{tx("seasonal.profileWarning", lang)}</p>
             <p className="mt-1 text-muted-foreground">
-              {lang === "tr" ? "Aktif ilaçlarıniz:" : "Your active medications:"}{" "}
+              {tx("seasonal.activeMeds", lang)}{" "}
               {userMedications.join(", ")}
             </p>
           </div>
@@ -507,15 +507,13 @@ export default function SeasonalHealthPage() {
           <div className="flex-1">
             <h3 className="text-sm font-semibold">{tx("seasonal.bossFight", lang)}</h3>
             <p className="text-xs text-muted-foreground">
-              {lang === "tr"
-                ? "Mevsimsel sağlık gorevleri için Boss Fight protokollerine goz atin!"
-                : "Check out Boss Fight protocols for seasonal health challenges!"}
+              {tx("seasonal.bossFightDesc", lang)}
             </p>
           </div>
           <Link href="/dashboard">
             <Button variant="outline" size="sm" className="gap-1">
               <Swords className="h-3 w-3" />
-              {lang === "tr" ? "Git" : "Go"}
+              {tx("seasonal.go", lang)}
             </Button>
           </Link>
         </div>

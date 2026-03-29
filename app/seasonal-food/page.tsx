@@ -69,8 +69,8 @@ export default function SeasonalFoodPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Apple className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{lang === "tr" ? "Mevsimsel Besin Haritası" : "Seasonal Food Map"}</h1>
-          <p className="text-muted-foreground mt-1">{lang === "tr" ? "Bu mevsim hangi besinler taze ve besin değeri yüksek" : "Which foods are fresh and nutrient-rich this season"}</p>
+          <h1 className="text-2xl font-bold text-foreground">{tx("seasonalFood.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("seasonalFood.subtitle", lang)}</p>
         </div>
 
         <div className="flex gap-2 mb-4 justify-center flex-wrap">
@@ -90,7 +90,7 @@ export default function SeasonalFoodPage() {
 
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input className="pl-9" placeholder={lang === "tr" ? "Besin ara..." : "Search food..."} value={search} onChange={e => setSearch(e.target.value)} />
+          <Input className="pl-9" placeholder={tx("seasonalFood.searchPlaceholder", lang)} value={search} onChange={e => setSearch(e.target.value)} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -114,7 +114,7 @@ export default function SeasonalFoodPage() {
                   </div>
                   {food.pairsWith.length > 0 && (
                     <p className="text-xs text-muted-foreground mt-2">
-                      ✨ {lang === "tr" ? "Birlikte:" : "Pairs with:"} {food.pairsWith.join(", ")}
+                      ✨ {tx("seasonalFood.pairsWith", lang)} {food.pairsWith.join(", ")}
                     </p>
                   )}
                 </div>
@@ -126,7 +126,7 @@ export default function SeasonalFoodPage() {
         {filtered.length === 0 && (
           <Card className="p-8 text-center">
             <Leaf className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">{lang === "tr" ? "Bu kriterlere uygun besin bulunamadı." : "No foods found for this criteria."}</p>
+            <p className="text-muted-foreground">{tx("seasonalFood.noResults", lang)}</p>
           </Card>
         )}
       </div>

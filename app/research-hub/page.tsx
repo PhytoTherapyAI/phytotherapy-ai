@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import {
   Building2, FlaskConical, Database, Globe, Users, BarChart3,
   Shield, Lock, FileText, Code2, GitBranch, Microscope,
@@ -62,12 +63,10 @@ export default function ResearchHubPage() {
           <FlaskConical className="h-7 w-7 text-primary" />
         </div>
         <h1 className="font-heading text-3xl font-bold md:text-4xl">
-          {isTr ? "Araştırma & İş Birliği Hub'ı" : "Research & Collaboration Hub"}
+          {tx("research.title", lang)}
         </h1>
         <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-          {isTr
-            ? "Üniversiteler, kamu kurumları ve araştırmacılar için açık inovasyon platformu. Anonimleştirilmiş veriler, klinik validasyon hattı ve ulusal sağlık vizyonu entegrasyonu."
-            : "Open innovation platform for universities, public institutions and researchers. De-identified data, clinical validation pipeline and national health vision integration."}
+          {tx("research.subtitle", lang)}
         </p>
         <div className="mt-4 flex justify-center gap-2 flex-wrap">
           <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">Harvard HVHS C10</span>
@@ -80,10 +79,10 @@ export default function ResearchHubPage() {
       <div className="mb-8 flex justify-center">
         <div className="inline-flex rounded-xl bg-muted p-1 flex-wrap">
           {[
-            { id: "overview" as const, label: isTr ? "Ortaklık Modeli" : "Partnership Model", icon: Handshake },
-            { id: "data" as const, label: isTr ? "Veri Ambarı" : "Data Warehouse", icon: Database },
-            { id: "pipeline" as const, label: isTr ? "Validasyon Hattı" : "Validation Pipeline", icon: GitBranch },
-            { id: "vision" as const, label: isTr ? "Ulusal Vizyon" : "National Vision", icon: Globe },
+            { id: "overview" as const, label: tx("research.tabPartnership", lang), icon: Handshake },
+            { id: "data" as const, label: tx("research.tabData", lang), icon: Database },
+            { id: "pipeline" as const, label: tx("research.tabPipeline", lang), icon: GitBranch },
+            { id: "vision" as const, label: tx("research.tabVision", lang), icon: Globe },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -112,18 +111,18 @@ export default function ResearchHubPage() {
                   <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="font-bold">{isTr ? "Veri Yönetişimi (Governance)" : "Data Governance"}</h3>
-                  <p className="text-xs text-muted-foreground">{isTr ? "KVKK / GDPR Uyumlu" : "KVKK / GDPR Compliant"}</p>
+                  <h3 className="font-bold">{tx("research.dataGovernance", lang)}</h3>
+                  <p className="text-xs text-muted-foreground">{tx("research.kvkkCompliant", lang)}</p>
                 </div>
               </div>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 {[
-                  isTr ? "Tüm veriler k-anonymity (k≥5) ile anonimleştirilir" : "All data de-identified with k-anonymity (k≥5)",
-                  isTr ? "Kullanıcı opt-in onayı zorunlu (KVKK Madde 5)" : "User opt-in consent required (KVKK Article 5)",
-                  isTr ? "Veri erişimi Etik Kurul onayına bağlı" : "Data access requires Ethics Board approval",
-                  isTr ? "Minimum veri ilkesi: sadece araştırma için gerekli alanlar" : "Data minimization: only fields needed for research",
-                  isTr ? "Audit log: her erişim kayıt altında" : "Audit log: every access is recorded",
-                  isTr ? "Veri Türkiye'de barındırılır (Supabase EU region)" : "Data hosted in Turkey (Supabase EU region)",
+                  tx("research.gov1", lang),
+                  tx("research.gov2", lang),
+                  tx("research.gov3", lang),
+                  tx("research.gov4", lang),
+                  tx("research.gov5", lang),
+                  tx("research.gov6", lang),
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-primary mt-0.5" />
@@ -139,7 +138,7 @@ export default function ResearchHubPage() {
                   <Code2 className="h-5 w-5 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <h3 className="font-bold">{isTr ? "Açık İnovasyon API" : "Open Innovation API"}</h3>
+                  <h3 className="font-bold">{tx("research.openApi", lang)}</h3>
                   <p className="text-xs text-muted-foreground">REST + GraphQL</p>
                 </div>
               </div>
@@ -154,9 +153,7 @@ export default function ResearchHubPage() {
                   </code>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {isTr
-                    ? "Tüm endpoint'ler OAuth2 + API key ile korunur. Rate limit: 1000 req/gün akademik, 10000 req/gün kurumsal."
-                    : "All endpoints protected with OAuth2 + API key. Rate limit: 1000 req/day academic, 10000 req/day enterprise."}
+                  {tx("research.apiRateLimit", lang)}
                 </p>
               </div>
             </div>
@@ -166,7 +163,7 @@ export default function ResearchHubPage() {
           <div>
             <h3 className="mb-4 flex items-center gap-2 text-lg font-bold">
               <Handshake className="h-5 w-5 text-primary" />
-              {isTr ? "Hedef Ortaklık Kurumları" : "Target Partnership Institutions"}
+              {tx("research.targetPartners", lang)}
             </h3>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {PARTNERS.map((p, i) => (
@@ -197,12 +194,10 @@ export default function ResearchHubPage() {
           <div className="rounded-xl border bg-card p-6">
             <h3 className="mb-4 flex items-center gap-2 text-lg font-bold">
               <Database className="h-5 w-5 text-primary" />
-              {isTr ? "Araştırma Veri Ambarı Şeması" : "Research Data Warehouse Schema"}
+              {tx("research.dataWarehouseSchema", lang)}
             </h3>
             <p className="mb-6 text-sm text-muted-foreground">
-              {isTr
-                ? "Star schema mimarisi — fact tabloları (ölçümler) + dimension tabloları (bağlam). SQL ve Python (Pandas) ile sorgulanabilir."
-                : "Star schema architecture — fact tables (measurements) + dimension tables (context). Queryable with SQL and Python (Pandas)."}
+              {tx("research.dataWarehouseDesc", lang)}
             </p>
 
             {/* Star Schema Visual */}
@@ -251,7 +246,7 @@ export default function ResearchHubPage() {
             {/* Example Query */}
             <div className="mt-6 rounded-lg bg-gray-900 p-4 overflow-x-auto">
               <p className="mb-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                {isTr ? "Örnek Sorgu: Ashwagandha kullanıcılarının uyku kalitesi değişimi" : "Example Query: Sleep quality change in Ashwagandha users"}
+                {tx("research.exampleQuery", lang)}
               </p>
               <pre className="text-xs text-gray-300 font-mono whitespace-pre-wrap">{`SELECT
   d.age_band, d.gender,
@@ -280,7 +275,7 @@ ORDER BY avg_improvement DESC;`}</pre>
           {/* Clinical Validation Pipeline */}
           <div>
             <h3 className="mb-6 text-lg font-bold text-center">
-              {isTr ? "Klinik Validasyon Hattı" : "Clinical Validation Pipeline"}
+              {tx("research.clinicalPipeline", lang)}
             </h3>
             <div className="relative">
               {/* Connection line */}
@@ -329,22 +324,22 @@ ORDER BY avg_improvement DESC;`}</pre>
             <div className="flex items-center gap-3 mb-4">
               <Award className="h-6 w-6 text-amber-600 dark:text-amber-400" />
               <h3 className="text-lg font-bold">
-                {isTr ? "Girişimci Destek Programı" : "Entrepreneur Support Program"}
+                {tx("research.entrepreneurProgram", lang)}
               </h3>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
               {[
                 {
-                  title: isTr ? "Veri Erişimi" : "Data Access",
-                  desc: isTr ? "Onaylı girişimcilere anonim araştırma verisi, kohort oluşturma araçları ve API erişimi" : "Approved startups get anonymous research data, cohort building tools and API access",
+                  title: tx("research.dataAccess", lang),
+                  desc: tx("research.dataAccessDesc", lang),
                 },
                 {
-                  title: isTr ? "Platform Entegrasyonu" : "Platform Integration",
-                  desc: isTr ? "Başarılı ürünler Phytotherapy.ai marketplace'ine eklenir, milyonlarca kullanıcıya erişim" : "Successful products added to Phytotherapy.ai marketplace, reaching millions of users",
+                  title: tx("research.platformIntegration", lang),
+                  desc: tx("research.platformIntegrationDesc", lang),
                 },
                 {
-                  title: isTr ? "Klinik Validasyon" : "Clinical Validation",
-                  desc: isTr ? "Platform üzerinde PROMs bazlı pilot çalışma yapma imkanı, akademik yayın desteği" : "PROMs-based pilot study capability on platform, academic publication support",
+                  title: tx("research.clinicalValidation", lang),
+                  desc: tx("research.clinicalValidationDesc", lang),
                 },
               ].map((item, i) => (
                 <div key={i} className="rounded-lg bg-background/80 p-4">
@@ -363,14 +358,14 @@ ORDER BY avg_improvement DESC;`}</pre>
           {/* System-Level Impact */}
           <div className="rounded-xl border bg-gradient-to-br from-primary/5 to-primary/10 p-6">
             <h3 className="mb-4 text-lg font-bold text-center">
-              {isTr ? "Sistem Düzeyinde Etki — Yatırımcı Vizyonu" : "System-Level Impact — Investor Vision"}
+              {tx("research.systemImpact", lang)}
             </h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {[
-                { icon: Users, value: "84M", label: isTr ? "Türkiye Nüfusu" : "Turkey Population", sub: isTr ? "İlk hedef pazar" : "Primary target market" },
-                { icon: Building2, value: "$42.6B", label: isTr ? "Global Fitoterapi Pazarı" : "Global Phytotherapy Market", sub: "2026, CAGR 8.7%" },
-                { icon: Microscope, value: "3,200+", label: isTr ? "Aktif Klinik Çalışma" : "Active Clinical Trials", sub: "ClinicalTrials.gov" },
-                { icon: Scale, value: "0", label: isTr ? "Rakip (Bu Segmentte)" : "Competitors (This Segment)", sub: isTr ? "İlaç+bitki+AI+sonuç ölçümü" : "Drug+herb+AI+outcome measurement" },
+                { icon: Users, value: "84M", label: tx("research.turkeyPop", lang), sub: tx("research.turkeyPopSub", lang) },
+                { icon: Building2, value: "$42.6B", label: tx("research.globalMarket", lang), sub: "2026, CAGR 8.7%" },
+                { icon: Microscope, value: "3,200+", label: tx("research.clinicalTrials", lang), sub: "ClinicalTrials.gov" },
+                { icon: Scale, value: "0", label: tx("research.competitors", lang), sub: tx("research.competitorsSub", lang) },
               ].map((stat, i) => (
                 <div key={i} className="rounded-lg bg-background/80 p-4 text-center">
                   <stat.icon className="mx-auto mb-2 h-5 w-5 text-primary" />
@@ -385,25 +380,25 @@ ORDER BY avg_improvement DESC;`}</pre>
           {/* NHTS Alignment */}
           <div className="rounded-xl border bg-card p-6">
             <h3 className="mb-4 font-bold">
-              {isTr ? "Ulusal HVHS Geçiş Stratejisi Uyumu" : "National HVHS Transition Strategy Alignment"}
+              {tx("research.nhtsAlignment", lang)}
             </h3>
             <div className="space-y-3">
               {[
                 {
-                  strategy: isTr ? "Türkiye 2023-2028 Sağlık Dönüşüm Programı" : "Turkey 2023-2028 Health Transformation Program",
-                  alignment: isTr ? "Dijital sağlık altyapısı, vatandaş odaklı sağlık hizmeti, koruyucu sağlık vurgusu" : "Digital health infrastructure, citizen-centered care, preventive health emphasis",
+                  strategy: tx("research.nhts1Strategy", lang),
+                  alignment: tx("research.nhts1Align", lang),
                 },
                 {
-                  strategy: isTr ? "G20 Dijital Sağlık Çerçevesi" : "G20 Digital Health Framework",
-                  alignment: isTr ? "Interoperabilite (FHIR), veri paylaşımı, yapay zeka güvenliği" : "Interoperability (FHIR), data sharing, AI safety",
+                  strategy: tx("research.nhts2Strategy", lang),
+                  alignment: tx("research.nhts2Align", lang),
                 },
                 {
-                  strategy: isTr ? "WHO Geleneksel Tıp Stratejisi 2024-2034" : "WHO Traditional Medicine Strategy 2024-2034",
-                  alignment: isTr ? "Kanıta dayalı entegrasyon, güvenlik izleme, regülasyon uyumu" : "Evidence-based integration, safety monitoring, regulatory alignment",
+                  strategy: tx("research.nhts3Strategy", lang),
+                  alignment: tx("research.nhts3Align", lang),
                 },
                 {
-                  strategy: isTr ? "AB Dijital Sağlık Alanı (EHDS)" : "EU European Health Data Space (EHDS)",
-                  alignment: isTr ? "Sınır ötesi veri paylaşımı, hasta veri taşınabilirliği, ikincil kullanım çerçevesi" : "Cross-border data sharing, patient data portability, secondary use framework",
+                  strategy: tx("research.nhts4Strategy", lang),
+                  alignment: tx("research.nhts4Align", lang),
                 },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
@@ -420,12 +415,10 @@ ORDER BY avg_improvement DESC;`}</pre>
           {/* CTA */}
           <div className="rounded-xl border bg-gradient-to-br from-primary/5 to-primary/10 p-8 text-center">
             <h3 className="mb-2 text-xl font-bold">
-              {isTr ? "Araştırma Ortaklığı Başvurusu" : "Research Partnership Application"}
+              {tx("research.partnershipCta", lang)}
             </h3>
             <p className="mb-5 text-sm text-muted-foreground">
-              {isTr
-                ? "Üniversite, kamu kurumu veya araştırma merkezi olarak veri erişimi ve iş birliği için başvurun."
-                : "Apply for data access and collaboration as a university, public institution or research center."}
+              {tx("research.partnershipCtaDesc", lang)}
             </p>
             <a
               href="mailto:research@phytotherapy.ai"
@@ -440,9 +433,7 @@ ORDER BY avg_improvement DESC;`}</pre>
 
       {/* Disclaimer */}
       <div className="mt-10 rounded-xl border bg-muted/30 p-5 text-center text-xs text-muted-foreground">
-        {isTr
-          ? "Bu sayfa araştırma ve iş birliği çerçevesini tanıtmaktadır. Tüm veri paylaşımları KVKK, GDPR ve ilgili yasal düzenlemelere uygun olarak, etik kurul onayı ve kullanıcı rızası ile gerçekleştirilir."
-          : "This page describes the research and collaboration framework. All data sharing is conducted in compliance with KVKK, GDPR and relevant regulations, with ethics board approval and user consent."}
+        {tx("research.disclaimer", lang)}
       </div>
     </div>
   )

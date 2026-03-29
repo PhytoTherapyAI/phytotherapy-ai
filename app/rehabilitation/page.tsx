@@ -135,7 +135,7 @@ export default function RehabilitationPage() {
 
   const handleCreateProgram = async () => {
     if (!surgeryType && !condition) {
-      setError(lang === "tr" ? "Ameliyat veya durum bilgisi gerekli" : "Surgery or condition is required");
+      setError(tx("rehab.surgeryOrConditionRequired", lang));
       return;
     }
 
@@ -301,7 +301,7 @@ export default function RehabilitationPage() {
                 type="text"
                 value={surgeryType}
                 onChange={(e) => setSurgeryType(e.target.value)}
-                placeholder={lang === "tr" ? "ör. Diz protezi" : "e.g., Knee replacement"}
+                placeholder={tx("rehab.surgeryPlaceholder", lang)}
                 className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
               />
             </div>
@@ -311,7 +311,7 @@ export default function RehabilitationPage() {
                 type="text"
                 value={condition}
                 onChange={(e) => setCondition(e.target.value)}
-                placeholder={lang === "tr" ? "ör. Bel fıtığı" : "e.g., Herniated disc"}
+                placeholder={tx("rehab.conditionPlaceholder", lang)}
                 className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400"
               />
             </div>
@@ -412,7 +412,7 @@ export default function RehabilitationPage() {
                       {program.target_end_date && (
                         <span>→ {program.target_end_date}</span>
                       )}
-                      <span>{programLogs.length} {lang === "tr" ? "kayıt" : "logs"}</span>
+                      <span>{programLogs.length} {tx("rehab.logs", lang)}</span>
                     </div>
                   </div>
                   {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -605,7 +605,7 @@ export default function RehabilitationPage() {
                     {programLogs.length > 0 && (
                       <div className="space-y-1">
                         <h4 className="text-xs font-semibold text-muted-foreground">
-                          {lang === "tr" ? "Son Kayıtlar" : "Recent Logs"}
+                          {tx("rehab.recentLogs", lang)}
                         </h4>
                         {programLogs.slice(-5).reverse().map((log) => (
                           <div key={log.id} className="flex items-center gap-3 rounded border p-2 text-xs">

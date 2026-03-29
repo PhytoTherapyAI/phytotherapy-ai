@@ -123,7 +123,7 @@ export default function RetirementHealthPage() {
         {/* Input Form */}
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-lg font-semibold">
-            {lang === "tr" ? "Bilgilerinizi Girin" : "Enter Your Information"}
+            {tx("retirement.enterInfo", lang)}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
@@ -173,7 +173,7 @@ export default function RetirementHealthPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Calendar className="w-5 h-5 text-amber-500" />
-            {lang === "tr" ? "Yas Bazli Tarama Kontrol Listesi" : "Age-Based Screening Checklist"}
+            {tx("retirement.screeningChecklist", lang)}
           </h2>
           <div className="grid gap-3">
             {SCREENING_STATIC[lang].map((item, i) => (
@@ -198,7 +198,7 @@ export default function RetirementHealthPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Shield className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "Kişisel Check-up Plani" : "Personalized Check-up Plan"}
+                  {tx("retirement.checkupPlan", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.checkupPlan.map((item, i) => (
@@ -226,7 +226,7 @@ export default function RetirementHealthPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Brain className="w-5 h-5 text-purple-500" />
-                  {lang === "tr" ? "Bilissel Sağlık Aktiviteleri" : "Cognitive Health Activities"}
+                  {tx("retirement.cognitiveActivities", lang)}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {result.cognitiveBaseline.activities.map((act, i) => (
@@ -241,7 +241,7 @@ export default function RetirementHealthPage() {
                   <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 space-y-2">
                     <h3 className="font-medium flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4 text-amber-500" />
-                      {lang === "tr" ? "Dikkat Edilecek Belirtiler" : "Warning Signs to Watch"}
+                      {tx("retirement.warningSigns", lang)}
                     </h3>
                     <ul className="space-y-1">
                       {result.cognitiveBaseline.warningSignsToWatch.map((sign, i) => (
@@ -277,7 +277,7 @@ export default function RetirementHealthPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Users className="w-5 h-5 text-blue-500" />
-                  {lang === "tr" ? "Sosyal Aktivite Plani" : "Social Activity Plan"}
+                  {tx("retirement.socialPlan", lang)}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {result.socialActivityPlan.map((act, i) => (

@@ -62,7 +62,7 @@ export default function ProactiveAIPage() {
 
       {/* Mock Alerts */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Ornek Uyarılar (Onizleme)" : "Example Alerts (Preview)"}
+        {tx("proactive.exampleAlerts", lang)}
       </h2>
       <div className="space-y-3 mb-10">
         {MOCK_ALERTS.map((a, i) => (
@@ -83,7 +83,7 @@ export default function ProactiveAIPage() {
 
       {/* Feature Grid */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Özellikler" : "Features"}
+        {tx("proactive.features", lang)}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {FEATURES.map((f, i) => (

@@ -106,21 +106,21 @@ export default function RareDiseasesPage() {
 
           {/* Expandable Details */}
           <button onClick={() => setShowDetails(!showDetails)} className="w-full flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-            <span className="font-semibold text-gray-900 dark:text-white">{lang === "tr" ? "Detaylar" : "Details"}</span>
+            <span className="font-semibold text-gray-900 dark:text-white">{tx("rare.details", lang)}</span>
             {showDetails ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
           </button>
           {showDetails && (
             <div className="space-y-4">
               <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{lang === "tr" ? "Tani" : "Diagnosis"}</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{tx("rare.diagnosis", lang)}</h3>
                 <ul className="space-y-1">{result.diagnosis?.map((d, i) => <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2"><span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-teal-500 flex-shrink-0" />{d}</li>)}</ul>
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{lang === "tr" ? "Tedavi" : "Treatment"}</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{tx("rare.treatment", lang)}</h3>
                 <p className="text-sm text-gray-700 dark:text-gray-300">{result.treatment}</p>
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{lang === "tr" ? "Prognoz" : "Prognosis"}</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{tx("rare.prognosis", lang)}</h3>
                 <p className="text-sm text-gray-700 dark:text-gray-300">{result.prognosis}</p>
               </div>
             </div>
@@ -128,7 +128,7 @@ export default function RareDiseasesPage() {
 
           {/* Specialists */}
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2"><Stethoscope className="w-4 h-4 text-teal-500" /> {lang === "tr" ? "Uzmanlar" : "Specialists"}</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2"><Stethoscope className="w-4 h-4 text-teal-500" /> {tx("rare.specialists", lang)}</h3>
             <div className="flex flex-wrap gap-2">
               {result.specialists?.map((s, i) => <span key={i} className="px-3 py-1 bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-400 rounded-full text-xs">{s}</span>)}
             </div>
@@ -137,7 +137,7 @@ export default function RareDiseasesPage() {
           {/* Patient Associations */}
           {result.patientAssociations?.length > 0 && (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2"><Users className="w-4 h-4 text-teal-500" /> {lang === "tr" ? "Hasta Dernekleri" : "Patient Associations"}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2"><Users className="w-4 h-4 text-teal-500" /> {tx("rare.patientAssociations", lang)}</h3>
               <div className="space-y-2">
                 {result.patientAssociations.map((a, i) => (
                   <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">

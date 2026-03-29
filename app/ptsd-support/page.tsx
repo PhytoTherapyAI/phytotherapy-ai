@@ -149,9 +149,7 @@ export default function PTSDSupportPage() {
       <div className="mb-6 rounded-xl border border-teal-200 bg-teal-50/50 p-4 dark:border-teal-800 dark:bg-teal-950/20">
         <p className="text-sm font-medium text-teal-700 dark:text-teal-300">
           <Heart className="mr-1.5 inline h-4 w-4" />
-          {lang === "tr"
-            ? "TSSB profesyonel destek gerektirir. Bu arac yardımcı bir kaynaktir, terapi yerine gecmez."
-            : "PTSD requires professional support. This tool is a supportive resource, not a replacement for therapy."}
+          {tx("ptsd.professionalNotice", lang)}
         </p>
       </div>
 
@@ -178,9 +176,7 @@ export default function PTSDSupportPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-600" />
             <p className="font-semibold text-red-700 dark:text-red-300">
-              {lang === "tr"
-                ? "Semptomlariniz şiddetli gorunuyor. Lütfen bir travma terapistiyle görüşmek için randevu alin."
-                : "Your symptoms appear severe. Please consider scheduling an appointment with a trauma therapist."}
+              {tx("ptsd.severeWarning", lang)}
             </p>
           </div>
         </div>
@@ -192,9 +188,7 @@ export default function PTSDSupportPage() {
           {tx("ptsd.screening", lang)}
         </h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          {lang === "tr"
-            ? "Son 1 ay icinde asagidaki sorunlardan ne kadar rahatsiz oldunuz?"
-            : "In the past month, how much were you bothered by the following?"}
+          {tx("ptsd.pastMonthQuestion", lang)}
         </p>
         <div className="space-y-4">
           {questions.map((q, qi) => (
@@ -227,12 +221,12 @@ export default function PTSDSupportPage() {
       {/* Trigger Log */}
       <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
         <h2 className="mb-3 text-lg font-bold text-teal-700 dark:text-teal-300">
-          {tx("ptsd.triggerLog", lang)} ({lang === "tr" ? "bu hafta" : "this week"})
+          {tx("ptsd.triggerLog", lang)} ({tx("ptsd.thisWeek", lang)})
         </h2>
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="mb-1 block text-xs font-semibold text-muted-foreground">
-              {lang === "tr" ? "Tetikleyiciler" : "Triggers"}
+              {tx("ptsd.triggers", lang)}
             </label>
             <div className="flex items-center gap-2">
               <button onClick={() => setTriggerCount(Math.max(0, triggerCount - 1))} className="rounded bg-gray-100 px-2 py-1 dark:bg-gray-800">-</button>
@@ -242,7 +236,7 @@ export default function PTSDSupportPage() {
           </div>
           <div>
             <label className="mb-1 block text-xs font-semibold text-muted-foreground">
-              {lang === "tr" ? "Flashback" : "Flashbacks"}
+              {tx("ptsd.flashbacks", lang)}
             </label>
             <div className="flex items-center gap-2">
               <button onClick={() => setFlashbackCount(Math.max(0, flashbackCount - 1))} className="rounded bg-gray-100 px-2 py-1 dark:bg-gray-800">-</button>
@@ -252,7 +246,7 @@ export default function PTSDSupportPage() {
           </div>
           <div>
             <label className="mb-1 block text-xs font-semibold text-muted-foreground">
-              {lang === "tr" ? "Kabuslar" : "Nightmares"}
+              {tx("ptsd.nightmares", lang)}
             </label>
             <div className="flex items-center gap-2">
               <button onClick={() => setNightmareCount(Math.max(0, nightmareCount - 1))} className="rounded bg-gray-100 px-2 py-1 dark:bg-gray-800">-</button>
@@ -265,7 +259,7 @@ export default function PTSDSupportPage() {
         {/* Avoidance + Grounding */}
         <div className="mt-4">
           <label className="mb-2 block text-xs font-semibold text-muted-foreground">
-            {lang === "tr" ? "Kacinma Düzeyi" : "Avoidance Level"}: {avoidanceLevel}/10
+            {tx("ptsd.avoidanceLevel", lang)}: {avoidanceLevel}/10
           </label>
           <input
             type="range"
@@ -283,7 +277,7 @@ export default function PTSDSupportPage() {
               groundingUsed ? "bg-green-500 text-white" : "bg-gray-100 dark:bg-gray-800"
             }`}
           >
-            {lang === "tr" ? "Topraklama kullandim" : "Used grounding techniques"}
+            {tx("ptsd.groundingUsed", lang)}
           </button>
         </div>
       </div>
@@ -296,7 +290,7 @@ export default function PTSDSupportPage() {
         size="lg"
       >
         {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Değerlendiriliyor..." : "Assessing..."}</>
+          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("ptsd.assessing", lang)}</>
         ) : (
           <><Shield className="mr-2 h-5 w-5" />{tx("ptsd.analyze", lang)}</>
         )}
@@ -354,7 +348,7 @@ export default function PTSDSupportPage() {
           {result.copingStrategies?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-teal-700 dark:text-teal-300">
-                {lang === "tr" ? "Basa Cikma Stratejileri" : "Coping Strategies"}
+                {tx("ptsd.copingStrategies", lang)}
               </h3>
               {result.copingStrategies.map((cs, idx) => (
                 <div key={idx} className="mb-3 last:mb-0">
@@ -370,7 +364,7 @@ export default function PTSDSupportPage() {
           {result.professionalResources && result.professionalResources.length > 0 && (
             <div className="rounded-xl border-2 border-teal-300 bg-teal-50 p-6 dark:bg-teal-950/20">
               <h3 className="mb-3 text-lg font-bold text-teal-700 dark:text-teal-300">
-                {lang === "tr" ? "Profesyonel Kaynaklar" : "Professional Resources"}
+                {tx("ptsd.professionalResources", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.professionalResources.map((res, i) => (

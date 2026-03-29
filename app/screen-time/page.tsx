@@ -84,26 +84,20 @@ function getAssessmentResult(score: number, lang: "en" | "tr"): { label: string;
     return {
       label: tx("common.lowRisk", lang),
       color: "text-green-600 dark:text-green-400",
-      advice: lang === "tr"
-        ? "Ekran kullaniminiz sağlıkli gorunuyor. Iyi aliskanliklarinizi sürdürun!"
-        : "Your screen habits look healthy. Keep up the good practices!",
+      advice: tx("screen.adviceLow", lang),
     };
   }
   if (score <= 7) {
     return {
       label: tx("common.moderateRisk", lang),
       color: "text-amber-600 dark:text-amber-400",
-      advice: lang === "tr"
-        ? "Ekran kullaniminizi azaltmak için bazi adimlar atmaniz oneriliyor."
-        : "Consider taking some steps to reduce your screen exposure.",
+      advice: tx("screen.adviceModerate", lang),
     };
   }
   return {
     label: tx("common.highRisk", lang),
     color: "text-red-600 dark:text-red-400",
-    advice: lang === "tr"
-      ? "Ekran kullaniminiz goz sağlığınizi olumsuz etkiliyor olabilir. Asagidaki ipuclarini uygulayın."
-      : "Your screen usage may be negatively affecting your eye health. Follow the tips below.",
+    advice: tx("screen.adviceHigh", lang),
   };
 }
 
@@ -173,12 +167,12 @@ export default function ScreenTimePage() {
               <span className="text-xl text-muted-foreground">-</span>
               <div className="text-center">
                 <p className="text-3xl font-bold text-violet-600 dark:text-violet-400">20</p>
-                <p className="text-xs text-muted-foreground">{lang === "tr" ? "saniye" : "seconds"}</p>
+                <p className="text-xs text-muted-foreground">{tx("screen.seconds", lang)}</p>
               </div>
               <span className="text-xl text-muted-foreground">-</span>
               <div className="text-center">
                 <p className="text-3xl font-bold text-violet-600 dark:text-violet-400">20</p>
-                <p className="text-xs text-muted-foreground">{lang === "tr" ? "fit (6m)" : "feet (6m)"}</p>
+                <p className="text-xs text-muted-foreground">{tx("screen.feet", lang)}</p>
               </div>
             </div>
             <p className="text-sm text-muted-foreground text-center">
