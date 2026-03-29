@@ -1087,6 +1087,28 @@ const t: Record<string, TranslationEntry> = {
   "dash.explore": { en: "Explore", tr: "Keşfet" },
   "dash.allTools": { en: "All Tools", tr: "Tüm Araçlar" },
   "common.tools": { en: "tools", tr: "araç" },
+  "common.saved": { en: "Saved!", tr: "Kaydedildi!" },
+  "common.close": { en: "Close", tr: "Kapat" },
+  "common.view": { en: "View", tr: "Veri" },
+  "common.pay": { en: "Pay", tr: "Ödeme" },
+  "common.meds": { en: "Meds", tr: "İlaç" },
+
+  // ══════════════════════════════════════════
+  // Profile Completion
+  // ══════════════════════════════════════════
+  "profile.completion": { en: "Profile Completion", tr: "Profil Tamamlama" },
+  "profile.complete100": { en: "Your profile is 100% complete!", tr: "Profilin %100 tamamlandı!" },
+  "profile.accountCreated": { en: "Account created", tr: "Hesap oluşturuldu" },
+  "profile.nameEntered": { en: "Name entered", tr: "Ad soyad girildi" },
+  "profile.medsAdded": { en: "Medications added", tr: "İlaçlar eklendi" },
+  "profile.allergiesEntered": { en: "Allergies entered", tr: "Alerjiler girildi" },
+  "profile.lifestyleInfo": { en: "Lifestyle info", tr: "Yaşam tarzı bilgisi" },
+  "profile.medicalHistory": { en: "Medical history", tr: "Tıbbi geçmiş" },
+  "profile.heightWeight": { en: "Height & weight", tr: "Boy & kilo" },
+  "profile.bloodGroup": { en: "Blood group", tr: "Kan grubu" },
+  "profile.moreInfoBetter": { en: "More info = more accurate and personalized recommendations", tr: "Daha fazla bilgi = daha doğru ve kişisel öneriler" },
+  "profile.completeMsg": { en: "You'll now receive the most accurate and personalized health recommendations", tr: "Artık en doğru ve kişisel sağlık önerilerini alabilirsin" },
+  "profile.addAllergiesTip": { en: "Adding allergies improves your medication safety by 40%", tr: "Alerjilerini eklersen ilaç önerilerinde güvenliğin %40 artar" },
 
   // ══════════════════════════════════════════
   // User Panel — Sprint 15

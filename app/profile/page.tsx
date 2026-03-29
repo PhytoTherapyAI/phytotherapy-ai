@@ -445,14 +445,14 @@ export default function ProfilePage() {
 
   // ── Profile Completion Score (Endowed Progress Effect — starts at 20%) ──
   const completionChecks = [
-    { done: true, label: lang === "tr" ? "Hesap oluşturuldu" : "Account created" }, // always true = 20% head start
-    { done: !!profile.full_name, label: lang === "tr" ? "Ad soyad girildi" : "Name entered" },
-    { done: medications.length > 0, label: lang === "tr" ? "İlaçlar eklendi" : "Medications added" },
-    { done: allergies.length > 0, label: lang === "tr" ? "Alerjiler girildi" : "Allergies entered" },
-    { done: !!(profile.alcohol_use || profile.smoking_use), label: lang === "tr" ? "Yaşam tarzı bilgisi" : "Lifestyle info" },
-    { done: !!(profile.kidney_disease !== undefined && profile.chronic_conditions?.length), label: lang === "tr" ? "Tıbbi geçmiş" : "Medical history" },
-    { done: !!(profile.height_cm && profile.weight_kg), label: lang === "tr" ? "Boy & kilo" : "Height & weight" },
-    { done: !!(profile.blood_group), label: lang === "tr" ? "Kan grubu" : "Blood group" },
+    { done: true, label: tx("profile.accountCreated", lang) }, // always true = 20% head start
+    { done: !!profile.full_name, label: tx("profile.nameEntered", lang) },
+    { done: medications.length > 0, label: tx("profile.medsAdded", lang) },
+    { done: allergies.length > 0, label: tx("profile.allergiesEntered", lang) },
+    { done: !!(profile.alcohol_use || profile.smoking_use), label: tx("profile.lifestyleInfo", lang) },
+    { done: !!(profile.kidney_disease !== undefined && profile.chronic_conditions?.length), label: tx("profile.medicalHistory", lang) },
+    { done: !!(profile.height_cm && profile.weight_kg), label: tx("profile.heightWeight", lang) },
+    { done: !!(profile.blood_group), label: tx("profile.bloodGroup", lang) },
   ];
   const completedCount = completionChecks.filter(c => c.done).length;
   const completionPct = Math.round((completedCount / completionChecks.length) * 100);
@@ -464,7 +464,7 @@ export default function ProfilePage() {
       {saveSuccess && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-5 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
           <CheckCircle2 className="h-4 w-4" />
-          <span className="text-sm font-medium">{lang === "tr" ? "Kaydedildi!" : "Saved!"}</span>
+          <span className="text-sm font-medium">{tx("common.saved", lang)}</span>
         </div>
       )}
 
@@ -479,12 +479,10 @@ export default function ProfilePage() {
             <div>
               <h3 className="text-sm font-semibold flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-amber-500" />
-                {lang === "tr" ? "Profil Tamamlama" : "Profile Completion"}
+                {tx("profile.completion", lang)}
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {lang === "tr"
-                  ? "Daha fazla bilgi = daha doğru ve kişisel öneriler"
-                  : "More info = more accurate and personalized recommendations"}
+                {tx("profile.moreInfoBetter", lang)}
               </p>
             </div>
             <span className="text-2xl font-bold text-primary">%{completionPct}</span>
@@ -529,12 +527,10 @@ export default function ProfilePage() {
           </div>
           <div>
             <p className="text-sm font-semibold text-green-800 dark:text-green-300">
-              {lang === "tr" ? "Profilin %100 tamamlandı!" : "Your profile is 100% complete!"}
+              {tx("profile.complete100", lang)}
             </p>
             <p className="text-xs text-green-600 dark:text-green-400">
-              {lang === "tr"
-                ? "Artık en doğru ve kişisel sağlık önerilerini alabilirsin"
-                : "You'll now receive the most accurate and personalized health recommendations"}
+              {tx("profile.completeMsg", lang)}
             </p>
           </div>
         </div>
@@ -812,9 +808,7 @@ export default function ProfilePage() {
               <p className="text-sm text-muted-foreground">{tx('profile.noAllergies', lang)}</p>
               <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
                 <AlertTriangle className="h-3 w-3" />
-                {lang === "tr"
-                  ? "Alerjilerini eklersen ilaç önerilerinde güvenliğin %40 artar"
-                  : "Adding allergies improves your medication safety by 40%"}
+                {tx("profile.addAllergiesTip", lang)}
               </p>
             </div>
           ) : (
@@ -1789,7 +1783,7 @@ function LinkedAccountsSection({ lang, userId }: { lang: "en" | "tr"; userId: st
             ) : (
               <UserPlus className="h-4 w-4" />
             )}
-            {showForm ? (lang === "tr" ? "Kapat" : "Close") : tx("linked.addAccount", lang)}
+            {showForm ? tx("common.close", lang) : tx("linked.addAccount", lang)}
           </Button>
         </div>
       </CardHeader>
@@ -1940,12 +1934,9 @@ function LinkedAccountsSection({ lang, userId }: { lang: "en" | "tr"; userId: st
                           </Badge>
                           {account.permissions.map((p) => (
                             <Badge key={p} variant="outline" className="text-[10px]">
-                              {p === "view_data"
-                                ? lang === "tr" ? "Veri" : "View"
-                                : p === "pays_subscription"
-                                ? lang === "tr" ? "Ödeme" : "Pay"
-                                : p === "manage_medications"
-                                ? lang === "tr" ? "İlaç" : "Meds"
+                              {p === "view_data" ? tx("common.view", lang)
+                                : p === "pays_subscription" ? tx("common.pay", lang)
+                                : p === "manage_medications" ? tx("common.meds", lang)
                                 : p}
                             </Badge>
                           ))}
