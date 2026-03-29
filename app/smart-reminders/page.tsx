@@ -337,7 +337,7 @@ export default function SmartRemindersPage() {
               ? "İlaçlarinizin en uygun zamanlarda alinmasini saglayan kişisellestirilmis program."
               : "Personalized schedule ensuring your medications are taken at optimal times."}
           </p>
-          <Link href="/login">
+          <Link href="/auth/login">
             <Button className="bg-teal-600 hover:bg-teal-700 text-white">
               {tx("auth.loginToUse", lang)}
             </Button>

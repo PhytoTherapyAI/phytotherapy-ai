@@ -348,7 +348,7 @@ export default function MedicationHubPage() {
               ? "İlaçlarınızın zamanlama, etkileşim ve hatırlatıcılarını tek yerden yönetin."
               : "Manage your medication timing, interactions and reminders in one place."}
           </p>
-          <Link href="/login">
+          <Link href="/auth/login">
             <Button className="bg-teal-600 hover:bg-teal-700 text-white">
               {tx("auth.loginToUse", lang)}
             </Button>

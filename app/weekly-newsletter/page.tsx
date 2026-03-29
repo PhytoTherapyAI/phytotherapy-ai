@@ -221,7 +221,7 @@ export default function WeeklyNewsletterPage() {
         <p className="text-center text-gray-600 dark:text-gray-400">
           {lang === "tr" ? "Haftalık bülteninizi görmek için giriş yapın." : "Sign in to view your weekly health newsletter."}
         </p>
-        <Link href="/login">
+        <Link href="/auth/login">
           <Button>{tx("common.signIn", lang)}</Button>
         </Link>
       </div>

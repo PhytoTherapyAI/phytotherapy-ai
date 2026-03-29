@@ -210,7 +210,7 @@ export default function HealthAnalyticsPage() {
           <Activity className="h-16 w-16 text-emerald-500 mx-auto" />
           <h1 className="text-2xl font-bold">{tx("analytics2.title", lang)}</h1>
           <p className="text-muted-foreground">{tx("analytics2.loginRequired", lang)}</p>
-          <Link href="/login">
+          <Link href="/auth/login">
             <Button className="bg-emerald-600 hover:bg-emerald-700 gap-2 mt-2">
               <LogIn className="h-4 w-4" />
               {tx("nav.login", lang)}

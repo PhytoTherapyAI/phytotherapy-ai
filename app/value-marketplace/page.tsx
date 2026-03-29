@@ -178,7 +178,7 @@ export default function ValueMarketplacePage() {
           <ShieldCheck className="w-16 h-16 mx-auto mb-4 text-emerald-500" />
           <h1 className="text-2xl font-bold mb-2">{tx("value.title", lang)}</h1>
           <p className="text-gray-500 dark:text-gray-400 mb-6">{tx("value.loginRequired", lang)}</p>
-          <a href="/login"><Button>{tx("nav.login", lang)}</Button></a>
+          <a href="/auth/login"><Button>{tx("nav.login", lang)}</Button></a>
         </div>
       </div>
     );

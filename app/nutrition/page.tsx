@@ -198,7 +198,7 @@ export default function NutritionLogPage() {
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             {tx("nut.loginRequired", lang)}
           </p>
-          <Link href="/login">
+          <Link href="/auth/login">
             <Button className="bg-lime-600 hover:bg-lime-700 text-white">
               {tx("nav.login", lang)}
             </Button>
