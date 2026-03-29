@@ -190,6 +190,7 @@ export default function ProfilePage() {
       }
       await refreshProfile();
       setEditingHealth(false);
+      showSaveToast();
     } catch (err) {
       console.error("Failed to save health profile:", err);
     } finally {
@@ -197,18 +198,27 @@ export default function ProfilePage() {
     }
   };
 
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  const showSaveToast = () => {
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2500);
+  };
+
   const addAllergy = async () => {
-    if (!newAllergen.trim() || !profile) return;
+    if (!newAllergen.trim() || !user) return;
     try {
       const supabase = createBrowserClient();
-      const { data } = await supabase.from("user_allergies").insert({
-        user_id: profile.id,
+      const { data, error } = await supabase.from("user_allergies").insert({
+        user_id: user.id,
         allergen: newAllergen.trim(),
         severity: newAllergenSeverity,
       }).select().single();
+      if (error) { console.error("Allergy insert error:", error); return; }
       if (data) setAllergies((prev) => [...prev, data as UserAllergy]);
       setNewAllergen("");
       setNewAllergenSeverity("mild");
+      showSaveToast();
     } catch (err) {
       console.error("Failed to add allergy:", err);
     }
@@ -217,8 +227,11 @@ export default function ProfilePage() {
   const removeAllergy = async (id: string) => {
     try {
       const supabase = createBrowserClient();
-      await supabase.from("user_allergies").delete().eq("id", id);
-      setAllergies((prev) => prev.filter((a) => a.id !== id));
+      const { error } = await supabase.from("user_allergies").delete().eq("id", id);
+      if (!error) {
+        setAllergies((prev) => prev.filter((a) => a.id !== id));
+        showSaveToast();
+      }
     } catch (err) {
       console.error("Failed to remove allergy:", err);
     }
@@ -260,26 +273,17 @@ export default function ProfilePage() {
   }, [isLoading, isAuthenticated, router]);
 
   useEffect(() => {
-    if (!profile) return;
+    if (!user) return;
     const supabase = createBrowserClient();
 
-    supabase
-      .from("user_medications")
-      .select("*")
-      .eq("user_id", profile.id)
-      .eq("is_active", true)
-      .then(({ data }) => {
-        if (data) setMedications(data as UserMedication[]);
-      });
-
-    supabase
-      .from("user_allergies")
-      .select("*")
-      .eq("user_id", profile.id)
-      .then(({ data }) => {
-        if (data) setAllergies(data as UserAllergy[]);
-      });
-  }, [profile]);
+    Promise.all([
+      supabase.from("user_medications").select("*").eq("user_id", user.id).eq("is_active", true),
+      supabase.from("user_allergies").select("*").eq("user_id", user.id),
+    ]).then(([medsRes, allergyRes]) => {
+      if (medsRes.data) setMedications(medsRes.data as UserMedication[]);
+      if (allergyRes.data) setAllergies(allergyRes.data as UserAllergy[]);
+    }).catch(() => { /* silent */ });
+  }, [user]);
 
   // Drug autocomplete
   const fetchSuggestions = useCallback(async (query: string) => {
@@ -361,24 +365,26 @@ export default function ProfilePage() {
   };
 
   const addMedication = async () => {
-    if (!newBrandName.trim() || !profile) return;
+    if (!newBrandName.trim() || !user) return;
     setSavingMed(true);
     try {
       const supabase = createBrowserClient();
-      const { data } = await supabase.from("user_medications").insert({
-        user_id: profile.id,
+      const { data, error } = await supabase.from("user_medications").insert({
+        user_id: user.id,
         brand_name: newBrandName.trim(),
         generic_name: newGenericName.trim() || null,
         dosage: newDosage.trim() || null,
         frequency: newFrequency.trim() || null,
         is_active: true,
       }).select().single();
+      if (error) { console.error("Med insert error:", error); setSavingMed(false); return; }
       if (data) setMedications((prev) => [...prev, data as UserMedication]);
       setNewBrandName("");
       setNewGenericName("");
       setNewDosage("");
       setNewFrequency("");
       setIsAddingMed(false);
+      showSaveToast();
     } catch (err) {
       console.error("Failed to add medication:", err);
     } finally {
@@ -389,8 +395,11 @@ export default function ProfilePage() {
   const removeMedication = async (id: string) => {
     try {
       const supabase = createBrowserClient();
-      await supabase.from("user_medications").update({ is_active: false }).eq("id", id);
-      setMedications((prev) => prev.filter((m) => m.id !== id));
+      const { error } = await supabase.from("user_medications").update({ is_active: false }).eq("id", id);
+      if (!error) {
+        setMedications((prev) => prev.filter((m) => m.id !== id));
+        showSaveToast();
+      }
     } catch (err) {
       console.error("Failed to remove medication:", err);
     }
@@ -416,7 +425,7 @@ export default function ProfilePage() {
       await supabase
         .from("user_profiles")
         .update({ last_medication_update: new Date().toISOString() })
-        .eq("id", profile.id);
+        .eq("user_id", user!.id);
       refreshProfile().catch(() => {});
       localStorage.setItem(MED_CONFIRM_KEY, new Date().toISOString());
       setMedConfirmed(true);
@@ -451,6 +460,14 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
+      {/* Save success toast */}
+      {saveSuccess && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-5 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+          <CheckCircle2 className="h-4 w-4" />
+          <span className="text-sm font-medium">{lang === "tr" ? "Kaydedildi!" : "Saved!"}</span>
+        </div>
+      )}
+
       <h1 className="font-heading mb-4 text-3xl font-semibold">
         {tx('profile.title', lang)}
       </h1>
