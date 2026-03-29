@@ -196,7 +196,7 @@ export default function DentalHealthPage() {
           </div>
           {progress === 100 && (
             <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl text-green-700 dark:text-green-400 font-medium">
-              {lang === "tr" ? "Bugunku agiz bakiminizi tamamladiniz!" : "You completed today's oral care routine!"}
+              {tx("dental.completedToday", lang)}
             </div>
           )}
         </div>
@@ -238,25 +238,25 @@ export default function DentalHealthPage() {
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  <strong>{lang === "tr" ? "İlaçlar:" : "Medications:"}</strong>{" "}
+                  <strong>{tx("dental.medications", lang)}</strong>{" "}
                   {effect.medications.join(", ")}
                 </p>
                 <div className="grid sm:grid-cols-3 gap-2 text-sm">
                   <div className="bg-muted/50 rounded-lg p-2">
                     <div className="font-medium text-xs text-muted-foreground mb-1">
-                      {lang === "tr" ? "Etki" : "Effect"}
+                      {tx("dental.effect", lang)}
                     </div>
                     {effect.effect[lang]}
                   </div>
                   <div className="bg-muted/50 rounded-lg p-2">
                     <div className="font-medium text-xs text-muted-foreground mb-1">
-                      {lang === "tr" ? "Risk" : "Risk"}
+                      {tx("dental.risk", lang)}
                     </div>
                     {effect.risk[lang]}
                   </div>
                   <div className="bg-muted/50 rounded-lg p-2">
                     <div className="font-medium text-xs text-muted-foreground mb-1">
-                      {lang === "tr" ? "Onlem" : "Prevention"}
+                      {tx("dental.prevention", lang)}
                     </div>
                     {effect.prevention[lang]}
                   </div>
@@ -270,18 +270,14 @@ export default function DentalHealthPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-3">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Heart className="w-5 h-5 text-red-500" />
-            {lang === "tr" ? "Ağız Sağlığı & Kalp Bağlantısı" : "Oral-Cardiovascular Link"}
+            {tx("dental.cardioLink", lang)}
           </h2>
           <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 space-y-2">
             <p className="text-sm">
-              {lang === "tr"
-                ? "Periodontal (dis eti) hastalık, kardiyovasküler hastalık riski ile guclu bir sekilde iliskilidir. Dis eti bakterileri kan dolasimina girerek ateroskleroz, endokardit ve kalp krizi riskini artirabilir."
-                : "Periodontal (gum) disease is strongly linked to cardiovascular disease risk. Gum bacteria can enter the bloodstream and increase risk of atherosclerosis, endocarditis, and heart attacks."}
+              {tx("dental.cardioDesc", lang)}
             </p>
             <p className="text-sm font-medium">
-              {lang === "tr"
-                ? "Düzenli dis bakimi sadece agiz sağlığı için degil, kalp sağlığıniz için de önemlidir."
-                : "Regular dental care is important not just for oral health, but for your heart health too."}
+              {tx("dental.cardioAdvice", lang)}
             </p>
           </div>
         </div>
@@ -290,7 +286,7 @@ export default function DentalHealthPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Calendar className="w-5 h-5 text-blue-500" />
-            {lang === "tr" ? "Dis Hekimi Ziyaret Takvimi" : "Dental Visit Schedule"}
+            {tx("dental.visitSchedule", lang)}
           </h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {VISIT_SCHEDULE.map((visit, i) => (

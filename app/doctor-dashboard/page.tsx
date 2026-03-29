@@ -23,9 +23,9 @@ export default function DoctorDashboardPage() {
   const highRisk = patients.filter(p => p.risk === "high").length;
 
   const tabs = [
-    { id: "overview", label: isTr ? "Genel Bakis" : "Overview" },
-    { id: "patients", label: isTr ? "Hastalar" : "Patients" },
-    { id: "ai", label: isTr ? "AI Destek" : "AI Decision Support" },
+    { id: "overview", label: tx("doctorDash.overview", lang) },
+    { id: "patients", label: tx("doctorDash.patientsTab", lang) },
+    { id: "ai", label: tx("doctorDash.aiSupport", lang) },
   ];
 
   return (
@@ -34,21 +34,21 @@ export default function DoctorDashboardPage() {
         <div className="flex items-center gap-3 mb-6">
           <Stethoscope className="w-8 h-8 text-indigo-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Doktor Paneli" : "Doctor Dashboard"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Hasta takibi ve karar destek sistemi" : "Patient monitoring and decision support"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("doctorDash.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{tx("doctorDash.subtitle", lang)}</p>
           </div>
         </div>
 
         <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
-          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200">{isTr ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
-          <span className="text-xs text-amber-700 dark:text-amber-300">{isTr ? "Gerçek hasta verisi bağlandığında bu veriler değişecektir" : "This data will change when connected to real patient records"}</span>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200">{tx("common.sampleData", lang)}</span>
+          <span className="text-xs text-amber-700 dark:text-amber-300">{tx("doctorDash.sampleNote", lang)}</span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          <Card className="p-4 text-center"><Users className="w-6 h-6 text-indigo-500 mx-auto mb-1" /><div className="text-2xl font-bold">{patients.length}</div><div className="text-xs text-gray-500">{isTr ? "Toplam Hasta" : "Total Patients"}</div></Card>
-          <Card className="p-4 text-center"><CheckCircle2 className="w-6 h-6 text-green-500 mx-auto mb-1" /><div className="text-2xl font-bold text-green-600">{avgCompliance}%</div><div className="text-xs text-gray-500">{isTr ? "Ort. Uyum" : "Avg Compliance"}</div></Card>
+          <Card className="p-4 text-center"><Users className="w-6 h-6 text-indigo-500 mx-auto mb-1" /><div className="text-2xl font-bold">{patients.length}</div><div className="text-xs text-gray-500">{tx("doctorDash.totalPatients", lang)}</div></Card>
+          <Card className="p-4 text-center"><CheckCircle2 className="w-6 h-6 text-green-500 mx-auto mb-1" /><div className="text-2xl font-bold text-green-600">{avgCompliance}%</div><div className="text-xs text-gray-500">{tx("doctorDash.avgCompliance", lang)}</div></Card>
           <Card className="p-4 text-center"><AlertTriangle className="w-6 h-6 text-red-500 mx-auto mb-1" /><div className="text-2xl font-bold text-red-600">{highRisk}</div><div className="text-xs text-gray-500">{tx("common.highRisk", lang)}</div></Card>
-          <Card className="p-4 text-center"><Clock className="w-6 h-6 text-orange-500 mx-auto mb-1" /><div className="text-2xl font-bold text-orange-600">2</div><div className="text-xs text-gray-500">{isTr ? "Takip Geciken" : "Overdue Follow-up"}</div></Card>
+          <Card className="p-4 text-center"><Clock className="w-6 h-6 text-orange-500 mx-auto mb-1" /><div className="text-2xl font-bold text-orange-600">2</div><div className="text-xs text-gray-500">{tx("doctorDash.overdueFollowup", lang)}</div></Card>
         </div>
 
         <div className="flex gap-2 mb-6">{tabs.map(t => (<Button key={t.id} variant={activeTab === t.id ? "default" : "outline"} size="sm" onClick={() => setActiveTab(t.id)}>{t.label}</Button>))}</div>
@@ -56,7 +56,7 @@ export default function DoctorDashboardPage() {
         {activeTab === "overview" && (
           <div className="space-y-4">
             <Card className="p-4 border-red-200 bg-red-50 dark:bg-red-900/20">
-              <h3 className="font-semibold text-red-700 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {isTr ? "Dikkat Gerektiren Hastalar" : "Patients Needing Attention"}</h3>
+              <h3 className="font-semibold text-red-700 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {tx("doctorDash.needsAttention", lang)}</h3>
               <div className="mt-3 space-y-2">
                 {patients.filter(p => p.risk === "high").map(p => (
                   <div key={p.id} className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-gray-800">
@@ -67,9 +67,9 @@ export default function DoctorDashboardPage() {
               </div>
             </Card>
             <Card className="p-4">
-              <h3 className="font-semibold mb-3">{isTr ? "Populasyon Özeti" : "Population Overview"}</h3>
+              <h3 className="font-semibold mb-3">{tx("doctorDash.populationOverview", lang)}</h3>
               <div className="grid grid-cols-3 gap-3">
-                {[{ label: isTr ? "Diyabet" : "Diabetes", count: 2, color: "bg-blue-100 text-blue-700" }, { label: isTr ? "Hipertansiyon" : "Hypertension", count: 1, color: "bg-purple-100 text-purple-700" }, { label: isTr ? "Tiroid" : "Thyroid", count: 1, color: "bg-teal-100 text-teal-700" }].map(c => (
+                {[{ label: tx("doctorDash.diabetes", lang), count: 2, color: "bg-blue-100 text-blue-700" }, { label: tx("doctorDash.hypertension", lang), count: 1, color: "bg-purple-100 text-purple-700" }, { label: tx("doctorDash.thyroid", lang), count: 1, color: "bg-teal-100 text-teal-700" }].map(c => (
                   <div key={c.label} className="text-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800"><Badge className={c.color}>{c.count}</Badge><div className="text-xs mt-1">{c.label}</div></div>
                 ))}
               </div>
@@ -91,7 +91,7 @@ export default function DoctorDashboardPage() {
                   </div>
                   <div className="text-right">
                     <div className={compColor(p.compliance) + " text-lg font-bold"}>{p.compliance}%</div>
-                    <div className="text-xs text-gray-400">{p.medications} {isTr ? "ilac" : "meds"}</div>
+                    <div className="text-xs text-gray-400">{p.medications} {tx("doctorDash.meds", lang)}</div>
                   </div>
                 </div>
                 <div className="mt-2"><div className="w-full bg-gray-200 rounded-full h-1.5"><div className={"h-1.5 rounded-full " + (p.compliance >= 90 ? "bg-green-500" : p.compliance >= 75 ? "bg-yellow-500" : "bg-red-500")} style={{ width: p.compliance + "%" }} /></div></div>
@@ -106,8 +106,8 @@ export default function DoctorDashboardPage() {
               <div className="flex items-start gap-3">
                 <Brain className="w-6 h-6 text-indigo-600" />
                 <div>
-                  <h3 className="font-semibold">{isTr ? "AI Karar Destek" : "AI Decision Support"}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{isTr ? "Hasta profillerine dayali AI uyarıları ve onerileri" : "AI-powered alerts and suggestions based on patient profiles"}</p>
+                  <h3 className="font-semibold">{tx("doctorDash.aiSupport", lang)}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{tx("doctorDash.aiDesc", lang)}</p>
                 </div>
               </div>
             </Card>

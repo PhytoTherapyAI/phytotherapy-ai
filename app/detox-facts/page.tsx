@@ -98,9 +98,7 @@ export default function DetoxFactsPage() {
       {/* Key message */}
       <div className="mb-6 p-5 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
         <p className="text-sm text-green-800 dark:text-green-300 font-medium">
-          {lang === "tr"
-            ? "Vücudunuz zaten mükemmel bir detoks sistemine sahiptir: karaciğer, böbrekler, akciğer, deri ve bağırsak. Çoğu 'detoks' ürünü bu sistemi iyilestirmez."
-            : "Your body already has a perfect detox system: liver, kidneys, lungs, skin, and intestines. Most 'detox' products don't improve this system."}
+          {tx("detox.keyMessage", lang)}
         </p>
       </div>
 
@@ -130,11 +128,11 @@ export default function DetoxFactsPage() {
               {expanded === i && (
                 <div className="px-5 pb-5 space-y-3">
                   <div>
-                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">{lang === "tr" ? "Iddia" : "Claim"}</p>
+                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">{tx("detox.claim", lang)}</p>
                     <p className="text-sm text-gray-600 dark:text-gray-400 italic">{item.claim[lang]}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">{lang === "tr" ? "Gerçek" : "Reality"}</p>
+                    <p className="text-xs font-medium text-gray-500 uppercase mb-1">{tx("detox.reality", lang)}</p>
                     <p className="text-sm text-gray-700 dark:text-gray-300">{item.reality[lang]}</p>
                   </div>
                   <div>

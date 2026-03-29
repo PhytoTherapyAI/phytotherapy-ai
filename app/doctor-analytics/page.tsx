@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 export default function DoctorAnalyticsPage() {
   const { lang } = useLang();
@@ -48,15 +49,15 @@ export default function DoctorAnalyticsPage() {
           <div className="flex items-center gap-3">
             <BarChart3 className="w-8 h-8 text-violet-600" />
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Hasta Analitigi" : "Patient Analytics"}</h1>
-              <p className="text-sm text-gray-500">{isTr ? "Populasyon sağlık gostergeleri" : "Population health indicators"}</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("doctorAnalytics.title", lang)}</h1>
+              <p className="text-sm text-gray-500">{tx("doctorAnalytics.subtitle", lang)}</p>
             </div>
           </div>
           <div className="flex gap-1">{["7d", "30d", "90d"].map(p => (<Button key={p} variant={period === p ? "default" : "outline"} size="sm" onClick={() => setPeriod(p)}>{p}</Button>))}</div>
         </div>
         <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
-          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200">{isTr ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
-          <span className="text-xs text-amber-700 dark:text-amber-300">{isTr ? "Gerçek hasta verisi bağlandığında güncellenir" : "Updates when connected to real patient data"}</span>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200">{tx("common.sampleData", lang)}</span>
+          <span className="text-xs text-amber-700 dark:text-amber-300">{tx("doctorAnalytics.sampleNote", lang)}</span>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -71,7 +72,7 @@ export default function DoctorAnalyticsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Card className="p-4">
-            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2"><PieChart className="w-4 h-4" /> {isTr ? "Hastalık Dağılımi" : "Condition Distribution"}</h3>
+            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2"><PieChart className="w-4 h-4" /> {tx("doctorAnalytics.conditionDist", lang)}</h3>
             <div className="space-y-3">
               {conditions.map(c => (
                 <div key={c.name} className="flex items-center gap-3">
@@ -85,12 +86,12 @@ export default function DoctorAnalyticsPage() {
           </Card>
 
           <Card className="p-4">
-            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2"><Pill className="w-4 h-4" /> {isTr ? "En Çok Kullanilan Ilaclar" : "Top Medications"}</h3>
+            <h3 className="font-semibold text-sm mb-4 flex items-center gap-2"><Pill className="w-4 h-4" /> {tx("doctorAnalytics.topMeds", lang)}</h3>
             <div className="space-y-3">
               {topMeds.map(m => (
                 <div key={m.name} className="flex items-center gap-3">
                   <span className="text-sm font-medium flex-1">{m.name}</span>
-                  <span className="text-xs text-gray-500">{m.patients} {isTr ? "hasta" : "pts"}</span>
+                  <span className="text-xs text-gray-500">{m.patients} {tx("doctorAnalytics.patients", lang)}</span>
                   <div className="w-16 bg-gray-200 rounded-full h-1.5"><div className={"h-1.5 rounded-full " + (m.compliance >= 85 ? "bg-green-500" : "bg-yellow-500")} style={{ width: m.compliance + "%" }} /></div>
                   <span className="text-xs font-medium w-8">{m.compliance}%</span>
                 </div>
@@ -100,7 +101,7 @@ export default function DoctorAnalyticsPage() {
         </div>
 
         <Card className="p-4">
-          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {isTr ? "Uyarılar ve Bildirimler" : "Alerts & Notifications"}</h3>
+          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {tx("doctorAnalytics.alerts", lang)}</h3>
           <div className="space-y-2">
             {alerts.map((a, i) => (
               <div key={i} className={"flex items-center gap-3 p-3 rounded-lg " + (a.type === "critical" ? "bg-red-50 dark:bg-red-900/20" : a.type === "warning" ? "bg-yellow-50 dark:bg-yellow-900/20" : "bg-green-50 dark:bg-green-900/20")}>

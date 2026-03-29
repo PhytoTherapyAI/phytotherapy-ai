@@ -14,29 +14,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
-const tx: Record<string, { en: string; tr: string }> = {
-  title: { en: "DISASTER HEALTH MODE", tr: "AFET SAGLIK MODU" },
-  subtitle: { en: "Emergency health guide - designed for crisis situations", tr: "Acil sağlık rehberi - kriz durumlari için tasarlandi" },
-  emergencyCard: { en: "Emergency ID Card", tr: "Acil Durum Kimlik Karti" },
-  myMeds: { en: "My Medications", tr: "İlaçlarim" },
-  noMeds: { en: "No medications on file", tr: "Kayıtli ilac yok" },
-  loginForMeds: { en: "Log in to see your medications", tr: "İlaçlarınızı görmek için giriş yapın" },
-  bloodType: { en: "Blood Type", tr: "Kan Grubu" },
-  allergies: { en: "Allergies", tr: "Alerjiler" },
-  none: { en: "None recorded", tr: "Kayıt yok" },
-  emergencyNumbers: { en: "Emergency Numbers", tr: "Acil Numaralar" },
-  waterSafety: { en: "Water Safety", tr: "Su Güvenligi" },
-  firstAid: { en: "First Aid Basics", tr: "Ilk Yardim Temelleri" },
-  crushSyndrome: { en: "Crush Syndrome Awareness", tr: "Ezilme Sendromu Farkindaligi" },
-  ptsd: { en: "PTSD Early Intervention", tr: "TSSB Erken Mudahale" },
-  hospital: { en: "Nearest Hospital", tr: "En Yakin Hastane" },
-  earthquake: { en: "Earthquake Guide", tr: "Deprem Rehberi" },
-  flood: { en: "Flood Guide", tr: "Sel Rehberi" },
-  offlineReady: { en: "This page works offline", tr: "Bu sayfa cevrimdisi calisir" },
-  call: { en: "CALL", tr: "ARA" },
-  downloadCard: { en: "Save Emergency Card", tr: "Acil Karti Kaydet" },
-  expandAll: { en: "Expand All", tr: "Tumunu Ac" },
-}
+import { tx } from "@/lib/translations";
 
 interface Section {
   id: string
@@ -207,7 +185,7 @@ const EMERGENCY_NUMBERS = [
 export default function DisasterModePage() {
   const { user } = useAuth()
   const { lang } = useLang()
-  const t = (key: string) => tx[key]?.[lang as "en" | "tr"] || tx[key]?.en || key
+  const t = (key: string) => tx(`disaster.${key}`, lang)
 
   const [userMeds, setUserMeds] = useState<string[]>([])
   const [profile, setProfile] = useState<any>(null)
@@ -369,10 +347,7 @@ export default function DisasterModePage() {
             <MapPin className="w-5 h-5 text-red-500" />{t("hospital")}
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {lang === "tr"
-              ? "Konum izni verildikten sonra en yakin hastane bilgisi burada gorunecektir."
-              : "Nearest hospital info will appear here once location permission is granted."
-            }
+            {tx("disaster.hospitalDesc", lang)}
           </p>
           <Button variant="outline" size="sm" onClick={() => {
             if (typeof window !== "undefined" && navigator.geolocation) {
@@ -380,7 +355,7 @@ export default function DisasterModePage() {
             }
           }}>
             <MapPin className="w-4 h-4 mr-2" />
-            {lang === "tr" ? "Google Maps'te Hastane Bul" : "Find Hospital on Google Maps"}
+            {tx("disaster.findHospital", lang)}
           </Button>
         </Card>
       </div>

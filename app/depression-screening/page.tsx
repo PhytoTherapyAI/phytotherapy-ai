@@ -193,9 +193,7 @@ export default function DepressionScreeningPage() {
       {!result && (
         <div className="mb-6 space-y-4">
           <p className="text-sm text-muted-foreground">
-            {lang === "tr"
-              ? "Son 2 hafta icinde asagidaki sorunlardan ne siklukla rahatsiz oldunuz?"
-              : "Over the last 2 weeks, how often have you been bothered by the following?"}
+            {tx("depression.instructions", lang)}
           </p>
           {questions.map((q, qi) => (
             <div key={qi} className={`rounded-xl border p-4 shadow-sm ${
@@ -205,7 +203,7 @@ export default function DepressionScreeningPage() {
                 {qi + 1}. {q}
                 {qi === 8 && (
                   <span className="ml-2 text-xs text-red-500">
-                    ({lang === "tr" ? "kritik soru" : "critical question"})
+                    ({tx("depression.criticalQuestion", lang)})
                   </span>
                 )}
               </p>
@@ -244,7 +242,7 @@ export default function DepressionScreeningPage() {
           size="lg"
         >
           {isLoading ? (
-            <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Hesaplanıyor..." : "Calculating..."}</>
+            <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("depression.calculating", lang)}</>
           ) : (
             <><Shield className="mr-2 h-5 w-5" />{tx("depression.analyze", lang)}</>
           )}
@@ -299,9 +297,7 @@ export default function DepressionScreeningPage() {
                   <p className={`font-semibold ${
                     result.alertLevel === "red" ? "text-red-700 dark:text-red-300" : "text-amber-700 dark:text-amber-300"
                   }`}>
-                    {lang === "tr"
-                      ? "PHQ-9 skorunuz profesyonel değerlendirme onermektedir."
-                      : "Your PHQ-9 score suggests professional evaluation is recommended."}
+                    {tx("depression.referralMessage", lang)}
                   </p>
                   <div className="mt-2 space-y-1">
                     {result.crisisLines.map((line, i) => (
@@ -320,7 +316,7 @@ export default function DepressionScreeningPage() {
               className="flex w-full items-center justify-between"
             >
               <h3 className="text-lg font-bold text-blue-700 dark:text-blue-300">
-                {lang === "tr" ? "Soru Detaylari" : "Question Details"}
+                {tx("depression.questionDetails", lang)}
               </h3>
               {showDetails ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
             </button>
@@ -364,7 +360,7 @@ export default function DepressionScreeningPage() {
           {result.positiveActions && result.positiveActions.length > 0 && (
             <div className="rounded-xl border-2 border-green-300 bg-green-50 p-6 dark:bg-green-950/20">
               <h3 className="mb-3 text-lg font-bold text-green-700 dark:text-green-300">
-                {lang === "tr" ? "Bugun Yapabilecekleriniz" : "Things You Can Do Today"}
+                {tx("depression.positiveActions", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.positiveActions.map((action, i) => (
@@ -390,7 +386,7 @@ export default function DepressionScreeningPage() {
             variant="outline"
             className="w-full"
           >
-            {lang === "tr" ? "Yeniden Yapin" : "Take Again"}
+            {tx("depression.takeAgain", lang)}
           </Button>
         </div>
       )}

@@ -38,25 +38,25 @@ export default function DataExportPage() {
         <div className="flex items-center gap-3 mb-6">
           <Download className="w-8 h-8 text-blue-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Verilerimi İndir" : "Export My Data"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "KVKK kapsaminda veri tasima hakki" : "GDPR/KVKK right to data portability"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("dataExport.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{tx("dataExport.subtitle", lang)}</p>
           </div>
         </div>
         <div className="mb-4 flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 dark:bg-amber-950/20 dark:border-amber-800">
-          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200">{isTr ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
-          <span className="text-xs text-amber-700 dark:text-amber-300">{isTr ? "Kayıt sayıları ve boyutlar hesabınıza göre değişecektir" : "Record counts and sizes will reflect your actual data"}</span>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-800 dark:bg-amber-800 dark:text-amber-200">{tx("common.sampleData", lang)}</span>
+          <span className="text-xs text-amber-700 dark:text-amber-300">{tx("dataExport.sampleNote", lang)}</span>
         </div>
         <Card className="p-4 mb-6 border-blue-200 bg-blue-50 dark:bg-blue-900/20">
           <div className="flex items-start gap-3">
             <Database className="w-5 h-5 text-blue-500 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-blue-700">{isTr ? "Veri Formati: JSON" : "Data Format: JSON"}</h3>
-              <p className="text-sm text-blue-600 mt-1">{isTr ? "Verileriniz JSON formatinda indirilecektir." : "Your data will be exported in JSON format."}</p>
+              <h3 className="font-semibold text-blue-700">{tx("dataExport.formatJson", lang)}</h3>
+              <p className="text-sm text-blue-600 mt-1">{tx("dataExport.formatJsonDesc", lang)}</p>
             </div>
           </div>
         </Card>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">{isTr ? "Veri Kategorileri" : "Data Categories"}</h2>
+          <h2 className="text-lg font-semibold">{tx("dataExport.categories", lang)}</h2>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => selectAll(true)}>{tx("common.selectAll", lang)}</Button>
             <Button variant="outline" size="sm" onClick={() => selectAll(false)}>{tx("common.clear", lang)}</Button>
@@ -80,20 +80,20 @@ export default function DataExportPage() {
         </div>
         <Card className="p-4 mb-6">
           <div className="flex items-center justify-between">
-            <div><span className="text-sm font-medium">{isTr ? "Secili:" : "Selected:"} {selectedCount}/{categories.length}</span><p className="text-xs text-gray-500">{totalRecords} {tx("common.records", lang)}</p></div>
-            <div className="flex items-center gap-2 text-xs text-gray-400"><Clock className="w-3.5 h-3.5" />{isTr ? "~5 saniye" : "~5 seconds"}</div>
+            <div><span className="text-sm font-medium">{tx("dataExport.selected", lang)} {selectedCount}/{categories.length}</span><p className="text-xs text-gray-500">{totalRecords} {tx("common.records", lang)}</p></div>
+            <div className="flex items-center gap-2 text-xs text-gray-400"><Clock className="w-3.5 h-3.5" />{tx("dataExport.estimatedTime", lang)}</div>
           </div>
         </Card>
         {exported ? (
           <Card className="p-6 text-center border-green-200 bg-green-50 dark:bg-green-900/20">
             <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
-            <h3 className="font-bold text-lg mb-1">{isTr ? "Tamamlandı" : "Export Complete"}</h3>
-            <p className="text-sm text-gray-500 mb-4">{isTr ? "Verileriniz indirildi." : "Your data has been downloaded."}</p>
-            <Button variant="outline" onClick={() => setExported(false)}>{isTr ? "Tekrar İndir" : "Download Again"}</Button>
+            <h3 className="font-bold text-lg mb-1">{tx("dataExport.complete", lang)}</h3>
+            <p className="text-sm text-gray-500 mb-4">{tx("dataExport.completeDesc", lang)}</p>
+            <Button variant="outline" onClick={() => setExported(false)}>{tx("dataExport.downloadAgain", lang)}</Button>
           </Card>
         ) : (
           <Button className="w-full bg-blue-500 hover:bg-blue-600" disabled={selectedCount === 0 || exporting} onClick={handleExport}>
-            {exporting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {isTr ? "Hazırlanıyor..." : "Preparing..."}</> : <><Download className="w-4 h-4 mr-2" /> {isTr ? "JSON Olarak İndir" : "Download as JSON"}</>}
+            {exporting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {tx("dataExport.preparing", lang)}</> : <><Download className="w-4 h-4 mr-2" /> {tx("dataExport.downloadJson", lang)}</>}
           </Button>
         )}
       </div>

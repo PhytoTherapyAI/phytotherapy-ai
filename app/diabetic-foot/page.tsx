@@ -209,7 +209,7 @@ export default function DiabeticFootPage() {
           </div>
           {progress === 100 && (
             <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-xl text-green-700 dark:text-green-400 font-medium">
-              {lang === "tr" ? "Bugunku ayak kontrolünuzu tamamladiniz!" : "You completed today's foot check!"}
+              {tx("dfoot.completedToday", lang)}
             </div>
           )}
         </div>
@@ -234,12 +234,10 @@ export default function DiabeticFootPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-purple-500" />
-            {lang === "tr" ? "Noropati Belirtileri" : "Neuropathy Symptoms"}
+            {tx("dfoot.neuropathy", lang)}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {lang === "tr"
-              ? "Bu belirtiler diyabetik noropati isareti olabilir. Herhangi birini yasiyorsaniz doktorunuza bildirin."
-              : "These symptoms may indicate diabetic neuropathy. Report any of them to your doctor."}
+            {tx("dfoot.neuropathyDesc", lang)}
           </p>
           <div className="grid sm:grid-cols-2 gap-2">
             {NEUROPATHY_SYMPTOMS.map((symptom, i) => (
@@ -254,7 +252,7 @@ export default function DiabeticFootPage() {
         {/* Shoe Guide */}
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold">
-            {lang === "tr" ? "Ayakkabi Rehberi" : "Shoe Guide"}
+            {tx("dfoot.shoeGuide", lang)}
           </h2>
           <div className="grid sm:grid-cols-2 gap-2">
             {SHOE_GUIDE.map((tip, i) => (

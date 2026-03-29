@@ -73,7 +73,7 @@ export default function DoctorCommunicationPage() {
       const printWindow = window.open("", "_blank");
       if (printWindow) {
         printWindow.document.write(`
-          <html><head><title>${lang === "tr" ? "Doktor Ziyareti Notları" : "Doctor Visit Notes"}</title>
+          <html><head><title>${tx("doctorComm.printTitle", lang)}</title>
           <style>body{font-family:system-ui,sans-serif;padding:2rem;max-width:700px;margin:0 auto}h1{font-size:1.5rem}h2{font-size:1.1rem;margin-top:1.5rem;border-bottom:1px solid #ddd;padding-bottom:.3rem}.field{margin:.5rem 0}.label{font-weight:600;color:#555}.value{margin-left:.5rem}ul{padding-left:1.5rem}li{margin:.3rem 0}.red{color:#dc2626;font-weight:600}</style>
           </head><body>${printRef.current.innerHTML}</body></html>
         `);
@@ -160,7 +160,7 @@ export default function DoctorCommunicationPage() {
               <div className="bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-200 dark:border-red-800 p-6">
                 <h3 className="font-semibold text-red-800 dark:text-red-400 mb-2 flex items-center gap-2">
                   <span className="text-lg">🚨</span>
-                  {lang === "tr" ? "Dikkat Edilmesi Gerekenler" : "Red Flags"}
+                  {tx("doctorComm.redFlags", lang)}
                 </h3>
                 <p className="text-red-700 dark:text-red-300">{result.redFlags}</p>
               </div>
@@ -170,7 +170,7 @@ export default function DoctorCommunicationPage() {
             <div className="flex justify-end">
               <Button onClick={handlePrint} variant="outline" className="gap-2 text-sm">
                 <Printer className="w-4 h-4" />
-                {lang === "tr" ? "Yazdır" : "Print"}
+                {tx("common.print", lang)}
               </Button>
             </div>
 
@@ -181,7 +181,7 @@ export default function DoctorCommunicationPage() {
                 <div className="flex items-center gap-2 mb-4">
                   <ClipboardList className="w-5 h-5 text-sky-600 dark:text-sky-400" />
                   <h2 className="font-semibold text-gray-900 dark:text-white">
-                    {lang === "tr" ? "Yapılandırılmış Anlatım" : "Structured Description"}
+                    {tx("doctorComm.structuredDesc", lang)}
                   </h2>
                 </div>
                 <div className="space-y-3">
@@ -204,7 +204,7 @@ export default function DoctorCommunicationPage() {
                   <div className="flex items-center gap-2 mb-3">
                     <HelpCircle className="w-5 h-5 text-sky-600 dark:text-sky-400" />
                     <h2 className="font-semibold text-gray-900 dark:text-white">
-                      {lang === "tr" ? "Doktorunuza Sorun" : "Questions to Ask"}
+                      {tx("doctorComm.questionsToAsk", lang)}
                     </h2>
                   </div>
                   <ul className="space-y-2">
@@ -223,7 +223,7 @@ export default function DoctorCommunicationPage() {
                 {result.tipsForVisit && result.tipsForVisit.length > 0 && (
                   <div className="bg-sky-50 dark:bg-sky-900/10 rounded-2xl border border-sky-200 dark:border-sky-800 p-5">
                     <h3 className="font-semibold text-sky-800 dark:text-sky-400 mb-2 text-sm">
-                      {lang === "tr" ? "Ziyaret İpuçları" : "Visit Tips"}
+                      {tx("doctorComm.visitTips", lang)}
                     </h3>
                     <ul className="space-y-1">
                       {result.tipsForVisit.map((t, i) => (
@@ -237,7 +237,7 @@ export default function DoctorCommunicationPage() {
                 {result.whatToBring && result.whatToBring.length > 0 && (
                   <div className="bg-sky-50 dark:bg-sky-900/10 rounded-2xl border border-sky-200 dark:border-sky-800 p-5">
                     <h3 className="font-semibold text-sky-800 dark:text-sky-400 mb-2 text-sm">
-                      {lang === "tr" ? "Yanınıza Alın" : "What to Bring"}
+                      {tx("doctorComm.whatToBring", lang)}
                     </h3>
                     <ul className="space-y-1">
                       {result.whatToBring.map((w, i) => (
@@ -257,7 +257,7 @@ export default function DoctorCommunicationPage() {
         {!result && !isLoading && !error && (
           <div className="text-center py-12 text-gray-400 dark:text-gray-500">
             <Stethoscope className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>{lang === "tr" ? "Semptomlarınızı anlatın" : "Describe your symptoms above"}</p>
+            <p>{tx("doctorComm.emptyState", lang)}</p>
           </div>
         )}
       </div>
