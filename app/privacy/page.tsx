@@ -5,7 +5,6 @@ import { tx } from "@/lib/translations"
 
 export default function PrivacyPolicyPage() {
   const { lang } = useLang()
-  const isTr = lang === "tr"
 
   return (
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-16">
@@ -15,7 +14,7 @@ export default function PrivacyPolicyPage() {
           {tx("legal.privacyTitle", lang)}
         </h1>
         <p className="mt-3 text-sm text-muted-foreground">
-          {tx("legal.lastUpdated", lang)}: 18 {isTr ? "Mart" : "March"} 2026
+          {tx("legal.lastUpdated", lang)}: 18 {tx("privacy.march", lang)} 2026
         </p>
       </div>
 
@@ -23,32 +22,30 @@ export default function PrivacyPolicyPage() {
         {/* 1 */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {isTr ? "1. Giriş" : "1. Introduction"}
+            {tx("privacy.s1Title", lang)}
           </h2>
           <p>
-            {isTr
-              ? "Phytotherapy.ai (\"Platform\") gizliliğinize saygı duyar. Bu Gizlilik Politikası, kişisel verilerinizin nasıl toplandığını, işlendiğini, saklandığını ve korunduğunu açıklar. Platformu kullanarak bu politikayı kabul etmiş sayılırsınız."
-              : "Phytotherapy.ai (\"Platform\") respects your privacy. This Privacy Policy explains how your personal data is collected, processed, stored, and protected. By using the Platform, you acknowledge and accept this policy."}
+            {tx("privacy.s1Text", lang)}
           </p>
         </section>
 
         {/* 2 */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {isTr ? "2. Topladığımız Veriler" : "2. Data We Collect"}
+            {tx("privacy.s2Title", lang)}
           </h2>
           <div className="space-y-2">
-            <p className="font-medium text-foreground">{isTr ? "Doğrudan sağladığınız veriler:" : "Data you directly provide:"}</p>
+            <p className="font-medium text-foreground">{tx("privacy.s2DirectLabel", lang)}</p>
             <ul className="list-disc space-y-1.5 pl-5">
-              <li>{isTr ? "Hesap bilgileri (ad, e-posta, yaş, cinsiyet)" : "Account information (name, email, age, gender)"}</li>
-              <li>{isTr ? "Sağlık profili (ilaçlar, alerjiler, kronik hastalıklar, gebelik durumu)" : "Health profile (medications, allergies, chronic conditions, pregnancy status)"}</li>
-              <li>{isTr ? "Sağlık sorguları ve sistem yanıtları" : "Health queries and system responses"}</li>
-              <li>{isTr ? "Kan tahlili değerleri" : "Blood test values"}</li>
+              <li>{tx("privacy.s2d1", lang)}</li>
+              <li>{tx("privacy.s2d2", lang)}</li>
+              <li>{tx("privacy.s2d3", lang)}</li>
+              <li>{tx("privacy.s2d4", lang)}</li>
             </ul>
-            <p className="mt-4 font-medium text-foreground">{isTr ? "Otomatik toplanan veriler:" : "Automatically collected data:"}</p>
+            <p className="mt-4 font-medium text-foreground">{tx("privacy.s2AutoLabel", lang)}</p>
             <ul className="list-disc space-y-1.5 pl-5">
-              <li>{isTr ? "Teknik kullanım verileri (sayfa ziyaretleri, anonimleştirilmiş)" : "Technical usage data (page visits, anonymized)"}</li>
-              <li>{isTr ? "Cihaz türü ve tarayıcı bilgisi (yalnızca sorun giderme amaçlı)" : "Device type and browser info (troubleshooting purposes only)"}</li>
+              <li>{tx("privacy.s2a1", lang)}</li>
+              <li>{tx("privacy.s2a2", lang)}</li>
             </ul>
           </div>
         </section>
@@ -56,72 +53,66 @@ export default function PrivacyPolicyPage() {
         {/* 3 */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {isTr ? "3. Verilerin Kullanım Amacı" : "3. Purpose of Data Processing"}
+            {tx("privacy.s3Title", lang)}
           </h2>
           <ul className="list-disc space-y-1.5 pl-5">
-            <li>{isTr ? "Kişiselleştirilmiş sağlık bilgisi sunmak" : "Provide personalized health information"}</li>
-            <li>{isTr ? "İlaç-bitki etkileşim güvenlik kontrolleri gerçekleştirmek" : "Perform drug-herb interaction safety checks"}</li>
-            <li>{isTr ? "Kan tahlili analizi ve yaşam koçluğu sağlamak" : "Deliver blood test analysis and lifestyle coaching"}</li>
-            <li>{isTr ? "Profil bazlı güvenlik kontrolleri (alerji, gebelik, böbrek/karaciğer)" : "Profile-based safety checks (allergies, pregnancy, kidney/liver conditions)"}</li>
-            <li>{isTr ? "Hizmet kalitesini iyileştirmek (yalnızca anonimleştirilmiş verilerle)" : "Improve service quality (anonymized data only)"}</li>
+            <li>{tx("privacy.s3i1", lang)}</li>
+            <li>{tx("privacy.s3i2", lang)}</li>
+            <li>{tx("privacy.s3i3", lang)}</li>
+            <li>{tx("privacy.s3i4", lang)}</li>
+            <li>{tx("privacy.s3i5", lang)}</li>
           </ul>
         </section>
 
         {/* 4 */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {isTr ? "4. Veri Saklama ve Güvenlik" : "4. Data Storage & Security"}
+            {tx("privacy.s4Title", lang)}
           </h2>
           <ul className="list-disc space-y-1.5 pl-5">
-            <li>{isTr ? "Veriler endüstri standardı şifreleme ile korunur" : "Data is protected with industry-standard encryption"}</li>
-            <li>{isTr ? "İletim sırasında TLS/SSL şifreleme uygulanır" : "TLS/SSL encryption applied during transmission"}</li>
-            <li>{isTr ? "Satır düzeyinde erişim kontrolü (RLS) politikaları mevcuttur" : "Row-Level Security (RLS) access control policies are in place"}</li>
-            <li>{isTr ? "Sunucu tarafı API anahtar yönetimi — istemci kodunda asla" : "Server-side API key management — never in client code"}</li>
-            <li>{isTr ? "2 yıl hareketsizlik sonrası veriler otomatik olarak silinir" : "Data is automatically deleted after 2 years of inactivity"}</li>
+            <li>{tx("privacy.s4i1", lang)}</li>
+            <li>{tx("privacy.s4i2", lang)}</li>
+            <li>{tx("privacy.s4i3", lang)}</li>
+            <li>{tx("privacy.s4i4", lang)}</li>
+            <li>{tx("privacy.s4i5", lang)}</li>
           </ul>
         </section>
 
         {/* 5 */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {isTr ? "5. Haklarınız (KVKK / GDPR)" : "5. Your Rights (KVKK / GDPR)"}
+            {tx("privacy.s5Title", lang)}
           </h2>
           <p className="mb-3">
-            {isTr
-              ? "6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve Genel Veri Koruma Yönetmeliği (GDPR) kapsamında:"
-              : "Under the Turkish Personal Data Protection Law (KVKK) and the General Data Protection Regulation (GDPR):"}
+            {tx("privacy.s5Intro", lang)}
           </p>
           <ul className="list-disc space-y-1.5 pl-5">
-            <li><span className="font-medium text-foreground">{isTr ? "Erişim:" : "Access:"}</span> {isTr ? "Profil sayfanızdan tüm verilerinizi indirebilirsiniz" : "Download all your data from your profile page"}</li>
-            <li><span className="font-medium text-foreground">{isTr ? "Düzeltme:" : "Rectification:"}</span> {isTr ? "Bilgilerinizi istediğiniz zaman güncelleyebilirsiniz" : "Update your information at any time"}</li>
-            <li><span className="font-medium text-foreground">{isTr ? "Silme:" : "Erasure:"}</span> {isTr ? "Hesabınızı ve tüm ilişkili verileri kalıcı olarak silebilirsiniz" : "Permanently delete your account and all associated data"}</li>
-            <li><span className="font-medium text-foreground">{isTr ? "Taşınabilirlik:" : "Portability:"}</span> {isTr ? "Verilerinizi makine tarafından okunabilir formatta (JSON) indirebilirsiniz" : "Download your data in machine-readable format (JSON)"}</li>
-            <li><span className="font-medium text-foreground">{isTr ? "İtiraz:" : "Objection:"}</span> {isTr ? "Veri işlemeye itiraz hakkınız saklıdır" : "You reserve the right to object to data processing"}</li>
+            <li><span className="font-medium text-foreground">{tx("privacy.s5Access", lang)}</span> {tx("privacy.s5AccessDesc", lang)}</li>
+            <li><span className="font-medium text-foreground">{tx("privacy.s5Rectification", lang)}</span> {tx("privacy.s5RectificationDesc", lang)}</li>
+            <li><span className="font-medium text-foreground">{tx("privacy.s5Erasure", lang)}</span> {tx("privacy.s5ErasureDesc", lang)}</li>
+            <li><span className="font-medium text-foreground">{tx("privacy.s5Portability", lang)}</span> {tx("privacy.s5PortabilityDesc", lang)}</li>
+            <li><span className="font-medium text-foreground">{tx("privacy.s5Objection", lang)}</span> {tx("privacy.s5ObjectionDesc", lang)}</li>
           </ul>
         </section>
 
         {/* 6 */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {isTr ? "6. Veri İşleyen Üçüncü Taraflar" : "6. Third-Party Data Processors"}
+            {tx("privacy.s6Title", lang)}
           </h2>
           <p className="mb-3">
-            {isTr
-              ? "Hizmetlerimizi sunabilmek için aşağıdaki kategorilerde üçüncü taraf altyapı sağlayıcıları kullanmaktayız:"
-              : "To deliver our services, we use third-party infrastructure providers in the following categories:"}
+            {tx("privacy.s6Intro", lang)}
           </p>
           <ul className="list-disc space-y-1.5 pl-5">
-            <li>{isTr ? "Veritabanı ve kimlik doğrulama altyapısı" : "Database and authentication infrastructure"}</li>
-            <li>{isTr ? "Yapay zeka analiz motoru (sorgular anonim olarak işlenir, kişisel veri iletilmez)" : "AI analysis engine (queries processed anonymously, no personal data transmitted)"}</li>
-            <li>{isTr ? "Bilimsel araştırma veritabanları (halka açık kaynaklar)" : "Scientific research databases (publicly available sources)"}</li>
-            <li>{isTr ? "İlaç güvenlik veritabanları (halka açık kaynaklar)" : "Drug safety databases (publicly available sources)"}</li>
-            <li>{isTr ? "Web barındırma hizmeti" : "Web hosting service"}</li>
+            <li>{tx("privacy.s6i1", lang)}</li>
+            <li>{tx("privacy.s6i2", lang)}</li>
+            <li>{tx("privacy.s6i3", lang)}</li>
+            <li>{tx("privacy.s6i4", lang)}</li>
+            <li>{tx("privacy.s6i5", lang)}</li>
           </ul>
           <div className="mt-4 rounded-lg border border-primary/20 bg-primary/5 p-4">
             <p className="font-medium text-foreground">
-              {isTr
-                ? "Kişisel verileriniz hiçbir koşulda üçüncü taraflara satılmaz, kiralanmaz veya ticari amaçla paylaşılmaz."
-                : "Your personal data is never sold, rented, or shared with third parties for commercial purposes under any circumstances."}
+              {tx("privacy.s6NoSale", lang)}
             </p>
           </div>
         </section>
@@ -129,48 +120,40 @@ export default function PrivacyPolicyPage() {
         {/* 7 */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {isTr ? "7. Çerezler" : "7. Cookies"}
+            {tx("privacy.s7Title", lang)}
           </h2>
           <p>
-            {isTr
-              ? "Yalnızca oturum yönetimi ve kullanıcı tercihleri (tema, dil) için zorunlu çerezler kullanılmaktadır. Reklam, pazarlama veya takip amaçlı çerez kullanılmamaktadır."
-              : "Only essential cookies are used for session management and user preferences (theme, language). No advertising, marketing, or tracking cookies are used."}
+            {tx("privacy.s7Text", lang)}
           </p>
         </section>
 
         {/* 8 */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {isTr ? "8. Veri İhlali Bildirimi" : "8. Data Breach Notification"}
+            {tx("privacy.s8Title", lang)}
           </h2>
           <p>
-            {isTr
-              ? "Olası bir veri ihlali durumunda, KVKK ve GDPR gerekliliklerine uygun olarak etkilenen kullanıcılar ve ilgili otoriteler en geç 72 saat içinde bilgilendirilecektir."
-              : "In the event of a data breach, affected users and relevant authorities will be notified within 72 hours in accordance with KVKK and GDPR requirements."}
+            {tx("privacy.s8Text", lang)}
           </p>
         </section>
 
         {/* 9 */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {isTr ? "9. Değişiklikler" : "9. Changes to This Policy"}
+            {tx("privacy.s9Title", lang)}
           </h2>
           <p>
-            {isTr
-              ? "Bu politika güncellenebilir. Önemli değişiklikler kayıtlı e-posta adresinize bildirilecektir. Platformu kullanmaya devam etmeniz güncellenmiş politikayı kabul ettiğiniz anlamına gelir."
-              : "This policy may be updated. Significant changes will be communicated to your registered email address. Continued use of the Platform constitutes acceptance of the updated policy."}
+            {tx("privacy.s9Text", lang)}
           </p>
         </section>
 
         {/* 10 */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {isTr ? "10. İletişim" : "10. Contact"}
+            {tx("privacy.s10Title", lang)}
           </h2>
           <p>
-            {isTr
-              ? "Gizlilik ile ilgili talepleriniz için:"
-              : "For privacy-related inquiries:"}
+            {tx("privacy.s10Text", lang)}
           </p>
           <p className="mt-2 font-heading text-lg font-medium text-foreground">privacy@phytotherapy.ai</p>
         </section>

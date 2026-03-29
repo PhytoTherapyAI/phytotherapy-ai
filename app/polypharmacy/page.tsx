@@ -136,19 +136,6 @@ export default function PolypharmacyPage() {
 
   const LEVEL_COLORS = { low: "text-green-600 bg-green-500/10", medium: "text-amber-600 bg-amber-500/10", high: "text-red-600 bg-red-500/10" }
 
-  const t = (key: string) => {
-    const map: Record<string, Record<string, string>> = {
-      title: { en: "Polypharmacy Risk Score", tr: "Polifarmasi Risk Skoru" },
-      subtitle: { en: "Comprehensive risk assessment for patients taking 5+ medications", tr: "5+ ilaç kullanan hastalar için kapsamlı risk değerlendirmesi" },
-      medications: { en: "medications", tr: "ilaç" },
-      overall: { en: "Overall Polypharmacy Risk", tr: "Genel Polifarmasi Riski" },
-      no_meds: { en: "Add medications to see risk assessment.", tr: "Risk değerlendirmesi için ilaç ekle." },
-      disclaimer: { en: "Discuss this assessment with your doctor. Never stop medications without medical advice.", tr: "Bu değerlendirmeyi doktorunuzla tartışın. Tıbbi tavsiye olmadan ilaçları bırakmayın." },
-      share_doctor: { en: "Share with Doctor", tr: "Doktorla Paylaş" },
-    }
-    return map[key]?.[lang] || key
-  }
-
   if (loading) return <div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
 
   return (
@@ -158,27 +145,27 @@ export default function PolypharmacyPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <ShieldAlert className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
-          <p className="text-muted-foreground mt-1">{t("subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground">{tx("polypharmacy.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("polypharmacy.subtitle", lang)}</p>
         </div>
 
         {meds.length === 0 ? (
           <Card className="p-8 text-center">
             <Pill className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">{t("no_meds")}</p>
+            <p className="text-muted-foreground">{tx("polypharmacy.noMeds", lang)}</p>
           </Card>
         ) : (
           <>
             {/* Overall score */}
             <Card className="p-6 mb-6 text-center">
-              <h3 className="text-sm text-muted-foreground mb-2">{t("overall")}</h3>
+              <h3 className="text-sm text-muted-foreground mb-2">{tx("polypharmacy.overall", lang)}</h3>
               <div className="flex items-center justify-center gap-4 mb-3">
                 <div className={`w-20 h-20 rounded-full ${overall.color} flex items-center justify-center`}>
                   <span className="text-2xl font-bold text-white">{meds.length}</span>
                 </div>
                 <div className="text-left">
                   <p className="text-lg font-semibold">{overall.label[lang]}</p>
-                  <p className="text-sm text-muted-foreground">{meds.length} {t("medications")}</p>
+                  <p className="text-sm text-muted-foreground">{meds.length} {tx("polypharmacy.medications", lang)}</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-1 justify-center">
@@ -233,12 +220,12 @@ export default function PolypharmacyPage() {
             <Card className="p-4 mt-6 border-amber-500/30 bg-amber-500/5">
               <div className="flex gap-2">
                 <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
-                <p className="text-sm text-muted-foreground">{t("disclaimer")}</p>
+                <p className="text-sm text-muted-foreground">{tx("polypharmacy.disclaimer", lang)}</p>
               </div>
             </Card>
 
             <Button className="w-full mt-4" onClick={() => window.location.href = "/appointment-prep"}>
-              <TrendingUp className="w-4 h-4 mr-2" />{t("share_doctor")}
+              <TrendingUp className="w-4 h-4 mr-2" />{tx("polypharmacy.shareDoctor", lang)}
             </Button>
           </>
         )}

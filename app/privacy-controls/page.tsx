@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface PrivacySetting { id: string; en: string; tr: string; descEn: string; descTr: string; enabled: boolean; category: string; }
 
@@ -55,8 +56,8 @@ export default function PrivacyControlsPage() {
         <div className="flex items-center gap-3 mb-6">
           <Shield className="w-8 h-8 text-slate-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Gizlilik Kontrolleri" : "Privacy Controls"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Verilerinizin nasil kullanildigini kontrol edin" : "Control how your data is used"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("privacyCtrl.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{tx("privacyCtrl.subtitle", lang)}</p>
           </div>
         </div>
 
@@ -64,8 +65,8 @@ export default function PrivacyControlsPage() {
           <div className="flex items-start gap-3">
             <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-green-700 text-sm">{isTr ? "KVKK Uyumlu" : "GDPR/KVKK Compliant"}</h3>
-              <p className="text-xs text-green-600 mt-1">{isTr ? "Verileriniz sifrelenerek saklanir. Türkiye sunucularinda barindiriliyor." : "Your data is stored encrypted. Hosted on servers compliant with regulations."}</p>
+              <h3 className="font-semibold text-green-700 text-sm">{tx("privacyCtrl.kvkkTitle", lang)}</h3>
+              <p className="text-xs text-green-600 mt-1">{tx("privacyCtrl.kvkkDesc", lang)}</p>
             </div>
           </div>
         </Card>
@@ -89,18 +90,18 @@ export default function PrivacyControlsPage() {
         ))}
 
         <Card className="p-4 mb-6">
-          <h2 className="font-semibold text-sm mb-3 flex items-center gap-2"><Clock className="w-4 h-4" /> {isTr ? "Veri Saklama Süresi" : "Data Retention Period"}</h2>
+          <h2 className="font-semibold text-sm mb-3 flex items-center gap-2"><Clock className="w-4 h-4" /> {tx("privacyCtrl.retention", lang)}</h2>
           <div className="grid grid-cols-3 gap-2">
             {[{ val: "6", en: "6 months", tr: "6 ay" }, { val: "12", en: "12 months", tr: "12 ay" }, { val: "24", en: "24 months", tr: "24 ay" }].map(opt => (
               <Button key={opt.val} variant={retentionPeriod === opt.val ? "default" : "outline"} size="sm" onClick={() => setRetention(opt.val)} className="w-full">{isTr ? opt.tr : opt.en}</Button>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-2">{isTr ? "Bu sure sonunda verileriniz otomatik silinir." : "Your data will be automatically deleted after this period."}</p>
+          <p className="text-xs text-gray-400 mt-2">{tx("privacyCtrl.retentionNote", lang)}</p>
         </Card>
 
         <div className="flex gap-3">
-          <Button variant="outline" className="flex-1"><Download className="w-4 h-4 mr-2" /> {isTr ? "Verilerimi İndir" : "Export Data"}</Button>
-          <Button variant="outline" className="flex-1 text-red-500 border-red-200 hover:bg-red-50"><Trash2 className="w-4 h-4 mr-2" /> {isTr ? "Hesabimi Sil" : "Delete Account"}</Button>
+          <Button variant="outline" className="flex-1"><Download className="w-4 h-4 mr-2" /> {tx("privacyCtrl.exportData", lang)}</Button>
+          <Button variant="outline" className="flex-1 text-red-500 border-red-200 hover:bg-red-50"><Trash2 className="w-4 h-4 mr-2" /> {tx("privacyCtrl.deleteAccount", lang)}</Button>
         </div>
       </div>
     </div>

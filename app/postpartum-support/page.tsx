@@ -197,9 +197,7 @@ export default function PostpartumSupportPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-amber-600" />
             <p className="font-semibold text-amber-700 dark:text-amber-300">
-              {lang === "tr"
-                ? "EPDS skorunuz profesyonel değerlendirme onermektedir. Doktorunuzla görüşün."
-                : "Your EPDS score suggests professional evaluation is recommended. Please talk to your doctor."}
+              {tx("postpartum.epdsReferral", lang)}
             </p>
           </div>
         </div>
@@ -238,7 +236,7 @@ export default function PostpartumSupportPage() {
           <div className="rounded-xl border bg-card p-4 shadow-sm">
             <label className="mb-1 block text-xs font-semibold text-muted-foreground">
               <Moon className="mr-1 inline h-3 w-3" />
-              {lang === "tr" ? "Uyku (saat)" : "Sleep (hrs)"}
+              {tx("postpartum.sleepLabel", lang)}
             </label>
             <input
               type="number"
@@ -254,7 +252,7 @@ export default function PostpartumSupportPage() {
         {/* Mood Score */}
         <div className="rounded-xl border bg-card p-6 shadow-sm">
           <label className="mb-2 block text-sm font-semibold text-muted-foreground">
-            {lang === "tr" ? "Ruh Hali" : "Mood"}: {moodScore}/5
+            {tx("postpartum.mood", lang)}: {moodScore}/5
           </label>
           <input
             type="range"
@@ -269,7 +267,7 @@ export default function PostpartumSupportPage() {
         {/* Concerns */}
         <div className="rounded-xl border bg-card p-4 shadow-sm">
           <label className="mb-2 block text-sm font-semibold text-muted-foreground">
-            {lang === "tr" ? "Endiseler" : "Concerns"}
+            {tx("postpartum.concerns", lang)}
           </label>
           <div className="flex flex-wrap gap-2">
             {concernOptions.map((c) => (
@@ -294,20 +292,20 @@ export default function PostpartumSupportPage() {
         <div className="rounded-xl border bg-card p-6 shadow-sm">
           <button onClick={() => setShowEPDS(!showEPDS)} className="flex w-full items-center justify-between">
             <h2 className="text-lg font-bold text-purple-700 dark:text-purple-300">
-              {tx("postpartum.epds", lang)} ({lang === "tr" ? "Istege Bagli" : "Optional"})
+              {tx("postpartum.epds", lang)} ({tx("postpartum.epdsOptional", lang)})
             </h2>
             {showEPDS ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
           </button>
           {showEPDS && (
             <div className="mt-4 space-y-4">
               <p className="text-sm text-muted-foreground">
-                {lang === "tr" ? "Son 7 gun icinde kendinizi nasil hissettiniz?" : "In the past 7 days, how have you felt?"}
+                {tx("postpartum.epds7days", lang)}
               </p>
               {epdsQuestions.map((q, qi) => (
                 <div key={qi} className={`rounded-lg border p-3 ${qi === 9 ? "border-red-200 bg-red-50/30 dark:border-red-800 dark:bg-red-950/10" : ""}`}>
                   <p className="mb-2 text-sm font-medium">
                     {qi + 1}. {q}
-                    {qi === 9 && <span className="ml-2 text-xs text-red-500">({lang === "tr" ? "kritik" : "critical"})</span>}
+                    {qi === 9 && <span className="ml-2 text-xs text-red-500">({tx("postpartum.critical", lang)})</span>}
                   </p>
                   <div className="grid grid-cols-2 gap-1.5">
                     {EPDS_OPTIONS_EN[qi].map((opt, oi) => (
@@ -337,7 +335,7 @@ export default function PostpartumSupportPage() {
 
       <Button onClick={handleAnalyze} disabled={isLoading} className="mb-6 w-full bg-purple-600 hover:bg-purple-700 text-white" size="lg">
         {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Değerlendiriliyor..." : "Assessing..."}</>
+          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("postpartum.assessing", lang)}</>
         ) : (
           <><Shield className="mr-2 h-5 w-5" />{tx("postpartum.analyze", lang)}</>
         )}
@@ -360,7 +358,7 @@ export default function PostpartumSupportPage() {
           {result.mentalHealthCheck && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-2 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {lang === "tr" ? "Ruh Sagligi Durumu" : "Mental Health Check"}
+                {tx("postpartum.mentalHealth", lang)}
               </h3>
               <p className="text-sm text-muted-foreground">{result.mentalHealthCheck.status}</p>
               {result.mentalHealthCheck.recommendations.length > 0 && (
@@ -397,7 +395,7 @@ export default function PostpartumSupportPage() {
           {result.recoveryTips?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {lang === "tr" ? "Toparlanma Önerileri" : "Recovery Tips"}
+                {tx("postpartum.recoveryTips", lang)}
               </h3>
               {result.recoveryTips.map((tip, i) => (
                 <div key={i} className="mb-2 last:mb-0">
@@ -413,7 +411,7 @@ export default function PostpartumSupportPage() {
           {result.selfCarePlan && result.selfCarePlan.length > 0 && (
             <div className="rounded-xl border-2 border-purple-200 bg-purple-50 p-6 dark:bg-purple-950/20">
               <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {lang === "tr" ? "Oz Bakim Plani" : "Self-Care Plan"}
+                {tx("postpartum.selfCare", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.selfCarePlan.map((item, i) => (

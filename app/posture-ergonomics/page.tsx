@@ -179,9 +179,7 @@ export default function PostureErgonomicsPage() {
 
         {checkedCount === CHECKLIST.length && (
           <div className="mt-3 rounded-lg bg-teal-50 p-3 text-center text-sm font-medium text-teal-700 dark:bg-teal-950/20 dark:text-teal-400">
-            {lang === "tr"
-              ? "Harika! Ergonomi kontrol listesi tamamlandı!"
-              : "Great! Ergonomics checklist complete!"}
+            {tx("posture.checklistComplete", lang)}
           </div>
         )}
       </div>

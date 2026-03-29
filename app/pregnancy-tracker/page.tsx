@@ -139,7 +139,7 @@ export default function PregnancyTrackerPage() {
             <div>
               <p className="font-bold text-red-700 dark:text-red-300">{result.emergencyMessage}</p>
               <p className="mt-2 text-lg font-bold text-red-600">
-                {lang === "tr" ? "112'yi HEMEN arayın!" : "Call 911/112 IMMEDIATELY!"}
+                {tx("pregnancy.callNow", lang)}
               </p>
             </div>
           </div>
@@ -194,7 +194,7 @@ export default function PregnancyTrackerPage() {
         <textarea
           value={concerns}
           onChange={(e) => setConcerns(e.target.value)}
-          placeholder={lang === "tr" ? "Endişelerinizi yazın (isteğe bağlı)..." : "Write your concerns (optional)..."}
+          placeholder={tx("pregnancy.concernsPlaceholder", lang)}
           className="w-full rounded-lg border bg-background px-4 py-3 text-sm"
           rows={3}
         />
@@ -230,8 +230,8 @@ export default function PregnancyTrackerPage() {
                 {tx("pregnancy.development", lang)}
               </h3>
               <div className="mb-3 flex gap-4 text-sm">
-                <span>{lang === "tr" ? "Boy" : "Size"}: {result.fetalDevelopment.size}</span>
-                <span>{lang === "tr" ? "Ağırlık" : "Weight"}: {result.fetalDevelopment.weight}</span>
+                <span>{tx("pregnancy.size", lang)}: {result.fetalDevelopment.size}</span>
+                <span>{tx("pregnancy.weight", lang)}: {result.fetalDevelopment.weight}</span>
               </div>
               <ul className="space-y-1">
                 {result.fetalDevelopment.developments.map((d, i) => (
@@ -249,11 +249,11 @@ export default function PregnancyTrackerPage() {
             <div className="rounded-xl border-2 border-red-400 bg-red-50 p-6 dark:bg-red-950/30">
               <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-red-700 dark:text-red-300">
                 <ShieldAlert className="h-5 w-5" />
-                {tx("pregnancy.safeMeds", lang)} — {lang === "tr" ? "Dikkat" : "Warning"}
+                {tx("pregnancy.safeMeds", lang)} — {tx("pregnancy.warning", lang)}
               </h3>
               {result.unsafeMeds.map((med, i) => (
                 <div key={i} className="mb-3 rounded-lg border border-red-300 p-3 last:mb-0 dark:border-red-700">
-                  <p className="font-semibold text-red-700 dark:text-red-300">{med.medication} — {lang === "tr" ? "Kategori" : "Category"} {med.category}</p>
+                  <p className="font-semibold text-red-700 dark:text-red-300">{med.medication} — {tx("pregnancy.category", lang)} {med.category}</p>
                   <p className="text-sm text-red-600 dark:text-red-400">{med.risk}</p>
                   <p className="mt-1 text-sm font-medium text-red-800 dark:text-red-200">{med.action}</p>
                 </div>
@@ -264,11 +264,11 @@ export default function PregnancyTrackerPage() {
           {result.safeMeds && result.safeMeds.length > 0 && (
             <div className="rounded-xl border border-green-200 bg-green-50 p-6 dark:bg-green-950/20">
               <h3 className="mb-3 text-lg font-bold text-green-700 dark:text-green-300">
-                {tx("pregnancy.safeMeds", lang)} — {lang === "tr" ? "Güvenli" : "Safe"}
+                {tx("pregnancy.safeMeds", lang)} — {tx("pregnancy.safe", lang)}
               </h3>
               {result.safeMeds.map((med, i) => (
                 <div key={i} className="mb-2 last:mb-0">
-                  <p className="font-medium text-green-700 dark:text-green-300">{med.medication} — {lang === "tr" ? "Kategori" : "Category"} {med.category}</p>
+                  <p className="font-medium text-green-700 dark:text-green-300">{med.medication} — {tx("pregnancy.category", lang)} {med.category}</p>
                   <p className="text-xs text-muted-foreground">{med.note}</p>
                 </div>
               ))}
@@ -279,7 +279,7 @@ export default function PregnancyTrackerPage() {
           {result.safeSupplements?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-pink-700 dark:text-pink-300">
-                {lang === "tr" ? "Güvenli Takviyeler" : "Safe Supplements"}
+                {tx("pregnancy.safeSupplements", lang)}
               </h3>
               <div className="space-y-3">
                 {result.safeSupplements.map((supp, i) => (

@@ -163,9 +163,7 @@ export default function PharmacogeneticsPage() {
             <div className="rounded-xl border-2 border-dashed border-violet-200 bg-violet-50/50 p-8 text-center dark:border-violet-800 dark:bg-violet-950/20">
               <Pill className="mx-auto mb-3 h-8 w-8 text-violet-400" />
               <p className="text-sm text-muted-foreground">
-                {lang === "tr"
-                  ? "Profilinizde ilac bulunamadı. Once profil sayfasindan ilaçlarınizi ekleyin."
-                  : "No medications found in your profile. Add medications from your profile page first."}
+                {tx("pharma.noMeds", lang)}
               </p>
             </div>
           ) : (
@@ -175,9 +173,7 @@ export default function PharmacogeneticsPage() {
                 <div className="flex items-start gap-2">
                   <Info className="mt-0.5 h-4 w-4 shrink-0 text-violet-500" />
                   <p className="text-xs text-violet-700 dark:text-violet-300">
-                    {lang === "tr"
-                      ? "Farmakogenetik, genetik farklıliklarin ilac metabolizmasini nasil etkiledigini inceler. Bu analiz, ilaçlarınizin genetik varyasyonlardan nasil etkilenebilecegini gosterir."
-                      : "Pharmacogenetics studies how genetic differences affect drug metabolism. This analysis shows which of your medications may be affected by genetic variations."}
+                    {tx("pharma.infoBox", lang)}
                   </p>
                 </div>
               </div>
@@ -185,7 +181,7 @@ export default function PharmacogeneticsPage() {
               {/* Current medications */}
               <div>
                 <p className="mb-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  {lang === "tr" ? "Profilinizdeki ilaclar" : "Your medications"}
+                  {tx("pharma.yourMeds", lang)}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {medications.map((m, i) => (
@@ -251,13 +247,13 @@ export default function PharmacogeneticsPage() {
                       {impactBadge(m.impact)}
                     </div>
                     <p className="mb-1 text-xs text-violet-600 dark:text-violet-400">
-                      {lang === "tr" ? "Enzim" : "Enzyme"}: {m.enzyme}
+                      {tx("pharma.enzyme", lang)}: {m.enzyme}
                     </p>
                     <p className="text-xs text-muted-foreground">{m.explanation}</p>
                     {m.signs && m.signs.length > 0 && (
                       <div className="mt-2">
                         <p className="text-xs font-medium text-muted-foreground">
-                          {lang === "tr" ? "Dikkat edilecek isaret" : "Signs to watch"}:
+                          {tx("pharma.signsToWatch", lang)}:
                         </p>
                         <ul className="mt-1 space-y-0.5">
                           {m.signs.map((s, j) => (
@@ -332,7 +328,7 @@ export default function PharmacogeneticsPage() {
           {result.personalizedNotes && result.personalizedNotes.length > 0 && (
             <div className="rounded-lg border border-violet-200 bg-violet-50/50 p-4 dark:border-violet-800 dark:bg-violet-950/20">
               <h3 className="mb-2 text-sm font-semibold text-violet-700 dark:text-violet-400">
-                {lang === "tr" ? "Kişisel Notlar" : "Personalized Notes"}
+                {tx("pharma.personalNotes", lang)}
               </h3>
               <ul className="space-y-1">
                 {result.personalizedNotes.map((n, i) => (
@@ -382,7 +378,7 @@ export default function PharmacogeneticsPage() {
             }}
             className="w-full"
           >
-            {lang === "tr" ? "Tekrar analiz et" : "Analyze again"}
+            {tx("pharma.analyzeAgain", lang)}
           </Button>
         </div>
       )}

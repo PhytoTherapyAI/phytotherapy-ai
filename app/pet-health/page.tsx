@@ -111,7 +111,7 @@ export default function PetHealthPage() {
             <Baby className="w-6 h-6 text-red-500 mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-bold text-red-800 dark:text-red-300">
-                {lang === "tr" ? "Hamilelik + Kedi Rehberi" : "Pregnancy + Cat Guide"}
+                {tx("pet.pregnancyCatGuide", lang)}
               </p>
               <ul className="mt-2 space-y-1.5">
                 {PREGNANCY_CAT_GUIDE.map((g, i) => (
@@ -129,16 +129,14 @@ export default function PetHealthPage() {
         <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800 flex items-start gap-3">
           <Shield className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
           <p className="text-sm text-amber-700 dark:text-amber-400">
-            {lang === "tr"
-              ? "Immunsuprese hastalar zoonotik enfeksiyonlara karsi daha savunmasizdir. Evcil hayvan hijyenine ekstra dikkat ediniz ve veterinerinizle düzenlii iletisime geciniz."
-              : "Immunosuppressed patients are more vulnerable to zoonotic infections. Pay extra attention to pet hygiene and consult your vet regularly."}
+            {tx("pet.immunosuppressedWarning", lang)}
           </p>
         </div>
       )}
 
       {/* Zoonotic Diseases */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Zoonotik Hastalıklar" : "Zoonotic Diseases"}
+        {tx("pet.zoonoticDiseases", lang)}
       </h2>
       <div className="space-y-3 mb-10">
         {DISEASES.map((d, i) => (
@@ -161,7 +159,7 @@ export default function PetHealthPage() {
             {expanded === i && (
               <div className="px-5 pb-5 space-y-3">
                 <div>
-                  <p className="text-xs font-medium text-gray-500 uppercase mb-1">{lang === "tr" ? "Bulasma" : "Transmission"}</p>
+                  <p className="text-xs font-medium text-gray-500 uppercase mb-1">{tx("pet.transmission", lang)}</p>
                   <p className="text-sm text-gray-700 dark:text-gray-300">{d.transmission[lang]}</p>
                 </div>
                 <div>
@@ -169,11 +167,11 @@ export default function PetHealthPage() {
                   <p className="text-sm text-gray-700 dark:text-gray-300">{d.symptoms[lang]}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-medium text-gray-500 uppercase mb-1">{lang === "tr" ? "Korunma" : "Prevention"}</p>
+                  <p className="text-xs font-medium text-gray-500 uppercase mb-1">{tx("pet.prevention", lang)}</p>
                   <p className="text-sm text-gray-700 dark:text-gray-300">{d.prevention[lang]}</p>
                 </div>
                 <div className="p-3 bg-amber-50 dark:bg-amber-900/10 rounded-lg">
-                  <p className="text-xs font-medium text-amber-600 mb-0.5">{lang === "tr" ? "Risk Gruplari" : "Risk Groups"}</p>
+                  <p className="text-xs font-medium text-amber-600 mb-0.5">{tx("pet.riskGroups", lang)}</p>
                   <p className="text-sm text-amber-700 dark:text-amber-400">{d.riskGroups[lang]}</p>
                 </div>
               </div>
@@ -184,7 +182,7 @@ export default function PetHealthPage() {
 
       {/* Bite/Scratch Protocol */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Isirma / Tirmalama Protokolu" : "Bite / Scratch Protocol"}
+        {tx("pet.biteProtocol", lang)}
       </h2>
       <div className="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800 p-5 mb-6">
         <ol className="space-y-2">

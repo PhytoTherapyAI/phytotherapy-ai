@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -152,17 +153,13 @@ export default function PostICUPage() {
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 px-4 py-2 rounded-full text-sm font-medium">
             <Shield className="w-4 h-4" />
-            {lang === "tr" ? "YBU Sonrasi Rehber" : "Post-ICU Recovery Guide"}
+            {tx("postIcu.badge", lang)}
           </div>
           <h1 className="text-3xl font-bold text-foreground">
-            {lang === "tr"
-              ? "Yogun Bakim Sonrasi Iyilesme"
-              : "Post-ICU Recovery Syndrome"}
+            {tx("postIcu.title", lang)}
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            {lang === "tr"
-              ? "Yogun bakim unitesinden cikarken bilmeniz gerekenler. Fiziksel, zihinsel ve beslenme iyileşmesi için adim adim rehber."
-              : "Everything you need to know after ICU discharge. A step-by-step guide for physical, mental, and nutritional recovery."}
+            {tx("postIcu.subtitle", lang)}
           </p>
         </div>
 
@@ -171,9 +168,7 @@ export default function PostICUPage() {
           <div className="flex gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
             <p className="text-sm text-amber-800 dark:text-amber-200">
-              {lang === "tr"
-                ? "Bu rehber bilgilendirme amaclıdır ve tıbbi tavsiye yerine gecmez. Iyilesme surecinde doktorunuzun talimatlarini takip edin."
-                : "This guide is for informational purposes and does not replace medical advice. Follow your doctor's instructions during recovery."}
+              {tx("postIcu.warning", lang)}
             </p>
           </div>
         </Card>
@@ -227,9 +222,7 @@ export default function PostICUPage() {
 
         {/* Footer */}
         <div className="text-center text-xs text-muted-foreground pt-4">
-          {lang === "tr"
-            ? "PICS (Yogun Bakim Sonrasi Sendromu) hakkinda bilimsel kaynak: Society of Critical Care Medicine"
-            : "Scientific reference on PICS (Post-Intensive Care Syndrome): Society of Critical Care Medicine"}
+          {tx("postIcu.footer", lang)}
         </div>
       </div>
     </div>
