@@ -197,3 +197,67 @@ Missing routes /contact and /security are not linked anywhere — future work.
 - **Fake data removed:** 11 files
 - **All API endpoints tested:** 14 endpoints verified
 - **Visual pages tested:** 11 pages across EN/TR/dark/light/mobile
+
+---
+
+## Cycle 4-7 — Batch Route Testing + Console Errors
+
+- **209 page routes** tested via HTTP — all return 200 or valid redirect
+- **15+ pages** navigated in browser — zero console errors found
+- **6 broken /login links** found and fixed across 6 pages
+- **SEO files** verified: robots.txt, sitemap.xml, manifest.json all correct
+- **Security headers** verified: X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, Referrer-Policy
+- **Meta tags** verified: title, description, OG, Twitter Card all present
+- **Commits:** `131b8e8`, `6fad411`, `1e23f51`
+
+---
+
+## Cycle 8-9 — CRITICAL: Database Column Name Mismatches
+
+### Supabase 400 Errors (45 files fixed)
+
+**Root cause:** Many API routes and pages queried non-existent columns:
+- `medication_name` → actual column is `brand_name` / `generic_name`
+- `active_ingredient` → actual column is `generic_name`
+- `results` → actual column is `test_data` (JSON blob)
+- `test_date` → actual column is `created_at`
+- `tested_at` → actual column is `created_at`
+- `test_name, value, unit, status` → data stored as JSON in `test_data`
+
+| # | Severity | Files | Description | Fix |
+|---|----------|-------|-------------|-----|
+| 24 | 🔴 | biomarker-trends, fhir, health-timeline | blood_tests: results→test_data, test_date→created_at | ✅ Fixed |
+| 25 | 🔴 | dashboard, daily-care-plan, fhir, second-opinion | user_medications: medication_name→brand_name/generic_name | ✅ Fixed |
+| 26 | 🔴 | 38 API routes + 7 page files | Systemic medication_name→brand_name/generic_name across all routes | ✅ Batch fixed |
+| 27 | 🔴 | second-opinion | blood_tests: test_name/value/unit→test_data JSON | ✅ Fixed |
+
+**Commits:** `ef10ff6`, `817f867`, `cdfb379`
+
+**Impact:** These bugs caused Supabase 400 errors on virtually every page that queries medications or blood tests. This would have been a critical failure during the hackathon demo.
+
+### Cycle 8-9 Summary
+
+- **Critical bugs found:** 4 (affecting 45 files)
+- **Files fixed:** 45
+- **Build:** Clean after all fixes
+- **Dashboard verified:** No more Supabase 400 errors
+
+---
+
+## GRAND TOTAL
+
+| Metric | Count |
+|--------|-------|
+| **Total bugs found** | 27 |
+| **Total bugs fixed** | 27 |
+| **Files modified** | 60+ |
+| **Critical security fixes** | 4 |
+| **Critical DB schema fixes** | 4 (affecting 45 files) |
+| **Translation fixes** | 2 |
+| **Broken link fixes** | 6 |
+| **Fake data removed** | 11 files |
+| **Pages HTTP tested** | 209 |
+| **Pages visually tested** | 30+ |
+| **API endpoints tested** | 14 |
+| **Build status** | Clean |
+| **Commits** | 7 |
