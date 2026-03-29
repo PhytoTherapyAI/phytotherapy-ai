@@ -173,9 +173,7 @@ const allMobileLinks = [
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [toolsOpen, setToolsOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const toolsRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, isLoading, user, profile, signOut, needsMedicationUpdate, refreshProfile } = useAuth();
   const { lang } = useLang()
   const [showMedReminder, setShowMedReminder] = useState(false);
@@ -221,9 +219,6 @@ export function Header() {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setUserMenuOpen(false);
       }
-      if (toolsRef.current && !toolsRef.current.contains(event.target as Node)) {
-        setToolsOpen(false);
-      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -268,18 +263,7 @@ export function Header() {
             {tx("family.title", lang)}
           </Link>
 
-          {/* Tools Mega Menu */}
-          <div className="relative">
-            <button
-              onClick={() => setToolsOpen(!toolsOpen)}
-              className="flex items-center gap-1 whitespace-nowrap text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
-            >
-              <Wrench className="h-3.5 w-3.5" />
-              {tx("nav.tools", lang)}
-              <ChevronDown className={`h-3 w-3 transition-transform ${toolsOpen ? "rotate-180" : ""}`} />
-            </button>
-          </div>
-          <MegaMenu open={toolsOpen} onClose={() => setToolsOpen(false)} />
+          {/* Tools link — full tools accessible from dashboard */}
 
           {isAuthenticated && (
             <Link

@@ -41,6 +41,7 @@ import Link from "next/link"
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog"
 import { TOOL_CATEGORIES } from "@/lib/tools-hierarchy"
 import { Badge } from "@/components/ui/badge"
+import { ChevronDown } from "lucide-react"
 
 // Quick-access utility links (non-category items)
 const QUICK_LINKS = [
@@ -70,6 +71,7 @@ export default function DashboardPage() {
   } | null>(null)
   const [addSupOpen, setAddSupOpen] = useState(false)
   const [supRefreshKey, setSupRefreshKey] = useState(0)
+  const [expandedCat, setExpandedCat] = useState<string | null>(null)
 
   // Fetch today's check-in for metabolic portfolio
   const fetchCheckIn = useCallback(async () => {
@@ -208,20 +210,36 @@ export default function DashboardPage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 stagger-children">
-          {TOOL_CATEGORIES.slice(0, 8).map((cat, idx) => {
+          {TOOL_CATEGORIES.map((cat, idx) => {
             const Icon = CATEGORY_ICON_MAP[cat.icon] || Sparkles
+            const isExpanded = expandedCat === cat.id
             return (
-              <Link key={cat.id} href={cat.modules[0]?.href || `/${cat.slug}`}
-                className={`card-hover flex flex-col gap-2 rounded-xl border p-4 tool-card-${idx + 1}`}
+              <div key={cat.id} className={`rounded-xl border transition-all ${isExpanded ? "col-span-2 sm:col-span-3 lg:col-span-4 shadow-md" : ""}`}
                 style={{ borderTopColor: cat.color, borderTopWidth: "2px" }}>
-                <div className="flex items-center justify-between">
-                  <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${cat.bgLight} ${cat.bgDark}`}>
+                <button
+                  onClick={() => setExpandedCat(isExpanded ? null : cat.id)}
+                  className={`w-full flex items-center gap-3 p-4 text-left hover:bg-muted/30 transition-colors rounded-xl ${isExpanded ? "rounded-b-none" : ""}`}
+                >
+                  <div className={`flex h-9 w-9 items-center justify-center rounded-lg flex-shrink-0 ${cat.bgLight} ${cat.bgDark}`}>
                     <Icon className="h-4.5 w-4.5" style={{ color: cat.color }} />
                   </div>
-                  <Badge variant="outline" className="text-[10px] h-5">{cat.modules.length}</Badge>
-                </div>
-                <span className="text-xs font-medium text-foreground">{cat.title[lang]}</span>
-              </Link>
+                  <span className="text-xs font-medium text-foreground flex-1">{cat.title[lang]}</span>
+                  <Badge variant="outline" className="text-[10px] h-5 mr-1">{cat.modules.length}</Badge>
+                  <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                </button>
+                {isExpanded && (
+                  <div className="border-t px-2 pb-2 pt-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-1">
+                    {cat.modules.map(mod => (
+                      <Link key={mod.id} href={mod.href}
+                        className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-colors"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: cat.color }} />
+                        {mod.title[lang]}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             )
           })}
         </div>

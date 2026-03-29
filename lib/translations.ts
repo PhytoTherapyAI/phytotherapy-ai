@@ -1069,7 +1069,7 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   // Badges / Gamification — Sprint 15
   // ══════════════════════════════════════════
-  "badges.title": { en: "Achievement Badges", tr: "Başarı Rözetleri" },
+  "badges.title": { en: "Achievement Badges", tr: "Başarı Rozetleri" },
   "badges.subtitle": { en: "Track your health journey milestones", tr: "Sağlık yolculuğu kilometre taşlarınızı takip edin" },
   "badges.earned": { en: "Earned", tr: "Kazanıldı" },
   "badges.locked": { en: "Locked", tr: "Kilitli" },
