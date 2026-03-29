@@ -13,7 +13,6 @@ interface Conversation { id: string; name: string; avatar: string; lastMessage: 
 
 export default function DoctorMessagesPage() {
   const { lang } = useLang();
-  const isTr = lang === "tr";
   const [selectedConvo, setSelectedConvo] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState("");
   const [conversations] = useState<Conversation[]>([]);
@@ -27,14 +26,14 @@ export default function DoctorMessagesPage() {
         <div className="flex items-center gap-3 mb-6">
           <MessageSquare className="w-8 h-8 text-blue-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Doktor Mesajlari" : "Doctor Messages"}</h1>
-            <div className="flex items-center gap-2 mt-0.5"><Badge className="bg-green-100 text-green-700"><Shield className="w-3 h-3 mr-1" />KVKK</Badge><span className="text-xs text-gray-500">{isTr ? "Uctan uca sifrelenmis" : "End-to-end encrypted"}</span></div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("doctorMessages.title", lang)}</h1>
+            <div className="flex items-center gap-2 mt-0.5"><Badge className="bg-green-100 text-green-700"><Shield className="w-3 h-3 mr-1" />KVKK</Badge><span className="text-xs text-gray-500">{tx("doctorMessages.encrypted", lang)}</span></div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <div className="relative mb-3"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /><input className="w-full rounded-lg border pl-9 pr-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Doktor ara..." : "Search doctors..."} /></div>
+            <div className="relative mb-3"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /><input className="w-full rounded-lg border pl-9 pr-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={tx("doctorMessages.searchDoctors", lang)} /></div>
             {conversations.map(c => (
               <Card key={c.id} className={"p-3 cursor-pointer hover:shadow-md transition-shadow " + (selectedConvo === c.id ? "border-blue-300 bg-blue-50 dark:bg-blue-900/20" : "")} onClick={() => setSelectedConvo(c.id)}>
                 <div className="flex items-center gap-3">
@@ -68,13 +67,13 @@ export default function DoctorMessagesPage() {
                 </div>
                 <div className="p-3 border-t flex gap-2">
                   <Button variant="ghost" size="sm"><Paperclip className="w-4 h-4" /></Button>
-                  <input className="flex-1 rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Mesaj yazın..." : "Type a message..."} value={newMessage} onChange={e => setNewMessage(e.target.value)} />
+                  <input className="flex-1 rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={tx("doctorMessages.typeMessage", lang)} value={newMessage} onChange={e => setNewMessage(e.target.value)} />
                   <Button size="sm" disabled={!newMessage.trim()}><Send className="w-4 h-4" /></Button>
                 </div>
               </Card>
             ) : (
               <Card className="flex items-center justify-center h-[500px] text-gray-400">
-                <div className="text-center"><MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-30" /><p className="text-sm">{isTr ? "Bir konusma secin" : "Select a conversation"}</p></div>
+                <div className="text-center"><MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-30" /><p className="text-sm">{tx("doctorMessages.selectConversation", lang)}</p></div>
               </Card>
             )}
           </div>

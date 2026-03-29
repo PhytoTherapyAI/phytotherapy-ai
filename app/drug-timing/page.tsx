@@ -108,20 +108,6 @@ export default function DrugTimingPage() {
 
   const conflicts = getConflicts()
 
-  const t = (key: string) => {
-    const map: Record<string, Record<string, string>> = {
-      title: { en: "Drug Interaction Timing Matrix", tr: "İlaç Etkileşim Zaman Matrisi" },
-      subtitle: { en: "Know exactly when to take each medication for maximum safety and effectiveness", tr: "Her ilacı maksimum güvenlik ve etkinlik için ne zaman alacağını bil" },
-      your_meds: { en: "Your Medications", tr: "Senin İlaçların" },
-      timing_guide: { en: "Full Timing Guide", tr: "Tam Zamanlama Rehberi" },
-      conflicts: { en: "Timing Conflicts", tr: "Zamanlama Çakışmaları" },
-      hours_apart: { en: "hours apart", tr: "saat arayla" },
-      no_meds: { en: "Add medications to your profile to see personalized timing.", tr: "Kişisel zamanlama görmek için profiline ilaç ekle." },
-      no_conflicts: { en: "No timing conflicts detected.", tr: "Zamanlama çakışması tespit edilmedi." },
-      loading: { en: "Loading...", tr: "Yükleniyor..." },
-    }
-    return map[key]?.[lang] || key
-  }
 
   if (loading) return (
     <div className="min-h-screen bg-background flex items-center justify-center">
@@ -136,8 +122,8 @@ export default function DrugTimingPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Clock className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{t("title")}</h1>
-          <p className="text-muted-foreground mt-1">{t("subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground">{tx("drugTiming.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("drugTiming.subtitle", lang)}</p>
         </div>
 
         {/* Conflicts */}
@@ -145,14 +131,14 @@ export default function DrugTimingPage() {
           <Card className="p-5 mb-6 border-amber-500/30 bg-amber-500/5">
             <h3 className="font-semibold flex items-center gap-2 mb-3">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
-              {t("conflicts")}
+              {tx("drugTiming.conflicts", lang)}
             </h3>
             <div className="space-y-2">
               {conflicts.map((c, i) => (
                 <div key={i} className="flex items-center gap-2 text-sm">
                   <Badge variant="outline">{c.med1}</Badge>
                   <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-medium text-amber-600">{c.hours} {t("hours_apart")}</span>
+                  <span className="font-medium text-amber-600">{c.hours} {tx("drugTiming.hoursApart", lang)}</span>
                   <ArrowRight className="w-4 h-4 text-muted-foreground" />
                   <Badge variant="outline">{c.med2}</Badge>
                 </div>
@@ -164,7 +150,7 @@ export default function DrugTimingPage() {
         {/* User's medications timing */}
         {userMeds.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-lg font-semibold mb-4">{t("your_meds")}</h2>
+            <h2 className="text-lg font-semibold mb-4">{tx("drugTiming.yourMeds", lang)}</h2>
             <div className="space-y-3">
               {userMeds.map(med => {
                 const timing = getTimingInfo(med)
@@ -194,7 +180,7 @@ export default function DrugTimingPage() {
                           </div>
                         ) : (
                           <p className="text-sm text-muted-foreground mt-1">
-                            {lang === "tr" ? "Zamanlama bilgisi mevcut değil" : "Timing info not available"}
+                            {tx("drugTiming.noTimingInfo", lang)}
                           </p>
                         )}
                       </div>
@@ -209,15 +195,15 @@ export default function DrugTimingPage() {
         {userMeds.length === 0 && (
           <Card className="p-8 text-center mb-8">
             <Pill className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">{t("no_meds")}</p>
+            <p className="text-muted-foreground">{tx("drugTiming.noMeds", lang)}</p>
             <Button className="mt-4" onClick={() => window.location.href = "/profile"}>
-              {lang === "tr" ? "Profil'e Git" : "Go to Profile"}
+              {tx("drugTiming.goToProfile", lang)}
             </Button>
           </Card>
         )}
 
         {/* Full timing guide */}
-        <h2 className="text-lg font-semibold mb-4">{t("timing_guide")}</h2>
+        <h2 className="text-lg font-semibold mb-4">{tx("drugTiming.timingGuide", lang)}</h2>
         <div className="space-y-3">
           {DRUG_TIMING_DB.map(drug => (
             <Card key={drug.name} className="p-4 cursor-pointer hover:border-primary/50 transition-colors"

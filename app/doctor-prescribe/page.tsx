@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 const DRUG_DB = [
   { brand: "Glifor", generic: "Metformin", brandPrice: 45, genericPrice: 18, category: "Antidiabetic" },
@@ -20,7 +21,6 @@ const DRUG_DB = [
 
 export default function DoctorPrescribePage() {
   const { lang } = useLang();
-  const isTr = lang === "tr";
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDrug, setSelectedDrug] = useState<typeof DRUG_DB[0] | null>(null);
   const [weight, setWeight] = useState("70");
@@ -41,46 +41,46 @@ export default function DoctorPrescribePage() {
         <div className="flex items-center gap-3 mb-6">
           <Pill className="w-8 h-8 text-emerald-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Recete Asistani" : "Prescription Assistant"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Doz hesaplama, etkilesim kontrolü, jenerik alternatifleri" : "Dose calculator, interaction check, generic alternatives"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("doctorPrescribe.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{tx("doctorPrescribe.subtitle", lang)}</p>
           </div>
         </div>
 
         <Card className="p-4 mb-6">
-          <h2 className="font-semibold text-sm mb-3 flex items-center gap-2"><Search className="w-4 h-4" /> {isTr ? "İlaç Ara" : "Search Drug"}</h2>
-          <input className="w-full rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Marka veya etken madde adi..." : "Brand or generic name..."} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+          <h2 className="font-semibold text-sm mb-3 flex items-center gap-2"><Search className="w-4 h-4" /> {tx("doctorPrescribe.searchDrug", lang)}</h2>
+          <input className="w-full rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={tx("doctorPrescribe.searchPlaceholder", lang)} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
           {filtered.length > 0 && <div className="mt-2 space-y-1">{filtered.map((d, i) => (<div key={i} className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" onClick={() => { setSelectedDrug(d); setSearchTerm(""); }}><div><span className="font-medium text-sm">{d.brand}</span><span className="text-xs text-gray-500 ml-2">({d.generic})</span></div><Badge variant="outline">{d.category}</Badge></div>))}</div>}
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Card className="p-4">
-            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Calculator className="w-4 h-4" /> {isTr ? "Doz Hesaplayici" : "Dose Calculator"}</h3>
+            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><Calculator className="w-4 h-4" /> {tx("doctorPrescribe.doseCalculator", lang)}</h3>
             <div className="space-y-3">
-              <div><label className="text-xs text-gray-500">{isTr ? "Kilo (kg)" : "Weight (kg)"}</label><input className="w-full rounded-lg border px-3 py-2 text-sm mt-1 dark:bg-gray-800 dark:border-gray-700" value={weight} onChange={e => setWeight(e.target.value)} type="number" /></div>
-              <div><label className="text-xs text-gray-500">{isTr ? "Yas" : "Age"}</label><input className="w-full rounded-lg border px-3 py-2 text-sm mt-1 dark:bg-gray-800 dark:border-gray-700" value={age} onChange={e => setAge(e.target.value)} type="number" /></div>
-              <div><label className="text-xs text-gray-500">{isTr ? "Bobrek Fonksiyonu" : "Renal Function"}</label>
+              <div><label className="text-xs text-gray-500">{tx("doctorPrescribe.weight", lang)}</label><input className="w-full rounded-lg border px-3 py-2 text-sm mt-1 dark:bg-gray-800 dark:border-gray-700" value={weight} onChange={e => setWeight(e.target.value)} type="number" /></div>
+              <div><label className="text-xs text-gray-500">{tx("doctorPrescribe.age", lang)}</label><input className="w-full rounded-lg border px-3 py-2 text-sm mt-1 dark:bg-gray-800 dark:border-gray-700" value={age} onChange={e => setAge(e.target.value)} type="number" /></div>
+              <div><label className="text-xs text-gray-500">{tx("doctorPrescribe.renalFunction", lang)}</label>
                 <select className="w-full rounded-lg border px-3 py-2 text-sm mt-1 dark:bg-gray-800 dark:border-gray-700" value={renal} onChange={e => setRenal(e.target.value)}>
                   <option value="normal">Normal (GFR &gt;60)</option><option value="mild">Mild (GFR 30-60)</option><option value="severe">Severe (GFR &lt;30)</option>
                 </select>
               </div>
-              <Button className="w-full"><Calculator className="w-4 h-4 mr-2" /> {isTr ? "Doz Hesapla" : "Calculate Dose"}</Button>
+              <Button className="w-full"><Calculator className="w-4 h-4 mr-2" /> {tx("doctorPrescribe.calculateDose", lang)}</Button>
             </div>
           </Card>
 
           <Card className="p-4">
-            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><ArrowRightLeft className="w-4 h-4" /> {isTr ? "Jenerik Alternatifler" : "Generic Alternatives"}</h3>
+            <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><ArrowRightLeft className="w-4 h-4" /> {tx("doctorPrescribe.genericAlternatives", lang)}</h3>
             {selectedDrug ? (
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800"><div><div className="font-medium text-sm">{selectedDrug.brand}</div><div className="text-xs text-gray-500">{isTr ? "Marka" : "Brand"}</div></div><span className="font-bold text-lg">{selectedDrug.brandPrice} TL</span></div>
-                <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border-green-200"><div><div className="font-medium text-sm text-green-700">{selectedDrug.generic}</div><div className="text-xs text-green-600">{isTr ? "Jenerik" : "Generic"}</div></div><span className="font-bold text-lg text-green-600">{selectedDrug.genericPrice} TL</span></div>
-                <div className="text-center p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30"><span className="text-sm font-bold text-emerald-700">{Math.round((1 - selectedDrug.genericPrice / selectedDrug.brandPrice) * 100)}% {isTr ? "tasarruf" : "savings"}</span></div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-800"><div><div className="font-medium text-sm">{selectedDrug.brand}</div><div className="text-xs text-gray-500">{tx("doctorPrescribe.brand", lang)}</div></div><span className="font-bold text-lg">{selectedDrug.brandPrice} TL</span></div>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border-green-200"><div><div className="font-medium text-sm text-green-700">{selectedDrug.generic}</div><div className="text-xs text-green-600">{tx("doctorPrescribe.generic", lang)}</div></div><span className="font-bold text-lg text-green-600">{selectedDrug.genericPrice} TL</span></div>
+                <div className="text-center p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30"><span className="text-sm font-bold text-emerald-700">{Math.round((1 - selectedDrug.genericPrice / selectedDrug.brandPrice) * 100)}% {tx("doctorPrescribe.savings", lang)}</span></div>
               </div>
-            ) : <p className="text-sm text-gray-400 text-center py-8">{isTr ? "Bir ilac secin" : "Select a drug first"}</p>}
+            ) : <p className="text-sm text-gray-400 text-center py-8">{tx("doctorPrescribe.selectDrug", lang)}</p>}
           </Card>
         </div>
 
         <Card className="p-4">
-          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-red-500" /> {isTr ? "Etkileşim Kontrolleri" : "Interaction Checks"}</h3>
+          <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-red-500" /> {tx("doctorPrescribe.interactionChecks", lang)}</h3>
           <div className="space-y-2">
             {interactions.map((int, i) => (
               <div key={i} className={"p-3 rounded-lg " + (int.severity === "high" ? "bg-red-50 border border-red-200 dark:bg-red-900/20" : "bg-yellow-50 border border-yellow-200 dark:bg-yellow-900/20")}>

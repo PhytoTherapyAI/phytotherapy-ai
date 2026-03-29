@@ -148,7 +148,7 @@ export default function EarHealthPage() {
           <div>
             <label className="block text-sm font-medium mb-1 flex items-center gap-2">
               <Volume2 className="w-4 h-4" />
-              {tx("ear.noiseExposure", lang)} ({lang === "tr" ? "saat/gun" : "hours/day"})
+              {tx("ear.noiseExposure", lang)} ({tx("ear.hoursPerDay", lang)})
             </label>
             <input
               type="number"
@@ -292,7 +292,7 @@ export default function EarHealthPage() {
             {/* Hearing Test */}
             {analysis.hearingTestSchedule && (
               <div className="bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 rounded-2xl p-6">
-                <h2 className="text-lg font-semibold mb-2">{lang === "tr" ? "Isitme Testi Takvimi" : "Hearing Test Schedule"}</h2>
+                <h2 className="text-lg font-semibold mb-2">{tx("ear.hearingTestSchedule", lang)}</h2>
                 <p className="text-sm">{analysis.hearingTestSchedule}</p>
               </div>
             )}

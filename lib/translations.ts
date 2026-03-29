@@ -4083,6 +4083,113 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "dataDelete.finalDesc": { en: "Clicking this button will mark your account for deletion.", tr: "Bu butona bastiginizda hesabiniz silinmek uzere isaretlenecektir." },
   "dataDelete.understandDelete": { en: "I understand all my data will be permanently deleted.", tr: "Tum verilerimin kalici olarak silinecegini anliyorum." },
   "dataDelete.deleteAccount": { en: "Delete My Account", tr: "Hesabimi Sil" },
+
+  // Doctor Messages
+  "doctorMessages.title": { en: "Doctor Messages", tr: "Doktor Mesajlari" },
+  "doctorMessages.encrypted": { en: "End-to-end encrypted", tr: "Uctan uca sifrelenmis" },
+  "doctorMessages.searchDoctors": { en: "Search doctors...", tr: "Doktor ara..." },
+  "doctorMessages.typeMessage": { en: "Type a message...", tr: "Mesaj yazın..." },
+  "doctorMessages.selectConversation": { en: "Select a conversation", tr: "Bir konusma secin" },
+
+  // Doctor Prescribe
+  "doctorPrescribe.title": { en: "Prescription Assistant", tr: "Recete Asistani" },
+  "doctorPrescribe.subtitle": { en: "Dose calculator, interaction check, generic alternatives", tr: "Doz hesaplama, etkilesim kontrolü, jenerik alternatifleri" },
+  "doctorPrescribe.searchDrug": { en: "Search Drug", tr: "İlaç Ara" },
+  "doctorPrescribe.searchPlaceholder": { en: "Brand or generic name...", tr: "Marka veya etken madde adi..." },
+  "doctorPrescribe.doseCalculator": { en: "Dose Calculator", tr: "Doz Hesaplayici" },
+  "doctorPrescribe.weight": { en: "Weight (kg)", tr: "Kilo (kg)" },
+  "doctorPrescribe.age": { en: "Age", tr: "Yas" },
+  "doctorPrescribe.renalFunction": { en: "Renal Function", tr: "Bobrek Fonksiyonu" },
+  "doctorPrescribe.calculateDose": { en: "Calculate Dose", tr: "Doz Hesapla" },
+  "doctorPrescribe.genericAlternatives": { en: "Generic Alternatives", tr: "Jenerik Alternatifler" },
+  "doctorPrescribe.brand": { en: "Brand", tr: "Marka" },
+  "doctorPrescribe.generic": { en: "Generic", tr: "Jenerik" },
+  "doctorPrescribe.savings": { en: "savings", tr: "tasarruf" },
+  "doctorPrescribe.selectDrug": { en: "Select a drug first", tr: "Bir ilac secin" },
+  "doctorPrescribe.interactionChecks": { en: "Interaction Checks", tr: "Etkileşim Kontrolleri" },
+
+  // Doctor Referral (additional)
+  "referral.verificationDesc": { en: "Once your doctor identity is verified, you can access the referral program.", tr: "Doktor kimliğinizi doğruladıktan sonra referans programına erişebilirsiniz." },
+  "referral.goToVerification": { en: "Go to Verification", tr: "Doğrulama Sayfasına Git" },
+  "referral.generateTitle": { en: "Generate your referral code", tr: "Referans kodunuzu oluşturun" },
+  "referral.generateDesc": { en: "Create a unique referral code to share with your patients and start earning premium credits.", tr: "Hastalarınızla paylaşacağınız benzersiz bir referans kodu oluşturun ve premium kredi kazanmaya başlayın." },
+  "referral.rewardsDesc": { en: "The more patients you refer, the more premium credits you earn", tr: "Ne kadar çok yönlendirme yaparsanız, o kadar çok premium kredi kazanırsınız" },
+
+  // Donation
+  "donation.bloodCompatibility": { en: "Blood Type Compatibility", tr: "Kan Grubu Uyumlulugu" },
+  "donation.canDonateTo": { en: "Can Donate To", tr: "Bagis Yapabilir" },
+  "donation.canReceiveFrom": { en: "Can Receive From", tr: "Alabilir" },
+  "donation.contraindications": { en: "Medication Contraindications", tr: "İlaç Kontrendikasyonlari" },
+  "donation.defer": { en: "DEFER", tr: "ERTELEME" },
+  "donation.history": { en: "Donation History", tr: "Bagis Geçmişi" },
+  "donation.blood": { en: "Blood", tr: "Kan" },
+  "donation.platelet": { en: "Platelet", tr: "Trombosit" },
+  "donation.plasma": { en: "Plasma", tr: "Plazma" },
+  "donation.noRecords": { en: "No records", tr: "Kayıt yok" },
+  "donation.centers": { en: "Donation Centers", tr: "Bagis Merkezleri" },
+  "donation.organDonation": { en: "Organ Donation", tr: "Organ Bagisi" },
+  "donation.organDesc": { en: "In Turkey, you can register for organ donation through E-Nabiz or at any healthcare facility. One donor can save up to 8 lives.", tr: "Türkiye'de organ bagisi için E-Nabiz uzerinden veya herhangi bir sağlık kurulusunda kayıt yaptirabilirsiniz. Bir donor 8 kisiinin hayatini kurtarabilir." },
+  "donation.registerENabiz": { en: "Register on E-Nabiz", tr: "E-Nabiz'da Kayıt Ol" },
+
+  // Dream Diary (additional)
+  "dream.medEffects": { en: "Medication-Dream Effects", tr: "İlaç-Ruya Etkileri" },
+  "dream.entries": { en: "Entries", tr: "Kayıtlar" },
+  "dream.aiAnalysis": { en: "Analysis", tr: "Analizi" },
+  "dream.noEntries": { en: "No entries yet. Add your first dream!", tr: "Henuz kayıt yok. Ilk ruyanizi ekleyiniz!" },
+
+  // Drug Equivalent
+  "drugEquivalent.title": { en: "Generic Drug Finder", tr: "Jenerik İlaç Bulucu" },
+  "drugEquivalent.subtitle": { en: "Find affordable generic alternatives for brand-name drugs", tr: "Marka ilaclar için uygun fiyatli jenerik alternatifleri bulun" },
+  "drugEquivalent.search": { en: "Search brand or generic name...", tr: "Marka veya jenerik adi arayın..." },
+  "drugEquivalent.brandName": { en: "Brand", tr: "Marka" },
+  "drugEquivalent.genericName": { en: "Generic", tr: "Jenerik" },
+  "drugEquivalent.alternatives": { en: "Generic Alternatives", tr: "Jenerik Alternatifler" },
+  "drugEquivalent.sgkYes": { en: "SGK Covered", tr: "SGK Kapsaminda" },
+  "drugEquivalent.sgkNo": { en: "Not SGK Covered", tr: "SGK Kapsaminda Degil" },
+  "drugEquivalent.savings": { en: "Monthly Savings", tr: "Aylık Tasarruf" },
+  "drugEquivalent.brandPrice": { en: "Brand Price", tr: "Marka Fiyat" },
+  "drugEquivalent.genericPrice": { en: "Generic Price", tr: "Jenerik Fiyat" },
+  "drugEquivalent.savingsCalc": { en: "Savings Calculator", tr: "Tasarruf Hesaplayici" },
+  "drugEquivalent.monthsLabel": { en: "Duration (months)", tr: "Sure (ay)" },
+  "drugEquivalent.totalSavings": { en: "Total Savings", tr: "Toplam Tasarruf" },
+  "drugEquivalent.yearly": { en: "Yearly Savings", tr: "Yıllık Tasarruf" },
+  "drugEquivalent.disclaimer": { en: "Always consult your doctor before switching medications. Generic equivalents contain the same active ingredient but may differ in inactive ingredients.", tr: "İlaç degistirmeden once mutlaka doktorunuza danışın. Jenerik esdegerler ayni etken maddeyi icerir ancak yardımcı maddeler farklılik gosterebilir." },
+  "drugEquivalent.noResults": { en: "No drugs found. Try a different search term.", tr: "İlaç bulunamadı. Farkli bir arama terimi deneyin." },
+  "drugEquivalent.back": { en: "Back", tr: "Geri" },
+  "drugEquivalent.allDrugs": { en: "All Medications", tr: "Tum Ilaclar" },
+  "drugEquivalent.results": { en: "results", tr: "sonuc" },
+  "drugEquivalent.months": { en: "mo", tr: "ay" },
+
+  // Drug Info (additional)
+  "drugInfo.whatItDoes": { en: "What Does It Do?", tr: "Ne Yapar?" },
+  "drugInfo.howToTake": { en: "How to Take", tr: "Nasıl Kullanılır?" },
+  "drugInfo.sideEffects": { en: "Side Effects", tr: "Yan Etkiler" },
+  "drugInfo.common": { en: "Common", tr: "Yaygın" },
+  "drugInfo.serious": { en: "Serious", tr: "Ciddi" },
+  "drugInfo.rare": { en: "Rare", tr: "Nadir" },
+  "drugInfo.interactions": { en: "Interactions", tr: "Etkileşimler" },
+  "drugInfo.whenToStop": { en: "When to Stop", tr: "Ne Zaman Kullanmayı Bırakmalı?" },
+  "drugInfo.genericVsBrand": { en: "Generic vs Brand", tr: "Jenerik vs Orijinal" },
+  "drugInfo.storage": { en: "Storage", tr: "Saklama" },
+  "drugInfo.pregnancy": { en: "Pregnancy", tr: "Gebelik" },
+  "drugInfo.defaultDisclaimer": { en: "This information does not replace medical advice. Consult your doctor.", tr: "Bu bilgi doktor tavsiyesinin yerine geçmez. Doktorunuza danışın." },
+  "drugInfo.enterName": { en: "Enter a drug name", tr: "İlaç adı girin" },
+
+  // Drug Timing
+  "drugTiming.title": { en: "Drug Interaction Timing Matrix", tr: "İlaç Etkileşim Zaman Matrisi" },
+  "drugTiming.subtitle": { en: "Know exactly when to take each medication for maximum safety and effectiveness", tr: "Her ilacı maksimum güvenlik ve etkinlik için ne zaman alacağını bil" },
+  "drugTiming.yourMeds": { en: "Your Medications", tr: "Senin İlaçların" },
+  "drugTiming.timingGuide": { en: "Full Timing Guide", tr: "Tam Zamanlama Rehberi" },
+  "drugTiming.conflicts": { en: "Timing Conflicts", tr: "Zamanlama Çakışmaları" },
+  "drugTiming.hoursApart": { en: "hours apart", tr: "saat arayla" },
+  "drugTiming.noMeds": { en: "Add medications to your profile to see personalized timing.", tr: "Kişisel zamanlama görmek için profiline ilaç ekle." },
+  "drugTiming.noConflicts": { en: "No timing conflicts detected.", tr: "Zamanlama çakışması tespit edilmedi." },
+  "drugTiming.noTimingInfo": { en: "Timing info not available", tr: "Zamanlama bilgisi mevcut değil" },
+  "drugTiming.goToProfile": { en: "Go to Profile", tr: "Profil'e Git" },
+
+  // Ear Health (additional)
+  "ear.hoursPerDay": { en: "hours/day", tr: "saat/gun" },
+  "ear.hearingTestSchedule": { en: "Hearing Test Schedule", tr: "Isitme Testi Takvimi" },
 }
 Object.assign(t, commonToolKeys)
 

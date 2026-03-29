@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -42,33 +43,8 @@ const DRUG_DATABASE: DrugEntry[] = [
   { brand: "Lantus", generic: "Insulin Glargine", category: { en: "Diabetes (Insulin)", tr: "Diyabet (Insulin)" }, brandPrice: 380, genericPrice: 195, sgkCovered: true, genericBrands: ["Basaglar", "Toujeo"], strength: "100U/mL" },
 ]
 
-const tx: Record<string, { en: string; tr: string }> = {
-  title: { en: "Generic Drug Finder", tr: "Jenerik İlaç Bulucu" },
-  subtitle: { en: "Find affordable generic alternatives for brand-name drugs", tr: "Marka ilaclar için uygun fiyatli jenerik alternatifleri bulun" },
-  search: { en: "Search brand or generic name...", tr: "Marka veya jenerik adi arayın..." },
-  brandName: { en: "Brand", tr: "Marka" },
-  genericName: { en: "Generic", tr: "Jenerik" },
-  alternatives: { en: "Generic Alternatives", tr: "Jenerik Alternatifler" },
-  sgkYes: { en: "SGK Covered", tr: "SGK Kapsaminda" },
-  sgkNo: { en: "Not SGK Covered", tr: "SGK Kapsaminda Degil" },
-  savings: { en: "Monthly Savings", tr: "Aylık Tasarruf" },
-  perMonth: { en: "/month", tr: "/ay" },
-  brandPrice: { en: "Brand Price", tr: "Marka Fiyat" },
-  genericPrice: { en: "Generic Price", tr: "Jenerik Fiyat" },
-  savingsCalc: { en: "Savings Calculator", tr: "Tasarruf Hesaplayici" },
-  monthsLabel: { en: "Duration (months)", tr: "Sure (ay)" },
-  totalSavings: { en: "Total Savings", tr: "Toplam Tasarruf" },
-  yearly: { en: "Yearly Savings", tr: "Yıllık Tasarruf" },
-  disclaimer: { en: "Always consult your doctor before switching medications. Generic equivalents contain the same active ingredient but may differ in inactive ingredients.", tr: "İlaç degistirmeden once mutlaka doktorunuza danışın. Jenerik esdegerler ayni etken maddeyi icerir ancak yardımcı maddeler farklılik gosterebilir." },
-  noResults: { en: "No drugs found. Try a different search term.", tr: "İlaç bulunamadı. Farkli bir arama terimi deneyin." },
-  back: { en: "Back", tr: "Geri" },
-  allDrugs: { en: "All Medications", tr: "Tum Ilaclar" },
-  results: { en: "results", tr: "sonuc" },
-}
-
 export default function DrugEquivalentPage() {
   const { lang } = useLang()
-  const t = (key: string) => tx[key]?.[lang as "en" | "tr"] || tx[key]?.en || key
 
   const [search, setSearch] = useState("")
   const [selectedDrug, setSelectedDrug] = useState<DrugEntry | null>(null)
@@ -94,9 +70,9 @@ export default function DrugEquivalentPage() {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <Pill className="w-6 h-6 text-green-500" />{t("title")}
+              <Pill className="w-6 h-6 text-green-500" />{tx("drugEquivalent.title", lang)}
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{t("subtitle")}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{tx("drugEquivalent.subtitle", lang)}</p>
           </div>
         </div>
 
@@ -107,19 +83,19 @@ export default function DrugEquivalentPage() {
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("search")}
+            placeholder={tx("drugEquivalent.search", lang)}
             className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent"
           />
         </div>
 
         {/* Results count */}
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          {filtered.length} {t("results")}
+          {filtered.length} {tx("drugEquivalent.results", lang)}
         </p>
 
         {/* Drug list */}
         {filtered.length === 0 ? (
-          <Card className="p-6 text-center text-gray-500 dark:text-gray-400">{t("noResults")}</Card>
+          <Card className="p-6 text-center text-gray-500 dark:text-gray-400">{tx("drugEquivalent.noResults", lang)}</Card>
         ) : (
           <div className="space-y-3">
             {filtered.map((drug) => {
@@ -145,7 +121,7 @@ export default function DrugEquivalentPage() {
                           </Badge>
                         </div>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
-                          {t("genericName")}: <span className="font-medium">{drug.generic}</span>
+                          {tx("drugEquivalent.genericName", lang)}: <span className="font-medium">{drug.generic}</span>
                         </p>
                       </div>
                       <div className="text-right shrink-0">
@@ -158,11 +134,11 @@ export default function DrugEquivalentPage() {
                     {/* Price comparison */}
                     <div className="flex gap-4 text-sm">
                       <div>
-                        <span className="text-gray-500 dark:text-gray-400">{t("brandPrice")}: </span>
+                        <span className="text-gray-500 dark:text-gray-400">{tx("drugEquivalent.brandPrice", lang)}: </span>
                         <span className="font-medium text-red-500 line-through">{drug.brandPrice} TL</span>
                       </div>
                       <div>
-                        <span className="text-gray-500 dark:text-gray-400">{t("genericPrice")}: </span>
+                        <span className="text-gray-500 dark:text-gray-400">{tx("drugEquivalent.genericPrice", lang)}: </span>
                         <span className="font-bold text-green-600">{drug.genericPrice} TL</span>
                       </div>
                     </div>
@@ -171,11 +147,11 @@ export default function DrugEquivalentPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       {drug.sgkCovered ? (
                         <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 text-xs">
-                          <CheckCircle2 className="w-3 h-3 mr-1" />{t("sgkYes")}
+                          <CheckCircle2 className="w-3 h-3 mr-1" />{tx("drugEquivalent.sgkYes", lang)}
                         </Badge>
                       ) : (
                         <Badge className="bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 text-xs">
-                          <XCircle className="w-3 h-3 mr-1" />{t("sgkNo")}
+                          <XCircle className="w-3 h-3 mr-1" />{tx("drugEquivalent.sgkNo", lang)}
                         </Badge>
                       )}
                     </div>
@@ -184,7 +160,7 @@ export default function DrugEquivalentPage() {
                     {isSelected && (
                       <div className="pt-2 border-t border-gray-100 dark:border-gray-800 space-y-3">
                         <div>
-                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("alternatives")}:</p>
+                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{tx("drugEquivalent.alternatives", lang)}:</p>
                           <div className="flex flex-wrap gap-1.5">
                             {drug.genericBrands.map((b) => (
                               <Badge key={b} variant="outline" className="text-sm">{b}</Badge>
@@ -195,10 +171,10 @@ export default function DrugEquivalentPage() {
                         {/* Savings calculator */}
                         <div className="bg-green-50 dark:bg-green-950/30 rounded-lg p-3 space-y-2">
                           <p className="text-sm font-semibold text-green-700 dark:text-green-300 flex items-center gap-1">
-                            <DollarSign className="w-4 h-4" />{t("savingsCalc")}
+                            <DollarSign className="w-4 h-4" />{tx("drugEquivalent.savingsCalc", lang)}
                           </p>
                           <div className="flex items-center gap-3">
-                            <label className="text-xs text-gray-600 dark:text-gray-400">{t("monthsLabel")}:</label>
+                            <label className="text-xs text-gray-600 dark:text-gray-400">{tx("drugEquivalent.monthsLabel", lang)}:</label>
                             <input
                               type="range"
                               min={1}
@@ -210,11 +186,11 @@ export default function DrugEquivalentPage() {
                             <span className="text-sm font-medium w-8 text-right">{months}</span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-gray-600 dark:text-gray-400">{t("savings")} ({months} {lang === "tr" ? "ay" : "mo"}):</span>
+                            <span className="text-gray-600 dark:text-gray-400">{tx("drugEquivalent.savings", lang)} ({months} {tx("drugEquivalent.months", lang)}):</span>
                             <span className="font-bold text-green-600 text-lg">{saving * months} TL</span>
                           </div>
                           <div className="flex justify-between text-xs text-gray-500">
-                            <span>{t("yearly")}:</span>
+                            <span>{tx("drugEquivalent.yearly", lang)}:</span>
                             <span className="font-medium">{saving * 12} TL</span>
                           </div>
                         </div>
@@ -231,7 +207,7 @@ export default function DrugEquivalentPage() {
         <Card className="p-4 bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800">
           <p className="text-xs text-amber-700 dark:text-amber-300 flex items-start gap-2">
             <Shield className="w-4 h-4 shrink-0 mt-0.5" />
-            {t("disclaimer")}
+            {tx("drugEquivalent.disclaimer", lang)}
           </p>
         </Card>
       </div>

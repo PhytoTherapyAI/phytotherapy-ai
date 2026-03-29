@@ -163,7 +163,7 @@ export default function DrugInfoPage() {
             {/* What It Does */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-purple-100 dark:border-gray-700 p-6">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                {lang === "tr" ? "Ne Yapar?" : "What Does It Do?"}
+                {tx("drugInfo.whatItDoes", lang)}
               </h3>
               <p className="text-gray-700 dark:text-gray-300">{result.whatItDoes}</p>
             </div>
@@ -171,7 +171,7 @@ export default function DrugInfoPage() {
             {/* How To Take */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-purple-100 dark:border-gray-700 p-6">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                {lang === "tr" ? "Nasıl Kullanılır?" : "How to Take"}
+                {tx("drugInfo.howToTake", lang)}
               </h3>
               <p className="text-gray-700 dark:text-gray-300">{result.howToTake}</p>
               {result.commonDoses && (
@@ -185,7 +185,7 @@ export default function DrugInfoPage() {
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-amber-500" />
                   <h3 className="font-semibold text-gray-900 dark:text-white">
-                    {lang === "tr" ? "Yan Etkiler" : "Side Effects"}
+                    {tx("drugInfo.sideEffects", lang)}
                   </h3>
                 </div>
                 {expandedSections.sideEffects ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
@@ -194,7 +194,7 @@ export default function DrugInfoPage() {
                 <div className="px-6 pb-6 space-y-3">
                   {result.sideEffects.common?.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-1">{lang === "tr" ? "Yaygın" : "Common"}</p>
+                      <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400 mb-1">{tx("drugInfo.common", lang)}</p>
                       <div className="flex flex-wrap gap-2">
                         {result.sideEffects.common.map((s) => (
                           <span key={s} className="text-xs px-2 py-1 rounded-full bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400">{s}</span>
@@ -204,7 +204,7 @@ export default function DrugInfoPage() {
                   )}
                   {result.sideEffects.serious?.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">{lang === "tr" ? "Ciddi" : "Serious"}</p>
+                      <p className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">{tx("drugInfo.serious", lang)}</p>
                       <div className="flex flex-wrap gap-2">
                         {result.sideEffects.serious.map((s) => (
                           <span key={s} className="text-xs px-2 py-1 rounded-full bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400">{s}</span>
@@ -214,7 +214,7 @@ export default function DrugInfoPage() {
                   )}
                   {result.sideEffects.rare?.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{lang === "tr" ? "Nadir" : "Rare"}</p>
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{tx("drugInfo.rare", lang)}</p>
                       <div className="flex flex-wrap gap-2">
                         {result.sideEffects.rare.map((s) => (
                           <span key={s} className="text-xs px-2 py-1 rounded-full bg-gray-50 dark:bg-gray-900/20 text-gray-600 dark:text-gray-400">{s}</span>
@@ -233,7 +233,7 @@ export default function DrugInfoPage() {
                   <div className="flex items-center gap-2">
                     <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                     <h3 className="font-semibold text-gray-900 dark:text-white">
-                      {lang === "tr" ? "Etkileşimler" : "Interactions"}
+                      {tx("drugInfo.interactions", lang)}
                     </h3>
                   </div>
                   {expandedSections.interactions ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
@@ -257,7 +257,7 @@ export default function DrugInfoPage() {
             {result.whenToStop && (
               <div className="bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-200 dark:border-red-800 p-6">
                 <h3 className="font-semibold text-red-800 dark:text-red-400 mb-2">
-                  {lang === "tr" ? "Ne Zaman Kullanmayı Bırakmalı?" : "When to Stop"}
+                  {tx("drugInfo.whenToStop", lang)}
                 </h3>
                 <p className="text-red-700 dark:text-red-300">{result.whenToStop}</p>
               </div>
@@ -267,7 +267,7 @@ export default function DrugInfoPage() {
             {result.genericVsOriginal && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-purple-100 dark:border-gray-700 p-6">
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  {lang === "tr" ? "Jenerik vs Orijinal" : "Generic vs Brand"}
+                  {tx("drugInfo.genericVsBrand", lang)}
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300">{result.genericVsOriginal}</p>
               </div>
@@ -278,7 +278,7 @@ export default function DrugInfoPage() {
               {result.storageInfo && (
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-purple-100 dark:border-gray-700 p-4">
                   <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
-                    {lang === "tr" ? "Saklama" : "Storage"}
+                    {tx("drugInfo.storage", lang)}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">{result.storageInfo}</p>
                 </div>
@@ -286,7 +286,7 @@ export default function DrugInfoPage() {
               {result.pregnancyCategory && (
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-purple-100 dark:border-gray-700 p-4">
                   <h3 className="font-semibold text-gray-900 dark:text-white text-sm mb-1">
-                    {lang === "tr" ? "Gebelik" : "Pregnancy"}
+                    {tx("drugInfo.pregnancy", lang)}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 text-sm">{result.pregnancyCategory}</p>
                 </div>
@@ -296,7 +296,7 @@ export default function DrugInfoPage() {
             {/* Disclaimer */}
             <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 text-center">
               <p className="text-gray-500 dark:text-gray-400 text-sm">
-                {result.disclaimer || (lang === "tr" ? "Bu bilgi doktor tavsiyesinin yerine geçmez. Doktorunuza danışın." : "This information does not replace medical advice. Consult your doctor.")}
+                {result.disclaimer || tx("drugInfo.defaultDisclaimer", lang)}
               </p>
             </div>
           </div>
@@ -306,7 +306,7 @@ export default function DrugInfoPage() {
         {!result && !isLoading && !error && (
           <div className="text-center py-12 text-gray-400 dark:text-gray-500">
             <Pill className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>{lang === "tr" ? "İlaç adı girin" : "Enter a drug name"}</p>
+            <p>{tx("drugInfo.enterName", lang)}</p>
           </div>
         )}
       </div>

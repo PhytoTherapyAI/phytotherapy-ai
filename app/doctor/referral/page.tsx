@@ -132,14 +132,12 @@ export default function DoctorReferralPage() {
             </div>
             <h2 className="text-xl font-semibold">{tx("referral.notVerified", lang)}</h2>
             <p className="max-w-sm text-sm text-muted-foreground">
-              {lang === "tr"
-                ? "Doktor kimliğinizi doğruladıktan sonra referans programına erişebilirsiniz."
-                : "Once your doctor identity is verified, you can access the referral program."}
+              {tx("referral.verificationDesc", lang)}
             </p>
             <Link href="/doctor">
               <Button className="mt-2 gap-2 bg-amber-600 hover:bg-amber-700">
                 <ShieldCheck className="h-4 w-4" />
-                {lang === "tr" ? "Doğrulama Sayfasına Git" : "Go to Verification"}
+                {tx("referral.goToVerification", lang)}
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
@@ -174,12 +172,10 @@ export default function DoctorReferralPage() {
           <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
             <Sparkles className="h-10 w-10 text-emerald-500" />
             <h2 className="text-xl font-semibold">
-              {lang === "tr" ? "Referans kodunuzu oluşturun" : "Generate your referral code"}
+              {tx("referral.generateTitle", lang)}
             </h2>
             <p className="max-w-sm text-sm text-muted-foreground">
-              {lang === "tr"
-                ? "Hastalarınızla paylaşacağınız benzersiz bir referans kodu oluşturun ve premium kredi kazanmaya başlayın."
-                : "Create a unique referral code to share with your patients and start earning premium credits."}
+              {tx("referral.generateDesc", lang)}
             </p>
             <Button
               onClick={generateCode}
@@ -373,9 +369,7 @@ export default function DoctorReferralPage() {
             {tx("referral.rewards", lang)}
           </CardTitle>
           <CardDescription>
-            {lang === "tr"
-              ? "Ne kadar çok yönlendirme yaparsanız, o kadar çok premium kredi kazanırsınız"
-              : "The more patients you refer, the more premium credits you earn"}
+            {tx("referral.rewardsDesc", lang)}
           </CardDescription>
         </CardHeader>
         <CardContent>

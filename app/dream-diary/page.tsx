@@ -110,7 +110,7 @@ export default function DreamDiaryPage() {
       {/* Medication-Dream Correlations */}
       <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800 p-5 mb-6">
         <h3 className="font-semibold text-indigo-800 dark:text-indigo-300 mb-3">
-          {lang === "tr" ? "İlaç-Ruya Etkileri" : "Medication-Dream Effects"}
+          {tx("dream.medEffects", lang)}
         </h3>
         <div className="space-y-2">
           {MED_DREAM_EFFECTS.map((m, i) => (
@@ -125,7 +125,7 @@ export default function DreamDiaryPage() {
       {/* Entries */}
       {entries.length > 0 && (
         <div className="space-y-3">
-          <h3 className="font-semibold text-gray-900 dark:text-white">{lang === "tr" ? "Kayıtlar" : "Entries"} ({entries.length})</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">{tx("dream.entries", lang)} ({entries.length})</h3>
           {entries.map((entry) => (
             <div key={entry.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
               <div className="flex items-center justify-between mb-2">
@@ -135,7 +135,7 @@ export default function DreamDiaryPage() {
               <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{entry.content}</p>
               {entry.analysis ? (
                 <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
-                  <p className="text-xs font-medium text-indigo-600 dark:text-indigo-400 mb-1">AI {lang === "tr" ? "Analizi" : "Analysis"}</p>
+                  <p className="text-xs font-medium text-indigo-600 dark:text-indigo-400 mb-1">AI {tx("dream.aiAnalysis", lang)}</p>
                   <p className="text-sm text-indigo-700 dark:text-indigo-300">{entry.analysis}</p>
                 </div>
               ) : (
@@ -150,7 +150,7 @@ export default function DreamDiaryPage() {
       )}
 
       {entries.length === 0 && (
-        <p className="text-center text-gray-400 text-sm py-8">{lang === "tr" ? "Henuz kayıt yok. Ilk ruyanizi ekleyiniz!" : "No entries yet. Add your first dream!"}</p>
+        <p className="text-center text-gray-400 text-sm py-8">{tx("dream.noEntries", lang)}</p>
       )}
 
       <p className="text-xs text-gray-400 text-center mt-6">{tx("disclaimer.tool", lang)}</p>

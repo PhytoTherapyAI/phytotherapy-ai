@@ -79,7 +79,7 @@ export default function DonationPage() {
       {/* Blood Type Compatibility */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-          <Droplets className="w-5 h-5 text-red-500" /> {lang === "tr" ? "Kan Grubu Uyumlulugu" : "Blood Type Compatibility"}
+          <Droplets className="w-5 h-5 text-red-500" /> {tx("donation.bloodCompatibility", lang)}
         </h3>
         <div className="flex flex-wrap gap-2 mb-4">
           {BLOOD_TYPES.map((bt) => (
@@ -95,13 +95,13 @@ export default function DonationPage() {
         {compat && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-              <p className="text-xs font-medium text-green-600 mb-2">{lang === "tr" ? "Bagis Yapabilir" : "Can Donate To"}</p>
+              <p className="text-xs font-medium text-green-600 mb-2">{tx("donation.canDonateTo", lang)}</p>
               <div className="flex flex-wrap gap-1.5">
                 {compat.canDonateTo.map((t) => <span key={t} className="px-2 py-0.5 bg-green-100 dark:bg-green-800/40 text-green-700 dark:text-green-400 rounded text-xs font-medium">{t}</span>)}
               </div>
             </div>
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-              <p className="text-xs font-medium text-blue-600 mb-2">{lang === "tr" ? "Alabilir" : "Can Receive From"}</p>
+              <p className="text-xs font-medium text-blue-600 mb-2">{tx("donation.canReceiveFrom", lang)}</p>
               <div className="flex flex-wrap gap-1.5">
                 {compat.canReceiveFrom.map((t) => <span key={t} className="px-2 py-0.5 bg-blue-100 dark:bg-blue-800/40 text-blue-700 dark:text-blue-400 rounded text-xs font-medium">{t}</span>)}
               </div>
@@ -113,14 +113,14 @@ export default function DonationPage() {
       {/* Medication Contraindications */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-500" /> {lang === "tr" ? "İlaç Kontrendikasyonlari" : "Medication Contraindications"}
+          <AlertTriangle className="w-4 h-4 text-amber-500" /> {tx("donation.contraindications", lang)}
         </h3>
         <div className="space-y-2">
           {CONTRAINDICATION_MEDS.map((m, i) => (
             <div key={i} className={`p-3 rounded-lg ${m.status === "defer" ? "bg-amber-50 dark:bg-amber-900/10" : "bg-green-50 dark:bg-green-900/10"}`}>
               <div className="flex items-center gap-2">
                 <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${m.status === "defer" ? "bg-amber-100 text-amber-700" : "bg-green-100 text-green-700"}`}>
-                  {m.status === "defer" ? (lang === "tr" ? "ERTELEME" : "DEFER") : "OK"}
+                  {m.status === "defer" ? tx("donation.defer", lang) : "OK"}
                 </span>
                 <span className="text-sm font-medium text-gray-900 dark:text-white">{m.meds[lang]}</span>
               </div>
@@ -132,12 +132,12 @@ export default function DonationPage() {
 
       {/* Donation History */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
-        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{lang === "tr" ? "Bagis Geçmişi" : "Donation History"}</h3>
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{tx("donation.history", lang)}</h3>
         <div className="flex gap-2 mb-3">
           <select value={newType} onChange={(e) => setNewType(e.target.value as "blood" | "platelet" | "plasma")} className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm">
-            <option value="blood">{lang === "tr" ? "Kan" : "Blood"}</option>
-            <option value="platelet">{lang === "tr" ? "Trombosit" : "Platelet"}</option>
-            <option value="plasma">{lang === "tr" ? "Plazma" : "Plasma"}</option>
+            <option value="blood">{tx("donation.blood", lang)}</option>
+            <option value="platelet">{tx("donation.platelet", lang)}</option>
+            <option value="plasma">{tx("donation.plasma", lang)}</option>
           </select>
           <input type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm" />
           <Button onClick={addEntry} disabled={!newDate} size="sm" className="bg-red-600 hover:bg-red-700 text-white"><Plus className="w-4 h-4" /></Button>
@@ -156,13 +156,13 @@ export default function DonationPage() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-gray-400 text-center py-2">{lang === "tr" ? "Kayıt yok" : "No records"}</p>
+          <p className="text-sm text-gray-400 text-center py-2">{tx("donation.noRecords", lang)}</p>
         )}
       </div>
 
       {/* Centers */}
       <div className="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800 p-5 mb-6">
-        <h3 className="font-semibold text-red-800 dark:text-red-300 mb-3">{lang === "tr" ? "Bagis Merkezleri" : "Donation Centers"}</h3>
+        <h3 className="font-semibold text-red-800 dark:text-red-300 mb-3">{tx("donation.centers", lang)}</h3>
         <div className="space-y-2">
           {CENTERS.map((c, i) => (
             <a key={i} href={c.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg hover:bg-white dark:hover:bg-gray-800 transition">
@@ -178,14 +178,12 @@ export default function DonationPage() {
 
       {/* Organ Donation */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-        <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{lang === "tr" ? "Organ Bagisi" : "Organ Donation"}</h3>
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{tx("donation.organDonation", lang)}</h3>
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-          {lang === "tr"
-            ? "Türkiye'de organ bagisi için E-Nabiz uzerinden veya herhangi bir sağlık kurulusunda kayıt yaptirabilirsiniz. Bir donor 8 kisiinin hayatini kurtarabilir."
-            : "In Turkey, you can register for organ donation through E-Nabiz or at any healthcare facility. One donor can save up to 8 lives."}
+          {tx("donation.organDesc", lang)}
         </p>
         <a href="https://enabiz.gov.tr" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-red-600 hover:text-red-700 font-medium">
-          {lang === "tr" ? "E-Nabiz'da Kayıt Ol" : "Register on E-Nabiz"} <ExternalLink className="w-3.5 h-3.5" />
+          {tx("donation.registerENabiz", lang)} <ExternalLink className="w-3.5 h-3.5" />
         </a>
       </div>
 
