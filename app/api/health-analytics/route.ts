@@ -37,17 +37,11 @@ export async function GET(req: NextRequest) {
 
     const section = req.nextUrl.searchParams.get("section") || "timeline"
 
-    // Fetch user profile for context
-    const { data: profile } = await supabase
-      .from("user_profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single()
-
-    const { data: medications } = await supabase
-      .from("user_medications")
-      .select("*")
-      .eq("user_id", user.id)
+    // Fetch user profile and medications in parallel
+    const [{ data: profile }, { data: medications }] = await Promise.all([
+      supabase.from("user_profiles").select("*").eq("id", user.id).single(),
+      supabase.from("user_medications").select("*").eq("user_id", user.id),
+    ])
 
     const timeline = generateHealthTimeline(user.id, 6)
 

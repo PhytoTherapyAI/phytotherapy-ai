@@ -2,19 +2,23 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { useRouter } from "next/navigation"
+import dynamic from "next/dynamic"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
-import { DailySummaryCard } from "@/components/dashboard/DailySummaryCard"
-import { DailyCareCard } from "@/components/dashboard/DailyCareCard"
-import { BiologicalAgeCard } from "@/components/dashboard/BiologicalAgeCard"
-import { MetabolicPortfolio } from "@/components/dashboard/MetabolicPortfolio"
-import { WashoutCountdown } from "@/components/dashboard/WashoutCountdown"
-import { WeeklySummaryCard } from "@/components/dashboard/WeeklySummaryCard"
-import { SymptomPatternCard } from "@/components/dashboard/SymptomPatternCard"
-import { BossFightCard } from "@/components/dashboard/BossFightCard"
-import { SeasonalCard } from "@/components/dashboard/SeasonalCard"
+import { Skeleton } from "@/components/ui/skeleton"
+
+// Dynamic imports for heavy dashboard cards
+const DailySummaryCard = dynamic(() => import("@/components/dashboard/DailySummaryCard").then(m => ({ default: m.DailySummaryCard })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
+const DailyCareCard = dynamic(() => import("@/components/dashboard/DailyCareCard").then(m => ({ default: m.DailyCareCard })), { loading: () => <Skeleton className="h-64 w-full rounded-xl" /> })
+const BiologicalAgeCard = dynamic(() => import("@/components/dashboard/BiologicalAgeCard").then(m => ({ default: m.BiologicalAgeCard })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
+const MetabolicPortfolio = dynamic(() => import("@/components/dashboard/MetabolicPortfolio").then(m => ({ default: m.MetabolicPortfolio })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
+const WashoutCountdown = dynamic(() => import("@/components/dashboard/WashoutCountdown").then(m => ({ default: m.WashoutCountdown })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
+const WeeklySummaryCard = dynamic(() => import("@/components/dashboard/WeeklySummaryCard").then(m => ({ default: m.WeeklySummaryCard })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
+const SymptomPatternCard = dynamic(() => import("@/components/dashboard/SymptomPatternCard").then(m => ({ default: m.SymptomPatternCard })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
+const BossFightCard = dynamic(() => import("@/components/dashboard/BossFightCard").then(m => ({ default: m.BossFightCard })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
+const SeasonalCard = dynamic(() => import("@/components/dashboard/SeasonalCard").then(m => ({ default: m.SeasonalCard })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
 import {
   Activity, Loader2, Clock, Trophy, BarChart3, Scissors, Sparkles,
   Stethoscope, HeartPulse, Microscope, Pill, Leaf, Brain,

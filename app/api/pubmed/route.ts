@@ -35,7 +35,14 @@ export async function GET(request: NextRequest) {
 
     const articles = await searchPubMed(query.trim(), Math.min(limit, 10));
 
-    return NextResponse.json({ articles, count: articles.length });
+    return NextResponse.json(
+      { articles, count: articles.length },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600",
+        },
+      }
+    );
   } catch (error) {
     console.error("PubMed API error:", error);
     return NextResponse.json(

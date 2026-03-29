@@ -63,25 +63,12 @@ export async function POST(request: NextRequest) {
         const { data: { user } } = await supabase.auth.getUser(token);
 
         if (user) {
-          // Fetch profile
-          const { data: profileData } = await supabase
-            .from("user_profiles")
-            .select("*")
-            .eq("id", user.id)
-            .single();
-
-          // Fetch medications
-          const { data: medsData } = await supabase
-            .from("user_medications")
-            .select("brand_name, generic_name, dosage")
-            .eq("user_id", user.id)
-            .eq("is_active", true);
-
-          // Fetch allergies
-          const { data: allergiesData } = await supabase
-            .from("user_allergies")
-            .select("allergen")
-            .eq("user_id", user.id);
+          // Fetch profile, medications, and allergies in parallel
+          const [{ data: profileData }, { data: medsData }, { data: allergiesData }] = await Promise.all([
+            supabase.from("user_profiles").select("*").eq("id", user.id).single(),
+            supabase.from("user_medications").select("brand_name, generic_name, dosage").eq("user_id", user.id).eq("is_active", true),
+            supabase.from("user_allergies").select("allergen").eq("user_id", user.id),
+          ]);
 
           if (profileData) {
             profile = {
