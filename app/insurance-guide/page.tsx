@@ -198,9 +198,7 @@ export default function InsuranceGuidePage() {
         {/* Disclaimer */}
         <div className="mt-8 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 text-center">
           <p className="text-gray-500 dark:text-gray-400 text-sm">
-            {lang === "tr"
-              ? "Bilgiler genel rehberlik amaclidir. Guncel kapsam ve ucretler için SGK veya sigorta sirketinizle iletisime gecin."
-              : "Information is for general guidance. Contact SGK or your insurance provider for current coverage and rates."}
+            {tx("insurance.disclaimerNote", lang)}
           </p>
         </div>
       </div>

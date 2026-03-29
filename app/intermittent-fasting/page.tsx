@@ -289,7 +289,7 @@ export default function IntermittentFastingPage() {
                   {result.fastingPlan.fastingHours}h
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {lang === "tr" ? "Oruc" : "Fasting"}
+                  {tx("fasting.fastingLabel", lang)}
                 </p>
               </div>
               <div className="rounded bg-muted/30 p-2 text-center">
@@ -297,7 +297,7 @@ export default function IntermittentFastingPage() {
                   {result.fastingPlan.eatingHours}h
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {lang === "tr" ? "Yeme" : "Eating"}
+                  {tx("fasting.eatingLabel", lang)}
                 </p>
               </div>
             </div>
@@ -319,7 +319,7 @@ export default function IntermittentFastingPage() {
                     <span className="text-sm font-semibold">{med.medication}</span>
                     {med.severity === "critical" && (
                       <span className="rounded bg-red-200 px-1.5 py-0.5 text-[10px] font-bold text-red-800 dark:bg-red-900 dark:text-red-300">
-                        {lang === "tr" ? "KRİTİK" : "CRITICAL"}
+                        {tx("fasting.criticalBadge", lang)}
                       </span>
                     )}
                   </div>
@@ -371,7 +371,7 @@ export default function IntermittentFastingPage() {
             <div className="rounded-lg border bg-card p-4">
               <h3 className="text-sm font-semibold mb-1 flex items-center gap-1.5">
                 <Droplets className="h-4 w-4 text-cyan-500" />
-                {lang === "tr" ? "Hidrasyon Plani" : "Hydration Plan"}
+                {tx("fasting.hydrationPlan", lang)}
               </h3>
               <p className="text-sm">{result.hydrationPlan}</p>
             </div>
@@ -382,7 +382,7 @@ export default function IntermittentFastingPage() {
             <div className="rounded-lg border bg-card p-4">
               <h3 className="text-sm font-semibold mb-2 flex items-center gap-1.5">
                 <Utensils className="h-4 w-4 text-green-500" />
-                {lang === "tr" ? "Oruc Acma Önerileri" : "Breaking Fast Suggestions"}
+                {tx("fasting.breakFastSuggestions", lang)}
               </h3>
               <ul className="space-y-1.5">
                 {result.breakfastSuggestions.map((s, i) => (
@@ -400,7 +400,7 @@ export default function IntermittentFastingPage() {
             className="w-full"
             onClick={() => setResult(null)}
           >
-            {lang === "tr" ? "Plani Güncelle" : "Update Plan"}
+            {tx("fasting.updatePlan", lang)}
           </Button>
         </div>
       )}

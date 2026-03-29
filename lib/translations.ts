@@ -4647,6 +4647,101 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   // Health Forum
   "forum.description": { en: "You're not alone in your health journey. Our moderated, evidence-based community forum is coming soon.", tr: "Sağlık yolculugunuzda yalniz degilsiniz. Moderatorlu, kanita dayali topluluk forumumuz yakinda hizmetinizde." },
   "forum.launchNotify": { en: "Keep using the app to be notified when we launch!", tr: "Lansman bildirimini almak için uygulamayi kullanmaya devam edin!" },
+
+  // Hydration page
+  "hydration.activityLevel": { en: "Activity Level", tr: "Aktivite Düzeyi" },
+  "hydration.sedentary": { en: "Sedentary", tr: "Hareketsiz" },
+  "hydration.moderatelyActive": { en: "Moderately active", tr: "Orta aktif" },
+  "hydration.veryActive": { en: "Very active / exercise", tr: "Çok aktif / spor" },
+  "hydration.dailyCaffeine": { en: "Daily Caffeine (cups)", tr: "Günlük Kafein (fincan)" },
+  "hydration.glasses": { en: "glasses", tr: "bardak" },
+  "hydration.base": { en: "Base", tr: "Baz" },
+  "hydration.activityMultiplier": { en: "Activity multiplier", tr: "Aktivite carpani" },
+  "hydration.caffeineOffset": { en: "Caffeine offset", tr: "Kafein telafisi" },
+  "hydration.kidneyWarningTitle": { en: "Kidney Disease Warning", tr: "Bobrek Hastasi Uyarısi" },
+  "hydration.kidneyWarningDesc": { en: "Fluid intake may need to be restricted in kidney disease. This calculation may not apply to you. Follow the fluid limit set by your nephrologist.", tr: "Bobrek hastaligi olan kisilerde sivi alimi kisitlanmalidir. Bu hesaplama sizin için uygun olmayabilir. Nefrologunuzun belirledigi sivi limitine uyunuz." },
+  "hydration.urineColorScale": { en: "Urine Color Scale", tr: "Idrar Renk Skalasi" },
+  "hydration.medicationEffects": { en: "Medication Effects on Hydration", tr: "İlaç Etkileri" },
+
+  // Immigrant Health page
+  "immigrant.languageNote": { en: "This guide is available in Turkish and English. Use the language toggle in the top right to switch.", tr: "Bu rehber Turkce ve Ingilizce mevcuttur. Dil degistirmek için sag ust kosedeki dil dugmesini kullaniniz." },
+  "immigrant.emergencyCall": { en: "Call 112 for emergencies. No registration or ID required.", tr: "Acil durumlarda 112'yi arayın. Kayıt veya kimlik gerekmez." },
+
+  // Insurance Guide page
+  "insurance.disclaimerNote": { en: "Information is for general guidance. Contact SGK or your insurance provider for current coverage and rates.", tr: "Bilgiler genel rehberlik amaclidir. Guncel kapsam ve ucretler için SGK veya sigorta sirketinizle iletisime gecin." },
+
+  // Intermittent Fasting page
+  "fasting.fastingLabel": { en: "Fasting", tr: "Oruc" },
+  "fasting.eatingLabel": { en: "Eating", tr: "Yeme" },
+  "fasting.hydrationPlan": { en: "Hydration Plan", tr: "Hidrasyon Plani" },
+  "fasting.breakFastSuggestions": { en: "Breaking Fast Suggestions", tr: "Oruc Acma Önerileri" },
+  "fasting.updatePlan": { en: "Update Plan", tr: "Plani Güncelle" },
+  "fasting.criticalBadge": { en: "CRITICAL", tr: "KRİTİK" },
+
+  // Jet Lag page
+  "jetlag.travelDate": { en: "Travel Date", tr: "Seyahat Tarihi" },
+  "jetlag.melatoninTitle": { en: "Melatonin Timing Plan", tr: "Melatonin Zamanlama Plani" },
+  "jetlag.preTravel": { en: "Pre-Travel", tr: "Seyahat Oncesi" },
+  "jetlag.timing": { en: "Timing", tr: "Zamanlama" },
+  "jetlag.dose": { en: "Dose", tr: "Doz" },
+  "jetlag.lightExposure": { en: "Light Exposure Schedule", tr: "Isik Maruziyeti Programı" },
+  "jetlag.mealTiming": { en: "Meal Timing Plan", tr: "Yemek Zamanlama Plani" },
+  "jetlag.breakfast": { en: "Breakfast:", tr: "Kahvalti:" },
+  "jetlag.lunch": { en: "Lunch:", tr: "Ogle:" },
+  "jetlag.dinner": { en: "Dinner:", tr: "Aksam:" },
+  "jetlag.medTimingAdj": { en: "Medication Timing Adjustments", tr: "İlaç Zamanlama Ayarlamalari" },
+  "jetlag.current": { en: "Current:", tr: "Mevcut:" },
+  "jetlag.new": { en: "New:", tr: "Yeni:" },
+  "jetlag.hourByHour": { en: "Hour-by-Hour Plan", tr: "Saat Saat Plan" },
+  "jetlag.generalTips": { en: "General Tips", tr: "Genel Ipuclari" },
+  "jetlag.east": { en: "East", tr: "Doguya" },
+  "jetlag.west": { en: "West", tr: "Batiya" },
+  "jetlag.daysBefore": { en: "days before", tr: "gun once başla" },
+
+  // Kidney Dashboard page
+  "kidney.labValues": { en: "Lab Values", tr: "Laboratuvar Degerleri" },
+  "kidney.potassium": { en: "Potassium", tr: "Potasyum" },
+  "kidney.phosphorus": { en: "Phosphorus", tr: "Fosfor" },
+  "kidney.sodium": { en: "Sodium", tr: "Sodyum" },
+  "kidney.stage": { en: "Stage", tr: "Evre" },
+  "kidney.dietLimit": { en: "Limit", tr: "Sinirlayin" },
+  "kidney.dietPrefer": { en: "Prefer", tr: "Tercih Edin" },
+  "kidney.fluidRecommendation": { en: "Fluid Recommendation", tr: "Sivi Onerisi" },
+
+  // Label Reader page
+  "label.dietCompatibility": { en: "Diet Compatibility", tr: "Diyet Uyumlulugu" },
+  "label.hiddenSugars": { en: "Hidden Sugars", tr: "Gizli Sekerler" },
+  "label.allergens": { en: "Allergens", tr: "Alerjenler" },
+  "label.additives": { en: "Additives", tr: "Katki Maddeleri" },
+  "label.positives": { en: "Positives", tr: "Olumlu" },
+  "label.concerns": { en: "Concerns", tr: "Endiseler" },
+
+  // Liver Monitor page
+  "liver.liverEnzymes": { en: "Liver Enzymes", tr: "Karaciger Enzimleri" },
+  "liver.fattyLiverOptional": { en: "For Fatty Liver Index (optional)", tr: "Yagli Karaciger Indeksi için (opsiyonel)" },
+  "liver.waist": { en: "Waist (cm)", tr: "Bel Cevresi (cm)" },
+
+  // Lung Monitor page
+  "lung.condition": { en: "Condition", tr: "Durum" },
+  "lung.actScoreHelp": { en: "Rate each question 1 (worst) to 5 (best)", tr: "Her soru için 1 (en kotu) - 5 (en iyi) puan verin" },
+  "lung.medicationAlerts": { en: "Medication Alerts", tr: "İlaç Uyarılari" },
+  "lung.breathingExercises": { en: "Breathing Exercises", tr: "Nefes Egzersizleri" },
+
+  // Medical Analysis page
+  "medAnalysis.testDate": { en: "Test Date", tr: "Tahlil Tarihi" },
+  "medAnalysis.optional": { en: "optional", tr: "istege bagli" },
+  "medAnalysis.dontRememberDate": { en: "I don't remember the exact date", tr: "Tam tarihi hatirlamiyorum" },
+  "medAnalysis.overallUrgency": { en: "Overall Urgency", tr: "Genel Aciliyet" },
+  "medAnalysis.urgencyShareResults": { en: "We recommend sharing your results with a specialist as soon as possible.", tr: "Sonuçlarinizi mumkun olan en kisa surede bir uzmanla paylasmanizi oneriyoruz." },
+  "medAnalysis.smartTriage": { en: "Smart Triage", tr: "Akilli Yonlendirme" },
+  "medAnalysis.smartTriageDesc": { en: "AI-recommended specialist consultations", tr: "AI onerili uzman konsultasyonlari" },
+  "medAnalysis.probability": { en: "Probability", tr: "Olasilik" },
+  "medAnalysis.keyMarkers": { en: "Key Markers:", tr: "Ana Gostergeler:" },
+  "medAnalysis.triageDisclaimer": { en: "These recommendations are AI-generated estimates and do not replace a doctor's evaluation.", tr: "Bu yonlendirmeler AI tahminidir ve bir doktorun degerlendirmesinin yerini tutmaz." },
+  "medAnalysis.routine": { en: "Routine", tr: "Rutin" },
+  "medAnalysis.seeSoon": { en: "See Soon", tr: "Yakinda Gidin" },
+  "medAnalysis.urgent": { en: "Urgent", tr: "Acil" },
+  "medAnalysis.emergency": { en: "Emergency", tr: "Acil Durum" },
 }
 Object.assign(t, commonToolKeys)
 

@@ -140,7 +140,7 @@ export default function JetLagPage() {
             </div>
           </div>
           <div>
-            <label className="text-sm font-medium">{lang === "tr" ? "Seyahat Tarihi" : "Travel Date"}</label>
+            <label className="text-sm font-medium">{tx("jetlag.travelDate", lang)}</label>
             <input
               type="date"
               value={travelDate}
@@ -174,7 +174,7 @@ export default function JetLagPage() {
             {/* Summary */}
             <div className="bg-sky-50 dark:bg-sky-900/20 border border-sky-200 dark:border-sky-800 rounded-2xl p-6 text-center space-y-2">
               <p className="text-2xl font-bold text-sky-700 dark:text-sky-400">
-                {result.timeDifference > 0 ? "+" : ""}{result.timeDifference}h {result.direction === "east" ? (lang === "tr" ? "Doguya" : "East") : (lang === "tr" ? "Batiya" : "West")}
+                {result.timeDifference > 0 ? "+" : ""}{result.timeDifference}h {result.direction === "east" ? tx("jetlag.east", lang) : tx("jetlag.west", lang)}
               </p>
               <p className="text-sm text-muted-foreground">
                 {lang === "tr" ? `Tahmini uyum suresi: ${result.adjustmentDays} gun` : `Estimated adjustment: ${result.adjustmentDays} days`}
@@ -186,19 +186,19 @@ export default function JetLagPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-3">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Moon className="w-5 h-5 text-indigo-500" />
-                  {lang === "tr" ? "Melatonin Zamanlama Plani" : "Melatonin Timing Plan"}
+                  {tx("jetlag.melatoninTitle", lang)}
                 </h2>
                 <div className="grid sm:grid-cols-3 gap-3">
                   <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Seyahat Oncesi" : "Pre-Travel"}</div>
-                    <div className="font-medium">{result.melatoninPlan.preTravelDays} {lang === "tr" ? "gun once başla" : "days before"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("jetlag.preTravel", lang)}</div>
+                    <div className="font-medium">{result.melatoninPlan.preTravelDays} {tx("jetlag.daysBefore", lang)}</div>
                   </div>
                   <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Zamanlama" : "Timing"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("jetlag.timing", lang)}</div>
                     <div className="font-medium">{result.melatoninPlan.timing}</div>
                   </div>
                   <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Doz" : "Dose"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("jetlag.dose", lang)}</div>
                     <div className="font-medium">{result.melatoninPlan.dose}</div>
                   </div>
                 </div>
@@ -211,7 +211,7 @@ export default function JetLagPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Sun className="w-5 h-5 text-yellow-500" />
-                  {lang === "tr" ? "Isik Maruziyeti Programı" : "Light Exposure Schedule"}
+                  {tx("jetlag.lightExposure", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.lightExposureSchedule.map((item, i) => (
@@ -230,16 +230,16 @@ export default function JetLagPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Utensils className="w-5 h-5 text-orange-500" />
-                  {lang === "tr" ? "Yemek Zamanlama Plani" : "Meal Timing Plan"}
+                  {tx("jetlag.mealTiming", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.mealTimingPlan.map((item, i) => (
                     <div key={i} className="bg-orange-50 dark:bg-orange-900/20 rounded-xl p-4">
                       <div className="font-medium mb-2">{item.day}</div>
                       <div className="grid grid-cols-3 gap-2 text-sm">
-                        <div><span className="text-muted-foreground">{lang === "tr" ? "Kahvalti:" : "Breakfast:"}</span> {item.breakfast}</div>
-                        <div><span className="text-muted-foreground">{lang === "tr" ? "Ogle:" : "Lunch:"}</span> {item.lunch}</div>
-                        <div><span className="text-muted-foreground">{lang === "tr" ? "Aksam:" : "Dinner:"}</span> {item.dinner}</div>
+                        <div><span className="text-muted-foreground">{tx("jetlag.breakfast", lang)}</span> {item.breakfast}</div>
+                        <div><span className="text-muted-foreground">{tx("jetlag.lunch", lang)}</span> {item.lunch}</div>
+                        <div><span className="text-muted-foreground">{tx("jetlag.dinner", lang)}</span> {item.dinner}</div>
                       </div>
                     </div>
                   ))}
@@ -252,15 +252,15 @@ export default function JetLagPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Pill className="w-5 h-5 text-red-500" />
-                  {lang === "tr" ? "İlaç Zamanlama Ayarlamalari" : "Medication Timing Adjustments"}
+                  {tx("jetlag.medTimingAdj", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.medicationAdjustments.map((med, i) => (
                     <div key={i} className="border border-red-200 dark:border-red-800 rounded-xl p-4 space-y-2">
                       <div className="font-semibold">{med.medication}</div>
                       <div className="grid sm:grid-cols-2 gap-2 text-sm">
-                        <div><span className="text-muted-foreground">{lang === "tr" ? "Mevcut:" : "Current:"}</span> {med.currentTiming}</div>
-                        <div><span className="text-muted-foreground">{lang === "tr" ? "Yeni:" : "New:"}</span> {med.newTiming}</div>
+                        <div><span className="text-muted-foreground">{tx("jetlag.current", lang)}</span> {med.currentTiming}</div>
+                        <div><span className="text-muted-foreground">{tx("jetlag.new", lang)}</span> {med.newTiming}</div>
                       </div>
                       <p className="text-sm">{med.transitionMethod}</p>
                       {med.warning && <p className="text-sm text-red-600 dark:text-red-400 font-medium">{med.warning}</p>}
@@ -275,7 +275,7 @@ export default function JetLagPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Clock className="w-5 h-5 text-sky-500" />
-                  {lang === "tr" ? "Saat Saat Plan" : "Hour-by-Hour Plan"}
+                  {tx("jetlag.hourByHour", lang)}
                 </h2>
                 <div className="grid gap-2">
                   {result.hourByHourPlan.map((item, i) => (
@@ -296,7 +296,7 @@ export default function JetLagPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-3">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Lightbulb className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "Genel Ipuclari" : "General Tips"}
+                  {tx("jetlag.generalTips", lang)}
                 </h2>
                 {result.generalTips.map((tip, i) => (
                   <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">

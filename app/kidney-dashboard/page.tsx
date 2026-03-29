@@ -109,7 +109,7 @@ export default function KidneyDashboardPage() {
 
         {/* Lab Input */}
         <div className="bg-card border rounded-2xl p-6 space-y-6">
-          <h2 className="text-lg font-semibold">{lang === "tr" ? "Laboratuvar Degerleri" : "Lab Values"}</h2>
+          <h2 className="text-lg font-semibold">{tx("kidney.labValues", lang)}</h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Creatinine (mg/dL)</label>
@@ -124,15 +124,15 @@ export default function KidneyDashboardPage() {
               <input type="number" value={egfr} onChange={(e) => setEgfr(e.target.value)} placeholder="e.g. 85" className="w-full px-3 py-2 border rounded-lg bg-background" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">{lang === "tr" ? "Potasyum" : "Potassium"} (mEq/L)</label>
+              <label className="block text-sm font-medium mb-1">{tx("kidney.potassium", lang)} (mEq/L)</label>
               <input type="number" step="0.1" value={potassium} onChange={(e) => setPotassium(e.target.value)} placeholder="e.g. 4.5" className="w-full px-3 py-2 border rounded-lg bg-background" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">{lang === "tr" ? "Fosfor" : "Phosphorus"} (mg/dL)</label>
+              <label className="block text-sm font-medium mb-1">{tx("kidney.phosphorus", lang)} (mg/dL)</label>
               <input type="number" step="0.1" value={phosphorus} onChange={(e) => setPhosphorus(e.target.value)} placeholder="e.g. 3.5" className="w-full px-3 py-2 border rounded-lg bg-background" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">{lang === "tr" ? "Sodyum" : "Sodium"} (mEq/L)</label>
+              <label className="block text-sm font-medium mb-1">{tx("kidney.sodium", lang)} (mEq/L)</label>
               <input type="number" value={sodium} onChange={(e) => setSodium(e.target.value)} placeholder="e.g. 140" className="w-full px-3 py-2 border rounded-lg bg-background" />
             </div>
           </div>
@@ -149,7 +149,7 @@ export default function KidneyDashboardPage() {
             {/* Stage Display */}
             <div className="bg-card border rounded-2xl p-6 text-center space-y-4">
               <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-white font-bold text-2xl bg-gradient-to-r ${STAGE_COLORS[analysis.stageColor] || STAGE_COLORS.green}`}>
-                {lang === "tr" ? "Evre" : "Stage"} {analysis.stageNumber}
+                {tx("kidney.stage", lang)} {analysis.stageNumber}
               </div>
               <div className="text-lg font-semibold">{analysis.kidneyStage}</div>
               <div className="text-sm text-muted-foreground">eGFR: {analysis.eGFR} mL/min/1.73m²</div>
@@ -233,11 +233,11 @@ export default function KidneyDashboardPage() {
                       </div>
                       <div className="grid sm:grid-cols-2 gap-2">
                         <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-2">
-                          <div className="text-xs font-medium text-red-700 dark:text-red-400 mb-1">{lang === "tr" ? "Sinirlayin" : "Limit"}</div>
+                          <div className="text-xs font-medium text-red-700 dark:text-red-400 mb-1">{tx("kidney.dietLimit", lang)}</div>
                           <div className="text-xs text-muted-foreground">{diet.foods_to_limit?.join(", ")}</div>
                         </div>
                         <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
-                          <div className="text-xs font-medium text-green-700 dark:text-green-400 mb-1">{lang === "tr" ? "Tercih Edin" : "Prefer"}</div>
+                          <div className="text-xs font-medium text-green-700 dark:text-green-400 mb-1">{tx("kidney.dietPrefer", lang)}</div>
                           <div className="text-xs text-muted-foreground">{diet.foods_to_prefer?.join(", ")}</div>
                         </div>
                       </div>
@@ -252,7 +252,7 @@ export default function KidneyDashboardPage() {
               <div className="bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-2xl p-6">
                 <h2 className="text-lg font-semibold flex items-center gap-2 mb-2">
                   <Droplets className="w-5 h-5 text-teal-500" />
-                  {lang === "tr" ? "Sivi Onerisi" : "Fluid Recommendation"}
+                  {tx("kidney.fluidRecommendation", lang)}
                 </h2>
                 <p className="text-sm">{analysis.fluidRecommendation}</p>
               </div>

@@ -126,7 +126,7 @@ export default function LungMonitorPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-6">
           {/* Condition Type */}
           <div>
-            <label className="block text-sm font-medium mb-2">{lang === "tr" ? "Durum" : "Condition"}</label>
+            <label className="block text-sm font-medium mb-2">{tx("lung.condition", lang)}</label>
             <div className="flex gap-2">
               {[{ v: "general", en: "General", tr: "Genel" }, { v: "asthma", en: "Asthma", tr: "Astim" }, { v: "copd", en: "COPD", tr: "KOAH" }].map((opt) => (
                 <button key={opt.v} onClick={() => setConditionType(opt.v)}
@@ -173,7 +173,7 @@ export default function LungMonitorPage() {
           {conditionType === "asthma" && (
             <div className="space-y-3">
               <label className="block text-sm font-medium">{tx("lung.actScore", lang)}</label>
-              <p className="text-xs text-muted-foreground">{lang === "tr" ? "Her soru için 1 (en kotu) - 5 (en iyi) puan verin" : "Rate each question 1 (worst) to 5 (best)"}</p>
+              <p className="text-xs text-muted-foreground">{tx("lung.actScoreHelp", lang)}</p>
               {ACT_QUESTIONS.map((q, i) => (
                 <div key={i} className="bg-muted/50 rounded-xl p-3">
                   <p className="text-sm mb-2">{q[lang]}</p>
@@ -257,7 +257,7 @@ export default function LungMonitorPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "İlaç Uyarılari" : "Medication Alerts"}
+                  {tx("lung.medicationAlerts", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {analysis.medicationAlerts.map((alert, i) => (
@@ -309,7 +309,7 @@ export default function LungMonitorPage() {
             {/* Breathing Exercises */}
             {analysis.breathingExercises?.length > 0 && (
               <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Nefes Egzersizleri" : "Breathing Exercises"}</h2>
+                <h2 className="text-lg font-semibold">{tx("lung.breathingExercises", lang)}</h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {analysis.breathingExercises.map((ex, i) => (
                     <div key={i} className="bg-muted/50 rounded-xl p-4 space-y-1">

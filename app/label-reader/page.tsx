@@ -108,7 +108,7 @@ export default function LabelReaderPage() {
           {/* Diet Compatibility */}
           {result.dietCompatibility && (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{lang === "tr" ? "Diyet Uyumlulugu" : "Diet Compatibility"}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{tx("label.dietCompatibility", lang)}</h3>
               <div className="flex flex-wrap gap-2">
                 {Object.entries(result.dietCompatibility).map(([key, val]) => {
                   const d = dietLabels[key];
@@ -128,7 +128,7 @@ export default function LabelReaderPage() {
           {result.hiddenSugars?.length > 0 && (
             <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800 p-5">
               <h3 className="font-semibold text-amber-800 dark:text-amber-300 mb-2 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4" /> {lang === "tr" ? "Gizli Sekerler" : "Hidden Sugars"}
+                <AlertTriangle className="w-4 h-4" /> {tx("label.hiddenSugars", lang)}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {result.hiddenSugars.map((s, i) => (
@@ -142,7 +142,7 @@ export default function LabelReaderPage() {
           {result.allergens?.length > 0 && (
             <div className="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800 p-5">
               <h3 className="font-semibold text-red-800 dark:text-red-300 mb-2 flex items-center gap-2">
-                <XCircle className="w-4 h-4" /> {lang === "tr" ? "Alerjenler" : "Allergens"}
+                <XCircle className="w-4 h-4" /> {tx("label.allergens", lang)}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {result.allergens.map((a, i) => (
@@ -155,7 +155,7 @@ export default function LabelReaderPage() {
           {/* Additives */}
           {result.additives?.length > 0 && (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{lang === "tr" ? "Katki Maddeleri" : "Additives"}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{tx("label.additives", lang)}</h3>
               <div className="space-y-2">
                 {result.additives.map((a, i) => (
                   <div key={i} className="flex items-center justify-between p-2.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
@@ -174,13 +174,13 @@ export default function LabelReaderPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {result.positives?.length > 0 && (
               <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 p-5">
-                <h3 className="font-semibold text-green-800 dark:text-green-300 mb-2 flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> {lang === "tr" ? "Olumlu" : "Positives"}</h3>
+                <h3 className="font-semibold text-green-800 dark:text-green-300 mb-2 flex items-center gap-2"><CheckCircle2 className="w-4 h-4" /> {tx("label.positives", lang)}</h3>
                 <ul className="space-y-1">{result.positives.map((p, i) => <li key={i} className="text-sm text-green-700 dark:text-green-400">{p}</li>)}</ul>
               </div>
             )}
             {result.concerns?.length > 0 && (
               <div className="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800 p-5">
-                <h3 className="font-semibold text-red-800 dark:text-red-300 mb-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {lang === "tr" ? "Endiseler" : "Concerns"}</h3>
+                <h3 className="font-semibold text-red-800 dark:text-red-300 mb-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {tx("label.concerns", lang)}</h3>
                 <ul className="space-y-1">{result.concerns.map((c, i) => <li key={i} className="text-sm text-red-700 dark:text-red-400">{c}</li>)}</ul>
               </div>
             )}

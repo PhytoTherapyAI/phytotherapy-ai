@@ -91,7 +91,7 @@ export default function LiverMonitorPage() {
 
         {/* Lab Input */}
         <div className="bg-card border rounded-2xl p-6 space-y-6">
-          <h2 className="text-lg font-semibold">{lang === "tr" ? "Karaciger Enzimleri" : "Liver Enzymes"}</h2>
+          <h2 className="text-lg font-semibold">{tx("liver.liverEnzymes", lang)}</h2>
           <div className="grid sm:grid-cols-3 gap-4">
             <div><label className="block text-sm font-medium mb-1">ALT (U/L)</label>
               <input type="number" value={alt} onChange={(e) => setAlt(e.target.value)} placeholder="e.g. 35" className="w-full px-3 py-2 border rounded-lg bg-background" /></div>
@@ -104,11 +104,11 @@ export default function LiverMonitorPage() {
             <div><label className="block text-sm font-medium mb-1">Albumin (g/dL)</label>
               <input type="number" step="0.1" value={albumin} onChange={(e) => setAlbumin(e.target.value)} placeholder="e.g. 4.2" className="w-full px-3 py-2 border rounded-lg bg-background" /></div>
           </div>
-          <h3 className="text-sm font-medium text-muted-foreground">{lang === "tr" ? "Yagli Karaciger Indeksi için (opsiyonel)" : "For Fatty Liver Index (optional)"}</h3>
+          <h3 className="text-sm font-medium text-muted-foreground">{tx("liver.fattyLiverOptional", lang)}</h3>
           <div className="grid sm:grid-cols-2 gap-4">
             <div><label className="block text-sm font-medium mb-1">BMI</label>
               <input type="number" step="0.1" value={bmi} onChange={(e) => setBmi(e.target.value)} placeholder="e.g. 26" className="w-full px-3 py-2 border rounded-lg bg-background" /></div>
-            <div><label className="block text-sm font-medium mb-1">{lang === "tr" ? "Bel Cevresi (cm)" : "Waist (cm)"}</label>
+            <div><label className="block text-sm font-medium mb-1">{tx("liver.waist", lang)}</label>
               <input type="number" value={waist} onChange={(e) => setWaist(e.target.value)} placeholder="e.g. 88" className="w-full px-3 py-2 border rounded-lg bg-background" /></div>
           </div>
           <Button onClick={handleAnalyze} disabled={(!alt && !ast) || isLoading} className="w-full bg-amber-600 hover:bg-amber-700 text-white">

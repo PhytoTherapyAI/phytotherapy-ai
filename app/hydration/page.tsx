@@ -58,17 +58,17 @@ export default function HydrationPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              <Activity className="w-4 h-4 inline mr-1" /> {lang === "tr" ? "Aktivite Düzeyi" : "Activity Level"}
+              <Activity className="w-4 h-4 inline mr-1" /> {tx("hydration.activityLevel", lang)}
             </label>
             <select value={activity} onChange={(e) => { setActivity(e.target.value); setCalculated(false); }} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
-              <option value="sedentary">{lang === "tr" ? "Hareketsiz" : "Sedentary"}</option>
-              <option value="moderate">{lang === "tr" ? "Orta aktif" : "Moderately active"}</option>
-              <option value="active">{lang === "tr" ? "Çok aktif / spor" : "Very active / exercise"}</option>
+              <option value="sedentary">{tx("hydration.sedentary", lang)}</option>
+              <option value="moderate">{tx("hydration.moderatelyActive", lang)}</option>
+              <option value="active">{tx("hydration.veryActive", lang)}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              <Coffee className="w-4 h-4 inline mr-1" /> {lang === "tr" ? "Günlük Kafein (fincan)" : "Daily Caffeine (cups)"}
+              <Coffee className="w-4 h-4 inline mr-1" /> {tx("hydration.dailyCaffeine", lang)}
             </label>
             <select value={caffeine} onChange={(e) => { setCaffeine(e.target.value); setCalculated(false); }} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
               <option value="0">0</option>
@@ -88,11 +88,11 @@ export default function HydrationPage() {
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-6 mb-6 text-center">
           <Droplets className="w-8 h-8 text-blue-500 mx-auto mb-2" />
           <p className="text-4xl font-bold text-blue-700 dark:text-blue-300">{(totalWater / 1000).toFixed(1)}L</p>
-          <p className="text-sm text-blue-600 dark:text-blue-400">{totalWater}ml / ~{glasses} {lang === "tr" ? "bardak" : "glasses"}</p>
+          <p className="text-sm text-blue-600 dark:text-blue-400">{totalWater}ml / ~{glasses} {tx("hydration.glasses", lang)}</p>
           <div className="mt-3 text-xs text-blue-500 space-y-1">
-            <p>{lang === "tr" ? "Baz" : "Base"}: {weightKg}kg x 30ml = {baseWater}ml</p>
-            <p>{lang === "tr" ? "Aktivite carpani" : "Activity multiplier"}: x{activityMultiplier}</p>
-            {caffeineOffset > 0 && <p>{lang === "tr" ? "Kafein telafisi" : "Caffeine offset"}: +{caffeineOffset}ml</p>}
+            <p>{tx("hydration.base", lang)}: {weightKg}kg x 30ml = {baseWater}ml</p>
+            <p>{tx("hydration.activityMultiplier", lang)}: x{activityMultiplier}</p>
+            {caffeineOffset > 0 && <p>{tx("hydration.caffeineOffset", lang)}: +{caffeineOffset}ml</p>}
           </div>
         </div>
       )}
@@ -104,12 +104,10 @@ export default function HydrationPage() {
             <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-semibold text-red-800 dark:text-red-300 text-sm">
-                {lang === "tr" ? "Bobrek Hastasi Uyarısi" : "Kidney Disease Warning"}
+                {tx("hydration.kidneyWarningTitle", lang)}
               </p>
               <p className="text-sm text-red-700 dark:text-red-400">
-                {lang === "tr"
-                  ? "Bobrek hastaligi olan kisilerde sivi alimi kisitlanmalidir. Bu hesaplama sizin için uygun olmayabilir. Nefrologunuzun belirledigi sivi limitine uyunuz."
-                  : "Fluid intake may need to be restricted in kidney disease. This calculation may not apply to you. Follow the fluid limit set by your nephrologist."}
+                {tx("hydration.kidneyWarningDesc", lang)}
               </p>
             </div>
           </div>
@@ -119,7 +117,7 @@ export default function HydrationPage() {
       {/* Urine Color Scale */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-          {lang === "tr" ? "Idrar Renk Skalasi" : "Urine Color Scale"}
+          {tx("hydration.urineColorScale", lang)}
         </h3>
         <div className="space-y-2">
           {URINE_COLORS.map((uc, i) => (
@@ -139,7 +137,7 @@ export default function HydrationPage() {
       {/* Medication Effects */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
         <h3 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-          <Pill className="w-5 h-5 text-blue-500" /> {lang === "tr" ? "İlaç Etkileri" : "Medication Effects on Hydration"}
+          <Pill className="w-5 h-5 text-blue-500" /> {tx("hydration.medicationEffects", lang)}
         </h3>
         <div className="space-y-3">
           {MEDICATION_EFFECTS.map((me, i) => (

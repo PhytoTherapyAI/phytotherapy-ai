@@ -248,10 +248,10 @@ function BloodTestTab({
           <div className="flex items-center gap-2 mb-3">
             <Calendar className="h-4 w-4 text-primary" />
             <h3 className="text-sm font-semibold">
-              {isTr ? "Tahlil Tarihi" : "Test Date"}
+              {tx("medAnalysis.testDate", lang)}
             </h3>
             <span className="text-xs text-muted-foreground">
-              ({isTr ? "iste\u011Fe ba\u011Fl\u0131" : "optional"})
+              ({tx("medAnalysis.optional", lang)})
             </span>
           </div>
 
@@ -276,7 +276,7 @@ function BloodTestTab({
               }}
               className="rounded border-gray-300"
             />
-            {isTr ? "Tam tarihi hat\u0131rlam\u0131yorum" : "I don't remember the exact date"}
+            {tx("medAnalysis.dontRememberDate", lang)}
           </label>
 
           {dontRememberDate && (
@@ -454,22 +454,22 @@ function TriageSection({
 
   const urgencyConfig = {
     routine: {
-      label: isTr ? "Rutin" : "Routine",
+      label: tx("medAnalysis.routine", lang),
       color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
       border: "border-green-200 dark:border-green-800",
     },
     soon: {
-      label: isTr ? "Yak\u0131nda Gidin" : "See Soon",
+      label: tx("medAnalysis.seeSoon", lang),
       color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
       border: "border-amber-200 dark:border-amber-800",
     },
     urgent: {
-      label: isTr ? "Acil" : "Urgent",
+      label: tx("medAnalysis.urgent", lang),
       color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
       border: "border-red-200 dark:border-red-800",
     },
     emergency: {
-      label: isTr ? "Acil Durum" : "Emergency",
+      label: tx("medAnalysis.emergency", lang),
       color: "bg-red-200 text-red-800 dark:bg-red-900/50 dark:text-red-300",
       border: "border-red-300 dark:border-red-700",
     },
@@ -491,12 +491,10 @@ function TriageSection({
           <AlertTriangle className="h-5 w-5 shrink-0" />
           <div>
             <p className="font-semibold">
-              {isTr ? "Genel Aciliyet" : "Overall Urgency"}: {urgencyConfig[triage.overallUrgency].label}
+              {tx("medAnalysis.overallUrgency", lang)}: {urgencyConfig[triage.overallUrgency].label}
             </p>
             <p className="text-sm opacity-80">
-              {isTr
-                ? "Sonu\u00E7lar\u0131n\u0131z\u0131 m\u00FCmk\u00FCn olan en k\u0131sa s\u00FCrede bir uzmanla payla\u015Fman\u0131z\u0131 \u00F6neriyoruz."
-                : "We recommend sharing your results with a specialist as soon as possible."}
+              {tx("medAnalysis.urgencyShareResults", lang)}
             </p>
           </div>
         </div>
@@ -516,10 +514,10 @@ function TriageSection({
       <div className="flex items-center gap-2">
         <Stethoscope className="h-5 w-5 text-primary" />
         <h3 className="text-lg font-semibold">
-          {isTr ? "Ak\u0131ll\u0131 Y\u00F6nlendirme" : "Smart Triage"}
+          {tx("medAnalysis.smartTriage", lang)}
         </h3>
         <span className="text-xs text-muted-foreground">
-          {isTr ? "AI \u00F6nerili uzman kons\u00FCltasyonlar\u0131" : "AI-recommended specialist consultations"}
+          {tx("medAnalysis.smartTriageDesc", lang)}
         </span>
       </div>
 
@@ -546,7 +544,7 @@ function TriageSection({
               {/* Probability bar */}
               <div className="mb-2">
                 <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                  <span>{isTr ? "Olas\u0131l\u0131k" : "Probability"}</span>
+                  <span>{tx("medAnalysis.probability", lang)}</span>
                   <span className="font-medium">{spec.probability}%</span>
                 </div>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
@@ -566,7 +564,7 @@ function TriageSection({
               {spec.keyMarkers.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   <span className="text-xs text-muted-foreground">
-                    {isTr ? "Ana G\u00F6stergeler:" : "Key Markers:"}
+                    {tx("medAnalysis.keyMarkers", lang)}
                   </span>
                   {spec.keyMarkers.map((marker, mIdx) => (
                     <span
@@ -584,9 +582,7 @@ function TriageSection({
       </div>
 
       <p className="text-center text-xs text-muted-foreground">
-        {isTr
-          ? "Bu y\u00F6nlendirmeler AI tahminidir ve bir doktorun de\u011Ferlendirmesinin yerini tutmaz."
-          : "These recommendations are AI-generated estimates and do not replace a doctor's evaluation."}
+        {tx("medAnalysis.triageDisclaimer", lang)}
       </p>
     </div>
   );

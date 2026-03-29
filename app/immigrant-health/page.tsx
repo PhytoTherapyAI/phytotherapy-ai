@@ -83,9 +83,7 @@ export default function ImmigrantHealthPage() {
       <div className="mb-6 p-4 bg-teal-50 dark:bg-teal-900/20 rounded-xl border border-teal-200 dark:border-teal-800 flex items-start gap-3">
         <Globe className="w-5 h-5 text-teal-500 mt-0.5 flex-shrink-0" />
         <p className="text-sm text-teal-700 dark:text-teal-400">
-          {lang === "tr"
-            ? "Bu rehber Turkce ve Ingilizce mevcuttur. Dil degistirmek için sag ust kosedeki dil dugmesini kullaniniz."
-            : "This guide is available in Turkish and English. Use the language toggle in the top right to switch."}
+          {tx("immigrant.languageNote", lang)}
           <br />
           <span className="text-xs opacity-70">Arabic (planned) | Farsi (planned) | Dari (planned) | French (planned)</span>
         </p>
@@ -120,9 +118,7 @@ export default function ImmigrantHealthPage() {
         <AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-2" />
         <p className="font-bold text-red-800 dark:text-red-300 text-lg">112</p>
         <p className="text-sm text-red-700 dark:text-red-400">
-          {lang === "tr"
-            ? "Acil durumlarda 112'yi arayın. Kayıt veya kimlik gerekmez."
-            : "Call 112 for emergencies. No registration or ID required."}
+          {tx("immigrant.emergencyCall", lang)}
         </p>
       </div>
 
