@@ -374,6 +374,75 @@ P1 Evcil Hayvan-İnsan Sağlık
 - 85+ sayfa, 70+ API route, 1500+ çeviri key
 - 0 TypeScript build hatası
 
+### ✅ 29 Mart — Oturum: Cleanup + UX Overhaul + Davranışsal Psikoloji (v25.0)
+
+**Araç Hiyerarşisi Temizliği:**
+- ✅ 5 duplicate href temizlendi (drug-equivalent, drug-recall, medication-buddy, health-report-card, disaster-mode)
+- ✅ drug-timing + medication-schedule + smart-reminders → `/medication-hub` (3 tab)
+- ✅ 12 statik rehber → `/health-guides` hub (lazy-loaded grid)
+- ✅ Doktor araçları Settings'ten çıkarılıp yeni "Doctor Tools" kategorisine taşındı
+- ✅ Acil durum kişileri profil sayfasına entegre edildi
+- ✅ Navbar'dan "Araçlar" dropdown kaldırıldı, dashboard'dan erişim
+- ✅ Navbar'dan "Hakkımızda" kaldırıldı, footer'a eklendi
+
+**Bug Fixler:**
+- ✅ 10 kırık sayfaya try/catch + boş state (biomarker-trends, health-roadmap, polypharmacy, health-timeline, share-data vb.)
+- ✅ 7 mock data sayfasına "ÖRNEK VERİ" badge (doctor-dashboard, doctor-analytics, data-export vb.)
+- ✅ 65 dosyada Türkçe karakter düzeltmesi (için, sağlık, güvenli, görüş, danışın vb.)
+- ✅ "Rözetleri" → "Rozetleri" çeviri düzeltmesi
+- ✅ Profil kaydetme: user.id fix, error handling, retry fallback
+- ✅ Profil kaydet butonu form sonuna taşındı
+- ✅ Yeşil "Kaydedildi!" toast bildirimi eklendi
+
+**Davranışsal Psikoloji ile Dashboard Yeniden Tasarım:**
+- ✅ Social Proof: "Bugün X kişi günlük planını tamamladı" counter
+- ✅ Loss Aversion: Streak kaybetme uyarısı (kırmızı pulse animasyonu)
+- ✅ Curiosity Gap: "Senin İçin Önerilen" kişisel tool önerileri (ilaç/yaş/cinsiyet bazlı)
+- ✅ Variable Reward: 7+ gün streak "🔥 Harika gidiyorsun!" rozeti
+- ✅ Kategori kartları: gradient sol şerit + emoji + hover parlama
+- ✅ Layout: Skor+Görevler → Öneriler → İçgörüler → Kategoriler sıralama
+
+**Özel İkon Seti:**
+- ✅ `components/icons/PhytoIcons.tsx` — 20+ botanik tıp temalı dual-tone SVG ikon
+- ✅ Landing page feature ikonları değiştirildi (IconSafeHerbal, IconResearchLeaf, IconBloodAnalysis, IconConflictDetect)
+- ✅ About page ikonları değiştirildi (vizyon, misyon, değerler, stats)
+
+**Profil Davranış Mühendisliği:**
+- ✅ Profil tamamlama ilerleme çubuğu (%20 Endowed Progress)
+- ✅ 8 kontrol noktası (hesap, ad, ilaçlar, alerjiler, yaşam tarzı, tıbbi geçmiş, boy/kilo, kan grubu)
+- ✅ Tamamlanmamış adım için motivasyonel mesaj
+- ✅ %100 kutlama kartı
+
+**Performans İyileştirmeleri:**
+- ✅ Takvim: TodayView/MonthView/AddVitalDialog lazy load (React.lazy + Suspense)
+- ✅ Takvim: fetchAllEvents + fetchVitals paralel (Promise.all)
+- ✅ Profil: ilaç + alerji fetch paralel (Promise.all)
+- ✅ About page: Stats yukarı, Vizyon/Misyon aşağıya (kullanıcı odaklı sıralama)
+
+**Veri Kaynakları Genişletme:**
+- ✅ PubMed + Europe PMC paralel sorgu (deduplicated)
+- ✅ Sistem promptları "peer-reviewed databases" olarak güncellendi
+- ✅ About sayfası "Çoklu Akademik Kaynak" olarak güncellendi
+
+**Yeni Sayfalar:**
+- ✅ `/medication-hub` — 3 tab (Günlük Program, Zamanlama Matrisi, Hatırlatıcılar)
+- ✅ `/health-guides` — 12 rehber lazy-loaded grid hub
+
+**Altyapı:**
+- ✅ `scripts/scan-pages.mjs` — 161 URL programatik tarayıcı (158 OK, 0 crash)
+- ✅ next.config.ts: 3 redirect (drug-timing, medication-schedule, smart-reminders → medication-hub)
+- ✅ E2E testlere medication-hub + health-guides eklendi
+- ✅ Admin health-check'e yeni sayfalar eklendi
+- ✅ header.tsx: 7+ eski link güncellendi/kaldırıldı
+- ✅ 2 yeni çeviri key'i (nav.medicationHub, nav.healthGuides)
+
+**İstatistikler:**
+- 27+ dosya oluşturuldu/güncellendi
+- 65 dosyada Türkçe karakter düzeltmesi
+- Build temiz, tüm deploy'lar doğrulandı
+
+---
+
 **FAZE D — Rakip Analizi + Final Ekler (14 yeni):**
 F1 Davranışsal Nudge, F2 İlaç Geri Çağırma Uyarısı, F3 Doğal Afet Sağlık Modu,
 F6 Barkod Güvenlik Tarama, F8 Agentic AI, F11 Sirkadyen Yemek Zamanlama,

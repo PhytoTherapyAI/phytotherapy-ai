@@ -1,10 +1,10 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v15.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v16.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
 **Phytotherapy.ai** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **14 gün kaldı**
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **13 gün kaldı**
 - **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı) — 2 yıllık ödeme yapıldı
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
@@ -40,7 +40,7 @@ Frontend:     Next.js 14 (App Router) + Tailwind CSS + shadcn/ui + Recharts
 Backend:      Next.js API Routes (serverless — Vercel)
 Database:     Supabase (PostgreSQL) ✅ — tüm tablolar kurulu
 AI Engine:    Google Gemini API (gemini-2.0-flash primary + gemini-2.5-flash fallback)
-Tıbbi Veri:   PubMed E-utilities API
+Tıbbi Veri:   PubMed E-utilities API + Europe PMC (çoklu akademik kaynak)
 İlaç Veri:    OpenFDA API
 PDF:          @react-pdf/renderer
 Charts:       Recharts (AreaChart, BarChart, RadarChart, PieChart, ComposedChart)
@@ -797,18 +797,42 @@ SENTRY_DSN=...                       # Error monitoring
 - 60+ yeni sayfa (Faze C/D/E/F)
 - 1,170+ Türkçe karakter düzeltmesi
 
+### Oturum 29 Mart — v25.0 (Cleanup + Davranışsal Psikoloji)
+
+**Araç Hiyerarşisi Temizliği:**
+- ✅ 5 duplicate href temizlendi, 3 tool `/medication-hub`'a birleştirildi
+- ✅ 12 statik rehber → `/health-guides` hub, Doktor araçları ayrı kategoriye
+- ✅ Acil durum kişileri profil sayfasına entegre
+- ✅ Navbar: "Araçlar" dropdown kaldırıldı, "Hakkımızda" footer'a taşındı
+
+**Davranışsal Psikoloji Dashboard:**
+- ✅ Social Proof, Loss Aversion (streak uyarısı), Curiosity Gap (öneriler)
+- ✅ Gradient kategori kartları + emoji ikonlar
+- ✅ Profil tamamlama ilerleme çubuğu (Endowed Progress %20)
+
+**Özel İkon Seti:**
+- ✅ `components/icons/PhytoIcons.tsx` — 20+ botanik dual-tone SVG
+- ✅ Landing + About page ikonları değiştirildi
+
+**Kritik Fixler:**
+- ✅ Profil kaydetme: user.id fix, toast bildirimi, error handling
+- ✅ Takvim performans: lazy load + paralel fetch
+- ✅ 65 dosyada Türkçe karakter düzeltmesi
+- ✅ Europe PMC eklendi (çoklu akademik kaynak)
+
 ### Toplam Proje Durumu
-- **317+ sayfa/route** aktif
-- **135+ araç** 14 kategoride organize
+- **320+ sayfa/route** aktif
+- **135+ araç** 17 kategoride organize
 - **640+ çeviri key'i** (TR+EN)
+- **20+ özel SVG ikon** (PhytoIcons)
 - Build temiz, tüm commitler push edilmiş
 - Vercel + Supabase + GitHub tam entegre
 
 ---
 
-*Son güncelleme: 29 Mart 2026 v15.0*
-*Sprint 1-13 + Phase 1-13 + 28-29 Mart oturumları tamamlandı.*
-*317+ sayfa, 14 kategori mega menü, 7 klinik test, FHIR R4, KVKK rıza yönetimi.*
-*Hackathon: 11-12 Nisan 2026 — 14 gün kaldı*
+*Son güncelleme: 29 Mart 2026 v16.0*
+*Sprint 1-13 + Phase 1-13 + 28-29 Mart oturumları + v25 cleanup tamamlandı.*
+*320+ sayfa, 17 kategori, 20+ özel ikon, davranışsal psikoloji dashboard.*
+*Hackathon: 11-12 Nisan 2026 — 13 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
 *Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*
