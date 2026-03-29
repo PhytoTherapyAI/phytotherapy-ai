@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, lazy, Suspense } from "react"
 import { useRouter } from "next/navigation"
 import {
   CalendarDays,
@@ -20,9 +20,11 @@ import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { NotificationSettings } from "@/components/pwa/NotificationSettings"
-import { TodayView } from "@/components/calendar/TodayView"
-import { MonthView } from "@/components/calendar/MonthView"
-import { AddVitalDialog } from "@/components/calendar/AddVitalDialog"
+
+// Lazy load heavy components to speed up initial render
+const TodayView = lazy(() => import("@/components/calendar/TodayView").then(m => ({ default: m.TodayView })))
+const MonthView = lazy(() => import("@/components/calendar/MonthView").then(m => ({ default: m.MonthView })))
+const AddVitalDialog = lazy(() => import("@/components/calendar/AddVitalDialog").then(m => ({ default: m.AddVitalDialog })))
 
 interface VitalRecord {
   id: string
@@ -139,10 +141,6 @@ export default function CalendarPage() {
     } catch { /* ignore */ }
   }, [profile?.id])
 
-  useEffect(() => {
-    if (profile?.id) fetchAllEvents()
-  }, [profile?.id, fetchAllEvents])
-
   const fetchVitals = useCallback(async () => {
     if (!profile?.id) return
     setVitalsLoading(true)
@@ -156,18 +154,19 @@ export default function CalendarPage() {
         .limit(20)
 
       if (data) setVitals(data as VitalRecord[])
-    } catch (err) {
-      console.error("Failed to fetch vitals:", err)
+    } catch {
+      // table may not exist yet
     } finally {
       setVitalsLoading(false)
     }
   }, [profile?.id])
 
+  // Fetch events AND vitals in parallel on mount
   useEffect(() => {
-    if (activeTab === "vitals" && profile?.id) {
-      fetchVitals()
+    if (profile?.id) {
+      Promise.all([fetchAllEvents(), fetchVitals()])
     }
-  }, [activeTab, profile?.id, fetchVitals])
+  }, [profile?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auth loading state
   if (authLoading) {
@@ -231,12 +230,16 @@ export default function CalendarPage() {
 
         {/* Today Tab */}
         <TabsContent value="today" className="mt-6">
-          <TodayView userId={profile.id} lang={lang} userName={profile.full_name} userWeight={profile.weight_kg} userHeight={profile.height_cm} userSupplements={profile.supplements} />
+          <Suspense fallback={<div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
+            <TodayView userId={profile.id} lang={lang} userName={profile.full_name} userWeight={profile.weight_kg} userHeight={profile.height_cm} userSupplements={profile.supplements} />
+          </Suspense>
         </TabsContent>
 
         {/* Calendar Tab */}
         <TabsContent value="calendar" className="mt-6">
-          <MonthView userId={profile.id} lang={lang} />
+          <Suspense fallback={<div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
+            <MonthView userId={profile.id} lang={lang} />
+          </Suspense>
           {allEvents.length > 0 && (
             <div className="mt-4">
               <Button variant="outline" className="w-full rounded-xl h-11" onClick={() => downloadICS(allEvents)}>
@@ -323,15 +326,17 @@ export default function CalendarPage() {
             )}
           </div>
 
-          <AddVitalDialog
-            userId={profile.id}
-            lang={lang}
-            open={addVitalOpen}
-            onOpenChange={setAddVitalOpen}
-            onSaved={() => {
-              fetchVitals()
-            }}
-          />
+          {addVitalOpen && (
+            <Suspense fallback={null}>
+              <AddVitalDialog
+                userId={profile.id}
+                lang={lang}
+                open={addVitalOpen}
+                onOpenChange={setAddVitalOpen}
+                onSaved={() => { fetchVitals() }}
+              />
+            </Suspense>
+          )}
         </TabsContent>
       </Tabs>
 

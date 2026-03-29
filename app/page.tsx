@@ -4,10 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Shield,
-  FlaskConical,
-  FileText,
-  ShieldCheck,
   ArrowRight,
   Search,
   CheckCircle2,
@@ -16,7 +12,14 @@ import {
   Users,
   Activity,
   BookOpen,
+  Shield,
 } from "lucide-react";
+import {
+  IconSafeHerbal,
+  IconResearchLeaf,
+  IconBloodAnalysis,
+  IconConflictDetect,
+} from "@/components/icons/PhytoIcons";
 import { BotanicalHero } from "@/components/illustrations/botanical-hero";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
@@ -39,10 +42,10 @@ const QUICK_TAGS_GUEST = [
 const TRUST_KEYS = ["lp.trust1", "lp.trust2", "lp.trust3", "lp.trust4", "lp.trust5"];
 
 const FEATURES = [
-  { num: "01", href: "/interaction-checker", icon: Shield, titleKey: "lp.feat1.title", descKey: "lp.feat1.desc" },
-  { num: "02", href: "/health-assistant", icon: FlaskConical, titleKey: "lp.feat2.title", descKey: "lp.feat2.desc" },
-  { num: "03", href: "/blood-test", icon: FileText, titleKey: "lp.feat3.title", descKey: "lp.feat3.desc" },
-  { num: "04", href: "/interaction-checker", icon: ShieldCheck, titleKey: "lp.feat4.title", descKey: "lp.feat4.desc" },
+  { num: "01", href: "/interaction-checker", icon: IconSafeHerbal, titleKey: "lp.feat1.title", descKey: "lp.feat1.desc" },
+  { num: "02", href: "/health-assistant", icon: IconResearchLeaf, titleKey: "lp.feat2.title", descKey: "lp.feat2.desc" },
+  { num: "03", href: "/blood-test", icon: IconBloodAnalysis, titleKey: "lp.feat3.title", descKey: "lp.feat3.desc" },
+  { num: "04", href: "/interaction-checker", icon: IconConflictDetect, titleKey: "lp.feat4.title", descKey: "lp.feat4.desc" },
 ];
 
 export default function Home() {

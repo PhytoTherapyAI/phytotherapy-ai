@@ -142,30 +142,52 @@ export default function ProfilePage() {
     setSavingHealth(true);
     try {
       const supabase = createBrowserClient();
-      await supabase
+      const updateData: Record<string, any> = {
+        is_pregnant: healthForm.is_pregnant ?? false,
+        is_breastfeeding: healthForm.is_breastfeeding ?? false,
+        alcohol_use: healthForm.alcohol_use || null,
+        smoking_use: healthForm.smoking_use || null,
+        kidney_disease: healthForm.kidney_disease ?? false,
+        liver_disease: healthForm.liver_disease ?? false,
+        recent_surgery: healthForm.recent_surgery ?? false,
+        chronic_conditions: healthForm.chronic_conditions || [],
+        supplements: healthForm.supplements || [],
+      };
+      // Only include optional fields if they have values (avoids column-not-found errors)
+      if (healthForm.height_cm) updateData.height_cm = healthForm.height_cm;
+      if (healthForm.weight_kg) updateData.weight_kg = healthForm.weight_kg;
+      if (healthForm.blood_group) updateData.blood_group = healthForm.blood_group;
+      if (healthForm.diet_type) updateData.diet_type = healthForm.diet_type;
+      if (healthForm.exercise_frequency) updateData.exercise_frequency = healthForm.exercise_frequency;
+      if (healthForm.sleep_quality) updateData.sleep_quality = healthForm.sleep_quality;
+      if (healthForm.country) updateData.country = healthForm.country;
+      if (healthForm.city) updateData.city = healthForm.city;
+      if (healthForm.phone) updateData.phone = healthForm.phone;
+      if (healthForm.recovery_email) updateData.recovery_email = healthForm.recovery_email;
+
+      const { error } = await supabase
         .from("user_profiles")
-        .update({
-          is_pregnant: healthForm.is_pregnant,
-          is_breastfeeding: healthForm.is_breastfeeding,
-          alcohol_use: healthForm.alcohol_use,
-          smoking_use: healthForm.smoking_use,
-          kidney_disease: healthForm.kidney_disease,
-          liver_disease: healthForm.liver_disease,
-          recent_surgery: healthForm.recent_surgery,
-          chronic_conditions: healthForm.chronic_conditions,
-          height_cm: healthForm.height_cm,
-          weight_kg: healthForm.weight_kg,
-          blood_group: healthForm.blood_group || null,
-          diet_type: healthForm.diet_type || null,
-          exercise_frequency: healthForm.exercise_frequency || null,
-          sleep_quality: healthForm.sleep_quality || null,
-          supplements: healthForm.supplements,
-          country: healthForm.country || null,
-          city: healthForm.city || null,
-          phone: healthForm.phone || null,
-          recovery_email: healthForm.recovery_email || null,
-        })
-        .eq("id", profile.id);
+        .update(updateData)
+        .eq("user_id", user!.id);
+
+      if (error) {
+        console.error("Supabase update error:", error);
+        // Retry with core fields only if some columns don't exist
+        const { error: retryError } = await supabase
+          .from("user_profiles")
+          .update({
+            is_pregnant: healthForm.is_pregnant ?? false,
+            is_breastfeeding: healthForm.is_breastfeeding ?? false,
+            kidney_disease: healthForm.kidney_disease ?? false,
+            liver_disease: healthForm.liver_disease ?? false,
+            recent_surgery: healthForm.recent_surgery ?? false,
+            chronic_conditions: healthForm.chronic_conditions || [],
+            alcohol_use: healthForm.alcohol_use || null,
+            smoking_use: healthForm.smoking_use || null,
+          })
+          .eq("user_id", user!.id);
+        if (retryError) console.error("Retry also failed:", retryError);
+      }
       await refreshProfile();
       setEditingHealth(false);
     } catch (err) {
@@ -1164,6 +1186,21 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* Save button at bottom — so user doesn't scroll back up */}
+            <div className="mt-6 flex gap-2 border-t pt-4">
+              <Button
+                onClick={saveHealthProfile}
+                disabled={savingHealth}
+                className="flex-1 gap-2 bg-primary hover:bg-primary/90"
+              >
+                {savingHealth ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {tx("profile.save", lang)}
+              </Button>
+              <Button variant="outline" onClick={() => setEditingHealth(false)}>
+                {tx("profile.cancel", lang)}
+              </Button>
             </div>
           </CardContent>
         )}
