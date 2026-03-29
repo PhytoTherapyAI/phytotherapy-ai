@@ -60,7 +60,7 @@ const t: Record<string, TranslationEntry> = {
     tr: "Phytotherapy.ai bir eğitim amaçlı sağlık aracıdır; tıbbi teşhis veya tedavi sunmaz. Tüm öneriler yayımlanmış bilimsel araştırmalara dayanır. Herhangi bir takviye başlamadan veya ilaç değişikliği yapmadan önce sağlık profesyonelinize danışın.",
   },
   "footer.tagline": {
-    en: "Evidence-based integrative mediçine · Backed by peer-reviewed research",
+    en: "Evidence-based integrative medicine · Backed by peer-reviewed research",
     tr: "Kanıta dayalı bütünleştirici tıp · Hakemli araştırmalarla desteklenir",
   },
 
@@ -1046,7 +1046,7 @@ const t: Record<string, TranslationEntry> = {
     tr: "Aile'deki her şey|Çoklu hasta yönetimi|AI ziyaret özeti|Uyum puanlaması|Hasta davet linkleri|Yeni Rx etkileşim uyarıları|Klinik çoklu hesap|Sigorta entegrasyonu hazır",
   },
 
-  "nav.priçing": { en: "Priçing", tr: "Fiyatlar" },
+  "nav.pricing": { en: "Pricing", tr: "Fiyatlar" },
   "nav.history": { en: "History", tr: "Geçmiş" },
   "history.noResponse": { en: "No response saved", tr: "Yanıt kaydedilmemiş" },
 

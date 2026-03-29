@@ -151,13 +151,14 @@ export async function GET() {
     { name: "PUBMED_API_KEY", exists: !!process.env.PUBMED_API_KEY },
   ];
 
-  for (const env of envChecks) {
-    results.push({
-      service: `ENV: ${env.name}`,
-      status: env.exists ? "ok" : "warning",
-      message: env.exists ? "Set" : "Not set",
-    });
-  }
+  // Only show env summary count — don't expose individual key names publicly
+  const envSet = envChecks.filter(e => e.exists).length;
+  const envTotal = envChecks.length;
+  results.push({
+    service: "ENV Variables",
+    status: envSet === envTotal ? "ok" : "warning",
+    message: `${envSet}/${envTotal} configured`,
+  });
 
   const hasErrors = results.some((r) => r.status === "error");
   const hasWarnings = results.some((r) => r.status === "warning");

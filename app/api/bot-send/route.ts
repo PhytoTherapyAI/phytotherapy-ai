@@ -116,7 +116,10 @@ function generateDailyTasks(lang: string): string[] {
 export async function POST(req: Request) {
   // Verify cron secret (prevent unauthorized triggers)
   const authHeader = req.headers.get("authorization")
-  const cronSecret = process.env.CRON_SECRET || "dev-cron-secret"
+  const cronSecret = process.env.CRON_SECRET
+  if (!cronSecret && process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 })
+  }
   if (authHeader !== `Bearer ${cronSecret}`) {
     // Also allow Vercel Cron (no auth header but from Vercel)
     const isVercelCron = req.headers.get("x-vercel-cron") === "true"

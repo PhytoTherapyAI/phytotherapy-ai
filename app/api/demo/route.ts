@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const DEMO_EMAIL = "demo@phytotherapy.ai";
-const DEMO_PASSWORD = "demo123456";
+const DEMO_EMAIL = process.env.DEMO_EMAIL || "demo@phytotherapy.ai";
+const DEMO_PASSWORD = process.env.DEMO_PASSWORD || "demo123456";
 
 function dateStr(daysAgo: number): string {
   return new Date(Date.now() - daysAgo * 86400000).toISOString().split("T")[0];

@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from "next/server"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
+import { createClient } from "@supabase/supabase-js"
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
 export async function POST(req: NextRequest) {
   try {
+    // Auth check
+    const authHeader = req.headers.get("authorization")
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
     // Rate limit
     const clientIP = getClientIP(req)
     const rateCheck = checkRateLimit(`scan:${clientIP}`, 5, 60_000)
