@@ -41,9 +41,7 @@ export default function FamilyPage() {
             {tx("family.title", lang)}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-            {lang === "tr"
-              ? "Ailenizin sağlık profillerini yönetin, herkes için kişiselleştirilmiş öneriler alın"
-              : "Manage your family's health profiles and get personalized recommendations for everyone"}
+            {tx("family.subtitle", lang)}
           </p>
         </div>
 

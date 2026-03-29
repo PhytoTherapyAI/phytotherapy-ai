@@ -249,7 +249,7 @@ export default function EyeHealthPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-2">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   <Monitor className="w-5 h-5 text-blue-500" />
-                  {lang === "tr" ? "Ekran Süresi Etkisi" : "Screen Time Impact"}
+                  {tx("eyeHealth.screenTimeImpact", lang)}
                 </h2>
                 <p className="text-sm text-muted-foreground">{analysis.screenTimeImpact}</p>
               </div>

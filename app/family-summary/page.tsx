@@ -34,7 +34,7 @@ export default function FamilySummaryPage() {
   const [members, setMembers] = useState<MemberSummary[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const tr = lang === "tr"
+
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -121,7 +121,7 @@ export default function FamilySummaryPage() {
         <div className="flex items-center gap-3">
           <Users className="h-6 w-6 text-primary" />
           <h1 className="text-2xl font-semibold">
-            {tr ? "Aile Haftalık Ozet" : "Family Weekly Summary"}
+            {tx("familySummary.title", lang)}
           </h1>
         </div>
         <button
@@ -138,12 +138,10 @@ export default function FamilySummaryPage() {
         <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed py-16 text-center">
           <Users className="mb-4 h-12 w-12 text-muted-foreground/40" />
           <h2 className="mb-2 text-lg font-medium text-muted-foreground">
-            {tr ? "Henuz aile uyesi eklenmedi" : "No family members yet"}
+            {tx("familySummary.noMembers", lang)}
           </h2>
           <p className="mb-6 max-w-sm text-sm text-muted-foreground/70">
-            {tr
-              ? "Profil sayfanizdan aile uyelerini ekleyerek haftalik ozetlerini gorebilirsiniz."
-              : "Add family members from your profile to see their weekly health summaries."}
+            {tx("familySummary.noMembersDesc", lang)}
           </p>
           <button
             onClick={() => router.push("/family")}
@@ -161,7 +159,7 @@ export default function FamilySummaryPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">
-                  {tr ? "Aile Sağlık Ortalaması" : "Family Health Average"}
+                  {tx("familySummary.healthAvg", lang)}
                 </p>
                 <p className={`text-3xl font-bold ${getScoreColor(avgScore)}`}>
                   {avgScore}
@@ -196,13 +194,13 @@ export default function FamilySummaryPage() {
                 >
                   <AlertTriangle className="h-5 w-5 shrink-0 text-red-500" />
                   <p className="text-sm font-medium text-red-700 dark:text-red-400">
-                    {tr
+                    {lang === "tr"
                       ? `${m.full_name} ${m.missedDays} gundur ilac almadi`
                       : `${m.full_name} hasn't taken meds for ${m.missedDays} days`}
                   </p>
                   <button className="ml-auto shrink-0 rounded-full bg-red-500 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-red-600">
                     <Bell className="inline h-3 w-3 mr-1" />
-                    {tr ? "Hatırlat" : "Remind"}
+                    {tx("familySummary.remind", lang)}
                   </button>
                 </div>
               ))}
@@ -250,7 +248,7 @@ export default function FamilySummaryPage() {
                     <div className="mb-1 flex items-center gap-1.5">
                       <Pill className="h-3.5 w-3.5 text-muted-foreground" />
                       <span className="text-xs text-muted-foreground">
-                        {tr ? "İlaç Uyumu" : "Med Compliance"}
+                        {tx("familySummary.medCompliance", lang)}
                       </span>
                     </div>
                     <p className="text-lg font-bold">
@@ -279,14 +277,14 @@ export default function FamilySummaryPage() {
                         }`}
                       />
                       <span className="text-xs text-muted-foreground">
-                        {tr ? "Kacirilan" : "Missed"}
+                        {tx("familySummary.missed", lang)}
                       </span>
                     </div>
                     <p className="text-lg font-bold">
                       {m.missedDays === 0 ? (
                         <span className="text-green-500">0</span>
                       ) : (
-                        <span className="text-red-500">{m.missedDays} {tr ? "gun" : "days"}</span>
+                        <span className="text-red-500">{m.missedDays} {tx("familySummary.days", lang)}</span>
                       )}
                     </p>
                   </div>
@@ -297,9 +295,9 @@ export default function FamilySummaryPage() {
                   <div className="flex items-center gap-2 rounded-lg bg-blue-50 p-2 dark:bg-blue-950/20">
                     <Calendar className="h-3.5 w-3.5 text-blue-500" />
                     <span className="text-xs text-blue-700 dark:text-blue-400">
-                      {tr ? "Sonraki randevu:" : "Next appointment:"}{" "}
+                      {tx("familySummary.nextAppt", lang)}{" "}
                       {new Date(m.nextAppointment).toLocaleDateString(
-                        tr ? "tr-TR" : "en-US",
+                        lang === "tr" ? "tr-TR" : "en-US",
                         { month: "short", day: "numeric" }
                       )}
                     </span>
@@ -310,13 +308,13 @@ export default function FamilySummaryPage() {
                 <div className="mt-3 flex items-center justify-between border-t pt-3">
                   <button className="flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20">
                     <Bell className="h-3 w-3" />
-                    {tr ? "Hatirlatma Gonder" : "Send Reminder"}
+                    {tx("familySummary.sendReminder", lang)}
                   </button>
                   <button
                     onClick={() => router.push("/family")}
                     className="flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    {tr ? "Detay" : "Details"}
+                    {tx("familySummary.details", lang)}
                     <ChevronRight className="h-3 w-3" />
                   </button>
                 </div>

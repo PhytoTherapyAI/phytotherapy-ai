@@ -156,7 +156,7 @@ export default function FamilyHealthTreePage() {
                 </button>
               </div>
               <div>
-                <label className="text-sm font-medium text-muted-foreground">{lang === "tr" ? "Sağlık Durumlari" : "Health Conditions"}</label>
+                <label className="text-sm font-medium text-muted-foreground">{tx("familyTree.healthConditions", lang)}</label>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {conditions.map((cond, i) => (
                     <button
@@ -207,7 +207,7 @@ export default function FamilyHealthTreePage() {
             {/* Overall Assessment */}
             <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-6">
               <h3 className="font-semibold text-emerald-700 dark:text-emerald-400 mb-2">
-                {lang === "tr" ? "Genel Değerlendirme" : "Overall Assessment"}
+                {tx("familyTree.overallAssessment", lang)}
               </h3>
               <p className="text-sm">{result.overallRiskAssessment}</p>
             </div>
@@ -217,7 +217,7 @@ export default function FamilyHealthTreePage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Search className="w-5 h-5 text-emerald-500" />
-                  {lang === "tr" ? "Kalitsal Risk Oruntuleri" : "Hereditary Risk Patterns"}
+                  {tx("familyTree.hereditaryPatterns", lang)}
                 </h2>
                 <div className="grid gap-4">
                   {result.hereditaryPatterns.map((pattern, i) => (
@@ -230,11 +230,11 @@ export default function FamilyHealthTreePage() {
                       </div>
                       <p className="text-sm text-muted-foreground">{pattern.inheritancePattern}</p>
                       <p className="text-xs text-muted-foreground">
-                        {lang === "tr" ? "Etkilenen yakinlar:" : "Affected relatives:"} {pattern.affectedRelatives.join(", ")}
+                        {tx("familyTree.affectedRelatives", lang)} {pattern.affectedRelatives.join(", ")}
                       </p>
                       {pattern.geneticTestRecommended && (
                         <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-2 text-sm text-amber-700 dark:text-amber-400">
-                          {lang === "tr" ? "Onerilen genetik test:" : "Recommended genetic test:"} {pattern.specificTest}
+                          {tx("familyTree.recommendedTest", lang)} {pattern.specificTest}
                         </div>
                       )}
                     </div>
@@ -248,7 +248,7 @@ export default function FamilyHealthTreePage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Shield className="w-5 h-5 text-blue-500" />
-                  {lang === "tr" ? "Tarama Önerileri" : "Screening Recommendations"}
+                  {tx("familyTree.screeningRecs", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.screeningRecommendations.map((rec, i) => (
@@ -267,7 +267,7 @@ export default function FamilyHealthTreePage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Heart className="w-5 h-5 text-green-500" />
-                  {lang === "tr" ? "Koruyucu Faktorler" : "Protective Factors"}
+                  {tx("familyTree.protectiveFactors", lang)}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {result.protectiveFactors.map((factor, i) => (
@@ -285,7 +285,7 @@ export default function FamilyHealthTreePage() {
               <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
                 <h3 className="font-medium flex items-center gap-2 mb-1 text-amber-700 dark:text-amber-400">
                   <AlertTriangle className="w-4 h-4" />
-                  {lang === "tr" ? "Genetik Danışmanlik" : "Genetic Counseling"}
+                  {tx("familyTree.geneticCounseling", lang)}
                 </h3>
                 <p className="text-sm text-amber-600 dark:text-amber-300">{result.geneticCounselingAdvice}</p>
               </div>
@@ -296,7 +296,7 @@ export default function FamilyHealthTreePage() {
               <div className="bg-card border rounded-2xl p-6 space-y-3">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   <Lightbulb className="w-5 h-5 text-amber-500" />
-                  {lang === "tr" ? "Önemli Bilgiler" : "Key Insights"}
+                  {tx("familyTree.keyInsights", lang)}
                 </h2>
                 {result.keyInsights.map((insight, i) => (
                   <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">

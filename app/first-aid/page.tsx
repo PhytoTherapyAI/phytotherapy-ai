@@ -373,9 +373,7 @@ export default function FirstAidPage() {
         {/* Disclaimer */}
         <div className="mt-8 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 text-center">
           <p className="text-gray-500 dark:text-gray-400 text-sm">
-            {lang === "tr"
-              ? "Bu rehber profesyonel ilk yardim egitiminin yerine gecmez. Bir ilk yardim kursuna katilmanizi oneririz."
-              : "This guide does not replace professional first aid training. We recommend taking a certified first aid course."}
+            {tx("firstAid.disclaimer", lang)}
           </p>
         </div>
       </div>

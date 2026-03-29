@@ -86,7 +86,7 @@ export default function FavoriteSupplementsPage() {
 
   const copyShoppingList = () => {
     const list = favorites.map((id) => `- ${formatName(id)}`).join("\n");
-    const header = lang === "tr" ? "Takviye Alisveris Listem:" : "My Supplement Shopping List:";
+    const header = tx("favSupp.shoppingListHeader", lang);
     navigator.clipboard.writeText(`${header}\n${list}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -108,17 +108,15 @@ export default function FavoriteSupplementsPage() {
         <div className="text-center max-w-md">
           <Heart className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {lang === "tr" ? "Henuz Favori Yok" : "No Favorites Yet"}
+            {tx("favSupp.noFavorites", lang)}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 mb-6">
-            {lang === "tr"
-              ? "Takviye Rehberi'ne goz atin ve favorilerinizi ekleyin!"
-              : "Browse the Supplement Guide and add your favorites!"}
+            {tx("favSupp.noFavoritesDesc", lang)}
           </p>
           <Link href="/supplement-marketplace">
             <Button className="gap-2 bg-green-600 hover:bg-green-700 text-white rounded-xl">
               <Leaf className="w-4 h-4" />
-              {lang === "tr" ? "Takviye Rehberine Git" : "Browse Supplement Guide"}
+              {tx("favSupp.browseGuide", lang)}
             </Button>
           </Link>
         </div>
@@ -134,12 +132,12 @@ export default function FavoriteSupplementsPage() {
           <Link href="/supplement-marketplace">
             <Button variant="ghost" size="sm" className="gap-1 rounded-lg">
               <ArrowLeft className="w-4 h-4" />
-              {lang === "tr" ? "Rehber" : "Guide"}
+              {tx("favSupp.guide", lang)}
             </Button>
           </Link>
           <div className="flex-1">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {lang === "tr" ? "Favori Takviyelerim" : "My Favorite Supplements"}
+              {tx("favSupp.title", lang)}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {lang === "tr" ? `${favorites.length} takviye kaydedildi` : `${favorites.length} supplement${favorites.length !== 1 ? "s" : ""} saved`}
@@ -151,9 +149,7 @@ export default function FavoriteSupplementsPage() {
         <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-3 mb-6 flex items-start gap-2">
           <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
           <p className="text-xs text-amber-800 dark:text-amber-300">
-            {lang === "tr"
-              ? "Herhangi bir takviyeye başlamadan once etkilesim kontrolü yapin ve doktorunuza danışın."
-              : "Always check interactions and consult your doctor before starting any supplement."}
+            {tx("favSupp.interactionReminder", lang)}
           </p>
         </div>
 
@@ -167,13 +163,11 @@ export default function FavoriteSupplementsPage() {
           >
             {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
             {copied
-              ? (lang === "tr" ? "Kopyalandi!" : "Copied!")
-              : (lang === "tr" ? "Alisveris Listesi Kopyala" : "Copy Shopping List")}
+              ? tx("favSupp.copied", lang)
+              : tx("favSupp.copyList", lang)}
           </Button>
           <span className="text-xs text-gray-400 dark:text-gray-500 self-center">
-            {lang === "tr"
-              ? "Karşılastirmak için 2 takviye secin"
-              : "Select 2 supplements to compare"}
+            {tx("favSupp.selectToCompare", lang)}
           </span>
         </div>
 
@@ -227,19 +221,19 @@ export default function FavoriteSupplementsPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-1">
                     <Link href={`/interaction-checker?supplement=${encodeURIComponent(formatName(id))}`}>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg" title={lang === "tr" ? "Etkileşim Kontrol" : "Check Interactions"}>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg" title={tx("favSupp.checkInteractions", lang)}>
                         <ShieldCheck className="w-4 h-4 text-blue-500" />
                       </Button>
                     </Link>
                     <Link href="/calendar">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg" title={lang === "tr" ? "Takvime Ekle" : "Add to Calendar"}>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg" title={tx("favSupp.addToCalendar", lang)}>
                         <CalendarPlus className="w-4 h-4 text-green-500" />
                       </Button>
                     </Link>
                     <button
                       onClick={() => removeFavorite(id)}
                       className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                      title={lang === "tr" ? "Kaldir" : "Remove"}
+                      title={tx("favSupp.remove", lang)}
                     >
                       <Trash2 className="w-4 h-4 text-red-400" />
                     </button>
@@ -256,7 +250,7 @@ export default function FavoriteSupplementsPage() {
             <div className="flex items-center gap-2 mb-4">
               <Scale className="w-5 h-5 text-green-600" />
               <h2 className="font-semibold text-gray-900 dark:text-white">
-                {lang === "tr" ? "Karşılastirma" : "Quick Compare"}
+                {tx("favSupp.quickCompare", lang)}
               </h2>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -267,7 +261,7 @@ export default function FavoriteSupplementsPage() {
                     <>
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {lang === "tr" ? "Kanit:" : "Evidence:"}
+                          {tx("favSupp.evidence", lang)}
                         </span>
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${GRADE_COLORS[item.info.evidenceGrade]}`}>
                           {item.info.evidenceGrade}
@@ -278,7 +272,7 @@ export default function FavoriteSupplementsPage() {
                       </p>
                     </>
                   ) : (
-                    <p className="text-xs text-gray-400">{lang === "tr" ? "Bilgi yok" : "No info available"}</p>
+                    <p className="text-xs text-gray-400">{tx("favSupp.noInfo", lang)}</p>
                   )}
                 </div>
               ))}
@@ -287,7 +281,7 @@ export default function FavoriteSupplementsPage() {
               <Link href={`/supplement-compare?s1=${encodeURIComponent(compareItems[0].name)}&s2=${encodeURIComponent(compareItems[1].name)}`}>
                 <Button size="sm" className="gap-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs">
                   <Scale className="w-3.5 h-3.5" />
-                  {lang === "tr" ? "Detayli AI Karşılastirma" : "Detailed AI Compare"}
+                  {tx("favSupp.detailedCompare", lang)}
                 </Button>
               </Link>
             </div>

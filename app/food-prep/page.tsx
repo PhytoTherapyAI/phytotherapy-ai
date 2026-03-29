@@ -57,13 +57,13 @@ export default function FoodPrepPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <ChefHat className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{lang === "tr" ? "Besin Hazırlama Rehberi" : "Food Prep Guide"}</h1>
-          <p className="text-muted-foreground mt-1">{lang === "tr" ? "Pişirme yöntemi besin değerini nasıl etkiler" : "How cooking method affects nutrient value"}</p>
+          <h1 className="text-2xl font-bold text-foreground">{tx("foodPrep.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("foodPrep.subtitle", lang)}</p>
         </div>
 
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input className="pl-9" placeholder={lang === "tr" ? "Besin ara..." : "Search food..."} value={search} onChange={e => setSearch(e.target.value)} />
+          <Input className="pl-9" placeholder={tx("foodPrep.searchPlaceholder", lang)} value={search} onChange={e => setSearch(e.target.value)} />
         </div>
 
         <div className="flex gap-2 mb-6 justify-center">

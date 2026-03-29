@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -86,8 +87,8 @@ export default function FastingMonitorPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Moon className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">{lang === "tr" ? "Oruç Sağlık Monitörü" : "Fasting Health Monitor"}</h1>
-          <p className="text-muted-foreground mt-1">{lang === "tr" ? "Ramazan & periyodik oruç için güvenli sağlık rehberi" : "Safe health guide for Ramadan & periodic fasting"}</p>
+          <h1 className="text-2xl font-bold text-foreground">{tx("fasting.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("fasting.subtitle", lang)}</p>
         </div>
 
         {/* Risk alert */}
@@ -110,9 +111,9 @@ export default function FastingMonitorPage() {
         <div className="flex gap-2 mb-6">
           {(["guide", "timing", "tracker"] as const).map(tab => (
             <Button key={tab} size="sm" variant={activeTab === tab ? "default" : "outline"} onClick={() => setActiveTab(tab)}>
-              {tab === "guide" ? (lang === "tr" ? "Rehber" : "Guide") :
-               tab === "timing" ? (lang === "tr" ? "İlaç Zamanlaması" : "Med Timing") :
-               (lang === "tr" ? "Günlük Takip" : "Daily Tracker")}
+              {tab === "guide" ? tx("fasting.tabGuide", lang) :
+               tab === "timing" ? tx("fasting.tabTiming", lang) :
+               tx("fasting.tabTracker", lang)}
             </Button>
           ))}
         </div>
@@ -123,7 +124,7 @@ export default function FastingMonitorPage() {
             <Card className="p-5">
               <h3 className="font-semibold flex items-center gap-2 mb-3">
                 <AlertTriangle className="w-5 h-5 text-red-500" />
-                {lang === "tr" ? "Orucu Bozma Kriterleri" : "When to Break Fast"}
+                {tx("fasting.breakCriteria", lang)}
               </h3>
               <ul className="space-y-2">
                 {BREAK_FAST_CRITERIA.map((c, i) => (
@@ -139,13 +140,13 @@ export default function FastingMonitorPage() {
             <Card className="p-5">
               <h3 className="font-semibold flex items-center gap-2 mb-3">
                 <Droplets className="w-5 h-5 text-blue-500" />
-                {lang === "tr" ? "Hidrasyon Rehberi" : "Hydration Guide"}
+                {tx("fasting.hydrationGuide", lang)}
               </h3>
               <div className="space-y-2 text-sm text-muted-foreground">
-                <p>{lang === "tr" ? "• İftar-sahur arası en az 2-3 litre su iç" : "• Drink at least 2-3 liters between iftar and suhoor"}</p>
-                <p>{lang === "tr" ? "• Kafein miktarını azalt (diüretik etki)" : "• Reduce caffeine (diuretic effect)"}</p>
-                <p>{lang === "tr" ? "• Tuzlu yiyeceklerden kaçın (susuzluk artırır)" : "• Avoid salty foods (increases thirst)"}</p>
-                <p>{lang === "tr" ? "• Karpuz, salatalık gibi su oranı yüksek besinler tüket" : "• Eat high-water-content foods like watermelon, cucumber"}</p>
+                <p>{tx("fasting.hydration1", lang)}</p>
+                <p>{tx("fasting.hydration2", lang)}</p>
+                <p>{tx("fasting.hydration3", lang)}</p>
+                <p>{tx("fasting.hydration4", lang)}</p>
               </div>
             </Card>
 
@@ -153,25 +154,25 @@ export default function FastingMonitorPage() {
             <Card className="p-5">
               <h3 className="font-semibold flex items-center gap-2 mb-3">
                 <Utensils className="w-5 h-5 text-green-500" />
-                {lang === "tr" ? "Sahur & İftar Beslenme" : "Suhoor & Iftar Nutrition"}
+                {tx("fasting.nutritionTitle", lang)}
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Badge className="mb-2 bg-indigo-500/10 text-indigo-600">{lang === "tr" ? "Sahur" : "Suhoor"}</Badge>
+                  <Badge className="mb-2 bg-indigo-500/10 text-indigo-600">{tx("fasting.suhoor", lang)}</Badge>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• {lang === "tr" ? "Kompleks karbonhidrat (yulaf, tam tahıl)" : "Complex carbs (oats, whole grain)"}</li>
-                    <li>• {lang === "tr" ? "Protein (yumurta, peynir)" : "Protein (eggs, cheese)"}</li>
-                    <li>• {lang === "tr" ? "Sağlıklı yağ (avokado, zeytinyağı)" : "Healthy fats (avocado, olive oil)"}</li>
-                    <li>• {lang === "tr" ? "Bol su" : "Plenty of water"}</li>
+                    <li>• {tx("fasting.suhoor1", lang)}</li>
+                    <li>• {tx("fasting.suhoor2", lang)}</li>
+                    <li>• {tx("fasting.suhoor3", lang)}</li>
+                    <li>• {tx("fasting.suhoor4", lang)}</li>
                   </ul>
                 </div>
                 <div>
-                  <Badge className="mb-2 bg-amber-500/10 text-amber-600">{lang === "tr" ? "İftar" : "Iftar"}</Badge>
+                  <Badge className="mb-2 bg-amber-500/10 text-amber-600">{tx("fasting.iftar", lang)}</Badge>
                   <ul className="text-sm text-muted-foreground space-y-1">
-                    <li>• {lang === "tr" ? "Hurma ile başla (hızlı enerji)" : "Start with dates (quick energy)"}</li>
-                    <li>• {lang === "tr" ? "Çorba (hidrasyon)" : "Soup (hydration)"}</li>
-                    <li>• {lang === "tr" ? "Dengeli ana yemek" : "Balanced main meal"}</li>
-                    <li>• {lang === "tr" ? "Aşırı yemekten kaçın" : "Avoid overeating"}</li>
+                    <li>• {tx("fasting.iftar1", lang)}</li>
+                    <li>• {tx("fasting.iftar2", lang)}</li>
+                    <li>• {tx("fasting.iftar3", lang)}</li>
+                    <li>• {tx("fasting.iftar4", lang)}</li>
                   </ul>
                 </div>
               </div>
@@ -184,15 +185,13 @@ export default function FastingMonitorPage() {
             {userMeds.length === 0 ? (
               <Card className="p-8 text-center">
                 <Pill className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground">{lang === "tr" ? "Profilinde ilaç yok. İlaç zamanlaması görmek için profil ekle." : "No medications in profile. Add to see timing."}</p>
+                <p className="text-muted-foreground">{tx("fasting.noMeds", lang)}</p>
               </Card>
             ) : (
               <>
                 <Card className="p-4 bg-primary/5 border-primary/30">
                   <p className="text-sm text-center">
-                    {lang === "tr"
-                      ? "İlaç zamanlamasını değiştirmeden ÖNCE doktorunuza danışın"
-                      : "Consult your doctor BEFORE changing medication timing"}
+                    {tx("fasting.consultDoctor", lang)}
                   </p>
                 </Card>
                 {userMeds.map(med => {
@@ -213,7 +212,7 @@ export default function FastingMonitorPage() {
                             </div>
                           ) : (
                             <p className="text-sm text-muted-foreground mt-1">
-                              {lang === "tr" ? "Genel kural: İftarda alınabilir. Doktora danışın." : "General rule: Can be taken at iftar. Consult doctor."}
+                              {tx("fasting.generalRule", lang)}
                             </p>
                           )}
                         </div>
@@ -230,18 +229,18 @@ export default function FastingMonitorPage() {
           <div className="space-y-4">
             <Card className="p-5 text-center">
               <Timer className="w-12 h-12 text-primary mx-auto mb-3" />
-              <h3 className="font-semibold">{lang === "tr" ? "Günlük Oruç Takibi" : "Daily Fasting Tracker"}</h3>
+              <h3 className="font-semibold">{tx("fasting.dailyTracker", lang)}</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                {lang === "tr" ? "Her gün oruç durumunuzu, su alımınızı ve semptomlarınızı kaydedin" : "Record your fasting status, water intake, and symptoms daily"}
+                {tx("fasting.dailyTrackerDesc", lang)}
               </p>
               <div className="grid grid-cols-2 gap-3 mt-4">
                 <Button variant="outline" className="h-16 flex-col">
                   <Check className="w-5 h-5 mb-1 text-green-500" />
-                  <span className="text-xs">{lang === "tr" ? "Bugün Oruç Tuttum" : "Fasted Today"}</span>
+                  <span className="text-xs">{tx("fasting.fastedToday", lang)}</span>
                 </Button>
                 <Button variant="outline" className="h-16 flex-col">
                   <Droplets className="w-5 h-5 mb-1 text-blue-500" />
-                  <span className="text-xs">{lang === "tr" ? "Su Takibi" : "Water Tracking"}</span>
+                  <span className="text-xs">{tx("fasting.waterTracking", lang)}</span>
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground mt-4">

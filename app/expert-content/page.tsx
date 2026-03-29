@@ -75,7 +75,7 @@ export default function ExpertContentPage() {
           </div>
           <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-muted-foreground mt-1">{t("subtitle")}</p>
-          <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{lang === "tr" ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
+          <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{tx("expertContent.sampleData", lang)}</span>
         </div>
 
         {/* Search + filters */}
@@ -134,7 +134,7 @@ export default function ExpertContentPage() {
                         <Sparkles className="w-3 h-3" />{t("expert_content")}
                       </Badge>
                       {content.isSponsored && (
-                        <Badge variant="outline" className="text-[10px]">{lang === "tr" ? "Sponsorlu" : "Sponsored"}</Badge>
+                        <Badge variant="outline" className="text-[10px]">{tx("expertContent.sponsored", lang)}</Badge>
                       )}
                     </div>
 

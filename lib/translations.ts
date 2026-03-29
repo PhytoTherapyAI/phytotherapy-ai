@@ -4362,6 +4362,98 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "whiteLabel.yourName": { en: "Your Name", tr: "Adınız" },
   "whiteLabel.company": { en: "Company", tr: "Sirket" },
   "whiteLabel.requestDemoBtn": { en: "Request Demo", tr: "Demo Talep Et" },
+
+  // Expert Content
+  "expertContent.sampleData": { en: "SAMPLE DATA", tr: "ÖRNEK VERİ" },
+  "expertContent.sponsored": { en: "Sponsored", tr: "Sponsorlu" },
+
+  // Eye Health
+  "eyeHealth.screenTimeImpact": { en: "Screen Time Impact", tr: "Ekran Süresi Etkisi" },
+
+  // Family Health Tree
+  "familyTree.healthConditions": { en: "Health Conditions", tr: "Sağlık Durumlari" },
+  "familyTree.overallAssessment": { en: "Overall Assessment", tr: "Genel Değerlendirme" },
+  "familyTree.hereditaryPatterns": { en: "Hereditary Risk Patterns", tr: "Kalitsal Risk Oruntuleri" },
+  "familyTree.affectedRelatives": { en: "Affected relatives:", tr: "Etkilenen yakinlar:" },
+  "familyTree.recommendedTest": { en: "Recommended genetic test:", tr: "Onerilen genetik test:" },
+  "familyTree.screeningRecs": { en: "Screening Recommendations", tr: "Tarama Önerileri" },
+  "familyTree.protectiveFactors": { en: "Protective Factors", tr: "Koruyucu Faktorler" },
+  "familyTree.geneticCounseling": { en: "Genetic Counseling", tr: "Genetik Danışmanlik" },
+  "familyTree.keyInsights": { en: "Key Insights", tr: "Önemli Bilgiler" },
+
+  // Family Summary
+  "familySummary.title": { en: "Family Weekly Summary", tr: "Aile Haftalık Ozet" },
+  "familySummary.noMembers": { en: "No family members yet", tr: "Henuz aile uyesi eklenmedi" },
+  "familySummary.noMembersDesc": { en: "Add family members from your profile to see their weekly health summaries.", tr: "Profil sayfanizdan aile uyelerini ekleyerek haftalik ozetlerini gorebilirsiniz." },
+  "familySummary.healthAvg": { en: "Family Health Average", tr: "Aile Sağlık Ortalaması" },
+  "familySummary.remind": { en: "Remind", tr: "Hatırlat" },
+  "familySummary.medCompliance": { en: "Med Compliance", tr: "İlaç Uyumu" },
+  "familySummary.missed": { en: "Missed", tr: "Kacirilan" },
+  "familySummary.days": { en: "days", tr: "gun" },
+  "familySummary.nextAppt": { en: "Next appointment:", tr: "Sonraki randevu:" },
+  "familySummary.sendReminder": { en: "Send Reminder", tr: "Hatirlatma Gonder" },
+  "familySummary.details": { en: "Details", tr: "Detay" },
+
+  // Family Page
+  "family.subtitle": { en: "Manage your family's health profiles and get personalized recommendations for everyone", tr: "Ailenizin sağlık profillerini yönetin, herkes için kişiselleştirilmiş öneriler alın" },
+
+  // Fasting Monitor
+  "fasting.title": { en: "Fasting Health Monitor", tr: "Oruç Sağlık Monitörü" },
+  "fasting.subtitle": { en: "Safe health guide for Ramadan & periodic fasting", tr: "Ramazan & periyodik oruç için güvenli sağlık rehberi" },
+  "fasting.tabGuide": { en: "Guide", tr: "Rehber" },
+  "fasting.tabTiming": { en: "Med Timing", tr: "İlaç Zamanlaması" },
+  "fasting.tabTracker": { en: "Daily Tracker", tr: "Günlük Takip" },
+  "fasting.breakCriteria": { en: "When to Break Fast", tr: "Orucu Bozma Kriterleri" },
+  "fasting.hydrationGuide": { en: "Hydration Guide", tr: "Hidrasyon Rehberi" },
+  "fasting.hydration1": { en: "• Drink at least 2-3 liters between iftar and suhoor", tr: "• İftar-sahur arası en az 2-3 litre su iç" },
+  "fasting.hydration2": { en: "• Reduce caffeine (diuretic effect)", tr: "• Kafein miktarını azalt (diüretik etki)" },
+  "fasting.hydration3": { en: "• Avoid salty foods (increases thirst)", tr: "• Tuzlu yiyeceklerden kaçın (susuzluk artırır)" },
+  "fasting.hydration4": { en: "• Eat high-water-content foods like watermelon, cucumber", tr: "• Karpuz, salatalık gibi su oranı yüksek besinler tüket" },
+  "fasting.nutritionTitle": { en: "Suhoor & Iftar Nutrition", tr: "Sahur & İftar Beslenme" },
+  "fasting.suhoor": { en: "Suhoor", tr: "Sahur" },
+  "fasting.suhoor1": { en: "Complex carbs (oats, whole grain)", tr: "Kompleks karbonhidrat (yulaf, tam tahıl)" },
+  "fasting.suhoor2": { en: "Protein (eggs, cheese)", tr: "Protein (yumurta, peynir)" },
+  "fasting.suhoor3": { en: "Healthy fats (avocado, olive oil)", tr: "Sağlıklı yağ (avokado, zeytinyağı)" },
+  "fasting.suhoor4": { en: "Plenty of water", tr: "Bol su" },
+  "fasting.iftar": { en: "Iftar", tr: "İftar" },
+  "fasting.iftar1": { en: "Start with dates (quick energy)", tr: "Hurma ile başla (hızlı enerji)" },
+  "fasting.iftar2": { en: "Soup (hydration)", tr: "Çorba (hidrasyon)" },
+  "fasting.iftar3": { en: "Balanced main meal", tr: "Dengeli ana yemek" },
+  "fasting.iftar4": { en: "Avoid overeating", tr: "Aşırı yemekten kaçın" },
+  "fasting.noMeds": { en: "No medications in profile. Add to see timing.", tr: "Profilinde ilaç yok. İlaç zamanlaması görmek için profil ekle." },
+  "fasting.consultDoctor": { en: "Consult your doctor BEFORE changing medication timing", tr: "İlaç zamanlamasını değiştirmeden ÖNCE doktorunuza danışın" },
+  "fasting.generalRule": { en: "General rule: Can be taken at iftar. Consult doctor.", tr: "Genel kural: İftarda alınabilir. Doktora danışın." },
+  "fasting.dailyTracker": { en: "Daily Fasting Tracker", tr: "Günlük Oruç Takibi" },
+  "fasting.dailyTrackerDesc": { en: "Record your fasting status, water intake, and symptoms daily", tr: "Her gün oruç durumunuzu, su alımınızı ve semptomlarınızı kaydedin" },
+  "fasting.fastedToday": { en: "Fasted Today", tr: "Bugün Oruç Tuttum" },
+  "fasting.waterTracking": { en: "Water Tracking", tr: "Su Takibi" },
+
+  // Favorite Supplements
+  "favSupp.shoppingListHeader": { en: "My Supplement Shopping List:", tr: "Takviye Alisveris Listem:" },
+  "favSupp.noFavorites": { en: "No Favorites Yet", tr: "Henuz Favori Yok" },
+  "favSupp.noFavoritesDesc": { en: "Browse the Supplement Guide and add your favorites!", tr: "Takviye Rehberi'ne goz atin ve favorilerinizi ekleyin!" },
+  "favSupp.browseGuide": { en: "Browse Supplement Guide", tr: "Takviye Rehberine Git" },
+  "favSupp.guide": { en: "Guide", tr: "Rehber" },
+  "favSupp.title": { en: "My Favorite Supplements", tr: "Favori Takviyelerim" },
+  "favSupp.interactionReminder": { en: "Always check interactions and consult your doctor before starting any supplement.", tr: "Herhangi bir takviyeye başlamadan once etkilesim kontrolü yapin ve doktorunuza danışın." },
+  "favSupp.copied": { en: "Copied!", tr: "Kopyalandi!" },
+  "favSupp.copyList": { en: "Copy Shopping List", tr: "Alisveris Listesi Kopyala" },
+  "favSupp.selectToCompare": { en: "Select 2 supplements to compare", tr: "Karşılastirmak için 2 takviye secin" },
+  "favSupp.checkInteractions": { en: "Check Interactions", tr: "Etkileşim Kontrol" },
+  "favSupp.addToCalendar": { en: "Add to Calendar", tr: "Takvime Ekle" },
+  "favSupp.remove": { en: "Remove", tr: "Kaldir" },
+  "favSupp.quickCompare": { en: "Quick Compare", tr: "Karşılastirma" },
+  "favSupp.evidence": { en: "Evidence:", tr: "Kanit:" },
+  "favSupp.noInfo": { en: "No info available", tr: "Bilgi yok" },
+  "favSupp.detailedCompare": { en: "Detailed AI Compare", tr: "Detayli AI Karşılastirma" },
+
+  // First Aid
+  "firstAid.disclaimer": { en: "This guide does not replace professional first aid training. We recommend taking a certified first aid course.", tr: "Bu rehber profesyonel ilk yardim egitiminin yerine gecmez. Bir ilk yardim kursuna katilmanizi oneririz." },
+
+  // Food Prep
+  "foodPrep.title": { en: "Food Prep Guide", tr: "Besin Hazırlama Rehberi" },
+  "foodPrep.subtitle": { en: "How cooking method affects nutrient value", tr: "Pişirme yöntemi besin değerini nasıl etkiler" },
+  "foodPrep.searchPlaceholder": { en: "Search food...", tr: "Besin ara..." },
 }
 Object.assign(t, commonToolKeys)
 
