@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -201,8 +202,8 @@ export default function HealthRoadmapPage() {
                     <h4 className="font-semibold">{pkg.title[lang as "en" | "tr"]}</h4>
                     <p className="text-sm text-muted-foreground mt-0.5">{pkg.description[lang as "en" | "tr"]}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="outline" className="text-[10px]">{pkg.components.length} {lang === "tr" ? "bileşen" : "components"}</Badge>
-                      <Badge variant="outline" className="text-[10px]">{pkg.milestones.length} {lang === "tr" ? "hedef" : "milestones"}</Badge>
+                      <Badge variant="outline" className="text-[10px]">{pkg.components.length} {tx("roadmap.components", lang)}</Badge>
+                      <Badge variant="outline" className="text-[10px]">{pkg.milestones.length} {tx("roadmap.milestones", lang)}</Badge>
                     </div>
                   </div>
                   <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform ${isSelected ? "rotate-180" : ""}`} />

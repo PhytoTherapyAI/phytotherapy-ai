@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import {
   Cross, Star, ChefHat, Flower, HeartPulse, Heart, Globe, Shield,
   PawPrint, Beaker, Accessibility, Users, BookOpen,
@@ -62,12 +63,10 @@ export default function HealthGuidesPage() {
             <BookOpen className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {lang === "tr" ? "Sağlık Rehberleri" : "Health Guides"}
+            {tx("healthGuides.title", lang)}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 max-w-lg mx-auto">
-            {lang === "tr"
-              ? "Özel durumlar için kapsamlı sağlık rehberleri"
-              : "Comprehensive health guides for special situations"}
+            {tx("healthGuides.subtitle", lang)}
           </p>
         </div>
 
@@ -79,7 +78,7 @@ export default function HealthGuidesPage() {
                 onClick={() => setActiveGuide(null)}
                 className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 mb-4"
               >
-                ← {lang === "tr" ? "Tüm Rehberler" : "All Guides"}
+                ← {tx("healthGuides.allGuides", lang)}
               </button>
 
               {/* Horizontal scroll tabs */}

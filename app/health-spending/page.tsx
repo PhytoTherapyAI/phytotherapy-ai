@@ -136,7 +136,7 @@ export default function HealthSpendingPage() {
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
-                {lang === "tr" ? "Kategori Dagılımı" : "Category Breakdown"}
+                {tx("spending.categoryBreakdown", lang)}
               </h3>
             </div>
             <div className="space-y-2">
@@ -187,7 +187,7 @@ export default function HealthSpendingPage() {
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  placeholder={lang === "tr" ? "Tutar (TL)" : "Amount (TL)"}
+                  placeholder={tx("spending.amountPlaceholder", lang)}
                   className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <input
@@ -217,7 +217,7 @@ export default function HealthSpendingPage() {
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder={lang === "tr" ? "Açıklama (isteğe bağlı)" : "Description (optional)"}
+                placeholder={tx("spending.descriptionPlaceholder", lang)}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
               <Button
@@ -225,7 +225,7 @@ export default function HealthSpendingPage() {
                 disabled={!amount || parseFloat(amount) <= 0}
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl"
               >
-                {lang === "tr" ? "Ekle" : "Add"}
+                {tx("spending.add", lang)}
               </Button>
             </div>
           </div>
@@ -261,19 +261,17 @@ export default function HealthSpendingPage() {
         {expenses.length === 0 && (
           <div className="text-center py-12 text-gray-400 dark:text-gray-500">
             <Wallet className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>{lang === "tr" ? "Henuz harcama kaydi yok" : "No expenses recorded yet"}</p>
+            <p>{tx("spending.noExpenses", lang)}</p>
           </div>
         )}
 
         {/* Tax Info */}
         <div className="mt-8 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl border border-emerald-200 dark:border-emerald-800 p-6">
           <h3 className="font-semibold text-emerald-800 dark:text-emerald-400 mb-2">
-            {lang === "tr" ? "Vergi İndirimi Bilgisi" : "Tax Deduction Info"}
+            {tx("spending.taxTitle", lang)}
           </h3>
           <p className="text-sm text-emerald-700 dark:text-emerald-300">
-            {lang === "tr"
-              ? "Türkiye'de sağlık harcamalari yillik gelir vergisi beyannamesinde indirim olarak gosterilebilir. SGK katilim paylari, ilac, ozel hastane, dis ve goz masraflari için fatura ve makbuzlarinizi saklayin. Yillik toplam gelirin %10'unu gecmeyen sağlık harcamalari indirilebilir."
-              : "In Turkey, health expenses can be deducted in annual income tax returns. Keep receipts for SGK copays, medications, private hospital visits, dental and eye care. Health expenses up to 10% of annual income may be deductible."}
+            {tx("spending.taxInfo", lang)}
           </p>
         </div>
       </div>

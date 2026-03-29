@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface Question {
   id: number;
@@ -129,10 +130,10 @@ export default function HealthQuizPage() {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400">
             <Brain className="w-5 h-5" />
-            <span className="font-semibold">{t ? "Günlük Sağlık Bilmecesi" : "Daily Health Quiz"}</span>
+            <span className="font-semibold">{tx("quiz.title", lang)}</span>
           </div>
           <p className="text-muted-foreground text-sm">
-            {t ? "Her gun bir soru, her gun yeni bir bilgi!" : "One question a day, learn something new!"}
+            {tx("quiz.subtitle", lang)}
           </p>
         </div>
 
@@ -140,17 +141,17 @@ export default function HealthQuizPage() {
           <Card className="p-3 text-center">
             <Trophy className="w-5 h-5 mx-auto text-yellow-500 mb-1" />
             <div className="text-lg font-bold">{score}/{totalAnswered}</div>
-            <div className="text-xs text-muted-foreground">{t ? "Doğru" : "Correct"}</div>
+            <div className="text-xs text-muted-foreground">{tx("quiz.correct", lang)}</div>
           </Card>
           <Card className="p-3 text-center">
             <Star className="w-5 h-5 mx-auto text-blue-500 mb-1" />
             <div className="text-lg font-bold">{accuracy}%</div>
-            <div className="text-xs text-muted-foreground">{t ? "Başarı" : "Accuracy"}</div>
+            <div className="text-xs text-muted-foreground">{tx("quiz.accuracy", lang)}</div>
           </Card>
           <Card className="p-3 text-center">
             <Flame className="w-5 h-5 mx-auto text-orange-500 mb-1" />
             <div className="text-lg font-bold">{streak}</div>
-            <div className="text-xs text-muted-foreground">{t ? "Seri" : "Streak"}</div>
+            <div className="text-xs text-muted-foreground">{tx("quiz.streak", lang)}</div>
           </Card>
         </div>
 
@@ -197,7 +198,7 @@ export default function HealthQuizPage() {
           {!showAnswer && !completed && (
             <Button onClick={handleSubmit} disabled={selected === null} className="w-full gap-2">
               <ArrowRight className="w-4 h-4" />
-              {t ? "Cevabimi Gonder" : "Submit Answer"}
+              {tx("quiz.submitAnswer", lang)}
             </Button>
           )}
 
@@ -205,7 +206,7 @@ export default function HealthQuizPage() {
             <Card className="p-4 bg-blue-500/5 border-blue-500/20">
               <h3 className="font-semibold mb-2 flex items-center gap-2">
                 <Brain className="w-4 h-4 text-blue-500" />
-                {t ? "Açıklama" : "Explanation"}
+                {tx("quiz.explanation", lang)}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {t ? question.explanationTr : question.explanationEn}
@@ -216,14 +217,14 @@ export default function HealthQuizPage() {
           {completed && !showAnswer && (
             <Card className="p-4 bg-green-500/5 border-green-500/20 text-center">
               <CheckCircle2 className="w-8 h-8 text-green-500 mx-auto mb-2" />
-              <p className="font-semibold">{t ? "Bugunun quizini tamamladin!" : "You completed today's quiz!"}</p>
-              <p className="text-sm text-muted-foreground">{t ? "Yarin yeni bir soru olacak." : "Come back tomorrow for a new question."}</p>
+              <p className="font-semibold">{tx("quiz.completedToday", lang)}</p>
+              <p className="text-sm text-muted-foreground">{tx("quiz.comeBackTomorrow", lang)}</p>
             </Card>
           )}
         </Card>
 
         <Card className="p-4">
-          <h3 className="font-semibold mb-3">{t ? "Kategori Dağılımi" : "Category Breakdown"}</h3>
+          <h3 className="font-semibold mb-3">{tx("quiz.categoryBreakdown", lang)}</h3>
           <div className="grid grid-cols-2 gap-2">
             {Object.entries(CATEGORY_LABELS).map(([key, label]) => {
               const count = QUESTIONS.filter(q => q.category === key).length;

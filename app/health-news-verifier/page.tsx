@@ -153,19 +153,19 @@ export default function HealthNewsVerifierPage() {
             {/* Evidence Breakdown */}
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-amber-100 dark:border-gray-700 p-6">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-                {lang === "tr" ? "Kanıt Analizi" : "Evidence Breakdown"}
+                {tx("newsVerifier.evidenceBreakdown", lang)}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="text-center p-3 rounded-xl bg-amber-50 dark:bg-amber-900/10">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{lang === "tr" ? "Kanıt Düzeyi" : "Evidence Level"}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{tx("newsVerifier.evidenceLevel", lang)}</p>
                   <p className="font-bold text-amber-700 dark:text-amber-400">{result.evidenceLevel}</p>
                 </div>
                 <div className="text-center p-3 rounded-xl bg-amber-50 dark:bg-amber-900/10">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{lang === "tr" ? "Çalışma Tipi" : "Study Type"}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{tx("newsVerifier.studyType", lang)}</p>
                   <p className="font-bold text-amber-700 dark:text-amber-400 text-sm">{result.studyType}</p>
                 </div>
                 <div className="text-center p-3 rounded-xl bg-amber-50 dark:bg-amber-900/10">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{lang === "tr" ? "Örneklem" : "Sample Size"}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{tx("newsVerifier.sampleSize", lang)}</p>
                   <p className="font-bold text-amber-700 dark:text-amber-400 text-sm">{result.sampleSize}</p>
                 </div>
               </div>
@@ -175,7 +175,7 @@ export default function HealthNewsVerifierPage() {
             {result.whatWeKnow && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-amber-100 dark:border-gray-700 p-6">
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  {lang === "tr" ? "Bilim Ne Diyor?" : "What Science Says"}
+                  {tx("newsVerifier.whatScienceSays", lang)}
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300">{result.whatWeKnow}</p>
               </div>
@@ -185,7 +185,7 @@ export default function HealthNewsVerifierPage() {
             {result.nuances && result.nuances.length > 0 && (
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-amber-100 dark:border-gray-700 p-6">
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  {lang === "tr" ? "Nüanslar" : "Important Nuances"}
+                  {tx("newsVerifier.nuances", lang)}
                 </h3>
                 <ul className="space-y-2">
                   {result.nuances.map((n, i) => (
@@ -201,7 +201,7 @@ export default function HealthNewsVerifierPage() {
             {result.commonMisinterpretations && result.commonMisinterpretations.length > 0 && (
               <div className="bg-amber-50 dark:bg-amber-900/10 rounded-2xl border border-amber-200 dark:border-amber-800 p-6">
                 <h3 className="font-semibold text-amber-800 dark:text-amber-400 mb-3">
-                  {lang === "tr" ? "Yaygın Yanlış Anlamalar" : "Common Misinterpretations"}
+                  {tx("newsVerifier.misinterpretations", lang)}
                 </h3>
                 <ul className="space-y-2">
                   {result.commonMisinterpretations.map((m, i) => (
@@ -216,7 +216,7 @@ export default function HealthNewsVerifierPage() {
             {/* Bottom Line */}
             {result.bottomLine && (
               <div className="bg-gray-900 dark:bg-gray-700 rounded-2xl p-6 text-center">
-                <p className="text-xs text-gray-400 mb-2">{lang === "tr" ? "Sonuç" : "Bottom Line"}</p>
+                <p className="text-xs text-gray-400 mb-2">{tx("newsVerifier.bottomLine", lang)}</p>
                 <p className="text-white text-lg font-medium">{result.bottomLine}</p>
               </div>
             )}
@@ -225,7 +225,7 @@ export default function HealthNewsVerifierPage() {
             {result.mediaAccuracy && (
               <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 text-center">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  <span className="font-medium">{lang === "tr" ? "Medya Doğruluğu:" : "Media Accuracy:"}</span> {result.mediaAccuracy}
+                  <span className="font-medium">{tx("newsVerifier.mediaAccuracy", lang)}</span> {result.mediaAccuracy}
                 </p>
               </div>
             )}
@@ -236,7 +236,7 @@ export default function HealthNewsVerifierPage() {
         {!result && !isLoading && !error && (
           <div className="text-center py-12 text-gray-400 dark:text-gray-500">
             <Newspaper className="w-12 h-12 mx-auto mb-3 opacity-50" />
-            <p>{lang === "tr" ? "Bir sağlık iddiası yapıştırın" : "Paste a health claim to verify"}</p>
+            <p>{tx("newsVerifier.emptyState", lang)}</p>
           </div>
         )}
       </div>

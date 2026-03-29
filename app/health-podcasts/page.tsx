@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface Podcast {
   id: number;
@@ -82,10 +83,10 @@ export default function HealthPodcastsPage() {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
             <Headphones className="w-5 h-5" />
-            <span className="font-semibold">{t ? "Sağlık Podcast Önerileri" : "Health Podcast Recommendations"}</span>
+            <span className="font-semibold">{tx("podcasts.title", lang)}</span>
           </div>
           <p className="text-muted-foreground text-sm">
-            {t ? "Dinlerken ogren, sağlığın için en iyi podcast'ler" : "Learn while you listen, the best podcasts for your health"}
+            {tx("podcasts.subtitle", lang)}
           </p>
         </div>
 
@@ -93,7 +94,7 @@ export default function HealthPodcastsPage() {
           <div>
             <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
               <Star className="w-5 h-5 text-yellow-500" />
-              {t ? "One Cikanlar" : "Featured"}
+              {tx("podcasts.featured", lang)}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {featured.map(p => (
@@ -117,7 +118,7 @@ export default function HealthPodcastsPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder={t ? "Podcast veya sunucu ara..." : "Search podcasts or hosts..."}
+              placeholder={tx("podcasts.searchPlaceholder", lang)}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2 rounded-xl border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
@@ -164,11 +165,11 @@ export default function HealthPodcastsPage() {
                       <Star className="w-3 h-3 text-yellow-500" /> {p.rating}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {p.episodes} {t ? "bolum" : "episodes"}
+                      {p.episodes} {tx("podcasts.episodes", lang)}
                     </span>
                     <a href={p.link} className="text-xs text-indigo-500 hover:underline flex items-center gap-1 ml-auto">
                       <ExternalLink className="w-3 h-3" />
-                      {t ? "Dinle" : "Listen"}
+                      {tx("podcasts.listen", lang)}
                     </a>
                   </div>
                 </div>
@@ -178,16 +179,14 @@ export default function HealthPodcastsPage() {
           {filtered.length === 0 && (
             <Card className="p-8 text-center">
               <Headphones className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-              <p className="text-muted-foreground">{t ? "Podcast bulunamadı" : "No podcasts found"}</p>
+              <p className="text-muted-foreground">{tx("podcasts.notFound", lang)}</p>
             </Card>
           )}
         </div>
 
         <Card className="p-4 bg-indigo-500/5 border-indigo-500/20">
           <p className="text-sm text-muted-foreground text-center">
-            {t
-              ? "Bir podcast oneriniz mi var? Bize bildirin ve listemize ekleyelim!"
-              : "Have a podcast recommendation? Let us know and we'll add it to our list!"}
+            {tx("podcasts.suggestion", lang)}
           </p>
         </Card>
       </div>

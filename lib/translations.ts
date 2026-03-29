@@ -3314,6 +3314,94 @@ const t: Record<string, TranslationEntry> = {
   "common.active": { en: "Active", tr: "Aktif" },
   "common.print": { en: "Print", tr: "Yazdir" },
 
+  // ── health-guides ──
+  "healthGuides.title": { en: "Health Guides", tr: "Sağlık Rehberleri" },
+  "healthGuides.subtitle": { en: "Comprehensive health guides for special situations", tr: "Özel durumlar için kapsamlı sağlık rehberleri" },
+  "healthGuides.allGuides": { en: "All Guides", tr: "Tüm Rehberler" },
+
+  // ── health-news-verifier ──
+  "newsVerifier.evidenceBreakdown": { en: "Evidence Breakdown", tr: "Kanıt Analizi" },
+  "newsVerifier.evidenceLevel": { en: "Evidence Level", tr: "Kanıt Düzeyi" },
+  "newsVerifier.studyType": { en: "Study Type", tr: "Çalışma Tipi" },
+  "newsVerifier.sampleSize": { en: "Sample Size", tr: "Örneklem" },
+  "newsVerifier.whatScienceSays": { en: "What Science Says", tr: "Bilim Ne Diyor?" },
+  "newsVerifier.nuances": { en: "Important Nuances", tr: "Nüanslar" },
+  "newsVerifier.misinterpretations": { en: "Common Misinterpretations", tr: "Yaygın Yanlış Anlamalar" },
+  "newsVerifier.bottomLine": { en: "Bottom Line", tr: "Sonuç" },
+  "newsVerifier.mediaAccuracy": { en: "Media Accuracy:", tr: "Medya Doğruluğu:" },
+  "newsVerifier.emptyState": { en: "Paste a health claim to verify", tr: "Bir sağlık iddiası yapıştırın" },
+
+  // ── health-podcasts ──
+  "podcasts.title": { en: "Health Podcast Recommendations", tr: "Sağlık Podcast Önerileri" },
+  "podcasts.subtitle": { en: "Learn while you listen, the best podcasts for your health", tr: "Dinlerken ogren, sağlığın için en iyi podcast'ler" },
+  "podcasts.featured": { en: "Featured", tr: "One Cikanlar" },
+  "podcasts.searchPlaceholder": { en: "Search podcasts or hosts...", tr: "Podcast veya sunucu ara..." },
+  "podcasts.episodes": { en: "episodes", tr: "bolum" },
+  "podcasts.listen": { en: "Listen", tr: "Dinle" },
+  "podcasts.notFound": { en: "No podcasts found", tr: "Podcast bulunamadı" },
+  "podcasts.suggestion": { en: "Have a podcast recommendation? Let us know and we'll add it to our list!", tr: "Bir podcast oneriniz mi var? Bize bildirin ve listemize ekleyelim!" },
+
+  // ── health-quiz ──
+  "quiz.title": { en: "Daily Health Quiz", tr: "Günlük Sağlık Bilmecesi" },
+  "quiz.subtitle": { en: "One question a day, learn something new!", tr: "Her gun bir soru, her gun yeni bir bilgi!" },
+  "quiz.correct": { en: "Correct", tr: "Doğru" },
+  "quiz.accuracy": { en: "Accuracy", tr: "Başarı" },
+  "quiz.streak": { en: "Streak", tr: "Seri" },
+  "quiz.submitAnswer": { en: "Submit Answer", tr: "Cevabimi Gonder" },
+  "quiz.explanation": { en: "Explanation", tr: "Açıklama" },
+  "quiz.completedToday": { en: "You completed today's quiz!", tr: "Bugunun quizini tamamladin!" },
+  "quiz.comeBackTomorrow": { en: "Come back tomorrow for a new question.", tr: "Yarin yeni bir soru olacak." },
+  "quiz.categoryBreakdown": { en: "Category Breakdown", tr: "Kategori Dağılımi" },
+
+  // ── health-report-card ──
+  "reportCard.title": { en: "Annual Health Report", tr: "Yıllık Sağlık Raporu" },
+  "reportCard.summaryReport": { en: "summary report", tr: "ozet rapor" },
+  "reportCard.medCompliance": { en: "Med Compliance", tr: "İlaç Uyumu" },
+  "reportCard.supplement": { en: "Supplement", tr: "Takviye Uyumu" },
+  "reportCard.checkups": { en: "Checkups", tr: "Doktor Ziyareti" },
+  "reportCard.bloodTests": { en: "Blood Tests", tr: "Kan Tahlili" },
+  "reportCard.goalsMet": { en: "Goals Met", tr: "Hedef" },
+  "reportCard.labTrends": { en: "Lab Trends", tr: "Laboratuvar Trendleri" },
+  "reportCard.healthGoals": { en: "Health Goals", tr: "Sağlık Hedefleri" },
+  "reportCard.completed": { en: "Completed", tr: "Tamamlandı" },
+  "reportCard.inProgress": { en: "In Progress", tr: "Devam Ediyor" },
+  "reportCard.notStarted": { en: "Not Started", tr: "Başlamadı" },
+  "reportCard.overallAssessment": { en: "Overall Assessment", tr: "Genel Değerlendirme" },
+  "reportCard.overallText": { en: "Your health indicators are trending positively overall. The decline in HbA1c and cholesterol is notable. You reached your Vitamin D target. There is room for improvement in exercise habits and sleep patterns.", tr: "Sağlık gostergeleriniz genel olarak olumlu yonde ilerliyor. HbA1c ve kolesterol degerlerinizdeki dusus dikkat cekici. D vitamini hedefinize ulastiniz. Egzersiz aliskanligi ve uyku duzeni konusunda gelisme alani var." },
+
+  // ── health-roadmap (extra) ──
+  "roadmap.components": { en: "components", tr: "bileşen" },
+  "roadmap.milestones": { en: "milestones", tr: "hedef" },
+
+  // ── health-spending ──
+  "spending.categoryBreakdown": { en: "Category Breakdown", tr: "Kategori Dagılımı" },
+  "spending.amountPlaceholder": { en: "Amount (TL)", tr: "Tutar (TL)" },
+  "spending.descriptionPlaceholder": { en: "Description (optional)", tr: "Açıklama (isteğe bağlı)" },
+  "spending.add": { en: "Add", tr: "Ekle" },
+  "spending.noExpenses": { en: "No expenses recorded yet", tr: "Henuz harcama kaydi yok" },
+  "spending.taxTitle": { en: "Tax Deduction Info", tr: "Vergi İndirimi Bilgisi" },
+  "spending.taxInfo": { en: "In Turkey, health expenses can be deducted in annual income tax returns. Keep receipts for SGK copays, medications, private hospital visits, dental and eye care. Health expenses up to 10% of annual income may be deductible.", tr: "Türkiye'de sağlık harcamalari yillik gelir vergisi beyannamesinde indirim olarak gosterilebilir. SGK katilim paylari, ilac, ozel hastane, dis ve goz masraflari için fatura ve makbuzlarinizi saklayin. Yillik toplam gelirin %10'unu gecmeyen sağlık harcamalari indirilebilir." },
+
+  // ── health-timeline ──
+  "timeline.title": { en: "Health Timeline", tr: "Sağlık Zaman Çizelgesi" },
+  "timeline.subtitle": { en: "Your complete health history in one chronological view", tr: "Tüm sağlık geçmişin tek kronolojik çizelgede" },
+  "timeline.events": { en: "events", tr: "olay" },
+  "timeline.addEvent": { en: "Add Event", tr: "Olay Ekle" },
+  "timeline.titlePlaceholder": { en: "Title", tr: "Başlık" },
+  "timeline.detailsPlaceholder": { en: "Details (optional)", tr: "Detay (opsiyonel)" },
+  "timeline.bloodTest": { en: "Blood Test", tr: "Kan Tahlili" },
+  "timeline.emptyState": { en: "Timeline is empty. Will auto-populate from profile data.", tr: "Henüz zaman çizelgesi boş. Profil verilerinden otomatik doldurulacak." },
+
+  // ── healthy-recipes ──
+  "recipes.title": { en: "Healthy Recipes", tr: "Sağlıkli Tarifler" },
+  "recipes.subtitle": { en: "Delicious recipes for special dietary needs", tr: "Özel diyetlere uygun, sağlıkli ve lezzetli tarifler" },
+  "recipes.searchPlaceholder": { en: "Search recipes...", tr: "Tarif ara..." },
+  "recipes.all": { en: "All", tr: "Tumunu" },
+  "recipes.ingredients": { en: "Ingredients", tr: "Malzemeler" },
+  "recipes.nutritionalHighlights": { en: "Nutritional Highlights", tr: "Besin Vurgulari" },
+  "recipes.goodFor": { en: "Good For", tr: "Bunlara Iyi Gelir" },
+  "recipes.notFound": { en: "No recipes found", tr: "Tarif bulunamadı" },
+
 }
 
 // ══════════════════════════════════════════

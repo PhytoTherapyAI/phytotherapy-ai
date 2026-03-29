@@ -54,7 +54,7 @@ export default function HealthTimelinePage() {
       // Load blood tests
       const { data: tests } = await supabase.from("blood_tests").select("created_at, id").eq("user_id", user.id)
       tests?.forEach((t: any) => {
-        autoEvents.push({ id: `test-${t.id}`, date: t.created_at?.split("T")[0] || "", type: "lab_test", title: lang === "tr" ? "Kan Tahlili" : "Blood Test", source: "auto" })
+        autoEvents.push({ id: `test-${t.id}`, date: t.created_at?.split("T")[0] || "", type: "lab_test", title: tx("timeline.bloodTest", lang), source: "auto" })
       })
     } catch (e) { console.error(e) }
 
@@ -110,13 +110,13 @@ export default function HealthTimelinePage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Clock className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold">{lang === "tr" ? "Sağlık Zaman Çizelgesi" : "Health Timeline"}</h1>
-          <p className="text-muted-foreground mt-1">{lang === "tr" ? "Tüm sağlık geçmişin tek kronolojik çizelgede" : "Your complete health history in one chronological view"}</p>
-          <p className="text-xs text-muted-foreground mt-1">{events.length} {lang === "tr" ? "olay" : "events"}</p>
+          <h1 className="text-2xl font-bold">{tx("timeline.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("timeline.subtitle", lang)}</p>
+          <p className="text-xs text-muted-foreground mt-1">{events.length} {tx("timeline.events", lang)}</p>
         </div>
 
         <Button onClick={() => setShowAdd(!showAdd)} className="w-full mb-6">
-          <Plus className="w-4 h-4 mr-2" />{lang === "tr" ? "Olay Ekle" : "Add Event"}
+          <Plus className="w-4 h-4 mr-2" />{tx("timeline.addEvent", lang)}
         </Button>
 
         {showAdd && (
@@ -131,8 +131,8 @@ export default function HealthTimelinePage() {
                 ))}
               </div>
               <input type="date" className="w-full px-3 py-2 rounded border border-border bg-background" value={newEvent.date || ""} onChange={e => setNewEvent({ ...newEvent, date: e.target.value })} />
-              <input className="w-full px-3 py-2 rounded border border-border bg-background" placeholder={lang === "tr" ? "Başlık" : "Title"} value={newEvent.title || ""} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })} />
-              <input className="w-full px-3 py-2 rounded border border-border bg-background" placeholder={lang === "tr" ? "Detay (opsiyonel)" : "Details (optional)"} value={newEvent.details || ""} onChange={e => setNewEvent({ ...newEvent, details: e.target.value })} />
+              <input className="w-full px-3 py-2 rounded border border-border bg-background" placeholder={tx("timeline.titlePlaceholder", lang)} value={newEvent.title || ""} onChange={e => setNewEvent({ ...newEvent, title: e.target.value })} />
+              <input className="w-full px-3 py-2 rounded border border-border bg-background" placeholder={tx("timeline.detailsPlaceholder", lang)} value={newEvent.details || ""} onChange={e => setNewEvent({ ...newEvent, details: e.target.value })} />
               <Button onClick={addEvent} disabled={!newEvent.title}>{tx("common.save", lang)}</Button>
             </div>
           </Card>
@@ -141,7 +141,7 @@ export default function HealthTimelinePage() {
         {events.length === 0 ? (
           <Card className="p-8 text-center">
             <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">{lang === "tr" ? "Henüz zaman çizelgesi boş. Profil verilerinden otomatik doldurulacak." : "Timeline is empty. Will auto-populate from profile data."}</p>
+            <p className="text-muted-foreground">{tx("timeline.emptyState", lang)}</p>
           </Card>
         ) : (
           <div className="space-y-8">

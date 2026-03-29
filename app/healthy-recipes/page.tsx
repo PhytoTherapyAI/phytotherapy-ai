@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface Recipe {
   id: number;
@@ -86,10 +87,10 @@ export default function HealthyRecipesPage() {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
             <UtensilsCrossed className="w-5 h-5" />
-            <span className="font-semibold">{t ? "Sağlıkli Tarifler" : "Healthy Recipes"}</span>
+            <span className="font-semibold">{tx("recipes.title", lang)}</span>
           </div>
           <p className="text-muted-foreground text-sm">
-            {t ? "Özel diyetlere uygun, sağlıkli ve lezzetli tarifler" : "Delicious recipes for special dietary needs"}
+            {tx("recipes.subtitle", lang)}
           </p>
         </div>
 
@@ -98,7 +99,7 @@ export default function HealthyRecipesPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input
               type="text"
-              placeholder={t ? "Tarif ara..." : "Search recipes..."}
+              placeholder={tx("recipes.searchPlaceholder", lang)}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2 rounded-xl border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
@@ -108,7 +109,7 @@ export default function HealthyRecipesPage() {
 
         <div className="flex gap-2 overflow-x-auto pb-1">
           <Button variant={activeTag === "all" ? "default" : "outline"} size="sm" onClick={() => setActiveTag("all")} className="shrink-0">
-            {t ? "Tumunu" : "All"} ({RECIPES.length})
+            {tx("recipes.all", lang)} ({RECIPES.length})
           </Button>
           {Object.entries(TAGS).map(([key, val]) => (
             <Button key={key} variant={activeTag === key ? "default" : "outline"} size="sm" onClick={() => setActiveTag(key)} className="shrink-0">
@@ -142,7 +143,7 @@ export default function HealthyRecipesPage() {
               {expanded === r.id && (
                 <div className="px-4 pb-4 space-y-3 border-t pt-3">
                   <div>
-                    <h4 className="text-sm font-semibold mb-1">{t ? "Malzemeler" : "Ingredients"}</h4>
+                    <h4 className="text-sm font-semibold mb-1">{tx("recipes.ingredients", lang)}</h4>
                     <ul className="text-sm text-muted-foreground space-y-0.5">
                       {(t ? r.ingredientsTr : r.ingredientsEn).map((ing, i) => (
                         <li key={i} className="flex items-center gap-2"><Leaf className="w-3 h-3 text-emerald-500 shrink-0" />{ing}</li>
@@ -150,11 +151,11 @@ export default function HealthyRecipesPage() {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold mb-1">{t ? "Besin Vurgulari" : "Nutritional Highlights"}</h4>
+                    <h4 className="text-sm font-semibold mb-1">{tx("recipes.nutritionalHighlights", lang)}</h4>
                     <p className="text-sm text-muted-foreground">{t ? r.highlightsTr : r.highlightsEn}</p>
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold mb-1">{t ? "Bunlara Iyi Gelir" : "Good For"}</h4>
+                    <h4 className="text-sm font-semibold mb-1">{tx("recipes.goodFor", lang)}</h4>
                     <div className="flex gap-1.5 flex-wrap">
                       {(t ? r.goodForTr : r.goodForEn).map((g, i) => (
                         <Badge key={i} variant="secondary" className="text-xs"><Heart className="w-3 h-3 mr-1" />{g}</Badge>
@@ -168,7 +169,7 @@ export default function HealthyRecipesPage() {
           {filtered.length === 0 && (
             <Card className="p-8 text-center">
               <UtensilsCrossed className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-              <p className="text-muted-foreground">{t ? "Tarif bulunamadı" : "No recipes found"}</p>
+              <p className="text-muted-foreground">{tx("recipes.notFound", lang)}</p>
             </Card>
           )}
         </div>
