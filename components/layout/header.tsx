@@ -18,7 +18,6 @@ const mainLinks = [
   { href: "/health-assistant", labelKey: "nav.assistant" },
   { href: "/calendar", labelKey: "nav.calendar" },
   { href: "/interaction-checker", labelKey: "nav.interaction" },
-  { href: "/about", labelKey: "nav.about" },
 ];
 
 // Tools dropdown items — all 85 tools organized by category
