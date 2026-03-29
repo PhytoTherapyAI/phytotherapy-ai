@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface RoutineItem { id: string; time: string; activity: string; completed: boolean; }
 interface BehaviorNote { id: string; date: string; mood: "happy" | "neutral" | "upset"; note: string; }
@@ -64,11 +65,11 @@ export default function AutismSupportPage() {
     setNewNote("");
   };
   const sections = [
-    { id: "routine", icon: <ClipboardList className="w-4 h-4" />, label: isTr ? "Rutin Takip" : "Routine Tracker" },
-    { id: "sensory", icon: <AlertTriangle className="w-4 h-4" />, label: isTr ? "Duyusal Tetikler" : "Sensory Triggers" },
-    { id: "therapy", icon: <Calendar className="w-4 h-4" />, label: isTr ? "Terapi Takvimi" : "Therapy Calendar" },
-    { id: "behavior", icon: <BookOpen className="w-4 h-4" />, label: isTr ? "Davranis Notlari" : "Behavioral Notes" },
-    { id: "resources", icon: <Brain className="w-4 h-4" />, label: isTr ? "Kaynaklar" : "Resources" },
+    { id: "routine", icon: <ClipboardList className="w-4 h-4" />, label: tx("autism.routineTracker", lang) },
+    { id: "sensory", icon: <AlertTriangle className="w-4 h-4" />, label: tx("autism.sensoryTriggers", lang) },
+    { id: "therapy", icon: <Calendar className="w-4 h-4" />, label: tx("autism.therapyCalendar", lang) },
+    { id: "behavior", icon: <BookOpen className="w-4 h-4" />, label: tx("autism.behavioralNotes", lang) },
+    { id: "resources", icon: <Brain className="w-4 h-4" />, label: tx("autism.resources", lang) },
   ];
   const moodIcon = (m: string) => m === "happy" ? <Smile className="w-5 h-5 text-green-500" /> : m === "upset" ? <Frown className="w-5 h-5 text-red-500" /> : <Meh className="w-5 h-5 text-yellow-500" />;
   const sevColor = (s: string) => s === "high" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" : s === "medium" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
@@ -79,8 +80,8 @@ export default function AutismSupportPage() {
         <div className="flex items-center gap-3 mb-6">
           <Brain className="w-8 h-8 text-purple-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Otizm Destek Merkezi" : "Autism Support Center"}</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{isTr ? "Ebeveynler için gunluk takip ve destek araclari" : "Daily tracking and support tools for parents"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("autism.title", lang)}</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{tx("autism.subtitle", lang)}</p>
           </div>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
@@ -91,11 +92,11 @@ export default function AutismSupportPage() {
           <div className="space-y-4">
             <Card className="p-4">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold">{isTr ? "Günlük İlerleme" : "Daily Progress"}</h2>
+                <h2 className="text-lg font-semibold">{tx("autism.dailyProgress", lang)}</h2>
                 <Badge variant="outline" className="text-purple-600">{completedCount}/{routines.length}</Badge>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-2"><div className="bg-purple-500 h-3 rounded-full transition-all" style={{ width: progressPct + "%" }} /></div>
-              <p className="text-xs text-gray-500">{progressPct}% {isTr ? "tamamlandi" : "completed"}</p>
+              <p className="text-xs text-gray-500">{progressPct}% {tx("autism.completed", lang)}</p>
             </Card>
             <div className="space-y-2">
               {routines.map(item => (
@@ -111,27 +112,27 @@ export default function AutismSupportPage() {
         {activeSection === "sensory" && (
           <div className="space-y-4">
             <Card className="p-4 border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20">
-              <h2 className="text-lg font-semibold mb-1">{isTr ? "Duyusal Tetikleyiciler" : "Sensory Trigger Profile"}</h2>
-              <p className="text-sm text-gray-600">{isTr ? "Bilinen tetikleyicileri takip edin." : "Track known triggers and prepare for new environments."}</p>
+              <h2 className="text-lg font-semibold mb-1">{tx("autism.sensoryTriggerProfile", lang)}</h2>
+              <p className="text-sm text-gray-600">{tx("autism.sensoryTriggerDesc", lang)}</p>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {SENSORY_TRIGGERS.map(tr => (
                 <Card key={tr.id} className="p-4 flex items-start gap-3">
                   <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">{tr.icon}</div>
                   <div className="flex-1">
-                    <div className="flex items-center justify-between gap-2"><span className="text-sm font-medium">{isTr ? tr.tr : tr.en}</span><Badge className={sevColor(tr.severity)}>{tr.severity}</Badge></div>
+                    <div className="flex items-center justify-between gap-2"><span className="text-sm font-medium">{tr[lang]}</span><Badge className={sevColor(tr.severity)}>{tr.severity}</Badge></div>
                     <span className="text-xs text-gray-500">{tr.cat}</span>
                   </div>
                 </Card>))}
             </div>
-            <Card className="p-4 border-dashed border-2 flex items-center justify-center gap-2 text-gray-400 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"><Plus className="w-4 h-4" /> {isTr ? "Yeni tetikleyici ekle" : "Add new trigger"}</Card>
+            <Card className="p-4 border-dashed border-2 flex items-center justify-center gap-2 text-gray-400 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"><Plus className="w-4 h-4" /> {tx("autism.addTrigger", lang)}</Card>
           </div>
         )}
 
         {activeSection === "therapy" && (
           <div className="space-y-4">
             <Card className="p-4">
-              <h2 className="text-lg font-semibold mb-4">{isTr ? "Haftalık Terapi Programı" : "Weekly Therapy Schedule"}</h2>
+              <h2 className="text-lg font-semibold mb-4">{tx("autism.weeklyTherapy", lang)}</h2>
               <div className="grid grid-cols-7 gap-2">
                 {THERAPY_SCHEDULE.map(day => (
                   <div key={day.day} className="text-center">
@@ -141,8 +142,8 @@ export default function AutismSupportPage() {
               </div>
             </Card>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {[{ label: isTr ? "Mesleki Terapi" : "Occupational Therapy", count: 2, color: "text-blue-600" }, { label: isTr ? "Konusma Terapisi" : "Speech Therapy", count: 2, color: "text-green-600" }, { label: isTr ? "ABA Terapi" : "ABA Therapy", count: 2, color: "text-orange-600" }].map(th => (
-                <Card key={th.label} className="p-4 text-center"><div className={"text-2xl font-bold " + th.color}>{th.count}x</div><div className="text-sm text-gray-600">{th.label} / {isTr ? "hafta" : "week"}</div></Card>))}
+              {[{ label: tx("autism.occupationalTherapy", lang), count: 2, color: "text-blue-600" }, { label: tx("autism.speechTherapy", lang), count: 2, color: "text-green-600" }, { label: tx("autism.abaTherapy", lang), count: 2, color: "text-orange-600" }].map(th => (
+                <Card key={th.label} className="p-4 text-center"><div className={"text-2xl font-bold " + th.color}>{th.count}x</div><div className="text-sm text-gray-600">{th.label} / {tx("autism.perWeek", lang)}</div></Card>))}
             </div>
           </div>
         )}
@@ -150,10 +151,10 @@ export default function AutismSupportPage() {
         {activeSection === "behavior" && (
           <div className="space-y-4">
             <Card className="p-4">
-              <h2 className="text-lg font-semibold mb-3">{isTr ? "Yeni Not Ekle" : "Add New Note"}</h2>
+              <h2 className="text-lg font-semibold mb-3">{tx("autism.addNote", lang)}</h2>
               <div className="flex gap-2 mb-3">{(["happy", "neutral", "upset"] as const).map(m => (<Button key={m} variant={newNoteMood === m ? "default" : "outline"} size="sm" onClick={() => setNewNoteMood(m)}>{moodIcon(m)}</Button>))}</div>
               <div className="flex gap-2">
-                <input className="flex-1 rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Bugünün notlarını yazın..." : "Write observations..."} value={newNote} onChange={e => setNewNote(e.target.value)} onKeyDown={e => e.key === "Enter" && addNote()} />
+                <input className="flex-1 rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={tx("autism.writeObservations", lang)} value={newNote} onChange={e => setNewNote(e.target.value)} onKeyDown={e => e.key === "Enter" && addNote()} />
                 <Button onClick={addNote} size="sm"><Plus className="w-4 h-4" /></Button>
               </div>
             </Card>
@@ -168,12 +169,12 @@ export default function AutismSupportPage() {
         {activeSection === "resources" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { title: isTr ? "Gorsel Program Oluşturucu" : "Visual Schedule Builder", desc: isTr ? "Gorsel kartlarla gunluk program" : "Create daily schedules with visual cards", color: "from-blue-500 to-blue-600" },
-              { title: isTr ? "Sosyal Hikaye Sablonlari" : "Social Story Templates", desc: isTr ? "Yeni durumlara hazirlama" : "Preparation stories for new situations", color: "from-green-500 to-green-600" },
-              { title: isTr ? "Sakinlesme Stratejileri" : "Calming Strategies", desc: isTr ? "Duyusal yuklenme için teknikler" : "Techniques for sensory overload", color: "from-purple-500 to-purple-600" },
-              { title: isTr ? "Ebeveyn Toplulugu" : "Parent Community", desc: isTr ? "Ailelerle deneyim paylasin" : "Share experiences with families", color: "from-orange-500 to-orange-600" },
-              { title: isTr ? "IEP / BEP Takipci" : "IEP Goal Tracker", desc: isTr ? "Bireysel egitim plani hedefleri" : "Track education plan goals", color: "from-pink-500 to-pink-600" },
-              { title: isTr ? "Terapi İlerleme Raporu" : "Therapy Progress Report", desc: isTr ? "Terapistler için ilerleme ozeti" : "Progress summary for therapists", color: "from-teal-500 to-teal-600" },
+              { title: tx("autism.visualSchedule", lang), desc: tx("autism.visualScheduleDesc", lang), color: "from-blue-500 to-blue-600" },
+              { title: tx("autism.socialStories", lang), desc: tx("autism.socialStoriesDesc", lang), color: "from-green-500 to-green-600" },
+              { title: tx("autism.calmingStrategies", lang), desc: tx("autism.calmingStrategiesDesc", lang), color: "from-purple-500 to-purple-600" },
+              { title: tx("autism.parentCommunity", lang), desc: tx("autism.parentCommunityDesc", lang), color: "from-orange-500 to-orange-600" },
+              { title: tx("autism.iepTracker", lang), desc: tx("autism.iepTrackerDesc", lang), color: "from-pink-500 to-pink-600" },
+              { title: tx("autism.therapyProgress", lang), desc: tx("autism.therapyProgressDesc", lang), color: "from-teal-500 to-teal-600" },
             ].map(res => (<Card key={res.title} className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"><div className={"h-2 bg-gradient-to-r " + res.color} /><div className="p-4"><h3 className="font-semibold text-sm mb-1">{res.title}</h3><p className="text-xs text-gray-500">{res.desc}</p></div></Card>))}
           </div>
         )}

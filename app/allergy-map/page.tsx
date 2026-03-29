@@ -225,7 +225,7 @@ export default function AllergyMapPage() {
     ].join("\n");
 
     navigator.clipboard.writeText(cardText);
-    setSuccess(lang === "tr" ? "Alerji karti panoya kopyalandi!" : "Emergency card copied to clipboard!");
+    setSuccess(tx("allergy.emergencyCardCopied", lang));
     setTimeout(() => setSuccess(null), 3000);
   };
 
@@ -285,7 +285,7 @@ export default function AllergyMapPage() {
             size="sm"
           >
             <Share2 className="h-4 w-4" />
-            {lang === "tr" ? "Acil Kart" : "Emergency Card"}
+            {tx("allergy.emergencyCard", lang)}
           </Button>
         )}
       </div>
@@ -343,7 +343,7 @@ export default function AllergyMapPage() {
                 type="text"
                 value={formTrigger}
                 onChange={(e) => setFormTrigger(e.target.value)}
-                placeholder={lang === "tr" ? "orn. Penisilin, Findik, Toz..." : "e.g. Penicillin, Peanuts, Dust..."}
+                placeholder={tx("allergy.triggerPlaceholder", lang)}
                 className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400"
               />
             </div>
@@ -358,7 +358,7 @@ export default function AllergyMapPage() {
                     food: tx("allergy.food", lang),
                     medication: tx("allergy.medication", lang),
                     environmental: tx("allergy.environmental", lang),
-                    supplement: lang === "tr" ? "Takviye" : "Supplement",
+                    supplement: tx("allergy.supplement", lang),
                   };
                   return (
                     <button
@@ -459,7 +459,7 @@ export default function AllergyMapPage() {
               className="w-full gap-2 bg-amber-600 hover:bg-amber-700 text-white"
             >
               {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-              {lang === "tr" ? "Kaydet" : "Save"}
+              {tx("allergy.save", lang)}
             </Button>
           </div>
         </div>
@@ -472,7 +472,7 @@ export default function AllergyMapPage() {
             <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
               <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-red-700 dark:text-red-400">
                 <AlertTriangle className="h-3.5 w-3.5" />
-                {lang === "tr" ? "Çatışmalar Bulundu" : "Conflicts Found"}
+                {tx("allergy.conflictsFound", lang)}
               </h3>
               <div className="space-y-2">
                 {crossCheck.conflicts.map((c, i) => (
@@ -497,7 +497,7 @@ export default function AllergyMapPage() {
           {crossCheck.warnings.length > 0 && (
             <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4 dark:border-amber-800 dark:bg-amber-950/20">
               <h3 className="mb-2 text-sm font-semibold text-amber-700 dark:text-amber-400">
-                {lang === "tr" ? "Uyarılar" : "Warnings"}
+                {tx("allergy.warnings", lang)}
               </h3>
               {crossCheck.warnings.map((w, i) => (
                 <p key={i} className="text-xs text-amber-600 dark:text-amber-300">
@@ -524,7 +524,7 @@ export default function AllergyMapPage() {
           <div className="rounded-lg border-2 border-dashed p-8 text-center">
             <ShieldAlert className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
-              {lang === "tr" ? "Henuz alerji kaydedilmedi" : "No allergies recorded yet"}
+              {tx("allergy.noRecords", lang)}
             </p>
           </div>
         ) : (
@@ -545,7 +545,7 @@ export default function AllergyMapPage() {
                       </span>
                       {r.diagnosed_by_doctor && (
                         <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-                          {lang === "tr" ? "Doktor" : "Dr."}
+                          {tx("allergy.doctor", lang)}
                         </span>
                       )}
                     </div>

@@ -142,12 +142,10 @@ export default function AirQualityPage() {
         {/* AQI Input */}
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold">
-            {lang === "tr" ? "AQI Değerinizi Girin" : "Enter Your AQI Value"}
+            {tx("air.enterAqi", lang)}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {lang === "tr"
-              ? "Yerel hava kalitesi endeksini airnow.gov, aqicn.org veya yerel kaynaklardan ogreneblirsiniz."
-              : "Find your local AQI from airnow.gov, aqicn.org, or local sources."}
+            {tx("air.findAqi", lang)}
           </p>
           <div className="flex gap-3">
             <input
@@ -160,7 +158,7 @@ export default function AirQualityPage() {
               className="flex-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
             <Button onClick={handleAQICheck} className="bg-sky-600 hover:bg-sky-700 text-white">
-              {lang === "tr" ? "Kontrol Et" : "Check"}
+              {tx("air.check", lang)}
             </Button>
           </div>
         </div>
@@ -180,28 +178,28 @@ export default function AirQualityPage() {
               <div className="bg-white/60 dark:bg-gray-900/40 rounded-xl p-4 space-y-1">
                 <div className="flex items-center gap-2 font-medium text-sm">
                   <Shield className="w-4 h-4" />
-                  {lang === "tr" ? "Genel Tavsiye" : "General Advice"}
+                  {tx("air.generalAdvice", lang)}
                 </div>
                 <p className="text-sm">{selectedLevel.general[lang]}</p>
               </div>
               <div className="bg-white/60 dark:bg-gray-900/40 rounded-xl p-4 space-y-1">
                 <div className="flex items-center gap-2 font-medium text-sm">
                   <AlertTriangle className="w-4 h-4" />
-                  {lang === "tr" ? "Astim / KOAH" : "Asthma / COPD"}
+                  {tx("air.asthmaCopd", lang)}
                 </div>
                 <p className="text-sm">{selectedLevel.sensitive[lang]}</p>
               </div>
               <div className="bg-white/60 dark:bg-gray-900/40 rounded-xl p-4 space-y-1">
                 <div className="flex items-center gap-2 font-medium text-sm">
                   <Activity className="w-4 h-4" />
-                  {lang === "tr" ? "Egzersiz" : "Exercise"}
+                  {tx("air.exercise", lang)}
                 </div>
                 <p className="text-sm">{selectedLevel.exercise[lang]}</p>
               </div>
               <div className="bg-white/60 dark:bg-gray-900/40 rounded-xl p-4 space-y-1">
                 <div className="flex items-center gap-2 font-medium text-sm">
                   <Shield className="w-4 h-4" />
-                  {lang === "tr" ? "Maske Rehberi" : "Mask Guidance"}
+                  {tx("air.maskGuidance", lang)}
                 </div>
                 <p className="text-sm">{selectedLevel.mask[lang]}</p>
               </div>
@@ -212,7 +210,7 @@ export default function AirQualityPage() {
         {/* Full AQI Reference Table */}
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold">
-            {lang === "tr" ? "AQI Referans Tablosu" : "AQI Reference Table"}
+            {tx("air.referenceTable", lang)}
           </h2>
           <div className="grid gap-3">
             {AQI_LEVELS.map((level) => (

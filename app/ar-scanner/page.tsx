@@ -43,18 +43,16 @@ export default function ARScannerPage() {
         </div>
         <Smartphone className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
         <p className="text-white text-lg font-semibold mb-2">
-          {lang === "tr" ? "WebXR Tabanli İlaç Tarayici" : "WebXR-Based Drug Scanner"}
+          {tx("ar.webxrScanner", lang)}
         </p>
         <p className="text-gray-400 text-sm max-w-md mx-auto">
-          {lang === "tr"
-            ? "Ek uygulama gerektirmeden tarayicinizdan calisan artirilmis gerçeklik deneyimi"
-            : "Augmented reality experience running directly from your browser — no app required"}
+          {tx("ar.webxrDesc", lang)}
         </p>
       </div>
 
       {/* How It Works */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Nasil Calisacak?" : "How It Will Work"}
+        {tx("ar.howItWorks", lang)}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
         {STEPS.map((s, i) => (
@@ -72,7 +70,7 @@ export default function ARScannerPage() {
 
       {/* Capabilities */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Yetenekler" : "Capabilities"}
+        {tx("ar.capabilities", lang)}
       </h2>
       <div className="p-5 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 mb-6">
         <ul className="space-y-2.5">
@@ -88,9 +86,7 @@ export default function ARScannerPage() {
       <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800 flex items-start gap-3">
         <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
         <p className="text-sm text-amber-700 dark:text-amber-400">
-          {lang === "tr"
-            ? "AR Tarayici WebXR API destekleyen modern tarayicilarda calisacaktir. iOS Safari desteği sinirli olabilir."
-            : "AR Scanner will work on modern browsers supporting WebXR API. iOS Safari support may be limited."}
+          {tx("ar.browserNote", lang)}
         </p>
       </div>
     </div>

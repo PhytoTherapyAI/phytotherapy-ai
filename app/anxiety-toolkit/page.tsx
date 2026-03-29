@@ -172,9 +172,7 @@ export default function AnxietyToolkitPage() {
             <Phone className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-600" />
             <div>
               <p className="font-bold text-red-700 dark:text-red-300">
-                {lang === "tr"
-                  ? "Kaygi seviyeniz cok yüksek. Lütfen profesyonel destek alin."
-                  : "Your anxiety level is very high. Please seek professional support."}
+                {tx("anxiety.highLevel", lang)}
               </p>
               <p className="mt-2 text-lg font-bold text-red-600">{result.crisisLine}</p>
             </div>
@@ -188,9 +186,7 @@ export default function AnxietyToolkitPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-amber-600" />
             <p className="font-semibold text-amber-700 dark:text-amber-300">
-              {lang === "tr"
-                ? "Kaygi seviyeniz orta-yüksek. Bir ruh sağlığı uzmaniyla görüşmenizi oneririz."
-                : "Your anxiety level is moderate-high. We recommend speaking with a mental health professional."}
+              {tx("anxiety.moderateLevel", lang)}
             </p>
           </div>
         </div>
@@ -216,9 +212,7 @@ export default function AnxietyToolkitPage() {
         </div>
         {panicAttack && (
           <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-            {lang === "tr"
-              ? "Panik atak modunda hemen topraklama protokolu gosterilecektir."
-              : "Panic mode will show immediate grounding protocol."}
+            {tx("anxiety.panicModeNote", lang)}
           </p>
         )}
       </div>
@@ -263,8 +257,8 @@ export default function AnxietyToolkitPage() {
               className="w-full accent-blue-500"
             />
             <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-              <span>{lang === "tr" ? "Minimum" : "Minimal"}</span>
-              <span>{lang === "tr" ? "Siddetli" : "Severe"}</span>
+              <span>{tx("anxiety.minimal", lang)}</span>
+              <span>{tx("anxiety.severe", lang)}</span>
             </div>
           </div>
 
@@ -297,16 +291,14 @@ export default function AnxietyToolkitPage() {
               className="flex w-full items-center justify-between"
             >
               <h2 className="text-lg font-bold text-blue-700 dark:text-blue-300">
-                {tx("anxiety.gad7", lang)} {lang === "tr" ? "(Istege Bagli)" : "(Optional)"}
+                {tx("anxiety.gad7", lang)} {tx("anxiety.gad7Optional", lang)}
               </h2>
               {showGAD7 ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
             </button>
             {showGAD7 && (
               <div className="mt-4 space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  {lang === "tr"
-                    ? "Son 2 hafta icinde asagidaki sorunlardan ne siklukla rahatsiz oldunuz?"
-                    : "Over the last 2 weeks, how often have you been bothered by the following?"}
+                  {tx("anxiety.gad7Intro", lang)}
                 </p>
                 {gad7Questions.map((q, qi) => (
                   <div key={qi} className="rounded-lg border p-3">
@@ -360,7 +352,7 @@ export default function AnxietyToolkitPage() {
           size="lg"
         >
           {isLoading ? (
-            <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{lang === "tr" ? "Yükleniyor..." : "Loading..."}</>
+            <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("anxiety.loading", lang)}</>
           ) : (
             <><Shield className="mr-2 h-5 w-5" />{tx("anxiety.grounding", lang)}</>
           )}
@@ -393,7 +385,7 @@ export default function AnxietyToolkitPage() {
                 />
               </div>
               <p className="text-sm capitalize text-muted-foreground">
-                {lang === "tr" ? "Siddet" : "Severity"}: {result.gad7Severity}
+                {tx("anxiety.severity", lang)}: {result.gad7Severity}
               </p>
             </div>
           )}
@@ -402,7 +394,7 @@ export default function AnxietyToolkitPage() {
           {result.techniques?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {lang === "tr" ? "Basa Cikma Teknikleri" : "Coping Techniques"}
+                {tx("anxiety.copingTechniques", lang)}
               </h3>
               {result.techniques.map((tech, idx) => (
                 <div key={idx} className="mb-4 last:mb-0">
@@ -423,7 +415,7 @@ export default function AnxietyToolkitPage() {
           {result.cognitiveDistortions?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {lang === "tr" ? "Bilissel Carpitmalar" : "Cognitive Distortions"}
+                {tx("anxiety.cognitiveDistortions", lang)}
               </h3>
               {result.cognitiveDistortions.map((cd, idx) => (
                 <div key={idx} className="mb-4 rounded-lg border p-4 last:mb-0">

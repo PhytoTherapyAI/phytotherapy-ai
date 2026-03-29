@@ -180,7 +180,7 @@ export default function AlcoholTrackerPage() {
                   <div className="text-center mb-2">
                     <span className="text-3xl">{d.icon}</span>
                     <p className="text-sm font-medium mt-1">
-                      {lang === "tr" ? label.tr : label.en}
+                      {label[lang]}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
                       ~{d.unitsLabel}
@@ -228,7 +228,7 @@ export default function AlcoholTrackerPage() {
               <p className="mt-2 text-center text-xl font-bold">
                 {totalUnits.toFixed(1)}{" "}
                 <span className="text-sm font-normal text-muted-foreground">
-                  {lang === "tr" ? "birim" : "units"}
+                  {tx("alcohol.units", lang)}
                 </span>
               </p>
             </div>
@@ -271,7 +271,7 @@ export default function AlcoholTrackerPage() {
                 <ShieldAlert className={`h-5 w-5 ${RISK_COLORS[result.riskLevel].text}`} />
               )}
               <span className="text-lg font-bold">
-                {result.weeklyUnits} {lang === "tr" ? "birim/hafta" : "units/week"}
+                {result.weeklyUnits} {tx("alcohol.unitsPerWeek", lang)}
               </span>
             </div>
             <p className={`text-sm font-medium ${RISK_COLORS[result.riskLevel].text}`}>
@@ -342,7 +342,7 @@ export default function AlcoholTrackerPage() {
             className="w-full"
             onClick={() => { setResult(null); setDrinks({}); }}
           >
-            {lang === "tr" ? "Yeni Kontrol" : "New Check"}
+            {tx("alcohol.newCheck", lang)}
           </Button>
         </div>
       )}

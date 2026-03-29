@@ -146,7 +146,7 @@ export default function AddictionRecoveryPage() {
         <p className="text-sm font-semibold text-green-700 dark:text-green-300">
           <Phone className="mr-1.5 inline h-4 w-4" />
           {tx("recovery.emergency", lang)}{" "}
-          <span className="font-bold">{lang === "tr" ? "Kriz Hattı: 182" : "SAMHSA: 1-800-662-4357"}</span>
+          <span className="font-bold">{tx("addictionRecovery.crisisLine", lang)}</span>
         </p>
       </div>
 
@@ -170,7 +170,7 @@ export default function AddictionRecoveryPage() {
       {/* Substance Selector */}
       <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
         <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
-          {lang === "tr" ? "Madde/Davranis" : "Substance/Behavior"}
+          {tx("addictionRecovery.substanceBehavior", lang)}
         </h2>
         <div className="flex flex-wrap gap-2">
           {substances.map((s, i) => (
@@ -221,9 +221,7 @@ export default function AddictionRecoveryPage() {
         />
         {cravingLevel >= 8 && (
           <p className="mt-2 text-sm font-semibold text-red-600">
-            {lang === "tr"
-              ? "Istek cok yüksek. Destekcinizi arayın veya bir toplantiya gidin."
-              : "Craving is very high. Call your sponsor or attend a meeting."}
+            {tx("addictionRecovery.cravingHigh", lang)}
           </p>
         )}
       </div>
@@ -232,7 +230,7 @@ export default function AddictionRecoveryPage() {
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-xl border bg-card p-4 shadow-sm">
           <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
-            {lang === "tr" ? "Bugunun Tetikleyicileri" : "Today's Triggers"}
+            {tx("addictionRecovery.todaysTriggers", lang)}
           </h3>
           <div className="flex flex-wrap gap-1.5">
             {triggers.map((t) => (
@@ -254,7 +252,7 @@ export default function AddictionRecoveryPage() {
         </div>
         <div className="rounded-xl border bg-card p-4 shadow-sm">
           <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
-            {lang === "tr" ? "Kullanilan Destek" : "Support Used"}
+            {tx("addictionRecovery.supportUsed", lang)}
           </h3>
           <div className="flex flex-wrap gap-1.5">
             {support.map((s) => (
@@ -280,7 +278,7 @@ export default function AddictionRecoveryPage() {
       <div className="mb-6 rounded-xl border bg-card p-4 shadow-sm">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium">
-            {lang === "tr" ? "Nobet riski hissediyorum" : "I feel at risk of relapse"}
+            {tx("addictionRecovery.relapseRisk", lang)}
           </span>
           <button
             onClick={() => setRelapseRisk(!relapseRisk)}
@@ -305,7 +303,7 @@ export default function AddictionRecoveryPage() {
         {isLoading ? (
           <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
         ) : (
-          <><Shield className="mr-2 h-5 w-5" />{lang === "tr" ? "Destek Al" : "Get Support"}</>
+          <><Shield className="mr-2 h-5 w-5" />{tx("addictionRecovery.getSupport", lang)}</>
         )}
       </Button>
 
@@ -329,7 +327,7 @@ export default function AddictionRecoveryPage() {
               {result.nextMilestone && (
                 <p className="mt-2 text-sm text-muted-foreground">
                   <Clock className="mr-1 inline h-4 w-4" />
-                  {lang === "tr" ? "Sonraki hedef" : "Next milestone"}: {result.nextMilestone.label} ({result.nextMilestone.days - result.cleanDays} {lang === "tr" ? "gun kaldi" : "days to go"})
+                  {tx("addictionRecovery.nextMilestone", lang)}: {result.nextMilestone.label} ({result.nextMilestone.days - result.cleanDays} {tx("addictionRecovery.daysToGo", lang)})
                 </p>
               )}
             </div>
@@ -348,7 +346,7 @@ export default function AddictionRecoveryPage() {
           {result.cravingAnalysis && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-2 text-lg font-bold text-green-700 dark:text-green-300">
-                {lang === "tr" ? "Istek Analizi" : "Craving Analysis"}
+                {tx("addictionRecovery.cravingAnalysis", lang)}
               </h3>
               <p className="text-sm text-muted-foreground">{result.cravingAnalysis}</p>
             </div>
@@ -358,7 +356,7 @@ export default function AddictionRecoveryPage() {
           {result.copingStrategies?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-green-700 dark:text-green-300">
-                {lang === "tr" ? "Basa Cikma Stratejileri" : "Coping Strategies"}
+                {tx("addictionRecovery.copingStrategies", lang)}
               </h3>
               {result.copingStrategies.map((cs, idx) => (
                 <div key={idx} className="mb-3 last:mb-0">
@@ -374,7 +372,7 @@ export default function AddictionRecoveryPage() {
           {result.healthBenefits?.length > 0 && (
             <div className="rounded-xl border-2 border-green-200 bg-green-50 p-6 dark:bg-green-950/20">
               <h3 className="mb-3 text-lg font-bold text-green-700 dark:text-green-300">
-                {lang === "tr" ? "Sağlık Kazanimlari" : "Health Benefits"}
+                {tx("addictionRecovery.healthBenefits", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.healthBenefits.map((benefit, i) => (
@@ -390,7 +388,7 @@ export default function AddictionRecoveryPage() {
           {/* Crisis Resources (always visible) */}
           <div className="rounded-xl border bg-card p-4 shadow-sm">
             <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
-              {lang === "tr" ? "Destek Hatlari" : "Support Lines"}
+              {tx("addictionRecovery.supportLines", lang)}
             </h3>
             <div className="space-y-1">
               {result.crisisLines.map((line, i) => (

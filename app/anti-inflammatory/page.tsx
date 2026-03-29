@@ -71,7 +71,7 @@ export default function AntiInflammatoryPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{tx("antiinflam.diet", lang)} *</label>
-            <textarea value={diet} onChange={(e) => setDiet(e.target.value)} rows={4} placeholder={lang === "tr" ? "ornegin: Sabah ekmek, peynir, cay. Ogle makarna, salata. Aksam kizartma, pilav..." : "e.g., Breakfast: toast, cheese, tea. Lunch: pasta, salad. Dinner: fried food, rice..."} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 outline-none resize-none" />
+            <textarea value={diet} onChange={(e) => setDiet(e.target.value)} rows={4} placeholder={tx("antiinflam.dietPlaceholder", lang)} className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 outline-none resize-none" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{tx("antiinflam.crp", lang)}</label>
@@ -93,19 +93,19 @@ export default function AntiInflammatoryPage() {
             <div className={`rounded-xl border-2 p-5 text-center ${scoreColor(result.inflammationScore)}`}>
               <p className="text-3xl font-bold">{result.inflammationScore}/10</p>
               <p className="text-sm mt-1">{result.scoreLabel}</p>
-              <p className="text-xs mt-1 opacity-70">{lang === "tr" ? "Iltihap Skoru" : "Inflammation Score"}</p>
+              <p className="text-xs mt-1 opacity-70">{tx("antiinflam.inflammationScore", lang)}</p>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 text-center">
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{result.omega6to3Ratio}</p>
-              <p className="text-sm text-gray-500">Omega-6:3 {lang === "tr" ? "Orani" : "Ratio"}</p>
-              <p className="text-xs text-green-600 mt-1">{lang === "tr" ? "Optimal" : "Optimal"}: {result.optimalRatio}</p>
+              <p className="text-sm text-gray-500">Omega-6:3 {tx("antiinflam.ratio", lang)}</p>
+              <p className="text-xs text-green-600 mt-1">{tx("antiinflam.optimal", lang)}: {result.optimalRatio}</p>
             </div>
           </div>
 
           {/* CRP Analysis */}
           {result.crpAnalysis && (
             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-5">
-              <h3 className="font-semibold text-blue-800 dark:text-blue-300 mb-1">CRP {lang === "tr" ? "Analizi" : "Analysis"}</h3>
+              <h3 className="font-semibold text-blue-800 dark:text-blue-300 mb-1">CRP {tx("antiinflam.crpAnalysis", lang)}</h3>
               <p className="text-sm text-blue-700 dark:text-blue-400">{result.crpAnalysis}</p>
             </div>
           )}
@@ -114,7 +114,7 @@ export default function AntiInflammatoryPage() {
           {result.inflammatoryFoods?.length > 0 && (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-red-500" /> {lang === "tr" ? "Iltihap Yapici Gidalar" : "Inflammatory Foods"}
+                <AlertTriangle className="w-4 h-4 text-red-500" /> {tx("antiinflam.inflammatoryFoods", lang)}
               </h3>
               <div className="space-y-3">
                 {result.inflammatoryFoods.map((f, i) => (
@@ -135,7 +135,7 @@ export default function AntiInflammatoryPage() {
           {result.antiInflammatoryFoods?.length > 0 && (
             <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 p-5">
               <h3 className="font-semibold text-green-800 dark:text-green-300 mb-2 flex items-center gap-2">
-                <Leaf className="w-4 h-4" /> {lang === "tr" ? "Zaten Iyi Yaptiginiz" : "Already Doing Well"}
+                <Leaf className="w-4 h-4" /> {tx("antiinflam.alreadyDoingWell", lang)}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {result.antiInflammatoryFoods.map((f, i) => (
@@ -167,7 +167,7 @@ export default function AntiInflammatoryPage() {
           {result.spicesAndHerbs?.length > 0 && (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-500" /> {lang === "tr" ? "Anti-Inflamatuar Baharat & Bitkiler" : "Anti-Inflammatory Spices & Herbs"}
+                <Sparkles className="w-4 h-4 text-amber-500" /> {tx("antiinflam.spicesHerbs", lang)}
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {result.spicesAndHerbs.map((s, i) => (
@@ -183,7 +183,7 @@ export default function AntiInflammatoryPage() {
 
           {result.weeklyPlan && (
             <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{lang === "tr" ? "Ornek Menu" : "Sample Meal Plan"}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{tx("antiinflam.sampleMealPlan", lang)}</h3>
               <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">{result.weeklyPlan}</p>
             </div>
           )}

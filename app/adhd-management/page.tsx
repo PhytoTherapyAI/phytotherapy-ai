@@ -131,7 +131,7 @@ export default function ADHDManagementPage() {
             <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-amber-600" />
             <div>
               <p className="font-semibold text-amber-700 dark:text-amber-300">
-                {lang === "tr" ? "Kafein - Stimulan Etkileşimi" : "Caffeine - Stimulant Interaction"}
+                {tx("adhd.caffeineStimulant", lang)}
               </p>
               <p className="mt-1 text-sm text-amber-600 dark:text-amber-400">
                 {result.caffeineInteraction}
@@ -158,8 +158,8 @@ export default function ADHDManagementPage() {
             className="w-full accent-orange-500"
           />
           <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-            <span>{lang === "tr" ? "Odaklanamiyorum" : "Can't focus"}</span>
-            <span>{lang === "tr" ? "Lazer odak" : "Laser focused"}</span>
+            <span>{tx("adhd.cantFocus", lang)}</span>
+            <span>{tx("adhd.laserFocused", lang)}</span>
           </div>
         </div>
 
@@ -167,7 +167,7 @@ export default function ADHDManagementPage() {
         <div className="grid grid-cols-2 gap-4">
           <div className="rounded-xl border bg-card p-4 shadow-sm">
             <label className="mb-2 block text-sm font-semibold text-muted-foreground">
-              {lang === "tr" ? "Dikkat Dagitma Sayisi" : "Distraction Events"}
+              {tx("adhd.distractionEvents", lang)}
             </label>
             <div className="flex items-center gap-3">
               <button onClick={() => setDistractibility(Math.max(0, distractibility - 1))} className="rounded-lg bg-gray-100 px-3 py-1 dark:bg-gray-800">-</button>
@@ -191,7 +191,7 @@ export default function ADHDManagementPage() {
         {/* Medication Effectiveness */}
         <div className="rounded-xl border bg-card p-6 shadow-sm">
           <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
-            {lang === "tr" ? "İlaç Etkinliği" : "Medication Effectiveness"}: {medEffectiveness}/5
+            {tx("adhd.medEffectiveness", lang)}: {medEffectiveness}/5
           </h2>
           <input
             type="range"
@@ -207,7 +207,7 @@ export default function ADHDManagementPage() {
         <div className="grid grid-cols-3 gap-3">
           <div className="rounded-xl border bg-card p-4 shadow-sm">
             <label className="mb-1 block text-xs font-semibold text-muted-foreground">
-              {lang === "tr" ? "Uyku (saat)" : "Sleep (hrs)"}
+              {tx("adhd.sleepHrs", lang)}
             </label>
             <input
               type="number"
@@ -221,7 +221,7 @@ export default function ADHDManagementPage() {
           <div className="rounded-xl border bg-card p-4 shadow-sm">
             <label className="mb-1 block text-xs font-semibold text-muted-foreground">
               <Coffee className="mr-1 inline h-3 w-3" />
-              {lang === "tr" ? "Kafein (bardak)" : "Caffeine (cups)"}
+              {tx("adhd.caffeineCups", lang)}
             </label>
             <input
               type="number"
@@ -234,7 +234,7 @@ export default function ADHDManagementPage() {
           </div>
           <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col items-center justify-center">
             <label className="mb-1 block text-xs font-semibold text-muted-foreground">
-              {lang === "tr" ? "Egzersiz?" : "Exercise?"}
+              {tx("adhd.exercise", lang)}
             </label>
             <button
               onClick={() => setExerciseToday(!exerciseToday)}
@@ -274,7 +274,7 @@ export default function ADHDManagementPage() {
           {/* Focus Analysis */}
           <div className="rounded-xl border bg-card p-6 shadow-sm">
             <h3 className="mb-2 text-lg font-bold text-orange-700 dark:text-orange-300">
-              {lang === "tr" ? "Odaklanma Analizi" : "Focus Analysis"}
+              {tx("adhd.focusAnalysis", lang)}
             </h3>
             <p className="text-sm text-muted-foreground">{result.focusAnalysis}</p>
             {result.medicationEffectivenessAnalysis && (
@@ -286,7 +286,7 @@ export default function ADHDManagementPage() {
           {result.productivityTips?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-orange-700 dark:text-orange-300">
-                {lang === "tr" ? "Verimlilik Ipuclari" : "Productivity Tips"}
+                {tx("adhd.productivityTips", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.productivityTips.map((tip, i) => (
@@ -303,7 +303,7 @@ export default function ADHDManagementPage() {
           {result.environmentTips?.length > 0 && (
             <div className="rounded-xl border-2 border-orange-200 bg-orange-50 p-6 dark:bg-orange-950/20">
               <h3 className="mb-3 text-lg font-bold text-orange-700 dark:text-orange-300">
-                {lang === "tr" ? "Çevre Önerileri" : "Environment Tips"}
+                {tx("adhd.environmentTips", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.environmentTips.map((tip, i) => (
@@ -336,7 +336,7 @@ export default function ADHDManagementPage() {
             {result.sleepImpact && (
               <div className="rounded-xl border bg-card p-4 shadow-sm">
                 <h4 className="mb-1 text-sm font-semibold text-orange-700 dark:text-orange-300">
-                  {lang === "tr" ? "Uyku Etkisi" : "Sleep Impact"}
+                  {tx("adhd.sleepImpact", lang)}
                 </h4>
                 <p className="text-xs text-muted-foreground">{result.sleepImpact}</p>
               </div>
@@ -344,7 +344,7 @@ export default function ADHDManagementPage() {
             {result.exerciseImpact && (
               <div className="rounded-xl border bg-card p-4 shadow-sm">
                 <h4 className="mb-1 text-sm font-semibold text-orange-700 dark:text-orange-300">
-                  {lang === "tr" ? "Egzersiz Etkisi" : "Exercise Impact"}
+                  {tx("adhd.exerciseImpact", lang)}
                 </h4>
                 <p className="text-xs text-muted-foreground">{result.exerciseImpact}</p>
               </div>

@@ -232,7 +232,7 @@ export default function AppointmentPrepPage() {
               >
                 <h3 className="flex items-center gap-1.5 text-sm font-semibold">
                   <Pill className="h-3.5 w-3.5 text-sky-500" />
-                  {lang === "tr" ? "Mevcut Ilaclar" : "Current Medications"}
+                  {tx("appt.currentMedications", lang)}
                 </h3>
                 {expandedSections.medications ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </button>
@@ -343,7 +343,7 @@ export default function AppointmentPrepPage() {
             <div className="rounded-lg border p-4">
               <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold">
                 <MessageSquare className="h-3.5 w-3.5 text-sky-500" />
-                {lang === "tr" ? "Semptom Özeti" : "Symptom Summary"}
+                {tx("appt.symptomSummary", lang)}
               </h3>
               <p className="text-sm leading-relaxed">{result.symptomSummary}</p>
             </div>
@@ -390,7 +390,7 @@ export default function AppointmentPrepPage() {
             <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4 dark:border-amber-800 dark:bg-amber-950/20">
               <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-amber-700 dark:text-amber-400">
                 <AlertTriangle className="h-3.5 w-3.5" />
-                {lang === "tr" ? "Klinik Notlar" : "Clinical Notes"}
+                {tx("appt.clinicalNotes", lang)}
               </h3>
               <p className="text-xs text-amber-600 dark:text-amber-300 leading-relaxed">
                 {result.clinicalNotes}
@@ -416,7 +416,7 @@ export default function AppointmentPrepPage() {
               }}
               className="flex-1"
             >
-              {lang === "tr" ? "Yeni Ozet" : "New Summary"}
+              {tx("appt.newSummary", lang)}
             </Button>
           </div>
         </div>
