@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface StockItem { id: string; name: string; generic: string; stock: number; minStock: number; expiryDate: string; price: number; demand: "high" | "medium" | "low"; }
 
@@ -30,9 +31,9 @@ export default function PharmacyPage() {
   const demandColor = (d: string) => d === "high" ? "bg-red-100 text-red-700" : d === "medium" ? "bg-yellow-100 text-yellow-700" : "bg-green-100 text-green-700";
 
   const tabs = [
-    { id: "counter", label: isTr ? "Tezgah Gorunumu" : "Counter Display" },
-    { id: "stock", label: isTr ? "Stok Optimizasyonu" : "Stock Optimization" },
-    { id: "support", label: isTr ? "Eczaci Destegi" : "Pharmacist Support" },
+    { id: "counter", label: tx("pharmacy.counterDisplay", lang) },
+    { id: "stock", label: tx("pharmacy.stockOptimization", lang) },
+    { id: "support", label: tx("pharmacy.pharmacistSupport", lang) },
   ];
 
   return (
@@ -41,23 +42,23 @@ export default function PharmacyPage() {
         <div className="flex items-center gap-3 mb-6">
           <Building className="w-8 h-8 text-green-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Eczane Entegrasyonu" : "Pharmacy Integration"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Tezgah gorunumu, stok yönetimi, eczaci destek" : "Counter display, stock management, pharmacist support"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("pharmacy.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{tx("pharmacy.subtitle", lang)}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          <Card className="p-3 text-center"><Package className="w-5 h-5 text-green-500 mx-auto mb-1" /><div className="text-xl font-bold">{stock.length}</div><div className="text-xs text-gray-500">{isTr ? "Toplam Urun" : "Total Products"}</div></Card>
-          <Card className="p-3 text-center border-red-200"><AlertTriangle className="w-5 h-5 text-red-500 mx-auto mb-1" /><div className="text-xl font-bold text-red-600">{lowStock.length}</div><div className="text-xs text-gray-500">{isTr ? "Düşük Stok" : "Low Stock"}</div></Card>
-          <Card className="p-3 text-center border-orange-200"><Clock className="w-5 h-5 text-orange-500 mx-auto mb-1" /><div className="text-xl font-bold text-orange-600">{nearExpiry.length}</div><div className="text-xs text-gray-500">{isTr ? "Yaklasan SKT" : "Near Expiry"}</div></Card>
-          <Card className="p-3 text-center"><Users className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">48</div><div className="text-xs text-gray-500">{isTr ? "Günlük Musteri" : "Daily Customers"}</div></Card>
+          <Card className="p-3 text-center"><Package className="w-5 h-5 text-green-500 mx-auto mb-1" /><div className="text-xl font-bold">{stock.length}</div><div className="text-xs text-gray-500">{tx("pharmacy.totalProducts", lang)}</div></Card>
+          <Card className="p-3 text-center border-red-200"><AlertTriangle className="w-5 h-5 text-red-500 mx-auto mb-1" /><div className="text-xl font-bold text-red-600">{lowStock.length}</div><div className="text-xs text-gray-500">{tx("pharmacy.lowStock", lang)}</div></Card>
+          <Card className="p-3 text-center border-orange-200"><Clock className="w-5 h-5 text-orange-500 mx-auto mb-1" /><div className="text-xl font-bold text-orange-600">{nearExpiry.length}</div><div className="text-xs text-gray-500">{tx("pharmacy.nearExpiry", lang)}</div></Card>
+          <Card className="p-3 text-center"><Users className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">48</div><div className="text-xs text-gray-500">{tx("pharmacy.dailyCustomers", lang)}</div></Card>
         </div>
 
         <div className="flex gap-2 mb-6">{tabs.map(t => (<Button key={t.id} variant={activeTab === t.id ? "default" : "outline"} size="sm" onClick={() => setActiveTab(t.id)}>{t.label}</Button>))}</div>
 
         {activeTab === "counter" && (
           <div className="space-y-4">
-            <div className="relative"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /><input className="w-full rounded-lg border pl-10 pr-4 py-3 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "İlaç ara (marka veya etken madde)..." : "Search drug (brand or generic)..."} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} /></div>
+            <div className="relative"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /><input className="w-full rounded-lg border pl-10 pr-4 py-3 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={tx("pharmacy.searchDrug", lang)} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} /></div>
             <div className="space-y-2">
               {filtered.map(item => (
                 <Card key={item.id} className={"p-4 flex items-center gap-4 " + (item.stock < item.minStock ? "border-red-200" : "")}>
@@ -78,17 +79,17 @@ export default function PharmacyPage() {
           <div className="space-y-4">
             {lowStock.length > 0 && (
               <Card className="p-4 border-red-200 bg-red-50 dark:bg-red-900/20">
-                <h3 className="font-semibold text-red-700 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {isTr ? "Siparis Gereken Urunler" : "Products to Reorder"}</h3>
+                <h3 className="font-semibold text-red-700 flex items-center gap-2"><AlertTriangle className="w-4 h-4" /> {tx("pharmacy.reorder", lang)}</h3>
                 <div className="mt-2 space-y-2">{lowStock.map(s => (
                   <div key={s.id} className="flex items-center justify-between p-2 rounded bg-white dark:bg-gray-800">
                     <span className="text-sm font-medium">{s.name}</span>
-                    <div className="flex items-center gap-2"><span className="text-sm text-red-600">{s.stock}/{s.minStock}</span><Button size="sm" variant="outline"><ShoppingCart className="w-3 h-3 mr-1" />{isTr ? "Siparis" : "Order"}</Button></div>
+                    <div className="flex items-center gap-2"><span className="text-sm text-red-600">{s.stock}/{s.minStock}</span><Button size="sm" variant="outline"><ShoppingCart className="w-3 h-3 mr-1" />{tx("pharmacy.order", lang)}</Button></div>
                   </div>
                 ))}</div>
               </Card>
             )}
             <Card className="p-4">
-              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><BarChart3 className="w-4 h-4" /> {isTr ? "Stok Onerisi (AI)" : "Stock Suggestions (AI)"}</h3>
+              <h3 className="font-semibold text-sm mb-3 flex items-center gap-2"><BarChart3 className="w-4 h-4" /> {tx("pharmacy.stockSuggestions", lang)}</h3>
               <div className="space-y-2">
                 {[
                   { en: "Increase Metformin stock by 30% - seasonal demand rise expected", tr: "Metformin stogunu %30 artirin - mevsimsel talep artisi bekleniyor" },
@@ -105,8 +106,8 @@ export default function PharmacyPage() {
         {activeTab === "support" && (
           <div className="space-y-4">
             <Card className="p-4 border-blue-200 bg-blue-50 dark:bg-blue-900/20">
-              <h3 className="font-semibold flex items-center gap-2"><Stethoscope className="w-5 h-5 text-blue-600" /> {isTr ? "Eczaci Karar Destek" : "Pharmacist Decision Support"}</h3>
-              <p className="text-sm text-gray-600 mt-1">{isTr ? "Hasta ilac profiline gore otomatik etkilesim kontrolü ve oneriler" : "Automatic interaction checks and suggestions based on patient medication profile"}</p>
+              <h3 className="font-semibold flex items-center gap-2"><Stethoscope className="w-5 h-5 text-blue-600" /> {tx("pharmacy.decisionSupport", lang)}</h3>
+              <p className="text-sm text-gray-600 mt-1">{tx("pharmacy.decisionSupportDesc", lang)}</p>
             </Card>
             {[
               { title: isTr ? "Etkileşim Uyarısi" : "Interaction Alert", desc: isTr ? "Metformin + Kontrast madde: 48 saat ara verin" : "Metformin + Contrast: Hold for 48 hours", type: "warning" },

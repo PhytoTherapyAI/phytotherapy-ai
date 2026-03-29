@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 export default function PharmaRWEPage() {
   const { lang } = useLang();
@@ -37,10 +38,10 @@ export default function PharmaRWEPage() {
         <div className="flex items-center gap-3 mb-6">
           <FlaskConical className="w-8 h-8 text-teal-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Gerçek Dünya Kaniti" : "Real World Evidence"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Anonim hasta verisinden ilac kullanim analizleri" : "Drug usage analytics from anonymized patient data"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("pharmaRwe.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{tx("pharmaRwe.subtitle", lang)}</p>
           </div>
-          <Badge className="bg-green-100 text-green-700 ml-auto"><Shield className="w-3 h-3 mr-1" />{isTr ? "Anonim & KVKK Uyumlu" : "Anonymous & KVKK Compliant"}</Badge>
+          <Badge className="bg-green-100 text-green-700 ml-auto"><Shield className="w-3 h-3 mr-1" />{tx("pharmaRwe.compliant", lang)}</Badge>
         </div>
 
         <div className="flex gap-2 overflow-x-auto mb-6">
@@ -48,15 +49,15 @@ export default function PharmaRWEPage() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          <Card className="p-4 text-center"><Users className="w-5 h-5 text-teal-500 mx-auto mb-1" /><div className="text-xl font-bold">{drug.patients.toLocaleString()}</div><div className="text-xs text-gray-500">{isTr ? "Hasta" : "Patients"}</div></Card>
-          <Card className="p-4 text-center"><Activity className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">{drug.adherence}%</div><div className="text-xs text-gray-500">{isTr ? "Uyum" : "Adherence"}</div></Card>
-          <Card className="p-4 text-center"><AlertTriangle className="w-5 h-5 text-orange-500 mx-auto mb-1" /><div className="text-xl font-bold">{drug.sideEffects}%</div><div className="text-xs text-gray-500">{isTr ? "Yan Etki" : "Side Effects"}</div></Card>
-          <Card className="p-4 text-center"><TrendingUp className="w-5 h-5 text-green-500 mx-auto mb-1" /><div className="text-xl font-bold">{drug.avgDuration}</div><div className="text-xs text-gray-500">{isTr ? "Ort. Kullanim" : "Avg Duration"}</div></Card>
+          <Card className="p-4 text-center"><Users className="w-5 h-5 text-teal-500 mx-auto mb-1" /><div className="text-xl font-bold">{drug.patients.toLocaleString()}</div><div className="text-xs text-gray-500">{tx("pharmaRwe.patients", lang)}</div></Card>
+          <Card className="p-4 text-center"><Activity className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">{drug.adherence}%</div><div className="text-xs text-gray-500">{tx("pharmaRwe.adherence", lang)}</div></Card>
+          <Card className="p-4 text-center"><AlertTriangle className="w-5 h-5 text-orange-500 mx-auto mb-1" /><div className="text-xl font-bold">{drug.sideEffects}%</div><div className="text-xs text-gray-500">{tx("pharmaRwe.sideEffects", lang)}</div></Card>
+          <Card className="p-4 text-center"><TrendingUp className="w-5 h-5 text-green-500 mx-auto mb-1" /><div className="text-xl font-bold">{drug.avgDuration}</div><div className="text-xs text-gray-500">{tx("pharmaRwe.avgDuration", lang)}</div></Card>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Card className="p-4">
-            <h3 className="font-semibold text-sm mb-4">{isTr ? "Yan Etki Profili" : "Side Effect Profile"}</h3>
+            <h3 className="font-semibold text-sm mb-4">{tx("pharmaRwe.sideEffectProfile", lang)}</h3>
             <div className="space-y-3">
               {sideEffects.map(se => (
                 <div key={se.en} className="flex items-center gap-3">
@@ -70,7 +71,7 @@ export default function PharmaRWEPage() {
           </Card>
 
           <Card className="p-4">
-            <h3 className="font-semibold text-sm mb-4">{isTr ? "Uyum Trendi (Aylik)" : "Adherence Trend (Monthly)"}</h3>
+            <h3 className="font-semibold text-sm mb-4">{tx("pharmaRwe.adherenceTrend", lang)}</h3>
             <div className="flex items-end gap-2 h-40">
               {[82, 84, 83, 86, 85, 87, 88, 87, 89, 88, 90, 87].map((val, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
@@ -86,8 +87,8 @@ export default function PharmaRWEPage() {
           <div className="flex items-start gap-3">
             <Database className="w-5 h-5 text-teal-600 mt-0.5" />
             <div>
-              <h3 className="font-semibold text-sm">{isTr ? "Veri Metodolojisi" : "Data Methodology"}</h3>
-              <p className="text-xs text-gray-600 mt-1">{isTr ? "Tum veriler opt-in kullanicilardan anonim olarak toplanmistir. Bireysel hasta verisi asla tanimlanamaz. KVKK ve GDPR uyumlu." : "All data is anonymously collected from opt-in users. Individual patient data can never be identified. KVKK and GDPR compliant."}</p>
+              <h3 className="font-semibold text-sm">{tx("pharmaRwe.methodology", lang)}</h3>
+              <p className="text-xs text-gray-600 mt-1">{tx("pharmaRwe.methodologyDesc", lang)}</p>
             </div>
           </div>
         </Card>

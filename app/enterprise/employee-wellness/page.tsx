@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface LeaderboardEntry { rank: number; name: string; avatar: string; dept: string; points: number; streak: number; }
 interface Challenge { id: string; en: string; tr: string; type: string; participants: number; daysLeft: number; prize: string; }
@@ -49,19 +50,19 @@ export default function EmployeeWellnessPage() {
         <div className="flex items-center gap-3 mb-6">
           <Trophy className="w-8 h-8 text-orange-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "Kurumsal Sağlık Programı" : "Corporate Wellness"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Meydan okumalar, liderlik tablosu, departman yarislari" : "Challenges, leaderboard, department competitions"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("employeeWellness.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{tx("employeeWellness.subtitle", lang)}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          <Card className="p-3 text-center"><Users className="w-5 h-5 text-orange-500 mx-auto mb-1" /><div className="text-xl font-bold">342</div><div className="text-xs text-gray-500">{isTr ? "Katilimci" : "Participants"}</div></Card>
-          <Card className="p-3 text-center"><Target className="w-5 h-5 text-green-500 mx-auto mb-1" /><div className="text-xl font-bold">86%</div><div className="text-xs text-gray-500">{isTr ? "Katilim Orani" : "Participation"}</div></Card>
-          <Card className="p-3 text-center"><TrendingUp className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">+12%</div><div className="text-xs text-gray-500">{isTr ? "Sağlık Skoru" : "Health Score"}</div></Card>
-          <Card className="p-3 text-center"><Award className="w-5 h-5 text-purple-500 mx-auto mb-1" /><div className="text-xl font-bold">4</div><div className="text-xs text-gray-500">{isTr ? "Aktif Yarisma" : "Active Challenges"}</div></Card>
+          <Card className="p-3 text-center"><Users className="w-5 h-5 text-orange-500 mx-auto mb-1" /><div className="text-xl font-bold">342</div><div className="text-xs text-gray-500">{tx("employeeWellness.participants", lang)}</div></Card>
+          <Card className="p-3 text-center"><Target className="w-5 h-5 text-green-500 mx-auto mb-1" /><div className="text-xl font-bold">86%</div><div className="text-xs text-gray-500">{tx("employeeWellness.participation", lang)}</div></Card>
+          <Card className="p-3 text-center"><TrendingUp className="w-5 h-5 text-blue-500 mx-auto mb-1" /><div className="text-xl font-bold">+12%</div><div className="text-xs text-gray-500">{tx("employeeWellness.healthScore", lang)}</div></Card>
+          <Card className="p-3 text-center"><Award className="w-5 h-5 text-purple-500 mx-auto mb-1" /><div className="text-xl font-bold">4</div><div className="text-xs text-gray-500">{tx("employeeWellness.activeChallenges", lang)}</div></Card>
         </div>
 
-        <div className="flex gap-2 mb-6">{[{id:"challenges",l:isTr?"Yarismar":"Challenges"},{id:"leaderboard",l:isTr?"Liderlik":"Leaderboard"},{id:"departments",l:isTr?"Departmanlar":"Departments"}].map(t=>(<Button key={t.id} variant={activeTab===t.id?"default":"outline"} size="sm" onClick={()=>setActiveTab(t.id)}>{t.l}</Button>))}</div>
+        <div className="flex gap-2 mb-6">{[{id:"challenges",l:tx("employeeWellness.challenges", lang)},{id:"leaderboard",l:tx("employeeWellness.leaderboard", lang)},{id:"departments",l:tx("employeeWellness.departments", lang)}].map(tb=>(<Button key={tb.id} variant={activeTab===tb.id?"default":"outline"} size="sm" onClick={()=>setActiveTab(tb.id)}>{tb.l}</Button>))}</div>
 
         {activeTab === "challenges" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -69,9 +70,9 @@ export default function EmployeeWellnessPage() {
               <Card key={c.id} className="p-4 hover:shadow-lg transition-shadow">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-900/30 text-orange-600">{challengeIcon(c.type)}</div>
-                  <div className="flex-1"><h3 className="font-semibold text-sm">{isTr ? c.tr : c.en}</h3><div className="flex items-center gap-2 mt-0.5"><Badge variant="outline" className="text-xs">{c.participants} {isTr ? "katilimci" : "joined"}</Badge><Badge className="bg-orange-100 text-orange-700 text-xs">{c.daysLeft}d left</Badge></div></div>
+                  <div className="flex-1"><h3 className="font-semibold text-sm">{isTr ? c.tr : c.en}</h3><div className="flex items-center gap-2 mt-0.5"><Badge variant="outline" className="text-xs">{c.participants} {tx("employeeWellness.joined", lang)}</Badge><Badge className="bg-orange-100 text-orange-700 text-xs">{c.daysLeft}d left</Badge></div></div>
                 </div>
-                <div className="flex items-center justify-between"><span className="text-xs text-gray-500"><Star className="w-3 h-3 inline mr-1" />{c.prize}</span><Button size="sm">{isTr ? "Katil" : "Join"}</Button></div>
+                <div className="flex items-center justify-between"><span className="text-xs text-gray-500"><Star className="w-3 h-3 inline mr-1" />{c.prize}</span><Button size="sm">{tx("employeeWellness.join", lang)}</Button></div>
               </Card>
             ))}
           </div>
@@ -98,7 +99,7 @@ export default function EmployeeWellnessPage() {
               <Card key={d.dept} className="p-4 flex items-center gap-4">
                 <div className="text-lg font-bold text-gray-400 w-6">#{i + 1}</div>
                 <div className="flex-1"><div className="font-medium text-sm">{d.dept}</div><div className="w-full bg-gray-200 rounded-full h-2 mt-1"><div className="bg-orange-500 h-2 rounded-full" style={{width: d.participation + "%"}} /></div></div>
-                <div className="text-right"><div className="font-bold text-sm">{d.avgPoints} pts</div><div className="text-xs text-gray-400">{d.participation}% {isTr ? "katilim" : "participation"}</div></div>
+                <div className="text-right"><div className="font-bold text-sm">{d.avgPoints} pts</div><div className="text-xs text-gray-400">{d.participation}% {tx("employeeWellness.participationRate", lang)}</div></div>
               </Card>
             ))}
           </div>

@@ -268,7 +268,7 @@ export default function ElderCarePage() {
                 sectionKey="polypharmacy"
                 badge={
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${riskBadge(result.polypharmacy.riskLevel)}`}>
-                    {result.polypharmacy.medicationCount} {lang === "tr" ? "ilac" : "meds"}
+                    {result.polypharmacy.medicationCount} {tx("elderCare.meds", lang)}
                   </span>
                 }
               />
@@ -276,12 +276,12 @@ export default function ElderCarePage() {
                 <div className="p-4 space-y-3">
                   <div className={`rounded-lg border p-3 ${riskColor(result.polypharmacy.riskLevel)}`}>
                     <p className="text-xs font-medium">
-                      {lang === "tr" ? "Risk Seviyesi" : "Risk Level"}: {result.polypharmacy.riskLevel.toUpperCase()}
+                      {tx("elderCare.riskLevel", lang)}: {result.polypharmacy.riskLevel.toUpperCase()}
                     </p>
                   </div>
                   {result.polypharmacy.concerns?.length > 0 && (
                     <div>
-                      <p className="mb-1 text-xs font-semibold text-red-600 dark:text-red-400">{lang === "tr" ? "Dikkat Edilmesi Gerekenler" : "Concerns"}</p>
+                      <p className="mb-1 text-xs font-semibold text-red-600 dark:text-red-400">{tx("elderCare.concerns", lang)}</p>
                       {result.polypharmacy.concerns.map((c, i) => (
                         <div key={i} className="flex items-start gap-2 text-sm mb-1">
                           <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0 text-amber-500" />
@@ -303,7 +303,7 @@ export default function ElderCarePage() {
                   )}
                   {result.polypharmacy.timingOptimization?.length > 0 && (
                     <div>
-                      <p className="mb-1 text-xs font-semibold text-blue-600 dark:text-blue-400">{lang === "tr" ? "İlaç Zamanlama" : "Timing Optimization"}</p>
+                      <p className="mb-1 text-xs font-semibold text-blue-600 dark:text-blue-400">{tx("elderCare.timingOptimization", lang)}</p>
                       {result.polypharmacy.timingOptimization.map((t, i) => (
                         <div key={i} className="flex items-start gap-2 text-sm mb-1">
                           <Clock className="mt-0.5 h-3 w-3 shrink-0 text-blue-500" />
@@ -367,7 +367,7 @@ export default function ElderCarePage() {
                   {result.cognitiveHealth.warningSignsToWatch?.length > 0 && (
                     <div className="rounded-lg border border-red-200 bg-red-50/30 p-3 dark:border-red-900 dark:bg-red-950/20">
                       <p className="mb-1 text-xs font-semibold text-red-600 dark:text-red-400">
-                        {lang === "tr" ? "Izlenmesi Gereken Isaretler" : "Warning Signs to Watch"}
+                        {tx("elderCare.warningSigns", lang)}
                       </p>
                       {result.cognitiveHealth.warningSignsToWatch.map((s, i) => (
                         <p key={i} className="text-xs text-red-700 dark:text-red-400">- {s}</p>
@@ -405,7 +405,7 @@ export default function ElderCarePage() {
                   {result.nutrition.hydrationGoal && (
                     <div className="rounded-lg border border-blue-200 bg-blue-50/30 p-3 dark:border-blue-900 dark:bg-blue-950/20">
                       <p className="text-xs font-medium text-blue-700 dark:text-blue-400">
-                        {lang === "tr" ? "Günlük Su Hedefi" : "Daily Hydration"}: {result.nutrition.hydrationGoal}
+                        {tx("elderCare.dailyHydration", lang)}: {result.nutrition.hydrationGoal}
                       </p>
                     </div>
                   )}
@@ -446,7 +446,7 @@ export default function ElderCarePage() {
                   )}
                   {result.socialWellbeing.riskFactors?.length > 0 && (
                     <div className="rounded-lg border border-amber-200 bg-amber-50/30 p-3 dark:border-amber-900 dark:bg-amber-950/20">
-                      <p className="mb-1 text-xs font-semibold">{lang === "tr" ? "Risk Faktorleri" : "Risk Factors"}</p>
+                      <p className="mb-1 text-xs font-semibold">{tx("elderCare.riskFactors", lang)}</p>
                       {result.socialWellbeing.riskFactors.map((f, i) => (
                         <p key={i} className="text-xs text-muted-foreground">- {f}</p>
                       ))}
@@ -491,7 +491,7 @@ export default function ElderCarePage() {
             onClick={() => setResult(null)}
             className="w-full"
           >
-            {lang === "tr" ? "Yeni İnceleme" : "New Review"}
+            {tx("elderCare.newReview", lang)}
           </Button>
         </div>
       )}

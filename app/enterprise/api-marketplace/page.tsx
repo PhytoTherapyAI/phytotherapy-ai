@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 interface APIEndpoint { id: string; name: string; method: string; path: string; descEn: string; descTr: string; price: string; category: string; }
 
@@ -41,8 +42,8 @@ export default function APIMarketplacePage() {
         <div className="flex items-center gap-3 mb-6">
           <Code className="w-8 h-8 text-gray-600" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "API Pazaryeri" : "API Marketplace"}</h1>
-            <p className="text-sm text-gray-500">{isTr ? "Sağlık AI API entegrasyonlari" : "Health AI API integrations"}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("apiMarketplace.title", lang)}</h1>
+            <p className="text-sm text-gray-500">{tx("apiMarketplace.subtitle", lang)}</p>
           </div>
         </div>
 
@@ -51,7 +52,7 @@ export default function APIMarketplacePage() {
           <pre className="text-xs font-mono overflow-x-auto text-green-400">{codeSnippet}</pre>
         </Card>
 
-        <h2 className="text-lg font-semibold mb-4">{isTr ? "Mevcut API Endpointleri" : "Available Endpoints"}</h2>
+        <h2 className="text-lg font-semibold mb-4">{tx("apiMarketplace.endpoints", lang)}</h2>
         <div className="space-y-3 mb-8">
           {endpoints.map(ep => (
             <Card key={ep.id} className="p-4 hover:shadow-md transition-shadow">
@@ -65,15 +66,15 @@ export default function APIMarketplacePage() {
           ))}
         </div>
 
-        <h2 className="text-lg font-semibold mb-4">{isTr ? "API Fiyatlandirma" : "API Pricing"}</h2>
+        <h2 className="text-lg font-semibold mb-4">{tx("apiMarketplace.pricing", lang)}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {pricing.map(p => (
             <Card key={p.name} className="p-6">
               <h3 className="text-lg font-bold">{p.name}</h3>
               <div className="text-2xl font-bold text-blue-600 mt-1">{p.price}</div>
-              <p className="text-sm text-gray-500">{p.reqs} {isTr ? "istek" : "requests"}</p>
+              <p className="text-sm text-gray-500">{p.reqs} {tx("apiMarketplace.requests", lang)}</p>
               <div className="mt-4 space-y-2">{p.features.map(f => (<div key={f} className="flex items-center gap-2 text-sm"><Check className="w-4 h-4 text-green-500" />{f}</div>))}</div>
-              <Button className="w-full mt-4" variant="outline"><Key className="w-4 h-4 mr-2" /> {isTr ? "API Anahtari Al" : "Get API Key"}</Button>
+              <Button className="w-full mt-4" variant="outline"><Key className="w-4 h-4 mr-2" /> {tx("apiMarketplace.getApiKey", lang)}</Button>
             </Card>
           ))}
         </div>

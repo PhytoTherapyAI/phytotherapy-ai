@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 
 export default function WhiteLabelPage() {
   const { lang } = useLang();
@@ -34,9 +35,9 @@ export default function WhiteLabelPage() {
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-3 mb-2">
           <Building2 className="w-8 h-8 text-indigo-600" />
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{isTr ? "White-Label Çözüm" : "White-Label Solution"}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("whiteLabel.title", lang)}</h1>
         </div>
-        <p className="text-gray-500 mb-8 ml-11">{isTr ? "Phytotherapy.ai platformunu kendi markanizla sunun" : "Offer the Phytotherapy.ai platform under your own brand"}</p>
+        <p className="text-gray-500 mb-8 ml-11">{tx("whiteLabel.subtitle", lang)}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {features.map(f => (
@@ -48,30 +49,30 @@ export default function WhiteLabelPage() {
           ))}
         </div>
 
-        <h2 className="text-xl font-bold mb-4 text-center">{isTr ? "Fiyatlandirma" : "Pricing"}</h2>
+        <h2 className="text-xl font-bold mb-4 text-center">{tx("whiteLabel.pricing", lang)}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           {tiers.map(t => (
             <Card key={t.name} className={"p-6 relative " + (t.popular ? "border-indigo-500 border-2 shadow-lg" : "")}>
-              {t.popular && <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white"><Star className="w-3 h-3 mr-1" />{isTr ? "Populer" : "Popular"}</Badge>}
+              {t.popular && <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-500 text-white"><Star className="w-3 h-3 mr-1" />{tx("whiteLabel.popular", lang)}</Badge>}
               <h3 className="text-lg font-bold">{t.name}</h3>
               <div className="text-2xl font-bold text-indigo-600 mt-2">{t.price}</div>
               <p className="text-sm text-gray-500 mt-1">{isTr ? t.tr : t.en}</p>
               <div className="mt-4 space-y-2">
                 {t.features.map(f => (<div key={f} className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-green-500" />{f}</div>))}
               </div>
-              <Button className={"w-full mt-4 " + (t.popular ? "bg-indigo-500 hover:bg-indigo-600" : "")} variant={t.popular ? "default" : "outline"}>{isTr ? "Sec" : "Select"}</Button>
+              <Button className={"w-full mt-4 " + (t.popular ? "bg-indigo-500 hover:bg-indigo-600" : "")} variant={t.popular ? "default" : "outline"}>{tx("whiteLabel.select", lang)}</Button>
             </Card>
           ))}
         </div>
 
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4 text-center">{isTr ? "Demo Talep Formu" : "Request Demo"}</h2>
+          <h2 className="text-lg font-semibold mb-4 text-center">{tx("whiteLabel.requestDemo", lang)}</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <input className="rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Adınız" : "Your Name"} value={name} onChange={e => setName(e.target.value)} />
+            <input className="rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={tx("whiteLabel.yourName", lang)} value={name} onChange={e => setName(e.target.value)} />
             <input className="rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-            <input className="rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={isTr ? "Sirket" : "Company"} value={company} onChange={e => setCompany(e.target.value)} />
+            <input className="rounded-lg border px-4 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={tx("whiteLabel.company", lang)} value={company} onChange={e => setCompany(e.target.value)} />
           </div>
-          <Button className="w-full mt-3 bg-indigo-500 hover:bg-indigo-600">{isTr ? "Demo Talep Et" : "Request Demo"} <ArrowRight className="w-4 h-4 ml-2" /></Button>
+          <Button className="w-full mt-3 bg-indigo-500 hover:bg-indigo-600">{tx("whiteLabel.requestDemoBtn", lang)} <ArrowRight className="w-4 h-4 ml-2" /></Button>
         </Card>
       </div>
     </div>

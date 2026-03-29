@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import {
   Building2,
   TrendingUp,
@@ -248,10 +249,10 @@ export default function EnterprisePage() {
   // ─── Sector performance data for bar chart ──
 
   const sectorPerformanceData = [
-    { sector: isTr ? "Takviyeler" : "Supplements", growth: 12.4, revenue: 18.2 },
-    { sector: isTr ? "Bitkisel İlaç" : "Herbal Pharma", growth: 9.8, revenue: 8.6 },
-    { sector: isTr ? "Fonksiyonel Gida" : "Functional Food", growth: 11.2, revenue: 10.4 },
-    { sector: isTr ? "Kozmetik" : "Cosmeceuticals", growth: 7.5, revenue: 5.9 },
+    { sector: tx("enterprise.supplements", lang), growth: 12.4, revenue: 18.2 },
+    { sector: tx("enterprise.herbalPharma", lang), growth: 9.8, revenue: 8.6 },
+    { sector: tx("enterprise.functionalFood", lang), growth: 11.2, revenue: 10.4 },
+    { sector: tx("enterprise.cosmeceuticals", lang), growth: 7.5, revenue: 5.9 },
   ]
 
   // Public companies for the pie chart
@@ -269,12 +270,10 @@ export default function EnterprisePage() {
           <Building2 className="h-7 w-7 text-primary" />
         </div>
         <h1 className="font-heading text-3xl font-bold tracking-tight md:text-4xl">
-          {isTr ? "Pazar İstihbarat Merkezi" : "Market Intelligence Hub"}
+          {tx("enterprise.title", lang)}
         </h1>
         <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">
-          {isTr
-            ? "Fitoterapi ve biyoteknoloji sektorunde yatirim odakli pazar verileri, trend analizi ve AI destekli içerikler."
-            : "Investment-focused market data, trend analysis and AI-powered insights for the phytotherapy & biotech sector."}
+          {tx("enterprise.subtitle", lang)}
         </p>
       </div>
 
@@ -350,7 +349,7 @@ export default function EnterprisePage() {
               <div className="rounded-xl border bg-card p-6">
                 <h3 className="mb-4 flex items-center gap-2 font-semibold">
                   <BarChart3 className="h-5 w-5 text-primary" />
-                  {isTr ? "Sektor Performansi" : "Sector Performance"}
+                  {tx("enterprise.sectorPerformance", lang)}
                 </h3>
                 <div className="h-72">
                   <ResponsiveContainer width="100%" height="100%">
@@ -369,13 +368,13 @@ export default function EnterprisePage() {
                       <Legend wrapperStyle={{ fontSize: 12 }} />
                       <Bar
                         dataKey="growth"
-                        name={isTr ? "Büyüme (%)" : "Growth (%)"}
+                        name={tx("enterprise.growthPct", lang)}
                         fill="#10b981"
                         radius={[4, 4, 0, 0]}
                       />
                       <Bar
                         dataKey="revenue"
-                        name={isTr ? "Gelir ($B)" : "Revenue ($B)"}
+                        name={tx("enterprise.revenueBn", lang)}
                         fill="#3b82f6"
                         radius={[4, 4, 0, 0]}
                       />
@@ -388,7 +387,7 @@ export default function EnterprisePage() {
               <div className="rounded-xl border bg-card p-6">
                 <h3 className="mb-5 flex items-center gap-2 font-semibold">
                   <Clock className="h-5 w-5 text-primary" />
-                  {isTr ? "Sektör Olayları" : "Sector Events"}
+                  {tx("enterprise.sectorEvents", lang)}
                 </h3>
                 <div className="relative space-y-0">
                   {/* Vertical line */}
@@ -440,7 +439,7 @@ export default function EnterprisePage() {
               <div className="rounded-xl border bg-card p-6">
                 <h3 className="mb-4 flex items-center gap-2 font-semibold">
                   <LineChart className="h-5 w-5 text-primary" />
-                  {isTr ? "PubMed Yayın Trendi (12 Ay)" : "PubMed Publication Trends (12 Months)"}
+                  {tx("enterprise.pubmedTrends", lang)}
                 </h3>
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
@@ -494,7 +493,7 @@ export default function EnterprisePage() {
                       {isEarlySignal && (
                         <div className="absolute -top-2.5 right-3 flex items-center gap-1 rounded-full bg-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow">
                           <Zap className="h-3 w-3" />
-                          {isTr ? "Erken Sinyal" : "Early Signal"}
+                          {tx("enterprise.earlySignal", lang)}
                         </div>
                       )}
                       <div className="mb-3 flex items-center justify-between">
@@ -525,13 +524,13 @@ export default function EnterprisePage() {
                       </div>
                       <div className="flex justify-between text-[11px] text-muted-foreground">
                         <span>
-                          {isTr ? "Yayın:" : "Pubs:"}{" "}
+                          {tx("enterprise.pubs", lang)}{" "}
                           <span className="font-mono font-semibold text-foreground">
                             {b.pubmedCountCurrent.toLocaleString()}
                           </span>
                         </span>
                         <span>
-                          {isTr ? "Pazar:" : "Market:"}{" "}
+                          {tx("enterprise.market", lang)}{" "}
                           <span className="font-mono font-semibold text-foreground">
                             ${b.marketSizeBillions}B
                           </span>
@@ -564,22 +563,22 @@ export default function EnterprisePage() {
                     <thead>
                       <tr className="border-b bg-muted/50 text-left">
                         <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          {isTr ? "Şirket" : "Company"}
+                          {tx("enterprise.company", lang)}
                         </th>
                         <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          {isTr ? "Fiyat" : "Price"}
+                          {tx("enterprise.price", lang)}
                         </th>
                         <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          {isTr ? "Değişim" : "Change"}
+                          {tx("enterprise.change", lang)}
                         </th>
                         <th className="hidden px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground md:table-cell">
-                          {isTr ? "Pazar Deg." : "Mkt Cap"}
+                          {tx("enterprise.mktCap", lang)}
                         </th>
                         <th className="hidden px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground lg:table-cell">
-                          {isTr ? "52H Aralık" : "52W Range"}
+                          {tx("enterprise.weekRange", lang)}
                         </th>
                         <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                          {isTr ? "Durum" : "Status"}
+                          {tx("enterprise.status", lang)}
                         </th>
                       </tr>
                     </thead>
@@ -668,7 +667,7 @@ export default function EnterprisePage() {
                 <div className="rounded-xl border bg-card p-6">
                   <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold">
                     <Activity className="h-4 w-4 text-primary" />
-                    {isTr ? "Pazar Değeri Dağılımı" : "Market Cap Distribution"}
+                    {tx("enterprise.marketCapDist", lang)}
                   </h3>
                   <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
@@ -696,7 +695,7 @@ export default function EnterprisePage() {
                             borderRadius: 8,
                             fontSize: 12,
                           }}
-                          formatter={(value) => [`$${value}B`, isTr ? "Pazar Değeri" : "Market Cap"] as [string, string]}
+                          formatter={(value) => [`$${value}B`, tx("enterprise.marketCapLabel", lang)] as [string, string]}
                         />
                       </PieChart>
                     </ResponsiveContainer>
@@ -708,7 +707,7 @@ export default function EnterprisePage() {
                   <div className="mb-4 flex items-center justify-between">
                     <h3 className="flex items-center gap-2 text-sm font-semibold">
                       <Search className="h-4 w-4 text-primary" />
-                      {isTr ? "Arama Hacmi vs Hisse Fiyati" : "Search Volume vs Stock Price"}
+                      {tx("enterprise.searchVsStock", lang)}
                     </h3>
                     {correlation.length > 0 && (
                       <div className="flex gap-1">
@@ -738,14 +737,14 @@ export default function EnterprisePage() {
                             yAxisId="left"
                             tick={{ fontSize: 11 }}
                             stroke="hsl(var(--muted-foreground))"
-                            label={{ value: isTr ? "Arama" : "Search", angle: -90, position: "insideLeft", fontSize: 10 }}
+                            label={{ value: tx("enterprise.searchLabel", lang), angle: -90, position: "insideLeft", fontSize: 10 }}
                           />
                           <YAxis
                             yAxisId="right"
                             orientation="right"
                             tick={{ fontSize: 11 }}
                             stroke="hsl(var(--muted-foreground))"
-                            label={{ value: isTr ? "Fiyat ($)" : "Price ($)", angle: 90, position: "insideRight", fontSize: 10 }}
+                            label={{ value: tx("enterprise.priceLabel", lang), angle: 90, position: "insideRight", fontSize: 10 }}
                           />
                           <Tooltip
                             contentStyle={{
@@ -759,7 +758,7 @@ export default function EnterprisePage() {
                           <Bar
                             yAxisId="left"
                             dataKey="searchVolume"
-                            name={isTr ? "Google Trends" : "Google Trends"}
+                            name="Google Trends"
                             fill="#8b5cf6"
                             fillOpacity={0.6}
                             radius={[2, 2, 0, 0]}
@@ -768,7 +767,7 @@ export default function EnterprisePage() {
                             yAxisId="right"
                             type="monotone"
                             dataKey="stockPrice"
-                            name={isTr ? "Hisse Fiyati" : "Stock Price"}
+                            name={tx("enterprise.stockPrice", lang)}
                             stroke="#10b981"
                             strokeWidth={2.5}
                             dot={{ fill: "#10b981", r: 3 }}
@@ -799,25 +798,25 @@ export default function EnterprisePage() {
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                 {[
                   {
-                    label: isTr ? "Toplam Patent" : "Total Patents",
+                    label: tx("enterprise.totalPatents", lang),
                     value: patents.length.toString(),
                     icon: FileText,
                     color: "text-blue-500",
                   },
                   {
-                    label: isTr ? "Onaylanan" : "Granted",
+                    label: tx("enterprise.granted", lang),
                     value: patents.filter((p) => p.status === "Granted").length.toString(),
                     icon: CheckCircle2,
                     color: "text-emerald-500",
                   },
                   {
-                    label: isTr ? "İnceleme Altinda" : "Under Review",
+                    label: tx("enterprise.underReview", lang),
                     value: patents.filter((p) => p.status === "Under Review").length.toString(),
                     icon: Clock,
                     color: "text-amber-500",
                   },
                   {
-                    label: isTr ? "Regülasyon Güncelleme" : "Regulatory Updates",
+                    label: tx("enterprise.regulatoryUpdates", lang),
                     value: regulatory.length.toString(),
                     icon: Scale,
                     color: "text-violet-500",
@@ -836,7 +835,7 @@ export default function EnterprisePage() {
                 <div className="border-b px-5 py-3">
                   <h3 className="flex items-center gap-2 text-sm font-semibold">
                     <FileText className="h-4 w-4 text-primary" />
-                    {isTr ? "Son Patent Başvurulari" : "Recent Patent Filings"}
+                    {tx("enterprise.recentPatents", lang)}
                   </h3>
                 </div>
                 <div className="divide-y">
@@ -871,7 +870,7 @@ export default function EnterprisePage() {
               <div>
                 <h3 className="mb-4 flex items-center gap-2 font-semibold">
                   <Shield className="h-5 w-5 text-primary" />
-                  {isTr ? "Regülasyon Güncellemeleri" : "Regulatory Updates"}
+                  {tx("enterprise.regulatoryUpdatesList", lang)}
                 </h3>
                 <div className="grid gap-4 md:grid-cols-2">
                   {regulatory.map((r) => (
@@ -882,10 +881,10 @@ export default function EnterprisePage() {
                         </span>
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${impactColor(r.impactLevel)}`}>
                           {r.impactLevel === "high"
-                            ? (isTr ? "Yüksek Etki" : "High Impact")
+                            ? tx("enterprise.highImpact", lang)
                             : r.impactLevel === "medium"
-                            ? (isTr ? "Orta Etki" : "Medium Impact")
-                            : (isTr ? "Düşük Etki" : "Low Impact")}
+                            ? tx("enterprise.mediumImpact", lang)
+                            : tx("enterprise.lowImpact", lang)}
                         </span>
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${statusBadge(r.status)}`}>
                           {r.status}
@@ -918,19 +917,17 @@ export default function EnterprisePage() {
             <div className="rounded-xl border bg-gradient-to-br from-primary/5 to-violet-500/5 p-10 text-center">
               <Sparkles className="mx-auto mb-4 h-12 w-12 text-primary opacity-80" />
               <h3 className="mb-2 text-xl font-bold">
-                {isTr ? "AI Pazar Analizi" : "AI Market Analysis"}
+                {tx("enterprise.aiAnalysis", lang)}
               </h3>
               <p className="mx-auto mb-6 max-w-lg text-sm text-muted-foreground">
-                {isTr
-                  ? "Gemini AI, en son botanik yayin trendlerini, sirket verilerini ve regulasyon değişikliklerini analiz ederek yatirim sinyalleri uretir."
-                  : "Gemini AI analyzes the latest botanical publication trends, company data and regulatory changes to generate investment-relevant signals."}
+                {tx("enterprise.aiDesc", lang)}
               </p>
               <button
                 onClick={runAIAnalysis}
                 className="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3 text-sm font-semibold text-white transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98]"
               >
                 <Zap className="h-4 w-4" />
-                {isTr ? "Analiz Oluştur" : "Generate Analysis"}
+                {tx("enterprise.generateAnalysis", lang)}
               </button>
             </div>
           )}
@@ -939,7 +936,7 @@ export default function EnterprisePage() {
             <div className="flex flex-col items-center justify-center py-20">
               <Loader2 className="mb-4 h-10 w-10 animate-spin text-primary" />
               <p className="text-sm text-muted-foreground">
-                {isTr ? "AI analiz ediliyor..." : "AI analyzing market data..."}
+                {tx("enterprise.aiAnalyzing", lang)}
               </p>
             </div>
           )}
@@ -950,7 +947,7 @@ export default function EnterprisePage() {
               <div>
                 <h3 className="mb-4 flex items-center gap-2 font-semibold">
                   <Zap className="h-5 w-5 text-amber-500" />
-                  {isTr ? "Erken Sinyaller" : "Early Signals"}
+                  {tx("enterprise.earlySignals", lang)}
                 </h3>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {aiAnalysis.earlySignals.map((s, i) => (
@@ -958,10 +955,10 @@ export default function EnterprisePage() {
                       <div className="mb-2 flex items-center gap-2">
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${confidenceColor(s.confidence)}`}>
                           {s.confidence === "high"
-                            ? (isTr ? "Yüksek Guven" : "High Confidence")
+                            ? tx("enterprise.highConfidence", lang)
                             : s.confidence === "medium"
-                            ? (isTr ? "Orta Guven" : "Medium Confidence")
-                            : (isTr ? "Düşük Guven" : "Low Confidence")}
+                            ? tx("enterprise.mediumConfidence", lang)
+                            : tx("enterprise.lowConfidence", lang)}
                         </span>
                         <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                           {s.botanical}
@@ -979,7 +976,7 @@ export default function EnterprisePage() {
               <div className="rounded-xl border bg-card p-6">
                 <h3 className="mb-3 flex items-center gap-2 font-semibold">
                   <ArrowUpRight className="h-5 w-5 text-primary" />
-                  {isTr ? "Sektor Gorunumu" : "Sector Outlook"}
+                  {tx("enterprise.sectorOutlook", lang)}
                 </h3>
                 <p className="mb-5 text-sm text-muted-foreground">
                   {isTr
@@ -991,7 +988,7 @@ export default function EnterprisePage() {
                   <div className="rounded-lg bg-emerald-50 p-4 dark:bg-emerald-950/20">
                     <h4 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-emerald-700 dark:text-emerald-400">
                       <TrendingUp className="h-4 w-4" />
-                      {isTr ? "Yukselis Faktorleri" : "Bullish Factors"}
+                      {tx("enterprise.bullishFactors", lang)}
                     </h4>
                     <ul className="space-y-1.5">
                       {(isTr
@@ -1009,7 +1006,7 @@ export default function EnterprisePage() {
                   <div className="rounded-lg bg-red-50 p-4 dark:bg-red-950/20">
                     <h4 className="mb-2 flex items-center gap-1.5 text-sm font-bold text-red-700 dark:text-red-400">
                       <TrendingDown className="h-4 w-4" />
-                      {isTr ? "Dusus Faktorleri" : "Bearish Factors"}
+                      {tx("enterprise.bearishFactors", lang)}
                     </h4>
                     <ul className="space-y-1.5">
                       {(isTr
@@ -1030,7 +1027,7 @@ export default function EnterprisePage() {
               <div>
                 <h3 className="mb-4 flex items-center gap-2 font-semibold">
                   <AlertTriangle className="h-5 w-5 text-red-500" />
-                  {isTr ? "Risk Uyarılari" : "Risk Alerts"}
+                  {tx("enterprise.riskAlerts", lang)}
                 </h3>
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {aiAnalysis.riskAlerts.map((r, i) => (
@@ -1065,7 +1062,7 @@ export default function EnterprisePage() {
                   className="inline-flex items-center gap-2 rounded-lg border px-5 py-2 text-xs font-medium text-muted-foreground transition-all hover:border-primary hover:text-primary"
                 >
                   <FlaskConical className="h-3.5 w-3.5" />
-                  {isTr ? "Yeniden Analiz Et" : "Re-run Analysis"}
+                  {tx("enterprise.rerunAnalysis", lang)}
                 </button>
               </div>
             </>
@@ -1075,9 +1072,7 @@ export default function EnterprisePage() {
 
       {/* Disclaimer */}
       <div className="mt-10 rounded-xl border bg-muted/30 p-5 text-center text-xs text-muted-foreground">
-        {isTr
-          ? "Bu sayfadaki pazar verileri ve sirket bilgileri kamuya acik kaynaklardan derlenmis tahmini degerlerdir. Yatirim tavsiyesi niteliginde degildir. Yatirim kararlarinizda profesyonel danışmanlık aliniz."
-          : "Market data and company information on this page are estimates compiled from public sources. This does not constitute investment advice. Seek professional guidance for investment decisions."}
+        {tx("enterprise.disclaimer", lang)}
       </div>
     </div>
   )

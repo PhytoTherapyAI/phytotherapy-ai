@@ -83,21 +83,21 @@ export default function EmergencyIdPage() {
         {/* Emergency Contact Input */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-red-100 dark:border-gray-700 p-6 mb-6">
           <h3 className="font-medium text-gray-900 dark:text-white mb-4">
-            {lang === "tr" ? "Acil Durum İletişim Bilgileri" : "Emergency Contact Info"}
+            {tx("emergencyId.contactInfo", lang)}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             <input
               type="text"
               value={emergencyContact.name}
               onChange={(e) => setEmergencyContact((p) => ({ ...p, name: e.target.value }))}
-              placeholder={lang === "tr" ? "İletişim adi" : "Contact name"}
+              placeholder={tx("emergencyId.contactName", lang)}
               className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
             <input
               type="tel"
               value={emergencyContact.phone}
               onChange={(e) => setEmergencyContact((p) => ({ ...p, phone: e.target.value }))}
-              placeholder={lang === "tr" ? "Telefon numarasi" : "Phone number"}
+              placeholder={tx("emergencyId.phoneNumber", lang)}
               className="px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
             />
           </div>
@@ -127,7 +127,7 @@ export default function EmergencyIdPage() {
                 <div className="header bg-red-600 text-white p-4 text-center">
                   <p className="text-lg font-bold flex items-center justify-center gap-2">
                     <Heart className="w-5 h-5" />
-                    {lang === "tr" ? "ACIL DURUM KIMLIK KARTI" : "EMERGENCY ID CARD"}
+                    {tx("emergencyId.cardTitle", lang)}
                   </p>
                 </div>
 
@@ -137,16 +137,16 @@ export default function EmergencyIdPage() {
                     <div className="row flex justify-between items-center py-1.5 border-b border-gray-100 dark:border-gray-700">
                       <span className="label text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                         <User className="w-3.5 h-3.5" />
-                        {lang === "tr" ? "Ad Soyad" : "Full Name"}
+                        {tx("emergencyId.fullName", lang)}
                       </span>
                       <span className="value text-sm font-semibold text-gray-900 dark:text-white">
-                        {fullName || (lang === "tr" ? "Belirtilmemis" : "Not specified")}
+                        {fullName || tx("emergencyId.notSpecified", lang)}
                       </span>
                     </div>
                     {dateOfBirth && (
                       <div className="row flex justify-between items-center py-1.5 border-b border-gray-100 dark:border-gray-700">
                         <span className="label text-sm font-medium text-gray-500 dark:text-gray-400">
-                          {lang === "tr" ? "Dogum Tarihi" : "Date of Birth"}
+                          {tx("emergencyId.dateOfBirth", lang)}
                         </span>
                         <span className="value text-sm text-gray-900 dark:text-white">{dateOfBirth}</span>
                       </div>
@@ -162,7 +162,7 @@ export default function EmergencyIdPage() {
                     {bloodType && (
                       <div className="row flex justify-between items-center py-1.5 border-b border-gray-100 dark:border-gray-700">
                         <span className="label text-sm font-medium text-gray-500 dark:text-gray-400">
-                          {lang === "tr" ? "Kan Grubu" : "Blood Type"}
+                          {tx("emergencyId.bloodType", lang)}
                         </span>
                         <span className="value text-sm font-bold text-red-600 dark:text-red-400">{bloodType}</span>
                       </div>
@@ -174,7 +174,7 @@ export default function EmergencyIdPage() {
                     <div>
                       <p className="section-title text-sm font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5 mb-2">
                         <AlertTriangle className="w-4 h-4" />
-                        {lang === "tr" ? "ALERJILER" : "ALLERGIES"}
+                        {tx("emergencyId.allergies", lang)}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {allergies.map((a, i) => (
@@ -191,7 +191,7 @@ export default function EmergencyIdPage() {
                     <div>
                       <p className="section-title text-sm font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5 mb-2">
                         <Pill className="w-4 h-4" />
-                        {lang === "tr" ? "ILACLAR" : "MEDICATIONS"}
+                        {tx("emergencyId.medications", lang)}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {medications.map((m, i) => (
@@ -207,7 +207,7 @@ export default function EmergencyIdPage() {
                   {chronicConditions && chronicConditions.length > 0 && (
                     <div>
                       <p className="section-title text-sm font-bold text-red-600 dark:text-red-400 mb-2">
-                        {lang === "tr" ? "KRONIK HASTALIKLAR" : "CHRONIC CONDITIONS"}
+                        {tx("emergencyId.chronicConditions", lang)}
                       </p>
                       <div className="flex flex-wrap gap-1.5">
                         {chronicConditions.map((c, i) => (
@@ -223,7 +223,7 @@ export default function EmergencyIdPage() {
                   {emergencyContact.name && (
                     <div className="emergency-box bg-red-600 rounded-xl p-4 text-center">
                       <p className="text-white text-xs uppercase tracking-wider mb-1">
-                        {lang === "tr" ? "Acil Durum İletişimi" : "Emergency Contact"}
+                        {tx("emergencyId.emergencyContact", lang)}
                       </p>
                       <p className="text-white font-bold">{emergencyContact.name}</p>
                       {emergencyContact.phone && (
@@ -241,9 +241,7 @@ export default function EmergencyIdPage() {
             {/* Info Note */}
             <div className="mt-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 text-center">
               <p className="text-gray-500 dark:text-gray-400 text-sm">
-                {lang === "tr"
-                  ? "Bu karti yazdirup cuzdaninizda tasimanizi oneririz. Veriler profilinizden cekilmistir."
-                  : "We recommend printing this card and carrying it in your wallet. Data is pulled from your profile."}
+                {tx("emergencyId.cardTip", lang)}
               </p>
             </div>
           </div>

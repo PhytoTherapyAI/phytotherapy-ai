@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -98,34 +99,31 @@ export default function EmergencyContactsPage() {
   }
 
   const t = (key: string) => {
-    const map: Record<string, Record<string, string>> = {
-      title: { en: "Emergency Contacts", tr: "Acil Durum Kişileri" },
-      subtitle: { en: "People to contact in a health emergency", tr: "Sağlık acilinde ulaşılacak kişiler" },
-      add: { en: "Add Contact", tr: "Kişi Ekle" },
-      edit: { en: "Edit", tr: "Düzenle" },
-      delete: { en: "Delete", tr: "Sil" },
-      save: { en: "Save", tr: "Kaydet" },
-      cancel: { en: "Cancel", tr: "İptal" },
-      name: { en: "Full Name", tr: "Ad Soyad" },
-      relationship: { en: "Relationship", tr: "Yakınlık Derecesi" },
-      phone: { en: "Phone Number", tr: "Telefon Numarası" },
-      primary: { en: "Primary Contact", tr: "Birincil Kişi" },
-      set_primary: { en: "Set as primary", tr: "Birincil yap" },
-      call: { en: "Call", tr: "Ara" },
-      empty: { en: "No emergency contacts yet. Add someone you trust.", tr: "Henüz acil durum kişisi yok. Güvendiğiniz birini ekleyin." },
-      saved: { en: "Saved!", tr: "Kaydedildi!" },
-      tip: { en: "Your emergency contacts are shown on your Emergency ID card and can be accessed even without login.", tr: "Acil durum kişileriniz Acil Kimlik kartınızda gösterilir ve giriş yapmadan da erişilebilir." },
-      max: { en: "Maximum 5 contacts", tr: "Maksimum 5 kişi" },
-      priority: { en: "Priority", tr: "Öncelik" },
+    const keyMap: Record<string, string> = {
+      title: "emergencyContacts.title",
+      subtitle: "emergencyContacts.subtitle",
+      add: "emergencyContacts.add",
+      save: "emergencyContacts.save",
+      cancel: "emergencyContacts.cancel",
+      name: "emergencyContacts.name",
+      relationship: "emergencyContacts.relationship",
+      phone: "emergencyContacts.phone",
+      primary: "emergencyContacts.primary",
+      set_primary: "emergencyContacts.setPrimary",
+      empty: "emergencyContacts.empty",
+      saved: "emergencyContacts.saved",
+      tip: "emergencyContacts.tip",
+      max: "emergencyContacts.max",
     }
-    return map[key]?.[lang] || key
+    const txKey = keyMap[key]
+    return txKey ? tx(txKey, lang) : key
   }
 
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-lg mx-auto px-4 md:px-8 py-8">
         <Link href="/profile" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ArrowLeft className="w-4 h-4" />{lang === "tr" ? "Profil" : "Profile"}
+          <ArrowLeft className="w-4 h-4" />{tx("emergencyContacts.backToProfile", lang)}
         </Link>
 
         {/* Header */}
@@ -162,7 +160,7 @@ export default function EmergencyContactsPage() {
               <div>
                 <label className="text-sm font-medium mb-1 block">{t("name")} *</label>
                 <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                  placeholder={lang === "tr" ? "Örn: Ahmet Yılmaz" : "e.g. John Doe"} />
+                  placeholder={tx("emergencyContacts.namePlaceholder", lang)} />
               </div>
               <div>
                 <label className="text-sm font-medium mb-2 block">{t("relationship")}</label>
