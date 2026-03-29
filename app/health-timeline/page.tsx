@@ -47,9 +47,9 @@ export default function HealthTimelinePage() {
     try {
       const supabase = createBrowserClient()
       // Load medications
-      const { data: meds } = await supabase.from("user_medications").select("medication_name, created_at").eq("user_id", user.id)
+      const { data: meds } = await supabase.from("user_medications").select("brand_name, generic_name, created_at").eq("user_id", user.id)
       meds?.forEach((m: any) => {
-        autoEvents.push({ id: `med-${m.medication_name}`, date: m.created_at?.split("T")[0] || "", type: "medication_start", title: m.medication_name, source: "auto" })
+        autoEvents.push({ id: `med-${m.generic_name || m.brand_name}`, date: m.created_at?.split("T")[0] || "", type: "medication_start", title: m.generic_name || m.brand_name, source: "auto" })
       })
       // Load blood tests
       const { data: tests } = await supabase.from("blood_tests").select("created_at, id").eq("user_id", user.id)

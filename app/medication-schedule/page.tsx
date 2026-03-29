@@ -61,8 +61,8 @@ export default function MedicationSchedulePage() {
     if (!user) { setLoading(false); return }
     try {
       const supabase = createBrowserClient()
-      const { data } = await supabase.from("user_medications").select("medication_name").eq("user_id", user.id)
-      if (data) setUserMeds(data.map((d: any) => d.medication_name))
+      const { data } = await supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id)
+      if (data) setUserMeds(data.map((d: any) => (d.generic_name || d.brand_name)))
     } catch (e) { console.error(e) }
     setLoading(false)
   }

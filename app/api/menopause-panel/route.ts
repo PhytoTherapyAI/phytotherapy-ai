@@ -48,11 +48,11 @@ export async function POST(request: NextRequest) {
     // Fetch user medications — check HRT
     const { data: medications } = await supabase
       .from("user_medications")
-      .select("medication_name, active_ingredient, dosage")
+      .select("brand_name, generic_name, dosage")
       .eq("user_id", user.id);
 
     const medicationList = medications && medications.length > 0
-      ? medications.map((m) => `${m.medication_name}${m.active_ingredient ? ` (${m.active_ingredient})` : ""}`).join(", ")
+      ? medications.map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""}`).join(", ")
       : "None reported";
 
     // Check for HRT medications
@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
     ];
     const hasHRT = medications?.some((m) =>
       hrtKeywords.some((kw) =>
-        (m.medication_name?.toLowerCase() || "").includes(kw) ||
-        (m.active_ingredient?.toLowerCase() || "").includes(kw)
+        ((m.generic_name || m.brand_name)?.toLowerCase() || "").includes(kw) ||
+        (m.generic_name?.toLowerCase() || "").includes(kw)
       )
     );
 

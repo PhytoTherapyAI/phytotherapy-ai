@@ -75,9 +75,9 @@ export default function DrugRecallPage() {
       const supabase = createBrowserClient()
       const { data } = await supabase
         .from("user_medications")
-        .select("medication_name")
+        .select("brand_name, generic_name")
         .eq("user_id", user.id)
-      setUserMeds((data || []).map((d: any) => d.medication_name.toLowerCase()))
+      setUserMeds((data || []).map((d: any) => (d.generic_name || d.brand_name).toLowerCase()))
     } catch { /* ignore */ }
     setLoading(false)
   }

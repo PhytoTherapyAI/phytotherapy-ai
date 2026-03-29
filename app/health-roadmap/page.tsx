@@ -41,7 +41,7 @@ export default function HealthRoadmapPage() {
       const supabase = createBrowserClient()
       const [profileRes, medsRes] = await Promise.all([
         supabase.from("user_profiles").select("*").eq("user_id", user.id).single(),
-        supabase.from("user_medications").select("medication_name").eq("user_id", user.id),
+        supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id),
       ])
       const profile = profileRes.data
       const medCount = medsRes.data?.length || 0

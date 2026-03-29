@@ -40,11 +40,11 @@ export async function POST(request: NextRequest) {
     // Fetch user medications — check ALL for sexual side effects
     const { data: medications } = await supabase
       .from("user_medications")
-      .select("medication_name, active_ingredient, dosage")
+      .select("brand_name, generic_name, dosage")
       .eq("user_id", user.id);
 
     const medicationList = medications && medications.length > 0
-      ? medications.map((m) => `${m.medication_name}${m.active_ingredient ? ` (${m.active_ingredient})` : ""}`).join(", ")
+      ? medications.map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""}`).join(", ")
       : "None reported";
 
     // Comprehensive list of medications with sexual side effects
@@ -73,12 +73,12 @@ export async function POST(request: NextRequest) {
     const matchedEffects: Array<{ medication: string; effect: string; prevalence: string }> = [];
     if (medications) {
       for (const med of medications) {
-        const name = (med.medication_name || "").toLowerCase();
-        const ingredient = (med.active_ingredient || "").toLowerCase();
+        const name = (med.generic_name || med.brand_name || "").toLowerCase();
+        const ingredient = (med.generic_name || "").toLowerCase();
         for (const [drug, info] of Object.entries(sexualEffectDatabase)) {
           if (name.includes(drug) || ingredient.includes(drug)) {
             matchedEffects.push({
-              medication: med.medication_name,
+              medication: med.generic_name || med.brand_name,
               ...info,
             });
           }

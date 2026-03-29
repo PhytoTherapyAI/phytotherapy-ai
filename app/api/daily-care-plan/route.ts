@@ -127,7 +127,7 @@ USER PROFILE:
 - Smoking: ${profile.smoking || "no"}
 - Alcohol: ${profile.alcohol || "no"}
 
-MEDICATIONS: ${medications?.map(m => `${m.medication_name} (${m.dosage}, ${m.frequency})`).join(", ") || "none"}
+MEDICATIONS: ${medications?.map(m => `${(m.generic_name || m.brand_name)} (${m.dosage}, ${m.frequency})`).join(", ") || "none"}
 
 ALLERGIES: ${allergies?.map(a => `${a.allergy_name} (${a.severity})`).join(", ") || "none"}
 

@@ -223,11 +223,11 @@ export default function DisasterModePage() {
     try {
       const supabase = createBrowserClient()
       const [medsRes, profileRes, allergyRes] = await Promise.all([
-        supabase.from("user_medications").select("medication_name").eq("user_id", user.id),
+        supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id),
         supabase.from("user_profiles").select("blood_type").eq("user_id", user.id).single(),
         supabase.from("user_allergies").select("allergy_name").eq("user_id", user.id),
       ])
-      setUserMeds((medsRes.data || []).map((d: any) => d.medication_name))
+      setUserMeds((medsRes.data || []).map((d: any) => (d.generic_name || d.brand_name)))
       setProfile(profileRes.data)
       setAllergies((allergyRes.data || []).map((d: any) => d.allergy_name))
     } catch { /* offline fallback */ }

@@ -32,11 +32,11 @@ export default function HealthRadarPage() {
     try {
       const supabase = createBrowserClient()
       const [medsRes, profileRes, checkinsRes] = await Promise.all([
-        supabase.from("user_medications").select("medication_name").eq("user_id", user.id),
+        supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id),
         supabase.from("user_profiles").select("*").eq("user_id", user.id).single(),
         supabase.from("daily_check_ins").select("*").eq("user_id", user.id).order("check_date", { ascending: false }).limit(7),
       ])
-      const meds = medsRes.data?.map((d: any) => d.medication_name) || []
+      const meds = medsRes.data?.map((d: any) => (d.generic_name || d.brand_name)) || []
       const profile = profileRes.data
       const checkins = checkinsRes.data || []
 

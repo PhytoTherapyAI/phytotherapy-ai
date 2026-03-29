@@ -39,11 +39,11 @@ export async function POST(request: NextRequest) {
     // Fetch user medications for timing adjustments
     const { data: medications } = await supabase
       .from("user_medications")
-      .select("medication_name, active_ingredient, dosage")
+      .select("brand_name, generic_name, dosage")
       .eq("user_id", user.id);
 
     const medicationList = medications && medications.length > 0
-      ? medications.map((m) => `${m.medication_name}${m.active_ingredient ? ` (${m.active_ingredient})` : ""}${m.dosage ? ` ${m.dosage}` : ""}`).join(", ")
+      ? medications.map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""}${m.dosage ? ` ${m.dosage}` : ""}`).join(", ")
       : "None reported";
 
     const systemPrompt = `You are a jet lag optimization assistant for Phytotherapy.ai.

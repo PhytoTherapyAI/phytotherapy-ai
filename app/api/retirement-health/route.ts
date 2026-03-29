@@ -37,11 +37,11 @@ export async function POST(request: NextRequest) {
     // Fetch user medications for context
     const { data: medications } = await supabase
       .from("user_medications")
-      .select("medication_name, active_ingredient")
+      .select("brand_name, generic_name")
       .eq("user_id", user.id);
 
     const medicationList = medications && medications.length > 0
-      ? medications.map((m) => `${m.medication_name}${m.active_ingredient ? ` (${m.active_ingredient})` : ""}`).join(", ")
+      ? medications.map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""}`).join(", ")
       : "None reported";
 
     const systemPrompt = `You are a retirement health planning assistant for Phytotherapy.ai.

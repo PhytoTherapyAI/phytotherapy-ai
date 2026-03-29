@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     // 3. Fetch current medications
     const { data: medications } = await supabase
       .from("user_medications")
-      .select("medication_name, dosage")
+      .select("brand_name, generic_name, dosage")
       .eq("user_id", userId);
 
     // 4. Fetch allergies
@@ -122,7 +122,7 @@ ${vitalData?.spo2 ? `🫁 SpO2: ${vitalData.spo2}%` : ""}
 - Yaş: ${age || "-"}
 - Kan Grubu: ${profile.blood_group || "-"}
 - Kronik: ${profile.chronic_conditions?.join(", ") || "-"}
-- İlaçlar: ${medications?.map((m) => m.medication_name).join(", ") || "-"}
+- İlaçlar: ${medications?.map((m) => (m.generic_name || m.brand_name)).join(", ") || "-"}
 - Alerjiler: ${allergies?.map((a) => a.allergy_name).join(", ") || "-"}
 
 ${locationUrl ? `📍 KONUM: ${locationUrl}` : "📍 Konum bilgisi mevcut değil"}

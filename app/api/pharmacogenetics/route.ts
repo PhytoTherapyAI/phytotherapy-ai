@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     // Fetch user medications
     const { data: medications } = await supabase
       .from("user_medications")
-      .select("medication_name, active_ingredient, dosage, frequency")
+      .select("brand_name, generic_name, dosage, frequency")
       .eq("user_id", user.id);
 
     if (!medications || medications.length === 0) {
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     const medicationList = medications
-      .map((m) => `${m.medication_name}${m.active_ingredient ? ` (${m.active_ingredient})` : ""} — ${m.dosage || "dose not specified"}, ${m.frequency || "frequency not specified"}`)
+      .map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""} — ${m.dosage || "dose not specified"}, ${m.frequency || "frequency not specified"}`)
       .join("\n");
 
     // Fetch profile for context
@@ -119,7 +119,7 @@ Provide a comprehensive pharmacogenetics guide as JSON.`;
     try {
       await supabase.from("query_history").insert({
         user_id: user.id,
-        query_text: `Pharmacogenetics analysis: ${medications.map((m) => m.medication_name).join(", ")}`,
+        query_text: `Pharmacogenetics analysis: ${medications.map((m) => (m.generic_name || m.brand_name)).join(", ")}`,
         response_text: `${(analysis.affectedMedications || []).length} medications affected, Testing: ${analysis.testingRecommendation?.urgency || "unknown"}`,
         query_type: "general",
       });

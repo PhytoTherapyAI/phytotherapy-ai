@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     // Fetch user medications
     const { data: medications } = await supabase
       .from("user_medications")
-      .select("medication_name, active_ingredient, dosage")
+      .select("brand_name, generic_name, dosage")
       .eq("user_id", user.id);
 
     // Check for critical patterns BEFORE AI — immediate red alert

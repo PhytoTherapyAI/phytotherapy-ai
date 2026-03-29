@@ -215,15 +215,15 @@ export async function POST(request: NextRequest) {
     try {
       const { data: meds } = await supabase
         .from("user_medications")
-        .select("medication_name, active_ingredient")
+        .select("brand_name, generic_name")
         .eq("user_id", user.id)
         .eq("is_active", true);
 
       if (meds && meds.length > 0) {
-        medicationsList = meds.map((m: { medication_name: string; active_ingredient?: string }) =>
-          m.active_ingredient
-            ? `${m.medication_name} (${m.active_ingredient})`
-            : m.medication_name
+        medicationsList = meds.map((m: any) =>
+          m.generic_name && m.brand_name
+            ? `${m.brand_name} (${m.generic_name})`
+            : (m.generic_name || m.brand_name)
         );
       }
     } catch {

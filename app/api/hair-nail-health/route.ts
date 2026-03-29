@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     const [medsResult, profileResult] = await Promise.all([
       supabase
         .from("user_medications")
-        .select("medication_name, active_ingredient, dosage, frequency")
+        .select("brand_name, generic_name, dosage, frequency")
         .eq("user_id", user.id),
       supabase
         .from("user_profiles")
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     const profile = profileResult.data;
 
     const medicationList = medications.length > 0
-      ? medications.map((m) => `${m.medication_name}${m.active_ingredient ? ` (${m.active_ingredient})` : ""}`).join(", ")
+      ? medications.map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""}`).join(", ")
       : "None reported";
 
     const profileInfo = profile
