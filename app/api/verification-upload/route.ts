@@ -127,7 +127,6 @@ export async function POST(req: Request) {
 
     // 12. Audit log
     const audit = createAuditEntry("upload", user.id, storagePath, { ipAddress: ip })
-    console.log("[AUDIT]", JSON.stringify(audit))
 
     return NextResponse.json({
       success: true,

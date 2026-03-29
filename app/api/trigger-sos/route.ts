@@ -200,7 +200,6 @@ Bu mesaj Phytotherapy.ai tarafından otomatik gönderilmiştir.`;
     // 8. Return success with contact count
     const contactCount = emergencyContacts?.length || 0;
 
-    console.log(`[SOS] 🚨 Alert triggered for user ${userId}`, {
       alertType,
       severity,
       contactsNotified: contactCount,

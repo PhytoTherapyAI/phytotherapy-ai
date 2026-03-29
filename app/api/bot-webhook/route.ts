@@ -31,7 +31,6 @@ export async function POST(req: Request) {
       channelId = from.replace("whatsapp:", "")
       messageText = body.trim().toLowerCase()
 
-      console.log(`[BOT-WEBHOOK] WhatsApp from ${channelId}: "${body}"`)
     } else {
       // ── TELEGRAM BOT API ──
       const data = await req.json()
@@ -43,7 +42,6 @@ export async function POST(req: Request) {
       channelId = String(message.chat.id)
       messageText = message.text.trim().toLowerCase()
 
-      console.log(`[BOT-WEBHOOK] Telegram from ${channelId}: "${message.text}"`)
     }
 
     // ── Find subscription ──
@@ -55,7 +53,6 @@ export async function POST(req: Request) {
       .single()
 
     if (!subscription) {
-      console.log(`[BOT-WEBHOOK] No subscription for ${channel}:${channelId}`)
       return NextResponse.json({ ok: true, status: "no_subscription" })
     }
 

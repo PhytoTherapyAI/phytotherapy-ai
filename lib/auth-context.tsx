@@ -46,7 +46,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfile = useCallback(async (userId: string): Promise<UserProfile | null> => {
     try {
-      console.log("[Auth] Fetching profile for:", userId);
 
       const profilePromise = supabase
         .from("user_profiles")
@@ -73,7 +72,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error("[Auth] Profile fetch error:", error.message);
         return null;
       }
-      console.log("[Auth] Profile fetched:", data?.full_name, "onboarding:", data?.onboarding_complete);
       return data as UserProfile;
     } catch (err) {
       console.error("[Auth] Profile fetch exception:", err);
@@ -93,10 +91,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateState = useCallback(async (user: User | null, session: Session | null) => {
-    console.log("[Auth] updateState called:", { hasUser: !!user, hasSession: !!session });
 
     if (!user) {
-      console.log("[Auth] No user — setting unauthenticated state");
       setState({
         user: null,
         session: null,
@@ -119,7 +115,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }));
 
     const profile = await fetchProfile(user.id);
-    console.log("[Auth] Final state: authenticated=true, profile=", profile?.full_name ?? "null");
     setState({
       user,
       session,
@@ -133,19 +128,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [fetchProfile, checkMedicationUpdate]);
 
   useEffect(() => {
-    console.log("[Auth] AuthProvider mounted — checking session...");
     let initialDone = false;
 
     async function initAuth() {
       try {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
         if (userError || !user) {
-          console.log("[Auth] getUser: no valid user", userError?.message);
           setState((prev) => ({ ...prev, isLoading: false }));
           return;
         }
         const { data: { session } } = await supabase.auth.getSession();
-        console.log("[Auth] initAuth: authenticated as", user.email);
         await updateState(user, session);
       } catch (err) {
         console.error("[Auth] initAuth exception:", err);
@@ -159,19 +151,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log("[Auth] onAuthStateChange:", event);
         if (event === "INITIAL_SESSION") return;
         if (event === "SIGNED_OUT" || !session?.user) {
           await updateState(null, null);
           return;
         }
         if (!initialDone) {
-          console.log("[Auth] Skipping event — initAuth still running");
           return;
         }
         // Handle token refresh — update session in state
         if (event === "TOKEN_REFRESHED") {
-          console.log("[Auth] Token refreshed successfully");
           setState((prev) => ({ ...prev, session }));
           return;
         }
@@ -183,19 +172,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Re-check session when tab becomes visible again (back from background)
     const handleVisibilityChange = async () => {
       if (document.visibilityState === "visible") {
-        console.log("[Auth] Tab became visible — refreshing session...");
         try {
           const { data: { session }, error } = await supabase.auth.getSession();
           if (error || !session) {
-            console.log("[Auth] Session expired while in background");
             // Try to refresh the token
             const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
             if (refreshError || !refreshData.session) {
-              console.log("[Auth] Token refresh failed — signing out");
               await updateState(null, null);
               return;
             }
-            console.log("[Auth] Token refreshed after background return");
             await updateState(refreshData.session.user, refreshData.session);
           } else {
             // Session exists, update state silently
@@ -263,7 +248,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    console.log("[Auth] Signing out...");
 
     // Clear state immediately for instant UI feedback
     setState({
@@ -296,7 +280,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    console.log("[Auth] Signed out — redirecting to /");
     window.location.href = "/";
   };
 

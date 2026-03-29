@@ -82,7 +82,6 @@ export async function POST(req: Request) {
       ipAddress: ip,
       details: `Signed URL generated (${SIGNED_URL_EXPIRY}s expiry)`,
     })
-    console.log("[AUDIT]", JSON.stringify(audit))
 
     return NextResponse.json({
       signedUrl: signedUrlData.signedUrl,

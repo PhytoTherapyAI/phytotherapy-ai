@@ -27,7 +27,6 @@ async function sendWhatsApp(to: string, message: string): Promise<boolean> {
   const fromNumber = process.env.TWILIO_WHATSAPP_FROM || "whatsapp:+14155238886" // sandbox
 
   if (!accountSid || !authToken) {
-    console.log(`[BOT-SEND] Twilio not configured. Would send to ${to}: ${message.substring(0, 50)}...`)
     return true // dev mode
   }
 
@@ -57,7 +56,6 @@ async function sendTelegram(chatId: string, message: string, buttons?: string[][
   const botToken = process.env.TELEGRAM_BOT_TOKEN
 
   if (!botToken) {
-    console.log(`[BOT-SEND] Telegram not configured. Would send to ${chatId}: ${message.substring(0, 50)}...`)
     return true // dev mode
   }
 
@@ -139,7 +137,6 @@ export async function POST(req: Request) {
   const targetTime = `${String(trHour).padStart(2, "0")}:${String(currentMinute).padStart(2, "0")}`
   const targetHour = `${String(trHour).padStart(2, "0")}:`
 
-  console.log(`[BOT-SEND] Running at UTC ${currentHour}:${currentMinute} (TR ${trHour}:${currentMinute})`)
 
   // Get active subscriptions matching current hour
   const { data: subscriptions, error } = await supabase
@@ -155,7 +152,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "DB error", sent: 0 })
   }
 
-  console.log(`[BOT-SEND] Found ${subscriptions.length} subscriptions for ${targetHour}*`)
 
   let sent = 0
   let failed = 0
@@ -205,7 +201,6 @@ export async function POST(req: Request) {
     }
   }
 
-  console.log(`[BOT-SEND] Complete: ${sent} sent, ${failed} failed out of ${subscriptions.length}`)
 
   return NextResponse.json({
     sent,

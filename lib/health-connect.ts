@@ -34,7 +34,6 @@ export async function requestHealthPermission(): Promise<boolean> {
   if (provider === "none") return false
 
   // Placeholder — in React Native this calls the native module
-  console.log(`[HealthConnect] Requesting permission for ${provider}`)
   return false // Not available in PWA
 }
 
@@ -44,7 +43,6 @@ export async function readTodayHealth(): Promise<HealthData | null> {
   if (provider === "none") return null
 
   // Placeholder
-  console.log(`[HealthConnect] Reading health data from ${provider}`)
   return null
 }
 

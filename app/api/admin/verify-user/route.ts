@@ -158,7 +158,6 @@ export async function POST(req: Request) {
         details: action === "reject" ? `Reason: ${rejectionReason}` : "Approved",
       }
     )
-    console.log("[AUDIT]", JSON.stringify(audit))
 
     // 10. Save audit to DB
     await supabase.from("verification_audit_log").insert({

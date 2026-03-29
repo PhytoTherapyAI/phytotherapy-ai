@@ -82,7 +82,6 @@ export async function POST(req: Request) {
     }
 
     // Audit log
-    console.log(`[CONSENT-AUDIT] GRANT | User: ${user.id} | Purpose: ${purpose} | Recipient: ${recipientId} | IP: ${ip} | Sig: ${digitalSignature.substring(0, 16)}...`)
 
     return NextResponse.json({
       success: true,
@@ -120,7 +119,6 @@ export async function DELETE(req: Request) {
     .eq("id", consentId)
     .eq("user_id", user.id)
 
-  console.log(`[CONSENT-AUDIT] WITHDRAW | User: ${user.id} | ConsentId: ${consentId} | IP: ${ip}`)
 
   return NextResponse.json({ success: true, withdrawn: true })
 }

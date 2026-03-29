@@ -84,7 +84,6 @@ export async function GET(req: Request) {
 
       // Store tokens in database (encrypted in production)
       // For now, redirect with success status
-      console.log("[GOOGLE-FIT] OAuth successful, access_token received")
 
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/connected-devices?connected=google_fit`)
     } catch (err) {

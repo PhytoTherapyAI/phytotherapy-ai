@@ -28,9 +28,6 @@ export async function sendVerificationEmail(
 ): Promise<SendEmailResult> {
   // Skip sending if no API key configured (development mode)
   if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === "re_placeholder") {
-    console.log(`[EMAIL-DEV] Would send to: ${to}`)
-    console.log(`[EMAIL-DEV] Subject: ${subject}`)
-    console.log(`[EMAIL-DEV] HTML length: ${htmlContent.length} chars`)
     return { success: true, messageId: `dev-${Date.now()}` }
   }
 
@@ -48,7 +45,6 @@ export async function sendVerificationEmail(
       return { success: false, error: error.message }
     }
 
-    console.log(`[EMAIL-SENT] To: ${to}, ID: ${data?.id}`)
     return { success: true, messageId: data?.id }
   } catch (err) {
     console.error("[EMAIL-EXCEPTION]", err)
