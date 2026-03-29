@@ -419,7 +419,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "notification-preferences", title: { en: "Notification Preferences", tr: "Bildirim Tercihleri" }, icon: "BellRing", href: "/notification-preferences" },
       { id: "connected-devices", title: { en: "Connected Devices", tr: "Bağlı Cihazlar" }, icon: "Smartphone", href: "/connected-devices" },
       { id: "connect-assistant", title: { en: "Daily Assistant Bot", tr: "Günlük Asistan Botu" }, icon: "MessageCircle", href: "/connect-assistant" },
-      { id: "emergency-contacts", title: { en: "Emergency Contacts", tr: "Acil Durum Kişileri" }, icon: "Shield", href: "/emergency-contacts" },
       { id: "privacy-controls", title: { en: "Privacy Controls", tr: "Gizlilik Kontrolleri" }, icon: "Lock", href: "/privacy-controls" },
       { id: "data-export", title: { en: "Export Data (KVKK)", tr: "Veri İndir (KVKK)" }, icon: "Download", href: "/data-export" },
       { id: "data-delete", title: { en: "Delete Data (KVKK)", tr: "Veri Sil (KVKK)" }, icon: "Trash2", href: "/data-delete" },
