@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     // Fetch user medications
     const { data: medications } = await supabase
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     if (!medications || medications.length === 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Profilinizde ilaç bulunamadı" : "No medications found in your profile" },
+        { error: tx("api.pharmacogenetics.noMeds", lang) },
         { status: 400 }
       );
     }
@@ -68,7 +69,7 @@ RULES:
 - Recommend pharmacogenetic testing only when clinically relevant
 - Use plain language — explain enzymes like "your body's drug processing factory"
 - Use PubMed-backed evidence
-- Respond in ${lang === "tr" ? "Turkish" : "English"}
+- Respond in ${tx("api.respondLang", lang)}
 - Never say the user IS a poor/rapid metabolizer — say they MIGHT be
 
 OUTPUT FORMAT (strict JSON):

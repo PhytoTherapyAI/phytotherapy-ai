@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const {
       gestational_week = 12,
       symptoms = [],
@@ -61,9 +62,7 @@ export async function POST(request: NextRequest) {
         result: {
           alertLevel: "red",
           emergencyAlert: true,
-          emergencyMessage: lang === "tr"
-            ? "Belirttiginiz semptomlar preeklampsi veya diger ciddi bir komplikasyonun habercisi olabilir. DERHAL doktorunuzu arayın veya acil servise gidin. Gecikmeyin."
-            : "The symptoms you described may indicate preeclampsia or another serious complication. Call your doctor or go to the emergency room IMMEDIATELY. Do not delay.",
+          emergencyMessage: tx("api.pregnancy.emergencyMessage", lang),
           gestationalWeek: gestational_week,
           weekInfo: null,
           fetalDevelopment: null,
@@ -105,7 +104,7 @@ CRITICAL SAFETY RULES:
 - Always recommend discussing with OB/GYN
 - Be warm, reassuring, informative
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return ONLY valid JSON:
 {

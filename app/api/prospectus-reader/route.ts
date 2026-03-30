@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSONMultimodal } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
-    const lang = (formData.get("lang") as string) || "en";
+    const lang = ((formData.get("lang") as string) === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Desteklenmeyen dosya formatı. JPEG, PNG veya PDF yükleyin." : "Unsupported file type. Upload JPEG, PNG, or PDF." },
+        { error: tx("api.prospectus.unsupportedFile", lang) },
         { status: 400 }
       );
     }
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest) {
     const buffer = await file.arrayBuffer();
     const base64 = Buffer.from(buffer).toString("base64");
 
-    const userLang = lang === "tr" ? "Turkish" : "English";
+    const userLang = tx("api.respondLang", lang);
 
     const systemPrompt = `You are a medication prospectus/leaflet reader at Phytotherapy.ai.
 Your job is to extract key information from medication packaging, leaflets, or prospectuses and explain them in simple, understandable language.
@@ -133,7 +134,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Prospektüs okunamadı, tekrar deneyin" : "Could not read prospectus, try again" },
+        { error: tx("api.prospectus.readFailed", lang) },
         { status: 500 }
       );
     }

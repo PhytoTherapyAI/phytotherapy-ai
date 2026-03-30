@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const shiftPattern = sanitizeInput(body.shift_pattern || "night");
     const shiftHours = sanitizeInput(body.shift_hours || "22:00-06:00");
 
@@ -55,7 +56,7 @@ RULES:
 - Practical, actionable advice
 - Be supportive — shift work is hard
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return ONLY valid JSON:
 {

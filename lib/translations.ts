@@ -6189,6 +6189,108 @@ const commonToolKeys: Record<string, TranslationEntry> = {
     en: "We detected concerning language in your entries. Please reach out to a mental health professional or crisis line (988) immediately. You are not alone.",
     tr: "Kayıtlarınızda endişe verici ifadeler tespit edildi. Lütfen hemen bir ruh sağlığı uzmanıyla veya kriz hattı (182) ile iletişime geçin. Yalnız değilsiniz.",
   },
+
+  // ── pain-diary ──
+  "api.painDiary.validLocation": {
+    en: "Select a valid pain location",
+    tr: "Geçerli bir bölge seçin",
+  },
+  "api.painDiary.minEntries": {
+    en: "Need at least 7 entries for AI analysis",
+    tr: "AI analiz için en az 7 kayıt gerekli",
+  },
+
+  // ── pharmacogenetics ──
+  "api.pharmacogenetics.noMeds": {
+    en: "No medications found in your profile",
+    tr: "Profilinizde ilaç bulunamadı",
+  },
+
+  // ── postpartum-support ──
+  "api.postpartum.crisisMessage": {
+    en: "Your EPDS results indicate you may be having thoughts of self-harm. The postpartum period can be incredibly challenging and seeking help is a sign of strength. Please reach out to a professional immediately.",
+    tr: "EPDS sonuclariniz kendinize zarar verme dusunceleri olabilecegini gosteriyor. Dogum sonrasi donem cok zor olabilir ve yardim almak guc gosterisidir. Lutfen hemen bir uzmana ulasin.",
+  },
+  "api.postpartum.crisisLine1": {
+    en: "Postpartum Support International: 1-800-944-4773",
+    tr: "Kriz Hattı: 182",
+  },
+  "api.postpartum.crisisLine2": {
+    en: "Crisis Line: 988",
+    tr: "Dogum Sonrasi Destek: Doktorunuzu arayın",
+  },
+
+  // ── pregnancy-tracker ──
+  "api.pregnancy.emergencyMessage": {
+    en: "The symptoms you described may indicate preeclampsia or another serious complication. Call your doctor or go to the emergency room IMMEDIATELY. Do not delay.",
+    tr: "Belirttiginiz semptomlar preeklampsi veya diger ciddi bir komplikasyonun habercisi olabilir. DERHAL doktorunuzu arayın veya acil servise gidin. Gecikmeyin.",
+  },
+
+  // ── prospectus-reader ──
+  "api.prospectus.unsupportedFile": {
+    en: "Unsupported file type. Upload JPEG, PNG, or PDF.",
+    tr: "Desteklenmeyen dosya formatı. JPEG, PNG veya PDF yükleyin.",
+  },
+  "api.prospectus.readFailed": {
+    en: "Could not read prospectus, try again",
+    tr: "Prospektüs okunamadı, tekrar deneyin",
+  },
+
+  // ── ptsd-support ──
+  "api.ptsd.crisisMessage": {
+    en: "We noticed concerning thoughts. Please reach out to a mental health professional or crisis line (988) immediately. You are not alone.",
+    tr: "Endise verici dusunceler fark ettik. Lutfen hemen bir ruh sağlığı uzmaniyla veya kriz hattı (182) ile iletisime gecin. Yalniz degilsiniz.",
+  },
+  "api.ptsd.crisisLine1": {
+    en: "Suicide & Crisis Lifeline: 988",
+    tr: "Kriz Hattı: 182",
+  },
+  "api.ptsd.crisisLine2": {
+    en: "Crisis Text Line: Text HOME to 741741",
+    tr: "Sağlık Bakanlığı ALO: 184",
+  },
+  "api.ptsd.responseLine1": {
+    en: "Suicide & Crisis Lifeline: 988",
+    tr: "Kriz Hattı: 182",
+  },
+  "api.ptsd.responseLine2": {
+    en: "Crisis Text Line: Text HOME to 741741",
+    tr: "Sağlık Bakanlığı ALO: 184",
+  },
+  "api.ptsd.responseLine3": {
+    en: "Veterans Crisis Line: 1-800-273-8255 Press 1",
+    tr: "Sağlık Bakanlığı ALO: 184",
+  },
+
+  // ── radiology-analysis ──
+  "api.radiology.disclaimer": {
+    en: "This analysis is for educational purposes only. Not a radiological diagnosis.",
+    tr: "Bu analiz yalnızca eğitim amaçlıdır. Radyolojik tanı değildir.",
+  },
+
+  // ── rare-diseases ──
+  "api.rareDiseases.enterName": {
+    en: "Please enter a disease name",
+    tr: "Lutfen bir hastalik adi giriniz",
+  },
+
+  // ── scan-medication ──
+  "api.scanMedication.promptTr": {
+    en: "This is a photo of a medication box or supplement bottle. Please extract:\n1. Brand name (on the box)\n2. Active ingredient (generic name)\n3. Dosage (mg/ml/IU)\n4. Form (tablet/capsule/liquid)\n\nRespond in JSON format:\n{\"brand_name\": \"...\", \"generic_name\": \"...\", \"dosage\": \"...\", \"form\": \"...\", \"confidence\": \"high/medium/low\"}\n\nIf unreadable: {\"error\": \"Cannot read\", \"confidence\": \"low\"}",
+    tr: "Bu bir ilaç kutusu veya takviye fotoğrafı. Lütfen şunları çıkar:\n1. Marka adı (kutu üzerindeki)\n2. Etken madde (jenerik ad)\n3. Doz (mg/ml/IU)\n4. Form (tablet/kapsül/likit)\n\nJSON formatında yanıt ver:\n{\"brand_name\": \"...\", \"generic_name\": \"...\", \"dosage\": \"...\", \"form\": \"...\", \"confidence\": \"high/medium/low\"}\n\nEğer okunamıyorsa: {\"error\": \"Okunamadı\", \"confidence\": \"low\"}",
+  },
+
+  // ── second-opinion ──
+  "api.secondOpinion.describeConcern": {
+    en: "Please describe your concern",
+    tr: "Lutfen endiselerinizi yaziiniz",
+  },
+
+  // ── skin-health ──
+  "api.skinHealth.validConcern": {
+    en: "Select a valid skin concern",
+    tr: "Geçerli bir cilt sorunu seçin",
+  },
 }
 Object.assign(t, commonToolKeys)
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const {
       weeks_postpartum = 4,
       breastfeeding = false,
@@ -60,12 +61,8 @@ export async function POST(request: NextRequest) {
           crisisAlert: true,
           epdsScore,
           epdsRisk: "crisis",
-          crisisMessage: lang === "tr"
-            ? "EPDS sonuclariniz kendinize zarar verme dusunceleri olabilecegini gosteriyor. Dogum sonrasi donem cok zor olabilir ve yardim almak guc gosterisidir. Lutfen hemen bir uzmana ulasin."
-            : "Your EPDS results indicate you may be having thoughts of self-harm. The postpartum period can be incredibly challenging and seeking help is a sign of strength. Please reach out to a professional immediately.",
-          crisisLines: lang === "tr"
-            ? ["Kriz Hattı: 182", "Dogum Sonrasi Destek: Doktorunuzu arayın"]
-            : ["Postpartum Support International: 1-800-944-4773", "Crisis Line: 988"],
+          crisisMessage: tx("api.postpartum.crisisMessage", lang),
+          crisisLines: [tx("api.postpartum.crisisLine1", lang), tx("api.postpartum.crisisLine2", lang)],
           breastfeedingSafeMeds: [],
           recoveryTips: [],
           mentalHealthCheck: null,
@@ -96,7 +93,7 @@ CRITICAL SAFETY RULES:
 - Normalize the difficulty, reduce guilt
 - NEVER suggest "just sleep when baby sleeps" without practical context
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return ONLY valid JSON:
 {
@@ -155,9 +152,7 @@ If EPDS >= 13 or mood_score <= 1, set alertLevel to "red" and professionalReferr
         weeksPostpartum: weeks_postpartum,
         breastfeeding,
         crisisAlert: false,
-        crisisLines: lang === "tr"
-          ? ["Kriz Hattı: 182", "Dogum Sonrasi Destek: Doktorunuzu arayın"]
-          : ["Postpartum Support International: 1-800-944-4773", "Crisis Line: 988"],
+        crisisLines: [tx("api.postpartum.crisisLine1", lang), tx("api.postpartum.crisisLine2", lang)],
       },
     });
   } catch (err) {

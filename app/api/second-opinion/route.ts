@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -31,11 +32,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const concern = sanitizeInput(body.concern || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!concern || concern.length < 5) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lutfen endiselerinizi yaziiniz" : "Please describe your concern" },
+        { error: tx("api.secondOpinion.describeConcern", lang) },
         { status: 400 }
       );
     }
@@ -67,7 +68,7 @@ ALLERGIES: ${allergies.length > 0 ? allergies.map(a => a.allergen).join(", ") : 
 RECENT BLOOD TESTS: ${bloodTests.length > 0 ? bloodTests.map((b: any) => { const td = typeof b.test_data === "string" ? JSON.parse(b.test_data) : b.test_data; return Object.entries(td || {}).map(([k, v]: [string, any]) => `${k}: ${v?.value} ${v?.unit || ""}`).join(", "); }).join("; ") : "None"}
 
 CONCERN: ${concern}
-Language: ${lang === "tr" ? "Turkish" : "English"}
+Language: ${tx("api.respondLang", lang)}
 
 Create a structured second opinion preparation package. Return JSON:
 
@@ -83,7 +84,7 @@ Create a structured second opinion preparation package. Return JSON:
 }`;
 
     const result = await askGeminiJSON(
-      `Prepare a second opinion package for this concern: "${concern}". Respond in ${lang === "tr" ? "Turkish" : "English"}.`,
+      `Prepare a second opinion package for this concern: "${concern}". Respond in ${tx("api.respondLang", lang)}.`,
       prompt
     );
 

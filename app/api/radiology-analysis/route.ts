@@ -3,6 +3,7 @@ import { askGeminiJSONMultimodal } from "@/lib/gemini";
 import { RADIOLOGY_ANALYSIS_PROMPT } from "@/lib/prompts";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
-    const lang = (formData.get("lang") as string) || "en";
+    const lang = ((formData.get("lang") as string) === "tr" ? "tr" : "en") as "en" | "tr";
     const imageType = (formData.get("imageType") as string) || "";
 
     if (!file) {
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
     const base64 = Buffer.from(buffer).toString("base64");
 
     // Build prompt with language and image type context
-    const userLang = lang === "tr" ? "Turkish" : "English";
+    const userLang = tx("api.respondLang", lang);
     const typeHint = IMAGE_TYPES.includes(imageType as typeof IMAGE_TYPES[number])
       ? `\n\nThe user indicated this is a ${imageType.toUpperCase()} image/report. Use this context to guide your analysis.`
       : "";
@@ -93,9 +94,7 @@ If this is a medical image, describe what you observe and explain each finding s
       glossary: Array.isArray(analysis.glossary) ? analysis.glossary : [],
       doctorDiscussion: Array.isArray(analysis.doctorDiscussion) ? analysis.doctorDiscussion : [],
       limitations: Array.isArray(analysis.limitations) ? analysis.limitations : [],
-      disclaimer: analysis.disclaimer || (lang === "tr"
-        ? "Bu analiz yalnızca eğitim amaçlıdır. Radyolojik tanı değildir."
-        : "This analysis is for educational purposes only. Not a radiological diagnosis."),
+      disclaimer: analysis.disclaimer || tx("api.radiology.disclaimer", lang),
     };
 
     // Save to Supabase if authenticated

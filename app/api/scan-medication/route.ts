@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
 import { createClient } from "@supabase/supabase-js"
+import { tx } from "@/lib/translations"
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
@@ -20,7 +21,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Too many requests. Please wait ${rateCheck.resetInSeconds} seconds.` }, { status: 429 })
     }
 
-    const { image, lang } = await req.json()
+    const body = await req.json()
+    const { image } = body
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr"
 
     if (!image) {
       return NextResponse.json({ error: "No image provided" }, { status: 400 })
@@ -31,27 +34,7 @@ export async function POST(req: NextRequest) {
 
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
 
-    const prompt = lang === "tr"
-      ? `Bu bir ilaç kutusu veya takviye fotoğrafı. Lütfen şunları çıkar:
-1. Marka adı (kutu üzerindeki)
-2. Etken madde (jenerik ad)
-3. Doz (mg/ml/IU)
-4. Form (tablet/kapsül/likit)
-
-JSON formatında yanıt ver:
-{"brand_name": "...", "generic_name": "...", "dosage": "...", "form": "...", "confidence": "high/medium/low"}
-
-Eğer okunamıyorsa: {"error": "Okunamadı", "confidence": "low"}`
-      : `This is a photo of a medication box or supplement bottle. Please extract:
-1. Brand name (on the box)
-2. Active ingredient (generic name)
-3. Dosage (mg/ml/IU)
-4. Form (tablet/capsule/liquid)
-
-Respond in JSON format:
-{"brand_name": "...", "generic_name": "...", "dosage": "...", "form": "...", "confidence": "high/medium/low"}
-
-If unreadable: {"error": "Cannot read", "confidence": "low"}`
+    const prompt = tx("api.scanMedication.promptTr", lang)
 
     const result = await model.generateContent([
       prompt,

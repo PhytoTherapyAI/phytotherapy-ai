@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const {
       pcl5_answers = [],
       trigger_count = 0,
@@ -70,12 +71,8 @@ export async function POST(request: NextRequest) {
           alertLevel: "red",
           professionalReferral: true,
           crisisAlert: true,
-          crisisMessage: lang === "tr"
-            ? "Endise verici dusunceler fark ettik. Lutfen hemen bir ruh sağlığı uzmaniyla veya kriz hattı (182) ile iletisime gecin. Yalniz degilsiniz."
-            : "We noticed concerning thoughts. Please reach out to a mental health professional or crisis line (988) immediately. You are not alone.",
-          crisisLines: lang === "tr"
-            ? ["Kriz Hattı: 182", "Sağlık Bakanlığı ALO: 184"]
-            : ["Suicide & Crisis Lifeline: 988", "Crisis Text Line: Text HOME to 741741"],
+          crisisMessage: tx("api.ptsd.crisisMessage", lang),
+          crisisLines: [tx("api.ptsd.crisisLine1", lang), tx("api.ptsd.crisisLine2", lang)],
           copingStrategies: [],
           groundingExercises: [],
         },
@@ -104,7 +101,7 @@ CRITICAL SAFETY RULES:
 - Focus on safety and stabilization, not processing
 - Never minimize trauma experiences
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return ONLY valid JSON:
 {
@@ -150,9 +147,7 @@ professionalReferral MUST always be true for PTSD.`;
         pcl5Score,
         professionalReferral: true,
         crisisAlert: false,
-        crisisLines: lang === "tr"
-          ? ["Kriz Hattı: 182", "Sağlık Bakanlığı ALO: 184"]
-          : ["Suicide & Crisis Lifeline: 988", "Crisis Text Line: Text HOME to 741741", "Veterans Crisis Line: 1-800-273-8255 Press 1"],
+        crisisLines: [tx("api.ptsd.responseLine1", lang), tx("api.ptsd.responseLine2", lang), tx("api.ptsd.responseLine3", lang)],
       },
     });
   } catch (err) {

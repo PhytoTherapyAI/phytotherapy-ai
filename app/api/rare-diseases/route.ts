@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -18,11 +19,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const disease = sanitizeInput(body.disease || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!disease || disease.length < 2) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lutfen bir hastalik adi giriniz" : "Please enter a disease name" },
+        { error: tx("api.rareDiseases.enterName", lang) },
         { status: 400 }
       );
     }
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     const prompt = `You are a rare disease information specialist. Provide comprehensive information about this rare disease.
 
 Disease: ${disease}
-Language: ${lang === "tr" ? "Turkish" : "English"}
+Language: ${tx("api.respondLang", lang)}
 
 Return JSON:
 
@@ -59,7 +60,7 @@ Return JSON:
 Be factual and evidence-based. If information is limited, say so.`;
 
     const result = await askGeminiJSON(
-      `Provide information about this rare disease: "${disease}". Respond in ${lang === "tr" ? "Turkish" : "English"}.`,
+      `Provide information about this rare disease: "${disease}". Respond in ${tx("api.respondLang", lang)}.`,
       prompt
     );
     return NextResponse.json(result);

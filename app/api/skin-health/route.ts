@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -36,13 +37,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     // Validate concern
     const concern = VALID_CONCERNS.includes(body.concern) ? body.concern : null;
     if (!concern) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Geçerli bir cilt sorunu seçin" : "Select a valid skin concern" },
+        { error: tx("api.skinHealth.validConcern", lang) },
         { status: 400 }
       );
     }
@@ -100,7 +101,7 @@ RULES:
 - Provide a practical skincare routine (cleanser, moisturizer, treatment, sunscreen)
 - Consider pregnancy/breastfeeding safety for all recommendations
 - Use PubMed-backed evidence
-- Respond in ${lang === "tr" ? "Turkish" : "English"}
+- Respond in ${tx("api.respondLang", lang)}
 - Never diagnose — suggest when to see a dermatologist
 
 OUTPUT FORMAT (strict JSON):

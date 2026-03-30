@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -86,14 +87,14 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const action = body.action || "log";
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     // ─── ACTION: LOG ───────────────────────
     if (action === "log") {
       const location = VALID_LOCATIONS.includes(body.location) ? body.location : null;
       if (!location) {
         return NextResponse.json(
-          { error: lang === "tr" ? "Geçerli bir bölge seçin" : "Select a valid pain location" },
+          { error: tx("api.painDiary.validLocation", lang) },
           { status: 400 }
         );
       }
@@ -160,7 +161,7 @@ export async function POST(request: NextRequest) {
 
       if (!records || records.length < 7) {
         return NextResponse.json(
-          { error: lang === "tr" ? "AI analiz için en az 7 kayıt gerekli" : "Need at least 7 entries for AI analysis" },
+          { error: tx("api.painDiary.minEntries", lang) },
           { status: 400 }
         );
       }
@@ -193,7 +194,7 @@ RULES:
 - Check if any user medications could be contributing to pain
 - Provide evidence-based non-pharmacological pain management suggestions
 - Flag concerning patterns (escalating intensity, new locations, chronic patterns)
-- Respond in ${lang === "tr" ? "Turkish" : "English"}
+- Respond in ${tx("api.respondLang", lang)}
 - Never diagnose — suggest when to see a pain specialist
 
 OUTPUT FORMAT (strict JSON):
