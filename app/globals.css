@@ -50,6 +50,13 @@
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-gold: var(--gold);
+  /* Design System — Semantic Tokens */
+  --color-lavender: var(--lavender);
+  --color-lavender-foreground: var(--lavender-foreground);
+  --color-sage: var(--sage);
+  --color-sage-foreground: var(--sage-foreground);
+  --color-coral: var(--coral);
+  --color-coral-foreground: var(--coral-foreground);
 }
 
 /* ===== LIGHT MODE — warm cream + deep forest green ===== */
@@ -76,6 +83,13 @@
   --brand-foreground: #ffffff;
   --gold: #b8965a;
   --logo-accent: #b8965a;
+  /* Design System — Semantic Colors */
+  --lavender: #7C3AED;
+  --lavender-foreground: #ffffff;
+  --sage: #6B8F71;
+  --sage-foreground: #ffffff;
+  --coral: #F59E6B;
+  --coral-foreground: #7C2D12;
   --chart-1: #3c7a52;
   --chart-2: #5a9e6f;
   --chart-3: #b8965a;
@@ -116,6 +130,13 @@
   --brand-foreground: #f0faf2;
   --gold: #b8945a;
   --logo-accent: #c4a86c;
+  /* Design System — Dark Semantic Colors */
+  --lavender: #A78BFA;
+  --lavender-foreground: #1e1b4b;
+  --sage: #86EFAC;
+  --sage-foreground: #14532d;
+  --coral: #FDBA74;
+  --coral-foreground: #7C2D12;
   --sidebar: #111a14;
   --sidebar-foreground: #e6ede8;
   --sidebar-primary: #4a9460;
@@ -296,4 +317,54 @@ html.transitioning *::after {
 .dark .tool-card-4, .dark .tool-card-5, .dark .tool-card-6,
 .dark .tool-card-7, .dark .tool-card-8 {
   background: var(--card);
+}
+
+/* ===== Design System v2 — Glassmorphism + Soft Shadows ===== */
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+.dark .glass-card {
+  background: rgba(17, 26, 20, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* AI thinking glass */
+.glass-thinking {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(59, 130, 246, 0.06));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  animation: shimmer 2s ease-in-out infinite;
+}
+.dark .glass-thinking {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(96, 165, 250, 0.08));
+  border: 1px solid rgba(167, 139, 250, 0.2);
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
+
+/* Soft shadows */
+.shadow-soft { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02); }
+.shadow-soft-md { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.03); }
+.shadow-soft-lg { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.04); }
+.dark .shadow-soft { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+.dark .shadow-soft-md { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); }
+.dark .shadow-soft-lg { box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+
+/* Lavender glow for AI elements */
+.glow-lavender {
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.15), 0 0 60px rgba(124, 58, 237, 0.05);
+}
+.dark .glow-lavender {
+  box-shadow: 0 0 20px rgba(167, 139, 250, 0.2), 0 0 60px rgba(167, 139, 250, 0.08);
 }
