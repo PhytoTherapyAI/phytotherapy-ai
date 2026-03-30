@@ -2,7 +2,12 @@
 "use client";
 
 import Link from "next/link";
-import { Leaf, LogIn, User, LogOut, Settings, AlertTriangle, Check, RefreshCw, FlaskConical, Menu, X, ChevronDown, Wrench } from "lucide-react";
+import { usePathname } from "next/navigation";
+import {
+  Leaf, LogIn, LogOut, Settings, AlertTriangle, Check, RefreshCw,
+  Menu, X, Sparkles, LayoutDashboard, Shield, Calendar,
+  Flame, Search, Users, FlaskConical, ChevronDown,
+} from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
@@ -10,175 +15,33 @@ import { LanguageToggle, useLang } from "@/components/layout/language-toggle";
 import { Button } from "@/components/ui/button";
 import { tx } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
-import { MegaMenu } from "@/components/layout/mega-menu/MegaMenu";
 import { MobileMegaMenu } from "@/components/layout/mega-menu/MobileMegaMenu";
 import { CommandPalette, CommandPaletteTrigger } from "@/components/layout/CommandPalette";
 
-// Main nav links (always visible)
-const mainLinks = [
-  { href: "/health-assistant", labelKey: "nav.assistant" },
-  { href: "/calendar", labelKey: "nav.calendar" },
-  { href: "/interaction-checker", labelKey: "nav.interaction" },
-];
-
-// Tools dropdown items — all 85 tools organized by category
-const toolLinks = [
-  // Core Analysis
-  { href: "/health-analytics", labelKey: "nav.healthAnalytics" },
-  { href: "/medical-analysis", labelKey: "nav.medicalAnalysis" },
-  { href: "/body-analysis", labelKey: "nav.bodyAnalysis" },
-  { href: "/symptom-checker", labelKey: "nav.symptomChecker" },
-  { href: "/food-interaction", labelKey: "nav.foodInteraction" },
-  { href: "/supplement-compare", labelKey: "nav.supCompare" },
-  { href: "/interaction-map", labelKey: "nav.intMap" },
-  { href: "/health-goals", labelKey: "nav.healthGoals" },
-  { href: "/prospectus-reader", labelKey: "nav.prospectus" },
-  // Tracking
-  { href: "/sleep-analysis", labelKey: "nav.sleepAnalysis" },
-  { href: "/mental-wellness", labelKey: "nav.mentalWellness" },
-  { href: "/nutrition", labelKey: "nav.nutrition" },
-  { href: "/pain-diary", labelKey: "nav.painDiary" },
-  { href: "/voice-diary", labelKey: "nav.voiceDiary" },
-  // Health Conditions
-  { href: "/chronic-care", labelKey: "nav.chronicCare" },
-  { href: "/allergy-map", labelKey: "nav.allergyMap" },
-  { href: "/gut-health", labelKey: "nav.gutHealth" },
-  { href: "/skin-health", labelKey: "nav.skinHealth" },
-  { href: "/pharmacogenetics", labelKey: "nav.pharmacogenetics" },
-  // Women & Men
-  { href: "/womens-health", labelKey: "nav.womensHealth" },
-  { href: "/pregnancy-tracker", labelKey: "nav.pregnancyTracker" },
-  { href: "/postpartum-support", labelKey: "nav.postpartum" },
-  { href: "/menopause-panel", labelKey: "nav.menopause" },
-  { href: "/mens-health", labelKey: "nav.mensHealth" },
-  { href: "/sexual-health", labelKey: "nav.sexualHealth" },
-  // Mental Health
-  { href: "/anxiety-toolkit", labelKey: "nav.anxietyToolkit" },
-  { href: "/depression-screening", labelKey: "nav.depressionScreening" },
-  { href: "/adhd-management", labelKey: "nav.adhdManagement" },
-  { href: "/ptsd-support", labelKey: "nav.ptsdSupport" },
-  { href: "/addiction-recovery", labelKey: "nav.addictionRecovery" },
-  { href: "/grief-support", labelKey: "nav.griefSupport" },
-  // Organ Systems
-  { href: "/eye-health", labelKey: "nav.eyeHealth" },
-  { href: "/ear-health", labelKey: "nav.earHealth" },
-  { href: "/dental-health", labelKey: "nav.dentalHealth" },
-  { href: "/hair-nail-health", labelKey: "nav.hairNail" },
-  { href: "/kidney-dashboard", labelKey: "nav.kidneyDashboard" },
-  { href: "/liver-monitor", labelKey: "nav.liverMonitor" },
-  { href: "/thyroid-dashboard", labelKey: "nav.thyroidDashboard" },
-  { href: "/cardiovascular-risk", labelKey: "nav.cardiovascularRisk" },
-  { href: "/lung-monitor", labelKey: "nav.lungMonitor" },
-  { href: "/diabetic-foot", labelKey: "nav.diabeticFoot" },
-  // Daily Habits
-  { href: "/caffeine-tracker", labelKey: "nav.caffeineTracker" },
-  { href: "/alcohol-tracker", labelKey: "nav.alcoholTracker" },
-  { href: "/smoking-cessation", labelKey: "nav.smokingCessation" },
-  { href: "/intermittent-fasting", labelKey: "nav.intermittentFasting" },
-  { href: "/breathing-exercises", labelKey: "nav.breathingExercises" },
-  { href: "/hydration", labelKey: "nav.hydration" },
-  // Fitness & Movement
-  { href: "/sports-performance", labelKey: "nav.sportsPerf" },
-  { href: "/stretching", labelKey: "nav.stretching" },
-  { href: "/walking-tracker", labelKey: "nav.walkingTracker" },
-  { href: "/yoga-meditation", labelKey: "nav.yogaMeditation" },
-  { href: "/posture-ergonomics", labelKey: "nav.postureErgonomics" },
-  // Medical Tools
-  { href: "/appointment-prep", labelKey: "nav.appointmentPrep" },
-  { href: "/vaccination", labelKey: "nav.vaccination" },
-  { href: "/rehabilitation", labelKey: "nav.rehabilitation" },
-  { href: "/emergency-id", labelKey: "nav.emergencyId" },
-  { href: "/health-guides", labelKey: "nav.healthGuides" },
-  // Screening & Prevention
-  { href: "/cancer-screening", labelKey: "nav.cancerScreening" },
-  { href: "/checkup-planner", labelKey: "nav.checkupPlanner" },
-  { href: "/family-health-tree", labelKey: "nav.familyTree" },
-  { href: "/genetic-risk", labelKey: "nav.geneticRisk" },
-  // Life Stages
-  { href: "/child-health", labelKey: "nav.childHealth" },
-  { href: "/elder-care", labelKey: "nav.elderCare" },
-  { href: "/student-health", labelKey: "nav.studentHealth" },
-  { href: "/new-parent-health", labelKey: "nav.newParentHealth" },
-  { href: "/retirement-health", labelKey: "nav.retirementHealth" },
-  // Environment & Travel
-  { href: "/travel-health", labelKey: "nav.travelHealth" },
-  { href: "/seasonal-health", labelKey: "nav.seasonalHealth" },
-  { href: "/sun-exposure", labelKey: "nav.sunExposure" },
-  { href: "/air-quality", labelKey: "nav.airQuality" },
-  { href: "/jet-lag", labelKey: "nav.jetLag" },
-  { href: "/shift-worker", labelKey: "nav.shiftWorker" },
-  // Education & Info
-  { href: "/medical-dictionary", labelKey: "nav.medicalDictionary" },
-  { href: "/drug-info", labelKey: "nav.drugInfo" },
-  { href: "/doctor-communication", labelKey: "nav.doctorComm" },
-  { href: "/health-news-verifier", labelKey: "nav.newsVerifier" },
-  // Nutrition Detail
-  { href: "/label-reader", labelKey: "nav.labelReader" },
-  { href: "/anti-inflammatory", labelKey: "nav.antiInflammatory" },
-  { href: "/cross-allergy", labelKey: "nav.crossAllergy" },
-  { href: "/water-quality", labelKey: "nav.waterQuality" },
-  // Sleep Detail
-  { href: "/dream-diary", labelKey: "nav.dreamDiary" },
-  { href: "/snoring-apnea", labelKey: "nav.snoringApnea" },
-  { href: "/circadian-rhythm", labelKey: "nav.circadianRhythm" },
-  // Specialized
-  { href: "/clinical-trials", labelKey: "nav.clinicalTrials" },
-  { href: "/second-opinion", labelKey: "nav.secondOpinion" },
-  { href: "/rare-diseases", labelKey: "nav.rareDiseases" },
-  { href: "/donation", labelKey: "nav.donation" },
-  { href: "/accessibility", labelKey: "nav.accessibility" },
-  // Tracking & Social
-  { href: "/health-spending", labelKey: "nav.healthSpending" },
-  { href: "/health-challenges", labelKey: "nav.challenges" },
-  { href: "/noise-exposure", labelKey: "nav.noiseExposure" },
-  { href: "/screen-time", labelKey: "nav.screenTime" },
-  { href: "/insurance-guide", labelKey: "nav.insuranceGuide" },
-  { href: "/pharmacy-finder", labelKey: "nav.pharmacyFinder" },
-  // Education & Business
-  { href: "/courses", labelKey: "nav.courses" },
-  { href: "/enterprise", labelKey: "nav.enterprise" },
-  // New Features (Phase C-F)
-  { href: "/notifications", labelKey: "nav.notifications" },
-  { href: "/time-capsule", labelKey: "nav.timeCapsule" },
-  { href: "/health-diary", labelKey: "nav.healthDiary" },
-  { href: "/biomarker-trends", labelKey: "nav.biomarkerTrends" },
-  { href: "/medication-hub", labelKey: "nav.medicationHub" },
-  { href: "/polypharmacy", labelKey: "nav.polypharmacy" },
-  { href: "/medication-log", labelKey: "nav.medLog" },
-  { href: "/health-radar", labelKey: "nav.healthRadar" },
-  { href: "/health-timeline", labelKey: "nav.healthTimeline" },
-  { href: "/micro-habits", labelKey: "nav.microHabits" },
-  { href: "/migraine-dashboard", labelKey: "nav.migraineDashboard" },
-  { href: "/fasting-monitor", labelKey: "nav.fastingMonitor" },
-  { href: "/circadian-eating", labelKey: "nav.circadianEating" },
-  { href: "/peer-mentoring", labelKey: "nav.peerMentoring" },
-  { href: "/drug-equivalent", labelKey: "nav.drugEquivalent" },
-  { href: "/drug-recall", labelKey: "nav.drugRecall" },
-  { href: "/disaster-mode", labelKey: "nav.disasterMode" },
-  { href: "/health-quiz", labelKey: "nav.healthQuiz" },
-  { href: "/healthy-recipes", labelKey: "nav.healthyRecipes" },
-  { href: "/data-export", labelKey: "nav.dataExport" },
-  { href: "/privacy-controls", labelKey: "nav.privacyControls" },
-  // Value & Marketplace
-  { href: "/value-marketplace", labelKey: "nav.valueMarketplace" },
-];
-
-// All links combined for mobile
-const allMobileLinks = [
-  ...mainLinks,
-  { href: "/family", labelKey: "family.title" },
-  ...toolLinks,
+// Core nav — only 3 most-used actions (Hick's Law)
+const CORE_NAV = [
+  { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+  { href: "/health-assistant", labelKey: "nav.assistant", icon: Sparkles },
+  { href: "/interaction-checker", labelKey: "nav.interaction", icon: Shield },
 ];
 
 export function Header() {
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, isLoading, user, profile, signOut, needsMedicationUpdate, refreshProfile } = useAuth();
-  const { lang } = useLang()
+  const { lang } = useLang();
   const [showMedReminder, setShowMedReminder] = useState(false);
   const [dismissingReminder, setDismissingReminder] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Scroll detection for shrink effect
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (needsMedicationUpdate && isAuthenticated && !isLoading) {
@@ -198,21 +61,15 @@ export function Header() {
         .eq("id", user?.id ?? "");
       setShowMedReminder(false);
       await refreshProfile();
-    } catch {
-      // silently fail
-    } finally {
-      setDismissingReminder(false);
-    }
+    } catch { /* silent */ } finally { setDismissingReminder(false); }
   }, [user?.id, refreshProfile]);
 
   const initials = profile?.full_name
-    ? profile.full_name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
+    ? profile.full_name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
     : user?.email?.[0]?.toUpperCase() ?? "U";
+
+  // Mock streak (in production, this comes from health-context or daily_check_ins)
+  const streakDays = 0; // Will be populated when user data loads
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -224,245 +81,249 @@ export function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const isActive = (href: string) => pathname === href;
+
   return (
     <>
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-7xl items-center px-4 md:px-8">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group shrink-0">
-          <Leaf
-            className="h-[18px] w-[18px] transition-all duration-300 group-hover:scale-110"
-            style={{ color: 'var(--logo-accent, #c4a86c)' }}
-          />
-          <span style={{
-            fontFamily: '"DM Serif Display", "Palatino Linotype", Georgia, serif',
-            fontSize: '1.18rem',
-            fontWeight: 400,
-            letterSpacing: '0.01em',
-            lineHeight: 1,
-          }}>
-            <span style={{ color: 'var(--foreground)' }}>Phyto</span><span style={{ color: 'var(--logo-accent, #c4a86c)' }}>therapy</span><span style={{ color: 'var(--primary)' }}>.ai</span>
-          </span>
-        </Link>
+      {/* ── Floating Glassmorphism Navbar ── */}
+      <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${scrolled ? "py-1" : "py-2"}`}>
+        <div className={`mx-auto max-w-6xl px-3 md:px-4 transition-all duration-300 ${scrolled ? "" : ""}`}>
+          <div className={`glass-card rounded-2xl px-4 transition-all duration-300 ${
+            scrolled ? "py-2 shadow-soft-md" : "py-3 shadow-soft"
+          }`}>
+            <div className="flex items-center">
+              {/* Logo */}
+              <Link href="/" className="flex items-center gap-2 group shrink-0">
+                <Leaf
+                  className="h-[18px] w-[18px] transition-all duration-300 group-hover:scale-110"
+                  style={{ color: "var(--logo-accent, #c4a86c)" }}
+                />
+                <span style={{
+                  fontFamily: '"DM Serif Display", "Palatino Linotype", Georgia, serif',
+                  fontSize: scrolled ? "1.05rem" : "1.15rem",
+                  fontWeight: 400, letterSpacing: "0.01em", lineHeight: 1,
+                  transition: "font-size 0.3s ease",
+                }}>
+                  <span style={{ color: "var(--foreground)" }}>Phyto</span>
+                  <span style={{ color: "var(--logo-accent, #c4a86c)" }}>therapy</span>
+                  <span style={{ color: "var(--primary)" }}>.ai</span>
+                </span>
+              </Link>
 
-        {/* Desktop nav */}
-        <nav className="ml-8 hidden items-center gap-4 xl:gap-5 lg:flex">
-          {mainLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="whitespace-nowrap text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
-            >
-              {tx(link.labelKey, lang)}
-            </Link>
-          ))}
-          <Link
-            href="/family"
-            className="whitespace-nowrap text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
-          >
-            {tx("family.title", lang)}
-          </Link>
+              {/* ── Desktop: Core Nav (3 items, centered) ── */}
+              <nav className="mx-auto hidden items-center gap-1 lg:flex">
+                {CORE_NAV.map(({ href, labelKey, icon: Icon }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 ${
+                      isActive(href)
+                        ? "bg-lavender/10 text-lavender dark:bg-lavender/20"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    <span className="hidden xl:inline">{tx(labelKey, lang)}</span>
+                  </Link>
+                ))}
+                {/* Calendar — always visible */}
+                <Link
+                  href="/calendar"
+                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 ${
+                    isActive("/calendar")
+                      ? "bg-lavender/10 text-lavender dark:bg-lavender/20"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  }`}
+                >
+                  <Calendar className="h-3.5 w-3.5" />
+                  <span className="hidden xl:inline">{tx("nav.calendar", lang)}</span>
+                </Link>
+              </nav>
 
-          {/* Tools link — full tools accessible from dashboard */}
+              {/* ── Desktop: Right Controls ── */}
+              <div className="ml-auto hidden items-center gap-1.5 lg:flex">
+                {/* Spotlight Search */}
+                <CommandPaletteTrigger />
 
-          {isAuthenticated && (
-            <Link
-              href="/dashboard"
-              className="whitespace-nowrap text-sm font-medium text-foreground/70 transition-colors hover:text-foreground"
-            >
-              {tx("nav.dashboard", lang)}
-            </Link>
-          )}
-        </nav>
+                <LanguageToggle />
+                <ThemeToggle />
 
-        {/* Desktop right controls */}
-        <div className="ml-auto hidden items-center gap-2 lg:flex">
-          <CommandPaletteTrigger />
-          <LanguageToggle />
-          <ThemeToggle />
-
-          {isLoading ? (
-            <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
-          ) : isAuthenticated ? (
-            <div className="relative" ref={userMenuRef}>
-              <button
-                type="button"
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                aria-label="User menu"
-                aria-expanded={userMenuOpen}
-                className="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary transition-colors hover:bg-primary/20 cursor-pointer"
-              >
-                {initials}
-              </button>
-
-              {userMenuOpen && (
-                <div className="absolute right-0 top-full z-[100] mt-2 w-56 rounded-lg border bg-background shadow-lg">
-                  <div className="border-b p-3">
-                    {profile?.full_name && (
-                      <p className="text-sm font-medium">{profile.full_name}</p>
-                    )}
-                    <p className="text-xs text-muted-foreground">{user?.email}</p>
-                  </div>
-                  <div className="p-1">
-                    <Link
-                      href="/profile"
-                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
-                      onClick={() => setUserMenuOpen(false)}
-                    >
-                      <Settings className="h-4 w-4" />
-                      {tx('nav.profileSettings', lang)}
-                    </Link>
-                    <Link
-                      href="/history"
-                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
-                      onClick={() => setUserMenuOpen(false)}
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                      {tx('nav.history', lang)}
-                    </Link>
-                    <Link
-                      href="/badges"
-                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
-                      onClick={() => setUserMenuOpen(false)}
-                    >
-                      <FlaskConical className="h-4 w-4" />
-                      {tx('badges.title', lang)}
-                    </Link>
-                  </div>
-                  <div className="border-t p-1">
+                {isLoading ? (
+                  <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+                ) : isAuthenticated ? (
+                  <div className="relative" ref={userMenuRef}>
                     <button
-                      className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
-                      onClick={async () => {
-                        setUserMenuOpen(false);
-                        try { await signOut(); } catch (e) { console.error("Sign out failed:", e); }
-                      }}
+                      type="button"
+                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                      aria-label="User menu"
+                      className="flex items-center gap-1.5 rounded-full bg-primary/10 px-2 py-1 transition-colors hover:bg-primary/20"
                     >
-                      <LogOut className="h-4 w-4" />
-                      {tx('nav.signOut', lang)}
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
+                        {initials}
+                      </div>
+                      {streakDays > 0 && (
+                        <span className="flex items-center gap-0.5 text-[10px] font-bold text-orange-500">
+                          <Flame className="h-3 w-3" />
+                          {streakDays}
+                        </span>
+                      )}
+                      <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                    </button>
+
+                    {userMenuOpen && (
+                      <div className="absolute right-0 top-full z-[100] mt-2 w-56 rounded-xl border bg-card shadow-xl glass-card">
+                        <div className="border-b p-3">
+                          {profile?.full_name && <p className="text-sm font-medium">{profile.full_name}</p>}
+                          <p className="text-xs text-muted-foreground">{user?.email}</p>
+                        </div>
+                        <div className="p-1">
+                          <Link href="/profile" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
+                            <Settings className="h-4 w-4" /> {tx("nav.profileSettings", lang)}
+                          </Link>
+                          <Link href="/family" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
+                            <Users className="h-4 w-4" /> {tx("family.title", lang)}
+                          </Link>
+                          <Link href="/history" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
+                            <RefreshCw className="h-4 w-4" /> {tx("nav.history", lang)}
+                          </Link>
+                          <Link href="/badges" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
+                            <FlaskConical className="h-4 w-4" /> {tx("badges.title", lang)}
+                          </Link>
+                          <Link href="/settings" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
+                            <Settings className="h-4 w-4" /> {tx("settings.title", lang)}
+                          </Link>
+                        </div>
+                        <div className="border-t p-1">
+                          <button
+                            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950"
+                            onClick={async () => { setUserMenuOpen(false); try { await signOut(); } catch (e) { console.error(e); } }}
+                          >
+                            <LogOut className="h-4 w-4" /> {tx("nav.signOut", lang)}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link href="/auth/login">
+                    <Button size="sm" className="gap-1.5 rounded-full bg-primary hover:bg-primary/90 text-xs px-4">
+                      <LogIn className="h-3.5 w-3.5" />
+                      {tx("nav.getStarted", lang)}
+                    </Button>
+                  </Link>
+                )}
+              </div>
+
+              {/* ── Mobile: Right Controls ── */}
+              <div className="ml-auto flex items-center gap-1.5 lg:hidden">
+                <CommandPaletteTrigger />
+                <LanguageToggle />
+                <ThemeToggle />
+                <button onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-muted transition-colors">
+                  {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Mobile Nav ── */}
+        {mobileOpen && (
+          <div className="mx-3 mt-2 rounded-2xl border bg-card shadow-xl lg:hidden overflow-hidden">
+            {/* Auth */}
+            <div className="px-4 py-3 border-b">
+              {isLoading ? (
+                <div className="h-10 animate-pulse rounded-lg bg-muted" />
+              ) : isAuthenticated ? (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                      {initials}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">{profile?.full_name || user?.email}</p>
+                      <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="text-xs text-primary">
+                        {tx("nav.dashboard", lang)}
+                      </Link>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Link href="/profile" onClick={() => setMobileOpen(false)} className="p-2 rounded-lg hover:bg-muted">
+                      <Settings className="h-4 w-4 text-muted-foreground" />
+                    </Link>
+                    <button onClick={async () => { setMobileOpen(false); try { await signOut(); } catch (e) { console.error(e); } }}
+                      className="p-2 rounded-lg hover:bg-muted">
+                      <LogOut className="h-4 w-4 text-red-500" />
                     </button>
                   </div>
                 </div>
+              ) : (
+                <Link href="/auth/login" onClick={() => setMobileOpen(false)}>
+                  <Button className="w-full gap-2 rounded-xl bg-primary hover:bg-primary/90">
+                    <LogIn className="h-4 w-4" /> {tx("nav.signInUp", lang)}
+                  </Button>
+                </Link>
               )}
             </div>
-          ) : (
-            <Link href="/auth/login">
-              <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90">
-                <LogIn className="h-4 w-4" />
-                {tx('nav.getStarted', lang)}
-              </Button>
-            </Link>
-          )}
-        </div>
 
-        {/* Mobile right */}
-        <div className="ml-auto flex items-center gap-2 lg:hidden">
-          <LanguageToggle />
-          <ThemeToggle />
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
-          >
-            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile nav */}
-      {mobileOpen && (
-        <nav className="max-h-[80vh] overflow-y-auto border-t py-2 lg:hidden">
-          {/* Main links */}
-          <div className="px-4 py-2 space-y-1">
-            {mainLinks.map((link) => (
-              <Link key={link.href} href={link.href}
-                className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+            {/* Core nav */}
+            <div className="px-3 py-2 space-y-0.5">
+              {CORE_NAV.map(({ href, labelKey, icon: Icon }) => (
+                <Link key={href} href={href}
+                  className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    isActive(href) ? "bg-lavender/10 text-lavender" : "text-muted-foreground hover:bg-muted"
+                  }`}
+                  onClick={() => setMobileOpen(false)}>
+                  <Icon className="h-4 w-4" /> {tx(labelKey, lang)}
+                </Link>
+              ))}
+              <Link href="/calendar"
+                className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  isActive("/calendar") ? "bg-lavender/10 text-lavender" : "text-muted-foreground hover:bg-muted"
+                }`}
                 onClick={() => setMobileOpen(false)}>
-                {tx(link.labelKey, lang)}
+                <Calendar className="h-4 w-4" /> {tx("nav.calendar", lang)}
               </Link>
-            ))}
-            <Link href="/family"
-              className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-              onClick={() => setMobileOpen(false)}>
-              {tx("family.title", lang)}
-            </Link>
+            </div>
+
+            {/* Mega Menu Categories */}
+            <div className="border-t pt-2 pb-2">
+              <p className="px-4 text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+                {tx("nav.tools", lang)}
+              </p>
+              <MobileMegaMenu onNavigate={() => setMobileOpen(false)} />
+            </div>
           </div>
-          {/* Auth section — prominent, at the top of mobile menu */}
-          <div className="px-4 py-3 border-b border-border">
-            {isLoading ? (
-              <div className="h-10 animate-pulse rounded-lg bg-muted" />
-            ) : isAuthenticated ? (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">
-                    {profile?.full_name?.split(" ").map((n: string) => n[0]).join("").slice(0, 2) || "U"}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{profile?.full_name || user?.email}</p>
-                    <Link href="/dashboard" onClick={() => setMobileOpen(false)}
-                      className="text-xs text-primary">{tx("nav.dashboard", lang)}</Link>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Link href="/profile" onClick={() => setMobileOpen(false)}
-                    className="p-2 rounded-lg hover:bg-muted"><Settings className="h-4 w-4 text-muted-foreground" /></Link>
-                  <button onClick={async () => { setMobileOpen(false); try { await signOut(); } catch (e) { console.error(e); } }}
-                    className="p-2 rounded-lg hover:bg-muted"><LogOut className="h-4 w-4 text-red-500" /></button>
-                </div>
-              </div>
-            ) : (
-              <Link href="/auth/login" onClick={() => setMobileOpen(false)}>
-                <Button className="w-full gap-2 bg-primary hover:bg-primary/90">
-                  <LogIn className="h-4 w-4" />
-                  {tx('nav.signInUp', lang)}
+        )}
+      </header>
+
+      {/* Medication reminder — below navbar */}
+      {showMedReminder && (
+        <div className="mx-auto max-w-6xl px-3 md:px-4 mt-1">
+          <div className="rounded-xl border border-amber-200 bg-amber-50/80 px-4 py-2 dark:border-amber-800/40 dark:bg-amber-950/20">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+              <p className="flex-1 text-xs text-amber-800 dark:text-amber-300">{tx("medReminder.text", lang)}</p>
+              <div className="flex items-center gap-1.5">
+                <Button variant="ghost" size="sm"
+                  className="h-7 gap-1 text-[10px] text-amber-700 hover:bg-amber-100 dark:text-amber-300"
+                  onClick={dismissReminder} disabled={dismissingReminder}>
+                  <Check className="h-3 w-3" /> {tx("medReminder.yesCurrent", lang)}
                 </Button>
-              </Link>
-            )}
-          </div>
-
-          {/* Mega Menu Categories */}
-          <div className="border-t mt-1 pt-2">
-            <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
-              {tx("nav.tools", lang)}
-            </p>
-            <MobileMegaMenu onNavigate={() => setMobileOpen(false)} />
-          </div>
-        </nav>
-      )}
-    </header>
-
-    {/* Medication update reminder banner */}
-    {showMedReminder && (
-      <div className="border-b bg-amber-50 dark:bg-amber-950/30">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2">
-          <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
-          <p className="flex-1 text-sm text-amber-800 dark:text-amber-300">
-            {tx('medReminder.text', lang)}
-          </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 gap-1 text-xs text-amber-700 hover:bg-amber-100 dark:text-amber-300 dark:hover:bg-amber-900/40"
-              onClick={dismissReminder}
-              disabled={dismissingReminder}
-            >
-              <Check className="h-3 w-3" />
-              {tx('medReminder.yesCurrent', lang)}
-            </Button>
-            <Link href="/profile?tab=medications">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-7 gap-1 border-amber-300 text-xs text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/40"
-              >
-                <RefreshCw className="h-3 w-3" />
-                {tx('medReminder.update', lang)}
-              </Button>
-            </Link>
+                <Link href="/profile?tab=medications">
+                  <Button variant="outline" size="sm"
+                    className="h-7 gap-1 border-amber-300 text-[10px] text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300">
+                    <RefreshCw className="h-3 w-3" /> {tx("medReminder.update", lang)}
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    )}
-    <CommandPalette />
+      )}
+
+      <CommandPalette />
     </>
   );
 }

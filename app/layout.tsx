@@ -111,7 +111,6 @@ export default function RootLayout({
         <ThemeProvider>
           <LanguageProvider>
             <AuthProvider>
-              <DisclaimerBanner />
               <Header />
               <TrialBannerWrapper />
               <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-hidden">
