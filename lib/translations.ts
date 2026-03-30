@@ -3419,6 +3419,43 @@ export function tx(key: string, lang: Lang): string {
 }
 
 /**
+ * Extract a localized value from a bilingual object like { en: "...", tr: "..." }.
+ * Works with any object that has lang-keyed properties.
+ * Also handles variants like { nameEn, nameTr } or { titleEN, titleTR }.
+ */
+export function txObj(obj: Record<string, any>, lang: Lang, fallback = ""): string {
+  if (!obj) return fallback
+  // Direct: { en: "...", tr: "..." }
+  if (obj[lang] !== undefined) return obj[lang]
+  // camelCase: { nameEn, nameTr }
+  const camel = lang === "tr" ? "Tr" : "En"
+  for (const key of Object.keys(obj)) {
+    if (key.endsWith(camel) && typeof obj[key] === "string") return obj[key]
+  }
+  // UPPER: { titleEN, titleTR }
+  const upper = lang.toUpperCase()
+  for (const key of Object.keys(obj)) {
+    if (key.endsWith(upper) && typeof obj[key] === "string") return obj[key]
+  }
+  // Fallback to other language
+  const otherLang = lang === "tr" ? "en" : "tr"
+  if (obj[otherLang] !== undefined) return obj[otherLang]
+  return fallback
+}
+
+/**
+ * Parameterized translation: replaces {key} placeholders with values.
+ * Example: txp("items.count", lang, { count: 5 }) → "5 items saved"
+ */
+export function txp(key: string, lang: Lang, params: Record<string, string | number>): string {
+  let result = tx(key, lang)
+  for (const [k, v] of Object.entries(params)) {
+    result = result.replace(new RegExp(`\\{${k}\\}`, "g"), String(v))
+  }
+  return result
+}
+
+/**
  * Get a random message from a language-keyed message array.
  * Used for fun/motivational messages (water, meds, etc.)
  *
