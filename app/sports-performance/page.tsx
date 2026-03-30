@@ -98,13 +98,13 @@ function SectionHeader({ title, icon: Icon, sectionKey, count, expanded, onToggl
   return (
     <button
       onClick={onToggle}
-      className="flex w-full items-center justify-between rounded-t-lg border-b bg-indigo-50/50 px-4 py-3 text-left dark:bg-indigo-950/20"
+      className="flex w-full items-center justify-between rounded-t-lg border-b bg-primary/5 px-4 py-3 text-left dark:bg-indigo-950/20"
     >
       <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+        <Icon className="h-4 w-4 text-primary" />
         <span className="text-sm font-semibold">{title}</span>
         {count !== undefined && (
-          <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">
+          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary dark:bg-primary/20 dark:text-primary">
             {count}
           </span>
         )}
@@ -152,8 +152,8 @@ export default function SportsPerformancePage() {
     <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
       {/* Header */}
       <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-indigo-50 p-3 dark:bg-indigo-950">
-          <Dumbbell className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+        <div className="rounded-lg bg-primary/10 p-3">
+          <Dumbbell className="h-6 w-6 text-primary" />
         </div>
         <div>
           <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
@@ -165,7 +165,7 @@ export default function SportsPerformancePage() {
 
       {/* Guest notice */}
       {!isAuthenticated && (
-        <div className="mb-6 flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50/50 p-3 text-xs text-indigo-800 dark:border-indigo-800 dark:bg-indigo-950/20 dark:text-indigo-300">
+        <div className="mb-6 flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs text-primary dark:border-primary/30 dark:bg-primary/10 dark:text-primary">
           <LogIn className="h-3.5 w-3.5 shrink-0" />
           {tx("sports.guestNote", lang)}
         </div>
@@ -181,7 +181,7 @@ export default function SportsPerformancePage() {
         <div className="space-y-4">
           <IntentBar lang={lang} isLoading={true} onSubmit={() => {}} />
           <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
-            <Loader2 className="h-5 w-5 animate-spin text-indigo-500" />
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />
             {tx("sports.generatingPlan", lang)}
           </div>
           {/* Skeleton cards */}
@@ -240,7 +240,7 @@ export default function SportsPerformancePage() {
           {/* Weekly Structure */}
           {r.weeklyStructure && (
             <div className="rounded-lg border border-indigo-200 bg-indigo-50/30 p-4 dark:border-indigo-800 dark:bg-indigo-950/10">
-              <p className="mb-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+              <p className="mb-1 text-xs font-semibold text-primary">
                 {tx("sports.weeklyStructure", lang)}
               </p>
               <p className="text-sm">{r.weeklyStructure}</p>
@@ -288,7 +288,7 @@ export default function SportsPerformancePage() {
                   </div>
                   {/* Post */}
                   <div className="rounded-lg border p-3">
-                    <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                    <p className="text-xs font-bold text-primary">
                       {tx("sports.postWorkout", lang)} ({r.nutritionTiming.postWorkout.timing})
                     </p>
                     <div className="mt-1 flex flex-wrap gap-1">
@@ -303,7 +303,7 @@ export default function SportsPerformancePage() {
                     <div className="space-y-1">
                       {r.nutritionTiming.generalTips.map((tip, i) => (
                         <div key={i} className="flex items-start gap-2 text-sm">
-                          <span className="mt-1 text-indigo-500">-</span>
+                          <span className="mt-1 text-primary">-</span>
                           <p>{tip}</p>
                         </div>
                       ))}
@@ -332,7 +332,7 @@ export default function SportsPerformancePage() {
                         <span>{rec.frequency}</span>
                         <span>{rec.duration}</span>
                       </div>
-                      <p className="mt-1 text-xs text-indigo-600 dark:text-indigo-400">{rec.benefit}</p>
+                      <p className="mt-1 text-xs text-primary">{rec.benefit}</p>
                     </div>
                   ))}
                 </div>
@@ -355,7 +355,7 @@ export default function SportsPerformancePage() {
                     <div key={i} className="rounded-lg border p-3">
                       <p className="text-sm font-medium">{ip.area}</p>
                       <p className="text-xs text-muted-foreground">{ip.exercise}</p>
-                      <p className="text-xs text-indigo-600 dark:text-indigo-400">{ip.frequency}</p>
+                      <p className="text-xs text-primary">{ip.frequency}</p>
                     </div>
                   ))}
                 </div>

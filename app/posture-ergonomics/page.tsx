@@ -3,6 +3,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Monitor, Armchair, Keyboard, Sun, Timer, Hand,
   Check, Play, Pause, SkipForward, X, Activity,
@@ -134,19 +135,21 @@ export default function PostureErgonomicsPage() {
   const stretch = STRETCHES[currentStretch];
 
   return (
+    <div className="min-h-screen bg-stone-50 dark:bg-background">
     <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
       {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-primary/10 p-3">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+        className="mb-6 flex items-center gap-3">
+        <div className="rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 p-3">
           <Monitor className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
             {tx("posture.title", lang)}
           </h1>
           <p className="text-sm text-muted-foreground">{tx("posture.subtitle", lang)}</p>
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Desk Rescue Routine Card ── */}
       <div className="mb-6 rounded-2xl border bg-gradient-to-r from-primary/5 to-sage/5 p-5 dark:from-primary/10 dark:to-sage/10">
@@ -182,9 +185,12 @@ export default function PostureErgonomicsPage() {
       </div>
 
       {/* ── Workout Player Modal ── */}
+      <AnimatePresence>
       {playerOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
-          <div className="w-full max-w-sm px-6 text-center">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
+          <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }} className="w-full max-w-sm px-6 text-center">
             {/* Close */}
             <button onClick={() => { setPlayerOpen(false); setIsPlaying(false); }}
               className="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
@@ -245,9 +251,10 @@ export default function PostureErgonomicsPage() {
                 </div>
               </div>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* ── Gamified Ergonomics Checklist ── */}
       <div className="mb-6 rounded-2xl border bg-card p-4">
@@ -325,6 +332,7 @@ export default function PostureErgonomicsPage() {
       </div>
 
       <p className="text-center text-[10px] text-muted-foreground/50">{tx("disclaimer.tool", lang)}</p>
+    </div>
     </div>
   );
 }
