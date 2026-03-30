@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
+import { DoctorShell } from "@/components/doctor/DoctorShell";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 
@@ -70,6 +71,7 @@ export default function DrugInfoPage() {
   }
 
   return (
+    <DoctorShell>
     <div className="mx-auto max-w-3xl px-4 py-8">
       {/* Header */}
       <div className="mb-6 flex items-center gap-3">
@@ -270,5 +272,6 @@ export default function DrugInfoPage() {
 
       <p className="mt-8 text-center text-[10px] text-muted-foreground/40">{tx("disclaimer.tool", lang)}</p>
     </div>
+    </DoctorShell>
   );
 }

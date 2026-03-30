@@ -52,6 +52,7 @@ import type { HealthTimeline, PeerBenchmark, Anomaly, Prediction, SupplementPeri
 import Link from "next/link";
 import { PageSkeleton } from "@/components/ui/page-skeleton";
 import { ClinicalInsightsHeader } from "@/components/analytics/ClinicalInsightsHeader";
+import { DoctorShell } from "@/components/doctor/DoctorShell";
 
 // ── Types ─────────────────────────────────────
 interface TimelineResponse {
@@ -229,6 +230,7 @@ export default function HealthAnalyticsPage() {
   ];
 
   return (
+    <DoctorShell>
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-emerald-950/5 pb-20">
       {/* Header */}
       <div className="border-b border-border/40 bg-background/80 backdrop-blur-sm sticky top-0 z-30">
@@ -375,6 +377,7 @@ export default function HealthAnalyticsPage() {
         )}
       </div>
     </div>
+    </DoctorShell>
   );
 }
 

@@ -4,6 +4,7 @@
 
 import { useState, useRef } from "react";
 import { Stethoscope, Loader2, LogIn, Printer, ClipboardList, MessageCircle, HelpCircle, Shield, Search, Sparkles } from "lucide-react";
+import { DoctorShell } from "@/components/doctor/DoctorShell";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
@@ -100,6 +101,7 @@ export default function DoctorCommunicationPage() {
   };
 
   return (
+    <DoctorShell>
     <div className="mx-auto max-w-3xl px-4 py-8">
       {/* Trust indicator */}
       <div className="mb-6 flex items-center justify-center gap-2 text-[11px] text-muted-foreground">
@@ -268,5 +270,6 @@ export default function DoctorCommunicationPage() {
 
       <p className="mt-8 text-center text-[10px] text-muted-foreground/40">{tx("disclaimer.tool", lang)}</p>
     </div>
+    </DoctorShell>
   );
 }

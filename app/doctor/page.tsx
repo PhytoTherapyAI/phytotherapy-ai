@@ -5,6 +5,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
+import { DoctorShell } from "@/components/doctor/DoctorShell"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
@@ -98,6 +99,7 @@ export default function DoctorPage() {
   if (isLoading) return <div className="flex min-h-[60vh] items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
 
   return (
+    <DoctorShell>
     <div className="mx-auto max-w-5xl px-4 md:px-8 py-8 space-y-5">
       {/* ── AI Clinical Copilot Greeting ── */}
       <div className="rounded-2xl border bg-gradient-to-r from-primary/5 to-sage/5 p-5 dark:from-primary/10 dark:to-sage/10">
@@ -321,6 +323,7 @@ export default function DoctorPage() {
 
       <p className="text-center text-[10px] text-muted-foreground/50">{tx("disclaimer.tool", lang)}</p>
     </div>
+    </DoctorShell>
   )
 }
 
