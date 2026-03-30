@@ -858,9 +858,53 @@ SENTRY_DSN=...                       # Error monitoring
 
 ---
 
-*Son güncelleme: 30 Mart 2026 v17.0*
-*Sprint 1-13 + Phase 1-13 + 28-30 Mart oturumları tamamlandı.*
-*324 sayfa, 17 kategori, 1,300+ çeviri, 20+ özel ikon.*
+### Oturum 30 Mart — v29.0 (Beta Readiness Sprint)
+
+**Legal & Copyright:**
+- ✅ LICENSE file (All Rights Reserved)
+- ✅ Copyright headers on 494 source files
+- ✅ Footer copyright text TR/EN
+
+**SEO:**
+- ✅ Sitemap expanded 7→32 pages
+- ✅ JSON-LD structured data (WebApplication + FAQPage)
+- ✅ Turkish FAQ section (5 questions)
+- ✅ Turkish SEO keywords in metadata
+
+**Yeni Özellikler:**
+- ✅ Settings page (/settings) — language, theme, notifications
+- ✅ Feedback widget (floating button, Supabase + Resend)
+- ✅ Contact form API (Resend email)
+- ✅ Cloudflare Turnstile CAPTCHA (login + register)
+- ✅ Global loading.tsx skeleton
+
+**Güvenlik & Uyumluluk:**
+- ✅ Password: 8 char + 1 uppercase + 1 number
+- ✅ Data deletion: 11+ tables (KVKK/GDPR)
+- ✅ Data export: 11 tables
+- ✅ Privacy policy: Gemini, PubMed, OpenFDA named
+- ✅ Emergency detection: 23 TR + 17 EN phrases (expanded)
+- ✅ 20 Turkish drug names in Gemini resolver
+
+**Fix'ler:**
+- ✅ Landing page fake stats → BETA badge
+- ✅ Dashboard fake social proof → BETA badge
+- ✅ Doctor compliance score → null (not random)
+- ✅ Wrapped supplements → real data query
+- ✅ Courses → "Coming Soon" for unlinked
+- ✅ E-Nabız → "Coming Soon" notice
+- ✅ Family profiles → type badges (Child/Elderly/Adult)
+- ✅ Unused imports cleaned
+
+**Dosyalar:**
+- ✅ FEATURE-AUDIT.md — full codebase analysis
+- ✅ BETA-READINESS.md — readiness checklist
+- ✅ DEMO-SCRIPT.md — Harvard demo instructions
+- ✅ Supabase migration: feedback table
+
+*Son güncelleme: 30 Mart 2026 v29.0*
+*Sprint 1-13 + Phase 1-13 + 28-30 Mart oturumları + Beta Readiness Sprint tamamlandı.*
+*324+ sayfa, 17 kategori, 1,300+ çeviri, 20+ özel ikon.*
 *Hackathon: 11-12 Nisan 2026 — 12 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
 *Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*
