@@ -187,7 +187,7 @@ export default function HealthGoalsPage() {
                       : "hover:border-emerald-300"
                   }`}
                 >
-                  {lang === "tr" ? tf.labelTr : tf.labelEn}
+                  {tf[lang === "tr" ? "labelTr" : "labelEn"]}
                 </button>
               ))}
             </div>

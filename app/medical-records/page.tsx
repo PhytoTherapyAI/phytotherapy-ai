@@ -78,10 +78,10 @@ export default function MedicalRecordsPage() {
             >
               <div className="text-slate-600 dark:text-slate-400 mb-3">{f.icon}</div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                {lang === "tr" ? f.titleTr : f.titleEn}
+                {f[lang === "tr" ? "titleTr" : "titleEn"]}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {lang === "tr" ? f.descTr : f.descEn}
+                {f[lang === "tr" ? "descTr" : "descEn"]}
               </p>
             </div>
           ))}

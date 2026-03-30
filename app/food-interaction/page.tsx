@@ -35,15 +35,12 @@ interface FoodResult {
   disclaimer: string;
 }
 
-const COMMON_FOODS_EN = [
-  "Grapefruit", "Coffee", "Alcohol", "Milk", "Green tea",
-  "Cheese", "Banana", "Spinach", "Dark chocolate", "Yogurt",
-];
-
-const COMMON_FOODS_TR = [
-  "Greyfurt", "Kahve", "Alkol", "Süt", "Yeşil çay",
-  "Peynir", "Muz", "Ispanak", "Bitter çikolata", "Yoğurt",
-];
+const COMMON_FOODS: Record<"en" | "tr", string[]> = {
+  en: ["Grapefruit", "Coffee", "Alcohol", "Milk", "Green tea",
+       "Cheese", "Banana", "Spinach", "Dark chocolate", "Yogurt"],
+  tr: ["Greyfurt", "Kahve", "Alkol", "Süt", "Yeşil çay",
+       "Peynir", "Muz", "Ispanak", "Bitter çikolata", "Yoğurt"],
+};
 
 const SEVERITY_CONFIG = {
   safe: {
@@ -76,7 +73,7 @@ export default function FoodInteractionPage() {
   const [result, setResult] = useState<FoodResult | null>(null);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
 
-  const commonFoods = lang === "tr" ? COMMON_FOODS_TR : COMMON_FOODS_EN;
+  const commonFoods = COMMON_FOODS[lang as "en" | "tr"] ?? COMMON_FOODS.en;
 
   const addFood = (name: string) => {
     const trimmed = name.trim();

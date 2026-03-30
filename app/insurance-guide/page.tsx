@@ -172,7 +172,7 @@ export default function InsuranceGuidePage() {
                 <div className="flex items-center gap-3">
                   <div className="text-blue-600 dark:text-blue-400">{s.icon}</div>
                   <h2 className="font-semibold text-gray-900 dark:text-white">
-                    {lang === "tr" ? s.titleTr : s.titleEn}
+                    {s[lang === "tr" ? "titleTr" : "titleEn"]}
                   </h2>
                 </div>
                 {expanded[s.id]
@@ -182,7 +182,7 @@ export default function InsuranceGuidePage() {
               {expanded[s.id] && (
                 <div className="px-5 pb-5">
                   <ul className="space-y-2.5">
-                    {(lang === "tr" ? s.contentTr : s.contentEn).map((item, i) => (
+                    {(s[lang === "tr" ? "contentTr" : "contentEn"]).map((item, i) => (
                       <li key={i} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
                         <span className="text-blue-500 mt-0.5 flex-shrink-0">•</span>
                         {item}

@@ -92,10 +92,10 @@ export default function SupportGroupsPage() {
               <div className={`${g.bg} p-3 rounded-xl ${g.color}`}>{g.icon}</div>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {lang === "tr" ? g.nameTr : g.nameEn}
+                  {g[lang === "tr" ? "nameTr" : "nameEn"]}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {lang === "tr" ? g.descTr : g.descEn}
+                  {g[lang === "tr" ? "descTr" : "descEn"]}
                 </p>
               </div>
               <div className="text-right">

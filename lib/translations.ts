@@ -6614,6 +6614,46 @@ const commonToolKeys: Record<string, TranslationEntry> = {
     en: "Day {daysPassed}/{duration}",
     tr: "Gün {daysPassed}/{duration}",
   },
+
+  // ── notifications page ──
+  "notif.pendingMed": {
+    en: "med",
+    tr: "ilaç",
+  },
+  "notif.pendingMeds": {
+    en: "meds",
+    tr: "ilaç",
+  },
+  "notif.pendingSupplement": {
+    en: "supplement",
+    tr: "takviye",
+  },
+  "notif.pendingSupplements": {
+    en: "supplements",
+    tr: "takviye",
+  },
+  "notif.pendingEvent": {
+    en: "event",
+    tr: "etkinlik",
+  },
+  "notif.pendingEvents": {
+    en: "events",
+    tr: "etkinlik",
+  },
+
+  // ── pregnancy-tracker page ──
+  "pregnancy.trimester1": {
+    en: "1st trimester",
+    tr: "1. trimester",
+  },
+  "pregnancy.trimester2": {
+    en: "2nd trimester",
+    tr: "2. trimester",
+  },
+  "pregnancy.trimester3": {
+    en: "3rd trimester",
+    tr: "3. trimester",
+  },
 }
 Object.assign(t, commonToolKeys)
 

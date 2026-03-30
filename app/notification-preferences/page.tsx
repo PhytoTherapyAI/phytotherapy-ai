@@ -61,7 +61,7 @@ export default function NotificationPreferencesPage() {
                   <div className={"p-2 rounded-lg " + (s.enabled ? "bg-amber-100 text-amber-600 dark:bg-amber-900/30" : "bg-gray-100 text-gray-400")}>{s.icon}</div>
                   <div className="flex-1">
                     <div className="font-medium text-sm">{s[lang as "en" | "tr"]}</div>
-                    <div className="text-xs text-gray-500">{lang === "tr" ? s.descTr : s.descEn}</div>
+                    <div className="text-xs text-gray-500">{s[lang === "tr" ? "descTr" : "descEn"]}</div>
                   </div>
                   <div className={"w-12 h-7 rounded-full flex items-center transition-all px-1 " + (s.enabled ? "bg-amber-500 justify-end" : "bg-gray-300 justify-start")}>
                     <div className="w-5 h-5 rounded-full bg-white shadow" />

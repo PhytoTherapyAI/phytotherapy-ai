@@ -343,11 +343,11 @@ export default function HealthDiaryPage() {
                         ? "bg-emerald-100 dark:bg-emerald-900/50 ring-2 ring-emerald-500 scale-110"
                         : "hover:bg-gray-100 dark:hover:bg-gray-700"
                     }`}
-                    title={m.label[lang === "tr" ? "tr" : "en"]}
+                    title={m.label[lang as "tr" | "en"]}
                   >
                     <span className="text-2xl">{m.emoji}</span>
                     <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
-                      {m.label[lang === "tr" ? "tr" : "en"]}
+                      {m.label[lang as "tr" | "en"]}
                     </span>
                   </button>
                 ))}

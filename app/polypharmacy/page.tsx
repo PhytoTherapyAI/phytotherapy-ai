@@ -187,7 +187,7 @@ export default function PolypharmacyPage() {
                           <Icon className="w-5 h-5" />
                         </div>
                         <div>
-                          <h4 className="font-medium text-sm">{lang === "tr" ? risk.categoryTr : risk.category}</h4>
+                          <h4 className="font-medium text-sm">{risk[lang === "tr" ? "categoryTr" : "category"]}</h4>
                           <Badge className={`mt-1 ${LEVEL_COLORS[risk.level]}`}>
                             {risk.level === "low" ? tx("common.low", lang) :
                              risk.level === "medium" ? tx("common.moderate", lang) :

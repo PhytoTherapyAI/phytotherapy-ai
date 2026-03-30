@@ -164,7 +164,7 @@ export default function PregnancyTrackerPage() {
         />
         <div className="mt-1 flex justify-between text-xs text-muted-foreground">
           <span>{tx("pregnancy.week1Label", lang)}</span>
-          <span>{lang === "tr" ? `${week <= 12 ? "1." : week <= 27 ? "2." : "3."} trimester` : `${week <= 12 ? "1st" : week <= 27 ? "2nd" : "3rd"} trimester`}</span>
+          <span>{tx(week <= 12 ? "pregnancy.trimester1" : week <= 27 ? "pregnancy.trimester2" : "pregnancy.trimester3", lang)}</span>
           <span>{tx("pregnancy.week42Label", lang)}</span>
         </div>
       </div>

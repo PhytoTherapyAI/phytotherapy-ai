@@ -379,19 +379,19 @@ export default function NotificationsPage() {
                 {pendingMeds > 0 && (
                   <Badge variant="secondary" className="text-xs font-normal">
                     <Pill className="mr-1 h-3 w-3" />
-                    {pendingMeds} {lang === "tr" ? "ilac" : `med${pendingMeds > 1 ? "s" : ""}`}
+                    {pendingMeds} {tx(pendingMeds > 1 ? "notif.pendingMeds" : "notif.pendingMed", lang)}
                   </Badge>
                 )}
                 {pendingSupps > 0 && (
                   <Badge variant="secondary" className="text-xs font-normal">
                     <Leaf className="mr-1 h-3 w-3" />
-                    {pendingSupps} {lang === "tr" ? "takviye" : `supplement${pendingSupps > 1 ? "s" : ""}`}
+                    {pendingSupps} {tx(pendingSupps > 1 ? "notif.pendingSupplements" : "notif.pendingSupplement", lang)}
                   </Badge>
                 )}
                 {pendingEvents > 0 && (
                   <Badge variant="secondary" className="text-xs font-normal">
                     <Calendar className="mr-1 h-3 w-3" />
-                    {pendingEvents} {lang === "tr" ? "etkinlik" : `event${pendingEvents > 1 ? "s" : ""}`}
+                    {pendingEvents} {tx(pendingEvents > 1 ? "notif.pendingEvents" : "notif.pendingEvent", lang)}
                   </Badge>
                 )}
               </div>

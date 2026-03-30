@@ -81,10 +81,10 @@ export default function PharmacyFinderPage() {
               <div className="text-green-600 dark:text-green-400">{link.icon}</div>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
-                  {link[lang === "tr" ? "nameTr" : "nameEn"]}
+                  {link[lang === "tr" ? "nameTr" : "nameEn"] as string}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {link[lang === "tr" ? "descTr" : "descEn"]}
+                  {link[lang === "tr" ? "descTr" : "descEn"] as string}
                 </p>
               </div>
               <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-green-500 transition-colors" />

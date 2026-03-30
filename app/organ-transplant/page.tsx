@@ -193,13 +193,13 @@ export default function OrganTransplantPage() {
                   {section.icon}
                 </div>
                 <span className="font-semibold text-left">
-                  {lang === "tr" ? section.titleTR : section.titleEN}
+                  {section[lang === "tr" ? "titleTR" : "titleEN"]}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 {section.badgeEN && (
                   <Badge className={section.badgeColor} variant="secondary">
-                    {lang === "tr" ? section.badgeTR : section.badgeEN}
+                    {section[lang === "tr" ? "badgeTR" : "badgeEN"]}
                   </Badge>
                 )}
                 {expanded[section.id] ? (

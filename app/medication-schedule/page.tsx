@@ -179,7 +179,7 @@ export default function MedicationSchedulePage() {
                                 <div>
                                   <span className="font-medium text-sm">{med.name}</span>
                                   <p className="text-xs text-muted-foreground">
-                                    {lang === "tr" ? med.instructionTr : med.instruction}
+                                    {med[lang === "tr" ? "instructionTr" : "instruction"]}
                                   </p>
                                 </div>
                               </div>

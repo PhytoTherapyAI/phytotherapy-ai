@@ -123,7 +123,7 @@ export default function GriefSupportPage() {
                     : "bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
                 }`}
               >
-                {lang === "tr" ? s.tr : s.en}
+                {s[lang as "tr" | "en"]}
               </button>
             ))}
           </div>

@@ -213,7 +213,7 @@ export default function FavoriteSupplementsPage() {
                     </div>
                     {info && (
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                        {lang === "tr" ? info.uses.tr : info.uses.en}
+                        {info.uses[lang as "tr" | "en"]}
                       </p>
                     )}
                   </div>
@@ -268,7 +268,7 @@ export default function FavoriteSupplementsPage() {
                         </span>
                       </div>
                       <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {lang === "tr" ? item.info.uses.tr : item.info.uses.en}
+                        {item.info.uses[lang as "tr" | "en"]}
                       </p>
                     </>
                   ) : (
