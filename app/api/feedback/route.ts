@@ -8,8 +8,6 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
-const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK_URL || process.env.DISCORD_FEEDBACK_WEBHOOK || null
-
 const RATE_LIMIT = new Map<string, number[]>()
 
 function checkRateLimit(ip: string, max = 5, windowMs = 60_000): boolean {
@@ -88,29 +86,55 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Send to Discord webhook — rich Embed card with color coding
-    if (DISCORD_WEBHOOK) {
+    // Send to Telegram Bot — instant mobile notification
+    const telegramToken = process.env.TELEGRAM_BOT_TOKEN
+    const telegramChatId = process.env.TELEGRAM_FEEDBACK_CHAT_ID
+    if (telegramToken && telegramChatId) {
       try {
-        const CATEGORY_COLORS: Record<string, number> = {
-          idea: 0x22c55e,   // green
-          love: 0xf43f5e,   // rose
-          bug: 0xf59e0b,    // amber/orange
-        }
         const emoji = CATEGORY_EMOJI[category] || "📝"
+        const text = [
+          `${emoji} *Yeni Geri Bildirim!*`,
+          ``,
+          `*Kategori:* ${emoji} ${category}`,
+          `*Sayfa:* \`${page}\``,
+          `*Kullanıcı:* ${userId || "anonim"}`,
+          `*Dil:* ${lang}`,
+          ...(message ? [``, `*Mesaj:*`, message.slice(0, 500)] : []),
+          ``,
+          `_${new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}_`,
+        ].join("\n")
 
-        await fetch(DISCORD_WEBHOOK, {
+        await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: telegramChatId,
+            text,
+            parse_mode: "Markdown",
+          }),
+        })
+      } catch {
+        console.log("[FEEDBACK] Telegram notification failed")
+      }
+    }
+
+    // Fallback: Discord webhook (if configured)
+    const discordWebhook = process.env.DISCORD_WEBHOOK_URL || process.env.DISCORD_FEEDBACK_WEBHOOK
+    if (discordWebhook) {
+      try {
+        const emoji = CATEGORY_EMOJI[category] || "📝"
+        await fetch(discordWebhook, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             embeds: [{
               title: `${emoji} Yeni Geri Bildirim Geldi!`,
-              color: CATEGORY_COLORS[category] || 0x7c3aed,
+              color: category === "idea" ? 0x22c55e : category === "love" ? 0xf43f5e : 0xf59e0b,
               fields: [
                 { name: "Kategori", value: `${emoji} ${category}`, inline: true },
                 { name: "Sayfa", value: `\`${page}\``, inline: true },
                 { name: "Kullanıcı", value: userId || "anonim", inline: true },
                 ...(message ? [{ name: "Mesaj", value: message.slice(0, 1024) }] : []),
-                { name: "Dil", value: lang, inline: true },
               ],
               timestamp: new Date().toISOString(),
               footer: { text: "phytotherapy.ai feedback" },
