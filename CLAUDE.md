@@ -1,10 +1,10 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v16.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v17.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
 **Phytotherapy.ai** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **13 gün kaldı**
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **12 gün kaldı**
 - **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı) — 2 yıllık ödeme yapıldı
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
@@ -820,19 +820,47 @@ SENTRY_DSN=...                       # Error monitoring
 - ✅ 65 dosyada Türkçe karakter düzeltmesi
 - ✅ Europe PMC eklendi (çoklu akademik kaynak)
 
+### Oturum 30 Mart — v27.0 (Performance + i18n + QA)
+
+**Performance Optimizasyonu:**
+- ✅ Build hataları düzeltildi (orphaned code, type error, 3 duplicate key)
+- ✅ Dashboard 9 ağır kart → next/dynamic + skeleton loading
+- ✅ 4 API route sequential → Promise.all parallelizasyon (chat, interaction, health-analytics, alcohol-tracker)
+- ✅ PubMed API 30dk cache headers
+- ✅ Skeleton UI component oluşturuldu
+
+**i18n tx() Migration (%79):**
+- ✅ 1,223 / 1,544 basit ternary → merkezi tx() sistemine taşındı
+- ✅ 22 batch sayfa + 5 batch API route işlendi (150+ dosya)
+- ✅ ~1,300 çeviri anahtarı translations.ts'de (6,438 satır)
+- ✅ 321 kalan ternary: object/array/template patterns (fonksiyonel, bug değil)
+
+**QA & Test Sonuçları:**
+- ✅ 6 öncelikli sayfa test: symptom-checker, food-interaction, supplement-compare, interaction-map, health-goals, prospectus-reader — HEPSİ PASS
+- ✅ 17/17 API endpoint test — HEPSİ PASS
+- ✅ Güvenlik testleri: XSS, SQL injection, auth, rate limiting — HEPSİ PASS
+
+**Diğer:**
+- ✅ /health-goal-coach → /health-goals redirect
+- ✅ /medication-reader → /prospectus-reader redirect
+- ✅ 32 commit push edildi
+
 ### Toplam Proje Durumu
-- **320+ sayfa/route** aktif
+- **324 sayfa/route** aktif (build doğrulanmış)
 - **135+ araç** 17 kategoride organize
-- **640+ çeviri key'i** (TR+EN)
+- **~1,300 çeviri key'i** (TR+EN) — translations.ts 6,438 satır
 - **20+ özel SVG ikon** (PhytoIcons)
+- **i18n coverage:** %79 (basit ternary), kalan %21 fonksiyonel pattern
+- **API testleri:** 17/17 PASS
+- **Güvenlik testleri:** 5/5 PASS
 - Build temiz, tüm commitler push edilmiş
 - Vercel + Supabase + GitHub tam entegre
 
 ---
 
-*Son güncelleme: 29 Mart 2026 v16.0*
-*Sprint 1-13 + Phase 1-13 + 28-29 Mart oturumları + v25 cleanup tamamlandı.*
-*320+ sayfa, 17 kategori, 20+ özel ikon, davranışsal psikoloji dashboard.*
-*Hackathon: 11-12 Nisan 2026 — 13 gün kaldı*
+*Son güncelleme: 30 Mart 2026 v17.0*
+*Sprint 1-13 + Phase 1-13 + 28-30 Mart oturumları tamamlandı.*
+*324 sayfa, 17 kategori, 1,300+ çeviri, 20+ özel ikon.*
+*Hackathon: 11-12 Nisan 2026 — 12 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
 *Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*
