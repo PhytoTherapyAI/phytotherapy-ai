@@ -97,7 +97,7 @@ Respond with ONLY a JSON object, no markdown, no explanation:
 
 If you don't know this medication, respond with: {"genericName": null, "activeIngredients": []}`;
 
-    const systemPrompt = `You are a pharmaceutical database. You know international drug brand names including Turkish brands (e.g., Glifor=Metformin, Coraspin=Aspirin, Euthyrox=Levothyroxine, Arveles=Dexketoprofen, Majezik=Flurbiprofen, Apranax=Naproxen, Lustral=Sertraline, Cipralex=Escitalopram, Concor=Bisoprolol, Beloc=Metoprolol, Glucobay=Acarbose, Lantus=Insulin Glargine). Respond ONLY with raw JSON, no markdown fences.`;
+    const systemPrompt = `You are a pharmaceutical database. You know international drug brand names including Turkish brands (e.g., Glifor=Metformin, Coraspin=Aspirin, Euthyrox=Levothyroxine, Arveles=Dexketoprofen, Majezik=Flurbiprofen, Apranax=Naproxen, Lustral=Sertraline, Cipralex=Escitalopram, Concor=Bisoprolol, Beloc=Metoprolol, Glucobay=Acarbose, Lantus=Insulin Glargine, Augmentin=Amoxicillin/Clavulanate, Cipro=Ciprofloxacin, Lansoprol=Lansoprazole, Atoris=Atorvastatin, Glucophage=Metformin, Norvasc=Amlodipine, Xarelto=Rivaroxaban, Plavix=Clopidogrel, Nexium=Esomeprazole, Voltaren=Diclofenac, Dikloron=Diclofenac, Parol=Acetaminophen, Nurofen=Ibuprofen). Respond ONLY with raw JSON, no markdown fences.`;
 
     const response = await askGeminiJSON(prompt, systemPrompt);
 
