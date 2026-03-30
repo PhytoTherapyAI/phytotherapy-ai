@@ -6,7 +6,8 @@ import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { FamilyManager } from "@/components/family/FamilyManager"
-import { Users, Loader2 } from "lucide-react"
+import { Users } from "lucide-react"
+import { PageSkeleton } from "@/components/ui/page-skeleton"
 
 export default function FamilyPage() {
   const router = useRouter()
@@ -20,11 +21,7 @@ export default function FamilyPage() {
   }, [isLoading, isAuthenticated, router])
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
+    return <PageSkeleton />
   }
 
   if (!user) return null

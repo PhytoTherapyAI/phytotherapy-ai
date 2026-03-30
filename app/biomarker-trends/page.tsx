@@ -8,7 +8,8 @@ import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { TrendingUp, TrendingDown, Minus, Activity, Calendar, Filter, Loader2, ArrowRight } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, Activity, Calendar, Filter, ArrowRight } from "lucide-react"
+import { PageSkeleton } from "@/components/ui/page-skeleton"
 
 interface BiomarkerEntry {
   marker: string
@@ -118,12 +119,7 @@ export default function BiomarkerTrendsPage() {
   // Local t() removed — using tx() from translations.ts
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <span className="ml-2 text-muted-foreground">{tx("biomarkerTrends.loading", lang)}</span>
-      </div>
-    )
+    return <PageSkeleton />
   }
 
   return (

@@ -7,6 +7,7 @@ import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -436,11 +437,7 @@ export default function ProfilePage() {
   };
 
   if (isLoading || !profile) {
-    return (
-      <div className="flex min-h-[calc(100vh-12rem)] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-      </div>
-    );
+    return <PageSkeleton variant="form" />;
   }
 
   // ── Profile Completion Score (Endowed Progress Effect — starts at 20%) ──

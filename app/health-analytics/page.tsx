@@ -49,6 +49,7 @@ import {
 } from "recharts";
 import type { HealthTimeline, PeerBenchmark, Anomaly, Prediction, SupplementPeriod } from "@/lib/analytics-engine";
 import Link from "next/link";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
 
 // ── Types ─────────────────────────────────────
 interface TimelineResponse {
@@ -196,11 +197,7 @@ export default function HealthAnalyticsPage() {
 
   // ── Auth wall ───────────────────────────────
   if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-      </div>
-    );
+    return <PageSkeleton />;
   }
 
   if (!user) {

@@ -20,6 +20,7 @@ import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { NotificationSettings } from "@/components/pwa/NotificationSettings"
+import { PageSkeleton } from "@/components/ui/page-skeleton"
 
 // Lazy load heavy components to speed up initial render
 const TodayView = lazy(() => import("@/components/calendar/TodayView").then(m => ({ default: m.TodayView })))
@@ -170,11 +171,7 @@ export default function CalendarPage() {
 
   // Auth loading state
   if (authLoading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
+    return <PageSkeleton />
   }
 
   // Not authenticated

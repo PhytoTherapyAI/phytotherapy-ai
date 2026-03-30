@@ -17,8 +17,8 @@ import {
   Heart,
   Sparkles,
   Share2,
-  Loader2,
 } from "lucide-react"
+import { PageSkeleton } from "@/components/ui/page-skeleton"
 
 interface WrappedData {
   totalQueries: number
@@ -109,11 +109,7 @@ export default function WrappedPage() {
   }, [user, fetchWrapped])
 
   if (isLoading || loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
+    return <PageSkeleton />
   }
 
   return (

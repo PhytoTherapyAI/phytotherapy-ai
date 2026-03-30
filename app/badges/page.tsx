@@ -7,7 +7,8 @@ import { useLang } from "@/components/layout/language-toggle"
 import { tx, txObj } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { BADGES, evaluateBadges, calculateAnonymousScore, type UserStats } from "@/lib/badges"
-import { Trophy, Lock, Loader2, Users, Crown, TrendingUp } from "lucide-react"
+import { Trophy, Lock, Users, Crown, TrendingUp } from "lucide-react"
+import { PageSkeleton } from "@/components/ui/page-skeleton"
 
 interface LeaderboardData {
   rank: number
@@ -86,11 +87,7 @@ export default function BadgesPage() {
   }, [user, fetchStats])
 
   if (isLoading || loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
+    return <PageSkeleton />
   }
 
   if (!stats) return null
