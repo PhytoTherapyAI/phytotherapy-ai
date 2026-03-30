@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
-const DISCORD_WEBHOOK = process.env.DISCORD_FEEDBACK_WEBHOOK || null
+const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK_URL || process.env.DISCORD_FEEDBACK_WEBHOOK || null
 
 const RATE_LIMIT = new Map<string, number[]>()
 
@@ -88,15 +88,33 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Send to Discord webhook (instant mobile notification)
+    // Send to Discord webhook — rich Embed card with color coding
     if (DISCORD_WEBHOOK) {
       try {
+        const CATEGORY_COLORS: Record<string, number> = {
+          idea: 0x22c55e,   // green
+          love: 0xf43f5e,   // rose
+          bug: 0xf59e0b,    // amber/orange
+        }
         const emoji = CATEGORY_EMOJI[category] || "📝"
+
         await fetch(DISCORD_WEBHOOK, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            content: `${emoji} **New Feedback** — \`${category}\`\n**Page:** ${page}\n**User:** ${userId || "anonymous"}\n${message ? `**Message:** ${message}` : ""}`,
+            embeds: [{
+              title: `${emoji} Yeni Geri Bildirim Geldi!`,
+              color: CATEGORY_COLORS[category] || 0x7c3aed,
+              fields: [
+                { name: "Kategori", value: `${emoji} ${category}`, inline: true },
+                { name: "Sayfa", value: `\`${page}\``, inline: true },
+                { name: "Kullanıcı", value: userId || "anonim", inline: true },
+                ...(message ? [{ name: "Mesaj", value: message.slice(0, 1024) }] : []),
+                { name: "Dil", value: lang, inline: true },
+              ],
+              timestamp: new Date().toISOString(),
+              footer: { text: "phytotherapy.ai feedback" },
+            }],
           }),
         })
       } catch {
