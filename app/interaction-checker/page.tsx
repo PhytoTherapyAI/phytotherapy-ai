@@ -1,7 +1,7 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import Link from "next/link";
 import {
   Shield,
@@ -33,6 +33,15 @@ const EXAMPLE_QUERIES = [
   { medications: ["Warfarin"], concernKey: "ic.ex2.concern", labelKey: "ic.ex2.label" },
   { medications: ["Lisinopril", "Metformin"], concernKey: "ic.ex3.concern", labelKey: "ic.ex3.label" },
   { medications: ["Sertraline"], concernKey: "ic.ex4.concern", labelKey: "ic.ex4.label" },
+];
+
+// Pharmacology "Did You Know?" facts — rotate each page load
+const PHARMA_FACTS = [
+  { en: "Grapefruit juice blocks the CYP3A4 enzyme, causing serious interactions with 85+ medications.", tr: "Greyfurt suyu CYP3A4 enzimini bloke ederek 85'ten fazla ilaçla ciddi etkileşime girer." },
+  { en: "St. John's Wort interacts with more medications than any other herb — including SSRIs, blood thinners, and immunosuppressants.", tr: "Sarı Kantaron tüm bitkiler arasında en fazla ilaçla etkileşir — SSRI'lar, kan sulandırıcılar ve bağışıklık baskılayıcılar dahil." },
+  { en: "Taking iron supplements with vitamin C increases absorption by 67%, but taking them with calcium reduces it by 50%.", tr: "Demir takviyesini C vitamini ile almak emilimi %67 artırır, kalsiyum ile almak ise %50 azaltır." },
+  { en: "Turmeric combined with piperine (black pepper) increases curcumin bioavailability by 2,000%.", tr: "Zerdeçal, piperin (karabiber) ile birleştiğinde kurkumin biyoyararlanımı %2.000 artar." },
+  { en: "Green tea in large amounts can reduce the effectiveness of blood thinners by providing vitamin K.", tr: "Büyük miktarda yeşil çay, K vitamini sağlayarak kan sulandırıcıların etkinliğini azaltabilir." },
 ];
 
 export default function InteractionCheckerPage() {
@@ -147,33 +156,52 @@ export default function InteractionCheckerPage() {
           </div>
         </div>
 
-        {/* How it works */}
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-              1
+        {/* Trust glassmorphism card */}
+        <div className="glass-card rounded-2xl p-4 glow-lavender">
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sage/10 dark:bg-sage/20">
+              <Shield className="h-4 w-4 text-sage" />
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Pill className="h-4 w-4 text-muted-foreground" />
-              {tx('ic.step1', lang)}
-            </div>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              {lang === "tr"
+                ? "Sistemimiz; PubMed, Cochrane Library ve dünyanın en saygın hakemli tıp dergilerindeki güncel makaleleri tarayarak size kanıta dayalı, güvenli alternatifler sunar."
+                : "Our system scans current articles from PubMed, Cochrane Library, and the world\u2019s most respected peer-reviewed medical journals to provide you with evidence-based, safe alternatives."}
+            </p>
           </div>
-          <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-              2
+        </div>
+
+        {/* How it works — compact */}
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { num: 1, icon: Pill, key: "ic.step1" },
+            { num: 2, icon: Heart, key: "ic.step2" },
+            { num: 3, icon: Leaf, key: "ic.step3" },
+          ].map(({ num, icon: Icon, key }) => (
+            <div key={num} className="flex items-center gap-2 rounded-lg border bg-card p-2.5">
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                {num}
+              </div>
+              <div className="flex items-center gap-1.5 text-xs">
+                <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+                {tx(key, lang)}
+              </div>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Heart className="h-4 w-4 text-muted-foreground" />
-              {tx('ic.step2', lang)}
+          ))}
+        </div>
+
+        {/* Pharmacology "Did You Know?" */}
+        <div className="glass-card rounded-2xl p-3">
+          <div className="flex items-start gap-2.5">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-coral/10 dark:bg-coral/20">
+              <Sparkles className="h-3.5 w-3.5 text-coral" />
             </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-              3
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <Leaf className="h-4 w-4 text-muted-foreground" />
-              {tx('ic.step3', lang)}
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-coral">
+                {lang === "tr" ? "Biliyor muydunuz?" : "Did You Know?"}
+              </p>
+              <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+                {PHARMA_FACTS[Math.floor(Date.now() / 86400000) % PHARMA_FACTS.length][lang]}
+              </p>
             </div>
           </div>
         </div>
@@ -219,6 +247,18 @@ export default function InteractionCheckerPage() {
                 {tx("ic.loadFromProfileGuest", lang)}
               </Link>
             )}
+          </div>
+        )}
+
+        {/* Endowed Progress nudge — appears after first medication */}
+        {medications.length > 0 && !concern.trim() && !result && (
+          <div className="flex items-center gap-2 rounded-xl border border-lavender/20 bg-lavender/5 p-3 dark:border-lavender/30 dark:bg-lavender/10">
+            <Sparkles className="h-4 w-4 text-lavender shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              {lang === "tr"
+                ? `Harika! ${medications.join(", ")} eklendi. Şimdi ne tür bir bitkisel destek arıyorsun? (Örn: Uyku, Enerji, Stres)`
+                : `Great! ${medications.join(", ")} added. Now what kind of herbal support are you looking for? (e.g., Sleep, Energy, Stress)`}
+            </p>
           </div>
         )}
 
@@ -328,8 +368,8 @@ export default function InteractionCheckerPage() {
       {!result && !isLoading && !redFlagCheck.isEmergency && (
         <div className="mb-8">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
-            <Sparkles className="h-4 w-4" />
-            {tx('ic.tryExample', lang)}
+            <Sparkles className="h-4 w-4 text-coral" />
+            {lang === "tr" ? "Günün En Çok Merak Edilen Etkileşimleri" : "Today\u2019s Most Popular Interactions"}
           </h3>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {EXAMPLE_QUERIES.map((example, i) => (
