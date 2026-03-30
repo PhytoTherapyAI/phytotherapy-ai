@@ -37,11 +37,15 @@ export async function GET(request: NextRequest) {
     ])
 
     // Additional tables — may not exist, handle errors gracefully
-    const familyRes = await supabase.from("family_members").select("*").eq("owner_id", user.id).then(r => r, () => ({ data: [] }))
-    const checkInsRes = await supabase.from("daily_check_ins").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(365).then(r => r, () => ({ data: [] }))
-    const calendarRes = await supabase.from("calendar_events").select("*").eq("user_id", user.id).then(r => r, () => ({ data: [] }))
-    const vitalsRes = await supabase.from("vital_records").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(365).then(r => r, () => ({ data: [] }))
-    const waterRes = await supabase.from("water_intake").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(365).then(r => r, () => ({ data: [] }))
+    const safe = (table: string, col = "user_id") => supabase.from(table).select("*").eq(col, user.id).then(r => r, () => ({ data: [] }))
+    const familyRes = await safe("family_members", "owner_id")
+    const checkInsRes = await safe("daily_check_ins")
+    const calendarRes = await safe("calendar_events")
+    const vitalsRes = await safe("vital_records")
+    const waterRes = await safe("water_intake")
+    const sleepRes = await safe("sleep_records")
+    const suppsRes = await safe("supplements")
+    const nudgeRes = await safe("nudge_log")
 
     const exportData = {
       exportedAt: new Date().toISOString(),
@@ -66,6 +70,9 @@ export async function GET(request: NextRequest) {
       calendarEvents: calendarRes.data || [],
       vitalRecords: vitalsRes.data || [],
       waterIntake: waterRes.data || [],
+      sleepRecords: sleepRes.data || [],
+      supplements: suppsRes.data || [],
+      nudgeLog: nudgeRes.data || [],
     }
 
     const json = JSON.stringify(exportData, null, 2)
@@ -115,17 +122,21 @@ export async function DELETE(request: NextRequest) {
     const phase1Tables = [
       "query_history", "blood_tests", "consent_records",
       "daily_check_ins", "daily_logs", "calendar_events",
-      "vital_records", "water_intake", "family_members",
+      "vital_records", "water_intake",
+      "family_medications", "family_allergies", "family_members",
       "doctor_patients", "referral_records",
+      "nudge_log", "bot_subscriptions", "bot_messages",
+      "sleep_records", "supplements", "feedback",
     ]
     await Promise.all(
       phase1Tables.map(async (table) => {
         try {
-          await supabase.from(table).delete().eq(
+          const idCol =
             table === "family_members" ? "owner_id" :
-            table === "doctor_patients" ? "doctor_id" : "user_id",
-            user.id
-          )
+            table === "doctor_patients" ? "doctor_id" :
+            table === "feedback" ? "user_id" :
+            "user_id"
+          await supabase.from(table).delete().eq(idCol, user.id)
         } catch {
           // Silently skip tables that don't exist
         }
