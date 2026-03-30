@@ -1,441 +1,298 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
+// Research Hub — Interactive Open Innovation Ecosystem
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import {
-  Building2, FlaskConical, Database, Globe, Users, BarChart3,
-  Shield, Lock, FileText, Code2, GitBranch, Microscope,
-  TrendingUp, CheckCircle2, ArrowRight, Mail, BookOpen,
-  Beaker, Network, Lightbulb, Award, Handshake, Scale,
-  ChevronDown, ChevronUp, ExternalLink, Layers,
+  FlaskConical, Shield, Lock, Globe, Code2, Microscope,
+  TrendingUp, BookOpen, Lightbulb, Beaker, Rocket, Key,
+  CheckCircle2, Terminal, Play, Copy, Check,
 } from "lucide-react"
 
-// ═══ Data Warehouse Schema (Visual) ═══
-const DW_SCHEMA = {
-  factTables: [
-    { name: "fact_interactions", desc: "Drug-herb interaction queries & results", rows: "500K+" },
-    { name: "fact_supplement_usage", desc: "Supplement start/stop/dosage/duration", rows: "200K+" },
-    { name: "fact_proms_outcomes", desc: "PROMs/PREMs survey responses (T0-T4)", rows: "100K+" },
-    { name: "fact_vital_records", desc: "BP, glucose, weight, HR measurements", rows: "1M+" },
-    { name: "fact_symptom_logs", desc: "Symptom reports with severity & duration", rows: "300K+" },
-  ],
-  dimensionTables: [
-    { name: "dim_user_demographics", desc: "Age, gender, region (de-identified)", fields: "age_band, gender, region_code" },
-    { name: "dim_medications", desc: "Drug catalog with ATC codes", fields: "atc_code, generic_name, drug_class" },
-    { name: "dim_supplements", desc: "Herb/supplement catalog", fields: "name, category, evidence_grade" },
-    { name: "dim_conditions", desc: "ICD-10 coded conditions", fields: "icd10_code, condition_name, severity" },
-    { name: "dim_time", desc: "Calendar dimension", fields: "date, week, month, quarter, year, season" },
-  ],
-}
-
-const PARTNERS = [
-  { name: "TÜSEB / TÜSPE", country: "Türkiye", type: "Kamu", focus: "Sağlık Araştırma" },
-  { name: "TÜBİTAK", country: "Türkiye", type: "Kamu", focus: "Bilimsel Araştırma Fonu" },
-  { name: "YÖK / Tıp Fakülteleri", country: "Türkiye", type: "Akademi", focus: "Klinik Araştırma" },
-  { name: "TITCK", country: "Türkiye", type: "Regülatör", focus: "İlaç/Takviye Düzenleme" },
-  { name: "EMA", country: "AB", type: "Regülatör", focus: "Bitkisel Tıbbi Ürün" },
-  { name: "FDA DSHEA", country: "ABD", type: "Regülatör", focus: "Dietary Supplement" },
-  { name: "WHO TM", country: "Global", type: "Uluslararası", focus: "Geleneksel Tıp Stratejisi" },
-  { name: "ACE", country: "Singapur", type: "İnovasyon", focus: "HealthTech Ekosistemi" },
+// ── Partner Institutions ──
+const INSTITUTIONS = [
+  { name: "WHO TM", region: "global", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300" },
+  { name: "FDA DSHEA", region: "us", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300" },
+  { name: "EMA", region: "eu", color: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300" },
+  { name: "TÜBİTAK", region: "tr", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  { name: "TÜSEB", region: "tr", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  { name: "TITCK", region: "tr", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  { name: "YÖK", region: "tr", color: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  { name: "ACE Singapur", region: "global", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300" },
 ]
 
-const VALIDATION_PIPELINE = [
-  { phase: "Discovery", icon: Lightbulb, desc: { en: "New herbal formulation or protocol identified from literature or traditional use", tr: "Literatür veya geleneksel kullanımdan yeni bitkisel formülasyon veya protokol tespiti" } },
-  { phase: "In-Silico", icon: Code2, desc: { en: "AI-powered interaction screening, safety prediction, mechanism analysis", tr: "AI destekli etkileşim taraması, güvenlik tahmini, mekanizma analizi" } },
-  { phase: "Pilot", icon: Beaker, desc: { en: "Small cohort (n=50-200) on platform with PROMs tracking, opt-in", tr: "Platformda küçük kohort (n=50-200), PROMs takipli, gönüllü katılım" } },
-  { phase: "Validation", icon: Microscope, desc: { en: "Statistical analysis of outcomes, safety review, peer comparison", tr: "Sonuçların istatistiksel analizi, güvenlik incelemesi, akran karşılaştırması" } },
-  { phase: "Publication", icon: BookOpen, desc: { en: "Results published in peer-reviewed journal, protocol added to platform", tr: "Sonuçlar hakemli dergide yayımlanır, protokol platforma eklenir" } },
-  { phase: "Scale", icon: TrendingUp, desc: { en: "Validated protocol available to all users with evidence grading", tr: "Doğrulanmış protokol tüm kullanıcılara kanıt düzeyi ile sunulur" } },
+const REGION_LABELS: Record<string, { en: string; tr: string }> = {
+  global: { en: "Global", tr: "Küresel" },
+  us: { en: "USA", tr: "ABD" },
+  eu: { en: "EU", tr: "AB" },
+  tr: { en: "Turkey", tr: "Türkiye" },
+}
+
+// ── Validation Pipeline ──
+const PIPELINE = [
+  { icon: Lightbulb, label: { en: "Discovery", tr: "Keşif" }, color: "#f59e0b" },
+  { icon: Code2, label: { en: "In-Silico", tr: "In-Silico" }, color: "#6366f1" },
+  { icon: Beaker, label: { en: "Pilot (n=200)", tr: "Pilot (n=200)" }, color: "#8b5cf6" },
+  { icon: Microscope, label: { en: "Validation", tr: "Doğrulama" }, color: "#3b82f6" },
+  { icon: BookOpen, label: { en: "Publication", tr: "Yayın" }, color: "#22c55e" },
+  { icon: TrendingUp, label: { en: "Scale", tr: "Ölçekleme" }, color: "#10b981" },
+]
+
+// ── API Demo Data ──
+const API_DEMOS: Record<string, { label: { en: string; tr: string }; endpoint: string; response: string }> = {
+  interactions: {
+    label: { en: "Fetch Interactions", tr: "Etkileşimleri Çek" },
+    endpoint: "GET /api/v1/research/interactions?drug=metformin",
+    response: `{
+  "status": "success",
+  "drug": "Metformin",
+  "interactions": [
+    {
+      "herb": "Berberine",
+      "risk": "MODERATE",
+      "mechanism": "Additive hypoglycemia",
+      "evidence": "B",
+      "pubmed_ids": ["32145678", "31987654"]
+    },
+    {
+      "herb": "St. John's Wort",
+      "risk": "HIGH",
+      "mechanism": "CYP3A4 induction",
+      "evidence": "A"
+    }
+  ],
+  "safe_alternatives": ["Valerian", "Chamomile"]
+}`,
+  },
+  cohort: {
+    label: { en: "Create Cohort", tr: "Kohort Oluştur" },
+    endpoint: "POST /api/v1/research/cohorts",
+    response: `{
+  "cohort_id": "coh_8f3a2b1c",
+  "criteria": {
+    "condition": "T2DM",
+    "supplement": "Berberine",
+    "min_duration_days": 90,
+    "k_anonymity": 5
+  },
+  "matched_users": 847,
+  "demographics": {
+    "age_mean": 52.3,
+    "female_pct": 44.2,
+    "medication_mean": 3.1
+  },
+  "proms_available": true
+}`,
+  },
+}
+
+// ── Trust Governance Chips ──
+const GOVERNANCE = [
+  { icon: Shield, en: "k-Anonymity (k≥5)", tr: "k-Anonimlik (k≥5)" },
+  { icon: Lock, en: "End-to-end Encryption", tr: "Uçtan Uca Şifreleme" },
+  { icon: CheckCircle2, en: "Ethics Board Approved", tr: "Etik Kurul Onaylı" },
+  { icon: Shield, en: "KVKK/GDPR Compliant", tr: "KVKK/GDPR Uyumlu" },
+  { icon: Lock, en: "Opt-in Only", tr: "Yalnızca Gönüllü Katılım" },
+  { icon: CheckCircle2, en: "Federated Learning", tr: "Federe Öğrenme" },
 ]
 
 export default function ResearchHubPage() {
   const { lang } = useLang()
   const isTr = lang === "tr"
-  const [activeTab, setActiveTab] = useState<"overview" | "data" | "pipeline" | "vision">("overview")
-  const [expandedSchema, setExpandedSchema] = useState<string | null>(null)
+  const [activeDemo, setActiveDemo] = useState<string | null>(null)
+  const [typedText, setTypedText] = useState("")
+  const [isTyping, setIsTyping] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  // Typewriter effect for API demo
+  useEffect(() => {
+    if (!activeDemo) { setTypedText(""); return }
+    const fullText = API_DEMOS[activeDemo].response
+    setIsTyping(true)
+    setTypedText("")
+    let i = 0
+    const interval = setInterval(() => {
+      if (i < fullText.length) {
+        setTypedText(fullText.slice(0, i + 1))
+        i++
+      } else {
+        clearInterval(interval)
+        setIsTyping(false)
+      }
+    }, 8)
+    return () => clearInterval(interval)
+  }, [activeDemo])
+
+  const copyEndpoint = () => {
+    if (activeDemo) {
+      navigator.clipboard.writeText(API_DEMOS[activeDemo].endpoint)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
+    <div className="mx-auto max-w-5xl px-4 py-8 md:px-8 space-y-10">
       {/* Hero */}
-      <div className="mb-10 text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5">
+      <div className="text-center">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-lavender/10">
           <FlaskConical className="h-7 w-7 text-primary" />
         </div>
         <h1 className="font-heading text-3xl font-bold md:text-4xl">
-          {tx("research.title", lang)}
+          {isTr ? "Açık İnovasyon Ekosistemi" : "Open Innovation Ecosystem"}
         </h1>
-        <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-          {tx("research.subtitle", lang)}
+        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+          {isTr
+            ? "Araştırmacılar, üniversiteler ve sağlık kurumları için kanıta dayalı veri altyapısı"
+            : "Evidence-based data infrastructure for researchers, universities, and health institutions"}
         </p>
-        <div className="mt-4 flex justify-center gap-2 flex-wrap">
-          <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">Harvard HVHS C10</span>
-          <span className="rounded-full bg-amber-100 dark:bg-amber-900/30 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-300">KVKK/GDPR</span>
-          <span className="rounded-full bg-blue-100 dark:bg-blue-900/30 px-3 py-1 text-xs font-bold text-blue-700 dark:text-blue-300">Open Innovation API</span>
+        <div className="mt-3 flex justify-center gap-2 flex-wrap">
+          <span className="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold text-primary">Harvard HVHS C10</span>
+          <span className="rounded-full bg-amber-100 dark:bg-amber-900/30 px-3 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">KVKK/GDPR</span>
+          <span className="rounded-full bg-lavender/10 px-3 py-1 text-[10px] font-bold text-lavender">Open API</span>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="mb-8 flex justify-center">
-        <div className="inline-flex rounded-xl bg-muted p-1 flex-wrap">
-          {[
-            { id: "overview" as const, label: tx("research.tabPartnership", lang), icon: Handshake },
-            { id: "data" as const, label: tx("research.tabData", lang), icon: Database },
-            { id: "pipeline" as const, label: tx("research.tabPipeline", lang), icon: GitBranch },
-            { id: "vision" as const, label: tx("research.tabVision", lang), icon: Globe },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-all ${
-                activeTab === tab.id
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <tab.icon className="h-3.5 w-3.5" />
-              {tab.label}
+      {/* ── Data Vault (Trust Visualization) ── */}
+      <div className="rounded-2xl border bg-card p-6 shadow-soft text-center">
+        <div className="relative mx-auto mb-5 flex h-28 w-28 items-center justify-center">
+          {/* Glow */}
+          <div className="absolute inset-0 rounded-full bg-primary/5 blur-2xl scale-150" />
+          {/* Vault icon */}
+          <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-emerald-500/10 border border-primary/20">
+            <Shield className="h-9 w-9 text-primary/40" strokeWidth={1.2} />
+            <Lock className="absolute -right-1 -bottom-1 h-5 w-5 text-emerald-500 bg-card rounded-full p-0.5" />
+          </div>
+        </div>
+        <h3 className="text-sm font-bold mb-3">{isTr ? "Veri Yönetişim Kasası" : "Data Governance Vault"}</h3>
+        <div className="flex flex-wrap justify-center gap-2">
+          {GOVERNANCE.map(({ icon: Icon, en, tr }, i) => (
+            <div key={i} className="flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-[10px] font-medium shadow-soft"
+              style={{ animation: `fadeUp 0.3s ease-out ${i * 60}ms both` }}>
+              <Icon className="h-3 w-3 text-primary" />
+              {isTr ? tr : en}
+            </div>
+          ))}
+        </div>
+        <style jsx>{`@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      </div>
+
+      {/* ── Interactive API Terminal ── */}
+      <div>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+          <Terminal className="h-3.5 w-3.5" />
+          {isTr ? "İnteraktif API Terminali" : "Interactive API Terminal"}
+        </h3>
+        <div className="flex gap-2 mb-3">
+          {Object.entries(API_DEMOS).map(([key, demo]) => (
+            <button key={key} onClick={() => setActiveDemo(key)}
+              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all active:scale-95 ${
+                activeDemo === key ? "border-primary bg-primary/10 text-primary" : "hover:border-primary/30"
+              }`}>
+              <Play className="h-3 w-3" />
+              {demo.label[lang as "en" | "tr"]}
             </button>
+          ))}
+        </div>
+        {/* Terminal window */}
+        <div className="rounded-2xl bg-gray-950 text-gray-100 overflow-hidden shadow-soft-lg">
+          {/* Title bar */}
+          <div className="flex items-center gap-1.5 px-4 py-2.5 bg-gray-900/80">
+            <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
+            <div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
+            <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
+            <span className="ml-3 text-[10px] text-gray-500 font-mono">phytotherapy.ai — API Explorer</span>
+          </div>
+          {/* Content */}
+          <div className="p-4 font-mono text-xs min-h-[200px] max-h-[400px] overflow-y-auto">
+            {!activeDemo ? (
+              <span className="text-gray-500">
+                {isTr ? "// Bir endpoint seçerek API'yi keşfedin..." : "// Select an endpoint to explore the API..."}
+              </span>
+            ) : (
+              <>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-emerald-400">$</span>
+                  <span className="text-gray-300">{API_DEMOS[activeDemo].endpoint}</span>
+                  <button onClick={copyEndpoint} className="ml-auto text-gray-500 hover:text-gray-300">
+                    {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
+                  </button>
+                </div>
+                <pre className="text-amber-300/90 whitespace-pre-wrap leading-relaxed">
+                  {typedText}
+                  {isTyping && <span className="animate-pulse">▌</span>}
+                </pre>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Validation Pipeline ── */}
+      <div>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
+          <Microscope className="h-3.5 w-3.5" />
+          {isTr ? "Doğrulama Hattı" : "Validation Pipeline"}
+        </h3>
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide pb-2">
+          {PIPELINE.map(({ icon: Icon, label, color }, i) => (
+            <div key={i} className="flex shrink-0 items-center">
+              <div className="flex flex-col items-center gap-1">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl border shadow-soft" style={{ backgroundColor: `${color}10`, borderColor: `${color}30` }}>
+                  <Icon className="h-4 w-4" style={{ color }} />
+                </div>
+                <span className="text-[9px] font-medium text-center w-16">{label[lang as "en" | "tr"]}</span>
+              </div>
+              {i < PIPELINE.length - 1 && <div className="w-6 h-0.5 bg-border mx-1 shrink-0" />}
+            </div>
           ))}
         </div>
       </div>
 
-      {/* ═══ TAB 1: Partnership Model ═══ */}
-      {activeTab === "overview" && (
-        <div className="space-y-8">
-          {/* sPPP Model Cards */}
-          <div className="grid gap-5 md:grid-cols-2">
-            <div className="rounded-xl border bg-card p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/50">
-                  <Shield className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="font-bold">{tx("research.dataGovernance", lang)}</h3>
-                  <p className="text-xs text-muted-foreground">{tx("research.kvkkCompliant", lang)}</p>
-                </div>
-              </div>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                {[
-                  tx("research.gov1", lang),
-                  tx("research.gov2", lang),
-                  tx("research.gov3", lang),
-                  tx("research.gov4", lang),
-                  tx("research.gov5", lang),
-                  tx("research.gov6", lang),
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-primary mt-0.5" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+      {/* ── Institution Constellation (Bento Grid) ── */}
+      <div>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+          <Globe className="h-3.5 w-3.5" />
+          {isTr ? "Ekosistem Ağı" : "Ecosystem Network"}
+        </h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {INSTITUTIONS.map((inst, i) => (
+            <div key={i} className="rounded-2xl border bg-card p-3 shadow-soft text-center transition-all hover:shadow-soft-md hover:-translate-y-0.5"
+              style={{ animation: `fadeUp 0.3s ease-out ${i * 50}ms both` }}>
+              <span className={`inline-block rounded-full px-2 py-0.5 text-[9px] font-bold mb-1.5 ${inst.color}`}>
+                {REGION_LABELS[inst.region][lang as "en" | "tr"]}
+              </span>
+              <p className="text-xs font-bold">{inst.name}</p>
             </div>
-
-            <div className="rounded-xl border bg-card p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 dark:bg-green-900/50">
-                  <Code2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <h3 className="font-bold">{tx("research.openApi", lang)}</h3>
-                  <p className="text-xs text-muted-foreground">REST + GraphQL</p>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="rounded-lg bg-muted/50 p-3">
-                  <code className="text-xs">
-                    <span className="text-green-600">GET</span> /api/research/interactions<br/>
-                    <span className="text-blue-600">GET</span> /api/research/outcomes<br/>
-                    <span className="text-amber-600">GET</span> /api/research/demographics<br/>
-                    <span className="text-purple-600">POST</span> /api/research/cohort-builder<br/>
-                    <span className="text-red-600">GET</span> /api/research/export?format=csv
-                  </code>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {tx("research.apiRateLimit", lang)}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Partner Institutions */}
-          <div>
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-bold">
-              <Handshake className="h-5 w-5 text-primary" />
-              {tx("research.targetPartners", lang)}
-            </h3>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {PARTNERS.map((p, i) => (
-                <div key={i} className="rounded-xl border bg-card p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-bold">{p.name}</span>
-                    <span className="rounded-full bg-muted px-2 py-0.5 text-[9px] font-bold">{p.country}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`rounded-md px-1.5 py-0.5 text-[9px] font-bold ${
-                      p.type === "Kamu" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
-                      : p.type === "Akademi" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300"
-                      : p.type === "Regülatör" ? "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300"
-                      : "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300"
-                    }`}>{p.type}</span>
-                    <span className="text-[10px] text-muted-foreground">{p.focus}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
-      )}
-
-      {/* ═══ TAB 2: Data Warehouse ═══ */}
-      {activeTab === "data" && (
-        <div className="space-y-6">
-          <div className="rounded-xl border bg-card p-6">
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-bold">
-              <Database className="h-5 w-5 text-primary" />
-              {tx("research.dataWarehouseSchema", lang)}
-            </h3>
-            <p className="mb-6 text-sm text-muted-foreground">
-              {tx("research.dataWarehouseDesc", lang)}
-            </p>
-
-            {/* Star Schema Visual */}
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* Fact Tables */}
-              <div>
-                <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-blue-600 dark:text-blue-400">
-                  <Layers className="h-4 w-4" />
-                  Fact Tables
-                </h4>
-                <div className="space-y-2">
-                  {DW_SCHEMA.factTables.map((t) => (
-                    <button
-                      key={t.name}
-                      onClick={() => setExpandedSchema(expandedSchema === t.name ? null : t.name)}
-                      className="w-full rounded-lg border border-blue-200 dark:border-blue-800/50 bg-blue-50/50 dark:bg-blue-950/20 p-3 text-left transition-all hover:shadow-sm"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-mono font-bold text-blue-700 dark:text-blue-300">{t.name}</span>
-                        <span className="text-[9px] text-muted-foreground">{t.rows}</span>
-                      </div>
-                      <p className="mt-1 text-[10px] text-muted-foreground">{t.desc}</p>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Dimension Tables */}
-              <div>
-                <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-green-600 dark:text-green-400">
-                  <Network className="h-4 w-4" />
-                  Dimension Tables
-                </h4>
-                <div className="space-y-2">
-                  {DW_SCHEMA.dimensionTables.map((t) => (
-                    <div key={t.name} className="rounded-lg border border-green-200 dark:border-green-800/50 bg-green-50/50 dark:bg-green-950/20 p-3">
-                      <span className="text-xs font-mono font-bold text-green-700 dark:text-green-300">{t.name}</span>
-                      <p className="mt-1 text-[10px] text-muted-foreground">{t.desc}</p>
-                      <p className="mt-1 text-[9px] font-mono text-muted-foreground/70">{t.fields}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Example Query */}
-            <div className="mt-6 rounded-lg bg-gray-900 p-4 overflow-x-auto">
-              <p className="mb-2 text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                {tx("research.exampleQuery", lang)}
-              </p>
-              <pre className="text-xs text-gray-300 font-mono whitespace-pre-wrap">{`SELECT
-  d.age_band, d.gender,
-  AVG(baseline.sleep_quality) as avg_baseline_sleep,
-  AVG(week4.sleep_quality) as avg_week4_sleep,
-  AVG(week4.sleep_quality - baseline.sleep_quality) as avg_improvement,
-  COUNT(DISTINCT f.user_id) as cohort_size
-FROM fact_proms_outcomes f
-JOIN dim_user_demographics d ON f.user_id = d.user_id
-JOIN fact_proms_outcomes baseline
-  ON f.user_id = baseline.user_id AND baseline.timepoint = 'T0'
-JOIN fact_proms_outcomes week4
-  ON f.user_id = week4.user_id AND week4.timepoint = 'T2'
-WHERE f.supplement_name ILIKE '%ashwagandha%'
-GROUP BY d.age_band, d.gender
-HAVING COUNT(DISTINCT f.user_id) >= 5  -- k-anonymity
-ORDER BY avg_improvement DESC;`}</pre>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ═══ TAB 3: Validation Pipeline ═══ */}
-      {activeTab === "pipeline" && (
-        <div className="space-y-8">
-          {/* Clinical Validation Pipeline */}
-          <div>
-            <h3 className="mb-6 text-lg font-bold text-center">
-              {tx("research.clinicalPipeline", lang)}
-            </h3>
-            <div className="relative">
-              {/* Connection line */}
-              <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/20 via-primary to-primary/20 hidden md:block" style={{ transform: "translateX(-50%)" }} />
-
-              <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-12 md:gap-y-6">
-                {VALIDATION_PIPELINE.map((step, i) => {
-                  const Icon = step.icon
-                  const isLeft = i % 2 === 0
-                  return (
-                    <div
-                      key={step.phase}
-                      className={`relative rounded-xl border bg-card p-5 ${isLeft ? "md:text-right" : "md:col-start-2"}`}
-                    >
-                      {/* Dot on timeline */}
-                      <div className="hidden md:flex absolute top-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background"
-                        style={{
-                          [isLeft ? "right" : "left"]: "-2rem",
-                          transform: "translateY(-50%)",
-                        }}
-                      />
-
-                      <div className={`flex items-center gap-3 mb-2 ${isLeft ? "md:flex-row-reverse" : ""}`}>
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
-                          <Icon className="h-4.5 w-4.5 text-primary" />
-                        </div>
-                        <div>
-                          <span className="text-[9px] font-bold text-primary uppercase tracking-wider">
-                            {isTr ? `Faz ${i + 1}` : `Phase ${i + 1}`}
-                          </span>
-                          <h4 className="text-sm font-bold">{step.phase}</h4>
-                        </div>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {isTr ? step.desc.tr : step.desc.en}
-                      </p>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Entrepreneur Support Program */}
-          <div className="rounded-xl border bg-gradient-to-br from-amber-50/50 to-yellow-50/30 dark:from-amber-950/20 dark:to-yellow-950/10 p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Award className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-              <h3 className="text-lg font-bold">
-                {tx("research.entrepreneurProgram", lang)}
-              </h3>
-            </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              {[
-                {
-                  title: tx("research.dataAccess", lang),
-                  desc: tx("research.dataAccessDesc", lang),
-                },
-                {
-                  title: tx("research.platformIntegration", lang),
-                  desc: tx("research.platformIntegrationDesc", lang),
-                },
-                {
-                  title: tx("research.clinicalValidation", lang),
-                  desc: tx("research.clinicalValidationDesc", lang),
-                },
-              ].map((item, i) => (
-                <div key={i} className="rounded-lg bg-background/80 p-4">
-                  <h4 className="text-sm font-bold mb-1">{item.title}</h4>
-                  <p className="text-xs text-muted-foreground">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ═══ TAB 4: National Vision ═══ */}
-      {activeTab === "vision" && (
-        <div className="space-y-6">
-          {/* System-Level Impact */}
-          <div className="rounded-xl border bg-gradient-to-br from-primary/5 to-primary/10 p-6">
-            <h3 className="mb-4 text-lg font-bold text-center">
-              {tx("research.systemImpact", lang)}
-            </h3>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {[
-                { icon: Users, value: "84M", label: tx("research.turkeyPop", lang), sub: tx("research.turkeyPopSub", lang) },
-                { icon: Building2, value: "$42.6B", label: tx("research.globalMarket", lang), sub: "2026, CAGR 8.7%" },
-                { icon: Microscope, value: "3,200+", label: tx("research.clinicalTrials", lang), sub: "ClinicalTrials.gov" },
-                { icon: Scale, value: "0", label: tx("research.competitors", lang), sub: tx("research.competitorsSub", lang) },
-              ].map((stat, i) => (
-                <div key={i} className="rounded-lg bg-background/80 p-4 text-center">
-                  <stat.icon className="mx-auto mb-2 h-5 w-5 text-primary" />
-                  <div className="text-2xl font-black text-primary">{stat.value}</div>
-                  <div className="text-xs font-bold">{stat.label}</div>
-                  <div className="text-[9px] text-muted-foreground">{stat.sub}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* NHTS Alignment */}
-          <div className="rounded-xl border bg-card p-6">
-            <h3 className="mb-4 font-bold">
-              {tx("research.nhtsAlignment", lang)}
-            </h3>
-            <div className="space-y-3">
-              {[
-                {
-                  strategy: tx("research.nhts1Strategy", lang),
-                  alignment: tx("research.nhts1Align", lang),
-                },
-                {
-                  strategy: tx("research.nhts2Strategy", lang),
-                  alignment: tx("research.nhts2Align", lang),
-                },
-                {
-                  strategy: tx("research.nhts3Strategy", lang),
-                  alignment: tx("research.nhts3Align", lang),
-                },
-                {
-                  strategy: tx("research.nhts4Strategy", lang),
-                  alignment: tx("research.nhts4Align", lang),
-                },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-3 rounded-lg bg-muted/30 p-3">
-                  <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-primary mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-bold">{item.strategy}</h4>
-                    <p className="text-xs text-muted-foreground mt-0.5">{item.alignment}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="rounded-xl border bg-gradient-to-br from-primary/5 to-primary/10 p-8 text-center">
-            <h3 className="mb-2 text-xl font-bold">
-              {tx("research.partnershipCta", lang)}
-            </h3>
-            <p className="mb-5 text-sm text-muted-foreground">
-              {tx("research.partnershipCtaDesc", lang)}
-            </p>
-            <a
-              href="mailto:research@phytotherapy.ai"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-primary/90"
-            >
-              <Mail className="h-4 w-4" />
-              research@phytotherapy.ai
-            </a>
-          </div>
-        </div>
-      )}
-
-      {/* Disclaimer */}
-      <div className="mt-10 rounded-xl border bg-muted/30 p-5 text-center text-xs text-muted-foreground">
-        {tx("research.disclaimer", lang)}
       </div>
+
+      {/* ── Golden Ticket CTA ── */}
+      <div className="rounded-2xl border bg-gradient-to-r from-primary/5 via-lavender/5 to-primary/5 p-6 text-center dark:from-primary/10 dark:via-lavender/10 dark:to-primary/10">
+        <h3 className="text-lg font-bold mb-2">{isTr ? "Ekosistemin Parçası Olun" : "Join the Ecosystem"}</h3>
+        <p className="text-xs text-muted-foreground max-w-md mx-auto mb-4">
+          {isTr
+            ? "Üniversite, araştırma kurumu veya sağlık şirketi olarak API erişimi talep edin. Birlikte kanıta dayalı fitoterapi geleceğini şekillendirelim."
+            : "Request API access as a university, research institution, or health company. Let's shape the future of evidence-based phytotherapy together."}
+        </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a href="mailto:research@phytotherapy.ai"
+            className="flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all">
+            <Rocket className="h-4 w-4" />
+            {isTr ? "Araştırma Partneri Ol" : "Become a Research Partner"}
+          </a>
+          <a href="mailto:api@phytotherapy.ai"
+            className="flex items-center gap-2 rounded-2xl border px-6 py-3 text-sm font-medium hover:bg-muted transition-all">
+            <Key className="h-4 w-4" />
+            {isTr ? "API Anahtarı Talep Et" : "Request API Key"}
+          </a>
+        </div>
+      </div>
+
+      <p className="text-center text-[10px] text-muted-foreground/40">{tx("disclaimer.tool", lang)}</p>
     </div>
   )
 }
