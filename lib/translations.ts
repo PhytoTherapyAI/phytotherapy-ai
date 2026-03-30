@@ -5406,6 +5406,12 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "sports.generatingPlan": { en: "Creating your personalized plan...", tr: "Kişisel planınız oluşturuluyor..." },
   "sports.riskLevel": { en: "Risk Level", tr: "Risk Seviyesi" },
 
+  // ── Master Orchestrator ──
+  "synergy.title": { en: "Daily Synergy Report", tr: "Günün Sinerji Raporu" },
+  "synergy.priority": { en: "Today's Priority", tr: "Bugünün Önceliği" },
+  "synergy.connections": { en: "Cross-module connections:", tr: "Modüller arası bağlantı:" },
+  "synergy.score": { en: "Synergy Score", tr: "Sinerji Skoru" },
+
   // ── Sleep Redesign ──
   "sleep.goodMorning": { en: "Good morning!", tr: "Günaydın!" },
   "sleep.aiGuess": { en: "I'm guessing you slept around", tr: "Tahminen şu kadar uyudun:" },

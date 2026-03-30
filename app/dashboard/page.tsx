@@ -20,6 +20,7 @@ const WeeklySummaryCard = dynamic(() => import("@/components/dashboard/WeeklySum
 const SymptomPatternCard = dynamic(() => import("@/components/dashboard/SymptomPatternCard").then(m => ({ default: m.SymptomPatternCard })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
 const BossFightCard = dynamic(() => import("@/components/dashboard/BossFightCard").then(m => ({ default: m.BossFightCard })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
 const SeasonalCard = dynamic(() => import("@/components/dashboard/SeasonalCard").then(m => ({ default: m.SeasonalCard })), { loading: () => <Skeleton className="h-48 w-full rounded-xl" /> })
+const DailySynergyCard = dynamic(() => import("@/components/dashboard/DailySynergyCard").then(m => ({ default: m.DailySynergyCard })), { loading: () => <Skeleton className="h-56 w-full rounded-xl" /> })
 import {
   Activity, Loader2, Clock, Trophy, BarChart3, Scissors, Sparkles,
   Stethoscope, HeartPulse, Microscope, Pill, Leaf, Brain,
@@ -265,6 +266,11 @@ export default function DashboardPage() {
           <span className="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-semibold text-primary">BETA</span>
           <span>{tx("dashboard.betaTagline", lang)}</span>
         </div>
+      </div>
+
+      {/* ── Daily Synergy Report (Master Orchestrator) ── */}
+      <div className="animate-fade-in-up" style={{ animationDelay: "30ms" }}>
+        <DailySynergyCard />
       </div>
 
       {/* ── Priority Zone: Score + Daily Tasks ── */}
