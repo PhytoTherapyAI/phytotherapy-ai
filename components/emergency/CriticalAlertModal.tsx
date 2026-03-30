@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   Loader2,
 } from "lucide-react"
+import { tx } from "@/lib/translations"
 
 interface CriticalAlert {
   alertType: "vital_anomaly" | "drug_interaction" | "fall_detected" | "panic_button" | "inactivity"
@@ -166,7 +167,7 @@ export function CriticalAlertModal() {
         <div className="bg-gradient-to-r from-red-600 to-red-700 px-5 py-3 flex items-center gap-3">
           <AlertTriangle className="h-6 w-6 text-white animate-pulse" />
           <span className="text-sm font-bold text-white uppercase tracking-wider">
-            {isTr ? "Kritik Durum Algılandı" : "Critical Alert Detected"}
+            {tx("criticalAlert.detected", lang)}
           </span>
         </div>
 
@@ -242,9 +243,9 @@ export function CriticalAlertModal() {
                 </div>
                 <p className="text-xs text-muted-foreground text-center">
                   {isSending
-                    ? (isTr ? "Acil durum kişilerine bildirim gönderiliyor..." : "Sending notifications to emergency contacts...")
+                    ? tx("criticalAlert.sending", lang)
                     : (isTr
-                      ? `${countdown} saniye içinde acil durum kişilerinize otomatik bildirim gönderilecek`
+                      ? `${countdown} saniye icinde acil durum kisilerinize otomatik bildirim gonderilecek`
                       : `Emergency contacts will be automatically notified in ${countdown} seconds`)}
                 </p>
               </div>
@@ -264,7 +265,7 @@ export function CriticalAlertModal() {
             <div className="flex flex-col items-center gap-2 py-3">
               <CheckCircle2 className="h-10 w-10 text-green-500" />
               <p className="text-sm font-bold text-green-600 dark:text-green-400">
-                {isTr ? "Uyarı iptal edildi. İyi olduğuna sevindik!" : "Alert cancelled. Glad you're okay!"}
+                {tx("criticalAlert.cancelled", lang)}
               </p>
             </div>
           )}
@@ -274,12 +275,10 @@ export function CriticalAlertModal() {
             <div className="flex flex-col items-center gap-2 py-3">
               <Phone className="h-10 w-10 text-primary animate-pulse" />
               <p className="text-sm font-bold text-primary">
-                {isTr
-                  ? "Acil durum kişilerinize bildirim gönderildi!"
-                  : "Emergency contacts have been notified!"}
+                {tx("criticalAlert.notified", lang)}
               </p>
               <p className="text-xs text-muted-foreground text-center">
-                {isTr ? "Lütfen 112'yi aramayı da düşünün." : "Please also consider calling 112/911."}
+                {tx("criticalAlert.consider112", lang)}
               </p>
             </div>
           )}
@@ -291,7 +290,7 @@ export function CriticalAlertModal() {
                 onClick={handleCancel}
                 className="flex-1 rounded-xl bg-green-600 py-3 text-sm font-bold text-white transition-all hover:bg-green-700 active:scale-95"
               >
-                {isTr ? "İyiyim, İptal Et" : "I'm Fine, Cancel"}
+                {tx("criticalAlert.imFine", lang)}
               </button>
             )}
 
@@ -300,7 +299,7 @@ export function CriticalAlertModal() {
                 onClick={triggerSOS}
                 className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-bold text-white transition-all hover:bg-red-700 active:scale-95"
               >
-                {isTr ? "Hemen Bildir" : "Send SOS Now"}
+                {tx("criticalAlert.sendNow", lang)}
               </button>
             )}
 
@@ -309,7 +308,7 @@ export function CriticalAlertModal() {
                 onClick={handleClose}
                 className="flex-1 rounded-xl bg-muted py-3 text-sm font-bold transition-all hover:bg-muted/80"
               >
-                {isTr ? "Kapat" : "Close"}
+                {tx("criticalAlert.close", lang)}
               </button>
             )}
 
@@ -331,7 +330,7 @@ export function CriticalAlertModal() {
               className="flex items-center justify-center gap-2 rounded-lg border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-950/20 py-2 text-xs font-semibold text-red-600 dark:text-red-400 transition-all hover:bg-red-100"
             >
               <Phone className="h-3.5 w-3.5" />
-              {isTr ? "Hemen 112'yi Ara" : "Call 112 / 911 Now"}
+              {tx("criticalAlert.call112", lang)}
             </a>
           )}
         </div>

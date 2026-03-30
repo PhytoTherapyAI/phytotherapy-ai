@@ -53,10 +53,10 @@ export function SymptomPatternCard({ userId, lang, isPremium = false }: SymptomP
 
       const patterns: PatternInsight[] = []
       const fields = [
-        { key: "energy_level", area: lang === "tr" ? "Enerji" : "Energy" },
-        { key: "sleep_quality", area: lang === "tr" ? "Uyku" : "Sleep" },
-        { key: "mood", area: lang === "tr" ? "Ruh hali" : "Mood" },
-        { key: "bloating", area: lang === "tr" ? "Sindirim" : "Digestion" },
+        { key: "energy_level", area: tx("symptomPattern.energy", lang) },
+        { key: "sleep_quality", area: tx("symptomPattern.sleep", lang) },
+        { key: "mood", area: tx("symptomPattern.mood", lang) },
+        { key: "bloating", area: tx("symptomPattern.digestion", lang) },
       ] as const
 
       for (const field of fields) {
@@ -95,7 +95,7 @@ export function SymptomPatternCard({ userId, lang, isPremium = false }: SymptomP
         if (sleepAvg <= 2.5 && energyAvg <= 2.5) {
           patterns.push({
             type: "decline",
-            area: lang === "tr" ? "Uyku-Enerji" : "Sleep-Energy",
+            area: tx("symptomPattern.sleepEnergy", lang),
             message: lang === "tr"
               ? "Düşük uyku kalitesi enerji seviyenizi etkiliyor olabilir"
               : "Poor sleep quality may be affecting your energy levels",

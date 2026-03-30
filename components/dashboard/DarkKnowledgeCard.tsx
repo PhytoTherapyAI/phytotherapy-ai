@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Lightbulb, X, ChevronRight } from "lucide-react"
-import { type Lang } from "@/lib/translations"
+import { tx, type Lang } from "@/lib/translations"
 import Link from "next/link"
 
 interface DarkKnowledgeCardProps {
@@ -262,7 +262,7 @@ export function DarkKnowledgeCard({
           {/* Content */}
           <div className="min-w-0 flex-1 pr-4">
             <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-              {lang === "tr" ? "Biliyor muydunuz?" : "Did you know?"}
+              {tx("darkKnowledge.didYouKnow", lang)}
             </p>
             <p className="text-sm leading-relaxed text-foreground/90">
               {text}
@@ -271,7 +271,7 @@ export function DarkKnowledgeCard({
               href={fact.link}
               className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-amber-600 transition-colors hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300"
             >
-              {lang === "tr" ? "Daha fazla" : "Learn more"}
+              {tx("darkKnowledge.learnMore", lang)}
               <ChevronRight className="h-3 w-3" />
             </Link>
           </div>

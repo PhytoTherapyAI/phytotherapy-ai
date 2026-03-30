@@ -11,6 +11,7 @@ import {
   HeartPulse, Users, BarChart3, ShieldCheck, Stethoscope, MessageCircle,
   ChevronRight, Sparkles, X, ArrowRight,
 } from "lucide-react"
+import { tx } from "@/lib/translations"
 
 const ICON_MAP: Record<string, any> = {
   Microscope, Pill, Leaf, Brain, UtensilsCrossed, Moon, Dumbbell,
@@ -89,7 +90,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             className="pl-10 pr-10 h-10 rounded-lg"
-            placeholder={lang === "tr" ? "Araç ara..." : "Search tools..."}
+            placeholder={tx("megaMenu.searchTools", lang)}
             value={search}
             onChange={e => setSearch(e.target.value)}
             autoFocus
@@ -106,7 +107,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
           <div className="divide-y divide-border max-h-[50vh] overflow-y-auto">
             {searchResults.length === 0 ? (
               <p className="text-sm text-muted-foreground py-4 text-center">
-                {lang === "tr" ? "Sonuç bulunamadı" : "No results found"}
+                {tx("megaMenu.noResults", lang)}
               </p>
             ) : (
               searchResults.slice(0, 12).map(result => (
@@ -141,7 +142,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
                         </div>
                         <div className="min-w-0">
                           <h4 className="text-sm font-medium text-foreground truncate">{cat.title[lang]}</h4>
-                          <p className="text-[10px] text-muted-foreground">{cat.modules.length} {lang === "tr" ? "araç" : "tools"}</p>
+                          <p className="text-[10px] text-muted-foreground">{cat.modules.length} {tx("megaMenu.tools", lang)}</p>
                         </div>
                       </div>
                     </Link>
@@ -173,11 +174,11 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
             {/* Footer */}
             <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
               <span className="text-xs text-muted-foreground">
-                {TOTAL_MODULE_COUNT} {lang === "tr" ? "araç" : "tools"} · {TOOL_CATEGORIES.length} {lang === "tr" ? "kategori" : "categories"}
+                {TOTAL_MODULE_COUNT} {tx("megaMenu.tools", lang)} · {TOOL_CATEGORIES.length} {tx("megaMenu.categories", lang)}
               </span>
               <Link href="/tools" onClick={onClose}
                 className="text-xs font-medium text-primary hover:underline flex items-center gap-1">
-                {lang === "tr" ? "Tüm Araçlar" : "All Tools"} <ArrowRight className="w-3 h-3" />
+                {tx("megaMenu.allTools", lang)} <ArrowRight className="w-3 h-3" />
               </Link>
             </div>
           </>

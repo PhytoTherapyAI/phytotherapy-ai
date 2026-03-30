@@ -182,7 +182,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
           <div className="flex items-center gap-1.5">
             <Users className="h-4 w-4 text-teal-500" />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {members.length} / {maxMembers} {tr ? "profil" : "profiles"}
+              {members.length} / {maxMembers} {tx("family.profiles", lang)}
             </span>
           </div>
           {isPremium && (
@@ -282,10 +282,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                   <div className="flex items-start gap-2 rounded-lg bg-blue-50 dark:bg-blue-950/30 px-3 py-2.5">
                     <ShieldAlert className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
                     <p className="text-xs text-blue-700 dark:text-blue-400">
-                      {tr
-                        ? "18 yaş altı — ebeveyn denetim modu aktif. Tüm öneriler pediatrik güvenlik kontrolünden geçer."
-                        : "Under 18 — parental oversight mode active. All recommendations pass pediatric safety checks."
-                      }
+                      {tx("family.parentalMode", lang)}
                     </p>
                   </div>
                 )}
@@ -317,12 +314,10 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
             <Users className="h-10 w-10 text-teal-400" />
           </div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-            {tr ? "Ailenizi Buraya Ekleyin" : "Add Your Family Here"}
+            {tx("family.emptyTitle", lang)}
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-6">
-            {tr
-              ? "Aile üyelerinizi ekleyerek onlara özel sağlık önerileri, ilaç etkileşim kontrolü ve kişiselleştirilmiş takip alın."
-              : "Add family members to get personalized health recommendations, drug interaction checks, and customized tracking for them."}
+            {tx("family.emptyDesc", lang)}
           </p>
           <Button
             className="bg-teal-600 hover:bg-teal-700 text-white gap-2"
@@ -349,7 +344,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
 
           <div>
             <label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 block">
-              {tr ? "Ad Soyad" : "Full Name"} *
+              {tx("family.fullNameLabel", lang)} *
             </label>
             <input
               type="text"
@@ -407,7 +402,7 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
 
           <div>
             <label className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1 block">
-              {tr ? "Kronik Hastalıklar" : "Chronic Conditions"}
+              {tx("family.chronicLabel", lang)}
             </label>
             <input
               type="text"

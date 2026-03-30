@@ -10,6 +10,7 @@ import {
   User, Pill, Brain, Sparkles, Star, Hash, CornerDownLeft,
   Command,
 } from "lucide-react"
+import { tx } from "@/lib/translations"
 
 // ── Search Data (mock content + supplements + doctors) ──
 
@@ -281,14 +282,14 @@ export function CommandPalette() {
   useEffect(() => { setSelectedIndex(0) }, [results])
 
   const t = {
-    placeholder: lang === "tr" ? "Doktor, makale, takviye veya araç ara..." : "Search doctors, articles, supplements, tools...",
-    shortcut: lang === "tr" ? "veya" : "or",
-    no_results: lang === "tr" ? "Sonuç bulunamadı" : "No results found",
-    try_different: lang === "tr" ? "Farklı anahtar kelimeler deneyin" : "Try different keywords",
-    quick: lang === "tr" ? "Hızlı Erişim" : "Quick Access",
-    navigate: lang === "tr" ? "Gezin" : "Navigate",
-    select: lang === "tr" ? "Seç" : "Select",
-    close: lang === "tr" ? "Kapat" : "Close",
+    placeholder: tx("cmdPalette.placeholder", lang),
+    shortcut: tx("cmdPalette.or", lang),
+    no_results: tx("cmdPalette.noResults", lang),
+    try_different: tx("cmdPalette.tryDifferent", lang),
+    quick: tx("cmdPalette.quickAccess", lang),
+    navigate: tx("cmdPalette.navigate", lang),
+    select: tx("cmdPalette.select", lang),
+    close: tx("cmdPalette.close", lang),
   }
 
   if (!open) return null
@@ -418,11 +419,11 @@ export function CommandPalette() {
                   <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{t.quick}</span>
                 </div>
                 {[
-                  { label: lang === "tr" ? "Sağlık Asistanı" : "Health Assistant", href: "/health-assistant", icon: "💬" },
-                  { label: lang === "tr" ? "Etkileşim Kontrol" : "Interaction Checker", href: "/interaction-checker", icon: "⚕️" },
-                  { label: lang === "tr" ? "Kan Tahlili" : "Blood Test", href: "/blood-test", icon: "🩸" },
-                  { label: lang === "tr" ? "Klinik Testler" : "Clinical Tests", href: "/clinical-tests", icon: "📋" },
-                  { label: lang === "tr" ? "Tüm Araçlar" : "All Tools", href: "/tools", icon: "🔧" },
+                  { label: tx("cmdPalette.healthAssistant", lang), href: "/health-assistant", icon: "💬" },
+                  { label: tx("cmdPalette.interactionChecker", lang), href: "/interaction-checker", icon: "⚕️" },
+                  { label: tx("cmdPalette.bloodTest", lang), href: "/blood-test", icon: "🩸" },
+                  { label: tx("cmdPalette.clinicalTests", lang), href: "/clinical-tests", icon: "📋" },
+                  { label: tx("cmdPalette.allTools", lang), href: "/tools", icon: "🔧" },
                 ].map(item => (
                   <button key={item.href} onClick={() => navigate(item.href)}
                     className="w-full flex items-center gap-3 px-4 py-2 text-left hover:bg-muted/50 transition-colors">
@@ -463,7 +464,7 @@ export function CommandPaletteTrigger({ onClick }: { onClick?: () => void }) {
       className="hidden lg:flex items-center gap-2 h-8 rounded-lg border border-border bg-muted/50 px-3 text-sm text-muted-foreground hover:bg-muted transition-colors"
       title="Cmd+K">
       <Search className="w-3.5 h-3.5" />
-      <span className="text-xs">{lang === "tr" ? "Ara..." : "Search..."}</span>
+      <span className="text-xs">{tx("cmdPalette.search", lang)}</span>
       <kbd className="ml-2 flex items-center gap-0.5 rounded border border-border bg-background px-1.5 py-0.5 text-[10px]">
         <Command className="w-2.5 h-2.5" />K
       </kbd>

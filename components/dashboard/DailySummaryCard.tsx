@@ -249,7 +249,7 @@ export function DailySummaryCard({ userId, lang, userName }: DailySummaryCardPro
             </div>
             {data.streak >= 7 && (
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
-                🔥 {lang === "tr" ? "Harika gidiyorsun!" : "You're on fire!"}
+                🔥 {tx("dailySummary.onFire", lang)}
               </span>
             )}
           </div>

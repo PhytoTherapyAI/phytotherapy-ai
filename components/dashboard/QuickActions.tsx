@@ -75,7 +75,7 @@ export function QuickActions({ lang, userId }: QuickActionsProps) {
     {
       key: "meds",
       icon: medsDone ? Check : Pill,
-      label: lang === "tr" ? "Ilacimi aldim" : "Took my meds",
+      label: tx("quickActions.tookMeds", lang),
       color: medsDone ? "text-green-500" : "text-primary",
       bg: medsDone ? "bg-green-500/10" : "bg-primary/10",
       onClick: handleMeds,
@@ -93,7 +93,7 @@ export function QuickActions({ lang, userId }: QuickActionsProps) {
     {
       key: "mood",
       icon: SmilePlus,
-      label: lang === "tr" ? "Nasil hissediyorum" : "How am I feeling",
+      label: tx("quickActions.howFeeling", lang),
       color: moodSelected ? "text-amber-500" : "text-amber-500",
       bg: moodSelected ? "bg-amber-500/15" : "bg-amber-500/10",
       onClick: () => setMoodOpen(true),
@@ -102,7 +102,7 @@ export function QuickActions({ lang, userId }: QuickActionsProps) {
     {
       key: "symptom",
       icon: AlertCircle,
-      label: lang === "tr" ? "Semptom kaydet" : "Log symptom",
+      label: tx("quickActions.logSymptom", lang),
       color: "text-rose-500",
       bg: "bg-rose-500/10",
       onClick: () => setSymptomOpen(true),
@@ -137,7 +137,7 @@ export function QuickActions({ lang, userId }: QuickActionsProps) {
         <DialogContent className="max-w-xs">
           <DialogHeader>
             <DialogTitle className="text-center">
-              {lang === "tr" ? "Bugun nasil hissediyorsun?" : "How are you feeling today?"}
+              {tx("quickActions.moodTitle", lang)}
             </DialogTitle>
           </DialogHeader>
           <div className="flex justify-center gap-2 py-4">
@@ -164,14 +164,14 @@ export function QuickActions({ lang, userId }: QuickActionsProps) {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-center">
-              {lang === "tr" ? "Semptom Kaydet" : "Log a Symptom"}
+              {tx("quickActions.symptomTitle", lang)}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
             <textarea
               value={symptomText}
               onChange={(e) => setSymptomText(e.target.value)}
-              placeholder={lang === "tr" ? "Semptomu yazin..." : "Describe your symptom..."}
+              placeholder={tx("quickActions.symptomPlaceholder", lang)}
               className="w-full rounded-lg border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               rows={3}
             />
@@ -181,8 +181,8 @@ export function QuickActions({ lang, userId }: QuickActionsProps) {
               disabled={!symptomText.trim()}
             >
               {symptomSaved
-                ? (lang === "tr" ? "Kaydedildi!" : "Saved!")
-                : (lang === "tr" ? "Kaydet" : "Save")}
+                ? tx("quickActions.saved", lang)
+                : tx("quickActions.save", lang)}
             </Button>
           </div>
         </DialogContent>

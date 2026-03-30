@@ -5759,6 +5759,113 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "dailyCare.title": { en: "Today's Care Plan", tr: "Bugununn Saglik Plani" },
   "dailyCare.refresh": { en: "Refresh", tr: "Yenile" },
   "dailyCare.allCompleted": { en: "You completed today's plan, amazing!", tr: "Bugunku planini tamamladin, harikasin!" },
+
+  // ── DailySummaryCard ──
+  "dailySummary.onFire": { en: "You're on fire!", tr: "Harika gidiyorsun!" },
+
+  // ── DarkKnowledgeCard ──
+  "darkKnowledge.didYouKnow": { en: "Did you know?", tr: "Biliyor muydunuz?" },
+  "darkKnowledge.learnMore": { en: "Learn more", tr: "Daha fazla" },
+
+  // ── MonthlyROICard ──
+  "roi.title": { en: "Your Monthly Impact", tr: "Aylik Etki Raporunuz" },
+  "roi.savings": { en: "Savings & Time", tr: "Tasarruf & Zaman" },
+  "roi.clinical": { en: "Clinical Progress", tr: "Klinik Ilerleme" },
+  "roi.usage": { en: "Platform Usage", tr: "Platform Kullanimi" },
+  "roi.avoided": { en: "unnecessary visits avoided", tr: "gereksiz hastane ziyaretinden kacinildi" },
+  "roi.hoursSaved": { en: "hours saved", tr: "saat tasarruf edildi" },
+  "roi.estimatedSavings": { en: "estimated savings", tr: "tahmini finansal tasarruf" },
+  "roi.sleep": { en: "Sleep Efficiency", tr: "Uyku Verimliligi" },
+  "roi.pain": { en: "Pain Reduction", tr: "Agri Azalmasi" },
+  "roi.meds": { en: "Medication Adherence", tr: "Ilac Uyumu" },
+  "roi.mood": { en: "Mood Score", tr: "Ruh Hali Skoru" },
+  "roi.interactions": { en: "AI interactions", tr: "AI etkilesimi" },
+  "roi.tools": { en: "tools used", tr: "arac kullanildi" },
+  "roi.goals": { en: "goals achieved", tr: "hedefe ulasildi" },
+  "roi.streak": { en: "day streak", tr: "gunluk seri" },
+  "roi.healthScore": { en: "Health Score", tr: "Saglik Skoru" },
+  "roi.vsLast": { en: "vs last month", tr: "gecen aya gore" },
+  "roi.share": { en: "Share", tr: "Paylas" },
+  "roi.details": { en: "See Details", tr: "Detaylari Gor" },
+  "roi.hide": { en: "Hide", tr: "Gizle" },
+  "roi.congrats": { en: "Great month!", tr: "Harika bir ay!" },
+
+  // ── QuickActions ──
+  "quickActions.tookMeds": { en: "Took my meds", tr: "Ilacimi aldim" },
+  "quickActions.howFeeling": { en: "How am I feeling", tr: "Nasil hissediyorum" },
+  "quickActions.logSymptom": { en: "Log symptom", tr: "Semptom kaydet" },
+  "quickActions.moodTitle": { en: "How are you feeling today?", tr: "Bugun nasil hissediyorsun?" },
+  "quickActions.symptomTitle": { en: "Log a Symptom", tr: "Semptom Kaydet" },
+  "quickActions.symptomPlaceholder": { en: "Describe your symptom...", tr: "Semptomu yazin..." },
+  "quickActions.saved": { en: "Saved!", tr: "Kaydedildi!" },
+  "quickActions.save": { en: "Save", tr: "Kaydet" },
+
+  // ── SOSCard ──
+  "sos.addContact": { en: "Add Emergency Contact", tr: "Acil Durum Kisisi Ekle" },
+  "sos.quickAccess": { en: "Quick access in crisis", tr: "Kriz aninda hizli erisim" },
+  "sos.emergency": { en: "Emergency", tr: "Acil Durum" },
+  "sos.contactsSaved": { en: "contacts saved", tr: "kisi kayitli" },
+  "sos.primary": { en: "Primary", tr: "Birincil" },
+  "sos.moreContacts": { en: "more contacts", tr: "diger kisi" },
+  "sos.manageContacts": { en: "Manage Contacts", tr: "Kisileri Duzenle" },
+
+  // ── SupplementDoseDialog ──
+  "suppDose.breakRecommended": { en: "day break is recommended.", tr: "gun mola vermeniz onerilir." },
+  "suppDose.recommendedCycle": { en: "Recommended:", tr: "Tavsiye:" },
+  "suppDose.daysUse": { en: "days use,", tr: "gun kullanim," },
+  "suppDose.daysBreak": { en: "days break", tr: "gun mola" },
+
+  // ── SymptomPatternCard ──
+  "symptomPattern.energy": { en: "Energy", tr: "Enerji" },
+  "symptomPattern.sleep": { en: "Sleep", tr: "Uyku" },
+  "symptomPattern.mood": { en: "Mood", tr: "Ruh hali" },
+  "symptomPattern.digestion": { en: "Digestion", tr: "Sindirim" },
+  "symptomPattern.sleepEnergy": { en: "Sleep-Energy", tr: "Uyku-Enerji" },
+
+  // ── CriticalAlertModal ──
+  "criticalAlert.detected": { en: "Critical Alert Detected", tr: "Kritik Durum Algilandi" },
+  "criticalAlert.sending": { en: "Sending notifications to emergency contacts...", tr: "Acil durum kisilerine bildirim gonderiliyor..." },
+  "criticalAlert.cancelled": { en: "Alert cancelled. Glad you're okay!", tr: "Uyari iptal edildi. Iyi olduguna sevindik!" },
+  "criticalAlert.notified": { en: "Emergency contacts have been notified!", tr: "Acil durum kisilerinize bildirim gonderildi!" },
+  "criticalAlert.consider112": { en: "Please also consider calling 112/911.", tr: "Lutfen 112'yi aramayi da dusunun." },
+  "criticalAlert.imFine": { en: "I'm Fine, Cancel", tr: "Iyiyim, Iptal Et" },
+  "criticalAlert.sendNow": { en: "Send SOS Now", tr: "Hemen Bildir" },
+  "criticalAlert.close": { en: "Close", tr: "Kapat" },
+  "criticalAlert.call112": { en: "Call 112 / 911 Now", tr: "Hemen 112'yi Ara" },
+
+  // ── FamilyManager ──
+  "family.profiles": { en: "profiles", tr: "profil" },
+  "family.parentalMode": { en: "Under 18 — parental oversight mode active. All recommendations pass pediatric safety checks.", tr: "18 yas alti — ebeveyn denetim modu aktif. Tum oneriler pediatrik guvenlik kontrolunden gecer." },
+  "family.emptyTitle": { en: "Add Your Family Here", tr: "Ailenizi Buraya Ekleyin" },
+  "family.emptyDesc": { en: "Add family members to get personalized health recommendations, drug interaction checks, and customized tracking for them.", tr: "Aile uyelerinizi ekleyerek onlara ozel saglik onerileri, ilac etkilesim kontrolu ve kisisellestirilmis takip alin." },
+  "family.fullNameLabel": { en: "Full Name", tr: "Ad Soyad" },
+  "family.chronicLabel": { en: "Chronic Conditions", tr: "Kronik Hastaliklar" },
+
+  // ── CommandPalette ──
+  "cmdPalette.placeholder": { en: "Search doctors, articles, supplements, tools...", tr: "Doktor, makale, takviye veya arac ara..." },
+  "cmdPalette.or": { en: "or", tr: "veya" },
+  "cmdPalette.noResults": { en: "No results found", tr: "Sonuc bulunamadi" },
+  "cmdPalette.tryDifferent": { en: "Try different keywords", tr: "Farkli anahtar kelimeler deneyin" },
+  "cmdPalette.quickAccess": { en: "Quick Access", tr: "Hizli Erisim" },
+  "cmdPalette.navigate": { en: "Navigate", tr: "Gezin" },
+  "cmdPalette.select": { en: "Select", tr: "Sec" },
+  "cmdPalette.close": { en: "Close", tr: "Kapat" },
+  "cmdPalette.healthAssistant": { en: "Health Assistant", tr: "Saglik Asistani" },
+  "cmdPalette.interactionChecker": { en: "Interaction Checker", tr: "Etkilesim Kontrol" },
+  "cmdPalette.bloodTest": { en: "Blood Test", tr: "Kan Tahlili" },
+  "cmdPalette.clinicalTests": { en: "Clinical Tests", tr: "Klinik Testler" },
+  "cmdPalette.allTools": { en: "All Tools", tr: "Tum Araclar" },
+  "cmdPalette.search": { en: "Search...", tr: "Ara..." },
+
+  // ── Footer ──
+  "footer.about": { en: "About", tr: "Hakkimizda" },
+
+  // ── MegaMenu ──
+  "megaMenu.searchTools": { en: "Search tools...", tr: "Arac ara..." },
+  "megaMenu.noResults": { en: "No results found", tr: "Sonuc bulunamadi" },
+  "megaMenu.tools": { en: "tools", tr: "arac" },
+  "megaMenu.categories": { en: "categories", tr: "kategori" },
+  "megaMenu.allTools": { en: "All Tools", tr: "Tum Araclar" },
 }
 Object.assign(t, commonToolKeys)
 

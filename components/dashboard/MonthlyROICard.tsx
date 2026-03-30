@@ -10,6 +10,7 @@ import {
   ChevronUp, Share2, Sparkles, ArrowUpRight, ArrowDownRight, Minus,
   Flame, Star, Award,
 } from "lucide-react"
+import { tx, type Lang } from "@/lib/translations"
 
 // ── Mock Data Generator (would come from API in production) ──
 interface MonthlyROI {
@@ -93,31 +94,22 @@ export function MonthlyROICard({ userId, lang = "en" }: MonthlyROICardProps) {
   }
 
   const t = (key: string) => {
-    const map: Record<string, Record<string, string>> = {
-      title: { en: "Your Monthly Impact", tr: "Aylık Etki Raporunuz" },
-      subtitle: { en: `${data.month} ${data.year} Summary`, tr: `${data.month} ${data.year} Özeti` },
-      savings: { en: "Savings & Time", tr: "Tasarruf & Zaman" },
-      clinical: { en: "Clinical Progress", tr: "Klinik İlerleme" },
-      usage: { en: "Platform Usage", tr: "Platform Kullanımı" },
-      avoided: { en: "unnecessary visits avoided", tr: "gereksiz hastane ziyaretinden kaçınıldı" },
-      hours_saved: { en: "hours saved", tr: "saat tasarruf edildi" },
-      estimated_savings: { en: "estimated savings", tr: "tahmini finansal tasarruf" },
-      sleep: { en: "Sleep Efficiency", tr: "Uyku Verimliliği" },
-      pain: { en: "Pain Reduction", tr: "Ağrı Azalması" },
-      meds: { en: "Medication Adherence", tr: "İlaç Uyumu" },
-      mood: { en: "Mood Score", tr: "Ruh Hali Skoru" },
-      interactions: { en: "AI interactions", tr: "AI etkileşimi" },
-      tools: { en: "tools used", tr: "araç kullanıldı" },
-      goals: { en: "goals achieved", tr: "hedefe ulaşıldı" },
-      streak: { en: "day streak", tr: "günlük seri" },
-      health_score: { en: "Health Score", tr: "Sağlık Skoru" },
-      vs_last: { en: "vs last month", tr: "geçen aya göre" },
-      share: { en: "Share", tr: "Paylaş" },
-      details: { en: "See Details", tr: "Detayları Gör" },
-      hide: { en: "Hide", tr: "Gizle" },
-      congrats: { en: "Great month!", tr: "Harika bir ay!" },
+    // Keys that need template literals stay local
+    const localMap: Record<string, Record<string, string>> = {
+      subtitle: { en: `${data.month} ${data.year} Summary`, tr: `${data.month} ${data.year} Ozeti` },
     }
-    return map[key]?.[lang] || key
+    if (localMap[key]) return localMap[key][lang] || key
+    // All other keys use centralized tx()
+    const txMap: Record<string, string> = {
+      title: "roi.title", savings: "roi.savings", clinical: "roi.clinical",
+      usage: "roi.usage", avoided: "roi.avoided", hours_saved: "roi.hoursSaved",
+      estimated_savings: "roi.estimatedSavings", sleep: "roi.sleep", pain: "roi.pain",
+      meds: "roi.meds", mood: "roi.mood", interactions: "roi.interactions",
+      tools: "roi.tools", goals: "roi.goals", streak: "roi.streak",
+      health_score: "roi.healthScore", vs_last: "roi.vsLast", share: "roi.share",
+      details: "roi.details", hide: "roi.hide", congrats: "roi.congrats",
+    }
+    return txMap[key] ? tx(txMap[key], lang as Lang) : key
   }
 
   // Mini sparkline bars (last 4 weeks simulated)

@@ -9,6 +9,7 @@ import {
   ChevronDown, ChevronUp, Plus, AlertTriangle,
 } from "lucide-react"
 import Link from "next/link"
+import { tx, type Lang } from "@/lib/translations"
 
 interface EmergencyContact {
   id: string
@@ -62,10 +63,10 @@ export function SOSCard({ userId, lang = "en", compact = false }: SOSCardProps) 
             </div>
             <div>
               <p className="text-sm font-medium">
-                {lang === "tr" ? "Acil Durum Kişisi Ekle" : "Add Emergency Contact"}
+                {tx("sos.addContact", lang as Lang)}
               </p>
               <p className="text-xs text-muted-foreground">
-                {lang === "tr" ? "Kriz anında hızlı erişim" : "Quick access in crisis"}
+                {tx("sos.quickAccess", lang as Lang)}
               </p>
             </div>
             <Plus className="w-4 h-4 text-muted-foreground ml-auto" />
@@ -107,10 +108,10 @@ export function SOSCard({ userId, lang = "en", compact = false }: SOSCardProps) 
             </div>
             <div>
               <h3 className="font-semibold text-sm">
-                {lang === "tr" ? "Acil Durum" : "Emergency"}
+                {tx("sos.emergency", lang as Lang)}
               </h3>
               <p className="text-[11px] text-muted-foreground">
-                {contacts.length} {lang === "tr" ? "kişi kayıtlı" : "contacts saved"}
+                {contacts.length} {tx("sos.contactsSaved", lang as Lang)}
               </p>
             </div>
           </div>
@@ -134,7 +135,7 @@ export function SOSCard({ userId, lang = "en", compact = false }: SOSCardProps) 
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">{primary.name}</span>
               <Badge className="bg-red-500/10 text-red-600 text-[9px] gap-0.5">
-                <Star className="w-2 h-2" />{lang === "tr" ? "Birincil" : "Primary"}
+                <Star className="w-2 h-2" />{tx("sos.primary", lang as Lang)}
               </Badge>
             </div>
             <span className="text-xs text-muted-foreground">{REL_LABELS[primary.relationship]?.[lang]} · {primary.phoneNumber}</span>
@@ -149,7 +150,7 @@ export function SOSCard({ userId, lang = "en", compact = false }: SOSCardProps) 
           <button onClick={() => setExpanded(!expanded)}
             className="w-full flex items-center justify-center gap-1 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors">
             {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-            {others.length} {lang === "tr" ? "diğer kişi" : "more contacts"}
+            {others.length} {tx("sos.moreContacts", lang as Lang)}
           </button>
           {expanded && (
             <div className="border-t border-border">
@@ -176,7 +177,7 @@ export function SOSCard({ userId, lang = "en", compact = false }: SOSCardProps) 
 
       {/* Footer link */}
       <Link href="/emergency-contacts" className="block text-center py-2.5 text-[11px] text-primary hover:underline border-t border-border">
-        {lang === "tr" ? "Kişileri Düzenle" : "Manage Contacts"}
+        {tx("sos.manageContacts", lang as Lang)}
       </Link>
     </Card>
   )
