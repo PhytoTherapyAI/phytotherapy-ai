@@ -902,9 +902,79 @@ SENTRY_DSN=...                       # Error monitoring
 - ✅ DEMO-SCRIPT.md — Harvard demo instructions
 - ✅ Supabase migration: feedback table
 
-*Son güncelleme: 30 Mart 2026 v29.0*
-*Sprint 1-13 + Phase 1-13 + 28-30 Mart oturumları + Beta Readiness Sprint tamamlandı.*
-*324+ sayfa, 17 kategori, 1,300+ çeviri, 20+ özel ikon.*
-*Hackathon: 11-12 Nisan 2026 — 12 gün kaldı*
+### Oturum 30-31 Mart — v31.0 (Session 5+6: Behavioral UX Overhaul + QA)
+
+**Session 5 — QA Sprint:**
+- ✅ Image optimization (5 unused SVGs removed, PNG→WebP 79% reduction)
+- ✅ 28/30 page rendering tests PASS
+- ✅ 13/15 API endpoint tests PASS (2 Gemini quota)
+- ✅ 6/6 security tests PASS (XSS, SQL injection, auth, rate limiting)
+- ✅ 8 new translation keys, all simple ternaries→tx()
+- ✅ Build: zero errors
+
+**Session 6 — Massive Behavioral UX Redesign (22 commits):**
+
+**Yeni Bileşenler (50+ dosya):**
+- ✅ Sports Performance: IntentBar, IntentCards, TodayFocusCard, SupplementTimer, DrugSafetyCard, WeeklyProgressBar
+- ✅ Sleep Analysis: MorningCard, MicroInsightCard, SleepDebtDonut, ChronotypeCard, WindDownCard, SleepSessionLogger, CircadianTimeline
+- ✅ Chat: SmartWelcome, AILoadingState (labor illusion), SmartSuggestions (follow-up chips)
+- ✅ Calendar: WeeklyStrip, HabitRings, TimeBlockTasks, QuickLogFAB
+- ✅ Dashboard: DailySynergyCard (cross-module AI)
+- ✅ Analytics: ClinicalInsightsHeader (triage + sparklines + donut)
+- ✅ Doctor: DoctorShell (persistent 4-tab navigation)
+- ✅ Innovation: InnovationShell (scrollable 5-tab navigation)
+- ✅ UI: DrugAlertCard (glassmorphism), EmptyState (behavioral)
+
+**Sayfa Yeniden Tasarımları (15 sayfa):**
+- ✅ Sports Performance: Intent bar + gamified supplement checklist + streak tracker
+- ✅ Sleep Analysis: Conversational morning card + sleep debt donut + chronotype animals + wind-down mode
+- ✅ Health Assistant: Smart welcome + contextual greeting + Did You Know + mic button
+- ✅ Interaction Checker: Trust card + pharmacology facts + endowed progress nudge
+- ✅ Landing Page: Bento Grid + Spotlight search + quick action chips
+- ✅ Posture & Ergonomics: Workout player with circular countdown + gamified checklist
+- ✅ Doctor Panel: Clinical Copilot + triage queue + Inbox Zero
+- ✅ Doctor Communication: Action-driven empty state + quick topic chips
+- ✅ Drug Info: Rx Copilot + progressive disclosure + AI shield
+- ✅ Health Analytics: Clinical insights header with triage alerts
+- ✅ Global Benchmark: Strategy simulator with interactive sliders + collectible cards
+- ✅ Health Roadmap: Gamified quest journey + shield gauge + mystery locked cards
+- ✅ Research Hub: Interactive API terminal + data vault + golden ticket CTA
+- ✅ Share Data (FHIR): Data Vault + toggle switches + self-destructing links
+- ✅ Creator Studio: Dopamine analytics + decoy pricing + magic pen FAB
+- ✅ Prospectus Reader: AI scanner lens + labor illusion loading
+- ✅ Vital Logger: Zero-typing grid + context chips + micro-reward
+
+**Navigasyon Yenilikleri:**
+- ✅ Floating glassmorphism navbar (scroll shrink, 4 core nav, pill active)
+- ✅ Smart Back Button + breadcrumbs (135+ tool pages)
+- ✅ Doctor Workspace Shell (4 pages, bottom tab bar mobile, sidebar desktop)
+- ✅ Innovation Hub Shell (5 pages, scrollable top tab bar)
+- ✅ Tools Hub: ?category= state retention + expand-in-place
+
+**Design System v2:**
+- ✅ Semantic tokens: lavender (AI), sage (clinical safe), coral (warnings)
+- ✅ Glassmorphism: glass-card, glass-thinking, glow-lavender
+- ✅ Soft shadows: shadow-soft, shadow-soft-md, shadow-soft-lg
+- ✅ scrollbar-hide, safe-area-pb utilities
+
+**Backend & Altyapı:**
+- ✅ Master AI Orchestrator: health-context.ts + cross-module-engine.ts + /api/master-orchestrator
+- ✅ Smart Nudge Engine: nudge-engine.ts + nudge-prompts.ts + /api/nudge-check + Vercel Cron
+- ✅ Recovery Dashboard BFF: daily-health-log.ts + /api/recovery-dashboard
+- ✅ Polyphasic sleep session support
+- ✅ Telegram Bot feedback notifications (Discord blocked in Turkey)
+- ✅ Discord webhook fallback
+- ✅ KVKK data deletion: 11→18 tables
+- ✅ Data export: 11→14 tables
+- ✅ Supabase migration: nudge_log table
+
+**Disclaimer banner üstten kaldırıldı** (footer'da kalıyor)
+**FAB butonu mordan botanik yeşiline** değiştirildi
+**Tüm sayfalar mobil-first** tasarıma geçirildi
+
+*Son güncelleme: 31 Mart 2026 v31.0*
+*Sprint 1-13 + Phase 1-13 + 28-31 Mart oturumları tamamlandı.*
+*324+ sayfa, 42/42 HTTP 200, 15/15 API PASS, 50+ yeni bileşen.*
+*Hackathon: 11-12 Nisan 2026 — 11 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
 *Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*

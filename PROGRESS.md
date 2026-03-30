@@ -1,6 +1,73 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 30 Mart 2026 (v30.0 — QA / Testing / Image Optimization / i18n Cleanup)
+> Son güncelleme: 31 Mart 2026 (v31.0 — Behavioral UX Overhaul + Feature Audit)
+
+---
+
+## Oturum 30-31 Mart 2026 (Session 6) — Behavioral UX Overhaul
+
+### 22 Commits — Tüm Değişiklikler
+
+| # | Commit | Açıklama |
+|---|--------|----------|
+| 1 | `f6f9dd4` | QA: image optimization + API/security tests + i18n |
+| 2 | `ff865fb` | Sports Performance redesign + Smart Nudge system |
+| 3 | `66f9b26` | Sleep Analysis conversational UI + gamification |
+| 4 | `e41f308` | Master AI Orchestrator (cross-module intelligence) |
+| 5 | `fcb61eb` | Design System v2 + polyphasic sleep session logger |
+| 6 | `fd58b93` | Smart Recovery Hub backend + circadian timeline |
+| 7 | `10876ef` | Chat behavioral redesign (smart welcome + mic) |
+| 8 | `73da257` | Interaction checker behavioral redesign |
+| 9 | `cd2f7c9` | Smart back navigation + breadcrumbs |
+| 10 | `6ab1eb6` | Feedback widget redesign + Discord webhook |
+| 11 | `0fdfdd9` | Discord → rich Embed cards |
+| 12 | `e43cab6` | Discord → Telegram Bot (Turkey Discord ban) |
+| 13 | `241d362` | AI Loading State (labor illusion) |
+| 14 | `d20e8ed` | Reusable EmptyState component |
+| 15 | `daa77cb` | Smart Follow-up Chips |
+| 16 | `4eff0dd` | Landing page Bento Grid + Command Center |
+| 17 | `2088a01` | Calendar: weekly strip + habit rings + time blocks + quick log |
+| 18 | `7a6e2ad` | Vital logger: zero-typing grid + context chips |
+| 19 | `65d5570` | Prospectus reader: AI scanner lens + labor illusion |
+| 20 | `e0d03cd` | Posture: interactive stretch player + gamified checklist |
+| 21 | `4427250` | Floating glassmorphism navbar |
+| 22+ | Multiple | Doctor panel, drug info, analytics, benchmark, roadmap, research hub, share data, creator studio, shells, audit |
+
+### Yeni Dosyalar (50+)
+
+**components/sports/** — IntentBar, IntentCards, TodayFocusCard, SupplementTimer, DrugSafetyCard, WeeklyProgressBar
+**components/sleep/** — MorningCard, MicroInsightCard, SleepDebtDonut, ChronotypeCard, WindDownCard, SleepSessionLogger, CircadianTimeline
+**components/chat/** — SmartWelcome, AILoadingState, SmartSuggestions
+**components/calendar/** — WeeklyStrip, HabitRings, TimeBlockTasks, QuickLogFAB
+**components/dashboard/** — DailySynergyCard
+**components/analytics/** — ClinicalInsightsHeader
+**components/doctor/** — DoctorShell
+**components/innovation/** — InnovationShell
+**components/layout/** — SmartBackButton
+**components/ui/** — DrugAlertCard, EmptyState
+**lib/** — health-context.ts, cross-module-engine.ts, daily-health-log.ts, nudge-engine.ts, nudge-prompts.ts, use-tool-navigation.ts
+**app/api/** — master-orchestrator, nudge-check, recovery-dashboard
+**supabase/migrations/** — nudge_log table
+
+### Yeniden Tasarlanan Sayfalar (17)
+
+sports-performance, sleep-analysis, health-assistant, interaction-checker, page.tsx (landing), posture-ergonomics, doctor, doctor-communication, drug-info, health-analytics, global-benchmark, health-roadmap, research-hub, share-data, creator-studio, prospectus-reader, header.tsx (navbar)
+
+### Kritik Fix'ler
+
+- KVKK data deletion: 11→18 tablo
+- Data export: 11→14 tablo
+- Telegram Bot feedback (Discord Turkey'de kapalı)
+- Disclaimer banner üstten kaldırıldı (footer'da)
+- FAB butonu mordan yeşile
+
+### Test Sonuçları
+
+- 42/42 sayfa HTTP 200
+- 15/15 API endpoint PASS
+- 6/6 güvenlik testi PASS
+- Build: zero errors
+- Tag: v1.0-beta-ready
 
 ---
 
