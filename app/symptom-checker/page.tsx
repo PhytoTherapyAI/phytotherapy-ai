@@ -125,7 +125,7 @@ export default function SymptomCheckerPage() {
       color: "border-red-500 bg-red-50 dark:bg-red-950/30",
       textColor: "text-red-700 dark:text-red-400",
       icon: ShieldAlert,
-      label: lang === "tr" ? "ACİL DURUM" : "EMERGENCY",
+      label: tx("symptom.emergency", lang),
     },
     doctor: {
       color: "border-amber-400 bg-amber-50 dark:bg-amber-950/30",
@@ -243,7 +243,7 @@ export default function SymptomCheckerPage() {
             <div className="rounded-xl border-2 border-red-500 bg-red-50 p-6 text-center dark:bg-red-950/40">
               <ShieldAlert className="mx-auto mb-3 h-12 w-12 text-red-600" />
               <h2 className="mb-2 text-xl font-bold text-red-700 dark:text-red-400">
-                {lang === "tr" ? "ACİL DURUM" : "EMERGENCY"}
+                {tx("symptom.emergency", lang)}
               </h2>
               <p className="mb-4 text-sm text-red-600 dark:text-red-300">
                 {result.message}
@@ -254,7 +254,7 @@ export default function SymptomCheckerPage() {
                   className="gap-2 bg-red-600 hover:bg-red-700 text-white"
                 >
                   <Phone className="h-5 w-5" />
-                  {lang === "tr" ? "112'yi Ara" : "Call 911/112"}
+                  {tx("symptom.call911", lang)}
                 </Button>
               </a>
             </div>

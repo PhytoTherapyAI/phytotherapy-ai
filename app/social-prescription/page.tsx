@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Users, TreePine, Palette, Heart, Music, BookOpen, Dog, Bike, Coffee, ChevronDown, ChevronUp, Plus, Check } from "lucide-react"
+import { tx } from "@/lib/translations"
 
 interface SocialRx {
   category: string
@@ -133,21 +134,19 @@ export default function SocialPrescriptionPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4">
             <Users className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold">{lang === "tr" ? "Sosyal Reçete" : "Social Prescription"}</h1>
-          <p className="text-muted-foreground mt-1">{lang === "tr" ? "İlaç yanında sosyal aktivite reçetesi — NHS onaylı" : "Social activities alongside medication — NHS endorsed"}</p>
+          <h1 className="text-2xl font-bold">{tx("socialRx.title", lang)}</h1>
+          <p className="text-muted-foreground mt-1">{tx("socialRx.subtitle", lang)}</p>
         </div>
 
         <Card className="p-4 mb-6 bg-primary/5 border-primary/30">
           <p className="text-sm text-center">
-            {lang === "tr"
-              ? "🇬🇧 İngiltere NHS, sosyal reçetelemeyi resmi olarak uygulamaktadır. Depresyon, izolasyon ve kronik ağrıda kanıtlanmış etki."
-              : "🇬🇧 UK NHS officially implements social prescribing. Evidence-based impact on depression, isolation, and chronic pain."}
+            {tx("socialRx.nhsNote", lang)}
           </p>
         </Card>
 
         {prescriptions.length > 0 && (
           <Card className="p-4 mb-6">
-            <h3 className="font-semibold text-sm mb-2">{lang === "tr" ? "Senin Sosyal Reçeten" : "Your Social Prescription"}</h3>
+            <h3 className="font-semibold text-sm mb-2">{tx("socialRx.yourPrescription", lang)}</h3>
             <div className="flex flex-wrap gap-2">
               {prescriptions.map(p => {
                 const rx = SOCIAL_PRESCRIPTIONS.find(s => s.category === p)
@@ -180,7 +179,7 @@ export default function SocialPrescriptionPage() {
                 {isExpanded && (
                   <div className="px-4 pb-4 border-t border-border pt-3">
                     <Badge variant="outline" className="text-xs mb-3">{rx.evidence[lang]}</Badge>
-                    <h5 className="text-xs font-medium text-muted-foreground mb-2">{lang === "tr" ? "Önerilen Aktiviteler:" : "Suggested Activities:"}</h5>
+                    <h5 className="text-xs font-medium text-muted-foreground mb-2">{tx("socialRx.suggestedActivities", lang)}</h5>
                     <ul className="space-y-1 mb-3">
                       {rx.activities.map((a, i) => (
                         <li key={i} className="text-sm flex items-center gap-2"><Check className="w-3 h-3 text-green-500" />{a[lang]}</li>
@@ -191,7 +190,7 @@ export default function SocialPrescriptionPage() {
                     </div>
                     <Button size="sm" variant={isSelected ? "default" : "outline"} onClick={() => togglePrescription(rx.category)}>
                       {isSelected ? <Check className="w-4 h-4 mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
-                      {isSelected ? (lang === "tr" ? "Eklendi" : "Added") : (lang === "tr" ? "Reçeteme Ekle" : "Add to Prescription")}
+                      {isSelected ? tx("socialRx.added", lang) : tx("socialRx.addToPrescription", lang)}
                     </Button>
                   </div>
                 )}

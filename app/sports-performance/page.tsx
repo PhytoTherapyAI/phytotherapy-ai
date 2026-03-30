@@ -108,11 +108,11 @@ export default function SportsPerformancePage() {
 
   const handleAnalyze = async () => {
     if (!sportType) {
-      setError(lang === "tr" ? "Lütfen bir spor türü secin" : "Please select a sport type");
+      setError(tx("sports.selectSport", lang));
       return;
     }
     if (!goal) {
-      setError(lang === "tr" ? "Lütfen bir hedef secin" : "Please select a goal");
+      setError(tx("sports.selectGoal", lang));
       return;
     }
 
@@ -230,7 +230,7 @@ export default function SportsPerformancePage() {
       {!isAuthenticated && (
         <div className="mb-6 flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50/50 p-3 text-xs text-indigo-800 dark:border-indigo-800 dark:bg-indigo-950/20 dark:text-indigo-300">
           <LogIn className="h-3.5 w-3.5 shrink-0" />
-          {lang === "tr" ? "İlaç etkilesim kontrolü için giriş yapın" : "Sign in for medication interaction checking"}
+          {tx("sports.guestNote", lang)}
         </div>
       )}
 
@@ -285,7 +285,7 @@ export default function SportsPerformancePage() {
           {/* Frequency */}
           <div className="mb-4">
             <label className="mb-2 block text-sm font-medium">
-              {tx("sports.frequency", lang)}: <span className="text-indigo-600 dark:text-indigo-400">{frequency} {lang === "tr" ? "gun/hafta" : "days/week"}</span>
+              {tx("sports.frequency", lang)}: <span className="text-indigo-600 dark:text-indigo-400">{frequency} {tx("sports.daysPerWeek", lang)}</span>
             </label>
             <input
               type="range"
@@ -309,13 +309,13 @@ export default function SportsPerformancePage() {
           {/* Current Supplements */}
           <div className="mb-4">
             <label className="mb-2 block text-sm font-medium">
-              {lang === "tr" ? "Mevcut Takviyeler (isteğe bağlı)" : "Current Supplements (optional)"}
+              {tx("sports.currentSupplements", lang)}
             </label>
             <input
               type="text"
               value={supplements}
               onChange={(e) => setSupplements(e.target.value)}
-              placeholder={lang === "tr" ? "orn: kreatin, protein tozu, omega-3" : "e.g., creatine, protein powder, omega-3"}
+              placeholder={tx("sports.supplementsPlaceholder", lang)}
               maxLength={500}
               className="w-full rounded-lg border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
             />
@@ -358,7 +358,7 @@ export default function SportsPerformancePage() {
             <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
               <p className="mb-2 flex items-center gap-1 text-xs font-bold text-red-600 dark:text-red-400">
                 <AlertTriangle className="h-3.5 w-3.5" />
-                {lang === "tr" ? "İlaç Etkileşim Uyarılari" : "Medication Interaction Warnings"}
+                {tx("sports.interactionWarnings", lang)}
               </p>
               {result.interactionWarnings.map((w, i) => (
                 <p key={i} className="text-sm text-red-700 dark:text-red-400">- {w}</p>
@@ -370,7 +370,7 @@ export default function SportsPerformancePage() {
           {result.weeklyStructure && (
             <div className="rounded-lg border border-indigo-200 bg-indigo-50/30 p-4 dark:border-indigo-800 dark:bg-indigo-950/10">
               <p className="mb-1 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
-                {lang === "tr" ? "Haftalık Yapi" : "Weekly Structure"}
+                {tx("sports.weeklyStructure", lang)}
               </p>
               <p className="text-sm">{result.weeklyStructure}</p>
             </div>
@@ -396,20 +396,20 @@ export default function SportsPerformancePage() {
                             {s.evidenceGrade}
                           </span>
                           <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${safetyBadge(s.safety)}`}>
-                            {s.safety === "safe" ? (lang === "tr" ? "Güvenli" : "Safe") :
+                            {s.safety === "safe" ? tx("sports.safe", lang) :
                              s.safety === "caution" ? tx("common.caution", lang) :
-                             (lang === "tr" ? "Kacinilmali" : "Avoid")}
+                             tx("sports.avoid", lang)}
                           </span>
                         </div>
                       </div>
                       <p className="mt-1 text-xs">{s.benefit}</p>
                       <div className="mt-2 grid grid-cols-3 gap-2 text-xs text-muted-foreground">
                         <div>
-                          <p className="font-medium">{lang === "tr" ? "Doz" : "Dose"}</p>
+                          <p className="font-medium">{tx("sports.dose", lang)}</p>
                           <p>{s.dose}</p>
                         </div>
                         <div>
-                          <p className="font-medium">{lang === "tr" ? "Zamanlama" : "Timing"}</p>
+                          <p className="font-medium">{tx("sports.timing", lang)}</p>
                           <p>{s.timing}</p>
                         </div>
                         <div>
@@ -442,7 +442,7 @@ export default function SportsPerformancePage() {
                   {/* Pre-Workout */}
                   <div className="rounded-lg border p-3">
                     <p className="text-xs font-bold text-green-600 dark:text-green-400">
-                      {lang === "tr" ? "Antrenman Oncesi" : "Pre-Workout"} ({result.nutritionTiming.preWorkout.timing})
+                      {tx("sports.preWorkout", lang)} ({result.nutritionTiming.preWorkout.timing})
                     </p>
                     <div className="mt-1 flex flex-wrap gap-1">
                       {result.nutritionTiming.preWorkout.foods.map((f, i) => (
@@ -455,7 +455,7 @@ export default function SportsPerformancePage() {
                   {/* During Workout */}
                   <div className="rounded-lg border p-3">
                     <p className="text-xs font-bold text-amber-600 dark:text-amber-400">
-                      {lang === "tr" ? "Antrenman Sirasinda" : "During Workout"} ({result.nutritionTiming.duringWorkout.timing})
+                      {tx("sports.duringWorkout", lang)} ({result.nutritionTiming.duringWorkout.timing})
                     </p>
                     <div className="mt-1 flex flex-wrap gap-1">
                       {result.nutritionTiming.duringWorkout.foods.map((f, i) => (
@@ -468,7 +468,7 @@ export default function SportsPerformancePage() {
                   {/* Post-Workout */}
                   <div className="rounded-lg border p-3">
                     <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                      {lang === "tr" ? "Antrenman Sonrasi" : "Post-Workout"} ({result.nutritionTiming.postWorkout.timing})
+                      {tx("sports.postWorkout", lang)} ({result.nutritionTiming.postWorkout.timing})
                     </p>
                     <div className="mt-1 flex flex-wrap gap-1">
                       {result.nutritionTiming.postWorkout.foods.map((f, i) => (
@@ -524,7 +524,7 @@ export default function SportsPerformancePage() {
           {result.injuryPrevention?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Sakatligi Onleme" : "Injury Prevention"}
+                title={tx("sports.injuryPrevention", lang)}
                 icon={ShieldAlert}
                 sectionKey="injury"
                 count={result.injuryPrevention.length}
@@ -604,7 +604,7 @@ export default function SportsPerformancePage() {
             }}
             className="w-full"
           >
-            {lang === "tr" ? "Yeni Plan" : "New Plan"}
+            {tx("sports.newPlan", lang)}
           </Button>
         </div>
       )}

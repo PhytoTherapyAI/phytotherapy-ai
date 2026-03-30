@@ -5311,6 +5311,114 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   // ── Snoring Apnea ──
   "snoring.stopBangInfo": { en: "STOP-BANG is a clinically validated screening tool for assessing obstructive sleep apnea risk.", tr: "STOP-BANG, obstruktif uyku apnesi riskini degerlendirmek icin klinik olarak dogrulanmis bir tarama aracidir." },
   "snoring.sleepLabRecommended": { en: "Sleep lab evaluation recommended", tr: "Uyku laboratuvari degerlendirmesi onerilir" },
+
+  // ── Social Prescription ──
+  "socialRx.title": { en: "Social Prescription", tr: "Sosyal Recete" },
+  "socialRx.subtitle": { en: "Social activities alongside medication — NHS endorsed", tr: "Ilac yaninda sosyal aktivite recetesi — NHS onayli" },
+  "socialRx.nhsNote": { en: "UK NHS officially implements social prescribing. Evidence-based impact on depression, isolation, and chronic pain.", tr: "Ingiltere NHS, sosyal recelemeyi resmi olarak uygulamaktadir. Depresyon, izolasyon ve kronik agride kanitlanmis etki." },
+  "socialRx.yourPrescription": { en: "Your Social Prescription", tr: "Senin Sosyal Receten" },
+  "socialRx.suggestedActivities": { en: "Suggested Activities:", tr: "Onerilen Aktiviteler:" },
+  "socialRx.added": { en: "Added", tr: "Eklendi" },
+  "socialRx.addToPrescription": { en: "Add to Prescription", tr: "Receteme Ekle" },
+
+  // ── Sports Performance (extra) ──
+  "sports.guestNote": { en: "Sign in for medication interaction checking", tr: "Ilac etkilesim kontrolu icin giris yapin" },
+  "sports.daysPerWeek": { en: "days/week", tr: "gun/hafta" },
+  "sports.currentSupplements": { en: "Current Supplements (optional)", tr: "Mevcut Takviyeler (istege bagli)" },
+  "sports.supplementsPlaceholder": { en: "e.g., creatine, protein powder, omega-3", tr: "orn: kreatin, protein tozu, omega-3" },
+  "sports.interactionWarnings": { en: "Medication Interaction Warnings", tr: "Ilac Etkilesim Uyarilari" },
+  "sports.weeklyStructure": { en: "Weekly Structure", tr: "Haftalik Yapi" },
+  "sports.preWorkout": { en: "Pre-Workout", tr: "Antrenman Oncesi" },
+  "sports.duringWorkout": { en: "During Workout", tr: "Antrenman Sirasinda" },
+  "sports.postWorkout": { en: "Post-Workout", tr: "Antrenman Sonrasi" },
+  "sports.injuryPrevention": { en: "Injury Prevention", tr: "Sakatligi Onleme" },
+  "sports.safe": { en: "Safe", tr: "Guvenli" },
+  "sports.avoid": { en: "Avoid", tr: "Kacinilmali" },
+  "sports.dose": { en: "Dose", tr: "Doz" },
+  "sports.timing": { en: "Timing", tr: "Zamanlama" },
+  "sports.newPlan": { en: "New Plan", tr: "Yeni Plan" },
+  "sports.selectSport": { en: "Please select a sport type", tr: "Lutfen bir spor turu secin" },
+  "sports.selectGoal": { en: "Please select a goal", tr: "Lutfen bir hedef secin" },
+
+  // ── Stretching ──
+  "stretch.selectPainPoints": { en: "Select your pain points:", tr: "Agri noktalarinizi seciniz:" },
+  "stretch.seconds": { en: "seconds", tr: "saniye" },
+  "stretch.pause": { en: "Pause", tr: "Duraklat" },
+  "stretch.nextStretch": { en: "Next Stretch", tr: "Sonraki Hareket" },
+  "stretch.routineComplete": { en: "Routine complete!", tr: "Rutin tamamlandi!" },
+  "stretch.selectToStart": { en: "Select pain points to start", tr: "Baslamak icin agri noktalarinizi seciniz" },
+
+  // ── Student Health ──
+  "student.substanceRisk": { en: "Substance Use Risk Information", tr: "Madde Kullanimi Risk Bilgisi" },
+  "student.needHelp": { en: "Need help?", tr: "Yardima mi ihtiyacin var?" },
+  "student.campusCounseling": { en: "Campus counseling is free. Crisis line: 988 (US) / 182 (TR)", tr: "Kampus psikolojik danismanlik ucretsizdir. Kriz hatti: 182" },
+
+  // ── Sun Exposure (extra) ──
+  "sun.veryHigh": { en: "Very High", tr: "Cok Yuksek" },
+  "sun.extreme": { en: "Extreme", tr: "Asiri" },
+  "sun.photoMedsNote": { en: "These medications increase your sun sensitivity. Increase sun protection and reduce exposure time.", tr: "Bu ilaclar gunes hassasiyetinizi artirir. Gunes korumanizi artirin ve maruziyet suresini azaltin." },
+  "sun.timeHalved": { en: "Time halved due to photosensitizing medication", tr: "Isiga duyarli ilac nedeniyle sure yariya indirildi" },
+
+  // ── Supplement Marketplace ──
+  "marketplace.badge": { en: "Supplement Guide", tr: "Takviye Rehberi" },
+  "marketplace.title": { en: "Supplement Marketplace", tr: "Takviye Pazari" },
+  "marketplace.desc": { en: "Evidence-based supplements, trusted brands, and pharmacy-quality recommendations. Always check interactions before starting.", tr: "Kanita dayali takviyeler, guvenilir markalar ve eczane kalitesi oneriler. Baslamadan once etkilesim kontrolu yapin." },
+  "marketplace.warning": { en: "Always choose standardized extracts from pharmacies, not herbalists. Consult your doctor before starting any supplement.", tr: "Her zaman acik aktardan degil, eczanede satilan standardize edilmis formlari tercih edin. Herhangi bir takviyeye baslamadan once doktorunuza danisin." },
+  "marketplace.searchPlaceholder": { en: "Search supplements...", tr: "Takviye ara..." },
+  "marketplace.favorites": { en: "Favorites", tr: "Favoriler" },
+  "marketplace.pharmacyQuality": { en: "Pharmacy Quality", tr: "Eczane Kalitesi" },
+  "marketplace.recommendedBrands": { en: "Recommended Brands", tr: "Onerilen Markalar" },
+  "marketplace.checkInteractions": { en: "Check Interactions", tr: "Etkilesim Kontrol" },
+  "marketplace.buy": { en: "Buy", tr: "Satin Al" },
+  "marketplace.noResults": { en: "No results found. Try a different search.", tr: "Sonuc bulunamadi. Farkli bir arama deneyin." },
+  "marketplace.affiliateDisclaimer": { en: "These links are provided for convenience only. Product suggestions never influence our health recommendations.", tr: "Bu linkler kolaylik amaciyla sunulmaktadir. Urun onerileri saglik tavsiyelerimizi asla etkilemez." },
+  "marketplace.addToFavorites": { en: "Add to favorites", tr: "Favorilere ekle" },
+
+  // ── Support Groups ──
+  "support.waiting": { en: "waiting", tr: "bekliyor" },
+  "support.whatToExpect": { en: "What to Expect", tr: "Neler Gelecek" },
+
+  // ── Symptom Checker (extra) ──
+  "symptom.emergency": { en: "EMERGENCY", tr: "ACIL DURUM" },
+  "symptom.call911": { en: "Call 911/112", tr: "112'yi Ara" },
+
+  // ── Talent Hub ──
+  "talent.sampleData": { en: "SAMPLE DATA", tr: "ORNEK VERI" },
+  "talent.noProfessionals": { en: "No registered professionals yet", tr: "Henuz kayitli profesyonel yok" },
+  "talent.beFirst": { en: "Be the first to register!", tr: "Ilk profesyonel siz olun!" },
+  "talent.languages": { en: "languages", tr: "dil" },
+  "talent.personalInfo": { en: "Personal & Contact Information", tr: "Kisisel & Iletisim Bilgileri" },
+  "talent.fullName": { en: "Full Name", tr: "Ad Soyad" },
+  "talent.titleLabel": { en: "Title", tr: "Unvan" },
+  "talent.email": { en: "Email", tr: "E-posta" },
+  "talent.phone": { en: "Phone", tr: "Telefon" },
+  "talent.city": { en: "City", tr: "Sehir" },
+  "talent.shortBio": { en: "Short Bio", tr: "Kisa Biyografi" },
+  "talent.bioPlaceholder": { en: "Briefly describe your expertise and experience...", tr: "Uzmanliginizi ve deneyiminizi kisaca anlatin..." },
+  "talent.specialtyTitle": { en: "Specialty & Academic Title", tr: "Brans & Akademik Unvan" },
+  "talent.profession": { en: "Profession", tr: "Meslek" },
+  "talent.specialty": { en: "Specialty", tr: "Uzmanlik Alani" },
+  "talent.academicTitle": { en: "Academic Title", tr: "Akademik Unvan" },
+  "talent.licenseNumber": { en: "License Number", tr: "Diploma/Sicil No" },
+  "talent.institution": { en: "Current Institution", tr: "Mevcut Kurum" },
+  "talent.experienceTitle": { en: "Clinical Experience & Education", tr: "Klinik Deneyim & Egitim Gecmisi" },
+  "talent.totalExperience": { en: "Total Experience (Years)", tr: "Toplam Deneyim (Yil)" },
+  "talent.education": { en: "Education", tr: "Egitim" },
+  "talent.institutionPlaceholder": { en: "Institution", tr: "Kurum" },
+  "talent.degree": { en: "Degree", tr: "Derece" },
+  "talent.year": { en: "Year", tr: "Yil" },
+  "talent.addEducation": { en: "Add Education", tr: "Egitim Ekle" },
+  "talent.languagesLabel": { en: "Languages", tr: "Diller" },
+  "talent.skillsTitle": { en: "Specialized Skills & Certifications", tr: "Ozellestirilmis Yetenekler & Sertifikalar" },
+  "talent.certifications": { en: "Certifications", tr: "Sertifikalar" },
+  "talent.certName": { en: "Certificate Name", tr: "Sertifika Adi" },
+  "talent.certIssuer": { en: "Issuer", tr: "Veren Kurum" },
+  "talent.addCertificate": { en: "Add Certificate", tr: "Sertifika Ekle" },
+
+  // ── Talent Hub Verify ──
+  "verify.yourName": { en: "Your Name", tr: "Adiniz Soyadiniz" },
+  "verify.yourSpecialty": { en: "Your Specialty", tr: "Uzmanlik Alaniniz" },
+  "verify.verified": { en: "Verified", tr: "Onayli" },
 }
 Object.assign(t, commonToolKeys)
 

@@ -17,6 +17,7 @@ import {
   Globe, BookOpen, Stethoscope, Pill, Brain, Apple, Heart, Activity,
   UserPlus, Smile, Baby, X,
 } from "lucide-react"
+import { tx } from "@/lib/translations"
 
 const ICON_MAP: Record<string, any> = { Stethoscope, Pill, Brain, Apple, Heart, Activity, UserPlus, Smile, Baby }
 
@@ -127,7 +128,7 @@ export default function TalentHubPage() {
             <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
               <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{profile.city}</span>
               <span className="flex items-center gap-1"><Briefcase className="w-3 h-3" />{profile.experienceYears} {t("years_exp")}</span>
-              <span className="flex items-center gap-1"><Globe className="w-3 h-3" />{profile.languages?.length} {lang === "tr" ? "dil" : "languages"}</span>
+              <span className="flex items-center gap-1"><Globe className="w-3 h-3" />{profile.languages?.length} {tx("talent.languages", lang)}</span>
             </div>
           </div>
         </div>
@@ -161,7 +162,7 @@ export default function TalentHubPage() {
           </div>
           <h1 className="text-3xl font-bold">{t("title")}</h1>
           <p className="text-muted-foreground mt-2 max-w-lg mx-auto">{t("subtitle")}</p>
-          <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{lang === "tr" ? "ÖRNEK VERİ" : "SAMPLE DATA"}</span>
+          <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">{tx("talent.sampleData", lang)}</span>
         </div>
 
         {/* View Toggle */}
@@ -190,8 +191,8 @@ export default function TalentHubPage() {
               }).length === 0 ? (
                 <Card className="p-8 text-center">
                   <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="font-medium">{lang === "tr" ? "Henüz kayıtlı profesyonel yok" : "No registered professionals yet"}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{lang === "tr" ? "İlk profesyonel siz olun!" : "Be the first to register!"}</p>
+                  <p className="font-medium">{tx("talent.noProfessionals", lang)}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{tx("talent.beFirst", lang)}</p>
                 </Card>
               ) : (
                 MOCK_PROFILES.filter(p => {
@@ -240,35 +241,35 @@ export default function TalentHubPage() {
             {/* ── Step 1: Personal ── */}
             {step === 1 && (
               <Card className="p-6 space-y-4">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Kişisel & İletişim Bilgileri" : "Personal & Contact Information"}</h2>
+                <h2 className="text-lg font-semibold">{tx("talent.personalInfo", lang)}</h2>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="col-span-2 sm:col-span-1">
-                    <label className="text-sm font-medium mb-1 block">{lang === "tr" ? "Ad Soyad" : "Full Name"} *</label>
+                    <label className="text-sm font-medium mb-1 block">{tx("talent.fullName", lang)} *</label>
                     <Input value={form.fullName} onChange={e => updateForm("fullName", e.target.value)} placeholder="Dr. Ayşe Kara" />
                   </div>
                   <div className="col-span-2 sm:col-span-1">
-                    <label className="text-sm font-medium mb-1 block">{lang === "tr" ? "Ünvan" : "Title"}</label>
+                    <label className="text-sm font-medium mb-1 block">{tx("talent.titleLabel", lang)}</label>
                     <Input value={form.title} onChange={e => updateForm("title", e.target.value)} placeholder="Prof. Dr. / Ecz. / Dyt." />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium mb-1 block">{lang === "tr" ? "E-posta" : "Email"} *</label>
+                    <label className="text-sm font-medium mb-1 block">{tx("talent.email", lang)} *</label>
                     <Input type="email" value={form.email} onChange={e => updateForm("email", e.target.value)} />
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1 block">{lang === "tr" ? "Telefon" : "Phone"}</label>
+                    <label className="text-sm font-medium mb-1 block">{tx("talent.phone", lang)}</label>
                     <Input value={form.phone} onChange={e => updateForm("phone", e.target.value)} placeholder="+90 5XX XXX XXXX" />
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">{lang === "tr" ? "Şehir" : "City"} *</label>
+                  <label className="text-sm font-medium mb-1 block">{tx("talent.city", lang)} *</label>
                   <Input value={form.city} onChange={e => updateForm("city", e.target.value)} placeholder="Istanbul" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">{lang === "tr" ? "Kısa Biyografi" : "Short Bio"}</label>
+                  <label className="text-sm font-medium mb-1 block">{tx("talent.shortBio", lang)}</label>
                   <Textarea value={form.bio} onChange={e => updateForm("bio", e.target.value)} rows={3}
-                    placeholder={lang === "tr" ? "Uzmanlığınızı ve deneyiminizi kısaca anlatın..." : "Briefly describe your expertise and experience..."} />
+                    placeholder={tx("talent.bioPlaceholder", lang)} />
                 </div>
               </Card>
             )}
@@ -276,9 +277,9 @@ export default function TalentHubPage() {
             {/* ── Step 2: Specialty ── */}
             {step === 2 && (
               <Card className="p-6 space-y-5">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Branş & Akademik Ünvan" : "Specialty & Academic Title"}</h2>
+                <h2 className="text-lg font-semibold">{tx("talent.specialtyTitle", lang)}</h2>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">{lang === "tr" ? "Meslek" : "Profession"} *</label>
+                  <label className="text-sm font-medium mb-2 block">{tx("talent.profession", lang)} *</label>
                   <div className="grid grid-cols-2 gap-2">
                     {PROFESSIONS.map(p => {
                       const Icon = ICON_MAP[p.icon] || Users
@@ -295,7 +296,7 @@ export default function TalentHubPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">{lang === "tr" ? "Uzmanlık Alanı" : "Specialty"} *</label>
+                  <label className="text-sm font-medium mb-2 block">{tx("talent.specialty", lang)} *</label>
                   <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
                     {SPECIALTIES.map(s => (
                       <button key={s.id} onClick={() => updateForm("specialty", s.id)}
@@ -309,7 +310,7 @@ export default function TalentHubPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium mb-2 block">{lang === "tr" ? "Akademik Ünvan" : "Academic Title"}</label>
+                    <label className="text-sm font-medium mb-2 block">{tx("talent.academicTitle", lang)}</label>
                     <div className="space-y-1">
                       {ACADEMIC_TITLES.map(at => (
                         <button key={at.id} onClick={() => updateForm("academicTitle", at.id)}
@@ -322,9 +323,9 @@ export default function TalentHubPage() {
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-1 block">{lang === "tr" ? "Diploma/Sicil No" : "License Number"}</label>
+                    <label className="text-sm font-medium mb-1 block">{tx("talent.licenseNumber", lang)}</label>
                     <Input value={form.licenseNumber} onChange={e => updateForm("licenseNumber", e.target.value)} />
-                    <label className="text-sm font-medium mb-1 mt-4 block">{lang === "tr" ? "Mevcut Kurum" : "Current Institution"}</label>
+                    <label className="text-sm font-medium mb-1 mt-4 block">{tx("talent.institution", lang)}</label>
                     <Input value={form.institution} onChange={e => updateForm("institution", e.target.value)} />
                   </div>
                 </div>
@@ -334,29 +335,29 @@ export default function TalentHubPage() {
             {/* ── Step 3: Experience ── */}
             {step === 3 && (
               <Card className="p-6 space-y-5">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Klinik Deneyim & Eğitim Geçmişi" : "Clinical Experience & Education"}</h2>
+                <h2 className="text-lg font-semibold">{tx("talent.experienceTitle", lang)}</h2>
                 <div>
-                  <label className="text-sm font-medium mb-1 block">{lang === "tr" ? "Toplam Deneyim (Yıl)" : "Total Experience (Years)"}</label>
+                  <label className="text-sm font-medium mb-1 block">{tx("talent.totalExperience", lang)}</label>
                   <Input type="number" min={0} max={60} value={form.experienceYears || ""} onChange={e => updateForm("experienceYears", parseInt(e.target.value) || 0)} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">{lang === "tr" ? "Eğitim" : "Education"}</label>
+                  <label className="text-sm font-medium mb-2 block">{tx("talent.education", lang)}</label>
                   {form.education.map((edu, i) => (
                     <div key={i} className="grid grid-cols-4 gap-2 mb-2">
-                      <Input className="col-span-2" placeholder={lang === "tr" ? "Kurum" : "Institution"} value={edu.institution}
+                      <Input className="col-span-2" placeholder={tx("talent.institutionPlaceholder", lang)} value={edu.institution}
                         onChange={e => { const ed = [...form.education]; ed[i] = { ...ed[i], institution: e.target.value }; updateForm("education", ed) }} />
-                      <Input placeholder={lang === "tr" ? "Derece" : "Degree"} value={edu.degree}
+                      <Input placeholder={tx("talent.degree", lang)} value={edu.degree}
                         onChange={e => { const ed = [...form.education]; ed[i] = { ...ed[i], degree: e.target.value }; updateForm("education", ed) }} />
-                      <Input placeholder={lang === "tr" ? "Yıl" : "Year"} value={edu.year}
+                      <Input placeholder={tx("talent.year", lang)} value={edu.year}
                         onChange={e => { const ed = [...form.education]; ed[i] = { ...ed[i], year: e.target.value }; updateForm("education", ed) }} />
                     </div>
                   ))}
                   <Button variant="ghost" size="sm" onClick={() => updateForm("education", [...form.education, { institution: "", degree: "", field: "", year: "" }])}>
-                    <Plus className="w-3 h-3 mr-1" />{lang === "tr" ? "Eğitim Ekle" : "Add Education"}
+                    <Plus className="w-3 h-3 mr-1" />{tx("talent.addEducation", lang)}
                   </Button>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">{lang === "tr" ? "Diller" : "Languages"}</label>
+                  <label className="text-sm font-medium mb-2 block">{tx("talent.languagesLabel", lang)}</label>
                   <div className="flex flex-wrap gap-2">
                     {LANGUAGES.map(l => (
                       <button key={l.id} onClick={() => toggleLanguage(l.id)}
@@ -374,7 +375,7 @@ export default function TalentHubPage() {
             {/* ── Step 4: Skills ── */}
             {step === 4 && (
               <Card className="p-6 space-y-5">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "Özelleşmiş Yetenekler & Sertifikalar" : "Specialized Skills & Certifications"}</h2>
+                <h2 className="text-lg font-semibold">{tx("talent.skillsTitle", lang)}</h2>
                 {SKILL_CATEGORIES.map(cat => (
                   <div key={cat.id}>
                     <p className="text-sm font-medium text-muted-foreground mb-2">{cat.label[lang as "en" | "tr"]}</p>
@@ -394,19 +395,19 @@ export default function TalentHubPage() {
                   </div>
                 ))}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">{lang === "tr" ? "Sertifikalar" : "Certifications"}</label>
+                  <label className="text-sm font-medium mb-2 block">{tx("talent.certifications", lang)}</label>
                   {form.certifications.map((cert, i) => (
                     <div key={i} className="grid grid-cols-3 gap-2 mb-2">
-                      <Input placeholder={lang === "tr" ? "Sertifika Adı" : "Certificate Name"} value={cert.name}
+                      <Input placeholder={tx("talent.certName", lang)} value={cert.name}
                         onChange={e => { const c = [...form.certifications]; c[i] = { ...c[i], name: e.target.value }; updateForm("certifications", c) }} />
-                      <Input placeholder={lang === "tr" ? "Veren Kurum" : "Issuer"} value={cert.issuer}
+                      <Input placeholder={tx("talent.certIssuer", lang)} value={cert.issuer}
                         onChange={e => { const c = [...form.certifications]; c[i] = { ...c[i], issuer: e.target.value }; updateForm("certifications", c) }} />
-                      <Input placeholder={lang === "tr" ? "Yıl" : "Year"} value={cert.year}
+                      <Input placeholder={tx("talent.year", lang)} value={cert.year}
                         onChange={e => { const c = [...form.certifications]; c[i] = { ...c[i], year: e.target.value }; updateForm("certifications", c) }} />
                     </div>
                   ))}
                   <Button variant="ghost" size="sm" onClick={() => updateForm("certifications", [...form.certifications, { name: "", issuer: "", year: "" }])}>
-                    <Plus className="w-3 h-3 mr-1" />{lang === "tr" ? "Sertifika Ekle" : "Add Certificate"}
+                    <Plus className="w-3 h-3 mr-1" />{tx("talent.addCertificate", lang)}
                   </Button>
                 </div>
               </Card>

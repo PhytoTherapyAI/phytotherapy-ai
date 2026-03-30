@@ -307,15 +307,13 @@ export default function SupplementMarketplacePage() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
             <Leaf className="w-4 h-4" />
-            {lang === "tr" ? "Takviye Rehberi" : "Supplement Guide"}
+            {tx("marketplace.badge", lang)}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3">
-            {lang === "tr" ? "Takviye Pazari" : "Supplement Marketplace"}
+            {tx("marketplace.title", lang)}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            {lang === "tr"
-              ? "Kanita dayali takviyeler, guvenilir markalar ve eczane kalitesi oneriler. Başlamadan once etkilesim kontrolü yapin."
-              : "Evidence-based supplements, trusted brands, and pharmacy-quality recommendations. Always check interactions before starting."}
+            {tx("marketplace.desc", lang)}
           </p>
         </div>
 
@@ -323,9 +321,7 @@ export default function SupplementMarketplacePage() {
         <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6 flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-amber-800 dark:text-amber-300">
-            {lang === "tr"
-              ? "Her zaman acik aktardan degil, eczanede satilan standardize edilmis formlari tercih edin. Herhangi bir takviyeye başlamadan once doktorunuza danışın."
-              : "Always choose standardized extracts from pharmacies, not herbalists. Consult your doctor before starting any supplement."}
+            {tx("marketplace.warning", lang)}
           </p>
         </div>
 
@@ -337,7 +333,7 @@ export default function SupplementMarketplacePage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={lang === "tr" ? "Takviye ara..." : "Search supplements..."}
+              placeholder={tx("marketplace.searchPlaceholder", lang)}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none text-sm"
             />
           </div>
@@ -345,7 +341,7 @@ export default function SupplementMarketplacePage() {
             <Link href="/favorite-supplements">
               <Button variant="outline" className="gap-2 rounded-xl">
                 <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-                {lang === "tr" ? `Favoriler (${favorites.length})` : `Favorites (${favorites.length})`}
+                {tx("marketplace.favorites", lang)} ({favorites.length})
               </Button>
             </Link>
           )}
@@ -404,7 +400,7 @@ export default function SupplementMarketplacePage() {
                   <button
                     onClick={() => toggleFavorite(supplement.id)}
                     className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                    title={lang === "tr" ? "Favorilere ekle" : "Add to favorites"}
+                    title={tx("marketplace.addToFavorites", lang)}
                   >
                     <Heart
                       className={`w-5 h-5 transition-colors ${
@@ -422,7 +418,7 @@ export default function SupplementMarketplacePage() {
                   {supplement.pharmacyQuality && (
                     <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 flex items-center gap-1">
                       <ShieldCheck className="w-3 h-3" />
-                      {lang === "tr" ? "Eczane Kalitesi" : "Pharmacy Quality"}
+                      {tx("marketplace.pharmacyQuality", lang)}
                     </span>
                   )}
                   <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 flex items-center gap-1">
@@ -434,7 +430,7 @@ export default function SupplementMarketplacePage() {
                 {/* Brands */}
                 <div className="mb-4">
                   <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1.5">
-                    {lang === "tr" ? "Onerilen Markalar" : "Recommended Brands"}
+                    {tx("marketplace.recommendedBrands", lang)}
                   </p>
                   <div className="space-y-1">
                     {supplement.brands.map((brand, i) => (
@@ -455,14 +451,14 @@ export default function SupplementMarketplacePage() {
                   <Link href={`/interaction-checker?supplement=${encodeURIComponent(supplement.name)}`} className="flex-1">
                     <Button variant="outline" size="sm" className="w-full gap-1.5 rounded-lg text-xs">
                       <ShieldCheck className="w-3.5 h-3.5" />
-                      {lang === "tr" ? "Etkileşim Kontrol" : "Check Interactions"}
+                      {tx("marketplace.checkInteractions", lang)}
                     </Button>
                   </Link>
                   {affiliateLinks.length > 0 && (
                     <a href={affiliateLinks[0].url} target="_blank" rel="noopener noreferrer">
                       <Button variant="ghost" size="sm" className="gap-1 rounded-lg text-xs text-green-600 dark:text-green-400">
                         <ExternalLink className="w-3.5 h-3.5" />
-                        {lang === "tr" ? "Satin Al" : "Buy"}
+                        {tx("marketplace.buy", lang)}
                       </Button>
                     </a>
                   )}
@@ -476,16 +472,14 @@ export default function SupplementMarketplacePage() {
           <div className="text-center py-16">
             <Search className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
             <p className="text-gray-500 dark:text-gray-400">
-              {lang === "tr" ? "Sonuc bulunamadı. Farkli bir arama deneyin." : "No results found. Try a different search."}
+              {tx("marketplace.noResults", lang)}
             </p>
           </div>
         )}
 
         {/* Affiliate Disclaimer */}
         <div className="mt-8 text-center text-xs text-gray-400 dark:text-gray-500 max-w-xl mx-auto">
-          {lang === "tr"
-            ? "Bu linkler kolaylik amaciyla sunulmaktadir. Urun onerileri sağlık tavsiyelerimizi asla etkilemez."
-            : "These links are provided for convenience only. Product suggestions never influence our health recommendations."}
+          {tx("marketplace.affiliateDisclaimer", lang)}
         </div>
 
         {/* Footer Disclaimer */}

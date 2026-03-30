@@ -17,6 +17,7 @@ import {
   Lock, Eye, Sparkles, Building2, GraduationCap,
 } from "lucide-react"
 import Link from "next/link"
+import { tx } from "@/lib/translations"
 
 interface UploadedFile {
   id: string
@@ -224,10 +225,10 @@ export default function VerifyPage() {
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">AD</div>
               <div className="text-left">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">{lang === "tr" ? "Adınız Soyadınız" : "Your Name"}</span>
+                  <span className="font-semibold">{tx("verify.yourName", lang)}</span>
                   <VerifiedBadge size="md" lang={lang} />
                 </div>
-                <p className="text-sm text-muted-foreground">{lang === "tr" ? "Uzmanlık Alanınız" : "Your Specialty"}</p>
+                <p className="text-sm text-muted-foreground">{tx("verify.yourSpecialty", lang)}</p>
               </div>
             </div>
           </Card>
@@ -406,7 +407,7 @@ export function VerifiedBadge({ size = "sm", lang = "en" }: { size?: "sm" | "md"
   return (
     <span className={`inline-flex items-center gap-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 border border-emerald-200 dark:border-emerald-800 font-medium ${s.badge}`}>
       <BadgeCheck className={s.icon} />
-      {size !== "sm" && (lang === "tr" ? "Onaylı" : "Verified")}
+      {size !== "sm" && (tx("verify.verified", lang as "en" | "tr"))}
     </span>
   )
 }

@@ -100,7 +100,7 @@ export default function SupportGroupsPage() {
               </div>
               <div className="text-right">
                 <span className="text-xs text-teal-600 dark:text-teal-400 font-medium">{g.members}</span>
-                <p className="text-xs text-gray-400">{lang === "tr" ? "bekliyor" : "waiting"}</p>
+                <p className="text-xs text-gray-400">{tx("support.waiting", lang)}</p>
               </div>
             </div>
           ))}
@@ -109,7 +109,7 @@ export default function SupportGroupsPage() {
         {/* Features Preview */}
         <div className="bg-teal-50 dark:bg-teal-900/10 rounded-2xl border border-teal-200 dark:border-teal-800 p-6">
           <h3 className="font-semibold text-teal-800 dark:text-teal-400 mb-4">
-            {lang === "tr" ? "Neler Gelecek" : "What to Expect"}
+            {tx("support.whatToExpect", lang)}
           </h3>
           <div className="space-y-3">
             {FEATURES_PREVIEW.map((f, i) => (

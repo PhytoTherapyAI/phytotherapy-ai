@@ -188,7 +188,7 @@ export default function StudentHealthPage() {
         <div className="bg-card border rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-red-500" />
-            {lang === "tr" ? "Madde Kullanimi Risk Bilgisi" : "Substance Use Risk Information"}
+            {tx("student.substanceRisk", lang)}
           </h2>
           <div className="grid gap-4">
             {SUBSTANCE_RISKS.map((substance, i) => (
@@ -230,12 +230,10 @@ export default function StudentHealthPage() {
         <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-2xl p-6 text-center space-y-2">
           <Shield className="w-8 h-8 text-indigo-500 mx-auto" />
           <h3 className="font-semibold">
-            {lang === "tr" ? "Yardima mi ihtiyacin var?" : "Need help?"}
+            {tx("student.needHelp", lang)}
           </h3>
           <p className="text-sm text-muted-foreground">
-            {lang === "tr"
-              ? "Kampus psikolojik danışmanlık ucretsizdir. Kriz hattı: 182"
-              : "Campus counseling is free. Crisis line: 988 (US) / 182 (TR)"}
+            {tx("student.campusCounseling", lang)}
           </p>
         </div>
 

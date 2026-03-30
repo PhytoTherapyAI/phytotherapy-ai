@@ -120,7 +120,7 @@ export default function StretchingPage() {
       {/* Pain Point Selector */}
       <div className="mb-6">
         <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-          {lang === "tr" ? "Ağrı noktalarinizi seciniz:" : "Select your pain points:"}
+          {tx("stretch.selectPainPoints", lang)}
         </p>
         <div className="flex flex-wrap gap-2">
           {PAIN_POINTS.map((p) => (
@@ -161,7 +161,7 @@ export default function StretchingPage() {
                     {timer > 0 ? timer : current.holdSeconds}
                   </span>
                 </div>
-                <p className="text-xs text-gray-400 mt-1">{lang === "tr" ? "saniye" : "seconds"}</p>
+                <p className="text-xs text-gray-400 mt-1">{tx("stretch.seconds", lang)}</p>
               </div>
 
               <div className="flex gap-3">
@@ -171,7 +171,7 @@ export default function StretchingPage() {
                   </Button>
                 ) : (
                   <Button onClick={() => setIsRunning(false)} variant="outline" className="flex-1">
-                    <Pause className="w-4 h-4 mr-2" /> {lang === "tr" ? "Duraklat" : "Pause"}
+                    <Pause className="w-4 h-4 mr-2" /> {tx("stretch.pause", lang)}
                   </Button>
                 )}
                 <Button onClick={() => { setTimer(0); setIsRunning(false); }} variant="outline" size="icon">
@@ -181,7 +181,7 @@ export default function StretchingPage() {
 
               {completed.has(currentStretch) && currentStretch < routine.length - 1 && (
                 <Button onClick={nextStretch} className="w-full mt-3 bg-teal-600 hover:bg-teal-700 text-white">
-                  {lang === "tr" ? "Sonraki Hareket" : "Next Stretch"} →
+                  {tx("stretch.nextStretch", lang)} →
                 </Button>
               )}
             </div>
@@ -191,7 +191,7 @@ export default function StretchingPage() {
             <div className="text-center p-6 bg-teal-50 dark:bg-teal-900/20 rounded-xl border border-teal-200 dark:border-teal-800">
               <CheckCircle2 className="w-10 h-10 text-teal-500 mx-auto mb-2" />
               <p className="font-semibold text-teal-800 dark:text-teal-300">
-                {lang === "tr" ? "Rutin tamamlandi!" : "Routine complete!"}
+                {tx("stretch.routineComplete", lang)}
               </p>
             </div>
           )}
@@ -199,7 +199,7 @@ export default function StretchingPage() {
       )}
 
       {selectedAreas.length === 0 && (
-        <p className="text-center text-gray-400 text-sm py-8">{lang === "tr" ? "Başlamak için ağrı noktalarinizi seciniz" : "Select pain points to start"}</p>
+        <p className="text-center text-gray-400 text-sm py-8">{tx("stretch.selectToStart", lang)}</p>
       )}
 
       <p className="text-xs text-gray-400 text-center mt-6">{tx("disclaimer.tool", lang)}</p>

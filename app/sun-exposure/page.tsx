@@ -57,8 +57,8 @@ function getUVCategory(uv: number, lang: "en" | "tr"): { label: string; color: s
   if (uv <= 2) return { label: tx("common.low", lang), color: "text-green-600 dark:text-green-400" };
   if (uv <= 5) return { label: tx("common.moderate", lang), color: "text-amber-600 dark:text-amber-400" };
   if (uv <= 7) return { label: tx("common.high", lang), color: "text-orange-600 dark:text-orange-400" };
-  if (uv <= 10) return { label: lang === "tr" ? "Çok Yüksek" : "Very High", color: "text-red-600 dark:text-red-400" };
-  return { label: lang === "tr" ? "Aşırı" : "Extreme", color: "text-purple-600 dark:text-purple-400" };
+  if (uv <= 10) return { label: tx("sun.veryHigh", lang), color: "text-red-600 dark:text-red-400" };
+  return { label: tx("sun.extreme", lang), color: "text-purple-600 dark:text-purple-400" };
 }
 
 export default function SunExposurePage() {
@@ -129,9 +129,7 @@ export default function SunExposurePage() {
             ))}
           </div>
           <p className="text-xs text-red-600 dark:text-red-400 mt-2">
-            {lang === "tr"
-              ? "Bu ilaçlar güneş hassasiyetinizi artırır. Güneş korumanızı artırın ve maruziyet süresini azaltın."
-              : "These medications increase your sun sensitivity. Increase sun protection and reduce exposure time."}
+            {tx("sun.photoMedsNote", lang)}
           </p>
         </div>
       )}
@@ -208,9 +206,7 @@ export default function SunExposurePage() {
         </p>
         {matchedPhotoMeds.length > 0 && (
           <p className="mt-2 text-xs text-red-600 dark:text-red-400">
-            {lang === "tr"
-              ? "Işığa duyarlı ilaç nedeniyle süre yarıya indirildi"
-              : "Time halved due to photosensitizing medication"}
+            {tx("sun.timeHalved", lang)}
           </p>
         )}
       </div>
