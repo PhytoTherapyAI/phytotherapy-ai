@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
@@ -161,6 +162,19 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
     } catch { return null }
   }
 
+  const getMemberType = (member: FamilyMember): "child" | "elderly" | "adult" => {
+    const age = getAge(member.birth_date)
+    if (member.is_minor || (age !== null && age < 18)) return "child"
+    if (age !== null && age >= 65) return "elderly"
+    return "adult"
+  }
+
+  const getMemberTypeBadge = (type: "child" | "elderly" | "adult") => {
+    if (type === "child") return { label: tr ? "Cocuk" : "Child", className: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" }
+    if (type === "elderly") return { label: tr ? "Yaşlı" : "Elderly", className: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" }
+    return { label: tr ? "Yetişkin" : "Adult", className: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" }
+  }
+
   const getInitials = (name: string) =>
     name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
 
@@ -209,6 +223,8 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
         const age = getAge(member.birth_date)
         const isExpanded = expandedId === member.id
         const colorClass = AVATAR_COLORS[idx % AVATAR_COLORS.length]
+        const memberType = getMemberType(member)
+        const typeBadge = getMemberTypeBadge(memberType)
 
         return (
           <div key={member.id} className="rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 overflow-hidden transition-all hover:shadow-md">
@@ -227,11 +243,9 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-base font-semibold text-gray-900 dark:text-white">{member.full_name}</span>
-                  {member.is_minor && (
-                    <Badge variant="secondary" className="text-[9px] bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-                      {tx("family.minor", lang)}
-                    </Badge>
-                  )}
+                  <Badge variant="secondary" className={`text-[9px] ${typeBadge.className}`}>
+                    {typeBadge.label}
+                  </Badge>
                 </div>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   {RELATIONSHIP_LABELS[member.relationship]?.[lang] || member.relationship}
@@ -278,11 +292,23 @@ export function FamilyManager({ userId, lang, isPremium = false }: FamilyManager
                   )}
                 </div>
 
-                {member.is_minor && (
+                {memberType === "child" && (
                   <div className="flex items-start gap-2 rounded-lg bg-blue-50 dark:bg-blue-950/30 px-3 py-2.5">
                     <ShieldAlert className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
                     <p className="text-xs text-blue-700 dark:text-blue-400">
-                      {tx("family.parentalMode", lang)}
+                      {tr
+                        ? "Ebeveyn kontrol modu aktif. Herhangi bir takviye vermeden önce mutlaka bir pediatriste danışın."
+                        : "Parental control mode active. Always consult a pediatrician before giving any supplement."}
+                    </p>
+                  </div>
+                )}
+                {memberType === "elderly" && (
+                  <div className="flex items-start gap-2 rounded-lg bg-purple-50 dark:bg-purple-950/30 px-3 py-2.5">
+                    <ShieldAlert className="h-4 w-4 text-purple-500 mt-0.5 shrink-0" />
+                    <p className="text-xs text-purple-700 dark:text-purple-400">
+                      {tr
+                        ? "Bakıcı modu aktif. İlaç ve takviye değişikliklerinde doktora danışın."
+                        : "Caregiver mode active. Consult a doctor for any medication or supplement changes."}
                     </p>
                   </div>
                 )}

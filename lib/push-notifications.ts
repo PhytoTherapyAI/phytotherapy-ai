@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Push Notifications — Enhanced for Phase 11
 // ============================================

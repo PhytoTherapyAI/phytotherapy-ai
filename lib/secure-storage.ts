@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Secure Document Storage — KVKK/HIPAA Compliant
 // ============================================

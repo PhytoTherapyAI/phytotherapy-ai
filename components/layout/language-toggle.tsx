@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 'use client'
 import { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { SUPPORTED_LANGUAGES, DEFAULT_LANG, type Lang } from '@/lib/translations'

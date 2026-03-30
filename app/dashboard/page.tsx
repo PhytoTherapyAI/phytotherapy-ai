@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client"
 
 import { useEffect, useState, useCallback, useMemo } from "react"
@@ -130,16 +131,6 @@ function getRecommendedTools(profile: any, medications: any[], lang: "tr" | "en"
   return recs.slice(0, 3)
 }
 
-// Generate deterministic "social proof" number for today
-function getTodaySocialCount(): number {
-  const today = new Date().toISOString().split("T")[0]
-  let hash = 0
-  for (let i = 0; i < today.length; i++) {
-    hash = ((hash << 5) - hash) + today.charCodeAt(i)
-    hash |= 0
-  }
-  return 500 + Math.abs(hash % 1000) // 500-1500 range
-}
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -206,7 +197,6 @@ export default function DashboardPage() {
     return () => window.removeEventListener("checkin-complete", handler)
   }, [fetchCheckIn])
 
-  const socialCount = useMemo(() => getTodaySocialCount(), [])
 
   if (isLoading) {
     return (
@@ -270,19 +260,10 @@ export default function DashboardPage() {
             <p className="text-sm text-muted-foreground">{tx("dashboard.subtitle", lang)}</p>
           </div>
         </div>
-        {/* Social Proof — Endowed Progress */}
+        {/* Beta badge */}
         <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-          <div className="flex -space-x-1">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-5 w-5 rounded-full border-2 border-background bg-gradient-to-br from-primary/40 to-primary/20" />
-            ))}
-          </div>
-          <span>
-            {lang === "tr"
-              ? `Bugün ${socialCount.toLocaleString("tr-TR")} kişi günlük planını tamamladı`
-              : `${socialCount.toLocaleString("en-US")} people completed their daily plan today`}{/* locale-specific formatting — keep inline */}
-          </span>
-          <TrendingUp className="h-3 w-3 text-green-500" />
+          <span className="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-semibold text-primary">BETA</span>
+          <span>{lang === "tr" ? "Kanıta dayalı sağlık asistanınız" : "Your evidence-based health assistant"}</span>
         </div>
       </div>
 

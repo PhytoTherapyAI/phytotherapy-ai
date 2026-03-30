@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";

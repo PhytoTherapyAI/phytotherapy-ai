@@ -3,5 +3,6 @@ Allow: /
 Disallow: /api/
 Disallow: /onboarding
 Disallow: /auth/
+Disallow: /admin/
 
 Sitemap: https://phytotherapy.ai/sitemap.xml

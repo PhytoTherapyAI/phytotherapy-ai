@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client"
 
 import { Radio as RadioPrimitive } from "@base-ui/react/radio"

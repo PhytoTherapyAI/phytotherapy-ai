@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Premium Publisher Portal — Data Schema
 // Business model: Credit-based publishing for verified professionals

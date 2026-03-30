@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client"
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button"

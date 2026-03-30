@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 

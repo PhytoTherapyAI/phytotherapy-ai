@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Google Fit OAuth2 Integration
 // GET  /api/integrations/google-fit?action=auth    → redirect to Google consent

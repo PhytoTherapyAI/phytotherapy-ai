@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client"
 
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"

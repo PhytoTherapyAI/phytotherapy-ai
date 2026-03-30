@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 const PUBMED_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 const EUROPE_PMC_BASE = "https://www.ebi.ac.uk/europepmc/webservices/rest";
 

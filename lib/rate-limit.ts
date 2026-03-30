@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Rate Limiter — In-memory sliding window
 // ============================================

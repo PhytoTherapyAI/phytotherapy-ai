@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import { NextRequest } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { BLOOD_TEST_PROMPT } from "@/lib/prompts";

@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // FHIR Interoperability API Bridge
 // GET  /api/fhir?type=bundle    → Export patient FHIR bundle

@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client";
 
 import { Camera, Scan, Pill, Info, Sparkles, Smartphone, Layers, AlertCircle } from "lucide-react";

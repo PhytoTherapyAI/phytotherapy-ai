@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // Auto-generated types for Supabase tables
 // Matches supabase/schema.sql
 

@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // FHIR Resource Converters
 // Transforms phytotherapy.ai data → FHIR R4 resources

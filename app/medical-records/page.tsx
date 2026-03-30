@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client";
 
 import { FileText, FolderOpen, QrCode, Shield, Share2, Search } from "lucide-react";

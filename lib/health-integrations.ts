@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Health Data Integrations — Schema & Config
 // Apple Health, Google Fit, Garmin, Fitbit, Oura, Samsung Health

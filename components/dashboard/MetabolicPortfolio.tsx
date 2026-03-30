@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

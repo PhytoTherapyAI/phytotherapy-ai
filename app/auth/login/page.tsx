@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
@@ -14,6 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { TurnstileWidget } from "@/components/auth/TurnstileWidget";
 
 export default function LoginPage() {
   return (
@@ -45,6 +47,7 @@ function LoginContent() {
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [signupConfirm, setSignupConfirm] = useState("");
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   // Referral code state
   const [showReferral, setShowReferral] = useState(false);
@@ -255,7 +258,7 @@ function LoginContent() {
                     </button>
                   </div>
                 </div>
-                {/* Supabase handles session persistence automatically */}
+                <TurnstileWidget onVerify={setCaptchaToken} onExpire={() => setCaptchaToken(null)} />
                 <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                   {isLoading ? tx("auth.signingIn", lang) : tx("auth.signIn", lang)}
                 </Button>
@@ -300,6 +303,7 @@ function LoginContent() {
                       value={signupConfirm} onChange={(e) => setSignupConfirm(e.target.value)} required />
                   </div>
                 </div>
+                <TurnstileWidget onVerify={setCaptchaToken} onExpire={() => setCaptchaToken(null)} />
                 <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                   {isLoading ? tx("auth.creatingAccount", lang) : tx("auth.createAccount", lang)}
                 </Button>

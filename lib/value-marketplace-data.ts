@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Value-Based Payment & Marketplace — Data Layer
 // ============================================

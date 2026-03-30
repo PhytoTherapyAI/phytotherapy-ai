@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client";
 
 import { Accessibility, Type, Mic, Layout, Dumbbell, Scale, FileText, ChevronDown, ChevronUp } from "lucide-react";

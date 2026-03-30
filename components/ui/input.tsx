@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import * as React from "react"
 import { Input as InputPrimitive } from "@base-ui/react/input"
 

@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Embedding Generation & Vector Search Client
 // Uses Google Gemini text-embedding-004 (768 dimensions)

@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Tools Information Architecture — v1.0
 // Single source of truth for all tool categories

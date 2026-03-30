@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import { NextRequest } from "next/server";
 import ReactPDF from "@react-pdf/renderer";
 import { RadiologyReport } from "@/components/pdf/RadiologyReport";

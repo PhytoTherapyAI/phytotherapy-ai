@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import { NextRequest } from "next/server";
 import { askGeminiStream, askGeminiStreamMultimodal } from "@/lib/gemini";
 import type { GeminiFilePart } from "@/lib/gemini";

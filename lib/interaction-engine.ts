@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import { searchDrug } from "@/lib/openfda";
 import { searchPubMed } from "@/lib/pubmed";
 import { askGeminiJSON } from "@/lib/gemini";

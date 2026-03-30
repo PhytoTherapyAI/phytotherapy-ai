@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Centralized Translation System — v2.0
 // ============================================
@@ -331,9 +332,9 @@ const t: Record<string, TranslationEntry> = {
   "lp.explore": { en: "Explore", tr: "Keşfet" },
   "lp.heroBadge": { en: "Evidence-Based AI Health Assistant", tr: "Kanıta Dayalı AI Sağlık Asistanı" },
   "lp.tryAssistant": { en: "Try Health Assistant", tr: "Sağlık Asistanını Dene" },
-  "lp.statUsers": { en: "Active users", tr: "Aktif kullanıcı" },
-  "lp.statInteractions": { en: "Interactions checked", tr: "Etkileşim kontrolü" },
-  "lp.statSources": { en: "PubMed sources", tr: "PubMed kaynağı" },
+  "lp.statBeta": { en: "Early Access", tr: "Erken Erişim" },
+  "lp.statSources": { en: "Evidence-based sources", tr: "Kanıta dayalı kaynaklar" },
+  "lp.statTools": { en: "Health tools", tr: "Sağlık aracı" },
   "lp.tag1": { en: "Medication interactions", tr: "İlaç etkileşimleri" },
   "lp.tag2": { en: "Omega-3 & inflammation", tr: "Omega-3 ve iltihap" },
   "lp.tag3": { en: "Valerian & sleep", tr: "Kediotu ve uyku" },

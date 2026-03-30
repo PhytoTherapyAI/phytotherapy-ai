@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // FHIR R4 Type Definitions for Phytotherapy.ai
 // HL7 FHIR (Fast Healthcare Interoperability Resources)

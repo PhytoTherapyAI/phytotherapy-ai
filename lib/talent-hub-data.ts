@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Healthcare Talent Hub — Data Schema & Constants
 // ============================================

@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Semantic Search API — Vector Similarity Search
 // POST /api/semantic-search

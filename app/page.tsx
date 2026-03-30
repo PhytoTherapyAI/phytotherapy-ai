@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client";
 
 import { useState } from "react";
@@ -40,6 +41,39 @@ const QUICK_TAGS_GUEST = [
 ];
 
 const TRUST_KEYS = ["lp.trust1", "lp.trust2", "lp.trust3", "lp.trust4", "lp.trust5"];
+
+const FAQ_ITEMS = [
+  {
+    questionTr: "Fitoterapi nedir?",
+    questionEn: "What is phytotherapy?",
+    answerTr: "Fitoterapi, bilimsel olarak kanıtlanmış bitkisel tedavilerin kullanılmasıdır. Phytotherapy.ai, modern tıp ile kanıta dayalı bitkisel tıbbı birleştirerek güvenli ve kişiselleştirilmiş öneriler sunar. Tüm önerilerimiz PubMed ve NIH gibi bilimsel kaynaklara dayanır.",
+    answerEn: "Phytotherapy is the use of scientifically proven herbal treatments. Phytotherapy.ai bridges modern medicine and evidence-based herbal medicine to provide safe, personalized recommendations backed by PubMed and NIH sources.",
+  },
+  {
+    questionTr: "İlaçlarla bitkisel takviye kullanmak güvenli mi?",
+    questionEn: "Is it safe to use herbal supplements with medications?",
+    answerTr: "Bazı bitkisel takviyeler ilaçlarla etkileşime girebilir. Örneğin, Sarı Kantaron birçok ilaçla tehlikeli etkileşim gösterir. Phytotherapy.ai'ın ilaç etkileşim kontrolü, güvenli ve riskli kombinasyonları bilimsel kaynaklarla gösterir. Her zaman doktorunuza danışmanızı öneriyoruz.",
+    answerEn: "Some herbal supplements can interact with medications. For example, St. John's Wort has dangerous interactions with many drugs. Phytotherapy.ai's drug interaction checker shows safe and risky combinations with scientific sources. We always recommend consulting your doctor.",
+  },
+  {
+    questionTr: "Kan tahlilimi nasıl yorumlarım?",
+    questionEn: "How can I interpret my blood test results?",
+    answerTr: "Kan tahlili değerlerinizi Phytotherapy.ai'a girerek yapay zeka destekli detaylı analiz alabilirsiniz. Sistem 30'dan fazla biyomarkörü değerlendirir, yaşam tarzı önerileri sunar ve doktorunuz için PDF rapor oluşturur.",
+    answerEn: "Enter your blood test values into Phytotherapy.ai for AI-powered detailed analysis. The system evaluates 30+ biomarkers, provides lifestyle recommendations, and generates a PDF report for your doctor.",
+  },
+  {
+    questionTr: "İlaç etkileşimlerini nasıl kontrol edebilirim?",
+    questionEn: "How can I check drug interactions?",
+    answerTr: "Etkileşim Kontrolü aracımıza ilaçlarınızı ve almak istediğiniz takviyeyi girin. Sistem OpenFDA ve PubMed veritabanlarını tarayarak güvenli (yeşil), dikkatli (sarı) ve tehlikeli (kırmızı) etkileşimleri renk kodlarıyla gösterir.",
+    answerEn: "Enter your medications and desired supplement in our Interaction Checker. The system scans OpenFDA and PubMed databases, showing safe (green), caution (yellow), and dangerous (red) interactions with color codes.",
+  },
+  {
+    questionTr: "Phytotherapy.ai ücretsiz mi?",
+    questionEn: "Is Phytotherapy.ai free?",
+    answerTr: "Evet, Phytotherapy.ai'ın temel özellikleri ücretsizdir. Sağlık asistanı, ilaç etkileşim kontrolü ve kan tahlili analizi gibi özellikler ücretsiz olarak kullanılabilir. Premium plan ile gelişmiş özellikler ve sınırsız kullanım sunulacaktır.",
+    answerEn: "Yes, Phytotherapy.ai's core features are free. The health assistant, drug interaction checker, and blood test analysis are available at no cost. A premium plan with advanced features and unlimited usage will be available soon.",
+  },
+];
 
 const FEATURES = [
   { num: "01", href: "/interaction-checker", icon: IconSafeHerbal, titleKey: "lp.feat1.title", descKey: "lp.feat1.desc" },
@@ -313,24 +347,24 @@ export default function Home() {
       <section className="border-y bg-primary/5">
         <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-12 gap-y-4 px-4 py-6">
           <div className="flex items-center gap-2.5 text-center">
-            <Users className="h-5 w-5 text-primary" />
-            <div>
-              <div className="text-lg font-bold text-foreground">1,200+</div>
-              <div className="text-[11px] text-muted-foreground">{tx('lp.statUsers', lang)}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2.5 text-center">
             <Shield className="h-5 w-5 text-primary" />
             <div>
-              <div className="text-lg font-bold text-foreground">8,500+</div>
-              <div className="text-[11px] text-muted-foreground">{tx('lp.statInteractions', lang)}</div>
+              <span className="inline-block rounded-full bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary">BETA</span>
+              <div className="text-[11px] text-muted-foreground mt-0.5">{tx('lp.statBeta', lang)}</div>
             </div>
           </div>
           <div className="flex items-center gap-2.5 text-center">
             <BookOpen className="h-5 w-5 text-primary" />
             <div>
-              <div className="text-lg font-bold text-foreground">15,000+</div>
+              <div className="text-lg font-bold text-foreground">PubMed + NIH</div>
               <div className="text-[11px] text-muted-foreground">{tx('lp.statSources', lang)}</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2.5 text-center">
+            <Activity className="h-5 w-5 text-primary" />
+            <div>
+              <div className="text-lg font-bold text-foreground">30+</div>
+              <div className="text-[11px] text-muted-foreground">{tx('lp.statTools', lang)}</div>
             </div>
           </div>
         </div>
@@ -388,6 +422,68 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ===== FAQ SECTION ===== */}
+      <section className="mx-auto max-w-4xl px-4 py-16">
+        <h2 className="font-heading text-2xl font-semibold text-center mb-8">
+          {lang === "tr" ? "Sık Sorulan Sorular" : "Frequently Asked Questions"}
+        </h2>
+        <div className="space-y-4">
+          {FAQ_ITEMS.map((item, i) => (
+            <details key={i} className="group rounded-lg border bg-card p-4">
+              <summary className="cursor-pointer font-medium text-sm list-none flex items-center justify-between">
+                {lang === "tr" ? item.questionTr : item.questionEn}
+                <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
+              </summary>
+              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                {lang === "tr" ? item.answerTr : item.answerEn}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            name: "Phytotherapy.ai",
+            url: "https://phytotherapy.ai",
+            description: "AI-powered evidence-based integrative medicine assistant bridging modern medicine and phytotherapy. Drug interaction checker, blood test analysis, and personalized health guidance.",
+            applicationCategory: "HealthApplication",
+            operatingSystem: "Web",
+            offers: {
+              "@type": "Offer",
+              price: "0",
+              priceCurrency: "USD",
+              description: "Free health assistant with premium features available"
+            },
+            author: {
+              "@type": "Organization",
+              name: "Phytotherapy.ai Team",
+              url: "https://phytotherapy.ai"
+            },
+            keywords: "phytotherapy, fitoterapi, herbal medicine, bitkisel tedavi, drug interaction checker, ilaç etkileşimi kontrolü, health assistant, sağlık asistanı, integrative medicine, bütünleştirici tıp"
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: FAQ_ITEMS.map((item) => ({
+              "@type": "Question",
+              name: item.questionTr,
+              acceptedAnswer: { "@type": "Answer", text: item.answerTr },
+            })),
+          }),
+        }}
+      />
     </div>
   );
 }

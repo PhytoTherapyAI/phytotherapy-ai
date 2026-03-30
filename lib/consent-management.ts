@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // KVKK/GDPR Consent Management System
 // Dynamic consent with layered disclosure, digital signatures,

@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // Guest query limit system
 // Tracks queries in localStorage for unauthenticated users
 

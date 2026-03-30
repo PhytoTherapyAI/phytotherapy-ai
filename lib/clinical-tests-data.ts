@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Clinical Assessment Tests Database
 // Standardized, internationally validated scales

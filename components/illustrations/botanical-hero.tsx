@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client";
 
 export function BotanicalHero({ className }: { className?: string }) {

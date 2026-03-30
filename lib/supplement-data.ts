@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Supplement Reference Data — Sprint 10b+
 // ============================================

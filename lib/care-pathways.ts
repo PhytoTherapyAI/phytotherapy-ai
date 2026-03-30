@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Integrated Care Pathways — Harvard HVHS C6
 // Risk Stratification + Bundled Services + Variance Analysis

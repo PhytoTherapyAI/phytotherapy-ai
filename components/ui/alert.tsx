@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 

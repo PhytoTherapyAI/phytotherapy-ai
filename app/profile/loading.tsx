@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import { Skeleton } from "@/components/ui/skeleton";
 
 function SectionCard({ rows = 3 }: { rows?: number }) {

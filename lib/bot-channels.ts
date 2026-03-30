@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Omnichannel Bot — Data Schema & Config
 // WhatsApp (Twilio) + Telegram Bot API

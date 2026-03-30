@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Bot Webhook — Receives incoming messages
 // from WhatsApp (Twilio) and Telegram Bot API

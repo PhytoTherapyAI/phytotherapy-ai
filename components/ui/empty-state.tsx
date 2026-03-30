@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import type { LucideIcon } from "lucide-react"
 
 interface EmptyStateProps {

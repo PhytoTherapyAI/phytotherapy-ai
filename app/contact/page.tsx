@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 "use client"
 
 import { useState } from "react"
@@ -13,11 +14,31 @@ export default function ContactPage() {
   const { lang } = useLang()
   const isTr = lang === "tr"
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [error, setError] = useState("")
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSent(true)
+    setSending(true)
+    setError("")
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || "Failed to send")
+      }
+      setSent(true)
+      setForm({ name: "", email: "", subject: "", message: "" })
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : isTr ? "Gönderim başarısız oldu" : "Failed to send message")
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -117,9 +138,12 @@ export default function ContactPage() {
                   placeholder={tx("contact.messagePlaceholder", lang)}
                 />
               </div>
-              <Button type="submit" className="w-full gap-2">
+              {error && (
+                <p className="text-sm text-red-500 text-center">{error}</p>
+              )}
+              <Button type="submit" className="w-full gap-2" disabled={sending}>
                 <Send className="w-4 h-4" />
-                {tx("contact.send", lang)}
+                {sending ? (isTr ? "Gönderiliyor..." : "Sending...") : tx("contact.send", lang)}
               </Button>
             </form>
           </Card>

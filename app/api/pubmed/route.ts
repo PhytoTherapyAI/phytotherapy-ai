@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { searchPubMed } from "@/lib/pubmed";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";

@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Global Health Benchmarking — Harvard HVHS
 // G20+ country data + cross-learning + simulation

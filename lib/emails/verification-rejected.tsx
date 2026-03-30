@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Verification Rejected Email Template
 // Compassionate tone — encourages resubmission

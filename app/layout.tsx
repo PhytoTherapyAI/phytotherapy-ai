@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
 import { Header } from "@/components/layout/header";
@@ -13,6 +14,7 @@ import { TrialBannerWrapper } from "@/components/premium/TrialBannerWrapper";
 import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { CriticalAlertModal } from "@/components/emergency/CriticalAlertModal";
+import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -47,13 +49,19 @@ export const metadata: Metadata = {
     "AI-powered health assistant bridging modern medicine and evidence-based phytotherapy. Get safe, personalized herbal recommendations with scientific references.",
   keywords: [
     "phytotherapy",
+    "fitoterapi",
     "herbal medicine",
-    "drug interaction",
+    "bitkisel tedavi",
+    "bitkisel ilaçlar",
+    "drug interaction checker",
+    "ilaç etkileşimi kontrolü",
     "evidence-based",
     "health assistant",
+    "sağlık asistanı",
     "supplement safety",
     "blood test analysis",
     "integrative medicine",
+    "bütünleştirici tıp",
   ],
   metadataBase: new URL("https://phytotherapy.ai"),
   openGraph: {
@@ -113,6 +121,7 @@ export default function RootLayout({
               <PWAInstallPrompt />
               <ServiceWorkerRegistration />
               <CriticalAlertModal />
+              <FeedbackWidget />
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>

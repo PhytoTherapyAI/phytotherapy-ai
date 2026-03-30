@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import { cn } from "@/lib/utils"
 
 function Skeleton({

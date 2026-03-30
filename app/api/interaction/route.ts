@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeInteraction, UserProfileForInteraction } from "@/lib/interaction-engine";
 import { createServerClient } from "@/lib/supabase";

@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Affiliate Supplement Links — Sprint 16
 // ============================================

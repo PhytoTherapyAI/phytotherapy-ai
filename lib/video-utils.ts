@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Video URL Parser & Validator
 // Supports: YouTube (all formats) + Vimeo

@@ -1,3 +1,4 @@
+// © 2026 Phytotherapy.ai — All Rights Reserved
 // ============================================
 // Consent Management API
 // POST /api/consent          → Grant new consent (with digital signature)
