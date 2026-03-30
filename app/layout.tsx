@@ -15,6 +15,7 @@ import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
 import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
 import { CriticalAlertModal } from "@/components/emergency/CriticalAlertModal";
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
+import { SmartBackButton } from "@/components/layout/SmartBackButton";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -113,7 +114,12 @@ export default function RootLayout({
               <DisclaimerBanner />
               <Header />
               <TrialBannerWrapper />
-              <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-hidden">{children}</main>
+              <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-hidden">
+                <div className="mx-auto w-full max-w-7xl px-4 md:px-8">
+                  <SmartBackButton />
+                </div>
+                {children}
+              </main>
               <Footer />
               <MedicationUpdateDialog />
               <MicroCheckInWrapper />

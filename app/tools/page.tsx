@@ -1,7 +1,8 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
+import { useSearchParams } from "next/navigation"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { TOOL_CATEGORIES, searchModules, TOTAL_MODULE_COUNT } from "@/lib/tools-hierarchy"
@@ -23,7 +24,19 @@ const ICON_MAP: Record<string, any> = {
 
 export default function ToolsHubPage() {
   const { lang } = useLang()
+  const searchParams = useSearchParams()
+  const highlightCategory = searchParams.get("category")
   const [search, setSearch] = useState("")
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(highlightCategory)
+  const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({})
+
+  // Auto-scroll to highlighted category when returning from a tool
+  useEffect(() => {
+    if (highlightCategory && categoryRefs.current[highlightCategory]) {
+      categoryRefs.current[highlightCategory]?.scrollIntoView({ behavior: "smooth", block: "center" })
+      setExpandedCategory(highlightCategory)
+    }
+  }, [highlightCategory])
 
   const searchResults = useMemo(() => {
     if (!search || search.length < 2) return null
@@ -95,10 +108,14 @@ export default function ToolsHubPage() {
               const Icon = ICON_MAP[cat.icon] || Sparkles
               return (
                 <Card key={cat.id}
-                  className="group relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                  ref={(el) => { categoryRefs.current[cat.slug] = el; }}
+                  className={`group relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer ${
+                    expandedCategory === cat.slug ? "ring-2 ring-primary shadow-lg" : ""
+                  }`}
                   style={{ borderTopColor: cat.color, borderTopWidth: "3px" }}
+                  onClick={() => setExpandedCategory(expandedCategory === cat.slug ? null : cat.slug)}
                 >
-                  <Link href={`/${cat.slug}`} className="block p-5">
+                  <div className="block p-5">
                     {/* Icon + Count */}
                     <div className="flex items-start justify-between mb-3">
                       <div className={`w-11 h-11 rounded-xl ${cat.bgLight} ${cat.bgDark} flex items-center justify-center`}>
@@ -135,9 +152,23 @@ export default function ToolsHubPage() {
 
                     {/* Arrow */}
                     <div className="flex justify-end mt-3">
-                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                      <ArrowRight className={`w-4 h-4 text-muted-foreground transition-all ${expandedCategory === cat.slug ? "rotate-90 text-primary" : "group-hover:text-primary group-hover:translate-x-1"}`} />
                     </div>
-                  </Link>
+                  </div>
+
+                  {/* Expanded module list — shows all tools in category */}
+                  {expandedCategory === cat.slug && (
+                    <div className="border-t px-5 pb-4 pt-3 space-y-1">
+                      {cat.modules.map(mod => (
+                        <Link key={mod.id} href={mod.href}
+                          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-muted"
+                        >
+                          <ChevronRight className="h-3 w-3 text-muted-foreground" />
+                          <span className="font-medium">{mod.title[lang]}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </Card>
               )
             })}
