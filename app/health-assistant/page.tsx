@@ -6,14 +6,13 @@ import { useRouter } from "next/navigation";
 import { Sparkles, Pill, CheckCircle2, RefreshCw, Loader2 } from "lucide-react";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { ConversationHistory } from "@/components/chat/ConversationHistory";
+import { SmartWelcome } from "@/components/chat/SmartWelcome";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
 import { useDailyMedCheck } from "@/lib/daily-med-check";
 import { createBrowserClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-
-const EXAMPLE_QUESTION_KEYS = ["ha.ex1", "ha.ex2", "ha.ex3", "ha.ex4", "ha.ex5", "ha.ex6"];
 
 export default function HealthAssistantPage() {
   const { lang } = useLang();
@@ -112,38 +111,24 @@ export default function HealthAssistantPage() {
             </div>
           </div>
 
-          {/* Example Questions */}
-          <div className="mb-4">
-            <p className="mb-2 text-xs font-medium text-muted-foreground">
-              {tx('ha.tryAsking', lang)}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {EXAMPLE_QUESTION_KEYS.map((key) => {
-                const q = tx(key, lang);
-                return (
-                  <button
-                    key={key}
-                    className="rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-                    onClick={() => {
-                      const textarea = document.querySelector("textarea");
-                      if (textarea) {
-                        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-                          window.HTMLTextAreaElement.prototype,
-                          "value"
-                        )?.set;
-                        nativeInputValueSetter?.call(textarea, q);
-                        textarea.dispatchEvent(new Event("input", { bubbles: true }));
-                        textarea.dispatchEvent(new Event("change", { bubbles: true }));
-                        textarea.focus();
-                      }
-                    }}
-                  >
-                    {q}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+          {/* Smart Welcome — contextual greeting + personalized chips + did you know */}
+          <SmartWelcome
+            lang={lang}
+            userName={profile?.full_name?.split(" ")[0]}
+            medications={undefined}
+            onSelectPrompt={(prompt) => {
+              const textarea = document.querySelector("textarea");
+              if (textarea) {
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+                  window.HTMLTextAreaElement.prototype, "value"
+                )?.set;
+                nativeInputValueSetter?.call(textarea, prompt);
+                textarea.dispatchEvent(new Event("input", { bubbles: true }));
+                textarea.dispatchEvent(new Event("change", { bubbles: true }));
+                textarea.focus();
+              }
+            }}
+          />
 
           {/* Chat Interface with Daily Check Overlay */}
           <div className="relative">

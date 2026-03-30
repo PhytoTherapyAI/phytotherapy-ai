@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Send, Loader2, Trash2, Paperclip, Camera, X, FileText, Image as ImageIcon } from "lucide-react";
+import { Send, Loader2, Trash2, Paperclip, Camera, X, FileText, Image as ImageIcon, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageBubble, ChatMessage } from "./MessageBubble";
 import { useAuth } from "@/lib/auth-context";
@@ -350,17 +350,19 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
         style={{ minHeight: "400px", maxHeight: "60vh" }}
       >
         {messages.length === 0 && (
-          <div className="flex h-full flex-col items-center justify-center text-center">
-            <div className="mb-4 rounded-full bg-primary/10 p-4">
-              <svg className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <div className="flex h-full flex-col items-center justify-center text-center px-4">
+            <div className="mb-4 rounded-2xl bg-gradient-to-br from-lavender/10 to-primary/10 p-5 glow-lavender">
+              <svg className="h-10 w-10 text-lavender" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
               </svg>
             </div>
-            <h3 className="mb-2 text-lg font-semibold">
+            <h3 className="mb-2 text-lg font-semibold font-heading">
               {tx('chat.emptyTitle', lang)}
             </h3>
-            <p className="max-w-sm text-sm text-muted-foreground">
-              {tx('chat.emptyDesc', lang)}
+            <p className="max-w-md text-sm text-muted-foreground leading-relaxed">
+              {lang === "tr"
+                ? "Sana \u00F6zel kan\u0131ta dayal\u0131 yan\u0131tlar sunmak i\u00E7in PubMed, Cochrane ve d\u00FCnyan\u0131n sayg\u0131n hakemli t\u0131p dergilerini saniyeler i\u00E7inde tar\u0131yorum."
+                : "I scan PubMed, Cochrane, and the world\u2019s leading peer-reviewed medical journals in seconds to deliver evidence-based answers tailored to you."}
             </p>
           </div>
         )}
@@ -466,6 +468,29 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
               title={tx("chat.takePhoto", lang)}
             >
               <Camera className="h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              disabled={isStreaming}
+              className="h-11 w-11 text-muted-foreground hover:text-lavender"
+              title={lang === "tr" ? "Sesli mesaj" : "Voice message"}
+              onClick={() => {
+                // Web Speech API (progressive enhancement)
+                const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+                if (!SpeechRecognition) return;
+                const recognition = new SpeechRecognition();
+                recognition.lang = lang === "tr" ? "tr-TR" : "en-US";
+                recognition.interimResults = false;
+                recognition.onresult = (event: any) => {
+                  const transcript = event.results[0][0].transcript;
+                  setInput((prev) => prev + (prev ? " " : "") + transcript);
+                };
+                recognition.start();
+              }}
+            >
+              <Mic className="h-4 w-4" />
             </Button>
           </div>
 
