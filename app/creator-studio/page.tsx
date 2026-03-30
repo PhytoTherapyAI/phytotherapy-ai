@@ -4,6 +4,7 @@
 
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
+import { InnovationShell } from "@/components/innovation/InnovationShell"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
@@ -308,6 +309,7 @@ export default function CreatorStudioPage() {
 
   // ── Dashboard View ──
   return (
+    <InnovationShell>
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -389,5 +391,6 @@ export default function CreatorStudioPage() {
       `}</style>
       <p className="mt-8 text-center text-[10px] text-muted-foreground/40">{tx("disclaimer.tool", lang)}</p>
     </div>
+    </InnovationShell>
   )
 }

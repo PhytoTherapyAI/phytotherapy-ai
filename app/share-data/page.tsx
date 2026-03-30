@@ -4,6 +4,7 @@
 
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
+import { InnovationShell } from "@/components/innovation/InnovationShell"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { CONSENT_DISCLOSURES, type ConsentPurpose } from "@/lib/consent-management"
@@ -129,6 +130,7 @@ export default function ShareDataPage() {
   }
 
   return (
+    <InnovationShell>
     <div className="mx-auto max-w-lg px-4 py-8">
       <Link href="/profile" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-6">
         <ArrowLeft className="w-3.5 h-3.5" />{isTr ? "Geri" : "Back"}
@@ -270,5 +272,6 @@ export default function ShareDataPage() {
       <style jsx>{`@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
       <p className="text-center text-[10px] text-muted-foreground/40 mt-6">{tx("disclaimer.tool", lang)}</p>
     </div>
+    </InnovationShell>
   )
 }

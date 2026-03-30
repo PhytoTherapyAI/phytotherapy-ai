@@ -4,6 +4,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { InnovationShell } from "@/components/innovation/InnovationShell"
 import { tx } from "@/lib/translations"
 import {
   FlaskConical, Shield, Lock, Globe, Code2, Microscope,
@@ -134,6 +135,7 @@ export default function ResearchHubPage() {
   }
 
   return (
+    <InnovationShell>
     <div className="mx-auto max-w-5xl px-4 py-8 md:px-8 space-y-10">
       {/* Hero */}
       <div className="text-center">
@@ -294,5 +296,6 @@ export default function ResearchHubPage() {
 
       <p className="text-center text-[10px] text-muted-foreground/40">{tx("disclaimer.tool", lang)}</p>
     </div>
+    </InnovationShell>
   )
 }

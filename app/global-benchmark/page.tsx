@@ -4,6 +4,7 @@
 
 import { useState, useMemo } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { InnovationShell } from "@/components/innovation/InnovationShell"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -91,6 +92,7 @@ export default function GlobalBenchmarkPage() {
   }
 
   return (
+    <InnovationShell>
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
       {/* Header */}
       <div className="text-center mb-6">
@@ -248,5 +250,6 @@ export default function GlobalBenchmarkPage() {
 
       <p className="text-center text-[10px] text-muted-foreground/40">{isTr ? "Bu analiz simülasyon amaçlıdır, tıbbi tavsiye değildir." : "This analysis is for simulation purposes, not medical advice."}</p>
     </div>
+    </InnovationShell>
   )
 }
