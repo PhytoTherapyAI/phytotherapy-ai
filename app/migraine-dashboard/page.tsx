@@ -99,7 +99,7 @@ export default function MigraineDashboardPage() {
             {TRIGGERS_DB.sort((a, b) => b.frequency - a.frequency).map(tr => (
               <Card key={tr.id} className="p-3 flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-600">{tr.icon}</div>
-                <div className="flex-1"><span className="text-sm font-medium">{lang === "tr" ? tr.tr : tr.en}</span></div>
+                <div className="flex-1"><span className="text-sm font-medium">{tr[lang as "en" | "tr"]}</span></div>
                 <div className="flex items-center gap-2">
                   <div className="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2"><div className="bg-violet-500 h-2 rounded-full" style={{ width: (tr.frequency / 8 * 100) + "%" }} /></div>
                   <span className="text-xs text-gray-500 w-6">{tr.frequency}x</span>

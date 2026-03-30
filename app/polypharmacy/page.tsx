@@ -206,7 +206,7 @@ export default function PolypharmacyPage() {
                           {risk.details.map((d, i) => (
                             <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
                               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-muted-foreground shrink-0" />
-                              {lang === "tr" ? d.tr : d.en}
+                              {d[lang as "en" | "tr"]}
                             </li>
                           ))}
                         </ul>

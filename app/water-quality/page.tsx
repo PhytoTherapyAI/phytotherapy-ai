@@ -153,7 +153,7 @@ export default function WaterQualityPage() {
           <option value="">{tx("water.selectCity", lang)}</option>
           {CITIES.map((c) => (
             <option key={c.name.en} value={c.name.en}>
-              {lang === "tr" ? c.name.tr : c.name.en}
+              {c.name[lang as "en" | "tr"]}
             </option>
           ))}
         </select>
@@ -168,7 +168,7 @@ export default function WaterQualityPage() {
               {tx("water.source", lang)}
             </p>
             <p className="text-sm font-medium">
-              {lang === "tr" ? city.source.tr : city.source.en}
+              {city.source[lang as "en" | "tr"]}
             </p>
           </div>
 

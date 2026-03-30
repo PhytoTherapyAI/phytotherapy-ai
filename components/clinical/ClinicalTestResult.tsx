@@ -192,7 +192,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
         </Button>
 
         {isHighRisk && (
-          <a href={lang === "tr" ? "https://www.google.com/search?q=psikiyatrist+yakınımda" : "https://www.google.com/search?q=psychiatrist+near+me"}
+          <a href={tx("clinicalResult.findProfessionalUrl", lang as Lang)}
             target="_blank" rel="noopener noreferrer">
             <Button className="w-full gap-2 bg-red-600 hover:bg-red-700 text-white">
               <ExternalLink className="w-4 h-4" />

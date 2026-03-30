@@ -97,7 +97,7 @@ export default function NudgeBanner({ type, data, lang, onDismiss }: NudgeBanner
   const config = nudgeConfig[type]
   const Icon = config.icon
   const msgIdx = Math.floor(Math.random() * config.messages.length)
-  const message = config.messages[0][(lang === "tr" ? "tr" : "en") as "en" | "tr"](data)
+  const message = config.messages[0][lang as "en" | "tr"](data)
 
   const handleDismiss = () => {
     setDismissed(true)
@@ -121,7 +121,7 @@ export default function NudgeBanner({ type, data, lang, onDismiss }: NudgeBanner
           <div className="flex items-center gap-2 mb-0.5">
             <Badge variant="secondary" className="text-xs px-1.5 py-0">
               <Sparkles className="w-3 h-3 mr-1" />
-              {typeLabel[type][(lang === "tr" ? "tr" : "en") as "en" | "tr"]}
+              {typeLabel[type][lang as "en" | "tr"]}
             </Badge>
           </div>
           <p className="text-sm text-gray-700 dark:text-gray-300 leading-snug">{message}</p>

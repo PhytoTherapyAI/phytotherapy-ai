@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Lock, Swords, ChevronRight, ChevronLeft, CheckCircle2, Circle, Trophy, Share2, Pill, Salad, Dumbbell, Sun, X } from "lucide-react"
-import { tx, type Lang } from "@/lib/translations"
+import { tx, txp, type Lang } from "@/lib/translations"
 import { BOSS_FIGHTS, type BossFight } from "@/lib/boss-fights"
 import { ShareCardBase } from "@/components/share/ShareCardBase"
 import { ShareModal } from "@/components/share/ShareModal"
@@ -42,7 +42,6 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
   const [selectedBoss, setSelectedBoss] = useState<BossFight | null>(null)
   const [viewMode, setViewMode] = useState<ViewMode>("idle")
   const [showShareCard, setShowShareCard] = useState(false)
-  const tr = lang === "tr"
 
   // Load active boss from localStorage
   useEffect(() => {
@@ -153,7 +152,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
             <span className="text-xl">{currentBoss.icon}</span>
             <span className="text-sm font-bold">{currentBoss.name[lang]}</span>
             <Badge variant="secondary" className="ml-auto text-xs font-bold">
-              {tr ? `Gün ${progress.daysPassed}/${currentBoss.duration}` : `Day ${progress.daysPassed}/${currentBoss.duration}`}
+              {txp("boss.dayCounter", lang, { daysPassed: progress.daysPassed, duration: currentBoss.duration })}
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -383,13 +382,16 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
 
 // ═══════════════ SHARE CARD ═══════════════
 function BossFightShareCard({ lang, boss }: { lang: Lang; boss: BossFight }) {
-  const tr = lang === "tr"
+  const shareTextMap: Record<"en" | "tr", string> = {
+    en: `I completed the ${boss.name.en} protocol! 🏆`,
+    tr: `${boss.name.tr} protokolünü tamamladım! 🏆`,
+  }
   return (
     <ShareCardBase
       lang={lang}
       fileName={`boss-${boss.id}.png`}
       shareTitle={boss.name[lang]}
-      shareText={tr ? `${boss.name.tr} protokolünü tamamladım! 🏆` : `I completed the ${boss.name.en} protocol! 🏆`}
+      shareText={shareTextMap[lang]}
     >
       <div
         className="relative overflow-hidden rounded-2xl"

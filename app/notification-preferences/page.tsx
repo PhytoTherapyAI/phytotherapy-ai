@@ -54,13 +54,13 @@ export default function NotificationPreferencesPage() {
 
         {categories.map(cat => (
           <div key={cat.id} className="mb-6">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{lang === "tr" ? cat.tr : cat.en}</h2>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{cat[lang as "en" | "tr"]}</h2>
             <div className="space-y-2">
               {settings.filter(s => s.category === cat.id).map(s => (
                 <Card key={s.id} className={"p-4 flex items-center gap-4 cursor-pointer transition-all " + (s.enabled ? "" : "opacity-50")} onClick={() => toggle(s.id)}>
                   <div className={"p-2 rounded-lg " + (s.enabled ? "bg-amber-100 text-amber-600 dark:bg-amber-900/30" : "bg-gray-100 text-gray-400")}>{s.icon}</div>
                   <div className="flex-1">
-                    <div className="font-medium text-sm">{lang === "tr" ? s.tr : s.en}</div>
+                    <div className="font-medium text-sm">{s[lang as "en" | "tr"]}</div>
                     <div className="text-xs text-gray-500">{lang === "tr" ? s.descTr : s.descEn}</div>
                   </div>
                   <div className={"w-12 h-7 rounded-full flex items-center transition-all px-1 " + (s.enabled ? "bg-amber-500 justify-end" : "bg-gray-300 justify-start")}>

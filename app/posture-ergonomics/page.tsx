@@ -233,14 +233,14 @@ export default function PostureErgonomicsPage() {
               >
                 <div className="flex items-center justify-between mb-1">
                   <h4 className="text-sm font-semibold">
-                    {lang === "tr" ? stretch.name.tr : stretch.name.en}
+                    {stretch.name[lang as "en" | "tr"]}
                   </h4>
                   <span className="text-xs text-teal-600 dark:text-teal-400 font-medium">
                     {stretch.duration}
                   </span>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  {lang === "tr" ? stretch.instructions.tr : stretch.instructions.en}
+                  {stretch.instructions[lang as "en" | "tr"]}
                 </p>
               </div>
             ))}

@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
-import { tx, type Lang } from "@/lib/translations"
+import { tx, txp, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -131,7 +131,7 @@ export default function NotificationsPage() {
           items.push({
             id: nid,
             type: "medication",
-            title: lang === "tr" ? `${name} hatirlatmasi` : `${name} reminder`,
+            title: txp("notifications.medReminder", lang, { name }),
             description: lang === "tr"
               ? `${med.dosage || ""} ${med.frequency || "gunluk"} — ilac saatinizi kacirmayin`
               : `${med.dosage || ""} ${med.frequency || "daily"} — don't miss your dose`,

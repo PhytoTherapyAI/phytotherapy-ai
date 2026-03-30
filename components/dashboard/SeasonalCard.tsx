@@ -133,7 +133,6 @@ export function SeasonalCard({ lang, userMedications = [], userConditions = [] }
   const [showShareCard, setShowShareCard] = useState(false)
   const seasonId = getCurrentSeason()
   const season = SEASONS[seasonId]
-  const tr = lang === "tr"
 
   return (
     <>
@@ -182,10 +181,9 @@ export function SeasonalCard({ lang, userMedications = [], userConditions = [] }
           lang={lang}
           fileName={`seasonal-${seasonId}.png`}
           shareTitle={`${season.name[lang]} ${tx("seasonal.tips", lang)}`}
-          shareText={
-            tr
-              ? `${season.emoji} ${season.name.tr} mevsimi için sağlık önerilerimi paylaşıyorum!`
-              : `${season.emoji} Sharing my ${season.name.en} health prep tips!`
+          shareText={lang === "tr"
+            ? `${season.emoji} ${season.name.tr} mevsimi için sağlık önerilerimi paylaşıyorum!`
+            : `${season.emoji} Sharing my ${season.name.en} health prep tips!`
           }
         >
           <div

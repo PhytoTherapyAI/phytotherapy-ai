@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txp } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
 
 interface DiaryEntry {
@@ -484,7 +484,7 @@ export default function HealthDiaryPage() {
         {/* Entries List */}
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            {lang === "tr" ? `Girdiler (${filteredEntries.length})` : `Entries (${filteredEntries.length})`}
+            {txp("healthDiary.entriesCount", lang, { count: filteredEntries.length })}
           </h3>
           {loading ? (
             <div className="flex items-center justify-center py-12">

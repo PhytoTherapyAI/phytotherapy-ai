@@ -22,19 +22,18 @@ export function InteractionShareCard({
   topDangerousHerb,
   concern,
 }: InteractionShareCardProps) {
-  const tr = lang === "tr"
   const totalInteractions = dangerousCount + cautionCount
+  const shareTextMap: Record<"en" | "tr", string> = {
+    en: `Phytotherapy.ai detected ${totalInteractions} drug-herb interactions! 🛡️`,
+    tr: `Phytotherapy.ai ${totalInteractions} ilaç-bitki etkileşimi tespit etti! 🛡️`,
+  }
 
   return (
     <ShareCardBase
       lang={lang}
       fileName={`interaction-alert-${Date.now()}.png`}
       shareTitle={tx("share.interaction.title", lang)}
-      shareText={
-        tr
-          ? `Phytotherapy.ai ${totalInteractions} ilaç-bitki etkileşimi tespit etti! 🛡️`
-          : `Phytotherapy.ai detected ${totalInteractions} drug-herb interactions! 🛡️`
-      }
+      shareText={shareTextMap[lang]}
     >
       <div
         className="relative overflow-hidden rounded-2xl"

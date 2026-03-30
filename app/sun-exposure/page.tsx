@@ -123,7 +123,7 @@ export default function SunExposurePage() {
                   {med.name}
                 </span>
                 <span className="text-xs text-red-600 dark:text-red-400">
-                  {lang === "tr" ? med.category.tr : med.category.en}
+                  {med.category[lang as "en" | "tr"]}
                 </span>
               </div>
             ))}
@@ -267,7 +267,7 @@ export default function SunExposurePage() {
             >
               {med.name}
               <span className="ml-1 opacity-70">
-                ({lang === "tr" ? med.category.tr : med.category.en})
+                ({med.category[lang as "en" | "tr"]})
               </span>
             </div>
           ))}

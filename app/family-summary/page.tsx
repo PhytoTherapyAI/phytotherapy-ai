@@ -195,7 +195,7 @@ export default function FamilySummaryPage() {
                   <AlertTriangle className="h-5 w-5 shrink-0 text-red-500" />
                   <p className="text-sm font-medium text-red-700 dark:text-red-400">
                     {lang === "tr"
-                      ? `${m.full_name} ${m.missedDays} gundur ilac almadi`
+                      ? `${m.full_name} ${m.missedDays} gün ilaç almadı`
                       : `${m.full_name} hasn't taken meds for ${m.missedDays} days`}
                   </p>
                   <button className="ml-auto shrink-0 rounded-full bg-red-500 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-red-600">

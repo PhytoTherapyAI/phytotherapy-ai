@@ -138,7 +138,7 @@ export default function MenopausePanelPage() {
         <div className="space-y-4">
           {SYMPTOM_LIST.map((symptom) => (
             <div key={symptom.key} className="rounded-lg border p-3">
-              <p className="mb-2 text-sm font-medium">{lang === "tr" ? symptom.tr : symptom.en}</p>
+              <p className="mb-2 text-sm font-medium">{symptom[lang as "en" | "tr"]}</p>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs text-muted-foreground">{tx("menopause.frequency", lang)}</label>

@@ -269,7 +269,7 @@ export default function ScreenTimePage() {
             {QUIZ.map((q, qi) => (
               <div key={qi} className="rounded-lg border bg-card p-4">
                 <p className="text-sm font-medium mb-2">
-                  {qi + 1}. {lang === "tr" ? q.question.tr : q.question.en}
+                  {qi + 1}. {q.question[lang as "en" | "tr"]}
                 </p>
                 <div className="space-y-1.5">
                   {q.options.map((opt, oi) => (
@@ -287,7 +287,7 @@ export default function ScreenTimePage() {
                           : "hover:bg-muted/50"
                       }`}
                     >
-                      {lang === "tr" ? opt.label.tr : opt.label.en}
+                      {opt.label[lang as "en" | "tr"]}
                     </button>
                   ))}
                 </div>

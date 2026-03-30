@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txp } from "@/lib/translations";
 
 interface FavoriteSupplement {
   id: string;
@@ -140,7 +140,7 @@ export default function FavoriteSupplementsPage() {
               {tx("favSupp.title", lang)}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {lang === "tr" ? `${favorites.length} takviye kaydedildi` : `${favorites.length} supplement${favorites.length !== 1 ? "s" : ""} saved`}
+              {txp("favSupp.savedCount", lang, { count: favorites.length })}
             </p>
           </div>
         </div>

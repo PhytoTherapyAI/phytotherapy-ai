@@ -187,7 +187,7 @@ export default function HealthRadarPage() {
                     {axis.factors.map((f, i) => (
                       <li key={i} className="text-xs text-muted-foreground flex items-center gap-1">
                         {f.impact === "positive" ? <TrendingUp className="w-3 h-3 text-green-500" /> : <TrendingDown className="w-3 h-3 text-red-500" />}
-                        {lang === "tr" ? f.tr : f.en}
+                        {f[lang as "en" | "tr"]}
                       </li>
                     ))}
                   </ul>

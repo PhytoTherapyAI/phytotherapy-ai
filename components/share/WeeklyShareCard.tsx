@@ -20,19 +20,18 @@ export function WeeklyShareCard({
   days,
   userName,
 }: WeeklyShareCardProps) {
-  const tr = lang === "tr"
   const maxScore = Math.max(...days.map(d => d.score ?? 0), 1)
+  const shareTextMap: Record<"en" | "tr", string> = {
+    en: `My average health score this week is ${avgScore}/100! 🌿`,
+    tr: `Bu hafta ortalama sağlık skorum ${avgScore}/100! 🌿`,
+  }
 
   return (
     <ShareCardBase
       lang={lang}
       fileName={`weekly-summary-${Date.now()}.png`}
       shareTitle={tx("weekly.title", lang)}
-      shareText={
-        tr
-          ? `Bu hafta ortalama sağlık skorum ${avgScore}/100! 🌿`
-          : `My average health score this week is ${avgScore}/100! 🌿`
-      }
+      shareText={shareTextMap[lang]}
     >
       <div
         className="relative overflow-hidden rounded-2xl"

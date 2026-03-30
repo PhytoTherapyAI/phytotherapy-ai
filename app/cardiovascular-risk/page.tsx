@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txp } from "@/lib/translations";
 
 interface RiskResult {
   score: number;
@@ -340,7 +340,7 @@ export default function CardiovascularRiskPage() {
                 {result.details === "low" ? tx("cardioRisk.lowRisk", lang) : result.details === "moderate" ? tx("cardioRisk.moderateRisk", lang) : tx("cardioRisk.highRisk", lang)}
               </div>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                {tx("cardioRisk.riskEstimate", lang)} {lang === "tr" ? `%${result.score}` : `${result.score}%`}
+                {txp("cardio.riskEstimateValue", lang, { score: result.score })}
               </p>
 
               {/* Risk Bar */}
@@ -366,7 +366,7 @@ export default function CardiovascularRiskPage() {
                     {tx("cardioRisk.statinTitle", lang)}
                   </div>
                   <p className="text-muted-foreground">
-                    {lang === "tr" ? `%${result.score} ` : `With a ${result.score}% `}{tx("cardioRisk.statinNote", lang)}
+                    {txp("cardio.statinNoteWithScore", lang, { score: result.score })}{tx("cardioRisk.statinNote", lang)}
                   </p>
                 </div>
               )}

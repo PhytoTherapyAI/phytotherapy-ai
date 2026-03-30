@@ -7,7 +7,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog"
 import { Pill, Droplets, SmilePlus, AlertCircle, Check } from "lucide-react"
-import { tx, txObj, type Lang } from "@/lib/translations"
+import { tx, txp, txObj, type Lang } from "@/lib/translations"
 
 interface QuickActionsProps {
   lang: Lang
@@ -84,7 +84,7 @@ export function QuickActions({ lang, userId }: QuickActionsProps) {
     {
       key: "water",
       icon: Droplets,
-      label: lang === "tr" ? `Su ictim (${waterCount})` : `Drank water (${waterCount})`,
+      label: txp("quickActions.drankWater", lang, { count: waterCount }),
       color: "text-blue-500",
       bg: "bg-blue-500/10",
       onClick: handleWater,

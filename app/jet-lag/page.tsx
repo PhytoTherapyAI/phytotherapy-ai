@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txp } from "@/lib/translations";
 
 interface JetLagResult {
   timeDifference: number;
@@ -177,7 +177,7 @@ export default function JetLagPage() {
                 {result.timeDifference > 0 ? "+" : ""}{result.timeDifference}h {result.direction === "east" ? tx("jetlag.east", lang) : tx("jetlag.west", lang)}
               </p>
               <p className="text-sm text-muted-foreground">
-                {lang === "tr" ? `Tahmini uyum suresi: ${result.adjustmentDays} gun` : `Estimated adjustment: ${result.adjustmentDays} days`}
+                {txp("jetLag.adjustmentDays", lang, { days: result.adjustmentDays })}
               </p>
             </div>
 

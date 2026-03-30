@@ -18,18 +18,17 @@ export function ProtocolShareCard({
   streakDays,
   userName,
 }: ProtocolShareCardProps) {
-  const tr = lang === "tr"
+  const shareTextMap: Record<"en" | "tr", string> = {
+    en: `I completed my ${cycleDays}-day ${supplementName} protocol! 🏆`,
+    tr: `${cycleDays} günlük ${supplementName} protokolümü tamamladım! 🏆`,
+  }
 
   return (
     <ShareCardBase
       lang={lang}
       fileName={`protocol-${supplementName.toLowerCase().replace(/\s+/g, "-")}.png`}
       shareTitle={tx("share.protocol.title", lang)}
-      shareText={
-        tr
-          ? `${cycleDays} günlük ${supplementName} protokolümü tamamladım! 🏆`
-          : `I completed my ${cycleDays}-day ${supplementName} protocol! 🏆`
-      }
+      shareText={shareTextMap[lang]}
     >
       <div
         className="relative overflow-hidden rounded-2xl"

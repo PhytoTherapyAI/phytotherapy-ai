@@ -147,7 +147,7 @@ export default function HealthSpendingPage() {
                 return (
                   <div key={cat.value} className="flex items-center gap-3">
                     <div className={`${cat.color}`}>{cat.icon}</div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400 w-28">{lang === "tr" ? cat.tr : cat.en}</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400 w-28">{cat[lang as "en" | "tr"]}</span>
                     <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                       <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${pct}%` }} />
                     </div>
@@ -209,7 +209,7 @@ export default function HealthSpendingPage() {
                     }`}
                   >
                     {cat.icon}
-                    {lang === "tr" ? cat.tr : cat.en}
+                    {cat[lang as "en" | "tr"]}
                   </button>
                 ))}
               </div>
@@ -240,7 +240,7 @@ export default function HealthSpendingPage() {
                 <div className={`${cat.bg} p-2 rounded-lg ${cat.color}`}>{cat.icon}</div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                    {exp.description || (lang === "tr" ? cat.tr : cat.en)}
+                    {exp.description || (cat[lang as "en" | "tr"])}
                   </p>
                   <p className="text-xs text-gray-400">{new Date(exp.date).toLocaleDateString(tx("common.locale", lang))}</p>
                 </div>

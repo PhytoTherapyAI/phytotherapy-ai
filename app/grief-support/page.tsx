@@ -5,7 +5,7 @@ import { Heart, Loader2, LogIn, Phone, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txp } from "@/lib/translations";
 
 interface GriefResult {
   stageName: string;
@@ -131,7 +131,7 @@ export default function GriefSupportPage() {
           {/* Mood Score */}
           <div className="mb-6">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
-              {lang === "tr" ? `Ruh haliniz: ${moodScore}/10` : `Your mood: ${moodScore}/10`}
+              {txp("grief.moodScore", lang, { score: moodScore })}
             </label>
             <input
               type="range"

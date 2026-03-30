@@ -226,7 +226,7 @@ export default function OrganTransplantPage() {
                       <Clock className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                     )}
                     <span className="text-sm text-foreground">
-                      {lang === "tr" ? item.tr : item.en}
+                      {item[lang as "en" | "tr"]}
                     </span>
                   </div>
                 ))}

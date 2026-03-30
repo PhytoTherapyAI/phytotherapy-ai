@@ -115,7 +115,7 @@ export default function SupportGroupsPage() {
             {FEATURES_PREVIEW.map((f, i) => (
               <div key={i} className="flex items-center gap-3 text-teal-700 dark:text-teal-300">
                 <div className="text-teal-500">{f.icon}</div>
-                <span className="text-sm">{lang === "tr" ? f.tr : f.en}</span>
+                <span className="text-sm">{f[lang as "en" | "tr"]}</span>
               </div>
             ))}
           </div>

@@ -22,22 +22,22 @@ export function BioAgeShareCard({
 }: BioAgeShareCardProps) {
   const isYounger = difference <= 0
   const absDiff = Math.abs(difference)
-  const tr = lang === "tr"
+
+  const shareTextYounger: Record<"en" | "tr", string> = {
+    en: `My biological age is ${absDiff} years younger than my real age! 🌿`,
+    tr: `Biyolojik yaşım gerçek yaşımdan ${absDiff} yıl genç! 🌿`,
+  }
+  const shareTextOlder: Record<"en" | "tr", string> = {
+    en: `I just learned my biological age — time to improve! 💪`,
+    tr: `Biyolojik yaşımı öğrendim — iyileştirme zamanı! 💪`,
+  }
 
   return (
     <ShareCardBase
       lang={lang}
       fileName={`bioage-${biologicalAge}.png`}
       shareTitle={tx("share.bioage.title", lang)}
-      shareText={
-        isYounger
-          ? (tr
-              ? `Biyolojik yaşım gerçek yaşımdan ${absDiff} yıl genç! 🌿`
-              : `My biological age is ${absDiff} years younger than my real age! 🌿`)
-          : (tr
-              ? `Biyolojik yaşımı öğrendim — iyileştirme zamanı! 💪`
-              : `I just learned my biological age — time to improve! 💪`)
-      }
+      shareText={isYounger ? shareTextYounger[lang] : shareTextOlder[lang]}
     >
       {/* Card visual — fixed size for consistent sharing */}
       <div

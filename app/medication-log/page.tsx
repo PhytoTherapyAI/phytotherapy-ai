@@ -143,7 +143,7 @@ export default function MedicationLogPage() {
                       setForm({ ...form, sideEffects: effects.includes(se.en) ? effects.filter(e => e !== se.en) : [...effects, se.en] })
                     }}
                       className={`px-2 py-1 rounded text-xs border transition-colors ${form.sideEffects?.includes(se.en) ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-primary/50"}`}>
-                      {lang === "tr" ? se.tr : se.en}
+                      {se[lang as "en" | "tr"]}
                     </button>
                   ))}
                 </div>

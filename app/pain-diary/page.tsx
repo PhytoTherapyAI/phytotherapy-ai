@@ -20,7 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txp } from "@/lib/translations";
 
 interface PainRecord {
   id: string;
@@ -516,7 +516,7 @@ export default function PainDiaryPage() {
           ) : (
             <>
               <p className="text-xs text-muted-foreground">
-                {lang === "tr" ? `Son 30 gunde ${records.length} kayıt` : `${records.length} records in last 30 days`}
+                {txp("painDiary.recordsCount", lang, { count: records.length })}
               </p>
               {records.map((r) => {
                 const loc = LOCATIONS.find((l) => l.key === r.location);

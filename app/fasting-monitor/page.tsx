@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
-import { tx } from "@/lib/translations"
+import { tx, txp } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -244,7 +244,7 @@ export default function FastingMonitorPage() {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground mt-4">
-                {lang === "tr" ? `${days.length} gün kaydedildi` : `${days.length} days recorded`}
+                {txp("fasting.daysRecorded", lang, { count: days.length })}
               </p>
             </Card>
           </div>

@@ -3,38 +3,31 @@
 // Compassionate tone — encourages resubmission
 // ============================================
 
+import { tx, txp } from "@/lib/translations"
+import type { Lang } from "@/lib/translations"
+
 interface RejectedEmailProps {
   recipientName: string
   rejectionReason: string
-  lang?: "en" | "tr"
+  lang?: Lang
 }
 
 export function renderRejectedEmail({ recipientName, rejectionReason, lang = "en" }: RejectedEmailProps): string {
-  const t = {
-    subject: lang === "tr" ? "Profil Onay Süreciniz Hakkında" : "Regarding Your Profile Verification",
-    preheader: lang === "tr" ? "Belgelerinizi güncellemenizi rica ediyoruz" : "We kindly ask you to update your documents",
-    greeting: lang === "tr" ? `Sayın ${recipientName},` : `Dear ${recipientName},`,
-    body1: lang === "tr"
-      ? "Profil doğrulama başvurunuzu titizlikle inceledik. Ne yazık ki, gönderdiğiniz belgeler doğrulama kriterlerimizi şu anda karşılayamadı."
-      : "We have carefully reviewed your profile verification application. Unfortunately, the documents you submitted did not meet our verification criteria at this time.",
-    reasonLabel: lang === "tr" ? "Geri Bildirim" : "Feedback",
-    body2: lang === "tr"
-      ? "Endişelenmeyin — belgelerinizi güncelleyerek tekrar başvurabilirsiniz. Ekibimiz yeni başvurunuzu öncelikli olarak değerlendirecektir."
-      : "Don't worry — you can resubmit with updated documents. Our team will prioritize your new application.",
-    tips: lang === "tr" ? "İpuçları" : "Tips for Resubmission",
-    tip1: lang === "tr" ? "Belgenin tamamı görünür ve okunaklı olmalı" : "Ensure the entire document is visible and legible",
-    tip2: lang === "tr" ? "Fotoğraflar net, iyi aydınlatılmış olmalı" : "Photos should be clear and well-lit",
-    tip3: lang === "tr" ? "PDF belgeler resmi kaynaklardan (e-Devlet) olmalı" : "PDF documents should be from official sources (e-Government)",
-    tip4: lang === "tr" ? "Belgedeki isim ile profil bilgileriniz eşleşmeli" : "Name on document must match your profile information",
-    cta: lang === "tr" ? "Belgeleri Tekrar Yükle" : "Resubmit Documents",
-    support: lang === "tr"
-      ? "Sorularınız mı var? Bize destek@phytotherapy.ai adresinden ulaşabilirsiniz."
-      : "Have questions? Reach us at support@phytotherapy.ai.",
-    footer: lang === "tr"
-      ? "Bu e-posta Phytotherapy.ai doğrulama sistemi tarafından otomatik gönderilmiştir."
-      : "This email was sent automatically by the Phytotherapy.ai verification system.",
-    address: "Phytotherapy.ai · Istanbul, Turkey",
-  }
+  const subject   = tx("email.rejected.subject", lang)
+  const preheader = tx("email.rejected.preheader", lang)
+  const greeting  = txp("email.greeting", lang, { name: recipientName })
+  const body1     = tx("email.rejected.body1", lang)
+  const reasonLabel = tx("email.rejected.reasonLabel", lang)
+  const body2     = tx("email.rejected.body2", lang)
+  const tips      = tx("email.rejected.tips", lang)
+  const tip1      = tx("email.rejected.tip1", lang)
+  const tip2      = tx("email.rejected.tip2", lang)
+  const tip3      = tx("email.rejected.tip3", lang)
+  const tip4      = tx("email.rejected.tip4", lang)
+  const cta       = tx("email.rejected.cta", lang)
+  const support   = tx("email.rejected.support", lang)
+  const footer    = tx("email.footer", lang)
+  const address   = "Phytotherapy.ai · Istanbul, Turkey"
 
   return `<!DOCTYPE html>
 <html lang="${lang}" xmlns:v="urn:schemas-microsoft-com:vml">
@@ -43,7 +36,7 @@ export function renderRejectedEmail({ recipientName, rejectionReason, lang = "en
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="supported-color-schemes" content="light dark" />
-  <title>${t.subject}</title>
+  <title>${subject}</title>
   <style>
     :root { color-scheme: light dark; }
     @media (prefers-color-scheme: dark) {
@@ -61,7 +54,7 @@ export function renderRejectedEmail({ recipientName, rejectionReason, lang = "en
   </style>
 </head>
 <body style="margin:0;padding:0;background-color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;" class="email-bg">
-  <div style="display:none;max-height:0;overflow:hidden;">${t.preheader}</div>
+  <div style="display:none;max-height:0;overflow:hidden;">${preheader}</div>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8fafc;" class="email-bg">
     <tr><td align="center" style="padding:40px 16px;">
@@ -84,24 +77,24 @@ export function renderRejectedEmail({ recipientName, rejectionReason, lang = "en
                 <span style="font-size:28px;color:#ffffff;">📋</span>
               </div>
               <h1 style="margin:0;font-size:20px;font-weight:700;color:#ffffff;line-height:1.3;">
-                ${t.subject}
+                ${subject}
               </h1>
             </td></tr>
 
             <!-- Body -->
             <tr><td style="padding:32px 40px;" class="inner">
               <p style="margin:0 0 16px;font-size:16px;color:#1e293b;line-height:1.6;" class="text-primary">
-                ${t.greeting}
+                ${greeting}
               </p>
               <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;" class="text-secondary">
-                ${t.body1}
+                ${body1}
               </p>
 
               <!-- Rejection Reason Box -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
                 <tr><td style="background-color:#eef2ff;border:1px solid #c7d2fe;border-left:4px solid #6366f1;border-radius:8px;padding:16px 20px;" class="reason-bg">
                   <p style="margin:0 0 6px;font-size:12px;font-weight:600;color:#6366f1;text-transform:uppercase;letter-spacing:0.5px;">
-                    ${t.reasonLabel}
+                    ${reasonLabel}
                   </p>
                   <p style="margin:0;font-size:14px;color:#1e293b;line-height:1.6;" class="text-primary">
                     ${rejectionReason}
@@ -110,17 +103,17 @@ export function renderRejectedEmail({ recipientName, rejectionReason, lang = "en
               </table>
 
               <p style="margin:0 0 20px;font-size:15px;color:#475569;line-height:1.7;" class="text-secondary">
-                ${t.body2}
+                ${body2}
               </p>
 
               <!-- Tips Box -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
                 <tr><td style="background-color:#f1f5f9;border-radius:10px;padding:16px 20px;" class="tip-bg">
                   <p style="margin:0 0 10px;font-size:13px;font-weight:600;color:#334155;" class="text-primary">
-                    💡 ${t.tips}:
+                    💡 ${tips}:
                   </p>
                   <table role="presentation" cellpadding="0" cellspacing="0">
-                    ${[t.tip1, t.tip2, t.tip3, t.tip4].map(tip => `
+                    ${[tip1, tip2, tip3, tip4].map(tip => `
                     <tr><td style="padding:3px 0;font-size:13px;color:#64748b;line-height:1.5;" class="text-secondary">
                       <span style="color:#059669;margin-right:6px;">✓</span>${tip}
                     </td></tr>`).join("")}
@@ -133,14 +126,14 @@ export function renderRejectedEmail({ recipientName, rejectionReason, lang = "en
                 <tr><td align="center">
                   <a href="https://phytotherapy.ai/talent-hub/verify" target="_blank"
                     style="display:inline-block;background-color:#6366f1;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:10px;letter-spacing:0.3px;">
-                    ${t.cta} →
+                    ${cta} →
                   </a>
                 </td></tr>
               </table>
 
               <!-- Support -->
               <p style="margin:28px 0 0;font-size:13px;color:#94a3b8;text-align:center;" class="text-secondary">
-                ${t.support}
+                ${support}
               </p>
             </td></tr>
 
@@ -149,8 +142,8 @@ export function renderRejectedEmail({ recipientName, rejectionReason, lang = "en
 
         <!-- Footer -->
         <tr><td style="padding:24px 0;text-align:center;">
-          <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;">${t.footer}</p>
-          <p style="margin:0;font-size:12px;color:#94a3b8;">${t.address}</p>
+          <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;">${footer}</p>
+          <p style="margin:0;font-size:12px;color:#94a3b8;">${address}</p>
         </td></tr>
 
       </table>

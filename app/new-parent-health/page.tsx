@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txp } from "@/lib/translations";
 
 interface Section {
   icon: React.ReactNode;
@@ -222,7 +222,7 @@ export default function NewParentHealthPage() {
               }`}
             >
               <p className="font-semibold">
-                {lang === "tr" ? `Skor: ${burnoutScore}/8` : `Score: ${burnoutScore}/8`}
+                {txp("newParent.burnoutScore", lang, { score: burnoutScore })}
               </p>
               <p className="text-sm mt-1">
                 {burnoutScore >= 5

@@ -6466,6 +6466,154 @@ const commonToolKeys: Record<string, TranslationEntry> = {
     en: "Message received. Reply '1' or 'done' to mark tasks complete.",
     tr: "Mesajınız alındı. Görevleri tamamlamak için '1' veya 'tamam' yazın.",
   },
+
+  // ── template literal keys ──
+  "cardio.riskEstimateValue": {
+    en: "Your estimated 10-year cardiovascular risk is {score}%",
+    tr: "Tahmini 10 yıllık kardiyovasküler riskiniz %{score}",
+  },
+  "cardio.statinNoteWithScore": {
+    en: "With a {score}% ",
+    tr: "%{score} ",
+  },
+  "referral.stepLabel": {
+    en: "Step {step}",
+    tr: "Adım {step}",
+  },
+  "favSupp.savedCount": {
+    en: "{count} supplements saved",
+    tr: "{count} takviye kaydedildi",
+  },
+  "fasting.daysRecorded": {
+    en: "{count} days recorded",
+    tr: "{count} gün kaydedildi",
+  },
+  "grief.moodScore": {
+    en: "Your mood: {score}/10",
+    tr: "Ruh haliniz: {score}/10",
+  },
+  "healthDiary.entriesCount": {
+    en: "Entries ({count})",
+    tr: "Girdiler ({count})",
+  },
+  "jetLag.adjustmentDays": {
+    en: "Estimated adjustment: {days} days",
+    tr: "Tahmini uyum süresi: {days} gün",
+  },
+  "newParent.burnoutScore": {
+    en: "Score: {score}/8",
+    tr: "Skor: {score}/8",
+  },
+  "notifications.medReminder": {
+    en: "{name} reminder",
+    tr: "{name} hatırlatması",
+  },
+  "painDiary.recordsCount": {
+    en: "{count} records in last 30 days",
+    tr: "Son 30 günde {count} kayıt",
+  },
+  "quickActions.drankWater": {
+    en: "Drank water ({count})",
+    tr: "Su içtim ({count})",
+  },
+  "email.greeting": {
+    en: "Dear {name},",
+    tr: "Sayın {name},",
+  },
+  "email.rejected.subject": {
+    en: "Regarding Your Profile Verification",
+    tr: "Profil Onay Süreciniz Hakkında",
+  },
+  "email.rejected.preheader": {
+    en: "We kindly ask you to update your documents",
+    tr: "Belgelerinizi güncellemenizi rica ediyoruz",
+  },
+  "email.rejected.body1": {
+    en: "We have carefully reviewed your profile verification application. Unfortunately, the documents you submitted did not meet our verification criteria at this time.",
+    tr: "Profil doğrulama başvurunuzu titizlikle inceledik. Ne yazık ki, gönderdiğiniz belgeler doğrulama kriterlerimizi şu anda karşılayamadı.",
+  },
+  "email.rejected.reasonLabel": {
+    en: "Feedback",
+    tr: "Geri Bildirim",
+  },
+  "email.rejected.body2": {
+    en: "Don't worry — you can resubmit with updated documents. Our team will prioritize your new application.",
+    tr: "Endişelenmeyin — belgelerinizi güncelleyerek tekrar başvurabilirsiniz. Ekibimiz yeni başvurunuzu öncelikli olarak değerlendirecektir.",
+  },
+  "email.rejected.tips": {
+    en: "Tips for Resubmission",
+    tr: "İpuçları",
+  },
+  "email.rejected.tip1": {
+    en: "Ensure the entire document is visible and legible",
+    tr: "Belgenin tamamı görünür ve okunaklı olmalı",
+  },
+  "email.rejected.tip2": {
+    en: "Photos should be clear and well-lit",
+    tr: "Fotoğraflar net, iyi aydınlatılmış olmalı",
+  },
+  "email.rejected.tip3": {
+    en: "PDF documents should be from official sources (e-Government)",
+    tr: "PDF belgeler resmi kaynaklardan (e-Devlet) olmalı",
+  },
+  "email.rejected.tip4": {
+    en: "Name on document must match your profile information",
+    tr: "Belgedeki isim ile profil bilgileriniz eşleşmeli",
+  },
+  "email.rejected.cta": {
+    en: "Resubmit Documents",
+    tr: "Belgeleri Tekrar Yükle",
+  },
+  "email.rejected.support": {
+    en: "Have questions? Reach us at support@phytotherapy.ai.",
+    tr: "Sorularınız mı var? Bize destek@phytotherapy.ai adresinden ulaşabilirsiniz.",
+  },
+  "email.footer": {
+    en: "This email was sent automatically by the Phytotherapy.ai verification system.",
+    tr: "Bu e-posta Phytotherapy.ai doğrulama sistemi tarafından otomatik gönderilmiştir.",
+  },
+  "email.approved.subject": {
+    en: "Congratulations, Your Profile is Verified!",
+    tr: "Tebrikler, Profiliniz Onaylandı!",
+  },
+  "email.approved.preheader": {
+    en: "You are now a Verified Health Professional",
+    tr: "Artık Onaylı Sağlık Profesyonelisiniz",
+  },
+  "email.approved.body1": {
+    en: "Your professional credentials have been successfully verified by our team. You now have the <strong>Verified Health Professional</strong> badge on Phytotherapy.ai.",
+    tr: "Profesyonel belgeleriniz ekibimiz tarafından başarıyla doğrulandı. Artık Phytotherapy.ai platformunda <strong>Onaylı Sağlık Profesyoneli</strong> rozetine sahipsiniz.",
+  },
+  "email.approved.badgeText": {
+    en: "Verified Health Professional",
+    tr: "Onaylı Sağlık Profesyoneli",
+  },
+  "email.approved.professionLabel": {
+    en: "Verified Title",
+    tr: "Doğrulanan Ünvan",
+  },
+  "email.approved.body2": {
+    en: "This badge will be visible on your profile, offering benefits like priority search ranking, increased patient trust, and eligibility for institutional partnerships.",
+    tr: "Bu rozet profilinizde görünür olacak ve arama sonuçlarında öncelikli sıralama, hasta güveni artışı ve kurumsal ortaklık fırsatları gibi ayrıcalıklar sunacaktır.",
+  },
+  "email.approved.cta": {
+    en: "Go to My Profile",
+    tr: "Profilime Git",
+  },
+
+  // ── remaining page keys ──
+  "clinicalResult.findProfessionalUrl": {
+    en: "https://www.google.com/search?q=psychiatrist+near+me",
+    tr: "https://www.google.com/search?q=psikiyatrist+yakınımda",
+  },
+  "familySummary.missedMedsAlert": {
+    en: "{name} hasn't taken meds for {days} days",
+    tr: "{name} {days} gündür ilaç almadı",
+  },
+  "boss.dayCounter": {
+    en: "Day {daysPassed}/{duration}",
+    tr: "Gün {daysPassed}/{duration}",
+  },
 }
 Object.assign(t, commonToolKeys)
 

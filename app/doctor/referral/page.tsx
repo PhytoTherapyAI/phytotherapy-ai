@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txp } from "@/lib/translations";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -351,7 +351,7 @@ export default function DoctorReferralPage() {
                 </div>
                 <div>
                   <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    {lang === "tr" ? `Adım ${s.step}` : `Step ${s.step}`}
+                    {txp("referral.stepLabel", lang, { step: s.step })}
                   </span>
                   <p className="mt-1 text-sm">{s.text}</p>
                 </div>
