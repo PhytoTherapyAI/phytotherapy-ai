@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const {
       symptoms = {},
       age = 50,
@@ -81,7 +82,7 @@ CRITICAL SAFETY RULES:
 - DEXA scan recommendation based on age and risk factors
 - Be empathetic and validating — menopause symptoms are real and impactful
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return ONLY valid JSON:
 {

@@ -3,6 +3,7 @@ import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const originTimezone = sanitizeInput(body.origin_timezone || "UTC");
     const destinationTimezone = sanitizeInput(body.destination_timezone || "UTC");
     const travelDate = sanitizeInput(body.travel_date || new Date().toISOString().split("T")[0]);
@@ -57,7 +58,7 @@ RULES:
 - Be practical and specific with hours
 - Never prescribe — recommend and suggest consulting doctor
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return ONLY valid JSON:
 {

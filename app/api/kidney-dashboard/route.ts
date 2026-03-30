@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     // Validate lab values
     const creatinine = Number(body.creatinine) || 0;
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     if (creatinine <= 0 && egfr <= 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Kreatinin veya eGFR değeri gerekli" : "Creatinine or eGFR value required" },
+        { error: tx("api.kidneyDashboard.creatinineOrEgfr", lang) },
         { status: 400 }
       );
     }
@@ -78,7 +79,7 @@ RULES:
 - Flag dangerous potassium levels (>5.5 = urgent, >6.0 = emergency)
 - Recommend fluid intake based on stage
 - Use PubMed-backed evidence
-- Respond in ${lang === "tr" ? "Turkish" : "English"}
+- Respond in ${tx("api.respondLang", lang)}
 - Never diagnose — suggest when to see a nephrologist
 
 OUTPUT FORMAT (strict JSON):

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { claim } = body;
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!claim || typeof claim !== "string" || claim.trim().length < 10) {
       return NextResponse.json({ error: "Please provide a more detailed health claim to verify." }, { status: 400 });
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     const systemPrompt = `You are a health news fact-checker and scientific literacy expert. Analyze health claims critically using evidence-based medicine principles. Be honest about uncertainty.
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return JSON with this exact structure:
 {

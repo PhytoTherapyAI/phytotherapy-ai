@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     const symptoms = Array.isArray(body.symptoms)
       ? body.symptoms.filter((s: string) => VALID_SYMPTOMS.includes(s))
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     if (symptoms.length === 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "En az bir semptom seçin" : "Select at least one symptom" },
+        { error: tx("api.selectSymptom", lang) },
         { status: 400 }
       );
     }
@@ -99,7 +100,7 @@ RULES:
 - Provide inhaler technique tips
 - Trigger management advice
 - Use PubMed-backed evidence
-- Respond in ${lang === "tr" ? "Turkish" : "English"}
+- Respond in ${tx("api.respondLang", lang)}
 - Never diagnose — suggest when to see a pulmonologist
 
 OUTPUT FORMAT (strict JSON):

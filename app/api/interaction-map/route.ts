@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -17,13 +18,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     // Must be authenticated
     const authHeader = request.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Giriş yapmanız gerekiyor" : "Authentication required" },
+        { error: tx("api.authRequired", lang) },
         { status: 401 }
       );
     }
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     if (!meds || meds.length < 2) {
       return NextResponse.json(
-        { error: lang === "tr" ? "En az 2 ilaç gerekli" : "At least 2 medications required" },
+        { error: tx("api.interactionMap.min2Meds", lang) },
         { status: 400 }
       );
     }
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
 
     const systemPrompt = `You are a drug interaction specialist. Analyze ALL pairwise interactions between the given medications.
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "nodes": [
     { "id": "medication_name", "label": "Display Name", "dosage": "dosage if known" }
@@ -90,7 +91,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısız" : "Analysis failed" },
+        { error: tx("api.analysisFailed", lang) },
         { status: 500 }
       );
     }

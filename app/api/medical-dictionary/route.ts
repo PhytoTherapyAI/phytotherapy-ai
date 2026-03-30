@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { term } = body;
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!term || typeof term !== "string" || term.trim().length < 2) {
       return NextResponse.json({ error: "Please provide a valid medical term." }, { status: 400 });
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     const systemPrompt = `You are a medical dictionary assistant. Your job is to explain medical terms in simple, easy-to-understand language for patients. Always be accurate and evidence-based.
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return JSON with this exact structure:
 {

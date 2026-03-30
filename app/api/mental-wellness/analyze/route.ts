@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     // Fetch mood records (last 30 days)
     const thirtyDaysAgo = new Date();
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     if (!records || records.length < 7) {
       return NextResponse.json(
-        { error: lang === "tr" ? "AI analiz için en az 7 gunluk veri gerekli" : "Need at least 7 days of data for AI analysis" },
+        { error: tx("api.mentalWellness.minDays", lang) },
         { status: 400 }
       );
     }
@@ -92,9 +93,7 @@ export async function POST(request: NextRequest) {
           recommendations: [],
           alertLevel: "red",
           professionalReferral: true,
-          crisisMessage: lang === "tr"
-            ? "Kayıtlarinizda endise verici ifadeler tespit edildi. Lutfen hemen bir ruh sağlığı uzmaniyla veya kriz hattı (182) ile iletisime gecin. Yalniz degilsiniz."
-            : "We detected concerning language in your entries. Please reach out to a mental health professional or crisis line (988) immediately. You are not alone.",
+          crisisMessage: tx("api.mentalWellness.crisisMessage", lang),
         },
       });
     }
@@ -109,7 +108,7 @@ CRITICAL SAFETY RULES:
 - You are NOT a therapist — provide pattern observations, not diagnoses
 - Be warm, supportive, non-judgmental
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return ONLY valid JSON with this structure:
 {

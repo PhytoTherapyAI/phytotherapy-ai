@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const protocol = sanitizeInput(body.protocol || "16_8");
     const eatingWindowStart = sanitizeInput(body.eating_window_start || "12:00");
     const eatingWindowEnd = sanitizeInput(body.eating_window_end || "20:00");
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
 ${profileContext ? `PATIENT: ${profileContext}` : ""}
 ${medications.length ? `MEDICATIONS: ${medications.join(", ")}` : ""}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "fastingPlan": {
     "protocol": "${protocol}",
@@ -130,7 +131,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısiz oldu" : "Analysis failed" },
+        { error: tx("api.intermittentFasting.analysisFailed", lang) },
         { status: 500 }
       );
     }

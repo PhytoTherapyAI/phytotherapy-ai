@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -192,7 +193,8 @@ export async function POST(request: NextRequest) {
 
     // Parse body
     const body = await request.json();
-    const { date, meal_type, description, lang = "en" } = body as NutritionInput;
+    const { date, meal_type, description } = body as NutritionInput;
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!description || !description.trim()) {
       return new Response(
@@ -235,7 +237,7 @@ export async function POST(request: NextRequest) {
       ? `\n\nUser's current medications: ${medicationsList.join(", ")}\nCheck ALL foods in the meal against these medications for interactions.`
       : "\n\nUser has no medications on record. Skip food-drug alerts.";
 
-    const userPrompt = `Analyze this meal and respond in ${lang === "tr" ? "Turkish" : "English"}:
+    const userPrompt = `Analyze this meal and respond in ${tx("api.respondLang", lang)}:
 
 Meal type: ${meal_type}
 Description: ${description}

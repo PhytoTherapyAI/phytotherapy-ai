@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     const alt = Number(body.alt) || 0;
     const ast = Number(body.ast) || 0;
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     if (alt <= 0 && ast <= 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "ALT veya AST değeri gerekli" : "ALT or AST value required" },
+        { error: tx("api.liverMonitor.altOrAst", lang) },
         { status: 400 }
       );
     }
@@ -77,7 +78,7 @@ RULES:
 - AST/ALT ratio interpretation: >2 suggests alcoholic liver disease, <1 suggests NAFLD
 - Flag dangerously elevated values (ALT/AST >10x ULN = urgent)
 - Use PubMed-backed evidence
-- Respond in ${lang === "tr" ? "Turkish" : "English"}
+- Respond in ${tx("api.respondLang", lang)}
 - Never diagnose — suggest when to see a hepatologist/gastroenterologist
 
 OUTPUT FORMAT (strict JSON):

@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -20,11 +21,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const goal = sanitizeInput(body.goal || "");
     const timeframe = sanitizeInput(body.timeframe || "3 months");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!goal || goal.length < 5) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Hedefinizi açıklayın" : "Describe your goal" },
+        { error: tx("api.healthGoals.describeGoal", lang) },
         { status: 400 }
       );
     }
@@ -75,7 +76,7 @@ Create a personalized weekly action plan to achieve a health goal.
 
 ${profileContext ? `USER PROFILE: ${profileContext}` : "No profile available — give general advice."}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "goalTitle": "Clear, measurable version of the goal",
   "timeframe": "${timeframe}",
@@ -115,7 +116,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Plan oluşturulamadı" : "Failed to create plan" },
+        { error: tx("api.healthGoals.planFailed", lang) },
         { status: 500 }
       );
     }

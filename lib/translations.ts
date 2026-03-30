@@ -6143,6 +6143,52 @@ const commonToolKeys: Record<string, TranslationEntry> = {
     en: "Tell someone you trust how you are feeling.",
     tr: "Guvendiginiz birine nasil hissettiginizi anlatin.",
   },
+
+  // ── API Route Batch 3 ────────────────────────
+  "api.authRequired": {
+    en: "Authentication required",
+    tr: "Giriş yapmanız gerekiyor",
+  },
+  "api.analysisFailed": {
+    en: "Analysis failed",
+    tr: "Analiz başarısız",
+  },
+  "api.healthGoals.describeGoal": {
+    en: "Describe your goal",
+    tr: "Hedefinizi açıklayın",
+  },
+  "api.healthGoals.planFailed": {
+    en: "Failed to create plan",
+    tr: "Plan oluşturulamadı",
+  },
+  "api.interactionMap.min2Meds": {
+    en: "At least 2 medications required",
+    tr: "En az 2 ilaç gerekli",
+  },
+  "api.intermittentFasting.analysisFailed": {
+    en: "Analysis failed",
+    tr: "Analiz başarısız oldu",
+  },
+  "api.kidneyDashboard.creatinineOrEgfr": {
+    en: "Creatinine or eGFR value required",
+    tr: "Kreatinin veya eGFR değeri gerekli",
+  },
+  "api.labelReader.enterIngredients": {
+    en: "Please enter the ingredients list",
+    tr: "Lütfen içerik listesini giriniz",
+  },
+  "api.liverMonitor.altOrAst": {
+    en: "ALT or AST value required",
+    tr: "ALT veya AST değeri gerekli",
+  },
+  "api.mentalWellness.minDays": {
+    en: "Need at least 7 days of data for AI analysis",
+    tr: "AI analiz için en az 7 günlük veri gerekli",
+  },
+  "api.mentalWellness.crisisMessage": {
+    en: "We detected concerning language in your entries. Please reach out to a mental health professional or crisis line (988) immediately. You are not alone.",
+    tr: "Kayıtlarınızda endişe verici ifadeler tespit edildi. Lütfen hemen bir ruh sağlığı uzmanıyla veya kriz hattı (182) ile iletişime geçin. Yalnız değilsiniz.",
+  },
 }
 Object.assign(t, commonToolKeys)
 

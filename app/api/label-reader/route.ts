@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -19,11 +20,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const productName = sanitizeInput(body.productName || "");
     const ingredients = sanitizeInput(body.ingredients || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!ingredients || ingredients.length < 5) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lutfen icerik listesini giriniz" : "Please enter the ingredients list" },
+        { error: tx("api.labelReader.enterIngredients", lang) },
         { status: 400 }
       );
     }
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
 
 Product name: ${productName || "Unknown"}
 Ingredients: ${ingredients}
-Language: ${lang === "tr" ? "Turkish" : "English"}
+Language: ${tx("api.respondLang", lang)}
 
 Analyze and return JSON:
 
@@ -58,7 +59,7 @@ Analyze and return JSON:
 }`;
 
     const result = await askGeminiJSON(
-      `Analyze this food label. Product: ${productName || "Unknown"}. Ingredients: ${ingredients}. Respond in ${lang === "tr" ? "Turkish" : "English"}.`,
+      `Analyze this food label. Product: ${productName || "Unknown"}. Ingredients: ${ingredients}. Respond in ${tx("api.respondLang", lang)}.`,
       prompt
     );
     return NextResponse.json(result);

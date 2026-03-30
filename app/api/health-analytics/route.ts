@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
 import { askGeminiJSON } from "@/lib/gemini"
+import { tx } from "@/lib/translations"
 import {
   generateHealthTimeline,
   generatePeerBenchmarks,
@@ -105,13 +106,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { lang } = await req.json()
+    const body = await req.json()
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr"
     const timeline = generateHealthTimeline(user.id, 6)
     const anomalies = detectAnomalies(timeline)
     const predictions = generatePredictions(timeline)
     const recent30 = timeline.slice(-30)
 
-    const systemPrompt = `You are a health analytics AI assistant for Phytotherapy.ai. Analyze the user's health timeline data and provide evidence-based insights. Respond in ${lang === "tr" ? "Turkish" : "English"}. Return valid JSON only.`
+    const systemPrompt = `You are a health analytics AI assistant for Phytotherapy.ai. Analyze the user's health timeline data and provide evidence-based insights. Respond in ${tx("api.respondLang", lang)}. Return valid JSON only.`
 
     const prompt = `Analyze this health data and return JSON with this structure:
 {
