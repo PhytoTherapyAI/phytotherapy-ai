@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { type ClinicalTest, type ClinicalTestThreshold } from "@/lib/clinical-tests-data"
 import { RotateCcw, ChevronDown, ChevronUp, FileText, AlertTriangle, Heart, ExternalLink, Share2 } from "lucide-react"
+import { tx, type Lang } from "@/lib/translations"
 
 interface ClinicalTestResultProps {
   test: ClinicalTest
@@ -99,7 +100,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle className="w-5 h-5 text-red-500" />
             <span className="font-medium text-red-600 dark:text-red-400 text-sm">
-              {lang === "tr" ? "Profesyonel destek önerilir" : "Professional support recommended"}
+              {tx("clinicalResult.professionalSupport", lang as Lang)}
             </span>
           </div>
         )}
@@ -113,9 +114,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
         <div className="flex gap-3">
           <Heart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
           <p className="text-sm text-foreground/80">
-            {lang === "tr"
-              ? "Bu test bir tarama aracıdır ve tıbbi teşhis yerine geçmez. Sonuçlarınız ne olursa olsun, ruh sağlığınız önemlidir ve yardım aramak güçlü bir adımdır."
-              : "This is a screening tool and does not replace a medical diagnosis. Whatever your results, your mental health matters and seeking help is a sign of strength."}
+            {tx("clinicalResult.compassionateNote", lang as Lang)}
           </p>
         </div>
       </Card>
@@ -124,7 +123,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
       <button onClick={() => setShowDetails(!showDetails)}
         className="w-full flex items-center justify-between p-4 rounded-lg border border-border hover:bg-muted/30 transition-colors mb-4">
         <span className="text-sm font-medium">
-          {lang === "tr" ? "Bu ne anlama geliyor?" : "What does this mean?"}
+          {tx("clinicalResult.whatDoesThisMean", lang as Lang)}
         </span>
         {showDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
       </button>
@@ -132,7 +131,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
       {showDetails && (
         <Card className="p-4 mb-4">
           <p className="text-xs text-muted-foreground mb-3">
-            {lang === "tr" ? "Puan aralıkları" : "Score ranges"} — {test.source}
+            {tx("clinicalResult.scoreRanges", lang as Lang)} — {test.source}
           </p>
           <div className="space-y-2">
             {test.thresholds.map((t, i) => (
@@ -150,7 +149,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
 
           {/* Answer breakdown */}
           <div className="mt-4 pt-4 border-t border-border">
-            <p className="text-xs text-muted-foreground mb-2">{lang === "tr" ? "Cevaplarınız" : "Your answers"}</p>
+            <p className="text-xs text-muted-foreground mb-2">{tx("clinicalResult.yourAnswers", lang as Lang)}</p>
             <div className="flex gap-1 flex-wrap">
               {answers.map((a, i) => (
                 <span key={i} className="w-7 h-7 rounded-lg text-xs flex items-center justify-center font-medium"
@@ -170,7 +169,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
       {pastResults.length > 0 && (
         <Card className="p-4 mb-4">
           <h4 className="text-sm font-medium mb-2">
-            {lang === "tr" ? "Geçmiş Sonuçlarınız" : "Your Past Results"}
+            {tx("clinicalResult.pastResults", lang as Lang)}
           </h4>
           <div className="space-y-1">
             {pastResults.map((r: any, i: number) => (
@@ -189,7 +188,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
       <div className="space-y-3">
         <Button onClick={onRetake} variant="outline" className="w-full gap-2">
           <RotateCcw className="w-4 h-4" />
-          {lang === "tr" ? "Testi Tekrarla" : "Retake Test"}
+          {tx("clinicalResult.retake", lang as Lang)}
         </Button>
 
         {isHighRisk && (
@@ -197,7 +196,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
             target="_blank" rel="noopener noreferrer">
             <Button className="w-full gap-2 bg-red-600 hover:bg-red-700 text-white">
               <ExternalLink className="w-4 h-4" />
-              {lang === "tr" ? "Uzman Bul" : "Find a Professional"}
+              {tx("clinicalResult.findProfessional", lang as Lang)}
             </Button>
           </a>
         )}

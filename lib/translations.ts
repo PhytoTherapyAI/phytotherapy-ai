@@ -5698,6 +5698,67 @@ const commonToolKeys: Record<string, TranslationEntry> = {
 
   // ── Supplement Dialog ──
   "supp.analyzeCustom": { en: "Analyze", tr: "Asistan analizi:" },
+
+  // ── Clinical Test Result ──
+  "clinicalResult.professionalSupport": { en: "Professional support recommended", tr: "Profesyonel destek onerilir" },
+  "clinicalResult.compassionateNote": { en: "This is a screening tool and does not replace a medical diagnosis. Whatever your results, your mental health matters and seeking help is a sign of strength.", tr: "Bu test bir tarama aracidir ve tibbi teshis yerine gecmez. Sonuclariniz ne olursa olsun, ruh sagliginiz onemlidir ve yardim aramak guclu bir adimdir." },
+  "clinicalResult.whatDoesThisMean": { en: "What does this mean?", tr: "Bu ne anlama geliyor?" },
+  "clinicalResult.scoreRanges": { en: "Score ranges", tr: "Puan araliklari" },
+  "clinicalResult.yourAnswers": { en: "Your answers", tr: "Cevaplariniz" },
+  "clinicalResult.pastResults": { en: "Your Past Results", tr: "Gecmis Sonuclariniz" },
+  "clinicalResult.retake": { en: "Retake Test", tr: "Testi Tekrarla" },
+  "clinicalResult.findProfessional": { en: "Find a Professional", tr: "Uzman Bul" },
+
+  // ── Clinical Test Runner ──
+  "clinicalRunner.crisisTitle": { en: "Reaching out for help is an important and brave step", tr: "Yardim almak onemli ve cesurca bir adimdir" },
+  "clinicalRunner.crisisMessage": { en: "If you are having thoughts of harming yourself, please reach out for professional support right away.", tr: "Kendinize zarar verme dusunceleriniz varsa, lutfen hemen profesyonel destek alin." },
+  "clinicalRunner.turkeyLine": { en: "Turkey Crisis Line", tr: "Turkiye Intihar Onleme" },
+  "clinicalRunner.emergency": { en: "Emergency", tr: "Acil Yardim" },
+  "clinicalRunner.endTest": { en: "End the test", tr: "Testi sonlandir" },
+  "clinicalRunner.question": { en: "Question", tr: "Soru" },
+  "clinicalRunner.back": { en: "Back", tr: "Geri" },
+  "clinicalRunner.seeResults": { en: "See Results", tr: "Sonuclari Gor" },
+  "clinicalRunner.next": { en: "Next", tr: "Ileri" },
+
+  // ── SEO Assistant ──
+  "seo.title": { en: "AI SEO Copilot", tr: "AI SEO Yardimcisi" },
+  "seo.score": { en: "SEO Score", tr: "SEO Skoru" },
+  "seo.keywords": { en: "Keywords", tr: "Anahtar Kelimeler" },
+  "seo.readability": { en: "Readability", tr: "Okunabilirlik" },
+  "seo.issues": { en: "Issues & Suggestions", tr: "Sorunlar & Oneriler" },
+  "seo.titles": { en: "Title Suggestions", tr: "Baslik Onerileri" },
+  "seo.generate": { en: "Generate Titles", tr: "Baslik Oner" },
+  "seo.generating": { en: "Generating...", tr: "Olusturuluyor..." },
+  "seo.use_this": { en: "Use this", tr: "Bunu kullan" },
+  "seo.words": { en: "words", tr: "kelime" },
+  "seo.sentences": { en: "sentences", tr: "cumle" },
+  "seo.min_read": { en: "min read", tr: "dk okuma" },
+  "seo.headings": { en: "headings", tr: "baslik" },
+  "seo.found": { en: "Found", tr: "Bulunan" },
+  "seo.missing": { en: "Missing", tr: "Eksik" },
+  "seo.easy": { en: "Easy to read", tr: "Kolay okunur" },
+  "seo.moderate": { en: "Moderate", tr: "Orta duzey" },
+  "seo.hard": { en: "Hard to read", tr: "Zor okunur" },
+  "seo.complex_terms": { en: "Complex Terms", tr: "Karmasik Terimler" },
+  "seo.simplify_hint": { en: "Consider using simpler language for patients", tr: "Hastalar icin daha basit dil kullanmayi dusunun" },
+  "seo.avg_sentence_length": { en: "Avg. sentence length", tr: "Ort. cumle uzunlugu" },
+
+  // ── Video URL Input ──
+  "video.label": { en: "Video URL", tr: "Video Baglantisi" },
+  "video.placeholder": { en: "Paste YouTube or Vimeo link...", tr: "YouTube veya Vimeo linkini yapistir..." },
+  "video.supported": { en: "Supported: YouTube, Vimeo", tr: "Desteklenen: YouTube, Vimeo" },
+  "video.valid": { en: "Video detected", tr: "Video algilandi" },
+  "video.invalid": { en: "Invalid video URL", tr: "Gecersiz video linki" },
+  "video.preview": { en: "Preview", tr: "Onizleme" },
+  "video.openOriginal": { en: "Open original", tr: "Orijinali ac" },
+
+  // ── Today View ──
+  "todayView.waterMaxWarning": { en: "Please stop! Risk of water intoxication.", tr: "Lutfen daha fazla icme! Su zehirlenmesi riski var." },
+
+  // ── Daily Care Card ──
+  "dailyCare.title": { en: "Today's Care Plan", tr: "Bugununn Saglik Plani" },
+  "dailyCare.refresh": { en: "Refresh", tr: "Yenile" },
+  "dailyCare.allCompleted": { en: "You completed today's plan, amazing!", tr: "Bugunku planini tamamladin, harikasin!" },
 }
 Object.assign(t, commonToolKeys)
 

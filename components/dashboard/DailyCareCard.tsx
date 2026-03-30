@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import {
   Leaf,
   Footprints,
@@ -199,7 +200,7 @@ export function DailyCareCard() {
             </div>
             <div className="min-w-0">
               <h3 className="text-sm font-bold leading-snug">
-                {isTr ? "Bugünün Sağlık Planı" : "Today's Care Plan"}
+                {tx("dailyCare.title", lang)}
               </h3>
               <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
                 {plan.greeting}
@@ -212,7 +213,7 @@ export function DailyCareCard() {
               fetchPlan()
             }}
             className="flex-shrink-0 rounded-lg p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-            title={isTr ? "Yenile" : "Refresh"}
+            title={tx("dailyCare.refresh", lang)}
           >
             <RefreshCw className="h-3.5 w-3.5" />
           </button>
@@ -256,7 +257,7 @@ export function DailyCareCard() {
                   isCompleted ? "bg-primary/10 text-primary" : style.badge
                 }`}>
                   <IconComponent className="h-2.5 w-2.5" />
-                  {isTr ? CATEGORY_LABELS[card.category]?.tr : CATEGORY_LABELS[card.category]?.en}
+                  {CATEGORY_LABELS[card.category]?.[lang]}
                 </span>
                 {card.duration && (
                   <span className="flex items-center gap-0.5 text-[9px] text-muted-foreground">
@@ -307,7 +308,7 @@ export function DailyCareCard() {
       {completionPercent === 100 && (
         <div className="mx-5 mb-4 rounded-lg bg-primary/10 px-3 py-2.5 text-center">
           <p className="text-xs font-bold text-primary">
-            {isTr ? "🎉 Bugünkü planını tamamladın, harikasın!" : "🎉 You completed today's plan, amazing!"}
+            {"🎉 " + tx("dailyCare.allCompleted", lang)}
           </p>
         </div>
       )}

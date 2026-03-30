@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { type ClinicalTest, type ClinicalTestThreshold } from "@/lib/clinical-tests-data"
 import { ChevronLeft, ChevronRight, Phone, AlertTriangle, ShieldAlert } from "lucide-react"
+import { tx, type Lang } from "@/lib/translations"
 
 interface ClinicalTestRunnerProps {
   test: ClinicalTest
@@ -105,21 +106,17 @@ export function ClinicalTestRunner({ test, lang, onComplete }: ClinicalTestRunne
         <div className="max-w-md text-center text-white">
           <ShieldAlert className="w-16 h-16 mx-auto mb-6 animate-pulse" />
           <h2 className="text-2xl font-bold mb-4">
-            {lang === "tr"
-              ? "Yardım almak önemli ve cesurca bir adımdır"
-              : "Reaching out for help is an important and brave step"}
+            {tx("clinicalRunner.crisisTitle", lang as Lang)}
           </h2>
           <p className="text-lg mb-6 text-white/90">
-            {lang === "tr"
-              ? "Kendinize zarar verme düşünceleriniz varsa, lütfen hemen profesyonel destek alın."
-              : "If you are having thoughts of harming yourself, please reach out for professional support right away."}
+            {tx("clinicalRunner.crisisMessage", lang as Lang)}
           </p>
           <div className="space-y-3 mb-8">
             <a href="tel:182" className="flex items-center justify-center gap-3 bg-white text-red-600 font-bold py-4 px-6 rounded-xl text-lg">
-              <Phone className="w-6 h-6" /> 182 — {lang === "tr" ? "Türkiye İntihar Önleme" : "Turkey Crisis Line"}
+              <Phone className="w-6 h-6" /> 182 — {tx("clinicalRunner.turkeyLine", lang as Lang)}
             </a>
             <a href="tel:112" className="flex items-center justify-center gap-3 bg-white/20 text-white font-bold py-3 px-6 rounded-xl">
-              <Phone className="w-5 h-5" /> 112 — {lang === "tr" ? "Acil Yardım" : "Emergency"}
+              <Phone className="w-5 h-5" /> 112 — {tx("clinicalRunner.emergency", lang as Lang)}
             </a>
             <a href="tel:988" className="flex items-center justify-center gap-3 bg-white/20 text-white font-bold py-3 px-6 rounded-xl">
               <Phone className="w-5 h-5" /> 988 — Suicide & Crisis Lifeline (US)
@@ -127,7 +124,7 @@ export function ClinicalTestRunner({ test, lang, onComplete }: ClinicalTestRunne
           </div>
           <button onClick={() => setShowCrisisOverlay(false)}
             className="text-white/60 underline text-sm hover:text-white/80">
-            {lang === "tr" ? "Testi sonlandır" : "End the test"}
+            {tx("clinicalRunner.endTest", lang as Lang)}
           </button>
         </div>
       </div>
@@ -171,7 +168,7 @@ export function ClinicalTestRunner({ test, lang, onComplete }: ClinicalTestRunne
           {/* Question number */}
           <div className="text-center mb-2">
             <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: `${test.color}15`, color: test.color }}>
-              {lang === "tr" ? "Soru" : "Question"} {currentStep + 1}
+              {tx("clinicalRunner.question", lang as Lang)} {currentStep + 1}
             </span>
           </div>
 
@@ -219,20 +216,20 @@ export function ClinicalTestRunner({ test, lang, onComplete }: ClinicalTestRunne
         <Button variant="ghost" size="sm" onClick={goBack} disabled={currentStep === 0 || isAnimating}
           className="gap-1">
           <ChevronLeft className="w-4 h-4" />
-          {lang === "tr" ? "Geri" : "Back"}
+          {tx("clinicalRunner.back", lang as Lang)}
         </Button>
 
         {currentStep === test.questions.length - 1 && allAnswered ? (
           <Button onClick={handleSubmit} style={{ backgroundColor: test.color }}
             className="text-white gap-1">
-            {lang === "tr" ? "Sonuçları Gör" : "See Results"}
+            {tx("clinicalRunner.seeResults", lang as Lang)}
             <ChevronRight className="w-4 h-4" />
           </Button>
         ) : (
           <Button variant="ghost" size="sm" onClick={goForward}
             disabled={answers[currentStep] === null || currentStep >= test.questions.length - 1 || isAnimating}
             className="gap-1">
-            {lang === "tr" ? "İleri" : "Next"}
+            {tx("clinicalRunner.next", lang as Lang)}
             <ChevronRight className="w-4 h-4" />
           </Button>
         )}

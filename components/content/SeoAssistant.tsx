@@ -9,6 +9,7 @@ import {
   Lightbulb, Type, FileText, Hash, Clock, Gauge, ChevronDown,
   ChevronUp, Loader2, Wand2, RefreshCw,
 } from "lucide-react"
+import { tx, type Lang } from "@/lib/translations"
 
 // ── SEO Analysis Engine ──
 
@@ -229,31 +230,8 @@ export function SeoAssistant({ title, summary, body, tags, lang, onTitleSuggesti
   const scoreColor = analysis.score >= 80 ? "#22C55E" : analysis.score >= 60 ? "#F59E0B" : analysis.score >= 40 ? "#F97316" : "#EF4444"
   const circumference = 2 * Math.PI * 36
 
-  const t = (key: string) => {
-    const map: Record<string, Record<string, string>> = {
-      title: { en: "AI SEO Copilot", tr: "AI SEO Yardımcısı" },
-      score: { en: "SEO Score", tr: "SEO Skoru" },
-      keywords: { en: "Keywords", tr: "Anahtar Kelimeler" },
-      readability: { en: "Readability", tr: "Okunabilirlik" },
-      issues: { en: "Issues & Suggestions", tr: "Sorunlar & Öneriler" },
-      titles: { en: "Title Suggestions", tr: "Başlık Önerileri" },
-      generate: { en: "Generate Titles", tr: "Başlık Öner" },
-      generating: { en: "Generating...", tr: "Oluşturuluyor..." },
-      use_this: { en: "Use this", tr: "Bunu kullan" },
-      words: { en: "words", tr: "kelime" },
-      sentences: { en: "sentences", tr: "cümle" },
-      min_read: { en: "min read", tr: "dk okuma" },
-      headings: { en: "headings", tr: "başlık" },
-      found: { en: "Found", tr: "Bulunan" },
-      missing: { en: "Missing", tr: "Eksik" },
-      easy: { en: "Easy to read", tr: "Kolay okunur" },
-      moderate: { en: "Moderate", tr: "Orta düzey" },
-      hard: { en: "Hard to read", tr: "Zor okunur" },
-      complex_terms: { en: "Complex Terms", tr: "Karmaşık Terimler" },
-      simplify_hint: { en: "Consider using simpler language for patients", tr: "Hastalar için daha basit dil kullanmayı düşünün" },
-    }
-    return map[key]?.[lang] || key
-  }
+  const l = lang as Lang
+  const t = (key: string) => tx(`seo.${key}`, l)
 
   const Section = ({ id, icon: Icon, label, children, badge }: { id: string; icon: any; label: string; children: React.ReactNode; badge?: React.ReactNode }) => {
     const isOpen = expanded === id
@@ -351,7 +329,7 @@ export function SeoAssistant({ title, summary, body, tags, lang, onTitleSuggesti
           }>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">{lang === "tr" ? "Ort. cümle uzunluğu" : "Avg. sentence length"}</span>
+              <span className="text-muted-foreground">{t("avg_sentence_length")}</span>
               <span className="font-medium">{analysis.avgWordsPerSentence} {t("words")}</span>
             </div>
             <div className="h-1.5 bg-muted rounded-full overflow-hidden">

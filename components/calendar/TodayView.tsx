@@ -701,7 +701,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
   // Stable water message — only changes on glass count change
   const n = userName?.split(" ")[0] || ""
   const getStableWaterMessage = useCallback(() => {
-    if (glasses >= waterLimits.max) return tr ? "⚠️ Lütfen daha fazla içme! Su zehirlenmesi riski var." : "⚠️ Please stop! Risk of water intoxication."
+    if (glasses >= waterLimits.max) return "⚠️ " + tx("todayView.waterMaxWarning", lang)
     if (glasses > waterTarget + 5) return getRandom(tr ? [
       "🐳 Yavaşla şampiyon! Böbreklerin rica ediyor!",
       "🚰 Evin su sayacı endişeli şu an!",

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { parseVideoUrl, type ParsedVideo } from "@/lib/video-utils"
 import { Video, Check, AlertCircle, Youtube, X, ExternalLink } from "lucide-react"
+import { tx, type Lang } from "@/lib/translations"
 
 interface VideoUrlInputProps {
   value: string
@@ -27,14 +28,15 @@ export function VideoUrlInput({ value, onChange, lang = "en" }: VideoUrlInputPro
     if (value) handleChange(value)
   }, [])
 
+  const l = lang as Lang
   const t = {
-    label: lang === "tr" ? "Video Bağlantısı" : "Video URL",
-    placeholder: lang === "tr" ? "YouTube veya Vimeo linkini yapıştır..." : "Paste YouTube or Vimeo link...",
-    supported: lang === "tr" ? "Desteklenen: YouTube, Vimeo" : "Supported: YouTube, Vimeo",
-    valid: lang === "tr" ? "Video algılandı" : "Video detected",
-    invalid: lang === "tr" ? "Geçersiz video linki" : "Invalid video URL",
-    preview: lang === "tr" ? "Önizleme" : "Preview",
-    open: lang === "tr" ? "Orijinali aç" : "Open original",
+    label: tx("video.label", l),
+    placeholder: tx("video.placeholder", l),
+    supported: tx("video.supported", l),
+    valid: tx("video.valid", l),
+    invalid: tx("video.invalid", l),
+    preview: tx("video.preview", l),
+    open: tx("video.openOriginal", l),
   }
 
   const isValid = parsed?.isValid
