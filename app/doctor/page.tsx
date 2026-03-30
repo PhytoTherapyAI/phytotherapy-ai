@@ -4,6 +4,7 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/lib/auth-context"
 import { DoctorShell } from "@/components/doctor/DoctorShell"
 import { useLang } from "@/components/layout/language-toggle"
@@ -100,9 +101,11 @@ export default function DoctorPage() {
 
   return (
     <DoctorShell>
-    <div className="mx-auto max-w-5xl px-4 md:px-8 py-8 space-y-5">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}
+      className="mx-auto max-w-5xl px-4 md:px-8 py-8 space-y-5">
       {/* ── AI Clinical Copilot Greeting ── */}
-      <div className="rounded-2xl border bg-gradient-to-r from-primary/5 to-sage/5 p-5 dark:from-primary/10 dark:to-sage/10">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+        className="rounded-2xl border bg-gradient-to-r from-primary/5 to-sage/5 p-5 dark:from-primary/10 dark:to-sage/10">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -322,7 +325,7 @@ export default function DoctorPage() {
       )}
 
       <p className="text-center text-[10px] text-muted-foreground/50">{tx("disclaimer.tool", lang)}</p>
-    </div>
+    </motion.div>
     </DoctorShell>
   )
 }

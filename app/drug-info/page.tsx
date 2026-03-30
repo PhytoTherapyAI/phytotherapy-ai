@@ -3,6 +3,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Pill, Search, Loader2, LogIn, AlertTriangle, Shield, ChevronDown, ChevronUp,
   ShieldCheck, Sparkles, ArrowRight,
