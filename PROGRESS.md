@@ -1,6 +1,63 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 30 Mart 2026 (v27.0 — Performance + i18n %79 + API/Security tests PASS)
+> Son güncelleme: 30 Mart 2026 (v28.0 — i18n 95%+ / Skeletons / Hydration / Full QA PASS)
+
+---
+
+## Oturum 30 Mart 2026 (Session 3) — i18n Completion + UX Polish + QA
+
+### Phase 1: i18n Completion ✅ (95%+ coverage)
+- **New helpers:** `txObj()` (bilingual object extraction) + `txp()` (parameterized translation with `{key}` interpolation) added to translations.ts
+- **Array selection ternaries (18):** Merged TR/EN array pairs into bilingual `{en, tr}` arrays in 14 files (addiction-recovery, allergy-map, anxiety-toolkit, cancer-screening, depression-screening, health-goals, mens-health, postpartum-support, pregnancy-tracker, ptsd-support, sexual-health, symptom-checker, MonthView, WeeklySummaryCard)
+- **Object property ternaries (85+):** Converted to `txObj()` or `[lang]` bracket access in 14 files (badges, biomarker-trends, cancer-support, courses, caffeine-tracker, first-aid, health-challenges, health-forum, AffiliateLinks, DarkKnowledgeCard, QuickActions, seasonal-health, supplement-marketplace, allergy-map)
+- **Template literal ternaries (15):** Converted to `txp()` with parameterized keys in 13 files including full email template rewrites (verification-approved, verification-rejected)
+- **Remaining page ternaries (27):** Converted obj access + plural patterns + trimester ordinals in 17 files
+- **40+ new translation keys** added to translations.ts
+- **Final count:** ~29 ternaries remain — all are locale strings (`toLocaleDateString`), asymmetric key mappings, or functional patterns. Zero translatable strings remain unconverted.
+- **i18n coverage: 95%+** (up from 79%)
+
+### Phase 2: Loading Skeletons ✅
+- **15 `loading.tsx` files** created for key pages: dashboard, health-assistant, calendar, profile, blood-test, interaction-checker, health-analytics, badges, family, health-goals, symptom-checker, courses, wrapped, doctor
+- **`PageSkeleton` component** with 3 variants (default card grid, form, list) — reusable across all pages
+- **8 pages** had inline Loader2 spinners replaced with structured PageSkeleton: profile, calendar, family, badges, health-analytics, wrapped, notifications, biomarker-trends
+- **Dashboard** spinner replaced with full structured skeleton matching actual layout
+
+### Phase 3: Hydration Fixes ✅
+- **footer.tsx:** `suppressHydrationWarning` on year span
+- **TodayView.tsx:** Module-level `TODAY` → `getTodayString()` function; confetti `Math.random()` → deterministic index-based `useMemo` values
+- **SeasonalCard.tsx:** `suppressHydrationWarning` on date span
+- **dashboard/page.tsx:** Hour-based greeting → `useState` + `useEffect`
+- **appointment-prep:** `suppressHydrationWarning` on date paragraph
+- **404 page:** Created bilingual not-found.tsx (EN/TR)
+
+### Phase 4: Full Functional Test ✅ (Demo Account)
+| Page | Status | Notes |
+|------|--------|-------|
+| Landing (/) | ✅ PASS | Hero, animations, CTA buttons |
+| Login (/auth/login) | ✅ PASS | Google/Facebook OAuth, demo button |
+| Dashboard | ✅ PASS | Health score 51, meds 0/3, water 4/8, social proof |
+| Health Assistant | ✅ PASS | Suggested questions, chat input |
+| Interaction Checker | ✅ PASS | 3-step flow, medication input |
+| Medical Analysis | ✅ PASS | Blood test + radiology tabs |
+| Profile | ✅ PASS | Demo data, 100% completion |
+| Calendar | ✅ PASS | Today view, meds, supplements, streak 13 |
+| Language Toggle | ✅ PASS | Instant EN↔TR switch |
+| Dark/Light Mode | ✅ PASS | Both themes clean |
+| Mobile (375px) | ✅ PASS | No overflow, responsive layout |
+| Console Errors | ✅ ZERO | No errors across all tested pages |
+
+### Phase 5: Demo Polish ✅
+- Moved loading.tsx from /chat to /health-assistant (correct route)
+- Removed orphan /supplements/loading.tsx
+- Bilingual 404 page
+
+### Summary — Session 3 (30 Mart 2026)
+- **i18n coverage:** 95%+ (from 79%), ~1,340 translation keys
+- **Loading skeletons:** 15 pages + PageSkeleton component
+- **Hydration fixes:** 5 files fixed, zero SSR/CSR mismatches
+- **Functional test:** 12/12 scenarios PASS, zero console errors
+- **Build:** Zero errors, 324 static pages
+- **10 commits**, all pushed
 
 ---
 
