@@ -1,6 +1,37 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 28 Mart 2026 (v22.0 — Phase 7-13 tamamlandı, Radyoloji Analizi eklendi, i18n merkezi çeviri %92, Phase 14-20 planlandı)
+> Son güncelleme: 30 Mart 2026 (v26.0 — Performance optimizasyonu + i18n tx() migration %68 tamamlandı)
+
+---
+
+## Oturum 30 Mart 2026 — Performance + i18n Migration
+
+### Phase 1: Performance Audit & Fix ✅
+- **Build errors fixed:** orphaned code in trigger-sos, type error in dashboard, 3 duplicate translation keys
+- **Dynamic imports:** Dashboard page — 9 heavy cards (DailySummaryCard, DailyCareCard, BiologicalAgeCard, MetabolicPortfolio, WashoutCountdown, WeeklySummaryCard, SymptomPatternCard, BossFightCard, SeasonalCard) now use next/dynamic with skeleton loading
+- **Parallel API calls:** 4 API routes converted from sequential to Promise.all (chat, interaction, health-analytics, alcohol-tracker)
+- **Caching:** PubMed API — 30-minute cache headers (s-maxage=1800, stale-while-revalidate=3600)
+- **New component:** `components/ui/skeleton.tsx` — base Skeleton component for loading states
+- **Build:** Zero errors, 324 static pages
+
+### Phase 2: i18n tx() Migration 🔧 (68% complete)
+- **Started at:** 1,544 `lang === "tr"` ternaries across 307 files
+- **Migrated:** ~1,054 ternaries in 22 batches (150+ files processed)
+- **Remaining:** 490 ternaries across:
+  - App pages: 191 (mostly object/array/template literal ternaries that can't be simple-converted)
+  - API routes: 214 (Gemini prompt language selection — lower priority)
+  - Components: 58 (residual template literals with ${variable})
+  - Lib files: 27 (email templates, data files)
+- **Translation keys added:** ~1,200+ new keys in lib/translations.ts
+- **23 commits** pushed to remote, all deployed via Vercel
+
+### What Remains (Next Session)
+1. **i18n — API routes (214 ternaries):** Most are Gemini prompt language instructions (`lang === "tr" ? "Türkçe yanıt ver" : "Respond in English"`). These are functional but could be centralized.
+2. **i18n — Residual page ternaries (191):** Object property access (`isTr ? obj.tr : obj.en`), array selection (`lang === "tr" ? ARR_TR : ARR_EN`), template literals with variables (`${count} items`). These require different migration patterns.
+3. **i18n — Component residuals (58):** Template literal ternaries with dynamic values. Need parameterized tx() or keep as-is.
+4. **Phase 3: Functional testing of 166+ tools** — not started
+5. **Phase 4: API endpoint tests** — not started
+6. **Phase 5: Security tests** — not started
 
 ---
 
