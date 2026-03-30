@@ -94,6 +94,25 @@ export async function POST(req: Request) {
         completed_via: channel,
       }, { onConflict: "user_id,check_date" })
 
+      // Acknowledge any recent unacknowledged nudge
+      try {
+        const { data: recentNudge } = await supabase
+          .from("nudge_log")
+          .select("id")
+          .eq("user_id", subscription.user_id)
+          .eq("acknowledged", false)
+          .order("sent_at", { ascending: false })
+          .limit(1)
+          .single()
+
+        if (recentNudge) {
+          await supabase
+            .from("nudge_log")
+            .update({ acknowledged: true, acknowledged_at: new Date().toISOString() })
+            .eq("id", recentNudge.id)
+        }
+      } catch { /* no unack nudge, fine */ }
+
       replyText = MESSAGE_TEMPLATES.taskCompleted[lang as "en" | "tr"]
     } else if (allPauseWords.includes(messageText)) {
       // ── PAUSE ──

@@ -203,10 +203,67 @@ export async function POST(req: Request) {
   }
 
 
+  // ── Phase 2: Nudge Check ──
+  let nudgesSent = 0
+  try {
+    const { checkNudgeTriggers } = await import("@/lib/nudge-engine")
+    const { buildNudgePrompt, NUDGE_FALLBACKS } = await import("@/lib/nudge-prompts")
+
+    const nudges = await checkNudgeTriggers(supabase)
+
+    for (const nudge of nudges) {
+      const nudgeSub = subscriptions?.find(s => s.user_id === nudge.userId)
+        || (await supabase.from("bot_subscriptions").select("*").eq("user_id", nudge.userId).eq("status", "active").limit(1).single()).data
+
+      if (!nudgeSub) continue
+
+      let message: string
+      try {
+        const { askGemini } = await import("@/lib/gemini")
+        const { systemPrompt, userPrompt } = buildNudgePrompt(nudge.trigger, nudge.context, nudge.lang)
+        message = await askGemini(userPrompt, systemPrompt)
+        if (message.length > 1600) message = message.slice(0, 1597) + "..."
+      } catch {
+        const name = String(nudge.context.userName || "friend")
+        if (nudge.trigger === "streak") {
+          message = NUDGE_FALLBACKS.streak[nudge.lang](name, Number(nudge.context.streakDays || 7))
+        } else if (nudge.trigger === "risk_alert") {
+          message = NUDGE_FALLBACKS.risk_alert[nudge.lang](
+            String(nudge.context.medication || "medication"),
+            String(nudge.context.supplement || "supplement")
+          )
+        } else {
+          message = NUDGE_FALLBACKS.drop_off[nudge.lang](name, Number(nudge.context.missedDays || 2))
+        }
+      }
+
+      let success = false
+      if (nudgeSub.channel === "whatsapp") {
+        success = await sendWhatsApp(nudgeSub.channel_id, message)
+      } else if (nudgeSub.channel === "telegram") {
+        success = await sendTelegram(nudgeSub.channel_id, message)
+      }
+
+      if (success) {
+        nudgesSent++
+        await supabase.from("nudge_log").insert({
+          user_id: nudge.userId,
+          trigger_type: nudge.trigger,
+          channel: nudgeSub.channel,
+          message_content: message,
+          context: nudge.context,
+        })
+      }
+    }
+  } catch (nudgeErr) {
+    console.error("[BOT-SEND] Nudge phase error:", nudgeErr)
+  }
+
   return NextResponse.json({
     sent,
     failed,
     total: subscriptions.length,
+    nudges: nudgesSent,
     timestamp: now.toISOString(),
   })
 }

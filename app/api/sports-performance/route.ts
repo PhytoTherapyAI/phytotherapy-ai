@@ -21,28 +21,49 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const sportType = sanitizeInput(body.sport_type || "");
-    const goal = sanitizeInput(body.goal || "");
+    const rawInput = sanitizeInput(body.raw_input || "");
+    // Fallback: accept structured fields for backward compatibility
+    let sportType = sanitizeInput(body.sport_type || "");
+    let goal = sanitizeInput(body.goal || "");
     const trainingFrequency = Number(body.training_frequency) || 3;
     const currentSupplements = sanitizeInput(body.current_supplements || "");
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
-    if (!sportType) {
+    // If raw_input provided, extract intent via Gemini
+    let extractedIntent = null;
+    if (rawInput) {
+      const extractPrompt = `Extract sports/fitness information from this input. Return JSON:
+{
+  "sportType": "the sport or activity (e.g., CrossFit, swimming, bodybuilding)",
+  "goal": "primary goal (e.g., shoulder mobility, endurance, weight loss, muscle gain)",
+  "specificFocus": "any specific body part or technique focus mentioned",
+  "experienceLevel": "beginner/intermediate/advanced (infer from context, default intermediate)",
+  "frequency": number of training days per week (default 3),
+  "currentSupplements": "any supplements mentioned"
+}
+Input: "${rawInput}"`;
+
+      try {
+        const intentResult = await askGeminiJSON(extractPrompt, "You extract structured data from fitness descriptions. Return only valid JSON.");
+        extractedIntent = typeof intentResult === "string" ? JSON.parse(intentResult) : intentResult;
+        // Use extracted values
+        sportType = extractedIntent.sportType || sportType;
+        goal = extractedIntent.goal || goal;
+      } catch {
+        // If intent extraction fails, require structured fields
+      }
+    }
+
+    if (!sportType && !rawInput) {
       return NextResponse.json(
         { error: tx("api.sports.selectSport", lang) },
         { status: 400 }
       );
     }
 
-    if (!goal) {
-      return NextResponse.json(
-        { error: tx("api.sports.selectGoal", lang) },
-        { status: 400 }
-      );
-    }
-
     // Fetch user profile for medication interaction check
     let profileContext = "";
+    let userName = "";
     const authHeader = request.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -52,7 +73,7 @@ export async function POST(request: NextRequest) {
         if (user) {
           const { data: profile } = await supabase
             .from("user_profiles")
-            .select("age, gender, kidney_disease, liver_disease, chronic_conditions")
+            .select("full_name, age, gender, kidney_disease, liver_disease, chronic_conditions")
             .eq("id", user.id)
             .single();
 
@@ -68,6 +89,7 @@ export async function POST(request: NextRequest) {
             .eq("user_id", user.id);
 
           if (profile) {
+            userName = profile.full_name || "";
             const parts: string[] = [];
             if (profile.age) parts.push(`Age: ${profile.age}`);
             if (profile.gender) parts.push(`Gender: ${profile.gender}`);
@@ -79,10 +101,9 @@ export async function POST(request: NextRequest) {
             profileContext = parts.join(". ");
           }
 
-          // Save to query history
           await supabase.from("query_history").insert({
             user_id: user.id,
-            query_text: `Sports Performance: ${sportType} - ${goal}`,
+            query_text: `Sports Performance: ${rawInput || `${sportType} - ${goal}`}`,
             query_type: "sports" as const,
           });
         }
@@ -91,7 +112,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // PubMed search for sports supplement evidence
+    // PubMed search
     let pubmedContext = "";
     try {
       const query = `${sportType} ${goal} supplement performance`;
@@ -105,68 +126,82 @@ export async function POST(request: NextRequest) {
       // Continue without PubMed
     }
 
-    const systemPrompt = `You are Phytotherapy.ai's sports performance advisor. You provide evidence-based supplement, nutrition, and recovery guidance for athletes.
+    const specificFocus = extractedIntent?.specificFocus || "";
+    const experienceLevel = extractedIntent?.experienceLevel || "intermediate";
+    const freq = extractedIntent?.frequency || trainingFrequency;
 
-RULES:
-1. Always check supplement recommendations against user's medications for interactions
-2. Use evidence grades: A (strong RCT evidence), B (moderate evidence), C (traditional/limited)
-3. Include specific dosing protocols with timing relative to training
-4. Flag any supplement-medication interactions clearly
-5. Be sport-specific in recommendations
-6. Respond in ${tx("api.respondLang", lang)}
-7. Never prescribe — recommend consulting a sports medicine doctor for medical concerns
+    const systemPrompt = `You are Phytotherapy.ai's elite sports performance coach. You give hyper-personalized, evidence-based guidance.
 
-${profileContext ? `USER PROFILE: ${profileContext}` : "No user profile available — provide general guidance and note that medication interaction check requires a profile."}
+CRITICAL RULES:
+1. NEVER give generic advice. Every sentence must reference the user's specific sport, goal, and situation.
+2. Instead of "Creatine improves strength", say "For your ${sportType} training${specificFocus ? `, especially the ${specificFocus} work` : ""}, creatine monohydrate at 5g/day will..."
+3. Always check supplements against user medications for interactions
+4. Use evidence grades: A (strong RCT), B (moderate), C (traditional/limited)
+5. Be sport-specific in ALL recommendations
+6. Respond in ${lang === "tr" ? "Turkish" : "English"}
+7. Never diagnose — recommend consulting a sports medicine doctor for medical concerns
+${userName ? `8. Address the user as ${userName} when natural` : ""}
 
+${profileContext ? `USER PROFILE: ${profileContext}` : "No profile — provide general guidance and note medication check requires login."}
 ${currentSupplements ? `CURRENT SUPPLEMENTS: ${currentSupplements}` : ""}
-
 ${pubmedContext ? `RELEVANT RESEARCH:\n${pubmedContext}` : ""}
 
-Sport: ${sportType}
-Goal: ${goal}
-Training frequency: ${trainingFrequency} days/week
+The user is ${experienceLevel === "advanced" ? "an advanced" : experienceLevel === "beginner" ? "a beginner" : "an intermediate"} ${sportType} athlete${specificFocus ? ` focusing on ${specificFocus}` : ""}.
+Primary goal: ${goal}. Training ${freq} days/week.
 
 Respond in this exact JSON format:
 {
+  "todayFocus": {
+    "title": "Single most important recommendation for today",
+    "description": "2-3 sentences explaining why, personalized to their sport/goal",
+    "keyAction": "One concrete thing to do TODAY",
+    "evidenceGrade": "A" | "B" | "C"
+  },
   "supplementPlan": [
     {
       "name": "Supplement name",
       "dose": "Specific dose",
-      "timing": "When to take relative to training",
+      "timing": "When relative to training",
       "evidenceGrade": "A" | "B" | "C",
-      "benefit": "What it does for this sport/goal",
+      "benefit": "Sport-specific benefit (personalized!)",
       "safety": "safe" | "caution" | "avoid",
-      "safetyNote": "Interaction warning or safety note if any",
-      "duration": "How long to take"
+      "safetyNote": "Interaction note if any",
+      "duration": "How long"
+    }
+  ],
+  "safetyWarnings": [
+    {
+      "supplement": "Name",
+      "medication": "Drug name if relevant",
+      "severity": "avoid" | "caution" | "monitor",
+      "why": "One clear sentence explaining the risk",
+      "whatToDo": "One clear action step"
     }
   ],
   "nutritionTiming": {
-    "preWorkout": { "timing": "When", "foods": ["food 1", "food 2"], "macros": "Macro breakdown" },
-    "duringWorkout": { "timing": "When applicable", "foods": ["food/drink"], "notes": "Guidance" },
-    "postWorkout": { "timing": "When", "foods": ["food 1", "food 2"], "macros": "Macro breakdown" },
-    "generalTips": ["tip 1", "tip 2"]
+    "preWorkout": { "timing": "When", "foods": ["food 1"], "macros": "Breakdown" },
+    "duringWorkout": { "timing": "When", "foods": ["item"], "notes": "Guidance" },
+    "postWorkout": { "timing": "When", "foods": ["food 1"], "macros": "Breakdown" },
+    "generalTips": ["tip 1"]
   },
   "recoveryProtocol": [
-    { "method": "Recovery method", "frequency": "How often", "duration": "How long", "benefit": "Why it helps" }
+    { "method": "Method", "frequency": "How often", "duration": "How long", "benefit": "Sport-specific benefit" }
   ],
   "injuryPrevention": [
-    { "area": "Body area or type", "exercise": "Preventive exercise", "frequency": "How often" }
+    { "area": "Area", "exercise": "Exercise", "frequency": "How often" }
   ],
-  "overtrainingWarnings": ["warning sign 1", "sign 2"],
-  "weeklyStructure": "Brief suggested weekly training structure for ${trainingFrequency} days",
-  "interactionWarnings": ["Any medication-supplement interaction warnings"],
-  "sources": [{ "title": "Source title", "url": "https://pubmed.ncbi.nlm.nih.gov/..." }]
+  "overtrainingWarnings": ["warning 1"],
+  "weeklyStructure": "Sport-specific weekly plan for ${freq} days",
+  "interactionWarnings": ["Any drug-supplement warnings"],
+  "sources": [{ "title": "Title", "url": "https://pubmed.ncbi.nlm.nih.gov/..." }]
 }
 
-IMPORTANT:
-- If user takes medications, CHECK every supplement against them
-- Mark "avoid" safety for any supplement that interacts with their medications
-- Include at least 3 supplements with evidence grades
-- Include at least 3 recovery methods
-- Be specific to the sport type`;
+Include at least 3 supplements, 3 recovery methods. Every recommendation must be sport-specific.`;
 
     const result = await askGeminiJSON(
-      `Provide a comprehensive sports performance plan for a ${sportType} athlete with ${goal} as their goal, training ${trainingFrequency} days per week.${currentSupplements ? ` Currently taking: ${currentSupplements}.` : ""}`,
+      rawInput
+        ? `Based on the user's input: "${rawInput}". Create a comprehensive, hyper-personalized sports performance plan.`
+        : `Provide a sports performance plan for a ${sportType} athlete with ${goal} as goal, training ${freq} days/week.${currentSupplements ? ` Currently taking: ${currentSupplements}.` : ""}`,
       systemPrompt
     );
 
@@ -178,6 +213,11 @@ IMPORTANT:
         { error: tx("api.sports.analysisFailed", lang) },
         { status: 500 }
       );
+    }
+
+    // Attach extracted intent to response
+    if (extractedIntent) {
+      parsed.extractedIntent = extractedIntent;
     }
 
     return NextResponse.json(parsed);

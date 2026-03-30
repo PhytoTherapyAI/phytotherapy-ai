@@ -3,6 +3,10 @@
     {
       "path": "/api/bot-send",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/nudge-check",
+      "schedule": "0 15 * * *"
     }
   ]
 }
