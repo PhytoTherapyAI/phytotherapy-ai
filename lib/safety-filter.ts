@@ -20,20 +20,28 @@ const RED_FLAGS_EN = [
 
 const RED_FLAGS_TR = [
   "göğüs ağrısı",
+  "göğsüm ağrıyor",
+  "göğsüm acıyor",
   "kalp krizi",
   "nefes darlığı",
   "nefes alamıyorum",
+  "nefes alamıyor",
   "bilinç kaybı",
   "bayıldı",
+  "bayılma",
   "nöbet",
   "felç",
   "inme",
   "kanama",
+  "ağır kanama",
   "intihar",
+  "kendime zarar",
   "zehirlenme",
+  "zehirlendim",
   "doz aşımı",
   "ani görme kaybı",
   "anafilaksi",
+  "alerji şoku",
 ];
 
 export interface RedFlagResult {
