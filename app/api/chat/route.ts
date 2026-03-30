@@ -7,6 +7,7 @@ import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
       const stream = new ReadableStream({
         start(controller) {
           controller.enqueue(new TextEncoder().encode(
-            `🚨 **${redFlagCheck.language === "tr" ? "ACİL UYARI" : "EMERGENCY WARNING"}**\n\n${emergencyMsg}`
+            `🚨 **${tx("api.chat.emergencyLabel", redFlagCheck.language === "tr" ? "tr" : "en")}**\n\n${emergencyMsg}`
           ));
           controller.close();
         },
@@ -198,24 +199,16 @@ This rule exists because giving dosage advice without knowing the user's medicat
       console.error("Gemini API call failed:", geminiError);
       const errMsg = geminiError instanceof Error ? geminiError.message : "Unknown error";
 
-      const isTr = lang === "tr";
+      const chatLang = lang === "tr" ? "tr" as const : "en" as const;
       let userMessage: string;
       if (errMsg.includes("QUOTA_EXHAUSTED")) {
-        userMessage = isTr
-          ? "⚠️ Günlük AI kullanım limitine ulaşıldı. Birkaç saat içinde tekrar deneyin. Bu sürede PubMed'de doğrudan araştırma yapabilirsiniz: [pubmed.ncbi.nlm.nih.gov](https://pubmed.ncbi.nlm.nih.gov)"
-          : "⚠️ **Daily AI quota reached.** Our free-tier API limit has been exceeded for today.\n\nThe quota resets at midnight Pacific Time. In the meantime:\n- Browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research\n- Try again in a few hours\n\nWe're working on upgrading our capacity!";
+        userMessage = tx("api.chat.quotaExhaustedTr", chatLang);
       } else if (errMsg.includes("429") || errMsg.includes("quota") || errMsg.includes("rate")) {
-        userMessage = isTr
-          ? "⚠️ AI servisimiz geçici olarak yoğun. Lütfen 30 saniye bekleyip tekrar deneyin.\n\nBu sürede [PubMed](https://pubmed.ncbi.nlm.nih.gov/) üzerinden doğrudan araştırma yapabilirsiniz."
-          : "⚠️ Our AI service is temporarily busy. Please wait 30 seconds and try again.\n\nIn the meantime, you can browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research.";
+        userMessage = tx("api.chat.rateLimited", chatLang);
       } else if (errMsg.includes("SAFETY") || errMsg.includes("blocked")) {
-        userMessage = isTr
-          ? "Kanıta dayalı sağlık ve fitoterapi soruları konusunda uzmanım. Diğer konularda yardımcı olamam, ancak sağlıkla ilgili her şeyi sorabilirsiniz! Örneğin: takviye önerileri, ilaç-bitki etkileşimleri, kan tahlili yorumlama veya yaşam tarzı tavsiyeleri."
-          : "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice.";
+        userMessage = tx("api.chat.safetyBlocked", chatLang);
       } else {
-        userMessage = isTr
-          ? "⚠️ AI servisimize bağlanırken bir hata oluştu. Lütfen birkaç dakika sonra tekrar deneyin."
-          : "⚠️ An error occurred while connecting to our AI service. Please try again in a few moments.";
+        userMessage = tx("api.chat.connectionError", chatLang);
       }
 
       const fallbackStream = new ReadableStream({
@@ -269,22 +262,13 @@ This rule exists because giving dosage advice without knowing the user's medicat
         } catch (error) {
           console.error("Stream error:", error);
           const errMsg = error instanceof Error ? error.message : "";
-          const isTr2 = lang === "tr";
+          const streamLang = lang === "tr" ? "tr" as const : "en" as const;
           if (errMsg.includes("SAFETY") || errMsg.includes("blocked") || errMsg.includes("RECITATION") || errMsg.includes("content policy")) {
-            controller.enqueue(encoder.encode(isTr2
-              ? "Kanıta dayalı sağlık ve fitoterapi soruları konusunda uzmanım. Diğer konularda yardımcı olamam, ancak sağlıkla ilgili her şeyi sorabilirsiniz!"
-              : "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice."
-            ));
+            controller.enqueue(encoder.encode(tx("api.chat.safetyBlocked", streamLang)));
           } else if (errMsg.includes("429") || errMsg.includes("quota")) {
-            controller.enqueue(encoder.encode(isTr2
-              ? "⚠️ Günlük AI kullanım limitine ulaşıldı. Birkaç saat içinde tekrar deneyin."
-              : "⚠️ Daily AI quota reached. Please try again in a few hours."
-            ));
+            controller.enqueue(encoder.encode(tx("api.chat.quotaShort", streamLang)));
           } else {
-            controller.enqueue(encoder.encode(isTr2
-              ? "\n\n⚠️ Yanıt oluşturulurken bir hata oluştu. Lütfen tekrar deneyin."
-              : "\n\n⚠️ An error occurred while generating the response. Please try again."
-            ));
+            controller.enqueue(encoder.encode(tx("api.chat.streamError", streamLang)));
           }
           controller.close();
         }

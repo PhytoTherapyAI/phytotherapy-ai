@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -19,11 +20,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const diet = sanitizeInput(body.diet || "");
     const crp = body.crp || null;
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!diet || diet.length < 10) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lutfen diyetinizi anlatiniz" : "Please describe your diet" },
+        { error: tx("api.antiInflam.describeDiet", lang) },
         { status: 400 }
       );
     }
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
 
 Diet description: ${diet}
 CRP level: ${crp ? crp + " mg/L" : "Not provided"}
-Language: ${lang === "tr" ? "Turkish" : "English"}
+Language: ${tx("api.respondLang", lang)}
 
 Return JSON:
 
@@ -56,7 +57,7 @@ Return JSON:
 }`;
 
     const result = await askGeminiJSON(
-      `Analyze this diet for inflammatory potential: "${diet}". CRP: ${crp || "not provided"}. Respond in ${lang === "tr" ? "Turkish" : "English"}.`,
+      `Analyze this diet for inflammatory potential: "${diet}". CRP: ${crp || "not provided"}. Respond in ${tx("api.respondLang", lang)}.`,
       prompt
     );
     return NextResponse.json(result);

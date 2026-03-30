@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -22,18 +23,18 @@ export async function POST(request: NextRequest) {
     const ageUnit = body.age_unit || "years";
     const concern = sanitizeInput(body.concern || "");
     const notes = sanitizeInput(body.notes || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!concern) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lutfen bir sorun secin" : "Please select a concern" },
+        { error: tx("api.child.selectConcern", lang) },
         { status: 400 }
       );
     }
 
     if (childAge <= 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lutfen cocugun yasini girin" : "Please enter the child's age" },
+        { error: tx("api.child.enterAge", lang) },
         { status: 400 }
       );
     }
@@ -76,7 +77,7 @@ STRICT RULES:
 3. Always recommend consulting a pediatrician for persistent or concerning symptoms
 4. Be age-appropriate in all recommendations (a 3-month-old vs a 10-year-old need very different advice)
 5. Include clear "when to seek immediate help" guidance
-6. Respond in ${lang === "tr" ? "Turkish" : "English"}
+6. Respond in ${tx("api.respondLang", lang)}
 7. Be warm, reassuring, but never dismissive of parental concerns
 8. For fever in infants under 3 months, ALWAYS recommend immediate medical attention
 
@@ -122,7 +123,7 @@ IMPORTANT:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısiz oldu, tekrar deneyin" : "Analysis failed, please try again" },
+        { error: tx("api.child.analysisFailed", lang) },
         { status: 500 }
       );
     }

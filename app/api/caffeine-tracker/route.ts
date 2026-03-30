@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const drinks: Record<string, number> = body.drinks || {};
 
     // Calculate total caffeine
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
 
     if (drinkBreakdown.length === 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "En az bir içecek ekleyin" : "Add at least one drink" },
+        { error: tx("api.caffeine.addDrink", lang) },
         { status: 400 }
       );
     }
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
 ${profileContext ? `PATIENT: ${profileContext}` : ""}
 ${medications.length ? `MEDICATIONS: ${medications.join(", ")}` : ""}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "dailyTotal": ${totalCaffeine},
   "safeLimit": 400,
@@ -140,7 +141,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısız oldu" : "Analysis failed" },
+        { error: tx("api.caffeine.analysisFailed", lang) },
         { status: 500 }
       );
     }

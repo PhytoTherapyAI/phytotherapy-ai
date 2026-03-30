@@ -9,6 +9,7 @@ import {
   type BloodTestCategory,
 } from "@/lib/blood-reference";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -159,7 +160,7 @@ export async function POST(request: NextRequest) {
     const prompt = buildAnalysisPrompt(results, abnormal, profileContext, hasMedications, testDate, testDateApprox);
 
     // Step 4: Get Gemini analysis
-    const userLang = lang === "tr" ? "Turkish" : "English";
+    const userLang = tx("api.respondLang", lang === "tr" ? "tr" : "en");
     const systemPrompt = BLOOD_TEST_PROMPT + `\n\nIMPORTANT: Respond entirely in ${userLang}.` + (hasMedications
       ? "\n\nThe user has medications on file. Cross-check all supplement recommendations against their medications."
       : "\n\nIMPORTANT: The user has NO medications on file. For supplement dosages, add a note: 'Please add your medications to your profile for personalized safety checks.'");

@@ -11,6 +11,7 @@ import { sendVerificationEmail } from "@/lib/emails/send"
 import { renderApprovedEmail } from "@/lib/emails/verification-approved"
 import { renderRejectedEmail } from "@/lib/emails/verification-rejected"
 import { createAuditEntry } from "@/lib/secure-storage"
+import { tx } from "@/lib/translations"
 
 interface VerifyRequest {
   targetUserId: string       // user being verified
@@ -130,7 +131,7 @@ export async function POST(req: Request) {
         })
         emailResult = await sendVerificationEmail(
           targetEmail,
-          lang === "tr" ? "Tebrikler, Profiliniz Onaylandı! ✅" : "Congratulations, Your Profile is Verified! ✅",
+          tx("api.admin.approvedSubject", lang as "en" | "tr"),
           html
         )
       } else {
@@ -141,7 +142,7 @@ export async function POST(req: Request) {
         })
         emailResult = await sendVerificationEmail(
           targetEmail,
-          lang === "tr" ? "Profil Onay Süreciniz Hakkında" : "Regarding Your Profile Verification",
+          tx("api.admin.rejectedSubject", lang as "en" | "tr"),
           html
         )
       }

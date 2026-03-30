@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const drinks: Record<string, number> = body.drinks || {};
 
     let totalUnits = 0;
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     if (drinkBreakdown.length === 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "En az bir içecek ekleyin" : "Add at least one drink" },
+        { error: tx("api.alcohol.addDrink", lang) },
         { status: 400 }
       );
     }
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
 ${profileContext ? `PATIENT: ${profileContext}` : ""}
 ${medications.length ? `MEDICATIONS: ${medications.join(", ")}` : ""}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "weeklyUnits": ${Math.round(totalUnits * 10) / 10},
   "WHOLimit": { "male": 14, "female": 7 },
@@ -129,7 +130,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısız oldu" : "Analysis failed" },
+        { error: tx("api.alcohol.analysisFailed", lang) },
         { status: 500 }
       );
     }

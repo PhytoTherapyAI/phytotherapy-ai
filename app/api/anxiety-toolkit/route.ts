@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -49,45 +50,35 @@ export async function POST(request: NextRequest) {
           gad7Severity: null,
           techniques: [
             {
-              name: lang === "tr" ? "5-4-3-2-1 Topraklama" : "5-4-3-2-1 Grounding",
-              steps: lang === "tr"
-                ? [
-                    "5 gorebildiginiz sey sayın",
-                    "4 dokunabildiginiz sey sayın",
-                    "3 duyabildiginiz sey sayın",
-                    "2 koklayabildiginiz sey sayın",
-                    "1 tadabildiginiz sey sayın",
-                  ]
-                : [
-                    "Name 5 things you can SEE",
-                    "Name 4 things you can TOUCH",
-                    "Name 3 things you can HEAR",
-                    "Name 2 things you can SMELL",
-                    "Name 1 thing you can TASTE",
-                  ],
+              name: tx("api.anxiety.grounding541", lang),
+              steps: [
+                tx("api.anxiety.groundingSee", lang),
+                tx("api.anxiety.groundingTouch", lang),
+                tx("api.anxiety.groundingHear", lang),
+                tx("api.anxiety.groundingSmell", lang),
+                tx("api.anxiety.groundingTaste", lang),
+              ],
             },
             {
-              name: lang === "tr" ? "Kare Nefes (4-4-4-4)" : "Box Breathing (4-4-4-4)",
-              steps: lang === "tr"
-                ? ["4 saniye nefes alın", "4 saniye tutun", "4 saniye verin", "4 saniye bekleyin", "5 kez tekrarlayın"]
-                : ["Breathe in for 4 seconds", "Hold for 4 seconds", "Breathe out for 4 seconds", "Hold for 4 seconds", "Repeat 5 times"],
+              name: tx("api.anxiety.boxBreathing", lang),
+              steps: [
+                tx("api.anxiety.breatheIn", lang),
+                tx("api.anxiety.hold1", lang),
+                tx("api.anxiety.breatheOut", lang),
+                tx("api.anxiety.hold2", lang),
+                tx("api.anxiety.repeat5", lang),
+              ],
             },
           ],
           cognitiveDistortions: [],
           recommendations: [
-            lang === "tr"
-              ? "Panik atak tehlikeli degildir ve gecicidir. Simdi guvendesiniz."
-              : "A panic attack is not dangerous and will pass. You are safe right now.",
-            lang === "tr"
-              ? "Topraklama egzersizini yapin ve nefes almaya odaklanin."
-              : "Focus on the grounding exercise and controlled breathing.",
-            lang === "tr"
-              ? "Panik ataklar tekrarliyorsa bir ruh sağlığı uzmaniyla görüşmek önemlidir."
-              : "If panic attacks recur, it is important to see a mental health professional.",
+            tx("api.anxiety.panicSafe", lang),
+            tx("api.anxiety.panicGrounding", lang),
+            tx("api.anxiety.panicRecur", lang),
           ],
           alertLevel: "yellow",
           professionalReferral: true,
-          crisisLine: lang === "tr" ? "Kriz hattı: 182" : "Crisis line: 988",
+          crisisLine: tx("api.anxiety.crisisLine", lang),
         },
       });
     }
@@ -125,7 +116,7 @@ CRITICAL SAFETY RULES:
 - Check medications for anxiety-related interactions (caffeine + stimulants, etc.)
 - Be warm, supportive, validating
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return ONLY valid JSON:
 {
@@ -174,7 +165,7 @@ If GAD-7 >= 15 or anxiety_level >= 9, set alertLevel to "red".`;
         panicProtocol: false,
         gad7Score,
         gad7Severity,
-        crisisLine: lang === "tr" ? "Kriz hattı: 182" : "Crisis line: 988",
+        crisisLine: tx("api.anxiety.crisisLine", lang),
       },
     });
   } catch (err) {

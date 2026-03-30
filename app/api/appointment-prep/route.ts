@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const concerns = sanitizeInput(body.concerns || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     // Fetch ALL user data
     const [
@@ -171,7 +172,7 @@ DAILY CHECK-INS (last 2 weeks): ${checkInsText}
 
 ${concerns ? `PATIENT CONCERNS: ${concerns}` : ""}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "patientOverview": "2-3 sentence summary of patient's current health status",
   "currentMedications": [
@@ -210,7 +211,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Ozet olusturulamadi" : "Failed to generate summary" },
+        { error: tx("api.apptPrep.generateFailed", lang) },
         { status: 500 }
       );
     }

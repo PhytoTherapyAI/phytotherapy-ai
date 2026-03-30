@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -66,12 +67,8 @@ export async function POST(request: NextRequest) {
         result: {
           alertLevel: "red",
           crisisAlert: true,
-          crisisMessage: lang === "tr"
-            ? "Cok zor bir donemden gectiginizi anliyoruz. Lutfen hemen bir uzmana ulasin. Yalniz degilsiniz."
-            : "We understand you're going through an incredibly difficult time. Please reach out to a professional right now. You are not alone.",
-          crisisLines: lang === "tr"
-            ? ["Kriz Hattı: 182", "ALO Sosyal Destek: 183"]
-            : ["Suicide & Crisis Lifeline: 988", "SAMHSA Helpline: 1-800-662-4357"],
+          crisisMessage: tx("api.recovery.crisisMessage", lang),
+          crisisLines: [tx("api.recovery.crisisLine1", lang), tx("api.recovery.crisisLine2", lang)],
           cleanDays: clean_days,
           milestone: null,
           cravingAnalysis: null,
@@ -119,7 +116,7 @@ CRITICAL SAFETY RULES:
 - Be encouraging, celebratory for milestones, compassionate for struggles
 - Validate their courage in tracking and seeking help
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return ONLY valid JSON:
 {
@@ -168,9 +165,7 @@ If craving >= 8 or relapse risk is true, set alertLevel to at least "yellow" and
         nextMilestone,
         substance,
         crisisAlert: false,
-        crisisLines: lang === "tr"
-          ? ["Kriz Hattı: 182", "ALO Sosyal Destek: 183", "Yesil Ay: 0800 888 0 888"]
-          : ["SAMHSA Helpline: 1-800-662-4357", "Crisis Line: 988", "AA Hotline: check local listings"],
+        crisisLines: [tx("api.recovery.responseCrisisLine1", lang), tx("api.recovery.responseCrisisLine2", lang), tx("api.recovery.responseCrisisLine3", lang)],
       },
     });
   } catch (err) {

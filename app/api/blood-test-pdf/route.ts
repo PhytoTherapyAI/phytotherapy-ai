@@ -10,6 +10,7 @@ import {
   type BloodTestCategory,
 } from "@/lib/blood-reference";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -155,7 +156,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Step 3: Get AI analysis
-    const userLang = lang === "tr" ? "Turkish" : "English";
+    const userLang = tx("api.respondLang", lang === "tr" ? "tr" : "en");
     const analysisPrompt = `Analyze these blood test results. Respond in ${userLang}.
 
 Values: ${JSON.stringify(values)}
@@ -170,14 +171,12 @@ Total markers: ${totalMarkers}, Abnormal: ${abnormalCount}, Optimal: ${optimalCo
       analysis = JSON.parse(aiResult);
     } catch {
       analysis = {
-        summary: lang === "tr" ? "Analiz tamamlandı." : "Analysis complete.",
+        summary: tx("api.bloodPdf.analysisComplete", lang === "tr" ? "tr" : "en"),
         abnormalFindings: [],
         supplementRecommendations: [],
         lifestyleAdvice: [],
         doctorDiscussion: [],
-        disclaimer: lang === "tr"
-          ? "Bu sonuçlar bilgilendirme amaçlıdır. Lütfen doktorunuza danışın."
-          : "These results are for informational purposes. Please consult your doctor.",
+        disclaimer: tx("api.bloodPdf.disclaimer", lang === "tr" ? "tr" : "en"),
       };
     }
 

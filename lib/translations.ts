@@ -5942,6 +5942,143 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "safety.individualVary": { en: "Individual responses may vary from person to person", tr: "Bireysel yanitlar kisiden kisiye farklilik gosterebilir" },
   "safety.latestResearch": { en: "The latest research may not yet be in our database", tr: "En guncel arastirmalar henuz veritabanina eklenmemis olabilir" },
   "safety.profileIncomplete": { en: "Profile data incomplete — personalization limited", tr: "Profil bilgisi eksik — kisisellestirme sinirli" },
+
+  // ── Medication Timing (medtime) ──
+  "medtime.morningEmpty": { en: "Morning (empty stomach)", tr: "Sabah (aç karın)" },
+  "medtime.beforeBreakfast": { en: "Before breakfast", tr: "Kahvaltıdan önce" },
+  "medtime.withBreakfast": { en: "With breakfast", tr: "Kahvaltı ile" },
+  "medtime.withLunch": { en: "With lunch", tr: "Öğle yemeği ile" },
+  "medtime.afternoon": { en: "Afternoon", tr: "Öğleden sonra" },
+  "medtime.withDinner": { en: "With dinner", tr: "Akşam yemeği ile" },
+  "medtime.evening": { en: "Evening", tr: "Akşam" },
+  "medtime.bedtime": { en: "Bedtime", tr: "Yatmadan önce" },
+  "medtime.ironLevoConflict": { en: "Keep at least 4 hours between Iron and Levothyroxine", tr: "Demir ve Levotiroksin arasında en az 4 saat bırakın" },
+  "medtime.ironCalciumConflict": { en: "Keep at least 2 hours between Iron and Calcium", tr: "Demir ve Kalsiyum arasında en az 2 saat bırakın" },
+  "medtime.hoursApart": { en: "h apart", tr: " saat ara" },
+  "medtime.caution": { en: "caution", tr: "dikkat" },
+
+  // ── Notification page strings ──
+  "notif.eventFallback": { en: "Event", tr: "Etkinlik" },
+  "notif.updateMedList": { en: "Update your medication list", tr: "İlaç listenizi güncelleyin" },
+  "notif.stayHydrated": { en: "Stay hydrated!", tr: "Su içmeyi unutma!" },
+  "notif.waterDesc": { en: "Have you hit your daily water goal? Track it in your calendar.", tr: "Günlük su hedefine ulaştın mı? Takvimden takip edebilirsin." },
+
+  // ── Relative time units ──
+  "time.minutesAgo": { en: "m ago", tr: " dk önce" },
+  "time.hoursAgo": { en: "h ago", tr: " sa önce" },
+  "time.daysAgo": { en: "d ago", tr: " gün önce" },
+
+  // ── Pregnancy tracker ──
+  "pregnancy.week1Label": { en: "Week 1", tr: "1. hafta" },
+  "pregnancy.week42Label": { en: "Week 42", tr: "42. hafta" },
+
+  // ══════════════════════════════════════════
+  // API Route Translations (batch 1)
+  // ══════════════════════════════════════════
+
+  // Shared across many API routes
+  "api.respondLang": { en: "English", tr: "Turkish" },
+
+  // addiction-recovery
+  "api.recovery.crisisMessage": {
+    en: "We understand you're going through an incredibly difficult time. Please reach out to a professional right now. You are not alone.",
+    tr: "Cok zor bir donemden gectiginizi anliyoruz. Lutfen hemen bir uzmana ulasin. Yalniz degilsiniz.",
+  },
+  "api.recovery.crisisLine1": { en: "Suicide & Crisis Lifeline: 988", tr: "Kriz Hattı: 182" },
+  "api.recovery.crisisLine2": { en: "SAMHSA Helpline: 1-800-662-4357", tr: "ALO Sosyal Destek: 183" },
+  "api.recovery.responseCrisisLine1": { en: "SAMHSA Helpline: 1-800-662-4357", tr: "Kriz Hattı: 182" },
+  "api.recovery.responseCrisisLine2": { en: "Crisis Line: 988", tr: "ALO Sosyal Destek: 183" },
+  "api.recovery.responseCrisisLine3": { en: "AA Hotline: check local listings", tr: "Yesil Ay: 0800 888 0 888" },
+
+  // alcohol-tracker
+  "api.alcohol.addDrink": { en: "Add at least one drink", tr: "En az bir içecek ekleyin" },
+  "api.alcohol.analysisFailed": { en: "Analysis failed", tr: "Analiz başarısız oldu" },
+
+  // allergy-map
+  "api.allergy.triggerRequired": { en: "Trigger name is required", tr: "Tetikleyici adi gerekli" },
+  "api.allergy.saveFailed": { en: "Failed to save", tr: "Kayıt başarısiz" },
+  "api.allergy.noAllergies": { en: "No allergies on record.", tr: "Kayıtli alerji bulunamadi." },
+  "api.allergy.analysisFailed": { en: "Analysis failed", tr: "Analiz başarısiz" },
+
+  // anti-inflammatory
+  "api.antiInflam.describeDiet": { en: "Please describe your diet", tr: "Lutfen diyetinizi anlatiniz" },
+
+  // anxiety-toolkit
+  "api.anxiety.grounding541": { en: "5-4-3-2-1 Grounding", tr: "5-4-3-2-1 Topraklama" },
+  "api.anxiety.groundingSee": { en: "Name 5 things you can SEE", tr: "5 gorebildiginiz sey sayın" },
+  "api.anxiety.groundingTouch": { en: "Name 4 things you can TOUCH", tr: "4 dokunabildiginiz sey sayın" },
+  "api.anxiety.groundingHear": { en: "Name 3 things you can HEAR", tr: "3 duyabildiginiz sey sayın" },
+  "api.anxiety.groundingSmell": { en: "Name 2 things you can SMELL", tr: "2 koklayabildiginiz sey sayın" },
+  "api.anxiety.groundingTaste": { en: "Name 1 thing you can TASTE", tr: "1 tadabildiginiz sey sayın" },
+  "api.anxiety.boxBreathing": { en: "Box Breathing (4-4-4-4)", tr: "Kare Nefes (4-4-4-4)" },
+  "api.anxiety.breatheIn": { en: "Breathe in for 4 seconds", tr: "4 saniye nefes alın" },
+  "api.anxiety.hold1": { en: "Hold for 4 seconds", tr: "4 saniye tutun" },
+  "api.anxiety.breatheOut": { en: "Breathe out for 4 seconds", tr: "4 saniye verin" },
+  "api.anxiety.hold2": { en: "Hold for 4 seconds", tr: "4 saniye bekleyin" },
+  "api.anxiety.repeat5": { en: "Repeat 5 times", tr: "5 kez tekrarlayın" },
+  "api.anxiety.panicSafe": {
+    en: "A panic attack is not dangerous and will pass. You are safe right now.",
+    tr: "Panik atak tehlikeli degildir ve gecicidir. Simdi guvendesiniz.",
+  },
+  "api.anxiety.panicGrounding": {
+    en: "Focus on the grounding exercise and controlled breathing.",
+    tr: "Topraklama egzersizini yapin ve nefes almaya odaklanin.",
+  },
+  "api.anxiety.panicRecur": {
+    en: "If panic attacks recur, it is important to see a mental health professional.",
+    tr: "Panik ataklar tekrarliyorsa bir ruh sağlığı uzmaniyla görüşmek önemlidir.",
+  },
+  "api.anxiety.crisisLine": { en: "Crisis line: 988", tr: "Kriz hattı: 182" },
+
+  // appointment-prep
+  "api.apptPrep.generateFailed": { en: "Failed to generate summary", tr: "Ozet olusturulamadi" },
+
+  // blood-test-pdf
+  "api.bloodPdf.analysisComplete": { en: "Analysis complete.", tr: "Analiz tamamlandı." },
+  "api.bloodPdf.disclaimer": {
+    en: "These results are for informational purposes. Please consult your doctor.",
+    tr: "Bu sonuçlar bilgilendirme amaçlıdır. Lütfen doktorunuza danışın.",
+  },
+
+  // caffeine-tracker
+  "api.caffeine.addDrink": { en: "Add at least one drink", tr: "En az bir içecek ekleyin" },
+  "api.caffeine.analysisFailed": { en: "Analysis failed", tr: "Analiz başarısız oldu" },
+
+  // child-health
+  "api.child.selectConcern": { en: "Please select a concern", tr: "Lutfen bir sorun secin" },
+  "api.child.enterAge": { en: "Please enter the child's age", tr: "Lutfen cocugun yasini girin" },
+  "api.child.analysisFailed": { en: "Analysis failed, please try again", tr: "Analiz başarısiz oldu, tekrar deneyin" },
+
+  // admin/verify-user
+  "api.admin.approvedSubject": { en: "Congratulations, Your Profile is Verified! ✅", tr: "Tebrikler, Profiliniz Onaylandı! ✅" },
+  "api.admin.rejectedSubject": { en: "Regarding Your Profile Verification", tr: "Profil Onay Süreciniz Hakkında" },
+
+  // chat
+  "api.chat.emergencyLabel": { en: "EMERGENCY WARNING", tr: "ACİL UYARI" },
+  "api.chat.quotaExhaustedTr": {
+    en: "⚠️ **Daily AI quota reached.** Our free-tier API limit has been exceeded for today.\n\nThe quota resets at midnight Pacific Time. In the meantime:\n- Browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research\n- Try again in a few hours\n\nWe're working on upgrading our capacity!",
+    tr: "⚠️ Günlük AI kullanım limitine ulaşıldı. Birkaç saat içinde tekrar deneyin. Bu sürede PubMed'de doğrudan araştırma yapabilirsiniz: [pubmed.ncbi.nlm.nih.gov](https://pubmed.ncbi.nlm.nih.gov)",
+  },
+  "api.chat.rateLimited": {
+    en: "⚠️ Our AI service is temporarily busy. Please wait 30 seconds and try again.\n\nIn the meantime, you can browse [PubMed](https://pubmed.ncbi.nlm.nih.gov/) directly for research.",
+    tr: "⚠️ AI servisimiz geçici olarak yoğun. Lütfen 30 saniye bekleyip tekrar deneyin.\n\nBu sürede [PubMed](https://pubmed.ncbi.nlm.nih.gov/) üzerinden doğrudan araştırma yapabilirsiniz.",
+  },
+  "api.chat.safetyBlocked": {
+    en: "I'm specialized in evidence-based health and phytotherapy questions. I can't help with other topics, but feel free to ask me anything health-related! For example: supplement recommendations, drug-herb interactions, blood test interpretation, or lifestyle advice.",
+    tr: "Kanıta dayalı sağlık ve fitoterapi soruları konusunda uzmanım. Diğer konularda yardımcı olamam, ancak sağlıkla ilgili her şeyi sorabilirsiniz! Örneğin: takviye önerileri, ilaç-bitki etkileşimleri, kan tahlili yorumlama veya yaşam tarzı tavsiyeleri.",
+  },
+  "api.chat.connectionError": {
+    en: "⚠️ An error occurred while connecting to our AI service. Please try again in a few moments.",
+    tr: "⚠️ AI servisimize bağlanırken bir hata oluştu. Lütfen birkaç dakika sonra tekrar deneyin.",
+  },
+  "api.chat.quotaShort": {
+    en: "⚠️ Daily AI quota reached. Please try again in a few hours.",
+    tr: "⚠️ Günlük AI kullanım limitine ulaşıldı. Birkaç saat içinde tekrar deneyin.",
+  },
+  "api.chat.streamError": {
+    en: "\n\n⚠️ An error occurred while generating the response. Please try again.",
+    tr: "\n\n⚠️ Yanıt oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.",
+  },
 }
 Object.assign(t, commonToolKeys)
 

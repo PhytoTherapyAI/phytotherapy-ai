@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -92,7 +93,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     // If action is "cross-check", do AI cross-check
     if (body.action === "cross-check") {
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest) {
     const triggerName = sanitizeInput(body.trigger_name || "");
     if (!triggerName) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Tetikleyici adi gerekli" : "Trigger name is required" },
+        { error: tx("api.allergy.triggerRequired", lang) },
         { status: 400 }
       );
     }
@@ -147,7 +148,7 @@ export async function POST(request: NextRequest) {
 
       if (fallbackError) {
         return NextResponse.json(
-          { error: lang === "tr" ? "Kayıt başarısiz" : "Failed to save" },
+          { error: tx("api.allergy.saveFailed", lang) },
           { status: 500 }
         );
       }
@@ -166,7 +167,7 @@ export async function POST(request: NextRequest) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function handleCrossCheck(supabase: any, userId: string, lang: string) {
+async function handleCrossCheck(supabase: any, userId: string, lang: "en" | "tr") {
   // Fetch allergies, medications, and supplements
   const [allergiesResult, medsResult, basicAllergiesResult] = await Promise.all([
     supabase
@@ -207,7 +208,7 @@ async function handleCrossCheck(supabase: any, userId: string, lang: string) {
       crossCheck: {
         conflicts: [],
         warnings: [],
-        summary: lang === "tr" ? "Kayıtli alerji bulunamadi." : "No allergies on record.",
+        summary: tx("api.allergy.noAllergies", lang),
       },
     });
   }
@@ -225,7 +226,7 @@ Cross-check the patient's allergies/intolerances against their medications and s
 ALLERGIES: ${allergiesText}
 MEDICATIONS: ${medsText}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "conflicts": [
     { "allergy": "allergy name", "conflictsWith": "medication/supplement name", "risk": "high" | "moderate" | "low", "explanation": "Why this is a concern" }
@@ -253,7 +254,7 @@ RULES:
     parsed = typeof result === "string" ? JSON.parse(result) : result;
   } catch {
     return NextResponse.json(
-      { error: lang === "tr" ? "Analiz başarısiz" : "Analysis failed" },
+      { error: tx("api.allergy.analysisFailed", lang) },
       { status: 500 }
     );
   }
