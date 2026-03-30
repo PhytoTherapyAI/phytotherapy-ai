@@ -96,9 +96,9 @@ function LoginContent() {
     setError(null);
     setSuccessMessage(null);
     if (signupPassword !== signupConfirm) { setError(tx("auth.errPasswordMismatch", lang)); return; }
-    if (signupPassword.length < 8) { setError(lang === "tr" ? "Şifre en az 8 karakter olmalıdır" : "Password must be at least 8 characters"); return; }
-    if (!/[A-Z]/.test(signupPassword)) { setError(lang === "tr" ? "Şifre en az 1 büyük harf içermelidir" : "Password must contain at least 1 uppercase letter"); return; }
-    if (!/[0-9]/.test(signupPassword)) { setError(lang === "tr" ? "Şifre en az 1 rakam içermelidir" : "Password must contain at least 1 number"); return; }
+    if (signupPassword.length < 8) { setError(tx("auth.errPasswordShort", lang)); return; }
+    if (!/[A-Z]/.test(signupPassword)) { setError(tx("auth.errPasswordUppercase", lang)); return; }
+    if (!/[0-9]/.test(signupPassword)) { setError(tx("auth.errPasswordNumber", lang)); return; }
     setIsLoading(true);
     try {
       const { error } = await signUpWithEmail(signupEmail, signupPassword, signupName);
@@ -134,7 +134,7 @@ function LoginContent() {
       if (error) { setError(error); setIsLoading(false); return; }
       window.location.href = "/";
     } catch {
-      setError("Demo login failed. Please try again.");
+      setError(tx("auth.errDemoFailed", lang));
       setIsLoading(false);
     }
   };

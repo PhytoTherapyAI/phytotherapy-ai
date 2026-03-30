@@ -295,7 +295,7 @@ export default function CoursesPage() {
                 </a>
               ) : (
                 <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-muted/50 py-2 text-sm font-medium text-muted-foreground">
-                  {lang === "tr" ? "Yakinda" : "Coming Soon"}
+                  {tx("courses.comingSoon", lang)}
                 </div>
               )}
             </div>

@@ -263,7 +263,7 @@ export default function DashboardPage() {
         {/* Beta badge */}
         <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
           <span className="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-semibold text-primary">BETA</span>
-          <span>{lang === "tr" ? "Kanıta dayalı sağlık asistanınız" : "Your evidence-based health assistant"}</span>
+          <span>{tx("dashboard.betaTagline", lang)}</span>
         </div>
       </div>
 

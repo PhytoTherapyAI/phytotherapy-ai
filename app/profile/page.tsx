@@ -1689,7 +1689,7 @@ function LinkedAccountsSection({ lang, userId }: { lang: "en" | "tr"; userId: st
       setShowForm(false);
       await fetchLinked();
     } catch {
-      setError("Failed to send invite");
+      setError(tx("profile.errInviteFailed", lang));
     } finally {
       setSending(false);
     }

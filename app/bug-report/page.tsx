@@ -203,7 +203,7 @@ export default function BugReportPage() {
             <div className="flex gap-3 flex-wrap">
               {screenshots.map((src, idx) => (
                 <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-                  <img src={src} alt="" className="w-full h-full object-cover" />
+                  <img src={src} alt={`Screenshot ${idx + 1}`} className="w-full h-full object-cover" />
                   <button onClick={() => removeScreenshot(idx)} className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5">
                     <Trash2 className="w-3 h-3" />
                   </button>

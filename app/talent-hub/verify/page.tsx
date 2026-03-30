@@ -332,7 +332,7 @@ export default function VerifyPage() {
                   {uploaded ? (
                     <div className="flex items-center gap-3 p-3 rounded-lg border border-green-500/30 bg-green-500/5">
                       {uploaded.preview ? (
-                        <img src={uploaded.preview} alt="" className="w-12 h-12 rounded-lg object-cover" />
+                        <img src={uploaded.preview} alt="Document preview" className="w-12 h-12 rounded-lg object-cover" />
                       ) : (
                         <div className="w-12 h-12 rounded-lg bg-muted flex items-center justify-center">
                           <FileText className="w-5 h-5 text-muted-foreground" />

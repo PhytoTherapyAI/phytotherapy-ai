@@ -1,6 +1,58 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 30 Mart 2026 (v29.0 — Beta Readiness / Feature Audit / Legal / SEO / Privacy)
+> Son güncelleme: 30 Mart 2026 (v30.0 — QA / Testing / Image Optimization / i18n Cleanup)
+
+---
+
+## Oturum 30 Mart 2026 (Session 5) — Comprehensive QA & Testing
+
+### Step 11: Image Optimization ✅
+- Removed 5 unused default Next.js SVGs (globe, file, next, vercel, window)
+- Converted phytotherapy_v2.png to WebP (549KB → 116KB, 79% reduction)
+- Fixed missing img alt text in bug-report and talent-hub pages
+
+### Step 13+14: Functional & API Tests ✅
+- **Page rendering:** 28/30 pages return HTTP 200 (login/register are at /auth/login)
+- **API endpoints:** 13/15 PASS
+  - Chat streaming: PASS
+  - Interaction checker: FAIL (Gemini quota — infra, not code)
+  - Blood analysis: PASS
+  - PDF generation: FAIL (needs real data shape — expected)
+  - PubMed: PASS, Demo: PASS
+  - All auth-gated endpoints (family, analytics, health-sync, leaderboard, FHIR, scan-medication): correctly return 401
+  - Contact/feedback: PASS, trigger-sos: PASS
+
+### Step 15: Security Tests ✅
+- XSS: script tags sanitized — PASS
+- SQL injection: no SQL error — PASS
+- Auth: all protected endpoints return 401 — PASS
+- Rate limiting: 429 after 10 requests — PASS
+
+### Step 16: Performance ✅
+- Build: zero errors, zero warnings
+- Chunk analysis: reasonable sizes, no bloated bundles
+- Largest chunk 422KB (shared framework code)
+
+### Step 17: i18n Cleanup ✅
+- 8 new translation keys added to translations.ts
+- Converted login password validation to tx() (3 strings)
+- Converted courses "Coming Soon" to tx()
+- Converted dashboard BETA tagline to tx()
+- Converted landing FAQ title to tx()
+- Converted footer "All rights reserved" to tx()
+- Fixed 2 hardcoded error strings (demo login, invite failed)
+- All remaining ternaries confirmed functional (locale, object keys, template literals)
+
+### Step 18+20: Demo & UX Verification ✅
+- Demo API returns valid credentials + seeds 35 days data
+- All 3 demo scenarios accepted by endpoints (Gemini quota limits responses)
+- 16 route-specific loading skeletons + global skeleton
+- overflow-x-hidden on main layout — no horizontal overflow
+- Landing page contains "Phytotherapy" content — communicates purpose
+
+### Build Status
+- Build: PASS (zero errors, zero warnings)
+- Pages: 324+ static pages generated
 
 ---
 

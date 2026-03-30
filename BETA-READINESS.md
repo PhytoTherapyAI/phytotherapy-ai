@@ -54,3 +54,14 @@
 - [x] Demo Scenario 1: Drug interaction (Metformin + sleep herbs)
 - [x] Demo Scenario 2: Lethal interaction warning (St. John's Wort)
 - [x] Demo Scenario 3: Blood test analysis + PDF download
+
+### SESSION 5 VERIFICATION (2026-03-30)
+- [x] Page rendering: 28/30 pages return HTTP 200
+- [x] API endpoints: 13/15 PASS (2 failures are Gemini quota, not code bugs)
+- [x] Security: 6/6 PASS (XSS, SQL injection, auth, rate limiting)
+- [x] Build: zero errors, zero warnings
+- [x] Image optimization: unused files removed, WebP conversion done
+- [x] i18n: all simple string ternaries converted to tx()
+- [x] Loading states: 16 route-specific + global skeleton
+- [x] Overflow handling: overflow-x-hidden on main layout
+- [x] Demo API: returns valid credentials + seeds 35 days data

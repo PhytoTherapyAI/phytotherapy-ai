@@ -425,7 +425,7 @@ export default function Home() {
       {/* ===== FAQ SECTION ===== */}
       <section className="mx-auto max-w-4xl px-4 py-16">
         <h2 className="font-heading text-2xl font-semibold text-center mb-8">
-          {lang === "tr" ? "Sık Sorulan Sorular" : "Frequently Asked Questions"}
+          {tx("common.faqTitle", lang)}
         </h2>
         <div className="space-y-4">
           {FAQ_ITEMS.map((item, i) => (
