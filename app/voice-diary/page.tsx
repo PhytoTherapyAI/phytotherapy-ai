@@ -188,9 +188,7 @@ export default function VoiceDiaryPage() {
       {/* Speech not supported warning */}
       {!isSupported && (
         <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-700 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-400">
-          {lang === "tr"
-            ? "Tarayiciniz ses tanima desteklemiyor. Metin olarak yazabilirsiniz."
-            : "Your browser does not support speech recognition. You can type your entries instead."}
+          {tx("voice.speechNotSupported", lang)}
         </div>
       )}
 
@@ -224,7 +222,7 @@ export default function VoiceDiaryPage() {
         <textarea
           value={currentText}
           onChange={(e) => setCurrentText(e.target.value)}
-          placeholder={lang === "tr" ? "Konusun veya yazın..." : "Speak or type..."}
+          placeholder={tx("voice.speakOrType", lang)}
           rows={4}
           className="w-full rounded-lg border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:border-purple-400 focus:outline-none focus:ring-1 focus:ring-purple-400"
         />

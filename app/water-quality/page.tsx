@@ -80,10 +80,10 @@ const CITIES: CityWater[] = [
 ];
 
 function getHardnessLabel(hardness: number, lang: string): string {
-  if (hardness < 120) return lang === "tr" ? "Yumuşak" : "Soft";
-  if (hardness < 180) return lang === "tr" ? "Orta Sert" : "Moderately Hard";
-  if (hardness < 300) return lang === "tr" ? "Sert" : "Hard";
-  return lang === "tr" ? "Çok Sert" : "Very Hard";
+  if (hardness < 120) return tx("water.soft", lang as "en" | "tr");
+  if (hardness < 180) return tx("water.moderatelyHard", lang as "en" | "tr");
+  if (hardness < 300) return tx("water.hard", lang as "en" | "tr");
+  return tx("water.veryHard", lang as "en" | "tr");
 }
 
 function getHardnessColor(hardness: number): string {

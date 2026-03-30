@@ -165,7 +165,7 @@ export default function ThyroidDashboardPage() {
             {/* Medication Timing */}
             {analysis.medicationTimingOptimization?.length > 0 && (
               <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-lg font-semibold">{lang === "tr" ? "İlaç Zamanlama Optimizasyonu" : "Medication Timing Optimization"}</h2>
+                <h2 className="text-lg font-semibold">{tx("thyroid.medTiming", lang)}</h2>
                 <div className="grid gap-3">
                   {analysis.medicationTimingOptimization.map((med, i) => (
                     <div key={i} className="border border-indigo-200 dark:border-indigo-800 rounded-xl p-4">
@@ -206,7 +206,7 @@ export default function ThyroidDashboardPage() {
             {/* Pregnancy Note */}
             {analysis.pregnancyNote && (
               <div className="bg-pink-50 dark:bg-pink-900/20 border border-pink-200 dark:border-pink-800 rounded-2xl p-6">
-                <h2 className="text-lg font-semibold mb-2">{lang === "tr" ? "Gebelik ve Tiroid" : "Pregnancy & Thyroid"}</h2>
+                <h2 className="text-lg font-semibold mb-2">{tx("thyroid.pregnancyNote", lang)}</h2>
                 <p className="text-sm">{analysis.pregnancyNote}</p>
               </div>
             )}

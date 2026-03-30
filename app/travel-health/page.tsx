@@ -458,7 +458,7 @@ export default function TravelHealthPage() {
           {result.generalTips?.length > 0 && (
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
-                title={lang === "tr" ? "Genel Tavsiyeler" : "General Tips"}
+                title={tx("travel.generalTips", lang)}
                 icon={Lightbulb}
                 sectionKey="tips"
                 count={result.generalTips.length}

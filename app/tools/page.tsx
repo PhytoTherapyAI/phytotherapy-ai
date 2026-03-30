@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { TOOL_CATEGORIES, searchModules, TOTAL_MODULE_COUNT } from "@/lib/tools-hierarchy"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -37,7 +38,7 @@ export default function ToolsHubPage() {
             <Sparkles className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
-            {lang === "tr" ? "Sağlık Araçları" : "Health Tools"}
+            {tx("tools.title", lang)}
           </h1>
           <p className="text-muted-foreground mt-2 max-w-lg mx-auto">
             {lang === "tr"
@@ -51,7 +52,7 @@ export default function ToolsHubPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
             className="pl-11 h-12 text-base rounded-xl"
-            placeholder={lang === "tr" ? "Araç ara... (ör: migren, uyku, ilaç)" : "Search tools... (e.g. migraine, sleep, drug)"}
+            placeholder={tx("tools.searchPlaceholder", lang)}
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -73,7 +74,7 @@ export default function ToolsHubPage() {
               ))}
               {searchResults.length > 8 && (
                 <p className="text-xs text-muted-foreground text-center py-2">
-                  +{searchResults.length - 8} {lang === "tr" ? "daha" : "more"}
+                  +{searchResults.length - 8} {tx("tools.more", lang)}
                 </p>
               )}
             </Card>
@@ -82,7 +83,7 @@ export default function ToolsHubPage() {
 
         {searchResults && searchResults.length === 0 && (
           <p className="text-center text-muted-foreground mb-8">
-            {lang === "tr" ? "Sonuç bulunamadı" : "No results found"}
+            {tx("tools.noResults", lang)}
           </p>
         )}
 
@@ -103,7 +104,7 @@ export default function ToolsHubPage() {
                         <Icon className="w-5 h-5" style={{ color: cat.color }} />
                       </div>
                       <Badge variant="outline" className="text-xs">
-                        {cat.modules.length} {lang === "tr" ? "araç" : "tools"}
+                        {cat.modules.length} {tx("tools.toolsLabel", lang)}
                       </Badge>
                     </div>
 
@@ -145,11 +146,11 @@ export default function ToolsHubPage() {
         {/* Stats footer */}
         <div className="mt-12 text-center">
           <div className="inline-flex items-center gap-6 text-sm text-muted-foreground">
-            <span>{TOOL_CATEGORIES.length} {lang === "tr" ? "kategori" : "categories"}</span>
+            <span>{TOOL_CATEGORIES.length} {tx("tools.categories", lang)}</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground" />
-            <span>{TOTAL_MODULE_COUNT} {lang === "tr" ? "araç" : "tools"}</span>
+            <span>{TOTAL_MODULE_COUNT} {tx("tools.toolsLabel", lang)}</span>
             <span className="w-1 h-1 rounded-full bg-muted-foreground" />
-            <span>{lang === "tr" ? "Sürekli güncelleniyor" : "Continuously updated"}</span>
+            <span>{tx("tools.updated", lang)}</span>
           </div>
         </div>
       </div>

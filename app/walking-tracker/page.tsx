@@ -77,7 +77,7 @@ export default function WalkingTrackerPage() {
       <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800 p-6 mb-6">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold text-green-800 dark:text-green-300 flex items-center gap-2">
-            <Target className="w-4 h-4" /> {lang === "tr" ? "Haftalık Hedef" : "Weekly Target"}
+            <Target className="w-4 h-4" /> {tx("walking.weeklyTarget", lang)}
           </h3>
           <span className="text-sm text-green-600 dark:text-green-400">{weekMinutes} / {WHO_TARGET_MINUTES} {tx("common.min", lang)}</span>
         </div>
@@ -87,7 +87,7 @@ export default function WalkingTrackerPage() {
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <p className="text-2xl font-bold text-green-700 dark:text-green-300">{weekSteps.toLocaleString()}</p>
-            <p className="text-xs text-green-600">{lang === "tr" ? "adim" : "steps"}</p>
+            <p className="text-xs text-green-600">{tx("walking.steps", lang)}</p>
           </div>
           <div>
             <p className="text-2xl font-bold text-green-700 dark:text-green-300">{weekDistance.toFixed(1)}</p>
@@ -105,15 +105,15 @@ export default function WalkingTrackerPage() {
         <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{tx("walking.addEntry", lang)}</h3>
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div>
-            <label className="block text-xs text-gray-500 mb-1">{lang === "tr" ? "Adim" : "Steps"}</label>
+            <label className="block text-xs text-gray-500 mb-1">{tx("walking.stepsLabel", lang)}</label>
             <input type="number" value={steps} onChange={(e) => setSteps(e.target.value)} placeholder="5000" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-green-500 outline-none" />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">{lang === "tr" ? "Mesafe (km)" : "Distance (km)"}</label>
+            <label className="block text-xs text-gray-500 mb-1">{tx("walking.distance", lang)}</label>
             <input type="number" step="0.1" value={distance} onChange={(e) => setDistance(e.target.value)} placeholder="3.5" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-green-500 outline-none" />
           </div>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">{lang === "tr" ? "Sure (dk)" : "Duration (min)"}</label>
+            <label className="block text-xs text-gray-500 mb-1">{tx("walking.duration", lang)}</label>
             <input type="number" value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="45" className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-green-500 outline-none" />
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function WalkingTrackerPage() {
       {/* Sarcopenia Screening */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-6">
         <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-green-500" /> {lang === "tr" ? "Yuruyus Hizi Taramasi (65+)" : "Walking Speed Screening (65+)"}
+          <TrendingUp className="w-4 h-4 text-green-500" /> {tx("walking.speedScreening", lang)}
         </h3>
         <div className="flex items-center gap-3">
           <input
@@ -133,18 +133,16 @@ export default function WalkingTrackerPage() {
             step="0.1"
             value={walkingSpeed}
             onChange={(e) => setWalkingSpeed(e.target.value)}
-            placeholder={lang === "tr" ? "Hiz (m/s)" : "Speed (m/s)"}
+            placeholder={tx("walking.speedPlaceholder", lang)}
             className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white text-sm focus:ring-2 focus:ring-green-500 outline-none"
           />
-          <span className="text-xs text-gray-400">{lang === "tr" ? "Normal: > 0.8 m/s" : "Normal: > 0.8 m/s"}</span>
+          <span className="text-xs text-gray-400">Normal: &gt; 0.8 m/s</span>
         </div>
         {sarcopeniaRisk && (
           <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
             <p className="text-sm text-amber-700 dark:text-amber-400">
-              {lang === "tr"
-                ? "0.8 m/s'nin altindaki yuruyus hizi sarkopeni (kas kaybi) riski isareti olabilir. Doktorunuza danışıniz."
-                : "Walking speed below 0.8 m/s may indicate sarcopenia (muscle loss) risk. Consult your doctor."}
+              {tx("walking.sarcopeniaWarning", lang)}
             </p>
           </div>
         )}
@@ -153,12 +151,12 @@ export default function WalkingTrackerPage() {
       {/* Recent Entries */}
       {entries.length > 0 && (
         <div className="space-y-2">
-          <h3 className="font-semibold text-gray-900 dark:text-white">{lang === "tr" ? "Son Kayıtlar" : "Recent Entries"}</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">{tx("walking.recentEntries", lang)}</h3>
           {entries.slice(0, 10).map((entry) => (
             <div key={entry.id} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
               <div className="flex items-center gap-4">
                 <span className="text-xs text-gray-400">{entry.date}</span>
-                {entry.steps > 0 && <span className="text-sm text-gray-700 dark:text-gray-300">{entry.steps.toLocaleString()} {lang === "tr" ? "adim" : "steps"}</span>}
+                {entry.steps > 0 && <span className="text-sm text-gray-700 dark:text-gray-300">{entry.steps.toLocaleString()} {tx("walking.steps", lang)}</span>}
                 {entry.distance > 0 && <span className="text-sm text-gray-500">{entry.distance} km</span>}
                 {entry.duration > 0 && <span className="text-sm text-gray-500 flex items-center gap-1"><Clock className="w-3 h-3" />{entry.duration}{tx("common.min", lang)}</span>}
               </div>

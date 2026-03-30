@@ -191,7 +191,7 @@ export default function ValueMarketplacePage() {
       {purchaseToast && (
         <div className="fixed top-4 right-4 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg animate-in fade-in slide-in-from-top-2 flex items-center gap-2">
           <CheckCircle2 className="w-5 h-5" />
-          <span className="font-medium">{isTr ? "Basarili!" : "Success!"} {purchaseToast}</span>
+          <span className="font-medium">{tx("value.success", lang)} {purchaseToast}</span>
         </div>
       )}
 
@@ -253,10 +253,10 @@ export default function ValueMarketplacePage() {
                     {tx("value.sortBy", lang)}:
                   </span>
                   {([
-                    { key: "valueScore" as SortKey, label: isTr ? "Deger Puani" : "Value Score" },
-                    { key: "standardPrice" as SortKey, label: isTr ? "Fiyat" : "Price" },
-                    { key: "successRate" as SortKey, label: isTr ? "Basari Orani" : "Success Rate" },
-                    { key: "evidenceGrade" as SortKey, label: isTr ? "Kanit" : "Evidence" },
+                    { key: "valueScore" as SortKey, label: tx("value.sortValueScore", lang) },
+                    { key: "standardPrice" as SortKey, label: tx("value.sortPrice", lang) },
+                    { key: "successRate" as SortKey, label: tx("value.sortSuccessRate", lang) },
+                    { key: "evidenceGrade" as SortKey, label: tx("value.sortEvidence", lang) },
                   ]).map((s) => (
                     <button
                       key={s.key}
@@ -379,10 +379,7 @@ export default function ValueMarketplacePage() {
                         </p>
                       </div>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
-                        {isTr
-                          ? "Klinik etkinlik RCT verilerinden, güvenlik profili yan etki oranlarindan, hasta sonuclari PROMs verilerinden ve maliyet etkinligi QALY basina maliyetten hesaplanir."
-                          : "Clinical efficacy is derived from RCT data, safety profile from adverse event rates, patient outcomes from PROMs data, and cost efficiency from cost-per-QALY calculations."
-                        }
+                        {tx("value.formulaDesc", lang)}
                       </p>
                     </div>
                   )}
@@ -398,7 +395,7 @@ export default function ValueMarketplacePage() {
                   className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 hover:text-emerald-600 mb-6 transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  {isTr ? "Pazaryerine Don" : "Back to Marketplace"}
+                  {tx("value.backToMarketplace", lang)}
                 </button>
 
                 {/* Hero */}
@@ -423,17 +420,17 @@ export default function ValueMarketplacePage() {
                 <div className="bg-white dark:bg-gray-800/70 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
                   <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <Target className="w-5 h-5 text-emerald-500" />
-                    {isTr ? "Deger Puani Dagilimi" : "Value Score Breakdown"}
+                    {tx("value.scoreBreakdown", lang)}
                   </h3>
                   <div className="h-72">
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart
                         data={[
-                          { axis: isTr ? "Etkinlik" : "Efficacy", value: selectedProduct.clinicalEfficacy, fullMark: 100 },
-                          { axis: isTr ? "Güvenlik" : "Safety", value: selectedProduct.safetyProfile, fullMark: 100 },
-                          { axis: isTr ? "Sonuclar" : "Outcomes", value: selectedProduct.patientOutcomeScore, fullMark: 100 },
-                          { axis: isTr ? "Maliyet" : "Cost Eff.", value: Math.round(100 - selectedProduct.costPerQALY / 50), fullMark: 100 },
-                          { axis: isTr ? "Kanit" : "Evidence", value: selectedProduct.evidenceGrade === "A" ? 95 : selectedProduct.evidenceGrade === "B" ? 70 : 45, fullMark: 100 },
+                          { axis: tx("value.efficacy", lang), value: selectedProduct.clinicalEfficacy, fullMark: 100 },
+                          { axis: tx("value.safety", lang), value: selectedProduct.safetyProfile, fullMark: 100 },
+                          { axis: tx("value.outcomes", lang), value: selectedProduct.patientOutcomeScore, fullMark: 100 },
+                          { axis: tx("value.costEff", lang), value: Math.round(100 - selectedProduct.costPerQALY / 50), fullMark: 100 },
+                          { axis: tx("value.evidence", lang), value: selectedProduct.evidenceGrade === "A" ? 95 : selectedProduct.evidenceGrade === "B" ? 70 : 45, fullMark: 100 },
                         ]}
                       >
                         <PolarGrid stroke="#374151" strokeOpacity={0.3} />
@@ -448,14 +445,14 @@ export default function ValueMarketplacePage() {
                 <div className="bg-white dark:bg-gray-800/70 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
                   <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <FileCheck className="w-5 h-5 text-blue-500" />
-                    {isTr ? "Klinik Kanit" : "Clinical Evidence"}
+                    {tx("value.clinicalEvidence", lang)}
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {[
-                      { label: isTr ? "RCT Sayisi" : "RCT Count", value: selectedProduct.rctCount.toString(), sub: isTr ? "çalışma" : "studies" },
-                      { label: tx("value.successRate", lang), value: `${selectedProduct.successRate}%`, sub: isTr ? "hedef sonuc" : "target outcome" },
-                      { label: isTr ? "Ort. Iyilesme" : "Avg. Improvement", value: `${selectedProduct.avgImprovementPercent}%`, sub: isTr ? "iyilesme" : "improvement" },
-                      { label: isTr ? "Etki Suresi" : "Time to Effect", value: isTr ? selectedProduct.timeToEffectTr : selectedProduct.timeToEffect, sub: "" },
+                      { label: tx("value.rctCount", lang), value: selectedProduct.rctCount.toString(), sub: tx("value.studies", lang) },
+                      { label: tx("value.successRate", lang), value: `${selectedProduct.successRate}%`, sub: tx("value.targetOutcome", lang) },
+                      { label: tx("value.avgImprovement", lang), value: `${selectedProduct.avgImprovementPercent}%`, sub: tx("value.improvement", lang) },
+                      { label: tx("value.timeToEffect", lang), value: isTr ? selectedProduct.timeToEffectTr : selectedProduct.timeToEffect, sub: "" },
                     ].map((item, i) => (
                       <div key={i} className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 text-center">
                         <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{item.label}</p>
@@ -468,10 +465,10 @@ export default function ValueMarketplacePage() {
                     <EvidenceBadge grade={selectedProduct.evidenceGrade} />
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       {selectedProduct.evidenceGrade === "A"
-                        ? (isTr ? "Yuksek kaliteli RCT'lerle desteklenmektedir" : "Supported by high-quality RCTs")
+                        ? tx("value.evidenceGradeA", lang)
                         : selectedProduct.evidenceGrade === "B"
-                          ? (isTr ? "Sinirli ancak umut verici kanitlar" : "Limited but promising evidence")
-                          : (isTr ? "Geleneksel kullanim, sinirli klinik veri" : "Traditional use, limited clinical data")
+                          ? tx("value.evidenceGradeB", lang)
+                          : tx("value.evidenceGradeC", lang)
                       }
                     </span>
                   </div>
@@ -481,14 +478,14 @@ export default function ValueMarketplacePage() {
                 <div className="mb-6">
                   <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <Banknote className="w-5 h-5 text-amber-500" />
-                    {isTr ? "Odeme Secenekleri" : "Payment Options"}
+                    {tx("value.paymentOptions", lang)}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* Standard */}
                     <div className="bg-white dark:bg-gray-800/70 rounded-2xl border border-gray-200 dark:border-gray-700 p-5 flex flex-col">
                       <h4 className="font-bold text-gray-900 dark:text-white mb-1">{tx("value.standardPrice", lang)}</h4>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                        {isTr ? "Garanti yok, standart fiyat" : "No guarantee, standard pricing"}
+                        {tx("value.noGuarantee", lang)}
                       </p>
                       <p className="text-3xl font-bold font-mono text-gray-900 dark:text-white mb-4">
                         {selectedProduct.standardPrice} <span className="text-base font-normal">TL</span>
@@ -497,7 +494,7 @@ export default function ValueMarketplacePage() {
                         <Button
                           variant="outline"
                           className="w-full"
-                          onClick={() => handlePurchase(selectedProduct, isTr ? "Standart" : "Standard")}
+                          onClick={() => handlePurchase(selectedProduct, tx("value.standardLabel", lang))}
                         >
                           {tx("value.buyStandard", lang)}
                         </Button>
@@ -513,7 +510,7 @@ export default function ValueMarketplacePage() {
                       </div>
                       <h4 className="font-bold text-gray-900 dark:text-white mb-1">{tx("value.valuePrice", lang)}</h4>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                        {isTr ? "ACE muzakere indirimi" : "ACE negotiated discount"}
+                        {tx("value.aceDiscount", lang)}
                       </p>
                       <p className="text-3xl font-bold font-mono text-blue-600 dark:text-blue-400 mb-1">
                         {Math.round(selectedProduct.standardPrice * (1 - selectedProduct.valuePricingDiscount / 100))} <span className="text-base font-normal">TL</span>
@@ -522,7 +519,7 @@ export default function ValueMarketplacePage() {
                       <div className="mt-auto">
                         <Button
                           className="w-full bg-blue-500 hover:bg-blue-600 text-white"
-                          onClick={() => handlePurchase(selectedProduct, isTr ? "Deger Fiyati" : "Value Price")}
+                          onClick={() => handlePurchase(selectedProduct, tx("value.valuePriceLabel", lang))}
                         >
                           {tx("value.buyValue", lang)}
                         </Button>
@@ -539,7 +536,7 @@ export default function ValueMarketplacePage() {
                       </div>
                       <h4 className="font-bold text-gray-900 dark:text-white mb-1">{tx("value.outcomePrice", lang)}</h4>
                       <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-                        {isTr ? "Sonuc garantisi + guvence hesabi" : "Outcome guarantee + escrow protection"}
+                        {tx("value.outcomeGuarantee", lang)}
                       </p>
                       <p className="text-3xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mb-2">
                         {selectedProduct.outcomeBasedPrice} <span className="text-base font-normal">TL</span>
@@ -555,7 +552,7 @@ export default function ValueMarketplacePage() {
                         <div className="flex items-center gap-2">
                           <Clock className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
                           <span className="text-gray-600 dark:text-gray-300">
-                            {tx("value.escrowPeriod", lang)}: {selectedProduct.escrowPeriod} {isTr ? "gun" : "days"}
+                            {tx("value.escrowPeriod", lang)}: {selectedProduct.escrowPeriod} {tx("value.daysUnit", lang)}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -575,7 +572,7 @@ export default function ValueMarketplacePage() {
                       <div className="mt-auto">
                         <Button
                           className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white shadow-lg"
-                          onClick={() => handlePurchase(selectedProduct, isTr ? "Garantili" : "Outcome-Based")}
+                          onClick={() => handlePurchase(selectedProduct, tx("value.outcomeBased", lang))}
                           disabled={!selectedProduct.guaranteeAvailable}
                         >
                           <ShieldCheck className="w-4 h-4 mr-1" />
@@ -583,7 +580,7 @@ export default function ValueMarketplacePage() {
                         </Button>
                         {!selectedProduct.guaranteeAvailable && (
                           <p className="text-xs text-gray-400 text-center mt-2">
-                            {isTr ? "Bu urun için garanti henuz mevcut degil" : "Guarantee not yet available for this product"}
+                            {tx("value.guaranteeNotAvailable", lang)}
                           </p>
                         )}
                       </div>
@@ -624,7 +621,7 @@ export default function ValueMarketplacePage() {
                 {escrowAccounts.length === 0 ? (
                   <div className="text-center py-16 text-gray-400 dark:text-gray-500">
                     <Lock className="w-12 h-12 mx-auto mb-3" />
-                    <p>{isTr ? "Henuz guvence hesabiniz yok" : "No escrow accounts yet"}</p>
+                    <p>{tx("value.noEscrow", lang)}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -694,7 +691,7 @@ export default function ValueMarketplacePage() {
                                         <XCircle className="w-3.5 h-3.5 text-red-400" />
                                       )}
                                       <span className={`text-xs font-medium ${kpi.met ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}`}>
-                                        {kpi.met ? (isTr ? "Hedefe ulasildi" : "Target met") : (isTr ? "Hedefe ulasilamadi" : "Target not met")}
+                                        {kpi.met ? tx("value.targetMet", lang) : tx("value.targetNotMet", lang)}
                                       </span>
                                     </div>
                                   )}
@@ -751,7 +748,7 @@ export default function ValueMarketplacePage() {
                 <div className="bg-white dark:bg-gray-800/70 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
                   <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <Award className="w-5 h-5 text-amber-500" />
-                    {isTr ? "Risk & Odul Kademeleri" : "Risk & Reward Tiers"}
+                    {tx("value.riskRewardTiers", lang)}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-6">
                     {tiers.map((tier, i) => (
@@ -765,7 +762,7 @@ export default function ValueMarketplacePage() {
                           {isTr ? tier.labelTr : tier.label}
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {tier.minSuccess}% - {tier.maxSuccess}% {isTr ? "basari" : "success"}
+                          {tier.minSuccess}% - {tier.maxSuccess}% {tx("value.success2", lang)}
                         </p>
                         <p className="text-2xl font-bold font-mono mt-2" style={{ color: tier.color }}>
                           +{tier.bonusPercent}%
@@ -779,14 +776,14 @@ export default function ValueMarketplacePage() {
                   <div className="bg-gray-50 dark:bg-gray-900/50 rounded-xl p-5">
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-3 text-sm flex items-center gap-2">
                       <Lock className="w-4 h-4 text-amber-500" />
-                      {isTr ? "Akilli Sozlesme Akisi" : "Smart Contract Flow"}
+                      {tx("value.smartContractFlow", lang)}
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                       {[
-                        { n: 1, icon: <ShoppingCart className="w-4 h-4" />, text: isTr ? "Hasta guvence ile satin alir" : "Patient purchases with escrow" },
-                        { n: 2, icon: <TrendingUp className="w-4 h-4" />, text: isTr ? "Sistem sağlık metriklerini izler (PROMs)" : "System monitors health metrics (PROMs)" },
-                        { n: 3, icon: <Sparkles className="w-4 h-4" />, text: isTr ? "AI değerlendirme tarihinde KPI basarisini değerlendirir" : "AI evaluates KPI achievement at evaluation date" },
-                        { n: 4, icon: <CheckCircle2 className="w-4 h-4" />, text: isTr ? "Akilli sozlesme odemeyi serbest birakir veya iade baslatir" : "Smart contract releases payment or initiates refund" },
+                        { n: 1, icon: <ShoppingCart className="w-4 h-4" />, text: tx("value.scStep1", lang) },
+                        { n: 2, icon: <TrendingUp className="w-4 h-4" />, text: tx("value.scStep2", lang) },
+                        { n: 3, icon: <Sparkles className="w-4 h-4" />, text: tx("value.scStep3", lang) },
+                        { n: 4, icon: <CheckCircle2 className="w-4 h-4" />, text: tx("value.scStep4", lang) },
                       ].map((s) => (
                         <div key={s.n} className="flex items-start gap-2">
                           <div className="w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center flex-shrink-0 text-xs font-bold">
@@ -806,18 +803,18 @@ export default function ValueMarketplacePage() {
                 <div className="bg-white dark:bg-gray-800/70 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
                   <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <Users className="w-5 h-5 text-blue-500" />
-                    {isTr ? "Saglayici Liderlik Tablosu" : "Provider Leaderboard"}
+                    {tx("value.providerLeaderboard", lang)}
                   </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                           <th className="pb-2 pr-4">#</th>
-                          <th className="pb-2 pr-4">{isTr ? "Saglayici" : "Provider"}</th>
-                          <th className="pb-2 pr-4">{isTr ? "Uzmanlik" : "Specialty"}</th>
+                          <th className="pb-2 pr-4">{tx("value.provider", lang)}</th>
+                          <th className="pb-2 pr-4">{tx("value.specialty", lang)}</th>
                           <th className="pb-2 pr-4 text-right">{tx("value.successRate", lang)}</th>
-                          <th className="pb-2 pr-4 text-right">{isTr ? "Hastalar" : "Patients"}</th>
-                          <th className="pb-2 text-right">{isTr ? "Kademe" : "Tier"}</th>
+                          <th className="pb-2 pr-4 text-right">{tx("value.patients", lang)}</th>
+                          <th className="pb-2 text-right">{tx("value.tier", lang)}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -859,7 +856,7 @@ export default function ValueMarketplacePage() {
                 <div className="bg-white dark:bg-gray-800/70 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
                   <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <BarChart3 className="w-5 h-5 text-emerald-500" />
-                    {isTr ? "Saglayici Performans Karsilastirmasi" : "Provider Performance Comparison"}
+                    {tx("value.performanceComparison", lang)}
                   </h3>
                   <div className="h-72">
                     <ResponsiveContainer width="100%" height="100%">
@@ -886,7 +883,7 @@ export default function ValueMarketplacePage() {
                         <Legend wrapperStyle={{ fontSize: 12 }} />
                         <Bar
                           dataKey="successRate"
-                          name={isTr ? "Basari Orani %" : "Success Rate %"}
+                          name={tx("value.successRatePercent", lang)}
                           radius={[6, 6, 0, 0]}
                         >
                           {leaderboard.map((_, i) => (
@@ -905,19 +902,16 @@ export default function ValueMarketplacePage() {
                 <div className="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-2xl border border-amber-200 dark:border-amber-800 p-6">
                   <h3 className="font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                     <Star className="w-5 h-5 text-amber-500" />
-                    {isTr ? "Doktor Yonlendirme Odulleri" : "Doctor Referral Rewards"}
+                    {tx("value.doctorReferral", lang)}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    {isTr
-                      ? "Yonlendiren doktorlar, hastalarinin basarili sonuclarindan kredi kazanir. Basari orani arttikca bonus da artar."
-                      : "Referring doctors earn credits from their patients' successful outcomes. Higher patient success rates mean bigger bonuses."
-                    }
+                    {tx("value.doctorReferralDesc", lang)}
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {[
-                      { icon: <TrendingUp className="w-5 h-5 text-emerald-500" />, title: isTr ? "Sonuc Odulu" : "Outcome Reward", desc: isTr ? "Her basarili hasta sonucu için kredi" : "Credits for each successful patient outcome" },
-                      { icon: <Users className="w-5 h-5 text-blue-500" />, title: isTr ? "Hacim Bonusu" : "Volume Bonus", desc: isTr ? "Daha fazla hasta = daha yuksek bonus kademesi" : "More patients = higher bonus tier" },
-                      { icon: <Award className="w-5 h-5 text-amber-500" />, title: isTr ? "Altin Saglayici" : "Gold Provider", desc: isTr ? "%90+ basari = %15 bonus + rozet" : "90%+ success = 15% bonus + badge" },
+                      { icon: <TrendingUp className="w-5 h-5 text-emerald-500" />, title: tx("value.outcomeReward", lang), desc: tx("value.outcomeRewardDesc", lang) },
+                      { icon: <Users className="w-5 h-5 text-blue-500" />, title: tx("value.volumeBonus", lang), desc: tx("value.volumeBonusDesc", lang) },
+                      { icon: <Award className="w-5 h-5 text-amber-500" />, title: tx("value.goldProvider", lang), desc: tx("value.goldProviderDesc", lang) },
                     ].map((item, i) => (
                       <div key={i} className="bg-white/60 dark:bg-gray-800/40 rounded-xl p-4">
                         {item.icon}

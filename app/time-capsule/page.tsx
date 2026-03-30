@@ -235,21 +235,21 @@ export default function TimeCapsulePage() {
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
-            {lang === "tr" ? "Geri" : "Back"}
+            {tx("timeCapsule.back", lang)}
           </button>
 
           <div className="text-center space-y-2">
             <Unlock className="w-10 h-10 mx-auto text-emerald-500" />
-            <h1 className="text-2xl font-bold">{lang === "tr" ? "Zaman Kapsulun Açıldı!" : "Your Time Capsule is Open!"}</h1>
+            <h1 className="text-2xl font-bold">{tx("timeCapsule.opened", lang)}</h1>
             <p className="text-sm text-muted-foreground">
-              {lang === "tr" ? "Oluşturulma" : "Created"}: {formatDate(selected.createdAt, lang)}
+              {tx("timeCapsule.created", lang)}: {formatDate(selected.createdAt, lang)}
             </p>
           </div>
 
           {/* Letter */}
           <div className="rounded-xl border bg-card p-5 shadow-sm">
             <p className="text-sm font-medium text-muted-foreground mb-2">
-              {lang === "tr" ? "Geçmişten mesajin:" : "Your message from the past:"}
+              {tx("timeCapsule.pastMessage", lang)}
             </p>
             <p className="italic text-foreground leading-relaxed">&ldquo;{selected.message}&rdquo;</p>
           </div>
@@ -258,7 +258,7 @@ export default function TimeCapsulePage() {
           <ShareCardBase lang={lang} fileName="time-capsule-comparison.png" shareTitle="Phytotherapy.ai Time Capsule">
             <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-xl p-5 space-y-4">
               <h3 className="text-center font-semibold text-lg">
-                {lang === "tr" ? "O Zaman vs Simdi" : "Then vs Now"}
+                {tx("timeCapsule.thenVsNow", lang)}
               </h3>
 
               <div className="grid grid-cols-2 gap-4">
@@ -268,20 +268,20 @@ export default function TimeCapsulePage() {
                     {snap.healthScore !== undefined && (
                       <div>
                         <p className="text-2xl font-bold">{snap.healthScore}</p>
-                        <p className="text-xs text-muted-foreground">{lang === "tr" ? "Sağlık Skoru" : "Health Score"}</p>
+                        <p className="text-xs text-muted-foreground">{tx("timeCapsule.healthScore", lang)}</p>
                       </div>
                     )}
                     {snap.weight !== undefined && (
                       <div>
                         <p className="text-xl font-semibold">{snap.weight} kg</p>
-                        <p className="text-xs text-muted-foreground">{lang === "tr" ? "Kilo" : "Weight"}</p>
+                        <p className="text-xs text-muted-foreground">{tx("timeCapsule.weight", lang)}</p>
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="text-center">
-                  <p className="text-xs text-muted-foreground mb-1">{lang === "tr" ? "Bugun" : "Today"}</p>
+                  <p className="text-xs text-muted-foreground mb-1">{tx("timeCapsule.today", lang)}</p>
                   <div className="rounded-lg bg-card/80 p-3 space-y-2">
                     {now.healthScore !== undefined && (
                       <div className="flex items-center justify-center gap-1">
@@ -294,7 +294,7 @@ export default function TimeCapsulePage() {
                       </div>
                     )}
                     {now.healthScore !== undefined && (
-                      <p className="text-xs text-muted-foreground">{lang === "tr" ? "Sağlık Skoru" : "Health Score"}</p>
+                      <p className="text-xs text-muted-foreground">{tx("timeCapsule.healthScore", lang)}</p>
                     )}
                     {now.weight !== undefined && (
                       <div className="flex items-center justify-center gap-1">
@@ -307,7 +307,7 @@ export default function TimeCapsulePage() {
                       </div>
                     )}
                     {now.weight !== undefined && (
-                      <p className="text-xs text-muted-foreground">{lang === "tr" ? "Kilo" : "Weight"}</p>
+                      <p className="text-xs text-muted-foreground">{tx("timeCapsule.weight", lang)}</p>
                     )}
                   </div>
                 </div>
@@ -316,7 +316,7 @@ export default function TimeCapsulePage() {
               {/* Goals */}
               {selected.goals.length > 0 && (
                 <div className="space-y-2 pt-2 border-t border-border/50">
-                  <p className="text-sm font-medium">{lang === "tr" ? "Hedefler" : "Goals"}</p>
+                  <p className="text-sm font-medium">{tx("timeCapsule.goals", lang)}</p>
                   {selected.goals.map((gId) => {
                     const goal = GOAL_OPTIONS.find((g) => g.id === gId)
                     if (!goal) return null
@@ -342,7 +342,7 @@ export default function TimeCapsulePage() {
           </ShareCardBase>
 
           <Button variant="destructive" size="sm" className="w-full" onClick={() => handleDelete(selected.id)}>
-            {lang === "tr" ? "Kapsulu Sil" : "Delete Capsule"}
+            {tx("timeCapsule.deleteCapsule", lang)}
           </Button>
         </div>
       </div>
@@ -359,36 +359,30 @@ export default function TimeCapsulePage() {
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
-            {lang === "tr" ? "Geri" : "Back"}
+            {tx("timeCapsule.back", lang)}
           </button>
 
           <div className="text-center space-y-2">
             <Send className="w-10 h-10 mx-auto text-emerald-500" />
             <h1 className="text-2xl font-bold">
-              {lang === "tr" ? "Gelecege Mektup Yaz" : "Write to Your Future Self"}
+              {tx("timeCapsule.writeTitle", lang)}
             </h1>
             <p className="text-sm text-muted-foreground">
-              {lang === "tr"
-                ? "Bugunku halinden gelecekteki haline bir mesaj birak."
-                : "Leave a message from your present self to your future self."}
+              {tx("timeCapsule.writeSubtitle", lang)}
             </p>
           </div>
 
           {/* Message */}
           <div className="space-y-2">
             <label className="text-sm font-medium">
-              {lang === "tr" ? "Mesajin" : "Your Message"}
+              {tx("timeCapsule.yourMessage", lang)}
             </label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={5}
               maxLength={1000}
-              placeholder={
-                lang === "tr"
-                  ? "Gelecekteki ben, umarim seni daha sağlıkli ve mutlu buluyorum..."
-                  : "Dear future me, I hope you are healthier and happier..."
-              }
+              placeholder={tx("timeCapsule.placeholder", lang)}
               className="w-full rounded-xl border bg-card px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 resize-none"
             />
             <p className="text-xs text-muted-foreground text-right">{message.length}/1000</p>
@@ -397,7 +391,7 @@ export default function TimeCapsulePage() {
           {/* Goals */}
           <div className="space-y-3">
             <label className="text-sm font-medium">
-              {lang === "tr" ? "Sağlık Hedeflerin" : "Health Goals"}
+              {tx("timeCapsule.healthGoals", lang)}
             </label>
             <div className="grid grid-cols-2 gap-2">
               {GOAL_OPTIONS.map((goal) => {
@@ -423,7 +417,7 @@ export default function TimeCapsulePage() {
           {/* Duration */}
           <div className="space-y-3">
             <label className="text-sm font-medium">
-              {lang === "tr" ? "Ne Zaman Acilsin?" : "When Should It Open?"}
+              {tx("timeCapsule.whenOpen", lang)}
             </label>
             <div className="flex gap-2">
               {DURATION_OPTIONS.map((opt) => (
@@ -445,23 +439,21 @@ export default function TimeCapsulePage() {
           {/* Snapshot preview */}
           <div className="rounded-xl border bg-card p-4 space-y-2">
             <p className="text-sm font-medium text-muted-foreground">
-              {lang === "tr" ? "Sağlık Anlik Goruntusu" : "Health Snapshot"}
+              {tx("timeCapsule.snapshot", lang)}
             </p>
             <p className="text-xs text-muted-foreground">
-              {lang === "tr"
-                ? "Mevcut sağlık verilerin otomatik olarak kaydedilecek."
-                : "Your current health data will be saved automatically."}
+              {tx("timeCapsule.snapshotDesc", lang)}
             </p>
             <div className="flex gap-4 text-sm">
               {getCurrentSnapshot().healthScore !== undefined && (
                 <div>
-                  <span className="text-muted-foreground">{lang === "tr" ? "Skor:" : "Score:"} </span>
+                  <span className="text-muted-foreground">{tx("timeCapsule.score", lang)} </span>
                   <span className="font-semibold">{getCurrentSnapshot().healthScore}</span>
                 </div>
               )}
               {getCurrentSnapshot().weight !== undefined && (
                 <div>
-                  <span className="text-muted-foreground">{lang === "tr" ? "Kilo:" : "Weight:"} </span>
+                  <span className="text-muted-foreground">{tx("timeCapsule.weightLabel", lang)} </span>
                   <span className="font-semibold">{getCurrentSnapshot().weight} kg</span>
                 </div>
               )}
@@ -479,7 +471,7 @@ export default function TimeCapsulePage() {
             ) : (
               <Lock className="w-4 h-4 mr-2" />
             )}
-            {lang === "tr" ? "Kapsulu Kilitle ve Gonder" : "Lock & Send Capsule"}
+            {tx("timeCapsule.lockSend", lang)}
           </Button>
         </div>
       </div>
@@ -498,12 +490,10 @@ export default function TimeCapsulePage() {
         <div className="text-center space-y-2">
           <Timer className="w-10 h-10 mx-auto text-emerald-500" />
           <h1 className="text-2xl font-bold">
-            {lang === "tr" ? "Sağlık Zaman Kapsulu" : "Health Time Capsule"}
+            {tx("timeCapsule.title", lang)}
           </h1>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            {lang === "tr"
-              ? "Gelecege bir mektup yaz, sağlık hedeflerini kaydet. Zaman geldiginde gerçek verilerle karşılastir."
-              : "Write a letter to your future self, save your health goals. Compare with real data when the time comes."}
+            {tx("timeCapsule.subtitle", lang)}
           </p>
         </div>
 
@@ -513,14 +503,14 @@ export default function TimeCapsulePage() {
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
         >
           <Plus className="w-4 h-4 mr-2" />
-          {lang === "tr" ? "Yeni Kapsul Oluştur" : "Create New Capsule"}
+          {tx("timeCapsule.createNew", lang)}
         </Button>
 
         {/* Ready to open */}
         {ready.length > 0 && (
           <div className="space-y-3">
             <h2 className="text-sm font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
-              {lang === "tr" ? "Açılmaya Hazır!" : "Ready to Open!"}
+              {tx("timeCapsule.readyToOpen", lang)}
             </h2>
             {ready.map((c) => (
               <button
@@ -534,7 +524,7 @@ export default function TimeCapsulePage() {
                     <span className="font-medium">{formatDate(c.createdAt, lang)}</span>
                   </div>
                   <span className="text-xs bg-emerald-500 text-white px-2 py-0.5 rounded-full">
-                    {lang === "tr" ? "Ac!" : "Open!"}
+                    {tx("timeCapsule.open", lang)}
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground truncate">{c.message}</p>
@@ -547,7 +537,7 @@ export default function TimeCapsulePage() {
         {locked.length > 0 && (
           <div className="space-y-3">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              {lang === "tr" ? "Kilitli Kapsuller" : "Locked Capsules"}
+              {tx("timeCapsule.locked", lang)}
             </h2>
             {locked.map((c) => {
               const days = daysUntil(c.openDate)
@@ -562,7 +552,7 @@ export default function TimeCapsulePage() {
                       <span className="font-medium">{formatDate(c.createdAt, lang)}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      {days} {lang === "tr" ? "gun kaldi" : "days left"}
+                      {days} {tx("timeCapsule.daysLeft", lang)}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground truncate">{c.message}</p>
@@ -584,7 +574,7 @@ export default function TimeCapsulePage() {
         {opened.length > 0 && (
           <div className="space-y-3">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              {lang === "tr" ? "Açılmış Kapsüller" : "Opened Capsules"}
+              {tx("timeCapsule.openedCapsules", lang)}
             </h2>
             {opened.map((c) => (
               <button
@@ -601,13 +591,13 @@ export default function TimeCapsulePage() {
                     <span className="font-medium">{formatDate(c.createdAt, lang)}</span>
                   </div>
                   <span className="text-xs text-emerald-600 dark:text-emerald-400">
-                    {lang === "tr" ? "Açıldı" : "Opened"}
+                    {tx("timeCapsule.openedLabel", lang)}
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground truncate">{c.message}</p>
                 {c.goals.length > 0 && (
                   <p className="text-xs text-muted-foreground">
-                    {c.goals.length} {lang === "tr" ? "hedef" : "goals"}
+                    {c.goals.length} {tx("timeCapsule.goalsCount", lang)}
                   </p>
                 )}
               </button>
@@ -620,9 +610,7 @@ export default function TimeCapsulePage() {
           <div className="text-center py-12 space-y-3">
             <Timer className="w-12 h-12 mx-auto text-muted-foreground/40" />
             <p className="text-muted-foreground">
-              {lang === "tr"
-                ? "Henuz kapsulun yok. Gelecege bir mektup yaz!"
-                : "No capsules yet. Write a letter to your future self!"}
+              {tx("timeCapsule.empty", lang)}
             </p>
           </div>
         )}

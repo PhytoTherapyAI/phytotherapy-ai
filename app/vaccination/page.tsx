@@ -106,7 +106,7 @@ export default function VaccinationPage() {
 
   const handleSave = async () => {
     if (!vaccineName.trim() || !dateAdministered) {
-      setError(lang === "tr" ? "Ad ve tarih zorunludur" : "Name and date are required");
+      setError(tx("vacc.nameRequired", lang));
       return;
     }
 
@@ -306,7 +306,7 @@ export default function VaccinationPage() {
                 type="text"
                 value={vaccineName}
                 onChange={(e) => setVaccineName(e.target.value)}
-                placeholder={lang === "tr" ? "Aşı adı" : "Vaccine name"}
+                placeholder={tx("vacc.vaccineNamePlaceholder", lang)}
                 className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:border-green-400 focus:outline-none focus:ring-1 focus:ring-green-400"
               />
             </div>
@@ -365,7 +365,7 @@ export default function VaccinationPage() {
                 type="text"
                 value={provider}
                 onChange={(e) => setProvider(e.target.value)}
-                placeholder={lang === "tr" ? "Hastane/klinik" : "Hospital/clinic"}
+                placeholder={tx("vacc.providerPlaceholder", lang)}
                 className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:border-green-400 focus:outline-none focus:ring-1 focus:ring-green-400"
               />
             </div>
