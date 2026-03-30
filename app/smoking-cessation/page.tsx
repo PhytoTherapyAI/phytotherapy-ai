@@ -284,7 +284,7 @@ export default function SmokingCessationPage() {
                     {result.savingsEstimate.dailySavings} {result.savingsEstimate.currency}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {lang === "tr" ? "/gün" : "/day"}
+                    {tx("smoking.perDay", lang)}
                   </p>
                 </div>
                 <div>
@@ -292,7 +292,7 @@ export default function SmokingCessationPage() {
                     {result.savingsEstimate.monthlySavings} {result.savingsEstimate.currency}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {lang === "tr" ? "/ay" : "/month"}
+                    {tx("smoking.perMonth", lang)}
                   </p>
                 </div>
                 <div>
@@ -300,7 +300,7 @@ export default function SmokingCessationPage() {
                     {result.savingsEstimate.yearlySavings.toLocaleString()} {result.savingsEstimate.currency}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {lang === "tr" ? "/yıl" : "/year"}
+                    {tx("smoking.perYear", lang)}
                   </p>
                 </div>
               </div>
@@ -395,7 +395,7 @@ export default function SmokingCessationPage() {
             className="w-full"
             onClick={() => setResult(null)}
           >
-            {lang === "tr" ? "Planı Güncelle" : "Update Plan"}
+            {tx("smoking.updatePlan", lang)}
           </Button>
         </div>
       )}

@@ -5206,6 +5206,111 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "seasonal.activeMeds": { en: "Your active medications:", tr: "Aktif ilaçlarıniz:" },
   "seasonal.bossFightDesc": { en: "Check out Boss Fight protocols for seasonal health challenges!", tr: "Mevsimsel sağlık gorevleri için Boss Fight protokollerine goz atin!" },
   "seasonal.go": { en: "Go", tr: "Git" },
+
+  // ── Second Opinion ──
+  "secondOpinion.recommendedSpecialist": { en: "Recommended Specialist", tr: "Onerilen Uzman" },
+  "secondOpinion.warningSigns": { en: "Warning Signs", tr: "Dikkat Gerektiren Isaretler" },
+  "secondOpinion.medicalSummary": { en: "Medical Summary", tr: "Tibbi Ozet" },
+  "secondOpinion.whatToBring": { en: "What to Bring", tr: "Yaninda Getirilecekler" },
+  "secondOpinion.keyQuestions": { en: "Key Questions", tr: "Sorulacak Sorular" },
+  "secondOpinion.suggestedTests": { en: "Suggested Additional Tests", tr: "Onerilen Ek Testler" },
+  "secondOpinion.placeholder": { en: "e.g., My doctor recommended knee surgery, I want a second opinion...", tr: "ornegin: Doktorum diz ameliyati onerdi, ikinci bir gorus almak istiyorum..." },
+
+  // ── Security ──
+  "security.title": { en: "Security", tr: "Guvenlik" },
+  "security.subtitle": { en: "The security of your health data is our top priority. Here are the security layers that keep you safe.", tr: "Saglik verilerinizin guvenligi en buyuk onceligi\u0300mizdir. Istte bizi guclu kilan guvenlik katmanlari." },
+  "security.dataEncryption": { en: "Data Encryption", tr: "Veri Sifreleme" },
+  "security.dataEncryptionDesc": { en: "All health data is encrypted in transit with TLS 1.3 and at rest with AES-256 encryption.", tr: "Tum saglik verileriniz aktarim sirasinda TLS 1.3 ve beklemede AES-256 ile sifrelenir." },
+  "security.kvkkGdpr": { en: "KVKK & GDPR Compliance", tr: "KVKK & GDPR Uyumu" },
+  "security.kvkkGdprDesc": { en: "Full compliance with Turkish KVKK and EU GDPR regulations. You have the right to download and delete your data.", tr: "Turkiye KVKK ve AB GDPR duzenlemelerine tam uyum. Verilerinizi indirme ve silme hakkiniz vardir." },
+  "security.authentication": { en: "Authentication", tr: "Kimlik Dogrulama" },
+  "security.authenticationDesc": { en: "Secure session management with Supabase Auth. Google and Facebook OAuth, email verification supported.", tr: "Supabase Auth ile guvenli oturum yonetimi. Google ve Facebook OAuth, e-posta dogrulamasi desteklenir." },
+  "security.infrastructure": { en: "Infrastructure Security", tr: "Altyapi Guvenligi" },
+  "security.infrastructureDesc": { en: "Hosted on Vercel, Supabase PostgreSQL database. DDoS protection, automatic backups.", tr: "Vercel uzerinde barindirma, Supabase PostgreSQL veritabani. DDoS koruması, otomatik yedekleme." },
+  "security.accessControl": { en: "Access Control", tr: "Erisim Kontrolu" },
+  "security.accessControlDesc": { en: "Every API endpoint requires authentication. Rate limiting (10 requests/minute) enforced.", tr: "Her API endpoint kimlik dogrulama gerektirir. Hiz sinirlamasi (10 istek/dakika) uygulanir." },
+  "security.dataMinimization": { en: "Data Minimization", tr: "Veri Minimizasyonu" },
+  "security.dataMinimizationDesc": { en: "Only necessary data is collected. Health data stored in encrypted columns. Maximum 2-year retention.", tr: "Yalnizca gerekli veriler toplanir. Saglik verileri sifreli kolonlarda saklanir. Maksimum 2 yil saklama." },
+  "security.inputValidation": { en: "Input Validation", tr: "Giris Dogrulamasi" },
+  "security.inputValidationDesc": { en: "All user inputs are sanitized. Protection against XSS, SQL injection, and other OWASP threats.", tr: "Tum kullanici girislerine sanitizasyon uygulanir. XSS, SQL injection ve diger OWASP tehditlerine karsi koruma." },
+  "security.errorMonitoring": { en: "Error Monitoring", tr: "Hata Izleme" },
+  "security.errorMonitoringDesc": { en: "Real-time error monitoring and performance tracking with Sentry. Security events reported instantly.", tr: "Sentry ile gercek zamanli hata izleme ve performans takibi. Guvenlik olaylari aninda bildirilir." },
+  "security.reportVulnerability": { en: "Found a security vulnerability? Please report it to us.", tr: "Bir guvenlik acigi buldunuz mu? Lutfen bize bildirin." },
+
+  // ── Sexual Health ──
+  "sexual.preferNotToSay": { en: "Prefer not to say", tr: "Belirtmiyorum" },
+  "sexual.selectConcerns": { en: "Select your concerns", tr: "Endiselerinizi secin" },
+  "sexual.prevalence": { en: "Prevalence", tr: "Gorulen oran" },
+  "sexual.yourConcerns": { en: "Your Concerns", tr: "Endiseleriniz" },
+  "sexual.safetyInfo": { en: "Safety Information", tr: "Guvenlik Bilgileri" },
+  "sexual.professionalReferral": { en: "We recommend discussing your concerns with a healthcare professional.", tr: "Endiseleriniz icin bir saglik profesyoneliyle gorusmenizi oneririz." },
+
+  // ── Share Data ──
+  "shareData.signedConsent": { en: "signed consent record", tr: "imzali riza kaydi" },
+
+  // ── Shift Worker ──
+  "shift.shiftHours": { en: "Shift Hours", tr: "Vardiya Saatleri" },
+  "shift.circadianPlan": { en: "Circadian Rhythm Plan", tr: "Sirkadyen Ritim Plani" },
+  "shift.sleepWindow": { en: "Sleep Window", tr: "Uyku Penceresi" },
+  "shift.darkPeriod": { en: "Dark Period", tr: "Karanlik Donemi" },
+  "shift.lightExposure": { en: "Light Exposure", tr: "Isik Maruziyeti" },
+  "shift.sleepSchedule": { en: "Sleep Schedule", tr: "Uyku Programi" },
+  "shift.mainSleep": { en: "Main Sleep", tr: "Ana Uyku" },
+  "shift.napWindow": { en: "Nap Window", tr: "Sekerleme" },
+  "shift.mealTiming": { en: "Meal Timing", tr: "Yemek Zamanlama" },
+  "shift.caffeineStrategy": { en: "Caffeine Strategy", tr: "Kafein Stratejisi" },
+  "shift.lastCaffeine": { en: "Last Caffeine", tr: "Son Kafein" },
+  "shift.dailyMax": { en: "Daily Max", tr: "Gunluk Max" },
+  "shift.timing": { en: "Timing:", tr: "Zamanlama:" },
+  "shift.bestTime": { en: "Best Time", tr: "En Iyi Zaman" },
+  "shift.avoid": { en: "Avoid", tr: "Kacinilmasi Gereken" },
+  "shift.burnoutWarnings": { en: "Burnout Warning Signs", tr: "Tukenmislik Uyari Isaretleri" },
+
+  // ── Skin Health ──
+  "skin.loginRequired": { en: "Sign in to analyze your skin health", tr: "Cilt analizi icin giris yapin" },
+  "skin.mild": { en: "Mild", tr: "Hafif" },
+  "skin.skinHealthScore": { en: "Skin Health Score", tr: "Cilt Sagligi Skoru" },
+  "skin.morning": { en: "Morning", tr: "Sabah" },
+  "skin.evening": { en: "Evening", tr: "Aksam" },
+  "skin.weekly": { en: "Weekly", tr: "Haftalik" },
+  "skin.lifestyleTips": { en: "Lifestyle Tips", tr: "Yasam Tarzi Onerileri" },
+  "skin.newAnalysis": { en: "Start new analysis", tr: "Yeni analiz yap" },
+  "skin.routinePlaceholder": { en: "Describe your current skincare routine...", tr: "Mevcut cilt bakim rutininizi yazin..." },
+
+  // ── Sleep Analysis ──
+  "sleep.detectedPatterns": { en: "Detected Patterns", tr: "Tespit Edilen Oruntuler" },
+  "sleep.average": { en: "Average", tr: "Ortalama" },
+  "sleep.qualityLabel": { en: "Quality", tr: "Kalite" },
+  "sleep.woke": { en: "woke", tr: "uyanma" },
+  "sleep.dreamsLabel": { en: "Dreams", tr: "Ruyali" },
+
+  // ── Smart Reminders ──
+  "reminders.title": { en: "Smart Medication Reminder", tr: "Akilli Ilac Hatirlatici" },
+  "reminders.subtitle": { en: "Personalized schedule ensuring your medications are taken at optimal times.", tr: "Ilaclarinizin en uygun zamanlarda alinmasini saglayan kisisellestirilmis program." },
+  "reminders.subtitleShort": { en: "Your personalized schedule optimized by drug properties", tr: "Ilac ozelliklerine gore optimize edilmis kisisel programiniz" },
+  "reminders.noMeds": { en: "No medications added yet", tr: "Henuz ilac eklenmemis" },
+  "reminders.noMedsDesc": { en: "Add your medications to your profile to generate smart scheduling.", tr: "Ilaclarinizi profilinize ekleyerek akilli zamanlama olusturun." },
+  "reminders.addMeds": { en: "Add Medications in Profile", tr: "Profilde Ilac Ekle" },
+  "reminders.nextUp": { en: "Next Up", tr: "Siradaki" },
+  "reminders.dailySchedule": { en: "Your Daily Schedule", tr: "Gunluk Programiniz" },
+  "reminders.colorLegend": { en: "Color Legend", tr: "Renk Kodlari" },
+  "reminders.notifSettings": { en: "Notification Settings", tr: "Bildirim Ayarlari" },
+  "reminders.notifDesc": { en: "Set reminder times for each medication", tr: "Her ilac icin hatirlatma saati belirleyin" },
+  "reminders.notifComingSoon": { en: "PWA push notifications will be enabled in an upcoming release.", tr: "PWA push bildirimleri yakin bir surumde etkinlestirilecektir." },
+  "reminders.timingGuide": { en: "Medication Timing Guide", tr: "Ilac Zamanlama Kilavuzu" },
+  "reminders.noTimingRule": { en: "No specific timing rule found for this medication. Follow your doctor's instructions.", tr: "Bu ilac icin ozel zamanlama kurali bulunamadi. Doktorunuzun onerilerine uyun." },
+  "reminders.disclaimer": { en: "This schedule is for informational purposes. Always follow your doctor's instructions for medication timing.", tr: "Bu program genel bilgi amaclidir. Ilac zamanlamasi icin her zaman doktorunuzun talimatlarini takip edin." },
+  "reminders.vitCEnhances": { en: "Vitamin C enhances absorption", tr: "C vitamini emilimi artirir" },
+
+  // ── Smoking Cessation ──
+  "smoking.perDay": { en: "/day", tr: "/gun" },
+  "smoking.perMonth": { en: "/month", tr: "/ay" },
+  "smoking.perYear": { en: "/year", tr: "/yil" },
+  "smoking.updatePlan": { en: "Update Plan", tr: "Plani Guncelle" },
+
+  // ── Snoring Apnea ──
+  "snoring.stopBangInfo": { en: "STOP-BANG is a clinically validated screening tool for assessing obstructive sleep apnea risk.", tr: "STOP-BANG, obstruktif uyku apnesi riskini degerlendirmek icin klinik olarak dogrulanmis bir tarama aracidir." },
+  "snoring.sleepLabRecommended": { en: "Sleep lab evaluation recommended", tr: "Uyku laboratuvari degerlendirmesi onerilir" },
 }
 Object.assign(t, commonToolKeys)
 

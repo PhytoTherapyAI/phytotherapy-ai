@@ -69,9 +69,7 @@ export default function SnoringApneaPage() {
       <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 mb-6 flex items-start gap-3">
         <Info className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
         <p className="text-sm text-blue-700 dark:text-blue-400">
-          {lang === "tr"
-            ? "STOP-BANG, obstruktif uyku apnesi riskini değerlendirmek için klinik olarak doğrulanmis bir tarama aracidir."
-            : "STOP-BANG is a clinically validated screening tool for assessing obstructive sleep apnea risk."}
+          {tx("snoring.stopBangInfo", lang)}
         </p>
       </div>
 
@@ -114,7 +112,7 @@ export default function SnoringApneaPage() {
           {result.risk === "high" && (
             <div className="mt-4 flex items-center justify-center gap-2 text-sm font-medium">
               <AlertTriangle className="w-4 h-4" />
-              {lang === "tr" ? "Uyku laboratuvari değerlendirmesi onerilir" : "Sleep lab evaluation recommended"}
+              {tx("snoring.sleepLabRecommended", lang)}
             </div>
           )}
         </div>

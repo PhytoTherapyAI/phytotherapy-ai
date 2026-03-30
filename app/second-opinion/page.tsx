@@ -88,7 +88,7 @@ export default function SecondOpinionPage() {
           value={concern}
           onChange={(e) => setConcern(e.target.value)}
           rows={4}
-          placeholder={lang === "tr" ? "ornegin: Doktorum diz ameliyati önerdi, ikinci bir görüş almak istiyorum..." : "e.g., My doctor recommended knee surgery, I want a second opinion..."}
+          placeholder={tx("secondOpinion.placeholder", lang)}
           className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-sky-500 outline-none resize-none"
         />
         <Button
@@ -112,7 +112,7 @@ export default function SecondOpinionPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
             <div className="flex items-center gap-3 mb-3">
               <UserCheck className="w-5 h-5 text-sky-500" />
-              <h3 className="font-semibold text-gray-900 dark:text-white">{lang === "tr" ? "Onerilen Uzman" : "Recommended Specialist"}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">{tx("secondOpinion.recommendedSpecialist", lang)}</h3>
               <span className={`ml-auto px-2.5 py-0.5 rounded-full text-xs font-medium ${urgencyColor(result.urgency)}`}>{result.urgency}</span>
             </div>
             <p className="text-gray-700 dark:text-gray-300">{result.recommendedSpecialist}</p>
@@ -123,7 +123,7 @@ export default function SecondOpinionPage() {
             <div className="bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800 p-5">
               <div className="flex items-center gap-2 mb-2">
                 <AlertTriangle className="w-5 h-5 text-red-500" />
-                <h3 className="font-semibold text-red-800 dark:text-red-300">{lang === "tr" ? "Dikkat Gerektiren Isatretler" : "Warning Signs"}</h3>
+                <h3 className="font-semibold text-red-800 dark:text-red-300">{tx("secondOpinion.warningSigns", lang)}</h3>
               </div>
               <ul className="space-y-1">
                 {result.redFlags.map((f, i) => (
@@ -137,7 +137,7 @@ export default function SecondOpinionPage() {
 
           {/* Medical Summary */}
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{lang === "tr" ? "Tibbi Ozet" : "Medical Summary"}</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{tx("secondOpinion.medicalSummary", lang)}</h3>
             <p className="text-sm text-gray-700 dark:text-gray-300">{result.medicalSummary}</p>
           </div>
 
@@ -145,7 +145,7 @@ export default function SecondOpinionPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
             <div className="flex items-center gap-2 mb-3">
               <ClipboardList className="w-5 h-5 text-sky-500" />
-              <h3 className="font-semibold text-gray-900 dark:text-white">{lang === "tr" ? "Yaninda Getirilecekler" : "What to Bring"}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">{tx("secondOpinion.whatToBring", lang)}</h3>
             </div>
             <ul className="space-y-1.5">
               {result.whatToBring?.map((item, i) => (
@@ -160,7 +160,7 @@ export default function SecondOpinionPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
             <div className="flex items-center gap-2 mb-3">
               <HelpCircle className="w-5 h-5 text-sky-500" />
-              <h3 className="font-semibold text-gray-900 dark:text-white">{lang === "tr" ? "Sorulacak Sorular" : "Key Questions"}</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-white">{tx("secondOpinion.keyQuestions", lang)}</h3>
             </div>
             <ol className="space-y-2">
               {result.keyQuestions?.map((q, i) => (
@@ -175,7 +175,7 @@ export default function SecondOpinionPage() {
           {result.relevantTests?.length > 0 && (
             <div className="bg-sky-50 dark:bg-sky-900/20 rounded-xl border border-sky-200 dark:border-sky-800 p-5">
               <h3 className="font-semibold text-sky-800 dark:text-sky-300 mb-2">
-                {lang === "tr" ? "Oneresilen Ek Testler" : "Suggested Additional Tests"}
+                {tx("secondOpinion.suggestedTests", lang)}
               </h3>
               <ul className="space-y-1">
                 {result.relevantTests.map((t, i) => (

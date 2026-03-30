@@ -122,7 +122,7 @@ export default function ShiftWorkerPage() {
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium">{lang === "tr" ? "Vardiya Saatleri" : "Shift Hours"}</label>
+              <label className="text-sm font-medium">{tx("shift.shiftHours", lang)}</label>
               <input
                 type="text"
                 value={shiftHours}
@@ -160,19 +160,19 @@ export default function ShiftWorkerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Sun className="w-5 h-5 text-yellow-500" />
-                  {lang === "tr" ? "Sirkadyen Ritim Plani" : "Circadian Rhythm Plan"}
+                  {tx("shift.circadianPlan", lang)}
                 </h2>
                 <div className="grid sm:grid-cols-3 gap-3">
                   <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Uyku Penceresi" : "Sleep Window"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("shift.sleepWindow", lang)}</div>
                     <div className="font-medium">{result.circadianPlan.sleepWindow}</div>
                   </div>
                   <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Karanlik Dönemi" : "Dark Period"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("shift.darkPeriod", lang)}</div>
                     <div className="font-medium">{result.circadianPlan.darkPeriod}</div>
                   </div>
                   <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Isik Maruziyeti" : "Light Exposure"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("shift.lightExposure", lang)}</div>
                     <div className="font-medium">{result.circadianPlan.lightExposure}</div>
                   </div>
                 </div>
@@ -185,15 +185,15 @@ export default function ShiftWorkerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Moon className="w-5 h-5 text-indigo-500" />
-                  {lang === "tr" ? "Uyku Programı" : "Sleep Schedule"}
+                  {tx("shift.sleepSchedule", lang)}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Ana Uyku" : "Main Sleep"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("shift.mainSleep", lang)}</div>
                     <div className="font-medium">{result.sleepSchedule.mainSleep}</div>
                   </div>
                   <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Sekerleme" : "Nap Window"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("shift.napWindow", lang)}</div>
                     <div className="font-medium">{result.sleepSchedule.napWindow}</div>
                   </div>
                 </div>
@@ -213,7 +213,7 @@ export default function ShiftWorkerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-4">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Utensils className="w-5 h-5 text-orange-500" />
-                  {lang === "tr" ? "Yemek Zamanlama" : "Meal Timing"}
+                  {tx("shift.mealTiming", lang)}
                 </h2>
                 <div className="grid gap-3">
                   {result.mealTiming.map((meal, i) => (
@@ -234,15 +234,15 @@ export default function ShiftWorkerPage() {
               <div className="bg-card border rounded-2xl p-6 space-y-3">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
                   <Coffee className="w-5 h-5 text-amber-700" />
-                  {lang === "tr" ? "Kafein Stratejisi" : "Caffeine Strategy"}
+                  {tx("shift.caffeineStrategy", lang)}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Son Kafein" : "Last Caffeine"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("shift.lastCaffeine", lang)}</div>
                     <div className="font-medium">{result.caffeinePlan.lastCaffeine}</div>
                   </div>
                   <div className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Günlük Max" : "Daily Max"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("shift.dailyMax", lang)}</div>
                     <div className="font-medium">{result.caffeinePlan.maxDaily}</div>
                   </div>
                 </div>
@@ -269,7 +269,7 @@ export default function ShiftWorkerPage() {
                           "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
                         }`}>{supp.dose}</span>
                       </div>
-                      <p className="text-sm"><span className="text-muted-foreground">{lang === "tr" ? "Zamanlama:" : "Timing:"}</span> {supp.timing}</p>
+                      <p className="text-sm"><span className="text-muted-foreground">{tx("shift.timing", lang)}</span> {supp.timing}</p>
                       <p className="text-sm text-muted-foreground">{supp.reason}</p>
                     </div>
                   ))}
@@ -286,11 +286,11 @@ export default function ShiftWorkerPage() {
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "En Iyi Zaman" : "Best Time"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("shift.bestTime", lang)}</div>
                     <div className="font-medium">{result.exerciseRecommendations.bestTime}</div>
                   </div>
                   <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-3">
-                    <div className="text-xs font-medium text-muted-foreground">{lang === "tr" ? "Kacinilmasi Gereken" : "Avoid"}</div>
+                    <div className="text-xs font-medium text-muted-foreground">{tx("shift.avoid", lang)}</div>
                     <div className="font-medium">{result.exerciseRecommendations.avoid}</div>
                   </div>
                 </div>
@@ -309,7 +309,7 @@ export default function ShiftWorkerPage() {
               <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 space-y-3">
                 <h2 className="text-lg font-semibold flex items-center gap-2 text-amber-700 dark:text-amber-400">
                   <AlertTriangle className="w-5 h-5" />
-                  {lang === "tr" ? "Tukenmislik Uyarı Isaretleri" : "Burnout Warning Signs"}
+                  {tx("shift.burnoutWarnings", lang)}
                 </h2>
                 {result.warningSignsOfBurnout.map((sign, i) => (
                   <div key={i} className="flex items-start gap-2 text-sm">

@@ -633,8 +633,8 @@ export default function SleepAnalysisPage() {
                           )}
                         </div>
                         <div className="mt-2 text-xs text-muted-foreground">
-                          {lang === "tr" ? "Ortalama" : "Average"}: {analysis.averageDuration.toFixed(1)}h &middot;{" "}
-                          {lang === "tr" ? "Kalite" : "Quality"}: {analysis.averageQuality.toFixed(1)}/5
+                          {tx("sleep.average", lang)}: {analysis.averageDuration.toFixed(1)}h &middot;{" "}
+                          {tx("sleep.qualityLabel", lang)}: {analysis.averageQuality.toFixed(1)}/5
                         </div>
                       </div>
                     </div>
@@ -663,7 +663,7 @@ export default function SleepAnalysisPage() {
                     {analysis.patterns.length > 0 && (
                       <div>
                         <h3 className="mb-2 text-sm font-semibold">
-                          {lang === "tr" ? "Tespit Edilen Oruntular" : "Detected Patterns"}
+                          {tx("sleep.detectedPatterns", lang)}
                         </h3>
                         <ul className="space-y-1">
                           {analysis.patterns.map((p, i) => (
@@ -775,10 +775,10 @@ export default function SleepAnalysisPage() {
                     )}
                     {r.wake_count > 0 && (
                       <span>
-                        {r.wake_count}x {lang === "tr" ? "uyanma" : "woke"}
+                        {r.wake_count}x {tx("sleep.woke", lang)}
                       </span>
                     )}
-                    {r.dreams && <span>{lang === "tr" ? "Ruyali" : "Dreams"}</span>}
+                    {r.dreams && <span>{tx("sleep.dreamsLabel", lang)}</span>}
                     {r.factors && r.factors.length > 0 && (
                       <span className="text-xs">
                         {r.factors.map((f) => tx(FACTOR_TX_MAP[f] || f, lang)).join(", ")}

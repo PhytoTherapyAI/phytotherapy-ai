@@ -137,7 +137,7 @@ export default function SexualHealthPage() {
             {[
               { value: "male", label: tx("common.male", lang) },
               { value: "female", label: tx("common.female", lang) },
-              { value: "not_specified", label: lang === "tr" ? "Belirtmiyorum" : "Prefer not to say" },
+              { value: "not_specified", label: tx("sexual.preferNotToSay", lang) },
             ].map((g) => (
               <button
                 key={g.value}
@@ -154,7 +154,7 @@ export default function SexualHealthPage() {
       {/* Concerns */}
       <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
         <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
-          {lang === "tr" ? "Endiselerinizi secin" : "Select your concerns"}
+          {tx("sexual.selectConcerns", lang)}
         </h2>
         <div className="flex flex-wrap gap-2">
           {concerns.map((c, i) => (
@@ -196,7 +196,7 @@ export default function SexualHealthPage() {
                 <div key={i} className="mb-3 rounded-lg border border-amber-300 p-3 last:mb-0 dark:border-amber-700">
                   <p className="font-semibold">{me.medication}</p>
                   <p className="text-sm text-muted-foreground">{me.effects}</p>
-                  <p className="text-xs text-amber-600">{lang === "tr" ? "Gorulen oran" : "Prevalence"}: {me.prevalence}</p>
+                  <p className="text-xs text-amber-600">{tx("sexual.prevalence", lang)}: {me.prevalence}</p>
                   {me.alternatives && <p className="text-xs text-green-600 dark:text-green-400">{me.alternatives}</p>}
                   <p className="mt-1 text-xs font-medium">{me.action}</p>
                 </div>
@@ -208,7 +208,7 @@ export default function SexualHealthPage() {
           {result.concernAddressed?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-slate-700 dark:text-slate-300">
-                {lang === "tr" ? "Endiseleriniz" : "Your Concerns"}
+                {tx("sexual.yourConcerns", lang)}
               </h3>
               {result.concernAddressed.map((ca, i) => (
                 <div key={i} className="mb-4 last:mb-0">
@@ -248,7 +248,7 @@ export default function SexualHealthPage() {
           {result.safetyInfo?.length > 0 && (
             <div className="rounded-xl border bg-card p-6 shadow-sm">
               <h3 className="mb-3 text-lg font-bold text-slate-700 dark:text-slate-300">
-                {lang === "tr" ? "Güvenlik Bilgileri" : "Safety Information"}
+                {tx("sexual.safetyInfo", lang)}
               </h3>
               <ul className="space-y-2">
                 {result.safetyInfo.map((info, i) => (
@@ -280,9 +280,7 @@ export default function SexualHealthPage() {
           {result.professionalReferral && (
             <div className="rounded-xl border border-slate-300 bg-slate-50 p-4 dark:bg-slate-950/20">
               <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                {lang === "tr"
-                  ? "Endiseleriniz için bir sağlık profesyoneliyle görüşmenizi oneririz."
-                  : "We recommend discussing your concerns with a healthcare professional."}
+                {tx("sexual.professionalReferral", lang)}
               </p>
             </div>
           )}

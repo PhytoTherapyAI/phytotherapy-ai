@@ -147,7 +147,7 @@ export default function SkinHealthPage() {
         <div className="rounded-xl border-2 border-dashed border-pink-200 bg-pink-50/50 p-12 text-center dark:border-pink-800 dark:bg-pink-950/20">
           <LogIn className="mx-auto mb-3 h-10 w-10 text-pink-400" />
           <p className="text-sm text-muted-foreground">
-            {lang === "tr" ? "Cilt analizi için giriş yapın" : "Sign in to analyze your skin health"}
+            {tx("skin.loginRequired", lang)}
           </p>
         </div>
       </div>
@@ -216,7 +216,7 @@ export default function SkinHealthPage() {
               className="w-full accent-pink-500"
             />
             <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-              <span>{lang === "tr" ? "Hafif" : "Mild"}</span>
+              <span>{tx("skin.mild", lang)}</span>
               <span>{tx("common.severe", lang)}</span>
             </div>
           </div>
@@ -251,7 +251,7 @@ export default function SkinHealthPage() {
             <textarea
               value={currentSkincare}
               onChange={(e) => setCurrentSkincare(e.target.value)}
-              placeholder={lang === "tr" ? "Mevcut cilt bakim rutininizi yazın..." : "Describe your current skincare routine..."}
+              placeholder={tx("skin.routinePlaceholder", lang)}
               className="w-full rounded-xl border bg-background p-3 text-sm placeholder:text-muted-foreground focus:border-pink-400 focus:outline-none focus:ring-1 focus:ring-pink-400"
               rows={3}
             />
@@ -303,7 +303,7 @@ export default function SkinHealthPage() {
             )}
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold">{lang === "tr" ? "Cilt Sagligi Skoru" : "Skin Health Score"}</span>
+                <span className="text-lg font-bold">{tx("skin.skinHealthScore", lang)}</span>
                 <span className={`text-2xl font-bold ${
                   result.skinHealthScore >= 70 ? "text-green-600" : result.skinHealthScore >= 40 ? "text-amber-600" : "text-red-600"
                 }`}>
@@ -348,7 +348,7 @@ export default function SkinHealthPage() {
                   <div>
                     <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-amber-600 uppercase">
                       <Sun className="h-3.5 w-3.5" />
-                      {lang === "tr" ? "Sabah" : "Morning"}
+                      {tx("skin.morning", lang)}
                     </p>
                     <div className="space-y-1.5">
                       {result.skincareRoutine.morning.map((s, i) => (
@@ -365,7 +365,7 @@ export default function SkinHealthPage() {
                   <div>
                     <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-indigo-600 uppercase">
                       <Moon className="h-3.5 w-3.5" />
-                      {lang === "tr" ? "Aksam" : "Evening"}
+                      {tx("skin.evening", lang)}
                     </p>
                     <div className="space-y-1.5">
                       {result.skincareRoutine.evening.map((s, i) => (
@@ -381,7 +381,7 @@ export default function SkinHealthPage() {
                 {result.skincareRoutine.weekly && result.skincareRoutine.weekly.length > 0 && (
                   <div>
                     <p className="mb-2 text-xs font-semibold text-pink-600 uppercase">
-                      {lang === "tr" ? "Haftalık" : "Weekly"}
+                      {tx("skin.weekly", lang)}
                     </p>
                     <div className="space-y-1.5">
                       {result.skincareRoutine.weekly.map((s, i) => (
@@ -431,7 +431,7 @@ export default function SkinHealthPage() {
           {result.lifestyleFactors && result.lifestyleFactors.length > 0 && (
             <div className="rounded-lg border border-pink-200 bg-pink-50/50 p-4 dark:border-pink-800 dark:bg-pink-950/20">
               <h3 className="mb-2 text-sm font-semibold text-pink-700 dark:text-pink-400">
-                {lang === "tr" ? "Yasam Tarzi Önerileri" : "Lifestyle Tips"}
+                {tx("skin.lifestyleTips", lang)}
               </h3>
               <ul className="space-y-1">
                 {result.lifestyleFactors.map((f, i) => (
@@ -503,7 +503,7 @@ export default function SkinHealthPage() {
             }}
             className="w-full"
           >
-            {lang === "tr" ? "Yeni analiz yap" : "Start new analysis"}
+            {tx("skin.newAnalysis", lang)}
           </Button>
         </div>
       )}

@@ -330,12 +330,10 @@ export default function SmartRemindersPage() {
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
           <Pill className="w-16 h-16 text-teal-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">
-            {lang === "tr" ? "Akilli İlaç Hatirlatici" : "Smart Medication Reminder"}
+            {tx("reminders.title", lang)}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {lang === "tr"
-              ? "İlaçlarinizin en uygun zamanlarda alinmasini saglayan kişisellestirilmis program."
-              : "Personalized schedule ensuring your medications are taken at optimal times."}
+            {tx("reminders.subtitle", lang)}
           </p>
           <Link href="/auth/login">
             <Button className="bg-teal-600 hover:bg-teal-700 text-white">
@@ -356,12 +354,10 @@ export default function SmartRemindersPage() {
             <BellRing className="w-8 h-8 text-teal-600 dark:text-teal-400" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {lang === "tr" ? "Akilli İlaç Hatirlatici" : "Smart Medication Reminder"}
+            {tx("reminders.title", lang)}
           </h1>
           <p className="text-gray-500 dark:text-gray-400 max-w-md mx-auto">
-            {lang === "tr"
-              ? "İlaç ozelliklerine gore optimize edilmis kişisel programıniz"
-              : "Your personalized schedule optimized by drug properties"}
+            {tx("reminders.subtitleShort", lang)}
           </p>
         </div>
 
@@ -373,16 +369,14 @@ export default function SmartRemindersPage() {
           <div className="text-center py-16">
             <Pill className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
             <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              {lang === "tr" ? "Henuz ilac eklenmemis" : "No medications added yet"}
+              {tx("reminders.noMeds", lang)}
             </h2>
             <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto">
-              {lang === "tr"
-                ? "İlaçlarinizi profilinize ekleyerek akilli zamanlama oluşturun."
-                : "Add your medications to your profile to generate smart scheduling."}
+              {tx("reminders.noMedsDesc", lang)}
             </p>
             <Link href="/profile">
               <Button className="bg-teal-600 hover:bg-teal-700 text-white">
-                {lang === "tr" ? "Profilde İlaç Ekle" : "Add Medications in Profile"}
+                {tx("reminders.addMeds", lang)}
               </Button>
             </Link>
           </div>
@@ -397,7 +391,7 @@ export default function SmartRemindersPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-teal-600 dark:text-teal-400 uppercase tracking-wide mb-1">
-                      {lang === "tr" ? "Siradaki" : "Next Up"}
+                      {tx("reminders.nextUp", lang)}
                     </p>
                     <p className="text-base font-semibold text-gray-900 dark:text-white">
                       {nextSlot.medications.map(m => m.name).join(", ")}
@@ -432,7 +426,7 @@ export default function SmartRemindersPage() {
             <div className="mb-8">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-teal-500" />
-                {lang === "tr" ? "Günlük Programıniz" : "Your Daily Schedule"}
+                {tx("reminders.dailySchedule", lang)}
               </h2>
 
               <div className="relative space-y-1">
@@ -518,9 +512,7 @@ export default function SmartRemindersPage() {
                                 {med.rule?.enhancedBy === "vitamin_c" && (
                                   <p className="text-xs text-green-700 dark:text-green-400 ml-6 flex items-center gap-1">
                                     <CheckCircle2 className="w-3 h-3" />
-                                    {lang === "tr"
-                                      ? "C vitamini emilimi artirir"
-                                      : "Vitamin C enhances absorption"}
+                                    {tx("reminders.vitCEnhances", lang)}
                                   </p>
                                 )}
                               </div>
@@ -537,7 +529,7 @@ export default function SmartRemindersPage() {
             {/* Meal Relation Legend */}
             <div className="mb-8 p-4 rounded-xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
               <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-                {lang === "tr" ? "Renk Kodlari" : "Color Legend"}
+                {tx("reminders.colorLegend", lang)}
               </h3>
               <div className="grid grid-cols-2 gap-2">
                 {(["before", "with", "after", "independent"] as const).map(rel => (
@@ -561,12 +553,10 @@ export default function SmartRemindersPage() {
                   <Bell className="w-5 h-5 text-teal-500" />
                   <div className="text-left">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {lang === "tr" ? "Bildirim Ayarlari" : "Notification Settings"}
+                      {tx("reminders.notifSettings", lang)}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {lang === "tr"
-                        ? "Her ilac için hatirlatma saati belirleyin"
-                        : "Set reminder times for each medication"}
+                      {tx("reminders.notifDesc", lang)}
                     </p>
                   </div>
                 </div>
@@ -595,9 +585,7 @@ export default function SmartRemindersPage() {
                     </div>
                   ))}
                   <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                    {lang === "tr"
-                      ? "PWA push bildirimleri yakin bir surumde etkinlestirilecektir."
-                      : "PWA push notifications will be enabled in an upcoming release."}
+                    {tx("reminders.notifComingSoon", lang)}
                   </p>
                 </div>
               )}
@@ -607,7 +595,7 @@ export default function SmartRemindersPage() {
             <div className="mb-8">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-teal-500" />
-                {lang === "tr" ? "İlaç Zamanlama Kilavuzu" : "Medication Timing Guide"}
+                {tx("reminders.timingGuide", lang)}
               </h2>
               <div className="space-y-3">
                 {medications.map((med) => {
@@ -648,9 +636,7 @@ export default function SmartRemindersPage() {
                         </div>
                       ) : (
                         <p className="ml-8 text-sm text-gray-400 dark:text-gray-500 italic">
-                          {lang === "tr"
-                            ? "Bu ilac için ozel zamanlama kurali bulunamadı. Doktorunuzun onerilerine uyun."
-                            : "No specific timing rule found for this medication. Follow your doctor's instructions."}
+                          {tx("reminders.noTimingRule", lang)}
                         </p>
                       )}
                     </div>
@@ -662,9 +648,7 @@ export default function SmartRemindersPage() {
             {/* Disclaimer */}
             <div className="p-4 rounded-xl bg-gray-100 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 text-center">
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                {lang === "tr"
-                  ? "Bu program genel bilgi amaclidir. İlaç zamanlamasi için her zaman doktorunuzun talimatlarini takip edin."
-                  : "This schedule is for informational purposes. Always follow your doctor's instructions for medication timing."}
+                {tx("reminders.disclaimer", lang)}
               </p>
             </div>
           </>

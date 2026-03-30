@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { tx } from "@/lib/translations"
 import { CONSENT_DISCLOSURES, type ConsentPurpose } from "@/lib/consent-management"
 import {
   Share2, Shield, Lock, Check, ChevronDown, ChevronUp, FileText,
@@ -124,7 +125,7 @@ export default function ShareDataPage() {
           )}
           <div className="flex items-center justify-center gap-2 mb-4 text-xs text-muted-foreground">
             <Fingerprint className="w-4 h-4 text-primary" />
-            <span>SHA-256 {lang === "tr" ? "imzalı rıza kaydı" : "signed consent record"}</span>
+            <span>SHA-256 {tx("shareData.signedConsent", lang)}</span>
           </div>
           <Button onClick={() => { setSuccess(false); setSelectedPurpose(null); setAcknowledged(false); setSelectedCategories(new Set()) }} className="w-full">
             {t("done")}
