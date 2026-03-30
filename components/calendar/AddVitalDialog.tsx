@@ -79,11 +79,7 @@ export function AddVitalDialog({
     // Validate
     if (vitalType === "blood_pressure") {
       if (!systolic || !diastolic) {
-        setError(
-          lang === "tr"
-            ? "Sistolik ve diastolik değerler gereklidir."
-            : "Systolic and diastolic values are required."
-        )
+        setError(tx("cal.bpRequired", lang))
         return
       }
       const sys = Number(systolic)

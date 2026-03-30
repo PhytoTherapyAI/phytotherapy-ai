@@ -2,6 +2,7 @@
 
 import { Leaf, Users } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import {
   IconHeartPulse,
   IconResearchLeaf,
@@ -16,59 +17,50 @@ import {
 
 export default function AboutPage() {
   const { lang } = useLang();
-  const isTr = lang === "tr";
 
   const values = [
     {
       icon: IconHeartPulse,
-      title: isTr ? "Primum non nocere" : "Primum non nocere",
-      desc: isTr ? "Her zaman \u00F6nce zarar verme" : "First, do no harm",
+      title: "Primum non nocere",
+      desc: tx("about.doNoHarm", lang),
       color: "text-red-500",
       bg: "bg-red-50 dark:bg-red-950/20",
     },
     {
       icon: IconResearchLeaf,
-      title: isTr ? "Kan\u0131ta Dayal\u0131" : "Evidence-based",
-      desc: isTr
-        ? "Yaln\u0131zca PubMed, NIH, WHO kaynakl\u0131"
-        : "Only PubMed, NIH, WHO sourced",
+      title: tx("about.evidenceBased", lang),
+      desc: tx("about.evidenceBasedDesc", lang),
       color: "text-blue-500",
       bg: "bg-blue-50 dark:bg-blue-950/20",
     },
     {
       icon: IconVisionSparkle,
-      title: isTr ? "\u015Eeffafl\u0131k" : "Transparency",
-      desc: isTr
-        ? "Her \u00F6neri makale referans\u0131yla gelir"
-        : "Every recommendation with sources",
+      title: tx("about.transparency", lang),
+      desc: tx("about.transparencyDesc", lang),
       color: "text-purple-500",
       bg: "bg-purple-50 dark:bg-purple-950/20",
     },
     {
       icon: IconCommunityNet,
-      title: isTr ? "Eri\u015Filebilirlik" : "Accessibility",
-      desc: isTr
-        ? "Herkes i\u00E7in sa\u011Fl\u0131k rehberli\u011Fi"
-        : "Health guidance for everyone",
+      title: tx("about.accessibility", lang),
+      desc: tx("about.accessibilityDesc", lang),
       color: "text-green-500",
       bg: "bg-green-50 dark:bg-green-950/20",
     },
     {
       icon: IconPrivacyLeaf,
-      title: isTr ? "Gizlilik" : "Privacy",
-      desc: isTr
-        ? "Verileriniz her zaman sizindir"
-        : "Your data is yours, always",
+      title: tx("about.privacy", lang),
+      desc: tx("about.privacyDesc", lang),
       color: "text-amber-500",
       bg: "bg-amber-50 dark:bg-amber-950/20",
     },
   ];
 
   const stats = [
-    { value: "85+", label: isTr ? "Sağlık Aracı" : "Health Tools", icon: IconResearchLeaf },
-    { value: "1000+", label: isTr ? "Çeviri Anahtarı (TR/EN)" : "Translation Keys (TR/EN)", icon: IconGrowthChart },
-    { value: "60+", label: isTr ? "API Endpoint" : "API Endpoints", icon: IconMissionTarget },
-    { value: isTr ? "Çoklu" : "Multi", label: isTr ? "Akademik Kaynak" : "Research Sources", icon: IconMedicalBotanical },
+    { value: "85+", label: tx("about.healthTools", lang), icon: IconResearchLeaf },
+    { value: "1000+", label: tx("about.translationKeys", lang), icon: IconGrowthChart },
+    { value: "60+", label: tx("about.apiEndpoints", lang), icon: IconMissionTarget },
+    { value: tx("about.multi", lang), label: tx("about.researchSources", lang), icon: IconMedicalBotanical },
   ];
 
   return (
@@ -84,9 +76,7 @@ export default function AboutPage() {
             <span className="text-primary">.ai</span>
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
-            {isTr
-              ? "Kan\u0131ta dayal\u0131 b\u00FCt\u00FCnle\u015Ftirici t\u0131p asistan\u0131 \u2014 modern t\u0131p ile bitkisel terapiyi g\u00FCvenle birle\u015Ftiren platform."
-              : "Evidence-based integrative medicine assistant \u2014 safely bridging modern medicine and herbal therapy."}
+            {tx("about.heroDesc", lang)}
           </p>
         </div>
         {/* Decorative circles */}
@@ -113,7 +103,7 @@ export default function AboutPage() {
       {/* Core Values */}
       <div className="mb-16">
         <h2 className="mb-6 text-center text-2xl font-bold">
-          {isTr ? "Temel De\u011Ferlerimiz" : "Core Values"}
+          {tx("about.coreValues", lang)}
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {values.map((v, i) => (
@@ -137,12 +127,10 @@ export default function AboutPage() {
           <Users className="h-6 w-6 text-green-600 dark:text-green-400" />
         </div>
         <h2 className="mb-3 text-xl font-bold">
-          {isTr ? "Ekibimiz" : "Our Team"}
+          {tx("about.ourTeam", lang)}
         </h2>
         <p className="mx-auto max-w-lg text-muted-foreground">
-          {isTr
-            ? "Harvard '\u0130Building High-Value Health Systems\u2019 hackathon'unda 3 t\u0131p \u00F6\u011Frencisi taraf\u0131ndan kurulan, yapay zeka ile g\u00FC\u00E7lendirilmi\u015F bir platform."
-            : "Founded by 3 medical students at Harvard's 'Building High-Value Health Systems' hackathon, powered by AI."}
+          {tx("about.teamDesc", lang)}
         </p>
       </div>
 
@@ -153,12 +141,10 @@ export default function AboutPage() {
             <div className="rounded-lg bg-purple-100 p-2.5 dark:bg-purple-900/30">
               <IconVisionSparkle className="h-5 w-5 text-purple-600 dark:text-purple-400" />
             </div>
-            <h2 className="text-xl font-bold">{isTr ? "Vizyonumuz" : "Our Vision"}</h2>
+            <h2 className="text-xl font-bold">{tx("about.ourVision", lang)}</h2>
           </div>
           <p className="leading-relaxed text-muted-foreground">
-            {isTr
-              ? "Dünyanın ilk Kanıta Dayalı Bütünleştirici Tıp Asistanı olmak — modern tıp, bitkisel terapi ve kişisel sağlık profillerini hem hastalara hem doktorlara hizmet eden tek bir güvenilir platformda birleştirmek."
-              : "To be the world's first Evidence-Based Integrative Medicine Assistant — bridging modern medicine, herbal therapy, and personal health profiles into a single trusted platform that serves both patients and doctors."}
+            {tx("about.visionDesc", lang)}
           </p>
         </div>
         <div className="rounded-2xl border bg-gradient-to-br from-amber-50/50 to-background p-6 md:p-8 dark:from-amber-950/10">
@@ -166,12 +152,10 @@ export default function AboutPage() {
             <div className="rounded-lg bg-amber-100 p-2.5 dark:bg-amber-900/30">
               <IconMissionTarget className="h-5 w-5 text-amber-600 dark:text-amber-400" />
             </div>
-            <h2 className="text-xl font-bold">{isTr ? "Misyonumuz" : "Our Mission"}</h2>
+            <h2 className="text-xl font-bold">{tx("about.ourMission", lang)}</h2>
           </div>
           <p className="leading-relaxed text-muted-foreground">
-            {isTr
-              ? "Yapay zeka destekli analizi hakemli bilimsel kanıtlarla birleştirerek sağlık bilgisini demokratikleştirmek, kişiselleştirilmiş sağlık rehberliğini tıbbi okuryazarlık veya ekonomik durumdan bağımsız olarak herkes için erişilebilir, güvenli ve şeffaf kılmak."
-              : "To democratize health knowledge by combining AI-powered analysis with peer-reviewed scientific evidence, making personalized health guidance accessible, safe, and transparent for everyone — regardless of medical literacy or economic status."}
+            {tx("about.missionDesc", lang)}
           </p>
         </div>
       </div>
@@ -182,9 +166,7 @@ export default function AboutPage() {
           <IconPreventionShield className="h-5 w-5 text-amber-600 dark:text-amber-400" />
         </div>
         <p className="text-sm text-muted-foreground">
-          {isTr
-            ? "Phytotherapy.ai bir e\u011Fitim ama\u00E7l\u0131 sa\u011Fl\u0131k arac\u0131d\u0131r; t\u0131bbi te\u015Fhis veya tedavi sunmaz. T\u00FCm \u00F6neriler yay\u0131mlanm\u0131\u015F bilimsel ara\u015Ft\u0131rmalara dayan\u0131r. Her zaman sa\u011Fl\u0131k profesyonelinize dan\u0131\u015F\u0131n."
-            : "Phytotherapy.ai is an educational wellness tool and does not provide medical diagnosis or treatment. All recommendations are based on published scientific research. Always consult your healthcare provider."}
+          {tx("about.disclaimer", lang)}
         </p>
       </div>
     </div>

@@ -178,9 +178,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
         const blockMsg: ChatMessage = {
           id: crypto.randomUUID(),
           role: "assistant",
-          content: lang === "tr"
-            ? "🔒 **Kişiselleştirilmiş öneriler için sağlık profili gereklidir.**\n\nGüvenliğiniz için kişisel tavsiye vermeden önce ilaçlarınızı, alerjilerinizi ve sağlık durumunuzu bilmem gerekiyor.\n\n👉 **[Kayıt olun](/auth/login)** — 2 dakikadan kısa sürer!\n\nBu sürede genel sağlık sorularını yanıtlayabilirim:\n- \"Omega-3 iltihabı azaltır mı?\"\n- \"Zerdeçal için kanıtlar nelerdir?\"\n- \"Kediotu kökü uyku için nasıl çalışır?\""
-            : "🔒 **Personalized recommendations require a health profile.**\n\nTo ensure your safety, I need to know your medications, allergies, and health conditions before giving personal advice.\n\n👉 **[Sign up](/auth/login)** — it takes less than 2 minutes!\n\nIn the meantime, I can answer general health questions like:\n- \"Does omega-3 reduce inflammation?\"\n- \"What is the evidence for turmeric?\"\n- \"How does valerian root work for sleep?\"",
+          content: tx("chat.personalProfileRequired", lang),
         };
         setMessages((prev) => [...prev, userMsg, blockMsg]);
         setInput("");
@@ -197,9 +195,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
         const limitMsg: ChatMessage = {
           id: crypto.randomUUID(),
           role: "assistant",
-          content: lang === "tr"
-            ? "🔒 **Ücretsiz sorgu limitinize ulaştınız.**\n\nMisafir kullanıcılar en fazla 5 soru sorabilir. Sınırsız erişim ve kişiselleştirilmiş öneriler için:\n\n👉 **[Ücretsiz hesap oluşturun](/auth/login)**\n\nVerileriniz şifrelenir ve istediğiniz zaman silebilirsiniz."
-            : "🔒 **You've reached your free query limit.**\n\nGuest users can ask up to 5 questions. To continue with unlimited access and personalized recommendations:\n\n👉 **[Create a free account](/auth/login)**\n\nYour data is encrypted and you can delete it anytime.",
+          content: tx("chat.queryLimitReached", lang),
         };
         setMessages((prev) => [...prev, userMsg, limitMsg]);
         setInput("");
@@ -320,9 +316,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
           m.id === assistantId
             ? {
                 ...m,
-                content: lang === "tr"
-                  ? "⚠️ Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol edip tekrar deneyin."
-                  : "⚠️ Could not connect to the server. Please check your internet connection and try again.",
+                content: tx("chat.connectionError", lang),
                 isStreaming: false,
               }
             : m

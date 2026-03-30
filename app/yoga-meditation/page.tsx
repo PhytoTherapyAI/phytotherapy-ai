@@ -97,10 +97,10 @@ export default function YogaMeditationPage() {
             <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-semibold text-red-800 dark:text-red-300 text-sm">
-                {lang === "tr" ? "Osteoporoz Uyarısi" : "Osteoporosis Warning"}
+                {tx("yoga.osteoWarning", lang)}
               </p>
               <p className="text-sm text-red-700 dark:text-red-400 mb-2">
-                {lang === "tr" ? "Asagidaki pozlardan kacininiz:" : "Avoid these poses:"}
+                {tx("yoga.avoidPoses", lang)}
               </p>
               <ul className="space-y-1">
                 {DANGEROUS_POSES_OSTEOPOROSIS.map((p, i) => (
@@ -116,7 +116,7 @@ export default function YogaMeditationPage() {
 
       {/* Yoga Guides */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Kanita Dayali Yoga" : "Evidence-Based Yoga"}
+        {tx("yoga.evidenceBased", lang)}
       </h2>
       <div className="space-y-3 mb-10">
         {YOGA_GUIDES.map((g, i) => (
@@ -129,7 +129,7 @@ export default function YogaMeditationPage() {
                     {tx("common.evidence", lang)} {g.grade}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500">{g.poses.length} {lang === "tr" ? "poz" : "poses"}</p>
+                <p className="text-xs text-gray-500">{g.poses.length} {tx("yoga.poses", lang)}</p>
               </div>
               {expandedGuide === i ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
             </button>
@@ -153,7 +153,7 @@ export default function YogaMeditationPage() {
 
       {/* Meditation Timer */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Meditasyon Zamanlayicisi" : "Meditation Timer"}
+        {tx("yoga.meditationTimer", lang)}
       </h2>
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <div className="space-y-3 mb-6">
@@ -177,11 +177,11 @@ export default function YogaMeditationPage() {
             <div className="flex gap-3 justify-center">
               {!timerRunning ? (
                 <Button onClick={() => setTimerRunning(true)} className="bg-purple-600 hover:bg-purple-700 text-white" disabled={meditationTimer === 0}>
-                  <Play className="w-4 h-4 mr-2" /> {lang === "tr" ? "Başlat" : "Start"}
+                  <Play className="w-4 h-4 mr-2" /> {tx("yoga.start", lang)}
                 </Button>
               ) : (
                 <Button onClick={() => setTimerRunning(false)} variant="outline">
-                  <Pause className="w-4 h-4 mr-2" /> {lang === "tr" ? "Duraklat" : "Pause"}
+                  <Pause className="w-4 h-4 mr-2" /> {tx("yoga.pause", lang)}
                 </Button>
               )}
               <Button onClick={() => { setMeditationTimer(MEDITATION_TECHNIQUES[selectedMeditation].duration); setTimerRunning(false); }} variant="outline" size="icon">

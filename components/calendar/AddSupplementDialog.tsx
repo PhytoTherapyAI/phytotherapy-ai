@@ -331,7 +331,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                     className="flex w-full items-center gap-2.5 px-4 py-2.5 text-left text-sm border-t transition-colors hover:bg-muted/50"
                   >
                     <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                    <span className="text-muted-foreground">{tr ? `"${query}" için asistan analizi` : `Analyze "${query}"`}</span>
+                    <span className="text-muted-foreground">{tx("supp.analyzeCustom", lang)} &quot;{query}&quot;</span>
                   </button>
                 )}
               </div>

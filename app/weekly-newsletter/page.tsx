@@ -219,7 +219,7 @@ export default function WeeklyNewsletterPage() {
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
         <Mail className="w-12 h-12 text-green-600" />
         <p className="text-center text-gray-600 dark:text-gray-400">
-          {lang === "tr" ? "Haftalık bülteninizi görmek için giriş yapın." : "Sign in to view your weekly health newsletter."}
+          {tx("newsletter.signInPrompt", lang)}
         </p>
         <Link href="/auth/login">
           <Button>{tx("common.signIn", lang)}</Button>
@@ -238,13 +238,11 @@ export default function WeeklyNewsletterPage() {
           <div className="flex items-center gap-3 mb-2">
             <Mail className="w-6 h-6" />
             <h1 className="text-xl font-bold">
-              {lang === "tr" ? "Haftalık Sağlık Bülteni" : "Weekly Health Newsletter"}
+              {tx("newsletter.title", lang)}
             </h1>
           </div>
           <p className="text-green-100 text-sm">
-            {lang === "tr"
-              ? "Her Pazartesi kişiselleştirilmiş sağlık özetiniz"
-              : "Your personalized health summary every Monday"}
+            {tx("newsletter.subtitle", lang)}
           </p>
         </div>
       </div>
@@ -263,10 +261,10 @@ export default function WeeklyNewsletterPage() {
               }`}
             >
               {tab === "current"
-                ? lang === "tr" ? "Bu Hafta" : "This Week"
+                ? tx("newsletter.thisWeek", lang)
                 : tab === "archive"
-                ? lang === "tr" ? "Arsiv" : "Archive"
-                : lang === "tr" ? "Ayarlar" : "Settings"}
+                ? tx("newsletter.archive", lang)
+                : tx("newsletter.settings", lang)}
             </button>
           ))}
         </div>
@@ -279,7 +277,7 @@ export default function WeeklyNewsletterPage() {
             {/* Week at a Glance */}
             <Card className="p-5">
               <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
-                {lang === "tr" ? "Haftaniza Bakis" : "Your Week at a Glance"}
+                {tx("newsletter.weekGlance", lang)}
               </h2>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
                 {formatDate(nl.weekStart)} — {formatDate(nl.weekEnd)}
@@ -299,7 +297,7 @@ export default function WeeklyNewsletterPage() {
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="text-xl font-bold text-gray-900 dark:text-white">{nl.complianceScore}%</span>
                     <span className="text-[10px] text-gray-500">
-                      {lang === "tr" ? "Uyum" : "Compliance"}
+                      {tx("newsletter.compliance", lang)}
                     </span>
                   </div>
                 </div>
@@ -307,7 +305,7 @@ export default function WeeklyNewsletterPage() {
                   <div className="flex items-center gap-2">
                     <Activity className="w-4 h-4 text-blue-500" />
                     <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {lang === "tr" ? "Sağlık Skoru:" : "Health Score:"}{" "}
+                      {tx("newsletter.healthScore", lang)}{" "}
                       <span className="font-semibold">{nl.healthScoreTrend.current}/100</span>
                     </span>
                     <Badge variant={trendDiff >= 0 ? "default" : "destructive"} className="text-xs">
@@ -318,7 +316,7 @@ export default function WeeklyNewsletterPage() {
                   <div className="flex items-center gap-2">
                     <Pill className="w-4 h-4 text-green-500" />
                     <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {lang === "tr" ? "İlaç uyumu bu hafta" : "Medication adherence this week"}
+                      {tx("newsletter.medAdherence", lang)}
                     </span>
                   </div>
                 </div>
@@ -332,7 +330,7 @@ export default function WeeklyNewsletterPage() {
               <div className="flex items-center gap-2 mb-3">
                 <Calendar className="w-5 h-5 text-blue-500" />
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {lang === "tr" ? "Yaklasan Etkinlikler" : "Upcoming Events"}
+                  {tx("newsletter.upcomingEvents", lang)}
                 </h3>
               </div>
               {nl.upcomingEvents.length > 0 ? (
@@ -346,7 +344,7 @@ export default function WeeklyNewsletterPage() {
                 </div>
               ) : (
                 <p className="text-sm text-gray-400 italic">
-                  {lang === "tr" ? "Bu hafta planlanmis etkinlik yok." : "No events scheduled this week."}
+                  {tx("newsletter.noEvents", lang)}
                 </p>
               )}
             </Card>
@@ -357,7 +355,7 @@ export default function WeeklyNewsletterPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <AlertTriangle className="w-5 h-5 text-yellow-500" />
                   <h3 className="font-semibold text-gray-900 dark:text-white">
-                    {lang === "tr" ? "Washout Hatirlatmalari" : "Washout Reminders"}
+                    {tx("newsletter.washoutReminders", lang)}
                   </h3>
                 </div>
                 <div className="space-y-2">
@@ -365,7 +363,7 @@ export default function WeeklyNewsletterPage() {
                     <div key={i} className="flex items-center justify-between p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{wa.supplement}</span>
                       <Badge variant="outline" className="text-yellow-600 border-yellow-300">
-                        {wa.daysLeft} {lang === "tr" ? "gun kaldi" : "days left"}
+                        {wa.daysLeft} {tx("newsletter.daysLeft", lang)}
                       </Badge>
                     </div>
                   ))}
@@ -378,11 +376,11 @@ export default function WeeklyNewsletterPage() {
               <div className="flex items-center gap-2 mb-2">
                 <Cloud className="w-5 h-5 text-sky-500" />
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {lang === "tr" ? "Hava Durumu Ipucu" : "Weather Health Tip"}
+                  {tx("newsletter.weatherTip", lang)}
                 </h3>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                {lang === "tr" ? nl.weatherTip.tr : nl.weatherTip.en}
+                {nl.weatherTip[lang]}
               </p>
             </Card>
 
@@ -391,18 +389,18 @@ export default function WeeklyNewsletterPage() {
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp className="w-5 h-5 text-green-600" />
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {lang === "tr" ? "AI Kişisel Değerlendirme" : "AI Personalized Insight"}
+                  {tx("newsletter.aiInsight", lang)}
                 </h3>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                {lang === "tr" ? nl.aiInsight.tr : nl.aiInsight.en}
+                {nl.aiInsight[lang]}
               </p>
             </Card>
 
             {/* Share Button */}
             <Button className="w-full gap-2" variant="outline">
               <Share2 className="w-4 h-4" />
-              {lang === "tr" ? "Haftami Paylas" : "Share My Week"}
+              {tx("newsletter.shareWeek", lang)}
             </Button>
           </>
         )}
@@ -411,7 +409,7 @@ export default function WeeklyNewsletterPage() {
         {activeTab === "archive" && (
           <Card className="p-5">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-              {lang === "tr" ? "Geçmiş Bultenler" : "Past Newsletters"}
+              {tx("newsletter.pastNewsletters", lang)}
             </h3>
             {pastNewsletters.length > 0 ? (
               <div className="space-y-2">
@@ -423,7 +421,7 @@ export default function WeeklyNewsletterPage() {
                     <div className="flex items-center gap-3">
                       <Mail className="w-4 h-4 text-gray-400" />
                       <span className="text-sm text-gray-700 dark:text-gray-300">
-                        {lang === "tr" ? "Hafta:" : "Week of"} {formatDate(pn.weekStart)}
+                        {tx("newsletter.weekOf", lang)} {formatDate(pn.weekStart)}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -437,7 +435,7 @@ export default function WeeklyNewsletterPage() {
               </div>
             ) : (
               <p className="text-sm text-gray-400 italic text-center py-8">
-                {lang === "tr" ? "Henuz geçmiş bulten yok." : "No past newsletters yet."}
+                {tx("newsletter.noPast", lang)}
               </p>
             )}
           </Card>
@@ -447,7 +445,7 @@ export default function WeeklyNewsletterPage() {
         {activeTab === "settings" && (
           <Card className="p-5 space-y-5">
             <h3 className="font-semibold text-gray-900 dark:text-white">
-              {lang === "tr" ? "Bulten Tercihleri" : "Newsletter Preferences"}
+              {tx("newsletter.preferences", lang)}
             </h3>
 
             {/* Push Monday Toggle */}
@@ -456,10 +454,10 @@ export default function WeeklyNewsletterPage() {
                 <Bell className="w-5 h-5 text-green-500" />
                 <div>
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {lang === "tr" ? "Pazartesi Push Bildirimi" : "Monday Push Notification"}
+                    {tx("newsletter.mondayPush", lang)}
                   </p>
                   <p className="text-xs text-gray-400">
-                    {lang === "tr" ? "Her Pazartesi sabahi bildirim al" : "Get notified every Monday morning"}
+                    {tx("newsletter.mondayPushDesc", lang)}
                   </p>
                 </div>
               </div>
@@ -481,10 +479,10 @@ export default function WeeklyNewsletterPage() {
                 <Mail className="w-5 h-5 text-blue-500" />
                 <div>
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {lang === "tr" ? "Uygulama Ici Bildirim" : "In-App Notification"}
+                    {tx("newsletter.inAppNotify", lang)}
                   </p>
                   <p className="text-xs text-gray-400">
-                    {lang === "tr" ? "Dashboard'da bulten karti goster" : "Show newsletter card on dashboard"}
+                    {tx("newsletter.inAppNotifyDesc", lang)}
                   </p>
                 </div>
               </div>
@@ -506,10 +504,10 @@ export default function WeeklyNewsletterPage() {
                 <Clock className="w-5 h-5 text-purple-500" />
                 <div>
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {lang === "tr" ? "Teslimat Saati" : "Delivery Time"}
+                    {tx("newsletter.deliveryTime", lang)}
                   </p>
                   <p className="text-xs text-gray-400">
-                    {lang === "tr" ? "Bulten kac'ta gelsin?" : "What time should your newsletter arrive?"}
+                    {tx("newsletter.deliveryTimeDesc", lang)}
                   </p>
                 </div>
               </div>

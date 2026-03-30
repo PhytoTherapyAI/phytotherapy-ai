@@ -340,9 +340,7 @@ export default function WomensHealthPage() {
         <Heart className="mx-auto mb-4 h-12 w-12 text-pink-400" />
         <h1 className="mb-2 text-2xl font-bold">{tx("wh.title", lang)}</h1>
         <p className="text-muted-foreground">
-          {lang === "tr"
-            ? "Bu ozellik kadin sağlık takibi için tasarlanmistir."
-            : "This feature is designed for female health tracking."}
+          {tx("wh.femaleOnly", lang)}
         </p>
       </div>
     );
@@ -419,7 +417,7 @@ export default function WomensHealthPage() {
                     {currentEstimate.day}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {lang === "tr" ? "gun" : "day"}
+                    {tx("wh.day", lang)}
                   </p>
                 </div>
               </div>
@@ -581,7 +579,7 @@ export default function WomensHealthPage() {
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder={lang === "tr" ? "Notlar (isteğe bağlı)..." : "Notes (optional)..."}
+                  placeholder={tx("wh.notesPlaceholder", lang)}
                   rows={2}
                   maxLength={500}
                   className="w-full rounded-lg border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:border-pink-400 focus:outline-none focus:ring-1 focus:ring-pink-400"
@@ -607,7 +605,7 @@ export default function WomensHealthPage() {
                   onClick={() => setShowForm(false)}
                   className="border-pink-200 hover:bg-pink-50 dark:border-pink-800"
                 >
-                  {lang === "tr" ? "Iptal" : "Cancel"}
+                  {tx("common.cancel", lang)}
                 </Button>
               </div>
             </div>
@@ -690,7 +688,7 @@ export default function WomensHealthPage() {
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                      {lang === "tr" ? "Düzenlilk" : "Regularity"}
+                      {tx("wh.regularity", lang)}
                     </p>
                     <p className={`font-bold text-sm ${
                       analysis.cycleRegularity === "regular"
@@ -700,15 +698,15 @@ export default function WomensHealthPage() {
                         : "text-gray-500"
                     }`}>
                       {analysis.cycleRegularity === "regular"
-                        ? lang === "tr" ? "Düzenli" : "Regular"
+                        ? tx("wh.regular", lang)
                         : analysis.cycleRegularity === "irregular"
-                        ? lang === "tr" ? "Duzensiz" : "Irregular"
-                        : lang === "tr" ? "Yetersiz veri" : "Insufficient data"}
+                        ? tx("wh.irregular", lang)
+                        : tx("wh.insufficientData", lang)}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                      {lang === "tr" ? "Ort. dongu" : "Avg. cycle"}
+                      {tx("wh.avgCycle", lang)}
                     </p>
                     <p className="font-bold text-sm text-pink-600">
                       {analysis.averageCycleLength
@@ -723,7 +721,7 @@ export default function WomensHealthPage() {
               {analysis.pmsPatterns.length > 0 && (
                 <div className="rounded-xl border border-pink-200 bg-white p-5 dark:border-pink-800 dark:bg-gray-900">
                   <h3 className="font-semibold mb-3 text-sm">
-                    {lang === "tr" ? "PMS Oruntuleri" : "PMS Patterns"}
+                    {tx("wh.pmsPatterns", lang)}
                   </h3>
                   <div className="space-y-3">
                     {analysis.pmsPatterns.map((p, i) => (
@@ -752,7 +750,7 @@ export default function WomensHealthPage() {
               {analysis.phaseRecommendations.length > 0 && (
                 <div className="rounded-xl border border-pink-200 bg-white p-5 dark:border-pink-800 dark:bg-gray-900">
                   <h3 className="font-semibold mb-3 text-sm">
-                    {lang === "tr" ? "Faz Önerileri" : "Phase Recommendations"}
+                    {tx("wh.phaseRecommendations", lang)}
                   </h3>
                   <div className="space-y-3">
                     {analysis.phaseRecommendations.map((r, i) => {
@@ -767,10 +765,10 @@ export default function WomensHealthPage() {
                             </span>
                           </div>
                           <div className="grid gap-1.5 text-xs">
-                            <p><span className="font-medium">{lang === "tr" ? "Beslenme:" : "Nutrition:"}</span> {r.nutrition}</p>
-                            <p><span className="font-medium">{lang === "tr" ? "Egzersiz:" : "Exercise:"}</span> {r.exercise}</p>
-                            <p><span className="font-medium">{lang === "tr" ? "Takviye:" : "Supplements:"}</span> {r.supplements}</p>
-                            <p><span className="font-medium">{lang === "tr" ? "Oz bakim:" : "Self-care:"}</span> {r.selfCare}</p>
+                            <p><span className="font-medium">{tx("wh.nutrition", lang)}</span> {r.nutrition}</p>
+                            <p><span className="font-medium">{tx("wh.exercise", lang)}</span> {r.exercise}</p>
+                            <p><span className="font-medium">{tx("wh.supplements", lang)}</span> {r.supplements}</p>
+                            <p><span className="font-medium">{tx("wh.selfCare", lang)}</span> {r.selfCare}</p>
                           </div>
                         </div>
                       );
@@ -789,7 +787,7 @@ export default function WomensHealthPage() {
                   <p className="text-sm">{analysis.contraceptiveStatus.name}</p>
                   {analysis.contraceptiveStatus.durationMonths !== null && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      {analysis.contraceptiveStatus.durationMonths} {lang === "tr" ? "aydir kullaniliyor" : "months active"}
+                      {analysis.contraceptiveStatus.durationMonths} {tx("wh.monthsActive", lang)}
                     </p>
                   )}
                   {analysis.contraceptiveStatus.annualReviewDue && (
@@ -853,7 +851,7 @@ export default function WomensHealthPage() {
                         <span className="text-xs text-muted-foreground">
                           {duration !== null
                             ? `${duration} ${tx("common.days", lang)}`
-                            : lang === "tr" ? "devam ediyor" : "ongoing"}
+                            : tx("wh.ongoing", lang)}
                         </span>
                       </div>
                       <div className="flex flex-wrap items-center gap-1.5">

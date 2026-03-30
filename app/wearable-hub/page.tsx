@@ -36,7 +36,7 @@ export default function WearableHubPage() {
 
       {/* Supported Devices */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Desteklenen Cihazlar" : "Supported Devices"}
+        {tx("wearable.supportedDevices", lang)}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
         {DEVICES.map((d) => (
@@ -55,7 +55,7 @@ export default function WearableHubPage() {
             </div>
             <div className="mt-3 flex items-center gap-1.5 text-xs text-gray-400">
               <Wifi className="w-3 h-3" />
-              {lang === "tr" ? "Entegrasyon bekleniyor" : "Integration pending"}
+              {tx("wearable.integrationPending", lang)}
             </div>
           </div>
         ))}
@@ -63,7 +63,7 @@ export default function WearableHubPage() {
 
       {/* Metrics Preview */}
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-        {lang === "tr" ? "Takip Edilecek Metrikler" : "Metrics We'll Track"}
+        {tx("wearable.metricsTitle", lang)}
       </h2>
       <div className="space-y-3 mb-10">
         {METRICS.map((m) => (
@@ -80,13 +80,13 @@ export default function WearableHubPage() {
       {/* How it will work */}
       <div className="p-6 bg-violet-50 dark:bg-violet-900/20 rounded-xl border border-violet-200 dark:border-violet-800">
         <h3 className="font-semibold text-violet-800 dark:text-violet-300 mb-2">
-          {lang === "tr" ? "Nasil Calisacak?" : "How It Will Work"}
+          {tx("wearable.howItWorks", lang)}
         </h3>
         <ol className="space-y-2 text-sm text-violet-700 dark:text-violet-400">
-          <li>1. {lang === "tr" ? "Cihazinizi baglayiniz (Apple Health / Google Fit)" : "Connect your device (Apple Health / Google Fit)"}</li>
-          <li>2. {lang === "tr" ? "Veriler otomatik senkronize olur" : "Data syncs automatically"}</li>
-          <li>3. {lang === "tr" ? "AI anomalileri tespit eder ve uyarır" : "AI detects anomalies and alerts you"}</li>
-          <li>4. {lang === "tr" ? "Sağlık skorunuz giyilebilir verilerle zenginlesir" : "Your health score enriched with wearable data"}</li>
+          <li>1. {tx("wearable.step1", lang)}</li>
+          <li>2. {tx("wearable.step2", lang)}</li>
+          <li>3. {tx("wearable.step3", lang)}</li>
+          <li>4. {tx("wearable.step4", lang)}</li>
         </ol>
       </div>
     </div>
