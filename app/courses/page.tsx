@@ -283,15 +283,21 @@ export default function CoursesPage() {
               </div>
 
               {/* CTA */}
-              <a
-                href={course.affiliateUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
-              >
-                {tx("courses.goToCourse", lang)}
-                <ExternalLink className="h-3.5 w-3.5" />
-              </a>
+              {course.affiliateUrl !== "#" ? (
+                <a
+                  href={course.affiliateUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary/10 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-white"
+                >
+                  {tx("courses.goToCourse", lang)}
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              ) : (
+                <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-muted/50 py-2 text-sm font-medium text-muted-foreground">
+                  {lang === "tr" ? "Yakinda" : "Coming Soon"}
+                </div>
+              )}
             </div>
           )
         })}
