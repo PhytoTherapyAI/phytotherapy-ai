@@ -49,7 +49,7 @@ export default function WrappedPage() {
     const yearStart = `${year}-01-01`
     const yearEnd = `${year}-12-31`
 
-    const [queries, checkIns, bloodTests] = await Promise.all([
+    const [queries, checkIns, bloodTests, supplements] = await Promise.all([
       supabase
         .from("query_history")
         .select("query_type, created_at")
@@ -68,6 +68,11 @@ export default function WrappedPage() {
         .eq("user_id", user.id)
         .gte("created_at", yearStart)
         .lte("created_at", yearEnd),
+      supabase
+        .from("calendar_events")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("type", "supplement"),
     ])
 
     const queryData = queries.data || []
@@ -96,7 +101,7 @@ export default function WrappedPage() {
       joinDate: createdAt.toISOString(),
       daysActive: Math.min(daysActive, 365),
       longestStreak: Math.min((checkIns.data || []).length, 30), // simplified
-      totalSupplements: 0,
+      totalSupplements: (supplements.data || []).length,
     })
     setLoading(false)
   }, [user])

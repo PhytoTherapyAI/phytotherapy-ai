@@ -96,7 +96,9 @@ function LoginContent() {
     setError(null);
     setSuccessMessage(null);
     if (signupPassword !== signupConfirm) { setError(tx("auth.errPasswordMismatch", lang)); return; }
-    if (signupPassword.length < 6) { setError(tx("auth.errPasswordShort", lang)); return; }
+    if (signupPassword.length < 8) { setError(lang === "tr" ? "Şifre en az 8 karakter olmalıdır" : "Password must be at least 8 characters"); return; }
+    if (!/[A-Z]/.test(signupPassword)) { setError(lang === "tr" ? "Şifre en az 1 büyük harf içermelidir" : "Password must contain at least 1 uppercase letter"); return; }
+    if (!/[0-9]/.test(signupPassword)) { setError(lang === "tr" ? "Şifre en az 1 rakam içermelidir" : "Password must contain at least 1 number"); return; }
     setIsLoading(true);
     try {
       const { error } = await signUpWithEmail(signupEmail, signupPassword, signupName);
@@ -288,7 +290,7 @@ function LoginContent() {
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input id="signup-password" type={showPassword ? "text" : "password"} placeholder={tx("auth.passwordPlaceholder", lang)} className="pl-10 pr-10"
-                      value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required minLength={6} />
+                      value={signupPassword} onChange={(e) => setSignupPassword(e.target.value)} required minLength={8} />
                     <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       onClick={() => setShowPassword(!showPassword)}>
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

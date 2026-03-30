@@ -34,7 +34,7 @@ interface Patient {
   created_at: string
   patient_name?: string
   patient_email?: string
-  compliance_score?: number
+  compliance_score?: number | null
 }
 
 export default function DoctorPage() {
@@ -76,7 +76,7 @@ export default function DoctorPage() {
         return {
           ...p,
           patient_name: (prof as { full_name?: string } | undefined)?.full_name || "—",
-          compliance_score: Math.floor(Math.random() * 40 + 60), // placeholder
+          compliance_score: null, // calculated from real check-in data when available
         }
       })
       setPatients(enriched)
@@ -288,7 +288,7 @@ export default function DoctorPage() {
                       {tx("doctor.aiSummary", lang)}
                     </Button>
                   )}
-                  {patient.compliance_score !== undefined && patient.status === "active" && (
+                  {patient.compliance_score != null && patient.status === "active" && (
                     <div className="text-right">
                       <p className="text-lg font-bold text-primary">{patient.compliance_score}%</p>
                       <p className="text-[10px] text-muted-foreground">{tx("doctor.compliance", lang)}</p>

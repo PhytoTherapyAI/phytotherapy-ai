@@ -36,6 +36,13 @@ export async function GET(request: NextRequest) {
       supabase.from("consent_records").select("*").eq("user_id", user.id),
     ])
 
+    // Additional tables — may not exist, handle errors gracefully
+    const familyRes = await supabase.from("family_members").select("*").eq("owner_id", user.id).then(r => r, () => ({ data: [] }))
+    const checkInsRes = await supabase.from("daily_check_ins").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(365).then(r => r, () => ({ data: [] }))
+    const calendarRes = await supabase.from("calendar_events").select("*").eq("user_id", user.id).then(r => r, () => ({ data: [] }))
+    const vitalsRes = await supabase.from("vital_records").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(365).then(r => r, () => ({ data: [] }))
+    const waterRes = await supabase.from("water_intake").select("*").eq("user_id", user.id).order("date", { ascending: false }).limit(365).then(r => r, () => ({ data: [] }))
+
     const exportData = {
       exportedAt: new Date().toISOString(),
       platform: "Phytotherapy.ai",
@@ -54,6 +61,11 @@ export async function GET(request: NextRequest) {
       })),
       bloodTests: bloodRes.data || [],
       consentRecords: consentRes.data || [],
+      familyMembers: familyRes.data || [],
+      dailyCheckIns: checkInsRes.data || [],
+      calendarEvents: calendarRes.data || [],
+      vitalRecords: vitalsRes.data || [],
+      waterIntake: waterRes.data || [],
     }
 
     const json = JSON.stringify(exportData, null, 2)
@@ -98,16 +110,35 @@ export async function DELETE(request: NextRequest) {
       })
     }
 
-    // Delete all user data in order (respecting foreign keys)
+    // Delete all user data — comprehensive KVKK/GDPR erasure
+    // Phase 1: Delete dependent records (tables that may have FK constraints)
+    const phase1Tables = [
+      "query_history", "blood_tests", "consent_records",
+      "daily_check_ins", "daily_logs", "calendar_events",
+      "vital_records", "water_intake", "family_members",
+      "doctor_patients", "referral_records",
+    ]
+    await Promise.all(
+      phase1Tables.map(async (table) => {
+        try {
+          await supabase.from(table).delete().eq(
+            table === "family_members" ? "owner_id" :
+            table === "doctor_patients" ? "doctor_id" : "user_id",
+            user.id
+          )
+        } catch {
+          // Silently skip tables that don't exist
+        }
+      })
+    )
+
+    // Phase 2: Delete core user records
     await Promise.all([
-      supabase.from("query_history").delete().eq("user_id", user.id),
-      supabase.from("blood_tests").delete().eq("user_id", user.id),
-      supabase.from("consent_records").delete().eq("user_id", user.id),
       supabase.from("user_medications").delete().eq("user_id", user.id),
       supabase.from("user_allergies").delete().eq("user_id", user.id),
     ])
 
-    // Delete profile last (may have FK constraints)
+    // Phase 3: Delete profile last (may have FK constraints)
     await supabase.from("user_profiles").delete().eq("id", user.id)
 
     // Delete the auth user
