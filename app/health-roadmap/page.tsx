@@ -3,6 +3,7 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
+import { motion } from "framer-motion"
 import { useAuth } from "@/lib/auth-context"
 import { InnovationShell } from "@/components/innovation/InnovationShell"
 import { useLang } from "@/components/layout/language-toggle"

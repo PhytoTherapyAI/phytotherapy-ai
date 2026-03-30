@@ -3,6 +3,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { useLang } from "@/components/layout/language-toggle"
 import { InnovationShell } from "@/components/innovation/InnovationShell"
 import { Button } from "@/components/ui/button"
