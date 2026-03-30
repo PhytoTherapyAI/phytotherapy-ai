@@ -1,7 +1,7 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 "use client"
 
-import { useEffect, useState, useCallback, useMemo } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import dynamic from "next/dynamic"
 import { useAuth } from "@/lib/auth-context"
@@ -24,7 +24,7 @@ import {
   Activity, Loader2, Clock, Trophy, BarChart3, Scissors, Sparkles,
   Stethoscope, HeartPulse, Microscope, Pill, Leaf, Brain,
   UtensilsCrossed, Moon, Dumbbell, Users, ShieldCheck, MessageCircle,
-  ArrowRight, ChevronDown, Zap, TrendingUp, Globe,
+  ArrowRight, ChevronDown, Zap, Globe,
 } from "lucide-react"
 import Link from "next/link"
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog"

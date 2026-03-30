@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   MessageCircle,
   Send,
-  Users,
   Activity,
   BookOpen,
   Shield,
