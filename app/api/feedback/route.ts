@@ -8,6 +8,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null
+const DISCORD_WEBHOOK = process.env.DISCORD_FEEDBACK_WEBHOOK || null
 
 const RATE_LIMIT = new Map<string, number[]>()
 
@@ -20,6 +21,12 @@ function checkRateLimit(ip: string, max = 5, windowMs = 60_000): boolean {
   return true
 }
 
+const CATEGORY_EMOJI: Record<string, string> = {
+  idea: "💡",
+  love: "❤️",
+  bug: "🐛",
+}
+
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get("x-forwarded-for") || "unknown"
@@ -28,47 +35,72 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { page, page_works, broken_description, feature_request, lang } = body
+    // Support both old format (page_works/broken_description) and new format (category/message)
+    const page = body.page || "unknown"
+    const category = body.category || (body.page_works === false ? "bug" : body.page_works === true ? "love" : "idea")
+    const message = body.message || body.feature_request || body.broken_description || ""
+    const userId = body.user_id || null
+    const lang = body.lang || "en"
 
     if (!page) {
       return NextResponse.json({ error: "Page is required" }, { status: 400 })
     }
 
-    // Try to save to Supabase feedback table
+    // Save to Supabase
     try {
       await supabase.from("feedback").insert({
         page,
-        page_works: page_works ?? null,
-        broken_description: broken_description || null,
-        feature_request: feature_request || null,
-        lang: lang || "en",
+        page_works: category !== "bug",
+        broken_description: category === "bug" ? message : null,
+        feature_request: category !== "bug" ? message : null,
+        lang,
         created_at: new Date().toISOString(),
       })
     } catch (dbErr) {
-      console.log("[FEEDBACK] DB save failed (table may not exist):", dbErr)
+      console.log("[FEEDBACK] DB save failed:", dbErr)
     }
 
-    // Send email notification
+    // Send Resend email
     if (resend) {
       try {
+        const emoji = CATEGORY_EMOJI[category] || "📝"
         await resend.emails.send({
           from: "Phytotherapy.ai <noreply@phytotherapy.ai>",
           to: ["hello@phytotherapy.ai"],
-          subject: `[Feedback] ${page} — ${page_works ? "Works" : "Broken"}`,
+          subject: `${emoji} [Feedback] ${category.toUpperCase()} — ${page}`,
           html: `
-            <div style="font-family: sans-serif;">
-              <h3>New Feedback</h3>
-              <p><strong>Page:</strong> ${page}</p>
-              <p><strong>Works:</strong> ${page_works ? "Yes" : "No"}</p>
-              ${broken_description ? `<p><strong>Issue:</strong> ${broken_description}</p>` : ""}
-              ${feature_request ? `<p><strong>Request:</strong> ${feature_request}</p>` : ""}
-              <p style="color: #666; font-size: 12px;">${new Date().toISOString()}</p>
+            <div style="font-family: -apple-system, sans-serif; max-width: 500px;">
+              <h3 style="color: #7C3AED;">${emoji} New Feedback</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr><td style="padding: 6px 0; color: #666;">Category</td><td style="padding: 6px 0; font-weight: bold;">${category}</td></tr>
+                <tr><td style="padding: 6px 0; color: #666;">Page</td><td style="padding: 6px 0;">${page}</td></tr>
+                <tr><td style="padding: 6px 0; color: #666;">User</td><td style="padding: 6px 0;">${userId || "anonymous"}</td></tr>
+                <tr><td style="padding: 6px 0; color: #666;">Lang</td><td style="padding: 6px 0;">${lang}</td></tr>
+              </table>
+              ${message ? `<div style="margin-top: 12px; padding: 12px; background: #f5f3ff; border-radius: 8px; font-size: 14px;">${message}</div>` : ""}
+              <p style="color: #999; font-size: 11px; margin-top: 16px;">${new Date().toISOString()}</p>
             </div>
           `,
-          tags: [{ name: "category", value: "feedback" }],
+          tags: [{ name: "category", value: category }],
         })
       } catch (emailErr) {
         console.log("[FEEDBACK] Email failed:", emailErr)
+      }
+    }
+
+    // Send to Discord webhook (instant mobile notification)
+    if (DISCORD_WEBHOOK) {
+      try {
+        const emoji = CATEGORY_EMOJI[category] || "📝"
+        await fetch(DISCORD_WEBHOOK, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: `${emoji} **New Feedback** — \`${category}\`\n**Page:** ${page}\n**User:** ${userId || "anonymous"}\n${message ? `**Message:** ${message}` : ""}`,
+          }),
+        })
+      } catch {
+        console.log("[FEEDBACK] Discord webhook failed")
       }
     }
 
