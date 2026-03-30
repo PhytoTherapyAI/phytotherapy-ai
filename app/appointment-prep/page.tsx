@@ -202,7 +202,7 @@ export default function AppointmentPrepPage() {
           {/* Print Header (hidden on screen) */}
           <div className="hidden print:block print:mb-4">
             <h2 className="text-xl font-bold">Phytotherapy.ai - Patient Summary</h2>
-            <p className="text-sm text-gray-500">Generated: {new Date().toLocaleDateString()}</p>
+            <p className="text-sm text-gray-500" suppressHydrationWarning>Generated: {new Date().toLocaleDateString()}</p>
             <hr className="mt-2" />
           </div>
 

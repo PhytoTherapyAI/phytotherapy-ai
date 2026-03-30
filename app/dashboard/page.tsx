@@ -155,6 +155,8 @@ export default function DashboardPage() {
   const [supRefreshKey, setSupRefreshKey] = useState(0)
   const [expandedCat, setExpandedCat] = useState<string | null>(null)
   const [medications, setMedications] = useState<any[]>([])
+  // Time-based greeting — use state to avoid hydration mismatch
+  const [hour, setHour] = useState<number | null>(null)
 
   // Fetch today's check-in for metabolic portfolio
   const fetchCheckIn = useCallback(async () => {
@@ -191,6 +193,8 @@ export default function DashboardPage() {
       router.push("/auth/login")
     }
   }, [isLoading, isAuthenticated, router])
+
+  useEffect(() => { setHour(new Date().getHours()) }, [])
 
   useEffect(() => {
     if (user) { fetchCheckIn(); fetchMeds(); }
@@ -248,9 +252,7 @@ export default function DashboardPage() {
 
   const isPremium = true
 
-  // Time-based greeting
-  const hour = new Date().getHours()
-  const greetingKey = hour < 12 ? "dashboard.morning" : hour < 18 ? "dashboard.afternoon" : "dashboard.evening"
+  const greetingKey = hour === null ? "dashboard.morning" : hour < 12 ? "dashboard.morning" : hour < 18 ? "dashboard.afternoon" : "dashboard.evening"
   const firstName = profile.full_name?.split(" ")[0] || ""
 
   const recommendedTools = getRecommendedTools(profile, medications, lang)

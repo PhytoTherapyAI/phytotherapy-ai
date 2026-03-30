@@ -50,7 +50,9 @@ interface CalendarEvent {
   metadata?: Record<string, unknown> | null
 }
 
-const TODAY = new Date().toISOString().split("T")[0]
+function getTodayString() {
+  return new Date().toISOString().split("T")[0]
+}
 
 // ── Fun, humorous, personal medication messages ──
 function medMessages(name: string | null, tr: boolean): string[] {
@@ -253,25 +255,42 @@ function ConfettiOverlay({ show, onDone }: { show: boolean; onDone: () => void }
   }, [show, onDone])
   if (!show) return null
   const colors = ["#5aac74", "#b8965a", "#60a5fa", "#f472b6", "#facc15", "#34d399", "#a78bfa", "#fb923c"]
+  // Use deterministic pseudo-random values based on index to avoid hydration mismatch
+  const confettiPieces = useMemo(() => Array.from({ length: 50 }, (_, i) => {
+    const seed1 = ((i * 7919) % 1000) / 1000
+    const seed2 = ((i * 6271) % 1000) / 1000
+    const seed3 = ((i * 4817) % 1000) / 1000
+    const seed4 = ((i * 3541) % 1000) / 1000
+    const seed5 = ((i * 2311) % 1000) / 1000
+    return {
+      left: seed1 * 100,
+      width: 6 + seed2 * 10,
+      height: 6 + seed3 * 10,
+      isCircle: seed4 > 0.5,
+      duration: 1.8 + seed5 * 1.5,
+      delay: ((i * 1327) % 1000) / 1000 * 0.6,
+      endRotate: 360 + ((i * 5939) % 1000) / 1000 * 360,
+    }
+  }), [])
   return (
     <div className="fixed inset-0 z-[100] pointer-events-none overflow-hidden">
-      {Array.from({ length: 50 }, (_, i) => (
+      {confettiPieces.map((p, i) => (
         <div key={i} style={{
           position: "absolute",
-          left: `${Math.random() * 100}%`,
+          left: `${p.left}%`,
           top: "-12px",
-          width: `${6 + Math.random() * 10}px`,
-          height: `${6 + Math.random() * 10}px`,
+          width: `${p.width}px`,
+          height: `${p.height}px`,
           backgroundColor: colors[i % colors.length],
-          borderRadius: Math.random() > 0.5 ? "50%" : "2px",
-          animation: `confetti-drop ${1.8 + Math.random() * 1.5}s ${Math.random() * 0.6}s cubic-bezier(0.37,0,0.63,1) forwards`,
+          borderRadius: p.isCircle ? "50%" : "2px",
+          animation: `confetti-drop ${p.duration}s ${p.delay}s cubic-bezier(0.37,0,0.63,1) forwards`,
         }} />
       ))}
       <style jsx>{`
         @keyframes confetti-drop {
           0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
           60% { opacity: 1; }
-          100% { transform: translateY(100vh) rotate(${360 + Math.random() * 360}deg) scale(0.2); opacity: 0; }
+          100% { transform: translateY(100vh) rotate(720deg) scale(0.2); opacity: 0; }
         }
       `}</style>
     </div>
@@ -279,7 +298,7 @@ function ConfettiOverlay({ show, onDone }: { show: boolean; onDone: () => void }
 }
 
 export function TodayView({ userId, lang, userName, userWeight, userHeight, userSupplements }: TodayViewProps) {
-  const today = TODAY
+  const today = getTodayString()
   const tr = lang === "tr"
 
   const [medications, setMedications] = useState<UserMedication[]>([])

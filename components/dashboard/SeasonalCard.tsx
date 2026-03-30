@@ -219,7 +219,7 @@ export function SeasonalCard({ lang, userMedications = [], userConditions = [] }
               </div>
               <div className="mt-auto flex items-center justify-between border-t border-white/20 pt-3">
                 <span className="text-[10px] opacity-60">phytotherapy.ai</span>
-                <span className="text-[10px] opacity-60">
+                <span className="text-[10px] opacity-60" suppressHydrationWarning>
                   {new Date().toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US")}
                 </span>
               </div>
