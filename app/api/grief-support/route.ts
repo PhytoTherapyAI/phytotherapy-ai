@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { stage, mood_score } = body;
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     const validStages = ["denial", "anger", "bargaining", "depression", "acceptance"];
     if (!stage || !validStages.includes(stage)) {
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     const systemPrompt = `You are a compassionate grief support counselor. Provide warm, empathetic, evidence-based support for people going through grief. Never minimize their feelings. Always recommend professional help when appropriate.
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return JSON with this exact structure:
 {

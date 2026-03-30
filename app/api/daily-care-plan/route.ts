@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 const DAILY_CARE_PROMPT = `You are generating a personalized daily care plan for a Phytotherapy.ai user.
 
@@ -56,7 +57,7 @@ export async function GET(req: Request) {
 
   try {
     const url = new URL(req.url);
-    const lang = url.searchParams.get("lang") || "en";
+    const lang = (url.searchParams.get("lang") === "tr" ? "tr" : "en") as "en" | "tr";
     const userId = url.searchParams.get("userId");
 
     if (!userId) {
@@ -136,7 +137,7 @@ RECENT VITALS: ${vitals?.map(v => `${v.vital_type}: ${v.value}${v.unit} (${v.rec
 RECENT MOOD/ENERGY: ${checkIns?.map(c => `${c.check_date}: energy=${c.energy_level}, sleep=${c.sleep_quality}, mood=${c.mood}`).join("; ") || "no recent check-ins"}
 
 TODAY: ${dayOfWeek}, ${dateStr} (${timeOfDay})
-LANGUAGE: ${lang === "tr" ? "Turkish" : "English"}
+LANGUAGE: ${tx("api.respondLang", lang)}
 
 Generate today's personalized care plan. Make it different from what you'd generate for a different day of the week.`;
 

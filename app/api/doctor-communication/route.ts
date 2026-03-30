@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { symptoms_description } = body;
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!symptoms_description || typeof symptoms_description !== "string" || symptoms_description.trim().length < 5) {
       return NextResponse.json({ error: "Please describe your symptoms in more detail." }, { status: 400 });
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     const systemPrompt = `You are a doctor communication coach. Your job is to help patients describe their symptoms effectively to their doctor. Organize their description into a clear, structured format that will help the doctor understand the situation quickly.
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return JSON with this exact structure:
 {

@@ -4,6 +4,7 @@ import { searchPubMed } from "@/lib/pubmed";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -20,11 +21,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const foods = (body.foods || []).map((f: string) => sanitizeInput(f)).filter(Boolean);
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (foods.length === 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "En az bir besin seçin" : "Select at least one food" },
+        { error: tx("api.foodInteraction.selectFood", lang) },
         { status: 400 }
       );
     }
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     if (medications.length === 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "İlaç profiliniz boş. Profil ayarlarından ilaçlarınızı ekleyin." : "No medications found. Add your medications in profile settings." },
+        { error: tx("api.foodInteraction.noMeds", lang) },
         { status: 400 }
       );
     }
@@ -112,7 +113,7 @@ Analyze interactions between foods/beverages and medications.
 ${profileContext ? `PATIENT: ${profileContext}` : ""}
 ${pubmedContext ? `RESEARCH:\n${pubmedContext}` : ""}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "interactions": [
     {
@@ -147,7 +148,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısız oldu" : "Analysis failed" },
+        { error: tx("api.foodInteraction.analysisFailed", lang) },
         { status: 500 }
       );
     }

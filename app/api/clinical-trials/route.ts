@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -19,11 +20,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const condition = sanitizeInput(body.condition || "");
     const location = sanitizeInput(body.location || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!condition || condition.length < 2) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lutfen bir durum veya hastalik giriniz" : "Please enter a condition or disease" },
+        { error: tx("api.clinicalTrials.enterCondition", lang) },
         { status: 400 }
       );
     }
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
 
 Condition: ${condition}
 Location: ${location || "Any"}
-Language: ${lang === "tr" ? "Turkish" : "English"}
+Language: ${tx("api.respondLang", lang)}
 
 Based on your knowledge of ClinicalTrials.gov and ongoing research, provide relevant clinical trial information. Return JSON:
 
@@ -56,7 +57,7 @@ Based on your knowledge of ClinicalTrials.gov and ongoing research, provide rele
 Provide 3-5 relevant trials. Be informative but note these are AI-generated summaries, not live data.`;
 
     const result = await askGeminiJSON(
-      `Search for clinical trials for: ${condition}, location: ${location || "Any"}. Respond in ${lang === "tr" ? "Turkish" : "English"}.`,
+      `Search for clinical trials for: ${condition}, location: ${location || "Any"}. Respond in ${tx("api.respondLang", lang)}.`,
       prompt
     );
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     // Fetch user profile — required for personalized elder care
     let profileContext = "";
@@ -83,7 +84,7 @@ RULES:
 5. Focus on senior-specific nutrition (protein, calcium, vitamin D, B12)
 6. Suggest medication timing optimization if multiple medications exist
 7. Address social isolation and mental wellbeing
-8. Respond in ${lang === "tr" ? "Turkish" : "English"}
+8. Respond in ${tx("api.respondLang", lang)}
 9. Never diagnose or prescribe — only guide and recommend consulting a geriatric specialist
 
 ${profileContext ? `USER PROFILE: ${profileContext}` : "No user profile available — provide general elder care advice."}
@@ -145,7 +146,7 @@ IMPORTANT:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısiz oldu, tekrar deneyin" : "Analysis failed, please try again" },
+        { error: tx("api.elderCare.analysisFailed", lang) },
         { status: 500 }
       );
     }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const { phq9_answers } = body;
 
     if (!phq9_answers || !Array.isArray(phq9_answers) || phq9_answers.length !== 9) {
@@ -76,19 +77,11 @@ export async function POST(request: NextRequest) {
           alertLevel: "red",
           professionalReferral: true,
           crisisAlert: true,
-          crisisMessage: lang === "tr"
-            ? "PHQ-9 sonuclariniz, kendinize zarar verme dusunceleri olabilecegini gosteriyor. Lutfen hemen profesyonel destek alin. Yalniz degilsiniz ve yardim mevcuttur."
-            : "Your PHQ-9 results indicate you may be having thoughts of self-harm. Please reach out for professional support immediately. You are not alone and help is available.",
-          crisisLines: lang === "tr"
-            ? ["Intihar Onleme Hattı: 182", "Sağlık Bakanlığı ALO: 184"]
-            : ["Suicide & Crisis Lifeline: 988", "Crisis Text Line: Text HOME to 741741"],
+          crisisMessage: tx("api.depression.crisisMessage", lang),
+          crisisLines: [tx("api.depression.crisisLine1", lang), tx("api.depression.crisisLine2", lang)],
           recommendations: [
-            lang === "tr"
-              ? "Lutfen bugun bir ruh sağlığı uzmaniyla görüşün."
-              : "Please speak with a mental health professional today.",
-            lang === "tr"
-              ? "Guvendiginiz birine nasil hissettiginizi anlatin."
-              : "Tell someone you trust how you are feeling.",
+            tx("api.depression.seeSpecialist", lang),
+            tx("api.depression.tellSomeone", lang),
           ],
           questionBreakdown: PHQ9_QUESTIONS_EN.map((q, i) => ({
             question: q,
@@ -119,7 +112,7 @@ CRITICAL SAFETY RULES:
 - Check if user medications may contribute to depressive symptoms (beta-blockers, corticosteroids, isotretinoin, etc.)
 - Be warm, empathetic, non-judgmental, hopeful
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return ONLY valid JSON:
 {
@@ -173,9 +166,7 @@ Note any medications that may contribute to mood changes.`;
           question: q,
           score: phq9_answers[i],
         })),
-        crisisLines: lang === "tr"
-          ? ["Intihar Onleme Hattı: 182", "Sağlık Bakanlığı ALO: 184"]
-          : ["Suicide & Crisis Lifeline: 988", "Crisis Text Line: Text HOME to 741741"],
+        crisisLines: [tx("api.depression.crisisLine1", lang), tx("api.depression.crisisLine2", lang)],
       },
     });
   } catch (err) {

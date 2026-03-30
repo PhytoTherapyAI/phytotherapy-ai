@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     const concerns = Array.isArray(body.concerns)
       ? body.concerns.filter((c: string) => VALID_CONCERNS.includes(c))
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     if (concerns.length === 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "En az bir sorun seçin" : "Select at least one concern" },
+        { error: tx("api.hairNail.selectConcern", lang) },
         { status: 400 }
       );
     }
@@ -78,7 +79,7 @@ RULES:
 - Recommend labs to check based on symptoms
 - Recommend evidence-based supplements with drug interaction checks
 - Use PubMed-backed evidence
-- Respond in ${lang === "tr" ? "Turkish" : "English"}
+- Respond in ${tx("api.respondLang", lang)}
 - Never diagnose — suggest when to see a dermatologist
 
 OUTPUT FORMAT (strict JSON):

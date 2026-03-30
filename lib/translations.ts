@@ -6079,6 +6079,70 @@ const commonToolKeys: Record<string, TranslationEntry> = {
     en: "\n\n⚠️ An error occurred while generating the response. Please try again.",
     tr: "\n\n⚠️ Yanıt oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.",
   },
+
+  // ══════════════════════════════════════════
+  // API Routes — Batch 2
+  // ══════════════════════════════════════════
+  "api.chronicCare.selectCondition": {
+    en: "Select a condition",
+    tr: "Hastalik secin",
+  },
+  "api.chronicCare.unsupported": {
+    en: "Unsupported condition",
+    tr: "Desteklenmeyen hastalik",
+  },
+  "api.chronicCare.analysisFailed": {
+    en: "Analysis failed, please try again",
+    tr: "Analiz başarısiz oldu",
+  },
+  "api.clinicalTrials.enterCondition": {
+    en: "Please enter a condition or disease",
+    tr: "Lutfen bir durum veya hastalik giriniz",
+  },
+  "api.selectSymptom": {
+    en: "Select at least one symptom",
+    tr: "En az bir semptom seçin",
+  },
+  "api.elderCare.analysisFailed": {
+    en: "Analysis failed, please try again",
+    tr: "Analiz başarısiz oldu, tekrar deneyin",
+  },
+  "api.foodInteraction.selectFood": {
+    en: "Select at least one food",
+    tr: "En az bir besin seçin",
+  },
+  "api.foodInteraction.noMeds": {
+    en: "No medications found. Add your medications in profile settings.",
+    tr: "İlaç profiliniz boş. Profil ayarlarından ilaçlarınızı ekleyin.",
+  },
+  "api.foodInteraction.analysisFailed": {
+    en: "Analysis failed",
+    tr: "Analiz başarısız oldu",
+  },
+  "api.hairNail.selectConcern": {
+    en: "Select at least one concern",
+    tr: "En az bir sorun seçin",
+  },
+  "api.depression.crisisMessage": {
+    en: "Your PHQ-9 results indicate you may be having thoughts of self-harm. Please reach out for professional support immediately. You are not alone and help is available.",
+    tr: "PHQ-9 sonuclariniz, kendinize zarar verme dusunceleri olabilecegini gosteriyor. Lutfen hemen profesyonel destek alin. Yalniz degilsiniz ve yardim mevcuttur.",
+  },
+  "api.depression.crisisLine1": {
+    en: "Suicide & Crisis Lifeline: 988",
+    tr: "Intihar Onleme Hattı: 182",
+  },
+  "api.depression.crisisLine2": {
+    en: "Crisis Text Line: Text HOME to 741741",
+    tr: "Sağlık Bakanlığı ALO: 184",
+  },
+  "api.depression.seeSpecialist": {
+    en: "Please speak with a mental health professional today.",
+    tr: "Lutfen bugun bir ruh sağlığı uzmaniyla görüşün.",
+  },
+  "api.depression.tellSomeone": {
+    en: "Tell someone you trust how you are feeling.",
+    tr: "Guvendiginiz birine nasil hissettiginizi anlatin.",
+  },
 }
 Object.assign(t, commonToolKeys)
 

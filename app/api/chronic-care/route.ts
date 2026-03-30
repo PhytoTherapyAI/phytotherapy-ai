@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -40,11 +41,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const condition = sanitizeInput(body.condition || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!condition) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Hastalik secin" : "Select a condition" },
+        { error: tx("api.chronicCare.selectCondition", lang) },
         { status: 400 }
       );
     }
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
     );
     if (!matched) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Desteklenmeyen hastalik" : "Unsupported condition" },
+        { error: tx("api.chronicCare.unsupported", lang) },
         { status: 400 }
       );
     }
@@ -150,7 +151,7 @@ RECENT BLOOD TESTS:
 ${bloodContext}
 RECENT VITALS: ${vitalsContext}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "controlStatus": "well_controlled" | "borderline" | "uncontrolled",
   "controlSummary": "1-2 sentence summary of control status",
@@ -191,7 +192,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısiz oldu" : "Analysis failed, please try again" },
+        { error: tx("api.chronicCare.analysisFailed", lang) },
         { status: 500 }
       );
     }

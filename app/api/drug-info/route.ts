@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/gemini";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { drug_name } = body;
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!drug_name || typeof drug_name !== "string" || drug_name.trim().length < 2) {
       return NextResponse.json({ error: "Please provide a valid drug name." }, { status: 400 });
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     const systemPrompt = `You are a drug information specialist. Provide comprehensive, evidence-based drug information in simple language patients can understand. Always recommend consulting a doctor.
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Return JSON with this exact structure:
 {
