@@ -1,6 +1,64 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 30 Mart 2026 (v28.0 — i18n 95%+ / Skeletons / Hydration / Full QA PASS)
+> Son güncelleme: 30 Mart 2026 (v29.0 — Beta Readiness / Feature Audit / Legal / SEO / Privacy)
+
+---
+
+## Oturum 30 Mart 2026 (Session 4) — Beta Readiness Sprint
+
+### Step 0: Full Feature Audit ✅
+- Complete codebase analysis of every feature
+- FEATURE-AUDIT.md created with detailed status for all features
+- Identified 12 critical fixes and 8 partial issues
+
+### Step 1: Copyright & Legal ✅
+- LICENSE file created (All Rights Reserved)
+- Copyright headers added to 494 source files
+- Footer updated with "All rights reserved" (TR/EN)
+
+### Step 3: SEO ✅
+- Sitemap expanded from 7 to 32 pages
+- JSON-LD structured data (WebApplication + FAQPage schema)
+- Turkish FAQ section added to landing page (5 questions)
+- Turkish SEO keywords added to metadata
+- robots.txt updated
+
+### Step 7: Remove Fake Data ✅
+- Landing page: Removed hardcoded "1,200+ users" stats, replaced with BETA badge
+- Dashboard: Removed fake social proof number, replaced with BETA badge
+- Doctor panel: Removed random compliance score placeholder
+
+### New Features Created ✅
+- **Settings page** (/settings) — language, theme, notifications with persistence
+- **Feedback widget** — floating button on every page, saves to Supabase + Resend email
+- **Contact form API** — connected to Resend email service
+- **CAPTCHA** — Cloudflare Turnstile on login and register forms
+- **Contact API** (/api/contact) — rate limited, HTML email template
+- **Feedback API** (/api/feedback) — Supabase + Resend integration
+
+### Step 5: Family Profile Enhancement ✅
+- Added type badges: Child / Elderly / Adult (auto-detected from age)
+- Pediatric disclaimer for child profiles
+- Caregiver mode notice for elderly profiles
+
+### Step 4: Privacy & Compliance ✅
+- Data export expanded to 11 tables (was 6)
+- Data deletion expanded to 11+ tables with phased approach
+- Privacy policy updated to name specific APIs (Gemini, PubMed, OpenFDA)
+- Password requirements strengthened (8 chars, 1 uppercase, 1 number)
+- Wrapped supplements count now queries real data
+
+### Step 8-9: Documentation ✅
+- BETA-READINESS.md with full feature checklist
+- DEMO-SCRIPT.md with step-by-step Harvard demo instructions
+- FEATURE-AUDIT.md with complete codebase analysis
+
+### E-Nabız Fix ✅
+- Removed mock data, replaced with "Coming Soon" notice
+
+### Build Status
+- Build: PASS (zero errors)
+- 3 commits pushed to master
 
 ---
 

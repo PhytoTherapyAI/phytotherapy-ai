@@ -43,20 +43,13 @@ export default function EnabizPage() {
     setError("")
 
     try {
-      // Simulate PDF parsing — in real implementation this would use
-      // Gemini Vision to extract structured data from E-Nabız PDF
-      await new Promise((r) => setTimeout(r, 2000))
-
-      // Mock imported data for demonstration
-      const mockData: ImportedRecord[] = [
-        { type: "Hemoglobin", date: "2026-01-15", value: "14.2", unit: "g/dL" },
-        { type: "Vitamin D", date: "2026-01-15", value: "28", unit: "ng/mL" },
-        { type: "TSH", date: "2026-01-15", value: "2.1", unit: "mIU/L" },
-        { type: "Glucose", date: "2026-01-15", value: "95", unit: "mg/dL" },
-        { type: "Total Cholesterol", date: "2026-01-15", value: "198", unit: "mg/dL" },
-      ]
-
-      setImported(mockData)
+      // E-Nabız integration requires Ministry of Health approval
+      // For now, show informational message
+      setError(lang === "tr"
+        ? "E-Nabız entegrasyonu yakında aktif olacak. Sağlık Bakanlığı onay sürecindedir."
+        : "E-Nabız integration coming soon. Pending Ministry of Health approval.")
+      setImporting(false)
+      return
     } catch {
       setError(tx("enabiz.error", lang))
     } finally {
