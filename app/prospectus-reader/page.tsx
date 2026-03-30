@@ -1,10 +1,10 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   BookOpen,
-  Upload,
+  Camera,
   FileText,
   Loader2,
   X,
@@ -15,6 +15,10 @@ import {
   ChevronDown,
   ChevronUp,
   RotateCcw,
+  Sparkles,
+  Search,
+  Shield,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
@@ -126,8 +130,8 @@ export default function ProspectusReaderPage() {
     <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
       {/* Header */}
       <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-cyan-50 p-3 dark:bg-cyan-950">
-          <BookOpen className="h-6 w-6 text-cyan-600 dark:text-cyan-400" />
+        <div className="rounded-lg bg-primary/10 p-3 dark:bg-primary/20">
+          <BookOpen className="h-6 w-6 text-primary" />
         </div>
         <div>
           <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
@@ -324,87 +328,180 @@ export default function ProspectusReaderPage() {
         </div>
       ) : (
         <>
-          {/* Upload Section */}
-          <div className="mb-6 rounded-xl border-2 border-dashed border-cyan-300/50 bg-cyan-50/30 p-8 dark:border-cyan-700/30 dark:bg-cyan-950/10">
-            <div className="flex flex-col items-center gap-4 text-center">
-              <div className="rounded-full bg-cyan-100 p-4 dark:bg-cyan-900/30">
-                <Upload className="h-8 w-8 text-cyan-600 dark:text-cyan-400" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold">{tx("prospectus.upload", lang)}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {tx("prospectus.uploadDesc", lang)}
-                </p>
-              </div>
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png,.webp,image/*"
+            capture="environment"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFileSelect(f);
+            }}
+          />
 
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".pdf,.jpg,.jpeg,.png,.webp,image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) handleFileSelect(f);
-                }}
-              />
-
-              {file ? (
-                <div className="flex flex-col items-center gap-3">
-                  {preview && (
-                    <img
-                      src={preview}
-                      alt="Prospectus preview"
-                      className="max-h-48 rounded-lg border object-contain shadow-sm"
-                    />
-                  )}
-                  <div className="flex items-center gap-2 rounded-lg border bg-background px-4 py-2 text-sm shadow-sm">
-                    <FileText className="h-4 w-4 text-cyan-500" />
-                    <span className="max-w-[200px] truncate">{file.name}</span>
-                    <button onClick={() => { setFile(null); setPreview(null); }}>
-                      <X className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
-                    </button>
+          {/* ── Smart Scanner UI ── */}
+          {!file && !isLoading && (
+            <div className="mb-6 flex flex-col items-center text-center">
+              {/* AI Lens icon with glow */}
+              <div className="relative mb-6">
+                <div className="absolute inset-0 rounded-full bg-primary/10 blur-3xl scale-150" />
+                <div className="relative flex h-28 w-28 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/10 to-sage/10 border border-primary/20">
+                  <Camera className="h-12 w-12 text-primary/60" strokeWidth={1.5} />
+                  <div className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-lavender text-white shadow-md">
+                    <Sparkles className="h-3.5 w-3.5" />
                   </div>
                 </div>
-              ) : (
-                <Button
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="gap-2"
-                >
-                  <Upload className="h-4 w-4" />
-                  {tx("prospectus.chooseFile", lang)}
-                </Button>
-              )}
-            </div>
-          </div>
+              </div>
 
-          {/* Analyze Button */}
-          {file && (
-            <Button
-              className="w-full gap-2 bg-cyan-600 hover:bg-cyan-700 text-white"
-              size="lg"
-              onClick={handleAnalyze}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {tx("prospectus.reading", lang)}
-                </>
-              ) : (
-                <>
-                  <BookOpen className="h-4 w-4" />
-                  {tx("prospectus.readBtn", lang)}
-                </>
+              {/* CTA Button */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="mb-5 flex items-center gap-2.5 rounded-2xl bg-primary px-8 py-4 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 hover:shadow-xl active:scale-95 animate-[softPulse_3s_ease-in-out_infinite]"
+              >
+                <Camera className="h-5 w-5" />
+                {lang === "tr" ? "📸 Kamerayı Aç ve Tara" : "📸 Open Scanner"}
+              </button>
+
+              {/* Value preview pills */}
+              <div className="mb-5 space-y-2 max-w-sm">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {lang === "tr" ? "Yapay Zeka Neleri Çözer?" : "What Does AI Solve?"}
+                </p>
+                <div className="flex flex-col gap-2">
+                  {[
+                    { emoji: "🧐", en: "Translates complex medical terms to plain language", tr: "Karışık tıbbi terimleri halk diline çevirir" },
+                    { emoji: "⚠️", en: "Summarizes hidden side effects and risks", tr: "Gizli yan etkileri ve riskleri özetler" },
+                    { emoji: "💊", en: "Clarifies how to take your medication", tr: "Nasıl kullanılacağını netleştirir" },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-2.5 rounded-xl border bg-card px-3 py-2.5 text-xs text-muted-foreground shadow-soft"
+                      style={{ animation: `fadeSlideIn 0.4s ease-out ${i * 100}ms both` }}>
+                      <span className="text-base shrink-0">{item.emoji}</span>
+                      <span>{lang === "tr" ? item.tr : item.en}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Also accept PDF link */}
+              <button
+                onClick={() => {
+                  // Remove capture to allow gallery/PDF selection
+                  if (fileInputRef.current) {
+                    fileInputRef.current.removeAttribute("capture");
+                    fileInputRef.current.click();
+                    // Restore capture for next camera use
+                    setTimeout(() => fileInputRef.current?.setAttribute("capture", "environment"), 1000);
+                  }
+                }}
+                className="text-xs text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+              >
+                {lang === "tr" ? "veya galeriden/PDF seç" : "or pick from gallery/PDF"}
+              </button>
+
+              <style jsx>{`
+                @keyframes fadeSlideIn {
+                  from { opacity: 0; transform: translateY(8px); }
+                  to { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes softPulse {
+                  0%, 100% { box-shadow: 0 0 0 0 rgba(60, 122, 82, 0.3); }
+                  50% { box-shadow: 0 0 0 8px rgba(60, 122, 82, 0); }
+                }
+              `}</style>
+            </div>
+          )}
+
+          {/* ── File selected — preview + analyze ── */}
+          {file && !isLoading && (
+            <div className="mb-6 flex flex-col items-center gap-4">
+              {preview && (
+                <div className="relative rounded-2xl border overflow-hidden shadow-soft-md">
+                  <img src={preview} alt="Prospectus" className="max-h-56 object-contain" />
+                  <button onClick={() => { setFile(null); setPreview(null); }}
+                    className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70">
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               )}
-            </Button>
+              {!preview && (
+                <div className="flex items-center gap-2 rounded-xl border bg-card px-4 py-3 shadow-soft">
+                  <FileText className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium truncate max-w-[200px]">{file.name}</span>
+                  <button onClick={() => { setFile(null); setPreview(null); }}>
+                    <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                  </button>
+                </div>
+              )}
+              <button onClick={handleAnalyze}
+                className="w-full flex items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 active:scale-[0.98]">
+                <Sparkles className="h-4 w-4" />
+                {lang === "tr" ? "AI ile Analiz Et" : "Analyze with AI"}
+              </button>
+            </div>
+          )}
+
+          {/* ── Labor Illusion Loading ── */}
+          {isLoading && (
+            <div className="mb-6 flex flex-col items-center gap-5 py-8">
+              {/* Scanner animation over preview */}
+              {preview && (
+                <div className="relative rounded-2xl border overflow-hidden shadow-soft-md">
+                  <img src={preview} alt="Scanning" className="max-h-48 object-contain opacity-60" />
+                  {/* Laser scan line */}
+                  <div className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent"
+                    style={{ animation: "scanLine 2s ease-in-out infinite" }} />
+                </div>
+              )}
+              {/* Cycling text */}
+              <ScannerLoadingText lang={lang} />
+              <style jsx>{`
+                @keyframes scanLine {
+                  0%, 100% { top: 10%; }
+                  50% { top: 90%; }
+                }
+              `}</style>
+            </div>
           )}
         </>
       )}
 
-      <p className="mt-6 text-center text-xs text-muted-foreground">
-        ⚠️ {tx("disclaimer.tool", lang)}
+      <p className="mt-6 text-center text-[10px] text-muted-foreground/50">
+        {tx("disclaimer.tool", lang)}
       </p>
+    </div>
+  );
+}
+
+// ── Scanner Loading Text (Labor Illusion) ──
+function ScannerLoadingText({ lang }: { lang: string }) {
+  const isTr = lang === "tr";
+  const [step, setStep] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  const steps = isTr
+    ? ["Görseldeki metinler okunuyor...", "Tıbbi terimler tespit ediliyor...", "Sizin için sadeleştiriliyor..."]
+    : ["Reading text from the image...", "Detecting medical terms...", "Simplifying for you..."];
+
+  const icons = [Eye, Search, Shield];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => { setStep((p) => (p + 1) % steps.length); setVisible(true); }, 250);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [steps.length]);
+
+  const Icon = icons[step];
+
+  return (
+    <div className={`flex items-center gap-2.5 transition-all duration-250 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1"}`}>
+      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+        <Icon className="h-4 w-4 text-primary animate-pulse" />
+      </div>
+      <span className="text-sm font-medium text-muted-foreground">{steps[step]}</span>
     </div>
   );
 }
