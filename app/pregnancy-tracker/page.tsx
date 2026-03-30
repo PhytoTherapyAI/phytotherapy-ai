@@ -159,9 +159,9 @@ export default function PregnancyTrackerPage() {
           className="mt-3 w-full accent-pink-500"
         />
         <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-          <span>{lang === "tr" ? "1. hafta" : "Week 1"}</span>
+          <span>{tx("pregnancy.week1Label", lang)}</span>
           <span>{lang === "tr" ? `${week <= 12 ? "1." : week <= 27 ? "2." : "3."} trimester` : `${week <= 12 ? "1st" : week <= 27 ? "2nd" : "3rd"} trimester`}</span>
-          <span>{lang === "tr" ? "42. hafta" : "Week 42"}</span>
+          <span>{tx("pregnancy.week42Label", lang)}</span>
         </div>
       </div>
 

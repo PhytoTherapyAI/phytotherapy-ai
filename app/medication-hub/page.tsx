@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, type Lang } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
 import Link from "next/link";
 import type { UserMedication } from "@/lib/database.types";
@@ -218,14 +218,14 @@ function generateSchedule(
 ): { slots: ScheduleSlot[]; conflicts: string[] } {
   const conflicts: string[] = [];
 
-  const morningEmpty: ScheduleSlot = { time: "06:30", period: lang === "tr" ? "Sabah (aç karın)" : "Morning (empty stomach)", medications: [] };
-  const beforeBreakfast: ScheduleSlot = { time: "07:00", period: lang === "tr" ? "Kahvaltıdan önce" : "Before breakfast", medications: [] };
-  const withBreakfast: ScheduleSlot = { time: "08:00", period: lang === "tr" ? "Kahvaltı ile" : "With breakfast", medications: [] };
-  const withLunch: ScheduleSlot = { time: "12:30", period: lang === "tr" ? "Öğle yemeği ile" : "With lunch", medications: [] };
-  const afternoon: ScheduleSlot = { time: "15:00", period: lang === "tr" ? "Öğleden sonra" : "Afternoon", medications: [] };
-  const withDinner: ScheduleSlot = { time: "19:00", period: lang === "tr" ? "Akşam yemeği ile" : "With dinner", medications: [] };
-  const evening: ScheduleSlot = { time: "21:00", period: lang === "tr" ? "Akşam" : "Evening", medications: [] };
-  const bedtime: ScheduleSlot = { time: "22:30", period: lang === "tr" ? "Yatmadan önce" : "Bedtime", medications: [] };
+  const morningEmpty: ScheduleSlot = { time: "06:30", period: tx("medtime.morningEmpty", lang as Lang), medications: [] };
+  const beforeBreakfast: ScheduleSlot = { time: "07:00", period: tx("medtime.beforeBreakfast", lang as Lang), medications: [] };
+  const withBreakfast: ScheduleSlot = { time: "08:00", period: tx("medtime.withBreakfast", lang as Lang), medications: [] };
+  const withLunch: ScheduleSlot = { time: "12:30", period: tx("medtime.withLunch", lang as Lang), medications: [] };
+  const afternoon: ScheduleSlot = { time: "15:00", period: tx("medtime.afternoon", lang as Lang), medications: [] };
+  const withDinner: ScheduleSlot = { time: "19:00", period: tx("medtime.withDinner", lang as Lang), medications: [] };
+  const evening: ScheduleSlot = { time: "21:00", period: tx("medtime.evening", lang as Lang), medications: [] };
+  const bedtime: ScheduleSlot = { time: "22:30", period: tx("medtime.bedtime", lang as Lang), medications: [] };
 
   for (const med of medications) {
     const displayName = med.brand_name || med.generic_name || "Unknown";
@@ -270,14 +270,10 @@ function generateSchedule(
   const hasCalcium = medications.some(m => matchDrugRule(m.generic_name || "")?.key === "calcium" || matchDrugRule(m.brand_name || "")?.key === "calcium");
 
   if (hasIron && hasLevo) {
-    conflicts.push(lang === "tr"
-      ? "Demir ve Levotiroksin arasında en az 4 saat bırakın"
-      : "Keep at least 4 hours between Iron and Levothyroxine");
+    conflicts.push(tx("medtime.ironLevoConflict", lang as Lang));
   }
   if (hasIron && hasCalcium) {
-    conflicts.push(lang === "tr"
-      ? "Demir ve Kalsiyum arasında en az 2 saat bırakın"
-      : "Keep at least 2 hours between Iron and Calcium");
+    conflicts.push(tx("medtime.ironCalciumConflict", lang as Lang));
   }
 
   const allSlots = [morningEmpty, beforeBreakfast, withBreakfast, withLunch, afternoon, withDinner, evening, bedtime];
@@ -628,8 +624,8 @@ export default function MedicationHubPage() {
                                   {Object.entries(matched.rule.hoursApart).map(([drug, hours]) => (
                                     <span key={drug} className="text-xs px-2 py-0.5 rounded-full bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400">
                                       {hours > 0
-                                        ? `${drug}: ${hours}${lang === "tr" ? " saat ara" : "h apart"}`
-                                        : `${drug}: ${lang === "tr" ? "dikkat" : "caution"}`}
+                                        ? `${drug}: ${hours}${tx("medtime.hoursApart", lang)}`
+                                        : `${drug}: ${tx("medtime.caution", lang)}`}
                                     </span>
                                   ))}
                                 </div>

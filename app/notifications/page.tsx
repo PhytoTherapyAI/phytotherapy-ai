@@ -63,11 +63,11 @@ function groupLabel(date: Date, now: Date, lang: Lang): string {
 function relativeTime(date: Date, lang: Lang): string {
   const mins = Math.floor((Date.now() - date.getTime()) / 60000)
   if (mins < 1) return tx("notif.justNow", lang)
-  if (mins < 60) return `${mins}${lang === "tr" ? " dk once" : "m ago"}`
+  if (mins < 60) return `${mins}${tx("time.minutesAgo", lang)}`
   const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}${lang === "tr" ? " sa once" : "h ago"}`
+  if (hrs < 24) return `${hrs}${tx("time.hoursAgo", lang)}`
   const days = Math.floor(hrs / 24)
-  return `${days}${lang === "tr" ? " gun once" : "d ago"}`
+  return `${days}${tx("time.daysAgo", lang)}`
 }
 
 const PREFS_KEY = "phyto_notification_prefs"
@@ -208,7 +208,7 @@ export default function NotificationsPage() {
           items.push({
             id: nid,
             type: "appointment",
-            title: ev.title || (lang === "tr" ? "Etkinlik" : "Event"),
+            title: ev.title || tx("notif.eventFallback", lang),
             description: `${ev.event_date}${ev.event_time ? ` ${ev.event_time}` : ""}`,
             time: new Date(ev.event_date + "T" + (ev.event_time || "10:00")),
             read: storedRead.has(nid),
@@ -232,7 +232,7 @@ export default function NotificationsPage() {
           items.push({
             id: nid,
             type: "health",
-            title: lang === "tr" ? "İlaç listenizi güncelleyin" : "Update your medication list",
+            title: tx("notif.updateMedList", lang),
             description: lang === "tr"
               ? `Son güncelleme ${daysSinceUpdate} gun once yapildi`
               : `Last updated ${daysSinceUpdate} days ago`,
@@ -248,10 +248,8 @@ export default function NotificationsPage() {
       items.push({
         id: nidWater,
         type: "system",
-        title: lang === "tr" ? "Su icmeyi unutma!" : "Stay hydrated!",
-        description: lang === "tr"
-          ? "Günlük su hedefine ulastin mi? Takvimden takip edebilirsin."
-          : "Have you hit your daily water goal? Track it in your calendar.",
+        title: tx("notif.stayHydrated", lang),
+        description: tx("notif.waterDesc", lang),
         time: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0),
         read: storedRead.has(nidWater),
         icon: Droplets,
@@ -349,7 +347,7 @@ export default function NotificationsPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-foreground">
-              {tx("notifications.title", lang) || (lang === "tr" ? "Bildirimler" : "Notifications")}
+              {tx("notifications.title", lang)}
             </h1>
             {unreadCount > 0 && (
               <p className="text-xs text-muted-foreground">

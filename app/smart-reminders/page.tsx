@@ -24,7 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, type Lang } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
 import Link from "next/link";
 import type { UserMedication } from "@/lib/database.types";
@@ -208,14 +208,14 @@ function generateSchedule(
   const slots: ScheduleSlot[] = [];
   const conflicts: string[] = [];
 
-  const morningEmpty: ScheduleSlot = { time: "06:30", period: lang === "tr" ? "Sabah (ac karin)" : "Morning (empty stomach)", medications: [] };
-  const beforeBreakfast: ScheduleSlot = { time: "07:00", period: lang === "tr" ? "Kahvaltidan once" : "Before breakfast", medications: [] };
-  const withBreakfast: ScheduleSlot = { time: "08:00", period: lang === "tr" ? "Kahvalti ile" : "With breakfast", medications: [] };
-  const withLunch: ScheduleSlot = { time: "12:30", period: lang === "tr" ? "Ogle yemegi ile" : "With lunch", medications: [] };
-  const afternoon: ScheduleSlot = { time: "15:00", period: lang === "tr" ? "Ogleden sonra" : "Afternoon", medications: [] };
-  const withDinner: ScheduleSlot = { time: "19:00", period: lang === "tr" ? "Aksam yemegi ile" : "With dinner", medications: [] };
-  const evening: ScheduleSlot = { time: "21:00", period: lang === "tr" ? "Aksam" : "Evening", medications: [] };
-  const bedtime: ScheduleSlot = { time: "22:30", period: lang === "tr" ? "Yatmadan once" : "Bedtime", medications: [] };
+  const morningEmpty: ScheduleSlot = { time: "06:30", period: tx("medtime.morningEmpty", lang as Lang), medications: [] };
+  const beforeBreakfast: ScheduleSlot = { time: "07:00", period: tx("medtime.beforeBreakfast", lang as Lang), medications: [] };
+  const withBreakfast: ScheduleSlot = { time: "08:00", period: tx("medtime.withBreakfast", lang as Lang), medications: [] };
+  const withLunch: ScheduleSlot = { time: "12:30", period: tx("medtime.withLunch", lang as Lang), medications: [] };
+  const afternoon: ScheduleSlot = { time: "15:00", period: tx("medtime.afternoon", lang as Lang), medications: [] };
+  const withDinner: ScheduleSlot = { time: "19:00", period: tx("medtime.withDinner", lang as Lang), medications: [] };
+  const evening: ScheduleSlot = { time: "21:00", period: tx("medtime.evening", lang as Lang), medications: [] };
+  const bedtime: ScheduleSlot = { time: "22:30", period: tx("medtime.bedtime", lang as Lang), medications: [] };
 
   for (const med of medications) {
     const displayName = med.brand_name || med.generic_name || "Unknown";
