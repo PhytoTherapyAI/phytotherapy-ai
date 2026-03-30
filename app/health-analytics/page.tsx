@@ -51,6 +51,7 @@ import {
 import type { HealthTimeline, PeerBenchmark, Anomaly, Prediction, SupplementPeriod } from "@/lib/analytics-engine";
 import Link from "next/link";
 import { PageSkeleton } from "@/components/ui/page-skeleton";
+import { ClinicalInsightsHeader } from "@/components/analytics/ClinicalInsightsHeader";
 
 // ── Types ─────────────────────────────────────
 interface TimelineResponse {
@@ -270,6 +271,18 @@ export default function HealthAnalyticsPage() {
 
       {/* Content Area */}
       <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Clinical Insights Header — Triage alerts + KPI sparklines + disease donut */}
+        <ClinicalInsightsHeader
+          lang={lang}
+          alerts={anomalyData?.filter(a => a.severity === "alert" || a.severity === "warning").map((a, i) => ({
+            id: `alert-${i}`,
+            severity: a.severity === "alert" ? "critical" as const : "warning" as const,
+            text: `${a.metric}: ${a.value} (${a.severity})`,
+          })) || []}
+          kpis={[]}
+          diseases={[]}
+        />
+
         {loading && (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
