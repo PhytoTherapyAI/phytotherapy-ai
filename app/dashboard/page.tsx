@@ -206,8 +206,36 @@ export default function DashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="container mx-auto max-w-5xl px-4 py-6 space-y-6">
+        {/* Greeting + score row */}
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-56" />
+          <Skeleton className="h-9 w-24 rounded-full" />
+        </div>
+        {/* Daily care card */}
+        <Skeleton className="h-64 w-full rounded-xl" />
+        {/* 2-col summary row */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Skeleton className="h-48 w-full rounded-xl" />
+          <Skeleton className="h-48 w-full rounded-xl" />
+        </div>
+        {/* Quick links row */}
+        <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-16 w-full rounded-xl" />
+          ))}
+        </div>
+        {/* Tools grid */}
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+          ))}
+        </div>
+        {/* Bottom row */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Skeleton className="h-48 w-full rounded-xl" />
+          <Skeleton className="h-48 w-full rounded-xl" />
+        </div>
       </div>
     )
   }
