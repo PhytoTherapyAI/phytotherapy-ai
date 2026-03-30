@@ -94,7 +94,7 @@ export function FeedbackWidget() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-lavender to-purple-600 text-white shadow-lg shadow-lavender/20 transition-all hover:scale-105 hover:shadow-xl active:scale-95"
+          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 text-white shadow-lg shadow-primary/20 transition-all hover:scale-105 hover:shadow-xl active:scale-95"
           aria-label="Feedback"
         >
           <MessageSquarePlus className="h-5 w-5" />

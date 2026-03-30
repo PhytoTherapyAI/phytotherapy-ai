@@ -5406,6 +5406,13 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "sports.generatingPlan": { en: "Creating your personalized plan...", tr: "Kişisel planınız oluşturuluyor..." },
   "sports.riskLevel": { en: "Risk Level", tr: "Risk Seviyesi" },
 
+  // ── Landing Quick Chips ──
+  "lp.chipInteraction": { en: "Drug Interaction Check", tr: "İlaç Etkileşim Kontrolü" },
+  "lp.chipBloodTest": { en: "Upload Blood Test", tr: "Tahlil Yükle" },
+  "lp.chipHerbOfDay": { en: "Herb of the Day", tr: "Günün Bitkisi" },
+  "lp.chipSleep": { en: "Sleep Optimization", tr: "Uyku Optimizasyonu" },
+  "lp.chipSports": { en: "Sports Performance", tr: "Spor Performansı" },
+
   // ── Master Orchestrator ──
   "synergy.title": { en: "Daily Synergy Report", tr: "Günün Sinerji Raporu" },
   "synergy.priority": { en: "Today's Priority", tr: "Bugünün Önceliği" },

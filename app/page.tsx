@@ -5,80 +5,39 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  ArrowRight,
-  Search,
-  CheckCircle2,
-  MessageCircle,
-  Send,
-  Activity,
-  BookOpen,
-  Shield,
+  ArrowRight, Search, CheckCircle2, MessageCircle, Send,
+  Activity, BookOpen, Shield, Sparkles, Moon, Droplets, Pill, Leaf,
 } from "lucide-react";
-import {
-  IconSafeHerbal,
-  IconResearchLeaf,
-  IconBloodAnalysis,
-  IconConflictDetect,
-} from "@/components/icons/PhytoIcons";
 import { BotanicalHero } from "@/components/illustrations/botanical-hero";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
 import { DailySummaryCard } from "@/components/dashboard/DailySummaryCard";
 
-const QUICK_TAGS_AUTH = [
-  { key: "lp.tag1", href: "/interaction-checker" },
-  { key: "lp.tag2", href: "/health-assistant" },
-  { key: "lp.tag3", href: "/health-assistant" },
-];
-
-const QUICK_TAGS_GUEST = [
-  { key: "lp.tag1", href: "/interaction-checker" },
-  { key: "lp.tag2", href: "/health-assistant" },
-  { key: "lp.tag3", href: "/health-assistant" },
-  { key: "lp.tag4", href: "/interaction-checker" },
+// ── Quick Action Chips ──
+const QUICK_CHIPS = [
+  { emoji: "💊", labelKey: "lp.chipInteraction", href: "/interaction-checker" },
+  { emoji: "🩸", labelKey: "lp.chipBloodTest", href: "/blood-test" },
+  { emoji: "🌿", labelKey: "lp.chipHerbOfDay", href: "/health-assistant" },
+  { emoji: "😴", labelKey: "lp.chipSleep", href: "/sleep-analysis" },
+  { emoji: "💪", labelKey: "lp.chipSports", href: "/sports-performance" },
 ];
 
 const TRUST_KEYS = ["lp.trust1", "lp.trust2", "lp.trust3", "lp.trust4", "lp.trust5"];
 
 const FAQ_ITEMS = [
-  {
-    questionTr: "Fitoterapi nedir?",
-    questionEn: "What is phytotherapy?",
-    answerTr: "Fitoterapi, bilimsel olarak kanıtlanmış bitkisel tedavilerin kullanılmasıdır. Phytotherapy.ai, modern tıp ile kanıta dayalı bitkisel tıbbı birleştirerek güvenli ve kişiselleştirilmiş öneriler sunar. Tüm önerilerimiz PubMed ve NIH gibi bilimsel kaynaklara dayanır.",
-    answerEn: "Phytotherapy is the use of scientifically proven herbal treatments. Phytotherapy.ai bridges modern medicine and evidence-based herbal medicine to provide safe, personalized recommendations backed by PubMed and NIH sources.",
-  },
-  {
-    questionTr: "İlaçlarla bitkisel takviye kullanmak güvenli mi?",
-    questionEn: "Is it safe to use herbal supplements with medications?",
-    answerTr: "Bazı bitkisel takviyeler ilaçlarla etkileşime girebilir. Örneğin, Sarı Kantaron birçok ilaçla tehlikeli etkileşim gösterir. Phytotherapy.ai'ın ilaç etkileşim kontrolü, güvenli ve riskli kombinasyonları bilimsel kaynaklarla gösterir. Her zaman doktorunuza danışmanızı öneriyoruz.",
-    answerEn: "Some herbal supplements can interact with medications. For example, St. John's Wort has dangerous interactions with many drugs. Phytotherapy.ai's drug interaction checker shows safe and risky combinations with scientific sources. We always recommend consulting your doctor.",
-  },
-  {
-    questionTr: "Kan tahlilimi nasıl yorumlarım?",
-    questionEn: "How can I interpret my blood test results?",
-    answerTr: "Kan tahlili değerlerinizi Phytotherapy.ai'a girerek yapay zeka destekli detaylı analiz alabilirsiniz. Sistem 30'dan fazla biyomarkörü değerlendirir, yaşam tarzı önerileri sunar ve doktorunuz için PDF rapor oluşturur.",
-    answerEn: "Enter your blood test values into Phytotherapy.ai for AI-powered detailed analysis. The system evaluates 30+ biomarkers, provides lifestyle recommendations, and generates a PDF report for your doctor.",
-  },
-  {
-    questionTr: "İlaç etkileşimlerini nasıl kontrol edebilirim?",
-    questionEn: "How can I check drug interactions?",
-    answerTr: "Etkileşim Kontrolü aracımıza ilaçlarınızı ve almak istediğiniz takviyeyi girin. Sistem OpenFDA ve PubMed veritabanlarını tarayarak güvenli (yeşil), dikkatli (sarı) ve tehlikeli (kırmızı) etkileşimleri renk kodlarıyla gösterir.",
-    answerEn: "Enter your medications and desired supplement in our Interaction Checker. The system scans OpenFDA and PubMed databases, showing safe (green), caution (yellow), and dangerous (red) interactions with color codes.",
-  },
-  {
-    questionTr: "Phytotherapy.ai ücretsiz mi?",
-    questionEn: "Is Phytotherapy.ai free?",
-    answerTr: "Evet, Phytotherapy.ai'ın temel özellikleri ücretsizdir. Sağlık asistanı, ilaç etkileşim kontrolü ve kan tahlili analizi gibi özellikler ücretsiz olarak kullanılabilir. Premium plan ile gelişmiş özellikler ve sınırsız kullanım sunulacaktır.",
-    answerEn: "Yes, Phytotherapy.ai's core features are free. The health assistant, drug interaction checker, and blood test analysis are available at no cost. A premium plan with advanced features and unlimited usage will be available soon.",
-  },
-];
-
-const FEATURES = [
-  { num: "01", href: "/interaction-checker", icon: IconSafeHerbal, titleKey: "lp.feat1.title", descKey: "lp.feat1.desc" },
-  { num: "02", href: "/health-assistant", icon: IconResearchLeaf, titleKey: "lp.feat2.title", descKey: "lp.feat2.desc" },
-  { num: "03", href: "/blood-test", icon: IconBloodAnalysis, titleKey: "lp.feat3.title", descKey: "lp.feat3.desc" },
-  { num: "04", href: "/interaction-checker", icon: IconConflictDetect, titleKey: "lp.feat4.title", descKey: "lp.feat4.desc" },
+  { questionTr: "Fitoterapi nedir?", questionEn: "What is phytotherapy?",
+    answerTr: "Fitoterapi, bilimsel olarak kanıtlanmış bitkisel tedavilerin kullanılmasıdır. Phytotherapy.ai, modern tıp ile kanıta dayalı bitkisel tıbbı birleştirerek güvenli ve kişiselleştirilmiş öneriler sunar.",
+    answerEn: "Phytotherapy is the use of scientifically proven herbal treatments. Phytotherapy.ai bridges modern medicine and evidence-based herbal medicine to provide safe, personalized recommendations." },
+  { questionTr: "İlaçlarla bitkisel takviye kullanmak güvenli mi?", questionEn: "Is it safe to use herbal supplements with medications?",
+    answerTr: "Bazı bitkisel takviyeler ilaçlarla etkileşime girebilir. Phytotherapy.ai'ın ilaç etkileşim kontrolü, güvenli ve riskli kombinasyonları bilimsel kaynaklarla gösterir.",
+    answerEn: "Some herbal supplements can interact with medications. Phytotherapy.ai's drug interaction checker shows safe and risky combinations with scientific sources." },
+  { questionTr: "Kan tahlilimi nasıl yorumlarım?", questionEn: "How can I interpret my blood test results?",
+    answerTr: "Kan tahlili değerlerinizi girerek yapay zeka destekli detaylı analiz alabilirsiniz. 30'dan fazla biyomarkör değerlendirilir.",
+    answerEn: "Enter your blood test values for AI-powered detailed analysis. 30+ biomarkers are evaluated." },
+  { questionTr: "Phytotherapy.ai ücretsiz mi?", questionEn: "Is Phytotherapy.ai free?",
+    answerTr: "Evet, temel özellikleri ücretsizdir. Sağlık asistanı, ilaç etkileşim kontrolü ve kan tahlili analizi ücretsiz kullanılabilir.",
+    answerEn: "Yes, core features are free. The health assistant, drug interaction checker, and blood test analysis are available at no cost." },
 ];
 
 export default function Home() {
@@ -95,8 +54,8 @@ export default function Home() {
 
   const showDashboard = isAuthenticated && user && profile?.onboarding_complete;
   const firstName = profile?.full_name?.split(" ")[0] || "";
+  const isTr = lang === "tr";
 
-  // Show nothing briefly while auth resolves (prevents guest→auth flash)
   if (isLoading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -105,151 +64,137 @@ export default function Home() {
     );
   }
 
-  // ─── AUTHENTICATED USER LAYOUT ───
+  // ─── AUTHENTICATED USER — Command Center ───
   if (showDashboard) {
     return (
       <div className="flex flex-col">
-        {/* ===== FIRST SCREEN: grid + trust bar fills viewport ===== */}
-        <div className="flex min-h-[calc(100vh-5.5rem)] flex-col">
-        <section className="mx-auto w-full max-w-6xl px-4 pt-6 pb-2">
-          <div className="grid gap-5 md:grid-cols-2">
-            {/* Top Left — Daily Summary */}
-            <DailySummaryCard
-              userId={user.id}
-              lang={lang}
-              userName={profile.full_name}
-            />
+        <section className="mx-auto w-full max-w-6xl px-4 pt-6 pb-4">
+          {/* Dynamic greeting */}
+          <h1 className="font-heading text-2xl font-semibold mb-1 sm:text-3xl">
+            {getTimeEmoji()} {isTr ? `Merhaba ${firstName}` : `Hi ${firstName}`}
+          </h1>
+          <p className="text-sm text-muted-foreground mb-5">
+            {isTr ? "Bugün senin için ne yapabilirim?" : "What can I do for you today?"}
+          </p>
 
-            {/* Top Right — Assistant Chat Box */}
-            <div className="flex flex-col justify-between rounded-xl border bg-card p-5">
-              <div className="mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                    <MessageCircle className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold">{tx("lp.assistantTitle", lang)}</h3>
-                    <p className="text-[11px] text-muted-foreground">{tx("lp.assistantSubtitle", lang)}</p>
-                  </div>
-                  <span className="ml-auto flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-0.5 text-[10px] font-medium text-green-600">
-                    <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                    Online
-                  </span>
-                </div>
-              </div>
-
-              <div className="mb-3 flex-1 space-y-2">
-                <div className="rounded-lg rounded-tl-none bg-primary/5 px-3 py-2 text-xs text-muted-foreground">
-                  {firstName
-                    ? tx("lp.assistantGreeting", lang).replace("{name}", firstName)
-                    : tx("lp.assistantGreetingGeneric", lang)
-                  }
-                </div>
-              </div>
-
-              <form onSubmit={handleSearch} className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={tx('lp.chatPlaceholder', lang)}
-                    className="w-full rounded-lg border bg-background py-2.5 pl-3 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-colors hover:bg-primary/90"
-                >
-                  <Send className="h-4 w-4" />
-                </button>
-              </form>
-
-              <div className="mt-2.5 flex flex-wrap gap-1.5">
-                {QUICK_TAGS_AUTH.map((tag) => (
-                  <Link
-                    key={tag.key}
-                    href={tag.href}
-                    className="rounded-full border px-2.5 py-0.5 text-[10px] text-muted-foreground transition-colors hover:border-primary/30 hover:text-primary"
-                  >
-                    {tx(tag.key, lang)}
-                  </Link>
-                ))}
-              </div>
+          {/* Spotlight search bar */}
+          <form onSubmit={handleSearch} className="mb-5">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={isTr ? "Tahlil ara veya Asistana sor... ⌘K" : "Search tests or ask the Assistant... ⌘K"}
+                className="w-full rounded-2xl border bg-card py-3.5 pl-11 pr-14 text-sm shadow-soft-md outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:shadow-soft-lg"
+              />
+              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/90">
+                <Sparkles className="h-4 w-4" />
+              </button>
             </div>
+          </form>
 
-            {/* Bottom Left — Hero Text */}
-            <div className="flex flex-col justify-start pt-4 pb-6 md:pt-6 md:pb-8">
-              <h1 className="font-heading text-4xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-[3.5rem]">
-                {tx('lp.heroHeading1', lang)}{" "}
-                <br className="hidden sm:block" />
-                <em className="font-heading" style={{ fontStyle: "italic", color: "var(--gold)" }}>
-                  {tx('lp.heroHeadingItalic', lang)}
-                </em>{" "}
-                <span className="text-primary">{tx('lp.heroHeadingEnd', lang)}</span>
-              </h1>
-              <p className="mt-4 text-base text-muted-foreground md:text-lg" style={{ width: "125%", maxWidth: "125%" }}>
-                {tx('lp.heroDescription', lang)}
-              </p>
-            </div>
-
-            {/* Bottom Right — Botanical Illustration */}
-            <div className="flex items-start justify-center pb-6 md:-mt-8 md:pb-8 animate-gentle-sway">
-              <BotanicalHero className="h-auto w-full max-w-[280px]" />
-            </div>
-          </div>
-        </section>
-
-        {/* ===== TRUST STRIP (bottom of viewport) ===== */}
-        <section className="mt-auto border-y bg-muted/30">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 py-5">
-            {TRUST_KEYS.map((key) => (
-              <div key={key} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-                {tx(key, lang)}
-              </div>
+          {/* Quick action chips — horizontal scroll */}
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6">
+            {QUICK_CHIPS.map(({ emoji, labelKey, href }) => (
+              <Link key={href} href={href}
+                className="flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground transition-all hover:border-primary/30 hover:text-foreground hover:shadow-soft active:scale-95"
+              >
+                <span>{emoji}</span>
+                {tx(labelKey, lang) || (isTr ? "Araç" : "Tool")}
+              </Link>
             ))}
           </div>
-        </section>
 
-        </div>
+          {/* ── Bento Grid ── */}
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            {/* Card 1 — Wide: AI Assistant */}
+            <Link href="/health-assistant"
+              className="col-span-2 group relative overflow-hidden rounded-2xl border bg-gradient-to-r from-primary/5 to-sage/5 p-5 transition-all hover:shadow-soft-lg hover:-translate-y-0.5 dark:from-primary/10 dark:to-sage/10"
+              style={{ animationDelay: "0ms" }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                    <MessageCircle className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold">{isTr ? "Kanıta Dayalı Asistan" : "Evidence-Based Assistant"}</h3>
+                    <p className="text-[11px] text-muted-foreground">{isTr ? "PubMed + Cochrane destekli" : "PubMed + Cochrane powered"}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
+                  </span>
+                  <span className="text-[10px] text-green-600 font-medium">Online</span>
+                </div>
+              </div>
+              <ArrowRight className="absolute right-4 bottom-4 h-4 w-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
+            </Link>
 
-        {/* ===== FEATURES ===== */}
-        <section className="mx-auto max-w-7xl px-4 md:px-8 py-12 md:py-16">
-          <div className="mb-8 text-center">
-            <h2 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-              {tx('lp.featureTitle1', lang)}{" "}
-              <em className="font-heading" style={{ fontStyle: "italic" }}>
-                {tx('lp.featureTitle2', lang)}
-              </em>
-            </h2>
+            {/* Card 2 — Square Left: Interaction Engine */}
+            <Link href="/interaction-checker"
+              className="group rounded-2xl border bg-card p-4 transition-all hover:shadow-soft-lg hover:-translate-y-0.5"
+              style={{ animationDelay: "80ms" }}
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-coral/10 mb-3">
+                <Shield className="h-4 w-4 text-coral" />
+              </div>
+              <h3 className="text-sm font-bold">{isTr ? "Etkileşim Motoru" : "Interaction Engine"}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{isTr ? "İlaç-bitki güvenliği" : "Drug-herb safety"}</p>
+            </Link>
+
+            {/* Card 3 — Square Right: Blood Test */}
+            <Link href="/blood-test"
+              className="group rounded-2xl border bg-card p-4 transition-all hover:shadow-soft-lg hover:-translate-y-0.5"
+              style={{ animationDelay: "160ms" }}
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500/10 mb-3">
+                <Droplets className="h-4 w-4 text-rose-500" />
+              </div>
+              <h3 className="text-sm font-bold">{isTr ? "Kan Tahlili" : "Blood Test"}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{isTr ? "AI analiz + PDF rapor" : "AI analysis + PDF report"}</p>
+            </Link>
+
+            {/* Card 4 — Square Left: Calendar */}
+            <Link href="/calendar"
+              className="group rounded-2xl border bg-card p-4 transition-all hover:shadow-soft-lg hover:-translate-y-0.5"
+              style={{ animationDelay: "240ms" }}
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-lavender/10 mb-3">
+                <Moon className="h-4 w-4 text-lavender" />
+              </div>
+              <h3 className="text-sm font-bold">{isTr ? "Takvim Hub" : "Calendar Hub"}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{isTr ? "İlaç + takviye takibi" : "Meds + supplement tracking"}</p>
+            </Link>
+
+            {/* Card 5 — Square Right: Sports */}
+            <Link href="/sports-performance"
+              className="group rounded-2xl border bg-card p-4 transition-all hover:shadow-soft-lg hover:-translate-y-0.5"
+              style={{ animationDelay: "320ms" }}
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 mb-3">
+                <Activity className="h-4 w-4 text-emerald-500" />
+              </div>
+              <h3 className="text-sm font-bold">{isTr ? "Spor Performansı" : "Sports Performance"}</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{isTr ? "AI antrenman planı" : "AI training plan"}</p>
+            </Link>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {FEATURES.map((feature) => (
-              <Link
-                key={feature.num}
-                href={feature.href}
-                className="group relative rounded-xl border bg-card p-6 transition-all hover:border-primary/30 hover:shadow-lg"
-              >
-                <span className="font-heading absolute right-4 top-4 text-4xl font-bold text-muted/60">
-                  {feature.num}
-                </span>
-                <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-2.5">
-                  <feature.icon className="h-5 w-5 text-primary" />
-                </div>
-                <h3 className="mb-2 text-base font-semibold leading-snug tracking-tight">
-                  <span className="block text-base font-semibold">
-                    {tx(feature.titleKey, lang)}
-                  </span>
-                </h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {tx(feature.descKey, lang)}
-                </p>
-                <div className="mt-4 flex items-center gap-1 text-sm font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                  {tx('lp.explore', lang)} <ArrowRight className="h-3.5 w-3.5" />
-                </div>
-              </Link>
+          {/* Daily Summary */}
+          <DailySummaryCard userId={user.id} lang={lang} userName={profile.full_name} />
+        </section>
+
+        {/* Trust strip */}
+        <section className="mt-6 border-t bg-muted/30">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 py-4">
+            {TRUST_KEYS.map((key) => (
+              <div key={key} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                <CheckCircle2 className="h-3 w-3 text-primary" />
+                {tx(key, lang)}
+              </div>
             ))}
           </div>
         </section>
@@ -257,179 +202,153 @@ export default function Home() {
     );
   }
 
-  // ─── GUEST LAYOUT ───
+  // ─── GUEST LANDING — Mobile-First Command Center ───
   return (
     <div className="flex flex-col">
-      {/* ===== HERO ===== */}
+      {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-8 md:flex-row md:gap-12 md:py-20">
-          {/* Text + CTA first on mobile */}
-          <div className="flex-1 text-center md:text-left stagger-children">
-            {/* Hero Badge */}
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary">
-              <Activity className="h-3.5 w-3.5" />
-              {tx('lp.heroBadge', lang)}
-            </div>
-
-            <h1 className="font-heading text-3xl font-semibold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-              {tx('lp.heroHeading1', lang)}{" "}
-              <br className="hidden sm:block" />
-              <em className="font-heading" style={{ fontStyle: "italic", color: "var(--gold)" }}>
-                {tx('lp.heroHeadingItalic', lang)}
-              </em>{" "}
-              <span className="text-primary">{tx('lp.heroHeadingEnd', lang)}</span>
-            </h1>
-
-            <p className="mt-3 max-w-lg text-sm text-muted-foreground md:mt-4 md:text-lg">
-              {tx('lp.heroDescription', lang)}
-            </p>
-
-            {/* CTA buttons - visible immediately on mobile */}
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row md:mt-8">
-              <Link
-                href="/auth/login"
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-              >
-                {tx('nav.getStarted', lang)}
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/health-assistant"
-                className="inline-flex items-center justify-center gap-2 rounded-lg border px-6 py-3 text-sm font-medium transition-colors hover:bg-muted"
-              >
-                <MessageCircle className="h-4 w-4" />
-                {tx('lp.tryAssistant', lang)}
-              </Link>
-            </div>
-
-            {/* Search bar */}
-            <form onSubmit={handleSearch} className="mt-5 flex items-center gap-2 md:mt-6">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={tx('lp.searchPlaceholder', lang)}
-                  className="w-full rounded-lg border bg-background py-2.5 pl-10 pr-4 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
+        <div className="mx-auto max-w-6xl px-4 pt-8 pb-4 md:pt-16 md:pb-8">
+          <div className="flex flex-col items-center gap-6 md:flex-row md:gap-12">
+            <div className="flex-1 text-center md:text-left stagger-children">
+              {/* Badge */}
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary">
+                <Activity className="h-3.5 w-3.5" />
+                {tx("lp.heroBadge", lang)}
               </div>
-              <button
-                type="submit"
-                className="shrink-0 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-              >
-                {tx('lp.searchButton', lang)}
-              </button>
-            </form>
 
-            <div className="mt-3 flex flex-wrap justify-center gap-2 md:justify-start">
-              {QUICK_TAGS_GUEST.map((tag) => (
-                <Link
-                  key={tag.key}
-                  href={tag.href}
-                  className="rounded-full border px-3 py-1 text-xs text-muted-foreground transition-all hover:border-primary/30 hover:text-primary hover:-translate-y-0.5"
-                >
-                  {tx(tag.key, lang)}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          {/* Illustration - hidden on very small screens, shown from sm up */}
-          <div className="hidden w-56 shrink-0 sm:block sm:w-72 md:w-80 lg:w-96 animate-gentle-sway">
-            <BotanicalHero className="h-auto w-full" />
-          </div>
-        </div>
-      </section>
-
-      {/* ===== STATS STRIP ===== */}
-      <section className="border-y bg-primary/5">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-12 gap-y-4 px-4 py-6">
-          <div className="flex items-center gap-2.5 text-center">
-            <Shield className="h-5 w-5 text-primary" />
-            <div>
-              <span className="inline-block rounded-full bg-primary/10 px-3 py-0.5 text-xs font-semibold text-primary">BETA</span>
-              <div className="text-[11px] text-muted-foreground mt-0.5">{tx('lp.statBeta', lang)}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2.5 text-center">
-            <BookOpen className="h-5 w-5 text-primary" />
-            <div>
-              <div className="text-lg font-bold text-foreground">PubMed + NIH</div>
-              <div className="text-[11px] text-muted-foreground">{tx('lp.statSources', lang)}</div>
-            </div>
-          </div>
-          <div className="flex items-center gap-2.5 text-center">
-            <Activity className="h-5 w-5 text-primary" />
-            <div>
-              <div className="text-lg font-bold text-foreground">30+</div>
-              <div className="text-[11px] text-muted-foreground">{tx('lp.statTools', lang)}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== TRUST STRIP ===== */}
-      <section className="bg-muted/30">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-3 px-4 py-4">
-          {TRUST_KEYS.map((key) => (
-            <div key={key} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
-              {tx(key, lang)}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ===== FEATURES ===== */}
-      <section className="mx-auto max-w-7xl px-4 md:px-8 py-16 md:py-24">
-        <div className="mb-12 text-center animate-fade-in-up">
-          <h2 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
-            {tx('lp.featureTitle1', lang)}{" "}
-            <em className="font-heading" style={{ fontStyle: "italic" }}>
-              {tx('lp.featureTitle2', lang)}
-            </em>
-          </h2>
-        </div>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 stagger-children">
-          {FEATURES.map((feature) => (
-            <Link
-              key={feature.num}
-              href={feature.href}
-              className="card-hover group relative rounded-xl border border-transparent bg-card p-6 transition-all hover:border-primary/20"
-              style={{ borderTop: '3px solid var(--primary)' }}
-            >
-              <span className="font-heading absolute right-4 top-4 text-4xl font-bold text-muted/60">
-                {feature.num}
-              </span>
-              <div className="mb-4 inline-flex rounded-lg bg-primary/10 p-2.5">
-                <feature.icon className="h-5 w-5 text-primary" />
-              </div>
-              <h3 className="mb-2 text-base font-semibold leading-snug tracking-tight">
-                <span className="block text-base font-semibold">
-                  {tx(feature.titleKey, lang)}
-                </span>
-              </h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {tx(feature.descKey, lang)}
+              {/* Dynamic heading */}
+              <h1 className="font-heading text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
+                {isTr ? "Bugün nasıl hissediyorsun?" : "How are you feeling today?"}
+              </h1>
+              <p className="mt-3 max-w-lg text-sm text-muted-foreground md:text-base">
+                {isTr
+                  ? "Hangi bitkiyi merak ediyorsun? İlaç etkileşimlerini kontrol et, kan tahlilini analiz et veya asistana sor."
+                  : "Curious about an herb? Check drug interactions, analyze blood tests, or ask the assistant."}
               </p>
-              <div className="mt-4 flex items-center gap-1 text-sm font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                {tx('lp.explore', lang)} <ArrowRight className="h-3.5 w-3.5" />
+
+              {/* Spotlight search */}
+              <form onSubmit={handleSearch} className="mt-5 md:mt-6">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={isTr ? "Bir bitki veya sağlık sorusu sor..." : "Ask about any herb or health question..."}
+                    className="w-full rounded-2xl border bg-card py-3.5 pl-11 pr-14 text-sm shadow-soft-md outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  />
+                  <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
+                    <Sparkles className="h-4 w-4" />
+                  </button>
+                </div>
+              </form>
+
+              {/* Quick action chips */}
+              <div className="mt-3 flex gap-2 overflow-x-auto scrollbar-hide justify-center md:justify-start">
+                {QUICK_CHIPS.map(({ emoji, labelKey, href }) => (
+                  <Link key={href} href={href}
+                    className="flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground transition-all hover:border-primary/30 hover:text-primary active:scale-95"
+                  >
+                    <span>{emoji}</span>
+                    {tx(labelKey, lang) || (isTr ? "Araç" : "Tool")}
+                  </Link>
+                ))}
               </div>
-            </Link>
-          ))}
+
+              {/* CTA */}
+              <div className="mt-5 flex flex-col gap-2 sm:flex-row md:mt-6">
+                <Link href="/auth/login"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+                  {tx("nav.getStarted", lang)} <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href="/health-assistant"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium hover:bg-muted">
+                  <MessageCircle className="h-4 w-4" /> {tx("lp.tryAssistant", lang)}
+                </Link>
+              </div>
+            </div>
+
+            {/* Illustration */}
+            <div className="hidden w-56 shrink-0 sm:block sm:w-72 md:w-80 animate-gentle-sway">
+              <BotanicalHero className="h-auto w-full" />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ===== FAQ SECTION ===== */}
-      <section className="mx-auto max-w-4xl px-4 py-16">
-        <h2 className="font-heading text-2xl font-semibold text-center mb-8">
-          {tx("common.faqTitle", lang)}
-        </h2>
-        <div className="space-y-4">
+      {/* Stats */}
+      <section className="border-y bg-primary/5">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 py-5">
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-primary" />
+            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-semibold text-primary">BETA</span>
+            <span className="text-[11px] text-muted-foreground">{tx("lp.statBeta", lang)}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4 text-primary" />
+            <span className="text-sm font-bold">PubMed</span>
+            <span className="text-[11px] text-muted-foreground">{tx("lp.statSources", lang)}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Activity className="h-4 w-4 text-primary" />
+            <span className="text-sm font-bold">30+</span>
+            <span className="text-[11px] text-muted-foreground">{tx("lp.statTools", lang)}</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Bento Grid for guests ── */}
+      <section className="mx-auto max-w-5xl px-4 py-10 md:py-16">
+        <div className="grid grid-cols-2 gap-3 md:gap-4 stagger-children">
+          {/* Wide: AI Assistant */}
+          <Link href="/health-assistant"
+            className="col-span-2 group relative overflow-hidden rounded-2xl border bg-gradient-to-r from-primary/5 to-sage/5 p-5 transition-all card-hover dark:from-primary/10 dark:to-sage/10">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
+                <Sparkles className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-bold">{isTr ? "Kanıta Dayalı AI Asistan" : "Evidence-Based AI Assistant"}</h3>
+                <p className="text-xs text-muted-foreground">{isTr ? "PubMed + Cochrane + hakemli dergiler" : "PubMed + Cochrane + peer-reviewed journals"}</p>
+              </div>
+              <div className="ml-auto flex items-center gap-1.5">
+                <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" /></span>
+              </div>
+            </div>
+          </Link>
+
+          {/* Square: Interaction */}
+          <Link href="/interaction-checker" className="group rounded-2xl border bg-card p-4 transition-all card-hover">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-coral/10 mb-3"><Pill className="h-4 w-4 text-coral" /></div>
+            <h3 className="text-sm font-bold">{isTr ? "Etkileşim Motoru" : "Interaction Engine"}</h3>
+          </Link>
+
+          {/* Square: Blood Test */}
+          <Link href="/blood-test" className="group rounded-2xl border bg-card p-4 transition-all card-hover">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500/10 mb-3"><Droplets className="h-4 w-4 text-rose-500" /></div>
+            <h3 className="text-sm font-bold">{isTr ? "Kan Tahlili" : "Blood Test"}</h3>
+          </Link>
+
+          {/* Square: Supplements */}
+          <Link href="/health-assistant" className="group rounded-2xl border bg-card p-4 transition-all card-hover">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 mb-3"><Leaf className="h-4 w-4 text-emerald-500" /></div>
+            <h3 className="text-sm font-bold">{isTr ? "Takviye Rehberi" : "Supplement Guide"}</h3>
+          </Link>
+
+          {/* Square: Sleep */}
+          <Link href="/sleep-analysis" className="group rounded-2xl border bg-card p-4 transition-all card-hover">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-lavender/10 mb-3"><Moon className="h-4 w-4 text-lavender" /></div>
+            <h3 className="text-sm font-bold">{isTr ? "Uyku Analizi" : "Sleep Analysis"}</h3>
+          </Link>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="mx-auto max-w-4xl px-4 py-10">
+        <h2 className="font-heading text-2xl font-semibold text-center mb-6">{tx("common.faqTitle", lang)}</h2>
+        <div className="space-y-3">
           {FAQ_ITEMS.map((item, i) => (
-            <details key={i} className="group rounded-lg border bg-card p-4">
+            <details key={i} className="group rounded-xl border bg-card p-4">
               <summary className="cursor-pointer font-medium text-sm list-none flex items-center justify-between">
                 {lang === "tr" ? item.questionTr : item.questionEn}
                 <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
@@ -442,47 +361,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "WebApplication",
-            name: "Phytotherapy.ai",
-            url: "https://phytotherapy.ai",
-            description: "AI-powered evidence-based integrative medicine assistant bridging modern medicine and phytotherapy. Drug interaction checker, blood test analysis, and personalized health guidance.",
-            applicationCategory: "HealthApplication",
-            operatingSystem: "Web",
-            offers: {
-              "@type": "Offer",
-              price: "0",
-              priceCurrency: "USD",
-              description: "Free health assistant with premium features available"
-            },
-            author: {
-              "@type": "Organization",
-              name: "Phytotherapy.ai Team",
-              url: "https://phytotherapy.ai"
-            },
-            keywords: "phytotherapy, fitoterapi, herbal medicine, bitkisel tedavi, drug interaction checker, ilaç etkileşimi kontrolü, health assistant, sağlık asistanı, integrative medicine, bütünleştirici tıp"
-          }),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            mainEntity: FAQ_ITEMS.map((item) => ({
-              "@type": "Question",
-              name: item.questionTr,
-              acceptedAnswer: { "@type": "Answer", text: item.answerTr },
-            })),
-          }),
-        }}
-      />
+      {/* Disclaimer — subtle, at the very bottom */}
+      <p className="text-center text-[10px] text-muted-foreground/40 px-4 pb-4">
+        {tx("disclaimer.banner", lang)}
+      </p>
+
+      {/* JSON-LD */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org", "@type": "WebApplication",
+        name: "Phytotherapy.ai", url: "https://phytotherapy.ai",
+        description: "AI-powered evidence-based integrative medicine assistant.",
+        applicationCategory: "HealthApplication", operatingSystem: "Web",
+        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org", "@type": "FAQPage",
+        mainEntity: FAQ_ITEMS.map((item) => ({
+          "@type": "Question", name: item.questionEn,
+          acceptedAnswer: { "@type": "Answer", text: item.answerEn },
+        })),
+      }) }} />
     </div>
   );
+}
+
+// Time-based greeting emoji
+function getTimeEmoji(): string {
+  const h = new Date().getHours();
+  if (h < 6) return "🌙";
+  if (h < 12) return "☀️";
+  if (h < 17) return "🌤️";
+  if (h < 21) return "🌅";
+  return "🌙";
 }
