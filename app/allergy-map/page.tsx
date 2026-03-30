@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txObj } from "@/lib/translations";
 
 interface AllergyRecord {
   id: string;
@@ -399,7 +399,7 @@ export default function AllergyMapPage() {
                           : "bg-muted text-muted-foreground hover:bg-amber-100 dark:hover:bg-amber-900/30"
                       }`}
                     >
-                      {lang === "tr" ? cfg.labelTr : cfg.label}
+                      {txObj({ en: cfg.label, tr: cfg.labelTr }, lang)}
                     </button>
                   );
                 })}
@@ -546,7 +546,7 @@ export default function AllergyMapPage() {
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium truncate">{r.trigger_name}</p>
                       <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${sevCfg.color}`}>
-                        {lang === "tr" ? sevCfg.labelTr : sevCfg.label}
+                        {txObj({ en: sevCfg.label, tr: sevCfg.labelTr }, lang)}
                       </span>
                       {r.diagnosed_by_doctor && (
                         <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">

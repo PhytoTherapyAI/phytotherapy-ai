@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txObj } from "@/lib/translations";
 import Link from "next/link";
 import { createBrowserClient } from "@/lib/supabase";
 
@@ -428,14 +428,14 @@ export default function SeasonalHealthPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="text-sm font-semibold">
-                      {lang === "tr" ? supp.nameTR : supp.nameEN}
+                      {txObj({ en: supp.nameEN, tr: supp.nameTR }, lang)}
                     </h3>
                     <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${gradeColors[supp.grade]}`}>
                       {supp.grade} — {gradeLabel(supp.grade)}
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {lang === "tr" ? supp.descriptionTR : supp.descriptionEN}
+                    {txObj({ en: supp.descriptionEN, tr: supp.descriptionTR }, lang)}
                   </p>
                   <div className="mt-2 flex gap-4 text-xs">
                     <span className="font-medium">
@@ -463,7 +463,7 @@ export default function SeasonalHealthPage() {
           {seasonData.lifestyle.map((tip, i) => (
             <div key={i} className="flex items-start gap-2 rounded-lg border p-3">
               <span className={`mt-0.5 ${seasonData.colorClass}`}>•</span>
-              <p className="text-sm">{lang === "tr" ? tip.tr : tip.en}</p>
+              <p className="text-sm">{tip[lang]}</p>
             </div>
           ))}
         </div>
@@ -492,7 +492,7 @@ export default function SeasonalHealthPage() {
                   className="h-4 w-4 rounded accent-green-600"
                 />
                 <span className={`text-sm ${checkedItems[key] ? "line-through text-muted-foreground" : ""}`}>
-                  {lang === "tr" ? item.tr : item.en}
+                  {item[lang]}
                 </span>
               </label>
             );

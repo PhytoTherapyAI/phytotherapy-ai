@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Cross, Phone, ChevronDown, ChevronUp, Heart, Flame, Bug, Skull, Bone, Wind, Baby, Droplets, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txObj } from "@/lib/translations";
 
 interface FirstAidSection {
   id: string;
@@ -336,7 +336,7 @@ export default function FirstAidPage() {
                 <div className="flex items-center gap-3">
                   <div className={section.color}>{section.icon}</div>
                   <h2 className="font-semibold text-gray-900 dark:text-white">
-                    {lang === "tr" ? section.titleTr : section.titleEn}
+                    {txObj(section, lang)}
                   </h2>
                 </div>
                 {expandedSections[section.id]
@@ -347,7 +347,7 @@ export default function FirstAidPage() {
               {expandedSections[section.id] && (
                 <div className="px-5 pb-5">
                   <ol className="space-y-3">
-                    {(lang === "tr" ? section.stepsTr : section.stepsEn).map((step, i) => (
+                    {({ en: section.stepsEn, tr: section.stepsTr }[lang] ?? section.stepsEn).map((step, i) => (
                       <li key={i} className="flex items-start gap-3">
                         <span className="flex-shrink-0 w-7 h-7 rounded-full bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-sm font-bold text-red-600 dark:text-red-400">
                           {i + 1}
@@ -356,11 +356,11 @@ export default function FirstAidPage() {
                       </li>
                     ))}
                   </ol>
-                  {(lang === "tr" ? section.warningTr : section.warningEn) && (
+                  {({ en: section.warningEn, tr: section.warningTr }[lang] ?? section.warningEn) && (
                     <div className="mt-4 bg-amber-50 dark:bg-amber-900/10 rounded-xl p-3 flex items-start gap-2">
                       <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-amber-700 dark:text-amber-300">
-                        {lang === "tr" ? section.warningTr : section.warningEn}
+                        {txObj({ en: section.warningEn, tr: section.warningTr }, lang)}
                       </p>
                     </div>
                   )}

@@ -7,7 +7,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog"
 import { Pill, Droplets, SmilePlus, AlertCircle, Check } from "lucide-react"
-import { tx, type Lang } from "@/lib/translations"
+import { tx, txObj, type Lang } from "@/lib/translations"
 
 interface QuickActionsProps {
   lang: Lang
@@ -151,7 +151,7 @@ export function QuickActions({ lang, userId }: QuickActionsProps) {
               >
                 <span className="text-2xl">{opt.emoji}</span>
                 <span className="text-[10px] text-muted-foreground">
-                  {lang === "tr" ? opt.labelTr : opt.labelEn}
+                  {txObj(opt, lang)}
                 </span>
               </button>
             ))}

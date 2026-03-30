@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
-import { tx } from "@/lib/translations"
+import { tx, txObj } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { BADGES, evaluateBadges, calculateAnonymousScore, type UserStats } from "@/lib/badges"
 import { Trophy, Lock, Loader2, Users, Crown, TrendingUp } from "lucide-react"
@@ -209,10 +209,10 @@ export default function BadgesPage() {
               >
                 <span className="text-3xl">{badge.icon}</span>
                 <h4 className="mt-2 text-sm font-semibold">
-                  {lang === "tr" ? badge.nameTr : badge.nameEn}
+                  {txObj(badge, lang)}
                 </h4>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  {lang === "tr" ? badge.descTr : badge.descEn}
+                  {txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
                 </p>
               </div>
             ))}
@@ -235,10 +235,10 @@ export default function BadgesPage() {
               >
                 <span className="text-3xl grayscale">{badge.icon}</span>
                 <h4 className="mt-2 text-sm font-semibold">
-                  {lang === "tr" ? badge.nameTr : badge.nameEn}
+                  {txObj(badge, lang)}
                 </h4>
                 <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  {lang === "tr" ? badge.descTr : badge.descEn}
+                  {txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
                 </p>
               </div>
             ))}

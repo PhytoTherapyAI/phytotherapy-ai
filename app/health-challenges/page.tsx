@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Trophy, Droplets, Apple, Footprints, Brain, Check, RotateCcw, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txObj } from "@/lib/translations";
 
 interface Challenge {
   id: string;
@@ -217,10 +217,10 @@ export default function HealthChallengesPage() {
                     <div className={`${c.bgColor} p-2.5 rounded-xl ${c.color}`}>{c.icon}</div>
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white">
-                        {lang === "tr" ? c.titleTr : c.titleEn}
+                        {txObj(c, lang)}
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {lang === "tr" ? c.descTr : c.descEn}
+                        {txObj({ en: c.descEn, tr: c.descTr }, lang)}
                       </p>
                     </div>
                   </div>
@@ -244,7 +244,7 @@ export default function HealthChallengesPage() {
                         {tx("challenges.rules", lang)}
                       </h4>
                       <ul className="space-y-1">
-                        {(lang === "tr" ? c.rulesTr : c.rulesEn).map((r, i) => (
+                        {({ en: c.rulesEn, tr: c.rulesTr }[lang] ?? c.rulesEn).map((r, i) => (
                           <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-1.5">
                             <span className={c.color}>•</span>{r}
                           </li>

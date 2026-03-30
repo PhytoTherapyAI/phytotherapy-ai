@@ -363,7 +363,7 @@ export default function SupplementMarketplacePage() {
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
-                {lang === "tr" ? cat.tr : cat.en}
+                {cat[lang]}
               </button>
             );
           })}
@@ -394,7 +394,7 @@ export default function SupplementMarketplacePage() {
                       {supplement.name}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      {lang === "tr" ? supplement.uses.tr : supplement.uses.en}
+                      {supplement.uses[lang]}
                     </p>
                   </div>
                   <button

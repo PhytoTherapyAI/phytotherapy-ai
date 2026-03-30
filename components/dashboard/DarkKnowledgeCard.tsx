@@ -239,7 +239,7 @@ export function DarkKnowledgeCard({
 
   if (dismissed) return null
 
-  const text = lang === "tr" ? fact.tr : fact.en
+  const text = fact[lang]
 
   return (
     <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent ring-1 ring-amber-500/20 transition-all hover:ring-amber-500/40">

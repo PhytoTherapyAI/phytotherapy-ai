@@ -2,7 +2,7 @@
 
 import { MessageSquare, Users, ThumbsUp, BookOpen, Shield, Bell } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txObj } from "@/lib/translations";
 
 const FEATURES = [
   {
@@ -78,10 +78,10 @@ export default function HealthForumPage() {
             >
               <div className="text-green-600 dark:text-green-400 mb-3">{f.icon}</div>
               <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                {lang === "tr" ? f.titleTr : f.titleEn}
+                {txObj(f, lang)}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {lang === "tr" ? f.descTr : f.descEn}
+                {txObj({ en: f.descEn, tr: f.descTr }, lang)}
               </p>
             </div>
           ))}

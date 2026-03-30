@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
-import { tx } from "@/lib/translations"
+import { tx, txObj } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -159,7 +159,7 @@ export default function BiomarkerTrendsPage() {
           {BIOMARKER_GROUPS.map(g => (
             <Button key={g.category} size="sm" variant={selectedCategory === g.category ? "default" : "outline"}
               onClick={() => setSelectedCategory(g.category)} className="whitespace-nowrap">
-              {lang === "tr" ? g.categoryTr : g.category}
+              {txObj({ en: g.category, tr: g.categoryTr }, lang)}
             </Button>
           ))}
         </div>
@@ -186,7 +186,7 @@ export default function BiomarkerTrendsPage() {
               return (
                 <Card key={group.category} className="p-5">
                   <h3 className="font-semibold text-foreground mb-4">
-                    {lang === "tr" ? group.categoryTr : group.category}
+                    {txObj({ en: group.category, tr: group.categoryTr }, lang)}
                   </h3>
                   <div className="space-y-3">
                     {groupMarkers.map(({ name, history }) => {

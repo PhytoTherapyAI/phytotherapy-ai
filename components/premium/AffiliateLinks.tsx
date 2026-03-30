@@ -43,7 +43,7 @@ export function AffiliateLinks({ supplementName }: AffiliateLinksProps) {
       <div className="mt-2 flex items-start gap-1">
         <Info className="mt-0.5 h-3 w-3 shrink-0 text-muted-foreground/50" />
         <p className="text-[9px] text-muted-foreground/60">
-          {lang === "tr" ? AFFILIATE_DISCLAIMER.tr : AFFILIATE_DISCLAIMER.en}
+          {AFFILIATE_DISCLAIMER[lang]}
         </p>
       </div>
     </div>

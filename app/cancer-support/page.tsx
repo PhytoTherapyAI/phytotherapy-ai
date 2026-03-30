@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { tx, txObj } from "@/lib/translations";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -233,13 +233,13 @@ export default function CancerSupportPage() {
                   {section.icon}
                 </div>
                 <span className="font-semibold text-left">
-                  {lang === "tr" ? section.titleTR : section.titleEN}
+                  {txObj({ en: section.titleEN, tr: section.titleTR }, lang)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 {section.badgeEN && (
                   <Badge className={section.badgeColor} variant="secondary">
-                    {lang === "tr" ? section.badgeTR : section.badgeEN}
+                    {txObj({ en: section.badgeEN, tr: section.badgeTR }, lang)}
                   </Badge>
                 )}
                 {expanded[section.id] ? (
@@ -258,7 +258,7 @@ export default function CancerSupportPage() {
                   >
                     {getItemIcon(item.type)}
                     <span className="text-sm text-foreground">
-                      {lang === "tr" ? item.tr : item.en}
+                      {item[lang]}
                     </span>
                   </div>
                 ))}

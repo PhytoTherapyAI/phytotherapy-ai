@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useLang } from "@/components/layout/language-toggle"
-import { tx } from "@/lib/translations"
+import { tx, txObj } from "@/lib/translations"
 import {
   GraduationCap,
   ExternalLink,
@@ -157,7 +157,6 @@ const CATEGORIES = [
 
 export default function CoursesPage() {
   const { lang } = useLang()
-  const isTr = lang === "tr"
   const [selectedCategory, setSelectedCategory] = useState("all")
 
   const filteredCourses = selectedCategory === "all"
@@ -165,7 +164,7 @@ export default function CoursesPage() {
     : COURSES.filter(c => c.category === selectedCategory)
 
   const levelLabel = (level: string) => {
-    if (isTr) {
+    if (lang === "tr") {
       return level === "beginner" ? "Başlangıç" : level === "intermediate" ? "Orta" : "İleri"
     }
     return level === "beginner" ? "Beginner" : level === "intermediate" ? "Intermediate" : "Advanced"
@@ -206,7 +205,7 @@ export default function CoursesPage() {
                 : "bg-muted text-muted-foreground hover:bg-muted/80"
             }`}
           >
-            {lang === "tr" ? cat.labelTr : cat.labelEn}
+            {txObj(cat, lang)}
           </button>
         ))}
       </div>
@@ -248,9 +247,7 @@ export default function CoursesPage() {
               <div className="mb-3 flex items-center justify-between">
                 <span className={`inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-semibold ${course.iconBg}`}>
                   <Icon className="mr-1.5 h-3.5 w-3.5" />
-                  {lang === "tr"
-                    ? CATEGORIES.find(c => c.id === course.category)?.labelTr
-                    : CATEGORIES.find(c => c.id === course.category)?.labelEn}
+                  {txObj(CATEGORIES.find(c => c.id === course.category) ?? {}, lang)}
                 </span>
                 <span className="rounded-md bg-background/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   {course.platform}
@@ -259,10 +256,10 @@ export default function CoursesPage() {
 
               {/* Title & Description */}
               <h3 className="mb-1.5 text-base font-bold leading-snug">
-                {lang === "tr" ? titles[course.id]?.tr : titles[course.id]?.en}
+                {titles[course.id]?.[lang]}
               </h3>
               <p className="mb-4 text-xs leading-relaxed text-muted-foreground line-clamp-2">
-                {lang === "tr" ? descs[course.id]?.tr : descs[course.id]?.en}
+                {descs[course.id]?.[lang]}
               </p>
 
               {/* Meta */}
@@ -277,7 +274,7 @@ export default function CoursesPage() {
                 </span>
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  {lang === "tr" ? course.duration : course.durationEn}
+                  {txObj({ en: course.durationEn, tr: course.duration }, lang)}
                 </span>
                 <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${levelColor(course.level)}`}>
                   {levelLabel(course.level)}

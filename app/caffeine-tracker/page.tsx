@@ -169,7 +169,7 @@ export default function CaffeineTrackerPage() {
                   <div className="text-center mb-2">
                     <span className="text-2xl">{d.icon}</span>
                     <p className="text-xs font-medium mt-1">
-                      {lang === "tr" ? label.tr : label.en}
+                      {label[lang]}
                     </p>
                     <p className="text-[10px] text-muted-foreground">
                       ~{d.mgPer}mg
