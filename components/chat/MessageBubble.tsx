@@ -4,6 +4,7 @@
 import { User, Leaf, Loader2, FileText, Image as ImageIcon } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { AILoadingState } from "@/components/chat/AILoadingState";
 
 export interface ChatMessage {
   id: string;
@@ -71,16 +72,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         )}
 
         {message.isStreaming && message.content === "" ? (
-          <div className="flex items-center gap-3 py-1 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <span className="typing-dot" />
-              <span className="typing-dot" />
-              <span className="typing-dot" />
-            </div>
-            <span className="text-xs">
-              {message.attachments?.length ? tx('chat.analyzingFile', lang) : tx('chat.analyzing', lang)}
-            </span>
-          </div>
+          <AILoadingState hasFile={!!message.attachments?.length} />
         ) : (
           <div
             className={`prose prose-sm max-w-none ${
