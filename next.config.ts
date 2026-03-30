@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
       { source: "/drug-timing", destination: "/medication-hub", permanent: true },
       { source: "/medication-schedule", destination: "/medication-hub", permanent: true },
       { source: "/smart-reminders", destination: "/medication-hub", permanent: true },
+      { source: "/health-goal-coach", destination: "/health-goals", permanent: true },
+      { source: "/medication-reader", destination: "/prospectus-reader", permanent: true },
     ];
   },
   async headers() {
