@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import {
   ChevronRight,
   ChevronLeft,
@@ -160,8 +161,8 @@ export function PromsSurvey({ survey, onComplete, onDismiss }: Props) {
               : "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300"
           }`}>
             {currentQuestion.category === "proms"
-              ? (isTr ? "Sağlık Durumu" : "Health Status")
-              : (isTr ? "Deneyim" : "Experience")}
+              ? tx("proms.healthStatus", lang)
+              : tx("proms.experience", lang)}
           </span>
 
           {/* Question text */}
@@ -201,8 +202,8 @@ export function PromsSurvey({ survey, onComplete, onDismiss }: Props) {
                 className="mt-2 w-full rounded-xl bg-primary py-3 text-sm font-bold text-white transition-all hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isLastQuestion
-                  ? (isTr ? "Tamamla" : "Complete")
-                  : (isTr ? "Devam" : "Continue")}
+                  ? tx("proms.complete", lang)
+                  : tx("proms.continue", lang)}
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
@@ -248,7 +249,7 @@ export function PromsSurvey({ survey, onComplete, onDismiss }: Props) {
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
-            {isTr ? "Geri" : "Back"}
+            {tx("proms.back", lang)}
           </button>
 
           {isLastQuestion && answers[currentQuestion.id] !== undefined && (
@@ -262,7 +263,7 @@ export function PromsSurvey({ survey, onComplete, onDismiss }: Props) {
               ) : (
                 <Sparkles className="h-4 w-4" />
               )}
-              {isTr ? "Gönder" : "Submit"}
+              {tx("proms.submit", lang)}
             </button>
           )}
         </div>
@@ -315,10 +316,10 @@ export function OutcomeComparisonCard({ data }: { data: ComparisonData }) {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-sm font-bold">
-            {isTr ? "İyileşme Raporu" : "Improvement Report"}
+            {tx("proms.improvementReport", lang)}
           </h3>
           <p className="text-xs text-muted-foreground">
-            {data.supplementName} — {data.daysBetween} {isTr ? "gün" : "days"}
+            {data.supplementName} — {data.daysBetween} {tx("proms.days", lang)}
           </p>
         </div>
         <div className="text-right">
@@ -326,7 +327,7 @@ export function OutcomeComparisonCard({ data }: { data: ComparisonData }) {
             {data.improvementScore}
           </div>
           <div className="text-[10px] text-muted-foreground font-bold uppercase">
-            {isTr ? "İyileşme Skoru" : "Improvement Score"}
+            {tx("proms.improvementScore", lang)}
           </div>
         </div>
       </div>
@@ -382,11 +383,11 @@ export function OutcomeComparisonCard({ data }: { data: ComparisonData }) {
       <div className="mt-3 flex items-center justify-center gap-4 text-[9px] text-muted-foreground">
         <span className="flex items-center gap-1">
           <div className="h-1.5 w-4 rounded bg-muted-foreground/30" />
-          {isTr ? "Başlangıç" : "Baseline"}
+          {tx("proms.baseline", lang)}
         </span>
         <span className="flex items-center gap-1">
           <div className="h-1.5 w-4 rounded bg-green-500" />
-          {isTr ? "Şimdi" : "Current"}
+          {tx("proms.current", lang)}
         </span>
       </div>
     </div>

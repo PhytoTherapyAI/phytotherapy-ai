@@ -5866,6 +5866,40 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "megaMenu.tools": { en: "tools", tr: "arac" },
   "megaMenu.categories": { en: "categories", tr: "kategori" },
   "megaMenu.allTools": { en: "All Tools", tr: "Tum Araclar" },
+
+  // ── MobileMegaMenu ──
+  "mobileMega.searchPlaceholder": { en: "Search tools...", tr: "Arac ara..." },
+  "mobileMega.noResults": { en: "No results found", tr: "Sonuc bulunamadi" },
+  "mobileMega.viewAll": { en: "View All Tools →", tr: "Tum Araclari Gor →" },
+
+  // ── AffiliateLinks ──
+  "affiliate.disclaimer": { en: "Affiliate disclaimer", tr: "Affiliate disclaimer" },
+
+  // ── FakeDoorTest ──
+  "fakeDoor.earlyBird": { en: "Early-bird discount reserved for you", tr: "Erken kus indirimi sizin icin ayrildi" },
+  "fakeDoor.noSpam": { en: "No spam", tr: "Spam yok" },
+  "fakeDoor.comingSoon": { en: "Coming soon", tr: "Yakinda" },
+  "fakeDoor.vipPriority": { en: "VIP priority", tr: "VIP oncelik" },
+
+  // ── PromsSurvey ──
+  "proms.healthStatus": { en: "Health Status", tr: "Saglik Durumu" },
+  "proms.experience": { en: "Experience", tr: "Deneyim" },
+  "proms.complete": { en: "Complete", tr: "Tamamla" },
+  "proms.continue": { en: "Continue", tr: "Devam" },
+  "proms.back": { en: "Back", tr: "Geri" },
+  "proms.submit": { en: "Submit", tr: "Gonder" },
+  "proms.improvementReport": { en: "Improvement Report", tr: "Iyilesme Raporu" },
+  "proms.days": { en: "days", tr: "gun" },
+  "proms.improvementScore": { en: "Improvement Score", tr: "Iyilesme Skoru" },
+  "proms.baseline": { en: "Baseline", tr: "Baslangic" },
+  "proms.current": { en: "Current", tr: "Simdi" },
+
+  // ── RadiologyResultDashboard ──
+  "rad.noGlossary": { en: "No glossary terms found.", tr: "Sozluk maddesi bulunamadi." },
+  "rad.pdfShareDesc": { en: "Professional report to share with your doctor", tr: "Doktorunuzla paylasmak icin profesyonel rapor" },
+
+  // ── ConsentStep ──
+  "consent.agreementText": { en: "I have read and understood the Medical Disclaimer and Data Privacy notice above. I accept the Terms of Service and Privacy Policy. I understand that Phytotherapy.ai is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations.", tr: "Yukaridaki Tibbi Sorumluluk Reddi ve Veri Gizliligi bildirimini okudum, Kullanim Kosullari ile Gizlilik Politikasini kabul ediyorum. Phytotherapy.ai'nin profesyonel tibbi tavsiyenin yerini almadigini anliyorum ve herhangi bir oneriyi uygulamadan once saglik uzmanima danisacagim." },
 }
 Object.assign(t, commonToolKeys)
 

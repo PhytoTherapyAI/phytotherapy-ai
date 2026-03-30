@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react"
 import Link from "next/link"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { TOOL_CATEGORIES, searchModules } from "@/lib/tools-hierarchy"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -38,7 +39,7 @@ export function MobileMegaMenu({ onNavigate }: MobileMegaMenuProps) {
         <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
           className="pl-9 pr-9 h-9 rounded-lg text-sm"
-          placeholder={lang === "tr" ? "Araç ara..." : "Search tools..."}
+          placeholder={tx("mobileMega.searchPlaceholder", lang)}
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -54,7 +55,7 @@ export function MobileMegaMenu({ onNavigate }: MobileMegaMenuProps) {
         <div className="px-3">
           {searchResults.length === 0 ? (
             <p className="text-sm text-muted-foreground py-3 text-center">
-              {lang === "tr" ? "Sonuç bulunamadı" : "No results found"}
+              {tx("mobileMega.noResults", lang)}
             </p>
           ) : (
             searchResults.slice(0, 10).map(result => (
@@ -112,7 +113,7 @@ export function MobileMegaMenu({ onNavigate }: MobileMegaMenuProps) {
       <div className="px-4 pt-3 mt-2 border-t border-border">
         <Link href="/tools" onClick={onNavigate}
           className="block text-center text-sm font-medium text-primary py-2">
-          {lang === "tr" ? "Tüm Araçları Gör →" : "View All Tools →"}
+          {tx("mobileMega.viewAll", lang)}
         </Link>
       </div>
     </div>

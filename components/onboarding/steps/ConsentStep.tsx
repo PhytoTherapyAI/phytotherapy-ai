@@ -129,9 +129,7 @@ export function ConsentStep({ data, updateData }: Props) {
             className="mt-1"
           />
           <Label htmlFor="consent" className="text-sm font-normal leading-relaxed">
-            {tr
-              ? "Yukarıdaki Tıbbi Sorumluluk Reddi ve Veri Gizliliği bildirimini okudum, Kullanım Koşulları ile Gizlilik Politikasını kabul ediyorum. Phytotherapy.ai'nin profesyonel tıbbi tavsiyenin yerini almadığını anlıyorum ve herhangi bir öneriyi uygulamadan önce sağlık uzmanıma danışacağım."
-              : "I have read and understood the Medical Disclaimer and Data Privacy notice above. I accept the Terms of Service and Privacy Policy. I understand that Phytotherapy.ai is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations."}
+            {tx("consent.agreementText", lang)}
           </Label>
         </div>
       </div>

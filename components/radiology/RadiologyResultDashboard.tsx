@@ -245,7 +245,7 @@ export function RadiologyResultDashboard({ analysis, imagePreview, lang }: Props
         <div className="grid gap-3 sm:grid-cols-2">
           {analysis.glossary.length === 0 ? (
             <p className="col-span-2 py-8 text-center text-sm text-muted-foreground">
-              {lang === "tr" ? "Sözlük maddesi bulunamadı." : "No glossary terms found."}
+              {tx("rad.noGlossary", lang)}
             </p>
           ) : (
             analysis.glossary.map((item, i) => (
@@ -284,9 +284,7 @@ export function RadiologyResultDashboard({ analysis, imagePreview, lang }: Props
                 <div>
                   <p className="text-sm font-semibold">{tx("rad.downloadPdf", lang)}</p>
                   <p className="text-xs text-muted-foreground">
-                    {lang === "tr"
-                      ? "Doktorunuzla paylaşmak için profesyonel rapor"
-                      : "Professional report to share with your doctor"}
+                    {tx("rad.pdfShareDesc", lang)}
                   </p>
                 </div>
                 <Button size="sm" onClick={handleDownloadPdf} disabled={pdfLoading}>

@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { tx } from "@/lib/translations"
 import {
   Package, Video, Star, Check, Crown, X, Sparkles, Heart,
   ArrowRight, Shield, Clock, Users, Loader2, Mail, Gift,
@@ -226,7 +227,7 @@ export function FakeDoorTest({ productId, lang = "en", variant = "card" }: FakeD
                 <p className="text-sm text-muted-foreground mb-6">{t("success_body")}</p>
                 <div className="flex items-center justify-center gap-2 mb-6 text-xs text-muted-foreground">
                   <Gift className="w-4 h-4 text-primary" />
-                  <span>{lang === "tr" ? "Erken kuş indirimi sizin için ayrıldı" : "Early-bird discount reserved for you"}</span>
+                  <span>{tx("fakeDoor.earlyBird", lang as "en" | "tr")}</span>
                 </div>
                 <Button className="w-full" onClick={() => setShowModal(false)}>
                   {t("close")}
@@ -275,9 +276,9 @@ export function FakeDoorTest({ productId, lang = "en", variant = "card" }: FakeD
 
                   {/* Trust signals */}
                   <div className="flex items-center justify-center gap-4 mt-4 text-[10px] text-muted-foreground">
-                    <span className="flex items-center gap-1"><Shield className="w-3 h-3" />{lang === "tr" ? "Spam yok" : "No spam"}</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{lang === "tr" ? "Yakında" : "Coming soon"}</span>
-                    <span className="flex items-center gap-1"><Star className="w-3 h-3" />{lang === "tr" ? "VIP öncelik" : "VIP priority"}</span>
+                    <span className="flex items-center gap-1"><Shield className="w-3 h-3" />{tx("fakeDoor.noSpam", lang as "en" | "tr")}</span>
+                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{tx("fakeDoor.comingSoon", lang as "en" | "tr")}</span>
+                    <span className="flex items-center gap-1"><Star className="w-3 h-3" />{tx("fakeDoor.vipPriority", lang as "en" | "tr")}</span>
                   </div>
                 </div>
               </>
