@@ -17,6 +17,7 @@
 import { NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { MESSAGE_TEMPLATES } from "@/lib/bot-channels"
+import { tx } from "@/lib/translations"
 
 const BATCH_SIZE = 50
 
@@ -170,9 +171,8 @@ export async function POST(req: Request) {
     if (sub.channel === "whatsapp") {
       success = await sendWhatsApp(sub.channel_id, message)
     } else if (sub.channel === "telegram") {
-      const buttons = lang === "tr"
-        ? [["✅ Tamamladım", "⏸ Duraklat"]]
-        : [["✅ Done", "⏸ Pause"]]
+      const typedLang = (lang === "tr" ? "tr" : "en") as "en" | "tr"
+      const buttons = [[tx("api.bot.btnDone", typedLang), tx("api.bot.btnPause", typedLang)]]
       success = await sendTelegram(sub.channel_id, message, buttons)
     }
 

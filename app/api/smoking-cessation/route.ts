@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const quitDate = sanitizeInput(body.quit_date || "");
     const dailyCigs = Number(body.daily_cigarettes_before) || 20;
     const currentStatus = sanitizeInput(body.current_status || "planning");
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
 ${profileContext ? `PATIENT: ${profileContext}` : ""}
 ${medications.length ? `MEDICATIONS: ${medications.join(", ")}` : ""}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "daysSinceQuit": ${daysSinceQuit},
   "healthRecoveryTimeline": [
@@ -103,7 +104,7 @@ Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
     "dailySavings": number,
     "monthlySavings": number,
     "yearlySavings": number,
-    "currency": "${lang === "tr" ? "TL" : "USD"}",
+    "currency": "${tx("api.smoking.currency", lang)}",
     "totalSaved": number
   },
   "cravingManagementTips": ["array of 5-6 practical tips"],
@@ -121,7 +122,7 @@ Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
 
 RULES:
 1. Mark timeline items as achieved based on daysSinceQuit
-2. Savings: use average pack price (${lang === "tr" ? "50 TL" : "$8"})
+2. Savings: use average pack price (${tx("api.smoking.avgPackPrice", lang)})
 3. Key medication interactions with quitting: CYP1A2 substrates (theophylline, clozapine, olanzapine) — doses may need REDUCTION after quitting. Bupropion+SSRI caution. Insulin sensitivity changes.
 4. Smoking induces CYP1A2 — quitting means drug levels may INCREASE
 5. NRT guidance based on their chosen method
@@ -138,7 +139,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısız oldu" : "Analysis failed" },
+        { error: tx("api.smoking.analysisFailed", lang) },
         { status: 500 }
       );
     }

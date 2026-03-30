@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     if (action === "recommendations") {
       // AI recommendations based on profile
-      const lang = body.lang || "en";
+      const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
       const { data: profile } = await supabase
         .from("user_profiles")
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest) {
 USER PROFILE: ${profileInfo}
 EXISTING VACCINATIONS: ${existingInfo}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"}.
+Respond in ${tx("api.respondLang", lang)}.
 
 Respond in this exact JSON format:
 {
@@ -135,7 +136,7 @@ RULES:
         parsed = typeof result === "string" ? JSON.parse(result) : result;
       } catch {
         return NextResponse.json(
-          { error: lang === "tr" ? "Analiz başarısız" : "Analysis failed" },
+          { error: tx("api.vaccination.analysisFailed", lang) },
           { status: 500 }
         );
       }

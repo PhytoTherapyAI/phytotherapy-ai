@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const lang = body.lang === "tr" ? "tr" : "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     const tsh = Number(body.tsh) || 0;
     const t3 = Number(body.t3) || 0;
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     if (tsh <= 0) {
       return NextResponse.json(
-        { error: lang === "tr" ? "TSH değeri gerekli" : "TSH value required" },
+        { error: tx("api.thyroid.tshRequired", lang) },
         { status: 400 }
       );
     }
@@ -75,7 +76,7 @@ RULES:
 - Anti-TPO positive → Hashimoto's risk, selenium supplementation evidence
 - Pregnancy thyroid: TSH targets different in pregnancy (trimester-specific)
 - Use PubMed-backed evidence
-- Respond in ${lang === "tr" ? "Turkish" : "English"}
+- Respond in ${tx("api.respondLang", lang)}
 - Never diagnose — suggest when to see an endocrinologist
 
 OUTPUT FORMAT (strict JSON):

@@ -6291,6 +6291,144 @@ const commonToolKeys: Record<string, TranslationEntry> = {
     en: "Select a valid skin concern",
     tr: "Geçerli bir cilt sorunu seçin",
   },
+
+  // ── smoking-cessation ──
+  "api.smoking.currency": {
+    en: "USD",
+    tr: "TL",
+  },
+  "api.smoking.avgPackPrice": {
+    en: "$8",
+    tr: "50 TL",
+  },
+  "api.smoking.analysisFailed": {
+    en: "Analysis failed",
+    tr: "Analiz başarısız oldu",
+  },
+
+  // ── snoring-apnea ──
+  "api.snoring.lowRisk": {
+    en: "Low Risk",
+    tr: "Dusuk Risk",
+  },
+  "api.snoring.lowRiskRec": {
+    en: "Your STOP-BANG score indicates low risk. Consult your doctor if symptoms persist.",
+    tr: "STOP-BANG skorunuz dusuk riskli. Semptomlariniz devam ederse doktorunuza danışıniz.",
+  },
+  "api.snoring.moderateRisk": {
+    en: "Moderate Risk",
+    tr: "Orta Risk",
+  },
+  "api.snoring.moderateRiskRec": {
+    en: "Your STOP-BANG score indicates moderate risk. Consider consulting your doctor for sleep lab evaluation.",
+    tr: "STOP-BANG skorunuz orta dereceeli risk gosteriyor. Uyku laboratuvari değerlendirmesi için doktorunuza danışıniz.",
+  },
+  "api.snoring.highRisk": {
+    en: "High Risk",
+    tr: "Yuksek Risk",
+  },
+  "api.snoring.highRiskRec": {
+    en: "Your STOP-BANG score indicates high risk. A sleep lab evaluation is strongly recommended. Please consult your doctor.",
+    tr: "STOP-BANG skorunuz yuksek risk gosteriyor. Uyku laboratuvari değerlendirmesi için doktorunuza basvurmaniz onerilir.",
+  },
+
+  // ── sports-performance ──
+  "api.sports.selectSport": {
+    en: "Please select a sport type",
+    tr: "Lutfen bir spor turu secin",
+  },
+  "api.sports.selectGoal": {
+    en: "Please select a goal",
+    tr: "Lutfen bir hedef secin",
+  },
+  "api.sports.analysisFailed": {
+    en: "Analysis failed, please try again",
+    tr: "Analiz başarısiz oldu, tekrar deneyin",
+  },
+
+  // ── supplement-check ──
+  "api.supplementCheck.langInstr": {
+    en: "All text fields in English.",
+    tr: "ALL text fields (recommendedDose, frequency, personalizedNote, warningMessage, interactions) MUST be IN TURKISH.",
+  },
+  "api.supplementCheck.doseExample": {
+    en: "500mg daily",
+    tr: "günde 500mg",
+  },
+  "api.supplementCheck.freqExample": {
+    en: "once daily",
+    tr: "günde bir kez",
+  },
+  "api.supplementCheck.turkishStyle": {
+    en: "",
+    tr: "ALL text fields MUST be in Turkish. Write naturally in Turkish, like a friend texting.",
+  },
+  "api.supplementCheck.fallbackNote": {
+    en: "Personalized dosing info unavailable. Please consult your healthcare provider.",
+    tr: "Bu takviye için kişiselleştirilmiş doz bilgisi şu an alınamadı. Sağlık profesyonelinize danışın.",
+  },
+
+  // ── supplement-compare ──
+  "api.supplementCompare.selectTwo": {
+    en: "Select two supplements",
+    tr: "İki takviye seçin",
+  },
+  "api.supplementCompare.failed": {
+    en: "Comparison failed",
+    tr: "Karşılaştırma başarısız",
+  },
+
+  // ── symptom-checker ──
+  "api.symptomChecker.describeSymptoms": {
+    en: "Please describe your symptoms",
+    tr: "Lütfen semptomlarınızı yazın",
+  },
+  "api.symptomChecker.analysisFailed": {
+    en: "Analysis failed, please try again",
+    tr: "Analiz başarısız oldu, tekrar deneyin",
+  },
+
+  // ── thyroid-dashboard ──
+  "api.thyroid.tshRequired": {
+    en: "TSH value required",
+    tr: "TSH değeri gerekli",
+  },
+
+  // ── travel-health ──
+  "api.travel.enterDestination": {
+    en: "Please enter a destination country",
+    tr: "Lütfen bir hedef ülke girin",
+  },
+  "api.travel.selectDates": {
+    en: "Please select travel dates",
+    tr: "Lütfen seyahat tarihlerini seçin",
+  },
+  "api.travel.analysisFailed": {
+    en: "Analysis failed, please try again",
+    tr: "Analiz başarısız oldu, tekrar deneyin",
+  },
+
+  // ── vaccination ──
+  "api.vaccination.analysisFailed": {
+    en: "Analysis failed",
+    tr: "Analiz başarısız",
+  },
+
+  // ── bot-send ──
+  "api.bot.btnDone": {
+    en: "✅ Done",
+    tr: "✅ Tamamladım",
+  },
+  "api.bot.btnPause": {
+    en: "⏸ Pause",
+    tr: "⏸ Duraklat",
+  },
+
+  // ── bot-webhook ──
+  "api.bot.unknownReply": {
+    en: "Message received. Reply '1' or 'done' to mark tasks complete.",
+    tr: "Mesajınız alındı. Görevleri tamamlamak için '1' veya 'tamam' yazın.",
+  },
 }
 Object.assign(t, commonToolKeys)
 

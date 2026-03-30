@@ -4,6 +4,7 @@ import { searchPubMed } from "@/lib/pubmed";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -21,11 +22,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const supplement1 = sanitizeInput(body.supplement1 || "");
     const supplement2 = sanitizeInput(body.supplement2 || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!supplement1 || !supplement2) {
       return NextResponse.json(
-        { error: lang === "tr" ? "İki takviye seçin" : "Select two supplements" },
+        { error: tx("api.supplementCompare.selectTwo", lang) },
         { status: 400 }
       );
     }
@@ -87,7 +88,7 @@ Compare two supplements side by side with evidence-based analysis.
 ${profileContext ? `USER PROFILE: ${profileContext}` : ""}
 ${pubmedContext ? `RESEARCH:\n${pubmedContext}` : ""}
 
-Respond in ${lang === "tr" ? "Turkish" : "English"} with this exact JSON:
+Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
   "supplement1": {
     "name": "${supplement1}",
@@ -136,7 +137,7 @@ RULES:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Karşılaştırma başarısız" : "Comparison failed" },
+        { error: tx("api.supplementCompare.failed", lang) },
         { status: 500 }
       );
     }

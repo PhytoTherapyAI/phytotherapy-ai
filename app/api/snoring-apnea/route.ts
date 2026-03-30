@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { tx } from "@/lib/translations";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const answers = body.answers as boolean[];
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!answers || answers.length !== 8) {
       return NextResponse.json({ error: "Invalid answers" }, { status: 400 });
@@ -28,22 +29,16 @@ export async function POST(request: NextRequest) {
 
     if (score <= 2) {
       risk = "low";
-      riskLabel = lang === "tr" ? "Dusuk Risk" : "Low Risk";
-      recommendation = lang === "tr"
-        ? "STOP-BANG skorunuz dusuk riskli. Semptomlariniz devam ederse doktorunuza danışıniz."
-        : "Your STOP-BANG score indicates low risk. Consult your doctor if symptoms persist.";
+      riskLabel = tx("api.snoring.lowRisk", lang);
+      recommendation = tx("api.snoring.lowRiskRec", lang);
     } else if (score <= 4) {
       risk = "moderate";
-      riskLabel = lang === "tr" ? "Orta Risk" : "Moderate Risk";
-      recommendation = lang === "tr"
-        ? "STOP-BANG skorunuz orta dereceeli risk gosteriyor. Uyku laboratuvari değerlendirmesi için doktorunuza danışıniz."
-        : "Your STOP-BANG score indicates moderate risk. Consider consulting your doctor for sleep lab evaluation.";
+      riskLabel = tx("api.snoring.moderateRisk", lang);
+      recommendation = tx("api.snoring.moderateRiskRec", lang);
     } else {
       risk = "high";
-      riskLabel = lang === "tr" ? "Yuksek Risk" : "High Risk";
-      recommendation = lang === "tr"
-        ? "STOP-BANG skorunuz yuksek risk gosteriyor. Uyku laboratuvari değerlendirmesi için doktorunuza basvurmaniz onerilir."
-        : "Your STOP-BANG score indicates high risk. A sleep lab evaluation is strongly recommended. Please consult your doctor.";
+      riskLabel = tx("api.snoring.highRisk", lang);
+      recommendation = tx("api.snoring.highRiskRec", lang);
     }
 
     return NextResponse.json({

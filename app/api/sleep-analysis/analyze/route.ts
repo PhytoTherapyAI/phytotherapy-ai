@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
 import { askGeminiJSON } from "@/lib/gemini"
+import { tx } from "@/lib/translations"
 
 export const maxDuration = 60
 
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const lang = body.lang === "tr" ? "tr" : "en"
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr"
 
     // Fetch last 30 days of sleep records
     const cutoff = new Date()
@@ -84,7 +85,7 @@ RULES:
 - Note medication effects on sleep when relevant
 - Be specific with recommendations
 - Use PubMed-backed evidence when possible
-- Respond in ${lang === "tr" ? "Turkish" : "English"}
+- Respond in ${tx("api.respondLang", lang)}
 
 OUTPUT FORMAT (strict JSON):
 {

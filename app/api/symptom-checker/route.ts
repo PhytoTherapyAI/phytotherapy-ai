@@ -5,6 +5,7 @@ import { searchPubMed } from "@/lib/pubmed";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -21,11 +22,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const symptoms = sanitizeInput(body.symptoms || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!symptoms || symptoms.length < 3) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lütfen semptomlarınızı yazın" : "Please describe your symptoms" },
+        { error: tx("api.symptomChecker.describeSymptoms", lang) },
         { status: 400 }
       );
     }
@@ -120,7 +121,7 @@ RULES:
 2. Always recommend seeing a doctor for persistent or concerning symptoms
 3. Consider the user's profile (medications, conditions) when assessing
 4. Be empathetic but evidence-based
-5. Respond in ${lang === "tr" ? "Turkish" : "English"}
+5. Respond in ${tx("api.respondLang", lang)}
 
 ${profileContext ? `USER PROFILE: ${profileContext}` : "No user profile available."}
 
@@ -162,7 +163,7 @@ Assess the symptoms, provide possible causes, and recommend next steps.`,
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısız oldu, tekrar deneyin" : "Analysis failed, please try again" },
+        { error: tx("api.symptomChecker.analysisFailed", lang) },
         { status: 500 }
       );
     }

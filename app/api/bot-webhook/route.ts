@@ -11,6 +11,7 @@
 import { NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { COMPLETION_KEYWORDS, PAUSE_KEYWORDS, RESUME_KEYWORDS, MESSAGE_TEMPLATES } from "@/lib/bot-channels"
+import { tx } from "@/lib/translations"
 
 export async function POST(req: Request) {
   try {
@@ -111,9 +112,8 @@ export async function POST(req: Request) {
       replyText = MESSAGE_TEMPLATES.resumed[lang as "en" | "tr"]
     } else {
       // ── UNKNOWN — acknowledge ──
-      replyText = lang === "tr"
-        ? "Mesajınız alındı. Görevleri tamamlamak için '1' veya 'tamam' yazın."
-        : "Message received. Reply '1' or 'done' to mark tasks complete."
+      const typedLang = (lang === "tr" ? "tr" : "en") as "en" | "tr"
+      replyText = tx("api.bot.unknownReply", typedLang)
     }
 
     // ── Send reply ──

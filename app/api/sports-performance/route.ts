@@ -4,6 +4,7 @@ import { searchPubMed } from "@/lib/pubmed";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -23,18 +24,18 @@ export async function POST(request: NextRequest) {
     const goal = sanitizeInput(body.goal || "");
     const trainingFrequency = Number(body.training_frequency) || 3;
     const currentSupplements = sanitizeInput(body.current_supplements || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!sportType) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lutfen bir spor turu secin" : "Please select a sport type" },
+        { error: tx("api.sports.selectSport", lang) },
         { status: 400 }
       );
     }
 
     if (!goal) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lutfen bir hedef secin" : "Please select a goal" },
+        { error: tx("api.sports.selectGoal", lang) },
         { status: 400 }
       );
     }
@@ -111,7 +112,7 @@ RULES:
 3. Include specific dosing protocols with timing relative to training
 4. Flag any supplement-medication interactions clearly
 5. Be sport-specific in recommendations
-6. Respond in ${lang === "tr" ? "Turkish" : "English"}
+6. Respond in ${tx("api.respondLang", lang)}
 7. Never prescribe — recommend consulting a sports medicine doctor for medical concerns
 
 ${profileContext ? `USER PROFILE: ${profileContext}` : "No user profile available — provide general guidance and note that medication interaction check requires a profile."}
@@ -173,7 +174,7 @@ IMPORTANT:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısiz oldu, tekrar deneyin" : "Analysis failed, please try again" },
+        { error: tx("api.sports.analysisFailed", lang) },
         { status: 500 }
       );
     }

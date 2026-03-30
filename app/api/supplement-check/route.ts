@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini"
 import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
 import { sanitizeInput } from "@/lib/sanitize"
+import { tx } from "@/lib/translations"
 
 export const maxDuration = 30
 
@@ -19,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json()
     const supplementName = sanitizeInput(body.supplement || "")
-    const lang = body.lang || "en"
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr"
 
     if (!supplementName || supplementName.length < 2) {
       return new Response(JSON.stringify({ error: "Supplement name required" }), {
@@ -67,9 +68,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const langInstr = lang === "tr"
-      ? "ALL text fields (recommendedDose, frequency, personalizedNote, warningMessage, interactions) MUST be IN TURKISH."
-      : "All text fields in English."
+    const langInstr = tx("api.supplementCheck.langInstr", lang)
 
     const prompt = `Analyze the supplement "${supplementName}" for this user.
 ${profileContext}
@@ -80,8 +79,8 @@ ${langInstr}
 {
   "supplement": "${supplementName}",
   "safety": "safe" | "caution" | "dangerous",
-  "recommendedDose": "specific dose in user's language (e.g., ${lang === "tr" ? "günde 500mg" : "500mg daily"})",
-  "frequency": "how often in user's language (e.g., ${lang === "tr" ? "günde bir kez" : "once daily"})",
+  "recommendedDose": "specific dose in user's language (e.g., ${tx("api.supplementCheck.doseExample", lang)})",
+  "frequency": "how often in user's language (e.g., ${tx("api.supplementCheck.freqExample", lang)})",
   "personalizedNote": "brief note about why this dose for THIS specific user (max 2 sentences)",
   "warningMessage": "if dangerous/caution: friendly warning like a caring friend. null if safe",
   "interactions": ["list of drug interactions in user's language"],
@@ -103,7 +102,7 @@ WRITING STYLE for personalizedNote and warningMessage:
 - Keep it to 1-2 natural sentences max
 - For warningMessage: be specific about WHY there's a risk, mention the interacting drug by name
 
-Be specific about dosing based on the user's profile. ${lang === "tr" ? "ALL text fields MUST be in Turkish. Write naturally in Turkish, like a friend texting." : ""}`
+Be specific about dosing based on the user's profile. ${tx("api.supplementCheck.turkishStyle", lang)}`
 
     const response = await askGeminiJSON(prompt, systemPrompt)
 
@@ -118,9 +117,7 @@ Be specific about dosing based on the user's profile. ${lang === "tr" ? "ALL tex
         safety: "caution",
         recommendedDose: "Consult your healthcare provider",
         frequency: "As directed",
-        personalizedNote: lang === "tr"
-          ? "Bu takviye için kişiselleştirilmiş doz bilgisi şu an alınamadı. Sağlık profesyonelinize danışın."
-          : "Personalized dosing info unavailable. Please consult your healthcare provider.",
+        personalizedNote: tx("api.supplementCheck.fallbackNote", lang),
         warningMessage: null,
         interactions: [],
         evidenceGrade: "C",

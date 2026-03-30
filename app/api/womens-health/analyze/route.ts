@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
 import { askGeminiJSON } from "@/lib/gemini"
+import { tx } from "@/lib/translations"
 
 export const maxDuration = 60
 
@@ -89,7 +90,8 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const lang = body.lang === "tr" ? "Turkish" : "English"
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr"
+    const langName = tx("api.respondLang", lang)
 
     // Fetch cycle records (last 6 months)
     const sixMonthsAgo = new Date()
@@ -150,7 +152,7 @@ RULES:
 5. Consider any medications the user is taking for interaction warnings.
 6. If contraceptive is active for >11 months, flag annual review.
 
-IMPORTANT: Respond entirely in ${lang}.
+IMPORTANT: Respond entirely in ${langName}.
 
 Return ONLY a raw JSON object matching this schema:
 {

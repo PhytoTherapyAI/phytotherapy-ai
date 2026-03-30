@@ -3,6 +3,7 @@ import { askGeminiJSON } from "@/lib/gemini";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
 
@@ -21,18 +22,18 @@ export async function POST(request: NextRequest) {
     const destination = sanitizeInput(body.destination || "");
     const startDate = sanitizeInput(body.startDate || "");
     const endDate = sanitizeInput(body.endDate || "");
-    const lang = body.lang || "en";
+    const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!destination || destination.length < 2) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lütfen bir hedef ülke girin" : "Please enter a destination country" },
+        { error: tx("api.travel.enterDestination", lang) },
         { status: 400 }
       );
     }
 
     if (!startDate || !endDate) {
       return NextResponse.json(
-        { error: lang === "tr" ? "Lütfen seyahat tarihlerini seçin" : "Please select travel dates" },
+        { error: tx("api.travel.selectDates", lang) },
         { status: 400 }
       );
     }
@@ -105,7 +106,7 @@ RULES:
 4. Include practical pharmacy checklist items
 5. Provide jet lag management plans when timezone difference is significant
 6. Always include local emergency numbers
-7. Respond in ${lang === "tr" ? "Turkish" : "English"}
+7. Respond in ${tx("api.respondLang", lang)}
 8. Never diagnose or prescribe — only inform and recommend consulting a travel medicine specialist
 
 ${profileContext ? `USER PROFILE: ${profileContext}` : "No user profile available — provide general advice."}
@@ -143,7 +144,7 @@ IMPORTANT:
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
       return NextResponse.json(
-        { error: lang === "tr" ? "Analiz başarısız oldu, tekrar deneyin" : "Analysis failed, please try again" },
+        { error: tx("api.travel.analysisFailed", lang) },
         { status: 500 }
       );
     }
