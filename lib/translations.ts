@@ -5900,6 +5900,48 @@ const commonToolKeys: Record<string, TranslationEntry> = {
 
   // ── ConsentStep ──
   "consent.agreementText": { en: "I have read and understood the Medical Disclaimer and Data Privacy notice above. I accept the Terms of Service and Privacy Policy. I understand that Phytotherapy.ai is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations.", tr: "Yukaridaki Tibbi Sorumluluk Reddi ve Veri Gizliligi bildirimini okudum, Kullanim Kosullari ile Gizlilik Politikasini kabul ediyorum. Phytotherapy.ai'nin profesyonel tibbi tavsiyenin yerini almadigini anliyorum ve herhangi bir oneriyi uygulamadan once saglik uzmanima danisacagim." },
+
+  // ── HealthScoreShareCard ──
+  "healthScore.title": { en: "My Health Score", tr: "Saglik Skorum" },
+  "healthScore.excellent": { en: "Excellent!", tr: "Harika!" },
+  "healthScore.keepGoing": { en: "Keep going!", tr: "Iyi gidiyorsun!" },
+  "healthScore.timeToImprove": { en: "Time to improve!", tr: "Gelisme zamani!" },
+  "healthScore.dayStreak": { en: "day streak", tr: "gun seri" },
+  "healthScore.compliance": { en: "compliance", tr: "uyum" },
+  "healthScore.bioAge": { en: "bio age", tr: "biyo yas" },
+  "healthScore.goal": { en: "goal", tr: "hedef" },
+  "healthScore.daysActive": { en: "days active", tr: "gun aktif" },
+
+  // ── BloodTestShareCard ──
+  "bloodTest.optimalLabel": { en: "optimal", tr: "optimal" },
+
+  // ── InteractionEngine ──
+  "interactionEngine.disclaimer": { en: "This information is for educational purposes only and does not replace professional medical advice. Always consult your healthcare provider before using any herbal supplements, especially alongside prescription medications.", tr: "Bu bilgi yalnizca egitim amaclidir ve profesyonel tibbi tavsiyenin yerini tutmaz. Herhangi bir bitkisel takviye kullanmadan once, ozellikle receteli ilaclarla birlikte, saglik uzmaniniza danisin." },
+  "interactionEngine.noProfile": { en: "Your health profile is not available. Complete your profile for personalized safety checks.", tr: "Saglik profiliniz mevcut degil. Kisisellestirilmis guvenlik kontrolleri icin profilinizi tamamlayin." },
+  "interactionEngine.pregnant": { en: "You are pregnant. Many herbs are contraindicated during pregnancy. Extra caution applied.", tr: "Hamilesiniz. Bircok bitki hamilelikte kontrendikedir. Ekstra dikkat uygulandi." },
+  "interactionEngine.breastfeeding": { en: "You are breastfeeding. Herbs can pass into breast milk. Extra caution applied.", tr: "Emziriyorsunuz. Bitkiler anne sutune gecebilir. Ekstra dikkat uygulandi." },
+  "interactionEngine.kidneyDisease": { en: "Kidney disease detected. Some herbs are nephrotoxic or alter drug clearance.", tr: "Bobrek hastaligi tespit edildi. Bazi bitkiler nefrotoksik veya ilac atilimini etkiler." },
+  "interactionEngine.liverDisease": { en: "Liver disease detected. Many herbs are hepatotoxic or affect drug metabolism.", tr: "Karaciger hastaligi tespit edildi. Bircok bitki hepatotoksik veya ilac metabolizmasini etkiler." },
+  "interactionEngine.elderly": { en: "Age 65+. Drug metabolism slows with age — lower doses may be appropriate.", tr: "65 yas uzeri. Yasla birlikte ilac metabolizmasi yavaslar — daha dusuk dozlar uygun olabilir." },
+  "interactionEngine.pediatric": { en: "Under 18. Pediatric dosing is different — consult a pediatrician before any herbal use.", tr: "18 yas alti. Pediatrik dozlama farklidir — herhangi bir bitkisel kullanimdan once pediatristinize danisin." },
+
+  // ── Notifications ──
+  "notification.goodMorning": { en: "Good morning!", tr: "Gunaydin!" },
+  "notification.morningBody": { en: "Complete your daily check-in and see your health score!", tr: "Gunluk check-in'ini yap ve saglik skorunu gor!" },
+  "notification.medReminder": { en: "Medication Reminder", tr: "Ilac Hatirlaticisi" },
+  "notification.dailyCheckin": { en: "Daily Check-in", tr: "Gunluk Check-in" },
+  "notification.dailyCheckinBody": { en: "How did you feel today? Do a quick check-in.", tr: "Bugun nasil hissettin? Hizli bir check-in yap." },
+  "notification.morningTitle": { en: "Good Morning!", tr: "Gunaydin!" },
+  "notification.morningMedsBody": { en: "Are your meds up to date? Check your daily summary.", tr: "Ilaclarin guncel mi? Gunluk ozetine goz at." },
+
+  // ── SafetyGuardrail ──
+  "safety.immediateEmergency": { en: "WARNING: The symptoms you described may indicate a life-threatening emergency. Please call 112/911 IMMEDIATELY or go to the nearest emergency room. No herbal supplement or medication advice can be given in this situation.", tr: "DIKKAT: Belirttiginiz sikayetler acil tibbi mudahale gerektiren bir duruma isaret edebilir. Lutfen DERHAL 112'yi arayin veya en yakin acil servise basvurun. Bu durumda hicbir bitkisel takviye veya ilac onerisi yapilamaz." },
+  "safety.urgentCaution": { en: "CAUTION: The symptoms you described require medical evaluation. Please see your doctor as soon as possible. Herbal supplement recommendations are limited.", tr: "DIKKAT: Belirttiginiz sikayetler tibbi degerlendirme gerektiriyor. Lutfen en kisa surede doktorunuza basvurun. Bitkisel takviye onerileri sinirlandirilmistir." },
+  "safety.disclaimer": { en: "This information is for educational purposes based on published scientific research. It does not replace medical diagnosis or treatment. Consult your healthcare professional before making any changes.", tr: "Bu bilgiler yayimlanmis bilimsel arastirmalara dayali genel bilgilendirme niteligindedir. Tibbi teshis veya tedavi yerine gecmez. Herhangi bir degisiklik yapmadan once saglik profesyonelinize danisin." },
+  "safety.aiCanError": { en: "AI models can make errors — independently verify all information", tr: "Yapay zeka modeli hata yapabilir — her bilgiyi bagimsiz dogrulayin" },
+  "safety.individualVary": { en: "Individual responses may vary from person to person", tr: "Bireysel yanitlar kisiden kisiye farklilik gosterebilir" },
+  "safety.latestResearch": { en: "The latest research may not yet be in our database", tr: "En guncel arastirmalar henuz veritabanina eklenmemis olabilir" },
+  "safety.profileIncomplete": { en: "Profile data incomplete — personalization limited", tr: "Profil bilgisi eksik — kisisellestirme sinirli" },
 }
 Object.assign(t, commonToolKeys)
 

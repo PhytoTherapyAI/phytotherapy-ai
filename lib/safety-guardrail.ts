@@ -1,3 +1,5 @@
+import { tx } from "@/lib/translations";
+
 /**
  * SAFETY GUARDRAIL — Phytotherapy.ai
  * ═══════════════════════════════════
@@ -154,13 +156,9 @@ export function checkRedFlags(input: string): RedFlagResult {
 
 function getEmergencyMessage(lang: "en" | "tr", level: "immediate" | "urgent"): string {
   if (level === "immediate") {
-    return lang === "tr"
-      ? "🚨 DİKKAT: Belirttiğiniz şikayetler acil tıbbi müdahale gerektiren bir duruma işaret edebilir. Lütfen DERHAL 112'yi arayın veya en yakın acil servise başvurun. Bu durumda hiçbir bitkisel takviye veya ilaç önerisi yapılamaz."
-      : "🚨 WARNING: The symptoms you described may indicate a life-threatening emergency. Please call 112/911 IMMEDIATELY or go to the nearest emergency room. No herbal supplement or medication advice can be given in this situation.";
+    return "🚨 " + tx("safety.immediateEmergency", lang);
   }
-  return lang === "tr"
-    ? "⚠️ DİKKAT: Belirttiğiniz şikayetler tıbbi değerlendirme gerektiriyor. Lütfen en kısa sürede doktorunuza başvurun. Bitkisel takviye önerileri sınırlandırılmıştır."
-    : "⚠️ CAUTION: The symptoms you described require medical evaluation. Please see your doctor as soon as possible. Herbal supplement recommendations are limited.";
+  return "⚠️ " + tx("safety.urgentCaution", lang);
 }
 
 // ═══════════════════════════════════════════════
@@ -539,22 +537,13 @@ export function generateTransparencyData(
     })),
     confidenceScore: sources.length >= 3 ? 80 : sources.length >= 1 ? 60 : 30,
     aiModel: "gemini-2.0-flash",
-    disclaimer: lang === "tr"
-      ? "Bu bilgiler yayımlanmış bilimsel araştırmalara dayalı genel bilgilendirme niteliğindedir. Tıbbi teşhis veya tedavi yerine geçmez. Herhangi bir değişiklik yapmadan önce sağlık profesyonelinize danışın."
-      : "This information is for educational purposes based on published scientific research. It does not replace medical diagnosis or treatment. Consult your healthcare professional before making any changes.",
-    limitations: lang === "tr"
-      ? [
-          "Yapay zeka modeli hata yapabilir — her bilgiyi bağımsız doğrulayın",
-          "Bireysel yanıtlar kişiden kişiye farklılık gösterebilir",
-          "En güncel araştırmalar henüz veritabanına eklenmemiş olabilir",
-          hasProfileData ? "" : "Profil bilgisi eksik — kişiselleştirme sınırlı",
-        ].filter(Boolean)
-      : [
-          "AI models can make errors — independently verify all information",
-          "Individual responses may vary from person to person",
-          "The latest research may not yet be in our database",
-          hasProfileData ? "" : "Profile data incomplete — personalization limited",
-        ].filter(Boolean),
+    disclaimer: tx("safety.disclaimer", lang),
+    limitations: [
+      tx("safety.aiCanError", lang),
+      tx("safety.individualVary", lang),
+      tx("safety.latestResearch", lang),
+      hasProfileData ? "" : tx("safety.profileIncomplete", lang),
+    ].filter(Boolean),
   };
 }
 

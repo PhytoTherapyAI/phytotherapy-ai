@@ -71,7 +71,7 @@ export function BloodTestShareCard({
             <div className="text-center">
               <p className="text-2xl font-bold">{healthPercent}%</p>
               <p className="text-[9px] text-muted-foreground">
-                {tr ? "optimal" : "optimal"}
+                {tx("bloodTest.optimalLabel", lang)}
               </p>
             </div>
           </div>

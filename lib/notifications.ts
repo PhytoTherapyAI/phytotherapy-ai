@@ -4,6 +4,8 @@
 // Handles browser notification permission and scheduling
 // PWA push notifications for morning summary
 
+import { tx } from "@/lib/translations"
+
 export async function requestNotificationPermission(): Promise<boolean> {
   if (!("Notification" in window)) return false
   if (Notification.permission === "granted") return true
@@ -72,10 +74,8 @@ export function sendMorningSummary(lang: "en" | "tr") {
   if (!shouldShowMorningReminder()) return
   if (!isNotificationGranted()) return
 
-  const title = lang === "tr" ? "Günaydın! ☀️" : "Good morning! ☀️"
-  const body = lang === "tr"
-    ? "Günlük check-in'ini yap ve sağlık skorunu gör!"
-    : "Complete your daily check-in and see your health score!"
+  const title = tx("notification.goodMorning", lang) + " ☀️"
+  const body = tx("notification.morningBody", lang)
 
   sendLocalNotification(title, body)
   markMorningReminderShown()

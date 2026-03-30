@@ -2,6 +2,8 @@
 // Push Notifications — Enhanced for Phase 11
 // ============================================
 
+import { tx } from "@/lib/translations"
+
 // Check if push notifications are supported
 export function isPushSupported(): boolean {
   return typeof window !== "undefined" && "Notification" in window && "serviceWorker" in navigator
@@ -143,7 +145,7 @@ export function scheduleMedicationReminders(
     const times = med.times?.length ? med.times : [settings.morningTime]
     times.forEach((time, i) => {
       scheduleAtTime(`med-${med.name}-${i}`, time, () => {
-        const title = lang === "tr" ? "İlaç Hatırlatıcısı" : "Medication Reminder"
+        const title = tx("notification.medReminder", lang)
         const body = lang === "tr"
           ? `${med.name} almanın zamanı geldi!`
           : `Time to take ${med.name}!`
@@ -159,10 +161,8 @@ export function scheduleDailyCheckIn(lang: "en" | "tr" = "en") {
   if (!settings.enabled || !settings.dailyCheckIn) return
 
   scheduleAtTime("daily-checkin", settings.eveningTime, () => {
-    const title = lang === "tr" ? "Günlük Check-in" : "Daily Check-in"
-    const body = lang === "tr"
-      ? "Bugün nasıl hissettin? Hızlı bir check-in yap."
-      : "How did you feel today? Do a quick check-in."
+    const title = tx("notification.dailyCheckin", lang)
+    const body = tx("notification.dailyCheckinBody", lang)
     sendLocalNotification(title, body, { tag: "daily-checkin", url: "/dashboard" })
   })
 }
@@ -173,10 +173,8 @@ export function scheduleMorningSummary(lang: "en" | "tr" = "en") {
   if (!settings.enabled) return
 
   scheduleAtTime("morning-summary", settings.morningTime, () => {
-    const title = lang === "tr" ? "Günaydın!" : "Good Morning!"
-    const body = lang === "tr"
-      ? "İlaçların güncel mi? Günlük özetine göz at."
-      : "Are your meds up to date? Check your daily summary."
+    const title = tx("notification.morningTitle", lang)
+    const body = tx("notification.morningMedsBody", lang)
     sendLocalNotification(title, body, { tag: "morning-summary", url: "/dashboard" })
   })
 }

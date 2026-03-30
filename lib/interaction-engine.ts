@@ -3,6 +3,7 @@ import { searchPubMed } from "@/lib/pubmed";
 import { askGeminiJSON } from "@/lib/gemini";
 import { INTERACTION_PROMPT } from "@/lib/prompts";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
+import { tx } from "@/lib/translations";
 
 // ============================================
 // Types
@@ -171,9 +172,7 @@ export async function analyzeInteraction(
     recommendations: parsed.recommendations,
     profileWarnings,
     generalAdvice: parsed.generalAdvice,
-    disclaimer: lang === "tr"
-      ? "⚠️ Bu bilgi yalnızca eğitim amaçlıdır ve profesyonel tıbbi tavsiyenin yerini tutmaz. Herhangi bir bitkisel takviye kullanmadan önce, özellikle reçeteli ilaçlarla birlikte, sağlık uzmanınıza danışın."
-      : "⚠️ This information is for educational purposes only and does not replace professional medical advice. Always consult your healthcare provider before using any herbal supplements, especially alongside prescription medications.",
+    disclaimer: "⚠️ " + tx("interactionEngine.disclaimer", lang as "en" | "tr"),
   };
 }
 
@@ -183,53 +182,32 @@ export async function analyzeInteraction(
 
 function buildProfileWarnings(profile: UserProfileForInteraction | null, lang: string = "en"): string[] {
   const warnings: string[] = [];
-  const tr = lang === "tr";
+  const l = lang as "en" | "tr";
   if (!profile) {
-    warnings.push(tr
-      ? "Sağlık profiliniz mevcut değil. Kişiselleştirilmiş güvenlik kontrolleri için profilinizi tamamlayın."
-      : "Your health profile is not available. Complete your profile for personalized safety checks."
-    );
+    warnings.push(tx("interactionEngine.noProfile", l));
     return warnings;
   }
 
   if (profile.is_pregnant) {
-    warnings.push(tr
-      ? "🤰 Hamilesiniz. Birçok bitki hamilelikte kontrendikedir. Ekstra dikkat uygulandı."
-      : "🤰 You are pregnant. Many herbs are contraindicated during pregnancy. Extra caution applied."
-    );
+    warnings.push("🤰 " + tx("interactionEngine.pregnant", l));
   }
   if (profile.is_breastfeeding) {
-    warnings.push(tr
-      ? "🤱 Emziriyorsunuz. Bitkiler anne sütüne geçebilir. Ekstra dikkat uygulandı."
-      : "🤱 You are breastfeeding. Herbs can pass into breast milk. Extra caution applied."
-    );
+    warnings.push("🤱 " + tx("interactionEngine.breastfeeding", l));
   }
   if (profile.kidney_disease) {
-    warnings.push(tr
-      ? "🫘 Böbrek hastalığı tespit edildi. Bazı bitkiler nefrotoksik veya ilaç atılımını etkiler."
-      : "🫘 Kidney disease detected. Some herbs are nephrotoxic or alter drug clearance."
-    );
+    warnings.push("🫘 " + tx("interactionEngine.kidneyDisease", l));
   }
   if (profile.liver_disease) {
-    warnings.push(tr
-      ? "🫁 Karaciğer hastalığı tespit edildi. Birçok bitki hepatotoksik veya ilaç metabolizmasını etkiler."
-      : "🫁 Liver disease detected. Many herbs are hepatotoxic or affect drug metabolism."
-    );
+    warnings.push("🫁 " + tx("interactionEngine.liverDisease", l));
   }
   if (profile.age && profile.age >= 65) {
-    warnings.push(tr
-      ? "👴 65 yaş üzeri. Yaşla birlikte ilaç metabolizması yavaşlar — daha düşük dozlar uygun olabilir."
-      : "👴 Age 65+. Drug metabolism slows with age — lower doses may be appropriate."
-    );
+    warnings.push("👴 " + tx("interactionEngine.elderly", l));
   }
   if (profile.age && profile.age < 18) {
-    warnings.push(tr
-      ? "👶 18 yaş altı. Pediatrik dozlama farklıdır — herhangi bir bitkisel kullanımdan önce pediatristinize danışın."
-      : "👶 Under 18. Pediatric dosing is different — consult a pediatrician before any herbal use."
-    );
+    warnings.push("👶 " + tx("interactionEngine.pediatric", l));
   }
   if (profile.allergies && profile.allergies.length > 0) {
-    warnings.push(tr
+    warnings.push(l === "tr"
       ? `⚠️ Bilinen alerjiler: ${profile.allergies.join(", ")}. Çapraz reaktivite kontrol edildi.`
       : `⚠️ Known allergies: ${profile.allergies.join(", ")}. Cross-reactivity checked.`
     );

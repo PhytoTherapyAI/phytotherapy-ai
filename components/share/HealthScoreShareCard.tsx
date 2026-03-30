@@ -32,10 +32,10 @@ export function HealthScoreShareCard({
 
   const scoreLabel =
     healthScore >= 80
-      ? tr ? "Harika!" : "Excellent!"
+      ? tx("healthScore.excellent", lang)
       : healthScore >= 60
-        ? tr ? "Iyi gidiyorsun!" : "Keep going!"
-        : tr ? "Gelisme zamani!" : "Time to improve!"
+        ? tx("healthScore.keepGoing", lang)
+        : tx("healthScore.timeToImprove", lang)
 
   const scoreEmoji = healthScore >= 80 ? "🌟" : healthScore >= 60 ? "💪" : "🔥"
 
@@ -90,7 +90,7 @@ export function HealthScoreShareCard({
 
           {/* Title */}
           <h2 className="mb-6 text-lg font-bold opacity-90">
-            {tr ? "Sağlık Skorum" : "My Health Score"}
+            {tx("healthScore.title", lang)}
           </h2>
 
           {/* Big score circle */}
@@ -128,7 +128,7 @@ export function HealthScoreShareCard({
             >
               <p className="text-xl font-extrabold">{streak}</p>
               <p className="text-[10px] opacity-80">
-                {tr ? "gun seri" : "day streak"}
+                {tx("healthScore.dayStreak", lang)}
               </p>
             </div>
 
@@ -140,7 +140,7 @@ export function HealthScoreShareCard({
               >
                 <p className="text-xl font-extrabold">{complianceRate}%</p>
                 <p className="text-[10px] opacity-80">
-                  {tr ? "uyum" : "compliance"}
+                  {tx("healthScore.compliance", lang)}
                 </p>
               </div>
             )}
@@ -153,7 +153,7 @@ export function HealthScoreShareCard({
               >
                 <p className="text-xl font-extrabold">{biologicalAge}</p>
                 <p className="text-[10px] opacity-80">
-                  {tr ? "biyo yas" : "bio age"}
+                  {tx("healthScore.bioAge", lang)}
                 </p>
               </div>
             )}
@@ -167,7 +167,7 @@ export function HealthScoreShareCard({
                 >
                   <p className="text-xl font-extrabold">{scoreEmoji}</p>
                   <p className="text-[10px] opacity-80">
-                    {tr ? "hedef" : "goal"}
+                    {tx("healthScore.goal", lang)}
                   </p>
                 </div>
                 <div
@@ -176,7 +176,7 @@ export function HealthScoreShareCard({
                 >
                   <p className="text-xl font-extrabold">7</p>
                   <p className="text-[10px] opacity-80">
-                    {tr ? "gun aktif" : "days active"}
+                    {tx("healthScore.daysActive", lang)}
                   </p>
                 </div>
               </>
