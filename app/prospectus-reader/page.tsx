@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen,
   Camera,
@@ -19,6 +20,7 @@ import {
   Search,
   Shield,
   Eye,
+  Scan,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
@@ -127,21 +129,23 @@ export default function ProspectusReaderPage() {
   };
 
   return (
+    <div className="min-h-screen bg-stone-50 dark:bg-background">
     <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
       {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-primary/10 p-3 dark:bg-primary/20">
-          <BookOpen className="h-6 w-6 text-primary" />
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+        className="mb-6 flex items-center gap-3">
+        <div className="rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 p-3">
+          <Scan className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
             {tx("prospectus.title", lang)}
           </h1>
           <p className="text-sm text-muted-foreground">
             {tx("prospectus.subtitle", lang)}
           </p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Error */}
       {error && (
@@ -343,16 +347,21 @@ export default function ProspectusReaderPage() {
 
           {/* ── Smart Scanner UI ── */}
           {!file && !isLoading && (
-            <div className="mb-6 flex flex-col items-center text-center">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+              className="mb-6 flex flex-col items-center text-center">
               {/* AI Lens icon with glow */}
               <div className="relative mb-6">
-                <div className="absolute inset-0 rounded-full bg-primary/10 blur-3xl scale-150" />
-                <div className="relative flex h-28 w-28 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/10 to-sage/10 border border-primary/20">
+                <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="absolute inset-0 rounded-full bg-primary/10 blur-3xl scale-150" />
+                <motion.div whileHover={{ scale: 1.05, rotate: 2 }} transition={{ type: "spring" }}
+                  className="relative flex h-28 w-28 items-center justify-center rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 shadow-lg">
                   <Camera className="h-12 w-12 text-primary/60" strokeWidth={1.5} />
-                  <div className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-lavender text-white shadow-md">
+                  <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white shadow-md">
                     <Sparkles className="h-3.5 w-3.5" />
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
               </div>
 
               {/* CTA Button */}
@@ -410,7 +419,7 @@ export default function ProspectusReaderPage() {
                   50% { box-shadow: 0 0 0 8px rgba(60, 122, 82, 0); }
                 }
               `}</style>
-            </div>
+            </motion.div>
           )}
 
           {/* ── File selected — preview + analyze ── */}
@@ -467,9 +476,10 @@ export default function ProspectusReaderPage() {
         </>
       )}
 
-      <p className="mt-6 text-center text-[10px] text-muted-foreground/50">
+      <p className="mt-6 text-center text-[10px] text-muted-foreground/40 max-w-md mx-auto leading-relaxed">
         {tx("disclaimer.tool", lang)}
       </p>
+    </div>
     </div>
   );
 }
