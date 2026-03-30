@@ -5,6 +5,7 @@ import { User, Leaf, Loader2, FileText, Image as ImageIcon } from "lucide-react"
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { AILoadingState } from "@/components/chat/AILoadingState";
+import { SmartSuggestions } from "@/components/chat/SmartSuggestions";
 
 export interface ChatMessage {
   id: string;
@@ -20,14 +21,52 @@ export interface ChatMessage {
 
 interface MessageBubbleProps {
   message: ChatMessage;
+  isLast?: boolean;
+  onSendFollowUp?: (text: string) => void;
 }
 
-export function MessageBubble({ message }: MessageBubbleProps) {
+// Generate follow-up suggestions from AI response content
+function getFollowUps(content: string, lang: string): string[] {
+  if (!content || content.length < 50) return [];
+  const suggestions: string[] = [];
+  const isTr = lang === "tr";
+
+  // Check content topics and suggest relevant follow-ups
+  const lower = content.toLowerCase();
+  if (lower.includes("dose") || lower.includes("doz") || lower.includes("mg")) {
+    suggestions.push(isTr ? "Sabah mı, akşam mı alınmalı?" : "Should I take it morning or evening?");
+  }
+  if (lower.includes("interaction") || lower.includes("etkileşim") || lower.includes("avoid") || lower.includes("kaçın")) {
+    suggestions.push(isTr ? "Güvenli bitkisel alternatifler neler?" : "What are safe herbal alternatives?");
+  }
+  if (lower.includes("supplement") || lower.includes("takviye") || lower.includes("herb") || lower.includes("bitki")) {
+    suggestions.push(isTr ? "Olası yan etkileri neler?" : "What are the possible side effects?");
+  }
+  if (lower.includes("sleep") || lower.includes("uyku")) {
+    suggestions.push(isTr ? "Uyku kalitemi artırmak için başka ne yapabilirim?" : "What else can I do to improve my sleep?");
+  }
+  if (lower.includes("stress") || lower.includes("stres") || lower.includes("anxiety") || lower.includes("anksiyete")) {
+    suggestions.push(isTr ? "Doğal stres yönetimi için ne önerirsin?" : "What do you recommend for natural stress management?");
+  }
+
+  // Always add a general follow-up if we have less than 2
+  if (suggestions.length < 2) {
+    suggestions.push(isTr ? "Bu konuda daha fazla bilgi ver" : "Tell me more about this");
+  }
+  if (suggestions.length < 2) {
+    suggestions.push(isTr ? "PubMed'de güncel araştırmalar ne diyor?" : "What do recent PubMed studies say?");
+  }
+
+  return suggestions.slice(0, 3);
+}
+
+export function MessageBubble({ message, isLast, onSendFollowUp }: MessageBubbleProps) {
   const { lang } = useLang();
   const isUser = message.role === "user";
+  const showSuggestions = isLast && !isUser && !message.isStreaming && message.content.length > 50 && onSendFollowUp;
 
   return (
-    <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
+    <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""} ${showSuggestions ? "relative mb-12" : ""}`}>
       {/* Avatar */}
       <div
         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
@@ -89,6 +128,16 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           <span className="ml-1 inline-block h-4 w-1 animate-pulse rounded-full bg-primary" />
         )}
       </div>
+
+      {/* Smart follow-up suggestions — only on last assistant message */}
+      {showSuggestions && (
+        <div className="absolute -bottom-10 left-10 right-0">
+          <SmartSuggestions
+            suggestions={getFollowUps(message.content, lang)}
+            onSelect={onSendFollowUp}
+          />
+        </div>
+      )}
     </div>
   );
 }

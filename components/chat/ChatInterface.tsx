@@ -367,8 +367,26 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
           </div>
         )}
 
-        {messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} />
+        {messages.map((msg, idx) => (
+          <MessageBubble
+            key={msg.id}
+            message={msg}
+            isLast={idx === messages.length - 1}
+            onSendFollowUp={(text) => {
+              // Set input via DOM (same pattern as example questions) then trigger send
+              const textarea = document.querySelector("textarea");
+              if (textarea) {
+                const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value")?.set;
+                setter?.call(textarea, text);
+                textarea.dispatchEvent(new Event("input", { bubbles: true }));
+                // Small delay to let React state update, then click send
+                setTimeout(() => {
+                  const sendBtn = document.querySelector("[data-send-btn]") as HTMLButtonElement;
+                  sendBtn?.click();
+                }, 50);
+              }
+            }}
+          />
         ))}
       </div>
 
@@ -520,6 +538,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
               </Button>
             )}
             <Button
+              data-send-btn
               onClick={sendMessage}
               disabled={isStreaming || (!input.trim() && attachedFiles.length === 0)}
               className="h-11 w-11 bg-primary hover:bg-primary/90"
