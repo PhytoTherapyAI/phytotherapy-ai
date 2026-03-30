@@ -33,38 +33,36 @@ interface AnxietyResult {
   medicationNotes?: string;
 }
 
-const GAD7_QUESTIONS_EN = [
-  "Feeling nervous, anxious, or on edge",
-  "Not being able to stop or control worrying",
-  "Worrying too much about different things",
-  "Trouble relaxing",
-  "Being so restless that it's hard to sit still",
-  "Becoming easily annoyed or irritable",
-  "Feeling afraid as if something awful might happen",
+const GAD7_QUESTIONS = [
+  { en: "Feeling nervous, anxious, or on edge", tr: "Gergin, endiseli veya sinirli hissetme" },
+  { en: "Not being able to stop or control worrying", tr: "Endiselenmeyi durduramama veya kontrol edememe" },
+  { en: "Worrying too much about different things", tr: "Farkli konularda cok fazla endiselenme" },
+  { en: "Trouble relaxing", tr: "Rahatlamakta zorluk cekme" },
+  { en: "Being so restless that it's hard to sit still", tr: "Yerinizde duramayacak kadar huzursuz olma" },
+  { en: "Becoming easily annoyed or irritable", tr: "Kolay sinirlenme veya kizma" },
+  { en: "Feeling afraid as if something awful might happen", tr: "Kotu bir sey olacakmis gibi korkma" },
 ];
 
-const GAD7_QUESTIONS_TR = [
-  "Gergin, endiseli veya sinirli hissetme",
-  "Endiselenmeyi durduramama veya kontrol edememe",
-  "Farkli konularda cok fazla endiselenme",
-  "Rahatlamakta zorluk cekme",
-  "Yerinizde duramayacak kadar huzursuz olma",
-  "Kolay sinirlenme veya kizma",
-  "Kotu bir sey olacakmis gibi korkma",
+const GAD7_OPTIONS = [
+  { en: "Not at all", tr: "Hic" },
+  { en: "Several days", tr: "Birkac gun" },
+  { en: "More than half the days", tr: "Gunlerin yarisından fazlasi" },
+  { en: "Nearly every day", tr: "Neredeyse her gun" },
 ];
 
-const GAD7_OPTIONS_EN = ["Not at all", "Several days", "More than half the days", "Nearly every day"];
-const GAD7_OPTIONS_TR = ["Hic", "Birkac gun", "Gunlerin yarisından fazlasi", "Neredeyse her gun"];
-
-const SYMPTOMS_EN = [
-  "Racing heart", "Sweating", "Trembling", "Shortness of breath",
-  "Chest tightness", "Nausea", "Dizziness", "Muscle tension",
-  "Difficulty concentrating", "Sleep problems", "Fatigue", "Irritability",
-];
-const SYMPTOMS_TR = [
-  "Hizli kalp atisi", "Terleme", "Titreme", "Nefes darlığı",
-  "Göğüs sıkışması", "Bulantı", "Bas dönmesi", "Kas gerginliği",
-  "Odaklanma güçlüğü", "Uyku sorunları", "Yorgunluk", "Sinirlilik",
+const SYMPTOMS = [
+  { en: "Racing heart", tr: "Hizli kalp atisi" },
+  { en: "Sweating", tr: "Terleme" },
+  { en: "Trembling", tr: "Titreme" },
+  { en: "Shortness of breath", tr: "Nefes darlığı" },
+  { en: "Chest tightness", tr: "Göğüs sıkışması" },
+  { en: "Nausea", tr: "Bulantı" },
+  { en: "Dizziness", tr: "Bas dönmesi" },
+  { en: "Muscle tension", tr: "Kas gerginliği" },
+  { en: "Difficulty concentrating", tr: "Odaklanma güçlüğü" },
+  { en: "Sleep problems", tr: "Uyku sorunları" },
+  { en: "Fatigue", tr: "Yorgunluk" },
+  { en: "Irritability", tr: "Sinirlilik" },
 ];
 
 export default function AnxietyToolkitPage() {
@@ -80,9 +78,7 @@ export default function AnxietyToolkitPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AnxietyResult | null>(null);
 
-  const symptoms = lang === "tr" ? SYMPTOMS_TR : SYMPTOMS_EN;
-  const gad7Questions = lang === "tr" ? GAD7_QUESTIONS_TR : GAD7_QUESTIONS_EN;
-  const gad7Options = lang === "tr" ? GAD7_OPTIONS_TR : GAD7_OPTIONS_EN;
+  const l = lang as "en" | "tr";
 
   const toggleSymptom = (s: string) => {
     setSelectedSymptoms((prev) =>
@@ -268,17 +264,17 @@ export default function AnxietyToolkitPage() {
               {tx("common.symptoms", lang)}
             </h2>
             <div className="flex flex-wrap gap-2">
-              {symptoms.map((s) => (
+              {SYMPTOMS.map((s) => (
                 <button
-                  key={s}
-                  onClick={() => toggleSymptom(s)}
+                  key={s.en}
+                  onClick={() => toggleSymptom(s.en)}
                   className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
-                    selectedSymptoms.includes(s)
+                    selectedSymptoms.includes(s.en)
                       ? "bg-blue-500 text-white"
                       : "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300"
                   }`}
                 >
-                  {s}
+                  {s[l]}
                 </button>
               ))}
             </div>
@@ -300,11 +296,11 @@ export default function AnxietyToolkitPage() {
                 <p className="text-sm text-muted-foreground">
                   {tx("anxiety.gad7Intro", lang)}
                 </p>
-                {gad7Questions.map((q, qi) => (
+                {GAD7_QUESTIONS.map((q, qi) => (
                   <div key={qi} className="rounded-lg border p-3">
-                    <p className="mb-2 text-sm font-medium">{qi + 1}. {q}</p>
+                    <p className="mb-2 text-sm font-medium">{qi + 1}. {q[l]}</p>
                     <div className="flex flex-wrap gap-2">
-                      {gad7Options.map((opt, oi) => (
+                      {GAD7_OPTIONS.map((opt, oi) => (
                         <button
                           key={oi}
                           onClick={() => {
@@ -318,7 +314,7 @@ export default function AnxietyToolkitPage() {
                               : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
                           }`}
                         >
-                          {opt} ({oi})
+                          {opt[l]} ({oi})
                         </button>
                       ))}
                     </div>

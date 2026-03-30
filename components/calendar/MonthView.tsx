@@ -33,17 +33,23 @@ const DAY_KEYS = [
   "cal.mon", "cal.tue", "cal.wed", "cal.thu", "cal.fri", "cal.sat", "cal.sun",
 ] as const
 
-const MONTH_NAMES_EN = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-]
-const MONTH_NAMES_TR = [
-  "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
-  "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık",
+const MONTH_NAMES = [
+  { en: "January", tr: "Ocak" },
+  { en: "February", tr: "Şubat" },
+  { en: "March", tr: "Mart" },
+  { en: "April", tr: "Nisan" },
+  { en: "May", tr: "Mayıs" },
+  { en: "June", tr: "Haziran" },
+  { en: "July", tr: "Temmuz" },
+  { en: "August", tr: "Ağustos" },
+  { en: "September", tr: "Eylül" },
+  { en: "October", tr: "Ekim" },
+  { en: "November", tr: "Kasım" },
+  { en: "December", tr: "Aralık" },
 ]
 
 function getMonthName(month: number, lang: Lang): string {
-  return lang === "tr" ? MONTH_NAMES_TR[month] : MONTH_NAMES_EN[month]
+  return MONTH_NAMES[month][lang]
 }
 
 function getMonthDays(year: number, month: number) {

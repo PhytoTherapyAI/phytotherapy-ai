@@ -32,32 +32,24 @@ interface DepressionResult {
   questionBreakdown: Array<{ question: string; score: number }>;
 }
 
-const PHQ9_EN = [
-  "Little interest or pleasure in doing things",
-  "Feeling down, depressed, or hopeless",
-  "Trouble falling or staying asleep, or sleeping too much",
-  "Feeling tired or having little energy",
-  "Poor appetite or overeating",
-  "Feeling bad about yourself — or that you are a failure",
-  "Trouble concentrating on things",
-  "Moving or speaking slowly, or being fidgety/restless",
-  "Thoughts that you would be better off dead, or of hurting yourself",
+const PHQ9 = [
+  { en: "Little interest or pleasure in doing things", tr: "Bir seylere karsi cok az ilgi veya zevk duyma" },
+  { en: "Feeling down, depressed, or hopeless", tr: "Kendini cokmus, depresif veya umutsuz hissetme" },
+  { en: "Trouble falling or staying asleep, or sleeping too much", tr: "Uykuya dalmakta veya uyumakta zorluk cekme, ya da cok fazla uyuma" },
+  { en: "Feeling tired or having little energy", tr: "Yorgun hissetme veya az enerjiye sahip olma" },
+  { en: "Poor appetite or overeating", tr: "Istahsizlik veya asiri yeme" },
+  { en: "Feeling bad about yourself — or that you are a failure", tr: "Kendini kotu hissetme veya başarısiz olduğunu dusunme" },
+  { en: "Trouble concentrating on things", tr: "Bir seylere odaklanmakta zorluk cekme" },
+  { en: "Moving or speaking slowly, or being fidgety/restless", tr: "Yavas hareket etme/konusma veya huzursuz/yerinde duramama" },
+  { en: "Thoughts that you would be better off dead, or of hurting yourself", tr: "Olseniz daha iyi olacagini dusunme veya kendinize zarar verme dusunceleri" },
 ];
 
-const PHQ9_TR = [
-  "Bir seylere karsi cok az ilgi veya zevk duyma",
-  "Kendini cokmus, depresif veya umutsuz hissetme",
-  "Uykuya dalmakta veya uyumakta zorluk cekme, ya da cok fazla uyuma",
-  "Yorgun hissetme veya az enerjiye sahip olma",
-  "Istahsizlik veya asiri yeme",
-  "Kendini kotu hissetme veya başarısiz olduğunu dusunme",
-  "Bir seylere odaklanmakta zorluk cekme",
-  "Yavas hareket etme/konusma veya huzursuz/yerinde duramama",
-  "Olseniz daha iyi olacagini dusunme veya kendinize zarar verme dusunceleri",
+const OPTIONS = [
+  { en: "Not at all (0)", tr: "Hic (0)" },
+  { en: "Several days (1)", tr: "Birkac gun (1)" },
+  { en: "More than half (2)", tr: "Yaridan fazla (2)" },
+  { en: "Nearly every day (3)", tr: "Neredeyse her gun (3)" },
 ];
-
-const OPTIONS_EN = ["Not at all (0)", "Several days (1)", "More than half (2)", "Nearly every day (3)"];
-const OPTIONS_TR = ["Hic (0)", "Birkac gun (1)", "Yaridan fazla (2)", "Neredeyse her gun (3)"];
 
 export default function DepressionScreeningPage() {
   const { isAuthenticated, session } = useAuth();
@@ -69,8 +61,7 @@ export default function DepressionScreeningPage() {
   const [result, setResult] = useState<DepressionResult | null>(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  const questions = lang === "tr" ? PHQ9_TR : PHQ9_EN;
-  const options = lang === "tr" ? OPTIONS_TR : OPTIONS_EN;
+  const l = lang as "en" | "tr";
 
   const allAnswered = answers.every((a) => a >= 0);
 
@@ -195,12 +186,12 @@ export default function DepressionScreeningPage() {
           <p className="text-sm text-muted-foreground">
             {tx("depression.instructions", lang)}
           </p>
-          {questions.map((q, qi) => (
+          {PHQ9.map((q, qi) => (
             <div key={qi} className={`rounded-xl border p-4 shadow-sm ${
               qi === 8 ? "border-red-200 bg-red-50/30 dark:border-red-800 dark:bg-red-950/10" : "bg-card"
             }`}>
               <p className="mb-3 text-sm font-medium">
-                {qi + 1}. {q}
+                {qi + 1}. {q[l]}
                 {qi === 8 && (
                   <span className="ml-2 text-xs text-red-500">
                     ({tx("depression.criticalQuestion", lang)})
@@ -208,7 +199,7 @@ export default function DepressionScreeningPage() {
                 )}
               </p>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {options.map((opt, oi) => (
+                {OPTIONS.map((opt, oi) => (
                   <button
                     key={oi}
                     onClick={() => {
@@ -224,7 +215,7 @@ export default function DepressionScreeningPage() {
                         : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
                     }`}
                   >
-                    {opt}
+                    {opt[l]}
                   </button>
                 ))}
               </div>
@@ -324,7 +315,7 @@ export default function DepressionScreeningPage() {
               <div className="mt-4 space-y-2">
                 {result.questionBreakdown.map((q, i) => (
                   <div key={i} className="flex items-center justify-between rounded-lg border p-3">
-                    <span className="text-sm">{i + 1}. {lang === "tr" ? PHQ9_TR[i] : q.question}</span>
+                    <span className="text-sm">{i + 1}. {PHQ9[i]?.[l] ?? q.question}</span>
                     <span className={`ml-2 rounded-full px-2 py-0.5 text-xs font-bold ${
                       q.score === 0 ? "bg-green-100 text-green-700" :
                       q.score === 1 ? "bg-yellow-100 text-yellow-700" :

@@ -30,17 +30,21 @@ interface CancerResult {
 }
 
 const FAMILY_CANCER_OPTIONS = [
-  "Breast cancer", "Colon cancer", "Lung cancer", "Prostate cancer",
-  "Ovarian cancer", "Melanoma", "Pancreatic cancer", "Stomach cancer",
-  "Thyroid cancer", "Kidney cancer", "Bladder cancer", "Leukemia",
-  "Lymphoma", "Liver cancer", "Cervical cancer",
-];
-
-const FAMILY_CANCER_OPTIONS_TR = [
-  "Meme kanseri", "Kolon kanseri", "Akciger kanseri", "Prostat kanseri",
-  "Over kanseri", "Melanom", "Pankreas kanseri", "Mide kanseri",
-  "Tiroid kanseri", "Bobrek kanseri", "Mesane kanseri", "Losemi",
-  "Lenfoma", "Karaciger kanseri", "Rahim agzi kanseri",
+  { en: "Breast cancer", tr: "Meme kanseri" },
+  { en: "Colon cancer", tr: "Kolon kanseri" },
+  { en: "Lung cancer", tr: "Akciger kanseri" },
+  { en: "Prostate cancer", tr: "Prostat kanseri" },
+  { en: "Ovarian cancer", tr: "Over kanseri" },
+  { en: "Melanoma", tr: "Melanom" },
+  { en: "Pancreatic cancer", tr: "Pankreas kanseri" },
+  { en: "Stomach cancer", tr: "Mide kanseri" },
+  { en: "Thyroid cancer", tr: "Tiroid kanseri" },
+  { en: "Kidney cancer", tr: "Bobrek kanseri" },
+  { en: "Bladder cancer", tr: "Mesane kanseri" },
+  { en: "Leukemia", tr: "Losemi" },
+  { en: "Lymphoma", tr: "Lenfoma" },
+  { en: "Liver cancer", tr: "Karaciger kanseri" },
+  { en: "Cervical cancer", tr: "Rahim agzi kanseri" },
 ];
 
 export default function CancerScreeningPage() {
@@ -54,7 +58,7 @@ export default function CancerScreeningPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CancerResult | null>(null);
 
-  const cancerOptions = lang === "tr" ? FAMILY_CANCER_OPTIONS_TR : FAMILY_CANCER_OPTIONS;
+  const l = lang as "en" | "tr";
 
   const toggleFamilyCancer = (cancer: string) => {
     setFamilyHistory((prev) =>
@@ -150,17 +154,17 @@ export default function CancerScreeningPage() {
           <div>
             <label className="text-sm font-medium">{tx("cancerScreening.familyHistory", lang)}</label>
             <div className="flex flex-wrap gap-2 mt-2">
-              {cancerOptions.map((cancer, i) => (
+              {FAMILY_CANCER_OPTIONS.map((cancer) => (
                 <button
-                  key={i}
-                  onClick={() => toggleFamilyCancer(FAMILY_CANCER_OPTIONS[i])}
+                  key={cancer.en}
+                  onClick={() => toggleFamilyCancer(cancer.en)}
                   className={`rounded-full px-3 py-1.5 text-xs transition-colors ${
-                    familyHistory.includes(FAMILY_CANCER_OPTIONS[i])
+                    familyHistory.includes(cancer.en)
                       ? "bg-teal-500 text-white"
                       : "bg-teal-50 text-teal-700 hover:bg-teal-100 dark:bg-teal-950 dark:text-teal-300"
                   }`}
                 >
-                  {cancer}
+                  {cancer[l]}
                 </button>
               ))}
             </div>

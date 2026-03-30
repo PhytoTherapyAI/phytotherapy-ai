@@ -32,23 +32,21 @@ interface PTSDResult {
   professionalResources?: string[];
 }
 
-const PCL5_EN = [
-  "Repeated, disturbing, and unwanted memories of the stressful experience",
-  "Feeling very upset when something reminded you of the stressful experience",
-  "Avoiding memories, thoughts, or feelings related to the stressful experience",
-  "Having strong negative beliefs about yourself, other people, or the world",
-  "Being 'super alert' or watchful or on guard",
-];
-const PCL5_TR = [
-  "Stresli deneyimin tekrarlayan, rahatsiz edici ve istenmeyen anilari",
-  "Stresli deneyimi hatirlatan bir sey olduğunda cok uzgun hissetme",
-  "Stresli deneyimle ilgili anilari, dusunceleri veya duygulari kacinma",
-  "Kendiniz, diger insanlar veya dünya hakkinda guclu olumsuz inanclar",
-  "Asiri tetikte, dikkatli veya tedbirli olma",
+const PCL5 = [
+  { en: "Repeated, disturbing, and unwanted memories of the stressful experience", tr: "Stresli deneyimin tekrarlayan, rahatsiz edici ve istenmeyen anilari" },
+  { en: "Feeling very upset when something reminded you of the stressful experience", tr: "Stresli deneyimi hatirlatan bir sey olduğunda cok uzgun hissetme" },
+  { en: "Avoiding memories, thoughts, or feelings related to the stressful experience", tr: "Stresli deneyimle ilgili anilari, dusunceleri veya duygulari kacinma" },
+  { en: "Having strong negative beliefs about yourself, other people, or the world", tr: "Kendiniz, diger insanlar veya dünya hakkinda guclu olumsuz inanclar" },
+  { en: "Being 'super alert' or watchful or on guard", tr: "Asiri tetikte, dikkatli veya tedbirli olma" },
 ];
 
-const OPTIONS_EN = ["Not at all", "A little bit", "Moderately", "Quite a bit", "Extremely"];
-const OPTIONS_TR = ["Hic", "Biraz", "Orta derecede", "Oldukca fazla", "Son derece"];
+const OPTIONS = [
+  { en: "Not at all", tr: "Hic" },
+  { en: "A little bit", tr: "Biraz" },
+  { en: "Moderately", tr: "Orta derecede" },
+  { en: "Quite a bit", tr: "Oldukca fazla" },
+  { en: "Extremely", tr: "Son derece" },
+];
 
 export default function PTSDSupportPage() {
   const { isAuthenticated, session } = useAuth();
@@ -65,8 +63,8 @@ export default function PTSDSupportPage() {
   const [result, setResult] = useState<PTSDResult | null>(null);
   const [showGrounding, setShowGrounding] = useState(false);
 
-  const questions = lang === "tr" ? PCL5_TR : PCL5_EN;
-  const options = lang === "tr" ? OPTIONS_TR : OPTIONS_EN;
+  const questions = PCL5.map((q) => q[lang]);
+  const options = OPTIONS.map((o) => o[lang]);
 
   const handleAnalyze = async () => {
     if (!session?.access_token) return;

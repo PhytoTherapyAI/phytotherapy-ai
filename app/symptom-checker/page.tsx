@@ -45,26 +45,15 @@ interface SymptomResult {
   sources?: Array<{ title: string; url: string }>;
 }
 
-const COMMON_SYMPTOMS_EN = [
-  { label: "Headache", icon: Brain },
-  { label: "Fatigue", icon: ThermometerSun },
-  { label: "Nausea", icon: Wind },
-  { label: "Joint pain", icon: Bone },
-  { label: "Insomnia", icon: Eye },
-  { label: "Stomach pain", icon: Heart },
-  { label: "Dizziness", icon: Brain },
-  { label: "Back pain", icon: Bone },
-];
-
-const COMMON_SYMPTOMS_TR = [
-  { label: "Baş ağrısı", icon: Brain },
-  { label: "Yorgunluk", icon: ThermometerSun },
-  { label: "Bulantı", icon: Wind },
-  { label: "Eklem ağrısı", icon: Bone },
-  { label: "Uykusuzluk", icon: Eye },
-  { label: "Karın ağrısı", icon: Heart },
-  { label: "Baş dönmesi", icon: Brain },
-  { label: "Bel ağrısı", icon: Bone },
+const COMMON_SYMPTOMS = [
+  { en: "Headache", tr: "Baş ağrısı", icon: Brain },
+  { en: "Fatigue", tr: "Yorgunluk", icon: ThermometerSun },
+  { en: "Nausea", tr: "Bulantı", icon: Wind },
+  { en: "Joint pain", tr: "Eklem ağrısı", icon: Bone },
+  { en: "Insomnia", tr: "Uykusuzluk", icon: Eye },
+  { en: "Stomach pain", tr: "Karın ağrısı", icon: Heart },
+  { en: "Dizziness", tr: "Baş dönmesi", icon: Brain },
+  { en: "Back pain", tr: "Bel ağrısı", icon: Bone },
 ];
 
 export default function SymptomCheckerPage() {
@@ -76,7 +65,7 @@ export default function SymptomCheckerPage() {
   const [result, setResult] = useState<SymptomResult | null>(null);
   const [showSources, setShowSources] = useState(false);
 
-  const commonSymptoms = lang === "tr" ? COMMON_SYMPTOMS_TR : COMMON_SYMPTOMS_EN;
+  const commonSymptoms = COMMON_SYMPTOMS.map((s) => ({ label: s[lang], icon: s.icon }));
 
   const handleAnalyze = async () => {
     if (!symptoms.trim()) return;

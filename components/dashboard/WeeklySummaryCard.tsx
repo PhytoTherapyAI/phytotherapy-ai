@@ -28,8 +28,15 @@ interface WeekData {
   }>
 }
 
-const DAY_NAMES_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-const DAY_NAMES_TR = ["Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"]
+const DAY_NAMES = [
+  { en: "Sun", tr: "Paz" },
+  { en: "Mon", tr: "Pzt" },
+  { en: "Tue", tr: "Sal" },
+  { en: "Wed", tr: "Çar" },
+  { en: "Thu", tr: "Per" },
+  { en: "Fri", tr: "Cum" },
+  { en: "Sat", tr: "Cmt" },
+]
 
 export function WeeklySummaryCard({ userId, lang, isPremium = false }: WeeklySummaryCardProps) {
   const [data, setData] = useState<WeekData | null>(null)
@@ -58,7 +65,7 @@ export function WeeklySummaryCard({ userId, lang, isPremium = false }: WeeklySum
         return
       }
 
-      const dayNames = lang === "tr" ? DAY_NAMES_TR : DAY_NAMES_EN
+      const dayNames = DAY_NAMES.map((d) => d[lang])
       const scores = checkIns.filter(c => c.health_score !== null)
       const avgScore = scores.length > 0
         ? Math.round(scores.reduce((s, c) => s + (c.health_score || 0), 0) / scores.length)

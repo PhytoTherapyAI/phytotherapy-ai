@@ -37,14 +37,38 @@ interface RecoveryResult {
   professionalReferral: boolean;
 }
 
-const SUBSTANCES_EN = ["Alcohol", "Tobacco", "Cannabis", "Opioids", "Stimulants", "Gambling", "Social Media", "Other"];
-const SUBSTANCES_TR = ["Alkol", "Tutun", "Esrar", "Opioidler", "Uyarıcilar", "Kumar", "Sosyal Medya", "Diger"];
+const SUBSTANCES = [
+  { en: "Alcohol", tr: "Alkol" },
+  { en: "Tobacco", tr: "Tutun" },
+  { en: "Cannabis", tr: "Esrar" },
+  { en: "Opioids", tr: "Opioidler" },
+  { en: "Stimulants", tr: "Uyarıcilar" },
+  { en: "Gambling", tr: "Kumar" },
+  { en: "Social Media", tr: "Sosyal Medya" },
+  { en: "Other", tr: "Diger" },
+];
 
-const TRIGGERS_EN = ["Stress", "Social pressure", "Boredom", "Loneliness", "Celebration", "Pain", "Sleep problems", "Conflict"];
-const TRIGGERS_TR = ["Stres", "Sosyal baskı", "Sıkıntı", "Yalnızlık", "Kutlama", "Ağrı", "Uyku sorunu", "Çatışma"];
+const TRIGGERS = [
+  { en: "Stress", tr: "Stres" },
+  { en: "Social pressure", tr: "Sosyal baskı" },
+  { en: "Boredom", tr: "Sıkıntı" },
+  { en: "Loneliness", tr: "Yalnızlık" },
+  { en: "Celebration", tr: "Kutlama" },
+  { en: "Pain", tr: "Ağrı" },
+  { en: "Sleep problems", tr: "Uyku sorunu" },
+  { en: "Conflict", tr: "Çatışma" },
+];
 
-const SUPPORT_EN = ["AA/NA meeting", "Therapist", "Sponsor call", "Exercise", "Meditation", "Support group", "Journal", "Friend/family"];
-const SUPPORT_TR = ["AA/NA toplantısı", "Terapist", "Sponsor araması", "Egzersiz", "Meditasyon", "Destek grubu", "Günlük", "Arkadas/aile"];
+const SUPPORT = [
+  { en: "AA/NA meeting", tr: "AA/NA toplantısı" },
+  { en: "Therapist", tr: "Terapist" },
+  { en: "Sponsor call", tr: "Sponsor araması" },
+  { en: "Exercise", tr: "Egzersiz" },
+  { en: "Meditation", tr: "Meditasyon" },
+  { en: "Support group", tr: "Destek grubu" },
+  { en: "Journal", tr: "Günlük" },
+  { en: "Friend/family", tr: "Arkadas/aile" },
+];
 
 export default function AddictionRecoveryPage() {
   const { isAuthenticated, session } = useAuth();
@@ -60,10 +84,8 @@ export default function AddictionRecoveryPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RecoveryResult | null>(null);
 
-  const substances = lang === "tr" ? SUBSTANCES_TR : SUBSTANCES_EN;
+  const l = lang as "en" | "tr";
   const substanceValues = ["alcohol", "tobacco", "cannabis", "opioids", "stimulants", "gambling", "social_media", "other"];
-  const triggers = lang === "tr" ? TRIGGERS_TR : TRIGGERS_EN;
-  const support = lang === "tr" ? SUPPORT_TR : SUPPORT_EN;
 
   const handleAnalyze = async () => {
     if (!session?.access_token) return;
@@ -173,9 +195,9 @@ export default function AddictionRecoveryPage() {
           {tx("addictionRecovery.substanceBehavior", lang)}
         </h2>
         <div className="flex flex-wrap gap-2">
-          {substances.map((s, i) => (
+          {SUBSTANCES.map((s, i) => (
             <button
-              key={s}
+              key={s.en}
               onClick={() => setSubstance(substanceValues[i])}
               className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
                 substance === substanceValues[i]
@@ -183,7 +205,7 @@ export default function AddictionRecoveryPage() {
                   : "bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950 dark:text-green-300"
               }`}
             >
-              {s}
+              {s[l]}
             </button>
           ))}
         </div>
@@ -233,19 +255,19 @@ export default function AddictionRecoveryPage() {
             {tx("addictionRecovery.todaysTriggers", lang)}
           </h3>
           <div className="flex flex-wrap gap-1.5">
-            {triggers.map((t) => (
+            {TRIGGERS.map((t) => (
               <button
-                key={t}
+                key={t.en}
                 onClick={() => setSelectedTriggers((prev) =>
-                  prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
+                  prev.includes(t.en) ? prev.filter((x) => x !== t.en) : [...prev, t.en]
                 )}
                 className={`rounded-full px-3 py-1 text-xs transition-colors ${
-                  selectedTriggers.includes(t)
+                  selectedTriggers.includes(t.en)
                     ? "bg-orange-500 text-white"
                     : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800"
                 }`}
               >
-                {t}
+                {t[l]}
               </button>
             ))}
           </div>
@@ -255,19 +277,19 @@ export default function AddictionRecoveryPage() {
             {tx("addictionRecovery.supportUsed", lang)}
           </h3>
           <div className="flex flex-wrap gap-1.5">
-            {support.map((s) => (
+            {SUPPORT.map((s) => (
               <button
-                key={s}
+                key={s.en}
                 onClick={() => setSelectedSupport((prev) =>
-                  prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
+                  prev.includes(s.en) ? prev.filter((x) => x !== s.en) : [...prev, s.en]
                 )}
                 className={`rounded-full px-3 py-1 text-xs transition-colors ${
-                  selectedSupport.includes(s)
+                  selectedSupport.includes(s.en)
                     ? "bg-green-500 text-white"
                     : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800"
                 }`}
               >
-                {s}
+                {s[l]}
               </button>
             ))}
           </div>

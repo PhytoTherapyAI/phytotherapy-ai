@@ -58,16 +58,21 @@ const CATEGORY_ICONS: Record<string, typeof Utensils> = {
   supplement: Leaf,
 };
 
-const COMMON_SYMPTOMS_EN = [
-  "Hives", "Itching", "Swelling", "Rash", "Nausea", "Vomiting",
-  "Diarrhea", "Sneezing", "Runny nose", "Wheezing", "Headache",
-  "Stomach pain", "Throat tightness", "Difficulty breathing",
-];
-
-const COMMON_SYMPTOMS_TR = [
-  "Ürtiker", "Kaşıntı", "Şişlik", "Dokutu", "Bulantı", "Kusma",
-  "İshal", "Hapşırma", "Burun akıntısı", "Hırıltılı solunum", "Bas ağrısi",
-  "Karin ağrısi", "Bogaz sıkışması", "Nefes darlığı",
+const COMMON_SYMPTOMS = [
+  { en: "Hives", tr: "Ürtiker" },
+  { en: "Itching", tr: "Kaşıntı" },
+  { en: "Swelling", tr: "Şişlik" },
+  { en: "Rash", tr: "Dokutu" },
+  { en: "Nausea", tr: "Bulantı" },
+  { en: "Vomiting", tr: "Kusma" },
+  { en: "Diarrhea", tr: "İshal" },
+  { en: "Sneezing", tr: "Hapşırma" },
+  { en: "Runny nose", tr: "Burun akıntısı" },
+  { en: "Wheezing", tr: "Hırıltılı solunum" },
+  { en: "Headache", tr: "Bas ağrısi" },
+  { en: "Stomach pain", tr: "Karin ağrısi" },
+  { en: "Throat tightness", tr: "Bogaz sıkışması" },
+  { en: "Difficulty breathing", tr: "Nefes darlığı" },
 ];
 
 export default function AllergyMapPage() {
@@ -91,7 +96,7 @@ export default function AllergyMapPage() {
   const [formDoctorDiagnosed, setFormDoctorDiagnosed] = useState(false);
   const [formNotes, setFormNotes] = useState("");
 
-  const commonSymptoms = lang === "tr" ? COMMON_SYMPTOMS_TR : COMMON_SYMPTOMS_EN;
+  const l = lang as "en" | "tr";
 
   const fetchRecords = useCallback(async () => {
     if (!session?.access_token) return;
@@ -407,17 +412,17 @@ export default function AllergyMapPage() {
                 {tx("common.symptoms", lang)}
               </label>
               <div className="flex flex-wrap gap-1.5">
-                {commonSymptoms.map((s) => (
+                {COMMON_SYMPTOMS.map((s) => (
                   <button
-                    key={s}
-                    onClick={() => toggleSymptom(s)}
+                    key={s.en}
+                    onClick={() => toggleSymptom(s.en)}
                     className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
-                      formSymptoms.includes(s)
+                      formSymptoms.includes(s.en)
                         ? "bg-amber-600 text-white"
                         : "bg-muted text-muted-foreground hover:bg-amber-100 dark:hover:bg-amber-900/30"
                     }`}
                   >
-                    {s}
+                    {s[l]}
                   </button>
                 ))}
               </div>

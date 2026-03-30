@@ -30,33 +30,29 @@ interface MensHealthResult {
   alertLevel: "green" | "yellow";
 }
 
-const ADAM_EN = [
-  "Decrease in libido (sex drive)?",
-  "Lack of energy?",
-  "Decrease in strength and/or endurance?",
-  "Lost height?",
-  "Decreased enjoyment of life?",
-  "Sad and/or grumpy?",
-  "Erections less strong?",
-  "Deterioration in sports ability?",
-  "Falling asleep after dinner?",
-  "Deterioration in work performance?",
-];
-const ADAM_TR = [
-  "Cinsel istekte azalma?",
-  "Enerji eksikligi?",
-  "Guc ve/veya dayaniklilikta azalma?",
-  "Boy kisalmasi?",
-  "Yasam zevkinde azalma?",
-  "Uzgun ve/veya huysuz?",
-  "Ereksiyon gücünde azalma?",
-  "Spor performansinda dusus?",
-  "Aksam yemeginden sonra uyuya kalma?",
-  "Is performansinda dusus?",
+const ADAM = [
+  { en: "Decrease in libido (sex drive)?", tr: "Cinsel istekte azalma?" },
+  { en: "Lack of energy?", tr: "Enerji eksikligi?" },
+  { en: "Decrease in strength and/or endurance?", tr: "Guc ve/veya dayaniklilikta azalma?" },
+  { en: "Lost height?", tr: "Boy kisalmasi?" },
+  { en: "Decreased enjoyment of life?", tr: "Yasam zevkinde azalma?" },
+  { en: "Sad and/or grumpy?", tr: "Uzgun ve/veya huysuz?" },
+  { en: "Erections less strong?", tr: "Ereksiyon gücünde azalma?" },
+  { en: "Deterioration in sports ability?", tr: "Spor performansinda dusus?" },
+  { en: "Falling asleep after dinner?", tr: "Aksam yemeginden sonra uyuya kalma?" },
+  { en: "Deterioration in work performance?", tr: "Is performansinda dusus?" },
 ];
 
-const SYMPTOMS_EN = ["Fatigue", "Low libido", "Mood changes", "Muscle loss", "Weight gain", "Sleep problems", "Hair loss", "Concentration issues"];
-const SYMPTOMS_TR = ["Yorgunluk", "Düşük cinsel istek", "Ruh hali değişikliği", "Kas kaybi", "Kilo artisi", "Uyku sorunları", "Sac dokulmesi", "Odaklanma sorunu"];
+const SYMPTOMS = [
+  { en: "Fatigue", tr: "Yorgunluk" },
+  { en: "Low libido", tr: "Düşük cinsel istek" },
+  { en: "Mood changes", tr: "Ruh hali değişikliği" },
+  { en: "Muscle loss", tr: "Kas kaybi" },
+  { en: "Weight gain", tr: "Kilo artisi" },
+  { en: "Sleep problems", tr: "Uyku sorunları" },
+  { en: "Hair loss", tr: "Sac dokulmesi" },
+  { en: "Concentration issues", tr: "Odaklanma sorunu" },
+];
 
 export default function MensHealthPage() {
   const { isAuthenticated, session } = useAuth();
@@ -70,8 +66,8 @@ export default function MensHealthPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MensHealthResult | null>(null);
 
-  const adamQuestions = lang === "tr" ? ADAM_TR : ADAM_EN;
-  const symptoms = lang === "tr" ? SYMPTOMS_TR : SYMPTOMS_EN;
+  const adamQuestions = ADAM.map((q) => q[lang]);
+  const symptoms = SYMPTOMS.map((s) => s[lang]);
 
   const handleAnalyze = async () => {
     if (!session?.access_token) return;

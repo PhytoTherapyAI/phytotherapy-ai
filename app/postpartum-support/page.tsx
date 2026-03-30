@@ -37,29 +37,17 @@ interface PostpartumResult {
   warningSignsToWatch?: string[];
 }
 
-const EPDS_EN = [
-  "I have been able to laugh and see the funny side of things",
-  "I have looked forward with enjoyment to things",
-  "I have blamed myself unnecessarily when things went wrong",
-  "I have been anxious or worried for no good reason",
-  "I have felt scared or panicky for no very good reason",
-  "Things have been getting on top of me",
-  "I have been so unhappy that I have had difficulty sleeping",
-  "I have felt sad or miserable",
-  "I have been so unhappy that I have been crying",
-  "The thought of harming myself has occurred to me",
-];
-const EPDS_TR = [
-  "Gulebiliyorum ve olaylarin komik tarafini gorebiliyorum",
-  "Bir seyleri zevkle bekliyorum",
-  "Isler ters gittiginde kendimi gereksiz yere sucluyorum",
-  "Sebepsiz yere endise ediyorum veya kaygılaniyorum",
-  "Sebepsiz yere korkuyorum veya panik oluyorum",
-  "Isler basima yigiliyor",
-  "O kadar mutsuzum ki uyumakta zorluk cekiyorum",
-  "Kendimi uzgun veya mutsuz hissediyorum",
-  "O kadar mutsuzum ki agliyorum",
-  "Kendime zarar verme dusuncesi aklima geldi",
+const EPDS = [
+  { en: "I have been able to laugh and see the funny side of things", tr: "Gulebiliyorum ve olaylarin komik tarafini gorebiliyorum" },
+  { en: "I have looked forward with enjoyment to things", tr: "Bir seyleri zevkle bekliyorum" },
+  { en: "I have blamed myself unnecessarily when things went wrong", tr: "Isler ters gittiginde kendimi gereksiz yere sucluyorum" },
+  { en: "I have been anxious or worried for no good reason", tr: "Sebepsiz yere endise ediyorum veya kaygılaniyorum" },
+  { en: "I have felt scared or panicky for no very good reason", tr: "Sebepsiz yere korkuyorum veya panik oluyorum" },
+  { en: "Things have been getting on top of me", tr: "Isler basima yigiliyor" },
+  { en: "I have been so unhappy that I have had difficulty sleeping", tr: "O kadar mutsuzum ki uyumakta zorluk cekiyorum" },
+  { en: "I have felt sad or miserable", tr: "Kendimi uzgun veya mutsuz hissediyorum" },
+  { en: "I have been so unhappy that I have been crying", tr: "O kadar mutsuzum ki agliyorum" },
+  { en: "The thought of harming myself has occurred to me", tr: "Kendime zarar verme dusuncesi aklima geldi" },
 ];
 
 const EPDS_OPTIONS_EN = [
@@ -90,11 +78,19 @@ export default function PostpartumSupportPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<PostpartumResult | null>(null);
 
-  const epdsQuestions = lang === "tr" ? EPDS_TR : EPDS_EN;
+  const epdsQuestions = EPDS.map((q) => q[lang]);
 
-  const CONCERNS_EN = ["Mood swings", "Anxiety", "Bonding difficulty", "Body image", "Relationship", "Breastfeeding issues", "Pain", "Fatigue"];
-  const CONCERNS_TR = ["Ruh hali değişikliği", "Kaygi", "Baglanma güçlüğü", "Beden imaji", "Iliski", "Emzirme sorunları", "Ağrı", "Yorgunluk"];
-  const concernOptions = lang === "tr" ? CONCERNS_TR : CONCERNS_EN;
+  const CONCERNS = [
+    { en: "Mood swings", tr: "Ruh hali değişikliği" },
+    { en: "Anxiety", tr: "Kaygi" },
+    { en: "Bonding difficulty", tr: "Baglanma güçlüğü" },
+    { en: "Body image", tr: "Beden imaji" },
+    { en: "Relationship", tr: "Iliski" },
+    { en: "Breastfeeding issues", tr: "Emzirme sorunları" },
+    { en: "Pain", tr: "Ağrı" },
+    { en: "Fatigue", tr: "Yorgunluk" },
+  ];
+  const concernOptions = CONCERNS.map((c) => c[lang]);
 
   const handleAnalyze = async () => {
     if (!session?.access_token) return;

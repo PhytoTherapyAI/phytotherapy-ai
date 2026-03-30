@@ -46,22 +46,13 @@ interface GoalResult {
   motivationalNote: string;
 }
 
-const GOAL_PRESETS_EN = [
-  "Lower cholesterol in 3 months",
-  "Improve sleep quality",
-  "Lose 5kg in 2 months",
-  "Reduce stress and anxiety",
-  "Boost energy levels",
-  "Strengthen immune system",
-];
-
-const GOAL_PRESETS_TR = [
-  "3 ayda kolesterolü düşür",
-  "Uyku kalitesini artır",
-  "2 ayda 5 kilo ver",
-  "Stres ve kaygıyı azalt",
-  "Enerji seviyesini artır",
-  "Bağışıklık sistemini güçlendir",
+const GOAL_PRESETS = [
+  { en: "Lower cholesterol in 3 months", tr: "3 ayda kolesterolü düşür" },
+  { en: "Improve sleep quality", tr: "Uyku kalitesini artır" },
+  { en: "Lose 5kg in 2 months", tr: "2 ayda 5 kilo ver" },
+  { en: "Reduce stress and anxiety", tr: "Stres ve kaygıyı azalt" },
+  { en: "Boost energy levels", tr: "Enerji seviyesini artır" },
+  { en: "Strengthen immune system", tr: "Bağışıklık sistemini güçlendir" },
 ];
 
 const TIMEFRAMES = [
@@ -88,7 +79,7 @@ export default function HealthGoalsPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<GoalResult | null>(null);
 
-  const presets = lang === "tr" ? GOAL_PRESETS_TR : GOAL_PRESETS_EN;
+  const l = lang as "en" | "tr";
 
   const handleGenerate = async () => {
     if (!goal.trim()) return;
@@ -149,17 +140,17 @@ export default function HealthGoalsPage() {
               {tx("goals.popularGoals", lang)}
             </p>
             <div className="flex flex-wrap gap-2">
-              {presets.map((preset) => (
+              {GOAL_PRESETS.map((preset) => (
                 <button
-                  key={preset}
-                  onClick={() => setGoal(preset)}
+                  key={preset.en}
+                  onClick={() => setGoal(preset[l])}
                   className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                    goal === preset
+                    goal === preset[l]
                       ? "border-emerald-400 bg-emerald-50 text-emerald-700 dark:border-emerald-600 dark:bg-emerald-950"
                       : "hover:border-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950"
                   }`}
                 >
-                  {preset}
+                  {preset[l]}
                 </button>
               ))}
             </div>

@@ -29,17 +29,18 @@ interface SexualHealthResult {
   professionalReferral: boolean;
 }
 
-const CONCERNS_EN = [
-  "Low libido", "Erectile dysfunction", "Pain during intercourse",
-  "Delayed orgasm", "Premature ejaculation", "Vaginal dryness",
-  "Medication side effects", "STI screening", "Contraception info",
-  "Menstrual irregularity", "Fertility concerns",
-];
-const CONCERNS_TR = [
-  "Düşük cinsel istek", "Ereksiyon bozuklugu", "Cinsel iliski sirasinda ağrı",
-  "Gecikmiş orgazm", "Erken bosalma", "Vajinal kuruluk",
-  "İlaç yan etkileri", "Cinsel yolla bulasan hastalık taramasi", "Kontrasepsiyon bilgisi",
-  "Adet duzensizligi", "Dogurganlik endisesi",
+const CONCERNS = [
+  { en: "Low libido", tr: "Düşük cinsel istek" },
+  { en: "Erectile dysfunction", tr: "Ereksiyon bozuklugu" },
+  { en: "Pain during intercourse", tr: "Cinsel iliski sirasinda ağrı" },
+  { en: "Delayed orgasm", tr: "Gecikmiş orgazm" },
+  { en: "Premature ejaculation", tr: "Erken bosalma" },
+  { en: "Vaginal dryness", tr: "Vajinal kuruluk" },
+  { en: "Medication side effects", tr: "İlaç yan etkileri" },
+  { en: "STI screening", tr: "Cinsel yolla bulasan hastalık taramasi" },
+  { en: "Contraception info", tr: "Kontrasepsiyon bilgisi" },
+  { en: "Menstrual irregularity", tr: "Adet duzensizligi" },
+  { en: "Fertility concerns", tr: "Dogurganlik endisesi" },
 ];
 
 export default function SexualHealthPage() {
@@ -54,8 +55,8 @@ export default function SexualHealthPage() {
   const [result, setResult] = useState<SexualHealthResult | null>(null);
   const [showScreening, setShowScreening] = useState(false);
 
-  const concerns = lang === "tr" ? CONCERNS_TR : CONCERNS_EN;
-  const concernValues = CONCERNS_EN;
+  const concerns = CONCERNS.map((c) => c[lang]);
+  const concernValues = CONCERNS.map((c) => c.en);
 
   const handleAnalyze = async () => {
     if (!session?.access_token) return;

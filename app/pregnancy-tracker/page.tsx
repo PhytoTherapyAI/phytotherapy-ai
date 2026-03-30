@@ -34,15 +34,19 @@ interface PregnancyResult {
   weekSpecificTips?: string[];
 }
 
-const PREGNANCY_SYMPTOMS_EN = [
-  "Nausea", "Fatigue", "Back pain", "Swelling", "Headache",
-  "Heartburn", "Constipation", "Insomnia", "Mood changes",
-  "Frequent urination", "Cramping", "Spotting",
-];
-const PREGNANCY_SYMPTOMS_TR = [
-  "Bulantı", "Yorgunluk", "Bel ağrısi", "Şişman", "Bas ağrısi",
-  "Mide yanması", "Kabızlık", "Uykusuzluk", "Ruh hali değişikliği",
-  "Sık idrara çıkma", "Kramp", "Lekelenme",
+const PREGNANCY_SYMPTOMS = [
+  { en: "Nausea", tr: "Bulantı" },
+  { en: "Fatigue", tr: "Yorgunluk" },
+  { en: "Back pain", tr: "Bel ağrısi" },
+  { en: "Swelling", tr: "Şişman" },
+  { en: "Headache", tr: "Bas ağrısi" },
+  { en: "Heartburn", tr: "Mide yanması" },
+  { en: "Constipation", tr: "Kabızlık" },
+  { en: "Insomnia", tr: "Uykusuzluk" },
+  { en: "Mood changes", tr: "Ruh hali değişikliği" },
+  { en: "Frequent urination", tr: "Sık idrara çıkma" },
+  { en: "Cramping", tr: "Kramp" },
+  { en: "Spotting", tr: "Lekelenme" },
 ];
 
 export default function PregnancyTrackerPage() {
@@ -56,7 +60,7 @@ export default function PregnancyTrackerPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<PregnancyResult | null>(null);
 
-  const symptoms = lang === "tr" ? PREGNANCY_SYMPTOMS_TR : PREGNANCY_SYMPTOMS_EN;
+  const symptoms = PREGNANCY_SYMPTOMS.map((s) => s[lang]);
 
   const handleAnalyze = async () => {
     if (!session?.access_token) return;
