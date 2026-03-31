@@ -208,7 +208,7 @@ export default function HealthAnalyticsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="text-center space-y-4 max-w-md">
-          <Activity className="h-16 w-16 text-emerald-500 mx-auto" />
+          <Activity className="h-16 w-16 text-primary mx-auto" />
           <h1 className="text-2xl font-bold">{tx("analytics2.title", lang)}</h1>
           <p className="text-muted-foreground">{tx("analytics2.loginRequired", lang)}</p>
           <Link href="/auth/login">
@@ -232,12 +232,13 @@ export default function HealthAnalyticsPage() {
 
   return (
     <DoctorShell>
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-emerald-950/5 pb-20">
+    <div className="min-h-screen bg-stone-50 dark:bg-background pb-20">
       {/* Header */}
-      <div className="border-b border-border/40 bg-background/80 backdrop-blur-sm sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="border-b border-border/40 bg-white/80 dark:bg-background/80 backdrop-blur-sm sticky top-0 z-30">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center gap-3 mb-1">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg shadow-primary/20">
               <Activity className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -259,7 +260,7 @@ export default function HealthAnalyticsPage() {
                   onClick={() => setActiveTab(tab.key)}
                   className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-all whitespace-nowrap ${
                     isActive
-                      ? "border-emerald-500 text-emerald-500"
+                      ? "border-primary text-primary"
                       : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
                   }`}
                 >
@@ -270,10 +271,12 @@ export default function HealthAnalyticsPage() {
             })}
           </div>
         </div>
+        </motion.div>
       </div>
 
       {/* Content Area */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
+        className="max-w-7xl mx-auto px-4 py-6">
         {/* Clinical Insights Header — Triage alerts + KPI sparklines + disease donut */}
         <ClinicalInsightsHeader
           lang={lang}
@@ -288,7 +291,7 @@ export default function HealthAnalyticsPage() {
 
         {loading && (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         )}
 
@@ -335,7 +338,7 @@ export default function HealthAnalyticsPage() {
                       key={i}
                       className={`rounded-xl border p-4 ${
                         insight.type === "positive"
-                          ? "border-emerald-500/20 bg-emerald-500/5"
+                          ? "border-primary/20 bg-primary/5"
                           : insight.type === "caution"
                           ? "border-amber-500/20 bg-amber-500/5"
                           : "border-border/40 bg-muted/30"
@@ -546,7 +549,7 @@ function ImpactResponseTab({
                     {isTr ? c.supplementTr : c.supplement}
                   </span>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    c.grade === "A" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"
+                    c.grade === "A" ? "bg-primary/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"
                   }`}>
                     {tx("analytics2.evidenceLabel", lang)} {c.grade}
                   </span>
@@ -763,7 +766,7 @@ function BenchmarkTab({
   return (
     <div className="space-y-6">
       {/* Peer Info Card */}
-      <div className="rounded-2xl border border-border/40 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 p-5 flex flex-wrap items-center justify-between gap-4">
+      <div className="rounded-2xl border border-border/40 bg-gradient-to-r from-primary/5 to-teal-500/5 p-5 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Users className="h-5 w-5 text-emerald-400" />
           <div>
@@ -776,7 +779,7 @@ function BenchmarkTab({
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 rounded-full px-4 py-2 bg-emerald-500/10 border border-emerald-500/20">
+        <div className="flex items-center gap-2 rounded-full px-4 py-2 bg-primary/10 border border-primary/20">
           <ShieldCheck className="h-4 w-4 text-emerald-400" />
           <span className="text-sm font-semibold text-emerald-400">
             {tx("analytics2.profileMatch", lang)}: {cosineSim}%
@@ -826,7 +829,7 @@ function BenchmarkTab({
                     <div className="absolute inset-0 flex">
                       <div className="w-1/4 bg-red-500/10" />
                       <div className="w-1/2 bg-amber-500/5" />
-                      <div className="w-1/4 bg-emerald-500/10" />
+                      <div className="w-1/4 bg-primary/10" />
                     </div>
                     {/* Position marker */}
                     <div
@@ -862,7 +865,7 @@ function BenchmarkTab({
       </div>
 
       {/* Benchmark Message */}
-      <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5 flex items-start gap-3">
+      <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 flex items-start gap-3">
         <Zap className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5" />
         <p className="text-sm">
           {isTr
@@ -1001,7 +1004,7 @@ function PredictionTab({
         </div>
         <div className="flex items-center gap-4 mt-3 text-[10px] text-muted-foreground">
           <span className="flex items-center gap-1">
-            <span className="h-0.5 w-4 bg-emerald-500 rounded" /> {tx("analytics2.actualData", lang)}
+            <span className="h-0.5 w-4 bg-primary rounded" /> {tx("analytics2.actualData", lang)}
           </span>
           <span className="flex items-center gap-1">
             <span className="h-0.5 w-4 bg-indigo-500 rounded" style={{ backgroundImage: "repeating-linear-gradient(90deg, #6366f1 0, #6366f1 4px, transparent 4px, transparent 7px)" }} /> {tx("analytics2.projectionLabel", lang)}
@@ -1019,7 +1022,7 @@ function PredictionTab({
         {predictions.map((p) => {
           const TrendIcon = p.trend === "improving" ? TrendingDown : p.trend === "declining" ? TrendingUp : Minus;
           const trendColor = p.trend === "improving" ? "text-emerald-400" : p.trend === "declining" ? "text-red-400" : "text-amber-400";
-          const trendBg = p.trend === "improving" ? "bg-emerald-500/5 border-emerald-500/20" : p.trend === "declining" ? "bg-red-500/5 border-red-500/20" : "bg-amber-500/5 border-amber-500/20";
+          const trendBg = p.trend === "improving" ? "bg-primary/5 border-primary/20" : p.trend === "declining" ? "bg-red-500/5 border-red-500/20" : "bg-amber-500/5 border-amber-500/20";
 
           return (
             <div key={p.metric} className={`rounded-2xl border p-5 ${trendBg}`}>
@@ -1087,6 +1090,7 @@ function PredictionTab({
           {tx("analytics2.addOmega3", lang)}
         </button>
       </div>
+      </motion.div>
     </div>
   );
 }
