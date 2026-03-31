@@ -246,7 +246,7 @@ export default function HealthAnalyticsPage() {
               <p className="text-sm text-muted-foreground">{tx("analytics2.subtitle", lang)}</p>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Tab Bar */}
         <div className="max-w-7xl mx-auto px-4">
@@ -271,7 +271,6 @@ export default function HealthAnalyticsPage() {
             })}
           </div>
         </div>
-        </motion.div>
       </div>
 
       {/* Content Area */}
@@ -379,7 +378,7 @@ export default function HealthAnalyticsPage() {
             )}
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
     </DoctorShell>
   );
@@ -1090,7 +1089,6 @@ function PredictionTab({
           {tx("analytics2.addOmega3", lang)}
         </button>
       </div>
-      </motion.div>
     </div>
   );
 }

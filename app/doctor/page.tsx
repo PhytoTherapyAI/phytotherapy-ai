@@ -133,7 +133,7 @@ export default function DoctorPage() {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Verification banner */}
       {!isVerified && (
