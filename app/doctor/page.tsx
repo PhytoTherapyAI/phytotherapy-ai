@@ -5,6 +5,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
+
 import { useAuth } from "@/lib/auth-context"
 import { DoctorShell } from "@/components/doctor/DoctorShell"
 import { useLang } from "@/components/layout/language-toggle"
@@ -167,9 +168,16 @@ export default function DoctorPage() {
               {visibleAlerts.length}
             </span>
           </h2>
+          <AnimatePresence>
           {visibleAlerts.map((patient) => (
-            <div key={patient.id}
-              className="group rounded-2xl border border-red-200 bg-red-50/50 p-4 transition-all dark:border-red-800/40 dark:bg-red-950/10">
+            <motion.div key={patient.id}
+              initial={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 300, transition: { duration: 0.3 } }}
+              drag="x" dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.3}
+              onDragEnd={(_, info) => { if (info.offset.x > 120) dismissAlert(patient.id); }}
+              whileDrag={{ cursor: "grabbing" }}
+              className="group rounded-2xl border border-red-200 bg-red-50/50 p-4 transition-all dark:border-red-800/40 dark:bg-red-950/10 cursor-grab">
               <div className="flex items-start gap-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-red-100 dark:bg-red-900/40">
                   <Users className="h-4 w-4 text-red-600 dark:text-red-400" />
@@ -211,21 +219,29 @@ export default function DoctorPage() {
                   <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-wrap">{summaryData[patient.patient_id]}</p>
                 </div>
               )}
-            </div>
+            </motion.div>
           ))}
+          </AnimatePresence>
+          <p className="text-[9px] text-muted-foreground text-center mt-1">
+            {isTr ? "← Sağa kaydırarak onayla" : "← Swipe right to dismiss"}
+          </p>
         </div>
       )}
 
       {/* Inbox Zero success */}
       {activePatients.length > 0 && visibleAlerts.length === 0 && (
-        <div className="rounded-2xl border bg-emerald-50/50 p-6 text-center dark:bg-emerald-950/10">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20 }}
+          className="rounded-2xl border bg-emerald-50/50 p-6 text-center dark:bg-emerald-950/10">
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
+            className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
             <Check className="h-6 w-6 text-emerald-600" />
-          </div>
+          </motion.div>
           <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
             {isTr ? "🎉 Tüm hastalarınız güvende, harika bir iş çıkardınız!" : "🎉 All patients are safe, great work!"}
           </p>
-        </div>
+        </motion.div>
       )}
 
       {/* ── Add Patient ── */}

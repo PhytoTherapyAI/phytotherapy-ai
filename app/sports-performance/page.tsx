@@ -2,6 +2,7 @@
 "use client";
 
 import { useReducer } from "react";
+import { motion } from "framer-motion";
 import {
   Dumbbell, Loader2, Pill, Utensils, Heart, ShieldAlert,
   AlertTriangle, ChevronDown, ChevronUp, LogIn, Info, RotateCcw,
@@ -149,19 +150,21 @@ export default function SportsPerformancePage() {
   const r = state.result;
 
   return (
+    <div className="min-h-screen bg-stone-50 dark:bg-background">
     <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
       {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-primary/10 p-3">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+        className="mb-6 flex items-center gap-3">
+        <div className="rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 p-3">
           <Dumbbell className="h-6 w-6 text-primary" />
         </div>
         <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
             {tx("sports.title", lang)}
           </h1>
           <p className="text-sm text-muted-foreground">{tx("sports.subtitle", lang)}</p>
         </div>
-      </div>
+      </motion.div>
 
       {/* Guest notice */}
       {!isAuthenticated && (
@@ -422,6 +425,7 @@ export default function SportsPerformancePage() {
       <p className="mt-6 text-center text-xs text-muted-foreground">
         {tx("disclaimer.tool", lang)}
       </p>
+    </div>
     </div>
   );
 }

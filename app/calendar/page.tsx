@@ -51,7 +51,7 @@ function downloadICS(events: Array<{ title: string; event_date: string; event_ti
 }
 
 // ── Weekly Strip Component ──
-function WeeklyStrip({ selectedDate, onSelect }: { selectedDate: Date; onSelect: (d: Date) => void }) {
+function WeeklyStrip({ selectedDate, onSelect, lang }: { selectedDate: Date; onSelect: (d: Date) => void; lang: string }) {
   const today = new Date()
   const startOfWeek = new Date(today)
   startOfWeek.setDate(today.getDate() - today.getDay() + 1)
@@ -274,7 +274,7 @@ export default function CalendarPage() {
 
         {/* ═══ WEEKLY STRIP ═══ */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-          <WeeklyStrip selectedDate={selectedDate} onSelect={setSelectedDate} />
+          <WeeklyStrip selectedDate={selectedDate} onSelect={setSelectedDate} lang={lang} />
         </motion.div>
 
         {/* ═══ HABIT RINGS ═══ */}
