@@ -1,6 +1,6 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSONMultimodal } from "@/lib/gemini";
+import { askGeminiJSONMultimodal } from "@/lib/ai-client";
 import { RADIOLOGY_ANALYSIS_PROMPT } from "@/lib/prompts";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";

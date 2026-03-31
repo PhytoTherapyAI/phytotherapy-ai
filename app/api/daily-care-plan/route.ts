@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { askGeminiJSON } from "@/lib/gemini";
+import { askGeminiJSON } from "@/lib/ai-client";
 import { tx } from "@/lib/translations";
 
 const DAILY_CARE_PROMPT = `You are generating a personalized daily care plan for a Phytotherapy.ai user.

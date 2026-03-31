@@ -1,6 +1,6 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 import { NextRequest } from "next/server";
-import { askGeminiJSON } from "@/lib/gemini";
+import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";

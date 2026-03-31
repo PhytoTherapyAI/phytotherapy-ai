@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { aggregateHealthContext } from "@/lib/health-context";
 import { runCrossModuleRules } from "@/lib/cross-module-engine";
-import { askGeminiJSON } from "@/lib/gemini";
+import { askGeminiJSON } from "@/lib/ai-client";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 
 export const maxDuration = 30;

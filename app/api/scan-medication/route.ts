@@ -1,11 +1,8 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server"
-import { GoogleGenerativeAI } from "@google/generative-ai"
+import { askGeminiJSONMultimodal } from "@/lib/ai-client"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
-import { createClient } from "@supabase/supabase-js"
 import { tx } from "@/lib/translations"
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "")
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,37 +30,17 @@ export async function POST(req: NextRequest) {
     // Remove data URL prefix if present
     const base64Data = image.replace(/^data:image\/\w+;base64,/, "")
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" })
-
     const prompt = tx("api.scanMedication.promptTr", lang)
 
-    const result = await model.generateContent([
+    const systemPrompt = "You are a medication identification assistant. Analyze the image and extract medication information. Respond in JSON format."
+
+    const result = await askGeminiJSONMultimodal(
       prompt,
-      {
-        inlineData: {
-          mimeType: "image/jpeg",
-          data: base64Data,
-        },
-      },
-    ])
+      systemPrompt,
+      [{ mimeType: "image/jpeg", base64: base64Data }]
+    )
 
-    const text = result.response.text()
-
-    // Extract JSON from response
-    const jsonMatch = text.match(/\{[\s\S]*\}/)
-    if (!jsonMatch) {
-      return NextResponse.json({
-        error: "Could not parse medication info",
-        raw: text,
-      })
-    }
-
-    let parsed
-    try {
-      parsed = JSON.parse(jsonMatch[0])
-    } catch {
-      return NextResponse.json({ error: "Could not parse medication info", raw: text }, { status: 422 })
-    }
+    const parsed = JSON.parse(result)
     return NextResponse.json(parsed)
   } catch (error) {
     return NextResponse.json(

@@ -1,5 +1,5 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
-import { askGeminiJSON } from "@/lib/gemini";
+import { askGeminiJSON } from "@/lib/ai-client";
 
 const OPENFDA_BASE = "https://api.fda.gov/drug";
 

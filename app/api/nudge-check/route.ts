@@ -9,7 +9,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkNudgeTriggers } from "@/lib/nudge-engine";
 import { buildNudgePrompt, NUDGE_FALLBACKS } from "@/lib/nudge-prompts";
-import { askGemini } from "@/lib/gemini";
+import { askGemini } from "@/lib/ai-client";
 
 export const maxDuration = 30;
 

@@ -1,7 +1,7 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 import { NextRequest } from "next/server";
-import { askGeminiStream, askGeminiStreamMultimodal } from "@/lib/gemini";
-import type { GeminiFilePart } from "@/lib/gemini";
+import { askGeminiStream, askGeminiStreamMultimodal } from "@/lib/ai-client";
+import type { GeminiFilePart } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
 import { SYSTEM_PROMPT } from "@/lib/prompts";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
@@ -227,21 +227,21 @@ This rule exists because giving dosage advice without knowing the user's medicat
       });
     }
 
-    // Convert Gemini stream to web ReadableStream
+    // Pass through the ReadableStream from Claude, collecting text for history
+    const decoder = new TextDecoder();
     const encoder = new TextEncoder();
+    const reader = stream.getReader();
     const readable = new ReadableStream({
       async start(controller) {
         try {
           let fullResponse = "";
-          for await (const chunk of stream) {
-            try {
-              const text = chunk.text();
-              if (text) {
-                fullResponse += text;
-                controller.enqueue(encoder.encode(text));
-              }
-            } catch {
-              // chunk.text() can throw if no text content — skip
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const text = decoder.decode(value, { stream: true });
+            if (text) {
+              fullResponse += text;
+              controller.enqueue(value);
             }
           }
           controller.close();

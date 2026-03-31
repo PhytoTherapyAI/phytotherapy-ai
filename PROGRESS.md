@@ -1,6 +1,44 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 31 Mart 2026 (v33.0 — 15 Modül UX + Bug Fix + Mobile Responsive)
+> Son güncelleme: 1 Nisan 2026 (v34.0 — Gemini → Claude API Tam Migration)
+
+---
+
+## Oturum 1 Nisan 2026 (Session 8) — Gemini → Claude API Migration
+
+### Özet
+Tüm AI çağrıları Google Gemini API'den Anthropic Claude API'ye taşındı.
+
+### Yapılan Değişiklikler
+
+| # | Adım | Açıklama |
+|---|------|----------|
+| 1 | SDK Kurulumu | `@anthropic-ai/sdk` npm paketi kuruldu |
+| 2 | `lib/ai-client.ts` | Yeni Claude implementasyonu — 5 fonksiyon aynı isimlerle (askGemini, askGeminiJSON, askGeminiStream, askGeminiJSONMultimodal, askGeminiStreamMultimodal) |
+| 3 | 75+ Route Migration | Tüm `from "@/lib/gemini"` → `from "@/lib/ai-client"` toplu değiştirildi |
+| 4 | scan-medication | `@google/generative-ai` doğrudan import kaldırıldı → `askGeminiJSONMultimodal` kullanımına geçirildi |
+| 5 | safety-guardrail.ts | `aiModel: "gemini-2.0-flash"` → `aiModel: "claude-sonnet-4-5-20250514"` |
+| 6 | CLAUDE.md | AI Motor, Teknik Stack, Yol Haritası bölümleri güncellendi |
+| 7 | health-check | Gemini test → Claude test, env check'e ANTHROPIC_API_KEY eklendi |
+| 8 | chat/route.ts | Gemini stream format → ReadableStream reader format |
+
+### Teknik Detaylar
+- **Model:** `claude-sonnet-4-5-20250514`
+- **Temperature:** 0 (tıbbi güvenlik)
+- **Max tokens:** text=4096, JSON=8192
+- **JSON güvenliği:** 5 katmanlı `safeParseJSON()` fonksiyonu (markdown cleanup, leading/trailing text strip, control char removal, trailing comma fix)
+- **PDF desteği:** Claude native PDF (type: "document", application/pdf)
+- **Retry:** 429 + 529 hataları için exponential backoff (5s → 10s → 15s, max 3 retry)
+- **Streaming:** `client.messages.stream()` + `content_block_delta` event formatı
+
+### Dokunulmayan Dosyalar (Kasıtlı)
+- `lib/gemini.ts` — yedek olarak korundu
+- `lib/embeddings.ts` — Gemini text-embedding-004 kullanmaya devam
+- `@google/generative-ai` paketi — embedding için gerekli
+- `.env.local` GEMINI_API_KEY — embedding için gerekli
+
+### Build Durumu
+- ✅ `npx next build` — Zero errors, compiled successfully
 
 ---
 

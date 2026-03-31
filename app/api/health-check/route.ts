@@ -37,21 +37,21 @@ export async function GET() {
     });
   }
 
-  // 2. Gemini API
+  // 2. Claude AI API
   try {
     const start = Date.now();
-    const { askGemini } = await import("@/lib/gemini");
+    const { askGemini } = await import("@/lib/ai-client");
     const res = await askGemini("Say 'ok'", "Respond with just 'ok'");
     const elapsed = Date.now() - start;
     results.push({
-      service: "Gemini AI",
+      service: "Claude AI",
       status: res ? "ok" : "error",
       message: res ? "Responding" : "No response",
       responseTime: elapsed,
     });
   } catch (e) {
     results.push({
-      service: "Gemini AI",
+      service: "Claude AI",
       status: "error",
       message: String(e),
     });
@@ -131,6 +131,7 @@ export async function GET() {
 
   // 5. Environment variables check
   const envChecks = [
+    { name: "ANTHROPIC_API_KEY", exists: !!process.env.ANTHROPIC_API_KEY },
     { name: "GEMINI_API_KEY", exists: !!process.env.GEMINI_API_KEY },
     {
       name: "NEXT_PUBLIC_SUPABASE_URL",
