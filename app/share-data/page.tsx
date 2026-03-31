@@ -138,7 +138,7 @@ export default function ShareDataPage() {
       </Link>
 
       {/* ── Hero: Data Vault ── */}
-      <div className="text-center mb-6">
+      <motion.div className="text-center mb-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <div className="relative mx-auto mb-4">
           <div className="absolute inset-0 rounded-full bg-primary/5 blur-3xl scale-150 mx-auto w-20 h-20" />
           <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-emerald-500/10 border border-primary/20">
@@ -155,15 +155,16 @@ export default function ShareDataPage() {
           <Shield className="h-3 w-3" />
           {isTr ? "Uçtan Uca Şifreli · FHIR R4 Standardında" : "End-to-End Encrypted · FHIR R4 Standard"}
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Toggle Cards (Granular Control) ── */}
       <div className="space-y-3 mb-5">
-        {SHARE_OPTIONS.map(({ purpose, emoji, valueEn, valueTr }) => {
+        {SHARE_OPTIONS.map(({ purpose, emoji, valueEn, valueTr }, idx) => {
           const disc = CONSENT_DISCLOSURES[purpose]
           const isOn = toggles[purpose] || false
           return (
-            <div key={purpose} className={`rounded-2xl border p-4 shadow-soft transition-all ${isOn ? "border-primary/30 bg-primary/5" : "bg-card"}`}>
+            <motion.div key={purpose} className={`rounded-2xl border p-4 shadow-soft transition-all ${isOn ? "border-primary/30 bg-primary/5" : "bg-card"}`}
+              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 + idx * 0.08 }}>
               <div className="flex items-start gap-3">
                 <span className="text-xl mt-0.5">{emoji}</span>
                 <div className="flex-1 min-w-0">
@@ -171,23 +172,26 @@ export default function ShareDataPage() {
                   <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">{isTr ? valueTr : valueEn}</p>
                 </div>
                 {/* iOS-style toggle */}
-                <button onClick={() => togglePurpose(purpose)}
+                <motion.button onClick={() => togglePurpose(purpose)} whileTap={{ scale: 0.9 }}
                   className={`relative shrink-0 mt-1 h-7 w-12 rounded-full transition-all duration-300 ${
                     isOn ? "bg-primary" : "bg-gray-300 dark:bg-gray-600"
                   }`}>
-                  <div className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow-md transition-all duration-300 ${
+                  <motion.div layout className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow-md ${
                     isOn ? "left-[22px]" : "left-0.5"
-                  }`} />
-                </button>
+                  }`} transition={{ type: "spring", stiffness: 500, damping: 30 }} />
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
           )
         })}
       </div>
 
       {/* ── Recipient + Expiry (shown when any toggle is on) ── */}
+      <AnimatePresence>
       {anyEnabled && (
-        <div className="space-y-4 mb-5" style={{ animation: "slideUp 0.3s ease-out" }}>
+        <motion.div className="space-y-4 mb-5"
+          initial={{ opacity: 0, y: 20, height: 0 }} animate={{ opacity: 1, y: 0, height: "auto" }} exit={{ opacity: 0, y: 10, height: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}>
           {/* Recipient */}
           <div className="rounded-2xl border bg-card p-4 shadow-soft">
             <h3 className="text-xs font-bold mb-3">{isTr ? "Alıcı" : "Recipient"}</h3>
@@ -253,24 +257,26 @@ export default function ShareDataPage() {
           </button>
 
           {/* CTA — slides up when ready */}
-          <button onClick={handleSubmit}
+          <motion.button onClick={handleSubmit}
             disabled={!acknowledged || !recipientName || submitting}
-            className="w-full flex items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 active:scale-[0.98] disabled:opacity-40">
+            initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }}
+            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+            className="w-full flex items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 disabled:opacity-40">
             {submitting ? (
               <><Loader2 className="h-4 w-4 animate-spin" />{isTr ? "Oluşturuluyor..." : "Creating..."}</>
             ) : (
               <><Lock className="h-4 w-4" />{isTr ? "Güvenli Link Oluştur" : "Create Secure Link"}</>
             )}
-          </button>
+          </motion.button>
 
           <div className="flex items-center justify-center gap-2 text-[9px] text-muted-foreground">
             <Lock className="h-2.5 w-2.5" />
             KVKK m.6/1 · TLS 1.3 · AES-256 · FHIR R4
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
-      <style jsx>{`@keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }`}</style>
       <p className="text-center text-[10px] text-muted-foreground/40 mt-6">{tx("disclaimer.tool", lang)}</p>
     </div>
     </InnovationShell>

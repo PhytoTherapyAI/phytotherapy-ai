@@ -3,7 +3,7 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/lib/auth-context"
 import { InnovationShell } from "@/components/innovation/InnovationShell"
 import { useLang } from "@/components/layout/language-toggle"
@@ -106,13 +106,13 @@ export default function HealthRoadmapPage() {
     <InnovationShell>
     <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
       {/* Header */}
-      <div className="text-center mb-6">
+      <motion.div className="text-center mb-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <h1 className="font-heading text-2xl font-bold sm:text-3xl">{isTr ? "Sağlık Serüveniniz" : "Your Health Quest"}</h1>
         <p className="text-sm text-muted-foreground mt-1">{isTr ? "Kalkanınızı güçlendirin, aşamaları tamamlayın" : "Strengthen your shield, complete the stages"}</p>
-      </div>
+      </motion.div>
 
       {/* ── Shield Gauge ── */}
-      <div className="rounded-2xl border bg-card p-6 shadow-soft text-center mb-6">
+      <motion.div className="rounded-2xl border bg-card p-6 shadow-soft text-center mb-6" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.15, type: "spring" }}>
         <ShieldGauge score={shieldScore} />
         <h3 className="text-sm font-bold mt-3">{isTr ? "Koruyucu Sağlık Kalkanı" : "Protective Health Shield"}</h3>
         <p className="text-xs text-muted-foreground mt-0.5">
@@ -120,7 +120,7 @@ export default function HealthRoadmapPage() {
             ? (isTr ? "Kalkanınız güçlü! Böyle devam edin." : "Your shield is strong! Keep it up.")
             : (isTr ? "Kalkanınızı güçlendirmek için aşamaları tamamlayın." : "Complete stages to strengthen your shield.")}
         </p>
-      </div>
+      </motion.div>
 
       {/* ── Duolingo-style Vertical Journey ── */}
       <div className="mb-6">
@@ -138,17 +138,21 @@ export default function HealthRoadmapPage() {
             const isLocked = step.status === "locked"
 
             return (
-              <div key={step.id} className="relative pl-14 pb-6 last:pb-0">
+              <motion.div key={step.id} className="relative pl-14 pb-6 last:pb-0"
+                initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}>
                 {/* Node */}
-                <div className={`absolute left-1.5 flex h-8 w-8 items-center justify-center rounded-full border-2 z-10 transition-all ${
+                <motion.div
+                  animate={isActive ? { scale: [1, 1.15, 1], boxShadow: ["0 0 0 0 rgba(60,122,82,0.3)", "0 0 0 8px rgba(60,122,82,0)", "0 0 0 0 rgba(60,122,82,0.3)"] } : {}}
+                  transition={isActive ? { duration: 2, repeat: Infinity, ease: "easeInOut" } : {}}
+                  className={`absolute left-1.5 flex h-8 w-8 items-center justify-center rounded-full border-2 z-10 transition-all ${
                   isCompleted
                     ? "border-emerald-500 bg-emerald-500 text-white"
                     : isActive
-                    ? "border-primary bg-primary/10 text-primary animate-[pulse_2s_ease-in-out_infinite]"
+                    ? "border-primary bg-primary/10 text-primary"
                     : "border-gray-300 bg-muted text-muted-foreground dark:border-gray-600"
                 }`}>
                   {isCompleted ? <Check className="h-4 w-4" /> : isLocked ? <Lock className="h-3.5 w-3.5" /> : <Icon className="h-4 w-4" />}
-                </div>
+                </motion.div>
 
                 {/* Card */}
                 <div className={`rounded-2xl border p-4 transition-all ${
@@ -176,7 +180,7 @@ export default function HealthRoadmapPage() {
                     )}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             )
           })}
         </div>
@@ -191,7 +195,9 @@ export default function HealthRoadmapPage() {
         {CARE_PACKAGES.slice(0, 1).map(pkg => {
           const PkgIcon = PKG_ICONS[pkg.icon] || Activity
           return (
-            <div key={pkg.id} className="rounded-2xl border bg-card p-4 shadow-soft">
+            <motion.div key={pkg.id} className="rounded-2xl border bg-card p-4 shadow-soft"
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}
+              whileHover={{ y: -2 }}>
               <div className="flex items-center gap-3 mb-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ backgroundColor: `${pkg.color}15` }}>
                   <PkgIcon className="h-5 w-5" style={{ color: pkg.color }} />
@@ -202,16 +208,17 @@ export default function HealthRoadmapPage() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mb-3">{pkg.description[lang as "en" | "tr"]}</p>
-              <button className="w-full rounded-xl bg-primary py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-all active:scale-[0.98]">
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }} className="w-full rounded-xl bg-primary py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-all">
                 {isTr ? "Paketi Başlat" : "Start Package"}
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           )
         })}
 
         {/* Locked mystery packages */}
         {[1, 2].map(i => (
-          <div key={i} className="relative rounded-2xl border bg-card p-4 overflow-hidden">
+          <motion.div key={i} className="relative rounded-2xl border bg-card p-4 overflow-hidden"
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.7 + i * 0.1 }}>
             {/* Blur overlay */}
             <div className="absolute inset-0 backdrop-blur-[6px] bg-background/60 z-10 flex flex-col items-center justify-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
@@ -235,7 +242,7 @@ export default function HealthRoadmapPage() {
               <div className="h-2 w-full rounded bg-muted" />
               <div className="h-2 w-4/5 rounded bg-muted" />
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 

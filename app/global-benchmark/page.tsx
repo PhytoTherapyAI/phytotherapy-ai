@@ -96,38 +96,43 @@ export default function GlobalBenchmarkPage() {
     <InnovationShell>
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
       {/* Header */}
-      <div className="text-center mb-6">
+      <motion.div className="text-center mb-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 mb-3">
           <Globe className="w-7 h-7 text-primary" />
         </div>
         <h1 className="text-2xl font-bold">{isTr ? "Küresel Sağlık Karnesi" : "Global Health Benchmark"}</h1>
         <p className="text-sm text-muted-foreground mt-1">{isTr ? "G20+ ülkeleriyle performans karşılaştırması" : "Compare performance with G20+ nations"}</p>
-      </div>
+      </motion.div>
 
       {/* Country chips */}
-      <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6 pb-1">
-        {COUNTRIES.filter(c => c.code !== "TR").map(c => (
-          <button key={c.code} onClick={() => setSelectedCountry(c.code)}
-            className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all active:scale-95 ${
+      <motion.div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6 pb-1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
+        {COUNTRIES.filter(c => c.code !== "TR").map((c, i) => (
+          <motion.button key={c.code} onClick={() => setSelectedCountry(c.code)}
+            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
+            className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
               selectedCountry === c.code ? "border-primary bg-primary/10 text-primary" : "hover:border-primary/30"
             }`}>
             <span>{c.flag}</span>{c.name[lang as "en" | "tr"]}
-          </button>
+          </motion.button>
         ))}
-      </div>
+      </motion.div>
 
       {/* AI Insight text */}
+      <AnimatePresence mode="wait">
       {aiInsight && (
-        <div className="glass-card rounded-2xl p-4 mb-5 glow-lavender">
+        <motion.div key={selectedCountry} className="glass-card rounded-2xl p-4 mb-5 glow-lavender"
+          initial={{ opacity: 0, y: 12, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4 }}>
           <div className="flex items-start gap-2.5">
             <Sparkles className="h-4 w-4 text-lavender shrink-0 mt-0.5" />
             <p className="text-sm leading-relaxed">{aiInsight}</p>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Radar + Scores */}
-      <div className="rounded-2xl border bg-card p-5 shadow-soft mb-5">
+      <motion.div className="rounded-2xl border bg-card p-5 shadow-soft mb-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <RadarChart userScores={sliderScores as Record<HVHSComponentId, number>} compareScores={compareCountry.scores} lang={lang} />
         <div className="flex justify-center gap-6 mt-3">
           <div className="flex items-center gap-1.5 text-[10px]"><div className="h-2.5 w-2.5 rounded-full bg-primary" />{isTr ? "Siz" : "You"}</div>
@@ -135,19 +140,19 @@ export default function GlobalBenchmarkPage() {
         </div>
         {/* Score comparison */}
         <div className="flex justify-center gap-6 mt-4 pt-3 border-t">
-          <div className="text-center">
+          <motion.div className="text-center" key={`turkey-${dynamicScore}`} initial={{ scale: 1.15, opacity: 0.7 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 300 }}>
             <p className={`text-2xl font-bold transition-all duration-500 ${Number(dynamicScore) > Number(originalScore) ? "text-emerald-500" : "text-foreground"}`}>{dynamicScore}</p>
             <p className="text-[10px] text-muted-foreground">🇹🇷 {isTr ? "Türkiye" : "Turkey"}</p>
-          </div>
-          <div className="text-center">
+          </motion.div>
+          <motion.div className="text-center" key={`compare-${selectedCountry}`} initial={{ scale: 1.15, opacity: 0.7 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 300 }}>
             <p className="text-2xl font-bold text-indigo-600">{compareCountry.overallScore}</p>
             <p className="text-[10px] text-muted-foreground">{compareCountry.flag} {compareCountry.name[lang as "en" | "tr"]}</p>
-          </div>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Interactive Simulation Sliders ── */}
-      <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 mb-5 dark:bg-primary/10">
+      <motion.div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 mb-5 dark:bg-primary/10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
         <h3 className="text-sm font-bold flex items-center gap-2 mb-4">
           <Sparkles className="h-4 w-4 text-primary" />
           {isTr ? "Strateji Simülatörü" : "Strategy Simulator"}
@@ -171,7 +176,7 @@ export default function GlobalBenchmarkPage() {
           className="mt-3 text-[10px] text-muted-foreground hover:text-foreground transition-colors">
           ↻ {isTr ? "Sıfırla" : "Reset"}
         </button>
-      </div>
+      </motion.div>
 
       {/* ── Growth Opportunities (positive framing) ── */}
       <div className="mb-5">
@@ -180,12 +185,14 @@ export default function GlobalBenchmarkPage() {
           {isTr ? "Potansiyel Büyüme Alanları" : "Potential Growth Areas"}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {crossLearning.slice(0, 6).map(item => {
+          {crossLearning.slice(0, 6).map((item, idx) => {
             const comp = HVHS_COMPONENTS.find(c => c.id === item.component)!
             const potential = Math.round((item.gap / 3) * 100)
             const fillPct = Math.round(((3 - item.gap) / 3) * 100)
             return (
-              <div key={item.component} className="rounded-2xl border bg-card p-3 shadow-soft">
+              <motion.div key={item.component} className="rounded-2xl border bg-card p-3 shadow-soft"
+                initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.4 + idx * 0.07 }}
+                whileHover={{ y: -2, boxShadow: "0 8px 25px rgba(0,0,0,0.08)" }}>
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-medium">{comp.label[lang as "en" | "tr"]}</span>
                   <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[9px]">
@@ -202,7 +209,7 @@ export default function GlobalBenchmarkPage() {
                     {item.bestCountry.name[lang as "en" | "tr"]} ({item.bestCountry.scores[item.component as HVHSComponentId]}/3)
                   </span>
                 </div>
-              </div>
+              </motion.div>
             )
           })}
         </div>
@@ -214,11 +221,13 @@ export default function GlobalBenchmarkPage() {
         {isTr ? "Dünyadan Strateji Kartları" : "World Strategy Cards"}
       </h3>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 mb-6">
-        {countriesWithStudies.map(country => {
+        {countriesWithStudies.map((country, idx) => {
           const study = country.caseStudy!
           const isSaved = savedStrategies.has(country.code)
           return (
-            <div key={country.code}
+            <motion.div key={country.code}
+              initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: idx * 0.08 }}
+              whileHover={{ y: -4, boxShadow: "0 12px 30px rgba(0,0,0,0.1)" }}
               className="shrink-0 w-64 rounded-2xl border bg-card p-4 shadow-soft hover:shadow-soft-lg transition-all">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-2xl">{country.flag}</span>
@@ -234,7 +243,8 @@ export default function GlobalBenchmarkPage() {
                 <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[9px]">
                   <TrendingUp className="w-2.5 h-2.5 mr-0.5" />{study.impact[lang as "en" | "tr"]}
                 </Badge>
-                <button onClick={() => toggleStrategy(country.code)}
+                <motion.button onClick={() => toggleStrategy(country.code)}
+                  whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}
                   className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium transition-all ${
                     isSaved
                       ? "bg-primary text-primary-foreground"
@@ -242,9 +252,9 @@ export default function GlobalBenchmarkPage() {
                   }`}>
                   {isSaved ? "✓" : <Plus className="h-3 w-3" />}
                   {isSaved ? (isTr ? "Eklendi" : "Saved") : (isTr ? "Vizyonuma Ekle" : "Add to Vision")}
-                </button>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
           )
         })}
       </div>

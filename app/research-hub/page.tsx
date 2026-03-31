@@ -3,7 +3,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useLang } from "@/components/layout/language-toggle"
 import { InnovationShell } from "@/components/innovation/InnovationShell"
 import { tx } from "@/lib/translations"
@@ -139,7 +139,7 @@ export default function ResearchHubPage() {
     <InnovationShell>
     <div className="mx-auto max-w-5xl px-4 py-8 md:px-8 space-y-10">
       {/* Hero */}
-      <div className="text-center">
+      <motion.div className="text-center" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-lavender/10">
           <FlaskConical className="h-7 w-7 text-primary" />
         </div>
@@ -156,10 +156,10 @@ export default function ResearchHubPage() {
           <span className="rounded-full bg-amber-100 dark:bg-amber-900/30 px-3 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">KVKK/GDPR</span>
           <span className="rounded-full bg-lavender/10 px-3 py-1 text-[10px] font-bold text-lavender">Open API</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Data Vault (Trust Visualization) ── */}
-      <div className="rounded-2xl border bg-card p-6 shadow-soft text-center">
+      <motion.div className="rounded-2xl border bg-card p-6 shadow-soft text-center" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
         <div className="relative mx-auto mb-5 flex h-28 w-28 items-center justify-center">
           {/* Glow */}
           <div className="absolute inset-0 rounded-full bg-primary/5 blur-2xl scale-150" />
@@ -172,15 +172,14 @@ export default function ResearchHubPage() {
         <h3 className="text-sm font-bold mb-3">{isTr ? "Veri Yönetişim Kasası" : "Data Governance Vault"}</h3>
         <div className="flex flex-wrap justify-center gap-2">
           {GOVERNANCE.map(({ icon: Icon, en, tr }, i) => (
-            <div key={i} className="flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-[10px] font-medium shadow-soft"
-              style={{ animation: `fadeUp 0.3s ease-out ${i * 60}ms both` }}>
+            <motion.div key={i} className="flex items-center gap-1.5 rounded-full border bg-background px-3 py-1.5 text-[10px] font-medium shadow-soft"
+              initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: 0.3 + i * 0.06 }}>
               <Icon className="h-3 w-3 text-primary" />
               {isTr ? tr : en}
-            </div>
+            </motion.div>
           ))}
         </div>
-        <style jsx>{`@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-      </div>
+      </motion.div>
 
       {/* ── Interactive API Terminal ── */}
       <div>
@@ -190,17 +189,18 @@ export default function ResearchHubPage() {
         </h3>
         <div className="flex gap-2 mb-3">
           {Object.entries(API_DEMOS).map(([key, demo]) => (
-            <button key={key} onClick={() => setActiveDemo(key)}
-              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all active:scale-95 ${
+            <motion.button key={key} onClick={() => setActiveDemo(key)}
+              whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.93 }}
+              className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
                 activeDemo === key ? "border-primary bg-primary/10 text-primary" : "hover:border-primary/30"
               }`}>
               <Play className="h-3 w-3" />
               {demo.label[lang as "en" | "tr"]}
-            </button>
+            </motion.button>
           ))}
         </div>
         {/* Terminal window */}
-        <div className="rounded-2xl bg-gray-950 text-gray-100 overflow-hidden shadow-soft-lg">
+        <motion.div className="rounded-2xl bg-gray-950 text-gray-100 overflow-hidden shadow-soft-lg" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}>
           {/* Title bar */}
           <div className="flex items-center gap-1.5 px-4 py-2.5 bg-gray-900/80">
             <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
@@ -210,12 +210,13 @@ export default function ResearchHubPage() {
           </div>
           {/* Content */}
           <div className="p-4 font-mono text-xs min-h-[200px] max-h-[400px] overflow-y-auto">
+            <AnimatePresence mode="wait">
             {!activeDemo ? (
-              <span className="text-gray-500">
+              <motion.span key="placeholder" className="text-gray-500" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 {isTr ? "// Bir endpoint seçerek API'yi keşfedin..." : "// Select an endpoint to explore the API..."}
-              </span>
+              </motion.span>
             ) : (
-              <>
+              <motion.div key={activeDemo} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-emerald-400">$</span>
                   <span className="text-gray-300">{API_DEMOS[activeDemo].endpoint}</span>
@@ -227,10 +228,11 @@ export default function ResearchHubPage() {
                   {typedText}
                   {isTyping && <span className="animate-pulse">▌</span>}
                 </pre>
-              </>
+              </motion.div>
             )}
+            </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* ── Validation Pipeline ── */}
@@ -241,15 +243,16 @@ export default function ResearchHubPage() {
         </h3>
         <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide pb-2">
           {PIPELINE.map(({ icon: Icon, label, color }, i) => (
-            <div key={i} className="flex shrink-0 items-center">
+            <motion.div key={i} className="flex shrink-0 items-center"
+              initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.4 + i * 0.08 }}>
               <div className="flex flex-col items-center gap-1">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl border shadow-soft" style={{ backgroundColor: `${color}10`, borderColor: `${color}30` }}>
+                <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="flex h-10 w-10 items-center justify-center rounded-xl border shadow-soft" style={{ backgroundColor: `${color}10`, borderColor: `${color}30` }}>
                   <Icon className="h-4 w-4" style={{ color }} />
-                </div>
+                </motion.div>
                 <span className="text-[9px] font-medium text-center w-16">{label[lang as "en" | "tr"]}</span>
               </div>
               {i < PIPELINE.length - 1 && <div className="w-6 h-0.5 bg-border mx-1 shrink-0" />}
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -262,19 +265,20 @@ export default function ResearchHubPage() {
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {INSTITUTIONS.map((inst, i) => (
-            <div key={i} className="rounded-2xl border bg-card p-3 shadow-soft text-center transition-all hover:shadow-soft-md hover:-translate-y-0.5"
-              style={{ animation: `fadeUp 0.3s ease-out ${i * 50}ms both` }}>
+            <motion.div key={i} className="rounded-2xl border bg-card p-3 shadow-soft text-center"
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.5 + i * 0.05 }}
+              whileHover={{ y: -3, boxShadow: "0 8px 25px rgba(0,0,0,0.08)" }}>
               <span className={`inline-block rounded-full px-2 py-0.5 text-[9px] font-bold mb-1.5 ${inst.color}`}>
                 {REGION_LABELS[inst.region][lang as "en" | "tr"]}
               </span>
               <p className="text-xs font-bold">{inst.name}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
 
       {/* ── Golden Ticket CTA ── */}
-      <div className="rounded-2xl border bg-gradient-to-r from-primary/5 via-lavender/5 to-primary/5 p-6 text-center dark:from-primary/10 dark:via-lavender/10 dark:to-primary/10">
+      <motion.div className="rounded-2xl border bg-gradient-to-r from-primary/5 via-lavender/5 to-primary/5 p-6 text-center dark:from-primary/10 dark:via-lavender/10 dark:to-primary/10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
         <h3 className="text-lg font-bold mb-2">{isTr ? "Ekosistemin Parçası Olun" : "Join the Ecosystem"}</h3>
         <p className="text-xs text-muted-foreground max-w-md mx-auto mb-4">
           {isTr
@@ -282,18 +286,18 @@ export default function ResearchHubPage() {
             : "Request API access as a university, research institution, or health company. Let's shape the future of evidence-based phytotherapy together."}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a href="mailto:research@phytotherapy.ai"
-            className="flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 transition-all">
+          <motion.a href="mailto:research@phytotherapy.ai" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+            className="flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
             <Rocket className="h-4 w-4" />
             {isTr ? "Araştırma Partneri Ol" : "Become a Research Partner"}
-          </a>
-          <a href="mailto:api@phytotherapy.ai"
+          </motion.a>
+          <motion.a href="mailto:api@phytotherapy.ai" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
             className="flex items-center gap-2 rounded-2xl border px-6 py-3 text-sm font-medium hover:bg-muted transition-all">
             <Key className="h-4 w-4" />
             {isTr ? "API Anahtarı Talep Et" : "Request API Key"}
-          </a>
+          </motion.a>
         </div>
-      </div>
+      </motion.div>
 
       <p className="text-center text-[10px] text-muted-foreground/40">{tx("disclaimer.tool", lang)}</p>
     </div>

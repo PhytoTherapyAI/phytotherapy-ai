@@ -123,8 +123,8 @@ export default function CreatorStudioPage() {
             { emoji: "🔖", label: isTr ? "Kaydedilme" : "Bookmarks", value: "840", trend: "+18%", color: "text-amber-500" },
             { emoji: "🔥", label: isTr ? "Zirvedeki İçerik" : "Top Content", value: "Berberine vs Metformin", trend: "#1", color: "text-red-500" },
           ].map((kpi, i) => (
-            <div key={i} className="rounded-2xl border bg-card p-4 shadow-soft"
-              style={{ animation: `fadeUp 0.4s ease-out ${i * 80}ms both` }}>
+            <motion.div key={i} className="rounded-2xl border bg-card p-4 shadow-soft"
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: i * 0.08 }}>
               <span className="text-lg">{kpi.emoji}</span>
               <p className="text-[10px] text-muted-foreground mt-1">{kpi.label}</p>
               <p className="text-xl font-bold mt-0.5">{kpi.value}</p>
@@ -133,7 +133,7 @@ export default function CreatorStudioPage() {
                 <span className={`text-[10px] font-bold ${kpi.color}`}>{kpi.trend}</span>
                 <span className="text-[9px] text-muted-foreground">{isTr ? "bu hafta" : "this week"}</span>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
@@ -173,7 +173,6 @@ export default function CreatorStudioPage() {
             </div>
           ))}
         </div>
-        <style jsx>{`@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }`}</style>
       </div>
     )
   }
@@ -201,13 +200,16 @@ export default function CreatorStudioPage() {
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {PRICING_PLANS.map(plan => {
+          {PRICING_PLANS.map((plan, idx) => {
             const price = billingCycle === "monthly" ? plan.price.monthly : plan.price.yearly
             const yearlyMonthly = Math.round(plan.price.yearly / 12)
             const isCurrentPlan = plan.id === tier
             const isPopular = plan.highlighted
             return (
-              <Card key={plan.id} className={`p-5 relative transition-all ${
+              <motion.div key={plan.id}
+                initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: idx * 0.08 }}
+                whileHover={isPopular ? { scale: 1.08, y: -4 } : { scale: 1.03, y: -2 }}>
+              <Card className={`p-5 relative transition-all ${
                 isPopular ? "border-primary shadow-xl ring-2 ring-primary/20 scale-105 z-10" : "hover:shadow-soft-lg"
               }`}>
                 {isPopular && (
@@ -226,18 +228,22 @@ export default function CreatorStudioPage() {
                 </div>
                 <ul className="space-y-1.5 mb-5">
                   {plan.features.map((f, i) => (
-                    <li key={i} className="flex items-start gap-1.5 text-xs">
+                    <motion.li key={i} className="flex items-start gap-1.5 text-xs"
+                      initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3, delay: idx * 0.08 + i * 0.04 }}>
                       <Check className="w-3.5 h-3.5 text-emerald-500 mt-0.5 shrink-0" />
                       <span className="text-muted-foreground">{f[lang as "en" | "tr"]}</span>
-                    </li>
+                    </motion.li>
                   ))}
                 </ul>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
                 <Button className={`w-full rounded-xl ${isPopular ? "" : ""}`}
                   variant={isPopular ? "default" : "outline"} disabled={isCurrentPlan}
                   onClick={() => { setTier(plan.id); setCredits(plan.credits); setView("dashboard") }}>
                   {isCurrentPlan ? t("current") : t("select_plan")}
                 </Button>
+                </motion.div>
               </Card>
+              </motion.div>
             )
           })}
         </div>
@@ -313,7 +319,7 @@ export default function CreatorStudioPage() {
     <InnovationShell>
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <motion.div className="flex items-center justify-between mb-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <PenTool className="w-6 h-6 text-primary" />{t("title")}
@@ -326,7 +332,7 @@ export default function CreatorStudioPage() {
           <Rocket className="h-3.5 w-3.5" />
           {isTr ? "Etkini Büyüt" : "Amplify Your Impact"}
         </button>
-      </div>
+      </motion.div>
 
       {/* Tab bar */}
       <div className="flex gap-2 mb-6 border-b pb-3">
@@ -348,7 +354,9 @@ export default function CreatorStudioPage() {
       {MOCK_CONTENT.length > 0 ? (
         <div className="space-y-3">
           {MOCK_CONTENT.map((content, i) => (
-            <div key={content.id} className="rounded-2xl border bg-card p-4 shadow-soft transition-all hover:shadow-soft-md">
+            <motion.div key={content.id} className="rounded-2xl border bg-card p-4 shadow-soft transition-all hover:shadow-soft-md"
+              initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.1 + i * 0.06 }}
+              whileHover={{ x: 4 }}>
               <div className="flex items-start gap-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${content.type === "video" ? "bg-red-500/10" : "bg-primary/10"}`}>
                   {content.type === "video" ? <Video className="w-5 h-5 text-red-500" /> : <FileText className="w-5 h-5 text-primary" />}
@@ -371,7 +379,7 @@ export default function CreatorStudioPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       ) : (
@@ -382,10 +390,12 @@ export default function CreatorStudioPage() {
       )}
 
       {/* Magic Pen FAB */}
-      <button onClick={() => setView("editor")}
-        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 text-white shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95">
+      <motion.button onClick={() => setView("editor")}
+        initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.5, type: "spring", stiffness: 260, damping: 20 }}
+        whileHover={{ scale: 1.12, rotate: 15 }} whileTap={{ scale: 0.9 }}
+        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 text-white shadow-lg shadow-primary/30">
         <PenTool className="h-5 w-5" />
-      </button>
+      </motion.button>
 
       <style jsx>{`
         @keyframes softPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(60,122,82,0.3); } 50% { box-shadow: 0 0 0 6px rgba(60,122,82,0); } }
