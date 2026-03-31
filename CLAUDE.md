@@ -1099,10 +1099,31 @@ SENTRY_DSN=...                       # Error monitoring
 **Takvim Fix:**
 - ✅ WeeklyStrip lang prop düzeltmesi
 
+### Session 7c — Bug Fix & Mobile Responsive (31 Mart 2026)
+
+**Mobil Responsive Düzeltmeleri:**
+- ✅ Landing page: text-3xl → text-2xl responsive, gap-x-8/10 → gap-x-3/4 responsive
+- ✅ Interaction checker: stepper 3 adım `flex items-center` → `flex-col items-center text-center` (kayık yazı düzeltildi)
+- ✅ Interaction checker: başlık text-3xl → text-xl responsive
+- ✅ Dashboard, Calendar, Interaction Checker 375px'te doğrulandı
+
+**Hydration & Session Düzeltmeleri:**
+- ✅ getTimeEmoji() render-time → useEffect + useState (hydration mismatch çözüldü)
+- ✅ Layout'a Suspense boundary eklendi (children etrafında spinner fallback)
+- ✅ Auth visibility change handler: user state de session ile birlikte güncelleniyor
+
+**Onboarding Stuck Düzeltmesi:**
+- ✅ Tüm alert() çağrıları → saveError state + inline banner + retry butonu
+- ✅ Hata durumunda kullanıcı tekrar deneyebiliyor (stuck olmaz)
+
+**Error Boundary İyileştirmesi:**
+- ✅ error.tsx: 3 kurtarma seçeneği (Tekrar Dene / Sayfayı Yenile / Ana Sayfa)
+- ✅ Hata mesajı excerpt'i gösteriliyor
+
 *Son güncelleme: 31 Mart 2026 v33.0*
 *Sprint 1-13 + Phase 1-20 + 28-31 Mart oturumları tamamlandı.*
 *324+ sayfa, 42/42 HTTP 200, 15/15 API PASS, 50+ yeni bileşen.*
-*15 modül davranışsal UX yeniden tasarımı TAMAMEN tamamlandı.*
+*15 modül davranışsal UX yeniden tasarımı + bug fix TAMAMEN tamamlandı.*
 *Hackathon: 11-12 Nisan 2026 — 11 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
 *Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*

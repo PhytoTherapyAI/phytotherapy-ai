@@ -147,7 +147,7 @@ export default function InteractionCheckerPage() {
             <Shield className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
+            <h1 className="font-heading text-xl font-bold italic tracking-tight sm:text-3xl md:text-4xl">
               {tx('ic.title', lang)}
             </h1>
             <p className="text-sm text-muted-foreground md:text-base">
@@ -171,20 +171,20 @@ export default function InteractionCheckerPage() {
         </div>
 
         {/* How it works — compact */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
           {[
             { num: 1, icon: Pill, key: "ic.step1" },
             { num: 2, icon: Heart, key: "ic.step2" },
             { num: 3, icon: Leaf, key: "ic.step3" },
           ].map(({ num, icon: Icon, key }) => (
-            <div key={num} className="flex items-center gap-2 rounded-lg border bg-card p-2.5">
-              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+            <div key={num} className="flex flex-col items-center gap-1.5 rounded-xl border bg-card p-2.5 text-center">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                 {num}
               </div>
-              <div className="flex items-center gap-1.5 text-xs">
-                <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+              <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-[10px] sm:text-xs leading-tight font-medium text-muted-foreground">
                 {tx(key, lang)}
-              </div>
+              </span>
             </div>
           ))}
         </div>

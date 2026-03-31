@@ -1,6 +1,6 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 31 Mart 2026 (v33.0 — 15 Modül Davranışsal UX Yeniden Tasarım)
+> Son güncelleme: 31 Mart 2026 (v33.0 — 15 Modül UX + Bug Fix + Mobile Responsive)
 
 ---
 
@@ -79,11 +79,32 @@
 - `app/share-data/page.tsx` — Full motion (toggles, slide-up CTA)
 - `app/creator-studio/page.tsx` — Full motion (KPI, pricing, content)
 
+### Session 7c — Bug Fix & Mobile Responsive (2 ek commit)
+
+| # | Commit | Açıklama |
+|---|--------|----------|
+| 12 | `ed82604` | Mobile responsive + hydration + onboarding + auth + error boundary |
+| 13 | (current) | Interaction checker stepper fix + docs güncelleme |
+
+**Düzeltilen dosyalar:**
+- `app/page.tsx` — landing mobile text size + gap + hydration fix
+- `app/layout.tsx` — Suspense boundary eklendi
+- `app/error.tsx` — 3 kurtarma seçenekli error boundary
+- `app/interaction-checker/page.tsx` — stepper kayık yazı + header text size
+- `components/onboarding/OnboardingWizard.tsx` — alert→state, retry butonu
+- `lib/auth-context.tsx` — visibility change user state fix
+
+**Doğrulama:**
+- 375px mobil: Dashboard ✅, Calendar ✅, Interaction Checker ✅
+- Console errors: Zero
+- Build: PASS (330 pages)
+
 ### Build Status
 - Build: PASS (zero errors)
 - Dev server: PASS
 - Tüm commitler push edildi
 - **15/15 modül TAMAMEN uygulandı**
+- **Bug fix sprint tamamlandı**
 
 ---
 
