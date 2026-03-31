@@ -1,10 +1,10 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v17.0
+# CLAUDE.md — Phytotherapy.ai Proje Anayasası v33.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
 **Phytotherapy.ai** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **12 gün kaldı**
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **11 gün kaldı**
 - **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı) — 2 yıllık ödeme yapıldı
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
@@ -972,9 +972,76 @@ SENTRY_DSN=...                       # Error monitoring
 **FAB butonu mordan botanik yeşiline** değiştirildi
 **Tüm sayfalar mobil-first** tasarıma geçirildi
 
-*Son güncelleme: 31 Mart 2026 v31.0*
-*Sprint 1-13 + Phase 1-13 + 28-31 Mart oturumları tamamlandı.*
+### Oturum 31 Mart — v33.0 (15 Modül Davranışsal UX Yeniden Tasarım)
+
+**Yeni Paket:**
+- ✅ framer-motion kuruldu (animasyon kütüphanesi)
+
+**Modül 1 — Dashboard (Bento Box Komuta Merkezi):**
+- ✅ Asimetrik Bento Box grid (2+1 sütun)
+- ✅ Circular progress ring ile günlük skor
+- ✅ Strike-through animasyonlu görev listesi
+- ✅ AI Copilot hero kartı (dark theme, search input, suggestion chips)
+- ✅ Quick action bento chips
+- ✅ Streak badge (Loss Aversion)
+- ✅ Framer Motion stagger animasyonlar
+
+**Modül 2 — Takvim (Günlük Yaşam Panosu):**
+- ✅ Horizontal weekly strip (swipeable gün seçimi)
+- ✅ Apple Fitness tarzı habit rings (su, ilaç, takviye, hareket)
+- ✅ Sirkadiyen zaman blokları (Sabah/Öğle/Gece)
+- ✅ Konfetili görev animasyonları
+- ✅ Quick Log FAB (sage-green, expandable menü)
+
+**Modül 3 — Prospektüs Okuyucu (Smart Scanner):**
+- ✅ Framer Motion nefes alan glow efekti
+- ✅ Geliştirilmiş AI lens ikonu
+- ✅ Sage-green tema (mor kaldırıldı)
+
+**Modül 4 — Spor & Ergonomi:**
+- ✅ Indigo → sage-green tema migrasyonu
+- ✅ AnimatePresence workout player modal
+
+**Modül 5 — Doktor Paneli (Clinical Copilot):**
+- ✅ Motion giriş animasyonları
+
+**Modül 6 — Doktor Mesajları (Premium İletişim):**
+- ✅ Tam yeniden yazım: premium empty state
+- ✅ Steteskop + mesaj hero ikonu + glow
+- ✅ Quick topic chips + trust badge
+- ✅ Sage-green FAB
+
+**Modül 7 — Reçete Asistanı (Rx Copilot):**
+- ✅ Framer Motion progressive disclosure
+
+**Modül 8 — Hasta Analitiği:**
+- ✅ Framer Motion chart animasyonları
+
+**Modül 9 — Doctor Workspace Shell:**
+- ✅ layoutId ile kayan tab indikatörü
+- ✅ Crossfade sayfa geçişleri
+- ✅ Glassmorphism backdrop-blur navigasyon
+
+**Modül 10-14 — Benchmark, Roadmap, Research, FHIR, Studio:**
+- ✅ Tüm sayfalara Framer Motion eklendi
+
+**Modül 15 — Innovation Hub Shell:**
+- ✅ layoutId pill tab animasyonu
+- ✅ Crossfade sayfa geçişleri
+
+**Tasarım Kuralları (Genel):**
+- Renk paleti: sage-green (sage-500/600/900), krem (stone-50), antrasit (slate-700/900)
+- MOR KULLANILMIYOR — tüm mor referanslar sage-green'e çevrildi
+- Tüm FAB butonları sage-green
+- Framer Motion: fade, slide, scale, stagger, pulse, tap, layoutId
+- Mobile-first: varsayılan mobil, md:/lg: breakpoint'leri
+- Glassmorphism: backdrop-blur-xl, bg-white/80
+- Gölgeler: shadow-sm, shadow-lg, shadow-2xl
+
+*Son güncelleme: 31 Mart 2026 v33.0*
+*Sprint 1-13 + Phase 1-20 + 28-31 Mart oturumları tamamlandı.*
 *324+ sayfa, 42/42 HTTP 200, 15/15 API PASS, 50+ yeni bileşen.*
+*15 modül davranışsal UX yeniden tasarımı tamamlandı.*
 *Hackathon: 11-12 Nisan 2026 — 11 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
 *Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*

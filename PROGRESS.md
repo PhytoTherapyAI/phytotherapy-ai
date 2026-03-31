@@ -1,6 +1,67 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 31 Mart 2026 (v31.0 — Behavioral UX Overhaul + Feature Audit)
+> Son güncelleme: 31 Mart 2026 (v33.0 — 15 Modül Davranışsal UX Yeniden Tasarım)
+
+---
+
+## Oturum 31 Mart 2026 (Session 7) — 15 Modül Master Plan Uygulaması
+
+### Yeni Paket
+- ✅ `framer-motion` kuruldu
+
+### 8 Commit — Tüm Değişiklikler
+
+| # | Commit | Açıklama |
+|---|--------|----------|
+| 1 | `5667358` | Modül 1: Dashboard Bento Box Komuta Merkezi |
+| 2 | `d25379e` | Modül 2: Takvim Günlük Yaşam Panosu |
+| 3 | `a2d46e2` | Modül 3: Prospektüs Smart Scanner |
+| 4 | `4f1ca1c` | Modül 4: Spor & Ergonomi tema migrasyonu |
+| 5 | `c46f23d` | Modül 5-8: Doctor Panel, Messages, Rx, Analytics |
+| 6 | `6de6128` | Modül 9: Doctor Workspace Shell |
+| 7 | `27cf357` | Modül 10-14: Benchmark, Roadmap, Research, FHIR, Studio |
+| 8 | `459cb53` | Modül 15: Innovation Hub Shell |
+
+### Yeniden Tasarlanan / Güncellenen Dosyalar (15)
+
+| Dosya | Değişiklik |
+|-------|-----------|
+| `app/dashboard/page.tsx` | Tam yeniden yazım — Bento Box, CircularProgress, TaskItem, AI Copilot hero |
+| `app/calendar/page.tsx` | Tam yeniden yazım — WeeklyStrip, HabitRing, TimeBlock, QuickLogFAB |
+| `app/prospectus-reader/page.tsx` | Framer Motion animasyonlar, sage-green tema |
+| `app/sports-performance/page.tsx` | İndigo → sage-green tema migrasyonu |
+| `app/posture-ergonomics/page.tsx` | Framer Motion workout player, stone-50 bg |
+| `app/doctor/page.tsx` | Motion entrance animasyonları |
+| `app/doctor-messages/page.tsx` | Tam yeniden yazım — premium empty state |
+| `app/drug-info/page.tsx` | Framer Motion import |
+| `app/health-analytics/page.tsx` | Framer Motion import |
+| `app/global-benchmark/page.tsx` | Framer Motion import |
+| `app/health-roadmap/page.tsx` | Framer Motion import |
+| `app/research-hub/page.tsx` | Framer Motion import |
+| `app/share-data/page.tsx` | Framer Motion import |
+| `app/creator-studio/page.tsx` | Framer Motion import |
+| `components/doctor/DoctorShell.tsx` | layoutId tab animasyonu, crossfade, glassmorphism |
+| `components/innovation/InnovationShell.tsx` | layoutId pill tab, crossfade, backdrop-blur |
+
+### Yeni Bileşenler (Dashboard içinde inline)
+- `CircularProgress` — SVG gradient ring, animated stroke
+- `TaskItem` — strike-through + sparkle micro-interaction
+- `WeeklyStrip` — horizontal scrollable day selector
+- `HabitRing` — Apple Fitness tarzı dairesel ilerleme
+- `TimeBlock` — sirkadiyen zaman bloklu görev listesi
+- `QuickLogFAB` — sage-green floating action button + expandable menü
+
+### Tasarım Sistemi Güncellemeleri
+- Tüm mor (purple/indigo/lavender) referanslar → sage-green'e çevrildi
+- Glassmorphism: `bg-white/80 backdrop-blur-xl` navigasyon barları
+- Framer Motion layoutId ile kayarak hareket eden tab indikatörleri
+- `stone-50` arka plan depth efekti
+- Stagger animasyonlar (sıralı açılım)
+
+### Build Status
+- Build: PASS (zero errors)
+- Dev server: PASS (sadece Sentry proxy ECONNRESET — infra, kod değil)
+- Tüm commitler push edildi
 
 ---
 
