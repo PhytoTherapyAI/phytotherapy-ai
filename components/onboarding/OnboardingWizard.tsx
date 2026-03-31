@@ -132,6 +132,7 @@ export function OnboardingWizard({ profile }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [showLayer2, setShowLayer2] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [animating, setAnimating] = useState(false);
   const [slideDir, setSlideDir] = useState<"left" | "right">("left");
   const [data, setData] = useState<OnboardingData>({
@@ -219,14 +220,15 @@ export function OnboardingWizard({ profile }: Props) {
 
   const saveOnboarding = async () => {
     setIsSubmitting(true);
+    setSaveError(null);
     try {
       const supabase = createBrowserClient();
 
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (authError || !user) {
         console.error("Auth error during onboarding save:", authError);
-        alert(tx("onb.sessionExpired", lang));
-        router.push("/auth/login");
+        setSaveError(tx("onb.sessionExpired", lang));
+        setTimeout(() => router.push("/auth/login"), 2000);
         return;
       }
 
@@ -251,7 +253,7 @@ export function OnboardingWizard({ profile }: Props) {
 
         if (medError) {
           console.error("[Onboarding] Medication insert error:", medError);
-          alert(tx("onb.medSaveError", lang));
+          setSaveError(tx("onb.medSaveError", lang));
           return;
         }
       }
@@ -272,7 +274,7 @@ export function OnboardingWizard({ profile }: Props) {
 
         if (allergyError) {
           console.error("[Onboarding] Allergy insert error:", allergyError);
-          alert(tx("onb.allergySaveError", lang));
+          setSaveError(tx("onb.allergySaveError", lang));
           return;
         }
       }
@@ -331,7 +333,7 @@ export function OnboardingWizard({ profile }: Props) {
       router.push("/");
     } catch (error) {
       console.error("Onboarding save error:", error);
-      alert(tx("onb.saveError", lang));
+      setSaveError(tx("onb.saveError", lang));
     } finally {
       setIsSubmitting(false);
     }
@@ -452,6 +454,22 @@ export function OnboardingWizard({ profile }: Props) {
           </CardContent>
         </Card>
       </div>
+
+      {/* Save Error Banner with Retry */}
+      {saveError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 dark:bg-red-950/20 dark:border-red-800 p-3 flex items-center gap-3">
+          <div className="flex-1">
+            <p className="text-sm font-medium text-red-700 dark:text-red-400">{saveError}</p>
+            <p className="text-xs text-red-500 dark:text-red-400/70 mt-0.5">
+              {lang === "tr" ? "Lütfen tekrar deneyin. İnternet bağlantınızı kontrol edin." : "Please try again. Check your internet connection."}
+            </p>
+          </div>
+          <button onClick={saveOnboarding}
+            className="shrink-0 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition-colors">
+            {lang === "tr" ? "Tekrar Dene" : "Retry"}
+          </button>
+        </div>
+      )}
 
       {/* Navigation */}
       <div className="flex items-center justify-between">

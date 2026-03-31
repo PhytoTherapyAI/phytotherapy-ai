@@ -1,5 +1,6 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Cormorant_Garamond, DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -117,7 +118,13 @@ export default function RootLayout({
                 <div className="mx-auto w-full max-w-7xl px-4 md:px-8">
                   <SmartBackButton />
                 </div>
-                {children}
+                <Suspense fallback={
+                  <div className="flex min-h-[40vh] items-center justify-center">
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  </div>
+                }>
+                  {children}
+                </Suspense>
               </main>
               <Footer />
               <MedicationUpdateDialog />

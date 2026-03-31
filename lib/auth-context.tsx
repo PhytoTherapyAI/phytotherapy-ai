@@ -184,8 +184,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
             await updateState(refreshData.session.user, refreshData.session);
           } else {
-            // Session exists, update state silently
-            setState((prev) => ({ ...prev, session }));
+            // Session exists, update state including user
+            setState((prev) => ({ ...prev, session, user: session.user }));
           }
         } catch (err) {
           console.error("[Auth] Visibility change session check error:", err);

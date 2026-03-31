@@ -1,7 +1,7 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -45,6 +45,9 @@ export default function Home() {
   const { lang } = useLang();
   const { user, isAuthenticated, isLoading, profile } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [timeEmoji, setTimeEmoji] = useState("👋");
+
+  useEffect(() => { setTimeEmoji(getTimeEmoji()); }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +74,7 @@ export default function Home() {
         <section className="mx-auto w-full max-w-6xl px-4 pt-6 pb-4">
           {/* Dynamic greeting */}
           <h1 className="font-heading text-2xl font-semibold mb-1 sm:text-3xl">
-            {getTimeEmoji()} {isTr ? `Merhaba ${firstName}` : `Hi ${firstName}`}
+            {timeEmoji} {isTr ? `Merhaba ${firstName}` : `Hi ${firstName}`}
           </h1>
           <p className="text-sm text-muted-foreground mb-5">
             {isTr ? "Bugün senin için ne yapabilirim?" : "What can I do for you today?"}
@@ -189,7 +192,7 @@ export default function Home() {
 
         {/* Trust strip */}
         <section className="mt-6 border-t bg-muted/30">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 py-4">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-3 gap-y-2 px-4 py-4 sm:gap-x-8">
             {TRUST_KEYS.map((key) => (
               <div key={key} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 <CheckCircle2 className="h-3 w-3 text-primary" />
@@ -217,10 +220,10 @@ export default function Home() {
               </div>
 
               {/* Dynamic heading */}
-              <h1 className="font-heading text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
+              <h1 className="font-heading text-2xl font-semibold leading-tight tracking-tight sm:text-3xl md:text-5xl">
                 {isTr ? "Bugün nasıl hissediyorsun?" : "How are you feeling today?"}
               </h1>
-              <p className="mt-3 max-w-lg text-sm text-muted-foreground md:text-base">
+              <p className="mt-3 max-w-lg text-xs text-muted-foreground sm:text-sm md:text-base">
                 {isTr
                   ? "Hangi bitkiyi merak ediyorsun? İlaç etkileşimlerini kontrol et, kan tahlilini analiz et veya asistana sor."
                   : "Curious about an herb? Check drug interactions, analyze blood tests, or ask the assistant."}
@@ -278,7 +281,7 @@ export default function Home() {
 
       {/* Stats */}
       <section className="border-y bg-primary/5">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-10 gap-y-3 px-4 py-5">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-4 gap-y-3 px-4 py-5 sm:gap-x-10">
           <div className="flex items-center gap-2">
             <Shield className="h-4 w-4 text-primary" />
             <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-semibold text-primary">BETA</span>
