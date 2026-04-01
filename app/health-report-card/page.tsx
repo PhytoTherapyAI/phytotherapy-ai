@@ -1,161 +1,182 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState, useEffect, useCallback } from "react";
-import { FileText, TrendingUp, TrendingDown, Download, CheckCircle2, Target, BarChart3, Minus, AlertCircle, Award } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
-import { useAuth } from "@/lib/auth-context";
-import { createBrowserClient } from "@/lib/supabase";
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+  Trophy, TrendingDown, TrendingUp, Share2,
+  Lock, Sparkles, Award, Heart, Flame,
+  Star, ChevronRight, Shield,
+} from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { useLang } from "@/components/layout/language-toggle"
 
-export default function HealthReportCardPage() {
-  const { lang } = useLang();
-  const isTr = lang === "tr";
-  const { user, isAuthenticated } = useAuth();
-  const [selectedYear] = useState(new Date().getFullYear());
-  const [loading, setLoading] = useState(true);
-  const [complianceData, setComplianceData] = useState({ medication: 0, supplements: 0, checkups: 0, bloodTests: 0, goals: 0 });
-  const [labTrends, setLabTrends] = useState<{ name: string; values: number[]; unit: string; trend: "up" | "down"; good: boolean }[]>([]);
-  const [goals, setGoals] = useState<{ en: string; tr: string; status: "completed" | "in_progress" | "not_started" }[]>([]);
+// ── Mock sparkline data ──
+function MiniSparkline({ data, color }: { data: number[]; color: string }) {
+  const max = Math.max(...data); const min = Math.min(...data)
+  const h = 32; const w = 80
+  const points = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - ((v - min) / (max - min || 1)) * h}`).join(" ")
+  return (
+    <svg width={w} height={h} className="overflow-visible">
+      <polyline points={points} fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
-  const fetchData = useCallback(async () => {
-    if (!user) { setLoading(false); return; }
-    const supabase = createBrowserClient();
-    try {
-      const yearStart = `${selectedYear}-01-01`;
-      const yearEnd = `${selectedYear}-12-31`;
-
-      const [bloodRes, queryRes] = await Promise.all([
-        supabase.from("blood_tests").select("test_data, created_at").eq("user_id", user.id).gte("created_at", yearStart).lte("created_at", yearEnd).order("created_at", { ascending: true }),
-        supabase.from("query_history").select("query_type").eq("user_id", user.id).gte("created_at", yearStart).lte("created_at", yearEnd),
-      ]);
-
-      const bloodTests = bloodRes.data || [];
-      const queries = queryRes.data || [];
-
-      setComplianceData({
-        medication: 0,
-        supplements: 0,
-        checkups: queries.filter(q => q.query_type === "symptom").length,
-        bloodTests: bloodTests.length,
-        goals: 0,
-      });
-
-      // Extract lab trends from blood tests
-      if (bloodTests.length > 0) {
-        const markerMap: Record<string, { values: number[]; unit: string }> = {};
-        for (const bt of bloodTests) {
-          const data = bt.test_data as Record<string, number> | null;
-          if (!data) continue;
-          for (const [key, val] of Object.entries(data)) {
-            if (typeof val !== "number") continue;
-            if (!markerMap[key]) markerMap[key] = { values: [], unit: "" };
-            markerMap[key].values.push(val);
-          }
-        }
-        const trends = Object.entries(markerMap)
-          .filter(([, v]) => v.values.length >= 2)
-          .slice(0, 6)
-          .map(([name, v]) => {
-            const last = v.values[v.values.length - 1];
-            const prev = v.values[v.values.length - 2];
-            return { name, values: v.values.slice(-4), unit: v.unit || "", trend: (last > prev ? "up" : "down") as "up" | "down", good: true };
-          });
-        setLabTrends(trends);
-      }
-    } catch { /* ignore */ }
-    setLoading(false);
-  }, [user, selectedYear]);
-
-  useEffect(() => { fetchData(); }, [fetchData]);
-  const trendIcon = (t: string) => t === "up" ? <TrendingUp className="w-4 h-4" /> : t === "down" ? <TrendingDown className="w-4 h-4" /> : <Minus className="w-4 h-4" />;
-  const statusBadge = (s: string) => s === "completed" ? <Badge className="bg-green-100 text-green-700">{tx("reportCard.completed", lang)}</Badge> : s === "in_progress" ? <Badge className="bg-yellow-100 text-yellow-700">{tx("reportCard.inProgress", lang)}</Badge> : <Badge className="bg-gray-100 text-gray-500">{tx("reportCard.notStarted", lang)}</Badge>;
-
-  if (loading) {
-    return <div className="flex min-h-[40vh] items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>;
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="flex min-h-[40vh] flex-col items-center justify-center gap-4 text-center p-4">
-        <AlertCircle className="w-12 h-12 text-muted-foreground" />
-        <p className="text-muted-foreground">{isTr ? "Sağlık raporunuzu görmek için giriş yapın." : "Sign in to view your health report."}</p>
-      </div>
-    );
-  }
+// ── Achievement Card ──
+function AchievementCard({ emoji, title, unlocked, description }: {
+  emoji: string; title: string; unlocked: boolean; description: string
+}) {
+  const [showConfetti, setShowConfetti] = useState(false)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50 to-white dark:from-gray-900 dark:to-gray-950 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <FileText className="w-8 h-8 text-emerald-600" />
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("reportCard.title", lang)}</h1>
-              <p className="text-sm text-gray-500">{selectedYear} {tx("reportCard.summaryReport", lang)}</p>
-            </div>
-          </div>
-          <Button variant="outline"><Download className="w-4 h-4 mr-2" /> PDF</Button>
+    <motion.button
+      whileTap={unlocked ? { scale: 0.95 } : undefined}
+      onClick={() => { if (unlocked) { setShowConfetti(true); setTimeout(() => setShowConfetti(false), 1000) } }}
+      className={`relative rounded-2xl p-4 text-left transition-all overflow-hidden ${
+        unlocked
+          ? "bg-gradient-to-br from-emerald-50 to-primary/5 dark:from-emerald-900/20 dark:to-primary/10 border-2 border-emerald-200/50 shadow-sm hover:shadow-md"
+          : "bg-stone-100 dark:bg-stone-900 border border-stone-200/50 opacity-60"
+      }`}>
+      <div className="flex items-start gap-3">
+        <span className={`text-2xl ${unlocked ? "" : "grayscale"}`}>{emoji}</span>
+        <div>
+          <p className={`text-xs font-bold ${unlocked ? "text-emerald-700 dark:text-emerald-400" : "text-muted-foreground"}`}>{title}</p>
+          <p className="text-[10px] text-muted-foreground mt-0.5">{description}</p>
+        </div>
+        {unlocked ? (
+          <Badge className="ml-auto bg-emerald-100 text-emerald-700 text-[8px] shrink-0">Unlocked</Badge>
+        ) : (
+          <Lock className="h-4 w-4 text-muted-foreground/40 ml-auto shrink-0" />
+        )}
+      </div>
+      {showConfetti && (
+        <div className="absolute inset-0 pointer-events-none">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <motion.div key={i}
+              initial={{ x: "50%", y: "50%", scale: 1, opacity: 1 }}
+              animate={{ x: `${20 + Math.random() * 60}%`, y: `${Math.random() * 80}%`, scale: 0, opacity: 0 }}
+              transition={{ duration: 0.7, delay: i * 0.03 }}
+              className="absolute w-2 h-2 rounded-full"
+              style={{ backgroundColor: ["#22c55e", "#facc15", "#60a5fa", "#f472b6", "#a78bfa", "#fb923c", "#34d399", "#3c7a52"][i] }} />
+          ))}
+        </div>
+      )}
+    </motion.button>
+  )
+}
+
+// ── AI Bubble ──
+function AIBubble({ text }: { text: string }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+      className="flex gap-3 items-start">
+      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+        <Sparkles className="h-4 w-4 text-primary" />
+      </div>
+      <div className="rounded-2xl rounded-tl-sm bg-white dark:bg-card border px-4 py-3 shadow-sm">
+        <p className="text-xs text-foreground leading-relaxed">{text}</p>
+      </div>
+    </motion.div>
+  )
+}
+
+export default function HealthReportCardPage() {
+  const { lang } = useLang()
+
+  const milestones = [
+    { label: "HbA1c", from: 7.2, to: 6.3, data: [7.2, 7.0, 6.8, 6.5, 6.3], unit: "%", improved: true },
+    { label: "Vitamin D", from: 14, to: 42, data: [14, 22, 30, 38, 42], unit: "ng/mL", improved: true },
+    { label: "CRP", from: 5.8, to: 1.4, data: [5.8, 4.2, 3.0, 2.1, 1.4], unit: "mg/L", improved: true },
+    { label: "Cholesterol", from: 240, to: 195, data: [240, 228, 215, 205, 195], unit: "mg/dL", improved: true },
+  ]
+
+  return (
+    <div className="min-h-screen bg-stone-50 dark:bg-background">
+      <div className="mx-auto max-w-2xl px-4 md:px-8 py-6 space-y-6">
+
+        {/* ═══ CELEBRATION HERO ═══ */}
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+          className="rounded-3xl bg-gradient-to-br from-emerald-500 to-teal-600 p-6 text-center text-white relative overflow-hidden">
+          <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 4 }}>
+            <Trophy className="h-14 w-14 mx-auto mb-3 drop-shadow-lg" />
+          </motion.div>
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }}
+            className="text-5xl font-bold mb-2">92</motion.div>
+          <p className="text-xs text-white/80">Health Score</p>
+          <h2 className="text-xl font-bold mt-2">You Had an Amazing Year!</h2>
+          <p className="text-xs text-white/70 mt-1 max-w-sm mx-auto">
+            You reversed your metabolic age by 3 years. Here's what you achieved:
+          </p>
+
+          <Button size="sm" className="mt-4 rounded-xl bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm">
+            <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share My Story
+          </Button>
+        </motion.div>
+
+        {/* AI Comment */}
+        <AIBubble text="Incredible progress! Your HbA1c dropped from 7.2% to 6.3% — that's pre-diabetes reversed. Your dedication to the anti-inflammatory protocol paid off beautifully." />
+
+        {/* ═══ MILESTONE SPARKLINE CARDS ═══ */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-bold flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-primary" /> Key Milestones
+          </h3>
+          {milestones.map((m, i) => (
+            <motion.div key={m.label}
+              initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 + i * 0.1 }}>
+              <Card className="rounded-2xl hover:shadow-md transition-shadow">
+                <CardContent className="p-4 flex items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-muted-foreground">{m.label}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-lg font-bold text-foreground">{m.to}{m.unit}</span>
+                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5 + i * 0.1 }}>
+                        <Badge className="bg-emerald-100 text-emerald-700 text-[9px] animate-pulse">
+                          {m.improved ? <TrendingDown className="h-3 w-3 mr-0.5 inline" /> : <TrendingUp className="h-3 w-3 mr-0.5 inline" />}
+                          {Math.abs(m.to - m.from).toFixed(1)} {m.improved ? "Drop" : "Rise"}!
+                        </Badge>
+                      </motion.div>
+                    </div>
+                  </div>
+                  <MiniSparkline data={m.data} color="#22c55e" />
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-emerald-600">{complianceData.medication}%</div><div className="text-xs text-gray-500">{tx("reportCard.medCompliance", lang)}</div></Card>
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-blue-600">{complianceData.supplements}%</div><div className="text-xs text-gray-500">{tx("reportCard.supplement", lang)}</div></Card>
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-purple-600">{complianceData.checkups}</div><div className="text-xs text-gray-500">{tx("reportCard.checkups", lang)}</div></Card>
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-orange-600">{complianceData.bloodTests}</div><div className="text-xs text-gray-500">{tx("reportCard.bloodTests", lang)}</div></Card>
-          <Card className="p-3 text-center"><div className="text-2xl font-bold text-pink-600">{complianceData.goals}/{goals.length}</div><div className="text-xs text-gray-500">{tx("reportCard.goalsMet", lang)}</div></Card>
+        {/* AI Comment */}
+        <AIBubble text="Reaching your vitamin D goal is amazing. Your immunity will be much stronger this winter. Keep taking 2000 IU daily with K2." />
+
+        {/* ═══ ACHIEVEMENTS ═══ */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-bold flex items-center gap-2">
+            <Award className="h-4 w-4 text-amber-500" /> Unlocked Achievements
+          </h3>
+          <div className="grid grid-cols-1 gap-2.5">
+            <AchievementCard emoji="🏆" title="Pre-Diabetes Reversed" unlocked description="HbA1c below 6.5% for 3 consecutive months" />
+            <AchievementCard emoji="☀️" title="Vitamin D Champion" unlocked description="Optimal vitamin D levels maintained 6+ months" />
+            <AchievementCard emoji="🔥" title="Inflammation Fighter" unlocked description="CRP reduced by 75% through lifestyle + supplements" />
+            <AchievementCard emoji="💪" title="Iron Will" unlocked={false} description="Complete 365-day supplement streak" />
+            <AchievementCard emoji="🧠" title="Brain Optimizer" unlocked={false} description="Achieve optimal omega-3 index (8%+)" />
+          </div>
         </div>
 
-        <Card className="p-4 mb-6">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"><BarChart3 className="w-5 h-5 text-emerald-600" /> {tx("reportCard.labTrends", lang)}</h2>
-          <div className="space-y-3">
-            {labTrends.length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-4">{isTr ? "Henüz kan tahlili verisi yok. Kan tahlili yükleyin." : "No lab data yet. Upload a blood test."}</p>
-            )}
-            {labTrends.map(lab => (
-              <div key={lab.name} className="flex items-center gap-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                <div className="w-32 font-medium text-sm">{lab.name}</div>
-                <div className="flex-1 flex items-center gap-2">
-                  {lab.values.map((v, i) => (<span key={i} className={"text-xs px-2 py-1 rounded " + (i === lab.values.length - 1 ? "bg-emerald-100 text-emerald-700 font-bold" : "bg-gray-100 text-gray-600")}>{v}</span>))}
-                </div>
-                <span className="text-xs text-gray-400">{lab.unit}</span>
-                <div className={"flex items-center gap-1 " + (lab.good ? "text-green-600" : "text-red-600")}>{trendIcon(lab.trend)}</div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card className="p-4 mb-6">
-          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2"><Target className="w-5 h-5 text-emerald-600" /> {tx("reportCard.healthGoals", lang)}</h2>
-          <div className="space-y-3">
-            {goals.length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-4">{isTr ? "Henüz sağlık hedefi belirlenmemiş." : "No health goals set yet."}</p>
-            )}
-            {goals.map((g, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-lg border">
-                <div className="flex items-center gap-3">
-                  {g.status === "completed" ? <CheckCircle2 className="w-5 h-5 text-green-500" /> : <div className="w-5 h-5 rounded-full border-2 border-gray-300" />}
-                  <span className={"text-sm " + (g.status === "completed" ? "line-through text-gray-400" : "")}>{isTr ? g.tr : g.en}</span>
-                </div>
-                {statusBadge(g.status)}
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card className="p-4 border-emerald-200 bg-emerald-50 dark:bg-emerald-900/20">
-          <div className="flex items-start gap-3">
-            <Award className="w-6 h-6 text-emerald-600" />
+        {/* ═══ STREAK ═══ */}
+        <Card className="rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 border-amber-200/50">
+          <CardContent className="p-5 flex items-center gap-4">
+            <Flame className="h-10 w-10 text-amber-500 shrink-0" />
             <div>
-              <h3 className="font-semibold">{tx("reportCard.overallAssessment", lang)}</h3>
-              <p className="text-sm text-gray-600 mt-1">{tx("reportCard.overallText", lang)}</p>
+              <p className="text-lg font-bold text-amber-700 dark:text-amber-400">127 Day Streak</p>
+              <p className="text-xs text-amber-600/70">Keep going! You're building an incredible health habit.</p>
             </div>
-          </div>
+          </CardContent>
         </Card>
       </div>
     </div>
-  );
+  )
 }
