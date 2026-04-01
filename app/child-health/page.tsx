@@ -1,543 +1,296 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState, useCallback } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
-  Baby,
-  Loader2,
-  Thermometer,
-  AlertTriangle,
-  CheckCircle2,
-  Stethoscope,
-  Home,
-  ShieldAlert,
-  ChevronDown,
-  ChevronUp,
-  LogIn,
-  Info,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+  Baby, Thermometer, Shield, Heart,
+  Phone, Leaf, Apple, Moon, Activity,
+} from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { useLang } from "@/components/layout/language-toggle"
+import { PediatricAgePicker } from "@/components/child-health/PediatricAgePicker"
 
-interface PossibleExplanation {
-  cause: string;
-  likelihood: "common" | "less_common" | "rare";
-  description: string;
+// ── Age group chips ──
+interface AgeGroup {
+  id: string; label: string; labelTr: string; range: string; rangeTr: string; emoji: string; color: string
 }
 
-interface HomeCareItem {
-  tip: string;
-  detail: string;
+const AGE_GROUPS: AgeGroup[] = [
+  { id: "newborn", label: "Newborn", labelTr: "Yenidoğan", range: "0-3 mo", rangeTr: "0-3 Ay", emoji: "👶", color: "#f472b6" },
+  { id: "infant", label: "Infant", labelTr: "Bebek", range: "3-12 mo", rangeTr: "3-12 Ay", emoji: "🍼", color: "#a78bfa" },
+  { id: "toddler", label: "Toddler", labelTr: "Oyun Çocuğu", range: "1-3 yr", rangeTr: "1-3 Yaş", emoji: "🧸", color: "#60a5fa" },
+  { id: "school", label: "School Age", labelTr: "Okul Çağı", range: "4+ yr", rangeTr: "4+ Yaş", emoji: "🎒", color: "#34d399" },
+]
+
+// ── Issues with progressive disclosure ──
+interface ChildIssue {
+  id: string; label: string; labelTr: string; emoji: string; color: string
+  subOptions: Array<{ id: string; label: string; labelTr: string }>
 }
 
-interface SourceItem {
-  title: string;
-  url: string;
-}
-
-interface ChildResult {
-  triage: "urgent" | "doctor" | "home";
-  title: string;
-  summary: string;
-  ageGroup: string;
-  possibleExplanations: PossibleExplanation[];
-  homeCare: HomeCareItem[];
-  whenToWorry: string[];
-  whenToSeeDoctor: string[];
-  developmentalInfo: string;
-  preventionTips: string[];
-  safeOTCNote: string;
-  sources: SourceItem[];
-}
-
-const CONCERNS = [
-  { key: "fever", icon: Thermometer },
-  { key: "cough", icon: Stethoscope },
-  { key: "rash", icon: ShieldAlert },
-  { key: "feeding", icon: Baby },
-  { key: "sleepIssue", icon: Home },
-  { key: "growth", icon: Info },
-  { key: "vaccination", icon: CheckCircle2 },
-];
+const ISSUES: ChildIssue[] = [
+  {
+    id: "fever", label: "Fever", labelTr: "Ateş", emoji: "🌡️", color: "#ef4444",
+    subOptions: [
+      { id: "fever-38", label: "Above 38°C", labelTr: "38°C Üzeri" },
+      { id: "fever-days", label: "Lasting 2+ days", labelTr: "2 Gündür Devam" },
+      { id: "fever-med", label: "Gave fever reducer", labelTr: "Ateş Düşürücü Verdim" },
+    ],
+  },
+  {
+    id: "cough", label: "Cough & Cold", labelTr: "Öksürük & Soğuk Algınlığı", emoji: "🤧", color: "#f59e0b",
+    subOptions: [
+      { id: "cough-dry", label: "Dry cough", labelTr: "Kuru öksürük" },
+      { id: "cough-runny", label: "Runny nose", labelTr: "Burun akıntısı" },
+      { id: "cough-wheeze", label: "Wheezing", labelTr: "Hırıltılı solunum" },
+    ],
+  },
+  {
+    id: "stomach", label: "Stomach Issues", labelTr: "Mide Sorunları", emoji: "🤢", color: "#22c55e",
+    subOptions: [
+      { id: "stomach-vomit", label: "Vomiting", labelTr: "Kusma" },
+      { id: "stomach-diarrhea", label: "Diarrhea", labelTr: "İshal" },
+      { id: "stomach-pain", label: "Stomach pain", labelTr: "Karın ağrısı" },
+    ],
+  },
+  {
+    id: "skin", label: "Skin & Rash", labelTr: "Cilt & Döküntü", emoji: "🔴", color: "#ec4899",
+    subOptions: [
+      { id: "skin-rash", label: "Red rash", labelTr: "Kızıl döküntü" },
+      { id: "skin-itch", label: "Itching", labelTr: "Kaşıntı" },
+      { id: "skin-eczema", label: "Eczema flare", labelTr: "Egzama alevlenmesi" },
+    ],
+  },
+  {
+    id: "sleep", label: "Sleep Problems", labelTr: "Uyku Sorunları", emoji: "😴", color: "#6366f1",
+    subOptions: [
+      { id: "sleep-cant", label: "Can't fall asleep", labelTr: "Uyuyamıyor" },
+      { id: "sleep-wake", label: "Wakes at night", labelTr: "Gece uyanıyor" },
+      { id: "sleep-nightmare", label: "Nightmares", labelTr: "Kâbuslar" },
+    ],
+  },
+  {
+    id: "nutrition", label: "Nutrition", labelTr: "Beslenme", emoji: "🍎", color: "#16a34a",
+    subOptions: [
+      { id: "nutr-appetite", label: "Low appetite", labelTr: "İştahsızlık" },
+      { id: "nutr-picky", label: "Picky eater", labelTr: "Seçici yeme" },
+      { id: "nutr-allergy", label: "Food allergy", labelTr: "Gıda alerjisi" },
+    ],
+  },
+]
 
 export default function ChildHealthPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [childAge, setChildAge] = useState("");
-  const [ageUnit, setAgeUnit] = useState<"months" | "years">("years");
-  const [selectedConcern, setSelectedConcern] = useState("");
-  const [notes, setNotes] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<ChildResult | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    explanations: true,
-    homeCare: true,
-    whenToWorry: true,
-    doctor: true,
-    prevention: false,
-    sources: false,
-  });
+  const { lang } = useLang()
+  const [selectedAge, setSelectedAge] = useState<string | null>(null)
+  const [showAgePicker, setShowAgePicker] = useState(false)
+  const [selectedIssue, setSelectedIssue] = useState<string | null>(null)
+  const [selectedSubs, setSelectedSubs] = useState<string[]>([])
+  const [showResults, setShowResults] = useState(false)
 
-  const toggleSection = (key: string) => {
-    setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  const handleAgeSelect = useCallback((_y: number, _m: number) => {}, [])
 
-  const handleAnalyze = async () => {
-    if (!childAge || Number(childAge) <= 0) {
-      setError(tx("child.age", lang) + " required");
-      return;
-    }
-    if (!selectedConcern) {
-      setError(tx("child.concern", lang) + " required");
-      return;
-    }
+  const toggleSub = (id: string) => {
+    setSelectedSubs(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id])
+  }
 
-    setIsLoading(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (isAuthenticated && session?.access_token) {
-        headers["Authorization"] = `Bearer ${session.access_token}`;
-      }
-
-      const res = await fetch("/api/child-health", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          child_age: Number(childAge),
-          age_unit: ageUnit,
-          concern: selectedConcern,
-          notes: notes.trim(),
-          lang,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to get guidance");
-      }
-
-      const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const triageBanner = (triage: string) => {
-    switch (triage) {
-      case "urgent":
-        return {
-          bg: "bg-red-100 border-red-300 dark:bg-red-950/40 dark:border-red-800",
-          text: "text-red-800 dark:text-red-300",
-          icon: <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />,
-          label: tx("childHealth.urgent", lang),
-        };
-      case "doctor":
-        return {
-          bg: "bg-amber-100 border-amber-300 dark:bg-amber-950/40 dark:border-amber-800",
-          text: "text-amber-800 dark:text-amber-300",
-          icon: <Stethoscope className="h-5 w-5 text-amber-600 dark:text-amber-400" />,
-          label: tx("childHealth.seeDoctor", lang),
-        };
-      default:
-        return {
-          bg: "bg-green-100 border-green-300 dark:bg-green-950/40 dark:border-green-800",
-          text: "text-green-800 dark:text-green-300",
-          icon: <Home className="h-5 w-5 text-green-600 dark:text-green-400" />,
-          label: tx("childHealth.homeCare", lang),
-        };
-    }
-  };
-
-  const likelihoodColor = (likelihood: string) => {
-    switch (likelihood) {
-      case "common":
-        return "bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300";
-      case "less_common":
-        return "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300";
-      default:
-        return "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400";
-    }
-  };
-
-  const SectionHeader = ({ title, icon: Icon, sectionKey, count }: { title: string; icon: React.ElementType; sectionKey: string; count?: number }) => (
-    <button
-      onClick={() => toggleSection(sectionKey)}
-      className="flex w-full items-center justify-between rounded-t-lg border-b bg-sky-50/50 px-4 py-3 text-left dark:bg-sky-950/20"
-    >
-      <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-        <span className="text-sm font-semibold">{title}</span>
-        {count !== undefined && (
-          <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-900 dark:text-sky-300">
-            {count}
-          </span>
-        )}
-      </div>
-      {expandedSections[sectionKey] ? (
-        <ChevronUp className="h-4 w-4 text-muted-foreground" />
-      ) : (
-        <ChevronDown className="h-4 w-4 text-muted-foreground" />
-      )}
-    </button>
-  );
+  const activeIssue = ISSUES.find(i => i.id === selectedIssue)
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-sky-50 p-3 dark:bg-sky-950">
-          <Baby className="h-6 w-6 text-sky-600 dark:text-sky-400" />
-        </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-            {tx("child.title", lang)}
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-emerald-50/30 dark:from-background dark:to-background">
+      <div className="mx-auto max-w-2xl px-4 md:px-8 py-6 space-y-6">
+
+        {/* ═══ EMPATHETIC HERO ═══ */}
+        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+          className="text-center py-6 space-y-3">
+          <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}>
+            <Baby className="h-12 w-12 text-primary mx-auto" />
+          </motion.div>
+          <h1 className="text-2xl font-bold text-foreground">
+            {lang === "tr" ? "Derin Bir Nefes Alın, Biz Buradayız" : "Take a Deep Breath, We're Here"}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {tx("child.subtitle", lang)}
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            {lang === "tr"
+              ? "Çocuğunuzun sağlığı konusunda güvenilir, kanıta dayalı rehberlik."
+              : "Trusted, evidence-based guidance for your child's health."}
           </p>
-        </div>
-      </div>
+        </motion.div>
 
-      {/* Disclaimer */}
-      <div className="mb-6 rounded-lg border border-sky-200 bg-sky-50/50 p-3 text-xs text-sky-800 dark:border-sky-800 dark:bg-sky-950/20 dark:text-sky-300">
-        <AlertTriangle className="mr-1 inline h-3.5 w-3.5" />
-        {tx("child.disclaimer", lang)}
-      </div>
-
-      {/* Guest notice */}
-      {!isAuthenticated && (
-        <div className="mb-4 flex items-center gap-2 rounded-lg border border-sky-200 bg-sky-50/30 p-3 text-xs text-sky-800 dark:border-sky-800 dark:bg-sky-950/10 dark:text-sky-300">
-          <LogIn className="h-3.5 w-3.5 shrink-0" />
-          {tx("childHealth.loginNote", lang)}
-        </div>
-      )}
-
-      {!result && (
-        <>
-          {/* Age Input */}
-          <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium">
-              {tx("child.age", lang)}
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="number"
-                min="0"
-                max={ageUnit === "months" ? 240 : 18}
-                value={childAge}
-                onChange={(e) => setChildAge(e.target.value)}
-                placeholder="0"
-                className="w-24 rounded-lg border bg-background px-4 py-3 text-sm focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
-              />
-              <div className="flex overflow-hidden rounded-lg border">
-                <button
-                  onClick={() => setAgeUnit("months")}
-                  className={`px-4 py-3 text-sm font-medium transition-colors ${
-                    ageUnit === "months"
-                      ? "bg-sky-600 text-white"
-                      : "bg-background hover:bg-muted"
+        {/* ═══ AGE GROUP CHIPS ═══ */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+          <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
+            {lang === "tr" ? "Yaş Grubu Seçin" : "Select Age Group"}
+          </p>
+          <div className="grid grid-cols-2 gap-2.5">
+            {AGE_GROUPS.map((g, i) => {
+              const isActive = selectedAge === g.id
+              return (
+                <motion.button key={g.id}
+                  initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.12 + i * 0.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => { setSelectedAge(isActive ? null : g.id); setShowAgePicker(false) }}
+                  className={`flex items-center gap-3 rounded-2xl p-3.5 text-left transition-all ${
+                    isActive ? "ring-2 shadow-md bg-white dark:bg-card" : "bg-white/60 dark:bg-card/60 hover:bg-white dark:hover:bg-card hover:shadow-sm"
                   }`}
-                >
-                  {tx("child.months", lang)}
-                </button>
-                <button
-                  onClick={() => setAgeUnit("years")}
-                  className={`px-4 py-3 text-sm font-medium transition-colors ${
-                    ageUnit === "years"
-                      ? "bg-sky-600 text-white"
-                      : "bg-background hover:bg-muted"
-                  }`}
-                >
-                  {tx("child.years", lang)}
-                </button>
-              </div>
-            </div>
+                  style={isActive ? { ringColor: g.color, boxShadow: `0 4px 16px ${g.color}20` } : undefined}>
+                  <span className="text-2xl">{g.emoji}</span>
+                  <div>
+                    <p className={`text-sm font-bold ${isActive ? "" : "text-foreground"}`}
+                      style={isActive ? { color: g.color } : undefined}>
+                      {lang === "tr" ? g.labelTr : g.label}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground">{lang === "tr" ? g.rangeTr : g.range}</p>
+                  </div>
+                </motion.button>
+              )
+            })}
           </div>
 
-          {/* Concern Selection */}
-          <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium">
-              {tx("child.concern", lang)}
-            </label>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {CONCERNS.map(({ key, icon: Icon }) => (
-                <button
-                  key={key}
-                  onClick={() => setSelectedConcern(key)}
-                  className={`flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition-colors ${
-                    selectedConcern === key
-                      ? "border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-950 dark:text-sky-300"
-                      : "hover:bg-muted/50"
-                  }`}
-                >
-                  <Icon className="h-5 w-5" />
-                  <span className="text-xs font-medium">{tx(`child.${key}`, lang)}</span>
-                </button>
-              ))}
-            </div>
-          </div>
+          <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowAgePicker(!showAgePicker)}
+            className="w-full mt-3 text-xs text-primary font-medium py-2 hover:underline">
+            {lang === "tr" ? "Tam yaş seçmek isterim →" : "I want to select exact age →"}
+          </motion.button>
 
-          {/* Notes */}
-          <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium">
-              {tx("childHealth.additionalNotes", lang)}
-            </label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder={tx("childHealth.notesPlaceholder", lang)}
-              maxLength={2000}
-              rows={3}
-              className="w-full rounded-lg border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
-            />
-          </div>
-
-          {/* Submit */}
-          <Button
-            onClick={handleAnalyze}
-            disabled={isLoading || !selectedConcern || !childAge}
-            className="w-full gap-2 bg-sky-600 hover:bg-sky-700 text-white"
-            size="lg"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {tx("child.analyzing", lang)}
-              </>
-            ) : (
-              <>
-                <Baby className="h-4 w-4" />
-                {tx("child.analyze", lang)}
-              </>
+          <AnimatePresence>
+            {showAgePicker && (
+              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                <div className="mt-3 rounded-2xl border bg-white/80 dark:bg-card/80 backdrop-blur-md p-4">
+                  <PediatricAgePicker onSelect={handleAgeSelect} lang={lang} />
+                </div>
+              </motion.div>
             )}
-          </Button>
-        </>
-      )}
+          </AnimatePresence>
+        </motion.div>
 
-      {/* Error */}
-      {error && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400">
-          {error}
-        </div>
-      )}
+        {/* ═══ SMART TRIAGE ═══ */}
+        <AnimatePresence>
+          {(selectedAge || showAgePicker) && (
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="space-y-4">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                {lang === "tr" ? "Sorun Nedir?" : "What's the Issue?"}
+              </p>
 
-      {/* Results */}
-      {result && (
-        <div className="space-y-4">
-          {/* Triage Banner */}
-          {(() => {
-            const t = triageBanner(result.triage);
-            return (
-              <div className={`flex items-center gap-3 rounded-lg border p-4 ${t.bg}`}>
-                {t.icon}
-                <div>
-                  <p className={`text-sm font-bold ${t.text}`}>{t.label}</p>
-                  <p className="text-sm">{result.title}</p>
-                </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                {ISSUES.map((issue, i) => {
+                  const isActive = selectedIssue === issue.id
+                  return (
+                    <motion.button key={issue.id}
+                      initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.04 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => { setSelectedIssue(isActive ? null : issue.id); setSelectedSubs([]); setShowResults(false) }}
+                      className={`flex items-center gap-2.5 rounded-2xl p-3 text-left transition-all ${
+                        isActive ? "ring-2 bg-white dark:bg-card shadow-sm" : "bg-white/60 dark:bg-card/60 hover:bg-white dark:hover:bg-card"
+                      }`}
+                      style={isActive ? { ringColor: issue.color } : undefined}>
+                      <span className="text-xl">{issue.emoji}</span>
+                      <span className={`text-xs font-semibold ${isActive ? "" : "text-foreground"}`}
+                        style={isActive ? { color: issue.color } : undefined}>
+                        {lang === "tr" ? issue.labelTr : issue.label}
+                      </span>
+                    </motion.button>
+                  )
+                })}
               </div>
-            );
-          })()}
 
-          {/* Summary */}
-          <div className="rounded-lg border bg-sky-50/30 p-4 dark:bg-sky-950/10">
-            <p className="text-sm leading-relaxed">{result.summary}</p>
-          </div>
+              {/* Sub-options */}
+              <AnimatePresence>
+                {activeIssue && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                    <div className="rounded-2xl border bg-white dark:bg-card p-4 space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground mb-2">
+                        {lang === "tr" ? "Detay seçin:" : "Select details:"}
+                      </p>
+                      {activeIssue.subOptions.map(sub => {
+                        const isChecked = selectedSubs.includes(sub.id)
+                        return (
+                          <motion.button key={sub.id} whileTap={{ scale: 0.97 }}
+                            onClick={() => toggleSub(sub.id)}
+                            className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
+                              isChecked ? "bg-primary/10 text-primary font-medium" : "hover:bg-stone-50 dark:hover:bg-stone-900 text-foreground"
+                            }`}>
+                            <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                              isChecked ? "bg-primary border-primary" : "border-stone-300"
+                            }`}>
+                              {isChecked && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="h-1.5 w-1.5 bg-white rounded-full" />}
+                            </div>
+                            {lang === "tr" ? sub.labelTr : sub.label}
+                          </motion.button>
+                        )
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-          {/* Possible Explanations */}
-          {result.possibleExplanations?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("childHealth.possibleExplanations", lang)}
-                icon={Info}
-                sectionKey="explanations"
-                count={result.possibleExplanations.length}
-              />
-              {expandedSections.explanations && (
-                <div className="p-4 space-y-2">
-                  {result.possibleExplanations.map((e, i) => (
-                    <div key={i} className="rounded-lg border p-3">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">{e.cause}</p>
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${likelihoodColor(e.likelihood)}`}>
-                          {e.likelihood === "common" ? tx("childHealth.common", lang) :
-                           e.likelihood === "less_common" ? tx("childHealth.lessCommon", lang) :
-                           tx("childHealth.rare", lang)}
-                        </span>
+              {/* Action Button */}
+              {selectedIssue && selectedSubs.length > 0 && !showResults && (
+                <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+                  <Button onClick={() => setShowResults(true)}
+                    className="w-full h-12 rounded-2xl text-sm font-semibold shadow-lg shadow-primary/20 animate-pulse">
+                    <Shield className="h-4 w-4 mr-2" />
+                    {lang === "tr" ? "Güvenli Adımları Gör" : "View Safe Steps"}
+                  </Button>
+                </motion.div>
+              )}
+
+              {/* Results */}
+              <AnimatePresence>
+                {showResults && (
+                  <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }} className="space-y-4">
+                    <Card className="rounded-2xl border-primary/20">
+                      <CardContent className="p-5 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Leaf className="h-5 w-5 text-primary" />
+                          <h3 className="text-base font-bold text-primary">
+                            {lang === "tr" ? "Güvenli Adımlar" : "Safe Steps"}
+                          </h3>
+                        </div>
+                        <ul className="space-y-2">
+                          {[
+                            lang === "tr" ? "Bol sıvı tüketimi sağlayın (su, komposto)" : "Ensure plenty of fluids (water, compote)",
+                            lang === "tr" ? "Odayı serin ve havadar tutun" : "Keep the room cool and ventilated",
+                            lang === "tr" ? "Semptomları not edin — doktora götürürken işe yarar" : "Note symptoms — useful when visiting the doctor",
+                          ].map((step, i) => (
+                            <motion.li key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: i * 0.1 }}
+                              className="flex items-start gap-2 text-sm text-foreground">
+                              <span className="text-primary mt-0.5">✓</span> {step}
+                            </motion.li>
+                          ))}
+                        </ul>
+                      </CardContent>
+                    </Card>
+
+                    <motion.a href="tel:112" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                      className="flex items-center gap-3 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-200/50 p-4 hover:bg-red-100 transition-colors">
+                      <Phone className="h-5 w-5 text-red-500" />
+                      <div>
+                        <p className="text-sm font-bold text-red-700 dark:text-red-400">
+                          {lang === "tr" ? "Durum kötüleşirse hemen arayın" : "Call immediately if condition worsens"}
+                        </p>
+                        <p className="text-xs text-red-500/80">112</p>
                       </div>
-                      <p className="mt-1 text-xs text-muted-foreground">{e.description}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    </motion.a>
+
+                    <p className="text-[10px] text-muted-foreground text-center px-4">
+                      {lang === "tr"
+                        ? "Bu bilgiler tıbbi tavsiye yerine geçmez. Her zaman çocuk doktorunuza danışın."
+                        : "This information does not replace medical advice. Always consult your pediatrician."}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           )}
-
-          {/* Home Care */}
-          {result.homeCare?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("childHealth.homeCareSection", lang)}
-                icon={Home}
-                sectionKey="homeCare"
-                count={result.homeCare.length}
-              />
-              {expandedSections.homeCare && (
-                <div className="p-4 space-y-2">
-                  {result.homeCare.map((h, i) => (
-                    <div key={i} className="rounded-lg border p-3">
-                      <p className="text-sm font-medium">{h.tip}</p>
-                      <p className="text-xs text-muted-foreground">{h.detail}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* When to Worry */}
-          {result.whenToWorry?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("childHealth.whenToWorry", lang)}
-                icon={AlertTriangle}
-                sectionKey="whenToWorry"
-                count={result.whenToWorry.length}
-              />
-              {expandedSections.whenToWorry && (
-                <div className="p-4 space-y-1">
-                  {result.whenToWorry.map((w, i) => (
-                    <div key={i} className="flex items-start gap-2 rounded p-2 text-sm">
-                      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500" />
-                      <p>{w}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* When to See Doctor */}
-          {result.whenToSeeDoctor?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("common.whenToSeeDoctor", lang)}
-                icon={Stethoscope}
-                sectionKey="doctor"
-                count={result.whenToSeeDoctor.length}
-              />
-              {expandedSections.doctor && (
-                <div className="p-4 space-y-1">
-                  {result.whenToSeeDoctor.map((d, i) => (
-                    <div key={i} className="flex items-start gap-2 rounded p-2 text-sm">
-                      <Stethoscope className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" />
-                      <p>{d}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Developmental Info */}
-          {result.developmentalInfo && (
-            <div className="rounded-lg border border-sky-200 bg-sky-50/30 p-4 dark:border-sky-800 dark:bg-sky-950/10">
-              <p className="mb-1 text-xs font-semibold text-sky-600 dark:text-sky-400">
-                {tx("childHealth.developmental", lang)}
-              </p>
-              <p className="text-sm">{result.developmentalInfo}</p>
-            </div>
-          )}
-
-          {/* OTC Note */}
-          {result.safeOTCNote && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50/30 p-3 dark:border-amber-800 dark:bg-amber-950/20">
-              <p className="text-xs text-amber-700 dark:text-amber-400">
-                <AlertTriangle className="mr-1 inline h-3 w-3" />
-                {result.safeOTCNote}
-              </p>
-            </div>
-          )}
-
-          {/* Prevention */}
-          {result.preventionTips?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("childHealth.prevention", lang)}
-                icon={CheckCircle2}
-                sectionKey="prevention"
-                count={result.preventionTips.length}
-              />
-              {expandedSections.prevention && (
-                <div className="p-4 space-y-1">
-                  {result.preventionTips.map((tip, i) => (
-                    <div key={i} className="flex items-start gap-2 text-sm">
-                      <span className="mt-1 text-sky-500">-</span>
-                      <p>{tip}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Sources */}
-          {result.sources?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("common.sources", lang)}
-                icon={Info}
-                sectionKey="sources"
-                count={result.sources.length}
-              />
-              {expandedSections.sources && (
-                <div className="p-4 space-y-1">
-                  {result.sources.map((s, i) => (
-                    <a
-                      key={i}
-                      href={s.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block text-xs text-sky-600 hover:underline dark:text-sky-400"
-                    >
-                      {s.title}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* New Search */}
-          <Button
-            variant="outline"
-            onClick={() => {
-              setResult(null);
-              setSelectedConcern("");
-              setChildAge("");
-              setNotes("");
-            }}
-            className="w-full"
-          >
-            {tx("childHealth.newSearch", lang)}
-          </Button>
-        </div>
-      )}
-
-      {/* Footer Disclaimer */}
-      <p className="mt-6 text-center text-xs text-muted-foreground">
-        {tx("child.disclaimer", lang)}
-      </p>
+        </AnimatePresence>
+      </div>
     </div>
-  );
+  )
 }
