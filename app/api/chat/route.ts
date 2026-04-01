@@ -149,10 +149,10 @@ export async function POST(request: NextRequest) {
     // Add the actual user message
     fullPrompt += `\n\nUSER'S QUESTION:\n${message}`;
 
-    // Step 5: Stream Gemini response
+    // Step 5: Stream Claude response
     let systemPromptFull = SYSTEM_PROMPT;
 
-    // Language instruction — MUST come first so Gemini responds in the correct language
+    // Language instruction — MUST come first so Claude responds in the correct language
     if (lang === "tr") {
       systemPromptFull += "\n\nKRİTİK DİL KURALI: Tüm yanıtlarını TÜRKÇE ver. Başlıklar, açıklamalar, öneriler, uyarılar dahil her şey Türkçe olmalı. Latince/İngilizce terimler parantez içinde kalabilir. Kullanıcı Türkçe yazdığında her zaman Türkçe yanıt ver.";
     }
@@ -173,7 +173,7 @@ When they ask about herbal supplements, herbs, or natural remedies:
 This rule exists because giving dosage advice without knowing the user's medications is unsafe.`;
     }
 
-    // Step 5b: Process uploaded files for multimodal Gemini call
+    // Step 5b: Process uploaded files for multimodal Claude call
     const geminiFiles: GeminiFilePart[] = [];
     if (Array.isArray(files) && files.length > 0) {
       for (const file of files) {
@@ -194,11 +194,11 @@ This rule exists because giving dosage advice without knowing the user's medicat
       stream = geminiFiles.length > 0
         ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles)
         : await askGeminiStream(fullPrompt, systemPromptFull);
-    } catch (geminiError) {
-      // Gemini call failed (rate limit, API key, network, etc.)
+    } catch (claudeError) {
+      // Claude API call failed (rate limit, API key, network, etc.)
       // Return a streaming response with the error message instead of a 500
-      console.error("Gemini API call failed:", geminiError);
-      const errMsg = geminiError instanceof Error ? geminiError.message : "Unknown error";
+      console.error("Claude API call failed:", claudeError);
+      const errMsg = claudeError instanceof Error ? claudeError.message : "Unknown error";
 
       const chatLang = lang === "tr" ? "tr" as const : "en" as const;
       let userMessage: string;
