@@ -15,13 +15,11 @@ function getClient(): Anthropic {
   return _client;
 }
 
-// Hybrid strategy:
-// - FAST: chat, streaming, simple text (Haiku 4.5 — 3x faster)
-// - SMART: JSON analysis, medical decisions (Sonnet 4.6 — highest quality)
-// On Vercel Free plan (60s timeout), Sonnet can timeout on large JSON.
-// Solution: Use Haiku for JSON too, but with stronger system prompts.
+// Model strategy:
+// - Current: Haiku 4.5 for everything (fast + cost-effective, better than Gemini 2.0 Flash)
+// - Future (when monetized): upgrade JSON routes to Sonnet 4.6 for highest medical quality
 const MODEL_FAST = "claude-haiku-4-5";
-const MODEL_SMART = "claude-sonnet-4-6";
+const MODEL_SMART = "claude-haiku-4-5"; // TODO: switch to "claude-sonnet-4-6" when on Vercel Pro + revenue
 
 // ──────────────────────────────────────────────
 // Safe JSON parser — 5-layer cleaning
