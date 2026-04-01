@@ -66,6 +66,7 @@ export async function GET(req: Request) {
       // Exchange authorization code for tokens
       const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
         method: "POST",
+        signal: AbortSignal.timeout(10000),
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
           code,
@@ -121,6 +122,7 @@ export async function POST(req: Request) {
     if (!dataTypes || dataTypes.includes("heart_rate")) {
       const hrRes = await fetch("https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate", {
         method: "POST",
+        signal: AbortSignal.timeout(10000),
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
@@ -156,6 +158,7 @@ export async function POST(req: Request) {
     if (!dataTypes || dataTypes.includes("steps")) {
       const stepsRes = await fetch("https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate", {
         method: "POST",
+        signal: AbortSignal.timeout(10000),
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",

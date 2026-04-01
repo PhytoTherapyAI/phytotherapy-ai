@@ -35,6 +35,7 @@ async function sendWhatsApp(to: string, message: string): Promise<boolean> {
   try {
     const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
       method: "POST",
+      signal: AbortSignal.timeout(10000),
       headers: {
         "Authorization": "Basic " + Buffer.from(`${accountSid}:${authToken}`).toString("base64"),
         "Content-Type": "application/x-www-form-urlencoded",
@@ -77,6 +78,7 @@ async function sendTelegram(chatId: string, message: string, buttons?: string[][
 
     const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: "POST",
+      signal: AbortSignal.timeout(10000),
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     })

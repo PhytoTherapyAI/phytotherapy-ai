@@ -106,6 +106,7 @@ export async function POST(req: NextRequest) {
 
         await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
           method: "POST",
+          signal: AbortSignal.timeout(8000),
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             chat_id: telegramChatId,
@@ -125,6 +126,7 @@ export async function POST(req: NextRequest) {
         const emoji = CATEGORY_EMOJI[category] || "📝"
         await fetch(discordWebhook, {
           method: "POST",
+          signal: AbortSignal.timeout(8000),
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             embeds: [{
