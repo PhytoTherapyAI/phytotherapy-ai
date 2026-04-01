@@ -21,6 +21,11 @@ function getClient(): Anthropic {
 const MODEL_FAST = "claude-haiku-4-5";
 const MODEL_SMART = "claude-haiku-4-5"; // TODO: switch to "claude-sonnet-4-6" when on Vercel Pro + revenue
 
+// Token limits — lower = faster response time
+const TOKENS_TEXT = 2048;    // chat/simple text — most answers < 800 tokens
+const TOKENS_JSON = 3000;    // JSON analysis — most responses < 1500 tokens
+const TOKENS_STREAM = 2048;  // streaming chat
+
 // ──────────────────────────────────────────────
 // Safe JSON parser — 5-layer cleaning
 // ──────────────────────────────────────────────
@@ -105,7 +110,7 @@ export async function askGemini(
   return retryWithBackoff(async () => {
     const response = await getClient().messages.create({
       model: MODEL_FAST,
-      max_tokens: 4096,
+      max_tokens: TOKENS_TEXT,
       temperature: 0,
       system: systemPrompt,
       messages: [{ role: "user", content: prompt }],
@@ -126,7 +131,7 @@ export async function askGeminiJSON(
   return retryWithBackoff(async () => {
     const response = await getClient().messages.create({
       model: MODEL_SMART,
-      max_tokens: 4096,
+      max_tokens: TOKENS_JSON,
       temperature: 0,
       system: jsonSystemPrompt,
       messages: [{ role: "user", content: prompt }],
@@ -145,7 +150,7 @@ export async function askGeminiStream(
   return retryWithBackoff(async () => {
     const stream = getClient().messages.stream({
       model: MODEL_FAST,
-      max_tokens: 4096,
+      max_tokens: TOKENS_STREAM,
       temperature: 0,
       system: systemPrompt,
       messages: [{ role: "user", content: prompt }],
@@ -220,7 +225,7 @@ export async function askGeminiJSONMultimodal(
 
     const response = await getClient().messages.create({
       model: MODEL_SMART,
-      max_tokens: 4096,
+      max_tokens: TOKENS_JSON,
       temperature: 0,
       system: jsonSystemPrompt,
       messages: [{ role: "user", content: contentParts }],
@@ -270,7 +275,7 @@ export async function askGeminiStreamMultimodal(
 
     const stream = getClient().messages.stream({
       model: MODEL_FAST,
-      max_tokens: 4096,
+      max_tokens: TOKENS_STREAM,
       temperature: 0,
       system: systemPrompt,
       messages: [{ role: "user", content: contentParts }],
