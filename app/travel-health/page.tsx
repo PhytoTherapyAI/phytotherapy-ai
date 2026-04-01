@@ -1,502 +1,232 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
-  Plane,
-  Loader2,
-  Syringe,
-  Pill,
-  AlertTriangle,
-  ShoppingBag,
-  Clock,
-  Phone,
-  ChevronDown,
-  ChevronUp,
-  Shield,
-  Lightbulb,
-  LogIn,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+  Plane, Globe, Shield, Syringe, Leaf,
+  MapPin, Sun, Mountain, Building, Tent,
+  ChevronRight, Loader2, Check, AlertTriangle,
+} from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { useLang } from "@/components/layout/language-toggle"
 
-interface VaccinationItem {
-  name: string;
-  reason: string;
-  timing: string;
+// ═══ ROUTE CHIPS ═══
+interface Route {
+  id: string; label: string; labelTr: string; emoji: string; color: string
+  vaccines: string[]; flora: string[]; tips: string[]; tipsTr: string[]
 }
 
-interface MedicationPlanItem {
-  medication: string;
-  adjustment: string;
-  notes: string;
-}
+const ROUTES: Route[] = [
+  {
+    id: "sea", label: "Southeast Asia (Malaria)", labelTr: "Güneydoğu Asya (Sıtma)",
+    emoji: "🌴", color: "#16a34a",
+    vaccines: ["Hepatitis A/B", "Typhoid", "Japanese Encephalitis"],
+    flora: ["Artemisinin (Artemisia)", "Citronella", "Neem Oil"],
+    tips: ["Use DEET insect repellent", "Sleep under mosquito nets", "Prophylactic antimalarials"],
+    tipsTr: ["DEET böcek kovucu kullanın", "Cibinlik altında uyuyun", "Profilaktik sıtma ilacı"],
+  },
+  {
+    id: "africa", label: "Africa Safari (Yellow Fever)", labelTr: "Afrika Safari (Sarı Humma)",
+    emoji: "🦁", color: "#f59e0b",
+    vaccines: ["Yellow Fever (required)", "Meningococcal", "Rabies"],
+    flora: ["Moringa", "Baobab Extract", "African Wormwood"],
+    tips: ["Yellow fever certificate mandatory", "Avoid bush meat", "Purify all water"],
+    tipsTr: ["Sarı humma sertifikası zorunlu", "Çalı etinden kaçının", "Tüm suyu arıtın"],
+  },
+  {
+    id: "altitude", label: "High Altitude", labelTr: "Yüksek İrtifa",
+    emoji: "🏔️", color: "#6366f1",
+    vaccines: [],
+    flora: ["Rhodiola Rosea", "Ginkgo Biloba", "Coca Leaf Tea"],
+    tips: ["Ascend slowly (300m/day above 3000m)", "Hydrate 3-4L/day", "Acetazolamide if prescribed"],
+    tipsTr: ["Yavaş yükselin (3000m üstü günde 300m)", "Günde 3-4L su için", "Reçeteli Asetazolamid"],
+  },
+  {
+    id: "tropical", label: "Tropical Beach", labelTr: "Tropikal Plaj",
+    emoji: "🏖️", color: "#ef4444",
+    vaccines: ["Hepatitis A", "Typhoid"],
+    flora: ["Aloe Vera", "Turmeric (anti-inflammatory)", "Ginger (nausea)"],
+    tips: ["SPF 50+ sunscreen", "Rehydration salts", "Avoid raw seafood"],
+    tipsTr: ["SPF 50+ güneş kremi", "Rehidrasyon tuzları", "Çiğ deniz ürünlerinden kaçının"],
+  },
+]
 
-interface RiskItem {
-  risk: string;
-  severity: "high" | "moderate" | "low";
-  description: string;
-  prevention: string;
-}
+// ═══ LABOR ILLUSION LOADING ═══
+function ScanningLoader({ lang }: { lang: string }) {
+  const [step, setStep] = useState(0)
+  const steps = [
+    lang === "tr" ? "Aşı gereksinimleri taranıyor..." : "Scanning vaccine requirements...",
+    lang === "tr" ? "Yerel flora analiz ediliyor..." : "Analyzing local flora...",
+    lang === "tr" ? "Sağlık riskleri değerlendiriliyor..." : "Evaluating health risks...",
+    lang === "tr" ? "Sonuçlar hazırlanıyor..." : "Preparing results...",
+  ]
 
-interface PharmacyItem {
-  item: string;
-  reason: string;
-}
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(s => (s + 1) % steps.length)
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [steps.length])
 
-interface JetLagItem {
-  day: string;
-  advice: string;
-}
-
-interface EmergencyItem {
-  service: string;
-  number: string;
-}
-
-interface TravelResult {
-  vaccinations: {
-    required: VaccinationItem[];
-    recommended: VaccinationItem[];
-  };
-  medicationPlan: MedicationPlanItem[];
-  risks: RiskItem[];
-  pharmacyChecklist: PharmacyItem[];
-  jetLagPlan: JetLagItem[];
-  emergencyNumbers: EmergencyItem[];
-  generalTips: string[];
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+      className="rounded-2xl bg-gradient-to-r from-sky-50 to-orange-50 dark:from-sky-900/10 dark:to-orange-900/10 border p-6 text-center">
+      <Loader2 className="h-8 w-8 text-primary mx-auto animate-spin mb-3" />
+      <AnimatePresence mode="wait">
+        <motion.p key={step} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          className="text-sm font-medium text-foreground">
+          {steps[step]}
+        </motion.p>
+      </AnimatePresence>
+      <div className="flex justify-center gap-1 mt-3">
+        {steps.map((_, i) => (
+          <div key={i} className={`h-1 w-6 rounded-full transition-all ${i <= step ? "bg-primary" : "bg-stone-200"}`} />
+        ))}
+      </div>
+    </motion.div>
+  )
 }
 
 export default function TravelHealthPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [destination, setDestination] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<TravelResult | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    vaccinations: true,
-    medicationPlan: true,
-    risks: true,
-    pharmacy: true,
-    jetLag: false,
-    emergency: true,
-    tips: false,
-  });
+  const { lang } = useLang()
+  const [travelType, setTravelType] = useState<"resort" | "backpack">("resort")
+  const [selectedRoute, setSelectedRoute] = useState<string | null>(null)
+  const [scanning, setScanning] = useState(false)
+  const [showResults, setShowResults] = useState(false)
 
-  const toggleSection = (key: string) => {
-    setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  const active = ROUTES.find(r => r.id === selectedRoute)
 
-  const handleGenerate = async () => {
-    if (!destination.trim()) {
-      setError(tx("travel.noDestination", lang));
-      return;
-    }
-    if (!startDate || !endDate) {
-      setError(tx("travel.noDates", lang));
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (isAuthenticated && session?.access_token) {
-        headers["Authorization"] = `Bearer ${session.access_token}`;
-      }
-
-      const res = await fetch("/api/travel-health", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          destination: destination.trim(),
-          startDate,
-          endDate,
-          lang,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to get advice");
-      }
-
-      const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const severityColor = (severity: string) => {
-    switch (severity) {
-      case "high":
-        return "bg-red-100 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800";
-      case "moderate":
-        return "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800";
-      default:
-        return "bg-green-100 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-800";
-    }
-  };
-
-  const SectionHeader = ({ title, icon: Icon, sectionKey, count }: { title: string; icon: React.ElementType; sectionKey: string; count?: number }) => (
-    <button
-      onClick={() => toggleSection(sectionKey)}
-      className="flex w-full items-center justify-between rounded-t-lg border-b bg-sky-50/50 px-4 py-3 text-left dark:bg-sky-950/20"
-    >
-      <div className="flex items-center gap-2">
-        <Icon className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-        <span className="text-sm font-semibold">{title}</span>
-        {count !== undefined && (
-          <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-900 dark:text-sky-300">
-            {count}
-          </span>
-        )}
-      </div>
-      {expandedSections[sectionKey] ? (
-        <ChevronUp className="h-4 w-4 text-muted-foreground" />
-      ) : (
-        <ChevronDown className="h-4 w-4 text-muted-foreground" />
-      )}
-    </button>
-  );
+  const startScan = (routeId: string) => {
+    setSelectedRoute(routeId)
+    setScanning(true)
+    setShowResults(false)
+    setTimeout(() => { setScanning(false); setShowResults(true) }, 4000)
+  }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-sky-50 p-3 dark:bg-sky-950">
-          <Plane className="h-6 w-6 text-sky-600 dark:text-sky-400" />
+    <div className="min-h-screen bg-gradient-to-b from-sky-50/30 to-orange-50/20 dark:from-background dark:to-background">
+      <div className="mx-auto max-w-2xl px-4 md:px-8 py-6 space-y-6">
+
+        {/* Hero */}
+        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+          className="text-center py-4 space-y-2">
+          <Globe className="h-10 w-10 text-sky-500 mx-auto" />
+          <h1 className="text-2xl font-bold">{lang === "tr" ? "Global Sağlık Radarı" : "Global Health Radar"}</h1>
+          <p className="text-sm text-muted-foreground">{lang === "tr" ? "Güvenli seyahatin sağlık rehberi." : "Your health guide for safe travel."}</p>
+        </motion.div>
+
+        {/* Context Switcher */}
+        <div className="flex bg-white dark:bg-card rounded-xl border p-1 gap-1">
+          {(["resort", "backpack"] as const).map(t => (
+            <motion.button key={t} whileTap={{ scale: 0.95 }}
+              onClick={() => setTravelType(t)}
+              className={`relative flex-1 py-2.5 px-3 rounded-lg text-xs font-medium transition-all ${
+                travelType === t ? "text-white" : "text-muted-foreground"
+              }`}>
+              {travelType === t && (
+                <motion.div layoutId="travelType" className="absolute inset-0 bg-sky-500 rounded-lg shadow"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }} />
+              )}
+              <span className="relative z-10 flex items-center justify-center gap-1.5">
+                {t === "resort" ? <Building className="h-3.5 w-3.5" /> : <Tent className="h-3.5 w-3.5" />}
+                {t === "resort" ? (lang === "tr" ? "Resort / Şehir" : "Resort / City") : (lang === "tr" ? "Doğa / Sırt Çantası" : "Nature / Backpack")}
+              </span>
+            </motion.button>
+          ))}
         </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-            {tx("travel.title", lang)}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {tx("travel.subtitle", lang)}
+
+        {/* Route Chips */}
+        <div className="space-y-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            {lang === "tr" ? "Rota Seçin" : "Select Route"}
           </p>
-        </div>
-      </div>
-
-      {/* Guest notice */}
-      {!isAuthenticated && (
-        <div className="mb-6 flex items-center gap-2 rounded-lg border border-sky-200 bg-sky-50/50 p-3 text-xs text-sky-800 dark:border-sky-800 dark:bg-sky-950/20 dark:text-sky-300">
-          <LogIn className="h-3.5 w-3.5 shrink-0" />
-          {tx("travel.loginRequired", lang)}
-        </div>
-      )}
-
-      {!result && (
-        <>
-          {/* Destination */}
-          <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium">
-              {tx("travel.destination", lang)}
-            </label>
-            <input
-              type="text"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              placeholder={tx("travel.destinationPlaceholder", lang)}
-              maxLength={100}
-              className="w-full rounded-lg border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
-            />
+          <div className="grid grid-cols-2 gap-2.5">
+            {ROUTES.map((r, i) => (
+              <motion.button key={r.id}
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => startScan(r.id)}
+                className={`flex items-center gap-3 rounded-2xl p-3.5 text-left transition-all ${
+                  selectedRoute === r.id
+                    ? "ring-2 bg-white dark:bg-card shadow-md"
+                    : "bg-white dark:bg-card border hover:shadow-sm"
+                }`}
+                style={selectedRoute === r.id ? { ringColor: r.color } : undefined}>
+                <span className="text-2xl">{r.emoji}</span>
+                <div>
+                  <p className="text-xs font-bold">{lang === "tr" ? r.labelTr : r.label}</p>
+                </div>
+              </motion.button>
+            ))}
           </div>
-
-          {/* Travel Dates */}
-          <div className="mb-4">
-            <label className="mb-2 block text-sm font-medium">
-              {tx("travel.dates", lang)}
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="mb-1 block text-xs text-muted-foreground">
-                  {tx("travel.startDate", lang)}
-                </label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full rounded-lg border bg-background px-4 py-3 text-sm focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs text-muted-foreground">
-                  {tx("travel.endDate", lang)}
-                </label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full rounded-lg border bg-background px-4 py-3 text-sm focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Generate Button */}
-          <Button
-            onClick={handleGenerate}
-            disabled={isLoading || !destination.trim()}
-            className="w-full gap-2 bg-sky-600 hover:bg-sky-700 text-white"
-            size="lg"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {tx("travel.generating", lang)}
-              </>
-            ) : (
-              <>
-                <Plane className="h-4 w-4" />
-                {tx("travel.generate", lang)}
-              </>
-            )}
-          </Button>
-        </>
-      )}
-
-      {/* Error */}
-      {error && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400">
-          {error}
         </div>
-      )}
 
-      {/* Results */}
-      {result && (
-        <div className="space-y-4">
-          {/* Vaccinations */}
-          {(result.vaccinations?.required?.length > 0 || result.vaccinations?.recommended?.length > 0) && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("travel.vaccinations", lang)}
-                icon={Syringe}
-                sectionKey="vaccinations"
-                count={(result.vaccinations?.required?.length || 0) + (result.vaccinations?.recommended?.length || 0)}
-              />
-              {expandedSections.vaccinations && (
-                <div className="p-4 space-y-3">
-                  {result.vaccinations.required?.length > 0 && (
-                    <div>
-                      <h4 className="mb-2 flex items-center gap-1 text-xs font-bold text-red-600 dark:text-red-400">
-                        <Shield className="h-3 w-3" />
-                        {tx("travel.required", lang)}
-                      </h4>
-                      {result.vaccinations.required.map((v, i) => (
-                        <div key={i} className="mb-2 rounded-lg border border-red-200 bg-red-50/50 p-3 dark:border-red-900 dark:bg-red-950/20">
-                          <p className="text-sm font-medium">{v.name}</p>
-                          <p className="text-xs text-muted-foreground">{v.reason}</p>
-                          <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                            <Clock className="mr-1 inline h-3 w-3" />{v.timing}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {result.vaccinations.recommended?.length > 0 && (
-                    <div>
-                      <h4 className="mb-2 flex items-center gap-1 text-xs font-bold text-sky-600 dark:text-sky-400">
-                        <Shield className="h-3 w-3" />
-                        {tx("travel.recommended", lang)}
-                      </h4>
-                      {result.vaccinations.recommended.map((v, i) => (
-                        <div key={i} className="mb-2 rounded-lg border bg-sky-50/30 p-3 dark:bg-sky-950/10">
-                          <p className="text-sm font-medium">{v.name}</p>
-                          <p className="text-xs text-muted-foreground">{v.reason}</p>
-                          <p className="mt-1 text-xs text-sky-600 dark:text-sky-400">
-                            <Clock className="mr-1 inline h-3 w-3" />{v.timing}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+        {/* Scanning / Results */}
+        <AnimatePresence mode="wait">
+          {scanning && (
+            <motion.div key="scanning" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <ScanningLoader lang={lang} />
+            </motion.div>
           )}
 
-          {/* Medication Plan */}
-          {result.medicationPlan?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("travel.medicationPlan", lang)}
-                icon={Pill}
-                sectionKey="medicationPlan"
-                count={result.medicationPlan.length}
-              />
-              {expandedSections.medicationPlan && (
-                <div className="p-4 space-y-2">
-                  {result.medicationPlan.map((m, i) => (
-                    <div key={i} className="rounded-lg border p-3">
-                      <p className="text-sm font-medium">{m.medication}</p>
-                      <p className="text-xs text-muted-foreground">{m.adjustment}</p>
-                      {m.notes && (
-                        <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">{m.notes}</p>
-                      )}
+          {showResults && active && (
+            <motion.div key="results" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+              className="space-y-4">
+              {/* Vaccines */}
+              {active.vaccines.length > 0 && (
+                <Card className="rounded-2xl">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Syringe className="h-4 w-4 text-sky-500" />
+                      <h3 className="text-sm font-bold">{lang === "tr" ? "Gerekli Aşılar" : "Required Vaccines"}</h3>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Regional Risks */}
-          {result.risks?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("travel.risks", lang)}
-                icon={AlertTriangle}
-                sectionKey="risks"
-                count={result.risks.length}
-              />
-              {expandedSections.risks && (
-                <div className="p-4 space-y-2">
-                  {result.risks.map((r, i) => (
-                    <div key={i} className={`rounded-lg border p-3 ${severityColor(r.severity)}`}>
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium">{r.risk}</p>
-                        <span className="rounded-full px-2 py-0.5 text-xs font-medium">
-                          {tx(`travel.severity.${r.severity}`, lang)}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-xs opacity-80">{r.description}</p>
-                      <p className="mt-1 text-xs font-medium">
-                        <Shield className="mr-1 inline h-3 w-3" />{r.prevention}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Pharmacy Checklist */}
-          {result.pharmacyChecklist?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("travel.pharmacy", lang)}
-                icon={ShoppingBag}
-                sectionKey="pharmacy"
-                count={result.pharmacyChecklist.length}
-              />
-              {expandedSections.pharmacy && (
-                <div className="p-4 space-y-1">
-                  {result.pharmacyChecklist.map((p, i) => (
-                    <div key={i} className="flex items-start gap-2 rounded p-2 hover:bg-muted/30">
-                      <input type="checkbox" className="mt-1 h-3.5 w-3.5 rounded accent-sky-600" />
-                      <div>
-                        <p className="text-sm font-medium">{p.item}</p>
-                        <p className="text-xs text-muted-foreground">{p.reason}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Jet Lag Plan */}
-          {result.jetLagPlan?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("travel.jetLag", lang)}
-                icon={Clock}
-                sectionKey="jetLag"
-                count={result.jetLagPlan.length}
-              />
-              {expandedSections.jetLag && (
-                <div className="p-4 space-y-2">
-                  {result.jetLagPlan.map((j, i) => (
-                    <div key={i} className="flex gap-3 rounded-lg border p-3">
-                      <span className="shrink-0 rounded bg-sky-100 px-2 py-1 text-xs font-bold text-sky-700 dark:bg-sky-900 dark:text-sky-300">
-                        {j.day}
-                      </span>
-                      <p className="text-sm">{j.advice}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Emergency Numbers */}
-          {result.emergencyNumbers?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("travel.emergency", lang)}
-                icon={Phone}
-                sectionKey="emergency"
-                count={result.emergencyNumbers.length}
-              />
-              {expandedSections.emergency && (
-                <div className="p-4">
-                  <div className="grid grid-cols-2 gap-2">
-                    {result.emergencyNumbers.map((e, i) => (
-                      <div key={i} className="rounded-lg border border-red-200 bg-red-50/30 p-3 text-center dark:border-red-900 dark:bg-red-950/20">
-                        <p className="text-xs text-muted-foreground">{e.service}</p>
-                        <p className="text-lg font-bold text-red-600 dark:text-red-400">{e.number}</p>
+                    {active.vaccines.map((v, i) => (
+                      <div key={i} className="flex items-center gap-2 text-sm py-1">
+                        <AlertTriangle className="h-3 w-3 text-amber-500" /> {v}
                       </div>
                     ))}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               )}
-            </div>
-          )}
 
-          {/* General Tips */}
-          {result.generalTips?.length > 0 && (
-            <div className="overflow-hidden rounded-lg border">
-              <SectionHeader
-                title={tx("travel.generalTips", lang)}
-                icon={Lightbulb}
-                sectionKey="tips"
-                count={result.generalTips.length}
-              />
-              {expandedSections.tips && (
-                <div className="p-4 space-y-1">
-                  {result.generalTips.map((tip, i) => (
-                    <div key={i} className="flex items-start gap-2 text-sm">
-                      <span className="mt-1 text-sky-500">•</span>
-                      <p>{tip}</p>
+              {/* Flora */}
+              <Card className="rounded-2xl">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Leaf className="h-4 w-4 text-primary" />
+                    <h3 className="text-sm font-bold">{lang === "tr" ? "Destekleyici Flora" : "Supportive Flora"}</h3>
+                  </div>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {active.flora.map(f => (
+                      <span key={f} className="text-xs px-2.5 py-1 rounded-full bg-primary/5 text-primary border border-primary/10">{f}</span>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Safety Tips */}
+              <Card className="rounded-2xl">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Shield className="h-4 w-4 text-sky-500" />
+                    <h3 className="text-sm font-bold">{lang === "tr" ? "Güvenlik İpuçları" : "Safety Tips"}</h3>
+                  </div>
+                  {(lang === "tr" ? active.tipsTr : active.tips).map((t, i) => (
+                    <div key={i} className="flex items-start gap-2 text-sm py-1">
+                      <Check className="h-3.5 w-3.5 text-primary mt-0.5 shrink-0" /> {t}
                     </div>
                   ))}
-                </div>
-              )}
-            </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           )}
-
-          {/* New Search */}
-          <Button
-            variant="outline"
-            onClick={() => {
-              setResult(null);
-              setDestination("");
-              setStartDate("");
-              setEndDate("");
-            }}
-            className="w-full"
-          >
-            {tx("travel.newSearch", lang)}
-          </Button>
-        </div>
-      )}
-
-      {/* Footer Disclaimer */}
-      <p className="mt-6 text-center text-xs text-muted-foreground">
-        {tx("disclaimer.tool", lang)}
-      </p>
+        </AnimatePresence>
+      </div>
     </div>
-  );
+  )
 }

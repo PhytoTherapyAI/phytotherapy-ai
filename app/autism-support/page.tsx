@@ -1,185 +1,217 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Brain, Calendar, ClipboardList, AlertTriangle, BookOpen, Plus, Check, Clock, Smile, Frown, Meh, Volume2, Sun, Zap, Eye, Hand, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+  Puzzle, Star, Shield, Volume2, Hand,
+  Check, ChevronRight, Sparkles, Heart,
+  Sun, Moon, Utensils, BookOpen,
+} from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { useLang } from "@/components/layout/language-toggle"
 
-interface RoutineItem { id: string; time: string; activity: string; completed: boolean; }
-interface BehaviorNote { id: string; date: string; mood: "happy" | "neutral" | "upset"; note: string; }
+// ═══ VISUAL ROUTINE PATH (PECS-style) ═══
+function VisualRoutine({ lang }: { lang: string }) {
+  const [completed, setCompleted] = useState<string[]>([])
 
-const SENSORY_TRIGGERS = [
-  { id: "1", cat: "Auditory", en: "Loud noises / crowds", tr: "Yüksek ses / kalabalik", severity: "high" as const, icon: <Volume2 className="w-4 h-4" /> },
-  { id: "2", cat: "Visual", en: "Bright fluorescent lights", tr: "Parlak floresan isiklar", severity: "medium" as const, icon: <Sun className="w-4 h-4" /> },
-  { id: "3", cat: "Tactile", en: "Certain fabric textures", tr: "Bazi kumas dokulari", severity: "medium" as const, icon: <Hand className="w-4 h-4" /> },
-  { id: "4", cat: "Visual", en: "Rapid screen transitions", tr: "Hizli ekran gecisleri", severity: "low" as const, icon: <Eye className="w-4 h-4" /> },
-  { id: "5", cat: "Sensory", en: "Strong smells (perfume, food)", tr: "Sert kokular (parfum, yiyecek)", severity: "high" as const, icon: <Zap className="w-4 h-4" /> },
-  { id: "6", cat: "Auditory", en: "Sudden unexpected sounds", tr: "Ani beklenmedik sesler", severity: "high" as const, icon: <Volume2 className="w-4 h-4" /> },
-  { id: "7", cat: "Tactile", en: "Tags on clothing", tr: "Kiyafet etiketleri", severity: "low" as const, icon: <Hand className="w-4 h-4" /> },
-];
+  const routines = [
+    { id: "wake", emoji: "🌅", label: lang === "tr" ? "Uyanma" : "Wake Up", time: "07:00" },
+    { id: "brush", emoji: "🪥", label: lang === "tr" ? "Diş Fırçalama" : "Brush Teeth", time: "07:10" },
+    { id: "breakfast", emoji: "🥣", label: lang === "tr" ? "Kahvaltı" : "Breakfast", time: "07:30" },
+    { id: "dress", emoji: "👕", label: lang === "tr" ? "Giyinme" : "Get Dressed", time: "08:00" },
+    { id: "school", emoji: "🎒", label: lang === "tr" ? "Okul / Etkinlik" : "School / Activity", time: "08:30" },
+    { id: "lunch", emoji: "🍽️", label: lang === "tr" ? "Öğle Yemeği" : "Lunch", time: "12:00" },
+    { id: "play", emoji: "🧩", label: lang === "tr" ? "Oyun Zamanı" : "Play Time", time: "15:00" },
+    { id: "bath", emoji: "🛁", label: lang === "tr" ? "Banyo" : "Bath", time: "19:00" },
+    { id: "sleep", emoji: "😴", label: lang === "tr" ? "Uyku" : "Sleep", time: "20:30" },
+  ]
 
-const DEFAULT_ROUTINES: RoutineItem[] = [
-  { id: "1", time: "07:00", activity: "Wake up + sensory-friendly dressing", completed: false },
-  { id: "2", time: "07:30", activity: "Breakfast (preferred foods)", completed: false },
-  { id: "3", time: "08:00", activity: "Visual schedule review", completed: false },
-  { id: "4", time: "09:00", activity: "Occupational therapy session", completed: false },
-  { id: "5", time: "10:30", activity: "Sensory break (10 min)", completed: false },
-  { id: "6", time: "12:00", activity: "Lunch + social skills practice", completed: false },
-  { id: "7", time: "14:00", activity: "Speech therapy", completed: false },
-  { id: "8", time: "15:30", activity: "Free play / special interest time", completed: false },
-  { id: "9", time: "17:00", activity: "Wind-down routine begins", completed: false },
-  { id: "10", time: "19:00", activity: "Bedtime routine (visual checklist)", completed: false },
-];
-
-const THERAPY_SCHEDULE = [
-  { day: "Mon", sessions: ["OT 09:00", "Speech 14:00"] },
-  { day: "Tue", sessions: ["ABA 10:00"] },
-  { day: "Wed", sessions: ["OT 09:00", "Social 15:00"] },
-  { day: "Thu", sessions: ["Speech 14:00"] },
-  { day: "Fri", sessions: ["ABA 10:00", "Music 16:00"] },
-  { day: "Sat", sessions: [] },
-  { day: "Sun", sessions: [] },
-];
-
-export default function AutismSupportPage() {
-  const { lang } = useLang();
-  const isTr = lang === "tr";
-  const [activeSection, setActiveSection] = useState("routine");
-  const [routines, setRoutines] = useState<RoutineItem[]>(DEFAULT_ROUTINES);
-  const [notes, setNotes] = useState<BehaviorNote[]>([
-    { id: "1", date: "2026-03-27", mood: "happy", note: isTr ? "Sabah rutini sorunsuz tamamlandi" : "Morning routine completed without issues" },
-    { id: "2", date: "2026-03-26", mood: "neutral", note: isTr ? "Ogle yemeginde yeni yiyecek denedi" : "Tried new food at lunch" },
-    { id: "3", date: "2026-03-25", mood: "upset", note: isTr ? "Okuldaki gosteri sesi tetikledi" : "School assembly noise was triggering" },
-  ]);
-  const [newNote, setNewNote] = useState("");
-  const [newNoteMood, setNewNoteMood] = useState<"happy" | "neutral" | "upset">("neutral");
-  const toggleRoutine = (id: string) => setRoutines(prev => prev.map(r => r.id === id ? { ...r, completed: !r.completed } : r));
-  const completedCount = routines.filter(r => r.completed).length;
-  const progressPct = Math.round((completedCount / routines.length) * 100);
-  const addNote = () => {
-    if (!newNote.trim()) return;
-    setNotes(prev => [{ id: Date.now().toString(), date: new Date().toISOString().split("T")[0], mood: newNoteMood, note: newNote.trim() }, ...prev]);
-    setNewNote("");
-  };
-  const sections = [
-    { id: "routine", icon: <ClipboardList className="w-4 h-4" />, label: tx("autism.routineTracker", lang) },
-    { id: "sensory", icon: <AlertTriangle className="w-4 h-4" />, label: tx("autism.sensoryTriggers", lang) },
-    { id: "therapy", icon: <Calendar className="w-4 h-4" />, label: tx("autism.therapyCalendar", lang) },
-    { id: "behavior", icon: <BookOpen className="w-4 h-4" />, label: tx("autism.behavioralNotes", lang) },
-    { id: "resources", icon: <Brain className="w-4 h-4" />, label: tx("autism.resources", lang) },
-  ];
-  const moodIcon = (m: string) => m === "happy" ? <Smile className="w-5 h-5 text-green-500" /> : m === "upset" ? <Frown className="w-5 h-5 text-red-500" /> : <Meh className="w-5 h-5 text-yellow-500" />;
-  const sevColor = (s: string) => s === "high" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" : s === "medium" ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
+  const toggle = (id: string) => {
+    setCompleted(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white dark:from-gray-900 dark:to-gray-950 p-4 md:p-8">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-center gap-3 mb-6">
-          <Brain className="w-8 h-8 text-purple-600" />
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">{tx("autism.title", lang)}</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{tx("autism.subtitle", lang)}</p>
-          </div>
+    <div className="space-y-2">
+      {routines.map((r, i) => {
+        const done = completed.includes(r.id)
+        return (
+          <motion.button key={r.id}
+            initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.04 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => toggle(r.id)}
+            className={`w-full flex items-center gap-4 rounded-3xl p-4 min-h-[64px] transition-all ${
+              done
+                ? "bg-violet-50 dark:bg-violet-900/20 border-2 border-violet-300/50"
+                : "bg-white dark:bg-card border-2 border-transparent hover:border-violet-200/50 hover:shadow-sm"
+            }`}>
+            <span className="text-3xl">{r.emoji}</span>
+            <div className="flex-1 text-left">
+              <p className={`text-sm font-bold ${done ? "text-violet-500" : "text-foreground"}`}>{r.label}</p>
+              <p className="text-[10px] text-muted-foreground">{r.time}</p>
+            </div>
+            {done ? (
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring" }}
+                className="flex items-center gap-1">
+                <span className="text-lg">🎉</span>
+                <Badge className="bg-violet-100 text-violet-700 text-[10px]">
+                  {lang === "tr" ? "Tamamlandı!" : "Done!"}
+                </Badge>
+              </motion.div>
+            ) : (
+              <div className="h-8 w-8 rounded-full border-2 border-stone-300 dark:border-stone-600" />
+            )}
+          </motion.button>
+        )
+      })}
+    </div>
+  )
+}
+
+// ═══ SENSORY SHIELD ═══
+function SensoryShield({ lang }: { lang: string }) {
+  const [active, setActive] = useState<string | null>(null)
+  const triggers = [
+    {
+      id: "noise", emoji: "🔊", label: lang === "tr" ? "Yüksek Ses" : "Loud Noise",
+      tips: [
+        { emoji: "🎧", text: lang === "tr" ? "Beyaz Gürültü Aç" : "Play White Noise" },
+        { emoji: "🤫", text: lang === "tr" ? "Sessiz bir alana git" : "Go to a quiet area" },
+      ],
+    },
+    {
+      id: "light", emoji: "💡", label: lang === "tr" ? "Parlak Işık" : "Bright Light",
+      tips: [
+        { emoji: "🕶️", text: lang === "tr" ? "Güneş gözlüğü tak" : "Wear sunglasses" },
+        { emoji: "🌙", text: lang === "tr" ? "Loş ışık tercih et" : "Prefer dim lighting" },
+      ],
+    },
+    {
+      id: "touch", emoji: "✋", label: lang === "tr" ? "Dokunma Hassasiyeti" : "Touch Sensitivity",
+      tips: [
+        { emoji: "🧸", text: lang === "tr" ? "Derin Basınç Masajı Adımları" : "Deep Pressure Massage Steps" },
+        { emoji: "🎽", text: lang === "tr" ? "Ağırlıklı battaniye kullan" : "Use weighted blanket" },
+      ],
+    },
+  ]
+
+  return (
+    <div className="space-y-3">
+      <div className="flex gap-2">
+        {triggers.map(t => (
+          <motion.button key={t.id} whileTap={{ scale: 0.93 }}
+            onClick={() => setActive(active === t.id ? null : t.id)}
+            className={`flex-1 flex flex-col items-center gap-1.5 rounded-2xl p-4 min-h-[72px] transition-all ${
+              active === t.id
+                ? "bg-violet-50 dark:bg-violet-900/20 ring-2 ring-violet-300"
+                : "bg-white dark:bg-card border hover:shadow-sm"
+            }`}>
+            <span className="text-2xl">{t.emoji}</span>
+            <span className="text-[10px] font-bold">{t.label}</span>
+          </motion.button>
+        ))}
+      </div>
+
+      <AnimatePresence>
+        {active && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+            <Card className="rounded-2xl border-violet-200/50">
+              <CardContent className="p-4 space-y-2">
+                {triggers.find(t => t.id === active)?.tips.map((tip, i) => (
+                  <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    className="flex items-center gap-3 text-sm p-2 rounded-xl hover:bg-violet-50/50 dark:hover:bg-violet-900/10">
+                    <span className="text-lg">{tip.emoji}</span>
+                    <span>{tip.text}</span>
+                  </motion.div>
+                ))}
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+// ═══ STICKER BOARD ═══
+function StickerBoard({ completed, lang }: { completed: number; lang: string }) {
+  const stickers = ["⭐", "🌟", "🏆", "🎯", "💎", "🦋", "🌈", "🎪"]
+  const earned = Math.min(completed, stickers.length)
+
+  return (
+    <Card className="rounded-2xl bg-gradient-to-br from-amber-50/50 to-yellow-50/50 dark:from-amber-900/10 dark:to-yellow-900/10 border-amber-100/50">
+      <CardContent className="p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Star className="h-4 w-4 text-amber-500" />
+          <h3 className="text-sm font-bold">{lang === "tr" ? "Küçük Zaferler" : "Little Victories"}</h3>
+          <Badge variant="secondary" className="text-[9px]">{earned}/{stickers.length}</Badge>
         </div>
-        <div className="flex gap-2 overflow-x-auto pb-2 mb-6">
-          {sections.map(s => (<Button key={s.id} variant={activeSection === s.id ? "default" : "outline"} size="sm" onClick={() => setActiveSection(s.id)} className="flex items-center gap-1.5 whitespace-nowrap">{s.icon} {s.label}</Button>))}
+        <div className="flex gap-2 flex-wrap">
+          {stickers.map((s, i) => (
+            <motion.div key={i}
+              initial={{ scale: 0 }}
+              animate={{ scale: i < earned ? 1 : 0.6, opacity: i < earned ? 1 : 0.2 }}
+              transition={{ delay: i * 0.05, type: "spring" }}
+              className="h-12 w-12 rounded-xl bg-white dark:bg-card border flex items-center justify-center text-xl shadow-sm">
+              {s}
+            </motion.div>
+          ))}
         </div>
+      </CardContent>
+    </Card>
+  )
+}
 
-        {activeSection === "routine" && (
-          <div className="space-y-4">
-            <Card className="p-4">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-semibold">{tx("autism.dailyProgress", lang)}</h2>
-                <Badge variant="outline" className="text-purple-600">{completedCount}/{routines.length}</Badge>
-              </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-2"><div className="bg-purple-500 h-3 rounded-full transition-all" style={{ width: progressPct + "%" }} /></div>
-              <p className="text-xs text-gray-500">{progressPct}% {tx("autism.completed", lang)}</p>
-            </Card>
-            <div className="space-y-2">
-              {routines.map(item => (
-                <Card key={item.id} className={"p-3 flex items-center gap-3 cursor-pointer " + (item.completed ? "bg-green-50 dark:bg-green-900/20 border-green-200" : "")} onClick={() => toggleRoutine(item.id)}>
-                  <div className={"w-6 h-6 rounded-full border-2 flex items-center justify-center " + (item.completed ? "bg-green-500 border-green-500" : "border-gray-300")}>{item.completed && <Check className="w-4 h-4 text-white" />}</div>
-                  <Clock className="w-4 h-4 text-gray-400" /><span className="text-sm font-medium text-gray-500 w-12">{item.time}</span>
-                  <span className={"text-sm flex-1 " + (item.completed ? "line-through text-gray-400" : "")}>{item.activity}</span>
-                </Card>))}
-            </div>
-          </div>
-        )}
+export default function AutismSupportPage() {
+  const { lang } = useLang()
+  const [completedCount] = useState(4) // mock
 
-        {activeSection === "sensory" && (
-          <div className="space-y-4">
-            <Card className="p-4 border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20">
-              <h2 className="text-lg font-semibold mb-1">{tx("autism.sensoryTriggerProfile", lang)}</h2>
-              <p className="text-sm text-gray-600">{tx("autism.sensoryTriggerDesc", lang)}</p>
-            </Card>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {SENSORY_TRIGGERS.map(tr => (
-                <Card key={tr.id} className="p-4 flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">{tr.icon}</div>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between gap-2"><span className="text-sm font-medium">{tr[lang]}</span><Badge className={sevColor(tr.severity)}>{tr.severity}</Badge></div>
-                    <span className="text-xs text-gray-500">{tr.cat}</span>
-                  </div>
-                </Card>))}
-            </div>
-            <Card className="p-4 border-dashed border-2 flex items-center justify-center gap-2 text-gray-400 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"><Plus className="w-4 h-4" /> {tx("autism.addTrigger", lang)}</Card>
-          </div>
-        )}
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-violet-50/30 to-purple-50/20 dark:from-background dark:to-background">
+      <div className="mx-auto max-w-2xl px-4 md:px-8 py-6 space-y-6">
 
-        {activeSection === "therapy" && (
-          <div className="space-y-4">
-            <Card className="p-4">
-              <h2 className="text-lg font-semibold mb-4">{tx("autism.weeklyTherapy", lang)}</h2>
-              <div className="grid grid-cols-7 gap-2">
-                {THERAPY_SCHEDULE.map(day => (
-                  <div key={day.day} className="text-center">
-                    <div className="text-xs font-bold text-gray-500 mb-2">{day.day}</div>
-                    {day.sessions.length > 0 ? day.sessions.map((s, i) => (<div key={i} className="text-[10px] md:text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 rounded px-1 py-1 mb-1">{s}</div>)) : <div className="text-[10px] text-gray-300">--</div>}
-                  </div>))}
-              </div>
-            </Card>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {[{ label: tx("autism.occupationalTherapy", lang), count: 2, color: "text-blue-600" }, { label: tx("autism.speechTherapy", lang), count: 2, color: "text-green-600" }, { label: tx("autism.abaTherapy", lang), count: 2, color: "text-orange-600" }].map(th => (
-                <Card key={th.label} className="p-4 text-center"><div className={"text-2xl font-bold " + th.color}>{th.count}x</div><div className="text-sm text-gray-600">{th.label} / {tx("autism.perWeek", lang)}</div></Card>))}
-            </div>
-          </div>
-        )}
+        {/* Hero */}
+        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+          className="text-center py-4 space-y-2">
+          <Puzzle className="h-10 w-10 text-violet-500 mx-auto" />
+          <h1 className="text-2xl font-bold">{lang === "tr" ? "Görsel Yaşam Rehberi" : "Visual Life Guide"}</h1>
+          <p className="text-sm text-muted-foreground">{lang === "tr" ? "Her adım görsel, her başarı kutlanır." : "Every step visual, every achievement celebrated."}</p>
+        </motion.div>
 
-        {activeSection === "behavior" && (
-          <div className="space-y-4">
-            <Card className="p-4">
-              <h2 className="text-lg font-semibold mb-3">{tx("autism.addNote", lang)}</h2>
-              <div className="flex gap-2 mb-3">{(["happy", "neutral", "upset"] as const).map(m => (<Button key={m} variant={newNoteMood === m ? "default" : "outline"} size="sm" onClick={() => setNewNoteMood(m)}>{moodIcon(m)}</Button>))}</div>
-              <div className="flex gap-2">
-                <input className="flex-1 rounded-lg border px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-700" placeholder={tx("autism.writeObservations", lang)} value={newNote} onChange={e => setNewNote(e.target.value)} onKeyDown={e => e.key === "Enter" && addNote()} />
-                <Button onClick={addNote} size="sm"><Plus className="w-4 h-4" /></Button>
-              </div>
-            </Card>
-            <div className="space-y-2">
-              {notes.map(n => (
-                <Card key={n.id} className="p-3 flex items-start gap-3">{moodIcon(n.mood)}<div className="flex-1"><p className="text-sm">{n.note}</p><span className="text-xs text-gray-400">{n.date}</span></div>
-                  <Button variant="ghost" size="sm" onClick={() => setNotes(prev => prev.filter(x => x.id !== n.id))}><Trash2 className="w-3.5 h-3.5 text-gray-400" /></Button></Card>))}
-            </div>
-          </div>
-        )}
+        {/* Sticker Board */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+          <StickerBoard completed={completedCount} lang={lang} />
+        </motion.div>
 
-        {activeSection === "resources" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { title: tx("autism.visualSchedule", lang), desc: tx("autism.visualScheduleDesc", lang), color: "from-blue-500 to-blue-600" },
-              { title: tx("autism.socialStories", lang), desc: tx("autism.socialStoriesDesc", lang), color: "from-green-500 to-green-600" },
-              { title: tx("autism.calmingStrategies", lang), desc: tx("autism.calmingStrategiesDesc", lang), color: "from-purple-500 to-purple-600" },
-              { title: tx("autism.parentCommunity", lang), desc: tx("autism.parentCommunityDesc", lang), color: "from-orange-500 to-orange-600" },
-              { title: tx("autism.iepTracker", lang), desc: tx("autism.iepTrackerDesc", lang), color: "from-pink-500 to-pink-600" },
-              { title: tx("autism.therapyProgress", lang), desc: tx("autism.therapyProgressDesc", lang), color: "from-teal-500 to-teal-600" },
-            ].map(res => (<Card key={res.title} className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"><div className={"h-2 bg-gradient-to-r " + res.color} /><div className="p-4"><h3 className="font-semibold text-sm mb-1">{res.title}</h3><p className="text-xs text-gray-500">{res.desc}</p></div></Card>))}
+        {/* Visual Routine */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
+          <div className="flex items-center gap-2 mb-3">
+            <BookOpen className="h-4 w-4 text-violet-500" />
+            <h2 className="text-sm font-bold">{lang === "tr" ? "Günlük Rutin Yolu" : "Daily Routine Path"}</h2>
           </div>
-        )}
+          <VisualRoutine lang={lang} />
+        </motion.div>
+
+        {/* Sensory Shield */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+          <div className="flex items-center gap-2 mb-3">
+            <Shield className="h-4 w-4 text-violet-500" />
+            <h2 className="text-sm font-bold">{lang === "tr" ? "Duyusal Kalkan" : "Sensory Shield"}</h2>
+          </div>
+          <SensoryShield lang={lang} />
+        </motion.div>
+
+        <p className="text-[10px] text-muted-foreground text-center px-4">
+          {lang === "tr"
+            ? "Bu uygulama profesyonel terapi yerine geçmez. Uzmanınıza danışın."
+            : "This app does not replace professional therapy. Consult your specialist."}
+        </p>
       </div>
     </div>
-  );
+  )
 }

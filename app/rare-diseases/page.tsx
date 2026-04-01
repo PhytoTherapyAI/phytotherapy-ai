@@ -1,167 +1,198 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Dna, Search, Loader2, ExternalLink, Users, Stethoscope, ChevronDown, ChevronUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+  Search, Dna, Heart, Globe, Sparkles,
+  ExternalLink, Users, Pill, Leaf,
+  ChevronRight, Shield, BookOpen,
+} from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { useLang } from "@/components/layout/language-toggle"
 
-interface RareResult {
-  name: string;
-  alternateNames: string[];
-  prevalence: string;
-  inheritance: string;
-  summary: string;
-  symptoms: string[];
-  diagnosis: string[];
-  treatment: string;
-  prognosis: string;
-  specialists: string[];
-  patientAssociations: Array<{ name: string; url: string; country: string }>;
-  clinicalTrials: string;
-  orphanetCode: string | null;
-  omimCode: string | null;
-  resources: Array<{ name: string; url: string; description: string }>;
+// ═══ DNA ANIMATION ═══
+function DnaSpinner() {
+  return (
+    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+      className="relative h-16 w-16 mx-auto">
+      <Dna className="h-16 w-16 text-teal-500" />
+    </motion.div>
+  )
 }
 
-export default function RareDiseasesPage() {
-  const { lang } = useLang();
-  const [disease, setDisease] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<RareResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [showDetails, setShowDetails] = useState(false);
+// ═══ TYPEWRITER SEARCH ═══
+function TypewriterSearch({ onSearch, lang }: { onSearch: (q: string) => void; lang: string }) {
+  const [query, setQuery] = useState("")
+  const [placeholder, setPlaceholder] = useState("")
 
-  const handleSearch = async () => {
-    if (!disease.trim()) return;
-    setIsLoading(true);
-    setError(null);
-    setResult(null);
-    try {
-      const res = await fetch("/api/rare-diseases", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ disease: disease.trim(), lang }),
-      });
-      if (!res.ok) throw new Error((await res.json()).error || "Failed");
-      setResult(await res.json());
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const placeholders = lang === "tr"
+    ? ["Ehlers-Danlos Sendromu", "Wilson Hastalığı", "Gaucher Hastalığı", "Fenilketonüri"]
+    : ["Ehlers-Danlos Syndrome", "Wilson's Disease", "Gaucher Disease", "Phenylketonuria"]
+
+  useEffect(() => {
+    let idx = 0; let charIdx = 0; let deleting = false
+    const interval = setInterval(() => {
+      const current = placeholders[idx]
+      if (!deleting) {
+        charIdx++
+        setPlaceholder(current.slice(0, charIdx))
+        if (charIdx >= current.length) { setTimeout(() => { deleting = true }, 1500) }
+      } else {
+        charIdx--
+        setPlaceholder(current.slice(0, charIdx))
+        if (charIdx <= 0) { deleting = false; idx = (idx + 1) % placeholders.length }
+      }
+    }, 80)
+    return () => clearInterval(interval)
+  }, [lang]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      <div className="text-center mb-8">
-        <Dna className="w-10 h-10 text-teal-500 mx-auto mb-3" />
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{tx("rare.title", lang)}</h1>
-        <p className="text-gray-600 dark:text-gray-400">{tx("rare.subtitle", lang)}</p>
-      </div>
-
-      {/* Search */}
-      <div className="flex gap-3 mb-6">
-        <input
-          type="text"
-          value={disease}
-          onChange={(e) => setDisease(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          placeholder={tx("rare.search", lang)}
-          className="flex-1 px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-teal-500 outline-none"
-        />
-        <Button onClick={handleSearch} disabled={isLoading || !disease.trim()} className="bg-teal-600 hover:bg-teal-700 text-white">
-          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-        </Button>
-      </div>
-
-      {error && <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm mb-6">{error}</div>}
-
-      {result && (
-        <div className="space-y-4">
-          {/* Header Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-1">{result.name}</h2>
-            {result.alternateNames?.length > 0 && (
-              <p className="text-xs text-gray-400 mb-3">{result.alternateNames.join(", ")}</p>
-            )}
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className="px-2.5 py-1 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 rounded text-xs">{result.prevalence}</span>
-              <span className="px-2.5 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded text-xs">{result.inheritance}</span>
-              {result.orphanetCode && <span className="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs">ORPHA: {result.orphanetCode}</span>}
-              {result.omimCode && <span className="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs">OMIM: {result.omimCode}</span>}
-            </div>
-            <p className="text-sm text-gray-700 dark:text-gray-300">{result.summary}</p>
-          </div>
-
-          {/* Symptoms */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">{tx("common.symptoms", lang)}</h3>
-            <div className="flex flex-wrap gap-2">
-              {result.symptoms?.map((s, i) => (
-                <span key={i} className="px-3 py-1 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 rounded-full text-xs">{s}</span>
-              ))}
-            </div>
-          </div>
-
-          {/* Expandable Details */}
-          <button onClick={() => setShowDetails(!showDetails)} className="w-full flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
-            <span className="font-semibold text-gray-900 dark:text-white">{tx("rare.details", lang)}</span>
-            {showDetails ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
-          </button>
-          {showDetails && (
-            <div className="space-y-4">
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{tx("rare.diagnosis", lang)}</h3>
-                <ul className="space-y-1">{result.diagnosis?.map((d, i) => <li key={i} className="text-sm text-gray-700 dark:text-gray-300 flex items-start gap-2"><span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-teal-500 flex-shrink-0" />{d}</li>)}</ul>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{tx("rare.treatment", lang)}</h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300">{result.treatment}</p>
-              </div>
-              <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{tx("rare.prognosis", lang)}</h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300">{result.prognosis}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Specialists */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2 flex items-center gap-2"><Stethoscope className="w-4 h-4 text-teal-500" /> {tx("rare.specialists", lang)}</h3>
-            <div className="flex flex-wrap gap-2">
-              {result.specialists?.map((s, i) => <span key={i} className="px-3 py-1 bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-400 rounded-full text-xs">{s}</span>)}
-            </div>
-          </div>
-
-          {/* Patient Associations */}
-          {result.patientAssociations?.length > 0 && (
-            <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2"><Users className="w-4 h-4 text-teal-500" /> {tx("rare.patientAssociations", lang)}</h3>
-              <div className="space-y-2">
-                {result.patientAssociations.map((a, i) => (
-                  <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{a.name}</p>
-                      <p className="text-xs text-gray-400">{a.country}</p>
-                    </div>
-                    {a.url && <a href={a.url} target="_blank" rel="noopener noreferrer" className="text-teal-600 hover:text-teal-700"><ExternalLink className="w-4 h-4" /></a>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {result.clinicalTrials && (
-            <div className="bg-teal-50 dark:bg-teal-900/20 rounded-xl border border-teal-200 dark:border-teal-800 p-4">
-              <p className="text-sm text-teal-700 dark:text-teal-400">{result.clinicalTrials}</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      <p className="text-xs text-gray-400 text-center mt-6">{tx("disclaimer.tool", lang)}</p>
+    <div className="relative">
+      <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+      <input type="text" value={query} onChange={e => { setQuery(e.target.value); onSearch(e.target.value) }}
+        placeholder={placeholder}
+        className="w-full rounded-2xl border-2 border-teal-200/50 bg-white dark:bg-card pl-12 pr-4 py-4 text-sm shadow-lg shadow-teal-500/5 focus:outline-none focus:border-teal-400 focus:ring-4 focus:ring-teal-100 dark:focus:ring-teal-900/20 transition-all placeholder:text-muted-foreground/40" />
     </div>
-  );
+  )
+}
+
+// ═══ MOCK RARE DISEASES ═══
+interface RareDisease {
+  id: string; name: string; nameTr: string; prevalence: string; category: string
+  treatments: string[]; treatmentsTr: string[]; communities: number; phyto: string[]
+}
+
+const DISEASES: RareDisease[] = [
+  {
+    id: "eds", name: "Ehlers-Danlos Syndrome", nameTr: "Ehlers-Danlos Sendromu",
+    prevalence: "1:5,000", category: "Connective Tissue",
+    treatments: ["Physical therapy", "Pain management", "Joint protection"],
+    treatmentsTr: ["Fizik tedavi", "Ağrı yönetimi", "Eklem koruması"],
+    communities: 45000, phyto: ["Turmeric", "Collagen", "Vitamin C"],
+  },
+  {
+    id: "wilson", name: "Wilson's Disease", nameTr: "Wilson Hastalığı",
+    prevalence: "1:30,000", category: "Metabolic",
+    treatments: ["Chelation therapy", "Zinc therapy", "Low-copper diet"],
+    treatmentsTr: ["Şelasyon tedavisi", "Çinko tedavisi", "Düşük bakır diyeti"],
+    communities: 12000, phyto: ["Zinc supplements", "Milk Thistle"],
+  },
+  {
+    id: "gaucher", name: "Gaucher Disease", nameTr: "Gaucher Hastalığı",
+    prevalence: "1:40,000", category: "Lysosomal Storage",
+    treatments: ["Enzyme replacement", "Substrate reduction"],
+    treatmentsTr: ["Enzim replasmanı", "Substrat azaltma"],
+    communities: 8500, phyto: ["Curcumin", "Green Tea Extract"],
+  },
+]
+
+export default function RareDiseasesPage() {
+  const { lang } = useLang()
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedDisease, setSelectedDisease] = useState<string | null>(null)
+
+  const filtered = searchQuery.trim()
+    ? DISEASES.filter(d =>
+        d.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        d.nameTr.toLowerCase().includes(searchQuery.toLowerCase()))
+    : DISEASES
+
+  const active = DISEASES.find(d => d.id === selectedDisease)
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-teal-50/30 to-cyan-50/20 dark:from-background dark:to-background">
+      <div className="mx-auto max-w-2xl px-4 md:px-8 py-6 space-y-6">
+
+        {/* Hero */}
+        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+          className="text-center py-6 space-y-3">
+          <DnaSpinner />
+          <h1 className="text-2xl font-bold">{lang === "tr" ? "Nadir Ama Yalnız Değilsiniz" : "Rare But Not Alone"}</h1>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            {lang === "tr" ? "Küresel araştırma ağına bağlanın, umut burada." : "Connect to the global research network. Hope lives here."}
+          </p>
+        </motion.div>
+
+        {/* AI Detective Search */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <TypewriterSearch onSearch={setSearchQuery} lang={lang} />
+        </motion.div>
+
+        {/* Hope Widgets */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
+          className="grid grid-cols-3 gap-2.5">
+          {[
+            { emoji: "💊", label: lang === "tr" ? "Yeni Tedaviler" : "New Treatments", count: "23" },
+            { emoji: "🌍", label: lang === "tr" ? "Hasta Toplulukları" : "Patient Communities", count: "140+" },
+            { emoji: "🌿", label: lang === "tr" ? "Fitoterapi Desteği" : "Phytotherapy Support", count: "45" },
+          ].map((w, i) => (
+            <motion.div key={i} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 + i * 0.06 }}
+              className="rounded-2xl bg-white dark:bg-card border p-3 text-center hover:shadow-sm transition-shadow cursor-pointer">
+              <span className="text-2xl">{w.emoji}</span>
+              <p className="text-lg font-bold text-teal-600 dark:text-teal-400 mt-1">{w.count}</p>
+              <p className="text-[9px] text-muted-foreground">{w.label}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Disease Cards */}
+        <div className="space-y-3">
+          {filtered.map((d, i) => (
+            <motion.button key={d.id}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 + i * 0.06 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setSelectedDisease(selectedDisease === d.id ? null : d.id)}
+              className={`w-full rounded-2xl border p-4 text-left transition-all ${
+                selectedDisease === d.id
+                  ? "bg-teal-50/50 dark:bg-teal-900/10 border-teal-300/50 shadow-sm"
+                  : "bg-white dark:bg-card hover:shadow-sm"
+              }`}>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-bold">{lang === "tr" ? d.nameTr : d.name}</h3>
+                <Badge variant="secondary" className="text-[9px]">{d.prevalence}</Badge>
+              </div>
+              <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-1"><Users className="h-3 w-3" /> {d.communities.toLocaleString()}</span>
+                <span className="flex items-center gap-1"><Leaf className="h-3 w-3" /> {d.phyto.length} {lang === "tr" ? "fitoterapi" : "phyto"}</span>
+              </div>
+
+              <AnimatePresence>
+                {selectedDisease === d.id && (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }} className="overflow-hidden mt-3 pt-3 border-t border-stone-200/50">
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-teal-600">{lang === "tr" ? "Tedavi Yaklaşımları" : "Treatment Approaches"}</p>
+                      {(lang === "tr" ? d.treatmentsTr : d.treatments).map((t, j) => (
+                        <div key={j} className="flex items-center gap-2 text-xs text-foreground">
+                          <span className="text-teal-500">•</span> {t}
+                        </div>
+                      ))}
+                      <p className="text-xs font-semibold text-teal-600 mt-2">{lang === "tr" ? "Destekleyici Fitoterapi" : "Supportive Phytotherapy"}</p>
+                      <div className="flex gap-1.5 flex-wrap">
+                        {d.phyto.map(p => (
+                          <span key={p} className="text-[10px] px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-900/20 text-teal-600 border border-teal-200/50">{p}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          ))}
+        </div>
+
+        {filtered.length === 0 && (
+          <div className="text-center py-12">
+            <Search className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground">{lang === "tr" ? "Sonuç bulunamadı." : "No results found."}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
 }
