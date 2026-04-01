@@ -1,246 +1,285 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
-  Baby,
-  Moon,
-  Heart,
-  AlertTriangle,
-  Users,
-  LogIn,
-  Sparkles,
-  ChevronDown,
-  ChevronUp,
-  CheckCircle2,
-  Circle,
-  ArrowRight,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx, txp } from "@/lib/translations";
+  Baby, Heart, Moon, Smile, Frown, Meh,
+  Clock, Leaf, Play, Pause, RotateCcw,
+  ChevronRight, Sparkles,
+} from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { useLang } from "@/components/layout/language-toggle"
 
-interface Section {
-  icon: React.ReactNode;
-  title: { en: string; tr: string };
-  color: string;
-  items: { en: string; tr: string }[];
+// ═══ CONTEXT SWITCHER ═══
+function ContextSwitcher({ mode, onChange, lang }: { mode: "child" | "self"; onChange: (m: "child" | "self") => void; lang: string }) {
+  return (
+    <div className="flex bg-white dark:bg-card rounded-xl border p-1 gap-1">
+      {(["child", "self"] as const).map(m => (
+        <motion.button key={m} whileTap={{ scale: 0.95 }}
+          onClick={() => onChange(m)}
+          className={`relative flex-1 py-2.5 px-3 rounded-lg text-xs font-medium transition-all ${
+            mode === m ? "text-white" : "text-muted-foreground"
+          }`}>
+          {mode === m && (
+            <motion.div layoutId="parentSwitcher" className="absolute inset-0 bg-primary rounded-lg shadow"
+              transition={{ type: "spring", stiffness: 300, damping: 30 }} />
+          )}
+          <span className="relative z-10 flex items-center justify-center gap-1.5">
+            {m === "child" ? <Baby className="h-3.5 w-3.5" /> : <Heart className="h-3.5 w-3.5" />}
+            {m === "child" ? (lang === "tr" ? "Çocuğum" : "My Child") : (lang === "tr" ? "Kendim" : "Myself")}
+          </span>
+        </motion.button>
+      ))}
+    </div>
+  )
 }
 
-const SECTIONS: Section[] = [
-  {
-    icon: <Moon className="w-5 h-5 text-blue-500" />,
-    title: { en: "Sleep Deprivation Management", tr: "Uyku Yoksunlugu Yönetimi" },
-    color: "blue",
-    items: [
-      { en: "Sleep when baby sleeps — even 20-minute naps restore cognitive function", tr: "Bebek uyurken uyuyun — 20 dakikalik sekerlemeler bile bilissel işlevi onarir" },
-      { en: "Split night shifts with partner: each person gets 1 uninterrupted 4-hour block", tr: "Gece nobetlerini es ile paylasin: her kisi 1 kesintisiz 4 saatlik blok uyusun" },
-      { en: "Caffeine cutoff: no coffee after 2 PM if you want to sleep when baby sleeps at night", tr: "Kafein siniri: bebek gece uyurken uyumak istiyorsaniz saat 14:00'ten sonra kahve icmeyin" },
-      { en: "Light exposure in morning (10 min bright light) helps reset disrupted circadian rhythm", tr: "Sabah isik maruziyeti (10 dk parlak isik) bozulmus sirkadyen ritmi sifirlar" },
-      { en: "Accept 'good enough' sleep — perfection is the enemy of rest right now", tr: "Yeterli uykunun yeterli olduğunu kabul edin — mükemmeliyetcilik simdi dinlenmenin dusmanidir" },
-      { en: "Room-darkening curtains help both parent and baby sleep during irregular hours", tr: "Karanlik perdeler hem ebeveynin hem de bebegin duzensiz saatlerde uyumasina yardımcı olur" },
-    ],
-  },
-  {
-    icon: <Heart className="w-5 h-5 text-rose-500" />,
-    title: { en: "Back & Wrist Pain from Carrying Baby", tr: "Bebek Tasimaktan Kaynaklanan Sirt ve Bilek Ağrısi" },
-    color: "rose",
-    items: [
-      { en: "Alternate arms frequently — repetitive strain on one side causes asymmetric pain", tr: "Kollarinizi sik sik degistirin — tek tarafta tekrarlayan zorlanma asimetrik ağrıya yol acar" },
-      { en: "De Quervain's tenosynovitis ('mother's thumb'): support wrist during lifting, use entire hand", tr: "De Quervain tenosinoviti ('anne basparmaği'): kaldirirken bilegi destekleyin, tum eli kullanin" },
-      { en: "Ergonomic feeding: support arms with pillows, keep spine neutral, feet flat on floor", tr: "Ergonomik besleme: kollarinizi yastikla destekleyin, omurga nötr, ayaklar yerde duz" },
-      { en: "3x daily stretches: cat-cow, doorway chest opener, wrist flexor/extensor stretches", tr: "Günlük 3x esneme: kedi-inek, kapi göğüs acici, bilek fleksor/ekstensor esnemeleri" },
-      { en: "Baby carrier with hip support distributes weight — reduces back strain by 40%", tr: "Kalca destekli bebek tasiyicisi agirligi dagitir — sirt zorlanmasini %40 azaltir" },
-      { en: "If wrist pain persists 2+ weeks: see physiotherapist — splinting helps significantly", tr: "Bilek ağrısi 2+ hafta devam ederse: fizyoterapiste gidin — atel önemli ölçüde yardımcı olur" },
-    ],
-  },
-  {
-    icon: <AlertTriangle className="w-5 h-5 text-amber-500" />,
-    title: { en: "Burnout Screening (Self-Check)", tr: "Tukenmislik Taramasi (Oz Kontrol)" },
-    color: "amber",
-    items: [
-      { en: "Feeling detached from baby or resentful of parenting tasks — this is common, not a failure", tr: "Bebekten kopuk hissetmek veya ebeveynlik gorevlerine icerlemek — bu yaygındır, başarısizlik degil" },
-      { en: "Physical exhaustion that doesn't improve with rest — could signal postpartum depression", tr: "Dinlenmekle duzelmeynen fiziksel bitkinlik — dogum sonrasi depresyon belirtisi olabilir" },
-      { en: "Crying for no reason, persistent sadness > 2 weeks — talk to your OB/GYN", tr: "Sebepsiz aglama, 2 haftadan uzun sureli uzuntu — kadin dogum uzmaninizla konusun" },
-      { en: "Edinburgh Postnatal Depression Scale (EPDS): score > 12 = seek professional support", tr: "Edinburgh Dogum Sonrasi Depresyon Ölçeği (EPDS): skor > 12 = profesyonel destek alin" },
-      { en: "Rage episodes, intrusive thoughts about harm — these require IMMEDIATE professional help", tr: "Ofke nöbetleri, zarar verme dusunceleri — bunlar ACIL profesyonel yardim gerektirir" },
-      { en: "Paternal postnatal depression exists too — fathers should also self-screen", tr: "Babalarda dogum sonrasi depresyon da vardir — babalar da kendilerini tarsin" },
-    ],
-  },
-  {
-    icon: <Users className="w-5 h-5 text-indigo-500" />,
-    title: { en: "Partner Stress Tips", tr: "Es Stresi Önerileri" },
-    color: "indigo",
-    items: [
-      { en: "Schedule 'check-in' conversations: 10 min/day about how each person is FEELING, not logistics", tr: "'Durum kontrolü' konusmalari planlayın: gunluk 10 dk her kisinin NASIL HISSETTIGINI konusun, lojistik degil" },
-      { en: "Divide tasks explicitly — unspoken expectations breed resentment", tr: "Gorevleri acikca bolun — soylenmemis beklentiler kin yaratir" },
-      { en: "Physical intimacy timeline varies: 6 weeks minimum post-birth, but emotional readiness is personal", tr: "Fiziksel yakinlik sureci degisir: dogumdan sonra minimum 6 hafta, ama duygusal hazirlik kişiseldir" },
-      { en: "Individual time is not selfish: each parent needs 2-3 hours/week of personal time", tr: "Bireysel zaman bencillik degildir: her ebeveynin haftada 2-3 saat kişisel zamana ihtiyaci vardir" },
-      { en: "Ask for help from family/friends — specific requests ('bring dinner Tuesday') work better than vague ones", tr: "Aile/arkadaslardan yardim isteyin — belirli istekler ('sali aksamyemegi getirin') belirsiz olanlardan daha iyi calisir" },
-      { en: "If arguing increases significantly, couples counseling early prevents larger problems", tr: "Tartismalar önemli ölçüde artarsa, erken cift terapisi daha buyuk sorunları onler" },
-    ],
-  },
-];
+// ═══ POWER NAP TIMER ═══
+function PowerNapTimer({ lang }: { lang: string }) {
+  const [seconds, setSeconds] = useState(20 * 60)
+  const [running, setRunning] = useState(false)
+  const ref = useRef<NodeJS.Timeout | null>(null)
 
-const BURNOUT_QUESTIONS: { en: string; tr: string }[] = [
-  { en: "I feel physically exhausted even after sleeping", tr: "Uyuduktan sonra bile fiziksel olarak bitkin hissediyorum" },
-  { en: "I feel emotionally distant from my baby", tr: "Bebeğimden duygusal olarak uzak hissediyorum" },
-  { en: "I have persistent sadness or crying spells", tr: "Surekli uzuntu veya aglama nöbetlerim var" },
-  { en: "I feel resentful about parenting responsibilities", tr: "Ebeveynlik sorumluluklarindan dolayi icerliyorum" },
-  { en: "I have difficulty concentrating on simple tasks", tr: "Basit gorevlere odaklanmakta zorluk cekiyorum" },
-  { en: "I feel isolated from friends and social life", tr: "Arkadaslarimdan ve sosyal hayattan kopuk hissediyorum" },
-  { en: "I have lost interest in things I used to enjoy", tr: "Eskiden zevk aldigim seylerle ilgimi kaybettim" },
-  { en: "I feel angry or irritable without clear reason", tr: "Belirgin bir neden olmadan sinirli veya asabi hissediyorum" },
-];
+  useEffect(() => {
+    if (running && seconds > 0) {
+      ref.current = setInterval(() => setSeconds(s => s - 1), 1000)
+    } else if (seconds === 0) { setRunning(false) }
+    return () => { if (ref.current) clearInterval(ref.current) }
+  }, [running, seconds])
 
-export default function NewParentHealthPage() {
-  const { isAuthenticated } = useAuth();
-  const { lang } = useLang();
-  const [expandedSection, setExpandedSection] = useState<number | null>(0);
-  const [burnoutAnswers, setBurnoutAnswers] = useState<boolean[]>(Array(BURNOUT_QUESTIONS.length).fill(false));
-  const [showBurnoutResult, setShowBurnoutResult] = useState(false);
-
-  const burnoutScore = burnoutAnswers.filter(Boolean).length;
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold">{tx("newparent.title", lang)}</h1>
-          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
-          <Button onClick={() => window.location.href = "/auth/login"}>
-            <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const min = Math.floor(seconds / 60)
+  const sec = seconds % 60
+  const pct = ((20 * 60 - seconds) / (20 * 60)) * 100
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-8 px-4">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-4 py-1.5 rounded-full text-sm font-medium">
-            <Baby className="w-4 h-4" />
-            {tx("newparent.title", lang)}
-          </div>
-          <h1 className="text-3xl font-bold">{tx("newparent.title", lang)}</h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">{tx("newparent.subtitle", lang)}</p>
+    <Card className="rounded-2xl bg-gradient-to-br from-indigo-50/50 to-violet-50/50 dark:from-indigo-900/10 dark:to-violet-900/10">
+      <CardContent className="p-5 text-center">
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <Moon className="h-4 w-4 text-indigo-500" />
+          <h3 className="text-sm font-bold">{lang === "tr" ? "20 Dk Güç Uykusu" : "20 Min Power Nap"}</h3>
         </div>
 
-        {/* Focus Note */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 text-center">
-          <p className="text-sm text-blue-700 dark:text-blue-300">
-            {tx("newparent.focusNote", lang)}
-          </p>
-          <Button
-            variant="link"
-            onClick={() => window.location.href = "/child-health"}
-            className="text-blue-600 dark:text-blue-400 mt-1"
-          >
-            {tx("newparent.childHealth", lang)} <ArrowRight className="w-4 h-4 ml-1" />
+        <div className="relative inline-block mb-4">
+          <svg width={100} height={100} className="transform -rotate-90">
+            <circle cx={50} cy={50} r={40} strokeWidth={5} fill="none" className="stroke-stone-200 dark:stroke-stone-700" />
+            <motion.circle cx={50} cy={50} r={40} strokeWidth={5} fill="none" strokeLinecap="round"
+              className="stroke-indigo-500" strokeDasharray={2 * Math.PI * 40}
+              animate={{ strokeDashoffset: 2 * Math.PI * 40 - (pct / 100) * 2 * Math.PI * 40 }} />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-xl font-bold font-mono text-indigo-600 dark:text-indigo-400">
+              {String(min).padStart(2, "0")}:{String(sec).padStart(2, "0")}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex justify-center gap-3">
+          <Button size="sm" className="rounded-xl bg-indigo-500 hover:bg-indigo-600" onClick={() => setRunning(!running)}>
+            {running ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+          </Button>
+          <Button size="sm" variant="outline" className="rounded-xl" onClick={() => { setRunning(false); setSeconds(20 * 60) }}>
+            <RotateCcw className="h-4 w-4" />
           </Button>
         </div>
+      </CardContent>
+    </Card>
+  )
+}
 
-        {/* Sections */}
-        {SECTIONS.map((section, idx) => (
-          <div key={idx} className="bg-card border rounded-2xl overflow-hidden">
-            <button
-              onClick={() => setExpandedSection(expandedSection === idx ? null : idx)}
-              className="w-full flex items-center justify-between p-6 text-left"
-            >
-              <div className="flex items-center gap-3">
-                {section.icon}
-                <h2 className="text-xl font-semibold">{section.title[lang]}</h2>
-              </div>
-              {expandedSection === idx ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-            </button>
-            {expandedSection === idx && (
-              <div className="px-6 pb-6 space-y-3">
-                {section.items.map((item, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-200 dark:bg-blue-800 text-xs font-bold text-blue-800 dark:text-blue-200 flex-shrink-0 mt-0.5">
-                      {i + 1}
-                    </span>
-                    <span className="text-sm">{item[lang]}</span>
-                  </div>
+// ═══ STRETCH ANIMATION ═══
+function StretchCard({ lang }: { lang: string }) {
+  const [step, setStep] = useState(0)
+  const stretches = [
+    { emoji: "🙆", label: lang === "tr" ? "Omuz çevirme (10x)" : "Shoulder rolls (10x)" },
+    { emoji: "🧘", label: lang === "tr" ? "Kedi-İnek duruşu (5x)" : "Cat-Cow stretch (5x)" },
+    { emoji: "💆", label: lang === "tr" ? "Boyun esneme (her yöne 15sn)" : "Neck stretch (15s each side)" },
+    { emoji: "🤸", label: lang === "tr" ? "Bel esneme (30sn)" : "Lower back stretch (30s)" },
+  ]
+
+  return (
+    <Card className="rounded-2xl bg-gradient-to-br from-sage-50/50 to-emerald-50/50 dark:from-emerald-900/10 dark:to-primary/5">
+      <CardContent className="p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Sparkles className="h-4 w-4 text-primary" />
+          <h3 className="text-sm font-bold">{lang === "tr" ? "Sırtı Esneme" : "Back Stretch"}</h3>
+        </div>
+        <div className="space-y-2">
+          {stretches.map((s, i) => (
+            <motion.button key={i} whileTap={{ scale: 0.97 }}
+              onClick={() => setStep(i === step ? -1 : i)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition-all ${
+                i === step ? "bg-primary/10 text-primary font-medium" : i < step ? "opacity-50 line-through" : "hover:bg-stone-50 dark:hover:bg-stone-900"
+              }`}>
+              <span className="text-lg">{s.emoji}</span>
+              <span className="flex-1">{s.label}</span>
+              {i < step && <span className="text-xs text-emerald-500">✓</span>}
+            </motion.button>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+// ═══ MOOD SURVEY (Typeform-style) ═══
+function MoodSurvey({ lang }: { lang: string }) {
+  const [mood, setMood] = useState<number | null>(null)
+  const [submitted, setSubmitted] = useState(false)
+
+  const moods = [
+    { value: 1, emoji: "😢", label: lang === "tr" ? "Çok Kötü" : "Very Bad" },
+    { value: 2, emoji: "😟", label: lang === "tr" ? "Kötü" : "Bad" },
+    { value: 3, emoji: "😐", label: lang === "tr" ? "Normal" : "Okay" },
+    { value: 4, emoji: "😊", label: lang === "tr" ? "İyi" : "Good" },
+    { value: 5, emoji: "🤩", label: lang === "tr" ? "Harika" : "Great" },
+  ]
+
+  return (
+    <Card className="rounded-2xl bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-900/10 dark:to-orange-900/10">
+      <CardContent className="p-5 text-center">
+        <h3 className="text-sm font-bold mb-1">
+          {lang === "tr" ? "Bugün nasıl hissediyorsunuz?" : "How are you feeling today?"}
+        </h3>
+        <p className="text-[10px] text-muted-foreground mb-4">
+          {lang === "tr" ? "Duygularınız önemli" : "Your feelings matter"}
+        </p>
+
+        <AnimatePresence mode="wait">
+          {!submitted ? (
+            <motion.div key="survey" className="space-y-4">
+              <div className="flex justify-center gap-3">
+                {moods.map(m => (
+                  <motion.button key={m.value} whileTap={{ scale: 0.85 }} whileHover={{ scale: 1.1 }}
+                    onClick={() => setMood(m.value)}
+                    className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
+                      mood === m.value ? "bg-primary/10 ring-2 ring-primary scale-110" : "hover:bg-stone-100 dark:hover:bg-stone-800"
+                    }`}>
+                    <span className="text-2xl">{m.emoji}</span>
+                    <span className="text-[9px] text-muted-foreground">{m.label}</span>
+                  </motion.button>
                 ))}
               </div>
-            )}
-          </div>
-        ))}
-
-        {/* Burnout Self-Assessment */}
-        <div className="bg-card border rounded-2xl p-6 space-y-4">
-          <h2 className="text-xl font-semibold flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
-            {tx("newparent.burnoutTitle", lang)}
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {tx("newparent.burnoutInstruction", lang)}
-          </p>
-          <div className="grid gap-2">
-            {BURNOUT_QUESTIONS.map((q, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  const newAnswers = [...burnoutAnswers];
-                  newAnswers[i] = !newAnswers[i];
-                  setBurnoutAnswers(newAnswers);
-                  setShowBurnoutResult(false);
-                }}
-                className={`flex items-center gap-3 p-3 rounded-xl text-left transition-all ${
-                  burnoutAnswers[i]
-                    ? "bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400"
-                    : "bg-muted/50 hover:bg-muted"
-                }`}
-              >
-                {burnoutAnswers[i] ? (
-                  <CheckCircle2 className="w-5 h-5 text-amber-500 flex-shrink-0" />
-                ) : (
-                  <Circle className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                )}
-                <span className="text-sm">{q[lang]}</span>
-              </button>
-            ))}
-          </div>
-          <Button
-            onClick={() => setShowBurnoutResult(true)}
-            className="w-full bg-amber-600 hover:bg-amber-700 text-white"
-          >
-            {tx("newparent.seeAssessment", lang)}
-          </Button>
-          {showBurnoutResult && (
-            <div
-              className={`rounded-xl p-4 ${
-                burnoutScore >= 5
-                  ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 border"
-                  : burnoutScore >= 3
-                  ? "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 border"
-                  : "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800 border"
-              }`}
-            >
-              <p className="font-semibold">
-                {txp("newParent.burnoutScore", lang, { score: burnoutScore })}
+              {mood !== null && (
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                  <Button size="sm" className="rounded-xl" onClick={() => setSubmitted(true)}>
+                    {lang === "tr" ? "Kaydet" : "Save"}
+                  </Button>
+                </motion.div>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div key="thanks" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+              className="py-4">
+              <span className="text-3xl">💛</span>
+              <p className="text-sm font-medium text-foreground mt-2">
+                {lang === "tr" ? "Teşekkürler! Kendinize iyi bakın." : "Thank you! Take care of yourself."}
               </p>
-              <p className="text-sm mt-1">
-                {burnoutScore >= 5
-                  ? tx("newparent.burnoutHigh", lang)
-                  : burnoutScore >= 3
-                  ? tx("newparent.burnoutModerate", lang)
-                  : tx("newparent.burnoutLow", lang)}
-              </p>
-            </div>
+            </motion.div>
           )}
-        </div>
+        </AnimatePresence>
+      </CardContent>
+    </Card>
+  )
+}
 
-        {/* Disclaimer */}
-        <div className="text-center text-xs text-muted-foreground px-4">
-          {tx("disclaimer.tool", lang)}
-        </div>
+export default function NewParentHealthPage() {
+  const { lang } = useLang()
+  const [mode, setMode] = useState<"child" | "self">("self")
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-stone-50 to-violet-50/20 dark:from-background dark:to-background">
+      <div className="mx-auto max-w-2xl px-4 md:px-8 py-6 space-y-6">
+
+        {/* Hero */}
+        <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
+          className="text-center py-4 space-y-2">
+          <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 4 }}>
+            <Heart className="h-10 w-10 text-rose-400 mx-auto" />
+          </motion.div>
+          <h1 className="text-2xl font-bold">{lang === "tr" ? "Ebeveyn Sığınağı" : "Parent Sanctuary"}</h1>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            {lang === "tr" ? "Hem bebeğiniz hem kendiniz için bakım rehberi." : "Care guide for both your baby and yourself."}
+          </p>
+        </motion.div>
+
+        {/* Context switcher */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+          <ContextSwitcher mode={mode} onChange={setMode} lang={lang} />
+        </motion.div>
+
+        {/* Content by mode */}
+        <AnimatePresence mode="wait">
+          {mode === "self" ? (
+            <motion.div key="self" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }} className="space-y-4">
+              <MoodSurvey lang={lang} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <PowerNapTimer lang={lang} />
+                <StretchCard lang={lang} />
+              </div>
+              {/* Self-care tips */}
+              <Card className="rounded-2xl">
+                <CardContent className="p-5 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Leaf className="h-4 w-4 text-primary" />
+                    <h3 className="text-sm font-bold">{lang === "tr" ? "Ebeveyn Bakım İpuçları" : "Parent Self-Care Tips"}</h3>
+                  </div>
+                  {[
+                    { e: "🍵", t: lang === "tr" ? "Papatya çayı — anksiyete ve uyku için güvenli" : "Chamomile tea — safe for anxiety and sleep" },
+                    { e: "🧘", t: lang === "tr" ? "Günde 10 dk meditasyon — cortisol düşürür" : "10 min daily meditation — lowers cortisol" },
+                    { e: "💧", t: lang === "tr" ? "Emziriyorsanız günde 10+ bardak su" : "10+ glasses water if breastfeeding" },
+                  ].map((tip, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
+                      <span>{tip.e}</span> {tip.t}
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </motion.div>
+          ) : (
+            <motion.div key="child" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }} className="space-y-4">
+              {/* Baby milestones */}
+              {[
+                { age: "0-3m", emoji: "👶", items: [
+                  lang === "tr" ? "Tummy time günde 3-5 dk" : "Tummy time 3-5 min daily",
+                  lang === "tr" ? "Göz teması ve konuşma" : "Eye contact and talking",
+                ]},
+                { age: "3-6m", emoji: "🍼", items: [
+                  lang === "tr" ? "İlk katı gıdaya hazırlık" : "Preparing for first solids",
+                  lang === "tr" ? "Uyku rutini oluşturma" : "Establishing sleep routine",
+                ]},
+                { age: "6-12m", emoji: "🧸", items: [
+                  lang === "tr" ? "Demir takviyesi kontrolü" : "Iron supplement check",
+                  lang === "tr" ? "Motor gelişim takibi" : "Motor development tracking",
+                ]},
+              ].map((m, i) => (
+                <motion.div key={m.age} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.08 }}>
+                  <Card className="rounded-2xl">
+                    <CardContent className="p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-lg">{m.emoji}</span>
+                        <Badge variant="secondary" className="text-[10px]">{m.age}</Badge>
+                      </div>
+                      <ul className="space-y-1.5">
+                        {m.items.map((item, j) => (
+                          <li key={j} className="text-sm text-muted-foreground flex items-start gap-2">
+                            <span className="text-primary mt-0.5">•</span> {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
-  );
+  )
 }
