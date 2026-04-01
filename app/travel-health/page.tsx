@@ -156,7 +156,7 @@ export default function TravelHealthPage() {
                     ? "ring-2 bg-white dark:bg-card shadow-md"
                     : "bg-white dark:bg-card border hover:shadow-sm"
                 }`}
-                style={selectedRoute === r.id ? { ringColor: r.color } : undefined}>
+                style={selectedRoute === r.id ? { boxShadow: `0 0 0 2px ${r.color}` } : undefined}>
                 <span className="text-2xl">{r.emoji}</span>
                 <div>
                   <p className="text-xs font-bold">{lang === "tr" ? r.labelTr : r.label}</p>

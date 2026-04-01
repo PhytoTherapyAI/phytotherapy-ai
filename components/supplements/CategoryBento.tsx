@@ -58,10 +58,8 @@ export function CategoryBento({ selected, onSelect, lang }: CategoryBentoProps) 
                 : `${cat.bgColor} hover:shadow-sm`
             }`}
             style={isActive ? {
-              ringColor: cat.color,
-              borderColor: cat.color,
               backgroundColor: `${cat.color}15`,
-              boxShadow: `0 4px 16px ${cat.color}20`,
+              boxShadow: `0 0 0 2px ${cat.color}, 0 4px 16px ${cat.color}20`,
             } : undefined}
           >
             <span className="text-2xl">{cat.emoji}</span>

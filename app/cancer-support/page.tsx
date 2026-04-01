@@ -84,7 +84,7 @@ function FatigueTracker({ lang }: { lang: string }) {
                   className={`flex flex-col items-center gap-2 p-4 rounded-2xl min-h-[96px] min-w-[80px] transition-all ${
                     level === l.value ? "ring-2 bg-white dark:bg-card shadow-md" : "hover:bg-stone-50 dark:hover:bg-stone-900"
                   }`}
-                  style={level === l.value ? { ringColor: l.color } : undefined}>
+                  style={level === l.value ? { boxShadow: `0 0 0 2px ${l.color}` } : undefined}>
                   <span className="text-3xl">{l.emoji}</span>
                   <span className="text-[10px] font-medium" style={{ color: l.color }}>{l.label}</span>
                 </motion.button>

@@ -249,9 +249,8 @@ export default function ChronicCarePage() {
                           : `${c.bgColor} hover:shadow-sm`
                       }`}
                       style={isActive ? {
-                        ringColor: c.color,
+                        boxShadow: `0 0 0 2px ${c.color}, 0 4px 16px ${c.color}20`,
                         backgroundColor: `${c.color}12`,
-                        boxShadow: `0 4px 16px ${c.color}20`,
                       } : undefined}
                     >
                       <div className="flex items-start justify-between mb-2">

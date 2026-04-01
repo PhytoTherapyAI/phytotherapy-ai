@@ -155,8 +155,7 @@ export default function InterestsPage() {
                     : "bg-white/60 dark:bg-card/60 hover:bg-white dark:hover:bg-card hover:shadow-sm"
                 }`}
                 style={isActive ? {
-                  ringColor: item.color,
-                  boxShadow: `0 4px 16px ${item.color}20`,
+                  boxShadow: `0 0 0 2px ${item.color}, 0 4px 16px ${item.color}20`,
                   backgroundColor: `${item.color}08`,
                 } : undefined}>
                 <span className="text-2xl">{item.emoji}</span>

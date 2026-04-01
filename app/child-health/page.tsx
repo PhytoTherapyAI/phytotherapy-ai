@@ -134,7 +134,7 @@ export default function ChildHealthPage() {
                   className={`flex items-center gap-3 rounded-2xl p-3.5 text-left transition-all ${
                     isActive ? "ring-2 shadow-md bg-white dark:bg-card" : "bg-white/60 dark:bg-card/60 hover:bg-white dark:hover:bg-card hover:shadow-sm"
                   }`}
-                  style={isActive ? { ringColor: g.color, boxShadow: `0 4px 16px ${g.color}20` } : undefined}>
+                  style={isActive ? { boxShadow: `0 0 0 2px ${g.color}, 0 4px 16px ${g.color}20` } : undefined}>
                   <span className="text-2xl">{g.emoji}</span>
                   <div>
                     <p className={`text-sm font-bold ${isActive ? "" : "text-foreground"}`}
@@ -186,7 +186,7 @@ export default function ChildHealthPage() {
                       className={`flex items-center gap-2.5 rounded-2xl p-3 text-left transition-all ${
                         isActive ? "ring-2 bg-white dark:bg-card shadow-sm" : "bg-white/60 dark:bg-card/60 hover:bg-white dark:hover:bg-card"
                       }`}
-                      style={isActive ? { ringColor: issue.color } : undefined}>
+                      style={isActive ? { boxShadow: `0 0 0 2px ${issue.color}` } : undefined}>
                       <span className="text-xl">{issue.emoji}</span>
                       <span className={`text-xs font-semibold ${isActive ? "" : "text-foreground"}`}
                         style={isActive ? { color: issue.color } : undefined}>
