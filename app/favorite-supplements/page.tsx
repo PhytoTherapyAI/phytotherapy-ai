@@ -1,299 +1,133 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
-import {
-  Heart,
-  ShieldCheck,
-  CalendarPlus,
-  Copy,
-  Check,
-  Trash2,
-  ArrowLeft,
-  Leaf,
-  Scale,
-  ShoppingCart,
-  AlertTriangle,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx, txp } from "@/lib/translations";
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Shield, Plus, Sparkles, Bookmark, Check, ChevronRight, Folder } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { useLang } from "@/components/layout/language-toggle"
 
-interface FavoriteSupplement {
-  id: string;
-  name: string;
-  addedAt: string;
-}
+const FOLDERS = [
+  { id: "supps", label: "My Supplements", emoji: "💊", count: 0 },
+  { id: "protocols", label: "Natural Protocols", emoji: "🌿", count: 0 },
+  { id: "reports", label: "Symptom Reports", emoji: "📋", count: 0 },
+]
 
-// Minimal data lookup for display (matches marketplace IDs)
-const SUPPLEMENT_INFO: Record<string, { uses: { en: string; tr: string }; evidenceGrade: string }> = {
-  "omega-3": { uses: { en: "Heart health, triglycerides", tr: "Kalp sağlığı, trigliserit" }, evidenceGrade: "A" },
-  "vitamin-d3": { uses: { en: "Bone health, immune support", tr: "Kemik sağlığı, bağışıklik" }, evidenceGrade: "A" },
-  "magnesium": { uses: { en: "Sleep, muscle cramps, stress", tr: "Uyku, kas kramplari, stres" }, evidenceGrade: "A" },
-  "ashwagandha": { uses: { en: "Stress, anxiety, cortisol", tr: "Stres, anksiyete, kortizol" }, evidenceGrade: "A" },
-  "probiotics": { uses: { en: "Gut health, digestion", tr: "Bağırsak sağlığı, sindirim" }, evidenceGrade: "A" },
-  "vitamin-b12": { uses: { en: "Energy, nerve function", tr: "Enerji, sinir fonksiyonu" }, evidenceGrade: "A" },
-  "iron-bisglycinate": { uses: { en: "Anemia, fatigue", tr: "Anemi, yorgunluk" }, evidenceGrade: "A" },
-  "zinc": { uses: { en: "Immune support, skin", tr: "Bağışıklik, cilt" }, evidenceGrade: "A" },
-  "curcumin": { uses: { en: "Inflammation, joint pain", tr: "Enflamasyon, eklem ağrısi" }, evidenceGrade: "B" },
-  "coq10": { uses: { en: "Heart health, energy", tr: "Kalp sağlığı, enerji" }, evidenceGrade: "B" },
-  "melatonin": { uses: { en: "Sleep onset, jet lag", tr: "Uyku başlangıçi, jet lag" }, evidenceGrade: "A" },
-  "valerian": { uses: { en: "Sleep quality, relaxation", tr: "Uyku kalitesi, rahatlama" }, evidenceGrade: "B" },
-  "berberine": { uses: { en: "Blood sugar, cholesterol", tr: "Kan sekeri, kolesterol" }, evidenceGrade: "A" },
-  "quercetin": { uses: { en: "Allergies, antioxidant", tr: "Alerjiler, antioksidan" }, evidenceGrade: "B" },
-  "vitamin-c": { uses: { en: "Immune support, collagen", tr: "Bağışıklik, kolajen" }, evidenceGrade: "A" },
-};
+const STACKS = [
+  { id: "workout", emoji: "🏋️", label: "Pre-Workout Essential Pack", items: ["Creatine", "Beta-Alanine", "Caffeine + L-Theanine"], color: "#f59e0b" },
+  { id: "exam", emoji: "📚", label: "Exam Week Focus Stack", items: ["Bacopa Monnieri", "Lion's Mane", "Omega-3"], color: "#6366f1" },
+  { id: "sleep", emoji: "😴", label: "Deep Sleep Protocol", items: ["Magnesium", "Valerian Root", "L-Theanine"], color: "#8b5cf6" },
+]
 
-const GRADE_COLORS: Record<string, string> = {
-  A: "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400",
-  B: "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400",
-  C: "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400",
-};
-
-function formatName(id: string): string {
-  return id.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
+const TRENDING = ["Magnesium Bisglycinate", "Ashwagandha", "D3+K2 Vitamin", "Omega-3 EPA/DHA", "Curcumin", "Probiotics"]
 
 export default function FavoriteSupplementsPage() {
-  const { lang } = useLang();
-  const [favorites, setFavorites] = useState<string[]>([]);
-  const [compareSelection, setCompareSelection] = useState<string[]>([]);
-  const [copied, setCopied] = useState(false);
+  const { lang } = useLang()
+  const [addedStacks, setAddedStacks] = useState<string[]>([])
+  const [showConfetti, setShowConfetti] = useState<string | null>(null)
 
-  useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem("supplement-favorites") || "[]");
-      setFavorites(stored);
-    } catch {
-      setFavorites([]);
-    }
-  }, []);
-
-  const removeFavorite = (id: string) => {
-    const next = favorites.filter((f) => f !== id);
-    setFavorites(next);
-    localStorage.setItem("supplement-favorites", JSON.stringify(next));
-    setCompareSelection((prev) => prev.filter((c) => c !== id));
-  };
-
-  const toggleCompare = (id: string) => {
-    setCompareSelection((prev) => {
-      if (prev.includes(id)) return prev.filter((c) => c !== id);
-      if (prev.length >= 2) return [prev[1], id];
-      return [...prev, id];
-    });
-  };
-
-  const copyShoppingList = () => {
-    const list = favorites.map((id) => `- ${formatName(id)}`).join("\n");
-    const header = tx("favSupp.shoppingListHeader", lang);
-    navigator.clipboard.writeText(`${header}\n${list}`);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const compareItems = useMemo(() => {
-    if (compareSelection.length !== 2) return null;
-    return compareSelection.map((id) => ({
-      id,
-      name: formatName(id),
-      info: SUPPLEMENT_INFO[id],
-    }));
-  }, [compareSelection]);
-
-  // Empty state
-  if (favorites.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-green-50/50 to-white dark:from-gray-900 dark:to-gray-950 flex items-center justify-center px-4">
-        <div className="text-center max-w-md">
-          <Heart className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {tx("favSupp.noFavorites", lang)}
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
-            {tx("favSupp.noFavoritesDesc", lang)}
-          </p>
-          <Link href="/supplement-marketplace">
-            <Button className="gap-2 bg-green-600 hover:bg-green-700 text-white rounded-xl">
-              <Leaf className="w-4 h-4" />
-              {tx("favSupp.browseGuide", lang)}
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
+  const addStack = (id: string) => {
+    setAddedStacks(prev => [...prev, id])
+    setShowConfetti(id)
+    setTimeout(() => setShowConfetti(null), 1000)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50/50 to-white dark:from-gray-900 dark:to-gray-950">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <Link href="/supplement-marketplace">
-            <Button variant="ghost" size="sm" className="gap-1 rounded-lg">
-              <ArrowLeft className="w-4 h-4" />
-              {tx("favSupp.guide", lang)}
-            </Button>
-          </Link>
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {tx("favSupp.title", lang)}
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {txp("favSupp.savedCount", lang, { count: favorites.length })}
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-stone-50 dark:bg-background">
+      <div className="mx-auto max-w-2xl px-4 md:px-8 py-6 space-y-6">
 
-        {/* Interaction Reminder */}
-        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-3 mb-6 flex items-start gap-2">
-          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-amber-800 dark:text-amber-300">
-            {tx("favSupp.interactionReminder", lang)}
+        {/* Vault Hero */}
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+          className="rounded-3xl bg-gradient-to-br from-primary/5 to-emerald-50/50 dark:from-primary/10 dark:to-emerald-900/10 border border-primary/10 p-8 text-center relative overflow-hidden">
+          <motion.div animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.05, 1] }}
+            transition={{ repeat: Infinity, duration: 3 }}
+            className="absolute inset-0 bg-gradient-radial from-primary/10 to-transparent pointer-events-none" />
+          <motion.div animate={{ y: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 3 }}>
+            <Shield className="h-14 w-14 text-primary mx-auto relative z-10" />
+          </motion.div>
+          <h1 className="text-2xl font-bold mt-4 relative z-10">Your Personal Healing Vault Awaits</h1>
+          <p className="text-xs text-muted-foreground mt-2 max-w-sm mx-auto relative z-10">
+            Add evidence-based supplements, healing protocols and articles to build your biological arsenal.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Actions Bar */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={copyShoppingList}
-            className="gap-1.5 rounded-lg text-xs"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5" />}
-            {copied
-              ? tx("favSupp.copied", lang)
-              : tx("favSupp.copyList", lang)}
-          </Button>
-          <span className="text-xs text-gray-400 dark:text-gray-500 self-center">
-            {tx("favSupp.selectToCompare", lang)}
-          </span>
-        </div>
-
-        {/* Favorites List */}
-        <div className="space-y-3 mb-8">
-          {favorites.map((id) => {
-            const info = SUPPLEMENT_INFO[id];
-            const isCompareSelected = compareSelection.includes(id);
-
-            return (
-              <div
-                key={id}
-                className={`bg-white dark:bg-gray-800 rounded-xl border p-4 transition-all ${
-                  isCompareSelected
-                    ? "border-green-400 dark:border-green-600 ring-1 ring-green-400/30"
-                    : "border-gray-200 dark:border-gray-700"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  {/* Compare Checkbox */}
-                  <button
-                    onClick={() => toggleCompare(id)}
-                    className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                      isCompareSelected
-                        ? "bg-green-600 border-green-600 text-white"
-                        : "border-gray-300 dark:border-gray-600"
-                    }`}
-                  >
-                    {isCompareSelected && <Check className="w-3 h-3" />}
-                  </button>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-medium text-gray-900 dark:text-white text-sm">
-                        {formatName(id)}
-                      </h3>
-                      {info && (
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${GRADE_COLORS[info.evidenceGrade]}`}>
-                          {info.evidenceGrade}
-                        </span>
-                      )}
-                    </div>
-                    {info && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                        {info.uses[lang as "tr" | "en"]}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-1">
-                    <Link href={`/interaction-checker?supplement=${encodeURIComponent(formatName(id))}`}>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg" title={tx("favSupp.checkInteractions", lang)}>
-                        <ShieldCheck className="w-4 h-4 text-blue-500" />
-                      </Button>
-                    </Link>
-                    <Link href="/calendar">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-lg" title={tx("favSupp.addToCalendar", lang)}>
-                        <CalendarPlus className="w-4 h-4 text-green-500" />
-                      </Button>
-                    </Link>
-                    <button
-                      onClick={() => removeFavorite(id)}
-                      className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                      title={tx("favSupp.remove", lang)}
-                    >
-                      <Trash2 className="w-4 h-4 text-red-400" />
-                    </button>
-                  </div>
-                </div>
+        {/* Categorical Folders */}
+        <div className="flex gap-2.5 overflow-x-auto scrollbar-hide pb-1">
+          {FOLDERS.map((f, i) => (
+            <motion.div key={f.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06 }}
+              className="shrink-0 flex items-center gap-2 px-4 py-3 rounded-2xl bg-white dark:bg-card border min-w-[160px]">
+              <span className="text-xl">{f.emoji}</span>
+              <div>
+                <p className="text-xs font-bold">{f.label}</p>
+                <p className="text-[10px] text-muted-foreground">{f.count} items</p>
               </div>
-            );
-          })}
+            </motion.div>
+          ))}
         </div>
 
-        {/* Compare Panel */}
-        {compareItems && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-green-200 dark:border-green-800 p-5 mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <Scale className="w-5 h-5 text-green-600" />
-              <h2 className="font-semibold text-gray-900 dark:text-white">
-                {tx("favSupp.quickCompare", lang)}
-              </h2>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              {compareItems.map((item) => (
-                <div key={item.id} className="space-y-2">
-                  <h3 className="font-medium text-sm text-gray-900 dark:text-white">{item.name}</h3>
-                  {item.info ? (
-                    <>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {tx("favSupp.evidence", lang)}
-                        </span>
-                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${GRADE_COLORS[item.info.evidenceGrade]}`}>
-                          {item.info.evidenceGrade}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
-                        {item.info.uses[lang as "tr" | "en"]}
-                      </p>
-                    </>
-                  ) : (
-                    <p className="text-xs text-gray-400">{tx("favSupp.noInfo", lang)}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
-              <Link href={`/supplement-compare?s1=${encodeURIComponent(compareItems[0].name)}&s2=${encodeURIComponent(compareItems[1].name)}`}>
-                <Button size="sm" className="gap-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs">
-                  <Scale className="w-3.5 h-3.5" />
-                  {tx("favSupp.detailedCompare", lang)}
-                </Button>
-              </Link>
-            </div>
+        {/* Starter Stacks */}
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <h2 className="text-sm font-bold">Starter Stacks</h2>
           </div>
-        )}
+          <div className="space-y-3">
+            {STACKS.map((stack, i) => {
+              const isAdded = addedStacks.includes(stack.id)
+              return (
+                <motion.div key={stack.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + i * 0.08 }}
+                  className="relative overflow-hidden">
+                  <Card className={`rounded-2xl transition-all ${isAdded ? "ring-2 ring-emerald-400" : ""}`}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div className="h-12 w-12 rounded-2xl flex items-center justify-center text-2xl" style={{ backgroundColor: `${stack.color}15` }}>{stack.emoji}</div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-bold">{stack.label}</h3>
+                          <div className="flex flex-wrap gap-1 mt-1.5">
+                            {stack.items.map(item => (
+                              <span key={item} className="text-[9px] px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-muted-foreground">{item}</span>
+                            ))}
+                          </div>
+                        </div>
+                        <Button size="sm" variant={isAdded ? "ghost" : "default"} className="rounded-xl text-[10px] h-8 shrink-0"
+                          onClick={() => !isAdded && addStack(stack.id)} disabled={isAdded}>
+                          {isAdded ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <><Plus className="h-3 w-3 mr-1" /> Add All</>}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  {/* Confetti */}
+                  {showConfetti === stack.id && (
+                    <div className="absolute inset-0 pointer-events-none">
+                      {Array.from({ length: 10 }).map((_, j) => (
+                        <motion.div key={j} initial={{ x: "50%", y: "50%", scale: 1, opacity: 1 }}
+                          animate={{ x: `${10 + Math.random() * 80}%`, y: `${Math.random() * 80}%`, scale: 0, opacity: 0 }}
+                          transition={{ duration: 0.7, delay: j * 0.03 }}
+                          className="absolute w-2 h-2 rounded-full"
+                          style={{ backgroundColor: ["#22c55e", "#facc15", "#60a5fa", "#f472b6", "#a78bfa", "#fb923c", "#34d399", "#3c7a52", "#ef4444", "#06b6d4"][j] }} />
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
 
-        {/* Footer */}
-        <div className="text-center text-xs text-gray-400 dark:text-gray-500">
-          {tx("disclaimer.tool", lang)}
+        {/* Trending Marquee */}
+        <div className="rounded-2xl bg-white dark:bg-card border p-4">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Community's Top Favorites Today</p>
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+            {TRENDING.map(t => (
+              <span key={t} className="shrink-0 px-3 py-1.5 rounded-full bg-primary/5 text-xs font-medium text-primary border border-primary/10">{t}</span>
+            ))}
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
