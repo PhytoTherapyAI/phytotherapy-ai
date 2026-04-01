@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { hostname: "flagcdn.com" },
     ],
+    formats: ["image/webp", "image/avif"],
+    minimumCacheTTL: 31536000,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   async redirects() {
     return [

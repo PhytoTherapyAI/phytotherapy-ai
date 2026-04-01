@@ -8,7 +8,8 @@ import {
   ArrowRight, Search, CheckCircle2, MessageCircle, Send,
   Activity, BookOpen, Shield, Sparkles, Moon, Droplets, Pill, Leaf,
 } from "lucide-react";
-import { BotanicalHero } from "@/components/illustrations/botanical-hero";
+import dynamic from "next/dynamic";
+const BotanicalHero = dynamic(() => import("@/components/illustrations/botanical-hero").then(m => m.BotanicalHero), { ssr: false, loading: () => <div className="h-64 w-full rounded-lg bg-stone-100 dark:bg-stone-800 animate-pulse" /> });
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";

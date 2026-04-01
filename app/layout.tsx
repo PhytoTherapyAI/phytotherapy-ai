@@ -8,15 +8,18 @@ import { DisclaimerBanner } from "@/components/layout/disclaimer-banner";
 import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/components/layout/language-toggle";
-import { MedicationUpdateDialog } from "@/components/layout/medication-update-dialog";
-import { CookieConsent } from "@/components/layout/cookie-consent";
-import { MicroCheckInWrapper } from "@/components/dashboard/MicroCheckInWrapper";
-import { TrialBannerWrapper } from "@/components/premium/TrialBannerWrapper";
-import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
-import { ServiceWorkerRegistration } from "@/components/pwa/ServiceWorkerRegistration";
-import { CriticalAlertModal } from "@/components/emergency/CriticalAlertModal";
-import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
+import dynamic from "next/dynamic";
 import { SmartBackButton } from "@/components/layout/SmartBackButton";
+
+// Lazy load non-critical global components — reduces initial bundle
+const MedicationUpdateDialog = dynamic(() => import("@/components/layout/medication-update-dialog").then(m => m.MedicationUpdateDialog));
+const CookieConsent = dynamic(() => import("@/components/layout/cookie-consent").then(m => m.CookieConsent));
+const MicroCheckInWrapper = dynamic(() => import("@/components/dashboard/MicroCheckInWrapper").then(m => m.MicroCheckInWrapper));
+const TrialBannerWrapper = dynamic(() => import("@/components/premium/TrialBannerWrapper").then(m => m.TrialBannerWrapper));
+const PWAInstallPrompt = dynamic(() => import("@/components/pwa/PWAInstallPrompt").then(m => m.PWAInstallPrompt));
+const ServiceWorkerRegistration = dynamic(() => import("@/components/pwa/ServiceWorkerRegistration").then(m => m.ServiceWorkerRegistration));
+const CriticalAlertModal = dynamic(() => import("@/components/emergency/CriticalAlertModal").then(m => m.CriticalAlertModal));
+const FeedbackWidget = dynamic(() => import("@/components/feedback/FeedbackWidget").then(m => m.FeedbackWidget));
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
