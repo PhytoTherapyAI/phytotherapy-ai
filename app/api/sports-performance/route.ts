@@ -222,11 +222,9 @@ Include at least 3 supplements, 3 recovery methods. Every recommendation must be
 
     return NextResponse.json(parsed);
   } catch (error) {
-    const errMsg = error instanceof Error ? error.message : String(error);
-    const errStack = error instanceof Error ? error.stack : "";
-    console.error("Sports performance API error:", errMsg, errStack);
+    console.error("Sports performance API error:", error instanceof Error ? error.message : error);
     return NextResponse.json(
-      { error: "An error occurred. Please try again.", debug: errMsg },
+      { error: "An error occurred. Please try again." },
       { status: 500 }
     );
   }
