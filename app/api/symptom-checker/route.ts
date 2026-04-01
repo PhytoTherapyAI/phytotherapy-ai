@@ -52,28 +52,20 @@ export async function POST(request: NextRequest) {
     // Fetch user profile if authenticated
     let profileContext = "";
     const authHeader = request.headers.get("authorization");
+    // Start PubMed immediately (parallel with profile fetch)
+    const pubmedPromise = searchPubMed(symptoms, 3).catch(() => []);
+
     if (authHeader?.startsWith("Bearer ")) {
       try {
         const token = authHeader.replace("Bearer ", "");
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
-          const { data: profile } = await supabase
-            .from("user_profiles")
-            .select("age, gender, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions")
-            .eq("id", user.id)
-            .single();
-
-          const { data: meds } = await supabase
-            .from("user_medications")
-            .select("brand_name, generic_name")
-            .eq("user_id", user.id)
-            .eq("is_active", true);
-
-          const { data: allergies } = await supabase
-            .from("user_allergies")
-            .select("allergen")
-            .eq("user_id", user.id);
+          const [{ data: profile }, { data: meds }, { data: allergies }] = await Promise.all([
+            supabase.from("user_profiles").select("age, gender, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions").eq("id", user.id).single(),
+            supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id).eq("is_active", true),
+            supabase.from("user_allergies").select("allergen").eq("user_id", user.id),
+          ]);
 
           if (profile) {
             const parts: string[] = [];
@@ -89,29 +81,23 @@ export async function POST(request: NextRequest) {
             profileContext = parts.join(". ");
           }
 
-          // Save to history
-          await supabase.from("query_history").insert({
-            user_id: user.id,
-            query_text: `Symptom Check: ${symptoms}`,
-            query_type: "symptom" as const,
-          });
+          supabase.from("query_history").insert({ user_id: user.id, query_text: `Symptom Check: ${symptoms}`, query_type: "symptom" as const }).then(() => {});
         }
       } catch {
         // Continue as guest
       }
     }
 
-    // PubMed search for context
+    // Await PubMed (already running in parallel)
     let pubmedContext = "";
-    try {
-      const articles = await searchPubMed(symptoms, 3);
-      if (articles.length > 0) {
-        pubmedContext = articles
-          .map((a: { title: string; abstract?: string }) => `- ${a.title}: ${(a.abstract || "").slice(0, 200)}`)
-          .join("\n");
-      }
-    } catch {
-      // Continue without PubMed
+    const articles = await pubmedPromise;
+    if (articles.length > 0) {
+      pubmedContext = articles
+        .map((a: { title: string; abstract?: string }) => `- ${a.title}: ${(a.abstract || "").slice(0, 200)}`)
+        .join("\n");
+    }
+    {
+      // PubMed context ready
     }
 
     const systemPrompt = `You are Phytotherapy.ai's symptom assessment assistant. You are NOT a doctor and cannot diagnose.

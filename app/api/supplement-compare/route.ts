@@ -32,7 +32,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get user profile for personalization
+    // Start PubMed immediately (parallel with profile)
+    const pubmedPromise = searchPubMed(`${supplement1} vs ${supplement2} comparison efficacy`, 4).catch(() => []);
+
     let profileContext = "";
     const authHeader = request.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
@@ -41,17 +43,10 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
-          const { data: profile } = await supabase
-            .from("user_profiles")
-            .select("age, gender, is_pregnant, kidney_disease, liver_disease, health_goals")
-            .eq("id", user.id)
-            .single();
-
-          const { data: meds } = await supabase
-            .from("user_medications")
-            .select("generic_name, brand_name")
-            .eq("user_id", user.id)
-            .eq("is_active", true);
+          const [{ data: profile }, { data: meds }] = await Promise.all([
+            supabase.from("user_profiles").select("age, gender, is_pregnant, kidney_disease, liver_disease, health_goals").eq("id", user.id).single(),
+            supabase.from("user_medications").select("generic_name, brand_name").eq("user_id", user.id).eq("is_active", true),
+          ]);
 
           if (profile) {
             const parts: string[] = [];
@@ -70,17 +65,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // PubMed search
+    // Await PubMed (already running in parallel)
     let pubmedContext = "";
-    try {
-      const articles = await searchPubMed(`${supplement1} vs ${supplement2} comparison efficacy`, 4);
-      if (articles.length > 0) {
-        pubmedContext = articles
-          .map((a: { title: string; abstract?: string }) => `- ${a.title}: ${(a.abstract || "").slice(0, 200)}`)
-          .join("\n");
-      }
-    } catch {
-      // Continue
+    const articles = await pubmedPromise;
+    if (articles.length > 0) {
+      pubmedContext = articles
+        .map((a: { title: string; abstract?: string }) => `- ${a.title}: ${(a.abstract || "").slice(0, 200)}`)
+        .join("\n");
     }
 
     const systemPrompt = `You are a supplement comparison expert at Phytotherapy.ai.

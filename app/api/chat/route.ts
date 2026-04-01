@@ -67,7 +67,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Step 2: Get user profile if authenticated
+    // Step 2: Start PubMed search IMMEDIATELY (runs in parallel with profile fetch)
+    const pubmedQuery = buildPubMedSearchQuery(message);
+    const pubmedPromise = searchPubMed(pubmedQuery, 5).catch(() => []);
+
+    // Step 2b: Get user profile if authenticated
     let profileContext = "";
     let hasMedications = false;
     const authHeader = request.headers.get("authorization");
@@ -113,9 +117,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Step 3: Search PubMed for relevant research
-    const pubmedQuery = buildPubMedSearchQuery(message);
-    const articles = await searchPubMed(pubmedQuery, 5);
+    // Step 3: Await PubMed results (already running in parallel since Step 2)
+    const articles = await pubmedPromise;
 
     // Step 4: Build the full prompt with context
     let fullPrompt = "";

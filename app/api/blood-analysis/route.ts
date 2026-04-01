@@ -124,17 +124,10 @@ export async function POST(request: NextRequest) {
 
         if (user) {
           userId = user.id;
-          const { data: profile } = await supabase
-            .from("user_profiles")
-            .select("*")
-            .eq("id", user.id)
-            .single();
-
-          const { data: meds } = await supabase
-            .from("user_medications")
-            .select("brand_name, generic_name, dosage")
-            .eq("user_id", user.id)
-            .eq("is_active", true);
+          const [{ data: profile }, { data: meds }] = await Promise.all([
+            supabase.from("user_profiles").select("*").eq("id", user.id).single(),
+            supabase.from("user_medications").select("brand_name, generic_name, dosage").eq("user_id", user.id).eq("is_active", true),
+          ]);
 
           hasMedications = !!(meds && meds.length > 0);
 

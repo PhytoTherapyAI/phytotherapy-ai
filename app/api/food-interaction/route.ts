@@ -42,17 +42,10 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
-          const { data: meds } = await supabase
-            .from("user_medications")
-            .select("brand_name, generic_name")
-            .eq("user_id", user.id)
-            .eq("is_active", true);
-
-          const { data: profile } = await supabase
-            .from("user_profiles")
-            .select("age, gender, is_pregnant, kidney_disease, liver_disease")
-            .eq("id", user.id)
-            .single();
+          const [{ data: meds }, { data: profile }] = await Promise.all([
+            supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id).eq("is_active", true),
+            supabase.from("user_profiles").select("age, gender, is_pregnant, kidney_disease, liver_disease").eq("id", user.id).single(),
+          ]);
 
           if (meds?.length) {
             medications = meds.map((m: { generic_name: string | null; brand_name: string | null }) =>
@@ -70,11 +63,11 @@ export async function POST(request: NextRequest) {
             profileContext = parts.join(". ");
           }
 
-          await supabase.from("query_history").insert({
+          supabase.from("query_history").insert({
             user_id: user.id,
             query_text: `Food-Drug: ${foods.join(", ")} | Meds: ${medications.join(", ")}`,
             query_type: "food_interaction" as const,
-          });
+          }).then(() => {});
         }
       } catch {
         // Continue as guest

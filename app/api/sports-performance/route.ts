@@ -61,9 +61,14 @@ Input: "${rawInput}"`;
       );
     }
 
-    // Fetch user profile for medication interaction check
+    // Fetch profile + PubMed IN PARALLEL for speed
     let profileContext = "";
     let userName = "";
+    const pubmedQuery = `${sportType} ${goal} supplement performance`;
+
+    // Start PubMed search immediately (don't wait for auth)
+    const pubmedPromise = searchPubMed(pubmedQuery, 3).catch(() => []);
+
     const authHeader = request.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -71,22 +76,11 @@ Input: "${rawInput}"`;
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
-          const { data: profile } = await supabase
-            .from("user_profiles")
-            .select("full_name, age, gender, kidney_disease, liver_disease, chronic_conditions")
-            .eq("id", user.id)
-            .single();
-
-          const { data: meds } = await supabase
-            .from("user_medications")
-            .select("brand_name, generic_name")
-            .eq("user_id", user.id)
-            .eq("is_active", true);
-
-          const { data: allergies } = await supabase
-            .from("user_allergies")
-            .select("allergen")
-            .eq("user_id", user.id);
+          const [{ data: profile }, { data: meds }, { data: allergies }] = await Promise.all([
+            supabase.from("user_profiles").select("full_name, age, gender, kidney_disease, liver_disease, chronic_conditions").eq("id", user.id).single(),
+            supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id).eq("is_active", true),
+            supabase.from("user_allergies").select("allergen").eq("user_id", user.id),
+          ]);
 
           if (profile) {
             userName = profile.full_name || "";
@@ -101,29 +95,24 @@ Input: "${rawInput}"`;
             profileContext = parts.join(". ");
           }
 
-          await supabase.from("query_history").insert({
+          supabase.from("query_history").insert({
             user_id: user.id,
             query_text: `Sports Performance: ${rawInput || `${sportType} - ${goal}`}`,
             query_type: "sports" as const,
-          });
+          }).then(() => {});
         }
       } catch {
         // Continue as guest
       }
     }
 
-    // PubMed search
+    // Await PubMed (already running in parallel)
     let pubmedContext = "";
-    try {
-      const query = `${sportType} ${goal} supplement performance`;
-      const articles = await searchPubMed(query, 3);
-      if (articles.length > 0) {
-        pubmedContext = articles
-          .map((a: { title: string; abstract?: string }) => `- ${a.title}: ${(a.abstract || "").slice(0, 200)}`)
-          .join("\n");
-      }
-    } catch {
-      // Continue without PubMed
+    const articles = await pubmedPromise;
+    if (articles.length > 0) {
+      pubmedContext = articles
+        .map((a: { title: string; abstract?: string }) => `- ${a.title}: ${(a.abstract || "").slice(0, 200)}`)
+        .join("\n");
     }
 
     const specificFocus = extractedIntent?.specificFocus || "";
