@@ -3363,7 +3363,7 @@ const t: Record<string, TranslationEntry> = {
 
   // ── health-report-card ──
   "reportCard.title": { en: "Annual Health Report", tr: "Yıllık Sağlık Raporu" },
-  "reportCard.summaryReport": { en: "summary report", tr: "ozet rapor" },
+  "reportCard.summaryReport": { en: "summary report", tr: "özet rapor" },
   "reportCard.medCompliance": { en: "Med Compliance", tr: "İlaç Uyumu" },
   "reportCard.supplement": { en: "Supplement", tr: "Takviye Uyumu" },
   "reportCard.checkups": { en: "Checkups", tr: "Doktor Ziyareti" },

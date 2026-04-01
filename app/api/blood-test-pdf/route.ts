@@ -83,12 +83,24 @@ export async function POST(req: NextRequest) {
     const buffer = await file.arrayBuffer();
     const base64 = Buffer.from(buffer).toString("base64");
 
-    // Step 1: Extract values from PDF/image using Gemini Vision
-    const extractionResult = await askGeminiJSONMultimodal(
-      EXTRACTION_PROMPT,
-      "You are a precise medical document parser. Extract lab values accurately.",
-      [{ mimeType: file.type, base64 }]
-    );
+    // Step 1: Extract values from PDF/image using Claude Vision
+    // For large PDFs (e-Nabız etc), limit to first pages to avoid timeout
+    let extractionResult: string;
+    try {
+      extractionResult = await askGeminiJSONMultimodal(
+        EXTRACTION_PROMPT + "\n\nIMPORTANT: Focus on extracting numeric lab values. Ignore headers, footers, patient info. If the document has multiple pages, extract from ALL pages.",
+        "You are a precise medical document parser. Extract lab values from Turkish/English lab reports accurately. Return valid JSON only.",
+        [{ mimeType: file.type, base64 }]
+      );
+    } catch (aiError) {
+      console.error("PDF AI extraction failed:", aiError);
+      return NextResponse.json(
+        { error: lang === "tr"
+          ? "PDF analiz edilemedi. Dosya çok büyük veya okunamıyor olabilir. Lütfen daha küçük bir PDF deneyin veya manuel giriş yapın."
+          : "Could not analyze PDF. File may be too large or unreadable. Please try a smaller PDF or manual entry." },
+        { status: 422 }
+      );
+    }
 
     let extracted: {
       values: Record<string, number>;
