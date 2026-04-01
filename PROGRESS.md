@@ -1,6 +1,57 @@
 # PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Nisan 2026 (v34.0 — Gemini → Claude API Tam Migration)
+> Son güncelleme: 1 Nisan 2026 (v35.0 — Claude Migration + Bug Fix + Performance)
+
+---
+
+## Oturum 1 Nisan 2026 (Session 8b) — Bug Fix + Performance + i18n
+
+### AI Migration Tamamlandı
+- ✅ Tüm 75+ route Gemini → Claude API (lib/ai-client.ts)
+- ✅ Model: claude-haiku-4-5 (tüm route'lar — hızlı + ucuz)
+- ✅ Sonnet 4.6 upgrade path hazır (tek satır değişiklik)
+- ✅ safeParseJSON 5 katmanlı JSON temizleme
+- ✅ Retry logic (429 + 529)
+- ✅ Lazy init client (Vercel env var uyumu)
+
+### Bug Fix (3 round scan)
+- ✅ 32 API route: korumasız JSON.parse → try/catch
+- ✅ XSS fix: CommandPalette HTML escape
+- ✅ SSR fix: error.tsx window.reload guard
+- ✅ Calendar: `as any` → proper type cast
+- ✅ Admin: input sanitization (HTML strip + length limit)
+- ✅ DrugInput: res.ok kontrolü
+- ✅ 10 external fetch: AbortSignal.timeout(10s) eklendi
+- ✅ Sports page: optional chaining (timing crash fix)
+- ✅ Auth context: agresif logout düzeltildi (network hatalarında session korunuyor)
+- ✅ CAPTCHA: hackathon için devre dışı
+- ✅ Auto-retry error boundary (2x retry before showing error)
+- ✅ Health report card: mock data → real Supabase data
+
+### Performance
+- ✅ 8 global bileşen lazy loaded (layout.tsx)
+- ✅ BotanicalHero lazy loaded (landing page)
+- ✅ Image optimization (WebP/AVIF + 1yr cache)
+- ✅ max_tokens düşürüldü (text:2048, JSON:3000, stream:2048)
+- ✅ 6 API route parallelized (PubMed + Supabase Promise.all)
+- ✅ History insert fire-and-forget
+- ✅ Sports prompt %60 küçültüldü
+
+### i18n / Çeviri
+- ✅ Privacy policy: Gemini → Anthropic Claude API
+- ✅ Enterprise: Gemini AI → Claude AI
+- ✅ 86 satır Türkçe karakter düzeltmesi (İlaç, Doğum, Haftalık, Sağlık vb.)
+- ✅ "Bugünün Sağlık Planı" typo fix
+- ✅ "özet rapor" typo fix
+
+### Sonraki Session İçin TODO
+- [ ] PubMed cache (30dk) — 2-4s hız kazancı
+- [ ] Domain değişikliği (Doctopal veya Medolya alternatifi)
+- [ ] Sentry webhook kurulumu
+- [ ] Hetzner migration (cold start çözümü)
+- [ ] Vercel Pro veya alternatif hosting
+- [ ] CAPTCHA server-side verification
+- [ ] Kalan Türkçe karakter düzeltmeleri (tüm dosya taraması)
 
 ---
 
