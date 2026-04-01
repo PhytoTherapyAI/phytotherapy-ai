@@ -1,9 +1,19 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
+// Lazy-init client to ensure env vars are loaded at runtime
+let _client: Anthropic | null = null;
+function getClient(): Anthropic {
+  if (!_client) {
+    if (!process.env.ANTHROPIC_API_KEY) {
+      throw new Error("ANTHROPIC_API_KEY is not set in environment variables");
+    }
+    _client = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+  }
+  return _client;
+}
 
 const MODEL = "claude-sonnet-4-5-20250514";
 
@@ -89,7 +99,7 @@ export async function askGemini(
   systemPrompt: string
 ): Promise<string> {
   return retryWithBackoff(async () => {
-    const response = await client.messages.create({
+    const response = await getClient().messages.create({
       model: MODEL,
       max_tokens: 4096,
       temperature: 0,
@@ -110,7 +120,7 @@ export async function askGeminiJSON(
     "\n\nIMPORTANT: You MUST respond with valid JSON only. No markdown code blocks, no explanation text before or after, no ```json wrapper. Output ONLY the raw JSON object/array.";
 
   return retryWithBackoff(async () => {
-    const response = await client.messages.create({
+    const response = await getClient().messages.create({
       model: MODEL,
       max_tokens: 8192,
       temperature: 0,
@@ -130,7 +140,7 @@ export async function askGeminiStream(
   systemPrompt: string
 ): Promise<ReadableStream> {
   return retryWithBackoff(async () => {
-    const stream = client.messages.stream({
+    const stream = getClient().messages.stream({
       model: MODEL,
       max_tokens: 4096,
       temperature: 0,
@@ -206,7 +216,7 @@ export async function askGeminiJSONMultimodal(
     }
     contentParts.push({ type: "text" as const, text: prompt });
 
-    const response = await client.messages.create({
+    const response = await getClient().messages.create({
       model: MODEL,
       max_tokens: 8192,
       temperature: 0,
@@ -257,7 +267,7 @@ export async function askGeminiStreamMultimodal(
     }
     contentParts.push({ type: "text" as const, text: prompt });
 
-    const stream = client.messages.stream({
+    const stream = getClient().messages.stream({
       model: MODEL,
       max_tokens: 8192,
       temperature: 0,
