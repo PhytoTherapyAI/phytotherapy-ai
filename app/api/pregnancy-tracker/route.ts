@@ -140,7 +140,7 @@ If ANY medication is Category X, set alertLevel to "red".
 If ANY medication is Category D, set alertLevel to at least "yellow".`;
 
     const resultText = await askGeminiJSON(prompt, systemPrompt);
-    const analysis = JSON.parse(resultText);
+    let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     return NextResponse.json({
       result: {

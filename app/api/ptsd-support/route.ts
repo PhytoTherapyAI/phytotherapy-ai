@@ -130,7 +130,7 @@ Provide trauma-informed support with grounding exercises, coping strategies, and
 professionalReferral MUST always be true for PTSD.`;
 
     const resultText = await askGeminiJSON(prompt, systemPrompt);
-    const analysis = JSON.parse(resultText);
+    let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     // Enforce safety: PTSD always needs professional referral
     analysis.professionalReferral = true;

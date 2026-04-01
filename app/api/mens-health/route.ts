@@ -135,7 +135,7 @@ Provide:
 6. Lifestyle recommendations (exercise, sleep, stress)`;
 
     const resultText = await askGeminiJSON(prompt, systemPrompt);
-    const analysis = JSON.parse(resultText);
+    let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     return NextResponse.json({
       result: {

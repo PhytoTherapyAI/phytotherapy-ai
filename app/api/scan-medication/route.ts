@@ -40,7 +40,8 @@ export async function POST(req: NextRequest) {
       [{ mimeType: "image/jpeg", base64: base64Data }]
     )
 
-    const parsed = JSON.parse(result)
+    let parsed;
+    try { parsed = JSON.parse(result); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
     return NextResponse.json(parsed)
   } catch (error) {
     return NextResponse.json(

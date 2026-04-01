@@ -144,7 +144,7 @@ USER MEDICATIONS: ${medicationList}
 Provide a comprehensive liver health analysis as JSON.`;
 
     const result = await askGeminiJSON(prompt, systemPrompt);
-    const analysis = JSON.parse(result);
+    let analysis; try { analysis = JSON.parse(result); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     try {
       await supabase.from("query_history").insert({

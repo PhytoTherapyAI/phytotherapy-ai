@@ -40,6 +40,7 @@ export function DrugInput({ medications, onMedicationsChange, disabled }: DrugIn
     setIsSearching(true);
     try {
       const res = await fetch(`/api/drug-search?q=${encodeURIComponent(query)}`);
+      if (!res.ok) { setSuggestions([]); setShowSuggestions(false); return; }
       const data: DrugSuggestion[] = await res.json();
       setSuggestions(data);
       setShowSuggestions(data.length > 0);

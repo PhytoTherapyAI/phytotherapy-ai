@@ -150,7 +150,7 @@ Provide compassionate recovery support. Celebrate progress, no matter how small.
 If craving >= 8 or relapse risk is true, set alertLevel to at least "yellow" and professionalReferral to true.`;
 
     const resultText = await askGeminiJSON(prompt, systemPrompt);
-    const analysis = JSON.parse(resultText);
+    let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     // Enforce safety overrides
     if (craving_level >= 9 || relapse_risk) {

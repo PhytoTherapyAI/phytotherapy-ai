@@ -136,7 +136,7 @@ Provide supportive recommendations based on the PHQ-9 score and severity level.
 Note any medications that may contribute to mood changes.`;
 
     const resultText = await askGeminiJSON(prompt, systemPrompt);
-    const analysis = JSON.parse(resultText);
+    let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     // Determine alert level
     let alertLevel = "green";
