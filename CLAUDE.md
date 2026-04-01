@@ -8,7 +8,7 @@
 - **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı) — 2 yıllık ödeme yapıldı
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
-- **AI Motor:** Anthropic Claude API (claude-sonnet-4-5-20250514) + Embedding: Gemini text-embedding-004
+- **AI Motor:** Anthropic Claude API (claude-sonnet-4-20250514) + Embedding: Gemini text-embedding-004
 - **OS:** Windows
 - **GitHub:** github.com/PhytoTherapyAI/phytotherapy-ai
 - **Hackathon modu:** Premium gate'ler kaldırıldı, isPremium=true, pricing navbar'dan çıktı, tüm özellikler açık
@@ -39,7 +39,7 @@
 Frontend:     Next.js 14 (App Router) + Tailwind CSS + shadcn/ui + Recharts
 Backend:      Next.js API Routes (serverless — Vercel)
 Database:     Supabase (PostgreSQL) ✅ — tüm tablolar kurulu
-AI Engine:    Anthropic Claude API (claude-sonnet-4-5-20250514) + Embedding: Gemini text-embedding-004
+AI Engine:    Anthropic Claude API (claude-sonnet-4-20250514) + Embedding: Gemini text-embedding-004
 Tıbbi Veri:   PubMed E-utilities API + Europe PMC (çoklu akademik kaynak)
 İlaç Veri:    OpenFDA API
 PDF:          @react-pdf/renderer
@@ -57,7 +57,7 @@ OS:           Windows
 ```
 
 ### AI Motor Yol Haritası
-- **Hackathon + Ana Motor:** Claude API (claude-sonnet-4-5-20250514) — tıbbi etik + güvenlik + kalite
+- **Hackathon + Ana Motor:** Claude API (claude-sonnet-4-20250514) — tıbbi etik + güvenlik + kalite
 - **Embedding:** Gemini text-embedding-004 (pgvector semantic search)
 - **Para kazanmaya başlayınca:** Claude ana motor olarak devam, maliyet optimizasyonu değerlendirilecek
 - **Multi-agent pipeline:** Claude üretir + denetler — ciddi gelir olunca çoklu model pipeline

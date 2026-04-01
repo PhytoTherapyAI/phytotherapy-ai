@@ -537,7 +537,7 @@ export function generateTransparencyData(
       evidenceLevel: "B" as const, // Default, AI should specify
     })),
     confidenceScore: sources.length >= 3 ? 80 : sources.length >= 1 ? 60 : 30,
-    aiModel: "claude-sonnet-4-5-20250514",
+    aiModel: "claude-sonnet-4-20250514",
     disclaimer: tx("safety.disclaimer", lang),
     limitations: [
       tx("safety.aiCanError", lang),
