@@ -33,20 +33,23 @@ function TypewriterSearch({ onSearch, lang }: { onSearch: (q: string) => void; l
     : ["Ehlers-Danlos Syndrome", "Wilson's Disease", "Gaucher Disease", "Phenylketonuria"]
 
   useEffect(() => {
-    let idx = 0; let charIdx = 0; let deleting = false
+    let mounted = true
+    let idx = 0; let charIdx = 0; let deleting = false; let pauseCount = 0
     const interval = setInterval(() => {
+      if (!mounted) return
       const current = placeholders[idx]
+      if (pauseCount > 0) { pauseCount--; return }
       if (!deleting) {
         charIdx++
         setPlaceholder(current.slice(0, charIdx))
-        if (charIdx >= current.length) { setTimeout(() => { deleting = true }, 1500) }
+        if (charIdx >= current.length) { deleting = true; pauseCount = 18 } // 18*80ms ≈ 1.5s pause
       } else {
         charIdx--
         setPlaceholder(current.slice(0, charIdx))
         if (charIdx <= 0) { deleting = false; idx = (idx + 1) % placeholders.length }
       }
     }, 80)
-    return () => clearInterval(interval)
+    return () => { mounted = false; clearInterval(interval) }
   }, [lang]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (

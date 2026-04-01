@@ -1,7 +1,7 @@
 // © 2026 Doctopal — All Rights Reserved
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Heart, Brain, Moon, Dumbbell, Leaf, Shield,
@@ -106,9 +106,15 @@ export default function InterestsPage() {
     setSelected(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
   }
 
+  const timerRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, [])
+
   const handleContinue = () => {
     setAnalyzing(true)
-    setTimeout(() => router.push("/dashboard"), 4500)
+    timerRef.current = setTimeout(() => router.push("/dashboard"), 4500)
   }
 
   if (analyzing) return <AnalyzingScreen lang={lang} />

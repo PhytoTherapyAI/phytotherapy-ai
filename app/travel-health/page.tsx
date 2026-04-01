@@ -1,7 +1,7 @@
 // © 2026 Doctopal — All Rights Reserved
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Plane, Globe, Shield, Syringe, Leaf,
@@ -65,10 +65,13 @@ function ScanningLoader({ lang }: { lang: string }) {
   ]
 
   useEffect(() => {
+    let mounted = true
+    const len = steps.length
     const interval = setInterval(() => {
-      setStep(s => (s + 1) % steps.length)
+      if (!mounted) return
+      setStep(s => (s + 1) % len)
     }, 1200)
-    return () => clearInterval(interval)
+    return () => { mounted = false; clearInterval(interval) }
   }, [steps.length])
 
   return (
@@ -100,11 +103,18 @@ export default function TravelHealthPage() {
 
   const active = ROUTES.find(r => r.id === selectedRoute)
 
+  const scanTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  useEffect(() => {
+    return () => { if (scanTimerRef.current) clearTimeout(scanTimerRef.current) }
+  }, [])
+
   const startScan = (routeId: string) => {
     setSelectedRoute(routeId)
     setScanning(true)
     setShowResults(false)
-    setTimeout(() => { setScanning(false); setShowResults(true) }, 4000)
+    if (scanTimerRef.current) clearTimeout(scanTimerRef.current)
+    scanTimerRef.current = setTimeout(() => { setScanning(false); setShowResults(true) }, 4000)
   }
 
   return (

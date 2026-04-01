@@ -44,11 +44,15 @@ function PowerNapTimer({ lang }: { lang: string }) {
   const ref = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    if (running && seconds > 0) {
-      ref.current = setInterval(() => setSeconds(s => s - 1), 1000)
-    } else if (seconds === 0) { setRunning(false) }
+    if (!running) return
+    ref.current = setInterval(() => {
+      setSeconds(prev => {
+        if (prev <= 1) { setRunning(false); return 0 }
+        return prev - 1
+      })
+    }, 1000)
     return () => { if (ref.current) clearInterval(ref.current) }
-  }, [running, seconds])
+  }, [running])
 
   const min = Math.floor(seconds / 60)
   const sec = seconds % 60

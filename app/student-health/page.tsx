@@ -21,15 +21,22 @@ function PomodoroTimer({ lang }: { lang: string }) {
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    if (running && seconds > 0) {
-      intervalRef.current = setInterval(() => setSeconds(s => s - 1), 1000)
-    } else if (seconds === 0) {
-      setRunning(false)
-      if (!isBreak) { setIsBreak(true); setSeconds(5 * 60) }
-      else { setIsBreak(false); setSeconds(25 * 60) }
-    }
+    if (!running) return
+    intervalRef.current = setInterval(() => {
+      setSeconds(prev => {
+        if (prev <= 1) {
+          setRunning(false)
+          setIsBreak(b => {
+            setSeconds(b ? 25 * 60 : 5 * 60)
+            return !b
+          })
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
     return () => { if (intervalRef.current) clearInterval(intervalRef.current) }
-  }, [running, seconds, isBreak])
+  }, [running]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const min = Math.floor(seconds / 60)
   const sec = seconds % 60
@@ -83,20 +90,22 @@ function BreathingExercise({ lang }: { lang: string }) {
 
   useEffect(() => {
     if (!active) return
+    let mounted = true
     const phases: Array<{ p: "inhale" | "hold" | "exhale"; d: number }> = [
       { p: "inhale", d: 4 }, { p: "hold", d: 7 }, { p: "exhale", d: 8 },
     ]
     let idx = 0; let c = phases[0].d
     const interval = setInterval(() => {
-      c--; setCount(c)
+      if (!mounted) return
+      c--
       if (c <= 0) {
         idx = (idx + 1) % 3
         c = phases[idx].d
         setPhase(phases[idx].p)
-        setCount(c)
       }
+      setCount(c)
     }, 1000)
-    return () => clearInterval(interval)
+    return () => { mounted = false; clearInterval(interval) }
   }, [active])
 
   const scale = phase === "inhale" ? 1.4 : phase === "hold" ? 1.4 : 0.8
