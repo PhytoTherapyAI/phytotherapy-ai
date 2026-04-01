@@ -15,7 +15,9 @@ function getClient(): Anthropic {
   return _client;
 }
 
-const MODEL = "claude-sonnet-4-6";
+// Hybrid strategy: fast model for chat/streaming, smart model for JSON analysis
+const MODEL_FAST = "claude-haiku-4-5";   // 3x faster, chat/streaming/simple text
+const MODEL_SMART = "claude-sonnet-4-6"; // highest quality, JSON analysis/medical
 
 // ──────────────────────────────────────────────
 // Safe JSON parser — 5-layer cleaning
@@ -100,7 +102,7 @@ export async function askGemini(
 ): Promise<string> {
   return retryWithBackoff(async () => {
     const response = await getClient().messages.create({
-      model: MODEL,
+      model: MODEL_FAST,
       max_tokens: 4096,
       temperature: 0,
       system: systemPrompt,
@@ -121,7 +123,7 @@ export async function askGeminiJSON(
 
   return retryWithBackoff(async () => {
     const response = await getClient().messages.create({
-      model: MODEL,
+      model: MODEL_SMART,
       max_tokens: 8192,
       temperature: 0,
       system: jsonSystemPrompt,
@@ -141,7 +143,7 @@ export async function askGeminiStream(
 ): Promise<ReadableStream> {
   return retryWithBackoff(async () => {
     const stream = getClient().messages.stream({
-      model: MODEL,
+      model: MODEL_FAST,
       max_tokens: 4096,
       temperature: 0,
       system: systemPrompt,
@@ -217,7 +219,7 @@ export async function askGeminiJSONMultimodal(
     contentParts.push({ type: "text" as const, text: prompt });
 
     const response = await getClient().messages.create({
-      model: MODEL,
+      model: MODEL_SMART,
       max_tokens: 8192,
       temperature: 0,
       system: jsonSystemPrompt,
@@ -268,7 +270,7 @@ export async function askGeminiStreamMultimodal(
     contentParts.push({ type: "text" as const, text: prompt });
 
     const stream = getClient().messages.stream({
-      model: MODEL,
+      model: MODEL_FAST,
       max_tokens: 8192,
       temperature: 0,
       system: systemPrompt,
