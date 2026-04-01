@@ -266,41 +266,47 @@ export default function SportsPerformancePage() {
               {state.sections.nutrition && (
                 <div className="p-4 space-y-3">
                   {/* Pre */}
+                  {r.nutritionTiming.preWorkout && (
                   <div className="rounded-lg border p-3">
                     <p className="text-xs font-bold text-green-600 dark:text-green-400">
-                      {tx("sports.preWorkout", lang)} ({r.nutritionTiming.preWorkout.timing})
+                      {tx("sports.preWorkout", lang)} ({r.nutritionTiming.preWorkout?.timing})
                     </p>
                     <div className="mt-1 flex flex-wrap gap-1">
-                      {r.nutritionTiming.preWorkout.foods.map((f, i) => (
+                      {r.nutritionTiming.preWorkout?.foods?.map((f: string, i: number) => (
                         <span key={i} className="rounded bg-green-50 px-2 py-0.5 text-xs dark:bg-green-950">{f}</span>
                       ))}
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{r.nutritionTiming.preWorkout.macros}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{r.nutritionTiming.preWorkout?.macros}</p>
                   </div>
+                  )}
                   {/* During */}
+                  {r.nutritionTiming.duringWorkout && (
                   <div className="rounded-lg border p-3">
                     <p className="text-xs font-bold text-amber-600 dark:text-amber-400">
-                      {tx("sports.duringWorkout", lang)} ({r.nutritionTiming.duringWorkout.timing})
+                      {tx("sports.duringWorkout", lang)} ({r.nutritionTiming.duringWorkout?.timing})
                     </p>
                     <div className="mt-1 flex flex-wrap gap-1">
-                      {r.nutritionTiming.duringWorkout.foods.map((f, i) => (
+                      {r.nutritionTiming.duringWorkout?.foods?.map((f: string, i: number) => (
                         <span key={i} className="rounded bg-amber-50 px-2 py-0.5 text-xs dark:bg-amber-950">{f}</span>
                       ))}
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{r.nutritionTiming.duringWorkout.notes}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{r.nutritionTiming.duringWorkout?.notes}</p>
                   </div>
+                  )}
                   {/* Post */}
+                  {r.nutritionTiming.postWorkout && (
                   <div className="rounded-lg border p-3">
                     <p className="text-xs font-bold text-primary">
-                      {tx("sports.postWorkout", lang)} ({r.nutritionTiming.postWorkout.timing})
+                      {tx("sports.postWorkout", lang)} ({r.nutritionTiming.postWorkout?.timing})
                     </p>
                     <div className="mt-1 flex flex-wrap gap-1">
-                      {r.nutritionTiming.postWorkout.foods.map((f, i) => (
+                      {r.nutritionTiming.postWorkout?.foods?.map((f: string, i: number) => (
                         <span key={i} className="rounded bg-indigo-50 px-2 py-0.5 text-xs dark:bg-indigo-950">{f}</span>
                       ))}
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{r.nutritionTiming.postWorkout.macros}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{r.nutritionTiming.postWorkout?.macros}</p>
                   </div>
+                  )}
                   {/* Tips */}
                   {r.nutritionTiming.generalTips?.length > 0 && (
                     <div className="space-y-1">

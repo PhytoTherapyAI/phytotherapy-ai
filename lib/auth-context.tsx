@@ -171,24 +171,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     // Re-check session when tab becomes visible again (back from background)
+    // Less aggressive: don't sign out on temporary network errors
     const handleVisibilityChange = async () => {
       if (document.visibilityState === "visible") {
         try {
           const { data: { session }, error } = await supabase.auth.getSession();
           if (error || !session) {
-            // Try to refresh the token
-            const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
-            if (refreshError || !refreshData.session) {
-              await updateState(null, null);
-              return;
+            // Try to refresh the token — but DON'T sign out on failure
+            // Network issues or cold starts can cause temporary failures
+            try {
+              const { data: refreshData } = await supabase.auth.refreshSession();
+              if (refreshData?.session) {
+                await updateState(refreshData.session.user, refreshData.session);
+              }
+              // If refresh fails, keep current state — don't sign out
+              // User will be signed out naturally when token fully expires
+            } catch {
+              // Silently ignore refresh errors — keep current session
+              console.warn("[Auth] Token refresh failed on visibility change, keeping current session");
             }
-            await updateState(refreshData.session.user, refreshData.session);
           } else {
             // Session exists, update state including user
             setState((prev) => ({ ...prev, session, user: session.user }));
           }
         } catch (err) {
-          console.error("[Auth] Visibility change session check error:", err);
+          // Don't sign out on network errors
+          console.warn("[Auth] Visibility change session check error:", err);
         }
       }
     };

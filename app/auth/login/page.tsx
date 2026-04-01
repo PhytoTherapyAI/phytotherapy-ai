@@ -260,7 +260,7 @@ function LoginContent() {
                     </button>
                   </div>
                 </div>
-                <TurnstileWidget onVerify={setCaptchaToken} onExpire={() => setCaptchaToken(null)} />
+                {/* CAPTCHA disabled for hackathon — no server-side verification configured yet */}
                 <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                   {isLoading ? tx("auth.signingIn", lang) : tx("auth.signIn", lang)}
                 </Button>
@@ -305,7 +305,7 @@ function LoginContent() {
                       value={signupConfirm} onChange={(e) => setSignupConfirm(e.target.value)} required />
                   </div>
                 </div>
-                <TurnstileWidget onVerify={setCaptchaToken} onExpire={() => setCaptchaToken(null)} />
+                {/* CAPTCHA disabled for hackathon — no server-side verification configured yet */}
                 <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
                   {isLoading ? tx("auth.creatingAccount", lang) : tx("auth.createAccount", lang)}
                 </Button>
