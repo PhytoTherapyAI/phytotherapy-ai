@@ -2777,10 +2777,10 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   "nav.pregnancyTracker": { en: "Pregnancy", tr: "Gebelik" },
   "pregnancy.title": { en: "Pregnancy Tracker", tr: "Gebelik Takipcisi" },
-  "pregnancy.subtitle": { en: "Week-by-week guide with medication safety", tr: "Ilac güvenligi ile hafta hafta rehber" },
+  "pregnancy.subtitle": { en: "Week-by-week guide with medication safety", tr: "İlaç güvenliği ile hafta hafta rehber" },
   "pregnancy.week": { en: "Gestational Week", tr: "Gebelik Haftasi" },
   "pregnancy.development": { en: "Fetal Development", tr: "Fetal Gelisim" },
-  "pregnancy.safeMeds": { en: "Medication Safety", tr: "Ilac Güvenligi" },
+  "pregnancy.safeMeds": { en: "Medication Safety", tr: "İlaç Güvenliği" },
   "pregnancy.nutrition": { en: "Nutrition", tr: "Beslenme" },
   "pregnancy.warnings": { en: "Warning Signs", tr: "Uyari Isaretleri" },
   "pregnancy.analyze": { en: "Get Week Guide", tr: "Hafta Rehberi Al" },
@@ -2788,13 +2788,13 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   // Postpartum Support
   // ══════════════════════════════════════════
-  "nav.postpartum": { en: "Postpartum", tr: "Dogum Sonrasi" },
-  "postpartum.title": { en: "Postpartum Support", tr: "Dogum Sonrasi Destek" },
-  "postpartum.subtitle": { en: "Recovery, mood screening & breastfeeding safety", tr: "Toparlanma, ruh hali taramasi ve emzirme güvenligi" },
+  "nav.postpartum": { en: "Postpartum", tr: "Doğum Sonrası" },
+  "postpartum.title": { en: "Postpartum Support", tr: "Doğum Sonrası Destek" },
+  "postpartum.subtitle": { en: "Recovery, mood screening & breastfeeding safety", tr: "Toparlanma, ruh hali taramasi ve emzirme güvenliği" },
   "postpartum.weeksSince": { en: "Weeks Postpartum", tr: "Dogumdan Sonra Hafta" },
   "postpartum.epds": { en: "EPDS Score", tr: "EPDS Skoru" },
   "postpartum.breastfeeding": { en: "Breastfeeding", tr: "Emzirme" },
-  "postpartum.medSafety": { en: "Medication Safety", tr: "Ilac Güvenligi" },
+  "postpartum.medSafety": { en: "Medication Safety", tr: "İlaç Güvenliği" },
   "postpartum.analyze": { en: "Get Assessment", tr: "Değerlendirme Al" },
 
   // ══════════════════════════════════════════
@@ -2816,7 +2816,7 @@ const t: Record<string, TranslationEntry> = {
   "mens.subtitle": { en: "Testosterone, prostate & medication effects", tr: "Testosteron, prostat ve ilac etkileri" },
   "mens.adam": { en: "ADAM Score", tr: "ADAM Skoru" },
   "mens.prostate": { en: "Prostate Health", tr: "Prostat Sağlığı" },
-  "mens.medEffects": { en: "Medication Effects", tr: "Ilac Etkileri" },
+  "mens.medEffects": { en: "Medication Effects", tr: "İlaç Etkileri" },
   "mens.analyze": { en: "Get Assessment", tr: "Değerlendirme Al" },
 
   // ══════════════════════════════════════════
@@ -2824,10 +2824,10 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   "nav.sexualHealth": { en: "Sexual Health", tr: "Cinsel Sağlık" },
   "sexual.title": { en: "Sexual Health", tr: "Cinsel Sağlık" },
-  "sexual.subtitle": { en: "Medication effects, screening & safety", tr: "Ilac etkileri, tarama ve güvenlik" },
-  "sexual.medEffects": { en: "Medication Sexual Effects", tr: "Ilaclarin Cinsel Etkileri" },
+  "sexual.subtitle": { en: "Medication effects, screening & safety", tr: "İlaç etkileri, tarama ve güvenlik" },
+  "sexual.medEffects": { en: "Medication Sexual Effects", tr: "İlaçların Cinsel Etkileri" },
   "sexual.screening": { en: "STI Screening", tr: "Cinsel Yolla Bulasan Hastalik Taramasi" },
-  "sexual.analyze": { en: "Check Medications", tr: "Ilaclari Kontrol Et" },
+  "sexual.analyze": { en: "Check Medications", tr: "İlaçları Kontrol Et" },
 
   // ── Student Health ──
   "nav.studentHealth": { en: "Student Health", tr: "Öğrenci Sağlığı" },
@@ -2842,7 +2842,7 @@ const t: Record<string, TranslationEntry> = {
   // ── Retirement Health ──
   "nav.retirementHealth": { en: "Retirement Health", tr: "Emeklilik Sağlığı" },
   "retirement.title": { en: "Retirement Health Plan", tr: "Emeklilik Sağlık Planı" },
-  "retirement.subtitle": { en: "Screening and wellness plan for 55+", tr: "55+ yas tarama ve sağlık plani" },
+  "retirement.subtitle": { en: "Screening and wellness plan for 55+", tr: "55+ yas tarama ve sağlık planı" },
   "retirement.generate": { en: "Generate Plan", tr: "Plan Olustur" },
 
   // ── New Parent Health ──
@@ -2853,7 +2853,7 @@ const t: Record<string, TranslationEntry> = {
   // ── Air Quality ──
   "nav.airQuality": { en: "Air Quality", tr: "Hava Kalitesi" },
   "air.title": { en: "Air Quality Guide", tr: "Hava Kalitesi Rehberi" },
-  "air.subtitle": { en: "AQI levels, health advice & exercise safety", tr: "AQI seviyeleri, sağlık onerileri ve egzersiz güvenligi" },
+  "air.subtitle": { en: "AQI levels, health advice & exercise safety", tr: "AQI seviyeleri, sağlık onerileri ve egzersiz güvenliği" },
 
   // ── Noise Exposure ──
   "nav.noiseExposure": { en: "Noise", tr: "Gürültü" },
@@ -2863,7 +2863,7 @@ const t: Record<string, TranslationEntry> = {
   // ── Jet Lag ──
   "nav.jetLag": { en: "Jet Lag", tr: "Jet Lag" },
   "jetlag.title": { en: "Jet Lag Optimizer", tr: "Jet Lag Optimizasyonu" },
-  "jetlag.subtitle": { en: "Timezone adjustment plan with medication timing", tr: "Ilac zamanlama ile saat dilimi uyum plani" },
+  "jetlag.subtitle": { en: "Timezone adjustment plan with medication timing", tr: "İlaç zamanlama ile saat dilimi uyum planı" },
   "jetlag.origin": { en: "Origin Timezone", tr: "Cikis Saat Dilimi" },
   "jetlag.destination": { en: "Destination Timezone", tr: "Varis Saat Dilimi" },
   "jetlag.generate": { en: "Generate Plan", tr: "Plan Olustur" },
@@ -2891,7 +2891,7 @@ const t: Record<string, TranslationEntry> = {
   // ── Check-up Planner ──
   "nav.checkupPlanner": { en: "Check-up", tr: "Check-up" },
   "checkup.title": { en: "Check-up Planner", tr: "Check-up Planlayici" },
-  "checkup.subtitle": { en: "Personalized annual test plan", tr: "Kisisel yillik test plani" },
+  "checkup.subtitle": { en: "Personalized annual test plan", tr: "Kisisel yillik test planı" },
   "checkup.generate": { en: "Generate Plan", tr: "Plan Olustur" },
 
   // ── Genetic Risk ──
@@ -2913,8 +2913,8 @@ const t: Record<string, TranslationEntry> = {
   "proactive.subtitle": { en: "AI-powered pattern detection and early warnings", tr: "AI destekli oruntusu tespiti ve erken uyarilar" },
 
   // ── K3: AR Scanner ──
-  "nav.arScanner": { en: "AR Scanner", tr: "AR Tarayici" },
-  "ar.title": { en: "AR Drug Scanner", tr: "AR Ilac Tarayici" },
+  "nav.arScanner": { en: "AR Scanner", tr: "AR Tarayıcı" },
+  "ar.title": { en: "AR Drug Scanner", tr: "AR İlaç Tarayıcı" },
   "ar.comingSoon": { en: "Augmented reality drug scanner coming soon!", tr: "Artirilmis gerceklik ilac tarayici yakinda!" },
   "ar.subtitle": { en: "Point your camera at any medication for instant info", tr: "Kameranizi herhangi bir ilaca tutun, aninda bilgi alin" },
 
@@ -3044,10 +3044,10 @@ const t: Record<string, TranslationEntry> = {
   "meddict.explain": { en: "Explain", tr: "Acikla" },
 
   // ── H2: Drug Info Center ──
-  "nav.drugInfo": { en: "Drug Info", tr: "Ilac Bilgi" },
-  "druginfo.title": { en: "Drug Information Center", tr: "Ilac Bilgi Merkezi" },
+  "nav.drugInfo": { en: "Drug Info", tr: "İlaç Bilgi" },
+  "druginfo.title": { en: "Drug Information Center", tr: "İlaç Bilgi Merkezi" },
   "druginfo.subtitle": { en: "Everything about your medication in plain language", tr: "Ilaciniz hakkinda her sey sade dilde" },
-  "druginfo.search": { en: "Enter drug name...", tr: "Ilac adi girin..." },
+  "druginfo.search": { en: "Enter drug name...", tr: "İlaç adi girin..." },
   "druginfo.lookup": { en: "Look Up", tr: "Ara" },
 
   // ── H3: Doctor Communication ──
@@ -3240,7 +3240,7 @@ const t: Record<string, TranslationEntry> = {
   "dialysis.sessions": { en: "Sessions", tr: "Seanslar" },
   "dialysis.fluidTracking": { en: "Fluid Tracking", tr: "Sivi Takibi" },
   "dialysis.foodGuide": { en: "Food Guide", tr: "Besin Rehberi" },
-  "dialysis.medTiming": { en: "Medication Timing", tr: "Ilac Zamanlama" },
+  "dialysis.medTiming": { en: "Medication Timing", tr: "İlaç Zamanlama" },
   "dialysis.sessionsThisMonth": { en: "Sessions this month", tr: "Bu ay seanslar" },
   "dialysis.avgFluidRemoval": { en: "Avg. fluid removal", tr: "Ort. sivi cekimi" },
   "dialysis.sessionDuration": { en: "Session duration", tr: "Seans suresi" },
@@ -3253,21 +3253,21 @@ const t: Record<string, TranslationEntry> = {
   "dialysis.fluidWarning": { en: "Approaching your fluid limit!", tr: "Sivi limitinize yaklasiyorsunuz!" },
   "dialysis.potassiumGuide": { en: "Potassium & Phosphorus Guide", tr: "Potasyum & Fosfor Rehberi" },
   "dialysis.potassiumGuideDesc": { en: "Nutrition guide for dialysis patients", tr: "Diyaliz hastalari icin besin rehberi" },
-  "dialysis.medTimingTitle": { en: "Dialysis Medication Timing", tr: "Diyaliz Ilac Zamanlama" },
-  "dialysis.medTimingDesc": { en: "Take your medications at the right time", tr: "Ilaclarinizi dogru zamanda alin" },
+  "dialysis.medTimingTitle": { en: "Dialysis Medication Timing", tr: "Diyaliz İlaç Zamanlama" },
+  "dialysis.medTimingDesc": { en: "Take your medications at the right time", tr: "İlaçlarınizi dogru zamanda alin" },
 
   // ── disaster-mode ──
   "disaster.title": { en: "DISASTER HEALTH MODE", tr: "AFET SAGLIK MODU" },
   "disaster.subtitle": { en: "Emergency health guide - designed for crisis situations", tr: "Acil saglik rehberi - kriz durumlari icin tasarlandi" },
   "disaster.emergencyCard": { en: "Emergency ID Card", tr: "Acil Durum Kimlik Karti" },
-  "disaster.myMeds": { en: "My Medications", tr: "Ilaclarim" },
+  "disaster.myMeds": { en: "My Medications", tr: "İlaçlarım" },
   "disaster.noMeds": { en: "No medications on file", tr: "Kayitli ilac yok" },
-  "disaster.loginForMeds": { en: "Log in to see your medications", tr: "Ilaclarinizi gormek icin giris yapin" },
+  "disaster.loginForMeds": { en: "Log in to see your medications", tr: "İlaçlarınizi gormek icin giris yapin" },
   "disaster.bloodType": { en: "Blood Type", tr: "Kan Grubu" },
   "disaster.allergies": { en: "Allergies", tr: "Alerjiler" },
   "disaster.none": { en: "None recorded", tr: "Kayit yok" },
   "disaster.emergencyNumbers": { en: "Emergency Numbers", tr: "Acil Numaralar" },
-  "disaster.waterSafety": { en: "Water Safety", tr: "Su Guvenligi" },
+  "disaster.waterSafety": { en: "Water Safety", tr: "Su Güvenliği" },
   "disaster.firstAid": { en: "First Aid Basics", tr: "Ilk Yardim Temelleri" },
   "disaster.crushSyndrome": { en: "Crush Syndrome Awareness", tr: "Ezilme Sendromu Farkindaligi" },
   "disaster.ptsd": { en: "PTSD Early Intervention", tr: "TSSB Erken Mudahale" },
@@ -3967,11 +3967,11 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "appt.newSummary": { en: "New Summary", tr: "Yeni Ozet" },
 
   // ── ar-scanner page ──
-  "ar.webxrScanner": { en: "WebXR-Based Drug Scanner", tr: "WebXR Tabanli İlaç Tarayici" },
+  "ar.webxrScanner": { en: "WebXR-Based Drug Scanner", tr: "WebXR Tabanli İlaç Tarayıcı" },
   "ar.webxrDesc": { en: "Augmented reality experience running directly from your browser — no app required", tr: "Ek uygulama gerektirmeden tarayicinizdan calisan artirilmis gerçeklik deneyimi" },
   "ar.howItWorks": { en: "How It Will Work", tr: "Nasil Calisacak?" },
   "ar.capabilities": { en: "Capabilities", tr: "Yetenekler" },
-  "ar.browserNote": { en: "AR Scanner will work on modern browsers supporting WebXR API. iOS Safari support may be limited.", tr: "AR Tarayici WebXR API destekleyen modern tarayicilarda calisacaktir. iOS Safari desteği sinirli olabilir." },
+  "ar.browserNote": { en: "AR Scanner will work on modern browsers supporting WebXR API. iOS Safari support may be limited.", tr: "AR Tarayıcı WebXR API destekleyen modern tarayicilarda calisacaktir. iOS Safari desteği sinirli olabilir." },
 
   // ── autism-support page ──
   "autism.title": { en: "Autism Support Center", tr: "Otizm Destek Merkezi" },
@@ -4002,7 +4002,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "autism.parentCommunity": { en: "Parent Community", tr: "Ebeveyn Toplulugu" },
   "autism.parentCommunityDesc": { en: "Share experiences with families", tr: "Ailelerle deneyim paylasin" },
   "autism.iepTracker": { en: "IEP Goal Tracker", tr: "IEP / BEP Takipci" },
-  "autism.iepTrackerDesc": { en: "Track education plan goals", tr: "Bireysel egitim plani hedefleri" },
+  "autism.iepTrackerDesc": { en: "Track education plan goals", tr: "Bireysel egitimplanı hedefleri" },
   "autism.therapyProgress": { en: "Therapy Progress Report", tr: "Terapi İlerleme Raporu" },
   "autism.therapyProgressDesc": { en: "Progress summary for therapists", tr: "Terapistler için ilerleme ozeti" },
 
@@ -4041,7 +4041,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   // ── Cancer Support ──
   "cancerSupport.badge": { en: "Cancer Treatment Support", tr: "Kanser Tedavi Destegi" },
   "cancerSupport.title": { en: "Cancer Treatment Side Effect Management", tr: "Kanser Tedavisi Yan Etki Yönetimi" },
-  "cancerSupport.subtitle": { en: "Guide for managing chemotherapy and radiotherapy side effects, nutrition, supplement safety, and emotional support.", tr: "Kemoterapi ve radyoterapi yan etkilerini yonetmek, beslenme, takviye güvenligi ve duygusal destek için rehber." },
+  "cancerSupport.subtitle": { en: "Guide for managing chemotherapy and radiotherapy side effects, nutrition, supplement safety, and emotional support.", tr: "Kemoterapi ve radyoterapi yan etkilerini yonetmek, beslenme, takviye güvenliği ve duygusal destek için rehber." },
   "cancerSupport.warning": { en: "IMPORTANT: ALWAYS consult your oncology team before starting ANY supplement, herbal product, or diet change during cancer treatment. Many supplements interact with chemotherapy.", tr: "ONEMLI: Kanser tedavisi sirasinda herhangi bir takviye, bitkisel urun veya diyet değişikliği yapmadan ÖNCE mutlaka onkoloji ekibinize danışın. Bircok takviye kemoterapiyle etkilesir." },
   "cancerSupport.footer": { en: "This information is for general guidance. Treatment decisions should always be made together with your oncology team.", tr: "Bu bilgiler genel rehberlik amaclıdır. Tedavi kararlari her zaman onkoloji ekibinizle birlikte alinmalidir." },
 
@@ -5263,24 +5263,24 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "secondOpinion.placeholder": { en: "e.g., My doctor recommended knee surgery, I want a second opinion...", tr: "ornegin: Doktorum diz ameliyati onerdi, ikinci bir gorus almak istiyorum..." },
 
   // ── Security ──
-  "security.title": { en: "Security", tr: "Guvenlik" },
-  "security.subtitle": { en: "The security of your health data is our top priority. Here are the security layers that keep you safe.", tr: "Saglik verilerinizin guvenligi en buyuk onceligi\u0300mizdir. Istte bizi guclu kilan guvenlik katmanlari." },
+  "security.title": { en: "Security", tr: "Güvenlik" },
+  "security.subtitle": { en: "The security of your health data is our top priority. Here are the security layers that keep you safe.", tr: "Sağlık verilerinizin guvenligi en buyuk onceligi\u0300mizdir. Istte bizi guclu kilan guvenlik katmanlari." },
   "security.dataEncryption": { en: "Data Encryption", tr: "Veri Sifreleme" },
   "security.dataEncryptionDesc": { en: "All health data is encrypted in transit with TLS 1.3 and at rest with AES-256 encryption.", tr: "Tum saglik verileriniz aktarim sirasinda TLS 1.3 ve beklemede AES-256 ile sifrelenir." },
   "security.kvkkGdpr": { en: "KVKK & GDPR Compliance", tr: "KVKK & GDPR Uyumu" },
   "security.kvkkGdprDesc": { en: "Full compliance with Turkish KVKK and EU GDPR regulations. You have the right to download and delete your data.", tr: "Turkiye KVKK ve AB GDPR duzenlemelerine tam uyum. Verilerinizi indirme ve silme hakkiniz vardir." },
   "security.authentication": { en: "Authentication", tr: "Kimlik Dogrulama" },
   "security.authenticationDesc": { en: "Secure session management with Supabase Auth. Google and Facebook OAuth, email verification supported.", tr: "Supabase Auth ile guvenli oturum yonetimi. Google ve Facebook OAuth, e-posta dogrulamasi desteklenir." },
-  "security.infrastructure": { en: "Infrastructure Security", tr: "Altyapi Guvenligi" },
+  "security.infrastructure": { en: "Infrastructure Security", tr: "Altyapi Güvenliği" },
   "security.infrastructureDesc": { en: "Hosted on Vercel, Supabase PostgreSQL database. DDoS protection, automatic backups.", tr: "Vercel uzerinde barindirma, Supabase PostgreSQL veritabani. DDoS koruması, otomatik yedekleme." },
   "security.accessControl": { en: "Access Control", tr: "Erisim Kontrolu" },
   "security.accessControlDesc": { en: "Every API endpoint requires authentication. Rate limiting (10 requests/minute) enforced.", tr: "Her API endpoint kimlik dogrulama gerektirir. Hiz sinirlamasi (10 istek/dakika) uygulanir." },
   "security.dataMinimization": { en: "Data Minimization", tr: "Veri Minimizasyonu" },
-  "security.dataMinimizationDesc": { en: "Only necessary data is collected. Health data stored in encrypted columns. Maximum 2-year retention.", tr: "Yalnizca gerekli veriler toplanir. Saglik verileri sifreli kolonlarda saklanir. Maksimum 2 yil saklama." },
+  "security.dataMinimizationDesc": { en: "Only necessary data is collected. Health data stored in encrypted columns. Maximum 2-year retention.", tr: "Yalnizca gerekli veriler toplanir. Sağlık verileri sifreli kolonlarda saklanir. Maksimum 2 yil saklama." },
   "security.inputValidation": { en: "Input Validation", tr: "Giris Dogrulamasi" },
   "security.inputValidationDesc": { en: "All user inputs are sanitized. Protection against XSS, SQL injection, and other OWASP threats.", tr: "Tum kullanici girislerine sanitizasyon uygulanir. XSS, SQL injection ve diger OWASP tehditlerine karsi koruma." },
   "security.errorMonitoring": { en: "Error Monitoring", tr: "Hata Izleme" },
-  "security.errorMonitoringDesc": { en: "Real-time error monitoring and performance tracking with Sentry. Security events reported instantly.", tr: "Sentry ile gercek zamanli hata izleme ve performans takibi. Guvenlik olaylari aninda bildirilir." },
+  "security.errorMonitoringDesc": { en: "Real-time error monitoring and performance tracking with Sentry. Security events reported instantly.", tr: "Sentry ile gercek zamanli hata izleme ve performans takibi. Güvenlik olaylari aninda bildirilir." },
   "security.reportVulnerability": { en: "Found a security vulnerability? Please report it to us.", tr: "Bir guvenlik acigi buldunuz mu? Lutfen bize bildirin." },
 
   // ── Sexual Health ──
@@ -5288,7 +5288,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "sexual.selectConcerns": { en: "Select your concerns", tr: "Endiselerinizi secin" },
   "sexual.prevalence": { en: "Prevalence", tr: "Gorulen oran" },
   "sexual.yourConcerns": { en: "Your Concerns", tr: "Endiseleriniz" },
-  "sexual.safetyInfo": { en: "Safety Information", tr: "Guvenlik Bilgileri" },
+  "sexual.safetyInfo": { en: "Safety Information", tr: "Güvenlik Bilgileri" },
   "sexual.professionalReferral": { en: "We recommend discussing your concerns with a healthcare professional.", tr: "Endiseleriniz icin bir saglik profesyoneliyle gorusmenizi oneririz." },
 
   // ── Share Data ──
@@ -5318,7 +5318,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "skin.skinHealthScore": { en: "Skin Health Score", tr: "Cilt Sagligi Skoru" },
   "skin.morning": { en: "Morning", tr: "Sabah" },
   "skin.evening": { en: "Evening", tr: "Aksam" },
-  "skin.weekly": { en: "Weekly", tr: "Haftalik" },
+  "skin.weekly": { en: "Weekly", tr: "Haftalık" },
   "skin.lifestyleTips": { en: "Lifestyle Tips", tr: "Yasam Tarzi Onerileri" },
   "skin.newAnalysis": { en: "Start new analysis", tr: "Yeni analiz yap" },
   "skin.routinePlaceholder": { en: "Describe your current skincare routine...", tr: "Mevcut cilt bakim rutininizi yazin..." },
@@ -5331,21 +5331,21 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "sleep.dreamsLabel": { en: "Dreams", tr: "Ruyali" },
 
   // ── Smart Reminders ──
-  "reminders.title": { en: "Smart Medication Reminder", tr: "Akilli Ilac Hatirlatici" },
-  "reminders.subtitle": { en: "Personalized schedule ensuring your medications are taken at optimal times.", tr: "Ilaclarinizin en uygun zamanlarda alinmasini saglayan kisisellestirilmis program." },
-  "reminders.subtitleShort": { en: "Your personalized schedule optimized by drug properties", tr: "Ilac ozelliklerine gore optimize edilmis kisisel programiniz" },
+  "reminders.title": { en: "Smart Medication Reminder", tr: "Akilli İlaç Hatirlatici" },
+  "reminders.subtitle": { en: "Personalized schedule ensuring your medications are taken at optimal times.", tr: "İlaçlarınizin en uygun zamanlarda alinmasini saglayan kisisellestirilmis program." },
+  "reminders.subtitleShort": { en: "Your personalized schedule optimized by drug properties", tr: "İlaç ozelliklerine gore optimize edilmis kisisel programiniz" },
   "reminders.noMeds": { en: "No medications added yet", tr: "Henuz ilac eklenmemis" },
-  "reminders.noMedsDesc": { en: "Add your medications to your profile to generate smart scheduling.", tr: "Ilaclarinizi profilinize ekleyerek akilli zamanlama olusturun." },
-  "reminders.addMeds": { en: "Add Medications in Profile", tr: "Profilde Ilac Ekle" },
+  "reminders.noMedsDesc": { en: "Add your medications to your profile to generate smart scheduling.", tr: "İlaçlarınizi profilinize ekleyerek akilli zamanlama olusturun." },
+  "reminders.addMeds": { en: "Add Medications in Profile", tr: "Profilde İlaç Ekle" },
   "reminders.nextUp": { en: "Next Up", tr: "Siradaki" },
   "reminders.dailySchedule": { en: "Your Daily Schedule", tr: "Gunluk Programiniz" },
   "reminders.colorLegend": { en: "Color Legend", tr: "Renk Kodlari" },
   "reminders.notifSettings": { en: "Notification Settings", tr: "Bildirim Ayarlari" },
   "reminders.notifDesc": { en: "Set reminder times for each medication", tr: "Her ilac icin hatirlatma saati belirleyin" },
   "reminders.notifComingSoon": { en: "PWA push notifications will be enabled in an upcoming release.", tr: "PWA push bildirimleri yakin bir surumde etkinlestirilecektir." },
-  "reminders.timingGuide": { en: "Medication Timing Guide", tr: "Ilac Zamanlama Kilavuzu" },
+  "reminders.timingGuide": { en: "Medication Timing Guide", tr: "İlaç Zamanlama Kilavuzu" },
   "reminders.noTimingRule": { en: "No specific timing rule found for this medication. Follow your doctor's instructions.", tr: "Bu ilac icin ozel zamanlama kurali bulunamadi. Doktorunuzun onerilerine uyun." },
-  "reminders.disclaimer": { en: "This schedule is for informational purposes. Always follow your doctor's instructions for medication timing.", tr: "Bu program genel bilgi amaclidir. Ilac zamanlamasi icin her zaman doktorunuzun talimatlarini takip edin." },
+  "reminders.disclaimer": { en: "This schedule is for informational purposes. Always follow your doctor's instructions for medication timing.", tr: "Bu program genel bilgi amaclidir. İlaç zamanlamasi icin her zaman doktorunuzun talimatlarini takip edin." },
   "reminders.vitCEnhances": { en: "Vitamin C enhances absorption", tr: "C vitamini emilimi artirir" },
 
   // ── Smoking Cessation ──
@@ -5360,7 +5360,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
 
   // ── Social Prescription ──
   "socialRx.title": { en: "Social Prescription", tr: "Sosyal Recete" },
-  "socialRx.subtitle": { en: "Social activities alongside medication — NHS endorsed", tr: "Ilac yaninda sosyal aktivite recetesi — NHS onayli" },
+  "socialRx.subtitle": { en: "Social activities alongside medication — NHS endorsed", tr: "İlaç yaninda sosyal aktivite recetesi — NHS onayli" },
   "socialRx.nhsNote": { en: "UK NHS officially implements social prescribing. Evidence-based impact on depression, isolation, and chronic pain.", tr: "Ingiltere NHS, sosyal recelemeyi resmi olarak uygulamaktadir. Depresyon, izolasyon ve kronik agride kanitlanmis etki." },
   "socialRx.yourPrescription": { en: "Your Social Prescription", tr: "Senin Sosyal Receten" },
   "socialRx.suggestedActivities": { en: "Suggested Activities:", tr: "Onerilen Aktiviteler:" },
@@ -5368,23 +5368,23 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "socialRx.addToPrescription": { en: "Add to Prescription", tr: "Receteme Ekle" },
 
   // ── Sports Performance (extra) ──
-  "sports.guestNote": { en: "Sign in for medication interaction checking", tr: "Ilac etkilesim kontrolu icin giris yapin" },
-  "sports.daysPerWeek": { en: "days/week", tr: "gun/hafta" },
-  "sports.currentSupplements": { en: "Current Supplements (optional)", tr: "Mevcut Takviyeler (istege bagli)" },
-  "sports.supplementsPlaceholder": { en: "e.g., creatine, protein powder, omega-3", tr: "orn: kreatin, protein tozu, omega-3" },
-  "sports.interactionWarnings": { en: "Medication Interaction Warnings", tr: "Ilac Etkilesim Uyarilari" },
-  "sports.weeklyStructure": { en: "Weekly Structure", tr: "Haftalik Yapi" },
-  "sports.preWorkout": { en: "Pre-Workout", tr: "Antrenman Oncesi" },
-  "sports.duringWorkout": { en: "During Workout", tr: "Antrenman Sirasinda" },
-  "sports.postWorkout": { en: "Post-Workout", tr: "Antrenman Sonrasi" },
-  "sports.injuryPrevention": { en: "Injury Prevention", tr: "Sakatligi Onleme" },
-  "sports.safe": { en: "Safe", tr: "Guvenli" },
-  "sports.avoid": { en: "Avoid", tr: "Kacinilmali" },
+  "sports.guestNote": { en: "Sign in for medication interaction checking", tr: "İlaç etkileşim kontrolü için giriş yapın" },
+  "sports.daysPerWeek": { en: "days/week", tr: "gün/hafta" },
+  "sports.currentSupplements": { en: "Current Supplements (optional)", tr: "Mevcut Takviyeler (isteğe bağlı)" },
+  "sports.supplementsPlaceholder": { en: "e.g., creatine, protein powder, omega-3", tr: "örn: kreatin, protein tozu, omega-3" },
+  "sports.interactionWarnings": { en: "Medication Interaction Warnings", tr: "İlaç Etkileşim Uyarıları" },
+  "sports.weeklyStructure": { en: "Weekly Structure", tr: "Haftalık Yapı" },
+  "sports.preWorkout": { en: "Pre-Workout", tr: "Antrenman Öncesi" },
+  "sports.duringWorkout": { en: "During Workout", tr: "Antrenman Sırasında" },
+  "sports.postWorkout": { en: "Post-Workout", tr: "Antrenman Sonrası" },
+  "sports.injuryPrevention": { en: "Injury Prevention", tr: "Sakatlığı Önleme" },
+  "sports.safe": { en: "Safe", tr: "Güvenli" },
+  "sports.avoid": { en: "Avoid", tr: "Kaçınılmalı" },
   "sports.dose": { en: "Dose", tr: "Doz" },
   "sports.timing": { en: "Timing", tr: "Zamanlama" },
   "sports.newPlan": { en: "New Plan", tr: "Yeni Plan" },
-  "sports.selectSport": { en: "Please select a sport type", tr: "Lutfen bir spor turu secin" },
-  "sports.selectGoal": { en: "Please select a goal", tr: "Lutfen bir hedef secin" },
+  "sports.selectSport": { en: "Please select a sport type", tr: "Lütfen bir spor türü seçin" },
+  "sports.selectGoal": { en: "Please select a goal", tr: "Lütfen bir hedef seçin" },
   "sports.intentPlaceholder": { en: "What can we achieve for you today? (e.g., I do CrossFit and want to improve shoulder mobility)", tr: "Bugün senin için ne başarabiliriz? (örn: CrossFit yapıyorum ve omuz hareketliliğimi artırmak istiyorum)" },
   "sports.intentExtracting": { en: "Understanding your goals...", tr: "Hedefleriniz anlaşılıyor..." },
   "sports.intentConfirm": { en: "Here's what I understood:", tr: "Anladığım şu:" },
@@ -5545,13 +5545,13 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "terms.serviceItem4": { en: "Informational lifestyle suggestions", tr: "Bilgilendirici yasam tarzi onerileri" },
   "terms.medicalDisclaimer": { en: "3. Medical Disclaimer", tr: "3. Tibbi Sorumluluk Reddi" },
   "terms.readCarefully": { en: "Please read carefully", tr: "Lutfen dikkatle okuyunuz" },
-  "terms.disclaimerP1": { en: "Phytotherapy.ai is a health information platform. It is not a medical device, diagnostic tool, or treatment system. The Platform does not diagnose conditions, suggest treatment plans, or prescribe medications under any circumstances.", tr: "Phytotherapy.ai bir saglik bilgi platformudur. Tibbi bir cihaz, teshis araci veya tedavi sistemi degildir. Platform hicbir kosulda hastalik teshisi koymaz, tedavi plani onermez veya ilac recetesi yazmaz." },
+  "terms.disclaimerP1": { en: "Phytotherapy.ai is a health information platform. It is not a medical device, diagnostic tool, or treatment system. The Platform does not diagnose conditions, suggest treatment plans, or prescribe medications under any circumstances.", tr: "Phytotherapy.ai bir saglik bilgi platformudur. Tibbi bir cihaz, teshis araci veya tedavi sistemi degildir. Platform hicbir kosulda hastalik teshisi koymaz, tedaviplanı onermez veya ilac recetesi yazmaz." },
   "terms.disclaimerP2": { en: "All content is general informational material based on published scientific sources and does not replace the advice of a doctor, pharmacist, dietitian, or any healthcare professional. Always consult your healthcare provider before starting any supplement, making medication changes, or making decisions about your health.", tr: "Sunulan tum icerik, yayimlanmis bilimsel kaynaklara dayali genel bilgilendirme niteligindedir ve doktor, eczaci, diyetisyen veya herhangi bir saglik profesyonelinin yerini almaz. Herhangi bir takviye kullanmaya baslamadan, ilac degisikligi yapmadan veya sagliginizla ilgili bir karar vermeden once mutlaka saglik profesyonelinize danisiniz." },
   "terms.disclaimerP3": { en: "In a medical emergency, immediately call your local emergency services number.", tr: "Acil bir saglik durumunda derhal bulundugunuz ulkenin acil yardim hattini arayiniz." },
   "terms.disclaimerP4": { en: "You are solely responsible for any decisions you make based on information provided by the Platform. The Platform does not intend to create or replace the relationship between any healthcare professional and a patient.", tr: "Platformun sundugu bilgilere dayanarak verdiginiz kararlarin sorumlulugu yalnizca size aittir. Platform, herhangi bir saglik profesyoneli ile hasta arasindaki iliskiyi kurmayi ya da bu iliskinin yerine gecmeyi amaclamamaktadir." },
   "terms.userResponsibilities": { en: "4. User Responsibilities", tr: "4. Kullanici Sorumluluklari" },
   "terms.userResp1": { en: "You must provide accurate and up-to-date health information; consequences of inaccurate information are your responsibility", tr: "Dogru ve guncel saglik bilgileri saglamalisiniz; yanlis bilgiden dogan sonuclar sizin sorumlulugunuzdadir" },
-  "terms.userResp2": { en: "You must regularly update your medication list", tr: "Ilac listenizi duzenli olarak guncellemelisiniz" },
+  "terms.userResp2": { en: "You must regularly update your medication list", tr: "İlaç listenizi duzenli olarak guncellemelisiniz" },
   "terms.userResp3": { en: "You must consult your healthcare provider before acting on information obtained from the Platform", tr: "Platformdan edinilen bilgileri uygulama karari almadan once saglik profesyonelinize danismalisiniz" },
   "terms.userResp4": { en: "You must be 18 or older, or use under parental/legal guardian supervision", tr: "18 yasindan buyuk olmalisiniz veya ebeveyn/yasal vasi gozetiminde kullanmalisiniz" },
   "terms.userResp5": { en: "You must not misuse the service or perform automated queries", tr: "Hizmeti kotuye kullanmamali, otomatik sorgulama yapmamalisiniz" },
@@ -5576,7 +5576,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "terms.contactText": { en: "For questions and inquiries:", tr: "Sorulariniz ve talepleriniz icin:" },
 
   // ── Thyroid Dashboard ──
-  "thyroid.medTiming": { en: "Medication Timing Optimization", tr: "Ilac Zamanlama Optimizasyonu" },
+  "thyroid.medTiming": { en: "Medication Timing Optimization", tr: "İlaç Zamanlama Optimizasyonu" },
   "thyroid.pregnancyNote": { en: "Pregnancy & Thyroid", tr: "Gebelik ve Tiroid" },
 
   // ── Time Capsule ──
@@ -5585,7 +5585,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "timeCapsule.created": { en: "Created", tr: "Olusturulma" },
   "timeCapsule.pastMessage": { en: "Your message from the past:", tr: "Gecmisten mesajin:" },
   "timeCapsule.thenVsNow": { en: "Then vs Now", tr: "O Zaman vs Simdi" },
-  "timeCapsule.healthScore": { en: "Health Score", tr: "Saglik Skoru" },
+  "timeCapsule.healthScore": { en: "Health Score", tr: "Sağlık Skoru" },
   "timeCapsule.weight": { en: "Weight", tr: "Kilo" },
   "timeCapsule.today": { en: "Today", tr: "Bugun" },
   "timeCapsule.goals": { en: "Goals", tr: "Hedefler" },
@@ -5594,14 +5594,14 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "timeCapsule.writeSubtitle": { en: "Leave a message from your present self to your future self.", tr: "Bugunku halinden gelecekteki haline bir mesaj birak." },
   "timeCapsule.yourMessage": { en: "Your Message", tr: "Mesajin" },
   "timeCapsule.placeholder": { en: "Dear future me, I hope you are healthier and happier...", tr: "Gelecekteki ben, umarim seni daha saglikli ve mutlu buluyorum..." },
-  "timeCapsule.healthGoals": { en: "Health Goals", tr: "Saglik Hedeflerin" },
+  "timeCapsule.healthGoals": { en: "Health Goals", tr: "Sağlık Hedeflerin" },
   "timeCapsule.whenOpen": { en: "When Should It Open?", tr: "Ne Zaman Acilsin?" },
-  "timeCapsule.snapshot": { en: "Health Snapshot", tr: "Saglik Anlik Goruntusu" },
+  "timeCapsule.snapshot": { en: "Health Snapshot", tr: "Sağlık Anlik Goruntusu" },
   "timeCapsule.snapshotDesc": { en: "Your current health data will be saved automatically.", tr: "Mevcut saglik verilerin otomatik olarak kaydedilecek." },
   "timeCapsule.score": { en: "Score:", tr: "Skor:" },
   "timeCapsule.weightLabel": { en: "Weight:", tr: "Kilo:" },
   "timeCapsule.lockSend": { en: "Lock & Send Capsule", tr: "Kapsulu Kilitle ve Gonder" },
-  "timeCapsule.title": { en: "Health Time Capsule", tr: "Saglik Zaman Kapsulu" },
+  "timeCapsule.title": { en: "Health Time Capsule", tr: "Sağlık Zaman Kapsulu" },
   "timeCapsule.subtitle": { en: "Write a letter to your future self, save your health goals. Compare with real data when the time comes.", tr: "Gelecege bir mektup yaz, saglik hedeflerini kaydet. Zaman geldiginde gercek verilerle karsilastir." },
   "timeCapsule.createNew": { en: "Create New Capsule", tr: "Yeni Kapsul Olustur" },
   "timeCapsule.readyToOpen": { en: "Ready to Open!", tr: "Acilmaya Hazir!" },
@@ -5614,7 +5614,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "timeCapsule.empty": { en: "No capsules yet. Write a letter to your future self!", tr: "Henuz kapsulun yok. Gelecege bir mektup yaz!" },
 
   // ── Tools Hub ──
-  "tools.title": { en: "Health Tools", tr: "Saglik Araclari" },
+  "tools.title": { en: "Health Tools", tr: "Sağlık Araclari" },
   "tools.searchPlaceholder": { en: "Search tools... (e.g. migraine, sleep, drug)", tr: "Arac ara... (orn: migren, uyku, ilac)" },
   "tools.more": { en: "more", tr: "daha" },
   "tools.noResults": { en: "No results found", tr: "Sonuc bulunamadi" },
@@ -5640,7 +5640,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "value.backToMarketplace": { en: "Back to Marketplace", tr: "Pazaryerine Don" },
   "value.scoreBreakdown": { en: "Value Score Breakdown", tr: "Deger Puani Dagilimi" },
   "value.efficacy": { en: "Efficacy", tr: "Etkinlik" },
-  "value.safety": { en: "Safety", tr: "Guvenlik" },
+  "value.safety": { en: "Safety", tr: "Güvenlik" },
   "value.outcomes": { en: "Outcomes", tr: "Sonuclar" },
   "value.costEff": { en: "Cost Eff.", tr: "Maliyet" },
   "value.evidence": { en: "Evidence", tr: "Kanit" },
@@ -5690,11 +5690,11 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "value.daysUnit": { en: "days", tr: "gun" },
 
   // ── Voice Diary ──
-  "voice.speechNotSupported": { en: "Your browser does not support speech recognition. You can type your entries instead.", tr: "Tarayiciniz ses tanima desteklemiyor. Metin olarak yazabilirsiniz." },
+  "voice.speechNotSupported": { en: "Your browser does not support speech recognition. You can type your entries instead.", tr: "Tarayıcıniz ses tanima desteklemiyor. Metin olarak yazabilirsiniz." },
   "voice.speakOrType": { en: "Speak or type...", tr: "Konusun veya yazin..." },
 
   // ── Walking Tracker ──
-  "walking.weeklyTarget": { en: "Weekly Target", tr: "Haftalik Hedef" },
+  "walking.weeklyTarget": { en: "Weekly Target", tr: "Haftalık Hedef" },
   "walking.steps": { en: "steps", tr: "adim" },
   "walking.stepsLabel": { en: "Steps", tr: "Adim" },
   "walking.distance": { en: "Distance (km)", tr: "Mesafe (km)" },
@@ -5718,19 +5718,19 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "wearable.step1": { en: "Connect your device (Apple Health / Google Fit)", tr: "Cihazinizi baglayiniz (Apple Health / Google Fit)" },
   "wearable.step2": { en: "Data syncs automatically", tr: "Veriler otomatik senkronize olur" },
   "wearable.step3": { en: "AI detects anomalies and alerts you", tr: "AI anomalileri tespit eder ve uyarir" },
-  "wearable.step4": { en: "Your health score enriched with wearable data", tr: "Saglik skorunuz giyilebilir verilerle zenginlesir" },
+  "wearable.step4": { en: "Your health score enriched with wearable data", tr: "Sağlık skorunuz giyilebilir verilerle zenginlesir" },
 
   // ── Weekly Newsletter ──
-  "newsletter.signInPrompt": { en: "Sign in to view your weekly health newsletter.", tr: "Haftalik bulteninizi gormek icin giris yapin." },
-  "newsletter.title": { en: "Weekly Health Newsletter", tr: "Haftalik Saglik Bulteni" },
+  "newsletter.signInPrompt": { en: "Sign in to view your weekly health newsletter.", tr: "Haftalık bulteninizi gormek icin giris yapin." },
+  "newsletter.title": { en: "Weekly Health Newsletter", tr: "Haftalık Sağlık Bülteni" },
   "newsletter.subtitle": { en: "Your personalized health summary every Monday", tr: "Her Pazartesi kisisellestirilmis saglik ozetiniz" },
   "newsletter.thisWeek": { en: "This Week", tr: "Bu Hafta" },
   "newsletter.archive": { en: "Archive", tr: "Arsiv" },
   "newsletter.settings": { en: "Settings", tr: "Ayarlar" },
   "newsletter.weekGlance": { en: "Your Week at a Glance", tr: "Haftaniza Bakis" },
   "newsletter.compliance": { en: "Compliance", tr: "Uyum" },
-  "newsletter.healthScore": { en: "Health Score:", tr: "Saglik Skoru:" },
-  "newsletter.medAdherence": { en: "Medication adherence this week", tr: "Ilac uyumu bu hafta" },
+  "newsletter.healthScore": { en: "Health Score:", tr: "Sağlık Skoru:" },
+  "newsletter.medAdherence": { en: "Medication adherence this week", tr: "İlaç uyumu bu hafta" },
   "newsletter.upcomingEvents": { en: "Upcoming Events", tr: "Yaklasan Etkinlikler" },
   "newsletter.noEvents": { en: "No events scheduled this week.", tr: "Bu hafta planlanmis etkinlik yok." },
   "newsletter.washoutReminders": { en: "Washout Reminders", tr: "Washout Hatirlatmalari" },
@@ -5786,7 +5786,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "about.accessibilityDesc": { en: "Health guidance for everyone", tr: "Herkes icin saglik rehberligi" },
   "about.privacy": { en: "Privacy", tr: "Gizlilik" },
   "about.privacyDesc": { en: "Your data is yours, always", tr: "Verileriniz her zaman sizindir" },
-  "about.healthTools": { en: "Health Tools", tr: "Saglik Araci" },
+  "about.healthTools": { en: "Health Tools", tr: "Sağlık Araci" },
   "about.translationKeys": { en: "Translation Keys (TR/EN)", tr: "Ceviri Anahtari (TR/EN)" },
   "about.apiEndpoints": { en: "API Endpoints", tr: "API Endpoint" },
   "about.multi": { en: "Multi", tr: "Coklu" },
@@ -5802,7 +5802,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "about.disclaimer": { en: "Phytotherapy.ai is an educational wellness tool and does not provide medical diagnosis or treatment. All recommendations are based on published scientific research. Always consult your healthcare provider.", tr: "Phytotherapy.ai bir egitim amacli saglik aracidir; tibbi teshis veya tedavi sunmaz. Tum oneriler yayimlanmis bilimsel arastirmalara dayanir. Her zaman saglik profesyonelinize danisin." },
 
   // ── Chat Interface ──
-  "chat.personalProfileRequired": { en: "\uD83D\uDD12 **Personalized recommendations require a health profile.**\n\nTo ensure your safety, I need to know your medications, allergies, and health conditions before giving personal advice.\n\n\uD83D\uDC49 **[Sign up](/auth/login)** \u2014 it takes less than 2 minutes!\n\nIn the meantime, I can answer general health questions like:\n- \"Does omega-3 reduce inflammation?\"\n- \"What is the evidence for turmeric?\"\n- \"How does valerian root work for sleep?\"", tr: "\uD83D\uDD12 **Kisisellestirilmis oneriler icin saglik profili gereklidir.**\n\nGuvenliginiz icin kisisel tavsiye vermeden once ilaclarinizi, alerjilerinizi ve saglik durumunuzu bilmem gerekiyor.\n\n\uD83D\uDC49 **[Kayit olun](/auth/login)** \u2014 2 dakikadan kisa surer!\n\nBu surede genel saglik sorularini yanitlayabilirim:\n- \"Omega-3 iltihabi azaltir mi?\"\n- \"Zerdecal icin kanitlar nelerdir?\"\n- \"Kediotu koku uyku icin nasil calisir?\"" },
+  "chat.personalProfileRequired": { en: "\uD83D\uDD12 **Personalized recommendations require a health profile.**\n\nTo ensure your safety, I need to know your medications, allergies, and health conditions before giving personal advice.\n\n\uD83D\uDC49 **[Sign up](/auth/login)** \u2014 it takes less than 2 minutes!\n\nIn the meantime, I can answer general health questions like:\n- \"Does omega-3 reduce inflammation?\"\n- \"What is the evidence for turmeric?\"\n- \"How does valerian root work for sleep?\"", tr: "\uD83D\uDD12 **Kisisellestirilmis oneriler icin saglik profili gereklidir.**\n\nGüvenliğiniz icin kisisel tavsiye vermeden once ilaclarinizi, alerjilerinizi ve saglik durumunuzu bilmem gerekiyor.\n\n\uD83D\uDC49 **[Kayit olun](/auth/login)** \u2014 2 dakikadan kisa surer!\n\nBu surede genel saglik sorularini yanitlayabilirim:\n- \"Omega-3 iltihabi azaltir mi?\"\n- \"Zerdecal icin kanitlar nelerdir?\"\n- \"Kediotu koku uyku icin nasil calisir?\"" },
   "chat.queryLimitReached": { en: "\uD83D\uDD12 **You've reached your free query limit.**\n\nGuest users can ask up to 5 questions. To continue with unlimited access and personalized recommendations:\n\n\uD83D\uDC49 **[Create a free account](/auth/login)**\n\nYour data is encrypted and you can delete it anytime.", tr: "\uD83D\uDD12 **Ucretsiz sorgu limitinize ulastiniz.**\n\nMisafir kullanicilar en fazla 5 soru sorabilir. Sinirsiz erisim ve kisisellestirilmis oneriler icin:\n\n\uD83D\uDC49 **[Ucretsiz hesap olusturun](/auth/login)**\n\nVerileriniz sifrelenir ve istediginiz zaman silebilirsiniz." },
   "chat.connectionError": { en: "\u26A0\uFE0F Could not connect to the server. Please check your internet connection and try again.", tr: "\u26A0\uFE0F Sunucuya baglanilamadi. Internet baglantinizi kontrol edip tekrar deneyin." },
 
@@ -5869,7 +5869,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "todayView.waterMaxWarning": { en: "Please stop! Risk of water intoxication.", tr: "Lutfen daha fazla icme! Su zehirlenmesi riski var." },
 
   // ── Daily Care Card ──
-  "dailyCare.title": { en: "Today's Care Plan", tr: "Bugununn Saglik Plani" },
+  "dailyCare.title": { en: "Today's Care Plan", tr: "Bugununn Sağlık Plani" },
   "dailyCare.refresh": { en: "Refresh", tr: "Yenile" },
   "dailyCare.allCompleted": { en: "You completed today's plan, amazing!", tr: "Bugunku planini tamamladin, harikasin!" },
 
@@ -5890,13 +5890,13 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "roi.estimatedSavings": { en: "estimated savings", tr: "tahmini finansal tasarruf" },
   "roi.sleep": { en: "Sleep Efficiency", tr: "Uyku Verimliligi" },
   "roi.pain": { en: "Pain Reduction", tr: "Agri Azalmasi" },
-  "roi.meds": { en: "Medication Adherence", tr: "Ilac Uyumu" },
+  "roi.meds": { en: "Medication Adherence", tr: "İlaç Uyumu" },
   "roi.mood": { en: "Mood Score", tr: "Ruh Hali Skoru" },
   "roi.interactions": { en: "AI interactions", tr: "AI etkilesimi" },
   "roi.tools": { en: "tools used", tr: "arac kullanildi" },
   "roi.goals": { en: "goals achieved", tr: "hedefe ulasildi" },
   "roi.streak": { en: "day streak", tr: "gunluk seri" },
-  "roi.healthScore": { en: "Health Score", tr: "Saglik Skoru" },
+  "roi.healthScore": { en: "Health Score", tr: "Sağlık Skoru" },
   "roi.vsLast": { en: "vs last month", tr: "gecen aya gore" },
   "roi.share": { en: "Share", tr: "Paylas" },
   "roi.details": { en: "See Details", tr: "Detaylari Gor" },
@@ -5963,7 +5963,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "cmdPalette.navigate": { en: "Navigate", tr: "Gezin" },
   "cmdPalette.select": { en: "Select", tr: "Sec" },
   "cmdPalette.close": { en: "Close", tr: "Kapat" },
-  "cmdPalette.healthAssistant": { en: "Health Assistant", tr: "Saglik Asistani" },
+  "cmdPalette.healthAssistant": { en: "Health Assistant", tr: "Sağlık Asistani" },
   "cmdPalette.interactionChecker": { en: "Interaction Checker", tr: "Etkilesim Kontrol" },
   "cmdPalette.bloodTest": { en: "Blood Test", tr: "Kan Tahlili" },
   "cmdPalette.clinicalTests": { en: "Clinical Tests", tr: "Klinik Testler" },
@@ -5995,7 +5995,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "fakeDoor.vipPriority": { en: "VIP priority", tr: "VIP oncelik" },
 
   // ── PromsSurvey ──
-  "proms.healthStatus": { en: "Health Status", tr: "Saglik Durumu" },
+  "proms.healthStatus": { en: "Health Status", tr: "Sağlık Durumu" },
   "proms.experience": { en: "Experience", tr: "Deneyim" },
   "proms.complete": { en: "Complete", tr: "Tamamla" },
   "proms.continue": { en: "Continue", tr: "Devam" },
@@ -6015,7 +6015,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "consent.agreementText": { en: "I have read and understood the Medical Disclaimer and Data Privacy notice above. I accept the Terms of Service and Privacy Policy. I understand that Phytotherapy.ai is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations.", tr: "Yukaridaki Tibbi Sorumluluk Reddi ve Veri Gizliligi bildirimini okudum, Kullanim Kosullari ile Gizlilik Politikasini kabul ediyorum. Phytotherapy.ai'nin profesyonel tibbi tavsiyenin yerini almadigini anliyorum ve herhangi bir oneriyi uygulamadan once saglik uzmanima danisacagim." },
 
   // ── HealthScoreShareCard ──
-  "healthScore.title": { en: "My Health Score", tr: "Saglik Skorum" },
+  "healthScore.title": { en: "My Health Score", tr: "Sağlık Skorum" },
   "healthScore.excellent": { en: "Excellent!", tr: "Harika!" },
   "healthScore.keepGoing": { en: "Keep going!", tr: "Iyi gidiyorsun!" },
   "healthScore.timeToImprove": { en: "Time to improve!", tr: "Gelisme zamani!" },
@@ -6030,7 +6030,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
 
   // ── InteractionEngine ──
   "interactionEngine.disclaimer": { en: "This information is for educational purposes only and does not replace professional medical advice. Always consult your healthcare provider before using any herbal supplements, especially alongside prescription medications.", tr: "Bu bilgi yalnizca egitim amaclidir ve profesyonel tibbi tavsiyenin yerini tutmaz. Herhangi bir bitkisel takviye kullanmadan once, ozellikle receteli ilaclarla birlikte, saglik uzmaniniza danisin." },
-  "interactionEngine.noProfile": { en: "Your health profile is not available. Complete your profile for personalized safety checks.", tr: "Saglik profiliniz mevcut degil. Kisisellestirilmis guvenlik kontrolleri icin profilinizi tamamlayin." },
+  "interactionEngine.noProfile": { en: "Your health profile is not available. Complete your profile for personalized safety checks.", tr: "Sağlık profiliniz mevcut degil. Kisisellestirilmis guvenlik kontrolleri icin profilinizi tamamlayin." },
   "interactionEngine.pregnant": { en: "You are pregnant. Many herbs are contraindicated during pregnancy. Extra caution applied.", tr: "Hamilesiniz. Bircok bitki hamilelikte kontrendikedir. Ekstra dikkat uygulandi." },
   "interactionEngine.breastfeeding": { en: "You are breastfeeding. Herbs can pass into breast milk. Extra caution applied.", tr: "Emziriyorsunuz. Bitkiler anne sutune gecebilir. Ekstra dikkat uygulandi." },
   "interactionEngine.kidneyDisease": { en: "Kidney disease detected. Some herbs are nephrotoxic or alter drug clearance.", tr: "Bobrek hastaligi tespit edildi. Bazi bitkiler nefrotoksik veya ilac atilimini etkiler." },
@@ -6041,11 +6041,11 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   // ── Notifications ──
   "notification.goodMorning": { en: "Good morning!", tr: "Gunaydin!" },
   "notification.morningBody": { en: "Complete your daily check-in and see your health score!", tr: "Gunluk check-in'ini yap ve saglik skorunu gor!" },
-  "notification.medReminder": { en: "Medication Reminder", tr: "Ilac Hatirlaticisi" },
+  "notification.medReminder": { en: "Medication Reminder", tr: "İlaç Hatirlaticisi" },
   "notification.dailyCheckin": { en: "Daily Check-in", tr: "Gunluk Check-in" },
   "notification.dailyCheckinBody": { en: "How did you feel today? Do a quick check-in.", tr: "Bugun nasil hissettin? Hizli bir check-in yap." },
   "notification.morningTitle": { en: "Good Morning!", tr: "Gunaydin!" },
-  "notification.morningMedsBody": { en: "Are your meds up to date? Check your daily summary.", tr: "Ilaclarin guncel mi? Gunluk ozetine goz at." },
+  "notification.morningMedsBody": { en: "Are your meds up to date? Check your daily summary.", tr: "İlaçların guncel mi? Gunluk ozetine goz at." },
 
   // ── SafetyGuardrail ──
   "safety.immediateEmergency": { en: "WARNING: The symptoms you described may indicate a life-threatening emergency. Please call 112/911 IMMEDIATELY or go to the nearest emergency room. No herbal supplement or medication advice can be given in this situation.", tr: "DIKKAT: Belirttiginiz sikayetler acil tibbi mudahale gerektiren bir duruma isaret edebilir. Lutfen DERHAL 112'yi arayin veya en yakin acil servise basvurun. Bu durumda hicbir bitkisel takviye veya ilac onerisi yapilamaz." },
@@ -6330,7 +6330,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   },
   "api.postpartum.crisisLine2": {
     en: "Crisis Line: 988",
-    tr: "Dogum Sonrasi Destek: Doktorunuzu arayın",
+    tr: "Doğum Sonrası Destek: Doktorunuzu arayın",
   },
 
   // ── pregnancy-tracker ──
