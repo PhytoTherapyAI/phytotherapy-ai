@@ -5869,7 +5869,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "todayView.waterMaxWarning": { en: "Please stop! Risk of water intoxication.", tr: "Lutfen daha fazla icme! Su zehirlenmesi riski var." },
 
   // ── Daily Care Card ──
-  "dailyCare.title": { en: "Today's Care Plan", tr: "Bugununn Sağlık Plani" },
+  "dailyCare.title": { en: "Today's Care Plan", tr: "Bugünün Sağlık Planı" },
   "dailyCare.refresh": { en: "Refresh", tr: "Yenile" },
   "dailyCare.allCompleted": { en: "You completed today's plan, amazing!", tr: "Bugunku planini tamamladin, harikasin!" },
 
