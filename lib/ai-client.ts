@@ -15,9 +15,13 @@ function getClient(): Anthropic {
   return _client;
 }
 
-// Hybrid strategy: fast model for chat/streaming, smart model for JSON analysis
-const MODEL_FAST = "claude-haiku-4-5";   // 3x faster, chat/streaming/simple text
-const MODEL_SMART = "claude-sonnet-4-6"; // highest quality, JSON analysis/medical
+// Hybrid strategy:
+// - FAST: chat, streaming, simple text (Haiku 4.5 — 3x faster)
+// - SMART: JSON analysis, medical decisions (Sonnet 4.6 — highest quality)
+// On Vercel Free plan (60s timeout), Sonnet can timeout on large JSON.
+// Solution: Use Haiku for JSON too, but with stronger system prompts.
+const MODEL_FAST = "claude-haiku-4-5";
+const MODEL_SMART = "claude-sonnet-4-6";
 
 // ──────────────────────────────────────────────
 // Safe JSON parser — 5-layer cleaning
@@ -119,19 +123,18 @@ export async function askGeminiJSON(
 ): Promise<string> {
   const jsonSystemPrompt =
     systemPrompt +
-    "\n\nIMPORTANT: You MUST respond with valid JSON only. No markdown code blocks, no explanation text before or after, no ```json wrapper. Output ONLY the raw JSON object/array.";
+    "\n\nIMPORTANT: You MUST respond with valid JSON only. No markdown code blocks, no explanation text before or after, no ```json wrapper. Output ONLY the raw JSON object/array. Be concise — use short values, avoid unnecessary verbosity.";
 
   return retryWithBackoff(async () => {
     const response = await getClient().messages.create({
       model: MODEL_SMART,
-      max_tokens: 8192,
+      max_tokens: 4096,
       temperature: 0,
       system: jsonSystemPrompt,
       messages: [{ role: "user", content: prompt }],
     });
     const block = response.content[0];
     const text = block.type === "text" ? block.text : "{}";
-    // Parse and re-stringify to guarantee valid JSON string output
     const parsed = safeParseJSON(text);
     return JSON.stringify(parsed);
   });
@@ -184,10 +187,9 @@ export async function askGeminiJSONMultimodal(
 ): Promise<string> {
   const jsonSystemPrompt =
     systemPrompt +
-    "\n\nIMPORTANT: You MUST respond with valid JSON only. No markdown code blocks, no explanation text before or after, no ```json wrapper. Output ONLY the raw JSON object/array.";
+    "\n\nIMPORTANT: You MUST respond with valid JSON only. No markdown code blocks, no explanation text before or after, no ```json wrapper. Output ONLY the raw JSON object/array. Be concise.";
 
   return retryWithBackoff(async () => {
-    // Build content parts
     const contentParts: Anthropic.MessageCreateParams["messages"][0]["content"] =
       [];
 
@@ -220,7 +222,7 @@ export async function askGeminiJSONMultimodal(
 
     const response = await getClient().messages.create({
       model: MODEL_SMART,
-      max_tokens: 8192,
+      max_tokens: 4096,
       temperature: 0,
       system: jsonSystemPrompt,
       messages: [{ role: "user", content: contentParts }],
@@ -238,7 +240,6 @@ export async function askGeminiStreamMultimodal(
   files: GeminiFilePart[]
 ): Promise<ReadableStream> {
   return retryWithBackoff(async () => {
-    // Build content parts
     const contentParts: Anthropic.MessageCreateParams["messages"][0]["content"] =
       [];
 
@@ -271,7 +272,7 @@ export async function askGeminiStreamMultimodal(
 
     const stream = getClient().messages.stream({
       model: MODEL_FAST,
-      max_tokens: 8192,
+      max_tokens: 4096,
       temperature: 0,
       system: systemPrompt,
       messages: [{ role: "user", content: contentParts }],
