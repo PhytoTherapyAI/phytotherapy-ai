@@ -15,7 +15,7 @@ function getClient(): Anthropic {
   return _client;
 }
 
-const MODEL = "claude-sonnet-4-20250514";
+const MODEL = "claude-sonnet-4-6";
 
 // ──────────────────────────────────────────────
 // Safe JSON parser — 5-layer cleaning
