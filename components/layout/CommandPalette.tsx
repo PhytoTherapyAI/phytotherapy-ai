@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
@@ -451,7 +451,7 @@ export function CommandPalette() {
                 <kbd className="rounded border border-border bg-muted px-1 py-0.5">ESC</kbd> {t.close}
               </span>
             </div>
-            <span className="text-[10px] text-muted-foreground">phytotherapy.ai</span>
+            <span className="text-[10px] text-muted-foreground">doctopal.com</span>
           </div>
         </div>
       </div>

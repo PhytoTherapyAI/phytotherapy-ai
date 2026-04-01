@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
 import { askGeminiJSON } from "@/lib/ai-client";
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       // PubMed context ready
     }
 
-    const systemPrompt = `You are Phytotherapy.ai's symptom assessment assistant. You are NOT a doctor and cannot diagnose.
+    const systemPrompt = `You are Doctopal's symptom assessment assistant. You are NOT a doctor and cannot diagnose.
 Your job is to help the user understand their symptoms and guide them on urgency.
 
 RULES:

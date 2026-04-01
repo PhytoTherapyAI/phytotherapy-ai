@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       )
     );
 
-    const systemPrompt = `You are an addiction recovery support assistant for Phytotherapy.ai.
+    const systemPrompt = `You are an addiction recovery support assistant for Doctopal.
 You provide compassionate, non-judgmental support for people in recovery.
 
 CRITICAL SAFETY RULES:

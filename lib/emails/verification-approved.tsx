@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Verification Approved Email Template
 // Compatible with all email clients + dark mode
@@ -24,7 +24,7 @@ export function renderApprovedEmail({ recipientName, profession, lang = "en" }: 
   const body2          = tx("email.approved.body2", lang)
   const cta            = tx("email.approved.cta", lang)
   const footer         = tx("email.footer", lang)
-  const address        = "Phytotherapy.ai · Istanbul, Turkey"
+  const address        = "Doctopal · Istanbul, Turkey"
 
   return `<!DOCTYPE html>
 <html lang="${lang}" xmlns:v="urn:schemas-microsoft-com:vml">
@@ -61,7 +61,7 @@ export function renderApprovedEmail({ recipientName, profession, lang = "en" }: 
         <!-- Logo -->
         <tr><td align="center" style="padding-bottom:32px;">
           <span style="font-size:24px;font-weight:700;color:#2d5016;letter-spacing:-0.5px;">
-            🌿 Phytotherapy.ai
+            🌿 Doctopal
           </span>
         </td></tr>
 
@@ -109,7 +109,7 @@ export function renderApprovedEmail({ recipientName, profession, lang = "en" }: 
               <!-- CTA Button -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr><td align="center">
-                  <a href="https://phytotherapy.ai/talent-hub" target="_blank"
+                  <a href="https://doctopal.com/talent-hub" target="_blank"
                     style="display:inline-block;background-color:#059669;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:10px;letter-spacing:0.3px;">
                     ${cta} →
                   </a>

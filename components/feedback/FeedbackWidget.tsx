@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Behavioral Feedback Widget — IKEA Effect + Variable Reward
 "use client"
 
@@ -128,7 +128,7 @@ export function FeedbackWidget() {
           {/* Header */}
           <div className="flex items-center justify-between border-b px-4 py-3">
             <span className="text-sm font-bold">
-              {isTr ? "phytotherapy.ai'yi birlikte geliştiriyoruz!" : "Let's build phytotherapy.ai together!"}
+              {isTr ? "doctopal.com'yi birlikte geliştiriyoruz!" : "Let's build doctopal.com together!"}
             </span>
             <button onClick={reset} className="text-muted-foreground hover:text-foreground transition-colors">
               <X className="h-4 w-4" />

@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Doctor Referral API
 // ============================================
@@ -141,7 +141,7 @@ export async function POST(req: Request) {
       const randomDigits = String(Math.floor(Math.random() * 90) + 10)
       const referralCode = `DR-${firstName}-${randomDigits}`
 
-      const link = `https://phytotherapy.ai/auth/login?ref=${referralCode}`
+      const link = `https://doctopal.com/auth/login?ref=${referralCode}`
 
       const { error: insertError } = await supabase
         .from("doctor_referral_codes")
@@ -154,7 +154,7 @@ export async function POST(req: Request) {
       if (insertError) {
         // Collision — try once more with different digits
         const retry = `DR-${firstName}-${Math.floor(Math.random() * 90) + 10}`
-        const retryLink = `https://phytotherapy.ai/auth/login?ref=${retry}`
+        const retryLink = `https://doctopal.com/auth/login?ref=${retry}`
         const { error: retryError } = await supabase
           .from("doctor_referral_codes")
           .insert({ doctor_id: user.id, code: retry, link: retryLink })

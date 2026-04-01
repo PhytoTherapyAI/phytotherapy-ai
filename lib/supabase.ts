@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 // Clean up any corrupted Supabase localStorage entries that cause

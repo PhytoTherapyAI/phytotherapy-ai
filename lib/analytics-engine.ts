@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Health Analytics Engine — Mock Data + Algorithms
 // ============================================

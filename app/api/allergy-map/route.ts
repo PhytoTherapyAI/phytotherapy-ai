@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -221,7 +221,7 @@ async function handleCrossCheck(supabase: any, userId: string, lang: "en" | "tr"
     ? medications.map((m: { generic_name: string | null; brand_name: string | null }) => m.generic_name || m.brand_name).join(", ")
     : "None";
 
-  const systemPrompt = `You are Phytotherapy.ai's allergy safety specialist.
+  const systemPrompt = `You are Doctopal's allergy safety specialist.
 Cross-check the patient's allergies/intolerances against their medications and supplements.
 
 ALLERGIES: ${allergiesText}

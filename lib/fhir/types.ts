@@ -1,6 +1,6 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
-// FHIR R4 Type Definitions for Phytotherapy.ai
+// FHIR R4 Type Definitions for Doctopal
 // HL7 FHIR (Fast Healthcare Interoperability Resources)
 // Customized for herbal/supplement data interoperability
 // ============================================
@@ -60,7 +60,7 @@ export const CODING_SYSTEMS = {
   WHO_DD: "http://www.whocc.no/atc_ddd_index",
   ICD10: "http://hl7.org/fhir/sid/icd-10",
   UCUM: "http://unitsofmeasure.org",
-  PHYTO_AI: "https://phytotherapy.ai/fhir/CodeSystem/herbal-products",
+  PHYTO_AI: "https://doctopal.com/fhir/CodeSystem/herbal-products",
   ENABIZ: "https://enabiz.gov.tr/fhir/CodeSystem",
 } as const
 

@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
         medicationsTaken: r.medications_taken || [],
       }));
 
-      const systemPrompt = `You are a pain management specialist for Phytotherapy.ai. Analyze pain diary records and identify patterns.
+      const systemPrompt = `You are a pain management specialist for Doctopal. Analyze pain diary records and identify patterns.
 
 RULES:
 - Identify pain patterns (time of day, triggers, location correlation)

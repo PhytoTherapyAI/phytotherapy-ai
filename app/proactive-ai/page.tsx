@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client";
 
 import { Brain, Bell, TrendingUp, AlertTriangle, Sparkles, Shield, Eye, Zap } from "lucide-react";

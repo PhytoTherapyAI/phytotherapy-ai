@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
@@ -30,7 +30,7 @@ export function ConsentStep({ data, updateData }: Props) {
           {tr ? (
             <>
               <p>
-                Phytotherapy.ai bir <strong>sağlık ve karar destek aracıdır</strong>, tıbbi cihaz değildir.
+                Doctopal bir <strong>sağlık ve karar destek aracıdır</strong>, tıbbi cihaz değildir.
                 Herhangi bir hastalığı teşhis etmez, tedavi etmez, iyileştirmez veya önlemez.
               </p>
               <p>
@@ -48,14 +48,14 @@ export function ConsentStep({ data, updateData }: Props) {
                 <li>Ameliyat planlanıyorsa</li>
               </ul>
               <p>
-                Phytotherapy.ai ve geliştiricileri, bu hizmet tarafından sağlanan bilgilerin kullanımından
+                Doctopal ve geliştiricileri, bu hizmet tarafından sağlanan bilgilerin kullanımından
                 kaynaklanan herhangi bir sağlık sonucundan <strong>sorumlu değildir</strong>.
               </p>
             </>
           ) : (
             <>
               <p>
-                Phytotherapy.ai is a <strong>wellness and decision-support tool</strong>, not a medical device.
+                Doctopal is a <strong>wellness and decision-support tool</strong>, not a medical device.
                 It does not diagnose, treat, cure, or prevent any disease.
               </p>
               <p>
@@ -73,7 +73,7 @@ export function ConsentStep({ data, updateData }: Props) {
                 <li>Are scheduled for surgery</li>
               </ul>
               <p>
-                Phytotherapy.ai and its developers are <strong>not liable</strong> for any health outcomes
+                Doctopal and its developers are <strong>not liable</strong> for any health outcomes
                 resulting from the use of information provided by this service.
               </p>
             </>

@@ -1,6 +1,56 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal.com — All Rights Reserved
 const PUBMED_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 const EUROPE_PMC_BASE = "https://www.ebi.ac.uk/europepmc/webservices/rest";
+
+// ── In-memory 24-hour cache ───────────────────────────
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+const MAX_CACHE_SIZE = 500; // max entries to prevent memory bloat
+
+interface CacheEntry {
+  data: PubMedArticle[];
+  timestamp: number;
+}
+
+const cache = new Map<string, CacheEntry>();
+
+function getCacheKey(query: string, maxResults: number): string {
+  return `${query.toLowerCase().trim()}::${maxResults}`;
+}
+
+function getFromCache(key: string): PubMedArticle[] | null {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    cache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+function setCache(key: string, data: PubMedArticle[]): void {
+  // Evict oldest entries if cache is full
+  if (cache.size >= MAX_CACHE_SIZE) {
+    let oldestKey: string | null = null;
+    let oldestTime = Infinity;
+    for (const [k, v] of cache) {
+      if (v.timestamp < oldestTime) {
+        oldestTime = v.timestamp;
+        oldestKey = k;
+      }
+    }
+    if (oldestKey) cache.delete(oldestKey);
+  }
+  cache.set(key, { data, timestamp: Date.now() });
+}
+
+// ── Exported: clear cache (for admin/testing) ─────────
+export function clearPubMedCache(): void {
+  cache.clear();
+}
+
+export function getPubMedCacheStats(): { size: number; maxSize: number; ttlHours: number } {
+  return { size: cache.size, maxSize: MAX_CACHE_SIZE, ttlHours: 24 };
+}
 
 export interface PubMedArticle {
   pmid: string;
@@ -19,11 +69,19 @@ export interface PubMedArticle {
  * 2. Europe PMC — includes PubMed + EMBL-EBI + preprints + WHO sources
  *
  * Results are deduplicated by title similarity and merged.
+ * Uses 24-hour in-memory cache for performance.
  */
 export async function searchPubMed(
   query: string,
   maxResults: number = 5
 ): Promise<PubMedArticle[]> {
+  // Check cache first
+  const cacheKey = getCacheKey(query, maxResults);
+  const cached = getFromCache(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const results = await Promise.allSettled([
     searchPubMedCore(query, maxResults),
     searchEuropePMC(query, Math.min(maxResults, 3)),
@@ -44,7 +102,14 @@ export async function searchPubMed(
     }
   }
 
-  return merged.slice(0, maxResults);
+  const final = merged.slice(0, maxResults);
+
+  // Cache the result (only if we got data)
+  if (final.length > 0) {
+    setCache(cacheKey, final);
+  }
+
+  return final;
 }
 
 // ── PubMed (NCBI) ──────────────────────────────────

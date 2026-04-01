@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import drugsData from '@/public/drugs-tr.json'
 
 export interface DrugEntry {

@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const systemPrompt = `You are Phytotherapy.ai's elder care health advisor, specialized in geriatric health guidance for adults 65+.
+    const systemPrompt = `You are Doctopal's elder care health advisor, specialized in geriatric health guidance for adults 65+.
 
 RULES:
 1. Focus on evidence-based geriatric health guidance

@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -38,7 +38,7 @@ interface GeminiNutritionResult {
 // System Prompt
 // ============================================
 
-const NUTRITION_SYSTEM_PROMPT = `You are a nutrition analysis expert for Phytotherapy.ai.
+const NUTRITION_SYSTEM_PROMPT = `You are a nutrition analysis expert for Doctopal.
 Your task is to estimate the nutritional content of meals described by users and detect food-drug interactions.
 
 RULES:

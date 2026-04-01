@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const age = parseInt(body.age) || 35;
     const gender = body.gender === "female" ? "female" : "male";
 
-    const systemPrompt = `You are a genetic risk assessment assistant for Phytotherapy.ai.
+    const systemPrompt = `You are a genetic risk assessment assistant for Doctopal.
 You estimate disease risk scores based on family history and personal factors.
 
 CRITICAL RULES:

@@ -1,8 +1,8 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { tx } from "@/lib/translations";
 
 /**
- * SAFETY GUARDRAIL — Phytotherapy.ai
+ * SAFETY GUARDRAIL — Doctopal
  * ═══════════════════════════════════
  * Algoritmik Güvenlik ve Etik Çerçevesi
  * "Primum non nocere — First, do no harm"

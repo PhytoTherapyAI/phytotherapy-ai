@@ -1,6 +1,6 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 /**
- * Phytotherapy.ai Custom Icon Set
+ * Doctopal Custom Icon Set
  *
  * Design principles (behavioral psychology):
  * - Rounded organic shapes → trust & safety (vs angular = danger)

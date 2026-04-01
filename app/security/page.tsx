@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useLang } from "@/components/layout/language-toggle"
@@ -56,7 +56,7 @@ export default function SecurityPage() {
           <p className="text-sm font-medium">
             {tx("security.reportVulnerability", lang)}
           </p>
-          <p className="text-xs text-muted-foreground mt-1">security@phytotherapy.ai</p>
+          <p className="text-xs text-muted-foreground mt-1">security@doctopal.com</p>
         </Card>
       </div>
     </div>

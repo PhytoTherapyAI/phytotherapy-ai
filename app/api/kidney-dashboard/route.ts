@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       ? `Age: ${profile.age || "unknown"}, Gender: ${profile.gender || "unknown"}, Chronic conditions: ${profile.chronic_conditions?.join(", ") || "none"}, Known kidney disease: ${profile.kidney_disease || false}`
       : "No profile data";
 
-    const systemPrompt = `You are a nephrology-informed health analyst for Phytotherapy.ai. Analyze kidney lab values and provide evidence-based kidney health guidance.
+    const systemPrompt = `You are a nephrology-informed health analyst for Doctopal. Analyze kidney lab values and provide evidence-based kidney health guidance.
 
 RULES:
 - Classify CKD stage based on eGFR: Stage 1 (>=90), Stage 2 (60-89), Stage 3a (45-59), Stage 3b (30-44), Stage 4 (15-29), Stage 5 (<15)

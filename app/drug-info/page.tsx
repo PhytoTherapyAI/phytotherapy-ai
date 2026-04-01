@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Drug Info / Rx Copilot — Progressive Disclosure + Zero-Error Shield + Framer Motion
 "use client";
 

@@ -1,12 +1,13 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
-import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react"
+import { useState, useEffect, useCallback, useMemo, lazy, Suspense } from "react"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   CalendarDays, Activity, Heart, Loader2, LogIn, Plus, Download,
   Droplets, Pill, Sun, Moon as MoonIcon, Sunset, Check, X,
+  Flame, Dumbbell, ChevronLeft, ChevronRight,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -29,14 +30,14 @@ interface VitalRecord {
 
 // ── ICS Export ──
 function generateICS(events: Array<{ title: string; event_date: string; event_time: string | null; description: string | null; event_type: string }>): string {
-  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Phytotherapy.ai//Calendar//EN", "CALSCALE:GREGORIAN"]
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Doctopal//Calendar//EN", "CALSCALE:GREGORIAN"]
   for (const evt of events) {
     const dateClean = evt.event_date.replace(/-/g, "")
     const dtStart = evt.event_time ? `${dateClean}T${evt.event_time.replace(":", "")}00` : dateClean
     const dtEnd = evt.event_time ? `${dateClean}T${String(parseInt(evt.event_time.split(":")[0]) + 1).padStart(2, "0")}${evt.event_time.split(":")[1]}00` : dateClean
     lines.push("BEGIN:VEVENT", `DTSTART:${dtStart}`, `DTEND:${dtEnd}`, `SUMMARY:${evt.title}`)
     if (evt.description) lines.push(`DESCRIPTION:${evt.description.replace(/\n/g, "\\n")}`)
-    lines.push(`CATEGORIES:${evt.event_type}`, `UID:${evt.event_date}-${Math.random().toString(36).slice(2)}@phytotherapy.ai`, "END:VEVENT")
+    lines.push(`CATEGORIES:${evt.event_type}`, `UID:${evt.event_date}-${Math.random().toString(36).slice(2)}@doctopal.com`, "END:VEVENT")
   }
   lines.push("END:VCALENDAR")
   return lines.join("\r\n")
@@ -46,132 +47,281 @@ function downloadICS(events: Array<{ title: string; event_date: string; event_ti
   const ics = generateICS(events)
   const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" })
   const url = URL.createObjectURL(blob)
-  const a = document.createElement("a"); a.href = url; a.download = "phytotherapy-calendar.ics"
+  const a = document.createElement("a"); a.href = url; a.download = "doctopal-calendar.ics"
   document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url)
 }
 
-// ── Weekly Strip Component ──
-function WeeklyStrip({ selectedDate, onSelect, lang }: { selectedDate: Date; onSelect: (d: Date) => void; lang: string }) {
-  const today = new Date()
-  const startOfWeek = new Date(today)
-  startOfWeek.setDate(today.getDate() - today.getDay() + 1)
-  const days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(startOfWeek); d.setDate(startOfWeek.getDate() + i); return d
-  })
-  const dayNames = { en: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], tr: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"] }
-
+// ── Confetti Burst ──
+function ConfettiBurst({ show }: { show: boolean }) {
+  if (!show) return null
+  const colors = ["#3c7a52", "#6B8F71", "#facc15", "#60a5fa", "#f472b6", "#a78bfa", "#fb923c", "#34d399"]
   return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1">
-      {days.map((d, i) => {
-        const isToday = d.toDateString() === today.toDateString()
-        const isSelected = d.toDateString() === selectedDate.toDateString()
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl z-10">
+      {Array.from({ length: 12 }, (_, i) => {
+        const angle = (i / 12) * 360
+        const rad = (angle * Math.PI) / 180
+        const tx = Math.cos(rad) * (30 + Math.random() * 20)
+        const ty = Math.sin(rad) * (30 + Math.random() * 20)
         return (
-          <motion.button key={i} whileTap={{ scale: 0.9 }}
-            onClick={() => onSelect(d)}
-            className={`flex flex-col items-center gap-1 min-w-[52px] rounded-2xl py-3 px-2 transition-all ${
-              isSelected ? "bg-primary text-white shadow-lg shadow-primary/25" : isToday ? "bg-primary/10" : "hover:bg-stone-100 dark:hover:bg-stone-800"
-            }`}>
-            <span className={`text-[10px] font-medium ${isSelected ? "text-white/80" : "text-muted-foreground"}`}>
-              {(dayNames as Record<string, string[]>)[lang]?.[i] || dayNames.en[i]}
-            </span>
-            <span className={`text-lg font-bold ${isSelected ? "text-white" : "text-foreground"}`}>{d.getDate()}</span>
-            {isToday && !isSelected && <span className="h-1 w-1 rounded-full bg-primary" />}
-          </motion.button>
+          <motion.div
+            key={i}
+            initial={{ x: "50%", y: "50%", scale: 1, opacity: 1 }}
+            animate={{ x: `calc(50% + ${tx}px)`, y: `calc(50% + ${ty}px)`, scale: 0, opacity: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.02 }}
+            className="absolute w-1.5 h-1.5 rounded-full"
+            style={{ backgroundColor: colors[i % colors.length], left: 0, top: 0 }}
+          />
         )
       })}
     </div>
   )
 }
 
-// ── Habit Ring ──
-function HabitRing({ emoji, label, current, total, color }: { emoji: string; label: string; current: number; total: number; color: string }) {
-  const percent = Math.min((current / total) * 100, 100)
-  const r = 28; const c = 2 * Math.PI * r; const offset = c - (percent / 100) * c
+// ══════════════════════════════════════════════════
+// WEEKLY STRIP — Horizontal 7-day selector
+// ══════════════════════════════════════════════════
+function WeeklyStripEnhanced({ selectedDate, onSelect, lang }: { selectedDate: Date; onSelect: (d: Date) => void; lang: string }) {
+  const today = useMemo(() => new Date(), [])
+
+  const getWeekDays = useCallback((center: Date) => {
+    const start = new Date(center)
+    const day = start.getDay()
+    start.setDate(start.getDate() - ((day + 6) % 7))
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(start); d.setDate(start.getDate() + i); return d
+    })
+  }, [])
+
+  const [weekOffset, setWeekOffset] = useState(0)
+  const days = useMemo(() => {
+    const center = new Date(today)
+    center.setDate(center.getDate() + weekOffset * 7)
+    return getWeekDays(center)
+  }, [today, weekOffset, getWeekDays])
+
+  const dayNames: Record<string, string[]> = {
+    en: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    tr: ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"],
+  }
+
+  const monthLabel = useMemo(() => {
+    const d = days[3] || today
+    return d.toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { month: "long", year: "numeric" })
+  }, [days, lang, today])
+
   return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div className="relative">
-        <svg width={68} height={68} className="transform -rotate-90">
-          <circle cx={34} cy={34} r={r} stroke="currentColor" strokeWidth={5} fill="none" className="text-stone-200 dark:text-stone-700" />
-          <motion.circle cx={34} cy={34} r={r} stroke={color} strokeWidth={5} fill="none" strokeLinecap="round"
-            strokeDasharray={c} initial={{ strokeDashoffset: c }} animate={{ strokeDashoffset: offset }}
-            transition={{ duration: 1, ease: "easeOut" }} />
-        </svg>
-        <span className="absolute inset-0 flex items-center justify-center text-lg">{emoji}</span>
+    <div className="space-y-3">
+      {/* Month header with navigation */}
+      <div className="flex items-center justify-between px-1">
+        <motion.button whileTap={{ scale: 0.9 }} onClick={() => setWeekOffset(w => w - 1)}
+          className="p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
+          <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+        </motion.button>
+        <h2 className="text-sm font-semibold text-foreground capitalize">{monthLabel}</h2>
+        <motion.button whileTap={{ scale: 0.9 }} onClick={() => setWeekOffset(w => w + 1)}
+          className="p-1.5 rounded-lg hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </motion.button>
       </div>
-      <span className="text-[10px] font-medium text-muted-foreground">{label}</span>
-      <span className="text-[10px] font-bold">{current}/{total}</span>
+
+      {/* Day pills */}
+      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
+        {days.map((d, i) => {
+          const isToday = d.toDateString() === today.toDateString()
+          const isSelected = d.toDateString() === selectedDate.toDateString()
+          return (
+            <motion.button key={d.toISOString()} whileTap={{ scale: 0.9 }}
+              initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.03 }}
+              onClick={() => onSelect(d)}
+              className={`flex flex-col items-center gap-1 min-w-[48px] rounded-2xl py-3 px-2.5 transition-all duration-200 ${
+                isSelected
+                  ? "bg-primary text-white shadow-lg shadow-primary/25 scale-105"
+                  : isToday
+                  ? "bg-primary/10 ring-1 ring-primary/20"
+                  : "hover:bg-stone-100 dark:hover:bg-stone-800"
+              }`}>
+              <span className={`text-[10px] font-medium uppercase ${isSelected ? "text-white/80" : "text-muted-foreground"}`}>
+                {dayNames[lang]?.[i] || dayNames.en[i]}
+              </span>
+              <span className={`text-lg font-bold leading-none ${isSelected ? "text-white" : "text-foreground"}`}>
+                {d.getDate()}
+              </span>
+              {isToday && !isSelected && <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />}
+            </motion.button>
+          )
+        })}
+      </div>
     </div>
   )
 }
 
-// ── Time Block ──
-function TimeBlock({ icon, title, tasks, onToggle, onAdd, lang }: {
-  icon: React.ReactNode; title: string; tasks: Array<{ id: string; label: string; done: boolean; emoji: string }>
-  onToggle: (id: string) => void; onAdd: () => void; lang: string
+// ══════════════════════════════════════════════════
+// HABIT RINGS — Apple Watch style circular SVG
+// ══════════════════════════════════════════════════
+function CircularRing({ emoji, label, current, total, color }: {
+  emoji: string; label: string; current: number; total: number; color: string
 }) {
+  const percent = Math.min((current / total) * 100, 100)
+  const r = 26; const c = 2 * Math.PI * r; const offset = c - (percent / 100) * c
+  const isDone = current >= total
+
   return (
-    <div className="rounded-xl border border-stone-200/60 dark:border-stone-800 bg-white dark:bg-card p-4">
-      <div className="flex items-center gap-2 mb-3">
-        {icon}
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+    <motion.div className="flex flex-col items-center gap-1.5"
+      initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 200 }}>
+      <div className="relative">
+        <svg width={64} height={64} className="transform -rotate-90">
+          <circle cx={32} cy={32} r={r} stroke="currentColor" strokeWidth={5} fill="none"
+            className="text-stone-200 dark:text-stone-700" />
+          <motion.circle cx={32} cy={32} r={r} stroke={color} strokeWidth={5} fill="none"
+            strokeLinecap="round" strokeDasharray={c}
+            initial={{ strokeDashoffset: c }}
+            animate={{ strokeDashoffset: offset }}
+            transition={{ duration: 1.2, ease: "easeOut" }} />
+        </svg>
+        <span className="absolute inset-0 flex items-center justify-center text-base">{emoji}</span>
+        {isDone && (
+          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
+            className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 flex items-center justify-center shadow-sm">
+            <Check className="h-2.5 w-2.5 text-white" />
+          </motion.div>
+        )}
       </div>
-      <div className="space-y-1">
+      <span className="text-[10px] font-medium text-muted-foreground">{label}</span>
+      <span className={`text-[10px] font-bold ${isDone ? "text-emerald-500" : "text-foreground"}`}>{current}/{total}</span>
+    </motion.div>
+  )
+}
+
+// ══════════════════════════════════════════════════
+// TIME BLOCK — Circadian rhythm task groups
+// ══════════════════════════════════════════════════
+interface DailyTask {
+  id: string; label: string; done: boolean; emoji: string
+}
+
+function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, isCurrent, hours, lang }: {
+  icon: React.ReactNode; title: string; tasks: DailyTask[]
+  onToggle: (id: string) => void; onAdd: () => void; isCurrent: boolean; hours: string; lang: string
+}) {
+  const [confettiId, setConfettiId] = useState<string | null>(null)
+
+  const handleToggle = (id: string) => {
+    const task = tasks.find(t => t.id === id)
+    if (task && !task.done) {
+      setConfettiId(id)
+      setTimeout(() => setConfettiId(null), 700)
+    }
+    onToggle(id)
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+      className={`rounded-2xl border p-4 transition-all ${
+        isCurrent
+          ? "border-primary/30 bg-primary/5 dark:bg-primary/10 shadow-sm"
+          : "bg-white dark:bg-card border-stone-200/60 dark:border-stone-800"
+      }`}>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          {icon}
+          <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+          {isCurrent && (
+            <Badge variant="secondary" className="text-[9px] bg-primary/10 text-primary px-1.5 py-0 animate-pulse">
+              {lang === "tr" ? "Şimdi" : "Now"}
+            </Badge>
+          )}
+        </div>
+        <span className="text-[10px] text-muted-foreground">{hours}</span>
+      </div>
+
+      <div className="space-y-1.5">
         {tasks.length === 0 ? (
-          <button onClick={onAdd}
-            className="w-full flex items-center gap-2 py-2.5 px-3 rounded-lg border border-dashed border-stone-300 dark:border-stone-700 text-xs text-muted-foreground hover:bg-stone-50 dark:hover:bg-stone-900 transition-colors">
+          <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={onAdd}
+            className="w-full flex items-center gap-2 py-3 px-3 rounded-xl border border-dashed border-primary/20 text-xs text-muted-foreground/60 hover:border-primary/40 hover:text-muted-foreground transition-colors">
             <Plus className="h-3 w-3" />
-            {lang === "tr" ? `+ ${title} ekle` : `+ Add to ${title}`}
-          </button>
+            {lang === "tr" ? `${title.split(" ")[0]} takviyesi ekle` : `Add to ${title.split(" ")[0]}`}
+          </motion.button>
         ) : (
-          tasks.map(t => (
-            <motion.button key={t.id} whileTap={{ scale: 0.97 }} onClick={() => onToggle(t.id)}
-              className="w-full flex items-center gap-2.5 py-2 px-3 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900 transition-colors text-left">
-              <motion.div className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${t.done ? "bg-primary border-primary" : "border-stone-300 dark:border-stone-600"}`}
-                animate={t.done ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
+          tasks.map((t, i) => (
+            <motion.button key={t.id}
+              initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05 }}
+              whileTap={{ scale: 0.97 }} onClick={() => handleToggle(t.id)}
+              className={`relative w-full flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-left transition-all ${
+                t.done
+                  ? "bg-stone-50 dark:bg-stone-900/50 opacity-60"
+                  : "bg-white dark:bg-card hover:bg-stone-50 dark:hover:bg-stone-900 hover:-translate-y-0.5 hover:shadow-sm"
+              }`}>
+              <motion.div
+                className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all shrink-0 ${
+                  t.done ? "bg-emerald-500 border-emerald-500" : "border-stone-300 dark:border-stone-600"
+                }`}
+                animate={t.done ? { scale: [1, 1.3, 1] } : {}}
+                transition={{ duration: 0.3 }}>
                 {t.done && <Check className="h-3 w-3 text-white" />}
               </motion.div>
               <span className="text-sm">{t.emoji}</span>
-              <span className={`text-sm flex-1 transition-all ${t.done ? "line-through text-muted-foreground/40" : ""}`}>{t.label}</span>
-              {t.done && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-xs">✨</motion.span>}
+              <span className={`text-sm flex-1 transition-all duration-300 ${t.done ? "line-through text-muted-foreground/40" : "font-medium"}`}>
+                {t.label}
+              </span>
+              {t.done && (
+                <motion.span initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", stiffness: 300 }} className="text-xs">
+                  ✨
+                </motion.span>
+              )}
+              <ConfettiBurst show={confettiId === t.id} />
             </motion.button>
           ))
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }
 
-// ── Quick Log FAB ──
-function QuickLogFAB({ onAction, lang }: { onAction: (type: string) => void; lang: string }) {
+// ══════════════════════════════════════════════════
+// QUICK LOG FAB — Sage-green floating action button
+// ══════════════════════════════════════════════════
+function QuickLogFABEnhanced({ onAction, lang }: { onAction: (type: string) => void; lang: string }) {
   const [open, setOpen] = useState(false)
   const items = [
-    { type: "water", emoji: "💧", label: lang === "tr" ? "Su İçtim" : "Drank Water" },
-    { type: "pain", emoji: "🤕", label: lang === "tr" ? "Ağrı Kaydet" : "Log Pain" },
-    { type: "med", emoji: "💊", label: lang === "tr" ? "İlacımı Aldım" : "Took Medication" },
+    { type: "water", emoji: "💧", label: lang === "tr" ? "Su İçtim" : "Drank Water", color: "bg-blue-500" },
+    { type: "pain", emoji: "🤕", label: lang === "tr" ? "Ağrı Kaydet" : "Log Pain", color: "bg-amber-500" },
+    { type: "med", emoji: "💊", label: lang === "tr" ? "İlacımı Aldım" : "Took Medication", color: "bg-primary" },
   ]
 
   return (
-    <div className="fixed bottom-24 right-6 z-40 flex flex-col items-end gap-2">
+    <div className="fixed bottom-24 right-5 z-40 flex flex-col items-end gap-2">
       <AnimatePresence>
         {open && items.map((item, i) => (
-          <motion.button key={item.type} initial={{ opacity: 0, y: 20, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.8 }} transition={{ delay: i * 0.05 }}
+          <motion.button key={item.type}
+            initial={{ opacity: 0, y: 16, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.8 }}
+            transition={{ delay: i * 0.05, type: "spring", stiffness: 300 }}
             onClick={() => { onAction(item.type); setOpen(false) }}
-            className="flex items-center gap-2 rounded-full bg-white dark:bg-card shadow-lg border px-4 py-2.5 text-sm font-medium hover:bg-stone-50 dark:hover:bg-stone-900 transition-colors">
+            className={`flex items-center gap-2 rounded-full ${item.color} text-white shadow-lg px-4 py-2.5 text-sm font-medium hover:brightness-110 active:scale-95 transition-all`}>
             <span>{item.emoji}</span> {item.label}
           </motion.button>
         ))}
       </AnimatePresence>
-      <motion.button whileTap={{ scale: 0.9 }} onClick={() => setOpen(!open)}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-xl shadow-primary/25 hover:bg-primary/90 transition-colors">
+      <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.05 }}
+        onClick={() => setOpen(!open)}
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 text-white shadow-xl shadow-primary/25 transition-colors">
         <motion.div animate={{ rotate: open ? 45 : 0 }} transition={{ duration: 0.2 }}>
-          <Plus className="h-6 w-6" />
+          {open ? <X className="h-5 w-5" /> : <Plus className="h-6 w-6" />}
         </motion.div>
       </motion.button>
     </div>
   )
 }
 
+// ══════════════════════════════════════════════════
+// VITAL HELPERS
+// ══════════════════════════════════════════════════
 function VitalIcon({ type }: { type: string }) {
   switch (type) {
     case "blood_pressure": return <Heart className="h-4 w-4 text-rose-500" />
@@ -192,6 +342,70 @@ function formatVitalValue(vital: VitalRecord, lang: string): string {
   }
 }
 
+// ══════════════════════════════════════════════════
+// DAILY PROGRESS SUMMARY
+// ══════════════════════════════════════════════════
+function DailyProgressCard({ completed, total, lang }: { completed: number; total: number; lang: string }) {
+  const pct = total > 0 ? Math.round((completed / total) * 100) : 0
+  const r = 36; const c = 2 * Math.PI * r; const offset = c - (pct / 100) * c
+  const allDone = pct === 100
+
+  return (
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+      className={`rounded-2xl p-5 ${allDone
+        ? "bg-gradient-to-br from-emerald-50 to-primary/5 dark:from-emerald-900/20 dark:to-primary/10 border border-emerald-200/50"
+        : "bg-white dark:bg-card border border-stone-200/60 dark:border-stone-800"
+      }`}>
+      <div className="flex items-center gap-5">
+        {/* Circular progress */}
+        <div className="relative shrink-0">
+          <svg width={84} height={84} className="transform -rotate-90">
+            <circle cx={42} cy={42} r={r} stroke="currentColor" strokeWidth={6} fill="none"
+              className="text-stone-200 dark:text-stone-700" />
+            <motion.circle cx={42} cy={42} r={r} strokeWidth={6} fill="none"
+              strokeLinecap="round" strokeDasharray={c}
+              stroke={allDone ? "#22c55e" : "#3c7a52"}
+              initial={{ strokeDashoffset: c }}
+              animate={{ strokeDashoffset: offset }}
+              transition={{ duration: 1.5, ease: "easeOut" }} />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <motion.span className="text-xl font-bold text-foreground"
+              key={pct} initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
+              {pct}%
+            </motion.span>
+          </div>
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base font-bold text-foreground">
+            {allDone
+              ? (lang === "tr" ? "Harika! Tüm görevler tamam!" : "Amazing! All tasks complete!")
+              : (lang === "tr" ? "Günlük İlerleme" : "Daily Progress")}
+          </h3>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {lang === "tr"
+              ? `${completed}/${total} görev tamamlandı`
+              : `${completed}/${total} tasks completed`}
+          </p>
+          {allDone && (
+            <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+              className="flex items-center gap-1 mt-2">
+              <Flame className="h-3.5 w-3.5 text-amber-500" />
+              <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
+                {lang === "tr" ? "Seri devam ediyor!" : "Streak going!"}
+              </span>
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+// ══════════════════════════════════════════════════
+// MAIN PAGE
+// ══════════════════════════════════════════════════
 export default function CalendarPage() {
   const router = useRouter()
   const { isAuthenticated, isLoading: authLoading, profile } = useAuth()
@@ -201,32 +415,43 @@ export default function CalendarPage() {
   const [vitals, setVitals] = useState<VitalRecord[]>([])
   const [vitalsLoading, setVitalsLoading] = useState(false)
   const [addVitalOpen, setAddVitalOpen] = useState(false)
-  const [allEvents, setAllEvents] = useState<any[]>([])
+  const [allEvents, setAllEvents] = useState<Array<{ title: string; event_date: string; event_time: string | null; description: string | null; event_type: string }>>([])
 
-  // Mock daily tasks organized by time blocks
-  const [morningTasks, setMorningTasks] = useState([
+  // Current time block detection
+  const currentBlock = useMemo(() => {
+    const h = new Date().getHours()
+    if (h < 12) return "morning"
+    if (h < 18) return "noon"
+    return "night"
+  }, [])
+
+  // Mock daily tasks organized by circadian time blocks
+  const [morningTasks, setMorningTasks] = useState<DailyTask[]>([
     { id: "m1", label: lang === "tr" ? "D3 Vitamini" : "Vitamin D3", done: false, emoji: "☀️" },
     { id: "m2", label: lang === "tr" ? "Probiyotik" : "Probiotic", done: false, emoji: "🌿" },
+    { id: "m3", label: lang === "tr" ? "1 bardak su" : "1 glass water", done: false, emoji: "💧" },
   ])
-  const [noonTasks, setNoonTasks] = useState([
-    { id: "n1", label: lang === "tr" ? "Omega-3" : "Omega-3", done: false, emoji: "🐟" },
+  const [noonTasks, setNoonTasks] = useState<DailyTask[]>([
+    { id: "n1", label: "Omega-3", done: false, emoji: "🐟" },
     { id: "n2", label: lang === "tr" ? "2 bardak su" : "2 glasses water", done: false, emoji: "💧" },
   ])
-  const [nightTasks, setNightTasks] = useState([
+  const [nightTasks, setNightTasks] = useState<DailyTask[]>([
     { id: "e1", label: lang === "tr" ? "Magnezyum" : "Magnesium", done: false, emoji: "🌙" },
     { id: "e2", label: lang === "tr" ? "Kediotu çayı" : "Valerian tea", done: false, emoji: "🍵" },
   ])
 
-  const toggleTask = (id: string) => {
-    const update = (tasks: typeof morningTasks) => tasks.map(t => t.id === id ? { ...t, done: !t.done } : t)
-    setMorningTasks(update); setNoonTasks(update); setNightTasks(update)
-  }
+  const toggleTask = useCallback((id: string) => {
+    const update = (tasks: DailyTask[]) => tasks.map(t => t.id === id ? { ...t, done: !t.done } : t)
+    setMorningTasks(prev => update(prev))
+    setNoonTasks(prev => update(prev))
+    setNightTasks(prev => update(prev))
+  }, [])
 
-  const allTasks = [...morningTasks, ...noonTasks, ...nightTasks]
+  const allTasks = useMemo(() => [...morningTasks, ...noonTasks, ...nightTasks], [morningTasks, noonTasks, nightTasks])
   const completedTasks = allTasks.filter(t => t.done).length
-  const waterCount = 3 // mock
-  const supCount = allTasks.filter(t => t.done && t.emoji !== "💧").length
-  const totalSup = allTasks.filter(t => t.emoji !== "💧").length
+  const waterDone = allTasks.filter(t => t.done && t.emoji === "💧").length
+  const medsDone = allTasks.filter(t => t.done && (t.emoji === "💊" || t.emoji === "🌿" || t.emoji === "🐟" || t.emoji === "🌙" || t.emoji === "☀️" || t.emoji === "🍵")).length
+  const totalMeds = allTasks.filter(t => t.emoji !== "💧").length
 
   const fetchAllEvents = useCallback(async () => {
     if (!profile?.id) return
@@ -270,50 +495,70 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-background">
-      <div className="mx-auto max-w-7xl px-4 md:px-8 py-6 space-y-6">
+      <div className="mx-auto max-w-2xl px-4 md:px-8 py-6 space-y-5">
 
         {/* ═══ WEEKLY STRIP ═══ */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-          <WeeklyStrip selectedDate={selectedDate} onSelect={setSelectedDate} lang={lang} />
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="bg-white dark:bg-card rounded-2xl border border-stone-200/60 dark:border-stone-800 p-4 shadow-sm">
+          <WeeklyStripEnhanced selectedDate={selectedDate} onSelect={setSelectedDate} lang={lang} />
         </motion.div>
 
+        {/* ═══ DAILY PROGRESS ═══ */}
+        <DailyProgressCard completed={completedTasks} total={allTasks.length} lang={lang} />
+
         {/* ═══ HABIT RINGS ═══ */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-          className="flex justify-center gap-6 py-2">
-          <HabitRing emoji="💧" label={lang === "tr" ? "Su" : "Water"} current={waterCount} total={8} color="#3b82f6" />
-          <HabitRing emoji="💊" label={lang === "tr" ? "İlaçlar" : "Meds"} current={1} total={2} color="#3c7a52" />
-          <HabitRing emoji="🌿" label={lang === "tr" ? "Takviye" : "Supps"} current={supCount} total={totalSup} color="#6B8F71" />
-          <HabitRing emoji="🚶" label={lang === "tr" ? "Hareket" : "Move"} current={1} total={3} color="#f59e0b" />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
+          className="flex justify-center gap-5 py-1">
+          <CircularRing emoji="💧" label={lang === "tr" ? "Su" : "Water"} current={waterDone + 3} total={8} color="#3b82f6" />
+          <CircularRing emoji="💊" label={lang === "tr" ? "İlaçlar" : "Meds"} current={1} total={2} color="#3c7a52" />
+          <CircularRing emoji="🌿" label={lang === "tr" ? "Takviye" : "Supps"} current={medsDone} total={totalMeds} color="#6B8F71" />
+          <CircularRing emoji="🚶" label={lang === "tr" ? "Hareket" : "Move"} current={1} total={3} color="#f59e0b" />
         </motion.div>
 
         {/* ═══ VIEW SWITCHER ═══ */}
-        <div className="flex gap-2 bg-white dark:bg-card rounded-xl border p-1">
+        <div className="flex gap-1 bg-white dark:bg-card rounded-xl border p-1">
           {(["today", "month", "vitals"] as const).map(view => (
-            <button key={view} onClick={() => setActiveView(view)}
-              className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all ${
-                activeView === view ? "bg-primary text-white shadow" : "text-muted-foreground hover:bg-stone-50 dark:hover:bg-stone-900"
+            <motion.button key={view} whileTap={{ scale: 0.95 }}
+              onClick={() => setActiveView(view)}
+              className={`relative flex-1 py-2.5 px-3 rounded-lg text-xs font-medium transition-all ${
+                activeView === view ? "text-white" : "text-muted-foreground hover:bg-stone-50 dark:hover:bg-stone-900"
               }`}>
-              {view === "today" ? (lang === "tr" ? "Bugün" : "Today") :
-               view === "month" ? (lang === "tr" ? "Takvim" : "Calendar") :
-               (lang === "tr" ? "Vitaller" : "Vitals")}
-            </button>
+              {activeView === view && (
+                <motion.div layoutId="calViewTab" className="absolute inset-0 bg-primary rounded-lg shadow"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }} />
+              )}
+              <span className="relative z-10">
+                {view === "today" ? (lang === "tr" ? "Bugün" : "Today") :
+                 view === "month" ? (lang === "tr" ? "Takvim" : "Calendar") :
+                 (lang === "tr" ? "Vitaller" : "Vitals")}
+              </span>
+            </motion.button>
           ))}
         </div>
 
-        {/* ═══ TODAY VIEW: Time Blocks ═══ */}
+        {/* ═══ TODAY VIEW: Circadian Time Blocks ═══ */}
         <AnimatePresence mode="wait">
           {activeView === "today" && (
             <motion.div key="today" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }} className="space-y-4">
-              <TimeBlock icon={<Sun className="h-4 w-4 text-amber-500" />}
-                title={lang === "tr" ? "🌅 Sabah Rutini" : "🌅 Morning Routine"}
-                tasks={morningTasks} onToggle={toggleTask} onAdd={() => {}} lang={lang} />
-              <TimeBlock icon={<Sunset className="h-4 w-4 text-orange-500" />}
-                title={lang === "tr" ? "☀️ Öğle" : "☀️ Noon"}
-                tasks={noonTasks} onToggle={toggleTask} onAdd={() => {}} lang={lang} />
-              <TimeBlock icon={<MoonIcon className="h-4 w-4 text-indigo-400" />}
-                title={lang === "tr" ? "🌙 Gece" : "🌙 Night"}
-                tasks={nightTasks} onToggle={toggleTask} onAdd={() => {}} lang={lang} />
+
+              <TimeBlockEnhanced
+                icon={<Sun className="h-4 w-4 text-amber-500" />}
+                title={lang === "tr" ? "Sabah Rutini" : "Morning Routine"}
+                tasks={morningTasks} onToggle={toggleTask} onAdd={() => {}}
+                isCurrent={currentBlock === "morning"} hours="06:00–12:00" lang={lang} />
+
+              <TimeBlockEnhanced
+                icon={<Sunset className="h-4 w-4 text-orange-500" />}
+                title={lang === "tr" ? "Öğle" : "Afternoon"}
+                tasks={noonTasks} onToggle={toggleTask} onAdd={() => {}}
+                isCurrent={currentBlock === "noon"} hours="12:00–18:00" lang={lang} />
+
+              <TimeBlockEnhanced
+                icon={<MoonIcon className="h-4 w-4 text-indigo-400" />}
+                title={lang === "tr" ? "Akşam Ritüeli" : "Evening Wind-Down"}
+                tasks={nightTasks} onToggle={toggleTask} onAdd={() => {}}
+                isCurrent={currentBlock === "night"} hours="18:00–00:00" lang={lang} />
 
               {/* Existing TodayView integration */}
               <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
@@ -363,18 +608,20 @@ export default function CalendarPage() {
                   {vitals.map(vital => {
                     const d = new Date(vital.recorded_at)
                     return (
-                      <Card key={vital.id}><CardContent className="flex items-center gap-4 py-3 px-4">
-                        <VitalIcon type={vital.vital_type} />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">{tx(`cal.vitalType.${vital.vital_type}`, lang)}</span>
-                            <Badge variant="secondary" className="text-xs font-mono">{formatVitalValue(vital, lang)}</Badge>
+                      <motion.div key={vital.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                        <Card><CardContent className="flex items-center gap-4 py-3 px-4">
+                          <VitalIcon type={vital.vital_type} />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium">{tx(`cal.vitalType.${vital.vital_type}`, lang)}</span>
+                              <Badge variant="secondary" className="text-xs font-mono">{formatVitalValue(vital, lang)}</Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {d.toLocaleDateString(tx("common.locale", lang), { day: "numeric", month: "short" })} {d.toLocaleTimeString(tx("common.locale", lang), { hour: "2-digit", minute: "2-digit" })}
+                            </p>
                           </div>
-                          <p className="text-xs text-muted-foreground">
-                            {d.toLocaleDateString(tx("common.locale", lang), { day: "numeric", month: "short" })} {d.toLocaleTimeString(tx("common.locale", lang), { hour: "2-digit", minute: "2-digit" })}
-                          </p>
-                        </div>
-                      </CardContent></Card>
+                        </CardContent></Card>
+                      </motion.div>
                     )
                   })}
                 </div>
@@ -394,7 +641,7 @@ export default function CalendarPage() {
       </div>
 
       {/* ═══ Quick Log FAB ═══ */}
-      <QuickLogFAB onAction={(type) => { /* handle quick log */ }} lang={lang} />
+      <QuickLogFABEnhanced onAction={() => { /* handle quick log */ }} lang={lang} />
     </div>
   )
 }

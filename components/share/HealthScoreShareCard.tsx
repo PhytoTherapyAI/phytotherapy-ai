@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { ShareCardBase } from "./ShareCardBase"
@@ -48,7 +48,7 @@ export function HealthScoreShareCard({
     <ShareCardBase
       lang={lang}
       fileName={`health-score-${healthScore}.png`}
-      shareTitle="Phytotherapy.ai"
+      shareTitle="Doctopal"
       shareText={shareText}
     >
       {/* Card — standard share size */}
@@ -81,7 +81,7 @@ export function HealthScoreShareCard({
           <div className="mb-2 flex items-center gap-2">
             <span className="text-2xl">🌿</span>
             <span className="text-sm font-semibold tracking-wide opacity-90">
-              Phytotherapy.ai
+              Doctopal
             </span>
           </div>
 
@@ -186,7 +186,7 @@ export function HealthScoreShareCard({
 
           {/* Footer */}
           <div className="mt-auto flex items-center justify-between border-t border-white/20 pt-3">
-            <span className="text-[10px] opacity-60">phytotherapy.ai</span>
+            <span className="text-[10px] opacity-60">doctopal.com</span>
             <span className="text-[10px] opacity-60">
               {new Date().toLocaleDateString(tr ? "tr-TR" : "en-US")}
             </span>

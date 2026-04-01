@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Bot Webhook — Receives incoming messages
 // from WhatsApp (Twilio) and Telegram Bot API
@@ -169,5 +169,5 @@ export async function POST(req: Request) {
 
 // Telegram webhook verification
 export async function GET(req: Request) {
-  return NextResponse.json({ status: "ok", service: "phytotherapy-bot-webhook" })
+  return NextResponse.json({ status: "ok", service: "doctopal-bot-webhook" })
 }

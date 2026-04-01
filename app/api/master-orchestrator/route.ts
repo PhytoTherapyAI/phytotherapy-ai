@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Master AI Orchestrator — /api/master-orchestrator
 // Cross-module intelligence: aggregates all health data,
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     // Step 3: Generate AI synergy insight
     let aiInsight = null;
     try {
-      const systemPrompt = `You are the Master Health Orchestrator of Phytotherapy.ai.
+      const systemPrompt = `You are the Master Health Orchestrator of Doctopal.
 You analyze a user's COMPLETE health profile across ALL modules (sleep, fitness, nutrition, supplements, vitals, medications) and generate a holistic daily synergy plan.
 
 CRITICAL RULES:

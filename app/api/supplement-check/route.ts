@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest } from "next/server"
 import { askGeminiJSON } from "@/lib/ai-client"
 import { createServerClient } from "@/lib/supabase"
@@ -88,7 +88,7 @@ ${langInstr}
   "evidenceGrade": "A" | "B" | "C"
 }`
 
-    const systemPrompt = `You are Phytotherapy.ai's supplement safety checker — a knowledgeable friend, not a clinical robot.
+    const systemPrompt = `You are Doctopal's supplement safety checker — a knowledgeable friend, not a clinical robot.
 Analyze supplements considering the user's medications, allergies, and health conditions.
 - "safe" = no known interactions, evidence supports use
 - "caution" = mild interaction risk or limited evidence

@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 'use client'
 
 import { Leaf } from "lucide-react";
@@ -20,7 +20,7 @@ export function Footer() {
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Leaf className="h-4 w-4 text-primary" />
-            <span className="font-heading" suppressHydrationWarning>© {new Date().getFullYear()} Phytotherapy.ai — {tx("footer.allRightsReserved", lang)}</span>
+            <span className="font-heading" suppressHydrationWarning>© {new Date().getFullYear()} Doctopal — {tx("footer.allRightsReserved", lang)}</span>
           </div>
 
           <div className="flex items-center gap-4 text-xs text-muted-foreground">

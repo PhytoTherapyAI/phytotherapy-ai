@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       ? `${childAge} months old`
       : `${childAge} years old`;
 
-    const systemPrompt = `You are Phytotherapy.ai's pediatric health guide for parents. You provide evidence-based guidance for common childhood health concerns.
+    const systemPrompt = `You are Doctopal's pediatric health guide for parents. You provide evidence-based guidance for common childhood health concerns.
 
 STRICT RULES:
 1. NEVER provide specific medication dosages for children — ALWAYS refer to pediatrician

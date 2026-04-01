@@ -1,8 +1,8 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const DEMO_EMAIL = process.env.DEMO_EMAIL || "demo@phytotherapy.ai";
+const DEMO_EMAIL = process.env.DEMO_EMAIL || "demo@doctopal.com";
 const DEMO_PASSWORD = process.env.DEMO_PASSWORD || "demo123456";
 
 function dateStr(daysAgo: number): string {

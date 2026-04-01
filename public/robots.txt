@@ -5,4 +5,4 @@ Disallow: /onboarding
 Disallow: /auth/
 Disallow: /admin/
 
-Sitemap: https://phytotherapy.ai/sitemap.xml
+Sitemap: https://doctopal.com/sitemap.xml

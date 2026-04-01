@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client";
 
 import { useState } from "react";
@@ -31,7 +31,7 @@ export default function APIMarketplacePage() {
     { name: "Enterprise", reqs: "Unlimited", price: isTr ? "Özel" : "Custom", features: ["All endpoints", "No rate limit", "Dedicated support", "SLA", "Custom endpoints"] },
   ];
 
-  const codeSnippet = "curl -X POST https://api.phytotherapy.ai/v1/interactions \\\n  -H \"Authorization: Bearer YOUR_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"medications\":[\"metformin\",\"lisinopril\"],\"supplements\":[\"st_johns_wort\"]}'";
+  const codeSnippet = "curl -X POST https://api.doctopal.com/v1/interactions \\\n  -H \"Authorization: Bearer YOUR_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"medications\":[\"metformin\",\"lisinopril\"],\"supplements\":[\"st_johns_wort\"]}'";
 
   const copySnippet = () => { navigator.clipboard.writeText(codeSnippet); setCopiedSnippet("main"); setTimeout(() => setCopiedSnippet(""), 2000); };
 

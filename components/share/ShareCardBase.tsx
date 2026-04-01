@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useRef, useState } from "react"
@@ -20,8 +20,8 @@ interface ShareCardBaseProps {
 export function ShareCardBase({
   lang,
   children,
-  fileName = "phytotherapy-card.png",
-  shareTitle = "Phytotherapy.ai",
+  fileName = "doctopal-card.png",
+  shareTitle = "Doctopal",
   shareText,
   className = "",
   showActions = true,

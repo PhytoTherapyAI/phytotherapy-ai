@@ -1,11 +1,11 @@
-# CLAUDE.md — Phytotherapy.ai Proje Anayasası v33.0
+# CLAUDE.md — Doctopal Proje Anayasası v35.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
-**Phytotherapy.ai** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
+**Doctopal** (eski adı: Phytotherapy.ai) — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **11 gün kaldı**
-- **Domain:** phytotherapy.ai ✅ (Vercel'e bağlı, canlı) — 2 yıllık ödeme yapıldı
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **10 gün kaldı**
+- **Domain:** doctopal.com ✅ (Vercel'e bağlanacak) — eski: phytotherapy.ai
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
 - **AI Motor:** Anthropic Claude API (claude-sonnet-4-6) + Embedding: Gemini text-embedding-004
@@ -46,7 +46,7 @@ PDF:          @react-pdf/renderer
 Charts:       Recharts (AreaChart, BarChart, RadarChart, PieChart, ComposedChart)
 Monitoring:   Sentry ✅ (error tracking + session replay + tracing)
 E2E Testing:  Playwright ✅ (54 sayfa + 6 API testi)
-Deploy:       Vercel ✅ — phytotherapy.ai
+Deploy:       Vercel ✅ — doctopal.com
 Auth:         Supabase Auth ✅ (email + Google OAuth + Facebook OAuth)
 Email:        Resend ✅ (verification approval/rejection emails)
 Vector DB:    Supabase pgvector ✅ (semantic search embeddings)
@@ -721,7 +721,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://huiiqbslahqkadchzyig.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
 PUBMED_API_KEY=...
-NEXT_PUBLIC_APP_URL=https://phytotherapy.ai
+NEXT_PUBLIC_APP_URL=https://doctopal.com
 RESEND_API_KEY=...                    # E-posta gönderimi (Resend)
 TWILIO_ACCOUNT_SID=...               # WhatsApp bot
 TWILIO_AUTH_TOKEN=...                 # WhatsApp bot

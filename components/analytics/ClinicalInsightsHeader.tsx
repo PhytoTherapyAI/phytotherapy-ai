@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Clinical Insights Header — Action-first triage + sparkline KPIs + donut distribution
 
 "use client";

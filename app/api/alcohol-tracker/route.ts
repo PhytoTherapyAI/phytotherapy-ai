@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const systemPrompt = `You are an alcohol-health interaction specialist at Phytotherapy.ai.
+    const systemPrompt = `You are an alcohol-health interaction specialist at Doctopal.
 
 ${profileContext ? `PATIENT: ${profileContext}` : ""}
 ${medications.length ? `MEDICATIONS: ${medications.join(", ")}` : ""}

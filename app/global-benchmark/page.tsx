@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Global Benchmark — Strategy Simulator with interactive sliders + AI insight
 "use client"
 

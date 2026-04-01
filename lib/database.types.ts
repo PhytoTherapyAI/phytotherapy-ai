@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Auto-generated types for Supabase tables
 // Matches supabase/schema.sql
 
@@ -370,7 +370,7 @@ export interface BotMessage {
 }
 
 // ── Health Metrics — Integrated Health Data ──────────────
-export type MetricSource = "manual" | "wearable" | "lab_test" | "doctor_note" | "fhir_import" | "apple_health" | "google_fit" | "fitbit" | "garmin" | "oura" | "phytotherapy_ai";
+export type MetricSource = "manual" | "wearable" | "lab_test" | "doctor_note" | "fhir_import" | "apple_health" | "google_fit" | "fitbit" | "garmin" | "oura" | "doctopal_app";
 export type MetricStatus = "normal" | "high" | "low" | "critical";
 
 export interface HealthMetric {

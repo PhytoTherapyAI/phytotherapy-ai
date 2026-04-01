@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Behavioral Vital Logger — Zero-typing, visual grid, context chips, micro-reward
 "use client"
 

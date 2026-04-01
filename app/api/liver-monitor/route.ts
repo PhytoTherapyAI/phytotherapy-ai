@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       ? `Age: ${profile.age || "unknown"}, Gender: ${profile.gender || "unknown"}, Chronic conditions: ${profile.chronic_conditions?.join(", ") || "none"}, Known liver disease: ${profile.liver_disease || false}`
       : "No profile data";
 
-    const systemPrompt = `You are a hepatology-informed health analyst for Phytotherapy.ai. Analyze liver lab values and provide evidence-based liver health guidance.
+    const systemPrompt = `You are a hepatology-informed health analyst for Doctopal. Analyze liver lab values and provide evidence-based liver health guidance.
 
 RULES:
 - Identify hepatotoxic medications: paracetamol/acetaminophen (chronic >4g/day), statins (monitor LFTs), methotrexate (hepatotoxic cumulative), isoniazid, valproate, amiodarone, phenytoin, ketoconazole

@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client";
 
 import { useState } from "react";
@@ -96,7 +96,7 @@ export function ResultDashboard({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `PhytotherapyAI-Report-${new Date().toISOString().split("T")[0]}.pdf`;
+      a.download = `Doctopal-Report-${new Date().toISOString().split("T")[0]}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {

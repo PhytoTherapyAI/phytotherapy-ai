@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
 
     const exportData = {
       exportedAt: new Date().toISOString(),
-      platform: "Phytotherapy.ai",
+      platform: "Doctopal",
       user: {
         email: user.email,
         createdAt: user.created_at,
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     }
 
     const json = JSON.stringify(exportData, null, 2)
-    const filename = `phytotherapy-data-${new Date().toISOString().split("T")[0]}.json`
+    const filename = `doctopal-data-${new Date().toISOString().split("T")[0]}.json`
 
     return new Response(json, {
       headers: {

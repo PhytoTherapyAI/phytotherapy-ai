@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Cormorant_Garamond, DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
@@ -49,7 +49,7 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Phytotherapy.ai — Evidence-Based Integrative Medicine Assistant",
+  title: "Doctopal — Evidence-Based Integrative Medicine Assistant",
   description:
     "AI-powered health assistant bridging modern medicine and evidence-based phytotherapy. Get safe, personalized herbal recommendations with scientific references.",
   keywords: [
@@ -68,18 +68,18 @@ export const metadata: Metadata = {
     "integrative medicine",
     "bütünleştirici tıp",
   ],
-  metadataBase: new URL("https://phytotherapy.ai"),
+  metadataBase: new URL("https://doctopal.com"),
   openGraph: {
-    title: "Phytotherapy.ai — Evidence-Based Integrative Medicine Assistant",
+    title: "Doctopal — Evidence-Based Integrative Medicine Assistant",
     description: "AI-powered health companion bridging modern medicine and evidence-based phytotherapy. Check drug-herb interactions, analyze blood tests, and get personalized health guidance.",
-    url: "https://phytotherapy.ai",
-    siteName: "Phytotherapy.ai",
+    url: "https://doctopal.com",
+    siteName: "Doctopal",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Phytotherapy.ai",
+    title: "Doctopal",
     description: "The world's first evidence-based integrative medicine assistant.",
   },
   robots: {
@@ -98,7 +98,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Phytotherapy.ai",
+    title: "Doctopal",
   },
 };
 

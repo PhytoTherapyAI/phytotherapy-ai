@@ -1,6 +1,6 @@
-// Service Worker — Phytotherapy.ai PWA — Sprint 20 v2
+// Service Worker — Doctopal PWA — Sprint 20 v2
 // Conservative approach: only cache static assets, never Next.js chunks
-const CACHE_NAME = 'phytotherapy-v2';
+const CACHE_NAME = 'doctopal-v2';
 const OFFLINE_URL = '/offline';
 
 // Only cache truly static assets
@@ -70,10 +70,10 @@ self.addEventListener('push', (event) => {
   try {
     const data = event.data.json();
     event.waitUntil(
-      self.registration.showNotification(data.title || 'Phytotherapy.ai', {
+      self.registration.showNotification(data.title || 'Doctopal', {
         body: data.body || '',
         icon: '/icon-192.png',
-        tag: data.tag || 'phytotherapy',
+        tag: data.tag || 'doctopal',
         data: { url: data.url || '/' },
       })
     );

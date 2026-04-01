@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       daysSinceQuit = Math.max(0, Math.floor((now.getTime() - qd.getTime()) / (1000 * 60 * 60 * 24)));
     }
 
-    const systemPrompt = `You are a smoking cessation coach at Phytotherapy.ai.
+    const systemPrompt = `You are a smoking cessation coach at Doctopal.
 
 ${profileContext ? `PATIENT: ${profileContext}` : ""}
 ${medications.length ? `MEDICATIONS: ${medications.join(", ")}` : ""}

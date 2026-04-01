@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       ? `Age: ${profile.age || "unknown"}, Gender: ${profile.gender || "unknown"}, Chronic conditions: ${profile.chronic_conditions?.join(", ") || "none"}`
       : "No profile data";
 
-    const systemPrompt = `You are an ENT/audiology-informed health analyst for Phytotherapy.ai. Analyze hearing and ear symptoms and provide evidence-based guidance.
+    const systemPrompt = `You are an ENT/audiology-informed health analyst for Doctopal. Analyze hearing and ear symptoms and provide evidence-based guidance.
 
 RULES:
 - Identify ototoxic medications: aminoglycosides (gentamicin, tobramycin), high-dose aspirin (>4g/day), cisplatin, carboplatin, furosemide, vancomycin, quinine, erythromycin IV

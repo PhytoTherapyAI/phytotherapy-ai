@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSONMultimodal } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
 
     const userLang = tx("api.respondLang", lang);
 
-    const systemPrompt = `You are a medication prospectus/leaflet reader at Phytotherapy.ai.
+    const systemPrompt = `You are a medication prospectus/leaflet reader at Doctopal.
 Your job is to extract key information from medication packaging, leaflets, or prospectuses and explain them in simple, understandable language.
 
 ${userMedications.length > 0 ? `USER'S CURRENT MEDICATIONS: ${userMedications.join(", ")}` : ""}

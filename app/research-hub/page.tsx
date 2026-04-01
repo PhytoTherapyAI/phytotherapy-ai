@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Research Hub — Interactive Open Innovation Ecosystem
 "use client"
 
@@ -206,7 +206,7 @@ export default function ResearchHubPage() {
             <div className="h-2.5 w-2.5 rounded-full bg-red-500" />
             <div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
             <div className="h-2.5 w-2.5 rounded-full bg-green-500" />
-            <span className="ml-3 text-[10px] text-gray-500 font-mono">phytotherapy.ai — API Explorer</span>
+            <span className="ml-3 text-[10px] text-gray-500 font-mono">doctopal.com — API Explorer</span>
           </div>
           {/* Content */}
           <div className="p-4 font-mono text-xs min-h-[200px] max-h-[400px] overflow-y-auto">
@@ -286,12 +286,12 @@ export default function ResearchHubPage() {
             : "Request API access as a university, research institution, or health company. Let's shape the future of evidence-based phytotherapy together."}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <motion.a href="mailto:research@phytotherapy.ai" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+          <motion.a href="mailto:research@doctopal.com" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
             className="flex items-center gap-2 rounded-2xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
             <Rocket className="h-4 w-4" />
             {isTr ? "Araştırma Partneri Ol" : "Become a Research Partner"}
           </motion.a>
-          <motion.a href="mailto:api@phytotherapy.ai" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+          <motion.a href="mailto:api@doctopal.com" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
             className="flex items-center gap-2 rounded-2xl border px-6 py-3 text-sm font-medium hover:bg-muted transition-all">
             <Key className="h-4 w-4" />
             {isTr ? "API Anahtarı Talep Et" : "Request API Key"}

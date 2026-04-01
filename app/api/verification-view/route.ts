@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Secure Document Viewing API — Admin Only
 // Generates time-limited signed URLs (15min expiry)

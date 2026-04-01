@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const systemPrompt = `You are Phytotherapy.ai's travel health advisor. You provide evidence-based travel health guidance.
+    const systemPrompt = `You are Doctopal's travel health advisor. You provide evidence-based travel health guidance.
 
 RULES:
 1. Provide accurate vaccination requirements based on destination

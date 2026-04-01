@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
         ).join("; ")
       : "No recent check-ins";
 
-    const systemPrompt = `You are Phytotherapy.ai's appointment preparation assistant.
+    const systemPrompt = `You are Doctopal's appointment preparation assistant.
 Generate a comprehensive clinical summary for the patient to bring to their doctor visit.
 This should be professional, concise, and formatted for a healthcare provider to quickly review.
 

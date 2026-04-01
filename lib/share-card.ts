@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Share Card Engine — Sprint 11
 // ============================================
@@ -76,7 +76,7 @@ export async function shareCard(
   if (navigator.canShare?.({ files: [file] })) {
     try {
       await navigator.share({
-        title: shareData?.title ?? "Phytotherapy.ai",
+        title: shareData?.title ?? "Doctopal",
         text: shareData?.text,
         files: [file],
       })

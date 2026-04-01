@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
@@ -409,7 +409,7 @@ function BossFightShareCard({ lang, boss }: { lang: Lang; boss: BossFight }) {
         <div className="relative z-10 flex h-full flex-col p-6 text-white">
           <div className="mb-2 flex items-center gap-2">
             <span className="text-2xl">🌿</span>
-            <span className="text-sm font-semibold tracking-wide opacity-90">Phytotherapy.ai</span>
+            <span className="text-sm font-semibold tracking-wide opacity-90">Doctopal</span>
           </div>
           <h2 className="mb-1 text-sm uppercase tracking-wider opacity-70">Boss Fight</h2>
           <h3 className="mb-2 text-2xl font-extrabold">{boss.name[lang]}</h3>
@@ -425,7 +425,7 @@ function BossFightShareCard({ lang, boss }: { lang: Lang; boss: BossFight }) {
             <p className="text-sm font-bold">{boss.rewards[lang]}</p>
           </div>
           <div className="mt-auto flex items-center justify-between border-t border-white/20 pt-3">
-            <span className="text-[10px] opacity-60">phytotherapy.ai</span>
+            <span className="text-[10px] opacity-60">doctopal.com</span>
             <span className="text-[10px] opacity-60">{new Date().toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US")}</span>
           </div>
         </div>

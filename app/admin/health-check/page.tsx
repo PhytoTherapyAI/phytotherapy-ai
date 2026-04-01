@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -257,7 +257,7 @@ export default function HealthCheckPage() {
                   fontSize: 14,
                 }}
               >
-                Phytotherapy.ai Service Status Dashboard
+                Doctopal Service Status Dashboard
               </p>
             </div>
             <div style={{ display: "flex", gap: 12, alignItems: "center" }}>

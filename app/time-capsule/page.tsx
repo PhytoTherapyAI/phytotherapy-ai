@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
@@ -256,7 +256,7 @@ export default function TimeCapsulePage() {
           </div>
 
           {/* Comparison */}
-          <ShareCardBase lang={lang} fileName="time-capsule-comparison.png" shareTitle="Phytotherapy.ai Time Capsule">
+          <ShareCardBase lang={lang} fileName="time-capsule-comparison.png" shareTitle="Doctopal Time Capsule">
             <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-xl p-5 space-y-4">
               <h3 className="text-center font-semibold text-lg">
                 {tx("timeCapsule.thenVsNow", lang)}
@@ -338,7 +338,7 @@ export default function TimeCapsulePage() {
                 </div>
               )}
 
-              <p className="text-center text-xs text-muted-foreground pt-2">phytotherapy.ai</p>
+              <p className="text-center text-xs text-muted-foreground pt-2">doctopal.com</p>
             </div>
           </ShareCardBase>
 

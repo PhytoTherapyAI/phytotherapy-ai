@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { ShareCardBase } from "./ShareCardBase"
@@ -42,7 +42,7 @@ export function BloodTestShareCard({
         <div className="mb-4 flex items-center justify-between">
           <div>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              Phytotherapy.ai
+              Doctopal
             </p>
             <h3 className="text-lg font-bold">
               {tx("share.bloodTest.summary", lang)}
@@ -133,7 +133,7 @@ export function BloodTestShareCard({
           <p className="text-[9px] text-muted-foreground">
             {new Date().toLocaleDateString(tr ? "tr-TR" : "en-US", { year: "numeric", month: "short", day: "numeric" })}
           </p>
-          <p className="text-[9px] font-medium text-primary">phytotherapy.ai</p>
+          <p className="text-[9px] font-medium text-primary">doctopal.com</p>
         </div>
       </div>
     </ShareCardBase>

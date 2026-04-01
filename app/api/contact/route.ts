@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server"
 import { Resend } from "resend"
 
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
           <p style="margin: 0; white-space: pre-wrap;">${escapeHtml(message)}</p>
         </div>
         <p style="margin-top: 16px; font-size: 12px; color: #6b7280;">
-          Sent from phytotherapy.ai contact form at ${new Date().toISOString()}
+          Sent from doctopal.com contact form at ${new Date().toISOString()}
         </p>
       </div>
     `
@@ -64,8 +64,8 @@ export async function POST(req: NextRequest) {
     }
 
     const { error } = await resend.emails.send({
-      from: "Phytotherapy.ai <noreply@phytotherapy.ai>",
-      to: ["hello@phytotherapy.ai"],
+      from: "Doctopal <noreply@doctopal.com>",
+      to: ["hello@doctopal.com"],
       replyTo: email,
       subject: `[Contact] ${subject}`,
       html: htmlContent,

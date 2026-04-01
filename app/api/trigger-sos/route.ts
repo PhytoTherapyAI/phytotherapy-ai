@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -130,7 +130,7 @@ ${locationUrl ? `📍 KONUM: ${locationUrl}` : "📍 Konum bilgisi mevcut değil
 
 🔴 LÜTFEN 112'Yİ ARAYIN veya hastayı kontrol edin.
 
-Bu mesaj Phytotherapy.ai tarafından otomatik gönderilmiştir.`;
+Bu mesaj Doctopal tarafından otomatik gönderilmiştir.`;
 
     // 6. Log SOS event to Supabase
     try {

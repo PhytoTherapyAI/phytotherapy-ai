@@ -1,5 +1,5 @@
 -- ============================================
--- Phytotherapy.ai — Supabase Schema v1.0
+-- Doctopal — Supabase Schema v1.0
 -- Sprint 2: Auth + Onboarding
 -- ============================================
 

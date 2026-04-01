@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // KVKK/GDPR Consent Management System
 // Dynamic consent with layered disclosure, digital signatures,
@@ -69,8 +69,8 @@ export const CONSENT_DISCLOSURES: Record<ConsentPurpose, {
       tr: "Bitkisel takviyelerle olası etkileşimleri kontrol etmek için ilaç listenize erişeceğiz. Hiçbir veri şifreli sunucularımızdan çıkmaz.",
     },
     details: {
-      en: "Purpose: To analyze your current medications against our herbal interaction database for safety.\n\nData Controller: Phytotherapy.ai (Veri Sorumlusu)\nProcessing: Automated AI analysis with human oversight for critical findings\nStorage: AES-256 encrypted, servers in Turkey/EU\nRetention: Until you withdraw consent or the selected retention period expires\nYour Rights (KVKK Art. 11): Access, correction, deletion, restriction, portability, objection\n\nLegal Basis: KVKK Article 6/1 - Your explicit consent\nData Transfer: No international transfer. No sharing with third parties.\nAutomated Decision: AI provides recommendations, not medical decisions.",
-      tr: "Amaç: Güvenlik için mevcut ilaçlarınızı bitkisel etkileşim veritabanımızla analiz etmek.\n\nVeri Sorumlusu: Phytotherapy.ai\nİşleme: Kritik bulgular için insan denetimi ile otomatik AI analizi\nSaklama: AES-256 şifreli, Türkiye/AB sunucuları\nSaklama Süresi: Rızanızı geri çekene veya seçilen saklama süresi dolana kadar\nHaklarınız (KVKK m.11): Erişim, düzeltme, silme, kısıtlama, taşınabilirlik, itiraz\n\nHukuki Dayanak: KVKK Madde 6/1 - Açık rızanız\nVeri Aktarımı: Uluslararası aktarım yok. Üçüncü taraflarla paylaşım yok.\nOtomatik Karar: AI öneri sunar, tıbbi karar vermez.",
+      en: "Purpose: To analyze your current medications against our herbal interaction database for safety.\n\nData Controller: Doctopal (Veri Sorumlusu)\nProcessing: Automated AI analysis with human oversight for critical findings\nStorage: AES-256 encrypted, servers in Turkey/EU\nRetention: Until you withdraw consent or the selected retention period expires\nYour Rights (KVKK Art. 11): Access, correction, deletion, restriction, portability, objection\n\nLegal Basis: KVKK Article 6/1 - Your explicit consent\nData Transfer: No international transfer. No sharing with third parties.\nAutomated Decision: AI provides recommendations, not medical decisions.",
+      tr: "Amaç: Güvenlik için mevcut ilaçlarınızı bitkisel etkileşim veritabanımızla analiz etmek.\n\nVeri Sorumlusu: Doctopal\nİşleme: Kritik bulgular için insan denetimi ile otomatik AI analizi\nSaklama: AES-256 şifreli, Türkiye/AB sunucuları\nSaklama Süresi: Rızanızı geri çekene veya seçilen saklama süresi dolana kadar\nHaklarınız (KVKK m.11): Erişim, düzeltme, silme, kısıtlama, taşınabilirlik, itiraz\n\nHukuki Dayanak: KVKK Madde 6/1 - Açık rızanız\nVeri Aktarımı: Uluslararası aktarım yok. Üçüncü taraflarla paylaşım yok.\nOtomatik Karar: AI öneri sunar, tıbbi karar vermez.",
     },
     dataCategories: [
       { id: "medications", label: { en: "Current medications", tr: "Mevcut ilaçlar" } },
@@ -111,8 +111,8 @@ export const CONSENT_DISCLOSURES: Record<ConsentPurpose, {
       tr: "İlaçlar, tahlil sonuçları, yaşamsal değerler ve AI önerileri dahil tam sağlık profiliniz seçilen kurumla paylaşılacak.",
     },
     details: {
-      en: "This is the most comprehensive data sharing option. All health data categories will be included in the FHIR bundle.\n\nData Processing Agreement (DPA) applies between Phytotherapy.ai and the receiving institution.\nBoth parties share responsibility for data security under KVKK.\nBreach notification: Within 72 hours to you and authorities (KVKK Art. 12).",
-      tr: "Bu en kapsamlı veri paylaşım seçeneğidir. FHIR paketine tüm sağlık verisi kategorileri dahil edilecektir.\n\nPhytotherapy.ai ile alıcı kurum arasında Veri İşleme Sözleşmesi (DPA) geçerlidir.\nHer iki taraf da KVKK kapsamında veri güvenliği sorumluluğunu paylaşır.\nİhlal bildirimi: Size ve yetkililere 72 saat içinde (KVKK m.12).",
+      en: "This is the most comprehensive data sharing option. All health data categories will be included in the FHIR bundle.\n\nData Processing Agreement (DPA) applies between Doctopal and the receiving institution.\nBoth parties share responsibility for data security under KVKK.\nBreach notification: Within 72 hours to you and authorities (KVKK Art. 12).",
+      tr: "Bu en kapsamlı veri paylaşım seçeneğidir. FHIR paketine tüm sağlık verisi kategorileri dahil edilecektir.\n\nDoctopal ile alıcı kurum arasında Veri İşleme Sözleşmesi (DPA) geçerlidir.\nHer iki taraf da KVKK kapsamında veri güvenliği sorumluluğunu paylaşır.\nİhlal bildirimi: Size ve yetkililere 72 saat içinde (KVKK m.12).",
     },
     dataCategories: [
       { id: "profile", label: { en: "Personal information", tr: "Kişisel bilgiler" } },
@@ -269,7 +269,7 @@ export function checkAccess(request: AccessRequest, activeConsents: ConsentRecor
 export const DPA_CLAUSES = {
   en: [
     "1. DATA CONTROLLER: The healthcare institution sharing patient data",
-    "2. DATA PROCESSOR: Phytotherapy.ai — processing data solely for the stated purpose",
+    "2. DATA PROCESSOR: Doctopal — processing data solely for the stated purpose",
     "3. PURPOSE LIMITATION: Data processed only for herbal interaction analysis and health recommendations",
     "4. DATA MINIMIZATION: Only necessary data categories are collected and processed",
     "5. STORAGE LIMITATION: Data retained for the agreed period, then securely deleted",
@@ -283,7 +283,7 @@ export const DPA_CLAUSES = {
   ],
   tr: [
     "1. VERİ SORUMLUSU: Hasta verisini paylaşan sağlık kurumu",
-    "2. VERİ İŞLEYEN: Phytotherapy.ai — veriyi yalnızca belirtilen amaç için işler",
+    "2. VERİ İŞLEYEN: Doctopal — veriyi yalnızca belirtilen amaç için işler",
     "3. AMAÇ SINIRLAMASI: Veri yalnızca bitkisel etkileşim analizi ve sağlık önerileri için işlenir",
     "4. VERİ MİNİMİZASYONU: Yalnızca gerekli veri kategorileri toplanır ve işlenir",
     "5. SAKLAMA SINIRLAMASI: Veri kararlaştırılan süre boyunca saklanır, ardından güvenle silinir",

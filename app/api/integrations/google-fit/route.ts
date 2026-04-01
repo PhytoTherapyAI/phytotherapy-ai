@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Google Fit OAuth2 Integration
 // GET  /api/integrations/google-fit?action=auth    → redirect to Google consent
@@ -12,7 +12,7 @@ import { checkRateLimit } from "@/lib/rate-limit"
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_FIT_CLIENT_ID || ""
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_FIT_CLIENT_SECRET || ""
-const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL || "https://phytotherapy.ai"}/api/integrations/google-fit?action=callback`
+const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL || "https://doctopal.com"}/api/integrations/google-fit?action=callback`
 const SCOPES = [
   "https://www.googleapis.com/auth/fitness.activity.read",
   "https://www.googleapis.com/auth/fitness.heart_rate.read",

@@ -1,7 +1,7 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // FHIR Resource Converters
-// Transforms phytotherapy.ai data → FHIR R4 resources
+// Transforms doctopal.com data → FHIR R4 resources
 // For hospital interoperability (e-Nabız, EPIC, Cerner)
 // ============================================
 
@@ -32,7 +32,7 @@ export function supplementToFHIR(params: {
     id: `phytoai-med-${Date.now()}`,
     meta: {
       profile: ["http://hl7.org/fhir/StructureDefinition/MedicationStatement"],
-      source: "https://phytotherapy.ai",
+      source: "https://doctopal.com",
       lastUpdated: new Date().toISOString(),
     },
     status: params.status || "active",
@@ -50,7 +50,7 @@ export function supplementToFHIR(params: {
       ...(params.endDate ? { end: params.endDate } : {}),
     },
     dateAsserted: new Date().toISOString(),
-    informationSource: { reference: "Organization/phytotherapy-ai", display: "Phytotherapy.ai" },
+    informationSource: { reference: "Organization/doctopal", display: "Doctopal" },
     dosage: [{
       text: `${params.dose}, ${params.frequency}`,
       route: {
@@ -58,12 +58,12 @@ export function supplementToFHIR(params: {
       },
     }],
     note: [{
-      text: `Recorded via Phytotherapy.ai platform. ${herb?.latinName ? `Latin name: ${herb.latinName}` : ""}`,
+      text: `Recorded via Doctopal platform. ${herb?.latinName ? `Latin name: ${herb.latinName}` : ""}`,
       time: new Date().toISOString(),
     }],
     extension: [
-      { url: "https://phytotherapy.ai/fhir/Extension/evidence-grade", valueString: "B" },
-      { url: "https://phytotherapy.ai/fhir/Extension/interaction-checked", valueBoolean: true },
+      { url: "https://doctopal.com/fhir/Extension/evidence-grade", valueString: "B" },
+      { url: "https://doctopal.com/fhir/Extension/interaction-checked", valueBoolean: true },
     ],
   }
 }
@@ -93,7 +93,7 @@ export function labResultToFHIR(params: {
     id: `phytoai-obs-${Date.now()}`,
     meta: {
       profile: ["http://hl7.org/fhir/StructureDefinition/Observation"],
-      source: "https://phytotherapy.ai",
+      source: "https://doctopal.com",
     },
     status: "final",
     category: [{
@@ -146,7 +146,7 @@ export function createPatientBundle(params: {
   return {
     resourceType: "Bundle",
     id: `phytoai-bundle-${Date.now()}`,
-    meta: { lastUpdated: new Date().toISOString(), source: "https://phytotherapy.ai" },
+    meta: { lastUpdated: new Date().toISOString(), source: "https://doctopal.com" },
     type: "collection",
     total: entries.length,
     entry: entries,
@@ -162,7 +162,7 @@ export function toENabizFormat(bundle: FHIRBundle): {
 } {
   return {
     header: {
-      source: "phytotherapy.ai",
+      source: "doctopal.com",
       version: "FHIR-R4",
       timestamp: new Date().toISOString(),
     },

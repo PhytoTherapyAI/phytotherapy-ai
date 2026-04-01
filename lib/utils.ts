@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 

@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client";
 
 import { useState, useRef } from "react";
@@ -220,12 +220,12 @@ export default function CertificatesPage() {
 
       ctx.fillStyle = "#64748b";
       ctx.font = "12px system-ui";
-      ctx.fillText("Phytotherapy.ai - Evidence-Based Health Assistant", 600, 680);
+      ctx.fillText("Doctopal - Evidence-Based Health Assistant", 600, 680);
 
       // Footer
       ctx.fillStyle = "#94a3b8";
       ctx.font = "10px system-ui";
-      ctx.fillText("phytotherapy.ai | " + tx("certificates.evidenceBased", lang), 600, 740);
+      ctx.fillText("doctopal.com | " + tx("certificates.evidenceBased", lang), 600, 740);
 
       setPreview(canvas.toDataURL("image/png"));
     } finally {
@@ -236,7 +236,7 @@ export default function CertificatesPage() {
   const downloadCertificate = () => {
     if (!preview) return;
     const link = document.createElement("a");
-    link.download = "phytotherapy-certificate.png";
+    link.download = "doctopal-certificate.png";
     link.href = preview;
     link.click();
   };
@@ -245,9 +245,9 @@ export default function CertificatesPage() {
     if (!preview) return;
     try {
       const blob = await (await fetch(preview)).blob();
-      const file = new File([blob], "phytotherapy-certificate.png", { type: "image/png" });
+      const file = new File([blob], "doctopal-certificate.png", { type: "image/png" });
       if (navigator.share) {
-        await navigator.share({ files: [file], title: "Phytotherapy.ai Certificate" });
+        await navigator.share({ files: [file], title: "Doctopal Certificate" });
       }
     } catch {
       downloadCertificate();

@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Design System v2 — Drug Interaction Alert Card
 // Uses: lavender AI glow, coral warnings, sage safe zones, glassmorphism
 

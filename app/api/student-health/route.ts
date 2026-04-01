@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const concern = sanitizeInput(body.concern || "exam stress");
 
-    const systemPrompt = `You are a student health advisor for Phytotherapy.ai.
+    const systemPrompt = `You are a student health advisor for Doctopal.
 You provide evidence-based advice for common student health concerns.
 
 RULES:

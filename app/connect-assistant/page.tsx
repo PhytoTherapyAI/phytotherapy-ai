@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useState, useEffect } from "react"
@@ -72,7 +72,7 @@ export default function ConnectAssistantPage() {
       feature_4: { en: "Pause or disconnect anytime — your data stays safe", tr: "İstediğiniz zaman duraklatın veya bağlantıyı kesin — verileriniz güvende" },
       security: { en: "End-to-end encrypted. We never share your number.", tr: "Uçtan uca şifreli. Numaranızı asla paylaşmayız." },
       tg_step1: { en: "Open Telegram", tr: "Telegram'ı Açın" },
-      tg_open: { en: "Open @PhytotherapyBot", tr: "@PhytotherapyBot'u Açın" },
+      tg_open: { en: "Open @DoctopalBot", tr: "@DoctopalBot'u Açın" },
       tg_or_scan: { en: "Or scan this QR code", tr: "Veya bu QR kodu okutun" },
       tg_waiting: { en: "Waiting for you to start the bot...", tr: "Botu başlatmanızı bekliyoruz..." },
       back: { en: "Back", tr: "Geri" },
@@ -317,7 +317,7 @@ export default function ConnectAssistantPage() {
 
               {/* Bot link */}
               <div className="text-center space-y-4">
-                <a href="https://t.me/PhytotherapyBot" target="_blank" rel="noopener noreferrer">
+                <a href="https://t.me/DoctopalBot" target="_blank" rel="noopener noreferrer">
                   <Button className="gap-2 bg-blue-500 hover:bg-blue-600 text-white">
                     <Send className="w-4 h-4" />{t("tg_open")} <ExternalLink className="w-3 h-3" />
                   </Button>
@@ -325,7 +325,7 @@ export default function ConnectAssistantPage() {
 
                 <p className="text-xs text-muted-foreground">{t("tg_or_scan")}</p>
                 <div className="inline-block p-3 bg-white rounded-xl">
-                  <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://t.me/PhytotherapyBot`}
+                  <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://t.me/DoctopalBot`}
                     alt="Telegram QR" className="w-36 h-36" />
                 </div>
               </div>

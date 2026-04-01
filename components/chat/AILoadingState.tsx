@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Labor Illusion Loading State — makes AI feel like it's doing real scientific work
 
 "use client";

@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useState } from "react"
@@ -202,7 +202,7 @@ export function SeasonalCard({ lang, userMedications = [], userConditions = [] }
             <div className="relative z-10 flex h-full flex-col p-6 text-white">
               <div className="mb-2 flex items-center gap-2">
                 <span className="text-2xl">🌿</span>
-                <span className="text-sm font-semibold tracking-wide opacity-90">Phytotherapy.ai</span>
+                <span className="text-sm font-semibold tracking-wide opacity-90">Doctopal</span>
               </div>
               <h2 className="mb-1 text-xl font-extrabold">
                 {season.emoji} {season.name[lang]} {tx("seasonal.prepGuide", lang)}
@@ -219,7 +219,7 @@ export function SeasonalCard({ lang, userMedications = [], userConditions = [] }
                 ))}
               </div>
               <div className="mt-auto flex items-center justify-between border-t border-white/20 pt-3">
-                <span className="text-[10px] opacity-60">phytotherapy.ai</span>
+                <span className="text-[10px] opacity-60">doctopal.com</span>
                 <span className="text-[10px] opacity-60" suppressHydrationWarning>
                   {new Date().toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US")}
                 </span>

@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
@@ -260,8 +260,8 @@ function LoginContent() {
                     </button>
                   </div>
                 </div>
-                {/* CAPTCHA disabled for hackathon — no server-side verification configured yet */}
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+                <TurnstileWidget onVerify={(token) => setCaptchaToken(token)} onExpire={() => setCaptchaToken(null)} />
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading || !captchaToken}>
                   {isLoading ? tx("auth.signingIn", lang) : tx("auth.signIn", lang)}
                 </Button>
               </form>
@@ -305,8 +305,8 @@ function LoginContent() {
                       value={signupConfirm} onChange={(e) => setSignupConfirm(e.target.value)} required />
                   </div>
                 </div>
-                {/* CAPTCHA disabled for hackathon — no server-side verification configured yet */}
-                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+                <TurnstileWidget onVerify={(token) => setCaptchaToken(token)} onExpire={() => setCaptchaToken(null)} />
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading || !captchaToken}>
                   {isLoading ? tx("auth.creatingAccount", lang) : tx("auth.createAccount", lang)}
                 </Button>
                 <p className="text-center text-xs text-muted-foreground">

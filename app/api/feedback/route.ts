@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { Resend } from "resend"
@@ -63,8 +63,8 @@ export async function POST(req: NextRequest) {
       try {
         const emoji = CATEGORY_EMOJI[category] || "📝"
         await resend.emails.send({
-          from: "Phytotherapy.ai <noreply@phytotherapy.ai>",
-          to: ["hello@phytotherapy.ai"],
+          from: "Doctopal <noreply@doctopal.com>",
+          to: ["hello@doctopal.com"],
           subject: `${emoji} [Feedback] ${category.toUpperCase()} — ${page}`,
           html: `
             <div style="font-family: -apple-system, sans-serif; max-width: 500px;">
@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
                 ...(message ? [{ name: "Mesaj", value: message.slice(0, 1024) }] : []),
               ],
               timestamp: new Date().toISOString(),
-              footer: { text: "phytotherapy.ai feedback" },
+              footer: { text: "doctopal.com feedback" },
             }],
           }),
         })

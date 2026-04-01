@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       // Continue without PubMed
     }
 
-    const systemPrompt = `You are a food-drug interaction specialist at Phytotherapy.ai.
+    const systemPrompt = `You are a food-drug interaction specialist at Doctopal.
 Analyze interactions between foods/beverages and medications.
 
 ${profileContext ? `PATIENT: ${profileContext}` : ""}

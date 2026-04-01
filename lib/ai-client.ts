@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import Anthropic from "@anthropic-ai/sdk";
 
 // Lazy-init client to ensure env vars are loaded at runtime

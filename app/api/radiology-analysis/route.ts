@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSONMultimodal } from "@/lib/ai-client";
 import { RADIOLOGY_ANALYSIS_PROMPT } from "@/lib/prompts";

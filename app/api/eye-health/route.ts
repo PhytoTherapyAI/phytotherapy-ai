@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       ? `Age: ${profile.age || "unknown"}, Gender: ${profile.gender || "unknown"}, Chronic conditions: ${profile.chronic_conditions?.join(", ") || "none"}`
       : "No profile data";
 
-    const systemPrompt = `You are an ophthalmology-informed health analyst for Phytotherapy.ai. Analyze eye symptoms and provide evidence-based eye health guidance.
+    const systemPrompt = `You are an ophthalmology-informed health analyst for Doctopal. Analyze eye symptoms and provide evidence-based eye health guidance.
 
 RULES:
 - Check medication effects on eyes: hydroxychloroquine→retinal toxicity, isotretinoin→night blindness/dry eyes, corticosteroids→glaucoma/cataracts, tamoxifen→retinal deposits, ethambutol→optic neuritis, sildenafil→blue vision, amiodarone→corneal deposits

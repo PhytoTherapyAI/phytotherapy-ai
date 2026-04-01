@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // FHIR Interoperability API Bridge
 // GET  /api/fhir?type=bundle    → Export patient FHIR bundle
@@ -88,7 +88,7 @@ export async function GET(req: Request) {
         headers: {
           "Content-Type": "application/fhir+json",
           "X-FHIR-Version": "4.0.1",
-          "X-Source": "phytotherapy.ai",
+          "X-Source": "doctopal.com",
         },
       })
     }

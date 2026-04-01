@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       )
     );
 
-    const systemPrompt = `You are an ADHD management assistant for Phytotherapy.ai.
+    const systemPrompt = `You are an ADHD management assistant for Doctopal.
 You provide evidence-based focus and productivity guidance for people with ADHD.
 
 CRITICAL SAFETY RULES:

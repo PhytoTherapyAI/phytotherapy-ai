@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     const predictions = generatePredictions(timeline)
     const recent30 = timeline.slice(-30)
 
-    const systemPrompt = `You are a health analytics AI assistant for Phytotherapy.ai. Analyze the user's health timeline data and provide evidence-based insights. Respond in ${tx("api.respondLang", lang)}. Return valid JSON only.`
+    const systemPrompt = `You are a health analytics AI assistant for Doctopal. Analyze the user's health timeline data and provide evidence-based insights. Respond in ${tx("api.respondLang", lang)}. Return valid JSON only.`
 
     const prompt = `Analyze this health data and return JSON with this structure:
 {

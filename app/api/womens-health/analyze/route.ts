@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       profile
     )
 
-    const systemPrompt = `You are a women's health analyst for Phytotherapy.ai. Analyze menstrual cycle data and provide evidence-based insights.
+    const systemPrompt = `You are a women's health analyst for Doctopal. Analyze menstrual cycle data and provide evidence-based insights.
 
 RULES:
 1. You are NOT a doctor. Never diagnose conditions.

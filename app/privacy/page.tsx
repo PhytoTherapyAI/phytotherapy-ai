@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useLang } from "@/components/layout/language-toggle"
@@ -156,7 +156,7 @@ export default function PrivacyPolicyPage() {
           <p>
             {tx("privacy.s10Text", lang)}
           </p>
-          <p className="mt-2 font-heading text-lg font-medium text-foreground">privacy@phytotherapy.ai</p>
+          <p className="mt-2 font-heading text-lg font-medium text-foreground">privacy@doctopal.com</p>
         </section>
       </div>
     </div>

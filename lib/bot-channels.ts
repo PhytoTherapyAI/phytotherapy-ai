@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Omnichannel Bot — Data Schema & Config
 // WhatsApp (Twilio) + Telegram Bot API
@@ -87,19 +87,19 @@ export const CHANNEL_CONFIG = {
     },
     setupSteps: {
       en: [
-        "Open Telegram and search for @PhytotherapyBot",
+        "Open Telegram and search for @DoctopalBot",
         "Press 'Start' to activate the bot",
         "The bot will ask you to link your account",
         "Done! Your daily plan arrives at 09:00 every morning.",
       ],
       tr: [
-        "Telegram'ı açın ve @PhytotherapyBot'u arayın",
+        "Telegram'ı açın ve @DoctopalBot'u arayın",
         "'Başlat' butonuna basarak botu aktifleştirin",
         "Bot hesabınızı bağlamanızı isteyecek",
         "Tamam! Günlük planınız her sabah 09:00'da gelecek.",
       ],
     },
-    botUsername: "@PhytotherapyBot",
+    botUsername: "@DoctopalBot",
     provider: "telegram-bot-api",
   },
 }
@@ -133,8 +133,8 @@ export const MESSAGE_TEMPLATES = {
     tr: "▶️ Günlük mesajlar yeniden başlatıldı! Planınız yarın 09:00'da gelecek.",
   },
   welcome: {
-    en: "👋 Welcome to Phytotherapy.ai Daily Assistant! You'll receive personalized health tips every morning at 09:00.",
-    tr: "👋 Phytotherapy.ai Günlük Asistan'a hoş geldiniz! Her sabah 09:00'da kişiselleştirilmiş sağlık önerileri alacaksınız.",
+    en: "👋 Welcome to Doctopal Daily Assistant! You'll receive personalized health tips every morning at 09:00.",
+    tr: "👋 Doctopal Günlük Asistan'a hoş geldiniz! Her sabah 09:00'da kişiselleştirilmiş sağlık önerileri alacaksınız.",
   },
 }
 

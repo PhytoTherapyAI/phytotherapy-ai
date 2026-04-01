@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client";
 
 import { Users, Heart, Brain, Leaf, Shield, Sparkles } from "lucide-react";

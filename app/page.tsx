@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client";
 
 import { useState, useEffect } from "react";
@@ -28,15 +28,15 @@ const TRUST_KEYS = ["lp.trust1", "lp.trust2", "lp.trust3", "lp.trust4", "lp.trus
 
 const FAQ_ITEMS = [
   { questionTr: "Fitoterapi nedir?", questionEn: "What is phytotherapy?",
-    answerTr: "Fitoterapi, bilimsel olarak kanıtlanmış bitkisel tedavilerin kullanılmasıdır. Phytotherapy.ai, modern tıp ile kanıta dayalı bitkisel tıbbı birleştirerek güvenli ve kişiselleştirilmiş öneriler sunar.",
-    answerEn: "Phytotherapy is the use of scientifically proven herbal treatments. Phytotherapy.ai bridges modern medicine and evidence-based herbal medicine to provide safe, personalized recommendations." },
+    answerTr: "Fitoterapi, bilimsel olarak kanıtlanmış bitkisel tedavilerin kullanılmasıdır. Doctopal, modern tıp ile kanıta dayalı bitkisel tıbbı birleştirerek güvenli ve kişiselleştirilmiş öneriler sunar.",
+    answerEn: "Phytotherapy is the use of scientifically proven herbal treatments. Doctopal bridges modern medicine and evidence-based herbal medicine to provide safe, personalized recommendations." },
   { questionTr: "İlaçlarla bitkisel takviye kullanmak güvenli mi?", questionEn: "Is it safe to use herbal supplements with medications?",
-    answerTr: "Bazı bitkisel takviyeler ilaçlarla etkileşime girebilir. Phytotherapy.ai'ın ilaç etkileşim kontrolü, güvenli ve riskli kombinasyonları bilimsel kaynaklarla gösterir.",
-    answerEn: "Some herbal supplements can interact with medications. Phytotherapy.ai's drug interaction checker shows safe and risky combinations with scientific sources." },
+    answerTr: "Bazı bitkisel takviyeler ilaçlarla etkileşime girebilir. Doctopal'ın ilaç etkileşim kontrolü, güvenli ve riskli kombinasyonları bilimsel kaynaklarla gösterir.",
+    answerEn: "Some herbal supplements can interact with medications. Doctopal's drug interaction checker shows safe and risky combinations with scientific sources." },
   { questionTr: "Kan tahlilimi nasıl yorumlarım?", questionEn: "How can I interpret my blood test results?",
     answerTr: "Kan tahlili değerlerinizi girerek yapay zeka destekli detaylı analiz alabilirsiniz. 30'dan fazla biyomarkör değerlendirilir.",
     answerEn: "Enter your blood test values for AI-powered detailed analysis. 30+ biomarkers are evaluated." },
-  { questionTr: "Phytotherapy.ai ücretsiz mi?", questionEn: "Is Phytotherapy.ai free?",
+  { questionTr: "Doctopal ücretsiz mi?", questionEn: "Is Doctopal free?",
     answerTr: "Evet, temel özellikleri ücretsizdir. Sağlık asistanı, ilaç etkileşim kontrolü ve kan tahlili analizi ücretsiz kullanılabilir.",
     answerEn: "Yes, core features are free. The health assistant, drug interaction checker, and blood test analysis are available at no cost." },
 ];
@@ -373,7 +373,7 @@ export default function Home() {
       {/* JSON-LD */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org", "@type": "WebApplication",
-        name: "Phytotherapy.ai", url: "https://phytotherapy.ai",
+        name: "Doctopal", url: "https://doctopal.com",
         description: "AI-powered evidence-based integrative medicine assistant.",
         applicationCategory: "HealthApplication", operatingSystem: "Web",
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },

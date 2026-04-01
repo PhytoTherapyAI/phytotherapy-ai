@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Email Sending Utility — Resend Integration
 // ============================================
@@ -12,9 +12,9 @@ import { Resend } from "resend"
 
 const resend = new Resend(process.env.RESEND_API_KEY || "re_placeholder")
 
-const FROM_EMAIL = "Phytotherapy.ai <noreply@phytotherapy.ai>"
+const FROM_EMAIL = "Doctopal <noreply@doctopal.com>"
 // Note: Until custom domain is verified in Resend,
-// use: "Phytotherapy.ai <onboarding@resend.dev>" for testing
+// use: "Doctopal <onboarding@resend.dev>" for testing
 
 interface SendEmailResult {
   success: boolean

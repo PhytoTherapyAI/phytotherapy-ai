@@ -1,6 +1,51 @@
-# PROGRESS.md — Phytotherapy.ai Sprint İlerleme Takibi
+# PROGRESS.md — Doctopal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Nisan 2026 (v35.0 — Claude Migration + Bug Fix + Performance)
+> Son güncelleme: 1 Nisan 2026 (v37.0 — PubMed Cache + Domain Migration)
+
+---
+
+## Oturum 1 Nisan 2026 (Session 9) — PubMed Cache + Domain Migration
+
+### PubMed 24 Saat Cache ✅
+- ✅ `lib/pubmed.ts` — in-memory 24 saat cache sistemi eklendi
+- ✅ `getCacheKey()` — query + maxResults normalize
+- ✅ `getFromCache()` / `setCache()` — TTL kontrolü + LRU eviction
+- ✅ Max 500 entry, 24 saat TTL
+- ✅ `clearPubMedCache()` + `getPubMedCacheStats()` export (admin/test için)
+- ✅ Boş sonuçlar cache'lenmez (sadece veri varsa cache'e yazılır)
+- **Performans etkisi:** PubMed sorguları tekrarlanan aramalar için 0ms (önceden 2-4s)
+
+### Domain Migration: phytotherapy.ai → doctopal.com ✅
+- ✅ 38+ kaynak dosyada `phytotherapy.ai` → `doctopal.com` toplu değişiklik
+- ✅ 400+ dosyada `Phytotherapy.ai` brand → `Doctopal` güncellendi (copyright headers dahil)
+- ✅ `public/sitemap.xml` — 32 URL güncellendi
+- ✅ `public/robots.txt` — sitemap URL güncellendi
+- ✅ `public/manifest.json` — name/short_name güncellendi
+- ✅ `public/sw.js` — cache name güncellendi
+- ✅ `LICENSE` — brand adı + contact email güncellendi
+- ✅ `app/layout.tsx` — metadataBase, openGraph, twitter meta güncellendi
+- ✅ `next.config.ts` — Sentry org adı korundu (ayrıca Sentry dashboard'da güncellenmeli)
+- ✅ Email adresleri: noreply@, hello@, legal@, privacy@, security@, research@, api@, support@, info@ → doctopal.com
+- ✅ PDF dosya adları: PhytotherapyAI-* → Doctopal-*
+- ✅ Telegram bot: @PhytotherapyBot → @DoctopalBot
+- ✅ FHIR kaynakları: Organization/phytotherapy-ai → Organization/doctopal
+- ✅ localStorage key'leri: phytotherapy_guest_* → doctopal_guest_*
+- ✅ .ics export, QR export, share card dosya adları güncellendi
+- ✅ CLAUDE.md güncellendi (domain, env vars, versiyon)
+- ✅ Build: zero errors, compiled successfully
+
+### Manuel Yapılması Gerekenler (Kod Dışı)
+- [ ] Vercel Dashboard: doctopal.com domain'i ekle + DNS ayarla
+- [ ] Supabase Dashboard: Site URL → https://doctopal.com
+- [ ] Supabase Dashboard: Redirect URLs → https://doctopal.com/auth/callback
+- [ ] Google OAuth Console: Authorized redirect URIs → doctopal.com
+- [ ] Facebook OAuth Console: Valid OAuth Redirect URIs → doctopal.com
+- [ ] Google Search Console: doctopal.com domain doğrulaması
+- [ ] Cloudflare Turnstile: domain whitelist güncelle
+- [ ] Resend: doctopal.com domain doğrulaması (email gönderimi için)
+- [ ] Sentry Dashboard: org/project güncelle (opsiyonel)
+- [ ] .env.local: NEXT_PUBLIC_APP_URL=https://doctopal.com
+- [ ] Telegram: @DoctopalBot oluştur (BotFather)
 
 ---
 

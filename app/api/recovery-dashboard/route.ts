@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // ============================================
 // Recovery Dashboard BFF — /api/recovery-dashboard
 // Single endpoint for the Smart Recovery Hub
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
         const isShift = dailyLog.contextTags.includes("on_call");
         const isTraveling = dailyLog.contextTags.includes("traveling");
 
-        const systemPrompt = `You are a sleep scientist and recovery coach for Phytotherapy.ai.
+        const systemPrompt = `You are a sleep scientist and recovery coach for Doctopal.
 Analyze today's recovery data and provide personalized guidance.
 ${isShift ? "IMPORTANT: User is on shift/on-call. Do NOT penalize daytime sleep. Provide shift-specific recovery advice." : ""}
 ${isTraveling ? "IMPORTANT: User is traveling. Provide jet lag management tips with melatonin timing." : ""}

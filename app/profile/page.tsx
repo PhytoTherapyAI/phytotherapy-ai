@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -1341,7 +1341,7 @@ export default function ProfilePage() {
                   const url = URL.createObjectURL(blob)
                   const a = document.createElement("a")
                   a.href = url
-                  a.download = `phytotherapy-data-${new Date().toISOString().split("T")[0]}.json`
+                  a.download = `doctopal-data-${new Date().toISOString().split("T")[0]}.json`
                   a.click()
                   URL.revokeObjectURL(url)
                 } catch {

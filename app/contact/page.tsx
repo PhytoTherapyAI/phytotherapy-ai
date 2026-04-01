@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useState } from "react"
@@ -60,7 +60,7 @@ export default function ContactPage() {
           <Card className="p-5 text-center">
             <Mail className="w-6 h-6 text-primary mx-auto mb-2" />
             <p className="font-medium text-sm">{tx("contact.email", lang)}</p>
-            <p className="text-xs text-muted-foreground mt-1">hello@phytotherapy.ai</p>
+            <p className="text-xs text-muted-foreground mt-1">hello@doctopal.com</p>
           </Card>
           <Card className="p-5 text-center">
             <MessageSquare className="w-6 h-6 text-primary mx-auto mb-2" />

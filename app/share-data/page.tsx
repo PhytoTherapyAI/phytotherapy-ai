@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Share Data (FHIR) — Data Vault with toggle switches + self-destructing links
 "use client"
 

@@ -1,9 +1,9 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 // Guest query limit system
 // Tracks queries in localStorage for unauthenticated users
 
-const GUEST_QUERY_KEY = "phytotherapy_guest_queries";
-const GUEST_SESSION_KEY = "phytotherapy_guest_session";
+const GUEST_QUERY_KEY = "doctopal_guest_queries";
+const GUEST_SESSION_KEY = "doctopal_guest_session";
 const MAX_GUEST_QUERIES = 5;
 
 interface GuestQueryData {

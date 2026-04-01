@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
         .join("\n");
     }
 
-    const systemPrompt = `You are a supplement comparison expert at Phytotherapy.ai.
+    const systemPrompt = `You are a supplement comparison expert at Doctopal.
 Compare two supplements side by side with evidence-based analysis.
 
 ${profileContext ? `USER PROFILE: ${profileContext}` : ""}

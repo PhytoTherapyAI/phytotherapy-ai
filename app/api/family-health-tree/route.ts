@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "At least one family member is required" }, { status: 400 });
     }
 
-    const systemPrompt = `You are a hereditary risk analysis assistant for Phytotherapy.ai.
+    const systemPrompt = `You are a hereditary risk analysis assistant for Doctopal.
 You analyze family health history to identify genetic risk patterns.
 
 RULES:

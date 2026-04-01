@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
@@ -131,7 +131,7 @@ export default function WrappedPage() {
         {data && (
           <ShareCardBase
             lang={lang}
-            fileName="phytotherapy-wrapped.png"
+            fileName="doctopal-wrapped.png"
             shareTitle={tx("wrapped.shareTitle", lang)}
           >
           <div className="space-y-4">

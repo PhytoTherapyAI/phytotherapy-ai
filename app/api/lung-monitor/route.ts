@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     const actTotal = actScores.length === 5 ? actScores.reduce((a: number, b: number) => a + b, 0) : null;
     const catTotal = catScores.length === 8 ? catScores.reduce((a: number, b: number) => a + b, 0) : null;
 
-    const systemPrompt = `You are a pulmonology-informed health analyst for Phytotherapy.ai. Analyze respiratory symptoms and provide evidence-based lung health guidance.
+    const systemPrompt = `You are a pulmonology-informed health analyst for Doctopal. Analyze respiratory symptoms and provide evidence-based lung health guidance.
 
 RULES:
 - For asthma: Interpret ACT score (25=well controlled, 20-24=not well controlled, <20=very poorly controlled)

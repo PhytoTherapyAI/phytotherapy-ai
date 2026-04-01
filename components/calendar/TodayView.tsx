@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react"
@@ -583,7 +583,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           const msg = tr
             ? `Bugün henüz almadığın ilaç/takviye var!`
             : `You have untaken meds/supplements today!`
-          new Notification("Phytotherapy.ai", { body: msg, icon: "/icon-192.png" })
+          new Notification("Doctopal", { body: msg, icon: "/icon-192.png" })
         }
         sessionStorage.setItem(`evening-reminder-${today}`, "true")
       }

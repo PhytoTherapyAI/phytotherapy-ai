@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 "use client"
 
 import { useLang } from "@/components/layout/language-toggle"
@@ -167,7 +167,7 @@ export default function TermsPage() {
           <p>
             {tx("terms.contactText", lang)}
           </p>
-          <p className="mt-2 font-heading text-lg font-medium text-foreground">legal@phytotherapy.ai</p>
+          <p className="mt-2 font-heading text-lg font-medium text-foreground">legal@doctopal.com</p>
         </section>
       </div>
     </div>

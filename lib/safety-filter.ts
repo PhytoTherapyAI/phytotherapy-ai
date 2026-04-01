@@ -1,4 +1,4 @@
-// © 2026 Phytotherapy.ai — All Rights Reserved
+// © 2026 Doctopal — All Rights Reserved
 const RED_FLAGS_EN = [
   "chest pain",
   "heart attack",
