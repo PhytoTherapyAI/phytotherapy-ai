@@ -54,7 +54,10 @@ export async function POST(req: Request) {
 
   try {
     const body: VerifyRequest = await req.json()
-    const { targetUserId, action, rejectionReason, adminNotes } = body
+    const targetUserId = String(body.targetUserId || "").trim()
+    const action = String(body.action || "").trim()
+    const rejectionReason = body.rejectionReason ? String(body.rejectionReason).replace(/<[^>]*>/g, "").trim().substring(0, 500) : undefined
+    const adminNotes = body.adminNotes ? String(body.adminNotes).replace(/<[^>]*>/g, "").trim().substring(0, 1000) : undefined
 
     // 4. Validate input
     if (!targetUserId || !action) {

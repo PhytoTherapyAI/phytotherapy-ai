@@ -81,9 +81,11 @@ function performSearch(query: string, lang: string): SearchResult[] {
   if (!query || query.length < 2) return []
   const q = query.toLowerCase()
 
+  const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
   const highlight = (text: string): string => {
+    const safe = escapeHtml(text)
     const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi")
-    return text.replace(regex, '<mark class="bg-primary/20 text-foreground rounded px-0.5">$1</mark>')
+    return safe.replace(regex, '<mark class="bg-primary/20 text-foreground rounded px-0.5">$1</mark>')
   }
 
   const matchItem = (item: SearchItem): boolean => {

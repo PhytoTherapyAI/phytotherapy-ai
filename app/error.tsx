@@ -29,7 +29,7 @@ export default function Error({
   }
 
   const handleRefresh = () => {
-    window.location.reload()
+    if (typeof window !== "undefined") window.location.reload()
   }
 
   return (

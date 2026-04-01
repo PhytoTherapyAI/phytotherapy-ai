@@ -72,7 +72,7 @@ function WeeklyStrip({ selectedDate, onSelect, lang }: { selectedDate: Date; onS
               isSelected ? "bg-primary text-white shadow-lg shadow-primary/25" : isToday ? "bg-primary/10" : "hover:bg-stone-100 dark:hover:bg-stone-800"
             }`}>
             <span className={`text-[10px] font-medium ${isSelected ? "text-white/80" : "text-muted-foreground"}`}>
-              {(dayNames as any)[lang]?.[i] || dayNames.en[i]}
+              {(dayNames as Record<string, string[]>)[lang]?.[i] || dayNames.en[i]}
             </span>
             <span className={`text-lg font-bold ${isSelected ? "text-white" : "text-foreground"}`}>{d.getDate()}</span>
             {isToday && !isSelected && <span className="h-1 w-1 rounded-full bg-primary" />}
