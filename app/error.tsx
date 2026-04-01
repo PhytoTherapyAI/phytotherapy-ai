@@ -1,7 +1,7 @@
 // © 2026 Phytotherapy.ai — All Rights Reserved
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle, RotateCcw, Home } from "lucide-react"
 
@@ -12,20 +12,27 @@ export default function Error({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const retryCount = useRef(0)
+
   useEffect(() => {
     console.error("[ErrorBoundary]", error)
     import("@sentry/nextjs").then((Sentry) => Sentry.captureException(error)).catch(() => {})
-  }, [error])
 
-  const handleReset = () => {
-    // Clear any cached state that might cause the error to repeat
-    try {
-      // Clear error-causing session storage entries
-      if (typeof window !== "undefined") {
-        sessionStorage.removeItem("lastError")
-      }
-    } catch {}
-    reset()
+    // Auto-retry up to 2 times with delay (handles cold start / deploy transitions)
+    if (retryCount.current < 2) {
+      retryCount.current++
+      const timer = setTimeout(() => reset(), 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [error, reset])
+
+  // Show UI only after auto-retries are exhausted
+  if (retryCount.current < 2) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    )
   }
 
   const handleRefresh = () => {
@@ -41,20 +48,15 @@ export default function Error({
       <p className="max-w-md text-sm text-muted-foreground">
         Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin veya sayfayı yenileyin.
       </p>
-      {error.message && (
-        <p className="max-w-md text-xs text-muted-foreground/60 font-mono bg-muted rounded-lg px-3 py-2">
-          {error.message.substring(0, 200)}
-        </p>
-      )}
       <div className="flex gap-3">
-        <Button onClick={handleReset} variant="default" className="gap-2">
+        <Button onClick={() => reset()} variant="default" className="gap-2">
           <RotateCcw className="h-4 w-4" />
           Tekrar Dene
         </Button>
         <Button onClick={handleRefresh} variant="outline" className="gap-2">
           Sayfayı Yenile
         </Button>
-        <Button onClick={() => window.location.href = "/"} variant="ghost" className="gap-2">
+        <Button onClick={() => { if (typeof window !== "undefined") window.location.href = "/" }} variant="ghost" className="gap-2">
           <Home className="h-4 w-4" />
           Ana Sayfa
         </Button>
