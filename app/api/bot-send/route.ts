@@ -219,7 +219,7 @@ export async function POST(req: Request) {
 
       let message: string
       try {
-        const { askGemini } = await import("@/lib/gemini")
+        const { askGemini } = await import("@/lib/ai-client")
         const { systemPrompt, userPrompt } = buildNudgePrompt(nudge.trigger, nudge.context, nudge.lang)
         message = await askGemini(userPrompt, systemPrompt)
         if (message.length > 1600) message = message.slice(0, 1597) + "..."
