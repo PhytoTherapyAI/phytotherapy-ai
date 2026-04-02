@@ -1,283 +1,181 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import {
-  ClipboardCheck,
-  Syringe,
-  Stethoscope,
-  TestTube,
-  Calendar,
-  Loader2,
-  LogIn,
-  Sparkles,
-  Lightbulb,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, Shield } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-interface CheckupResult {
-  annualPlan: Array<{ test: string; specialist: string; frequency: string; priority: string; reason: string; preparation: string }>;
-  bloodWorkPanel: Array<{ test: string; reason: string; fasting: boolean }>;
-  specialistVisits: Array<{ specialist: string; frequency: string; reason: string }>;
-  vaccinations: Array<{ vaccine: string; dueDate: string; notes: string }>;
-  schedulingSuggestion: string;
-  costSavingTips: string[];
+const protectionAreas = [
+  { id: "metabolic", emoji: "⚖️", label: "Metabolic Balance", old: "Obesity" },
+  { id: "cardio", emoji: "🫀", label: "Cardiovascular Shield", old: "High BP" },
+  { id: "mental", emoji: "🧠", label: "Mental Resilience", old: "Depression" },
+  { id: "genetic", emoji: "🧬", label: "Genetic Cell Protection", old: "Family Cancer" },
+  { id: "bone", emoji: "🦴", label: "Bone Density Guard", old: "Osteoporosis" },
+  { id: "digestive", emoji: "🍃", label: "Digestive Wellness", old: "GI Issues" },
+]
+
+function LaborIllusion({ onComplete }: { onComplete: () => void }) {
+  const steps = [
+    "Reviewing international screening guidelines...",
+    "Scanning age-specific biomarkers...",
+    "Cross-referencing family history patterns...",
+    "Creating your personalized annual check-up calendar...",
+  ]
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(s => {
+        if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s }
+        return s + 1
+      })
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-blue-950/50 backdrop-blur-sm">
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          className="w-14 h-14 mx-auto mb-4 rounded-full border-4 border-slate-200 border-t-blue-500" />
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="text-slate-600 text-sm">{steps[step]}</motion.p>
+        </AnimatePresence>
+        <div className="flex gap-1 justify-center mt-4">
+          {steps.map((_, i) => <div key={i} className={`w-2 h-2 rounded-full ${i <= step ? "bg-blue-500" : "bg-slate-200"}`} />)}
+        </div>
+      </motion.div>
+    </motion.div>
+  )
 }
 
-const RISK_FACTORS = {
-  en: ["Family history of heart disease", "Family history of cancer", "Diabetes risk", "Obesity", "Smoker/former smoker", "High blood pressure", "Sedentary lifestyle", "High stress", "History of depression", "Chronic medication use"],
-  tr: ["Ailede kalp hastaligi", "Ailede kanser geçmişi", "Diyabet riski", "Obezite", "Sigara/eski sigara kullanici", "Yüksek tansiyon", "Hareketsiz yasam", "Yüksek stres", "Depresyon geçmişi", "Kronik ilac kullanimi"],
-};
-
 export default function CheckupPlannerPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [age, setAge] = useState("35");
-  const [gender, setGender] = useState("male");
-  const [riskFactors, setRiskFactors] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<CheckupResult | null>(null);
+  const router = useRouter()
+  const [gender, setGender] = useState<"male" | "female" | null>(null)
+  const [age, setAge] = useState(35)
+  const [selectedAreas, setSelectedAreas] = useState<string[]>(["cardio", "metabolic"])
+  const [showLabor, setShowLabor] = useState(false)
+  const [showResult, setShowResult] = useState(false)
 
-  const factors = RISK_FACTORS[lang];
-  const factorsEN = RISK_FACTORS.en;
-
-  const toggleFactor = (factor: string) => {
-    setRiskFactors((prev) => prev.includes(factor) ? prev.filter((f) => f !== factor) : [...prev, factor]);
-  };
-
-  const handleGenerate = async () => {
-    if (!session?.access_token) return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/checkup-planner", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ lang, age, gender, risk_factors: riskFactors }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to generate plan");
-      }
-
-      const data = await res.json();
-      setResult(data.result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold">{tx("checkup.title", lang)}</h1>
-          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
-          <Button onClick={() => window.location.href = "/auth/login"}>
-            <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
-          </Button>
-        </div>
-      </div>
-    );
+  const toggleArea = (id: string) => {
+    setSelectedAreas(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id])
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-8 px-4">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-4 py-1.5 rounded-full text-sm font-medium">
-            <ClipboardCheck className="w-4 h-4" />
-            {tx("checkup.title", lang)}
+    <div className="min-h-screen bg-gradient-to-b from-blue-50/30 via-stone-50 to-emerald-50/20">
+      <AnimatePresence>
+        {showLabor && <LaborIllusion onComplete={() => { setShowLabor(false); setShowResult(true) }} />}
+      </AnimatePresence>
+
+      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/60">
+            <ChevronLeft className="w-5 h-5 text-slate-600" />
+          </button>
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-slate-800">Longevity Shield</h1>
+            <p className="text-xs text-slate-400">Plan your next 10 years of health</p>
           </div>
-          <h1 className="text-3xl font-bold">{tx("checkup.title", lang)}</h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">{tx("checkup.subtitle", lang)}</p>
-        </div>
+          <Shield className="w-5 h-5 text-blue-400" />
+        </motion.div>
 
-        {/* Input Form */}
-        <div className="bg-card border rounded-2xl p-6 space-y-4">
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium">{tx("common.age", lang)}</label>
-              <input type="number" min="18" max="100" value={age} onChange={(e) => setAge(e.target.value)}
-                className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-blue-500" />
-            </div>
-            <div>
-              <label className="text-sm font-medium">{tx("common.gender", lang)}</label>
-              <select value={gender} onChange={(e) => setGender(e.target.value)}
-                className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="male">{tx("common.male", lang)}</option>
-                <option value="female">{tx("common.female", lang)}</option>
-              </select>
-            </div>
+        {/* Gender Selection */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-2 gap-3 mb-6">
+          {[
+            { val: "female" as const, emoji: "👩", label: "Female" },
+            { val: "male" as const, emoji: "👨", label: "Male" },
+          ].map(g => (
+            <motion.button
+              key={g.val}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => setGender(g.val)}
+              className={`p-5 rounded-2xl border-2 text-center transition-all ${
+                gender === g.val
+                  ? g.val === "female" ? "border-pink-300 bg-pink-50" : "border-blue-300 bg-blue-50"
+                  : "border-slate-100 bg-white"
+              }`}
+            >
+              <span className="text-3xl block mb-1">{g.emoji}</span>
+              <span className="text-sm font-medium text-slate-700">{g.label}</span>
+            </motion.button>
+          ))}
+        </motion.div>
+
+        {/* Age Tunnel */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-slate-100">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-slate-500">Your Age</span>
+            <span className="text-xl font-bold text-slate-800">{age}</span>
           </div>
+          <input type="range" min={18} max={80} value={age} onChange={(e) => setAge(Number(e.target.value))}
+            className="w-full accent-blue-500" />
+          <p className="text-xs text-blue-500 mt-2 text-center">Planning your golden years ahead.</p>
+        </motion.div>
 
-          <div>
-            <label className="text-sm font-medium">{tx("checkupPlanner.riskFactors", lang)}</label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {factors.map((factor, i) => (
-                <button key={i} onClick={() => toggleFactor(factorsEN[i])}
-                  className={`rounded-full px-3 py-1.5 text-xs transition-colors ${
-                    riskFactors.includes(factorsEN[i])
-                      ? "bg-blue-500 text-white"
-                      : "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300"
-                  }`}>{factor}</button>
-              ))}
-            </div>
+        {/* Protection Areas */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-6">
+          <h3 className="text-sm font-semibold text-slate-600 mb-3 px-1">Priority Protection Areas</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {protectionAreas.map((area, i) => {
+              const isActive = selectedAreas.includes(area.id)
+              return (
+                <motion.button
+                  key={area.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.25 + i * 0.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => toggleArea(area.id)}
+                  className={`flex flex-col items-start p-4 rounded-2xl border-2 text-left transition-all ${
+                    isActive ? "border-blue-300 bg-blue-50 shadow-sm" : "border-slate-100 bg-white"
+                  }`}
+                >
+                  <span className="text-xl mb-1">{area.emoji}</span>
+                  <span className="text-sm font-medium text-slate-700">{area.label}</span>
+                </motion.button>
+              )
+            })}
           </div>
+        </motion.div>
 
-          <Button onClick={handleGenerate} disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white" size="lg">
-            {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.generating", lang)}</>
-            ) : (
-              <><Sparkles className="mr-2 h-5 w-5" />{tx("checkup.generate", lang)}</>
-            )}
-          </Button>
-        </div>
+        {/* Action */}
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setShowLabor(true)}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-blue-500 to-emerald-500 text-white font-medium shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
+        >
+          <Sparkles className="w-4 h-4" />
+          Map My Longevity Shield
+        </motion.button>
 
-        {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">{error}</div>
-        )}
-
-        {/* Results */}
-        {result && (
-          <div className="space-y-6">
-            {/* Annual Plan */}
-            {result.annualPlan?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-blue-500" />
-                  {tx("checkupPlanner.annualPlan", lang)}
-                </h2>
-                <div className="grid gap-3">
-                  {result.annualPlan.map((item, i) => (
-                    <div key={i} className={`border rounded-xl p-4 ${
-                      item.priority === "essential" ? "border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/10" :
-                      item.priority === "recommended" ? "border-border" : "border-dashed border-border"
-                    }`}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-semibold">{item.test}</span>
-                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                          item.priority === "essential" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
-                          item.priority === "recommended" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
-                          "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
-                        }`}>{item.priority}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{item.specialist} | {item.frequency}</p>
-                      <p className="text-sm mt-1">{item.reason}</p>
-                      {item.preparation && <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">{item.preparation}</p>}
-                    </div>
-                  ))}
+        <AnimatePresence>
+          {showResult && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="mt-4 bg-white rounded-2xl p-5 shadow-sm border border-blue-100">
+              <h3 className="text-sm font-semibold text-blue-600 mb-2">Your Check-up Calendar</h3>
+              <div className="space-y-2 text-sm text-slate-600">
+                <p>Based on your age ({age}) and selected areas:</p>
+                <div className="bg-blue-50 rounded-xl p-3 space-y-1.5">
+                  <p>- Annual blood panel (lipids, glucose, HbA1c)</p>
+                  <p>- Blood pressure monitoring every 6 months</p>
+                  <p>- Cardiac stress test (recommended at {age > 40 ? "your age" : "age 40+"})</p>
+                  {gender === "female" && <p>- Mammography screening</p>}
+                  {gender === "male" && <p>- PSA screening discussion with doctor</p>}
+                  <p>- Bone density scan (if risk factors present)</p>
                 </div>
               </div>
-            )}
-
-            {/* Blood Work */}
-            {result.bloodWorkPanel?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <TestTube className="w-5 h-5 text-red-500" />
-                  {tx("checkupPlanner.bloodWork", lang)}
-                </h2>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {result.bloodWorkPanel.map((item, i) => (
-                    <div key={i} className="bg-red-50 dark:bg-red-900/20 rounded-xl p-3 space-y-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-sm">{item.test}</span>
-                        {item.fasting && <span className="text-xs px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 rounded-full">
-                          {tx("checkupPlanner.fasting", lang)}
-                        </span>}
-                      </div>
-                      <p className="text-xs text-muted-foreground">{item.reason}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Specialists */}
-            {result.specialistVisits?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Stethoscope className="w-5 h-5 text-purple-500" />
-                  {tx("checkupPlanner.specialists", lang)}
-                </h2>
-                <div className="grid gap-3">
-                  {result.specialistVisits.map((visit, i) => (
-                    <div key={i} className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium">{visit.specialist}</span>
-                        <span className="text-sm text-purple-600 dark:text-purple-400">{visit.frequency}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{visit.reason}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Vaccinations */}
-            {result.vaccinations?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Syringe className="w-5 h-5 text-green-500" />
-                  {tx("checkupPlanner.vaccinations", lang)}
-                </h2>
-                <div className="grid gap-3">
-                  {result.vaccinations.map((vax, i) => (
-                    <div key={i} className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium">{vax.vaccine}</span>
-                        <span className="text-sm text-green-600 dark:text-green-400">{vax.dueDate}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{vax.notes}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Scheduling */}
-            {result.schedulingSuggestion && (
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
-                <p className="text-sm text-blue-700 dark:text-blue-300">{result.schedulingSuggestion}</p>
-              </div>
-            )}
-
-            {/* Cost Tips */}
-            {result.costSavingTips?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-3">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                  <Lightbulb className="w-5 h-5 text-amber-500" />
-                  {tx("checkupPlanner.costTips", lang)}
-                </h2>
-                {result.costSavingTips.map((tip, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                    {tip}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Disclaimer */}
-        <div className="text-center text-xs text-muted-foreground px-4">
-          {tx("disclaimer.tool", lang)}
-        </div>
+              <p className="text-xs text-slate-400 mt-3">Guidelines based on WHO, USPSTF, and ACS recommendations.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
-  );
+  )
 }
