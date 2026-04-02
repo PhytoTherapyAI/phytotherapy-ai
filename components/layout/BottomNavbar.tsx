@@ -6,7 +6,7 @@ import { motion } from "framer-motion"
 import { Home, Wrench, Globe, User } from "lucide-react"
 
 const tabs = [
-  { href: "/dashboard", label: "Home", icon: Home },
+  { href: "/", label: "Home", icon: Home },
   { href: "/tools", label: "Medical Tools", icon: Wrench },
   { href: "/discover", label: "Community", icon: Globe },
   { href: "/profile", label: "Profile", icon: User },
@@ -24,7 +24,7 @@ export function BottomNavbar() {
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-slate-100 safe-area-pb md:hidden">
       <div className="flex items-center justify-around px-2 py-1.5">
         {tabs.map((tab) => {
-          const isActive = pathname === tab.href || (tab.href !== "/dashboard" && pathname.startsWith(tab.href))
+          const isActive = pathname === tab.href || (tab.href !== "/" && pathname.startsWith(tab.href))
           const Icon = tab.icon
 
           return (

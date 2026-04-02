@@ -20,7 +20,7 @@ import { CommandPalette, CommandPaletteTrigger } from "@/components/layout/Comma
 
 // Core nav — only 3 most-used actions (Hick's Law)
 const CORE_NAV = [
-  { href: "/dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard },
+  { href: "/", labelKey: "nav.dashboard", icon: LayoutDashboard },
   { href: "/health-assistant", labelKey: "nav.assistant", icon: Sparkles },
   { href: "/interaction-checker", labelKey: "nav.interaction", icon: Shield },
 ];
@@ -244,7 +244,7 @@ export function Header() {
                     </div>
                     <div>
                       <p className="text-sm font-medium">{profile?.full_name || user?.email}</p>
-                      <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="text-xs text-primary">
+                      <Link href="/" onClick={() => setMobileOpen(false)} className="text-xs text-primary">
                         {tx("nav.dashboard", lang)}
                       </Link>
                     </div>
