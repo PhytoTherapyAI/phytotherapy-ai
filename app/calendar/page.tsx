@@ -19,6 +19,7 @@ import { createBrowserClient } from "@/lib/supabase"
 import { NotificationSettings } from "@/components/pwa/NotificationSettings"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
 import { InfoTooltip } from "@/components/ui/InfoTooltip"
+import { HabitHeatMap } from "@/components/calendar/HabitHeatMap"
 
 const TodayView = lazy(() => import("@/components/calendar/TodayView").then(m => ({ default: m.TodayView })))
 const MonthView = lazy(() => import("@/components/calendar/MonthView").then(m => ({ default: m.MonthView })))
@@ -509,6 +510,9 @@ export default function CalendarPage() {
           className="bg-white dark:bg-card rounded-2xl border border-stone-200/60 dark:border-stone-800 p-4 shadow-sm">
           <WeeklyStripEnhanced selectedDate={selectedDate} onSelect={setSelectedDate} lang={lang} />
         </motion.div>
+
+        {/* ═══ HABIT HEAT MAP ═══ */}
+        <HabitHeatMap lang={lang} />
 
         {/* ═══ DAILY PROGRESS ═══ */}
         <DailyProgressCard completed={completedTasks} total={allTasks.length} lang={lang} />

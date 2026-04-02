@@ -470,6 +470,94 @@ export default function ProfilePage() {
         {tx('profile.title', lang)}
       </h1>
 
+      {/* ── DIGITAL TWIN HERO ── */}
+      {profile && (
+        <div className="mb-6 rounded-2xl border bg-gradient-to-br from-primary/5 via-emerald-500/5 to-teal-500/5 p-6 shadow-sm">
+          {/* Avatar + Name + Member since */}
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
+            {/* Avatar */}
+            <div className="relative shrink-0">
+              <div className="flex h-28 w-28 items-center justify-center rounded-full border-4 border-primary bg-gradient-to-br from-primary/20 to-emerald-500/20 text-3xl font-bold text-primary shadow-xl">
+                {profile.full_name
+                  ? profile.full_name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
+                  : user?.email?.[0]?.toUpperCase() ?? "U"}
+              </div>
+              <div className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white shadow">
+                <span className="text-xs font-bold">✓</span>
+              </div>
+            </div>
+            {/* Info + Score */}
+            <div className="flex-1 text-center sm:text-left">
+              <h2 className="text-xl font-bold">
+                {profile.full_name || user?.email?.split("@")[0] || "Member"}
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {tr ? "Üye:" : "Member since:"}{" "}
+                {new Date(user?.created_at || Date.now()).toLocaleDateString(tr ? "tr-TR" : "en-US", { month: "long", year: "numeric" })}
+              </p>
+              {/* Streak badge */}
+              <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-400">
+                🔥 {tr ? "12 günlük seri" : "12-day streak"}
+              </div>
+            </div>
+            {/* Vitality Score ring */}
+            <div className="flex flex-col items-center gap-1 shrink-0">
+              <div className="relative flex h-20 w-20 items-center justify-center">
+                <svg className="h-20 w-20 -rotate-90" viewBox="0 0 36 36">
+                  <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-muted/30" />
+                  <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" strokeWidth="2.5"
+                    strokeDasharray="78 100" strokeLinecap="round" className="text-emerald-500 transition-all duration-1000" />
+                </svg>
+                <div className="absolute flex flex-col items-center">
+                  <span className="text-lg font-bold leading-none">78</span>
+                  <span className="text-[8px] text-muted-foreground font-medium">/100</span>
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground font-medium text-center">{tr ? "Canlılık Skoru" : "Vitality Score"}</p>
+            </div>
+          </div>
+
+          {/* Bento metrics */}
+          <div className="mt-5 grid grid-cols-3 gap-3">
+            <div className="rounded-xl bg-white/60 dark:bg-card/60 border p-3 text-center shadow-sm">
+              <p className="text-xl font-bold text-primary">{medications.length || 0}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">💊 {tr ? "Aktif İlaç" : "Active Medications"}</p>
+            </div>
+            <div className="rounded-xl bg-white/60 dark:bg-card/60 border p-3 text-center shadow-sm">
+              <p className="text-xl font-bold text-emerald-600">{(profile.supplements || []).length || 0}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">🌿 {tr ? "Günlük Takviye" : "Daily Supplements"}</p>
+            </div>
+            <div className="rounded-xl bg-white/60 dark:bg-card/60 border p-3 text-center shadow-sm">
+              <p className="text-xl font-bold text-blue-600">4</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">🩸 {tr ? "Yüklenen Tahlil" : "Lab Tests"}</p>
+            </div>
+          </div>
+
+          {/* Achievement Badges preview */}
+          <div className="mt-5">
+            <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+              🏆 {tr ? "Başarı Rozetleri" : "Achievement Badges"}
+            </h3>
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              {[
+                { icon: "💧", label: tr ? "Hidrasyon Ustası" : "Hydration Master", earned: true },
+                { icon: "🌿", label: tr ? "Fitoterapist" : "Phyto Streak", earned: true },
+                { icon: "🩸", label: tr ? "Lab Savaşçısı" : "Lab Warrior", earned: false },
+                { icon: "🛡️", label: tr ? "Kalkan Ustası" : "Shield Master", earned: false },
+                { icon: "🧬", label: tr ? "DNA Kaşifi" : "DNA Explorer", earned: false },
+                { icon: "🏔️", label: tr ? "Şampiyon" : "Challenge Champion", earned: false },
+              ].map((b, i) => (
+                <div key={i} className={`flex flex-col items-center rounded-lg p-2 text-center text-[10px] border transition-all ${b.earned ? "bg-amber-50/80 dark:bg-amber-950/20 ring-1 ring-amber-200 dark:ring-amber-700" : "bg-muted/30 opacity-50"}`}
+                  style={b.earned ? { boxShadow: "0 0 8px rgba(245, 158, 11, 0.2)" } : {}}>
+                  <span className={`text-xl ${b.earned ? "" : "grayscale"}`}>{b.icon}</span>
+                  <span className="mt-0.5 leading-tight text-muted-foreground line-clamp-1">{b.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Profile Completion Card ── */}
       {completionPct < 100 && (
         <div className="mb-6 rounded-xl border bg-gradient-to-r from-primary/5 to-amber-500/5 p-5">

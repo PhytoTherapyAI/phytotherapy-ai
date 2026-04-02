@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
+import { motion } from "framer-motion";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import Link from "next/link";
 import {
@@ -211,8 +212,11 @@ export default function InteractionCheckerPage() {
         </div>
       </div>
 
-      {/* Input Section */}
-      <div className="mb-8 space-y-6 rounded-xl border bg-card p-6 shadow-sm">
+      {/* Input Section — 2 column on desktop */}
+      <div className="mb-8 grid gap-6 lg:grid-cols-5">
+
+      {/* LEFT: Input Form (3/5) */}
+      <div className="space-y-6 rounded-xl border bg-card p-6 shadow-sm lg:col-span-3">
         {/* Drug Input */}
         <DrugInput
           medications={medications}
@@ -366,6 +370,53 @@ export default function InteractionCheckerPage() {
             {tx('ic.signInNote', lang)}
           </p>
         )}
+      </div>
+
+      {/* RIGHT: Safety Radar Animation (2/5) */}
+      <div className="hidden lg:flex flex-col items-center justify-center rounded-xl border bg-card p-6 shadow-sm lg:col-span-2">
+        {medications.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 text-center">
+            <Shield className="h-12 w-12 text-muted-foreground/20" />
+            <p className="text-sm text-muted-foreground max-w-[160px] leading-relaxed">
+              {lang === "tr"
+                ? "Güvenlik radarını aktif etmek için ilaç veya takviye ekle"
+                : "Add medications and supplements to activate your safety radar"}
+            </p>
+          </div>
+        ) : (
+          <div className="relative flex items-center justify-center">
+            <Shield className="h-20 w-20 text-primary/20" />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              className="absolute w-32 h-32 rounded-full border-2 border-dashed border-primary/30"
+            />
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ duration: 16, repeat: Infinity, ease: "linear" }}
+              className="absolute w-48 h-48 rounded-full border border-primary/15"
+            />
+            <motion.div
+              animate={{ scale: [1, 1.15, 1], opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute w-5 h-5 rounded-full bg-primary/40 top-4 left-1/2 -translate-x-1/2"
+            />
+            <motion.div
+              animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.9, 0.4] }}
+              transition={{ duration: 2.5, repeat: Infinity, delay: 0.8 }}
+              className="absolute w-3 h-3 rounded-full bg-amber-400/60 bottom-6 right-8"
+            />
+          </div>
+        )}
+        {medications.length > 0 && (
+          <div className="mt-6 text-center">
+            <p className="text-xs font-semibold text-primary">{medications.length} {lang === "tr" ? "öğe taranıyor" : "items scanning"}</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">{lang === "tr" ? "Aktif tarama" : "Active scan"}</p>
+          </div>
+        )}
+      </div>
+
+      {/* End grid */}
       </div>
 
       {/* Example Queries — hidden during emergency */}
