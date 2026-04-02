@@ -1,349 +1,219 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import {
-  Baby,
-  Loader2,
-  AlertTriangle,
-  Phone,
-  Shield,
-  LogIn,
-  Heart,
-  Apple,
-  ShieldAlert,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, Check, ShieldCheck, ShieldAlert } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-interface PregnancyResult {
-  gestationalWeek: number;
-  trimester: string;
-  emergencyAlert: boolean;
-  emergencyMessage?: string;
-  alertLevel: "green" | "yellow" | "red";
-  weekInfo: string;
-  fetalDevelopment: { size: string; weight: string; developments: string[] };
-  safeSupplements: Array<{ name: string; dose: string; benefit: string; trimesterSafe: string[] }>;
-  unsafeMeds: Array<{ medication: string; category: string; risk: string; action: string }>;
-  safeMeds?: Array<{ medication: string; category: string; note: string }>;
-  nutritionPlan: Array<{ nutrient: string; amount: string; sources: string; why: string }>;
-  exerciseGuidelines?: string[];
-  warningSignals: Array<{ signal: string; action: string }>;
-  weekSpecificTips?: string[];
+const weekData: Record<number, { trimester: string; size: string; message: string }> = {
+  8: { trimester: "First Trimester", size: "Raspberry", message: "Tiny fingers are forming. Your baby is about the size of a raspberry!" },
+  12: { trimester: "First Trimester", size: "Lime", message: "All major organs are developing. Baby is moving, though you can't feel it yet." },
+  14: { trimester: "Second Trimester Glow", size: "Lemon", message: "Welcome to the second trimester! Energy is returning and nausea may ease." },
+  20: { trimester: "Second Trimester", size: "Banana", message: "Halfway there! Baby can hear your voice now. Talk and sing to them." },
+  28: { trimester: "Third Trimester", size: "Eggplant", message: "Baby is practicing breathing movements. You might feel rhythmic hiccups!" },
+  36: { trimester: "Third Trimester", size: "Honeydew", message: "Almost there! Baby is gaining weight and getting ready for the big day." },
 }
 
-const PREGNANCY_SYMPTOMS = [
-  { en: "Nausea", tr: "Bulantı" },
-  { en: "Fatigue", tr: "Yorgunluk" },
-  { en: "Back pain", tr: "Bel ağrısi" },
-  { en: "Swelling", tr: "Şişman" },
-  { en: "Headache", tr: "Bas ağrısi" },
-  { en: "Heartburn", tr: "Mide yanması" },
-  { en: "Constipation", tr: "Kabızlık" },
-  { en: "Insomnia", tr: "Uykusuzluk" },
-  { en: "Mood changes", tr: "Ruh hali değişikliği" },
-  { en: "Frequent urination", tr: "Sık idrara çıkma" },
-  { en: "Cramping", tr: "Kramp" },
-  { en: "Spotting", tr: "Lekelenme" },
-];
+const safeSupplements = [
+  { name: "Ginger", use: "Morning sickness relief", dose: "1g/day, divided" },
+  { name: "Folate (5-MTHF)", use: "Neural tube development", dose: "400-800mcg/day" },
+  { name: "Iron Bisglycinate", use: "Prevent anemia", dose: "As prescribed" },
+  { name: "Vitamin D3", use: "Bone development", dose: "1000-2000 IU/day" },
+  { name: "Omega-3 DHA", use: "Brain development", dose: "200-300mg DHA/day" },
+]
+
+const avoidSupplements = [
+  { name: "Sage", reason: "May stimulate uterine contractions" },
+  { name: "Senna", reason: "Strong laxative, not safe in pregnancy" },
+  { name: "Black Cohosh", reason: "Risk of premature labor" },
+  { name: "High-dose Vitamin A", reason: "Teratogenic risk" },
+  { name: "St. John's Wort", reason: "Interacts with many prenatal medications" },
+]
+
+const symptomChips = [
+  { emoji: "🤢", label: "Morning Sickness", tip: "B6 vitamin (25mg) and fresh ginger slices could be your best friends this morning. Try small, frequent meals." },
+  { emoji: "🔥", label: "Heartburn", tip: "Eat smaller portions, avoid lying down after meals. Slippery Elm tea may help soothe." },
+  { emoji: "🎈", label: "Edema", tip: "Elevate your feet, stay hydrated. Dandelion leaf tea (safe in moderation) may help with water retention." },
+  { emoji: "😴", label: "Fatigue", tip: "Listen to your body. Short walks and iron-rich foods can boost energy naturally." },
+  { emoji: "😰", label: "Anxiety", tip: "Deep breathing and Chamomile tea (safe in pregnancy) can help calm your mind." },
+  { emoji: "🦵", label: "Leg Cramps", tip: "Magnesium Bisglycinate before bed. Stay hydrated and stretch gently." },
+]
+
+const weeks = [8, 12, 14, 20, 28, 36]
 
 export default function PregnancyTrackerPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
+  const router = useRouter()
+  const [currentWeek, setCurrentWeek] = useState(14)
+  const [activeTab, setActiveTab] = useState<"safe" | "avoid">("safe")
+  const [expandedSymptom, setExpandedSymptom] = useState<string | null>(null)
 
-  const [week, setWeek] = useState(12);
-  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
-  const [concerns, setConcerns] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<PregnancyResult | null>(null);
-
-  const symptoms = PREGNANCY_SYMPTOMS.map((s) => s[lang]);
-
-  const handleAnalyze = async () => {
-    if (!session?.access_token) return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/pregnancy-tracker", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          lang,
-          gestational_week: week,
-          symptoms: selectedSymptoms,
-          concerns,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Analysis failed");
-      }
-
-      const data = await res.json();
-      setResult(data.result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="rounded-lg bg-pink-50 p-3 dark:bg-pink-950">
-            <Baby className="h-6 w-6 text-pink-600 dark:text-pink-400" />
-          </div>
-          <div>
-            <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-              {tx("pregnancy.title", lang)}
-            </h1>
-            <p className="text-sm text-muted-foreground">{tx("pregnancy.subtitle", lang)}</p>
-          </div>
-        </div>
-        <div className="rounded-xl border border-pink-200 bg-pink-50/50 p-8 text-center dark:border-pink-800 dark:bg-pink-950/30">
-          <LogIn className="mx-auto mb-3 h-10 w-10 text-pink-400" />
-          <p className="text-lg font-medium text-pink-700 dark:text-pink-300">
-            {tx("common.loginToUse2", lang)}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const data = weekData[currentWeek] || weekData[14]
+  const sphereScale = 0.6 + (currentWeek / 40) * 0.6
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-pink-50 p-3 dark:bg-pink-950">
-          <Baby className="h-6 w-6 text-pink-600 dark:text-pink-400" />
-        </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-            {tx("pregnancy.title", lang)}
-          </h1>
-          <p className="text-sm text-muted-foreground">{tx("pregnancy.subtitle", lang)}</p>
-        </div>
-      </div>
-
-      {/* Emergency Alert */}
-      {result?.emergencyAlert && (
-        <div className="mb-6 rounded-xl border-2 border-red-500 bg-red-50 p-6 dark:bg-red-950/40">
-          <div className="flex items-start gap-3">
-            <Phone className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-600" />
-            <div>
-              <p className="font-bold text-red-700 dark:text-red-300">{result.emergencyMessage}</p>
-              <p className="mt-2 text-lg font-bold text-red-600">
-                {tx("pregnancy.callNow", lang)}
-              </p>
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-orange-50/50 via-stone-50 to-green-50/30">
+      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/60">
+            <ChevronLeft className="w-5 h-5 text-slate-600" />
+          </button>
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-slate-800">Bloom Dashboard</h1>
+            <p className="text-xs text-slate-400">Your pregnancy journey</p>
           </div>
-        </div>
-      )}
+          <div className="w-9" />
+        </motion.div>
 
-      {/* Week Selector */}
-      <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm text-center">
-        <h2 className="text-sm font-semibold text-muted-foreground">{tx("pregnancy.week", lang)}</h2>
-        <p className="mt-2 text-5xl font-bold text-pink-600 dark:text-pink-400">{week}</p>
-        <input
-          type="range"
-          min={1}
-          max={42}
-          value={week}
-          onChange={(e) => setWeek(Number(e.target.value))}
-          className="mt-3 w-full accent-pink-500"
-        />
-        <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-          <span>{tx("pregnancy.week1Label", lang)}</span>
-          <span>{tx(week <= 12 ? "pregnancy.trimester1" : week <= 27 ? "pregnancy.trimester2" : "pregnancy.trimester3", lang)}</span>
-          <span>{tx("pregnancy.week42Label", lang)}</span>
-        </div>
-      </div>
+        {/* Development Sphere */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", stiffness: 100 }}
+          className="flex flex-col items-center mb-6"
+        >
+          <motion.div
+            key={currentWeek}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: sphereScale, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 80 }}
+            className="w-40 h-40 rounded-full bg-gradient-to-br from-orange-200 via-rose-100 to-green-100 shadow-lg shadow-orange-200/50 flex items-center justify-center mb-4"
+          >
+            <div className="text-center">
+              <p className="text-2xl">🌱</p>
+              <p className="text-xs text-slate-600 font-medium mt-1">{data.size}</p>
+            </div>
+          </motion.div>
+          <motion.div key={`text-${currentWeek}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center">
+            <p className="text-xl font-bold text-slate-800">Week {currentWeek}</p>
+            <p className="text-sm text-emerald-600 font-medium">{data.trimester}</p>
+          </motion.div>
+        </motion.div>
 
-      {/* Symptoms */}
-      <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
-          {tx("common.symptoms", lang)}
-        </h2>
-        <div className="flex flex-wrap gap-2">
-          {symptoms.map((s) => (
-            <button
-              key={s}
-              onClick={() => setSelectedSymptoms((prev) =>
-                prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
-              )}
-              className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
-                selectedSymptoms.includes(s)
-                  ? "bg-pink-500 text-white"
-                  : "bg-pink-50 text-pink-700 hover:bg-pink-100 dark:bg-pink-950 dark:text-pink-300"
+        {/* Week Navigation */}
+        <div className="flex justify-center gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
+          {weeks.map(w => (
+            <motion.button
+              key={w}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setCurrentWeek(w)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                currentWeek === w ? "bg-emerald-500 text-white shadow-md" : "bg-white text-slate-500 border border-slate-200"
               }`}
             >
-              {s}
-            </button>
+              W{w}
+            </motion.button>
           ))}
         </div>
-      </div>
 
-      {/* Concerns */}
-      <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
-        <textarea
-          value={concerns}
-          onChange={(e) => setConcerns(e.target.value)}
-          placeholder={tx("pregnancy.concernsPlaceholder", lang)}
-          className="w-full rounded-lg border bg-background px-4 py-3 text-sm"
-          rows={3}
-        />
-      </div>
+        {/* Weekly Insight */}
+        <motion.div
+          key={`insight-${currentWeek}`}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-slate-100"
+        >
+          <div className="flex items-start gap-3">
+            <Sparkles className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+            <p className="text-sm text-slate-600 leading-relaxed">{data.message}</p>
+          </div>
+        </motion.div>
 
-      {/* Analyze */}
-      <Button
-        onClick={handleAnalyze}
-        disabled={isLoading}
-        className="mb-6 w-full bg-pink-600 hover:bg-pink-700 text-white"
-        size="lg"
-      >
-        {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
-        ) : (
-          <><Baby className="mr-2 h-5 w-5" />{tx("pregnancy.analyze", lang)}</>
-        )}
-      </Button>
+        {/* Phytotherapy Radar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 mb-6"
+        >
+          <div className="flex border-b border-slate-100">
+            <button
+              onClick={() => setActiveTab("safe")}
+              className={`flex-1 py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${
+                activeTab === "safe" ? "bg-emerald-50 text-emerald-700 border-b-2 border-emerald-500" : "text-slate-500"
+              }`}
+            >
+              <ShieldCheck className="w-4 h-4" /> Safe Supports
+            </button>
+            <button
+              onClick={() => setActiveTab("avoid")}
+              className={`flex-1 py-3 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${
+                activeTab === "avoid" ? "bg-red-50 text-red-700 border-b-2 border-red-500" : "text-slate-500"
+              }`}
+            >
+              <ShieldAlert className="w-4 h-4" /> Absolutely Avoid
+            </button>
+          </div>
 
-      {error && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">
-          {error}
-        </div>
-      )}
-
-      {/* Results */}
-      {result && !result.emergencyAlert && (
-        <div className="space-y-4">
-          {/* Fetal Development */}
-          {result.fetalDevelopment && (
-            <div className="rounded-xl border-2 border-pink-200 bg-pink-50 p-6 dark:bg-pink-950/20">
-              <h3 className="mb-2 text-lg font-bold text-pink-700 dark:text-pink-300">
-                {tx("pregnancy.development", lang)}
-              </h3>
-              <div className="mb-3 flex gap-4 text-sm">
-                <span>{tx("pregnancy.size", lang)}: {result.fetalDevelopment.size}</span>
-                <span>{tx("pregnancy.weight", lang)}: {result.fetalDevelopment.weight}</span>
-              </div>
-              <ul className="space-y-1">
-                {result.fetalDevelopment.developments.map((d, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-pink-800 dark:text-pink-200">
-                    <Heart className="mt-0.5 h-3 w-3 flex-shrink-0 text-pink-500" />
-                    {d}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Medication Safety */}
-          {result.unsafeMeds && result.unsafeMeds.length > 0 && (
-            <div className="rounded-xl border-2 border-red-400 bg-red-50 p-6 dark:bg-red-950/30">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-red-700 dark:text-red-300">
-                <ShieldAlert className="h-5 w-5" />
-                {tx("pregnancy.safeMeds", lang)} — {tx("pregnancy.warning", lang)}
-              </h3>
-              {result.unsafeMeds.map((med, i) => (
-                <div key={i} className="mb-3 rounded-lg border border-red-300 p-3 last:mb-0 dark:border-red-700">
-                  <p className="font-semibold text-red-700 dark:text-red-300">{med.medication} — {tx("pregnancy.category", lang)} {med.category}</p>
-                  <p className="text-sm text-red-600 dark:text-red-400">{med.risk}</p>
-                  <p className="mt-1 text-sm font-medium text-red-800 dark:text-red-200">{med.action}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {result.safeMeds && result.safeMeds.length > 0 && (
-            <div className="rounded-xl border border-green-200 bg-green-50 p-6 dark:bg-green-950/20">
-              <h3 className="mb-3 text-lg font-bold text-green-700 dark:text-green-300">
-                {tx("pregnancy.safeMeds", lang)} — {tx("pregnancy.safe", lang)}
-              </h3>
-              {result.safeMeds.map((med, i) => (
-                <div key={i} className="mb-2 last:mb-0">
-                  <p className="font-medium text-green-700 dark:text-green-300">{med.medication} — {tx("pregnancy.category", lang)} {med.category}</p>
-                  <p className="text-xs text-muted-foreground">{med.note}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Safe Supplements */}
-          {result.safeSupplements?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-pink-700 dark:text-pink-300">
-                {tx("pregnancy.safeSupplements", lang)}
-              </h3>
-              <div className="space-y-3">
-                {result.safeSupplements.map((supp, i) => (
-                  <div key={i} className="rounded-lg border p-3">
-                    <p className="font-semibold">{supp.name} — {supp.dose}</p>
-                    <p className="text-xs text-muted-foreground">{supp.benefit}</p>
+          <AnimatePresence mode="wait">
+            {activeTab === "safe" ? (
+              <motion.div key="safe" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="p-4 space-y-3">
+                {safeSupplements.map((s) => (
+                  <div key={s.name} className="flex items-start gap-3 bg-emerald-50/50 rounded-xl p-3">
+                    <Check className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">{s.name}</p>
+                      <p className="text-xs text-slate-500">{s.use} — {s.dose}</p>
+                    </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {/* Nutrition */}
-          {result.nutritionPlan?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-pink-700 dark:text-pink-300">
-                <Apple className="h-5 w-5" />
-                {tx("pregnancy.nutrition", lang)}
-              </h3>
-              <div className="space-y-3">
-                {result.nutritionPlan.map((item, i) => (
-                  <div key={i} className="rounded-lg border p-3">
-                    <p className="font-semibold">{item.nutrient} — {item.amount}</p>
-                    <p className="text-xs text-muted-foreground">{item.sources}</p>
-                    <p className="text-xs text-pink-600 dark:text-pink-400">{item.why}</p>
+              </motion.div>
+            ) : (
+              <motion.div key="avoid" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="p-4 space-y-3">
+                {avoidSupplements.map((s) => (
+                  <div key={s.name} className="flex items-start gap-3 bg-red-50/50 rounded-xl p-3">
+                    <ShieldAlert className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">{s.name}</p>
+                      <p className="text-xs text-red-500">{s.reason}</p>
+                    </div>
                   </div>
                 ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Symptom Chips */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <h3 className="text-sm font-semibold text-slate-600 mb-3 px-1">How is Your Body Today?</h3>
+          <div className="space-y-2">
+            {symptomChips.map((s) => (
+              <div key={s.label}>
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setExpandedSymptom(expandedSymptom === s.label ? null : s.label)}
+                  className="w-full flex items-center gap-3 bg-white rounded-xl p-3.5 shadow-sm border border-slate-100 text-left"
+                >
+                  <span className="text-xl">{s.emoji}</span>
+                  <span className="text-sm text-slate-700 flex-1">{s.label}</span>
+                  <motion.span
+                    animate={{ rotate: expandedSymptom === s.label ? 180 : 0 }}
+                    className="text-slate-400 text-sm"
+                  >
+                    ▾
+                  </motion.span>
+                </motion.button>
+                <AnimatePresence>
+                  {expandedSymptom === s.label && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="bg-emerald-50 rounded-xl p-3.5 ml-10 mt-1 border border-emerald-100">
+                        <p className="text-sm text-emerald-700">🌿 {s.tip}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </div>
-          )}
-
-          {/* Warning Signs */}
-          {result.warningSignals?.length > 0 && (
-            <div className="rounded-xl border-2 border-amber-300 bg-amber-50 p-6 dark:bg-amber-950/20">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-amber-700 dark:text-amber-300">
-                <AlertTriangle className="h-5 w-5" />
-                {tx("pregnancy.warnings", lang)}
-              </h3>
-              {result.warningSignals.map((ws, i) => (
-                <div key={i} className="mb-2 last:mb-0">
-                  <p className="font-medium text-amber-800 dark:text-amber-200">{ws.signal}</p>
-                  <p className="text-xs text-amber-600 dark:text-amber-400">{ws.action}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Week Info */}
-          {result.weekInfo && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <p className="text-sm text-muted-foreground">{result.weekInfo}</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      <p className="mt-6 text-center text-xs text-muted-foreground">
-        {tx("disclaimer.tool", lang)}
-      </p>
+            ))}
+          </div>
+        </motion.div>
+      </div>
     </div>
-  );
+  )
 }
