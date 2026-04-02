@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
     if (articles.length > 0) {
       fullPrompt += "RELEVANT PEER-REVIEWED RESEARCH (cite these in your response):\n";
       for (const article of articles) {
-        fullPrompt += `- "${article.title}" (${article.year}) — ${article.url}\n`;
+        fullPrompt += `- [${article.title} (${article.year})](${article.url})\n`;
         if (article.abstract && article.abstract !== "No abstract available") {
           fullPrompt += `  Abstract: ${article.abstract.substring(0, 300)}...\n`;
         }
@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
     fullPrompt += `\n\nUSER'S QUESTION:\n${message}`;
 
     // Step 5: Stream Claude response
-    let systemPromptFull = SYSTEM_PROMPT;
+    let systemPromptFull = SYSTEM_PROMPT + "\n\nSOURCES FORMAT RULE: When listing sources/references at the end of your response, ALWAYS format each source as a markdown link: [Title (Year)](URL). Never write URLs as plain text.";
 
     // Language instruction — MUST come first so Claude responds in the correct language
     if (lang === "tr") {

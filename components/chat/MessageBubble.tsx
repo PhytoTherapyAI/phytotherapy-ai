@@ -1,7 +1,7 @@
 // © 2026 Doctopal — All Rights Reserved
 "use client";
 
-import { User, Leaf, Loader2, FileText, Image as ImageIcon } from "lucide-react";
+import { User, Leaf, Loader2, FileText, Image as ImageIcon, BookOpen } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { AILoadingState } from "@/components/chat/AILoadingState";
@@ -64,6 +64,12 @@ export function MessageBubble({ message, isLast, onSendFollowUp }: MessageBubble
   const { lang } = useLang();
   const isUser = message.role === "user";
   const showSuggestions = isLast && !isUser && !message.isStreaming && message.content.length > 50 && onSendFollowUp;
+  const isTr = lang === "tr";
+
+  // Split main content from sources section (separated by "---")
+  const hrSplit = message.content.split(/\n---\n/);
+  const mainContent = hrSplit[0];
+  const sourcesContent = hrSplit.length > 1 ? hrSplit.slice(1).join("\n---\n") : null;
 
   return (
     <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""} ${showSuggestions ? "relative mb-12" : ""}`}>
@@ -82,50 +88,66 @@ export function MessageBubble({ message, isLast, onSendFollowUp }: MessageBubble
         )}
       </div>
 
-      {/* Message content */}
-      <div
-        className={`max-w-[85%] rounded-2xl px-4 py-3 animate-scale-in ${
-          isUser
-            ? "bg-primary text-white shadow-sm"
-            : "border-l-2 border-l-primary/30 border border-border bg-card shadow-sm"
-        }`}
-      >
-        {/* File attachments */}
-        {message.attachments && message.attachments.length > 0 && (
-          <div className="mb-2 flex flex-wrap gap-2">
-            {message.attachments.map((att, i) => (
-              <div key={i} className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-xs ${
-                isUser ? "bg-primary/70" : "bg-muted"
-              }`}>
-                {att.type === "pdf" ? (
-                  <FileText className="h-3.5 w-3.5" />
-                ) : att.preview ? (
-                  <img src={att.preview} alt={att.name} className="h-6 w-6 rounded object-cover" />
-                ) : (
-                  <ImageIcon className="h-3.5 w-3.5" />
-                )}
-                <span className="max-w-[100px] truncate">{att.name}</span>
-              </div>
-            ))}
-          </div>
-        )}
+      {/* Message content + sources wrapper */}
+      <div className="max-w-[85%] flex flex-col gap-2">
+        {/* Main bubble */}
+        <div
+          className={`rounded-2xl px-4 py-3 animate-scale-in ${
+            isUser
+              ? "bg-primary text-white shadow-sm"
+              : "border-l-2 border-l-primary/30 border border-border bg-card shadow-sm"
+          }`}
+        >
+          {/* File attachments */}
+          {message.attachments && message.attachments.length > 0 && (
+            <div className="mb-2 flex flex-wrap gap-2">
+              {message.attachments.map((att, i) => (
+                <div key={i} className={`flex items-center gap-1.5 rounded-md px-2 py-1 text-xs ${
+                  isUser ? "bg-primary/70" : "bg-muted"
+                }`}>
+                  {att.type === "pdf" ? (
+                    <FileText className="h-3.5 w-3.5" />
+                  ) : att.preview ? (
+                    <img src={att.preview} alt={att.name} className="h-6 w-6 rounded object-cover" />
+                  ) : (
+                    <ImageIcon className="h-3.5 w-3.5" />
+                  )}
+                  <span className="max-w-[100px] truncate">{att.name}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
-        {message.isStreaming && message.content === "" ? (
-          <AILoadingState hasFile={!!message.attachments?.length} />
-        ) : (
-          <div
-            className={`prose prose-sm max-w-none ${
-              isUser
-                ? "prose-invert"
-                : "dark:prose-invert"
-            }`}
-          >
-            <FormattedContent content={message.content} />
-          </div>
-        )}
+          {message.isStreaming && message.content === "" ? (
+            <AILoadingState hasFile={!!message.attachments?.length} />
+          ) : (
+            <div
+              className={`prose prose-sm max-w-none ${
+                isUser
+                  ? "prose-invert"
+                  : "dark:prose-invert"
+              }`}
+            >
+              <FormattedContent content={mainContent} />
+            </div>
+          )}
 
-        {message.isStreaming && message.content !== "" && (
-          <span className="ml-1 inline-block h-4 w-1 animate-pulse rounded-full bg-primary" />
+          {message.isStreaming && message.content !== "" && (
+            <span className="ml-1 inline-block h-4 w-1 animate-pulse rounded-full bg-primary" />
+          )}
+        </div>
+
+        {/* Sources panel — rendered outside the main bubble */}
+        {!isUser && sourcesContent && sourcesContent.trim().length > 0 && (
+          <div className="rounded-xl border border-primary/10 bg-primary/5 p-3 text-xs">
+            <p className="font-semibold text-primary mb-2 flex items-center gap-1">
+              <BookOpen className="h-3.5 w-3.5" />
+              {isTr ? "Kaynaklar" : "Sources"}
+            </p>
+            <div className="space-y-1">
+              <FormattedContent content={sourcesContent} />
+            </div>
+          </div>
         )}
       </div>
 

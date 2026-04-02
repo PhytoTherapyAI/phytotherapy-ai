@@ -1,22 +1,22 @@
 // © 2026 Doctopal — All Rights Reserved
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useEffect, useState } from "react"
 import { motion } from "framer-motion"
+import { createBrowserClient } from "@/lib/supabase"
 
 interface HabitHeatMapProps {
   lang: string
+  userId?: string
+  streak?: number
 }
 
 const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 
 function generateMockData(): number[] {
-  // 84 days (12 weeks), weekdays denser
-  const seed = 42
   return Array.from({ length: 84 }, (_, i) => {
     const dayOfWeek = i % 7
     const isWeekend = dayOfWeek >= 5
-    // Pseudo-random but deterministic
     const rand = ((i * 2654435761) >>> 0) / 4294967296
     if (isWeekend) return rand < 0.3 ? Math.floor(rand * 3) : 0
     return rand < 0.6 ? Math.floor(rand * 5) : 0
@@ -30,19 +30,65 @@ function getColor(count: number): string {
   return "bg-emerald-600 dark:bg-emerald-400"
 }
 
-export function HabitHeatMap({ lang }: HabitHeatMapProps) {
+export function HabitHeatMap({ lang, userId, streak: streakProp }: HabitHeatMapProps) {
   const isTr = lang === "tr"
-  const data = useMemo(() => generateMockData(), [])
+  const [data, setData] = useState<number[]>(() => generateMockData())
+  const [realStreak, setRealStreak] = useState<number | null>(null)
 
-  // Calculate current streak (from end)
-  const streak = useMemo(() => {
+  // Fetch real check-in data from Supabase
+  useEffect(() => {
+    if (!userId) return
+    const fetchData = async () => {
+      try {
+        const supabase = createBrowserClient()
+        const ninetyDaysAgo = new Date()
+        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
+        const { data: checkIns } = await supabase
+          .from("daily_check_ins")
+          .select("check_date")
+          .eq("user_id", userId)
+          .gte("check_date", ninetyDaysAgo.toISOString().split("T")[0])
+          .order("check_date", { ascending: true })
+
+        if (checkIns && checkIns.length > 0) {
+          // Build a set of active dates
+          const activeDates = new Set(checkIns.map((c: { check_date: string }) => c.check_date))
+
+          // Map last 84 days to counts (0 or 1)
+          const today = new Date()
+          const newData = Array.from({ length: 84 }, (_, i) => {
+            const d = new Date(today)
+            d.setDate(d.getDate() - (83 - i))
+            const dateStr = d.toISOString().split("T")[0]
+            return activeDates.has(dateStr) ? 1 : 0
+          })
+          setData(newData)
+
+          // Calculate streak: consecutive days from today backwards
+          let s = 0
+          for (let i = newData.length - 1; i >= 0; i--) {
+            if (newData[i] > 0) s++
+            else break
+          }
+          setRealStreak(s)
+        } else {
+          setRealStreak(0)
+        }
+      } catch {
+        // Keep mock data on error
+      }
+    }
+    fetchData()
+  }, [userId])
+
+  const streak = streakProp ?? (realStreak ?? (() => {
     let s = 0
     for (let i = data.length - 1; i >= 0; i--) {
       if (data[i] > 0) s++
       else break
     }
     return s
-  }, [data])
+  })())
 
   // Split into weeks
   const weeks = useMemo(() => {
@@ -58,7 +104,7 @@ export function HabitHeatMap({ lang }: HabitHeatMapProps) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className="rounded-2xl border border-stone-200/60 dark:border-stone-800 bg-white dark:bg-card p-4 shadow-sm"
+      className="rounded-2xl border border-stone-200/60 dark:border-stone-800 bg-white dark:bg-card p-4 shadow-sm max-w-full"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
@@ -73,32 +119,34 @@ export function HabitHeatMap({ lang }: HabitHeatMapProps) {
         </p>
       </div>
 
-      {/* Day labels */}
-      <div className="flex gap-1 mb-1 ml-0">
-        <div className="grid grid-rows-7 gap-1">
-          {DAY_LABELS.map((d) => (
-            <div key={d} className="h-4 w-5 text-[9px] text-muted-foreground flex items-center">
-              {d}
-            </div>
-          ))}
-        </div>
+      {/* Day labels + grid */}
+      <div className="w-full overflow-x-auto scrollbar-hide">
+        <div className="flex gap-1 mb-1 min-w-0">
+          <div className="grid grid-rows-7 gap-1 shrink-0">
+            {DAY_LABELS.map((d) => (
+              <div key={d} className="h-3.5 w-5 text-[9px] text-muted-foreground flex items-center">
+                {d}
+              </div>
+            ))}
+          </div>
 
-        {/* Grid */}
-        <div className="flex gap-1 flex-1 overflow-x-auto scrollbar-hide">
-          {weeks.map((week, wi) => (
-            <div key={wi} className="grid grid-rows-7 gap-1 shrink-0">
-              {week.map((count, di) => (
-                <motion.div
-                  key={di}
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: (wi * 7 + di) * 0.003, duration: 0.2 }}
-                  className={`h-4 w-4 rounded-sm ${getColor(count)}`}
-                  title={`${count} ${isTr ? "aktivite" : "activities"}`}
-                />
-              ))}
-            </div>
-          ))}
+          {/* Grid */}
+          <div className="flex gap-1">
+            {weeks.map((week, wi) => (
+              <div key={wi} className="grid grid-rows-7 gap-1 shrink-0">
+                {week.map((count, di) => (
+                  <motion.div
+                    key={di}
+                    initial={{ opacity: 0, scale: 0.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: (wi * 7 + di) * 0.003, duration: 0.2 }}
+                    className={`h-3.5 w-3.5 rounded-sm ${getColor(count)}`}
+                    title={`${count} ${isTr ? "aktivite" : "activities"}`}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

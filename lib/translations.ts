@@ -95,6 +95,7 @@ const t: Record<string, TranslationEntry> = {
     en: "Describe your symptom or health goal (e.g., 'I have trouble sleeping', 'I want to reduce my cholesterol naturally', 'I feel anxious and stressed')",
     tr: "Semptomunuzu veya sağlık hedefinizi açıklayın (örn. 'Uyumakta güçlük çekiyorum', 'Kolesterolümü doğal yollarla düşürmek istiyorum')",
   },
+  "ic.runSafetyAnalysis": { en: "Run Safety Analysis", tr: "Güvenlik Analizini Başlat" },
   "ic.analyzing": { en: "Analyzing interactions...", tr: "Etkileşimler analiz ediliyor..." },
   "ic.checkBtn": { en: "Check Interactions", tr: "Etkileşimleri Kontrol Et" },
   "ic.emergencyDisabled": { en: "Emergency detected — Analysis disabled", tr: "Acil durum — Analiz devre dışı" },

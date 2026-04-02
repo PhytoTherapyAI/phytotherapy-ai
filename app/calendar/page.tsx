@@ -410,7 +410,7 @@ function DailyProgressCard({ completed, total, lang }: { completed: number; tota
 // ══════════════════════════════════════════════════
 export default function CalendarPage() {
   const router = useRouter()
-  const { isAuthenticated, isLoading: authLoading, profile } = useAuth()
+  const { isAuthenticated, isLoading: authLoading, profile, user } = useAuth()
   const { lang } = useLang()
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [activeView, setActiveView] = useState<"today" | "month" | "vitals">("today")
@@ -418,6 +418,9 @@ export default function CalendarPage() {
   const [vitalsLoading, setVitalsLoading] = useState(false)
   const [addVitalOpen, setAddVitalOpen] = useState(false)
   const [allEvents, setAllEvents] = useState<Array<{ title: string; event_date: string; event_time: string | null; description: string | null; event_type: string }>>([])
+  const [waterCount, setWaterCount] = useState(0)
+  const [waterToast, setWaterToast] = useState(false)
+  const [realStreak, setRealStreak] = useState<number | null>(null)
 
   // Current time block detection
   const currentBlock = useMemo(() => {
@@ -427,7 +430,7 @@ export default function CalendarPage() {
     return "night"
   }, [])
 
-  // Mock daily tasks organized by circadian time blocks
+  // Daily tasks organized by circadian time blocks — profile-driven
   const [morningTasks, setMorningTasks] = useState<DailyTask[]>([
     { id: "m1", label: lang === "tr" ? "D3 Vitamini" : "Vitamin D3", done: false, emoji: "☀️" },
     { id: "m2", label: lang === "tr" ? "Probiyotik" : "Probiotic", done: false, emoji: "🌿" },
@@ -442,18 +445,156 @@ export default function CalendarPage() {
     { id: "e2", label: lang === "tr" ? "Kediotu çayı" : "Valerian tea", done: false, emoji: "🍵" },
   ])
 
+  // Shared completed items set for ritual sync (key = task label)
+  const [completedItems, setCompletedItems] = useState<Set<string>>(new Set())
+
+  // Toggle a task — updates shared completedItems set
   const toggleTask = useCallback((id: string) => {
     const update = (tasks: DailyTask[]) => tasks.map(t => t.id === id ? { ...t, done: !t.done } : t)
-    setMorningTasks(prev => update(prev))
-    setNoonTasks(prev => update(prev))
-    setNightTasks(prev => update(prev))
+    setMorningTasks(prev => {
+      const updated = update(prev)
+      const task = updated.find(t => t.id === id)
+      if (task) {
+        setCompletedItems(ci => {
+          const next = new Set(ci)
+          if (task.done) { next.add(task.id); next.add(task.label) }
+          else { next.delete(task.id); next.delete(task.label) }
+          return next
+        })
+      }
+      return updated
+    })
+    setNoonTasks(prev => {
+      const updated = update(prev)
+      const task = updated.find(t => t.id === id)
+      if (task) {
+        setCompletedItems(ci => {
+          const next = new Set(ci)
+          if (task.done) { next.add(task.id); next.add(task.label) }
+          else { next.delete(task.id); next.delete(task.label) }
+          return next
+        })
+      }
+      return updated
+    })
+    setNightTasks(prev => {
+      const updated = update(prev)
+      const task = updated.find(t => t.id === id)
+      if (task) {
+        setCompletedItems(ci => {
+          const next = new Set(ci)
+          if (task.done) { next.add(task.id); next.add(task.label) }
+          else { next.delete(task.id); next.delete(task.label) }
+          return next
+        })
+      }
+      return updated
+    })
   }, [])
 
   const allTasks = useMemo(() => [...morningTasks, ...noonTasks, ...nightTasks], [morningTasks, noonTasks, nightTasks])
   const completedTasks = allTasks.filter(t => t.done).length
-  const waterDone = allTasks.filter(t => t.done && t.emoji === "💧").length
+  // waterCount comes from FAB + tasks combined
+  const waterDoneFromTasks = allTasks.filter(t => t.done && t.emoji === "💧").length
+  const totalWater = waterCount + waterDoneFromTasks + 3
   const medsDone = allTasks.filter(t => t.done && (t.emoji === "💊" || t.emoji === "🌿" || t.emoji === "🐟" || t.emoji === "🌙" || t.emoji === "☀️" || t.emoji === "🍵")).length
   const totalMeds = allTasks.filter(t => t.emoji !== "💧").length
+
+  // FAB quick log handler
+  const handleQuickLog = useCallback((type: string) => {
+    if (type === "water") {
+      setWaterCount(c => c + 1)
+      setWaterToast(true)
+      setTimeout(() => setWaterToast(false), 1500)
+    }
+  }, [])
+
+  // Fetch real profile medications + supplements to populate time blocks
+  const fetchProfileMeds = useCallback(async () => {
+    if (!user?.id) return
+    try {
+      const supabase = createBrowserClient()
+      const { data: meds } = await supabase
+        .from("user_medications")
+        .select("brand_name, generic_name, dosage, frequency")
+        .eq("user_id", user.id)
+        .eq("is_active", true)
+
+      if (meds && meds.length > 0) {
+        const morning: DailyTask[] = []
+        const noon: DailyTask[] = []
+        const night: DailyTask[] = []
+
+        meds.forEach((m: { brand_name: string | null; generic_name: string | null; frequency?: string | null }, idx: number) => {
+          const name = m.brand_name || m.generic_name || "İlaç"
+          const freq = (m.frequency || "").toLowerCase()
+          const task: DailyTask = { id: `med-${idx}`, label: name, done: false, emoji: "💊" }
+
+          if (freq.includes("akşam") || freq.includes("night") || freq.includes("evening") || freq.includes("gece")) {
+            night.push(task)
+          } else if (freq.includes("öğle") || freq.includes("noon") || freq.includes("afternoon")) {
+            noon.push(task)
+          } else {
+            // Default: morning
+            morning.push(task)
+          }
+        })
+
+        if (morning.length > 0) {
+          setMorningTasks(prev => {
+            // Remove default med placeholders, keep water tasks, add real meds
+            const waterTasks = prev.filter(t => t.emoji === "💧")
+            const supplementTasks = prev.filter(t => t.emoji !== "💧" && t.emoji !== "💊")
+            return [...morning, ...supplementTasks, ...waterTasks]
+          })
+        }
+        if (noon.length > 0) {
+          setNoonTasks(prev => {
+            const waterTasks = prev.filter(t => t.emoji === "💧")
+            return [...noon, ...waterTasks]
+          })
+        }
+        if (night.length > 0) {
+          setNightTasks(prev => {
+            const existing = prev.filter(t => t.emoji !== "💊")
+            return [...night, ...existing]
+          })
+        }
+      }
+    } catch { /* ignore — keep defaults */ }
+  }, [user?.id])
+
+  // Fetch streak from daily_check_ins
+  const fetchStreak = useCallback(async () => {
+    if (!user?.id) return
+    try {
+      const supabase = createBrowserClient()
+      const ninetyDaysAgo = new Date()
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
+      const { data: checkIns } = await supabase
+        .from("daily_check_ins")
+        .select("check_date")
+        .eq("user_id", user.id)
+        .gte("check_date", ninetyDaysAgo.toISOString().split("T")[0])
+        .order("check_date", { ascending: false })
+
+      if (checkIns && checkIns.length > 0) {
+        const activeDates = new Set(checkIns.map((c: { check_date: string }) => c.check_date))
+        let s = 0
+        const today = new Date()
+        for (let i = 0; i < 90; i++) {
+          const d = new Date(today)
+          d.setDate(d.getDate() - i)
+          const dateStr = d.toISOString().split("T")[0]
+          if (activeDates.has(dateStr)) s++
+          else break
+        }
+        setRealStreak(s)
+      } else {
+        setRealStreak(0)
+      }
+    } catch { /* ignore */ }
+  }, [user?.id])
 
   const fetchAllEvents = useCallback(async () => {
     if (!profile?.id) return
@@ -478,7 +619,9 @@ export default function CalendarPage() {
   }, [profile?.id])
 
   useEffect(() => {
-    if (profile?.id) { Promise.all([fetchAllEvents(), fetchVitals()]) }
+    if (profile?.id) {
+      Promise.all([fetchAllEvents(), fetchVitals(), fetchProfileMeds(), fetchStreak()])
+    }
   }, [profile?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (authLoading) return <PageSkeleton />
@@ -518,7 +661,7 @@ export default function CalendarPage() {
             </motion.div>
 
             {/* Habit Heat Map */}
-            <HabitHeatMap lang={lang} />
+            <HabitHeatMap lang={lang} userId={user?.id} streak={realStreak ?? undefined} />
 
             {/* Daily Progress */}
             <DailyProgressCard completed={completedTasks} total={allTasks.length} lang={lang} />
@@ -530,9 +673,9 @@ export default function CalendarPage() {
                 {lang === "tr" ? "Günlük Halkalar" : "Daily Rings"}
               </p>
               <div className="flex justify-around gap-2">
-                <CircularRing emoji="💧" label={lang === "tr" ? "Su" : "Water"} current={waterDone + 3} total={8} color="#3b82f6" />
-                <CircularRing emoji="💊" label={lang === "tr" ? "İlaçlar" : "Meds"} current={1} total={2} color="#3c7a52" />
-                <CircularRing emoji="🌿" label={lang === "tr" ? "Takviye" : "Supps"} current={medsDone} total={totalMeds} color="#6B8F71" />
+                <CircularRing emoji="💧" label={lang === "tr" ? "Su" : "Water"} current={Math.min(totalWater, 8)} total={8} color="#3b82f6" />
+                <CircularRing emoji="💊" label={lang === "tr" ? "İlaçlar" : "Meds"} current={medsDone} total={Math.max(totalMeds, 1)} color="#3c7a52" />
+                <CircularRing emoji="🌿" label={lang === "tr" ? "Takviye" : "Supps"} current={medsDone} total={Math.max(totalMeds, 1)} color="#6B8F71" />
                 <CircularRing emoji="🚶" label={lang === "tr" ? "Hareket" : "Move"} current={1} total={3} color="#f59e0b" />
               </div>
             </motion.div>
@@ -678,7 +821,28 @@ export default function CalendarPage() {
       </div>
 
       {/* ═══ Quick Log FAB ═══ */}
-      <QuickLogFABEnhanced onAction={() => { /* handle quick log */ }} lang={lang} />
+      <QuickLogFABEnhanced onAction={handleQuickLog} lang={lang} />
+
+      {/* ═══ Water Toast ═══ */}
+      <AnimatePresence>
+        {waterToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            className="fixed bottom-40 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 rounded-full bg-blue-500 text-white px-4 py-2 text-sm font-medium shadow-lg"
+          >
+            <motion.span
+              animate={{ scale: [1, 1.4, 1] }}
+              transition={{ duration: 0.3 }}
+            >
+              💧
+            </motion.span>
+            {lang === "tr" ? "1 bardak su eklendi!" : "1 glass of water added!"}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -55,7 +55,7 @@ const PHARMA_FACTS = [
 ];
 
 export default function InteractionCheckerPage() {
-  const { isAuthenticated, isLoading: authLoading, session, profile } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, session, profile, user } = useAuth();
   const { lang } = useLang();
   const isTr = lang === "tr";
   const [medications, setMedications] = useState<string[]>([]);
@@ -78,14 +78,14 @@ export default function InteractionCheckerPage() {
   }, []);
 
   const loadMedicationsFromProfile = async () => {
-    if (!profile) return;
+    if (!user) return;
     setLoadingProfile(true);
     try {
       const supabase = createBrowserClient();
       const { data } = await supabase
         .from("user_medications")
         .select("*")
-        .eq("user_id", profile.id)
+        .eq("user_id", user.id)
         .eq("is_active", true);
       if (data && data.length > 0) {
         const medNames = (data as UserMedication[]).map(
@@ -241,7 +241,7 @@ export default function InteractionCheckerPage() {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">1</div>
-                <p className="text-sm font-semibold">{isTr ? "İlaçlarınızı Ekleyin" : "Add Your Medications"}</p>
+                <p className="text-sm font-semibold">{tx("ic.step1", lang)}</p>
               </div>
 
               <DrugInput
@@ -392,7 +392,7 @@ export default function InteractionCheckerPage() {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">3</div>
-                <p className="text-sm font-semibold">{isTr ? "Güvenlik Analizini Başlat" : "Run Safety Analysis"}</p>
+                <p className="text-sm font-semibold">{tx("ic.runSafetyAnalysis", lang)}</p>
               </div>
 
               <Button
