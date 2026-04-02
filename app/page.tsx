@@ -222,12 +222,16 @@ export default function Home() {
 
               {/* Dynamic heading */}
               <h1 className="font-heading text-2xl font-semibold leading-tight tracking-tight sm:text-3xl md:text-5xl">
-                {isTr ? "Yapay Zeka Destekli Sağlık Asistanın" : "Your AI-Powered Health Companion"}
+                {isTr ? (
+                  <>Kanıt Doğayla Buluşur.<br /><span className="text-[var(--brand)]">Yapay Zeka Seninle.</span></>
+                ) : (
+                  <>Evidence Meets Nature.<br /><span className="text-[var(--brand)]">AI Meets You.</span></>
+                )}
               </h1>
               <p className="mt-3 max-w-lg text-xs text-muted-foreground sm:text-sm md:text-base">
                 {isTr
-                  ? "Doctopal, modern tıp ile doğal iyileşmeyi birleştirir — ilaç etkileşimleri, fitoterapi protokolleri ve kişiselleştirilmiş sağlık bilgileri, bilim tarafından doğrulanmış."
-                  : "Doctopal bridges modern medicine and natural healing — drug interactions, phytotherapy protocols, and personalized health insights, all verified by science."}
+                  ? "DoctoPal, modern tıp ile doğal iyileşmeyi birleştirir — ilaç etkileşimleri, fitoterapi protokolleri ve kişiselleştirilmiş sağlık bilgileri, bilim tarafından doğrulanmış."
+                  : "DoctoPal bridges modern medicine and natural healing — drug interactions, phytotherapy protocols, and personalized health insights, all verified by science."}
               </p>
 
               {/* Spotlight search */}
@@ -262,7 +266,7 @@ export default function Home() {
               {/* CTA */}
               <div className="mt-5 flex flex-col gap-2 sm:flex-row md:mt-6">
                 <Link href="/auth/login"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--brand)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900/30 hover:bg-[var(--brand-dark,#047857)] transition-colors">
                   {tx("nav.getStarted", lang)} <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link href="/health-assistant"
@@ -286,7 +290,7 @@ export default function Home() {
           {[
             { icon: "🔬", label: "PubMed Verified" },
             { icon: "🏥", label: "FHIR Compatible" },
-            { icon: "🔒", label: "KVKK & GDPR Compliant" },
+            { icon: "🔒", label: "HIPAA & KVKK Compliant" },
             { icon: "🤖", label: "Powered by Claude AI" },
             { icon: "📱", label: "166+ Health Tools" },
           ].map((t) => (
@@ -376,7 +380,7 @@ export default function Home() {
       {/* JSON-LD */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org", "@type": "WebApplication",
-        name: "Doctopal", url: "https://doctopal.com",
+        name: "DoctoPal", url: "https://doctopal.com",
         description: "AI-powered evidence-based integrative medicine assistant.",
         applicationCategory: "HealthApplication", operatingSystem: "Web",
         offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
