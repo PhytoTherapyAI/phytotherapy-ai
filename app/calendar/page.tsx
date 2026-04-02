@@ -609,13 +609,15 @@ export default function CalendarPage() {
     const taskMap = allTasks.map(t => ({ id: t.id, emoji: t.emoji }))
     localStorage.setItem(`cal-ritual-tasks-${todayDateStr}`, JSON.stringify(taskMap))
 
-    // Sync med completion to dashboard
+    // Sync med/sup completion to dashboard
     const dashKey = `dash-tasks-done-${todayDateStr}`
     try {
       const dashDone = new Set(JSON.parse(localStorage.getItem(dashKey) || "[]"))
-      const anyMedDone = allTasks.some(t => t.emoji === "💊" && t.done)
+      // Med: only real meds (med-* prefix from DB)
+      const anyMedDone = allTasks.some(t => t.emoji === "💊" && t.id.startsWith("med-") && t.done)
       if (anyMedDone) dashDone.add("med"); else dashDone.delete("med")
-      const anySupDone = allTasks.some(t => (t.emoji === "🌿" || t.emoji === "🐟") && t.done)
+      // Sup: only real supplements (sup-* prefix from DB)
+      const anySupDone = allTasks.some(t => t.id.startsWith("sup-") && t.done)
       if (anySupDone) dashDone.add("sup"); else dashDone.delete("sup")
       localStorage.setItem(dashKey, JSON.stringify([...dashDone]))
     } catch {}
@@ -626,8 +628,9 @@ export default function CalendarPage() {
   const totalWater = waterCount + waterDoneFromTasks + 3
   const medsDone = allTasks.filter(t => t.done && t.emoji === "💊").length
   const totalMedsOnly = allTasks.filter(t => t.emoji === "💊").length
-  const supsDone = allTasks.filter(t => t.done && (t.emoji === "🌿" || t.emoji === "🐟" || t.emoji === "🌙" || t.emoji === "☀️" || t.emoji === "🍵")).length
-  const totalSups = allTasks.filter(t => t.emoji === "🌿" || t.emoji === "🐟" || t.emoji === "🌙" || t.emoji === "☀️" || t.emoji === "🍵").length
+  // Supplements: count only real DB supplements (sup-*) + default supplement emojis that are from profile
+  const supsDone = allTasks.filter(t => t.done && (t.id.startsWith("sup-") || (t.emoji === "🌿" && !t.id.startsWith("m")) || t.emoji === "🐟")).length
+  const totalSups = allTasks.filter(t => t.id.startsWith("sup-") || (t.emoji === "🌿" && !t.id.startsWith("m")) || t.emoji === "🐟").length
 
   // FAB quick log handler — saves to Supabase
   const handleQuickLog = useCallback((type: string) => {

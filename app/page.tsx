@@ -389,29 +389,32 @@ export default function Home() {
     setCompletedTaskIds(next);
     saveCompletedTasks(todayStr, next);
 
-    // Bidirectional sync: when "med" or "sup" toggled, update calendar rituals too
+    // Update done counts for med/sup display
+    if (id === "med") {
+      setMedDoneCount(wasCompleted ? 0 : medTotal);
+    }
+    if (id === "sup") {
+      setSupDoneCount(wasCompleted ? 0 : supTotal);
+    }
+
+    // Bidirectional sync: when "med" or "sup" toggled, update calendar rituals
     if (id === "med" || id === "sup") {
       try {
         const calKey = `cal-rituals-${todayStr}`;
         const calDone = new Set(JSON.parse(localStorage.getItem(calKey) || "[]") as string[]);
-        const targetEmoji = id === "med" ? "💊" : null; // sup covers multiple emojis
-        const supEmojis = new Set(["🌿", "🐟", "🌙", "☀️", "🍵"]);
-
-        // Read current calendar tasks to find matching IDs
-        // We store a mapping for cross-reference
         const allCalTasks = JSON.parse(localStorage.getItem(`cal-ritual-tasks-${todayStr}`) || "[]") as Array<{id: string; emoji: string}>;
 
         if (!wasCompleted) {
-          // Check all matching tasks in calendar
           allCalTasks.forEach(t => {
-            if (id === "med" && t.emoji === "💊") calDone.add(t.id);
-            if (id === "sup" && supEmojis.has(t.emoji)) calDone.add(t.id);
+            // Med: only actual medication tasks (💊 emoji with med-* prefix)
+            if (id === "med" && t.emoji === "💊" && t.id.startsWith("med-")) calDone.add(t.id);
+            // Sup: only DB-sourced supplements (sup-* prefix), not default placeholders
+            if (id === "sup" && t.id.startsWith("sup-")) calDone.add(t.id);
           });
         } else {
-          // Uncheck all matching tasks in calendar
           allCalTasks.forEach(t => {
-            if (id === "med" && t.emoji === "💊") calDone.delete(t.id);
-            if (id === "sup" && supEmojis.has(t.emoji)) calDone.delete(t.id);
+            if (id === "med" && t.emoji === "💊" && t.id.startsWith("med-")) calDone.delete(t.id);
+            if (id === "sup" && t.id.startsWith("sup-")) calDone.delete(t.id);
           });
         }
         localStorage.setItem(calKey, JSON.stringify([...calDone]));
