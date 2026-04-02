@@ -20,6 +20,7 @@ const PWAInstallPrompt = dynamic(() => import("@/components/pwa/PWAInstallPrompt
 const ServiceWorkerRegistration = dynamic(() => import("@/components/pwa/ServiceWorkerRegistration").then(m => m.ServiceWorkerRegistration));
 const CriticalAlertModal = dynamic(() => import("@/components/emergency/CriticalAlertModal").then(m => m.CriticalAlertModal));
 const FeedbackWidget = dynamic(() => import("@/components/feedback/FeedbackWidget").then(m => m.FeedbackWidget));
+const BottomNavbar = dynamic(() => import("@/components/layout/BottomNavbar").then(m => m.BottomNavbar));
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -137,6 +138,7 @@ export default function RootLayout({
               <ServiceWorkerRegistration />
               <CriticalAlertModal />
               <FeedbackWidget />
+              <BottomNavbar />
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>
