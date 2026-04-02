@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
 
     const exportData = {
       exportedAt: new Date().toISOString(),
-      platform: "Doctopal",
+      platform: "DoctoPal",
       user: {
         email: user.email,
         createdAt: user.created_at,

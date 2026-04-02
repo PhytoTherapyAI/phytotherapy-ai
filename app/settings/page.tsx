@@ -337,7 +337,7 @@ export default function SettingsPage() {
         ))}
 
         {/* Version */}
-        <p className="text-center text-xs text-slate-300 mt-8">Doctopal v3.0 Beta</p>
+        <p className="text-center text-xs text-slate-300 mt-8">DoctoPal v3.0 Beta</p>
       </div>
     </div>
   )

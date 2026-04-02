@@ -58,7 +58,7 @@ export function RadiologyReport({ analysis }: { analysis: Analysis }) {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text style={styles.title}>Doctopal — Radiology Analysis Report</Text>
+          <Text style={styles.title}>DoctoPal — Radiology Analysis Report</Text>
           <Text style={styles.subtitle}>Educational Radiology Image Interpretation | For Healthcare Provider Review</Text>
         </View>
 

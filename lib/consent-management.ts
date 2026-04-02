@@ -269,7 +269,7 @@ export function checkAccess(request: AccessRequest, activeConsents: ConsentRecor
 export const DPA_CLAUSES = {
   en: [
     "1. DATA CONTROLLER: The healthcare institution sharing patient data",
-    "2. DATA PROCESSOR: Doctopal — processing data solely for the stated purpose",
+    "2. DATA PROCESSOR: DoctoPal — processing data solely for the stated purpose",
     "3. PURPOSE LIMITATION: Data processed only for herbal interaction analysis and health recommendations",
     "4. DATA MINIMIZATION: Only necessary data categories are collected and processed",
     "5. STORAGE LIMITATION: Data retained for the agreed period, then securely deleted",
@@ -283,7 +283,7 @@ export const DPA_CLAUSES = {
   ],
   tr: [
     "1. VERİ SORUMLUSU: Hasta verisini paylaşan sağlık kurumu",
-    "2. VERİ İŞLEYEN: Doctopal — veriyi yalnızca belirtilen amaç için işler",
+    "2. VERİ İŞLEYEN: DoctoPal — veriyi yalnızca belirtilen amaç için işler",
     "3. AMAÇ SINIRLAMASI: Veri yalnızca bitkisel etkileşim analizi ve sağlık önerileri için işlenir",
     "4. VERİ MİNİMİZASYONU: Yalnızca gerekli veri kategorileri toplanır ve işlenir",
     "5. SAKLAMA SINIRLAMASI: Veri kararlaştırılan süre boyunca saklanır, ardından güvenle silinir",

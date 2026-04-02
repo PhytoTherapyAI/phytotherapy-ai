@@ -76,7 +76,7 @@ export async function shareCard(
   if (navigator.canShare?.({ files: [file] })) {
     try {
       await navigator.share({
-        title: shareData?.title ?? "Doctopal",
+        title: shareData?.title ?? "DoctoPal",
         text: shareData?.text,
         files: [file],
       })

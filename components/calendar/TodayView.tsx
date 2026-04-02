@@ -583,7 +583,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           const msg = tr
             ? `Bugün henüz almadığın ilaç/takviye var!`
             : `You have untaken meds/supplements today!`
-          new Notification("Doctopal", { body: msg, icon: "/icon-192.png" })
+          new Notification("DoctoPal", { body: msg, icon: "/icon-192.png" })
         }
         sessionStorage.setItem(`evening-reminder-${today}`, "true")
       }

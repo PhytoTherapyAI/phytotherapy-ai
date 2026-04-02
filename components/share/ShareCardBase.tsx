@@ -21,7 +21,7 @@ export function ShareCardBase({
   lang,
   children,
   fileName = "doctopal-card.png",
-  shareTitle = "Doctopal",
+  shareTitle = "DoctoPal",
   shareText,
   className = "",
   showActions = true,

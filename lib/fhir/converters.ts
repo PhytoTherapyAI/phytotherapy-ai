@@ -50,7 +50,7 @@ export function supplementToFHIR(params: {
       ...(params.endDate ? { end: params.endDate } : {}),
     },
     dateAsserted: new Date().toISOString(),
-    informationSource: { reference: "Organization/doctopal", display: "Doctopal" },
+    informationSource: { reference: "Organization/doctopal", display: "DoctoPal" },
     dosage: [{
       text: `${params.dose}, ${params.frequency}`,
       route: {

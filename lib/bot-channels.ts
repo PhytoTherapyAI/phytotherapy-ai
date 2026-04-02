@@ -133,8 +133,8 @@ export const MESSAGE_TEMPLATES = {
     tr: "▶️ Günlük mesajlar yeniden başlatıldı! Planınız yarın 09:00'da gelecek.",
   },
   welcome: {
-    en: "👋 Welcome to Doctopal Daily Assistant! You'll receive personalized health tips every morning at 09:00.",
-    tr: "👋 Doctopal Günlük Asistan'a hoş geldiniz! Her sabah 09:00'da kişiselleştirilmiş sağlık önerileri alacaksınız.",
+    en: "👋 Welcome to DoctoPal Daily Assistant! You'll receive personalized health tips every morning at 09:00.",
+    tr: "👋 DoctoPal Günlük Asistan'a hoş geldiniz! Her sabah 09:00'da kişiselleştirilmiş sağlık önerileri alacaksınız.",
   },
 }
 

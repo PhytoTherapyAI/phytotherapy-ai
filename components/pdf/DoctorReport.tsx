@@ -196,7 +196,7 @@ export function DoctorReport({ results, analysis, patientInfo }: DoctorReportPro
       <Page size="A4" style={styles.page}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>Doctopal — Blood Test Report</Text>
+          <Text style={styles.title}>DoctoPal — Blood Test Report</Text>
           <Text style={styles.subtitle}>
             Evidence-Based Integrative Medicine Analysis | For Healthcare Provider Review
           </Text>

@@ -20,8 +20,8 @@ const CATEGORY_ICONS: Record<string, any> = { Leaf, Apple, Brain, Activity, Pill
 
 // Authors will be loaded from Supabase in production
 const AUTHORS: Record<string, { name: string; title: string; specialty: { en: string; tr: string }; verified: boolean; avatar: string }> = {
-  "1": { name: "Doctopal", title: "Editör", specialty: { en: "Evidence-Based Phytotherapy", tr: "Kanıta Dayalı Fitoterapi" }, verified: true, avatar: "PA" },
-  "2": { name: "Doctopal", title: "Editör", specialty: { en: "Drug-Herb Interactions", tr: "İlaç-Bitki Etkileşimleri" }, verified: true, avatar: "PA" },
+  "1": { name: "DoctoPal", title: "Editör", specialty: { en: "Evidence-Based Phytotherapy", tr: "Kanıta Dayalı Fitoterapi" }, verified: true, avatar: "PA" },
+  "2": { name: "DoctoPal", title: "Editör", specialty: { en: "Drug-Herb Interactions", tr: "İlaç-Bitki Etkileşimleri" }, verified: true, avatar: "PA" },
 }
 
 export default function ExpertContentPage() {

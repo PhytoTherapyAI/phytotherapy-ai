@@ -48,7 +48,7 @@ export function HealthScoreShareCard({
     <ShareCardBase
       lang={lang}
       fileName={`health-score-${healthScore}.png`}
-      shareTitle="Doctopal"
+      shareTitle="DoctoPal"
       shareText={shareText}
     >
       {/* Card — standard share size */}

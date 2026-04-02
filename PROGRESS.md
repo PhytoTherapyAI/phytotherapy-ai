@@ -2319,3 +2319,50 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ Desktop 2/3 + 1/3 layout, mobilde tek kolon
 - ✅ Opsiyonel not alanı (akordeon, varsayılan kapalı)
 - ✅ Son girdi kartları (emoji + tarih + not)
+
+---
+
+## DoctoPal Premium Brand Identity (2 Nisan 2026 — Session 4)
+
+**Adım 1 — Wordmark & Logo Bileşeni:**
+- ✅ components/brand/DoctoPalLogo.tsx — React bileşeni (size: sm/md/lg, variant: full/icon/wordmark, theme: light/dark)
+- ✅ Stetoskop çemberinin içinde minimalist yaprak — tıp + doğa birleşimi
+- ✅ Wordmark: "Docto" (slate-800) + "Pal" (emerald-600) — bold, tight tracking
+- ✅ public/favicon.svg, logo-icon.svg, logo.svg, logo-white.svg, og-image.svg güncellendi
+
+**Adım 2 — Tagline & Motto:**
+- ✅ Ana tagline: "Evidence Meets Nature. AI Meets You."
+- ✅ Kısa tagline: "Your AI Health Companion"
+- ✅ layout.tsx metadata, manifest.json güncellendi
+
+**Adım 3 — Renk Sistemi:**
+- ✅ Brand renkleri: --brand (#059669), --brand-light, --brand-dark, --brand-accent
+- ✅ Dark mode: emerald-400/500 tonları
+- ✅ Logo-accent güncellendi (altın → emerald)
+
+**Adım 4 — Navbar & Footer:**
+- ✅ Navbar: "Docto" + "Pal" iki renkli wordmark + logo-icon
+- ✅ Scroll shrink davranışı korundu
+- ✅ Footer: DoctoPalLogo bileşeni + tagline + hello@doctopal.com
+
+**Adım 5 — Landing Page Hero:**
+- ✅ "Evidence Meets Nature." + "AI Meets You." iki satırlı hero
+- ✅ CTA: brand renginde (emerald-600), shadow-lg
+- ✅ Trust bar: HIPAA & KVKK eklendi
+
+**Adım 6 — Loading, Favicon, Login, System Prompts:**
+- ✅ loading.tsx: DoctoPal logo + shimmer + "Loading your health companion..."
+- ✅ not-found.tsx: "This page took a different path." + brand CTA
+- ✅ Login page: Eski Phytotherapy wordmark → DoctoPal logo + wordmark
+- ✅ favicon.svg → layout.tsx'e entegre
+- ✅ 10 system prompt dosyasında "Doctopal" → "DoctoPal"
+
+**Adım 7 — Final Temizlik:**
+- ✅ UI-facing "Doctopal" → "DoctoPal" (PDF raporları, bot mesajları, share kartları, FHIR, consent, settings)
+- ✅ next build: SIFIR hata
+- ✅ Brand: DoctoPal (D ve P büyük) tüm kullanıcı arayüzünde tutarlı
+
+**Google OAuth Notu:**
+- Google OAuth consent screen "phytotherapy.ai" gösteriyor → Bu Google Cloud Console'dan düzeltilmeli
+- Supabase Dashboard → Authentication → Providers → Google → App Name: "DoctoPal" yapılmalı
+- Google Cloud Console → OAuth consent screen → App name: "DoctoPal" yapılmalı
