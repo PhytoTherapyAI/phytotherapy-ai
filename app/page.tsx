@@ -222,12 +222,12 @@ export default function Home() {
 
               {/* Dynamic heading */}
               <h1 className="font-heading text-2xl font-semibold leading-tight tracking-tight sm:text-3xl md:text-5xl">
-                {isTr ? "Bugün nasıl hissediyorsun?" : "How are you feeling today?"}
+                {isTr ? "Yapay Zeka Destekli Sağlık Asistanın" : "Your AI-Powered Health Companion"}
               </h1>
               <p className="mt-3 max-w-lg text-xs text-muted-foreground sm:text-sm md:text-base">
                 {isTr
-                  ? "Hangi bitkiyi merak ediyorsun? İlaç etkileşimlerini kontrol et, kan tahlilini analiz et veya asistana sor."
-                  : "Curious about an herb? Check drug interactions, analyze blood tests, or ask the assistant."}
+                  ? "Doctopal, modern tıp ile doğal iyileşmeyi birleştirir — ilaç etkileşimleri, fitoterapi protokolleri ve kişiselleştirilmiş sağlık bilgileri, bilim tarafından doğrulanmış."
+                  : "Doctopal bridges modern medicine and natural healing — drug interactions, phytotherapy protocols, and personalized health insights, all verified by science."}
               </p>
 
               {/* Spotlight search */}
@@ -280,71 +280,74 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats */}
+      {/* Trust Indicators */}
       <section className="border-y bg-primary/5">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-4 gap-y-3 px-4 py-5 sm:gap-x-10">
-          <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-primary" />
-            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-semibold text-primary">BETA</span>
-            <span className="text-[11px] text-muted-foreground">{tx("lp.statBeta", lang)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-primary" />
-            <span className="text-sm font-bold">PubMed</span>
-            <span className="text-[11px] text-muted-foreground">{tx("lp.statSources", lang)}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-primary" />
-            <span className="text-sm font-bold">30+</span>
-            <span className="text-[11px] text-muted-foreground">{tx("lp.statTools", lang)}</span>
-          </div>
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-4 gap-y-3 px-4 py-5 sm:gap-x-8">
+          {[
+            { icon: "🔬", label: "PubMed Verified" },
+            { icon: "🏥", label: "FHIR Compatible" },
+            { icon: "🔒", label: "KVKK & GDPR Compliant" },
+            { icon: "🤖", label: "Powered by Claude AI" },
+            { icon: "📱", label: "166+ Health Tools" },
+          ].map((t) => (
+            <div key={t.label} className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium">
+              <span>{t.icon}</span> {t.label}
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── Bento Grid for guests ── */}
+      {/* ── Feature Showcase ── */}
       <section className="mx-auto max-w-5xl px-4 py-10 md:py-16">
-        <div className="grid grid-cols-2 gap-3 md:gap-4 stagger-children">
-          {/* Wide: AI Assistant */}
-          <Link href="/health-assistant"
-            className="col-span-2 group relative overflow-hidden rounded-2xl border bg-gradient-to-r from-primary/5 to-sage/5 p-5 transition-all card-hover dark:from-primary/10 dark:to-sage/10">
-            <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
-                <Sparkles className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="font-bold">{isTr ? "Kanıta Dayalı AI Asistan" : "Evidence-Based AI Assistant"}</h3>
-                <p className="text-xs text-muted-foreground">{isTr ? "PubMed + Cochrane + hakemli dergiler" : "PubMed + Cochrane + peer-reviewed journals"}</p>
-              </div>
-              <div className="ml-auto flex items-center gap-1.5">
-                <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" /></span>
-              </div>
-            </div>
-          </Link>
-
-          {/* Square: Interaction */}
-          <Link href="/interaction-checker" className="group rounded-2xl border bg-card p-4 transition-all card-hover">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-coral/10 mb-3"><Pill className="h-4 w-4 text-coral" /></div>
-            <h3 className="text-sm font-bold">{isTr ? "Etkileşim Motoru" : "Interaction Engine"}</h3>
-          </Link>
-
-          {/* Square: Blood Test */}
-          <Link href="/blood-test" className="group rounded-2xl border bg-card p-4 transition-all card-hover">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500/10 mb-3"><Droplets className="h-4 w-4 text-rose-500" /></div>
-            <h3 className="text-sm font-bold">{isTr ? "Kan Tahlili" : "Blood Test"}</h3>
-          </Link>
-
-          {/* Square: Supplements */}
-          <Link href="/health-assistant" className="group rounded-2xl border bg-card p-4 transition-all card-hover">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 mb-3"><Leaf className="h-4 w-4 text-emerald-500" /></div>
-            <h3 className="text-sm font-bold">{isTr ? "Takviye Rehberi" : "Supplement Guide"}</h3>
-          </Link>
-
-          {/* Square: Sleep */}
-          <Link href="/sleep-analysis" className="group rounded-2xl border bg-card p-4 transition-all card-hover">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-lavender/10 mb-3"><Moon className="h-4 w-4 text-lavender" /></div>
-            <h3 className="text-sm font-bold">{isTr ? "Uyku Analizi" : "Sleep Analysis"}</h3>
-          </Link>
+        <h2 className="font-heading text-xl font-semibold text-center mb-2 sm:text-2xl">
+          {isTr ? "Neler Yapabilirsin?" : "What Can You Do?"}
+        </h2>
+        <p className="text-center text-sm text-muted-foreground mb-8 max-w-lg mx-auto">
+          {isTr ? "Sağlığını bilimle yönet" : "Manage your health with science"}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            { emoji: "💊", title: isTr ? "İlaç Etkileşim Kalkanı" : "Drug Interaction Shield", desc: isTr ? "50.000+ ilaç-bitki etkileşimini saniyeler içinde kontrol et" : "Check 50,000+ drug-herb interactions in seconds", href: "/interaction-checker", gradient: "from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20", border: "border-red-100 dark:border-red-900/30" },
+            { emoji: "🩸", title: isTr ? "AI Laboratuvar Analizi" : "AI Lab Analysis", desc: isTr ? "Kan tahlili PDF'ini yükle, anında görsel sağlık haritası al" : "Upload your blood test PDF, get instant visual health map", href: "/blood-test", gradient: "from-rose-50 to-pink-50 dark:from-rose-950/20 dark:to-pink-950/20", border: "border-rose-100 dark:border-rose-900/30" },
+            { emoji: "🌿", title: isTr ? "Fitoterapi Protokolleri" : "Phytotherapy Protocols", desc: isTr ? "PubMed alıntılı kanıta dayalı bitkisel tıp" : "Evidence-based herbal medicine with PubMed citations", href: "/health-assistant", gradient: "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20", border: "border-emerald-100 dark:border-emerald-900/30" },
+            { emoji: "👨‍⚕️", title: isTr ? "Doktor Klinik Yardımcısı" : "Doctor's Clinical Copilot", desc: isTr ? "AI destekli triyaj, reçete asistanı ve hasta analitiği" : "AI-powered triage, prescribing assistant, and patient analytics", href: "/doctor-panel", gradient: "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20", border: "border-blue-100 dark:border-blue-900/30" },
+          ].map((f) => (
+            <Link key={f.href} href={f.href}
+              className={`group rounded-2xl border ${f.border} bg-gradient-to-br ${f.gradient} p-6 transition-all hover:shadow-soft-lg hover:-translate-y-0.5`}>
+              <span className="text-3xl block mb-3">{f.emoji}</span>
+              <h3 className="font-bold text-sm mb-1">{f.title}</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+            </Link>
+          ))}
         </div>
+
+        {/* Social Proof Stats */}
+        <div className="mt-10 flex justify-center gap-8 sm:gap-12 flex-wrap">
+          {[
+            { num: "166+", label: isTr ? "Sağlık Aracı" : "Health Tools" },
+            { num: "330+", label: isTr ? "Sayfa" : "Pages" },
+            { num: "75+", label: isTr ? "AI Destekli Rota" : "AI-Powered Routes" },
+          ].map((s) => (
+            <div key={s.label} className="text-center">
+              <p className="text-2xl font-bold text-primary sm:text-3xl">{s.num}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="mx-4 mb-10 rounded-2xl bg-gradient-to-r from-primary/10 to-teal-500/10 p-8 text-center border border-primary/10 md:mx-auto md:max-w-4xl">
+        <h2 className="font-heading text-xl font-semibold sm:text-2xl">
+          {isTr ? "Sağlık Yolculuğuna Bugün Başla" : "Start Your Health Journey Today"}
+        </h2>
+        <p className="text-sm text-muted-foreground mt-2 mb-5 max-w-md mx-auto">
+          {isTr ? "Ücretsiz kaydol, kredi kartı gerekmez." : "Sign up free — no credit card required."}
+        </p>
+        <Link href="/auth/login"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20">
+          {isTr ? "Ücretsiz Başla" : "Get Started Free"} <ArrowRight className="h-4 w-4" />
+        </Link>
       </section>
 
       {/* FAQ */}
