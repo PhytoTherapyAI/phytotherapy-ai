@@ -1,6 +1,42 @@
 # PROGRESS.md — Doctopal Sprint İlerleme Takibi
 
-> Son güncelleme: 2 Nisan 2026 (v39.0 — 29 Modül Davranışsal UX Yeniden Tasarım)
+> Son güncelleme: 2 Nisan 2026 (v40.0 — Bug Fix & Polish Session)
+
+---
+
+## Oturum 2 Nisan 2026 (Session 11) — Bug Fix & Polish
+
+### Navbar Solid Background ✅
+- ✅ `glass-card` (backdrop-blur + şeffaf) tamamen kaldırıldı
+- ✅ Floating rounded-2xl card layout → düz full-width solid bar
+- ✅ `style={{ backgroundColor: "var(--card)" }}` — Tailwind v4'te CSS variable guaranteed
+- ✅ `border-b border-border shadow-sm` ile alt çizgi
+- ✅ Header wrapper + inner container her ikisinde de solid background
+
+### Settings Page — 9 Araç Tam Liste ✅
+- ✅ Tüm 9 araç SYSTEM_ITEMS listesinde uniform link kartı olarak
+- ✅ Veri İndir (KVKK) + Veri Sil (KVKK) ayrı buton/modal'dan kart listesine taşındı
+- ✅ "Bildirimler" (/notifications) eklendi — tam 9 araç
+- ✅ Eski data actions buton bölümü + delete modal kaldırıldı (sadeleşti)
+
+### Şifre Değiştirme — Email Onayı ile ✅
+- ✅ `supabase.auth.updateUser({ password })` — Supabase'in kendi email confirmation akışı
+- ✅ Başarı mesajı: "📧 E-posta adresinize onay linki gönderdik"
+- ✅ Server-side admin API route (`/api/auth/change-password`) da mevcut (ileride gerekirse)
+
+### İlaçlarımı Yükle — Tam Düzeltme ✅
+- ✅ Yeni `/api/user/medications` GET endpoint — service role ile Bearer token doğrulama
+- ✅ `loadMedicationsFromProfile` artık session access_token ile API çağırıyor
+- ✅ RLS sorunları ve client session race condition tamamen ortadan kalktı
+- ✅ Spinner her zaman gösteriliyor (early return kaldırıldı)
+- ✅ Görünür hata mesajları: oturum yok / ilaç bulunamadı / API hatası
+- ✅ Buton her zaman yeniden tıklanabilir
+
+### Notification Preferences ✅
+- ✅ "Biological Challenge" → "Challenge Updates" (doğru text)
+
+### Deploy ✅
+- ✅ `git push origin master` — Vercel auto-deploy tetiklendi
 
 ---
 

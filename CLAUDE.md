@@ -1,4 +1,4 @@
-# CLAUDE.md — Doctopal Proje Anayasası v37.0
+# CLAUDE.md — Doctopal Proje Anayasası v40.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
@@ -1131,10 +1131,17 @@ SENTRY_DSN=...                       # Error monitoring
 - ✅ error.tsx: 3 kurtarma seçeneği (Tekrar Dene / Sayfayı Yenile / Ana Sayfa)
 - ✅ Hata mesajı excerpt'i gösteriliyor
 
-*Son güncelleme: 2 Nisan 2026 v37.0*
+*Son güncelleme: 2 Nisan 2026 v40.0*
 *Sprint 1-13 + Phase 1-20 + 28 Mart - 2 Nisan oturumları tamamlandı.*
 *342+ sayfa, build SIFIR hata, 50+ yeni bileşen.*
 *V2.0 Master Revision: 14 özellik, 4 grup, TAMAMEN tamamlandı.*
 *Hackathon: 11-12 Nisan 2026 — 9 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
 *Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*
+
+### Son Oturum (Session 11) — Bug Fix & Polish
+- Navbar: glass-card kaldırıldı → CSS var(--card) solid background
+- Settings: 9 araç tam liste, uniform link kartları
+- Şifre değiştirme: email onay akışı (Supabase native)
+- İlaçlarımı Yükle: /api/user/medications → Bearer token auth, hata mesajları
+- Yeni API routes: /api/user/medications, /api/auth/change-password
