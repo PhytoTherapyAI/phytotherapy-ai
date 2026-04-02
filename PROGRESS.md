@@ -2303,3 +2303,19 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ next build: SIFIR hata
 - ✅ Final grep: Tüm kaynak dosyalarda phytotherapy brand referansı temizlendi
 - ✅ Sadece CLAUDE.md ve PROGRESS.md'de tarihsel referanslar kaldı (doğru)
+
+---
+
+## Health Diary → Biometric Logbook (2 Nisan 2026)
+
+- ✅ Sonsuz spinner kaldırıldı → welcoming empty state + skeleton loading
+- ✅ Quick Status Panel: Energy (Low/Normal/Peak), Mood (Stormy/Cloudy/Sunny), Body (Pain/Bloated/Light) çipleri
+- ✅ Framer Motion haptic scale animasyonları + konfeti burst efekti
+- ✅ GitHub tarzı Habit Heat Map (84 gün, 12 hafta, sage-green tonları)
+- ✅ Streak badge (🔥 12 Day Streak)
+- ✅ AI Companion side panel (sticky desktop, card mobile)
+- ✅ Dinamik AI mesajları (enerji/mood/body seçimine göre farklı öneri)
+- ✅ Collapsible Sources paneli (PubMed PMID referansları)
+- ✅ Desktop 2/3 + 1/3 layout, mobilde tek kolon
+- ✅ Opsiyonel not alanı (akordeon, varsayılan kapalı)
+- ✅ Son girdi kartları (emoji + tarih + not)

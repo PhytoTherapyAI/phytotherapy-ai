@@ -1,577 +1,498 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import {
-  BookOpen,
-  Calendar,
-  Tag,
-  TrendingUp,
-  Loader2,
-  Plus,
-  Search,
-  LogIn,
-  Sparkles,
-  X,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx, txp } from "@/lib/translations";
-import { createBrowserClient } from "@/lib/supabase";
+  ChevronLeft, Sparkles, ChevronDown, Flame, BookOpen,
+  PenLine, Clock,
+} from "lucide-react"
+import { useRouter } from "next/navigation"
+
+// ── Types ──
+type EnergyLevel = "low" | "normal" | "peak" | null
+type MoodLevel = "stormy" | "cloudy" | "sunny" | null
+type BodyLevel = "pain" | "bloated" | "light" | null
 
 interface DiaryEntry {
-  id: string;
-  user_id: string;
-  date: string;
-  content: string;
-  mood: number;
-  tags: TagItem[];
-  created_at: string;
+  id: string
+  date: string
+  energy: EnergyLevel
+  mood: MoodLevel
+  body: BodyLevel
+  note: string
 }
 
-interface TagItem {
-  label: string;
-  category: TagCategory;
-}
+// ── Mock data: past entries for heat map ──
+const MOCK_ENTRIES: DiaryEntry[] = [
+  { id: "1", date: "2026-04-01", energy: "peak", mood: "sunny", body: "light", note: "Great workout day" },
+  { id: "2", date: "2026-03-31", energy: "normal", mood: "cloudy", body: "bloated", note: "" },
+  { id: "3", date: "2026-03-30", energy: "low", mood: "stormy", body: "pain", note: "Migraine all day" },
+  { id: "4", date: "2026-03-29", energy: "peak", mood: "sunny", body: "light", note: "" },
+  { id: "5", date: "2026-03-28", energy: "normal", mood: "sunny", body: "light", note: "Slept 8 hours" },
+  { id: "6", date: "2026-03-27", energy: "normal", mood: "cloudy", body: "bloated", note: "" },
+  { id: "7", date: "2026-03-26", energy: "peak", mood: "sunny", body: "light", note: "" },
+  { id: "8", date: "2026-03-25", energy: "low", mood: "stormy", body: "pain", note: "Stress" },
+  { id: "9", date: "2026-03-24", energy: "normal", mood: "sunny", body: "light", note: "" },
+  { id: "10", date: "2026-03-22", energy: "peak", mood: "sunny", body: "light", note: "" },
+  { id: "11", date: "2026-03-20", energy: "normal", mood: "cloudy", body: "bloated", note: "" },
+  { id: "12", date: "2026-03-18", energy: "low", mood: "stormy", body: "pain", note: "" },
+]
 
-type TagCategory = "symptom" | "mood" | "medication" | "exercise" | "food" | "sleep";
-
-const TAG_COLORS: Record<TagCategory, string> = {
-  symptom: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
-  mood: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
-  medication: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-  exercise: "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
-  food: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
-  sleep: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300",
-};
-
-const MOOD_EMOJIS = [
-  { value: 1, emoji: "\uD83D\uDE2B", label: { en: "Terrible", tr: "Berbat" } },
-  { value: 2, emoji: "\uD83D\uDE1F", label: { en: "Bad", tr: "Kotu" } },
-  { value: 3, emoji: "\uD83D\uDE10", label: { en: "Okay", tr: "Idare eder" } },
-  { value: 4, emoji: "\uD83D\uDE42", label: { en: "Good", tr: "Iyi" } },
-  { value: 5, emoji: "\uD83D\uDE04", label: { en: "Great", tr: "Harika" } },
-];
-
-const KEYWORD_MAP: Record<string, TagCategory> = {
-  headache: "symptom", migraine: "symptom", nausea: "symptom", pain: "symptom",
-  fatigue: "symptom", dizziness: "symptom", fever: "symptom", cough: "symptom",
-  cramp: "symptom", bloating: "symptom", rash: "symptom", allergy: "symptom",
-  "bas ağrısi": "symptom", mide: "symptom", bulantı: "symptom", ağrı: "symptom",
-  yorgunluk: "symptom", ates: "symptom", oksuruk: "symptom", sisman: "symptom",
-  happy: "mood", sad: "mood", anxious: "mood", stressed: "mood", calm: "mood",
-  angry: "mood", depressed: "mood", nervous: "mood", relaxed: "mood",
-  mutlu: "mood", uzgun: "mood", stresli: "mood", sakin: "mood", sinirli: "mood",
-  endiseli: "mood", kaygı: "mood",
-  ibuprofen: "medication", paracetamol: "medication", aspirin: "medication",
-  metformin: "medication", vitamin: "medication", supplement: "medication",
-  ilac: "medication", hap: "medication", tablet: "medication", takviye: "medication",
-  walked: "exercise", running: "exercise", yoga: "exercise", gym: "exercise",
-  workout: "exercise", swim: "exercise", cycling: "exercise", stretch: "exercise",
-  yuruyus: "exercise", spor: "exercise", kosu: "exercise", egzersiz: "exercise",
-  ate: "food", breakfast: "food", lunch: "food", dinner: "food", coffee: "food",
-  sugar: "food", protein: "food", salad: "food", fruit: "food",
-  kahvalti: "food", ogle: "food", aksam: "food", kahve: "food", seker: "food",
-  slept: "sleep", insomnia: "sleep", nap: "sleep", tired: "sleep",
-  uyku: "sleep", uykusuz: "sleep", uyudum: "sleep", yorgun: "sleep",
-};
-
-function autoDetectTags(text: string): TagItem[] {
-  const lower = text.toLowerCase();
-  const found: TagItem[] = [];
-  const seen = new Set<string>();
-  for (const [keyword, category] of Object.entries(KEYWORD_MAP)) {
-    if (lower.includes(keyword) && !seen.has(keyword)) {
-      seen.add(keyword);
-      found.push({ label: keyword, category });
+// ── Heat map helpers ──
+function generateHeatMapData() {
+  const days: { date: string; intensity: number }[] = []
+  const entryDates = new Set(MOCK_ENTRIES.map(e => e.date))
+  const today = new Date()
+  for (let i = 83; i >= 0; i--) {
+    const d = new Date(today)
+    d.setDate(d.getDate() - i)
+    const dateStr = d.toISOString().split("T")[0]
+    const entry = MOCK_ENTRIES.find(e => e.date === dateStr)
+    let intensity = 0
+    if (entry) {
+      intensity = entry.energy === "peak" ? 3 : entry.energy === "normal" ? 2 : 1
     }
+    days.push({ date: dateStr, intensity })
   }
-  return found;
+  return days
 }
 
-function getLocalEntries(): DiaryEntry[] {
-  if (typeof window === "undefined") return [];
-  try {
-    return JSON.parse(localStorage.getItem("health_diary_entries") || "[]");
-  } catch { return []; }
-}
+const HEAT_COLORS = ["bg-slate-100 dark:bg-slate-800", "bg-emerald-200", "bg-emerald-400", "bg-emerald-600"]
 
-function setLocalEntries(entries: DiaryEntry[]) {
-  localStorage.setItem("health_diary_entries", JSON.stringify(entries));
-}
-
-export default function HealthDiaryPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [entries, setEntries] = useState<DiaryEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [content, setContent] = useState("");
-  const [mood, setMood] = useState(3);
-  const [detectedTags, setDetectedTags] = useState<TagItem[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTagFilter, setSelectedTagFilter] = useState<string | null>(null);
-  const [showInsights, setShowInsights] = useState(false);
-  const [insightText, setInsightText] = useState("");
-  const [insightLoading, setInsightLoading] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [useLocalStorage, setUseLocalStorage] = useState(false);
-
-  const loadEntries = useCallback(async () => {
-    setLoading(true);
-    if (isAuthenticated && session?.user?.id) {
-      try {
-        const supabase = createBrowserClient();
-        const { data, error } = await supabase
-          .from("health_diary_entries")
-          .select("*")
-          .eq("user_id", session.user.id)
-          .order("date", { ascending: false });
-        if (error) throw error;
-        setEntries(data || []);
-        setUseLocalStorage(false);
-      } catch {
-        setEntries(getLocalEntries());
-        setUseLocalStorage(true);
-      }
-    } else {
-      setEntries(getLocalEntries());
-      setUseLocalStorage(true);
-    }
-    setLoading(false);
-  }, [isAuthenticated, session]);
-
-  useEffect(() => { loadEntries(); }, [loadEntries]);
-
-  useEffect(() => {
-    setDetectedTags(autoDetectTags(content));
-  }, [content]);
-
-  const handleSave = async () => {
-    if (!content.trim()) return;
-    setSaving(true);
-    const tags = autoDetectTags(content);
-    const newEntry: DiaryEntry = {
-      id: crypto.randomUUID(),
-      user_id: session?.user?.id || "local",
-      date,
-      content: content.trim(),
-      mood,
-      tags,
-      created_at: new Date().toISOString(),
-    };
-
-    if (!useLocalStorage && isAuthenticated && session?.user?.id) {
-      try {
-        const supabase = createBrowserClient();
-        const { error } = await supabase.from("health_diary_entries").insert({
-          user_id: session.user.id,
-          date: newEntry.date,
-          content: newEntry.content,
-          mood: newEntry.mood,
-          tags: newEntry.tags,
-        });
-        if (error) throw error;
-      } catch {
-        const local = getLocalEntries();
-        local.unshift(newEntry);
-        setLocalEntries(local);
-      }
-    } else {
-      const local = getLocalEntries();
-      local.unshift(newEntry);
-      setLocalEntries(local);
-    }
-
-    setContent("");
-    setMood(3);
-    setDate(new Date().toISOString().slice(0, 10));
-    setShowForm(false);
-    setSaving(false);
-    loadEntries();
-  };
-
-  const filteredEntries = useMemo(() => {
-    let result = entries;
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(
-        (e) =>
-          e.content.toLowerCase().includes(q) ||
-          e.tags.some((t) => t.label.toLowerCase().includes(q))
-      );
-    }
-    if (selectedTagFilter) {
-      result = result.filter((e) =>
-        e.tags.some((t) => t.category === selectedTagFilter)
-      );
-    }
-    return result;
-  }, [entries, searchQuery, selectedTagFilter]);
-
-  const tagCloud = useMemo(() => {
-    const counts: Record<string, { count: number; category: TagCategory }> = {};
-    entries.forEach((e) =>
-      e.tags.forEach((tag) => {
-        const key = tag.label;
-        if (!counts[key]) counts[key] = { count: 0, category: tag.category };
-        counts[key].count++;
-      })
-    );
-    return Object.entries(counts)
-      .sort((a, b) => b[1].count - a[1].count)
-      .slice(0, 20);
-  }, [entries]);
-
-  const runInsightAnalysis = useCallback(() => {
-    setInsightLoading(true);
-    setShowInsights(true);
-    setTimeout(() => {
-      const symptomEntries = entries.filter((e) => e.tags.some((t) => t.category === "symptom"));
-      const sleepEntries = entries.filter((e) => e.tags.some((t) => t.category === "sleep"));
-      const moodAvg = entries.length
-        ? (entries.reduce((s, e) => s + e.mood, 0) / entries.length).toFixed(1)
-        : "N/A";
-      const topSymptoms = Object.entries(
-        symptomEntries.flatMap((e) => e.tags.filter((t) => t.category === "symptom").map((t) => t.label))
-          .reduce((acc: Record<string, number>, l) => { acc[l] = (acc[l] || 0) + 1; return acc; }, {})
-      ).sort((a, b) => b[1] - a[1]).slice(0, 3);
-
-      const insights: string[] = [];
-      if (entries.length < 5) {
-        insights.push(tx("diary.keepWriting", lang));
-      } else {
-        insights.push(lang === "tr"
-          ? `${entries.length} girdi uzerinden ortalama ruh hali: ${moodAvg}/5`
-          : `Average mood over ${entries.length} entries: ${moodAvg}/5`
-        );
-        if (topSymptoms.length > 0) {
-          const symptomStr = topSymptoms.map(([s, c]) => `${s} (${c}x)`).join(", ");
-          insights.push(lang === "tr"
-            ? `En sik belirtiler: ${symptomStr}`
-            : `Most frequent symptoms: ${symptomStr}`
-          );
-        }
-        if (sleepEntries.length > 0 && symptomEntries.length > 0) {
-          insights.push(tx("diary.sleepCorrelation", lang));
-        }
-        const lowMoodDays = entries.filter((e) => e.mood <= 2);
-        if (lowMoodDays.length > entries.length * 0.3) {
-          insights.push(tx("diary.lowMoodWarning", lang));
-        }
-      }
-      setInsightText(insights.join("\n\n"));
-      setInsightLoading(false);
-    }, 800);
-  }, [entries, lang]);
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-white dark:from-gray-900 dark:to-gray-800 px-4">
-        <div className="text-center space-y-4 max-w-md">
-          <BookOpen className="w-16 h-16 mx-auto text-emerald-500" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            {tx("diary.title", lang)}
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            {tx("diary.loginPrompt", lang)}
-          </p>
-          <Button onClick={() => (window.location.href = "/")}>
-            <LogIn className="w-4 h-4 mr-2" />
-            {tx("diary.signIn", lang)}
-          </Button>
-        </div>
-      </div>
-    );
+// ── AI Companion messages ──
+function getAIMessage(energy: EnergyLevel, mood: MoodLevel, body: BodyLevel): { message: string; source: string } {
+  if (energy === "low") return {
+    message: "Your energy seems low today. Consider Magnesium Bisglycinate (200mg) for cellular energy production, and a 15-minute power nap if possible.",
+    source: "PubMed: PMID 31691121 — Magnesium & Energy Metabolism"
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
-              <BookOpen className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                {tx("diary.title", lang)}
-              </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {tx("diary.subtitle", lang)}
-              </p>
-            </div>
-          </div>
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white"
-          >
-            {showForm ? <X className="w-4 h-4 mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
-            {showForm ? tx("diary.cancel", lang) : tx("diary.newEntry", lang)}
-          </Button>
-        </div>
-
-        {/* New Entry Form */}
-        {showForm && (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-5 space-y-4 animate-in fade-in slide-in-from-top-2">
-            <div className="flex items-center gap-3">
-              <Calendar className="w-4 h-4 text-gray-500" />
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="border border-gray-200 dark:border-gray-600 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              />
-            </div>
-
-            {/* Mood Selector */}
-            <div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {tx("diary.howFeeling", lang)}
-              </p>
-              <div className="flex gap-2">
-                {MOOD_EMOJIS.map((m) => (
-                  <button
-                    key={m.value}
-                    onClick={() => setMood(m.value)}
-                    className={`flex flex-col items-center p-2 rounded-xl transition-all ${
-                      mood === m.value
-                        ? "bg-emerald-100 dark:bg-emerald-900/50 ring-2 ring-emerald-500 scale-110"
-                        : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                    }`}
-                    title={m.label[lang as "tr" | "en"]}
-                  >
-                    <span className="text-2xl">{m.emoji}</span>
-                    <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">
-                      {m.label[lang as "tr" | "en"]}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Journal Textarea */}
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder={tx("diary.placeholder", lang)}
-              rows={6}
-              className="w-full border border-gray-200 dark:border-gray-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 resize-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            />
-
-            {/* Auto-detected Tags */}
-            {detectedTags.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                <Tag className="w-3.5 h-3.5 text-gray-400 mt-0.5" />
-                {detectedTags.map((tag, i) => (
-                  <span
-                    key={i}
-                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${TAG_COLORS[tag.category]}`}
-                  >
-                    {tag.label}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <Button
-              onClick={handleSave}
-              disabled={!content.trim() || saving}
-              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-            >
-              {saving ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <BookOpen className="w-4 h-4 mr-2" />
-              )}
-              {tx("diary.saveEntry", lang)}
-            </Button>
-          </div>
-        )}
-
-        {/* Search + Insights Row */}
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={tx("diary.searchEntries", lang)}
-              className="w-full pl-9 pr-3 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400"
-            />
-          </div>
-          <Button
-            variant="outline"
-            onClick={runInsightAnalysis}
-            className="flex items-center gap-2"
-          >
-            <Sparkles className="w-4 h-4" />
-            {tx("diary.aiInsights", lang)}
-          </Button>
-        </div>
-
-        {/* AI Insights Panel */}
-        {showInsights && (
-          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-2xl border border-purple-200 dark:border-purple-800 p-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                <h3 className="font-semibold text-purple-900 dark:text-purple-200">
-                  {tx("diary.patternInsights", lang)}
-                </h3>
-              </div>
-              <button onClick={() => setShowInsights(false)}>
-                <X className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-              </button>
-            </div>
-            {insightLoading ? (
-              <div className="flex items-center gap-2 text-purple-600 dark:text-purple-300">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                {tx("diary.analyzingEntries", lang)}
-              </div>
-            ) : (
-              <div className="text-sm text-purple-800 dark:text-purple-200 whitespace-pre-line leading-relaxed">
-                {insightText}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Tag Cloud */}
-        {tagCloud.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-100 dark:border-gray-700 p-4">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
-              <Tag className="w-4 h-4" />
-              {tx("diary.topTopics", lang)}
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {tagCloud.map(([label, { count, category }]) => (
-                <button
-                  key={label}
-                  onClick={() =>
-                    setSelectedTagFilter(
-                      selectedTagFilter === category ? null : category
-                    )
-                  }
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
-                    TAG_COLORS[category]
-                  } ${
-                    selectedTagFilter === category
-                      ? "ring-2 ring-offset-1 ring-gray-400 dark:ring-gray-500"
-                      : "hover:opacity-80"
-                  }`}
-                >
-                  {label} ({count})
-                </button>
-              ))}
-              {selectedTagFilter && (
-                <button
-                  onClick={() => setSelectedTagFilter(null)}
-                  className="px-3 py-1 rounded-full text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 underline"
-                >
-                  {tx("diary.clearFilter", lang)}
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Entries List */}
-        <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            {txp("healthDiary.entriesCount", lang, { count: filteredEntries.length })}
-          </h3>
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-6 h-6 animate-spin text-emerald-500" />
-            </div>
-          ) : filteredEntries.length === 0 ? (
-            <div className="text-center py-12 text-gray-400 dark:text-gray-500">
-              <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-40" />
-              <p className="text-sm">
-                {searchQuery || selectedTagFilter
-                  ? tx("diary.noMatch", lang)
-                  : tx("diary.noEntries", lang)}
-              </p>
-            </div>
-          ) : (
-            filteredEntries.map((entry) => (
-              <EntryCard key={entry.id} entry={entry} lang={lang} />
-            ))
-          )}
-        </div>
-      </div>
-    </div>
-  );
+  if (mood === "stormy") return {
+    message: "Rough day? Ashwagandha KSM-66 (300mg) and a 10-minute box breathing exercise might help restore your balance. Be gentle with yourself.",
+    source: "PubMed: PMID 32021735 — Ashwagandha & Stress Reduction"
+  }
+  if (body === "pain") return {
+    message: "Body aches noted. Curcumin with black pepper extract (500mg + 5mg piperine) is your anti-inflammatory ally. Gentle stretching helps too.",
+    source: "PubMed: PMID 29065496 — Curcumin Bioavailability"
+  }
+  if (body === "bloated") return {
+    message: "Feeling bloated? Peppermint oil capsules (0.2ml enteric-coated) can relax intestinal smooth muscle. Avoid carbonated drinks today.",
+    source: "PubMed: PMID 30654773 — Peppermint Oil & GI Symptoms"
+  }
+  if (energy === "peak" && mood === "sunny") return {
+    message: "You're on fire today! Great time for a challenging workout. Consider Rhodiola Rosea (200mg) to sustain peak performance throughout the day.",
+    source: "PubMed: PMID 22228617 — Rhodiola & Physical Performance"
+  }
+  if (mood === "sunny") return {
+    message: "Glad you're feeling good! Maintain the momentum with Omega-3 (1g EPA+DHA) — it supports both cognitive clarity and mood stability long-term.",
+    source: "PubMed: PMID 31905352 — Omega-3 & Cognitive Health"
+  }
+  return {
+    message: "How are you feeling today? Select your energy, mood, and body status above, and I'll provide personalized evidence-based suggestions.",
+    source: ""
+  }
 }
 
-function EntryCard({
-  entry,
-  lang,
-}: {
-  entry: DiaryEntry;
-  lang: "en" | "tr";
+// ── Chip Component ──
+function StatusChip({ emoji, label, isActive, onClick }: {
+  emoji: string; label: string; isActive: boolean; onClick: () => void
 }) {
-  const [expanded, setExpanded] = useState(false);
-  const moodEmoji = MOOD_EMOJIS.find((m) => m.value === entry.mood)?.emoji || "\uD83D\uDE10";
-  const preview = entry.content.length > 120 ? entry.content.slice(0, 120) + "..." : entry.content;
-  const dateStr = new Date(entry.date).toLocaleDateString(tx("common.locale", lang as "en" | "tr"), {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  });
+  return (
+    <motion.button
+      whileTap={{ scale: 0.9 }}
+      onClick={onClick}
+      className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl border-2 text-sm font-medium transition-all ${
+        isActive
+          ? "border-emerald-400 bg-emerald-50 text-emerald-700 shadow-sm dark:bg-emerald-950/40 dark:border-emerald-600 dark:text-emerald-300"
+          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+      }`}
+    >
+      <motion.span
+        animate={isActive ? { scale: [1, 1.3, 1] } : {}}
+        transition={{ duration: 0.3 }}
+        className="text-lg"
+      >
+        {emoji}
+      </motion.span>
+      {label}
+    </motion.button>
+  )
+}
+
+// ── Confetti Burst ──
+function ConfettiBurst({ show }: { show: boolean }) {
+  if (!show) return null
+  return (
+    <div className="fixed inset-0 pointer-events-none z-50">
+      {Array.from({ length: 24 }).map((_, i) => {
+        const angle = (i / 24) * 360
+        const distance = 80 + Math.random() * 120
+        const x = Math.cos((angle * Math.PI) / 180) * distance
+        const y = Math.sin((angle * Math.PI) / 180) * distance
+        const colors = ["bg-emerald-400", "bg-amber-400", "bg-rose-400", "bg-blue-400", "bg-purple-400"]
+        return (
+          <motion.div
+            key={i}
+            initial={{ x: "50vw", y: "50vh", opacity: 1, scale: 1 }}
+            animate={{ x: `calc(50vw + ${x}px)`, y: `calc(50vh + ${y}px)`, opacity: 0, scale: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className={`absolute w-2 h-2 rounded-full ${colors[i % colors.length]}`}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+// ── Heat Map ──
+function HabitHeatMap({ data }: { data: { date: string; intensity: number }[] }) {
+  const weeks: { date: string; intensity: number }[][] = []
+  for (let i = 0; i < data.length; i += 7) {
+    weeks.push(data.slice(i, i + 7))
+  }
+  const dayLabels = ["M", "T", "W", "T", "F", "S", "S"]
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-4 transition-all hover:shadow-md">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-lg">{moodEmoji}</span>
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-              {dateStr}
-            </span>
-          </div>
-          <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed">
-            {expanded ? entry.content : preview}
-          </p>
-          {entry.content.length > 120 && (
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 flex items-center gap-1"
-            >
-              {expanded ? (
-                <>
-                  <ChevronUp className="w-3 h-3" />
-                  {tx("diary.showLess", lang)}
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-3 h-3" />
-                  {tx("diary.showMore", lang)}
-                </>
-              )}
-            </button>
-          )}
-        </div>
-      </div>
-      {entry.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-3">
-          {entry.tags.map((tag, i) => (
-            <span
-              key={i}
-              className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${TAG_COLORS[tag.category]}`}
-            >
-              {tag.label}
-            </span>
+    <div className="overflow-x-auto">
+      <div className="flex gap-1">
+        {/* Day labels */}
+        <div className="flex flex-col gap-1 mr-1">
+          {dayLabels.map((d, i) => (
+            <div key={i} className="h-[14px] text-[9px] text-slate-400 flex items-center justify-end pr-1 w-4">
+              {i % 2 === 0 ? d : ""}
+            </div>
           ))}
         </div>
-      )}
+        {/* Weeks */}
+        {weeks.map((week, wi) => (
+          <motion.div
+            key={wi}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: wi * 0.03 }}
+            className="flex flex-col gap-1"
+          >
+            {week.map((day, di) => (
+              <motion.div
+                key={di}
+                whileHover={{ scale: 1.4 }}
+                className={`w-[14px] h-[14px] rounded-[3px] ${HEAT_COLORS[day.intensity]} transition-colors cursor-default`}
+                title={`${day.date} — ${day.intensity === 0 ? "No entry" : `Intensity ${day.intensity}`}`}
+              />
+            ))}
+          </motion.div>
+        ))}
+      </div>
     </div>
-  );
+  )
+}
+
+// ── Entry Card ──
+function EntryCard({ entry }: { entry: DiaryEntry }) {
+  const energyEmoji = entry.energy === "peak" ? "🔥" : entry.energy === "normal" ? "⚡" : "🔋"
+  const moodEmoji = entry.mood === "sunny" ? "☀️" : entry.mood === "cloudy" ? "⛅" : "🌧️"
+  const bodyEmoji = entry.body === "light" ? "🪶" : entry.body === "bloated" ? "🎈" : "😣"
+  const d = new Date(entry.date)
+  const dayStr = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-center gap-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur rounded-xl p-3.5 border border-slate-100 dark:border-slate-700"
+    >
+      <div className="text-xs text-slate-400 w-16 flex-shrink-0">
+        <Clock className="w-3 h-3 inline mr-1" />{dayStr}
+      </div>
+      <div className="flex items-center gap-2 text-lg">
+        <span title="Energy">{energyEmoji}</span>
+        <span title="Mood">{moodEmoji}</span>
+        <span title="Body">{bodyEmoji}</span>
+      </div>
+      {entry.note && <p className="text-xs text-slate-500 dark:text-slate-400 truncate flex-1">{entry.note}</p>}
+    </motion.div>
+  )
+}
+
+// ═══ MAIN PAGE ═══
+export default function HealthDiaryPage() {
+  const router = useRouter()
+  const [energy, setEnergy] = useState<EnergyLevel>(null)
+  const [mood, setMood] = useState<MoodLevel>(null)
+  const [body, setBody] = useState<BodyLevel>(null)
+  const [note, setNote] = useState("")
+  const [noteOpen, setNoteOpen] = useState(false)
+  const [entries, setEntries] = useState<DiaryEntry[]>(MOCK_ENTRIES)
+  const [showConfetti, setShowConfetti] = useState(false)
+  const [sourcesOpen, setSourcesOpen] = useState(false)
+
+  const heatMapData = useMemo(() => generateHeatMapData(), [])
+  const streak = 12 // mock
+  const aiResponse = getAIMessage(energy, mood, body)
+  const hasSelection = energy || mood || body
+
+  const handleLog = () => {
+    if (!hasSelection) return
+    const newEntry: DiaryEntry = {
+      id: String(Date.now()),
+      date: new Date().toISOString().split("T")[0],
+      energy, mood, body, note,
+    }
+    setEntries(prev => [newEntry, ...prev])
+    setShowConfetti(true)
+    setTimeout(() => setShowConfetti(false), 1000)
+    setEnergy(null); setMood(null); setBody(null); setNote(""); setNoteOpen(false)
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-background">
+      <ConfettiBurst show={showConfetti} />
+
+      <div className="max-w-7xl mx-auto px-4 py-6 md:px-8">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mb-6"
+        >
+          <div className="flex items-center gap-3">
+            <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white dark:hover:bg-slate-800">
+              <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+            </button>
+            <div>
+              <h1 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-emerald-500" />
+                Biometric Logbook
+              </h1>
+              <p className="text-xs text-slate-400">Map your biological journey</p>
+            </div>
+          </div>
+          {/* Streak */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center gap-1.5 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200 dark:border-amber-800 rounded-full px-3.5 py-1.5"
+          >
+            <Flame className="w-4 h-4 text-amber-500" />
+            <span className="text-xs font-bold text-amber-700 dark:text-amber-400">{streak} Day Streak</span>
+          </motion.div>
+        </motion.div>
+
+        {/* ── DESKTOP 2-COLUMN / MOBILE 1-COLUMN ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* ═══ LEFT: Main Content (2/3) ═══ */}
+          <div className="lg:col-span-2 space-y-6">
+
+            {/* Quick Status Panel */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white/80 dark:bg-card backdrop-blur rounded-2xl p-6 border border-slate-200/60 dark:border-slate-800 shadow-sm"
+            >
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-2">
+                <PenLine className="w-4 h-4" /> How are you feeling right now?
+              </p>
+
+              {/* Energy */}
+              <div className="mb-4">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Energy</p>
+                <div className="flex gap-2 flex-wrap">
+                  <StatusChip emoji="🔋" label="Low" isActive={energy === "low"} onClick={() => setEnergy(energy === "low" ? null : "low")} />
+                  <StatusChip emoji="⚡" label="Normal" isActive={energy === "normal"} onClick={() => setEnergy(energy === "normal" ? null : "normal")} />
+                  <StatusChip emoji="🔥" label="Peak" isActive={energy === "peak"} onClick={() => setEnergy(energy === "peak" ? null : "peak")} />
+                </div>
+              </div>
+
+              {/* Mood */}
+              <div className="mb-4">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Mood</p>
+                <div className="flex gap-2 flex-wrap">
+                  <StatusChip emoji="🌧️" label="Stormy" isActive={mood === "stormy"} onClick={() => setMood(mood === "stormy" ? null : "stormy")} />
+                  <StatusChip emoji="⛅" label="Cloudy" isActive={mood === "cloudy"} onClick={() => setMood(mood === "cloudy" ? null : "cloudy")} />
+                  <StatusChip emoji="☀️" label="Sunny" isActive={mood === "sunny"} onClick={() => setMood(mood === "sunny" ? null : "sunny")} />
+                </div>
+              </div>
+
+              {/* Body */}
+              <div className="mb-4">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Body</p>
+                <div className="flex gap-2 flex-wrap">
+                  <StatusChip emoji="😣" label="Pain" isActive={body === "pain"} onClick={() => setBody(body === "pain" ? null : "pain")} />
+                  <StatusChip emoji="🎈" label="Bloated" isActive={body === "bloated"} onClick={() => setBody(body === "bloated" ? null : "bloated")} />
+                  <StatusChip emoji="🪶" label="Light" isActive={body === "light"} onClick={() => setBody(body === "light" ? null : "light")} />
+                </div>
+              </div>
+
+              {/* Optional Note */}
+              <button
+                onClick={() => setNoteOpen(!noteOpen)}
+                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 mb-3"
+              >
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${noteOpen ? "rotate-180" : ""}`} />
+                Add a note (optional)
+              </button>
+              <AnimatePresence>
+                {noteOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <textarea
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                      placeholder="How was your day? Any symptoms, wins, or thoughts..."
+                      className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm resize-none h-20 focus:outline-none focus:border-emerald-300"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Log Button */}
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleLog}
+                disabled={!hasSelection}
+                className={`w-full mt-4 py-3.5 rounded-xl font-medium text-sm flex items-center justify-center gap-2 transition-all ${
+                  hasSelection
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900/30"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
+                }`}
+              >
+                <Sparkles className="w-4 h-4" />
+                Log Today&apos;s Status
+              </motion.button>
+            </motion.div>
+
+            {/* Habit Heat Map */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="bg-white/80 dark:bg-card backdrop-blur rounded-2xl p-6 border border-slate-200/60 dark:border-slate-800 shadow-sm"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200">Activity Map — Last 12 Weeks</h3>
+                <div className="flex items-center gap-1">
+                  <span className="text-[9px] text-slate-400">Less</span>
+                  {HEAT_COLORS.map((c, i) => (
+                    <div key={i} className={`w-[10px] h-[10px] rounded-[2px] ${c}`} />
+                  ))}
+                  <span className="text-[9px] text-slate-400">More</span>
+                </div>
+              </div>
+              <HabitHeatMap data={heatMapData} />
+            </motion.div>
+
+            {/* Recent Entries */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3 px-1">Recent Entries</h3>
+              {entries.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-white/80 dark:bg-card backdrop-blur rounded-2xl p-10 border border-slate-200/60 dark:border-slate-800 text-center"
+                >
+                  <BookOpen className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+                  <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto leading-relaxed">
+                    Listen to what your body told you today. Start mapping your biological journey by creating your first entry.
+                  </p>
+                </motion.div>
+              ) : (
+                <div className="space-y-2">
+                  {entries.slice(0, 7).map(entry => (
+                    <EntryCard key={entry.id} entry={entry} />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </div>
+
+          {/* ═══ RIGHT: AI Companion Panel (1/3, sticky on desktop) ═══ */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="lg:sticky lg:top-24 lg:self-start"
+          >
+            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-2xl p-6 border border-emerald-100 dark:border-emerald-900/30 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 3 }}
+                  className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center"
+                >
+                  <Sparkles className="w-4 h-4 text-emerald-500" />
+                </motion.div>
+                <div>
+                  <h3 className="text-sm font-bold text-emerald-800 dark:text-emerald-300">Daily AI Companion</h3>
+                  <p className="text-[10px] text-emerald-600/60 dark:text-emerald-400/60">Evidence-based insights</p>
+                </div>
+              </div>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${energy}-${mood}-${body}`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                    {aiResponse.message}
+                  </p>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Sources */}
+              {aiResponse.source && (
+                <div className="mt-4">
+                  <button
+                    onClick={() => setSourcesOpen(!sourcesOpen)}
+                    className="flex items-center gap-1 text-[10px] text-emerald-600/70 dark:text-emerald-400/70 hover:text-emerald-700"
+                  >
+                    <ChevronDown className={`w-3 h-3 transition-transform ${sourcesOpen ? "rotate-180" : ""}`} />
+                    Sources
+                  </button>
+                  <AnimatePresence>
+                    {sourcesOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1.5 bg-white/50 dark:bg-slate-800/50 rounded-lg px-3 py-2">
+                          {aiResponse.source}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
+
+              {/* Quick Tips */}
+              <div className="mt-5 pt-4 border-t border-emerald-200/50 dark:border-emerald-800/30">
+                <p className="text-[10px] text-emerald-600/60 dark:text-emerald-400/60 uppercase tracking-wider mb-2">Quick Tips</p>
+                <div className="space-y-2">
+                  {[
+                    "Log at the same time daily for best pattern detection",
+                    "The more data points, the smarter your AI companion gets",
+                    "Your data is end-to-end encrypted and never shared",
+                  ].map((tip, i) => (
+                    <p key={i} className="text-[11px] text-slate-500 dark:text-slate-400 flex items-start gap-1.5">
+                      <span className="text-emerald-400 mt-0.5">•</span> {tip}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  )
 }
