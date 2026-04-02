@@ -623,9 +623,9 @@ export default function CalendarPage() {
     } catch {}
   }, [allTasks, todayDateStr, ritualDataLoaded])
 
-  // waterCount comes from FAB + tasks combined
+  // waterCount from FAB + water tasks in rituals (no hardcoded +3)
   const waterDoneFromTasks = allTasks.filter(t => t.done && t.emoji === "💧").length
-  const totalWater = waterCount + waterDoneFromTasks + 3
+  const totalWater = waterCount + waterDoneFromTasks
   const medsDone = allTasks.filter(t => t.done && t.emoji === "💊").length
   const totalMedsOnly = allTasks.filter(t => t.emoji === "💊").length
   // Supplements: count only real DB supplements (sup-*) + default supplement emojis that are from profile
@@ -637,7 +637,6 @@ export default function CalendarPage() {
     if (type === "water") {
       setWaterCount(prev => {
         const next = prev + 1
-        // Fire-and-forget save to Supabase
         fetch("/api/daily-log", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -647,6 +646,11 @@ export default function CalendarPage() {
       })
       setWaterToast(true)
       setTimeout(() => setWaterToast(false), 1500)
+    } else if (type === "med") {
+      // Toggle all medication tasks as done
+      setMorningTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
+      setNoonTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
+      setNightTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
     }
   }, [todayDateStr])
 
