@@ -1,319 +1,245 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import {
-  Shield,
-  Calendar,
-  Users,
-  Heart,
-  AlertTriangle,
-  Loader2,
-  LogIn,
-  Sparkles,
-  Plus,
-  X,
-  Search,
-  Lightbulb,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, Shield, ChevronDown } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-interface CancerResult {
-  riskLevel: string;
-  screeningSchedule: Array<{ cancer: string; test: string; startAge: number; frequency: string; applicability: string; priority: string; notes: string }>;
-  familyRiskAnalysis: Array<{ cancer: string; relativeRisk: string; recommendation: string }>;
-  selfCheckReminders: Array<{ check: string; frequency: string; howTo: string }>;
-  lifestyleReductions: Array<{ factor: string; riskReduction: string; recommendation: string }>;
-  nextSteps: string[];
+const systemFocusAreas = [
+  {
+    id: "respiratory", emoji: "🫁", label: "Respiratory", color: "bg-sky-50 border-sky-200",
+    risks: ["Lung Screening (CT)", "Nasopharynx Check"],
+  },
+  {
+    id: "digestive", emoji: "🍕", label: "Digestive & Gut", color: "bg-amber-50 border-amber-200",
+    risks: ["Colonoscopy", "Stomach Endoscopy", "Liver Ultrasound", "Pancreatic Panel"],
+  },
+  {
+    id: "womens", emoji: "🌸", label: "Women's Screening", color: "bg-pink-50 border-pink-200",
+    risks: ["Mammography", "Pap Smear / HPV", "Ovarian CA-125"],
+  },
+  {
+    id: "mens", emoji: "⚡", label: "Men's Screening", color: "bg-cyan-50 border-cyan-200",
+    risks: ["PSA (Prostate)", "Testicular Self-Exam"],
+  },
+  {
+    id: "blood", emoji: "🩸", label: "Blood & Immunity", color: "bg-red-50 border-red-200",
+    risks: ["CBC Panel", "Lymph Node Check", "Skin Mole Mapping"],
+  },
+]
+
+const lifestyleCards = [
+  {
+    id: "smoking",
+    label: "Smoking Status",
+    options: [
+      { emoji: "🚭", label: "Never", msg: "Great! Keep it up.", value: "never" },
+      { emoji: "⏳", label: "Quit", msg: "Your body is healing every day.", value: "quit" },
+      { emoji: "🚬", label: "Current", msg: "Screening is vital for you.", value: "current" },
+    ],
+  },
+  {
+    id: "alcohol",
+    label: "Alcohol Use",
+    options: [
+      { emoji: "🚫", label: "None", msg: "Excellent choice!", value: "none" },
+      { emoji: "🍷", label: "Moderate", msg: "Stay within guidelines.", value: "moderate" },
+      { emoji: "⚠️", label: "Heavy", msg: "Liver screening recommended.", value: "heavy" },
+    ],
+  },
+]
+
+function LaborIllusion({ onComplete }: { onComplete: () => void }) {
+  const steps = [
+    "Scanning NCCN, WHO screening guidelines...",
+    "Running age and genetics-specific risk scoring...",
+    "Analyzing lifestyle factors...",
+    "Creating your life-saving early detection calendar...",
+  ]
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(s => {
+        if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s }
+        return s + 1
+      })
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-teal-950/50 backdrop-blur-sm">
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          className="w-14 h-14 mx-auto mb-4 rounded-full border-4 border-slate-200 border-t-teal-500" />
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="text-slate-600 text-sm">{steps[step]}</motion.p>
+        </AnimatePresence>
+        <div className="flex gap-1 justify-center mt-4">
+          {steps.map((_, i) => <div key={i} className={`w-2 h-2 rounded-full ${i <= step ? "bg-teal-500" : "bg-slate-200"}`} />)}
+        </div>
+      </motion.div>
+    </motion.div>
+  )
 }
 
-const FAMILY_CANCER_OPTIONS = [
-  { en: "Breast cancer", tr: "Meme kanseri" },
-  { en: "Colon cancer", tr: "Kolon kanseri" },
-  { en: "Lung cancer", tr: "Akciger kanseri" },
-  { en: "Prostate cancer", tr: "Prostat kanseri" },
-  { en: "Ovarian cancer", tr: "Over kanseri" },
-  { en: "Melanoma", tr: "Melanom" },
-  { en: "Pancreatic cancer", tr: "Pankreas kanseri" },
-  { en: "Stomach cancer", tr: "Mide kanseri" },
-  { en: "Thyroid cancer", tr: "Tiroid kanseri" },
-  { en: "Kidney cancer", tr: "Bobrek kanseri" },
-  { en: "Bladder cancer", tr: "Mesane kanseri" },
-  { en: "Leukemia", tr: "Losemi" },
-  { en: "Lymphoma", tr: "Lenfoma" },
-  { en: "Liver cancer", tr: "Karaciger kanseri" },
-  { en: "Cervical cancer", tr: "Rahim agzi kanseri" },
-];
-
 export default function CancerScreeningPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [age, setAge] = useState("40");
-  const [gender, setGender] = useState("male");
-  const [smokingHistory, setSmokingHistory] = useState("never");
-  const [familyHistory, setFamilyHistory] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<CancerResult | null>(null);
+  const router = useRouter()
+  const [expandedArea, setExpandedArea] = useState<string | null>(null)
+  const [selectedRisks, setSelectedRisks] = useState<string[]>([])
+  const [lifestyle, setLifestyle] = useState<Record<string, string>>({})
+  const [showLabor, setShowLabor] = useState(false)
+  const [showResult, setShowResult] = useState(false)
 
-  const l = lang as "en" | "tr";
-
-  const toggleFamilyCancer = (cancer: string) => {
-    setFamilyHistory((prev) =>
-      prev.includes(cancer) ? prev.filter((c) => c !== cancer) : [...prev, cancer]
-    );
-  };
-
-  const handleGenerate = async () => {
-    if (!session?.access_token) return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/cancer-screening", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ lang, age, gender, smoking_history: smokingHistory, family_history: familyHistory }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to generate schedule");
-      }
-
-      const data = await res.json();
-      setResult(data.result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold">{tx("cancer.title", lang)}</h1>
-          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
-          <Button onClick={() => window.location.href = "/auth/login"}>
-            <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
-          </Button>
-        </div>
-      </div>
-    );
+  const toggleRisk = (risk: string) => {
+    setSelectedRisks(prev => prev.includes(risk) ? prev.filter(r => r !== risk) : [...prev, risk])
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-8 px-4">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400 px-4 py-1.5 rounded-full text-sm font-medium">
-            <Search className="w-4 h-4" />
-            {tx("cancer.title", lang)}
+    <div className="min-h-screen bg-gradient-to-b from-teal-50/30 via-stone-50 to-emerald-50/20">
+      <AnimatePresence>
+        {showLabor && <LaborIllusion onComplete={() => { setShowLabor(false); setShowResult(true) }} />}
+      </AnimatePresence>
+
+      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-4">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/60">
+            <ChevronLeft className="w-5 h-5 text-slate-600" />
+          </button>
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-slate-800">Early Detection Shield</h1>
+            <p className="text-xs text-slate-400">Proactive cell protection planning</p>
           </div>
-          <h1 className="text-3xl font-bold">{tx("cancer.title", lang)}</h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">{tx("cancer.subtitle", lang)}</p>
+          <Shield className="w-5 h-5 text-teal-400" />
+        </motion.div>
+
+        {/* Intro */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          className="bg-teal-50 rounded-2xl p-4 mb-6 border border-teal-100">
+          <p className="text-sm text-teal-700">
+            Analyzing your genetic heritage and lifestyle to proactively protect your cells.
+            Select focus areas relevant to you.
+          </p>
+        </motion.div>
+
+        {/* System Focus Bento */}
+        <div className="space-y-3 mb-6">
+          {systemFocusAreas.map((area, i) => (
+            <motion.div
+              key={area.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + i * 0.05 }}
+            >
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setExpandedArea(expandedArea === area.id ? null : area.id)}
+                className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all ${area.color}`}
+              >
+                <span className="text-2xl">{area.emoji}</span>
+                <span className="text-sm font-medium text-slate-700 flex-1">{area.label}</span>
+                <motion.div animate={{ rotate: expandedArea === area.id ? 180 : 0 }}>
+                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                </motion.div>
+              </motion.button>
+              <AnimatePresence>
+                {expandedArea === area.id && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="pt-2 pl-12 space-y-2">
+                      {area.risks.map(risk => (
+                        <motion.button
+                          key={risk}
+                          whileTap={{ scale: 0.96 }}
+                          onClick={() => toggleRisk(risk)}
+                          className={`w-full text-left px-4 py-2.5 rounded-xl text-sm transition-all ${
+                            selectedRisks.includes(risk)
+                              ? "bg-teal-100 text-teal-700 font-medium"
+                              : "bg-white text-slate-600 border border-slate-100"
+                          }`}
+                        >
+                          {selectedRisks.includes(risk) ? "✓ " : ""}{risk}
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          ))}
         </div>
 
-        {/* Input Form */}
-        <div className="bg-card border rounded-2xl p-6 space-y-4">
-          <div className="grid sm:grid-cols-3 gap-4">
-            <div>
-              <label className="text-sm font-medium">{tx("common.age", lang)}</label>
-              <input type="number" min="18" max="100" value={age} onChange={(e) => setAge(e.target.value)}
-                className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-teal-500" />
-            </div>
-            <div>
-              <label className="text-sm font-medium">{tx("common.gender", lang)}</label>
-              <select value={gender} onChange={(e) => setGender(e.target.value)}
-                className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-teal-500">
-                <option value="male">{tx("common.male", lang)}</option>
-                <option value="female">{tx("common.female", lang)}</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-sm font-medium">{tx("cancerScreening.smokingHistory", lang)}</label>
-              <select value={smokingHistory} onChange={(e) => setSmokingHistory(e.target.value)}
-                className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-teal-500">
-                <option value="never">{tx("cancerScreening.never", lang)}</option>
-                <option value="former">{tx("cancerScreening.former", lang)}</option>
-                <option value="current">{tx("cancerScreening.current", lang)}</option>
-                <option value="heavy">{tx("cancerScreening.heavy", lang)}</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Family History */}
-          <div>
-            <label className="text-sm font-medium">{tx("cancerScreening.familyHistory", lang)}</label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {FAMILY_CANCER_OPTIONS.map((cancer) => (
-                <button
-                  key={cancer.en}
-                  onClick={() => toggleFamilyCancer(cancer.en)}
-                  className={`rounded-full px-3 py-1.5 text-xs transition-colors ${
-                    familyHistory.includes(cancer.en)
-                      ? "bg-teal-500 text-white"
-                      : "bg-teal-50 text-teal-700 hover:bg-teal-100 dark:bg-teal-950 dark:text-teal-300"
-                  }`}
-                >
-                  {cancer[l]}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <Button onClick={handleGenerate} disabled={isLoading} className="w-full bg-teal-600 hover:bg-teal-700 text-white" size="lg">
-            {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("cancerScreening.generating", lang)}</>
-            ) : (
-              <><Sparkles className="mr-2 h-5 w-5" />{tx("cancer.generate", lang)}</>
-            )}
-          </Button>
-        </div>
-
-        {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">{error}</div>
-        )}
-
-        {/* Results */}
-        {result && (
-          <div className="space-y-6">
-            {/* Risk Level */}
-            <div className={`rounded-2xl p-6 text-center border-2 ${
-              result.riskLevel === "high" ? "bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-700" :
-              result.riskLevel === "elevated" ? "bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-700" :
-              "bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700"
-            }`}>
-              <Shield className={`w-8 h-8 mx-auto mb-2 ${
-                result.riskLevel === "high" ? "text-red-500" : result.riskLevel === "elevated" ? "text-amber-500" : "text-green-500"
-              }`} />
-              <p className="text-lg font-bold">
-                {tx("cancerScreening.riskLevel", lang)} {result.riskLevel.charAt(0).toUpperCase() + result.riskLevel.slice(1)}
-              </p>
-            </div>
-
-            {/* Screening Schedule */}
-            {result.screeningSchedule?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-teal-500" />
-                  {tx("cancerScreening.screeningSchedule", lang)}
-                </h2>
-                <div className="grid gap-3">
-                  {result.screeningSchedule.map((item, i) => (
-                    <div key={i} className={`border rounded-xl p-4 ${
-                      item.priority === "critical" ? "border-red-200 dark:border-red-800" :
-                      item.priority === "important" ? "border-amber-200 dark:border-amber-800" : "border-border"
-                    }`}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-semibold">{item.cancer}</span>
-                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                          item.priority === "critical" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
-                          item.priority === "important" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
-                          "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                        }`}>{item.frequency}</span>
-                      </div>
-                      <p className="text-sm font-medium text-teal-600 dark:text-teal-400">{item.test}</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {tx("cancerScreening.startAge", lang)} {item.startAge} | {item.applicability}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">{item.notes}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Family Risk */}
-            {result.familyRiskAnalysis?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Users className="w-5 h-5 text-purple-500" />
-                  {tx("cancerScreening.familyRisk", lang)}
-                </h2>
-                <div className="grid gap-3">
-                  {result.familyRiskAnalysis.map((item, i) => (
-                    <div key={i} className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 space-y-1">
-                      <div className="font-medium">{item.cancer}</div>
-                      <div className="text-sm text-purple-600 dark:text-purple-400">{item.relativeRisk}</div>
-                      <div className="text-sm text-muted-foreground">{item.recommendation}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Self-Check Reminders */}
-            {result.selfCheckReminders?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-rose-500" />
-                  {tx("cancerScreening.selfCheck", lang)}
-                </h2>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {result.selfCheckReminders.map((item, i) => (
-                    <div key={i} className="bg-rose-50 dark:bg-rose-900/20 rounded-xl p-4 space-y-1">
-                      <div className="font-medium">{item.check}</div>
-                      <div className="text-sm text-rose-600 dark:text-rose-400">{item.frequency}</div>
-                      <div className="text-sm text-muted-foreground">{item.howTo}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Lifestyle */}
-            {result.lifestyleReductions?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Lightbulb className="w-5 h-5 text-amber-500" />
-                  {tx("cancerScreening.riskReduction", lang)}
-                </h2>
-                <div className="grid gap-3">
-                  {result.lifestyleReductions.map((item, i) => (
-                    <div key={i} className="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium">{item.factor}</span>
-                        <span className="text-sm text-green-600 dark:text-green-400 font-medium">{item.riskReduction}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{item.recommendation}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Next Steps */}
-            {result.nextSteps?.length > 0 && (
-              <div className="bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800 rounded-2xl p-6 space-y-2">
-                <h3 className="font-semibold text-teal-700 dark:text-teal-400">
-                  {tx("cancerScreening.nextSteps", lang)}
-                </h3>
-                {result.nextSteps.map((step, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-teal-200 dark:bg-teal-800 text-xs font-bold text-teal-800 dark:text-teal-200 flex-shrink-0 mt-0.5">{i + 1}</span>
-                    {step}
-                  </div>
+        {/* Lifestyle Cards */}
+        <div className="space-y-4 mb-6">
+          {lifestyleCards.map((card) => (
+            <motion.div
+              key={card.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100"
+            >
+              <h4 className="text-sm font-semibold text-slate-600 mb-3">{card.label}</h4>
+              <div className="flex gap-2">
+                {card.options.map(opt => (
+                  <motion.button
+                    key={opt.value}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setLifestyle(prev => ({ ...prev, [card.id]: opt.value }))}
+                    className={`flex-1 flex flex-col items-center gap-1 py-3 rounded-xl border-2 transition-all ${
+                      lifestyle[card.id] === opt.value
+                        ? "border-teal-300 bg-teal-50"
+                        : "border-slate-100 bg-slate-50"
+                    }`}
+                  >
+                    <span className="text-lg">{opt.emoji}</span>
+                    <span className="text-[11px] font-medium text-slate-700">{opt.label}</span>
+                  </motion.button>
                 ))}
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Disclaimer */}
-        <div className="text-center text-xs text-muted-foreground px-4">
-          {tx("disclaimer.tool", lang)}
+              {lifestyle[card.id] && (
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  className="text-xs text-teal-600 mt-2 bg-teal-50 rounded-lg px-3 py-1.5">
+                  {card.options.find(o => o.value === lifestyle[card.id])?.msg}
+                </motion.p>
+              )}
+            </motion.div>
+          ))}
         </div>
+
+        {/* Action */}
+        <motion.button
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setShowLabor(true)}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-medium shadow-lg shadow-teal-200 flex items-center justify-center gap-2"
+        >
+          <Sparkles className="w-4 h-4" />
+          Map My Protection Shield
+        </motion.button>
+
+        <AnimatePresence>
+          {showResult && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="mt-4 bg-white rounded-2xl p-5 shadow-sm border border-teal-100">
+              <h3 className="text-sm font-semibold text-teal-600 mb-2">Your Early Detection Calendar</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Based on your selections, we recommend {selectedRisks.length > 0
+                  ? `prioritizing: ${selectedRisks.slice(0, 3).join(", ")}`
+                  : "a comprehensive baseline screening"
+                }. Guidelines sourced from NCCN, WHO, and ACS.
+              </p>
+              <p className="text-xs text-slate-400 mt-3">Schedule these with your healthcare provider for personalized guidance.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
-  );
+  )
 }
