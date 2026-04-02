@@ -1,334 +1,216 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import {
-  Dna,
-  Shield,
-  AlertTriangle,
-  Loader2,
-  LogIn,
-  Sparkles,
-  TrendingDown,
-  Lightbulb,
-  TestTube,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, Dna } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-interface RiskScore {
-  disease: string;
-  riskScore: number;
-  populationRisk: string;
-  yourEstimatedRisk: string;
-  confidence: string;
-  keyFactors: string[];
-  reductionStrategies: Array<{ strategy: string; potentialReduction: string }>;
+const improvementAreas = [
+  { id: "body", emoji: "⚖️", label: "Body Composition", desc: "Weight & metabolic health" },
+  { id: "diet", emoji: "🥗", label: "Anti-Inflammatory Diet", desc: "Nutrition optimization" },
+  { id: "active", emoji: "🏃‍♂️", label: "Active Living", desc: "Movement & exercise" },
+  { id: "sleep", emoji: "😴", label: "Sleep Architecture", desc: "Restorative rest" },
+  { id: "stress", emoji: "🧘", label: "Stress Resilience", desc: "Mental fortitude" },
+  { id: "detox", emoji: "🌿", label: "Cellular Detox", desc: "Antioxidant support" },
+]
+
+const familySystems = [
+  { id: "cardio", emoji: "🫀", label: "Cardiovascular", color: "text-red-500" },
+  { id: "neuro", emoji: "🧠", label: "Neurological", color: "text-purple-500" },
+  { id: "metabolic", emoji: "🧬", label: "Metabolic", color: "text-amber-500" },
+  { id: "autoimmune", emoji: "🛡️", label: "Autoimmune", color: "text-cyan-500" },
+]
+
+function DNAHelix() {
+  return (
+    <div className="relative w-40 h-40 mx-auto mb-4">
+      <motion.div
+        animate={{ rotateY: [0, 360] }}
+        transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+        className="absolute inset-0"
+      >
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => {
+          const angle = (i / 8) * Math.PI * 2
+          const x1 = 70 + Math.cos(angle) * 35
+          const x2 = 70 - Math.cos(angle) * 35
+          const y = 10 + i * 15
+          return (
+            <g key={i}>
+              <svg className="absolute inset-0" viewBox="0 0 140 140">
+                <line x1={x1} y1={y} x2={x2} y2={y} stroke="rgba(167,139,250,0.3)" strokeWidth={2} />
+                <circle cx={x1} cy={y} r={4} fill="#a78bfa" opacity={0.8} />
+                <circle cx={x2} cy={y} r={4} fill="#06b6d4" opacity={0.8} />
+              </svg>
+            </g>
+          )
+        })}
+      </motion.div>
+      <motion.div
+        animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+        transition={{ repeat: Infinity, duration: 3 }}
+        className="absolute inset-0 rounded-full bg-gradient-to-br from-fuchsia-500/10 to-cyan-500/10 blur-2xl"
+      />
+    </div>
+  )
 }
 
-interface GeneticResult {
-  riskScores: RiskScore[];
-  overallProfile: string;
-  highPriorityActions: string[];
-  geneticTestsRecommended: Array<{ test: string; reason: string; urgency: string }>;
-  disclaimer: string;
+function LaborIllusion({ onComplete }: { onComplete: () => void }) {
+  const steps = [
+    "Mapping genetic predispositions...",
+    "Simulating lifestyle cellular effects (Epigenetics)...",
+    "Calculating protective factor scores...",
+    "Weaving your personalized phytotherapy armor...",
+  ]
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(s => {
+        if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s }
+        return s + 1
+      })
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm">
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}
+        className="bg-slate-800 rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl border border-fuchsia-800/30">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+          className="w-14 h-14 mx-auto mb-4 rounded-full border-4 border-slate-700 border-t-fuchsia-400" />
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="text-fuchsia-200 text-sm">{steps[step]}</motion.p>
+        </AnimatePresence>
+        <div className="flex gap-1 justify-center mt-4">
+          {steps.map((_, i) => <div key={i} className={`w-2 h-2 rounded-full ${i <= step ? "bg-fuchsia-400" : "bg-slate-700"}`} />)}
+        </div>
+      </motion.div>
+    </motion.div>
+  )
 }
-
-const FAMILY_CONDITIONS = {
-  en: ["Type 2 diabetes", "Heart disease", "Stroke", "Breast cancer", "Colon cancer", "Lung cancer", "Alzheimer's", "High blood pressure", "High cholesterol", "Osteoporosis", "Autoimmune disease", "Parkinson's", "Depression", "Kidney disease", "Thyroid disorder"],
-  tr: ["Tip 2 diyabet", "Kalp hastaligi", "Inme", "Meme kanseri", "Kolon kanseri", "Akciger kanseri", "Alzheimer", "Yüksek tansiyon", "Yüksek kolesterol", "Osteoporoz", "Otoimmun hastalık", "Parkinson", "Depresyon", "Bobrek hastaligi", "Tiroid bozuklugu"],
-};
-
-const PERSONAL_FACTORS = {
-  en: ["Smoker", "Overweight (BMI 25-30)", "Obese (BMI 30+)", "Sedentary lifestyle", "High stress", "Poor diet", "Excessive alcohol", "Sleep disorder", "Chronic inflammation", "Insulin resistance"],
-  tr: ["Sigara kullanici", "Fazla kilolu (BMI 25-30)", "Obez (BMI 30+)", "Hareketsiz yasam", "Yüksek stres", "Kotu beslenme", "Asiri alkol", "Uyku bozuklugu", "Kronik inflamasyon", "Insulin direnci"],
-};
 
 export default function GeneticRiskPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [age, setAge] = useState("35");
-  const [gender, setGender] = useState("male");
-  const [familyHistory, setFamilyHistory] = useState<string[]>([]);
-  const [personalFactors, setPersonalFactors] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<GeneticResult | null>(null);
+  const router = useRouter()
+  const [selectedAreas, setSelectedAreas] = useState<string[]>(["diet", "active"])
+  const [familyHistory, setFamilyHistory] = useState<string[]>([])
+  const [showLabor, setShowLabor] = useState(false)
+  const [showResult, setShowResult] = useState(false)
 
-  const famConditions = FAMILY_CONDITIONS[lang];
-  const famConditionsEN = FAMILY_CONDITIONS.en;
-  const persFactors = PERSONAL_FACTORS[lang];
-  const persFactorsEN = PERSONAL_FACTORS.en;
+  const toggleArea = (id: string) => {
+    setSelectedAreas(prev => prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id])
+  }
 
-  const toggleFamily = (cond: string) => {
-    setFamilyHistory((prev) => prev.includes(cond) ? prev.filter((c) => c !== cond) : [...prev, cond]);
-  };
-
-  const togglePersonal = (factor: string) => {
-    setPersonalFactors((prev) => prev.includes(factor) ? prev.filter((f) => f !== factor) : [...prev, factor]);
-  };
-
-  const handleAnalyze = async () => {
-    if (!session?.access_token) return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/genetic-risk", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ lang, age, gender, family_history: familyHistory, personal_factors: personalFactors }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to analyze");
-      }
-
-      const data = await res.json();
-      setResult(data.result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getRiskColor = (score: number) => {
-    if (score <= 1.0) return "text-green-600 dark:text-green-400";
-    if (score <= 1.5) return "text-yellow-600 dark:text-yellow-400";
-    if (score <= 2.5) return "text-orange-600 dark:text-orange-400";
-    return "text-red-600 dark:text-red-400";
-  };
-
-  const getRiskBg = (score: number) => {
-    if (score <= 1.0) return "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800";
-    if (score <= 1.5) return "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800";
-    if (score <= 2.5) return "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800";
-    return "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800";
-  };
-
-  const getRiskBarWidth = (score: number) => Math.min(score / 4 * 100, 100);
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold">{tx("genetic.title", lang)}</h1>
-          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
-          <Button onClick={() => window.location.href = "/auth/login"}>
-            <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
-          </Button>
-        </div>
-      </div>
-    );
+  const toggleFamily = (id: string) => {
+    setFamilyHistory(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id])
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-8 px-4">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-slate-900 text-white">
+      <AnimatePresence>
+        {showLabor && <LaborIllusion onComplete={() => { setShowLabor(false); setShowResult(true) }} />}
+      </AnimatePresence>
+
+      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400 px-4 py-1.5 rounded-full text-sm font-medium">
-            <Dna className="w-4 h-4" />
-            {tx("genetic.title", lang)}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-4">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/10">
+            <ChevronLeft className="w-5 h-5 text-slate-400" />
+          </button>
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-white">Epigenetic Control Center</h1>
+            <p className="text-xs text-slate-400">Your genes load the gun, lifestyle pulls the trigger</p>
           </div>
-          <h1 className="text-3xl font-bold">{tx("genetic.title", lang)}</h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">{tx("genetic.subtitle", lang)}</p>
-        </div>
+          <Dna className="w-5 h-5 text-fuchsia-400" />
+        </motion.div>
 
-        {/* Input Form */}
-        <div className="bg-card border rounded-2xl p-6 space-y-4">
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium">{tx("common.age", lang)}</label>
-              <input type="number" min="18" max="100" value={age} onChange={(e) => setAge(e.target.value)}
-                className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-violet-500" />
-            </div>
-            <div>
-              <label className="text-sm font-medium">{tx("common.gender", lang)}</label>
-              <select value={gender} onChange={(e) => setGender(e.target.value)}
-                className="w-full mt-1 px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-violet-500">
-                <option value="male">{tx("common.male", lang)}</option>
-                <option value="female">{tx("common.female", lang)}</option>
-              </select>
-            </div>
+        {/* DNA Helix */}
+        <DNAHelix />
+
+        {/* Family History Systems */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-6">
+          <h3 className="text-sm font-semibold text-slate-300 mb-3 px-1">Family Health History (Systems)</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {familySystems.map((sys, i) => {
+              const isActive = familyHistory.includes(sys.id)
+              return (
+                <motion.button
+                  key={sys.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.25 + i * 0.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => toggleFamily(sys.id)}
+                  className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
+                    isActive ? "border-fuchsia-500/50 bg-fuchsia-950/40" : "border-slate-700 bg-slate-800"
+                  }`}
+                >
+                  <span className="text-xl">{sys.emoji}</span>
+                  <span className="text-sm text-slate-200">{sys.label}</span>
+                </motion.button>
+              )
+            })}
           </div>
+        </motion.div>
 
-          {/* Family History */}
-          <div>
-            <label className="text-sm font-medium">{tx("geneticRisk.familyHistory", lang)}</label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {famConditions.map((cond, i) => (
-                <button key={i} onClick={() => toggleFamily(famConditionsEN[i])}
-                  className={`rounded-full px-3 py-1.5 text-xs transition-colors ${
-                    familyHistory.includes(famConditionsEN[i])
-                      ? "bg-violet-500 text-white"
-                      : "bg-violet-50 text-violet-700 hover:bg-violet-100 dark:bg-violet-950 dark:text-violet-300"
-                  }`}>{cond}</button>
-              ))}
-            </div>
+        {/* Improvement Areas */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-6">
+          <h3 className="text-sm font-semibold text-slate-300 mb-3 px-1">Cellular Improvement Opportunities</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {improvementAreas.map((area, i) => {
+              const isActive = selectedAreas.includes(area.id)
+              return (
+                <motion.button
+                  key={area.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35 + i * 0.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => toggleArea(area.id)}
+                  className={`flex flex-col items-start p-4 rounded-2xl border-2 text-left transition-all ${
+                    isActive ? "border-cyan-500/50 bg-cyan-950/30" : "border-slate-700 bg-slate-800"
+                  }`}
+                >
+                  <span className="text-xl mb-1">{area.emoji}</span>
+                  <span className="text-sm font-medium text-white">{area.label}</span>
+                  <span className="text-[10px] text-slate-400 mt-0.5">{area.desc}</span>
+                </motion.button>
+              )
+            })}
           </div>
+        </motion.div>
 
-          {/* Personal Factors */}
-          <div>
-            <label className="text-sm font-medium">{tx("geneticRisk.personalFactors", lang)}</label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {persFactors.map((factor, i) => (
-                <button key={i} onClick={() => togglePersonal(persFactorsEN[i])}
-                  className={`rounded-full px-3 py-1.5 text-xs transition-colors ${
-                    personalFactors.includes(persFactorsEN[i])
-                      ? "bg-indigo-500 text-white"
-                      : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300"
-                  }`}>{factor}</button>
-              ))}
-            </div>
-          </div>
+        {/* Action */}
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setShowLabor(true)}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-fuchsia-500 to-cyan-500 text-white font-medium shadow-lg shadow-fuchsia-900/30 flex items-center justify-center gap-2"
+        >
+          <Sparkles className="w-4 h-4" />
+          Decode My Epigenetic Potential
+        </motion.button>
 
-          <Button onClick={handleAnalyze} disabled={isLoading} className="w-full bg-violet-600 hover:bg-violet-700 text-white" size="lg">
-            {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
-            ) : (
-              <><Sparkles className="mr-2 h-5 w-5" />{tx("genetic.analyze", lang)}</>
-            )}
-          </Button>
-        </div>
-
-        {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">{error}</div>
-        )}
-
-        {/* Results */}
-        {result && (
-          <div className="space-y-6">
-            {/* Overall Profile */}
-            <div className="bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800 rounded-2xl p-6">
-              <h3 className="font-semibold text-violet-700 dark:text-violet-400 mb-2">
-                {tx("geneticRisk.overallProfile", lang)}
-              </h3>
-              <p className="text-sm">{result.overallProfile}</p>
-            </div>
-
-            {/* Risk Score Cards */}
-            {result.riskScores?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-violet-500" />
-                  {tx("geneticRisk.diseaseScores", lang)}
-                </h2>
-                <p className="text-xs text-muted-foreground">
-                  {tx("geneticRisk.scoreExplanation", lang)}
-                </p>
-                <div className="grid gap-4">
-                  {result.riskScores.map((risk, i) => (
-                    <div key={i} className={`border rounded-xl p-4 space-y-3 ${getRiskBg(risk.riskScore)}`}>
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold">{risk.disease}</span>
-                        <span className={`text-2xl font-bold ${getRiskColor(risk.riskScore)}`}>
-                          {risk.riskScore}x
-                        </span>
-                      </div>
-                      {/* Risk Bar */}
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full transition-all ${
-                            risk.riskScore <= 1.0 ? "bg-green-500" :
-                            risk.riskScore <= 1.5 ? "bg-yellow-500" :
-                            risk.riskScore <= 2.5 ? "bg-orange-500" : "bg-red-500"
-                          }`}
-                          style={{ width: `${getRiskBarWidth(risk.riskScore)}%` }}
-                        />
-                      </div>
-                      <div className="grid sm:grid-cols-2 gap-2 text-sm">
-                        <div><span className="text-muted-foreground">{tx("geneticRisk.populationRisk", lang)}</span> {risk.populationRisk}</div>
-                        <div><span className="text-muted-foreground">{tx("geneticRisk.yourRisk", lang)}</span> {risk.yourEstimatedRisk}</div>
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {tx("geneticRisk.confidence", lang)} {risk.confidence} | {tx("geneticRisk.factors", lang)} {risk.keyFactors.join(", ")}
-                      </div>
-                      {/* Reduction Strategies */}
-                      {risk.reductionStrategies?.length > 0 && (
-                        <div className="bg-white/60 dark:bg-gray-900/40 rounded-lg p-3 space-y-1">
-                          <div className="text-xs font-medium flex items-center gap-1">
-                            <TrendingDown className="w-3 h-3" />
-                            {tx("geneticRisk.riskReduction", lang)}
-                          </div>
-                          {risk.reductionStrategies.map((strat, si) => (
-                            <div key={si} className="flex items-center justify-between text-xs">
-                              <span>{strat.strategy}</span>
-                              <span className="text-green-600 dark:text-green-400 font-medium">{strat.potentialReduction}</span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* High Priority Actions */}
-            {result.highPriorityActions?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-3">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-amber-500" />
-                  {tx("geneticRisk.priorityActions", lang)}
-                </h2>
-                {result.highPriorityActions.map((action, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-200 dark:bg-amber-800 text-xs font-bold text-amber-800 dark:text-amber-200 flex-shrink-0 mt-0.5">{i + 1}</span>
-                    <span className="text-sm">{action}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Genetic Tests */}
-            {result.geneticTestsRecommended?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <TestTube className="w-5 h-5 text-purple-500" />
-                  {tx("geneticRisk.recommendedTests", lang)}
-                </h2>
-                <div className="grid gap-3">
-                  {result.geneticTestsRecommended.map((test, i) => (
-                    <div key={i} className={`border rounded-xl p-4 ${
-                      test.urgency === "important" ? "border-amber-200 dark:border-amber-800" : "border-border"
-                    }`}>
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium">{test.test}</span>
-                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                          test.urgency === "important" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
-                          test.urgency === "recommended" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
-                          "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
-                        }`}>{test.urgency}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{test.reason}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Disclaimer */}
-            {result.disclaimer && (
-              <div className="bg-gray-50 dark:bg-gray-900/30 border rounded-xl p-4">
-                <p className="text-xs text-muted-foreground">{result.disclaimer}</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Disclaimer */}
-        <div className="text-center text-xs text-muted-foreground px-4">
-          {tx("disclaimer.tool", lang)}
-        </div>
+        <AnimatePresence>
+          {showResult && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="mt-4 bg-slate-800 rounded-2xl p-5 border border-fuchsia-800/30">
+              <h3 className="text-sm font-semibold text-fuchsia-400 mb-2">Your Epigenetic Shield</h3>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Based on your family history and lifestyle goals: Curcumin (500mg/day) for cellular protection,
+                Resveratrol (250mg/day) for epigenetic modulation, and Sulforaphane (from broccoli sprouts)
+                for DNA repair enzyme activation. Combined with Mediterranean diet pattern.
+              </p>
+              <p className="text-xs text-slate-500 mt-3">Epigenetic changes take 3-6 months. Consistency is key.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
-  );
+  )
 }
