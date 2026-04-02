@@ -1,808 +1,425 @@
-// © 2026 Doctopal — All Rights Reserved
-"use client";
+// © 2026 DoctoPal — All Rights Reserved
+"use client"
 
-import { useState, useEffect, useCallback } from "react";
-import {
-  Activity,
-  Loader2,
-  LogIn,
-  ChevronDown,
-  ChevronUp,
-  AlertTriangle,
-  CheckCircle2,
-  ShieldAlert,
-  Plus,
-  BarChart3,
-  Brain,
-  ArrowRight,
-  Pill,
-  Calendar,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx, txp } from "@/lib/translations";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, RotateCcw } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-interface PainRecord {
-  id: string;
-  date: string;
-  location: string;
-  intensity: number;
-  pain_type: string;
-  duration: string;
-  triggers: string[];
-  relief_methods: string[];
-  medications_taken: string[];
-  notes: string;
+// ── Region definitions ──
+interface BodyRegion {
+  id: string
+  label: string
+  path?: string // SVG path for front view
+  backPath?: string // SVG path for back view
 }
 
-interface TriggerAnalysis {
-  trigger: string;
-  frequency: number;
-  correlation: string;
-}
-
-interface PatternItem {
-  pattern: string;
-  significance: string;
-  suggestion: string;
-}
-
-interface ReliefItem {
-  method: string;
-  effectiveness: string;
-}
-
-interface PainAnalysis {
-  overallPattern: string;
-  averageIntensity: number;
-  frequencyPerWeek: number;
-  mostCommonLocation: string;
-  mostCommonType: string;
-  patterns: PatternItem[];
-  triggerAnalysis: TriggerAnalysis[];
-  medicationCorrelation: string[];
-  reliefEffectiveness: ReliefItem[];
-  recommendations: string[];
-  alertLevel: "green" | "yellow" | "red";
-  alertMessage: string;
-  whenToSeeDoctor: string[];
-  sources?: Array<{ title: string; url: string }>;
-}
-
-const LOCATIONS = [
-  { key: "head", label: { en: "Head", tr: "Bas" } },
-  { key: "neck", label: { en: "Neck", tr: "Boyun" } },
-  { key: "upper_back", label: { en: "Upper Back", tr: "Ust Sirt" } },
-  { key: "lower_back", label: { en: "Lower Back", tr: "Bel" } },
-  { key: "chest", label: { en: "Chest", tr: "Göğüs" } },
-  { key: "abdomen", label: { en: "Abdomen", tr: "Karin" } },
-  { key: "shoulder", label: { en: "Shoulder", tr: "Omuz" } },
-  { key: "elbow", label: { en: "Elbow", tr: "Dirsek" } },
-  { key: "wrist", label: { en: "Wrist", tr: "Bilek" } },
-  { key: "hand", label: { en: "Hand", tr: "El" } },
-  { key: "hip", label: { en: "Hip", tr: "Kalca" } },
-  { key: "knee", label: { en: "Knee", tr: "Diz" } },
-  { key: "ankle", label: { en: "Ankle", tr: "Ayak Bilegi" } },
-  { key: "foot", label: { en: "Foot", tr: "Ayak" } },
-  { key: "jaw", label: { en: "Jaw", tr: "Cene" } },
-  { key: "general", label: { en: "General", tr: "Genel" } },
-];
+const BODY_REGIONS: BodyRegion[] = [
+  { id: "head", label: "Head", path: "M145,30 C145,15 155,8 165,8 C175,8 185,15 185,30 C185,45 175,55 165,55 C155,55 145,45 145,30Z", backPath: "M145,30 C145,15 155,8 165,8 C175,8 185,15 185,30 C185,45 175,55 165,55 C155,55 145,45 145,30Z" },
+  { id: "neck", label: "Neck", path: "M158,55 L172,55 L170,72 L160,72Z", backPath: "M158,55 L172,55 L170,72 L160,72Z" },
+  { id: "shoulders", label: "Shoulders", path: "M120,72 L210,72 L215,90 L115,90Z", backPath: "M120,72 L210,72 L215,90 L115,90Z" },
+  { id: "chest", label: "Chest", path: "M130,90 L200,90 L198,140 L132,140Z" },
+  { id: "upper-back", label: "Upper Back", backPath: "M130,90 L200,90 L198,140 L132,140Z" },
+  { id: "abdomen", label: "Abdomen", path: "M135,140 L195,140 L190,195 L140,195Z" },
+  { id: "lower-back", label: "Lower Back", backPath: "M135,140 L195,140 L190,195 L140,195Z" },
+  { id: "left-arm", label: "Left Arm", path: "M115,90 L130,90 L125,170 L108,170Z", backPath: "M115,90 L130,90 L125,170 L108,170Z" },
+  { id: "right-arm", label: "Right Arm", path: "M200,90 L215,90 L222,170 L205,170Z", backPath: "M200,90 L215,90 L222,170 L205,170Z" },
+  { id: "left-hand", label: "Left Hand", path: "M105,170 L125,170 L122,195 L103,195Z", backPath: "M105,170 L125,170 L122,195 L103,195Z" },
+  { id: "right-hand", label: "Right Hand", path: "M205,170 L225,170 L227,195 L207,195Z", backPath: "M205,170 L225,170 L227,195 L207,195Z" },
+  { id: "hips", label: "Hips", path: "M138,195 L192,195 L195,220 L135,220Z", backPath: "M138,195 L192,195 L195,220 L135,220Z" },
+  { id: "upper-legs", label: "Upper Legs", path: "M135,220 L195,220 L190,300 L140,300Z", backPath: "M135,220 L195,220 L190,300 L140,300Z" },
+  { id: "knees", label: "Knees", path: "M142,300 L188,300 L186,325 L144,325Z", backPath: "M142,300 L188,300 L186,325 L144,325Z" },
+  { id: "lower-legs", label: "Lower Legs", path: "M144,325 L186,325 L184,400 L146,400Z", backPath: "M144,325 L186,325 L184,400 L146,400Z" },
+  { id: "feet", label: "Feet", path: "M142,400 L188,400 L192,425 L138,425Z", backPath: "M142,400 L188,400 L192,425 L138,425Z" },
+]
 
 const PAIN_TYPES = [
-  { key: "sharp", txKey: "pain.sharp" },
-  { key: "dull", txKey: "pain.dull" },
-  { key: "burning", txKey: "pain.burning" },
-  { key: "throbbing", txKey: "pain.throbbing" },
-  { key: "stabbing", label: { en: "Stabbing", tr: "Saplanan" } },
-  { key: "cramping", label: { en: "Cramping", tr: "Krampi" } },
-  { key: "aching", label: { en: "Aching", tr: "Sizlayan" } },
-];
+  { id: "sharp", emoji: "🔪", label: "Sharp" },
+  { id: "dull", emoji: "🌊", label: "Dull/Aching" },
+  { id: "burning", emoji: "⚡", label: "Burning" },
+  { id: "pressure", emoji: "🫸", label: "Pressure" },
+  { id: "throbbing", emoji: "📌", label: "Throbbing" },
+]
 
-const COMMON_TRIGGERS = [
-  { en: "Stress", tr: "Stres" },
-  { en: "Poor sleep", tr: "Kotu uyku" },
-  { en: "Exercise", tr: "Egzersiz" },
-  { en: "Weather change", tr: "Hava degisimi" },
-  { en: "Sitting too long", tr: "Uzun oturma" },
-  { en: "Screen time", tr: "Ekran suresi" },
-  { en: "Heavy lifting", tr: "Agir kaldirma" },
-  { en: "Dehydration", tr: "Susuzluk" },
-];
+const DURATIONS = [
+  { id: "now", emoji: "⚡", label: "Just Now" },
+  { id: "hours", emoji: "⏳", label: "Few Hours" },
+  { id: "days", emoji: "🕰️", label: "Days" },
+  { id: "weeks", emoji: "📅", label: "Weeks+" },
+]
 
-const COMMON_RELIEF = [
-  { en: "Rest", tr: "Dinlenme" },
-  { en: "Ice/Cold", tr: "Buz/Soguk" },
-  { en: "Heat", tr: "Sicak" },
-  { en: "Stretching", tr: "Germe" },
-  { en: "Massage", tr: "Masaj" },
-  { en: "Medication", tr: "İlaç" },
-  { en: "Deep breathing", tr: "Derin nefes" },
-  { en: "Walking", tr: "Yuruyus" },
-];
+const TRIGGERS = [
+  { id: "exercise", emoji: "🏋️", label: "Exercise" },
+  { id: "desk", emoji: "💻", label: "Desk Work" },
+  { id: "stress", emoji: "😰", label: "Stress" },
+  { id: "sleep", emoji: "🌙", label: "Sleep Position" },
+  { id: "food", emoji: "🍔", label: "Food" },
+]
 
-export default function PainDiaryPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [activeTab, setActiveTab] = useState<"log" | "history" | "analysis">("log");
+const RELIEFS = [
+  { id: "painkiller", emoji: "💊", label: "Painkiller" },
+  { id: "ice", emoji: "🧊", label: "Ice/Heat" },
+  { id: "stretch", emoji: "🧘", label: "Stretching" },
+  { id: "rest", emoji: "😴", label: "Rest" },
+  { id: "nothing", emoji: "❌", label: "Nothing Helps" },
+]
 
-  // Form state
-  const [location, setLocation] = useState<string | null>(null);
-  const [intensity, setIntensity] = useState(5);
-  const [painType, setPainType] = useState<string | null>(null);
-  const [duration, setDuration] = useState("");
-  const [selectedTriggers, setSelectedTriggers] = useState<string[]>([]);
-  const [selectedRelief, setSelectedRelief] = useState<string[]>([]);
-  const [notes, setNotes] = useState("");
+// ── Intensity color mapping ──
+function getIntensityColor(intensity: number): string {
+  if (intensity <= 3) return "rgba(245,158,11,0.5)"    // amber
+  if (intensity <= 6) return "rgba(234,88,12,0.6)"     // orange
+  return "rgba(185,28,28,0.7)"                          // deep red/terracotta
+}
 
-  // Data state
-  const [records, setRecords] = useState<PainRecord[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState<PainAnalysis | null>(null);
-  const [showSources, setShowSources] = useState(false);
+function getIntensityGlow(intensity: number): string {
+  if (intensity <= 3) return "0 0 15px rgba(245,158,11,0.4)"
+  if (intensity <= 6) return "0 0 25px rgba(234,88,12,0.5)"
+  return "0 0 35px rgba(185,28,28,0.6)"
+}
 
-  // Fetch records
-  const fetchRecords = useCallback(async () => {
-    if (!session?.access_token) return;
-    try {
-      const res = await fetch("/api/pain-diary?days=30", {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setRecords(data.records || []);
-      }
-    } catch {
-      // Ignore
-    }
-  }, [session?.access_token]);
+// ── Labor Illusion ──
+function LaborIllusion({ onComplete }: { onComplete: () => void }) {
+  const steps = [
+    "Analyzing fascial tension patterns...",
+    "Scanning natural anti-inflammatory matches...",
+    "Mapping your personalized relief protocol...",
+  ]
+  const [step, setStep] = useState(0)
 
   useEffect(() => {
-    if (isAuthenticated) fetchRecords();
-  }, [isAuthenticated, fetchRecords]);
+    const interval = setInterval(() => {
+      setStep(s => {
+        if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s }
+        return s + 1
+      })
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [])
 
-  const handleSave = async () => {
-    if (!location) return;
-    setIsSaving(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const res = await fetch("/api/pain-diary", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({
-          action: "log",
-          location,
-          intensity,
-          pain_type: painType,
-          duration,
-          triggers: selectedTriggers,
-          relief_methods: selectedRelief,
-          notes,
-          lang,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to save");
-      }
-
-      setSuccess(tx("pain.saved", lang));
-      // Reset form
-      setLocation(null);
-      setIntensity(5);
-      setPainType(null);
-      setDuration("");
-      setSelectedTriggers([]);
-      setSelectedRelief([]);
-      setNotes("");
-      // Refresh records
-      fetchRecords();
-      setTimeout(() => setSuccess(null), 3000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleAnalyze = async () => {
-    setIsLoading(true);
-    setError(null);
-    setAnalysis(null);
-
-    try {
-      const res = await fetch("/api/pain-diary", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({ action: "analyze", lang }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Analysis failed");
-      }
-
-      const data = await res.json();
-      setAnalysis(data.analysis);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const toggleTrigger = (t: string) => {
-    setSelectedTriggers((prev) =>
-      prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
-    );
-  };
-
-  const toggleRelief = (r: string) => {
-    setSelectedRelief((prev) =>
-      prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r]
-    );
-  };
-
-  const intensityColor = (val: number) => {
-    if (val <= 3) return "text-green-600";
-    if (val <= 6) return "text-amber-600";
-    return "text-red-600";
-  };
-
-  const intensityBg = (val: number) => {
-    if (val <= 3) return "bg-green-500";
-    if (val <= 6) return "bg-amber-500";
-    return "bg-red-500";
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-        <div className="rounded-xl border-2 border-dashed border-red-200 bg-red-50/50 p-12 text-center dark:border-red-800 dark:bg-red-950/20">
-          <LogIn className="mx-auto mb-3 h-10 w-10 text-red-400" />
-          <p className="text-sm text-muted-foreground">{tx("pain.loginRequired", lang)}</p>
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}
+        className="bg-white dark:bg-slate-800 rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          className="w-14 h-14 mx-auto mb-4 rounded-full border-4 border-slate-200 border-t-emerald-500" />
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="text-slate-600 dark:text-slate-300 text-sm">{steps[step]}</motion.p>
+        </AnimatePresence>
+        <div className="flex gap-1 justify-center mt-4">
+          {steps.map((_, i) => <div key={i} className={`w-2 h-2 rounded-full ${i <= step ? "bg-emerald-500" : "bg-slate-200"}`} />)}
         </div>
-      </div>
-    );
+      </motion.div>
+    </motion.div>
+  )
+}
+
+// ── Chip ──
+function Chip({ emoji, label, isActive, onClick }: { emoji: string; label: string; isActive: boolean; onClick: () => void }) {
+  return (
+    <motion.button whileTap={{ scale: 0.9 }} onClick={onClick}
+      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 text-sm transition-all ${
+        isActive ? "border-amber-400 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:border-amber-600 dark:text-amber-300"
+          : "border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
+      }`}>
+      <motion.span animate={isActive ? { scale: [1, 1.2, 1] } : {}} transition={{ duration: 0.2 }}>{emoji}</motion.span>
+      {label}
+    </motion.button>
+  )
+}
+
+// ── Mock relief result ──
+function getReliefResult(regions: string[], intensity: number, painType: string | null) {
+  const regionNames = regions.map(r => BODY_REGIONS.find(b => b.id === r)?.label).filter(Boolean).join(", ")
+  if (intensity >= 7) {
+    return { supplement: "Curcumin 500mg + Piperine 5mg", topical: "Topical Arnica Gel", exercise: "Gentle mobilization + deep breathing", note: "High intensity pain — consult your doctor if persistent beyond 3 days." }
+  }
+  if (painType === "burning" || painType === "sharp") {
+    return { supplement: "Magnesium Glycinate 400mg", topical: "Capsaicin Cream (0.025%)", exercise: "Nerve gliding exercises", note: "Sharp/burning pain may indicate nerve involvement." }
+  }
+  return { supplement: "Boswellia 300mg + Omega-3 2g", topical: "Peppermint Oil (diluted)", exercise: "Gentle stretching 10 min", note: "Consistent daily movement helps reduce chronic tension." }
+}
+
+// ═══ MAIN PAGE ═══
+export default function PainDiaryPage() {
+  const router = useRouter()
+  const [view, setView] = useState<"front" | "back">("front")
+  const [selectedRegions, setSelectedRegions] = useState<string[]>([])
+  const [intensity, setIntensity] = useState(5)
+  const [painType, setPainType] = useState<string | null>(null)
+  const [duration, setDuration] = useState<string | null>(null)
+  const [triggers, setTriggers] = useState<string[]>([])
+  const [relief, setRelief] = useState<string | null>(null)
+  const [showLabor, setShowLabor] = useState(false)
+  const [showResult, setShowResult] = useState(false)
+
+  // Progressive disclosure steps
+  const step = selectedRegions.length === 0 ? 0 : !painType ? 1 : !duration ? 2 : triggers.length === 0 ? 3 : !relief ? 4 : 5
+
+  const toggleRegion = (id: string) => {
+    setSelectedRegions(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id])
+  }
+  const toggleTrigger = (id: string) => {
+    setTriggers(prev => prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id])
+  }
+
+  const result = getReliefResult(selectedRegions, intensity, painType)
+
+  const getRegionsForView = () => {
+    return BODY_REGIONS.filter(r => {
+      if (view === "front") return !!r.path
+      return !!r.backPath
+    })
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-red-50 p-3 dark:bg-red-950">
-          <Activity className="h-6 w-6 text-red-600 dark:text-red-400" />
-        </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-            {tx("pain.title", lang)}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {tx("pain.subtitle", lang)}
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-slate-50 dark:bg-background">
+      <AnimatePresence>
+        {showLabor && <LaborIllusion onComplete={() => { setShowLabor(false); setShowResult(true) }} />}
+      </AnimatePresence>
 
-      {/* Tabs */}
-      <div className="mb-5 flex gap-1 rounded-lg bg-muted/50 p-1">
-        {[
-          { key: "log" as const, icon: Plus, label: tx("pain.logPain", lang) },
-          { key: "history" as const, icon: Calendar, label: tx("pain.history", lang) },
-          { key: "analysis" as const, icon: Brain, label: tx("pain.analyze", lang) },
-        ].map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => {
-              setActiveTab(tab.key);
-              setError(null);
-            }}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-all ${
-              activeTab === tab.key
-                ? "bg-background shadow text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            <tab.icon className="h-3.5 w-3.5" />
-            {tab.label}
+      <div className="max-w-7xl mx-auto px-4 py-6 md:px-8">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white dark:hover:bg-slate-800">
+              <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+            </button>
+            <div>
+              <h1 className="text-xl font-bold text-slate-800 dark:text-white">Somatic Body Map</h1>
+              <p className="text-xs text-slate-400">Touch where it hurts — we will help you heal</p>
+            </div>
+          </div>
+          <button onClick={() => { setSelectedRegions([]); setPainType(null); setDuration(null); setTriggers([]); setRelief(null); setShowResult(false) }}
+            className="p-2 rounded-xl hover:bg-white dark:hover:bg-slate-800 text-slate-400">
+            <RotateCcw className="w-4 h-4" />
           </button>
-        ))}
-      </div>
+        </motion.div>
 
-      {/* ─── LOG TAB ─────────────────────── */}
-      {activeTab === "log" && (
-        <div className="space-y-5">
-          {/* Location */}
-          <div>
-            <label className="mb-2 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {tx("pain.location", lang)}
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {LOCATIONS.map((l) => (
-                <button
-                  key={l.key}
-                  onClick={() => setLocation(l.key)}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                    location === l.key
-                      ? "border-red-400 bg-red-50 text-red-700 dark:border-red-600 dark:bg-red-950/30 dark:text-red-300"
-                      : "hover:border-red-300 dark:hover:border-red-700"
-                  }`}
-                >
-                  {l.label[lang]}
-                </button>
-              ))}
-            </div>
-          </div>
+        {/* ── DESKTOP 2-COLUMN / MOBILE 1-COLUMN ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-          {/* Intensity */}
-          <div>
-            <label className="mb-2 flex items-center justify-between text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              <span>{tx("pain.intensity", lang)}</span>
-              <span className={`text-lg font-bold ${intensityColor(intensity)}`}>
-                {intensity}/10
-              </span>
-            </label>
-            <input
-              type="range"
-              min={1}
-              max={10}
-              value={intensity}
-              onChange={(e) => setIntensity(Number(e.target.value))}
-              className="w-full accent-red-500"
-            />
-            <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-              <span>{tx("pain.mild", lang)}</span>
-              <span>{tx("common.moderate", lang)}</span>
-              <span>{tx("common.severe", lang)}</span>
-            </div>
-          </div>
-
-          {/* Pain Type */}
-          <div>
-            <label className="mb-2 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {tx("pain.type", lang)}
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {PAIN_TYPES.map((p) => {
-                const label = p.txKey ? tx(p.txKey, lang) : (p as { label: { en: string; tr: string } }).label[lang];
-                return (
-                  <button
-                    key={p.key}
-                    onClick={() => setPainType(p.key)}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                      painType === p.key
-                        ? "border-red-400 bg-red-50 text-red-700 dark:border-red-600 dark:bg-red-950/30 dark:text-red-300"
-                        : "hover:border-red-300 dark:hover:border-red-700"
-                    }`}
-                  >
-                    {label}
+          {/* ═══ LEFT: Body Map (55%) ═══ */}
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-7">
+            <div className="bg-white/80 dark:bg-card backdrop-blur rounded-2xl p-6 border border-slate-200/60 dark:border-slate-800 shadow-sm">
+              {/* View Toggle */}
+              <div className="flex justify-center gap-2 mb-4">
+                {(["front", "back"] as const).map(v => (
+                  <button key={v} onClick={() => setView(v)}
+                    className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
+                      view === v ? "bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900"
+                        : "bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
+                    }`}>
+                    {v === "front" ? "Front View" : "Back View"}
                   </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Duration */}
-          <div>
-            <label className="mb-2 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {tx("pain.duration", lang)}
-            </label>
-            <input
-              type="text"
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              placeholder={tx("pain.durationPlaceholder", lang)}
-              className="w-full rounded-xl border bg-background p-3 text-sm placeholder:text-muted-foreground focus:border-red-400 focus:outline-none focus:ring-1 focus:ring-red-400"
-            />
-          </div>
-
-          {/* Triggers */}
-          <div>
-            <label className="mb-2 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {tx("pain.triggers", lang)}
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {COMMON_TRIGGERS.map((t, i) => {
-                const label = t[lang];
-                return (
-                  <button
-                    key={i}
-                    onClick={() => toggleTrigger(label)}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                      selectedTriggers.includes(label)
-                        ? "border-red-400 bg-red-50 text-red-700 dark:border-red-600 dark:bg-red-950/30 dark:text-red-300"
-                        : "hover:border-red-300 dark:hover:border-red-700"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Relief Methods */}
-          <div>
-            <label className="mb-2 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {tx("pain.relief", lang)}
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {COMMON_RELIEF.map((r, i) => {
-                const label = r[lang];
-                return (
-                  <button
-                    key={i}
-                    onClick={() => toggleRelief(label)}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
-                      selectedRelief.includes(label)
-                        ? "border-green-400 bg-green-50 text-green-700 dark:border-green-600 dark:bg-green-950/30 dark:text-green-300"
-                        : "hover:border-green-300 dark:hover:border-green-700"
-                    }`}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label className="mb-2 block text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {tx("common.notes", lang)}
-            </label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder={tx("pain.notesPlaceholder", lang)}
-              className="w-full rounded-xl border bg-background p-3 text-sm placeholder:text-muted-foreground focus:border-red-400 focus:outline-none focus:ring-1 focus:ring-red-400"
-              rows={2}
-            />
-          </div>
-
-          {/* Success */}
-          {success && (
-            <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-950/30 dark:text-green-400">
-              <CheckCircle2 className="mr-1 inline h-4 w-4" />
-              {success}
-            </div>
-          )}
-
-          {/* Error */}
-          {error && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400">
-              {error}
-            </div>
-          )}
-
-          {/* Save Button */}
-          <Button
-            onClick={handleSave}
-            disabled={!location || isSaving}
-            className="w-full bg-red-600 hover:bg-red-700"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {tx("common.saving", lang)}
-              </>
-            ) : (
-              tx("pain.logPain", lang)
-            )}
-          </Button>
-        </div>
-      )}
-
-      {/* ─── HISTORY TAB ────────────────── */}
-      {activeTab === "history" && (
-        <div className="space-y-3">
-          {records.length === 0 ? (
-            <div className="rounded-xl border-2 border-dashed border-red-200 bg-red-50/50 p-8 text-center dark:border-red-800 dark:bg-red-950/20">
-              <BarChart3 className="mx-auto mb-3 h-8 w-8 text-red-400" />
-              <p className="text-sm text-muted-foreground">
-                {tx("pain.noRecords", lang)}
-              </p>
-            </div>
-          ) : (
-            <>
-              <p className="text-xs text-muted-foreground">
-                {txp("painDiary.recordsCount", lang, { count: records.length })}
-              </p>
-              {records.map((r) => {
-                const loc = LOCATIONS.find((l) => l.key === r.location);
-                return (
-                  <div key={r.id} className="rounded-lg border p-3">
-                    <div className="mb-1 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{loc?.label[lang] || r.location}</span>
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${
-                          r.intensity <= 3 ? "bg-green-100 text-green-700" : r.intensity <= 6 ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-700"
-                        }`}>
-                          {r.intensity}/10
-                        </span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">{r.date}</span>
-                    </div>
-                    {r.pain_type && (
-                      <p className="text-xs text-muted-foreground capitalize">{r.pain_type}</p>
-                    )}
-                    {r.duration && (
-                      <p className="text-xs text-muted-foreground">{r.duration}</p>
-                    )}
-                    {r.triggers && r.triggers.length > 0 && (
-                      <div className="mt-1 flex flex-wrap gap-1">
-                        {r.triggers.map((t, i) => (
-                          <span key={i} className="rounded-full bg-red-50 px-2 py-0.5 text-xs text-red-600 dark:bg-red-950/30 dark:text-red-400">
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </>
-          )}
-        </div>
-      )}
-
-      {/* ─── ANALYSIS TAB ───────────────── */}
-      {activeTab === "analysis" && (
-        <div className="space-y-4">
-          {!analysis && !isLoading && (
-            <div className="space-y-4">
-              <div className="rounded-xl border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
-                <p className="text-xs text-red-700 dark:text-red-300">
-                  {records.length < 7
-                    ? tx("pain.needMore", lang)
-                    : lang === "tr"
-                    ? `${records.length} kaydiniz var. AI analiz için hazir.`
-                    : `You have ${records.length} records. Ready for AI analysis.`}
-                </p>
-              </div>
-              <Button
-                onClick={handleAnalyze}
-                disabled={records.length < 7}
-                className="w-full bg-red-600 hover:bg-red-700"
-              >
-                <Brain className="mr-2 h-4 w-4" />
-                {tx("pain.analyze", lang)}
-              </Button>
-            </div>
-          )}
-
-          {/* Loading */}
-          {isLoading && (
-            <div className="flex flex-col items-center justify-center py-16">
-              <Loader2 className="mb-3 h-8 w-8 animate-spin text-red-500" />
-              <p className="text-sm text-muted-foreground">{tx("pain.analyzing", lang)}</p>
-            </div>
-          )}
-
-          {/* Error */}
-          {error && activeTab === "analysis" && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400">
-              {error}
-            </div>
-          )}
-
-          {/* Analysis Results */}
-          {analysis && (
-            <div className="space-y-4">
-              {/* Overall Pattern */}
-              <div className={`flex items-center gap-3 rounded-xl border-2 p-4 ${
-                analysis.alertLevel === "green"
-                  ? "border-green-400 bg-green-50 dark:bg-green-950/30"
-                  : analysis.alertLevel === "yellow"
-                  ? "border-amber-400 bg-amber-50 dark:bg-amber-950/30"
-                  : "border-red-400 bg-red-50 dark:bg-red-950/30"
-              }`}>
-                {analysis.alertLevel === "green" ? (
-                  <CheckCircle2 className="h-8 w-8 text-green-600 dark:text-green-400" />
-                ) : analysis.alertLevel === "yellow" ? (
-                  <AlertTriangle className="h-8 w-8 text-amber-600 dark:text-amber-400" />
-                ) : (
-                  <ShieldAlert className="h-8 w-8 text-red-600 dark:text-red-400" />
-                )}
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{analysis.overallPattern}</p>
-                  {analysis.alertMessage && (
-                    <p className="mt-1 text-xs text-muted-foreground">{analysis.alertMessage}</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Stats */}
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {[
-                  { label: tx("pain.avgIntensity", lang), value: `${analysis.averageIntensity}/10`, color: intensityColor(analysis.averageIntensity) },
-                  { label: tx("pain.freqWeek", lang), value: String(analysis.frequencyPerWeek), color: "text-foreground" },
-                  { label: tx("pain.mostCommonArea", lang), value: analysis.mostCommonLocation, color: "text-foreground" },
-                  { label: tx("pain.mostCommonType", lang), value: analysis.mostCommonType, color: "text-foreground" },
-                ].map((stat, i) => (
-                  <div key={i} className="rounded-lg border p-3 text-center">
-                    <p className="text-xs text-muted-foreground">{stat.label}</p>
-                    <p className={`text-sm font-bold capitalize ${stat.color}`}>{stat.value}</p>
-                  </div>
                 ))}
               </div>
 
-              {/* Patterns */}
-              {analysis.patterns && analysis.patterns.length > 0 && (
-                <div className="rounded-lg border p-4">
-                  <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
-                    <BarChart3 className="h-4 w-4 text-red-500" />
-                    {tx("pain.trend", lang)}
-                  </h3>
-                  <div className="space-y-2">
-                    {analysis.patterns.map((p, i) => (
-                      <div key={i} className="rounded-lg bg-muted/30 p-3">
-                        <p className="text-sm font-medium">{p.pattern}</p>
-                        <p className="text-xs text-muted-foreground">{p.significance}</p>
-                        <p className="mt-1 text-xs text-red-600 dark:text-red-400">{p.suggestion}</p>
-                      </div>
-                    ))}
-                  </div>
+              {/* SVG Body */}
+              <div className="flex justify-center">
+                <svg viewBox="90 0 150 440" className="w-full max-w-[280px] h-auto">
+                  {/* Background glow */}
+                  <ellipse cx="165" cy="220" rx="80" ry="200" fill="none" stroke="rgba(148,163,184,0.1)" strokeWidth="40" />
+
+                  {/* Body outline */}
+                  <path d="M165,8 C155,8 145,15 145,30 C145,45 155,55 165,55 C175,55 185,45 185,30 C185,15 175,8 165,8 M160,55 L160,72 L170,72 L170,55 M120,72 L210,72 C215,72 218,78 215,90 L200,90 L215,170 L225,195 L207,195 L205,170 L200,90 L130,90 L125,170 L122,195 L103,195 L108,170 L115,90 L130,90 C132,90 130,78 120,72 M135,90 L195,90 L195,195 L192,220 L195,300 L188,325 L186,400 L192,425 L138,425 L146,400 L144,325 L140,300 L135,220 L140,195 L135,90"
+                    fill="none" stroke="rgba(148,163,184,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+
+                  {/* Clickable regions */}
+                  {getRegionsForView().map(region => {
+                    const isSelected = selectedRegions.includes(region.id)
+                    const regionPath = view === "front" ? region.path : (region.backPath || region.path)
+                    if (!regionPath) return null
+
+                    return (
+                      <g key={region.id} onClick={() => toggleRegion(region.id)} style={{ cursor: "pointer" }}>
+                        <motion.path
+                          d={regionPath}
+                          fill={isSelected ? getIntensityColor(intensity) : "rgba(148,163,184,0.08)"}
+                          stroke={isSelected ? "rgba(245,158,11,0.6)" : "rgba(148,163,184,0.15)"}
+                          strokeWidth={isSelected ? 1.5 : 0.5}
+                          whileHover={{ fillOpacity: 0.3 }}
+                          animate={isSelected ? {
+                            fillOpacity: [0.4, 0.7, 0.4],
+                          } : {}}
+                          transition={isSelected ? { repeat: Infinity, duration: 2 } : {}}
+                          style={isSelected ? { filter: `drop-shadow(${getIntensityGlow(intensity)})` } : {}}
+                        />
+                      </g>
+                    )
+                  })}
+                </svg>
+              </div>
+
+              {/* Selected regions tags */}
+              {selectedRegions.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 justify-center mt-4">
+                  {selectedRegions.map(id => {
+                    const region = BODY_REGIONS.find(r => r.id === id)
+                    return (
+                      <motion.span key={id} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                        className="text-[11px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full">
+                        {region?.label}
+                      </motion.span>
+                    )
+                  })}
                 </div>
               )}
 
-              {/* Trigger Analysis */}
-              {analysis.triggerAnalysis && analysis.triggerAnalysis.length > 0 && (
-                <div className="rounded-lg border p-4">
-                  <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
-                    <AlertTriangle className="h-4 w-4 text-red-500" />
-                    {tx("pain.triggers", lang)}
-                  </h3>
-                  <div className="space-y-1.5">
-                    {analysis.triggerAnalysis.map((t, i) => (
-                      <div key={i} className="flex items-center justify-between rounded-lg bg-muted/30 p-2.5">
-                        <span className="text-sm font-medium">{t.trigger}</span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-muted-foreground">{t.frequency}x</span>
-                          <span className="text-xs text-muted-foreground">{t.correlation}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              {selectedRegions.length === 0 && (
+                <p className="text-center text-xs text-slate-400 mt-4">Tap on body regions where you feel pain</p>
               )}
-
-              {/* Medication Correlation */}
-              {analysis.medicationCorrelation && analysis.medicationCorrelation.length > 0 && (
-                <div className="rounded-lg border p-4">
-                  <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
-                    <Pill className="h-4 w-4 text-red-500" />
-                    {tx("pain.medCorrelation", lang)}
-                  </h3>
-                  <ul className="space-y-1">
-                    {analysis.medicationCorrelation.map((m, i) => (
-                      <li key={i} className="flex items-start gap-1.5 text-xs">
-                        <span className="mt-1 text-amber-500">&#9679;</span>
-                        {m}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Relief Effectiveness */}
-              {analysis.reliefEffectiveness && analysis.reliefEffectiveness.length > 0 && (
-                <div className="rounded-lg border p-4">
-                  <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
-                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                    {tx("pain.relief", lang)}
-                  </h3>
-                  <div className="space-y-1.5">
-                    {analysis.reliefEffectiveness.map((r, i) => (
-                      <div key={i} className="flex items-center justify-between rounded-lg bg-muted/30 p-2.5">
-                        <span className="text-sm font-medium">{r.method}</span>
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                          r.effectiveness === "seems effective"
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                            : "bg-muted text-muted-foreground"
-                        }`}>
-                          {r.effectiveness}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Recommendations */}
-              {analysis.recommendations && analysis.recommendations.length > 0 && (
-                <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
-                  <h3 className="mb-2 text-sm font-semibold text-red-700 dark:text-red-400">
-                    {tx("common.recommendations", lang)}
-                  </h3>
-                  <ul className="space-y-1">
-                    {analysis.recommendations.map((r, i) => (
-                      <li key={i} className="flex items-start gap-1.5 text-xs text-red-600 dark:text-red-300">
-                        <ArrowRight className="mt-0.5 h-3 w-3 shrink-0" />
-                        {r}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* When to See Doctor */}
-              {analysis.whenToSeeDoctor && analysis.whenToSeeDoctor.length > 0 && (
-                <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
-                  <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-red-700 dark:text-red-400">
-                    <ShieldAlert className="h-3.5 w-3.5" />
-                    {tx("common.whenToSeeDoctor", lang)}
-                  </h3>
-                  <ul className="space-y-1">
-                    {analysis.whenToSeeDoctor.map((s, i) => (
-                      <li key={i} className="flex items-start gap-1.5 text-xs text-red-600 dark:text-red-300">
-                        <span className="mt-1">&#8226;</span>
-                        {s}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Sources */}
-              {analysis.sources && analysis.sources.length > 0 && (
-                <div>
-                  <button
-                    onClick={() => setShowSources(!showSources)}
-                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-                  >
-                    {showSources ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                    {tx("common.sources", lang)} ({analysis.sources.length})
-                  </button>
-                  {showSources && (
-                    <div className="mt-2 space-y-1">
-                      {analysis.sources.map((src, i) => (
-                        <a
-                          key={i}
-                          href={src.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block text-xs text-primary hover:underline"
-                        >
-                          {src.title}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* New Analysis */}
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setAnalysis(null);
-                  setError(null);
-                }}
-                className="w-full"
-              >
-                {tx("pain.analyzeAgain", lang)}
-              </Button>
             </div>
-          )}
-        </div>
-      )}
+          </motion.div>
 
-      {/* Footer Disclaimer */}
-      <p className="mt-6 text-center text-xs text-muted-foreground">
-        {tx("disclaimer.tool", lang)}
-      </p>
+          {/* ═══ RIGHT: Smart Diagnosis Panel (45%) ═══ */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-5 lg:sticky lg:top-24 lg:self-start space-y-4">
+
+            {/* Intensity Slider */}
+            {selectedRegions.length > 0 && (
+              <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+                className="bg-white/80 dark:bg-card backdrop-blur rounded-2xl p-5 border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pain Intensity</p>
+                  <span className="text-2xl font-bold" style={{ color: getIntensityColor(intensity).replace(/[^#\w,]/g, "").includes("245") ? "#f59e0b" : intensity <= 6 ? "#ea580c" : "#b91c1c" }}>
+                    {intensity}/10
+                  </span>
+                </div>
+                <input type="range" min={1} max={10} value={intensity}
+                  onChange={(e) => setIntensity(Number(e.target.value))}
+                  className="w-full accent-amber-500"
+                  style={{
+                    background: `linear-gradient(to right, #fbbf24 0%, #ea580c 50%, #991b1b 100%)`,
+                    borderRadius: "8px", height: "6px",
+                  }}
+                />
+                <div className="flex justify-between text-[9px] text-slate-400 mt-1">
+                  <span>Mild</span><span>Moderate</span><span>Severe</span>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Step 1: Pain Type */}
+            <AnimatePresence>
+              {step >= 1 && (
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                  className="bg-white/80 dark:bg-card backdrop-blur rounded-2xl p-5 border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">What does it feel like?</p>
+                  <div className="flex flex-wrap gap-2">
+                    {PAIN_TYPES.map(p => (
+                      <Chip key={p.id} emoji={p.emoji} label={p.label} isActive={painType === p.id}
+                        onClick={() => setPainType(painType === p.id ? null : p.id)} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Step 2: Duration */}
+            <AnimatePresence>
+              {step >= 2 && (
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                  className="bg-white/80 dark:bg-card backdrop-blur rounded-2xl p-5 border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">How long?</p>
+                  <div className="flex flex-wrap gap-2">
+                    {DURATIONS.map(d => (
+                      <Chip key={d.id} emoji={d.emoji} label={d.label} isActive={duration === d.id}
+                        onClick={() => setDuration(duration === d.id ? null : d.id)} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Step 3: Triggers */}
+            <AnimatePresence>
+              {step >= 3 && (
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                  className="bg-white/80 dark:bg-card backdrop-blur rounded-2xl p-5 border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">What triggers it?</p>
+                  <div className="flex flex-wrap gap-2">
+                    {TRIGGERS.map(t => (
+                      <Chip key={t.id} emoji={t.emoji} label={t.label} isActive={triggers.includes(t.id)}
+                        onClick={() => toggleTrigger(t.id)} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Step 4: Relief */}
+            <AnimatePresence>
+              {step >= 4 && (
+                <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                  className="bg-white/80 dark:bg-card backdrop-blur rounded-2xl p-5 border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">What helps?</p>
+                  <div className="flex flex-wrap gap-2">
+                    {RELIEFS.map(r => (
+                      <Chip key={r.id} emoji={r.emoji} label={r.label} isActive={relief === r.id}
+                        onClick={() => setRelief(relief === r.id ? null : r.id)} />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* CTA */}
+            {step >= 5 && !showResult && (
+              <motion.button
+                initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowLabor(true)}
+                className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-medium shadow-lg shadow-emerald-200 dark:shadow-emerald-900/30 flex items-center justify-center gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                Generate My Relief Analysis
+              </motion.button>
+            )}
+
+            {/* Result */}
+            <AnimatePresence>
+              {showResult && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                  className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 rounded-2xl p-5 border border-emerald-200/50 dark:border-emerald-800/30 shadow-sm">
+                  <h3 className="text-sm font-bold text-emerald-800 dark:text-emerald-300 mb-3 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" /> Your Relief Protocol
+                  </h3>
+                  <div className="space-y-2.5">
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm">🌿</span>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">Supplement</p>
+                        <p className="text-sm text-slate-600 dark:text-slate-300">{result.supplement}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm">💧</span>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">Topical</p>
+                        <p className="text-sm text-slate-600 dark:text-slate-300">{result.topical}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-sm">🧘</span>
+                      <div>
+                        <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">Movement</p>
+                        <p className="text-sm text-slate-600 dark:text-slate-300">{result.exercise}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-3 pt-2 border-t border-emerald-200/30 dark:border-emerald-800/20">
+                    {result.note} Always consult your healthcare provider.
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
