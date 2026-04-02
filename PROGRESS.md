@@ -2396,3 +2396,23 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ 3 yeni sayfa tümüyle inline isTr ? TR : EN pattern ile çevrilmiş
 - ✅ Kafein: 8+ çeviri key, Alkol: 10+ çeviri key, Sigara: 12+ çeviri key
 - ✅ Bozuk Türkçe karakter taraması: 0 bulgu (temiz)
+
+
+---
+
+## Dashboard → Root Birleştirme (2 Nisan 2026 — Session 6)
+
+**Ana Değişiklik: Dashboard root sayfaya taşındı**
+- ✅ `app/page.tsx` — Giriş yapan kullanıcıya artık tam dashboard gösteriliyor (eski `/dashboard` içeriği)
+- ✅ `app/dashboard/page.tsx` — Sadece `router.replace("/")` yapan redirect'e dönüştürüldü
+- ✅ `components/layout/BottomNavbar.tsx` — Home linki `/dashboard` → `/`
+- ✅ `components/layout/header.tsx` — Dashboard nav linki `/dashboard` → `/`
+- ✅ Diğer tüm `/dashboard` linkleri redirect üzerinden otomatik çalışıyor
+- ✅ next build: SIFIR hata, push edildi (commit: 784d438)
+
+**Google OAuth Branding Durumu:**
+- Google Cloud Console'da yeni "DoctoPal" branding submit edildi (2 Nisan 2026)
+- Verification Center'da: Homepage ✅, Privacy policy ✅, Branding guidelines ✅ — incelemede
+- Onay süreci: 4-6 hafta → hackathon'a yetişmez
+- Hackathon demosu için: Demo butonu veya email/şifre girişi kullanılacak
+

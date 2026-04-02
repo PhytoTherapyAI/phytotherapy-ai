@@ -1,17 +1,28 @@
-# CLAUDE.md — Doctopal Proje Anayasası v35.0
+# CLAUDE.md — Doctopal Proje Anayasası v36.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
 **Doctopal** (eski adı: Phytotherapy.ai) — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **10 gün kaldı**
-- **Domain:** doctopal.com ✅ (Vercel'e bağlanacak) — eski: phytotherapy.ai
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **9 gün kaldı**
+- **Domain:** doctopal.com ✅ (Vercel'e bağlı) — eski: phytotherapy.ai
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
 - **AI Motor:** Anthropic Claude API (claude-sonnet-4-6) + Embedding: Gemini text-embedding-004
 - **OS:** Windows
 - **GitHub:** github.com/PhytoTherapyAI/phytotherapy-ai
 - **Hackathon modu:** Premium gate'ler kaldırıldı, isPremium=true, pricing navbar'dan çıktı, tüm özellikler açık
+
+### Routing Mimarisi (Güncel)
+- `/` → Giriş yapan kullanıcıya TAM DASHBOARD gösterir (app/page.tsx)
+- `/dashboard` → `/`'e redirect (app/dashboard/page.tsx — sadece router.replace("/"))
+- Misafir → Landing page (aynı app/page.tsx, showDashboard=false ise)
+- BottomNavbar Home butonu + Header dashboard linki → `/`
+
+### Google OAuth Durumu
+- Consent screen "DoctoPal" branding'i submit edildi (2 Nisan 2026) — incelemede
+- Onay 4-6 hafta sürer, hackathon'a yetişmez → Demo için email/şifre veya Demo butonu kullan
+- Google OAuth teknik olarak çalışıyor, sadece consent screen'de "Phytotherapy.ai" görünüyor
 
 ---
 
