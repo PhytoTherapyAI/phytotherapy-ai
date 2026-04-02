@@ -5889,6 +5889,28 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "dailyCare.cat.social": { en: "Social", tr: "Sosyal" },
   "dailyCare.cat.mindfulness": { en: "Mindfulness", tr: "Farkındalık" },
 
+  // ── Adaptive Symptom Assessment ──
+  "symptom.title": { en: "Smart Symptom Assessment", tr: "Akıllı Semptom Değerlendirmesi" },
+  "symptom.subtitle": { en: "Answer a few quick questions. Our AI adapts to your answers — like talking to a real doctor.", tr: "Birkaç hızlı soruyu yanıtlayın. AI cevaplarınıza göre uyarlanır — gerçek bir doktorla konuşmak gibi." },
+  "symptom.whatsWrong": { en: "What's bothering you most right now?", tr: "Şu an sizi en çok ne rahatsız ediyor?" },
+  "symptom.forMyself": { en: "For Myself", tr: "Kendim İçin" },
+  "symptom.forChild": { en: "For My Child", tr: "Çocuğum İçin" },
+  "symptom.forOther": { en: "For Someone Else", tr: "Başkası İçin" },
+  "symptom.continue": { en: "Continue", tr: "Devam" },
+  "symptom.back": { en: "Back", tr: "Geri" },
+  "symptom.aiThinking": { en: "AI is thinking...", tr: "AI düşünüyor..." },
+  "symptom.aiNarrowing": { en: "AI is narrowing down...", tr: "AI olasılıkları daraltıyor..." },
+  "symptom.emergency": { en: "CALL 112/911 IMMEDIATELY", tr: "HEMEN 112'Yİ ARAYIN" },
+  "symptom.seeToday": { en: "See a doctor today", tr: "Bugün doktora gidin" },
+  "symptom.seeSoon": { en: "Schedule a doctor visit", tr: "Doktor randevusu alın" },
+  "symptom.monitor": { en: "Monitor symptoms, self-care may be enough", tr: "Semptomları takip edin, öz bakım yeterli olabilir" },
+  "symptom.selfCare": { en: "Self-care is appropriate", tr: "Öz bakım yeterli" },
+  "symptom.phytoTitle": { en: "Phytotherapy Suggestions", tr: "Fitoterapi Önerileri" },
+  "symptom.download": { en: "Download Report", tr: "Raporu İndir" },
+  "symptom.discuss": { en: "Discuss with AI Assistant", tr: "AI Asistanla Tartış" },
+  "symptom.newAssessment": { en: "Start New Assessment", tr: "Yeni Değerlendirme Başlat" },
+  "symptom.checkInteractions": { en: "Check Drug Interactions", tr: "İlaç Etkileşimlerini Kontrol Et" },
+
   // ── DailySummaryCard ──
   "dailySummary.onFire": { en: "You're on fire!", tr: "Harika gidiyorsun!" },
 

@@ -43,7 +43,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "blood-test", title: { en: "Blood Test", tr: "Kan Tahlili" }, icon: "TestTube", href: "/blood-test" },
       { id: "radiology", title: { en: "Radiology", tr: "Radyoloji" }, icon: "Scan", href: "/radiology" },
       { id: "body-analysis", title: { en: "Body Analysis", tr: "Vücut Analizi" }, icon: "Activity", href: "/body-analysis" },
-      { id: "symptom-checker", title: { en: "Symptom Checker", tr: "Semptom Kontrol" }, icon: "HeartPulse", href: "/symptom-checker" },
+      { id: "symptom-checker", title: { en: "Smart Symptom Assessment", tr: "Akıllı Semptom Değerlendirmesi" }, icon: "HeartPulse", href: "/symptom-checker" },
       { id: "scanner", title: { en: "Smart Lens Scanner", tr: "Akıllı Lens Tarayıcı" }, icon: "ScanLine", href: "/scan-medication" },
       { id: "health-report", title: { en: "Health Report Card", tr: "Sağlık Karnesi" }, icon: "FileText", href: "/health-report-card" },
     ],
