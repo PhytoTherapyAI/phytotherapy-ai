@@ -2416,3 +2416,36 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - Onay süreci: 4-6 hafta → hackathon'a yetişmez
 - Hackathon demosu için: Demo butonu veya email/şifre girişi kullanılacak
 
+
+---
+
+## V2.0 Master Revision Sprint (2 Nisan 2026 — Session 7)
+
+### GRUP 1 — Friction Killers & Flow Repair
+- ✅ ChatInterface `initialQuery` prop — URL `?q=` parametresinden otomatik mesaj gönderimi (2-effect pipeline)
+- ✅ `components/ui/InfoTooltip.tsx` — HelpCircle tetikleyici, AnimatePresence fade/scale, overlay ile dışarı tıklama kapatma
+- ✅ InfoTooltip 7 sayfaya eklendi: health-assistant, dashboard, interaction-checker, medical-analysis, symptom-checker, community, calendar
+- ✅ `components/FeedbackButton.tsx` — Emoji rating (5 yüz), opsiyonel metin, "sent" başarı durumu, sabit FAB, AnimatePresence modal
+- ✅ Profile dropdown solid arka plan fix (`bg-white dark:bg-slate-900` — glassmorphism kaldırıldı)
+
+### GRUP 2 — UI Fixes & Micro-Copies
+- ✅ DailyCareCard metin taşması fix (`truncate` + `line-clamp-2`)
+- ✅ BossFightCard: `Swords` → `Mountain` ikonu, kırmızı → emerald-600 renk, "Boss Fight" → "Biological Challenge"
+- ✅ `lib/translations.ts`: `boss.title` ve `boss.choose` anahtarları güncellendi
+- ✅ SeasonalCard sol kolona taşındı (dashboard HEALTH INSIGHTS GRID)
+- ✅ `lib/badges.ts` 12 yeni rozet: hydration_master, phyto_streak, lab_warrior, shield_master, dna_explorer, challenge_champion, knowledge_seeker, iron_will, global_citizen, early_bird, community_star, zen_master
+- ✅ Badges page: earned rozetlerde ring + glow efekti, locked rozetlerde Lock ikonu + blur overlay + title hint
+
+### GRUP 3 — Full Revisions
+- ✅ Profile Digital Twin hero: avatar ring, SVG vitality score ring (78/100), 3-kolon bento metrikleri (ilaç/takviye/lab), 6-grid rozet önizlemesi
+- ✅ Calendar HabitHeatMap: 84 günlük GitHub contribution tarzı ısı haritası, deterministik mock veri, streak sayacı, gün etiketleri, Framer Motion stagger animasyonu
+- ✅ Interaction Checker 2-kolon layout: `lg:grid-cols-5` (3+2), sağ kolonda Shield + dönen dashed ring + nabız noktaları animasyonlu güvenlik radarı
+
+### GRUP 4 — Personal Command Center (Settings)
+- ✅ iOS segmented 2-tab kontrol (`layoutId="settings-tab-indicator"` spring animasyonu)
+- ✅ Tab 1 (Profile Settings): Personal Info kartı (avatar, ad, email, düzenle linki), Health Profile kartı (ilaç/alerji/takviye chipleri)
+- ✅ Tab 2 (System Settings): AI Personality 3-way toggle (Compassionate/Clinical/Witty), AnimatePresence iOS tarzı bildirim toggle'ları, 4 sistem linki, Dil toggle (EN/TR), Download My Data (labor illusion: packaging→ready), Delete My Data (onay modal)
+
+### Build Durumu
+- ✅ `npx next build` — SIFIR hata, 342 sayfa başarıyla oluşturuldu
+- ✅ Tüm 4 grup commit edildi ve master'a push edildi
