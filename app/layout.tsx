@@ -50,9 +50,9 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Doctopal — AI-Powered Evidence-Based Health Assistant",
+  title: "DoctoPal — Evidence Meets Nature. AI Meets You.",
   description:
-    "Bridge modern medicine and natural healing. Drug interactions, phytotherapy protocols, lab analysis, and 166+ health tools — all verified by PubMed science.",
+    "DoctoPal bridges modern medicine and natural healing — drug interactions, phytotherapy protocols, lab analysis, and 166+ AI-powered health tools, all verified by science.",
   keywords: [
     "AI health assistant",
     "drug interactions",
@@ -71,18 +71,18 @@ export const metadata: Metadata = {
   ],
   metadataBase: new URL("https://doctopal.com"),
   openGraph: {
-    title: "Doctopal — AI-Powered Evidence-Based Health Assistant",
-    description: "Bridge modern medicine and natural healing. Drug interactions, phytotherapy protocols, lab analysis, and 166+ health tools — all verified by PubMed science.",
+    title: "DoctoPal — Evidence Meets Nature. AI Meets You.",
+    description: "DoctoPal bridges modern medicine and natural healing — drug interactions, phytotherapy protocols, lab analysis, and 166+ AI-powered health tools, all verified by science.",
     url: "https://doctopal.com",
-    siteName: "Doctopal",
+    siteName: "DoctoPal",
     type: "website",
     locale: "en_US",
-    images: [{ url: "/og-image.svg", width: 1200, height: 630, alt: "Doctopal" }],
+    images: [{ url: "/og-image.svg", width: 1200, height: 630, alt: "DoctoPal" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Doctopal — AI-Powered Evidence-Based Health Assistant",
-    description: "Bridge modern medicine and natural healing. 166+ health tools verified by PubMed science.",
+    title: "DoctoPal — Evidence Meets Nature. AI Meets You.",
+    description: "DoctoPal bridges modern medicine and natural healing. 166+ AI-powered health tools verified by science.",
     images: ["/og-image.svg"],
   },
   robots: {

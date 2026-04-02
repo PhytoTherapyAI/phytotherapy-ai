@@ -1,11 +1,11 @@
 {
-  "name": "Doctopal",
-  "short_name": "Doctopal",
-  "description": "Evidence-based integrative medicine assistant",
+  "name": "DoctoPal",
+  "short_name": "DoctoPal",
+  "description": "Your AI Health Companion",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0f2419",
-  "theme_color": "#16a34a",
+  "background_color": "#ffffff",
+  "theme_color": "#059669",
   "orientation": "portrait-primary",
   "icons": [
     {
