@@ -451,6 +451,7 @@ export default function Home() {
           {/* ═══ HEALTH INSIGHTS GRID ═══ */}
           <motion.div variants={fadeUp} className="grid gap-6 md:grid-cols-2">
             <div className="space-y-6">
+              <SeasonalCard lang={lang} userConditions={profile.chronic_conditions || []} />
               <WeeklySummaryCard userId={user.id} lang={lang} isPremium={isPremium} />
               <WashoutCountdown key={supRefreshKey} userId={user.id} lang={lang} isPremium={isPremium}
                 profileSupplements={profile.supplements || []} onAddSupplement={() => setAddSupOpen(true)} />
@@ -460,7 +461,6 @@ export default function Home() {
               <BiologicalAgeCard userId={user.id} lang={lang} isPremium={isPremium}
                 chronologicalAge={chronologicalAge} userName={profile.full_name ?? undefined} />
               <MetabolicPortfolio lang={lang} isPremium={isPremium} checkInData={checkInData} />
-              <SeasonalCard lang={lang} userConditions={profile.chronic_conditions || []} />
             </div>
           </motion.div>
 

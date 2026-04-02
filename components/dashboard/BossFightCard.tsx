@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { Lock, Swords, ChevronRight, ChevronLeft, CheckCircle2, Circle, Trophy, Share2, Pill, Salad, Dumbbell, Sun, X } from "lucide-react"
+import { Lock, Mountain, ChevronRight, ChevronLeft, CheckCircle2, Circle, Trophy, Share2, Pill, Salad, Dumbbell, Sun, X } from "lucide-react"
 import { tx, txp, type Lang } from "@/lib/translations"
 import { BOSS_FIGHTS, type BossFight } from "@/lib/boss-fights"
 import { ShareCardBase } from "@/components/share/ShareCardBase"
@@ -129,8 +129,8 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
         </div>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Swords className="h-4 w-4 text-red-500" />
-            Boss Fight
+            <Mountain className="h-4 w-4 text-emerald-600" />
+            Biological Challenge
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -301,7 +301,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
           </p>
 
           <Button className="w-full" onClick={() => startBoss(selectedBoss)}>
-            <Swords className="mr-2 h-4 w-4" />
+            <Mountain className="mr-2 h-4 w-4" />
             {tx("boss.start", lang)}
           </Button>
         </CardContent>
@@ -315,7 +315,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Swords className="h-4 w-4 text-red-500" />
+            <Mountain className="h-4 w-4 text-emerald-600" />
             <span className="text-sm font-bold">{tx("boss.choose", lang)}</span>
             <button onClick={() => setViewMode("idle")} className="ml-auto text-muted-foreground hover:text-foreground transition-colors">
               <X className="h-4 w-4" />
@@ -363,8 +363,8 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
     <Card className="border-red-500/10">
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
-          <Swords className="h-4 w-4 text-red-500" />
-          <span className="text-sm font-bold">Boss Fight</span>
+          <Mountain className="h-4 w-4 text-emerald-600" />
+          <span className="text-sm font-bold">Biological Challenge</span>
           <Badge variant="secondary" className="ml-auto text-[10px]">PREMIUM</Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground">
@@ -373,7 +373,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
       </CardHeader>
       <CardContent>
         <Button className="w-full" onClick={() => setViewMode("select")}>
-          <Swords className="mr-2 h-4 w-4" />
+          <Mountain className="mr-2 h-4 w-4" />
           {tx("boss.choose", lang)}
         </Button>
       </CardContent>
@@ -411,7 +411,7 @@ function BossFightShareCard({ lang, boss }: { lang: Lang; boss: BossFight }) {
             <span className="text-2xl">🌿</span>
             <span className="text-sm font-semibold tracking-wide opacity-90">Doctopal</span>
           </div>
-          <h2 className="mb-1 text-sm uppercase tracking-wider opacity-70">Boss Fight</h2>
+          <h2 className="mb-1 text-sm uppercase tracking-wider opacity-70">Biological Challenge</h2>
           <h3 className="mb-2 text-2xl font-extrabold">{boss.name[lang]}</h3>
           <p className="mb-6 text-sm opacity-80">{boss.tagline[lang]}</p>
           <div className="mb-6 flex items-center justify-center gap-3 rounded-xl px-5 py-4" style={{ background: "rgba(255,255,255,0.2)" }}>

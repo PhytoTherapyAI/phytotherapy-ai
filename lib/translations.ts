@@ -929,9 +929,9 @@ const t: Record<string, TranslationEntry> = {
   "family.limitReached": { en: "Upgrade to Premium for more profiles", tr: "Daha fazla profil için Premium'a geçin" },
   "family.minorWarning": { en: "Parental oversight mode active", tr: "Ebeveyn denetim modu aktif" },
 
-  // Boss Fight — Sprint 11
-  "boss.title": { en: "Boss Fight", tr: "Boss Fight" },
-  "boss.choose": { en: "Choose Your Boss", tr: "Boss Seç" },
+  // Biological Challenge (formerly Boss Fight) — Sprint 11
+  "boss.title": { en: "Biological Challenge", tr: "Biyolojik Meydan Okuma" },
+  "boss.choose": { en: "Choose Your Challenge", tr: "Meydan Okuma Seç" },
   "boss.todayTasks": { en: "Today's Tasks", tr: "Bugünün Görevleri" },
   "boss.progress": { en: "Overall Progress", tr: "Genel İlerleme" },
   "boss.abandon": { en: "Abandon protocol", tr: "Protokolü bırak" },

@@ -203,7 +203,8 @@ export default function BadgesPage() {
             {earned.map((badge) => (
               <div
                 key={badge.id}
-                className="flex flex-col items-center rounded-xl border bg-gradient-to-b from-amber-50/50 to-orange-50/50 p-4 text-center dark:from-amber-950/20 dark:to-orange-950/20"
+                className="flex flex-col items-center rounded-xl border bg-gradient-to-b from-amber-50/50 to-orange-50/50 p-4 text-center dark:from-amber-950/20 dark:to-orange-950/20 shadow-sm ring-1 ring-amber-200/60 dark:ring-amber-700/40"
+                style={{ boxShadow: "0 0 12px rgba(245, 158, 11, 0.15)" }}
               >
                 <span className="text-3xl">{badge.icon}</span>
                 <h4 className="mt-2 text-sm font-semibold">
@@ -229,7 +230,8 @@ export default function BadgesPage() {
             {locked.map((badge) => (
               <div
                 key={badge.id}
-                className="flex flex-col items-center rounded-xl border bg-muted/30 p-4 text-center opacity-60"
+                className="relative flex flex-col items-center rounded-xl border bg-muted/30 p-4 text-center opacity-50 overflow-hidden"
+                title={`Complete: ${badge.descEn}`}
               >
                 <span className="text-3xl grayscale">{badge.icon}</span>
                 <h4 className="mt-2 text-sm font-semibold">
@@ -238,6 +240,9 @@ export default function BadgesPage() {
                 <p className="mt-0.5 text-[11px] text-muted-foreground">
                   {txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
                 </p>
+                <div className="absolute top-2 right-2">
+                  <Lock className="h-3 w-3 text-muted-foreground" />
+                </div>
               </div>
             ))}
           </div>

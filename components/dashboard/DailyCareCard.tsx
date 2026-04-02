@@ -269,14 +269,14 @@ export function DailyCareCard() {
               </div>
 
               {/* Title */}
-              <h4 className={`text-[13px] font-bold leading-snug mb-1 ${
+              <h4 className={`text-[13px] font-bold leading-snug mb-1 truncate ${
                 isCompleted ? "line-through text-muted-foreground" : ""
               }`}>
                 {card.title}
               </h4>
 
               {/* Description */}
-              <p className={`text-[11px] leading-relaxed ${
+              <p className={`text-[11px] leading-relaxed line-clamp-2 ${
                 isCompleted ? "text-muted-foreground/60 line-through" : "text-muted-foreground"
               }`}>
                 {card.description}
