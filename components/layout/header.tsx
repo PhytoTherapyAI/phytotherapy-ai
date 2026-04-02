@@ -172,7 +172,7 @@ export function Header() {
                     </button>
 
                     {userMenuOpen && (
-                      <div className="absolute right-0 top-full z-[100] mt-2 w-56 rounded-xl border bg-card shadow-xl glass-card">
+                      <div className="absolute right-0 top-full z-[100] mt-2 w-56 rounded-xl border bg-white dark:bg-slate-900 shadow-xl border-slate-200 dark:border-slate-700">
                         <div className="border-b p-3">
                           {profile?.full_name && <p className="text-sm font-medium">{profile.full_name}</p>}
                           <p className="text-xs text-muted-foreground">{user?.email}</p>

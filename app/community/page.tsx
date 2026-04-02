@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
+import { InfoTooltip } from "@/components/ui/InfoTooltip"
 
 // ── Tribes/Circles ──
 const TRIBES = [
@@ -109,7 +110,10 @@ export default function CommunityPage() {
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
           className="text-center py-3 space-y-1">
-          <h1 className="text-2xl font-bold">Healing Circle</h1>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-2xl font-bold">Healing Circle</h1>
+            <InfoTooltip title="Healing Circle" description="Connect with people on similar health journeys. Share experiences, find support." />
+          </div>
           <p className="text-xs text-muted-foreground">Your tribe. Your journey. Together.</p>
         </motion.div>
 

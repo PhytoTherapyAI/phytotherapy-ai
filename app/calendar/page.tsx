@@ -18,6 +18,7 @@ import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { NotificationSettings } from "@/components/pwa/NotificationSettings"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
+import { InfoTooltip } from "@/components/ui/InfoTooltip"
 
 const TodayView = lazy(() => import("@/components/calendar/TodayView").then(m => ({ default: m.TodayView })))
 const MonthView = lazy(() => import("@/components/calendar/MonthView").then(m => ({ default: m.MonthView })))
@@ -496,6 +497,12 @@ export default function CalendarPage() {
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-background">
       <div className="mx-auto max-w-2xl px-4 md:px-8 py-6 space-y-5">
+
+        {/* ═══ PAGE HEADER ═══ */}
+        <div className="flex items-center gap-2 px-1">
+          <h1 className="font-heading text-2xl font-bold italic">{tx("cal.title", lang)}</h1>
+          <InfoTooltip title="Habit & Healing Map" description="Track daily supplements, water intake, and health habits. Build streaks to stay motivated." />
+        </div>
 
         {/* ═══ WEEKLY STRIP ═══ */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}

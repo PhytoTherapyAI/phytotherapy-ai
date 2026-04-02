@@ -2,8 +2,9 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Sparkles, Pill, CheckCircle2, RefreshCw, Loader2 } from "lucide-react";
+import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { ConversationHistory } from "@/components/chat/ConversationHistory";
 import { SmartWelcome } from "@/components/chat/SmartWelcome";
@@ -17,6 +18,8 @@ import { Button } from "@/components/ui/button";
 export default function HealthAssistantPage() {
   const { lang } = useLang();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const urlQuery = searchParams.get("q") ?? undefined;
   const {
     isAuthenticated, isLoading, profile,
     needsMedicationUpdate,
@@ -94,9 +97,12 @@ export default function HealthAssistantPage() {
                 <Sparkles className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-                  {tx('ha.title', lang)}
-                </h1>
+                <div className="flex items-center gap-2">
+                  <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
+                    {tx('ha.title', lang)}
+                  </h1>
+                  <InfoTooltip title="Health Assistant" description="Ask any health question. AI searches PubMed and gives evidence-based, personalized answers." />
+                </div>
                 <p className="text-sm text-muted-foreground">
                   {tx('ha.subtitle', lang)}
                 </p>
@@ -136,6 +142,7 @@ export default function HealthAssistantPage() {
               key={chatKey}
               className="h-[calc(100vh-280px)] min-h-[500px]"
               loadConversation={loadConversation}
+              initialQuery={urlQuery}
             />
 
             {/* Daily medication check blocker overlay */}

@@ -12,6 +12,7 @@ import {
   HeartPulse, Users, BarChart3, Stethoscope, Globe, Clock, Trophy,
   Scissors, ChevronDown,
 } from "lucide-react";
+import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
@@ -340,9 +341,12 @@ export default function Home() {
 
                 {/* Greeting + Tasks */}
                 <div className="flex-1 min-w-0">
-                  <h1 className="text-xl md:text-2xl font-semibold text-foreground mb-1">
-                    {tx(greetingKey, lang).replace("{name}", firstName)} 👋
-                  </h1>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h1 className="text-xl md:text-2xl font-semibold text-foreground">
+                      {tx(greetingKey, lang).replace("{name}", firstName)} 👋
+                    </h1>
+                    <InfoTooltip title="Your Health Hub" description="Ask anything via the search bar. Your daily snapshot shows key health metrics at a glance." />
+                  </div>
                   <p className="text-xs text-muted-foreground mb-4">
                     {isTr ? "Günlük görevlerini tamamla, skorunu yükselt!" : "Complete your daily tasks, boost your score!"}
                   </p>

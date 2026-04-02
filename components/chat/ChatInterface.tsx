@@ -47,9 +47,10 @@ interface ChatInterfaceProps {
   className?: string;
   onMessagesChange?: (messages: ChatMessage[]) => void;
   loadConversation?: { query: string; response: string | null } | null;
+  initialQuery?: string;
 }
 
-export function ChatInterface({ className, onMessagesChange, loadConversation }: ChatInterfaceProps) {
+export function ChatInterface({ className, onMessagesChange, loadConversation, initialQuery }: ChatInterfaceProps) {
   const { isAuthenticated, session } = useAuth();
   const { lang } = useLang()
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -61,6 +62,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const initialQueryFiredRef = useRef(false);
 
   // Cleanup stream on unmount
   useEffect(() => {
@@ -327,6 +329,31 @@ export function ChatInterface({ className, onMessagesChange, loadConversation }:
       setIsStreaming(false);
     }
   }, [input, isStreaming, isAuthenticated, session, messages, attachedFiles, lang]);
+
+  // Auto-fire from URL ?q= parameter
+  useEffect(() => {
+    if (initialQuery && !initialQueryFiredRef.current) {
+      initialQueryFiredRef.current = true;
+      setInput(initialQuery);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialQuery]);
+
+  // When input is set from initialQuery, trigger send
+  const initialQueryRef = useRef(initialQuery);
+  useEffect(() => {
+    if (
+      initialQueryRef.current &&
+      input === initialQueryRef.current &&
+      !isStreaming &&
+      messages.length === 0
+    ) {
+      initialQueryRef.current = undefined;
+      const timer = setTimeout(() => sendMessage(), 150);
+      return () => clearTimeout(timer);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [input]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {

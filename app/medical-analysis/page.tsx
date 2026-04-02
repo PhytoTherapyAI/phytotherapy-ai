@@ -25,6 +25,7 @@ import { tx } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
 import type { BloodTestResult, BloodTestCategory } from "@/lib/blood-reference";
 import type { Lang } from "@/lib/translations";
+import { InfoTooltip } from "@/components/ui/InfoTooltip";
 
 // ── Blood Test Types ──
 interface AnalysisResponse {
@@ -101,9 +102,12 @@ export default function MedicalAnalysisPage() {
           <FlaskConical className="h-6 w-6 text-purple-600 dark:text-purple-400" />
         </div>
         <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-            {tx("medAnalysis.title", lang)}
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
+              {tx("medAnalysis.title", lang)}
+            </h1>
+            <InfoTooltip title="AI Lab Interpreter" description="Upload your blood test PDF or enter values manually. AI generates a visual health map." />
+          </div>
           <p className="text-sm text-muted-foreground">
             {tx("medAnalysis.subtitle", lang)}
           </p>

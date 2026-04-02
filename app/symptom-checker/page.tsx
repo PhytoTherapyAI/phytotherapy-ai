@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
+import { InfoTooltip } from "@/components/ui/InfoTooltip"
 
 const REGIONS = [
   { id: "head", emoji: "🧠", label: "Head & Mind", symptoms: [
@@ -86,7 +87,10 @@ export default function SymptomCheckerPage() {
           <motion.div animate={{ scale: [1, 1.05, 1] }} transition={{ repeat: Infinity, duration: 3 }}>
             <Stethoscope className="h-12 w-12 text-primary mx-auto" />
           </motion.div>
-          <h1 className="text-2xl font-bold">Get Well Soon, We're Listening.</h1>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-2xl font-bold">Get Well Soon, We're Listening.</h1>
+            <InfoTooltip title="Symptom Navigator" description="Select body regions and symptoms. AI suggests evidence-based next steps." />
+          </div>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">Let's understand what your body is telling you together.</p>
         </motion.div>
 

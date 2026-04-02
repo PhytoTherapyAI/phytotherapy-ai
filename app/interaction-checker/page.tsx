@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
+import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import Link from "next/link";
 import {
   Shield,
@@ -147,9 +148,12 @@ export default function InteractionCheckerPage() {
             <Shield className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h1 className="font-heading text-xl font-bold italic tracking-tight sm:text-3xl md:text-4xl">
-              {tx('ic.title', lang)}
-            </h1>
+            <div className="flex items-center gap-2">
+              <h1 className="font-heading text-xl font-bold italic tracking-tight sm:text-3xl md:text-4xl">
+                {tx('ic.title', lang)}
+              </h1>
+              <InfoTooltip title="Safety Radar" description="Check drug-herb-supplement interactions. Add your medications to scan for risks instantly." />
+            </div>
             <p className="text-sm text-muted-foreground md:text-base">
               {tx('ic.subtitle', lang)}
             </p>
