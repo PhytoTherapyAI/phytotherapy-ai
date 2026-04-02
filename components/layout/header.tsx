@@ -107,7 +107,7 @@ export function Header() {
                   transition: "font-size 0.3s ease",
                 }}>
                   <span style={{ color: "var(--foreground)" }}>Docto</span>
-                  <span style={{ color: "var(--brand, #059669)" }}>Pal</span>
+                  <span style={{ color: "var(--brand, #0d9488)" }}>Pal</span>
                 </span>
               </Link>
 

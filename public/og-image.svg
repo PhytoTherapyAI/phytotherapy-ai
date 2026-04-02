@@ -6,54 +6,48 @@
     </linearGradient>
   </defs>
 
-  <!-- Background -->
   <rect width="1200" height="630" fill="url(#og-bg)"/>
 
   <!-- Subtle grid -->
   <pattern id="og-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-    <line x1="40" y1="0" x2="40" y2="40" stroke="#059669" stroke-width="0.3" opacity="0.07"/>
-    <line x1="0" y1="40" x2="40" y2="40" stroke="#059669" stroke-width="0.3" opacity="0.07"/>
+    <line x1="40" y1="0" x2="40" y2="40" stroke="#0d9488" stroke-width="0.3" opacity="0.07"/>
+    <line x1="0" y1="40" x2="40" y2="40" stroke="#0d9488" stroke-width="0.3" opacity="0.07"/>
   </pattern>
   <rect width="1200" height="630" fill="url(#og-grid)"/>
 
   <!-- Logo icon (centered, large) -->
-  <g transform="translate(556, 120)">
-    <circle cx="44" cy="44" r="30" stroke="#34d399" stroke-width="3.5" fill="none"/>
-    <path d="M44 74 L44 82" stroke="#34d399" stroke-width="3.5" stroke-linecap="round"/>
-    <circle cx="44" cy="85" r="3" fill="#34d399"/>
-    <path d="M44 28 C38 34, 35 41, 39 47 C41 50, 44 50, 44 50 C44 50, 47 50, 49 47 C53 41, 50 34, 44 28Z" fill="#34d399" opacity="0.9"/>
+  <g transform="translate(556, 110) scale(2)">
+    <rect x="1" y="1" width="38" height="38" rx="10" stroke="#2dd4bf" stroke-width="2" fill="none"/>
+    <path d="M12 10 L12 30 L20 30 C27 30, 32 25, 32 20 C32 15, 27 10, 20 10 Z" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path d="M26 8 C28 6, 31 5.5, 33 6 C32 8, 30 9.5, 27.5 10" fill="#2dd4bf" opacity="0.85"/>
   </g>
 
   <!-- Wordmark -->
-  <text x="600" y="290" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="56" letter-spacing="-2">
-    <tspan fill="#ffffff">Docto</tspan><tspan fill="#34d399">Pal</tspan>
+  <text x="600" y="280" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="56" letter-spacing="-2">
+    <tspan fill="#f1f5f9">Docto</tspan><tspan fill="#2dd4bf">Pal</tspan>
   </text>
 
   <!-- Tagline -->
-  <text x="600" y="340" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="400" font-size="22" fill="#94a3b8">
+  <text x="600" y="330" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="400" font-size="22" fill="#94a3b8">
     Evidence Meets Nature. AI Meets You.
   </text>
 
   <!-- Trust pills -->
-  <g transform="translate(220, 400)">
-    <rect x="0" y="0" width="150" height="32" rx="16" fill="#059669" fill-opacity="0.1" stroke="#059669" stroke-width="0.8" stroke-opacity="0.3"/>
-    <text x="75" y="21" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#6ee7b7">PubMed Verified</text>
-
-    <rect x="170" y="0" width="150" height="32" rx="16" fill="#059669" fill-opacity="0.1" stroke="#059669" stroke-width="0.8" stroke-opacity="0.3"/>
-    <text x="245" y="21" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#6ee7b7">166+ Health Tools</text>
-
-    <rect x="340" y="0" width="150" height="32" rx="16" fill="#059669" fill-opacity="0.1" stroke="#059669" stroke-width="0.8" stroke-opacity="0.3"/>
-    <text x="415" y="21" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#6ee7b7">FHIR Compatible</text>
-
-    <rect x="510" y="0" width="170" height="32" rx="16" fill="#059669" fill-opacity="0.1" stroke="#059669" stroke-width="0.8" stroke-opacity="0.3"/>
-    <text x="595" y="21" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#6ee7b7">Powered by Claude AI</text>
+  <g transform="translate(220, 390)">
+    <rect x="0" y="0" width="150" height="32" rx="16" fill="#0d9488" fill-opacity="0.1" stroke="#0d9488" stroke-width="0.8" stroke-opacity="0.3"/>
+    <text x="75" y="21" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5eead4">PubMed Verified</text>
+    <rect x="170" y="0" width="150" height="32" rx="16" fill="#0d9488" fill-opacity="0.1" stroke="#0d9488" stroke-width="0.8" stroke-opacity="0.3"/>
+    <text x="245" y="21" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5eead4">166+ Health Tools</text>
+    <rect x="340" y="0" width="150" height="32" rx="16" fill="#0d9488" fill-opacity="0.1" stroke="#0d9488" stroke-width="0.8" stroke-opacity="0.3"/>
+    <text x="415" y="21" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5eead4">FHIR Compatible</text>
+    <rect x="510" y="0" width="170" height="32" rx="16" fill="#0d9488" fill-opacity="0.1" stroke="#0d9488" stroke-width="0.8" stroke-opacity="0.3"/>
+    <text x="595" y="21" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#5eead4">Powered by Claude AI</text>
   </g>
 
   <!-- URL -->
-  <text x="600" y="530" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="500" font-size="16" fill="#059669" opacity="0.5">
+  <text x="600" y="520" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="500" font-size="16" fill="#0d9488" opacity="0.5">
     doctopal.com
   </text>
 
-  <!-- Bottom accent -->
-  <rect x="0" y="624" width="1200" height="6" fill="#059669" opacity="0.5"/>
+  <rect x="0" y="624" width="1200" height="6" fill="#0d9488" opacity="0.5"/>
 </svg>

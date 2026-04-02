@@ -14,50 +14,55 @@ const SIZES = {
   lg: { icon: 48, text: "text-3xl", gap: "gap-3" },
 }
 
+// Brand colors
+const BRAND = {
+  light: { docto: "#1e293b", pal: "#0d9488", icon: "#0d9488" },  // slate-800 + teal-600
+  dark:  { docto: "#f1f5f9", pal: "#2dd4bf", icon: "#2dd4bf" },  // slate-100 + teal-400
+}
+
 function LogoIcon({ size, theme }: { size: number; theme: "light" | "dark" }) {
-  const color = theme === "dark" ? "#34d399" : "#059669" // emerald-400 / emerald-600
+  const c = BRAND[theme].icon
 
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 48 48"
+      viewBox="0 0 40 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      {/* Stethoscope circle */}
-      <circle cx="24" cy="24" r="16" stroke={color} strokeWidth="2.5" fill="none" />
-      {/* Stethoscope tube going down */}
+      {/* Rounded square container */}
+      <rect x="1" y="1" width="38" height="38" rx="10" stroke={c} strokeWidth="2" fill="none" />
+      {/* D letterform */}
       <path
-        d="M24 40 L24 44"
-        stroke={color}
+        d="M12 10 L12 30 L20 30 C27 30, 32 25, 32 20 C32 15, 27 10, 20 10 Z"
+        stroke={c}
         strokeWidth="2.5"
         strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
       />
-      {/* Stethoscope chest piece (small circle at bottom) */}
-      <circle cx="24" cy="46" r="2" fill={color} />
-      {/* Minimal leaf inside the circle */}
+      {/* Subtle leaf accent on top-right of D curve */}
       <path
-        d="M24 15 C20 19, 18 24, 21 28 C22.5 30, 24 30, 24 30 C24 30, 25.5 30, 27 28 C30 24, 28 19, 24 15Z"
-        fill={color}
-        opacity="0.9"
+        d="M26 8 C28 6, 31 5.5, 33 6 C32 8, 30 9.5, 27.5 10"
+        fill={c}
+        opacity="0.85"
       />
-      {/* Leaf center vein */}
-      <line
-        x1="24" y1="17" x2="24" y2="28"
-        stroke={theme === "dark" ? "#064e3b" : "#ffffff"}
-        strokeWidth="1"
-        strokeLinecap="round"
-        opacity="0.5"
+      {/* Tiny leaf vein */}
+      <path
+        d="M27 8.5 C29 7, 31 6.5, 32 6.5"
+        stroke={theme === "dark" ? "#0f172a" : "#ffffff"}
+        strokeWidth="0.5"
+        fill="none"
+        opacity="0.4"
       />
     </svg>
   )
 }
 
 function Wordmark({ theme, className }: { theme: "light" | "dark"; className?: string }) {
-  const doctoColor = theme === "dark" ? "#ffffff" : "#1e293b"
-  const palColor = theme === "dark" ? "#34d399" : "#059669"
+  const colors = BRAND[theme]
 
   return (
     <span
@@ -69,8 +74,8 @@ function Wordmark({ theme, className }: { theme: "light" | "dark"; className?: s
         lineHeight: 1,
       }}
     >
-      <span style={{ color: doctoColor }}>Docto</span>
-      <span style={{ color: palColor }}>Pal</span>
+      <span style={{ color: colors.docto }}>Docto</span>
+      <span style={{ color: colors.pal }}>Pal</span>
     </span>
   )
 }
@@ -95,7 +100,6 @@ export function DoctoPalLogo({
     return <Wordmark theme={theme} className={`${s.text} ${className}`} />
   }
 
-  // full = icon + wordmark
   return (
     <div className={`flex items-center ${s.gap} ${className}`}>
       <LogoIcon size={s.icon} theme={theme} />
