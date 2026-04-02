@@ -297,6 +297,10 @@ export default function Home() {
   const [dismissedTaskIds, setDismissedTaskIds] = useState<Set<string>>(new Set());
   const [taskCustomizeMode, setTaskCustomizeMode] = useState(false);
   const [streak, setStreak] = useState(0);
+  const [medTotal, setMedTotal] = useState(0); // total daily medication doses
+  const [supTotal, setSupTotal] = useState(0); // total daily supplements
+  const [medDoneCount, setMedDoneCount] = useState(0);
+  const [supDoneCount, setSupDoneCount] = useState(0);
   const todayStr = getLocalDate();
 
   // Fetch real streak from Supabase (same algo as HabitHeatMap)
@@ -333,6 +337,38 @@ export default function Home() {
     fetchStreak();
   }, [user?.id]);
 
+  // Fetch med/sup totals + done counts from Supabase
+  useEffect(() => {
+    if (!user?.id) return;
+    const fetchCounts = async () => {
+      try {
+        const { createBrowserClient } = await import("@/lib/supabase");
+        const supabase = createBrowserClient();
+        const [medsRes, supsRes, logsRes] = await Promise.all([
+          supabase.from("user_medications").select("id, frequency").eq("user_id", user.id).eq("is_active", true),
+          supabase.from("calendar_events").select("id").eq("user_id", user.id).eq("event_type", "supplement").eq("recurrence", "daily"),
+          supabase.from("daily_logs").select("item_type, completed").eq("user_id", user.id).eq("log_date", todayStr).eq("completed", true),
+        ]);
+        // Calculate total daily doses (2x/day meds count double)
+        let totalDoses = 0;
+        medsRes.data?.forEach((m: any) => {
+          const freq = (m.frequency || "").toLowerCase();
+          if (freq.includes("2") || freq.includes("twice") || freq.includes("iki")) totalDoses += 2;
+          else if (freq.includes("3") || freq.includes("three") || freq.includes("üç")) totalDoses += 3;
+          else totalDoses += 1;
+        });
+        setMedTotal(totalDoses || medsRes.data?.length || 0);
+        setSupTotal(supsRes.data?.length || 0);
+        // Count done from daily_logs
+        const medDone = logsRes.data?.filter((l: any) => l.item_type === "medication").length || 0;
+        const supDone = logsRes.data?.filter((l: any) => l.item_type === "supplement").length || 0;
+        setMedDoneCount(medDone);
+        setSupDoneCount(supDone);
+      } catch {}
+    };
+    fetchCounts();
+  }, [user?.id, todayStr]);
+
   // Load task prefs + completions + dismissals on mount
   useEffect(() => {
     if (!user) return;
@@ -348,9 +384,39 @@ export default function Home() {
 
   const toggleTask = (id: string) => {
     const next = new Set(completedTaskIds);
-    if (next.has(id)) next.delete(id); else next.add(id);
+    const wasCompleted = next.has(id);
+    if (wasCompleted) next.delete(id); else next.add(id);
     setCompletedTaskIds(next);
     saveCompletedTasks(todayStr, next);
+
+    // Bidirectional sync: when "med" or "sup" toggled, update calendar rituals too
+    if (id === "med" || id === "sup") {
+      try {
+        const calKey = `cal-rituals-${todayStr}`;
+        const calDone = new Set(JSON.parse(localStorage.getItem(calKey) || "[]") as string[]);
+        const targetEmoji = id === "med" ? "💊" : null; // sup covers multiple emojis
+        const supEmojis = new Set(["🌿", "🐟", "🌙", "☀️", "🍵"]);
+
+        // Read current calendar tasks to find matching IDs
+        // We store a mapping for cross-reference
+        const allCalTasks = JSON.parse(localStorage.getItem(`cal-ritual-tasks-${todayStr}`) || "[]") as Array<{id: string; emoji: string}>;
+
+        if (!wasCompleted) {
+          // Check all matching tasks in calendar
+          allCalTasks.forEach(t => {
+            if (id === "med" && t.emoji === "💊") calDone.add(t.id);
+            if (id === "sup" && supEmojis.has(t.emoji)) calDone.add(t.id);
+          });
+        } else {
+          // Uncheck all matching tasks in calendar
+          allCalTasks.forEach(t => {
+            if (id === "med" && t.emoji === "💊") calDone.delete(t.id);
+            if (id === "sup" && supEmojis.has(t.emoji)) calDone.delete(t.id);
+          });
+        }
+        localStorage.setItem(calKey, JSON.stringify([...calDone]));
+      } catch {}
+    }
   };
 
   const dismissTask = (id: string) => {
@@ -539,7 +605,11 @@ export default function Home() {
                     <div className="space-y-0.5">
                       {visibleTasks.map((t) => {
                         const dur = taskPrefs.durationOverrides[t.id] || t.duration;
-                        const label = isTr ? t.labelTr : t.labelEn;
+                        const baseLabel: string = isTr ? t.labelTr : t.labelEn;
+                        // Dynamic count for med/sup
+                        let label = baseLabel;
+                        if (t.id === "med" && medTotal > 0) label = `${baseLabel} ${medDoneCount}/${medTotal}`;
+                        if (t.id === "sup" && supTotal > 0) label = `${baseLabel} ${supDoneCount}/${supTotal}`;
                         const fullLabel = dur ? `${label} (${dur})` : label;
                         return (
                           <TaskItem key={t.id} emoji={t.emoji} label={fullLabel}

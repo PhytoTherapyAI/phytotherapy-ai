@@ -205,11 +205,18 @@ interface DailyTask {
   id: string; label: string; done: boolean; emoji: string
 }
 
-function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, isCurrent, hours, lang }: {
+function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, onRemoveTask, onAddCustomTask, isCurrent, hours, lang, blockKey }: {
   icon: React.ReactNode; title: string; tasks: DailyTask[]
-  onToggle: (id: string) => void; onAdd: () => void; isCurrent: boolean; hours: string; lang: string
+  onToggle: (id: string) => void; onAdd: () => void
+  onRemoveTask?: (id: string) => void; onAddCustomTask?: (task: DailyTask) => void
+  isCurrent: boolean; hours: string; lang: string; blockKey?: string
 }) {
   const [confettiId, setConfettiId] = useState<string | null>(null)
+  const [editMode, setEditMode] = useState(false)
+  const [newTaskLabel, setNewTaskLabel] = useState("")
+  const [newTaskEmoji, setNewTaskEmoji] = useState("✨")
+
+  const EMOJI_OPTIONS = ["💊", "🌿", "💧", "🧘", "🏃", "📊", "🍵", "✨"]
 
   const handleToggle = (id: string) => {
     const task = tasks.find(t => t.id === id)
@@ -218,6 +225,14 @@ function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, isCurrent, hou
       setTimeout(() => setConfettiId(null), 700)
     }
     onToggle(id)
+  }
+
+  const handleAddCustom = () => {
+    if (!newTaskLabel.trim() || !onAddCustomTask) return
+    const id = `custom-${blockKey}-${Date.now()}`
+    onAddCustomTask({ id, label: newTaskLabel.trim(), done: false, emoji: newTaskEmoji })
+    setNewTaskLabel("")
+    setNewTaskEmoji("✨")
   }
 
   return (
@@ -238,48 +253,89 @@ function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, isCurrent, hou
             </Badge>
           )}
         </div>
-        <span className="text-[10px] text-muted-foreground">{hours}</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[10px] text-muted-foreground">{hours}</span>
+          {onRemoveTask && (
+            <button onClick={() => setEditMode(!editMode)}
+              className={`p-1 rounded-md transition-colors ${editMode ? "bg-primary/10 text-primary" : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"}`}>
+              {editMode
+                ? <Check className="h-3 w-3" />
+                : <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              }
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="space-y-1.5">
-        {tasks.length === 0 ? (
+        {tasks.length === 0 && !editMode ? (
           <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={onAdd}
             className="w-full flex items-center gap-2 py-3 px-3 rounded-xl border border-dashed border-primary/20 text-xs text-muted-foreground/60 hover:border-primary/40 hover:text-muted-foreground transition-colors">
             <Plus className="h-3 w-3" />
-            {lang === "tr" ? `${title.split(" ")[0]} takviyesi ekle` : `Add to ${title.split(" ")[0]}`}
+            {lang === "tr" ? `${title.split(" ")[0]} görevi ekle` : `Add to ${title.split(" ")[0]}`}
           </motion.button>
         ) : (
           tasks.map((t, i) => (
-            <motion.button key={t.id}
+            <motion.div key={t.id}
               initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              whileTap={{ scale: 0.97 }} onClick={() => handleToggle(t.id)}
-              className={`relative w-full flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-left transition-all ${
-                t.done
-                  ? "bg-stone-50 dark:bg-stone-900/50 opacity-60"
-                  : "bg-white dark:bg-card hover:bg-stone-50 dark:hover:bg-stone-900 hover:-translate-y-0.5 hover:shadow-sm"
-              }`}>
-              <motion.div
-                className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all shrink-0 ${
-                  t.done ? "bg-emerald-500 border-emerald-500" : "border-stone-300 dark:border-stone-600"
-                }`}
-                animate={t.done ? { scale: [1, 1.3, 1] } : {}}
-                transition={{ duration: 0.3 }}>
-                {t.done && <Check className="h-3 w-3 text-white" />}
-              </motion.div>
-              <span className="text-sm">{t.emoji}</span>
-              <span className={`text-sm flex-1 transition-all duration-300 ${t.done ? "line-through text-muted-foreground/40" : "font-medium"}`}>
-                {t.label}
-              </span>
-              {t.done && (
-                <motion.span initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: "spring", stiffness: 300 }} className="text-xs">
-                  ✨
-                </motion.span>
+              className="flex items-center gap-1">
+              <motion.button
+                whileTap={{ scale: 0.97 }} onClick={() => !editMode && handleToggle(t.id)}
+                className={`relative flex-1 flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-left transition-all ${
+                  editMode ? "opacity-80" :
+                  t.done
+                    ? "bg-stone-50 dark:bg-stone-900/50 opacity-60"
+                    : "bg-white dark:bg-card hover:bg-stone-50 dark:hover:bg-stone-900 hover:-translate-y-0.5 hover:shadow-sm"
+                }`}>
+                <motion.div
+                  className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all shrink-0 ${
+                    t.done ? "bg-emerald-500 border-emerald-500" : "border-stone-300 dark:border-stone-600"
+                  }`}
+                  animate={t.done ? { scale: [1, 1.3, 1] } : {}}
+                  transition={{ duration: 0.3 }}>
+                  {t.done && <Check className="h-3 w-3 text-white" />}
+                </motion.div>
+                <span className="text-sm">{t.emoji}</span>
+                <span className={`text-sm flex-1 transition-all duration-300 ${t.done ? "line-through text-muted-foreground/40" : "font-medium"}`}>
+                  {t.label}
+                </span>
+                {t.done && !editMode && (
+                  <motion.span initial={{ scale: 0, rotate: -180 }} animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", stiffness: 300 }} className="text-xs">
+                    ✨
+                  </motion.span>
+                )}
+                <ConfettiBurst show={confettiId === t.id} />
+              </motion.button>
+              {editMode && onRemoveTask && (
+                <button onClick={() => onRemoveTask(t.id)}
+                  className="p-1.5 rounded-lg text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors shrink-0">
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
               )}
-              <ConfettiBurst show={confettiId === t.id} />
-            </motion.button>
+            </motion.div>
           ))
+        )}
+
+        {/* Add custom task input (edit mode) */}
+        {editMode && onAddCustomTask && (
+          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-dashed">
+            <div className="flex gap-0.5">
+              {EMOJI_OPTIONS.map(e => (
+                <button key={e} onClick={() => setNewTaskEmoji(e)}
+                  className={`text-sm p-0.5 rounded ${newTaskEmoji === e ? "bg-primary/10 ring-1 ring-primary/30" : ""}`}>{e}</button>
+              ))}
+            </div>
+            <input value={newTaskLabel} onChange={e => setNewTaskLabel(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && handleAddCustom()}
+              placeholder={lang === "tr" ? "Görev adı..." : "Task name..."}
+              className="flex-1 text-xs bg-transparent border-b border-muted-foreground/20 focus:border-primary outline-none py-1 px-1" />
+            <button onClick={handleAddCustom} disabled={!newTaskLabel.trim()}
+              className="p-1 rounded-md bg-primary/10 text-primary disabled:opacity-30 hover:bg-primary/20 transition-colors">
+              <Plus className="h-3 w-3" />
+            </button>
+          </div>
         )}
       </div>
     </motion.div>
@@ -513,6 +569,33 @@ export default function CalendarPage() {
 
   }, [])
 
+  // Remove a task from a specific block
+  const removeTask = useCallback((id: string) => {
+    setMorningTasks(prev => prev.filter(t => t.id !== id))
+    setNoonTasks(prev => prev.filter(t => t.id !== id))
+    setNightTasks(prev => prev.filter(t => t.id !== id))
+    // Save custom removals
+    try {
+      const key = `cal-ritual-removed-${user?.id}`
+      const removed = JSON.parse(localStorage.getItem(key) || "[]") as string[]
+      if (!removed.includes(id)) { removed.push(id); localStorage.setItem(key, JSON.stringify(removed)) }
+    } catch {}
+  }, [user?.id])
+
+  // Add a custom task to a specific block
+  const addCustomTask = useCallback((block: "morning" | "noon" | "night", task: DailyTask) => {
+    if (block === "morning") setMorningTasks(prev => [...prev, task])
+    else if (block === "noon") setNoonTasks(prev => [...prev, task])
+    else setNightTasks(prev => [...prev, task])
+    // Save custom additions
+    try {
+      const key = `cal-ritual-custom-${user?.id}`
+      const custom = JSON.parse(localStorage.getItem(key) || "[]") as Array<DailyTask & { block: string }>
+      custom.push({ ...task, block } as any)
+      localStorage.setItem(key, JSON.stringify(custom))
+    } catch {}
+  }, [user?.id])
+
   const allTasks = useMemo(() => [...morningTasks, ...noonTasks, ...nightTasks], [morningTasks, noonTasks, nightTasks])
   const completedTasks = allTasks.filter(t => t.done).length
 
@@ -521,6 +604,10 @@ export default function CalendarPage() {
     if (!ritualDataLoaded) return
     const doneIds = allTasks.filter(t => t.done).map(t => t.id)
     localStorage.setItem(`cal-rituals-${todayDateStr}`, JSON.stringify(doneIds))
+
+    // Save task id↔emoji mapping so dashboard can sync back
+    const taskMap = allTasks.map(t => ({ id: t.id, emoji: t.emoji }))
+    localStorage.setItem(`cal-ritual-tasks-${todayDateStr}`, JSON.stringify(taskMap))
 
     // Sync med completion to dashboard
     const dashKey = `dash-tasks-done-${todayDateStr}`
@@ -816,19 +903,22 @@ export default function CalendarPage() {
                     icon={<Sun className="h-4 w-4 text-amber-500" />}
                     title={lang === "tr" ? "Sabah Rutini" : "Morning Routine"}
                     tasks={morningTasks} onToggle={toggleTask} onAdd={() => {}}
-                    isCurrent={currentBlock === "morning"} hours="06:00–12:00" lang={lang} />
+                    onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("morning", t)}
+                    isCurrent={currentBlock === "morning"} hours="06:00–12:00" lang={lang} blockKey="morning" />
 
                   <TimeBlockEnhanced
                     icon={<Sunset className="h-4 w-4 text-orange-500" />}
                     title={lang === "tr" ? "Öğle" : "Afternoon"}
                     tasks={noonTasks} onToggle={toggleTask} onAdd={() => {}}
-                    isCurrent={currentBlock === "noon"} hours="12:00–18:00" lang={lang} />
+                    onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("noon", t)}
+                    isCurrent={currentBlock === "noon"} hours="12:00–18:00" lang={lang} blockKey="noon" />
 
                   <TimeBlockEnhanced
                     icon={<MoonIcon className="h-4 w-4 text-indigo-400" />}
                     title={lang === "tr" ? "Akşam Ritüeli" : "Evening Wind-Down"}
                     tasks={nightTasks} onToggle={toggleTask} onAdd={() => {}}
-                    isCurrent={currentBlock === "night"} hours="18:00–00:00" lang={lang} />
+                    onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("night", t)}
+                    isCurrent={currentBlock === "night"} hours="18:00–00:00" lang={lang} blockKey="night" />
 
                   {/* Existing TodayView integration */}
                   <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
