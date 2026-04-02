@@ -86,11 +86,13 @@ function WeeklyStripEnhanced({ selectedDate, onSelect, lang }: { selectedDate: D
   const today = useMemo(() => new Date(), [])
 
   const getWeekDays = useCallback((center: Date) => {
-    const start = new Date(center)
-    const day = start.getDay()
-    start.setDate(start.getDate() - ((day + 6) % 7))
+    // Use local date to avoid timezone/DST issues
+    const d = new Date(center.getFullYear(), center.getMonth(), center.getDate())
+    const dow = d.getDay() // 0=Sun, 1=Mon...
+    const diffToMon = dow === 0 ? 6 : dow - 1
+    const monday = new Date(d.getFullYear(), d.getMonth(), d.getDate() - diffToMon)
     return Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(start); d.setDate(start.getDate() + i); return d
+      return new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i)
     })
   }, [])
 
@@ -169,11 +171,11 @@ function CircularRing({ emoji, label, current, total, color }: {
   const isDone = current >= total
 
   return (
-    <motion.div className="flex flex-col items-center gap-1.5"
+    <motion.div className="flex flex-col items-center gap-1 min-w-0 flex-1"
       initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
       transition={{ type: "spring", stiffness: 200 }}>
       <div className="relative">
-        <svg width={64} height={64} className="transform -rotate-90">
+        <svg width={56} height={56} viewBox="0 0 64 64" className="transform -rotate-90">
           <circle cx={32} cy={32} r={r} stroke="currentColor" strokeWidth={5} fill="none"
             className="text-stone-200 dark:text-stone-700" />
           <motion.circle cx={32} cy={32} r={r} stroke={color} strokeWidth={5} fill="none"
@@ -182,16 +184,16 @@ function CircularRing({ emoji, label, current, total, color }: {
             animate={{ strokeDashoffset: offset }}
             transition={{ duration: 1.2, ease: "easeOut" }} />
         </svg>
-        <span className="absolute inset-0 flex items-center justify-center text-base">{emoji}</span>
+        <span className="absolute inset-0 flex items-center justify-center text-sm">{emoji}</span>
         {isDone && (
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 flex items-center justify-center shadow-sm">
-            <Check className="h-2.5 w-2.5 text-white" />
+            className="absolute -top-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 flex items-center justify-center shadow-sm">
+            <Check className="h-2 w-2 text-white" />
           </motion.div>
         )}
       </div>
-      <span className="text-[10px] font-medium text-muted-foreground">{label}</span>
-      <span className={`text-[10px] font-bold ${isDone ? "text-emerald-500" : "text-foreground"}`}>{current}/{total}</span>
+      <span className="text-[9px] font-medium text-muted-foreground truncate max-w-full">{label}</span>
+      <span className={`text-[9px] font-bold ${isDone ? "text-emerald-500" : "text-foreground"}`}>{current}/{total}</span>
     </motion.div>
   )
 }
@@ -448,6 +450,29 @@ export default function CalendarPage() {
   // Shared completed items set for ritual sync (key = task label)
   const [completedItems, setCompletedItems] = useState<Set<string>>(new Set())
 
+  // Load ritual completions from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem(`cal-rituals-${todayDateStr}`)
+    if (!saved) return
+    try {
+      const ids = JSON.parse(saved) as string[]
+      const idSet = new Set(ids)
+      setCompletedItems(idSet)
+      setMorningTasks(prev => prev.map(t => idSet.has(t.id) ? { ...t, done: true } : t))
+      setNoonTasks(prev => prev.map(t => idSet.has(t.id) ? { ...t, done: true } : t))
+      setNightTasks(prev => prev.map(t => idSet.has(t.id) ? { ...t, done: true } : t))
+    } catch {}
+  }, [todayDateStr])
+
+  // Load water count from Supabase on mount
+  useEffect(() => {
+    if (!user?.id) return
+    fetch(`/api/daily-log?date=${todayDateStr}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.water?.glasses) setWaterCount(data.water.glasses) })
+      .catch(() => {})
+  }, [user?.id, todayDateStr])
+
   // Toggle a task — updates shared completedItems set
   const toggleTask = useCallback((id: string) => {
     const update = (tasks: DailyTask[]) => tasks.map(t => t.id === id ? { ...t, done: !t.done } : t)
@@ -490,7 +515,28 @@ export default function CalendarPage() {
       }
       return updated
     })
-  }, [])
+
+    // Persist ritual completions to localStorage
+    setTimeout(() => {
+      const all = [...morningTasks, ...noonTasks, ...nightTasks]
+      const toggledTask = all.find(t => t.id === id)
+      const doneIds = all.filter(t => t.id === id ? !t.done : t.done).map(t => t.id)
+      // Actually recalculate: task was toggled
+      const correct = all.map(t => t.id === id ? { ...t, done: !t.done } : t).filter(t => t.done).map(t => t.id)
+      localStorage.setItem(`cal-rituals-${todayDateStr}`, JSON.stringify(correct))
+
+      // Fix 6: Sync med completion to dashboard
+      if (toggledTask?.emoji === "💊") {
+        const dashKey = `dash-tasks-done-${todayDateStr}`
+        try {
+          const dashDone = new Set(JSON.parse(localStorage.getItem(dashKey) || "[]"))
+          const anyMedDone = all.map(t => t.id === id ? { ...t, done: !t.done } : t).some(t => t.emoji === "💊" && t.done)
+          if (anyMedDone) dashDone.add("med"); else dashDone.delete("med")
+          localStorage.setItem(dashKey, JSON.stringify([...dashDone]))
+        } catch {}
+      }
+    }, 50)
+  }, [morningTasks, noonTasks, nightTasks, todayDateStr])
 
   const allTasks = useMemo(() => [...morningTasks, ...noonTasks, ...nightTasks], [morningTasks, noonTasks, nightTasks])
   const completedTasks = allTasks.filter(t => t.done).length
@@ -500,14 +546,28 @@ export default function CalendarPage() {
   const medsDone = allTasks.filter(t => t.done && (t.emoji === "💊" || t.emoji === "🌿" || t.emoji === "🐟" || t.emoji === "🌙" || t.emoji === "☀️" || t.emoji === "🍵")).length
   const totalMeds = allTasks.filter(t => t.emoji !== "💧").length
 
-  // FAB quick log handler
+  // Helper: local date string
+  const getDateStr = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
+  const selectedDateStr = getDateStr(selectedDate)
+  const todayDateStr = getDateStr(new Date())
+
+  // FAB quick log handler — saves to Supabase
   const handleQuickLog = useCallback((type: string) => {
     if (type === "water") {
-      setWaterCount(c => c + 1)
+      setWaterCount(prev => {
+        const next = prev + 1
+        // Fire-and-forget save to Supabase
+        fetch("/api/daily-log", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ date: todayDateStr, glasses: next }),
+        }).catch(() => {})
+        return next
+      })
       setWaterToast(true)
       setTimeout(() => setWaterToast(false), 1500)
     }
-  }, [])
+  }, [todayDateStr])
 
   // Fetch real profile medications + supplements to populate time blocks
   const fetchProfileMeds = useCallback(async () => {
@@ -672,7 +732,7 @@ export default function CalendarPage() {
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                 {lang === "tr" ? "Günlük Halkalar" : "Daily Rings"}
               </p>
-              <div className="flex justify-around gap-2">
+              <div className="flex justify-around gap-1 px-1">
                 <CircularRing emoji="💧" label={lang === "tr" ? "Su" : "Water"} current={Math.min(totalWater, 8)} total={8} color="#3b82f6" />
                 <CircularRing emoji="💊" label={lang === "tr" ? "İlaçlar" : "Meds"} current={medsDone} total={Math.max(totalMeds, 1)} color="#3c7a52" />
                 <CircularRing emoji="🌿" label={lang === "tr" ? "Takviye" : "Supps"} current={medsDone} total={Math.max(totalMeds, 1)} color="#6B8F71" />

@@ -32,7 +32,7 @@ function getColor(count: number): string {
 
 export function HabitHeatMap({ lang, userId, streak: streakProp }: HabitHeatMapProps) {
   const isTr = lang === "tr"
-  const [data, setData] = useState<number[]>(() => generateMockData())
+  const [data, setData] = useState<number[]>(() => Array.from({ length: 84 }, () => 0))
   const [realStreak, setRealStreak] = useState<number | null>(null)
 
   // Fetch real check-in data from Supabase
@@ -43,16 +43,28 @@ export function HabitHeatMap({ lang, userId, streak: streakProp }: HabitHeatMapP
         const supabase = createBrowserClient()
         const ninetyDaysAgo = new Date()
         ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
-        const { data: checkIns } = await supabase
-          .from("daily_check_ins")
-          .select("check_date")
-          .eq("user_id", userId)
-          .gte("check_date", ninetyDaysAgo.toISOString().split("T")[0])
-          .order("check_date", { ascending: true })
+        // Fetch both check-ins and daily logs for comprehensive data
+        const [checkInsRes, logsRes] = await Promise.all([
+          supabase
+            .from("daily_check_ins")
+            .select("check_date")
+            .eq("user_id", userId)
+            .gte("check_date", ninetyDaysAgo.toISOString().split("T")[0]),
+          supabase
+            .from("daily_logs")
+            .select("log_date")
+            .eq("user_id", userId)
+            .eq("completed", true)
+            .gte("log_date", ninetyDaysAgo.toISOString().split("T")[0]),
+        ])
+        const checkIns = checkInsRes.data
+        const logs = logsRes.data
 
-        if (checkIns && checkIns.length > 0) {
-          // Build a set of active dates
-          const activeDates = new Set(checkIns.map((c: { check_date: string }) => c.check_date))
+        const activeDates = new Set<string>()
+        checkIns?.forEach((c: any) => activeDates.add(c.check_date))
+        logs?.forEach((l: any) => activeDates.add(l.log_date))
+
+        if (activeDates.size > 0) {
 
           // Map last 84 days to counts (0 or 1)
           const today = new Date()
@@ -72,10 +84,12 @@ export function HabitHeatMap({ lang, userId, streak: streakProp }: HabitHeatMapP
           }
           setRealStreak(s)
         } else {
+          setData(Array.from({ length: 84 }, () => 0))
           setRealStreak(0)
         }
       } catch {
-        // Keep mock data on error
+        setData(Array.from({ length: 84 }, () => 0))
+        setRealStreak(0)
       }
     }
     fetchData()

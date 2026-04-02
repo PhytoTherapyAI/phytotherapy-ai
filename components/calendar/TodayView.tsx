@@ -648,7 +648,20 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
         }
       }
       const { data: freshLogs } = await supabase.from("daily_logs").select("*").eq("user_id", userId).eq("log_date", today)
-      if (freshLogs) setDailyLogs(freshLogs as DailyLog[])
+      if (freshLogs) {
+        setDailyLogs(freshLogs as DailyLog[])
+        // Sync med completion to dashboard task list
+        try {
+          const anyMedDone = freshLogs.some((l: any) => l.item_type === "medication" && l.completed)
+          const dashKey = `dash-tasks-done-${today}`
+          const dashDone = new Set(JSON.parse(localStorage.getItem(dashKey) || "[]"))
+          if (anyMedDone) dashDone.add("med"); else dashDone.delete("med")
+          // Also sync supplements
+          const anySupDone = freshLogs.some((l: any) => l.item_type === "supplement" && l.completed)
+          if (anySupDone) dashDone.add("sup"); else dashDone.delete("sup")
+          localStorage.setItem(dashKey, JSON.stringify([...dashDone]))
+        } catch {}
+      }
     } catch { fetchData() } finally { setTogglingId(null) }
   }
 
