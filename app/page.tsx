@@ -68,140 +68,72 @@ export default function Home() {
     );
   }
 
-  // ─── AUTHENTICATED USER — Command Center ───
+  // ─── AUTHENTICATED USER — Minimal Command Center ───
   if (showDashboard) {
     return (
-      <div className="flex flex-col">
-        <section className="mx-auto w-full max-w-6xl px-4 pt-6 pb-4">
-          {/* Dynamic greeting */}
-          <h1 className="font-heading text-2xl font-semibold mb-1 sm:text-3xl">
-            {timeEmoji} {isTr ? `Merhaba ${firstName}` : `Hi ${firstName}`}
-          </h1>
-          <p className="text-sm text-muted-foreground mb-5">
-            {isTr ? "Bugün senin için ne yapabilirim?" : "What can I do for you today?"}
-          </p>
+      <div className="mx-auto w-full max-w-2xl px-4 pt-10 pb-16">
+        {/* Greeting */}
+        <p className="text-base text-muted-foreground mb-1">
+          {timeEmoji} {isTr ? `Merhaba, ${firstName}` : `Hi, ${firstName}`}
+        </p>
+        <h1 className="font-heading text-2xl font-semibold mb-6">
+          {isTr ? "Bugün sağlığın için ne yapalım?" : "What can we do for your health today?"}
+        </h1>
 
-          {/* Spotlight search bar */}
-          <form onSubmit={handleSearch} className="mb-5">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={isTr ? "Tahlil ara veya Asistana sor... ⌘K" : "Search tests or ask the Assistant... ⌘K"}
-                className="w-full rounded-2xl border bg-card py-3.5 pl-11 pr-14 text-sm shadow-soft-md outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:shadow-soft-lg"
-              />
-              <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/90">
-                <Sparkles className="h-4 w-4" />
-              </button>
+        {/* Omni-bar */}
+        <form onSubmit={handleSearch} className="mb-4">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={isTr ? "Bir soru sor veya takviye ara..." : "Ask a question or search supplements..."}
+              className="w-full rounded-2xl border bg-card py-4 pl-11 pr-14 text-sm shadow-soft-md outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:shadow-soft-lg"
+            />
+            <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/90">
+              <Sparkles className="h-4 w-4" />
+            </button>
+          </div>
+        </form>
+
+        {/* Quick chips */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-8">
+          {QUICK_CHIPS.map(({ emoji, labelKey, href }) => (
+            <Link key={href} href={href}
+              className="flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground transition-all hover:border-primary/30 hover:text-foreground hover:shadow-soft active:scale-95"
+            >
+              <span>{emoji}</span>
+              {tx(labelKey, lang) || (isTr ? "Araç" : "Tool")}
+            </Link>
+          ))}
+        </div>
+
+        {/* Panel preview — compact stats row */}
+        <Link href="/dashboard" className="group block rounded-2xl border bg-card px-5 py-4 shadow-soft transition-all hover:shadow-soft-lg hover:-translate-y-0.5">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              {isTr ? "Panel Önizlemesi" : "Panel Preview"}
+            </span>
+            <span className="flex items-center gap-1 text-xs text-primary">
+              {isTr ? "Panele git" : "Open panel"} <ArrowRight className="h-3 w-3" />
+            </span>
+          </div>
+          <div className="grid grid-cols-3 divide-x divide-border">
+            <div className="pr-4 text-center">
+              <p className="text-xl font-bold text-foreground">73</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">{isTr ? "Vitalite" : "Vitality"}</p>
             </div>
-          </form>
-
-          {/* Quick action chips — horizontal scroll */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6">
-            {QUICK_CHIPS.map(({ emoji, labelKey, href }) => (
-              <Link key={href} href={href}
-                className="flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground transition-all hover:border-primary/30 hover:text-foreground hover:shadow-soft active:scale-95"
-              >
-                <span>{emoji}</span>
-                {tx(labelKey, lang) || (isTr ? "Araç" : "Tool")}
-              </Link>
-            ))}
+            <div className="px-4 text-center">
+              <p className="text-xl font-bold text-amber-500">🔥 12</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">{isTr ? "Günlük seri" : "Day streak"}</p>
+            </div>
+            <div className="pl-4 text-center">
+              <p className="text-xl font-bold text-foreground">0/4</p>
+              <p className="text-[11px] text-muted-foreground mt-0.5">{isTr ? "Görevler" : "Tasks"}</p>
+            </div>
           </div>
-
-          {/* ── Bento Grid ── */}
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            {/* Card 1 — Wide: AI Assistant */}
-            <Link href="/health-assistant"
-              className="col-span-2 group relative overflow-hidden rounded-2xl border bg-gradient-to-r from-primary/5 to-sage/5 p-5 transition-all hover:shadow-soft-lg hover:-translate-y-0.5 dark:from-primary/10 dark:to-sage/10"
-              style={{ animationDelay: "0ms" }}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-                    <MessageCircle className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-bold">{isTr ? "Kanıta Dayalı Asistan" : "Evidence-Based Assistant"}</h3>
-                    <p className="text-[11px] text-muted-foreground">{isTr ? "PubMed + Cochrane destekli" : "PubMed + Cochrane powered"}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500" />
-                  </span>
-                  <span className="text-[10px] text-green-600 font-medium">Online</span>
-                </div>
-              </div>
-              <ArrowRight className="absolute right-4 bottom-4 h-4 w-4 text-muted-foreground/40 group-hover:text-primary transition-colors" />
-            </Link>
-
-            {/* Card 2 — Square Left: Interaction Engine */}
-            <Link href="/interaction-checker"
-              className="group rounded-2xl border bg-card p-4 transition-all hover:shadow-soft-lg hover:-translate-y-0.5"
-              style={{ animationDelay: "80ms" }}
-            >
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-coral/10 mb-3">
-                <Shield className="h-4 w-4 text-coral" />
-              </div>
-              <h3 className="text-sm font-bold">{isTr ? "Etkileşim Motoru" : "Interaction Engine"}</h3>
-              <p className="text-[10px] text-muted-foreground mt-0.5">{isTr ? "İlaç-bitki güvenliği" : "Drug-herb safety"}</p>
-            </Link>
-
-            {/* Card 3 — Square Right: Blood Test */}
-            <Link href="/blood-test"
-              className="group rounded-2xl border bg-card p-4 transition-all hover:shadow-soft-lg hover:-translate-y-0.5"
-              style={{ animationDelay: "160ms" }}
-            >
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500/10 mb-3">
-                <Droplets className="h-4 w-4 text-rose-500" />
-              </div>
-              <h3 className="text-sm font-bold">{isTr ? "Kan Tahlili" : "Blood Test"}</h3>
-              <p className="text-[10px] text-muted-foreground mt-0.5">{isTr ? "AI analiz + PDF rapor" : "AI analysis + PDF report"}</p>
-            </Link>
-
-            {/* Card 4 — Square Left: Calendar */}
-            <Link href="/calendar"
-              className="group rounded-2xl border bg-card p-4 transition-all hover:shadow-soft-lg hover:-translate-y-0.5"
-              style={{ animationDelay: "240ms" }}
-            >
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-lavender/10 mb-3">
-                <Moon className="h-4 w-4 text-lavender" />
-              </div>
-              <h3 className="text-sm font-bold">{isTr ? "Takvim Hub" : "Calendar Hub"}</h3>
-              <p className="text-[10px] text-muted-foreground mt-0.5">{isTr ? "İlaç + takviye takibi" : "Meds + supplement tracking"}</p>
-            </Link>
-
-            {/* Card 5 — Square Right: Sports */}
-            <Link href="/sports-performance"
-              className="group rounded-2xl border bg-card p-4 transition-all hover:shadow-soft-lg hover:-translate-y-0.5"
-              style={{ animationDelay: "320ms" }}
-            >
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 mb-3">
-                <Activity className="h-4 w-4 text-emerald-500" />
-              </div>
-              <h3 className="text-sm font-bold">{isTr ? "Spor Performansı" : "Sports Performance"}</h3>
-              <p className="text-[10px] text-muted-foreground mt-0.5">{isTr ? "AI antrenman planı" : "AI training plan"}</p>
-            </Link>
-          </div>
-
-          {/* Daily Summary */}
-          <DailySummaryCard userId={user.id} lang={lang} userName={profile.full_name} />
-        </section>
-
-        {/* Trust strip */}
-        <section className="mt-6 border-t bg-muted/30">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-3 gap-y-2 px-4 py-4 sm:gap-x-8">
-            {TRUST_KEYS.map((key) => (
-              <div key={key} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                <CheckCircle2 className="h-3 w-3 text-primary" />
-                {tx(key, lang)}
-              </div>
-            ))}
-          </div>
-        </section>
+        </Link>
       </div>
     );
   }
