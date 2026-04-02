@@ -15,6 +15,15 @@ import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
 import { DailySummaryCard } from "@/components/dashboard/DailySummaryCard";
 
+// ── Quick Action Chips (defined early to avoid TDZ) ──
+const QUICK_CHIPS = [
+  { emoji: "💊", labelKey: "lp.chipInteraction", href: "/interaction-checker" },
+  { emoji: "🩸", labelKey: "lp.chipBloodTest",   href: "/blood-test" },
+  { emoji: "🌿", labelKey: "lp.chipHerbOfDay",   href: "/health-assistant" },
+  { emoji: "😴", labelKey: "lp.chipSleep",       href: "/sleep-analysis" },
+  { emoji: "💪", labelKey: "lp.chipSports",      href: "/sports-performance" },
+];
+
 // ── Progress Ring ──
 function ProgressRing({ value, size = 80 }: { value: number; size?: number }) {
   const r = (size - 8) / 2;
@@ -142,14 +151,6 @@ function AuthHome({ isTr, lang, firstName, timeEmoji, searchQuery, setSearchQuer
   );
 }
 
-// ── Quick Action Chips ──
-const QUICK_CHIPS = [
-  { emoji: "💊", labelKey: "lp.chipInteraction", href: "/interaction-checker" },
-  { emoji: "🩸", labelKey: "lp.chipBloodTest", href: "/blood-test" },
-  { emoji: "🌿", labelKey: "lp.chipHerbOfDay", href: "/health-assistant" },
-  { emoji: "😴", labelKey: "lp.chipSleep", href: "/sleep-analysis" },
-  { emoji: "💪", labelKey: "lp.chipSports", href: "/sports-performance" },
-];
 
 const TRUST_KEYS = ["lp.trust1", "lp.trust2", "lp.trust3", "lp.trust4", "lp.trust5"];
 
