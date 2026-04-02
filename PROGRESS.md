@@ -2366,3 +2366,33 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - Google OAuth consent screen "phytotherapy.ai" gösteriyor → Bu Google Cloud Console'dan düzeltilmeli
 - Supabase Dashboard → Authentication → Providers → Google → App Name: "DoctoPal" yapılmalı
 - Google Cloud Console → OAuth consent screen → App name: "DoctoPal" yapılmalı
+
+---
+
+## Tracker Yeniden Tasarımları + i18n (2 Nisan 2026 — Session 5)
+
+**Caffeine Tracker → Metabolic Energy Radar:**
+- ✅ Recharts AreaChart half-life eğrisi (06:00→02:00, bedtime referans çizgisi)
+- ✅ CNS Battery gauge (sıvı dolma animasyonu, 0-400mg FDA limit)
+- ✅ Glassmorphism içecek kartları (6 tür, tıkla → anında grafik güncelleme)
+- ✅ Bedtime kafein uyarısı, Sleep Analysis labor illusion
+- ✅ Dark mode (stone-900, amber parlamalar), TR/EN çeviri inline
+
+**Alcohol Tracker → Liver Shield & Clearance Hub:**
+- ✅ Recharts AreaChart BAC clearance eğrisi
+- ✅ İçki kartları (4 tür, sıvı animasyonu, birim sayacı)
+- ✅ Damage Control panel (dinamik çipler: hidrasyon, REM riski, MPS etkisi, fitoterapi)
+- ✅ Recovery Protocol labor illusion + mock sonuç
+- ✅ Dark mode (slate-900, fuchsia/mor parlamalar), TR/EN çeviri inline
+
+**Smoking Cessation → Biological Regeneration Dashboard:**
+- ✅ Lung/Heart Hologram SVG (sağlık durumuna göre renk değişimi + shield glow)
+- ✅ Gain Calculator (yıllık tasarruf, kazanılan ömür, içilmeyen sigara — CountUp animasyonu)
+- ✅ Regeneration Armor (3 tıbbi + 3 fitoterapi kartı)
+- ✅ 6 milestone (20dk → 1 yıl), tıkla → confetti mini animasyonu
+- ✅ Dark mode (slate-900, teal/cyan parlamalar), TR/EN çeviri inline
+
+**i18n (Module D):**
+- ✅ 3 yeni sayfa tümüyle inline isTr ? TR : EN pattern ile çevrilmiş
+- ✅ Kafein: 8+ çeviri key, Alkol: 10+ çeviri key, Sigara: 12+ çeviri key
+- ✅ Bozuk Türkçe karakter taraması: 0 bulgu (temiz)
