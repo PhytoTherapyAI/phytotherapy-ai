@@ -94,19 +94,20 @@ export function Header() {
             <div className="flex items-center">
               {/* Logo */}
               <Link href="/" className="flex items-center gap-2 group shrink-0">
-                <Leaf
-                  className="h-[18px] w-[18px] transition-all duration-300 group-hover:scale-110"
-                  style={{ color: "var(--logo-accent, #c4a86c)" }}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/logo-icon.svg"
+                  alt="Doctopal"
+                  className="h-8 w-8 rounded-lg transition-all duration-300 group-hover:scale-105"
                 />
-                <span style={{
-                  fontFamily: '"DM Serif Display", "Palatino Linotype", Georgia, serif',
+                <span className="hidden sm:inline" style={{
+                  fontFamily: 'system-ui, -apple-system, sans-serif',
                   fontSize: scrolled ? "1.05rem" : "1.15rem",
-                  fontWeight: 400, letterSpacing: "0.01em", lineHeight: 1,
+                  fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1,
                   transition: "font-size 0.3s ease",
+                  color: "var(--foreground)",
                 }}>
-                  <span style={{ color: "var(--foreground)" }}>Phyto</span>
-                  <span style={{ color: "var(--logo-accent, #c4a86c)" }}>therapy</span>
-                  <span style={{ color: "var(--primary)" }}>.ai</span>
+                  Doctopal
                 </span>
               </Link>
 

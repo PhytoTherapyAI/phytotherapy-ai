@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="og-bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f1d15"/>
+      <stop offset="50%" stop-color="#0a1a0f"/>
+      <stop offset="100%" stop-color="#0d1f12"/>
+    </linearGradient>
+    <linearGradient id="og-green" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <radialGradient id="og-glow" cx="600" cy="280" r="400" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#og-bg)"/>
+  <rect width="1200" height="630" fill="url(#og-glow)"/>
+
+  <!-- Subtle grid pattern -->
+  <pattern id="og-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <rect width="40" height="40" fill="none"/>
+    <line x1="40" y1="0" x2="40" y2="40" stroke="#22c55e" stroke-width="0.3" opacity="0.1"/>
+    <line x1="0" y1="40" x2="40" y2="40" stroke="#22c55e" stroke-width="0.3" opacity="0.1"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#og-grid)"/>
+
+  <!-- Logo icon (larger) -->
+  <g transform="translate(520, 140)">
+    <rect width="80" height="80" rx="18" fill="#0f1d15" stroke="#22c55e" stroke-width="1.5" opacity="0.6"/>
+    <path d="M24 22 L24 58 L36 58 C52 58, 62 48, 62 40 C62 32, 52 22, 36 22 Z" fill="none" stroke="url(#og-green)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="56" cy="30" r="5.5" fill="none" stroke="#4ade80" stroke-width="2"/>
+    <circle cx="56" cy="30" r="2" fill="#4ade80"/>
+    <path d="M42 22 C44 16, 50 13, 56 12 C52 18, 48 20, 44 21" fill="#22c55e" opacity="0.9"/>
+  </g>
+
+  <!-- Brand name -->
+  <text x="600" y="280" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="56" letter-spacing="-1" fill="white">
+    Doctopal
+  </text>
+
+  <!-- Tagline -->
+  <text x="600" y="330" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="400" font-size="22" fill="#86efac" opacity="0.9">
+    AI-Powered Evidence-Based Health Assistant
+  </text>
+
+  <!-- Feature pills -->
+  <g transform="translate(240, 380)">
+    <rect x="0" y="0" width="160" height="36" rx="18" fill="#22c55e" fill-opacity="0.12" stroke="#22c55e" stroke-width="0.8" stroke-opacity="0.3"/>
+    <text x="80" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#86efac">PubMed Verified</text>
+
+    <rect x="180" y="0" width="160" height="36" rx="18" fill="#22c55e" fill-opacity="0.12" stroke="#22c55e" stroke-width="0.8" stroke-opacity="0.3"/>
+    <text x="260" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#86efac">166+ Health Tools</text>
+
+    <rect x="360" y="0" width="170" height="36" rx="18" fill="#22c55e" fill-opacity="0.12" stroke="#22c55e" stroke-width="0.8" stroke-opacity="0.3"/>
+    <text x="445" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#86efac">FHIR Compatible</text>
+
+    <rect x="550" y="0" width="170" height="36" rx="18" fill="#22c55e" fill-opacity="0.12" stroke="#22c55e" stroke-width="0.8" stroke-opacity="0.3"/>
+    <text x="635" y="23" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#86efac">Powered by Claude</text>
+  </g>
+
+  <!-- URL -->
+  <text x="600" y="520" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="500" font-size="18" fill="#4ade80" opacity="0.6">
+    doctopal.com
+  </text>
+
+  <!-- Bottom border accent -->
+  <rect x="0" y="624" width="1200" height="6" fill="url(#og-green)" opacity="0.6"/>
+</svg>

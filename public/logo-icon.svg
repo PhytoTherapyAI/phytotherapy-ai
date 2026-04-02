@@ -1,24 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#111a14"/>
-      <stop offset="100%" stop-color="#0a1f10"/>
+      <stop offset="0%" stop-color="#0f1d15"/>
+      <stop offset="100%" stop-color="#0a1a0f"/>
     </linearGradient>
-    <linearGradient id="leaf" x1="220" y1="80" x2="320" y2="400" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#c4a86c"/>
-      <stop offset="100%" stop-color="#22c55e"/>
+    <linearGradient id="main" x1="140" y1="100" x2="380" y2="420" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="50%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="280" y1="120" x2="360" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#4ade80"/>
     </linearGradient>
   </defs>
 
-  <!-- Clean rounded square background -->
+  <!-- Rounded square background -->
   <rect width="512" height="512" rx="112" fill="url(#bg)"/>
 
-  <!-- Single elegant leaf — the brand mark -->
-  <path d="M256 96 C200 160, 160 240, 196 320 C212 356, 234 370, 256 360 C278 370, 300 356, 316 320 C352 240, 312 160, 256 96Z" fill="url(#leaf)"/>
+  <!-- Shield outline (protection/trust) -->
+  <path d="M256 88 C180 88, 120 120, 120 180 L120 280 C120 360, 180 420, 256 432 C332 420, 392 360, 392 280 L392 180 C392 120, 332 88, 256 88Z" fill="none" stroke="url(#main)" stroke-width="5" opacity="0.2"/>
 
-  <!-- Minimal center vein -->
-  <line x1="256" y1="130" x2="256" y2="350" stroke="#111a14" stroke-width="2" stroke-opacity="0.25"/>
+  <!-- Stylized "D" with stethoscope curve -->
+  <path d="M190 160 L190 352 L240 352 C320 352, 360 300, 360 256 C360 212, 320 160, 240 160 Z" fill="none" stroke="url(#main)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
 
-  <!-- Thin elegant stem -->
-  <line x1="256" y1="360" x2="256" y2="420" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-opacity="0.7"/>
+  <!-- Stethoscope chest piece (circle at the top of D's curve) -->
+  <circle cx="340" cy="200" r="18" fill="none" stroke="url(#accent)" stroke-width="5"/>
+  <circle cx="340" cy="200" r="6" fill="#4ade80"/>
+
+  <!-- Leaf sprouting from the D -->
+  <path d="M280 160 C290 130, 310 110, 340 105 C325 125, 310 140, 290 148" fill="#22c55e" opacity="0.9"/>
+  <path d="M285 155 C290 140, 305 125, 325 118" fill="none" stroke="#16a34a" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Subtle AI pulse line inside D -->
+  <polyline points="210,256 230,256 240,232 255,280 270,240 285,256 320,256" fill="none" stroke="#4ade80" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
 </svg>
