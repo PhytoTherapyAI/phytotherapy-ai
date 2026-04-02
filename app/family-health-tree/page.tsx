@@ -1,320 +1,225 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import {
-  TreePine,
-  Plus,
-  X,
-  Loader2,
-  LogIn,
-  Sparkles,
-  AlertTriangle,
-  Shield,
-  Heart,
-  Lightbulb,
-  Search,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, X, Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface FamilyMember {
-  id: string;
-  relation: string;
-  conditions: string[];
+  id: string
+  label: string
+  emoji: string
+  conditions: string[]
+  y: number
 }
 
-interface TreeResult {
-  overallRiskAssessment: string;
-  hereditaryPatterns: Array<{ condition: string; affectedRelatives: string[]; inheritancePattern: string; yourRiskMultiplier: string; geneticTestRecommended: boolean; specificTest: string }>;
-  screeningRecommendations: Array<{ condition: string; startAge: string; frequency: string; test: string; reason: string }>;
-  geneticCounselingAdvice: string;
-  protectiveFactors: Array<{ factor: string; benefit: string }>;
-  keyInsights: string[];
-}
+const conditionChips = [
+  { emoji: "🩸", label: "Type 2 Diabetes" },
+  { emoji: "🫀", label: "Heart Disease" },
+  { emoji: "🧠", label: "Alzheimer's" },
+  { emoji: "🦋", label: "Thyroid" },
+  { emoji: "🫁", label: "Lung Disease" },
+  { emoji: "🧬", label: "Cancer" },
+  { emoji: "⚖️", label: "Obesity" },
+  { emoji: "🩺", label: "Hypertension" },
+  { emoji: "🦴", label: "Osteoporosis" },
+  { emoji: "🧪", label: "Autoimmune" },
+]
 
-const RELATIONS = {
-  en: ["Mother", "Father", "Sister", "Brother", "Maternal grandmother", "Maternal grandfather", "Paternal grandmother", "Paternal grandfather", "Maternal aunt", "Maternal uncle", "Paternal aunt", "Paternal uncle", "Daughter", "Son"],
-  tr: ["Anne", "Baba", "Kiz kardes", "Erkek kardes", "Anneanne", "Dede (anne tarafi)", "Babaanne", "Dede (baba tarafi)", "Teyze", "Dayi", "Hala", "Amca", "Kiz cocuk", "Erkek cocuk"],
-};
-
-const CONDITIONS = {
-  en: ["Breast cancer", "Colon cancer", "Lung cancer", "Prostate cancer", "Ovarian cancer", "Heart disease", "Stroke", "Type 2 diabetes", "Alzheimer's", "Parkinson's", "High blood pressure", "High cholesterol", "Autoimmune disease", "Thyroid disorder", "Kidney disease", "Depression", "Osteoporosis", "Melanoma"],
-  tr: ["Meme kanseri", "Kolon kanseri", "Akciger kanseri", "Prostat kanseri", "Over kanseri", "Kalp hastaligi", "Inme", "Tip 2 diyabet", "Alzheimer", "Parkinson", "Yüksek tansiyon", "Yüksek kolesterol", "Otoimmun hastalık", "Tiroid bozuklugu", "Bobrek hastaligi", "Depresyon", "Osteoporoz", "Melanom"],
-};
+const familyTemplate: FamilyMember[] = [
+  { id: "grandmother_m", label: "Grandmother (M)", emoji: "👵", conditions: [], y: 0 },
+  { id: "grandfather_m", label: "Grandfather (M)", emoji: "👴", conditions: [], y: 0 },
+  { id: "grandmother_f", label: "Grandmother (F)", emoji: "👵", conditions: [], y: 0 },
+  { id: "grandfather_f", label: "Grandfather (F)", emoji: "👴", conditions: [], y: 0 },
+  { id: "mother", label: "Mother", emoji: "👩", conditions: [], y: 1 },
+  { id: "father", label: "Father", emoji: "👨", conditions: [], y: 1 },
+  { id: "you", label: "You", emoji: "🧬", conditions: [], y: 2 },
+]
 
 export default function FamilyHealthTreePage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [members, setMembers] = useState<FamilyMember[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<TreeResult | null>(null);
+  const router = useRouter()
+  const [members, setMembers] = useState(familyTemplate)
+  const [activeMember, setActiveMember] = useState<string | null>(null)
+  const [feedback, setFeedback] = useState<string | null>(null)
 
-  const addMember = () => {
-    setMembers([...members, { id: Date.now().toString(), relation: RELATIONS.en[0], conditions: [] }]);
-  };
+  const activeData = members.find(m => m.id === activeMember)
 
-  const removeMember = (id: string) => {
-    setMembers(members.filter((m) => m.id !== id));
-  };
-
-  const updateRelation = (id: string, relation: string) => {
-    setMembers(members.map((m) => m.id === id ? { ...m, relation } : m));
-  };
-
-  const toggleCondition = (memberId: string, condition: string) => {
-    setMembers(members.map((m) => {
-      if (m.id !== memberId) return m;
-      const conditions = m.conditions.includes(condition)
-        ? m.conditions.filter((c) => c !== condition)
-        : [...m.conditions, condition];
-      return { ...m, conditions };
-    }));
-  };
-
-  const handleAnalyze = async () => {
-    if (!session?.access_token || members.length === 0) return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/family-health-tree", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          lang,
-          family_members: members.filter((m) => m.conditions.length > 0),
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to analyze");
-      }
-
-      const data = await res.json();
-      setResult(data.result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
+  const addCondition = (memberId: string, condition: string) => {
+    setMembers(prev => prev.map(m =>
+      m.id === memberId
+        ? { ...m, conditions: m.conditions.includes(condition) ? m.conditions.filter(c => c !== condition) : [...m.conditions, condition] }
+        : m
+    ))
+    if (memberId !== "you") {
+      setFeedback(`Genetic heritage updated. Your ${members.find(m => m.id === memberId)?.label}'s health data strengthens your personalized shield.`)
+      setTimeout(() => setFeedback(null), 3000)
     }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold">{tx("familytree.title", lang)}</h1>
-          <p className="text-muted-foreground">{tx("common.loginToUse", lang)}</p>
-          <Button onClick={() => window.location.href = "/auth/login"}>
-            <LogIn className="w-4 h-4 mr-2" /> {tx("nav.login", lang)}
-          </Button>
-        </div>
-      </div>
-    );
   }
 
-  const relations = RELATIONS[lang];
-  const conditions = CONDITIONS[lang];
-  const conditionsEN = CONDITIONS.en;
+  const totalConditions = members.reduce((acc, m) => acc + m.conditions.length, 0)
+
+  const rows = [
+    { y: 0, members: members.filter(m => m.y === 0) },
+    { y: 1, members: members.filter(m => m.y === 1) },
+    { y: 2, members: members.filter(m => m.y === 2) },
+  ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 py-8 px-4">
-      <div className="max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50/30 via-stone-50 to-sage-50/20">
+      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-4 py-1.5 rounded-full text-sm font-medium">
-            <TreePine className="w-4 h-4" />
-            {tx("familytree.title", lang)}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/60">
+            <ChevronLeft className="w-5 h-5 text-slate-600" />
+          </button>
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-slate-800">Genetic Constellation</h1>
+            <p className="text-xs text-slate-400">Map your family health heritage</p>
           </div>
-          <h1 className="text-3xl font-bold">{tx("familytree.title", lang)}</h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">{tx("familytree.subtitle", lang)}</p>
-        </div>
+          <div className="w-9" />
+        </motion.div>
 
-        {/* Family Members Input */}
-        <div className="space-y-4">
-          {members.map((member) => (
-            <div key={member.id} className="bg-card border rounded-2xl p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <select
-                  value={member.relation}
-                  onChange={(e) => updateRelation(member.id, e.target.value)}
-                  className="px-4 py-2 border rounded-xl bg-background focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                >
-                  {RELATIONS.en.map((rel, i) => (
-                    <option key={rel} value={rel}>{relations[i]}</option>
-                  ))}
-                </select>
-                <button onClick={() => removeMember(member.id)} className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">{tx("familyTree.healthConditions", lang)}</label>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {conditions.map((cond, i) => (
-                    <button
-                      key={cond}
-                      onClick={() => toggleCondition(member.id, conditionsEN[i])}
-                      className={`rounded-full px-3 py-1 text-xs transition-colors ${
-                        member.conditions.includes(conditionsEN[i])
-                          ? "bg-emerald-500 text-white"
-                          : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-300"
+        {/* Feedback Toast */}
+        <AnimatePresence>
+          {feedback && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4 flex items-start gap-2"
+            >
+              <Sparkles className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-emerald-700">{feedback}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Family Tree */}
+        <div className="space-y-6 mb-8">
+          {rows.map((row, ri) => (
+            <motion.div
+              key={ri}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: ri * 0.15 }}
+            >
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider text-center mb-2">
+                {ri === 0 ? "Grandparents" : ri === 1 ? "Parents" : "You"}
+              </p>
+              <div className={`flex justify-center gap-3 ${row.members.length > 2 ? "flex-wrap" : ""}`}>
+                {row.members.map(member => {
+                  const hasConditions = member.conditions.length > 0
+                  const isYou = member.id === "you"
+                  return (
+                    <motion.button
+                      key={member.id}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setActiveMember(member.id)}
+                      className={`relative flex flex-col items-center gap-1 p-3 rounded-2xl border-2 transition-all min-w-[80px] ${
+                        isYou
+                          ? "border-emerald-400 bg-emerald-50 shadow-lg shadow-emerald-100"
+                          : hasConditions
+                            ? "border-amber-300 bg-amber-50"
+                            : "border-dashed border-slate-200 bg-white"
                       }`}
                     >
-                      {cond}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-
-          <Button onClick={addMember} variant="outline" className="w-full border-dashed border-2">
-            <Plus className="w-4 h-4 mr-2" /> {tx("familytree.addMember", lang)}
-          </Button>
-        </div>
-
-        {/* Analyze Button */}
-        {members.length > 0 && (
-          <Button
-            onClick={handleAnalyze}
-            disabled={isLoading || members.every((m) => m.conditions.length === 0)}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-            size="lg"
-          >
-            {isLoading ? (
-              <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
-            ) : (
-              <><Sparkles className="mr-2 h-5 w-5" />{tx("familytree.analyze", lang)}</>
-            )}
-          </Button>
-        )}
-
-        {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">{error}</div>
-        )}
-
-        {/* Results */}
-        {result && (
-          <div className="space-y-6">
-            {/* Overall Assessment */}
-            <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-6">
-              <h3 className="font-semibold text-emerald-700 dark:text-emerald-400 mb-2">
-                {tx("familyTree.overallAssessment", lang)}
-              </h3>
-              <p className="text-sm">{result.overallRiskAssessment}</p>
-            </div>
-
-            {/* Hereditary Patterns */}
-            {result.hereditaryPatterns?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Search className="w-5 h-5 text-emerald-500" />
-                  {tx("familyTree.hereditaryPatterns", lang)}
-                </h2>
-                <div className="grid gap-4">
-                  {result.hereditaryPatterns.map((pattern, i) => (
-                    <div key={i} className={`border rounded-xl p-4 space-y-2 ${
-                      pattern.geneticTestRecommended ? "border-amber-200 dark:border-amber-800" : "border-border"
-                    }`}>
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold">{pattern.condition}</span>
-                        <span className="text-sm font-medium text-red-600 dark:text-red-400">{pattern.yourRiskMultiplier}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{pattern.inheritancePattern}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {tx("familyTree.affectedRelatives", lang)} {pattern.affectedRelatives.join(", ")}
-                      </p>
-                      {pattern.geneticTestRecommended && (
-                        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-2 text-sm text-amber-700 dark:text-amber-400">
-                          {tx("familyTree.recommendedTest", lang)} {pattern.specificTest}
-                        </div>
+                      {isYou && (
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ repeat: Infinity, duration: 2 }}
+                          className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400"
+                        />
                       )}
-                    </div>
-                  ))}
+                      <span className="text-2xl">{member.emoji}</span>
+                      <span className="text-[10px] font-medium text-slate-600 whitespace-nowrap">{member.label}</span>
+                      {hasConditions ? (
+                        <span className="text-[9px] text-amber-600 font-medium">{member.conditions.length} condition{member.conditions.length > 1 ? "s" : ""}</span>
+                      ) : !isYou ? (
+                        <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 2 }}>
+                          <Plus className="w-3.5 h-3.5 text-slate-300" />
+                        </motion.div>
+                      ) : null}
+                    </motion.button>
+                  )
+                })}
+              </div>
+              {/* Connection lines */}
+              {ri < 2 && (
+                <div className="flex justify-center mt-2">
+                  <div className="w-px h-4 bg-slate-200" />
                 </div>
-              </div>
-            )}
-
-            {/* Screening */}
-            {result.screeningRecommendations?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-blue-500" />
-                  {tx("familyTree.screeningRecs", lang)}
-                </h2>
-                <div className="grid gap-3">
-                  {result.screeningRecommendations.map((rec, i) => (
-                    <div key={i} className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4">
-                      <div className="font-medium">{rec.condition} — {rec.test}</div>
-                      <div className="text-sm text-muted-foreground">{rec.startAge} | {rec.frequency}</div>
-                      <div className="text-sm mt-1">{rec.reason}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Protective Factors */}
-            {result.protectiveFactors?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <Heart className="w-5 h-5 text-green-500" />
-                  {tx("familyTree.protectiveFactors", lang)}
-                </h2>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {result.protectiveFactors.map((factor, i) => (
-                    <div key={i} className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 space-y-1">
-                      <div className="font-medium">{factor.factor}</div>
-                      <div className="text-sm text-muted-foreground">{factor.benefit}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Genetic Counseling */}
-            {result.geneticCounselingAdvice && (
-              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-                <h3 className="font-medium flex items-center gap-2 mb-1 text-amber-700 dark:text-amber-400">
-                  <AlertTriangle className="w-4 h-4" />
-                  {tx("familyTree.geneticCounseling", lang)}
-                </h3>
-                <p className="text-sm text-amber-600 dark:text-amber-300">{result.geneticCounselingAdvice}</p>
-              </div>
-            )}
-
-            {/* Key Insights */}
-            {result.keyInsights?.length > 0 && (
-              <div className="bg-card border rounded-2xl p-6 space-y-3">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                  <Lightbulb className="w-5 h-5 text-amber-500" />
-                  {tx("familyTree.keyInsights", lang)}
-                </h2>
-                {result.keyInsights.map((insight, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                    {insight}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Disclaimer */}
-        <div className="text-center text-xs text-muted-foreground px-4">
-          {tx("disclaimer.tool", lang)}
+              )}
+            </motion.div>
+          ))}
         </div>
+
+        {/* Stats */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-slate-100 text-center"
+        >
+          <p className="text-sm text-slate-500">
+            {totalConditions === 0
+              ? "Tap family members to add their health conditions"
+              : `${totalConditions} condition${totalConditions > 1 ? "s" : ""} mapped across your family tree`
+            }
+          </p>
+        </motion.div>
+
+        {/* Bottom Sheet */}
+        <AnimatePresence>
+          {activeMember && activeData && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-end justify-center"
+              onClick={() => setActiveMember(null)}
+            >
+              <motion.div
+                initial={{ y: 300 }}
+                animate={{ y: 0 }}
+                exit={{ y: 300 }}
+                transition={{ type: "spring", damping: 25 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-t-3xl p-6 w-full max-w-lg shadow-2xl"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{activeData.emoji}</span>
+                    <h3 className="text-lg font-semibold text-slate-800">{activeData.label}</h3>
+                  </div>
+                  <button onClick={() => setActiveMember(null)} className="p-2 rounded-full hover:bg-slate-100">
+                    <X className="w-5 h-5 text-slate-400" />
+                  </button>
+                </div>
+
+                <p className="text-sm text-slate-500 mb-4">Select known health conditions:</p>
+                <div className="flex flex-wrap gap-2">
+                  {conditionChips.map(chip => {
+                    const isActive = activeData.conditions.includes(chip.label)
+                    return (
+                      <motion.button
+                        key={chip.label}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => addCondition(activeData.id, chip.label)}
+                        className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-sm border-2 transition-all ${
+                          isActive ? "border-emerald-300 bg-emerald-50 text-emerald-700" : "border-slate-100 bg-slate-50 text-slate-600"
+                        }`}
+                      >
+                        <span>{chip.emoji}</span>
+                        <span>{chip.label}</span>
+                      </motion.button>
+                    )
+                  })}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
-  );
+  )
 }
