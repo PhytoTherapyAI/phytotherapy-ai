@@ -29,7 +29,18 @@ const personalityOptions = [
   { id: "witty", label: "Witty", emoji: "✨", desc: "Playful, encouraging, light" },
 ]
 
-const settingsGroups = [
+interface SettingsCard {
+  id: string
+  icon: typeof Bot
+  label: string
+  desc: string
+  color: string
+  hasPersonality?: boolean
+  isVault?: boolean
+  isDanger?: boolean
+}
+
+const settingsGroups: { title: string; cards: SettingsCard[] }[] = [
   {
     title: "Personal AI",
     cards: [
