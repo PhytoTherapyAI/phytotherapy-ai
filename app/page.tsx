@@ -299,33 +299,36 @@ export default function Home() {
   const [streak, setStreak] = useState(0);
   const todayStr = getLocalDate();
 
-  // Fetch real streak from Supabase
+  // Fetch real streak from Supabase (same algo as HabitHeatMap)
   useEffect(() => {
     if (!user?.id) return;
     const fetchStreak = async () => {
       try {
         const { createBrowserClient } = await import("@/lib/supabase");
         const supabase = createBrowserClient();
-        const ninetyDaysAgo = new Date();
-        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+        const now = new Date();
+        const ninetyAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 90);
+        const ninetyAgoStr = `${ninetyAgo.getFullYear()}-${String(ninetyAgo.getMonth()+1).padStart(2,"0")}-${String(ninetyAgo.getDate()).padStart(2,"0")}`;
         const [checkInsRes, logsRes] = await Promise.all([
           supabase.from("daily_check_ins").select("check_date").eq("user_id", user.id)
-            .gte("check_date", ninetyDaysAgo.toISOString().split("T")[0]),
+            .gte("check_date", ninetyAgoStr),
           supabase.from("daily_logs").select("log_date").eq("user_id", user.id).eq("completed", true)
-            .gte("log_date", ninetyDaysAgo.toISOString().split("T")[0]),
+            .gte("log_date", ninetyAgoStr),
         ]);
         const activeDates = new Set<string>();
         checkInsRes.data?.forEach((c: any) => activeDates.add(c.check_date));
         logsRes.data?.forEach((l: any) => activeDates.add(l.log_date));
+        // Count consecutive days from today backwards
         let s = 0;
-        const today = new Date();
         for (let i = 0; i < 90; i++) {
-          const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+          const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
           const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
           if (activeDates.has(ds)) s++; else break;
         }
         setStreak(s);
-      } catch {}
+      } catch (err) {
+        console.error("[Dashboard] Streak fetch error:", err);
+      }
     };
     fetchStreak();
   }, [user?.id]);

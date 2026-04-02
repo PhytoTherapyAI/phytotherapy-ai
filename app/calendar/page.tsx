@@ -537,8 +537,10 @@ export default function CalendarPage() {
   // waterCount comes from FAB + tasks combined
   const waterDoneFromTasks = allTasks.filter(t => t.done && t.emoji === "💧").length
   const totalWater = waterCount + waterDoneFromTasks + 3
-  const medsDone = allTasks.filter(t => t.done && (t.emoji === "💊" || t.emoji === "🌿" || t.emoji === "🐟" || t.emoji === "🌙" || t.emoji === "☀️" || t.emoji === "🍵")).length
-  const totalMeds = allTasks.filter(t => t.emoji !== "💧").length
+  const medsDone = allTasks.filter(t => t.done && t.emoji === "💊").length
+  const totalMedsOnly = allTasks.filter(t => t.emoji === "💊").length
+  const supsDone = allTasks.filter(t => t.done && (t.emoji === "🌿" || t.emoji === "🐟" || t.emoji === "🌙" || t.emoji === "☀️" || t.emoji === "🍵")).length
+  const totalSups = allTasks.filter(t => t.emoji === "🌿" || t.emoji === "🐟" || t.emoji === "🌙" || t.emoji === "☀️" || t.emoji === "🍵").length
 
   // FAB quick log handler — saves to Supabase
   const handleQuickLog = useCallback((type: string) => {
@@ -767,8 +769,8 @@ export default function CalendarPage() {
               </p>
               <div className="flex justify-around gap-1 px-1">
                 <CircularRing emoji="💧" label={lang === "tr" ? "Su" : "Water"} current={Math.min(totalWater, 8)} total={8} color="#3b82f6" />
-                <CircularRing emoji="💊" label={lang === "tr" ? "İlaçlar" : "Meds"} current={medsDone} total={Math.max(totalMeds, 1)} color="#3c7a52" />
-                <CircularRing emoji="🌿" label={lang === "tr" ? "Takviye" : "Supps"} current={medsDone} total={Math.max(totalMeds, 1)} color="#6B8F71" />
+                <CircularRing emoji="💊" label={lang === "tr" ? "İlaçlar" : "Meds"} current={medsDone} total={Math.max(totalMedsOnly, 1)} color="#3c7a52" />
+                <CircularRing emoji="🌿" label={lang === "tr" ? "Takviye" : "Supps"} current={supsDone} total={Math.max(totalSups, 1)} color="#6B8F71" />
                 <CircularRing emoji="🚶" label={lang === "tr" ? "Hareket" : "Move"} current={1} total={3} color="#f59e0b" />
               </div>
             </motion.div>
