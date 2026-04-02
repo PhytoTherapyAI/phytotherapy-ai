@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
@@ -194,9 +194,10 @@ function LoginContent() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-2 flex items-center gap-2">
-            <Leaf className="h-[18px] w-[18px]" style={{ color: 'var(--logo-accent, #c4a86c)' }} />
-            <span style={{ fontFamily: '"DM Serif Display", "Palatino Linotype", Georgia, serif', fontSize: '1.18rem', fontWeight: 400, letterSpacing: '0.01em', lineHeight: 1 }}>
-              <span style={{ color: 'var(--foreground)' }}>Phyto</span><span style={{ color: 'var(--logo-accent, #c4a86c)' }}>therapy</span><span style={{ color: 'var(--primary)' }}>.ai</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-icon.svg" alt="DoctoPal" className="h-8 w-8" />
+            <span style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>
+              <span style={{ color: 'var(--foreground)' }}>Docto</span><span style={{ color: 'var(--brand, #059669)' }}>Pal</span>
             </span>
           </div>
           <CardTitle className="text-2xl">{tx("auth.welcome", lang)}</CardTitle>

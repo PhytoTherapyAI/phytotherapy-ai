@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const systemPrompt = `You are Doctopal's travel health advisor. You provide evidence-based travel health guidance.
+    const systemPrompt = `You are DoctoPal's travel health advisor. You provide evidence-based travel health guidance.
 
 RULES:
 1. Provide accurate vaccination requirements based on destination

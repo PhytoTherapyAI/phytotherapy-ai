@@ -1,15 +1,16 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 export default function Loading() {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/logo-icon.svg"
-        alt="Doctopal"
-        className="h-12 w-12 rounded-xl animate-pulse"
+        alt="DoctoPal"
+        className="h-12 w-12 animate-pulse"
       />
+      <p className="text-xs text-muted-foreground">Loading your health companion...</p>
       <div className="h-1 w-24 rounded-full bg-muted overflow-hidden">
-        <div className="h-full w-1/2 rounded-full bg-primary animate-[shimmer_1.5s_ease-in-out_infinite]"
+        <div className="h-full w-1/2 rounded-full bg-[var(--brand,#059669)]"
           style={{ animation: "shimmer 1.5s ease-in-out infinite" }}
         />
       </div>

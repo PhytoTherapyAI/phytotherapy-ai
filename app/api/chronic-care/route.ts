@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
         }).join(", ")
       : "No recent vitals";
 
-    const systemPrompt = `You are Doctopal's chronic disease management assistant.
+    const systemPrompt = `You are DoctoPal's chronic disease management assistant.
 Analyze the user's data for "${matched}" and provide a comprehensive disease management assessment.
 
 PATIENT PROFILE: ${profileContext.join(". ")}

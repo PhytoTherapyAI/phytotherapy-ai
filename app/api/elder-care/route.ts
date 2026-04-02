@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const systemPrompt = `You are Doctopal's elder care health advisor, specialized in geriatric health guidance for adults 65+.
+    const systemPrompt = `You are DoctoPal's elder care health advisor, specialized in geriatric health guidance for adults 65+.
 
 RULES:
 1. Focus on evidence-based geriatric health guidance

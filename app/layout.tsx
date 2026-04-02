@@ -92,7 +92,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
-      { url: "/logo-icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
     ],
     apple: [
       { url: "/logo-icon.svg", type: "image/svg+xml" },
@@ -101,7 +101,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Doctopal",
+    title: "DoctoPal",
   },
 };
 

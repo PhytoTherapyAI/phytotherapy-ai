@@ -21,7 +21,7 @@ export function buildNudgePrompt(
   switch (trigger) {
     case "drop_off":
       return {
-        systemPrompt: `You are Doctopal's motivational health coach.
+        systemPrompt: `You are DoctoPal's motivational health coach.
 Generate a SHORT (2-3 sentences max, under 160 characters) WhatsApp message to gently motivate a user who hasn't been active.
 Be warm and caring, NOT guilt-tripping. Sound like a supportive friend.
 If you know their name, use it naturally.
@@ -32,7 +32,7 @@ NEVER use clinical or robotic language.`,
 
     case "streak":
       return {
-        systemPrompt: `You are Doctopal's celebration coach.
+        systemPrompt: `You are DoctoPal's celebration coach.
 Generate a SHORT (2-3 sentences, under 160 characters) congratulatory WhatsApp message.
 Include a fun emoji. Be genuinely excited. Sound like a proud friend.
 Respond in ${langName}.`,
@@ -41,7 +41,7 @@ Respond in ${langName}.`,
 
     case "risk_alert":
       return {
-        systemPrompt: `You are Doctopal's safety advisor.
+        systemPrompt: `You are DoctoPal's safety advisor.
 Generate a CLEAR, URGENT but calm WhatsApp message about a drug-supplement interaction.
 Format: ⚠️ [Brief risk description] → ✅ [Clear action step]
 MUST be under 200 characters. No medical jargon. Be direct but not alarming.
@@ -52,7 +52,7 @@ Always end with "Consult your doctor" / "Doktorunuza danışın".`,
 
     default:
       return {
-        systemPrompt: `You are Doctopal's health coach. Write a short, friendly health tip. Respond in ${langName}.`,
+        systemPrompt: `You are DoctoPal's health coach. Write a short, friendly health tip. Respond in ${langName}.`,
         userPrompt: `Write a brief motivational health message for ${context.userName || "the user"}.`,
       };
   }

@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
       // PubMed context ready
     }
 
-    const systemPrompt = `You are Doctopal's symptom assessment assistant. You are NOT a doctor and cannot diagnose.
+    const systemPrompt = `You are DoctoPal's symptom assessment assistant. You are NOT a doctor and cannot diagnose.
 Your job is to help the user understand their symptoms and guide them on urgency.
 
 RULES:

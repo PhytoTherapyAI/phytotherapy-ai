@@ -153,7 +153,7 @@ export async function POST(request: NextRequest) {
         ).join("; ")
       : "No recent check-ins";
 
-    const systemPrompt = `You are Doctopal's appointment preparation assistant.
+    const systemPrompt = `You are DoctoPal's appointment preparation assistant.
 Generate a comprehensive clinical summary for the patient to bring to their doctor visit.
 This should be professional, concise, and formatted for a healthcare provider to quickly review.
 
