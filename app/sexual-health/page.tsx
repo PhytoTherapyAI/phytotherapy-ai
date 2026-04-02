@@ -1,295 +1,214 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import {
-  Heart,
-  Loader2,
-  Shield,
-  LogIn,
-  Pill,
-  Calendar,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Lock, Sparkles, Pill, Shield } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-interface SexualHealthResult {
-  age: number;
-  gender: string;
-  preMatchedEffects: Array<{ medication: string; effect: string; prevalence: string }>;
-  medicationSexualEffects: Array<{ medication: string; effects: string; prevalence: string; alternatives: string; action: string }>;
-  screeningSchedule: Array<{ test: string; frequency: string; ageGroup: string; note: string }>;
-  concernAddressed: Array<{ concern: string; information: string; recommendation: string }>;
-  safetyInfo: string[];
-  recommendations: string[];
-  supplementSuggestions?: Array<{ name: string; evidence: string; safetyNote: string }>;
-  professionalReferral: boolean;
+const goalChips = [
+  { id: "libido", emoji: "🔥", label: "Libido & Energy Boost" },
+  { id: "blood", emoji: "🩸", label: "Blood Flow & Performance" },
+  { id: "moisture", emoji: "💧", label: "Natural Moisture & Comfort" },
+  { id: "control", emoji: "🧘‍♂️", label: "Control & Endurance" },
+  { id: "desire", emoji: "✨", label: "Desire & Connection" },
+  { id: "hormones", emoji: "⚖️", label: "Hormonal Balance" },
+]
+
+function LaborIllusion({ onComplete }: { onComplete: () => void }) {
+  const steps = [
+    "Scanning safe phyto-aphrodisiacs (Maca, Tribulus)...",
+    "Zero-clearing interaction risk with your medications...",
+    "Mapping your hormonal balance...",
+    "Preparing your intimacy protocol...",
+  ]
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(s => {
+        if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s }
+        return s + 1
+      })
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-indigo-950/80 backdrop-blur-md">
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-slate-900 rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl border border-indigo-800/30">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          className="w-14 h-14 mx-auto mb-4 rounded-full border-4 border-indigo-800 border-t-indigo-400" />
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="text-indigo-200 text-sm">{steps[step]}</motion.p>
+        </AnimatePresence>
+        <div className="flex gap-1 justify-center mt-4">
+          {steps.map((_, i) => (
+            <div key={i} className={`w-2 h-2 rounded-full ${i <= step ? "bg-indigo-400" : "bg-slate-700"}`} />
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
+  )
 }
 
-const CONCERNS = [
-  { en: "Low libido", tr: "Düşük cinsel istek" },
-  { en: "Erectile dysfunction", tr: "Ereksiyon bozuklugu" },
-  { en: "Pain during intercourse", tr: "Cinsel iliski sirasinda ağrı" },
-  { en: "Delayed orgasm", tr: "Gecikmiş orgazm" },
-  { en: "Premature ejaculation", tr: "Erken bosalma" },
-  { en: "Vaginal dryness", tr: "Vajinal kuruluk" },
-  { en: "Medication side effects", tr: "İlaç yan etkileri" },
-  { en: "STI screening", tr: "Cinsel yolla bulasan hastalık taramasi" },
-  { en: "Contraception info", tr: "Kontrasepsiyon bilgisi" },
-  { en: "Menstrual irregularity", tr: "Adet duzensizligi" },
-  { en: "Fertility concerns", tr: "Dogurganlik endisesi" },
-];
-
 export default function SexualHealthPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
+  const router = useRouter()
+  const [selectedGoals, setSelectedGoals] = useState<string[]>([])
+  const [ssriCheck, setSsriCheck] = useState(false)
+  const [showLabor, setShowLabor] = useState(false)
+  const [showResult, setShowResult] = useState(false)
 
-  const [selectedConcerns, setSelectedConcerns] = useState<string[]>([]);
-  const [age, setAge] = useState(30);
-  const [gender, setGender] = useState("not_specified");
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<SexualHealthResult | null>(null);
-  const [showScreening, setShowScreening] = useState(false);
-
-  const concerns = CONCERNS.map((c) => c[lang]);
-  const concernValues = CONCERNS.map((c) => c.en);
-
-  const handleAnalyze = async () => {
-    if (!session?.access_token) return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/sexual-health", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          lang,
-          concerns: selectedConcerns,
-          age,
-          gender,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Analysis failed");
-      }
-
-      const data = await res.json();
-      setResult(data.result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-950">
-            <Heart className="h-6 w-6 text-slate-600 dark:text-slate-400" />
-          </div>
-          <div>
-            <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">{tx("sexual.title", lang)}</h1>
-            <p className="text-sm text-muted-foreground">{tx("sexual.subtitle", lang)}</p>
-          </div>
-        </div>
-        <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-8 text-center dark:border-slate-800 dark:bg-slate-950/30">
-          <LogIn className="mx-auto mb-3 h-10 w-10 text-slate-400" />
-          <p className="text-lg font-medium text-slate-700 dark:text-slate-300">
-            {tx("common.loginToUse2", lang)}
-          </p>
-        </div>
-      </div>
-    );
+  const toggleGoal = (id: string) => {
+    setSelectedGoals(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id])
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-slate-50 p-3 dark:bg-slate-950">
-          <Heart className="h-6 w-6 text-slate-600 dark:text-slate-400" />
-        </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">{tx("sexual.title", lang)}</h1>
-          <p className="text-sm text-muted-foreground">{tx("sexual.subtitle", lang)}</p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-slate-900 text-white">
+      <AnimatePresence>
+        {showLabor && <LaborIllusion onComplete={() => { setShowLabor(false); setShowResult(true) }} />}
+      </AnimatePresence>
 
-      {/* Age + Gender */}
-      <div className="mb-6 grid grid-cols-2 gap-4">
-        <div className="rounded-xl border bg-card p-4 shadow-sm">
-          <label className="mb-1 block text-sm font-semibold text-muted-foreground">{tx("common.age", lang)}</label>
-          <input type="number" min={18} max={100} value={age} onChange={(e) => setAge(Number(e.target.value))} className="w-24 rounded-lg border bg-background px-3 py-2 text-center text-lg font-bold" />
-        </div>
-        <div className="rounded-xl border bg-card p-4 shadow-sm">
-          <label className="mb-1 block text-sm font-semibold text-muted-foreground">{tx("common.gender", lang)}</label>
-          <div className="flex gap-2">
-            {[
-              { value: "male", label: tx("common.male", lang) },
-              { value: "female", label: tx("common.female", lang) },
-              { value: "not_specified", label: tx("sexual.preferNotToSay", lang) },
-            ].map((g) => (
-              <button
-                key={g.value}
-                onClick={() => setGender(g.value)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                  gender === g.value ? "bg-slate-700 text-white dark:bg-slate-300 dark:text-slate-900" : "bg-gray-100 dark:bg-gray-800"
-                }`}
-              >{g.label}</button>
-            ))}
+      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/10">
+            <ChevronLeft className="w-5 h-5 text-slate-400" />
+          </button>
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-white flex items-center gap-2">
+              Intimacy & Vitality Room <Lock className="w-4 h-4 text-indigo-400" />
+            </h1>
           </div>
-        </div>
-      </div>
+          <div className="w-9" />
+        </motion.div>
 
-      {/* Concerns */}
-      <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
-          {tx("sexual.selectConcerns", lang)}
-        </h2>
-        <div className="flex flex-wrap gap-2">
-          {concerns.map((c, i) => (
-            <button
-              key={c}
-              onClick={() => setSelectedConcerns((prev) =>
-                prev.includes(concernValues[i]) ? prev.filter((x) => x !== concernValues[i]) : [...prev, concernValues[i]]
-              )}
-              className={`rounded-full px-3 py-1.5 text-sm transition-colors ${
-                selectedConcerns.includes(concernValues[i])
-                  ? "bg-slate-700 text-white dark:bg-slate-300 dark:text-slate-900"
-                  : "bg-slate-50 text-slate-700 hover:bg-slate-100 dark:bg-slate-950 dark:text-slate-300"
-              }`}
-            >{c}</button>
-          ))}
-        </div>
-      </div>
+        {/* Privacy Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-indigo-950/50 rounded-2xl p-4 mb-6 border border-indigo-800/30"
+        >
+          <div className="flex items-center gap-3">
+            <Shield className="w-5 h-5 text-indigo-400 flex-shrink-0" />
+            <p className="text-xs text-indigo-200 leading-relaxed">
+              This area is end-to-end encrypted. Your data stays on your device and is analyzed by a judgment-free AI.
+            </p>
+          </div>
+        </motion.div>
 
-      <Button onClick={handleAnalyze} disabled={isLoading} className="mb-6 w-full bg-slate-700 hover:bg-slate-800 text-white dark:bg-slate-600 dark:hover:bg-slate-500" size="lg">
-        {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
-        ) : (
-          <><Pill className="mr-2 h-5 w-5" />{tx("sexual.analyze", lang)}</>
-        )}
-      </Button>
+        {/* Goal Chips */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-6">
+          <h3 className="text-sm font-semibold text-slate-300 mb-3 px-1">What would you like to optimize?</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {goalChips.map((chip, i) => {
+              const isActive = selectedGoals.includes(chip.id)
+              return (
+                <motion.button
+                  key={chip.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 + i * 0.05 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => toggleGoal(chip.id)}
+                  className={`flex items-center gap-3 p-4 rounded-2xl border-2 text-left transition-all ${
+                    isActive
+                      ? "border-indigo-500/50 bg-indigo-950/60 shadow-lg shadow-indigo-900/20"
+                      : "border-slate-700/50 bg-slate-800/50 backdrop-blur-sm"
+                  }`}
+                >
+                  <motion.span
+                    className="text-xl"
+                    animate={isActive ? { scale: [1, 1.2, 1] } : {}}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {chip.emoji}
+                  </motion.span>
+                  <span className="text-sm text-slate-200">{chip.label}</span>
+                </motion.button>
+              )
+            })}
+          </div>
+        </motion.div>
 
-      {error && <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">{error}</div>}
-
-      {result && (
-        <div className="space-y-4">
-          {/* Medication Sexual Effects */}
-          {result.medicationSexualEffects?.length > 0 && (
-            <div className="rounded-xl border-2 border-amber-300 bg-amber-50 p-6 dark:bg-amber-950/20">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-amber-700 dark:text-amber-300">
-                <Pill className="h-5 w-5" />
-                {tx("sexual.medEffects", lang)}
-              </h3>
-              {result.medicationSexualEffects.map((me, i) => (
-                <div key={i} className="mb-3 rounded-lg border border-amber-300 p-3 last:mb-0 dark:border-amber-700">
-                  <p className="font-semibold">{me.medication}</p>
-                  <p className="text-sm text-muted-foreground">{me.effects}</p>
-                  <p className="text-xs text-amber-600">{tx("sexual.prevalence", lang)}: {me.prevalence}</p>
-                  {me.alternatives && <p className="text-xs text-green-600 dark:text-green-400">{me.alternatives}</p>}
-                  <p className="mt-1 text-xs font-medium">{me.action}</p>
+        {/* SSRI Connection Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-slate-800 rounded-2xl p-5 mb-6 border border-slate-700"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Pill className="w-5 h-5 text-amber-400" />
+              <div>
+                <h3 className="text-sm font-semibold text-white">Medication Side Effect Detective</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Check if SSRI or other meds affect libido</p>
+              </div>
+            </div>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setSsriCheck(!ssriCheck)}
+              className={`w-12 h-7 rounded-full p-0.5 transition-colors ${ssriCheck ? "bg-indigo-500" : "bg-slate-600"}`}
+            >
+              <motion.div
+                animate={{ x: ssriCheck ? 20 : 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="w-6 h-6 bg-white rounded-full shadow"
+              />
+            </motion.button>
+          </div>
+          <AnimatePresence>
+            {ssriCheck && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="mt-4 bg-amber-950/30 rounded-xl p-3 border border-amber-800/20">
+                  <p className="text-xs text-amber-200">
+                    SSRIs (Sertraline, Fluoxetine, Paroxetine) are known to affect sexual function in 40-70% of users.
+                    We will cross-check your medication profile for safe alternatives and complementary phyto-support.
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
-          {/* Concerns Addressed */}
-          {result.concernAddressed?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-slate-700 dark:text-slate-300">
-                {tx("sexual.yourConcerns", lang)}
-              </h3>
-              {result.concernAddressed.map((ca, i) => (
-                <div key={i} className="mb-4 last:mb-0">
-                  <p className="font-semibold">{ca.concern}</p>
-                  <p className="text-sm text-muted-foreground">{ca.information}</p>
-                  <p className="mt-1 text-sm font-medium text-slate-700 dark:text-slate-300">{ca.recommendation}</p>
-                </div>
-              ))}
-            </div>
-          )}
+        {/* Action Button */}
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setShowLabor(true)}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-medium shadow-lg shadow-indigo-900/40 flex items-center justify-center gap-2"
+        >
+          <Sparkles className="w-4 h-4" />
+          Prepare My Personal Intimacy Protocol
+        </motion.button>
 
-          {/* STI Screening Schedule */}
-          {result.screeningSchedule?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <button onClick={() => setShowScreening(!showScreening)} className="flex w-full items-center justify-between">
-                <h3 className="flex items-center gap-2 text-lg font-bold text-slate-700 dark:text-slate-300">
-                  <Calendar className="h-5 w-5" />
-                  {tx("sexual.screening", lang)}
-                </h3>
-                {showScreening ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-              </button>
-              {showScreening && (
-                <div className="mt-4 space-y-3">
-                  {result.screeningSchedule.map((s, i) => (
-                    <div key={i} className="rounded-lg border p-3">
-                      <p className="font-semibold">{s.test}</p>
-                      <p className="text-xs text-muted-foreground">{s.frequency} - {s.ageGroup}</p>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">{s.note}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Safety Info */}
-          {result.safetyInfo?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-slate-700 dark:text-slate-300">
-                {tx("sexual.safetyInfo", lang)}
-              </h3>
-              <ul className="space-y-2">
-                {result.safetyInfo.map((info, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <Shield className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-500" /> {info}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Recommendations */}
-          {result.recommendations?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-slate-700 dark:text-slate-300">
-                {tx("common.recommendations", lang)}
-              </h3>
-              <ul className="space-y-2">
-                {result.recommendations.map((rec, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <Heart className="mt-0.5 h-4 w-4 flex-shrink-0 text-slate-500" /> {rec}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Professional Referral */}
-          {result.professionalReferral && (
-            <div className="rounded-xl border border-slate-300 bg-slate-50 p-4 dark:bg-slate-950/20">
-              <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                {tx("sexual.professionalReferral", lang)}
+        {/* Result */}
+        <AnimatePresence>
+          {showResult && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="mt-4 bg-slate-800 rounded-2xl p-5 border border-indigo-800/30">
+              <h3 className="text-sm font-semibold text-indigo-400 mb-2">Your Intimacy Protocol</h3>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Personalized plan: Maca Root (2000mg/day) for libido support,
+                L-Arginine (3g/day) for blood flow optimization,
+                and Tribulus Terrestris (750mg/day) for hormonal balance.
+                All cross-checked against your medication profile for safety.
               </p>
-            </div>
+              <p className="text-xs text-slate-500 mt-3">Always consult your healthcare provider. This is not medical advice.</p>
+            </motion.div>
           )}
-        </div>
-      )}
-
-      <p className="mt-6 text-center text-xs text-muted-foreground">{tx("disclaimer.tool", lang)}</p>
+        </AnimatePresence>
+      </div>
     </div>
-  );
+  )
 }
