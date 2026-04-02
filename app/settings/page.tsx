@@ -69,20 +69,16 @@ export default function SettingsPage() {
     if (newPassword.length < 8) { setPwError(isTr ? "Şifre en az 8 karakter olmalı" : "Password must be at least 8 characters"); return }
     if (!/[A-Z]/.test(newPassword)) { setPwError(isTr ? "En az 1 büyük harf gerekli" : "Need at least 1 uppercase letter"); return }
     if (newPassword !== confirmPassword) { setPwError(isTr ? "Şifreler eşleşmiyor" : "Passwords don't match"); return }
-    if (!user?.id) { setPwError(isTr ? "Kullanıcı bulunamadı" : "User not found"); return }
     setPwState("loading")
     try {
-      // Use server-side API with service role key — no email confirmation required
-      const res = await fetch("/api/auth/change-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: newPassword, userId: user.id }),
-      })
-      const data = await res.json()
-      if (!res.ok) { setPwState("error"); setPwError(data.error || (isTr ? "Bir hata oluştu" : "An error occurred")); return }
+      const { createBrowserClient } = await import("@/lib/supabase")
+      const supabase = createBrowserClient()
+      // Supabase sends a confirmation email — user must click link to finalize change
+      const { error } = await supabase.auth.updateUser({ password: newPassword })
+      if (error) { setPwState("error"); setPwError(error.message); return }
       setPwState("success")
       setNewPassword(""); setConfirmPassword("")
-      setTimeout(() => setPwState("idle"), 3000)
+      setTimeout(() => setPwState("idle"), 5000)
     } catch {
       setPwState("error")
       setPwError(isTr ? "Beklenmeyen bir hata oluştu" : "An unexpected error occurred")
@@ -236,9 +232,19 @@ export default function SettingsPage() {
                 {pwState === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
                 {pwState === "success" && <Check className="h-4 w-4" />}
                 {pwState === "success"
-                  ? (isTr ? "Şifre güncellendi!" : "Password updated!")
+                  ? (isTr ? "Onay e-postası gönderildi!" : "Confirmation email sent!")
                   : (isTr ? "Şifreyi Güncelle" : "Update Password")}
               </motion.button>
+              <AnimatePresence>
+                {pwState === "success" && (
+                  <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                    className="text-xs text-emerald-600 text-center">
+                    {isTr
+                      ? "📧 E-posta adresinize bir onay linki gönderdik. Şifreniz link tıklandıktan sonra değişecek."
+                      : "📧 We sent a confirmation link to your email. Your password will change after you click the link."}
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
