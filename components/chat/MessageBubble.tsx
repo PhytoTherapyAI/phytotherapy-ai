@@ -72,7 +72,7 @@ export function MessageBubble({ message, isLast, onSendFollowUp }: MessageBubble
   const sourcesContent = hrSplit.length > 1 ? hrSplit.slice(1).join("\n---\n") : null;
 
   return (
-    <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""} ${showSuggestions ? "relative mb-12" : ""}`}>
+    <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""} ${showSuggestions ? "relative pb-14" : ""}`}>
       {/* Avatar */}
       <div
         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
@@ -153,7 +153,7 @@ export function MessageBubble({ message, isLast, onSendFollowUp }: MessageBubble
 
       {/* Smart follow-up suggestions — only on last assistant message */}
       {showSuggestions && (
-        <div className="absolute -bottom-10 left-10 right-0">
+        <div className="absolute bottom-0 left-10 right-0">
           <SmartSuggestions
             suggestions={getFollowUps(message.content, lang)}
             onSelect={onSendFollowUp}
