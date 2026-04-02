@@ -8,7 +8,7 @@ import { useLang } from "@/components/layout/language-toggle"
 import { MessageSquarePlus, X, Send, Check, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 
-const HIDDEN_PATHS = ["/health-assistant", "/interaction-checker", "/blood-test"]
+const HIDDEN_PATHS = ["/blood-test"]
 
 type FeedbackCategory = "idea" | "love" | "bug"
 

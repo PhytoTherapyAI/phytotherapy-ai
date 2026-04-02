@@ -555,6 +555,26 @@ export default function ProfilePage() {
               ))}
             </div>
           </div>
+
+          {/* Recent Activity micro-feed */}
+          <div className="mt-5">
+            <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
+              📋 {tr ? "Son Aktiviteler" : "Recent Activity"}
+            </h3>
+            <div className="space-y-2">
+              {[
+                { icon: "✅", text: tr ? "İlaç etkileşimi kontrol edildi" : "Checked drug interaction", time: tr ? "2s önce" : "2h ago" },
+                { icon: "🩸", text: tr ? "Kan tahlili yüklendi" : "Uploaded blood test", time: tr ? "Dün" : "Yesterday" },
+                { icon: "💊", text: tr ? "İlaçlar güncellendi" : "Updated medications", time: tr ? "3 gün önce" : "3 days ago" },
+              ].map((act, i) => (
+                <div key={i} className="flex items-center gap-2.5 rounded-lg bg-white/40 dark:bg-white/5 px-3 py-2">
+                  <span className="text-sm">{act.icon}</span>
+                  <span className="flex-1 text-xs text-muted-foreground">{act.text}</span>
+                  <span className="text-[10px] text-muted-foreground/60">{act.time}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 

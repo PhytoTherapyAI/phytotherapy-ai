@@ -130,7 +130,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
         <CardHeader className="pb-2">
           <CardTitle className="flex items-center gap-2 text-base">
             <Mountain className="h-4 w-4 text-emerald-600" />
-            Biological Challenge
+            {tx("boss.title", lang)}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -364,7 +364,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <Mountain className="h-4 w-4 text-emerald-600" />
-          <span className="text-sm font-bold">Biological Challenge</span>
+          <span className="text-sm font-bold">{tx("boss.title", lang)}</span>
           <Badge variant="secondary" className="ml-auto text-[10px]">PREMIUM</Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground">

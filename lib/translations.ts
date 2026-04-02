@@ -6730,6 +6730,16 @@ const commonToolKeys: Record<string, TranslationEntry> = {
     en: "3rd trimester",
     tr: "3. trimester",
   },
+
+  // ── settings page ──
+  "settings.title": {
+    en: "Settings",
+    tr: "Ayarlar",
+  },
+  "settings.subtitle": {
+    en: "Manage your preferences",
+    tr: "Tercihlerinizi yönetin",
+  },
 }
 Object.assign(t, commonToolKeys)
 

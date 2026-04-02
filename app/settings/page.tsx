@@ -56,6 +56,8 @@ export default function SettingsPage() {
   }
 
   const SYSTEM_ITEMS = [
+    { icon: Bell,   label: isTr ? "Bildirim Tercihleri" : "Notification Preferences", desc: isTr ? "Hangi bildirimleri alacağınızı seçin" : "Choose which notifications you receive", color: "bg-blue-50 dark:bg-blue-950/30 text-blue-600", href: "/notification-preferences" },
+    { icon: Lock,   label: isTr ? "Güvenlik Ayarları" : "Security Settings", desc: isTr ? "Şifre ve oturum yönetimi" : "Password & session management", color: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600", href: "/security" },
     { icon: Shield, label: isTr ? "Gizlilik Kontrolleri" : "Privacy Controls", desc: isTr ? "Veri izinlerini yönet" : "Manage data permissions", color: "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300", href: "/privacy-controls" },
     { icon: Watch,  label: isTr ? "Bağlı Cihazlar" : "Connected Devices", desc: isTr ? "Apple Health, Google Fit" : "Apple Health, Google Fit", color: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600", href: "/connected-devices" },
     { icon: Award,  label: isTr ? "Sertifikalar" : "Certificates", desc: isTr ? "Sağlık başarılarınız" : "Your health achievements", color: "bg-amber-50 dark:bg-amber-950/30 text-amber-600", href: "/certificates" },

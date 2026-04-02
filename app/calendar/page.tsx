@@ -497,158 +497,184 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-background">
-      <div className="mx-auto max-w-2xl px-4 md:px-8 py-6 space-y-5">
+      <div className="mx-auto max-w-7xl px-4 md:px-8 py-6">
 
         {/* ═══ PAGE HEADER ═══ */}
-        <div className="flex items-center gap-2 px-1">
+        <div className="flex items-center gap-2 px-1 mb-6">
           <h1 className="font-heading text-2xl font-bold italic">{tx("cal.title", lang)}</h1>
           <InfoTooltip title="Habit & Healing Map" description="Track daily supplements, water intake, and health habits. Build streaks to stay motivated." />
         </div>
 
-        {/* ═══ WEEKLY STRIP ═══ */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-card rounded-2xl border border-stone-200/60 dark:border-stone-800 p-4 shadow-sm">
-          <WeeklyStripEnhanced selectedDate={selectedDate} onSelect={setSelectedDate} lang={lang} />
-        </motion.div>
+        {/* ═══ DESKTOP 2-COLUMN LAYOUT ═══ */}
+        <div className="flex flex-col md:flex-row gap-6">
 
-        {/* ═══ HABIT HEAT MAP ═══ */}
-        <HabitHeatMap lang={lang} />
+          {/* ═══ LEFT COLUMN: Navigation & Rings ═══ */}
+          <div className="md:w-72 flex-shrink-0 space-y-4">
 
-        {/* ═══ DAILY PROGRESS ═══ */}
-        <DailyProgressCard completed={completedTasks} total={allTasks.length} lang={lang} />
+            {/* Weekly Strip */}
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+              className="bg-white dark:bg-card rounded-2xl border border-stone-200/60 dark:border-stone-800 p-4 shadow-sm">
+              <WeeklyStripEnhanced selectedDate={selectedDate} onSelect={setSelectedDate} lang={lang} />
+            </motion.div>
 
-        {/* ═══ HABIT RINGS ═══ */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
-          className="flex justify-center gap-5 py-1">
-          <CircularRing emoji="💧" label={lang === "tr" ? "Su" : "Water"} current={waterDone + 3} total={8} color="#3b82f6" />
-          <CircularRing emoji="💊" label={lang === "tr" ? "İlaçlar" : "Meds"} current={1} total={2} color="#3c7a52" />
-          <CircularRing emoji="🌿" label={lang === "tr" ? "Takviye" : "Supps"} current={medsDone} total={totalMeds} color="#6B8F71" />
-          <CircularRing emoji="🚶" label={lang === "tr" ? "Hareket" : "Move"} current={1} total={3} color="#f59e0b" />
-        </motion.div>
+            {/* Habit Heat Map */}
+            <HabitHeatMap lang={lang} />
 
-        {/* ═══ VIEW SWITCHER ═══ */}
-        <div className="flex gap-1 bg-white dark:bg-card rounded-xl border p-1">
-          {(["today", "month", "vitals"] as const).map(view => (
-            <motion.button key={view} whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveView(view)}
-              className={`relative flex-1 py-2.5 px-3 rounded-lg text-xs font-medium transition-all ${
-                activeView === view ? "text-white" : "text-muted-foreground hover:bg-stone-50 dark:hover:bg-stone-900"
-              }`}>
-              {activeView === view && (
-                <motion.div layoutId="calViewTab" className="absolute inset-0 bg-primary rounded-lg shadow"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }} />
+            {/* Daily Progress */}
+            <DailyProgressCard completed={completedTasks} total={allTasks.length} lang={lang} />
+
+            {/* Habit Rings */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
+              className="bg-white dark:bg-card rounded-2xl border border-stone-200/60 dark:border-stone-800 p-4 shadow-sm">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                {lang === "tr" ? "Günlük Halkalar" : "Daily Rings"}
+              </p>
+              <div className="flex justify-around gap-2">
+                <CircularRing emoji="💧" label={lang === "tr" ? "Su" : "Water"} current={waterDone + 3} total={8} color="#3b82f6" />
+                <CircularRing emoji="💊" label={lang === "tr" ? "İlaçlar" : "Meds"} current={1} total={2} color="#3c7a52" />
+                <CircularRing emoji="🌿" label={lang === "tr" ? "Takviye" : "Supps"} current={medsDone} total={totalMeds} color="#6B8F71" />
+                <CircularRing emoji="🚶" label={lang === "tr" ? "Hareket" : "Move"} current={1} total={3} color="#f59e0b" />
+              </div>
+            </motion.div>
+
+            {/* Notification Settings — desktop sidebar */}
+            <div className="hidden md:block">
+              <NotificationSettings />
+            </div>
+
+          </div>
+
+          {/* ═══ RIGHT COLUMN: Daily Content ═══ */}
+          <div className="flex-1 space-y-4">
+
+            {/* View Switcher */}
+            <div className="flex gap-1 bg-white dark:bg-card rounded-xl border p-1">
+              {(["today", "month", "vitals"] as const).map(view => (
+                <motion.button key={view} whileTap={{ scale: 0.95 }}
+                  onClick={() => setActiveView(view)}
+                  className={`relative flex-1 py-2.5 px-3 rounded-lg text-xs font-medium transition-all ${
+                    activeView === view ? "text-white" : "text-muted-foreground hover:bg-stone-50 dark:hover:bg-stone-900"
+                  }`}>
+                  {activeView === view && (
+                    <motion.div layoutId="calViewTab" className="absolute inset-0 bg-primary rounded-lg shadow"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }} />
+                  )}
+                  <span className="relative z-10">
+                    {view === "today" ? (lang === "tr" ? "Bugün" : "Today") :
+                     view === "month" ? (lang === "tr" ? "Takvim" : "Calendar") :
+                     (lang === "tr" ? "Vitaller" : "Vitals")}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
+
+            {/* ═══ TODAY VIEW: Circadian Time Blocks ═══ */}
+            <AnimatePresence mode="wait">
+              {activeView === "today" && (
+                <motion.div key="today" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }} className="space-y-4">
+
+                  <TimeBlockEnhanced
+                    icon={<Sun className="h-4 w-4 text-amber-500" />}
+                    title={lang === "tr" ? "Sabah Rutini" : "Morning Routine"}
+                    tasks={morningTasks} onToggle={toggleTask} onAdd={() => {}}
+                    isCurrent={currentBlock === "morning"} hours="06:00–12:00" lang={lang} />
+
+                  <TimeBlockEnhanced
+                    icon={<Sunset className="h-4 w-4 text-orange-500" />}
+                    title={lang === "tr" ? "Öğle" : "Afternoon"}
+                    tasks={noonTasks} onToggle={toggleTask} onAdd={() => {}}
+                    isCurrent={currentBlock === "noon"} hours="12:00–18:00" lang={lang} />
+
+                  <TimeBlockEnhanced
+                    icon={<MoonIcon className="h-4 w-4 text-indigo-400" />}
+                    title={lang === "tr" ? "Akşam Ritüeli" : "Evening Wind-Down"}
+                    tasks={nightTasks} onToggle={toggleTask} onAdd={() => {}}
+                    isCurrent={currentBlock === "night"} hours="18:00–00:00" lang={lang} />
+
+                  {/* Existing TodayView integration */}
+                  <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
+                    <TodayView userId={profile.id} lang={lang} userName={profile.full_name}
+                      userWeight={profile.weight_kg} userHeight={profile.height_cm} userSupplements={profile.supplements} />
+                  </Suspense>
+                </motion.div>
               )}
-              <span className="relative z-10">
-                {view === "today" ? (lang === "tr" ? "Bugün" : "Today") :
-                 view === "month" ? (lang === "tr" ? "Takvim" : "Calendar") :
-                 (lang === "tr" ? "Vitaller" : "Vitals")}
-              </span>
-            </motion.button>
-          ))}
+
+              {activeView === "month" && (
+                <motion.div key="month" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }}>
+                  <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
+                    <MonthView userId={profile.id} lang={lang} />
+                  </Suspense>
+                  {allEvents.length > 0 && (
+                    <div className="mt-4">
+                      <Button variant="outline" className="w-full rounded-xl h-11" onClick={() => downloadICS(allEvents)}>
+                        <Download className="h-4 w-4 mr-2" />{tx("cal.exportIcs", lang)}
+                      </Button>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
+              {activeView === "vitals" && (
+                <motion.div key="vitals" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }} className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">{tx("cal.recentVitals", lang)}</h3>
+                    <Button size="sm" onClick={() => setAddVitalOpen(true)}>
+                      <Plus className="h-3.5 w-3.5 mr-1" />{tx("cal.addVital", lang)}
+                    </Button>
+                  </div>
+                  {vitalsLoading ? (
+                    <div className="flex justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-primary" /></div>
+                  ) : vitals.length === 0 ? (
+                    <Card><CardContent className="flex flex-col items-center gap-3 py-12 text-center">
+                      <Activity className="h-10 w-10 text-muted-foreground/40" />
+                      <p className="text-sm text-muted-foreground">{tx("cal.noVitals", lang)}</p>
+                      <Button variant="outline" size="sm" onClick={() => setAddVitalOpen(true)}>
+                        <Plus className="h-3.5 w-3.5 mr-1" />{tx("cal.addVital", lang)}
+                      </Button>
+                    </CardContent></Card>
+                  ) : (
+                    <div className="space-y-2">
+                      {vitals.map(vital => {
+                        const d = new Date(vital.recorded_at)
+                        return (
+                          <motion.div key={vital.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                            <Card><CardContent className="flex items-center gap-4 py-3 px-4">
+                              <VitalIcon type={vital.vital_type} />
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm font-medium">{tx(`cal.vitalType.${vital.vital_type}`, lang)}</span>
+                                  <Badge variant="secondary" className="text-xs font-mono">{formatVitalValue(vital, lang)}</Badge>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {d.toLocaleDateString(tx("common.locale", lang), { day: "numeric", month: "short" })} {d.toLocaleTimeString(tx("common.locale", lang), { hour: "2-digit", minute: "2-digit" })}
+                                </p>
+                              </div>
+                            </CardContent></Card>
+                          </motion.div>
+                        )
+                      })}
+                    </div>
+                  )}
+                  {addVitalOpen && (
+                    <Suspense fallback={null}>
+                      <AddVitalDialog userId={profile.id} lang={lang} open={addVitalOpen}
+                        onOpenChange={setAddVitalOpen} onSaved={() => fetchVitals()} />
+                    </Suspense>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+          </div>
         </div>
 
-        {/* ═══ TODAY VIEW: Circadian Time Blocks ═══ */}
-        <AnimatePresence mode="wait">
-          {activeView === "today" && (
-            <motion.div key="today" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }} className="space-y-4">
-
-              <TimeBlockEnhanced
-                icon={<Sun className="h-4 w-4 text-amber-500" />}
-                title={lang === "tr" ? "Sabah Rutini" : "Morning Routine"}
-                tasks={morningTasks} onToggle={toggleTask} onAdd={() => {}}
-                isCurrent={currentBlock === "morning"} hours="06:00–12:00" lang={lang} />
-
-              <TimeBlockEnhanced
-                icon={<Sunset className="h-4 w-4 text-orange-500" />}
-                title={lang === "tr" ? "Öğle" : "Afternoon"}
-                tasks={noonTasks} onToggle={toggleTask} onAdd={() => {}}
-                isCurrent={currentBlock === "noon"} hours="12:00–18:00" lang={lang} />
-
-              <TimeBlockEnhanced
-                icon={<MoonIcon className="h-4 w-4 text-indigo-400" />}
-                title={lang === "tr" ? "Akşam Ritüeli" : "Evening Wind-Down"}
-                tasks={nightTasks} onToggle={toggleTask} onAdd={() => {}}
-                isCurrent={currentBlock === "night"} hours="18:00–00:00" lang={lang} />
-
-              {/* Existing TodayView integration */}
-              <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
-                <TodayView userId={profile.id} lang={lang} userName={profile.full_name}
-                  userWeight={profile.weight_kg} userHeight={profile.height_cm} userSupplements={profile.supplements} />
-              </Suspense>
-            </motion.div>
-          )}
-
-          {activeView === "month" && (
-            <motion.div key="month" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }}>
-              <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
-                <MonthView userId={profile.id} lang={lang} />
-              </Suspense>
-              {allEvents.length > 0 && (
-                <div className="mt-4">
-                  <Button variant="outline" className="w-full rounded-xl h-11" onClick={() => downloadICS(allEvents)}>
-                    <Download className="h-4 w-4 mr-2" />{tx("cal.exportIcs", lang)}
-                  </Button>
-                </div>
-              )}
-            </motion.div>
-          )}
-
-          {activeView === "vitals" && (
-            <motion.div key="vitals" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }} className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">{tx("cal.recentVitals", lang)}</h3>
-                <Button size="sm" onClick={() => setAddVitalOpen(true)}>
-                  <Plus className="h-3.5 w-3.5 mr-1" />{tx("cal.addVital", lang)}
-                </Button>
-              </div>
-              {vitalsLoading ? (
-                <div className="flex justify-center py-12"><Loader2 className="h-5 w-5 animate-spin text-primary" /></div>
-              ) : vitals.length === 0 ? (
-                <Card><CardContent className="flex flex-col items-center gap-3 py-12 text-center">
-                  <Activity className="h-10 w-10 text-muted-foreground/40" />
-                  <p className="text-sm text-muted-foreground">{tx("cal.noVitals", lang)}</p>
-                  <Button variant="outline" size="sm" onClick={() => setAddVitalOpen(true)}>
-                    <Plus className="h-3.5 w-3.5 mr-1" />{tx("cal.addVital", lang)}
-                  </Button>
-                </CardContent></Card>
-              ) : (
-                <div className="space-y-2">
-                  {vitals.map(vital => {
-                    const d = new Date(vital.recorded_at)
-                    return (
-                      <motion.div key={vital.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                        <Card><CardContent className="flex items-center gap-4 py-3 px-4">
-                          <VitalIcon type={vital.vital_type} />
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium">{tx(`cal.vitalType.${vital.vital_type}`, lang)}</span>
-                              <Badge variant="secondary" className="text-xs font-mono">{formatVitalValue(vital, lang)}</Badge>
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                              {d.toLocaleDateString(tx("common.locale", lang), { day: "numeric", month: "short" })} {d.toLocaleTimeString(tx("common.locale", lang), { hour: "2-digit", minute: "2-digit" })}
-                            </p>
-                          </div>
-                        </CardContent></Card>
-                      </motion.div>
-                    )
-                  })}
-                </div>
-              )}
-              {addVitalOpen && (
-                <Suspense fallback={null}>
-                  <AddVitalDialog userId={profile.id} lang={lang} open={addVitalOpen}
-                    onOpenChange={setAddVitalOpen} onSaved={() => fetchVitals()} />
-                </Suspense>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Notification Settings */}
-        <NotificationSettings />
+        {/* Notification Settings — mobile only */}
+        <div className="mt-4 md:hidden">
+          <NotificationSettings />
+        </div>
       </div>
 
       {/* ═══ Quick Log FAB ═══ */}

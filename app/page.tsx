@@ -277,7 +277,7 @@ export default function Home() {
   };
 
   const handleAskAI = () => {
-    if (query.trim()) router.push(`/chat?q=${encodeURIComponent(query.trim())}`);
+    if (query.trim()) router.push(`/health-assistant?q=${encodeURIComponent(query.trim())}`);
   };
 
   const showDashboard = isAuthenticated && user && profile?.onboarding_complete;
@@ -409,10 +409,10 @@ export default function Home() {
                   </div>
                   <div className="flex flex-wrap gap-1.5 mt-3">
                     {[
-                      { emoji: "💊", text: isTr ? "İlaç etkileşimi" : "Drug interaction" },
-                      { emoji: "🩸", text: isTr ? "Tahlil yorumla" : "Analyze blood test" },
+                      { emoji: "💊", text: isTr ? "İlaç etkileşimi" : "Drug interaction", query: isTr ? "İlaç etkileşimi hakkında bilgi" : "Drug interaction help" },
+                      { emoji: "🩸", text: isTr ? "Tahlil yorumla" : "Analyze blood test", query: isTr ? "Kan tahlilimi yorumla" : "Analyze my blood test" },
                     ].map((chip, i) => (
-                      <button key={i} onClick={() => { setQuery(chip.text); inputRef.current?.focus(); }}
+                      <button key={i} onClick={() => router.push(`/health-assistant?q=${encodeURIComponent(chip.query)}`)}
                         className="flex items-center gap-1 rounded-lg bg-white/5 border border-white/10 px-2.5 py-1.5 text-[10px] text-stone-400 hover:bg-white/10 hover:text-white transition-colors">
                         <span>{chip.emoji}</span> {chip.text}
                       </button>
@@ -455,12 +455,12 @@ export default function Home() {
               <WeeklySummaryCard userId={user.id} lang={lang} isPremium={isPremium} />
               <WashoutCountdown key={supRefreshKey} userId={user.id} lang={lang} isPremium={isPremium}
                 profileSupplements={profile.supplements || []} onAddSupplement={() => setAddSupOpen(true)} />
-              <BossFightCard userId={user.id} lang={lang} isPremium={isPremium} />
             </div>
             <div className="space-y-6">
               <BiologicalAgeCard userId={user.id} lang={lang} isPremium={isPremium}
                 chronologicalAge={chronologicalAge} userName={profile.full_name ?? undefined} />
               <MetabolicPortfolio lang={lang} isPremium={isPremium} checkInData={checkInData} />
+              <BossFightCard userId={user.id} lang={lang} isPremium={isPremium} />
             </div>
           </motion.div>
 
