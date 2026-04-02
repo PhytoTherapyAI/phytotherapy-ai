@@ -3,7 +3,7 @@
 
 import { useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { AlertTriangle, RotateCcw, Home } from "lucide-react"
+import { RotateCcw, Home, RefreshCw } from "lucide-react"
 
 export default function Error({
   error,
@@ -18,7 +18,6 @@ export default function Error({
     console.error("[ErrorBoundary]", error)
     import("@sentry/nextjs").then((Sentry) => Sentry.captureException(error)).catch(() => {})
 
-    // Auto-retry up to 2 times with delay (handles cold start / deploy transitions)
     if (retryCount.current < 2) {
       retryCount.current++
       const timer = setTimeout(() => reset(), 1500)
@@ -26,7 +25,6 @@ export default function Error({
     }
   }, [error, reset])
 
-  // Show UI only after auto-retries are exhausted
   if (retryCount.current < 2) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center">
@@ -35,30 +33,23 @@ export default function Error({
     )
   }
 
-  const handleRefresh = () => {
-    if (typeof window !== "undefined") window.location.reload()
-  }
-
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/30">
-        <AlertTriangle className="h-8 w-8 text-amber-500" />
-      </div>
-      <h2 className="text-xl font-semibold">Bir şeyler ters gitti</h2>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/logo-icon.svg" alt="Doctopal" className="h-14 w-14 rounded-xl opacity-60" />
+      <h2 className="text-xl font-semibold">Something went wrong</h2>
       <p className="max-w-md text-sm text-muted-foreground">
-        Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin veya sayfayı yenileyin.
+        An unexpected error occurred. Don&apos;t worry — your data is safe. Let&apos;s get you back on track.
       </p>
-      <div className="flex gap-3">
+      <div className="flex gap-3 flex-wrap justify-center">
         <Button onClick={() => reset()} variant="default" className="gap-2">
-          <RotateCcw className="h-4 w-4" />
-          Tekrar Dene
+          <RotateCcw className="h-4 w-4" /> Try Again
         </Button>
-        <Button onClick={handleRefresh} variant="outline" className="gap-2">
-          Sayfayı Yenile
+        <Button onClick={() => { if (typeof window !== "undefined") window.location.reload() }} variant="outline" className="gap-2">
+          <RefreshCw className="h-4 w-4" /> Refresh Page
         </Button>
         <Button onClick={() => { if (typeof window !== "undefined") window.location.href = "/" }} variant="ghost" className="gap-2">
-          <Home className="h-4 w-4" />
-          Ana Sayfa
+          <Home className="h-4 w-4" /> Go Home
         </Button>
       </div>
     </div>

@@ -19,7 +19,8 @@ export function Footer() {
 
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Leaf className="h-4 w-4 text-primary" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-icon.svg" alt="" className="h-5 w-5 rounded" />
             <span className="font-heading" suppressHydrationWarning>© {new Date().getFullYear()} Doctopal — {tx("footer.allRightsReserved", lang)}</span>
           </div>
 
@@ -35,6 +36,10 @@ export function Footer() {
             <Link href="/about" className="transition-colors hover:text-foreground">
               {tx("footer.about", lang)}
             </Link>
+            <span className="text-border">|</span>
+            <a href="mailto:hello@doctopal.com" className="transition-colors hover:text-foreground">
+              hello@doctopal.com
+            </a>
           </div>
 
           <p className="text-xs text-muted-foreground">
