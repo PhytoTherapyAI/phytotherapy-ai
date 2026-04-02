@@ -2147,3 +2147,117 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ `vercel.json` — Cron job yapılandırması (06:00 UTC)
 - ✅ 8 Supabase migration dosyası (verification, bot, vector, health metrics, consent)
 - ✅ Toplam: 317+ sayfa, build temiz, tüm push'lar yapılmış
+
+---
+
+## Modül 45-60: Davranışsal UX Yeniden Tasarım v4 (2 Nisan 2026)
+
+**Modül 45 — Settings & Account (Personal Command Center):**
+- ✅ Apple tarzı Bento Box kategori kartları (Personal AI, Digital Vault, Ecosystem)
+- ✅ Security & Privacy Shield (circular progress, %82/%100)
+- ✅ Asistan kişilik seçimi (Compassionate/Clinical/Witty — IKEA Effect)
+- ✅ Labor Illusion (data encryption animation)
+- ✅ Bildirim tercihleri açılır panel
+
+**Modül 46 — Women's Health (Hormonal Compass):**
+- ✅ Apple Fitness tarzı organik Cycle Ring (SVG, 28 gün, 4 faz)
+- ✅ Anticipatory Design — günlük hormonal insight kartı
+- ✅ Sürtünmesiz semptom çipleri (tek dokunuşla kayıt, haptic pop)
+- ✅ Sofistike FemTech paletiyle (peach/terracotta/blush/sage)
+
+**Modül 47 — Menopause Panel (Biological Balance Center):**
+- ✅ Balance Aura (nefes alan, renkleri değişen radyal gradient)
+- ✅ Semptom baloncukları (8 adet, tıkla → BottomSheet → şiddet seçimi)
+- ✅ Mikro şefkat mesajları (Sleep yüksekse → Passionflower önerisi)
+- ✅ Labor Illusion (hormonal analiz + phytoestrogen tarama)
+
+**Modül 48 — Postpartum Support (Safe Harbor / Sanctuary):**
+- ✅ Şefkatli diyalog (uyku saatine göre validasyon mesajları)
+- ✅ Mood Weather ikonları (☀️🌥️🌧️⛈️)
+- ✅ Healing Needs vitrini (6 kart, tek dokunuşla seçim)
+- ✅ Inner Balance Scan (EPDS tarzı, Typeform UI)
+- ✅ Labor Illusion (breastfeeding safety check)
+
+**Modül 49 — Men's Health (Performance HQ):**
+- ✅ Vitality Radar (SVG radar chart, 6 metrik, neon cyan/emerald)
+- ✅ Dark mode (bg-slate-900, spor otomobil kadranı estetiği)
+- ✅ Biological Age slider (kronolojik vs hedef biyolojik yaş)
+- ✅ 6 optimizasyon hedefi (Testosterone, Muscle, Energy...)
+- ✅ Labor Illusion (testosterone/cortisol/DHT analizi)
+
+**Modül 50 — Sexual Health (Intimacy & Vitality Room):**
+- ✅ Dark mode (koyu lacivert, indigo parlamalar)
+- ✅ Privacy Signaling (🔒 end-to-end encrypted banner)
+- ✅ Glassmorphism hedef çipleri (Libido, Blood Flow, Moisture...)
+- ✅ SSRI Side Effect Detective (toggle switch + bilgi kartı)
+- ✅ Labor Illusion (phyto-aphrodisiac + medication cross-check)
+
+**Modül 51 — Pregnancy Tracker (Bloom Dashboard):**
+- ✅ Development Sphere (haftalık büyüyen organik küre)
+- ✅ Hafta navigasyonu (W8-W36 pill butonları)
+- ✅ Phytotherapy Radar (Safe Supports vs Absolutely Avoid tab)
+- ✅ Semptom çipleri (tıkla → genişleyen öneri kartı)
+- ✅ Terracotta/krem/sage-green soft-UI paleti
+
+**Modül 52 — Hormonal Health Hub Layout:**
+- ✅ 6 sekme navigasyonu (Women's, Pregnancy, Postpartum, Menopause, Men's, Sexual)
+- ✅ layoutId pill tab animasyonu (fuchsia/rose tonları)
+- ✅ AnimatePresence sayfa geçişleri (opacity + y slide)
+- ✅ Hub index sayfası (gradient kartlar)
+
+**Modül 53 — Check-up Planner (Longevity Shield):**
+- ✅ Cinsiyet seçimi (iki büyük ikonlu kart)
+- ✅ Age Tunnel slider (vizyoner mesaj)
+- ✅ 6 Priority Protection Area (pozitif çerçeveleme)
+- ✅ Labor Illusion (screening guidelines + biomarker analizi)
+
+**Modül 54 — Cancer Screening (Cell Protection Shield):**
+- ✅ Pozitif başlık (Early Detection Shield)
+- ✅ Systemic Focus Bento Box (5 sistem, Progressive Disclosure)
+- ✅ Lifestyle Cards (Smoking/Alcohol — pozitif mikro-copy)
+- ✅ Labor Illusion (NCCN/WHO guidelines tarama)
+
+**Modül 55 — Family Health Tree (Genetic Constellation):**
+- ✅ İnteraktif aile ağacı (Grandparents → Parents → You)
+- ✅ Pulsing ghost slotları (Zeigarnik Effect)
+- ✅ BottomSheet kondisyon seçimi (10 sağlık çipi)
+- ✅ Anında bio-feedback (enerji akışı + aha mesajı)
+
+**Modül 56 — Genetic Risk Profile (Epigenetic Control Center):**
+- ✅ Dark mode (uzay grisi, fuchsia/cyan parlamalar)
+- ✅ DNA Helix görsel metaforu (dönen SVG)
+- ✅ Aile öyküsü sistemleri (Cardio, Neuro, Metabolic, Autoimmune)
+- ✅ 6 Cellular Improvement Opportunity (pozitif çerçeveleme)
+- ✅ Labor Illusion (epigenetic mapping + phytotherapy armor)
+
+**Modül 57 — Allergy & Intolerance Map (Immunological Shield):**
+- ✅ Protective Shield zero-state (süzülen kalkan animasyonu)
+- ✅ Kategorik ayrım: Immune Response (kırmızı) vs Digestive Sensitivity (amber)
+- ✅ Cross-Safety Radar (ilaç adı gir → tarama animasyonu → yeşil/kırmızı sonuç)
+- ✅ BottomSheet hızlı ekleme (Big 8 alerjen çipleri)
+
+**Modül 58 — Vaccine Tracker (Biological Armor):**
+- ✅ Hexagon petek zırh grafiği (SVG, yeşil/amber/gri durumlar)
+- ✅ Shield yüzdesi (tamamlanan/toplam aşı)
+- ✅ Tıkla → durum değiştir (Missing → Due → Protected döngüsü)
+- ✅ Quick Add BottomSheet + Travel Radar Labor Illusion
+
+**Modül 59 — Prevention Hub Layout:**
+- ✅ 6 sekme navigasyonu (Check-up, Cancer, Family Tree, Genetic, Allergy, Vaccines)
+- ✅ layoutId pill tab (teal/emerald tonları)
+- ✅ AnimatePresence geçişleri (opacity + scale)
+- ✅ Hub index sayfası
+
+**Modül 60 — Discovery Hub + Bottom Navbar:**
+- ✅ Discovery page (Pinterest/Instagram Explore tarzı Bento Grid)
+- ✅ Hero: Healing Circle + Health Forum büyük kartlar
+- ✅ Trending Content yatay carousel (Podcast, Course, Expert)
+- ✅ AI Did You Know insight kartı
+- ✅ Quick Access pill çipleri (Quiz, Fact Check, Dictionary...)
+- ✅ BottomNavbar bileşeni (Home, Medical Tools, Community, Profile)
+- ✅ Layout.tsx'e entegre, mobilde sticky bottom nav
+
+**Genel:**
+- ✅ tools-hierarchy.ts güncellendi (vaccine-tracker href, discover eklendi)
+- ✅ 16 modül tamamlandı, 16 commit + push
+- ✅ Toplam: 330+ sayfa aktif

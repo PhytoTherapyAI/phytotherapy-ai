@@ -295,7 +295,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "family-tree", title: { en: "Family Health Tree", tr: "Aile Sağlık Ağacı" }, icon: "GitBranch", href: "/family-health-tree" },
       { id: "genetic-risk", title: { en: "Genetic Risk", tr: "Genetik Risk" }, icon: "Dna", href: "/genetic-risk" },
       { id: "allergy-map", title: { en: "Allergy Map", tr: "Alerji Haritası" }, icon: "MapPin", href: "/allergy-map" },
-      { id: "vaccination", title: { en: "Vaccinations", tr: "Aşılar" }, icon: "Syringe", href: "/vaccination" },
+      { id: "vaccination", title: { en: "Vaccinations", tr: "Aşılar" }, icon: "Syringe", href: "/vaccine-tracker" },
     ],
   },
 
@@ -370,6 +370,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     defaultModule: "forum",
     layout: "grid",
     modules: [
+      { id: "discover", title: { en: "Discovery Hub", tr: "Keşif Merkezi" }, icon: "Compass", href: "/discover" },
       { id: "community-feed", title: { en: "Healing Circle", tr: "Şifa Çemberi" }, icon: "Heart", href: "/community" },
       { id: "forum", title: { en: "Health Forum", tr: "Sağlık Forumu" }, icon: "MessageSquare", href: "/health-forum" },
       { id: "support-groups", title: { en: "Support Groups", tr: "Destek Grupları" }, icon: "Users", href: "/support-groups" },
