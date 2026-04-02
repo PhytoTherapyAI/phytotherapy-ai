@@ -197,7 +197,7 @@ function LoginContent() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/logo-icon.svg" alt="DoctoPal" className="h-8 w-8" />
             <span style={{ fontFamily: 'system-ui, -apple-system, sans-serif', fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>
-              <span style={{ color: 'var(--foreground)' }}>Docto</span><span style={{ color: 'var(--brand, #0d9488)' }}>Pal</span>
+              <span style={{ color: 'var(--foreground)' }}>Docto</span><span style={{ color: 'var(--brand, #3c7a52)' }}>Pal</span>
             </span>
           </div>
           <CardTitle className="text-2xl">{tx("auth.welcome", lang)}</CardTitle>

@@ -16,12 +16,13 @@ const SIZES = {
 
 // Brand colors
 const BRAND = {
-  light: { docto: "#1e293b", pal: "#0d9488", icon: "#0d9488" },  // slate-800 + teal-600
-  dark:  { docto: "#f1f5f9", pal: "#2dd4bf", icon: "#2dd4bf" },  // slate-100 + teal-400
+  light: { docto: "#1e293b", pal: "#3c7a52", icon: "#3c7a52", leaf: "#c4a86c" },
+  dark:  { docto: "#f1f5f9", pal: "#86EFAC", icon: "#4a9460", leaf: "#c4a86c" },
 }
 
 function LogoIcon({ size, theme }: { size: number; theme: "light" | "dark" }) {
   const c = BRAND[theme].icon
+  const leaf = BRAND[theme].leaf
 
   return (
     <svg
@@ -43,11 +44,11 @@ function LogoIcon({ size, theme }: { size: number; theme: "light" | "dark" }) {
         strokeLinejoin="round"
         fill="none"
       />
-      {/* Subtle leaf accent on top-right of D curve */}
+      {/* Gold leaf accent on top-right of D curve */}
       <path
         d="M26 8 C28 6, 31 5.5, 33 6 C32 8, 30 9.5, 27.5 10"
-        fill={c}
-        opacity="0.85"
+        fill={leaf}
+        opacity="0.9"
       />
       {/* Tiny leaf vein */}
       <path

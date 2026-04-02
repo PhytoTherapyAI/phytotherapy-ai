@@ -79,13 +79,13 @@
   --border: #e2dfd8;
   --input: #e2dfd8;
   --ring: #3c7a52;
-  --brand: #0d9488;
-  --brand-light: #ccfbf1;
-  --brand-dark: #0f766e;
-  --brand-accent: #14b8a6;
+  --brand: #3c7a52;
+  --brand-light: #e8f5e9;
+  --brand-dark: #2d5e3e;
+  --brand-accent: #5a9e6f;
   --brand-foreground: #ffffff;
-  --gold: #b8965a;
-  --logo-accent: #0d9488;
+  --gold: #c4a86c;
+  --logo-accent: #c4a86c;
   /* Design System — Semantic Colors */
   --lavender: #7C3AED;
   --lavender-foreground: #ffffff;
@@ -129,13 +129,13 @@
   --border: rgba(255, 255, 255, 0.06);
   --input: rgba(255, 255, 255, 0.06);
   --ring: #4a9460;
-  --brand: #14b8a6;
-  --brand-light: #042f2e;
-  --brand-dark: #2dd4bf;
-  --brand-accent: #5eead4;
+  --brand: #4a9460;
+  --brand-light: #1a3a24;
+  --brand-dark: #86EFAC;
+  --brand-accent: #6dbd82;
   --brand-foreground: #f0faf2;
-  --gold: #b8945a;
-  --logo-accent: #2dd4bf;
+  --gold: #c4a86c;
+  --logo-accent: #c4a86c;
   /* Design System — Dark Semantic Colors */
   --lavender: #A78BFA;
   --lavender-foreground: #1e1b4b;
