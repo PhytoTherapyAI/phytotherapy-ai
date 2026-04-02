@@ -2529,5 +2529,26 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ Tab 2 (System Settings): AI Personality 3-way toggle (Compassionate/Clinical/Witty), AnimatePresence iOS tarzı bildirim toggle'ları, 4 sistem linki, Dil toggle (EN/TR), Download My Data (labor illusion: packaging→ready), Delete My Data (onay modal)
 
 ### Build Durumu
-- ✅ `npx next build` — SIFIR hata, 342 sayfa başarıyla oluşturuldu
+- ✅ `npx next build` — SIFIR hata, 345 sayfa başarıyla oluşturuldu
 - ✅ Tüm 4 grup commit edildi ve master'a push edildi
+
+---
+
+## Session 12 — 3 Nisan 2026
+
+### Medication/Supplement Task Sync Refactor
+- ✅ `lib/med-dose-utils.ts` — Shared frequency parser (2x/gün → sabah+akşam)
+- ✅ Dashboard: tek "İlaçlar" task → bireysel ilaç dozları (Cipralex ✓, Glifor Sabah ✓, Glifor Akşam ✓)
+- ✅ TodayView: multi-dose ilaçlar ayrı satırda, `daily_logs` Supabase ile sync
+- ✅ Calendar rituals: UUID bazlı task ID'ler, `daily_logs` single source of truth
+- ✅ 3-way sync: Dashboard ↔ TodayView ↔ Calendar → `daily-log-changed` event
+- ✅ Water 3-way sync: FAB + TodayView + ring → `water_intake` tablosu
+- ✅ localStorage sync kaldırıldı (med/sup için), Supabase tek kaynak
+
+### Lighthouse Optimization
+- ✅ CLS fix: sabit navbar yüksekliği, animasyon y-offset kaldırma (fadeUp, time blocks, view transitions), img width/height
+- ✅ A11y fix: text-muted-foreground/50 → /70 (28 instance, 23 dosya), aria-labels tüm ikon butonlara, touch targets 44px+
+- ✅ Performance: dynamic import doğrulandı (9 kart), tree-shake doğrulandı, sw.js temiz
+- ✅ Best Practices: deprecated API yok, HTTP URL'ler sadece FHIR standart URI'ler (doğru)
+- ✅ Viewport metadata eklendi (width, initialScale, themeColor)
+- Hedef skorlar: Performance 90+, Accessibility 95+, Best Practices 100, SEO 100

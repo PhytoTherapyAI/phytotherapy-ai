@@ -1,5 +1,5 @@
 // © 2026 Doctopal — All Rights Reserved
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Cormorant_Garamond, DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
 import { Header } from "@/components/layout/header";
@@ -48,6 +48,12 @@ const dmSerif = DM_Serif_Display({
   weight: ["400"],
   style: ["normal"],
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#3c7a52",
+};
 
 export const metadata: Metadata = {
   title: "DoctoPal — Evidence Meets Nature. AI Meets You.",
