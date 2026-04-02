@@ -1,429 +1,281 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import {
-  Heart,
-  Loader2,
-  AlertTriangle,
-  Phone,
-  Shield,
-  LogIn,
-  Baby,
-  Moon,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, Heart, Shield } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-interface PostpartumResult {
-  alertLevel: "green" | "yellow" | "red";
-  crisisAlert: boolean;
-  crisisMessage?: string;
-  crisisLines: string[];
-  epdsScore: number | null;
-  epdsRisk: string | null;
-  weeksPostpartum: number;
-  breastfeeding: boolean;
-  professionalReferral: boolean;
-  mentalHealthCheck: { status: string; recommendations: string[] };
-  breastfeedingSafeMeds: Array<{ medication: string; lactmedCategory: string; safe: boolean; note: string }>;
-  recoveryTips: Array<{ area: string; tip: string; when: string }>;
-  nutritionNeeds?: Array<{ nutrient: string; amount: string; why: string }>;
-  sleepStrategies?: string[];
-  selfCarePlan?: string[];
-  warningSignsToWatch?: string[];
+const moodWeather = [
+  { emoji: "☀️", label: "Sunny & Peaceful", value: 5 },
+  { emoji: "🌤️", label: "Mostly Good", value: 4 },
+  { emoji: "🌥️", label: "Partly Cloudy", value: 3 },
+  { emoji: "🌧️", label: "Stormy", value: 2 },
+  { emoji: "⛈️", label: "Overwhelmed", value: 1 },
+]
+
+const healingNeeds = [
+  { emoji: "🧘‍♀️", label: "Calm the Mind", desc: "Relaxation & anxiety relief" },
+  { emoji: "🤱", label: "Breastfeeding Support", desc: "Safe supplements for nursing" },
+  { emoji: "🔋", label: "Energy Recharge", desc: "Fight fatigue naturally" },
+  { emoji: "🌸", label: "Body Acceptance", desc: "Postpartum body love" },
+  { emoji: "😴", label: "Sleep Recovery", desc: "Better rest when you can" },
+  { emoji: "💪", label: "Physical Recovery", desc: "Healing & strength" },
+]
+
+const sleepMessages: Record<string, string> = {
+  "2": "Only 2 hours? You're a superhero for even standing right now. Let's find you some gentle support.",
+  "3": "3 hours of broken sleep is incredibly hard. Your body is doing amazing things despite this.",
+  "4": "Only 4 hours? Just standing up right now is a miracle. Even superheroes get tired.",
+  "5": "5 hours — better than yesterday maybe? Every bit of rest counts for your recovery.",
+  "6": "6 hours! That's a small victory worth celebrating. You're doing great, mama.",
+  "7": "7 hours? That's wonderful! Your body is healing beautifully.",
+  "8": "8 hours! You must be feeling like a new person. Enjoy this energy!",
 }
 
-const EPDS = [
-  { en: "I have been able to laugh and see the funny side of things", tr: "Gulebiliyorum ve olaylarin komik tarafini gorebiliyorum" },
-  { en: "I have looked forward with enjoyment to things", tr: "Bir seyleri zevkle bekliyorum" },
-  { en: "I have blamed myself unnecessarily when things went wrong", tr: "Isler ters gittiginde kendimi gereksiz yere sucluyorum" },
-  { en: "I have been anxious or worried for no good reason", tr: "Sebepsiz yere endise ediyorum veya kaygılaniyorum" },
-  { en: "I have felt scared or panicky for no very good reason", tr: "Sebepsiz yere korkuyorum veya panik oluyorum" },
-  { en: "Things have been getting on top of me", tr: "Isler basima yigiliyor" },
-  { en: "I have been so unhappy that I have had difficulty sleeping", tr: "O kadar mutsuzum ki uyumakta zorluk cekiyorum" },
-  { en: "I have felt sad or miserable", tr: "Kendimi uzgun veya mutsuz hissediyorum" },
-  { en: "I have been so unhappy that I have been crying", tr: "O kadar mutsuzum ki agliyorum" },
-  { en: "The thought of harming myself has occurred to me", tr: "Kendime zarar verme dusuncesi aklima geldi" },
-];
+function LaborIllusion({ onComplete }: { onComplete: () => void }) {
+  const steps = [
+    "Checking breastfeeding safety...",
+    "Scanning mood-lifting adaptogens...",
+    "Filtering postpartum-safe herbs...",
+    "Preparing your compassion protocol...",
+  ]
+  const [step, setStep] = useState(0)
 
-const EPDS_OPTIONS_EN = [
-  ["As much as I always could", "Not quite so much now", "Definitely not so much now", "Not at all"],
-  ["As much as I ever did", "Rather less than I used to", "Definitely less than I used to", "Hardly at all"],
-  ["Yes, most of the time", "Yes, some of the time", "Not very often", "No, never"],
-  ["Yes, quite a lot", "Yes, sometimes", "No, not much", "No, not at all"],
-  ["Yes, quite a lot", "Yes, sometimes", "No, not much", "No, not at all"],
-  ["Yes, most of the time", "Yes, sometimes", "No, not often", "No, never"],
-  ["Yes, most of the time", "Yes, sometimes", "Not very often", "No, not at all"],
-  ["Yes, most of the time", "Yes, quite often", "Not very often", "No, not at all"],
-  ["Yes, most of the time", "Yes, quite often", "Only occasionally", "No, never"],
-  ["Yes, quite often", "Sometimes", "Hardly ever", "Never"],
-];
-
-export default function PostpartumSupportPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-
-  const [weeksPostpartum, setWeeksPostpartum] = useState(4);
-  const [breastfeeding, setBreastfeeding] = useState(false);
-  const [moodScore, setMoodScore] = useState(3);
-  const [sleepHours, setSleepHours] = useState(4);
-  const [concerns, setConcerns] = useState<string[]>([]);
-  const [epdsAnswers, setEpdsAnswers] = useState<number[]>(Array(10).fill(-1));
-  const [showEPDS, setShowEPDS] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<PostpartumResult | null>(null);
-
-  const epdsQuestions = EPDS.map((q) => q[lang]);
-
-  const CONCERNS = [
-    { en: "Mood swings", tr: "Ruh hali değişikliği" },
-    { en: "Anxiety", tr: "Kaygi" },
-    { en: "Bonding difficulty", tr: "Baglanma güçlüğü" },
-    { en: "Body image", tr: "Beden imaji" },
-    { en: "Relationship", tr: "Iliski" },
-    { en: "Breastfeeding issues", tr: "Emzirme sorunları" },
-    { en: "Pain", tr: "Ağrı" },
-    { en: "Fatigue", tr: "Yorgunluk" },
-  ];
-  const concernOptions = CONCERNS.map((c) => c[lang]);
-
-  const handleAnalyze = async () => {
-    if (!session?.access_token) return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const epdsValid = epdsAnswers.every((a) => a >= 0);
-      const res = await fetch("/api/postpartum-support", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          lang,
-          weeks_postpartum: weeksPostpartum,
-          breastfeeding,
-          mood_score: moodScore,
-          sleep_hours: sleepHours,
-          concerns,
-          epds_answers: epdsValid ? epdsAnswers : [],
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Assessment failed");
-      }
-
-      const data = await res.json();
-      setResult(data.result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="rounded-lg bg-purple-50 p-3 dark:bg-purple-950">
-            <Baby className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-          </div>
-          <div>
-            <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-              {tx("postpartum.title", lang)}
-            </h1>
-            <p className="text-sm text-muted-foreground">{tx("postpartum.subtitle", lang)}</p>
-          </div>
-        </div>
-        <div className="rounded-xl border border-purple-200 bg-purple-50/50 p-8 text-center dark:border-purple-800 dark:bg-purple-950/30">
-          <LogIn className="mx-auto mb-3 h-10 w-10 text-purple-400" />
-          <p className="text-lg font-medium text-purple-700 dark:text-purple-300">
-            {tx("common.loginToUse2", lang)}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(s => {
+        if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s }
+        return s + 1
+      })
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-purple-50 p-3 dark:bg-purple-950">
-          <Baby className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-rose-950/40 backdrop-blur-sm">
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl">
+        <motion.div className="text-4xl mb-4" animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 2 }}>💖</motion.div>
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="text-slate-600 text-sm">{steps[step]}</motion.p>
+        </AnimatePresence>
+        <div className="flex gap-1 justify-center mt-4">
+          {steps.map((_, i) => (
+            <div key={i} className={`w-2 h-2 rounded-full ${i <= step ? "bg-rose-400" : "bg-slate-200"}`} />
+          ))}
         </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-            {tx("postpartum.title", lang)}
-          </h1>
-          <p className="text-sm text-muted-foreground">{tx("postpartum.subtitle", lang)}</p>
-        </div>
-      </div>
+      </motion.div>
+    </motion.div>
+  )
+}
 
-      {/* Crisis Alert */}
-      {result?.crisisAlert && (
-        <div className="mb-6 rounded-xl border-2 border-red-500 bg-red-50 p-6 dark:bg-red-950/40">
-          <div className="flex items-start gap-3">
-            <Phone className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-600" />
-            <div>
-              <p className="font-bold text-red-700 dark:text-red-300">{result.crisisMessage}</p>
-              <div className="mt-3 space-y-1">
-                {result.crisisLines.map((line, i) => (
-                  <p key={i} className="text-lg font-bold text-red-600">{line}</p>
-                ))}
-              </div>
-            </div>
+export default function PostpartumPage() {
+  const router = useRouter()
+  const [mood, setMood] = useState<number | null>(null)
+  const [sleepHours, setSleepHours] = useState(4)
+  const [selectedNeeds, setSelectedNeeds] = useState<string[]>([])
+  const [showLabor, setShowLabor] = useState(false)
+  const [showResult, setShowResult] = useState(false)
+  const [showScreening, setShowScreening] = useState(false)
+
+  const toggleNeed = (label: string) => {
+    setSelectedNeeds(prev => prev.includes(label) ? prev.filter(n => n !== label) : [...prev, label])
+  }
+
+  const sleepKey = String(Math.min(8, Math.max(2, sleepHours)))
+  const sleepMessage = sleepMessages[sleepKey] || sleepMessages["4"]
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-orange-50/40 via-rose-50/20 to-stone-50">
+      <AnimatePresence>
+        {showLabor && <LaborIllusion onComplete={() => { setShowLabor(false); setShowResult(true) }} />}
+      </AnimatePresence>
+
+      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/60">
+            <ChevronLeft className="w-5 h-5 text-slate-600" />
+          </button>
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-slate-800">Safe Harbor</h1>
+            <p className="text-xs text-slate-400">Your postpartum sanctuary</p>
           </div>
-        </div>
-      )}
+          <Heart className="w-5 h-5 text-rose-300" />
+        </motion.div>
 
-      {/* Professional Referral */}
-      {result && !result.crisisAlert && result.alertLevel !== "green" && (
-        <div className={`mb-6 rounded-xl border-2 p-5 ${
-          result.alertLevel === "red" ? "border-red-500 bg-red-50 dark:bg-red-950/30" : "border-amber-400 bg-amber-50 dark:bg-amber-950/30"
-        }`}>
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-6 w-6 flex-shrink-0 text-amber-600" />
-            <p className="font-semibold text-amber-700 dark:text-amber-300">
-              {tx("postpartum.epdsReferral", lang)}
-            </p>
-          </div>
-        </div>
-      )}
+        {/* Welcome */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-orange-50 to-rose-50 rounded-2xl p-5 mb-6 border border-orange-100/50"
+        >
+          <p className="text-sm text-slate-600 leading-relaxed">
+            Welcome back, mama. 💛 This is your safe space — no judgment, only support.
+            Tell us how you are, and we will find gentle, breastfeeding-safe ways to help.
+          </p>
+        </motion.div>
 
-      {/* Inputs */}
-      <div className="mb-6 space-y-4">
-        {/* Weeks + Breastfeeding + Sleep */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-xl border bg-card p-4 shadow-sm">
-            <label className="mb-1 block text-xs font-semibold text-muted-foreground">
-              {tx("postpartum.weeksSince", lang)}
-            </label>
+        {/* Sleep Status */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-slate-100"
+        >
+          <h3 className="text-sm font-semibold text-slate-700 mb-3">How much sleep did you get?</h3>
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-2xl">😴</span>
             <input
-              type="number"
-              min={0}
-              max={52}
-              value={weeksPostpartum}
-              onChange={(e) => setWeeksPostpartum(Number(e.target.value))}
-              className="w-full rounded-lg border bg-background px-3 py-2 text-center text-lg font-bold"
-            />
-          </div>
-          <div className="rounded-xl border bg-card p-4 shadow-sm flex flex-col items-center">
-            <label className="mb-1 block text-xs font-semibold text-muted-foreground">
-              {tx("postpartum.breastfeeding", lang)}
-            </label>
-            <button
-              onClick={() => setBreastfeeding(!breastfeeding)}
-              className={`mt-1 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
-                breastfeeding ? "bg-purple-500 text-white" : "bg-gray-100 dark:bg-gray-800"
-              }`}
-            >
-              {breastfeeding ? tx("common.yes", lang) : tx("common.no", lang)}
-            </button>
-          </div>
-          <div className="rounded-xl border bg-card p-4 shadow-sm">
-            <label className="mb-1 block text-xs font-semibold text-muted-foreground">
-              <Moon className="mr-1 inline h-3 w-3" />
-              {tx("postpartum.sleepLabel", lang)}
-            </label>
-            <input
-              type="number"
-              min={0}
-              max={24}
-              value={sleepHours}
+              type="range" min={2} max={8} value={sleepHours}
               onChange={(e) => setSleepHours(Number(e.target.value))}
-              className="w-full rounded-lg border bg-background px-3 py-2 text-center text-lg font-bold"
+              className="flex-1 accent-rose-400"
             />
+            <span className="text-lg font-bold text-slate-700 w-12 text-right">{sleepHours}h</span>
           </div>
-        </div>
+          <motion.p
+            key={sleepHours}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-sm text-rose-600 bg-rose-50 rounded-xl px-4 py-2.5 leading-relaxed"
+          >
+            {sleepMessage}
+          </motion.p>
+        </motion.div>
 
-        {/* Mood Score */}
-        <div className="rounded-xl border bg-card p-6 shadow-sm">
-          <label className="mb-2 block text-sm font-semibold text-muted-foreground">
-            {tx("postpartum.mood", lang)}: {moodScore}/5
-          </label>
-          <input
-            type="range"
-            min={1}
-            max={5}
-            value={moodScore}
-            onChange={(e) => setMoodScore(Number(e.target.value))}
-            className="w-full accent-purple-500"
-          />
-        </div>
-
-        {/* Concerns */}
-        <div className="rounded-xl border bg-card p-4 shadow-sm">
-          <label className="mb-2 block text-sm font-semibold text-muted-foreground">
-            {tx("postpartum.concerns", lang)}
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {concernOptions.map((c) => (
-              <button
-                key={c}
-                onClick={() => setConcerns((prev) =>
-                  prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]
-                )}
-                className={`rounded-full px-3 py-1.5 text-xs transition-colors ${
-                  concerns.includes(c)
-                    ? "bg-purple-500 text-white"
-                    : "bg-purple-50 text-purple-700 hover:bg-purple-100 dark:bg-purple-950 dark:text-purple-300"
+        {/* Mood Weather */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mb-6"
+        >
+          <h3 className="text-sm font-semibold text-slate-700 mb-3 px-1">How is your emotional weather?</h3>
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {moodWeather.map((m) => (
+              <motion.button
+                key={m.value}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setMood(m.value)}
+                className={`flex-shrink-0 flex flex-col items-center gap-1.5 px-4 py-3 rounded-2xl border-2 transition-all ${
+                  mood === m.value ? "border-amber-300 bg-amber-50 shadow-sm" : "border-slate-100 bg-white"
                 }`}
               >
-                {c}
-              </button>
+                <motion.span
+                  className="text-2xl"
+                  animate={mood === m.value ? { scale: [1, 1.2, 1] } : {}}
+                >
+                  {m.emoji}
+                </motion.span>
+                <span className="text-[10px] text-slate-500 whitespace-nowrap">{m.label}</span>
+              </motion.button>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        {/* EPDS */}
-        <div className="rounded-xl border bg-card p-6 shadow-sm">
-          <button onClick={() => setShowEPDS(!showEPDS)} className="flex w-full items-center justify-between">
-            <h2 className="text-lg font-bold text-purple-700 dark:text-purple-300">
-              {tx("postpartum.epds", lang)} ({tx("postpartum.epdsOptional", lang)})
-            </h2>
-            {showEPDS ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-          </button>
-          {showEPDS && (
-            <div className="mt-4 space-y-4">
-              <p className="text-sm text-muted-foreground">
-                {tx("postpartum.epds7days", lang)}
-              </p>
-              {epdsQuestions.map((q, qi) => (
-                <div key={qi} className={`rounded-lg border p-3 ${qi === 9 ? "border-red-200 bg-red-50/30 dark:border-red-800 dark:bg-red-950/10" : ""}`}>
-                  <p className="mb-2 text-sm font-medium">
-                    {qi + 1}. {q}
-                    {qi === 9 && <span className="ml-2 text-xs text-red-500">({tx("postpartum.critical", lang)})</span>}
-                  </p>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {EPDS_OPTIONS_EN[qi].map((opt, oi) => (
-                      <button
-                        key={oi}
-                        onClick={() => {
-                          const newAnswers = [...epdsAnswers];
-                          newAnswers[qi] = oi;
-                          setEpdsAnswers(newAnswers);
-                        }}
-                        className={`rounded-lg px-2 py-1.5 text-xs transition-colors ${
-                          epdsAnswers[qi] === oi
-                            ? qi === 9 && oi < 3 ? "bg-red-500 text-white" : "bg-purple-500 text-white"
-                            : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
-                        }`}
-                      >
-                        {opt} ({oi})
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+        {/* Healing Needs */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-6"
+        >
+          <h3 className="text-sm font-semibold text-slate-700 mb-3 px-1">How Can We Help You Today?</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {healingNeeds.map((need, i) => {
+              const isActive = selectedNeeds.includes(need.label)
+              return (
+                <motion.button
+                  key={need.label}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35 + i * 0.05 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => toggleNeed(need.label)}
+                  className={`flex flex-col items-start p-4 rounded-2xl border-2 text-left transition-all ${
+                    isActive ? "border-rose-300 bg-rose-50" : "border-slate-100 bg-white"
+                  }`}
+                >
+                  <span className="text-xl mb-1">{need.emoji}</span>
+                  <span className="text-sm font-medium text-slate-700">{need.label}</span>
+                  <span className="text-[10px] text-slate-400 mt-0.5">{need.desc}</span>
+                </motion.button>
+              )
+            })}
+          </div>
+        </motion.div>
 
-      <Button onClick={handleAnalyze} disabled={isLoading} className="mb-6 w-full bg-purple-600 hover:bg-purple-700 text-white" size="lg">
-        {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("postpartum.assessing", lang)}</>
-        ) : (
-          <><Shield className="mr-2 h-5 w-5" />{tx("postpartum.analyze", lang)}</>
-        )}
-      </Button>
-
-      {error && <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">{error}</div>}
-
-      {result && !result.crisisAlert && (
-        <div className="space-y-4">
-          {/* EPDS Score */}
-          {result.epdsScore !== null && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm text-center">
-              <p className="text-sm text-muted-foreground">{tx("postpartum.epds", lang)}</p>
-              <p className="text-4xl font-bold">{result.epdsScore}<span className="text-lg text-muted-foreground">/30</span></p>
-              <p className="mt-1 text-sm capitalize">{result.epdsRisk}</p>
-            </div>
-          )}
-
-          {/* Mental Health Check */}
-          {result.mentalHealthCheck && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-2 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {tx("postpartum.mentalHealth", lang)}
-              </h3>
-              <p className="text-sm text-muted-foreground">{result.mentalHealthCheck.status}</p>
-              {result.mentalHealthCheck.recommendations.length > 0 && (
-                <ul className="mt-2 space-y-1">
-                  {result.mentalHealthCheck.recommendations.map((rec, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
-                      <Heart className="mt-0.5 h-3 w-3 flex-shrink-0 text-purple-500" />
-                      {rec}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-
-          {/* Breastfeeding Medication Safety */}
-          {breastfeeding && result.breastfeedingSafeMeds?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {tx("postpartum.medSafety", lang)}
-              </h3>
-              {result.breastfeedingSafeMeds.map((med, i) => (
-                <div key={i} className={`mb-2 rounded-lg border p-3 last:mb-0 ${
-                  med.safe ? "border-green-200 bg-green-50/50 dark:bg-green-950/10" : "border-red-200 bg-red-50/50 dark:bg-red-950/10"
-                }`}>
-                  <p className="font-medium">{med.medication} — {med.lactmedCategory}</p>
-                  <p className="text-xs text-muted-foreground">{med.note}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Recovery Tips */}
-          {result.recoveryTips?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {tx("postpartum.recoveryTips", lang)}
-              </h3>
-              {result.recoveryTips.map((tip, i) => (
-                <div key={i} className="mb-2 last:mb-0">
-                  <p className="font-semibold">{tip.area}</p>
-                  <p className="text-sm text-muted-foreground">{tip.tip}</p>
-                  <p className="text-xs text-purple-600 dark:text-purple-400">{tip.when}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Self Care */}
-          {result.selfCarePlan && result.selfCarePlan.length > 0 && (
-            <div className="rounded-xl border-2 border-purple-200 bg-purple-50 p-6 dark:bg-purple-950/20">
-              <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {tx("postpartum.selfCare", lang)}
-              </h3>
-              <ul className="space-y-2">
-                {result.selfCarePlan.map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-purple-800 dark:text-purple-200">
-                    <Heart className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-500" />
-                    {item}
-                  </li>
+        {/* Inner Balance Scan */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-5 mb-6 border border-purple-100/50"
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <Shield className="w-5 h-5 text-purple-500" />
+            <h3 className="text-sm font-semibold text-purple-700">Take Your Inner Balance Scan</h3>
+          </div>
+          <p className="text-xs text-slate-500 mb-3">
+            This 2-minute check helps us suggest the right phyto-support for your emotional wellbeing.
+          </p>
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setShowScreening(!showScreening)}
+            className="text-xs font-medium text-purple-600 bg-white/70 px-4 py-2 rounded-full"
+          >
+            {showScreening ? "Close Scan" : "Start Quick Scan"}
+          </motion.button>
+          <AnimatePresence>
+            {showScreening && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden mt-4"
+              >
+                <p className="text-sm text-slate-600 mb-3">Over the past 2 weeks, how often have you felt down or hopeless?</p>
+                {["Not at all", "Several days", "More than half the days", "Nearly every day"].map((opt, i) => (
+                  <button key={opt} className="w-full text-left text-sm text-slate-600 px-4 py-2.5 rounded-xl bg-white/60 mb-2 hover:bg-white transition-colors">
+                    {opt}
+                  </button>
                 ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
-      <p className="mt-6 text-center text-xs text-muted-foreground">{tx("disclaimer.tool", lang)}</p>
+        {/* Action Button */}
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setShowLabor(true)}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-400 to-orange-400 text-white font-medium shadow-lg shadow-rose-200 flex items-center justify-center gap-2"
+        >
+          <Sparkles className="w-4 h-4" />
+          Draw My Personal Healing Route
+        </motion.button>
+
+        {/* Result */}
+        <AnimatePresence>
+          {showResult && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="mt-4 bg-white rounded-2xl p-5 shadow-sm border border-rose-100">
+              <h3 className="text-sm font-semibold text-rose-600 mb-2">Your Healing Protocol</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                We have prepared a breastfeeding-safe support plan: Chamomile & Lemon Balm for calm,
+                Ashwagandha (low dose, nursing-compatible) for energy, and a gentle sleep hygiene routine.
+                All herbs are cross-checked with your medication profile.
+              </p>
+              <p className="text-xs text-slate-400 mt-3">Always discuss with your healthcare provider before starting supplements while nursing.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
-  );
+  )
 }
