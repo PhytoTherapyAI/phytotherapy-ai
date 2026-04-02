@@ -78,31 +78,38 @@ export default function InteractionCheckerPage() {
   }, []);
 
   const loadMedicationsFromProfile = async () => {
-    if (!user) return;
+    const uid = user?.id ?? session?.user?.id;
+    if (!uid) return;
     setLoadingProfile(true);
+    setProfileMedsLoaded(false);
     try {
       const supabase = createBrowserClient();
-      const { data } = await supabase
+      // Don't filter by is_active — some rows may have null
+      const { data, error: dbErr } = await supabase
         .from("user_medications")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("is_active", true);
+        .select("brand_name, generic_name, is_active")
+        .eq("user_id", uid);
+      if (dbErr) throw dbErr;
       if (data && data.length > 0) {
-        const medNames = (data as UserMedication[]).map(
-          (m) => m.brand_name || m.generic_name || ""
-        ).filter(Boolean);
-        setMedications((prev) => {
-          const existing = new Set(prev.map((s) => s.toLowerCase()));
-          const merged = [...prev];
-          for (const name of medNames) {
-            if (!existing.has(name.toLowerCase())) {
-              merged.push(name);
-              existing.add(name.toLowerCase());
+        // include active or null (not explicitly false)
+        const medNames = (data as UserMedication[])
+          .filter((m) => m.is_active !== false)
+          .map((m) => m.brand_name || m.generic_name || "")
+          .filter(Boolean);
+        if (medNames.length > 0) {
+          setMedications((prev) => {
+            const existing = new Set(prev.map((s) => s.toLowerCase()));
+            const merged = [...prev];
+            for (const name of medNames) {
+              if (!existing.has(name.toLowerCase())) {
+                merged.push(name);
+                existing.add(name.toLowerCase());
+              }
             }
-          }
-          return merged;
-        });
-        setProfileMedsLoaded(true);
+            return merged;
+          });
+          setProfileMedsLoaded(true);
+        }
       }
     } catch (err) {
       console.error("Failed to load profile medications:", err);
@@ -258,7 +265,7 @@ export default function InteractionCheckerPage() {
                       variant="outline"
                       size="sm"
                       onClick={loadMedicationsFromProfile}
-                      disabled={loadingProfile || profileMedsLoaded}
+                      disabled={loadingProfile}
                       className="gap-2 text-xs rounded-full"
                     >
                       {loadingProfile ? (

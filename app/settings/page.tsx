@@ -9,8 +9,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import {
   Bot, Bell, Shield, Download, Trash2, Watch, Award,
-  Bug, ChevronRight, Check, Globe, Lock, AlertTriangle,
-  Loader2, Eye, EyeOff, MessageSquare, KeyRound,
+  Bug, ChevronRight, Check, Globe,
+  Loader2, Eye, EyeOff, MessageSquare, KeyRound, AlertTriangle,
 } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
 
@@ -29,8 +29,6 @@ export default function SettingsPage() {
   const isTr = lang === "tr"
 
   const [personality, setPersonality]       = useState("compassionate")
-  const [downloadState, setDownloadState]   = useState<"idle" | "packaging" | "ready">("idle")
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [notifications, setNotifications]   = useState({ email: true, push: true, dailyPlan: true, weeklySummary: false })
 
   // Password change state
@@ -59,11 +57,6 @@ export default function SettingsPage() {
     localStorage.setItem(PERSONALITY_KEY, id)
   }
 
-  const handleDownload = () => {
-    setDownloadState("packaging")
-    setTimeout(() => setDownloadState("ready"), 3000)
-  }
-
   const handlePasswordChange = async () => {
     setPwError("")
     if (newPassword.length < 8) { setPwError(isTr ? "Şifre en az 8 karakter olmalı" : "Password must be at least 8 characters"); return }
@@ -86,13 +79,15 @@ export default function SettingsPage() {
   }
 
   const SYSTEM_ITEMS = [
-    { icon: Bell,          label: isTr ? "Bildirimler" : "Notifications",                     desc: isTr ? "Genel bildirim ayarları" : "General notification settings",        color: "bg-violet-50 dark:bg-violet-950/30 text-violet-600", href: "/notifications" },
-    { icon: Bell,          label: isTr ? "Bildirim Tercihleri" : "Notification Preferences", desc: isTr ? "Hangi bildirimleri alacağınızı seçin" : "Choose which notifications", color: "bg-blue-50 dark:bg-blue-950/30 text-blue-600",     href: "/notification-preferences" },
-    { icon: Watch,         label: isTr ? "Bağlı Cihazlar" : "Connected Devices",              desc: isTr ? "Apple Health, Google Fit" : "Apple Health, Google Fit",           color: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600",       href: "/connected-devices" },
-    { icon: MessageSquare, label: isTr ? "Günlük Asistan Botu" : "Daily Assistant Bot",       desc: isTr ? "WhatsApp & Telegram bağla" : "Connect WhatsApp & Telegram",       color: "bg-green-50 dark:bg-green-950/30 text-green-600",    href: "/connect-assistant" },
-    { icon: Shield,        label: isTr ? "Gizlilik Kontrolleri" : "Privacy Controls",         desc: isTr ? "Veri izinlerini yönet" : "Manage data permissions",              color: "bg-slate-100 dark:bg-slate-800 text-slate-600",      href: "/privacy-controls" },
-    { icon: Award,         label: isTr ? "Sertifikalar" : "Certificates",                     desc: isTr ? "Sağlık başarılarınız" : "Your health achievements",               color: "bg-amber-50 dark:bg-amber-950/30 text-amber-600",    href: "/certificates" },
-    { icon: Bug,           label: isTr ? "Hata Bildir" : "Bug Report",                        desc: isTr ? "Bizi geliştirmemize yardım et" : "Help us improve DoctoPal",      color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600", href: "/bug-report" },
+    { icon: Bell,          label: isTr ? "Bildirimler" : "Notifications",                     desc: isTr ? "Genel bildirim ayarları" : "General notification settings",                  color: "bg-violet-50 dark:bg-violet-950/30 text-violet-600",  href: "/notifications" },
+    { icon: Bell,          label: isTr ? "Bildirim Tercihleri" : "Notification Preferences",  desc: isTr ? "Hangi bildirimleri alacağınızı seçin" : "Choose which notifications",         color: "bg-blue-50 dark:bg-blue-950/30 text-blue-600",        href: "/notification-preferences" },
+    { icon: Watch,         label: isTr ? "Bağlı Cihazlar" : "Connected Devices",              desc: isTr ? "Apple Health, Google Fit bağla" : "Connect Apple Health, Google Fit",        color: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600",        href: "/connected-devices" },
+    { icon: MessageSquare, label: isTr ? "Günlük Asistan Botu" : "Daily Assistant Bot",       desc: isTr ? "WhatsApp & Telegram bağla" : "Connect WhatsApp & Telegram",                  color: "bg-green-50 dark:bg-green-950/30 text-green-600",     href: "/connect-assistant" },
+    { icon: Shield,        label: isTr ? "Gizlilik Kontrolleri" : "Privacy Controls",         desc: isTr ? "Veri izinlerini yönet" : "Manage data permissions",                          color: "bg-slate-100 dark:bg-slate-800 text-slate-600",       href: "/privacy-controls" },
+    { icon: Download,      label: isTr ? "Veri İndir (KVKK)" : "Export Data (KVKK)",          desc: isTr ? "Tüm verilerini JSON olarak indir" : "Download all your data as JSON",         color: "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600",  href: "/data-export" },
+    { icon: Trash2,        label: isTr ? "Veri Sil (KVKK)" : "Delete Data (KVKK)",            desc: isTr ? "Kalıcı hesap ve veri silme" : "Permanently erase account & data",            color: "bg-red-50 dark:bg-red-950/30 text-red-500",           href: "/data-delete" },
+    { icon: Award,         label: isTr ? "Sertifikalar" : "Certificates",                     desc: isTr ? "Sağlık başarılarınız" : "Your health achievements",                          color: "bg-amber-50 dark:bg-amber-950/30 text-amber-600",     href: "/certificates" },
+    { icon: Bug,           label: isTr ? "Hata Bildir" : "Report Bug",                        desc: isTr ? "Bizi geliştirmemize yardım et" : "Help us improve DoctoPal",                 color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600",  href: "/bug-report" },
   ]
 
   return (
@@ -283,74 +278,12 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* ── Data Actions ── */}
-          <div className="rounded-2xl border bg-card overflow-hidden shadow-sm divide-y divide-border">
-            <button onClick={handleDownload} className="flex w-full items-center gap-4 p-4 hover:bg-muted/30 transition-colors text-left">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex-shrink-0">
-                <Download className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">💾 {isTr ? "Verilerimi İndir" : "Download My Data"}</p>
-                <AnimatePresence mode="wait">
-                  {downloadState === "idle"      && <motion.p key="i" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-xs text-muted-foreground">GDPR / KVKK</motion.p>}
-                  {downloadState === "packaging" && <motion.p key="p" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-xs text-primary flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" />{isTr ? "Veriler hazırlanıyor..." : "Packaging..."}</motion.p>}
-                  {downloadState === "ready"     && <motion.p key="r" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-xs text-emerald-600 flex items-center gap-1"><Check className="h-3 w-3" />{isTr ? "Hazır!" : "Ready!"}</motion.p>}
-                </AnimatePresence>
-              </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            </button>
-
-            <button onClick={() => setShowDeleteModal(true)} className="flex w-full items-center gap-4 p-4 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors text-left">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-red-50 dark:bg-red-950/30 text-red-600 flex-shrink-0">
-                <Trash2 className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-red-600">🗑️ {isTr ? "Verilerimi Sil" : "Delete My Data"}</p>
-                <p className="text-xs text-muted-foreground">{isTr ? "Kalıcı silme (KVKK)" : "Permanently erase all data (GDPR)"}</p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            </button>
-          </div>
 
         </motion.div>
 
         <p className="text-center text-xs text-muted-foreground/40 mt-10">DoctoPal v3.7.0 Beta</p>
       </div>
 
-      {/* Delete Modal */}
-      <AnimatePresence>
-        {showDeleteModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-            onClick={(e) => e.target === e.currentTarget && setShowDeleteModal(false)}>
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-sm rounded-2xl bg-card border shadow-2xl p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 dark:bg-red-950/40">
-                  <AlertTriangle className="h-5 w-5 text-red-600" />
-                </div>
-                <h3 className="font-semibold">{isTr ? "Verilerini Sil" : "Delete Your Data"}</h3>
-              </div>
-              <p className="text-sm text-muted-foreground mb-5">
-                {isTr
-                  ? "Bu işlem geri alınamaz. Tüm sağlık geçmişin, profil bilgilerin ve sorgu kayıtların silinecek."
-                  : "This action cannot be undone. All your health history, profile data, and query records will be erased."}
-              </p>
-              <div className="flex gap-3">
-                <button onClick={() => setShowDeleteModal(false)}
-                  className="flex-1 rounded-xl border py-2.5 text-sm font-medium hover:bg-muted/50 transition-colors">
-                  {isTr ? "İptal" : "Cancel"}
-                </button>
-                <Link href="/data-delete"
-                  className="flex-1 rounded-xl bg-red-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-red-700 transition-colors"
-                  onClick={() => setShowDeleteModal(false)}>
-                  {isTr ? "Devam Et" : "Continue"}
-                </Link>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }

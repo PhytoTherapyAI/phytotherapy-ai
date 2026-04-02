@@ -86,11 +86,9 @@ export function Header() {
   return (
     <>
       {/* ── Floating Glassmorphism Navbar ── */}
-      <header className={`sticky top-0 z-50 w-full transition-all duration-300 bg-white dark:bg-slate-900 ${scrolled ? "py-1" : "py-2"}`}>
-        <div className={`mx-auto max-w-6xl px-3 md:px-4 transition-all duration-300 ${scrolled ? "" : ""}`}>
-          <div className={`rounded-2xl px-4 transition-all duration-300 bg-white dark:bg-slate-900 border border-border ${
-            scrolled ? "py-2 shadow-md" : "py-3 shadow-sm"
-          }`}>
+      <header className="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-border shadow-sm">
+        <div className="mx-auto max-w-6xl px-3 md:px-4">
+          <div className={`transition-all duration-300 ${scrolled ? "py-2" : "py-3"}`}>
             <div className="flex items-center">
               {/* Logo */}
               <Link href="/" className="flex items-center gap-2 group shrink-0">
