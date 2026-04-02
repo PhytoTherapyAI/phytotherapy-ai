@@ -5,7 +5,6 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
-import { createBrowserClient } from "@/lib/supabase"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import {
@@ -70,11 +69,17 @@ export default function SettingsPage() {
     if (newPassword.length < 8) { setPwError(isTr ? "Şifre en az 8 karakter olmalı" : "Password must be at least 8 characters"); return }
     if (!/[A-Z]/.test(newPassword)) { setPwError(isTr ? "En az 1 büyük harf gerekli" : "Need at least 1 uppercase letter"); return }
     if (newPassword !== confirmPassword) { setPwError(isTr ? "Şifreler eşleşmiyor" : "Passwords don't match"); return }
+    if (!user?.id) { setPwError(isTr ? "Kullanıcı bulunamadı" : "User not found"); return }
     setPwState("loading")
     try {
-      const supabase = createBrowserClient()
-      const { error } = await supabase.auth.updateUser({ password: newPassword })
-      if (error) { setPwState("error"); setPwError(error.message); return }
+      // Use server-side API with service role key — no email confirmation required
+      const res = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: newPassword, userId: user.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setPwState("error"); setPwError(data.error || (isTr ? "Bir hata oluştu" : "An error occurred")); return }
       setPwState("success")
       setNewPassword(""); setConfirmPassword("")
       setTimeout(() => setPwState("idle"), 3000)
@@ -85,10 +90,11 @@ export default function SettingsPage() {
   }
 
   const SYSTEM_ITEMS = [
+    { icon: Bell,          label: isTr ? "Bildirimler" : "Notifications",                     desc: isTr ? "Genel bildirim ayarları" : "General notification settings",        color: "bg-violet-50 dark:bg-violet-950/30 text-violet-600", href: "/notifications" },
     { icon: Bell,          label: isTr ? "Bildirim Tercihleri" : "Notification Preferences", desc: isTr ? "Hangi bildirimleri alacağınızı seçin" : "Choose which notifications", color: "bg-blue-50 dark:bg-blue-950/30 text-blue-600",     href: "/notification-preferences" },
-    { icon: Shield,        label: isTr ? "Gizlilik Kontrolleri" : "Privacy Controls",         desc: isTr ? "Veri izinlerini yönet" : "Manage data permissions",              color: "bg-slate-100 dark:bg-slate-800 text-slate-600",      href: "/privacy-controls" },
     { icon: Watch,         label: isTr ? "Bağlı Cihazlar" : "Connected Devices",              desc: isTr ? "Apple Health, Google Fit" : "Apple Health, Google Fit",           color: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600",       href: "/connected-devices" },
     { icon: MessageSquare, label: isTr ? "Günlük Asistan Botu" : "Daily Assistant Bot",       desc: isTr ? "WhatsApp & Telegram bağla" : "Connect WhatsApp & Telegram",       color: "bg-green-50 dark:bg-green-950/30 text-green-600",    href: "/connect-assistant" },
+    { icon: Shield,        label: isTr ? "Gizlilik Kontrolleri" : "Privacy Controls",         desc: isTr ? "Veri izinlerini yönet" : "Manage data permissions",              color: "bg-slate-100 dark:bg-slate-800 text-slate-600",      href: "/privacy-controls" },
     { icon: Award,         label: isTr ? "Sertifikalar" : "Certificates",                     desc: isTr ? "Sağlık başarılarınız" : "Your health achievements",               color: "bg-amber-50 dark:bg-amber-950/30 text-amber-600",    href: "/certificates" },
     { icon: Bug,           label: isTr ? "Hata Bildir" : "Bug Report",                        desc: isTr ? "Bizi geliştirmemize yardım et" : "Help us improve DoctoPal",      color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600", href: "/bug-report" },
   ]
