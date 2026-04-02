@@ -86,9 +86,9 @@ export function Header() {
   return (
     <>
       {/* ── Floating Glassmorphism Navbar ── */}
-      <header className="sticky top-0 z-50 w-full bg-white dark:bg-slate-900 border-b border-border shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b border-border shadow-sm" style={{ backgroundColor: "var(--card)" }}>
         <div className="mx-auto max-w-6xl px-3 md:px-4">
-          <div className={`transition-all duration-300 ${scrolled ? "py-2" : "py-3"}`}>
+          <div className={`transition-all duration-300 ${scrolled ? "py-2" : "py-3"}`} style={{ backgroundColor: "var(--card)" }}>
             <div className="flex items-center">
               {/* Logo */}
               <Link href="/" className="flex items-center gap-2 group shrink-0">

@@ -68,6 +68,7 @@ export default function InteractionCheckerPage() {
   const [savedMeds, setSavedMeds] = useState<string[]>([]);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [expandedResult, setExpandedResult] = useState<number | null>(null);
+  const [loadMedError, setLoadMedError] = useState<string | null>(null);
 
   // Load saved medications from localStorage
   useEffect(() => {
@@ -78,41 +79,55 @@ export default function InteractionCheckerPage() {
   }, []);
 
   const loadMedicationsFromProfile = async () => {
-    const uid = user?.id ?? session?.user?.id;
-    if (!uid) return;
     setLoadingProfile(true);
+    setLoadMedError(null);
     setProfileMedsLoaded(false);
     try {
+      // Get the current session token to authenticate the API call
       const supabase = createBrowserClient();
-      // Don't filter by is_active — some rows may have null
-      const { data, error: dbErr } = await supabase
-        .from("user_medications")
-        .select("brand_name, generic_name, is_active")
-        .eq("user_id", uid);
-      if (dbErr) throw dbErr;
-      if (data && data.length > 0) {
-        // include active or null (not explicitly false)
-        const medNames = (data as UserMedication[])
-          .filter((m) => m.is_active !== false)
-          .map((m) => m.brand_name || m.generic_name || "")
-          .filter(Boolean);
-        if (medNames.length > 0) {
-          setMedications((prev) => {
-            const existing = new Set(prev.map((s) => s.toLowerCase()));
-            const merged = [...prev];
-            for (const name of medNames) {
-              if (!existing.has(name.toLowerCase())) {
-                merged.push(name);
-                existing.add(name.toLowerCase());
-              }
-            }
-            return merged;
-          });
-          setProfileMedsLoaded(true);
-        }
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      const token = currentSession?.access_token;
+
+      if (!token) {
+        setLoadMedError(isTr ? "Oturum bulunamadı, lütfen tekrar giriş yap" : "Session not found, please sign in again");
+        return;
       }
+
+      const res = await fetch("/api/user/medications", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const json = await res.json();
+
+      if (!res.ok) {
+        setLoadMedError(json.error || (isTr ? "Bir hata oluştu" : "An error occurred"));
+        return;
+      }
+
+      const meds: UserMedication[] = json.medications ?? [];
+      if (meds.length === 0) {
+        setLoadMedError(isTr ? "Profilinde aktif ilaç bulunamadı" : "No active medications found in your profile");
+        return;
+      }
+
+      const medNames = meds
+        .map((m) => m.brand_name || m.generic_name || "")
+        .filter(Boolean);
+
+      setMedications((prev) => {
+        const existing = new Set(prev.map((s) => s.toLowerCase()));
+        const merged = [...prev];
+        for (const name of medNames) {
+          if (!existing.has(name.toLowerCase())) {
+            merged.push(name);
+            existing.add(name.toLowerCase());
+          }
+        }
+        return merged;
+      });
+      setProfileMedsLoaded(true);
     } catch (err) {
       console.error("Failed to load profile medications:", err);
+      setLoadMedError(isTr ? "Beklenmeyen hata oluştu" : "Unexpected error occurred");
     } finally {
       setLoadingProfile(false);
     }
@@ -287,6 +302,13 @@ export default function InteractionCheckerPage() {
                       <LogIn className="h-3.5 w-3.5" />
                       {tx("ic.loadFromProfileGuest", lang)}
                     </Link>
+                  )}
+
+                  {/* Load error */}
+                  {loadMedError && (
+                    <p className="w-full text-xs text-red-500 flex items-center gap-1 mt-1">
+                      <X className="h-3 w-3 flex-shrink-0" /> {loadMedError}
+                    </p>
                   )}
 
                   {/* Save current medications */}
