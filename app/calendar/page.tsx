@@ -129,7 +129,7 @@ function WeeklyStripEnhanced({ selectedDate, onSelect, lang }: { selectedDate: D
       </div>
 
       {/* Day pills */}
-      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
+      <div className="grid grid-cols-7 gap-1 pb-1">
         {days.map((d, i) => {
           const isToday = d.toDateString() === today.toDateString()
           const isSelected = d.toDateString() === selectedDate.toDateString()
@@ -138,7 +138,7 @@ function WeeklyStripEnhanced({ selectedDate, onSelect, lang }: { selectedDate: D
               initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03 }}
               onClick={() => onSelect(d)}
-              className={`flex flex-col items-center gap-1 min-w-[48px] rounded-2xl py-3 px-2.5 transition-all duration-200 ${
+              className={`flex flex-col items-center gap-1 rounded-2xl py-3 px-1 transition-all duration-200 ${
                 isSelected
                   ? "bg-primary text-white shadow-lg shadow-primary/25 scale-105"
                   : isToday
@@ -521,30 +521,28 @@ export default function CalendarPage() {
       return updated
     })
 
-    // Persist ritual completions to localStorage
-    setTimeout(() => {
-      const all = [...morningTasks, ...noonTasks, ...nightTasks]
-      const toggledTask = all.find(t => t.id === id)
-      const doneIds = all.filter(t => t.id === id ? !t.done : t.done).map(t => t.id)
-      // Actually recalculate: task was toggled
-      const correct = all.map(t => t.id === id ? { ...t, done: !t.done } : t).filter(t => t.done).map(t => t.id)
-      localStorage.setItem(`cal-rituals-${todayDateStr}`, JSON.stringify(correct))
-
-      // Fix 6: Sync med completion to dashboard
-      if (toggledTask?.emoji === "💊") {
-        const dashKey = `dash-tasks-done-${todayDateStr}`
-        try {
-          const dashDone = new Set(JSON.parse(localStorage.getItem(dashKey) || "[]"))
-          const anyMedDone = all.map(t => t.id === id ? { ...t, done: !t.done } : t).some(t => t.emoji === "💊" && t.done)
-          if (anyMedDone) dashDone.add("med"); else dashDone.delete("med")
-          localStorage.setItem(dashKey, JSON.stringify([...dashDone]))
-        } catch {}
-      }
-    }, 50)
-  }, [morningTasks, noonTasks, nightTasks, todayDateStr])
+  }, [])
 
   const allTasks = useMemo(() => [...morningTasks, ...noonTasks, ...nightTasks], [morningTasks, noonTasks, nightTasks])
   const completedTasks = allTasks.filter(t => t.done).length
+
+  // Auto-persist ritual completions whenever tasks change
+  useEffect(() => {
+    const doneIds = allTasks.filter(t => t.done).map(t => t.id)
+    localStorage.setItem(`cal-rituals-${todayDateStr}`, JSON.stringify(doneIds))
+
+    // Sync med completion to dashboard
+    const dashKey = `dash-tasks-done-${todayDateStr}`
+    try {
+      const dashDone = new Set(JSON.parse(localStorage.getItem(dashKey) || "[]"))
+      const anyMedDone = allTasks.some(t => t.emoji === "💊" && t.done)
+      if (anyMedDone) dashDone.add("med"); else dashDone.delete("med")
+      const anySupDone = allTasks.some(t => (t.emoji === "🌿" || t.emoji === "🐟") && t.done)
+      if (anySupDone) dashDone.add("sup"); else dashDone.delete("sup")
+      localStorage.setItem(dashKey, JSON.stringify([...dashDone]))
+    } catch {}
+  }, [allTasks, todayDateStr])
+
   // waterCount comes from FAB + tasks combined
   const waterDoneFromTasks = allTasks.filter(t => t.done && t.emoji === "💧").length
   const totalWater = waterCount + waterDoneFromTasks + 3
@@ -574,18 +572,32 @@ export default function CalendarPage() {
     if (!user?.id) return
     try {
       const supabase = createBrowserClient()
-      const { data: meds } = await supabase
-        .from("user_medications")
-        .select("brand_name, generic_name, dosage, frequency")
-        .eq("user_id", user.id)
-        .eq("is_active", true)
 
+      // Fetch medications AND supplements in parallel
+      const [medsRes, supsRes] = await Promise.all([
+        supabase
+          .from("user_medications")
+          .select("brand_name, generic_name, dosage, frequency")
+          .eq("user_id", user.id)
+          .eq("is_active", true),
+        supabase
+          .from("calendar_events")
+          .select("title, event_time, metadata")
+          .eq("user_id", user.id)
+          .eq("event_type", "supplement")
+          .eq("recurrence", "daily"),
+      ])
+
+      const meds = medsRes.data
+      const sups = supsRes.data
+
+      const morning: DailyTask[] = []
+      const noon: DailyTask[] = []
+      const night: DailyTask[] = []
+
+      // Add medications by time
       if (meds && meds.length > 0) {
-        const morning: DailyTask[] = []
-        const noon: DailyTask[] = []
-        const night: DailyTask[] = []
-
-        meds.forEach((m: { brand_name: string | null; generic_name: string | null; frequency?: string | null }, idx: number) => {
+        meds.forEach((m: any, idx: number) => {
           const name = m.brand_name || m.generic_name || "İlaç"
           const freq = (m.frequency || "").toLowerCase()
           const task: DailyTask = { id: `med-${idx}`, label: name, done: false, emoji: "💊" }
@@ -595,34 +607,60 @@ export default function CalendarPage() {
           } else if (freq.includes("öğle") || freq.includes("noon") || freq.includes("afternoon")) {
             noon.push(task)
           } else {
-            // Default: morning
             morning.push(task)
           }
         })
+      }
 
-        if (morning.length > 0) {
-          setMorningTasks(prev => {
-            // Remove default med placeholders, keep water tasks, add real meds
-            const waterTasks = prev.filter(t => t.emoji === "💧")
-            const supplementTasks = prev.filter(t => t.emoji !== "💧" && t.emoji !== "💊")
-            return [...morning, ...supplementTasks, ...waterTasks]
-          })
-        }
-        if (noon.length > 0) {
-          setNoonTasks(prev => {
-            const waterTasks = prev.filter(t => t.emoji === "💧")
-            return [...noon, ...waterTasks]
-          })
-        }
-        if (night.length > 0) {
-          setNightTasks(prev => {
-            const existing = prev.filter(t => t.emoji !== "💊")
-            return [...night, ...existing]
-          })
-        }
+      // Add supplements by scheduled time
+      if (sups && sups.length > 0) {
+        sups.forEach((s: any, idx: number) => {
+          const name = s.title || "Takviye"
+          const time = s.event_time || "08:00"
+          const hour = parseInt(time.split(":")[0] || "8", 10)
+          const meta = typeof s.metadata === "string" ? JSON.parse(s.metadata || "{}") : (s.metadata || {})
+          const dose = meta.dose ? ` (${meta.dose})` : ""
+          const task: DailyTask = { id: `sup-${idx}`, label: `${name}${dose}`, done: false, emoji: "🌿" }
+
+          if (hour >= 18) {
+            night.push(task)
+          } else if (hour >= 12) {
+            noon.push(task)
+          } else {
+            morning.push(task)
+          }
+        })
+      }
+
+      // Water tasks
+      const waterMorning: DailyTask = { id: "w1", label: lang === "tr" ? "1 bardak su" : "1 glass water", done: false, emoji: "💧" }
+      const waterNoon: DailyTask = { id: "w2", label: lang === "tr" ? "2 bardak su" : "2 glasses water", done: false, emoji: "💧" }
+
+      // Set task blocks (replace defaults with real data)
+      if (morning.length > 0 || sups) {
+        setMorningTasks([...morning.filter(t => t.emoji === "💊"), ...morning.filter(t => t.emoji === "🌿"), waterMorning])
+      }
+      if (noon.length > 0) {
+        setNoonTasks([...noon, waterNoon])
+      } else {
+        setNoonTasks([waterNoon])
+      }
+      if (night.length > 0) {
+        setNightTasks(night)
+      }
+
+      // Restore completed state from localStorage
+      const saved = localStorage.getItem(`cal-rituals-${todayDateStr}`)
+      if (saved) {
+        try {
+          const doneIds = new Set(JSON.parse(saved) as string[])
+          setMorningTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
+          setNoonTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
+          setNightTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
+        } catch {}
       }
     } catch { /* ignore — keep defaults */ }
-  }, [user?.id])
+  }, [user?.id, lang, todayDateStr])
 
   // Fetch streak from daily_check_ins
   const fetchStreak = useCallback(async () => {
