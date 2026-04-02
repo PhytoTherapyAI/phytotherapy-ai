@@ -1,10 +1,10 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 'use client'
 
-import { Leaf } from "lucide-react";
 import Link from "next/link";
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
+import { DoctoPalLogo } from "@/components/brand/DoctoPalLogo"
 
 export function Footer() {
   const { lang } = useLang()
@@ -18,10 +18,14 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo-icon.svg" alt="" className="h-5 w-5 rounded" />
-            <span className="font-heading" suppressHydrationWarning>© {new Date().getFullYear()} Doctopal — {tx("footer.allRightsReserved", lang)}</span>
+          <div className="flex flex-col items-center sm:items-start gap-1.5">
+            <DoctoPalLogo variant="full" size="sm" theme="light" />
+            <span className="text-xs text-muted-foreground" suppressHydrationWarning>
+              © {new Date().getFullYear()} DoctoPal. {tx("footer.allRightsReserved", lang)}
+            </span>
+            <p className="text-[10px] text-muted-foreground/60 italic">
+              Evidence Meets Nature. AI Meets You.
+            </p>
           </div>
 
           <div className="flex items-center gap-4 text-xs text-muted-foreground">

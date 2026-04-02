@@ -97,17 +97,17 @@ export function Header() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/logo-icon.svg"
-                  alt="Doctopal"
-                  className="h-8 w-8 rounded-lg transition-all duration-300 group-hover:scale-105"
+                  alt="DoctoPal"
+                  className={`rounded-lg transition-all duration-300 group-hover:scale-105 ${scrolled ? "h-7 w-7" : "h-8 w-8"}`}
                 />
                 <span className="hidden sm:inline" style={{
                   fontFamily: 'system-ui, -apple-system, sans-serif',
-                  fontSize: scrolled ? "1.05rem" : "1.15rem",
-                  fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1,
+                  fontSize: scrolled ? "1rem" : "1.1rem",
+                  fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1,
                   transition: "font-size 0.3s ease",
-                  color: "var(--foreground)",
                 }}>
-                  Doctopal
+                  <span style={{ color: "var(--foreground)" }}>Docto</span>
+                  <span style={{ color: "var(--brand, #059669)" }}>Pal</span>
                 </span>
               </Link>
 
