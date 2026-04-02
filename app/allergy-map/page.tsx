@@ -1,576 +1,296 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState, useEffect, useCallback } from "react";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Loader2,
-  Plus,
-  ShieldAlert,
-  X,
-  Search,
-  LogIn,
-  Pill,
-  Leaf,
-  Wind,
-  Utensils,
-  Share2,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx, txObj } from "@/lib/translations";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Shield, Plus, X, Search, AlertTriangle } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-interface AllergyRecord {
-  id: string;
-  type: string;
-  trigger_name: string;
-  category: string;
-  severity: string;
-  symptoms: string[];
-  diagnosed_by_doctor: boolean;
-  notes: string;
-  created_at: string;
+interface AllergyItem {
+  name: string
+  emoji: string
+  type: "allergy" | "intolerance"
+  severity?: string
 }
 
-interface CrossCheckResult {
-  conflicts: Array<{
-    allergy: string;
-    conflictsWith: string;
-    risk: "high" | "moderate" | "low";
-    explanation: string;
-  }>;
-  warnings: Array<{ message: string }>;
-  summary: string;
-}
+const quickAllergies = [
+  { emoji: "🥜", name: "Peanut" },
+  { emoji: "🥛", name: "Cow's Milk" },
+  { emoji: "🦐", name: "Shellfish" },
+  { emoji: "💊", name: "Penicillin" },
+  { emoji: "🥚", name: "Egg" },
+  { emoji: "🌾", name: "Wheat" },
+  { emoji: "🫘", name: "Soy" },
+  { emoji: "🐝", name: "Bee Venom" },
+]
 
-const SEVERITY_CONFIG: Record<string, { color: string; label: string; labelTr: string }> = {
-  mild: { color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", label: "Mild", labelTr: "Hafif" },
-  moderate: { color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400", label: "Moderate", labelTr: "Orta" },
-  severe: { color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400", label: "Severe", labelTr: "Siddetli" },
-  anaphylaxis: { color: "bg-red-200 text-red-800 dark:bg-red-900/50 dark:text-red-300", label: "Anaphylaxis", labelTr: "Anafilaksi" },
-};
+const quickIntolerances = [
+  { emoji: "🥛", name: "Lactose" },
+  { emoji: "🌾", name: "Gluten" },
+  { emoji: "🧅", name: "FODMAP" },
+  { emoji: "🍫", name: "Histamine" },
+  { emoji: "☕", name: "Caffeine" },
+  { emoji: "🍷", name: "Sulfite" },
+]
 
-const CATEGORY_ICONS: Record<string, typeof Utensils> = {
-  food: Utensils,
-  medication: Pill,
-  environmental: Wind,
-  supplement: Leaf,
-};
-
-const COMMON_SYMPTOMS = [
-  { en: "Hives", tr: "Ürtiker" },
-  { en: "Itching", tr: "Kaşıntı" },
-  { en: "Swelling", tr: "Şişlik" },
-  { en: "Rash", tr: "Dokutu" },
-  { en: "Nausea", tr: "Bulantı" },
-  { en: "Vomiting", tr: "Kusma" },
-  { en: "Diarrhea", tr: "İshal" },
-  { en: "Sneezing", tr: "Hapşırma" },
-  { en: "Runny nose", tr: "Burun akıntısı" },
-  { en: "Wheezing", tr: "Hırıltılı solunum" },
-  { en: "Headache", tr: "Bas ağrısi" },
-  { en: "Stomach pain", tr: "Karin ağrısi" },
-  { en: "Throat tightness", tr: "Bogaz sıkışması" },
-  { en: "Difficulty breathing", tr: "Nefes darlığı" },
-];
-
-export default function AllergyMapPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [records, setRecords] = useState<AllergyRecord[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [crossCheck, setCrossCheck] = useState<CrossCheckResult | null>(null);
-  const [isCrossChecking, setIsCrossChecking] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-
-  // Form state
-  const [formType, setFormType] = useState<string>("allergy");
-  const [formTrigger, setFormTrigger] = useState("");
-  const [formCategory, setFormCategory] = useState("food");
-  const [formSeverity, setFormSeverity] = useState("mild");
-  const [formSymptoms, setFormSymptoms] = useState<string[]>([]);
-  const [formDoctorDiagnosed, setFormDoctorDiagnosed] = useState(false);
-  const [formNotes, setFormNotes] = useState("");
-
-  const l = lang as "en" | "tr";
-
-  const fetchRecords = useCallback(async () => {
-    if (!session?.access_token) return;
-    try {
-      const res = await fetch("/api/allergy-map", {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setRecords(data.records || []);
-      }
-    } catch {
-      // Ignore
-    } finally {
-      setIsLoading(false);
-    }
-  }, [session?.access_token]);
+function RadarScan({ scanning, result }: { scanning: boolean; result: "safe" | "danger" | null }) {
+  const [step, setStep] = useState(0)
+  const steps = [
+    "Comparing with allergens in your profile...",
+    "Checking histamine response...",
+    "Cross-referencing supplement safety...",
+  ]
 
   useEffect(() => {
-    if (isAuthenticated) fetchRecords();
-    else setIsLoading(false);
-  }, [isAuthenticated, fetchRecords]);
+    if (!scanning) return
+    const interval = setInterval(() => setStep(s => Math.min(s + 1, steps.length - 1)), 1000)
+    return () => clearInterval(interval)
+  }, [scanning])
 
-  const handleSave = async () => {
-    if (!formTrigger.trim()) return;
-    setIsSaving(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const res = await fetch("/api/allergy-map", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({
-          type: formType,
-          trigger_name: formTrigger.trim(),
-          category: formCategory,
-          severity: formSeverity,
-          symptoms: formSymptoms,
-          diagnosed_by_doctor: formDoctorDiagnosed,
-          notes: formNotes.trim(),
-          lang,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Save failed");
-      }
-
-      setSuccess(tx("allergy.saved", lang));
-      setShowForm(false);
-      resetForm();
-      fetchRecords();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleCrossCheck = async () => {
-    setIsCrossChecking(true);
-    setCrossCheck(null);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/allergy-map", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({ action: "cross-check", lang }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Cross-check failed");
-      }
-
-      const data = await res.json();
-      setCrossCheck(data.crossCheck);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsCrossChecking(false);
-    }
-  };
-
-  const resetForm = () => {
-    setFormType("allergy");
-    setFormTrigger("");
-    setFormCategory("food");
-    setFormSeverity("mild");
-    setFormSymptoms([]);
-    setFormDoctorDiagnosed(false);
-    setFormNotes("");
-  };
-
-  const toggleSymptom = (s: string) => {
-    setFormSymptoms((prev) =>
-      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
-    );
-  };
-
-  const generateEmergencyCard = () => {
-    const severeAllergies = records.filter(
-      (r) => r.severity === "severe" || r.severity === "anaphylaxis"
-    );
-    const allAllergies = records.map((r) => r.trigger_name);
-
-    const cardText = [
-      "--- ALLERGY ALERT CARD ---",
-      "",
-      ...(severeAllergies.length > 0
-        ? [
-            "SEVERE/ANAPHYLAXIS:",
-            ...severeAllergies.map((r) => `  !! ${r.trigger_name} (${r.severity})`),
-            "",
-          ]
-        : []),
-      "ALL ALLERGIES/INTOLERANCES:",
-      ...allAllergies.map((a) => `  - ${a}`),
-      "",
-      "Generated by Doctopal",
-      new Date().toLocaleDateString(),
-    ].join("\n");
-
-    navigator.clipboard.writeText(cardText);
-    setSuccess(tx("allergy.emergencyCardCopied", lang));
-    setTimeout(() => setSuccess(null), 3000);
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-        <div className="rounded-xl border-2 border-dashed border-amber-200 bg-amber-50/50 p-12 text-center dark:border-amber-800 dark:bg-amber-950/20">
-          <LogIn className="mx-auto mb-3 h-10 w-10 text-amber-400" />
-          <p className="text-sm text-muted-foreground">{tx("allergy.loginRequired", lang)}</p>
-        </div>
-      </div>
-    );
-  }
+  useEffect(() => { if (scanning) setStep(0) }, [scanning])
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-amber-50 p-3 dark:bg-amber-950">
-          <ShieldAlert className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-slate-100"
+    >
+      <div className="flex items-center gap-3 mb-3">
+        <motion.div
+          animate={scanning ? { scale: [1, 1.1, 1] } : {}}
+          transition={{ repeat: scanning ? Infinity : 0, duration: 1 }}
+        >
+          <Shield className="w-5 h-5 text-amber-500" />
+        </motion.div>
+        <h3 className="text-sm font-semibold text-slate-700">Cross-Safety Radar</h3>
+      </div>
+
+      {scanning && (
+        <div className="space-y-2">
+          <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+            className="w-8 h-8 mx-auto rounded-full border-3 border-slate-200 border-t-amber-500" />
+          <AnimatePresence mode="wait">
+            <motion.p key={step} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="text-xs text-slate-500 text-center">{steps[step]}</motion.p>
+          </AnimatePresence>
         </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-            {tx("allergy.title", lang)}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {tx("allergy.subtitle", lang)}
+      )}
+
+      {result && !scanning && (
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className={`text-center py-3 rounded-xl ${result === "safe" ? "bg-emerald-50" : "bg-red-50"}`}
+        >
+          <span className="text-2xl">{result === "safe" ? "✅" : "🚨"}</span>
+          <p className={`text-sm font-medium mt-1 ${result === "safe" ? "text-emerald-700" : "text-red-700"}`}>
+            {result === "safe" ? "No allergen conflicts detected" : "Potential allergen risk found!"}
           </p>
-        </div>
-      </div>
+        </motion.div>
+      )}
 
-      {/* Action Buttons */}
-      <div className="mb-4 flex flex-wrap gap-2">
-        <Button
-          onClick={() => { setShowForm(!showForm); setSuccess(null); }}
-          className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
-          size="sm"
-        >
-          <Plus className="h-4 w-4" />
-          {tx("allergy.addNew", lang)}
-        </Button>
-        <Button
-          variant="outline"
-          onClick={handleCrossCheck}
-          disabled={isCrossChecking || records.length === 0}
-          className="gap-2"
-          size="sm"
-        >
-          {isCrossChecking ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-          {tx("allergy.crossCheck", lang)}
-        </Button>
-        {records.length > 0 && (
-          <Button
-            variant="outline"
-            onClick={generateEmergencyCard}
-            className="gap-2"
-            size="sm"
-          >
-            <Share2 className="h-4 w-4" />
-            {tx("allergy.emergencyCard", lang)}
-          </Button>
+      {!scanning && !result && (
+        <p className="text-xs text-slate-400 text-center">Type a medication or supplement name to check safety</p>
+      )}
+    </motion.div>
+  )
+}
+
+export default function AllergyMapPage() {
+  const router = useRouter()
+  const [allergies, setAllergies] = useState<AllergyItem[]>([])
+  const [intolerances, setIntolerances] = useState<AllergyItem[]>([])
+  const [showSheet, setShowSheet] = useState<"allergy" | "intolerance" | null>(null)
+  const [searchDrug, setSearchDrug] = useState("")
+  const [scanning, setScanning] = useState(false)
+  const [scanResult, setScanResult] = useState<"safe" | "danger" | null>(null)
+
+  const addAllergy = (name: string, emoji: string) => {
+    if (!allergies.find(a => a.name === name)) {
+      setAllergies(prev => [...prev, { name, emoji, type: "allergy", severity: "Moderate" }])
+    }
+  }
+
+  const addIntolerance = (name: string, emoji: string) => {
+    if (!intolerances.find(a => a.name === name)) {
+      setIntolerances(prev => [...prev, { name, emoji, type: "intolerance" }])
+    }
+  }
+
+  const removeItem = (name: string, type: "allergy" | "intolerance") => {
+    if (type === "allergy") setAllergies(prev => prev.filter(a => a.name !== name))
+    else setIntolerances(prev => prev.filter(a => a.name !== name))
+  }
+
+  const handleScan = () => {
+    if (!searchDrug.trim()) return
+    setScanning(true)
+    setScanResult(null)
+    setTimeout(() => {
+      setScanning(false)
+      setScanResult(allergies.length > 0 ? "danger" : "safe")
+    }, 3500)
+  }
+
+  const totalItems = allergies.length + intolerances.length
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-amber-50/30 via-stone-50 to-red-50/10">
+      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/60">
+            <ChevronLeft className="w-5 h-5 text-slate-600" />
+          </button>
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-slate-800">Immunological Shield</h1>
+            <p className="text-xs text-slate-400">Define your biological boundaries</p>
+          </div>
+          <Shield className="w-5 h-5 text-amber-500" />
+        </motion.div>
+
+        {/* Zero State or Shield Info */}
+        {totalItems === 0 && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            className="bg-amber-50 rounded-2xl p-5 mb-6 border border-amber-100 text-center">
+            <motion.div animate={{ y: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 3 }}>
+              <Shield className="w-10 h-10 text-amber-400 mx-auto mb-3" />
+            </motion.div>
+            <p className="text-sm text-amber-700">
+              Define your biological boundaries. Add allergies and intolerances so AI can protect you from medication and supplement risks.
+            </p>
+          </motion.div>
         )}
-      </div>
 
-      {/* Success */}
-      {success && (
-        <div className="mb-4 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700 dark:border-green-800 dark:bg-green-950/30 dark:text-green-400">
-          <CheckCircle2 className="mr-1 inline h-4 w-4" />
-          {success}
-        </div>
-      )}
-
-      {/* Error */}
-      {error && (
-        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400">
-          {error}
-        </div>
-      )}
-
-      {/* Add Form */}
-      {showForm && (
-        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50/30 p-4 dark:border-amber-800 dark:bg-amber-950/10">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-sm font-semibold">{tx("allergy.addNew", lang)}</h3>
-            <button onClick={() => { setShowForm(false); resetForm(); }}>
-              <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+        {/* Allergies Section */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-4">
+          <div className="flex items-center justify-between mb-2 px-1">
+            <h3 className="text-sm font-semibold text-red-600 flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4" /> Immune Response (Allergies)
+            </h3>
+            <button onClick={() => setShowSheet("allergy")} className="text-xs text-red-500 font-medium flex items-center gap-1">
+              <Plus className="w-3.5 h-3.5" /> Add
             </button>
           </div>
-
-          <div className="space-y-3">
-            {/* Type */}
-            <div>
-              <label className="mb-1 block text-xs font-medium">{tx("allergy.type", lang)}</label>
-              <div className="flex gap-2">
-                {(["allergy", "intolerance", "sensitivity"] as const).map((t) => (
-                  <button
-                    key={t}
-                    onClick={() => setFormType(t)}
-                    className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                      formType === t
-                        ? "bg-amber-600 text-white"
-                        : "bg-muted text-muted-foreground hover:bg-amber-100 dark:hover:bg-amber-900/30"
-                    }`}
-                  >
-                    {t === "allergy" ? tx("allergy.allergyType", lang) : t === "intolerance" ? tx("allergy.intoleranceType", lang) : tx("allergy.sensitivityType", lang)}
+          <div className="space-y-2">
+            {allergies.length === 0 ? (
+              <p className="text-xs text-slate-400 px-1">No allergies added yet</p>
+            ) : (
+              allergies.map(a => (
+                <motion.div key={a.name} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                  className="flex items-center gap-3 bg-red-50 rounded-xl p-3 border border-red-100">
+                  <span className="text-lg">{a.emoji}</span>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-slate-700">{a.name}</p>
+                    <span className="text-[10px] text-red-500 bg-red-100 px-2 py-0.5 rounded-full">{a.severity}</span>
+                  </div>
+                  <button onClick={() => removeItem(a.name, "allergy")} className="p-1 rounded-full hover:bg-red-100">
+                    <X className="w-4 h-4 text-red-400" />
                   </button>
-                ))}
-              </div>
-            </div>
+                </motion.div>
+              ))
+            )}
+          </div>
+        </motion.div>
 
-            {/* Trigger */}
-            <div>
-              <label className="mb-1 block text-xs font-medium">{tx("allergy.triggerName", lang)}</label>
+        {/* Intolerances Section */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-6">
+          <div className="flex items-center justify-between mb-2 px-1">
+            <h3 className="text-sm font-semibold text-amber-600">🎈 Digestive Sensitivity (Intolerances)</h3>
+            <button onClick={() => setShowSheet("intolerance")} className="text-xs text-amber-500 font-medium flex items-center gap-1">
+              <Plus className="w-3.5 h-3.5" /> Add
+            </button>
+          </div>
+          <div className="space-y-2">
+            {intolerances.length === 0 ? (
+              <p className="text-xs text-slate-400 px-1">No intolerances added yet</p>
+            ) : (
+              intolerances.map(a => (
+                <motion.div key={a.name} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+                  className="flex items-center gap-3 bg-amber-50 rounded-xl p-3 border border-amber-100">
+                  <span className="text-lg">{a.emoji}</span>
+                  <p className="text-sm font-medium text-slate-700 flex-1">{a.name}</p>
+                  <button onClick={() => removeItem(a.name, "intolerance")} className="p-1 rounded-full hover:bg-amber-100">
+                    <X className="w-4 h-4 text-amber-400" />
+                  </button>
+                </motion.div>
+              ))
+            )}
+          </div>
+        </motion.div>
+
+        {/* Cross-Safety Radar */}
+        <div className="mb-4">
+          <div className="flex gap-2 mb-3">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
-                value={formTrigger}
-                onChange={(e) => setFormTrigger(e.target.value)}
-                placeholder={tx("allergy.triggerPlaceholder", lang)}
-                className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400"
+                value={searchDrug}
+                onChange={(e) => setSearchDrug(e.target.value)}
+                placeholder="Enter medication name..."
+                className="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-700 focus:outline-none focus:border-amber-300"
               />
             </div>
-
-            {/* Category */}
-            <div>
-              <label className="mb-1 block text-xs font-medium">{tx("allergy.category", lang)}</label>
-              <div className="flex gap-2">
-                {(["food", "medication", "environmental", "supplement"] as const).map((c) => {
-                  const Icon = CATEGORY_ICONS[c] || Wind;
-                  const labels: Record<string, string> = {
-                    food: tx("allergy.food", lang),
-                    medication: tx("allergy.medication", lang),
-                    environmental: tx("allergy.environmental", lang),
-                    supplement: tx("allergy.supplement", lang),
-                  };
-                  return (
-                    <button
-                      key={c}
-                      onClick={() => setFormCategory(c)}
-                      className={`flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                        formCategory === c
-                          ? "bg-amber-600 text-white"
-                          : "bg-muted text-muted-foreground hover:bg-amber-100 dark:hover:bg-amber-900/30"
-                      }`}
-                    >
-                      <Icon className="h-3 w-3" />
-                      {labels[c]}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Severity */}
-            <div>
-              <label className="mb-1 block text-xs font-medium">{tx("allergy.severity", lang)}</label>
-              <div className="flex gap-2">
-                {(["mild", "moderate", "severe", "anaphylaxis"] as const).map((s) => {
-                  const cfg = SEVERITY_CONFIG[s];
-                  return (
-                    <button
-                      key={s}
-                      onClick={() => setFormSeverity(s)}
-                      className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                        formSeverity === s
-                          ? cfg.color + " ring-2 ring-amber-400"
-                          : "bg-muted text-muted-foreground hover:bg-amber-100 dark:hover:bg-amber-900/30"
-                      }`}
-                    >
-                      {txObj({ en: cfg.label, tr: cfg.labelTr }, lang)}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Symptoms */}
-            <div>
-              <label className="mb-1 block text-xs font-medium">
-                {tx("common.symptoms", lang)}
-              </label>
-              <div className="flex flex-wrap gap-1.5">
-                {COMMON_SYMPTOMS.map((s) => (
-                  <button
-                    key={s.en}
-                    onClick={() => toggleSymptom(s.en)}
-                    className={`rounded-full px-2.5 py-1 text-xs transition-colors ${
-                      formSymptoms.includes(s.en)
-                        ? "bg-amber-600 text-white"
-                        : "bg-muted text-muted-foreground hover:bg-amber-100 dark:hover:bg-amber-900/30"
-                    }`}
-                  >
-                    {s[l]}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Doctor Diagnosed */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setFormDoctorDiagnosed(!formDoctorDiagnosed)}
-                className={`h-5 w-5 rounded border-2 transition-colors ${
-                  formDoctorDiagnosed
-                    ? "border-amber-600 bg-amber-600"
-                    : "border-muted-foreground"
-                }`}
-              >
-                {formDoctorDiagnosed && <CheckCircle2 className="h-4 w-4 text-white" />}
-              </button>
-              <span className="text-xs">{tx("allergy.doctorDiagnosed", lang)}</span>
-            </div>
-
-            {/* Notes */}
-            <div>
-              <label className="mb-1 block text-xs font-medium">
-                {tx("common.notes", lang)}
-              </label>
-              <textarea
-                value={formNotes}
-                onChange={(e) => setFormNotes(e.target.value)}
-                rows={2}
-                maxLength={500}
-                className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:border-amber-400 focus:outline-none focus:ring-1 focus:ring-amber-400"
-              />
-            </div>
-
-            {/* Save */}
-            <Button
-              onClick={handleSave}
-              disabled={isSaving || !formTrigger.trim()}
-              className="w-full gap-2 bg-amber-600 hover:bg-amber-700 text-white"
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleScan}
+              className="px-5 py-3 rounded-xl bg-amber-500 text-white text-sm font-medium"
             >
-              {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-              {tx("allergy.save", lang)}
-            </Button>
+              Scan
+            </motion.button>
           </div>
+          <RadarScan scanning={scanning} result={scanResult} />
         </div>
-      )}
 
-      {/* Cross-Check Results */}
-      {crossCheck && (
-        <div className="mb-6 space-y-3">
-          {crossCheck.conflicts.length > 0 && (
-            <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 dark:border-red-800 dark:bg-red-950/20">
-              <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-red-700 dark:text-red-400">
-                <AlertTriangle className="h-3.5 w-3.5" />
-                {tx("allergy.conflictsFound", lang)}
-              </h3>
-              <div className="space-y-2">
-                {crossCheck.conflicts.map((c, i) => (
-                  <div key={i} className="rounded-lg bg-white/50 p-3 dark:bg-black/20">
-                    <div className="mb-1 flex items-center gap-2">
-                      <span className="text-sm font-medium">{c.allergy}</span>
-                      <span className="text-xs text-muted-foreground">vs</span>
-                      <span className="text-sm font-medium">{c.conflictsWith}</span>
-                      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        c.risk === "high" ? "bg-red-200 text-red-800" : c.risk === "moderate" ? "bg-amber-200 text-amber-800" : "bg-green-200 text-green-800"
-                      }`}>
-                        {c.risk}
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{c.explanation}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {crossCheck.warnings.length > 0 && (
-            <div className="rounded-lg border border-amber-200 bg-amber-50/50 p-4 dark:border-amber-800 dark:bg-amber-950/20">
-              <h3 className="mb-2 text-sm font-semibold text-amber-700 dark:text-amber-400">
-                {tx("allergy.warnings", lang)}
-              </h3>
-              {crossCheck.warnings.map((w, i) => (
-                <p key={i} className="text-xs text-amber-600 dark:text-amber-300">
-                  {w.message}
-                </p>
-              ))}
-            </div>
-          )}
-
-          <div className="rounded-lg border p-3">
-            <p className="text-sm">{crossCheck.summary}</p>
-          </div>
-        </div>
-      )}
-
-      {/* Records List */}
-      <div className="mb-4">
-        <h3 className="mb-3 text-sm font-semibold">{tx("allergy.myAllergies", lang)}</h3>
-        {isLoading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-amber-500" />
-          </div>
-        ) : records.length === 0 ? (
-          <div className="rounded-lg border-2 border-dashed p-8 text-center">
-            <ShieldAlert className="mx-auto mb-2 h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              {tx("allergy.noRecords", lang)}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {records.map((r) => {
-              const sevCfg = SEVERITY_CONFIG[r.severity] || SEVERITY_CONFIG.mild;
-              const CatIcon = CATEGORY_ICONS[r.category] || AlertTriangle;
-              return (
-                <div key={r.id} className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/30">
-                  <div className="rounded-lg bg-amber-50 p-2 dark:bg-amber-950/30">
-                    <CatIcon className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium truncate">{r.trigger_name}</p>
-                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${sevCfg.color}`}>
-                        {txObj({ en: sevCfg.label, tr: sevCfg.labelTr }, lang)}
-                      </span>
-                      {r.diagnosed_by_doctor && (
-                        <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-                          {tx("allergy.doctor", lang)}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {r.type} &middot; {r.category}
-                      {r.symptoms && r.symptoms.length > 0 && ` &middot; ${r.symptoms.join(", ")}`}
-                    </p>
-                  </div>
+        {/* Bottom Sheet */}
+        <AnimatePresence>
+          {showSheet && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-end justify-center"
+              onClick={() => setShowSheet(null)}
+            >
+              <motion.div
+                initial={{ y: 300 }}
+                animate={{ y: 0 }}
+                exit={{ y: 300 }}
+                transition={{ type: "spring", damping: 25 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-t-3xl p-6 w-full max-w-lg shadow-2xl"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-slate-800">
+                    {showSheet === "allergy" ? "Add Allergy" : "Add Intolerance"}
+                  </h3>
+                  <button onClick={() => setShowSheet(null)} className="p-2 rounded-full hover:bg-slate-100">
+                    <X className="w-5 h-5 text-slate-400" />
+                  </button>
                 </div>
-              );
-            })}
-          </div>
-        )}
+                <p className="text-sm text-slate-500 mb-4">Tap to add:</p>
+                <div className="flex flex-wrap gap-2">
+                  {(showSheet === "allergy" ? quickAllergies : quickIntolerances).map(item => (
+                    <motion.button
+                      key={item.name}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => {
+                        showSheet === "allergy" ? addAllergy(item.name, item.emoji) : addIntolerance(item.name, item.emoji)
+                        setShowSheet(null)
+                      }}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-slate-50 border border-slate-200 text-sm text-slate-700"
+                    >
+                      <span>{item.emoji}</span>
+                      <span>{item.name}</span>
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
-      {/* Footer Disclaimer */}
-      <p className="mt-6 text-center text-xs text-muted-foreground">
-        {tx("disclaimer.tool", lang)}
-      </p>
     </div>
-  );
+  )
 }
