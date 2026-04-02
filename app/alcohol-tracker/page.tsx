@@ -1,356 +1,248 @@
-// © 2026 Doctopal — All Rights Reserved
-"use client";
+// © 2026 DoctoPal — All Rights Reserved
+"use client"
 
-import { useState } from "react";
-import {
-  Wine,
-  Loader2,
-  AlertTriangle,
-  CheckCircle2,
-  ShieldAlert,
-  Minus,
-  Plus,
-  Heart,
-  LogIn,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
-import Link from "next/link";
+import { useState, useEffect, useMemo } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, Shield, Droplets } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
+import { useLang } from "@/components/layout/language-toggle"
 
-interface MedAlert {
-  medication: string;
-  severity: "safe" | "caution" | "dangerous";
-  interaction: string;
-  mechanism: string;
-  recommendation: string;
-}
+const METABOLISM_RATE = 0.015 // BAC drop per hour
 
-interface AlcoholResult {
-  weeklyUnits: number;
-  WHOLimit: { male: number; female: number };
-  riskLevel: "low" | "moderate" | "high" | "very_high";
-  medicationAlerts: MedAlert[];
-  liverEnzymeCorrelation: string;
-  liverHealthTips: string[];
-  recommendations: string[];
-  disclaimer: string;
-}
+interface DrinkEntry { id: string; name: string; units: number; hour: number; emoji: string }
 
 const DRINKS = [
-  { key: "beer", icon: "🍺", unitsLabel: "1.5 units" },
-  { key: "wine", icon: "🍷", unitsLabel: "2.1 units" },
-  { key: "spirits", icon: "🥃", unitsLabel: "1.0 unit" },
-  { key: "cocktail", icon: "🍹", unitsLabel: "2.0 units" },
-];
+  { emoji: "🍺", name: "Beer", units: 1 },
+  { emoji: "🍷", name: "Wine", units: 1.5 },
+  { emoji: "🥃", name: "Spirit", units: 2 },
+  { emoji: "🍸", name: "Cocktail", units: 1.5 },
+]
 
-const DRINK_LABELS: Record<string, { en: string; tr: string }> = {
-  beer: { en: "Beer (330ml)", tr: "Bira (330ml)" },
-  wine: { en: "Wine (150ml)", tr: "Şarap (150ml)" },
-  spirits: { en: "Spirits (40ml)", tr: "Sert İçki (40ml)" },
-  cocktail: { en: "Cocktail", tr: "Kokteyl" },
-};
+function calcBAC(entries: DrinkEntry[], weight: number, gender: "m" | "f"): number {
+  const r = gender === "m" ? 0.68 : 0.55
+  const totalAlcohol = entries.reduce((s, e) => s + e.units * 10, 0) // grams
+  return (totalAlcohol / (weight * r * 10)) * 100
+}
 
-const UNITS_PER: Record<string, number> = {
-  beer: 1.5,
-  wine: 2.1,
-  spirits: 1.0,
-  cocktail: 2.0,
-};
+function generateClearanceData(entries: DrinkEntry[], weight: number) {
+  const data = []
+  const now = new Date()
+  const startHour = entries.length > 0 ? Math.min(...entries.map(e => e.hour)) : now.getHours()
+  const peakBAC = calcBAC(entries, weight, "m")
 
-const SEVERITY_COLORS = {
-  safe: "border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-950/20",
-  caution: "border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/20",
-  dangerous: "border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-950/20",
-};
+  for (let h = 0; h <= 16; h += 0.5) {
+    const currentHour = startHour + h
+    const displayH = currentHour > 24 ? currentHour - 24 : currentHour
+    const label = `${String(Math.floor(displayH)).padStart(2, "0")}:${h % 1 === 0 ? "00" : "30"}`
+    const bac = Math.max(0, peakBAC - METABOLISM_RATE * h)
+    data.push({ hour: h, label, bac: Math.round(bac * 1000) / 1000 })
+  }
+  return data
+}
 
-const RISK_COLORS = {
-  low: { bg: "bg-green-500", text: "text-green-700 dark:text-green-400" },
-  moderate: { bg: "bg-amber-500", text: "text-amber-700 dark:text-amber-400" },
-  high: { bg: "bg-red-500", text: "text-red-700 dark:text-red-400" },
-  very_high: { bg: "bg-red-700", text: "text-red-800 dark:text-red-300" },
-};
+function getClearanceTime(entries: DrinkEntry[], weight: number): string {
+  const peakBAC = calcBAC(entries, weight, "m")
+  const hoursToZero = peakBAC / METABOLISM_RATE
+  const now = new Date()
+  const clearTime = new Date(now.getTime() + hoursToZero * 60 * 60 * 1000)
+  return `${String(clearTime.getHours()).padStart(2, "0")}:${String(clearTime.getMinutes()).padStart(2, "0")}`
+}
 
-export default function AlcoholTrackerPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [drinks, setDrinks] = useState<Record<string, number>>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<AlcoholResult | null>(null);
+function LaborIllusion({ onComplete, lang }: { onComplete: () => void; lang: string }) {
+  const isTr = lang === "tr"
+  const steps = isTr
+    ? ["Karaciğer enzim (CYP) yükü hesaplanıyor...", "Uyku mimarisi bozulması simüle ediliyor...", "Sabah anti-inflamatuar fitoterapi reçeteniz yazılıyor..."]
+    : ["Calculating liver enzyme (CYP) load...", "Simulating sleep architecture disruption...", "Writing your morning anti-inflammatory phytotherapy prescription..."]
+  const [step, setStep] = useState(0)
 
-  const updateDrink = (key: string, delta: number) => {
-    setDrinks((prev) => {
-      const val = Math.max(0, (prev[key] || 0) + delta);
-      if (val === 0) {
-        const next = { ...prev };
-        delete next[key];
-        return next;
-      }
-      return { ...prev, [key]: val };
-    });
-  };
-
-  const totalUnits = Object.entries(drinks).reduce(
-    (sum, [key, qty]) => sum + (UNITS_PER[key] || 0) * qty,
-    0
-  );
-
-  const whoLimit = 14;
-  const meterPercent = Math.min((totalUnits / whoLimit) * 100, 100);
-  const meterColor =
-    totalUnits < 7 ? "bg-green-500" : totalUnits < 14 ? "bg-amber-500" : "bg-red-500";
-
-  const handleAnalyze = async () => {
-    setIsLoading(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (isAuthenticated && session?.access_token) {
-        headers["Authorization"] = `Bearer ${session.access_token}`;
-      }
-
-      const res = await fetch("/api/alcohol-tracker", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ drinks, lang }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Analysis failed");
-      }
-
-      const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(s => { if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s } return s + 1 })
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-purple-50 p-3 dark:bg-purple-950">
-          <Wine className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-        </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-            {tx("alcohol.title", lang)}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {tx("alcohol.subtitle", lang)}
-          </p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-purple-950/60 backdrop-blur-sm">
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}
+        className="bg-slate-900 rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl border border-purple-800/30">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          className="w-14 h-14 mx-auto mb-4 rounded-full border-4 border-slate-700 border-t-fuchsia-400" />
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="text-purple-200 text-sm">{steps[step]}</motion.p>
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+export default function AlcoholTrackerPage() {
+  const router = useRouter()
+  const { lang } = useLang()
+  const isTr = lang === "tr"
+  const [entries, setEntries] = useState<DrinkEntry[]>([])
+  const [showLabor, setShowLabor] = useState(false)
+  const [showResult, setShowResult] = useState(false)
+  const weight = 75
+
+  const totalUnits = entries.reduce((s, e) => s + e.units, 0)
+  const curveData = useMemo(() => generateClearanceData(entries, weight), [entries])
+  const clearTime = entries.length > 0 ? getClearanceTime(entries, weight) : "--:--"
+
+  const addDrink = (drink: typeof DRINKS[0]) => {
+    const now = new Date()
+    setEntries(prev => [...prev, { id: String(Date.now()), name: drink.name, units: drink.units, hour: now.getHours() + now.getMinutes() / 60, emoji: drink.emoji }])
+  }
+
+  const drinkCounts = DRINKS.map(d => ({ ...d, count: entries.filter(e => e.name === d.name).length }))
+
+  const damageChips = useMemo(() => {
+    if (totalUnits === 0) return []
+    const chips = []
+    chips.push({ emoji: "💧", label: isTr ? `Hidrasyon İhtiyacı: +${Math.round(totalUnits * 250)}ml Su` : `Hydration Need: +${Math.round(totalUnits * 250)}ml Water` })
+    if (totalUnits >= 2) chips.push({ emoji: "🧠", label: isTr ? "REM Uykusu Riski: Yüksek" : "REM Sleep Risk: High" })
+    if (totalUnits >= 3) chips.push({ emoji: "💪", label: isTr ? "Kas Toparlanma Etkisi: -%40 MPS" : "Muscle Recovery Impact: -40% MPS" })
+    chips.push({ emoji: "🌿", label: isTr ? "Öneri: Deve Dikeni + C Vitamini" : "Phyto Suggestion: Milk Thistle + Vitamin C" })
+    return chips
+  }, [totalUnits, isTr])
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-white">
+      <AnimatePresence>
+        {showLabor && <LaborIllusion lang={lang} onComplete={() => { setShowLabor(false); setShowResult(true) }} />}
+      </AnimatePresence>
+
+      <div className="max-w-7xl mx-auto px-4 py-6 md:px-8">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/10">
+              <ChevronLeft className="w-5 h-5 text-slate-400" />
+            </button>
+            <div>
+              <h1 className="text-xl font-bold">{isTr ? "Metabolik Temizlenme & Karaciğer Kalkanı" : "Metabolic Clearance & Liver Shield"}</h1>
+              <p className="text-xs text-slate-400">{isTr ? "Alkol metabolizmanı takip et" : "Track your alcohol metabolism"}</p>
+            </div>
+          </div>
+        </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-11 gap-6">
+          {/* LEFT (55%) */}
+          <div className="lg:col-span-6 space-y-6">
+            {/* Clearance Timeline */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="bg-slate-800/80 backdrop-blur rounded-2xl p-5 border border-slate-700/50">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-slate-300">{isTr ? "Temizlenme Zaman Çizelgesi" : "Clearance Timeline"}</h3>
+                {entries.length > 0 && (
+                  <span className="text-xs text-purple-300 bg-purple-900/30 px-2.5 py-1 rounded-full">
+                    {isTr ? `Tam temizlenme: ${clearTime}` : `Full clearance: ${clearTime}`}
+                  </span>
+                )}
+              </div>
+              <ResponsiveContainer width="100%" height={200}>
+                <AreaChart data={curveData}>
+                  <defs>
+                    <linearGradient id="alcGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#c084fc" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#7c3aed" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="label" tick={{ fontSize: 10, fill: "#64748b" }} interval={3} />
+                  <YAxis tick={{ fontSize: 10, fill: "#64748b" }} domain={[0, "auto"]} />
+                  <Tooltip contentStyle={{ background: "#1e1b4b", border: "1px solid #4c1d95", borderRadius: 12, fontSize: 12 }} />
+                  <Area type="monotone" dataKey="bac" stroke="#c084fc" strokeWidth={2} fill="url(#alcGrad)" />
+                </AreaChart>
+              </ResponsiveContainer>
+              {entries.length > 0 && (
+                <p className="text-xs text-slate-400 mt-2 text-center">
+                  {isTr ? `Karaciğeriniz çalışıyor... Tahmini tam temizlenme: ${clearTime}` : `Your liver is working... Estimated full clearance: ${clearTime}`}
+                </p>
+              )}
+            </motion.div>
+
+            {/* Drink Cards */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+              <h3 className="text-sm font-semibold text-slate-300 mb-3 px-1">{isTr ? "İçecek Ekle" : "Add Drink"}</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {drinkCounts.map((drink, i) => (
+                  <motion.button key={drink.name}
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + i * 0.04 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => addDrink(drink)}
+                    className="relative bg-slate-800/60 backdrop-blur border border-slate-700/50 rounded-2xl p-4 text-center hover:border-purple-700/50 transition-all">
+                    <motion.span className="text-2xl block mb-1" whileTap={{ scale: 1.3 }}>{drink.emoji}</motion.span>
+                    <p className="text-xs font-medium text-slate-200">{drink.name}</p>
+                    <p className="text-[10px] text-slate-500">{drink.units} {isTr ? "birim" : "unit"}</p>
+                    {drink.count > 0 && (
+                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
+                        className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-fuchsia-500 text-[10px] font-bold flex items-center justify-center">
+                        ×{drink.count}
+                      </motion.div>
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* RIGHT (45%) */}
+          <div className="lg:col-span-5 lg:sticky lg:top-24 lg:self-start space-y-5">
+            {/* Damage Control Panel */}
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+              className="bg-gradient-to-br from-purple-950/50 to-slate-800/50 rounded-2xl p-5 border border-purple-800/20">
+              <h3 className="text-sm font-bold text-purple-300 mb-3 flex items-center gap-2">
+                <Shield className="w-4 h-4" /> {isTr ? "Hasar Kontrol & Koruma Paneli" : "Damage Control & Protection Panel"}
+              </h3>
+              {damageChips.length === 0 ? (
+                <p className="text-xs text-slate-500">{isTr ? "İçecek ekleyin" : "Add a drink to see damage control tips"}</p>
+              ) : (
+                <div className="space-y-2">
+                  {damageChips.map((chip, i) => (
+                    <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}
+                      className="flex items-center gap-2.5 bg-slate-800/60 rounded-xl px-3.5 py-2.5 border border-slate-700/30">
+                      <span className="text-lg">{chip.emoji}</span>
+                      <span className="text-xs text-slate-200">{chip.label}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+
+            {/* Recovery CTA */}
+            <motion.button
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setShowLabor(true)}
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white font-medium shadow-lg shadow-purple-900/40 flex items-center justify-center gap-2"
+            >
+              <Sparkles className="w-4 h-4" />
+              {isTr ? "Ertesi Gün Toparlanma Protokolümü Hazırla" : "Prepare My Next-Day Recovery Protocol"}
+            </motion.button>
+
+            {/* Result */}
+            <AnimatePresence>
+              {showResult && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                  className="bg-gradient-to-br from-purple-950/50 to-slate-800/50 rounded-2xl p-5 border border-fuchsia-800/20">
+                  <h3 className="text-sm font-bold text-fuchsia-300 mb-2 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" /> {isTr ? "Toparlanma Protokolü" : "Recovery Protocol"}
+                  </h3>
+                  <p className="text-sm text-slate-300 leading-relaxed">
+                    {isTr
+                      ? "Yarın sabah: 500ml su + Deve Dikeni 250mg + Vitamin B kompleks ile başlayın. 24 saat ağır egzersizden kaçının — MPS'niz düşük."
+                      : "Tomorrow morning: Start with 500ml water + Milk Thistle 250mg + Vitamin B complex. Avoid heavy exercise for 24h — your MPS is compromised."}
+                  </p>
+                  <p className="text-[10px] text-slate-500 mt-2">{isTr ? "Her zaman doktorunuza danışın." : "Always consult your healthcare provider."}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
-
-      {!isAuthenticated && (
-        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50/50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/20 dark:text-amber-300">
-          <LogIn className="mr-1 inline h-3.5 w-3.5" />
-          {tx("alcohol.loginNote", lang)}{" "}
-          <Link href="/auth/login" className="font-semibold underline">
-            {tx("bt.createAccount", lang)}
-          </Link>
-        </div>
-      )}
-
-      {!result && (
-        <>
-          {/* Drink Selector */}
-          <div className="mb-6 grid grid-cols-2 gap-3">
-            {DRINKS.map((d) => {
-              const qty = drinks[d.key] || 0;
-              const label = DRINK_LABELS[d.key];
-              return (
-                <div
-                  key={d.key}
-                  className={`rounded-lg border p-4 transition-colors ${
-                    qty > 0
-                      ? "border-purple-400 bg-purple-50/50 dark:border-purple-600 dark:bg-purple-950/20"
-                      : "bg-card hover:bg-muted/50"
-                  }`}
-                >
-                  <div className="text-center mb-2">
-                    <span className="text-3xl">{d.icon}</span>
-                    <p className="text-sm font-medium mt-1">
-                      {label[lang]}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      ~{d.unitsLabel}
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-center gap-3">
-                    <button
-                      onClick={() => updateDrink(d.key, -1)}
-                      className="rounded-full border p-1.5 hover:bg-muted transition-colors"
-                    >
-                      <Minus className="h-3.5 w-3.5" />
-                    </button>
-                    <span className="w-6 text-center text-lg font-bold">
-                      {qty}
-                    </span>
-                    <button
-                      onClick={() => updateDrink(d.key, 1)}
-                      className="rounded-full border p-1.5 hover:bg-muted transition-colors"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Units Meter */}
-          {totalUnits > 0 && (
-            <div className="mb-6 rounded-lg border bg-card p-4">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium">
-                  {tx("alcohol.weeklyUnits", lang)}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {tx("alcohol.whoLimit", lang)}: {whoLimit}
-                </p>
-              </div>
-              <div className="h-4 w-full rounded-full bg-muted overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-300 ${meterColor}`}
-                  style={{ width: `${meterPercent}%` }}
-                />
-              </div>
-              <p className="mt-2 text-center text-xl font-bold">
-                {totalUnits.toFixed(1)}{" "}
-                <span className="text-sm font-normal text-muted-foreground">
-                  {tx("alcohol.units", lang)}
-                </span>
-              </p>
-            </div>
-          )}
-
-          <Button
-            onClick={handleAnalyze}
-            disabled={totalUnits === 0 || isLoading}
-            className="w-full gap-2 bg-purple-600 hover:bg-purple-700 text-white"
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Wine className="h-4 w-4" />
-            )}
-            {tx("alcohol.analyze", lang)}
-          </Button>
-        </>
-      )}
-
-      {error && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-700 dark:bg-red-950/20 dark:text-red-300">
-          <AlertTriangle className="mr-1 inline h-4 w-4" />
-          {error}
-        </div>
-      )}
-
-      {result && (
-        <div className="space-y-4">
-          {/* Risk Level */}
-          <div className={`rounded-lg border p-4 ${
-            result.riskLevel === "low" ? SEVERITY_COLORS.safe
-            : result.riskLevel === "moderate" ? SEVERITY_COLORS.caution
-            : SEVERITY_COLORS.dangerous
-          }`}>
-            <div className="flex items-center gap-2 mb-1">
-              {result.riskLevel === "low" ? (
-                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-              ) : (
-                <ShieldAlert className={`h-5 w-5 ${RISK_COLORS[result.riskLevel].text}`} />
-              )}
-              <span className="text-lg font-bold">
-                {result.weeklyUnits} {tx("alcohol.unitsPerWeek", lang)}
-              </span>
-            </div>
-            <p className={`text-sm font-medium ${RISK_COLORS[result.riskLevel].text}`}>
-              {tx("alcohol.riskLevel", lang)}: {result.riskLevel.replace("_", " ").toUpperCase()}
-            </p>
-          </div>
-
-          {/* Medication Alerts */}
-          {result.medicationAlerts?.length > 0 && (
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold flex items-center gap-1.5">
-                <ShieldAlert className="h-4 w-4 text-red-500" />
-                {tx("alcohol.medAlerts", lang)}
-              </h3>
-              {result.medicationAlerts.map((alert, i) => (
-                <div
-                  key={i}
-                  className={`rounded-lg border p-3 ${SEVERITY_COLORS[alert.severity]}`}
-                >
-                  <p className="text-sm font-semibold">{alert.medication}</p>
-                  <p className="text-sm mt-1">{alert.interaction}</p>
-                  <p className="text-xs text-muted-foreground mt-1 italic">
-                    {alert.mechanism}
-                  </p>
-                  <p className="text-xs mt-1 font-medium">{alert.recommendation}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Liver */}
-          {result.liverEnzymeCorrelation && (
-            <div className="rounded-lg border bg-card p-4">
-              <p className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1">
-                <Heart className="h-3.5 w-3.5" />
-                {tx("alcohol.liverTips", lang)}
-              </p>
-              <p className="text-sm mb-2">{result.liverEnzymeCorrelation}</p>
-              {result.liverHealthTips?.length > 0 && (
-                <ul className="space-y-1">
-                  {result.liverHealthTips.map((tip, i) => (
-                    <li key={i} className="text-sm flex items-start gap-2">
-                      <span className="text-purple-500 mt-0.5">&#8226;</span>
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-
-          {/* Recommendations */}
-          {result.recommendations?.length > 0 && (
-            <div className="rounded-lg border bg-card p-4">
-              <ul className="space-y-1.5">
-                {result.recommendations.map((r, i) => (
-                  <li key={i} className="text-sm flex items-start gap-2">
-                    <span className="text-purple-500 mt-0.5">&#8226;</span>
-                    {r}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => { setResult(null); setDrinks({}); }}
-          >
-            {tx("alcohol.newCheck", lang)}
-          </Button>
-        </div>
-      )}
-
-      <p className="mt-6 text-xs text-muted-foreground text-center">
-        {tx("disclaimer.tool", lang)}
-      </p>
     </div>
-  );
+  )
 }
