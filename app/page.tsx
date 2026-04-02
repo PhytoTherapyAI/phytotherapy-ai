@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowRight, Search, CheckCircle2, MessageCircle, Send,
-  Activity, BookOpen, Shield, Sparkles, Moon, Droplets, Pill, Leaf,
+  Activity, BookOpen, Shield, Sparkles, Moon, Droplets, Pill, Leaf, Flame,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 const BotanicalHero = dynamic(() => import("@/components/illustrations/botanical-hero").then(m => m.BotanicalHero), { ssr: false, loading: () => <div className="h-64 w-full rounded-lg bg-stone-100 dark:bg-stone-800 animate-pulse" /> });
@@ -14,6 +14,133 @@ import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
 import { DailySummaryCard } from "@/components/dashboard/DailySummaryCard";
+
+// ── Progress Ring ──
+function ProgressRing({ value, size = 80 }: { value: number; size?: number }) {
+  const r = (size - 8) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (value / 100) * circ;
+  return (
+    <svg width={size} height={size} className="-rotate-90">
+      <circle cx={size/2} cy={size/2} r={r} stroke="#e5e7eb" strokeWidth={6} fill="none" />
+      <circle cx={size/2} cy={size/2} r={r} stroke="#3c7a52" strokeWidth={6} fill="none"
+        strokeLinecap="round" strokeDasharray={circ} strokeDashoffset={offset}
+        style={{ transition: "stroke-dashoffset 0.6s ease" }} />
+    </svg>
+  );
+}
+
+// ── Daily Tasks Widget ──
+const INIT_TASKS = (isTr: boolean) => [
+  { id: "med",   emoji: "💊", labelTr: "İlaçlar 0/1",       labelEn: "Medications 0/1" },
+  { id: "water", emoji: "💧", labelTr: "Su 0/8 bardak",     labelEn: "Water 0/8 glasses" },
+  { id: "sup",   emoji: "🌿", labelTr: "Takviyeler",        labelEn: "Supplements" },
+  { id: "walk",  emoji: "🚶", labelTr: "10 dk yürüyüş",     labelEn: "10 min walk" },
+];
+
+function DailyTasksWidget({ isTr, firstName, timeEmoji, streak = 3 }: {
+  isTr: boolean; firstName: string; timeEmoji: string; streak?: number;
+}) {
+  const [tasks, setTasks] = useState(INIT_TASKS(isTr).map(t => ({ ...t, done: false })));
+  const done = tasks.filter(t => t.done).length;
+  const pct = Math.round((done / tasks.length) * 100);
+  const toggle = (id: string) => setTasks(p => p.map(t => t.id === id ? { ...t, done: !t.done } : t));
+
+  return (
+    <div className="rounded-2xl border bg-card shadow-soft p-5">
+      <div className="flex gap-5 items-start">
+        {/* Ring */}
+        <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
+          <div className="relative">
+            <ProgressRing value={pct} size={88} />
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-xl font-bold text-foreground leading-none">{pct}</span>
+              <span className="text-[10px] text-muted-foreground">/100</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2.5 py-1 text-[11px] font-semibold text-amber-600">
+            <Flame className="h-3 w-3" /> {streak} {isTr ? "gün seri" : "day streak"}
+          </div>
+        </div>
+
+        {/* Tasks */}
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-base mb-0.5">
+            {isTr ? `İyi günler, ${firstName}` : `Good day, ${firstName}`} {timeEmoji}
+          </h3>
+          <p className="text-xs text-muted-foreground mb-3">
+            {isTr ? "Günlük görevlerini tamamla, skorunu yükselt!" : "Complete your daily tasks, boost your score!"}
+          </p>
+          <div className="space-y-1.5">
+            {tasks.map(t => (
+              <button key={t.id} onClick={() => toggle(t.id)}
+                className="flex items-center gap-2.5 w-full text-left group">
+                <div className={`flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition-all
+                  ${t.done ? "border-primary bg-primary" : "border-stone-300 group-hover:border-primary/50"}`}>
+                  {t.done && <svg className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}><path d="M5 13l4 4L19 7"/></svg>}
+                </div>
+                <span className="text-[11px]">{t.emoji}</span>
+                <span className={`text-sm transition-all ${t.done ? "line-through text-muted-foreground/50" : "text-foreground"}`}>
+                  {isTr ? t.labelTr : t.labelEn}
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="mt-3">
+            <div className="h-1.5 rounded-full bg-stone-100 overflow-hidden">
+              <div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${pct}%` }} />
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1">{done}/{tasks.length} {isTr ? "tamamlandı" : "completed"}</p>
+          </div>
+        </div>
+      </div>
+      <div className="mt-3 pt-3 border-t flex items-center justify-between">
+        <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">BETA</span>
+        <Link href="/dashboard" className="flex items-center gap-1 text-xs text-primary hover:underline">
+          {isTr ? "Panele git" : "Open dashboard"} <ArrowRight className="h-3 w-3" />
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+// ── AuthHome ──
+function AuthHome({ isTr, lang, firstName, timeEmoji, searchQuery, setSearchQuery, handleSearch, userId }: {
+  isTr: boolean; lang: string; firstName: string; timeEmoji: string;
+  searchQuery: string; setSearchQuery: (v: string) => void;
+  handleSearch: (e: React.FormEvent) => void; userId: string;
+}) {
+  return (
+    <div className="mx-auto w-full max-w-2xl px-4 pt-8 pb-16">
+      {/* Omni-bar */}
+      <form onSubmit={handleSearch} className="mb-4">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+            placeholder={isTr ? "Bir soru sor veya takviye ara..." : "Ask a question or search supplements..."}
+            className="w-full rounded-2xl border bg-card py-4 pl-11 pr-14 text-sm shadow-soft-md outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:shadow-soft-lg"
+          />
+          <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/90">
+            <Sparkles className="h-4 w-4" />
+          </button>
+        </div>
+      </form>
+
+      {/* Quick chips */}
+      <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-6">
+        {QUICK_CHIPS.map(({ emoji, labelKey, href }) => (
+          <Link key={href} href={href}
+            className="flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground transition-all hover:border-primary/30 hover:text-foreground hover:shadow-soft active:scale-95">
+            <span>{emoji}</span>{tx(labelKey, lang as "tr" | "en") || (isTr ? "Araç" : "Tool")}
+          </Link>
+        ))}
+      </div>
+
+      {/* Daily tasks widget */}
+      <DailyTasksWidget isTr={isTr} firstName={firstName} timeEmoji={timeEmoji} streak={3} />
+    </div>
+  );
+}
 
 // ── Quick Action Chips ──
 const QUICK_CHIPS = [
@@ -71,70 +198,11 @@ export default function Home() {
   // ─── AUTHENTICATED USER — Minimal Command Center ───
   if (showDashboard) {
     return (
-      <div className="mx-auto w-full max-w-2xl px-4 pt-10 pb-16">
-        {/* Greeting */}
-        <p className="text-base text-muted-foreground mb-1">
-          {timeEmoji} {isTr ? `Merhaba, ${firstName}` : `Hi, ${firstName}`}
-        </p>
-        <h1 className="font-heading text-2xl font-semibold mb-6">
-          {isTr ? "Bugün sağlığın için ne yapalım?" : "What can we do for your health today?"}
-        </h1>
-
-        {/* Omni-bar */}
-        <form onSubmit={handleSearch} className="mb-4">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isTr ? "Bir soru sor veya takviye ara..." : "Ask a question or search supplements..."}
-              className="w-full rounded-2xl border bg-card py-4 pl-11 pr-14 text-sm shadow-soft-md outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:shadow-soft-lg"
-            />
-            <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/90">
-              <Sparkles className="h-4 w-4" />
-            </button>
-          </div>
-        </form>
-
-        {/* Quick chips */}
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-8">
-          {QUICK_CHIPS.map(({ emoji, labelKey, href }) => (
-            <Link key={href} href={href}
-              className="flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground transition-all hover:border-primary/30 hover:text-foreground hover:shadow-soft active:scale-95"
-            >
-              <span>{emoji}</span>
-              {tx(labelKey, lang) || (isTr ? "Araç" : "Tool")}
-            </Link>
-          ))}
-        </div>
-
-        {/* Panel preview — compact stats row */}
-        <Link href="/dashboard" className="group block rounded-2xl border bg-card px-5 py-4 shadow-soft transition-all hover:shadow-soft-lg hover:-translate-y-0.5">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-              {isTr ? "Panel Önizlemesi" : "Panel Preview"}
-            </span>
-            <span className="flex items-center gap-1 text-xs text-primary">
-              {isTr ? "Panele git" : "Open panel"} <ArrowRight className="h-3 w-3" />
-            </span>
-          </div>
-          <div className="grid grid-cols-3 divide-x divide-border">
-            <div className="pr-4 text-center">
-              <p className="text-xl font-bold text-foreground">73</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">{isTr ? "Vitalite" : "Vitality"}</p>
-            </div>
-            <div className="px-4 text-center">
-              <p className="text-xl font-bold text-amber-500">🔥 12</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">{isTr ? "Günlük seri" : "Day streak"}</p>
-            </div>
-            <div className="pl-4 text-center">
-              <p className="text-xl font-bold text-foreground">0/4</p>
-              <p className="text-[11px] text-muted-foreground mt-0.5">{isTr ? "Görevler" : "Tasks"}</p>
-            </div>
-          </div>
-        </Link>
-      </div>
+      <AuthHome
+        isTr={isTr} lang={lang} firstName={firstName} timeEmoji={timeEmoji}
+        searchQuery={searchQuery} setSearchQuery={setSearchQuery} handleSearch={handleSearch}
+        userId={user.id}
+      />
     );
   }
 
