@@ -10,7 +10,7 @@ export default function Loading() {
       />
       <p className="text-xs text-muted-foreground">Loading your health companion...</p>
       <div className="h-1 w-24 rounded-full bg-muted overflow-hidden">
-        <div className="h-full w-1/2 rounded-full bg-[var(--brand,#059669)]"
+        <div className="h-full w-1/2 rounded-full bg-primary"
           style={{ animation: "shimmer 1.5s ease-in-out infinite" }}
         />
       </div>

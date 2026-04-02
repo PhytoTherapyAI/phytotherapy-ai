@@ -223,9 +223,9 @@ export default function Home() {
               {/* Dynamic heading */}
               <h1 className="font-heading text-2xl font-semibold leading-tight tracking-tight sm:text-3xl md:text-5xl">
                 {isTr ? (
-                  <>Kanıt Doğayla Buluşur.<br /><span className="text-[var(--brand)]">Yapay Zeka Seninle.</span></>
+                  <>Kanıt Doğayla Buluşur.<br /><span style={{ color: "var(--brand)" }}>Yapay Zeka Seninle.</span></>
                 ) : (
-                  <>Evidence Meets Nature.<br /><span className="text-[var(--brand)]">AI Meets You.</span></>
+                  <>Evidence Meets Nature.<br /><span style={{ color: "var(--brand)" }}>AI Meets You.</span></>
                 )}
               </h1>
               <p className="mt-3 max-w-lg text-xs text-muted-foreground sm:text-sm md:text-base">
@@ -266,7 +266,7 @@ export default function Home() {
               {/* CTA */}
               <div className="mt-5 flex flex-col gap-2 sm:flex-row md:mt-6">
                 <Link href="/auth/login"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--brand)] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 dark:shadow-emerald-900/30 hover:bg-[var(--brand-dark,#047857)] transition-colors">
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors">
                   {tx("nav.getStarted", lang)} <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link href="/health-assistant"
