@@ -44,7 +44,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "radiology", title: { en: "Radiology", tr: "Radyoloji" }, icon: "Scan", href: "/radiology" },
       { id: "body-analysis", title: { en: "Body Analysis", tr: "Vücut Analizi" }, icon: "Activity", href: "/body-analysis" },
       { id: "symptom-checker", title: { en: "Symptom Checker", tr: "Semptom Kontrol" }, icon: "HeartPulse", href: "/symptom-checker" },
-      { id: "scanner", title: { en: "Document Scanner", tr: "Belge Tarayıcı" }, icon: "ScanLine", href: "/scanner" },
+      { id: "scanner", title: { en: "Smart Lens Scanner", tr: "Akıllı Lens Tarayıcı" }, icon: "ScanLine", href: "/scan-medication" },
       { id: "health-report", title: { en: "Health Report Card", tr: "Sağlık Karnesi" }, icon: "FileText", href: "/health-report-card" },
     ],
   },
@@ -96,6 +96,8 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "favorites", title: { en: "Favorites", tr: "Favoriler" }, icon: "Heart", href: "/favorite-supplements" },
       { id: "anti-inflammatory", title: { en: "Anti-Inflammatory", tr: "Anti-İnflamatuar" }, icon: "Flame", href: "/anti-inflammatory" },
       { id: "cross-allergy", title: { en: "Cross Allergy", tr: "Çapraz Alerji" }, icon: "AlertCircle", href: "/cross-allergy" },
+      { id: "supplement-hub", title: { en: "Healing Center", tr: "Şifa Merkezi" }, icon: "Leaf", href: "/supplement-hub" },
+      { id: "supplement-guide", title: { en: "Supplement Guide", tr: "Takviye Rehberi" }, icon: "BookOpen", href: "/supplement-guide" },
     ],
   },
 
@@ -368,6 +370,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     defaultModule: "forum",
     layout: "grid",
     modules: [
+      { id: "community-feed", title: { en: "Healing Circle", tr: "Şifa Çemberi" }, icon: "Heart", href: "/community" },
       { id: "forum", title: { en: "Health Forum", tr: "Sağlık Forumu" }, icon: "MessageSquare", href: "/health-forum" },
       { id: "support-groups", title: { en: "Support Groups", tr: "Destek Grupları" }, icon: "Users", href: "/support-groups" },
       { id: "peer-mentoring", title: { en: "Peer Mentoring", tr: "Akran Mentorluğu" }, icon: "UserPlus", href: "/peer-mentoring" },

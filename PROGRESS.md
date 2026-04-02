@@ -1,6 +1,60 @@
 # PROGRESS.md — Doctopal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Nisan 2026 (v37.0 — PubMed Cache + Domain Migration)
+> Son güncelleme: 2 Nisan 2026 (v39.0 — 29 Modül Davranışsal UX Yeniden Tasarım)
+
+---
+
+## Oturum 2 Nisan 2026 (Session 10) — 29 Modül (16-44)
+
+### Modül 16-31 (Yaşam Dönemleri & Özel Sayfalar)
+- ✅ **Mod 16:** Calendar Center — weekly strip, habit rings, circadian time blocks, confetti FAB
+- ✅ **Mod 17:** Supplement Hub (`/supplement-hub`) — category bento, trust scores, smart swap
+- ✅ **Mod 18:** Chronic Care — empathetic hero, 6 condition bento, dashboard
+- ✅ **Mod 19+20:** Child Health + PediatricAgePicker — drum roller, progressive disclosure triage
+- ✅ **Mod 21:** Student Health — Pomodoro, 4-7-8 breathing, smart swaps, SOS FAB
+- ✅ **Mod 22:** New Parent Health — context switcher, power nap, mood survey, stretch
+- ✅ **Mod 23:** Elder Care — geriatric bento, large touch targets, SOS+FHIR
+- ✅ **Mod 24:** Cancer Support — affirmation swiper, chemo-brain chips, fatigue tracker
+- ✅ **Mod 25+26:** Dialysis Tracker — water ring, fluid/nutrition/medication tabs, smart food swap
+- ✅ **Mod 27:** Autism Support — PECS visual routine, sensory shield, sticker board
+- ✅ **Mod 28:** Rare Diseases — DNA animation, typewriter search, hope widgets
+- ✅ **Mod 29:** Travel Health — route chips, labor illusion scanning, context switcher
+- ✅ **Mod 30:** Seasonal Health — boss fight hero, arsenal grid, dopamine checklist, pollen radar
+- ✅ **Mod 31A:** Interests Onboarding — 24 interest masonry grid, spring animations, labor illusion
+- ✅ **Mod 31B:** LifeStagesShell — scrollable tab bar, layoutId animation, crossfade
+
+### Modül 32-44 (Davranışsal UX Yeniden Tasarım)
+- ✅ **Mod 32:** Community/Feed (`/community`) — tribes, bento feed, empathy reactions, transformation stories
+- ✅ **Mod 33:** Body Analysis — magic dropzone, vitality gauges, smooth sliders, energy ring
+- ✅ **Mod 34:** Symptom Checker — body region bento, progressive disclosure, labor illusion, sticky chat
+- ✅ **Mod 35:** Scan Medication (`/scan-medication`) — dark viewfinder, scanner laser, fütüristik results
+- ✅ **Mod 36:** Health Report Card — celebration hero, sparkline milestones, achievement unlock, AI bubbles
+- ✅ **Mod 37:** Medical Hub Layout (`/medical-hub`) — indigo pill tabs, crossfade routing, 6 tabs
+- ✅ **Mod 38:** Supplement Compare — VS arena, roster cards, epic battles, progress bars
+- ✅ **Mod 39:** Supplement Marketplace — trust banner, benefit pills, compatibility badges
+- ✅ **Mod 40:** Favorites — vault hero, starter stacks, categorical folders, trending marquee
+- ✅ **Mod 41:** Anti-Inflammatory — real-time gauge, food chips, CRP slider, snap your plate
+- ✅ **Mod 42:** Cross-Allergy — node graph, trivia cards, traffic light UI, my shield
+- ✅ **Mod 43:** Botanical Hub Layout (`/botanical-hub`) — emerald pill tabs, crossfade routing, 5 tabs
+- ✅ **Mod 44:** Supplement Guide (`/supplement-guide`) — category pills, trust scores, smart swap, sparklines
+
+### Bug Fixes
+- ✅ Timer cleanup: PomodoroTimer, BreathingExercise, PowerNapTimer, TypewriterSearch, ScanningLoader
+- ✅ Unmount state update prevention: mounted guard + clearTimeout/clearInterval in all 5 components
+- ✅ tools-hierarchy.ts updated: +4 new modules (scan-medication, supplement-hub, supplement-guide, community)
+- ✅ PROGRESS.md updated
+
+### Yeni Dosyalar
+- `app/community/page.tsx` (yeni)
+- `app/supplement-hub/page.tsx` (yeni)
+- `app/supplement-guide/page.tsx` (yeni)
+- `app/scan-medication/page.tsx` (yeni)
+- `app/medical-hub/layout.tsx` + `page.tsx` (yeni)
+- `app/botanical-hub/layout.tsx` + `page.tsx` (yeni)
+- `components/supplements/SupplementCard.tsx` (yeni)
+- `components/supplements/CategoryBento.tsx` (yeni)
+- `components/child-health/PediatricAgePicker.tsx` (yeni)
+- `components/life-stages/LifeStagesShell.tsx` (yeni)
 
 ---
 
