@@ -1,291 +1,274 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import {
-  Flame,
-  Loader2,
-  Shield,
-  LogIn,
-  Bone,
-  Leaf,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, X } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-interface MenopauseResult {
-  mrsScore: number;
-  hasHRT: boolean;
-  age: number;
-  symptomAnalysis: Array<{ symptom: string; severity: string; management: string }>;
-  mrsInterpretation: string;
-  supplementPlan: Array<{ name: string; dose: string; evidence: string; duration: string; caution: string }>;
-  boneHealthPlan: { calciumNeeded: string; vitaminD: string; exercise: string[]; dexaRecommendation: string };
-  hrtNotes: string;
-  lifestyleRecommendations: string[];
-  medicationNotes?: string;
-  alertLevel: "green" | "yellow";
-}
+const symptomBubbles = [
+  { id: "hotflash", emoji: "🔥", label: "Hot Flash", relief: "Black Cohosh + cool breathing technique may help reduce intensity." },
+  { id: "sweating", emoji: "💦", label: "Sweating", relief: "Sage leaf tea (2 cups/day) has been shown to reduce night sweats." },
+  { id: "brainfog", emoji: "🧠", label: "Brain Fog", relief: "Ginkgo Biloba 120mg/day may support cognitive clarity." },
+  { id: "joint", emoji: "🦴", label: "Joint Pain", relief: "Turmeric + Boswellia combo supports joint comfort naturally." },
+  { id: "sleep", emoji: "😴", label: "Sleep Issues", relief: "Tough night? Passionflower + Valerian Root could be your allies." },
+  { id: "mood", emoji: "🌊", label: "Mood Swings", relief: "St. John's Wort (after medication check) supports emotional balance." },
+  { id: "weight", emoji: "⚖️", label: "Weight Change", relief: "Green tea extract + mindful eating support metabolic transition." },
+  { id: "libido", emoji: "💫", label: "Low Libido", relief: "Maca root 1500mg/day may support hormonal vitality." },
+]
 
-const SYMPTOM_LIST = [
-  { key: "hot_flashes", en: "Hot flashes", tr: "Sicak basmalari" },
-  { key: "night_sweats", en: "Night sweats", tr: "Gece terlemeleri" },
-  { key: "mood_changes", en: "Mood changes", tr: "Ruh hali değişiklikleri" },
-  { key: "insomnia", en: "Insomnia", tr: "Uykusuzluk" },
-  { key: "vaginal_dryness", en: "Vaginal dryness", tr: "Vajinal kuruluk" },
-  { key: "joint_pain", en: "Joint pain", tr: "Eklem ağrısi" },
-  { key: "fatigue", en: "Fatigue", tr: "Yorgunluk" },
-  { key: "brain_fog", en: "Brain fog", tr: "Zihin bulanıkligi" },
-];
-
-export default function MenopausePanelPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-
-  const [symptoms, setSymptoms] = useState<Record<string, { frequency: number; severity: number }>>({});
-  const [age, setAge] = useState(50);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<MenopauseResult | null>(null);
-
-  const updateSymptom = (key: string, field: "frequency" | "severity", value: number) => {
-    setSymptoms((prev) => ({
-      ...prev,
-      [key]: { ...prev[key], frequency: prev[key]?.frequency || 0, severity: prev[key]?.severity || 0, [field]: value },
-    }));
-  };
-
-  const handleAnalyze = async () => {
-    if (!session?.access_token) return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/menopause-panel", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ lang, symptoms, age }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Analysis failed");
-      }
-
-      const data = await res.json();
-      setResult(data.result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="rounded-lg bg-purple-50 p-3 dark:bg-purple-950">
-            <Flame className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-          </div>
-          <div>
-            <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">{tx("menopause.title", lang)}</h1>
-            <p className="text-sm text-muted-foreground">{tx("menopause.subtitle", lang)}</p>
-          </div>
-        </div>
-        <div className="rounded-xl border border-purple-200 bg-purple-50/50 p-8 text-center dark:border-purple-800 dark:bg-purple-950/30">
-          <LogIn className="mx-auto mb-3 h-10 w-10 text-purple-400" />
-          <p className="text-lg font-medium text-purple-700 dark:text-purple-300">
-            {tx("common.loginToUse2", lang)}
-          </p>
-        </div>
-      </div>
-    );
-  }
+function BalanceAura({ score, symptoms }: { score: number; symptoms: Record<string, number> }) {
+  const activeCount = Object.values(symptoms).filter(v => v > 0).length
+  const hue = score > 70 ? 260 : score > 40 ? 35 : 0
+  const saturation = 30 + (100 - score) * 0.4
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-purple-50 p-3 dark:bg-purple-950">
-          <Flame className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-        </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">{tx("menopause.title", lang)}</h1>
-          <p className="text-sm text-muted-foreground">{tx("menopause.subtitle", lang)}</p>
-        </div>
+    <div className="relative w-64 h-64 mx-auto">
+      <motion.div
+        animate={{
+          scale: [1, 1.04, 1],
+          opacity: [0.7, 0.9, 0.7],
+        }}
+        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+        className="absolute inset-0 rounded-full"
+        style={{
+          background: `radial-gradient(circle, hsla(${hue}, ${saturation}%, 85%, 0.8) 0%, hsla(${hue}, ${saturation}%, 92%, 0.3) 60%, transparent 80%)`,
+        }}
+      />
+      <motion.div
+        animate={{ scale: [1, 1.02, 1] }}
+        transition={{ repeat: Infinity, duration: 3, ease: "easeInOut", delay: 0.5 }}
+        className="absolute inset-6 rounded-full"
+        style={{
+          background: `radial-gradient(circle, hsla(${hue}, ${saturation + 10}%, 80%, 0.6) 0%, transparent 70%)`,
+        }}
+      />
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <p className="text-xs text-slate-400 uppercase tracking-wider">Daily Vitality</p>
+        <motion.p
+          key={score}
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          className="text-4xl font-bold text-slate-800"
+        >
+          {score}%
+        </motion.p>
+        <p className="text-xs text-slate-500 mt-1">
+          {activeCount === 0 ? "Tap symptoms around me" : `${activeCount} area${activeCount > 1 ? "s" : ""} tracked`}
+        </p>
       </div>
+    </div>
+  )
+}
 
-      {/* Age */}
-      <div className="mb-6 rounded-xl border bg-card p-4 shadow-sm">
-        <label className="mb-1 block text-sm font-semibold text-muted-foreground">{tx("common.age", lang)}</label>
-        <input
-          type="number"
-          min={35}
-          max={80}
-          value={age}
-          onChange={(e) => setAge(Number(e.target.value))}
-          className="w-24 rounded-lg border bg-background px-3 py-2 text-center text-lg font-bold"
+function LaborIllusion({ onComplete }: { onComplete: () => void }) {
+  const steps = [
+    "Analyzing hormonal fluctuations...",
+    "Scanning body temperature regulators (phytoestrogens)...",
+    "Preparing bone health & mental focus shield...",
+    "Finalizing your balancing protocol...",
+  ]
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(s => {
+        if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s }
+        return s + 1
+      })
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-indigo-950/60 backdrop-blur-sm"
+    >
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          className="w-14 h-14 mx-auto mb-4 rounded-full border-4 border-lavender-200 border-t-purple-400"
+          style={{ borderTopColor: "#a78bfa" }}
         />
-      </div>
-
-      {/* Symptoms */}
-      <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-bold text-purple-700 dark:text-purple-300">{tx("menopause.symptoms", lang)}</h2>
-        <div className="space-y-4">
-          {SYMPTOM_LIST.map((symptom) => (
-            <div key={symptom.key} className="rounded-lg border p-3">
-              <p className="mb-2 text-sm font-medium">{symptom[lang as "en" | "tr"]}</p>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs text-muted-foreground">{tx("menopause.frequency", lang)}</label>
-                  <input
-                    type="range"
-                    min={0}
-                    max={10}
-                    value={symptoms[symptom.key]?.frequency || 0}
-                    onChange={(e) => updateSymptom(symptom.key, "frequency", Number(e.target.value))}
-                    className="w-full accent-purple-500"
-                  />
-                  <span className="text-xs font-bold">{symptoms[symptom.key]?.frequency || 0}</span>
-                </div>
-                <div>
-                  <label className="text-xs text-muted-foreground">{tx("menopause.severity", lang)}</label>
-                  <input
-                    type="range"
-                    min={0}
-                    max={3}
-                    value={symptoms[symptom.key]?.severity || 0}
-                    onChange={(e) => updateSymptom(symptom.key, "severity", Number(e.target.value))}
-                    className="w-full accent-purple-500"
-                  />
-                  <span className="text-xs font-bold">{symptoms[symptom.key]?.severity || 0}</span>
-                </div>
-              </div>
-            </div>
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="text-slate-600 text-sm">{steps[step]}</motion.p>
+        </AnimatePresence>
+        <div className="flex gap-1 justify-center mt-4">
+          {steps.map((_, i) => (
+            <div key={i} className={`w-2 h-2 rounded-full ${i <= step ? "bg-purple-400" : "bg-slate-200"}`} />
           ))}
         </div>
-      </div>
+      </motion.div>
+    </motion.div>
+  )
+}
 
-      <Button onClick={handleAnalyze} disabled={isLoading} className="mb-6 w-full bg-purple-600 hover:bg-purple-700 text-white" size="lg">
-        {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
-        ) : (
-          <><Leaf className="mr-2 h-5 w-5" />{tx("menopause.analyze", lang)}</>
-        )}
-      </Button>
+export default function MenopausePanelPage() {
+  const router = useRouter()
+  const [symptoms, setSymptoms] = useState<Record<string, number>>({})
+  const [activeSymptom, setActiveSymptom] = useState<string | null>(null)
+  const [showLabor, setShowLabor] = useState(false)
+  const [showResult, setShowResult] = useState(false)
 
-      {error && <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">{error}</div>}
+  const score = Math.max(20, 82 - Object.values(symptoms).reduce((a, b) => a + b * 5, 0))
 
-      {result && (
-        <div className="space-y-4">
-          {/* MRS Score */}
-          <div className="rounded-xl border bg-card p-6 shadow-sm text-center">
-            <p className="text-sm text-muted-foreground">{tx("menopause.mrsScore", lang)}</p>
-            <p className="text-4xl font-bold text-purple-600">{result.mrsScore}</p>
-            <p className="mt-2 text-sm text-muted-foreground">{result.mrsInterpretation}</p>
-            {result.hasHRT && (
-              <span className="mt-2 inline-block rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700 dark:bg-purple-900 dark:text-purple-300">
-                {tx("menopause.onHRT", lang)}
-              </span>
-            )}
+  const handleSymptomIntensity = (id: string, value: number) => {
+    setSymptoms(prev => ({ ...prev, [id]: value }))
+  }
+
+  const activeData = symptomBubbles.find(s => s.id === activeSymptom)
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-indigo-50/40 via-purple-50/20 to-stone-50">
+      <AnimatePresence>
+        {showLabor && <LaborIllusion onComplete={() => { setShowLabor(false); setShowResult(true) }} />}
+      </AnimatePresence>
+
+      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-4">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/60">
+            <ChevronLeft className="w-5 h-5 text-slate-600" />
+          </button>
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-slate-800">Biological Balance Center</h1>
+            <p className="text-xs text-slate-400">Hormonal Balance & Second Spring</p>
           </div>
+          <div className="w-9" />
+        </motion.div>
 
-          {/* Symptom Analysis */}
-          {result.symptomAnalysis?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {tx("menopause.symptomAnalysis", lang)}
-              </h3>
-              {result.symptomAnalysis.map((sa, i) => (
-                <div key={i} className="mb-3 rounded-lg border p-3 last:mb-0">
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold">{sa.symptom}</p>
-                    <span className={`rounded-full px-2 py-0.5 text-xs ${
-                      sa.severity === "mild" ? "bg-green-100 text-green-700" :
-                      sa.severity === "moderate" ? "bg-yellow-100 text-yellow-700" :
-                      "bg-red-100 text-red-700"
-                    }`}>{sa.severity}</span>
-                  </div>
-                  <p className="mt-1 text-sm text-muted-foreground">{sa.management}</p>
-                </div>
-              ))}
-            </div>
-          )}
+        {/* Balance Aura */}
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
+          <BalanceAura score={score} symptoms={symptoms} />
+        </motion.div>
 
-          {/* Supplement Plan */}
-          {result.supplementPlan?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {tx("menopause.supplementPlan", lang)}
-              </h3>
-              {result.supplementPlan.map((supp, i) => (
-                <div key={i} className="mb-3 rounded-lg border p-3 last:mb-0">
-                  <p className="font-semibold">{supp.name} — {supp.dose}</p>
-                  <p className="text-xs text-muted-foreground">{supp.evidence}</p>
-                  <p className="text-xs text-purple-600 dark:text-purple-400">{tx("menopause.duration", lang)}: {supp.duration}</p>
-                  {supp.caution && <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">{supp.caution}</p>}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Bone Health */}
-          {result.boneHealthPlan && (
-            <div className="rounded-xl border-2 border-purple-200 bg-purple-50 p-6 dark:bg-purple-950/20">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-purple-700 dark:text-purple-300">
-                <Bone className="h-5 w-5" />
-                {tx("menopause.boneHealth", lang)}
-              </h3>
-              <div className="space-y-2 text-sm">
-                <p><strong>{tx("menopause.calcium", lang)}:</strong> {result.boneHealthPlan.calciumNeeded}</p>
-                <p><strong>{tx("menopause.vitaminD", lang)}:</strong> {result.boneHealthPlan.vitaminD}</p>
-                <p><strong>DEXA:</strong> {result.boneHealthPlan.dexaRecommendation}</p>
-                {result.boneHealthPlan.exercise?.length > 0 && (
-                  <div>
-                    <strong>{tx("menopause.exercise", lang)}:</strong>
-                    <ul className="mt-1 space-y-1 pl-4">
-                      {result.boneHealthPlan.exercise.map((ex, i) => (
-                        <li key={i} className="text-purple-800 dark:text-purple-200">{ex}</li>
-                      ))}
-                    </ul>
+        {/* Symptom Bubbles */}
+        <div className="flex flex-wrap justify-center gap-3 mt-4 mb-6">
+          {symptomBubbles.map((s, i) => {
+            const intensity = symptoms[s.id] || 0
+            const isActive = intensity > 0
+            return (
+              <motion.button
+                key={s.id}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.15 + i * 0.05 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setActiveSymptom(s.id)}
+                className={`flex flex-col items-center gap-1 px-3 py-2.5 rounded-2xl border-2 transition-all ${
+                  isActive ? "border-purple-300 bg-purple-50 shadow-sm" : "border-slate-100 bg-white"
+                }`}
+              >
+                <span className="text-xl">{s.emoji}</span>
+                <span className="text-[10px] text-slate-600 whitespace-nowrap">{s.label}</span>
+                {isActive && (
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3].map(d => (
+                      <div key={d} className={`w-1.5 h-1.5 rounded-full ${d <= intensity ? "bg-purple-400" : "bg-slate-200"}`} />
+                    ))}
                   </div>
                 )}
-              </div>
-            </div>
-          )}
-
-          {/* HRT Notes */}
-          {result.hrtNotes && (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:bg-amber-950/30">
-              <p className="text-sm text-amber-700 dark:text-amber-300">{result.hrtNotes}</p>
-            </div>
-          )}
-
-          {/* Lifestyle */}
-          {result.lifestyleRecommendations?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-purple-700 dark:text-purple-300">
-                {tx("menopause.lifestyle", lang)}
-              </h3>
-              <ul className="space-y-2">
-                {result.lifestyleRecommendations.map((rec, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <Shield className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-500" />
-                    {rec}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+              </motion.button>
+            )
+          })}
         </div>
-      )}
 
-      <p className="mt-6 text-center text-xs text-muted-foreground">{tx("disclaimer.tool", lang)}</p>
+        {/* Symptom Detail Sheet */}
+        <AnimatePresence>
+          {activeSymptom && activeData && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-end justify-center"
+              onClick={() => setActiveSymptom(null)}
+            >
+              <motion.div
+                initial={{ y: 200 }}
+                animate={{ y: 0 }}
+                exit={{ y: 200 }}
+                transition={{ type: "spring", damping: 25 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-t-3xl p-6 w-full max-w-lg shadow-2xl"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{activeData.emoji}</span>
+                    <h3 className="text-lg font-semibold text-slate-800">{activeData.label}</h3>
+                  </div>
+                  <button onClick={() => setActiveSymptom(null)} className="p-2 rounded-full hover:bg-slate-100">
+                    <X className="w-5 h-5 text-slate-400" />
+                  </button>
+                </div>
+
+                <p className="text-sm text-slate-500 mb-4">How intense is it today?</p>
+                <div className="flex gap-3 mb-5">
+                  {[
+                    { val: 1, label: "Mild", color: "bg-amber-100 border-amber-300 text-amber-700" },
+                    { val: 2, label: "Moderate", color: "bg-orange-100 border-orange-300 text-orange-700" },
+                    { val: 3, label: "Severe", color: "bg-red-100 border-red-300 text-red-700" },
+                  ].map(opt => (
+                    <motion.button
+                      key={opt.val}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleSymptomIntensity(activeData.id, opt.val)}
+                      className={`flex-1 py-3 rounded-xl text-sm font-medium border-2 transition-all ${
+                        symptoms[activeData.id] === opt.val ? opt.color : "border-slate-100 bg-slate-50 text-slate-500"
+                      }`}
+                    >
+                      {opt.label}
+                    </motion.button>
+                  ))}
+                </div>
+
+                {(symptoms[activeData.id] || 0) > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-purple-50 rounded-xl p-4 border border-purple-100"
+                  >
+                    <p className="text-sm text-purple-700">🌿 {activeData.relief}</p>
+                  </motion.div>
+                )}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Update Protocol Button */}
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setShowLabor(true)}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-lg shadow-purple-200 flex items-center justify-center gap-2"
+        >
+          <Sparkles className="w-4 h-4" />
+          Update My Balancing Protocol
+        </motion.button>
+
+        {/* Result */}
+        <AnimatePresence>
+          {showResult && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-4 bg-white rounded-2xl p-5 shadow-sm border border-purple-100"
+            >
+              <h3 className="text-sm font-semibold text-purple-700 mb-2">Your Balancing Protocol</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Based on your symptom profile, we recommend a phytoestrogen-rich protocol with Black Cohosh,
+                Sage Leaf, and Magnesium Bisglycinate. Combined with mindful movement and sleep hygiene optimization.
+              </p>
+              <p className="text-xs text-slate-400 mt-3">Always consult your healthcare provider before starting any supplement.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
-  );
+  )
 }
