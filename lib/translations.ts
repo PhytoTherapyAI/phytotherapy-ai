@@ -5867,12 +5867,27 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "video.openOriginal": { en: "Open original", tr: "Orijinali ac" },
 
   // ── Today View ──
-  "todayView.waterMaxWarning": { en: "Please stop! Risk of water intoxication.", tr: "Lutfen daha fazla icme! Su zehirlenmesi riski var." },
+  "todayView.waterMaxWarning": { en: "Please stop! Risk of water intoxication.", tr: "Lütfen daha fazla içme! Su zehirlenmesi riski var." },
 
   // ── Daily Care Card ──
   "dailyCare.title": { en: "Today's Care Plan", tr: "Bugünün Sağlık Planı" },
   "dailyCare.refresh": { en: "Refresh", tr: "Yenile" },
-  "dailyCare.allCompleted": { en: "You completed today's plan, amazing!", tr: "Bugunku planini tamamladin, harikasin!" },
+  "dailyCare.allCompleted": { en: "You completed today's plan, amazing!", tr: "Bugünkü planını tamamladın, harikasın!" },
+  "dailyCare.customize": { en: "Customize", tr: "Kişiselleştir" },
+  "dailyCare.customizeDesc": { en: "Choose your daily actions", tr: "Günlük aksiyonlarını seç" },
+  "dailyCare.done": { en: "Done", tr: "Tamam" },
+  "dailyCare.dismiss": { en: "Dismiss for today", tr: "Bugün gösterme" },
+  "dailyCare.dismissed": { en: "card hidden", tr: "kart gizlendi" },
+  "dailyCare.showAll": { en: "Show All", tr: "Tümünü Göster" },
+  "dailyCare.selectCards": { en: "Select at least 2 cards", tr: "En az 2 kart seç" },
+  "dailyCare.cat.nutrition": { en: "Nutrition", tr: "Beslenme" },
+  "dailyCare.cat.lifestyle": { en: "Lifestyle", tr: "Yaşam Tarzı" },
+  "dailyCare.cat.tracking": { en: "Tracking", tr: "Takip" },
+  "dailyCare.cat.wellness": { en: "Wellness", tr: "Kendine İyi Bak" },
+  "dailyCare.cat.fitness": { en: "Fitness", tr: "Fitness" },
+  "dailyCare.cat.hydration": { en: "Hydration", tr: "Hidrasyon" },
+  "dailyCare.cat.social": { en: "Social", tr: "Sosyal" },
+  "dailyCare.cat.mindfulness": { en: "Mindfulness", tr: "Farkındalık" },
 
   // ── DailySummaryCard ──
   "dailySummary.onFire": { en: "You're on fire!", tr: "Harika gidiyorsun!" },

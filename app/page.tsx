@@ -345,7 +345,7 @@ export default function Home() {
                     <h1 className="text-xl md:text-2xl font-semibold text-foreground">
                       {tx(greetingKey, lang).replace("{name}", firstName)} 👋
                     </h1>
-                    <InfoTooltip title="Your Health Hub" description="Ask anything via the search bar. Your daily snapshot shows key health metrics at a glance." />
+                    <InfoTooltip title={isTr ? "Sağlık Merkezin" : "Your Health Hub"} description={isTr ? "Arama çubuğundan her şeyi sorabilirsin. Günlük özetin temel sağlık metriklerini bir bakışta gösterir." : "Ask anything via the search bar. Your daily snapshot shows key health metrics at a glance."} />
                   </div>
                   <p className="text-xs text-muted-foreground mb-4">
                     {isTr ? "Günlük görevlerini tamamla, skorunu yükselt!" : "Complete your daily tasks, boost your score!"}

@@ -9,25 +9,29 @@ const DAILY_CARE_PROMPT = `You are generating a personalized daily care plan for
 
 INPUT: User profile (age, gender, conditions, medications, allergies, supplements, recent vitals, recent mood/sleep data).
 
-GENERATE exactly 4 action cards for TODAY — each must be:
+GENERATE exactly 8 action cards for TODAY — each must be:
 - Specific to the user's profile (not generic)
 - Evidence-based and safe
 - Different from yesterday (use the day-of-week and date to vary)
 - Warm, encouraging tone — like a caring friend, not a doctor's order
 
-CATEGORIES (1 card each minimum, 4 total):
+CATEGORIES (exactly 1 card per category, 8 total):
 1. "nutrition" — Food/drink/phytotherapy tip tied to their condition
 2. "lifestyle" — Exercise/movement/breathing/habit tied to their condition
 3. "tracking" — Prompt to log a symptom, vital, or mood relevant to them
 4. "wellness" — Mental health, social, sleep, or motivational micro-action
+5. "fitness" — Specific exercise or stretching routine (e.g., 10 min jog, yoga, plank)
+6. "hydration" — Water intake goal, electrolyte tip, or hydration strategy
+7. "social" — Social connection action (call a friend, gratitude note, community)
+8. "mindfulness" — Meditation, journaling, body scan, or awareness exercise
 
 RESPONSE FORMAT (JSON):
 {
   "greeting": "Warm, personalized morning/afternoon/evening message referencing their name and a relevant health focus (max 2 sentences)",
   "cards": [
     {
-      "id": "unique-id",
-      "category": "nutrition" | "lifestyle" | "tracking" | "wellness",
+      "id": "category-name",
+      "category": "nutrition" | "lifestyle" | "tracking" | "wellness" | "fitness" | "hydration" | "social" | "mindfulness",
       "icon": "leaf" | "footprints" | "clipboard" | "heart" | "droplets" | "sun" | "moon" | "dumbbell" | "brain" | "eye",
       "title": "Short action title (max 8 words)",
       "description": "Specific, actionable instruction (2-3 sentences max). Include WHY it matters for their condition.",
@@ -78,37 +82,36 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
-    // Fetch medications
-    const { data: medications } = await supabase
-      .from("user_medications")
-      .select("brand_name, generic_name, dosage, frequency")
-      .eq("user_id", userId);
+    // Fetch medications, allergies, vitals, check-ins in parallel
+    const [medsRes, allergiesRes, vitalsRes, checkInsRes] = await Promise.all([
+      supabase
+        .from("user_medications")
+        .select("brand_name, generic_name, dosage, frequency")
+        .eq("user_id", userId),
+      supabase
+        .from("user_allergies")
+        .select("allergen, severity")
+        .eq("user_id", userId),
+      supabase
+        .from("vital_records")
+        .select("vital_type, value, unit, recorded_at")
+        .eq("user_id", userId)
+        .gte("recorded_at", new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0])
+        .order("recorded_at", { ascending: false })
+        .limit(10),
+      supabase
+        .from("daily_check_ins")
+        .select("energy_level, sleep_quality, mood, bloating, check_date")
+        .eq("user_id", userId)
+        .gte("check_date", new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split("T")[0])
+        .order("check_date", { ascending: false })
+        .limit(3),
+    ]);
 
-    // Fetch allergies
-    const { data: allergies } = await supabase
-      .from("user_allergies")
-      .select("allergen, severity")
-      .eq("user_id", userId);
-
-    // Fetch recent vitals (last 7 days)
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
-    const { data: vitals } = await supabase
-      .from("vital_records")
-      .select("vital_type, value, unit, recorded_at")
-      .eq("user_id", userId)
-      .gte("recorded_at", sevenDaysAgo)
-      .order("recorded_at", { ascending: false })
-      .limit(10);
-
-    // Fetch recent check-ins (last 3 days)
-    const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
-    const { data: checkIns } = await supabase
-      .from("daily_check_ins")
-      .select("energy_level, sleep_quality, mood, bloating, check_date")
-      .eq("user_id", userId)
-      .gte("check_date", threeDaysAgo)
-      .order("check_date", { ascending: false })
-      .limit(3);
+    const medications = medsRes.data;
+    const allergies = allergiesRes.data;
+    const vitals = vitalsRes.data;
+    const checkIns = checkInsRes.data;
 
     // Build context for AI
     const today = new Date();
@@ -140,7 +143,7 @@ RECENT MOOD/ENERGY: ${checkIns?.map(c => `${c.check_date}: energy=${c.energy_lev
 TODAY: ${dayOfWeek}, ${dateStr} (${timeOfDay})
 LANGUAGE: ${tx("api.respondLang", lang)}
 
-Generate today's personalized care plan. Make it different from what you'd generate for a different day of the week.`;
+Generate today's personalized care plan with 8 cards. Make it different from what you'd generate for a different day of the week.`;
 
     const result = await askGeminiJSON(contextPrompt, DAILY_CARE_PROMPT);
 
@@ -148,12 +151,18 @@ Generate today's personalized care plan. Make it different from what you'd gener
     try {
       parsed = typeof result === "string" ? JSON.parse(result) : result;
     } catch {
-      // Fallback if AI response isn't valid JSON
       parsed = getFallbackPlan(profile, lang, timeOfDay);
     }
 
+    // Ensure deterministic IDs (stable for the day)
+    if (parsed?.cards && Array.isArray(parsed.cards)) {
+      parsed.cards.forEach((card: any) => {
+        card.id = `${dateStr}-${card.category}`;
+      });
+    }
+
     return NextResponse.json(parsed, {
-      headers: { "Cache-Control": "private, max-age=1800" }, // Cache 30 min
+      headers: { "Cache-Control": "private, max-age=1800" },
     });
   } catch (error) {
     console.error("[Daily Care Plan] Error:", error);
@@ -168,6 +177,7 @@ Generate today's personalized care plan. Make it different from what you'd gener
 function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
   const name = profile?.full_name?.split(" ")[0] || "";
   const isTr = lang === "tr";
+  const dateStr = new Date().toISOString().split("T")[0];
 
   const greetings: Record<string, { tr: string; en: string }> = {
     morning: {
@@ -188,7 +198,7 @@ function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
     greeting: isTr ? greetings[timeOfDay].tr : greetings[timeOfDay].en,
     cards: [
       {
-        id: "fallback-nutrition",
+        id: `${dateStr}-nutrition`,
         category: "nutrition",
         icon: "leaf",
         title: isTr ? "Bir fincan bitki çayı iç" : "Have a cup of herbal tea",
@@ -200,7 +210,7 @@ function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
         priority: "medium",
       },
       {
-        id: "fallback-lifestyle",
+        id: `${dateStr}-lifestyle`,
         category: "lifestyle",
         icon: "footprints",
         title: isTr ? "15 dakika yürüyüş yap" : "Take a 15-minute walk",
@@ -212,7 +222,7 @@ function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
         priority: "medium",
       },
       {
-        id: "fallback-tracking",
+        id: `${dateStr}-tracking`,
         category: "tracking",
         icon: "clipboard",
         title: isTr ? "Bugün kendini nasıl hissediyorsun?" : "How are you feeling today?",
@@ -224,7 +234,7 @@ function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
         priority: "high",
       },
       {
-        id: "fallback-wellness",
+        id: `${dateStr}-wellness`,
         category: "wellness",
         icon: "heart",
         title: isTr ? "3 dakika nefes egzersizi yap" : "Do a 3-minute breathing exercise",
@@ -232,6 +242,54 @@ function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
           ? "4 saniye nefes al, 7 saniye tut, 8 saniye ver. Sinir sistemini sakinleştirir ve stresi azaltır."
           : "Breathe in 4 sec, hold 7 sec, exhale 8 sec. Calms your nervous system and reduces stress.",
         duration: "3 min",
+        evidence: null,
+        priority: "low",
+      },
+      {
+        id: `${dateStr}-fitness`,
+        category: "fitness",
+        icon: "dumbbell",
+        title: isTr ? "10 dakika esneme hareketleri" : "10-minute stretching routine",
+        description: isTr
+          ? "Boyun, omuz ve sırt esnemeleri kas gerginliğini azaltır ve duruşunu iyileştirir."
+          : "Neck, shoulder, and back stretches reduce muscle tension and improve posture.",
+        duration: "10 min",
+        evidence: null,
+        priority: "medium",
+      },
+      {
+        id: `${dateStr}-hydration`,
+        category: "hydration",
+        icon: "droplets",
+        title: isTr ? "Günlük su hedefini takip et" : "Track your daily water goal",
+        description: isTr
+          ? "Bugün en az 8 bardak su içmeyi hedefle. Yeterli su metabolizmayı hızlandırır ve enerji verir."
+          : "Aim for at least 8 glasses today. Proper hydration boosts metabolism and energy levels.",
+        duration: "1 min",
+        evidence: null,
+        priority: "medium",
+      },
+      {
+        id: `${dateStr}-social`,
+        category: "social",
+        icon: "heart",
+        title: isTr ? "Bir yakınını ara" : "Call someone you care about",
+        description: isTr
+          ? "Sosyal bağlantılar bağışıklık sistemini güçlendirir. Kısa bir arama bile ruh halini iyileştirir."
+          : "Social connections boost immunity. Even a short call can improve your mood significantly.",
+        duration: "5 min",
+        evidence: null,
+        priority: "low",
+      },
+      {
+        id: `${dateStr}-mindfulness`,
+        category: "mindfulness",
+        icon: "brain",
+        title: isTr ? "5 dakika farkındalık meditasyonu" : "5-minute mindfulness meditation",
+        description: isTr
+          ? "Gözlerini kapat ve nefesine odaklan. Düzenli meditasyon kortizol seviyesini düşürür."
+          : "Close your eyes and focus on breathing. Regular meditation lowers cortisol levels.",
+        duration: "5 min",
         evidence: null,
         priority: "low",
       },
