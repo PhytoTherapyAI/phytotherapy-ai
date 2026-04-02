@@ -1,29 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 56" fill="none">
-  <defs>
-    <linearGradient id="logo-grad" x1="0" y1="0" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#4ade80"/>
-      <stop offset="100%" stop-color="#16a34a"/>
-    </linearGradient>
-  </defs>
-
-  <!-- Icon (compact version) -->
-  <rect width="48" height="48" rx="12" x="4" y="4" fill="#0f1d15"/>
-
-  <!-- D shape -->
-  <path d="M18 16 L18 40 L26 40 C34 40, 40 34, 40 28 C40 22, 34 16, 26 16 Z" fill="none" stroke="url(#logo-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-
-  <!-- Stethoscope circle -->
-  <circle cx="37" cy="22" r="3.5" fill="none" stroke="#4ade80" stroke-width="1.2"/>
-  <circle cx="37" cy="22" r="1.2" fill="#4ade80"/>
-
-  <!-- Leaf -->
-  <path d="M30 16 C32 12, 36 10, 40 9.5 C37 13, 34 15, 31 15.5" fill="#22c55e" opacity="0.9"/>
-
-  <!-- Pulse -->
-  <polyline points="21,28 25,28 27,24 29,32 31,26 33,28 38,28" fill="none" stroke="#4ade80" stroke-width="0.8" stroke-linecap="round" opacity="0.4"/>
-
-  <!-- "Doctopal" text -->
-  <text x="64" y="36" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="26" letter-spacing="-0.5" fill="#1e293b">
-    Doctopal
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 48" fill="none">
+  <!-- Icon -->
+  <circle cx="24" cy="24" r="16" stroke="#059669" stroke-width="2.5" fill="none"/>
+  <path d="M24 40 L24 44" stroke="#059669" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="24" cy="46" r="2" fill="#059669"/>
+  <path d="M24 15 C20 19, 18 24, 21 28 C22.5 30, 24 30, 24 30 C24 30, 25.5 30, 27 28 C30 24, 28 19, 24 15Z" fill="#059669" opacity="0.9"/>
+  <line x1="24" y1="17" x2="24" y2="28" stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+  <!-- Wordmark -->
+  <text x="56" y="32" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="24" letter-spacing="-0.5">
+    <tspan fill="#1e293b">Docto</tspan><tspan fill="#059669">Pal</tspan>
   </text>
 </svg>
