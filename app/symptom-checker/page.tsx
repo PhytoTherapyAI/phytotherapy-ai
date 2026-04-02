@@ -101,15 +101,16 @@ export default function SymptomCheckerPage() {
   const retryCountRef = useRef(0)
 
   // Build user profile from auth
-  const userProfile = profile ? {
-    age: profile.age || undefined,
-    gender: profile.gender || undefined,
-    medications: [], // Could be fetched separately
+  const p = profile as any
+  const userProfile = p ? {
+    age: p.age || undefined,
+    gender: p.gender || undefined,
+    medications: [],
     allergies: [],
-    conditions: profile.chronic_conditions ? [profile.chronic_conditions] : [],
-    kidneyStatus: profile.kidney_status || undefined,
-    liverStatus: profile.liver_status || undefined,
-    pregnancyStatus: profile.pregnancy_status || undefined,
+    conditions: p.chronic_conditions ? [p.chronic_conditions] : [],
+    kidneyStatus: p.kidney_status || undefined,
+    liverStatus: p.liver_status || undefined,
+    pregnancyStatus: p.pregnancy_status || undefined,
   } : undefined
 
   const callAPI = useCallback(async (stepNum: number, hist: ConversationStep[], category?: string) => {

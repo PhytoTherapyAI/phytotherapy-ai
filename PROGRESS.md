@@ -1,6 +1,52 @@
 # PROGRESS.md — Doctopal Sprint İlerleme Takibi
 
-> Son güncelleme: 2 Nisan 2026 (v40.0 — Bug Fix & Polish Session)
+> Son güncelleme: 2 Nisan 2026 (v41.0 — Adaptive Symptom + Calendar Fixes + Dashboard UX)
+
+---
+
+## Oturum 2 Nisan 2026 (Session 12) — Adaptive Symptom + Calendar + Dashboard
+
+### Adaptive Symptom Assessment (Ada Health Style) ✅
+- ✅ `lib/types/symptom-assessment.ts` — Full TypeScript types
+- ✅ `app/api/symptom-assessment/route.ts` — Claude AI adaptive questioning engine
+- ✅ `app/symptom-checker/page.tsx` — Complete rewrite: 3 screens (Intro → Questions → Results)
+- ✅ Intro: 6 body region bento cards, "Assess for Others" toggle (self/child/other)
+- ✅ Question Flow: Typeform-style one-question-at-a-time, AnimatePresence transitions
+- ✅ Side panel: real-time AI condition narrowing with confidence bars (desktop)
+- ✅ Results: urgency banner, top conditions, medication alerts, phytotherapy suggestions
+- ✅ Error handling: auto-retry 2x, 15s timeout, fallback question, retry button
+- ✅ Full TR/EN translations, Framer Motion throughout
+- ✅ tools-hierarchy.ts updated: "Smart Symptom Assessment" (TR/EN)
+
+### Dashboard Task List — Persistence + Customization ✅
+- ✅ Tasks persist via localStorage (survive page refresh)
+- ✅ 8 task options (med, water, supplements, walk, meditation, vitals, sleep, meal)
+- ✅ Customize mode: toggle switches + duration selectors (⚙️ icon)
+- ✅ Dismiss tasks for today (X button on hover)
+- ✅ InfoTooltip "Your Health Hub" translated to Turkish
+
+### DailyCareCard — Customization + Persistence ✅
+- ✅ API generates 8 cards (was 4), deterministic IDs
+- ✅ Versioned cache (v2), local date (not UTC)
+- ✅ Customize mode: 8 categories with toggle + duration picker
+- ✅ Dismiss cards, completion persists across refresh
+
+### Calendar Fixes (6 bugs) ✅
+- ✅ Weekly strip day skipping: local date constructor fix
+- ✅ Su İçtim FAB → Supabase save (was state-only)
+- ✅ Habit rings mobile overflow: SVG 64→56px, flex-1
+- ✅ Heatmap: removed mock data, fetches from daily_check_ins + daily_logs
+- ✅ Morning/evening ritual saving: localStorage persistence
+- ✅ Calendar med → Dashboard task sync: localStorage cross-update
+
+### Chat Fixes ✅
+- ✅ `<details>` blocks render as collapsible sources (was raw HTML text)
+- ✅ Follow-up suggestion chips no longer overlap message bubble
+
+### Translation Fixes ✅
+- ✅ "Bugunku planini tamamladin" → proper Turkish characters
+- ✅ 20+ symptom assessment keys added
+- ✅ InfoTooltip TR translation
 
 ---
 

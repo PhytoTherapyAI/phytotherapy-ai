@@ -1776,8 +1776,8 @@ const t: Record<string, TranslationEntry> = {
   // Symptom Checker
   // ══════════════════════════════════════════
   "nav.symptomChecker": { en: "Symptom Checker", tr: "Semptom Kontrolü" },
-  "symptom.title": { en: "Symptom Checker", tr: "Semptom Kontrolü" },
-  "symptom.subtitle": { en: "Describe your symptoms for an AI-guided assessment", tr: "Semptomlarınızı yazın, AI destekli değerlendirme alın" },
+  "symptom.title": { en: "Smart Symptom Assessment", tr: "Akıllı Semptom Değerlendirmesi" },
+  "symptom.subtitle": { en: "Answer a few quick questions. Our AI adapts to your answers — like talking to a real doctor.", tr: "Birkaç hızlı soruyu yanıtlayın. AI cevaplarınıza göre uyarlanır — gerçek bir doktorla konuşmak gibi." },
   "symptom.disclaimer": { en: "This tool does not diagnose. It helps you understand symptoms and decide on urgency. Always consult a doctor for medical concerns.", tr: "Bu araç teşhis koymaz. Semptomlarınızı anlamanıza ve aciliyeti değerlendirmenize yardımcı olur. Tıbbi endişeleriniz için her zaman doktorunuza danışın." },
   "symptom.commonSymptoms": { en: "Common symptoms:", tr: "Yaygın semptomlar:" },
   "symptom.describeLabel": { en: "Describe your symptoms", tr: "Semptomlarınızı açıklayın" },
@@ -5889,9 +5889,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "dailyCare.cat.social": { en: "Social", tr: "Sosyal" },
   "dailyCare.cat.mindfulness": { en: "Mindfulness", tr: "Farkındalık" },
 
-  // ── Adaptive Symptom Assessment ──
-  "symptom.title": { en: "Smart Symptom Assessment", tr: "Akıllı Semptom Değerlendirmesi" },
-  "symptom.subtitle": { en: "Answer a few quick questions. Our AI adapts to your answers — like talking to a real doctor.", tr: "Birkaç hızlı soruyu yanıtlayın. AI cevaplarınıza göre uyarlanır — gerçek bir doktorla konuşmak gibi." },
+  // ── Adaptive Symptom Assessment (new keys only — no duplicates) ──
   "symptom.whatsWrong": { en: "What's bothering you most right now?", tr: "Şu an sizi en çok ne rahatsız ediyor?" },
   "symptom.forMyself": { en: "For Myself", tr: "Kendim İçin" },
   "symptom.forChild": { en: "For My Child", tr: "Çocuğum İçin" },
@@ -5900,11 +5898,10 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "symptom.back": { en: "Back", tr: "Geri" },
   "symptom.aiThinking": { en: "AI is thinking...", tr: "AI düşünüyor..." },
   "symptom.aiNarrowing": { en: "AI is narrowing down...", tr: "AI olasılıkları daraltıyor..." },
-  "symptom.emergency": { en: "CALL 112/911 IMMEDIATELY", tr: "HEMEN 112'Yİ ARAYIN" },
   "symptom.seeToday": { en: "See a doctor today", tr: "Bugün doktora gidin" },
   "symptom.seeSoon": { en: "Schedule a doctor visit", tr: "Doktor randevusu alın" },
-  "symptom.monitor": { en: "Monitor symptoms, self-care may be enough", tr: "Semptomları takip edin, öz bakım yeterli olabilir" },
-  "symptom.selfCare": { en: "Self-care is appropriate", tr: "Öz bakım yeterli" },
+  "symptom.monitorSelf": { en: "Monitor symptoms, self-care may be enough", tr: "Semptomları takip edin, öz bakım yeterli olabilir" },
+  "symptom.selfCareOk": { en: "Self-care is appropriate", tr: "Öz bakım yeterli" },
   "symptom.phytoTitle": { en: "Phytotherapy Suggestions", tr: "Fitoterapi Önerileri" },
   "symptom.download": { en: "Download Report", tr: "Raporu İndir" },
   "symptom.discuss": { en: "Discuss with AI Assistant", tr: "AI Asistanla Tartış" },

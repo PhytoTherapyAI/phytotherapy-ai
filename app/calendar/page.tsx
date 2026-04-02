@@ -450,6 +450,11 @@ export default function CalendarPage() {
   // Shared completed items set for ritual sync (key = task label)
   const [completedItems, setCompletedItems] = useState<Set<string>>(new Set())
 
+  // Helper: local date string (must be before useEffects that use it)
+  const getDateStr = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
+  const selectedDateStr = getDateStr(selectedDate)
+  const todayDateStr = getDateStr(new Date())
+
   // Load ritual completions from localStorage on mount
   useEffect(() => {
     const saved = localStorage.getItem(`cal-rituals-${todayDateStr}`)
@@ -545,11 +550,6 @@ export default function CalendarPage() {
   const totalWater = waterCount + waterDoneFromTasks + 3
   const medsDone = allTasks.filter(t => t.done && (t.emoji === "💊" || t.emoji === "🌿" || t.emoji === "🐟" || t.emoji === "🌙" || t.emoji === "☀️" || t.emoji === "🍵")).length
   const totalMeds = allTasks.filter(t => t.emoji !== "💧").length
-
-  // Helper: local date string
-  const getDateStr = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
-  const selectedDateStr = getDateStr(selectedDate)
-  const todayDateStr = getDateStr(new Date())
 
   // FAB quick log handler — saves to Supabase
   const handleQuickLog = useCallback((type: string) => {
