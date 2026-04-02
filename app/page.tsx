@@ -296,8 +296,39 @@ export default function Home() {
   const [completedTaskIds, setCompletedTaskIds] = useState<Set<string>>(new Set());
   const [dismissedTaskIds, setDismissedTaskIds] = useState<Set<string>>(new Set());
   const [taskCustomizeMode, setTaskCustomizeMode] = useState(false);
-  const [streak] = useState(3);
+  const [streak, setStreak] = useState(0);
   const todayStr = getLocalDate();
+
+  // Fetch real streak from Supabase
+  useEffect(() => {
+    if (!user?.id) return;
+    const fetchStreak = async () => {
+      try {
+        const { createBrowserClient } = await import("@/lib/supabase");
+        const supabase = createBrowserClient();
+        const ninetyDaysAgo = new Date();
+        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+        const [checkInsRes, logsRes] = await Promise.all([
+          supabase.from("daily_check_ins").select("check_date").eq("user_id", user.id)
+            .gte("check_date", ninetyDaysAgo.toISOString().split("T")[0]),
+          supabase.from("daily_logs").select("log_date").eq("user_id", user.id).eq("completed", true)
+            .gte("log_date", ninetyDaysAgo.toISOString().split("T")[0]),
+        ]);
+        const activeDates = new Set<string>();
+        checkInsRes.data?.forEach((c: any) => activeDates.add(c.check_date));
+        logsRes.data?.forEach((l: any) => activeDates.add(l.log_date));
+        let s = 0;
+        const today = new Date();
+        for (let i = 0; i < 90; i++) {
+          const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+          const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+          if (activeDates.has(ds)) s++; else break;
+        }
+        setStreak(s);
+      } catch {}
+    };
+    fetchStreak();
+  }, [user?.id]);
 
   // Load task prefs + completions + dismissals on mount
   useEffect(() => {

@@ -455,19 +455,9 @@ export default function CalendarPage() {
   const selectedDateStr = getDateStr(selectedDate)
   const todayDateStr = getDateStr(new Date())
 
-  // Load ritual completions from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem(`cal-rituals-${todayDateStr}`)
-    if (!saved) return
-    try {
-      const ids = JSON.parse(saved) as string[]
-      const idSet = new Set(ids)
-      setCompletedItems(idSet)
-      setMorningTasks(prev => prev.map(t => idSet.has(t.id) ? { ...t, done: true } : t))
-      setNoonTasks(prev => prev.map(t => idSet.has(t.id) ? { ...t, done: true } : t))
-      setNightTasks(prev => prev.map(t => idSet.has(t.id) ? { ...t, done: true } : t))
-    } catch {}
-  }, [todayDateStr])
+  // Ritual restore is handled inside fetchProfileMeds (after tasks are set)
+  // to avoid race condition where profile fetch overwrites restored done states
+  const [ritualDataLoaded, setRitualDataLoaded] = useState(false)
 
   // Load water count from Supabase on mount
   useEffect(() => {
@@ -526,8 +516,9 @@ export default function CalendarPage() {
   const allTasks = useMemo(() => [...morningTasks, ...noonTasks, ...nightTasks], [morningTasks, noonTasks, nightTasks])
   const completedTasks = allTasks.filter(t => t.done).length
 
-  // Auto-persist ritual completions whenever tasks change
+  // Auto-persist ritual completions whenever tasks change (only after data loaded)
   useEffect(() => {
+    if (!ritualDataLoaded) return
     const doneIds = allTasks.filter(t => t.done).map(t => t.id)
     localStorage.setItem(`cal-rituals-${todayDateStr}`, JSON.stringify(doneIds))
 
@@ -541,7 +532,7 @@ export default function CalendarPage() {
       if (anySupDone) dashDone.add("sup"); else dashDone.delete("sup")
       localStorage.setItem(dashKey, JSON.stringify([...dashDone]))
     } catch {}
-  }, [allTasks, todayDateStr])
+  }, [allTasks, todayDateStr, ritualDataLoaded])
 
   // waterCount comes from FAB + tasks combined
   const waterDoneFromTasks = allTasks.filter(t => t.done && t.emoji === "💧").length
@@ -649,16 +640,20 @@ export default function CalendarPage() {
         setNightTasks(night)
       }
 
-      // Restore completed state from localStorage
-      const saved = localStorage.getItem(`cal-rituals-${todayDateStr}`)
-      if (saved) {
-        try {
-          const doneIds = new Set(JSON.parse(saved) as string[])
-          setMorningTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
-          setNoonTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
-          setNightTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
-        } catch {}
-      }
+      // Restore completed state from localStorage AFTER tasks are set
+      // setTimeout ensures the setMorningTasks/setNoonTasks/setNightTasks above are batched first
+      setTimeout(() => {
+        const saved2 = localStorage.getItem(`cal-rituals-${todayDateStr}`)
+        if (saved2) {
+          try {
+            const doneIds = new Set(JSON.parse(saved2) as string[])
+            setMorningTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
+            setNoonTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
+            setNightTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
+          } catch {}
+        }
+        setRitualDataLoaded(true)
+      }, 100)
     } catch { /* ignore — keep defaults */ }
   }, [user?.id, lang, todayDateStr])
 
