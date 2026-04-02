@@ -155,17 +155,17 @@ export default function ProfilePage() {
         chronic_conditions: healthForm.chronic_conditions || [],
         supplements: healthForm.supplements || [],
       };
-      // Only include optional fields if they have values (avoids column-not-found errors)
-      if (healthForm.height_cm) updateData.height_cm = healthForm.height_cm;
-      if (healthForm.weight_kg) updateData.weight_kg = healthForm.weight_kg;
-      if (healthForm.blood_group) updateData.blood_group = healthForm.blood_group;
-      if (healthForm.diet_type) updateData.diet_type = healthForm.diet_type;
-      if (healthForm.exercise_frequency) updateData.exercise_frequency = healthForm.exercise_frequency;
-      if (healthForm.sleep_quality) updateData.sleep_quality = healthForm.sleep_quality;
-      if (healthForm.country) updateData.country = healthForm.country;
-      if (healthForm.city) updateData.city = healthForm.city;
-      if (healthForm.phone) updateData.phone = healthForm.phone;
-      if (healthForm.recovery_email) updateData.recovery_email = healthForm.recovery_email;
+      // Always include all fields — columns confirmed to exist in user_profiles
+      updateData.height_cm = healthForm.height_cm || null;
+      updateData.weight_kg = healthForm.weight_kg || null;
+      updateData.blood_group = healthForm.blood_group || null;
+      updateData.diet_type = healthForm.diet_type || null;
+      updateData.exercise_frequency = healthForm.exercise_frequency || null;
+      updateData.sleep_quality = healthForm.sleep_quality || null;
+      updateData.country = healthForm.country || null;
+      updateData.city = healthForm.city || null;
+      updateData.phone = healthForm.phone || null;
+      updateData.recovery_email = healthForm.recovery_email || null;
 
       const { error } = await supabase
         .from("user_profiles")
