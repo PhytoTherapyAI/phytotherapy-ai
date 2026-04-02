@@ -2,7 +2,7 @@
 > 3 Scenarios, ~12 minutes total
 
 ## Pre-Demo Setup (2 min before)
-1. Open https://phytotherapy.ai in Chrome
+1. Open https://doctopal.com in Chrome
 2. Clear browser cache if needed
 3. Open browser console (F12) to monitor for errors
 4. Have backup: If site is down, use localhost:3000 with `npm run dev`

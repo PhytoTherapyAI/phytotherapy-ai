@@ -89,7 +89,7 @@
 - Revenue: Break-even at 1,000 users + 8% premium conversion
 
 ### Slide 8: Traction
-- Live at phytotherapy.ai
+- Live at doctopal.com
 - Full-stack app: Next.js + Supabase + Gemini AI
 - 200+ supplement database with dosing
 - TR + EN bilingual
@@ -122,7 +122,7 @@
 3. Show screenshots of authenticated experience
 
 ### If demo laptop fails:
-1. Have phone ready with phytotherapy.ai open
+1. Have phone ready with doctopal.com open
 2. Pre-record 3-minute demo video as backup
 3. Team member laptop as secondary
 
@@ -151,7 +151,7 @@
 - [x] Title: "Phytotherapy.ai — Evidence-Based Integrative Medicine Assistant"
 - [x] Meta description set
 - [x] Open Graph tags
-- [ ] Verify phytotherapy.ai loads correctly
+- [ ] Verify doctopal.com loads correctly
 - [ ] robots.txt allows indexing
 - [ ] sitemap.xml exists
 
@@ -159,7 +159,7 @@
 
 ## Final Pre-Demo Checklist (Day Of)
 
-1. [ ] Open phytotherapy.ai in Chrome (incognito for demo)
+1. [ ] Open doctopal.com in Chrome (incognito for demo)
 2. [ ] Login with demo account
 3. [ ] Complete onboarding with demo profile
 4. [ ] Test Interaction Checker with Metformin

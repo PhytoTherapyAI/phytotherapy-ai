@@ -2261,3 +2261,45 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ tools-hierarchy.ts güncellendi (vaccine-tracker href, discover eklendi)
 - ✅ 16 modül tamamlandı, 16 commit + push
 - ✅ Toplam: 330+ sayfa aktif
+
+---
+
+## Brand Migration & Product Polish (2 Nisan 2026 — Session 2)
+
+**Adım 1 — Kapsamlı Brand Temizliği:**
+- ✅ package.json name: phytotherapy-ai → doctopal
+- ✅ package-lock.json name güncellendi
+- ✅ SOS API: PHYTOTHERAPY.AI → DOCTOPAL
+- ✅ Certificates: PHYTOTHERAPY.AI → DOCTOPAL
+- ✅ DEMO-SCRIPT.md, HACKATHON-PREP.md: phytotherapy.ai → doctopal.com
+
+**Adım 2 — Yeni Logo Tasarımı:**
+- ✅ public/logo-icon.svg — Shield + D monogram + stethoscope + leaf + AI pulse
+- ✅ public/logo.svg — İkon + "Doctopal" text (navbar)
+- ✅ public/logo-white.svg — Koyu arka planlar için beyaz versiyon
+- ✅ public/og-image.svg — 1200x630 OpenGraph paylaşım görseli
+- ✅ Navbar: Eski yaprak+Phytotherapy text → Yeni logo-icon + "Doctopal" bold text
+- ✅ layout.tsx: metadata og:image, twitter:image güncellendi
+
+**Adım 3 — Landing Page Pazarlama Optimizasyonu:**
+- ✅ Hero: "Your AI-Powered Health Companion" başlık
+- ✅ Trust indicators: PubMed Verified, FHIR Compatible, KVKK/GDPR, Claude AI, 166+ Tools
+- ✅ Feature showcase: 4 bento kart (Drug Shield, Lab Analysis, Phytotherapy, Doctor Copilot)
+- ✅ Social proof stats: 166+ tools, 330+ pages, 75+ AI routes
+- ✅ CTA section: gradient, "Start Your Health Journey Today"
+
+**Adım 4 — Ürün Parlatma:**
+- ✅ app/loading.tsx: Doctopal logo + shimmer loading
+- ✅ app/error.tsx: Branded error page + 3 recovery options
+- ✅ app/not-found.tsx: "Oops, this page took a different path" + Go Home
+- ✅ Footer: Logo icon, hello@doctopal.com eklendi
+
+**Adım 5 — Hackathon Demo Hazırlığı:**
+- ✅ DemoBanner: "Harvard HVHS Hackathon Demo Mode" kapatılabilir banner
+- ✅ Quick Demo shortcut (interaction-checker'a)
+- ✅ Dashboard'a entegre
+
+**Adım 6 — Build & Final Kontrol:**
+- ✅ next build: SIFIR hata
+- ✅ Final grep: Tüm kaynak dosyalarda phytotherapy brand referansı temizlendi
+- ✅ Sadece CLAUDE.md ve PROGRESS.md'de tarihsel referanslar kaldı (doğru)
