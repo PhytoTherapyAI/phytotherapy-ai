@@ -1,350 +1,269 @@
-// © 2026 Doctopal — All Rights Reserved
-"use client";
+// © 2026 DoctoPal — All Rights Reserved
+"use client"
 
-import { useState } from "react";
-import {
-  Coffee,
-  Loader2,
-  AlertTriangle,
-  CheckCircle2,
-  ShieldAlert,
-  Moon,
-  Minus,
-  Plus,
-  LogIn,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
-import Link from "next/link";
+import { useState, useEffect, useMemo } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, Moon, AlertTriangle } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts"
+import { useLang } from "@/components/layout/language-toggle"
 
-interface MedAlert {
-  medication: string;
-  severity: "safe" | "caution" | "dangerous";
-  interaction: string;
-  recommendation: string;
-}
+const HALF_LIFE_HOURS = 5.5
+const FDA_LIMIT = 400
+const BEDTIME_HOUR = 23.5
 
-interface CaffeineResult {
-  dailyTotal: number;
-  safeLimit: number;
-  riskLevel: "safe" | "moderate" | "high";
-  halfLifeEstimate: string;
-  sleepImpact: string;
-  medicationAlerts: MedAlert[];
-  recommendations: string[];
-  breakdown: Array<{ drink: string; quantity: number; mg: number }>;
-}
+interface CaffeineEntry { id: string; name: string; mg: number; hour: number; emoji: string }
 
 const DRINKS = [
-  { key: "coffee", icon: "☕", mgPer: 95 },
-  { key: "tea", icon: "🍵", mgPer: 47 },
-  { key: "cola", icon: "🥤", mgPer: 34 },
-  { key: "energy_drink", icon: "⚡", mgPer: 160 },
-  { key: "pre_workout", icon: "💪", mgPer: 200 },
-  { key: "chocolate", icon: "🍫", mgPer: 23 },
-];
+  { emoji: "☕", name: "Coffee", mg: 95 },
+  { emoji: "🍵", name: "Tea", mg: 45 },
+  { emoji: "⚡", name: "Pre-Workout", mg: 200 },
+  { emoji: "🥤", name: "Energy Drink", mg: 160 },
+  { emoji: "🍫", name: "Dark Chocolate", mg: 25 },
+  { emoji: "🧉", name: "Matcha", mg: 70 },
+]
 
-const DRINK_LABELS: Record<string, { en: string; tr: string }> = {
-  coffee: { en: "Coffee", tr: "Kahve" },
-  tea: { en: "Tea", tr: "Çay" },
-  cola: { en: "Cola", tr: "Kola" },
-  energy_drink: { en: "Energy Drink", tr: "Enerji İçeceği" },
-  pre_workout: { en: "Pre-Workout", tr: "Pre-Workout" },
-  chocolate: { en: "Dark Chocolate", tr: "Bitter Çikolata" },
-};
+function calcCaffeineAtTime(entries: CaffeineEntry[], targetHour: number): number {
+  return entries.reduce((total, e) => {
+    const elapsed = targetHour - e.hour
+    if (elapsed < 0) return total
+    return total + e.mg * Math.pow(0.5, elapsed / HALF_LIFE_HOURS)
+  }, 0)
+}
 
-const SEVERITY_COLORS = {
-  safe: "border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-950/20",
-  caution: "border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950/20",
-  dangerous: "border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-950/20",
-};
+function generateCurveData(entries: CaffeineEntry[]) {
+  const data = []
+  for (let h = 6; h <= 26; h += 0.5) {
+    const displayHour = h > 24 ? h - 24 : h
+    const label = `${String(Math.floor(displayHour)).padStart(2, "0")}:${h % 1 === 0 ? "00" : "30"}`
+    data.push({ hour: h, label, mg: Math.round(calcCaffeineAtTime(entries, h)) })
+  }
+  return data
+}
 
-export default function CaffeineTrackerPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-  const [drinks, setDrinks] = useState<Record<string, number>>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<CaffeineResult | null>(null);
-
-  const updateDrink = (key: string, delta: number) => {
-    setDrinks((prev) => {
-      const val = Math.max(0, (prev[key] || 0) + delta);
-      if (val === 0) {
-        const next = { ...prev };
-        delete next[key];
-        return next;
-      }
-      return { ...prev, [key]: val };
-    });
-  };
-
-  const totalMg = Object.entries(drinks).reduce((sum, [key, qty]) => {
-    const d = DRINKS.find((dr) => dr.key === key);
-    return sum + (d ? d.mgPer * qty : 0);
-  }, 0);
-
-  const meterPercent = Math.min((totalMg / 400) * 100, 100);
-  const meterColor =
-    totalMg < 200 ? "bg-green-500" : totalMg < 400 ? "bg-amber-500" : "bg-red-500";
-
-  const handleAnalyze = async () => {
-    setIsLoading(true);
-    setError(null);
-    setResult(null);
-
-    try {
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (isAuthenticated && session?.access_token) {
-        headers["Authorization"] = `Bearer ${session.access_token}`;
-      }
-
-      const res = await fetch("/api/caffeine-tracker", {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ drinks, lang }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Analysis failed");
-      }
-
-      const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+// CNS Battery
+function CNSBattery({ current, max }: { current: number; max: number }) {
+  const pct = Math.min((current / max) * 100, 120)
+  const color = pct <= 50 ? "#14b8a6" : pct <= 100 ? "#f59e0b" : "#dc2626"
+  const label = pct <= 50 ? "Optimal Zone" : pct <= 100 ? "Elevated" : "Over Limit"
 
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-amber-50 p-3 dark:bg-amber-950">
-          <Coffee className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-        </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-            {tx("caffeine.title", lang)}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {tx("caffeine.subtitle", lang)}
-          </p>
+    <div className="relative w-full max-w-[200px] mx-auto">
+      <div className="relative h-64 w-24 mx-auto rounded-2xl border-2 border-slate-600 bg-slate-800 overflow-hidden">
+        {/* Battery cap */}
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-3 bg-slate-600 rounded-t-md" />
+        {/* Fill */}
+        <motion.div
+          initial={{ height: 0 }}
+          animate={{ height: `${Math.min(pct, 100)}%` }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="absolute bottom-0 left-0 right-0 rounded-b-xl"
+          style={{ backgroundColor: color, opacity: 0.8 }}
+        >
+          {/* Wave effect */}
+          <motion.div
+            animate={{ y: [0, -3, 0] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            className="absolute top-0 left-0 right-0 h-3 rounded-full"
+            style={{ backgroundColor: color, filter: "brightness(1.3)" }}
+          />
+        </motion.div>
+        {/* Level text */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+          <span className="text-xl font-bold text-white">{Math.round(current)}</span>
+          <span className="text-[9px] text-slate-300">/ {max} mg</span>
         </div>
       </div>
-
-      {/* Guest notice */}
-      {!isAuthenticated && (
-        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50/50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/20 dark:text-amber-300">
-          <LogIn className="mr-1 inline h-3.5 w-3.5" />
-          {tx("caffeine.loginNote", lang)}{" "}
-          <Link href="/auth/login" className="font-semibold underline">
-            {tx("bt.createAccount", lang)}
-          </Link>
-        </div>
-      )}
-
-      {!result && (
-        <>
-          {/* Drink Selector */}
-          <div className="mb-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {DRINKS.map((d) => {
-              const qty = drinks[d.key] || 0;
-              const label = DRINK_LABELS[d.key];
-              return (
-                <div
-                  key={d.key}
-                  className={`rounded-lg border p-3 transition-colors ${
-                    qty > 0
-                      ? "border-amber-400 bg-amber-50/50 dark:border-amber-600 dark:bg-amber-950/20"
-                      : "bg-card hover:bg-muted/50"
-                  }`}
-                >
-                  <div className="text-center mb-2">
-                    <span className="text-2xl">{d.icon}</span>
-                    <p className="text-xs font-medium mt-1">
-                      {label[lang]}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      ~{d.mgPer}mg
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <button
-                      onClick={() => updateDrink(d.key, -1)}
-                      className="rounded-full border p-1 hover:bg-muted transition-colors"
-                    >
-                      <Minus className="h-3.5 w-3.5" />
-                    </button>
-                    <span className="w-6 text-center text-sm font-bold">
-                      {qty}
-                    </span>
-                    <button
-                      onClick={() => updateDrink(d.key, 1)}
-                      className="rounded-full border p-1 hover:bg-muted transition-colors"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Caffeine Meter */}
-          {totalMg > 0 && (
-            <div className="mb-6 rounded-lg border bg-card p-4">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium">{tx("caffeine.daily", lang)}</p>
-                <p className="text-sm text-muted-foreground">
-                  {tx("caffeine.safeZone", lang)}
-                </p>
-              </div>
-              <div className="h-4 w-full rounded-full bg-muted overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-300 ${meterColor}`}
-                  style={{ width: `${meterPercent}%` }}
-                />
-              </div>
-              <p className="mt-2 text-center text-xl font-bold">
-                {totalMg}mg
-              </p>
-            </div>
-          )}
-
-          {/* Analyze Button */}
-          <Button
-            onClick={handleAnalyze}
-            disabled={totalMg === 0 || isLoading}
-            className="w-full gap-2 bg-amber-600 hover:bg-amber-700 text-white"
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Coffee className="h-4 w-4" />
-            )}
-            {tx("caffeine.analyze", lang)}
-          </Button>
-        </>
-      )}
-
-      {/* Error */}
-      {error && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-700 dark:bg-red-950/20 dark:text-red-300">
-          <AlertTriangle className="mr-1 inline h-4 w-4" />
-          {error}
-        </div>
-      )}
-
-      {/* Results */}
-      {result && (
-        <div className="space-y-4">
-          {/* Risk Level */}
-          <div
-            className={`rounded-lg border p-4 ${
-              result.riskLevel === "safe"
-                ? SEVERITY_COLORS.safe
-                : result.riskLevel === "moderate"
-                ? SEVERITY_COLORS.caution
-                : SEVERITY_COLORS.dangerous
-            }`}
-          >
-            <div className="flex items-center gap-2 mb-2">
-              {result.riskLevel === "safe" ? (
-                <CheckCircle2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-              ) : result.riskLevel === "moderate" ? (
-                <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              ) : (
-                <ShieldAlert className="h-5 w-5 text-red-600 dark:text-red-400" />
-              )}
-              <span className="text-lg font-bold">{result.dailyTotal}mg</span>
-              <span className="text-sm text-muted-foreground">
-                / {result.safeLimit}mg
-              </span>
-            </div>
-          </div>
-
-          {/* Half Life */}
-          <div className="rounded-lg border bg-card p-4">
-            <p className="text-xs font-medium text-muted-foreground mb-1">
-              {tx("caffeine.halfLife", lang)}
-            </p>
-            <p className="text-sm">{result.halfLifeEstimate}</p>
-          </div>
-
-          {/* Sleep Impact */}
-          <div className="rounded-lg border bg-card p-4">
-            <p className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1">
-              <Moon className="h-3.5 w-3.5" />
-              {tx("caffeine.sleepImpact", lang)}
-            </p>
-            <p className="text-sm">{result.sleepImpact}</p>
-          </div>
-
-          {/* Medication Alerts */}
-          {result.medicationAlerts?.length > 0 && (
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold flex items-center gap-1.5">
-                <ShieldAlert className="h-4 w-4 text-red-500" />
-                {tx("caffeine.medAlerts", lang)}
-              </h3>
-              {result.medicationAlerts.map((alert, i) => (
-                <div
-                  key={i}
-                  className={`rounded-lg border p-3 ${SEVERITY_COLORS[alert.severity]}`}
-                >
-                  <p className="text-sm font-semibold">{alert.medication}</p>
-                  <p className="text-sm mt-1">{alert.interaction}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {alert.recommendation}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Recommendations */}
-          {result.recommendations?.length > 0 && (
-            <div className="rounded-lg border bg-card p-4">
-              <p className="text-xs font-medium text-muted-foreground mb-2">
-                {tx("caffeine.recommendations", lang)}
-              </p>
-              <ul className="space-y-1.5">
-                {result.recommendations.map((r, i) => (
-                  <li key={i} className="text-sm flex items-start gap-2">
-                    <span className="text-amber-500 mt-0.5">&#8226;</span>
-                    {r}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* New Check */}
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => {
-              setResult(null);
-              setDrinks({});
-            }}
-          >
-            {tx("caffeineTracker.newCheck", lang)}
-          </Button>
-        </div>
-      )}
-
-      {/* Disclaimer */}
-      <p className="mt-6 text-xs text-muted-foreground text-center">
-        {tx("disclaimer.tool", lang)}
-      </p>
+      <p className="text-center text-xs font-medium mt-3" style={{ color }}>{label}</p>
+      <p className="text-center text-[10px] text-slate-500 mt-0.5">CNS Battery</p>
     </div>
-  );
+  )
+}
+
+function LaborIllusion({ onComplete, lang }: { onComplete: () => void; lang: string }) {
+  const isTr = lang === "tr"
+  const steps = isTr
+    ? ["Kafein klerens hızınız hesaplanıyor...", "Gece uykusu için kalan kafein yükü analiz ediliyor...", "Akşam sakinleşme protokolünüz hazırlanıyor..."]
+    : ["Calculating your caffeine clearance rate...", "Analyzing remaining caffeine load for tonight's sleep...", "Preparing your evening wind-down protocol..."]
+  const [step, setStep] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(s => { if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s } return s + 1 })
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-amber-950/60 backdrop-blur-sm">
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }}
+        className="bg-stone-900 rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl border border-amber-800/30">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          className="w-14 h-14 mx-auto mb-4 rounded-full border-4 border-stone-700 border-t-amber-400" />
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="text-amber-100 text-sm">{steps[step]}</motion.p>
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+export default function CaffeineTrackerPage() {
+  const router = useRouter()
+  const { lang } = useLang()
+  const isTr = lang === "tr"
+  const [entries, setEntries] = useState<CaffeineEntry[]>([
+    { id: "1", name: "Coffee", mg: 95, hour: 8, emoji: "☕" },
+    { id: "2", name: "Coffee", mg: 95, hour: 12, emoji: "☕" },
+  ])
+  const [showLabor, setShowLabor] = useState(false)
+  const [showResult, setShowResult] = useState(false)
+
+  const totalMg = entries.reduce((s, e) => s + e.mg, 0)
+  const curveData = useMemo(() => generateCurveData(entries), [entries])
+  const bedtimeCaffeine = Math.round(calcCaffeineAtTime(entries, BEDTIME_HOUR))
+
+  const addDrink = (drink: typeof DRINKS[0]) => {
+    const now = new Date()
+    const hour = now.getHours() + now.getMinutes() / 60
+    setEntries(prev => [...prev, { id: String(Date.now()), name: drink.name, mg: drink.mg, hour, emoji: drink.emoji }])
+  }
+
+  const drinkCounts = DRINKS.map(d => ({
+    ...d,
+    count: entries.filter(e => e.name === d.name).length,
+  }))
+
+  return (
+    <div className="min-h-screen bg-stone-900 text-white">
+      <AnimatePresence>
+        {showLabor && <LaborIllusion lang={lang} onComplete={() => { setShowLabor(false); setShowResult(true) }} />}
+      </AnimatePresence>
+
+      <div className="max-w-7xl mx-auto px-4 py-6 md:px-8">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/10">
+              <ChevronLeft className="w-5 h-5 text-stone-400" />
+            </button>
+            <div>
+              <h1 className="text-xl font-bold">{isTr ? "Metabolik Enerji & Yarı Ömür Radarı" : "Metabolic Energy & Half-Life Radar"}</h1>
+              <p className="text-xs text-stone-400">{isTr ? "Kafein metabolizmanı takip et" : "Track your caffeine metabolism"}</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Desktop 2-col */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* LEFT: Chart + Drink Cards (60%) */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Energy Curve */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="bg-stone-800/80 backdrop-blur rounded-2xl p-5 border border-stone-700/50">
+              <h3 className="text-sm font-semibold text-stone-300 mb-3">{isTr ? "Günlük Enerji Eğrisi" : "Daily Energy Curve"}</h3>
+              <ResponsiveContainer width="100%" height={220}>
+                <AreaChart data={curveData}>
+                  <defs>
+                    <linearGradient id="caffeineGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.4} />
+                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="label" tick={{ fontSize: 10, fill: "#78716c" }} interval={3} />
+                  <YAxis tick={{ fontSize: 10, fill: "#78716c" }} domain={[0, "auto"]} />
+                  <Tooltip contentStyle={{ background: "#1c1917", border: "1px solid #44403c", borderRadius: 12, fontSize: 12 }} />
+                  <ReferenceLine x={curveData.find(d => d.hour === BEDTIME_HOUR)?.label} stroke="#7c3aed" strokeDasharray="5 3" label={{ value: "Bedtime", fill: "#a78bfa", fontSize: 10, position: "top" }} />
+                  <Area type="monotone" dataKey="mg" stroke="#f59e0b" strokeWidth={2} fill="url(#caffeineGrad)" />
+                </AreaChart>
+              </ResponsiveContainer>
+              {bedtimeCaffeine > 30 && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  className="flex items-center gap-2 mt-3 bg-amber-950/40 border border-amber-800/30 rounded-xl px-4 py-2.5">
+                  <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                  <p className="text-xs text-amber-200">
+                    {isTr
+                      ? `⚠️ Yatma saatinde kanınızda ~${bedtimeCaffeine}mg kafein olacak. Bu derin uykuyu bozabilir.`
+                      : `⚠️ ~${bedtimeCaffeine}mg caffeine will still be in your blood at bedtime. This may disrupt deep sleep.`}
+                  </p>
+                </motion.div>
+              )}
+            </motion.div>
+
+            {/* Drink Cards */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+              <h3 className="text-sm font-semibold text-stone-300 mb-3 px-1">{isTr ? "İçecek Ekle" : "Add Beverage"}</h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {drinkCounts.map((drink, i) => (
+                  <motion.button
+                    key={drink.name}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15 + i * 0.04 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => addDrink(drink)}
+                    className="relative bg-stone-800/60 backdrop-blur border border-stone-700/50 rounded-2xl p-4 text-center hover:border-amber-700/50 transition-all group"
+                  >
+                    <motion.span className="text-2xl block mb-1" whileTap={{ scale: 1.3 }}>{drink.emoji}</motion.span>
+                    <p className="text-xs font-medium text-stone-200">{drink.name}</p>
+                    <p className="text-[10px] text-stone-500">{drink.mg}mg</p>
+                    {drink.count > 0 && (
+                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
+                        className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-amber-500 text-[10px] font-bold flex items-center justify-center text-stone-900">
+                        ×{drink.count}
+                      </motion.div>
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+
+          {/* RIGHT: Battery + Analysis (40%) */}
+          <div className="lg:col-span-2 lg:sticky lg:top-24 lg:self-start space-y-6">
+            {/* CNS Battery */}
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+              className="bg-stone-800/80 backdrop-blur rounded-2xl p-6 border border-stone-700/50">
+              <h3 className="text-sm font-semibold text-stone-300 mb-4 text-center">
+                {isTr ? "Merkezi Sinir Sistemi Pili" : "Central Nervous System Battery"}
+              </h3>
+              <CNSBattery current={totalMg} max={FDA_LIMIT} />
+            </motion.div>
+
+            {/* Sleep Analysis CTA */}
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setShowLabor(true)}
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-amber-600 to-orange-600 text-white font-medium shadow-lg shadow-amber-900/40 flex items-center justify-center gap-2"
+            >
+              <Moon className="w-4 h-4" />
+              {isTr ? "Uyku & Toparlanma Etkimi Analiz Et" : "Analyze My Sleep & Recovery Impact"}
+            </motion.button>
+
+            {/* Result */}
+            <AnimatePresence>
+              {showResult && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+                  className="bg-gradient-to-br from-amber-950/50 to-stone-800/50 rounded-2xl p-5 border border-amber-800/20">
+                  <h3 className="text-sm font-bold text-amber-300 mb-2 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" /> {isTr ? "Uyku Analizi" : "Sleep Analysis"}
+                  </h3>
+                  <p className="text-sm text-stone-300 leading-relaxed">
+                    {isTr
+                      ? `Son kafein alımınız, yatma saatinde ~${bedtimeCaffeine}mg kafein bırakacak. Derin uykuyu korumak için saat 14:00'ten sonra Melisa çayına geçmeyi düşünün.`
+                      : `Your caffeine intake leaves ~${bedtimeCaffeine}mg at bedtime. Consider switching to Lemon Balm tea after 14:00 to protect deep sleep and muscle recovery.`}
+                  </p>
+                  <p className="text-[10px] text-stone-500 mt-2">{isTr ? "Her zaman doktorunuza danışın." : "Always consult your healthcare provider."}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
