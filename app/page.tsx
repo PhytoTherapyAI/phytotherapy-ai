@@ -20,6 +20,8 @@ import { createBrowserClient } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
 import { TOOL_CATEGORIES } from "@/lib/tools-hierarchy";
+import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-utils";
+import { getSupplementDisplayName } from "@/lib/supplement-data";
 
 // ── Dynamic Imports (Dashboard) ──
 const BotanicalHero = dynamic(
@@ -203,11 +205,9 @@ function TaskItem({ emoji, label, done, duration, onClick, onDismiss }: {
   );
 }
 
-// ── All possible dashboard tasks ──
-const ALL_DASHBOARD_TASKS = [
-  { id: "med",        emoji: "💊", labelEn: "Medications",      labelTr: "İlaçlar",            duration: null },
-  { id: "water",      emoji: "💧", labelEn: "Water 0/8 glasses",labelTr: "Su 0/8 bardak",      duration: null },
-  { id: "sup",        emoji: "🌿", labelEn: "Supplements",      labelTr: "Takviyeler",          duration: null },
+// ── Static dashboard tasks (non-med/sup) ──
+const STATIC_DASHBOARD_TASKS = [
+  { id: "water",      emoji: "💧", labelEn: "Water",            labelTr: "Su",                  duration: null },
   { id: "walk",       emoji: "🚶", labelEn: "Walk",             labelTr: "Yürüyüş",            duration: "10 dk" },
   { id: "meditate",   emoji: "🧘", labelEn: "Meditation",       labelTr: "Meditasyon",          duration: "5 dk" },
   { id: "vitals",     emoji: "📊", labelEn: "Log vitals",       labelTr: "Vital kaydet",        duration: "1 dk" },
@@ -215,7 +215,17 @@ const ALL_DASHBOARD_TASKS = [
   { id: "meal",       emoji: "🥗", labelEn: "Healthy meal",     labelTr: "Sağlıklı öğün",      duration: null },
 ] as const;
 
-const DEFAULT_TASK_IDS = ["med", "water", "sup", "walk"];
+interface DashboardTask {
+  id: string
+  emoji: string
+  labelEn: string
+  labelTr: string
+  duration: string | null
+  isMed?: boolean
+  isSup?: boolean
+}
+
+const DEFAULT_STATIC_IDS = ["water", "walk"];
 const DURATION_OPTS = ["1 dk", "5 dk", "10 dk", "15 dk", "30 dk"];
 
 /** Local date YYYY-MM-DD (not UTC) */
@@ -234,7 +244,7 @@ function loadTaskPrefs(userId: string): TaskPrefs {
     const raw = localStorage.getItem(`dash-task-prefs-${userId}`);
     if (raw) return JSON.parse(raw);
   } catch {}
-  return { enabledIds: [...DEFAULT_TASK_IDS], durationOverrides: {} };
+  return { enabledIds: [...DEFAULT_STATIC_IDS], durationOverrides: {} };
 }
 
 function saveTaskPrefs(userId: string, p: TaskPrefs) {
@@ -292,23 +302,25 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   // ── Task system with persistence ──
-  const [taskPrefs, setTaskPrefs] = useState<TaskPrefs>({ enabledIds: [...DEFAULT_TASK_IDS], durationOverrides: {} });
+  const [taskPrefs, setTaskPrefs] = useState<TaskPrefs>({ enabledIds: [...DEFAULT_STATIC_IDS], durationOverrides: {} });
   const [completedTaskIds, setCompletedTaskIds] = useState<Set<string>>(new Set());
   const [dismissedTaskIds, setDismissedTaskIds] = useState<Set<string>>(new Set());
   const [taskCustomizeMode, setTaskCustomizeMode] = useState(false);
   const [streak, setStreak] = useState(0);
-  const [medTotal, setMedTotal] = useState(0); // total daily medication doses
-  const [supTotal, setSupTotal] = useState(0); // total daily supplements
-  const [medDoneCount, setMedDoneCount] = useState(0);
-  const [supDoneCount, setSupDoneCount] = useState(0);
+  // Dynamic med/sup tasks from Supabase
+  const [dynamicTasks, setDynamicTasks] = useState<DashboardTask[]>([]);
+  const [waterGlasses, setWaterGlasses] = useState(0);
+  const [waterTarget, setWaterTarget] = useState(8);
   const todayStr = getLocalDate();
 
-  // Fetch real streak from Supabase (same algo as HabitHeatMap)
+  // Build the full task list: dynamic med/sup tasks + static tasks
+  const allDashboardTasks: DashboardTask[] = [...dynamicTasks, ...STATIC_DASHBOARD_TASKS.map(t => ({ ...t, duration: t.duration as string | null }))];
+
+  // Fetch real streak from Supabase
   useEffect(() => {
     if (!user?.id) return;
     const fetchStreak = async () => {
       try {
-        const { createBrowserClient } = await import("@/lib/supabase");
         const supabase = createBrowserClient();
         const now = new Date();
         const ninetyAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 90);
@@ -322,7 +334,6 @@ export default function Home() {
         const activeDates = new Set<string>();
         checkInsRes.data?.forEach((c: any) => activeDates.add(c.check_date));
         logsRes.data?.forEach((l: any) => activeDates.add(l.log_date));
-        // Count consecutive days from today backwards
         let s = 0;
         for (let i = 0; i < 90; i++) {
           const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
@@ -337,92 +348,120 @@ export default function Home() {
     fetchStreak();
   }, [user?.id]);
 
-  // Fetch med/sup totals + done counts from Supabase
-  useEffect(() => {
+  // Fetch individual med/sup tasks + completion state from Supabase (single source of truth)
+  const fetchDashboardTasks = useCallback(async () => {
     if (!user?.id) return;
-    const fetchCounts = async () => {
-      try {
-        const { createBrowserClient } = await import("@/lib/supabase");
-        const supabase = createBrowserClient();
-        const [medsRes, supsRes, logsRes] = await Promise.all([
-          supabase.from("user_medications").select("id, frequency").eq("user_id", user.id).eq("is_active", true),
-          supabase.from("calendar_events").select("id").eq("user_id", user.id).eq("event_type", "supplement").eq("recurrence", "daily"),
-          supabase.from("daily_logs").select("item_type, completed").eq("user_id", user.id).eq("log_date", todayStr).eq("completed", true),
-        ]);
-        // Calculate total daily doses (2x/day meds count double)
-        let totalDoses = 0;
-        medsRes.data?.forEach((m: any) => {
-          const freq = (m.frequency || "").toLowerCase();
-          if (freq.includes("2") || freq.includes("twice") || freq.includes("iki")) totalDoses += 2;
-          else if (freq.includes("3") || freq.includes("three") || freq.includes("üç")) totalDoses += 3;
-          else totalDoses += 1;
-        });
-        setMedTotal(totalDoses || medsRes.data?.length || 0);
-        setSupTotal(supsRes.data?.length || 0);
-        // Count done from daily_logs
-        const medDone = logsRes.data?.filter((l: any) => l.item_type === "medication").length || 0;
-        const supDone = logsRes.data?.filter((l: any) => l.item_type === "supplement").length || 0;
-        setMedDoneCount(medDone);
-        setSupDoneCount(supDone);
-      } catch {}
-    };
-    fetchCounts();
-  }, [user?.id, todayStr]);
+    try {
+      const supabase = createBrowserClient();
+      const [medsRes, supsRes, logsRes, waterRes] = await Promise.all([
+        supabase.from("user_medications").select("id, brand_name, generic_name, dosage, frequency").eq("user_id", user.id).eq("is_active", true),
+        supabase.from("calendar_events").select("id, title").eq("user_id", user.id).eq("event_type", "supplement").eq("recurrence", "daily"),
+        supabase.from("daily_logs").select("item_id, item_type, completed").eq("user_id", user.id).eq("log_date", todayStr).eq("completed", true),
+        supabase.from("water_intake").select("glasses, target_glasses").eq("user_id", user.id).eq("intake_date", todayStr).single(),
+      ]);
 
-  // Load task prefs + completions + dismissals on mount
+      // Build dynamic task list
+      const tasks: DashboardTask[] = [];
+      medsRes.data?.forEach((m: any) => {
+        const medName = m.brand_name || m.generic_name || "Med";
+        const doses = parseMedDoses(m.frequency || "", lang as "en" | "tr");
+        for (const dose of doses) {
+          const itemId = buildMedItemId(m.id, dose);
+          const label = buildMedLabel(medName, dose);
+          tasks.push({ id: itemId, emoji: "💊", labelEn: label, labelTr: label, duration: null, isMed: true });
+        }
+      });
+      supsRes.data?.forEach((s: any) => {
+        const supName = getSupplementDisplayName(s.title, lang as "en" | "tr");
+        tasks.push({ id: `sup-${s.id}`, emoji: "🌿", labelEn: supName, labelTr: supName, duration: null, isSup: true });
+      });
+      setDynamicTasks(tasks);
+
+      // Completion from daily_logs (med/sup) + localStorage (static tasks)
+      const doneIds = new Set<string>();
+      logsRes.data?.forEach((l: any) => { if (l.completed) doneIds.add(l.item_id); });
+      const staticDone = loadCompletedTasks(todayStr);
+      STATIC_DASHBOARD_TASKS.forEach(t => { if (staticDone.has(t.id)) doneIds.add(t.id); });
+      setCompletedTaskIds(doneIds);
+
+      // Water
+      if (waterRes.data) {
+        setWaterGlasses(waterRes.data.glasses ?? 0);
+        if (waterRes.data.target_glasses) setWaterTarget(waterRes.data.target_glasses);
+      }
+    } catch {}
+  }, [user?.id, todayStr, lang]);
+
+  useEffect(() => { fetchDashboardTasks(); }, [fetchDashboardTasks]);
+
+  // Listen for cross-view sync events
+  useEffect(() => {
+    const handler = () => { fetchDashboardTasks(); };
+    window.addEventListener("daily-log-changed", handler);
+    window.addEventListener("water-intake-changed", handler);
+    return () => {
+      window.removeEventListener("daily-log-changed", handler);
+      window.removeEventListener("water-intake-changed", handler);
+    };
+  }, [fetchDashboardTasks]);
+
+  // Load task prefs + dismissals on mount (static tasks only)
   useEffect(() => {
     if (!user) return;
     setTaskPrefs(loadTaskPrefs(user.id));
-    setCompletedTaskIds(loadCompletedTasks(todayStr));
     setDismissedTaskIds(loadDismissedTasks(todayStr));
   }, [user, todayStr]);
 
-  // Visible tasks: enabled + not dismissed
-  const visibleTasks = ALL_DASHBOARD_TASKS.filter(
-    (t) => taskPrefs.enabledIds.includes(t.id) && !dismissedTaskIds.has(t.id)
-  );
+  // Visible tasks: dynamic (always visible) + static (enabled + not dismissed)
+  const visibleTasks = [
+    ...dynamicTasks,
+    ...STATIC_DASHBOARD_TASKS.filter(
+      (t) => taskPrefs.enabledIds.includes(t.id) && !dismissedTaskIds.has(t.id)
+    ).map(t => ({ ...t, duration: t.duration as string | null })),
+  ];
 
-  const toggleTask = (id: string) => {
+  const toggleTask = async (id: string) => {
     const next = new Set(completedTaskIds);
     const wasCompleted = next.has(id);
     if (wasCompleted) next.delete(id); else next.add(id);
     setCompletedTaskIds(next);
-    saveCompletedTasks(todayStr, next);
 
-    // Update done counts for med/sup display
-    if (id === "med") {
-      setMedDoneCount(wasCompleted ? 0 : medTotal);
-    }
-    if (id === "sup") {
-      setSupDoneCount(wasCompleted ? 0 : supTotal);
-    }
+    const task = allDashboardTasks.find(t => t.id === id);
+    const isMedOrSup = task?.isMed || task?.isSup;
 
-    // Bidirectional sync: when "med" or "sup" toggled, update calendar rituals
-    if (id === "med" || id === "sup") {
+    if (isMedOrSup && user?.id) {
+      // Write to daily_logs Supabase (single source of truth)
       try {
-        const calKey = `cal-rituals-${todayStr}`;
-        const calDone = new Set(JSON.parse(localStorage.getItem(calKey) || "[]") as string[]);
-        const allCalTasks = JSON.parse(localStorage.getItem(`cal-ritual-tasks-${todayStr}`) || "[]") as Array<{id: string; emoji: string}>;
-
-        if (!wasCompleted) {
-          allCalTasks.forEach(t => {
-            // Med: only actual medication tasks (💊 emoji with med-* prefix)
-            if (id === "med" && t.emoji === "💊" && t.id.startsWith("med-")) calDone.add(t.id);
-            // Sup: only DB-sourced supplements (sup-* prefix), not default placeholders
-            if (id === "sup" && t.id.startsWith("sup-")) calDone.add(t.id);
-          });
+        const supabase = createBrowserClient();
+        const itemType = task?.isMed ? "medication" : "supplement";
+        const itemName = task?.labelEn || id;
+        if (wasCompleted) {
+          // Un-complete: delete the daily_log entry
+          await supabase.from("daily_logs").delete()
+            .eq("user_id", user.id).eq("log_date", todayStr).eq("item_type", itemType).eq("item_id", id);
         } else {
-          allCalTasks.forEach(t => {
-            if (id === "med" && t.emoji === "💊" && t.id.startsWith("med-")) calDone.delete(t.id);
-            if (id === "sup" && t.id.startsWith("sup-")) calDone.delete(t.id);
+          // Complete: insert daily_log entry
+          const { error } = await supabase.from("daily_logs").insert({
+            user_id: user.id, log_date: todayStr, item_type: itemType, item_id: id, item_name: itemName, completed: true,
           });
+          if (error) {
+            await supabase.from("daily_logs").update({ completed: true })
+              .eq("user_id", user.id).eq("log_date", todayStr).eq("item_type", itemType).eq("item_id", id);
+          }
         }
-        localStorage.setItem(calKey, JSON.stringify([...calDone]));
+        // Notify other views
+        window.dispatchEvent(new Event("daily-log-changed"));
       } catch {}
+    } else {
+      // Static tasks — save to localStorage
+      saveCompletedTasks(todayStr, next);
     }
   };
 
   const dismissTask = (id: string) => {
+    // Only allow dismissing static tasks, not med/sup
+    const task = allDashboardTasks.find(t => t.id === id);
+    if (task?.isMed || task?.isSup) return;
     const next = new Set(dismissedTaskIds);
     next.add(id);
     setDismissedTaskIds(next);
@@ -431,7 +470,7 @@ export default function Home() {
 
   const toggleTaskPref = (id: string) => {
     const enabled = new Set(taskPrefs.enabledIds);
-    if (enabled.has(id)) { if (enabled.size <= 2) return; enabled.delete(id); }
+    if (enabled.has(id)) { if (enabled.size <= 1) return; enabled.delete(id); }
     else enabled.add(id);
     const next = { ...taskPrefs, enabledIds: [...enabled] };
     setTaskPrefs(next);
@@ -572,13 +611,13 @@ export default function Home() {
                     </button>
                   </div>
 
-                  {/* ── Customize Mode ── */}
+                  {/* ── Customize Mode (static tasks only) ── */}
                   {taskCustomizeMode ? (
                     <div className="space-y-1.5 mb-3">
                       <p className="text-[10px] text-muted-foreground mb-2">
-                        {isTr ? "En az 2 görev seç:" : "Select at least 2 tasks:"}
+                        {isTr ? "Ek görevleri aç/kapat:" : "Toggle extra tasks:"}
                       </p>
-                      {ALL_DASHBOARD_TASKS.map((t) => {
+                      {STATIC_DASHBOARD_TASKS.map((t) => {
                         const isOn = taskPrefs.enabledIds.includes(t.id);
                         const dur = taskPrefs.durationOverrides[t.id] || t.duration;
                         return (
@@ -608,17 +647,16 @@ export default function Home() {
                     <div className="space-y-0.5">
                       {visibleTasks.map((t) => {
                         const dur = taskPrefs.durationOverrides[t.id] || t.duration;
-                        const baseLabel: string = isTr ? t.labelTr : t.labelEn;
-                        // Dynamic count for med/sup
-                        let label = baseLabel;
-                        if (t.id === "med" && medTotal > 0) label = `${baseLabel} ${medDoneCount}/${medTotal}`;
-                        if (t.id === "sup" && supTotal > 0) label = `${baseLabel} ${supDoneCount}/${supTotal}`;
-                        const fullLabel = dur ? `${label} (${dur})` : label;
+                        const label: string = isTr ? t.labelTr : t.labelEn;
+                        // Water: show glasses count
+                        const displayLabel = t.id === "water"
+                          ? `${label} ${waterGlasses}/${waterTarget}`
+                          : dur ? `${label} (${dur})` : label;
                         return (
-                          <TaskItem key={t.id} emoji={t.emoji} label={fullLabel}
+                          <TaskItem key={t.id} emoji={t.emoji} label={displayLabel}
                             done={completedTaskIds.has(t.id)}
                             onClick={() => toggleTask(t.id)}
-                            onDismiss={() => dismissTask(t.id)} />
+                            onDismiss={(t as any).isMed || (t as any).isSup ? undefined : () => dismissTask(t.id)} />
                         );
                       })}
                     </div>

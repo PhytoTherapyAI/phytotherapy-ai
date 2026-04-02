@@ -170,7 +170,7 @@ export default function ProfilePage() {
       const { error } = await supabase
         .from("user_profiles")
         .update(updateData)
-        .eq("user_id", user!.id);
+        .eq("id", user!.id);
 
       if (error) {
         console.error("Supabase update error:", error);
@@ -187,7 +187,7 @@ export default function ProfilePage() {
             alcohol_use: healthForm.alcohol_use || null,
             smoking_use: healthForm.smoking_use || null,
           })
-          .eq("user_id", user!.id);
+          .eq("id", user!.id);
         if (retryError) console.error("Retry also failed:", retryError);
       }
       await refreshProfile();
@@ -427,7 +427,7 @@ export default function ProfilePage() {
       await supabase
         .from("user_profiles")
         .update({ last_medication_update: new Date().toISOString() })
-        .eq("user_id", user!.id);
+        .eq("id", user!.id);
       refreshProfile().catch(() => {});
       localStorage.setItem(MED_CONFIRM_KEY, new Date().toISOString());
       setMedConfirmed(true);

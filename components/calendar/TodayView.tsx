@@ -20,6 +20,7 @@ import { AddVitalDialog } from "./AddVitalDialog"
 import { AddSupplementDialog } from "./AddSupplementDialog"
 import type { UserMedication } from "@/lib/database.types"
 import { getSupplementDisplayName } from "@/lib/supplement-data"
+import { parseMedDoses, buildMedItemId, buildMedLabel, type MedDose } from "@/lib/med-dose-utils"
 
 interface TodayViewProps {
   userId: string
@@ -575,7 +576,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       const dismissed = sessionStorage.getItem(`evening-reminder-${today}`)
       if (dismissed) return
 
-      const hasPendingMeds = medications.some(m => !dailyLogs.some(l => l.item_type === "medication" && l.item_id === m.id && l.completed))
+      const hasPendingMeds = medications.some(m => !dailyLogs.some(l => l.item_type === "medication" && l.item_id?.startsWith(m.id) && l.completed))
       const pendingSups = events.filter(e => e.event_type === "supplement").filter(s => !dailyLogs.some(l => l.item_type === "supplement" && l.item_id === s.id && l.completed))
 
       if (hasPendingMeds || pendingSups.length > 0) {
@@ -602,30 +603,53 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
   const medMsgs = useMemo(() => medMessages(userName ?? null, tr), [userName, tr])
   const allDoneMsgs = useMemo(() => allMedsDoneMessages(userName ?? null, tr), [userName, tr])
 
+  // ── Build dose rows: each medication expanded into individual dose tasks ──
+  interface MedDoseRow {
+    med: UserMedication
+    dose: MedDose
+    itemId: string   // e.g., "med-uuid-morning"
+    label: string    // e.g., "Glifor (Sabah)"
+  }
+  const medDoseRows: MedDoseRow[] = useMemo(() => {
+    const rows: MedDoseRow[] = []
+    for (const med of medications) {
+      const medName = med.brand_name || med.generic_name || ""
+      const doses = parseMedDoses(med.frequency || "", lang)
+      for (const dose of doses) {
+        rows.push({
+          med,
+          dose,
+          itemId: buildMedItemId(med.id, dose),
+          label: buildMedLabel(medName, dose),
+        })
+      }
+    }
+    return rows
+  }, [medications, lang])
+
   // ── Med toggle with full-page animation ──
-  const toggleMedication = async (med: UserMedication) => {
-    const medName = med.brand_name || med.generic_name || "Unknown"
-    const existing = dailyLogs.find((l) => l.item_type === "medication" && l.item_id === med.id)
+  const toggleMedDose = async (row: MedDoseRow) => {
+    const existing = dailyLogs.find((l) => l.item_type === "medication" && l.item_id === row.itemId)
     const wasCompleted = existing?.completed ?? false
-    setTogglingId(med.id)
+    setTogglingId(row.itemId)
 
     // Optimistic
     if (existing) {
       setDailyLogs((prev) => prev.map((l) => l.id === existing.id ? { ...l, completed: !l.completed } : l))
     } else {
-      setDailyLogs((prev) => [...prev, { id: `temp-${med.id}`, user_id: userId, log_date: today, item_type: "medication", item_id: med.id, item_name: medName, completed: true }])
+      setDailyLogs((prev) => [...prev, { id: `temp-${row.itemId}`, user_id: userId, log_date: today, item_type: "medication", item_id: row.itemId, item_name: row.label, completed: true }])
     }
 
     if (!wasCompleted) {
-      setJustCompletedMed(med.id)
+      setJustCompletedMed(row.itemId)
       setMedMessage(getRandom(medMsgs))
       setTimeout(() => { setJustCompletedMed(null); setMedMessage(null) }, 2500)
 
-      // Check all done
-      const willBeComplete = medications.every((m) =>
-        m.id === med.id || dailyLogs.some((l) => l.item_type === "medication" && l.item_id === m.id && l.completed)
+      // Check all doses done
+      const willBeComplete = medDoseRows.every((r) =>
+        r.itemId === row.itemId || dailyLogs.some((l) => l.item_type === "medication" && l.item_id === r.itemId && l.completed)
       )
-      if (willBeComplete && medications.length > 0) {
+      if (willBeComplete && medDoseRows.length > 0) {
         setTimeout(() => {
           setShowConfetti(true)
           setAllDoneMsg(getRandom(allDoneMsgs))
@@ -640,34 +664,23 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
         await supabase.from("daily_logs").update({ completed: !existing.completed }).eq("id", existing.id)
       } else {
         const { error: insertError } = await supabase.from("daily_logs").insert({
-          user_id: userId, log_date: today, item_type: "medication", item_id: med.id, item_name: medName, completed: true,
+          user_id: userId, log_date: today, item_type: "medication", item_id: row.itemId, item_name: row.label, completed: true,
         })
         if (insertError) {
           await supabase.from("daily_logs").update({ completed: true })
-            .eq("user_id", userId).eq("log_date", today).eq("item_type", "medication").eq("item_id", med.id)
+            .eq("user_id", userId).eq("log_date", today).eq("item_type", "medication").eq("item_id", row.itemId)
         }
       }
       const { data: freshLogs } = await supabase.from("daily_logs").select("*").eq("user_id", userId).eq("log_date", today)
-      if (freshLogs) {
-        setDailyLogs(freshLogs as DailyLog[])
-        // Sync med completion to dashboard task list
-        try {
-          const anyMedDone = freshLogs.some((l: any) => l.item_type === "medication" && l.completed)
-          const dashKey = `dash-tasks-done-${today}`
-          const dashDone = new Set(JSON.parse(localStorage.getItem(dashKey) || "[]"))
-          if (anyMedDone) dashDone.add("med"); else dashDone.delete("med")
-          // Also sync supplements
-          const anySupDone = freshLogs.some((l: any) => l.item_type === "supplement" && l.completed)
-          if (anySupDone) dashDone.add("sup"); else dashDone.delete("sup")
-          localStorage.setItem(dashKey, JSON.stringify([...dashDone]))
-        } catch {}
-      }
+      if (freshLogs) setDailyLogs(freshLogs as DailyLog[])
+      // Notify other views
+      window.dispatchEvent(new Event("daily-log-changed"))
     } catch { fetchData() } finally { setTogglingId(null) }
   }
 
-  const isMedCompleted = (medId: string) => dailyLogs.some((l) => l.item_type === "medication" && l.item_id === medId && l.completed)
-  const completedMeds = medications.filter((m) => isMedCompleted(m.id)).length
-  const allMedsDone = medications.length > 0 && completedMeds === medications.length
+  const isDoseCompleted = (itemId: string) => dailyLogs.some((l) => l.item_type === "medication" && l.item_id === itemId && l.completed)
+  const completedMeds = medDoseRows.filter((r) => isDoseCompleted(r.itemId)).length
+  const allMedsDone = medDoseRows.length > 0 && completedMeds === medDoseRows.length
 
   // Supplement completion
   const isSupCompleted = (supId: string) => dailyLogs.some((l) => l.item_type === "supplement" && l.item_id === supId && l.completed)
@@ -725,8 +738,21 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       }
       const { data: freshLogs } = await supabase.from("daily_logs").select("*").eq("user_id", userId).eq("log_date", today)
       if (freshLogs) setDailyLogs(freshLogs as DailyLog[])
+      // Notify other views
+      window.dispatchEvent(new Event("daily-log-changed"))
     } catch { fetchData() } finally { setTogglingSupId(null) }
   }
+
+  // Listen for cross-view sync events
+  useEffect(() => {
+    const handler = () => { fetchData() }
+    window.addEventListener("daily-log-changed", handler)
+    window.addEventListener("water-intake-changed", handler)
+    return () => {
+      window.removeEventListener("daily-log-changed", handler)
+      window.removeEventListener("water-intake-changed", handler)
+    }
+  }, [fetchData])
 
   // ── Water ──
   const isAtLimit = glasses >= waterLimits.max
@@ -829,6 +855,8 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       } else {
         await supabase.from("water_intake").insert({ user_id: userId, intake_date: today, glasses: clamped, target_glasses: waterTarget })
       }
+      // Notify other views
+      window.dispatchEvent(new Event("water-intake-changed"))
     } catch { /* ignore */ }
   }, [userId, today, waterTarget, glasses, waterLimits.max, tr])
 
@@ -903,18 +931,18 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       {(() => {
         const now = new Date()
         const currentTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`
-        const overdueMeds = medications.filter((m) => {
-          const reminder = medReminders[m.id]
+        const overdueRows = medDoseRows.filter((r) => {
+          const reminder = medReminders[r.med.id]
           if (!reminder) return false
-          return reminder < currentTime && !isMedCompleted(m.id)
+          return reminder < currentTime && !isDoseCompleted(r.itemId)
         })
-        if (overdueMeds.length === 0) return null
+        if (overdueRows.length === 0) return null
         return (
           <div className="flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 animate-pulse">
             <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
-                {`${overdueMeds.map((m) => m.brand_name || m.generic_name).join(", ")} ${tx("cal.overdueAlert", lang)}`}
+                {`${overdueRows.map((r) => r.label).join(", ")} ${tx("cal.overdueAlert", lang)}`}
               </p>
               <p className="text-xs text-amber-500/70">
                 {tx("cal.dontForgetMeds", lang)}
@@ -931,8 +959,8 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
           <p className="text-sm font-medium text-foreground">
             {allMedsDone && allSupsDone && glasses >= waterTarget
               ? tx("cal.allDoneToday", lang)
-              : (tr ? `Bugünkü ilerleme: ${completedMeds}/${medications.length} ilaç · ${completedSups}/${supplementEvents.length} takviye`
-                    : `Today: ${completedMeds}/${medications.length} meds · ${completedSups}/${supplementEvents.length} supps`)}
+              : (tr ? `Bugünkü ilerleme: ${completedMeds}/${medDoseRows.length} ilaç · ${completedSups}/${supplementEvents.length} takviye`
+                    : `Today: ${completedMeds}/${medDoseRows.length} meds · ${completedSups}/${supplementEvents.length} supps`)}
           </p>
         </div>
         {streak > 0 && (
@@ -994,16 +1022,16 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                   <Flame className="h-3 w-3" /> {streak} {tx("cal.daysStreak", lang)}
                 </span>
               )}
-              {medications.length > 0 && (
+              {medDoseRows.length > 0 && (
                 <Badge variant={allMedsDone ? "default" : "secondary"} className={allMedsDone ? "bg-primary text-white" : ""}>
-                  {allMedsDone ? "✓" : `${completedMeds}/${medications.length}`}
+                  {allMedsDone ? "✓" : `${completedMeds}/${medDoseRows.length}`}
                 </Badge>
               )}
             </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {medications.length === 0 ? (
+          {medDoseRows.length === 0 ? (
             <div className="text-center py-4">
               <Pill className="mx-auto h-8 w-8 text-muted-foreground/30 mb-2" />
               <p className="text-sm text-muted-foreground">{tx("cal.noMeds", lang)}</p>
@@ -1013,17 +1041,16 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
             </div>
           ) : (
             <div className="space-y-2">
-              {medications.map((med) => {
-                const completed = isMedCompleted(med.id)
-                const isToggling = togglingId === med.id
-                const justDone = justCompletedMed === med.id
-                const reminderTime = medReminders[med.id]
-                const medName = med.brand_name || med.generic_name || ""
+              {medDoseRows.map((row) => {
+                const completed = isDoseCompleted(row.itemId)
+                const isToggling = togglingId === row.itemId
+                const justDone = justCompletedMed === row.itemId
+                const reminderTime = medReminders[row.med.id]
                 return (
-                  <div key={med.id} className="relative">
+                  <div key={row.itemId} className="relative">
                     <button
                       type="button"
-                      onClick={() => !isToggling && toggleMedication(med)}
+                      onClick={() => !isToggling && toggleMedDose(row)}
                       disabled={isToggling}
                       className={`flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-300 ${
                         justDone ? "scale-[1.03] border-primary bg-primary/15 shadow-lg shadow-primary/10" :
@@ -1039,12 +1066,12 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-medium truncate transition-all ${completed ? "text-muted-foreground line-through" : "text-foreground"}`}>
-                          {medName}
+                          {row.label}
                         </p>
                         <div className="flex items-center gap-2">
-                          {(med.dosage || med.frequency) && (
+                          {(row.med.dosage || row.med.frequency) && (
                             <p className="text-xs text-muted-foreground truncate">
-                              {[med.dosage, med.frequency].filter(Boolean).join(" · ")}
+                              {[row.med.dosage, row.dose.suffix ? row.dose.suffix : row.med.frequency].filter(Boolean).join(" · ")}
                             </p>
                           )}
                           {reminderTime && (
@@ -1055,7 +1082,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                         </div>
                       </div>
                       <div
-                        onClick={(e) => { e.stopPropagation(); setBellMedId(med.id) }}
+                        onClick={(e) => { e.stopPropagation(); setBellMedId(row.med.id) }}
                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors cursor-pointer ${
                           reminderTime ? "text-primary bg-primary/10" : "text-muted-foreground/40 hover:text-primary hover:bg-primary/10"
                         }`}
