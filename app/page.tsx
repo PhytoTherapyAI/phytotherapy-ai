@@ -169,29 +169,96 @@ function CircularProgress({ value, size = 100, strokeWidth = 8 }: { value: numbe
 }
 
 // ── Task Item with strike-through animation ──
-function TaskItem({ emoji, label, done, onClick }: { emoji: string; label: string; done: boolean; onClick: () => void }) {
+function TaskItem({ emoji, label, done, duration, onClick, onDismiss }: {
+  emoji: string; label: string; done: boolean; duration?: string | null; onClick: () => void; onDismiss?: () => void
+}) {
   return (
-    <motion.button onClick={onClick} className="flex items-center gap-2 py-1.5 group w-full text-left"
-      whileTap={{ scale: 0.97 }}>
-      <motion.div
-        className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors ${done ? "bg-primary border-primary" : "border-stone-300 dark:border-stone-600"}`}
-        animate={done ? { scale: [1, 1.3, 1] } : {}}
-        transition={{ duration: 0.3 }}>
-        {done && (
-          <motion.svg initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }}
-            className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
-            <motion.path d="M5 13l4 4L19 7" />
-          </motion.svg>
-        )}
-      </motion.div>
-      <span className="text-xs">{emoji}</span>
-      <span className={`text-sm transition-all ${done ? "line-through text-muted-foreground/50" : "text-foreground"}`}>{label}</span>
+    <motion.div className="flex items-center gap-2 py-1.5 group w-full" whileTap={{ scale: 0.97 }}>
+      <button onClick={onClick} className="flex items-center gap-2 flex-1 text-left">
+        <motion.div
+          className={`flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors flex-shrink-0 ${done ? "bg-primary border-primary" : "border-stone-300 dark:border-stone-600"}`}
+          animate={done ? { scale: [1, 1.3, 1] } : {}}
+          transition={{ duration: 0.3 }}>
+          {done && (
+            <motion.svg initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.3 }}
+              className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+              <motion.path d="M5 13l4 4L19 7" />
+            </motion.svg>
+          )}
+        </motion.div>
+        <span className="text-xs">{emoji}</span>
+        <span className={`text-sm transition-all ${done ? "line-through text-muted-foreground/50" : "text-foreground"}`}>{label}</span>
+        {duration && <span className="text-[10px] text-muted-foreground ml-1">({duration})</span>}
+      </button>
       {done && (
         <motion.span initial={{ opacity: 0, scale: 0 }} animate={{ opacity: 1, scale: 1 }}
-          className="ml-auto text-xs">✨</motion.span>
+          className="text-xs flex-shrink-0">✨</motion.span>
       )}
-    </motion.button>
+      {!done && onDismiss && (
+        <button onClick={onDismiss} className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground/40 hover:text-muted-foreground flex-shrink-0 p-0.5">
+          <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      )}
+    </motion.div>
   );
+}
+
+// ── All possible dashboard tasks ──
+const ALL_DASHBOARD_TASKS = [
+  { id: "med",        emoji: "💊", labelEn: "Medications",      labelTr: "İlaçlar",            duration: null },
+  { id: "water",      emoji: "💧", labelEn: "Water 0/8 glasses",labelTr: "Su 0/8 bardak",      duration: null },
+  { id: "sup",        emoji: "🌿", labelEn: "Supplements",      labelTr: "Takviyeler",          duration: null },
+  { id: "walk",       emoji: "🚶", labelEn: "Walk",             labelTr: "Yürüyüş",            duration: "10 dk" },
+  { id: "meditate",   emoji: "🧘", labelEn: "Meditation",       labelTr: "Meditasyon",          duration: "5 dk" },
+  { id: "vitals",     emoji: "📊", labelEn: "Log vitals",       labelTr: "Vital kaydet",        duration: "1 dk" },
+  { id: "sleep",      emoji: "😴", labelEn: "Sleep log",        labelTr: "Uyku kaydı",          duration: "1 dk" },
+  { id: "meal",       emoji: "🥗", labelEn: "Healthy meal",     labelTr: "Sağlıklı öğün",      duration: null },
+] as const;
+
+const DEFAULT_TASK_IDS = ["med", "water", "sup", "walk"];
+const DURATION_OPTS = ["1 dk", "5 dk", "10 dk", "15 dk", "30 dk"];
+
+/** Local date YYYY-MM-DD (not UTC) */
+function getLocalDate() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+interface TaskPrefs {
+  enabledIds: string[];
+  durationOverrides: Record<string, string>;
+}
+
+function loadTaskPrefs(userId: string): TaskPrefs {
+  try {
+    const raw = localStorage.getItem(`dash-task-prefs-${userId}`);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return { enabledIds: [...DEFAULT_TASK_IDS], durationOverrides: {} };
+}
+
+function saveTaskPrefs(userId: string, p: TaskPrefs) {
+  localStorage.setItem(`dash-task-prefs-${userId}`, JSON.stringify(p));
+}
+
+function loadCompletedTasks(date: string): Set<string> {
+  try {
+    const raw = localStorage.getItem(`dash-tasks-done-${date}`);
+    if (raw) return new Set(JSON.parse(raw));
+  } catch {}
+  return new Set();
+}
+
+function saveCompletedTasks(date: string, s: Set<string>) {
+  localStorage.setItem(`dash-tasks-done-${date}`, JSON.stringify([...s]));
+}
+
+function loadDismissedTasks(date: string): Set<string> {
+  try {
+    const raw = localStorage.getItem(`dash-tasks-hide-${date}`);
+    if (raw) return new Set(JSON.parse(raw));
+  } catch {}
+  return new Set();
 }
 
 // ── Time-based greeting emoji ──
@@ -224,17 +291,58 @@ export default function Home() {
   const [query, setQuery]              = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [tasks, setTasks] = useState([
-    { id: "med",   emoji: "💊", labelEn: "Medications 0/1",   labelTr: "İlaçlar 0/1",     done: false },
-    { id: "water", emoji: "💧", labelEn: "Water 0/8 glasses", labelTr: "Su 0/8 bardak",   done: false },
-    { id: "sup",   emoji: "🌿", labelEn: "Supplements",       labelTr: "Takviyeler",       done: false },
-    { id: "walk",  emoji: "🚶", labelEn: "10 min walk",       labelTr: "10 dk yürüyüş",   done: false },
-  ]);
+  // ── Task system with persistence ──
+  const [taskPrefs, setTaskPrefs] = useState<TaskPrefs>({ enabledIds: [...DEFAULT_TASK_IDS], durationOverrides: {} });
+  const [completedTaskIds, setCompletedTaskIds] = useState<Set<string>>(new Set());
+  const [dismissedTaskIds, setDismissedTaskIds] = useState<Set<string>>(new Set());
+  const [taskCustomizeMode, setTaskCustomizeMode] = useState(false);
   const [streak] = useState(3);
+  const todayStr = getLocalDate();
 
-  const toggleTask = (id: string) => setTasks((prev) => prev.map((t) => t.id === id ? { ...t, done: !t.done } : t));
-  const completedCount = tasks.filter((t) => t.done).length;
-  const scorePercent   = Math.round((completedCount / tasks.length) * 100);
+  // Load task prefs + completions + dismissals on mount
+  useEffect(() => {
+    if (!user) return;
+    setTaskPrefs(loadTaskPrefs(user.id));
+    setCompletedTaskIds(loadCompletedTasks(todayStr));
+    setDismissedTaskIds(loadDismissedTasks(todayStr));
+  }, [user, todayStr]);
+
+  // Visible tasks: enabled + not dismissed
+  const visibleTasks = ALL_DASHBOARD_TASKS.filter(
+    (t) => taskPrefs.enabledIds.includes(t.id) && !dismissedTaskIds.has(t.id)
+  );
+
+  const toggleTask = (id: string) => {
+    const next = new Set(completedTaskIds);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    setCompletedTaskIds(next);
+    saveCompletedTasks(todayStr, next);
+  };
+
+  const dismissTask = (id: string) => {
+    const next = new Set(dismissedTaskIds);
+    next.add(id);
+    setDismissedTaskIds(next);
+    localStorage.setItem(`dash-tasks-hide-${todayStr}`, JSON.stringify([...next]));
+  };
+
+  const toggleTaskPref = (id: string) => {
+    const enabled = new Set(taskPrefs.enabledIds);
+    if (enabled.has(id)) { if (enabled.size <= 2) return; enabled.delete(id); }
+    else enabled.add(id);
+    const next = { ...taskPrefs, enabledIds: [...enabled] };
+    setTaskPrefs(next);
+    if (user) saveTaskPrefs(user.id, next);
+  };
+
+  const changeTaskDuration = (id: string, dur: string) => {
+    const next = { ...taskPrefs, durationOverrides: { ...taskPrefs.durationOverrides, [id]: dur } };
+    setTaskPrefs(next);
+    if (user) saveTaskPrefs(user.id, next);
+  };
+
+  const completedCount = visibleTasks.filter((t) => completedTaskIds.has(t.id)).length;
+  const scorePercent   = visibleTasks.length > 0 ? Math.round((completedCount / visibleTasks.length) * 100) : 0;
 
   const fetchCheckIn = useCallback(async () => {
     if (!user) return;
@@ -347,22 +455,75 @@ export default function Home() {
                     </h1>
                     <InfoTooltip title={isTr ? "Sağlık Merkezin" : "Your Health Hub"} description={isTr ? "Arama çubuğundan her şeyi sorabilirsin. Günlük özetin temel sağlık metriklerini bir bakışta gösterir." : "Ask anything via the search bar. Your daily snapshot shows key health metrics at a glance."} />
                   </div>
-                  <p className="text-xs text-muted-foreground mb-4">
-                    {isTr ? "Günlük görevlerini tamamla, skorunu yükselt!" : "Complete your daily tasks, boost your score!"}
-                  </p>
-                  <div className="space-y-0.5">
-                    {tasks.map((t) => (
-                      <TaskItem key={t.id} emoji={t.emoji} label={isTr ? t.labelTr : t.labelEn}
-                        done={t.done} onClick={() => toggleTask(t.id)} />
-                    ))}
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-xs text-muted-foreground">
+                      {isTr ? "Günlük görevlerini tamamla, skorunu yükselt!" : "Complete your daily tasks, boost your score!"}
+                    </p>
+                    <button onClick={() => setTaskCustomizeMode(!taskCustomizeMode)}
+                      className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted"
+                      title={isTr ? "Kişiselleştir" : "Customize"}>
+                      {taskCustomizeMode
+                        ? <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7"/></svg>
+                        : <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                      }
+                    </button>
                   </div>
+
+                  {/* ── Customize Mode ── */}
+                  {taskCustomizeMode ? (
+                    <div className="space-y-1.5 mb-3">
+                      <p className="text-[10px] text-muted-foreground mb-2">
+                        {isTr ? "En az 2 görev seç:" : "Select at least 2 tasks:"}
+                      </p>
+                      {ALL_DASHBOARD_TASKS.map((t) => {
+                        const isOn = taskPrefs.enabledIds.includes(t.id);
+                        const dur = taskPrefs.durationOverrides[t.id] || t.duration;
+                        return (
+                          <div key={t.id} className={`flex items-center gap-2 py-1 px-2 rounded-lg transition-colors ${isOn ? "bg-primary/5" : "opacity-50"}`}>
+                            <button onClick={() => toggleTaskPref(t.id)}
+                              className={`relative h-5 w-9 flex-shrink-0 rounded-full transition-colors ${isOn ? "bg-primary" : "bg-muted-foreground/30"}`}>
+                              <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${isOn ? "translate-x-4" : "translate-x-0"}`} />
+                            </button>
+                            <span className="text-xs">{t.emoji}</span>
+                            <span className="text-sm flex-1">{isTr ? t.labelTr : t.labelEn}</span>
+                            {isOn && t.duration && (
+                              <div className="flex gap-0.5">
+                                {DURATION_OPTS.map((d) => (
+                                  <button key={d} onClick={() => changeTaskDuration(t.id, d)}
+                                    className={`rounded px-1 py-0.5 text-[8px] font-medium transition-colors ${
+                                      (dur || "") === d ? "bg-primary text-white" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                                    }`}>{d}</button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    /* ── Normal Task List ── */
+                    <div className="space-y-0.5">
+                      {visibleTasks.map((t) => {
+                        const dur = taskPrefs.durationOverrides[t.id] || t.duration;
+                        const label = isTr ? t.labelTr : t.labelEn;
+                        const fullLabel = dur ? `${label} (${dur})` : label;
+                        return (
+                          <TaskItem key={t.id} emoji={t.emoji} label={fullLabel}
+                            done={completedTaskIds.has(t.id)}
+                            onClick={() => toggleTask(t.id)}
+                            onDismiss={() => dismissTask(t.id)} />
+                        );
+                      })}
+                    </div>
+                  )}
+
                   <div className="mt-3 h-2 rounded-full bg-stone-100 dark:bg-stone-800 overflow-hidden">
                     <motion.div className="h-full rounded-full bg-gradient-to-r from-primary to-primary/70"
                       initial={{ width: 0 }} animate={{ width: `${scorePercent}%` }}
                       transition={{ duration: 0.8, ease: "easeOut" as const }} />
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-1">
-                    {completedCount}/{tasks.length} {isTr ? "tamamlandı" : "completed"}
+                    {completedCount}/{visibleTasks.length} {isTr ? "tamamlandı" : "completed"}
                   </p>
                 </div>
               </div>
