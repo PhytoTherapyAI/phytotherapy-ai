@@ -151,7 +151,7 @@ export default function CertificatesPage() {
       ctx.fillStyle = "#6366f1";
       ctx.font = "bold 18px system-ui";
       ctx.textAlign = "center";
-      ctx.fillText("PHYTOTHERAPY.AI", 600, 100);
+      ctx.fillText("DOCTOPAL", 600, 100);
 
       // Award icon area
       ctx.font = "48px serif";
