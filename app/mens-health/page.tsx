@@ -1,307 +1,255 @@
 // © 2026 Doctopal — All Rights Reserved
-"use client";
+"use client"
 
-import { useState } from "react";
-import {
-  Shield,
-  Loader2,
-  LogIn,
-  AlertTriangle,
-  Activity,
-  Pill,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
-import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, Sparkles, Zap } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-interface MensHealthResult {
-  adamScore: number | null;
-  adamPositive: boolean;
-  age: number;
-  hasSexualEffectMed: boolean;
-  testosteroneSymptomAssessment: string;
-  medicationEffects: Array<{ medication: string; effect: string; prevalence: string; action: string }>;
-  supplementSuggestions: Array<{ name: string; dose: string; evidence: string; safetyNote: string }>;
-  prostateHealth: { screeningRecommendation: string; tips: string[] };
-  lifestyleRecommendations: string[];
-  labTestsRecommended: string[];
-  alertLevel: "green" | "yellow";
-}
+const optimizationGoals = [
+  { id: "muscle", emoji: "💪", label: "Muscle & Recovery", desc: "Strength & post-workout repair" },
+  { id: "energy", emoji: "⚡", label: "Pure Energy & Focus", desc: "Sustained daily power" },
+  { id: "testosterone", emoji: "🔥", label: "Testosterone Support", desc: "Natural hormonal optimization" },
+  { id: "hair", emoji: "🛡️", label: "Hair Root Shield", desc: "DHT-blocking phytoactives" },
+  { id: "stress", emoji: "🧘‍♂️", label: "Cortisol Management", desc: "Stress & adaptation" },
+  { id: "sleep", emoji: "🌙", label: "Deep Sleep Protocol", desc: "Recovery & HGH optimization" },
+]
 
-const ADAM = [
-  { en: "Decrease in libido (sex drive)?", tr: "Cinsel istekte azalma?" },
-  { en: "Lack of energy?", tr: "Enerji eksikligi?" },
-  { en: "Decrease in strength and/or endurance?", tr: "Guc ve/veya dayaniklilikta azalma?" },
-  { en: "Lost height?", tr: "Boy kisalmasi?" },
-  { en: "Decreased enjoyment of life?", tr: "Yasam zevkinde azalma?" },
-  { en: "Sad and/or grumpy?", tr: "Uzgun ve/veya huysuz?" },
-  { en: "Erections less strong?", tr: "Ereksiyon gücünde azalma?" },
-  { en: "Deterioration in sports ability?", tr: "Spor performansinda dusus?" },
-  { en: "Falling asleep after dinner?", tr: "Aksam yemeginden sonra uyuya kalma?" },
-  { en: "Deterioration in work performance?", tr: "Is performansinda dusus?" },
-];
+const radarMetrics = [
+  { label: "Strength", angle: 0 },
+  { label: "Energy", angle: 60 },
+  { label: "Focus", angle: 120 },
+  { label: "Recovery", angle: 180 },
+  { label: "Hormones", angle: 240 },
+  { label: "Sleep", angle: 300 },
+]
 
-const SYMPTOMS = [
-  { en: "Fatigue", tr: "Yorgunluk" },
-  { en: "Low libido", tr: "Düşük cinsel istek" },
-  { en: "Mood changes", tr: "Ruh hali değişikliği" },
-  { en: "Muscle loss", tr: "Kas kaybi" },
-  { en: "Weight gain", tr: "Kilo artisi" },
-  { en: "Sleep problems", tr: "Uyku sorunları" },
-  { en: "Hair loss", tr: "Sac dokulmesi" },
-  { en: "Concentration issues", tr: "Odaklanma sorunu" },
-];
+function VitalityRadar({ values }: { values: number[] }) {
+  const center = 150
+  const maxR = 100
 
-export default function MensHealthPage() {
-  const { isAuthenticated, session } = useAuth();
-  const { lang } = useLang();
-
-  const [adamAnswers, setAdamAnswers] = useState<boolean[]>(Array(10).fill(false));
-  const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
-  const [age, setAge] = useState(40);
-  const [showADAM, setShowADAM] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<MensHealthResult | null>(null);
-
-  const adamQuestions = ADAM.map((q) => q[lang]);
-  const symptoms = SYMPTOMS.map((s) => s[lang]);
-
-  const handleAnalyze = async () => {
-    if (!session?.access_token) return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/mens-health", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          lang,
-          adam_answers: adamAnswers,
-          symptoms: selectedSymptoms,
-          age,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Assessment failed");
-      }
-
-      const data = await res.json();
-      setResult(data.result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="rounded-lg bg-blue-50 p-3 dark:bg-blue-950">
-            <Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-          </div>
-          <div>
-            <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">{tx("mens.title", lang)}</h1>
-            <p className="text-sm text-muted-foreground">{tx("mens.subtitle", lang)}</p>
-          </div>
-        </div>
-        <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-8 text-center dark:border-blue-800 dark:bg-blue-950/30">
-          <LogIn className="mx-auto mb-3 h-10 w-10 text-blue-400" />
-          <p className="text-lg font-medium text-blue-700 dark:text-blue-300">
-            {tx("common.loginToUse2", lang)}
-          </p>
-        </div>
-      </div>
-    );
+  const getPoint = (angle: number, value: number) => {
+    const rad = ((angle - 90) * Math.PI) / 180
+    const r = (value / 100) * maxR
+    return { x: center + r * Math.cos(rad), y: center + r * Math.sin(rad) }
   }
 
+  const gridLevels = [25, 50, 75, 100]
+  const points = radarMetrics.map((m, i) => getPoint(m.angle, values[i] || 50))
+  const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ") + " Z"
+
   return (
-    <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="rounded-lg bg-blue-50 p-3 dark:bg-blue-950">
-          <Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-        </div>
-        <div>
-          <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">{tx("mens.title", lang)}</h1>
-          <p className="text-sm text-muted-foreground">{tx("mens.subtitle", lang)}</p>
-        </div>
+    <div className="relative w-[300px] h-[300px] mx-auto">
+      <svg viewBox="0 0 300 300" className="w-full h-full">
+        {/* Grid */}
+        {gridLevels.map(level => {
+          const pts = radarMetrics.map(m => getPoint(m.angle, level))
+          return (
+            <polygon key={level} points={pts.map(p => `${p.x},${p.y}`).join(" ")}
+              fill="none" stroke="rgba(100,116,139,0.1)" strokeWidth={1} />
+          )
+        })}
+        {/* Axes */}
+        {radarMetrics.map(m => {
+          const end = getPoint(m.angle, 100)
+          return <line key={m.angle} x1={center} y1={center} x2={end.x} y2={end.y} stroke="rgba(100,116,139,0.08)" strokeWidth={1} />
+        })}
+        {/* Data */}
+        <motion.polygon
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          points={points.map(p => `${p.x},${p.y}`).join(" ")}
+          fill="rgba(6,182,212,0.15)" stroke="rgb(6,182,212)" strokeWidth={2}
+        />
+        {points.map((p, i) => (
+          <motion.circle
+            key={i}
+            initial={{ r: 0 }}
+            animate={{ r: 4 }}
+            transition={{ delay: 0.6 + i * 0.1 }}
+            cx={p.x} cy={p.y} fill="rgb(6,182,212)" stroke="white" strokeWidth={2}
+          />
+        ))}
+        {/* Labels */}
+        {radarMetrics.map((m) => {
+          const pos = getPoint(m.angle, 120)
+          return (
+            <text key={m.label} x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="middle"
+              className="text-[10px] fill-slate-400 font-medium">{m.label}</text>
+          )
+        })}
+      </svg>
+      {/* Center glow */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ repeat: Infinity, duration: 3 }}
+          className="w-16 h-16 rounded-full bg-cyan-400/20 blur-xl"
+        />
       </div>
+    </div>
+  )
+}
 
-      {/* Age */}
-      <div className="mb-6 rounded-xl border bg-card p-4 shadow-sm">
-        <label className="mb-1 block text-sm font-semibold text-muted-foreground">{tx("common.age", lang)}</label>
-        <input type="number" min={18} max={100} value={age} onChange={(e) => setAge(Number(e.target.value))} className="w-24 rounded-lg border bg-background px-3 py-2 text-center text-lg font-bold" />
-      </div>
+function LaborIllusion({ onComplete }: { onComplete: () => void }) {
+  const steps = [
+    "Calculating muscle recovery rate...",
+    "Simulating free testosterone / cortisol balance...",
+    "Scanning DHT blockers and prostate-protective phytoactives...",
+    "Compiling your biological engine report...",
+  ]
+  const [step, setStep] = useState(0)
 
-      {/* Symptoms */}
-      <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">{tx("common.symptoms", lang)}</h2>
-        <div className="flex flex-wrap gap-2">
-          {symptoms.map((s) => (
-            <button
-              key={s}
-              onClick={() => setSelectedSymptoms((prev) => prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s])}
-              className={`rounded-full px-3 py-1.5 text-sm transition-colors ${selectedSymptoms.includes(s) ? "bg-blue-500 text-white" : "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-950 dark:text-blue-300"}`}
-            >{s}</button>
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep(s => {
+        if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s }
+        return s + 1
+      })
+    }, 1200)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm">
+      <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} className="bg-slate-800 rounded-2xl p-8 max-w-sm mx-4 text-center shadow-2xl border border-slate-700">
+        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+          className="w-14 h-14 mx-auto mb-4 rounded-full border-4 border-slate-600 border-t-cyan-400" />
+        <AnimatePresence mode="wait">
+          <motion.p key={step} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
+            className="text-cyan-100 text-sm">{steps[step]}</motion.p>
+        </AnimatePresence>
+        <div className="flex gap-1 justify-center mt-4">
+          {steps.map((_, i) => (
+            <div key={i} className={`w-2 h-2 rounded-full ${i <= step ? "bg-cyan-400" : "bg-slate-600"}`} />
           ))}
         </div>
-      </div>
+      </motion.div>
+    </motion.div>
+  )
+}
 
-      {/* ADAM Questionnaire */}
-      <div className="mb-6 rounded-xl border bg-card p-6 shadow-sm">
-        <button onClick={() => setShowADAM(!showADAM)} className="flex w-full items-center justify-between">
-          <h2 className="text-lg font-bold text-blue-700 dark:text-blue-300">{tx("mens.adam", lang)}</h2>
-          {showADAM ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-        </button>
-        {showADAM && (
-          <div className="mt-4 space-y-3">
-            {adamQuestions.map((q, qi) => (
-              <div key={qi} className="flex items-center justify-between rounded-lg border p-3">
-                <span className="text-sm">{qi + 1}. {q}</span>
-                <button
-                  onClick={() => {
-                    const newAnswers = [...adamAnswers];
-                    newAnswers[qi] = !newAnswers[qi];
-                    setAdamAnswers(newAnswers);
-                  }}
-                  className={`rounded-full px-4 py-1 text-sm font-semibold transition-colors ${adamAnswers[qi] ? "bg-blue-500 text-white" : "bg-gray-100 dark:bg-gray-800"}`}
-                >
-                  {adamAnswers[qi] ? tx("common.yes", lang) : tx("common.no", lang)}
-                </button>
-              </div>
-            ))}
+export default function MensHealthPage() {
+  const router = useRouter()
+  const [selectedGoals, setSelectedGoals] = useState<string[]>(["energy", "testosterone"])
+  const [age, setAge] = useState(40)
+  const [showLabor, setShowLabor] = useState(false)
+  const [showResult, setShowResult] = useState(false)
+
+  const toggleGoal = (id: string) => {
+    setSelectedGoals(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id])
+  }
+
+  const radarValues = radarMetrics.map((_, i) => {
+    const base = 40 + Math.random() * 30
+    return Math.min(100, base + selectedGoals.length * 5)
+  })
+
+  const biologicalAge = Math.max(age - 8, age - selectedGoals.length * 2)
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-white">
+      <AnimatePresence>
+        {showLabor && <LaborIllusion onComplete={() => { setShowLabor(false); setShowResult(true) }} />}
+      </AnimatePresence>
+
+      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/10">
+            <ChevronLeft className="w-5 h-5 text-slate-400" />
+          </button>
+          <div className="text-center">
+            <h1 className="text-lg font-bold text-white">Performance HQ</h1>
+            <p className="text-xs text-slate-400">Optimize Your Biological Engine</p>
           </div>
-        )}
+          <Zap className="w-5 h-5 text-cyan-400" />
+        </motion.div>
+
+        {/* Vitality Radar */}
+        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}>
+          <VitalityRadar values={radarValues} />
+        </motion.div>
+
+        {/* Biological Age */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-slate-800 rounded-2xl p-5 mb-6 border border-slate-700"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm text-slate-400">Chronological Age</span>
+            <span className="text-xl font-bold text-white">{age}</span>
+          </div>
+          <input type="range" min={25} max={65} value={age} onChange={(e) => setAge(Number(e.target.value))}
+            className="w-full accent-cyan-400 mb-3" />
+          <div className="bg-gradient-to-r from-cyan-900/30 to-emerald-900/30 rounded-xl p-3 border border-cyan-800/30">
+            <p className="text-xs text-cyan-300">
+              Our goal: bring your Biological Age to <span className="font-bold text-emerald-400">{biologicalAge}</span>
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Optimization Goals */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mb-6">
+          <h3 className="text-sm font-semibold text-slate-300 mb-3 px-1">Performance Optimization Goals</h3>
+          <div className="grid grid-cols-2 gap-3">
+            {optimizationGoals.map((goal, i) => {
+              const isActive = selectedGoals.includes(goal.id)
+              return (
+                <motion.button
+                  key={goal.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35 + i * 0.05 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => toggleGoal(goal.id)}
+                  className={`flex flex-col items-start p-4 rounded-2xl border-2 text-left transition-all ${
+                    isActive ? "border-cyan-500/50 bg-cyan-950/40 shadow-lg shadow-cyan-900/20" : "border-slate-700 bg-slate-800"
+                  }`}
+                >
+                  <span className="text-xl mb-1">{goal.emoji}</span>
+                  <span className="text-sm font-medium text-white">{goal.label}</span>
+                  <span className="text-[10px] text-slate-400 mt-0.5">{goal.desc}</span>
+                </motion.button>
+              )
+            })}
+          </div>
+        </motion.div>
+
+        {/* Analyze Button */}
+        <motion.button
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => setShowLabor(true)}
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-medium shadow-lg shadow-cyan-900/40 flex items-center justify-center gap-2"
+        >
+          <Zap className="w-4 h-4" />
+          Analyze My Biological Engine
+        </motion.button>
+
+        {/* Result */}
+        <AnimatePresence>
+          {showResult && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="mt-4 bg-slate-800 rounded-2xl p-5 border border-cyan-800/30">
+              <h3 className="text-sm font-semibold text-cyan-400 mb-2">Your Optimization Protocol</h3>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Based on your goals: Tongkat Ali (400mg/day) for testosterone support,
+                Ashwagandha KSM-66 (600mg/day) for cortisol management,
+                and Saw Palmetto (320mg/day) for DHT balance.
+                Combined with HIIT training 3x/week and 7+ hours of quality sleep.
+              </p>
+              <p className="text-xs text-slate-500 mt-3">Consult your healthcare provider before starting any supplement regimen.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
-      <Button onClick={handleAnalyze} disabled={isLoading} className="mb-6 w-full bg-blue-600 hover:bg-blue-700 text-white" size="lg">
-        {isLoading ? (
-          <><Loader2 className="mr-2 h-5 w-5 animate-spin" />{tx("common.analyzing", lang)}</>
-        ) : (
-          <><Shield className="mr-2 h-5 w-5" />{tx("mens.analyze", lang)}</>
-        )}
-      </Button>
-
-      {error && <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">{error}</div>}
-
-      {result && (
-        <div className="space-y-4">
-          {/* ADAM Score */}
-          {result.adamScore !== null && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm text-center">
-              <p className="text-sm text-muted-foreground">{tx("mens.adam", lang)}</p>
-              <p className="text-4xl font-bold">{result.adamScore}<span className="text-lg text-muted-foreground">/10</span></p>
-              <span className={`mt-2 inline-block rounded-full px-3 py-1 text-xs font-semibold ${result.adamPositive ? "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300" : "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"}`}>
-                {result.adamPositive ? tx("mens.adamPositive", lang) : tx("mens.adamNegative", lang)}
-              </span>
-            </div>
-          )}
-
-          {/* Assessment */}
-          {result.testosteroneSymptomAssessment && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-2 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {tx("mens.assessment", lang)}
-              </h3>
-              <p className="text-sm text-muted-foreground">{result.testosteroneSymptomAssessment}</p>
-            </div>
-          )}
-
-          {/* Medication Effects */}
-          {result.medicationEffects?.length > 0 && (
-            <div className="rounded-xl border-2 border-amber-300 bg-amber-50 p-6 dark:bg-amber-950/20">
-              <h3 className="mb-3 flex items-center gap-2 text-lg font-bold text-amber-700 dark:text-amber-300">
-                <Pill className="h-5 w-5" />
-                {tx("mens.medEffects", lang)}
-              </h3>
-              {result.medicationEffects.map((me, i) => (
-                <div key={i} className="mb-3 rounded-lg border border-amber-300 p-3 last:mb-0 dark:border-amber-700">
-                  <p className="font-semibold">{me.medication}</p>
-                  <p className="text-sm text-muted-foreground">{me.effect}</p>
-                  <p className="text-xs text-amber-600 dark:text-amber-400">{tx("mens.prevalence", lang)}: {me.prevalence}</p>
-                  <p className="text-xs font-medium">{me.action}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Prostate Health */}
-          {result.prostateHealth && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">{tx("mens.prostate", lang)}</h3>
-              <p className="text-sm text-muted-foreground">{result.prostateHealth.screeningRecommendation}</p>
-              {result.prostateHealth.tips?.length > 0 && (
-                <ul className="mt-2 space-y-1">
-                  {result.prostateHealth.tips.map((tip, i) => (
-                    <li key={i} className="text-sm text-muted-foreground">- {tip}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-
-          {/* Supplements */}
-          {result.supplementSuggestions?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {tx("common.supplementSuggestions", lang)}
-              </h3>
-              {result.supplementSuggestions.map((supp, i) => (
-                <div key={i} className="mb-3 rounded-lg border p-3 last:mb-0">
-                  <p className="font-semibold">{supp.name} — {supp.dose}</p>
-                  <p className="text-xs text-muted-foreground">{supp.evidence}</p>
-                  <p className="mt-1 text-xs text-amber-600">{supp.safetyNote}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Lab Tests */}
-          {result.labTestsRecommended?.length > 0 && (
-            <div className="rounded-xl border-2 border-blue-200 bg-blue-50 p-6 dark:bg-blue-950/20">
-              <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {tx("mens.recommendedTests", lang)}
-              </h3>
-              <ul className="space-y-1">
-                {result.labTestsRecommended.map((test, i) => (
-                  <li key={i} className="text-sm text-blue-800 dark:text-blue-200">
-                    <AlertTriangle className="mr-1 inline h-3 w-3" /> {test}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Lifestyle */}
-          {result.lifestyleRecommendations?.length > 0 && (
-            <div className="rounded-xl border bg-card p-6 shadow-sm">
-              <h3 className="mb-3 text-lg font-bold text-blue-700 dark:text-blue-300">
-                {tx("mens.lifestyle", lang)}
-              </h3>
-              <ul className="space-y-2">
-                {result.lifestyleRecommendations.map((rec, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                    <Shield className="mt-0.5 h-4 w-4 flex-shrink-0 text-blue-500" /> {rec}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-
-      <p className="mt-6 text-center text-xs text-muted-foreground">{tx("disclaimer.tool", lang)}</p>
     </div>
-  );
+  )
 }
