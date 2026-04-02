@@ -166,46 +166,111 @@ export function MessageBubble({ message, isLast, onSendFollowUp }: MessageBubble
 
 /**
  * Simple markdown-like renderer for assistant messages.
- * Handles: **bold**, headers, bullet lists, links, line breaks
+ * Handles: **bold**, headers, bullet lists, links, line breaks, <details> blocks
  */
 function FormattedContent({ content }: { content: string }) {
-  const lines = content.split("\n");
+  // Extract <details> blocks first and render them separately
+  const detailsRegex = /<details>([\s\S]*?)<\/details>/gi;
+  const parts: Array<{ type: "text" | "details"; content: string }> = [];
+  let lastIndex = 0;
+  let match;
+
+  const cleanContent = content.replace(/<\/?details>/gi, "").replace(/<\/?summary>/gi, "");
+  // Check if content has details tags
+  const hasDetails = /<details>/i.test(content);
+
+  if (hasDetails) {
+    let remaining = content;
+    // Split into text parts and details parts
+    while ((match = detailsRegex.exec(content)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push({ type: "text", content: content.slice(lastIndex, match.index) });
+      }
+      parts.push({ type: "details", content: match[1] });
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < content.length) {
+      parts.push({ type: "text", content: content.slice(lastIndex) });
+    }
+  } else {
+    parts.push({ type: "text", content });
+  }
 
   return (
     <div className="space-y-1">
+      {parts.map((part, pi) => {
+        if (part.type === "details") {
+          return <DetailsBlock key={`d-${pi}`} content={part.content} />;
+        }
+        return <TextBlock key={`t-${pi}`} content={part.content} />;
+      })}
+    </div>
+  );
+}
+
+/** Renders a collapsible <details> section (e.g., Sources/Kaynaklar) */
+function DetailsBlock({ content }: { content: string }) {
+  // Extract summary text
+  const summaryMatch = content.match(/<summary>([\s\S]*?)<\/summary>/i);
+  const summaryText = summaryMatch ? summaryMatch[1].replace(/[▾▸]/g, "").trim() : "Details";
+  const bodyContent = content.replace(/<summary>[\s\S]*?<\/summary>/i, "").trim();
+
+  return (
+    <details className="mt-2 rounded-lg border border-primary/15 bg-primary/5 overflow-hidden">
+      <summary className="cursor-pointer px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10 transition-colors select-none flex items-center gap-1.5">
+        <BookOpen className="h-3.5 w-3.5 flex-shrink-0" />
+        {summaryText}
+      </summary>
+      <div className="px-3 pb-2.5 pt-1 space-y-1.5 border-t border-primary/10">
+        <TextBlock content={bodyContent} />
+      </div>
+    </details>
+  );
+}
+
+/** Renders plain text/markdown lines */
+function TextBlock({ content }: { content: string }) {
+  const lines = content.split("\n");
+
+  return (
+    <>
       {lines.map((line, i) => {
-        // Empty line = paragraph break
-        if (line.trim() === "") return <div key={i} className="h-2" />;
+        const trimmed = line.trim();
+        // Empty line
+        if (trimmed === "") return <div key={i} className="h-2" />;
+
+        // Skip raw HTML tag lines
+        if (/^<\/?(details|summary)>/i.test(trimmed)) return null;
 
         // Headers
-        if (line.startsWith("### "))
-          return <h4 key={i} className="mt-2 text-sm font-semibold">{formatInline(line.slice(4))}</h4>;
-        if (line.startsWith("## "))
-          return <h3 key={i} className="mt-3 text-base font-semibold">{formatInline(line.slice(3))}</h3>;
+        if (trimmed.startsWith("### "))
+          return <h4 key={i} className="mt-2 text-sm font-semibold">{formatInline(trimmed.slice(4))}</h4>;
+        if (trimmed.startsWith("## "))
+          return <h3 key={i} className="mt-3 text-base font-semibold">{formatInline(trimmed.slice(3))}</h3>;
 
         // Bullet points
-        if (line.match(/^[-•*]\s/))
+        if (trimmed.match(/^[-•*]\s/))
           return (
             <div key={i} className="flex gap-2 pl-1">
               <span className="mt-1 text-primary">•</span>
-              <span className="text-sm">{formatInline(line.replace(/^[-•*]\s/, ""))}</span>
+              <span className="text-sm">{formatInline(trimmed.replace(/^[-•*]\s/, ""))}</span>
             </div>
           );
 
         // Numbered lists
-        const numMatch = line.match(/^(\d+)[.)]\s/);
+        const numMatch = trimmed.match(/^(\d+)[.)]\s/);
         if (numMatch)
           return (
             <div key={i} className="flex gap-2 pl-1">
               <span className="mt-0 min-w-[1.25rem] text-sm font-medium text-primary">{numMatch[1]}.</span>
-              <span className="text-sm">{formatInline(line.replace(/^\d+[.)]\s/, ""))}</span>
+              <span className="text-sm">{formatInline(trimmed.replace(/^\d+[.)]\s/, ""))}</span>
             </div>
           );
 
         // Regular paragraph
-        return <p key={i} className="text-sm">{formatInline(line)}</p>;
+        return <p key={i} className="text-sm">{formatInline(trimmed)}</p>;
       })}
-    </div>
+    </>
   );
 }
 
