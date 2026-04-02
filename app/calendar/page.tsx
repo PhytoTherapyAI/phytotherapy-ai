@@ -19,6 +19,8 @@ import { createBrowserClient } from "@/lib/supabase"
 import { NotificationSettings } from "@/components/pwa/NotificationSettings"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
 import { InfoTooltip } from "@/components/ui/InfoTooltip"
+import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-utils"
+import { getSupplementDisplayName } from "@/lib/supplement-data"
 import { HabitHeatMap } from "@/components/calendar/HabitHeatMap"
 
 const TodayView = lazy(() => import("@/components/calendar/TodayView").then(m => ({ default: m.TodayView })))
@@ -135,7 +137,7 @@ function WeeklyStripEnhanced({ selectedDate, onSelect, lang }: { selectedDate: D
           const isSelected = d.toDateString() === selectedDate.toDateString()
           return (
             <motion.button key={d.toISOString()} whileTap={{ scale: 0.9 }}
-              initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               transition={{ delay: i * 0.03 }}
               onClick={() => onSelect(d)}
               className={`flex flex-col items-center gap-1 rounded-2xl py-3 px-1 transition-all duration-200 ${
@@ -237,7 +239,7 @@ function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, onRemoveTask, 
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
       className={`rounded-2xl border p-4 transition-all ${
         isCurrent
           ? "border-primary/30 bg-primary/5 dark:bg-primary/10 shadow-sm"
@@ -277,7 +279,7 @@ function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, onRemoveTask, 
         ) : (
           tasks.map((t, i) => (
             <motion.div key={t.id}
-              initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               transition={{ delay: i * 0.05 }}
               className="flex items-center gap-1">
               <motion.button
@@ -358,9 +360,9 @@ function QuickLogFABEnhanced({ onAction, lang }: { onAction: (type: string) => v
       <AnimatePresence>
         {open && items.map((item, i) => (
           <motion.button key={item.type}
-            initial={{ opacity: 0, y: 16, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
             transition={{ delay: i * 0.05, type: "spring", stiffness: 300 }}
             onClick={() => { onAction(item.type); setOpen(false) }}
             className={`flex items-center gap-2 rounded-full ${item.color} text-white shadow-lg px-4 py-2.5 text-sm font-medium hover:brightness-110 active:scale-95 transition-all`}>
@@ -449,7 +451,7 @@ function DailyProgressCard({ completed, total, lang }: { completed: number; tota
               : `${completed}/${total} tasks completed`}
           </p>
           {allDone && (
-            <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
               className="flex items-center gap-1 mt-2">
               <Flame className="h-3.5 w-3.5 text-amber-500" />
               <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
@@ -516,58 +518,68 @@ export default function CalendarPage() {
   const [ritualDataLoaded, setRitualDataLoaded] = useState(false)
 
   // Load water count from Supabase on mount
-  useEffect(() => {
+  const fetchWaterCount = useCallback(() => {
     if (!user?.id) return
     fetch(`/api/daily-log?date=${todayDateStr}`)
       .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data?.water?.glasses) setWaterCount(data.water.glasses) })
+      .then(data => { if (data?.water?.glasses != null) setWaterCount(data.water.glasses) })
       .catch(() => {})
   }, [user?.id, todayDateStr])
 
-  // Toggle a task — updates shared completedItems set
-  const toggleTask = useCallback((id: string) => {
-    const update = (tasks: DailyTask[]) => tasks.map(t => t.id === id ? { ...t, done: !t.done } : t)
-    setMorningTasks(prev => {
-      const updated = update(prev)
-      const task = updated.find(t => t.id === id)
-      if (task) {
-        setCompletedItems(ci => {
-          const next = new Set(ci)
-          if (task.done) { next.add(task.id); next.add(task.label) }
-          else { next.delete(task.id); next.delete(task.label) }
-          return next
-        })
-      }
-      return updated
-    })
-    setNoonTasks(prev => {
-      const updated = update(prev)
-      const task = updated.find(t => t.id === id)
-      if (task) {
-        setCompletedItems(ci => {
-          const next = new Set(ci)
-          if (task.done) { next.add(task.id); next.add(task.label) }
-          else { next.delete(task.id); next.delete(task.label) }
-          return next
-        })
-      }
-      return updated
-    })
-    setNightTasks(prev => {
-      const updated = update(prev)
-      const task = updated.find(t => t.id === id)
-      if (task) {
-        setCompletedItems(ci => {
-          const next = new Set(ci)
-          if (task.done) { next.add(task.id); next.add(task.label) }
-          else { next.delete(task.id); next.delete(task.label) }
-          return next
-        })
-      }
-      return updated
+  useEffect(() => { fetchWaterCount() }, [fetchWaterCount])
+
+  // Listen for water changes from other views
+  useEffect(() => {
+    const handler = () => { fetchWaterCount() }
+    window.addEventListener("water-intake-changed", handler)
+    return () => window.removeEventListener("water-intake-changed", handler)
+  }, [fetchWaterCount])
+
+  // Toggle a task — for med/sup writes to daily_logs, for others uses localStorage
+  const toggleTask = useCallback(async (id: string) => {
+    // Find the task across all blocks
+    const allCurrent = [...morningTasks, ...noonTasks, ...nightTasks]
+    const task = allCurrent.find(t => t.id === id)
+    if (!task) return
+    const newDone = !task.done
+
+    // Optimistic UI update
+    const update = (tasks: DailyTask[]) => tasks.map(t => t.id === id ? { ...t, done: newDone } : t)
+    setMorningTasks(update)
+    setNoonTasks(update)
+    setNightTasks(update)
+
+    // Update completedItems set
+    setCompletedItems(ci => {
+      const next = new Set(ci)
+      if (newDone) { next.add(task.id); next.add(task.label) }
+      else { next.delete(task.id); next.delete(task.label) }
+      return next
     })
 
-  }, [])
+    // For med/sup tasks → write to daily_logs Supabase
+    const isMedOrSup = id.startsWith("med-") || id.startsWith("sup-")
+    if (isMedOrSup && user?.id) {
+      try {
+        const supabase = createBrowserClient()
+        const itemType = id.startsWith("med-") ? "medication" : "supplement"
+        if (newDone) {
+          const { error } = await supabase.from("daily_logs").insert({
+            user_id: user.id, log_date: todayDateStr, item_type: itemType, item_id: id, item_name: task.label, completed: true,
+          })
+          if (error) {
+            await supabase.from("daily_logs").update({ completed: true })
+              .eq("user_id", user.id).eq("log_date", todayDateStr).eq("item_type", itemType).eq("item_id", id)
+          }
+        } else {
+          await supabase.from("daily_logs").delete()
+            .eq("user_id", user.id).eq("log_date", todayDateStr).eq("item_type", itemType).eq("item_id", id)
+        }
+        // Notify other views
+        window.dispatchEvent(new Event("daily-log-changed"))
+      } catch {}
+    }
+  }, [morningTasks, noonTasks, nightTasks, user?.id, todayDateStr])
 
   // Remove a task from a specific block
   const removeTask = useCallback((id: string) => {
@@ -599,28 +611,16 @@ export default function CalendarPage() {
   const allTasks = useMemo(() => [...morningTasks, ...noonTasks, ...nightTasks], [morningTasks, noonTasks, nightTasks])
   const completedTasks = allTasks.filter(t => t.done).length
 
-  // Auto-persist ritual completions whenever tasks change (only after data loaded)
+  // Auto-persist custom (non-med/sup) task completions to localStorage
   useEffect(() => {
     if (!ritualDataLoaded) return
-    const doneIds = allTasks.filter(t => t.done).map(t => t.id)
-    localStorage.setItem(`cal-rituals-${todayDateStr}`, JSON.stringify(doneIds))
+    // Only persist custom task completions (water, custom tasks) — med/sup use daily_logs
+    const customDoneIds = allTasks.filter(t => t.done && !t.id.startsWith("med-") && !t.id.startsWith("sup-")).map(t => t.id)
+    localStorage.setItem(`cal-rituals-${todayDateStr}`, JSON.stringify(customDoneIds))
 
-    // Save task id↔emoji mapping so dashboard can sync back
+    // Save task id↔emoji mapping for reference
     const taskMap = allTasks.map(t => ({ id: t.id, emoji: t.emoji }))
     localStorage.setItem(`cal-ritual-tasks-${todayDateStr}`, JSON.stringify(taskMap))
-
-    // Sync med/sup completion to dashboard
-    const dashKey = `dash-tasks-done-${todayDateStr}`
-    try {
-      const dashDone = new Set(JSON.parse(localStorage.getItem(dashKey) || "[]"))
-      // Med: only real meds (med-* prefix from DB)
-      const anyMedDone = allTasks.some(t => t.emoji === "💊" && t.id.startsWith("med-") && t.done)
-      if (anyMedDone) dashDone.add("med"); else dashDone.delete("med")
-      // Sup: only real supplements (sup-* prefix from DB)
-      const anySupDone = allTasks.some(t => t.id.startsWith("sup-") && t.done)
-      if (anySupDone) dashDone.add("sup"); else dashDone.delete("sup")
-      localStorage.setItem(dashKey, JSON.stringify([...dashDone]))
-    } catch {}
   }, [allTasks, todayDateStr, ritualDataLoaded])
 
   // waterCount from FAB + water tasks in rituals (no hardcoded +3)
@@ -641,16 +641,30 @@ export default function CalendarPage() {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ date: todayDateStr, glasses: next }),
+        }).then(() => {
+          window.dispatchEvent(new Event("water-intake-changed"))
         }).catch(() => {})
         return next
       })
       setWaterToast(true)
       setTimeout(() => setWaterToast(false), 1500)
     } else if (type === "med") {
-      // Toggle all medication tasks as done
+      // Toggle all medication tasks as done — write each to daily_logs
+      const allCurrent = [...morningTasks, ...noonTasks, ...nightTasks]
+      const pendingMeds = allCurrent.filter(t => t.emoji === "💊" && !t.done && t.id.startsWith("med-"))
       setMorningTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
       setNoonTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
       setNightTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
+      // Write each to Supabase
+      if (user?.id && pendingMeds.length > 0) {
+        const supabase = createBrowserClient()
+        const inserts = pendingMeds.map(t => ({
+          user_id: user.id, log_date: todayDateStr, item_type: "medication", item_id: t.id, item_name: t.label, completed: true,
+        }))
+        supabase.from("daily_logs").upsert(inserts, { onConflict: "user_id,log_date,item_type,item_id" }).then(() => {
+          window.dispatchEvent(new Event("daily-log-changed"))
+        })
+      }
     }
   }, [todayDateStr])
 
@@ -660,70 +674,66 @@ export default function CalendarPage() {
     try {
       const supabase = createBrowserClient()
 
-      // Fetch medications AND supplements in parallel
-      const [medsRes, supsRes] = await Promise.all([
-        supabase
-          .from("user_medications")
-          .select("brand_name, generic_name, dosage, frequency")
-          .eq("user_id", user.id)
-          .eq("is_active", true),
-        supabase
-          .from("calendar_events")
-          .select("title, event_time, metadata")
-          .eq("user_id", user.id)
-          .eq("event_type", "supplement")
-          .eq("recurrence", "daily"),
+      // Fetch medications, supplements, and daily_logs in parallel
+      const [medsRes, supsRes, logsRes] = await Promise.all([
+        supabase.from("user_medications").select("id, brand_name, generic_name, dosage, frequency")
+          .eq("user_id", user.id).eq("is_active", true),
+        supabase.from("calendar_events").select("id, title, event_time, metadata")
+          .eq("user_id", user.id).eq("event_type", "supplement").eq("recurrence", "daily"),
+        supabase.from("daily_logs").select("item_id, completed")
+          .eq("user_id", user.id).eq("log_date", todayDateStr).eq("completed", true),
       ])
 
       const meds = medsRes.data
       const sups = supsRes.data
+      // Build done set from daily_logs (single source of truth)
+      const doneIds = new Set<string>()
+      logsRes.data?.forEach((l: any) => { if (l.completed) doneIds.add(l.item_id) })
 
       const morning: DailyTask[] = []
       const noon: DailyTask[] = []
       const night: DailyTask[] = []
 
-      // Add medications by time
+      // Add medications — split multi-dose using shared utility
       if (meds && meds.length > 0) {
-        meds.forEach((m: any, idx: number) => {
-          const name = m.brand_name || m.generic_name || "İlaç"
-          const freq = (m.frequency || "").toLowerCase()
-          const task: DailyTask = { id: `med-${idx}`, label: name, done: false, emoji: "💊" }
-
-          if (freq.includes("akşam") || freq.includes("night") || freq.includes("evening") || freq.includes("gece")) {
-            night.push(task)
-          } else if (freq.includes("öğle") || freq.includes("noon") || freq.includes("afternoon")) {
-            noon.push(task)
-          } else {
-            morning.push(task)
+        const langKey = (lang === "tr" ? "tr" : "en") as "en" | "tr"
+        meds.forEach((m: any) => {
+          const medName = m.brand_name || m.generic_name || "Med"
+          const doses = parseMedDoses(m.frequency || "", langKey)
+          for (const dose of doses) {
+            const itemId = buildMedItemId(m.id, dose)
+            const label = buildMedLabel(medName, dose)
+            const task: DailyTask = { id: itemId, label, done: doneIds.has(itemId), emoji: "💊" }
+            if (dose.timeBlock === "evening") night.push(task)
+            else if (dose.timeBlock === "noon") noon.push(task)
+            else morning.push(task)
           }
         })
       }
 
-      // Add supplements by scheduled time
+      // Add supplements by scheduled time — use UUID
       if (sups && sups.length > 0) {
-        sups.forEach((s: any, idx: number) => {
-          const name = s.title || "Takviye"
+        const langKey = (lang === "tr" ? "tr" : "en") as "en" | "tr"
+        sups.forEach((s: any) => {
+          const name = getSupplementDisplayName(s.title || "Supplement", langKey)
           const time = s.event_time || "08:00"
           const hour = parseInt(time.split(":")[0] || "8", 10)
           const meta = typeof s.metadata === "string" ? JSON.parse(s.metadata || "{}") : (s.metadata || {})
-          const dose = meta.dose ? ` (${meta.dose})` : ""
-          const task: DailyTask = { id: `sup-${idx}`, label: `${name}${dose}`, done: false, emoji: "🌿" }
+          const doseInfo = meta.dose ? ` (${meta.dose})` : ""
+          const itemId = `sup-${s.id}`
+          const task: DailyTask = { id: itemId, label: `${name}${doseInfo}`, done: doneIds.has(itemId), emoji: "🌿" }
 
-          if (hour >= 18) {
-            night.push(task)
-          } else if (hour >= 12) {
-            noon.push(task)
-          } else {
-            morning.push(task)
-          }
+          if (hour >= 18) night.push(task)
+          else if (hour >= 12) noon.push(task)
+          else morning.push(task)
         })
       }
 
       // Water tasks
-      const waterMorning: DailyTask = { id: "w1", label: lang === "tr" ? "1 bardak su" : "1 glass water", done: false, emoji: "💧" }
-      const waterNoon: DailyTask = { id: "w2", label: lang === "tr" ? "2 bardak su" : "2 glasses water", done: false, emoji: "💧" }
+      const waterMorning: DailyTask = { id: "w1", label: lang === "tr" ? "1 bardak su" : "1 glass water", done: doneIds.has("w1"), emoji: "💧" }
+      const waterNoon: DailyTask = { id: "w2", label: lang === "tr" ? "2 bardak su" : "2 glasses water", done: doneIds.has("w2"), emoji: "💧" }
 
-      // Set task blocks (replace defaults with real data)
+      // Set task blocks
       if (morning.length > 0 || sups) {
         setMorningTasks([...morning.filter(t => t.emoji === "💊"), ...morning.filter(t => t.emoji === "🌿"), waterMorning])
       }
@@ -736,22 +746,32 @@ export default function CalendarPage() {
         setNightTasks(night)
       }
 
-      // Restore completed state from localStorage AFTER tasks are set
-      // setTimeout ensures the setMorningTasks/setNoonTasks/setNightTasks above are batched first
+      // Restore custom (non-med/sup) task completions from localStorage
       setTimeout(() => {
         const saved2 = localStorage.getItem(`cal-rituals-${todayDateStr}`)
         if (saved2) {
           try {
-            const doneIds = new Set(JSON.parse(saved2) as string[])
-            setMorningTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
-            setNoonTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
-            setNightTasks(prev => prev.map(t => doneIds.has(t.id) ? { ...t, done: true } : t))
+            const savedIds = new Set(JSON.parse(saved2) as string[])
+            // Only apply to water/custom tasks (not med/sup — those come from daily_logs)
+            const customDoneIds = new Set([...savedIds].filter(id => !id.startsWith("med-") && !id.startsWith("sup-")))
+            if (customDoneIds.size > 0) {
+              setMorningTasks(prev => prev.map(t => customDoneIds.has(t.id) ? { ...t, done: true } : t))
+              setNoonTasks(prev => prev.map(t => customDoneIds.has(t.id) ? { ...t, done: true } : t))
+              setNightTasks(prev => prev.map(t => customDoneIds.has(t.id) ? { ...t, done: true } : t))
+            }
           } catch {}
         }
         setRitualDataLoaded(true)
       }, 100)
     } catch { /* ignore — keep defaults */ }
   }, [user?.id, lang, todayDateStr])
+
+  // Listen for cross-view sync events — re-fetch from daily_logs
+  useEffect(() => {
+    const handler = () => { fetchProfileMeds() }
+    window.addEventListener("daily-log-changed", handler)
+    return () => window.removeEventListener("daily-log-changed", handler)
+  }, [fetchProfileMeds])
 
   // Fetch streak from daily_check_ins
   const fetchStreak = useCallback(async () => {
@@ -844,7 +864,7 @@ export default function CalendarPage() {
           <div className="md:w-72 flex-shrink-0 space-y-4">
 
             {/* Weekly Strip */}
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
               className="bg-white dark:bg-card rounded-2xl border border-stone-200/60 dark:border-stone-800 p-4 shadow-sm">
               <WeeklyStripEnhanced selectedDate={selectedDate} onSelect={setSelectedDate} lang={lang} />
             </motion.div>
@@ -903,8 +923,8 @@ export default function CalendarPage() {
             {/* ═══ TODAY VIEW: Circadian Time Blocks ═══ */}
             <AnimatePresence mode="wait">
               {activeView === "today" && (
-                <motion.div key="today" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }} className="space-y-4">
+                <motion.div key="today" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="space-y-4">
 
                   <TimeBlockEnhanced
                     icon={<Sun className="h-4 w-4 text-amber-500" />}
@@ -936,8 +956,8 @@ export default function CalendarPage() {
               )}
 
               {activeView === "month" && (
-                <motion.div key="month" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }}>
+                <motion.div key="month" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                   <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
                     <MonthView userId={profile.id} lang={lang} />
                   </Suspense>
@@ -952,8 +972,8 @@ export default function CalendarPage() {
               )}
 
               {activeView === "vitals" && (
-                <motion.div key="vitals" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }} className="space-y-4">
+                <motion.div key="vitals" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold">{tx("cal.recentVitals", lang)}</h3>
                     <Button size="sm" onClick={() => setAddVitalOpen(true)}>
@@ -975,7 +995,7 @@ export default function CalendarPage() {
                       {vitals.map(vital => {
                         const d = new Date(vital.recorded_at)
                         return (
-                          <motion.div key={vital.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+                          <motion.div key={vital.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                             <Card><CardContent className="flex items-center gap-4 py-3 px-4">
                               <VitalIcon type={vital.vital_type} />
                               <div className="flex-1 min-w-0">

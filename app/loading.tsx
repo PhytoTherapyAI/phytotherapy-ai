@@ -6,6 +6,8 @@ export default function Loading() {
       <img
         src="/logo-icon.svg"
         alt="DoctoPal"
+        width={48}
+        height={48}
         className="h-12 w-12 animate-pulse"
       />
       <p className="text-xs text-muted-foreground">Loading your health companion...</p>

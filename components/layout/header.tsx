@@ -88,7 +88,7 @@ export function Header() {
       {/* ── Floating Glassmorphism Navbar ── */}
       <header className="sticky top-0 z-50 w-full border-b border-border shadow-sm" style={{ backgroundColor: "var(--card)" }}>
         <div className="mx-auto max-w-6xl px-3 md:px-4">
-          <div className={`transition-all duration-300 ${scrolled ? "py-2" : "py-3"}`} style={{ backgroundColor: "var(--card)" }}>
+          <div className="py-2.5" style={{ backgroundColor: "var(--card)" }}>
             <div className="flex items-center">
               {/* Logo */}
               <Link href="/" className="flex items-center gap-2 group shrink-0">
@@ -96,13 +96,14 @@ export function Header() {
                 <img
                   src="/logo-icon.svg"
                   alt="DoctoPal"
-                  className={`rounded-lg transition-all duration-300 group-hover:scale-105 ${scrolled ? "h-7 w-7" : "h-8 w-8"}`}
+                  width={32}
+                  height={32}
+                  className="h-8 w-8 rounded-lg transition-transform duration-300 group-hover:scale-105"
                 />
                 <span className="hidden sm:inline" style={{
                   fontFamily: 'system-ui, -apple-system, sans-serif',
-                  fontSize: scrolled ? "1rem" : "1.1rem",
+                  fontSize: "1.1rem",
                   fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1,
-                  transition: "font-size 0.3s ease",
                 }}>
                   <span style={{ color: "var(--foreground)" }}>Docto</span>
                   <span style={{ color: "var(--brand, #3c7a52)" }}>Pal</span>
