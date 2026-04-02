@@ -253,7 +253,7 @@ export function Header() {
                       <Settings className="h-4 w-4 text-muted-foreground" />
                     </Link>
                     <button onClick={async () => { setMobileOpen(false); try { await signOut(); } catch (e) { console.error(e); } }}
-                      className="p-2 rounded-lg hover:bg-muted">
+                      className="p-2 rounded-lg hover:bg-muted" aria-label="Sign out">
                       <LogOut className="h-4 w-4 text-red-500" />
                     </button>
                   </div>

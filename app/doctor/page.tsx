@@ -340,7 +340,7 @@ export default function DoctorPage() {
         </div>
       )}
 
-      <p className="text-center text-[10px] text-muted-foreground/50">{tx("disclaimer.tool", lang)}</p>
+      <p className="text-center text-[10px] text-muted-foreground/70">{tx("disclaimer.tool", lang)}</p>
     </motion.div>
     </DoctorShell>
   )

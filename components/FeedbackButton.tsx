@@ -46,7 +46,7 @@ export function FeedbackButton() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-base">Share Your Feedback 💬</h3>
-                <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
+                <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground p-1" aria-label="Close">
                   <X className="w-4 h-4" />
                 </button>
               </div>
@@ -63,7 +63,8 @@ export function FeedbackButton() {
                     <div className="flex justify-center gap-3 mb-4">
                       {EMOJIS.map((emoji, i) => (
                         <button key={i} onClick={() => setSelected(i)}
-                          className={`text-2xl transition-all ${selected === i ? "scale-125" : "opacity-40 hover:opacity-70"}`}>
+                          aria-label={["Very bad", "Bad", "Okay", "Good", "Great"][i]}
+                          className={`text-2xl transition-all p-1 min-w-[44px] min-h-[44px] ${selected === i ? "scale-125" : "opacity-60 hover:opacity-90"}`}>
                           {emoji}
                         </button>
                       ))}

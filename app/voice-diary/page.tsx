@@ -272,7 +272,7 @@ export default function VoiceDiaryPage() {
 
         {entries.length === 0 ? (
           <div className="rounded-lg border border-dashed p-6 text-center">
-            <Mic className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
+            <Mic className="mx-auto mb-2 h-8 w-8 text-muted-foreground/70" />
             <p className="text-sm text-muted-foreground">
               {tx("voice.noEntries", lang)}
             </p>

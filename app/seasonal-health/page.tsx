@@ -143,7 +143,7 @@ function SeasonalChecklist({ lang }: { lang: string }) {
               {isDone && <Check className="h-3 w-3 text-white" />}
             </motion.div>
             <span className="text-sm">{item.emoji}</span>
-            <span className={`flex-1 ${isDone ? "line-through text-muted-foreground/50" : "font-medium"}`}>{item.text}</span>
+            <span className={`flex-1 ${isDone ? "line-through text-muted-foreground/70" : "font-medium"}`}>{item.text}</span>
             {isDone && <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>✨</motion.span>}
           </motion.button>
         )

@@ -259,7 +259,7 @@ function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, onRemoveTask, 
           <span className="text-[10px] text-muted-foreground">{hours}</span>
           {onRemoveTask && (
             <button onClick={() => setEditMode(!editMode)}
-              className={`p-1 rounded-md transition-colors ${editMode ? "bg-primary/10 text-primary" : "text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted"}`}>
+              className={`p-1 rounded-md transition-colors ${editMode ? "bg-primary/10 text-primary" : "text-muted-foreground/70 hover:text-muted-foreground hover:bg-muted"}`}>
               {editMode
                 ? <Check className="h-3 w-3" />
                 : <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -838,7 +838,7 @@ export default function CalendarPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16">
         <Card><CardContent className="flex flex-col items-center gap-4 py-12 text-center">
-          <CalendarDays className="h-12 w-12 text-muted-foreground/50" />
+          <CalendarDays className="h-12 w-12 text-muted-foreground/70" />
           <h2 className="font-heading text-2xl font-bold italic">{tx("cal.title", lang)}</h2>
           <p className="max-w-md text-sm text-muted-foreground">{tx("cal.signInPrompt", lang)}</p>
           <Button onClick={() => router.push("/auth/login")}><LogIn className="mr-2 h-4 w-4" />{tx("cal.signIn", lang)}</Button>

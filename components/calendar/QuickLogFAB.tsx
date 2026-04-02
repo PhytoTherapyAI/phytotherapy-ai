@@ -33,6 +33,7 @@ export function QuickLogFAB({ onLogWater, onLogMed, onLogPain, lang }: QuickLogF
       {/* FAB button */}
       <button
         onClick={() => setOpen(!open)}
+        aria-label={open ? "Close quick log" : "Quick log"}
         className={`flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all duration-300 ${
           open
             ? "bg-muted-foreground text-background rotate-45"

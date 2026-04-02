@@ -216,7 +216,7 @@ export function SleepSessionLogger({ lang, onSubmit, isLoading }: SleepSessionLo
             placeholder={lang === "tr" ? "Rüyanı kısaca anlat..." : "Briefly describe your dream..."}
             maxLength={500}
             rows={2}
-            className="w-full resize-none rounded-xl border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/50 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+            className="w-full resize-none rounded-xl border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground/70 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
           />
         )}
       </div>

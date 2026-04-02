@@ -189,7 +189,7 @@ function TaskItem({ emoji, label, done, duration, onClick, onDismiss }: {
           )}
         </motion.div>
         <span className="text-xs">{emoji}</span>
-        <span className={`text-sm transition-all ${done ? "line-through text-muted-foreground/50" : "text-foreground"}`}>{label}</span>
+        <span className={`text-sm transition-all ${done ? "line-through text-muted-foreground/70" : "text-foreground"}`}>{label}</span>
         {duration && <span className="text-[10px] text-muted-foreground ml-1">({duration})</span>}
       </button>
       {done && (
@@ -197,7 +197,7 @@ function TaskItem({ emoji, label, done, duration, onClick, onDismiss }: {
           className="text-xs flex-shrink-0">✨</motion.span>
       )}
       {!done && onDismiss && (
-        <button onClick={onDismiss} className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground/40 hover:text-muted-foreground flex-shrink-0 p-0.5">
+        <button onClick={onDismiss} aria-label="Dismiss task" className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground/70 hover:text-muted-foreground flex-shrink-0 p-0.5">
           <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       )}
@@ -708,7 +708,7 @@ export default function Home() {
                       onKeyDown={(e) => e.key === "Enter" && handleAskAI()}
                       placeholder={isTr ? "Bugün sağlığınız için ne araştıralım?" : "What should we research for your health today?"}
                       className="w-full rounded-xl bg-white/10 backdrop-blur border border-white/10 pl-10 pr-10 py-3 text-sm text-white placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
-                    <button onClick={handleAskAI}
+                    <button onClick={handleAskAI} aria-label="Send"
                       className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 flex items-center justify-center rounded-lg bg-primary hover:bg-primary/80 transition-colors">
                       <Send className="h-3.5 w-3.5 text-white" />
                     </button>
@@ -879,7 +879,7 @@ export default function Home() {
                     placeholder={isTr ? "Bir bitki veya sağlık sorusu sor..." : "Ask about any herb or health question..."}
                     className="w-full rounded-2xl border bg-card py-3.5 pl-11 pr-14 text-sm shadow-soft-md outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
-                  <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
+                  <button type="submit" aria-label="Search" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
                     <Sparkles className="h-4 w-4" />
                   </button>
                 </div>
@@ -1005,7 +1005,7 @@ export default function Home() {
         </div>
       </section>
 
-      <p className="text-center text-[10px] text-muted-foreground/40 px-4 pb-4">
+      <p className="text-center text-[10px] text-muted-foreground/70 px-4 pb-4">
         {tx("disclaimer.banner", lang)}
       </p>
 

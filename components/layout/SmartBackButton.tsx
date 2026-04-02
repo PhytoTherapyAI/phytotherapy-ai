@@ -35,7 +35,7 @@ export function SmartBackButton() {
           const isLast = i === breadcrumbs.length - 1;
           return (
             <span key={i} className="flex items-center gap-1 shrink-0">
-              <ChevronRight className="h-3 w-3 text-muted-foreground/50" />
+              <ChevronRight className="h-3 w-3 text-muted-foreground/70" />
               {isLast ? (
                 <span className="font-medium text-foreground truncate max-w-[150px]">
                   {crumb.label[lang]}

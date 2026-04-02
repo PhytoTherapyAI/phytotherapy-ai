@@ -176,7 +176,7 @@ export default function SupplementHubPage() {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder={lang === "tr" ? "Takviye ara... (ör. Ashwagandha, uyku)" : "Search supplements... (e.g. Ashwagandha, sleep)"}
-            className="w-full rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-card pl-11 pr-4 py-3.5 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+            className="w-full rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-card pl-11 pr-4 py-3.5 text-sm placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
           />
         </motion.div>
 

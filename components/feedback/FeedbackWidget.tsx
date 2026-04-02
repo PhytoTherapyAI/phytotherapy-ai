@@ -181,7 +181,7 @@ export function FeedbackWidget() {
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder={isTr ? "Düşüncelerini paylaş..." : "Share your thoughts..."}
                     maxLength={1000}
-                    className="w-full resize-none rounded-xl border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground/50 focus:border-lavender focus:outline-none focus:ring-1 focus:ring-lavender/30"
+                    className="w-full resize-none rounded-xl border bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground/70 focus:border-lavender focus:outline-none focus:ring-1 focus:ring-lavender/30"
                     autoFocus
                   />
                 </div>

@@ -321,7 +321,7 @@ export function AddSupplementDialog({ userId, lang, open, onOpenChange, onSaved 
                     <Leaf className="h-3.5 w-3.5 text-primary/50 shrink-0" />
                     <span className="font-medium">{item.display}</span>
                     {item.display !== item.en && (
-                      <span className="ml-auto text-[10px] text-muted-foreground/50">{item.en}</span>
+                      <span className="ml-auto text-[10px] text-muted-foreground/70">{item.en}</span>
                     )}
                   </button>
                 ))}

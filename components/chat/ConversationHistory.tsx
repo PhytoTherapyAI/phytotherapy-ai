@@ -161,7 +161,7 @@ export function ConversationHistory({ onSelectConversation, onNewConversation, s
             </div>
           ) : conversations.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center px-4">
-              <MessageSquare className="mb-3 h-8 w-8 text-muted-foreground/50" />
+              <MessageSquare className="mb-3 h-8 w-8 text-muted-foreground/70" />
               <p className="text-sm font-medium text-muted-foreground">{tx('ch.empty', lang)}</p>
               <p className="mt-1 text-xs text-muted-foreground/70">
                 {tx('ch.emptyDesc', lang)}
@@ -265,7 +265,7 @@ export function ConversationHistory({ onSelectConversation, onNewConversation, s
                 </div>
               ) : conversations.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center px-4">
-                  <MessageSquare className="mb-3 h-8 w-8 text-muted-foreground/50" />
+                  <MessageSquare className="mb-3 h-8 w-8 text-muted-foreground/70" />
                   <p className="text-sm font-medium text-muted-foreground">{tx('ch.empty', lang)}</p>
                   <p className="mt-1 text-xs text-muted-foreground/70">
                     {tx('ch.emptyDesc', lang)}

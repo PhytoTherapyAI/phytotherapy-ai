@@ -194,7 +194,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
                   {isDone ? (
                     <CheckCircle2 className="h-5 w-5 shrink-0 text-green-500" />
                   ) : (
-                    <Circle className="h-5 w-5 shrink-0 text-muted-foreground/50" />
+                    <Circle className="h-5 w-5 shrink-0 text-muted-foreground/70" />
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">

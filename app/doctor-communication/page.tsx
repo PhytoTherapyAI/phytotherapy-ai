@@ -154,7 +154,7 @@ export default function DoctorCommunicationPage() {
         <textarea value={symptoms} onChange={(e) => setSymptoms(e.target.value)}
           placeholder={tx("doctorcomm.describe", lang)}
           rows={4}
-          className="w-full rounded-xl border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" />
+          className="w-full rounded-xl border bg-background px-4 py-3 text-sm placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none" />
         <Button onClick={handleSubmit} disabled={isLoading || symptoms.trim().length < 5}
           className="mt-3 w-full gap-2 rounded-xl bg-primary hover:bg-primary/90">
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
@@ -260,7 +260,7 @@ export default function DoctorCommunicationPage() {
               <MessageCircle className="h-8 w-8 text-primary/20" strokeWidth={1.5} />
             </div>
           </div>
-          <p className="text-xs text-muted-foreground/50 max-w-xs mx-auto">
+          <p className="text-xs text-muted-foreground/70 max-w-xs mx-auto">
             {isTr
               ? "Şikayetinizi yazın, AI doktor ziyaretiniz için yapılandırılmış bir hazırlık raporu oluştursun."
               : "Describe your symptoms, and AI will create a structured preparation report for your doctor visit."}

@@ -159,7 +159,7 @@ function MedTimeline({ lang }: { lang: string }) {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <Badge variant="secondary" className="text-[9px] font-mono">{m.time}</Badge>
-                <span className={`text-sm font-medium ${done ? "line-through text-muted-foreground/50" : ""}`}>{m.label}</span>
+                <span className={`text-sm font-medium ${done ? "line-through text-muted-foreground/70" : ""}`}>{m.label}</span>
               </div>
               <p className="text-[10px] text-muted-foreground">{m.note}</p>
             </div>

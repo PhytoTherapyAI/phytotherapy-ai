@@ -331,7 +331,7 @@ export default function PostureErgonomicsPage() {
         )}
       </div>
 
-      <p className="text-center text-[10px] text-muted-foreground/50">{tx("disclaimer.tool", lang)}</p>
+      <p className="text-center text-[10px] text-muted-foreground/70">{tx("disclaimer.tool", lang)}</p>
     </div>
     </div>
   );

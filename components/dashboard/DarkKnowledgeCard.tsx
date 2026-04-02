@@ -248,7 +248,7 @@ export function DarkKnowledgeCard({
         {/* Dismiss button */}
         <button
           onClick={handleDismiss}
-          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground/50 transition-colors hover:bg-muted hover:text-muted-foreground"
+          className="absolute right-2 top-2 rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-muted hover:text-muted-foreground"
           aria-label="Dismiss"
         >
           <X className="h-3.5 w-3.5" />

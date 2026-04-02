@@ -550,7 +550,7 @@ export default function SymptomCheckerPage() {
               ))}
 
               {(!currentResponse?.possibleConditions || currentResponse.possibleConditions.length === 0) && (
-                <p className="text-xs text-muted-foreground/50 text-center py-4">
+                <p className="text-xs text-muted-foreground/70 text-center py-4">
                   {lang === "tr" ? "Cevaplarınızı analiz ediyoruz..." : "Analyzing your answers..."}
                 </p>
               )}

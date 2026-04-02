@@ -451,7 +451,7 @@ export default function NotificationsPage() {
                           n.read ? "bg-muted/50" : "bg-muted"
                         }`}
                       >
-                        <Icon className={`h-4 w-4 ${n.read ? "text-muted-foreground/50" : n.color}`} />
+                        <Icon className={`h-4 w-4 ${n.read ? "text-muted-foreground/70" : n.color}`} />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-2">

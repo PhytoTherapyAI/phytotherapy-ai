@@ -115,7 +115,7 @@ export function ClinicalInsightsHeader({ alerts = [], kpis = [], diseases = [], 
               )}
               <ArrowRight className="h-3 w-3 shrink-0 opacity-60" />
               <button onClick={() => setDismissedAlerts(p => new Set([...p, alert.id]))}
-                className="shrink-0 opacity-40 hover:opacity-100">
+                className="shrink-0 opacity-60 hover:opacity-100 p-1" aria-label="Dismiss alert">
                 <X className="h-3 w-3" />
               </button>
             </div>

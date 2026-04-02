@@ -1436,7 +1436,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                     <p className="text-sm font-medium text-foreground truncate">{evt.title}</p>
                     <div className="flex items-center gap-2 mt-0.5">
                       {evt.event_time && <span className="text-xs text-muted-foreground">{evt.event_time}</span>}
-                      <span className="text-xs text-muted-foreground/50">{tx(`cal.eventType.${evt.event_type}`, lang)}</span>
+                      <span className="text-xs text-muted-foreground/70">{tx(`cal.eventType.${evt.event_type}`, lang)}</span>
                     </div>
                   </div>
                   <button
@@ -1577,7 +1577,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                         .water-slider::-webkit-slider-runnable-track { height: 10px; border-radius: 5px; }
                         .water-slider::-moz-range-track { height: 10px; border-radius: 5px; }
                       `}</style>
-                      <div className="flex justify-between text-xs text-muted-foreground/50">
+                      <div className="flex justify-between text-xs text-muted-foreground/70">
                         <span>0 ml</span>
                         <span className="font-semibold text-blue-400 text-sm">{mlInput} ml</span>
                         <span>1000 ml</span>
@@ -1633,7 +1633,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
                   <div className={`h-3 rounded-full bg-gradient-to-r ${waterBarColor} transition-all duration-700 ease-out`}
                     style={{ width: `${Math.min(waterFillPct, 100)}%` }} />
                 </div>
-                <div className="flex justify-between text-[10px] text-muted-foreground/50">
+                <div className="flex justify-between text-[10px] text-muted-foreground/70">
                   <span>0 ml</span>
                   <span className="font-medium">{glasses * 250} / {waterTarget * 250} ml</span>
                   <span>{waterTarget * 250} ml</span>

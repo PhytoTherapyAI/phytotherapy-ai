@@ -54,7 +54,7 @@ function DrumRoller({ items, selected, onSelect, label, suffix }: {
                 <span className={`text-center transition-all duration-200 ${
                   isSelected
                     ? "text-xl font-bold text-primary scale-110"
-                    : "text-base text-muted-foreground/50"
+                    : "text-base text-muted-foreground/70"
                 }`}>
                   {val} {suffix}
                 </span>
