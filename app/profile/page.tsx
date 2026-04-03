@@ -448,7 +448,7 @@ export default function ProfilePage() {
     { done: medications.length > 0, label: tx("profile.medsAdded", lang) },
     { done: allergies.length > 0, label: tx("profile.allergiesEntered", lang) },
     { done: !!(profile.alcohol_use || profile.smoking_use), label: tx("profile.lifestyleInfo", lang) },
-    { done: !!(profile.kidney_disease !== undefined && profile.chronic_conditions?.length), label: tx("profile.medicalHistory", lang) },
+    { done: profile.kidney_disease !== null && profile.kidney_disease !== undefined, label: tx("profile.medicalHistory", lang) },
     { done: !!(profile.height_cm && profile.weight_kg), label: tx("profile.heightWeight", lang) },
     { done: !!(profile.blood_group), label: tx("profile.bloodGroup", lang) },
   ];
