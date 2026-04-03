@@ -122,6 +122,19 @@ export default function ConnectedDevicesPage() {
           <p className="text-muted-foreground mt-1">{t("subtitle")}</p>
         </div>
 
+        {/* No Wearable Banner */}
+        <div className="rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 border border-emerald-200 dark:border-emerald-800 p-5 mb-6">
+          <h3 className="text-sm font-bold mb-1">📱 {lang === "tr" ? "Giyilebilir Cihazınız Yok mu? Sorun Değil." : "No Wearable? No Problem."}</h3>
+          <p className="text-xs text-muted-foreground mb-2">
+            {lang === "tr"
+              ? "Diğer uygulamalar $300'lık yüzük veya bileklik isterken, DoctoPal AI destekli subjektif takiple toparlanma ve stres yükünüzü hesaplar. Her sabah 4 soruyu cevaplayın — sadece 30 saniye."
+              : "While other apps require a $300 ring or band, DoctoPal calculates your recovery and strain using AI-powered subjective tracking. Just answer 4 questions each morning — it takes 30 seconds."}
+          </p>
+          <p className="text-[10px] text-muted-foreground">
+            {lang === "tr" ? "Zaten bir giyilebilir cihazınız var mı? İçgörülerinizi gerçek fizyolojik veriyle güçlendirmek için aşağıdan bağlayın." : "Already have a wearable? Connect it below to supercharge your insights with real physiological data."}
+          </p>
+        </div>
+
         {/* Stats */}
         {connectedCount > 0 && (
           <div className="flex justify-center gap-6 mb-6">

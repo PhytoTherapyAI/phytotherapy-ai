@@ -984,7 +984,12 @@ export default function Home() {
               { feature: isTr ? "İlaç Takibi" : "Medication Tracker", isNew: false },
               { feature: isTr ? "Alerji Takibi" : "Allergy Tracker", isNew: false },
               { feature: isTr ? "Aile Profilleri" : "Family Profiles", isNew: true },
+              { feature: isTr ? "Toparlanma Skoru" : "Recovery Score (Free)", isNew: true },
+              { feature: isTr ? "Biyolojik Bütçe" : "Biological Budget", isNew: true },
+              { feature: isTr ? "AI Korelasyon" : "AI Health Correlations", isNew: true },
+              { feature: isTr ? "Kişisel Deneyler" : "Personal A/B Experiments", isNew: true },
               { feature: isTr ? "BMI & Vücut Analizi" : "BMI & Body Analysis", isNew: false },
+              { feature: isTr ? "Donanım Gerekmez" : "No Hardware Required", isNew: false },
             ].map((item) => (
               <div key={item.feature} className={`flex items-center gap-1.5 rounded-lg bg-white/80 dark:bg-card/80 px-2.5 py-2 text-[11px] font-medium border shadow-sm ${item.isNew ? "ring-1 ring-emerald-200 dark:ring-emerald-800" : ""}`}>
                 <span className="text-emerald-500 shrink-0">✅</span>
@@ -1002,7 +1007,7 @@ export default function Home() {
         <div className="mt-10 flex justify-center gap-8 sm:gap-12 flex-wrap">
           {[
             { num: "166+", label: isTr ? "Sağlık Aracı" : "Health Tools" },
-            { num: "347+", label: isTr ? "Sayfa" : "Pages" },
+            { num: "348+", label: isTr ? "Sayfa" : "Pages" },
             { num: "75+",  label: isTr ? "AI Destekli Rota" : "AI-Powered Routes" },
           ].map((s) => (
             <div key={s.label} className="text-center">

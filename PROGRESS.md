@@ -2582,6 +2582,15 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ beforeSend filtresi: AbortError, Lock stolen, eski domain SW hataları filtreleniyor
 - ✅ 7 issue düzeltildi/resolve edildi (DOCTOPAL-H, F, E, 6, 1, 8, 7, J)
 
+### Bearable & Oura/Whoop Feature Parity (Session 12d)
+- ✅ AI Correlation Engine — "Magnesium reduced your headache by 42%" insight cards, 5 mock correlations
+- ✅ Year in Pixels — 365-day mood/health color grid, 4 metric filters, hover tooltips
+- ✅ Personal Experiments (/experiments) — A/B testing wizard, active tracker, past results with AI verdict
+- ✅ Subjective Recovery Score — morning 30-sec check-in, SVG gauge, 7-day trend bars, no hardware
+- ✅ Biological Budget — Whoop-style strain/recovery balance, AI boost suggestions
+- ✅ Wearable-free positioning — connected-devices "No Wearable? No Problem" banner
+- ✅ Competitive advantage: 17 feature badges (Recovery Score, Bio Budget, Correlations, Experiments added)
+
 ### Build Durumu
-- ✅ `npx next build` — SIFIR hata, 347 sayfa başarıyla oluşturuldu
-- ✅ Tüm KHealth+Buoy Feature'lar commit edildi ve master'a push edildi
+- ✅ `npx next build` — SIFIR hata, 348 sayfa başarıyla oluşturuldu
+- ✅ Tüm Bearable+Oura Feature'lar commit edildi ve master'a push edildi
