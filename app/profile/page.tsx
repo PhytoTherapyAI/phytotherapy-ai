@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
-  User, Pill, AlertTriangle, Heart, Shield, Trash2, Download,
+  User, Pill, AlertTriangle, Heart, Shield, Trash2,
   Plus, X, Loader2, CheckCircle2, Check, Settings, Save, Baby, Wine,
   Cigarette, Stethoscope, Sparkles, Camera, MapPin, Users, Mail,
   UserPlus, ChevronDown, ChevronUp, Phone, Edit3, Star,
@@ -40,8 +40,7 @@ export default function ProfilePage() {
 
   // Add medication state
   const [isAddingMed, setIsAddingMed] = useState(false);
-  const [exportingData, setExportingData] = useState(false);
-  const [deletingAccount, setDeletingAccount] = useState(false);
+  // Data export/delete moved to Settings page
   const [newBrandName, setNewBrandName] = useState("");
   const [newGenericName, setNewGenericName] = useState("");
   const [newDosage, setNewDosage] = useState("");
@@ -900,6 +899,36 @@ export default function ProfilePage() {
 
       {/* Scanners moved to /scanner page via Tools menu */}
 
+      {/* Medical History / Health Flags — moved up for visibility */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Stethoscope className="h-5 w-5" />
+            {tx('profile.medicalHistory', lang)}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
+          {profile.is_pregnant && <Badge variant="outline">{tx("profile.pregnant", lang)}</Badge>}
+          {profile.is_breastfeeding && <Badge variant="outline">{tx("profile.breastfeeding", lang)}</Badge>}
+          {profile.kidney_disease && <Badge variant="destructive">{tx("profile.kidneyDisease", lang)}</Badge>}
+          {profile.liver_disease && <Badge variant="destructive">{tx("profile.liverDisease", lang)}</Badge>}
+          {profile.recent_surgery && <Badge variant="outline">{tx("profile.recentSurgery", lang)}</Badge>}
+          {profile.chronic_conditions.map((c) => (
+            <Badge key={c} variant="secondary">{c}</Badge>
+          ))}
+          {!profile.is_pregnant &&
+            !profile.is_breastfeeding &&
+            !profile.kidney_disease &&
+            !profile.liver_disease &&
+            !profile.recent_surgery &&
+            profile.chronic_conditions.length === 0 && (
+              <p className="text-sm text-muted-foreground">
+                {tx('profile.noFlags', lang)}
+              </p>
+            )}
+        </CardContent>
+      </Card>
+
       {/* Allergies */}
       <Card className="mb-6">
         <CardHeader>
@@ -929,35 +958,7 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      {/* Health Flags */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Heart className="h-5 w-5" />
-            {tx('profile.healthFlags', lang)}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
-          {profile.is_pregnant && <Badge variant="outline">{tx("profile.pregnant", lang)}</Badge>}
-          {profile.is_breastfeeding && <Badge variant="outline">{tx("profile.breastfeeding", lang)}</Badge>}
-          {profile.kidney_disease && <Badge variant="destructive">{tx("profile.kidneyDisease", lang)}</Badge>}
-          {profile.liver_disease && <Badge variant="destructive">{tx("profile.liverDisease", lang)}</Badge>}
-          {profile.recent_surgery && <Badge variant="outline">{tx("profile.recentSurgery", lang)}</Badge>}
-          {profile.chronic_conditions.map((c) => (
-            <Badge key={c} variant="secondary">{c}</Badge>
-          ))}
-          {!profile.is_pregnant &&
-            !profile.is_breastfeeding &&
-            !profile.kidney_disease &&
-            !profile.liver_disease &&
-            !profile.recent_surgery &&
-            profile.chronic_conditions.length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                {tx('profile.noFlags', lang)}
-              </p>
-            )}
-        </CardContent>
-      </Card>
+      {/* Health Flags card moved up — see above */}
 
       {/* Edit Health Profile */}
       <Card className="mb-6">
@@ -1420,84 +1421,7 @@ export default function ProfilePage() {
         )}
       </Card>
 
-      {/* Data Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
-            {tx('profile.dataPrivacy', lang)}
-          </CardTitle>
-          <CardDescription>{tx('profile.dataDesc', lang)}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button
-              variant="outline"
-              className="gap-2"
-              disabled={exportingData}
-              onClick={async () => {
-                setExportingData(true)
-                try {
-                  const supabase = createBrowserClient()
-                  const { data: { session } } = await supabase.auth.getSession()
-                  if (!session) return
-                  const res = await fetch("/api/user-data", {
-                    headers: { Authorization: `Bearer ${session.access_token}` },
-                  })
-                  if (!res.ok) throw new Error("Export failed")
-                  const blob = await res.blob()
-                  const url = URL.createObjectURL(blob)
-                  const a = document.createElement("a")
-                  a.href = url
-                  a.download = `doctopal-data-${new Date().toISOString().split("T")[0]}.json`
-                  a.click()
-                  URL.revokeObjectURL(url)
-                } catch {
-                  alert(tx("profile.exportFailed", lang))
-                } finally {
-                  setExportingData(false)
-                }
-              }}
-            >
-              {exportingData ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-              {exportingData ? tx('data.exporting', lang) : tx('profile.downloadData', lang)}
-            </Button>
-            <Button
-              variant="destructive"
-              className="gap-2"
-              disabled={deletingAccount}
-              onClick={async () => {
-                const confirmText = tx("profile.deleteConfirmText", lang)
-                const input = prompt(tx('data.deleteConfirm', lang))
-                if (input !== confirmText) return
-                setDeletingAccount(true)
-                try {
-                  const supabase = createBrowserClient()
-                  const { data: { session } } = await supabase.auth.getSession()
-                  if (!session) return
-                  const res = await fetch("/api/user-data", {
-                    method: "DELETE",
-                    headers: { Authorization: `Bearer ${session.access_token}` },
-                  })
-                  if (!res.ok) throw new Error("Delete failed")
-                  await supabase.auth.signOut()
-                  router.push("/")
-                } catch {
-                  alert(tx("profile.deleteFailed", lang))
-                  setDeletingAccount(false)
-                }
-              }}
-            >
-              {deletingAccount ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-              {deletingAccount ? tx('data.deleting', lang) : tx('profile.deleteAccount', lang)}
-            </Button>
-          </div>
-          <Separator className="my-4" />
-          <p className="text-xs text-muted-foreground">
-            {tx('profile.dataNote', lang)}
-          </p>
-        </CardContent>
-      </Card>
+      {/* Data Management moved to Settings page */}
 
       {/* Emergency Contacts */}
       <EmergencyContactsSection lang={lang} userId={profile.id} />
