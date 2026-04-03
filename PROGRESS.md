@@ -2552,3 +2552,22 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ Best Practices: deprecated API yok, HTTP URL'ler sadece FHIR standart URI'ler (doğru)
 - ✅ Viewport metadata eklendi (width, initialScale, themeColor)
 - Hedef skorlar: Performance 90+, Accessibility 95+, Best Practices 100, SEO 100
+
+### Ada Health Feature Parity (Session 12b)
+- ✅ Natural Language Symptom Input (Ada 2026 feature — we go global, they're US-only)
+  - Free-text textarea with 3 example prompts, ?text= URL param for Omni-bar
+  - AI parses description, skips obvious questions, starts at 25% progress
+- ✅ Assess for Others (child/other modes, pediatric red flags, geriatric considerations)
+  - System prompt enhanced with age-appropriate language rules
+- ✅ 8-Level Urgency Triage (emergency → ER → urgent care → GP today → GP appointment → telehealth → pharmacy → self-care)
+  - Color-coded banners, backward compatible with old 5-level urgency
+- ✅ Shareable PDF Assessment Report (download PDF, copy summary to clipboard)
+  - @react-pdf/renderer, lazy loaded, A4 format, TR/EN bilingual
+  - Includes: patient info, urgency, Q&A history, conditions, phyto suggestions, disclaimer
+- ✅ Competitive Advantage Section (Ada removed BMI/medication/allergy/symptom trackers Jan 2026)
+  - Landing page: 9 feature badges, "While Others Simplify, We Amplify"
+  - Symptom checker results: trust badge after phytotherapy section
+
+### Build Durumu
+- ✅ `npx next build` — SIFIR hata, 345 sayfa başarıyla oluşturuldu
+- ✅ Tüm Ada Feature'lar commit edildi ve master'a push edildi
