@@ -537,6 +537,15 @@ export default function SymptomCheckerPage() {
               </motion.div>
             )}
 
+            {/* Trust Badge */}
+            <motion.div variants={fadeUp} className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-center">
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                🏆 {lang === "tr"
+                  ? "Diğer sağlık uygulamalarından farklı olarak DoctoPal, ilaç profilinizi, alerji verilerinizi ve semptom geçmişinizi korur — size en kişiselleştirilmiş değerlendirmeyi sunar."
+                  : "Unlike other health apps, DoctoPal keeps your complete medication profile, allergy data, and symptom history — giving you the most personalized assessment possible."}
+              </p>
+            </motion.div>
+
             {/* Final Summary */}
             {currentResponse.finalSummary && (
               <motion.div variants={fadeUp} className="flex gap-3">

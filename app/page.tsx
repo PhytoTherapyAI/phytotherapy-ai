@@ -958,11 +958,41 @@ export default function Home() {
           ))}
         </div>
 
+        {/* Competitive Advantage — "Why DoctoPal?" */}
+        <div className="mt-12 rounded-2xl border bg-gradient-to-br from-stone-50 to-primary/5 dark:from-stone-900 dark:to-primary/10 p-6 md:p-8">
+          <h3 className="text-lg font-bold text-center mb-2">
+            {isTr ? "Diğerleri Sadeleşirken, Biz Güçlendiriyoruz." : "While Others Simplify, We Amplify."}
+          </h3>
+          <p className="text-xs text-muted-foreground text-center mb-6 max-w-lg mx-auto">
+            {isTr
+              ? "2026'da öncü sağlık uygulamaları BMI takibi, ilaç yönetimi, alerji takibi ve semptom geçmişini kaldırdı. Biz hepsini koruduk — ve yapay zeka ile güçlendirdik."
+              : "In 2026, leading health apps removed BMI tracking, medication management, allergy tracking, and symptom history. We kept them all — and enhanced them with AI."}
+          </p>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-3">
+            {[
+              { feature: isTr ? "BMI & Vücut Analizi" : "BMI & Body Analysis", ours: true },
+              { feature: isTr ? "İlaç Takibi" : "Medication Tracking", ours: true },
+              { feature: isTr ? "Alerji Takibi" : "Allergy Tracking", ours: true },
+              { feature: isTr ? "Semptom Geçmişi" : "Symptom History", ours: true },
+              { feature: isTr ? "İlaç Etkileşimi" : "Drug Interactions", ours: true },
+              { feature: isTr ? "Fitoterapi AI" : "Phytotherapy AI", ours: true },
+              { feature: isTr ? "Laboratuvar Analizi" : "Lab Report Analysis", ours: true },
+              { feature: isTr ? "Aile Profilleri" : "Family Profiles", ours: true },
+              { feature: isTr ? "AI Semptom Triyajı" : "AI Symptom Triage", ours: true },
+            ].map((item) => (
+              <div key={item.feature} className="flex items-center gap-1.5 rounded-lg bg-white/80 dark:bg-card/80 px-2.5 py-2 text-[11px] font-medium border shadow-sm">
+                <span className="text-emerald-500">✅</span>
+                <span className="truncate">{item.feature}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Stats */}
         <div className="mt-10 flex justify-center gap-8 sm:gap-12 flex-wrap">
           {[
             { num: "166+", label: isTr ? "Sağlık Aracı" : "Health Tools" },
-            { num: "330+", label: isTr ? "Sayfa" : "Pages" },
+            { num: "345+", label: isTr ? "Sayfa" : "Pages" },
             { num: "75+",  label: isTr ? "AI Destekli Rota" : "AI-Powered Routes" },
           ].map((s) => (
             <div key={s.label} className="text-center">
