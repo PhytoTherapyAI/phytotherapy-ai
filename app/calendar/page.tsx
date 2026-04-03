@@ -558,11 +558,11 @@ export default function CalendarPage() {
     })
 
     // For med/sup tasks → write to daily_logs Supabase
-    const isMedOrSup = id.startsWith("med-") || id.startsWith("sup-")
+    const isMedOrSup = task.emoji === "💊" || task.emoji === "🌿" || task.emoji === "🐟"
     if (isMedOrSup && user?.id) {
       try {
         const supabase = createBrowserClient()
-        const itemType = id.startsWith("med-") ? "medication" : "supplement"
+        const itemType = task.emoji === "💊" ? "medication" : "supplement"
         if (newDone) {
           const { error } = await supabase.from("daily_logs").insert({
             user_id: user.id, log_date: todayDateStr, item_type: itemType, item_id: id, item_name: task.label, completed: true,
@@ -615,7 +615,7 @@ export default function CalendarPage() {
   useEffect(() => {
     if (!ritualDataLoaded) return
     // Only persist custom task completions (water, custom tasks) — med/sup use daily_logs
-    const customDoneIds = allTasks.filter(t => t.done && !t.id.startsWith("med-") && !t.id.startsWith("sup-")).map(t => t.id)
+    const customDoneIds = allTasks.filter(t => t.done && t.emoji !== "💊" && t.emoji !== "🌿" && t.emoji !== "🐟").map(t => t.id)
     localStorage.setItem(`cal-rituals-${todayDateStr}`, JSON.stringify(customDoneIds))
 
     // Save task id↔emoji mapping for reference
@@ -629,8 +629,8 @@ export default function CalendarPage() {
   const medsDone = allTasks.filter(t => t.done && t.emoji === "💊").length
   const totalMedsOnly = allTasks.filter(t => t.emoji === "💊").length
   // Supplements: count only real DB supplements (sup-*) + default supplement emojis that are from profile
-  const supsDone = allTasks.filter(t => t.done && (t.id.startsWith("sup-") || (t.emoji === "🌿" && !t.id.startsWith("m")) || t.emoji === "🐟")).length
-  const totalSups = allTasks.filter(t => t.id.startsWith("sup-") || (t.emoji === "🌿" && !t.id.startsWith("m")) || t.emoji === "🐟").length
+  const supsDone = allTasks.filter(t => t.done && (t.emoji === "🌿" || t.emoji === "🐟")).length
+  const totalSups = allTasks.filter(t => t.emoji === "🌿" || t.emoji === "🐟").length
 
   // FAB quick log handler — saves to Supabase
   const handleQuickLog = useCallback((type: string) => {
@@ -651,7 +651,7 @@ export default function CalendarPage() {
     } else if (type === "med") {
       // Toggle all medication tasks as done — write each to daily_logs
       const allCurrent = [...morningTasks, ...noonTasks, ...nightTasks]
-      const pendingMeds = allCurrent.filter(t => t.emoji === "💊" && !t.done && t.id.startsWith("med-"))
+      const pendingMeds = allCurrent.filter(t => t.emoji === "💊" && !t.done)
       setMorningTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
       setNoonTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
       setNightTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
@@ -720,7 +720,7 @@ export default function CalendarPage() {
           const hour = parseInt(time.split(":")[0] || "8", 10)
           const meta = typeof s.metadata === "string" ? JSON.parse(s.metadata || "{}") : (s.metadata || {})
           const doseInfo = meta.dose ? ` (${meta.dose})` : ""
-          const itemId = `sup-${s.id}`
+          const itemId = s.id
           const task: DailyTask = { id: itemId, label: `${name}${doseInfo}`, done: doneIds.has(itemId), emoji: "🌿" }
 
           if (hour >= 18) night.push(task)
@@ -752,8 +752,8 @@ export default function CalendarPage() {
         if (saved2) {
           try {
             const savedIds = new Set(JSON.parse(saved2) as string[])
-            // Only apply to water/custom tasks (not med/sup — those come from daily_logs)
-            const customDoneIds = new Set([...savedIds].filter(id => !id.startsWith("med-") && !id.startsWith("sup-")))
+            // Only restore water/custom tasks — med/sup completion comes from daily_logs above
+            const customDoneIds = new Set([...savedIds].filter(id => id.startsWith("w") || id.startsWith("custom-")))
             if (customDoneIds.size > 0) {
               setMorningTasks(prev => prev.map(t => customDoneIds.has(t.id) ? { ...t, done: true } : t))
               setNoonTasks(prev => prev.map(t => customDoneIds.has(t.id) ? { ...t, done: true } : t))

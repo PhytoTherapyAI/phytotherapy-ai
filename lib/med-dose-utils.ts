@@ -14,11 +14,15 @@ export interface MedDose {
  * Single dose → placed in appropriate time block based on frequency text
  */
 export function parseMedDoses(frequency: string, lang: "en" | "tr" = "en"): MedDose[] {
-  const f = (frequency || "").toLowerCase()
+  const f = (frequency || "").toLowerCase().trim()
   const isTr = lang === "tr"
 
-  // 3x per day
-  if (f.includes("3x") || f.includes("3 kez") || f.includes("üç") || f.includes("three") || f.includes("3 times")) {
+  // 3x per day — handles "3", "3x", "3 kez", "üç", "three times", etc.
+  if (
+    f === "3" || f.includes("3x") || f.includes("3 kez") || f.includes("üç") ||
+    f.includes("three") || f.includes("3 times") || f.includes("tid") ||
+    f.includes("günde 3")
+  ) {
     return [
       { timeBlock: "morning", suffix: isTr ? "Sabah" : "Morning", itemIdSuffix: "-morning" },
       { timeBlock: "noon", suffix: isTr ? "Öğle" : "Noon", itemIdSuffix: "-noon" },
@@ -26,10 +30,11 @@ export function parseMedDoses(frequency: string, lang: "en" | "tr" = "en"): MedD
     ]
   }
 
-  // 2x per day
+  // 2x per day — handles "2", "2x", "twice", "iki kez", "günde 2", etc.
   if (
-    f.includes("2x") || f.includes("2 kez") || f.includes("iki kez") || f.includes("iki defa") ||
-    f.includes("twice") || f.includes("2 times") || f.includes("bid") ||
+    f === "2" || f.includes("2x") || f.includes("2 kez") || f.includes("iki kez") ||
+    f.includes("iki defa") || f.includes("twice") || f.includes("2 times") ||
+    f.includes("bid") || f.includes("günde 2") ||
     (f.includes("sabah") && f.includes("akşam")) ||
     (f.includes("morning") && f.includes("evening"))
   ) {
@@ -55,10 +60,11 @@ export function parseMedDoses(frequency: string, lang: "en" | "tr" = "en"): MedD
 
 /**
  * Build the daily_logs item_id for a medication dose.
- * Format: "med-{uuid}" for single dose, "med-{uuid}-morning" for multi-dose
+ * Single dose: raw UUID (backward compatible with existing daily_logs)
+ * Multi-dose: "{uuid}-morning", "{uuid}-evening", "{uuid}-noon"
  */
 export function buildMedItemId(medId: string, dose: MedDose): string {
-  return `med-${medId}${dose.itemIdSuffix}`
+  return `${medId}${dose.itemIdSuffix}`
 }
 
 /**

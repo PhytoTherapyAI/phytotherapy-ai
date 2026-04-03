@@ -607,8 +607,8 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
   interface MedDoseRow {
     med: UserMedication
     dose: MedDose
-    itemId: string   // e.g., "med-uuid-morning"
-    label: string    // e.g., "Glifor (Sabah)"
+    itemId: string   // e.g., raw UUID (single dose) or "uuid-morning" (multi-dose)
+    label: string    // e.g., "Glifor (Sabah)" or "Cipralex"
   }
   const medDoseRows: MedDoseRow[] = useMemo(() => {
     const rows: MedDoseRow[] = []

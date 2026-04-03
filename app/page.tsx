@@ -373,7 +373,7 @@ export default function Home() {
       });
       supsRes.data?.forEach((s: any) => {
         const supName = getSupplementDisplayName(s.title, lang as "en" | "tr");
-        tasks.push({ id: `sup-${s.id}`, emoji: "🌿", labelEn: supName, labelTr: supName, duration: null, isSup: true });
+        tasks.push({ id: s.id, emoji: "🌿", labelEn: supName, labelTr: supName, duration: null, isSup: true });
       });
       setDynamicTasks(tasks);
 
