@@ -2,10 +2,11 @@
 "use client"
 
 import { useState, useCallback, useRef, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Stethoscope, Loader2, ArrowLeft, ArrowRight, Check, Leaf, AlertTriangle,
-  Shield, FileText, MessageSquare, RefreshCw, Sparkles, BookOpen,
+  Shield, FileText, MessageSquare, RefreshCw, Sparkles, BookOpen, SendHorizontal,
 } from "lucide-react"
 import { useLang } from "@/components/layout/language-toggle"
 import { useAuth } from "@/lib/auth-context"
@@ -41,11 +42,14 @@ const T: Record<string, { en: string; tr: string }> = {
   forMyself: { en: "For Myself", tr: "Kendim İçin" },
   forChild: { en: "For My Child", tr: "Çocuğum İçin" },
   forOther: { en: "For Someone Else", tr: "Başkası İçin" },
-  emergency: { en: "🚨 CALL 112/911 IMMEDIATELY", tr: "🚨 HEMEN 112'Yİ ARAYIN" },
-  seeToday: { en: "⚠️ See a doctor today", tr: "⚠️ Bugün doktora gidin" },
-  seeSoon: { en: "📋 Schedule a doctor visit", tr: "📋 Doktor randevusu alın" },
-  monitor: { en: "👀 Monitor symptoms, self-care may be enough", tr: "👀 Semptomları takip edin, öz bakım yeterli olabilir" },
-  selfCare: { en: "✅ Self-care is appropriate", tr: "✅ Öz bakım yeterli" },
+  emergency: { en: "🚨 CALL 112/911 NOW", tr: "🚨 HEMEN 112'Yİ ARAYIN" },
+  erVisit: { en: "🏥 Go to Emergency Room", tr: "🏥 Acil Servise Gidin" },
+  urgentCare: { en: "⚠️ Visit Urgent Care Today", tr: "⚠️ Bugün Acil Bakıma Gidin" },
+  gpToday: { en: "🩺 See Your Doctor Today", tr: "🩺 Bugün Doktorunuza Gidin" },
+  gpAppointment: { en: "📋 Schedule a Doctor Appointment", tr: "📋 Doktor Randevusu Alın" },
+  telehealth: { en: "💻 Telehealth Consultation Recommended", tr: "💻 Online Doktor Görüşmesi Önerilir" },
+  pharmacy: { en: "💊 Pharmacy Visit Sufficient", tr: "💊 Eczane Ziyareti Yeterli" },
+  selfCare: { en: "✅ Self-Care at Home", tr: "✅ Evde Öz Bakım Yeterli" },
   phytoTitle: { en: "🌿 Phytotherapy Suggestions", tr: "🌿 Fitoterapi Önerileri" },
   evidence: { en: "Evidence", tr: "Kanıt" },
   download: { en: "Download Report", tr: "Raporu İndir" },
@@ -57,6 +61,12 @@ const T: Record<string, { en: string; tr: string }> = {
   retry: { en: "Retry", tr: "Tekrar Dene" },
   topConditions: { en: "Possible Conditions", tr: "Olası Durumlar" },
   confidence: { en: "Confidence", tr: "Güven" },
+  orDescribe: { en: "Or describe in your own words:", tr: "Ya da kendi cümlelerinizle anlatın:" },
+  freeTextPlaceholder: { en: "e.g., I've had a headache for 3 days and feel nauseous...", tr: "örn., 3 gündür başım ağrıyor ve midem bulanıyor..." },
+  aiParsing: { en: "AI is analyzing your description...", tr: "AI açıklamanızı analiz ediyor..." },
+  freeTextExample1: { en: "My child has had a fever since yesterday", tr: "Çocuğumun dünden beri ateşi var" },
+  freeTextExample2: { en: "Sharp pain in my lower back after exercise", tr: "Egzersiz sonrası belimde keskin ağrı" },
+  freeTextExample3: { en: "Feeling anxious and can't sleep for a week", tr: "Bir haftadır kaygılıyım ve uyuyamıyorum" },
 }
 
 function t(key: string, lang: string): string {
@@ -86,6 +96,7 @@ const fadeUp = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }
 export default function SymptomCheckerPage() {
   const { lang } = useLang()
   const { user, profile } = useAuth()
+  const searchParams = useSearchParams()
 
   const [step, setStep] = useState(0) // 0 = intro
   const [history, setHistory] = useState<ConversationStep[]>([])
@@ -98,7 +109,9 @@ export default function SymptomCheckerPage() {
   const [otherAge, setOtherAge] = useState(30)
   const [otherGender, setOtherGender] = useState("unknown")
   const [initialCategory, setInitialCategory] = useState("")
+  const [freeText, setFreeText] = useState("")
   const retryCountRef = useRef(0)
+  const freeTextHandled = useRef(false)
 
   // Build user profile from auth
   const p = profile as any
@@ -113,7 +126,7 @@ export default function SymptomCheckerPage() {
     pregnancyStatus: p.pregnancy_status || undefined,
   } : undefined
 
-  const callAPI = useCallback(async (stepNum: number, hist: ConversationStep[], category?: string) => {
+  const callAPI = useCallback(async (stepNum: number, hist: ConversationStep[], category?: string, freeTextInput?: string) => {
     setLoading(true)
     setError(null)
     try {
@@ -134,6 +147,7 @@ export default function SymptomCheckerPage() {
           otherGender: assessmentFor === "other" ? otherGender : undefined,
           lang,
           initialCategory: category || initialCategory,
+          ...(freeTextInput ? { freeText: freeTextInput } : {}),
         }),
       })
       clearTimeout(timeout)
@@ -188,9 +202,28 @@ export default function SymptomCheckerPage() {
     callAPI(step - 1, prevHistory)
   }
 
+  // Handle free-text submission
+  const handleFreeTextSubmit = useCallback(() => {
+    if (!freeText.trim()) return
+    setStep(1)
+    callAPI(1, [], undefined, freeText.trim())
+  }, [freeText, callAPI])
+
+  // Auto-start from Omni-bar ?text= parameter
+  useEffect(() => {
+    if (freeTextHandled.current) return
+    const textParam = searchParams.get("text")
+    if (textParam) {
+      freeTextHandled.current = true
+      setFreeText(textParam)
+      setStep(1)
+      callAPI(1, [], undefined, textParam)
+    }
+  }, [searchParams, callAPI])
+
   const handleReset = () => {
     setStep(0); setHistory([]); setCurrentResponse(null); setSelectedOption(null)
-    setError(null); setInitialCategory("")
+    setError(null); setInitialCategory(""); setFreeText("")
     retryCountRef.current = 0
   }
 
@@ -267,6 +300,46 @@ export default function SymptomCheckerPage() {
             </motion.div>
           )}
 
+          {/* ── Free Text Input ── */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+            className="mb-8">
+            <p className="text-center text-sm font-medium text-foreground mb-3">{t("orDescribe", lang)}</p>
+            <div className="relative max-w-xl mx-auto">
+              <textarea
+                value={freeText}
+                onChange={e => setFreeText(e.target.value)}
+                onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleFreeTextSubmit() } }}
+                placeholder={t("freeTextPlaceholder", lang)}
+                rows={2}
+                className="w-full rounded-2xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-card pl-4 pr-14 py-3.5 text-sm shadow-lg outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"
+              />
+              <button
+                onClick={handleFreeTextSubmit}
+                disabled={!freeText.trim()}
+                className="absolute right-3 bottom-3 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-white shadow-md transition-all hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
+                aria-label="Send"
+              >
+                <SendHorizontal className="h-4 w-4" />
+              </button>
+            </div>
+            {/* Example prompts */}
+            <div className="flex flex-wrap justify-center gap-2 mt-3 max-w-xl mx-auto">
+              {["freeTextExample1", "freeTextExample2", "freeTextExample3"].map(k => (
+                <button key={k} onClick={() => setFreeText(t(k, lang))}
+                  className="rounded-full border bg-white dark:bg-card px-3 py-1 text-[10px] text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors">
+                  {t(k, lang)}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* ── Divider ── */}
+          <div className="flex items-center gap-3 mb-6 max-w-xl mx-auto">
+            <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700" />
+            <span className="text-xs text-muted-foreground font-medium">{lang === "tr" ? "ya da bölge seçin" : "or select a body region"}</span>
+            <div className="flex-1 h-px bg-stone-200 dark:bg-stone-700" />
+          </div>
+
           {/* Category Bento Grid */}
           <motion.div variants={stagger} initial="hidden" animate="show" className="text-center mb-4">
             <h2 className="text-lg font-semibold text-foreground mb-4">{t("whatsWrong", lang)}</h2>
@@ -298,17 +371,26 @@ export default function SymptomCheckerPage() {
           <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-4">
 
             {/* Urgency Banner */}
+            {/* 8-Level Urgency Banner */}
             <motion.div variants={fadeUp} className={`rounded-2xl p-5 text-center font-bold ${
               currentResponse.urgency === "emergency" ? "bg-red-600 text-white text-lg" :
-              currentResponse.urgency === "see_doctor_today" ? "bg-amber-500 text-white" :
-              currentResponse.urgency === "see_doctor_soon" ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200" :
-              currentResponse.urgency === "monitor" ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200" :
-              "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-200"
+              currentResponse.urgency === "er_visit" ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-200" :
+              currentResponse.urgency === "urgent_care" ? "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-200" :
+              currentResponse.urgency === "gp_today" || currentResponse.urgency === "see_doctor_today" ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200" :
+              currentResponse.urgency === "gp_appointment" || currentResponse.urgency === "see_doctor_soon" ? "bg-yellow-50 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-200" :
+              currentResponse.urgency === "telehealth" || currentResponse.urgency === "monitor" ? "bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-200" :
+              currentResponse.urgency === "pharmacy" ? "bg-teal-50 text-teal-800 dark:bg-teal-900/20 dark:text-teal-200" :
+              "bg-emerald-50 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-200"
             }`}>
-              {t(currentResponse.urgency === "emergency" ? "emergency" :
-                currentResponse.urgency === "see_doctor_today" ? "seeToday" :
-                currentResponse.urgency === "see_doctor_soon" ? "seeSoon" :
-                currentResponse.urgency === "monitor" ? "monitor" : "selfCare", lang)}
+              {t(
+                currentResponse.urgency === "emergency" ? "emergency" :
+                currentResponse.urgency === "er_visit" ? "erVisit" :
+                currentResponse.urgency === "urgent_care" ? "urgentCare" :
+                currentResponse.urgency === "gp_today" || currentResponse.urgency === "see_doctor_today" ? "gpToday" :
+                currentResponse.urgency === "gp_appointment" || currentResponse.urgency === "see_doctor_soon" ? "gpAppointment" :
+                currentResponse.urgency === "telehealth" || currentResponse.urgency === "monitor" ? "telehealth" :
+                currentResponse.urgency === "pharmacy" ? "pharmacy" : "selfCare",
+              lang)}
               {currentResponse.urgency === "emergency" && (
                 <a href="tel:112" className="block mt-2 underline text-white/90">📞 112</a>
               )}
@@ -455,7 +537,7 @@ export default function SymptomCheckerPage() {
                     <div className="h-4 w-1/2 rounded-lg bg-muted animate-pulse" />
                     <div className="flex items-center gap-2 mt-6 justify-center text-muted-foreground">
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm">{t("aiThinking", lang)}</span>
+                      <span className="text-sm">{step === 1 && freeText ? t("aiParsing", lang) : t("aiThinking", lang)}</span>
                     </div>
                   </div>
                 </motion.div>

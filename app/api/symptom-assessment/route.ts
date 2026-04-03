@@ -19,6 +19,28 @@ RULES:
 6. If the user's profile includes medications, silently check if symptoms could be drug side effects.
 7. When you have enough confidence (top condition >60% or after 8+ questions), set isComplete=true.
 
+NATURAL LANGUAGE INPUT MODE:
+When you receive a freeText field instead of structured Q&A history:
+1. Parse the user's natural language description to extract: symptoms, duration, severity hints, affected body areas.
+2. Skip the first 1-2 obvious questions (you already know the answers from their text).
+3. Start asking follow-up questions that the user DIDN'T mention.
+4. Example: "I've had a headache for 3 days and feel nauseous" → You already know: headache (3 days) + nausea. First question should be about something NEW: "Have you noticed any sensitivity to light or sound?" NOT "How long have you had a headache?"
+5. Set progress to at least 25% since we already have initial info.
+6. Include initial possibleConditions based on the free text description.
+
+ASSESS FOR OTHERS MODE:
+When assessmentFor is "child":
+- Adjust all questions for pediatric context
+- Use age-appropriate language: "Does your baby..." / "Does your child..."
+- Apply pediatric red flags: fever in <3 months = ALWAYS emergency, rash + fever = urgent
+- Drug dosing context: "Children's dosage applies"
+- Phytotherapy: Flag herbs unsafe for children (e.g., no St. John's Wort under 12)
+
+When assessmentFor is "other":
+- Use third person: "Does the person..." / "Are they experiencing..."
+- Note that you're working with secondhand information — ask clarifying questions
+- If age >65: Apply geriatric considerations (polypharmacy, fall risk)
+
 RESPONSE FORMAT (strict JSON):
 {
   "nextQuestion": {
@@ -43,7 +65,15 @@ RESPONSE FORMAT (strict JSON):
   "reasoning": "Duration will help differentiate between acute and chronic causes"
 }
 
-URGENCY LEVELS: "emergency" | "see_doctor_today" | "see_doctor_soon" | "monitor" | "self_care"
+URGENCY LEVELS (8 tiers — use the most appropriate one):
+1. "emergency" — Life-threatening. Chest pain+breathing, stroke signs, anaphylaxis, heavy bleeding, loss of consciousness. → "Call 112/911 immediately"
+2. "er_visit" — Serious but not immediately life-threatening. Suspected fracture, severe abdominal pain, high fever (>40°C) not responding to medication. → "Go to the nearest emergency room"
+3. "urgent_care" — Needs same-day medical attention. Moderate injuries, persistent vomiting, worsening infection signs. → "Visit an urgent care clinic today"
+4. "gp_today" — Should see a doctor today but not emergent. New concerning symptoms, moderate pain affecting daily life. → "See your doctor today if possible"
+5. "gp_appointment" — Needs medical evaluation but can wait a few days. Persistent mild symptoms, follow-up needed. → "Schedule a doctor appointment this week"
+6. "telehealth" — Medical guidance needed but physical exam not critical. Medication questions, mild ongoing symptoms, mental health check. → "A telehealth/video consultation would help"
+7. "pharmacy" — OTC remedies likely sufficient. Common cold, mild allergies, minor skin irritation. → "Your local pharmacist can advise on over-the-counter options"
+8. "self_care" — No medical attention needed. Mild, self-limiting symptoms. → "Rest and home care should be sufficient"
 
 If at ANY point symptoms suggest emergency (chest pain + shortness of breath, sudden severe headache + vision loss, signs of stroke/anaphylaxis):
 IMMEDIATELY set isComplete=true, urgency="emergency", and include a message to call 112/911 immediately.
@@ -71,7 +101,7 @@ export async function POST(req: Request) {
 
   try {
     const body: AssessmentRequest = await req.json();
-    const { step, history, userProfile, assessmentFor, childAge, otherAge, otherGender, lang, initialCategory } = body;
+    const { step, history, userProfile, assessmentFor, childAge, otherAge, otherGender, lang, initialCategory, freeText } = body;
 
     // Build context prompt
     let contextParts: string[] = [];
@@ -100,8 +130,13 @@ export async function POST(req: Request) {
     // Language
     contextParts.push(`LANGUAGE: ${lang === "tr" ? "Turkish (respond in Turkish)" : "English (respond in English)"}`);
 
-    // Initial category
-    if (initialCategory && step === 1) {
+    // Free text input (natural language mode)
+    if (freeText && step === 1) {
+      contextParts.push(`NATURAL LANGUAGE INPUT FROM USER:\n"${freeText}"\n\nParse this description. Extract symptoms, duration, severity. Skip questions the user already answered. Set progress ≥ 25%. Start with a follow-up question about something NOT mentioned.`);
+    }
+
+    // Initial category (only if no freeText)
+    if (initialCategory && step === 1 && !freeText) {
       contextParts.push(`INITIAL COMPLAINT AREA: ${initialCategory}`);
     }
 
@@ -139,7 +174,7 @@ export async function POST(req: Request) {
         possibleConditions: [],
         progress: Math.min(step * 12, 90),
         isComplete: false,
-        urgency: "monitor",
+        urgency: "self_care",
         reasoning: "Fallback question — AI response was unclear",
       };
     }

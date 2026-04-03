@@ -34,7 +34,7 @@ export interface AssessmentResponse {
   possibleConditions: PossibleCondition[];
   progress: number;
   isComplete: boolean;
-  urgency: "emergency" | "see_doctor_today" | "see_doctor_soon" | "monitor" | "self_care";
+  urgency: "emergency" | "er_visit" | "urgent_care" | "gp_today" | "gp_appointment" | "telehealth" | "pharmacy" | "self_care" | "see_doctor_today" | "see_doctor_soon" | "monitor";
   reasoning?: string;
   medicationAlerts?: string[];
   phytotherapySuggestions?: PhytotherapySuggestion[];
@@ -62,4 +62,5 @@ export interface AssessmentRequest {
   otherGender?: string;
   lang?: "en" | "tr";
   initialCategory?: string;
+  freeText?: string;
 }
