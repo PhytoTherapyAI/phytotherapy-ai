@@ -8,6 +8,9 @@ import {
   PenLine, Clock,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useLang } from "@/components/layout/language-toggle"
+import { CorrelationInsights } from "@/components/insights/CorrelationInsights"
+import { YearInPixels } from "@/components/insights/YearInPixels"
 
 // ── Types ──
 type EnergyLevel = "low" | "normal" | "peak" | null
@@ -216,6 +219,7 @@ function EntryCard({ entry }: { entry: DiaryEntry }) {
 // ═══ MAIN PAGE ═══
 export default function HealthDiaryPage() {
   const router = useRouter()
+  const { lang } = useLang()
   const [energy, setEnergy] = useState<EnergyLevel>(null)
   const [mood, setMood] = useState<MoodLevel>(null)
   const [body, setBody] = useState<BodyLevel>(null)
@@ -491,6 +495,22 @@ export default function HealthDiaryPage() {
               </div>
             </div>
           </motion.div>
+        </div>
+
+        {/* ── Health Correlations ── */}
+        <div className="mt-8">
+          <h2 className="text-base font-bold mb-1 flex items-center gap-2">
+            🔬 {lang === "tr" ? "Sağlık Korelasyonlarınız" : "Your Health Correlations"}
+          </h2>
+          <p className="text-xs text-muted-foreground mb-4">
+            {lang === "tr" ? "DoctoPal AI son 30 gününüzü analiz etti ve şu örüntüleri buldu:" : "DoctoPal AI analyzed your last 30 days and found these patterns:"}
+          </p>
+          <CorrelationInsights lang={lang} />
+        </div>
+
+        {/* ── Year in Pixels ── */}
+        <div className="mt-8">
+          <YearInPixels lang={lang} />
         </div>
       </div>
     </div>

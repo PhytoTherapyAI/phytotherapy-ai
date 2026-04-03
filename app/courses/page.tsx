@@ -271,7 +271,7 @@ export default function CoursesPage() {
                 </span>
                 <span className="flex items-center gap-1">
                   <Users className="h-3 w-3" />
-                  {course.students.toLocaleString()}
+                  {course.students.toLocaleString("en-US")}
                 </span>
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
