@@ -960,39 +960,49 @@ export default function Home() {
 
         {/* Competitive Advantage — "Why DoctoPal?" */}
         <div className="mt-12 rounded-2xl border bg-gradient-to-br from-stone-50 to-primary/5 dark:from-stone-900 dark:to-primary/10 p-6 md:p-8">
-          <h3 className="text-lg font-bold text-center mb-2">
+          <h3 className="text-lg font-bold text-center mb-1">
             {isTr ? "Diğerleri Sadeleşirken, Biz Güçlendiriyoruz." : "While Others Simplify, We Amplify."}
           </h3>
+          <p className="text-sm font-medium text-primary text-center mb-2">
+            {isTr ? "Diğer uygulamalar teşhis koyar. DoctoPal teşhis koyar VE iyileştirir." : "They tell you what's wrong. We show you how to get better — naturally."}
+          </p>
           <p className="text-xs text-muted-foreground text-center mb-6 max-w-lg mx-auto">
             {isTr
-              ? "2026'da öncü sağlık uygulamaları BMI takibi, ilaç yönetimi, alerji takibi ve semptom geçmişini kaldırdı. Biz hepsini koruduk — ve yapay zeka ile güçlendirdik."
-              : "In 2026, leading health apps removed BMI tracking, medication management, allergy tracking, and symptom history. We kept them all — and enhanced them with AI."}
+              ? "2026'da öncü sağlık uygulamaları BMI takibi, ilaç yönetimi ve alerji takibini kaldırdı. Biz hepsini koruduk — ve yapay zeka ile güçlendirdik."
+              : "In 2026, leading health apps removed BMI tracking, medication management, and allergy tracking. We kept them all — and enhanced them with AI."}
           </p>
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-3 md:grid-cols-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {[
-              { feature: isTr ? "BMI & Vücut Analizi" : "BMI & Body Analysis", ours: true },
-              { feature: isTr ? "İlaç Takibi" : "Medication Tracking", ours: true },
-              { feature: isTr ? "Alerji Takibi" : "Allergy Tracking", ours: true },
-              { feature: isTr ? "Semptom Geçmişi" : "Symptom History", ours: true },
-              { feature: isTr ? "İlaç Etkileşimi" : "Drug Interactions", ours: true },
-              { feature: isTr ? "Fitoterapi AI" : "Phytotherapy AI", ours: true },
-              { feature: isTr ? "Laboratuvar Analizi" : "Lab Report Analysis", ours: true },
-              { feature: isTr ? "Aile Profilleri" : "Family Profiles", ours: true },
-              { feature: isTr ? "AI Semptom Triyajı" : "AI Symptom Triage", ours: true },
+              { feature: isTr ? "AI Semptom Triyajı" : "AI Symptom Triage", isNew: false },
+              { feature: isTr ? "İlaç Etkileşimi" : "Drug Interaction Shield", isNew: true },
+              { feature: isTr ? "Fitoterapi AI" : "Phytotherapy AI", isNew: true },
+              { feature: isTr ? "Tahmini Etkinlik" : "Predictive Effectiveness", isNew: true },
+              { feature: isTr ? "Laboratuvar Analizi" : "Lab Report Analysis", isNew: true },
+              { feature: isTr ? "Doktor Hazırlık Raporu" : "Doctor Pre-Visit Report", isNew: false },
+              { feature: isTr ? "Günlük Sağlık Takibi" : "Daily Health Tracking", isNew: true },
+              { feature: isTr ? "Alışkanlık Serisi" : "Habit Streaks & Heat Maps", isNew: true },
+              { feature: isTr ? "İlaç Takibi" : "Medication Tracker", isNew: false },
+              { feature: isTr ? "Alerji Takibi" : "Allergy Tracker", isNew: false },
+              { feature: isTr ? "Aile Profilleri" : "Family Profiles", isNew: true },
+              { feature: isTr ? "BMI & Vücut Analizi" : "BMI & Body Analysis", isNew: false },
             ].map((item) => (
-              <div key={item.feature} className="flex items-center gap-1.5 rounded-lg bg-white/80 dark:bg-card/80 px-2.5 py-2 text-[11px] font-medium border shadow-sm">
-                <span className="text-emerald-500">✅</span>
+              <div key={item.feature} className={`flex items-center gap-1.5 rounded-lg bg-white/80 dark:bg-card/80 px-2.5 py-2 text-[11px] font-medium border shadow-sm ${item.isNew ? "ring-1 ring-emerald-200 dark:ring-emerald-800" : ""}`}>
+                <span className="text-emerald-500 shrink-0">✅</span>
                 <span className="truncate">{item.feature}</span>
+                {item.isNew && <span className="text-[8px] bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 rounded px-1 font-bold shrink-0">NEW</span>}
               </div>
             ))}
           </div>
+          <p className="text-[9px] text-muted-foreground text-center mt-3">
+            {isTr ? "* BMI, ilaç ve alerji takibi 2026'da rakipler tarafından kaldırıldı" : "* BMI, medication & allergy tracking discontinued by major health apps in 2026"}
+          </p>
         </div>
 
         {/* Stats */}
         <div className="mt-10 flex justify-center gap-8 sm:gap-12 flex-wrap">
           {[
             { num: "166+", label: isTr ? "Sağlık Aracı" : "Health Tools" },
-            { num: "345+", label: isTr ? "Sayfa" : "Pages" },
+            { num: "347+", label: isTr ? "Sayfa" : "Pages" },
             { num: "75+",  label: isTr ? "AI Destekli Rota" : "AI-Powered Routes" },
           ].map((s) => (
             <div key={s.label} className="text-center">
