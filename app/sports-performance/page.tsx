@@ -252,7 +252,7 @@ export default function SportsPerformancePage() {
 
           {/* Supplement Timer (interactive checklist) */}
           {r.supplementPlan?.length > 0 && (
-            <SupplementTimer supplements={r.supplementPlan} lang={lang} />
+            <SupplementTimer supplements={r.supplementPlan.filter(Boolean)} lang={lang} />
           )}
 
           {/* Nutrition Timing */}

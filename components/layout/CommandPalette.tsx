@@ -338,8 +338,8 @@ export function CommandPalette() {
             {debouncedQuery.length >= 2 ? (
               results.length > 0 ? (
                 <div className="py-2">
-                  {results.map(group => {
-                    const GroupIcon = group.icon
+                  {results.filter(Boolean).map(group => {
+                    const GroupIcon = group.icon || Sparkles
                     return (
                       <div key={group.category}>
                         {/* Category Header */}
