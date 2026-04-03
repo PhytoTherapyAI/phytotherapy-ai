@@ -566,7 +566,7 @@ function TriageSection({
               </p>
 
               {/* Key Markers */}
-              {spec.keyMarkers.length > 0 && (
+              {spec.keyMarkers?.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   <span className="text-xs text-muted-foreground">
                     {tx("medAnalysis.keyMarkers", lang)}

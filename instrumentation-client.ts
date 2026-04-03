@@ -9,6 +9,15 @@ Sentry.init({
   integrations: [
     Sentry.replayIntegration(),
   ],
+  // Filter out known noise errors
+  beforeSend(event) {
+    const msg = event.exception?.values?.[0]?.value || "";
+    // Supabase auth lock contention — benign, happens on rapid navigation
+    if (msg.includes("Lock was stolen by another request")) return null;
+    // AbortError from navigation cancelling in-flight requests — expected behavior
+    if (msg.includes("AbortError") || msg.includes("The operation was aborted")) return null;
+    return event;
+  },
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
