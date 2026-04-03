@@ -2568,6 +2568,20 @@ FAZE F — Rakip Özellikleri (8 yeni):
   - Landing page: 9 feature badges, "While Others Simplify, We Amplify"
   - Symptom checker results: trust badge after phytotherapy section
 
+### K Health & Buoy Health Feature Parity (Session 12c)
+- ✅ "People Like You" epidemiological statistics (PubMed-based, animated progress bars, staggered)
+- ✅ AI Pre-Visit Doctor Preparation Report (/doctor-prep — 3-step wizard, PDF export, copy, print)
+- ✅ Predictive Phytotherapy Effectiveness (personalized %, timeToEffect, studyBasis per suggestion)
+- ✅ Dynamic Question Selection (Bayesian uncertainty reduction, confidenceChange tracking, reasoning transparency)
+- ✅ Care Navigation (8-level urgency → Google Maps GP/pharmacy/ER/telehealth finder)
+- ✅ Competitive Advantage Section (expanded 12 badges, 6 marked "NEW", tagline update, footnote)
+
+### Sentry Autofix
+- ✅ Sentry error tracking aktif (client + server + edge + session replay)
+- ✅ Admin auth token ile saatlik otomatik kontrol + fix + resolve
+- ✅ beforeSend filtresi: AbortError, Lock stolen, eski domain SW hataları filtreleniyor
+- ✅ 7 issue düzeltildi/resolve edildi (DOCTOPAL-H, F, E, 6, 1, 8, 7, J)
+
 ### Build Durumu
-- ✅ `npx next build` — SIFIR hata, 345 sayfa başarıyla oluşturuldu
-- ✅ Tüm Ada Feature'lar commit edildi ve master'a push edildi
+- ✅ `npx next build` — SIFIR hata, 347 sayfa başarıyla oluşturuldu
+- ✅ Tüm KHealth+Buoy Feature'lar commit edildi ve master'a push edildi
