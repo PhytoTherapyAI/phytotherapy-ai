@@ -83,6 +83,53 @@ const CATEGORIES = [
   { id: "mental", emoji: "🧘", labelKey: "mental", subKey: "mentalSub" },
 ]
 
+// ── Care Navigation Options by Urgency ──
+interface CareOption { icon: string; label: string; action: string | null; primary?: boolean }
+function getCareOptions(urgency: string, lang: string): CareOption[] {
+  const tr = lang === "tr"
+  const opts: Record<string, CareOption[]> = {
+    emergency:      [{ icon: "📞", label: tr ? "Hemen 112'yi Arayın" : "Call 112 NOW", action: "tel:112", primary: true }],
+    er_visit:       [
+      { icon: "🏥", label: tr ? "En Yakın Acil Servis" : "Find Nearest ER", action: "https://maps.google.com/?q=emergency+room+near+me", primary: true },
+      { icon: "📞", label: tr ? "112'yi Ara" : "Call 112", action: "tel:112" },
+    ],
+    urgent_care:    [
+      { icon: "🏥", label: tr ? "Acil Bakım Bulun" : "Find Urgent Care", action: "https://maps.google.com/?q=urgent+care+near+me", primary: true },
+      { icon: "💻", label: tr ? "Online Görüşme" : "Try Telehealth", action: "/health-assistant" },
+    ],
+    gp_today:       [
+      { icon: "🩺", label: tr ? "Doktor Bulun" : "Find a Doctor", action: "https://maps.google.com/?q=doctor+near+me", primary: true },
+      { icon: "💻", label: tr ? "Online Görüşme" : "Try Telehealth", action: "/health-assistant" },
+    ],
+    see_doctor_today: [
+      { icon: "🩺", label: tr ? "Doktor Bulun" : "Find a Doctor", action: "https://maps.google.com/?q=doctor+near+me", primary: true },
+    ],
+    gp_appointment: [
+      { icon: "🩺", label: tr ? "Yakınızdaki Doktor" : "Find a GP Near You", action: "https://maps.google.com/?q=family+doctor+near+me", primary: true },
+      { icon: "💻", label: tr ? "Online Görüşme" : "Telehealth", action: "/health-assistant" },
+    ],
+    see_doctor_soon: [
+      { icon: "🩺", label: tr ? "Doktor Bulun" : "Find a Doctor", action: "https://maps.google.com/?q=doctor+near+me", primary: true },
+    ],
+    telehealth:     [
+      { icon: "💻", label: tr ? "Online Görüşme Başlat" : "Start Telehealth Now", action: "/health-assistant", primary: true },
+      { icon: "🩺", label: tr ? "Doktor Bul" : "Or Find a Doctor", action: "https://maps.google.com/?q=doctor+near+me" },
+    ],
+    monitor:        [
+      { icon: "💻", label: tr ? "AI Asistanla Konuş" : "Chat with AI", action: "/health-assistant", primary: true },
+    ],
+    pharmacy:       [
+      { icon: "💊", label: tr ? "Eczane Bulun" : "Find a Pharmacy", action: "https://maps.google.com/?q=pharmacy+near+me", primary: true },
+      { icon: "💻", label: tr ? "OTC Seçenekleri Sor" : "Ask AI About OTC Options", action: "/health-assistant" },
+    ],
+    self_care:      [
+      { icon: "🌿", label: tr ? "Fitoterapi Keşfet" : "Explore Phytotherapy", action: "/supplement-guide", primary: true },
+      { icon: "💻", label: tr ? "AI Asistanla Konuş" : "Chat with AI", action: "/health-assistant" },
+    ],
+  }
+  return opts[urgency] || opts.self_care
+}
+
 const fadeSlide = {
   initial: { x: 80, opacity: 0 },
   animate: { x: 0, opacity: 1 },
@@ -510,15 +557,49 @@ export default function SymptomCheckerPage() {
               </motion.div>
             )}
 
-            {/* Phytotherapy Suggestions */}
+            {/* ── People Like You ── */}
+            {currentResponse.peopleStats && currentResponse.peopleStats.stats?.length > 0 && (
+              <motion.div variants={fadeUp} className="bg-gradient-to-r from-slate-50 to-emerald-50 dark:from-slate-900 dark:to-emerald-950/20 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+                <h3 className="text-sm font-bold mb-1 flex items-center gap-2">
+                  📊 {lang === "tr" ? "Sizin Gibi Kişiler" : "People Like You"}
+                </h3>
+                <p className="text-[11px] text-muted-foreground mb-4">{currentResponse.peopleStats.sampleText}</p>
+                <div className="space-y-3">
+                  {currentResponse.peopleStats.stats.map((s, i) => (
+                    <div key={s.condition}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-semibold">{s.condition}</span>
+                        <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400">{s.percentage}%</span>
+                      </div>
+                      <motion.div className="h-2.5 w-full rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${s.percentage}%` }}
+                          transition={{ duration: 0.8, delay: i * 0.2, ease: "easeOut" }}
+                          className={`h-full rounded-full ${i === 0 ? "bg-emerald-500" : i === 1 ? "bg-emerald-400" : "bg-slate-400"}`}
+                        />
+                      </motion.div>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{s.context}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-3 text-center">
+                  {lang === "tr"
+                    ? `~${currentResponse.peopleStats.totalCases} benzer vaka · Kaynak: ${currentResponse.peopleStats.source}`
+                    : `Based on ~${currentResponse.peopleStats.totalCases} similar cases · Source: ${currentResponse.peopleStats.source}`}
+                </p>
+              </motion.div>
+            )}
+
+            {/* ── Phytotherapy Suggestions with Predictive Effectiveness ── */}
             {currentResponse.phytotherapySuggestions && currentResponse.phytotherapySuggestions.length > 0 && (
               <motion.div variants={fadeUp} className="bg-white dark:bg-card rounded-2xl border p-5 shadow-sm">
                 <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
                   <Leaf className="h-4 w-4 text-emerald-600" /> {t("phytoTitle", lang)}
                 </h3>
-                <div className="space-y-2.5">
+                <div className="space-y-3">
                   {currentResponse.phytotherapySuggestions.map((s) => (
-                    <div key={s.name} className="rounded-xl border p-3 bg-emerald-50/50 dark:bg-emerald-950/10">
+                    <div key={s.name} className="rounded-xl border p-4 bg-emerald-50/50 dark:bg-emerald-950/10 hover:shadow-md transition-shadow">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-sm font-semibold text-emerald-800 dark:text-emerald-200">{s.name}</span>
                         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
@@ -528,8 +609,34 @@ export default function SymptomCheckerPage() {
                         }`}>{t("evidence", lang)}: {s.evidence}</span>
                       </div>
                       <p className="text-xs text-muted-foreground">{s.description}</p>
+                      {/* Predictive Effectiveness */}
+                      {s.predictedEffectiveness && (
+                        <div className="mt-3 rounded-lg bg-white dark:bg-card border border-emerald-200 dark:border-emerald-800 p-3">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-[11px] font-medium">
+                              📈 {lang === "tr" ? "Size Özel Tahmini Etkinlik" : "Predicted Effectiveness for You"}
+                            </span>
+                            <span className="text-lg font-bold text-emerald-600">{s.predictedEffectiveness.percentage}%</span>
+                          </div>
+                          <motion.div className="h-2 w-full rounded-full bg-emerald-100 dark:bg-emerald-900 overflow-hidden mb-2">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${s.predictedEffectiveness.percentage}%` }}
+                              transition={{ duration: 1, ease: "easeOut" }}
+                              className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600"
+                            />
+                          </motion.div>
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-muted-foreground">
+                            <span>⏱️ {s.predictedEffectiveness.timeToEffect}</span>
+                            <span>📚 {s.predictedEffectiveness.studyBasis}</span>
+                          </div>
+                          {s.predictedEffectiveness.context && (
+                            <p className="text-[10px] text-emerald-700 dark:text-emerald-400 mt-1">{s.predictedEffectiveness.context}</p>
+                          )}
+                        </div>
+                      )}
                       {s.caution && (
-                        <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-1">⚠️ {s.caution}</p>
+                        <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-2">⚠️ {s.caution}</p>
                       )}
                     </div>
                   ))}
@@ -537,12 +644,43 @@ export default function SymptomCheckerPage() {
               </motion.div>
             )}
 
+            {/* ── Care Navigation ── */}
+            <motion.div variants={fadeUp} className="bg-white dark:bg-card rounded-2xl border p-5 shadow-sm">
+              <h3 className="text-sm font-bold mb-3">📍 {lang === "tr" ? "Sonraki Adımlar ve Bakım Seçenekleri" : "Next Steps & Care Options"}</h3>
+              <div className="flex flex-wrap gap-2">
+                {getCareOptions(currentResponse.urgency, lang).map((opt, i) => (
+                  opt.action?.startsWith("tel:") ? (
+                    <a key={i} href={opt.action}
+                      className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-medium transition-all ${
+                        opt.primary ? "bg-red-600 text-white shadow-lg hover:bg-red-700" : "border bg-white dark:bg-card hover:bg-muted"
+                      }`}>
+                      <span>{opt.icon}</span> {opt.label}
+                    </a>
+                  ) : opt.action?.startsWith("http") ? (
+                    <a key={i} href={opt.action} target="_blank" rel="noopener noreferrer"
+                      className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-medium transition-all ${
+                        opt.primary ? "bg-primary text-white shadow-md hover:bg-primary/90" : "border bg-white dark:bg-card hover:bg-muted"
+                      }`}>
+                      <span>{opt.icon}</span> {opt.label}
+                    </a>
+                  ) : (
+                    <a key={i} href={opt.action || "#"}
+                      className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-medium transition-all ${
+                        opt.primary ? "bg-primary text-white shadow-md hover:bg-primary/90" : "border bg-white dark:bg-card hover:bg-muted"
+                      }`}>
+                      <span>{opt.icon}</span> {opt.label}
+                    </a>
+                  )
+                ))}
+              </div>
+            </motion.div>
+
             {/* Trust Badge */}
             <motion.div variants={fadeUp} className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-center">
               <p className="text-[11px] text-muted-foreground leading-relaxed">
                 🏆 {lang === "tr"
-                  ? "Diğer sağlık uygulamalarından farklı olarak DoctoPal, ilaç profilinizi, alerji verilerinizi ve semptom geçmişinizi korur — size en kişiselleştirilmiş değerlendirmeyi sunar."
-                  : "Unlike other health apps, DoctoPal keeps your complete medication profile, allergy data, and symptom history — giving you the most personalized assessment possible."}
+                  ? "Diğer semptom uygulamalarından farklı olarak DoctoPal, kişiselleştirilmiş fitoterapi protokolleri, ilaç etkileşim kontrolleri ve günlük sağlık takibi sunar — hepsi tek platformda."
+                  : "Unlike symptom-only apps, your assessment includes personalized phytotherapy protocols, medication interaction checks, and daily health tracking — all in one place."}
               </p>
             </motion.div>
 
@@ -716,6 +854,25 @@ export default function SymptomCheckerPage() {
                   </motion.div>
                 ))}
               </AnimatePresence>
+
+              {/* Confidence change impact */}
+              {currentResponse?.confidenceChange?.questionImpact && (
+                <div className="mt-2 rounded-lg bg-blue-50 dark:bg-blue-950/20 p-2.5 border border-blue-200/60">
+                  <p className="text-[10px] text-blue-700 dark:text-blue-300">🧠 {currentResponse.confidenceChange.questionImpact}</p>
+                </div>
+              )}
+
+              {/* AI reasoning (expandable) */}
+              {currentResponse?.reasoning && (
+                <details className="mt-2">
+                  <summary className="text-[10px] text-muted-foreground cursor-pointer hover:text-foreground">
+                    🧠 {lang === "tr" ? "Neden bu soru?" : "Why this question?"}
+                  </summary>
+                  <p className="text-[10px] text-muted-foreground mt-1 pl-4 border-l-2 border-primary/20">
+                    {currentResponse.reasoning}
+                  </p>
+                </details>
+              )}
 
               {/* Medication alerts */}
               {currentResponse?.medicationAlerts?.map((a, i) => (

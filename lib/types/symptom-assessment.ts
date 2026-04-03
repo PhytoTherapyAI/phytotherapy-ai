@@ -27,6 +27,25 @@ export interface PhytotherapySuggestion {
   evidence: "A" | "B" | "C";
   description: string;
   caution?: string;
+  predictedEffectiveness?: {
+    percentage: number;
+    context: string;
+    timeToEffect: string;
+    studyBasis: string;
+  };
+}
+
+export interface PeopleStats {
+  sampleText: string;
+  stats: { condition: string; percentage: number; context: string }[];
+  totalCases: string;
+  source: string;
+}
+
+export interface ConfidenceChange {
+  before: Record<string, number>;
+  after: Record<string, number>;
+  questionImpact: string;
 }
 
 export interface AssessmentResponse {
@@ -39,6 +58,8 @@ export interface AssessmentResponse {
   medicationAlerts?: string[];
   phytotherapySuggestions?: PhytotherapySuggestion[];
   finalSummary?: string;
+  peopleStats?: PeopleStats;
+  confidenceChange?: ConfidenceChange;
 }
 
 export interface UserProfile {
