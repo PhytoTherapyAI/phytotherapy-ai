@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation"
 import { useLang } from "@/components/layout/language-toggle"
 import { CorrelationInsights } from "@/components/insights/CorrelationInsights"
 import { YearInPixels } from "@/components/insights/YearInPixels"
+import { RecoveryScore } from "@/components/recovery/RecoveryScore"
+import { BiologicalBudget } from "@/components/recovery/BiologicalBudget"
 
 // ── Types ──
 type EnergyLevel = "low" | "normal" | "peak" | null
@@ -495,6 +497,12 @@ export default function HealthDiaryPage() {
               </div>
             </div>
           </motion.div>
+        </div>
+
+        {/* ── Recovery Score + Biological Budget ── */}
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <RecoveryScore lang={lang} />
+          <BiologicalBudget lang={lang} />
         </div>
 
         {/* ── Health Correlations ── */}
