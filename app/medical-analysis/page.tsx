@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import type { BloodTestResult, BloodTestCategory } from "@/lib/blood-reference";
 import type { Lang } from "@/lib/translations";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
+import { LabInsightsPanel } from "@/components/lab/LabInsightsPanel";
 
 // ── Blood Test Types ──
 interface AnalysisResponse {
@@ -433,6 +434,9 @@ function BloodTestTab({
           {data.triage && data.triage.specialtyRecommendations?.length > 0 && (
             <TriageSection triage={data.triage} lang={lang} />
           )}
+
+          {/* Lab Insights — Longevity Ranges, Organ Systems, Biological Age, Action Plan */}
+          <LabInsightsPanel lang={lang} />
         </div>
       ) : (
         <BloodTestForm onSubmit={handleSubmit} isLoading={isLoading} />
