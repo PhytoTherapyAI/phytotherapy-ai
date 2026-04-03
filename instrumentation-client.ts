@@ -13,9 +13,11 @@ Sentry.init({
   beforeSend(event) {
     const msg = event.exception?.values?.[0]?.value || "";
     // Supabase auth lock contention — benign, happens on rapid navigation
-    if (msg.includes("Lock was stolen by another request")) return null;
-    // AbortError from navigation cancelling in-flight requests — expected behavior
+    if (msg.includes("Lock was stolen") || msg.includes("Lock broken")) return null;
+    // AbortError from navigation cancelling in-flight requests
     if (msg.includes("AbortError") || msg.includes("The operation was aborted")) return null;
+    // Old domain SW registration attempts (users with cached phytotherapy.ai SW)
+    if (msg.includes("phytotherapy.ai/sw.js")) return null;
     return event;
   },
 });
