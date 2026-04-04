@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 
 export default function DashboardRedirect() {
   const router = useRouter()
-  useEffect(() => { router.replace("/") }, [router])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { router.replace("/") }, [])
   return null
 }
