@@ -26,7 +26,7 @@ const TOOL_LOOKUP = new Map<string, { module: ToolModule; category: ToolCategory
 
 for (const category of TOOL_CATEGORIES) {
   for (const mod of category.modules) {
-    // Normalize href (remove trailing slash)
+    // Include all modules (even hidden) for routing/breadcrumb support
     const normalizedHref = mod.href.replace(/\/$/, "");
     TOOL_LOOKUP.set(normalizedHref, { module: mod, category });
   }

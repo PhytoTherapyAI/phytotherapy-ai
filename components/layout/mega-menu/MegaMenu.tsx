@@ -143,7 +143,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
                         </div>
                         <div className="min-w-0">
                           <h4 className="text-sm font-medium text-foreground truncate">{cat.title[lang]}</h4>
-                          <p className="text-[10px] text-muted-foreground">{cat.modules.length} {tx("megaMenu.tools", lang)}</p>
+                          <p className="text-[10px] text-muted-foreground">{cat.modules.filter(m => !m.hidden).length} {tx("megaMenu.tools", lang)}</p>
                         </div>
                       </div>
                     </Link>
@@ -157,7 +157,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
                         onMouseLeave={handleMouseLeave}
                       >
                         <div className="max-h-[240px] overflow-y-auto">
-                          {cat.modules.map(mod => (
+                          {cat.modules.filter(m => !m.hidden).map(mod => (
                             <Link key={mod.id} href={mod.href} onClick={onClose}
                               className="flex items-center justify-between py-1.5 px-2 rounded hover:bg-muted/50 text-sm transition-colors">
                               <span className="text-foreground truncate">{mod.title[lang]}</span>

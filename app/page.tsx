@@ -793,7 +793,7 @@ export default function Home() {
                         <span className="text-lg">{emoji}</span>
                         <div className="flex-1 min-w-0">
                           <span className="text-xs font-semibold text-foreground block">{cat.title[lang]}</span>
-                          <span className="text-[10px] text-muted-foreground">{cat.modules.length} {tx("common.tools", lang)}</span>
+                          <span className="text-[10px] text-muted-foreground">{cat.modules.filter(m => !m.hidden).length} {tx("common.tools", lang)}</span>
                         </div>
                         <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`} />
                       </div>
@@ -804,7 +804,7 @@ export default function Home() {
                           exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}
                           className="border-t border-border/50 px-2 pb-2 pt-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-0.5 overflow-hidden"
                           style={{ background: `linear-gradient(180deg, ${cat.color}05 0%, transparent 100%)` }}>
-                          {cat.modules.map((mod) => (
+                          {cat.modules.filter(m => !m.hidden).map((mod) => (
                             <Link key={mod.id} href={mod.href}
                               className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-xs text-muted-foreground hover:text-foreground hover:bg-white/60 dark:hover:bg-white/5 transition-colors">
                               <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: cat.color }} />

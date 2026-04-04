@@ -54,7 +54,7 @@ const SUPPLEMENTS_DB: SearchItem[] = [
 // Build tool search items from hierarchy
 function getToolItems(): SearchItem[] {
   return TOOL_CATEGORIES.flatMap(cat =>
-    cat.modules.map(mod => ({
+    cat.modules.filter(m => !m.hidden).map(mod => ({
       id: `tool-${mod.id}`,
       type: "tool" as const,
       title: mod.title.en,

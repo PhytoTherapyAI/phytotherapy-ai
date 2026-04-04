@@ -1,14 +1,14 @@
-# CLAUDE.md — Doctopal Proje Anayasası v40.0
+# CLAUDE.md — Doctopal Proje Anayasası v42.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
 **Doctopal** (eski adı: Phytotherapy.ai) — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **9 gün kaldı**
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **8 gün kaldı**
 - **Domain:** doctopal.com ✅ (Vercel'e bağlı) — eski: phytotherapy.ai
 - **Sunum dili:** İngilizce | **Arayüz dili:** İngilizce (TR/EN toggle navbar'da ✅)
 - **Deploy:** Vercel ✅ + Supabase ✅ (tablolar kurulu, email auth çalışıyor)
-- **AI Motor:** Anthropic Claude API (claude-sonnet-4-6) + Embedding: Gemini text-embedding-004
+- **AI Motor:** Anthropic Claude API (claude-haiku-4-5) + Embedding: Gemini text-embedding-004
 - **OS:** Windows
 - **GitHub:** github.com/PhytoTherapyAI/phytotherapy-ai
 - **Hackathon modu:** Premium gate'ler kaldırıldı, isPremium=true, pricing navbar'dan çıktı, tüm özellikler açık
@@ -1131,17 +1131,48 @@ SENTRY_DSN=...                       # Error monitoring
 - ✅ error.tsx: 3 kurtarma seçeneği (Tekrar Dene / Sayfayı Yenile / Ana Sayfa)
 - ✅ Hata mesajı excerpt'i gösteriliyor
 
-*Son güncelleme: 2 Nisan 2026 v40.0*
-*Sprint 1-13 + Phase 1-20 + 28 Mart - 2 Nisan oturumları tamamlandı.*
-*342+ sayfa, build SIFIR hata, 50+ yeni bileşen.*
+*Son güncelleme: 3 Nisan 2026 v42.0*
+*Sprint 1-13 + Phase 1-20 + 28 Mart - 3 Nisan oturumları tamamlandı.*
+*225 sayfa + 121 API route, build SIFIR hata, 50+ yeni bileşen.*
 *V2.0 Master Revision: 14 özellik, 4 grup, TAMAMEN tamamlandı.*
-*Hackathon: 11-12 Nisan 2026 — 9 gün kaldı*
+*Hackathon: 11-12 Nisan 2026 — 8 gün kaldı*
 *Premium gate'ler kaldırıldı — hackathon modunda tüm özellikler açık.*
 *Demo modu aktif — jüri tek tıkla dolu hesap görebilir.*
 
-### Son Oturum (Session 11) — Bug Fix & Polish
+### Son Oturumlar (Session 11-12e) — Özet
+
+**Session 11 — Bug Fix & Polish:**
 - Navbar: glass-card kaldırıldı → CSS var(--card) solid background
 - Settings: 9 araç tam liste, uniform link kartları
 - Şifre değiştirme: email onay akışı (Supabase native)
 - İlaçlarımı Yükle: /api/user/medications → Bearer token auth, hata mesajları
-- Yeni API routes: /api/user/medications, /api/auth/change-password
+
+**Session 12 — Adaptive Symptom + Calendar + Dashboard:**
+- Adaptive Symptom Assessment (Ada Health style) — Claude AI adaptive questioning
+- Dashboard task list persistence + customization (8 task, dismiss, ⚙️)
+- DailyCareCard customization + 8 kategori
+- Calendar 6 bug fix (weekly strip, su kayıt, habit rings, heatmap, ritual, med sync)
+- Chat: collapsible sources, suggestion chips overlap fix
+
+**Session 12b — Calendar & Supplement Deep Fix:**
+- Bidirectional panel↔calendar sync, dynamic med/sup counts
+- Supplement ring separate tracking, streak UTC fix
+- Ritual persistence race condition fix
+- Profile save user_id→id fix, Supabase column additions
+
+**Session 12c — Lighthouse + Profile + Sentry:**
+- Lighthouse CLS fixes (navbar boyutu, animasyon y-offset, img width/height)
+- A11y: aria-labels, renk kontrastı, touch targets
+- Profile: medical history card layout, null check fix
+- Sentry errors: 3 round fix (keyMarkers, nutritionTiming, supplementPlan, CommandPalette, AbortError)
+
+**Session 12d — Ada + KHealth + Buoy Feature Parity:**
+- Ada: Natural language input, assess for others, 8-level triage, PDF report, competitive advantage
+- KHealth: People Like You, AI Pre-Visit Doctor Report, predictive phyto
+- Buoy: Uncertainty reduction, care navigation, competitive positioning
+
+**Session 12e — Bearable + Oura + Function Health + InsideTracker:**
+- Bearable: AI Correlation Engine, Year in Pixels, Experiments, Recovery Score, Biological Budget
+- Oura: Wearable-free positioning, competitive update
+- Function Health: Longevity Optimal Ranges, organ system grouping, biological age calculation
+- InsideTracker: Personalized Action Plan (top 5 foods + supplements)

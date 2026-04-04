@@ -1,6 +1,95 @@
 # PROGRESS.md — Doctopal Sprint İlerleme Takibi
 
-> Son güncelleme: 2 Nisan 2026 (v41.0 — Adaptive Symptom + Calendar Fixes + Dashboard UX)
+> Son güncelleme: 3 Nisan 2026 (v42.0 — Rakip Feature Parity + Sentry Fixes + Lighthouse)
+
+---
+
+## Oturum 2-3 Nisan 2026 (Session 12e) — Function Health + InsideTracker Feature Parity
+
+### Function Health Feature Parity ✅
+- ✅ Longevity Optimal Ranges — 3-tier bars (low/optimal/high) for 12 biomarkers
+- ✅ Improvement tips per biomarker
+- ✅ Organ System Grouping — 6 Bento cards by health system (Heart, Metabolism, Thyroid, Liver, Blood, Hormones)
+- ✅ Biological Age calculation (chronological vs biological) with reduction tips
+- ✅ "No Exclusive Partnership Needed" banner (any lab uploads accepted)
+- ✅ AI Chat with Results integration
+
+### InsideTracker Feature Parity ✅
+- ✅ Personalized Action Plan — Top 5 foods + Top 5 supplements with evidence grades
+- ✅ Evidence-graded recommendations (A/B/C)
+
+### Build ✅
+- ✅ 348 pages, zero errors, all commits pushed
+
+---
+
+## Oturum 2 Nisan 2026 (Session 12d) — Bearable + Oura Feature Parity
+
+### Bearable Feature Parity ✅
+- ✅ AI Correlation Engine — symptom↔supplement correlation analysis
+- ✅ Year in Pixels — 365-day mood/symptom heatmap grid
+- ✅ Experiments — A/B self-experiments with tracking
+- ✅ Recovery Score — daily recovery calculation
+- ✅ Biological Budget — energy/resource allocation
+
+### Oura Feature Parity ✅
+- ✅ Wearable-free positioning — no device required messaging
+- ✅ Competitive update in comparison section
+
+### Build ✅
+- ✅ All commits pushed, zero errors
+
+---
+
+## Oturum 2 Nisan 2026 (Session 12c) — KHealth + Buoy Feature Parity
+
+### KHealth Feature Parity ✅
+- ✅ People Like You — anonymized cohort comparison
+- ✅ AI Pre-Visit Doctor Report — intake prep, PDF export, copy, print
+- ✅ Predictive phyto suggestions based on similar profiles
+
+### Buoy Feature Parity ✅
+- ✅ Uncertainty reduction — confidence-building explanations
+- ✅ Care navigation — next steps guidance
+- ✅ Competitive advantage — expanded comparison section, new taglines
+
+### Build ✅
+- ✅ All commits pushed, zero errors
+
+---
+
+## Oturum 2 Nisan 2026 (Session 12b) — Sentry Fixes + Ada Feature Parity + Lighthouse
+
+### Sentry Error Fixes (3 Round) ✅
+- ✅ Round 1: keyMarkers null check, AbortError filter, test endpoint
+- ✅ Round 2: nutritionTiming null check, noise filter
+- ✅ Round 3: supplementPlan null filter, CommandPalette icon guard
+
+### Ada Health Feature Parity ✅
+- ✅ Natural language symptom input (free text)
+- ✅ Assess for Others toggle (self/child/other)
+- ✅ 8-level triage classification
+- ✅ Shareable PDF assessment report — download + copy summary
+- ✅ Competitive advantage — comparison section + trust badges
+
+### Lighthouse Performance Fixes ✅
+- ✅ CLS: sabit navbar boyutu, animasyon y-offset kaldırma, img width/height
+- ✅ A11y: aria-labels, renk kontrastı, touch targets
+- ✅ Viewport metadata fix
+
+### Profile & Calendar Fixes ✅
+- ✅ Profile layout: medical history card moved up, data management removed
+- ✅ Medical history: null check instead of content check
+- ✅ Sync desync: item_id format alignment across 3 views
+- ✅ Profile save: always include all fields, remove falsy guards
+- ✅ Profile save user_id→id fix + missing Supabase columns added
+
+### Calendar & Supplement Deep Fix ✅
+- ✅ Bidirectional panel↔calendar sync, dynamic med/sup counts, ritual edit mode
+- ✅ Supplement ring separate tracking + dashboard streak UTC fix
+- ✅ Ritual persistence race condition + streak sync from Supabase
+- ✅ Weekly strip 7 days grid fix, ritual persist, supplements in routines
+- ✅ Water ring hardcoded +3 removed, FAB med handler toggles all meds
 
 ---
 

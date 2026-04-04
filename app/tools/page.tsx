@@ -122,7 +122,7 @@ export default function ToolsHubPage() {
                         <Icon className="w-5 h-5" style={{ color: cat.color }} />
                       </div>
                       <Badge variant="outline" className="text-xs">
-                        {cat.modules.length} {tx("tools.toolsLabel", lang)}
+                        {cat.modules.filter(m => !m.hidden).length} {tx("tools.toolsLabel", lang)}
                       </Badge>
                     </div>
 
@@ -138,14 +138,14 @@ export default function ToolsHubPage() {
 
                     {/* Module preview (first 4) */}
                     <div className="flex flex-wrap gap-1 mt-3">
-                      {cat.modules.slice(0, 4).map(mod => (
+                      {cat.modules.filter(m => !m.hidden).slice(0, 4).map(mod => (
                         <span key={mod.id} className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
                           {mod.title[lang]}
                         </span>
                       ))}
-                      {cat.modules.length > 4 && (
+                      {cat.modules.filter(m => !m.hidden).length > 4 && (
                         <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                          +{cat.modules.length - 4}
+                          +{cat.modules.filter(m => !m.hidden).length - 4}
                         </span>
                       )}
                     </div>
@@ -159,7 +159,7 @@ export default function ToolsHubPage() {
                   {/* Expanded module list — shows all tools in category */}
                   {expandedCategory === cat.slug && (
                     <div className="border-t px-5 pb-4 pt-3 space-y-1">
-                      {cat.modules.map(mod => (
+                      {cat.modules.filter(m => !m.hidden).map(mod => (
                         <Link key={mod.id} href={mod.href}
                           className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-muted"
                         >

@@ -89,13 +89,13 @@ export function MobileMegaMenu({ onNavigate }: MobileMegaMenuProps) {
                   <div className="flex-1 text-left">
                     <span className="text-sm font-medium">{cat.title[lang]}</span>
                   </div>
-                  <Badge variant="outline" className="text-[10px] mr-1">{cat.modules.length}</Badge>
+                  <Badge variant="outline" className="text-[10px] mr-1">{cat.modules.filter(m => !m.hidden).length}</Badge>
                   {isExpanded ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
                 </button>
 
                 {isExpanded && (
                   <div className="bg-muted/20 py-1 px-4 pl-[60px]">
-                    {cat.modules.map(mod => (
+                    {cat.modules.filter(m => !m.hidden).map(mod => (
                       <Link key={mod.id} href={mod.href} onClick={onNavigate}
                         className="flex items-center justify-between py-2 px-2 rounded-md hover:bg-muted/50 transition-colors">
                         <span className="text-sm text-foreground">{mod.title[lang]}</span>
