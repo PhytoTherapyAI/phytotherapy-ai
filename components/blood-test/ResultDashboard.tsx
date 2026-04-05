@@ -127,7 +127,7 @@ export function ResultDashboard({
         <ScoreCard
           icon={<Stethoscope className="h-5 w-5 text-blue-600" />}
           label={tx('rd.recommendations', lang)}
-          value={analysis.supplementRecommendations.length}
+          value={analysis.supplementRecommendations?.length ?? 0}
           total={null}
           color="blue"
         />
@@ -198,12 +198,12 @@ export function ResultDashboard({
 
       {activeTab === "supplements" && (
         <div className="space-y-4">
-          {analysis.supplementRecommendations.length === 0 ? (
+          {(analysis.supplementRecommendations?.length ?? 0) === 0 ? (
             <div className="rounded-lg border bg-card p-8 text-center text-muted-foreground">
               {tx('rd.noSupplements', lang)}
             </div>
           ) : (
-            analysis.supplementRecommendations.map((rec, i) => (
+            (analysis.supplementRecommendations ?? []).map((rec, i) => (
               <div key={i} className="rounded-lg border bg-card p-4">
                 <div className="mb-2 flex items-start justify-between">
                   <h4 className="font-semibold">{rec.supplement}</h4>
@@ -220,9 +220,9 @@ export function ResultDashboard({
                     <p className="text-sm font-medium">{rec.duration}</p>
                   </div>
                 </div>
-                {rec.sources.length > 0 && (
+                {(rec.sources?.length ?? 0) > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {rec.sources.map((src, j) => (
+                    {(rec.sources ?? []).map((src, j) => (
                       <a
                         key={j}
                         href={src.url}
@@ -244,12 +244,12 @@ export function ResultDashboard({
 
       {activeTab === "lifestyle" && (
         <div className="space-y-3">
-          {analysis.lifestyleAdvice.length === 0 ? (
+          {(analysis.lifestyleAdvice?.length ?? 0) === 0 ? (
             <div className="rounded-lg border bg-card p-8 text-center text-muted-foreground">
               {tx('rd.noLifestyle', lang)}
             </div>
           ) : (
-            analysis.lifestyleAdvice.map((item, i) => (
+            (analysis.lifestyleAdvice ?? []).map((item, i) => (
               <div key={i} className="rounded-lg border bg-card p-4">
                 <div className="mb-1 flex items-center gap-2">
                   <Badge variant="outline" className="text-xs">
@@ -268,11 +268,11 @@ export function ResultDashboard({
         <div className="space-y-4">
           <div className="rounded-lg border bg-card p-4">
             <h4 className="mb-3 font-semibold">{tx('rd.doctorTitle', lang)}</h4>
-            {analysis.doctorDiscussion.length === 0 ? (
+            {(analysis.doctorDiscussion?.length ?? 0) === 0 ? (
               <p className="text-sm text-muted-foreground">{tx('rd.noDoctor', lang)}</p>
             ) : (
               <ol className="list-decimal space-y-2 pl-5 text-sm">
-                {analysis.doctorDiscussion.map((point, i) => (
+                {(analysis.doctorDiscussion ?? []).map((point, i) => (
                   <li key={i} className="text-muted-foreground">{point}</li>
                 ))}
               </ol>
@@ -314,7 +314,7 @@ export function ResultDashboard({
         totalMarkers={totalMarkers}
         abnormalCount={abnormalCount}
         optimalCount={optimalCount}
-        topFindings={analysis.abnormalFindings.slice(0, 3).map((f) => ({
+        topFindings={(analysis.abnormalFindings ?? []).slice(0, 3).map((f) => ({
           marker: f.marker,
           status: f.status,
         }))}
