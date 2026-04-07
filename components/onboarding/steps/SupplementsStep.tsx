@@ -178,7 +178,7 @@ function useReducedMotion() {
   return reduced;
 }
 
-// Portal dropdown to avoid overflow clipping
+// Portal dropdown
 function DropdownPortal({ children, show }: { children: React.ReactNode; show: boolean }) {
   if (!show || typeof document === "undefined") return null;
   return createPortal(<>{children}</>, document.body);
@@ -268,11 +268,17 @@ export function SupplementsStep({ data, updateData }: Props) {
     setHighlightIdx(-1);
   }, [search, selectedIdStr]);
 
-  // Position dropdown relative to input (portal)
+  // Position dropdown relative to input (portal) — recalculate on scroll
   useEffect(() => {
     if (!showSuggestions || !inputRef.current) return;
-    const rect = inputRef.current.getBoundingClientRect();
-    setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+    const update = () => {
+      const rect = inputRef.current?.getBoundingClientRect();
+      if (rect) setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+    };
+    update();
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => { window.removeEventListener("scroll", update, true); window.removeEventListener("resize", update); };
   }, [showSuggestions, search]);
 
   // Close on outside click

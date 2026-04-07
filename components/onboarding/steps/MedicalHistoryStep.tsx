@@ -271,19 +271,19 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
     setSurgeryHighlight(-1);
   }, [surgerySearch, surgeryIdsStr]);
 
-  // Position dropdowns (portal)
+  // Position dropdowns (portal) — recalculate on scroll
   useEffect(() => {
-    if (showSuggestions && inputRef.current) {
-      const r = inputRef.current.getBoundingClientRect();
-      setDiseaseDropPos({ top: r.bottom + 4, left: r.left, width: r.width });
-    }
+    if (!showSuggestions || !inputRef.current) return;
+    const update = () => { const r = inputRef.current?.getBoundingClientRect(); if (r) setDiseaseDropPos({ top: r.bottom + 4, left: r.left, width: r.width }); };
+    update(); window.addEventListener("scroll", update, true); window.addEventListener("resize", update);
+    return () => { window.removeEventListener("scroll", update, true); window.removeEventListener("resize", update); };
   }, [showSuggestions, customCondition]);
 
   useEffect(() => {
-    if (showSurgerySugg && surgeryInputRef.current) {
-      const r = surgeryInputRef.current.getBoundingClientRect();
-      setSurgeryDropPos({ top: r.bottom + 4, left: r.left, width: r.width });
-    }
+    if (!showSurgerySugg || !surgeryInputRef.current) return;
+    const update = () => { const r = surgeryInputRef.current?.getBoundingClientRect(); if (r) setSurgeryDropPos({ top: r.bottom + 4, left: r.left, width: r.width }); };
+    update(); window.addEventListener("scroll", update, true); window.addEventListener("resize", update);
+    return () => { window.removeEventListener("scroll", update, true); window.removeEventListener("resize", update); };
   }, [showSurgerySugg, surgerySearch]);
 
   // Close dropdowns on outside click

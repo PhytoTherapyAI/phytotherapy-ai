@@ -87,12 +87,15 @@ export function MedicationsStep({ data, updateData }: Props) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Common default dosages for well-known drugs
+  const [autoFillBadge, setAutoFillBadge] = useState(false);
+
+  // Common default dosages for well-known drugs (EN generic + TR brand)
   const DEFAULT_DOSES: Record<string, { dosage: string; frequency: string }> = {
     "metformin": { dosage: "500mg", frequency: "2x daily" },
     "lisinopril": { dosage: "10mg", frequency: "1x daily" },
     "atorvastatin": { dosage: "20mg", frequency: "1x daily" },
     "omeprazole": { dosage: "20mg", frequency: "1x daily" },
+    "pantoprazole": { dosage: "40mg", frequency: "1x daily" },
     "amlodipine": { dosage: "5mg", frequency: "1x daily" },
     "losartan": { dosage: "50mg", frequency: "1x daily" },
     "levothyroxine": { dosage: "50mcg", frequency: "1x daily" },
@@ -102,6 +105,29 @@ export function MedicationsStep({ data, updateData }: Props) {
     "aspirin": { dosage: "100mg", frequency: "1x daily" },
     "ibuprofen": { dosage: "400mg", frequency: "3x daily" },
     "paracetamol": { dosage: "500mg", frequency: "3x daily" },
+    "ramipril": { dosage: "5mg", frequency: "1x daily" },
+    "bisoprolol": { dosage: "5mg", frequency: "1x daily" },
+    "clopidogrel": { dosage: "75mg", frequency: "1x daily" },
+    "sertraline": { dosage: "50mg", frequency: "1x daily" },
+    "escitalopram": { dosage: "10mg", frequency: "1x daily" },
+    "pregabalin": { dosage: "75mg", frequency: "2x daily" },
+    "gabapentin": { dosage: "300mg", frequency: "3x daily" },
+    "montelukast": { dosage: "10mg", frequency: "1x daily" },
+    "salbutamol": { dosage: "100mcg", frequency: "as needed" },
+    "insulin glargine": { dosage: "10IU", frequency: "1x daily" },
+    // TR brand names → generic match
+    "euthyrox": { dosage: "50mcg", frequency: "1x daily" },
+    "beloc": { dosage: "50mg", frequency: "2x daily" },
+    "concor": { dosage: "5mg", frequency: "1x daily" },
+    "coraspin": { dosage: "100mg", frequency: "1x daily" },
+    "majezik": { dosage: "100mg", frequency: "2x daily" },
+    "parol": { dosage: "500mg", frequency: "3x daily" },
+    "arveles": { dosage: "25mg", frequency: "3x daily" },
+    "glifor": { dosage: "500mg", frequency: "2x daily" },
+    "diovan": { dosage: "80mg", frequency: "1x daily" },
+    "lipitor": { dosage: "20mg", frequency: "1x daily" },
+    "nexium": { dosage: "20mg", frequency: "1x daily" },
+    "lantus": { dosage: "10IU", frequency: "1x daily" },
   };
 
   const selectSuggestion = (suggestion: DrugSuggestion) => {
@@ -109,12 +135,15 @@ export function MedicationsStep({ data, updateData }: Props) {
     if (suggestion.genericName && suggestion.genericName.toLowerCase() !== suggestion.brandName.toLowerCase()) {
       setGenericName(suggestion.genericName);
     }
-    // Auto-fill default dosage if known
+    // Auto-fill default dosage if known (search both generic and brand)
     const generic = (suggestion.genericName || suggestion.brandName).toLowerCase();
-    const match = Object.entries(DEFAULT_DOSES).find(([key]) => generic.includes(key));
+    const brand = suggestion.brandName.toLowerCase();
+    const match = Object.entries(DEFAULT_DOSES).find(([key]) => generic.includes(key) || brand.includes(key));
     if (match) {
       setDosage(match[1].dosage);
       setFrequency(match[1].frequency);
+      setAutoFillBadge(true);
+      setTimeout(() => setAutoFillBadge(false), 2000);
     }
     setBrandSuggestions([]);
     setShowBrandSuggestions(false);
@@ -289,7 +318,10 @@ export function MedicationsStep({ data, updateData }: Props) {
                 />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="dosage" className="text-xs">{tx('onb.dosageLabel', lang)}</Label>
+                <Label htmlFor="dosage" className="text-xs flex items-center gap-2">
+                  {tx('onb.dosageLabel', lang)}
+                  {autoFillBadge && <span className="text-[10px] text-primary font-medium animate-pulse">{lang === "tr" ? "Otomatik dolduruldu" : "Auto-filled"}</span>}
+                </Label>
                 <Input
                   id="dosage"
                   placeholder={tx('onb.dosagePlaceholder', lang)}

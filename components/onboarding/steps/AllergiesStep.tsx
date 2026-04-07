@@ -128,11 +128,17 @@ export function AllergiesStep({ data, updateData }: Props) {
     setShowSuggestions(matches.length > 0);
   }, [allergen, addedNamesStr]);
 
-  // Position dropdown (portal)
+  // Position dropdown (portal) — recalculate on scroll
   useEffect(() => {
     if (!showSuggestions || !inputRef.current) return;
-    const rect = inputRef.current.getBoundingClientRect();
-    setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+    const update = () => {
+      const rect = inputRef.current?.getBoundingClientRect();
+      if (rect) setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+    };
+    update();
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => { window.removeEventListener("scroll", update, true); window.removeEventListener("resize", update); };
   }, [showSuggestions, allergen]);
 
   // Close on outside click
@@ -310,10 +316,15 @@ export function AllergiesStep({ data, updateData }: Props) {
               <div className="space-y-1">
                 <Label className="text-xs">{tx("onb.reactionType", lang)}</Label>
                 <Select value={severity} onValueChange={(v) => v && setSeverity(v)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder={tx("onb.reactionUnknown", lang)} />
+                  <SelectTrigger className="min-w-[180px]">
+                    <SelectValue placeholder={tx("onb.reactionUnknown", lang)}>
+                      {(value: string | null) => {
+                        const opt = REACTION_OPTIONS.find(o => o.value === value);
+                        return opt ? `${opt.emoji} ${tx(opt.key, lang)}` : tx("onb.reactionUnknown", lang);
+                      }}
+                    </SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="max-h-60">
+                  <SelectContent className="max-h-60 min-w-[240px]">
                     {REACTION_OPTIONS.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         {opt.emoji} {tx(opt.key, lang)}
