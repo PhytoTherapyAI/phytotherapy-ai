@@ -523,11 +523,6 @@ export default function ProfilePage() {
                     ⚠️ {allergies.length} {tr ? "Alerji" : allergies.length === 1 ? "Allergy" : "Allergies"}
                   </span>
                 )}
-                {!hasAllergies && !hasAnaphylaxis && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-green-500 px-2.5 py-1 text-[10px] font-bold text-white shadow">
-                    🛡️ {tr ? "Alerji Yok" : "No Allergies"}
-                  </span>
-                )}
                 {isPregnant && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-purple-500 px-2.5 py-1 text-[10px] font-bold text-white shadow">
                     🤰 {tr ? "Gebelik" : "Pregnancy"}
@@ -593,14 +588,13 @@ export default function ProfilePage() {
                         <span className="text-[8px] text-muted-foreground font-medium">/100</span>
                       </div>
                     </div>
-                    {/* Decorative heartbeat SVG */}
-                    <svg width="80" height="24" viewBox="0 0 80 24" className="opacity-60 overflow-hidden">
-                      <motion.path
+                    {/* Decorative heartbeat SVG with glow + continuous motion */}
+                    <svg width="80" height="24" viewBox="0 0 80 24" className="overflow-hidden"
+                      style={{ filter: `drop-shadow(0 0 6px ${scoreColor}99)` }}>
+                      <path
                         d="M0 12 L10 12 L15 4 L20 20 L25 8 L30 16 L35 12 L45 12 L50 4 L55 20 L60 8 L65 16 L70 12 L80 12"
                         fill="none" stroke={scoreColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
-                        initial={{ pathLength: 0, opacity: 0 }}
-                        animate={{ pathLength: 1, opacity: 0.6 }}
-                        transition={{ duration: 2, ease: "easeInOut" }}
+                        strokeDasharray="200" className="ecg-line" style={{ opacity: 0.7 }}
                       />
                     </svg>
                   </div>
@@ -608,26 +602,6 @@ export default function ProfilePage() {
                   <p className="text-[10px] text-muted-foreground font-medium text-center">
                     {tr ? "Canlılık Skoru" : "Vitality Score"}
                   </p>
-
-                  {/* Energy bar */}
-                  <div className="w-full max-w-[160px] space-y-1">
-                    <div className="flex items-center justify-between text-[10px]">
-                      <span className="font-medium" style={{ color: scoreColor }}>{scoreEmoji} {scoreLabel}</span>
-                      <span className="text-muted-foreground">{score}%</span>
-                    </div>
-                    <div className="h-2 rounded-full bg-muted/40 overflow-hidden">
-                      <motion.div
-                        className="h-full rounded-full"
-                        style={{
-                          background: `linear-gradient(90deg, ${scoreColor}, ${scoreColor}aa)`,
-                          boxShadow: `0 0 12px ${scoreColor}66`,
-                        }}
-                        initial={{ width: 0 }}
-                        animate={{ width: `${score}%` }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
-                      />
-                    </div>
-                  </div>
                 </div>
               );
             })()}
@@ -1406,19 +1380,22 @@ export default function ProfilePage() {
           <Card className={`mb-6 ${hasAnaphylaxis ? "border-red-300 dark:border-red-700 border-l-4 border-l-red-500" : allergies.length === 0 ? "border-green-200 dark:border-green-800" : ""}`}
             style={hasAnaphylaxis ? { backgroundColor: "var(--red-50, rgba(254,242,242,0.5))" } : allergies.length === 0 ? { backgroundColor: "var(--green-50, rgba(240,253,244,0.5))" } : {}}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 flex-wrap">
                 {hasAnaphylaxis ? (
                   <span className="animate-pulse">🚨</span>
-                ) : allergies.length === 0 ? (
-                  <span className="text-2xl">🛡️</span>
                 ) : (
                   <AlertTriangle className="h-5 w-5 text-amber-500" />
                 )}
                 {hasAnaphylaxis
                   ? (tr ? "Anafilaksi Uyarısı Aktif" : "Anaphylaxis Alert Active")
                   : allergies.length === 0
-                    ? (tr ? "Bilinen Alerji Yok" : "No Known Allergies")
+                    ? (tr ? "Alerjiler" : "Allergies")
                     : `${allergies.length} ${tr ? "Alerji Tanımlı" : allergies.length === 1 ? "Allergy Defined" : "Allergies Defined"}`}
+                {allergies.length === 0 && !hasAnaphylaxis && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-green-500 px-2.5 py-1 text-[10px] font-bold text-white shadow">
+                    🛡️ {tr ? "Alerji Yok" : "No Allergies"}
+                  </span>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent>
