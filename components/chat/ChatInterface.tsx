@@ -449,8 +449,9 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
+              title={lang === "tr" ? "Günlük sohbet ve hızlı sorular için" : "For daily chat and quick questions"}
             >
-              ⚡ {lang === "tr" ? "Hızlı" : "Fast"}
+              ⚡ Pulse
             </button>
             <button
               onClick={() => setModelMode("quality")}
@@ -459,13 +460,14 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
+              title={lang === "tr" ? "Derinlemesine analiz ve kişisel öneriler için" : "For in-depth analysis and personalized recommendations"}
             >
-              ✨ {lang === "tr" ? "Detaylı" : "Detailed"}
+              🧬 Opus
             </button>
-            <span className="text-[10px] text-muted-foreground ml-1">
+            <span className="text-[10px] text-muted-foreground ml-1 hidden sm:inline">
               {modelMode === "fast"
-                ? (lang === "tr" ? "Daha hızlı yanıt" : "Faster response")
-                : (lang === "tr" ? "Daha kapsamlı analiz" : "More thorough analysis")}
+                ? (lang === "tr" ? "Günlük sohbet ve hızlı sorular" : "Daily chat and quick questions")
+                : (lang === "tr" ? "Derinlemesine analiz ve kişisel öneriler" : "In-depth analysis and personalized recommendations")}
             </span>
           </div>
         )}

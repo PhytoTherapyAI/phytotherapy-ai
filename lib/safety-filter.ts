@@ -150,46 +150,70 @@ const YELLOW_CODE_TR = [
 // ═══════════════════════════════════════════════
 
 const SAFE_CONTEXTS_EN = [
-  // Menstrual
+  // Menstrual / Gynecological
   "period", "menstrual", "menstruation", "period bleeding", "period cramps",
-  "menstrual cramps", "period pain",
-  // Minor bleeding / dental
+  "menstrual cramps", "period pain", "spotting", "light period",
+  // Dental / Oral
   "gum bleeding", "gums bleed", "gums when brushing", "bleeding when brushing",
   "when i brush", "while brushing", "after brushing", "flossing",
-  "nose bleed", "nosebleed",
+  "wisdom tooth", "dental", "dentist", "toothache", "mouthwash",
+  "braces", "gum disease", "gingivitis",
+  // Nasal
+  "nose bleed", "nosebleed", "dry nose", "picking nose",
+  // Minor skin / wound
   "hemorrhoid", "paper cut", "small cut", "shaving cut",
-  "pimple", "acne", "hangnail", "minor cut",
-  // Exercise related
+  "pimple", "acne", "hangnail", "minor cut", "scratch", "scrape",
+  "razor burn", "ingrown hair", "blister", "mosquito bite", "insect bite",
+  // Exercise / Exertion
   "after running", "after exercise", "climbing stairs", "out of shape",
   "muscle soreness", "sore from exercise", "after gym", "after workout",
+  "post workout", "leg day", "cramp after exercise", "side stitch",
+  // Digestive (minor)
+  "gas pain", "ate too much", "food didn't agree", "bloated", "bloating",
+  "indigestion", "heartburn", "acid reflux", "constipation",
   // Common minor
   "mild fever", "low grade fever", "slight temperature",
   "tension headache", "stress headache", "hangover",
   "after coffee", "after caffeine", "after energy drink",
-  "period cramps", "gas pain", "ate too much", "food didn't agree",
-  "stood up too fast", "haven't eaten", "hungry",
-  "migraine as usual",
+  "period cramps", "stood up too fast", "haven't eaten", "hungry",
+  "migraine as usual", "seasonal allergy", "hay fever", "runny nose",
+  "common cold", "mild cold", "sore throat", "dry throat",
+  "eye strain", "screen fatigue", "tired eyes",
+  "sunburn", "mild sunburn", "chapped lips", "dry skin",
 ];
 
 const SAFE_CONTEXTS_TR = [
-  // Regl
+  // Regl / Jinekolojik
   "regl", "adet", "âdet", "mensturasyon", "menstrüel",
   "regl kanaması", "adet kanaması", "adet ağrısı", "regl ağrısı",
-  // Hafif kanama / diş
+  "lekelenme", "hafif adet", "adet düzensizliği",
+  // Diş / Ağız
   "diş eti", "diş fırça", "fırçalarken", "fırçalayınca", "diş ipi",
   "dişimi fırçalarken", "fırçaladığımda", "fırçaladıktan sonra",
-  "burun kanaması", "basur", "hemoroid",
-  "kesik", "küçük kesik", "tıraş", "sivilce", "hafif kanama",
-  // Egzersiz
+  "diş ağrısı", "dişçi", "diş hekimi", "ağız gargarası",
+  "diş teli", "gingivit", "yirmilik diş", "diş çürüğü",
+  // Burun
+  "burun kanaması", "kuru burun", "burun karıştır",
+  // Hafif cilt / yara
+  "basur", "hemoroid", "kesik", "küçük kesik", "tıraş", "sivilce",
+  "hafif kanama", "sıyrık", "çizik", "jilet", "batık kıl",
+  "mantar", "uçuk", "böcek ısırığı", "sivrisinek",
+  // Egzersiz / Efor
   "koşu sonrası", "merdiven çıkınca", "egzersiz sonrası", "spor sonrası",
-  "kas ağrısı", "spordan sonra ağrı",
+  "kas ağrısı", "spordan sonra ağrı", "antrenmandan sonra",
+  "bacak günü", "kramp egzersiz", "yan sancı koşu",
+  // Sindirim (hafif)
+  "gaz sancısı", "çok yedim", "hazımsızlık", "mide ekşimesi",
+  "şişkinlik", "kabızlık", "mide yanması", "reflü",
   // Hafif durumlar
   "hafif ateş", "düşük ateş", "biraz ateşim var",
   "stres baş ağrısı", "gerilim baş ağrısı", "akşamdan kalma",
   "kahve sonrası", "kafein", "enerji içeceği",
-  "adet krampı", "gaz sancısı", "çok yedim", "hazımsızlık", "mide ekşimesi",
-  "hızlı kalktım", "yemek yemedim", "açlıktan",
-  "her zamanki migren",
+  "adet krampı", "hızlı kalktım", "yemek yemedim", "açlıktan",
+  "her zamanki migren", "mevsimsel alerji", "saman nezlesi",
+  "soğuk algınlığı", "hafif grip", "boğaz ağrısı", "kuru boğaz",
+  "göz yorgunluğu", "ekran yorgunluğu",
+  "güneş yanığı", "hafif yanık", "dudak çatlağı", "kuru cilt",
 ];
 
 // ═══════════════════════════════════════════════
@@ -253,9 +277,9 @@ export function getEmergencyMessage(language: "en" | "tr"): string {
 
 export function getYellowWarning(language: "en" | "tr"): string {
   if (language === "tr") {
-    return "\n\n⚠️ **Önemli Uyarı:** Bu bilgiler genel bilgilendirme amaçlıdır ve doktor muayenesinin yerini tutmaz. Belirtileriniz devam ederse veya kötüleşirse lütfen **doktorunuza başvurun**. Acil bir durum hissederseniz 112'yi arayın.";
+    return "\n\n⚠️ Bu bir acil durum olabilir. Lütfen **112'yi arayın** veya **doktorunuza danışın**.";
   }
-  return "\n\n⚠️ **Important Notice:** This information is for general guidance only and does not replace a doctor's examination. If your symptoms persist or worsen, please **consult your doctor**. If you feel it's an emergency, call 112/911.";
+  return "\n\n⚠️ This could be an emergency. Please **call 112/911** or **consult your doctor**.";
 }
 
 // ═══════════════════════════════════════════════
