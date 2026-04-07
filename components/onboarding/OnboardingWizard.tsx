@@ -225,17 +225,24 @@ export function OnboardingWizard({ profile }: Props) {
     ? [0, 1, 2, 4, 5, 6, 7, 8]
     : [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
+  // Clamp restored step to valid bounds (gender change can shrink step count)
+  const maxStep = showLayer2 ? LAYER1_STEPS.length : LAYER1_STEPS.length - 1;
+  if (currentStep > maxStep) {
+    setCurrentStep(LAYER1_STEPS.length - 1);
+  }
+  const safeStep = Math.min(currentStep, maxStep);
+
   const totalSteps = showLayer2 ? LAYER1_STEPS.length + 1 : LAYER1_STEPS.length;
-  const isLayer2 = currentStep === LAYER1_STEPS.length;
-  const currentStepInfo = isLayer2 ? LAYER2_STEP : LAYER1_STEPS[currentStep];
-  const progress = ((currentStep + 1) / totalSteps) * 100;
+  const isLayer2 = safeStep === LAYER1_STEPS.length && showLayer2;
+  const currentStepInfo = isLayer2 ? LAYER2_STEP : LAYER1_STEPS[safeStep];
+  const progress = ((safeStep + 1) / totalSteps) * 100;
 
   // Map visible step index to original step index for rendering
   const getOriginalStepIndex = (visibleIndex: number): number => {
     if (!skipPregnancy) return visibleIndex;
     return visibleIndex >= 3 ? visibleIndex + 1 : visibleIndex;
   };
-  const origStep = getOriginalStepIndex(currentStep);
+  const origStep = getOriginalStepIndex(safeStep);
 
   const updateData = (updates: Partial<OnboardingData>) => {
     setData((prev) => ({ ...prev, ...updates }));
@@ -456,7 +463,7 @@ export function OnboardingWizard({ profile }: Props) {
     }
   };
 
-  const CurrentStepIcon = isLayer2 ? Sparkles : STEP_ICONS[stepIconIndices[currentStep]] || User;
+  const CurrentStepIcon = isLayer2 ? Sparkles : STEP_ICONS[stepIconIndices[safeStep]] || User;
 
   // Show celebration modals (badges earned)
   if (celebrating) {
@@ -497,7 +504,7 @@ export function OnboardingWizard({ profile }: Props) {
       {/* 3-Phase Progress Bar */}
       {(() => {
         const phaseKeys = ["onb.phaseBasics", "onb.phaseHealth", "onb.phaseConsent"] as const;
-        const currentOrigStep = isLayer2 ? 9 : getOriginalStepIndex(currentStep);
+        const currentOrigStep = isLayer2 ? 9 : getOriginalStepIndex(safeStep);
         const currentPhase = isLayer2 ? 2 : STEP_PHASE[currentOrigStep] ?? 0;
 
         return (
@@ -540,7 +547,7 @@ export function OnboardingWizard({ profile }: Props) {
             </div>
             {/* Step counter */}
             <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>{tx("onb.stepOf", lang)} {currentStep + 1} {tx("onb.of", lang)} {totalSteps}</span>
+              <span>{tx("onb.stepOf", lang)} {safeStep + 1} {tx("onb.of", lang)} {totalSteps}</span>
               <span className="font-medium text-foreground">{Math.round(progress)}%</span>
             </div>
           </div>
@@ -615,7 +622,7 @@ export function OnboardingWizard({ profile }: Props) {
         <Button
           variant="outline"
           onClick={handleBack}
-          disabled={currentStep === 0 || isSubmitting}
+          disabled={safeStep === 0 || isSubmitting}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           {tx("onb.back", lang)}
@@ -635,7 +642,7 @@ export function OnboardingWizard({ profile }: Props) {
           >
             {isSubmitting ? (
               tx("onb.saving", lang)
-            ) : currentStep >= totalSteps - 1 ? (
+            ) : safeStep >= totalSteps - 1 ? (
               <>
                 <CheckCircle2 className="mr-2 h-4 w-4" />
                 {tx("onb.complete", lang)}
