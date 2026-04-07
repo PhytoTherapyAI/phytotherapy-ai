@@ -2,12 +2,19 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { X, Stethoscope, ShieldAlert, Scissors, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Portal dropdown to avoid overflow clipping
+function DropdownPortal({ children, show }: { children: React.ReactNode; show: boolean }) {
+  if (!show || typeof document === "undefined") return null;
+  return createPortal(<>{children}</>, document.body);
+}
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
@@ -65,13 +72,14 @@ const SURGERY_DB: SurgeryDef[] = [
   // Cardiovascular
   { id: "Bypass Surgery", tr: "Bypass Ameliyatı", en: "Bypass Surgery", cat: "cardio" },
   { id: "Heart Valve Surgery", tr: "Kalp Kapak Ameliyatı", en: "Heart Valve Surgery", cat: "cardio" },
-  { id: "Pacemaker Implant", tr: "Pace Maker Takılması", en: "Pacemaker Implant", cat: "cardio" },
+  { id: "Pacemaker Implant", tr: "Kalp Pili Takılması (Pace Maker)", en: "Pacemaker Implant", cat: "cardio" },
   { id: "Stent Placement", tr: "Stent", en: "Stent Placement", cat: "cardio" },
   // General Surgery
-  { id: "Appendectomy", tr: "Apandis Ameliyatı", en: "Appendectomy", cat: "general" },
-  { id: "Cholecystectomy", tr: "Safra Kesesi Ameliyatı", en: "Cholecystectomy", cat: "general" },
+  { id: "Appendectomy", tr: "Apandis Ameliyatı (Apendektomi)", en: "Appendectomy", cat: "general" },
+  { id: "Cholecystectomy", tr: "Safra Kesesi Ameliyatı (Kolesistektomi)", en: "Cholecystectomy", cat: "general" },
   { id: "Hernia Repair", tr: "Fıtık Ameliyatı", en: "Hernia Repair", cat: "general" },
-  { id: "Bowel Resection", tr: "Bağırsak Rezeksiyonu", en: "Bowel Resection", cat: "general" },
+  { id: "Inguinal Hernia", tr: "Kasık Fıtığı Ameliyatı", en: "Inguinal Hernia Repair", cat: "general" },
+  { id: "Bowel Resection", tr: "Bağırsak Kesme Ameliyatı (Rezeksiyon)", en: "Bowel Resection", cat: "general" },
   // Bariatric / Digestive
   { id: "Bariatric Surgery", tr: "Bariatrik Cerrahi", en: "Bariatric Surgery", cat: "bariatric" },
   { id: "Gastric Sleeve", tr: "Gastrik Sleeve", en: "Gastric Sleeve", cat: "bariatric" },
@@ -81,24 +89,28 @@ const SURGERY_DB: SurgeryDef[] = [
   { id: "Knee Replacement", tr: "Diz Protezi", en: "Knee Replacement", cat: "ortho" },
   { id: "Hip Replacement", tr: "Kalça Protezi", en: "Hip Replacement", cat: "ortho" },
   { id: "Spinal Surgery", tr: "Omurga Ameliyatı", en: "Spinal Surgery", cat: "ortho" },
+  { id: "Spondylolisthesis Surgery", tr: "Omurga Kayması Ameliyatı (Spondilolistezis)", en: "Spondylolisthesis Surgery", cat: "ortho" },
   { id: "Meniscus Surgery", tr: "Menisküs Ameliyatı", en: "Meniscus Surgery", cat: "ortho" },
   { id: "Fracture Fixation", tr: "Kırık Tespiti (Plak/Vida)", en: "Fracture Fixation", cat: "ortho" },
   // Urology / Gynecology
   { id: "Prostate Surgery", tr: "Prostat Ameliyatı", en: "Prostate Surgery", cat: "urogyn" },
   { id: "Kidney Stone Surgery", tr: "Böbrek Taşı Ameliyatı", en: "Kidney Stone Surgery", cat: "urogyn" },
-  { id: "Hysterectomy", tr: "Histerektomi", en: "Hysterectomy", cat: "urogyn" },
+  { id: "Varicocele Surgery", tr: "Varikosel Ameliyatı", en: "Varicocele Surgery", cat: "urogyn" },
+  { id: "Hysterectomy", tr: "Rahim Ameliyatı (Histerektomi)", en: "Hysterectomy", cat: "urogyn" },
   { id: "Cesarean Section", tr: "Sezaryen", en: "Cesarean Section", cat: "urogyn" },
   { id: "Ovarian Cyst Surgery", tr: "Over Kisti Ameliyatı", en: "Ovarian Cyst Surgery", cat: "urogyn" },
-  { id: "Tubal Ligation", tr: "Tüp Ligasyonu", en: "Tubal Ligation", cat: "urogyn" },
+  { id: "Tubal Ligation", tr: "Tüp Bağlama (Ligasyon)", en: "Tubal Ligation", cat: "urogyn" },
   // Neurology
   { id: "Brain Tumor Surgery", tr: "Beyin Tümörü Ameliyatı", en: "Brain Tumor Surgery", cat: "neuro" },
-  { id: "Disc Herniation Surgery", tr: "Disk Hernisi Ameliyatı", en: "Disc Herniation Surgery", cat: "neuro" },
-  { id: "Carpal Tunnel Surgery", tr: "Karpal Tünel Ameliyatı", en: "Carpal Tunnel Surgery", cat: "neuro" },
+  { id: "Disc Herniation Surgery", tr: "Bel/Boyun Fıtığı Ameliyatı (Disk Hernisi)", en: "Disc Herniation Surgery", cat: "neuro" },
+  { id: "Carpal Tunnel Surgery", tr: "Bilek Sıkışma Siniri Ameliyatı (Karpal Tünel)", en: "Carpal Tunnel Surgery", cat: "neuro" },
   // Eye / ENT
   { id: "Cataract Surgery", tr: "Katarakt Ameliyatı", en: "Cataract Surgery", cat: "eyeent" },
-  { id: "LASIK", tr: "Lazik", en: "LASIK", cat: "eyeent" },
-  { id: "Tonsillectomy", tr: "Bademcik Ameliyatı", en: "Tonsillectomy", cat: "eyeent" },
+  { id: "LASIK", tr: "Lazer Göz Ameliyatı (LASIK)", en: "LASIK", cat: "eyeent" },
+  { id: "Tonsillectomy", tr: "Bademcik Ameliyatı (Tonsillektomi)", en: "Tonsillectomy", cat: "eyeent" },
   { id: "Sinus Surgery", tr: "Sinüs Ameliyatı", en: "Sinus Surgery", cat: "eyeent" },
+  { id: "Strabismus Surgery", tr: "Şaşılık Ameliyatı", en: "Strabismus Surgery", cat: "eyeent" },
+  { id: "Ear Tube Insertion", tr: "Kulak Tüpü Takılması", en: "Ear Tube Insertion", cat: "eyeent" },
   // Other
   { id: "Thyroid Surgery", tr: "Tiroid Ameliyatı", en: "Thyroid Surgery", cat: "other" },
   { id: "Breast Surgery", tr: "Meme Ameliyatı", en: "Breast Surgery", cat: "other" },
@@ -190,6 +202,8 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
   const [showSurgerySugg, setShowSurgerySugg] = useState(false);
   const [surgeryHighlight, setSurgeryHighlight] = useState(-1);
   const [editingYear, setEditingYear] = useState<string | null>(null);
+  const [diseaseDropPos, setDiseaseDropPos] = useState({ top: 0, left: 0, width: 0 });
+  const [surgeryDropPos, setSurgeryDropPos] = useState({ top: 0, left: 0, width: 0 });
   const surgeryDropRef = useRef<HTMLDivElement>(null);
   const surgeryInputRef = useRef<HTMLInputElement>(null);
 
@@ -220,20 +234,24 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
     return id;
   }, [lang]);
 
+  // Stable dependency strings
+  const conditionsStr = data.chronic_conditions.join(",");
+  const surgeryIdsStr = surgeryEntries.map(e => e.parsed.id).join(",");
+
   // ── Disease autocomplete ──
   useEffect(() => {
     if (customCondition.length < 2) {
       setSuggestions([]); setShowSuggestions(false); setHighlightIdx(-1); return;
     }
     const q = trLower(customCondition);
-    const already = new Set(data.chronic_conditions);
+    const already = new Set(conditionsStr.split(","));
     const matches = DISEASE_AUTOCOMPLETE.filter(d =>
       !already.has(d.id) && (trLower(d.tr).includes(q) || trLower(d.en).includes(q))
     );
     setSuggestions(matches.slice(0, 6));
     setShowSuggestions(true);
     setHighlightIdx(-1);
-  }, [customCondition, data.chronic_conditions]);
+  }, [customCondition, conditionsStr]);
 
   // ── Surgery autocomplete ──
   useEffect(() => {
@@ -241,13 +259,29 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
       setSurgerySuggestions([]); setShowSurgerySugg(false); setSurgeryHighlight(-1); return;
     }
     const q = trLower(surgerySearch);
+    const selIds = new Set(surgeryIdsStr.split(","));
     const matches = SURGERY_DB.filter(s =>
-      !selectedSurgeryIds.has(s.id) && (trLower(s.tr).includes(q) || trLower(s.en).includes(q))
+      !selIds.has(s.id) && (trLower(s.tr).includes(q) || trLower(s.en).includes(q))
     );
     setSurgerySuggestions(matches.slice(0, 6));
     setShowSurgerySugg(true);
     setSurgeryHighlight(-1);
-  }, [surgerySearch, selectedSurgeryIds]);
+  }, [surgerySearch, surgeryIdsStr]);
+
+  // Position dropdowns (portal)
+  useEffect(() => {
+    if (showSuggestions && inputRef.current) {
+      const r = inputRef.current.getBoundingClientRect();
+      setDiseaseDropPos({ top: r.bottom + 4, left: r.left, width: r.width });
+    }
+  }, [showSuggestions, customCondition]);
+
+  useEffect(() => {
+    if (showSurgerySugg && surgeryInputRef.current) {
+      const r = surgeryInputRef.current.getBoundingClientRect();
+      setSurgeryDropPos({ top: r.bottom + 4, left: r.left, width: r.width });
+    }
+  }, [showSurgerySugg, surgerySearch]);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -471,9 +505,10 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
                 onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
                 autoComplete="off"
                 className="focus:ring-2 focus:ring-green-400/40 focus:border-green-400" />
-              {showSuggestions && (suggestions.length > 0 || showFreeTextOption) && (
-                <div ref={dropdownRef}
-                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-lg border bg-background shadow-lg" role="listbox">
+              <DropdownPortal show={showSuggestions && (suggestions.length > 0 || showFreeTextOption)}>
+                <div ref={dropdownRef} role="listbox"
+                  style={{ position: "fixed", top: diseaseDropPos.top, left: diseaseDropPos.left, width: diseaseDropPos.width, zIndex: 9999 }}
+                  className="max-h-56 overflow-y-auto rounded-lg border bg-background shadow-lg">
                   {suggestions.map((s, idx) => (
                     <button key={s.id} type="button" role="option" aria-selected={idx === highlightIdx}
                       onClick={() => addConditionFromAutocomplete(s.id)}
@@ -493,7 +528,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
                     </button>
                   )}
                 </div>
-              )}
+              </DropdownPortal>
             </div>
           </div>
 
@@ -539,9 +574,10 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
                   autoComplete="off"
                   className="pl-9 focus:ring-2 focus:ring-green-400/40 focus:border-green-400" />
               </div>
-              {showSurgerySugg && (surgerySuggestions.length > 0 || showSurgeryFreeText) && (
-                <div ref={surgeryDropRef}
-                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-lg border bg-background shadow-lg" role="listbox">
+              <DropdownPortal show={showSurgerySugg && (surgerySuggestions.length > 0 || showSurgeryFreeText)}>
+                <div ref={surgeryDropRef} role="listbox"
+                  style={{ position: "fixed", top: surgeryDropPos.top, left: surgeryDropPos.left, width: surgeryDropPos.width, zIndex: 9999 }}
+                  className="max-h-56 overflow-y-auto rounded-lg border bg-background shadow-lg">
                   {surgerySuggestions.map((s, idx) => (
                     <button key={s.id} type="button" role="option" aria-selected={idx === surgeryHighlight}
                       onClick={() => addSurgery(s.id)}
@@ -561,7 +597,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
                     </button>
                   )}
                 </div>
-              )}
+              </DropdownPortal>
             </div>
 
             {/* Selected surgeries with year + remove */}

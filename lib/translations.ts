@@ -1833,6 +1833,13 @@ const t: Record<string, TranslationEntry> = {
   "onb.suppCatHerbal": { en: "Herbal", tr: "Bitkisel" },
   "onb.suppCatOmega": { en: "Fatty Acids", tr: "Yağ Asitleri" },
   "onb.suppCatProtein": { en: "Protein & Sports", tr: "Protein & Spor" },
+  "onb.suppCatAmino": { en: "Amino Acids", tr: "Amino Asitler" },
+  "onb.suppCatAdaptogen": { en: "Adaptogens", tr: "Adaptogenler" },
+  "onb.suppCatProbiotic": { en: "Probiotic / Prebiotic", tr: "Probiyotik / Prebiyotik" },
+  "onb.suppCatAntioxidant": { en: "Antioxidants", tr: "Antioksidanlar" },
+  "onb.suppCatHormone": { en: "Hormone Support", tr: "Hormon Desteği" },
+  "onb.suppCatBoneJoint": { en: "Bone & Joint", tr: "Kemik & Eklem" },
+  "onb.suppCatDigestive": { en: "Digestive", tr: "Sindirim" },
   // Dose units
   "onb.unitMg": { en: "mg", tr: "mg" },
   "onb.unitMcg": { en: "mcg", tr: "mcg" },
