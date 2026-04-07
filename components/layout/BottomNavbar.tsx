@@ -21,7 +21,7 @@ export function BottomNavbar() {
   if (hiddenPaths.some(p => pathname.startsWith(p))) return null
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-t border-slate-100 safe-area-pb md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-background/90 backdrop-blur-md border-t border-border safe-area-pb md:hidden">
       <div className="flex items-center justify-around px-2 py-1.5">
         {tabs.map((tab) => {
           const isActive = pathname === tab.href || (tab.href !== "/" && pathname.startsWith(tab.href))
@@ -41,8 +41,8 @@ export function BottomNavbar() {
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
               )}
-              <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-primary" : "text-slate-400"}`} />
-              <span className={`text-[10px] font-medium transition-colors ${isActive ? "text-primary" : "text-slate-400"}`}>
+              <Icon className={`w-5 h-5 transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+              <span className={`text-[10px] font-medium transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}>
                 {tab.label}
               </span>
             </button>

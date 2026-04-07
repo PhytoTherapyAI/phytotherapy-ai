@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import type { OnboardingData, SupplementEntry } from "../OnboardingWizard";
+import { SUPPLEMENT_NAME_MAP, SUPPLEMENT_NAME_TR } from "@/lib/supplement-data";
 
 interface Props {
   data: OnboardingData;
@@ -171,9 +172,11 @@ const FREQUENCIES = [
   { value: "irregular", key: "onb.freqIrregular" },
 ] as const;
 
-const reducedMotion = typeof window !== "undefined"
-  ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
-  : false;
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => { setReduced(!!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches); }, []);
+  return reduced;
+}
 
 // Portal dropdown to avoid overflow clipping
 function DropdownPortal({ children, show }: { children: React.ReactNode; show: boolean }) {
@@ -183,6 +186,7 @@ function DropdownPortal({ children, show }: { children: React.ReactNode; show: b
 
 export function SupplementsStep({ data, updateData }: Props) {
   const { lang } = useLang();
+  const reducedMotion = useReducedMotion();
   const [search, setSearch] = useState("");
   const [suggestions, setSuggestions] = useState<SupplementDef[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -196,17 +200,70 @@ export function SupplementsStep({ data, updateData }: Props) {
 
   const getName = useCallback((def: SupplementDef) => lang === "tr" ? def.tr : def.en, [lang]);
 
-  // ── Autocomplete — search full DB ──
+  // ── Autocomplete — search local DB + supplement-data.ts maps ──
   useEffect(() => {
     if (search.length < 2) {
       setSuggestions([]); setShowSuggestions(false); setHighlightIdx(-1); return;
     }
     const selectedIds = new Set(selectedIdStr.split(","));
     const q = trLower(search);
-    const matches = SUPPLEMENT_DB.filter(s =>
+
+    // 1) Search hardcoded SUPPLEMENT_DB first
+    const dbMatches = SUPPLEMENT_DB.filter(s =>
       !selectedIds.has(s.id) && (trLower(s.tr).includes(q) || trLower(s.en).includes(q))
     );
-    setSuggestions(matches.slice(0, 6));
+
+    // 2) Search SUPPLEMENT_NAME_MAP (TR→EN) and SUPPLEMENT_NAME_TR (EN→TR) for extra results
+    const dbIds = new Set(dbMatches.map(s => s.id));
+    const dbNames = new Set(SUPPLEMENT_DB.map(s => trLower(s.tr)).concat(SUPPLEMENT_DB.map(s => trLower(s.en))));
+    const extraMatches: SupplementDef[] = [];
+
+    // Infer category from English name
+    const inferCat = (en: string): SupCat => {
+      const l = en.toLowerCase();
+      if (l.includes("vitamin") || l.includes("folat") || l.includes("biotin")) return "vitamin";
+      if (/iron|zinc|magnesium|calcium|selenium|chromium|potassium|iodine|boron|copper|manganese/i.test(l)) return "vitamin";
+      if (/omega|fish oil|krill|flaxseed|mct oil|evening primrose/i.test(l)) return "omega";
+      if (/whey|creatine|bcaa|eaa|collagen|hmb|protein/i.test(l)) return "protein";
+      if (/l-\w+|taurine|glycine|nac|gaba|5-htp/i.test(l)) return "amino_acid";
+      if (/rhodiola|ashwagandha|maca|bacopa|lion|reishi|cordyceps|chaga|holy basil|tongkat/i.test(l)) return "adaptogen";
+      if (/probiotic|lactobacill|bifidobacter/i.test(l)) return "probiotic";
+      if (/coq10|resveratrol|quercetin|alpha lipoic|astaxanthin|pqq|nmn/i.test(l)) return "antioxidant";
+      if (/glucosamine|chondroitin|msm|silica|hyaluronic/i.test(l)) return "bone_joint";
+      if (/enzyme|betaine|charcoal|psyllium|spirulina|chlorella/i.test(l)) return "digestive";
+      if (/dhea|melatonin|pregnenolone|sam-e/i.test(l)) return "hormone";
+      return "herbal";
+    };
+
+    // TR→EN map: keys are Turkish names, values are English names
+    for (const [trName, enName] of Object.entries(SUPPLEMENT_NAME_MAP)) {
+      if (extraMatches.length >= 6) break;
+      const id = `map_${enName.toLowerCase().replace(/\s+/g, "_")}`;
+      if (selectedIds.has(id)) continue;
+      if (dbNames.has(trLower(trName)) || dbNames.has(trLower(enName))) continue;
+      if (trLower(trName).includes(q) || trLower(enName).includes(q)) {
+        if (!extraMatches.some(e => e.id === id)) {
+          const trDisplay = trName.charAt(0).toUpperCase() + trName.slice(1);
+          extraMatches.push({ id, tr: trDisplay, en: enName, category: inferCat(enName) });
+        }
+      }
+    }
+
+    // EN→TR map: keys are English names, values are Turkish names
+    for (const [enName, trName] of Object.entries(SUPPLEMENT_NAME_TR)) {
+      if (extraMatches.length >= 6) break;
+      const id = `map_${enName.toLowerCase().replace(/\s+/g, "_")}`;
+      if (selectedIds.has(id)) continue;
+      if (dbNames.has(trLower(trName)) || dbNames.has(trLower(enName))) continue;
+      if (extraMatches.some(e => e.id === id)) continue;
+      if (trLower(trName).includes(q) || trLower(enName).includes(q)) {
+        extraMatches.push({ id, tr: trName, en: enName.charAt(0).toUpperCase() + enName.slice(1), category: inferCat(enName) });
+      }
+    }
+
+    // 3) Merge: DB matches first, then extras, max 6 total
+    const combined = [...dbMatches, ...extraMatches.filter(e => !dbIds.has(e.id))];
+    setSuggestions(combined.slice(0, 6));
     setShowSuggestions(true);
     setHighlightIdx(-1);
   }, [search, selectedIdStr]);
@@ -281,11 +338,6 @@ export function SupplementsStep({ data, updateData }: Props) {
         const s = suggestions[highlightIdx]; addSupplement(s.id, getName(s));
       } else addCustom();
     } else if (e.key === "Escape") setShowSuggestions(false);
-  };
-
-  const getFreqLabel = (val: string) => {
-    const f = FREQUENCIES.find(fr => fr.value === val);
-    return f ? tx(f.key, lang) : val;
   };
 
   const selectedIds = new Set(entries.map(e => e.id));
@@ -413,7 +465,7 @@ export function SupplementsStep({ data, updateData }: Props) {
                         <Select value={entry.frequency || "daily"}
                           onValueChange={(v) => updateEntry(entry.id, { frequency: v as SupplementEntry["frequency"] })}>
                           <SelectTrigger className="h-8 text-xs flex-1 min-w-[100px]">
-                            <SelectValue>{getFreqLabel(entry.frequency || "daily")}</SelectValue>
+                            <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
                             {FREQUENCIES.map(f => (<SelectItem key={f.value} value={f.value}>{tx(f.key, lang)}</SelectItem>))}

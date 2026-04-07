@@ -81,9 +81,11 @@ const REACTION_OPTIONS = [
   { value: "unknown", key: "onb.reactionUnknown", emoji: "❓" },
 ];
 
-const reducedMotion = typeof window !== "undefined"
-  ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
-  : false;
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => { setReduced(!!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches); }, []);
+  return reduced;
+}
 
 // Portal dropdown
 function DropdownPortal({ children, show }: { children: React.ReactNode; show: boolean }) {
@@ -93,6 +95,7 @@ function DropdownPortal({ children, show }: { children: React.ReactNode; show: b
 
 export function AllergiesStep({ data, updateData }: Props) {
   const { lang } = useLang();
+  const reducedMotion = useReducedMotion();
   const [allergen, setAllergen] = useState("");
   const [severity, setSeverity] = useState("unknown");
   const [suggestions, setSuggestions] = useState<AllergenDef[]>([]);
@@ -103,8 +106,12 @@ export function AllergiesStep({ data, updateData }: Props) {
 
   const getName = useCallback((def: AllergenDef) => lang === "tr" ? def.tr : def.en, [lang]);
 
+  // Defensive: ensure allergies is always an array
+  const allergies = Array.isArray(data.allergies) ? data.allergies : [];
+  const noAllergies = data.no_allergies === true;
+
   // Stable string for dependency tracking
-  const addedNamesStr = data.allergies.map(a => a.allergen.toLowerCase()).join(",");
+  const addedNamesStr = allergies.map(a => a.allergen.toLowerCase()).join(",");
 
   // Autocomplete filter
   useEffect(() => {
@@ -147,25 +154,25 @@ export function AllergiesStep({ data, updateData }: Props) {
 
     // Anaphylaxis downgrade warning
     if (s === "intolerance") {
-      const existing = data.allergies.find(a => a.allergen.toLowerCase() === n.toLowerCase());
+      const existing = allergies.find(a => a.allergen.toLowerCase() === n.toLowerCase());
       if (existing?.severity === "anaphylaxis") {
         if (typeof window !== "undefined" && !window.confirm(tx("onb.anaphylaxisWarning", lang))) return;
       }
     }
 
-    const existingIdx = data.allergies.findIndex(a => a.allergen.toLowerCase() === n.toLowerCase());
+    const existingIdx = allergies.findIndex(a => a.allergen.toLowerCase() === n.toLowerCase());
     if (existingIdx >= 0) {
-      const updated = [...data.allergies];
+      const updated = [...allergies];
       updated[existingIdx] = { allergen: n, severity: s };
       updateData({ allergies: updated, no_allergies: false });
     } else {
-      updateData({ allergies: [...data.allergies, { allergen: n, severity: s }], no_allergies: false });
+      updateData({ allergies: [...allergies, { allergen: n, severity: s }], no_allergies: false });
     }
     setAllergen(""); setSeverity("unknown");
   };
 
   const removeAllergy = (index: number) => {
-    updateData({ allergies: data.allergies.filter((_, i) => i !== index) });
+    updateData({ allergies: allergies.filter((_, i) => i !== index) });
   };
 
   const getReactionLabel = (val: string) => {
@@ -175,16 +182,16 @@ export function AllergiesStep({ data, updateData }: Props) {
 
   const quickAddChip = (def: AllergenDef, isSensitivity: boolean) => {
     const name = getName(def);
-    const addedSet = new Set(data.allergies.map(a => a.allergen.toLowerCase()));
+    const addedSet = new Set(allergies.map(a => a.allergen.toLowerCase()));
     if (addedSet.has(name.toLowerCase())) {
-      const idx = data.allergies.findIndex(a => a.allergen.toLowerCase() === name.toLowerCase());
+      const idx = allergies.findIndex(a => a.allergen.toLowerCase() === name.toLowerCase());
       if (idx >= 0) removeAllergy(idx);
     } else {
       addAllergy(name, isSensitivity ? "intolerance" : "unknown");
     }
   };
 
-  const addedSet = new Set(data.allergies.map(a => a.allergen.toLowerCase()));
+  const addedSet = new Set(allergies.map(a => a.allergen.toLowerCase()));
 
   return (
     <div className="space-y-4">
@@ -193,14 +200,14 @@ export function AllergiesStep({ data, updateData }: Props) {
       </p>
 
       <div className="flex items-center space-x-2">
-        <Checkbox id="no-allergies" checked={data.no_allergies}
-          onCheckedChange={(checked) => updateData({ no_allergies: checked === true, allergies: checked === true ? [] : data.allergies })} />
+        <Checkbox id="no-allergies" checked={noAllergies}
+          onCheckedChange={(checked) => updateData({ no_allergies: checked === true, allergies: checked === true ? [] : allergies })} />
         <Label htmlFor="no-allergies" className="text-sm font-normal">
           {tx("onb.noAllergies", lang)}
         </Label>
       </div>
 
-      {!data.no_allergies && (
+      {!noAllergies && (
         <>
           {/* ══ Allergy Chips ══ */}
           <div className="space-y-3">
@@ -245,10 +252,10 @@ export function AllergiesStep({ data, updateData }: Props) {
           </div>
 
           {/* ══ Current Entries ══ */}
-          {data.allergies.length > 0 && (
+          {allergies.length > 0 && (
             <div className="space-y-2">
               <AnimatePresence mode="popLayout">
-                {data.allergies.map((allergy, index) => (
+                {allergies.map((allergy, index) => (
                   <motion.div key={`${allergy.allergen}-${index}`}
                     layout={!reducedMotion}
                     initial={reducedMotion ? undefined : { opacity: 0, height: 0 }}
@@ -304,12 +311,7 @@ export function AllergiesStep({ data, updateData }: Props) {
                 <Label className="text-xs">{tx("onb.reactionType", lang)}</Label>
                 <Select value={severity} onValueChange={(v) => v && setSeverity(v)}>
                   <SelectTrigger>
-                    <SelectValue placeholder={tx("onb.reactionUnknown", lang)}>
-                      {(() => {
-                        const opt = REACTION_OPTIONS.find(o => o.value === severity);
-                        return opt ? `${opt.emoji} ${tx(opt.key, lang)}` : severity;
-                      })()}
-                    </SelectValue>
+                    <SelectValue placeholder={tx("onb.reactionUnknown", lang)} />
                   </SelectTrigger>
                   <SelectContent className="max-h-60">
                     {REACTION_OPTIONS.map((opt) => (

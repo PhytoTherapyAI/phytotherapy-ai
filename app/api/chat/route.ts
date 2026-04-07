@@ -4,7 +4,7 @@ import { askGeminiStream, askGeminiStreamMultimodal } from "@/lib/ai-client";
 import type { GeminiFilePart } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
 import { SYSTEM_PROMPT } from "@/lib/prompts";
-import { checkRedFlags, getEmergencyMessage, getYellowWarning } from "@/lib/safety-filter";
+import { checkRedFlags, getEmergencyMessage, getYellowWarning, checkVaccineKeywords } from "@/lib/safety-filter";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
     let hasMedications = false;
     const authHeader = request.headers.get("authorization");
     let userId: string | null = null;
+    let profile: Record<string, unknown> | null = null;
 
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -86,13 +87,14 @@ export async function POST(request: NextRequest) {
 
         if (user) {
           userId = user.id;
-          const [{ data: profile }, { data: meds }, { data: allergies }] = await Promise.all([
+          const [profileRes, { data: meds }, { data: allergies }] = await Promise.all([
             supabase.from("user_profiles").select("*").eq("id", user.id).single(),
             supabase.from("user_medications").select("brand_name, generic_name, dosage").eq("user_id", user.id).eq("is_active", true),
             supabase.from("user_allergies").select("allergen, severity").eq("user_id", user.id),
           ]);
 
           hasMedications = !!(meds && meds.length > 0);
+          profile = profileRes.data;
 
           if (profile) {
             profileContext = `\n\nUSER PROFILE (cross-check all recommendations against this):`;
@@ -116,6 +118,17 @@ export async function POST(request: NextRequest) {
       } catch (authError) {
         console.error("Auth error (continuing without profile):", authError);
       }
+    }
+
+    // Step 2b: Vaccine keyword detection
+    let vaccineContext = "";
+    const chronicConditions = profile?.chronic_conditions as string[] | undefined;
+    const vaccineMatch = checkVaccineKeywords(message, chronicConditions);
+    if (vaccineMatch) {
+      const vq = lang === "tr" ? vaccineMatch.questionTr : vaccineMatch.questionEn;
+      vaccineContext = `\n\n⚡ VACCINE QUERY DETECTED (vaccine: ${vaccineMatch.vaccine}, urgency: ${vaccineMatch.urgency}):
+Ask the user this question FIRST before answering their main question: "${vq}"
+${vaccineMatch.urgency === "critical" ? "If user says they are NOT vaccinated, STRONGLY recommend they go to the emergency room immediately." : ""}`;
     }
 
     // Step 3: Await PubMed results (already running in parallel since Step 2)
@@ -149,6 +162,9 @@ export async function POST(request: NextRequest) {
 
     // Add profile context
     fullPrompt += profileContext;
+
+    // Add vaccine context if detected
+    if (vaccineContext) fullPrompt += vaccineContext;
 
     // Add the actual user message
     fullPrompt += `\n\nUSER'S QUESTION:\n${message}`;

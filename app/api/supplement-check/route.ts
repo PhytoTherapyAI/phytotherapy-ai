@@ -19,8 +19,11 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const body = await request.json()
-    const supplementName = sanitizeInput(body.supplement || "")
+    let body: Record<string, unknown>
+    try { body = await request.json() } catch {
+      return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { "Content-Type": "application/json" } })
+    }
+    const supplementName = sanitizeInput((body.supplement as string) || "")
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr"
 
     if (!supplementName || supplementName.length < 2) {
@@ -46,6 +49,10 @@ export async function POST(request: NextRequest) {
             supabase.from("user_medications").select("brand_name, generic_name, dosage").eq("user_id", user.id).eq("is_active", true),
             supabase.from("user_allergies").select("allergen, severity").eq("user_id", user.id),
           ])
+
+          if (profileRes.error) console.warn("Profile fetch failed:", profileRes.error.message)
+          if (medsRes.error) console.warn("Meds fetch failed:", medsRes.error.message)
+          if (allergiesRes.error) console.warn("Allergies fetch failed:", allergiesRes.error.message)
 
           if (profileRes.data) {
             const p = profileRes.data

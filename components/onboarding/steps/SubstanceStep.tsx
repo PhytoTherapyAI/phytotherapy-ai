@@ -3,14 +3,17 @@
 
 import { Label } from "@/components/ui/label";
 import { Wine, Cigarette } from "lucide-react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
 
-const reducedMotion = typeof window !== "undefined"
-  ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
-  : false;
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => { setReduced(!!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches); }, []);
+  return reduced;
+}
 
 interface Props {
   data: OnboardingData;
@@ -68,6 +71,7 @@ function ChipGroup({ label, options, value, onChange }: {
 
 export function SubstanceStep({ data, updateData }: Props) {
   const { lang } = useLang();
+  const reducedMotion = useReducedMotion();
 
   // Parse smoking_use compound value: "current|1pack|5to15" or simple "none"
   const smokingParts = data.smoking_use.split("|");

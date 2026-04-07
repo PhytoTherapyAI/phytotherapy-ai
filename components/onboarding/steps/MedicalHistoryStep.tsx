@@ -182,12 +182,15 @@ const CONDITION_GROUPS = [
   },
 ];
 
-const reducedMotion = typeof window !== "undefined"
-  ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
-  : false;
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => { setReduced(!!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches); }, []);
+  return reduced;
+}
 
 export function MedicalHistoryStep({ data, updateData }: Props) {
   const { lang } = useLang();
+  const reducedMotion = useReducedMotion();
   const [customCondition, setCustomCondition] = useState("");
   const [noChronic, setNoChronic] = useState(false);
   const [suggestions, setSuggestions] = useState<typeof DISEASE_AUTOCOMPLETE>([]);

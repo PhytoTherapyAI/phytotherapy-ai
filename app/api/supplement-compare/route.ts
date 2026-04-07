@@ -20,9 +20,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const supplement1 = sanitizeInput(body.supplement1 || "");
-    const supplement2 = sanitizeInput(body.supplement2 || "");
+    let body: Record<string, unknown>;
+    try { body = await request.json(); } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
+    const supplement1 = sanitizeInput((body.supplement1 as string) || "");
+    const supplement2 = sanitizeInput((body.supplement2 as string) || "");
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
     if (!supplement1 || !supplement2) {
@@ -43,10 +46,14 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
-          const [{ data: profile }, { data: meds }] = await Promise.all([
+          const [profileRes, medsRes] = await Promise.all([
             supabase.from("user_profiles").select("age, gender, is_pregnant, kidney_disease, liver_disease, health_goals").eq("id", user.id).single(),
             supabase.from("user_medications").select("generic_name, brand_name").eq("user_id", user.id).eq("is_active", true),
           ]);
+          if (profileRes.error) console.warn("Profile fetch failed:", profileRes.error.message);
+          if (medsRes.error) console.warn("Meds fetch failed:", medsRes.error.message);
+          const profile = profileRes.data;
+          const meds = medsRes.data;
 
           if (profile) {
             const parts: string[] = [];

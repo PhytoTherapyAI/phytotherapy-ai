@@ -1812,6 +1812,8 @@ const t: Record<string, TranslationEntry> = {
   "onb.stepOptionalTitle": { en: "Personalize (Optional)", tr: "Profilini Güçlendir (İsteğe Bağlı)" },
   "onb.stepOptionalDesc": { en: "Help us give better recommendations", tr: "Daha iyi öneriler için bize yardımcı ol" },
   "onb.retry": { en: "Retry", tr: "Tekrar Dene" },
+  "onb.retryHint": { en: "Please try again. Check your internet connection.", tr: "Lütfen tekrar deneyin. İnternet bağlantınızı kontrol edin." },
+  "onb.trustBadge": { en: "End-to-End Encrypted \u2022 KVKK Compliant", tr: "Uçtan Uca Şifreli \u2022 KVKK Uyumlu" },
   "onb.whyBasic": { en: "Your age and biological sex help us tailor recommendations safely.", tr: "Yaşın ve biyolojik cinsiyetin güvenli öneriler sunmamı sağlar." },
   "onb.whyMeds": { en: "Knowing your medications helps us detect herb-drug interactions.", tr: "İlaçlarını bilmemiz bitki-ilaç etkileşimlerini tespit etmemizi sağlar." },
   "onb.whySupplements": { en: "Supplements can interact with medications — knowing yours helps us keep you safe.", tr: "Takviyeler ilaçlarla etkileşime girebilir — bildiklerimiz güvenliğini sağlar." },
@@ -7012,6 +7014,21 @@ const commonToolKeys: Record<string, TranslationEntry> = {
     en: "Manage your preferences",
     tr: "Tercihlerinizi yönetin",
   },
+  // ── Vaccine Profile ──
+  "vaccine.title": { en: "Immunity & My Vaccines", tr: "Bağışıklık & Aşılarım" },
+  "vaccine.subtitle": { en: "Your vaccination history helps us assess infection risks.", tr: "Aşı geçmişin, enfeksiyon risklerini hesaplamamıza yardımcı olur." },
+  "vaccine.saving": { en: "Saving...", tr: "Kaydediliyor..." },
+  "vaccine.shieldBadge": { en: "Immune Shield", tr: "Bağışıklık Kalkanı" },
+  "vaccine.groupEssential": { en: "Essential Vaccines", tr: "Temel Aşılar" },
+  "vaccine.groupSeasonal": { en: "Annual / Seasonal", tr: "Yıllık / Mevsimsel" },
+  "vaccine.groupSpecial": { en: "Special Situations", tr: "Özel Durumlar" },
+  "vaccine.done": { en: "Done", tr: "Oldum" },
+  "vaccine.unknown": { en: "Unsure", tr: "Bilmiyorum" },
+  "vaccine.notDone": { en: "Not done", tr: "Olmadım" },
+  "vaccine.bannerTitle": { en: "Vaccine recommendation based on your profile", tr: "Profiline göre aşı önerisi" },
+  "vaccine.bannerCta": { en: "Go to Vaccine Profile", tr: "Aşı Profilime Git" },
+  "vaccine.bannerDismiss": { en: "Dismiss", tr: "Kapat" },
+  "vaccine.chatFollowUp": { en: "Update my vaccine profile", tr: "Aşı profilimi güncelle" },
 }
 Object.assign(t, commonToolKeys)
 

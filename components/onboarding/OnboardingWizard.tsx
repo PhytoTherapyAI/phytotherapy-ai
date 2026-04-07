@@ -636,7 +636,7 @@ export function OnboardingWizard({ profile }: Props) {
           <div className="flex-1">
             <p className="text-sm font-medium text-red-700 dark:text-red-400">{saveError}</p>
             <p className="text-xs text-red-500 dark:text-red-400/70 mt-0.5">
-              {lang === "tr" ? "Lütfen tekrar deneyin. İnternet bağlantınızı kontrol edin." : "Please try again. Check your internet connection."}
+              {tx("onb.retryHint", lang)}
             </p>
           </div>
           <button onClick={saveOnboarding}
@@ -690,7 +690,7 @@ export function OnboardingWizard({ profile }: Props) {
       <div className="flex items-center justify-center gap-1.5 text-muted-foreground/50">
         <Lock className="h-3 w-3" />
         <span className="text-[10px]">
-          {lang === "tr" ? "Uçtan Uca Şifreli • KVKK Uyumlu" : "End-to-End Encrypted • KVKK Compliant"}
+          {tx("onb.trustBadge", lang)}
         </span>
       </div>
     </div>
