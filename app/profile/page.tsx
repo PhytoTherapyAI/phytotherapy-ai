@@ -854,6 +854,77 @@ export default function ProfilePage() {
               })()}
             </p>
           </div>
+
+          {/* ── Proaktif Sağlık Etiketleri ── */}
+          {(() => {
+            const tags: { icon: string; label: string; color: string; tooltip: string }[] = [];
+
+            // Blood group risk
+            if (profile.blood_group) {
+              const bg = profile.blood_group.replace(/[+-]/g, "");
+              const bgInsights: Record<string, { labelTr: string; labelEn: string; tipTr: string; tipEn: string }> = {
+                A: { labelTr: "Mide & Hematolojik Tarama Önerilir", labelEn: "Gastric & Hematologic Screening Recommended", tipTr: "A kan grubu istatistiksel olarak mide ve hematolojik hastalıklara yatkınlık gösterir.", tipEn: "Blood type A shows statistical predisposition to gastric and hematologic conditions." },
+                B: { labelTr: "Pankreas Sağlığı Takibi Önerilir", labelEn: "Pancreatic Health Monitoring Recommended", tipTr: "B kan grubu pankreas hastalıklarına yatkınlık gösterebilir.", tipEn: "Blood type B may show predisposition to pancreatic conditions." },
+                AB: { labelTr: "Kardiyovasküler Takip Önerilir", labelEn: "Cardiovascular Monitoring Recommended", tipTr: "AB kan grubu kardiyovasküler hastalık riskini artırabilir.", tipEn: "Blood type AB may increase cardiovascular disease risk." },
+                O: { labelTr: "Ülser & Mide Asidi Takibi Önerilir", labelEn: "Ulcer & Gastric Acid Monitoring Recommended", tipTr: "O kan grubu ülser ve mide asidi sorunlarına yatkınlık gösterir.", tipEn: "Blood type O shows predisposition to ulcer and gastric acid issues." },
+              };
+              const ins = bgInsights[bg];
+              if (ins) tags.push({ icon: "🩸", label: tr ? ins.labelTr : ins.labelEn, color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", tooltip: tr ? ins.tipTr : ins.tipEn });
+            }
+
+            // Age + gender screening
+            const age = profile.age || 0;
+            const gender = profile.gender;
+            if (gender === "female" && age >= 40) tags.push({ icon: "🩺", label: tr ? "Mamografi Takibi Önerilir" : "Mammography Screening Recommended", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", tooltip: tr ? "40 yaş üstü kadınlarda düzenli mamografi taraması önerilir." : "Regular mammography screening is recommended for women over 40." });
+            if (gender === "male" && age >= 50) tags.push({ icon: "🩺", label: tr ? "Prostat Tarama Önerilir" : "Prostate Screening Recommended", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", tooltip: tr ? "50 yaş üstü erkeklerde prostat taraması önerilir." : "Prostate screening is recommended for men over 50." });
+            if (age >= 65) tags.push({ icon: "👴", label: tr ? "Geriatrik Takip Aktif" : "Geriatric Follow-up Active", color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300", tooltip: tr ? "65 yaş üstü bireylerde kapsamlı geriatrik değerlendirme önerilir." : "Comprehensive geriatric assessment recommended for individuals over 65." });
+
+            // Smoking
+            const smokingStatus = (profile.smoking_use || "none").split("|")[0];
+            if (smokingStatus === "current") tags.push({ icon: "🚬", label: tr ? "KOAH & Akciğer Tarama Önerilir" : "COPD & Lung Screening Recommended", color: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300", tooltip: tr ? "Aktif sigara kullanımı akciğer hastalığı riskini önemli ölçüde artırır." : "Active smoking significantly increases lung disease risk." });
+            if (smokingStatus === "former") tags.push({ icon: "🚬", label: tr ? "Akciğer Tarama Önerilir" : "Lung Screening Recommended", color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300", tooltip: tr ? "Eski sigara kullanıcılarında akciğer taraması önerilir." : "Lung screening is recommended for former smokers." });
+
+            // BMI
+            if (profile.height_cm && profile.weight_kg) {
+              const bmi = Number(profile.weight_kg) / ((Number(profile.height_cm) / 100) ** 2);
+              if (bmi >= 30) tags.push({ icon: "📏", label: `BMI: ${bmi.toFixed(1)} — ${tr ? "Metabolik Risk Takibi" : "Metabolic Risk Monitoring"}`, color: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300", tooltip: tr ? "BMI 30 ve üzeri obezite sınıfına girer. Metabolik sendrom taraması önerilir." : "BMI 30+ is classified as obese. Metabolic syndrome screening recommended." });
+              else if (bmi >= 25) tags.push({ icon: "📏", label: `BMI: ${bmi.toFixed(1)} — ${tr ? "Beslenme Takibi" : "Nutrition Monitoring"}`, color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300", tooltip: tr ? "BMI 25-30 arası kilolu sınıfına girer. Beslenme düzenlemesi önerilir." : "BMI 25-30 is classified as overweight. Dietary adjustment recommended." });
+            }
+
+            // Family early cardiac
+            const familyItems = (profile.chronic_conditions || []).filter((c: string) => c.startsWith("family:"));
+            if (familyItems.some((c: string) => c.toLowerCase().includes("heart") || c.toLowerCase().includes("kalp"))) {
+              tags.push({ icon: "❤️", label: tr ? "Erken Kardiyovasküler Risk" : "Early Cardiovascular Risk", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300", tooltip: tr ? "Birinci derece akrabada erken kalp krizi genetik risk faktörüdür." : "Early heart attack in first-degree relative is a genetic risk factor." });
+            }
+
+            if (tags.length === 0) return null;
+
+            return (
+              <div className="mt-4 pt-4 border-t space-y-2">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                  {tr ? "Proaktif Sağlık Etiketleri" : "Proactive Health Tags"}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag, i) => (
+                    <motion.div key={i} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: i * 0.08, type: "spring", stiffness: 300, damping: 20 }}
+                      className="group relative">
+                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium cursor-help ${tag.color}`}>
+                        {tag.icon} {tag.label}
+                      </span>
+                      {/* Tooltip */}
+                      <div className="invisible group-hover:visible absolute bottom-full left-0 mb-2 w-64 rounded-lg bg-card border shadow-lg p-3 z-50 transition-all opacity-0 group-hover:opacity-100">
+                        <p className="text-xs text-foreground">{tag.tooltip}</p>
+                        <p className="text-[10px] text-muted-foreground mt-1.5 italic">
+                          {tr ? "Bu bilgi tıbbi teşhis değildir. Proaktif sağlık takibi için önerilmektedir." : "This is not a medical diagnosis. Recommended for proactive health monitoring."}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
         </CardContent>
       </Card>
 
