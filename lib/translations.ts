@@ -413,7 +413,7 @@ const t: Record<string, TranslationEntry> = {
   "onb.addMedBtn": { en: "Add Medication", tr: "İlaç Ekle" },
   "onb.medPrivacy": {
     en: "We check every herbal recommendation against your medications for safety. This information is encrypted and only visible to you.",
-    tr: "Her bitkisel öneriyi ilaçlarınızla güvenlik açısından kontrol ederiz. Bu bilgi şifrelenmiş olup yalnızca size görünürdür.",
+    tr: "Her bitkisel öneriyi ilaçlarınla güvenlik açısından kontrol ederiz. Bu bilgi şifrelenmiş olup yalnızca sana görünür.",
   },
 
   // ══════════════════════════════════════════
@@ -1679,7 +1679,7 @@ const t: Record<string, TranslationEntry> = {
   // Onboarding — PregnancyStep
   // ══════════════════════════════════════════
   "onb.pregnantQ": { en: "Are you currently pregnant?", tr: "Şu anda hamile misin?" },
-  "onb.breastfeedingQ": { en: "Are you currently breastfeeding?", tr: "Şu anda emziriyor musunuz?" },
+  "onb.breastfeedingQ": { en: "Are you currently breastfeeding?", tr: "Şu anda emziriyor musun?" },
   "onb.yes": { en: "Yes", tr: "Evet" },
   "onb.no": { en: "No", tr: "Hayır" },
   "onb.pregnancyWarning": { en: "Many herbal products are unsafe during pregnancy and breastfeeding. Our system will apply extra safety filters to all recommendations for your protection.", tr: "Birçok bitkisel ürün gebelik ve emzirme döneminde güvenli değildir. Sistemimiz tüm önerilere ekstra güvenlik filtreleri uygulayacaktır." },

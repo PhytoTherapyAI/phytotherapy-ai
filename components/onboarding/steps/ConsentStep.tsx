@@ -38,17 +38,17 @@ export function ConsentStep({ data, updateData }: Props) {
                 <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
                 <p className="text-red-700 dark:text-red-400 font-medium">
                   <strong>Acil durumlarda kullanılamaz.</strong> Beklenmedik, şiddetli veya hayati tehlike taşıyan
-                  bir sağlık sorununuz varsa lütfen hemen <strong>112</strong>&apos;yi arayın veya en yakın acil servise başvurun.
+                  bir sağlık sorunun varsa lütfen hemen <strong>112</strong>&apos;yi ara veya en yakın acil servise başvur.
                 </p>
               </div>
               <p>
                 Önerilerimiz <strong>bilimsel literatüre</strong> (PubMed, NIH) dayanır ve yalnızca <strong>bilgilendirme amaçlıdır</strong>.
-                Özellikle şu durumlarda herhangi bir öneriyi uygulamadan önce mutlaka <strong>doktorunuza danışmalısınız</strong>:
+                Özellikle şu durumlarda herhangi bir öneriyi uygulamadan önce mutlaka <strong>doktoruna danışmalısın</strong>:
               </p>
               <ul className="ml-4 list-disc space-y-1">
-                <li><strong>Reçeteli ilaç</strong> kullanıyorsanız</li>
-                <li><strong>Hamilelik veya emzirme</strong> dönemindeyseniz</li>
-                <li>Kronik bir rahatsızlığınız veya planlanan <strong>ameliyatınız</strong> varsa</li>
+                <li><strong>Reçeteli ilaç</strong> kullanıyorsan</li>
+                <li><strong>Hamilelik veya emzirme</strong> dönemindeysen</li>
+                <li>Kronik bir rahatsızlığın veya planlanan <strong>ameliyatın</strong> varsa</li>
               </ul>
               <p className="text-xs">
                 DoctoPal ve geliştiricileri, bu hizmet tarafından sağlanan bilgilerin kullanımından
@@ -97,16 +97,16 @@ export function ConsentStep({ data, updateData }: Props) {
         <div className="space-y-2 text-sm text-muted-foreground">
           <p>
             {tr
-              ? <>Sağlık verileriniz <strong>&quot;Özel Nitelikli Kişisel Veri&quot;</strong> kapsamında en üst düzeyde korunur:</>
+              ? <>Sağlık verilerin <strong>&quot;Özel Nitelikli Kişisel Veri&quot;</strong> kapsamında en üst düzeyde korunur:</>
               : <>Your health data is protected at the highest level as <strong>&quot;Special Category Personal Data&quot;</strong>:</>
             }
           </p>
           <ul className="ml-4 list-disc space-y-1">
             {tr ? (
               <>
-                <li><strong>Uçtan Uca Şifreleme:</strong> Verileriniz Supabase sunucularında şifrelenerek saklanır</li>
-                <li><strong>Tam Gizlilik:</strong> Kimliğinizle eşleştirilmiş hiçbir veriniz 3. şahıslarla paylaşılmaz</li>
-                <li><strong>Kontrol Sizde:</strong> İstediğiniz an verilerinizi silebilirsiniz (Maks. 2 yıl saklanır)</li>
+                <li><strong>Uçtan Uca Şifreleme:</strong> Verilerin Supabase sunucularında şifrelenerek saklanır</li>
+                <li><strong>Tam Gizlilik:</strong> Kimliğinle eşleştirilmiş hiçbir verin 3. şahıslarla paylaşılmaz</li>
+                <li><strong>Kontrol Sende:</strong> İstediğin an verilerini silebilirsin (Maks. 2 yıl saklanır)</li>
               </>
             ) : (
               <>
