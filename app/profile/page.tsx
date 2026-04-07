@@ -1720,7 +1720,7 @@ export default function ProfilePage() {
       />
 
       {/* Vaccine Profile */}
-      <VaccineProfileSection lang={lang} userId={profile.id} />
+      <VaccineProfileSection lang={lang} userId={profile.id} initialVaccines={Array.isArray(profile.vaccines) ? profile.vaccines : undefined} />
 
       {/* Emergency Contacts */}
       <EmergencyContactsSection lang={lang} userId={profile.id} />

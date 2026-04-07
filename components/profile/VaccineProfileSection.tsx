@@ -36,22 +36,27 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
     if (initialVaccines) return
     const supabase = createBrowserClient()
     supabase.from("user_profiles").select("vaccines").eq("id", userId).single()
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (error) { console.warn("Vaccine fetch failed:", error.message); return }
         if (data?.vaccines && Array.isArray(data.vaccines)) {
           setVaccines(data.vaccines as VaccineEntry[])
         }
       })
   }, [userId, initialVaccines])
 
-  // Save to Supabase
+  // Save to Supabase — update state only after success
   const saveVaccines = useCallback(async (updated: VaccineEntry[]) => {
-    setVaccines(updated)
     setSaving(true)
     try {
       const supabase = createBrowserClient()
-      await supabase.from("user_profiles").update({ vaccines: updated }).eq("id", userId)
-    } catch { /* silent */ }
-    setSaving(false)
+      const { error } = await supabase.from("user_profiles").update({ vaccines: updated }).eq("id", userId)
+      if (error) { console.warn("Vaccine save failed:", error.message); return }
+      setVaccines(updated)
+    } catch (err) {
+      console.warn("Vaccine save error:", err)
+    } finally {
+      setSaving(false)
+    }
   }, [userId])
 
   const getEntry = (vaccineId: string): VaccineEntry | undefined =>

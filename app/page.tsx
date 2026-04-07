@@ -605,7 +605,7 @@ export default function Home() {
         {/* Hackathon Demo Banner */}
         <DemoBanner lang={lang} />
         {/* Vaccine Recommendation Banner */}
-        <VaccineBanner lang={lang} chronicConditions={profile?.chronic_conditions || []} vaccines={(profile?.vaccines as VaccineEntry[]) || []} />
+        <VaccineBanner lang={lang} chronicConditions={profile?.chronic_conditions || []} vaccines={Array.isArray(profile?.vaccines) ? (profile.vaccines as VaccineEntry[]) : []} />
 
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="mx-auto max-w-7xl px-4 py-6 md:px-8 lg:px-12 space-y-6">

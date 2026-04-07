@@ -266,8 +266,9 @@ export function checkVaccineKeywords(input: string, chronicConditions?: string[]
     if (!matchEn && !matchTr) continue
 
     // Condition-gated trigger: only fire if user has matching chronic condition
-    if ("conditionRequired" in trigger && trigger.conditionRequired) {
-      if (!chronicConditions?.some(c => trigger.conditionRequired!.includes(c))) continue
+    if ("conditionRequired" in trigger && trigger.conditionRequired && trigger.conditionRequired.length > 0) {
+      const hasCondition = chronicConditions?.some(c => trigger.conditionRequired!.includes(c)) ?? false
+      if (!hasCondition) continue
     }
 
     return {
