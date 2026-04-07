@@ -9,6 +9,7 @@ import { AlertCircle, Info, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { BirthDatePicker } from "../BirthDatePicker";
 import type { OnboardingData } from "../OnboardingWizard";
 
 interface Props {
@@ -29,11 +30,11 @@ function calcAge(birthDate: string): number | null {
 }
 
 const GENDER_OPTIONS = [
-  { value: "male", en: "Male", tr: "Erkek" },
-  { value: "female", en: "Female", tr: "Kadın" },
-  { value: "other", en: "Other", tr: "Diğer" },
-  { value: "prefer_not_to_say", en: "Prefer not to say", tr: "Belirtmek istemiyorum" },
-];
+  { value: "male", labelKey: "onb.male" },
+  { value: "female", labelKey: "onb.female" },
+  { value: "other", labelKey: "onb.other" },
+  { value: "prefer_not_to_say", labelKey: "onb.preferNotToSay" },
+] as const;
 
 // ── Inline Tooltip ──
 export function FieldTooltip({ text }: { text: string }) {
@@ -102,14 +103,12 @@ export function BasicInfoStep({ data, updateData }: Props) {
           <Label htmlFor="birth-date">{tx("onb.birthDate", lang)}</Label>
           <FieldTooltip text={tx("onb.tooltipBirthDate", lang)} />
         </div>
-        <Input
-          id="birth-date"
-          type="date"
+        <BirthDatePicker
+          value={data.birth_date || ""}
+          onChange={handleBirthDateChange}
           min={minDateStr}
           max={today}
-          value={data.birth_date || ""}
-          onChange={(e) => handleBirthDateChange(e.target.value)}
-          className="text-base h-11 rounded-xl bg-muted/30 border-muted-foreground/20 transition-all duration-200 focus:ring-2 focus:ring-green-400/40 focus:border-green-400 focus:bg-background"
+          lang={lang}
         />
         {data.age !== null && data.age >= 0 && (
           <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1">
@@ -149,7 +148,7 @@ export function BasicInfoStep({ data, updateData }: Props) {
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
                 }`}
               >
-                {lang === "tr" ? opt.tr : opt.en}
+                {tx(opt.labelKey, lang)}
                 {/* Animated check mark */}
                 <AnimatePresence>
                   {selected && (

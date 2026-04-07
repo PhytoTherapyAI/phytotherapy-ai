@@ -53,39 +53,33 @@ const WHY_KEYS = [
 // Phase 0 = Basics (steps 0-1), Phase 1 = Health Profile (steps 2-6), Phase 2 = Permissions + Consent (steps 7-8)
 const STEP_PHASE = [0, 0, 1, 1, 1, 1, 1, 2, 2]; // indexed by original step index
 
-// Bilingual step definitions
+// Step definitions using i18n keys
+const STEP_DEFS = [
+  { id: "basic", titleKey: "onb.stepBasicTitle", descKey: "onb.stepBasicDesc" },
+  { id: "medications", titleKey: "onb.stepMedsTitle", descKey: "onb.stepMedsDesc" },
+  { id: "allergies", titleKey: "onb.stepAllergiesTitle", descKey: "onb.stepAllergiesDesc" },
+  { id: "pregnancy", titleKey: "onb.stepPregnancyTitle", descKey: "onb.stepPregnancyDesc" },
+  { id: "substances", titleKey: "onb.stepSubstancesTitle", descKey: "onb.stepSubstancesDesc" },
+  { id: "medical", titleKey: "onb.stepMedicalTitle", descKey: "onb.stepMedicalDesc" },
+  { id: "family", titleKey: "onb.stepFamilyTitle", descKey: "onb.stepFamilyDesc" },
+  { id: "permissions", titleKey: "onb.stepPermissionsTitle", descKey: "onb.stepPermissionsDesc" },
+  { id: "consent", titleKey: "onb.stepConsentTitle", descKey: "onb.stepConsentDesc" },
+] as const;
+
 function getSteps(lang: "en" | "tr") {
-  if (lang === "tr") {
-    return [
-      { id: "basic", title: "Temel Bilgiler", description: "Seni daha yakından tanıyalım" },
-      { id: "medications", title: "Mevcut İlaçlar", description: "Kullandığın aktif ilaçlar" },
-      { id: "allergies", title: "Alerjiler", description: "Bilinen alerjilerin" },
-      { id: "pregnancy", title: "Gebelik & Emzirme", description: "Üreme sağlığı durumun" },
-      { id: "substances", title: "Alkol & Sigara", description: "Madde kullanım bilgin" },
-      { id: "medical", title: "Tıbbi Geçmiş", description: "Önemli sağlık durumların" },
-      { id: "family", title: "Soygeçmiş", description: "Aile sağlık öyküsü" },
-      { id: "permissions", title: "Seni Daha İyi Koruyabilmek İçin", description: "Bazı özellikler için iznine ihtiyaç duyacağız" },
-      { id: "consent", title: "Şartlar & Onay", description: "Tıbbi sorumluluk reddi" },
-    ];
-  }
-  return [
-    { id: "basic", title: "Basic Information", description: "Tell us about yourself" },
-    { id: "medications", title: "Current Medications", description: "Active medications you take" },
-    { id: "allergies", title: "Allergies", description: "Known allergies" },
-    { id: "pregnancy", title: "Pregnancy & Breastfeeding", description: "Reproductive health status" },
-    { id: "substances", title: "Alcohol & Smoking", description: "Substance use information" },
-    { id: "medical", title: "Medical History", description: "Key health conditions" },
-    { id: "family", title: "Family History", description: "Health conditions in close family" },
-    { id: "permissions", title: "To Better Protect You", description: "Some features will need your permission" },
-    { id: "consent", title: "Terms & Consent", description: "Medical disclaimer agreement" },
-  ];
+  return STEP_DEFS.map(s => ({
+    id: s.id,
+    title: tx(s.titleKey, lang),
+    description: tx(s.descKey, lang),
+  }));
 }
 
 function getLayer2Step(lang: "en" | "tr") {
-  if (lang === "tr") {
-    return { id: "optional", title: "Profilini Güçlendir (İsteğe Bağlı)", description: "Daha iyi öneriler için bize yardımcı ol" };
-  }
-  return { id: "optional", title: "Personalize (Optional)", description: "Help us give better recommendations" };
+  return {
+    id: "optional",
+    title: tx("onb.stepOptionalTitle", lang),
+    description: tx("onb.stepOptionalDesc", lang),
+  };
 }
 
 export interface OnboardingData {
@@ -611,7 +605,7 @@ export function OnboardingWizard({ profile }: Props) {
           </div>
           <button onClick={saveOnboarding}
             className="shrink-0 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 transition-colors">
-            {lang === "tr" ? "Tekrar Dene" : "Retry"}
+            {tx("onb.retry", lang)}
           </button>
         </div>
       )}

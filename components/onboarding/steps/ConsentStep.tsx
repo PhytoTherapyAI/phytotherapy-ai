@@ -132,31 +132,32 @@ export function ConsentStep({ data, updateData }: Props) {
 
       {/* Consent Checkbox — KVKK Açık Rıza */}
       <div className="rounded-lg border-2 border-primary/20 bg-primary/10 p-4">
-        <div className="flex items-start space-x-3">
+        <label htmlFor="consent" className="flex items-start gap-3 cursor-pointer">
           <Checkbox
             id="consent"
             checked={data.consent_agreed}
             onCheckedChange={(checked) => updateData({ consent_agreed: checked === true })}
-            className="mt-1"
+            className="mt-0.5 shrink-0"
           />
-          <Label htmlFor="consent" className="text-sm font-normal leading-relaxed">
+          <span className="text-sm leading-relaxed">
             {tr ? (
               <>
-                <Link href="/terms" target="_blank" className="underline">Kullanım Koşulları</Link> ve{" "}
-                <Link href="/privacy" target="_blank" className="underline">Gizlilik Politikası</Link>&apos;nı okudum.
-                DoctoPal&apos;ın <strong>profesyonel bir doktor tavsiyesi yerine geçmediğini</strong> anlıyor;
-                sağlık verilerimin <strong>KVKK kapsamında işlenmesine açık rıza</strong> gösteriyorum.
+                <Link href="/terms" target="_blank" className="text-primary underline underline-offset-2 hover:text-primary/80">Kullanım Koşulları</Link> ve{" "}
+                <Link href="/privacy" target="_blank" className="text-primary underline underline-offset-2 hover:text-primary/80">Gizlilik Politikası</Link>&apos;nı okudum.
+                {" "}DoctoPal&apos;ın <strong>profesyonel bir doktor tavsiyesi yerine geçmediğini</strong> anlıyorum;
+                {" "}sağlık verilerimin <strong>KVKK kapsamında işlenmesine açık rıza</strong> gösteriyorum.
               </>
             ) : (
               <>
-                I have read the <Link href="/terms" target="_blank" className="underline">Terms of Service</Link> and{" "}
-                <Link href="/privacy" target="_blank" className="underline">Privacy Policy</Link>.
-                I understand DoctoPal <strong>does not replace professional medical advice</strong>;
-                I give <strong>explicit consent</strong> for my health data to be processed under KVKK regulations.
+                I have read the{" "}
+                <Link href="/terms" target="_blank" className="text-primary underline underline-offset-2 hover:text-primary/80">Terms of Service</Link> and{" "}
+                <Link href="/privacy" target="_blank" className="text-primary underline underline-offset-2 hover:text-primary/80">Privacy Policy</Link>.
+                {" "}I understand DoctoPal <strong>does not replace professional medical advice</strong>;
+                {" "}I give <strong>explicit consent</strong> for my health data to be processed under KVKK regulations.
               </>
             )}
-          </Label>
-        </div>
+          </span>
+        </label>
       </div>
     </div>
   );

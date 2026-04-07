@@ -184,9 +184,14 @@ export function AllergiesStep({ data, updateData }: Props) {
                 <Label className="text-xs">{tx("onb.reactionType", lang)}</Label>
                 <Select value={severity} onValueChange={(v) => v && setSeverity(v)}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder={tx("onb.reactionUnknown", lang)}>
+                      {(() => {
+                        const opt = REACTION_OPTIONS.find(o => o.value === severity);
+                        return opt ? `${opt.emoji} ${tx(opt.key, lang)}` : severity;
+                      })()}
+                    </SelectValue>
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-60">
                     {REACTION_OPTIONS.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         {opt.emoji} {tx(opt.key, lang)}
