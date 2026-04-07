@@ -250,9 +250,10 @@ export function OnboardingWizard({ profile }: Props) {
   const progress = ((safeStep + 1) / totalSteps) * 100;
 
   // Map visible step index to original step index for rendering
+  // Pregnancy is at original index 4 — when skipped, visible indices 4+ shift by 1
   const getOriginalStepIndex = (visibleIndex: number): number => {
     if (!skipPregnancy) return visibleIndex;
-    return visibleIndex >= 3 ? visibleIndex + 1 : visibleIndex;
+    return visibleIndex >= 4 ? visibleIndex + 1 : visibleIndex;
   };
   const origStep = getOriginalStepIndex(safeStep);
 
