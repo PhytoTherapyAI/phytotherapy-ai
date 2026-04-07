@@ -1,6 +1,47 @@
 # PROGRESS.md — Doctopal Sprint İlerleme Takibi
 
-> Son güncelleme: 7 Nisan 2026 (v43.2 — Onboarding Complete + Permissions + Premium UX)
+> Son güncelleme: 7 Nisan 2026 (v44.0 — Session 16: Onboarding Mega Expansion)
+
+---
+
+## Oturum 7 Nisan 2026 (Session 16) — Onboarding Expansion + Bug Fixes
+
+### Bug Fixes (Session 15 Audit)
+- ✅ BUG-017: Dashboard Tour ID'leri — FALSE POSITIVE (dinamik üretiliyor)
+- ✅ BUG-018: Supabase RLS — defensive migration eklendi (user_profiles)
+- ✅ BUG-019: Step titles i18n refactor — 22 key tx() kullanıyor
+- ✅ BUG-020: Gender labels i18n refactor — onb.male/female/other kullanıyor
+- ✅ Reaksiyon Tipi "unknown" çeviri fix — SelectValue rendered label
+- ✅ KVKK consent layout fix — flex-row items-start, text-primary links
+- ✅ Kritik step index mapping fix — pregnancy skip offset 3→4
+- ✅ AllergiesStep window.confirm SSR guard
+- ✅ OptionalProfileStep "musunuz" → "musun" formal fix
+
+### Yeni Bileşenler
+- ✅ **BirthDatePicker**: Custom takvim (3 view: calendar/months/years), decade grupları, klavye nav, mobile swipe, portal pozisyonlama, scroll lock
+- ✅ **SupplementsStep**: Yeni onboarding adımı (index 2), 100+ takviye 11 kategoride, chip grid + autocomplete + doz/birim/sıklık
+- ✅ **Cerrahi Geçmiş Autocomplete**: 40 ameliyat 8 kategoride, halk dili isimleri, opsiyonel yıl, portal dropdown
+
+### Onboarding Güncellemeler
+- ✅ 9→10 adım (Supplements eklendi, ilaçlardan sonra)
+- ✅ Alerjiler → "Alerjiler ve Hassasiyetler" (intolerance desteği, 8 hassasiyet chip'i)
+- ✅ Sigara/Alkol: AnimatePresence dinamik açılım + alkol terminoloji
+- ✅ Tıbbi Geçmiş: Hamilelik conditional (erkekte gizli) + tekrar metin kaldırıldı
+- ✅ Soygeçmiş: Tekrar eden başlık + why-note temizlendi
+- ✅ Permission Pre-framing: Premium upgrade (başlık, subtitle, pill badge'ler, kamera kart)
+- ✅ Google Quick-Fill: BasicInfoStep'te Google People API auto-fill (Layer 1 + Layer 2)
+- ✅ siz→sen: Tüm onboarding'de formal→informal dönüşüm tamamlandı
+
+### Teknik
+- ✅ 13 commit, tümü push edildi
+- ✅ Portal-based dropdowns (Supplements, Allergies, Medical History — overflow fix)
+- ✅ Stable useEffect dependencies (Set→string serialization)
+- ✅ Google OAuth scopes: user.birthday.read + user.gender.read
+- ✅ lib/google-profile.ts: People API helper
+- ✅ lib/safety-guardrail.ts: ALLERGY_SEVERITY_MAP (6 seviye)
+- ✅ 2 yeni rozet: conscious_user, health_tracker
+- ✅ ~100 yeni i18n key
+- ✅ Build: sıfır hata
 
 ---
 
