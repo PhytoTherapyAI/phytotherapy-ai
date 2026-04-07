@@ -1739,6 +1739,7 @@ const t: Record<string, TranslationEntry> = {
   "onb.noChronic": { en: "I have no known chronic conditions", tr: "Bilinen kronik hastalığım yok" },
   "onb.bleedingDisorder": { en: "Bleeding disorder / Active stomach ulcer", tr: "Kanama Bozukluğu / Aktif Mide Ülseri" },
   "onb.immuneSuppressed": { en: "Immune suppression (Cancer tx, Transplant, HIV)", tr: "Bağışıklık Baskılanması (Kanser tedavisi, Nakil, HIV)" },
+  "onb.pregnancyBreastfeedingPlan": { en: "Pregnancy / Breastfeeding / Planning Pregnancy", tr: "Hamilelik / Emzirme / Hamilelik Planı" },
   "onb.advancedOrganFailure": { en: "Advanced Kidney/Liver Failure or Dialysis", tr: "İleri Böbrek/KC Yetmezliği veya Diyaliz" },
   "onb.hypertension": { en: "Hypertension", tr: "Hipertansiyon" },
   "onb.categoryCardio": { en: "Cardiovascular", tr: "Kardiyovasküler" },

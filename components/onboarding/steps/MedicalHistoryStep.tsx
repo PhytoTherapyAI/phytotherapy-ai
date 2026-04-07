@@ -397,6 +397,14 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
               {tx("onb.criticalConditions", lang)}
             </Label>
             <div className="space-y-2 rounded-lg border border-red-200 dark:border-red-800 p-3 bg-red-50/50 dark:bg-red-950/10">
+              {/* Pregnancy — hidden for male users */}
+              {data.gender !== "male" && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="pregnancy-critical" checked={data.is_pregnant || data.is_breastfeeding}
+                    onCheckedChange={(c) => updateData({ is_pregnant: c === true, is_breastfeeding: c === true })} />
+                  <Label htmlFor="pregnancy-critical" className="font-normal text-sm">🤰 {tx("onb.pregnancyBreastfeedingPlan", lang)}</Label>
+                </div>
+              )}
               <div className="flex items-center space-x-2">
                 <Checkbox id="kidney" checked={data.kidney_disease}
                   onCheckedChange={(c) => updateData({ kidney_disease: c === true })} />
@@ -608,9 +616,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
         </>
       )}
 
-      <p className="text-xs text-muted-foreground">
-        {tx("onb.medHistoryNote", lang)}
-      </p>
+{/* Note removed — whyMedHistory in card header is sufficient */}
     </div>
   );
 }
