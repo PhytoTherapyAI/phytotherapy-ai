@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, X, AlertTriangle } from "lucide-react";
+import { Plus, X, AlertTriangle, ShieldAlert } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
@@ -18,26 +19,51 @@ interface Props {
   updateData: (updates: Partial<OnboardingData>) => void;
 }
 
-// Common allergens for autocomplete
-const COMMON_ALLERGENS_EN = [
-  "Penicillin", "Amoxicillin", "Sulfonamides", "Aspirin", "Ibuprofen",
-  "Cephalosporins", "Latex", "Peanuts", "Tree Nuts", "Shellfish",
-  "Eggs", "Milk", "Soy", "Wheat/Gluten", "Bee Venom",
-  "Chamomile", "Echinacea", "St. John's Wort", "Ginkgo Biloba",
-];
-const COMMON_ALLERGENS_TR = [
-  "Penisilin", "Amoksisilin", "Sülfonamidler", "Aspirin", "İbuprofen",
-  "Sefalosporinler", "Lateks", "Yer Fıstığı", "Ağaç Kabukluları", "Kabuklu Deniz Ürünleri",
-  "Yumurta", "Süt", "Soya", "Buğday/Gluten", "Arı Zehiri",
-  "Papatya", "Ekinezya", "Sarı Kantaron", "Ginkgo Biloba",
+// ── Allergen lists ──
+interface AllergenDef { id: string; tr: string; en: string }
+
+const COMMON_ALLERGENS: AllergenDef[] = [
+  { id: "penicillin", tr: "Penisilin", en: "Penicillin" },
+  { id: "amoxicillin", tr: "Amoksisilin", en: "Amoxicillin" },
+  { id: "sulfonamides", tr: "Sülfonamidler", en: "Sulfonamides" },
+  { id: "aspirin", tr: "Aspirin", en: "Aspirin" },
+  { id: "ibuprofen", tr: "İbuprofen", en: "Ibuprofen" },
+  { id: "cephalosporins", tr: "Sefalosporinler", en: "Cephalosporins" },
+  { id: "latex", tr: "Lateks", en: "Latex" },
+  { id: "peanuts", tr: "Yer Fıstığı", en: "Peanuts" },
+  { id: "tree_nuts", tr: "Ağaç Kabukluları", en: "Tree Nuts" },
+  { id: "shellfish", tr: "Kabuklu Deniz Ürünleri", en: "Shellfish" },
+  { id: "eggs", tr: "Yumurta", en: "Eggs" },
+  { id: "milk", tr: "Süt", en: "Milk" },
+  { id: "soy", tr: "Soya", en: "Soy" },
+  { id: "wheat_gluten", tr: "Buğday/Gluten", en: "Wheat/Gluten" },
+  { id: "bee_venom", tr: "Arı Zehiri", en: "Bee Venom" },
+  { id: "chamomile", tr: "Papatya", en: "Chamomile" },
+  { id: "echinacea", tr: "Ekinezya", en: "Echinacea" },
+  { id: "st_johns_wort", tr: "Sarı Kantaron", en: "St. John's Wort" },
+  { id: "ginkgo", tr: "Ginkgo Biloba", en: "Ginkgo Biloba" },
 ];
 
+const SENSITIVITY_ITEMS: AllergenDef[] = [
+  { id: "lactose", tr: "Laktoz", en: "Lactose" },
+  { id: "gluten", tr: "Gluten", en: "Gluten" },
+  { id: "fructose", tr: "Fruktoz", en: "Fructose" },
+  { id: "msg", tr: "MSG (Çin Tuzu)", en: "MSG" },
+  { id: "histamine", tr: "Histamin", en: "Histamine" },
+  { id: "fodmap", tr: "FODMAP", en: "FODMAP" },
+  { id: "caffeine", tr: "Kafein", en: "Caffeine" },
+  { id: "alcohol", tr: "Alkol", en: "Alcohol" },
+];
+
+const ALL_ITEMS = [...COMMON_ALLERGENS, ...SENSITIVITY_ITEMS];
+
 const reactionColors: Record<string, string> = {
-  anaphylaxis: "bg-red-200 text-red-900",
-  urticaria: "bg-red-100 text-red-800",
-  mild_skin: "bg-orange-100 text-orange-800",
-  gi_intolerance: "bg-yellow-100 text-yellow-800",
-  unknown: "bg-slate-100 text-slate-700",
+  anaphylaxis: "bg-red-200 text-red-900 dark:bg-red-900/30 dark:text-red-300",
+  urticaria: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
+  mild_skin: "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400",
+  gi_intolerance: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
+  intolerance: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
+  unknown: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
 };
 
 const REACTION_OPTIONS = [
@@ -45,32 +71,41 @@ const REACTION_OPTIONS = [
   { value: "urticaria", key: "onb.reactionUrticaria", emoji: "⚠️" },
   { value: "mild_skin", key: "onb.reactionMildSkin", emoji: "🟡" },
   { value: "gi_intolerance", key: "onb.reactionGI", emoji: "🟠" },
+  { value: "intolerance", key: "onb.reactionIntolerance", emoji: "🫃" },
   { value: "unknown", key: "onb.reactionUnknown", emoji: "❓" },
 ];
+
+const reducedMotion = typeof window !== "undefined"
+  ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+  : false;
 
 export function AllergiesStep({ data, updateData }: Props) {
   const { lang } = useLang();
   const [allergen, setAllergen] = useState("");
   const [severity, setSeverity] = useState("unknown");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<AllergenDef[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const allergenList = lang === "tr" ? COMMON_ALLERGENS_TR : COMMON_ALLERGENS_EN;
+  const getName = (def: AllergenDef) => lang === "tr" ? def.tr : def.en;
+
+  // Already added allergen names
+  const addedNames = new Set(data.allergies.map(a => a.allergen.toLowerCase()));
 
   // Autocomplete filter
   useEffect(() => {
     if (allergen.length < 1) {
-      setSuggestions([]);
-      setShowSuggestions(false);
-      return;
+      setSuggestions([]); setShowSuggestions(false); return;
     }
     const q = allergen.toLowerCase();
-    const matches = allergenList.filter(a => a.toLowerCase().includes(q));
+    const matches = ALL_ITEMS.filter(a =>
+      !addedNames.has(getName(a).toLowerCase()) &&
+      (a.tr.toLowerCase().includes(q) || a.en.toLowerCase().includes(q))
+    );
     setSuggestions(matches.slice(0, 8));
     setShowSuggestions(matches.length > 0);
-  }, [allergen, allergenList]);
+  }, [allergen, addedNames, lang]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -84,12 +119,31 @@ export function AllergiesStep({ data, updateData }: Props) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const addAllergy = () => {
-    if (!allergen.trim()) return;
-    updateData({
-      allergies: [...data.allergies, { allergen: allergen.trim(), severity }],
-      no_allergies: false,
-    });
+  const addAllergy = (name?: string, reactionType?: string) => {
+    const n = (name || allergen).trim();
+    if (!n) return;
+    const s = reactionType || severity;
+
+    // Anaphylaxis downgrade warning
+    if (s === "intolerance") {
+      const existing = data.allergies.find(a => a.allergen.toLowerCase() === n.toLowerCase());
+      if (existing?.severity === "anaphylaxis") {
+        if (!window.confirm(tx("onb.anaphylaxisWarning", lang))) return;
+      }
+    }
+
+    // Update or add
+    const existingIdx = data.allergies.findIndex(a => a.allergen.toLowerCase() === n.toLowerCase());
+    if (existingIdx >= 0) {
+      const updated = [...data.allergies];
+      updated[existingIdx] = { allergen: n, severity: s };
+      updateData({ allergies: updated, no_allergies: false });
+    } else {
+      updateData({
+        allergies: [...data.allergies, { allergen: n, severity: s }],
+        no_allergies: false,
+      });
+    }
     setAllergen("");
     setSeverity("unknown");
   };
@@ -103,8 +157,26 @@ export function AllergiesStep({ data, updateData }: Props) {
     return opt ? `${opt.emoji} ${tx(opt.key, lang)}` : val;
   };
 
+  // Quick add from chip — uses "intolerance" for sensitivities, "unknown" for allergens
+  const quickAddChip = (def: AllergenDef, isSensitivity: boolean) => {
+    const name = getName(def);
+    if (addedNames.has(name.toLowerCase())) {
+      // Remove if already added
+      const idx = data.allergies.findIndex(a => a.allergen.toLowerCase() === name.toLowerCase());
+      if (idx >= 0) removeAllergy(idx);
+    } else {
+      addAllergy(name, isSensitivity ? "intolerance" : "unknown");
+    }
+  };
+
   return (
     <div className="space-y-4">
+      {/* Subtitle */}
+      <p className="text-xs text-muted-foreground">
+        {tx("onb.allergySubtitle", lang)}
+      </p>
+
+      {/* No allergies checkbox */}
       <div className="flex items-center space-x-2">
         <Checkbox
           id="no-allergies"
@@ -123,25 +195,81 @@ export function AllergiesStep({ data, updateData }: Props) {
 
       {!data.no_allergies && (
         <>
+          {/* ══ Allergy Chips ══ */}
+          <div className="space-y-3">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+              <AlertTriangle className="h-3.5 w-3.5" />
+              {tx("onb.allergyGroupAllergy", lang)}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {COMMON_ALLERGENS.map(def => {
+                const name = getName(def);
+                const isAdded = addedNames.has(name.toLowerCase());
+                return (
+                  <Badge key={def.id}
+                    variant={isAdded ? "default" : "outline"}
+                    className="cursor-pointer transition-colors text-xs"
+                    onClick={() => quickAddChip(def, false)}>
+                    {name}
+                  </Badge>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ══ Sensitivity / Intolerance Chips ══ */}
+          <div className="space-y-3 pt-2 border-t">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+              <ShieldAlert className="h-3.5 w-3.5" />
+              {tx("onb.allergyGroupSensitivity", lang)}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {SENSITIVITY_ITEMS.map(def => {
+                const name = getName(def);
+                const isAdded = addedNames.has(name.toLowerCase());
+                return (
+                  <Badge key={def.id}
+                    variant={isAdded ? "default" : "outline"}
+                    className={`cursor-pointer transition-colors text-xs ${isAdded ? "bg-blue-600 hover:bg-blue-700" : ""}`}
+                    onClick={() => quickAddChip(def, true)}>
+                    {name}
+                  </Badge>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ══ Current Entries ══ */}
           {data.allergies.length > 0 && (
             <div className="space-y-2">
-              {data.allergies.map((allergy, index) => (
-                <div key={index} className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <AlertTriangle className="h-4 w-4 text-orange-500 shrink-0" />
-                    <span className="font-medium">{allergy.allergen}</span>
-                    <Badge className={reactionColors[allergy.severity] || "bg-slate-100"}>
-                      {getReactionLabel(allergy.severity)}
-                    </Badge>
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => removeAllergy(index)}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
+              <AnimatePresence mode="popLayout">
+                {data.allergies.map((allergy, index) => (
+                  <motion.div
+                    key={`${allergy.allergen}-${index}`}
+                    layout={!reducedMotion}
+                    initial={reducedMotion ? undefined : { opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={reducedMotion ? undefined : { opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-center justify-between rounded-lg border p-3"
+                  >
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <AlertTriangle className="h-4 w-4 text-orange-500 shrink-0" />
+                      <span className="font-medium text-sm">{allergy.allergen}</span>
+                      <Badge className={reactionColors[allergy.severity] || "bg-slate-100"}>
+                        {getReactionLabel(allergy.severity)}
+                      </Badge>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => removeAllergy(index)}>
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           )}
 
+          {/* ══ Add Form ══ */}
           <div className="space-y-3 rounded-lg border border-dashed p-4">
             <p className="text-sm font-medium">{tx("onb.addAllergy", lang)}</p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -165,13 +293,13 @@ export function AllergiesStep({ data, updateData }: Props) {
                     >
                       {suggestions.map((s) => (
                         <button
-                          key={s}
+                          key={s.id}
                           type="button"
-                          onClick={() => { setAllergen(s); setShowSuggestions(false); }}
+                          onClick={() => { setAllergen(getName(s)); setShowSuggestions(false); }}
                           className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted/50"
                         >
                           <AlertTriangle className="h-3 w-3 shrink-0 text-orange-400" />
-                          {s}
+                          {getName(s)}
                         </button>
                       ))}
                     </div>
@@ -201,7 +329,7 @@ export function AllergiesStep({ data, updateData }: Props) {
                 </Select>
               </div>
             </div>
-            <Button variant="outline" size="sm" onClick={addAllergy} disabled={!allergen.trim()}>
+            <Button variant="outline" size="sm" onClick={() => addAllergy()} disabled={!allergen.trim()}>
               <Plus className="mr-2 h-4 w-4" />
               {tx("onb.addAllergyBtn", lang)}
             </Button>

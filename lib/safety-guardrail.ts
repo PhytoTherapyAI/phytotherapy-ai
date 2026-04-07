@@ -481,6 +481,17 @@ export function checkContraindications(
   return result;
 }
 
+// ── Allergy/Intolerance Severity Mapping ──
+// Maps reaction types from onboarding to safety severity levels
+export const ALLERGY_SEVERITY_MAP: Record<string, "absolute" | "high" | "moderate" | "low_intolerance" | "unknown"> = {
+  anaphylaxis: "absolute",        // Never recommend — life-threatening
+  urticaria: "high",              // Block recommendation, suggest doctor
+  mild_skin: "moderate",          // Warn, suggest doctor consultation
+  gi_intolerance: "moderate",     // Warn, side effect not allergy
+  intolerance: "low_intolerance", // Inform only, no anaphylaxis risk
+  unknown: "unknown",             // Default caution
+};
+
 // ═══════════════════════════════════════════════
 // LAYER 4: Dosage Limit Validation
 // ═══════════════════════════════════════════════
