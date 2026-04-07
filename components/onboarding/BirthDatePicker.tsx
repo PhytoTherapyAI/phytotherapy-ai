@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, CalendarDays, ChevronDown, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { tx } from "@/lib/translations";
@@ -30,6 +31,12 @@ const DAY_SHORT_KEYS = [
 const DAY_FULL_KEYS = [
   "cal.monFull", "cal.tueFull", "cal.wedFull", "cal.thuFull", "cal.friFull", "cal.satFull", "cal.sunFull",
 ] as const;
+
+// Portal wrapper for popover — renders to document.body to avoid overflow clipping
+function DatePickerPortal({ children, show }: { children: React.ReactNode; show: boolean }) {
+  if (!show) return null;
+  return createPortal(<>{children}</>, document.body);
+}
 
 type ViewMode = "calendar" | "months" | "years";
 type Lang = "en" | "tr";
@@ -93,6 +100,57 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
   const gridRef = useRef<HTMLDivElement>(null);
   const yearsScrollRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
+  const [mounted, setMounted] = useState(false);
+
+  // SSR guard
+  useEffect(() => setMounted(true), []);
+
+  // ── Dynamic positioning: calculate popover position relative to trigger ──
+  useEffect(() => {
+    if (!open || !containerRef.current) return;
+    const updatePos = () => {
+      const rect = containerRef.current!.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const panelW = Math.min(320, vw * 0.9);
+      const panelH = 420; // approx max height
+
+      // Horizontal: center on trigger, clamp to viewport
+      let left = rect.left + rect.width / 2 - panelW / 2;
+      if (left + panelW > vw - 8) left = vw - panelW - 8;
+      if (left < 8) left = 8;
+
+      // Vertical: prefer below, flip above if no room
+      let top = rect.bottom + 8;
+      if (top + panelH > vh && rect.top - panelH - 8 > 0) {
+        top = rect.top - panelH - 8;
+      }
+
+      setPopoverStyle({
+        position: "fixed",
+        top, left,
+        width: panelW,
+        zIndex: 9999,
+      });
+    };
+    updatePos();
+    window.addEventListener("resize", updatePos);
+    window.addEventListener("scroll", updatePos, true);
+    return () => {
+      window.removeEventListener("resize", updatePos);
+      window.removeEventListener("scroll", updatePos, true);
+    };
+  }, [open]);
+
+  // ── Scroll lock on mobile ──
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [open]);
 
   // Sync nav when value changes externally
   useEffect(() => {
@@ -103,11 +161,15 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
     }
   }, [value]);
 
-  // Close on outside click
+  // Close on outside click (check both trigger and portal popover)
   useEffect(() => {
     if (!open) return;
     function handle(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        containerRef.current && !containerRef.current.contains(target) &&
+        popoverRef.current && !popoverRef.current.contains(target)
+      ) {
         setOpen(false);
         setView("calendar");
       }
@@ -287,18 +349,19 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
         <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", open && "rotate-180")} />
       </button>
 
-      {/* Popover */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -4 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -4 }}
-            transition={{ duration: 0.2 }}
-            className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl border bg-background shadow-xl sm:w-80 sm:left-auto sm:right-auto"
-            onTouchStart={view === "calendar" ? handleTouchStart : undefined}
-            onTouchEnd={view === "calendar" ? handleTouchEnd : undefined}
-          >
+      {/* Popover — rendered via portal to avoid overflow clipping */}
+      <DatePickerPortal show={mounted && open}>
+        <motion.div
+          ref={popoverRef}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          transition={{ duration: 0.2 }}
+          style={popoverStyle}
+          className="rounded-xl border bg-background shadow-xl"
+          onTouchStart={view === "calendar" ? handleTouchStart : undefined}
+          onTouchEnd={view === "calendar" ? handleTouchEnd : undefined}
+        >
             {/* Header */}
             <div className="flex items-center justify-between border-b px-3 py-2.5">
               {view === "calendar" && (
@@ -545,8 +608,7 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
               </motion.div>
             )}
           </motion.div>
-        )}
-      </AnimatePresence>
+      </DatePickerPortal>
     </div>
   );
 }
