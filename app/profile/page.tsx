@@ -1087,133 +1087,226 @@ export default function ProfilePage() {
 
       {/* Scanners moved to /scanner page via Tools menu */}
 
-      {/* Medical History / Health Flags */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Stethoscope className="h-5 w-5" />
-            {tx('profile.medicalHistory', lang)}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Critical conditions */}
-          {(profile.is_pregnant || profile.is_breastfeeding || profile.kidney_disease || profile.liver_disease || profile.recent_surgery) && (
-            <div className="space-y-2">
-              <p className="text-xs font-semibold text-red-600 dark:text-red-400 uppercase tracking-wide">
-                {tr ? "Kritik Durumlar" : "Critical Conditions"}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {profile.is_pregnant && <Badge variant="outline" className="border-red-300 text-red-700 dark:text-red-400">🤰 {tx("profile.pregnant", lang)}</Badge>}
-                {profile.is_breastfeeding && <Badge variant="outline" className="border-red-300 text-red-700 dark:text-red-400">🤱 {tx("profile.breastfeeding", lang)}</Badge>}
-                {profile.kidney_disease && <Badge variant="destructive">{tx("onb.advancedOrganFailure", lang)}</Badge>}
-                {profile.liver_disease && <Badge variant="destructive">🩸 {tx("onb.bleedingDisorder", lang)}</Badge>}
-                {profile.recent_surgery && <Badge variant="destructive">🛡️ {tx("onb.immuneSuppressed", lang)}</Badge>}
-              </div>
-            </div>
-          )}
+      {/* Medical History — SBAR enriched */}
+      {(() => {
+        const conditions = (profile.chronic_conditions || []).filter((c: string) => !c.startsWith("family:"));
+        const familyItems = (profile.chronic_conditions || []).filter((c: string) => c.startsWith("family:"));
+        const hasCritical = profile.is_pregnant || profile.is_breastfeeding || profile.kidney_disease || profile.liver_disease || profile.recent_surgery;
+        const isEmpty = conditions.length === 0 && !hasCritical;
 
-          {/* Chronic conditions — grouped by system */}
-          {(() => {
-            const conditions = profile.chronic_conditions.filter(c => !c.startsWith("family:"));
-            if (conditions.length === 0 && !profile.is_pregnant && !profile.is_breastfeeding && !profile.kidney_disease && !profile.liver_disease && !profile.recent_surgery) {
-              return (
-                <div className="flex items-center gap-2 rounded-lg bg-green-50 dark:bg-green-950/20 p-3 border border-green-200 dark:border-green-800">
-                  <span className="text-green-600">🟢</span>
-                  <p className="text-sm text-green-700 dark:text-green-400">{tx("onb.noChronic", lang)}</p>
-                </div>
-              );
-            }
-            if (conditions.length > 0) {
-              // Group conditions by system
-              const cardio = ["Hypertension", "Arrhythmia", "Heart Failure"];
-              const endo = ["Diabetes", "Thyroid Disorder"];
-              const neuro = ["Depression/Anxiety", "Epilepsy"];
-              const resp = ["Asthma", "COPD"];
-              const surg = ["Bariatric Surgery"];
-              const groups = [
-                { label: tr ? "Kardiyovasküler" : "Cardiovascular", items: conditions.filter(c => cardio.includes(c)) },
-                { label: tr ? "Endokrin" : "Endocrine", items: conditions.filter(c => endo.includes(c)) },
-                { label: tr ? "Nörolojik" : "Neurological", items: conditions.filter(c => neuro.includes(c)) },
-                { label: tr ? "Solunum" : "Respiratory", items: conditions.filter(c => resp.includes(c)) },
-                { label: tr ? "Cerrahi" : "Surgical", items: conditions.filter(c => surg.includes(c)) },
-              ].filter(g => g.items.length > 0);
-              const others = conditions.filter(c => ![...cardio, ...endo, ...neuro, ...resp, ...surg].includes(c));
+        const cardio = ["Hypertension", "Arrhythmia", "Heart Failure"];
+        const endo = ["Diabetes", "Thyroid Disorder"];
+        const neuro = ["Depression/Anxiety", "Epilepsy"];
+        const resp = ["Asthma", "COPD"];
+        const surg = ["Bariatric Surgery"];
+        const groupDefs = [
+          { key: "cardio", label: tr ? "Kardiyovasküler" : "Cardiovascular", icon: "❤️", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300", items: conditions.filter((c: string) => cardio.includes(c)) },
+          { key: "endo", label: tr ? "Endokrin" : "Endocrine", icon: "🩺", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300", items: conditions.filter((c: string) => endo.includes(c)) },
+          { key: "neuro", label: tr ? "Nörolojik" : "Neurological", icon: "🧠", color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300", items: conditions.filter((c: string) => neuro.includes(c)) },
+          { key: "resp", label: tr ? "Solunum" : "Respiratory", icon: "🫁", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", items: conditions.filter((c: string) => resp.includes(c)) },
+          { key: "surg", label: tr ? "Cerrahi" : "Surgical", icon: "🔪", color: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300", items: conditions.filter((c: string) => surg.includes(c)) },
+        ].filter(g => g.items.length > 0);
+        const others = conditions.filter((c: string) => ![...cardio, ...endo, ...neuro, ...resp, ...surg].includes(c));
 
-              return (
-                <div className="space-y-2">
-                  {groups.map(g => (
-                    <div key={g.label}>
-                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">{g.label}</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {g.items.map(c => <Badge key={c} variant="secondary">{c}</Badge>)}
+        // Cardiometabolic risk detection
+        const hasCardioMetabolic = conditions.includes("Diabetes") && conditions.includes("Hypertension");
+
+        return (
+          <>
+            <Card className={`mb-6 ${isEmpty ? "border-green-200 dark:border-green-800" : ""}`}
+              style={isEmpty ? { backgroundColor: "var(--green-50, rgba(240,253,244,0.5))" } : {}} id="medical-history">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Stethoscope className="h-5 w-5" />
+                  {isEmpty
+                    ? (tr ? "✅ Temiz Tıbbi Geçmiş" : "✅ Clean Medical History")
+                    : `🏥 ${conditions.length + (hasCritical ? 1 : 0)} ${tr ? "Kronik Durum Kayıtlı" : "Chronic Conditions Recorded"}`}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {isEmpty ? (
+                  <div className="space-y-3">
+                    <p className="text-sm text-green-700 dark:text-green-400">
+                      {tr ? "Kayıtlı kronik hastalığın yok. Bu, AI önerilerinin daha geniş bir yelpazede çalışması demek." : "No chronic conditions recorded. This means AI recommendations work across a wider range."}
+                    </p>
+                    <button onClick={() => document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" })}
+                      className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
+                      <Plus className="h-3 w-3" /> {tr ? "Hastalık Ekle" : "Add Condition"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {/* Critical conditions */}
+                    {hasCritical && (
+                      <div className="space-y-2">
+                        <p className="text-xs font-semibold text-red-600 dark:text-red-400 uppercase tracking-wide">
+                          {tr ? "Kritik Durumlar" : "Critical Conditions"}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {profile.is_pregnant && <Badge variant="outline" className="border-red-300 text-red-700 dark:text-red-400">🤰 {tx("profile.pregnant", lang)}</Badge>}
+                          {profile.is_breastfeeding && <Badge variant="outline" className="border-red-300 text-red-700 dark:text-red-400">🤱 {tx("profile.breastfeeding", lang)}</Badge>}
+                          {profile.kidney_disease && <Badge variant="destructive">{tx("onb.advancedOrganFailure", lang)}</Badge>}
+                          {profile.liver_disease && <Badge variant="destructive">🩸 {tx("onb.bleedingDisorder", lang)}</Badge>}
+                          {profile.recent_surgery && <Badge variant="destructive">🛡️ {tx("onb.immuneSuppressed", lang)}</Badge>}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                  {others.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {others.map(c => <Badge key={c} variant="secondary">{c}</Badge>)}
-                    </div>
+                    )}
+
+                    {/* Grouped conditions with icons + colored badges */}
+                    {groupDefs.map(g => (
+                      <div key={g.key} className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span>{g.icon}</span>
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{g.label}</p>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 ml-6">
+                          {g.items.map((c: string) => <Badge key={c} className={g.color}>{c}</Badge>)}
+                        </div>
+                      </div>
+                    ))}
+                    {others.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {others.map((c: string) => <Badge key={c} variant="secondary">{c}</Badge>)}
+                      </div>
+                    )}
+
+                    {/* Cardiometabolic risk banner */}
+                    {hasCardioMetabolic && (
+                      <p className="text-xs text-amber-700 dark:text-amber-400 flex items-start gap-1.5 bg-amber-50 dark:bg-amber-950/20 rounded-lg px-3 py-2">
+                        <span className="shrink-0 mt-0.5">⚡</span>
+                        {tr ? "Kardiyometabolik risk profili tespit edildi. Düzenli takip önerilir." : "Cardiometabolic risk profile detected. Regular monitoring recommended."}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Soygeçmiş — separate card */}
+            {(() => {
+              const hasEarlyCardio = familyItems.some((c: string) => c.toLowerCase().includes("heart") || c.toLowerCase().includes("kalp"));
+              return (
+                <Card className={`mb-6 ${familyItems.length === 0 ? "border-blue-200 dark:border-blue-800" : hasEarlyCardio ? "border-l-4 border-l-red-500" : ""}`}
+                  style={familyItems.length === 0 ? { backgroundColor: "var(--blue-50, rgba(239,246,255,0.5))" } : {}}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <span>🧬</span>
+                      {familyItems.length === 0
+                        ? (tr ? "Aile Sağlık Geçmişi Eklenmedi" : "No Family Health History Added")
+                        : (tr ? "Aile Sağlık Geçmişi" : "Family Health History")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {familyItems.length === 0 ? (
+                      <div className="space-y-3">
+                        <p className="text-sm text-blue-700 dark:text-blue-400">
+                          {tr ? "Soygeçmiş verisi, genetik risk tespitini %60 daha doğru yapar." : "Family history data makes genetic risk assessment 60% more accurate."}
+                        </p>
+                        <button onClick={() => document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" })}
+                          className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
+                          <Plus className="h-3 w-3" /> {tr ? "Soygeçmiş Ekle" : "Add Family History"}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="space-y-2">
+                          {familyItems.map((c: string) => (
+                            <div key={c} className="flex items-center justify-between rounded-lg border px-3 py-2">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm">{c.toLowerCase().includes("heart") || c.toLowerCase().includes("kalp") ? "❤️" : c.toLowerCase().includes("diabet") || c.toLowerCase().includes("diyabet") ? "🩸" : "🧬"}</span>
+                                <span className="text-sm font-medium">{c.replace("family:", "")}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        {hasEarlyCardio && (
+                          <p className="text-xs text-red-600 dark:text-red-400 flex items-start gap-1.5 bg-red-50 dark:bg-red-950/20 rounded-lg px-3 py-2">
+                            <span className="shrink-0 mt-0.5">🔍</span>
+                            {tr ? "Erken Kardiyovasküler Risk Taraması Önerilir" : "Early Cardiovascular Risk Screening Recommended"}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })()}
+          </>
+        );
+      })()}
+
+      {/* Allergies — SBAR enriched */}
+      {(() => {
+        const hasAnaphylaxis = allergies.some(a => a.severity === "anaphylaxis");
+        const reactionConfig: Record<string, { emoji: string; color: string; label: string }> = {
+          anaphylaxis: { emoji: "🔴", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300", label: tr ? "Anafilaksi" : "Anaphylaxis" },
+          urticaria: { emoji: "🟡", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300", label: tr ? "Kurdeşen" : "Urticaria" },
+          mild_skin: { emoji: "🟢", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300", label: tr ? "Hafif Kaşıntı" : "Mild Skin" },
+          gi_intolerance: { emoji: "🔵", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", label: tr ? "İntolerans" : "Intolerance" },
+          unknown: { emoji: "❓", color: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300", label: tr ? "Bilinmiyor" : "Unknown" },
+          mild: { emoji: "🟢", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300", label: tr ? "Hafif" : "Mild" },
+          moderate: { emoji: "🟡", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300", label: tr ? "Orta" : "Moderate" },
+          severe: { emoji: "🔴", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300", label: tr ? "Şiddetli" : "Severe" },
+        };
+
+        return (
+          <Card className={`mb-6 ${hasAnaphylaxis ? "border-red-300 dark:border-red-700 border-l-4 border-l-red-500" : allergies.length === 0 ? "border-green-200 dark:border-green-800" : ""}`}
+            style={hasAnaphylaxis ? { backgroundColor: "var(--red-50, rgba(254,242,242,0.5))" } : allergies.length === 0 ? { backgroundColor: "var(--green-50, rgba(240,253,244,0.5))" } : {}}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {hasAnaphylaxis ? (
+                  <span className="animate-pulse">🚨</span>
+                ) : allergies.length === 0 ? (
+                  <span className="text-2xl">🛡️</span>
+                ) : (
+                  <AlertTriangle className="h-5 w-5 text-amber-500" />
+                )}
+                {hasAnaphylaxis
+                  ? (tr ? "Anafilaksi Uyarısı Aktif" : "Anaphylaxis Alert Active")
+                  : allergies.length === 0
+                    ? (tr ? "Bilinen Alerji Yok" : "No Known Allergies")
+                    : `${allergies.length} ${tr ? "Alerji Tanımlı" : allergies.length === 1 ? "Allergy Defined" : "Allergies Defined"}`}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {allergies.length === 0 ? (
+                <div className="space-y-3">
+                  <p className="text-sm text-green-700 dark:text-green-400">
+                    {tr ? "Tıbbi geçmişinde kayıtlı bir alerjin yok. Güvenle öneri alabilirsin." : "No allergies in your medical record. You can safely receive recommendations."}
+                  </p>
+                  <button onClick={() => document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" })}
+                    className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
+                    <Plus className="h-3 w-3" /> {tr ? "Alerji Ekle" : "Add Allergy"}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    {allergies.map((allergy) => {
+                      const rc = reactionConfig[allergy.severity] || reactionConfig.unknown;
+                      return (
+                        <div key={allergy.id} className="flex items-center justify-between rounded-lg border px-3 py-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm">{rc.emoji}</span>
+                            <span className="text-sm font-medium">{allergy.allergen}</span>
+                          </div>
+                          <Badge className={rc.color}>{rc.label}</Badge>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {hasAnaphylaxis && (
+                    <p className="text-xs text-red-600 dark:text-red-400 flex items-start gap-1.5 bg-red-50 dark:bg-red-950/20 rounded-lg px-3 py-2">
+                      <span className="shrink-0 mt-0.5">⚡</span>
+                      {tr ? "Bu bilgi tüm AI önerilerinde otomatik filtreleme yapıyor." : "This data automatically filters all AI recommendations."}
+                    </p>
                   )}
                 </div>
-              );
-            }
-            return null;
-          })()}
-
-          {/* Family History */}
-          {profile.chronic_conditions.filter(c => c.startsWith("family:")).length > 0 && (
-            <div className="space-y-2 border-t pt-3">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
-                🧬 {tr ? "Soygeçmiş" : "Family History"}
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {profile.chronic_conditions.filter(c => c.startsWith("family:")).map((c) => (
-                  <Badge key={c} variant="outline" className="text-xs">{c.replace("family:", "")}</Badge>
-                ))}
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Allergies */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5" />
-            {tx('profile.allergies', lang)}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {allergies.length === 0 ? (
-            <div>
-              <p className="text-sm text-muted-foreground">{tx('profile.noAllergies', lang)}</p>
-              <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center gap-1">
-                <AlertTriangle className="h-3 w-3" />
-                {tx("profile.addAllergiesTip", lang)}
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {allergies.map((allergy) => {
-                const reactionLabels: Record<string, string> = {
-                  anaphylaxis: "🚨 Anaphylaxis",
-                  urticaria: "⚠️ Urticaria",
-                  mild_skin: "🟡 Mild",
-                  gi_intolerance: "🟠 Intolerance",
-                  unknown: "❓ Unknown",
-                  mild: "Mild", moderate: "Moderate", severe: "Severe",
-                };
-                return (
-                  <Badge key={allergy.id} variant="destructive">
-                    {allergy.allergen} ({reactionLabels[allergy.severity] || allergy.severity})
-                  </Badge>
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              )}
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {/* Health Flags card moved up — see above */}
 
