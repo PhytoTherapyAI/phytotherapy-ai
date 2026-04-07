@@ -206,6 +206,9 @@ export default function ProfilePage() {
   };
 
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [sbarLoading, setSbarLoading] = useState<"pdf" | "email" | null>(null);
+  const [sbarEmailOpen, setSbarEmailOpen] = useState(false);
+  const [sbarEmail, setSbarEmail] = useState("");
 
   const showSaveToast = () => {
     setSaveSuccess(true);
@@ -1936,6 +1939,107 @@ export default function ProfilePage() {
 
       {/* Vaccine Profile */}
       <VaccineProfileSection lang={lang} userId={profile.id} initialVaccines={Array.isArray(profile.vaccines) ? profile.vaccines : undefined} />
+
+      {/* SBAR PDF Export */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <span>📋</span>
+            {tr ? "Doktor Görüşmesi İçin Özet Al" : "Get Summary for Doctor Visit"}
+          </CardTitle>
+          <CardDescription>
+            {tr ? "Tüm sağlık verilerini tek sayfalık profesyonel bir rapor olarak indir veya e-posta ile gönder." : "Download all your health data as a one-page professional report or send via email."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button
+              onClick={async () => {
+                setSbarLoading("pdf");
+                try {
+                  const supabase = createBrowserClient();
+                  const { data: { session } } = await supabase.auth.getSession();
+                  const res = await fetch("/api/sbar-pdf", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+                    body: JSON.stringify({ lang }),
+                  });
+                  if (!res.ok) throw new Error("PDF failed");
+                  const blob = await res.blob();
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url; a.download = `DoctoPal-SBAR-${new Date().toISOString().split("T")[0]}.pdf`;
+                  a.click(); URL.revokeObjectURL(url);
+                } catch { alert(tr ? "PDF oluşturulamadı, tekrar dene" : "PDF generation failed, try again"); }
+                setSbarLoading(null);
+              }}
+              disabled={sbarLoading === "pdf"}
+              className="flex-1"
+            >
+              {sbarLoading === "pdf" ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{tr ? "PDF Oluşturuluyor..." : "Generating PDF..."}</> : <><span className="mr-2">📥</span>{tr ? "PDF İndir" : "Download PDF"}</>}
+            </Button>
+            <Button variant="outline"
+              onClick={() => setSbarEmailOpen(true)}
+              disabled={sbarLoading === "email"}
+              className="flex-1"
+            >
+              <span className="mr-2">📧</span>{tr ? "E-posta Gönder" : "Send via Email"}
+            </Button>
+          </div>
+
+          {/* Email modal */}
+          {sbarEmailOpen && (
+            <div className="mt-4 rounded-lg border p-4 space-y-3 bg-muted/30">
+              <p className="text-sm font-medium">{tr ? "PDF'i e-posta ile gönder" : "Send PDF via email"}</p>
+              <Input
+                type="email"
+                placeholder={tr ? "E-posta adresi" : "Email address"}
+                value={sbarEmail}
+                onChange={(e) => setSbarEmail(e.target.value)}
+                defaultValue={user?.email || ""}
+              />
+              <div className="flex gap-2">
+                <Button size="sm"
+                  disabled={sbarLoading === "email"}
+                  onClick={async () => {
+                    setSbarLoading("email");
+                    try {
+                      const supabase = createBrowserClient();
+                      const { data: { session } } = await supabase.auth.getSession();
+                      // First generate PDF blob
+                      const pdfRes = await fetch("/api/sbar-pdf", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+                        body: JSON.stringify({ lang }),
+                      });
+                      if (!pdfRes.ok) throw new Error("PDF failed");
+                      const blob = await pdfRes.blob();
+                      const reader = new FileReader();
+                      const base64 = await new Promise<string>((resolve) => {
+                        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+                        reader.readAsDataURL(blob);
+                      });
+                      // Send email
+                      const emailRes = await fetch("/api/sbar-email", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+                        body: JSON.stringify({ email: sbarEmail || user?.email, lang, pdfBase64: base64 }),
+                      });
+                      if (!emailRes.ok) throw new Error("Email failed");
+                      setSbarEmailOpen(false);
+                      alert(tr ? "E-posta gönderildi!" : "Email sent!");
+                    } catch { alert(tr ? "Gönderilemedi, tekrar dene" : "Failed to send, try again"); }
+                    setSbarLoading(null);
+                  }}
+                >
+                  {sbarLoading === "email" ? <><Loader2 className="mr-2 h-3 w-3 animate-spin" />{tr ? "Gönderiliyor..." : "Sending..."}</> : (tr ? "Gönder" : "Send")}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setSbarEmailOpen(false)}>{tr ? "İptal" : "Cancel"}</Button>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Emergency Contacts */}
       <EmergencyContactsSection lang={lang} userId={profile.id} />
