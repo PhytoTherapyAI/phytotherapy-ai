@@ -128,7 +128,7 @@ export function AllergiesStep({ data, updateData }: Props) {
     if (s === "intolerance") {
       const existing = data.allergies.find(a => a.allergen.toLowerCase() === n.toLowerCase());
       if (existing?.severity === "anaphylaxis") {
-        if (!window.confirm(tx("onb.anaphylaxisWarning", lang))) return;
+        if (typeof window !== "undefined" && !window.confirm(tx("onb.anaphylaxisWarning", lang))) return;
       }
     }
 

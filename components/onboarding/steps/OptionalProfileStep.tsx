@@ -274,7 +274,7 @@ export function OptionalProfileStep({ data, updateData }: Props) {
       <div className="flex items-center space-x-2 rounded-lg border p-3">
         <Watch className="h-4 w-4 text-muted-foreground" />
         <Label className="text-sm font-normal flex-1">
-          {tr ? "Akıllı saat veya tansiyon aleti kullanıyor musunuz?" : "Do you use a smartwatch or blood pressure monitor?"}
+          {tr ? "Akıllı saat veya tansiyon aleti kullanıyor musun?" : "Do you use a smartwatch or blood pressure monitor?"}
         </Label>
         <Checkbox
           checked={wearable === "yes"}

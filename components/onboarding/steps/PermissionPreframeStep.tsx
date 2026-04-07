@@ -11,24 +11,30 @@ const PERMISSION_CARDS = [
     titleKey: "onb.permNotifTitle",
     descKey: "onb.permNotifDesc",
     whenKey: "onb.permNotifWhen",
+    whenEmoji: "🔔",
     color: "text-amber-500",
     bg: "bg-amber-50 dark:bg-amber-950/30",
+    pillBg: "bg-amber-200/50 dark:bg-amber-800/30",
   },
   {
     icon: MapPin,
     titleKey: "onb.permLocationTitle",
     descKey: "onb.permLocationDesc",
     whenKey: "onb.permLocationWhen",
+    whenEmoji: "📍",
     color: "text-blue-500",
     bg: "bg-blue-50 dark:bg-blue-950/30",
+    pillBg: "bg-blue-200/50 dark:bg-blue-800/30",
   },
   {
     icon: Camera,
     titleKey: "onb.permCameraTitle",
     descKey: "onb.permCameraDesc",
     whenKey: "onb.permCameraWhen",
+    whenEmoji: "📷",
     color: "text-purple-500",
     bg: "bg-purple-50 dark:bg-purple-950/30",
+    pillBg: "bg-purple-200/50 dark:bg-purple-800/30",
   },
 ];
 
@@ -55,7 +61,8 @@ export function PermissionPreframeStep() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold">{tx(card.titleKey, lang)}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{tx(card.descKey, lang)}</p>
-                <span className="mt-1.5 inline-block rounded-full bg-slate-200/60 dark:bg-slate-700/60 px-2 py-0.5 text-[10px] text-muted-foreground">
+                <span className={`mt-1.5 inline-flex items-center gap-1 rounded-full ${card.pillBg} px-2.5 py-0.5 text-xs font-medium text-muted-foreground`}>
+                  <span>{card.whenEmoji}</span>
                   {tx(card.whenKey, lang)}
                 </span>
               </div>
