@@ -4,8 +4,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Shield, Syringe, Calendar, ChevronDown, ChevronUp } from "lucide-react"
+import { Shield, ChevronDown, ChevronUp, Check } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
@@ -24,14 +23,16 @@ interface Props {
 }
 
 const GROUP_ORDER: VaccineGroup[] = ["essential", "seasonal", "special"]
+const YEARS = Array.from({ length: 27 }, (_, i) => 2026 - i) // 2026..2000
 
 export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) {
   const reducedMotion = useReducedMotion()
+  const tr = lang === "tr"
   const [vaccines, setVaccines] = useState<VaccineEntry[]>(initialVaccines || [])
   const [saving, setSaving] = useState(false)
   const [expandedGroup, setExpandedGroup] = useState<VaccineGroup | null>("essential")
+  const [openDatePicker, setOpenDatePicker] = useState<string | null>(null)
 
-  // Load vaccines from Supabase on mount
   useEffect(() => {
     if (initialVaccines) return
     const supabase = createBrowserClient()
@@ -44,7 +45,6 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
       })
   }, [userId, initialVaccines])
 
-  // Save to Supabase — update state only after success
   const saveVaccines = useCallback(async (updated: VaccineEntry[]) => {
     setSaving(true)
     try {
@@ -62,23 +62,40 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
   const getEntry = (vaccineId: string): VaccineEntry | undefined =>
     vaccines.find(v => v.id === vaccineId)
 
-  const updateVaccine = (vaccineId: string, updates: Partial<VaccineEntry>) => {
-    const existing = vaccines.find(v => v.id === vaccineId)
+  const toggleVaccine = (vaccineId: string) => {
+    const existing = getEntry(vaccineId)
     const vaccineDef = VACCINE_LIST.find(v => v.id === vaccineId)
     if (!vaccineDef) return
+    const name = tr ? vaccineDef.nameTr : vaccineDef.nameEn
+    const newStatus = existing?.status === "done" ? "not_done" : "done"
 
-    const name = lang === "tr" ? vaccineDef.nameTr : vaccineDef.nameEn
     let updated: VaccineEntry[]
-
     if (existing) {
-      updated = vaccines.map(v => v.id === vaccineId ? { ...v, ...updates } : v)
+      updated = vaccines.map(v => v.id === vaccineId
+        ? { ...v, status: newStatus as VaccineEntry["status"], ...(newStatus === "not_done" ? { last_date: undefined } : {}) }
+        : v)
     } else {
-      updated = [...vaccines, { id: vaccineId, name, status: "unknown", ...updates }]
+      updated = [...vaccines, { id: vaccineId, name, status: newStatus as VaccineEntry["status"] }]
     }
     saveVaccines(updated)
   }
 
-  // Progress
+  const setDate = (vaccineId: string, year: string) => {
+    const existing = getEntry(vaccineId)
+    const vaccineDef = VACCINE_LIST.find(v => v.id === vaccineId)
+    if (!vaccineDef) return
+    const name = tr ? vaccineDef.nameTr : vaccineDef.nameEn
+
+    let updated: VaccineEntry[]
+    if (existing) {
+      updated = vaccines.map(v => v.id === vaccineId ? { ...v, last_date: year, status: "done" as const } : v)
+    } else {
+      updated = [...vaccines, { id: vaccineId, name, status: "done" as const, last_date: year }]
+    }
+    saveVaccines(updated)
+    setOpenDatePicker(null)
+  }
+
   const doneCount = vaccines.filter(v => v.status === "done").length
   const totalCount = VACCINE_LIST.length
   const essentialDone = vaccines.filter(v => ESSENTIAL_VACCINE_IDS.includes(v.id) && v.status === "done").length
@@ -91,16 +108,6 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
       special: "vaccine.groupSpecial",
     }
     return tx(keys[group], lang)
-  }
-
-  const statusChipClass = (status: string, isSelected: boolean) => {
-    if (!isSelected) return "bg-muted text-muted-foreground hover:bg-muted/80"
-    switch (status) {
-      case "done": return "bg-green-600 text-white"
-      case "not_done": return "bg-red-500 text-white"
-      case "unknown": return "bg-slate-500 text-white"
-      default: return "bg-muted text-muted-foreground"
-    }
   }
 
   return (
@@ -127,9 +134,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
         <div className="mt-3 space-y-1.5">
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">
-              {lang === "tr"
-                ? `${doneCount}/${totalCount} aşı kayıtlı`
-                : `${doneCount}/${totalCount} vaccines recorded`}
+              {tr ? `${doneCount}/${totalCount} aşı kayıtlı` : `${doneCount}/${totalCount} vaccines recorded`}
             </span>
             {allEssentialDone && (
               <Badge className="bg-primary/10 text-primary text-[10px]">
@@ -148,23 +153,26 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         {GROUP_ORDER.map(group => {
           const groupVaccines = VACCINE_LIST.filter(v => v.group === group)
           const isExpanded = expandedGroup === group
+          const groupDone = groupVaccines.filter(v => getEntry(v.id)?.status === "done").length
+          const groupComplete = groupDone === groupVaccines.length
 
           return (
-            <div key={group} className="rounded-lg border">
+            <div key={group} className={`rounded-lg border transition-colors ${groupComplete ? "border-green-200 dark:border-green-800" : ""}`}>
               <button
                 type="button"
                 onClick={() => setExpandedGroup(isExpanded ? null : group)}
-                className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/30 transition-colors"
+                className="flex w-full items-center justify-between px-4 py-2.5 text-left hover:bg-muted/30 transition-colors"
               >
-                <span className="text-sm font-semibold">{getGroupLabel(group)}</span>
+                <span className="text-sm font-semibold flex items-center gap-2">
+                  {getGroupLabel(group)}
+                  {groupComplete && <span className="text-green-600 text-xs">✅</span>}
+                </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">
-                    {groupVaccines.filter(v => getEntry(v.id)?.status === "done").length}/{groupVaccines.length}
-                  </span>
+                  <span className="text-[11px] text-muted-foreground">{groupDone}/{groupVaccines.length}</span>
                   {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </div>
               </button>
@@ -178,73 +186,79 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className="border-t px-4 py-2 space-y-3">
+                    <div className="border-t divide-y">
                       {groupVaccines.map(vDef => {
                         const entry = getEntry(vDef.id)
-                        const currentStatus = entry?.status || "unknown"
-                        const showDate = currentStatus === "done"
-                        const displayName = lang === "tr" ? vDef.nameTr : vDef.nameEn
+                        const isDone = entry?.status === "done"
+                        const displayName = tr ? vDef.nameTr : vDef.nameEn
+                        const dateLabel = entry?.last_date
+                          ? entry.last_date
+                          : isDone
+                            ? (tr ? "Tarih ekle" : "Add date")
+                            : "—"
+                        const isDateOpen = openDatePicker === vDef.id
 
                         return (
-                          <div key={vDef.id} className="space-y-2">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                              {/* Vaccine name */}
-                              <div className="flex items-center gap-2 sm:w-48 shrink-0">
-                                <Syringe className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                                <span className="text-sm font-medium">{displayName}</span>
-                              </div>
+                          <div key={vDef.id} className="flex items-center gap-3 px-4 py-3 min-h-[48px] relative">
+                            {/* Checkbox */}
+                            <button
+                              type="button"
+                              onClick={() => toggleVaccine(vDef.id)}
+                              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-all ${
+                                isDone
+                                  ? "bg-primary border-primary text-primary-foreground"
+                                  : "border-muted-foreground/30 hover:border-primary/50"
+                              }`}
+                              aria-label={`${displayName} ${isDone ? "done" : "not done"}`}
+                            >
+                              {isDone && <Check className="h-4 w-4" />}
+                            </button>
 
-                              {/* Status chips */}
-                              <div className="flex gap-1.5">
-                                {(["done", "unknown", "not_done"] as const).map(status => (
+                            {/* Vaccine name */}
+                            <span className={`flex-1 text-sm font-medium ${isDone ? "text-foreground" : "text-muted-foreground"}`}>
+                              {displayName}
+                            </span>
+
+                            {/* Date dropdown trigger */}
+                            <button
+                              type="button"
+                              onClick={() => isDone && setOpenDatePicker(isDateOpen ? null : vDef.id)}
+                              disabled={!isDone}
+                              className={`text-xs px-2 py-1 rounded-md transition-colors flex items-center gap-1 ${
+                                isDone
+                                  ? entry?.last_date
+                                    ? "text-primary font-medium hover:bg-primary/10"
+                                    : "text-muted-foreground hover:bg-muted/50"
+                                  : "text-muted-foreground/40 cursor-default"
+                              }`}
+                            >
+                              {dateLabel}
+                              {isDone && <ChevronDown className={`h-3 w-3 transition-transform ${isDateOpen ? "rotate-180" : ""}`} />}
+                            </button>
+
+                            {/* Year picker dropdown */}
+                            {isDateOpen && (
+                              <div className="absolute right-4 top-full mt-1 z-50 w-40 max-h-48 overflow-y-auto rounded-lg border bg-background shadow-lg">
+                                <button
+                                  type="button"
+                                  onClick={() => setDate(vDef.id, "")}
+                                  className="w-full px-3 py-1.5 text-left text-xs text-muted-foreground hover:bg-muted/50 border-b"
+                                >
+                                  {tr ? "Hatırlamıyorum" : "Don't remember"}
+                                </button>
+                                {YEARS.map(y => (
                                   <button
-                                    key={status}
+                                    key={y}
                                     type="button"
-                                    onClick={() => updateVaccine(vDef.id, {
-                                      status,
-                                      ...(status !== "done" ? { last_date: undefined } : {}),
-                                    })}
-                                    className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${statusChipClass(status, currentStatus === status)}`}
+                                    onClick={() => setDate(vDef.id, String(y))}
+                                    className={`w-full px-3 py-1.5 text-left text-xs hover:bg-muted/50 ${
+                                      entry?.last_date === String(y) ? "bg-primary/10 text-primary font-semibold" : ""
+                                    }`}
                                   >
-                                    {status === "done" && (lang === "tr" ? "✓ Oldum" : "✓ Done")}
-                                    {status === "unknown" && (lang === "tr" ? "? Bilmiyorum" : "? Unsure")}
-                                    {status === "not_done" && (lang === "tr" ? "✗ Olmadım" : "✗ Not done")}
+                                    {y}
                                   </button>
                                 ))}
                               </div>
-
-                              {/* Date input (when done) */}
-                              <AnimatePresence>
-                                {showDate && (
-                                  <motion.div
-                                    initial={reducedMotion ? undefined : { width: 0, opacity: 0 }}
-                                    animate={{ width: "auto", opacity: 1 }}
-                                    exit={reducedMotion ? undefined : { width: 0, opacity: 0 }}
-                                    transition={{ duration: 0.2 }}
-                                    className="overflow-hidden"
-                                  >
-                                    <div className="flex items-center gap-1.5">
-                                      <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                                      <Input
-                                        type="month"
-                                        value={entry?.last_date || ""}
-                                        onChange={(e) => updateVaccine(vDef.id, { last_date: e.target.value })}
-                                        className="h-7 text-xs w-36"
-                                        placeholder="YYYY-MM"
-                                      />
-                                    </div>
-                                  </motion.div>
-                                )}
-                              </AnimatePresence>
-                            </div>
-
-                            {/* Interval note */}
-                            {vDef.intervalYears && currentStatus === "done" && (
-                              <p className="text-[10px] text-muted-foreground/70 ml-5">
-                                {lang === "tr"
-                                  ? `${vDef.intervalYears === 1 ? "Her yıl" : `${vDef.intervalYears} yılda bir`} tekrarlanmalı`
-                                  : `Repeat every ${vDef.intervalYears === 1 ? "year" : `${vDef.intervalYears} years`}`}
-                              </p>
                             )}
                           </div>
                         )
