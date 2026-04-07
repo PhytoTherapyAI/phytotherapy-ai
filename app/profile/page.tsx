@@ -853,7 +853,8 @@ export default function ProfilePage() {
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div>
             <p className="text-sm text-muted-foreground">{tr ? "Sana nasıl hitap edelim" : "Display Name"}</p>
-            <p className="font-medium">{profile.full_name || "—"}</p>
+            <InlineEdit value={profile.full_name} lang={lang} placeholder={tr ? "Adın" : "Your name"}
+              onSave={async (v) => { const sb = createBrowserClient(); await sb.from("user_profiles").update({ full_name: v }).eq("id", profile.id); await refreshProfile(); }} />
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{tx('profile.email', lang)}</p>
@@ -861,22 +862,29 @@ export default function ProfilePage() {
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{tx('profile.age', lang)}</p>
-            <p className="font-medium">{profile.age ?? "—"}</p>
+            <InlineEdit value={profile.age} lang={lang} type="number" placeholder={tr ? "Yaş" : "Age"}
+              onSave={async (v) => { const sb = createBrowserClient(); await sb.from("user_profiles").update({ age: parseInt(v) || null }).eq("id", profile.id); await refreshProfile(); }} />
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{tx('profile.gender', lang)}</p>
-            <p className="font-medium capitalize">
-              {(() => {
-                const genderLabels: Record<string, Record<string, string>> = {
-                  male: { en: "Male", tr: "Erkek" },
-                  female: { en: "Female", tr: "Kadın" },
-                  other: { en: "Other", tr: "Diğer" },
-                  prefer_not_to_say: { en: "Prefer not to say", tr: "Belirtmek istemiyorum" },
-                };
-                const g = profile.gender || "";
-                return genderLabels[g]?.[lang] || g.replace("_", " ") || "—";
-              })()}
-            </p>
+            {(() => {
+              const genderLabels: Record<string, Record<string, string>> = {
+                male: { en: "Male", tr: "Erkek" },
+                female: { en: "Female", tr: "Kadın" },
+                other: { en: "Other", tr: "Diğer" },
+              };
+              const g = profile.gender || "";
+              const displayValue = genderLabels[g]?.[lang] || null;
+              return (
+                <InlineEdit value={displayValue} lang={lang} type="chips"
+                  options={[
+                    { value: "male", label: tr ? "Erkek" : "Male" },
+                    { value: "female", label: tr ? "Kadın" : "Female" },
+                    { value: "other", label: tr ? "Diğer" : "Other" },
+                  ]}
+                  onSave={async (v) => { const sb = createBrowserClient(); await sb.from("user_profiles").update({ gender: v }).eq("id", profile.id); await refreshProfile(); }} />
+              );
+            })()}
           </div>
           {/* Substance use summary */}
           <div>
@@ -2076,6 +2084,54 @@ const EC_RELATIONSHIPS = [
   { id: "friend", label: { en: "Friend", tr: "Arkadaş" } },
   { id: "other", label: { en: "Other", tr: "Diğer" } },
 ];
+
+// ── Inline Edit Helper ──
+function InlineEdit({ value, onSave, type = "text", placeholder, lang, options }: {
+  value?: string | number | null; onSave: (val: string) => Promise<void>; type?: "text" | "number" | "chips";
+  placeholder?: string; lang: "en" | "tr"; options?: { value: string; label: string }[];
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(String(value ?? ""));
+  const [saving, setSaving] = useState(false);
+  const addLabel = lang === "tr" ? "+ Ekle" : "+ Add";
+
+  if (!editing && !value) {
+    return <button onClick={() => setEditing(true)} className="text-sm font-medium text-primary hover:underline cursor-pointer">{addLabel}</button>;
+  }
+  if (!editing) {
+    return <span className="font-medium cursor-pointer hover:text-primary transition-colors" onClick={() => { setDraft(String(value ?? "")); setEditing(true); }}>{String(value)}</span>;
+  }
+
+  const save = async () => {
+    if (!draft.trim()) return;
+    setSaving(true);
+    await onSave(draft.trim());
+    setSaving(false); setEditing(false);
+  };
+
+  if (type === "chips" && options) {
+    return (
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {options.map(o => (
+          <button key={o.value} type="button" onClick={async () => { setSaving(true); await onSave(o.value); setSaving(false); setEditing(false); }}
+            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${draft === o.value ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-muted/80"}`}>
+            {o.label}
+          </button>
+        ))}
+        <button onClick={() => setEditing(false)} className="text-xs text-muted-foreground hover:text-foreground ml-1">✗</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <input type={type === "number" ? "number" : "text"} value={draft} onChange={e => setDraft(e.target.value)}
+        placeholder={placeholder} autoFocus className="h-7 rounded-md border px-2 text-sm w-32 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" />
+      <button onClick={save} disabled={saving} className="text-primary hover:text-primary/80 text-sm font-bold">{saving ? "..." : "✓"}</button>
+      <button onClick={() => setEditing(false)} className="text-muted-foreground hover:text-foreground text-sm">✗</button>
+    </div>
+  );
+}
 
 function EmergencyContactsSection({ lang, userId }: { lang: "en" | "tr"; userId: string }) {
   const tr = lang === "tr";
