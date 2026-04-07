@@ -197,6 +197,14 @@ function BloodTestTab({
   const [pdfUploading, setPdfUploading] = useState(false);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to results when data arrives
+  useEffect(() => {
+    if (data && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [data]);
   const [testDate, setTestDate] = useState<string>("");
   const [dontRememberDate, setDontRememberDate] = useState(false);
   const [testDateApprox, setTestDateApprox] = useState<string>("");
@@ -415,7 +423,7 @@ function BloodTestTab({
       )}
 
       {data ? (
-        <div className="space-y-6">
+        <div ref={resultsRef} className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">
               {tx("bt.yourResults", lang)}

@@ -122,8 +122,7 @@ export async function askStreamJSON(
     systemPrompt +
     "\n\nIMPORTANT: You MUST respond with valid JSON only. No markdown code blocks, no explanation text before or after, no ```json wrapper. Output ONLY the raw JSON object/array. Be concise.";
 
-  return retryWithBackoff(async () => {
-    const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
+  async function streamCollect(model: string): Promise<string> {
     const stream = getClient().messages.stream({
       model,
       max_tokens: TOKENS_JSON,
@@ -141,7 +140,18 @@ export async function askStreamJSON(
 
     const parsed = safeParseJSON(fullText);
     return JSON.stringify(parsed);
-  });
+  }
+
+  // Try premium model first, fallback to default if it fails
+  if (options?.premium) {
+    try {
+      return await retryWithBackoff(() => streamCollect(MODEL_PREMIUM));
+    } catch (err) {
+      console.warn("[Claude] Premium model failed, falling back to default:", err instanceof Error ? err.message : err);
+      return await retryWithBackoff(() => streamCollect(MODEL_DEFAULT));
+    }
+  }
+  return retryWithBackoff(() => streamCollect(MODEL_DEFAULT));
 }
 
 export async function askStreamJSONMultimodal(
@@ -154,29 +164,27 @@ export async function askStreamJSONMultimodal(
     systemPrompt +
     "\n\nIMPORTANT: You MUST respond with valid JSON only. No markdown code blocks, no explanation text before or after, no ```json wrapper. Output ONLY the raw JSON object/array. Be concise.";
 
-  return retryWithBackoff(async () => {
-    const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
-    const contentParts: Anthropic.MessageCreateParams["messages"][0]["content"] = [];
-
-    for (const file of files) {
-      if (file.mimeType === "application/pdf") {
-        contentParts.push({
-          type: "document" as const,
-          source: { type: "base64" as const, media_type: "application/pdf" as const, data: file.base64 },
-        } as unknown as Anthropic.ImageBlockParam);
-      } else {
-        contentParts.push({
-          type: "image" as const,
-          source: {
-            type: "base64" as const,
-            media_type: file.mimeType as "image/jpeg" | "image/png" | "image/gif" | "image/webp",
-            data: file.base64,
-          },
-        });
-      }
+  const contentParts: Anthropic.MessageCreateParams["messages"][0]["content"] = [];
+  for (const file of files) {
+    if (file.mimeType === "application/pdf") {
+      contentParts.push({
+        type: "document" as const,
+        source: { type: "base64" as const, media_type: "application/pdf" as const, data: file.base64 },
+      } as unknown as Anthropic.ImageBlockParam);
+    } else {
+      contentParts.push({
+        type: "image" as const,
+        source: {
+          type: "base64" as const,
+          media_type: file.mimeType as "image/jpeg" | "image/png" | "image/gif" | "image/webp",
+          data: file.base64,
+        },
+      });
     }
-    contentParts.push({ type: "text" as const, text: prompt });
+  }
+  contentParts.push({ type: "text" as const, text: prompt });
 
+  async function streamCollect(model: string): Promise<string> {
     const stream = getClient().messages.stream({
       model,
       max_tokens: TOKENS_JSON,
@@ -194,7 +202,17 @@ export async function askStreamJSONMultimodal(
 
     const parsed = safeParseJSON(fullText);
     return JSON.stringify(parsed);
-  });
+  }
+
+  if (options?.premium) {
+    try {
+      return await retryWithBackoff(() => streamCollect(MODEL_PREMIUM));
+    } catch (err) {
+      console.warn("[Claude] Premium multimodal failed, falling back:", err instanceof Error ? err.message : err);
+      return await retryWithBackoff(() => streamCollect(MODEL_DEFAULT));
+    }
+  }
+  return retryWithBackoff(() => streamCollect(MODEL_DEFAULT));
 }
 
 // ──────────────────────────────────────────────
@@ -248,8 +266,7 @@ export async function askGeminiStream(
   systemPrompt: string,
   options?: { premium?: boolean }
 ): Promise<ReadableStream> {
-  return retryWithBackoff(async () => {
-    const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
+  function createStream(model: string): ReadableStream {
     const stream = getClient().messages.stream({
       model,
       max_tokens: TOKENS_STREAM,
@@ -276,7 +293,18 @@ export async function askGeminiStream(
         }
       },
     });
-  });
+  }
+
+  // Try premium model, fallback to default
+  if (options?.premium) {
+    try {
+      return createStream(MODEL_PREMIUM);
+    } catch {
+      console.warn("[Claude] Premium stream failed, falling back to default");
+      return createStream(MODEL_DEFAULT);
+    }
+  }
+  return createStream(MODEL_DEFAULT);
 }
 
 // Re-export the same interface for multimodal

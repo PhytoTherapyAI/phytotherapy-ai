@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { history, files, lang } = body;
+    const { history, files, lang, modelMode } = body;
     const message = sanitizeInput(body.message);
 
     if (!message || message.length === 0) {
@@ -193,8 +193,8 @@ This rule exists because giving dosage advice without knowing the user's medicat
     }
 
     // Use multimodal streaming if files are present, otherwise standard text streaming
-    // Hackathon mode: premium=true → Sonnet for all users (best quality for demo)
-    const isPremium = true; // TODO: check user subscription after hackathon
+    // Model selection: "quality" = Sonnet, "fast" = Haiku
+    const isPremium = modelMode !== "fast"; // default to quality (Sonnet)
     let stream;
     try {
       stream = geminiFiles.length > 0

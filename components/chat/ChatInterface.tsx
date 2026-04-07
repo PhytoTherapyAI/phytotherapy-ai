@@ -57,6 +57,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
+  const [modelMode, setModelMode] = useState<"fast" | "quality">("quality"); // fast=Haiku, quality=Sonnet
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -282,6 +283,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
           history: historyForApi,
           files: filesPayload,
           lang,
+          modelMode,
         }),
       });
 
@@ -434,6 +436,37 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
             <Link href="/auth/login" className="text-primary hover:underline">
               {tx('chat.signUpUnlimited', lang)}
             </Link>
+          </div>
+        )}
+
+        {/* Model selector */}
+        {isAuthenticated && (
+          <div className="mb-2 flex items-center gap-1.5">
+            <button
+              onClick={() => setModelMode("fast")}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                modelMode === "fast"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              ⚡ {lang === "tr" ? "Hızlı" : "Fast"}
+            </button>
+            <button
+              onClick={() => setModelMode("quality")}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                modelMode === "quality"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              ✨ {lang === "tr" ? "Detaylı" : "Detailed"}
+            </button>
+            <span className="text-[10px] text-muted-foreground ml-1">
+              {modelMode === "fast"
+                ? (lang === "tr" ? "Daha hızlı yanıt" : "Faster response")
+                : (lang === "tr" ? "Daha kapsamlı analiz" : "More thorough analysis")}
+            </span>
           </div>
         )}
 

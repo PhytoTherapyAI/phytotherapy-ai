@@ -153,10 +153,12 @@ const SAFE_CONTEXTS_EN = [
   // Menstrual
   "period", "menstrual", "menstruation", "period bleeding", "period cramps",
   "menstrual cramps", "period pain",
-  // Minor bleeding
-  "gum bleeding", "gums bleed", "nose bleed", "nosebleed",
+  // Minor bleeding / dental
+  "gum bleeding", "gums bleed", "gums when brushing", "bleeding when brushing",
+  "when i brush", "while brushing", "after brushing", "flossing",
+  "nose bleed", "nosebleed",
   "hemorrhoid", "paper cut", "small cut", "shaving cut",
-  "pimple", "acne", "hangnail",
+  "pimple", "acne", "hangnail", "minor cut",
   // Exercise related
   "after running", "after exercise", "climbing stairs", "out of shape",
   "muscle soreness", "sore from exercise", "after gym", "after workout",
@@ -173,9 +175,11 @@ const SAFE_CONTEXTS_TR = [
   // Regl
   "regl", "adet", "âdet", "mensturasyon", "menstrüel",
   "regl kanaması", "adet kanaması", "adet ağrısı", "regl ağrısı",
-  // Hafif kanama
-  "diş eti", "burun kanaması", "basur", "hemoroid",
-  "kesik", "küçük kesik", "tıraş", "sivilce",
+  // Hafif kanama / diş
+  "diş eti", "diş fırça", "fırçalarken", "fırçalayınca", "diş ipi",
+  "dişimi fırçalarken", "fırçaladığımda", "fırçaladıktan sonra",
+  "burun kanaması", "basur", "hemoroid",
+  "kesik", "küçük kesik", "tıraş", "sivilce", "hafif kanama",
   // Egzersiz
   "koşu sonrası", "merdiven çıkınca", "egzersiz sonrası", "spor sonrası",
   "kas ağrısı", "spordan sonra ağrı",
@@ -249,9 +253,9 @@ export function getEmergencyMessage(language: "en" | "tr"): string {
 
 export function getYellowWarning(language: "en" | "tr"): string {
   if (language === "tr") {
-    return "\n\n⚠️ **Önemli Uyarı:** Belirttiğiniz semptomlar ciddi bir duruma işaret edebilir. Eğer belirtiler kötüleşirse, aniden başladıysa veya kendinizi güvende hissetmiyorsanız **derhal 112'yi arayın**. Bu bilgiler yalnızca genel bilgilendirme amaçlıdır ve doktor muayenesinin yerini tutmaz.";
+    return "\n\n⚠️ **Önemli Uyarı:** Bu bilgiler genel bilgilendirme amaçlıdır ve doktor muayenesinin yerini tutmaz. Belirtileriniz devam ederse veya kötüleşirse lütfen **doktorunuza başvurun**. Acil bir durum hissederseniz 112'yi arayın.";
   }
-  return "\n\n⚠️ **Important Warning:** Your symptoms may indicate a serious condition. If symptoms worsen, started suddenly, or you feel unsafe, **call 112/911 immediately**. This information is for general guidance only and does not replace a doctor's examination.";
+  return "\n\n⚠️ **Important Notice:** This information is for general guidance only and does not replace a doctor's examination. If your symptoms persist or worsen, please **consult your doctor**. If you feel it's an emergency, call 112/911.";
 }
 
 // ═══════════════════════════════════════════════
