@@ -449,7 +449,6 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
-              title={lang === "tr" ? "Günlük sohbet ve hızlı sorular için" : "For daily chat and quick questions"}
             >
               ⚡ Pulse
             </button>
@@ -460,14 +459,13 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
                   ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
-              title={lang === "tr" ? "Derinlemesine analiz ve kişisel öneriler için" : "For in-depth analysis and personalized recommendations"}
             >
-              🧬 Opus
+              🧬 DeepScan
             </button>
             <span className="text-[10px] text-muted-foreground ml-1 hidden sm:inline">
               {modelMode === "fast"
-                ? (lang === "tr" ? "Günlük sohbet ve hızlı sorular" : "Daily chat and quick questions")
-                : (lang === "tr" ? "Derinlemesine analiz ve kişisel öneriler" : "In-depth analysis and personalized recommendations")}
+                ? (lang === "tr" ? "Anlık sohbet, hızlı cevaplar" : "Quick chat, instant answers")
+                : (lang === "tr" ? "Araştırma destekli, kişiye özel analiz" : "Research-backed, personalized analysis")}
             </span>
           </div>
         )}

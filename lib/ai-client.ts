@@ -31,8 +31,8 @@ const TOKENS_TEXT = 2048;    // chat/simple text — most answers < 800 tokens
 const TOKENS_JSON = 3000;    // JSON analysis — most responses < 1500 tokens
 const TOKENS_STREAM = 2048;  // streaming chat
 
-// Temperature — 0.3 for natural conversation, 0 for JSON/analysis
-const TEMP_CHAT = 0.3;       // warm, varied responses — friend-like tone
+// Temperature — 0.6 for natural conversation, 0 for JSON/analysis
+const TEMP_CHAT = 0.6;       // warm, varied responses — friend-like tone
 const TEMP_ANALYSIS = 0;     // deterministic for medical analysis/JSON
 
 // ──────────────────────────────────────────────

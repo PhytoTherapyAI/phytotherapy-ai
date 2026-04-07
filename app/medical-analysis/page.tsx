@@ -199,12 +199,16 @@ function BloodTestTab({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to results when data arrives (small delay for DOM render)
+  // Scroll to results when data arrives
   useEffect(() => {
     if (data) {
       const timer = setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 150);
+        if (resultsRef.current) {
+          resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 200);
       return () => clearTimeout(timer);
     }
   }, [data]);
@@ -238,13 +242,16 @@ function BloodTestTab({
         }),
       });
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Analysis failed");
+        let errMsg = lang === "tr" ? "Analiz başarısız oldu. Tekrar deneyin." : "Analysis failed. Please try again.";
+        try { const err = await res.json(); errMsg = err.error || errMsg; } catch { /* non-JSON error */ }
+        throw new Error(errMsg);
       }
-      const result: AnalysisResponse = await res.json();
+      const text = await res.text();
+      let result: AnalysisResponse;
+      try { result = JSON.parse(text); } catch { throw new Error(lang === "tr" ? "Sunucudan geçersiz yanıt alındı. Tekrar deneyin." : "Invalid response from server. Please try again."); }
       setData(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : (lang === "tr" ? "Bir hata oluştu" : "Something went wrong"));
     } finally {
       setIsLoading(false);
     }
@@ -386,19 +393,20 @@ function BloodTestTab({
                         body: formData,
                       });
                       if (!res.ok) {
-                        const err = await res.json();
-                        throw new Error(
-                          err.error || "PDF extraction failed"
-                        );
+                        let errMsg = lang === "tr" ? "PDF analizi başarısız. Tekrar deneyin." : "PDF analysis failed. Try again.";
+                        try { const err = await res.json(); errMsg = err.error || errMsg; } catch { /* non-JSON */ }
+                        throw new Error(errMsg);
                       }
-                      const result = await res.json();
+                      const text = await res.text();
+                      let result;
+                      try { result = JSON.parse(text); } catch { throw new Error(lang === "tr" ? "Sunucudan geçersiz yanıt. Tekrar deneyin." : "Invalid server response. Try again."); }
                       setData(result);
                       setPdfFile(null);
                     } catch (err) {
                       setError(
                         err instanceof Error
                           ? err.message
-                          : "PDF upload failed"
+                          : (lang === "tr" ? "PDF yükleme başarısız" : "PDF upload failed")
                       );
                     } finally {
                       setPdfUploading(false);
