@@ -92,7 +92,7 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
     setValues(prev => ({ ...prev, [field]: value }))
 
     if (step < QUESTIONS.length - 1) {
-      setTimeout(() => setStep(s => s + 1), 300)
+      setTimeout(() => setStep(s => Math.min(s + 1, QUESTIONS.length - 1)), 300)
     }
   }
 
@@ -132,7 +132,7 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
 
   if (alreadyDone) return null
 
-  const currentQ = QUESTIONS[step]
+  const currentQ = QUESTIONS[Math.min(step, QUESTIONS.length - 1)]
   const allAnswered = Object.values(values).every(v => v !== null)
   const isLastStep = step === QUESTIONS.length - 1
 
