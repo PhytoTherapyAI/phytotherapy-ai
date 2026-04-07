@@ -36,9 +36,8 @@ const GENDER_OPTIONS = [
 ];
 
 // ── Inline Tooltip ──
-function FieldTooltip({ text }: { text: string }) {
+export function FieldTooltip({ text }: { text: string }) {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
 
   return (
     <span className="relative inline-flex ml-1">
@@ -55,12 +54,11 @@ function FieldTooltip({ text }: { text: string }) {
       <AnimatePresence>
         {open && (
           <motion.div
-            ref={ref}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.15 }}
-            className="absolute left-6 top-1/2 -translate-y-1/2 z-50 w-52 rounded-lg bg-white dark:bg-slate-800 border shadow-md p-2.5 text-[11px] text-muted-foreground leading-relaxed"
+            className="absolute left-6 top-1/2 -translate-y-1/2 z-50 w-52 max-w-[calc(100vw-5rem)] rounded-lg bg-white dark:bg-slate-800 border shadow-md p-2.5 text-[11px] text-muted-foreground leading-relaxed"
           >
             {text}
           </motion.div>

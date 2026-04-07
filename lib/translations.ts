@@ -1691,6 +1691,7 @@ const t: Record<string, TranslationEntry> = {
   "onb.displayNamePlaceholder": { en: "e.g. Night Owl, Alex or just your name...", tr: "Örn: Gece Kuşu, Alex veya sadece Taha..." },
   "onb.tooltipBirthDate": { en: "Needed for age-specific reference ranges and risk factors.", tr: "Yaşa özgü referans aralıkları ve risk faktörleri için gereklidir." },
   "onb.tooltipGender": { en: "Used to calculate medication dosages based on your hormonal profile.", tr: "Hormon profiline uygun ilaç dozu hesaplamak için kullanıyoruz." },
+  "onb.tooltipHeightWeight": { en: "Used for medication dosing and BMI-based recommendations.", tr: "İlaç dozu ve BMI bazlı öneriler için kullanılır." },
   "onb.doseDisclaimer": { en: "Please make sure the dosage is correct. Edit if your doctor prescribed a different dose.", tr: "Lütfen dozunu doğru girdiğinden emin ol. Doktorun farklı bir doz verdiyse düzenle." },
   "onb.reactionType": { en: "Reaction Type", tr: "Reaksiyon Tipi" },
   "onb.reactionAnaphylaxis": { en: "Anaphylaxis (Breathing difficulty / Shock)", tr: "Anafilaksi (Nefes Darlığı / Şok)" },

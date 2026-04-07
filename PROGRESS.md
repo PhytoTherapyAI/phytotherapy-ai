@@ -1,6 +1,52 @@
 # PROGRESS.md — Doctopal Sprint İlerleme Takibi
 
-> Son güncelleme: 7 Nisan 2026 (v43.1 — Onboarding Revizyon + Tour + Badge + Permissions)
+> Son güncelleme: 7 Nisan 2026 (v43.2 — Onboarding Complete + Permissions + Premium UX)
+
+---
+
+## Oturum 7 Nisan 2026 (Session 15) — Bug Fixes + Premium UX + Contextual Permissions
+
+### Bug Fixes (BUG-003 → BUG-016)
+- ✅ BUG-003: preframe_shown flag set edilmiyor → permission step'ten geçerken set ediliyor
+- ✅ BUG-005: isIOSPWA ters mantık → isIOSWithoutPWA rename
+- ✅ BUG-006: Çift tıklama race condition → savingRef guard
+- ✅ BUG-008: Konfeti düşük cihaz optimize → hardwareConcurrency check
+- ✅ BUG-009: Step pozisyonu restore edilmiyor → localStorage persist/restore
+- ✅ BUG-010: Permission state Supabase persistence → localStorage cache + async Supabase write
+- ✅ BUG-012: Restored step LAYER1_STEPS sınırını aşabilir → safeStep clamp
+- ✅ BUG-014: Boy/Kilo tooltip eksik → OptionalProfileStep'e eklendi
+- ✅ BUG-015: Tooltip mobilde taşabilir → max-w-[calc(100vw-5rem)]
+- ✅ BUG-016: Tooltip'te kullanılmayan ref → kaldırıldı
+- ✅ EKSİK-002: triggerCelebration bağlantısı → celebrating state + sıralı modal + finale
+
+### Contextual Permission Tetikleyicileri (EKSİK-001) ✅
+- ✅ PermissionBottomSheet: Framer Motion slide-up, 3 type (notification/location/camera)
+- ✅ Tetikleyici 1: Bildirim izni — profil sayfası ilaç kaydetme sonrası
+- ✅ Tetikleyici 2: Konum izni — pharmacy-finder sayfa açılışında
+- ✅ Tetikleyici 3: Kamera izni — medical-analysis görüntü yükleme butonunda
+- ✅ iOS PWA fallback mesajı
+- ✅ 7 gün dismissed cooldown + max 2 tekrar sınırı
+- ✅ Supabase persistence (user_profiles.permission_state JSONB) + localStorage cache
+- ✅ Migration çalıştırıldı
+
+### Onboarding Copywriting ✅
+- ✅ Tüm metinler siz → sen diline çevrildi (~25 key)
+- ✅ Cinsiyet → Biyolojik Cinsiyet + tooltip
+- ✅ Metin sadeleştirme, tekrar kaldırma
+
+### Premium UI/UX Dokunuşları (5 adet) ✅
+- ✅ Trust badge: 🔒 "Uçtan Uca Şifreli • KVKK Uyumlu"
+- ✅ Step counter kaldırıldı, Framer Motion smooth progress bar
+- ✅ Field tooltip'leri: doğum tarihi, biyolojik cinsiyet, boy/kilo
+- ✅ Focus glow (green ring) + chip tap/select animasyonları + animated ✔
+- ✅ Playful placeholder: "Örn: Gece Kuşu, Alex veya sadece Taha..."
+
+### Teknik
+- ✅ 16 yeni perm.* i18n key, 3 tooltip key, placeholder güncelleme
+- ✅ PermissionBottomSheet.tsx, permission-state.ts Supabase entegrasyonu
+- ✅ Supabase migration: permission_state JSONB kolonu
+- ✅ FieldTooltip export edildi, OptionalProfileStep'te de kullanılabilir
+- ✅ Build: sıfır hata, tüm commitler push edildi
 
 ---
 

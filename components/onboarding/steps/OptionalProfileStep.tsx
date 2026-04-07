@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, X, Sparkles, MapPin, Users, Heart, Dumbbell, Briefcase, Scale, Watch } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { FieldTooltip } from "@/components/onboarding/steps/BasicInfoStep";
 import type { OnboardingData } from "../OnboardingWizard";
 
 interface Props {
@@ -224,7 +225,10 @@ export function OptionalProfileStep({ data, updateData }: Props) {
         </p>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
-            <Label htmlFor="height" className="text-xs">{tx("onb.heightLabel", lang)}</Label>
+            <div className="flex items-center">
+              <Label htmlFor="height" className="text-xs">{tx("onb.heightLabel", lang)}</Label>
+              <FieldTooltip text={tx("onb.tooltipHeightWeight", lang)} />
+            </div>
             <Input
               id="height"
               type="number"
