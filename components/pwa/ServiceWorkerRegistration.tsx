@@ -20,8 +20,8 @@ export function ServiceWorkerRegistration() {
         })
         console.log("[SW] Registered:", registration.scope)
 
-        // Force update check
-        registration.update()
+        // Force update check (fire-and-forget — errors silenced to avoid unhandled rejections)
+        registration.update().catch(() => {})
       } catch (error) {
         console.error("[SW] Registration failed:", error)
       }
