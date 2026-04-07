@@ -50,6 +50,8 @@ export interface UserProfile {
   // Doctor verification — Sprint 17
   is_doctor_verified: boolean;
   doctor_license_url: string | null;
+  // Permission state — JSONB
+  permission_state: Record<string, unknown> | null;
 }
 
 export interface UserMedication {

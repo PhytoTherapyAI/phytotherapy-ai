@@ -1,5 +1,7 @@
 // © 2026 Doctopal — All Rights Reserved
 
+import { createBrowserClient } from "@/lib/supabase";
+
 export type PermissionType = "notification" | "location" | "camera";
 export type PermissionStatus = "not_asked" | "granted" | "denied" | "dismissed";
 
@@ -29,7 +31,9 @@ function getDefault(): PermissionState {
   };
 }
 
-export function getPermissionState(): PermissionState {
+// ── localStorage (cache / fallback) ──
+
+function readLocal(): PermissionState {
   if (typeof window === "undefined") return getDefault();
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -39,10 +43,72 @@ export function getPermissionState(): PermissionState {
   }
 }
 
+function writeLocal(state: PermissionState): void {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* ignore */ }
+}
+
+// ── Supabase (persistent, cross-device) ──
+
+async function readSupabase(): Promise<PermissionState | null> {
+  try {
+    const supabase = createBrowserClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .select("permission_state")
+      .eq("id", user.id)
+      .single();
+
+    if (error || !data?.permission_state) return null;
+    return { ...getDefault(), ...data.permission_state };
+  } catch {
+    return null;
+  }
+}
+
+async function writeSupabase(state: PermissionState): Promise<boolean> {
+  try {
+    const supabase = createBrowserClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return false;
+
+    const { error } = await supabase
+      .from("user_profiles")
+      .update({ permission_state: state })
+      .eq("id", user.id);
+
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
+// ── Public API ──
+
+export function getPermissionState(): PermissionState {
+  // Sync read from localStorage (instant)
+  return readLocal();
+}
+
+export async function syncPermissionState(): Promise<PermissionState> {
+  // Try Supabase first, fall back to localStorage
+  const remote = await readSupabase();
+  if (remote) {
+    writeLocal(remote); // update local cache
+    return remote;
+  }
+  return readLocal();
+}
+
 export function updatePermissionState(updates: Partial<PermissionState>): void {
-  const current = getPermissionState();
+  const current = readLocal();
   const next = { ...current, ...updates };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+  // Write to localStorage immediately (sync)
+  writeLocal(next);
+  // Write to Supabase in background (async, fire-and-forget)
+  writeSupabase(next).catch(() => { /* localStorage is the fallback */ });
 }
 
 export function shouldAskPermission(type: PermissionType): boolean {
@@ -52,12 +118,10 @@ export function shouldAskPermission(type: PermissionType): boolean {
   if (status === "granted" || status === "denied") return false;
 
   if (status === "dismissed") {
-    // Check max dismiss count
     const countKey = `${type}_dismiss_count` as keyof PermissionState;
     const count = (state[countKey] as number | undefined) ?? 0;
     if (count >= MAX_DISMISS_COUNT) return false;
 
-    // Check 7-day cooldown
     const dismissedKey = `${type}_dismissed_at` as keyof PermissionState;
     const dismissedAt = state[dismissedKey] as string | undefined;
     if (!dismissedAt) return true;

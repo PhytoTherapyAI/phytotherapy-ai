@@ -6,7 +6,7 @@ import { MapPin, Search, ExternalLink, Pill, Clock, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
-import { shouldAskPermission, getPermissionState } from "@/lib/permission-state";
+import { shouldAskPermission, syncPermissionState } from "@/lib/permission-state";
 import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
 
 const PHARMACY_LINKS = [
@@ -53,10 +53,12 @@ export default function PharmacyFinderPage() {
   const [showLocationPerm, setShowLocationPerm] = useState(false);
 
   useEffect(() => {
-    if (shouldAskPermission("location")) {
-      const timer = setTimeout(() => setShowLocationPerm(true), 800);
-      return () => clearTimeout(timer);
-    }
+    // Sync permission state from Supabase, then check
+    syncPermissionState().then(() => {
+      if (shouldAskPermission("location")) {
+        setTimeout(() => setShowLocationPerm(true), 800);
+      }
+    });
   }, []);
 
   const filteredEquivalents = searchTerm.trim().length >= 2
