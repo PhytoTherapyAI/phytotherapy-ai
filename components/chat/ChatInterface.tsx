@@ -464,8 +464,8 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
             </button>
             <span className="text-[10px] text-muted-foreground ml-1 hidden sm:inline">
               {modelMode === "fast"
-                ? (lang === "tr" ? "Anlık sohbet, hızlı cevaplar" : "Quick chat, instant answers")
-                : (lang === "tr" ? "Araştırma destekli, kişiye özel analiz" : "Research-backed, personalized analysis")}
+                ? (lang === "tr" ? "Hafif ve hızlı motor" : "Light and fast engine")
+                : (lang === "tr" ? "Güçlü ve kapsamlı motor" : "Powerful and thorough engine")}
             </span>
           </div>
         )}
