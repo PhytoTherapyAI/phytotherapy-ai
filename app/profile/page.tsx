@@ -452,18 +452,38 @@ export default function ProfilePage() {
 
   // ── Profile Completion Score (Endowed Progress Effect — starts at 20%) ──
   const completionChecks = [
-    { done: true, label: tx("profile.accountCreated", lang) }, // always true = 20% head start
-    { done: !!profile.full_name, label: tx("profile.nameEntered", lang) },
-    { done: medications.length > 0, label: tx("profile.medsAdded", lang) },
-    { done: allergies.length > 0, label: tx("profile.allergiesEntered", lang) },
-    { done: !!(profile.alcohol_use || profile.smoking_use), label: tx("profile.lifestyleInfo", lang) },
-    { done: profile.kidney_disease !== null && profile.kidney_disease !== undefined, label: tx("profile.medicalHistory", lang) },
-    { done: !!(profile.height_cm && profile.weight_kg), label: tx("profile.heightWeight", lang) },
-    { done: !!(profile.blood_group), label: tx("profile.bloodGroup", lang) },
+    { id: "account", done: true, label: tx("profile.accountCreated", lang) },
+    { id: "name", done: !!profile.full_name, label: tx("profile.nameEntered", lang) },
+    { id: "meds", done: medications.length > 0, label: tx("profile.medsAdded", lang) },
+    { id: "allergies", done: allergies.length > 0, label: tx("profile.allergiesEntered", lang) },
+    { id: "lifestyle", done: !!(profile.alcohol_use || profile.smoking_use), label: tx("profile.lifestyleInfo", lang) },
+    { id: "medical", done: profile.kidney_disease !== null && profile.kidney_disease !== undefined, label: tx("profile.medicalHistory", lang) },
+    { id: "body", done: !!(profile.height_cm && profile.weight_kg), label: tx("profile.heightWeight", lang) },
+    { id: "blood", done: !!(profile.blood_group), label: tx("profile.bloodGroup", lang) },
   ];
   const completedCount = completionChecks.filter(c => c.done).length;
   const completionPct = Math.round((completedCount / completionChecks.length) * 100);
   const nextIncomplete = completionChecks.find(c => !c.done);
+
+  // Clinical motivation message based on missing field
+  const getMotivation = () => {
+    if (!nextIncomplete) return null;
+    const motivMap: Record<string, { msgKey: string; ctaKey: string; href: string }> = {
+      meds: { msgKey: "profile.motiv.meds", ctaKey: "profile.motiv.ctaMeds", href: "#medications" },
+      allergies: { msgKey: "profile.motiv.allergies", ctaKey: "profile.motiv.ctaAllergies", href: "#allergies" },
+      medical: { msgKey: "profile.motiv.medical", ctaKey: "profile.motiv.ctaMedical", href: "#medical-history" },
+      name: { msgKey: "profile.motiv.name", ctaKey: "profile.motiv.ctaName", href: "#personal-info" },
+      lifestyle: { msgKey: "profile.motiv.lifestyle", ctaKey: "profile.motiv.ctaLifestyle", href: "#personal-info" },
+      body: { msgKey: "profile.motiv.body", ctaKey: "profile.motiv.ctaBody", href: "#edit-health" },
+      blood: { msgKey: "profile.motiv.blood", ctaKey: "profile.motiv.ctaBlood", href: "#edit-health" },
+    };
+    const m = motivMap[nextIncomplete.id];
+    if (!m) return null;
+    // Percentage-based general message
+    const generalKey = completionPct >= 80 ? "profile.motiv.almost" : completionPct >= 50 ? "profile.motiv.good" : "profile.motiv.start";
+    return { message: tx(m.msgKey, lang), cta: tx(m.ctaKey, lang), href: m.href, general: tx(generalKey, lang) };
+  };
+  const motivation = getMotivation();
 
   return (
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
@@ -626,27 +646,50 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Achievement Badges preview */}
+          {/* Achievement Badges preview — metalik */}
           <div className="mt-5">
             <h3 className="text-sm font-semibold mb-2 flex items-center gap-2">
               🏆 {tr ? "Başarı Rozetleri" : "Achievement Badges"}
             </h3>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {[
-                { icon: "💧", label: tr ? "Hidrasyon Ustası" : "Hydration Master", earned: true },
-                { icon: "🌿", label: tr ? "Fitoterapist" : "Phyto Streak", earned: true },
-                { icon: "🩸", label: tr ? "Lab Savaşçısı" : "Lab Warrior", earned: false },
-                { icon: "🛡️", label: tr ? "Kalkan Ustası" : "Shield Master", earned: false },
-                { icon: "🧬", label: tr ? "DNA Kaşifi" : "DNA Explorer", earned: false },
-                { icon: "🏔️", label: tr ? "Şampiyon" : "Challenge Champion", earned: false },
-              ].map((b, i) => (
-                <div key={i} className={`flex flex-col items-center rounded-lg p-2 text-center text-[10px] border transition-all ${b.earned ? "bg-amber-50/80 dark:bg-amber-950/20 ring-1 ring-amber-200 dark:ring-amber-700" : "bg-muted/30 opacity-50"}`}
-                  style={b.earned ? { boxShadow: "0 0 8px rgba(245, 158, 11, 0.2)" } : {}}>
-                  <span className={`text-xl ${b.earned ? "" : "grayscale"}`}>{b.icon}</span>
-                  <span className="mt-0.5 leading-tight text-muted-foreground line-clamp-1">{b.label}</span>
-                </div>
-              ))}
+                { icon: "💧", label: tr ? "Hidrasyon Ustası" : "Hydration Master", earned: true, cat: "engagement" as const },
+                { icon: "🌿", label: tr ? "Fitoterapist" : "Phyto Streak", earned: true, cat: "health" as const },
+                { icon: "🩸", label: tr ? "Lab Savaşçısı" : "Lab Warrior", earned: false, cat: "health" as const },
+                { icon: "🛡️", label: tr ? "Kalkan Ustası" : "Shield Master", earned: false, cat: "milestone" as const },
+                { icon: "🧬", label: tr ? "DNA Kaşifi" : "DNA Explorer", earned: false, cat: "social" as const },
+                { icon: "🏔️", label: tr ? "Şampiyon" : "Challenge Champion", earned: false, cat: "milestone" as const },
+              ].map((b, i) => {
+                const gradients: Record<string, { bg: string; shadow: string }> = {
+                  health: { bg: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)", shadow: "0 4px 15px rgba(132,250,176,0.4)" },
+                  engagement: { bg: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", shadow: "0 4px 15px rgba(79,172,254,0.4)" },
+                  social: { bg: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)", shadow: "0 4px 15px rgba(161,140,209,0.4)" },
+                  milestone: { bg: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)", shadow: "0 4px 15px rgba(253,160,133,0.4)" },
+                };
+                const g = gradients[b.cat] || gradients.health;
+                return (
+                  <motion.div key={i}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.08, type: "spring", stiffness: 300, damping: 20 }}
+                    className={`relative flex flex-col items-center rounded-lg p-2 text-center text-[10px] border transition-all ${
+                      b.earned
+                        ? "text-white hover:scale-105 cursor-default"
+                        : "bg-gray-100 dark:bg-gray-800/30 border-dashed border-gray-200 dark:border-gray-700"
+                    }`}
+                    style={b.earned ? { background: g.bg, boxShadow: g.shadow } : {}}>
+                    <span className={`text-xl ${b.earned ? "drop-shadow-md" : "grayscale opacity-30"}`}>{b.icon}</span>
+                    <span className={`mt-0.5 leading-tight line-clamp-1 ${b.earned ? "text-white/90 font-semibold" : "text-gray-400"}`}>{b.label}</span>
+                    {!b.earned && <span className="absolute top-1 right-1 text-[8px] text-gray-400">🔒</span>}
+                    {b.earned && (
+                      <div className="absolute inset-0 rounded-lg overflow-hidden pointer-events-none"
+                        style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s ease-out forwards" }} />
+                    )}
+                  </motion.div>
+                );
+              })}
             </div>
+            <style jsx>{`@keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }`}</style>
           </div>
 
           {/* Recent Activity micro-feed */}
@@ -706,14 +749,22 @@ export default function ProfilePage() {
               </span>
             ))}
           </div>
-          {/* Next action nudge */}
-          {nextIncomplete && (
-            <p className="text-xs text-amber-700 dark:text-amber-400 flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/20 rounded-lg px-3 py-2">
-              <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
-              {lang === "tr"
-                ? `Sıradaki: "${nextIncomplete.label}" bilgisini ekleyerek önerilerimizi iyileştir`
-                : `Next: Add "${nextIncomplete.label}" to improve your recommendations`}
-            </p>
+          {/* Clinical motivation nudge */}
+          {motivation && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.3 }}
+              className="bg-amber-50 dark:bg-amber-950/20 rounded-lg px-3 py-2.5 space-y-1.5"
+            >
+              <p className="text-xs text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
+                <span className="shrink-0 mt-0.5">💡</span>
+                <span>{motivation.message}</span>
+              </p>
+              <a href={motivation.href} className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline">
+                {motivation.cta}
+              </a>
+            </motion.div>
           )}
         </div>
       )}

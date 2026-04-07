@@ -193,7 +193,7 @@ export default function BadgesPage() {
         </div>
       )}
 
-      {/* Earned Badges */}
+      {/* Earned Badges — metalik */}
       {earned.length > 0 && (
         <div className="mb-8">
           <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
@@ -201,26 +201,38 @@ export default function BadgesPage() {
             {tx("badges.earned", lang)} ({earned.length}/{BADGES.length})
           </h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {earned.map((badge) => (
-              <div
-                key={badge.id}
-                className="flex flex-col items-center rounded-xl border bg-gradient-to-b from-amber-50/50 to-orange-50/50 p-4 text-center dark:from-amber-950/20 dark:to-orange-950/20 shadow-sm ring-1 ring-amber-200/60 dark:ring-amber-700/40"
-                style={{ boxShadow: "0 0 12px rgba(245, 158, 11, 0.15)" }}
-              >
-                <span className="text-3xl">{badge.icon}</span>
-                <h4 className="mt-2 text-sm font-semibold">
-                  {txObj(badge, lang)}
-                </h4>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  {txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
-                </p>
-              </div>
-            ))}
+            {earned.map((badge, i) => {
+              const gradients: Record<string, { bg: string; shadow: string }> = {
+                health: { bg: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)", shadow: "0 4px 15px rgba(132,250,176,0.4)" },
+                engagement: { bg: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", shadow: "0 4px 15px rgba(79,172,254,0.4)" },
+                social: { bg: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)", shadow: "0 4px 15px rgba(161,140,209,0.4)" },
+                milestone: { bg: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)", shadow: "0 4px 15px rgba(253,160,133,0.4)" },
+              };
+              const g = gradients[badge.category] || gradients.health;
+              return (
+                <div
+                  key={badge.id}
+                  className="relative flex flex-col items-center rounded-xl p-4 text-center text-white hover:scale-[1.03] transition-transform overflow-hidden"
+                  style={{ background: g.bg, boxShadow: g.shadow, animationDelay: `${i * 80}ms` }}
+                >
+                  <span className="text-3xl drop-shadow-md">{badge.icon}</span>
+                  <h4 className="mt-2 text-sm font-semibold text-white/95">
+                    {txObj(badge, lang)}
+                  </h4>
+                  <p className="mt-0.5 text-[11px] text-white/70">
+                    {txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
+                  </p>
+                  {/* Shimmer overlay */}
+                  <div className="absolute inset-0 rounded-xl pointer-events-none"
+                    style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: `badgeShimmer 1.5s ${i * 0.1}s ease-out forwards` }} />
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Locked Badges */}
+      {/* Locked Badges — subtle gray */}
       {locked.length > 0 && (
         <div>
           <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold">
@@ -231,24 +243,24 @@ export default function BadgesPage() {
             {locked.map((badge) => (
               <div
                 key={badge.id}
-                className="relative flex flex-col items-center rounded-xl border bg-muted/30 p-4 text-center opacity-50 overflow-hidden"
-                title={`Complete: ${badge.descEn}`}
+                className="relative flex flex-col items-center rounded-xl p-4 text-center overflow-hidden bg-gray-100 dark:bg-gray-800/30 border border-dashed border-gray-200 dark:border-gray-700"
+                title={txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
               >
-                <span className="text-3xl grayscale">{badge.icon}</span>
-                <h4 className="mt-2 text-sm font-semibold">
+                <span className="text-3xl grayscale opacity-30">{badge.icon}</span>
+                <h4 className="mt-2 text-sm font-semibold text-gray-400">
                   {txObj(badge, lang)}
                 </h4>
-                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                <p className="mt-0.5 text-[11px] text-gray-400/70">
                   {txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
                 </p>
-                <div className="absolute top-2 right-2">
-                  <Lock className="h-3 w-3 text-muted-foreground" />
-                </div>
+                <span className="absolute top-2 right-2 text-xs text-gray-400">🔒</span>
               </div>
             ))}
           </div>
         </div>
       )}
+
+      <style jsx>{`@keyframes badgeShimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }`}</style>
     </div>
   )
 }

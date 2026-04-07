@@ -7029,6 +7029,25 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "vaccine.bannerCta": { en: "Go to Vaccine Profile", tr: "Aşı Profilime Git" },
   "vaccine.bannerDismiss": { en: "Dismiss", tr: "Kapat" },
   "vaccine.chatFollowUp": { en: "Update my vaccine profile", tr: "Aşı profilimi güncelle" },
+  // ── Profile Motivation Messages ──
+  "profile.motiv.meds": { en: "Adding your medications increases herb-drug interaction safety by 90%.", tr: "İlaçlarını eklersen AI asistanın bitkisel etkileşim güvenliğini %90 artırır." },
+  "profile.motiv.allergies": { en: "Without allergy data, safe recommendations become much harder.", tr: "Alerji bilgisi olmadan güvenli öneri vermek zorlaşıyor." },
+  "profile.motiv.medical": { en: "Chronic disease data triples AI's early warning power.", tr: "Kronik hastalık verisi, AI'ın seni erken uyarma gücünü 3x artırır." },
+  "profile.motiv.name": { en: "Your name helps us personalize your experience.", tr: "Adın, deneyimini kişiselleştirmemize yardımcı olur." },
+  "profile.motiv.lifestyle": { en: "Lifestyle info shapes supplement and dosage recommendations.", tr: "Yaşam tarzı bilgisi takviye ve doz önerilerini şekillendirir." },
+  "profile.motiv.body": { en: "Height and weight enable accurate BMI-based dosing.", tr: "Boy ve kilo, BMI tabanlı doğru dozlama sağlar." },
+  "profile.motiv.blood": { en: "Blood group data completes your emergency profile.", tr: "Kan grubu bilgisi acil durum profilini tamamlar." },
+  "profile.motiv.ctaMeds": { en: "Add My Medications \u2192", tr: "İlaçlarımı Ekle \u2192" },
+  "profile.motiv.ctaAllergies": { en: "Add Allergies \u2192", tr: "Alerji Ekle \u2192" },
+  "profile.motiv.ctaMedical": { en: "Add Medical History \u2192", tr: "Hastalık Ekle \u2192" },
+  "profile.motiv.ctaName": { en: "Add Your Name \u2192", tr: "Adını Ekle \u2192" },
+  "profile.motiv.ctaLifestyle": { en: "Add Lifestyle Info \u2192", tr: "Yaşam Tarzı Ekle \u2192" },
+  "profile.motiv.ctaBody": { en: "Add Height & Weight \u2192", tr: "Boy & Kilo Ekle \u2192" },
+  "profile.motiv.ctaBlood": { en: "Add Blood Group \u2192", tr: "Kan Grubu Ekle \u2192" },
+  "profile.motiv.almost": { en: "Almost there! One small step makes a big difference.", tr: "Neredeyse tam! Küçük bir adım, büyük bir fark yaratır." },
+  "profile.motiv.good": { en: "Good progress \u2014 every added data makes your AI safer.", tr: "İyi gidiyorsun \u2014 her eklenen veri AI'ını daha güvenli yapar." },
+  "profile.motiv.start": { en: "Complete your profile to unlock DoctoPal's full power.", tr: "Profili tamamla, DoctoPal'ın gerçek gücünü keşfet." },
+  "profile.motiv.complete": { en: "Your profile is complete! AI assistant running at full power.", tr: "Profilin tam! AI asistanın maksimum güçte çalışıyor." },
 }
 Object.assign(t, commonToolKeys)
 
