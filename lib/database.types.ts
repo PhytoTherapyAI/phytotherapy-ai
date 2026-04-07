@@ -52,6 +52,16 @@ export interface UserProfile {
   doctor_license_url: string | null;
   // Permission state — JSONB
   permission_state: Record<string, unknown> | null;
+  // Vaccines — JSONB array
+  vaccines: VaccineEntryDB[];
+}
+
+export interface VaccineEntryDB {
+  id: string;
+  name: string;
+  last_date?: string;
+  status: "done" | "not_done" | "unknown";
+  reminder?: boolean;
 }
 
 export interface UserMedication {

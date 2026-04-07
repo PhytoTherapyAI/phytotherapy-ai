@@ -217,6 +217,71 @@ const SAFE_CONTEXTS_TR = [
 ];
 
 // ═══════════════════════════════════════════════
+// VACCINE QUERY DETECTION
+// ═══════════════════════════════════════════════
+
+export interface VaccineQueryResult {
+  triggered: boolean
+  vaccine: string
+  questionEn: string
+  questionTr: string
+  urgency: "critical" | "high" | "medium"
+}
+
+export function checkVaccineKeywords(input: string, chronicConditions?: string[]): VaccineQueryResult | null {
+  // Dynamic import avoided — use inline data to keep safety-filter dependency-free
+  const lower = input.toLowerCase().replace(/[.,!?;:]/g, " ")
+
+  const TRIGGERS = [
+    {
+      keywords_en: ["rusty", "nail", "puncture", "wound", "cut", "soil", "garden", "dirt"],
+      keywords_tr: ["paslı", "çivi", "battı", "yara", "kesik", "toprak", "bahçe", "kir"],
+      vaccine: "tetanus",
+      questionEn: "Get well soon. For risk assessment: Have you had a tetanus shot in the last 5 years?",
+      questionTr: "Geçmiş olsun. Risk değerlendirmesi yapabilmem için: Son 5 yıl içinde tetanoz aşısı oldun mu?",
+      urgency: "high" as const,
+    },
+    {
+      keywords_en: ["dog", "cat", "animal", "bit", "bite", "bitten", "scratched", "scratch", "rabies"],
+      keywords_tr: ["köpek", "kedi", "hayvan", "ısırdı", "çizdi", "tırmaldı", "kuduz", "sokak hayvanı"],
+      vaccine: "rabies",
+      questionEn: "Get well soon. Important question: Was the animal vaccinated for rabies? Do you have a rabies vaccine?",
+      questionTr: "Geçmiş olsun. Önemli bir soru: Hayvan kuduz aşılı mıydı? Kuduz aşın var mı?",
+      urgency: "critical" as const,
+    },
+    {
+      keywords_en: ["flu", "cough", "shortness of breath", "pneumonia", "fever", "fatigue"],
+      keywords_tr: ["grip", "öksürük", "nefes darlığı", "zatürre", "ateş", "halsizlik"],
+      vaccine: "influenza",
+      conditionRequired: ["COPD", "Asthma", "Diabetes", "Heart Failure"],
+      questionEn: "Have you had this year's flu shot? Based on your profile, it's important for you.",
+      questionTr: "Bu yılki grip aşını oldun mu? Profiline göre bu senin için önemli.",
+      urgency: "medium" as const,
+    },
+  ]
+
+  for (const trigger of TRIGGERS) {
+    const matchEn = trigger.keywords_en.some(kw => lower.includes(kw))
+    const matchTr = trigger.keywords_tr.some(kw => lower.includes(kw))
+    if (!matchEn && !matchTr) continue
+
+    // Condition-gated trigger: only fire if user has matching chronic condition
+    if ("conditionRequired" in trigger && trigger.conditionRequired) {
+      if (!chronicConditions?.some(c => trigger.conditionRequired!.includes(c))) continue
+    }
+
+    return {
+      triggered: true,
+      vaccine: trigger.vaccine,
+      questionEn: trigger.questionEn,
+      questionTr: trigger.questionTr,
+      urgency: trigger.urgency,
+    }
+  }
+  return null
+}
+
+// ═══════════════════════════════════════════════
 // MAIN CHECK FUNCTION
 // ═══════════════════════════════════════════════
 

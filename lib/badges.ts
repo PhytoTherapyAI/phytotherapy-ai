@@ -25,6 +25,7 @@ export interface UserStats {
   daysActive: number
   familyMembers: number
   pdfReports: number
+  vaccinesTracked: number
 }
 
 export const BADGES: Badge[] = [
@@ -418,6 +419,17 @@ export const BADGES: Badge[] = [
     descTr: "90 gündür aktif",
     category: "milestone",
     condition: (s) => s.daysActive >= 90,
+  },
+  // Vaccine
+  {
+    id: "immune_shield",
+    icon: "🛡️",
+    nameEn: "Immune Shield",
+    nameTr: "Bağışıklık Kalkanı",
+    descEn: "All essential vaccines recorded",
+    descTr: "Tüm temel aşılar kayıt altında",
+    category: "health",
+    condition: (s) => s.vaccinesTracked >= 5,
   },
 ]
 

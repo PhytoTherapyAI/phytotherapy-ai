@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
@@ -27,6 +28,7 @@ import type { UserMedication, UserAllergy, AllergySeverity } from "@/lib/databas
 import { MedicationScanner } from "@/components/scanner/MedicationScanner";
 import { shouldAskPermission } from "@/lib/permission-state";
 import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
+import { VaccineProfileSection } from "@/components/profile/VaccineProfileSection";
 
 interface DrugSuggestion {
   brandName: string;
@@ -479,7 +481,39 @@ export default function ProfilePage() {
 
       {/* ── DIGITAL TWIN HERO ── */}
       {profile && (
-        <div className="mb-6 rounded-2xl border bg-gradient-to-br from-primary/5 via-emerald-500/5 to-teal-500/5 p-6 shadow-sm">
+        <div className="relative mb-6 rounded-2xl border bg-gradient-to-br from-primary/5 via-emerald-500/5 to-teal-500/5 p-6 shadow-sm overflow-hidden">
+          {/* ── Allergy / Critical Status Badge (top-right) ── */}
+          {(() => {
+            const hasAnaphylaxis = allergies.some((a: UserAllergy) => a.severity === "anaphylaxis");
+            const hasAllergies = allergies.length > 0;
+            const isPregnant = profile.is_pregnant;
+
+            return (
+              <div className="absolute top-2 right-2 sm:top-4 sm:right-4 flex flex-col gap-1.5 z-10">
+                {hasAnaphylaxis && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-red-500 px-2.5 py-1 text-[10px] font-bold text-white shadow-lg animate-pulse">
+                    🚨 {tr ? "Anafilaksi" : "Anaphylaxis"}
+                  </span>
+                )}
+                {!hasAnaphylaxis && hasAllergies && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-500 px-2.5 py-1 text-[10px] font-bold text-white shadow">
+                    ⚠️ {allergies.length} {tr ? "Alerji" : allergies.length === 1 ? "Allergy" : "Allergies"}
+                  </span>
+                )}
+                {!hasAllergies && !hasAnaphylaxis && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-green-500 px-2.5 py-1 text-[10px] font-bold text-white shadow">
+                    🛡️ {tr ? "Alerji Yok" : "No Allergies"}
+                  </span>
+                )}
+                {isPregnant && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-purple-500 px-2.5 py-1 text-[10px] font-bold text-white shadow">
+                    🤰 {tr ? "Gebelik" : "Pregnancy"}
+                  </span>
+                )}
+              </div>
+            );
+          })()}
+
           {/* Avatar + Name + Member since */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
             {/* Avatar */}
@@ -507,21 +541,73 @@ export default function ProfilePage() {
                 🔥 {tr ? "12 günlük seri" : "12-day streak"}
               </div>
             </div>
-            {/* Vitality Score ring */}
-            <div className="flex flex-col items-center gap-1 shrink-0">
-              <div className="relative flex h-20 w-20 items-center justify-center">
-                <svg className="h-20 w-20 -rotate-90" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-muted/30" />
-                  <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" strokeWidth="2.5"
-                    strokeDasharray="78 100" strokeLinecap="round" className="text-emerald-500 transition-all duration-1000" />
-                </svg>
-                <div className="absolute flex flex-col items-center">
-                  <span className="text-lg font-bold leading-none">78</span>
-                  <span className="text-[8px] text-muted-foreground font-medium">/100</span>
+            {/* Vitality Score — ring + bar + heartbeat */}
+            {(() => {
+              const score = 78;
+              const scoreColor = score >= 71 ? "#3c7a52" : score >= 41 ? "#f59e0b" : "#ef4444";
+              const scoreEmoji = score >= 71 ? "⚡" : score >= 41 ? "😐" : "🔴";
+              const scoreLabel = score >= 71
+                ? (tr ? "Harika form" : "Great shape")
+                : score >= 41
+                  ? (tr ? "Gelişme var" : "Improving")
+                  : (tr ? "Dikkat gerekiyor" : "Needs attention");
+              const ringClass = score >= 71 ? "text-emerald-500" : score >= 41 ? "text-amber-500" : "text-red-500";
+
+              return (
+                <div className="flex flex-col items-center gap-2 shrink-0">
+                  {/* Ring + Heartbeat SVG side by side */}
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex h-20 w-20 items-center justify-center">
+                      <svg className="h-20 w-20 -rotate-90" viewBox="0 0 36 36">
+                        <circle cx="18" cy="18" r="16" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-muted/30" />
+                        <motion.circle cx="18" cy="18" r="16" fill="none" stroke={scoreColor} strokeWidth="2.5"
+                          strokeLinecap="round" initial={{ strokeDasharray: "0 100" }}
+                          animate={{ strokeDasharray: `${score} 100` }}
+                          transition={{ duration: 1.2, ease: "easeOut" }} />
+                      </svg>
+                      <div className="absolute flex flex-col items-center">
+                        <span className="text-lg font-bold leading-none">{score}</span>
+                        <span className="text-[8px] text-muted-foreground font-medium">/100</span>
+                      </div>
+                    </div>
+                    {/* Decorative heartbeat SVG */}
+                    <svg width="80" height="24" viewBox="0 0 80 24" className="opacity-60 overflow-hidden">
+                      <motion.path
+                        d="M0 12 L10 12 L15 4 L20 20 L25 8 L30 16 L35 12 L45 12 L50 4 L55 20 L60 8 L65 16 L70 12 L80 12"
+                        fill="none" stroke={scoreColor} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={{ pathLength: 1, opacity: 0.6 }}
+                        transition={{ duration: 2, ease: "easeInOut" }}
+                      />
+                    </svg>
+                  </div>
+                  {/* Score label */}
+                  <p className="text-[10px] text-muted-foreground font-medium text-center">
+                    {tr ? "Canlılık Skoru" : "Vitality Score"}
+                  </p>
+
+                  {/* Energy bar */}
+                  <div className="w-full max-w-[160px] space-y-1">
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="font-medium" style={{ color: scoreColor }}>{scoreEmoji} {scoreLabel}</span>
+                      <span className="text-muted-foreground">{score}%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-muted/40 overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full"
+                        style={{
+                          background: `linear-gradient(90deg, ${scoreColor}, ${scoreColor}aa)`,
+                          boxShadow: `0 0 12px ${scoreColor}66`,
+                        }}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${score}%` }}
+                        transition={{ duration: 1.2, ease: "easeOut" }}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <p className="text-[10px] text-muted-foreground font-medium text-center">{tr ? "Canlılık Skoru" : "Vitality Score"}</p>
-            </div>
+              );
+            })()}
           </div>
 
           {/* Bento metrics */}
@@ -1632,6 +1718,9 @@ export default function ProfilePage() {
         onGranted={() => setShowNotifPermission(false)}
         onDismissed={() => setShowNotifPermission(false)}
       />
+
+      {/* Vaccine Profile */}
+      <VaccineProfileSection lang={lang} userId={profile.id} />
 
       {/* Emergency Contacts */}
       <EmergencyContactsSection lang={lang} userId={profile.id} />

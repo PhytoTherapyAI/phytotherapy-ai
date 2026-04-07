@@ -23,6 +23,7 @@ import { DashboardTour } from "@/components/layout/DashboardTour";
 import { TOOL_CATEGORIES } from "@/lib/tools-hierarchy";
 import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-utils";
 import { getSupplementDisplayName } from "@/lib/supplement-data";
+import { getVaccineRecommendations, isFluSeason, type VaccineEntry } from "@/lib/vaccine-data";
 
 // ── Dynamic Imports (Dashboard) ──
 const BotanicalHero = dynamic(
@@ -141,6 +142,46 @@ function DemoBanner({ lang }: { lang: string }) {
             Quick Demo
           </Link>
           <button onClick={() => setDismissed(true)} className="text-muted-foreground hover:text-foreground text-xs px-1">✕</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Vaccine Recommendation Banner ──
+function VaccineBanner({ lang, chronicConditions, vaccines }: { lang: string; chronicConditions: string[]; vaccines: VaccineEntry[] }) {
+  const [dismissed, setDismissed] = useState(false);
+  useEffect(() => {
+    const dismissedAt = localStorage.getItem("vaccine_banner_dismissed");
+    if (dismissedAt && Date.now() - Number(dismissedAt) < 7 * 24 * 60 * 60 * 1000) setDismissed(true);
+  }, []);
+
+  if (dismissed) return null;
+  const recs = getVaccineRecommendations(chronicConditions, vaccines);
+  // In flu season, prioritize influenza
+  const fluSeason = isFluSeason();
+  const sorted = fluSeason ? [...recs].sort((a, b) => (a.vaccine.id === "influenza" ? -1 : b.vaccine.id === "influenza" ? 1 : 0)) : recs;
+  const top = sorted[0];
+  if (!top) return null;
+
+  const dismiss = () => { setDismissed(true); localStorage.setItem("vaccine_banner_dismissed", String(Date.now())); };
+  const msg = lang === "tr" ? top.reminder.messageTr : top.reminder.messageEn;
+  const vaccineName = lang === "tr" ? top.vaccine.nameTr : top.vaccine.nameEn;
+
+  return (
+    <div className="bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-teal-500/10 border-b border-blue-200/30 dark:border-blue-800/30">
+      <div className="mx-auto max-w-7xl px-4 py-2.5 flex items-center justify-between gap-3">
+        <p className="text-xs font-medium text-blue-700 dark:text-blue-300 flex items-center gap-2 flex-1 min-w-0">
+          <span className="shrink-0">💉</span>
+          <span className="truncate">
+            {lang === "tr" ? `${vaccineName} öneriliyor` : `${vaccineName} recommended`} — {msg}
+          </span>
+        </p>
+        <div className="flex items-center gap-2 shrink-0">
+          <Link href="/profile#vaccines" className="text-[10px] bg-blue-500/10 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded-full font-medium hover:bg-blue-500/20 transition-colors whitespace-nowrap">
+            {tx("vaccine.bannerCta", lang as "en" | "tr")}
+          </Link>
+          <button onClick={dismiss} className="text-muted-foreground hover:text-foreground text-xs px-1">✕</button>
         </div>
       </div>
     </div>
@@ -563,6 +604,8 @@ export default function Home() {
         <DashboardTour />
         {/* Hackathon Demo Banner */}
         <DemoBanner lang={lang} />
+        {/* Vaccine Recommendation Banner */}
+        <VaccineBanner lang={lang} chronicConditions={profile?.chronic_conditions || []} vaccines={(profile?.vaccines as VaccineEntry[]) || []} />
 
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="mx-auto max-w-7xl px-4 py-6 md:px-8 lg:px-12 space-y-6">

@@ -57,6 +57,7 @@ export default function BadgesPage() {
       daysActive,
       familyMembers: family.count || 0,
       pdfReports: 0,
+      vaccinesTracked: 0,
     }
 
     setStats(userStats)

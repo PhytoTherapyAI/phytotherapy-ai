@@ -48,6 +48,9 @@ function getFollowUps(content: string, lang: string): string[] {
   if (lower.includes("stress") || lower.includes("stres") || lower.includes("anxiety") || lower.includes("anksiyete")) {
     suggestions.push(isTr ? "Doğal stres yönetimi için ne önerirsin?" : "What do you recommend for natural stress management?");
   }
+  if (lower.includes("vaccine") || lower.includes("aşı") || lower.includes("tetanus") || lower.includes("tetanoz") || lower.includes("rabies") || lower.includes("kuduz")) {
+    suggestions.push(isTr ? "Aşı profilimi güncelle" : "Update my vaccine profile");
+  }
 
   // Always add a general follow-up if we have less than 2
   if (suggestions.length < 2) {
