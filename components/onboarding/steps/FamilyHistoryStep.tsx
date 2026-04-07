@@ -70,11 +70,6 @@ export function FamilyHistoryStep({ data, updateData }: Props) {
 
       {!noFamily && (
         <div className="space-y-4">
-          <Label className="flex items-center gap-2">
-            <Dna className="h-4 w-4 text-primary" />
-            {tx("onb.familyHistoryTitle", lang)}
-          </Label>
-
           <div className="flex flex-wrap gap-2">
             {FAMILY_CONDITIONS.map((cond) => (
               <Badge

@@ -1778,7 +1778,7 @@ const t: Record<string, TranslationEntry> = {
   "onb.familyAlzheimer": { en: "Alzheimer / Early dementia", tr: "Alzheimer / Erken Demans" },
   "onb.familyPsychiatric": { en: "Major psychiatric (Bipolar/Schizophrenia)", tr: "Majör Psikiyatrik (Bipolar/Şizofreni)" },
   "onb.familyWhyNote": { en: "Your family history helps our AI calculate cardiovascular risk scores and warn you proactively about future health risks.", tr: "Aile geçmişin, yapay zekamızın kardiyovasküler risk skorlarını hesaplaması ve gelecekteki sağlık risklerine karşı seni erken uyarabilmesi için kullanılır." },
-  "onb.whyFamilyHistory": { en: "Family history enables proactive risk screening for hereditary conditions.", tr: "Soygeçmiş bilgisi kalıtsal hastalıklar için proaktif risk taraması sağlar." },
+  "onb.whyFamilyHistory": { en: "", tr: "" },
   "onb.phaseBasics": { en: "Basics", tr: "Temel Bilgiler" },
   "onb.phaseHealth": { en: "Health Profile", tr: "Sağlık Profili" },
   "onb.phaseConsent": { en: "Confirmation", tr: "Onay" },
