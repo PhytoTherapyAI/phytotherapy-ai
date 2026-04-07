@@ -3,9 +3,14 @@
 
 import { Label } from "@/components/ui/label";
 import { Wine, Cigarette } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
+
+const reducedMotion = typeof window !== "undefined"
+  ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+  : false;
 
 interface Props {
   data: OnboardingData;
@@ -121,42 +126,64 @@ export function SubstanceStep({ data, updateData }: Props) {
         </div>
 
         {/* Dynamic questions for active/former */}
-        {(smokingStatus === "current" || smokingStatus === "former") && (
-          <div className="space-y-3 mt-2">
-            <ChipGroup
-              label={tx("onb.smokingAmount", lang)}
-              options={[
-                { value: "half_pack", label: tx("onb.smokingHalfPack", lang) },
-                { value: "1pack", label: tx("onb.smokingOnePack", lang) },
-                { value: "1.5plus", label: tx("onb.smokingMorePack", lang) },
-              ]}
-              value={smokingAmount}
-              onChange={(v) => setSmokingCompound(smokingStatus, v, smokingYears, smokingQuit)}
-            />
-            <ChipGroup
-              label={tx("onb.smokingYears", lang)}
-              options={[
-                { value: "1to5", label: tx("onb.smoking1to5", lang) },
-                { value: "5to15", label: tx("onb.smoking5to15", lang) },
-                { value: "15plus", label: tx("onb.smoking15plus", lang) },
-              ]}
-              value={smokingYears}
-              onChange={(v) => setSmokingCompound(smokingStatus, smokingAmount, v, smokingQuit)}
-            />
-            {smokingStatus === "former" && (
-              <ChipGroup
-                label={tx("onb.smokingQuitWhen", lang)}
-                options={[
-                  { value: "lt1yr", label: tx("onb.smokingQuit1yr", lang) },
-                  { value: "1to5yr", label: tx("onb.smokingQuit1to5", lang) },
-                  { value: "gt5yr", label: tx("onb.smokingQuit5plus", lang) },
-                ]}
-                value={smokingQuit}
-                onChange={(v) => setSmokingCompound(smokingStatus, smokingAmount, smokingYears, v)}
-              />
-            )}
-          </div>
-        )}
+        <AnimatePresence>
+          {(smokingStatus === "current" || smokingStatus === "former") && (
+            <motion.div
+              key="smoking-sub"
+              initial={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="overflow-hidden"
+            >
+              <div className="space-y-3 mt-2">
+                <ChipGroup
+                  label={tx("onb.smokingAmount", lang)}
+                  options={[
+                    { value: "half_pack", label: tx("onb.smokingHalfPack", lang) },
+                    { value: "1pack", label: tx("onb.smokingOnePack", lang) },
+                    { value: "1.5plus", label: tx("onb.smokingMorePack", lang) },
+                  ]}
+                  value={smokingAmount}
+                  onChange={(v) => setSmokingCompound(smokingStatus, v, smokingYears, smokingQuit)}
+                />
+                <ChipGroup
+                  label={tx("onb.smokingYears", lang)}
+                  options={[
+                    { value: "1to5", label: tx("onb.smoking1to5", lang) },
+                    { value: "5to15", label: tx("onb.smoking5to15", lang) },
+                    { value: "15plus", label: tx("onb.smoking15plus", lang) },
+                  ]}
+                  value={smokingYears}
+                  onChange={(v) => setSmokingCompound(smokingStatus, smokingAmount, v, smokingQuit)}
+                />
+                <AnimatePresence>
+                  {smokingStatus === "former" && (
+                    <motion.div
+                      key="smoking-quit"
+                      initial={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <ChipGroup
+                        label={tx("onb.smokingQuitWhen", lang)}
+                        options={[
+                          { value: "lt1yr", label: tx("onb.smokingQuit1yr", lang) },
+                          { value: "1to5yr", label: tx("onb.smokingQuit1to5", lang) },
+                          { value: "gt5yr", label: tx("onb.smokingQuit5plus", lang) },
+                        ]}
+                        value={smokingQuit}
+                        onChange={(v) => setSmokingCompound(smokingStatus, smokingAmount, smokingYears, v)}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ═══ ALCOHOL ═══ */}
@@ -189,20 +216,31 @@ export function SubstanceStep({ data, updateData }: Props) {
           </ChipButton>
         </div>
 
-        {(alcStatus === "active" || alcStatus === "former") && (
-          <div className="mt-2">
-            <ChipGroup
-              label={tx("onb.alcFrequency", lang)}
-              options={[
-                { value: "social", label: tx("onb.alcSocial", lang) },
-                { value: "weekly", label: tx("onb.alcWeekly", lang) },
-                { value: "daily", label: tx("onb.alcDaily", lang) },
-              ]}
-              value={alcFreq}
-              onChange={(v) => setAlcCompound(alcStatus, v)}
-            />
-          </div>
-        )}
+        <AnimatePresence>
+          {(alcStatus === "active" || alcStatus === "former") && (
+            <motion.div
+              key="alc-sub"
+              initial={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="overflow-hidden"
+            >
+              <div className="mt-2">
+                <ChipGroup
+                  label={tx("onb.alcFrequency", lang)}
+                  options={[
+                    { value: "social", label: tx("onb.alcSocial", lang) },
+                    { value: "weekly", label: tx("onb.alcWeekly", lang) },
+                    { value: "daily", label: tx("onb.alcDaily", lang) },
+                  ]}
+                  value={alcFreq}
+                  onChange={(v) => setAlcCompound(alcStatus, v)}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <p className="text-xs text-muted-foreground">
