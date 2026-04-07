@@ -1,7 +1,7 @@
 // © 2026 Doctopal — All Rights Reserved
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import {
   FlaskConical,
@@ -409,6 +409,11 @@ function BloodTestTab({
         </div>
       )}
 
+      {/* Loading overlay — labor illusion */}
+      {(isLoading || pdfUploading) && !data && (
+        <AnalysisLoadingOverlay lang={lang} isPdf={pdfUploading} />
+      )}
+
       {data ? (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
@@ -446,6 +451,83 @@ function BloodTestTab({
         ⚠️ {tx("disclaimer.tool", lang)}
       </p>
     </>
+  );
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Analysis Loading Overlay (Labor Illusion)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+const LOADING_STEPS_TR = [
+  { text: "Kan değerleri okunuyor...", icon: "🔬" },
+  { text: "Referans aralıkları karşılaştırılıyor...", icon: "📊" },
+  { text: "PubMed veritabanı taranıyor...", icon: "📚" },
+  { text: "İlaç etkileşimleri kontrol ediliyor...", icon: "💊" },
+  { text: "Kişisel öneriler hazırlanıyor...", icon: "🎯" },
+  { text: "Doktor raporu oluşturuluyor...", icon: "📋" },
+  { text: "Son kontroller yapılıyor...", icon: "✅" },
+];
+
+const LOADING_STEPS_EN = [
+  { text: "Reading blood values...", icon: "🔬" },
+  { text: "Comparing reference ranges...", icon: "📊" },
+  { text: "Scanning PubMed database...", icon: "📚" },
+  { text: "Checking drug interactions...", icon: "💊" },
+  { text: "Preparing personalized recommendations...", icon: "🎯" },
+  { text: "Generating doctor report...", icon: "📋" },
+  { text: "Final checks...", icon: "✅" },
+];
+
+function AnalysisLoadingOverlay({ lang, isPdf }: { lang: Lang; isPdf?: boolean }) {
+  const [step, setStep] = useState(0);
+  const steps = lang === "tr" ? LOADING_STEPS_TR : LOADING_STEPS_EN;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep((s) => (s < steps.length - 1 ? s + 1 : s));
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [steps.length]);
+
+  const progress = Math.min(((step + 1) / steps.length) * 100, 95);
+
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-4">
+      {/* Animated pulse circle */}
+      <div className="relative mb-6">
+        <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
+          <div className="h-14 w-14 rounded-full bg-primary/20 flex items-center justify-center animate-pulse">
+            <span className="text-3xl">{steps[step].icon}</span>
+          </div>
+        </div>
+        <div className="absolute -inset-2 rounded-full border-2 border-primary/20 animate-ping" style={{ animationDuration: "2s" }} />
+      </div>
+
+      {/* Step text */}
+      <p className="text-base font-medium text-foreground mb-2 text-center transition-all duration-500">
+        {steps[step].text}
+      </p>
+
+      {/* Sub text */}
+      <p className="text-xs text-muted-foreground mb-6 text-center max-w-xs">
+        {isPdf
+          ? (lang === "tr" ? "PDF'iniz AI tarafından analiz ediliyor, bu biraz zaman alabilir..." : "Your PDF is being analyzed by AI, this may take a moment...")
+          : (lang === "tr" ? "Yapay zeka değerlerinizi analiz ediyor..." : "AI is analyzing your values...")}
+      </p>
+
+      {/* Progress bar */}
+      <div className="w-full max-w-xs h-2 bg-muted rounded-full overflow-hidden">
+        <div
+          className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+
+      {/* Step counter */}
+      <p className="mt-2 text-xs text-muted-foreground">
+        {step + 1} / {steps.length}
+      </p>
+    </div>
   );
 }
 
@@ -674,6 +756,11 @@ function RadiologyTab({
         <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400">
           {error}
         </div>
+      )}
+
+      {/* Loading overlay — labor illusion */}
+      {isLoading && !data && (
+        <AnalysisLoadingOverlay lang={lang} isPdf />
       )}
 
       {data ? (

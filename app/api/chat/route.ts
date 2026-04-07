@@ -4,7 +4,7 @@ import { askGeminiStream, askGeminiStreamMultimodal } from "@/lib/ai-client";
 import type { GeminiFilePart } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
 import { SYSTEM_PROMPT } from "@/lib/prompts";
-import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
+import { checkRedFlags, getEmergencyMessage, getYellowWarning } from "@/lib/safety-filter";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -47,14 +47,15 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Step 1: Red flag check
-    const redFlagCheck = checkRedFlags(message);
-    if (redFlagCheck.isEmergency) {
-      const emergencyMsg = getEmergencyMessage(redFlagCheck.language);
+    // Step 1: Turkey 112 Triage Protocol check
+    const triageResult = checkRedFlags(message);
+    const isYellowCode = triageResult.type === "yellow_code";
+    if (triageResult.type === "red_code") {
+      const emergencyMsg = getEmergencyMessage(triageResult.language);
       const stream = new ReadableStream({
         start(controller) {
           controller.enqueue(new TextEncoder().encode(
-            `🚨 **${tx("api.chat.emergencyLabel", redFlagCheck.language === "tr" ? "tr" : "en")}**\n\n${emergencyMsg}`
+            `🚨 **${tx("api.chat.emergencyLabel", triageResult.language === "tr" ? "tr" : "en")}**\n\n${emergencyMsg}`
           ));
           controller.close();
         },
@@ -192,11 +193,13 @@ This rule exists because giving dosage advice without knowing the user's medicat
     }
 
     // Use multimodal streaming if files are present, otherwise standard text streaming
+    // Hackathon mode: premium=true → Sonnet for all users (best quality for demo)
+    const isPremium = true; // TODO: check user subscription after hackathon
     let stream;
     try {
       stream = geminiFiles.length > 0
-        ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles)
-        : await askGeminiStream(fullPrompt, systemPromptFull);
+        ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles, { premium: isPremium })
+        : await askGeminiStream(fullPrompt, systemPromptFull, { premium: isPremium });
     } catch (claudeError) {
       // Claude API call failed (rate limit, API key, network, etc.)
       // Return a streaming response with the error message instead of a 500
@@ -247,6 +250,15 @@ This rule exists because giving dosage advice without knowing the user's medicat
               controller.enqueue(value);
             }
           }
+
+          // YELLOW CODE: Append safety warning after AI response
+          if (isYellowCode) {
+            const warningLang = triageResult.type === "yellow_code" ? triageResult.language : "en";
+            const warning = getYellowWarning(warningLang);
+            fullResponse += warning;
+            controller.enqueue(encoder.encode(warning));
+          }
+
           controller.close();
 
           // Save query + response to history (fire and forget)

@@ -16,15 +16,24 @@ function getClient(): Anthropic {
 }
 
 // Model strategy:
-// - Current: Haiku 4.5 for everything (fast + cost-effective, better than Gemini 2.0 Flash)
-// - Future (when monetized): upgrade JSON routes to Sonnet 4.6 for highest medical quality
-const MODEL_FAST = "claude-haiku-4-5";
-const MODEL_SMART = "claude-haiku-4-5"; // TODO: switch to "claude-sonnet-4-6" when on Vercel Pro + revenue
+// - Default (free): Haiku 4.5 — fast + cost-effective ($0.008/request)
+// - Premium: Sonnet 4.6 — highest medical quality ($0.03/request)
+// - Hackathon mode: isPremium=true → all users get Sonnet
+const MODEL_DEFAULT = "claude-haiku-4-5";
+const MODEL_PREMIUM = "claude-sonnet-4-6";
+
+// Backward compat aliases
+const MODEL_FAST = MODEL_DEFAULT;
+const MODEL_SMART = MODEL_DEFAULT;
 
 // Token limits — lower = faster response time
 const TOKENS_TEXT = 2048;    // chat/simple text — most answers < 800 tokens
 const TOKENS_JSON = 3000;    // JSON analysis — most responses < 1500 tokens
 const TOKENS_STREAM = 2048;  // streaming chat
+
+// Temperature — 0.3 for natural conversation, 0 for JSON/analysis
+const TEMP_CHAT = 0.3;       // warm, varied responses — friend-like tone
+const TEMP_ANALYSIS = 0;     // deterministic for medical analysis/JSON
 
 // ──────────────────────────────────────────────
 // Safe JSON parser — 5-layer cleaning
@@ -100,18 +109,109 @@ async function retryWithBackoff<T>(fn: () => Promise<T>): Promise<T> {
 }
 
 // ──────────────────────────────────────────────
+// Stream-to-JSON: Streams the AI call (avoids Vercel timeout)
+// then collects and parses as JSON. Best of both worlds.
+// ──────────────────────────────────────────────
+
+export async function askStreamJSON(
+  prompt: string,
+  systemPrompt: string,
+  options?: { premium?: boolean }
+): Promise<string> {
+  const jsonSystemPrompt =
+    systemPrompt +
+    "\n\nIMPORTANT: You MUST respond with valid JSON only. No markdown code blocks, no explanation text before or after, no ```json wrapper. Output ONLY the raw JSON object/array. Be concise.";
+
+  return retryWithBackoff(async () => {
+    const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
+    const stream = getClient().messages.stream({
+      model,
+      max_tokens: TOKENS_JSON,
+      temperature: TEMP_ANALYSIS,
+      system: jsonSystemPrompt,
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    let fullText = "";
+    for await (const event of stream) {
+      if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+        fullText += event.delta.text;
+      }
+    }
+
+    const parsed = safeParseJSON(fullText);
+    return JSON.stringify(parsed);
+  });
+}
+
+export async function askStreamJSONMultimodal(
+  prompt: string,
+  systemPrompt: string,
+  files: GeminiFilePart[],
+  options?: { premium?: boolean }
+): Promise<string> {
+  const jsonSystemPrompt =
+    systemPrompt +
+    "\n\nIMPORTANT: You MUST respond with valid JSON only. No markdown code blocks, no explanation text before or after, no ```json wrapper. Output ONLY the raw JSON object/array. Be concise.";
+
+  return retryWithBackoff(async () => {
+    const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
+    const contentParts: Anthropic.MessageCreateParams["messages"][0]["content"] = [];
+
+    for (const file of files) {
+      if (file.mimeType === "application/pdf") {
+        contentParts.push({
+          type: "document" as const,
+          source: { type: "base64" as const, media_type: "application/pdf" as const, data: file.base64 },
+        } as unknown as Anthropic.ImageBlockParam);
+      } else {
+        contentParts.push({
+          type: "image" as const,
+          source: {
+            type: "base64" as const,
+            media_type: file.mimeType as "image/jpeg" | "image/png" | "image/gif" | "image/webp",
+            data: file.base64,
+          },
+        });
+      }
+    }
+    contentParts.push({ type: "text" as const, text: prompt });
+
+    const stream = getClient().messages.stream({
+      model,
+      max_tokens: TOKENS_JSON,
+      temperature: TEMP_ANALYSIS,
+      system: jsonSystemPrompt,
+      messages: [{ role: "user", content: contentParts }],
+    });
+
+    let fullText = "";
+    for await (const event of stream) {
+      if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+        fullText += event.delta.text;
+      }
+    }
+
+    const parsed = safeParseJSON(fullText);
+    return JSON.stringify(parsed);
+  });
+}
+
+// ──────────────────────────────────────────────
 // Exported functions — same names as gemini.ts
 // ──────────────────────────────────────────────
 
 export async function askGemini(
   prompt: string,
-  systemPrompt: string
+  systemPrompt: string,
+  options?: { premium?: boolean; temperature?: number }
 ): Promise<string> {
   return retryWithBackoff(async () => {
+    const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
     const response = await getClient().messages.create({
-      model: MODEL_FAST,
+      model,
       max_tokens: TOKENS_TEXT,
-      temperature: 0,
+      temperature: options?.temperature ?? TEMP_CHAT,
       system: systemPrompt,
       messages: [{ role: "user", content: prompt }],
     });
@@ -145,13 +245,15 @@ export async function askGeminiJSON(
 
 export async function askGeminiStream(
   prompt: string,
-  systemPrompt: string
+  systemPrompt: string,
+  options?: { premium?: boolean }
 ): Promise<ReadableStream> {
   return retryWithBackoff(async () => {
+    const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
     const stream = getClient().messages.stream({
-      model: MODEL_FAST,
+      model,
       max_tokens: TOKENS_STREAM,
-      temperature: 0,
+      temperature: TEMP_CHAT,
       system: systemPrompt,
       messages: [{ role: "user", content: prompt }],
     });
@@ -240,7 +342,8 @@ export async function askGeminiJSONMultimodal(
 export async function askGeminiStreamMultimodal(
   prompt: string,
   systemPrompt: string,
-  files: GeminiFilePart[]
+  files: GeminiFilePart[],
+  options?: { premium?: boolean }
 ): Promise<ReadableStream> {
   return retryWithBackoff(async () => {
     const contentParts: Anthropic.MessageCreateParams["messages"][0]["content"] =
@@ -273,10 +376,11 @@ export async function askGeminiStreamMultimodal(
     }
     contentParts.push({ type: "text" as const, text: prompt });
 
+    const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
     const stream = getClient().messages.stream({
-      model: MODEL_FAST,
+      model,
       max_tokens: TOKENS_STREAM,
-      temperature: 0,
+      temperature: TEMP_CHAT,
       system: systemPrompt,
       messages: [{ role: "user", content: contentParts }],
     });

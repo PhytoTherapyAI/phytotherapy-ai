@@ -1,6 +1,6 @@
 // © 2026 Doctopal — All Rights Reserved
 import { NextRequest } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askStreamJSON } from "@/lib/ai-client";
 import { BLOOD_TEST_PROMPT } from "@/lib/prompts";
 import { createServerClient } from "@/lib/supabase";
 import {
@@ -159,7 +159,8 @@ export async function POST(request: NextRequest) {
       ? "\n\nThe user has medications on file. Cross-check all supplement recommendations against their medications."
       : "\n\nIMPORTANT: The user has NO medications on file. For supplement dosages, add a note: 'Please add your medications to your profile for personalized safety checks.'");
 
-    const geminiResponse = await askGeminiJSON(prompt, systemPrompt);
+    // Use streaming JSON to avoid Vercel timeout (stream keeps connection alive)
+    const geminiResponse = await askStreamJSON(prompt, systemPrompt, { premium: true });
     const analysis = parseGeminiBloodAnalysis(geminiResponse);
 
     // Step 5: Save to query history if authenticated

@@ -150,9 +150,10 @@ export default function InteractionCheckerPage() {
   };
 
   const redFlagCheck = useMemo(() => checkRedFlags(concern), [concern]);
+  const isRedFlagEmergency = redFlagCheck.type === "red_code";
 
   const handleAnalyze = async () => {
-    if (medications.length === 0 || !concern.trim() || redFlagCheck.isEmergency) return;
+    if (medications.length === 0 || !concern.trim() || isRedFlagEmergency) return;
 
     setIsLoading(true);
     setError(null);
@@ -367,7 +368,7 @@ export default function InteractionCheckerPage() {
                 rows={3}
                 maxLength={1000}
                 className={`w-full resize-none rounded-xl border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 ${
-                  redFlagCheck.isEmergency
+                  isRedFlagEmergency
                     ? "border-red-500 ring-2 ring-red-500/30 focus:border-red-500"
                     : "focus:border-primary focus:ring-2 focus:ring-primary/20"
                 }`}
@@ -381,7 +382,7 @@ export default function InteractionCheckerPage() {
             </div>
 
             {/* 🚨 Emergency Banner */}
-            {redFlagCheck.isEmergency && (
+            {isRedFlagEmergency && (
               <div className="rounded-xl border-2 border-red-500 bg-red-50 p-5 dark:bg-red-950/40">
                 <div className="flex items-start gap-3">
                   <div className="shrink-0 rounded-full bg-red-600 p-2.5">
@@ -392,7 +393,7 @@ export default function InteractionCheckerPage() {
                       🚨 Emergency Warning
                     </h3>
                     <p className="mt-1.5 text-sm leading-relaxed text-red-700 dark:text-red-300">
-                      {getEmergencyMessage(redFlagCheck.language)}
+                      {getEmergencyMessage(redFlagCheck.type === "red_code" ? redFlagCheck.language : "en")}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       <a
@@ -426,9 +427,9 @@ export default function InteractionCheckerPage() {
 
               <Button
                 onClick={handleAnalyze}
-                disabled={isLoading || medications.length === 0 || !concern.trim() || redFlagCheck.isEmergency}
+                disabled={isLoading || medications.length === 0 || !concern.trim() || isRedFlagEmergency}
                 className={`w-full gap-2 py-6 text-base font-medium rounded-xl ${
-                  redFlagCheck.isEmergency
+                  isRedFlagEmergency
                     ? "bg-gray-400 cursor-not-allowed hover:bg-gray-400"
                     : "bg-primary hover:bg-primary/90"
                 }`}
@@ -436,7 +437,7 @@ export default function InteractionCheckerPage() {
               >
                 {isLoading ? (
                   <><Loader2 className="h-5 w-5 animate-spin" />{tx('ic.analyzing', lang)}</>
-                ) : redFlagCheck.isEmergency ? (
+                ) : isRedFlagEmergency ? (
                   <><ShieldAlert className="h-5 w-5" />{tx('ic.emergencyDisabled', lang)}</>
                 ) : (
                   <><Search className="h-5 w-5" />{tx('ic.checkBtn', lang)}<ArrowRight className="h-4 w-4" /></>
@@ -445,7 +446,7 @@ export default function InteractionCheckerPage() {
             </div>
 
             {/* Sign in note */}
-            {!authLoading && !isAuthenticated && !redFlagCheck.isEmergency && (
+            {!authLoading && !isAuthenticated && !isRedFlagEmergency && (
               <p className="text-center text-xs text-muted-foreground">
                 💡 <Link href="/auth/login" className="text-primary underline hover:text-primary/80">{tx('ic.signIn', lang)}</Link>{" "}
                 {tx('ic.signInNote', lang)}
@@ -454,7 +455,7 @@ export default function InteractionCheckerPage() {
           </div>
 
           {/* EXAMPLE QUERIES */}
-          {!result && !isLoading && !redFlagCheck.isEmergency && (
+          {!result && !isLoading && !isRedFlagEmergency && (
             <div>
               <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <Sparkles className="h-4 w-4 text-primary" />

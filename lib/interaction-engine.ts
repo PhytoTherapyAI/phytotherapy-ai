@@ -68,9 +68,9 @@ export async function analyzeInteraction(
   profile: UserProfileForInteraction | null,
   lang: string = "en"
 ): Promise<InteractionResult> {
-  // Step 1: Red flag check — BEFORE anything else
+  // Step 1: Red flag check — BEFORE anything else (only block red code)
   const redFlagCheck = checkRedFlags(concern);
-  if (redFlagCheck.isEmergency) {
+  if (redFlagCheck.type === "red_code") {
     return {
       success: true,
       isEmergency: true,

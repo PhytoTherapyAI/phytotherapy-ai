@@ -1,7 +1,6 @@
 // © 2026 Doctopal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSONMultimodal } from "@/lib/ai-client";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askStreamJSONMultimodal, askStreamJSON } from "@/lib/ai-client";
 import { BLOOD_TEST_PROMPT } from "@/lib/prompts";
 import { createServerClient } from "@/lib/supabase";
 import {
@@ -87,10 +86,12 @@ export async function POST(req: NextRequest) {
     // For large PDFs (e-Nabız etc), limit to first pages to avoid timeout
     let extractionResult: string;
     try {
-      extractionResult = await askGeminiJSONMultimodal(
+      // Use streaming JSON to avoid Vercel timeout
+      extractionResult = await askStreamJSONMultimodal(
         EXTRACTION_PROMPT + "\n\nIMPORTANT: Focus on extracting numeric lab values. Ignore headers, footers, patient info. If the document has multiple pages, extract from ALL pages.",
         "You are a precise medical document parser. Extract lab values from Turkish/English lab reports accurately. Return valid JSON only.",
-        [{ mimeType: file.type, base64 }]
+        [{ mimeType: file.type, base64 }],
+        { premium: true }
       );
     } catch (aiError) {
       console.error("PDF AI extraction failed:", aiError);
@@ -177,7 +178,8 @@ Gender: ${gender || "unknown"}
 
 Total markers: ${totalMarkers}, Abnormal: ${abnormalCount}, Optimal: ${optimalCount}`;
 
-    const aiResult = await askGeminiJSON(analysisPrompt, BLOOD_TEST_PROMPT);
+    // Use streaming JSON to avoid Vercel timeout
+    const aiResult = await askStreamJSON(analysisPrompt, BLOOD_TEST_PROMPT, { premium: true });
 
     let analysis;
     try {

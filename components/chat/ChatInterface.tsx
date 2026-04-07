@@ -151,9 +151,11 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
     const hasFiles = attachedFiles.length > 0;
     if ((!trimmed && !hasFiles) || isStreaming) return;
 
-    // Red flag check — client-side
-    const redFlag = checkRedFlags(trimmed);
-    if (redFlag.isEmergency) {
+    // Turkey 112 Triage Protocol — client-side safety check
+    const triageResult = checkRedFlags(trimmed);
+
+    // KIRMIZI KOD — Hayati tehlike, popup + block, AI cevap vermez
+    if (triageResult.type === "red_code") {
       const userMsg: ChatMessage = {
         id: crypto.randomUUID(),
         role: "user",
@@ -162,12 +164,14 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
       const emergencyMsg: ChatMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: `🚨 **${tx('chat.emergencyTitle', lang)}**\n\n${getEmergencyMessage(redFlag.language)}`,
+        content: getEmergencyMessage(triageResult.language),
       };
       setMessages((prev) => [...prev, userMsg, emergencyMsg]);
       setInput("");
       return;
     }
+
+    // SARI KOD + YEŞİL KOD — AI cevap verir (sarı kodda server-side disclaimer eklenir)
 
     // Guest mode checks
     if (!isAuthenticated) {
@@ -214,18 +218,6 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
       ? `${trimmed || tx("chat.analyzeFile", lang)}${fileNames.length > 0 ? `\n\n📎 ${fileNames.join(", ")}` : ""}`
       : trimmed;
 
-    // Add user message
-    const userMsg: ChatMessage = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content: displayContent,
-      attachments: attachedFiles.map((f) => ({
-        name: f.name,
-        type: f.type,
-        preview: f.preview,
-      })),
-    };
-
     const assistantId = crypto.randomUUID();
     const assistantMsg: ChatMessage = {
       id: assistantId,
@@ -237,6 +229,17 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
     // Capture files before clearing
     const filesToSend = [...attachedFiles];
 
+    // Add user message and assistant placeholder
+    const userMsg: ChatMessage = {
+      id: crypto.randomUUID(),
+      role: "user",
+      content: displayContent,
+      attachments: attachedFiles.map((f) => ({
+        name: f.name,
+        type: f.type,
+        preview: f.preview,
+      })),
+    };
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
     setInput("");
     setAttachedFiles([]);
@@ -415,6 +418,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
             }}
           />
         ))}
+
       </div>
 
       {/* Input area */}

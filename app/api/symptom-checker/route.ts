@@ -39,9 +39,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Red flag check FIRST
+    // Red flag check FIRST — only block red code
     const redFlagResult = checkRedFlags(symptoms);
-    if (redFlagResult.isEmergency) {
+    if (redFlagResult.type === "red_code") {
       return NextResponse.json({
         triage: "emergency",
         message: getEmergencyMessage(redFlagResult.language),
