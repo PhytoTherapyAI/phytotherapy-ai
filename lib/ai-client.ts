@@ -266,45 +266,57 @@ export async function askGeminiStream(
   systemPrompt: string,
   options?: { premium?: boolean }
 ): Promise<ReadableStream> {
-  function createStream(model: string): ReadableStream {
-    const stream = getClient().messages.stream({
-      model,
-      max_tokens: TOKENS_STREAM,
-      temperature: TEMP_CHAT,
-      system: systemPrompt,
-      messages: [{ role: "user", content: prompt }],
-    });
+  const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
 
-    const encoder = new TextEncoder();
-    return new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const event of stream) {
-            if (
-              event.type === "content_block_delta" &&
-              event.delta.type === "text_delta"
-            ) {
-              controller.enqueue(encoder.encode(event.delta.text));
-            }
+  // Stream with built-in fallback: if premium fails mid-stream, catch inside
+  const stream = getClient().messages.stream({
+    model,
+    max_tokens: TOKENS_STREAM,
+    temperature: TEMP_CHAT,
+    system: systemPrompt,
+    messages: [{ role: "user", content: prompt }],
+  });
+
+  const encoder = new TextEncoder();
+  return new ReadableStream({
+    async start(controller) {
+      try {
+        for await (const event of stream) {
+          if (
+            event.type === "content_block_delta" &&
+            event.delta.type === "text_delta"
+          ) {
+            controller.enqueue(encoder.encode(event.delta.text));
           }
-          controller.close();
-        } catch (err) {
+        }
+        controller.close();
+      } catch (err) {
+        // If premium model failed and we haven't sent anything, try fallback
+        if (options?.premium) {
+          console.warn("[Claude] Premium stream failed, trying fallback:", err instanceof Error ? err.message : err);
+          try {
+            const fallback = getClient().messages.stream({
+              model: MODEL_DEFAULT,
+              max_tokens: TOKENS_STREAM,
+              temperature: TEMP_CHAT,
+              system: systemPrompt,
+              messages: [{ role: "user", content: prompt }],
+            });
+            for await (const event of fallback) {
+              if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+                controller.enqueue(encoder.encode(event.delta.text));
+              }
+            }
+            controller.close();
+          } catch (fallbackErr) {
+            controller.error(fallbackErr);
+          }
+        } else {
           controller.error(err);
         }
-      },
-    });
-  }
-
-  // Try premium model, fallback to default
-  if (options?.premium) {
-    try {
-      return createStream(MODEL_PREMIUM);
-    } catch {
-      console.warn("[Claude] Premium stream failed, falling back to default");
-      return createStream(MODEL_DEFAULT);
-    }
-  }
-  return createStream(MODEL_DEFAULT);
+      }
+    },
+  });
 }
 
 // Re-export the same interface for multimodal

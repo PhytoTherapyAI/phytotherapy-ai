@@ -199,10 +199,13 @@ function BloodTestTab({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to results when data arrives
+  // Scroll to results when data arrives (small delay for DOM render)
   useEffect(() => {
-    if (data && resultsRef.current) {
-      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (data) {
+      const timer = setTimeout(() => {
+        resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+      return () => clearTimeout(timer);
     }
   }, [data]);
   const [testDate, setTestDate] = useState<string>("");
@@ -257,61 +260,73 @@ function BloodTestTab({
       )}
 
       {/* Test Date Picker */}
-      {!data && (
-        <div className="mb-6 rounded-xl border bg-muted/20 p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <Calendar className="h-4 w-4 text-primary" />
-            <h3 className="text-sm font-semibold">
-              {tx("medAnalysis.testDate", lang)}
-            </h3>
-            <span className="text-xs text-muted-foreground">
-              ({tx("medAnalysis.optional", lang)})
-            </span>
+      {!data && !isLoading && !pdfUploading && (
+        <div className="mb-6 rounded-xl border bg-card p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                <Calendar className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold">{tx("medAnalysis.testDate", lang)}</h3>
+                <p className="text-[10px] text-muted-foreground">{tx("medAnalysis.optional", lang)}</p>
+              </div>
+            </div>
           </div>
 
-          {!dontRememberDate && (
+          {/* Toggle: exact date or approximate */}
+          <div className="flex gap-2 mb-3">
+            <button
+              type="button"
+              onClick={() => { setDontRememberDate(false); setTestDateApprox(""); }}
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+                !dontRememberDate
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              📅 {isTr ? "Tarih biliyorum" : "I know the date"}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setDontRememberDate(true); setTestDate(""); }}
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+                dontRememberDate
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              🤔 {isTr ? "Yaklaşık" : "Approximate"}
+            </button>
+          </div>
+
+          {!dontRememberDate ? (
             <input
               type="date"
               value={testDate}
               onChange={(e) => setTestDate(e.target.value)}
               max={new Date().toISOString().split("T")[0]}
-              className="mb-3 w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-auto"
+              className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-auto"
             />
-          )}
-
-          <label className="flex items-center gap-2 cursor-pointer text-sm text-muted-foreground mb-3">
-            <input
-              type="checkbox"
-              checked={dontRememberDate}
-              onChange={(e) => {
-                setDontRememberDate(e.target.checked);
-                if (e.target.checked) setTestDate("");
-                if (!e.target.checked) setTestDateApprox("");
-              }}
-              className="rounded border-gray-300"
-            />
-            {tx("medAnalysis.dontRememberDate", lang)}
-          </label>
-
-          {dontRememberDate && (
+          ) : (
             <div className="flex flex-wrap gap-2">
               {[
-                { value: "last3months", en: "Last 3 months", tr: "Son 3 ay" },
-                { value: "last6months", en: "Last 6 months", tr: "Son 6 ay" },
-                { value: "lastYear", en: "Last year", tr: "Son 1 y\u0131l" },
-                { value: "olderThanYear", en: "More than a year", tr: "1 y\u0131ldan eski" },
+                { value: "last3months", en: "Last 3 months", tr: "Son 3 ay", icon: "🟢" },
+                { value: "last6months", en: "Last 6 months", tr: "Son 6 ay", icon: "🟡" },
+                { value: "lastYear", en: "Last year", tr: "Son 1 yıl", icon: "🟠" },
+                { value: "olderThanYear", en: "Over a year", tr: "1 yıldan eski", icon: "🔴" },
               ].map((opt) => (
                 <button
                   key={opt.value}
                   type="button"
                   onClick={() => setTestDateApprox(testDateApprox === opt.value ? "" : opt.value)}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all ${
+                  className={`rounded-lg border px-3 py-2 text-xs font-medium transition-all ${
                     testDateApprox === opt.value
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border hover:border-primary/40 hover:text-primary"
+                      ? "border-primary bg-primary/10 text-primary shadow-sm"
+                      : "border-border bg-background hover:border-primary/40 hover:bg-primary/5"
                   }`}
                 >
-                  {isTr ? opt.tr : opt.en}
+                  {opt.icon} {isTr ? opt.tr : opt.en}
                 </button>
               ))}
             </div>

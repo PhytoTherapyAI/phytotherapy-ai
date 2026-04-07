@@ -160,7 +160,16 @@ export async function POST(request: NextRequest) {
       : "\n\nIMPORTANT: The user has NO medications on file. For supplement dosages, add a note: 'Please add your medications to your profile for personalized safety checks.'");
 
     // Use streaming JSON to avoid Vercel timeout (stream keeps connection alive)
-    const geminiResponse = await askStreamJSON(prompt, systemPrompt, { premium: true });
+    let geminiResponse: string;
+    try {
+      geminiResponse = await askStreamJSON(prompt, systemPrompt, { premium: true });
+    } catch (aiErr) {
+      console.error("Blood test AI error:", aiErr);
+      return new Response(
+        JSON.stringify({ error: lang === "tr" ? "AI analiz yapılamadı. Lütfen tekrar deneyin." : "AI analysis failed. Please try again." }),
+        { status: 502, headers: { "Content-Type": "application/json" } }
+      );
+    }
     const analysis = parseGeminiBloodAnalysis(geminiResponse);
 
     // Step 5: Save to query history if authenticated
