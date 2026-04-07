@@ -367,6 +367,26 @@ export const BADGES: Badge[] = [
     category: "milestone",
     condition: () => false,
   },
+  {
+    id: "conscious_user",
+    icon: "🧬",
+    nameEn: "Conscious User",
+    nameTr: "Bilinçli Kullanıcı",
+    descEn: "Added your first supplement",
+    descTr: "İlk takviyeni ekledin",
+    category: "health",
+    condition: () => false,
+  },
+  {
+    id: "health_tracker",
+    icon: "📊",
+    nameEn: "Health Tracker",
+    nameTr: "Sağlık Takipçisi",
+    descEn: "Tracking 3+ supplements",
+    descTr: "3+ takviye takip ediyorsun",
+    category: "health",
+    condition: () => false,
+  },
 
   // Milestones
   {
@@ -421,6 +441,8 @@ export const BADGE_POINTS: Record<string, number> = {
   identity_revealed: 50,
   family_guardian: 75,
   first_med: 50,
+  conscious_user: 50,
+  health_tracker: 75,
   no_dose_missed: 30,
   met_ai: 100,
   welcome_doctopal: 200,

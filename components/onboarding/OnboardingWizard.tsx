@@ -32,31 +32,34 @@ import { MedicalHistoryStep } from "@/components/onboarding/steps/MedicalHistory
 import { ConsentStep } from "@/components/onboarding/steps/ConsentStep";
 import { PermissionPreframeStep } from "@/components/onboarding/steps/PermissionPreframeStep";
 import { FamilyHistoryStep } from "@/components/onboarding/steps/FamilyHistoryStep";
+import { SupplementsStep } from "@/components/onboarding/steps/SupplementsStep";
 import { OptionalProfileStep } from "@/components/onboarding/steps/OptionalProfileStep";
 
-const STEP_ICONS = [User, Pill, AlertTriangle, Baby, Wine, HeartPulse, Dna, Shield, FileCheck];
+const STEP_ICONS = [User, Pill, Leaf, AlertTriangle, Baby, Wine, HeartPulse, Dna, Shield, FileCheck];
 
 // "Why we ask" keys mapped to original step index
 const WHY_KEYS = [
   "onb.whyBasic",           // 0: basic
   "onb.whyMeds",            // 1: medications
-  "onb.whyAllergies",       // 2: allergies
-  "onb.whyPregnancy",       // 3: pregnancy
-  "onb.whySubstances",      // 4: substances
-  "onb.whyMedHistory",      // 5: medical history
-  "onb.whyFamilyHistory",   // 6: family history
-  "onb.whyPermissions",     // 7: permissions preframe
-  "onb.whyConsent",         // 8: consent
+  "onb.whySupplements",     // 2: supplements
+  "onb.whyAllergies",       // 3: allergies
+  "onb.whyPregnancy",       // 4: pregnancy
+  "onb.whySubstances",      // 5: substances
+  "onb.whyMedHistory",      // 6: medical history
+  "onb.whyFamilyHistory",   // 7: family history
+  "onb.whyPermissions",     // 8: permissions preframe
+  "onb.whyConsent",         // 9: consent
 ];
 
 // Phase definitions: each step belongs to a phase (0, 1, or 2)
-// Phase 0 = Basics (steps 0-1), Phase 1 = Health Profile (steps 2-6), Phase 2 = Permissions + Consent (steps 7-8)
-const STEP_PHASE = [0, 0, 1, 1, 1, 1, 1, 2, 2]; // indexed by original step index
+// Phase 0 = Basics (steps 0-1), Phase 1 = Health Profile (steps 2-7), Phase 2 = Permissions + Consent (steps 8-9)
+const STEP_PHASE = [0, 0, 1, 1, 1, 1, 1, 1, 2, 2]; // indexed by original step index (10 steps)
 
 // Step definitions using i18n keys
 const STEP_DEFS = [
   { id: "basic", titleKey: "onb.stepBasicTitle", descKey: "onb.stepBasicDesc" },
   { id: "medications", titleKey: "onb.stepMedsTitle", descKey: "onb.stepMedsDesc" },
+  { id: "supplements", titleKey: "onb.stepSupplementsTitle", descKey: "onb.stepSupplementsDesc" },
   { id: "allergies", titleKey: "onb.stepAllergiesTitle", descKey: "onb.stepAllergiesDesc" },
   { id: "pregnancy", titleKey: "onb.stepPregnancyTitle", descKey: "onb.stepPregnancyDesc" },
   { id: "substances", titleKey: "onb.stepSubstancesTitle", descKey: "onb.stepSubstancesDesc" },
@@ -82,15 +85,27 @@ function getLayer2Step(lang: "en" | "tr") {
   };
 }
 
+export interface SupplementEntry {
+  id: string;
+  name: string;
+  dose?: string;
+  doseUnit?: "mg" | "mcg" | "IU" | "g" | "ml" | "capsule" | "tablet";
+  frequency?: "daily" | "weekly_2_3" | "weekly" | "monthly" | "irregular";
+  isCustom: boolean;
+}
+
 export interface OnboardingData {
-  // Step 1: Basic info
+  // Step 0: Basic info
   full_name: string;
   birth_date: string;
   age: number | null;
   gender: string;
-  // Step 2: Medications
+  // Step 1: Medications
   medications: { brand_name: string; generic_name: string; dosage: string; frequency: string }[];
   no_medications: boolean;
+  // Step 2: Supplements
+  supplement_entries: SupplementEntry[];
+  no_supplements: boolean;
   // Step 3: Allergies
   allergies: { allergen: string; severity: string }[];
   no_allergies: boolean;
@@ -105,7 +120,7 @@ export interface OnboardingData {
   liver_disease: boolean;
   recent_surgery: boolean;
   chronic_conditions: string[];
-  // Step 7: Consent
+  // Step 9: Consent
   consent_agreed: boolean;
   // Layer 2 (optional)
   height_cm: number | null;
@@ -124,6 +139,8 @@ const defaultData: OnboardingData = {
   gender: "",
   medications: [],
   no_medications: false,
+  supplement_entries: [],
+  no_supplements: false,
   allergies: [],
   no_allergies: false,
   is_pregnant: false,
@@ -209,16 +226,16 @@ export function OnboardingWizard({ profile }: Props) {
   const ALL_LAYER1_STEPS = getSteps(lang);
   const LAYER2_STEP = getLayer2Step(lang);
 
-  // Skip pregnancy step (index 3) if user is male
+  // Skip pregnancy step (index 4) if user is male
   const skipPregnancy = data.gender === "male";
   const LAYER1_STEPS = skipPregnancy
-    ? ALL_LAYER1_STEPS.filter((_, i) => i !== 3)
+    ? ALL_LAYER1_STEPS.filter((_, i) => i !== 4)
     : ALL_LAYER1_STEPS;
 
   // Icon indices adjusted for skipped pregnancy
   const stepIconIndices = skipPregnancy
-    ? [0, 1, 2, 4, 5, 6, 7, 8]
-    : [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    ? [0, 1, 2, 3, 5, 6, 7, 8, 9]
+    : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   // Clamp restored step to valid bounds (gender change can shrink step count)
   const maxStep = showLayer2 ? LAYER1_STEPS.length : LAYER1_STEPS.length - 1;
@@ -247,14 +264,15 @@ export function OnboardingWizard({ profile }: Props) {
     switch (origStep) {
       case 0: return !!data.full_name.trim() && !!data.birth_date && data.age !== null && data.age >= 18 && !!data.gender;
       case 1: return data.no_medications || data.medications.length > 0;
-      case 2: return true; // allergies now optional
-      case 3: return true; // pregnancy
-      case 4: return !!data.alcohol_use && !!data.smoking_use;
-      case 5: return true; // medical history
-      case 6: return true; // family history
-      case 7: return true; // permissions preframe (info only)
-      case 8: return data.consent_agreed;
-      case 9: return true; // layer 2
+      case 2: return true; // supplements (optional)
+      case 3: return true; // allergies (optional)
+      case 4: return true; // pregnancy
+      case 5: return !!data.alcohol_use && !!data.smoking_use;
+      case 6: return true; // medical history
+      case 7: return true; // family history
+      case 8: return true; // permissions preframe (info only)
+      case 9: return data.consent_agreed;
+      case 10: return true; // layer 2
       default: return false;
     }
   };
@@ -270,7 +288,7 @@ export function OnboardingWizard({ profile }: Props) {
 
   const handleNext = async () => {
     // Mark permission preframe as shown when leaving that step
-    if (origStep === 7) {
+    if (origStep === 8) {
       updatePermissionState({ preframe_shown: true });
     }
 
@@ -394,7 +412,11 @@ export function OnboardingWizard({ profile }: Props) {
           diet_type: data.diet_type || null,
           exercise_frequency: data.exercise_frequency || null,
           sleep_quality: data.sleep_quality || null,
-          supplements: data.supplements,
+          supplements: data.supplement_entries.length > 0
+            ? data.supplement_entries.map(e =>
+                [e.name, e.dose || "", e.doseUnit || "", e.frequency || "daily"].join("|")
+              )
+            : data.supplements,
           onboarding_complete: true,
           onboarding_layer2_complete: isLayer2,
           consent_timestamp: new Date().toISOString(),
@@ -423,6 +445,18 @@ export function OnboardingWizard({ profile }: Props) {
       // "First Step" — medication saved
       if (data.medications.length > 0) {
         const b = getBadgeById("first_med");
+        if (b) { badges.push(b); points += BADGE_POINTS[b.id] ?? 0; }
+      }
+
+      // "Conscious User" — first supplement added
+      if (data.supplement_entries.length >= 1) {
+        const b = getBadgeById("conscious_user");
+        if (b) { badges.push(b); points += BADGE_POINTS[b.id] ?? 0; }
+      }
+
+      // "Health Tracker" — 3+ supplements
+      if (data.supplement_entries.length >= 3) {
+        const b = getBadgeById("health_tracker");
         if (b) { badges.push(b); points += BADGE_POINTS[b.id] ?? 0; }
       }
 
@@ -582,13 +616,14 @@ export function OnboardingWizard({ profile }: Props) {
           <CardContent>
             {origStep === 0 && <BasicInfoStep data={data} updateData={updateData} />}
             {origStep === 1 && <MedicationsStep data={data} updateData={updateData} />}
-            {origStep === 2 && <AllergiesStep data={data} updateData={updateData} />}
-            {origStep === 3 && !skipPregnancy && <PregnancyStep data={data} updateData={updateData} />}
-            {origStep === 4 && <SubstanceStep data={data} updateData={updateData} />}
-            {origStep === 5 && <MedicalHistoryStep data={data} updateData={updateData} />}
-            {origStep === 6 && <FamilyHistoryStep data={data} updateData={updateData} />}
-            {origStep === 7 && <PermissionPreframeStep />}
-            {origStep === 8 && <ConsentStep data={data} updateData={updateData} />}
+            {origStep === 2 && <SupplementsStep data={data} updateData={updateData} />}
+            {origStep === 3 && <AllergiesStep data={data} updateData={updateData} />}
+            {origStep === 4 && !skipPregnancy && <PregnancyStep data={data} updateData={updateData} />}
+            {origStep === 5 && <SubstanceStep data={data} updateData={updateData} />}
+            {origStep === 6 && <MedicalHistoryStep data={data} updateData={updateData} />}
+            {origStep === 7 && <FamilyHistoryStep data={data} updateData={updateData} />}
+            {origStep === 8 && <PermissionPreframeStep />}
+            {origStep === 9 && <ConsentStep data={data} updateData={updateData} />}
             {isLayer2 && <OptionalProfileStep data={data} updateData={updateData} />}
           </CardContent>
         </Card>
