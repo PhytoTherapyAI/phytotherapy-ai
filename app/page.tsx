@@ -19,6 +19,7 @@ import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
+import { DashboardTour } from "@/components/layout/DashboardTour";
 import { TOOL_CATEGORIES } from "@/lib/tools-hierarchy";
 import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-utils";
 import { getSupplementDisplayName } from "@/lib/supplement-data";
@@ -558,6 +559,8 @@ export default function Home() {
   if (showDashboard) {
     return (
       <div className="min-h-screen bg-stone-50 dark:bg-background">
+        {/* Dashboard Tour (first visit only) */}
+        <DashboardTour />
         {/* Hackathon Demo Banner */}
         <DemoBanner lang={lang} />
 

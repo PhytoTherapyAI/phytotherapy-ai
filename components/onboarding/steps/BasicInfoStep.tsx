@@ -3,7 +3,6 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
@@ -27,6 +26,13 @@ function calcAge(birthDate: string): number | null {
   return age;
 }
 
+const GENDER_OPTIONS = [
+  { value: "male", en: "Male", tr: "Erkek" },
+  { value: "female", en: "Female", tr: "Kadın" },
+  { value: "other", en: "Other", tr: "Diğer" },
+  { value: "prefer_not_to_say", en: "Prefer not to say", tr: "Belirtmek istemiyorum" },
+];
+
 export function BasicInfoStep({ data, updateData }: Props) {
   const { lang } = useLang();
 
@@ -36,7 +42,6 @@ export function BasicInfoStep({ data, updateData }: Props) {
 
   const ageWarning = data.age !== null && data.age < 18;
 
-  // Max date = today, min date = 120 years ago
   const today = new Date().toISOString().split("T")[0];
   const minDate = new Date();
   minDate.setFullYear(minDate.getFullYear() - 120);
@@ -44,30 +49,38 @@ export function BasicInfoStep({ data, updateData }: Props) {
 
   return (
     <div className="space-y-4">
+      {/* Name / Display Name */}
       <div className="space-y-2">
-        <Label htmlFor="full-name">{tx("onb.fullName", lang)}</Label>
+        <Label htmlFor="full-name">{tx("onb.displayName", lang)}</Label>
         <Input
           id="full-name"
-          placeholder={tx("onb.fullNamePlaceholder", lang)}
+          placeholder={tx("onb.displayNamePlaceholder", lang)}
           value={data.full_name}
           onChange={(e) => updateData({ full_name: e.target.value })}
+          className="text-base"
         />
       </div>
 
+      {/* Date of Birth — styled card */}
       <div className="space-y-2">
         <Label htmlFor="birth-date">{tx("onb.birthDate", lang)}</Label>
-        <Input
-          id="birth-date"
-          type="date"
-          min={minDateStr}
-          max={today}
-          value={data.birth_date || ""}
-          onChange={(e) => handleBirthDateChange(e.target.value)}
-        />
+        <div className="relative">
+          <Input
+            id="birth-date"
+            type="date"
+            min={minDateStr}
+            max={today}
+            value={data.birth_date || ""}
+            onChange={(e) => handleBirthDateChange(e.target.value)}
+            className="text-base h-11 rounded-xl bg-muted/30 border-muted-foreground/20 focus:bg-background"
+          />
+        </div>
         {data.age !== null && data.age >= 0 && (
-          <p className="text-xs text-muted-foreground">
-            {tx("onb.yourAge", lang)} {data.age}
-          </p>
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1">
+            <span className="text-xs font-medium text-primary">
+              {tx("onb.yourAge", lang)} {data.age}
+            </span>
+          </div>
         )}
         {ageWarning && (
           <Alert variant="destructive">
@@ -79,19 +92,25 @@ export function BasicInfoStep({ data, updateData }: Props) {
         )}
       </div>
 
+      {/* Gender — chip buttons instead of dropdown */}
       <div className="space-y-2">
         <Label>{tx("onb.gender", lang)}</Label>
-        <Select value={data.gender} onValueChange={(v) => v && updateData({ gender: v })}>
-          <SelectTrigger>
-            <SelectValue placeholder={tx("onb.genderPlaceholder", lang)} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="male">{tx("onb.male", lang)}</SelectItem>
-            <SelectItem value="female">{tx("onb.female", lang)}</SelectItem>
-            <SelectItem value="other">{tx("onb.other", lang)}</SelectItem>
-            <SelectItem value="prefer_not_to_say">{tx("onb.preferNotToSay", lang)}</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex flex-wrap gap-2">
+          {GENDER_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => updateData({ gender: opt.value })}
+              className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                data.gender === opt.value
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-muted text-muted-foreground hover:bg-muted/80"
+              }`}
+            >
+              {lang === "tr" ? opt.tr : opt.en}
+            </button>
+          ))}
+        </div>
       </div>
 
       <p className="text-xs text-muted-foreground">

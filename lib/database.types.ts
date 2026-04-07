@@ -3,9 +3,9 @@
 // Matches supabase/schema.sql
 
 export type Gender = "male" | "female" | "other" | "prefer_not_to_say";
-export type AlcoholUse = "none" | "occasional" | "regular" | "heavy";
-export type SmokingUse = "none" | "former" | "current";
-export type AllergySeverity = "mild" | "moderate" | "severe" | "anaphylaxis";
+export type AlcoholUse = string; // "none" | "former|freq" | "active|freq" (compound format)
+export type SmokingUse = string; // "none" | "current|amount|years" | "former|amount|years|quit" (compound format)
+export type AllergySeverity = "anaphylaxis" | "urticaria" | "mild_skin" | "gi_intolerance" | "unknown" | "mild" | "moderate" | "severe";
 export type QueryType = "interaction" | "general" | "blood_test";
 export type ConsentType = "terms_of_service" | "privacy_policy" | "medical_disclaimer";
 

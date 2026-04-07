@@ -306,6 +306,68 @@ export const BADGES: Badge[] = [
     condition: (s) => s.totalCheckIns >= 30,
   },
 
+  // Onboarding
+  {
+    id: "identity_revealed",
+    icon: "👤",
+    nameEn: "Identity Revealed",
+    nameTr: "Kimliğini Tanıttın",
+    descEn: "Filled in your name and profile photo",
+    descTr: "Adını ve profil fotoğrafını doldurdun",
+    category: "milestone",
+    condition: () => false, // awarded programmatically
+  },
+  {
+    id: "family_guardian",
+    icon: "🛡️",
+    nameEn: "Family Guardian",
+    nameTr: "Aile Koruyucusu",
+    descEn: "Added your first family member",
+    descTr: "İlk aile üyesini ekledin",
+    category: "social",
+    condition: (s) => s.familyMembers >= 1,
+  },
+  {
+    id: "first_med",
+    icon: "💊",
+    nameEn: "First Step",
+    nameTr: "İlk Adım",
+    descEn: "Saved your first medication",
+    descTr: "İlk ilacını kaydettin",
+    category: "health",
+    condition: () => false,
+  },
+  {
+    id: "no_dose_missed",
+    icon: "🔔",
+    nameEn: "Never Miss a Dose",
+    nameTr: "Hiçbir Dozu Kaçırmam",
+    descEn: "Enabled notification reminders",
+    descTr: "Bildirim hatırlatıcılarını etkinleştirdin",
+    category: "engagement",
+    condition: () => false,
+  },
+  {
+    id: "met_ai",
+    icon: "🤖",
+    nameEn: "Met the AI",
+    nameTr: "AI ile Tanıştım",
+    descEn: "Used an AI tool for the first time",
+    descTr: "İlk kez bir AI aracı kullandın",
+    category: "health",
+    condition: (s) => s.totalQueries >= 1,
+  },
+  {
+    id: "welcome_doctopal",
+    icon: "🎉",
+    nameEn: "Welcome to DoctoPal",
+    nameTr: "DoctoPal'a Hoş Geldin",
+    descEn: "Completed your onboarding journey",
+    descTr: "Başlangıç yolculuğunu tamamladın",
+    category: "milestone",
+    condition: () => false,
+  },
+
   // Milestones
   {
     id: "week_one",
@@ -352,6 +414,21 @@ export function evaluateBadges(stats: UserStats): { earned: Badge[]; locked: Bad
   }
 
   return { earned, locked }
+}
+
+// Onboarding badge points
+export const BADGE_POINTS: Record<string, number> = {
+  identity_revealed: 50,
+  family_guardian: 75,
+  first_med: 50,
+  no_dose_missed: 30,
+  met_ai: 100,
+  welcome_doctopal: 200,
+}
+
+// Get badge by ID
+export function getBadgeById(id: string): Badge | undefined {
+  return BADGES.find(b => b.id === id)
 }
 
 // Anonymous health score (0-100) based on activity

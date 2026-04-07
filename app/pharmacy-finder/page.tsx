@@ -1,11 +1,13 @@
 // © 2026 Doctopal — All Rights Reserved
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MapPin, Search, ExternalLink, Pill, Clock, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { shouldAskPermission, getPermissionState } from "@/lib/permission-state";
+import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
 
 const PHARMACY_LINKS = [
   {
@@ -48,6 +50,14 @@ const COMMON_EQUIVALENTS: Record<string, string[]> = {
 export default function PharmacyFinderPage() {
   const { lang } = useLang();
   const [searchTerm, setSearchTerm] = useState("");
+  const [showLocationPerm, setShowLocationPerm] = useState(false);
+
+  useEffect(() => {
+    if (shouldAskPermission("location")) {
+      const timer = setTimeout(() => setShowLocationPerm(true), 800);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   const filteredEquivalents = searchTerm.trim().length >= 2
     ? Object.entries(COMMON_EQUIVALENTS).filter(
@@ -158,6 +168,18 @@ export default function PharmacyFinderPage() {
           </p>
         </div>
       </div>
+
+      {/* Location Permission Bottom Sheet */}
+      <PermissionBottomSheet
+        type="location"
+        open={showLocationPerm}
+        onGranted={() => {
+          setShowLocationPerm(false);
+          // Could open Google Maps with user's location
+          window.open("https://www.google.com/maps/search/pharmacy+near+me", "_blank");
+        }}
+        onDismissed={() => setShowLocationPerm(false)}
+      />
     </div>
   );
 }

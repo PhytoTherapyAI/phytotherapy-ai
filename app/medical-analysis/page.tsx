@@ -1,7 +1,7 @@
 // © 2026 Doctopal — All Rights Reserved
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   FlaskConical,
@@ -27,6 +27,8 @@ import type { BloodTestResult, BloodTestCategory } from "@/lib/blood-reference";
 import type { Lang } from "@/lib/translations";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import { LabInsightsPanel } from "@/components/lab/LabInsightsPanel";
+import { shouldAskPermission, getPermissionState } from "@/lib/permission-state";
+import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
 
 // ── Blood Test Types ──
 interface AnalysisResponse {
@@ -730,6 +732,15 @@ function RadiologyTab({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [data, setData] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showCameraPerm, setShowCameraPerm] = useState(false);
+
+  const handleUploadClick = useCallback(() => {
+    if (shouldAskPermission("camera")) {
+      setShowCameraPerm(true);
+    } else {
+      fileInputRef.current?.click();
+    }
+  }, []);
 
   const handleFileSelect = (selectedFile: File) => {
     setFile(selectedFile);
@@ -862,7 +873,7 @@ function RadiologyTab({
               ) : (
                 <Button
                   variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={handleUploadClick}
                   className="gap-2"
                 >
                   <Upload className="h-4 w-4" />
@@ -927,6 +938,20 @@ function RadiologyTab({
       <p className="mt-8 text-center text-xs text-muted-foreground">
         {tx("rad.disclaimer", lang)}
       </p>
+
+      {/* Camera Permission Bottom Sheet */}
+      <PermissionBottomSheet
+        type="camera"
+        open={showCameraPerm}
+        onGranted={() => {
+          setShowCameraPerm(false);
+          fileInputRef.current?.click();
+        }}
+        onDismissed={() => {
+          setShowCameraPerm(false);
+          fileInputRef.current?.click();
+        }}
+      />
     </>
   );
 }

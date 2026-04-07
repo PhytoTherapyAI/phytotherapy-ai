@@ -87,10 +87,34 @@ export function MedicationsStep({ data, updateData }: Props) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Common default dosages for well-known drugs
+  const DEFAULT_DOSES: Record<string, { dosage: string; frequency: string }> = {
+    "metformin": { dosage: "500mg", frequency: "2x daily" },
+    "lisinopril": { dosage: "10mg", frequency: "1x daily" },
+    "atorvastatin": { dosage: "20mg", frequency: "1x daily" },
+    "omeprazole": { dosage: "20mg", frequency: "1x daily" },
+    "amlodipine": { dosage: "5mg", frequency: "1x daily" },
+    "losartan": { dosage: "50mg", frequency: "1x daily" },
+    "levothyroxine": { dosage: "50mcg", frequency: "1x daily" },
+    "metoprolol": { dosage: "50mg", frequency: "2x daily" },
+    "simvastatin": { dosage: "20mg", frequency: "1x daily" },
+    "warfarin": { dosage: "5mg", frequency: "1x daily" },
+    "aspirin": { dosage: "100mg", frequency: "1x daily" },
+    "ibuprofen": { dosage: "400mg", frequency: "3x daily" },
+    "paracetamol": { dosage: "500mg", frequency: "3x daily" },
+  };
+
   const selectSuggestion = (suggestion: DrugSuggestion) => {
     setBrandName(suggestion.brandName);
     if (suggestion.genericName && suggestion.genericName.toLowerCase() !== suggestion.brandName.toLowerCase()) {
       setGenericName(suggestion.genericName);
+    }
+    // Auto-fill default dosage if known
+    const generic = (suggestion.genericName || suggestion.brandName).toLowerCase();
+    const match = Object.entries(DEFAULT_DOSES).find(([key]) => generic.includes(key));
+    if (match) {
+      setDosage(match[1].dosage);
+      setFrequency(match[1].frequency);
     }
     setBrandSuggestions([]);
     setShowBrandSuggestions(false);
@@ -296,6 +320,9 @@ export function MedicationsStep({ data, updateData }: Props) {
         </>
       )}
 
+      <p className="text-xs text-amber-600 dark:text-amber-400/80">
+        {tx('onb.doseDisclaimer', lang)}
+      </p>
       <p className="text-xs text-muted-foreground">
         {tx('onb.medPrivacy', lang)}
       </p>

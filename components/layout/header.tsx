@@ -116,6 +116,7 @@ export function Header() {
                   <Link
                     key={href}
                     href={href}
+                    id={`tour-nav-${href === "/" ? "dashboard" : href.slice(1)}`}
                     className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 ${
                       isActive(href)
                         ? "bg-lavender/10 text-lavender dark:bg-lavender/20"
@@ -129,6 +130,7 @@ export function Header() {
                 {/* Calendar — always visible */}
                 <Link
                   href="/calendar"
+                  id="tour-nav-calendar"
                   className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-200 ${
                     isActive("/calendar")
                       ? "bg-lavender/10 text-lavender dark:bg-lavender/20"
@@ -145,14 +147,15 @@ export function Header() {
                 {/* Spotlight Search */}
                 <CommandPaletteTrigger />
 
-                <LanguageToggle />
-                <ThemeToggle />
+                <span id="tour-language-toggle"><LanguageToggle /></span>
+                <span id="tour-theme-toggle"><ThemeToggle /></span>
 
                 {isLoading ? (
                   <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
                 ) : isAuthenticated ? (
                   <div className="relative" ref={userMenuRef}>
                     <button
+                      id="tour-user-menu"
                       type="button"
                       onClick={() => setUserMenuOpen(!userMenuOpen)}
                       aria-label="User menu"

@@ -1,6 +1,54 @@
 # PROGRESS.md — Doctopal Sprint İlerleme Takibi
 
-> Son güncelleme: 7 Nisan 2026 (v43.0 — Harvard Hackathon Roadmap Focus)
+> Son güncelleme: 7 Nisan 2026 (v43.1 — Onboarding Revizyon + Tour + Badge + Permissions)
+
+---
+
+## Oturum 7 Nisan 2026 (Session 14) — Onboarding Mega Revizyon
+
+### Onboarding Flow Revizyonu ✅
+- ✅ Progress bar 3 aşamaya gruplandı (Temel Bilgiler / Sağlık Profili / Onay)
+- ✅ Her adıma "Neden soruyoruz?" açıklaması eklendi (TR/EN)
+- ✅ İlk sayfaya rahatlatıcı metin: "~2 dk · Tüm bilgilerini daha sonra düzenleyebilirsin"
+- ✅ Logo DoctoPal olarak güncellendi + "Ne kadar çok bilgi = o kadar iyi cevap" mesajı
+- ✅ BasicInfoStep: "Sana nasıl hitap edelim?" + chip buton cinsiyet + doğum tarihi UX
+- ✅ MedicationsStep: otomatik doz atama (13 yaygın ilaç) + doz disclaimer
+- ✅ AllergiesStep: autocomplete (19 alerjen), opsiyonel, "Reaksiyon Tipi" menüsü (5 seçenek)
+- ✅ SubstanceStep: 3 buton (Hiç/Eski/Aktif) + dinamik chip sorular (miktar/yıl/bırakma)
+- ✅ MedicalHistoryStep: temiz kağıdı, kritik durumlar (kanama/immün/organ), sistemlere göre çipler
+- ✅ FamilyHistoryStep: yeni adım — temiz kağıdı + 6 majör genetik çip
+- ✅ ConsentStep: 112 acil durum uyarısı, KVKK açık rıza, bold kritik kelimeler
+- ✅ OptionalProfileStep: sosyodemografik + beslenme + aktivite + çalışma düzeni + BMI + akıllı cihaz
+- ✅ PermissionPreframeStep: bildirim/konum/kamera pre-frame (izin istenmez, bilgilendirilir)
+- ✅ Auto-save: çıkışta localStorage'a draft kaydedilir, geri gelince restore
+
+### Dashboard Onboarding Tour ✅
+- ✅ react-joyride v3 ile 7 adımlık desktop tour + 4 adımlık mobil tour
+- ✅ localStorage flag ile sadece ilk girişte çalışır
+- ✅ Navbar/Header elementlerine tour-* ID'leri eklendi
+
+### Badge Celebration UI ✅
+- ✅ BadgeCelebrationModal: Framer Motion + canvas-confetti
+- ✅ 6 yeni onboarding rozeti (Kimliğini Tanıttın, İlk Adım, DoctoPal'a Hoş Geldin vb.)
+- ✅ Celebration queue (sıralı gösterim) + 4s auto-close
+- ✅ OnboardingFinale: grand finale ekranı (rozetler + toplam puan + konfeti)
+- ✅ prefers-reduced-motion desteği
+
+### Contextual Permission System ✅
+- ✅ lib/permission-state.ts: state management (not_asked/granted/denied/dismissed)
+- ✅ 7 gün dismissed cooldown, iOS PWA detection
+
+### Profil Sayfası Güncelleme ✅
+- ✅ Alerji "Reaksiyon Tipi" gösterimi güncellendi
+- ✅ Madde kullanımı yeni compound format uyumlu
+- ✅ Soygeçmiş (family:) ayrı bölüm olarak gösteriliyor
+- ✅ database.types.ts güncellendi
+
+### Teknik
+- ✅ ~80 yeni TR/EN çeviri key'i
+- ✅ 5 yeni dosya: DashboardTour, PermissionPreframeStep, FamilyHistoryStep, BadgeCelebrationModal, OnboardingFinale
+- ✅ 2 yeni kütüphane: react-joyride@3.0.2, canvas-confetti
+- ✅ Build: sıfır hata
 
 ---
 

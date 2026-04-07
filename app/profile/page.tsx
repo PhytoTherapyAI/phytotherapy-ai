@@ -25,6 +25,8 @@ import {
 } from "lucide-react";
 import type { UserMedication, UserAllergy, AllergySeverity } from "@/lib/database.types";
 import { MedicationScanner } from "@/components/scanner/MedicationScanner";
+import { shouldAskPermission } from "@/lib/permission-state";
+import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
 
 interface DrugSuggestion {
   brandName: string;
@@ -60,6 +62,8 @@ export default function ProfilePage() {
   const [confirming, setConfirming] = useState(false);
   // Scanner state
   const [showScanner, setShowScanner] = useState(false);
+  // Permission bottom sheet
+  const [showNotifPermission, setShowNotifPermission] = useState(false);
 
   // Health profile editing state
   const [editingHealth, setEditingHealth] = useState(false);
@@ -108,7 +112,7 @@ export default function ProfilePage() {
   });
   const [newCondition, setNewCondition] = useState("");
   const [newAllergen, setNewAllergen] = useState("");
-  const [newAllergenSeverity, setNewAllergenSeverity] = useState<AllergySeverity>("mild");
+  const [newAllergenSeverity, setNewAllergenSeverity] = useState<AllergySeverity>("unknown");
 
   const tr = lang === "tr";
 
@@ -218,7 +222,7 @@ export default function ProfilePage() {
       if (error) { console.error("Allergy insert error:", error); return; }
       if (data) setAllergies((prev) => [...prev, data as UserAllergy]);
       setNewAllergen("");
-      setNewAllergenSeverity("mild");
+      setNewAllergenSeverity("unknown");
       showSaveToast();
     } catch (err) {
       console.error("Failed to add allergy:", err);
@@ -386,6 +390,10 @@ export default function ProfilePage() {
       setNewFrequency("");
       setIsAddingMed(false);
       showSaveToast();
+      // Ask for notification permission on first med save
+      if (shouldAskPermission("notification")) {
+        setTimeout(() => setShowNotifPermission(true), 500);
+      }
     } catch (err) {
       console.error("Failed to add medication:", err);
     } finally {
@@ -651,7 +659,7 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div>
-            <p className="text-sm text-muted-foreground">{tx('profile.name', lang)}</p>
+            <p className="text-sm text-muted-foreground">{tr ? "Sana nasıl hitap edelim" : "Display Name"}</p>
             <p className="font-medium">{profile.full_name || "—"}</p>
           </div>
           <div>
@@ -664,7 +672,50 @@ export default function ProfilePage() {
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{tx('profile.gender', lang)}</p>
-            <p className="font-medium capitalize">{profile.gender?.replace("_", " ") || "—"}</p>
+            <p className="font-medium capitalize">
+              {(() => {
+                const genderLabels: Record<string, Record<string, string>> = {
+                  male: { en: "Male", tr: "Erkek" },
+                  female: { en: "Female", tr: "Kadın" },
+                  other: { en: "Other", tr: "Diğer" },
+                  prefer_not_to_say: { en: "Prefer not to say", tr: "Belirtmek istemiyorum" },
+                };
+                const g = profile.gender || "";
+                return genderLabels[g]?.[lang] || g.replace("_", " ") || "—";
+              })()}
+            </p>
+          </div>
+          {/* Substance use summary */}
+          <div>
+            <p className="text-sm text-muted-foreground">{tr ? "Sigara" : "Smoking"}</p>
+            <p className="font-medium">
+              {(() => {
+                const s = (profile.smoking_use || "none").split("|")[0];
+                const labels: Record<string, Record<string, string>> = {
+                  none: { en: "🟢 Never", tr: "🟢 Hiç içmedim" },
+                  former: { en: "🟡 Former", tr: "🟡 Bıraktım" },
+                  current: { en: "🔴 Active", tr: "🔴 Aktif" },
+                };
+                return labels[s]?.[lang] || s;
+              })()}
+            </p>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">{tr ? "Alkol" : "Alcohol"}</p>
+            <p className="font-medium">
+              {(() => {
+                const a = (profile.alcohol_use || "none").split("|")[0];
+                const labels: Record<string, Record<string, string>> = {
+                  none: { en: "🟢 Never", tr: "🟢 Hiç içmedim" },
+                  former: { en: "🟡 Former", tr: "🟡 Bıraktım" },
+                  active: { en: "🔴 Active", tr: "🔴 Aktif" },
+                  occasional: { en: "🟡 Occasional", tr: "🟡 Ara sıra" },
+                  regular: { en: "🔴 Regular", tr: "🔴 Düzenli" },
+                  heavy: { en: "🔴 Heavy", tr: "🔴 Ağır" },
+                };
+                return labels[a]?.[lang] || a;
+              })()}
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -899,7 +950,7 @@ export default function ProfilePage() {
 
       {/* Scanners moved to /scanner page via Tools menu */}
 
-      {/* Medical History / Health Flags — moved up for visibility */}
+      {/* Medical History / Health Flags */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -907,25 +958,84 @@ export default function ProfilePage() {
             {tx('profile.medicalHistory', lang)}
           </CardTitle>
         </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
-          {profile.is_pregnant && <Badge variant="outline">{tx("profile.pregnant", lang)}</Badge>}
-          {profile.is_breastfeeding && <Badge variant="outline">{tx("profile.breastfeeding", lang)}</Badge>}
-          {profile.kidney_disease && <Badge variant="destructive">{tx("profile.kidneyDisease", lang)}</Badge>}
-          {profile.liver_disease && <Badge variant="destructive">{tx("profile.liverDisease", lang)}</Badge>}
-          {profile.recent_surgery && <Badge variant="outline">{tx("profile.recentSurgery", lang)}</Badge>}
-          {profile.chronic_conditions.map((c) => (
-            <Badge key={c} variant="secondary">{c}</Badge>
-          ))}
-          {!profile.is_pregnant &&
-            !profile.is_breastfeeding &&
-            !profile.kidney_disease &&
-            !profile.liver_disease &&
-            !profile.recent_surgery &&
-            profile.chronic_conditions.length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                {tx('profile.noFlags', lang)}
+        <CardContent className="space-y-4">
+          {/* Critical conditions */}
+          {(profile.is_pregnant || profile.is_breastfeeding || profile.kidney_disease || profile.liver_disease || profile.recent_surgery) && (
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-red-600 dark:text-red-400 uppercase tracking-wide">
+                {tr ? "Kritik Durumlar" : "Critical Conditions"}
               </p>
-            )}
+              <div className="flex flex-wrap gap-2">
+                {profile.is_pregnant && <Badge variant="outline" className="border-red-300 text-red-700 dark:text-red-400">🤰 {tx("profile.pregnant", lang)}</Badge>}
+                {profile.is_breastfeeding && <Badge variant="outline" className="border-red-300 text-red-700 dark:text-red-400">🤱 {tx("profile.breastfeeding", lang)}</Badge>}
+                {profile.kidney_disease && <Badge variant="destructive">{tx("onb.advancedOrganFailure", lang)}</Badge>}
+                {profile.liver_disease && <Badge variant="destructive">🩸 {tx("onb.bleedingDisorder", lang)}</Badge>}
+                {profile.recent_surgery && <Badge variant="destructive">🛡️ {tx("onb.immuneSuppressed", lang)}</Badge>}
+              </div>
+            </div>
+          )}
+
+          {/* Chronic conditions — grouped by system */}
+          {(() => {
+            const conditions = profile.chronic_conditions.filter(c => !c.startsWith("family:"));
+            if (conditions.length === 0 && !profile.is_pregnant && !profile.is_breastfeeding && !profile.kidney_disease && !profile.liver_disease && !profile.recent_surgery) {
+              return (
+                <div className="flex items-center gap-2 rounded-lg bg-green-50 dark:bg-green-950/20 p-3 border border-green-200 dark:border-green-800">
+                  <span className="text-green-600">🟢</span>
+                  <p className="text-sm text-green-700 dark:text-green-400">{tx("onb.noChronic", lang)}</p>
+                </div>
+              );
+            }
+            if (conditions.length > 0) {
+              // Group conditions by system
+              const cardio = ["Hypertension", "Arrhythmia", "Heart Failure"];
+              const endo = ["Diabetes", "Thyroid Disorder"];
+              const neuro = ["Depression/Anxiety", "Epilepsy"];
+              const resp = ["Asthma", "COPD"];
+              const surg = ["Bariatric Surgery"];
+              const groups = [
+                { label: tr ? "Kardiyovasküler" : "Cardiovascular", items: conditions.filter(c => cardio.includes(c)) },
+                { label: tr ? "Endokrin" : "Endocrine", items: conditions.filter(c => endo.includes(c)) },
+                { label: tr ? "Nörolojik" : "Neurological", items: conditions.filter(c => neuro.includes(c)) },
+                { label: tr ? "Solunum" : "Respiratory", items: conditions.filter(c => resp.includes(c)) },
+                { label: tr ? "Cerrahi" : "Surgical", items: conditions.filter(c => surg.includes(c)) },
+              ].filter(g => g.items.length > 0);
+              const others = conditions.filter(c => ![...cardio, ...endo, ...neuro, ...resp, ...surg].includes(c));
+
+              return (
+                <div className="space-y-2">
+                  {groups.map(g => (
+                    <div key={g.label}>
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">{g.label}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {g.items.map(c => <Badge key={c} variant="secondary">{c}</Badge>)}
+                      </div>
+                    </div>
+                  ))}
+                  {others.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {others.map(c => <Badge key={c} variant="secondary">{c}</Badge>)}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return null;
+          })()}
+
+          {/* Family History */}
+          {profile.chronic_conditions.filter(c => c.startsWith("family:")).length > 0 && (
+            <div className="space-y-2 border-t pt-3">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
+                🧬 {tr ? "Soygeçmiş" : "Family History"}
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {profile.chronic_conditions.filter(c => c.startsWith("family:")).map((c) => (
+                  <Badge key={c} variant="outline" className="text-xs">{c.replace("family:", "")}</Badge>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -948,11 +1058,21 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="flex flex-wrap gap-2">
-              {allergies.map((allergy) => (
-                <Badge key={allergy.id} variant="destructive">
-                  {allergy.allergen} ({allergy.severity})
-                </Badge>
-              ))}
+              {allergies.map((allergy) => {
+                const reactionLabels: Record<string, string> = {
+                  anaphylaxis: "🚨 Anaphylaxis",
+                  urticaria: "⚠️ Urticaria",
+                  mild_skin: "🟡 Mild",
+                  gi_intolerance: "🟠 Intolerance",
+                  unknown: "❓ Unknown",
+                  mild: "Mild", moderate: "Moderate", severe: "Severe",
+                };
+                return (
+                  <Badge key={allergy.id} variant="destructive">
+                    {allergy.allergen} ({reactionLabels[allergy.severity] || allergy.severity})
+                  </Badge>
+                );
+              })}
             </div>
           )}
         </CardContent>
@@ -1003,12 +1123,18 @@ export default function ProfilePage() {
                 {tx("profile.allergies", lang)}
               </Label>
               <div className="flex flex-wrap gap-2">
-                {allergies.map((allergy) => (
-                  <Badge key={allergy.id} variant="destructive" className="gap-1">
-                    {allergy.allergen} ({allergy.severity})
-                    <X className="h-3 w-3 cursor-pointer" onClick={() => removeAllergy(allergy.id)} />
-                  </Badge>
-                ))}
+                {allergies.map((allergy) => {
+                  const rl: Record<string, string> = {
+                    anaphylaxis: "🚨", urticaria: "⚠️", mild_skin: "🟡",
+                    gi_intolerance: "🟠", unknown: "❓", mild: "M", moderate: "M", severe: "S",
+                  };
+                  return (
+                    <Badge key={allergy.id} variant="destructive" className="gap-1">
+                      {rl[allergy.severity] || ""} {allergy.allergen}
+                      <X className="h-3 w-3 cursor-pointer" onClick={() => removeAllergy(allergy.id)} />
+                    </Badge>
+                  );
+                })}
                 {allergies.length === 0 && (
                   <p className="text-sm text-muted-foreground">{tx("profile.noAllergies", lang)}</p>
                 )}
@@ -1022,14 +1148,15 @@ export default function ProfilePage() {
                   className="flex-1"
                 />
                 <Select value={newAllergenSeverity} onValueChange={(v) => setNewAllergenSeverity(v as AllergySeverity)}>
-                  <SelectTrigger className="w-32">
+                  <SelectTrigger className="w-40">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="mild">{tx("profile.severityMild", lang)}</SelectItem>
-                    <SelectItem value="moderate">{tx("profile.severityModerate", lang)}</SelectItem>
-                    <SelectItem value="severe">{tx("profile.severitySevere", lang)}</SelectItem>
-                    <SelectItem value="anaphylaxis">{tx("profile.severityAnaphylaxis", lang)}</SelectItem>
+                    <SelectItem value="anaphylaxis">{tx("onb.reactionAnaphylaxis", lang)}</SelectItem>
+                    <SelectItem value="urticaria">{tx("onb.reactionUrticaria", lang)}</SelectItem>
+                    <SelectItem value="mild_skin">{tx("onb.reactionMildSkin", lang)}</SelectItem>
+                    <SelectItem value="gi_intolerance">{tx("onb.reactionGI", lang)}</SelectItem>
+                    <SelectItem value="unknown">{tx("onb.reactionUnknown", lang)}</SelectItem>
                   </SelectContent>
                 </Select>
                 <Button variant="outline" size="sm" onClick={addAllergy} disabled={!newAllergen.trim()}>
@@ -1076,18 +1203,17 @@ export default function ProfilePage() {
                   {tx("profile.alcohol", lang)}
                 </Label>
                 <RadioGroup
-                  value={healthForm.alcohol_use}
+                  value={healthForm.alcohol_use.split("|")[0]}
                   onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, alcohol_use: v }))}
                 >
                   {[
-                    { value: "none", key: "profile.alcoholNone" },
-                    { value: "occasional", key: "profile.alcoholOccasional" },
-                    { value: "regular", key: "profile.alcoholRegular" },
-                    { value: "heavy", key: "profile.alcoholHeavy" },
+                    { value: "none", label: "🟢", key: "onb.alcNever" },
+                    { value: "former", label: "🟡", key: "onb.alcFormer" },
+                    { value: "active", label: "🔴", key: "onb.alcActive" },
                   ].map((opt) => (
                     <div key={opt.value} className="flex items-center space-x-2">
                       <RadioGroupItem value={opt.value} id={`edit-alc-${opt.value}`} />
-                      <Label htmlFor={`edit-alc-${opt.value}`} className="font-normal">{tx(opt.key, lang)}</Label>
+                      <Label htmlFor={`edit-alc-${opt.value}`} className="font-normal">{opt.label} {tx(opt.key, lang)}</Label>
                     </div>
                   ))}
                 </RadioGroup>
@@ -1098,17 +1224,17 @@ export default function ProfilePage() {
                   {tx("profile.smoking", lang)}
                 </Label>
                 <RadioGroup
-                  value={healthForm.smoking_use}
+                  value={healthForm.smoking_use.split("|")[0]}
                   onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, smoking_use: v }))}
                 >
                   {[
-                    { value: "none", key: "profile.smokingNever" },
-                    { value: "former", key: "profile.smokingFormer" },
-                    { value: "current", key: "profile.smokingCurrent" },
+                    { value: "none", label: "🟢", key: "onb.smokingNever" },
+                    { value: "former", label: "🟡", key: "onb.smokingFormer" },
+                    { value: "current", label: "🔴", key: "onb.smokingActive" },
                   ].map((opt) => (
                     <div key={opt.value} className="flex items-center space-x-2">
                       <RadioGroupItem value={opt.value} id={`edit-smk-${opt.value}`} />
-                      <Label htmlFor={`edit-smk-${opt.value}`} className="font-normal">{tx(opt.key, lang)}</Label>
+                      <Label htmlFor={`edit-smk-${opt.value}`} className="font-normal">{opt.label} {tx(opt.key, lang)}</Label>
                     </div>
                   ))}
                 </RadioGroup>
@@ -1117,82 +1243,158 @@ export default function ProfilePage() {
 
             <Separator />
 
-            {/* Medical History */}
+            {/* Critical Conditions */}
+            <div className="space-y-3">
+              <Label className="flex items-center gap-2 text-base font-semibold text-red-600 dark:text-red-400">
+                <Shield className="h-4 w-4" />
+                {tx("onb.criticalConditions", lang)}
+              </Label>
+              <div className="space-y-2 rounded-lg border border-red-200 dark:border-red-800 p-3 bg-red-50/50 dark:bg-red-950/10">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="edit-kidney" checked={healthForm.kidney_disease}
+                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, kidney_disease: c === true }))} />
+                  <Label htmlFor="edit-kidney" className="font-normal text-sm">{tx("onb.advancedOrganFailure", lang)}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="edit-liver" checked={healthForm.liver_disease}
+                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, liver_disease: c === true }))} />
+                  <Label htmlFor="edit-liver" className="font-normal text-sm">🩸 {tx("onb.bleedingDisorder", lang)}</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="edit-surgery" checked={healthForm.recent_surgery}
+                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, recent_surgery: c === true }))} />
+                  <Label htmlFor="edit-surgery" className="font-normal text-sm">🛡️ {tx("onb.immuneSuppressed", lang)}</Label>
+                </div>
+              </div>
+            </div>
+
+            {/* Chronic Conditions — System Grouped */}
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <Stethoscope className="h-4 w-4" />
-                {tx("profile.medicalHistory", lang)}
+                {tx("profile.chronicConditions", lang)}
               </Label>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="edit-kidney"
-                    checked={healthForm.kidney_disease}
-                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, kidney_disease: c === true }))}
-                  />
-                  <Label htmlFor="edit-kidney" className="font-normal">{tx("profile.kidneyDisease", lang)}</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="edit-liver"
-                    checked={healthForm.liver_disease}
-                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, liver_disease: c === true }))}
-                  />
-                  <Label htmlFor="edit-liver" className="font-normal">{tx("profile.liverDisease", lang)}</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="edit-surgery"
-                    checked={healthForm.recent_surgery}
-                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, recent_surgery: c === true }))}
-                  />
-                  <Label htmlFor="edit-surgery" className="font-normal">{tx("profile.recentSurgery", lang)}</Label>
-                </div>
-              </div>
-              <div className="mt-2">
-                <Label className="text-sm">{tx("profile.chronicConditions", lang)}</Label>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {["Diabetes", "Hypertension", "Asthma", "Heart Disease", "Thyroid Disorder", "Arthritis", "Depression", "Anxiety", "COPD", "Epilepsy"].map((c) => (
-                    <Badge
-                      key={c}
-                      variant={healthForm.chronic_conditions.includes(c) ? "default" : "outline"}
-                      className="cursor-pointer transition-colors"
-                      onClick={() => toggleCondition(c)}
-                    >
-                      {({
-                        "Diabetes": tx("profile.conditionDiabetes", lang),
-                        "Hypertension": tx("profile.conditionHypertension", lang),
-                        "Asthma": tx("profile.conditionAsthma", lang),
-                        "Heart Disease": tx("profile.conditionHeartDisease", lang),
-                        "Thyroid Disorder": tx("profile.conditionThyroid", lang),
-                        "Arthritis": tx("profile.conditionArthritis", lang),
-                        "Depression": tx("profile.conditionDepression", lang),
-                        "Anxiety": tx("profile.conditionAnxiety", lang),
-                        "COPD": tx("profile.conditionCOPD", lang),
-                        "Epilepsy": tx("profile.conditionEpilepsy", lang),
-                      } as Record<string, string>)[c] || c}
+
+              {/* Cardiovascular */}
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryCardio", lang)}</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: "Hypertension", key: "onb.hypertension" },
+                    { id: "Arrhythmia", key: "onb.arrhythmia" },
+                    { id: "Heart Failure", key: "onb.heartFailure" },
+                  ].map(c => (
+                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
+                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
+                      {tx(c.key, lang)}
                     </Badge>
                   ))}
-                  {healthForm.chronic_conditions
-                    .filter((c) => !["Diabetes", "Hypertension", "Asthma", "Heart Disease", "Thyroid Disorder", "Arthritis", "Depression", "Anxiety", "COPD", "Epilepsy"].includes(c))
-                    .map((c) => (
-                      <Badge key={c} variant="default" className="gap-1">
-                        {c}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => toggleCondition(c)} />
-                      </Badge>
-                    ))}
                 </div>
-                <div className="mt-2 flex gap-2">
-                  <Input
-                    placeholder={tx("profile.otherConditionPlaceholder", lang)}
-                    value={newCondition}
-                    onChange={(e) => setNewCondition(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustomCondition())}
-                  />
-                  <Button variant="outline" size="sm" onClick={addCustomCondition} disabled={!newCondition.trim()}>
-                    <Plus className="h-4 w-4" />
-                  </Button>
+              </div>
+
+              {/* Endocrine */}
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryEndocrine", lang)}</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: "Diabetes", key: "onb.diabetesType" },
+                    { id: "Thyroid Disorder", key: "onb.thyroid" },
+                  ].map(c => (
+                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
+                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
+                      {tx(c.key, lang)}
+                    </Badge>
+                  ))}
                 </div>
+              </div>
+
+              {/* Neurological */}
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryNeuro", lang)}</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: "Depression/Anxiety", key: "onb.depressionAnxiety" },
+                    { id: "Epilepsy", key: "onb.epilepsy" },
+                  ].map(c => (
+                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
+                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
+                      {tx(c.key, lang)}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {/* Respiratory */}
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryRespiratory", lang)}</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: "Asthma", key: "onb.asthma" },
+                    { id: "COPD", key: "onb.copd" },
+                  ].map(c => (
+                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
+                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
+                      {tx(c.key, lang)}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {/* Surgical */}
+              <div>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categorySurgical", lang)}</p>
+                <div className="flex flex-wrap gap-2">
+                  <Badge variant={healthForm.chronic_conditions.includes("Bariatric Surgery") ? "default" : "outline"}
+                    className="cursor-pointer transition-colors" onClick={() => toggleCondition("Bariatric Surgery")}>
+                    {tx("onb.bariatricSurgery", lang)}
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Custom + Family conditions */}
+              {(() => {
+                const knownIds = ["Hypertension", "Arrhythmia", "Heart Failure", "Diabetes", "Thyroid Disorder", "Depression/Anxiety", "Epilepsy", "Asthma", "COPD", "Bariatric Surgery"];
+                const customs = healthForm.chronic_conditions.filter(c => !knownIds.includes(c) && !c.startsWith("family:"));
+                const family = healthForm.chronic_conditions.filter(c => c.startsWith("family:"));
+                return (
+                  <>
+                    {customs.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {customs.map(c => (
+                          <Badge key={c} variant="default" className="gap-1">
+                            {c}
+                            <X className="h-3 w-3 cursor-pointer" onClick={() => toggleCondition(c)} />
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                    {family.length > 0 && (
+                      <div className="border-t pt-2 mt-2">
+                        <p className="text-xs font-semibold text-muted-foreground mb-1.5">🧬 {tr ? "Soygeçmiş" : "Family History"}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {family.map(c => (
+                            <Badge key={c} variant="outline" className="gap-1 text-xs">
+                              {c.replace("family:", "")}
+                              <X className="h-3 w-3 cursor-pointer" onClick={() => toggleCondition(c)} />
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+
+              <div className="mt-2 flex gap-2">
+                <Input
+                  placeholder={tx("profile.otherConditionPlaceholder", lang)}
+                  value={newCondition}
+                  onChange={(e) => setNewCondition(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustomCondition())}
+                />
+                <Button variant="outline" size="sm" onClick={addCustomCondition} disabled={!newCondition.trim()}>
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
             </div>
 
@@ -1422,6 +1624,14 @@ export default function ProfilePage() {
       </Card>
 
       {/* Data Management moved to Settings page */}
+
+      {/* Notification Permission Bottom Sheet */}
+      <PermissionBottomSheet
+        type="notification"
+        open={showNotifPermission}
+        onGranted={() => setShowNotifPermission(false)}
+        onDismissed={() => setShowNotifPermission(false)}
+      />
 
       {/* Emergency Contacts */}
       <EmergencyContactsSection lang={lang} userId={profile.id} />

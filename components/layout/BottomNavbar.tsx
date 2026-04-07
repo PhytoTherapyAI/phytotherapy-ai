@@ -30,6 +30,7 @@ export function BottomNavbar() {
           return (
             <button
               key={tab.href}
+              id={`tour-nav-${tab.label.toLowerCase().replace(/\s+/g, "-")}`}
               onClick={() => router.push(tab.href)}
               className="relative flex flex-col items-center gap-0.5 px-3 py-1.5 min-w-[64px]"
             >

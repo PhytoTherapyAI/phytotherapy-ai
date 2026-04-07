@@ -1,7 +1,7 @@
 // © 2026 Doctopal — All Rights Reserved
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -18,17 +18,71 @@ interface Props {
   updateData: (updates: Partial<OnboardingData>) => void;
 }
 
-const severityColors: Record<string, string> = {
-  mild: "bg-yellow-100 text-yellow-800",
-  moderate: "bg-orange-100 text-orange-800",
-  severe: "bg-red-100 text-red-800",
+// Common allergens for autocomplete
+const COMMON_ALLERGENS_EN = [
+  "Penicillin", "Amoxicillin", "Sulfonamides", "Aspirin", "Ibuprofen",
+  "Cephalosporins", "Latex", "Peanuts", "Tree Nuts", "Shellfish",
+  "Eggs", "Milk", "Soy", "Wheat/Gluten", "Bee Venom",
+  "Chamomile", "Echinacea", "St. John's Wort", "Ginkgo Biloba",
+];
+const COMMON_ALLERGENS_TR = [
+  "Penisilin", "Amoksisilin", "Sülfonamidler", "Aspirin", "İbuprofen",
+  "Sefalosporinler", "Lateks", "Yer Fıstığı", "Ağaç Kabukluları", "Kabuklu Deniz Ürünleri",
+  "Yumurta", "Süt", "Soya", "Buğday/Gluten", "Arı Zehiri",
+  "Papatya", "Ekinezya", "Sarı Kantaron", "Ginkgo Biloba",
+];
+
+const reactionColors: Record<string, string> = {
   anaphylaxis: "bg-red-200 text-red-900",
+  urticaria: "bg-red-100 text-red-800",
+  mild_skin: "bg-orange-100 text-orange-800",
+  gi_intolerance: "bg-yellow-100 text-yellow-800",
+  unknown: "bg-slate-100 text-slate-700",
 };
+
+const REACTION_OPTIONS = [
+  { value: "anaphylaxis", key: "onb.reactionAnaphylaxis", emoji: "🚨" },
+  { value: "urticaria", key: "onb.reactionUrticaria", emoji: "⚠️" },
+  { value: "mild_skin", key: "onb.reactionMildSkin", emoji: "🟡" },
+  { value: "gi_intolerance", key: "onb.reactionGI", emoji: "🟠" },
+  { value: "unknown", key: "onb.reactionUnknown", emoji: "❓" },
+];
 
 export function AllergiesStep({ data, updateData }: Props) {
   const { lang } = useLang();
   const [allergen, setAllergen] = useState("");
-  const [severity, setSeverity] = useState("mild");
+  const [severity, setSeverity] = useState("unknown");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const allergenList = lang === "tr" ? COMMON_ALLERGENS_TR : COMMON_ALLERGENS_EN;
+
+  // Autocomplete filter
+  useEffect(() => {
+    if (allergen.length < 1) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    const q = allergen.toLowerCase();
+    const matches = allergenList.filter(a => a.toLowerCase().includes(q));
+    setSuggestions(matches.slice(0, 8));
+    setShowSuggestions(matches.length > 0);
+  }, [allergen, allergenList]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
+          inputRef.current && !inputRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   const addAllergy = () => {
     if (!allergen.trim()) return;
@@ -37,11 +91,16 @@ export function AllergiesStep({ data, updateData }: Props) {
       no_allergies: false,
     });
     setAllergen("");
-    setSeverity("mild");
+    setSeverity("unknown");
   };
 
   const removeAllergy = (index: number) => {
     updateData({ allergies: data.allergies.filter((_, i) => i !== index) });
+  };
+
+  const getReactionLabel = (val: string) => {
+    const opt = REACTION_OPTIONS.find(o => o.value === val);
+    return opt ? `${opt.emoji} ${tx(opt.key, lang)}` : val;
   };
 
   return (
@@ -68,10 +127,12 @@ export function AllergiesStep({ data, updateData }: Props) {
             <div className="space-y-2">
               {data.allergies.map((allergy, index) => (
                 <div key={index} className="flex items-center justify-between rounded-lg border p-3">
-                  <div className="flex items-center gap-3">
-                    <AlertTriangle className="h-4 w-4 text-orange-500" />
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <AlertTriangle className="h-4 w-4 text-orange-500 shrink-0" />
                     <span className="font-medium">{allergy.allergen}</span>
-                    <Badge className={severityColors[allergy.severity]}>{allergy.severity}</Badge>
+                    <Badge className={reactionColors[allergy.severity] || "bg-slate-100"}>
+                      {getReactionLabel(allergy.severity)}
+                    </Badge>
                   </div>
                   <Button variant="ghost" size="sm" onClick={() => removeAllergy(index)}>
                     <X className="h-4 w-4" />
@@ -84,26 +145,53 @@ export function AllergiesStep({ data, updateData }: Props) {
           <div className="space-y-3 rounded-lg border border-dashed p-4">
             <p className="text-sm font-medium">{tx("onb.addAllergy", lang)}</p>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {/* Allergen with autocomplete */}
               <div className="space-y-1">
                 <Label htmlFor="allergen" className="text-xs">{tx("onb.allergen", lang)}</Label>
-                <Input
-                  id="allergen"
-                  placeholder={tx("onb.allergenPlaceholder", lang)}
-                  value={allergen}
-                  onChange={(e) => setAllergen(e.target.value)}
-                />
+                <div className="relative">
+                  <Input
+                    ref={inputRef}
+                    id="allergen"
+                    placeholder={tx("onb.allergenPlaceholder", lang)}
+                    value={allergen}
+                    onChange={(e) => setAllergen(e.target.value)}
+                    onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
+                    autoComplete="off"
+                  />
+                  {showSuggestions && suggestions.length > 0 && (
+                    <div
+                      ref={dropdownRef}
+                      className="absolute left-0 right-0 top-full z-50 mt-1 max-h-48 overflow-y-auto rounded-lg border bg-background shadow-lg"
+                    >
+                      {suggestions.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => { setAllergen(s); setShowSuggestions(false); }}
+                          className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted/50"
+                        >
+                          <AlertTriangle className="h-3 w-3 shrink-0 text-orange-400" />
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
+
+              {/* Reaction Type dropdown */}
               <div className="space-y-1">
-                <Label className="text-xs">{tx("onb.severity", lang)}</Label>
+                <Label className="text-xs">{tx("onb.reactionType", lang)}</Label>
                 <Select value={severity} onValueChange={(v) => v && setSeverity(v)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="mild">{tx("onb.mild", lang)}</SelectItem>
-                    <SelectItem value="moderate">{tx("onb.moderate", lang)}</SelectItem>
-                    <SelectItem value="severe">{tx("onb.severe", lang)}</SelectItem>
-                    <SelectItem value="anaphylaxis">{tx("onb.anaphylaxis", lang)}</SelectItem>
+                    {REACTION_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.emoji} {tx(opt.key, lang)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
