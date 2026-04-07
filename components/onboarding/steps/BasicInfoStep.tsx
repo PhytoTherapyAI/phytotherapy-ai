@@ -1,10 +1,12 @@
 // © 2026 Doctopal — All Rights Reserved
 "use client";
 
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Info, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
@@ -33,6 +35,41 @@ const GENDER_OPTIONS = [
   { value: "prefer_not_to_say", en: "Prefer not to say", tr: "Belirtmek istemiyorum" },
 ];
 
+// ── Inline Tooltip ──
+function FieldTooltip({ text }: { text: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  return (
+    <span className="relative inline-flex ml-1">
+      <button
+        type="button"
+        className="flex h-4 w-4 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground/50 hover:text-muted-foreground hover:border-muted-foreground/50 transition-colors"
+        onClick={() => setOpen(!open)}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        aria-label="Info"
+      >
+        <Info className="h-2.5 w-2.5" />
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            ref={ref}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.15 }}
+            className="absolute left-6 top-1/2 -translate-y-1/2 z-50 w-52 rounded-lg bg-white dark:bg-slate-800 border shadow-md p-2.5 text-[11px] text-muted-foreground leading-relaxed"
+          >
+            {text}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </span>
+  );
+}
+
 export function BasicInfoStep({ data, updateData }: Props) {
   const { lang } = useLang();
 
@@ -57,24 +94,25 @@ export function BasicInfoStep({ data, updateData }: Props) {
           placeholder={tx("onb.displayNamePlaceholder", lang)}
           value={data.full_name}
           onChange={(e) => updateData({ full_name: e.target.value })}
-          className="text-base"
+          className="text-base transition-all duration-200 focus:ring-2 focus:ring-green-400/40 focus:border-green-400"
         />
       </div>
 
-      {/* Date of Birth — styled card */}
+      {/* Date of Birth */}
       <div className="space-y-2">
-        <Label htmlFor="birth-date">{tx("onb.birthDate", lang)}</Label>
-        <div className="relative">
-          <Input
-            id="birth-date"
-            type="date"
-            min={minDateStr}
-            max={today}
-            value={data.birth_date || ""}
-            onChange={(e) => handleBirthDateChange(e.target.value)}
-            className="text-base h-11 rounded-xl bg-muted/30 border-muted-foreground/20 focus:bg-background"
-          />
+        <div className="flex items-center">
+          <Label htmlFor="birth-date">{tx("onb.birthDate", lang)}</Label>
+          <FieldTooltip text={tx("onb.tooltipBirthDate", lang)} />
         </div>
+        <Input
+          id="birth-date"
+          type="date"
+          min={minDateStr}
+          max={today}
+          value={data.birth_date || ""}
+          onChange={(e) => handleBirthDateChange(e.target.value)}
+          className="text-base h-11 rounded-xl bg-muted/30 border-muted-foreground/20 transition-all duration-200 focus:ring-2 focus:ring-green-400/40 focus:border-green-400 focus:bg-background"
+        />
         {data.age !== null && data.age >= 0 && (
           <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1">
             <span className="text-xs font-medium text-primary">
@@ -85,32 +123,52 @@ export function BasicInfoStep({ data, updateData }: Props) {
         {ageWarning && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              {tx("onb.ageWarning", lang)}
-            </AlertDescription>
+            <AlertDescription>{tx("onb.ageWarning", lang)}</AlertDescription>
           </Alert>
         )}
       </div>
 
-      {/* Biological Sex — chip buttons */}
+      {/* Biological Sex — animated chips */}
       <div className="space-y-2">
-        <Label>{tx("onb.gender", lang)}</Label>
-        <p className="text-xs text-muted-foreground -mt-1">{tx("onb.genderNote", lang)}</p>
+        <div className="flex items-center">
+          <Label>{tx("onb.gender", lang)}</Label>
+          <FieldTooltip text={tx("onb.tooltipGender", lang)} />
+        </div>
         <div className="flex flex-wrap gap-2">
-          {GENDER_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => updateData({ gender: opt.value })}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                data.gender === opt.value
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80"
-              }`}
-            >
-              {lang === "tr" ? opt.tr : opt.en}
-            </button>
-          ))}
+          {GENDER_OPTIONS.map((opt) => {
+            const selected = data.gender === opt.value;
+            return (
+              <motion.button
+                key={opt.value}
+                type="button"
+                onClick={() => updateData({ gender: opt.value })}
+                whileTap={{ scale: 0.95 }}
+                animate={{ scale: selected ? 1.02 : 1 }}
+                transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                  selected
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80"
+                }`}
+              >
+                {lang === "tr" ? opt.tr : opt.en}
+                {/* Animated check mark */}
+                <AnimatePresence>
+                  {selected && (
+                    <motion.span
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="ml-1.5 inline-flex"
+                    >
+                      <Check className="h-3.5 w-3.5" />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
 

@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ArrowLeft, ArrowRight, Leaf, CheckCircle2,
-  User, Pill, AlertTriangle, Baby, Wine, HeartPulse, FileCheck, Shield, Sparkles, Dna,
+  User, Pill, AlertTriangle, Baby, Wine, HeartPulse, FileCheck, Shield, Sparkles, Dna, Lock,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
@@ -532,24 +533,22 @@ export function OnboardingWizard({ profile }: Props) {
                         {tx(key, lang)}
                       </span>
                     </div>
-                    {/* Phase progress line */}
+                    {/* Phase progress line — smooth animated */}
                     <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-primary to-primary/70 transition-all duration-500 ease-out"
-                        style={{
-                          width: isPhaseComplete ? "100%" : isPhaseCurrent ? `${Math.max(10, ((currentStep + 1) / totalSteps) * 100)}%` : "0%",
+                      <motion.div
+                        className="h-full rounded-full bg-gradient-to-r from-primary to-primary/70"
+                        initial={false}
+                        animate={{
+                          width: isPhaseComplete ? "100%" : isPhaseCurrent ? `${Math.max(10, ((safeStep + 1) / totalSteps) * 100)}%` : "0%",
                         }}
+                        transition={{ duration: 0.4, ease: "easeInOut" }}
                       />
                     </div>
                   </div>
                 );
               })}
             </div>
-            {/* Step counter */}
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>{tx("onb.stepOf", lang)} {safeStep + 1} {tx("onb.of", lang)} {totalSteps}</span>
-              <span className="font-medium text-foreground">{Math.round(progress)}%</span>
-            </div>
+            {/* Step counter removed — phase bar is sufficient */}
           </div>
         );
       })()}
@@ -655,6 +654,14 @@ export function OnboardingWizard({ profile }: Props) {
             )}
           </Button>
         </div>
+      </div>
+
+      {/* Trust Badge */}
+      <div className="flex items-center justify-center gap-1.5 text-muted-foreground/50">
+        <Lock className="h-3 w-3" />
+        <span className="text-[10px]">
+          {lang === "tr" ? "Uçtan Uca Şifreli • KVKK Uyumlu" : "End-to-End Encrypted • KVKK Compliant"}
+        </span>
       </div>
     </div>
   );
