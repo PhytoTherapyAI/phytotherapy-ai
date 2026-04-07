@@ -45,7 +45,7 @@ const s = StyleSheet.create({
   label: { fontFamily: "Helvetica-Bold", width: 80, fontSize: 9 },
   value: { flex: 1, fontSize: 9 },
   sectionTitle: { fontSize: 12, fontFamily: "Helvetica-Bold", color: green, marginBottom: 8, marginTop: 14, paddingBottom: 4, borderBottom: `1px solid ${green}` },
-  sectionLetter: { fontSize: 12, fontFamily: "Helvetica-Bold", color: "#ffffff", backgroundColor: green, borderRadius: 10, width: 20, height: 20, textAlign: "center", lineHeight: 20, marginRight: 6 },
+  sectionLetter: { fontSize: 12, fontFamily: "Helvetica-Bold", color: "#ffffff", backgroundColor: green, borderRadius: 10, width: 20, height: 20, textAlign: "center", paddingTop: 3, marginRight: 6 },
   sectionRow: { flexDirection: "row", alignItems: "center", marginBottom: 8, marginTop: 14 },
   row: { flexDirection: "row", paddingVertical: 4, paddingHorizontal: 8, borderBottom: `1px solid ${grayBorder}` },
   rowAlt: { flexDirection: "row", paddingVertical: 4, paddingHorizontal: 8, borderBottom: `1px solid ${grayBorder}`, backgroundColor: grayLight },

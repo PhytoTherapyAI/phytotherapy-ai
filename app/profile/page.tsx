@@ -686,13 +686,12 @@ export default function ProfilePage() {
                     {!b.earned && <span className="absolute top-1 right-1 text-[8px] text-gray-400">🔒</span>}
                     {b.earned && (
                       <div className="absolute inset-0 rounded-lg overflow-hidden pointer-events-none"
-                        style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s ease-out forwards" }} />
+                        style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s ease-out 1" }} />
                     )}
                   </motion.div>
                 );
               })}
             </div>
-            <style jsx>{`@keyframes shimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }`}</style>
           </div>
 
           {/* Recent Activity micro-feed */}
@@ -2015,8 +2014,13 @@ export default function ProfilePage() {
                       if (!pdfRes.ok) throw new Error("PDF failed");
                       const blob = await pdfRes.blob();
                       const reader = new FileReader();
-                      const base64 = await new Promise<string>((resolve) => {
-                        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+                      const base64 = await new Promise<string>((resolve, reject) => {
+                        reader.onerror = () => reject(new Error("FileReader failed"));
+                        reader.onload = () => {
+                          const result = reader.result as string | null;
+                          if (!result) { reject(new Error("No result")); return; }
+                          resolve(result.split(",")[1]);
+                        };
                         reader.readAsDataURL(blob);
                       });
                       // Send email

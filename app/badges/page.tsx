@@ -224,7 +224,7 @@ export default function BadgesPage() {
                   </p>
                   {/* Shimmer overlay */}
                   <div className="absolute inset-0 rounded-xl pointer-events-none"
-                    style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: `badgeShimmer 1.5s ${i * 0.1}s ease-out forwards` }} />
+                    style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: `badgeShimmer 1.5s ${i * 0.1}s ease-out 1` }} />
                 </div>
               );
             })}
@@ -260,7 +260,6 @@ export default function BadgesPage() {
         </div>
       )}
 
-      <style jsx>{`@keyframes badgeShimmer { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }`}</style>
     </div>
   )
 }
