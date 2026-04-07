@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { X, Stethoscope, ShieldAlert } from "lucide-react";
+import { X, Stethoscope, ShieldAlert, Scissors, Search } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
@@ -55,24 +56,88 @@ const DISEASE_AUTOCOMPLETE: { id: string; tr: string; en: string }[] = [
   { id: "Glaucoma", tr: "Glokom", en: "Glaucoma" },
   { id: "Cataract", tr: "Katarakt", en: "Cataract" },
   { id: "Hearing Loss", tr: "İşitme Kaybı", en: "Hearing Loss" },
-  { id: "Bariatric Surgery", tr: "Bariatrik Cerrahi", en: "Bariatric Surgery" },
   { id: "Thyroid Disorder", tr: "Tiroid Bozukluğu", en: "Thyroid Disorder" },
 ];
+
+// ── Surgery database ──
+interface SurgeryDef { id: string; tr: string; en: string; cat: string }
+const SURGERY_DB: SurgeryDef[] = [
+  // Cardiovascular
+  { id: "Bypass Surgery", tr: "Bypass Ameliyatı", en: "Bypass Surgery", cat: "cardio" },
+  { id: "Heart Valve Surgery", tr: "Kalp Kapak Ameliyatı", en: "Heart Valve Surgery", cat: "cardio" },
+  { id: "Pacemaker Implant", tr: "Pace Maker Takılması", en: "Pacemaker Implant", cat: "cardio" },
+  { id: "Stent Placement", tr: "Stent", en: "Stent Placement", cat: "cardio" },
+  // General Surgery
+  { id: "Appendectomy", tr: "Apandis Ameliyatı", en: "Appendectomy", cat: "general" },
+  { id: "Cholecystectomy", tr: "Safra Kesesi Ameliyatı", en: "Cholecystectomy", cat: "general" },
+  { id: "Hernia Repair", tr: "Fıtık Ameliyatı", en: "Hernia Repair", cat: "general" },
+  { id: "Bowel Resection", tr: "Bağırsak Rezeksiyonu", en: "Bowel Resection", cat: "general" },
+  // Bariatric / Digestive
+  { id: "Bariatric Surgery", tr: "Bariatrik Cerrahi", en: "Bariatric Surgery", cat: "bariatric" },
+  { id: "Gastric Sleeve", tr: "Gastrik Sleeve", en: "Gastric Sleeve", cat: "bariatric" },
+  { id: "Gastric Bypass", tr: "Gastrik Bypass", en: "Gastric Bypass", cat: "bariatric" },
+  { id: "Gastric Band", tr: "Mide Bandı", en: "Gastric Band", cat: "bariatric" },
+  // Orthopedics
+  { id: "Knee Replacement", tr: "Diz Protezi", en: "Knee Replacement", cat: "ortho" },
+  { id: "Hip Replacement", tr: "Kalça Protezi", en: "Hip Replacement", cat: "ortho" },
+  { id: "Spinal Surgery", tr: "Omurga Ameliyatı", en: "Spinal Surgery", cat: "ortho" },
+  { id: "Meniscus Surgery", tr: "Menisküs Ameliyatı", en: "Meniscus Surgery", cat: "ortho" },
+  { id: "Fracture Fixation", tr: "Kırık Tespiti (Plak/Vida)", en: "Fracture Fixation", cat: "ortho" },
+  // Urology / Gynecology
+  { id: "Prostate Surgery", tr: "Prostat Ameliyatı", en: "Prostate Surgery", cat: "urogyn" },
+  { id: "Kidney Stone Surgery", tr: "Böbrek Taşı Ameliyatı", en: "Kidney Stone Surgery", cat: "urogyn" },
+  { id: "Hysterectomy", tr: "Histerektomi", en: "Hysterectomy", cat: "urogyn" },
+  { id: "Cesarean Section", tr: "Sezaryen", en: "Cesarean Section", cat: "urogyn" },
+  { id: "Ovarian Cyst Surgery", tr: "Over Kisti Ameliyatı", en: "Ovarian Cyst Surgery", cat: "urogyn" },
+  { id: "Tubal Ligation", tr: "Tüp Ligasyonu", en: "Tubal Ligation", cat: "urogyn" },
+  // Neurology
+  { id: "Brain Tumor Surgery", tr: "Beyin Tümörü Ameliyatı", en: "Brain Tumor Surgery", cat: "neuro" },
+  { id: "Disc Herniation Surgery", tr: "Disk Hernisi Ameliyatı", en: "Disc Herniation Surgery", cat: "neuro" },
+  { id: "Carpal Tunnel Surgery", tr: "Karpal Tünel Ameliyatı", en: "Carpal Tunnel Surgery", cat: "neuro" },
+  // Eye / ENT
+  { id: "Cataract Surgery", tr: "Katarakt Ameliyatı", en: "Cataract Surgery", cat: "eyeent" },
+  { id: "LASIK", tr: "Lazik", en: "LASIK", cat: "eyeent" },
+  { id: "Tonsillectomy", tr: "Bademcik Ameliyatı", en: "Tonsillectomy", cat: "eyeent" },
+  { id: "Sinus Surgery", tr: "Sinüs Ameliyatı", en: "Sinus Surgery", cat: "eyeent" },
+  // Other
+  { id: "Thyroid Surgery", tr: "Tiroid Ameliyatı", en: "Thyroid Surgery", cat: "other" },
+  { id: "Breast Surgery", tr: "Meme Ameliyatı", en: "Breast Surgery", cat: "other" },
+  { id: "Organ Transplant", tr: "Organ Nakli", en: "Organ Transplant", cat: "other" },
+  { id: "Plastic Surgery", tr: "Plastik Cerrahi", en: "Plastic Surgery", cat: "other" },
+];
+
+const SURGERY_CATS = [
+  { key: "cardio", labelKey: "onb.surgeryCatCardio" },
+  { key: "general", labelKey: "onb.surgeryCatGeneral" },
+  { key: "bariatric", labelKey: "onb.surgeryCatBariatric" },
+  { key: "ortho", labelKey: "onb.surgeryCatOrtho" },
+  { key: "urogyn", labelKey: "onb.surgeryCatUroGyn" },
+  { key: "neuro", labelKey: "onb.surgeryCatNeuro" },
+  { key: "eyeent", labelKey: "onb.surgeryCatEyeEnt" },
+  { key: "other", labelKey: "onb.surgeryCatOther" },
+] as const;
 
 // Turkish-aware lowercase for search
 function trLower(s: string): string {
   return s
-    .replace(/İ/g, "i")
-    .replace(/I/g, "ı")
-    .replace(/Ş/g, "ş")
-    .replace(/Ğ/g, "ğ")
-    .replace(/Ü/g, "ü")
-    .replace(/Ö/g, "ö")
-    .replace(/Ç/g, "ç")
-    .toLowerCase();
+    .replace(/İ/g, "i").replace(/I/g, "ı").replace(/Ş/g, "ş")
+    .replace(/Ğ/g, "ğ").replace(/Ü/g, "ü").replace(/Ö/g, "ö")
+    .replace(/Ç/g, "ç").toLowerCase();
 }
 
-// System-grouped conditions (stored in English for DB)
+// ── Surgery helpers ──
+// Format: "surgery:ID|YEAR" or "surgery:ID"
+function parseSurgeryEntry(s: string): { id: string; year?: number } | null {
+  if (!s.startsWith("surgery:")) return null;
+  const parts = s.slice(8).split("|");
+  return { id: parts[0], year: parts[1] ? parseInt(parts[1], 10) : undefined };
+}
+
+function encodeSurgery(id: string, year?: number): string {
+  return year ? `surgery:${id}|${year}` : `surgery:${id}`;
+}
+
+// System-grouped conditions (no longer includes surgical)
 const CONDITION_GROUPS = [
   {
     labelKey: "onb.categoryCardio",
@@ -103,13 +168,11 @@ const CONDITION_GROUPS = [
       { id: "COPD", key: "onb.copd" },
     ],
   },
-  {
-    labelKey: "onb.categorySurgical",
-    conditions: [
-      { id: "Bariatric Surgery", key: "onb.bariatricSurgery" },
-    ],
-  },
 ];
+
+const reducedMotion = typeof window !== "undefined"
+  ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+  : false;
 
 export function MedicalHistoryStep({ data, updateData }: Props) {
   const { lang } = useLang();
@@ -121,54 +184,88 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Surgery autocomplete state
+  const [surgerySearch, setSurgerySearch] = useState("");
+  const [surgerySuggestions, setSurgerySuggestions] = useState<SurgeryDef[]>([]);
+  const [showSurgerySugg, setShowSurgerySugg] = useState(false);
+  const [surgeryHighlight, setSurgeryHighlight] = useState(-1);
+  const [editingYear, setEditingYear] = useState<string | null>(null);
+  const surgeryDropRef = useRef<HTMLDivElement>(null);
+  const surgeryInputRef = useRef<HTMLInputElement>(null);
+
   // All known condition IDs from groups
   const knownIds = CONDITION_GROUPS.flatMap(g => g.conditions.map(c => c.id));
 
-  // Conditions that are NOT in the predefined chip groups (custom entries)
+  // Conditions that are NOT in the predefined chip groups and NOT surgery/family
   const customConditions = data.chronic_conditions.filter(
-    (c) => !knownIds.includes(c) && !c.startsWith("family:")
+    (c) => !knownIds.includes(c) && !c.startsWith("family:") && !c.startsWith("surgery:")
   );
+
+  // Extract surgery entries
+  const surgeryEntries = data.chronic_conditions
+    .map(c => ({ raw: c, parsed: parseSurgeryEntry(c) }))
+    .filter((e): e is { raw: string; parsed: { id: string; year?: number } } => e.parsed !== null);
+
+  const selectedSurgeryIds = new Set(surgeryEntries.map(e => e.parsed.id));
+
+  const getSurgeryLabel = useCallback((id: string): string => {
+    const found = SURGERY_DB.find(s => s.id === id);
+    return found ? (lang === "tr" ? found.tr : found.en) : id;
+  }, [lang]);
 
   // Get display name for a condition
   const getConditionLabel = useCallback((id: string): string => {
     const found = DISEASE_AUTOCOMPLETE.find(d => d.id === id);
     if (found) return lang === "tr" ? found.tr : found.en;
-    return id; // Custom free-text entry
+    return id;
   }, [lang]);
 
-  // Autocomplete filter — min 2 chars, Turkish-aware
+  // ── Disease autocomplete ──
   useEffect(() => {
     if (customCondition.length < 2) {
-      setSuggestions([]);
-      setShowSuggestions(false);
-      setHighlightIdx(-1);
-      return;
+      setSuggestions([]); setShowSuggestions(false); setHighlightIdx(-1); return;
     }
     const q = trLower(customCondition);
     const already = new Set(data.chronic_conditions);
     const matches = DISEASE_AUTOCOMPLETE.filter(d =>
-      !already.has(d.id) &&
-      (trLower(d.tr).includes(q) || trLower(d.en).includes(q))
+      !already.has(d.id) && (trLower(d.tr).includes(q) || trLower(d.en).includes(q))
     );
     setSuggestions(matches.slice(0, 6));
     setShowSuggestions(true);
     setHighlightIdx(-1);
   }, [customCondition, data.chronic_conditions]);
 
-  // Close dropdown on outside click
+  // ── Surgery autocomplete ──
+  useEffect(() => {
+    if (surgerySearch.length < 2) {
+      setSurgerySuggestions([]); setShowSurgerySugg(false); setSurgeryHighlight(-1); return;
+    }
+    const q = trLower(surgerySearch);
+    const matches = SURGERY_DB.filter(s =>
+      !selectedSurgeryIds.has(s.id) && (trLower(s.tr).includes(q) || trLower(s.en).includes(q))
+    );
+    setSurgerySuggestions(matches.slice(0, 6));
+    setShowSurgerySugg(true);
+    setSurgeryHighlight(-1);
+  }, [surgerySearch, selectedSurgeryIds]);
+
+  // Close dropdowns on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (
-        dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
-        inputRef.current && !inputRef.current.contains(e.target as Node)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
+          inputRef.current && !inputRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);
+      }
+      if (surgeryDropRef.current && !surgeryDropRef.current.contains(e.target as Node) &&
+          surgeryInputRef.current && !surgeryInputRef.current.contains(e.target as Node)) {
+        setShowSurgerySugg(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  // ── Condition helpers ──
   const toggleCondition = (condition: string) => {
     setNoChronic(false);
     const existing = data.chronic_conditions;
@@ -184,9 +281,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
     if (!data.chronic_conditions.includes(id)) {
       updateData({ chronic_conditions: [...data.chronic_conditions, id] });
     }
-    setCustomCondition("");
-    setShowSuggestions(false);
-    setHighlightIdx(-1);
+    setCustomCondition(""); setShowSuggestions(false); setHighlightIdx(-1);
     inputRef.current?.focus();
   };
 
@@ -196,61 +291,98 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
     addConditionFromAutocomplete(trimmed);
   };
 
+  // ── Surgery helpers ──
+  const addSurgery = (id: string) => {
+    if (selectedSurgeryIds.has(id)) return;
+    setNoChronic(false);
+    updateData({ chronic_conditions: [...data.chronic_conditions, encodeSurgery(id)] });
+    setSurgerySearch(""); setShowSurgerySugg(false); setSurgeryHighlight(-1);
+    surgeryInputRef.current?.focus();
+  };
+
+  const removeSurgery = (surgeryId: string) => {
+    updateData({
+      chronic_conditions: data.chronic_conditions.filter(c => {
+        const p = parseSurgeryEntry(c);
+        return !p || p.id !== surgeryId;
+      }),
+    });
+  };
+
+  const updateSurgeryYear = (surgeryId: string, year: number | undefined) => {
+    updateData({
+      chronic_conditions: data.chronic_conditions.map(c => {
+        const p = parseSurgeryEntry(c);
+        if (p && p.id === surgeryId) return encodeSurgery(surgeryId, year);
+        return c;
+      }),
+    });
+  };
+
+  const addCustomSurgery = () => {
+    const trimmed = surgerySearch.trim();
+    if (!trimmed) return;
+    addSurgery(trimmed);
+  };
+
+  const toggleSurgeryChip = (def: SurgeryDef) => {
+    if (selectedSurgeryIds.has(def.id)) {
+      removeSurgery(def.id);
+    } else {
+      addSurgery(def.id);
+    }
+  };
+
   const handleNoChronic = (checked: boolean) => {
     setNoChronic(checked);
     if (checked) {
       updateData({
         chronic_conditions: data.chronic_conditions.filter(c => c.startsWith("family:")),
-        kidney_disease: false,
-        liver_disease: false,
-        recent_surgery: false,
+        kidney_disease: false, liver_disease: false, recent_surgery: false,
       });
     }
   };
 
-  // Keyboard navigation for autocomplete
+  // ── Keyboard nav: disease ──
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!showSuggestions) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        addCustomCondition();
-      }
-      return;
-    }
-
-    const totalItems = suggestions.length + (customCondition.trim() ? 1 : 0); // +1 for "Add: ..." option
-
-    if (e.key === "ArrowDown") {
+    if (!showSuggestions) { if (e.key === "Enter") { e.preventDefault(); addCustomCondition(); } return; }
+    const total = suggestions.length + (customCondition.trim() ? 1 : 0);
+    if (e.key === "ArrowDown") { e.preventDefault(); setHighlightIdx(p => (p + 1) % total); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setHighlightIdx(p => (p - 1 + total) % total); }
+    else if (e.key === "Enter") {
       e.preventDefault();
-      setHighlightIdx(prev => (prev + 1) % totalItems);
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setHighlightIdx(prev => (prev - 1 + totalItems) % totalItems);
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      if (highlightIdx >= 0 && highlightIdx < suggestions.length) {
-        addConditionFromAutocomplete(suggestions[highlightIdx].id);
-      } else {
-        addCustomCondition();
-      }
-    } else if (e.key === "Escape") {
-      setShowSuggestions(false);
-    }
+      if (highlightIdx >= 0 && highlightIdx < suggestions.length) addConditionFromAutocomplete(suggestions[highlightIdx].id);
+      else addCustomCondition();
+    } else if (e.key === "Escape") setShowSuggestions(false);
   };
 
-  // Check if free-text "Add: X" option should show
+  // ── Keyboard nav: surgery ──
+  const handleSurgeryKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSurgerySugg) { if (e.key === "Enter") { e.preventDefault(); addCustomSurgery(); } return; }
+    const showFree = surgerySearch.trim().length >= 2 &&
+      !surgerySuggestions.some(s => trLower(s.tr) === trLower(surgerySearch) || trLower(s.en) === trLower(surgerySearch));
+    const total = surgerySuggestions.length + (showFree ? 1 : 0);
+    if (e.key === "ArrowDown") { e.preventDefault(); setSurgeryHighlight(p => (p + 1) % total); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setSurgeryHighlight(p => (p - 1 + total) % total); }
+    else if (e.key === "Enter") {
+      e.preventDefault();
+      if (surgeryHighlight >= 0 && surgeryHighlight < surgerySuggestions.length) addSurgery(surgerySuggestions[surgeryHighlight].id);
+      else addCustomSurgery();
+    } else if (e.key === "Escape") setShowSurgerySugg(false);
+  };
+
   const showFreeTextOption = customCondition.trim().length >= 2 &&
     !suggestions.some(s => trLower(s.tr) === trLower(customCondition) || trLower(s.en) === trLower(customCondition));
+
+  const showSurgeryFreeText = surgerySearch.trim().length >= 2 &&
+    !surgerySuggestions.some(s => trLower(s.tr) === trLower(surgerySearch) || trLower(s.en) === trLower(surgerySearch));
 
   return (
     <div className="space-y-5">
       {/* Clean bill of health */}
       <div className="flex items-center space-x-2 rounded-xl bg-green-50 dark:bg-green-950/20 p-3 border border-green-200 dark:border-green-800">
-        <Checkbox
-          id="no-chronic"
-          checked={noChronic}
-          onCheckedChange={(checked) => handleNoChronic(checked === true)}
-        />
+        <Checkbox id="no-chronic" checked={noChronic}
+          onCheckedChange={(checked) => handleNoChronic(checked === true)} />
         <Label htmlFor="no-chronic" className="text-sm font-medium text-green-700 dark:text-green-400 cursor-pointer">
           🟢 {tx("onb.noChronic", lang)}
         </Label>
@@ -296,12 +428,10 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {group.conditions.map((cond) => (
-                    <Badge
-                      key={cond.id}
+                    <Badge key={cond.id}
                       variant={data.chronic_conditions.includes(cond.id) ? "default" : "outline"}
                       className="cursor-pointer transition-colors"
-                      onClick={() => toggleCondition(cond.id)}
-                    >
+                      onClick={() => toggleCondition(cond.id)}>
                       {tx(cond.key, lang)}
                     </Badge>
                   ))}
@@ -310,72 +440,46 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
             ))}
           </div>
 
-          {/* Custom conditions — chips with × remove + autocomplete input */}
+          {/* Custom conditions — chips + autocomplete */}
           <div className="space-y-2">
             {customConditions.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {customConditions.map((condition) => (
                   <Badge key={condition} variant="default" className="gap-1 pr-1">
                     {getConditionLabel(condition)}
-                    <button
-                      type="button"
-                      onClick={() => toggleCondition(condition)}
+                    <button type="button" onClick={() => toggleCondition(condition)}
                       className="ml-0.5 rounded-full p-0.5 hover:bg-primary-foreground/20 transition-colors"
-                      aria-label={`Remove ${condition}`}
-                    >
+                      aria-label={`Remove ${condition}`}>
                       <X className="h-3 w-3" />
                     </button>
                   </Badge>
                 ))}
               </div>
             )}
-
-            {/* Autocomplete input */}
             <div className="relative">
-              <Input
-                ref={inputRef}
-                placeholder={tx("onb.otherCondition", lang)}
-                value={customCondition}
-                onChange={(e) => setCustomCondition(e.target.value)}
+              <Input ref={inputRef} placeholder={tx("onb.otherCondition", lang)}
+                value={customCondition} onChange={(e) => setCustomCondition(e.target.value)}
                 onKeyDown={handleKeyDown}
                 onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
                 autoComplete="off"
-                className="focus:ring-2 focus:ring-green-400/40 focus:border-green-400"
-              />
-
-              {/* Autocomplete dropdown */}
+                className="focus:ring-2 focus:ring-green-400/40 focus:border-green-400" />
               {showSuggestions && (suggestions.length > 0 || showFreeTextOption) && (
-                <div
-                  ref={dropdownRef}
-                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-lg border bg-background shadow-lg"
-                  role="listbox"
-                >
+                <div ref={dropdownRef}
+                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-lg border bg-background shadow-lg" role="listbox">
                   {suggestions.map((s, idx) => (
-                    <button
-                      key={s.id}
-                      type="button"
-                      role="option"
-                      aria-selected={idx === highlightIdx}
+                    <button key={s.id} type="button" role="option" aria-selected={idx === highlightIdx}
                       onClick={() => addConditionFromAutocomplete(s.id)}
                       className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors ${
-                        idx === highlightIdx ? "bg-primary/10 text-primary" : "hover:bg-muted/50"
-                      }`}
-                    >
+                        idx === highlightIdx ? "bg-primary/10 text-primary" : "hover:bg-muted/50"}`}>
                       <Stethoscope className="h-3 w-3 shrink-0 text-muted-foreground" />
                       <span>{lang === "tr" ? s.tr : s.en}</span>
                     </button>
                   ))}
-                  {/* Free text "Add: ..." option */}
                   {showFreeTextOption && (
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={highlightIdx === suggestions.length}
+                    <button type="button" role="option" aria-selected={highlightIdx === suggestions.length}
                       onClick={addCustomCondition}
                       className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm border-t transition-colors ${
-                        highlightIdx === suggestions.length ? "bg-primary/10 text-primary" : "hover:bg-muted/50"
-                      }`}
-                    >
+                        highlightIdx === suggestions.length ? "bg-primary/10 text-primary" : "hover:bg-muted/50"}`}>
                       <span className="text-muted-foreground">+</span>
                       <span>{tx("onb.addCustomPrefix", lang)} <strong>{customCondition.trim()}</strong></span>
                     </button>
@@ -383,6 +487,123 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* ══════ Surgical History Section ══════ */}
+          <div className="space-y-3 pt-2 border-t">
+            <Label className="flex items-center gap-2">
+              <Scissors className="h-4 w-4" />
+              {tx("onb.categorySurgical", lang)}
+            </Label>
+
+            {/* Category chip grids */}
+            {SURGERY_CATS.map(cat => {
+              const items = SURGERY_DB.filter(s => s.cat === cat.key);
+              return (
+                <div key={cat.key} className="space-y-1">
+                  <p className="text-[11px] font-medium text-muted-foreground/70">{tx(cat.labelKey, lang)}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {items.map(def => {
+                      const selected = selectedSurgeryIds.has(def.id);
+                      return (
+                        <Badge key={def.id}
+                          variant={selected ? "default" : "outline"}
+                          className="cursor-pointer transition-colors text-xs"
+                          onClick={() => toggleSurgeryChip(def)}>
+                          {lang === "tr" ? def.tr : def.en}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Surgery autocomplete search */}
+            <div className="relative">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                <Input ref={surgeryInputRef}
+                  placeholder={tx("onb.surgerySearch", lang)}
+                  value={surgerySearch} onChange={(e) => setSurgerySearch(e.target.value)}
+                  onKeyDown={handleSurgeryKeyDown}
+                  onFocus={() => { if (surgerySuggestions.length > 0) setShowSurgerySugg(true); }}
+                  autoComplete="off"
+                  className="pl-9 focus:ring-2 focus:ring-green-400/40 focus:border-green-400" />
+              </div>
+              {showSurgerySugg && (surgerySuggestions.length > 0 || showSurgeryFreeText) && (
+                <div ref={surgeryDropRef}
+                  className="absolute left-0 right-0 top-full z-50 mt-1 max-h-56 overflow-y-auto rounded-lg border bg-background shadow-lg" role="listbox">
+                  {surgerySuggestions.map((s, idx) => (
+                    <button key={s.id} type="button" role="option" aria-selected={idx === surgeryHighlight}
+                      onClick={() => addSurgery(s.id)}
+                      className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors ${
+                        idx === surgeryHighlight ? "bg-primary/10 text-primary" : "hover:bg-muted/50"}`}>
+                      <Scissors className="h-3 w-3 shrink-0 text-muted-foreground" />
+                      <span>{lang === "tr" ? s.tr : s.en}</span>
+                    </button>
+                  ))}
+                  {showSurgeryFreeText && (
+                    <button type="button" role="option" aria-selected={surgeryHighlight === surgerySuggestions.length}
+                      onClick={addCustomSurgery}
+                      className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm border-t transition-colors ${
+                        surgeryHighlight === surgerySuggestions.length ? "bg-primary/10 text-primary" : "hover:bg-muted/50"}`}>
+                      <span className="text-muted-foreground">+</span>
+                      <span>{tx("onb.surgeryAddPrefix", lang)} <strong>{surgerySearch.trim()}</strong></span>
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Selected surgeries with year + remove */}
+            {surgeryEntries.length > 0 && (
+              <AnimatePresence mode="popLayout">
+                {surgeryEntries.map(({ raw, parsed }) => (
+                  <motion.div key={parsed.id}
+                    layout={!reducedMotion}
+                    initial={reducedMotion ? undefined : { opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={reducedMotion ? undefined : { opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-center gap-2 rounded-lg border p-2.5">
+                    <Scissors className="h-3.5 w-3.5 text-primary shrink-0" />
+                    <span className="text-sm font-medium flex-1 truncate">{getSurgeryLabel(parsed.id)}</span>
+
+                    {/* Year inline input */}
+                    {editingYear === parsed.id ? (
+                      <Input type="number" min={1950} max={new Date().getFullYear()}
+                        placeholder={tx("onb.surgeryYearPlaceholder", lang)}
+                        defaultValue={parsed.year || ""}
+                        className="h-7 w-20 text-xs"
+                        autoFocus
+                        onBlur={(e) => {
+                          const v = parseInt(e.target.value, 10);
+                          updateSurgeryYear(parsed.id, v >= 1950 && v <= new Date().getFullYear() ? v : undefined);
+                          setEditingYear(null);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+                          if (e.key === "Escape") setEditingYear(null);
+                        }} />
+                    ) : (
+                      <button type="button" onClick={() => setEditingYear(parsed.id)}
+                        className="text-[11px] text-muted-foreground hover:text-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-muted">
+                        {parsed.year
+                          ? `${parsed.year}`
+                          : `+ ${tx("onb.surgeryYearLabel", lang)}`}
+                      </button>
+                    )}
+
+                    <button type="button" onClick={() => removeSurgery(parsed.id)}
+                      className="rounded-full p-0.5 hover:bg-destructive/10 transition-colors"
+                      aria-label={`Remove ${parsed.id}`}>
+                      <X className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                    </button>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
           </div>
         </>
       )}
