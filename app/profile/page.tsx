@@ -547,8 +547,11 @@ export default function ProfilePage() {
             </div>
             {/* Info + Score */}
             <div className="flex-1 text-center sm:text-left">
-              <h2 className="text-xl font-bold">
+              <h2 className="text-xl font-bold flex items-center gap-2">
                 {profile.full_name || user?.email?.split("@")[0] || "Member"}
+                <button onClick={startEditingHealth} className="text-gray-400 hover:text-primary transition-colors" aria-label={tr ? "Düzenle" : "Edit"}>
+                  <Edit3 className="h-4 w-4" />
+                </button>
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {tr ? "Üye:" : "Member since:"}{" "}
@@ -843,12 +846,18 @@ export default function ProfilePage() {
       </Card>
 
       {/* Personal Info */}
-      <Card className="mb-6">
+      <Card className="mb-6" id="personal-info">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
-            {tx('profile.personalInfo', lang)}
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              {tx('profile.personalInfo', lang)}
+            </CardTitle>
+            <button onClick={startEditingHealth} className="text-sm text-primary font-medium hover:underline flex items-center gap-1">
+              <Edit3 className="h-3.5 w-3.5" />
+              {tr ? "Düzenle" : "Edit"}
+            </button>
+          </div>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div>
@@ -1983,10 +1992,11 @@ export default function ProfilePage() {
         )}
 
         {!editingHealth && (
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              {tx("profile.editHealthHint", lang)}
-            </p>
+          <CardContent className="py-3">
+            <button onClick={startEditingHealth} className="text-sm text-primary font-medium hover:underline flex items-center gap-1.5">
+              <Edit3 className="h-3.5 w-3.5" />
+              {tr ? "Sağlık profilini düzenle" : "Edit health profile"}
+            </button>
           </CardContent>
         )}
       </Card>
