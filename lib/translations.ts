@@ -400,7 +400,7 @@ const t: Record<string, TranslationEntry> = {
   // Onboarding — Medications Step
   // ══════════════════════════════════════════
   "onb.noMeds": { en: "I don't take any medications", tr: "Herhangi bir ilaç kullanmıyorum" },
-  "onb.yourMeds": { en: "Your medications:", tr: "İlaçlarınız:" },
+  "onb.yourMeds": { en: "Your medications:", tr: "İlaçların:" },
   "onb.addMed": { en: "Add a medication", tr: "İlaç ekle" },
   "onb.brandName": { en: "Brand Name", tr: "İlaç Adı (Marka)" },
   "onb.brandPlaceholder": { en: "e.g., Glifor, Coumadin", tr: "ör. Glifor, Coumadin" },
@@ -1301,8 +1301,8 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   // Onboarding Wizard
   // ══════════════════════════════════════════
-  "onb.setupTitle": { en: "Set Up Your Health Profile", tr: "Sağlık Profilinizi Oluşturun" },
-  "onb.setupDesc": { en: "This helps us give you safe, personalized recommendations", tr: "Güvenli ve kişiselleştirilmiş öneriler sunmamızı sağlar" },
+  "onb.setupTitle": { en: "Set Up Your Health Profile", tr: "Sağlık Profilini Oluştur" },
+  "onb.setupDesc": { en: "This helps us give you safe, personalized recommendations", tr: "Güvenli ve kişiselleştirilmiş öneriler sunmamı sağlar" },
   "onb.stepOf": { en: "Step", tr: "Adım" },
   "onb.of": { en: "of", tr: "/" },
   "onb.back": { en: "Back", tr: "Geri" },
@@ -1313,7 +1313,7 @@ const t: Record<string, TranslationEntry> = {
   "onb.sessionExpired": { en: "Your session has expired. Please sign in again.", tr: "Oturumunuz sona erdi. Lütfen tekrar giriş yapın." },
   "onb.medSaveError": { en: "Failed to save medications. Please try again.", tr: "İlaçlar kaydedilemedi. Tekrar deneyin." },
   "onb.allergySaveError": { en: "Failed to save allergies. Please try again.", tr: "Alerjiler kaydedilemedi. Tekrar deneyin." },
-  "onb.saveError": { en: "Failed to save your information. Please try again.", tr: "Bilgileriniz kaydedilemedi. Tekrar deneyin." },
+  "onb.saveError": { en: "Failed to save your information. Please try again.", tr: "Bilgilerin kaydedilemedi. Tekrar dene." },
 
   // ══════════════════════════════════════════
   // Blood Test — PDF Upload
@@ -1362,17 +1362,18 @@ const t: Record<string, TranslationEntry> = {
   // Onboarding Steps — BasicInfo
   // ══════════════════════════════════════════
   "onb.fullName": { en: "Full Name *", tr: "Ad Soyad *" },
-  "onb.fullNamePlaceholder": { en: "Enter your full name", tr: "Adınızı ve soyadınızı girin" },
+  "onb.fullNamePlaceholder": { en: "Enter your full name", tr: "Adını ve soyadını gir" },
   "onb.birthDate": { en: "Date of Birth *", tr: "Doğum Tarihi *" },
-  "onb.yourAge": { en: "Your age:", tr: "Yaşınız:" },
-  "onb.ageWarning": { en: "You must be 18 or older to use this service. Our recommendations are designed for adults only.", tr: "Bu hizmeti kullanmak için 18 yaşında veya daha büyük olmalısınız. Önerilerimiz yalnızca yetişkinler için tasarlanmıştır." },
-  "onb.gender": { en: "Gender *", tr: "Cinsiyet *" },
-  "onb.genderPlaceholder": { en: "Select your gender", tr: "Cinsiyetinizi seçin" },
+  "onb.yourAge": { en: "Your age:", tr: "Yaşın:" },
+  "onb.ageWarning": { en: "You must be 18 or older to use this service. Our recommendations are designed for adults only.", tr: "Bu hizmeti kullanmak için 18 yaşında veya daha büyük olmalısın. Önerilerimiz yalnızca yetişkinler için tasarlanmıştır." },
+  "onb.gender": { en: "Biological Sex *", tr: "Biyolojik Cinsiyet *" },
+  "onb.genderNote": { en: "Used for medication dosage and health calculations.", tr: "İlaç dozu ve sağlık hesaplamaları için kullanılır." },
+  "onb.genderPlaceholder": { en: "Select your biological sex", tr: "Biyolojik cinsiyetini seç" },
   "onb.male": { en: "Male", tr: "Erkek" },
   "onb.female": { en: "Female", tr: "Kadın" },
   "onb.other": { en: "Other", tr: "Diğer" },
   "onb.preferNotToSay": { en: "Prefer not to say", tr: "Belirtmek istemiyorum" },
-  "onb.requiredFields": { en: "* Required fields. This information helps us provide safe, age-and-gender-appropriate recommendations.", tr: "* Zorunlu alanlar. Bu bilgiler yaşa ve cinsiyete uygun güvenli öneriler sunmamızı sağlar." },
+  "onb.requiredFields": { en: "* Required fields. This basic information helps us account for age and sex-specific physiological differences to make accurate decisions.", tr: "* Zorunlu alanlar. Bu temel bilgiler, yaşa ve cinsiyete özgü fizyolojik farklılıkları hesaba katarak doğru kararlar almamız için gereklidir." },
 
   // Allergies Step
   "onb.noAllergies": { en: "I have no known allergies", tr: "Bilinen alerjim yok" },
@@ -1623,7 +1624,7 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   // Onboarding — OptionalProfileStep
   // ══════════════════════════════════════════
-  "onb.optionalHint": { en: "These details help us personalize your recommendations. You can skip this and fill it later.", tr: "Bu bilgiler önerilerimizi kişiselleştirmemize yardımcı olur. Atlayıp daha sonra doldurabilirsiniz." },
+  "onb.optionalHint": { en: "These details help us personalize your recommendations. You can skip this and fill it later.", tr: "Bu bilgiler önerilerimizi kişiselleştirmemize yardımcı olur. Atlayıp daha sonra doldurabilirsin." },
   "onb.heightLabel": { en: "Height (cm)", tr: "Boy (cm)" },
   "onb.heightPlaceholder": { en: "e.g., 175", tr: "ör. 175" },
   "onb.weightLabel": { en: "Weight (kg)", tr: "Kilo (kg)" },
@@ -1631,11 +1632,11 @@ const t: Record<string, TranslationEntry> = {
   "onb.bloodGroup": { en: "Blood Group", tr: "Kan Grubu" },
   "onb.bloodGroupPlaceholder": { en: "Select blood group", tr: "Kan grubunuzu seçin" },
   "onb.dietType": { en: "Diet Type", tr: "Diyet Türü" },
-  "onb.dietPlaceholder": { en: "Select your diet", tr: "Diyetinizi seçin" },
+  "onb.dietPlaceholder": { en: "Select your diet", tr: "Diyetini seç" },
   "onb.exerciseFreq": { en: "Exercise Frequency", tr: "Egzersiz Sıklığı" },
-  "onb.exercisePlaceholder": { en: "How often do you exercise?", tr: "Ne sıklıkta egzersiz yapıyorsunuz?" },
+  "onb.exercisePlaceholder": { en: "How often do you exercise?", tr: "Ne sıklıkta egzersiz yapıyorsun?" },
   "onb.sleepQuality": { en: "Sleep Quality", tr: "Uyku Kalitesi" },
-  "onb.sleepPlaceholder": { en: "How well do you sleep?", tr: "Uyku kaliteniz nasıl?" },
+  "onb.sleepPlaceholder": { en: "How well do you sleep?", tr: "Uyku kaliten nasıl?" },
   "onb.supplements": { en: "Current Supplements / Vitamins", tr: "Mevcut Takviyeler / Vitaminler" },
   "onb.otherSupplement": { en: "Other supplement...", tr: "Diğer takviye..." },
 
@@ -1667,7 +1668,7 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   // Onboarding — PregnancyStep
   // ══════════════════════════════════════════
-  "onb.pregnantQ": { en: "Are you currently pregnant?", tr: "Şu anda hamile misiniz?" },
+  "onb.pregnantQ": { en: "Are you currently pregnant?", tr: "Şu anda hamile misin?" },
   "onb.breastfeedingQ": { en: "Are you currently breastfeeding?", tr: "Şu anda emziriyor musunuz?" },
   "onb.yes": { en: "Yes", tr: "Evet" },
   "onb.no": { en: "No", tr: "Hayır" },
@@ -1679,16 +1680,16 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   "onb.disclaimerTitle": { en: "Medical Disclaimer", tr: "Tıbbi Sorumluluk Reddi" },
   "onb.dataPrivacy": { en: "Data Privacy", tr: "Veri Gizliliği" },
-  "onb.dataIntro": { en: "Your health data is:", tr: "Sağlık verileriniz:" },
+  "onb.dataIntro": { en: "Your health data is:", tr: "Sağlık verilerin:" },
   "onb.termsLink": { en: "Terms of Service", tr: "Kullanım Koşulları" },
   "onb.privacyLink": { en: "Privacy Policy", tr: "Gizlilik Politikası" },
 
   // Onboarding — Phase labels & why-we-ask
-  "onb.reassurance": { en: "~2 min · You can edit everything later", tr: "~2 dk · Tüm bilgilerini daha sonra düzenleyebilirsin" },
-  "onb.moreInfoBetter": { en: "The more you share, the better our recommendations get", tr: "Ne kadar çok bilgi verirsen, o kadar iyi cevap alırsın" },
+  "onb.reassurance": { en: "(~2 min · You can edit all your info later in settings)", tr: "(~2 dk · Tüm bilgilerini daha sonra ayarlardan düzenleyebilirsin)" },
+  "onb.moreInfoBetter": { en: "The more you share, the more precise and safe recommendations DoctoPal can offer.", tr: "Ne kadar çok bilgi verirsen, DoctoPal sana o kadar nokta atışı ve güvenli öneriler sunar." },
   "onb.displayName": { en: "What should we call you? *", tr: "Sana nasıl hitap edelim? *" },
   "onb.displayNamePlaceholder": { en: "Name, nickname, or whatever you prefer", tr: "Adın, rumuzun veya istediğin şekilde" },
-  "onb.doseDisclaimer": { en: "Please make sure the dosage is correct. Edit if your doctor prescribed a different dose.", tr: "Lütfen dozunuzu doğru girdiğinizden emin olun. Doktorunuz farklı bir doz verdiyse düzenleyin." },
+  "onb.doseDisclaimer": { en: "Please make sure the dosage is correct. Edit if your doctor prescribed a different dose.", tr: "Lütfen dozunu doğru girdiğinden emin ol. Doktorun farklı bir doz verdiyse düzenle." },
   "onb.reactionType": { en: "Reaction Type", tr: "Reaksiyon Tipi" },
   "onb.reactionAnaphylaxis": { en: "Anaphylaxis (Breathing difficulty / Shock)", tr: "Anafilaksi (Nefes Darlığı / Şok)" },
   "onb.reactionUrticaria": { en: "Urticaria / Widespread Rash", tr: "Kurdeşen / Yaygın Döküntü" },
@@ -1706,7 +1707,7 @@ const t: Record<string, TranslationEntry> = {
   "onb.smoking1to5": { en: "1–5 years", tr: "1 - 5 Yıl" },
   "onb.smoking5to15": { en: "5–15 years", tr: "5 - 15 Yıl" },
   "onb.smoking15plus": { en: "15+ years", tr: "15 Yıl ve üzeri" },
-  "onb.smokingQuitWhen": { en: "When did you quit?", tr: "Ne zaman bıraktınız?" },
+  "onb.smokingQuitWhen": { en: "When did you quit?", tr: "Ne zaman bıraktın?" },
   "onb.smokingQuit1yr": { en: "Within last year", tr: "Son 1 yıl içinde" },
   "onb.smokingQuit1to5": { en: "1–5 years ago", tr: "1 - 5 Yıl arası" },
   "onb.smokingQuit5plus": { en: "More than 5 years ago", tr: "5 Yıldan uzun" },
@@ -1745,30 +1746,30 @@ const t: Record<string, TranslationEntry> = {
   "onb.familyCancer": { en: "Familial cancer (Breast/Colon/Prostate)", tr: "Ailevi Kanser (Meme/Kolon/Prostat)" },
   "onb.familyAlzheimer": { en: "Alzheimer / Early dementia", tr: "Alzheimer / Erken Demans" },
   "onb.familyPsychiatric": { en: "Major psychiatric (Bipolar/Schizophrenia)", tr: "Majör Psikiyatrik (Bipolar/Şizofreni)" },
-  "onb.familyWhyNote": { en: "Your family history helps our AI calculate cardiovascular risk scores and warn you proactively about future health risks.", tr: "Aile geçmişiniz, yapay zekamızın kardiyovasküler risk skorlarını hesaplaması ve gelecekteki sağlık risklerine karşı sizi erken uyarabilmesi için kullanılır." },
+  "onb.familyWhyNote": { en: "Your family history helps our AI calculate cardiovascular risk scores and warn you proactively about future health risks.", tr: "Aile geçmişin, yapay zekamızın kardiyovasküler risk skorlarını hesaplaması ve gelecekteki sağlık risklerine karşı seni erken uyarabilmesi için kullanılır." },
   "onb.whyFamilyHistory": { en: "Family history enables proactive risk screening for hereditary conditions.", tr: "Soygeçmiş bilgisi kalıtsal hastalıklar için proaktif risk taraması sağlar." },
   "onb.phaseBasics": { en: "Basics", tr: "Temel Bilgiler" },
   "onb.phaseHealth": { en: "Health Profile", tr: "Sağlık Profili" },
   "onb.phaseConsent": { en: "Confirmation", tr: "Onay" },
-  "onb.whyBasic": { en: "Your age and gender help us tailor recommendations safely.", tr: "Yaşınız ve cinsiyetiniz güvenli öneriler sunmamızı sağlar." },
-  "onb.whyMeds": { en: "Knowing your medications helps us detect herb-drug interactions.", tr: "İlaçlarınızı bilmemiz bitki-ilaç etkileşimlerini tespit etmemizi sağlar." },
+  "onb.whyBasic": { en: "Your age and biological sex help us tailor recommendations safely.", tr: "Yaşın ve biyolojik cinsiyetin güvenli öneriler sunmamı sağlar." },
+  "onb.whyMeds": { en: "Knowing your medications helps us detect herb-drug interactions.", tr: "İlaçlarını bilmemiz bitki-ilaç etkileşimlerini tespit etmemizi sağlar." },
   "onb.whyAllergies": { en: "Herbal products may cross-react with known allergens — we filter accordingly.", tr: "Bitkisel ürünler bilinen alerjenlerle çapraz reaksiyon verebilir — önerilerimizi buna göre filtreliyoruz." },
   "onb.whyPregnancy": { en: "Many herbs are unsafe during pregnancy and breastfeeding — this activates extra safety filters.", tr: "Birçok bitki gebelik ve emzirmede güvenli değildir — bu bilgi ek güvenlik filtreleri etkinleştirir." },
   "onb.whySubstances": { en: "Alcohol and smoking affect how herbs and medications are metabolized.", tr: "Alkol ve sigara bitkilerin ve ilaçların metabolizmasını etkiler." },
   "onb.whyMedHistory": { en: "Conditions like kidney or liver disease change how herbs are processed in your body.", tr: "Böbrek veya karaciğer hastalığı bitkilerin vücuttaki işlenişini değiştirir." },
-  "onb.whyConsent": { en: "We need your informed consent before providing personalized health guidance.", tr: "Kişiselleştirilmiş sağlık rehberliği sunmadan önce bilgilendirilmiş onayınız gereklidir." },
+  "onb.whyConsent": { en: "We need your informed consent before providing personalized health guidance.", tr: "Kişiselleştirilmiş sağlık rehberliği sunmadan önce bilgilendirilmiş onayın gereklidir." },
   "onb.whyPermissions": { en: "We'll only ask for permissions when you need them — no surprises.", tr: "İzinleri sadece ihtiyaç duyduğunuzda isteyeceğiz — sürpriz yok." },
-  "onb.permSubtitle": { en: "Some features will need your permission. We'll ask at the right moment, not now.", tr: "Bazı özellikler için izninize ihtiyaç duyacağız. Şimdi değil, doğru zamanda soracağız." },
+  "onb.permSubtitle": { en: "Some features will need your permission. We'll ask at the right moment, not now.", tr: "Bazı özellikler için iznine ihtiyaç duyacağız. Şimdi değil, doğru zamanda soracağız." },
   "onb.permNotifTitle": { en: "Medication Reminders", tr: "İlaç Hatırlatıcıları" },
-  "onb.permNotifDesc": { en: "Never miss your medication times and appointments.", tr: "İlaç saatlerinizi ve randevularınızı kaçırmayın." },
+  "onb.permNotifDesc": { en: "Never miss your medication times and appointments.", tr: "İlaç saatlerini ve randevularını kaçırma." },
   "onb.permNotifWhen": { en: "Asked when first medication is saved", tr: "İlk ilaç kaydedildiğinde sorulur" },
   "onb.permLocationTitle": { en: "Nearby Health", tr: "Yakınımdaki Sağlık" },
-  "onb.permLocationDesc": { en: "Find the nearest pharmacies and clinics.", tr: "Size en yakın eczane ve klinikleri bulalım." },
+  "onb.permLocationDesc": { en: "Find the nearest pharmacies and clinics.", tr: "Sana en yakın eczane ve klinikleri bulalım." },
   "onb.permLocationWhen": { en: "Asked when 'Nearby' feature is opened", tr: "'Yakınımda' özelliği açıldığında sorulur" },
   "onb.permCameraTitle": { en: "Image Analysis", tr: "Görüntü Analizi" },
-  "onb.permCameraDesc": { en: "Upload radiology and lab results.", tr: "Radyoloji ve lab sonuçlarınızı yükleyin." },
+  "onb.permCameraDesc": { en: "Upload radiology and lab results.", tr: "Radyoloji ve lab sonuçlarını yükle." },
   "onb.permCameraWhen": { en: "Asked on first upload attempt", tr: "İlk yükleme denemesinde sorulur" },
-  "onb.permNote": { en: "No permissions are requested during setup. You're always in control.", tr: "Kurulum sırasında izin istenmez. Kontrol her zaman sizde." },
+  "onb.permNote": { en: "No permissions are requested during setup. You're always in control.", tr: "Kurulum sırasında izin istenmez. Kontrol her zaman sende." },
 
   // Badge Celebration
   "badge.earned": { en: "Badge Earned!", tr: "Rozet Kazandın!" },

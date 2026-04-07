@@ -56,14 +56,14 @@ const STEP_PHASE = [0, 0, 1, 1, 1, 1, 1, 2, 2]; // indexed by original step inde
 function getSteps(lang: "en" | "tr") {
   if (lang === "tr") {
     return [
-      { id: "basic", title: "Temel Bilgiler", description: "Kendiniz hakkında bilgi verin" },
-      { id: "medications", title: "Mevcut İlaçlar", description: "Kullandığınız aktif ilaçlar" },
-      { id: "allergies", title: "Alerjiler", description: "Bilinen alerjileriniz" },
-      { id: "pregnancy", title: "Gebelik & Emzirme", description: "Üreme sağlığı durumu" },
-      { id: "substances", title: "Alkol & Sigara", description: "Madde kullanım bilgisi" },
-      { id: "medical", title: "Tıbbi Geçmiş", description: "Önemli sağlık durumları" },
+      { id: "basic", title: "Temel Bilgiler", description: "Seni daha yakından tanıyalım" },
+      { id: "medications", title: "Mevcut İlaçlar", description: "Kullandığın aktif ilaçlar" },
+      { id: "allergies", title: "Alerjiler", description: "Bilinen alerjilerin" },
+      { id: "pregnancy", title: "Gebelik & Emzirme", description: "Üreme sağlığı durumun" },
+      { id: "substances", title: "Alkol & Sigara", description: "Madde kullanım bilgin" },
+      { id: "medical", title: "Tıbbi Geçmiş", description: "Önemli sağlık durumların" },
       { id: "family", title: "Soygeçmiş", description: "Aile sağlık öyküsü" },
-      { id: "permissions", title: "Sizi Daha İyi Koruyabilmek İçin", description: "Bazı özellikler için izninize ihtiyaç duyacağız" },
+      { id: "permissions", title: "Seni Daha İyi Koruyabilmek İçin", description: "Bazı özellikler için iznine ihtiyaç duyacağız" },
       { id: "consent", title: "Şartlar & Onay", description: "Tıbbi sorumluluk reddi" },
     ];
   }
@@ -82,7 +82,7 @@ function getSteps(lang: "en" | "tr") {
 
 function getLayer2Step(lang: "en" | "tr") {
   if (lang === "tr") {
-    return { id: "optional", title: "Kişiselleştir (İsteğe Bağlı)", description: "Daha iyi öneriler için yardımcı olun" };
+    return { id: "optional", title: "Profilini Güçlendir (İsteğe Bağlı)", description: "Daha iyi öneriler için bize yardımcı ol" };
   }
   return { id: "optional", title: "Personalize (Optional)", description: "Help us give better recommendations" };
 }

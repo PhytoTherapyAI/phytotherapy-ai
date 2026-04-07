@@ -92,9 +92,10 @@ export function BasicInfoStep({ data, updateData }: Props) {
         )}
       </div>
 
-      {/* Gender — chip buttons instead of dropdown */}
+      {/* Biological Sex — chip buttons */}
       <div className="space-y-2">
         <Label>{tx("onb.gender", lang)}</Label>
+        <p className="text-xs text-muted-foreground -mt-1">{tx("onb.genderNote", lang)}</p>
         <div className="flex flex-wrap gap-2">
           {GENDER_OPTIONS.map((opt) => (
             <button
