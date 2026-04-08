@@ -633,11 +633,17 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
     const wasCompleted = existing?.completed ?? false
     setTogglingId(row.itemId)
 
-    // Optimistic
-    if (existing) {
-      setDailyLogs((prev) => prev.map((l) => l.id === existing.id ? { ...l, completed: !l.completed } : l))
+    // Optimistic UI update
+    if (wasCompleted) {
+      // Uncomplete: remove from local state (consistent with DELETE approach)
+      setDailyLogs((prev) => prev.filter((l) => !(l.item_type === "medication" && l.item_id === row.itemId)))
     } else {
-      setDailyLogs((prev) => [...prev, { id: `temp-${row.itemId}`, user_id: userId, log_date: today, item_type: "medication", item_id: row.itemId, item_name: row.label, completed: true }])
+      // Complete: add to local state
+      if (existing) {
+        setDailyLogs((prev) => prev.map((l) => l.id === existing.id ? { ...l, completed: true } : l))
+      } else {
+        setDailyLogs((prev) => [...prev, { id: `temp-${row.itemId}`, user_id: userId, log_date: today, item_type: "medication", item_id: row.itemId, item_name: row.label, completed: true }])
+      }
     }
 
     if (!wasCompleted) {
@@ -660,9 +666,12 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
 
     try {
       const supabase = createBrowserClient()
-      if (existing) {
-        await supabase.from("daily_logs").update({ completed: !existing.completed }).eq("id", existing.id)
+      if (wasCompleted) {
+        // Uncomplete: DELETE the row (consistent with ritual blocks & dashboard)
+        await supabase.from("daily_logs").delete()
+          .eq("user_id", userId).eq("log_date", today).eq("item_type", "medication").eq("item_id", row.itemId)
       } else {
+        // Complete: INSERT (with UPDATE fallback for existing completed=false rows)
         const { error: insertError } = await supabase.from("daily_logs").insert({
           user_id: userId, log_date: today, item_type: "medication", item_id: row.itemId, item_name: row.label, completed: true,
         })
@@ -698,11 +707,17 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
     const wasCompleted = existing?.completed ?? false
     setTogglingSupId(sup.id)
 
-    // Optimistic
-    if (existing) {
-      setDailyLogs((prev) => prev.map((l) => l.id === existing.id ? { ...l, completed: !l.completed } : l))
+    // Optimistic UI update
+    if (wasCompleted) {
+      // Uncomplete: remove from local state (consistent with DELETE approach)
+      setDailyLogs((prev) => prev.filter((l) => !(l.item_type === "supplement" && l.item_id === sup.id)))
     } else {
-      setDailyLogs((prev) => [...prev, { id: `temp-sup-${sup.id}`, user_id: userId, log_date: today, item_type: "supplement", item_id: sup.id, item_name: supName, completed: true }])
+      // Complete: add to local state
+      if (existing) {
+        setDailyLogs((prev) => prev.map((l) => l.id === existing.id ? { ...l, completed: true } : l))
+      } else {
+        setDailyLogs((prev) => [...prev, { id: `temp-sup-${sup.id}`, user_id: userId, log_date: today, item_type: "supplement", item_id: sup.id, item_name: supName, completed: true }])
+      }
     }
 
     if (!wasCompleted) {
@@ -725,9 +740,12 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
 
     try {
       const supabase = createBrowserClient()
-      if (existing) {
-        await supabase.from("daily_logs").update({ completed: !existing.completed }).eq("id", existing.id)
+      if (wasCompleted) {
+        // Uncomplete: DELETE the row (consistent with ritual blocks & dashboard)
+        await supabase.from("daily_logs").delete()
+          .eq("user_id", userId).eq("log_date", today).eq("item_type", "supplement").eq("item_id", sup.id)
       } else {
+        // Complete: INSERT (with UPDATE fallback for existing completed=false rows)
         const { error: insertError } = await supabase.from("daily_logs").insert({
           user_id: userId, log_date: today, item_type: "supplement", item_id: sup.id, item_name: supName, completed: true,
         })
