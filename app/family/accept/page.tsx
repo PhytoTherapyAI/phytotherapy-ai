@@ -5,6 +5,7 @@ import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { createBrowserClient } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth-context'
+import { useLang } from '@/components/layout/language-toggle'
 
 type InviteStatus = 'loading' | 'found' | 'accepting' | 'accepted' | 'error'
 
@@ -12,6 +13,8 @@ function AcceptInviteContent() {
   const params = useSearchParams()
   const router = useRouter()
   const { user } = useAuth()
+  const { lang } = useLang()
+  const tr = lang === 'tr'
   const token = params.get('token')
   const [status, setStatus] = useState<InviteStatus>('loading')
   const [inviterName, setInviterName] = useState('')
@@ -26,7 +29,7 @@ function AcceptInviteContent() {
   }, [token])
 
   async function fetchInvite() {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('family_members')
       .select(`
         id, invite_email, nickname,
@@ -37,22 +40,31 @@ function AcceptInviteContent() {
       `)
       .eq('invite_token', token!)
       .eq('invite_status', 'pending')
-      .single()
+      .maybeSingle()
+
+    if (error) {
+      console.error('[Accept] fetchInvite error:', error.message)
+      setStatus('error')
+      return
+    }
 
     if (data) {
-      const groupData = data.group as unknown as { name: string; owner_id: string } | null
-      setGroupName(groupData?.name ?? 'Aile Grubu')
+      // Supabase join d\u00f6ner \u2014 safe parse
+      const groupArr = data.group
+      const groupData = Array.isArray(groupArr) ? groupArr[0] : groupArr
+      setGroupName((groupData as { name?: string })?.name ?? (tr ? 'Aile Grubu' : 'Family Group'))
 
       // Owner ismini al
-      if (groupData?.owner_id) {
+      const ownerId = (groupData as { owner_id?: string })?.owner_id
+      if (ownerId) {
         const { data: ownerProfile } = await supabase
           .from('user_profiles')
-          .select('display_name')
-          .eq('id', groupData.owner_id)
-          .single()
-        setInviterName(ownerProfile?.display_name ?? 'Birisi')
+          .select('display_name, full_name')
+          .eq('id', ownerId)
+          .maybeSingle()
+        setInviterName(ownerProfile?.display_name || ownerProfile?.full_name || (tr ? 'Birisi' : 'Someone'))
       } else {
-        setInviterName('Birisi')
+        setInviterName(tr ? 'Birisi' : 'Someone')
       }
       setStatus('found')
     } else {
@@ -74,6 +86,7 @@ function AcceptInviteContent() {
       .eq('invite_token', token)
 
     if (error) {
+      console.error('[Accept] acceptInvite error:', error.message)
       setStatus('error')
     } else {
       setStatus('accepted')
@@ -99,18 +112,18 @@ function AcceptInviteContent() {
   if (status === 'error') return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="text-center">
-        <div className="text-6xl mb-4">&#10060;</div>
+        <div className="text-6xl mb-4" aria-hidden="true">&#10060;</div>
         <h2 className="text-xl font-bold text-foreground mb-2">
-          Davet Bulunamadi
+          {tr ? 'Davet Bulunamad\u0131' : 'Invite Not Found'}
         </h2>
         <p className="text-muted-foreground">
-          Bu davet gecersiz veya suresi dolmus.
+          {tr ? 'Bu davet ge\u00e7ersiz veya s\u00fcresi dolmu\u015f.' : 'This invite is invalid or has expired.'}
         </p>
         <button
           onClick={() => router.push('/')}
           className="mt-6 px-6 py-2 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition"
         >
-          Ana Sayfaya Don
+          {tr ? 'Ana Sayfaya D\u00f6n' : 'Back to Home'}
         </button>
       </div>
     </div>
@@ -120,22 +133,22 @@ function AcceptInviteContent() {
   if (!user && status === 'found') return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="bg-card rounded-2xl shadow-lg p-8 max-w-md w-full text-center border">
-        <div className="text-5xl mb-4">&#128101;</div>
+        <div className="text-5xl mb-4" aria-hidden="true">&#128101;</div>
         <h2 className="text-2xl font-bold text-foreground mb-2">
-          Aile Daveti
+          {tr ? 'Aile Daveti' : 'Family Invite'}
         </h2>
         <p className="text-muted-foreground mb-6">
-          <strong>{inviterName}</strong>, sizi{' '}
-          <strong>{groupName}</strong> grubuna davet etti.
+          <strong>{inviterName}</strong>, {tr ? 'sizi' : 'invited you to'}{' '}
+          <strong>{groupName}</strong> {tr ? 'grubuna davet etti.' : 'group.'}
         </p>
         <p className="text-sm text-muted-foreground mb-4">
-          Daveti kabul etmek icin giris yapin veya kayit olun.
+          {tr ? 'Daveti kabul etmek i\u00e7in giri\u015f yap\u0131n veya kay\u0131t olun.' : 'Sign in or register to accept this invite.'}
         </p>
         <button
-          onClick={() => router.push(`/login?redirect=/family/accept?token=${token}`)}
+          onClick={() => router.push(`/auth/login?redirect=/family/accept?token=${token}`)}
           className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition"
         >
-          Giris Yap / Kayit Ol
+          {tr ? 'Giri\u015f Yap / Kay\u0131t Ol' : 'Sign In / Register'}
         </button>
       </div>
     </div>
@@ -145,33 +158,35 @@ function AcceptInviteContent() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="bg-card rounded-2xl shadow-lg p-8 max-w-md w-full text-center border">
 
-        {/* Guvenlik uyarisi */}
+        {/* G\u00fcvenlik uyar\u0131s\u0131 */}
         <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6 text-left">
           <div className="flex items-start gap-3">
-            <span className="text-2xl">&#9888;&#65039;</span>
+            <span className="text-2xl" aria-hidden="true">&#9888;&#65039;</span>
             <div>
               <p className="font-semibold text-amber-800 dark:text-amber-200">
-                Guvenlik Bildirimi
+                {tr ? 'G\u00fcvenlik Bildirimi' : 'Security Notice'}
               </p>
               <p className="text-amber-700 dark:text-amber-300 text-sm mt-1">
-                Bu davet size ait degilse kabul etmeyin ve bu sayfayi kapatin.
+                {tr
+                  ? 'Bu davet size ait de\u011filse kabul etmeyin ve bu sayfay\u0131 kapat\u0131n.'
+                  : 'If this invite is not meant for you, do not accept it and close this page.'}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="text-5xl mb-4">&#128106;</div>
+        <div className="text-5xl mb-4" aria-hidden="true">&#128106;</div>
         <h2 className="text-2xl font-bold text-foreground mb-2">
-          Aile Daveti
+          {tr ? 'Aile Daveti' : 'Family Invite'}
         </h2>
         <p className="text-muted-foreground mb-6">
-          <strong>{inviterName}</strong>, sizi{' '}
-          <strong>{groupName}</strong> grubuna davet etti.
+          <strong>{inviterName}</strong>, {tr ? 'sizi' : 'invited you to'}{' '}
+          <strong>{groupName}</strong> {tr ? 'grubuna davet etti.' : 'group.'}
         </p>
 
         {status === 'accepted' ? (
           <div className="text-primary font-semibold text-lg">
-            &#10003; Kabul edildi! Yonlendiriliyorsunuz...
+            {tr ? 'Kabul edildi! Y\u00f6nlendiriliyorsunuz...' : 'Accepted! Redirecting...'}
           </div>
         ) : (
           <div className="flex flex-col gap-3">
@@ -181,14 +196,14 @@ function AcceptInviteContent() {
               className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition disabled:opacity-50"
             >
               {status === 'accepting'
-                ? 'Kabul ediliyor...'
-                : 'Daveti Kabul Et'}
+                ? (tr ? 'Kabul ediliyor...' : 'Accepting...')
+                : (tr ? 'Daveti Kabul Et' : 'Accept Invite')}
             </button>
             <button
               onClick={declineInvite}
               className="w-full py-3 border-2 border-border text-muted-foreground rounded-xl font-semibold hover:border-destructive hover:text-destructive transition"
             >
-              Reddet
+              {tr ? 'Reddet' : 'Decline'}
             </button>
           </div>
         )}

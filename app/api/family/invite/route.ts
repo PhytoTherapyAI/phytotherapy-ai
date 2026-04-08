@@ -17,24 +17,31 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { groupId, email, nickname, inviterName } = await req.json()
+    let body: { groupId?: string; email?: string; nickname?: string; inviterName?: string }
+    try {
+      body = await req.json()
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+    }
+
+    const { groupId, email, nickname, inviterName } = body
 
     if (!groupId || !email) {
       return NextResponse.json({ error: "groupId and email required" }, { status: 400 })
     }
 
-    // Grubu doğrula — sadece owner/admin davet edebilir
-    const { data: group } = await supabase
+    // Grubu do\u011Frula \u2014 sadece owner/admin davet edebilir
+    const { data: group, error: groupErr } = await supabase
       .from("family_groups")
       .select("id, name, owner_id")
       .eq("id", groupId)
       .single()
 
-    if (!group) {
+    if (groupErr || !group) {
       return NextResponse.json({ error: "Group not found" }, { status: 404 })
     }
 
-    // Owner mı kontrol et
+    // Owner m\u0131 kontrol et
     const isOwner = group.owner_id === user.id
     if (!isOwner) {
       // Admin mi kontrol et
@@ -45,38 +52,38 @@ export async function POST(req: NextRequest) {
         .eq("user_id", user.id)
         .eq("role", "admin")
         .eq("invite_status", "accepted")
-        .single()
+        .maybeSingle()
 
       if (!adminCheck) {
         return NextResponse.json({ error: "Only owner or admin can invite" }, { status: 403 })
       }
     }
 
-    // Zaten üye mi?
+    // Zaten \u00FCye mi?
     const { data: existing } = await supabase
       .from("family_members")
       .select("id, invite_status")
       .eq("group_id", groupId)
       .eq("invite_email", email)
-      .single()
+      .maybeSingle()
 
     if (existing?.invite_status === "accepted") {
       return NextResponse.json({ error: "Already a member" }, { status: 409 })
     }
 
-    let inviteToken: string
+    let inviteToken: string | null = null
 
     if (existing) {
-      // Pending davet varsa token'ı al
+      // Pending davet varsa token'\u0131 al
       const { data: memberData } = await supabase
         .from("family_members")
         .select("invite_token")
         .eq("id", existing.id)
         .single()
-      inviteToken = memberData?.invite_token
+      inviteToken = memberData?.invite_token ?? null
     } else {
-      // Yeni üye ekle
-      const { data: newMember } = await supabase
+      // Yeni \u00FCye ekle
+      const { data: newMember, error: insertErr } = await supabase
         .from("family_members")
         .insert({
           group_id: groupId,
@@ -88,13 +95,18 @@ export async function POST(req: NextRequest) {
         .select("invite_token")
         .single()
 
-      if (!newMember) {
+      if (insertErr || !newMember) {
+        console.error("[FAMILY-INVITE] Insert error:", insertErr?.message)
         return NextResponse.json({ error: "Failed to create invite" }, { status: 500 })
       }
       inviteToken = newMember.invite_token
     }
 
-    // Davet emaili gönder
+    if (!inviteToken) {
+      return NextResponse.json({ error: "Could not generate invite token" }, { status: 500 })
+    }
+
+    // Davet emaili g\u00F6nder
     const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/family/accept?token=${inviteToken}`
     const senderName = inviterName || "Birisi"
 
@@ -123,17 +135,18 @@ export async function POST(req: NextRequest) {
         </div>
         <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; margin: 24px 0;">
           <p style="color: #92400e; font-size: 13px; margin: 0;">
-            Bu davet size ait değilse bu emaili görmezden gelin.
+            Bu davet size ait de\u011Filse bu emaili g\u00F6rmezden gelin.
           </p>
         </div>
         <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 32px;">
-          DoctoPal — Kanıta dayalı sağlık asistanı
+          DoctoPal \u2014 Kan\u0131ta dayal\u0131 sa\u011Fl\u0131k asistan\u0131
         </p>
       </div>
       `
     )
 
     if (!result.success) {
+      console.error("[FAMILY-INVITE] Email failed:", result.error)
       return NextResponse.json({ error: "Email failed", details: result.error }, { status: 500 })
     }
 

@@ -42,6 +42,7 @@ export default function FamilyPage() {
   const [newNickname, setNewNickname] = useState("")
   const [creating, setCreating] = useState(false)
   const [inviting, setInviting] = useState(false)
+  const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null)
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -49,11 +50,28 @@ export default function FamilyPage() {
     }
   }, [authLoading, isAuthenticated, router])
 
+  // Auto-dismiss feedback
+  useEffect(() => {
+    if (feedback) {
+      const t = setTimeout(() => setFeedback(null), 4000)
+      return () => clearTimeout(t)
+    }
+  }, [feedback])
+
   async function handleCreateGroup() {
     if (!groupName.trim()) return
     setCreating(true)
     try {
-      await createGroup(groupName)
+      const ok = await createGroup(groupName)
+      if (ok) {
+        setFeedback({ type: "success", msg: tr ? "Grup olu\u015Fturuldu!" : "Group created!" })
+        setGroupName("")
+      } else {
+        setFeedback({ type: "error", msg: tr ? "Grup olu\u015Fturulamad\u0131. Tablolar Supabase'de olu\u015Fturulmu\u015F mu?" : "Failed to create group. Are the tables set up in Supabase?" })
+      }
+    } catch (err) {
+      console.error("[Family] createGroup failed:", err)
+      setFeedback({ type: "error", msg: tr ? "Grup olu\u015Fturulamad\u0131, tekrar deneyin." : "Failed to create group, try again." })
     } finally {
       setCreating(false)
     }
@@ -64,11 +82,11 @@ export default function FamilyPage() {
     setInviting(true)
     try {
       await inviteMember(inviteEmail, inviteNickname)
-      // Email gonder
+      // Email g\u00F6nder
       const supabase = createBrowserClient()
       const { data: { session } } = await supabase.auth.getSession()
       if (session?.access_token) {
-        await fetch("/api/family/invite", {
+        const res = await fetch("/api/family/invite", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -81,10 +99,21 @@ export default function FamilyPage() {
             inviterName: profile?.full_name || user?.email,
           }),
         })
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}))
+          console.error("[Family] invite API error:", errData)
+          setFeedback({ type: "error", msg: tr ? "Davet e-postas\u0131 g\u00F6nderilemedi." : "Failed to send invite email." })
+          setInviting(false)
+          return
+        }
       }
       setInviteEmail("")
       setInviteNickname("")
+      setFeedback({ type: "success", msg: tr ? "Davet g\u00F6nderildi!" : "Invite sent!" })
       await refetch()
+    } catch (err) {
+      console.error("[Family] handleInvite failed:", err)
+      setFeedback({ type: "error", msg: tr ? "Davet g\u00F6nderilemedi." : "Failed to send invite." })
     } finally {
       setInviting(false)
     }
@@ -112,12 +141,23 @@ export default function FamilyPage() {
           </h1>
           <p className="text-muted-foreground max-w-md mx-auto text-sm">
             {tr
-              ? "Aile uyelerinin saglik profillerini yonet"
+              ? "Aile \u00FCyelerinin sa\u011Fl\u0131k profillerini y\u00F6net"
               : "Manage your family members' health profiles"}
           </p>
         </div>
 
-        {/* Grup yoksa olustur */}
+        {/* Feedback toast */}
+        {feedback && (
+          <div className={`mb-4 rounded-xl border px-4 py-3 text-center text-sm font-medium ${
+            feedback.type === "success"
+              ? "border-emerald-200 bg-emerald-50/80 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/20 dark:text-emerald-300"
+              : "border-destructive/30 bg-destructive/10 text-destructive"
+          }`}>
+            {feedback.msg}
+          </div>
+        )}
+
+        {/* Grup yoksa olu\u015Ftur */}
         {!familyGroup ? (
           <div className="bg-card rounded-2xl shadow-sm border p-6">
             <div className="text-center mb-6">
@@ -127,15 +167,16 @@ export default function FamilyPage() {
               </h2>
               <p className="text-muted-foreground text-sm mt-1">
                 {tr
-                  ? "Aile uyelerinin saglik profillerini yonetmek icin bir grup olustur."
+                  ? "Aile \u00FCyelerinin sa\u011Fl\u0131k profillerini y\u00F6netmek i\u00E7in bir grup olu\u015Ftur."
                   : "Create a group to manage your family's health profiles."}
               </p>
             </div>
             <input
               value={groupName}
               onChange={e => setGroupName(e.target.value)}
-              placeholder={tr ? "Grup adi (orn: Ailem)" : "Group name (e.g. My Family)"}
+              placeholder={tr ? "Grup ad\u0131 (\u00F6rn: Ailem)" : "Group name (e.g. My Family)"}
               className="w-full border border-border rounded-xl px-4 py-3 mb-3 bg-background text-foreground focus:ring-2 focus:ring-emerald-400 outline-none"
+              onKeyDown={e => e.key === "Enter" && handleCreateGroup()}
             />
             <Button
               onClick={handleCreateGroup}
@@ -144,13 +185,13 @@ export default function FamilyPage() {
             >
               {creating && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
               {creating
-                ? (tr ? "Olusturuluyor..." : "Creating...")
-                : (tr ? "Grup Olustur" : "Create Group")}
+                ? (tr ? "Olu\u015Fturuluyor..." : "Creating...")
+                : (tr ? "Grup Olu\u015Ftur" : "Create Group")}
             </Button>
           </div>
         ) : (
           <>
-            {/* Grup basligi */}
+            {/* Grup ba\u015Fl\u0131\u011F\u0131 */}
             <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-4 mb-6 flex items-center gap-3">
               <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-900/40">
                 <Home className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
@@ -160,7 +201,7 @@ export default function FamilyPage() {
                   {familyGroup.name}
                 </h2>
                 <p className="text-emerald-600 dark:text-emerald-400 text-sm">
-                  {familyMembers.length} {tr ? "uye" : "members"}
+                  {familyMembers.length} {tr ? "\u00FCye" : "members"}
                 </p>
               </div>
               {isOwner && (
@@ -171,11 +212,11 @@ export default function FamilyPage() {
               )}
             </div>
 
-            {/* Uye listesi */}
+            {/* \u00DCye listesi */}
             <div className="bg-card rounded-2xl shadow-sm border mb-6 overflow-hidden">
               <div className="p-4 border-b border-border">
                 <h3 className="font-semibold text-foreground">
-                  {tr ? "Uyeler" : "Members"}
+                  {tr ? "\u00DCyeler" : "Members"}
                 </h3>
               </div>
               <div className="divide-y divide-border">
@@ -254,12 +295,12 @@ export default function FamilyPage() {
                             {member.role === "owner"
                               ? (tr ? "Kurucu" : "Owner")
                               : member.role === "admin"
-                                ? (tr ? "Yonetici" : "Admin")
-                                : (tr ? "Uye" : "Member")}
+                                ? (tr ? "Y\u00F6netici" : "Admin")
+                                : (tr ? "\u00DCye" : "Member")}
                           </Badge>
                           {member.allows_management && (
                             <span className="text-[10px] text-emerald-600 dark:text-emerald-400">
-                              {tr ? "Yonetim izni var" : "Can be managed"}
+                              {tr ? "Y\u00F6netim izni var" : "Can be managed"}
                             </span>
                           )}
                         </div>
@@ -276,7 +317,7 @@ export default function FamilyPage() {
                               onClick={() => promoteToAdmin(member.id)}
                             >
                               <Shield className="h-3 w-3 mr-0.5" />
-                              {tr ? "Yonetici Yap" : "Promote"}
+                              {tr ? "Y\u00F6netici Yap" : "Promote"}
                             </Button>
                           )}
                           <Button
@@ -286,7 +327,7 @@ export default function FamilyPage() {
                             onClick={() => {
                               const name = member.nickname || displayName
                               if (confirm(tr
-                                ? `${name} gruptan cikarilsin mi?`
+                                ? `${name} gruptan \u00E7\u0131kar\u0131ls\u0131n m\u0131?`
                                 : `Remove ${name} from group?`
                               )) {
                                 removeMember(member.id)
@@ -303,33 +344,34 @@ export default function FamilyPage() {
 
                 {familyMembers.length === 0 && (
                   <div className="p-8 text-center text-muted-foreground text-sm">
-                    {tr ? "Henuz uye yok. Asagidan davet gonder." : "No members yet. Send an invite below."}
+                    {tr ? "Hen\u00FCz \u00FCye yok. A\u015Fa\u011F\u0131dan davet g\u00F6nder." : "No members yet. Send an invite below."}
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Uye davet et */}
+            {/* \u00DCye davet et */}
             {(isOwner || isAdmin) && (
               <div className="bg-card rounded-2xl shadow-sm border p-6">
                 <div className="flex items-center gap-2 mb-4">
                   <UserPlus className="h-5 w-5 text-emerald-500" />
                   <h3 className="font-semibold text-foreground">
-                    {tr ? "Uye Davet Et" : "Invite Member"}
+                    {tr ? "\u00DCye Davet Et" : "Invite Member"}
                   </h3>
                 </div>
                 <input
                   value={inviteNickname}
                   onChange={e => setInviteNickname(e.target.value)}
-                  placeholder={tr ? "Takma ad (orn: Babam, Annem)" : "Nickname (e.g. Dad, Mom)"}
+                  placeholder={tr ? "Takma ad (\u00F6rn: Babam, Annem)" : "Nickname (e.g. Dad, Mom)"}
                   className="w-full border border-border rounded-xl px-4 py-3 mb-3 bg-background text-foreground focus:ring-2 focus:ring-emerald-400 outline-none"
                 />
                 <input
                   value={inviteEmail}
                   onChange={e => setInviteEmail(e.target.value)}
-                  placeholder={tr ? "Email adresi" : "Email address"}
+                  placeholder={tr ? "E-posta adresi" : "Email address"}
                   type="email"
                   className="w-full border border-border rounded-xl px-4 py-3 mb-3 bg-background text-foreground focus:ring-2 focus:ring-emerald-400 outline-none"
+                  onKeyDown={e => e.key === "Enter" && handleInvite()}
                 />
                 <Button
                   onClick={handleInvite}
@@ -338,8 +380,8 @@ export default function FamilyPage() {
                 >
                   {inviting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                   {inviting
-                    ? (tr ? "Gonderiliyor..." : "Sending...")
-                    : (tr ? "Davet Gonder" : "Send Invite")}
+                    ? (tr ? "G\u00F6nderiliyor..." : "Sending...")
+                    : (tr ? "Davet G\u00F6nder" : "Send Invite")}
                 </Button>
               </div>
             )}

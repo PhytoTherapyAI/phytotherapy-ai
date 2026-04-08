@@ -6,8 +6,11 @@ export function useActiveProfile() {
   const { user } = useAuth()
   const { activeProfileId, canManage } = useFamily()
 
-  const effectiveUserId = activeProfileId || user?.id || ''
-  const isOwnProfile = !activeProfileId || effectiveUserId === user?.id
+  // activeProfileId empty string = no family, fallback to own user
+  const effectiveUserId = (activeProfileId && activeProfileId.length > 0)
+    ? activeProfileId
+    : (user?.id || '')
+  const isOwnProfile = !user || effectiveUserId === user.id
   const canEdit = isOwnProfile || canManage(effectiveUserId)
 
   return {

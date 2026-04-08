@@ -98,7 +98,7 @@ export default function SelectProfilePage() {
         transition={{ delay: 0.2 }}
         className="text-white text-xl sm:text-2xl font-semibold mb-10 text-center"
       >
-        Kimin profilini goruntulmek istiyorsunuz?
+        Kimin profilini g\u00f6r\u00fcnt\u00fclemek istiyorsunuz?
       </motion.h2>
 
       {/* Profil Grid */}
@@ -128,7 +128,7 @@ export default function SelectProfilePage() {
                   &#10003;
                 </div>
               )}
-              {/* Sadece goruntuleme */}
+              {/* Sadece g\u00f6r\u00fcnt\u00fcleme */}
               {!p.canManageThis && !p.isOwn && (
                 <div className="absolute -top-1.5 -right-1.5 bg-slate-500 rounded-full w-5 h-5 flex items-center justify-center text-white text-[10px] shadow-md">
                   &#128065;
@@ -141,13 +141,13 @@ export default function SelectProfilePage() {
               {p.name}
             </span>
 
-            {/* Yonetim durumu */}
+            {/* Y\u00f6netim durumu */}
             <span className="text-[11px] text-slate-500">
               {p.isOwn
                 ? 'Kendi profilin'
                 : p.canManageThis
-                  ? 'Duzenleyebilirsin'
-                  : 'Sadece goruntule'}
+                  ? 'D\u00fczenleyebilirsin'
+                  : 'Sadece g\u00f6r\u00fcnt\u00fcle'}
             </span>
           </motion.button>
         ))}
@@ -162,7 +162,7 @@ export default function SelectProfilePage() {
         className="mt-12 text-slate-500 hover:text-slate-300 transition flex items-center gap-2 text-sm"
       >
         <Settings className="w-4 h-4" />
-        Aile Ayarlari
+        Aile Ayarlar\u0131
       </motion.button>
     </div>
   )

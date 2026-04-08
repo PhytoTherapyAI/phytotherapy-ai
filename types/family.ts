@@ -43,8 +43,8 @@ export interface FamilyContextType {
   isAdmin: boolean
   canManage: (targetUserId: string) => boolean
   setActiveProfile: (userId: string) => Promise<void>
-  createGroup: (name: string) => Promise<void>
-  inviteMember: (email: string, nickname: string) => Promise<void>
+  createGroup: (name: string) => Promise<boolean>
+  inviteMember: (email: string, nickname: string) => Promise<boolean>
   updateNickname: (memberId: string, nickname: string) => Promise<void>
   promoteToAdmin: (memberId: string) => Promise<void>
   removeMember: (memberId: string) => Promise<void>

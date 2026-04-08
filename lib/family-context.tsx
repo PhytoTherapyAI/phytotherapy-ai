@@ -18,7 +18,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
   const supabase = createBrowserClient()
 
   const fetchMembers = useCallback(async (groupId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('family_members')
       .select(`
         *,
@@ -29,6 +29,10 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
       .eq('group_id', groupId)
       .eq('invite_status', 'accepted')
 
+    if (error) {
+      console.error('[Family] fetchMembers error:', error.message)
+      return
+    }
     if (data) setFamilyMembers(data as FamilyMember[])
   }, [supabase])
 
@@ -36,12 +40,16 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
     if (!user) return
     setLoading(true)
     try {
-      // Önce sahibi olduğu grubu bul
-      const { data: ownedGroup } = await supabase
+      // \u00D6nce sahibi oldu\u011Fu grubu bul
+      const { data: ownedGroup, error: ownedErr } = await supabase
         .from('family_groups')
         .select('*')
         .eq('owner_id', user.id)
-        .single()
+        .maybeSingle()
+
+      if (ownedErr) {
+        console.error('[Family] fetchOwnedGroup error:', ownedErr.message)
+      }
 
       if (ownedGroup) {
         setFamilyGroup(ownedGroup)
@@ -49,20 +57,24 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      // Üye olduğu grubu bul
-      const { data: membership } = await supabase
+      // \u00DCye oldu\u011Fu grubu bul
+      const { data: membership, error: memberErr } = await supabase
         .from('family_members')
         .select('group_id')
         .eq('user_id', user.id)
         .eq('invite_status', 'accepted')
-        .single()
+        .maybeSingle()
+
+      if (memberErr) {
+        console.error('[Family] fetchMembership error:', memberErr.message)
+      }
 
       if (membership) {
         const { data: group } = await supabase
           .from('family_groups')
           .select('*')
           .eq('id', membership.group_id)
-          .single()
+          .maybeSingle()
 
         if (group) {
           setFamilyGroup(group)
@@ -80,8 +92,9 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
       .from('active_profile_sessions')
       .select('viewing_user_id')
       .eq('user_id', user.id)
-      .single()
+      .maybeSingle()
 
+    // maybeSingle returns null if no row — no error thrown
     setActiveProfileIdState(data?.viewing_user_id ?? user.id)
   }, [user, supabase])
 
@@ -115,81 +128,99 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
   async function setActiveProfile(userId: string) {
     if (!user) return
     setActiveProfileIdState(userId)
-    await supabase
+    const { error } = await supabase
       .from('active_profile_sessions')
       .upsert({
         user_id: user.id,
         viewing_user_id: userId,
         updated_at: new Date().toISOString()
       })
+    if (error) console.error('[Family] setActiveProfile error:', error.message)
   }
 
-  async function createGroup(name: string) {
-    if (!user) return
-    const { data } = await supabase
+  async function createGroup(name: string): Promise<boolean> {
+    if (!user) return false
+    const { data, error } = await supabase
       .from('family_groups')
       .insert({ owner_id: user.id, name })
       .select()
       .single()
 
+    if (error) {
+      console.error('[Family] createGroup error:', error.message)
+      return false
+    }
+
     if (data) {
       setFamilyGroup(data)
       // Kurucuyu da member olarak ekle
-      await supabase.from('family_members').insert({
+      const { error: memberErr } = await supabase.from('family_members').insert({
         group_id: data.id,
         user_id: user.id,
         role: 'owner',
-        invite_email: user.email!,
+        invite_email: user.email || '',
         invite_status: 'accepted',
         accepted_at: new Date().toISOString()
       })
+      if (memberErr) console.error('[Family] createGroup member error:', memberErr.message)
       await fetchMembers(data.id)
+      return true
     }
+    return false
   }
 
-  async function inviteMember(email: string, nickname: string) {
-    if (!familyGroup) return
-    await supabase.from('family_members').insert({
+  async function inviteMember(email: string, nickname: string): Promise<boolean> {
+    if (!familyGroup) return false
+    const { error } = await supabase.from('family_members').insert({
       group_id: familyGroup.id,
       invite_email: email,
       nickname,
       role: 'member',
       invite_status: 'pending'
     })
+    if (error) {
+      console.error('[Family] inviteMember error:', error.message)
+      return false
+    }
     await fetchFamilyData()
+    return true
   }
 
   async function updateNickname(memberId: string, nickname: string) {
-    await supabase
+    const { error } = await supabase
       .from('family_members')
       .update({ nickname })
       .eq('id', memberId)
+    if (error) console.error('[Family] updateNickname error:', error.message)
     await fetchFamilyData()
   }
 
   async function promoteToAdmin(memberId: string) {
-    await supabase
+    const { error } = await supabase
       .from('family_members')
       .update({ role: 'admin' })
       .eq('id', memberId)
+    if (error) console.error('[Family] promoteToAdmin error:', error.message)
     await fetchFamilyData()
   }
 
   async function removeMember(memberId: string) {
-    await supabase
+    const { error } = await supabase
       .from('family_members')
       .delete()
       .eq('id', memberId)
+    if (error) console.error('[Family] removeMember error:', error.message)
     await fetchFamilyData()
   }
 
   async function updateAllowsManagement(allows: boolean) {
     if (!user || !familyGroup) return
-    await supabase
+    const { error } = await supabase
       .from('family_members')
       .update({ allows_management: allows })
       .eq('user_id', user.id)
       .eq('group_id', familyGroup.id)
+    if (error) console.error('[Family] updateAllowsManagement error:', error.message)
     await fetchFamilyData()
   }
 
@@ -197,7 +228,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
     <FamilyContext.Provider value={{
       familyGroup,
       familyMembers,
-      activeProfileId: activeProfileId,
+      activeProfileId,
       isOwner,
       isAdmin,
       canManage,
