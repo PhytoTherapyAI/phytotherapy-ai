@@ -41,6 +41,8 @@ import {
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { LifestyleSection } from "@/components/profile/LifestyleSection";
 import { ProfileSupplementsStep, ProfileMedicalHistoryStep, ProfileFamilyHistoryStep, ProfileSubstanceStep } from "@/components/profile/OnboardingAdapters";
+import { toTurkishFrequency } from "@/lib/frequency";
+import { PDFDownloadButton } from "@/components/pdf/PDFDownloadButton";
 import { AvatarPicker } from "@/components/profile/AvatarPicker";
 
 interface DrugSuggestion {
@@ -839,31 +841,7 @@ export default function ProfilePage() {
               </p>
             </div>
             <div className="flex gap-2 w-full sm:w-auto">
-              <Button size="sm"
-                onClick={async () => {
-                  setSbarLoading("pdf");
-                  try {
-                    const supabase = createBrowserClient();
-                    const { data: { session } } = await supabase.auth.getSession();
-                    const res = await fetch("/api/sbar-pdf", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
-                      body: JSON.stringify({ lang }),
-                    });
-                    if (!res.ok) throw new Error("PDF failed");
-                    const blob = await res.blob();
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url; a.download = `DoctoPal-SBAR-${new Date().toISOString().split("T")[0]}.pdf`;
-                    a.click(); URL.revokeObjectURL(url);
-                  } catch { alert(tr ? "PDF oluşturulamadı" : "PDF generation failed"); }
-                  setSbarLoading(null);
-                }}
-                disabled={sbarLoading === "pdf"}
-                className="flex-1 sm:flex-initial"
-              >
-                {sbarLoading === "pdf" ? <><Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />{tr ? "Oluşturuluyor..." : "Generating..."}</> : <><span className="mr-1.5">📥</span>{tr ? "PDF İndir" : "Download PDF"}</>}
-              </Button>
+              <PDFDownloadButton lang={lang as "en" | "tr"} className="flex-1 sm:flex-initial" />
               <Button size="sm" variant="outline"
                 onClick={() => setSbarEmailOpen(!sbarEmailOpen)}
                 className="flex-1 sm:flex-initial"
@@ -1152,18 +1130,7 @@ export default function ProfilePage() {
                       {(med.dosage || med.frequency) && (
                         <div className="mt-1 flex gap-2">
                           {med.dosage && <Badge variant="secondary">{med.dosage}</Badge>}
-                          {med.frequency && <Badge variant="outline">{tr ? ({
-                            "1x daily": "Günlük", "2x daily": "Günde 2 kez", "3x daily": "Günde 3 kez",
-                            "4x daily": "Günde 4 kez", "once daily": "Günlük", "twice daily": "Günde 2 kez",
-                            "1x_daily": "Günlük", "once_daily": "Günlük", "once_a_day": "Günlük",
-                            "twice_daily": "Günde 2 kez", "three_times_daily": "Günde 3 kez",
-                            "four_times_daily": "Günde 4 kez", "2x_daily": "Günde 2 kez", "3x_daily": "Günde 3 kez",
-                            "daily": "Günlük", "qd": "Günlük", "bid": "Günde 2 kez", "tid": "Günde 3 kez", "qid": "Günde 4 kez",
-                            "every 8 hours": "Her 8 saatte", "every 12 hours": "Her 12 saatte",
-                            "as needed": "Gerektiğinde", "as_needed": "Gerektiğinde", "prn": "Gerektiğinde",
-                            "weekly": "Haftalık", "monthly": "Aylık",
-                            "Günlük": "Günlük", "Günde 2 kez": "Günde 2 kez", "Günde 3 kez": "Günde 3 kez",
-                          } as Record<string, string>)[med.frequency] || med.frequency : med.frequency}</Badge>}
+                          {med.frequency && <Badge variant="outline">{tr ? toTurkishFrequency(med.frequency) : med.frequency}</Badge>}
                         </div>
                       )}
                     </div>
@@ -1904,42 +1871,11 @@ export default function ProfilePage() {
       {/* Scanners removed — kept for mobile app later */}
 
       {/* FAB — SBAR PDF shortcut */}
-      <motion.button
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.5, type: "spring", stiffness: 300, damping: 20 }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={async () => {
-          setSbarLoading("pdf");
-          try {
-            const supabase = createBrowserClient();
-            const { data: { session } } = await supabase.auth.getSession();
-            const res = await fetch("/api/sbar-pdf", {
-              method: "POST",
-              headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
-              body: JSON.stringify({ lang }),
-            });
-            if (!res.ok) throw new Error("PDF failed");
-            const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url; a.download = `DoctoPal-SBAR-${new Date().toISOString().split("T")[0]}.pdf`;
-            a.click(); URL.revokeObjectURL(url);
-          } catch { alert(tr ? "PDF oluşturulamadı" : "PDF generation failed"); }
-          setSbarLoading(null);
-        }}
-        disabled={sbarLoading === "pdf"}
-        className="fixed bottom-36 right-4 md:bottom-20 md:right-8 z-[100] flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3.5 shadow-xl hover:shadow-2xl transition-shadow group"
-        aria-label={tr ? "Özet PDF Al" : "Get Summary PDF"}
-      >
-        {sbarLoading === "pdf"
-          ? <Loader2 className="h-5 w-5 animate-spin" />
-          : <span className="text-lg">📄</span>}
-        <span className="max-w-0 overflow-hidden group-hover:max-w-[120px] transition-all duration-300 text-sm font-medium whitespace-nowrap">
-          {tr ? "Özet Al" : "Get Summary"}
-        </span>
-      </motion.button>
+      <PDFDownloadButton
+        lang={lang as "en" | "tr"}
+        variant="fab"
+        className="fixed bottom-36 right-4 md:bottom-20 md:right-8 z-[100] flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3.5 shadow-xl hover:shadow-2xl transition-shadow"
+      />
     </div>
   );
 }

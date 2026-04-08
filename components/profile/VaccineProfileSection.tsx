@@ -51,20 +51,20 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
     setSaveSuccess(false)
     try {
       const supabase = createBrowserClient()
-      // Timeout: abort after 8s
-      const controller = new AbortController()
-      const timeout = setTimeout(() => controller.abort(), 8000)
-      const { error } = await supabase.from("user_profiles").update({ vaccines: updated }).eq("id", userId).abortSignal(controller.signal)
-      clearTimeout(timeout)
+      const { data, error } = await supabase
+        .from("user_profiles")
+        .update({ vaccines: updated })
+        .eq("id", userId)
+        .select("vaccines")
       if (error) {
-        console.warn("Vaccine save failed:", error.message)
+        console.error("Vaccine save failed:", error.code, error.message, error.details)
         setVaccines(previous)
       } else {
         setSaveSuccess(true)
         setTimeout(() => setSaveSuccess(false), 2000)
       }
     } catch (err) {
-      console.warn("Vaccine save error:", err)
+      console.error("Vaccine save error:", err)
       setVaccines(previous)
     } finally {
       setSaving(false)
