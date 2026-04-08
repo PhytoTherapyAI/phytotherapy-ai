@@ -1,6 +1,63 @@
 # PROGRESS.md — Doctopal Sprint İlerleme Takibi
 
-> Son güncelleme: 7 Nisan 2026 (v44.0 — Session 16: Onboarding Mega Expansion)
+> Son güncelleme: 8 Nisan 2026 (v45.0 — Session 17: Vaccine + Profile + Bug Mega Sprint)
+
+---
+
+## Oturum 7-8 Nisan 2026 (Session 17) — Vaccine Profile + Profile Overhaul + 17 Commits
+
+### Bug Fixes & Audit
+- ✅ SSR hydration: reducedMotion module-level → useReducedMotion() hook (4 step dosyası)
+- ✅ API error handling: supplement-check/compare request.json() try-catch + Supabase .error log
+- ✅ i18n: OnboardingWizard 2 hardcoded ternary → tx() keys
+- ✅ Dark mode: BottomNavbar bg-white → bg-background, text-slate → text-muted-foreground
+- ✅ SupplementsStep arama: 100 → 250+ takviye (SUPPLEMENT_NAME_MAP/TR entegrasyonu)
+- ✅ AllergiesStep: defansif Array.isArray guard + SelectValue children fix
+- ✅ Shimmer keyframes: style jsx → globals.css (client component uyumluluğu)
+- ✅ FileReader Promise: onerror + null guard eklendi
+- ✅ SBARReport: lineHeight → paddingTop (react-pdf uyumluluğu)
+- ✅ Badge shimmer: forwards → 1 (freeze fix)
+- ✅ 5 mock veri → gerçek DB: streak, vitality score, lab count, badges, aktiviteler
+
+### Yeni Özellikler — Aşı Profili (3 Parça)
+- ✅ Supabase migration: user_profiles.vaccines JSONB kolonu
+- ✅ lib/vaccine-data.ts: 13 aşı 3 grupta, VaccineEntry type, VACCINE_TRIGGERS, getVaccineRecommendations()
+- ✅ VaccineProfileSection: checkbox + yıl picker, accordion gruplar, progress bar
+- ✅ Dashboard VaccineBanner: kronik hastalık × aşı cross-check, grip sezonu önceliği
+- ✅ AI Chat tetikleyiciler: checkVaccineKeywords() (tetanoz/kuduz/grip), chat API vaccine context injection
+- ✅ immune_shield badge + vaccinesTracked UserStats
+
+### Profil Sayfası Overhaul
+- ✅ Canlılık skoru: dinamik bar + glow EKG + Framer Motion ring
+- ✅ Alerji/hamilelik rozeti: hero üst-sağ conditional badges
+- ✅ Metalik rozet tasarımı: kategori bazlı gradient (health/engagement/social/milestone)
+- ✅ Klinik motivasyon mesajları: eksik alana göre dinamik mesaj + CTA
+- ✅ SBAR kartlar: alerji (anafilaksi uyarı), tıbbi geçmiş (kardiyometabolik risk), soygeçmiş (ayrı kart)
+- ✅ Epidemiyolojik etiketler: kan grubu, yaş/cinsiyet tarama, sigara, BMI, soygeçmiş risk
+- ✅ SBAR PDF export: @react-pdf/renderer + Resend email + FAB
+- ✅ InlineEdit: boş alanlar "+ Ekle" → inline input (ad, yaş, cinsiyet)
+- ✅ Kalem ikonu: header + kişisel bilgiler kartı → edit trigger
+- ✅ EKG glow + sonsuz hareket animasyonu (CSS ecg-move)
+- ✅ "Alerji Yok" rozeti: hero → alerjiler kartı başlığına taşındı
+
+### Onboarding İyileştirmeler
+- ✅ İlaç sıklığı: text input → dropdown select (9 seçenek) + auto-add
+- ✅ DEFAULT_DOSES: 13 → 33 ilaç (TR brand: Parol, Coraspin, Beloc vb.)
+- ✅ Takviye otomatik doz: findSupplementInfo() → dose/unit pre-fill
+- ✅ Gamification: renkli info kartları (adım bazlı ikon/renk) + XP sistemi
+- ✅ Dropdown scroll fix: tüm portal dropdown'lar scroll/resize event'te pozisyon günceller
+- ✅ Reaksiyon tipi: SelectValue render function + min-width fix
+- ✅ Merkezi frequency-utils.ts + DropdownPortal.tsx bileşenleri
+
+### Davranış Bilimi Copywriting
+- ✅ 37 translation key davranış bilimi prensipleriyle yeniden yazıldı
+- ✅ Reciprocity, Loss Aversion, Social Proof, Autonomy, Curiosity Gap, Personalization
+
+### Teknik
+- ✅ 17 commit, tümü push edildi
+- ✅ 12 yeni dosya oluşturuldu
+- ✅ ~2500 satır ekleme
+- ✅ Build: sıfır hata (her commit sonrası doğrulandı)
 
 ---
 

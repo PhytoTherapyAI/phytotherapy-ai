@@ -1,10 +1,10 @@
-# CLAUDE.md — Doctopal Proje Anayasası v43.0
+# CLAUDE.md — Doctopal Proje Anayasası v44.0
 
 ## Hızlı Bağlam
 
 **Doctopal** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **4 gün kaldı**
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **3 gün kaldı**
 - **IGNITE 26 kazanıldı** — jüri core tool'lara ve aile profiline odaklanılmasını istedi
 - **Domain:** doctopal.com (Vercel) | **GitHub:** github.com/PhytoTherapyAI/phytotherapy-ai
 - **Sunum dili:** İngilizce | **Arayüz:** TR/EN toggle
@@ -225,6 +225,7 @@ SENTRY_DSN=...
 
 ---
 
-*Son güncelleme: 7 Nisan 2026 v43.0*
+*Son güncelleme: 8 Nisan 2026 v44.0*
 *IGNITE 26 kazanıldı — Harvard Hackathon'a core tool + aile profili odağıyla hazırlanılıyor.*
-*Hackathon: 11-12 Nisan 2026 — 4 gün kaldı.*
+*Session 17: Aşı profili, SBAR PDF, profil overhaul, davranış bilimi copywriting tamamlandı.*
+*Hackathon: 11-12 Nisan 2026 — 3 gün kaldı.*
