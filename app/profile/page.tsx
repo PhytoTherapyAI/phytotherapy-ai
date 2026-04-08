@@ -17,11 +17,10 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
-  User, Pill, AlertTriangle, Heart, Shield, Trash2,
-  Plus, X, Loader2, CheckCircle2, Check, Settings, Save, Baby, Wine,
-  Cigarette, Stethoscope, Sparkles, Camera, MapPin, Users, Mail,
+  User, Pill, AlertTriangle, Shield, Trash2,
+  Plus, X, Loader2, CheckCircle2, Check, Save, Baby,
+  Stethoscope, Sparkles, Camera, MapPin, Users, Mail,
   UserPlus, ChevronDown, ChevronUp, Phone, Edit3, Star,
 } from "lucide-react";
 import type { UserMedication, UserAllergy, AllergySeverity } from "@/lib/database.types";
@@ -41,8 +40,7 @@ import {
 } from "@/components/profile/ProfileGamification";
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { LifestyleSection } from "@/components/profile/LifestyleSection";
-import { ChronicConditionsEditor } from "@/components/profile/ChronicConditionsEditor";
-import { ProfileSupplementsStep, ProfileMedicalHistoryStep, ProfileFamilyHistoryStep, ProfileAllergiesStep, ProfileSubstanceStep } from "@/components/profile/OnboardingAdapters";
+import { ProfileSupplementsStep, ProfileMedicalHistoryStep, ProfileFamilyHistoryStep, ProfileSubstanceStep } from "@/components/profile/OnboardingAdapters";
 
 interface DrugSuggestion {
   brandName: string;
