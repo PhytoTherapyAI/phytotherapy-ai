@@ -41,6 +41,7 @@ import {
 } from "@/components/profile/ProfileGamification";
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { LifestyleSection } from "@/components/profile/LifestyleSection";
+import { ChronicConditionsEditor } from "@/components/profile/ChronicConditionsEditor";
 
 interface DrugSuggestion {
   brandName: string;
@@ -1456,7 +1457,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Chronic Conditions — System Grouped Chips */}
+            {/* Chronic Conditions — Full Editor with Autocomplete + Med Suggestion */}
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <Stethoscope className="h-4 w-4" />
@@ -1470,145 +1471,31 @@ export default function ProfilePage() {
                 message={tr ? "Diyabet ile hipertansiyonu olan birine farkl\u0131, sa\u011fl\u0131kl\u0131 birine farkl\u0131 \u00f6neri veririm. Hastal\u0131\u011f\u0131n\u0131 bilmeden sana \"herkese uyan\" \u00e7\u00f6z\u00fcm \u00f6neririm \u2014 ama sen herkese uymuyorsun. Sen \u00f6zelsin. \u{1F3AF}" : "I recommend differently for someone with diabetes + hypertension vs a healthy person. Without knowing your conditions, I give generic advice \u2014 but you\u2019re not generic. You\u2019re special. \u{1F3AF}"}
                 color="purple"
               />
-
-              {/* Clean slate toggle button */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (healthForm.chronic_conditions.filter(c => !c.startsWith("family:")).length > 0) return;
+              <ChronicConditionsEditor
+                conditions={healthForm.chronic_conditions}
+                medications={medications.map(m => ({ brand_name: m.brand_name, generic_name: m.generic_name }))}
+                onToggle={toggleCondition}
+                onAdd={(id) => {
+                  if (!healthForm.chronic_conditions.includes(id)) {
+                    setHealthForm(p => ({ ...p, chronic_conditions: [...p.chronic_conditions, id] }));
+                  }
                 }}
-                className={`w-full rounded-xl border-2 p-3.5 text-sm font-semibold text-center transition-all ${
-                  healthForm.chronic_conditions.filter(c => !c.startsWith("family:")).length === 0
-                    ? "border-green-500 bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400"
-                    : "border-muted hover:border-green-300 text-muted-foreground"
-                }`}
-              >
-                {healthForm.chronic_conditions.filter(c => !c.startsWith("family:")).length === 0
-                  ? `✅ ${tr ? "Kronik hastalığım yok" : "No chronic conditions"}`
-                  : `${tr ? "Tüm seçimleri kaldır" : "Clear all selections"}`}
-              </button>
-
-              {/* Cardiovascular */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryCardio", lang)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: "Hypertension", key: "onb.hypertension" },
-                    { id: "Arrhythmia", key: "onb.arrhythmia" },
-                    { id: "Heart Failure", key: "onb.heartFailure" },
-                  ].map(c => (
-                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
-                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
-                      {tx(c.key, lang)}
-                    </Badge>
-                  ))}
+                lang={lang as 'en' | 'tr'}
+              />
+              {/* Family history */}
+              {healthForm.chronic_conditions.filter(c => c.startsWith("family:")).length > 0 && (
+                <div className="border-t pt-2 mt-2">
+                  <p className="text-xs font-semibold text-muted-foreground mb-1.5">{"\u{1F9EC}"} {tr ? "Soyge\u00e7mi\u015f" : "Family History"}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {healthForm.chronic_conditions.filter(c => c.startsWith("family:")).map(c => (
+                      <Badge key={c} variant="outline" className="gap-1 text-xs">
+                        {c.replace("family:", "")}
+                        <X className="h-3 w-3 cursor-pointer" onClick={() => toggleCondition(c)} />
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              {/* Endocrine */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryEndocrine", lang)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: "Diabetes", key: "onb.diabetesType" },
-                    { id: "Thyroid Disorder", key: "onb.thyroid" },
-                  ].map(c => (
-                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
-                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
-                      {tx(c.key, lang)}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Neurological */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryNeuro", lang)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: "Depression/Anxiety", key: "onb.depressionAnxiety" },
-                    { id: "Epilepsy", key: "onb.epilepsy" },
-                  ].map(c => (
-                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
-                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
-                      {tx(c.key, lang)}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Respiratory */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryRespiratory", lang)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: "Asthma", key: "onb.asthma" },
-                    { id: "COPD", key: "onb.copd" },
-                  ].map(c => (
-                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
-                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
-                      {tx(c.key, lang)}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Surgical */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categorySurgical", lang)}</p>
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant={healthForm.chronic_conditions.includes("Bariatric Surgery") ? "default" : "outline"}
-                    className="cursor-pointer transition-colors" onClick={() => toggleCondition("Bariatric Surgery")}>
-                    {tx("onb.bariatricSurgery", lang)}
-                  </Badge>
-                </div>
-              </div>
-
-              {/* Custom + Family conditions */}
-              {(() => {
-                const knownIds = ["Hypertension", "Arrhythmia", "Heart Failure", "Diabetes", "Thyroid Disorder", "Depression/Anxiety", "Epilepsy", "Asthma", "COPD", "Bariatric Surgery"];
-                const customs = healthForm.chronic_conditions.filter(c => !knownIds.includes(c) && !c.startsWith("family:"));
-                const family = healthForm.chronic_conditions.filter(c => c.startsWith("family:"));
-                return (
-                  <>
-                    {customs.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {customs.map(c => (
-                          <Badge key={c} variant="default" className="gap-1">
-                            {c}
-                            <X className="h-3 w-3 cursor-pointer" onClick={() => toggleCondition(c)} />
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                    {family.length > 0 && (
-                      <div className="border-t pt-2 mt-2">
-                        <p className="text-xs font-semibold text-muted-foreground mb-1.5">{"\u{1F9EC}"} {tr ? "Soyge\u00e7mi\u015f" : "Family History"}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {family.map(c => (
-                            <Badge key={c} variant="outline" className="gap-1 text-xs">
-                              {c.replace("family:", "")}
-                              <X className="h-3 w-3 cursor-pointer" onClick={() => toggleCondition(c)} />
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
-
-              <div className="mt-2 flex gap-2">
-                <Input
-                  placeholder={tx("profile.otherConditionPlaceholder", lang)}
-                  value={newCondition}
-                  onChange={(e) => setNewCondition(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustomCondition())}
-                />
-                <Button variant="outline" size="sm" onClick={addCustomCondition} disabled={!newCondition.trim()}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
+              )}
             </div>
 
             <Separator />
