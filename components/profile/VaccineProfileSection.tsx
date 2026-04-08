@@ -116,14 +116,20 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
     return tx(keys[group], lang)
   }
 
+  const essentialTotal = ESSENTIAL_VACCINE_IDS.length
+  const xpEarned = doneCount * 20
+
   return (
-    <Card id="vaccines">
+    <Card id="vaccines" className={`rounded-xl shadow-sm hover:shadow-md transition-shadow ${doneCount > 0 ? 'border-l-4 border-l-blue-500' : ''}`}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
               {tx("vaccine.title", lang)}
+              <span className={`text-xs font-semibold rounded-full px-2.5 py-0.5 ${doneCount > 0 ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30' : 'text-muted-foreground bg-muted'}`}>
+                {doneCount > 0 ? `✓ +${xpEarned} XP` : '+20 XP'}
+              </span>
             </CardTitle>
             <CardDescription className="mt-1">
               {tx("vaccine.subtitle", lang)}
@@ -136,11 +142,29 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
           )}
         </div>
 
+        {/* Motivation card */}
+        <div className="mt-3 rounded-lg border p-3 text-sm flex items-start gap-2.5 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">
+          <span className="text-base shrink-0 mt-0.5">🛡️</span>
+          <p className="flex-1 leading-snug">
+            {tr ? "Tetanoz aşın ne zaman? Bunu bilmek hayat kurtarır" : "When was your last tetanus shot? This info saves lives"}
+          </p>
+          <span className="shrink-0 text-xs font-bold opacity-70 bg-white/50 dark:bg-black/20 rounded-full px-2 py-0.5">+20 XP</span>
+        </div>
+
+        {/* Shield complete banner */}
+        {allEssentialDone && (
+          <div className="mt-3 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 p-3 text-white text-center">
+            <p className="text-sm font-bold">🛡️ {tr ? "Bağışıklık Kalkanı Tam!" : "Immunity Shield Complete!"}</p>
+            <p className="text-xs opacity-90 mt-0.5">{tr ? `${essentialTotal} temel aşı tamamlandı` : `All ${essentialTotal} essential vaccines recorded`}</p>
+          </div>
+        )}
+
         {/* Progress bar */}
         <div className="mt-3 space-y-1.5">
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">
-              {tr ? `${doneCount}/${totalCount} aşı kayıtlı` : `${doneCount}/${totalCount} vaccines recorded`}
+              {tr ? `Temel Aşılar: ${essentialDone}/${essentialTotal}` : `Essential: ${essentialDone}/${essentialTotal}`}
+              {xpEarned > 0 && <span className="ml-2 text-primary font-medium">(+{xpEarned} XP {tr ? "kazandın" : "earned"})</span>}
             </span>
             {allEssentialDone && (
               <Badge className="bg-primary/10 text-primary text-[10px]">
@@ -224,6 +248,13 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                             <span className={`flex-1 text-sm font-medium ${isDone ? "text-foreground" : "text-muted-foreground"}`}>
                               {displayName}
                             </span>
+
+                            {/* XP indicator */}
+                            {isDone ? (
+                              <span className="text-[10px] font-semibold text-green-600 dark:text-green-400">+20 XP ✨</span>
+                            ) : (
+                              <span className="text-[10px] text-muted-foreground/50">+20 XP</span>
+                            )}
 
                             {/* Date dropdown trigger */}
                             <button

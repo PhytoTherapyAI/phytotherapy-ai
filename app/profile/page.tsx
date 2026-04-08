@@ -31,6 +31,14 @@ import { PermissionBottomSheet } from "@/components/permissions/PermissionBottom
 import { VaccineProfileSection } from "@/components/profile/VaccineProfileSection";
 import { BADGES, evaluateBadges, type UserStats } from "@/lib/badges";
 import { txObj } from "@/lib/translations";
+import {
+  calculateProfileXP,
+  ProfileXPHeader,
+  MotivationCard,
+  SectionXPBadge,
+  EmptyStateCTA,
+  type ProfileXPInput,
+} from "@/components/profile/ProfileGamification";
 
 interface DrugSuggestion {
   brandName: string;
@@ -549,6 +557,24 @@ export default function ProfilePage() {
         {tx('profile.title', lang)}
       </h1>
 
+      {/* ── XP & PROFILE COMPLETION HEADER ── */}
+      {profile && (() => {
+        const vaccines = Array.isArray(profile.vaccines) ? profile.vaccines : [];
+        const xpInput: ProfileXPInput = {
+          hasBasicInfo: !!(profile.full_name && profile.age && profile.gender),
+          medicationCount: medications.length,
+          supplementCount: (profile.supplements || []).length,
+          hasAllergies: allergies.length > 0,
+          hasChronicConditions: (profile.chronic_conditions || []).filter((c: string) => !c.startsWith('family:')).length > 0,
+          hasFamilyHistory: (profile.chronic_conditions || []).some((c: string) => c.startsWith('family:')),
+          vaccineCount: vaccines.filter((v: { status: string }) => v.status === 'done').length,
+          hasContactInfo: !!(profile.country || profile.city || profile.phone),
+          streakDays,
+        };
+        const xp = calculateProfileXP(xpInput);
+        return <ProfileXPHeader streakDays={streakDays} xp={xp} lang={lang as 'en' | 'tr'} />;
+      })()}
+
       {/* ── DIGITAL TWIN HERO ── */}
       {profile && (
         <div className="relative mb-6 rounded-2xl border bg-gradient-to-br from-primary/5 via-emerald-500/5 to-teal-500/5 p-6 shadow-sm overflow-hidden">
@@ -1056,13 +1082,14 @@ export default function ProfilePage() {
       </Card>
 
       {/* Medications — Editable */}
-      <Card className="mb-6">
+      <Card className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow ${medications.length > 0 ? 'border-l-4 border-l-green-500' : ''}`}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Pill className="h-5 w-5" />
                 {tx('profile.activeMeds', lang)}
+                <SectionXPBadge earned={Math.min(medications.length * 50, 250)} potential={50} completed={medications.length > 0} />
               </CardTitle>
               <CardDescription>
                 {tx('profile.lastUpdated', lang)}{" "}
@@ -1110,11 +1137,23 @@ export default function ProfilePage() {
               }}
             />
           )}
+          {/* Motivation card */}
+          <MotivationCard
+            icon={"\u{1F48A}"}
+            message={tr ? "İlaç-bitki etkileşimlerini kontrol edebilmem için şart" : "Essential for checking drug-herb interactions"}
+            xpReward="+50 XP"
+            color="blue"
+          />
           {/* Medication list */}
           {medications.length === 0 && !isAddingMed ? (
-            <p className="text-sm text-muted-foreground">
-              {tx('profile.noMeds', lang)}
-            </p>
+            <EmptyStateCTA
+              icon={"\u{1F48A}"}
+              title={tr ? "İlaç Ekle" : "Add Medication"}
+              description={tr ? "İlaçlarını ekleyerek AI asistanının gücünü artır!" : "Power up your AI assistant by adding your medications!"}
+              buttonText={tr ? "İlk İlacını Ekle" : "Add First Medication"}
+              xpReward="+50 XP"
+              onClick={() => setIsAddingMed(true)}
+            />
           ) : (
             <div className="space-y-2">
               {medications.map((med) => (
@@ -1285,7 +1324,7 @@ export default function ProfilePage() {
       {/* Scanners moved to /scanner page via Tools menu */}
 
       {/* Edit Health Profile — moved here, right below Active Medications */}
-      <Card className="mb-6">
+      <Card className="mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
@@ -1429,7 +1468,14 @@ export default function ProfilePage() {
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <Stethoscope className="h-4 w-4" />
                 {tx("profile.chronicConditions", lang)}
+                <SectionXPBadge earned={75} potential={75} completed={healthForm.chronic_conditions.filter(c => !c.startsWith('family:')).length > 0} />
               </Label>
+              <MotivationCard
+                icon={"\u{1F3E5}"}
+                message={tr ? "Diyabetliye farkl\u0131, sa\u011fl\u0131kl\u0131ya farkl\u0131 \u00f6neri veririm" : "I recommend differently for diabetics vs healthy individuals"}
+                xpReward="+75 XP"
+                color="purple"
+              />
 
               {/* Clean slate button */}
               {healthForm.chronic_conditions.filter(c => !c.startsWith("family:")).length === 0 && (
@@ -1568,7 +1614,14 @@ export default function ProfilePage() {
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 {"\u{1F33F}"} {tx("profile.supplements", lang)}
+                <SectionXPBadge earned={Math.min(healthForm.supplements.length * 30, 150)} potential={30} completed={healthForm.supplements.length > 0} />
               </Label>
+              <MotivationCard
+                icon={"\u{1F33F}"}
+                message={tr ? "Beta-alanin kar\u0131ncalanmas\u0131n\u0131 n\u00f6rolojik sanmayay\u0131m" : "So I don't mistake beta-alanine tingling for a neurological issue"}
+                xpReward="+30 XP"
+                color="green"
+              />
               <div className="flex flex-wrap gap-2">
                 {["Vitamin D", "Vitamin B12", "Iron", "Omega-3", "Magnesium", "Zinc", "Probiotics", "Multivitamin", "Vitamin C", "Folic Acid", "Calcium", "Coenzyme Q10", "Curcumin", "Ashwagandha", "Melatonin", "Collagen"].map((s) => (
                   <Badge
@@ -1831,7 +1884,7 @@ export default function ProfilePage() {
 
         return (
           <>
-            <Card className={`mb-6 ${isEmpty ? "border-green-200 dark:border-green-800" : ""}`}
+            <Card className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow ${isEmpty ? "border-green-200 dark:border-green-800" : "border-l-4 border-l-purple-500"}`}
               style={isEmpty ? { backgroundColor: "var(--green-50, rgba(240,253,244,0.5))" } : {}} id="medical-history">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1968,7 +2021,7 @@ export default function ProfilePage() {
         };
 
         return (
-          <Card className={`mb-6 ${hasAnaphylaxis ? "border-red-300 dark:border-red-700 border-l-4 border-l-red-500" : allergies.length === 0 ? "border-green-200 dark:border-green-800" : ""}`}
+          <Card className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow ${hasAnaphylaxis ? "border-red-300 dark:border-red-700 border-l-4 border-l-red-500" : allergies.length > 0 ? "border-l-4 border-l-amber-500" : "border-green-200 dark:border-green-800"}`}
             style={hasAnaphylaxis ? { backgroundColor: "var(--red-50, rgba(254,242,242,0.5))" } : allergies.length === 0 ? { backgroundColor: "var(--green-50, rgba(240,253,244,0.5))" } : {}}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 flex-wrap">
@@ -1982,6 +2035,7 @@ export default function ProfilePage() {
                   : allergies.length === 0
                     ? (tr ? "Alerjiler" : "Allergies")
                     : `${allergies.length} ${tr ? "Alerji Tanımlı" : allergies.length === 1 ? "Allergy Defined" : "Allergies Defined"}`}
+                <SectionXPBadge earned={75} potential={75} completed={allergies.length > 0} />
                 {allergies.length === 0 && !hasAnaphylaxis && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-green-500 px-2.5 py-1 text-[10px] font-bold text-white shadow">
                     🛡️ {tr ? "Alerji Yok" : "No Allergies"}

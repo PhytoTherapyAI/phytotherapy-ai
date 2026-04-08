@@ -1,6 +1,6 @@
 // © 2026 Doctopal — All Rights Reserved
 import { NextRequest } from "next/server";
-import ReactPDF from "@react-pdf/renderer";
+import { renderToStream } from "@react-pdf/renderer";
 import { SBARReport, type SBARData } from "@/components/pdf/SBARReport";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -89,14 +89,20 @@ export async function POST(request: NextRequest) {
     };
 
     // Render PDF
-    const pdfStream = await ReactPDF.renderToStream(SBARReport({ data: sbarData }));
-    const chunks: Uint8Array[] = [];
-    for await (const chunk of pdfStream) {
-      chunks.push(typeof chunk === "string" ? new TextEncoder().encode(chunk) : chunk);
+    let pdfBuffer: Buffer;
+    try {
+      const pdfStream = await renderToStream(SBARReport({ data: sbarData }));
+      const chunks: Uint8Array[] = [];
+      for await (const chunk of pdfStream) {
+        chunks.push(typeof chunk === "string" ? new TextEncoder().encode(chunk) : chunk);
+      }
+      pdfBuffer = Buffer.concat(chunks);
+    } catch (renderErr) {
+      console.error("PDF render error:", renderErr);
+      return new Response(JSON.stringify({ error: "PDF render failed", detail: String(renderErr) }), { status: 500, headers: { "Content-Type": "application/json" } });
     }
-    const pdfBuffer = Buffer.concat(chunks);
 
-    return new Response(pdfBuffer, {
+    return new Response(new Uint8Array(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="DoctoPal-SBAR-${new Date().toISOString().split("T")[0]}.pdf"`,
