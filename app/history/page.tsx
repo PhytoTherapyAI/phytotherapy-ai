@@ -135,10 +135,8 @@ export default function HistoryPage() {
     if (filter === "favorites" && !item.is_favorite) return false
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
-      return (
-        item.query_text.toLowerCase().includes(q) ||
-        (item.response_text && item.response_text.toLowerCase().includes(q))
-      )
+      // Search in query_text only — response_text is too long and matches common substrings
+      return item.query_text.toLowerCase().includes(q)
     }
     return true
   })
