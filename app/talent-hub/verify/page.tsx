@@ -1,7 +1,7 @@
 // © 2026 Doctopal — All Rights Reserved
 "use client"
 
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { Card } from "@/components/ui/card"
@@ -41,7 +41,7 @@ export default function VerifyPage() {
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   // Load status from localStorage
-  useState(() => {
+  useEffect(() => {
     try {
       const saved = localStorage.getItem(`verification_${user?.id || "guest"}`)
       if (saved) {
@@ -50,7 +50,7 @@ export default function VerifyPage() {
         setDiplomaNumber(data.diplomaNumber || "")
       }
     } catch {}
-  })
+  }, [user?.id])
 
   const t = (key: string) => {
     const map: Record<string, Record<string, string>> = {

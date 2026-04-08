@@ -2,7 +2,7 @@
 // Drug Info / Rx Copilot — Progressive Disclosure + Zero-Error Shield + Framer Motion
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Pill, Search, Loader2, LogIn, AlertTriangle, Shield, ChevronDown, ChevronUp,
@@ -34,10 +34,10 @@ function LoadingSteps({ lang }: { lang: string }) {
     : ["Scanning drug database...", "Checking interactions...", "Analyzing safety profile...", "Compiling dosage info..."];
   const icons = ["🔍", "⚠️", "🛡️", "💊"];
 
-  useState(() => {
+  useEffect(() => {
     const t = setInterval(() => setStep(s => (s + 1) % steps.length), 2000);
     return () => clearInterval(t);
-  });
+  }, [steps.length]);
 
   return (
     <div className="flex flex-col items-center py-16 gap-6">

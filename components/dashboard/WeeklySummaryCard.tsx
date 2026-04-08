@@ -71,7 +71,7 @@ export function WeeklySummaryCard({ userId, lang, isPremium = false }: WeeklySum
       const avgScore = scores.length > 0
         ? Math.round(scores.reduce((s, c) => s + (c.health_score || 0), 0) / scores.length)
         : 0
-      const best = scores.reduce((max, c) => (c.health_score || 0) > (max.health_score || 0) ? c : max, scores[0])
+      const best = scores.length > 0 ? scores.reduce((max, c) => (c.health_score || 0) > (max.health_score || 0) ? c : max, scores[0]) : null
 
       // Build 7-day array
       const days = []
