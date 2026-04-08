@@ -1,10 +1,10 @@
-# CLAUDE.md — DoctoPal Proje Anayasası v44.0
+# CLAUDE.md — DoctoPal Proje Anayasası v45.0
 
 ## Hızlı Bağlam
 
 **DoctoPal** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **3 gün kaldı**
+- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **2 gün kaldı**
 - **IGNITE 26 kazanıldı** — jüri core tool'lara ve aile profiline odaklanılmasını istedi
 - **Domain:** doctopal.com (Vercel) | **GitHub:** github.com/PhytoTherapyAI/phytotherapy-ai
 - **Sunum dili:** İngilizce | **Arayüz:** TR/EN toggle
@@ -105,15 +105,18 @@
 - [ ] Boy/Kilo (BMI hesaplama)
 - [ ] Akıllı cihaz kullanımı (switch)
 
-### 7. Aile Profili (Netflix Tarzı)
-- [ ] Netflix profil sekmesi şeklinde profil ekleme
-- [ ] Premium alan kişi: kendi + 2 kişinin profilini yönetebilir
-- [ ] Aile paketi: eklenen herkes premium
-- [ ] Üye ekleme = direkt kullanıcı ekleme (davet ile)
-- [ ] Eklenen kişiye güvenlik bildirimi: "Bir aileye kaydedildiniz, size ait değilse çıkın"
-- [ ] Eklenen kişi düzenlenebilirlik tercihi seçebilsin
-- [ ] Premium kullanıcıya giriştε "Hangi profili görüntülemek istiyorsunuz?" sorulsun
-- [ ] Not ekleme: "sevgilim", "babam" gibi etiketler
+### 7. Aile Profili (Netflix Tarzı) ✅ TAMAMLANDI
+- [x] Netflix profil sekmesi şeklinde profil ekleme (/select-profile)
+- [x] Üye ekleme = davet ile (/api/family/invite + Resend email)
+- [x] Eklenen kişiye güvenlik bildirimi (/family/accept güvenlik uyarısı)
+- [x] Eklenen kişi düzenlenebilirlik tercihi seçebilsin (FamilyManagementSettings toggle)
+- [x] "Hangi profili görüntülemek istiyorsunuz?" sorulsun (select-profile redirect)
+- [x] Not ekleme: "babam", "eşim" gibi nickname'ler (davet formunda)
+- [x] Aktif profil banner (header'da yeşil banner)
+- [x] Profil/Dashboard başkasının verisini gösterir (useActiveProfile hook)
+- [x] 24 bug fix (XSS, RLS recursion, hydration, unicode, tema)
+- [ ] Premium alan kişi: kendi + 2 kişinin profilini yönetebilir (premium gate)
+- [ ] Aile paketi: eklenen herkes premium (premium propagation)
 
 ### 8. Toolları Gizle
 - [ ] Sadece core tool'lar görünsün (asistan, etkileşim, takvim, kan testi, profil, aile)
@@ -225,7 +228,7 @@ SENTRY_DSN=...
 
 ---
 
-*Son güncelleme: 8 Nisan 2026 v44.0*
+*Son güncelleme: 9 Nisan 2026 v45.0*
 *IGNITE 26 kazanıldı — Harvard Hackathon'a core tool + aile profili odağıyla hazırlanılıyor.*
-*Session 17: Aşı profili, SBAR PDF, profil overhaul, davranış bilimi copywriting tamamlandı.*
-*Hackathon: 11-12 Nisan 2026 — 3 gün kaldı.*
+*Session 18: Aile profili sistemi tamamlandı (Netflix tarzı, davet, yönetim, 24 bug fix).*
+*Hackathon: 11-12 Nisan 2026 — 2 gün kaldı.*

@@ -1,6 +1,58 @@
 # PROGRESS.md — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 8 Nisan 2026 (v45.0 — Session 17: Vaccine + Profile + Bug Mega Sprint)
+> Son güncelleme: 9 Nisan 2026 (v46.0 — Session 18: Aile Profili Sistemi)
+
+---
+
+## Oturum 9 Nisan 2026 (Session 18) — Aile Profili Sistemi + 10 Commit
+
+### Yeni Özellikler — Aile Profili (Netflix Tarzı)
+- ✅ Supabase migration: family_groups, family_members, active_profile_sessions tabloları
+- ✅ RLS policy'ler: SECURITY DEFINER fonksiyonlarla recursion-free
+- ✅ FamilyContext: createGroup, inviteMember, updateNickname, promoteToAdmin, removeMember
+- ✅ FamilyProvider: app layout'a eklendi (AuthProvider içinde)
+- ✅ Netflix tarzı profil seçim sayfası (/select-profile)
+- ✅ Aile yönetim sayfası (/family) — grup oluşturma, üye listesi, davet formu
+- ✅ Davet kabul sayfası (/family/accept) — güvenlik uyarısı, login redirect
+- ✅ Davet API route (/api/family/invite) — Resend + Supabase admin fallback
+- ✅ Aktif profil banner (header'da yeşil banner, "profilini görüntülüyorsunuz")
+- ✅ useActiveProfile hook — activeUserId, isOwnProfile, canEdit
+- ✅ Profil sayfası: activeUserId ile data fetch, read-only/edit modu
+- ✅ Dashboard: streak, tasks, check-in, meds activeUserId ile fetch
+- ✅ FamilyManagementSettings: profil sayfasında yönetim izni toggle
+
+### Bug Fixes (24 bug fixlendi)
+- ✅ XSS fix: escapeHtml() email template'inde
+- ✅ RLS infinite recursion: SECURITY DEFINER helper fonksiyonlar
+- ✅ Supabase .single() → .maybeSingle() (hata yutma fix)
+- ✅ inviteToken null guard
+- ✅ Hydration fix: select-profile localStorage useEffect'e taşındı
+- ✅ sessionStorage per-user key (cross-account leak fix)
+- ✅ setActiveProfile validation (non-member block)
+- ✅ Accept page email validation (logged-in email match)
+- ✅ Unicode escape → düz Türkçe karakterler (8 dosya)
+- ✅ Tema tutarlılığı: select-profile dark → site temasına uyumlu
+- ✅ Email: Resend onboarding@resend.dev + inviteUrl UI'da gösterme
+- ✅ createGroup/inviteMember boolean return + feedback toast
+- ✅ SQL: partial unique index (duplicate invite prevention)
+
+### Teknik
+- ✅ 10+ commit, tümü push edildi
+- ✅ 12 yeni dosya oluşturuldu
+- ✅ ~2000 satır ekleme
+- ✅ Build: sıfır hata (her commit sonrası doğrulandı)
+
+### Dosya Listesi
+- types/family.ts — FamilyGroup, FamilyMember, ActiveProfileSession types
+- lib/family-context.tsx — FamilyProvider + useFamily hook
+- lib/use-active-profile.ts — useActiveProfile hook
+- app/api/family/invite/route.ts — Davet API (Resend + Supabase fallback)
+- app/family/page.tsx — Aile yönetim sayfası
+- app/family/accept/page.tsx — Davet kabul sayfası
+- app/select-profile/page.tsx — Netflix tarzı profil seçim
+- components/profile/FamilyManagementSettings.tsx — Yönetim izni toggle
+- supabase/migrations/20260409_family_profiles.sql — Tablo + policy migration
+- supabase/migrations/20260409_family_fix_v2.sql — Recursion-free RLS fix
 
 ---
 
