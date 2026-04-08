@@ -1,6 +1,6 @@
 // © 2026 Doctopal — All Rights Reserved
 import { NextRequest } from "next/server";
-import { renderToStream } from "@react-pdf/renderer";
+import { renderToBuffer } from "@react-pdf/renderer";
 import { SBARReport, type SBARData } from "@/components/pdf/SBARReport";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -88,15 +88,11 @@ export async function POST(request: NextRequest) {
       generatedAt: new Date().toLocaleString(lang === "tr" ? "tr-TR" : "en-US", { dateStyle: "medium", timeStyle: "short" }),
     };
 
-    // Render PDF
+    // Render PDF using renderToBuffer (simpler, no stream handling)
     let pdfBuffer: Buffer;
     try {
-      const pdfStream = await renderToStream(SBARReport({ data: sbarData }));
-      const chunks: Uint8Array[] = [];
-      for await (const chunk of pdfStream) {
-        chunks.push(typeof chunk === "string" ? new TextEncoder().encode(chunk) : chunk);
-      }
-      pdfBuffer = Buffer.concat(chunks);
+      const element = SBARReport({ data: sbarData });
+      pdfBuffer = await renderToBuffer(element as any);
     } catch (renderErr) {
       console.error("PDF render error:", renderErr);
       return new Response(JSON.stringify({ error: "PDF render failed", detail: String(renderErr) }), { status: 500, headers: { "Content-Type": "application/json" } });
