@@ -29,6 +29,8 @@ import { MedicationScanner } from "@/components/scanner/MedicationScanner";
 import { shouldAskPermission } from "@/lib/permission-state";
 import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
 import { VaccineProfileSection } from "@/components/profile/VaccineProfileSection";
+import { BADGES, evaluateBadges, type UserStats } from "@/lib/badges";
+import { txObj } from "@/lib/translations";
 
 interface DrugSuggestion {
   brandName: string;
@@ -41,6 +43,11 @@ export default function ProfilePage() {
   const { isAuthenticated, isLoading, profile, user, refreshProfile } = useAuth();
   const [medications, setMedications] = useState<UserMedication[]>([]);
   const [allergies, setAllergies] = useState<UserAllergy[]>([]);
+
+  // Dynamic data (replacing hardcoded values)
+  const [streakDays, setStreakDays] = useState(0);
+  const [labTestCount, setLabTestCount] = useState(0);
+  const [recentActivity, setRecentActivity] = useState<{ icon: string; text: string; time: string }[]>([]);
 
   // Add medication state
   const [isAddingMed, setIsAddingMed] = useState(false);
@@ -289,9 +296,45 @@ export default function ProfilePage() {
     Promise.all([
       supabase.from("user_medications").select("*").eq("user_id", user.id).eq("is_active", true),
       supabase.from("user_allergies").select("*").eq("user_id", user.id),
-    ]).then(([medsRes, allergyRes]) => {
+      supabase.from("blood_tests").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+      supabase.from("query_history").select("query_type, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5),
+      supabase.from("daily_check_ins").select("check_in_date").eq("user_id", user.id).order("check_in_date", { ascending: false }).limit(30),
+    ]).then(([medsRes, allergyRes, labRes, activityRes, streakRes]) => {
       if (medsRes.data) setMedications(medsRes.data as UserMedication[]);
       if (allergyRes.data) setAllergies(allergyRes.data as UserAllergy[]);
+      // Lab test count
+      setLabTestCount(labRes.count ?? 0);
+      // Streak calculation
+      if (streakRes.data && streakRes.data.length > 0) {
+        let streak = 0;
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        for (let i = 0; i < streakRes.data.length; i++) {
+          const d = new Date(streakRes.data[i].check_in_date); d.setHours(0, 0, 0, 0);
+          const expected = new Date(today); expected.setDate(expected.getDate() - i);
+          if (d.getTime() === expected.getTime()) streak++;
+          else break;
+        }
+        setStreakDays(streak);
+      }
+      // Recent activity from query_history
+      if (activityRes.data && activityRes.data.length > 0) {
+        const tr = lang === "tr";
+        const typeIcons: Record<string, { icon: string; en: string; tr: string }> = {
+          interaction: { icon: "✅", en: "Checked drug interaction", tr: "İlaç etkileşimi kontrol edildi" },
+          blood_test: { icon: "🩸", en: "Uploaded blood test", tr: "Kan tahlili yüklendi" },
+          general: { icon: "💬", en: "Asked health question", tr: "Sağlık sorusu soruldu" },
+        };
+        const now = Date.now();
+        setRecentActivity(activityRes.data.slice(0, 3).map((a: { query_type: string; created_at: string }) => {
+          const info = typeIcons[a.query_type] || typeIcons.general;
+          const diff = now - new Date(a.created_at).getTime();
+          const mins = Math.floor(diff / 60000);
+          const hrs = Math.floor(diff / 3600000);
+          const days = Math.floor(diff / 86400000);
+          const time = days > 0 ? (tr ? `${days} gün önce` : `${days}d ago`) : hrs > 0 ? (tr ? `${hrs}s önce` : `${hrs}h ago`) : (tr ? `${mins}dk önce` : `${mins}m ago`);
+          return { icon: info.icon, text: tr ? info.tr : info.en, time };
+        }));
+      }
     }).catch(() => { /* silent */ });
   }, [user]);
 
@@ -559,12 +602,16 @@ export default function ProfilePage() {
               </p>
               {/* Streak badge */}
               <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-amber-100 dark:bg-amber-900/30 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-400">
-                🔥 {tr ? "12 günlük seri" : "12-day streak"}
+                🔥 {tr ? `${streakDays} günlük seri` : `${streakDays}-day streak`}
               </div>
             </div>
             {/* Vitality Score — ring + bar + heartbeat */}
             {(() => {
-              const score = 78;
+              // Dynamic vitality score: profile completion (40%) + streak (30%) + meds+allergies (30%)
+              const profileWeight = completionPct * 0.4;
+              const streakWeight = Math.min(streakDays, 30) / 30 * 100 * 0.3;
+              const dataWeight = (medications.length > 0 ? 50 : 0) + (allergies.length > 0 || (profile.chronic_conditions || []).length > 0 ? 50 : 0);
+              const score = Math.round(Math.min(profileWeight + streakWeight + dataWeight * 0.3, 100));
               const scoreColor = score >= 71 ? "#3c7a52" : score >= 41 ? "#f59e0b" : "#ef4444";
               const scoreEmoji = score >= 71 ? "⚡" : score >= 41 ? "😐" : "🔴";
               const scoreLabel = score >= 71
@@ -621,7 +668,7 @@ export default function ProfilePage() {
               <p className="text-[10px] text-muted-foreground mt-0.5">🌿 {tr ? "Günlük Takviye" : "Daily Supplements"}</p>
             </div>
             <div className="rounded-xl bg-white/60 dark:bg-card/60 border p-3 text-center shadow-sm">
-              <p className="text-xl font-bold text-blue-600">4</p>
+              <p className="text-xl font-bold text-blue-600">{labTestCount}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">🩸 {tr ? "Yüklenen Tahlil" : "Lab Tests"}</p>
             </div>
           </div>
@@ -632,14 +679,19 @@ export default function ProfilePage() {
               🏆 {tr ? "Başarı Rozetleri" : "Achievement Badges"}
             </h3>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {[
-                { icon: "💧", label: tr ? "Hidrasyon Ustası" : "Hydration Master", earned: true, cat: "engagement" as const },
-                { icon: "🌿", label: tr ? "Fitoterapist" : "Phyto Streak", earned: true, cat: "health" as const },
-                { icon: "🩸", label: tr ? "Lab Savaşçısı" : "Lab Warrior", earned: false, cat: "health" as const },
-                { icon: "🛡️", label: tr ? "Kalkan Ustası" : "Shield Master", earned: false, cat: "milestone" as const },
-                { icon: "🧬", label: tr ? "DNA Kaşifi" : "DNA Explorer", earned: false, cat: "social" as const },
-                { icon: "🏔️", label: tr ? "Şampiyon" : "Challenge Champion", earned: false, cat: "milestone" as const },
-              ].map((b, i) => {
+              {(() => {
+                const stats: UserStats = {
+                  totalQueries: 0, totalCheckIns: streakDays, streakDays, bloodTestCount: labTestCount,
+                  supplementsTracked: (profile.supplements || []).length, waterGoalHits: 0,
+                  interactionChecks: 0, daysActive: streakDays, familyMembers: 0, pdfReports: 0,
+                  vaccinesTracked: (Array.isArray(profile.vaccines) ? (profile.vaccines as { status: string }[]).filter(v => v.status === "done").length : 0),
+                };
+                const { earned, locked } = evaluateBadges(stats);
+                return [
+                  ...earned.slice(0, 6).map(b => ({ icon: b.icon, label: txObj(b, lang), earned: true, cat: b.category })),
+                  ...locked.slice(0, Math.max(0, 6 - earned.length)).map(b => ({ icon: b.icon, label: txObj(b, lang), earned: false, cat: b.category })),
+                ];
+              })().map((b, i) => {
                 const gradients: Record<string, { bg: string; shadow: string }> = {
                   health: { bg: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)", shadow: "0 4px 15px rgba(132,250,176,0.4)" },
                   engagement: { bg: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", shadow: "0 4px 15px rgba(79,172,254,0.4)" },
@@ -677,11 +729,9 @@ export default function ProfilePage() {
               📋 {tr ? "Son Aktiviteler" : "Recent Activity"}
             </h3>
             <div className="space-y-2">
-              {[
-                { icon: "✅", text: tr ? "İlaç etkileşimi kontrol edildi" : "Checked drug interaction", time: tr ? "2s önce" : "2h ago" },
-                { icon: "🩸", text: tr ? "Kan tahlili yüklendi" : "Uploaded blood test", time: tr ? "Dün" : "Yesterday" },
-                { icon: "💊", text: tr ? "İlaçlar güncellendi" : "Updated medications", time: tr ? "3 gün önce" : "3 days ago" },
-              ].map((act, i) => (
+              {(recentActivity.length > 0 ? recentActivity : [
+                { icon: "💬", text: tr ? "Henüz aktivite yok" : "No activity yet", time: "" },
+              ]).map((act, i) => (
                 <div key={i} className="flex items-center gap-2.5 rounded-lg bg-white/40 dark:bg-white/5 px-3 py-2">
                   <span className="text-sm">{act.icon}</span>
                   <span className="flex-1 text-xs text-muted-foreground">{act.text}</span>
