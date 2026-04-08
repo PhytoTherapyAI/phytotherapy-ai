@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import type { OnboardingData, SupplementEntry } from "../OnboardingWizard";
-import { SUPPLEMENT_NAME_MAP, SUPPLEMENT_NAME_TR } from "@/lib/supplement-data";
+import { SUPPLEMENT_NAME_MAP, SUPPLEMENT_NAME_TR, findSupplementInfo } from "@/lib/supplement-data";
 
 interface Props {
   data: OnboardingData;
@@ -294,10 +294,27 @@ export function SupplementsStep({ data, updateData }: Props) {
   }, []);
 
   // ── Add/Remove ──
+  const [doseAutoFill, setDoseAutoFill] = useState(false);
+
   const addSupplement = useCallback((id: string, name: string, isCustom = false) => {
     const selectedIds = new Set(entries.map(e => e.id));
     if (selectedIds.has(id)) return;
-    const entry: SupplementEntry = { id, name, frequency: "daily", isCustom };
+
+    // Auto-fill dose from supplement-data.ts
+    const info = findSupplementInfo(name);
+    let dose: string | undefined;
+    let doseUnit: SupplementEntry["doseUnit"] = "mg";
+    if (info) {
+      // Parse recommendedDose like "300-600mg" → take lower bound
+      const match = info.recommendedDose.match(/(\d+)/);
+      if (match) dose = match[1];
+      if (info.unit === "IU") doseUnit = "IU";
+      else if (info.unit === "mcg") doseUnit = "mcg";
+      else if (info.unit === "g") doseUnit = "g";
+      if (dose) { setDoseAutoFill(true); setTimeout(() => setDoseAutoFill(false), 2000); }
+    }
+
+    const entry: SupplementEntry = { id, name, frequency: "daily", isCustom, ...(dose ? { dose, doseUnit } : {}) };
     updateData({ supplement_entries: [...entries, entry], no_supplements: false });
     setSearch(""); setShowSuggestions(false); setHighlightIdx(-1);
     inputRef.current?.focus();
@@ -444,6 +461,7 @@ export function SupplementsStep({ data, updateData }: Props) {
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                 {tx("onb.suppSelected", lang)} ({entries.length})
+                {doseAutoFill && <span className="text-[10px] text-primary font-medium animate-pulse ml-2">{lang === "tr" ? "Önerilen doz dolduruldu ✓" : "Recommended dose filled ✓"}</span>}
               </p>
               <AnimatePresence mode="popLayout">
                 {entries.map((entry) => (

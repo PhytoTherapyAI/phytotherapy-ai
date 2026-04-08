@@ -51,6 +51,21 @@ const WHY_KEYS = [
   "onb.whyConsent",         // 9: consent
 ];
 
+const STEP_INFO_STYLE: Record<number, { icon: string; bg: string }> = {
+  0: { icon: "👋", bg: "bg-primary/10 border-primary/20" },
+  1: { icon: "💊", bg: "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800" },
+  2: { icon: "🌿", bg: "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800" },
+  3: { icon: "⚠️", bg: "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800" },
+  4: { icon: "🤰", bg: "bg-pink-50 dark:bg-pink-950/20 border-pink-200 dark:border-pink-800" },
+  5: { icon: "🌬️", bg: "bg-slate-50 dark:bg-slate-900/20 border-slate-200 dark:border-slate-700" },
+  6: { icon: "🏥", bg: "bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800" },
+  7: { icon: "🧬", bg: "bg-teal-50 dark:bg-teal-950/20 border-teal-200 dark:border-teal-800" },
+  8: { icon: "🔐", bg: "bg-primary/10 border-primary/20" },
+  9: { icon: "🤝", bg: "bg-primary/10 border-primary/20" },
+};
+
+const STEP_XP: Record<number, number> = { 0: 50, 1: 50, 2: 30, 3: 75, 4: 25, 5: 25, 6: 75, 7: 100, 8: 10, 9: 10 };
+
 // Phase definitions: each step belongs to a phase (0, 1, or 2)
 // Phase 0 = Basics (steps 0-1), Phase 1 = Health Profile (steps 2-7), Phase 2 = Permissions + Consent (steps 8-9)
 const STEP_PHASE = [0, 0, 1, 1, 1, 1, 1, 1, 2, 2]; // indexed by original step index (10 steps)
@@ -226,6 +241,9 @@ export function OnboardingWizard({ profile }: Props) {
   const ALL_LAYER1_STEPS = getSteps(lang);
   const LAYER2_STEP = getLayer2Step(lang);
 
+  const [totalXP, setTotalXP] = useState(0);
+  const [xpBadge, setXpBadge] = useState<{ amount: number; show: boolean }>({ amount: 0, show: false });
+
   // Skip pregnancy step (index 4) if user is male
   const skipPregnancy = data.gender === "male";
   const LAYER1_STEPS = skipPregnancy
@@ -288,6 +306,14 @@ export function OnboardingWizard({ profile }: Props) {
   };
 
   const handleNext = async () => {
+    // XP reward for completing step
+    const xp = STEP_XP[origStep] || 0;
+    if (xp > 0) {
+      setTotalXP(prev => prev + xp);
+      setXpBadge({ amount: xp, show: true });
+      setTimeout(() => setXpBadge(prev => ({ ...prev, show: false })), 1500);
+    }
+
     // Mark permission preframe as shown when leaving that step
     if (origStep === 8) {
       updatePermissionState({ preframe_shown: true });
@@ -601,11 +627,17 @@ export function OnboardingWizard({ profile }: Props) {
               {currentStepInfo.title}
             </CardTitle>
             <CardDescription>{currentStepInfo.description}</CardDescription>
-            {/* "Why we ask" explanation */}
+            {/* "Why we ask" — info card */}
             {!isLayer2 && WHY_KEYS[origStep] && (
-              <p className="mt-2 text-xs text-muted-foreground/80 italic">
-                {tx(WHY_KEYS[origStep], lang)}
-              </p>
+              <div className={`mt-3 rounded-lg border p-3 flex items-start gap-2.5 ${STEP_INFO_STYLE[origStep]?.bg || "bg-muted/30"}`}>
+                <span className="text-lg shrink-0">{STEP_INFO_STYLE[origStep]?.icon || "💡"}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-foreground/80">{tx(WHY_KEYS[origStep], lang)}</p>
+                </div>
+                {totalXP > 0 && (
+                  <span className="text-[10px] text-muted-foreground shrink-0">{totalXP} XP</span>
+                )}
+              </div>
             )}
             {/* Reassurance on first step */}
             {origStep === 0 && (
@@ -693,6 +725,21 @@ export function OnboardingWizard({ profile }: Props) {
           {tx("onb.trustBadge", lang)}
         </span>
       </div>
+
+      {/* XP floating badge */}
+      <AnimatePresence>
+        {xpBadge.show && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -30 }}
+            transition={{ duration: 0.5, type: "spring" }}
+            className="fixed bottom-24 right-6 z-50 rounded-full bg-amber-500 text-white px-4 py-2 text-sm font-bold shadow-lg"
+          >
+            +{xpBadge.amount} XP ✨
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

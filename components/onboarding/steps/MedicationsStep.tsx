@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, X, Pill, Loader2 } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { MED_FREQUENCY_OPTIONS, getFrequencyLabel } from "@/lib/frequency-utils";
 import type { OnboardingData } from "../OnboardingWizard";
 
 interface DrugSuggestion {
@@ -246,7 +248,7 @@ export function MedicationsStep({ data, updateData }: Props) {
                       {(med.dosage || med.frequency) && (
                         <div className="flex gap-2">
                           {med.dosage && <Badge variant="secondary">{med.dosage}</Badge>}
-                          {med.frequency && <Badge variant="outline">{med.frequency}</Badge>}
+                          {med.frequency && <Badge variant="outline">{getFrequencyLabel(med.frequency, lang)}</Badge>}
                         </div>
                       )}
                     </div>
@@ -331,19 +333,33 @@ export function MedicationsStep({ data, updateData }: Props) {
               </div>
               <div className="space-y-1">
                 <Label htmlFor="freq" className="text-xs">{tx('onb.freqLabel', lang)}</Label>
-                <Input
-                  id="freq"
-                  placeholder={tx('onb.freqPlaceholder', lang)}
-                  value={frequency}
-                  onChange={(e) => setFrequency(e.target.value)}
-                />
+                <Select value={frequency} onValueChange={(v) => {
+                  if (!v) return;
+                  setFrequency(v);
+                  // Auto-add: if brand/generic + dosage filled, auto-add medication
+                  if ((brandName.trim() || genericName.trim()) && dosage.trim() && v) {
+                    setTimeout(() => {
+                      addMedication();
+                    }, 100);
+                  }
+                }}>
+                  <SelectTrigger className="h-9">
+                    <SelectValue placeholder={tx('onb.freqPlaceholder', lang)} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MED_FREQUENCY_OPTIONS.map(opt => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {lang === "tr" ? opt.labelTr : opt.labelEn}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <Button
-              variant="outline"
-              size="sm"
               onClick={addMedication}
               disabled={!brandName.trim() && !genericName.trim()}
+              className={`w-full ${brandName.trim() && dosage.trim() ? "animate-pulse" : ""}`}
             >
               <Plus className="mr-2 h-4 w-4" />
               {tx('onb.addMedBtn', lang)}
