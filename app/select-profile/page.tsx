@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/lib/auth-context'
@@ -38,23 +38,28 @@ export default function SelectProfilePage() {
     </div>
   )
 
+  // Hydration-safe: read localStorage only after mount
+  const [ownAvatar, setOwnAvatar] = useState<{ style: AvatarStyle; seed: string }>({
+    style: 'adventurer',
+    seed: user?.id || 'default'
+  })
+
+  useEffect(() => {
+    if (!user) return
+    const style = (localStorage.getItem(`avatar_style_${user.id}`) || 'adventurer') as AvatarStyle
+    const seed = localStorage.getItem(`avatar_seed_${user.id}`) || user.id
+    setOwnAvatar({ style, seed })
+  }, [user])
+
   if (!user || !familyGroup) return null
 
-  // Own avatar from localStorage (same pattern as header)
-  const ownAvatarStyle = (typeof window !== 'undefined'
-    ? localStorage.getItem(`avatar_style_${user.id}`) || 'adventurer'
-    : 'adventurer') as AvatarStyle
-  const ownAvatarSeed = typeof window !== 'undefined'
-    ? localStorage.getItem(`avatar_seed_${user.id}`) || user.id
-    : user.id
-
-  // Kendi profilini her zaman ilk goster
+  // Kendi profilini her zaman ilk g\u00f6ster
   const profiles = [
     {
       userId: user.id,
       name: profile?.full_name?.split(' ')[0] || 'Ben',
-      avatarStyle: ownAvatarStyle,
-      avatarSeed: ownAvatarSeed,
+      avatarStyle: ownAvatar.style,
+      avatarSeed: ownAvatar.seed,
       isOwn: true,
       canManageThis: true
     },
@@ -62,7 +67,7 @@ export default function SelectProfilePage() {
       .filter(m => m.user_id !== user.id && m.profile)
       .map(m => ({
         userId: m.user_id!,
-        name: m.nickname ?? m.profile?.display_name ?? 'Uye',
+        name: m.nickname ?? m.profile?.display_name ?? '\u00DCye',
         avatarStyle: (m.profile?.avatar_style as AvatarStyle) ?? 'adventurer',
         avatarSeed: m.profile?.avatar_seed ?? m.user_id!,
         isOwn: false,

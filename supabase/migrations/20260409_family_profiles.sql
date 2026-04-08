@@ -129,3 +129,17 @@ CREATE POLICY "Accept own invite"
 CREATE POLICY "User manages own session"
   ON active_profile_sessions FOR ALL
   USING (user_id = auth.uid());
+
+-- =========================================
+-- Performance & Constraint Indexes
+-- =========================================
+
+-- Prevent duplicate accepted members (NULL user_id excluded)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_family_members_group_accepted_user
+  ON family_members(group_id, user_id)
+  WHERE invite_status = 'accepted' AND user_id IS NOT NULL;
+
+-- Prevent duplicate pending invites for same email in same group
+CREATE UNIQUE INDEX IF NOT EXISTS idx_family_members_group_pending_email
+  ON family_members(group_id, invite_email)
+  WHERE invite_status = 'pending';

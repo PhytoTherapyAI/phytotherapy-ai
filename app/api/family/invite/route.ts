@@ -3,6 +3,15 @@ import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { sendVerificationEmail } from "@/lib/emails/send"
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;")
+}
+
 export async function POST(req: NextRequest) {
   try {
     const auth = req.headers.get("authorization")
@@ -108,7 +117,8 @@ export async function POST(req: NextRequest) {
 
     // Davet emaili g\u00F6nder
     const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/family/accept?token=${inviteToken}`
-    const senderName = inviterName || "Birisi"
+    const senderName = escapeHtml(inviterName || "Birisi")
+    const safeGroupName = escapeHtml(group.name)
 
     const result = await sendVerificationEmail(
       email,
@@ -122,7 +132,7 @@ export async function POST(req: NextRequest) {
         <p style="color: #374151; font-size: 16px;">Merhaba,</p>
         <p style="color: #374151; font-size: 16px;">
           <strong>${senderName}</strong> sizi DoctoPal'daki
-          <strong>${group.name}</strong> aile grubuna davet etti.
+          <strong>${safeGroupName}</strong> aile grubuna davet etti.
         </p>
         <div style="text-align: center; margin: 32px 0;">
           <a href="${inviteUrl}"

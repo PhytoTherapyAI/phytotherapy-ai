@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 'use client'
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { createBrowserClient } from '@/lib/supabase'
 import type { FamilyContextType, FamilyGroup, FamilyMember } from '@/types/family'
@@ -15,7 +15,8 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
   const [activeProfileId, setActiveProfileIdState] = useState<string>('')
   const [loading, setLoading] = useState(true)
 
-  const supabase = createBrowserClient()
+  // Singleton — createBrowserClient already returns singleton, but memoize for stable ref
+  const supabase = useMemo(() => createBrowserClient(), [])
 
   const fetchMembers = useCallback(async (groupId: string) => {
     const { data, error } = await supabase
@@ -38,7 +39,6 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
 
   const fetchFamilyData = useCallback(async () => {
     if (!user) return
-    setLoading(true)
     try {
       // \u00D6nce sahibi oldu\u011Fu grubu bul
       const { data: ownedGroup, error: ownedErr } = await supabase
@@ -81,8 +81,8 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
           await fetchMembers(group.id)
         }
       }
-    } finally {
-      setLoading(false)
+    } catch (err) {
+      console.error('[Family] fetchFamilyData error:', err)
     }
   }, [user, supabase, fetchMembers])
 
@@ -100,15 +100,18 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (user) {
-      fetchFamilyData()
-      fetchActiveSession()
+      // Run both in parallel, only setLoading(false) when both done
+      setLoading(true)
+      Promise.all([fetchFamilyData(), fetchActiveSession()])
+        .finally(() => setLoading(false))
     } else {
       setFamilyGroup(null)
       setFamilyMembers([])
       setActiveProfileIdState('')
       setLoading(false)
     }
-  }, [user, fetchFamilyData, fetchActiveSession])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
 
   const isOwner = familyGroup?.owner_id === user?.id
 
@@ -127,6 +130,11 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
 
   async function setActiveProfile(userId: string) {
     if (!user) return
+    // Validate: must be own profile or accepted family member
+    if (userId !== user.id && !familyMembers.some(m => m.user_id === userId)) {
+      console.error('[Family] Cannot view non-member profile:', userId)
+      return
+    }
     setActiveProfileIdState(userId)
     const { error } = await supabase
       .from('active_profile_sessions')

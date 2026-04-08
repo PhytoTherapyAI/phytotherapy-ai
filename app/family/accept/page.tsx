@@ -76,6 +76,19 @@ function AcceptInviteContent() {
     if (!user || !token) return
     setStatus('accepting')
 
+    // Validate invite belongs to this user's email
+    const { data: inviteData } = await supabase
+      .from('family_members')
+      .select('invite_email')
+      .eq('invite_token', token)
+      .maybeSingle()
+
+    if (inviteData && user.email && inviteData.invite_email.toLowerCase() !== user.email.toLowerCase()) {
+      console.error('[Accept] Email mismatch:', inviteData.invite_email, 'vs', user.email)
+      setStatus('error')
+      return
+    }
+
     const { error } = await supabase
       .from('family_members')
       .update({

@@ -335,15 +335,16 @@ export default function Home() {
 
   // Family profile selection — redirect if group exists but no profile selected yet
   useEffect(() => {
-    if (!isLoading && !familyLoading && isAuthenticated && familyGroup) {
-      // Check if user has been to select-profile this session
-      const hasSelected = sessionStorage.getItem('family_profile_selected');
+    if (!isLoading && !familyLoading && isAuthenticated && familyGroup && user) {
+      // Per-user key prevents cross-account session leaks
+      const key = `family_profile_selected_${user.id}`
+      const hasSelected = sessionStorage.getItem(key)
       if (!hasSelected) {
-        sessionStorage.setItem('family_profile_selected', 'true');
-        router.push('/select-profile');
+        sessionStorage.setItem(key, 'true')
+        router.push('/select-profile')
       }
     }
-  }, [isLoading, familyLoading, isAuthenticated, familyGroup, router]);
+  }, [isLoading, familyLoading, isAuthenticated, familyGroup, user, router]);
 
   // Guest state
   const [searchQuery, setSearchQuery] = useState("");
