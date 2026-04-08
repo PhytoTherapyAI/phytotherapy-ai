@@ -1605,28 +1605,15 @@ export default function ProfilePage() {
 
         return (
           <>
-            <Card className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow ${isEmpty ? "border-green-200 dark:border-green-800" : "border-l-4 border-l-purple-500"}`}
-              style={isEmpty ? { backgroundColor: "var(--green-50, rgba(240,253,244,0.5))" } : {}} id="medical-history">
+            {!isEmpty && <Card className="mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-purple-500" id="medical-history">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Stethoscope className="h-5 w-5" />
-                  {isEmpty
-                    ? (tr ? "✅ Temiz Tıbbi Geçmiş" : "✅ Clean Medical History")
-                    : `🏥 ${conditions.length + (hasCritical ? 1 : 0)} ${tr ? "Kronik Durum Kayıtlı" : "Chronic Conditions Recorded"}`}
+                  {`🏥 ${conditions.length + (hasCritical ? 1 : 0)} ${tr ? "Kronik Durum Kayıtlı" : "Chronic Conditions Recorded"}`}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {isEmpty ? (
-                  <div className="space-y-3">
-                    <p className="text-sm text-green-700 dark:text-green-400">
-                      {tr ? "Kayıtlı kronik hastalığın yok. Bu, AI önerilerinin daha geniş bir yelpazede çalışması demek." : "No chronic conditions recorded. This means AI recommendations work across a wider range."}
-                    </p>
-                    <button onClick={() => { document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" }); setTimeout(() => startEditingHealth(), 300); }}
-                      className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
-                      <Plus className="h-3 w-3" /> {tr ? "Hastalık Ekle" : "Add Condition"}
-                    </button>
-                  </div>
-                ) : (
+                {(
                   <div className="space-y-3">
                     {/* Critical conditions */}
                     {hasCritical && (
@@ -1672,7 +1659,7 @@ export default function ProfilePage() {
                   </div>
                 )}
               </CardContent>
-            </Card>
+            </Card>}
 
             {/* Soygeçmiş — separate card */}
             {(() => {
