@@ -86,15 +86,17 @@ export default function HealthQuizPage() {
     const today = new Date().toISOString().slice(0, 10);
     const dayNum = Math.floor((Date.now() / 86400000)) % QUESTIONS.length;
     setTodayIndex(dayNum);
-    const saved = localStorage.getItem("healthQuiz");
-    if (saved) {
-      const data = JSON.parse(saved);
-      setScore(data.score || 0);
-      setTotalAnswered(data.totalAnswered || 0);
-      setStreak(data.streak || 0);
-      setLastDate(data.lastDate || "");
-      if (data.lastDate === today) setCompleted(true);
-    }
+    try {
+      const saved = localStorage.getItem("healthQuiz");
+      if (saved) {
+        const data = JSON.parse(saved);
+        setScore(data.score || 0);
+        setTotalAnswered(data.totalAnswered || 0);
+        setStreak(data.streak || 0);
+        setLastDate(data.lastDate || "");
+        if (data.lastDate === today) setCompleted(true);
+      }
+    } catch { /* corrupted localStorage */ }
   }, []);
 
   const question = QUESTIONS[todayIndex];

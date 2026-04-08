@@ -34,8 +34,10 @@ export default function MedicationLogPage() {
   const [form, setForm] = useState<Partial<MedChange>>({ type: "started", date: new Date().toISOString().split("T")[0], sideEffects: [] })
 
   useEffect(() => {
-    const saved = localStorage.getItem(`med_log_${user?.id || "guest"}`)
-    if (saved) setChanges(JSON.parse(saved))
+    try {
+      const saved = localStorage.getItem(`med_log_${user?.id || "guest"}`)
+      if (saved) setChanges(JSON.parse(saved))
+    } catch { /* corrupted localStorage */ }
     setLoading(false)
   }, [user])
 
