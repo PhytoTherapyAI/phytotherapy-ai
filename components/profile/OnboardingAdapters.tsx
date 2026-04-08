@@ -6,6 +6,7 @@ import { SupplementsStep } from '@/components/onboarding/steps/SupplementsStep'
 import { AllergiesStep } from '@/components/onboarding/steps/AllergiesStep'
 import { FamilyHistoryStep } from '@/components/onboarding/steps/FamilyHistoryStep'
 import { MedicalHistoryStep } from '@/components/onboarding/steps/MedicalHistoryStep'
+import { SubstanceStep } from '@/components/onboarding/steps/SubstanceStep'
 import type { OnboardingData, SupplementEntry } from '@/components/onboarding/OnboardingWizard'
 
 // ─── Shared: build a minimal OnboardingData from profile ───
@@ -134,4 +135,27 @@ export function ProfileMedicalHistoryStep({ chronicConditions, onUpdate }: Chron
   }, [onUpdate])
 
   return <MedicalHistoryStep data={data} updateData={updateData} />
+}
+
+// ─── 5. Substance Use Adapter ───
+interface SubstanceAdapterProps {
+  alcoholUse: string
+  smokingUse: string
+  onUpdate: (updates: { alcohol_use?: string; smoking_use?: string }) => void
+}
+
+export function ProfileSubstanceStep({ alcoholUse, smokingUse, onUpdate }: SubstanceAdapterProps) {
+  const data = useMemo(() => buildOnboardingData({
+    alcohol_use: alcoholUse,
+    smoking_use: smokingUse,
+  }), [alcoholUse, smokingUse])
+
+  const updateData = useCallback((updates: Partial<OnboardingData>) => {
+    const changes: { alcohol_use?: string; smoking_use?: string } = {}
+    if (updates.alcohol_use !== undefined) changes.alcohol_use = updates.alcohol_use
+    if (updates.smoking_use !== undefined) changes.smoking_use = updates.smoking_use
+    if (Object.keys(changes).length > 0) onUpdate(changes)
+  }, [onUpdate])
+
+  return <SubstanceStep data={data} updateData={updateData} />
 }

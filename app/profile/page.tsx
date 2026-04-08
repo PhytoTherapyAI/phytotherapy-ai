@@ -42,7 +42,7 @@ import {
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { LifestyleSection } from "@/components/profile/LifestyleSection";
 import { ChronicConditionsEditor } from "@/components/profile/ChronicConditionsEditor";
-import { ProfileSupplementsStep, ProfileMedicalHistoryStep, ProfileFamilyHistoryStep, ProfileAllergiesStep } from "@/components/profile/OnboardingAdapters";
+import { ProfileSupplementsStep, ProfileMedicalHistoryStep, ProfileFamilyHistoryStep, ProfileAllergiesStep, ProfileSubstanceStep } from "@/components/profile/OnboardingAdapters";
 
 interface DrugSuggestion {
   brandName: string;
@@ -1387,61 +1387,16 @@ export default function ProfilePage() {
               </>
             )}
 
-            {/* Substance Use — Chip-based with celebration */}
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2 text-base font-semibold">
-                  <Wine className="h-4 w-4" />
-                  {tx("profile.alcohol", lang)}
-                </Label>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { value: "none", emoji: "\u{1F7E2}", tr: "Kullanmıyorum", en: "None" },
-                    { value: "former", emoji: "\u{1F7E1}", tr: "Bıraktım", en: "Former" },
-                    { value: "active", emoji: "\u{1F534}", tr: "Aktif", en: "Active" },
-                  ].map(opt => (
-                    <button key={opt.value} type="button"
-                      onClick={() => setHealthForm((p): HealthFormState => ({ ...p, alcohol_use: opt.value }))}
-                      className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all ${
-                        healthForm.alcohol_use.split("|")[0] === opt.value
-                          ? opt.value === "none"
-                            ? "border-green-500 bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 scale-[1.02]"
-                            : "border-primary bg-primary/10 text-primary"
-                          : "border-muted hover:border-primary/30 text-muted-foreground"
-                      }`}>
-                      {opt.emoji} {tr ? opt.tr : opt.en}
-                      {healthForm.alcohol_use.split("|")[0] === opt.value && opt.value === "none" && " \u2705"}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2 text-base font-semibold">
-                  <Cigarette className="h-4 w-4" />
-                  {tx("profile.smoking", lang)}
-                </Label>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { value: "none", emoji: "\u{1F7E2}", tr: "Kullanmıyorum", en: "None" },
-                    { value: "former", emoji: "\u{1F7E1}", tr: "Bıraktım", en: "Former" },
-                    { value: "current", emoji: "\u{1F534}", tr: "Aktif", en: "Active" },
-                  ].map(opt => (
-                    <button key={opt.value} type="button"
-                      onClick={() => setHealthForm((p): HealthFormState => ({ ...p, smoking_use: opt.value }))}
-                      className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all ${
-                        healthForm.smoking_use.split("|")[0] === opt.value
-                          ? opt.value === "none"
-                            ? "border-green-500 bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 scale-[1.02]"
-                            : "border-primary bg-primary/10 text-primary"
-                          : "border-muted hover:border-primary/30 text-muted-foreground"
-                      }`}>
-                      {opt.emoji} {tr ? opt.tr : opt.en}
-                      {healthForm.smoking_use.split("|")[0] === opt.value && opt.value === "none" && " \u2705"}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+            {/* Substance Use — Onboarding SubstanceStep reuse (with pack-year details) */}
+            <ProfileSubstanceStep
+              alcoholUse={healthForm.alcohol_use}
+              smokingUse={healthForm.smoking_use}
+              onUpdate={(updates) => setHealthForm(p => ({
+                ...p,
+                ...(updates.alcohol_use !== undefined ? { alcohol_use: updates.alcohol_use } : {}),
+                ...(updates.smoking_use !== undefined ? { smoking_use: updates.smoking_use } : {}),
+              }))}
+            />
 
             <Separator />
 

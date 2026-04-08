@@ -224,22 +224,23 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                         const isDateOpen = openDatePicker === vDef.id
 
                         return (
-                          <div key={vDef.id} className={`flex items-center gap-3 px-4 py-3 min-h-[48px] relative cursor-pointer transition-colors duration-200 ${isDone ? "bg-green-50/50 dark:bg-green-950/10 hover:bg-green-50 dark:hover:bg-green-950/20" : "hover:bg-muted/30"}`} onClick={() => toggleVaccine(vDef.id)}>
-                            {/* Checkbox with scale animation */}
-                            <motion.button
-                              type="button"
-                              onClick={(e) => { e.stopPropagation(); toggleVaccine(vDef.id); }}
-                              animate={isDone ? { scale: [1, 1.2, 1] } : { scale: 1 }}
-                              transition={{ duration: 0.3 }}
-                              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-all ${
+                          <div key={vDef.id}
+                            className={`flex items-center gap-3 px-4 py-3 min-h-[48px] relative cursor-pointer transition-colors duration-200 ${isDone ? "bg-green-50/50 dark:bg-green-950/10 hover:bg-green-50 dark:hover:bg-green-950/20" : "hover:bg-muted/30"}`}
+                            onClick={() => toggleVaccine(vDef.id)}
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleVaccine(vDef.id); } }}
+                          >
+                            {/* Checkbox */}
+                            <div
+                              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-all duration-200 ${
                                 isDone
-                                  ? "bg-primary border-primary text-primary-foreground"
-                                  : "border-muted-foreground/30 hover:border-primary/50"
+                                  ? "bg-green-500 border-green-500 text-white"
+                                  : "border-gray-300 dark:border-gray-600 hover:border-primary/50"
                               }`}
-                              aria-label={`${displayName} ${isDone ? "done" : "not done"}`}
                             >
                               {isDone && <Check className="h-4 w-4" />}
-                            </motion.button>
+                            </div>
 
                             {/* Vaccine name */}
                             <span className={`flex-1 text-sm font-medium ${isDone ? "text-foreground" : "text-muted-foreground"}`}>
@@ -250,7 +251,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                             {/* Date dropdown trigger */}
                             <button
                               type="button"
-                              onClick={(e) => { e.stopPropagation(); isDone && setOpenDatePicker(isDateOpen ? null : vDef.id); }}
+                              onClick={(e) => { e.stopPropagation(); if (isDone) setOpenDatePicker(isDateOpen ? null : vDef.id); }}
                               disabled={!isDone}
                               className={`text-xs px-2 py-1 rounded-md transition-colors flex items-center gap-1 ${
                                 isDone
@@ -266,10 +267,10 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
 
                             {/* Year picker dropdown */}
                             {isDateOpen && (
-                              <div className="absolute right-4 top-full mt-1 z-50 w-40 max-h-48 overflow-y-auto rounded-lg border bg-background shadow-lg">
+                              <div className="absolute right-4 top-full mt-1 z-50 w-40 max-h-48 overflow-y-auto rounded-lg border bg-background shadow-lg" onClick={(e) => e.stopPropagation()}>
                                 <button
                                   type="button"
-                                  onClick={() => setDate(vDef.id, "")}
+                                  onClick={(e) => { e.stopPropagation(); setDate(vDef.id, ""); }}
                                   className="w-full px-3 py-1.5 text-left text-xs text-muted-foreground hover:bg-muted/50 border-b"
                                 >
                                   {tr ? "Hatırlamıyorum" : "Don't remember"}
@@ -278,7 +279,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                                   <button
                                     key={y}
                                     type="button"
-                                    onClick={() => setDate(vDef.id, String(y))}
+                                    onClick={(e) => { e.stopPropagation(); setDate(vDef.id, String(y)); }}
                                     className={`w-full px-3 py-1.5 text-left text-xs hover:bg-muted/50 ${
                                       entry?.last_date === String(y) ? "bg-primary/10 text-primary font-semibold" : ""
                                     }`}
