@@ -625,14 +625,14 @@ export default function ProfilePage() {
       {!isOwnProfile && !canEdit && (
         <div className="mb-4 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50/80 dark:bg-amber-950/20 px-4 py-3 text-center">
           <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">
-            {tr ? "Sadece g\u00f6r\u00fcnt\u00fcleme modu \u2014 bu profili d\u00fczenlemek i\u00e7in y\u00f6netim iznine ihtiyac\u0131n\u0131z var." : "View-only mode \u2014 you need management permission to edit this profile."}
+            {tr ? "Sadece görüntüleme modu — bu profili düzenlemek için yönetim iznine ihtiyacınız var." : "View-only mode — you need management permission to edit this profile."}
           </p>
         </div>
       )}
       {!isOwnProfile && canEdit && (
         <div className="mb-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/20 px-4 py-3 text-center">
           <p className="text-sm text-emerald-800 dark:text-emerald-300 font-medium">
-            {tr ? "Aile \u00fcyesi profilini d\u00fczenliyorsunuz" : "You are editing a family member\u2019s profile"}
+            {tr ? "Aile üyesi profilini düzenliyorsunuz" : "You are editing a family member's profile"}
           </p>
         </div>
       )}

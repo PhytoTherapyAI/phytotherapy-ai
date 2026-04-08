@@ -49,7 +49,7 @@ function AcceptInviteContent() {
     }
 
     if (data) {
-      // Supabase join d\u00f6ner \u2014 safe parse
+      // Supabase join — safe parse
       const groupArr = data.group
       const groupData = Array.isArray(groupArr) ? groupArr[0] : groupArr
       setGroupName((groupData as { name?: string })?.name ?? (tr ? 'Aile Grubu' : 'Family Group'))
@@ -127,16 +127,16 @@ function AcceptInviteContent() {
       <div className="text-center">
         <div className="text-6xl mb-4" aria-hidden="true">&#10060;</div>
         <h2 className="text-xl font-bold text-foreground mb-2">
-          {tr ? 'Davet Bulunamad\u0131' : 'Invite Not Found'}
+          {tr ? 'Davet Bulunamadı' : 'Invite Not Found'}
         </h2>
         <p className="text-muted-foreground">
-          {tr ? 'Bu davet ge\u00e7ersiz veya s\u00fcresi dolmu\u015f.' : 'This invite is invalid or has expired.'}
+          {tr ? 'Bu davet geçersiz veya süresi dolmuş.' : 'This invite is invalid or has expired.'}
         </p>
         <button
           onClick={() => router.push('/')}
           className="mt-6 px-6 py-2 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition"
         >
-          {tr ? 'Ana Sayfaya D\u00f6n' : 'Back to Home'}
+          {tr ? 'Ana Sayfaya Dön' : 'Back to Home'}
         </button>
       </div>
     </div>
@@ -155,13 +155,13 @@ function AcceptInviteContent() {
           <strong>{groupName}</strong> {tr ? 'grubuna davet etti.' : 'group.'}
         </p>
         <p className="text-sm text-muted-foreground mb-4">
-          {tr ? 'Daveti kabul etmek i\u00e7in giri\u015f yap\u0131n veya kay\u0131t olun.' : 'Sign in or register to accept this invite.'}
+          {tr ? 'Daveti kabul etmek için giriş yapın veya kayıt olun.' : 'Sign in or register to accept this invite.'}
         </p>
         <button
           onClick={() => router.push(`/auth/login?redirect=/family/accept?token=${token}`)}
           className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-semibold hover:bg-primary/90 transition"
         >
-          {tr ? 'Giri\u015f Yap / Kay\u0131t Ol' : 'Sign In / Register'}
+          {tr ? 'Giriş Yap / Kayıt Ol' : 'Sign In / Register'}
         </button>
       </div>
     </div>
@@ -171,17 +171,17 @@ function AcceptInviteContent() {
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
       <div className="bg-card rounded-2xl shadow-lg p-8 max-w-md w-full text-center border">
 
-        {/* G\u00fcvenlik uyar\u0131s\u0131 */}
+        {/* Güvenlik uyarısı */}
         <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-6 text-left">
           <div className="flex items-start gap-3">
             <span className="text-2xl" aria-hidden="true">&#9888;&#65039;</span>
             <div>
               <p className="font-semibold text-amber-800 dark:text-amber-200">
-                {tr ? 'G\u00fcvenlik Bildirimi' : 'Security Notice'}
+                {tr ? 'Güvenlik Bildirimi' : 'Security Notice'}
               </p>
               <p className="text-amber-700 dark:text-amber-300 text-sm mt-1">
                 {tr
-                  ? 'Bu davet size ait de\u011filse kabul etmeyin ve bu sayfay\u0131 kapat\u0131n.'
+                  ? 'Bu davet size ait değilse kabul etmeyin ve bu sayfayı kapatın.'
                   : 'If this invite is not meant for you, do not accept it and close this page.'}
               </p>
             </div>
@@ -199,7 +199,7 @@ function AcceptInviteContent() {
 
         {status === 'accepted' ? (
           <div className="text-primary font-semibold text-lg">
-            {tr ? 'Kabul edildi! Y\u00f6nlendiriliyorsunuz...' : 'Accepted! Redirecting...'}
+            {tr ? 'Kabul edildi! Yönlendiriliyorsunuz...' : 'Accepted! Redirecting...'}
           </div>
         ) : (
           <div className="flex flex-col gap-3">

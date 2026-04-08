@@ -58,24 +58,24 @@ export function FamilyManagementSettings({ lang }: Props) {
       <div className="flex items-center gap-2 mb-3">
         <Shield className="h-5 w-5 text-emerald-500" />
         <h3 className="font-semibold text-foreground">
-          {tr ? "Aile Profil \u0130zni" : "Family Profile Permission"}
+          {tr ? "Aile Profil İzni" : "Family Profile Permission"}
         </h3>
       </div>
       <p className="text-muted-foreground text-sm mb-4">
         {tr
-          ? "Aile grubundaki y\u00f6neticilerin senin profilini d\u00fczenlemesine izin vermek istiyor musun? Bu ayar\u0131 sadece sen de\u011fi\u015ftirebilirsin."
+          ? "Aile grubundaki yöneticilerin senin profilini düzenlemesine izin vermek istiyor musun? Bu ayarı sadece sen değiştirebilirsin."
           : "Do you want to allow admins in your family group to edit your profile? Only you can change this setting."}
       </p>
 
       <div className="flex items-center justify-between bg-muted/50 rounded-xl p-4">
         <div className="flex-1 min-w-0">
           <p className="font-medium text-foreground text-sm">
-            {tr ? "Profilimin y\u00f6netilmesine izin ver" : "Allow profile management"}
+            {tr ? "Profilimin yönetilmesine izin ver" : "Allow profile management"}
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
             {allows
-              ? (tr ? "Y\u00f6neticiler profilini d\u00fczenleyebilir" : "Admins can edit your profile")
-              : (tr ? "Sadece sen d\u00fczenleyebilirsin" : "Only you can edit")}
+              ? (tr ? "Yöneticiler profilini düzenleyebilir" : "Admins can edit your profile")
+              : (tr ? "Sadece sen düzenleyebilirsin" : "Only you can edit")}
           </p>
         </div>
         <button
@@ -88,7 +88,7 @@ export function FamilyManagementSettings({ lang }: Props) {
               ? "bg-emerald-500"
               : "bg-muted-foreground/30"
           } disabled:opacity-50`}
-          aria-label={tr ? "Y\u00f6netim izni" : "Management permission"}
+          aria-label={tr ? "Yönetim izni" : "Management permission"}
         >
           <div
             className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all duration-200 ${
@@ -102,7 +102,7 @@ export function FamilyManagementSettings({ lang }: Props) {
         <div className="mt-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-3">
           <p className="text-amber-700 dark:text-amber-300 text-xs">
             {tr
-              ? "Y\u00f6neticiler ila\u00e7, alerji ve sa\u011fl\u0131k bilgilerini d\u00fczenleyebilir. Bu izni istedi\u011fin zaman kapatabilirsin."
+              ? "Yöneticiler ilaç, alerji ve sağlık bilgilerini düzenleyebilir. Bu izni istediğin zaman kapatabilirsin."
               : "Admins can edit medications, allergies and health info. You can revoke this permission at any time."}
           </p>
         </div>

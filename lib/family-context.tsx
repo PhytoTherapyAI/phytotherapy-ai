@@ -40,7 +40,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
   const fetchFamilyData = useCallback(async () => {
     if (!user) return
     try {
-      // \u00D6nce sahibi oldu\u011Fu grubu bul
+      // Önce sahibi olduğu grubu bul
       const { data: ownedGroup, error: ownedErr } = await supabase
         .from('family_groups')
         .select('*')
@@ -57,7 +57,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
-      // \u00DCye oldu\u011Fu grubu bul
+      // Üye olduğu grubu bul
       const { data: membership, error: memberErr } = await supabase
         .from('family_members')
         .select('group_id')
@@ -152,7 +152,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
       return false
     }
 
-    console.log('[Family] createGroup ba\u015Flad\u0131:', { name, userId: user.id })
+    console.log('[Family] createGroup başladı:', { name, userId: user.id })
 
     const { data, error } = await supabase
       .from('family_groups')

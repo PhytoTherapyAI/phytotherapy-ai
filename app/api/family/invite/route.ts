@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "groupId and email required" }, { status: 400 })
     }
 
-    // Grubu do\u011Frula \u2014 sadece owner/admin davet edebilir
+    // Grubu doğrula — sadece owner/admin davet edebilir
     const { data: group, error: groupErr } = await supabase
       .from("family_groups")
       .select("id, name, owner_id")
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Group not found" }, { status: 404 })
     }
 
-    // Owner m\u0131 kontrol et
+    // Owner mı kontrol et
     const isOwner = group.owner_id === user.id
     if (!isOwner) {
       // Admin mi kontrol et
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Zaten \u00FCye mi?
+    // Zaten üye mi?
     const { data: existing } = await supabase
       .from("family_members")
       .select("id, invite_status")
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
     let inviteToken: string | null = null
 
     if (existing) {
-      // Pending davet varsa token'\u0131 al
+      // Pending davet varsa token'ı al
       const { data: memberData } = await supabase
         .from("family_members")
         .select("invite_token")
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
         .single()
       inviteToken = memberData?.invite_token ?? null
     } else {
-      // Yeni \u00FCye ekle
+      // Yeni üye ekle
       const { data: newMember, error: insertErr } = await supabase
         .from("family_members")
         .insert({
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Could not generate invite token" }, { status: 500 })
     }
 
-    // Davet emaili g\u00F6nder
+    // Davet emaili gönder
     const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/family/accept?token=${inviteToken}`
     const senderName = escapeHtml(inviterName || "Birisi")
     const safeGroupName = escapeHtml(group.name)
@@ -145,22 +145,38 @@ export async function POST(req: NextRequest) {
         </div>
         <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; margin: 24px 0;">
           <p style="color: #92400e; font-size: 13px; margin: 0;">
-            Bu davet size ait de\u011Filse bu emaili g\u00F6rmezden gelin.
+            Bu davet size ait değilse bu emaili görmezden gelin.
           </p>
         </div>
         <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 32px;">
-          DoctoPal \u2014 Kan\u0131ta dayal\u0131 sa\u011Fl\u0131k asistan\u0131
+          DoctoPal — Kanıta dayalı sağlık asistanı
         </p>
       </div>
       `
     )
 
     if (!result.success) {
-      console.error("[FAMILY-INVITE] Email failed:", result.error)
-      return NextResponse.json({ error: "Email failed", details: result.error }, { status: 500 })
+      console.error("[FAMILY-INVITE] Resend failed, trying Supabase admin:", result.error)
+      // Fallback: Supabase Auth admin invite
+      try {
+        const { error: adminErr } = await supabase.auth.admin.inviteUserByEmail(email, {
+          redirectTo: inviteUrl,
+          data: {
+            invited_by: inviterName || "DoctoPal",
+            group_id: groupId,
+            invite_token: inviteToken
+          }
+        })
+        if (adminErr) {
+          console.error("[FAMILY-INVITE] Supabase admin invite also failed:", adminErr.message)
+          // Still return success — invite record exists, user can share link manually
+        }
+      } catch (fallbackErr) {
+        console.error("[FAMILY-INVITE] Fallback failed:", fallbackErr)
+      }
     }
 
-    return NextResponse.json({ success: true, inviteToken })
+    return NextResponse.json({ success: true, inviteToken, inviteUrl })
   } catch (err) {
     console.error("[FAMILY-INVITE]", err)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

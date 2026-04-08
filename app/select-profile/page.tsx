@@ -20,24 +20,6 @@ export default function SelectProfilePage() {
   } = useFamily()
   const router = useRouter()
 
-  // Aile grubu yoksa direkt dashboard'a git
-  useEffect(() => {
-    if (!authLoading && !loading && !familyGroup) {
-      router.replace('/')
-    }
-  }, [authLoading, loading, familyGroup, router])
-
-  async function selectProfile(userId: string) {
-    await setActiveProfile(userId)
-    router.push('/')
-  }
-
-  if (authLoading || loading) return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-      <div className="animate-spin w-10 h-10 border-4 border-primary rounded-full border-t-transparent" />
-    </div>
-  )
-
   // Hydration-safe: read localStorage only after mount
   const [ownAvatar, setOwnAvatar] = useState<{ style: AvatarStyle; seed: string }>({
     style: 'adventurer',
@@ -51,9 +33,27 @@ export default function SelectProfilePage() {
     setOwnAvatar({ style, seed })
   }, [user])
 
+  // Aile grubu yoksa direkt dashboard'a git
+  useEffect(() => {
+    if (!authLoading && !loading && !familyGroup) {
+      router.replace('/')
+    }
+  }, [authLoading, loading, familyGroup, router])
+
+  async function selectProfile(userId: string) {
+    await setActiveProfile(userId)
+    router.push('/')
+  }
+
+  if (authLoading || loading) return (
+    <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="animate-spin w-10 h-10 border-4 border-primary rounded-full border-t-transparent" />
+    </div>
+  )
+
   if (!user || !familyGroup) return null
 
-  // Kendi profilini her zaman ilk g\u00f6ster
+  // Kendi profilini her zaman ilk göster
   const profiles = [
     {
       userId: user.id,
@@ -67,7 +67,7 @@ export default function SelectProfilePage() {
       .filter(m => m.user_id !== user.id && m.profile)
       .map(m => ({
         userId: m.user_id!,
-        name: m.nickname ?? m.profile?.display_name ?? '\u00DCye',
+        name: m.nickname ?? m.profile?.display_name ?? 'Üye',
         avatarStyle: (m.profile?.avatar_style as AvatarStyle) ?? 'adventurer',
         avatarSeed: m.profile?.avatar_seed ?? m.user_id!,
         isOwn: false,
@@ -76,13 +76,13 @@ export default function SelectProfilePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 to-background dark:from-gray-950 dark:to-gray-900 flex flex-col items-center justify-center p-8">
 
       {/* Logo */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-12"
+        className="mb-12 text-center"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -92,7 +92,7 @@ export default function SelectProfilePage() {
           height={48}
           className="mx-auto mb-3"
         />
-        <h1 className="text-emerald-400 text-2xl font-bold tracking-tight">
+        <h1 className="text-emerald-600 dark:text-emerald-400 text-2xl font-bold tracking-tight">
           DoctoPal
         </h1>
       </motion.div>
@@ -101,9 +101,9 @@ export default function SelectProfilePage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
-        className="text-white text-xl sm:text-2xl font-semibold mb-10 text-center"
+        className="text-foreground text-xl sm:text-2xl font-semibold mb-10 text-center"
       >
-        Kimin profilini g\u00f6r\u00fcnt\u00fclemek istiyorsunuz?
+        Kimin profilini görüntülemek istiyorsunuz?
       </motion.h2>
 
       {/* Profil Grid */}
@@ -125,49 +125,49 @@ export default function SelectProfilePage() {
               <img
                 src={getAvatarDataUri(p.avatarSeed, p.avatarStyle)}
                 alt={p.name}
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl ring-4 ring-transparent group-hover:ring-emerald-400 transition-all duration-200 bg-slate-800"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl ring-4 ring-transparent group-hover:ring-emerald-500 transition-all duration-200 bg-muted"
               />
-              {/* Yonetici rozeti */}
+              {/* Yönetici rozeti */}
               {p.canManageThis && !p.isOwn && (
                 <div className="absolute -top-1.5 -right-1.5 bg-emerald-500 rounded-full w-5 h-5 flex items-center justify-center text-white text-[10px] font-bold shadow-md">
                   &#10003;
                 </div>
               )}
-              {/* Sadece g\u00f6r\u00fcnt\u00fcleme */}
+              {/* Sadece görüntüleme */}
               {!p.canManageThis && !p.isOwn && (
-                <div className="absolute -top-1.5 -right-1.5 bg-slate-500 rounded-full w-5 h-5 flex items-center justify-center text-white text-[10px] shadow-md">
+                <div className="absolute -top-1.5 -right-1.5 bg-muted-foreground/50 rounded-full w-5 h-5 flex items-center justify-center text-white text-[10px] shadow-md">
                   &#128065;
                 </div>
               )}
             </div>
 
-            {/* Isim */}
-            <span className="text-slate-300 group-hover:text-white transition-colors font-medium text-sm sm:text-base">
+            {/* İsim */}
+            <span className="text-muted-foreground group-hover:text-foreground transition-colors font-medium text-sm sm:text-base">
               {p.name}
             </span>
 
-            {/* Y\u00f6netim durumu */}
-            <span className="text-[11px] text-slate-500">
+            {/* Yönetim durumu */}
+            <span className="text-[11px] text-muted-foreground/70">
               {p.isOwn
                 ? 'Kendi profilin'
                 : p.canManageThis
-                  ? 'D\u00fczenleyebilirsin'
-                  : 'Sadece g\u00f6r\u00fcnt\u00fcle'}
+                  ? 'Düzenleyebilirsin'
+                  : 'Sadece görüntüle'}
             </span>
           </motion.button>
         ))}
       </div>
 
-      {/* Aile yonetimi linki */}
+      {/* Aile yönetimi linki */}
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
         onClick={() => router.push('/family')}
-        className="mt-12 text-slate-500 hover:text-slate-300 transition flex items-center gap-2 text-sm"
+        className="mt-12 text-muted-foreground hover:text-foreground transition flex items-center gap-2 text-sm"
       >
         <Settings className="w-4 h-4" />
-        Aile Ayarlar\u0131
+        Aile Ayarları
       </motion.button>
     </div>
   )

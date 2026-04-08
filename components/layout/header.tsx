@@ -330,13 +330,13 @@ export function Header() {
             <div className="flex items-center gap-3">
               <Users className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <p className="flex-1 text-xs text-emerald-800 dark:text-emerald-300">
-                {activeMember?.nickname ?? (lang === 'tr' ? 'Aile \u00DCyesi' : 'Family Member')}{' '}
-                {lang === 'tr' ? 'profilini g\u00f6r\u00fcnt\u00fclüyorsunuz' : 'profile active'}
+                {activeMember?.nickname ?? (lang === 'tr' ? 'Aile Üyesi' : 'Family Member')}{' '}
+                {lang === 'tr' ? 'profilini görüntülüyorsunuz' : 'profile active'}
               </p>
               <Button variant="ghost" size="sm"
                 className="h-7 gap-1 text-[10px] text-emerald-700 hover:bg-emerald-100 dark:text-emerald-300"
                 onClick={() => setActiveProfile(user.id)}>
-                {lang === 'tr' ? 'Kendi profilime d\u00f6n' : 'Back to my profile'}
+                {lang === 'tr' ? 'Kendi profilime dön' : 'Back to my profile'}
               </Button>
             </div>
           </div>
