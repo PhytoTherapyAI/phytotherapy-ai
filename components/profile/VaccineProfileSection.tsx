@@ -30,6 +30,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
   const tr = lang === "tr"
   const [vaccines, setVaccines] = useState<VaccineEntry[]>(initialVaccines || [])
   const [saving, setSaving] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
   const [expandedGroup, setExpandedGroup] = useState<VaccineGroup | null>("essential")
   const [openDatePicker, setOpenDatePicker] = useState<string | null>(null)
 
@@ -46,14 +47,21 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
   }, [userId, initialVaccines])
 
   const saveVaccines = useCallback(async (updated: VaccineEntry[], previous: VaccineEntry[]) => {
-    // Optimistic: UI already shows updated, rollback on failure
     setSaving(true)
+    setSaveSuccess(false)
     try {
       const supabase = createBrowserClient()
-      const { error } = await supabase.from("user_profiles").update({ vaccines: updated }).eq("id", userId)
+      // Timeout: abort after 8s
+      const controller = new AbortController()
+      const timeout = setTimeout(() => controller.abort(), 8000)
+      const { error } = await supabase.from("user_profiles").update({ vaccines: updated }).eq("id", userId).abortSignal(controller.signal)
+      clearTimeout(timeout)
       if (error) {
         console.warn("Vaccine save failed:", error.message)
         setVaccines(previous)
+      } else {
+        setSaveSuccess(true)
+        setTimeout(() => setSaveSuccess(false), 2000)
       }
     } catch (err) {
       console.warn("Vaccine save error:", err)
@@ -140,6 +148,11 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
           {saving && (
             <span className="text-xs text-muted-foreground animate-pulse">
               {tx("vaccine.saving", lang)}
+            </span>
+          )}
+          {saveSuccess && !saving && (
+            <span className="text-xs text-green-600 dark:text-green-400 font-medium">
+              {"\u2713"} {tr ? "Kaydedildi" : "Saved"}
             </span>
           )}
         </div>

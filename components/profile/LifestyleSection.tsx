@@ -48,14 +48,14 @@ const DIET_OPTIONS = [
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
 const BLOOD_INSIGHTS: Record<string, { tr: string; en: string; emoji: string; source: string; url?: string }> = {
-  'A+': { tr: 'Mide & Hematolojik Tarama \u00d6nerilir', en: 'Stomach & Hematological Screening Recommended', emoji: '\u{1F50D}', source: 'Edgren et al., NEJM 2010', url: 'https://www.nejm.org/doi/10.1056/NEJMoa0910676' },
-  'A-': { tr: 'Mide & Hematolojik Tarama \u00d6nerilir', en: 'Stomach & Hematological Screening Recommended', emoji: '\u{1F50D}', source: 'Edgren et al., NEJM 2010', url: 'https://www.nejm.org/doi/10.1056/NEJMoa0910676' },
-  'O+': { tr: '\u00dclser & Mide Asidi Takibi', en: 'Ulcer & Stomach Acid Monitoring', emoji: '\u{1F48A}', source: 'Wolff & Wolff, 1956' },
-  'O-': { tr: '\u00dclser & Mide Asidi Takibi', en: 'Ulcer & Stomach Acid Monitoring', emoji: '\u{1F48A}', source: 'Wolff & Wolff, 1956' },
-  'B+': { tr: 'Pankreas Sa\u011fl\u0131\u011f\u0131 Takibi', en: 'Pancreas Health Monitoring', emoji: '\u{1F3AF}', source: 'Wolpin et al., JNCI 2010', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2842044/' },
-  'B-': { tr: 'Pankreas Sa\u011fl\u0131\u011f\u0131 Takibi', en: 'Pancreas Health Monitoring', emoji: '\u{1F3AF}', source: 'Wolpin et al., JNCI 2010', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2842044/' },
-  'AB+': { tr: 'Kardiyovask\u00fcler Takip', en: 'Cardiovascular Monitoring', emoji: '\u{2764}\u{FE0F}', source: 'Mega et al., JAMA 2008' },
-  'AB-': { tr: 'Kardiyovask\u00fcler Takip', en: 'Cardiovascular Monitoring', emoji: '\u{2764}\u{FE0F}', source: 'Mega et al., JAMA 2008' },
+  'A+': { tr: 'Mide & Hematolojik Tarama \u00d6nerilir', en: 'Stomach & Hematological Screening Recommended', emoji: '\u{1F50D}', source: 'Edgren et al., Blood 2010', url: 'https://pubmed.ncbi.nlm.nih.gov/20576827/' },
+  'A-': { tr: 'Mide & Hematolojik Tarama \u00d6nerilir', en: 'Stomach & Hematological Screening Recommended', emoji: '\u{1F50D}', source: 'Edgren et al., Blood 2010', url: 'https://pubmed.ncbi.nlm.nih.gov/20576827/' },
+  'O+': { tr: '\u00dclser & Mide Asidi Takibi', en: 'Ulcer & Stomach Acid Monitoring', emoji: '\u{1F48A}', source: 'Wolff & Wolff, Lancet 1947' },
+  'O-': { tr: '\u00dclser & Mide Asidi Takibi', en: 'Ulcer & Stomach Acid Monitoring', emoji: '\u{1F48A}', source: 'Wolff & Wolff, Lancet 1947' },
+  'B+': { tr: 'Pankreas Sa\u011fl\u0131\u011f\u0131 Takibi', en: 'Pancreas Health Monitoring', emoji: '\u{1F3AF}', source: 'Wolpin et al., JNCI 2009', url: 'https://pubmed.ncbi.nlm.nih.gov/19940282/' },
+  'B-': { tr: 'Pankreas Sa\u011fl\u0131\u011f\u0131 Takibi', en: 'Pancreas Health Monitoring', emoji: '\u{1F3AF}', source: 'Wolpin et al., JNCI 2009', url: 'https://pubmed.ncbi.nlm.nih.gov/19940282/' },
+  'AB+': { tr: 'Kardiyovask\u00fcler Takip', en: 'Cardiovascular Monitoring', emoji: '\u{2764}\u{FE0F}', source: 'He et al., ATVB 2012', url: 'https://pubmed.ncbi.nlm.nih.gov/22895672/' },
+  'AB-': { tr: 'Kardiyovask\u00fcler Takip', en: 'Cardiovascular Monitoring', emoji: '\u{2764}\u{FE0F}', source: 'He et al., ATVB 2012', url: 'https://pubmed.ncbi.nlm.nih.gov/22895672/' },
 }
 
 function getBMI(h: number | null, w: number | null): { value: number; label: string; emoji: string; color: string; tipTr: string; tipEn: string } | null {
@@ -101,7 +101,7 @@ export function LifestyleSection({ data, onChange, lang }: Props) {
               BMI: {bmi.value} — {bmi.emoji} {bmi.label}
             </div>
             <p className="text-xs text-muted-foreground">{tr ? bmi.tipTr : bmi.tipEn}</p>
-            <p className="text-[9px] text-muted-foreground/60 italic">WHO BMI Classification (2004)</p>
+            <a href="https://www.who.int/europe/news-room/fact-sheets/item/a-healthy-lifestyle---who-recommendations" target="_blank" rel="noopener noreferrer" className="text-[9px] text-muted-foreground/60 italic hover:underline">{"\u{1F4DA}"} WHO BMI Classification</a>
           </div>
         ) : (
           <p className="text-xs text-muted-foreground">{tr ? 'Boy ve kilonu gir, BMI hesaplansın!' : 'Enter height & weight to calculate BMI!'} {"\u{1F4AA}"}</p>

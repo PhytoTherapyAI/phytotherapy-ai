@@ -7,6 +7,7 @@ import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import type { VaccineEntry } from "@/lib/vaccine-data";
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 export async function POST(request: NextRequest) {
