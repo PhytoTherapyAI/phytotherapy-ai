@@ -10,6 +10,7 @@ import { createBrowserClient } from "@/lib/supabase"
 import { BADGES, evaluateBadges, calculateAnonymousScore, type UserStats } from "@/lib/badges"
 import { Trophy, Lock, Users, Crown, TrendingUp } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
+import BadgeIcon from "@/components/badges/BadgeIcon"
 
 interface LeaderboardData {
   rank: number
@@ -201,33 +202,20 @@ export default function BadgesPage() {
             {tx("badges.earned", lang)} ({earned.length}/{BADGES.length})
           </h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {earned.map((badge, i) => {
-              const gradients: Record<string, { bg: string; shadow: string }> = {
-                health: { bg: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)", shadow: "0 4px 15px rgba(132,250,176,0.4)" },
-                engagement: { bg: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", shadow: "0 4px 15px rgba(79,172,254,0.4)" },
-                social: { bg: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)", shadow: "0 4px 15px rgba(161,140,209,0.4)" },
-                milestone: { bg: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)", shadow: "0 4px 15px rgba(253,160,133,0.4)" },
-              };
-              const g = gradients[badge.category] || gradients.health;
-              return (
-                <div
-                  key={badge.id}
-                  className="relative flex flex-col items-center rounded-xl p-4 text-center text-white hover:scale-[1.03] transition-transform overflow-hidden"
-                  style={{ background: g.bg, boxShadow: g.shadow, animationDelay: `${i * 80}ms` }}
-                >
-                  <span className="text-3xl drop-shadow-md">{badge.icon}</span>
-                  <h4 className="mt-2 text-sm font-semibold text-white/95">
-                    {txObj(badge, lang)}
-                  </h4>
-                  <p className="mt-0.5 text-[11px] text-white/70">
-                    {txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
-                  </p>
-                  {/* Shimmer overlay */}
-                  <div className="absolute inset-0 rounded-xl pointer-events-none"
-                    style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: `badgeShimmer 1.5s ${i * 0.1}s ease-out 1` }} />
-                </div>
-              );
-            })}
+            {earned.map((badge) => (
+              <div
+                key={badge.id}
+                className="flex flex-col items-center rounded-xl border p-4 text-center hover:scale-[1.03] hover:shadow-lg transition-all"
+              >
+                <BadgeIcon badgeId={badge.id} size={72} showAnimation fallbackEmoji={badge.icon} />
+                <h4 className="mt-2 text-sm font-semibold">
+                  {txObj(badge, lang)}
+                </h4>
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  {txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       )}
@@ -243,17 +231,16 @@ export default function BadgesPage() {
             {locked.map((badge) => (
               <div
                 key={badge.id}
-                className="relative flex flex-col items-center rounded-xl p-4 text-center overflow-hidden bg-gray-100 dark:bg-gray-800/30 border border-dashed border-gray-200 dark:border-gray-700"
+                className="flex flex-col items-center rounded-xl border border-dashed border-muted-foreground/20 p-4 text-center"
                 title={txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
               >
-                <span className="text-3xl grayscale opacity-30">{badge.icon}</span>
-                <h4 className="mt-2 text-sm font-semibold text-gray-400">
+                <BadgeIcon badgeId={badge.id} locked size={72} fallbackEmoji={badge.icon} />
+                <h4 className="mt-2 text-sm font-semibold text-muted-foreground">
                   {txObj(badge, lang)}
                 </h4>
-                <p className="mt-0.5 text-[11px] text-gray-400/70">
+                <p className="mt-0.5 text-[11px] text-muted-foreground/70">
                   {txObj({ en: badge.descEn, tr: badge.descTr }, lang)}
                 </p>
-                <span className="absolute top-2 right-2 text-xs text-gray-400">🔒</span>
               </div>
             ))}
           </div>

@@ -8,6 +8,7 @@ import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import type { Badge } from "@/lib/badges";
 import { BADGE_POINTS } from "@/lib/badges";
+import BadgeIcon from "@/components/badges/BadgeIcon";
 
 interface CelebrationItem {
   badge: Badge;
@@ -122,14 +123,14 @@ export function BadgeCelebrationModal() {
             className="mx-4 w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 p-6 text-center shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Badge icon */}
+            {/* Badge icon — SVG or emoji fallback */}
             <motion.div
               initial={prefersReducedMotion.current ? {} : { scale: 0.5 }}
               animate={prefersReducedMotion.current ? {} : { scale: [0.5, 1.2, 1] }}
               transition={{ duration: 0.5, times: [0, 0.6, 1] }}
-              className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-4xl"
+              className="mx-auto mb-3 flex h-24 w-24 items-center justify-center"
             >
-              {current.badge.icon}
+              <BadgeIcon badgeId={current.badge.id} size={96} showAnimation fallbackEmoji={current.badge.icon} />
             </motion.div>
 
             {/* Title */}

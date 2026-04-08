@@ -39,6 +39,7 @@ import {
   EmptyStateCTA,
   type ProfileXPInput,
 } from "@/components/profile/ProfileGamification";
+import BadgeIcon from "@/components/badges/BadgeIcon";
 
 interface DrugSuggestion {
   brandName: string;
@@ -718,38 +719,20 @@ export default function ProfilePage() {
                 };
                 const { earned, locked } = evaluateBadges(stats);
                 return [
-                  ...earned.slice(0, 6).map(b => ({ icon: b.icon, label: txObj(b, lang), earned: true, cat: b.category })),
-                  ...locked.slice(0, Math.max(0, 6 - earned.length)).map(b => ({ icon: b.icon, label: txObj(b, lang), earned: false, cat: b.category })),
+                  ...earned.slice(0, 6).map(b => ({ id: b.id, icon: b.icon, label: txObj(b, lang), earned: true })),
+                  ...locked.slice(0, Math.max(0, 6 - earned.length)).map(b => ({ id: b.id, icon: b.icon, label: txObj(b, lang), earned: false })),
                 ];
-              })().map((b, i) => {
-                const gradients: Record<string, { bg: string; shadow: string }> = {
-                  health: { bg: "linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)", shadow: "0 4px 15px rgba(132,250,176,0.4)" },
-                  engagement: { bg: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", shadow: "0 4px 15px rgba(79,172,254,0.4)" },
-                  social: { bg: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)", shadow: "0 4px 15px rgba(161,140,209,0.4)" },
-                  milestone: { bg: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)", shadow: "0 4px 15px rgba(253,160,133,0.4)" },
-                };
-                const g = gradients[b.cat] || gradients.health;
-                return (
+              })().map((b, i) => (
                   <motion.div key={i}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.08, type: "spring", stiffness: 300, damping: 20 }}
-                    className={`relative flex flex-col items-center rounded-lg p-2 text-center text-[10px] border transition-all ${
-                      b.earned
-                        ? "text-white hover:scale-105 cursor-default"
-                        : "bg-gray-100 dark:bg-gray-800/30 border-dashed border-gray-200 dark:border-gray-700"
-                    }`}
-                    style={b.earned ? { background: g.bg, boxShadow: g.shadow } : {}}>
-                    <span className={`text-xl ${b.earned ? "drop-shadow-md" : "grayscale opacity-30"}`}>{b.icon}</span>
-                    <span className={`mt-0.5 leading-tight line-clamp-1 ${b.earned ? "text-white/90 font-semibold" : "text-gray-400"}`}>{b.label}</span>
-                    {!b.earned && <span className="absolute top-1 right-1 text-[8px] text-gray-400">🔒</span>}
-                    {b.earned && (
-                      <div className="absolute inset-0 rounded-lg overflow-hidden pointer-events-none"
-                        style={{ background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s ease-out 1" }} />
-                    )}
+                    className="relative flex flex-col items-center rounded-lg p-2 text-center text-[10px] border transition-all hover:scale-105 cursor-default"
+                  >
+                    <BadgeIcon badgeId={b.id} locked={!b.earned} size={48} showAnimation={b.earned} fallbackEmoji={b.icon} />
+                    <span className={`mt-1 leading-tight line-clamp-1 ${b.earned ? "font-semibold" : "text-muted-foreground"}`}>{b.label}</span>
                   </motion.div>
-                );
-              })}
+              ))}
             </div>
           </div>
 

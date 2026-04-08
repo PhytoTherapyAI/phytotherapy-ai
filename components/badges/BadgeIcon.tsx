@@ -36,6 +36,7 @@ interface BadgeIconProps {
   size?: number
   showAnimation?: boolean
   className?: string
+  fallbackEmoji?: string
 }
 
 export default function BadgeIcon({
@@ -44,11 +45,22 @@ export default function BadgeIcon({
   size = 64,
   showAnimation = false,
   className = '',
+  fallbackEmoji,
 }: BadgeIconProps) {
   const reducedMotion = useReducedMotion()
   const SvgComponent = BADGE_SVG_MAP[badgeId]
 
-  if (!SvgComponent) return null
+  if (!SvgComponent) {
+    if (!fallbackEmoji) return null
+    return (
+      <span
+        className={`inline-flex items-center justify-center rounded-full ${locked ? 'grayscale opacity-40' : ''}`}
+        style={{ width: size, height: size, fontSize: size * 0.5 }}
+      >
+        {fallbackEmoji}
+      </span>
+    )
+  }
 
   const motionProps = showAnimation && !reducedMotion
     ? {
