@@ -41,6 +41,7 @@ import {
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { LifestyleSection } from "@/components/profile/LifestyleSection";
 import { ProfileSupplementsStep, ProfileMedicalHistoryStep, ProfileFamilyHistoryStep, ProfileSubstanceStep } from "@/components/profile/OnboardingAdapters";
+import { AvatarPicker } from "@/components/profile/AvatarPicker";
 
 interface DrugSuggestion {
   brandName: string;
@@ -656,15 +657,16 @@ export default function ProfilePage() {
 
           {/* Avatar + Name + Member since */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-            {/* Avatar */}
+            {/* Avatar — DiceBear picker */}
             <div className="relative shrink-0">
-              <div className="flex h-28 w-28 items-center justify-center rounded-full border-4 border-primary bg-gradient-to-br from-primary/20 to-emerald-500/20 text-3xl font-bold text-primary shadow-xl">
-                {profile.full_name
-                  ? profile.full_name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
-                  : user?.email?.[0]?.toUpperCase() ?? "U"}
-              </div>
+              <AvatarPicker
+                userId={user!.id}
+                userName={profile.full_name || user?.email?.split("@")[0] || ""}
+                lang={lang as "en" | "tr"}
+                onAvatarChange={refreshProfile}
+              />
               <div className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white shadow">
-                <span className="text-xs font-bold">✓</span>
+                <span className="text-xs font-bold">{"\u2713"}</span>
               </div>
             </div>
             {/* Info + Score */}
