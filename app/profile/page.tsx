@@ -2085,8 +2085,8 @@ export default function ProfilePage() {
 
       {/* Health Flags card moved up — see above */}
 
-      {/* Old Edit Health Profile removed — moved above Medical History */}
-      {false && <Card className="mb-6">
+      {/* Old Edit Health Profile card deleted — now lives above Medical History */}
+      {false && <Card className="mb-6-DEAD">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
