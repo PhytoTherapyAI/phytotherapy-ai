@@ -44,8 +44,10 @@ export default function FriendGoalsPage() {
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null)
 
   useEffect(() => {
-    const saved = localStorage.getItem(`friend_goals_${user?.id || "guest"}`)
-    if (saved) setGoals(JSON.parse(saved))
+    try {
+      const saved = localStorage.getItem(`friend_goals_${user?.id || "guest"}`)
+      if (saved) setGoals(JSON.parse(saved))
+    } catch { /* corrupted localStorage */ }
   }, [user])
 
   const saveGoals = (newGoals: SharedGoal[]) => {
