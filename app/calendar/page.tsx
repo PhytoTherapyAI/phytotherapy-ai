@@ -38,7 +38,7 @@ function generateICS(events: Array<{ title: string; event_date: string; event_ti
   for (const evt of events) {
     const dateClean = evt.event_date.replace(/-/g, "")
     const dtStart = evt.event_time ? `${dateClean}T${evt.event_time.replace(":", "")}00` : dateClean
-    const dtEnd = evt.event_time ? `${dateClean}T${String(parseInt(evt.event_time.split(":")[0]) + 1).padStart(2, "0")}${evt.event_time.split(":")[1]}00` : dateClean
+    const dtEnd = evt.event_time ? `${dateClean}T${String(parseInt(evt.event_time.split(":")[0], 10) + 1).padStart(2, "0")}${evt.event_time.split(":")[1]}00` : dateClean
     lines.push("BEGIN:VEVENT", `DTSTART:${dtStart}`, `DTEND:${dtEnd}`, `SUMMARY:${evt.title}`)
     if (evt.description) lines.push(`DESCRIPTION:${evt.description.replace(/\n/g, "\\n")}`)
     lines.push(`CATEGORIES:${evt.event_type}`, `UID:${evt.event_date}-${Math.random().toString(36).slice(2)}@doctopal.com`, "END:VEVENT")

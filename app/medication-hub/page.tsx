@@ -327,7 +327,7 @@ export default function MedicationHubPage() {
   const now = new Date();
   const currentHour = now.getHours();
   const nextSlot = slots.find(s => {
-    const slotHour = parseInt(s.time.split(":")[0]);
+    const slotHour = parseInt(s.time.split(":")[0] || "0", 10);
     return slotHour >= currentHour;
   });
 
