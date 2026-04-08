@@ -45,10 +45,8 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
       })
   }, [userId, initialVaccines])
 
-  const saveVaccines = useCallback(async (updated: VaccineEntry[]) => {
-    // Capture current state for rollback before optimistic update
-    let previous: VaccineEntry[] = []
-    setVaccines(prev => { previous = prev; return updated })
+  const saveVaccines = useCallback(async (updated: VaccineEntry[], previous: VaccineEntry[]) => {
+    // Optimistic: UI already shows updated, rollback on failure
     setSaving(true)
     try {
       const supabase = createBrowserClient()
@@ -75,6 +73,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
     const name = tr ? vaccineDef.nameTr : vaccineDef.nameEn
     const newStatus = existing?.status === "done" ? "not_done" : "done"
 
+    const previous = [...vaccines]
     let updated: VaccineEntry[]
     if (existing) {
       updated = vaccines.map(v => v.id === vaccineId
@@ -83,7 +82,8 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
     } else {
       updated = [...vaccines, { id: vaccineId, name, status: newStatus as VaccineEntry["status"] }]
     }
-    saveVaccines(updated)
+    setVaccines(updated)
+    saveVaccines(updated, previous)
   }
 
   const setDate = (vaccineId: string, year: string) => {
@@ -92,13 +92,15 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
     if (!vaccineDef) return
     const name = tr ? vaccineDef.nameTr : vaccineDef.nameEn
 
+    const previous = [...vaccines]
     let updated: VaccineEntry[]
     if (existing) {
       updated = vaccines.map(v => v.id === vaccineId ? { ...v, last_date: year, status: "done" as const } : v)
     } else {
       updated = [...vaccines, { id: vaccineId, name, status: "done" as const, last_date: year }]
     }
-    saveVaccines(updated)
+    setVaccines(updated)
+    saveVaccines(updated, previous)
     setOpenDatePicker(null)
   }
 
@@ -222,11 +224,11 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                         const isDateOpen = openDatePicker === vDef.id
 
                         return (
-                          <div key={vDef.id} className="flex items-center gap-3 px-4 py-3 min-h-[48px] relative">
+                          <div key={vDef.id} className="flex items-center gap-3 px-4 py-3 min-h-[48px] relative cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleVaccine(vDef.id)}>
                             {/* Checkbox */}
                             <button
                               type="button"
-                              onClick={() => toggleVaccine(vDef.id)}
+                              onClick={(e) => { e.stopPropagation(); toggleVaccine(vDef.id); }}
                               className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-all ${
                                 isDone
                                   ? "bg-primary border-primary text-primary-foreground"
@@ -246,7 +248,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                             {/* Date dropdown trigger */}
                             <button
                               type="button"
-                              onClick={() => isDone && setOpenDatePicker(isDateOpen ? null : vDef.id)}
+                              onClick={(e) => { e.stopPropagation(); isDone && setOpenDatePicker(isDateOpen ? null : vDef.id); }}
                               disabled={!isDone}
                               className={`text-xs px-2 py-1 rounded-md transition-colors flex items-center gap-1 ${
                                 isDone

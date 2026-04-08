@@ -302,6 +302,15 @@ export default function ProfilePage() {
     }
   }, [isLoading, isAuthenticated, router]);
 
+  // BUG-7: Restore scroll position on reload
+  useEffect(() => {
+    const saved = sessionStorage.getItem('profile_scrollPos');
+    if (saved) { window.scrollTo(0, parseInt(saved)); sessionStorage.removeItem('profile_scrollPos'); }
+    const handleBeforeUnload = () => sessionStorage.setItem('profile_scrollPos', String(window.scrollY));
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   useEffect(() => {
     if (!user) return;
     const supabase = createBrowserClient();
@@ -485,7 +494,7 @@ export default function ProfilePage() {
         frequency: newFrequency.trim() || null,
         is_active: true,
       }).select().single();
-      if (error) { console.error("Med insert error:", error); setSavingMed(false); return; }
+      if (error) { console.error("Med insert error:", error); alert(tr ? "Kaydedilemedi, tekrar dene" : "Save failed, try again"); setSavingMed(false); return; }
       if (data) setMedications((prev) => [...prev, data as UserMedication]);
       setNewBrandName("");
       setNewGenericName("");
@@ -798,60 +807,19 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* ── Profile Completion Card ── */}
-      {completionPct < 100 && (
-        <div className="mb-6 rounded-xl border bg-gradient-to-r from-primary/5 to-amber-500/5 p-5">
-          <div className="flex items-center justify-between mb-3">
-            <div>
-              <h3 className="text-sm font-semibold flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-amber-500" />
-                {tx("profile.completion", lang)}
-              </h3>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {tx("profile.moreInfoBetter", lang)}
-              </p>
-            </div>
-            <span className="text-2xl font-bold text-primary">%{completionPct}</span>
-          </div>
-          {/* Progress bar */}
-          <div className="h-2.5 rounded-full bg-muted/50 overflow-hidden mb-3">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-primary to-amber-500 transition-all duration-700"
-              style={{ width: `${completionPct}%` }}
-            />
-          </div>
-          {/* Completion items */}
-          <div className="flex flex-wrap gap-2 mb-3">
-            {completionChecks.map((check, i) => (
-              <span key={i} className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full ${
-                check.done
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                  : "bg-muted text-muted-foreground"
-              }`}>
-                {check.done ? <CheckCircle2 className="h-3 w-3" /> : <span className="w-3 h-3 rounded-full border border-current opacity-40" />}
-                {check.label}
-              </span>
-            ))}
-          </div>
-          {/* Clinical motivation nudge */}
-          {motivation && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7, duration: 0.3 }}
-              className="bg-amber-50 dark:bg-amber-950/20 rounded-lg px-3 py-2.5 space-y-1.5"
-            >
-              <p className="text-xs text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
-                <span className="shrink-0 mt-0.5">💡</span>
-                <span>{motivation.message}</span>
-              </p>
-              <a href={motivation.href} className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary hover:underline">
-                {motivation.cta}
-              </a>
-            </motion.div>
-          )}
-        </div>
-      )}
+      {/* ── Completion Checks — under Profile Power header ── */}
+      <div className="mb-6 flex flex-wrap gap-2">
+        {completionChecks.map((check, i) => (
+          <span key={i} className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full ${
+            check.done
+              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+              : "bg-muted text-muted-foreground"
+          }`}>
+            {check.done ? <CheckCircle2 className="h-3 w-3" /> : <span className="w-3 h-3 rounded-full border border-current opacity-40" />}
+            {check.label}
+          </span>
+        ))}
+      </div>
 
       {/* ── Completed celebration ── */}
       {completionPct === 100 && (
@@ -1197,7 +1165,12 @@ export default function ProfilePage() {
                       {(med.dosage || med.frequency) && (
                         <div className="mt-1 flex gap-2">
                           {med.dosage && <Badge variant="secondary">{med.dosage}</Badge>}
-                          {med.frequency && <Badge variant="outline">{med.frequency}</Badge>}
+                          {med.frequency && <Badge variant="outline">{tr ? ({
+                            "1x daily": "Günde 1 kez", "2x daily": "Günde 2 kez", "3x daily": "Günde 3 kez",
+                            "4x daily": "Günde 4 kez", "once daily": "Günde 1 kez", "twice daily": "Günde 2 kez",
+                            "every 8 hours": "Her 8 saatte", "every 12 hours": "Her 12 saatte",
+                            "as needed": "Gerektiğinde", "weekly": "Haftada 1", "monthly": "Ayda 1",
+                          } as Record<string, string>)[med.frequency] || med.frequency : med.frequency}</Badge>}
                         </div>
                       )}
                     </div>
@@ -1304,9 +1277,9 @@ export default function ProfilePage() {
                   {savingMed ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Check className="h-4 w-4" />
+                    <Save className="h-4 w-4" />
                   )}
-                  {tr ? "✓ Kaydet" : "✓ Save"}
+                  {tr ? "Kaydet" : "Save"}
                 </Button>
                 <Button
                   variant="ghost"
@@ -1933,7 +1906,7 @@ export default function ProfilePage() {
                     <p className="text-sm text-green-700 dark:text-green-400">
                       {tr ? "Kayıtlı kronik hastalığın yok. Bu, AI önerilerinin daha geniş bir yelpazede çalışması demek." : "No chronic conditions recorded. This means AI recommendations work across a wider range."}
                     </p>
-                    <button onClick={() => document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" })}
+                    <button onClick={() => document.getElementById("allergy-card")?.scrollIntoView({ behavior: "smooth" })}
                       className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
                       <Plus className="h-3 w-3" /> {tr ? "Hastalık Ekle" : "Add Condition"}
                     </button>
@@ -2006,7 +1979,7 @@ export default function ProfilePage() {
                         <p className="text-sm text-blue-700 dark:text-blue-400">
                           {tr ? "Soygeçmiş verisi, genetik risk tespitini %60 daha doğru yapar." : "Family history data makes genetic risk assessment 60% more accurate."}
                         </p>
-                        <button onClick={() => document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" })}
+                        <button onClick={() => document.getElementById("allergy-card")?.scrollIntoView({ behavior: "smooth" })}
                           className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
                           <Plus className="h-3 w-3" /> {tr ? "Soygeçmiş Ekle" : "Add Family History"}
                         </button>
@@ -2054,7 +2027,7 @@ export default function ProfilePage() {
         };
 
         return (
-          <Card className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow ${hasAnaphylaxis ? "border-red-300 dark:border-red-700 border-l-4 border-l-red-500" : allergies.length > 0 ? "border-l-4 border-l-amber-500" : "border-green-200 dark:border-green-800"}`}
+          <Card id="allergy-card" className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow ${hasAnaphylaxis ? "border-red-300 dark:border-red-700 border-l-4 border-l-red-500" : allergies.length > 0 ? "border-l-4 border-l-amber-500" : "border-green-200 dark:border-green-800"}`}
             style={hasAnaphylaxis ? { backgroundColor: "var(--red-50, rgba(254,242,242,0.5))" } : allergies.length === 0 ? { backgroundColor: "var(--green-50, rgba(240,253,244,0.5))" } : {}}>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 flex-wrap">
@@ -2082,7 +2055,7 @@ export default function ProfilePage() {
                   <p className="text-sm text-green-700 dark:text-green-400">
                     {tr ? "Tıbbi geçmişinde kayıtlı bir alerjin yok. Güvenle öneri alabilirsin." : "No allergies in your medical record. You can safely receive recommendations."}
                   </p>
-                  <button onClick={() => document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" })}
+                  <button onClick={() => document.getElementById("allergy-card")?.scrollIntoView({ behavior: "smooth" })}
                     className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
                     <Plus className="h-3 w-3" /> {tr ? "Alerji Ekle" : "Add Allergy"}
                   </button>
