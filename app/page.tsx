@@ -17,6 +17,7 @@ import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
 import { useFamily } from "@/lib/family-context";
+import { useActiveProfile } from "@/lib/use-active-profile";
 import { createBrowserClient } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
@@ -330,6 +331,7 @@ export default function Home() {
   const { lang } = useLang();
   const { user, isAuthenticated, isLoading, profile } = useAuth();
   const { familyGroup, activeProfileId, loading: familyLoading } = useFamily();
+  const { activeUserId } = useActiveProfile();
 
   // Family profile selection — redirect if group exists but no profile selected yet
   useEffect(() => {
@@ -374,7 +376,7 @@ export default function Home() {
 
   // Fetch real streak from Supabase
   useEffect(() => {
-    if (!user?.id) return;
+    if (!activeUserId) return;
     const fetchStreak = async () => {
       try {
         const supabase = createBrowserClient();
@@ -382,9 +384,9 @@ export default function Home() {
         const ninetyAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 90);
         const ninetyAgoStr = `${ninetyAgo.getFullYear()}-${String(ninetyAgo.getMonth()+1).padStart(2,"0")}-${String(ninetyAgo.getDate()).padStart(2,"0")}`;
         const [checkInsRes, logsRes] = await Promise.all([
-          supabase.from("daily_check_ins").select("check_date").eq("user_id", user.id)
+          supabase.from("daily_check_ins").select("check_date").eq("user_id", activeUserId)
             .gte("check_date", ninetyAgoStr),
-          supabase.from("daily_logs").select("log_date").eq("user_id", user.id).eq("completed", true)
+          supabase.from("daily_logs").select("log_date").eq("user_id", activeUserId).eq("completed", true)
             .gte("log_date", ninetyAgoStr),
         ]);
         const activeDates = new Set<string>();
@@ -402,18 +404,18 @@ export default function Home() {
       }
     };
     fetchStreak();
-  }, [user?.id]);
+  }, [activeUserId]);
 
   // Fetch individual med/sup tasks + completion state from Supabase (single source of truth)
   const fetchDashboardTasks = useCallback(async () => {
-    if (!user?.id) return;
+    if (!activeUserId) return;
     try {
       const supabase = createBrowserClient();
       const [medsRes, supsRes, logsRes, waterRes] = await Promise.all([
-        supabase.from("user_medications").select("id, brand_name, generic_name, dosage, frequency").eq("user_id", user.id).eq("is_active", true),
-        supabase.from("calendar_events").select("id, title").eq("user_id", user.id).eq("event_type", "supplement").eq("recurrence", "daily"),
-        supabase.from("daily_logs").select("item_id, item_type, completed").eq("user_id", user.id).eq("log_date", todayStr).eq("completed", true),
-        supabase.from("water_intake").select("glasses, target_glasses").eq("user_id", user.id).eq("intake_date", todayStr).single(),
+        supabase.from("user_medications").select("id, brand_name, generic_name, dosage, frequency").eq("user_id", activeUserId).eq("is_active", true),
+        supabase.from("calendar_events").select("id, title").eq("user_id", activeUserId).eq("event_type", "supplement").eq("recurrence", "daily"),
+        supabase.from("daily_logs").select("item_id, item_type, completed").eq("user_id", activeUserId).eq("log_date", todayStr).eq("completed", true),
+        supabase.from("water_intake").select("glasses, target_glasses").eq("user_id", activeUserId).eq("intake_date", todayStr).single(),
       ]);
 
       // Build dynamic task list
@@ -446,7 +448,7 @@ export default function Home() {
         if (waterRes.data.target_glasses) setWaterTarget(waterRes.data.target_glasses);
       }
     } catch {}
-  }, [user?.id, todayStr, lang]);
+  }, [activeUserId, todayStr, lang]);
 
   useEffect(() => { fetchDashboardTasks(); }, [fetchDashboardTasks]);
 
@@ -543,29 +545,29 @@ export default function Home() {
   const scorePercent   = visibleTasks.length > 0 ? Math.round((completedCount / visibleTasks.length) * 100) : 0;
 
   const fetchCheckIn = useCallback(async () => {
-    if (!user) return;
+    if (!activeUserId) return;
     try {
       const supabase = createBrowserClient();
       const today = new Date().toISOString().split("T")[0];
       const { data } = await supabase
         .from("daily_check_ins")
         .select("energy_level, sleep_quality, mood, bloating")
-        .eq("user_id", user.id).eq("check_date", today).single();
+        .eq("user_id", activeUserId).eq("check_date", today).single();
       if (data) setCheckInData(data);
     } catch { /* silent */ }
-  }, [user]);
+  }, [activeUserId]);
 
   const fetchMeds = useCallback(async () => {
-    if (!user) return;
+    if (!activeUserId) return;
     try {
       const supabase = createBrowserClient();
       const { data } = await supabase
         .from("user_medications")
         .select("brand_name, generic_name")
-        .eq("user_id", user.id).eq("is_active", true);
+        .eq("user_id", activeUserId).eq("is_active", true);
       if (data) setMedications(data.map((m: any) => ({ medication_name: m.generic_name || m.brand_name })));
     } catch { /* silent */ }
-  }, [user]);
+  }, [activeUserId]);
 
   useEffect(() => { setTimeEmoji(getTimeEmoji()); }, []);
   useEffect(() => { setHour(new Date().getHours()); }, []);

@@ -29,6 +29,7 @@ import { shouldAskPermission } from "@/lib/permission-state";
 import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
 import { VaccineProfileSection } from "@/components/profile/VaccineProfileSection";
 import { FamilyManagementSettings } from "@/components/profile/FamilyManagementSettings";
+import { useActiveProfile } from "@/lib/use-active-profile";
 import { BADGES, evaluateBadges, type UserStats } from "@/lib/badges";
 import { txObj } from "@/lib/translations";
 import {
@@ -55,6 +56,8 @@ export default function ProfilePage() {
   const router = useRouter();
   const { lang } = useLang();
   const { isAuthenticated, isLoading, profile, user, refreshProfile } = useAuth();
+  const { activeUserId, isOwnProfile, canEdit } = useActiveProfile();
+  const [viewedProfile, setViewedProfile] = useState<typeof profile>(null);
   const [medications, setMedications] = useState<UserMedication[]>([]);
   const [allergies, setAllergies] = useState<UserAllergy[]>([]);
 
@@ -234,11 +237,11 @@ export default function ProfilePage() {
   };
 
   const addAllergy = async () => {
-    if (!newAllergen.trim() || !user) return;
+    if (!newAllergen.trim() || !user || !canEdit) return;
     try {
       const supabase = createBrowserClient();
       const { data, error } = await supabase.from("user_allergies").insert({
-        user_id: user.id,
+        user_id: activeUserId,
         allergen: newAllergen.trim(),
         severity: newAllergenSeverity,
       }).select().single();
@@ -309,16 +312,36 @@ export default function ProfilePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Fetch viewed profile data when viewing another user
   useEffect(() => {
-    if (!user) return;
+    if (!activeUserId || isOwnProfile) {
+      setViewedProfile(null);
+      return;
+    }
+    const supabase = createBrowserClient();
+    supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("id", activeUserId)
+      .single()
+      .then(({ data }) => {
+        if (data) setViewedProfile(data as typeof profile);
+      });
+  }, [activeUserId, isOwnProfile]);
+
+  // The effective profile to display
+  const displayProfile = isOwnProfile ? profile : viewedProfile;
+
+  useEffect(() => {
+    if (!activeUserId) return;
     const supabase = createBrowserClient();
 
     Promise.all([
-      supabase.from("user_medications").select("*").eq("user_id", user.id).eq("is_active", true),
-      supabase.from("user_allergies").select("*").eq("user_id", user.id),
-      supabase.from("blood_tests").select("id", { count: "exact", head: true }).eq("user_id", user.id),
-      supabase.from("query_history").select("query_type, created_at").eq("user_id", user.id).order("created_at", { ascending: false }).limit(5),
-      supabase.from("daily_check_ins").select("check_in_date").eq("user_id", user.id).order("check_in_date", { ascending: false }).limit(30),
+      supabase.from("user_medications").select("*").eq("user_id", activeUserId).eq("is_active", true),
+      supabase.from("user_allergies").select("*").eq("user_id", activeUserId),
+      supabase.from("blood_tests").select("id", { count: "exact", head: true }).eq("user_id", activeUserId),
+      supabase.from("query_history").select("query_type, created_at").eq("user_id", activeUserId).order("created_at", { ascending: false }).limit(5),
+      supabase.from("daily_check_ins").select("check_in_date").eq("user_id", activeUserId).order("check_in_date", { ascending: false }).limit(30),
     ]).then(([medsRes, allergyRes, labRes, activityRes, streakRes]) => {
       if (medsRes.data) setMedications(medsRes.data as UserMedication[]);
       if (allergyRes.data) setAllergies(allergyRes.data as UserAllergy[]);
@@ -356,7 +379,7 @@ export default function ProfilePage() {
         }));
       }
     }).catch(() => { /* silent */ });
-  }, [user, lang]);
+  }, [activeUserId, lang]);
 
   // Drug autocomplete
   const fetchSuggestions = useCallback(async (query: string) => {
@@ -483,12 +506,12 @@ export default function ProfilePage() {
   };
 
   const addMedication = async () => {
-    if (!newBrandName.trim() || !user) return;
+    if (!newBrandName.trim() || !user || !canEdit) return;
     setSavingMed(true);
     try {
       const supabase = createBrowserClient();
       const { data, error } = await supabase.from("user_medications").insert({
-        user_id: user.id,
+        user_id: activeUserId,
         brand_name: newBrandName.trim(),
         generic_name: newGenericName.trim() || null,
         dosage: newDosage.trim() || null,
@@ -598,6 +621,21 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
+      {/* Read-only banner when viewing someone else's profile */}
+      {!isOwnProfile && !canEdit && (
+        <div className="mb-4 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50/80 dark:bg-amber-950/20 px-4 py-3 text-center">
+          <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">
+            {tr ? "Sadece goruntuleme modu — bu profili duzenlemek icin yonetim iznine ihtiyaciniz var." : "View-only mode — you need management permission to edit this profile."}
+          </p>
+        </div>
+      )}
+      {!isOwnProfile && canEdit && (
+        <div className="mb-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/20 px-4 py-3 text-center">
+          <p className="text-sm text-emerald-800 dark:text-emerald-300 font-medium">
+            {tr ? "Aile uyesi profilini duzenliyorsunuz" : "You are editing a family member's profile"}
+          </p>
+        </div>
+      )}
       {/* Save success toast */}
       {saveSuccess && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-5 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
@@ -1084,7 +1122,7 @@ export default function ProfilePage() {
           {/* Medication Scanner */}
           {showScanner && user && (
             <MedicationScanner
-              userId={user.id}
+              userId={activeUserId || user.id}
               lang={lang as "en" | "tr"}
               onMedicationFound={(brand, generic, dose) => {
                 setNewBrandName(brand);
@@ -1443,7 +1481,7 @@ export default function ProfilePage() {
                 color="green"
               />
               <ProfileSupplementsStep
-                userId={user!.id}
+                userId={activeUserId || user!.id}
                 supplements={healthForm.supplements}
                 onUpdate={(supps) => setHealthForm(p => ({ ...p, supplements: supps }))}
               />
@@ -1861,16 +1899,16 @@ export default function ProfilePage() {
       />
 
       {/* Vaccine Profile */}
-      <VaccineProfileSection lang={lang} userId={profile.id} initialVaccines={Array.isArray(profile.vaccines) ? profile.vaccines : undefined} />
+      <VaccineProfileSection lang={lang} userId={activeUserId || profile.id} initialVaccines={Array.isArray(profile.vaccines) ? profile.vaccines : undefined} />
 
       {/* Family Management Permission */}
       <FamilyManagementSettings lang={lang} />
 
       {/* Emergency Contacts */}
-      <EmergencyContactsSection lang={lang} userId={profile.id} />
+      <EmergencyContactsSection lang={lang} userId={activeUserId || profile.id} />
 
       {/* Linked Accounts */}
-      <LinkedAccountsSection lang={lang} userId={profile.id} />
+      <LinkedAccountsSection lang={lang} userId={activeUserId || profile.id} />
 
       {/* Scanners removed — kept for mobile app later */}
 
