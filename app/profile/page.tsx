@@ -397,10 +397,52 @@ export default function ProfilePage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Common drug default doses (same as onboarding)
+  const DEFAULT_DOSES: Record<string, { dosage: string; frequency: string }> = {
+    metformin: { dosage: "500mg", frequency: "2x daily" },
+    lisinopril: { dosage: "10mg", frequency: "1x daily" },
+    atorvastatin: { dosage: "20mg", frequency: "1x daily" },
+    omeprazole: { dosage: "20mg", frequency: "1x daily" },
+    pantoprazole: { dosage: "40mg", frequency: "1x daily" },
+    amlodipine: { dosage: "5mg", frequency: "1x daily" },
+    losartan: { dosage: "50mg", frequency: "1x daily" },
+    levothyroxine: { dosage: "50mcg", frequency: "1x daily" },
+    metoprolol: { dosage: "50mg", frequency: "2x daily" },
+    aspirin: { dosage: "100mg", frequency: "1x daily" },
+    ibuprofen: { dosage: "400mg", frequency: "3x daily" },
+    paracetamol: { dosage: "500mg", frequency: "3x daily" },
+    ramipril: { dosage: "5mg", frequency: "1x daily" },
+    bisoprolol: { dosage: "5mg", frequency: "1x daily" },
+    sertraline: { dosage: "50mg", frequency: "1x daily" },
+    escitalopram: { dosage: "10mg", frequency: "1x daily" },
+    pregabalin: { dosage: "75mg", frequency: "2x daily" },
+    montelukast: { dosage: "10mg", frequency: "1x daily" },
+    euthyrox: { dosage: "50mcg", frequency: "1x daily" },
+    beloc: { dosage: "50mg", frequency: "2x daily" },
+    concor: { dosage: "5mg", frequency: "1x daily" },
+    coraspin: { dosage: "100mg", frequency: "1x daily" },
+    parol: { dosage: "500mg", frequency: "3x daily" },
+    arveles: { dosage: "25mg", frequency: "3x daily" },
+    glifor: { dosage: "500mg", frequency: "2x daily" },
+    nexium: { dosage: "20mg", frequency: "1x daily" },
+  };
+
+  const [autoDoseBadge, setAutoDoseBadge] = useState(false);
+
   const selectSuggestion = (s: DrugSuggestion) => {
     setNewBrandName(s.brandName);
     if (s.genericName && s.genericName.toLowerCase() !== s.brandName.toLowerCase()) {
       setNewGenericName(s.genericName);
+    }
+    // Auto-fill default dosage if known
+    const generic = (s.genericName || s.brandName).toLowerCase();
+    const brand = s.brandName.toLowerCase();
+    const match = Object.entries(DEFAULT_DOSES).find(([key]) => generic.includes(key) || brand.includes(key));
+    if (match) {
+      setNewDosage(match[1].dosage);
+      setNewFrequency(match[1].frequency);
+      setAutoDoseBadge(true);
+      setTimeout(() => setAutoDoseBadge(false), 2500);
     }
     setSuggestions([]);
     setShowSuggestions(false);
@@ -916,10 +958,9 @@ export default function ProfilePage() {
               <User className="h-5 w-5" />
               {tx('profile.personalInfo', lang)}
             </CardTitle>
-            <button onClick={startEditingHealth} className="text-sm text-primary font-medium hover:underline flex items-center gap-1">
-              <Edit3 className="h-3.5 w-3.5" />
-              {tr ? "Düzenle" : "Edit"}
-            </button>
+            <p className="text-xs text-muted-foreground italic">
+              {tr ? "Değere tıklayarak düzenle" : "Click a value to edit"}
+            </p>
           </div>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
@@ -1247,18 +1288,24 @@ export default function ProfilePage() {
                   />
                 </div>
               </div>
+              {autoDoseBadge && (
+                <div className="flex items-center gap-2 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 p-2 text-sm text-green-700 dark:text-green-300">
+                  <Check className="h-4 w-4" />
+                  {tr ? "Önerilen doz otomatik dolduruldu ✓" : "Suggested dose auto-filled ✓"}
+                </div>
+              )}
               <div className="flex gap-2">
                 <Button
                   onClick={addMedication}
                   disabled={!newBrandName.trim() || savingMed}
-                  className="flex-1 gap-1 bg-primary hover:bg-primary/90"
+                  className="flex-1 gap-1 bg-green-600 hover:bg-green-700 text-white"
                 >
                   {savingMed ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <Check className="h-4 w-4" />
                   )}
-                  {tr ? "Kaydet" : "Save"}
+                  {tr ? "✓ Kaydet" : "✓ Save"}
                 </Button>
                 <Button
                   variant="ghost"
@@ -2660,7 +2707,7 @@ export default function ProfilePage() {
           setSbarLoading(null);
         }}
         disabled={sbarLoading === "pdf"}
-        className="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-50 flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-3 shadow-lg hover:shadow-xl transition-shadow group mb-16 md:mb-0"
+        className="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-[100] flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3.5 shadow-xl hover:shadow-2xl transition-shadow group"
         aria-label={tr ? "Özet PDF Al" : "Get Summary PDF"}
       >
         {sbarLoading === "pdf"
