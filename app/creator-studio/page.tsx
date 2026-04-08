@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Creator Studio — SaaS Growth Redesign with Dopamine Analytics + Decoy Pricing
 "use client"
 

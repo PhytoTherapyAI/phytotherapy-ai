@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"

@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Embedding Generation & Vector Search Client
 // Uses Google Gemini text-embedding-004 (768 dimensions)

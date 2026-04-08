@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Circadian Time-Blocked Task List — Morning / Afternoon / Night
 
 "use client";

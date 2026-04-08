@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Semantic Search API — Vector Similarity Search
 // POST /api/semantic-search

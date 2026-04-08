@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Sentry Webhook Receiver — stores error data for Claude Code auto-fix pipeline
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"

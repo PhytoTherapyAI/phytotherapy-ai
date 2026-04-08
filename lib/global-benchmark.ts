@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Global Health Benchmarking — Harvard HVHS
 // G20+ country data + cross-learning + simulation

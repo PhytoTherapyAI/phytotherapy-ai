@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Horizontal Weekly Strip — replaces 30-day grid with focused 7-day swipeable strip
 
 "use client";

@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Behavioral Chat Welcome — replaces static example questions
 // 1. Contextual greeting (time + mock sleep data)
 // 2. Smart personalized chips (curiosity gap)

@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Sentry Auto-Fix Status API — returns pending errors for Claude Code to fix
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"

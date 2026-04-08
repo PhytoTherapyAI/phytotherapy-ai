@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 "use client";
 
 import Link from "next/link";
@@ -10,9 +10,11 @@ import {
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { useFamily } from "@/lib/family-context";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageToggle, useLang } from "@/components/layout/language-toggle";
 import { Button } from "@/components/ui/button";
+import { getAvatarDataUri, type AvatarStyle } from "@/lib/avatar";
 import { tx } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
 import { MobileMegaMenu } from "@/components/layout/mega-menu/MobileMegaMenu";
@@ -32,7 +34,10 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, isLoading, user, profile, signOut, needsMedicationUpdate, refreshProfile } = useAuth();
+  const { activeProfileId, familyMembers, setActiveProfile } = useFamily();
   const { lang } = useLang();
+  const isViewingOther = isAuthenticated && user && activeProfileId && activeProfileId !== user.id;
+  const activeMember = familyMembers.find(m => m.user_id === activeProfileId);
   const [showMedReminder, setShowMedReminder] = useState(false);
   const [dismissingReminder, setDismissingReminder] = useState(false);
 
@@ -65,8 +70,19 @@ export function Header() {
   }, [user?.id, refreshProfile]);
 
   const initials = profile?.full_name
-    ? profile.full_name.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2)
+    ? profile.full_name.split(" ").filter(Boolean).map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) || "U"
     : user?.email?.[0]?.toUpperCase() ?? "U";
+
+  // DiceBear avatar from localStorage
+  const [avatarUri, setAvatarUri] = useState('');
+  useEffect(() => {
+    if (!user?.id) return;
+    try {
+      const style = (localStorage.getItem(`avatar_style_${user.id}`) || 'adventurer') as AvatarStyle;
+      const seed = localStorage.getItem(`avatar_seed_${user.id}`) || user.id;
+      setAvatarUri(getAvatarDataUri(seed, style));
+    } catch { /* noop */ }
+  }, [user?.id]);
 
   // Mock streak (in production, this comes from health-context or daily_check_ins)
   const streakDays = 0; // Will be populated when user data loads
@@ -161,9 +177,13 @@ export function Header() {
                       aria-label="User menu"
                       className="flex items-center gap-1.5 rounded-full bg-primary/10 px-2 py-1 transition-colors hover:bg-primary/20"
                     >
-                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
-                        {initials}
-                      </div>
+                      {avatarUri ? (
+                        <img src={avatarUri} alt="" className="h-7 w-7 rounded-full" />
+                      ) : (
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
+                          {initials}
+                        </div>
+                      )}
                       {streakDays > 0 && (
                         <span className="flex items-center gap-0.5 text-[10px] font-bold text-orange-500">
                           <Flame className="h-3 w-3" />
@@ -241,9 +261,11 @@ export function Header() {
               ) : isAuthenticated ? (
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                    {avatarUri ? (
+                      <img src={avatarUri} alt="" className="h-8 w-8 rounded-full" />
+                    ) : <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                       {initials}
-                    </div>
+                    </div>}
                     <div>
                       <p className="text-sm font-medium">{profile?.full_name || user?.email}</p>
                       <Link href="/" onClick={() => setMobileOpen(false)} className="text-xs text-primary">
@@ -300,6 +322,26 @@ export function Header() {
           </div>
         )}
       </header>
+
+      {/* Active family profile banner */}
+      {isViewingOther && user && (
+        <div className="mx-auto max-w-6xl px-3 md:px-4 mt-1">
+          <div className="rounded-xl border border-emerald-200 bg-emerald-50/80 px-4 py-2 dark:border-emerald-800/40 dark:bg-emerald-950/20">
+            <div className="flex items-center gap-3">
+              <Users className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <p className="flex-1 text-xs text-emerald-800 dark:text-emerald-300">
+                {activeMember?.nickname ?? (lang === 'tr' ? 'Aile Uyesi' : 'Family Member')}{' '}
+                {lang === 'tr' ? 'profilini goruntuluyorsunuz' : 'profile active'}
+              </p>
+              <Button variant="ghost" size="sm"
+                className="h-7 gap-1 text-[10px] text-emerald-700 hover:bg-emerald-100 dark:text-emerald-300"
+                onClick={() => setActiveProfile(user.id)}>
+                {lang === 'tr' ? 'Kendi profilime don' : 'Back to my profile'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Medication reminder — below navbar */}
       {showMedReminder && (

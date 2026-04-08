@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 import { searchDrug } from "@/lib/openfda";
 import { searchPubMed } from "@/lib/pubmed";
 import { askGeminiJSON } from "@/lib/ai-client";

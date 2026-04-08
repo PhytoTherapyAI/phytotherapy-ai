@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 import { NextRequest } from "next/server";
 import { askStreamJSON } from "@/lib/ai-client";
 import { BLOOD_TEST_PROMPT } from "@/lib/prompts";

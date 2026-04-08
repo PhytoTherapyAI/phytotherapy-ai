@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Turkey 112 Emergency Triage Protocol + ESI-based Safety Filter
 //
 // Seviye 1 (KIRMIZI): Hayati tehlike — popup ile 112'ye yönlendir, AI cevap vermez

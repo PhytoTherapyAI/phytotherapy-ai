@@ -1,8 +1,8 @@
-# CLAUDE.md — Doctopal Proje Anayasası v44.0
+# CLAUDE.md — DoctoPal Proje Anayasası v44.0
 
 ## Hızlı Bağlam
 
-**Doctopal** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
+**DoctoPal** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
 - **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **3 gün kaldı**
 - **IGNITE 26 kazanıldı** — jüri core tool'lara ve aile profiline odaklanılmasını istedi

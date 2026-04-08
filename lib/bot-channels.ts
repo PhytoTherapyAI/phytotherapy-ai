@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Omnichannel Bot — Data Schema & Config
 // WhatsApp (Twilio) + Telegram Bot API

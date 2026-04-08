@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 import { NextRequest } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";

@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -16,6 +16,7 @@ import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
+import { useFamily } from "@/lib/family-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
@@ -328,6 +329,19 @@ export default function Home() {
   const router = useRouter();
   const { lang } = useLang();
   const { user, isAuthenticated, isLoading, profile } = useAuth();
+  const { familyGroup, activeProfileId, loading: familyLoading } = useFamily();
+
+  // Family profile selection — redirect if group exists but no profile selected yet
+  useEffect(() => {
+    if (!isLoading && !familyLoading && isAuthenticated && familyGroup) {
+      // Check if user has been to select-profile this session
+      const hasSelected = sessionStorage.getItem('family_profile_selected');
+      if (!hasSelected) {
+        sessionStorage.setItem('family_profile_selected', 'true');
+        router.push('/select-profile');
+      }
+    }
+  }, [isLoading, familyLoading, isAuthenticated, familyGroup, router]);
 
   // Guest state
   const [searchQuery, setSearchQuery] = useState("");
@@ -903,15 +917,15 @@ export default function Home() {
 
               <h1 className="font-heading text-2xl font-semibold leading-tight tracking-tight sm:text-3xl md:text-5xl">
                 {isTr ? (
-                  <>Kanıt Doğayla Buluşur.<br /><span style={{ color: "var(--brand)" }}>Yapay Zeka Seninle.</span></>
+                  <>Tahmin Değil,<br /><span style={{ color: "var(--brand)" }}>Kanıta Dayalı Analiz.</span></>
                 ) : (
-                  <>Evidence Meets Nature.<br /><span style={{ color: "var(--brand)" }}>AI Meets You.</span></>
+                  <>Not Guesswork,<br /><span style={{ color: "var(--brand)" }}>Evidence-Based Analysis.</span></>
                 )}
               </h1>
               <p className="mt-3 max-w-lg text-xs text-muted-foreground sm:text-sm md:text-base">
                 {isTr
-                  ? "DoctoPal, modern tıp ile doğal iyileşmeyi birleştirir — ilaç etkileşimleri, fitoterapi protokolleri ve kişiselleştirilmiş sağlık bilgileri, bilim tarafından doğrulanmış."
-                  : "DoctoPal bridges modern medicine and natural healing — drug interactions, phytotherapy protocols, and personalized health insights, all verified by science."}
+                  ? "DoctoPal semptomlarınızı dinler, ilaç etkileşimlerini analiz eder ve doktorunuz için profesyonel bir SBAR ön raporu hazırlar."
+                  : "DoctoPal listens to your symptoms, analyzes drug interactions, and prepares a professional SBAR preliminary report for your doctor."}
               </p>
 
               {/* Spotlight search */}
@@ -988,6 +1002,28 @@ export default function Home() {
         <p className="text-center text-sm text-muted-foreground mb-8 max-w-lg mx-auto">
           {isTr ? "Sağlığını bilimle yönet" : "Manage your health with science"}
         </p>
+
+        {/* Core Features — Highlighted */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
+          {[
+            { icon: <Stethoscope className="h-7 w-7 text-primary" />, title: isTr ? "AI Semptom Triyajı" : "AI Symptom Triage", desc: isTr ? "Şikayetlerinizi yapılandırılmış bir klinik tabloya dönüştürür ve aciliyet seviyesini belirler." : "Converts your complaints into a structured clinical picture and determines urgency level.", href: "/health-assistant", gradient: "from-primary/5 to-emerald-50 dark:from-primary/10 dark:to-emerald-950/20", border: "border-primary/20 dark:border-primary/30" },
+            { icon: <Pill className="h-7 w-7 text-red-500" />, title: isTr ? "İlaç Etkileşim Kontrolü" : "Drug Interaction Check", desc: isTr ? "Reçeteli ilaçlar ve takviyeler arasındaki riskli kombinasyonları anında tespit eder." : "Instantly detects risky combinations between prescription drugs and supplements.", href: "/interaction-checker", gradient: "from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20", border: "border-red-100 dark:border-red-900/30" },
+            { icon: <Leaf className="h-7 w-7 text-emerald-500" />, title: isTr ? "Fitoterapi AI" : "Phytotherapy AI", desc: isTr ? "Bitkisel destekleri modern tıp veritabanlarıyla çapraz kontrol ederek güvenli öneriler sunar." : "Cross-checks herbal supplements with modern medical databases to provide safe recommendations.", href: "/health-assistant", gradient: "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20", border: "border-emerald-100 dark:border-emerald-900/30" },
+            { icon: <Microscope className="h-7 w-7 text-blue-500" />, title: isTr ? "Laboratuvar Analizi" : "Lab Analysis", desc: isTr ? "Kan tahlili sonuçlarınızı yapay zeka ile yorumlar ve anlaşılır içgörülere dönüştürür." : "Interprets your blood test results with AI and turns them into understandable insights.", href: "/blood-test", gradient: "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20", border: "border-blue-100 dark:border-blue-900/30" },
+          ].map((f) => (
+            <Link key={f.href + f.title} href={f.href}
+              className={`group rounded-2xl border-2 ${f.border} bg-gradient-to-br ${f.gradient} p-7 transition-all hover:shadow-soft-lg hover:-translate-y-0.5`}>
+              <span className="block mb-3">{f.icon}</span>
+              <h3 className="font-bold text-base mb-1.5">{f.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+            </Link>
+          ))}
+        </div>
+
+        {/* Other Features */}
+        <h3 className="text-center text-sm font-semibold text-muted-foreground mb-4">
+          {isTr ? "Daha Fazlası" : "And More"}
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
             { emoji: "💊", title: isTr ? "İlaç Etkileşim Kalkanı" : "Drug Interaction Shield", desc: isTr ? "50.000+ ilaç-bitki etkileşimini saniyeler içinde kontrol et" : "Check 50,000+ drug-herb interactions in seconds", href: "/interaction-checker", gradient: "from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20", border: "border-red-100 dark:border-red-900/30" },
@@ -1007,15 +1043,15 @@ export default function Home() {
         {/* Competitive Advantage — "Why DoctoPal?" */}
         <div className="mt-12 rounded-2xl border bg-gradient-to-br from-stone-50 to-primary/5 dark:from-stone-900 dark:to-primary/10 p-6 md:p-8">
           <h3 className="text-lg font-bold text-center mb-1">
-            {isTr ? "Diğerleri Sadeleşirken, Biz Güçlendiriyoruz." : "While Others Simplify, We Amplify."}
+            {isTr ? "Neden DoctoPal?" : "Why DoctoPal?"}
           </h3>
           <p className="text-sm font-medium text-primary text-center mb-2">
-            {isTr ? "Diğer uygulamalar teşhis koyar. DoctoPal teşhis koyar VE iyileştirir." : "They tell you what's wrong. We show you how to get better — naturally."}
+            {isTr ? "5 katmanlı güvenlik altyapımız her AI yanıtını klinik kurallara göre denetler." : "Our 5-layer safety infrastructure audits every AI response against clinical rules."}
           </p>
           <p className="text-xs text-muted-foreground text-center mb-6 max-w-lg mx-auto">
             {isTr
-              ? "2026'da öncü sağlık uygulamaları BMI takibi, ilaç yönetimi ve alerji takibini kaldırdı. Biz hepsini koruduk — ve yapay zeka ile güçlendirdik."
-              : "In 2026, leading health apps removed BMI tracking, medication management, and allergy tracking. We kept them all — and enhanced them with AI."}
+              ? "Türkiye'nin ilk ilaç-bitki etkileşim veritabanıyla desteklenmektedir. İlaç takibi, alerji yönetimi ve BMI analizi — hepsi yapay zeka ile güçlendirilmiş."
+              : "Powered by Turkey's first drug-herb interaction database. Medication tracking, allergy management, and BMI analysis — all enhanced with AI."}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {[
@@ -1045,7 +1081,7 @@ export default function Home() {
             ))}
           </div>
           <p className="text-[9px] text-muted-foreground text-center mt-3">
-            {isTr ? "* BMI, ilaç ve alerji takibi 2026'da rakipler tarafından kaldırıldı" : "* BMI, medication & allergy tracking discontinued by major health apps in 2026"}
+            {isTr ? "* Tüm AI yanıtları 5 katmanlı güvenlik altyapısından geçer" : "* All AI responses pass through a 5-layer clinical safety pipeline"}
           </p>
         </div>
 

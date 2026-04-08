@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Doctor Workspace Shell — persistent tab bar + glassmorphism + Framer Motion
 
 "use client";

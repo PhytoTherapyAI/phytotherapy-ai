@@ -1,8 +1,8 @@
-# CLAUDE.md — Doctopal Proje Anayasası v42.0
+# CLAUDE.md — DoctoPal Proje Anayasası v42.0
 
 ## ⚡ Hızlı Bağlam (Her Oturum Başında Oku)
 
-**Doctopal** (eski adı: Phytotherapy.ai) — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
+**DoctoPal** (eski adı: Phytotherapy.ai) — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
 - **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **8 gün kaldı**
 - **Domain:** doctopal.com ✅ (Vercel'e bağlı) — eski: phytotherapy.ai

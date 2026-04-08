@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Guest query limit system
 // Tracks queries in localStorage for unauthenticated users
 

@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Live Circadian Rhythm Timeline — dynamic status based on current time
 
 "use client";

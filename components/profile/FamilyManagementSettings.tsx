@@ -1,0 +1,106 @@
+// © 2026 DoctoPal — All Rights Reserved
+"use client"
+
+import { useEffect, useState } from "react"
+import { useAuth } from "@/lib/auth-context"
+import { useFamily } from "@/lib/family-context"
+import { createBrowserClient } from "@/lib/supabase"
+import { Shield } from "lucide-react"
+import type { Lang } from "@/lib/translations"
+
+interface Props {
+  lang: Lang
+}
+
+export function FamilyManagementSettings({ lang }: Props) {
+  const { user } = useAuth()
+  const { familyGroup, updateAllowsManagement } = useFamily()
+  const [allows, setAllows] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const tr = lang === "tr"
+
+  useEffect(() => {
+    async function load() {
+      if (!user || !familyGroup) return
+      const supabase = createBrowserClient()
+      const { data } = await supabase
+        .from("family_members")
+        .select("allows_management")
+        .eq("user_id", user.id)
+        .eq("group_id", familyGroup.id)
+        .single()
+      if (data) setAllows(data.allows_management)
+      setLoaded(true)
+    }
+    load()
+  }, [user, familyGroup])
+
+  async function toggle() {
+    setSaving(true)
+    try {
+      const next = !allows
+      await updateAllowsManagement(next)
+      setAllows(next)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  if (!familyGroup || !loaded) return null
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5 sm:p-6 mt-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Shield className="h-5 w-5 text-emerald-500" />
+        <h3 className="font-semibold text-foreground">
+          {tr ? "Aile Profil Izni" : "Family Profile Permission"}
+        </h3>
+      </div>
+      <p className="text-muted-foreground text-sm mb-4">
+        {tr
+          ? "Aile grubundaki yoneticilerin senin profilini duzenlemesine izin vermek istiyor musun? Bu ayari sadece sen degistirebilirsin."
+          : "Do you want to allow admins in your family group to edit your profile? Only you can change this setting."}
+      </p>
+
+      <div className="flex items-center justify-between bg-muted/50 rounded-xl p-4">
+        <div className="flex-1 min-w-0">
+          <p className="font-medium text-foreground text-sm">
+            {tr ? "Profilimin yonetilmesine izin ver" : "Allow profile management"}
+          </p>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {allows
+              ? (tr ? "Yoneticiler profilini duzenleyebilir" : "Admins can edit your profile")
+              : (tr ? "Sadece sen duzenleyebilirsin" : "Only you can edit")}
+          </p>
+        </div>
+        <button
+          onClick={toggle}
+          disabled={saving}
+          className={`relative w-12 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ${
+            allows
+              ? "bg-emerald-500"
+              : "bg-muted-foreground/30"
+          } disabled:opacity-50`}
+          aria-label={tr ? "Yonetim izni" : "Management permission"}
+        >
+          <div
+            className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all duration-200 ${
+              allows ? "left-[26px]" : "left-0.5"
+            }`}
+          />
+        </button>
+      </div>
+
+      {allows && (
+        <div className="mt-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-3">
+          <p className="text-amber-700 dark:text-amber-300 text-xs">
+            {tr
+              ? "Yoneticiler ilac, alerji ve saglik bilgilerini duzenleyebilir. Bu izni istedigin zaman kapatabilirsin."
+              : "Admins can edit medications, allergies and health info. You can revoke this permission at any time."}
+          </p>
+        </div>
+      )}
+    </div>
+  )
+}

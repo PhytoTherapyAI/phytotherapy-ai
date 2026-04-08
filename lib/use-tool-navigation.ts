@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Smart Tool Navigation — Hierarchy-aware back navigation
 // Maps any tool page to its parent category for breadcrumbs + back button

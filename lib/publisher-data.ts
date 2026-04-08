@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Premium Publisher Portal — Data Schema
 // Business model: Credit-based publishing for verified professionals

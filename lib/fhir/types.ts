@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // FHIR R4 Type Definitions for Doctopal
 // HL7 FHIR (Fast Healthcare Interoperability Resources)

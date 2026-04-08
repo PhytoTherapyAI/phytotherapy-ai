@@ -1,4 +1,4 @@
-# PROGRESS.md — Doctopal Sprint İlerleme Takibi
+# PROGRESS.md — DoctoPal Sprint İlerleme Takibi
 
 > Son güncelleme: 8 Nisan 2026 (v45.0 — Session 17: Vaccine + Profile + Bug Mega Sprint)
 
@@ -464,7 +464,7 @@
 
 ### Domain Migration: phytotherapy.ai → doctopal.com ✅
 - ✅ 38+ kaynak dosyada `phytotherapy.ai` → `doctopal.com` toplu değişiklik
-- ✅ 400+ dosyada `Phytotherapy.ai` brand → `Doctopal` güncellendi (copyright headers dahil)
+- ✅ 400+ dosyada `Phytotherapy.ai` brand → `DoctoPal` güncellendi (copyright headers dahil)
 - ✅ `public/sitemap.xml` — 32 URL güncellendi
 - ✅ `public/robots.txt` — sitemap URL güncellendi
 - ✅ `public/manifest.json` — name/short_name güncellendi
@@ -473,7 +473,7 @@
 - ✅ `app/layout.tsx` — metadataBase, openGraph, twitter meta güncellendi
 - ✅ `next.config.ts` — Sentry org adı korundu (ayrıca Sentry dashboard'da güncellenmeli)
 - ✅ Email adresleri: noreply@, hello@, legal@, privacy@, security@, research@, api@, support@, info@ → doctopal.com
-- ✅ PDF dosya adları: PhytotherapyAI-* → Doctopal-*
+- ✅ PDF dosya adları: PhytotherapyAI-* → DoctoPal-*
 - ✅ Telegram bot: @PhytotherapyBot → @DoctopalBot
 - ✅ FHIR kaynakları: Organization/phytotherapy-ai → Organization/doctopal
 - ✅ localStorage key'leri: phytotherapy_guest_* → doctopal_guest_*
@@ -538,7 +538,7 @@
 
 ### Sonraki Session İçin TODO
 - [ ] PubMed cache (30dk) — 2-4s hız kazancı
-- [ ] Domain değişikliği (Doctopal veya Medolya alternatifi)
+- [ ] Domain değişikliği (DoctoPal veya Medolya alternatifi)
 - [ ] Sentry webhook kurulumu
 - [ ] Hetzner migration (cold start çözümü)
 - [ ] Vercel Pro veya alternatif hosting
@@ -2668,10 +2668,10 @@ FAZE F — Rakip Özellikleri (8 yeni):
 
 **Adım 2 — Yeni Logo Tasarımı:**
 - ✅ public/logo-icon.svg — Shield + D monogram + stethoscope + leaf + AI pulse
-- ✅ public/logo.svg — İkon + "Doctopal" text (navbar)
+- ✅ public/logo.svg — İkon + "DoctoPal" text (navbar)
 - ✅ public/logo-white.svg — Koyu arka planlar için beyaz versiyon
 - ✅ public/og-image.svg — 1200x630 OpenGraph paylaşım görseli
-- ✅ Navbar: Eski yaprak+Phytotherapy text → Yeni logo-icon + "Doctopal" bold text
+- ✅ Navbar: Eski yaprak+Phytotherapy text → Yeni logo-icon + "DoctoPal" bold text
 - ✅ layout.tsx: metadata og:image, twitter:image güncellendi
 
 **Adım 3 — Landing Page Pazarlama Optimizasyonu:**
@@ -2682,7 +2682,7 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ CTA section: gradient, "Start Your Health Journey Today"
 
 **Adım 4 — Ürün Parlatma:**
-- ✅ app/loading.tsx: Doctopal logo + shimmer loading
+- ✅ app/loading.tsx: DoctoPal logo + shimmer loading
 - ✅ app/error.tsx: Branded error page + 3 recovery options
 - ✅ app/not-found.tsx: "Oops, this page took a different path" + Go Home
 - ✅ Footer: Logo icon, hello@doctopal.com eklendi

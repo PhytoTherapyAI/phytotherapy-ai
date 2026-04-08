@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Unified lab insights: Longevity ranges, organ systems, biological age, healthspan scores, action plan
 "use client"
 

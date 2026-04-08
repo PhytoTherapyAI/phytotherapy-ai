@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Doctor Panel — Clinical Copilot with AI Greeting + Triage Queue + Bento Population
 "use client"
 

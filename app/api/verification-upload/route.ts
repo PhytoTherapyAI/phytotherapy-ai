@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Secure Document Upload API
 // KVKK/HIPAA compliant — server-side validation

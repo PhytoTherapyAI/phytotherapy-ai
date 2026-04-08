@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -28,6 +28,7 @@ import { MedicationScanner } from "@/components/scanner/MedicationScanner";
 import { shouldAskPermission } from "@/lib/permission-state";
 import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
 import { VaccineProfileSection } from "@/components/profile/VaccineProfileSection";
+import { FamilyManagementSettings } from "@/components/profile/FamilyManagementSettings";
 import { BADGES, evaluateBadges, type UserStats } from "@/lib/badges";
 import { txObj } from "@/lib/translations";
 import {
@@ -1861,6 +1862,9 @@ export default function ProfilePage() {
 
       {/* Vaccine Profile */}
       <VaccineProfileSection lang={lang} userId={profile.id} initialVaccines={Array.isArray(profile.vaccines) ? profile.vaccines : undefined} />
+
+      {/* Family Management Permission */}
+      <FamilyManagementSettings lang={lang} />
 
       {/* Emergency Contacts */}
       <EmergencyContactsSection lang={lang} userId={profile.id} />

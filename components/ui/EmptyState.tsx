@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Behavioral Empty State — encourages action instead of showing "no data"
 
 "use client";

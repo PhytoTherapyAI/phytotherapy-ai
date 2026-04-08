@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 "use client"
 import { redirect } from "next/navigation"
 export default function BotanicalHubPage() { redirect("/supplement-compare") }

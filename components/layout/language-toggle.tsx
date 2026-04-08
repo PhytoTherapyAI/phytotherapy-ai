@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 'use client'
 import { createContext, useContext, useState, useEffect, useRef } from 'react'
 import { SUPPORTED_LANGUAGES, DEFAULT_LANG, type Lang } from '@/lib/translations'

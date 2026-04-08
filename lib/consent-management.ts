@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // KVKK/GDPR Consent Management System
 // Dynamic consent with layered disclosure, digital signatures,

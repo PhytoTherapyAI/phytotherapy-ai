@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Centralized Translation System — v2.0
 // ============================================
@@ -1097,13 +1097,13 @@ const t: Record<string, TranslationEntry> = {
   "pricing.doctor.tagline": { en: "Clinical decision support", tr: "Klinik karar destek" },
   "pricing.doctor.features": { en: "Patient tracking panel|AI visit summary|Compliance score|Prescription interaction alerts|Multi-patient management|Invite patients via link|Clinic billing available|FHIR data export", tr: "Hasta takip paneli|AI ziyaret özeti|Uyum skoru|Reçete etkileşim uyarıları|Çoklu hasta yönetimi|Hastaları linkle davet|Klinik faturalandırma|FHIR veri dışa aktarım" },
   "pricing.faq1q": { en: "Is there really a free plan?", tr: "Gerçekten ücretsiz plan var mı?" },
-  "pricing.faq1a": { en: "Yes! The free plan includes 20 AI queries/day, drug interaction checks, and basic health tracking. No credit card required.", tr: "Evet! Ücretsiz plan günde 20 AI sorgu, ilaç etkileşim kontrolü ve temel sağlık takibini içerir. Kredi kartı gerekmez." },
-  "pricing.faq2q": { en: "How does the 7-day trial work?", tr: "7 günlük deneme nasıl çalışır?" },
-  "pricing.faq2a": { en: "When you sign up, you get full Premium access for 7 days. No credit card needed, no automatic charges. After 7 days, you switch to the free plan — your data is never deleted.", tr: "Kayıt olduğunuzda 7 gün tam Premium erişim alırsınız. Kredi kartı gerekmez, otomatik ödeme yoktur. 7 gün sonra ücretsiz plana geçersiniz — verileriniz asla silinmez." },
-  "pricing.faq3q": { en: "Can I cancel anytime?", tr: "İstediğim zaman iptal edebilir miyim?" },
-  "pricing.faq3a": { en: "Absolutely. No contracts, no cancellation fees. Cancel anytime and keep using the free plan with all your saved data.", tr: "Kesinlikle. Sözleşme yok, iptal ücreti yok. İstediğiniz zaman iptal edin ve tüm kayıtlı verilerinizle ücretsiz planı kullanmaya devam edin." },
-  "pricing.faq4q": { en: "Is my health data safe?", tr: "Sağlık verilerim güvende mi?" },
-  "pricing.faq4a": { en: "Your data is encrypted and stored securely. We comply with KVKK/GDPR regulations. You can download or delete all your data anytime. We never sell user data.", tr: "Verileriniz şifrelenerek güvenli şekilde saklanır. KVKK/GDPR düzenlemelerine uyuyoruz. Verilerinizi istediğiniz zaman indirebilir veya silebilirsiniz. Kullanıcı verisi asla satılmaz." },
+  "pricing.faq1a": { en: "Yes, using DoctoPal's core features is completely free. You can try our health assistant, drug interaction checker, and blood test analysis tools right now for free.", tr: "Evet, DoctoPal'ın temel özelliklerini kullanmak tamamen ücretsizdir. Sağlık asistanımız, ilaç etkileşim kontrolü ve kan tahlili analizi gibi araçları hemen şimdi ücretsiz deneyebilirsiniz." },
+  "pricing.faq2q": { en: "Is my personal health data safe?", tr: "Kişisel sağlık verilerim güvende mi?" },
+  "pricing.faq2a": { en: "Absolutely. DoctoPal protects your data with the highest security standards. Your test results are processed instantly only to generate personalized analyses and are never shared with third parties without your consent.", tr: "Kesinlikle. DoctoPal, verilerinizi en yüksek güvenlik standartlarıyla korur. Tahlil sonuçlarınız sadece size özel analizler üretmek için anlık olarak işlenir ve izniniz olmadan üçüncü şahıslarla paylaşılmaz." },
+  "pricing.faq3q": { en: "How does the 7-day trial work?", tr: "7 günlük deneme nasıl çalışır?" },
+  "pricing.faq3a": { en: "When you sign up, you get full Premium access for 7 days. No credit card needed, no automatic charges. After 7 days, you switch to the free plan — your data is never deleted.", tr: "Kayıt olduğunuzda 7 gün tam Premium erişim alırsınız. Kredi kartı gerekmez, otomatik ödeme yoktur. 7 gün sonra ücretsiz plana geçersiniz — verileriniz asla silinmez." },
+  "pricing.faq4q": { en: "Can I cancel anytime?", tr: "İstediğim zaman iptal edebilir miyim?" },
+  "pricing.faq4a": { en: "Absolutely. No contracts, no cancellation fees. Cancel anytime and keep using the free plan with all your saved data.", tr: "Kesinlikle. Sözleşme yok, iptal ücreti yok. İstediğiniz zaman iptal edin ve tüm kayıtlı verilerinizle ücretsiz planı kullanmaya devam edin." },
   "history.noResponse": { en: "No response saved", tr: "Yanıt kaydedilmemiş" },
 
   // ══════════════════════════════════════════

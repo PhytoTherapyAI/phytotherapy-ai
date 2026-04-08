@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Bot Daily Send — Cron Job Endpoint
 // POST /api/bot-send

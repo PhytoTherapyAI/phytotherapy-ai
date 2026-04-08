@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Test endpoint to verify Sentry error tracking is working
 import { NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";

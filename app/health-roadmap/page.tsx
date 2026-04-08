@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Health Roadmap — Gamified Quest Journey with Shield Gauge
 "use client"
 

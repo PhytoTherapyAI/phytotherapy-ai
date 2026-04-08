@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // FHIR Interoperability API Bridge
 // GET  /api/fhir?type=bundle    → Export patient FHIR bundle

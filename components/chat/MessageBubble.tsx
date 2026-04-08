@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 "use client";
 
 import { User, Leaf, Loader2, FileText, Image as ImageIcon, BookOpen } from "lucide-react";

@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Smart Nudge Engine — Event-Driven Triggers
 // Detects: Drop-off, Streak, Risk Alert

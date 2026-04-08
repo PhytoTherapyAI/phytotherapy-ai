@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
 import { askGeminiJSON } from "@/lib/ai-client";

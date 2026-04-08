@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Medical Terminology Mapping — SNOMED CT, RxNorm, LOINC, WHO-DD
 // Maps doctopal.com internal terms to global medical codes

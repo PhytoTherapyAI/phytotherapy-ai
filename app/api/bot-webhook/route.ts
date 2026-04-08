@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // ============================================
 // Bot Webhook — Receives incoming messages
 // from WhatsApp (Twilio) and Telegram Bot API

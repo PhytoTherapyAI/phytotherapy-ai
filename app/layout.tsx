@@ -1,11 +1,12 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Cormorant_Garamond, DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
-import { Header } from "@/components/layout/Header";
+import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { DisclaimerBanner } from "@/components/layout/disclaimer-banner";
 import { AuthProvider } from "@/lib/auth-context";
+import { FamilyProvider } from "@/lib/family-context";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/components/layout/language-toggle";
 import dynamic from "next/dynamic";
@@ -125,6 +126,7 @@ export default function RootLayout({
         <ThemeProvider>
           <LanguageProvider>
             <AuthProvider>
+            <FamilyProvider>
               <Header />
               <TrialBannerWrapper />
               <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-hidden">
@@ -148,6 +150,7 @@ export default function RootLayout({
               <CriticalAlertModal />
               <FeedbackWidget />
               <BottomNavbar />
+            </FamilyProvider>
             </AuthProvider>
           </LanguageProvider>
         </ThemeProvider>

@@ -1,4 +1,4 @@
-// © 2026 Doctopal — All Rights Reserved
+// © 2026 DoctoPal — All Rights Reserved
 // Longevity-optimal biomarker ranges (3-tier: standard, optimal, longevity)
 
 export interface BiomarkerRange {
