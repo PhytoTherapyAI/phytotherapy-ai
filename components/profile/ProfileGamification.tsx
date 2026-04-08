@@ -27,16 +27,16 @@ export interface ProfilePower {
   missingSections: string[]
 }
 
-const SECTION_CHECKS: { key: string; labelTr: string; labelEn: string; check: (i: ProfilePowerInput) => boolean }[] = [
-  { key: 'basic', labelTr: 'Temel Bilgiler', labelEn: 'Basic Info', check: i => i.hasBasicInfo },
-  { key: 'meds', labelTr: 'İlaçlar', labelEn: 'Medications', check: i => i.medicationCount > 0 },
-  { key: 'supplements', labelTr: 'Takviyeler', labelEn: 'Supplements', check: i => i.supplementCount > 0 },
-  { key: 'allergies', labelTr: 'Alerjiler', labelEn: 'Allergies', check: i => i.hasAllergies },
-  { key: 'chronic', labelTr: 'Kronik Hastalıklar', labelEn: 'Chronic Conditions', check: i => i.hasChronicConditions },
-  { key: 'family', labelTr: 'Soygeçmiş', labelEn: 'Family History', check: i => i.hasFamilyHistory },
-  { key: 'vaccines', labelTr: 'Aşılar', labelEn: 'Vaccines', check: i => i.vaccineCount > 0 },
-  { key: 'contact', labelTr: 'İletişim', labelEn: 'Contact', check: i => i.hasContactInfo },
-  { key: 'lifestyle', labelTr: 'Yaşam Tarzı', labelEn: 'Lifestyle', check: i => i.hasLifestyle },
+const SECTION_CHECKS: { key: string; labelTr: string; labelEn: string; scrollId: string; check: (i: ProfilePowerInput) => boolean }[] = [
+  { key: 'basic', labelTr: 'Temel Bilgiler', labelEn: 'Basic Info', scrollId: 'personal-info', check: i => i.hasBasicInfo },
+  { key: 'meds', labelTr: 'İlaçlar', labelEn: 'Medications', scrollId: 'medications', check: i => i.medicationCount > 0 },
+  { key: 'supplements', labelTr: 'Takviyeler', labelEn: 'Supplements', scrollId: 'edit-health', check: i => i.supplementCount > 0 },
+  { key: 'allergies', labelTr: 'Alerjiler', labelEn: 'Allergies', scrollId: 'allergy-card', check: i => i.hasAllergies },
+  { key: 'chronic', labelTr: 'Kronik Hastalıklar', labelEn: 'Chronic Conditions', scrollId: 'edit-health', check: i => i.hasChronicConditions },
+  { key: 'family', labelTr: 'Soygeçmiş', labelEn: 'Family History', scrollId: 'edit-health', check: i => i.hasFamilyHistory },
+  { key: 'vaccines', labelTr: 'Aşılar', labelEn: 'Vaccines', scrollId: 'vaccines', check: i => i.vaccineCount > 0 },
+  { key: 'contact', labelTr: 'İletişim', labelEn: 'Contact', scrollId: 'edit-health', check: i => i.hasContactInfo },
+  { key: 'lifestyle', labelTr: 'Yaşam Tarzı', labelEn: 'Lifestyle', scrollId: 'edit-health', check: i => i.hasLifestyle },
 ]
 
 export function calculateProfilePower(input: ProfilePowerInput): ProfilePower {
@@ -105,8 +105,10 @@ export function ProfilePowerHeader({ power, input, lang }: ProfilePowerHeaderPro
         {SECTION_CHECKS.map(s => {
           const done = s.check(input)
           return (
-            <div key={s.key} className={`flex items-center gap-2 text-xs ${!done ? 'cursor-pointer hover:text-primary transition-colors' : ''}`}
-              title={!done ? (tr ? 'Ekle ve profil g\u00fcc\u00fcn\u00fc art\u0131r!' : 'Add to boost your profile power!') : undefined}>
+            <div key={s.key}
+              className={`flex items-center gap-2 text-xs ${!done ? 'cursor-pointer hover:text-primary transition-colors' : ''}`}
+              title={!done ? (tr ? 'Ekle ve profil g\u00fcc\u00fcn\u00fc art\u0131r!' : 'Add to boost your profile power!') : undefined}
+              onClick={!done ? () => document.getElementById(s.scrollId)?.scrollIntoView({ behavior: 'smooth', block: 'center' }) : undefined}>
               {done
                 ? <span className="text-green-600 dark:text-green-400">{"\u2705"}</span>
                 : <span className="text-muted-foreground/50">{"\u2B55"}</span>}

@@ -297,13 +297,13 @@ export default function ProfilePage() {
     }
   }, [isLoading, isAuthenticated, router]);
 
-  // BUG-7: Restore scroll position on reload
+  // Restore scroll position on reload
   useEffect(() => {
-    const saved = sessionStorage.getItem('profile_scrollPos');
-    if (saved) { window.scrollTo(0, parseInt(saved)); sessionStorage.removeItem('profile_scrollPos'); }
-    const handleBeforeUnload = () => sessionStorage.setItem('profile_scrollPos', String(window.scrollY));
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    const saved = sessionStorage.getItem('profile_scroll');
+    if (saved) setTimeout(() => window.scrollTo(0, parseInt(saved)), 100);
+    const handleScroll = () => sessionStorage.setItem('profile_scroll', String(window.scrollY));
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -1060,7 +1060,7 @@ export default function ProfilePage() {
       </Card>
 
       {/* Medications — Editable */}
-      <Card className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow ${medications.length > 0 ? 'border-l-4 border-l-green-500' : ''}`}>
+      <Card id="medications" className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow ${medications.length > 0 ? 'border-l-4 border-l-green-500' : ''}`}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>

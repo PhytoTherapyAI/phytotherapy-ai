@@ -58,13 +58,13 @@ const BLOOD_INSIGHTS: Record<string, { tr: string; en: string; emoji: string }> 
   'AB-': { tr: 'Kardiyovasküler takip', en: 'Cardiovascular monitoring', emoji: '\u{2764}\u{FE0F}' },
 }
 
-function getBMI(h: number | null, w: number | null): { value: number; label: string; emoji: string; color: string } | null {
+function getBMI(h: number | null, w: number | null): { value: number; label: string; emoji: string; color: string; tipTr: string; tipEn: string } | null {
   if (!h || !w || h < 50 || w < 10) return null
   const bmi = w / ((h / 100) ** 2)
-  if (bmi < 18.5) return { value: Math.round(bmi * 10) / 10, label: 'Zayıf', emoji: '\u{1F4C9}', color: 'text-blue-600' }
-  if (bmi < 25) return { value: Math.round(bmi * 10) / 10, label: 'Normal', emoji: '\u{2705}', color: 'text-green-600' }
-  if (bmi < 30) return { value: Math.round(bmi * 10) / 10, label: 'Fazla Kilolu', emoji: '\u{26A0}\u{FE0F}', color: 'text-amber-600' }
-  return { value: Math.round(bmi * 10) / 10, label: 'Obez', emoji: '\u{1F534}', color: 'text-red-600' }
+  if (bmi < 18.5) return { value: Math.round(bmi * 10) / 10, label: 'Zayıf', emoji: '\u{1F4C9}', color: 'text-blue-600', tipTr: 'Takviye önerilerin farklı olacak.', tipEn: 'Your supplement recommendations will be different.' }
+  if (bmi < 25) return { value: Math.round(bmi * 10) / 10, label: 'Normal', emoji: '\u{2705}', color: 'text-green-600', tipTr: 'İdeal aralıkta! Öneriler buna göre.', tipEn: 'Ideal range! Recommendations adjusted accordingly.' }
+  if (bmi < 30) return { value: Math.round(bmi * 10) / 10, label: 'Fazla Kilolu', emoji: '\u{26A0}\u{FE0F}', color: 'text-amber-600', tipTr: 'Bazı takviyeler daha önemli olabilir.', tipEn: 'Some supplements may be more important.' }
+  return { value: Math.round(bmi * 10) / 10, label: 'Obez', emoji: '\u{1F534}', color: 'text-red-600', tipTr: 'Metabolik risk faktörleri hesaba katılacak.', tipEn: 'Metabolic risk factors will be considered.' }
 }
 
 export function LifestyleSection({ data, onChange, lang }: Props) {
@@ -96,8 +96,11 @@ export function LifestyleSection({ data, onChange, lang }: Props) {
           </div>
         </div>
         {bmi ? (
-          <div className={`text-sm font-semibold ${bmi.color}`}>
-            BMI: {bmi.value} — {bmi.emoji} {bmi.label}
+          <div className="space-y-1">
+            <div className={`text-sm font-semibold ${bmi.color}`}>
+              BMI: {bmi.value} — {bmi.emoji} {bmi.label}
+            </div>
+            <p className="text-xs text-muted-foreground">{tr ? bmi.tipTr : bmi.tipEn}</p>
           </div>
         ) : (
           <p className="text-xs text-muted-foreground">{tr ? 'Boy ve kilonu gir, BMI hesaplansın!' : 'Enter height & weight to calculate BMI!'} {"\u{1F4AA}"}</p>
@@ -115,8 +118,10 @@ export function LifestyleSection({ data, onChange, lang }: Props) {
           ))}
         </div>
         {bloodInsight && (
-          <div className="text-xs text-primary font-medium flex items-center gap-1.5 bg-primary/5 rounded-lg px-3 py-2">
+          <div className="text-xs text-primary font-medium flex items-center gap-1.5 bg-primary/5 rounded-lg px-3 py-2"
+            title={tr ? "Bu istatistiksel bir e\u011filim, te\u015fhis de\u011fildir." : "This is a statistical trend, not a diagnosis."}>
             {bloodInsight.emoji} {tr ? bloodInsight.tr : bloodInsight.en}
+            <span className="text-muted-foreground opacity-50 ml-1 text-[10px]">{tr ? "(istatistiksel)" : "(statistical)"}</span>
           </div>
         )}
       </div>
