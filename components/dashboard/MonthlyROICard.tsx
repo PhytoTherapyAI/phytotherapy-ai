@@ -117,7 +117,7 @@ export function MonthlyROICard({ userId, lang = "en" }: MonthlyROICardProps) {
   const SparkBars = ({ values, color }: { values: number[]; color: string }) => (
     <div className="flex items-end gap-[3px] h-6">
       {values.map((v, i) => (
-        <div key={i} className="w-1.5 rounded-full transition-all" style={{ height: `${(v / Math.max(...values)) * 24}px`, backgroundColor: i === values.length - 1 ? color : `${color}40` }} />
+        <div key={i} className="w-1.5 rounded-full transition-all" style={{ height: `${(v / (Math.max(...values) || 1)) * 24}px`, backgroundColor: i === values.length - 1 ? color : `${color}40` }} />
       ))}
     </div>
   )

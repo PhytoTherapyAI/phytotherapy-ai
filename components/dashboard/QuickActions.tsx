@@ -60,7 +60,8 @@ export function QuickActions({ lang, userId }: QuickActionsProps) {
 
   const handleSymptomSave = () => {
     if (!symptomText.trim()) return
-    const existing = JSON.parse(localStorage.getItem(`qa-symptoms-${today}`) || "[]")
+    let existing: Array<{ text: string; time: string }> = []
+    try { existing = JSON.parse(localStorage.getItem(`qa-symptoms-${today}`) || "[]") } catch {}
     existing.push({ text: symptomText.trim(), time: new Date().toISOString() })
     localStorage.setItem(`qa-symptoms-${today}`, JSON.stringify(existing))
     setSymptomSaved(true)

@@ -47,8 +47,10 @@ export function SOSCard({ userId, lang = "en", compact = false }: SOSCardProps) 
   const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
-    const data = localStorage.getItem(`emergency_contacts_${userId || "guest"}`)
-    if (data) setContacts(JSON.parse(data))
+    try {
+      const data = localStorage.getItem(`emergency_contacts_${userId || "guest"}`)
+      if (data) setContacts(JSON.parse(data))
+    } catch { /* corrupted localStorage */ }
   }, [userId])
 
   const primary = contacts.find(c => c.isPrimary) || contacts[0]

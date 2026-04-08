@@ -82,7 +82,8 @@ export default function HealthTimelinePage() {
       source: "manual",
     }
     const saved = localStorage.getItem(`timeline_${user?.id || "guest"}`)
-    const manual: TimelineEvent[] = saved ? JSON.parse(saved) : []
+    let manual: TimelineEvent[] = []
+    try { if (saved) manual = JSON.parse(saved) } catch {}
     manual.push(event)
     localStorage.setItem(`timeline_${user?.id || "guest"}`, JSON.stringify(manual))
     setEvents(prev => [event, ...prev].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))

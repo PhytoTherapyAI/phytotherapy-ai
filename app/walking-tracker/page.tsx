@@ -26,8 +26,10 @@ export default function WalkingTrackerPage() {
   const [walkingSpeed, setWalkingSpeed] = useState("");
 
   useEffect(() => {
-    const saved = localStorage.getItem("walking-tracker");
-    if (saved) setEntries(JSON.parse(saved));
+    try {
+      const saved = localStorage.getItem("walking-tracker");
+      if (saved) setEntries(JSON.parse(saved));
+    } catch { /* corrupted localStorage */ }
   }, []);
 
   const saveEntries = (updated: WalkEntry[]) => {

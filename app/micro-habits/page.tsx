@@ -91,18 +91,20 @@ export default function MicroHabitsPage() {
   const [showTemplates, setShowTemplates] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem(`micro_habits_${user?.id || "guest"}`)
-    if (saved) {
-      const parsed = JSON.parse(saved)
-      // Reset completedToday if not today
-      const today = new Date().toDateString()
-      const lastDate = localStorage.getItem(`habit_date_${user?.id || "guest"}`)
-      if (lastDate !== today) {
-        parsed.forEach((h: MicroHabit) => { h.completedToday = false })
-        localStorage.setItem(`habit_date_${user?.id || "guest"}`, today)
+    try {
+      const saved = localStorage.getItem(`micro_habits_${user?.id || "guest"}`)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        // Reset completedToday if not today
+        const today = new Date().toDateString()
+        const lastDate = localStorage.getItem(`habit_date_${user?.id || "guest"}`)
+        if (lastDate !== today) {
+          parsed.forEach((h: MicroHabit) => { h.completedToday = false })
+          localStorage.setItem(`habit_date_${user?.id || "guest"}`, today)
+        }
+        setHabits(parsed)
       }
-      setHabits(parsed)
-    }
+    } catch { /* corrupted localStorage */ }
   }, [user])
 
   const saveHabits = (h: MicroHabit[]) => {
