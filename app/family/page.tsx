@@ -80,62 +80,61 @@ export default function FamilyPage() {
   }
 
   async function handleInvite() {
-    if (!inviteEmail.trim()) return
+    if (!inviteEmail.trim() || !familyGroup) return
     setInviting(true)
     try {
-      const ok = await inviteMember(inviteEmail, inviteNickname)
-      if (!ok) {
-        setFeedback({ type: "error", msg: tr ? "Davet oluşturulamadı." : "Failed to create invite." })
+      // Tüm işi API route'a bırak — hem insert hem email
+      const supabase = createBrowserClient()
+      const { data: { session } } = await supabase.auth.getSession()
+
+      if (!session?.access_token) {
+        setFeedback({ type: "error", msg: tr ? "Oturum bulunamadı, tekrar giriş yapın." : "Session not found, please log in again." })
         setInviting(false)
         return
       }
-      // Email gönder
-      const supabase = createBrowserClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.access_token) {
-        const res = await fetch("/api/family/invite", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({
-            groupId: familyGroup!.id,
-            email: inviteEmail,
-            nickname: inviteNickname,
-            inviterName: profile?.full_name || user?.email,
-          }),
+
+      console.log("[Family] Calling invite API...")
+      const res = await fetch("/api/family/invite", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          groupId: familyGroup.id,
+          email: inviteEmail,
+          nickname: inviteNickname,
+          inviterName: profile?.full_name || user?.email,
+        }),
+      })
+
+      const resData = await res.json().catch(() => ({}))
+      console.log("[Family] invite API response:", { status: res.status, resData })
+
+      if (!res.ok) {
+        setFeedback({
+          type: "error",
+          msg: tr
+            ? `Davet gönderilemedi: ${resData.error || "Bilinmeyen hata"}`
+            : `Failed to send invite: ${resData.error || "Unknown error"}`
         })
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}))
-          console.error("[Family] invite API error:", errData)
-          setFeedback({ type: "error", msg: tr ? "Davet e-postası gönderilemedi." : "Failed to send invite email." })
-          setInviting(false)
-          return
-        }
-        const resData = await res.json().catch(() => ({}))
-        console.log("[Family] invite API response:", resData)
+        setInviting(false)
+        return
+      }
 
-        setInviteEmail("")
-        setInviteNickname("")
+      setInviteEmail("")
+      setInviteNickname("")
 
-        // Her zaman invite link'i göster — email gitmiş olsa bile
-        if (resData.inviteUrl) {
-          setFeedback({
-            type: "success",
-            msg: resData.emailSent
-              ? (tr ? "Davet gönderildi!" : "Invite sent!")
-              : (tr
-                  ? `Davet oluşturuldu! E-posta gönderilemedi, linki paylaşın:`
-                  : `Invite created! Email failed, share this link:`)
-          })
-          setInviteLink(resData.inviteUrl)
-        } else {
-          setFeedback({ type: "success", msg: tr ? "Davet oluşturuldu!" : "Invite created!" })
-        }
+      // Invite link'i göster
+      if (resData.inviteUrl) {
+        setInviteLink(resData.inviteUrl)
+        setFeedback({
+          type: "success",
+          msg: resData.emailSent
+            ? (tr ? "Davet gönderildi!" : "Invite sent!")
+            : (tr ? "Davet oluşturuldu! Linki paylaşın:" : "Invite created! Share the link:")
+        })
       } else {
-        setInviteEmail("")
-        setInviteNickname("")
         setFeedback({ type: "success", msg: tr ? "Davet oluşturuldu!" : "Invite created!" })
       }
       await refetch()
