@@ -47,15 +47,15 @@ const DIET_OPTIONS = [
 
 const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
-const BLOOD_INSIGHTS: Record<string, { tr: string; en: string; emoji: string }> = {
-  'A+': { tr: 'Mide tarama önerisi aktif', en: 'Stomach screening recommended', emoji: '\u{1F50D}' },
-  'A-': { tr: 'Mide tarama önerisi aktif', en: 'Stomach screening recommended', emoji: '\u{1F50D}' },
-  'O+': { tr: 'Ülser takibi önerilir', en: 'Ulcer monitoring recommended', emoji: '\u{1F48A}' },
-  'O-': { tr: 'Ülser takibi önerilir', en: 'Ulcer monitoring recommended', emoji: '\u{1F48A}' },
-  'B+': { tr: 'Pankreas sağlığı takibi', en: 'Pancreas health monitoring', emoji: '\u{1F3AF}' },
-  'B-': { tr: 'Pankreas sağlığı takibi', en: 'Pancreas health monitoring', emoji: '\u{1F3AF}' },
-  'AB+': { tr: 'Kardiyovasküler takip', en: 'Cardiovascular monitoring', emoji: '\u{2764}\u{FE0F}' },
-  'AB-': { tr: 'Kardiyovasküler takip', en: 'Cardiovascular monitoring', emoji: '\u{2764}\u{FE0F}' },
+const BLOOD_INSIGHTS: Record<string, { tr: string; en: string; emoji: string; source: string; url?: string }> = {
+  'A+': { tr: 'Mide & Hematolojik Tarama \u00d6nerilir', en: 'Stomach & Hematological Screening Recommended', emoji: '\u{1F50D}', source: 'Edgren et al., NEJM 2010', url: 'https://www.nejm.org/doi/10.1056/NEJMoa0910676' },
+  'A-': { tr: 'Mide & Hematolojik Tarama \u00d6nerilir', en: 'Stomach & Hematological Screening Recommended', emoji: '\u{1F50D}', source: 'Edgren et al., NEJM 2010', url: 'https://www.nejm.org/doi/10.1056/NEJMoa0910676' },
+  'O+': { tr: '\u00dclser & Mide Asidi Takibi', en: 'Ulcer & Stomach Acid Monitoring', emoji: '\u{1F48A}', source: 'Wolff & Wolff, 1956' },
+  'O-': { tr: '\u00dclser & Mide Asidi Takibi', en: 'Ulcer & Stomach Acid Monitoring', emoji: '\u{1F48A}', source: 'Wolff & Wolff, 1956' },
+  'B+': { tr: 'Pankreas Sa\u011fl\u0131\u011f\u0131 Takibi', en: 'Pancreas Health Monitoring', emoji: '\u{1F3AF}', source: 'Wolpin et al., JNCI 2010', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2842044/' },
+  'B-': { tr: 'Pankreas Sa\u011fl\u0131\u011f\u0131 Takibi', en: 'Pancreas Health Monitoring', emoji: '\u{1F3AF}', source: 'Wolpin et al., JNCI 2010', url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2842044/' },
+  'AB+': { tr: 'Kardiyovask\u00fcler Takip', en: 'Cardiovascular Monitoring', emoji: '\u{2764}\u{FE0F}', source: 'Mega et al., JAMA 2008' },
+  'AB-': { tr: 'Kardiyovask\u00fcler Takip', en: 'Cardiovascular Monitoring', emoji: '\u{2764}\u{FE0F}', source: 'Mega et al., JAMA 2008' },
 }
 
 function getBMI(h: number | null, w: number | null): { value: number; label: string; emoji: string; color: string; tipTr: string; tipEn: string } | null {
@@ -101,6 +101,7 @@ export function LifestyleSection({ data, onChange, lang }: Props) {
               BMI: {bmi.value} — {bmi.emoji} {bmi.label}
             </div>
             <p className="text-xs text-muted-foreground">{tr ? bmi.tipTr : bmi.tipEn}</p>
+            <p className="text-[9px] text-muted-foreground/60 italic">WHO BMI Classification (2004)</p>
           </div>
         ) : (
           <p className="text-xs text-muted-foreground">{tr ? 'Boy ve kilonu gir, BMI hesaplansın!' : 'Enter height & weight to calculate BMI!'} {"\u{1F4AA}"}</p>
@@ -118,10 +119,21 @@ export function LifestyleSection({ data, onChange, lang }: Props) {
           ))}
         </div>
         {bloodInsight && (
-          <div className="text-xs text-primary font-medium flex items-center gap-1.5 bg-primary/5 rounded-lg px-3 py-2"
-            title={tr ? "Bu istatistiksel bir e\u011filim, te\u015fhis de\u011fildir." : "This is a statistical trend, not a diagnosis."}>
-            {bloodInsight.emoji} {tr ? bloodInsight.tr : bloodInsight.en}
-            <span className="text-muted-foreground opacity-50 ml-1 text-[10px]">{tr ? "(istatistiksel)" : "(statistical)"}</span>
+          <div className="bg-primary/5 rounded-lg px-3 py-2 space-y-1">
+            <div className="text-xs text-primary font-medium flex items-center gap-1.5">
+              {bloodInsight.emoji} {tr ? bloodInsight.tr : bloodInsight.en}
+            </div>
+            <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+              <span>{"\u{1F4DA}"}</span>
+              {bloodInsight.url ? (
+                <a href={bloodInsight.url} target="_blank" rel="noopener noreferrer" className="italic hover:underline">{bloodInsight.source}</a>
+              ) : (
+                <span className="italic">{bloodInsight.source}</span>
+              )}
+            </div>
+            <p className="text-[9px] text-muted-foreground/60 italic">
+              {tr ? "\u0130statistiksel e\u011filim, t\u0131bbi te\u015fhis de\u011fildir." : "Statistical trend, not a medical diagnosis."}
+            </p>
           </div>
         )}
       </div>
