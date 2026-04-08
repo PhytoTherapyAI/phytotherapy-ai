@@ -32,16 +32,18 @@ export default function ConnectAssistantPage() {
 
   // Load saved connection from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem(`bot_connection_${user?.id || "guest"}`)
-    if (saved) {
-      const data = JSON.parse(saved)
-      setIsConnected(true)
-      setSelectedChannel(data.channel)
-      setPhoneNumber(data.channelId || "")
-      setSendTime(data.sendTime || "09:00")
-      setIsPaused(data.status === "paused")
-      setPhase("connected")
-    }
+    try {
+      const saved = localStorage.getItem(`bot_connection_${user?.id || "guest"}`)
+      if (saved) {
+        const data = JSON.parse(saved)
+        setIsConnected(true)
+        setSelectedChannel(data.channel)
+        setPhoneNumber(data.channelId || "")
+        setSendTime(data.sendTime || "09:00")
+        setIsPaused(data.status === "paused")
+        setPhase("connected")
+      }
+    } catch { /* corrupted localStorage */ }
   }, [user])
 
   const t = (key: string) => {

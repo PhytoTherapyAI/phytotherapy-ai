@@ -92,7 +92,8 @@ export default function BugReportPage() {
       timestamp: new Date().toISOString(),
       status: "submitted",
     }
-    const existing = JSON.parse(localStorage.getItem("phyto_bug_reports") || "[]")
+    let existing: BugReport[] = []
+    try { existing = JSON.parse(localStorage.getItem("phyto_bug_reports") || "[]") } catch {}
     existing.unshift(report)
     localStorage.setItem("phyto_bug_reports", JSON.stringify(existing.slice(0, 50)))
     setSubmitted(true)
@@ -108,9 +109,10 @@ export default function BugReportPage() {
     setError("")
   }
 
-  const history: BugReport[] = typeof window !== "undefined"
-    ? JSON.parse(localStorage.getItem("phyto_bug_reports") || "[]")
-    : []
+  let history: BugReport[] = []
+  if (typeof window !== "undefined") {
+    try { history = JSON.parse(localStorage.getItem("phyto_bug_reports") || "[]") } catch {}
+  }
 
   if (submitted) {
     return (
