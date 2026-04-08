@@ -82,10 +82,15 @@ export default function FamilyPage() {
   async function handleInvite() {
     if (!inviteEmail.trim() || !familyGroup) return
     setInviting(true)
+    console.log("[Family] handleInvite başladı:", {
+      email: inviteEmail,
+      nickname: inviteNickname,
+      groupId: familyGroup.id
+    })
     try {
-      // Tüm işi API route'a bırak — hem insert hem email
       const supabase = createBrowserClient()
       const { data: { session } } = await supabase.auth.getSession()
+      console.log("[Family] Session:", { hasToken: !!session?.access_token })
 
       if (!session?.access_token) {
         setFeedback({ type: "error", msg: tr ? "Oturum bulunamadı, tekrar giriş yapın." : "Session not found, please log in again." })
