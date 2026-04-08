@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       ? `Age: ${profile.age || "unknown"}, Gender: ${profile.gender || "unknown"}, Chronic conditions: ${profile.chronic_conditions?.join(", ") || "none"}`
       : "No profile data";
 
-    const systemPrompt = `You are an ENT/audiology-informed health analyst for Doctopal. Analyze hearing and ear symptoms and provide evidence-based guidance.
+    const systemPrompt = `You are an ENT/audiology-informed health analyst for DoctoPal. Analyze hearing and ear symptoms and provide evidence-based guidance.
 
 RULES:
 - Identify ototoxic medications: aminoglycosides (gentamicin, tobramycin), high-dose aspirin (>4g/day), cisplatin, carboplatin, furosemide, vancomycin, quinine, erythromycin IV

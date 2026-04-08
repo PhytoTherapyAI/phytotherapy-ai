@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const systemPrompt = `You are a health goal coach at Doctopal.
+    const systemPrompt = `You are a health goal coach at DoctoPal.
 Create a personalized weekly action plan to achieve a health goal.
 
 ${profileContext ? `USER PROFILE: ${profileContext}` : "No profile available — give general advice."}

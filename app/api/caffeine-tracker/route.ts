@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const systemPrompt = `You are a caffeine and medication interaction specialist at Doctopal.
+    const systemPrompt = `You are a caffeine and medication interaction specialist at DoctoPal.
 
 ${profileContext ? `PATIENT: ${profileContext}` : ""}
 ${medications.length ? `MEDICATIONS: ${medications.join(", ")}` : ""}

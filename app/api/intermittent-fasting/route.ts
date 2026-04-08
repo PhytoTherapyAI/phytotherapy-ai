@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const systemPrompt = `You are an intermittent fasting and medication timing specialist at Doctopal.
+    const systemPrompt = `You are an intermittent fasting and medication timing specialist at DoctoPal.
 
 ${profileContext ? `PATIENT: ${profileContext}` : ""}
 ${medications.length ? `MEDICATIONS: ${medications.join(", ")}` : ""}

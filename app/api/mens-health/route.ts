@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       )
     );
 
-    const systemPrompt = `You are a men's health assistant for Doctopal.
+    const systemPrompt = `You are a men's health assistant for DoctoPal.
 You provide evidence-based guidance on testosterone, prostate health, and medication effects.
 
 CRITICAL SAFETY RULES:

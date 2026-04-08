@@ -130,7 +130,7 @@ ${locationUrl ? `📍 KONUM: ${locationUrl}` : "📍 Konum bilgisi mevcut değil
 
 🔴 LÜTFEN 112'Yİ ARAYIN veya hastayı kontrol edin.
 
-Bu mesaj Doctopal tarafından otomatik gönderilmiştir.`;
+Bu mesaj DoctoPal tarafından otomatik gönderilmiştir.`;
 
     // 6. Log SOS event to Supabase
     try {

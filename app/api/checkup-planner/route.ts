@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       ? medications.map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""}`).join(", ")
       : "None reported";
 
-    const systemPrompt = `You are a check-up planning assistant for Doctopal.
+    const systemPrompt = `You are a check-up planning assistant for DoctoPal.
 You create personalized annual health check-up plans based on USPSTF and WHO guidelines.
 
 RULES:

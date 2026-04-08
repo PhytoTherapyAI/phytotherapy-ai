@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
     else if (gestational_week <= 27) trimester = "second";
     else trimester = "third";
 
-    const systemPrompt = `You are a pregnancy health assistant for Doctopal.
+    const systemPrompt = `You are a pregnancy health assistant for DoctoPal.
 You provide evidence-based pregnancy guidance with strict safety focus.
 
 CRITICAL SAFETY RULES:

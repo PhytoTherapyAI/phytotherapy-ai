@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       profile
     )
 
-    const systemPrompt = `You are a women's health analyst for Doctopal. Analyze menstrual cycle data and provide evidence-based insights.
+    const systemPrompt = `You are a women's health analyst for DoctoPal. Analyze menstrual cycle data and provide evidence-based insights.
 
 RULES:
 1. You are NOT a doctor. Never diagnose conditions.

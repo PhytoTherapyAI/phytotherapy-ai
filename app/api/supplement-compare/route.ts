@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
         .join("\n");
     }
 
-    const systemPrompt = `You are a supplement comparison expert at Doctopal.
+    const systemPrompt = `You are a supplement comparison expert at DoctoPal.
 Compare two supplements side by side with evidence-based analysis.
 
 ${profileContext ? `USER PROFILE: ${profileContext}` : ""}

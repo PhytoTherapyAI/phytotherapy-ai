@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const systemPrompt = `You are a mental wellness analysis assistant for Doctopal.
+    const systemPrompt = `You are a mental wellness analysis assistant for DoctoPal.
 Analyze mood tracking data and provide supportive, evidence-informed insights.
 
 CRITICAL SAFETY RULES:

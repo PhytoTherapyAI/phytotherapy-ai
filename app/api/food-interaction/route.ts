@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
       // Continue without PubMed
     }
 
-    const systemPrompt = `You are a food-drug interaction specialist at Doctopal.
+    const systemPrompt = `You are a food-drug interaction specialist at DoctoPal.
 Analyze interactions between foods/beverages and medications.
 
 ${profileContext ? `PATIENT: ${profileContext}` : ""}

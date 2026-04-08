@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
       ? `Age: ${profile.age || "unknown"}, Gender: ${profile.gender || "unknown"}, Pregnant: ${profile.is_pregnant || false}, Breastfeeding: ${profile.is_breastfeeding || false}, Chronic conditions: ${profile.chronic_conditions?.join(", ") || "none"}`
       : "No profile data";
 
-    const systemPrompt = `You are a dermatology-informed health analyst for Doctopal. Analyze skin concerns and provide evidence-based skincare guidance.
+    const systemPrompt = `You are a dermatology-informed health analyst for DoctoPal. Analyze skin concerns and provide evidence-based skincare guidance.
 
 RULES:
 - Check medication effects on skin (isotretinoin dryness, corticosteroid thinning, photosensitizing drugs like doxycycline/NSAIDs)

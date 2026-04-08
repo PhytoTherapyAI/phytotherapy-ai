@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       )
     );
 
-    const systemPrompt = `You are an addiction recovery support assistant for Doctopal.
+    const systemPrompt = `You are an addiction recovery support assistant for DoctoPal.
 You provide compassionate, non-judgmental support for people in recovery.
 
 CRITICAL SAFETY RULES:

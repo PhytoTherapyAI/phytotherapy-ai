@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       ? medications.map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""}`).join(", ")
       : "None reported";
 
-    const systemPrompt = `You are a depression screening assistant for Doctopal.
+    const systemPrompt = `You are a depression screening assistant for DoctoPal.
 You analyze PHQ-9 scores and provide supportive, evidence-based guidance.
 
 CRITICAL SAFETY RULES:

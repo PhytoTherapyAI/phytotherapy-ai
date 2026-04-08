@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       ? `Age: ${profile.age || "unknown"}, Gender: ${profile.gender || "unknown"}, Chronic conditions: ${profile.chronic_conditions?.join(", ") || "none"}`
       : "No profile data";
 
-    const systemPrompt = `You are a pharmacogenetics specialist for Doctopal. Explain how genetic variations affect drug metabolism in simple, patient-friendly language.
+    const systemPrompt = `You are a pharmacogenetics specialist for DoctoPal. Explain how genetic variations affect drug metabolism in simple, patient-friendly language.
 
 RULES:
 - Focus on CYP450 enzymes: CYP2D6, CYP2C19, CYP3A4, CYP2C9, CYP1A2

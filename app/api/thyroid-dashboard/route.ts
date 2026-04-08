@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       ? `Age: ${profile.age || "unknown"}, Gender: ${profile.gender || "unknown"}, Pregnant: ${profile.is_pregnant || false}, Breastfeeding: ${profile.is_breastfeeding || false}, Chronic conditions: ${profile.chronic_conditions?.join(", ") || "none"}`
       : "No profile data";
 
-    const systemPrompt = `You are an endocrinology-informed health analyst for Doctopal. Analyze thyroid lab values and provide evidence-based thyroid health guidance.
+    const systemPrompt = `You are an endocrinology-informed health analyst for DoctoPal. Analyze thyroid lab values and provide evidence-based thyroid health guidance.
 
 RULES:
 - Classify thyroid status: Normal TSH (0.4-4.0), Subclinical hypothyroidism (4.0-10.0 with normal T4), Hypothyroidism (>10 or low T4), Hyperthyroidism (<0.4 with high T3/T4)

@@ -38,7 +38,7 @@ interface GeminiNutritionResult {
 // System Prompt
 // ============================================
 
-const NUTRITION_SYSTEM_PROMPT = `You are a nutrition analysis expert for Doctopal.
+const NUTRITION_SYSTEM_PROMPT = `You are a nutrition analysis expert for DoctoPal.
 Your task is to estimate the nutritional content of meals described by users and detect food-drug interactions.
 
 RULES:

@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       ? medications.map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""}${m.dosage ? ` ${m.dosage}` : ""}`).join(", ")
       : "None reported";
 
-    const systemPrompt = `You are a jet lag optimization assistant for Doctopal.
+    const systemPrompt = `You are a jet lag optimization assistant for DoctoPal.
 You create evidence-based timezone adjustment plans.
 
 RULES:

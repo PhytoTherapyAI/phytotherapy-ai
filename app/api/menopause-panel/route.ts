@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
       )
     );
 
-    const systemPrompt = `You are a menopause health assistant for Doctopal.
+    const systemPrompt = `You are a menopause health assistant for DoctoPal.
 You provide evidence-based menopause management guidance.
 
 CRITICAL SAFETY RULES:

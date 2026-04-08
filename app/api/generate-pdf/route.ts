@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     return new Response(pdfBuffer, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="Doctopal-BloodTest-Report-${new Date().toISOString().split("T")[0]}.pdf"`,
+        "Content-Disposition": `attachment; filename="DoctoPal-BloodTest-Report-${new Date().toISOString().split("T")[0]}.pdf"`,
       },
     });
   } catch (error) {

@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       ? medications.map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""}`).join(", ")
       : "None reported";
 
-    const systemPrompt = `You are a shift work health coach for Doctopal.
+    const systemPrompt = `You are a shift work health coach for DoctoPal.
 You create evidence-based circadian rhythm management plans for shift workers.
 
 RULES:

@@ -5,7 +5,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { tx } from "@/lib/translations";
 
-const DAILY_CARE_PROMPT = `You are generating a personalized daily care plan for a Doctopal user.
+const DAILY_CARE_PROMPT = `You are generating a personalized daily care plan for a DoctoPal user.
 
 INPUT: User profile (age, gender, conditions, medications, allergies, supplements, recent vitals, recent mood/sleep data).
 

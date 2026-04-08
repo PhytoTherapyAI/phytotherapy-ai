@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const smokingHistory = body.smoking_history || "never";
     const familyHistory = Array.isArray(body.family_history) ? body.family_history.map((f: string) => sanitizeInput(f)) : [];
 
-    const systemPrompt = `You are a cancer screening advisor for Doctopal.
+    const systemPrompt = `You are a cancer screening advisor for DoctoPal.
 You create evidence-based, personalized screening schedules based on USPSTF, ACS, and NCCN guidelines.
 
 CRITICAL RULES:

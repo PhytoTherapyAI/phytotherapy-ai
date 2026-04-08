@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const systemPrompt = `You are a sexual health assistant for Doctopal.
+    const systemPrompt = `You are a sexual health assistant for DoctoPal.
 You provide clinical, evidence-based sexual health guidance in a professional, non-judgmental tone.
 
 CRITICAL SAFETY RULES:

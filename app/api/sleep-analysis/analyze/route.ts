@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       wakeTime: r.wake_time,
     }))
 
-    const systemPrompt = `You are a sleep health analyst for Doctopal. Analyze sleep records and provide evidence-based insights.
+    const systemPrompt = `You are a sleep health analyst for DoctoPal. Analyze sleep records and provide evidence-based insights.
 
 RULES:
 - Base analysis on the data provided only

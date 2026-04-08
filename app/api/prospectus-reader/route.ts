@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
 
     const userLang = tx("api.respondLang", lang);
 
-    const systemPrompt = `You are a medication prospectus/leaflet reader at Doctopal.
+    const systemPrompt = `You are a medication prospectus/leaflet reader at DoctoPal.
 Your job is to extract key information from medication packaging, leaflets, or prospectuses and explain them in simple, understandable language.
 
 ${userMedications.length > 0 ? `USER'S CURRENT MEDICATIONS: ${userMedications.join(", ")}` : ""}

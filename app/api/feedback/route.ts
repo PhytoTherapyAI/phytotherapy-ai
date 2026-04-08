@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
       try {
         const emoji = CATEGORY_EMOJI[category] || "📝"
         await resend.emails.send({
-          from: "Doctopal <noreply@doctopal.com>",
+          from: "DoctoPal <noreply@doctopal.com>",
           to: ["hello@doctopal.com"],
           subject: `${emoji} [Feedback] ${category.toUpperCase()} — ${page}`,
           html: `

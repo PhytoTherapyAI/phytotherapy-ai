@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const age = parseInt(body.age) || 35;
     const gender = body.gender === "female" ? "female" : "male";
 
-    const systemPrompt = `You are a genetic risk assessment assistant for Doctopal.
+    const systemPrompt = `You are a genetic risk assessment assistant for DoctoPal.
 You estimate disease risk scores based on family history and personal factors.
 
 CRITICAL RULES:

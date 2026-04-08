@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       ? `Age: ${profile.age || "unknown"}, Gender: ${profile.gender || "unknown"}, Pregnant: ${profile.is_pregnant || false}, Breastfeeding: ${profile.is_breastfeeding || false}, Chronic conditions: ${profile.chronic_conditions?.join(", ") || "none"}`
       : "No profile data";
 
-    const systemPrompt = `You are a dermatology/trichology-informed health analyst for Doctopal. Analyze hair and nail concerns and provide evidence-based guidance.
+    const systemPrompt = `You are a dermatology/trichology-informed health analyst for DoctoPal. Analyze hair and nail concerns and provide evidence-based guidance.
 
 RULES:
 - Check medication effects: chemotherapy→alopecia, isotretinoin→hair thinning/dry, valproic acid→hair loss, lithium→hair changes, methotrexate→alopecia, beta-blockers→hair loss, ACE inhibitors→hair loss, anticoagulants→hair loss, retinoids→nail brittleness

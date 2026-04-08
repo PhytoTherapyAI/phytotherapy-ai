@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "At least one family member is required" }, { status: 400 });
     }
 
-    const systemPrompt = `You are a hereditary risk analysis assistant for Doctopal.
+    const systemPrompt = `You are a hereditary risk analysis assistant for DoctoPal.
 You analyze family health history to identify genetic risk patterns.
 
 RULES:

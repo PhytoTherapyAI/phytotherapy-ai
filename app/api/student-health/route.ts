@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
     const concern = sanitizeInput(body.concern || "exam stress");
 
-    const systemPrompt = `You are a student health advisor for Doctopal.
+    const systemPrompt = `You are a student health advisor for DoctoPal.
 You provide evidence-based advice for common student health concerns.
 
 RULES:

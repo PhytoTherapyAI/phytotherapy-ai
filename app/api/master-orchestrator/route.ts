@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     // Step 3: Generate AI synergy insight
     let aiInsight = null;
     try {
-      const systemPrompt = `You are the Master Health Orchestrator of Doctopal.
+      const systemPrompt = `You are the Master Health Orchestrator of DoctoPal.
 You analyze a user's COMPLETE health profile across ALL modules (sleep, fitness, nutrition, supplements, vitals, medications) and generate a holistic daily synergy plan.
 
 CRITICAL RULES:

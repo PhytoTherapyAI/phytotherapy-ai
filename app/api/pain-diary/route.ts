@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
         medicationsTaken: r.medications_taken || [],
       }));
 
-      const systemPrompt = `You are a pain management specialist for Doctopal. Analyze pain diary records and identify patterns.
+      const systemPrompt = `You are a pain management specialist for DoctoPal. Analyze pain diary records and identify patterns.
 
 RULES:
 - Identify pain patterns (time of day, triggers, location correlation)

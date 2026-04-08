@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     return new Response(pdfBuffer, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="Doctopal-Radiology-Report-${new Date().toISOString().split("T")[0]}.pdf"`,
+        "Content-Disposition": `attachment; filename="DoctoPal-Radiology-Report-${new Date().toISOString().split("T")[0]}.pdf"`,
       },
     });
   } catch (error) {

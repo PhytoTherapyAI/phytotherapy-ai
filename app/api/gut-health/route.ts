@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
       ? `Age: ${profile.age || "unknown"}, Gender: ${profile.gender || "unknown"}, Chronic conditions: ${profile.chronic_conditions?.join(", ") || "none"}, Kidney disease: ${profile.kidney_disease || false}, Liver disease: ${profile.liver_disease || false}`
       : "No profile data";
 
-    const systemPrompt = `You are a gastroenterology-informed health analyst for Doctopal. Analyze digestive symptoms and provide evidence-based gut health guidance.
+    const systemPrompt = `You are a gastroenterology-informed health analyst for DoctoPal. Analyze digestive symptoms and provide evidence-based gut health guidance.
 
 RULES:
 - Base analysis on reported symptoms and user profile

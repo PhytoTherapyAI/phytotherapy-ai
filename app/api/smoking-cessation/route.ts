@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       daysSinceQuit = Math.max(0, Math.floor((now.getTime() - qd.getTime()) / (1000 * 60 * 60 * 24)));
     }
 
-    const systemPrompt = `You are a smoking cessation coach at Doctopal.
+    const systemPrompt = `You are a smoking cessation coach at DoctoPal.
 
 ${profileContext ? `PATIENT: ${profileContext}` : ""}
 ${medications.length ? `MEDICATIONS: ${medications.join(", ")}` : ""}

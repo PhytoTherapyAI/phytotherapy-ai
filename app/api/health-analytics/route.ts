@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     const predictions = generatePredictions(timeline)
     const recent30 = timeline.slice(-30)
 
-    const systemPrompt = `You are a health analytics AI assistant for Doctopal. Analyze the user's health timeline data and provide evidence-based insights. Respond in ${tx("api.respondLang", lang)}. Return valid JSON only.`
+    const systemPrompt = `You are a health analytics AI assistant for DoctoPal. Analyze the user's health timeline data and provide evidence-based insights. Respond in ${tx("api.respondLang", lang)}. Return valid JSON only.`
 
     const prompt = `Analyze this health data and return JSON with this structure:
 {

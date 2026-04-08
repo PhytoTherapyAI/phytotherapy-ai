@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
       ? medications.map((m) => `${(m.generic_name || m.brand_name)}${m.generic_name ? ` (${m.generic_name})` : ""}`).join(", ")
       : "None reported";
 
-    const systemPrompt = `You are an anxiety assessment assistant for Doctopal.
+    const systemPrompt = `You are an anxiety assessment assistant for DoctoPal.
 You provide evidence-based anxiety management guidance.
 
 CRITICAL SAFETY RULES:
