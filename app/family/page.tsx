@@ -111,10 +111,30 @@ export default function FamilyPage() {
           setInviting(false)
           return
         }
+        const resData = await res.json().catch(() => ({}))
+        console.log("[Family] invite API response:", resData)
+
+        setInviteEmail("")
+        setInviteNickname("")
+
+        if (resData.emailSent) {
+          setFeedback({ type: "success", msg: tr ? "Davet gönderildi!" : "Invite sent!" })
+        } else if (resData.inviteUrl) {
+          // Email gönderilemedi ama link oluşturuldu
+          setFeedback({
+            type: "success",
+            msg: tr
+              ? `Davet oluşturuldu! Linki paylaşın: ${resData.inviteUrl}`
+              : `Invite created! Share this link: ${resData.inviteUrl}`
+          })
+        } else {
+          setFeedback({ type: "success", msg: tr ? "Davet oluşturuldu!" : "Invite created!" })
+        }
+      } else {
+        setInviteEmail("")
+        setInviteNickname("")
+        setFeedback({ type: "success", msg: tr ? "Davet oluşturuldu!" : "Invite created!" })
       }
-      setInviteEmail("")
-      setInviteNickname("")
-      setFeedback({ type: "success", msg: tr ? "Davet gönderildi!" : "Invite sent!" })
       await refetch()
     } catch (err) {
       console.error("[Family] handleInvite failed:", err)
