@@ -196,25 +196,18 @@ export default function ProfilePage() {
 
       if (error) {
         console.error("Supabase update error:", error);
-        // Retry with core + contact fields if some columns don't exist
+        // Retry after 1s delay (cold start / connection issue)
+        await new Promise(r => setTimeout(r, 1000));
         const { error: retryError } = await supabase
           .from("user_profiles")
-          .update({
-            is_pregnant: healthForm.is_pregnant ?? false,
-            is_breastfeeding: healthForm.is_breastfeeding ?? false,
-            kidney_disease: healthForm.kidney_disease ?? false,
-            liver_disease: healthForm.liver_disease ?? false,
-            recent_surgery: healthForm.recent_surgery ?? false,
-            chronic_conditions: healthForm.chronic_conditions || [],
-            alcohol_use: healthForm.alcohol_use || null,
-            smoking_use: healthForm.smoking_use || null,
-            country: healthForm.country || null,
-            city: healthForm.city || null,
-            phone: healthForm.phone || null,
-            recovery_email: healthForm.recovery_email || null,
-          })
+          .update(updateData)
           .eq("id", user!.id);
-        if (retryError) console.error("Retry also failed:", retryError);
+        if (retryError) {
+          console.error("Retry also failed:", retryError);
+          alert(tr ? "Kaydedilemedi. Lütfen tekrar dene." : "Save failed. Please try again.");
+          setSavingHealth(false);
+          return;
+        }
       }
       await refreshProfile();
       setEditingHealth(false);
@@ -435,6 +428,9 @@ export default function ProfilePage() {
     arveles: { dosage: "25mg", frequency: "3x daily" },
     glifor: { dosage: "500mg", frequency: "2x daily" },
     nexium: { dosage: "20mg", frequency: "1x daily" },
+    zoretanin: { dosage: "10mg", frequency: "1x daily" },
+    isotretinoin: { dosage: "10mg", frequency: "1x daily" },
+    roaccutane: { dosage: "10mg", frequency: "1x daily" },
   };
 
   const [autoDoseBadge, setAutoDoseBadge] = useState(false);
@@ -1157,8 +1153,12 @@ export default function ProfilePage() {
                           {med.frequency && <Badge variant="outline">{tr ? ({
                             "1x daily": "Günde 1 kez", "2x daily": "Günde 2 kez", "3x daily": "Günde 3 kez",
                             "4x daily": "Günde 4 kez", "once daily": "Günde 1 kez", "twice daily": "Günde 2 kez",
+                            "once_daily": "Günde 1 kez", "twice_daily": "Günde 2 kez", "three_times_daily": "Günde 3 kez",
+                            "four_times_daily": "Günde 4 kez", "2x_daily": "Günde 2 kez", "3x_daily": "Günde 3 kez",
+                            "daily": "Günlük", "qd": "Günlük", "bid": "Günde 2 kez", "tid": "Günde 3 kez", "qid": "Günde 4 kez",
                             "every 8 hours": "Her 8 saatte", "every 12 hours": "Her 12 saatte",
-                            "as needed": "Gerektiğinde", "weekly": "Haftada 1", "monthly": "Ayda 1",
+                            "as needed": "Gerektiğinde", "as_needed": "Gerektiğinde", "prn": "Gerektiğinde",
+                            "weekly": "Haftalık", "monthly": "Aylık",
                           } as Record<string, string>)[med.frequency] || med.frequency : med.frequency}</Badge>}
                         </div>
                       )}
@@ -1834,7 +1834,7 @@ export default function ProfilePage() {
                     <p className="text-sm text-green-700 dark:text-green-400">
                       {tr ? "Kayıtlı kronik hastalığın yok. Bu, AI önerilerinin daha geniş bir yelpazede çalışması demek." : "No chronic conditions recorded. This means AI recommendations work across a wider range."}
                     </p>
-                    <button onClick={() => document.getElementById("allergy-card")?.scrollIntoView({ behavior: "smooth" })}
+                    <button onClick={() => { document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" }); setTimeout(() => startEditingHealth(), 300); }}
                       className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
                       <Plus className="h-3 w-3" /> {tr ? "Hastalık Ekle" : "Add Condition"}
                     </button>
@@ -1907,7 +1907,7 @@ export default function ProfilePage() {
                         <p className="text-sm text-blue-700 dark:text-blue-400">
                           {tr ? "Soygeçmiş verisi, genetik risk tespitini %60 daha doğru yapar." : "Family history data makes genetic risk assessment 60% more accurate."}
                         </p>
-                        <button onClick={() => document.getElementById("allergy-card")?.scrollIntoView({ behavior: "smooth" })}
+                        <button onClick={() => { document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" }); setTimeout(() => startEditingHealth(), 300); }}
                           className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
                           <Plus className="h-3 w-3" /> {tr ? "Soygeçmiş Ekle" : "Add Family History"}
                         </button>
@@ -1947,8 +1947,10 @@ export default function ProfilePage() {
           anaphylaxis: { emoji: "🔴", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300", label: tr ? "Anafilaksi" : "Anaphylaxis" },
           urticaria: { emoji: "🟡", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300", label: tr ? "Kurdeşen" : "Urticaria" },
           mild_skin: { emoji: "🟢", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300", label: tr ? "Hafif Kaşıntı" : "Mild Skin" },
-          gi_intolerance: { emoji: "🔵", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", label: tr ? "İntolerans" : "Intolerance" },
-          unknown: { emoji: "❓", color: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300", label: tr ? "Bilinmiyor" : "Unknown" },
+          gi_intolerance: { emoji: "🔵", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", label: tr ? "Sindirim / İntolerans" : "GI Intolerance" },
+          intolerance: { emoji: "🔵", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", label: tr ? "İntolerans" : "Intolerance" },
+          mild_rash: { emoji: "🟢", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300", label: tr ? "Hafif Döküntü" : "Mild Rash" },
+          unknown: { emoji: "❓", color: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300", label: tr ? "Bilmiyorum" : "Unknown" },
           mild: { emoji: "🟢", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300", label: tr ? "Hafif" : "Mild" },
           moderate: { emoji: "🟡", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300", label: tr ? "Orta" : "Moderate" },
           severe: { emoji: "🔴", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300", label: tr ? "Şiddetli" : "Severe" },
@@ -2150,7 +2152,7 @@ export default function ProfilePage() {
           setSbarLoading(null);
         }}
         disabled={sbarLoading === "pdf"}
-        className="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-[100] flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3.5 shadow-xl hover:shadow-2xl transition-shadow group"
+        className="fixed bottom-36 right-4 md:bottom-20 md:right-8 z-[100] flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3.5 shadow-xl hover:shadow-2xl transition-shadow group"
         aria-label={tr ? "Özet PDF Al" : "Get Summary PDF"}
       >
         {sbarLoading === "pdf"
