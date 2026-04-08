@@ -148,8 +148,9 @@ export async function POST(req: NextRequest) {
         `${inviterName || "Birisi"} sizi DoctoPal aile grubuna davet etti`,
         buildEmailHtml(senderName, safeGroupName, inviteUrl)
       )
-      console.log("[FAMILY-INVITE] Resend result:", { success: result.success, error: result.error })
-      emailSent = result.success
+      console.log("[FAMILY-INVITE] Resend result:", { success: result.success, messageId: result.messageId, error: result.error })
+      // Dev mode returns messageId starting with "dev-" — not a real send
+      emailSent = result.success && !!result.messageId && !result.messageId.startsWith("dev-")
     } else {
       console.log("[FAMILY-INVITE] No real Resend key, skipping Resend")
     }

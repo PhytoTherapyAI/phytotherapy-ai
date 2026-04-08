@@ -185,6 +185,34 @@ export default function FamilyPage() {
           </div>
         )}
 
+        {/* Invite link — kopyalanabilir */}
+        {inviteLink && (
+          <div className="mb-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/20 p-4">
+            <p className="text-xs text-muted-foreground mb-2">
+              {tr ? "Davet linki:" : "Invite link:"}
+            </p>
+            <div className="flex gap-2 items-center">
+              <input
+                readOnly
+                value={inviteLink}
+                className="flex-1 text-xs bg-background border border-border rounded-lg px-3 py-2 text-foreground font-mono"
+                onClick={e => (e.target as HTMLInputElement).select()}
+              />
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs shrink-0"
+                onClick={() => {
+                  navigator.clipboard.writeText(inviteLink)
+                  setFeedback({ type: "success", msg: tr ? "Link kopyalandı!" : "Link copied!" })
+                }}
+              >
+                {tr ? "Kopyala" : "Copy"}
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Grup yoksa oluştur */}
         {!familyGroup ? (
           <div className="bg-card rounded-2xl shadow-sm border p-6">
