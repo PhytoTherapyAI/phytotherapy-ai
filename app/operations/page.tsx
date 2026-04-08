@@ -55,10 +55,10 @@ export default function OperationsPage() {
 
   // Load operations from localStorage (simple approach)
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    try {
       const saved = localStorage.getItem("phyto_operations")
       if (saved) setOperations(JSON.parse(saved))
-    }
+    } catch { /* corrupted localStorage */ }
   }, [])
 
   const saveOperations = (ops: Operation[]) => {
