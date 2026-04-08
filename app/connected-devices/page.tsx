@@ -36,8 +36,10 @@ export default function ConnectedDevicesPage() {
   const [syncing, setSyncing] = useState<string | null>(null)
 
   useEffect(() => {
-    const data = localStorage.getItem(`health_connections_${user?.id || "guest"}`)
-    if (data) setConnections(JSON.parse(data))
+    try {
+      const data = localStorage.getItem(`health_connections_${user?.id || "guest"}`)
+      if (data) setConnections(JSON.parse(data))
+    } catch { /* corrupted localStorage */ }
   }, [user])
 
   const saveConnections = (updated: Record<string, DeviceConnection>) => {

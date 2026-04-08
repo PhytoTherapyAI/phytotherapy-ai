@@ -45,8 +45,10 @@ export default function EmergencyContactsPage() {
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    const data = localStorage.getItem(`emergency_contacts_${user?.id || "guest"}`)
-    if (data) setContacts(JSON.parse(data))
+    try {
+      const data = localStorage.getItem(`emergency_contacts_${user?.id || "guest"}`)
+      if (data) setContacts(JSON.parse(data))
+    } catch { /* corrupted localStorage */ }
   }, [user])
 
   const save = (updated: EmergencyContact[]) => {

@@ -111,15 +111,17 @@ export default function DiabeticFootPage() {
   const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
 
   useEffect(() => {
-    const today = new Date().toDateString();
-    const stored = localStorage.getItem("diabetic-foot-checklist");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed.date === today) {
-        setChecklist(parsed.items);
-        return;
+    try {
+      const today = new Date().toDateString();
+      const stored = localStorage.getItem("diabetic-foot-checklist");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.date === today) {
+          setChecklist(parsed.items);
+          return;
+        }
       }
-    }
+    } catch { /* corrupted localStorage */ }
     setChecklist(FOOT_CHECKLIST.map((item) => ({ ...item, done: false })));
   }, []);
 

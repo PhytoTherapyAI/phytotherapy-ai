@@ -105,15 +105,17 @@ export default function DentalHealthPage() {
   const [checklist, setChecklist] = useState<ChecklistItem[]>([]);
 
   useEffect(() => {
-    const today = new Date().toDateString();
-    const stored = localStorage.getItem("dental-checklist");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed.date === today) {
-        setChecklist(parsed.items);
-        return;
+    try {
+      const today = new Date().toDateString();
+      const stored = localStorage.getItem("dental-checklist");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.date === today) {
+          setChecklist(parsed.items);
+          return;
+        }
       }
-    }
+    } catch { /* corrupted localStorage */ }
     setChecklist(DAILY_CHECKLIST.map((item) => ({ ...item, done: false })));
   }, []);
 

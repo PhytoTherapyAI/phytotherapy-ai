@@ -32,8 +32,10 @@ export default function DreamDiaryPage() {
   const [analyzing, setAnalyzing] = useState<string | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("dream-diary");
-    if (saved) setEntries(JSON.parse(saved));
+    try {
+      const saved = localStorage.getItem("dream-diary");
+      if (saved) setEntries(JSON.parse(saved));
+    } catch { /* corrupted localStorage */ }
   }, []);
 
   const saveEntries = (updated: DreamEntry[]) => {
