@@ -105,11 +105,12 @@ export function ProfilePowerHeader({ power, input, lang }: ProfilePowerHeaderPro
         {SECTION_CHECKS.map(s => {
           const done = s.check(input)
           return (
-            <div key={s.key} className="flex items-center gap-2 text-xs">
+            <div key={s.key} className={`flex items-center gap-2 text-xs ${!done ? 'cursor-pointer hover:text-primary transition-colors' : ''}`}
+              title={!done ? (tr ? 'Ekle ve profil g\u00fcc\u00fcn\u00fc art\u0131r!' : 'Add to boost your profile power!') : undefined}>
               {done
                 ? <span className="text-green-600 dark:text-green-400">{"\u2705"}</span>
-                : <span className="text-muted-foreground">{"\u2B55"}</span>}
-              <span className={done ? 'text-foreground' : 'text-muted-foreground'}>
+                : <span className="text-muted-foreground/50">{"\u2B55"}</span>}
+              <span className={done ? 'text-foreground font-medium' : 'text-muted-foreground'}>
                 {tr ? s.labelTr : s.labelEn}
               </span>
             </div>

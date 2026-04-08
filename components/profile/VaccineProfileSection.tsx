@@ -224,11 +224,13 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                         const isDateOpen = openDatePicker === vDef.id
 
                         return (
-                          <div key={vDef.id} className="flex items-center gap-3 px-4 py-3 min-h-[48px] relative cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => toggleVaccine(vDef.id)}>
-                            {/* Checkbox */}
-                            <button
+                          <div key={vDef.id} className={`flex items-center gap-3 px-4 py-3 min-h-[48px] relative cursor-pointer transition-colors duration-200 ${isDone ? "bg-green-50/50 dark:bg-green-950/10 hover:bg-green-50 dark:hover:bg-green-950/20" : "hover:bg-muted/30"}`} onClick={() => toggleVaccine(vDef.id)}>
+                            {/* Checkbox with scale animation */}
+                            <motion.button
                               type="button"
                               onClick={(e) => { e.stopPropagation(); toggleVaccine(vDef.id); }}
+                              animate={isDone ? { scale: [1, 1.2, 1] } : { scale: 1 }}
+                              transition={{ duration: 0.3 }}
                               className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-all ${
                                 isDone
                                   ? "bg-primary border-primary text-primary-foreground"
@@ -237,7 +239,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                               aria-label={`${displayName} ${isDone ? "done" : "not done"}`}
                             >
                               {isDone && <Check className="h-4 w-4" />}
-                            </button>
+                            </motion.button>
 
                             {/* Vaccine name */}
                             <span className={`flex-1 text-sm font-medium ${isDone ? "text-foreground" : "text-muted-foreground"}`}>
@@ -317,11 +319,11 @@ function VaccineMotivationCard({ tr }: { tr: boolean }) {
       <button onClick={dismiss} className="absolute top-2 right-2 opacity-40 hover:opacity-70 transition-opacity" aria-label="Dismiss">
         <span className="text-xs">✕</span>
       </button>
-      <p className="font-semibold text-xs uppercase tracking-wide opacity-70 mb-1">🛡️ {tr ? "Neden önemli?" : "Why it matters"}</p>
+      <p className="font-semibold text-xs uppercase tracking-wide opacity-70 mb-1">{"\u{1F489}"} {tr ? "'Paslı çivi battı' dersen ne yaparım?" : "'A rusty nail got me' — then what?"}</p>
       <p className="leading-relaxed pr-4">
         {tr
-          ? '"Paslı çivi battı" dediğinde tetanoz aşın ne zaman olduğunu bilmek hayat kurtarır. Bunu bilmeden seni doğru yönlendiremem.'
-          : '"A rusty nail got me" — knowing when your last tetanus shot was can save your life. Without this info, I can\'t guide you properly.'}
+          ? 'Tetanoz aşın ne zaman oldu? Bunu bilmeden seni acile yollamadan önce doğru soruyu soramam. Aşı kartın yoksa tahmin bile edemem. 5 dakika, hayat kurtarabilir. Gerçekten.'
+          : 'When was your last tetanus shot? Without knowing, I can\'t ask the right question before sending you to the ER. No vaccine card = no way to guess. 5 minutes could save a life. Seriously.'}
       </p>
     </div>
   )

@@ -1119,8 +1119,8 @@ export default function ProfilePage() {
           <MotivationCard
             id="motiv_meds"
             icon={"\u{1F48A}"}
-            title={tr ? "Neden önemli?" : "Why it matters"}
-            message={tr ? "İlaç-bitki etkileşimleri ciddi olabilir. İlaçlarını ekleyerek güvenli öneri alma şansını %90 artırıyorsun!" : "Drug-herb interactions can be serious. Adding your medications increases safe recommendation accuracy by 90%!"}
+            title={tr ? "Bunu atlama, ciddi s\u00f6yl\u00fcyorum" : "Don't skip this, I'm serious"}
+            message={tr ? "Sar\u0131 kantaron gibi masum g\u00f6r\u00fcnen bitkiler baz\u0131 ila\u00e7larla kar\u0131\u015ft\u0131r\u0131l\u0131nca i\u015fler kar\u0131\u015f\u0131r. \u0130la\u00e7lar\u0131n\u0131 bilmeden \u00f6neri versem, sana yanl\u0131\u015f bir \u015fey s\u00f6yleyebilirim. O y\u00fczden s\u00f6yle \u2014 kimseye s\u00f6ylemeyece\u011fim \u{1F92B}" : "Herbs like St. John's Wort can mess things up when mixed with certain meds. If I don't know your medications, I might give you bad advice. So tell me \u2014 I won't tell anyone \u{1F92B}"}
             color="blue"
           />
           {/* Medication list */}
@@ -1384,49 +1384,59 @@ export default function ProfilePage() {
               </>
             )}
 
-            {/* Substance Use */}
+            {/* Substance Use — Chip-based with celebration */}
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="space-y-3">
                 <Label className="flex items-center gap-2 text-base font-semibold">
                   <Wine className="h-4 w-4" />
                   {tx("profile.alcohol", lang)}
                 </Label>
-                <RadioGroup
-                  value={healthForm.alcohol_use.split("|")[0]}
-                  onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, alcohol_use: v }))}
-                >
+                <div className="flex flex-wrap gap-2">
                   {[
-                    { value: "none", label: "\u{1F7E2}", key: "onb.alcNever" },
-                    { value: "former", label: "\u{1F7E1}", key: "onb.alcFormer" },
-                    { value: "active", label: "\u{1F534}", key: "onb.alcActive" },
-                  ].map((opt) => (
-                    <div key={opt.value} className="flex items-center space-x-2">
-                      <RadioGroupItem value={opt.value} id={`edit-alc-${opt.value}`} />
-                      <Label htmlFor={`edit-alc-${opt.value}`} className="font-normal">{opt.label} {tx(opt.key, lang)}</Label>
-                    </div>
+                    { value: "none", emoji: "\u{1F7E2}", tr: "Kullanmıyorum", en: "None" },
+                    { value: "former", emoji: "\u{1F7E1}", tr: "Bıraktım", en: "Former" },
+                    { value: "active", emoji: "\u{1F534}", tr: "Aktif", en: "Active" },
+                  ].map(opt => (
+                    <button key={opt.value} type="button"
+                      onClick={() => setHealthForm((p): HealthFormState => ({ ...p, alcohol_use: opt.value }))}
+                      className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all ${
+                        healthForm.alcohol_use.split("|")[0] === opt.value
+                          ? opt.value === "none"
+                            ? "border-green-500 bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 scale-[1.02]"
+                            : "border-primary bg-primary/10 text-primary"
+                          : "border-muted hover:border-primary/30 text-muted-foreground"
+                      }`}>
+                      {opt.emoji} {tr ? opt.tr : opt.en}
+                      {healthForm.alcohol_use.split("|")[0] === opt.value && opt.value === "none" && " \u2705"}
+                    </button>
                   ))}
-                </RadioGroup>
+                </div>
               </div>
               <div className="space-y-3">
                 <Label className="flex items-center gap-2 text-base font-semibold">
                   <Cigarette className="h-4 w-4" />
                   {tx("profile.smoking", lang)}
                 </Label>
-                <RadioGroup
-                  value={healthForm.smoking_use.split("|")[0]}
-                  onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, smoking_use: v }))}
-                >
+                <div className="flex flex-wrap gap-2">
                   {[
-                    { value: "none", label: "\u{1F7E2}", key: "onb.smokingNever" },
-                    { value: "former", label: "\u{1F7E1}", key: "onb.smokingFormer" },
-                    { value: "current", label: "\u{1F534}", key: "onb.smokingActive" },
-                  ].map((opt) => (
-                    <div key={opt.value} className="flex items-center space-x-2">
-                      <RadioGroupItem value={opt.value} id={`edit-smk-${opt.value}`} />
-                      <Label htmlFor={`edit-smk-${opt.value}`} className="font-normal">{opt.label} {tx(opt.key, lang)}</Label>
-                    </div>
+                    { value: "none", emoji: "\u{1F7E2}", tr: "Kullanmıyorum", en: "None" },
+                    { value: "former", emoji: "\u{1F7E1}", tr: "Bıraktım", en: "Former" },
+                    { value: "current", emoji: "\u{1F534}", tr: "Aktif", en: "Active" },
+                  ].map(opt => (
+                    <button key={opt.value} type="button"
+                      onClick={() => setHealthForm((p): HealthFormState => ({ ...p, smoking_use: opt.value }))}
+                      className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all ${
+                        healthForm.smoking_use.split("|")[0] === opt.value
+                          ? opt.value === "none"
+                            ? "border-green-500 bg-green-50 dark:bg-green-950/20 text-green-700 dark:text-green-400 scale-[1.02]"
+                            : "border-primary bg-primary/10 text-primary"
+                          : "border-muted hover:border-primary/30 text-muted-foreground"
+                      }`}>
+                      {opt.emoji} {tr ? opt.tr : opt.en}
+                      {healthForm.smoking_use.split("|")[0] === opt.value && opt.value === "none" && " \u2705"}
+                    </button>
                   ))}
-                </RadioGroup>
+                </div>
               </div>
             </div>
 
@@ -1467,8 +1477,8 @@ export default function ProfilePage() {
               <MotivationCard
                 id="motiv_chronic"
                 icon={"\u{1F3E5}"}
-                title={tr ? "Neden \u00f6nemli?" : "Why it matters"}
-                message={tr ? "Diyabet ile hipertansiyonu olan birine farkl\u0131, sa\u011fl\u0131kl\u0131 birine farkl\u0131 \u00f6neri veririm. Hastal\u0131\u011f\u0131n\u0131 bilmeden sana \"herkese uyan\" \u00e7\u00f6z\u00fcm \u00f6neririm \u2014 ama sen herkese uymuyorsun. Sen \u00f6zelsin. \u{1F3AF}" : "I recommend differently for someone with diabetes + hypertension vs a healthy person. Without knowing your conditions, I give generic advice \u2014 but you\u2019re not generic. You\u2019re special. \u{1F3AF}"}
+                title={tr ? "Sen herkese benzemiyorsun (iyi anlamda)" : "You're not like everyone (in a good way)"}
+                message={tr ? "Diyabetli birine 'bol meyve ye' demek kan \u015fekerini u\u00e7urabilir. Hastal\u0131\u011f\u0131n\u0131 bilmeden sana 'herkese uyan' \u00f6neriler veririm. Sen herkese uymuyor musun? Ben de. \u{1F60E}" : "Telling a diabetic to 'eat lots of fruit' can spike their blood sugar. Without knowing your conditions, I give generic advice. You don't fit the mold? Neither do I. \u{1F60E}"}
                 color="purple"
               />
               <ChronicConditionsEditor
@@ -1509,8 +1519,8 @@ export default function ProfilePage() {
               <MotivationCard
                 id="motiv_supplements"
                 icon={"\u{1F33F}"}
-                title={tr ? "Neden \u00f6nemli?" : "Why it matters"}
-                message={tr ? "St. John's Wort (Sar\u0131 Kantaron) antidepresanlarla birlikte al\u0131n\u0131rsa ciddi reaksiyon verebilir. Takviyen olmadan bunu bilemem. S\u00f6ylersen, seni koruyabilirim. \u{1F6E1}\u{FE0F}" : "St. John's Wort can cause serious reactions with antidepressants. Without knowing your supplements, I can't catch this. Tell me, and I'll protect you. \u{1F6E1}\u{FE0F}"}
+                title={tr ? "'Do\u011fald\u0131r, ne olabilir ki?'" : "'It's natural, what could go wrong?'"}
+                message={tr ? "Her \u015fey. Beta-alanin ald\u0131\u011f\u0131nda elin kolun kar\u0131ncalanmaya ba\u015flarsa panikleyip acile ko\u015fma \u2014 bu normal, ama bunu bilmem laz\u0131m. Takviyelerini ekle, k\u00f6r u\u00e7mayay\u0131m." : "Everything. When you take beta-alanine and your hands start tingling, don't panic and rush to the ER \u2014 it's normal, but I need to know. Add your supplements so I don't fly blind."}
                 color="green"
               />
               {/* Categorized supplement chip grid */}
@@ -1792,7 +1802,7 @@ export default function ProfilePage() {
                     {familyItems.length === 0 ? (
                       <div className="space-y-3">
                         <p className="text-sm text-blue-700 dark:text-blue-400">
-                          {tr ? "Soygeçmiş verisi, genetik risk tespitini %60 daha doğru yapar." : "Family history data makes genetic risk assessment 60% more accurate."}
+                          {tr ? "Baban\u0131n 50'sinde kalp krizi ge\u00e7irmesi senin i\u00e7in \u00f6nemli bir ipucu. Genetik riskleri bilmeden seni erken uyaramam. Bu bilgi sigortan gibi \u2014 umar\u0131m hi\u00e7 kullanmazs\u0131n, ama olmas\u0131 iyi. \u{1F6E1}\u{FE0F}" : "Your dad's heart attack at 50 is an important clue for you. Without genetic risks, I can't warn you early. This info is like insurance \u2014 hopefully you'll never need it, but it's good to have. \u{1F6E1}\u{FE0F}"}
                         </p>
                         <button onClick={() => { document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" }); setTimeout(() => startEditingHealth(), 300); }}
                           className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
@@ -1871,8 +1881,8 @@ export default function ProfilePage() {
               <MotivationCard
                 id="motiv_allergy"
                 icon={"\u{26A0}\u{FE0F}"}
-                title={tr ? "Neden önemli?" : "Why it matters"}
-                message={tr ? "Fıstık alerjisi olan birine \"doğal protein kaynağı\" diye fıstık yağı önermek istemem. Alerji bilgin = Benim güvenlik filtrem. Filtre olmadan kör uçarım. \u{1F3AF}" : "I wouldn't want to recommend peanut oil as \"natural protein\" to someone with a peanut allergy. Your allergy data = My safety filter. Without it, I'm flying blind. \u{1F3AF}"}
+                title={tr ? "F\u0131st\u0131k konusunda \u015faka yapm\u0131yorum" : "I don't joke about peanuts"}
+                message={tr ? "Alerji bilgisi olmadan \u00f6neri vermek, g\u00f6z\u00fc kapal\u0131 dart atmak gibi. Bazen tutturursun, bazen tutturmazs\u0131n. Sen tutturulmak istemiyorsun, de\u011fil mi? Ben de istemiyorum. Ekle. \u{1F3AF}" : "Giving advice without allergy info is like throwing darts blindfolded. Sometimes you hit, sometimes you don't. You don't want to be the dartboard, right? Neither do I. Add them. \u{1F3AF}"}
                 color="yellow"
               />
 

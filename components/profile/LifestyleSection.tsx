@@ -77,8 +77,8 @@ export function LifestyleSection({ data, onChange, lang }: Props) {
       <MotivationCard
         id="motiv_lifestyle"
         icon={"\u{1F3C3}"}
-        title={tr ? 'Neden önemli?' : 'Why it matters'}
-        message={tr ? 'Sporcu birine farklı takviye, hareketsiz birine farklı öneri veririm. Yaşam tarzını bilmek önerilerimi 2x daha isabetli yapar.' : 'I recommend different supplements for athletes vs sedentary people. Knowing your lifestyle makes my advice 2x more accurate.'}
+        title={tr ? 'Kanepe mi, maraton mu?' : 'Couch or marathon?'}
+        message={tr ? 'Sporcu birine kreatin \u00f6neriyorum, kanepe sevdal\u0131s\u0131na magnezyum. \u0130kisine de \'egzersiz yap\' demem. Senin tarz\u0131na g\u00f6re konu\u015fal\u0131m. Hangisi daha yak\u0131n? \u{1F604}' : 'I recommend creatine for athletes, magnesium for couch lovers. I don\'t tell both to \'just exercise\'. Let\'s talk based on your style. Which one are you? \u{1F604}'}
         color="orange"
       />
 
