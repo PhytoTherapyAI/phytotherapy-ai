@@ -215,7 +215,7 @@ export async function POST(req: Request) {
 
     for (const nudge of nudges) {
       const nudgeSub = subscriptions?.find(s => s.user_id === nudge.userId)
-        || (await supabase.from("bot_subscriptions").select("*").eq("user_id", nudge.userId).eq("status", "active").limit(1).single()).data
+        || (await supabase.from("bot_subscriptions").select("*").eq("user_id", nudge.userId).eq("status", "active").limit(1).single()).data || null
 
       if (!nudgeSub) continue
 

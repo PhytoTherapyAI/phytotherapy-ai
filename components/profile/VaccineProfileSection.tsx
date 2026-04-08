@@ -46,14 +46,20 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
   }, [userId, initialVaccines])
 
   const saveVaccines = useCallback(async (updated: VaccineEntry[]) => {
+    // Capture current state for rollback before optimistic update
+    let previous: VaccineEntry[] = []
+    setVaccines(prev => { previous = prev; return updated })
     setSaving(true)
     try {
       const supabase = createBrowserClient()
       const { error } = await supabase.from("user_profiles").update({ vaccines: updated }).eq("id", userId)
-      if (error) { console.warn("Vaccine save failed:", error.message); return }
-      setVaccines(updated)
+      if (error) {
+        console.warn("Vaccine save failed:", error.message)
+        setVaccines(previous)
+      }
     } catch (err) {
       console.warn("Vaccine save error:", err)
+      setVaccines(previous)
     } finally {
       setSaving(false)
     }

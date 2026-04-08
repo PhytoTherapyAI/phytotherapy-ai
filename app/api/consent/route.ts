@@ -78,15 +78,20 @@ export async function POST(req: Request) {
     const { data, error: dbError } = await supabase.from("consent_records").insert(consentRecord).select().single()
 
     if (dbError) {
-      // Fallback: save to existing consent_records or log
       console.warn("[CONSENT] DB insert error:", dbError.message)
+      return NextResponse.json({
+        success: false,
+        error: "consent_save_failed",
+        consentId: `local-${Date.now()}`,
+        digitalSignature,
+        grantedAt,
+        expiresAt,
+      }, { status: 500 })
     }
-
-    // Audit log
 
     return NextResponse.json({
       success: true,
-      consentId: data?.id || `local-${Date.now()}`,
+      consentId: data.id,
       digitalSignature,
       grantedAt,
       expiresAt,
