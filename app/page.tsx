@@ -105,14 +105,14 @@ const FAQ_ITEMS = [
   {
     questionTr: "Fitoterapi nedir?",
     questionEn: "What is phytotherapy?",
-    answerTr: "Fitoterapi, bilimsel olarak kanıtlanmış bitkisel tedavilerin kullanılmasıdır. Doctopal, modern tıp ile kanıta dayalı bitkisel tıbbı birleştirerek güvenli ve kişiselleştirilmiş öneriler sunar.",
-    answerEn: "Phytotherapy is the use of scientifically proven herbal treatments. Doctopal bridges modern medicine and evidence-based herbal medicine to provide safe, personalized recommendations.",
+    answerTr: "Fitoterapi, bilimsel olarak kanıtlanmış bitkisel tedavilerin kullanılmasıdır. DoctoPal, modern tıp ile kanıta dayalı bitkisel tıbbı birleştirerek güvenli ve kişiselleştirilmiş öneriler sunar.",
+    answerEn: "Phytotherapy is the use of scientifically proven herbal treatments. DoctoPal bridges modern medicine and evidence-based herbal medicine to provide safe, personalized recommendations.",
   },
   {
     questionTr: "İlaçlarla bitkisel takviye kullanmak güvenli mi?",
     questionEn: "Is it safe to use herbal supplements with medications?",
-    answerTr: "Bazı bitkisel takviyeler ilaçlarla etkileşime girebilir. Doctopal'ın ilaç etkileşim kontrolü, güvenli ve riskli kombinasyonları bilimsel kaynaklarla gösterir.",
-    answerEn: "Some herbal supplements can interact with medications. Doctopal's drug interaction checker shows safe and risky combinations with scientific sources.",
+    answerTr: "Bazı bitkisel takviyeler ilaçlarla etkileşime girebilir. DoctoPal'ın ilaç etkileşim kontrolü, güvenli ve riskli kombinasyonları bilimsel kaynaklarla gösterir.",
+    answerEn: "Some herbal supplements can interact with medications. DoctoPal's drug interaction checker shows safe and risky combinations with scientific sources.",
   },
   {
     questionTr: "Kan tahlilimi nasıl yorumlarım?",
@@ -121,8 +121,8 @@ const FAQ_ITEMS = [
     answerEn: "Enter your blood test values for AI-powered detailed analysis. 30+ biomarkers are evaluated.",
   },
   {
-    questionTr: "Doctopal ücretsiz mi?",
-    questionEn: "Is Doctopal free?",
+    questionTr: "DoctoPal ücretsiz mi?",
+    questionEn: "Is DoctoPal free?",
     answerTr: "Evet, temel özellikleri ücretsizdir. Sağlık asistanı, ilaç etkileşim kontrolü ve kan tahlili analizi ücretsiz kullanılabilir.",
     answerEn: "Yes, core features are free. The health assistant, drug interaction checker, and blood test analysis are available at no cost.",
   },
