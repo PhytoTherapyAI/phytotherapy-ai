@@ -403,35 +403,35 @@ export default function ProfilePage() {
 
   // Common drug default doses (same as onboarding)
   const DEFAULT_DOSES: Record<string, { dosage: string; frequency: string }> = {
-    metformin: { dosage: "500mg", frequency: "2x daily" },
-    lisinopril: { dosage: "10mg", frequency: "1x daily" },
-    atorvastatin: { dosage: "20mg", frequency: "1x daily" },
-    omeprazole: { dosage: "20mg", frequency: "1x daily" },
-    pantoprazole: { dosage: "40mg", frequency: "1x daily" },
-    amlodipine: { dosage: "5mg", frequency: "1x daily" },
-    losartan: { dosage: "50mg", frequency: "1x daily" },
-    levothyroxine: { dosage: "50mcg", frequency: "1x daily" },
-    metoprolol: { dosage: "50mg", frequency: "2x daily" },
-    aspirin: { dosage: "100mg", frequency: "1x daily" },
-    ibuprofen: { dosage: "400mg", frequency: "3x daily" },
-    paracetamol: { dosage: "500mg", frequency: "3x daily" },
-    ramipril: { dosage: "5mg", frequency: "1x daily" },
-    bisoprolol: { dosage: "5mg", frequency: "1x daily" },
-    sertraline: { dosage: "50mg", frequency: "1x daily" },
-    escitalopram: { dosage: "10mg", frequency: "1x daily" },
-    pregabalin: { dosage: "75mg", frequency: "2x daily" },
-    montelukast: { dosage: "10mg", frequency: "1x daily" },
-    euthyrox: { dosage: "50mcg", frequency: "1x daily" },
-    beloc: { dosage: "50mg", frequency: "2x daily" },
-    concor: { dosage: "5mg", frequency: "1x daily" },
-    coraspin: { dosage: "100mg", frequency: "1x daily" },
-    parol: { dosage: "500mg", frequency: "3x daily" },
-    arveles: { dosage: "25mg", frequency: "3x daily" },
-    glifor: { dosage: "500mg", frequency: "2x daily" },
-    nexium: { dosage: "20mg", frequency: "1x daily" },
-    zoretanin: { dosage: "10mg", frequency: "1x daily" },
-    isotretinoin: { dosage: "10mg", frequency: "1x daily" },
-    roaccutane: { dosage: "10mg", frequency: "1x daily" },
+    metformin: { dosage: "500mg", frequency: "Günde 2 kez" },
+    lisinopril: { dosage: "10mg", frequency: "Günlük" },
+    atorvastatin: { dosage: "20mg", frequency: "Günlük" },
+    omeprazole: { dosage: "20mg", frequency: "Günlük" },
+    pantoprazole: { dosage: "40mg", frequency: "Günlük" },
+    amlodipine: { dosage: "5mg", frequency: "Günlük" },
+    losartan: { dosage: "50mg", frequency: "Günlük" },
+    levothyroxine: { dosage: "50mcg", frequency: "Günlük" },
+    metoprolol: { dosage: "50mg", frequency: "Günde 2 kez" },
+    aspirin: { dosage: "100mg", frequency: "Günlük" },
+    ibuprofen: { dosage: "400mg", frequency: "Günde 3 kez" },
+    paracetamol: { dosage: "500mg", frequency: "Günde 3 kez" },
+    ramipril: { dosage: "5mg", frequency: "Günlük" },
+    bisoprolol: { dosage: "5mg", frequency: "Günlük" },
+    sertraline: { dosage: "50mg", frequency: "Günlük" },
+    escitalopram: { dosage: "10mg", frequency: "Günlük" },
+    pregabalin: { dosage: "75mg", frequency: "Günde 2 kez" },
+    montelukast: { dosage: "10mg", frequency: "Günlük" },
+    euthyrox: { dosage: "50mcg", frequency: "Günlük" },
+    beloc: { dosage: "50mg", frequency: "Günde 2 kez" },
+    concor: { dosage: "5mg", frequency: "Günlük" },
+    coraspin: { dosage: "100mg", frequency: "Günlük" },
+    parol: { dosage: "500mg", frequency: "Günde 3 kez" },
+    arveles: { dosage: "25mg", frequency: "Günde 3 kez" },
+    glifor: { dosage: "500mg", frequency: "Günde 2 kez" },
+    nexium: { dosage: "20mg", frequency: "Günlük" },
+    zoretanin: { dosage: "10mg", frequency: "Günlük" },
+    isotretinoin: { dosage: "10mg", frequency: "Günlük" },
+    roaccutane: { dosage: "10mg", frequency: "Günlük" },
   };
 
   const [autoDoseBadge, setAutoDoseBadge] = useState(false);
@@ -1152,14 +1152,16 @@ export default function ProfilePage() {
                         <div className="mt-1 flex gap-2">
                           {med.dosage && <Badge variant="secondary">{med.dosage}</Badge>}
                           {med.frequency && <Badge variant="outline">{tr ? ({
-                            "1x daily": "Günde 1 kez", "2x daily": "Günde 2 kez", "3x daily": "Günde 3 kez",
-                            "4x daily": "Günde 4 kez", "once daily": "Günde 1 kez", "twice daily": "Günde 2 kez",
-                            "once_daily": "Günde 1 kez", "twice_daily": "Günde 2 kez", "three_times_daily": "Günde 3 kez",
+                            "1x daily": "Günlük", "2x daily": "Günde 2 kez", "3x daily": "Günde 3 kez",
+                            "4x daily": "Günde 4 kez", "once daily": "Günlük", "twice daily": "Günde 2 kez",
+                            "1x_daily": "Günlük", "once_daily": "Günlük", "once_a_day": "Günlük",
+                            "twice_daily": "Günde 2 kez", "three_times_daily": "Günde 3 kez",
                             "four_times_daily": "Günde 4 kez", "2x_daily": "Günde 2 kez", "3x_daily": "Günde 3 kez",
                             "daily": "Günlük", "qd": "Günlük", "bid": "Günde 2 kez", "tid": "Günde 3 kez", "qid": "Günde 4 kez",
                             "every 8 hours": "Her 8 saatte", "every 12 hours": "Her 12 saatte",
                             "as needed": "Gerektiğinde", "as_needed": "Gerektiğinde", "prn": "Gerektiğinde",
                             "weekly": "Haftalık", "monthly": "Aylık",
+                            "Günlük": "Günlük", "Günde 2 kez": "Günde 2 kez", "Günde 3 kez": "Günde 3 kez",
                           } as Record<string, string>)[med.frequency] || med.frequency : med.frequency}</Badge>}
                         </div>
                       )}
@@ -1500,7 +1502,7 @@ export default function ProfilePage() {
                     {healthForm.chronic_conditions.filter(c => c.startsWith("family:")).map(c => (
                       <Badge key={c} variant="outline" className="gap-1 text-xs">
                         {c.replace("family:", "")}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => toggleCondition(c)} />
+                        <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); toggleCondition(c); }} />
                       </Badge>
                     ))}
                   </div>
@@ -1583,7 +1585,7 @@ export default function ProfilePage() {
                     {healthForm.supplements.map(s => (
                       <Badge key={s} variant="default" className="gap-1 text-xs">
                         {s}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => toggleSupplement(s)} />
+                        <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); toggleSupplement(s); }} />
                       </Badge>
                     ))}
                   </div>
@@ -2128,7 +2130,7 @@ function InlineEdit({ value, onSave, type = "text", placeholder, lang, options }
             {o.label}
           </button>
         ))}
-        <button onClick={() => setEditing(false)} className="text-xs text-muted-foreground hover:text-foreground ml-1">✗</button>
+        <button onClick={() => setEditing(false)} className="flex items-center justify-center w-7 h-7 min-w-[44px] min-h-[44px] rounded-md text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 text-sm font-bold transition-colors ml-1">✗</button>
       </div>
     );
   }
@@ -2137,8 +2139,8 @@ function InlineEdit({ value, onSave, type = "text", placeholder, lang, options }
     <div className="flex items-center gap-1.5">
       <input type={type === "number" ? "number" : "text"} value={draft} onChange={e => setDraft(e.target.value)}
         placeholder={placeholder} autoFocus className="h-7 rounded-md border px-2 text-sm w-32 focus:ring-2 focus:ring-primary/40 focus:border-primary outline-none" />
-      <button onClick={save} disabled={saving} className="text-primary hover:text-primary/80 text-sm font-bold">{saving ? "..." : "✓"}</button>
-      <button onClick={() => setEditing(false)} className="text-muted-foreground hover:text-foreground text-sm">✗</button>
+      <button onClick={save} disabled={saving} className="flex items-center justify-center w-8 h-8 min-w-[44px] min-h-[44px] rounded-md text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-950/20 text-lg font-bold transition-colors">{saving ? "..." : "✓"}</button>
+      <button onClick={() => setEditing(false)} className="flex items-center justify-center w-8 h-8 min-w-[44px] min-h-[44px] rounded-md text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 text-lg font-bold transition-colors">✗</button>
     </div>
   );
 }

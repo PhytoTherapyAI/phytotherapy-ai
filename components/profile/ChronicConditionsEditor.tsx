@@ -276,7 +276,7 @@ export function ChronicConditionsEditor({ conditions, medications, onToggle, onA
             return (
               <Badge key={c} variant="default" className="gap-1 text-xs">
                 {db ? (tr ? db.tr : db.en) : c}
-                <X className="h-3 w-3 cursor-pointer" onClick={() => onToggle(c)} />
+                <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); onToggle(c); }} />
               </Badge>
             )
           })}
