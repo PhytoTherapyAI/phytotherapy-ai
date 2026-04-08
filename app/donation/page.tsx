@@ -51,8 +51,10 @@ export default function DonationPage() {
   const [newType, setNewType] = useState<"blood" | "platelet" | "plasma">("blood");
 
   useEffect(() => {
-    const saved = localStorage.getItem("donation-history");
-    if (saved) setEntries(JSON.parse(saved));
+    try {
+      const saved = localStorage.getItem("donation-history");
+      if (saved) setEntries(JSON.parse(saved));
+    } catch { /* corrupted localStorage */ }
   }, []);
 
   const saveEntries = (updated: DonationEntry[]) => {

@@ -114,9 +114,11 @@ export default function ConnectAssistantPage() {
 
   const togglePause = () => {
     setIsPaused(!isPaused)
-    const saved = JSON.parse(localStorage.getItem(`bot_connection_${user?.id || "guest"}`) || "{}")
-    saved.status = isPaused ? "active" : "paused"
-    localStorage.setItem(`bot_connection_${user?.id || "guest"}`, JSON.stringify(saved))
+    try {
+      const saved = JSON.parse(localStorage.getItem(`bot_connection_${user?.id || "guest"}`) || "{}")
+      saved.status = isPaused ? "active" : "paused"
+      localStorage.setItem(`bot_connection_${user?.id || "guest"}`, JSON.stringify(saved))
+    } catch { /* corrupted localStorage */ }
   }
 
   return (

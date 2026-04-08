@@ -63,8 +63,10 @@ export default function FastingMonitorPage() {
       const { data } = await supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id)
       if (data) setUserMeds(data.map((d: any) => (d.generic_name || d.brand_name)))
     } catch (e) { console.error(e) }
-    const saved = localStorage.getItem(`fasting_${user?.id || "guest"}`)
-    if (saved) setDays(JSON.parse(saved))
+    try {
+      const saved = localStorage.getItem(`fasting_${user?.id || "guest"}`)
+      if (saved) setDays(JSON.parse(saved))
+    } catch { /* corrupted localStorage */ }
     setLoading(false)
   }
 
