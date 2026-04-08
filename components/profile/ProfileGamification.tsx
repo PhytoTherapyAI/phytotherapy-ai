@@ -60,64 +60,74 @@ export function calculateProfilePower(input: ProfilePowerInput): ProfilePower {
 }
 
 // ─── Level Display Config ───
-const LEVEL_CONFIG: Record<ProfileLevel, { labelTr: string; labelEn: string; color: string; gradient: string }> = {
-  beginner: { labelTr: 'Başlangıç', labelEn: 'Beginner', color: 'text-gray-500', gradient: 'from-gray-400 to-gray-500' },
-  developing: { labelTr: 'Gelişiyor', labelEn: 'Developing', color: 'text-blue-500', gradient: 'from-blue-400 to-blue-600' },
-  strong: { labelTr: 'Güçlü', labelEn: 'Strong', color: 'text-emerald-500', gradient: 'from-emerald-400 to-emerald-600' },
-  expert: { labelTr: 'Uzman', labelEn: 'Expert', color: 'text-amber-500', gradient: 'from-amber-400 to-amber-600' },
-  full: { labelTr: 'Tam Koruma', labelEn: 'Full Protection', color: 'text-primary', gradient: 'from-primary to-emerald-500' },
+const LEVEL_CONFIG: Record<ProfileLevel, { labelTr: string; labelEn: string; emoji: string; color: string; gradient: string }> = {
+  beginner: { labelTr: 'Başlangıç', labelEn: 'Beginner', emoji: '\u{1F331}', color: 'text-gray-500', gradient: 'from-gray-400 to-gray-500' },
+  developing: { labelTr: 'Gelişiyor', labelEn: 'Developing', emoji: '\u{1F33F}', color: 'text-blue-500', gradient: 'from-blue-400 to-blue-600' },
+  strong: { labelTr: 'Güçlü', labelEn: 'Strong', emoji: '\u{1F4AA}', color: 'text-emerald-500', gradient: 'from-emerald-400 to-emerald-600' },
+  expert: { labelTr: 'Uzman', labelEn: 'Expert', emoji: '\u{1F525}', color: 'text-amber-500', gradient: 'from-amber-400 to-amber-600' },
+  full: { labelTr: 'Tam Koruma', labelEn: 'Full Protection', emoji: '\u{1F6E1}\u{FE0F}', color: 'text-primary', gradient: 'from-primary to-emerald-500' },
 }
 
 // ─── Profile Power Header ───
 interface ProfilePowerHeaderProps {
   power: ProfilePower
+  input: ProfilePowerInput
   lang: 'en' | 'tr'
 }
 
-export function ProfilePowerHeader({ power, lang }: ProfilePowerHeaderProps) {
+export function ProfilePowerHeader({ power, input, lang }: ProfilePowerHeaderProps) {
   const tr = lang === 'tr'
   const reducedMotion = useReducedMotion()
   const cfg = LEVEL_CONFIG[power.level]
-  const missingCount = power.totalSections - power.completedSections
+
+  const nextLevel = power.level === 'beginner' ? 'developing' : power.level === 'developing' ? 'strong' : power.level === 'strong' ? 'expert' : power.level === 'expert' ? 'full' : null
 
   return (
-    <div className="mb-4 rounded-xl border bg-gradient-to-r from-primary/5 via-emerald-500/5 to-teal-500/5 px-4 py-3.5">
-      <div className="flex items-center gap-3">
-        <span className="text-xl">{"\u{1F6E1}\uFE0F"}</span>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold">
-              {tr ? 'Profil Gücü:' : 'Profile Power:'}
-            </span>
-            <span className={`text-sm font-bold ${cfg.color}`}>
-              {tr ? cfg.labelTr : cfg.labelEn}
-            </span>
-          </div>
-          <div className="mt-1.5 flex items-center gap-2">
-            <div className="flex-1 h-2.5 rounded-full bg-muted overflow-hidden">
-              <motion.div
-                className={`h-full rounded-full bg-gradient-to-r ${cfg.gradient}`}
-                initial={reducedMotion ? { width: `${power.percentage}%` } : { width: 0 }}
-                animate={{ width: `${power.percentage}%` }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-              />
-            </div>
-            <span className="text-xs font-bold text-muted-foreground">%{power.percentage}</span>
-          </div>
-          {missingCount > 0 && power.level !== 'full' && (
-            <p className="mt-1 text-xs text-muted-foreground">
-              {tr
-                ? `${missingCount} bölüm daha ekleyerek ${LEVEL_CONFIG[power.level === 'expert' ? 'full' : power.level === 'strong' ? 'expert' : power.level === 'developing' ? 'strong' : 'developing'].labelTr}'a ulaş!`
-                : `Add ${missingCount} more sections to reach ${LEVEL_CONFIG[power.level === 'expert' ? 'full' : power.level === 'strong' ? 'expert' : power.level === 'developing' ? 'strong' : 'developing'].labelEn}!`}
-            </p>
-          )}
-          {power.level === 'full' && (
-            <p className="mt-1 text-xs font-semibold text-primary">
-              {tr ? '🎉 Tebrikler! Profil tamamen tamamlandı.' : '🎉 Congratulations! Profile fully completed.'}
-            </p>
-          )}
-        </div>
+    <div className="mb-4 rounded-xl border bg-gradient-to-r from-primary/5 via-emerald-500/5 to-teal-500/5 p-4">
+      {/* Level + Progress */}
+      <div className="flex items-center gap-2 mb-2">
+        <span className="text-lg">{cfg.emoji}</span>
+        <span className="text-sm font-bold">{tr ? 'Profil Gücü:' : 'Profile Power:'}</span>
+        <span className={`text-sm font-bold ${cfg.color}`}>{tr ? cfg.labelTr : cfg.labelEn}</span>
+        <span className="ml-auto text-xs font-bold text-muted-foreground">%{power.percentage}</span>
       </div>
+      <div className="h-2.5 rounded-full bg-muted overflow-hidden mb-3">
+        <motion.div
+          className={`h-full rounded-full bg-gradient-to-r ${cfg.gradient}`}
+          initial={reducedMotion ? { width: `${power.percentage}%` } : { width: 0 }}
+          animate={{ width: `${power.percentage}%` }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+        />
+      </div>
+
+      {/* Section completion list */}
+      <div className="space-y-1">
+        {SECTION_CHECKS.map(s => {
+          const done = s.check(input)
+          return (
+            <div key={s.key} className="flex items-center gap-2 text-xs">
+              {done
+                ? <span className="text-green-600 dark:text-green-400">{"\u2705"}</span>
+                : <span className="text-muted-foreground">{"\u2B55"}</span>}
+              <span className={done ? 'text-foreground' : 'text-muted-foreground'}>
+                {tr ? s.labelTr : s.labelEn}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Next level hint */}
+      {nextLevel && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          {tr ? `Sonraki seviye: ${LEVEL_CONFIG[nextLevel].emoji} ${LEVEL_CONFIG[nextLevel].labelTr}` : `Next: ${LEVEL_CONFIG[nextLevel].emoji} ${LEVEL_CONFIG[nextLevel].labelEn}`}
+        </p>
+      )}
+      {power.level === 'full' && (
+        <p className="mt-2 text-xs font-semibold text-primary">
+          {"\u{1F389}"} {tr ? 'Tebrikler! Tam Koruma seviyesindesin.' : 'Congratulations! Full Protection achieved.'}
+        </p>
+      )}
     </div>
   )
 }

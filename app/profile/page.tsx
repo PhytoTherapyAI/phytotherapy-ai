@@ -40,6 +40,7 @@ import {
   type ProfilePowerInput,
 } from "@/components/profile/ProfileGamification";
 import BadgeIcon from "@/components/badges/BadgeIcon";
+import { LifestyleSection } from "@/components/profile/LifestyleSection";
 
 interface DrugSuggestion {
   brandName: string;
@@ -624,7 +625,7 @@ export default function ProfilePage() {
           hasLifestyle: !!(profile.height_cm || profile.weight_kg || profile.exercise_frequency || profile.sleep_quality),
         };
         const power = calculateProfilePower(powerInput);
-        return <ProfilePowerHeader power={power} lang={lang as 'en' | 'tr'} />;
+        return <ProfilePowerHeader power={power} input={powerInput} lang={lang as 'en' | 'tr'} />;
       })()}
 
       {/* ── DIGITAL TWIN HERO ── */}
@@ -807,19 +808,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* ── Completion Checks — under Profile Power header ── */}
-      <div className="mb-6 flex flex-wrap gap-2">
-        {completionChecks.map((check, i) => (
-          <span key={i} className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full ${
-            check.done
-              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-              : "bg-muted text-muted-foreground"
-          }`}>
-            {check.done ? <CheckCircle2 className="h-3 w-3" /> : <span className="w-3 h-3 rounded-full border border-current opacity-40" />}
-            {check.label}
-          </span>
-        ))}
-      </div>
+      {/* Completion checks now shown inside ProfilePowerHeader */}
 
       {/* ── Completed celebration ── */}
       {completionPct === 100 && (
@@ -1478,7 +1467,7 @@ export default function ProfilePage() {
                 id="motiv_chronic"
                 icon={"\u{1F3E5}"}
                 title={tr ? "Neden \u00f6nemli?" : "Why it matters"}
-                message={tr ? "Diyabetliye farkl\u0131, sa\u011fl\u0131kl\u0131ya farkl\u0131 \u00f6neri veririm. Bu bilgi olmadan sana \"herkese uyan\" \u00f6neriler veririm \u2014 sen herkese uymuyorsun." : "I recommend differently for diabetics vs healthy people. Without this, I give generic advice \u2014 you deserve personalized care."}
+                message={tr ? "Diyabet ile hipertansiyonu olan birine farkl\u0131, sa\u011fl\u0131kl\u0131 birine farkl\u0131 \u00f6neri veririm. Hastal\u0131\u011f\u0131n\u0131 bilmeden sana \"herkese uyan\" \u00e7\u00f6z\u00fcm \u00f6neririm \u2014 ama sen herkese uymuyorsun. Sen \u00f6zelsin. \u{1F3AF}" : "I recommend differently for someone with diabetes + hypertension vs a healthy person. Without knowing your conditions, I give generic advice \u2014 but you\u2019re not generic. You\u2019re special. \u{1F3AF}"}
                 color="purple"
               />
 
@@ -1625,7 +1614,7 @@ export default function ProfilePage() {
                 id="motiv_supplements"
                 icon={"\u{1F33F}"}
                 title={tr ? "Neden \u00f6nemli?" : "Why it matters"}
-                message={tr ? "Masum g\u00f6r\u00fcnen takviyeler ila\u00e7larla ciddi etkile\u015fime girebilir. Beta-alanin'in yapt\u0131\u011f\u0131 kar\u0131ncalanmay\u0131 n\u00f6rolojik san\u0131p acile ko\u015fanlar var! Do\u011fru tan\u0131mlarsan seni koruyabilirim." : "Seemingly harmless supplements can seriously interact with medications. People rush to ER thinking beta-alanine tingling is neurological! Proper tracking keeps you safe."}
+                message={tr ? "St. John's Wort (Sar\u0131 Kantaron) antidepresanlarla birlikte al\u0131n\u0131rsa ciddi reaksiyon verebilir. Takviyen olmadan bunu bilemem. S\u00f6ylersen, seni koruyabilirim. \u{1F6E1}\u{FE0F}" : "St. John's Wort can cause serious reactions with antidepressants. Without knowing your supplements, I can't catch this. Tell me, and I'll protect you. \u{1F6E1}\u{FE0F}"}
                 color="green"
               />
               <div className="flex flex-wrap gap-2">
@@ -1666,131 +1655,30 @@ export default function ProfilePage() {
 
             <Separator />
 
-            {/* Optional Lifestyle Data */}
-            <div className="space-y-4">
+            {/* Gamified Lifestyle Section */}
+            <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <Sparkles className="h-4 w-4" />
-                {tx("profile.lifestyle", lang)}
+                {tr ? "Yaşam Tarzı" : "Lifestyle"}
               </Label>
+              <LifestyleSection
+                data={{ height_cm: healthForm.height_cm, weight_kg: healthForm.weight_kg, blood_group: healthForm.blood_group, diet_type: healthForm.diet_type, exercise_frequency: healthForm.exercise_frequency, sleep_quality: healthForm.sleep_quality }}
+                onChange={(updates) => setHealthForm((p): HealthFormState => ({ ...p, ...updates }))}
+                lang={lang as "en" | "tr"}
+              />
+            </div>
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.height", lang)}</Label>
-                  <Input
-                    type="number"
-                    placeholder={tx("profile.heightPlaceholder", lang)}
-                    value={healthForm.height_cm ?? ""}
-                    onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, height_cm: e.target.value ? parseInt(e.target.value) : null }))}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.weight", lang)}</Label>
-                  <Input
-                    type="number"
-                    placeholder={tx("profile.weightPlaceholder", lang)}
-                    value={healthForm.weight_kg ?? ""}
-                    onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, weight_kg: e.target.value ? parseFloat(e.target.value) : null }))}
-                  />
-                </div>
-              </div>
+            <Separator />
 
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.bloodGroup", lang)}</Label>
-                  <Select value={healthForm.blood_group} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, blood_group: v }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={tx("profile.select", lang)} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((g) => (
-                        <SelectItem key={g} value={g}>{g}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.dietType", lang)}</Label>
-                  <Select value={healthForm.diet_type} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, diet_type: v }))}>
-                    <SelectTrigger>
-                      {healthForm.diet_type ? (
-                        <span>{({ regular: tx("profile.dietRegular", lang), vegetarian: tx("profile.dietVegetarian", lang), vegan: tx("profile.dietVegan", lang), keto: tx("profile.dietKeto", lang), gluten_free: tx("profile.dietGlutenFree", lang), halal: tx("profile.dietHalal", lang), other: tx("profile.dietOther", lang) } as Record<string, string>)[healthForm.diet_type] || healthForm.diet_type}</span>
-                      ) : (
-                        <SelectValue placeholder={tx("profile.select", lang)} />
-                      )}
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[
-                        { v: "regular", key: "profile.dietRegular" },
-                        { v: "vegetarian", key: "profile.dietVegetarian" },
-                        { v: "vegan", key: "profile.dietVegan" },
-                        { v: "keto", key: "profile.dietKeto" },
-                        { v: "gluten_free", key: "profile.dietGlutenFree" },
-                        { v: "halal", key: "profile.dietHalal" },
-                        { v: "other", key: "profile.dietOther" },
-                      ].map((opt) => (
-                        <SelectItem key={opt.v} value={opt.v}>{tx(opt.key, lang)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.exercise", lang)}</Label>
-                  <Select value={healthForm.exercise_frequency} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, exercise_frequency: v }))}>
-                    <SelectTrigger>
-                      {healthForm.exercise_frequency ? (
-                        <span>{({ sedentary: tx("profile.exerciseSedentary", lang), light: tx("profile.exerciseLight", lang), moderate: tx("profile.exerciseModerate", lang), active: tx("profile.exerciseActive", lang), athlete: tx("profile.exerciseAthlete", lang) } as Record<string, string>)[healthForm.exercise_frequency] || healthForm.exercise_frequency}</span>
-                      ) : (
-                        <SelectValue placeholder={tx("profile.select", lang)} />
-                      )}
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[
-                        { v: "sedentary", key: "profile.exerciseSedentary" },
-                        { v: "light", key: "profile.exerciseLight" },
-                        { v: "moderate", key: "profile.exerciseModerate" },
-                        { v: "active", key: "profile.exerciseActive" },
-                        { v: "athlete", key: "profile.exerciseAthlete" },
-                      ].map((opt) => (
-                        <SelectItem key={opt.v} value={opt.v}>{tx(opt.key, lang)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.sleep", lang)}</Label>
-                  <Select value={healthForm.sleep_quality} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, sleep_quality: v }))}>
-                    <SelectTrigger>
-                      {healthForm.sleep_quality ? (
-                        <span>{({ good: tx("profile.sleepGood", lang), fair: tx("profile.sleepFair", lang), poor: tx("profile.sleepPoor", lang), insomnia: tx("profile.sleepInsomnia", lang) } as Record<string, string>)[healthForm.sleep_quality] || healthForm.sleep_quality}</span>
-                      ) : (
-                        <SelectValue placeholder={tx("profile.select", lang)} />
-                      )}
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[
-                        { v: "good", key: "profile.sleepGood" },
-                        { v: "fair", key: "profile.sleepFair" },
-                        { v: "poor", key: "profile.sleepPoor" },
-                        { v: "insomnia", key: "profile.sleepInsomnia" },
-                      ].map((opt) => (
-                        <SelectItem key={opt.v} value={opt.v}>{tx(opt.key, lang)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Contact & Location */}
-              <div className="space-y-4">
+            {/* Contact & Location */}
+            <div className="space-y-4">
                 <Label className="flex items-center gap-2 text-base font-semibold">
                   <MapPin className="h-4 w-4" />
-                  {tx("profile.contactLocation", lang)}
+                  {tr ? "\u{1F4CD} İletişim & Konum" : "\u{1F4CD} Contact & Location"}
                 </Label>
+                <p className="text-xs text-muted-foreground -mt-2">
+                  {tr ? "Acil durumda sana ulaşabilmemiz ve yakınındaki sağlık kurumlarını gösterebilmemiz için." : "So we can reach you in emergencies and show nearby health facilities."}
+                </p>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-1">
@@ -1834,7 +1722,6 @@ export default function ProfilePage() {
                     </p>
                   </div>
                 </div>
-              </div>
             </div>
 
             {/* Sticky Save button at bottom */}
@@ -2091,549 +1978,6 @@ export default function ProfilePage() {
 
       {/* Health Flags card moved up — see above */}
 
-      {/* Old Edit Health Profile card deleted — now lives above Medical History */}
-      {false && <Card className="mb-6-DEAD">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              {tx("profile.editHealthProfile", lang)}
-            </CardTitle>
-            {!editingHealth ? (
-              <Button variant="outline" size="sm" onClick={startEditingHealth}>
-                {tx("profile.edit", lang)}
-              </Button>
-            ) : (
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  onClick={saveHealthProfile}
-                  disabled={savingHealth}
-                  className="gap-1 bg-primary hover:bg-primary/90"
-                >
-                  {savingHealth ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                  {tx("profile.save", lang)}
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => setEditingHealth(false)}>
-                  {tx("profile.cancel", lang)}
-                </Button>
-              </div>
-            )}
-          </div>
-          <CardDescription>
-            {tx("profile.editHealthDesc", lang)}
-          </CardDescription>
-        </CardHeader>
-
-        {editingHealth && (
-          <CardContent className="space-y-6">
-            {/* Allergies Section */}
-            <div className="space-y-3">
-              <Label className="flex items-center gap-2 text-base font-semibold">
-                <AlertTriangle className="h-4 w-4" />
-                {tx("profile.allergies", lang)}
-              </Label>
-              <div className="flex flex-wrap gap-2">
-                {allergies.map((allergy) => {
-                  const rl: Record<string, string> = {
-                    anaphylaxis: "🚨", urticaria: "⚠️", mild_skin: "🟡",
-                    gi_intolerance: "🟠", unknown: "❓", mild: "M", moderate: "M", severe: "S",
-                  };
-                  return (
-                    <Badge key={allergy.id} variant="destructive" className="gap-1">
-                      {rl[allergy.severity] || ""} {allergy.allergen}
-                      <X className="h-3 w-3 cursor-pointer" onClick={() => removeAllergy(allergy.id)} />
-                    </Badge>
-                  );
-                })}
-                {allergies.length === 0 && (
-                  <p className="text-sm text-muted-foreground">{tx("profile.noAllergies", lang)}</p>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <Input
-                  placeholder={tx("profile.allergenPlaceholder", lang)}
-                  value={newAllergen}
-                  onChange={(e) => setNewAllergen(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addAllergy())}
-                  className="flex-1"
-                />
-                <Select value={newAllergenSeverity} onValueChange={(v) => setNewAllergenSeverity(v as AllergySeverity)}>
-                  <SelectTrigger className="w-40">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="anaphylaxis">{tx("onb.reactionAnaphylaxis", lang)}</SelectItem>
-                    <SelectItem value="urticaria">{tx("onb.reactionUrticaria", lang)}</SelectItem>
-                    <SelectItem value="mild_skin">{tx("onb.reactionMildSkin", lang)}</SelectItem>
-                    <SelectItem value="gi_intolerance">{tx("onb.reactionGI", lang)}</SelectItem>
-                    <SelectItem value="unknown">{tx("onb.reactionUnknown", lang)}</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button variant="outline" size="sm" onClick={addAllergy} disabled={!newAllergen.trim()}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Pregnancy / Breastfeeding */}
-            <div className="space-y-3">
-              <Label className="flex items-center gap-2 text-base font-semibold">
-                <Baby className="h-4 w-4" />
-                {tx("profile.pregnancyBreastfeeding", lang)}
-              </Label>
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="edit-pregnant"
-                    checked={healthForm.is_pregnant}
-                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, is_pregnant: c === true }))}
-                  />
-                  <Label htmlFor="edit-pregnant" className="font-normal">{tx("profile.pregnant", lang)}</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="edit-bf"
-                    checked={healthForm.is_breastfeeding}
-                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, is_breastfeeding: c === true }))}
-                  />
-                  <Label htmlFor="edit-bf" className="font-normal">{tx("profile.breastfeeding", lang)}</Label>
-                </div>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Substance Use */}
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2 text-base font-semibold">
-                  <Wine className="h-4 w-4" />
-                  {tx("profile.alcohol", lang)}
-                </Label>
-                <RadioGroup
-                  value={healthForm.alcohol_use.split("|")[0]}
-                  onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, alcohol_use: v }))}
-                >
-                  {[
-                    { value: "none", label: "🟢", key: "onb.alcNever" },
-                    { value: "former", label: "🟡", key: "onb.alcFormer" },
-                    { value: "active", label: "🔴", key: "onb.alcActive" },
-                  ].map((opt) => (
-                    <div key={opt.value} className="flex items-center space-x-2">
-                      <RadioGroupItem value={opt.value} id={`edit-alc-${opt.value}`} />
-                      <Label htmlFor={`edit-alc-${opt.value}`} className="font-normal">{opt.label} {tx(opt.key, lang)}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </div>
-              <div className="space-y-3">
-                <Label className="flex items-center gap-2 text-base font-semibold">
-                  <Cigarette className="h-4 w-4" />
-                  {tx("profile.smoking", lang)}
-                </Label>
-                <RadioGroup
-                  value={healthForm.smoking_use.split("|")[0]}
-                  onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, smoking_use: v }))}
-                >
-                  {[
-                    { value: "none", label: "🟢", key: "onb.smokingNever" },
-                    { value: "former", label: "🟡", key: "onb.smokingFormer" },
-                    { value: "current", label: "🔴", key: "onb.smokingActive" },
-                  ].map((opt) => (
-                    <div key={opt.value} className="flex items-center space-x-2">
-                      <RadioGroupItem value={opt.value} id={`edit-smk-${opt.value}`} />
-                      <Label htmlFor={`edit-smk-${opt.value}`} className="font-normal">{opt.label} {tx(opt.key, lang)}</Label>
-                    </div>
-                  ))}
-                </RadioGroup>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Critical Conditions */}
-            <div className="space-y-3">
-              <Label className="flex items-center gap-2 text-base font-semibold text-red-600 dark:text-red-400">
-                <Shield className="h-4 w-4" />
-                {tx("onb.criticalConditions", lang)}
-              </Label>
-              <div className="space-y-2 rounded-lg border border-red-200 dark:border-red-800 p-3 bg-red-50/50 dark:bg-red-950/10">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="edit-kidney" checked={healthForm.kidney_disease}
-                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, kidney_disease: c === true }))} />
-                  <Label htmlFor="edit-kidney" className="font-normal text-sm">{tx("onb.advancedOrganFailure", lang)}</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="edit-liver" checked={healthForm.liver_disease}
-                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, liver_disease: c === true }))} />
-                  <Label htmlFor="edit-liver" className="font-normal text-sm">🩸 {tx("onb.bleedingDisorder", lang)}</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="edit-surgery" checked={healthForm.recent_surgery}
-                    onCheckedChange={(c) => setHealthForm((p): HealthFormState => ({ ...p, recent_surgery: c === true }))} />
-                  <Label htmlFor="edit-surgery" className="font-normal text-sm">🛡️ {tx("onb.immuneSuppressed", lang)}</Label>
-                </div>
-              </div>
-            </div>
-
-            {/* Chronic Conditions — System Grouped */}
-            <div className="space-y-3">
-              <Label className="flex items-center gap-2 text-base font-semibold">
-                <Stethoscope className="h-4 w-4" />
-                {tx("profile.chronicConditions", lang)}
-              </Label>
-
-              {/* Cardiovascular */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryCardio", lang)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: "Hypertension", key: "onb.hypertension" },
-                    { id: "Arrhythmia", key: "onb.arrhythmia" },
-                    { id: "Heart Failure", key: "onb.heartFailure" },
-                  ].map(c => (
-                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
-                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
-                      {tx(c.key, lang)}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Endocrine */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryEndocrine", lang)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: "Diabetes", key: "onb.diabetesType" },
-                    { id: "Thyroid Disorder", key: "onb.thyroid" },
-                  ].map(c => (
-                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
-                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
-                      {tx(c.key, lang)}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Neurological */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryNeuro", lang)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: "Depression/Anxiety", key: "onb.depressionAnxiety" },
-                    { id: "Epilepsy", key: "onb.epilepsy" },
-                  ].map(c => (
-                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
-                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
-                      {tx(c.key, lang)}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Respiratory */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categoryRespiratory", lang)}</p>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: "Asthma", key: "onb.asthma" },
-                    { id: "COPD", key: "onb.copd" },
-                  ].map(c => (
-                    <Badge key={c.id} variant={healthForm.chronic_conditions.includes(c.id) ? "default" : "outline"}
-                      className="cursor-pointer transition-colors" onClick={() => toggleCondition(c.id)}>
-                      {tx(c.key, lang)}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Surgical */}
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">{tx("onb.categorySurgical", lang)}</p>
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant={healthForm.chronic_conditions.includes("Bariatric Surgery") ? "default" : "outline"}
-                    className="cursor-pointer transition-colors" onClick={() => toggleCondition("Bariatric Surgery")}>
-                    {tx("onb.bariatricSurgery", lang)}
-                  </Badge>
-                </div>
-              </div>
-
-              {/* Custom + Family conditions */}
-              {(() => {
-                const knownIds = ["Hypertension", "Arrhythmia", "Heart Failure", "Diabetes", "Thyroid Disorder", "Depression/Anxiety", "Epilepsy", "Asthma", "COPD", "Bariatric Surgery"];
-                const customs = healthForm.chronic_conditions.filter(c => !knownIds.includes(c) && !c.startsWith("family:"));
-                const family = healthForm.chronic_conditions.filter(c => c.startsWith("family:"));
-                return (
-                  <>
-                    {customs.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {customs.map(c => (
-                          <Badge key={c} variant="default" className="gap-1">
-                            {c}
-                            <X className="h-3 w-3 cursor-pointer" onClick={() => toggleCondition(c)} />
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                    {family.length > 0 && (
-                      <div className="border-t pt-2 mt-2">
-                        <p className="text-xs font-semibold text-muted-foreground mb-1.5">🧬 {tr ? "Soygeçmiş" : "Family History"}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {family.map(c => (
-                            <Badge key={c} variant="outline" className="gap-1 text-xs">
-                              {c.replace("family:", "")}
-                              <X className="h-3 w-3 cursor-pointer" onClick={() => toggleCondition(c)} />
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
-
-              <div className="mt-2 flex gap-2">
-                <Input
-                  placeholder={tx("profile.otherConditionPlaceholder", lang)}
-                  value={newCondition}
-                  onChange={(e) => setNewCondition(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addCustomCondition())}
-                />
-                <Button variant="outline" size="sm" onClick={addCustomCondition} disabled={!newCondition.trim()}>
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Optional Lifestyle Data */}
-            <div className="space-y-4">
-              <Label className="flex items-center gap-2 text-base font-semibold">
-                <Sparkles className="h-4 w-4" />
-                {tx("profile.lifestyle", lang)}
-              </Label>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.height", lang)}</Label>
-                  <Input
-                    type="number"
-                    placeholder={tx("profile.heightPlaceholder", lang)}
-                    value={healthForm.height_cm ?? ""}
-                    onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, height_cm: e.target.value ? parseInt(e.target.value) : null }))}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.weight", lang)}</Label>
-                  <Input
-                    type="number"
-                    placeholder={tx("profile.weightPlaceholder", lang)}
-                    value={healthForm.weight_kg ?? ""}
-                    onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, weight_kg: e.target.value ? parseFloat(e.target.value) : null }))}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.bloodGroup", lang)}</Label>
-                  <Select value={healthForm.blood_group} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, blood_group: v }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder={tx("profile.select", lang)} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((g) => (
-                        <SelectItem key={g} value={g}>{g}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.dietType", lang)}</Label>
-                  <Select value={healthForm.diet_type} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, diet_type: v }))}>
-                    <SelectTrigger>
-                      {healthForm.diet_type ? (
-                        <span>{({ regular: tx("profile.dietRegular", lang), vegetarian: tx("profile.dietVegetarian", lang), vegan: tx("profile.dietVegan", lang), keto: tx("profile.dietKeto", lang), gluten_free: tx("profile.dietGlutenFree", lang), halal: tx("profile.dietHalal", lang), other: tx("profile.dietOther", lang) } as Record<string, string>)[healthForm.diet_type] || healthForm.diet_type}</span>
-                      ) : (
-                        <SelectValue placeholder={tx("profile.select", lang)} />
-                      )}
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[
-                        { v: "regular", key: "profile.dietRegular" },
-                        { v: "vegetarian", key: "profile.dietVegetarian" },
-                        { v: "vegan", key: "profile.dietVegan" },
-                        { v: "keto", key: "profile.dietKeto" },
-                        { v: "gluten_free", key: "profile.dietGlutenFree" },
-                        { v: "halal", key: "profile.dietHalal" },
-                        { v: "other", key: "profile.dietOther" },
-                      ].map((opt) => (
-                        <SelectItem key={opt.v} value={opt.v}>{tx(opt.key, lang)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.exercise", lang)}</Label>
-                  <Select value={healthForm.exercise_frequency} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, exercise_frequency: v }))}>
-                    <SelectTrigger>
-                      {healthForm.exercise_frequency ? (
-                        <span>{({ sedentary: tx("profile.exerciseSedentary", lang), light: tx("profile.exerciseLight", lang), moderate: tx("profile.exerciseModerate", lang), active: tx("profile.exerciseActive", lang), athlete: tx("profile.exerciseAthlete", lang) } as Record<string, string>)[healthForm.exercise_frequency] || healthForm.exercise_frequency}</span>
-                      ) : (
-                        <SelectValue placeholder={tx("profile.select", lang)} />
-                      )}
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[
-                        { v: "sedentary", key: "profile.exerciseSedentary" },
-                        { v: "light", key: "profile.exerciseLight" },
-                        { v: "moderate", key: "profile.exerciseModerate" },
-                        { v: "active", key: "profile.exerciseActive" },
-                        { v: "athlete", key: "profile.exerciseAthlete" },
-                      ].map((opt) => (
-                        <SelectItem key={opt.v} value={opt.v}>{tx(opt.key, lang)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-sm">{tx("profile.sleep", lang)}</Label>
-                  <Select value={healthForm.sleep_quality} onValueChange={(v) => v && setHealthForm((p): HealthFormState => ({ ...p, sleep_quality: v }))}>
-                    <SelectTrigger>
-                      {healthForm.sleep_quality ? (
-                        <span>{({ good: tx("profile.sleepGood", lang), fair: tx("profile.sleepFair", lang), poor: tx("profile.sleepPoor", lang), insomnia: tx("profile.sleepInsomnia", lang) } as Record<string, string>)[healthForm.sleep_quality] || healthForm.sleep_quality}</span>
-                      ) : (
-                        <SelectValue placeholder={tx("profile.select", lang)} />
-                      )}
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[
-                        { v: "good", key: "profile.sleepGood" },
-                        { v: "fair", key: "profile.sleepFair" },
-                        { v: "poor", key: "profile.sleepPoor" },
-                        { v: "insomnia", key: "profile.sleepInsomnia" },
-                      ].map((opt) => (
-                        <SelectItem key={opt.v} value={opt.v}>{tx(opt.key, lang)}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Supplements */}
-              <div className="space-y-2">
-                <Label className="text-sm">{tx("profile.supplements", lang)}</Label>
-                <div className="flex flex-wrap gap-2">
-                  {["Vitamin D", "Vitamin B12", "Iron", "Omega-3", "Magnesium", "Zinc", "Probiotics", "Multivitamin"].map((s) => (
-                    <Badge
-                      key={s}
-                      variant={healthForm.supplements.includes(s) ? "default" : "outline"}
-                      className="cursor-pointer transition-colors"
-                      onClick={() => toggleSupplement(s)}
-                    >
-                      {({
-                        "Vitamin D": tx("profile.suppVitaminD", lang),
-                        "Vitamin B12": tx("profile.suppVitaminB12", lang),
-                        "Iron": tx("profile.suppIron", lang),
-                        "Omega-3": tx("profile.suppOmega3", lang),
-                        "Magnesium": tx("profile.suppMagnesium", lang),
-                        "Zinc": tx("profile.suppZinc", lang),
-                        "Probiotics": tx("profile.suppProbiotics", lang),
-                        "Multivitamin": tx("profile.suppMultivitamin", lang),
-                      } as Record<string, string>)[s] || s}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Contact & Location */}
-              <div className="space-y-4">
-                <Label className="flex items-center gap-2 text-base font-semibold">
-                  <MapPin className="h-4 w-4" />
-                  {tx("profile.contactLocation", lang)}
-                </Label>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="space-y-1">
-                    <Label className="text-sm">{tx("profile.country", lang)}</Label>
-                    <Input
-                      placeholder={tx("profile.countryPlaceholder", lang)}
-                      value={healthForm.country}
-                      onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, country: e.target.value }))}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-sm">{tx("profile.city", lang)}</Label>
-                    <Input
-                      placeholder={tx("profile.cityPlaceholder", lang)}
-                      value={healthForm.city}
-                      onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, city: e.target.value }))}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="space-y-1">
-                    <Label className="text-sm">{tx("profile.phone", lang)}</Label>
-                    <Input
-                      type="tel"
-                      placeholder={tx("profile.phonePlaceholder", lang)}
-                      value={healthForm.phone}
-                      onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, phone: e.target.value }))}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-sm">{tx("profile.recoveryEmail", lang)}</Label>
-                    <Input
-                      type="email"
-                      placeholder={tx("profile.recoveryPlaceholder", lang)}
-                      value={healthForm.recovery_email}
-                      onChange={(e) => setHealthForm((p): HealthFormState => ({ ...p, recovery_email: e.target.value }))}
-                    />
-                    <p className="text-[10px] text-muted-foreground">
-                      {tx("profile.recoveryDesc", lang)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Save button at bottom — so user doesn't scroll back up */}
-            <div className="mt-6 flex gap-2 border-t pt-4">
-              <Button
-                onClick={saveHealthProfile}
-                disabled={savingHealth}
-                className="flex-1 gap-2 bg-primary hover:bg-primary/90"
-              >
-                {savingHealth ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                {tx("profile.save", lang)}
-              </Button>
-              <Button variant="outline" onClick={() => setEditingHealth(false)}>
-                {tx("profile.cancel", lang)}
-              </Button>
-            </div>
-          </CardContent>
-        )}
-
-        {!editingHealth && (
-          <CardContent className="py-3">
-            <button onClick={startEditingHealth} className="text-sm text-primary font-medium hover:underline flex items-center gap-1.5">
-              <Edit3 className="h-3.5 w-3.5" />
-              {tr ? "Sağlık profilini düzenle" : "Edit health profile"}
-            </button>
-          </CardContent>
-        )}
-      </Card>}
 
       {/* Data Management moved to Settings page */}
 
