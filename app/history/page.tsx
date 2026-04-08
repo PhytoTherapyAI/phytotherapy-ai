@@ -52,15 +52,21 @@ export default function HistoryPage() {
     setLoading(true)
     try {
       const supabase = createBrowserClient()
-      // Try with is_favorite first, fallback without it if column doesn't exist
-      const result = await supabase
+      const { data, error } = await supabase
         .from("query_history")
-        .select("*")
+        .select("id, query_text, response_text, query_type, is_favorite, created_at")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(200)
 
-      const data = (result.data || []).map((item: Record<string, unknown>) => ({
+      if (error) {
+        console.error("[History] Supabase query error:", error.message)
+        setItems([])
+        setLoading(false)
+        return
+      }
+
+      const mapped = (data || []).map((item: Record<string, unknown>) => ({
         id: item.id as string,
         query_text: (item.query_text as string) || "",
         response_text: (item.response_text as string) || null,
@@ -68,8 +74,9 @@ export default function HistoryPage() {
         is_favorite: (item.is_favorite as boolean) ?? false,
         created_at: item.created_at as string,
       }))
-      setItems(data as HistoryItem[])
-    } catch {
+      setItems(mapped as HistoryItem[])
+    } catch (err) {
+      console.error("[History] Fetch failed:", err)
       setItems([])
     }
     setLoading(false)

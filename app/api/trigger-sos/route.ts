@@ -108,7 +108,7 @@ export async function POST(req: Request) {
     };
 
     // Bilingual message (TR primary for Turkey)
-    const sosMessage = `🚨 DOCTOPAL ACİL UYARI
+    const sosMessage = `🚨 DoctoPal ACİL UYARI
 
 ${profile.full_name || "Kullanıcı"} için acil sağlık uyarısı tetiklendi.
 

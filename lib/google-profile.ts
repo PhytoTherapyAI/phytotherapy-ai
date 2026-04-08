@@ -1,4 +1,4 @@
-// © 2026 Doctopal — Google People API Profile Fetcher
+// © 2026 DoctoPal — Google People API Profile Fetcher
 
 interface GoogleDate {
   year?: number;

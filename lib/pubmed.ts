@@ -1,4 +1,4 @@
-// © 2026 Doctopal.com — All Rights Reserved
+// © 2026 DoctoPal.com — All Rights Reserved
 const PUBMED_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils";
 const EUROPE_PMC_BASE = "https://www.ebi.ac.uk/europepmc/webservices/rest";
 

@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       )
     );
 
-    const systemPrompt = `You are an ADHD management assistant for Doctopal.
+    const systemPrompt = `You are an ADHD management assistant for DoctoPal.
 You provide evidence-based focus and productivity guidance for people with ADHD.
 
 CRITICAL SAFETY RULES:

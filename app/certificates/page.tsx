@@ -151,7 +151,7 @@ export default function CertificatesPage() {
       ctx.fillStyle = "#6366f1";
       ctx.font = "bold 18px system-ui";
       ctx.textAlign = "center";
-      ctx.fillText("DOCTOPAL", 600, 100);
+      ctx.fillText("DoctoPal", 600, 100);
 
       // Award icon area
       ctx.font = "48px serif";
@@ -220,7 +220,7 @@ export default function CertificatesPage() {
 
       ctx.fillStyle = "#64748b";
       ctx.font = "12px system-ui";
-      ctx.fillText("Doctopal - Evidence-Based Health Assistant", 600, 680);
+      ctx.fillText("DoctoPal - Evidence-Based Health Assistant", 600, 680);
 
       // Footer
       ctx.fillStyle = "#94a3b8";

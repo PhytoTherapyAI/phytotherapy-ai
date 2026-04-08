@@ -257,7 +257,7 @@ export default function HealthCheckPage() {
                   fontSize: 14,
                 }}
               >
-                Doctopal Service Status Dashboard
+                DoctoPal Service Status Dashboard
               </p>
             </div>
             <div style={{ display: "flex", gap: 12, alignItems: "center" }}>

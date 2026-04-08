@@ -1,4 +1,4 @@
-// Service Worker — Doctopal PWA — Sprint 20 v2
+// Service Worker — DoctoPal PWA — Sprint 20 v2
 // Conservative approach: only cache static assets, never Next.js chunks
 const CACHE_NAME = 'doctopal-v2';
 const OFFLINE_URL = '/offline';
@@ -70,7 +70,7 @@ self.addEventListener('push', (event) => {
   try {
     const data = event.data.json();
     event.waitUntil(
-      self.registration.showNotification(data.title || 'Doctopal', {
+      self.registration.showNotification(data.title || 'DoctoPal', {
         body: data.body || '',
         icon: '/icon-192.png',
         tag: data.tag || 'doctopal',
