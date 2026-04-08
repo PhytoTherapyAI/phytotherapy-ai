@@ -37,13 +37,18 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
-  org: "phytotherapyai",
-  project: "javascript-nextjs",
-  silent: !process.env.CI,
-  tunnelRoute: "/monitoring",
-  widenClientFileUpload: true,
-  bundleSizeOptimizations: {
-    excludeDebugStatements: true,
-  },
-});
+// Only apply Sentry source map upload if auth token is available
+const hasSentryToken = !!process.env.SENTRY_AUTH_TOKEN;
+
+export default hasSentryToken
+  ? withSentryConfig(nextConfig, {
+      org: "phytotherapyai",
+      project: "javascript-nextjs",
+      silent: !process.env.CI,
+      tunnelRoute: "/monitoring",
+      widenClientFileUpload: true,
+      bundleSizeOptimizations: {
+        excludeDebugStatements: true,
+      },
+    })
+  : nextConfig;
