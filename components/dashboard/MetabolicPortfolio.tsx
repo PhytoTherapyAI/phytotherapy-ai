@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Lock, Zap, Brain, Moon, Shield } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
+import { InfoTooltip } from "@/components/ui/InfoTooltip"
 
 interface MetabolicPortfolioProps {
   lang: Lang
@@ -56,6 +57,7 @@ export function MetabolicPortfolio({ lang, isPremium = false, checkInData }: Met
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           {tx("metabolic.title", lang)}
+          <InfoTooltip title={lang === "tr" ? "Metabolik Portföy" : "Metabolic Portfolio"} description={lang === "tr" ? "Metabolik portföyünüz enerji, stres, uyku ve bağışıklık gibi temel sağlık alanlarınızın güncel durumunu özetler. Günlük check-in'lerinize göre güncellenir ve sağlık trendlerinizi takip etmenizi sağlar." : "Your metabolic portfolio summarizes the current state of key health areas like energy, stress, sleep, and immunity. It updates based on your daily check-ins."} />
           <Badge variant="secondary" className="ml-auto text-[10px]">PREMIUM</Badge>
         </CardTitle>
         <p className="text-xs text-muted-foreground">{tx("metabolic.subtitle", lang)}</p>

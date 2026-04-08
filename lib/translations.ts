@@ -917,7 +917,7 @@ const t: Record<string, TranslationEntry> = {
   "share.bioage.title": { en: "My Biological Age", tr: "Biyolojik Yaşım" },
   "share.bioage.yearsYounger": { en: "years younger!", tr: "yıl daha genç!" },
   "share.bioage.yearsOlder": { en: "years older", tr: "yıl daha büyük" },
-  "share.bioage.btn": { en: "Share Your Age", tr: "Yaşını Paylaş" },
+  "share.bioage.btn": { en: "Share Your Result", tr: "Sonucunu Paylaş" },
   "share.interaction.title": { en: "Safety Alert Detected!", tr: "Güvenlik Uyarısı Tespit Edildi!" },
   "share.interaction.subtitle": { en: "This app may have saved my health", tr: "Bu uygulama sağlığımı korumuş olabilir" },
   "share.interaction.detected": { en: "interactions detected", tr: "etkileşim tespit edildi" },

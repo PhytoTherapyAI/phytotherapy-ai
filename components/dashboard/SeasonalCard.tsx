@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Leaf, Snowflake, Sun, CloudRain, Pill, Salad, Dumbbell, Share2 } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
+import { InfoTooltip } from "@/components/ui/InfoTooltip"
 import { ShareCardBase } from "@/components/share/ShareCardBase"
 import { ShareModal } from "@/components/share/ShareModal"
 
@@ -142,6 +143,7 @@ export function SeasonalCard({ lang, userMedications = [], userConditions = [] }
           <CardTitle className="flex items-center gap-2 text-base">
             {season.icon}
             {season.name[lang]} {tx("seasonal.prep", lang)}
+            <InfoTooltip title={lang === "tr" ? "Mevsimsel Sağlık" : "Seasonal Health"} description={lang === "tr" ? "Mevsimsel sağlık önerileri, bulunduğunuz mevsime ve bölgeye özel riskleri (alerji, polen, hava değişimi) dikkate alarak size kişiselleştirilmiş önlemler sunar." : "Seasonal health recommendations offer personalized precautions based on risks specific to your season and region."} />
             <Badge variant="secondary" className="ml-auto text-[10px]">{season.emoji}</Badge>
           </CardTitle>
           <p className="text-xs text-muted-foreground">

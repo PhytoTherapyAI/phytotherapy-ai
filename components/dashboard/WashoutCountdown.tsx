@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Lock, Timer, AlertCircle, Settings2, Plus, Bell, Share2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { tx, type Lang } from "@/lib/translations"
+import { InfoTooltip } from "@/components/ui/InfoTooltip"
 import { createBrowserClient } from "@/lib/supabase"
 import { findSupplementInfo, getSupplementDisplayName } from "@/lib/supplement-data"
 import { SupplementDoseDialog } from "./SupplementDoseDialog"
@@ -220,6 +221,7 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
         <CardTitle className="flex items-center gap-2 text-base">
           <Timer className="h-4 w-4 text-primary" />
           {tx("washout.title", lang)}
+          <InfoTooltip title={lang === "tr" ? "Takviye Döngüsü" : "Supplement Cycle"} description={lang === "tr" ? "Takviye döngüsü, kullandığınız besin takviyelerinin ne zaman başladığını, ne kadar süredir kullandığınızı ve önerilen döngü sürelerini takip eder. Bazı takviyeler belirli aralıklarla ara verilmesi gerektiğinden bu takip önemlidir." : "The supplement cycle tracks when you started your supplements, how long you've been using them, and recommended cycle durations. Some supplements need periodic breaks."} />
           <div className="ml-auto flex items-center gap-2">
             <button
               onClick={() => onAddSupplement ? onAddSupplement() : setShowAddInput(!showAddInput)}

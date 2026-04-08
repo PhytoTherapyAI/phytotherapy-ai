@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, Lock, RefreshCw, Share2 } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
+import { InfoTooltip } from "@/components/ui/InfoTooltip"
 import { createBrowserClient } from "@/lib/supabase"
 import { BioAgeShareCard } from "@/components/share/BioAgeShareCard"
 import { ShareModal } from "@/components/share/ShareModal"
@@ -146,6 +147,7 @@ export function BiologicalAgeCard({
           <CardTitle className="flex items-center gap-2 text-base">
             <Sparkles className="h-4 w-4 text-amber-500" />
             {tx("bioage.title", lang)}
+            <InfoTooltip title={lang === "tr" ? "Biyolojik Yaş Nedir?" : "What is Biological Age?"} description={lang === "tr" ? "Biyolojik yaşınız, vücut fonksiyonlarınızın gerçek yaşınıza kıyasla ne kadar genç veya yaşlı olduğunu gösterir. Uyku, beslenme, egzersiz ve stres seviyenize göre hesaplanır. Düşük biyolojik yaş, sağlıklı yaşam alışkanlıklarınızın bir yansımasıdır." : "Your biological age shows how young or old your body functions are compared to your actual age. It is calculated based on your sleep, nutrition, exercise, and stress levels."} />
             <Badge variant="secondary" className="ml-auto text-[10px]">PREMIUM</Badge>
           </CardTitle>
         </CardHeader>

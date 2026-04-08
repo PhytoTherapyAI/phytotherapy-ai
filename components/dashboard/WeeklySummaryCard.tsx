@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Lock, BarChart3, Share2, Trophy, Droplets, Pill } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
+import { InfoTooltip } from "@/components/ui/InfoTooltip"
 import { createBrowserClient } from "@/lib/supabase"
 import { WeeklyShareCard } from "@/components/share/WeeklyShareCard"
 import { ShareModal } from "@/components/share/ShareModal"
@@ -161,6 +162,7 @@ export function WeeklySummaryCard({ userId, lang, isPremium = false }: WeeklySum
         <CardTitle className="flex items-center gap-2 text-base">
           <BarChart3 className="h-4 w-4 text-primary" />
           {tx("weekly.title", lang)}
+          <InfoTooltip title={lang === "tr" ? "Haftalık Özet" : "Weekly Summary"} description={lang === "tr" ? "Haftalık özetiniz, son 7 günde ilaç uyumunuz, su tüketiminiz, check-in'leriniz ve genel sağlık trendlerinizi tek bakışta görmenizi sağlar." : "Your weekly summary lets you see your medication adherence, water intake, check-ins, and overall health trends from the past 7 days at a glance."} />
           <Badge variant="secondary" className="ml-auto text-[10px]">PREMIUM</Badge>
         </CardTitle>
       </CardHeader>
