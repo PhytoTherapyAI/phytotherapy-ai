@@ -714,7 +714,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       const willBeComplete = supplementEvents.every((s) =>
         s.id === sup.id || dailyLogs.some((l) => l.item_type === "supplement" && l.item_id === s.id && l.completed)
       )
-      if (willBeComplete && supplementEvents.length > 1) {
+      if (willBeComplete && supplementEvents.length > 0) {
         setTimeout(() => {
           setShowConfetti(true)
           setAllSupsDoneMsg(getRandom(allSupDoneMsgs))

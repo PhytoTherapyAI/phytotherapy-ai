@@ -257,9 +257,6 @@ export function OnboardingWizard({ profile }: Props) {
 
   // Clamp restored step to valid bounds (gender change can shrink step count)
   const maxStep = showLayer2 ? LAYER1_STEPS.length : LAYER1_STEPS.length - 1;
-  if (currentStep > maxStep) {
-    setCurrentStep(LAYER1_STEPS.length - 1);
-  }
   const safeStep = Math.min(currentStep, maxStep);
 
   const totalSteps = showLayer2 ? LAYER1_STEPS.length + 1 : LAYER1_STEPS.length;

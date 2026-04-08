@@ -666,7 +666,7 @@ export default function CalendarPage() {
         })
       }
     }
-  }, [todayDateStr])
+  }, [todayDateStr, morningTasks, noonTasks, nightTasks, user?.id])
 
   // Fetch real profile medications + supplements to populate time blocks
   const fetchProfileMeds = useCallback(async () => {
