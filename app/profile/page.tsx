@@ -42,6 +42,7 @@ import {
 import BadgeIcon from "@/components/badges/BadgeIcon";
 import { LifestyleSection } from "@/components/profile/LifestyleSection";
 import { ChronicConditionsEditor } from "@/components/profile/ChronicConditionsEditor";
+import { ProfileSupplementsStep, ProfileMedicalHistoryStep, ProfileFamilyHistoryStep, ProfileAllergiesStep } from "@/components/profile/OnboardingAdapters";
 
 interface DrugSuggestion {
   brandName: string;
@@ -1483,16 +1484,9 @@ export default function ProfilePage() {
                 message={tr ? "Diyabetli birine 'bol meyve ye' demek kan \u015fekerini u\u00e7urabilir. Hastal\u0131\u011f\u0131n\u0131 bilmeden sana 'herkese uyan' \u00f6neriler veririm. Sen herkese uymuyor musun? Ben de. \u{1F60E}" : "Telling a diabetic to 'eat lots of fruit' can spike their blood sugar. Without knowing your conditions, I give generic advice. You don't fit the mold? Neither do I. \u{1F60E}"}
                 color="purple"
               />
-              <ChronicConditionsEditor
-                conditions={healthForm.chronic_conditions}
-                medications={medications.map(m => ({ brand_name: m.brand_name, generic_name: m.generic_name }))}
-                onToggle={toggleCondition}
-                onAdd={(id) => {
-                  if (!healthForm.chronic_conditions.includes(id)) {
-                    setHealthForm(p => ({ ...p, chronic_conditions: [...p.chronic_conditions, id] }));
-                  }
-                }}
-                lang={lang as 'en' | 'tr'}
+              <ProfileMedicalHistoryStep
+                chronicConditions={healthForm.chronic_conditions}
+                onUpdate={(conditions) => setHealthForm(p => ({ ...p, chronic_conditions: conditions }))}
               />
               {/* Family history */}
               {healthForm.chronic_conditions.filter(c => c.startsWith("family:")).length > 0 && (
@@ -1512,7 +1506,7 @@ export default function ProfilePage() {
 
             <Separator />
 
-            {/* Supplements — Enhanced */}
+            {/* Supplements — Onboarding SupplementsStep reuse */}
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 {"\u{1F33F}"} {tx("profile.supplements", lang)}
@@ -1525,72 +1519,11 @@ export default function ProfilePage() {
                 message={tr ? "Her \u015fey. Beta-alanin ald\u0131\u011f\u0131nda elin kolun kar\u0131ncalanmaya ba\u015flarsa panikleyip acile ko\u015fma \u2014 bu normal, ama bunu bilmem laz\u0131m. Takviyelerini ekle, k\u00f6r u\u00e7mayay\u0131m." : "Everything. When you take beta-alanine and your hands start tingling, don't panic and rush to the ER \u2014 it's normal, but I need to know. Add your supplements so I don't fly blind."}
                 color="green"
               />
-              {/* Categorized supplement chip grid */}
-              {[
-                { cat: tr ? "VİTAMİN & MİNERAL" : "VITAMIN & MINERAL", items: [
-                  { id: "Vitamin D", label: tx("profile.suppVitaminD", lang) },
-                  { id: "Vitamin B12", label: tx("profile.suppVitaminB12", lang) },
-                  { id: "Vitamin C", label: "Vitamin C" },
-                  { id: "Iron", label: tx("profile.suppIron", lang) },
-                  { id: "Magnesium", label: tx("profile.suppMagnesium", lang) },
-                  { id: "Zinc", label: tx("profile.suppZinc", lang) },
-                  { id: "Calcium", label: tr ? "Kalsiyum" : "Calcium" },
-                  { id: "Folic Acid", label: tr ? "Folik Asit" : "Folic Acid" },
-                  { id: "Multivitamin", label: tx("profile.suppMultivitamin", lang) },
-                ]},
-                { cat: tr ? "BİTKİSEL" : "HERBAL", items: [
-                  { id: "Curcumin", label: tr ? "Kurkumin" : "Curcumin" },
-                  { id: "Ashwagandha", label: "Ashwagandha" },
-                  { id: "Valerian Root", label: tr ? "Kediotu" : "Valerian Root" },
-                  { id: "Ginkgo Biloba", label: "Ginkgo Biloba" },
-                  { id: "St. John's Wort", label: tr ? "Sarı Kantaron" : "St. John's Wort" },
-                  { id: "Echinacea", label: "Ekinezya" },
-                ]},
-                { cat: tr ? "YAĞ ASİTLERİ" : "FATTY ACIDS", items: [
-                  { id: "Omega-3", label: tx("profile.suppOmega3", lang) },
-                  { id: "Coenzyme Q10", label: "Koenzim Q10" },
-                  { id: "Fish Oil", label: tr ? "Balık Yağı" : "Fish Oil" },
-                ]},
-                { cat: tr ? "PROTEİN & SPOR" : "PROTEIN & SPORTS", items: [
-                  { id: "Collagen", label: tr ? "Kolajen" : "Collagen" },
-                  { id: "Creatine", label: "Kreatin" },
-                  { id: "BCAA", label: "BCAA" },
-                  { id: "Whey Protein", label: tr ? "Whey Protein" : "Whey Protein" },
-                ]},
-                { cat: tr ? "DİĞER" : "OTHER", items: [
-                  { id: "Probiotics", label: tx("profile.suppProbiotics", lang) },
-                  { id: "Melatonin", label: "Melatonin" },
-                  { id: "Glucosamine", label: tr ? "Glukozamin" : "Glucosamine" },
-                ]},
-              ].map(group => (
-                <div key={group.cat} className="space-y-1.5">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{group.cat}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {group.items.map(s => (
-                      <Badge key={s.id} variant={healthForm.supplements.includes(s.id) ? "default" : "outline"}
-                        className="cursor-pointer transition-colors" onClick={() => toggleSupplement(s.id)}>
-                        {s.label}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              ))}
-              {/* Selected count + remove */}
-              {healthForm.supplements.length > 0 && (
-                <div className="space-y-1.5">
-                  <p className="text-xs font-semibold text-primary">
-                    {tr ? `${healthForm.supplements.length} takviye seçili` : `${healthForm.supplements.length} supplements selected`}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {healthForm.supplements.map(s => (
-                      <Badge key={s} variant="default" className="gap-1 text-xs">
-                        {s}
-                        <X className="h-3 w-3 cursor-pointer" onClick={(e) => { e.stopPropagation(); toggleSupplement(s); }} />
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <ProfileSupplementsStep
+                userId={user!.id}
+                supplements={healthForm.supplements}
+                onUpdate={(supps) => setHealthForm(p => ({ ...p, supplements: supps }))}
+              />
             </div>
 
             <Separator />
@@ -1806,10 +1739,14 @@ export default function ProfilePage() {
                         <p className="text-sm text-blue-700 dark:text-blue-400">
                           {tr ? "Baban\u0131n 50'sinde kalp krizi ge\u00e7irmesi senin i\u00e7in \u00f6nemli bir ipucu. Genetik riskleri bilmeden seni erken uyaramam. Bu bilgi sigortan gibi \u2014 umar\u0131m hi\u00e7 kullanmazs\u0131n, ama olmas\u0131 iyi. \u{1F6E1}\u{FE0F}" : "Your dad's heart attack at 50 is an important clue for you. Without genetic risks, I can't warn you early. This info is like insurance \u2014 hopefully you'll never need it, but it's good to have. \u{1F6E1}\u{FE0F}"}
                         </p>
-                        <button onClick={() => { document.getElementById("edit-health")?.scrollIntoView({ behavior: "smooth" }); setTimeout(() => startEditingHealth(), 300); }}
-                          className="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
-                          <Plus className="h-3 w-3" /> {tr ? "Soygeçmiş Ekle" : "Add Family History"}
-                        </button>
+                        <ProfileFamilyHistoryStep
+                          chronicConditions={profile.chronic_conditions || []}
+                          onUpdate={async (conditions) => {
+                            const supabase = createBrowserClient();
+                            await supabase.from('user_profiles').update({ chronic_conditions: conditions }).eq('id', user!.id);
+                            await refreshProfile();
+                          }}
+                        />
                       </div>
                     ) : (
                       <div className="space-y-3">
