@@ -117,8 +117,6 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
   }
 
   const essentialTotal = ESSENTIAL_VACCINE_IDS.length
-  const xpEarned = doneCount * 20
-
   return (
     <Card id="vaccines" className={`rounded-xl shadow-sm hover:shadow-md transition-shadow ${doneCount > 0 ? 'border-l-4 border-l-blue-500' : ''}`}>
       <CardHeader>
@@ -127,9 +125,11 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-primary" />
               {tx("vaccine.title", lang)}
-              <span className={`text-xs font-semibold rounded-full px-2.5 py-0.5 ${doneCount > 0 ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30' : 'text-muted-foreground bg-muted'}`}>
-                {doneCount > 0 ? `✓ +${xpEarned} XP` : '+20 XP'}
-              </span>
+              {doneCount > 0 && (
+                <span className="text-xs font-semibold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/30 rounded-full px-2.5 py-0.5">
+                  {"\u2713"}
+                </span>
+              )}
             </CardTitle>
             <CardDescription className="mt-1">
               {tx("vaccine.subtitle", lang)}
@@ -143,13 +143,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
         </div>
 
         {/* Motivation card */}
-        <div className="mt-3 rounded-lg border p-3 text-sm flex items-start gap-2.5 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">
-          <span className="text-base shrink-0 mt-0.5">🛡️</span>
-          <p className="flex-1 leading-snug">
-            {tr ? "Tetanoz aşın ne zaman? Bunu bilmek hayat kurtarır" : "When was your last tetanus shot? This info saves lives"}
-          </p>
-          <span className="shrink-0 text-xs font-bold opacity-70 bg-white/50 dark:bg-black/20 rounded-full px-2 py-0.5">+20 XP</span>
-        </div>
+        <VaccineMotivationCard tr={tr} />
 
         {/* Shield complete banner */}
         {allEssentialDone && (
@@ -164,7 +158,6 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">
               {tr ? `Temel Aşılar: ${essentialDone}/${essentialTotal}` : `Essential: ${essentialDone}/${essentialTotal}`}
-              {xpEarned > 0 && <span className="ml-2 text-primary font-medium">(+{xpEarned} XP {tr ? "kazandın" : "earned"})</span>}
             </span>
             {allEssentialDone && (
               <Badge className="bg-primary/10 text-primary text-[10px]">
@@ -249,12 +242,6 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                               {displayName}
                             </span>
 
-                            {/* XP indicator */}
-                            {isDone ? (
-                              <span className="text-[10px] font-semibold text-green-600 dark:text-green-400">+20 XP ✨</span>
-                            ) : (
-                              <span className="text-[10px] text-muted-foreground/50">+20 XP</span>
-                            )}
 
                             {/* Date dropdown trigger */}
                             <button
@@ -309,5 +296,31 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
         })}
       </CardContent>
     </Card>
+  )
+}
+
+// Dismissable motivation card for vaccines
+function VaccineMotivationCard({ tr }: { tr: boolean }) {
+  const [dismissed, setDismissed] = useState(false)
+  useEffect(() => {
+    try { if (localStorage.getItem('motiv_dismiss_vaccines') === '1') setDismissed(true) } catch { /* noop */ }
+  }, [])
+  if (dismissed) return null
+  const dismiss = () => {
+    setDismissed(true)
+    try { localStorage.setItem('motiv_dismiss_vaccines', '1') } catch { /* noop */ }
+  }
+  return (
+    <div className="mt-3 rounded-lg border-l-4 border-l-blue-500 bg-blue-50 dark:bg-blue-950/20 p-3 text-sm text-blue-800 dark:text-blue-200 relative">
+      <button onClick={dismiss} className="absolute top-2 right-2 opacity-40 hover:opacity-70 transition-opacity" aria-label="Dismiss">
+        <span className="text-xs">✕</span>
+      </button>
+      <p className="font-semibold text-xs uppercase tracking-wide opacity-70 mb-1">🛡️ {tr ? "Neden önemli?" : "Why it matters"}</p>
+      <p className="leading-relaxed pr-4">
+        {tr
+          ? '"Paslı çivi battı" dediğinde tetanoz aşın ne zaman olduğunu bilmek hayat kurtarır. Bunu bilmeden seni doğru yönlendiremem.'
+          : '"A rusty nail got me" — knowing when your last tetanus shot was can save your life. Without this info, I can\'t guide you properly.'}
+      </p>
+    </div>
   )
 }

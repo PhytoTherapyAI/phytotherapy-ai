@@ -32,12 +32,12 @@ import { VaccineProfileSection } from "@/components/profile/VaccineProfileSectio
 import { BADGES, evaluateBadges, type UserStats } from "@/lib/badges";
 import { txObj } from "@/lib/translations";
 import {
-  calculateProfileXP,
-  ProfileXPHeader,
+  calculateProfilePower,
+  ProfilePowerHeader,
   MotivationCard,
   SectionXPBadge,
   EmptyStateCTA,
-  type ProfileXPInput,
+  type ProfilePowerInput,
 } from "@/components/profile/ProfileGamification";
 import BadgeIcon from "@/components/badges/BadgeIcon";
 
@@ -600,10 +600,10 @@ export default function ProfilePage() {
         {tx('profile.title', lang)}
       </h1>
 
-      {/* ── XP & PROFILE COMPLETION HEADER ── */}
+      {/* ── PROFILE POWER HEADER ── */}
       {profile && (() => {
         const vaccines = Array.isArray(profile.vaccines) ? profile.vaccines : [];
-        const xpInput: ProfileXPInput = {
+        const powerInput: ProfilePowerInput = {
           hasBasicInfo: !!(profile.full_name && profile.age && profile.gender),
           medicationCount: medications.length,
           supplementCount: (profile.supplements || []).length,
@@ -612,10 +612,10 @@ export default function ProfilePage() {
           hasFamilyHistory: (profile.chronic_conditions || []).some((c: string) => c.startsWith('family:')),
           vaccineCount: vaccines.filter((v: { status: string }) => v.status === 'done').length,
           hasContactInfo: !!(profile.country || profile.city || profile.phone),
-          streakDays,
+          hasLifestyle: !!(profile.height_cm || profile.weight_kg || profile.exercise_frequency || profile.sleep_quality),
         };
-        const xp = calculateProfileXP(xpInput);
-        return <ProfileXPHeader streakDays={streakDays} xp={xp} lang={lang as 'en' | 'tr'} />;
+        const power = calculateProfilePower(powerInput);
+        return <ProfilePowerHeader power={power} lang={lang as 'en' | 'tr'} />;
       })()}
 
       {/* ── DIGITAL TWIN HERO ── */}
@@ -1113,7 +1113,7 @@ export default function ProfilePage() {
               <CardTitle className="flex items-center gap-2">
                 <Pill className="h-5 w-5" />
                 {tx('profile.activeMeds', lang)}
-                <SectionXPBadge earned={Math.min(medications.length * 50, 250)} potential={50} completed={medications.length > 0} />
+                <SectionXPBadge completed={medications.length > 0} />
               </CardTitle>
               <CardDescription>
                 {tx('profile.lastUpdated', lang)}{" "}
@@ -1163,9 +1163,10 @@ export default function ProfilePage() {
           )}
           {/* Motivation card */}
           <MotivationCard
+            id="motiv_meds"
             icon={"\u{1F48A}"}
-            message={tr ? "İlaç-bitki etkileşimlerini kontrol edebilmem için şart" : "Essential for checking drug-herb interactions"}
-            xpReward="+50 XP"
+            title={tr ? "Neden önemli?" : "Why it matters"}
+            message={tr ? "İlaç-bitki etkileşimleri ciddi olabilir. İlaçlarını ekleyerek güvenli öneri alma şansını %90 artırıyorsun!" : "Drug-herb interactions can be serious. Adding your medications increases safe recommendation accuracy by 90%!"}
             color="blue"
           />
           {/* Medication list */}
@@ -1354,12 +1355,12 @@ export default function ProfilePage() {
       {/* Scanners moved to /scanner page via Tools menu */}
 
       {/* Edit Health Profile — moved here, right below Active Medications */}
-      <Card className="mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+      <Card className="mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow" id="edit-health">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              {tx("profile.editHealthProfile", lang)}
+              <Stethoscope className="h-5 w-5 text-primary" />
+              {tr ? "Sağlık Profilim" : "My Health Profile"}
             </CardTitle>
             {!editingHealth ? (
               <Button variant="outline" size="sm" onClick={startEditingHealth}>
@@ -1383,7 +1384,7 @@ export default function ProfilePage() {
             )}
           </div>
           <CardDescription>
-            {tx("profile.editHealthDesc", lang)}
+            {tr ? "Sağlık geçmişin = Benim süper gücüm 💪 Ne kadar çok bilirsem, o kadar isabetli olurum." : "Your health history = My superpower 💪 The more I know, the more accurate I become."}
           </CardDescription>
         </CardHeader>
 
@@ -1498,12 +1499,13 @@ export default function ProfilePage() {
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <Stethoscope className="h-4 w-4" />
                 {tx("profile.chronicConditions", lang)}
-                <SectionXPBadge earned={75} potential={75} completed={healthForm.chronic_conditions.filter(c => !c.startsWith('family:')).length > 0} />
+                <SectionXPBadge completed={healthForm.chronic_conditions.filter(c => !c.startsWith('family:')).length > 0} />
               </Label>
               <MotivationCard
+                id="motiv_chronic"
                 icon={"\u{1F3E5}"}
-                message={tr ? "Diyabetliye farkl\u0131, sa\u011fl\u0131kl\u0131ya farkl\u0131 \u00f6neri veririm" : "I recommend differently for diabetics vs healthy individuals"}
-                xpReward="+75 XP"
+                title={tr ? "Neden \u00f6nemli?" : "Why it matters"}
+                message={tr ? "Diyabetliye farkl\u0131, sa\u011fl\u0131kl\u0131ya farkl\u0131 \u00f6neri veririm. Bu bilgi olmadan sana \"herkese uyan\" \u00f6neriler veririm \u2014 sen herkese uymuyorsun." : "I recommend differently for diabetics vs healthy people. Without this, I give generic advice \u2014 you deserve personalized care."}
                 color="purple"
               />
 
@@ -1644,12 +1646,13 @@ export default function ProfilePage() {
             <div className="space-y-3">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 {"\u{1F33F}"} {tx("profile.supplements", lang)}
-                <SectionXPBadge earned={Math.min(healthForm.supplements.length * 30, 150)} potential={30} completed={healthForm.supplements.length > 0} />
+                <SectionXPBadge completed={healthForm.supplements.length > 0} />
               </Label>
               <MotivationCard
+                id="motiv_supplements"
                 icon={"\u{1F33F}"}
-                message={tr ? "Beta-alanin kar\u0131ncalanmas\u0131n\u0131 n\u00f6rolojik sanmayay\u0131m" : "So I don't mistake beta-alanine tingling for a neurological issue"}
-                xpReward="+30 XP"
+                title={tr ? "Neden \u00f6nemli?" : "Why it matters"}
+                message={tr ? "Masum g\u00f6r\u00fcnen takviyeler ila\u00e7larla ciddi etkile\u015fime girebilir. Beta-alanin'in yapt\u0131\u011f\u0131 kar\u0131ncalanmay\u0131 n\u00f6rolojik san\u0131p acile ko\u015fanlar var! Do\u011fru tan\u0131mlarsan seni koruyabilirim." : "Seemingly harmless supplements can seriously interact with medications. People rush to ER thinking beta-alanine tingling is neurological! Proper tracking keeps you safe."}
                 color="green"
               />
               <div className="flex flex-wrap gap-2">
@@ -2065,7 +2068,7 @@ export default function ProfilePage() {
                   : allergies.length === 0
                     ? (tr ? "Alerjiler" : "Allergies")
                     : `${allergies.length} ${tr ? "Alerji Tanımlı" : allergies.length === 1 ? "Allergy Defined" : "Allergies Defined"}`}
-                <SectionXPBadge earned={75} potential={75} completed={allergies.length > 0} />
+                <SectionXPBadge completed={allergies.length > 0} />
                 {allergies.length === 0 && !hasAnaphylaxis && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-green-500 px-2.5 py-1 text-[10px] font-bold text-white shadow">
                     🛡️ {tr ? "Alerji Yok" : "No Allergies"}
