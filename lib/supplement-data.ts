@@ -274,7 +274,7 @@ export function formatDoseWithUnit(rawDose: string, supplementName: string): str
 
   const info = findSupplementInfo(supplementName)
   // Determine appropriate unit based on supplement info
-  if (info.unit === "g" || info.recommendedDose.includes("g") && !info.recommendedDose.includes("mg") && !info.recommendedDose.includes("mcg")) {
+  if (info.unit === "g" || (info.recommendedDose.includes("g") && !info.recommendedDose.includes("mg") && !info.recommendedDose.includes("mcg"))) {
     return `${trimmed} gram`
   }
   if (info.unit === "IU" || info.recommendedDose.includes("IU")) {

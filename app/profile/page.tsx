@@ -143,7 +143,7 @@ export default function ProfilePage() {
       kidney_disease: profile.kidney_disease,
       liver_disease: profile.liver_disease,
       recent_surgery: profile.recent_surgery,
-      chronic_conditions: [...profile.chronic_conditions],
+      chronic_conditions: [...(profile.chronic_conditions || [])],
       height_cm: profile.height_cm,
       weight_kg: profile.weight_kg,
       blood_group: profile.blood_group || "",
