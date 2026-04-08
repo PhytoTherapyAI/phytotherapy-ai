@@ -147,34 +147,53 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function createGroup(name: string): Promise<boolean> {
-    if (!user) return false
-    const { data, error } = await supabase
-      .from('family_groups')
-      .insert({ owner_id: user.id, name })
-      .select()
-      .single()
-
-    if (error) {
-      console.error('[Family] createGroup error:', error.message)
+    if (!user) {
+      console.error('[Family] createGroup: user yok')
       return false
     }
 
-    if (data) {
-      setFamilyGroup(data)
-      // Kurucuyu da member olarak ekle
-      const { error: memberErr } = await supabase.from('family_members').insert({
-        group_id: data.id,
-        user_id: user.id,
-        role: 'owner',
-        invite_email: user.email || '',
-        invite_status: 'accepted',
-        accepted_at: new Date().toISOString()
-      })
-      if (memberErr) console.error('[Family] createGroup member error:', memberErr.message)
-      await fetchMembers(data.id)
-      return true
+    console.log('[Family] createGroup ba\u015Flad\u0131:', { name, userId: user.id })
+
+    const { data, error } = await supabase
+      .from('family_groups')
+      .insert({ owner_id: user.id, name: name.trim() })
+      .select()
+      .single()
+
+    console.log('[Family] family_groups insert result:', { data, error })
+
+    if (error) {
+      console.error('[Family] createGroup error:', error.message, error.details, error.hint)
+      return false
     }
-    return false
+
+    if (!data) {
+      console.error('[Family] createGroup: data is null after insert')
+      return false
+    }
+
+    // Kurucuyu member olarak ekle
+    const { error: memberErr } = await supabase.from('family_members').insert({
+      group_id: data.id,
+      user_id: user.id,
+      role: 'owner',
+      invite_email: user.email || '',
+      invite_status: 'accepted',
+      accepted_at: new Date().toISOString()
+    })
+
+    console.log('[Family] family_members insert result:', { memberErr })
+
+    if (memberErr) {
+      console.error('[Family] createGroup member error:', memberErr.message, memberErr.details)
+      // Rollback: grubu geri sil
+      await supabase.from('family_groups').delete().eq('id', data.id)
+      return false
+    }
+
+    setFamilyGroup(data)
+    await fetchMembers(data.id)
+    return true
   }
 
   async function inviteMember(email: string, nickname: string): Promise<boolean> {

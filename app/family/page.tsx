@@ -67,7 +67,7 @@ export default function FamilyPage() {
         setFeedback({ type: "success", msg: tr ? "Grup olu\u015Fturuldu!" : "Group created!" })
         setGroupName("")
       } else {
-        setFeedback({ type: "error", msg: tr ? "Grup olu\u015Fturulamad\u0131. Tablolar Supabase'de olu\u015Fturulmu\u015F mu?" : "Failed to create group. Are the tables set up in Supabase?" })
+        setFeedback({ type: "error", msg: tr ? "Grup olu\u015Fturulamad\u0131. Konsolu kontrol edin (F12). Supabase tablolar\u0131 olu\u015Fturulmu\u015F olmal\u0131." : "Failed to create group. Check console (F12). Supabase tables must be set up." })
       }
     } catch (err) {
       console.error("[Family] createGroup failed:", err)
