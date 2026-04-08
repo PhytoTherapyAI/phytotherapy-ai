@@ -256,7 +256,7 @@ export default function TimeCapsulePage() {
           </div>
 
           {/* Comparison */}
-          <ShareCardBase lang={lang} fileName="time-capsule-comparison.png" shareTitle="Doctopal Time Capsule">
+          <ShareCardBase lang={lang} fileName="time-capsule-comparison.png" shareTitle="DoctoPal Time Capsule">
             <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-900/30 dark:to-teal-900/30 rounded-xl p-5 space-y-4">
               <h3 className="text-center font-semibold text-lg">
                 {tx("timeCapsule.thenVsNow", lang)}

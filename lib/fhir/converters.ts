@@ -58,7 +58,7 @@ export function supplementToFHIR(params: {
       },
     }],
     note: [{
-      text: `Recorded via Doctopal platform. ${herb?.latinName ? `Latin name: ${herb.latinName}` : ""}`,
+      text: `Recorded via DoctoPal platform. ${herb?.latinName ? `Latin name: ${herb.latinName}` : ""}`,
       time: new Date().toISOString(),
     }],
     extension: [

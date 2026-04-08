@@ -38,7 +38,7 @@ const heroCards = [
 
 const mediaCards = [
   { title: "Sleep Science", author: "Dr. Sarah Chen", type: "Podcast", emoji: "🎧", duration: "28 min", color: "bg-purple-50" },
-  { title: "Gut-Brain Connection", author: "Doctopal Academy", type: "Course", emoji: "📚", duration: "6 lessons", color: "bg-amber-50" },
+  { title: "Gut-Brain Connection", author: "DoctoPal Academy", type: "Course", emoji: "📚", duration: "6 lessons", color: "bg-amber-50" },
   { title: "Anti-Inflammatory Kitchen", author: "Chef Maria", type: "Expert", emoji: "🍳", duration: "12 articles", color: "bg-orange-50" },
   { title: "Mindful Movement", author: "Yoga Lab", type: "Course", emoji: "🧘", duration: "8 sessions", color: "bg-teal-50" },
 ]

@@ -24,7 +24,7 @@ export function renderApprovedEmail({ recipientName, profession, lang = "en" }: 
   const body2          = tx("email.approved.body2", lang)
   const cta            = tx("email.approved.cta", lang)
   const footer         = tx("email.footer", lang)
-  const address        = "Doctopal · Istanbul, Turkey"
+  const address        = "DoctoPal · Istanbul, Turkey"
 
   return `<!DOCTYPE html>
 <html lang="${lang}" xmlns:v="urn:schemas-microsoft-com:vml">
@@ -61,7 +61,7 @@ export function renderApprovedEmail({ recipientName, profession, lang = "en" }: 
         <!-- Logo -->
         <tr><td align="center" style="padding-bottom:32px;">
           <span style="font-size:24px;font-weight:700;color:#2d5016;letter-spacing:-0.5px;">
-            🌿 Doctopal
+            🌿 DoctoPal
           </span>
         </td></tr>
 

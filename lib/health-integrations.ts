@@ -128,7 +128,7 @@ export interface HealthDataSync {
 export const CONSENT_TEXT = {
   en: {
     title: "Health Data Access Permission",
-    body: "By connecting this service, you authorize Doctopal to access the following health data from your account. This data will be used solely to provide personalized health recommendations.",
+    body: "By connecting this service, you authorize DoctoPal to access the following health data from your account. This data will be used solely to provide personalized health recommendations.",
     dataTypes: "Data types we'll access:",
     storage: "Your data is encrypted at rest (AES-256) and in transit (TLS 1.3). We never sell your data.",
     revoke: "You can disconnect and delete imported data at any time from this settings page.",
@@ -138,7 +138,7 @@ export const CONSENT_TEXT = {
   },
   tr: {
     title: "Sağlık Verisi Erişim İzni",
-    body: "Bu hizmeti bağlayarak, Doctopal'nin hesabınızdan aşağıdaki sağlık verilerine erişmesine izin verirsiniz. Bu veriler yalnızca kişiselleştirilmiş sağlık önerileri sunmak için kullanılacaktır.",
+    body: "Bu hizmeti bağlayarak, DoctoPal'nin hesabınızdan aşağıdaki sağlık verilerine erişmesine izin verirsiniz. Bu veriler yalnızca kişiselleştirilmiş sağlık önerileri sunmak için kullanılacaktır.",
     dataTypes: "Erişeceğimiz veri türleri:",
     storage: "Verileriniz durağan halde (AES-256) ve aktarım sırasında (TLS 1.3) şifrelenir. Verilerinizi asla satmayız.",
     revoke: "Bu ayarlar sayfasından istediğiniz zaman bağlantıyı kesebilir ve aktarılan verileri silebilirsiniz.",

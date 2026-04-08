@@ -42,6 +42,7 @@ export default function FamilyPage() {
   const [newNickname, setNewNickname] = useState("")
   const [creating, setCreating] = useState(false)
   const [inviting, setInviting] = useState(false)
+  const [inviteLink, setInviteLink] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null)
 
   useEffect(() => {
@@ -50,13 +51,14 @@ export default function FamilyPage() {
     }
   }, [authLoading, isAuthenticated, router])
 
-  // Auto-dismiss feedback
+  // Auto-dismiss feedback (longer if link is shown)
   useEffect(() => {
     if (feedback) {
-      const t = setTimeout(() => setFeedback(null), 4000)
+      const delay = inviteLink ? 30000 : 4000
+      const t = setTimeout(() => { setFeedback(null); setInviteLink(null) }, delay)
       return () => clearTimeout(t)
     }
-  }, [feedback])
+  }, [feedback, inviteLink])
 
   async function handleCreateGroup() {
     if (!groupName.trim()) return
@@ -117,16 +119,17 @@ export default function FamilyPage() {
         setInviteEmail("")
         setInviteNickname("")
 
-        if (resData.emailSent) {
-          setFeedback({ type: "success", msg: tr ? "Davet gönderildi!" : "Invite sent!" })
-        } else if (resData.inviteUrl) {
-          // Email gönderilemedi ama link oluşturuldu
+        // Her zaman invite link'i göster — email gitmiş olsa bile
+        if (resData.inviteUrl) {
           setFeedback({
             type: "success",
-            msg: tr
-              ? `Davet oluşturuldu! Linki paylaşın: ${resData.inviteUrl}`
-              : `Invite created! Share this link: ${resData.inviteUrl}`
+            msg: resData.emailSent
+              ? (tr ? "Davet gönderildi!" : "Invite sent!")
+              : (tr
+                  ? `Davet oluşturuldu! E-posta gönderilemedi, linki paylaşın:`
+                  : `Invite created! Email failed, share this link:`)
           })
+          setInviteLink(resData.inviteUrl)
         } else {
           setFeedback({ type: "success", msg: tr ? "Davet oluşturuldu!" : "Invite created!" })
         }

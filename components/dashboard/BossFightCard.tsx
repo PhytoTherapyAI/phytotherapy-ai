@@ -409,7 +409,7 @@ function BossFightShareCard({ lang, boss }: { lang: Lang; boss: BossFight }) {
         <div className="relative z-10 flex h-full flex-col p-6 text-white">
           <div className="mb-2 flex items-center gap-2">
             <span className="text-2xl">🌿</span>
-            <span className="text-sm font-semibold tracking-wide opacity-90">Doctopal</span>
+            <span className="text-sm font-semibold tracking-wide opacity-90">DoctoPal</span>
           </div>
           <h2 className="mb-1 text-sm uppercase tracking-wider opacity-70">Biological Challenge</h2>
           <h3 className="mb-2 text-2xl font-extrabold">{boss.name[lang]}</h3>

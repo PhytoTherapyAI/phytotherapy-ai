@@ -53,7 +53,7 @@ export function ProtocolShareCard({
           <div className="mb-2 flex items-center gap-2">
             <span className="text-2xl">🌿</span>
             <span className="text-sm font-semibold tracking-wide opacity-90">
-              Doctopal
+              DoctoPal
             </span>
           </div>
 

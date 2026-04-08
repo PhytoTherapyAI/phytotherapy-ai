@@ -25,8 +25,8 @@ export function InteractionShareCard({
 }: InteractionShareCardProps) {
   const totalInteractions = dangerousCount + cautionCount
   const shareTextMap: Record<"en" | "tr", string> = {
-    en: `Doctopal detected ${totalInteractions} drug-herb interactions! 🛡️`,
-    tr: `Doctopal ${totalInteractions} ilaç-bitki etkileşimi tespit etti! 🛡️`,
+    en: `DoctoPal detected ${totalInteractions} drug-herb interactions! 🛡️`,
+    tr: `DoctoPal ${totalInteractions} ilaç-bitki etkileşimi tespit etti! 🛡️`,
   }
 
   return (
@@ -58,7 +58,7 @@ export function InteractionShareCard({
           <div className="mb-2 flex items-center gap-2">
             <span className="text-2xl">🌿</span>
             <span className="text-sm font-semibold tracking-wide opacity-90">
-              Doctopal
+              DoctoPal
             </span>
           </div>
 

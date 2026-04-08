@@ -247,7 +247,7 @@ export default function CertificatesPage() {
       const blob = await (await fetch(preview)).blob();
       const file = new File([blob], "doctopal-certificate.png", { type: "image/png" });
       if (navigator.share) {
-        await navigator.share({ files: [file], title: "Doctopal Certificate" });
+        await navigator.share({ files: [file], title: "DoctoPal Certificate" });
       }
     } catch {
       downloadCertificate();

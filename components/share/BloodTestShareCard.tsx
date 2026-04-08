@@ -42,7 +42,7 @@ export function BloodTestShareCard({
         <div className="mb-4 flex items-center justify-between">
           <div>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
-              Doctopal
+              DoctoPal
             </p>
             <h3 className="text-lg font-bold">
               {tx("share.bloodTest.summary", lang)}

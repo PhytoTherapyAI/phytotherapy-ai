@@ -2,7 +2,7 @@
 import { tx } from "@/lib/translations";
 
 /**
- * SAFETY GUARDRAIL — Doctopal
+ * SAFETY GUARDRAIL — DoctoPal
  * ═══════════════════════════════════
  * Algoritmik Güvenlik ve Etik Çerçevesi
  * "Primum non nocere — First, do no harm"

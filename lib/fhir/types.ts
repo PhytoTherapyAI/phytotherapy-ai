@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 // ============================================
-// FHIR R4 Type Definitions for Doctopal
+// FHIR R4 Type Definitions for DoctoPal
 // HL7 FHIR (Fast Healthcare Interoperability Resources)
 // Customized for herbal/supplement data interoperability
 // ============================================

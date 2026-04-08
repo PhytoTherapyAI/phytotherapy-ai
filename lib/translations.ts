@@ -57,8 +57,8 @@ const t: Record<string, TranslationEntry> = {
     tr: "Tıbbi Sorumluluk Reddi:",
   },
   "footer.disclaimer.text": {
-    en: "Doctopal is an educational wellness tool and does not provide medical diagnosis or treatment. All recommendations are based on published scientific research. Always consult your healthcare provider before starting any supplement or making changes to your medication.",
-    tr: "Doctopal bir eğitim amaçlı sağlık aracıdır; tıbbi teşhis veya tedavi sunmaz. Tüm öneriler yayımlanmış bilimsel araştırmalara dayanır. Herhangi bir takviye başlamadan veya ilaç değişikliği yapmadan önce sağlık profesyonelinize danışın.",
+    en: "DoctoPal is an educational wellness tool and does not provide medical diagnosis or treatment. All recommendations are based on published scientific research. Always consult your healthcare provider before starting any supplement or making changes to your medication.",
+    tr: "DoctoPal bir eğitim amaçlı sağlık aracıdır; tıbbi teşhis veya tedavi sunmaz. Tüm öneriler yayımlanmış bilimsel araştırmalara dayanır. Herhangi bir takviye başlamadan veya ilaç değişikliği yapmadan önce sağlık profesyonelinize danışın.",
   },
   "footer.tagline": {
     en: "Evidence-based integrative medicine · Backed by peer-reviewed research",
@@ -1284,7 +1284,7 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   // PWA — Sprint 20
   // ══════════════════════════════════════════
-  "pwa.installPrompt": { en: "Install Doctopal", tr: "Doctopal'yi Yükle" },
+  "pwa.installPrompt": { en: "Install DoctoPal", tr: "DoctoPal'yi Yükle" },
   "pwa.installDesc": { en: "Add to your home screen for quick access", tr: "Hızlı erişim için ana ekranınıza ekleyin" },
   "pwa.install": { en: "Install", tr: "Yükle" },
   "pwa.dismiss": { en: "Not now", tr: "Şimdi değil" },
@@ -1295,7 +1295,7 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   "wrapped.title": { en: "Your Health Year in Review", tr: "Sağlık Yılınız Özet" },
   "wrapped.subtitle": { en: "A look back at your health journey", tr: "Sağlık yolculuğunuza bir bakış" },
-  "wrapped.shareTitle": { en: "My Health Year — Doctopal", tr: "Sağlık Yılım — Doctopal" },
+  "wrapped.shareTitle": { en: "My Health Year — DoctoPal", tr: "Sağlık Yılım — DoctoPal" },
   "wrapped.queries": { en: "Queries", tr: "Sorgu" },
   "wrapped.interactionChecks": { en: "Interaction Checks", tr: "Etkileşim Kontrolü" },
   "wrapped.checkIns": { en: "Check-ins", tr: "Check-in" },
@@ -1352,12 +1352,12 @@ const t: Record<string, TranslationEntry> = {
   // ══════════════════════════════════════════
   // Notification Settings
   // ══════════════════════════════════════════
-  "notif.title": { en: "Notifications", tr: "Bildirimler" },
-  "notif.on": { en: "On", tr: "Açık" },
+  "notif.title": { en: "Health Shield", tr: "Sağlık Kalkanı" },
+  "notif.on": { en: "Active", tr: "Aktif" },
   "notif.off": { en: "Off", tr: "Kapalı" },
   "notif.blocked": { en: "Notifications blocked by browser. Enable in browser settings.", tr: "Bildirimler tarayıcı tarafından engellendi. Tarayıcı ayarlarından izin verin." },
-  "notif.medReminders": { en: "Medication reminders", tr: "İlaç hatırlatıcısı" },
-  "notif.dailyCheckIn": { en: "Daily check-in reminder", tr: "Günlük check-in hatırlatıcısı" },
+  "notif.medReminders": { en: "Medication Shield", tr: "İlaç Kalkanı" },
+  "notif.dailyCheckIn": { en: "Daily Health Tracking", tr: "Günlük Sağlık Takibi" },
   "notif.morningTime": { en: "Morning time", tr: "Sabah saati" },
   "notif.eveningTime": { en: "Evening time", tr: "Akşam saati" },
 
@@ -4423,7 +4423,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "courses.subtitle": { en: "Develop yourself with evidence-based health courses. Phytotherapy, aromatherapy, acupuncture and more.", tr: "Kanıta dayalı sağlık eğitimleriyle kendinizi geliştirin. Fitoterapi, aromaterapi, akupunktur ve daha fazlası." },
   "courses.goToCourse": { en: "Go to Course", tr: "Kursa Git" },
   "courses.comingSoon": { en: "Coming Soon", tr: "Yakında" },
-  "courses.disclaimer": { en: "Courses listed on this page are hosted on independent education platforms. Doctopal is not responsible for course content. We may earn a commission from sales through affiliate links.", tr: "Bu sayfadaki kurslar bağımsız eğitim platformlarında yer almaktadır. Doctopal bu kursların içeriklerinden sorumlu değildir. Affiliate bağlantıları üzerinden yapılan satışlardan komisyon alınabilir." },
+  "courses.disclaimer": { en: "Courses listed on this page are hosted on independent education platforms. DoctoPal is not responsible for course content. We may earn a commission from sales through affiliate links.", tr: "Bu sayfadaki kurslar bağımsız eğitim platformlarında yer almaktadır. DoctoPal bu kursların içeriklerinden sorumlu değildir. Affiliate bağlantıları üzerinden yapılan satışlardan komisyon alınabilir." },
 
   // ── Creator Studio ──
   "creatorStudio.addTag": { en: "Add tag...", tr: "Etiket ekle..." },
@@ -4728,7 +4728,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
 
   // Enterprise - White Label
   "whiteLabel.title": { en: "White-Label Solution", tr: "White-Label Çözüm" },
-  "whiteLabel.subtitle": { en: "Offer the Doctopal platform under your own brand", tr: "Doctopal platformunu kendi markanizla sunun" },
+  "whiteLabel.subtitle": { en: "Offer the DoctoPal platform under your own brand", tr: "DoctoPal platformunu kendi markanizla sunun" },
   "whiteLabel.pricing": { en: "Pricing", tr: "Fiyatlandirma" },
   "whiteLabel.popular": { en: "Popular", tr: "Populer" },
   "whiteLabel.select": { en: "Select", tr: "Sec" },
@@ -5308,7 +5308,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   // Privacy Policy page
   "privacy.march": { en: "March", tr: "Mart" },
   "privacy.s1Title": { en: "1. Introduction", tr: "1. Giriş" },
-  "privacy.s1Text": { en: "Doctopal (\"Platform\") respects your privacy. This Privacy Policy explains how your personal data is collected, processed, stored, and protected. By using the Platform, you acknowledge and accept this policy.", tr: "Doctopal (\"Platform\") gizliliğinize saygı duyar. Bu Gizlilik Politikası, kişisel verilerinizin nasıl toplandığını, işlendiğini, saklandığını ve korunduğunu açıklar. Platformu kullanarak bu politikayı kabul etmiş sayılırsınız." },
+  "privacy.s1Text": { en: "DoctoPal (\"Platform\") respects your privacy. This Privacy Policy explains how your personal data is collected, processed, stored, and protected. By using the Platform, you acknowledge and accept this policy.", tr: "DoctoPal (\"Platform\") gizliliğinize saygı duyar. Bu Gizlilik Politikası, kişisel verilerinizin nasıl toplandığını, işlendiğini, saklandığını ve korunduğunu açıklar. Platformu kullanarak bu politikayı kabul etmiş sayılırsınız." },
   "privacy.s2Title": { en: "2. Data We Collect", tr: "2. Topladığımız Veriler" },
   "privacy.s2DirectLabel": { en: "Data you directly provide:", tr: "Doğrudan sağladığınız veriler:" },
   "privacy.s2d1": { en: "Account information (name, email, age, gender)", tr: "Hesap bilgileri (ad, e-posta, yaş, cinsiyet)" },
@@ -5443,7 +5443,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "research.dataAccess": { en: "Data Access", tr: "Veri Erişimi" },
   "research.dataAccessDesc": { en: "Approved startups get anonymous research data, cohort building tools and API access", tr: "Onaylı girişimcilere anonim araştırma verisi, kohort oluşturma araçları ve API erişimi" },
   "research.platformIntegration": { en: "Platform Integration", tr: "Platform Entegrasyonu" },
-  "research.platformIntegrationDesc": { en: "Successful products added to Doctopal marketplace, reaching millions of users", tr: "Başarılı ürünler Doctopal marketplace'ine eklenir, milyonlarca kullanıcıya erişim" },
+  "research.platformIntegrationDesc": { en: "Successful products added to DoctoPal marketplace, reaching millions of users", tr: "Başarılı ürünler DoctoPal marketplace'ine eklenir, milyonlarca kullanıcıya erişim" },
   "research.clinicalValidation": { en: "Clinical Validation", tr: "Klinik Validasyon" },
   "research.clinicalValidationDesc": { en: "PROMs-based pilot study capability on platform, academic publication support", tr: "Platform üzerinde PROMs bazlı pilot çalışma yapma imkanı, akademik yayın desteği" },
   "research.systemImpact": { en: "System-Level Impact — Investor Vision", tr: "Sistem Düzeyinde Etki — Yatırımcı Vizyonu" },
@@ -5776,16 +5776,16 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   // ── Terms Page ──
   "terms.month": { en: "March", tr: "Mart" },
   "terms.acceptance": { en: "1. Acceptance of Terms", tr: "1. Kabul" },
-  "terms.acceptanceText": { en: "By using the Doctopal Platform (\"Platform\"), you acknowledge that you have read, understood, and agree to these Terms of Service and our Privacy Policy. If you do not agree, do not use the Platform.", tr: "Doctopal Platformunu (\"Platform\") kullanarak bu Kullanim Kosullarini ve Gizlilik Politikamizi okudugunuzu, anladiginizi ve kabul ettiginizi beyan edersiniz. Kabul etmiyorsaniz Platformu kullanmayiniz." },
+  "terms.acceptanceText": { en: "By using the DoctoPal Platform (\"Platform\"), you acknowledge that you have read, understood, and agree to these Terms of Service and our Privacy Policy. If you do not agree, do not use the Platform.", tr: "DoctoPal Platformunu (\"Platform\") kullanarak bu Kullanim Kosullarini ve Gizlilik Politikamizi okudugunuzu, anladiginizi ve kabul ettiginizi beyan edersiniz. Kabul etmiyorsaniz Platformu kullanmayiniz." },
   "terms.serviceDesc": { en: "2. Service Description", tr: "2. Hizmet Tanimi" },
-  "terms.serviceDescText": { en: "Doctopal is an educational decision-support tool that provides general health information based on published scientific research. Our services include:", tr: "Doctopal, yayimlanmis bilimsel arastirmalara dayali genel saglik bilgisi sunan bir egitim ve karar destek aracidir. Hizmetlerimiz:" },
+  "terms.serviceDescText": { en: "DoctoPal is an educational decision-support tool that provides general health information based on published scientific research. Our services include:", tr: "DoctoPal, yayimlanmis bilimsel arastirmalara dayali genel saglik bilgisi sunan bir egitim ve karar destek aracidir. Hizmetlerimiz:" },
   "terms.serviceItem1": { en: "Drug-herb interaction information system", tr: "Ilac-bitki etkilesim bilgi sistemi" },
   "terms.serviceItem2": { en: "Evidence-based general health information assistant", tr: "Kanita dayali genel saglik bilgi asistani" },
   "terms.serviceItem3": { en: "Informational interpretation of blood test values", tr: "Kan tahlili degerlerinin bilgilendirici yorumu" },
   "terms.serviceItem4": { en: "Informational lifestyle suggestions", tr: "Bilgilendirici yasam tarzi onerileri" },
   "terms.medicalDisclaimer": { en: "3. Medical Disclaimer", tr: "3. Tibbi Sorumluluk Reddi" },
   "terms.readCarefully": { en: "Please read carefully", tr: "Lutfen dikkatle okuyunuz" },
-  "terms.disclaimerP1": { en: "Doctopal is a health information platform. It is not a medical device, diagnostic tool, or treatment system. The Platform does not diagnose conditions, suggest treatment plans, or prescribe medications under any circumstances.", tr: "Doctopal bir saglik bilgi platformudur. Tibbi bir cihaz, teshis araci veya tedavi sistemi degildir. Platform hicbir kosulda hastalik teshisi koymaz, tedaviplanı onermez veya ilac recetesi yazmaz." },
+  "terms.disclaimerP1": { en: "DoctoPal is a health information platform. It is not a medical device, diagnostic tool, or treatment system. The Platform does not diagnose conditions, suggest treatment plans, or prescribe medications under any circumstances.", tr: "DoctoPal bir saglik bilgi platformudur. Tibbi bir cihaz, teshis araci veya tedavi sistemi degildir. Platform hicbir kosulda hastalik teshisi koymaz, tedaviplanı onermez veya ilac recetesi yazmaz." },
   "terms.disclaimerP2": { en: "All content is general informational material based on published scientific sources and does not replace the advice of a doctor, pharmacist, dietitian, or any healthcare professional. Always consult your healthcare provider before starting any supplement, making medication changes, or making decisions about your health.", tr: "Sunulan tum icerik, yayimlanmis bilimsel kaynaklara dayali genel bilgilendirme niteligindedir ve doktor, eczaci, diyetisyen veya herhangi bir saglik profesyonelinin yerini almaz. Herhangi bir takviye kullanmaya baslamadan, ilac degisikligi yapmadan veya sagliginizla ilgili bir karar vermeden once mutlaka saglik profesyonelinize danisiniz." },
   "terms.disclaimerP3": { en: "In a medical emergency, immediately call your local emergency services number.", tr: "Acil bir saglik durumunda derhal bulundugunuz ulkenin acil yardim hattini arayiniz." },
   "terms.disclaimerP4": { en: "You are solely responsible for any decisions you make based on information provided by the Platform. The Platform does not intend to create or replace the relationship between any healthcare professional and a patient.", tr: "Platformun sundugu bilgilere dayanarak verdiginiz kararlarin sorumlulugu yalnizca size aittir. Platform, herhangi bir saglik profesyoneli ile hasta arasindaki iliskiyi kurmayi ya da bu iliskinin yerine gecmeyi amaclamamaktadir." },
@@ -5801,7 +5801,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "terms.infoItem3": { en: "Scientific knowledge is continuously evolving; the Platform may not always reflect the most current data", tr: "Bilimsel bilgi surekli guncellenmektedir; Platform her zaman en guncel veriyi yansitmayabilir" },
   "terms.infoItem4": { en: "Drug-herb interaction results are informational and do NOT substitute for clinical judgment", tr: "Ilac-bitki etkilesim sonuclari bilgilendirme amaclidir, klinik karar yerine GECMEZ" },
   "terms.liability": { en: "6. Limitation of Liability", tr: "6. Sorumluluk Sinirlamasi" },
-  "terms.liabilityText": { en: "Doctopal and its team shall not be liable for any direct, indirect, incidental, special, or consequential damages (including but not limited to health outcomes, financial losses, data loss) arising from the use of information provided by the Platform. All information is provided \"as is\" and \"as available\" without any express or implied warranties.", tr: "Doctopal ve ekibi, Platformun sundugu bilgilerin kullanimindan kaynaklanan dogrudan, dolayli, arizi, ozel veya sonuc olarak ortaya cikan hicbir zarardan (saglik sonuclari, mali kayiplar, veri kaybi dahil ancak bunlarla sinirli olmaksizin) sorumlu tutulamaz. Tum bilgiler \"oldugu gibi\" ve \"mevcut haliyle\" sunulur; acik veya zimni hicbir garanti verilmemektedir." },
+  "terms.liabilityText": { en: "DoctoPal and its team shall not be liable for any direct, indirect, incidental, special, or consequential damages (including but not limited to health outcomes, financial losses, data loss) arising from the use of information provided by the Platform. All information is provided \"as is\" and \"as available\" without any express or implied warranties.", tr: "DoctoPal ve ekibi, Platformun sundugu bilgilerin kullanimindan kaynaklanan dogrudan, dolayli, arizi, ozel veya sonuc olarak ortaya cikan hicbir zarardan (saglik sonuclari, mali kayiplar, veri kaybi dahil ancak bunlarla sinirli olmaksizin) sorumlu tutulamaz. Tum bilgiler \"oldugu gibi\" ve \"mevcut haliyle\" sunulur; acik veya zimni hicbir garanti verilmemektedir." },
   "terms.ip": { en: "7. Intellectual Property", tr: "7. Fikri Mulkiyet" },
   "terms.ipText": { en: "All content, design, logos, software, and database structures of the Platform are protected by intellectual property rights. Unauthorized copying, distribution, reverse engineering, or commercial use is prohibited.", tr: "Platformun tum icerigi, tasarimi, logolari, yazilimi ve veritabani yapilari fikri mulkiyet haklariyla korunmaktadir. Izinsiz kopyalama, dagitma, tersine muhendislik veya ticari kullanim yasaktir." },
   "terms.interruption": { en: "8. Service Interruption", tr: "8. Hizmet Kesintisi" },
@@ -6039,7 +6039,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "about.visionDesc": { en: "To be the world's first Evidence-Based Integrative Medicine Assistant \u2014 bridging modern medicine, herbal therapy, and personal health profiles into a single trusted platform that serves both patients and doctors.", tr: "Dunyanin ilk Kanita Dayali Butunlestirici Tip Asistani olmak \u2014 modern tip, bitkisel terapi ve kisisel saglik profillerini hem hastalara hem doktorlara hizmet eden tek bir guvenilir platformda birlestirmek." },
   "about.ourMission": { en: "Our Mission", tr: "Misyonumuz" },
   "about.missionDesc": { en: "To democratize health knowledge by combining AI-powered analysis with peer-reviewed scientific evidence, making personalized health guidance accessible, safe, and transparent for everyone \u2014 regardless of medical literacy or economic status.", tr: "Yapay zeka destekli analizi hakemli bilimsel kanitlarla birlestirerek saglik bilgisini demokratiklestirmek, kisisellestirilmis saglik rehberligini tibbi okuryazarlik veya ekonomik durumdan bagimsiz olarak herkes icin erisilebilir, guvenli ve seffaf kilmak." },
-  "about.disclaimer": { en: "Doctopal is an educational wellness tool and does not provide medical diagnosis or treatment. All recommendations are based on published scientific research. Always consult your healthcare provider.", tr: "Doctopal bir egitim amacli saglik aracidir; tibbi teshis veya tedavi sunmaz. Tum oneriler yayimlanmis bilimsel arastirmalara dayanir. Her zaman saglik profesyonelinize danisin." },
+  "about.disclaimer": { en: "DoctoPal is an educational wellness tool and does not provide medical diagnosis or treatment. All recommendations are based on published scientific research. Always consult your healthcare provider.", tr: "DoctoPal bir egitim amacli saglik aracidir; tibbi teshis veya tedavi sunmaz. Tum oneriler yayimlanmis bilimsel arastirmalara dayanir. Her zaman saglik profesyonelinize danisin." },
 
   // ── Chat Interface ──
   "chat.personalProfileRequired": { en: "\uD83D\uDD12 **Personalized recommendations require a health profile.**\n\nTo ensure your safety, I need to know your medications, allergies, and health conditions before giving personal advice.\n\n\uD83D\uDC49 **[Sign up](/auth/login)** \u2014 it takes less than 2 minutes!\n\nIn the meantime, I can answer general health questions like:\n- \"Does omega-3 reduce inflammation?\"\n- \"What is the evidence for turmeric?\"\n- \"How does valerian root work for sleep?\"", tr: "\uD83D\uDD12 **Kisisellestirilmis oneriler icin saglik profili gereklidir.**\n\nGüvenliğiniz icin kisisel tavsiye vermeden once ilaclarinizi, alerjilerinizi ve saglik durumunuzu bilmem gerekiyor.\n\n\uD83D\uDC49 **[Kayit olun](/auth/login)** \u2014 2 dakikadan kisa surer!\n\nBu surede genel saglik sorularini yanitlayabilirim:\n- \"Omega-3 iltihabi azaltir mi?\"\n- \"Zerdecal icin kanitlar nelerdir?\"\n- \"Kediotu koku uyku icin nasil calisir?\"" },
@@ -6286,7 +6286,7 @@ const commonToolKeys: Record<string, TranslationEntry> = {
   "rad.pdfShareDesc": { en: "Professional report to share with your doctor", tr: "Doktorunuzla paylasmak icin profesyonel rapor" },
 
   // ── ConsentStep ──
-  "consent.agreementText": { en: "I have read and understood the Medical Disclaimer and Data Privacy notice above. I accept the Terms of Service and Privacy Policy. I understand that Doctopal is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations.", tr: "Yukaridaki Tibbi Sorumluluk Reddi ve Veri Gizliligi bildirimini okudum, Kullanim Kosullari ile Gizlilik Politikasini kabul ediyorum. Doctopal'nin profesyonel tibbi tavsiyenin yerini almadigini anliyorum ve herhangi bir oneriyi uygulamadan once saglik uzmanima danisacagim." },
+  "consent.agreementText": { en: "I have read and understood the Medical Disclaimer and Data Privacy notice above. I accept the Terms of Service and Privacy Policy. I understand that DoctoPal is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations.", tr: "Yukaridaki Tibbi Sorumluluk Reddi ve Veri Gizliligi bildirimini okudum, Kullanim Kosullari ile Gizlilik Politikasini kabul ediyorum. DoctoPal'nin profesyonel tibbi tavsiyenin yerini almadigini anliyorum ve herhangi bir oneriyi uygulamadan once saglik uzmanima danisacagim." },
 
   // ── HealthScoreShareCard ──
   "healthScore.title": { en: "My Health Score", tr: "Sağlık Skorum" },
@@ -6919,8 +6919,8 @@ const commonToolKeys: Record<string, TranslationEntry> = {
     tr: "Sorularınız mı var? Bize destek@doctopal.com adresinden ulaşabilirsiniz.",
   },
   "email.footer": {
-    en: "This email was sent automatically by the Doctopal verification system.",
-    tr: "Bu e-posta Doctopal doğrulama sistemi tarafından otomatik gönderilmiştir.",
+    en: "This email was sent automatically by the DoctoPal verification system.",
+    tr: "Bu e-posta DoctoPal doğrulama sistemi tarafından otomatik gönderilmiştir.",
   },
   "email.approved.subject": {
     en: "Congratulations, Your Profile is Verified!",
@@ -6931,8 +6931,8 @@ const commonToolKeys: Record<string, TranslationEntry> = {
     tr: "Artık Onaylı Sağlık Profesyonelisiniz",
   },
   "email.approved.body1": {
-    en: "Your professional credentials have been successfully verified by our team. You now have the <strong>Verified Health Professional</strong> badge on Doctopal.",
-    tr: "Profesyonel belgeleriniz ekibimiz tarafından başarıyla doğrulandı. Artık Doctopal platformunda <strong>Onaylı Sağlık Profesyoneli</strong> rozetine sahipsiniz.",
+    en: "Your professional credentials have been successfully verified by our team. You now have the <strong>Verified Health Professional</strong> badge on DoctoPal.",
+    tr: "Profesyonel belgeleriniz ekibimiz tarafından başarıyla doğrulandı. Artık DoctoPal platformunda <strong>Onaylı Sağlık Profesyoneli</strong> rozetine sahipsiniz.",
   },
   "email.approved.badgeText": {
     en: "Verified Health Professional",

@@ -28,7 +28,7 @@ export function renderRejectedEmail({ recipientName, rejectionReason, lang = "en
   const cta       = tx("email.rejected.cta", lang)
   const support   = tx("email.rejected.support", lang)
   const footer    = tx("email.footer", lang)
-  const address   = "Doctopal · Istanbul, Turkey"
+  const address   = "DoctoPal · Istanbul, Turkey"
 
   return `<!DOCTYPE html>
 <html lang="${lang}" xmlns:v="urn:schemas-microsoft-com:vml">
@@ -64,7 +64,7 @@ export function renderRejectedEmail({ recipientName, rejectionReason, lang = "en
         <!-- Logo -->
         <tr><td align="center" style="padding-bottom:32px;">
           <span style="font-size:24px;font-weight:700;color:#2d5016;letter-spacing:-0.5px;">
-            🌿 Doctopal
+            🌿 DoctoPal
           </span>
         </td></tr>
 

@@ -12,9 +12,9 @@ import { Resend } from "resend"
 
 const resend = new Resend(process.env.RESEND_API_KEY || "re_placeholder")
 
-const FROM_EMAIL = "Doctopal <noreply@doctopal.com>"
+const FROM_EMAIL = "DoctoPal <noreply@doctopal.com>"
 // Note: Until custom domain is verified in Resend,
-// use: "Doctopal <onboarding@resend.dev>" for testing
+// use: "DoctoPal <onboarding@resend.dev>" for testing
 
 interface SendEmailResult {
   success: boolean

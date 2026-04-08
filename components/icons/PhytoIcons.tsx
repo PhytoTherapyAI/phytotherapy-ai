@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 /**
- * Doctopal Custom Icon Set
+ * DoctoPal Custom Icon Set
  *
  * Design principles (behavioral psychology):
  * - Rounded organic shapes → trust & safety (vs angular = danger)

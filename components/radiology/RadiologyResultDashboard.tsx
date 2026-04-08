@@ -116,7 +116,7 @@ export function RadiologyResultDashboard({ analysis, imagePreview, lang }: Props
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `Doctopal-Radiology-${new Date().toISOString().split("T")[0]}.pdf`;
+      a.download = `DoctoPal-Radiology-${new Date().toISOString().split("T")[0]}.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
