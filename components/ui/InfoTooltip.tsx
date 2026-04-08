@@ -29,7 +29,8 @@ export function InfoTooltip({ title, description }: InfoTooltipProps) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -5 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-7 z-50 w-64 rounded-xl border border-slate-200 bg-white/90 backdrop-blur-md p-4 shadow-lg dark:bg-slate-900/90 dark:border-slate-700"
+              className="absolute left-1/2 top-8 z-50 w-[280px] -translate-x-1/2 rounded-xl border border-slate-200 bg-white/95 backdrop-blur-md p-4 shadow-xl dark:bg-slate-900/95 dark:border-slate-700"
+              style={{ maxWidth: "calc(100vw - 32px)", wordWrap: "break-word" }}
             >
               <p className="text-sm font-semibold text-foreground mb-1">{title}</p>
               <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
