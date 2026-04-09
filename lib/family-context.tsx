@@ -81,21 +81,28 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
           await fetchMembers(group.id)
         }
       }
-    } catch (err) {
+    } catch (err: unknown) {
+      if (err instanceof Error && (err.name === 'AbortError' || err.message?.includes('AbortError') || err.message?.includes('Lock'))) {
+        return // silently ignore abort/lock errors
+      }
       console.error('[Family] fetchFamilyData error:', err)
     }
   }, [user, supabase, fetchMembers])
 
   const fetchActiveSession = useCallback(async () => {
     if (!user) return
-    const { data } = await supabase
-      .from('active_profile_sessions')
-      .select('viewing_user_id')
-      .eq('user_id', user.id)
-      .maybeSingle()
+    try {
+      const { data } = await supabase
+        .from('active_profile_sessions')
+        .select('viewing_user_id')
+        .eq('user_id', user.id)
+        .maybeSingle()
 
-    // maybeSingle returns null if no row — no error thrown
-    setActiveProfileIdState(data?.viewing_user_id ?? user.id)
+      setActiveProfileIdState(data?.viewing_user_id ?? user.id)
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name === 'AbortError') return
+      console.error('[Family] fetchActiveSession error:', err)
+    }
   }, [user, supabase])
 
   useEffect(() => {

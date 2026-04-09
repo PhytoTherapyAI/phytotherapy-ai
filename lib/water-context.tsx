@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 'use client'
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { useActiveProfile } from '@/lib/use-active-profile'
 import { createBrowserClient } from '@/lib/supabase'
@@ -40,68 +40,87 @@ export function WaterIntakeProvider({ children }: { children: React.ReactNode })
   const [target, setTargetState] = useState(DEFAULT_TARGET)
   const [loading, setLoading] = useState(true)
   const [recordId, setRecordId] = useState<string | null>(null)
+  // Track which date column works in this DB
+  const [dateCol, setDateCol] = useState<'intake_date' | 'date'>('intake_date')
 
-  const supabase = createBrowserClient()
+  const supabase = useMemo(() => createBrowserClient(), [])
   const today = getToday()
   const userId = activeUserId || user?.id
 
   const fetchToday = useCallback(async () => {
     if (!userId) { setLoading(false); return }
     try {
-      const { data } = await supabase
+      // Try intake_date first, fallback to date
+      let { data, error } = await supabase
         .from('water_intake')
         .select('id, glasses, target_glasses')
         .eq('user_id', userId)
-        .eq('intake_date', today)
+        .eq(dateCol, today)
         .maybeSingle()
+
+      // 406 = column doesn't exist, try alternate
+      if (error && (error.code === 'PGRST204' || error.message?.includes('406') || error.code === '42703')) {
+        const altCol = dateCol === 'intake_date' ? 'date' : 'intake_date'
+        console.log('[Water] Trying alternate date column:', altCol)
+        const retry = await supabase
+          .from('water_intake')
+          .select('id, glasses, target_glasses')
+          .eq('user_id', userId)
+          .eq(altCol, today)
+          .maybeSingle()
+        if (!retry.error) {
+          setDateCol(altCol)
+          data = retry.data
+          error = null
+        }
+      }
 
       if (data) {
         setGlasses(data.glasses ?? 0)
-        if (data.target_glasses) setTargetState(data.target_glasses)
+        if ('target_glasses' in data && data.target_glasses) setTargetState(data.target_glasses)
         setRecordId(data.id)
       } else {
         setGlasses(0)
         setRecordId(null)
       }
-    } catch (err) {
+    } catch (err: unknown) {
+      // Silently ignore AbortError
+      if (err instanceof Error && err.name === 'AbortError') return
       console.error('[Water] fetch error:', err)
     } finally {
       setLoading(false)
     }
-  }, [userId, today, supabase])
+  }, [userId, today, supabase, dateCol])
 
   useEffect(() => {
     fetchToday()
   }, [fetchToday])
 
-  // Listen for external water changes
   useEffect(() => {
     const handler = () => fetchToday()
     window.addEventListener('water-intake-changed', handler)
     return () => window.removeEventListener('water-intake-changed', handler)
   }, [fetchToday])
 
-  const saveToDb = useCallback(async (newGlasses: number, newTarget?: number) => {
+  const saveToDb = useCallback(async (newGlasses: number) => {
     if (!userId) return
     try {
       if (recordId) {
-        const updateData: Record<string, unknown> = { glasses: newGlasses }
-        if (newTarget !== undefined) updateData.target_glasses = newTarget
-        await supabase.from('water_intake').update(updateData).eq('id', recordId)
+        await supabase.from('water_intake').update({ glasses: newGlasses }).eq('id', recordId)
       } else {
-        const { data } = await supabase.from('water_intake').insert({
+        const insertData: Record<string, unknown> = {
           user_id: userId,
-          intake_date: today,
+          [dateCol]: today,
           glasses: newGlasses,
-          target_glasses: newTarget ?? target,
-        }).select('id').single()
+        }
+        const { data } = await supabase.from('water_intake').insert(insertData).select('id').maybeSingle()
         if (data) setRecordId(data.id)
       }
       window.dispatchEvent(new Event('water-intake-changed'))
     } catch (err) {
       console.error('[Water] save error:', err)
     }
-  }, [userId, today, recordId, target, supabase])
+  }, [userId, today, recordId, dateCol, supabase])
 
   const addGlass = useCallback(async () => {
     const next = Math.min(glasses + 1, 20)
@@ -116,10 +135,8 @@ export function WaterIntakeProvider({ children }: { children: React.ReactNode })
   }, [glasses, saveToDb])
 
   const setTarget = useCallback(async (t: number) => {
-    const clamped = Math.max(1, Math.min(20, t))
-    setTargetState(clamped)
-    await saveToDb(glasses, clamped)
-  }, [glasses, saveToDb])
+    setTargetState(Math.max(1, Math.min(20, t)))
+  }, [])
 
   return (
     <WaterContext.Provider value={{

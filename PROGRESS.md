@@ -1,6 +1,6 @@
 # PROGRESS.md — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 9 Nisan 2026 (v46.0 — Session 18: Aile Profili Sistemi)
+> Son güncelleme: 9 Nisan 2026 (v46.0 — Session 18-19: Aile Profili + Core Fixes)
 
 ---
 
@@ -36,10 +36,25 @@
 - ✅ createGroup/inviteMember boolean return + feedback toast
 - ✅ SQL: partial unique index (duplicate invite prevention)
 
+### Session 19 Devamı — Core Fixes
+- ✅ Dialog sıralaması: İlaç onayı önce, check-in sonra (event sistemi)
+- ✅ Onboarding alerji: reaksiyon tipi inline dropdown + intolerance→gi_intolerance
+- ✅ Sigorta: "Emekli (SGK)" seçeneği eklendi
+- ✅ Onboarding save: alcohol_use "none" fallback, severity CHECK constraint map
+- ✅ Onboarding allergies JSONB → user_profiles.allergies + user_allergies dual write
+- ✅ Cerrahi geçmiş yıl input UX iyileştirme (daha büyük, Enter/Escape, 📅 ikon)
+- ✅ WaterIntakeContext: tek kaynak (dashboard + calendar + quick actions)
+- ✅ water_intake kolon fix: date/intake_date auto-detect, target_glasses
+- ✅ meta: supplement filter (dashboard görev listesinden kaldırıldı)
+- ✅ Family AbortError sessiz geçildi
+- ✅ Profile fetch: 5s timeout + 8s retry
+- ✅ SQL migrations: daily_check_ins, water_intake, daily_logs tabloları
+- ✅ SQL: CHECK constraint'ler güncellendi (severity, alcohol_use)
+
 ### Teknik
-- ✅ 10+ commit, tümü push edildi
-- ✅ 12 yeni dosya oluşturuldu
-- ✅ ~2000 satır ekleme
+- ✅ 20+ commit, tümü push edildi
+- ✅ 15+ yeni dosya oluşturuldu
+- ✅ ~3000 satır ekleme
 - ✅ Build: sıfır hata (her commit sonrası doğrulandı)
 
 ### Dosya Listesi
