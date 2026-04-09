@@ -1,17 +1,10 @@
 // © 2026 DoctoPal — All Rights Reserved
 import React from "react";
-import path from "path";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
 
-// ── Font Registration (server-side only — local TTF) ──
-const fontsDir = path.join(process.cwd(), "public", "fonts");
-Font.register({
-  family: "NotoSans",
-  fonts: [
-    { src: path.join(fontsDir, "NotoSans-Regular.ttf"), fontWeight: 400 },
-    { src: path.join(fontsDir, "NotoSans-Bold.ttf"), fontWeight: 700 },
-  ],
-});
+// ── Helvetica (built-in) + minimal Turkish fix ──
+// Helvetica supports ç,ş,ğ,ö,ü but NOT ı/İ — fix only those two
+const fixTr = (s: string) => s?.replace(/ı/g, "i").replace(/İ/g, "I") || "";
 Font.registerHyphenationCallback(word => [word]);
 
 // ── Types ──
@@ -52,7 +45,7 @@ const redText = "#991B1B";
 
 // ── Styles ──
 const s = StyleSheet.create({
-  page: { padding: 40, paddingBottom: 60, fontFamily: "NotoSans", fontSize: 9.5, color: textPrimary, backgroundColor: "#FFFFFF" },
+  page: { padding: 40, paddingBottom: 60, fontFamily: "Helvetica", fontSize: 9.5, color: textPrimary, backgroundColor: "#FFFFFF" },
   // Header
   headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 },
   logo: { fontSize: 20, fontWeight: "bold", color: sage },
@@ -109,7 +102,7 @@ const s = StyleSheet.create({
 });
 
 // ── Helpers ──
-const t = (en: string, tr: string, lang: string) => (lang === "tr" ? tr : en);
+const t = (en: string, tr: string, lang: string) => fixTr(lang === "tr" ? tr : en);
 
 const GENDER: Record<string, Record<string, string>> = {
   male: { en: "Male", tr: "Erkek" },
@@ -200,7 +193,7 @@ export function SBARReport({ data }: { data: SBARData }) {
             <Text style={s.logoSub}>{t("Evidence-Based Health Assistant", "Kanıta Dayalı Sağlık Asistanı", lang)}</Text>
           </View>
           <View style={s.headerRight}>
-            <Text style={s.headerDate}>{data.generatedAt}</Text>
+            <Text style={s.headerDate}>{fixTr(data.generatedAt)}</Text>
             <Text style={s.headerConfidential}>{t("Confidential Patient Information", "Gizli Hasta Bilgisi", lang)}</Text>
           </View>
         </View>
@@ -211,7 +204,7 @@ export function SBARReport({ data }: { data: SBARData }) {
           <View style={s.infoGrid}>
             <View style={s.infoItem}>
               <Text style={s.infoLabel}>{t("Full Name", "Ad Soyad", lang)}</Text>
-              <Text style={s.infoValue}>{data.fullName || "—"}</Text>
+              <Text style={s.infoValue}>{fixTr(data.fullName) || "—"}</Text>
             </View>
             <View style={s.infoItem}>
               <Text style={s.infoLabel}>{t("Age", "Yaş", lang)}</Text>
@@ -252,7 +245,7 @@ export function SBARReport({ data }: { data: SBARData }) {
           </View>
           <View style={s.sectionDivider} />
           <Text style={s.bodyText}>
-            {data.fullName || t("Patient", "Hasta", lang)}, {data.age ?? "?"} {t("years old", "yaşında", lang)}, {genderLabel.toLowerCase()}.
+            {fixTr(data.fullName) || t("Patient", "Hasta", lang)}, {data.age ?? "?"} {t("years old", "yaşında", lang)}, {fixTr(genderLabel.toLowerCase())}.
             {data.bloodGroup ? ` ${t("Blood group", "Kan grubu", lang)}: ${data.bloodGroup}.` : ""}
             {data.bmi != null ? ` BMI: ${data.bmi.toFixed(1)}.` : ""}
             {` ${smokingLabel}. ${alcoholLabel}.`}
@@ -273,7 +266,7 @@ export function SBARReport({ data }: { data: SBARData }) {
           {chronic.length > 0 ? chronic.map((c, i) => (
             <View key={i} style={s.bulletRow}>
               <Text style={s.bulletDot}>•</Text>
-              <Text style={s.bulletText}>{translateCondition(c, lang)}</Text>
+              <Text style={s.bulletText}>{fixTr(translateCondition(c, lang))}</Text>
             </View>
           )) : <Text style={s.emptyText}>{t("No chronic conditions reported", "Kronik hastalık bildirilmemiş", lang)}</Text>}
 
@@ -284,7 +277,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               {surgery.map((c, i) => (
                 <View key={i} style={s.bulletRow}>
                   <Text style={s.bulletDot}>•</Text>
-                  <Text style={s.bulletText}>{translateCondition(c, lang)}</Text>
+                  <Text style={s.bulletText}>{fixTr(translateCondition(c, lang))}</Text>
                 </View>
               ))}
             </>
@@ -297,7 +290,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               {data.familyHistory.map((f, i) => (
                 <View key={i} style={s.bulletRow}>
                   <Text style={s.bulletDot}>•</Text>
-                  <Text style={s.bulletText}>{translateCondition(f, lang)}</Text>
+                  <Text style={s.bulletText}>{fixTr(translateCondition(f, lang))}</Text>
                 </View>
               ))}
             </>
@@ -322,7 +315,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               </View>
               {data.allergies.map((a, i) => (
                 <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
-                  <Text style={[s.tableCell, s.col1]}>{a.allergen}</Text>
+                  <Text style={[s.tableCell, s.col1]}>{fixTr(a.allergen)}</Text>
                   <Text style={[s.tableCell, s.col2]}>{REACTION[a.severity]?.[lang] || a.severity}</Text>
                 </View>
               ))}
@@ -340,8 +333,8 @@ export function SBARReport({ data }: { data: SBARData }) {
               </View>
               {data.medications.map((m, i) => (
                 <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
-                  <Text style={[s.tableCell, s.col1]}>{m.name}</Text>
-                  <Text style={[s.tableCell, s.col2]}>{m.dosage}</Text>
+                  <Text style={[s.tableCell, s.col1]}>{fixTr(m.name)}</Text>
+                  <Text style={[s.tableCell, s.col2]}>{fixTr(m.dosage)}</Text>
                   <Text style={[s.tableCell, s.col3]}>{translateFreq(m.frequency, lang)}</Text>
                 </View>
               ))}
@@ -369,7 +362,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               </View>
               {data.vaccines.map((v, i) => (
                 <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
-                  <Text style={[s.tableCell, s.col1]}>{v.name}</Text>
+                  <Text style={[s.tableCell, s.col1]}>{fixTr(v.name)}</Text>
                   <Text style={[s.tableCell, s.col2]}>{v.lastDate || t("Not specified", "Belirtilmemiş", lang)}</Text>
                   <Text style={[s.tableCell, s.col3]}>{v.status === "done" ? "✓" : "—"}</Text>
                 </View>
@@ -411,7 +404,7 @@ export function SBARReport({ data }: { data: SBARData }) {
         <View style={s.footer} fixed>
           <Text style={s.footerText}>doctopal.com | KVKK {t("Compliant", "Uyumlu", lang)}</Text>
           <Text style={s.footerCenter} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
-          <Text style={s.footerText}>{data.generatedAt}</Text>
+          <Text style={s.footerText}>{fixTr(data.generatedAt)}</Text>
         </View>
       </Page>
     </Document>

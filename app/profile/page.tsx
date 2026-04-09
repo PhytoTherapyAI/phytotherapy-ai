@@ -342,7 +342,7 @@ export default function ProfilePage() {
       supabase.from("user_allergies").select("*").eq("user_id", activeUserId),
       supabase.from("blood_tests").select("id", { count: "exact", head: true }).eq("user_id", activeUserId),
       supabase.from("query_history").select("query_type, created_at").eq("user_id", activeUserId).order("created_at", { ascending: false }).limit(5),
-      supabase.from("daily_check_ins").select("check_in_date").eq("user_id", activeUserId).order("check_in_date", { ascending: false }).limit(30),
+      supabase.from("daily_check_ins").select("check_date").eq("user_id", activeUserId).order("check_date", { ascending: false }).limit(30),
     ]).then(([medsRes, allergyRes, labRes, activityRes, streakRes]) => {
       if (medsRes.data) setMedications(medsRes.data as UserMedication[]);
       if (allergyRes.data) setAllergies(allergyRes.data as UserAllergy[]);
@@ -353,7 +353,7 @@ export default function ProfilePage() {
         let streak = 0;
         const today = new Date(); today.setHours(0, 0, 0, 0);
         for (let i = 0; i < streakRes.data.length; i++) {
-          const d = new Date(streakRes.data[i].check_in_date); d.setHours(0, 0, 0, 0);
+          const d = new Date(streakRes.data[i].check_date); d.setHours(0, 0, 0, 0);
           const expected = new Date(today); expected.setDate(expected.getDate() - i);
           if (d.getTime() === expected.getTime()) streak++;
           else break;
@@ -1914,12 +1914,7 @@ export default function ProfilePage() {
 
       {/* Scanners removed — kept for mobile app later */}
 
-      {/* FAB — SBAR PDF shortcut */}
-      <PDFDownloadButton
-        lang={lang as "en" | "tr"}
-        variant="fab"
-        className="fixed bottom-36 right-4 md:bottom-20 md:right-8 z-[100] flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3.5 shadow-xl hover:shadow-2xl transition-shadow"
-      />
+      {/* FAB removed — SBAR PDF download/email available in Doctor Summary card */}
     </div>
   );
 }
