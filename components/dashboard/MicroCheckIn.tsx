@@ -44,6 +44,8 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
   const [saving, setSaving] = useState(false)
   const [alreadyDone, setAlreadyDone] = useState(false)
 
+  const [shouldOpen, setShouldOpen] = useState(false)
+
   const checkIfDone = useCallback(async () => {
     try {
       const supabase = createBrowserClient()
@@ -59,10 +61,9 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
       if (data.checkIn) {
         setAlreadyDone(true)
       } else {
-        // Show check-in dialog after a short delay
         const dismissed = sessionStorage.getItem("checkin-dismissed-" + today)
         if (!dismissed) {
-          setTimeout(() => setOpen(true), 2000)
+          setShouldOpen(true)
         }
       }
     } catch {
@@ -73,6 +74,35 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
   useEffect(() => {
     if (userId) checkIfDone()
   }, [userId, checkIfDone])
+
+  // Wait for med dialog to close before opening
+  useEffect(() => {
+    if (!shouldOpen) return
+
+    // Check if med dialog is currently active
+    let medDialogActive = false
+    const markActive = () => { medDialogActive = true }
+    window.addEventListener("med-dialog-will-open", markActive)
+
+    // If med dialog closes, open check-in after short delay
+    const onMedClosed = () => {
+      setTimeout(() => setOpen(true), 500)
+    }
+    window.addEventListener("med-dialog-closed", onMedClosed)
+
+    // If no med dialog fires within 1.5s, open check-in
+    const fallback = setTimeout(() => {
+      if (!medDialogActive) {
+        setOpen(true)
+      }
+    }, 1500)
+
+    return () => {
+      window.removeEventListener("med-dialog-will-open", markActive)
+      window.removeEventListener("med-dialog-closed", onMedClosed)
+      clearTimeout(fallback)
+    }
+  }, [shouldOpen])
 
   // Listen for external "open-checkin" event (from Dashboard button, Calendar, etc.)
   useEffect(() => {

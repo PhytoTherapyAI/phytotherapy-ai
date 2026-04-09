@@ -47,7 +47,14 @@ export function MedicationUpdateDialog() {
     needsOnboardingRefresh, confirmRefresh,
   } = useDailyMedCheck();
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpenState] = useState(false);
+  // Wrapper: fire event when dialog closes so check-in knows it can open
+  const setOpen = (val: boolean) => {
+    setOpenState(val);
+    if (!val) {
+      setTimeout(() => window.dispatchEvent(new Event("med-dialog-closed")), 300);
+    }
+  };
   const [isConfirming, setIsConfirming] = useState(false);
 
   // 30-day mini onboarding state
@@ -222,12 +229,15 @@ export function MedicationUpdateDialog() {
 
   useEffect(() => {
     if (mode) {
+      // Signal that med dialog is active — check-in should wait
+      window.dispatchEvent(new Event("med-dialog-will-open"));
       const timer = setTimeout(() => setOpen(true), 800);
       return () => clearTimeout(timer);
     } else {
       setOpen(false);
     }
   }, [mode]);
+
 
   // Handle dialog close (X button)
   const handleOpenChange = (newOpen: boolean) => {
