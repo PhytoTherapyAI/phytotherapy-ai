@@ -2,10 +2,53 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
 
-// ── Helvetica (built-in) + minimal Turkish fix ──
-// Helvetica supports ç,ş,ğ,ö,ü but NOT ı/İ — fix only those two
-const fixTr = (s: string) => s?.replace(/ı/g, "i").replace(/İ/g, "I") || "";
+// ── Helvetica (built-in) — transliterate ALL Turkish special chars ──
+const fixTr = (s: string): string => {
+  if (!s) return "";
+  return s
+    .replace(/ı/g, "i").replace(/İ/g, "I")
+    .replace(/ş/g, "s").replace(/Ş/g, "S")
+    .replace(/ğ/g, "g").replace(/Ğ/g, "G")
+    .replace(/ü/g, "u").replace(/Ü/g, "U")
+    .replace(/ö/g, "o").replace(/Ö/g, "O")
+    .replace(/ç/g, "c").replace(/Ç/g, "C");
+};
 Font.registerHyphenationCallback(word => [word]);
+
+// ── EN translation maps for TR-stored data ──
+const ALLERGEN_EN: Record<string, string> = {
+  "Arı Zehiri": "Bee Venom", "Penisilin": "Penicillin", "Aspirin": "Aspirin",
+  "Latex": "Latex", "Polen": "Pollen", "Süt": "Milk", "Yumurta": "Egg",
+  "Fıstık": "Peanut", "Gluten": "Gluten", "Soya": "Soy", "Balık": "Fish",
+  "Kabuklu Deniz Ürünleri": "Shellfish", "Buğday": "Wheat",
+};
+
+const VACCINE_EN: Record<string, string> = {
+  "KKK (Kızamık-Kabakulak-Kızamıkçık)": "MMR (Measles-Mumps-Rubella)",
+  "Suçiçeği (Varisella)": "Varicella (Chickenpox)",
+  "Hepatit A": "Hepatitis A", "Hepatit B": "Hepatitis B",
+  "Covid-19": "Covid-19", "Tetanoz (Td/Tdap)": "Tetanus (Td/Tdap)",
+  "Grip": "Influenza", "Pnömokok": "Pneumococcal",
+  "HPV": "HPV", "Zona": "Shingles (Zoster)",
+  "Meningokok": "Meningococcal", "Kuduz": "Rabies",
+  "Hepatit C": "Hepatitis C",
+};
+
+const MED_NAME_EN: Record<string, string> = {
+  "Metformin Hidroklorür": "Metformin Hydrochloride",
+  "Atorvastatin Kalsiyum": "Atorvastatin Calcium",
+  "Varfarin": "Warfarin", "Losartan Potasyum": "Losartan Potassium",
+  "Amlodipin": "Amlodipine", "Ramipril": "Ramipril",
+  "Lisinopril": "Lisinopril", "Metoprolol": "Metoprolol",
+};
+
+/** Translate data value: if lang=en, look up TR→EN map; always fixTr for PDF safety */
+function loc(value: string, lang: string, enMap?: Record<string, string>): string {
+  if (lang === "en" && enMap) {
+    return fixTr(enMap[value] || value);
+  }
+  return fixTr(value);
+}
 
 // ── Types ──
 export interface SBARData {
@@ -315,7 +358,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               </View>
               {data.allergies.map((a, i) => (
                 <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
-                  <Text style={[s.tableCell, s.col1]}>{fixTr(a.allergen)}</Text>
+                  <Text style={[s.tableCell, s.col1]}>{loc(a.allergen, lang, ALLERGEN_EN)}</Text>
                   <Text style={[s.tableCell, s.col2]}>{REACTION[a.severity]?.[lang] || a.severity}</Text>
                 </View>
               ))}
@@ -333,7 +376,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               </View>
               {data.medications.map((m, i) => (
                 <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
-                  <Text style={[s.tableCell, s.col1]}>{fixTr(m.name)}</Text>
+                  <Text style={[s.tableCell, s.col1]}>{loc(m.name, lang, MED_NAME_EN)}</Text>
                   <Text style={[s.tableCell, s.col2]}>{fixTr(m.dosage)}</Text>
                   <Text style={[s.tableCell, s.col3]}>{translateFreq(m.frequency, lang)}</Text>
                 </View>
@@ -346,7 +389,7 @@ export function SBARReport({ data }: { data: SBARData }) {
             <>
               <Text style={s.subTitle}>{t("Supplements", "Takviyeler", lang)}</Text>
               <View style={s.badgeRow}>
-                {data.supplements.map((sup, i) => <Text key={i} style={s.badge}>{sup}</Text>)}
+                {data.supplements.map((sup, i) => <Text key={i} style={s.badge}>{fixTr(sup)}</Text>)}
               </View>
             </>
           )}
@@ -362,7 +405,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               </View>
               {data.vaccines.map((v, i) => (
                 <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
-                  <Text style={[s.tableCell, s.col1]}>{fixTr(v.name)}</Text>
+                  <Text style={[s.tableCell, s.col1]}>{loc(v.name, lang, VACCINE_EN)}</Text>
                   <Text style={[s.tableCell, s.col2]}>{v.lastDate || t("Not specified", "Belirtilmemiş", lang)}</Text>
                   <Text style={[s.tableCell, s.col3]}>{v.status === "done" ? "✓" : "—"}</Text>
                 </View>
