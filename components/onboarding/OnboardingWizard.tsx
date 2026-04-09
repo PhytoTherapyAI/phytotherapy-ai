@@ -383,12 +383,24 @@ export function OnboardingWizard({ profile }: Props) {
       }
 
       // 2. Save allergies to user_allergies table (backward compat)
+      // Map new severity values to DB-safe values
+      const mapSeverityForDb = (s: string): string => {
+        const map: Record<string, string> = {
+          anaphylaxis: "severe",
+          urticaria: "moderate",
+          mild_skin: "mild",
+          gi_intolerance: "mild",
+          unknown: "unknown",
+        };
+        return map[s] || s;
+      };
+
       if (data.allergies.length > 0) {
         await supabase.from("user_allergies").delete().eq("user_id", userId);
         const allergiesToInsert = data.allergies.map((allergy) => ({
           user_id: userId,
           allergen: allergy.allergen,
-          severity: allergy.severity,
+          severity: mapSeverityForDb(allergy.severity),
         }));
         const { error: allergyError } = await supabase
           .from("user_allergies")
@@ -424,8 +436,8 @@ export function OnboardingWizard({ profile }: Props) {
         gender: data.gender,
         is_pregnant: data.is_pregnant,
         is_breastfeeding: data.is_breastfeeding,
-        alcohol_use: data.alcohol_use,
-        smoking_use: data.smoking_use,
+        alcohol_use: data.alcohol_use || "none",
+        smoking_use: data.smoking_use || "none",
         kidney_disease: data.kidney_disease,
         liver_disease: data.liver_disease,
         recent_surgery: data.recent_surgery,
@@ -454,6 +466,8 @@ export function OnboardingWizard({ profile }: Props) {
       console.log("[Onboarding] userId:", userId);
       console.log("[Onboarding] payload keys:", Object.keys(profilePayload));
       console.log("[Onboarding] allergies count:", allergiesJsonb.length);
+      console.log("[Onboarding] alcohol_use:", profilePayload.alcohol_use);
+      console.log("[Onboarding] smoking_use:", profilePayload.smoking_use);
       console.log("[Onboarding] chronic_conditions:", data.chronic_conditions);
 
       let { error: profileError } = await supabase
