@@ -613,39 +613,54 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={reducedMotion ? undefined : { opacity: 0, height: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="flex items-center gap-2 rounded-lg border p-2.5">
-                    <Scissors className="h-3.5 w-3.5 text-primary shrink-0" />
+                    className="flex items-center gap-2 rounded-xl border bg-card shadow-sm px-3 py-2.5">
+                    <Scissors className="h-4 w-4 text-primary shrink-0" />
                     <span className="text-sm font-medium flex-1 truncate">{getSurgeryLabel(parsed.id)}</span>
 
-                    {/* Year inline input */}
+                    {/* Year inline input — bigger, cleaner */}
                     {editingYear === parsed.id ? (
-                      <Input type="number" min={1950} max={new Date().getFullYear()}
-                        placeholder={tx("onb.surgeryYearPlaceholder", lang)}
-                        defaultValue={parsed.year || ""}
-                        className="h-7 w-20 text-xs"
-                        autoFocus
-                        onBlur={(e) => {
-                          const v = parseInt(e.target.value, 10);
-                          updateSurgeryYear(parsed.id, v >= 1950 && v <= new Date().getFullYear() ? v : undefined);
-                          setEditingYear(null);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") (e.target as HTMLInputElement).blur();
-                          if (e.key === "Escape") setEditingYear(null);
-                        }} />
+                      <div className="flex items-center gap-1">
+                        <input type="number" min={1950} max={new Date().getFullYear()}
+                          placeholder="2018"
+                          defaultValue={parsed.year || ""}
+                          className="w-20 border border-border rounded-lg px-2 py-1.5 text-sm bg-background text-foreground focus:ring-2 focus:ring-primary outline-none"
+                          autoFocus
+                          onBlur={(e) => {
+                            const v = parseInt(e.target.value, 10);
+                            updateSurgeryYear(parsed.id, v >= 1950 && v <= new Date().getFullYear() ? v : undefined);
+                            setEditingYear(null);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              const v = parseInt((e.target as HTMLInputElement).value, 10);
+                              updateSurgeryYear(parsed.id, v >= 1950 && v <= new Date().getFullYear() ? v : undefined);
+                              setEditingYear(null);
+                            }
+                            if (e.key === "Escape") setEditingYear(null);
+                          }} />
+                        <button type="button"
+                          onClick={() => setEditingYear(null)}
+                          className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:bg-muted/80 transition text-xs">
+                          &#10005;
+                        </button>
+                      </div>
                     ) : (
                       <button type="button" onClick={() => setEditingYear(parsed.id)}
-                        className="text-[11px] text-muted-foreground hover:text-foreground transition-colors px-1.5 py-0.5 rounded hover:bg-muted">
+                        className={`text-xs font-medium px-3 py-1.5 rounded-lg transition border-2 border-dashed ${
+                          parsed.year
+                            ? "border-primary/30 text-primary bg-primary/5"
+                            : "border-emerald-300 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-400 dark:border-emerald-700 dark:text-emerald-400 dark:hover:bg-emerald-950/30"
+                        }`}>
                         {parsed.year
-                          ? `${parsed.year}`
+                          ? `📅 ${parsed.year}`
                           : `+ ${tx("onb.surgeryYearLabel", lang)}`}
                       </button>
                     )}
 
                     <button type="button" onClick={() => removeSurgery(parsed.id)}
-                      className="rounded-full p-0.5 hover:bg-destructive/10 transition-colors"
+                      className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition"
                       aria-label={`Remove ${parsed.id}`}>
-                      <X className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                      <X className="h-4 w-4" />
                     </button>
                   </motion.div>
                 ))}

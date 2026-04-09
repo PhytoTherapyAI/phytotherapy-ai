@@ -382,47 +382,22 @@ export function OnboardingWizard({ profile }: Props) {
         }
       }
 
-      // 2. Save allergies — both user_allergies table AND user_profiles.allergies JSONB
-      {
-        // Build JSONB array for user_profiles
-        const allergiesJsonb = data.allergies.map((a) => ({
-          allergen: a.allergen,
-          severity: a.severity,
+      // 2. Save allergies to user_allergies table (backward compat)
+      if (data.allergies.length > 0) {
+        await supabase.from("user_allergies").delete().eq("user_id", userId);
+        const allergiesToInsert = data.allergies.map((allergy) => ({
+          user_id: userId,
+          allergen: allergy.allergen,
+          severity: allergy.severity,
         }));
-
-        // Save to user_profiles.allergies JSONB (primary)
-        const { error: allergyJsonError } = await supabase
-          .from("user_profiles")
-          .update({ allergies: data.no_allergies ? [] : allergiesJsonb })
-          .eq("id", userId);
-
-        if (allergyJsonError) {
-          console.error("[Onboarding] Allergy JSONB save error:", allergyJsonError.message, allergyJsonError.details);
-          // Non-critical — continue with user_allergies table
+        const { error: allergyError } = await supabase
+          .from("user_allergies")
+          .insert(allergiesToInsert);
+        if (allergyError) {
+          console.error("[Onboarding] user_allergies insert error:", allergyError.message, allergyError.details);
         }
-
-        // Also save to user_allergies table (for backward compat)
-        if (data.allergies.length > 0) {
-          await supabase.from("user_allergies").delete().eq("user_id", userId);
-
-          const allergiesToInsert = data.allergies.map((allergy) => ({
-            user_id: userId,
-            allergen: allergy.allergen,
-            severity: allergy.severity,
-          }));
-
-          const { error: allergyError } = await supabase
-            .from("user_allergies")
-            .insert(allergiesToInsert);
-
-          if (allergyError) {
-            console.error("[Onboarding] user_allergies insert error:", allergyError.message, allergyError.details, allergyError.hint, "Data:", allergiesToInsert);
-            // Non-critical if JSONB save succeeded
-          }
-        } else if (data.no_allergies) {
-          // Clear old allergies if user says "no allergies"
-          await supabase.from("user_allergies").delete().eq("user_id", userId);
-        }
+      } else if (data.no_allergies) {
+        await supabase.from("user_allergies").delete().eq("user_id", userId);
       }
 
       // 3. Save consent record
@@ -436,44 +411,80 @@ export function OnboardingWizard({ profile }: Props) {
         console.error("[Onboarding] Consent save failed (non-critical):", consentErr);
       }
 
-      // 4. Update profile
-      const { error: profileError } = await supabase
+      // 4. Update profile — build payload, log it, then save
+      const allergiesJsonb = data.no_allergies ? [] : data.allergies.map((a) => ({
+        allergen: a.allergen,
+        severity: a.severity,
+      }));
+
+      const profilePayload: Record<string, unknown> = {
+        full_name: data.full_name,
+        birth_date: data.birth_date || null,
+        age: data.age,
+        gender: data.gender,
+        is_pregnant: data.is_pregnant,
+        is_breastfeeding: data.is_breastfeeding,
+        alcohol_use: data.alcohol_use,
+        smoking_use: data.smoking_use,
+        kidney_disease: data.kidney_disease,
+        liver_disease: data.liver_disease,
+        recent_surgery: data.recent_surgery,
+        chronic_conditions: data.chronic_conditions,
+        height_cm: data.height_cm,
+        weight_kg: data.weight_kg,
+        blood_group: data.blood_group || null,
+        diet_type: data.diet_type || null,
+        exercise_frequency: data.exercise_frequency || null,
+        sleep_quality: data.sleep_quality || null,
+        supplements: data.supplement_entries.length > 0
+          ? data.supplement_entries.map(e =>
+              [e.name, e.dose || "", e.doseUnit || "", e.frequency || "daily"].join("|")
+            )
+          : data.supplements,
+        onboarding_complete: true,
+        onboarding_layer2_complete: isLayer2,
+        consent_timestamp: new Date().toISOString(),
+        last_medication_update: new Date().toISOString(),
+      };
+
+      // Add allergies JSONB if column exists (try/catch — non-blocking if column missing)
+      profilePayload.allergies = allergiesJsonb;
+
+      console.log("[Onboarding] === PROFILE UPDATE ===");
+      console.log("[Onboarding] userId:", userId);
+      console.log("[Onboarding] payload keys:", Object.keys(profilePayload));
+      console.log("[Onboarding] allergies count:", allergiesJsonb.length);
+      console.log("[Onboarding] chronic_conditions:", data.chronic_conditions);
+
+      let { error: profileError } = await supabase
         .from("user_profiles")
-        .update({
-          full_name: data.full_name,
-          birth_date: data.birth_date || null,
-          age: data.age,
-          gender: data.gender,
-          is_pregnant: data.is_pregnant,
-          is_breastfeeding: data.is_breastfeeding,
-          alcohol_use: data.alcohol_use,
-          smoking_use: data.smoking_use,
-          kidney_disease: data.kidney_disease,
-          liver_disease: data.liver_disease,
-          recent_surgery: data.recent_surgery,
-          chronic_conditions: data.chronic_conditions,
-          height_cm: data.height_cm,
-          weight_kg: data.weight_kg,
-          blood_group: data.blood_group || null,
-          diet_type: data.diet_type || null,
-          exercise_frequency: data.exercise_frequency || null,
-          sleep_quality: data.sleep_quality || null,
-          supplements: data.supplement_entries.length > 0
-            ? data.supplement_entries.map(e =>
-                [e.name, e.dose || "", e.doseUnit || "", e.frequency || "daily"].join("|")
-              )
-            : data.supplements,
-          onboarding_complete: true,
-          onboarding_layer2_complete: isLayer2,
-          consent_timestamp: new Date().toISOString(),
-          last_medication_update: new Date().toISOString(),
-        })
+        .update(profilePayload)
         .eq("id", userId);
 
+      // If allergies column doesn't exist, retry without it
       if (profileError) {
-        console.error("[Onboarding] Profile update error:", profileError);
+        console.error("[Onboarding] Profile update error:", profileError.message, profileError.details, profileError.hint);
+
+        if (profileError.message?.includes("allergies") || profileError.details?.includes("allergies")) {
+          console.log("[Onboarding] Retrying without allergies column...");
+          delete profilePayload.allergies;
+          const retry = await supabase
+            .from("user_profiles")
+            .update(profilePayload)
+            .eq("id", userId);
+          profileError = retry.error;
+          if (profileError) {
+            console.error("[Onboarding] Retry also failed:", profileError.message);
+          }
+        }
+      }
+
+      if (profileError) {
+        console.error("[Onboarding] Final profile error:", profileError);
         throw profileError;
       }
+
+      console.log("[Onboarding] === PROFILE SAVED OK ===");
 
       // 5. Mark first login as done + confirm all checks
       markFirstLoginDone();
