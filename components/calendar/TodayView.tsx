@@ -869,7 +869,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       const supabase = createBrowserClient()
       const { data: existing } = await supabase.from("water_intake").select("id").eq("user_id", userId).eq("intake_date", today).single()
       if (existing) {
-        await supabase.from("water_intake").update({ glasses: clamped, updated_at: new Date().toISOString() }).eq("id", existing.id)
+        await supabase.from("water_intake").update({ glasses: clamped }).eq("id", existing.id)
       } else {
         await supabase.from("water_intake").insert({ user_id: userId, intake_date: today, glasses: clamped, target_glasses: waterTarget })
       }

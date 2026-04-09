@@ -431,6 +431,8 @@ export default function Home() {
         }
       });
       supsRes.data?.forEach((s: any) => {
+        // Skip meta: entries that leaked into calendar_events
+        if (s.title?.startsWith("meta:")) return;
         const supName = getSupplementDisplayName(s.title, lang as "en" | "tr");
         tasks.push({ id: s.id, emoji: "🌿", labelEn: supName, labelTr: supName, duration: null, isSup: true });
       });

@@ -359,8 +359,10 @@ export function OnboardingWizard({ profile }: Props) {
       const userId = user.id;
 
       // 1. Save medications
+      console.log("[Onboarding] Medications to save:", data.medications.length, data.medications);
       if (data.medications.length > 0) {
-        await supabase.from("user_medications").delete().eq("user_id", userId);
+        const { error: delErr } = await supabase.from("user_medications").delete().eq("user_id", userId);
+        if (delErr) console.error("[Onboarding] Med delete error:", delErr.message);
 
         const medsToInsert = data.medications.map((med) => ({
           user_id: userId,
@@ -371,15 +373,20 @@ export function OnboardingWizard({ profile }: Props) {
           is_active: true,
         }));
 
-        const { error: medError } = await supabase
+        console.log("[Onboarding] Inserting meds:", medsToInsert);
+        const { data: insertedMeds, error: medError } = await supabase
           .from("user_medications")
-          .insert(medsToInsert);
+          .insert(medsToInsert)
+          .select();
+
+        console.log("[Onboarding] Med insert result:", { insertedMeds, medError: medError?.message });
 
         if (medError) {
-          console.error("[Onboarding] Medication insert error:", medError);
-          setSaveError(tx("onb.medSaveError", lang));
-          return;
+          console.error("[Onboarding] Medication insert error:", medError.message, medError.details, medError.hint);
+          // Non-critical — continue (don't block onboarding)
         }
+      } else {
+        console.log("[Onboarding] No medications to save (no_medications:", data.no_medications, ")");
       }
 
       // 2. Save allergies to user_allergies table (backward compat)

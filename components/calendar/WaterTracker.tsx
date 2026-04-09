@@ -25,7 +25,7 @@ export function WaterTracker({ userId, date, lang }: WaterTrackerProps) {
         .from("water_intake")
         .select("glasses")
         .eq("user_id", userId)
-        .eq("date", date)
+        .eq("intake_date", date)
         .single()
 
       if (data) {
@@ -55,18 +55,18 @@ export function WaterTracker({ userId, date, lang }: WaterTrackerProps) {
           .from("water_intake")
           .select("id")
           .eq("user_id", userId)
-          .eq("date", date)
+          .eq("intake_date", date)
           .single()
 
         if (existing) {
           await supabase
             .from("water_intake")
-            .update({ glasses: clamped, updated_at: new Date().toISOString() })
+            .update({ glasses: clamped })
             .eq("id", existing.id)
         } else {
           await supabase.from("water_intake").insert({
             user_id: userId,
-            date,
+            intake_date: date,
             glasses: clamped,
           })
         }
