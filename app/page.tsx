@@ -18,6 +18,7 @@ import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
 import { useFamily } from "@/lib/family-context";
 import { useActiveProfile } from "@/lib/use-active-profile";
+import { useWater } from "@/lib/water-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
@@ -368,8 +369,7 @@ export default function Home() {
   const [streak, setStreak] = useState(0);
   // Dynamic med/sup tasks from Supabase
   const [dynamicTasks, setDynamicTasks] = useState<DashboardTask[]>([]);
-  const [waterGlasses, setWaterGlasses] = useState(0);
-  const [waterTarget, setWaterTarget] = useState(8);
+  const { glasses: waterGlasses, target: waterTarget } = useWater();
   const todayStr = getLocalDate();
 
   // Build the full task list: dynamic med/sup tasks + static tasks
@@ -412,11 +412,11 @@ export default function Home() {
     if (!activeUserId) return;
     try {
       const supabase = createBrowserClient();
-      const [medsRes, supsRes, logsRes, waterRes] = await Promise.all([
+      const [medsRes, supsRes, logsRes] = await Promise.all([
         supabase.from("user_medications").select("id, brand_name, generic_name, dosage, frequency").eq("user_id", activeUserId).eq("is_active", true),
         supabase.from("calendar_events").select("id, title").eq("user_id", activeUserId).eq("event_type", "supplement").eq("recurrence", "daily"),
         supabase.from("daily_logs").select("item_id, item_type, completed").eq("user_id", activeUserId).eq("log_date", todayStr).eq("completed", true),
-        supabase.from("water_intake").select("glasses, target_glasses").eq("user_id", activeUserId).eq("intake_date", todayStr).single(),
+        // water_intake artık WaterIntakeContext'ten geliyor
       ]);
 
       // Build dynamic task list
@@ -444,12 +444,6 @@ export default function Home() {
       const staticDone = loadCompletedTasks(todayStr);
       STATIC_DASHBOARD_TASKS.forEach(t => { if (staticDone.has(t.id)) doneIds.add(t.id); });
       setCompletedTaskIds(doneIds);
-
-      // Water
-      if (waterRes.data) {
-        setWaterGlasses(waterRes.data.glasses ?? 0);
-        if (waterRes.data.target_glasses) setWaterTarget(waterRes.data.target_glasses);
-      }
     } catch {}
   }, [activeUserId, todayStr, lang]);
 

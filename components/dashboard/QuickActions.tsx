@@ -2,6 +2,7 @@
 "use client"
 
 import { useState } from "react"
+import { useWater } from "@/lib/water-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -24,12 +25,8 @@ const MOOD_OPTIONS = [
 ]
 
 export function QuickActions({ lang, userId }: QuickActionsProps) {
+  const { glasses: waterCount, addGlass } = useWater()
   const [medsDone, setMedsDone] = useState(false)
-  const [waterCount, setWaterCount] = useState(() => {
-    if (typeof window === "undefined") return 0
-    const today = new Date().toISOString().split("T")[0]
-    return parseInt(localStorage.getItem(`qa-water-${today}`) || "0", 10)
-  })
   const [moodOpen, setMoodOpen] = useState(false)
   const [moodSelected, setMoodSelected] = useState<number | null>(null)
   const [symptomOpen, setSymptomOpen] = useState(false)
@@ -45,10 +42,7 @@ export function QuickActions({ lang, userId }: QuickActionsProps) {
   }
 
   const handleWater = () => {
-    const next = waterCount + 1
-    setWaterCount(next)
-    localStorage.setItem(`qa-water-${today}`, String(next))
-    window.dispatchEvent(new CustomEvent("water-logged", { detail: { count: next } }))
+    addGlass()
   }
 
   const handleMoodSelect = (value: number) => {

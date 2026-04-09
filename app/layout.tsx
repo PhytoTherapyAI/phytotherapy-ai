@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/footer";
 import { DisclaimerBanner } from "@/components/layout/disclaimer-banner";
 import { AuthProvider } from "@/lib/auth-context";
 import { FamilyProvider } from "@/lib/family-context";
+import { WaterIntakeProvider } from "@/lib/water-context";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/components/layout/language-toggle";
 import dynamic from "next/dynamic";
@@ -127,6 +128,7 @@ export default function RootLayout({
           <LanguageProvider>
             <AuthProvider>
             <FamilyProvider>
+            <WaterIntakeProvider>
               <Header />
               <TrialBannerWrapper />
               <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-hidden">
@@ -150,6 +152,7 @@ export default function RootLayout({
               <CriticalAlertModal />
               <FeedbackWidget />
               <BottomNavbar />
+            </WaterIntakeProvider>
             </FamilyProvider>
             </AuthProvider>
           </LanguageProvider>
