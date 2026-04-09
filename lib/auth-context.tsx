@@ -46,8 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   const fetchProfile = useCallback(async (userId: string): Promise<UserProfile | null> => {
-    try {
-
+    const doFetch = async (timeoutMs: number) => {
       const profilePromise = supabase
         .from("user_profiles")
         .select("*")
@@ -55,25 +54,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single();
 
       const timeoutPromise = new Promise<null>((resolve) => {
-        setTimeout(() => {
-          console.warn("[Auth] Profile fetch timed out after 8s");
-          resolve(null);
-        }, 8000);
+        setTimeout(() => resolve(null), timeoutMs);
       });
 
       const result = await Promise.race([profilePromise, timeoutPromise]);
 
-      if (!result || !("data" in result)) {
-        return null;
-      }
-
+      if (!result || !("data" in result)) return null;
       const { data, error } = result;
-
       if (error) {
         console.error("[Auth] Profile fetch error:", error.message);
         return null;
       }
       return data as UserProfile;
+    };
+
+    try {
+      // First try: 5s timeout
+      const profile = await doFetch(5000);
+      if (profile) return profile;
+
+      // Retry: 8s timeout
+      console.warn("[Auth] Profile fetch timed out, retrying...");
+      const retry = await doFetch(8000);
+      if (retry) return retry;
+
+      console.error("[Auth] Profile fetch failed after retry");
+      return null;
     } catch (err) {
       console.error("[Auth] Profile fetch exception:", err);
       return null;

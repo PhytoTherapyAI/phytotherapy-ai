@@ -823,7 +823,7 @@ export default function Home() {
               <SeasonalCard lang={lang} userConditions={profile.chronic_conditions || []} />
               <WeeklySummaryCard userId={user.id} lang={lang} isPremium={isPremium} />
               <WashoutCountdown key={supRefreshKey} userId={user.id} lang={lang} isPremium={isPremium}
-                profileSupplements={profile.supplements || []} onAddSupplement={() => setAddSupOpen(true)} />
+                profileSupplements={(profile.supplements || []).filter((s: string) => !s.startsWith("meta:"))} onAddSupplement={() => setAddSupOpen(true)} />
             </div>
             <div className="space-y-6">
               <BiologicalAgeCard userId={user.id} lang={lang} isPremium={isPremium}

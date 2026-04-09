@@ -95,10 +95,12 @@ export function WashoutCountdown({ userId, lang, isPremium = false, profileSuppl
       const calendarNamesNorm = calendarSupps.map(e => normalize(e.title))
 
       // Auto-add profile supplements that aren't in calendar yet
-      const missingFromProfile = profileSupplements.filter(ps => {
-        const pn = normalize(ps)
-        return !calendarNamesNorm.some(cn => cn.includes(pn) || pn.includes(cn))
-      })
+      const missingFromProfile = profileSupplements
+        .filter(ps => !ps.startsWith("meta:")) // exclude meta entries
+        .filter(ps => {
+          const pn = normalize(ps)
+          return !calendarNamesNorm.some(cn => cn.includes(pn) || pn.includes(cn))
+        })
 
       if (missingFromProfile.length > 0) {
         const today = new Date().toISOString().split("T")[0]
