@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Shield, ChevronDown, ChevronUp, Check } from "lucide-react"
@@ -238,6 +238,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
 
                         return (
                           <div key={vDef.id}
+                            data-vaccine-id={vDef.id}
                             className={`flex items-center gap-3 px-4 py-3 min-h-[48px] relative cursor-pointer transition-colors duration-200 ${isDone ? "bg-green-50/50 dark:bg-green-950/10 hover:bg-green-50 dark:hover:bg-green-950/20" : "hover:bg-muted/30"}`}
                             onClick={() => toggleVaccine(vDef.id)}
                             role="button"
@@ -278,29 +279,15 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
                               {isDone && <ChevronDown className={`h-3 w-3 transition-transform ${isDateOpen ? "rotate-180" : ""}`} />}
                             </button>
 
-                            {/* Year picker dropdown */}
+                            {/* Year picker dropdown — fixed position to escape overflow-hidden */}
                             {isDateOpen && (
-                              <div className="absolute right-4 top-full mt-1 z-50 w-40 max-h-48 overflow-y-auto rounded-lg border bg-background shadow-lg" onClick={(e) => e.stopPropagation()}>
-                                <button
-                                  type="button"
-                                  onClick={(e) => { e.stopPropagation(); setDate(vDef.id, ""); }}
-                                  className="w-full px-3 py-1.5 text-left text-xs text-muted-foreground hover:bg-muted/50 border-b"
-                                >
-                                  {tr ? "Hatırlamıyorum" : "Don't remember"}
-                                </button>
-                                {YEARS.map(y => (
-                                  <button
-                                    key={y}
-                                    type="button"
-                                    onClick={(e) => { e.stopPropagation(); setDate(vDef.id, String(y)); }}
-                                    className={`w-full px-3 py-1.5 text-left text-xs hover:bg-muted/50 ${
-                                      entry?.last_date === String(y) ? "bg-primary/10 text-primary font-semibold" : ""
-                                    }`}
-                                  >
-                                    {y}
-                                  </button>
-                                ))}
-                              </div>
+                              <YearPickerDropdown
+                                tr={tr}
+                                entry={entry}
+                                triggerId={vDef.id}
+                                onSelect={(year) => setDate(vDef.id, year)}
+                                onClose={() => setOpenDatePicker(null)}
+                              />
                             )}
                           </div>
                         )
@@ -314,6 +301,66 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
         })}
       </CardContent>
     </Card>
+  )
+}
+
+// Year picker dropdown — uses fixed positioning to escape overflow-hidden containers
+function YearPickerDropdown({ tr, entry, triggerId, onSelect, onClose }: {
+  tr: boolean
+  entry: VaccineEntry | undefined
+  triggerId: string
+  onSelect: (year: string) => void
+  onClose: () => void
+}) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null)
+
+  useEffect(() => {
+    // Find the trigger button by looking for the parent with the vaccine id
+    const row = document.querySelector(`[data-vaccine-id="${triggerId}"]`)
+    if (row) {
+      const rect = row.getBoundingClientRect()
+      setPos({ top: rect.bottom + 4, left: Math.min(rect.right - 160, window.innerWidth - 170) })
+    }
+  }, [triggerId])
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose()
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [onClose])
+
+  if (!pos) return null
+
+  return (
+    <div
+      ref={ref}
+      className="fixed z-[200] w-40 max-h-48 overflow-y-auto rounded-lg border bg-background shadow-xl"
+      style={{ top: pos.top, left: pos.left }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); onSelect(""); }}
+        className="w-full px-3 py-1.5 text-left text-xs text-muted-foreground hover:bg-muted/50 border-b"
+      >
+        {tr ? "Hatırlamıyorum" : "Don't remember"}
+      </button>
+      {YEARS.map(y => (
+        <button
+          key={y}
+          type="button"
+          onClick={(e) => { e.stopPropagation(); onSelect(String(y)); }}
+          className={`w-full px-3 py-1.5 text-left text-xs hover:bg-muted/50 ${
+            entry?.last_date === String(y) ? "bg-primary/10 text-primary font-semibold" : ""
+          }`}
+        >
+          {y}
+        </button>
+      ))}
+    </div>
   )
 }
 

@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { translateCondition, isSurgery, stripPrefix } from "@/lib/condition-translations";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageSkeleton } from "@/components/ui/page-skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -1596,15 +1597,16 @@ export default function ProfilePage() {
         const endo = ["Diabetes", "Thyroid Disorder"];
         const neuro = ["Depression/Anxiety", "Epilepsy"];
         const resp = ["Asthma", "COPD"];
-        const surg = ["Bariatric Surgery"];
+        const surgNames = ["Bariatric Surgery"];
+        const surgItems = conditions.filter((c: string) => surgNames.includes(c) || isSurgery(c));
         const groupDefs = [
           { key: "cardio", label: tr ? "Kardiyovasküler" : "Cardiovascular", icon: "❤️", color: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300", items: conditions.filter((c: string) => cardio.includes(c)) },
           { key: "endo", label: tr ? "Endokrin" : "Endocrine", icon: "🩺", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300", items: conditions.filter((c: string) => endo.includes(c)) },
           { key: "neuro", label: tr ? "Nörolojik" : "Neurological", icon: "🧠", color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300", items: conditions.filter((c: string) => neuro.includes(c)) },
           { key: "resp", label: tr ? "Solunum" : "Respiratory", icon: "🫁", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300", items: conditions.filter((c: string) => resp.includes(c)) },
-          { key: "surg", label: tr ? "Cerrahi" : "Surgical", icon: "🔪", color: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300", items: conditions.filter((c: string) => surg.includes(c)) },
+          { key: "surg", label: tr ? "Cerrahi Geçmiş" : "Surgical History", icon: "🔪", color: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300", items: surgItems },
         ].filter(g => g.items.length > 0);
-        const others = conditions.filter((c: string) => ![...cardio, ...endo, ...neuro, ...resp, ...surg].includes(c));
+        const others = conditions.filter((c: string) => ![...cardio, ...endo, ...neuro, ...resp, ...surgNames].includes(c) && !isSurgery(c));
 
         // Cardiometabolic risk detection
         const hasCardioMetabolic = conditions.includes("Diabetes") && conditions.includes("Hypertension");
@@ -1645,13 +1647,13 @@ export default function ProfilePage() {
                           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{g.label}</p>
                         </div>
                         <div className="flex flex-wrap gap-1.5 ml-6">
-                          {g.items.map((c: string) => <Badge key={c} className={g.color}>{c}</Badge>)}
+                          {g.items.map((c: string) => <Badge key={c} className={g.color}>{translateCondition(c, lang)}</Badge>)}
                         </div>
                       </div>
                     ))}
                     {others.length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
-                        {others.map((c: string) => <Badge key={c} variant="secondary">{c}</Badge>)}
+                        {others.map((c: string) => <Badge key={c} variant="secondary">{translateCondition(c, lang)}</Badge>)}
                       </div>
                     )}
 
@@ -1703,7 +1705,7 @@ export default function ProfilePage() {
                             <div key={c} className="flex items-center justify-between rounded-lg border px-3 py-2">
                               <div className="flex items-center gap-2">
                                 <span className="text-sm">{c.toLowerCase().includes("heart") || c.toLowerCase().includes("kalp") ? "❤️" : c.toLowerCase().includes("diabet") || c.toLowerCase().includes("diyabet") ? "🩸" : "🧬"}</span>
-                                <span className="text-sm font-medium">{c.replace("family:", "")}</span>
+                                <span className="text-sm font-medium">{translateCondition(c, lang)}</span>
                               </div>
                             </div>
                           ))}

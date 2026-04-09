@@ -8,8 +8,8 @@ const fontsDir = path.join(process.cwd(), "public", "fonts");
 Font.register({
   family: "NotoSans",
   fonts: [
-    { src: path.join(fontsDir, "NotoSans-Regular.ttf"), fontWeight: "normal" },
-    { src: path.join(fontsDir, "NotoSans-Bold.ttf"), fontWeight: "bold" },
+    { src: path.join(fontsDir, "NotoSans-Regular.ttf"), fontWeight: 400 },
+    { src: path.join(fontsDir, "NotoSans-Bold.ttf"), fontWeight: 700 },
   ],
 });
 Font.registerHyphenationCallback(word => [word]);
@@ -151,21 +151,7 @@ const FREQ: Record<string, Record<string, string>> = {
   "monthly": { en: "Monthly", tr: "Aylık" },
 };
 
-// Chronic condition translation map (EN → TR)
-const CONDITION_TR: Record<string, string> = {
-  "Diabetes": "Diyabet", "Diabetes (Type 1)": "Diyabet (Tip 1)", "Diabetes (Type 2)": "Diyabet (Tip 2)",
-  "Hypertension": "Hipertansiyon", "Heart Failure": "Kalp Yetmezliği", "Arrhythmia": "Aritmi",
-  "Thyroid": "Tiroid", "Depression/Anxiety": "Depresyon/Anksiyete", "Epilepsy": "Epilepsi",
-  "Asthma": "Astım", "COPD": "KOAH", "Bleeding Disorder": "Kanama Bozukluğu",
-  "Early Heart Attack": "Erken Kalp Krizi", "Family Cancer": "Ailede Kanser",
-  "Family Diabetes": "Ailede Diyabet", "Alzheimer": "Alzheimer",
-  "Bipolar/Schizophrenia": "Bipolar/Şizofreni",
-};
-
-function localizeCondition(name: string, lang: string): string {
-  if (lang !== "tr") return name;
-  return CONDITION_TR[name] || name;
-}
+import { translateCondition } from "@/lib/condition-translations";
 
 function translateFreq(val: string, lang: string): string {
   const lower = val.toLowerCase().trim();
@@ -287,7 +273,7 @@ export function SBARReport({ data }: { data: SBARData }) {
           {chronic.length > 0 ? chronic.map((c, i) => (
             <View key={i} style={s.bulletRow}>
               <Text style={s.bulletDot}>•</Text>
-              <Text style={s.bulletText}>{localizeCondition(c, lang)}</Text>
+              <Text style={s.bulletText}>{translateCondition(c, lang)}</Text>
             </View>
           )) : <Text style={s.emptyText}>{t("No chronic conditions reported", "Kronik hastalık bildirilmemiş", lang)}</Text>}
 
@@ -298,7 +284,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               {surgery.map((c, i) => (
                 <View key={i} style={s.bulletRow}>
                   <Text style={s.bulletDot}>•</Text>
-                  <Text style={s.bulletText}>{localizeCondition(c, lang)}</Text>
+                  <Text style={s.bulletText}>{translateCondition(c, lang)}</Text>
                 </View>
               ))}
             </>
@@ -311,7 +297,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               {data.familyHistory.map((f, i) => (
                 <View key={i} style={s.bulletRow}>
                   <Text style={s.bulletDot}>•</Text>
-                  <Text style={s.bulletText}>{localizeCondition(f, lang)}</Text>
+                  <Text style={s.bulletText}>{translateCondition(f, lang)}</Text>
                 </View>
               ))}
             </>
