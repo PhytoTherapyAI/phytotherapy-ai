@@ -397,7 +397,7 @@ export function OnboardingWizard({ profile }: Props) {
           .insert(allergiesToInsert);
 
         if (allergyError) {
-          console.error("[Onboarding] Allergy insert error:", allergyError);
+          console.error("[Onboarding] Allergy insert error:", allergyError.message, allergyError.details, allergyError.hint, "Data:", allergiesToInsert);
           setSaveError(tx("onb.allergySaveError", lang));
           return;
         }

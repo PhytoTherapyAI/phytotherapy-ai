@@ -68,7 +68,6 @@ const reactionColors: Record<string, string> = {
   urticaria: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400",
   mild_skin: "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400",
   gi_intolerance: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400",
-  intolerance: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400",
   unknown: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
 };
 
@@ -77,7 +76,7 @@ const REACTION_OPTIONS = [
   { value: "urticaria", key: "onb.reactionUrticaria", emoji: "⚠️" },
   { value: "mild_skin", key: "onb.reactionMildSkin", emoji: "🟡" },
   { value: "gi_intolerance", key: "onb.reactionGI", emoji: "🟠" },
-  { value: "intolerance", key: "onb.reactionIntolerance", emoji: "🫃" },
+  { value: "gi_intolerance", key: "onb.reactionIntolerance", emoji: "🫃" },
   { value: "unknown", key: "onb.reactionUnknown", emoji: "❓" },
 ];
 
@@ -159,7 +158,7 @@ export function AllergiesStep({ data, updateData }: Props) {
     const s = reactionType || severity;
 
     // Anaphylaxis downgrade warning
-    if (s === "intolerance") {
+    if (s === "gi_intolerance") {
       const existing = allergies.find(a => a.allergen.toLowerCase() === n.toLowerCase());
       if (existing?.severity === "anaphylaxis") {
         if (typeof window !== "undefined" && !window.confirm(tx("onb.anaphylaxisWarning", lang))) return;
@@ -181,6 +180,12 @@ export function AllergiesStep({ data, updateData }: Props) {
     updateData({ allergies: allergies.filter((_, i) => i !== index) });
   };
 
+  const updateAllergyReaction = (index: number, newSeverity: string) => {
+    const updated = [...allergies];
+    updated[index] = { ...updated[index], severity: newSeverity };
+    updateData({ allergies: updated });
+  };
+
   const getReactionLabel = (val: string) => {
     const opt = REACTION_OPTIONS.find(o => o.value === val);
     return opt ? `${opt.emoji} ${tx(opt.key, lang)}` : val;
@@ -193,7 +198,7 @@ export function AllergiesStep({ data, updateData }: Props) {
       const idx = allergies.findIndex(a => a.allergen.toLowerCase() === name.toLowerCase());
       if (idx >= 0) removeAllergy(idx);
     } else {
-      addAllergy(name, isSensitivity ? "intolerance" : "unknown");
+      addAllergy(name, isSensitivity ? "gi_intolerance" : "unknown");
     }
   };
 
@@ -268,17 +273,27 @@ export function AllergiesStep({ data, updateData }: Props) {
                     animate={{ opacity: 1, height: "auto" }}
                     exit={reducedMotion ? undefined : { opacity: 0, height: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="flex items-center justify-between rounded-lg border p-3">
-                    <div className="flex items-center gap-3 flex-wrap">
+                    className="flex items-center justify-between rounded-lg border p-3 gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
                       <AlertTriangle className="h-4 w-4 text-orange-500 shrink-0" />
-                      <span className="font-medium text-sm">{allergy.allergen}</span>
-                      <Badge className={reactionColors[allergy.severity] || "bg-slate-100"}>
-                        {getReactionLabel(allergy.severity)}
-                      </Badge>
+                      <span className="font-medium text-sm truncate">{allergy.allergen}</span>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => removeAllergy(index)}>
-                      <X className="h-4 w-4" />
-                    </Button>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <select
+                        value={allergy.severity}
+                        onChange={(e) => updateAllergyReaction(index, e.target.value)}
+                        className={`text-xs border rounded-lg px-2 py-1 bg-background focus:ring-2 focus:ring-primary outline-none ${reactionColors[allergy.severity] || ""}`}
+                      >
+                        {REACTION_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.emoji} {tx(opt.key, lang)}
+                          </option>
+                        ))}
+                      </select>
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={() => removeAllergy(index)}>
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </motion.div>
                 ))}
               </AnimatePresence>

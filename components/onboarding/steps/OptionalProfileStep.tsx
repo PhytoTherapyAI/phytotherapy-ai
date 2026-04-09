@@ -54,6 +54,7 @@ const MARITAL_OPTIONS = [
 
 const INSURANCE_OPTIONS = [
   { value: "sgk", en: "Public (SGK)", tr: "SGK" },
+  { value: "retired_sgk", en: "Retired (SGK)", tr: "Emekli (SGK)" },
   { value: "private", en: "Private", tr: "Özel Sağlık" },
   { value: "complementary", en: "Complementary", tr: "Tamamlayıcı" },
   { value: "none", en: "None", tr: "Yok" },
