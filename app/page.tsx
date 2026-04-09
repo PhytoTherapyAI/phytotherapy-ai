@@ -549,7 +549,7 @@ export default function Home() {
       const { data } = await supabase
         .from("daily_check_ins")
         .select("energy_level, sleep_quality, mood, bloating")
-        .eq("user_id", activeUserId).eq("check_date", today).single();
+        .eq("user_id", activeUserId).eq("check_date", today).maybeSingle();
       if (data) setCheckInData(data);
     } catch { /* silent */ }
   }, [activeUserId]);

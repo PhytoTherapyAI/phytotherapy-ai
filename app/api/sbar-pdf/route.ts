@@ -37,17 +37,35 @@ export async function POST(request: NextRequest) {
     }
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
-    // Fetch all profile data
-    const [profileRes, medsRes, allergiesRes] = await Promise.all([
-      supabase.from("user_profiles").select("*").eq("id", user.id).single(),
-      supabase.from("user_medications").select("brand_name, generic_name, dosage, frequency").eq("user_id", user.id).eq("is_active", true),
-      supabase.from("user_allergies").select("allergen, severity").eq("user_id", user.id),
-    ]);
+    // Fetch all profile data — explicit columns to avoid 400 errors
+    console.log("[SBAR-PDF] Fetching data for user:", user.id);
 
-    if (profileRes.error) console.warn("SBAR profile fetch:", profileRes.error.message);
+    const profileRes = await supabase
+      .from("user_profiles")
+      .select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    const medsRes = await supabase
+      .from("user_medications")
+      .select("brand_name, generic_name, dosage, frequency")
+      .eq("user_id", user.id)
+      .eq("is_active", true);
+
+    const allergiesRes = await supabase
+      .from("user_allergies")
+      .select("allergen, severity")
+      .eq("user_id", user.id);
+
+    if (profileRes.error) console.error("[SBAR-PDF] profile error:", profileRes.error.message, profileRes.error.details, profileRes.error.hint);
+    if (medsRes.error) console.error("[SBAR-PDF] meds error:", medsRes.error.message, medsRes.error.details);
+    if (allergiesRes.error) console.error("[SBAR-PDF] allergies error:", allergiesRes.error.message, allergiesRes.error.details);
+
     const profile = profileRes.data;
     const meds = medsRes.data || [];
     const allergies = allergiesRes.data || [];
+
+    console.log("[SBAR-PDF] Profile:", profile?.full_name, "| meds:", meds.length, "| allergies:", allergies.length);
 
     if (!profile) {
       return new Response(JSON.stringify({ error: "Profile not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
@@ -55,7 +73,7 @@ export async function POST(request: NextRequest) {
 
     // Build SBAR data
     const vaccines = Array.isArray(profile.vaccines) ? (profile.vaccines as VaccineEntry[]) : [];
-    const chronicConditions: string[] = profile.chronic_conditions || [];
+    const chronicConditions: string[] = Array.isArray(profile.chronic_conditions) ? profile.chronic_conditions : [];
     const bmi = profile.height_cm && profile.weight_kg
       ? Number(profile.weight_kg) / ((Number(profile.height_cm) / 100) ** 2)
       : null;
@@ -81,7 +99,7 @@ export async function POST(request: NextRequest) {
         dosage: m.dosage || "—",
         frequency: m.frequency || "—",
       })),
-      supplements: profile.supplements || [],
+      supplements: (profile.supplements || []).filter((s: string) => !s.startsWith("meta:")),
       vaccines: vaccines.filter(v => v.status === "done").map(v => ({
         name: v.name,
         status: v.status,

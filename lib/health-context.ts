@@ -72,7 +72,7 @@ export async function aggregateHealthContext(
     supabase.from("user_allergies").select("allergen").eq("user_id", userId),
     supabase.from("sleep_records").select("*").eq("user_id", userId).gte("date", sevenDaysAgo).order("date", { ascending: false }).limit(7),
     supabase.from("sleep_records").select("sleep_duration").eq("user_id", userId).gte("date", sevenDaysAgo),
-    supabase.from("daily_check_ins").select("check_date, energy_level, mood_level").eq("user_id", userId).gte("check_date", sevenDaysAgo).order("check_date", { ascending: false }),
+    supabase.from("daily_check_ins").select("check_date, energy_level, mood").eq("user_id", userId).gte("check_date", sevenDaysAgo).order("check_date", { ascending: false }),
     supabase.from("supplements").select("name, taken_today").eq("user_id", userId),
     supabase.from("vital_records").select("weight, systolic, diastolic, heart_rate, recorded_at").eq("user_id", userId).order("recorded_at", { ascending: false }).limit(1),
     supabase.from("query_history").select("query_text").eq("user_id", userId).eq("query_type", "sports").order("created_at", { ascending: false }).limit(1),
@@ -148,10 +148,10 @@ export async function aggregateHealthContext(
     },
     nutrition: {
       calorieTarget: null,
-      recentCheckIns: checkIns.map((c: { check_date: string; energy_level: number; mood_level: number }) => ({
+      recentCheckIns: checkIns.map((c: { check_date: string; energy_level: number; mood: number }) => ({
         date: c.check_date,
         energy: c.energy_level || 0,
-        mood: c.mood_level || 0,
+        mood: c.mood || 0,
       })),
     },
     supplements: supps.map((s: { name: string; taken_today: boolean }) => ({

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   Leaf, LogIn, LogOut, Settings, AlertTriangle, Check, RefreshCw,
   Menu, X, Sparkles, LayoutDashboard, Shield, Calendar,
-  Flame, Search, Users, FlaskConical, ChevronDown,
+  Flame, Search, Users, FlaskConical, ChevronDown, UserCog,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
@@ -201,7 +201,7 @@ export function Header() {
                         </div>
                         <div className="p-1">
                           <Link href="/profile" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
-                            <Settings className="h-4 w-4" /> {tx("nav.profileSettings", lang)}
+                            <UserCog className="h-4 w-4" /> {tx("nav.profileSettings", lang)}
                           </Link>
                           <Link href="/family" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
                             <Users className="h-4 w-4" /> {tx("family.title", lang)}
@@ -275,7 +275,7 @@ export function Header() {
                   </div>
                   <div className="flex items-center gap-1">
                     <Link href="/profile" onClick={() => setMobileOpen(false)} className="p-2 rounded-lg hover:bg-muted">
-                      <Settings className="h-4 w-4 text-muted-foreground" />
+                      <UserCog className="h-4 w-4 text-muted-foreground" />
                     </Link>
                     <button onClick={async () => { setMobileOpen(false); try { await signOut(); } catch (e) { console.error(e); } }}
                       className="p-2 rounded-lg hover:bg-muted" aria-label="Sign out">

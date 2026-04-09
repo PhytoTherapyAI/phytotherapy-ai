@@ -55,7 +55,7 @@ export async function fetchDailyHealthLog(
     supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", userId).eq("is_active", true),
     supabase.from("supplements").select("name, taken_today").eq("user_id", userId),
     supabase.from("vital_records").select("weight, heart_rate, systolic, diastolic").eq("user_id", userId).order("recorded_at", { ascending: false }).limit(1),
-    supabase.from("daily_check_ins").select("energy_level, mood_level, bloating_level").eq("user_id", userId).eq("check_date", targetDate).single(),
+    supabase.from("daily_check_ins").select("energy_level, mood, bloating").eq("user_id", userId).eq("check_date", targetDate).maybeSingle(),
     supabase.from("user_profiles").select("full_name").eq("id", userId).single(),
   ]);
 
@@ -114,8 +114,8 @@ export async function fetchDailyHealthLog(
     circadianPhase,
     checkIn: checkIn ? {
       energy: checkIn.energy_level || 0,
-      mood: checkIn.mood_level || 0,
-      bloating: checkIn.bloating_level || 0,
+      mood: checkIn.mood || 0,
+      bloating: checkIn.bloating || 0,
     } : null,
   };
 }
