@@ -1,19 +1,20 @@
 // © 2026 DoctoPal — All Rights Reserved
 import React from "react";
+import path from "path";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
 
-// Disable hyphenation to prevent word-break crashes
+// ── Font Registration (server-side only — local TTF) ──
+const fontsDir = path.join(process.cwd(), "public", "fonts");
+Font.register({
+  family: "NotoSans",
+  fonts: [
+    { src: path.join(fontsDir, "NotoSans-Regular.ttf"), fontWeight: "normal" },
+    { src: path.join(fontsDir, "NotoSans-Bold.ttf"), fontWeight: "bold" },
+  ],
+});
 Font.registerHyphenationCallback(word => [word]);
 
-// Turkish → ASCII transliteration for Helvetica (Latin-1 only)
-const TR_MAP: Record<string, string> = {
-  "ç": "c", "Ç": "C", "ğ": "g", "Ğ": "G", "ı": "i", "İ": "I",
-  "ö": "o", "Ö": "O", "ş": "s", "Ş": "S", "ü": "u", "Ü": "U",
-};
-function ascii(str: string): string {
-  return str.replace(/[çÇğĞıİöÖşŞüÜ]/g, ch => TR_MAP[ch] || ch);
-}
-
+// ── Types ──
 export interface SBARData {
   lang: "en" | "tr";
   fullName: string;
@@ -36,274 +37,395 @@ export interface SBARData {
   generatedAt: string;
 }
 
-const green = "#16a34a";
-const greenBg = "#f0fdf4";
-const grayBg = "#f9fafb";
-const grayBorder = "#e5e7eb";
-const redBg = "#fef2f2";
+// ── Design Tokens ──
+const sage = "#6B8F71";
+const sageDark = "#4A6B50";
+const sageLight = "#EDF2EE";
+const bgCard = "#F8F9FA";
+const textPrimary = "#1a1a1a";
+const textSecondary = "#666666";
+const textMuted = "#999999";
+const borderLight = "#E5E7EB";
+const redBg = "#FEF2F2";
+const redBorder = "#EF4444";
+const redText = "#991B1B";
 
+// ── Styles ──
 const s = StyleSheet.create({
-  page: { padding: 40, fontFamily: "Helvetica", fontSize: 10, color: "#1a1a1a", backgroundColor: "#FFFFFF" },
+  page: { padding: 40, paddingBottom: 60, fontFamily: "NotoSans", fontSize: 9.5, color: textPrimary, backgroundColor: "#FFFFFF" },
   // Header
-  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 16, paddingBottom: 10, borderBottomWidth: 2, borderBottomColor: green },
-  logo: { fontSize: 22, fontWeight: "bold", color: green },
-  headerSub: { fontSize: 10, color: "#6b7280", marginTop: 2 },
-  headerDate: { fontSize: 9, color: "#9ca3af" },
-  // Patient info grid
-  infoGrid: { backgroundColor: greenBg, padding: 12, borderRadius: 6, marginBottom: 16 },
-  infoRow: { flexDirection: "row", marginBottom: 4 },
-  label: { width: 80, fontWeight: "bold", fontSize: 10, color: "#374151" },
-  value: { width: 140, fontSize: 10, color: "#111827" },
-  // Sections
-  sectionTitle: { fontSize: 13, fontWeight: "bold", color: green, marginTop: 16, marginBottom: 8, paddingBottom: 4, borderBottomWidth: 1, borderBottomColor: green },
-  // Critical
-  criticalBox: { backgroundColor: redBg, padding: 10, borderRadius: 4, borderLeftWidth: 3, borderLeftColor: "#ef4444", marginBottom: 10 },
-  criticalText: { fontSize: 10, fontWeight: "bold", color: "#991b1b" },
-  // Table
-  tableHeader: { flexDirection: "row", backgroundColor: "#f3f4f6", padding: 8, borderRadius: 4 },
-  tableRow: { flexDirection: "row", padding: 8, borderBottomWidth: 1, borderBottomColor: grayBorder },
-  tableRowAlt: { flexDirection: "row", padding: 8, borderBottomWidth: 1, borderBottomColor: grayBorder, backgroundColor: grayBg },
-  col1: { flex: 2, fontSize: 9 },
-  col2: { flex: 1, fontSize: 9 },
-  col3: { flex: 1, fontSize: 9 },
-  colBold: { fontWeight: "bold" },
-  // Misc
-  empty: { fontSize: 9, color: "#9ca3af", fontStyle: "italic", marginBottom: 4 },
-  badge: { fontSize: 8, backgroundColor: "#dbeafe", color: "#1e40af", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8, marginRight: 4, marginBottom: 3 },
-  badgeRow: { flexDirection: "row", flexWrap: "wrap", marginTop: 4 },
-  alertBox: { backgroundColor: "#fefce8", padding: 10, borderRadius: 4, marginTop: 12 },
-  alertText: { fontSize: 9, color: "#854d0e" },
-  disclaimer: { marginTop: 16, padding: 10, backgroundColor: "#f3f4f6", borderRadius: 4 },
-  disclaimerText: { fontSize: 8, color: "#6b7280", textAlign: "center" },
-  footer: { position: "absolute", bottom: 30, left: 40, right: 40, flexDirection: "row", justifyContent: "space-between", borderTopWidth: 1, borderTopColor: grayBorder, paddingTop: 8 },
-  footerText: { fontSize: 7, color: "#9ca3af" },
-  subLabel: { fontSize: 9, fontWeight: "bold", marginBottom: 3, marginTop: 8 },
-  bodyText: { fontSize: 9, marginBottom: 4 },
-  bulletText: { fontSize: 9, color: "#4b5563", marginBottom: 2 },
+  headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 },
+  logo: { fontSize: 20, fontWeight: "bold", color: sage },
+  logoSub: { fontSize: 8, color: textSecondary, marginTop: 1 },
+  headerRight: { alignItems: "flex-end" },
+  headerDate: { fontSize: 8, color: textSecondary },
+  headerConfidential: { fontSize: 7, color: sage, fontWeight: "bold", marginTop: 2, textTransform: "uppercase" as const, letterSpacing: 0.5 },
+  headerLine: { height: 2, backgroundColor: sage, marginBottom: 14, borderRadius: 1 },
+  // Patient Info Box
+  infoBox: { backgroundColor: bgCard, borderRadius: 6, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: borderLight },
+  infoGrid: { flexDirection: "row", flexWrap: "wrap" },
+  infoItem: { width: "33%", marginBottom: 6 },
+  infoLabel: { fontSize: 7.5, color: textMuted, textTransform: "uppercase" as const, letterSpacing: 0.3, marginBottom: 1 },
+  infoValue: { fontSize: 9.5, fontWeight: "bold", color: textPrimary },
+  // Critical Alert
+  criticalBox: { backgroundColor: redBg, padding: 10, borderRadius: 4, borderLeftWidth: 3, borderLeftColor: redBorder, marginBottom: 14 },
+  criticalLabel: { fontSize: 7, fontWeight: "bold", color: redText, textTransform: "uppercase" as const, letterSpacing: 0.5, marginBottom: 2 },
+  criticalText: { fontSize: 9, fontWeight: "bold", color: redText },
+  // SBAR Sections
+  section: { marginBottom: 12, borderLeftWidth: 3, borderLeftColor: sage, paddingLeft: 10, paddingTop: 2, paddingBottom: 2 },
+  sectionHeader: { flexDirection: "row", alignItems: "center", marginBottom: 6 },
+  sectionLetter: { fontSize: 14, fontWeight: "bold", color: sage, marginRight: 6 },
+  sectionTitle: { fontSize: 11, fontWeight: "bold", color: sageDark },
+  sectionDivider: { height: 1, backgroundColor: sageLight, marginBottom: 8 },
+  // Sub-sections
+  subTitle: { fontSize: 9, fontWeight: "bold", color: textPrimary, marginBottom: 4, marginTop: 6 },
+  bodyText: { fontSize: 9, color: textPrimary, lineHeight: 1.5, marginBottom: 4 },
+  bulletRow: { flexDirection: "row", marginBottom: 3, paddingLeft: 4 },
+  bulletDot: { fontSize: 9, color: sage, marginRight: 6, width: 8 },
+  bulletText: { fontSize: 9, color: textPrimary, flex: 1 },
+  emptyText: { fontSize: 8.5, color: textMuted, fontStyle: "italic", marginBottom: 4 },
+  // Tables
+  tableHeader: { flexDirection: "row", backgroundColor: sageLight, padding: 6, borderRadius: 3, marginBottom: 1 },
+  tableHeaderText: { fontSize: 8, fontWeight: "bold", color: sageDark, textTransform: "uppercase" as const, letterSpacing: 0.3 },
+  tableRow: { flexDirection: "row", padding: 6, borderBottomWidth: 0.5, borderBottomColor: borderLight },
+  tableRowAlt: { flexDirection: "row", padding: 6, borderBottomWidth: 0.5, borderBottomColor: borderLight, backgroundColor: "#FAFBFA" },
+  tableCell: { fontSize: 9 },
+  col1: { flex: 2 },
+  col2: { flex: 1 },
+  col3: { flex: 1 },
+  // Badges
+  badgeRow: { flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 2 },
+  badge: { fontSize: 8, backgroundColor: sageLight, color: sageDark, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10 },
+  // Recommendation box
+  recBox: { backgroundColor: "#FFFBEB", padding: 10, borderRadius: 4, borderWidth: 1, borderColor: "#FDE68A", marginTop: 4 },
+  recText: { fontSize: 8.5, color: "#92400E", lineHeight: 1.5 },
+  // Disclaimer
+  disclaimer: { marginTop: 12, padding: 10, backgroundColor: bgCard, borderRadius: 4, borderWidth: 1, borderColor: borderLight },
+  disclaimerText: { fontSize: 7.5, color: textMuted, textAlign: "center", lineHeight: 1.5 },
+  // Footer
+  footer: { position: "absolute", bottom: 25, left: 40, right: 40, flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderTopWidth: 0.5, borderTopColor: borderLight, paddingTop: 6 },
+  footerText: { fontSize: 7, color: textMuted },
+  footerCenter: { fontSize: 7, color: textMuted, textAlign: "center" },
 });
 
-const t = (en: string, tr: string, lang: string) => ascii(lang === "tr" ? tr : en);
+// ── Helpers ──
+const t = (en: string, tr: string, lang: string) => (lang === "tr" ? tr : en);
 
-const GENDER_LABELS: Record<string, Record<string, string>> = {
+const GENDER: Record<string, Record<string, string>> = {
   male: { en: "Male", tr: "Erkek" },
-  female: { en: "Female", tr: "Kadin" },
-  other: { en: "Other", tr: "Diger" },
-  prefer_not_to_say: { en: "Not specified", tr: "Belirtilmemis" },
+  female: { en: "Female", tr: "Kadın" },
+  other: { en: "Other", tr: "Diğer" },
+  prefer_not_to_say: { en: "Not specified", tr: "Belirtilmemiş" },
 };
 
-const FREQ_TR: Record<string, string> = {
-  "daily": "Gunluk", "1x daily": "Gunluk", "once daily": "Gunluk", "qd": "Gunluk",
-  "2x daily": "Gunde 2 kez", "twice daily": "Gunde 2 kez", "bid": "Gunde 2 kez",
-  "3x daily": "Gunde 3 kez", "tid": "Gunde 3 kez",
-  "as needed": "Gerektiginde", "prn": "Gerektiginde",
-  "weekly": "Haftalik", "monthly": "Aylik",
+const SMOKING: Record<string, Record<string, string>> = {
+  none: { en: "Non-smoker", tr: "Sigara kullanmıyor" },
+  former: { en: "Former smoker", tr: "Bırakmış" },
+  current: { en: "Active smoker", tr: "Aktif sigara kullanıyor" },
 };
 
-const REACTION_LABELS: Record<string, Record<string, string>> = {
+const ALCOHOL: Record<string, Record<string, string>> = {
+  none: { en: "No alcohol use", tr: "Alkol kullanmıyor" },
+  former: { en: "Former drinker", tr: "Bırakmış" },
+  active: { en: "Active drinker", tr: "Alkol kullanıyor" },
+};
+
+const REACTION: Record<string, Record<string, string>> = {
   anaphylaxis: { en: "Anaphylaxis", tr: "Anafilaksi" },
-  urticaria: { en: "Urticaria", tr: "Kurdesen" },
-  mild_skin: { en: "Mild Skin", tr: "Hafif Dokuntu" },
-  gi_intolerance: { en: "GI Intolerance", tr: "Sindirim Intoleransi" },
+  urticaria: { en: "Urticaria / Rash", tr: "Kurdeşen / Döküntü" },
+  mild_skin: { en: "Mild Skin Reaction", tr: "Hafif Cilt Reaksiyonu" },
+  gi_intolerance: { en: "GI Intolerance", tr: "Sindirim İntoleransı" },
   unknown: { en: "Unknown", tr: "Bilinmiyor" },
   mild: { en: "Mild", tr: "Hafif" },
   moderate: { en: "Moderate", tr: "Orta" },
-  severe: { en: "Severe", tr: "Siddetli" },
+  severe: { en: "Severe", tr: "Şiddetli" },
 };
 
-const SMOKING_LABELS: Record<string, Record<string, string>> = {
-  none: { en: "Never", tr: "Hic kullanmadim" },
-  former: { en: "Former", tr: "Biraktim" },
-  current: { en: "Active", tr: "Aktif kullaniyorum" },
+const FREQ: Record<string, Record<string, string>> = {
+  "daily": { en: "Daily", tr: "Günlük" },
+  "1x daily": { en: "Once daily", tr: "Günde 1" },
+  "2x daily": { en: "Twice daily", tr: "Günde 2" },
+  "3x daily": { en: "Three times daily", tr: "Günde 3" },
+  "as needed": { en: "As needed", tr: "Gerektiğinde" },
+  "weekly": { en: "Weekly", tr: "Haftalık" },
+  "monthly": { en: "Monthly", tr: "Aylık" },
 };
 
-const ALCOHOL_LABELS: Record<string, Record<string, string>> = {
-  none: { en: "Never", tr: "Kullanmiyorum" },
-  former: { en: "Former", tr: "Biraktim" },
-  active: { en: "Active", tr: "Kullaniyorum" },
+// Chronic condition translation map (EN → TR)
+const CONDITION_TR: Record<string, string> = {
+  "Diabetes": "Diyabet", "Diabetes (Type 1)": "Diyabet (Tip 1)", "Diabetes (Type 2)": "Diyabet (Tip 2)",
+  "Hypertension": "Hipertansiyon", "Heart Failure": "Kalp Yetmezliği", "Arrhythmia": "Aritmi",
+  "Thyroid": "Tiroid", "Depression/Anxiety": "Depresyon/Anksiyete", "Epilepsy": "Epilepsi",
+  "Asthma": "Astım", "COPD": "KOAH", "Bleeding Disorder": "Kanama Bozukluğu",
+  "Early Heart Attack": "Erken Kalp Krizi", "Family Cancer": "Ailede Kanser",
+  "Family Diabetes": "Ailede Diyabet", "Alzheimer": "Alzheimer",
+  "Bipolar/Schizophrenia": "Bipolar/Şizofreni",
 };
 
-function trFreq(val: string, lang: string): string {
-  if (lang !== "tr") return val;
-  const lower = val.toLowerCase().trim();
-  return FREQ_TR[lower] ?? FREQ_TR[val] ?? ascii(val);
+function localizeCondition(name: string, lang: string): string {
+  if (lang !== "tr") return name;
+  return CONDITION_TR[name] || name;
 }
 
+function translateFreq(val: string, lang: string): string {
+  const lower = val.toLowerCase().trim();
+  return FREQ[lower]?.[lang] || FREQ[val]?.[lang] || val;
+}
+
+/** Separate chronic conditions from surgery entries */
+function splitConditions(conditions: string[]) {
+  const chronic: string[] = [];
+  const surgery: string[] = [];
+
+  for (const c of conditions) {
+    if (c.startsWith("family:")) continue; // handled separately
+    if (c.startsWith("surgery:")) {
+      surgery.push(c.replace("surgery:", ""));
+    } else {
+      chronic.push(c);
+    }
+  }
+  return { chronic, surgery };
+}
+
+// ── Main Component ──
 export function SBARReport({ data }: { data: SBARData }) {
   const { lang } = data;
+  const genderLabel = GENDER[data.gender || ""]?.[lang] || data.gender || "—";
+  const smokingLabel = SMOKING[data.smokingUse]?.[lang] || data.smokingUse;
+  const alcoholLabel = ALCOHOL[data.alcoholUse]?.[lang] || data.alcoholUse;
 
-  const genderLabel = GENDER_LABELS[data.gender || ""]?.[lang] || ascii(data.gender || "") || "\u2014";
-  const conditions = data.chronicConditions.filter(c => !c.startsWith("family:"));
+  const { chronic, surgery } = splitConditions(data.chronicConditions);
 
   const criticalFlags: string[] = [];
-  if (data.isPregnant) criticalFlags.push(t("PREGNANT", "HAMILE", lang));
-  if (data.isBreastfeeding) criticalFlags.push(t("BREASTFEEDING", "EMZIRIYOR", lang));
-  if (data.kidneyDisease) criticalFlags.push(t("KIDNEY DISEASE", "BOBREK YETMEZLIGI", lang));
-  if (data.liverDisease) criticalFlags.push(t("BLEEDING DISORDER", "KANAMA BOZUKLUGU", lang));
-  if (data.allergies.some(a => a.severity === "anaphylaxis")) criticalFlags.push(t("ANAPHYLAXIS RISK", "ANAFILAKSI RISKI", lang));
+  if (data.isPregnant) criticalFlags.push(t("Pregnant", "Hamile", lang));
+  if (data.isBreastfeeding) criticalFlags.push(t("Breastfeeding", "Emziriyor", lang));
+  if (data.kidneyDisease) criticalFlags.push(t("Kidney Disease", "Böbrek Yetmezliği", lang));
+  if (data.liverDisease) criticalFlags.push(t("Liver Disease", "Karaciğer Hastalığı", lang));
+  if (data.allergies.some(a => a.severity === "anaphylaxis")) criticalFlags.push(t("Anaphylaxis Risk", "Anafilaksi Riski", lang));
 
   return (
     <Document>
       <Page size="A4" style={s.page}>
-        {/* Header */}
-        <View style={s.header}>
+        {/* ═══ HEADER ═══ */}
+        <View style={s.headerRow}>
           <View>
             <Text style={s.logo}>DoctoPal</Text>
-            <Text style={s.headerSub}>{t("Patient Health Summary (SBAR)", "Hasta Saglik Ozet Raporu (SBAR)", lang)}</Text>
+            <Text style={s.logoSub}>{t("Evidence-Based Health Assistant", "Kanıta Dayalı Sağlık Asistanı", lang)}</Text>
           </View>
-          <Text style={s.headerDate}>{ascii(data.generatedAt)}</Text>
+          <View style={s.headerRight}>
+            <Text style={s.headerDate}>{data.generatedAt}</Text>
+            <Text style={s.headerConfidential}>{t("Confidential Patient Information", "Gizli Hasta Bilgisi", lang)}</Text>
+          </View>
+        </View>
+        <View style={s.headerLine} />
+
+        {/* ═══ PATIENT INFO BOX ═══ */}
+        <View style={s.infoBox}>
+          <View style={s.infoGrid}>
+            <View style={s.infoItem}>
+              <Text style={s.infoLabel}>{t("Full Name", "Ad Soyad", lang)}</Text>
+              <Text style={s.infoValue}>{data.fullName || "—"}</Text>
+            </View>
+            <View style={s.infoItem}>
+              <Text style={s.infoLabel}>{t("Age", "Yaş", lang)}</Text>
+              <Text style={s.infoValue}>{data.age ?? "—"}</Text>
+            </View>
+            <View style={s.infoItem}>
+              <Text style={s.infoLabel}>{t("Gender", "Cinsiyet", lang)}</Text>
+              <Text style={s.infoValue}>{genderLabel}</Text>
+            </View>
+            <View style={s.infoItem}>
+              <Text style={s.infoLabel}>{t("Blood Group", "Kan Grubu", lang)}</Text>
+              <Text style={s.infoValue}>{data.bloodGroup || "—"}</Text>
+            </View>
+            <View style={s.infoItem}>
+              <Text style={s.infoLabel}>BMI</Text>
+              <Text style={s.infoValue}>{data.bmi != null ? data.bmi.toFixed(1) : "—"}</Text>
+            </View>
+            <View style={s.infoItem}>
+              <Text style={s.infoLabel}>{t("Smoking", "Sigara", lang)}</Text>
+              <Text style={s.infoValue}>{smokingLabel}</Text>
+            </View>
+          </View>
         </View>
 
-        {/* Patient Info */}
-        <View style={s.infoGrid}>
-          <View style={s.infoRow}>
-            <Text style={s.label}>{t("Name:", "Ad:", lang)}</Text>
-            <Text style={s.value}>{ascii(data.fullName) || "\u2014"}</Text>
-            <Text style={s.label}>{t("Age:", "Yas:", lang)}</Text>
-            <Text style={s.value}>{data.age ?? "\u2014"}</Text>
+        {/* ═══ CRITICAL ALERTS ═══ */}
+        {criticalFlags.length > 0 && (
+          <View style={s.criticalBox}>
+            <Text style={s.criticalLabel}>{t("Critical Alert", "Kritik Uyarı", lang)}</Text>
+            <Text style={s.criticalText}>{criticalFlags.join("  •  ")}</Text>
           </View>
-          <View style={s.infoRow}>
-            <Text style={s.label}>{t("Gender:", "Cinsiyet:", lang)}</Text>
-            <Text style={s.value}>{genderLabel}</Text>
-            <Text style={s.label}>{t("Blood:", "Kan:", lang)}</Text>
-            <Text style={s.value}>{data.bloodGroup || "\u2014"}</Text>
+        )}
+
+        {/* ═══ S — SITUATION ═══ */}
+        <View style={s.section}>
+          <View style={s.sectionHeader}>
+            <Text style={s.sectionLetter}>S</Text>
+            <Text style={s.sectionTitle}>{t("Situation", "Durum", lang)}</Text>
           </View>
-          {data.bmi != null && (
-            <View style={s.infoRow}>
-              <Text style={s.label}>BMI:</Text>
-              <Text style={s.value}>{data.bmi.toFixed(1)}</Text>
+          <View style={s.sectionDivider} />
+          <Text style={s.bodyText}>
+            {data.fullName || t("Patient", "Hasta", lang)}, {data.age ?? "?"} {t("years old", "yaşında", lang)}, {genderLabel.toLowerCase()}.
+            {data.bloodGroup ? ` ${t("Blood group", "Kan grubu", lang)}: ${data.bloodGroup}.` : ""}
+            {data.bmi != null ? ` BMI: ${data.bmi.toFixed(1)}.` : ""}
+            {` ${smokingLabel}. ${alcoholLabel}.`}
+            {criticalFlags.length > 0 ? ` ${t("Critical", "Kritik", lang)}: ${criticalFlags.join(", ")}.` : ""}
+          </Text>
+        </View>
+
+        {/* ═══ B — BACKGROUND ═══ */}
+        <View style={s.section}>
+          <View style={s.sectionHeader}>
+            <Text style={s.sectionLetter}>B</Text>
+            <Text style={s.sectionTitle}>{t("Background", "Geçmiş", lang)}</Text>
+          </View>
+          <View style={s.sectionDivider} />
+
+          {/* Chronic Conditions */}
+          <Text style={s.subTitle}>{t("Chronic Conditions", "Kronik Hastalıklar", lang)}</Text>
+          {chronic.length > 0 ? chronic.map((c, i) => (
+            <View key={i} style={s.bulletRow}>
+              <Text style={s.bulletDot}>•</Text>
+              <Text style={s.bulletText}>{localizeCondition(c, lang)}</Text>
             </View>
+          )) : <Text style={s.emptyText}>{t("No chronic conditions reported", "Kronik hastalık bildirilmemiş", lang)}</Text>}
+
+          {/* Surgical History */}
+          {surgery.length > 0 && (
+            <>
+              <Text style={s.subTitle}>{t("Surgical History", "Cerrahi Geçmiş", lang)}</Text>
+              {surgery.map((c, i) => (
+                <View key={i} style={s.bulletRow}>
+                  <Text style={s.bulletDot}>•</Text>
+                  <Text style={s.bulletText}>{localizeCondition(c, lang)}</Text>
+                </View>
+              ))}
+            </>
+          )}
+
+          {/* Family History */}
+          {data.familyHistory.length > 0 && (
+            <>
+              <Text style={s.subTitle}>{t("Family Health History", "Aile Sağlık Geçmişi", lang)}</Text>
+              {data.familyHistory.map((f, i) => (
+                <View key={i} style={s.bulletRow}>
+                  <Text style={s.bulletDot}>•</Text>
+                  <Text style={s.bulletText}>{localizeCondition(f, lang)}</Text>
+                </View>
+              ))}
+            </>
           )}
         </View>
 
-        {/* Critical Alerts */}
-        {criticalFlags.length > 0 && (
-          <View style={s.criticalBox}>
-            <Text style={s.criticalText}>{t("CRITICAL:", "KRITIK:", lang)} {criticalFlags.join(" | ")}</Text>
+        {/* ═══ A — ASSESSMENT ═══ */}
+        <View style={s.section}>
+          <View style={s.sectionHeader}>
+            <Text style={s.sectionLetter}>A</Text>
+            <Text style={s.sectionTitle}>{t("Assessment", "Değerlendirme", lang)}</Text>
           </View>
-        )}
+          <View style={s.sectionDivider} />
 
-        {/* S — Situation */}
-        <Text style={s.sectionTitle}>{t("S \u2014 Situation", "S \u2014 Durum (Situation)", lang)}</Text>
-        <Text style={s.bodyText}>
-          {ascii(data.fullName) || t("Patient", "Hasta", lang)}, {data.age ?? "?"} {t("years old", "yasinda", lang)}.
-          {data.bloodGroup ? ` ${t("Blood group", "Kan grubu", lang)}: ${data.bloodGroup}.` : ""}
-          {data.bmi != null ? ` BMI: ${data.bmi.toFixed(1)}.` : ""}
-          {criticalFlags.length > 0 ? ` ${t("Critical flags", "Kritik durumlar", lang)}: ${criticalFlags.join(", ")}.` : ""}
-        </Text>
-
-        {/* B — Background */}
-        <Text style={s.sectionTitle}>{t("B \u2014 Background", "B \u2014 Gecmis (Background)", lang)}</Text>
-
-        <Text style={s.subLabel}>{t("Chronic Conditions:", "Kronik Hastaliklar:", lang)}</Text>
-        {conditions.length > 0
-          ? conditions.map((c, i) => <Text key={i} style={s.bulletText}>{"\u2022"} {ascii(c)}</Text>)
-          : <Text style={s.empty}>{t("No chronic conditions", "Kronik hastalik yok", lang)}</Text>}
-
-        {data.familyHistory.length > 0 && (
-          <>
-            <Text style={s.subLabel}>{t("Family History:", "Soygecmis:", lang)}</Text>
-            {data.familyHistory.map((f, i) => <Text key={i} style={s.bulletText}>{"\u2022"} {ascii(f)}</Text>)}
-          </>
-        )}
-
-        <Text style={s.subLabel}>{t("Substance Use:", "Madde Kullanimi:", lang)}</Text>
-        <Text style={s.bodyText}>
-          {t("Smoking:", "Sigara:", lang)} {SMOKING_LABELS[data.smokingUse]?.[lang] || ascii(data.smokingUse)} | {t("Alcohol:", "Alkol:", lang)} {ALCOHOL_LABELS[data.alcoholUse]?.[lang] || ascii(data.alcoholUse)}
-        </Text>
-
-        {/* A — Assessment */}
-        <Text style={s.sectionTitle}>{t("A \u2014 Assessment", "A \u2014 Degerlendirme (Assessment)", lang)}</Text>
-
-        {/* Allergies table */}
-        <Text style={s.subLabel}>{t("Allergies:", "Alerjiler:", lang)}</Text>
-        {data.allergies.length > 0 ? (
-          <>
-            <View style={s.tableHeader}>
-              <Text style={[s.col1, s.colBold]}>{t("Allergen", "Alerjen", lang)}</Text>
-              <Text style={[s.col2, s.colBold]}>{t("Reaction", "Reaksiyon", lang)}</Text>
-            </View>
-            {data.allergies.map((a, i) => (
-              <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
-                <Text style={s.col1}>{ascii(a.allergen)}</Text>
-                <Text style={s.col2}>{REACTION_LABELS[a.severity]?.[lang] || ascii(a.severity)}</Text>
+          {/* Allergies */}
+          <Text style={s.subTitle}>{t("Allergies", "Alerjiler", lang)}</Text>
+          {data.allergies.length > 0 ? (
+            <>
+              <View style={s.tableHeader}>
+                <Text style={[s.tableHeaderText, s.col1]}>{t("Allergen", "Alerjen", lang)}</Text>
+                <Text style={[s.tableHeaderText, s.col2]}>{t("Reaction Type", "Reaksiyon Tipi", lang)}</Text>
               </View>
-            ))}
-          </>
-        ) : <Text style={s.empty}>{t("No allergies recorded", "Kayitli alerji yok", lang)}</Text>}
+              {data.allergies.map((a, i) => (
+                <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
+                  <Text style={[s.tableCell, s.col1]}>{a.allergen}</Text>
+                  <Text style={[s.tableCell, s.col2]}>{REACTION[a.severity]?.[lang] || a.severity}</Text>
+                </View>
+              ))}
+            </>
+          ) : <Text style={s.emptyText}>{t("No allergies recorded", "Kayıtlı alerji yok", lang)}</Text>}
 
-        {/* Medications table */}
-        <Text style={s.subLabel}>{t("Active Medications:", "Aktif Ilaclar:", lang)}</Text>
-        {data.medications.length > 0 ? (
-          <>
-            <View style={s.tableHeader}>
-              <Text style={[s.col1, s.colBold]}>{t("Medication", "Ilac", lang)}</Text>
-              <Text style={[s.col2, s.colBold]}>{t("Dose", "Doz", lang)}</Text>
-              <Text style={[s.col3, s.colBold]}>{t("Frequency", "Siklik", lang)}</Text>
-            </View>
-            {data.medications.map((m, i) => (
-              <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
-                <Text style={s.col1}>{ascii(m.name)}</Text>
-                <Text style={s.col2}>{ascii(m.dosage)}</Text>
-                <Text style={s.col3}>{trFreq(m.frequency, lang)}</Text>
+          {/* Medications */}
+          <Text style={s.subTitle}>{t("Active Medications", "Aktif İlaçlar", lang)}</Text>
+          {data.medications.length > 0 ? (
+            <>
+              <View style={s.tableHeader}>
+                <Text style={[s.tableHeaderText, s.col1]}>{t("Medication", "İlaç", lang)}</Text>
+                <Text style={[s.tableHeaderText, s.col2]}>{t("Dose", "Doz", lang)}</Text>
+                <Text style={[s.tableHeaderText, s.col3]}>{t("Frequency", "Sıklık", lang)}</Text>
               </View>
-            ))}
-          </>
-        ) : <Text style={s.empty}>{t("No active medications", "Kayitli ilac yok", lang)}</Text>}
+              {data.medications.map((m, i) => (
+                <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
+                  <Text style={[s.tableCell, s.col1]}>{m.name}</Text>
+                  <Text style={[s.tableCell, s.col2]}>{m.dosage}</Text>
+                  <Text style={[s.tableCell, s.col3]}>{translateFreq(m.frequency, lang)}</Text>
+                </View>
+              ))}
+            </>
+          ) : <Text style={s.emptyText}>{t("No active medications", "Kayıtlı ilaç yok", lang)}</Text>}
 
-        {/* Supplements */}
-        {data.supplements.length > 0 && (
-          <>
-            <Text style={s.subLabel}>{t("Supplements:", "Takviyeler:", lang)}</Text>
-            <View style={s.badgeRow}>
-              {data.supplements.map((sup, i) => <Text key={i} style={s.badge}>{ascii(sup)}</Text>)}
-            </View>
-          </>
-        )}
-
-        {/* Vaccines */}
-        {data.vaccines.length > 0 && (
-          <>
-            <Text style={s.subLabel}>{t("Vaccinations:", "Asilar:", lang)}</Text>
-            <View style={s.tableHeader}>
-              <Text style={[s.col1, s.colBold]}>{t("Vaccine", "Asi", lang)}</Text>
-              <Text style={[s.col2, s.colBold]}>{t("Date", "Tarih", lang)}</Text>
-            </View>
-            {data.vaccines.map((v, i) => (
-              <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
-                <Text style={s.col1}>{ascii(v.name)}</Text>
-                <Text style={s.col2}>{v.lastDate || "\u2014"}</Text>
+          {/* Supplements */}
+          {data.supplements.length > 0 && (
+            <>
+              <Text style={s.subTitle}>{t("Supplements", "Takviyeler", lang)}</Text>
+              <View style={s.badgeRow}>
+                {data.supplements.map((sup, i) => <Text key={i} style={s.badge}>{sup}</Text>)}
               </View>
-            ))}
-          </>
-        )}
+            </>
+          )}
 
-        {/* R — Recommendation */}
-        <Text style={s.sectionTitle}>{t("R \u2014 Recommendation", "R \u2014 Oneri (Recommendation)", lang)}</Text>
-        <View style={s.alertBox}>
-          <Text style={s.alertText}>
-            {t(
-              "This report was generated by DoctoPal AI. It does not constitute a medical diagnosis. Share with your healthcare provider for professional evaluation.",
-              "Bu rapor DoctoPal AI tarafindan olusturulmustur. Tibbi teshis niteligi tasimaz. Profesyonel degerlendirme icin doktorunuzla paylasin.",
-              lang
-            )}
-          </Text>
+          {/* Vaccines */}
+          {data.vaccines.length > 0 && (
+            <>
+              <Text style={s.subTitle}>{t("Vaccination Status", "Aşı Durumu", lang)}</Text>
+              <View style={s.tableHeader}>
+                <Text style={[s.tableHeaderText, s.col1]}>{t("Vaccine", "Aşı", lang)}</Text>
+                <Text style={[s.tableHeaderText, s.col2]}>{t("Date", "Tarih", lang)}</Text>
+                <Text style={[s.tableHeaderText, s.col3]}>{t("Status", "Durum", lang)}</Text>
+              </View>
+              {data.vaccines.map((v, i) => (
+                <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
+                  <Text style={[s.tableCell, s.col1]}>{v.name}</Text>
+                  <Text style={[s.tableCell, s.col2]}>{v.lastDate || t("Not specified", "Belirtilmemiş", lang)}</Text>
+                  <Text style={[s.tableCell, s.col3]}>{v.status === "done" ? "✓" : "—"}</Text>
+                </View>
+              ))}
+            </>
+          )}
         </View>
 
-        {/* Disclaimer */}
+        {/* ═══ R — RECOMMENDATION ═══ */}
+        <View style={s.section}>
+          <View style={s.sectionHeader}>
+            <Text style={s.sectionLetter}>R</Text>
+            <Text style={s.sectionTitle}>{t("Recommendation", "Öneri", lang)}</Text>
+          </View>
+          <View style={s.sectionDivider} />
+          <View style={s.recBox}>
+            <Text style={s.recText}>
+              {t(
+                "This structured SBAR report summarizes the patient's current health profile. Please review medications, allergies, and chronic conditions before clinical decisions. For interaction risks, refer to the DoctoPal interaction checker.",
+                "Bu yapılandırılmış SBAR raporu hastanın güncel sağlık profilini özetlemektedir. Klinik kararlar öncesinde ilaçları, alerjileri ve kronik hastalıkları gözden geçiriniz. Etkileşim riskleri için DoctoPal etkileşim kontrolünü kullanınız.",
+                lang
+              )}
+            </Text>
+          </View>
+        </View>
+
+        {/* ═══ DISCLAIMER ═══ */}
         <View style={s.disclaimer}>
           <Text style={s.disclaimerText}>
             {t(
-              "DoctoPal \u2014 Evidence-based phytotherapy assistant. Not a substitute for professional medical advice. Emergency: Call 112.",
-              "DoctoPal \u2014 Kanita dayali fitoterapi asistani. Profesyonel tibbi tavsiyenin yerini tutmaz. Acil durum: 112'yi arayin.",
+              "This report was generated by DoctoPal AI and does not constitute a medical diagnosis or prescription. It is intended as supplementary information for healthcare professionals. Not a substitute for professional medical evaluation. In emergencies, call 112.",
+              "Bu rapor DoctoPal AI tarafından oluşturulmuştur ve tıbbi teşhis veya reçete niteliği taşımaz. Sağlık profesyonelleri için destekleyici bilgi amacıyla hazırlanmıştır. Profesyonel tıbbi değerlendirmenin yerini tutmaz. Acil durumlarda 112'yi arayınız.",
               lang
             )}
           </Text>
         </View>
 
-        {/* Footer */}
-        <View style={s.footer}>
+        {/* ═══ FOOTER ═══ */}
+        <View style={s.footer} fixed>
           <Text style={s.footerText}>doctopal.com | KVKK {t("Compliant", "Uyumlu", lang)}</Text>
-          <Text style={s.footerText}>{t("Generated:", "Olusturulma:", lang)} {ascii(data.generatedAt)}</Text>
+          <Text style={s.footerCenter} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
+          <Text style={s.footerText}>{data.generatedAt}</Text>
         </View>
       </Page>
     </Document>
