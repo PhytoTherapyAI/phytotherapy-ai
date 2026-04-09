@@ -382,24 +382,46 @@ export function OnboardingWizard({ profile }: Props) {
         }
       }
 
-      // 2. Save allergies
-      if (data.allergies.length > 0) {
-        await supabase.from("user_allergies").delete().eq("user_id", userId);
-
-        const allergiesToInsert = data.allergies.map((allergy) => ({
-          user_id: userId,
-          allergen: allergy.allergen,
-          severity: allergy.severity,
+      // 2. Save allergies — both user_allergies table AND user_profiles.allergies JSONB
+      {
+        // Build JSONB array for user_profiles
+        const allergiesJsonb = data.allergies.map((a) => ({
+          allergen: a.allergen,
+          severity: a.severity,
         }));
 
-        const { error: allergyError } = await supabase
-          .from("user_allergies")
-          .insert(allergiesToInsert);
+        // Save to user_profiles.allergies JSONB (primary)
+        const { error: allergyJsonError } = await supabase
+          .from("user_profiles")
+          .update({ allergies: data.no_allergies ? [] : allergiesJsonb })
+          .eq("id", userId);
 
-        if (allergyError) {
-          console.error("[Onboarding] Allergy insert error:", allergyError.message, allergyError.details, allergyError.hint, "Data:", allergiesToInsert);
-          setSaveError(tx("onb.allergySaveError", lang));
-          return;
+        if (allergyJsonError) {
+          console.error("[Onboarding] Allergy JSONB save error:", allergyJsonError.message, allergyJsonError.details);
+          // Non-critical — continue with user_allergies table
+        }
+
+        // Also save to user_allergies table (for backward compat)
+        if (data.allergies.length > 0) {
+          await supabase.from("user_allergies").delete().eq("user_id", userId);
+
+          const allergiesToInsert = data.allergies.map((allergy) => ({
+            user_id: userId,
+            allergen: allergy.allergen,
+            severity: allergy.severity,
+          }));
+
+          const { error: allergyError } = await supabase
+            .from("user_allergies")
+            .insert(allergiesToInsert);
+
+          if (allergyError) {
+            console.error("[Onboarding] user_allergies insert error:", allergyError.message, allergyError.details, allergyError.hint, "Data:", allergiesToInsert);
+            // Non-critical if JSONB save succeeded
+          }
+        } else if (data.no_allergies) {
+          // Clear old allergies if user says "no allergies"
+          await supabase.from("user_allergies").delete().eq("user_id", userId);
         }
       }
 
