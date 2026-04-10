@@ -87,27 +87,36 @@ export async function POST(request: NextRequest) {
 
         if (user) {
           userId = user.id;
-          const [profileRes, { data: meds }, { data: allergies }] = await Promise.all([
-            supabase.from("user_profiles").select("*").eq("id", user.id).maybeSingle(),
+          // Same queries as SBAR PDF route — explicit columns to avoid 400 errors
+          const [profileRes, medsRes, allergiesRes] = await Promise.all([
+            supabase.from("user_profiles").select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines, onboarding_complete").eq("id", user.id).maybeSingle(),
             supabase.from("user_medications").select("brand_name, generic_name, dosage, frequency").eq("user_id", user.id).eq("is_active", true),
             supabase.from("user_allergies").select("allergen, severity").eq("user_id", user.id),
           ]);
 
-          hasMedications = !!(meds && meds.length > 0);
+          if (profileRes.error) console.error("[Chat] profile error:", profileRes.error.message, profileRes.error.details);
+          if (medsRes.error) console.error("[Chat] meds error:", medsRes.error.message);
+          if (allergiesRes.error) console.error("[Chat] allergies error:", allergiesRes.error.message);
+
+          const meds = medsRes.data || [];
+          const allergies = allergiesRes.data || [];
+          hasMedications = meds.length > 0;
           profile = profileRes.data;
+
+          console.log("[Chat] Profile:", profile?.full_name, "| meds:", meds.length, "| allergies:", allergies.length);
 
           if (profile) {
             // ── Build comprehensive PATIENT PROFILE block ──
-            const notReported = "Not reported";
-            const name = (profile.full_name as string) || notReported;
-            const age = profile.age ? `${profile.age}` : notReported;
-            const gender = (profile.gender as string) || notReported;
-            const bloodType = (profile.blood_group as string) || notReported;
+            const none = "None reported";
+            const name = (profile.full_name as string) || "Unknown";
+            const age = profile.age ? `${profile.age}` : "Unknown";
+            const gender = (profile.gender as string) || "Unknown";
+            const bloodType = (profile.blood_group as string) || "Unknown";
 
             // BMI calculation
             const h = profile.height_cm as number | null;
             const w = profile.weight_kg as number | null;
-            const bmi = (h && w) ? (Number(w) / ((Number(h) / 100) ** 2)).toFixed(1) : notReported;
+            const bmi = (h && w) ? (Number(w) / ((Number(h) / 100) ** 2)).toFixed(1) : "Unknown";
 
             // Split chronic_conditions into chronic / surgical / family
             const allConditions: string[] = Array.isArray(profile.chronic_conditions) ? profile.chronic_conditions : [];
@@ -115,72 +124,99 @@ export async function POST(request: NextRequest) {
             const surgicalList = allConditions.filter(c => c.startsWith("surgery:")).map(c => c.replace("surgery:", ""));
             const familyList = allConditions.filter(c => c.startsWith("family:")).map(c => c.replace("family:", ""));
 
-            // Critical flags prepended to chronic
+            // Critical flags
             const criticalFlags: string[] = [];
             if (profile.is_pregnant) criticalFlags.push("PREGNANT");
             if (profile.is_breastfeeding) criticalFlags.push("BREASTFEEDING");
             if (profile.kidney_disease) criticalFlags.push("Kidney disease");
             if (profile.liver_disease) criticalFlags.push("Liver disease");
 
-            const chronicText = [...criticalFlags, ...chronicList].length > 0
-              ? [...criticalFlags, ...chronicList].join(", ")
-              : notReported;
-            const surgicalText = surgicalList.length > 0 ? surgicalList.join(", ") : notReported;
-            const familyText = familyList.length > 0 ? familyList.join(", ") : notReported;
+            // Build bullet lists for each section
+            const bulletList = (items: string[]) => items.length > 0 ? items.map(i => `  - ${i}`).join("\n") : `  - ${none}`;
 
-            // Medications
-            const medsText = hasMedications
-              ? meds!.map((m: { generic_name: string | null; brand_name: string | null; dosage: string | null; frequency: string | null }) => {
+            // Medications — detailed with dose + frequency
+            const medsLines = meds.length > 0
+              ? meds.map((m: { generic_name: string | null; brand_name: string | null; dosage: string | null; frequency: string | null }) => {
                   const nm = m.generic_name || m.brand_name || "Unknown";
-                  const parts = [nm];
-                  if (m.dosage) parts.push(m.dosage);
-                  if (m.frequency) parts.push(m.frequency);
-                  return parts.join(" ");
-                }).join("; ")
-              : notReported;
+                  const dose = m.dosage || "dose not specified";
+                  const freq = m.frequency || "frequency not specified";
+                  return `  - ${nm} — ${dose}, ${freq}`;
+                }).join("\n")
+              : `  - ${none}`;
 
             // Allergies with reaction type
-            const allergiesText = (allergies && allergies.length > 0)
-              ? allergies.map((a: { allergen: string; severity: string }) => `${a.allergen} (${a.severity})`).join(", ")
-              : notReported;
+            const allergyLines = allergies.length > 0
+              ? allergies.map((a: { allergen: string; severity: string }) => `  - ${a.allergen} (${a.severity})`).join("\n")
+              : `  - ${none}`;
+
+            // Chronic conditions (critical flags + regular)
+            const allChronic = [...criticalFlags, ...chronicList];
+            const chronicLines = bulletList(allChronic);
+            const surgicalLines = bulletList(surgicalList);
+            const familyLines = bulletList(familyList);
 
             // Lifestyle
-            const smoking = ((profile.smoking_use as string) || "").split("|")[0] || notReported;
-            const alcohol = ((profile.alcohol_use as string) || "").split("|")[0] || notReported;
+            const smoking = ((profile.smoking_use as string) || "").split("|")[0] || none;
+            const alcohol = ((profile.alcohol_use as string) || "").split("|")[0] || none;
 
             // Vaccines (JSONB) — only completed ones
             const vaccinesRaw = Array.isArray(profile.vaccines) ? profile.vaccines as Array<{ name: string; status: string; last_date?: string }> : [];
             const doneVaccines = vaccinesRaw.filter(v => v.status === "done");
-            const vaccinesText = doneVaccines.length > 0
-              ? doneVaccines.map(v => v.last_date ? `${v.name} (${v.last_date})` : v.name).join(", ")
-              : notReported;
+            const vaccineLines = doneVaccines.length > 0
+              ? doneVaccines.map(v => v.last_date ? `  - ${v.name} (${v.last_date})` : `  - ${v.name}`).join("\n")
+              : `  - ${none}`;
+
+            // Supplements — filter meta: prefix
+            const supplementsArr: string[] = Array.isArray(profile.supplements) ? profile.supplements : [];
+            const cleanSupps = supplementsArr.filter((s: string) => !s.startsWith("meta:"));
+            const supplementLines = cleanSupps.length > 0
+              ? cleanSupps.map(s => {
+                  // Parse "Name|dose|unit|frequency" format if present
+                  const parts = s.split("|");
+                  if (parts.length >= 2) {
+                    const nm = parts[0];
+                    const dose = parts[1] ? `${parts[1]}${parts[2] ? parts[2] : ""}` : "";
+                    const freq = parts[3] || "";
+                    return `  - ${nm}${dose ? ` — ${dose}` : ""}${freq ? `, ${freq}` : ""}`;
+                  }
+                  return `  - ${s}`;
+                }).join("\n")
+              : `  - ${none}`;
 
             profileContext = `
+=== THIS PATIENT'S COMPLETE HEALTH PROFILE ===
 
-PATIENT PROFILE:
-Name: ${name}
-Age: ${age} | Gender: ${gender} | Blood Type: ${bloodType} | BMI: ${bmi}
+PERSONAL: ${name}, ${age} years old, ${gender}, Blood Type: ${bloodType}, BMI: ${bmi}
 
-Medications: ${medsText}
-Allergies: ${allergiesText}
-Chronic Conditions: ${chronicText}
-Surgical History: ${surgicalText}
-Family History: ${familyText}
-Lifestyle: Smoking: ${smoking} | Alcohol: ${alcohol}
-Vaccinations: ${vaccinesText}
+ACTIVE MEDICATIONS:
+${medsLines}
 
-CRITICAL INSTRUCTIONS:
-- Cross-reference ALL profile data in every answer
-- Flag drug-herb interactions specific to this patient's medications
-- Consider surgical history effects on drug/supplement absorption (e.g., bariatric/gastric surgery = altered absorption, reduced bioavailability)
-- Note allergy cross-reactivity risks (e.g., aspirin allergy = NSAID sensitivity; willow bark contains salicylates)
-- Flag family history risks when relevant (e.g., family breast/ovarian cancer = caution with phytoestrogen supplements like soy, red clover, black cohosh)
-- Consider kidney/liver disease for dose reduction or elimination warnings
-- Always mention evidence level (A/B/C) when discussing supplements
-- Always recommend consulting their doctor before starting any new supplement
+ALLERGIES:
+${allergyLines}
+
+CHRONIC CONDITIONS:
+${chronicLines}
+
+SURGICAL HISTORY:
+${surgicalLines}
+
+FAMILY HEALTH HISTORY:
+${familyLines}
+
+LIFESTYLE:
+  - Smoking: ${smoking}
+  - Alcohol: ${alcohol}
+
+VACCINATIONS:
+${vaccineLines}
+
+SUPPLEMENTS:
+${supplementLines}
+
+=== END OF PATIENT PROFILE ===
 `;
             if (!profile.onboarding_complete) {
-              profileContext += `\n- Profile INCOMPLETE — add warning that recommendations may be limited without full profile\n`;
+              profileContext += `\nNOTE: Profile is INCOMPLETE — add a warning that recommendations may be limited without a full profile.\n`;
             }
           }
         }
@@ -229,16 +265,13 @@ ${vaccineMatch.urgency === "critical" ? "If user says they are NOT vaccinated, S
       fullPrompt += "\n";
     }
 
-    // Add profile context
-    fullPrompt += profileContext;
-
-    // Add vaccine context if detected
+    // Add vaccine context if detected (goes to user message — dynamic per query)
     if (vaccineContext) fullPrompt += vaccineContext;
 
     // Add the actual user message
     fullPrompt += `\n\nUSER'S QUESTION:\n${message}`;
 
-    // Step 5: Stream Claude response
+    // Step 5: Build system prompt — profile goes HERE (not in user message)
     let systemPromptFull = SYSTEM_PROMPT + "\n\nSOURCES FORMAT RULE: When listing sources/references at the end of your response, ALWAYS format each source as a markdown link: [Title (Year)](URL). Never write URLs as plain text.";
 
     // Language instruction — MUST come first so Claude responds in the correct language
@@ -246,8 +279,26 @@ ${vaccineMatch.urgency === "critical" ? "If user says they are NOT vaccinated, S
       systemPromptFull += "\n\nKRİTİK DİL KURALI: Tüm yanıtlarını TÜRKÇE ver. Başlıklar, açıklamalar, öneriler, uyarılar dahil her şey Türkçe olmalı. Latince/İngilizce terimler parantez içinde kalabilir. Kullanıcı Türkçe yazdığında her zaman Türkçe yanıt ver.";
     }
 
+    // Inject full patient profile into system prompt for maximum personalization
+    if (profileContext) {
+      systemPromptFull += `\n${profileContext}\n
+You are DoctoPal, a personalized health assistant. You MUST reference this patient's specific profile in EVERY answer:
+- Always mention their specific medications BY NAME when relevant (not generic "your medications")
+- Flag interactions with THEIR specific drugs, not generic warnings
+- Consider THEIR surgical history (e.g., gastric sleeve/bypass affects absorption and bioavailability)
+- Consider THEIR allergies and cross-reactivity risks (e.g., aspirin allergy → willow bark, salicylates; NSAID sensitivity)
+- Consider THEIR family history when recommending supplements (e.g., family breast/ovarian cancer → avoid phytoestrogens like soy, red clover, black cohosh)
+- Consider kidney/liver disease for dose reduction or elimination warnings
+- Mention evidence levels (Grade A/B/C) for any supplement claims
+- Always end with a recommendation to consult their doctor before starting any new supplement
+- Be warm, conversational, and address the patient by their first name when natural
+- Do NOT give generic answers — every response must feel personally tailored to THIS patient
+- If profile data says "None reported" for a section, do not fabricate information — work with what is known`;
+    }
+
     if (profileContext && hasMedications) {
-      systemPromptFull += "\n\nIMPORTANT: A user profile is provided. Cross-check ALL recommendations against their medications, allergies, and health conditions.";
+      // Additional reinforcement when meds are present
+      systemPromptFull += "\n\nREINFORCEMENT: This patient has active medications listed above. Cross-check EVERY recommendation against their medications for interactions.";
     } else {
       // Guest user OR authenticated user without medications saved
       systemPromptFull += `\n\nCRITICAL SAFETY RULE — NO DOSAGE ADVICE:
