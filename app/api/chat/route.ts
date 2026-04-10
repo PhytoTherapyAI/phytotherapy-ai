@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { history, files, lang, modelMode } = body;
+    const { history, files, lang } = body;
     const message = sanitizeInput(body.message);
 
     if (!message || message.length === 0) {
@@ -88,8 +88,8 @@ export async function POST(request: NextRequest) {
         if (user) {
           userId = user.id;
           const [profileRes, { data: meds }, { data: allergies }] = await Promise.all([
-            supabase.from("user_profiles").select("*").eq("id", user.id).single(),
-            supabase.from("user_medications").select("brand_name, generic_name, dosage").eq("user_id", user.id).eq("is_active", true),
+            supabase.from("user_profiles").select("*").eq("id", user.id).maybeSingle(),
+            supabase.from("user_medications").select("brand_name, generic_name, dosage, frequency").eq("user_id", user.id).eq("is_active", true),
             supabase.from("user_allergies").select("allergen, severity").eq("user_id", user.id),
           ]);
 
@@ -97,21 +97,90 @@ export async function POST(request: NextRequest) {
           profile = profileRes.data;
 
           if (profile) {
-            profileContext = `\n\nUSER PROFILE (cross-check all recommendations against this):`;
-            if (profile.age) profileContext += `\n- Age: ${profile.age}`;
-            if (profile.gender) profileContext += `\n- Gender: ${profile.gender}`;
-            if (profile.is_pregnant) profileContext += `\n- ⚠️ PREGNANT`;
-            if (profile.is_breastfeeding) profileContext += `\n- ⚠️ BREASTFEEDING`;
-            if (profile.kidney_disease) profileContext += `\n- ⚠️ KIDNEY DISEASE`;
-            if (profile.liver_disease) profileContext += `\n- ⚠️ LIVER DISEASE`;
-            if (hasMedications) {
-              profileContext += `\n- Medications: ${meds!.map((m: { generic_name: string | null; brand_name: string | null }) => m.generic_name || m.brand_name).join(", ")}`;
-            }
-            if (allergies && allergies.length > 0) {
-              profileContext += `\n- Allergies: ${allergies.map((a: { allergen: string }) => a.allergen).join(", ")}`;
-            }
+            // ── Build comprehensive PATIENT PROFILE block ──
+            const notReported = "Not reported";
+            const name = (profile.full_name as string) || notReported;
+            const age = profile.age ? `${profile.age}` : notReported;
+            const gender = (profile.gender as string) || notReported;
+            const bloodType = (profile.blood_group as string) || notReported;
+
+            // BMI calculation
+            const h = profile.height_cm as number | null;
+            const w = profile.weight_kg as number | null;
+            const bmi = (h && w) ? (Number(w) / ((Number(h) / 100) ** 2)).toFixed(1) : notReported;
+
+            // Split chronic_conditions into chronic / surgical / family
+            const allConditions: string[] = Array.isArray(profile.chronic_conditions) ? profile.chronic_conditions : [];
+            const chronicList = allConditions.filter(c => !c.startsWith("surgery:") && !c.startsWith("family:"));
+            const surgicalList = allConditions.filter(c => c.startsWith("surgery:")).map(c => c.replace("surgery:", ""));
+            const familyList = allConditions.filter(c => c.startsWith("family:")).map(c => c.replace("family:", ""));
+
+            // Critical flags prepended to chronic
+            const criticalFlags: string[] = [];
+            if (profile.is_pregnant) criticalFlags.push("PREGNANT");
+            if (profile.is_breastfeeding) criticalFlags.push("BREASTFEEDING");
+            if (profile.kidney_disease) criticalFlags.push("Kidney disease");
+            if (profile.liver_disease) criticalFlags.push("Liver disease");
+
+            const chronicText = [...criticalFlags, ...chronicList].length > 0
+              ? [...criticalFlags, ...chronicList].join(", ")
+              : notReported;
+            const surgicalText = surgicalList.length > 0 ? surgicalList.join(", ") : notReported;
+            const familyText = familyList.length > 0 ? familyList.join(", ") : notReported;
+
+            // Medications
+            const medsText = hasMedications
+              ? meds!.map((m: { generic_name: string | null; brand_name: string | null; dosage: string | null; frequency: string | null }) => {
+                  const nm = m.generic_name || m.brand_name || "Unknown";
+                  const parts = [nm];
+                  if (m.dosage) parts.push(m.dosage);
+                  if (m.frequency) parts.push(m.frequency);
+                  return parts.join(" ");
+                }).join("; ")
+              : notReported;
+
+            // Allergies with reaction type
+            const allergiesText = (allergies && allergies.length > 0)
+              ? allergies.map((a: { allergen: string; severity: string }) => `${a.allergen} (${a.severity})`).join(", ")
+              : notReported;
+
+            // Lifestyle
+            const smoking = ((profile.smoking_use as string) || "").split("|")[0] || notReported;
+            const alcohol = ((profile.alcohol_use as string) || "").split("|")[0] || notReported;
+
+            // Vaccines (JSONB) — only completed ones
+            const vaccinesRaw = Array.isArray(profile.vaccines) ? profile.vaccines as Array<{ name: string; status: string; last_date?: string }> : [];
+            const doneVaccines = vaccinesRaw.filter(v => v.status === "done");
+            const vaccinesText = doneVaccines.length > 0
+              ? doneVaccines.map(v => v.last_date ? `${v.name} (${v.last_date})` : v.name).join(", ")
+              : notReported;
+
+            profileContext = `
+
+PATIENT PROFILE:
+Name: ${name}
+Age: ${age} | Gender: ${gender} | Blood Type: ${bloodType} | BMI: ${bmi}
+
+Medications: ${medsText}
+Allergies: ${allergiesText}
+Chronic Conditions: ${chronicText}
+Surgical History: ${surgicalText}
+Family History: ${familyText}
+Lifestyle: Smoking: ${smoking} | Alcohol: ${alcohol}
+Vaccinations: ${vaccinesText}
+
+CRITICAL INSTRUCTIONS:
+- Cross-reference ALL profile data in every answer
+- Flag drug-herb interactions specific to this patient's medications
+- Consider surgical history effects on drug/supplement absorption (e.g., bariatric/gastric surgery = altered absorption, reduced bioavailability)
+- Note allergy cross-reactivity risks (e.g., aspirin allergy = NSAID sensitivity; willow bark contains salicylates)
+- Flag family history risks when relevant (e.g., family breast/ovarian cancer = caution with phytoestrogen supplements like soy, red clover, black cohosh)
+- Consider kidney/liver disease for dose reduction or elimination warnings
+- Always mention evidence level (A/B/C) when discussing supplements
+- Always recommend consulting their doctor before starting any new supplement
+`;
             if (!profile.onboarding_complete) {
-              profileContext += `\n- ⚠️ Profile INCOMPLETE — add warning to response`;
+              profileContext += `\n- Profile INCOMPLETE — add warning that recommendations may be limited without full profile\n`;
             }
           }
         }
@@ -208,14 +277,12 @@ This rule exists because giving dosage advice without knowing the user's medicat
       fullPrompt += `\n\nThe user has uploaded ${files.length} file(s). Please analyze the content of these files and incorporate the findings into your response. If the file is a blood test report, lab result, or medical document, extract the relevant values and provide evidence-based recommendations.`;
     }
 
-    // Use multimodal streaming if files are present, otherwise standard text streaming
-    // Model selection: "quality" = Sonnet, "fast" = Haiku
-    const isPremium = modelMode !== "fast"; // default to quality (Sonnet)
+    // Single model: claude-haiku-4-5 — no premium toggle
     let stream;
     try {
       stream = geminiFiles.length > 0
-        ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles, { premium: isPremium })
-        : await askGeminiStream(fullPrompt, systemPromptFull, { premium: isPremium });
+        ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles, { premium: false })
+        : await askGeminiStream(fullPrompt, systemPromptFull, { premium: false });
     } catch (claudeError) {
       // Claude API call failed (rate limit, API key, network, etc.)
       // Return a streaming response with the error message instead of a 500

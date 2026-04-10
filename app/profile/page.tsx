@@ -655,7 +655,7 @@ export default function ProfilePage() {
         const powerInput: ProfilePowerInput = {
           hasBasicInfo: !!(profile.full_name && profile.age && profile.gender),
           medicationCount: medications.length,
-          supplementCount: (profile.supplements || []).length,
+          supplementCount: (profile.supplements || []).filter((s: string) => !s.startsWith("meta:")).length,
           hasAllergies: allergies.length > 0,
           hasChronicConditions: (profile.chronic_conditions || []).filter((c: string) => !c.startsWith('family:')).length > 0,
           hasFamilyHistory: (profile.chronic_conditions || []).some((c: string) => c.startsWith('family:')),
@@ -787,7 +787,7 @@ export default function ProfilePage() {
               <p className="text-[10px] text-muted-foreground mt-0.5">💊 {tr ? "Aktif İlaç" : "Active Medications"}</p>
             </div>
             <div className="rounded-xl bg-white/60 dark:bg-card/60 border p-3 text-center shadow-sm">
-              <p className="text-xl font-bold text-emerald-600">{(profile.supplements || []).length || 0}</p>
+              <p className="text-xl font-bold text-emerald-600">{(profile.supplements || []).filter((s: string) => !s.startsWith("meta:")).length || 0}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">🌿 {tr ? "Günlük Takviye" : "Daily Supplements"}</p>
             </div>
             <div className="rounded-xl bg-white/60 dark:bg-card/60 border p-3 text-center shadow-sm">
@@ -805,7 +805,7 @@ export default function ProfilePage() {
               {(() => {
                 const stats: UserStats = {
                   totalQueries: 0, totalCheckIns: streakDays, streakDays, bloodTestCount: labTestCount,
-                  supplementsTracked: (profile.supplements || []).length, waterGoalHits: 0,
+                  supplementsTracked: (profile.supplements || []).filter((s: string) => !s.startsWith("meta:")).length, waterGoalHits: 0,
                   interactionChecks: 0, daysActive: streakDays, familyMembers: 0, pdfReports: 0,
                   vaccinesTracked: (Array.isArray(profile.vaccines) ? (profile.vaccines as { status: string }[]).filter(v => v.status === "done").length : 0),
                 };

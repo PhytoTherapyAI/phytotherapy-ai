@@ -950,7 +950,7 @@ export default function CalendarPage() {
                   {/* Existing TodayView integration */}
                   <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
                     <TodayView userId={profile.id} lang={lang} userName={profile.full_name}
-                      userWeight={profile.weight_kg} userHeight={profile.height_cm} userSupplements={profile.supplements} />
+                      userWeight={profile.weight_kg} userHeight={profile.height_cm} userSupplements={(profile.supplements || []).filter((s: string) => !s.startsWith("meta:"))} />
                   </Suspense>
                 </motion.div>
               )}

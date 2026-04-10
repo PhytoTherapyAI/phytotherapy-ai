@@ -37,9 +37,9 @@ interface SupplementsAdapterProps {
 export function ProfileSupplementsStep({ userId, supplements, onUpdate }: SupplementsAdapterProps) {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Convert string[] → SupplementEntry[]
+  // Convert string[] → SupplementEntry[] (filter out meta: entries that leaked in)
   const entries: SupplementEntry[] = useMemo(() =>
-    supplements.map(s => ({ id: s, name: s, isCustom: false })),
+    supplements.filter(s => !s.startsWith("meta:")).map(s => ({ id: s, name: s, isCustom: false })),
     [supplements]
   )
 

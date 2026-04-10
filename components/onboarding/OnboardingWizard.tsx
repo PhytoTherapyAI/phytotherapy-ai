@@ -436,6 +436,19 @@ export function OnboardingWizard({ profile }: Props) {
         severity: a.severity,
       }));
 
+      // ── Extract meta:key=value entries from supplements array (OptionalProfileStep) ──
+      const metaEntries: Record<string, string> = {};
+      const cleanSupplements = (data.supplements || []).filter((s: string) => {
+        if (s.startsWith("meta:")) {
+          const match = s.match(/^meta:([^=]+)=(.*)$/);
+          if (match) {
+            metaEntries[match[1]] = match[2];
+          }
+          return false; // remove from supplements
+        }
+        return true;
+      });
+
       const profilePayload: Record<string, unknown> = {
         full_name: data.full_name,
         birth_date: data.birth_date || null,
@@ -459,7 +472,13 @@ export function OnboardingWizard({ profile }: Props) {
           ? data.supplement_entries.map(e =>
               [e.name, e.dose || "", e.doseUnit || "", e.frequency || "daily"].join("|")
             )
-          : data.supplements,
+          : cleanSupplements,
+        // Sociodemographic fields from meta: entries
+        city: metaEntries.city || null,
+        marital_status: metaEntries.marital || null,
+        insurance_type: metaEntries.insurance || null,
+        work_schedule: metaEntries.work || null,
+        wearable_device: metaEntries.wearable === "yes",
         onboarding_complete: true,
         onboarding_layer2_complete: isLayer2,
         consent_timestamp: new Date().toISOString(),
@@ -482,13 +501,22 @@ export function OnboardingWizard({ profile }: Props) {
         .update(profilePayload)
         .eq("id", userId);
 
-      // If allergies column doesn't exist, retry without it
+      // Retry logic: strip missing columns if schema hasn't been migrated yet
       if (profileError) {
         console.error("[Onboarding] Profile update error:", profileError.message, profileError.details, profileError.hint);
 
-        if (profileError.message?.includes("allergies") || profileError.details?.includes("allergies")) {
-          console.log("[Onboarding] Retrying without allergies column...");
-          delete profilePayload.allergies;
+        const errText = `${profileError.message || ""} ${profileError.details || ""}`.toLowerCase();
+        const optionalColumns = ["allergies", "city", "marital_status", "insurance_type", "work_schedule", "wearable_device"];
+        let stripped = false;
+        for (const col of optionalColumns) {
+          if (errText.includes(col)) {
+            console.log(`[Onboarding] Stripping missing column: ${col}`);
+            delete profilePayload[col];
+            stripped = true;
+          }
+        }
+
+        if (stripped) {
           const retry = await supabase
             .from("user_profiles")
             .update(profilePayload)
