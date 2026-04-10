@@ -32,7 +32,7 @@ const TOKENS_JSON = 3000;    // JSON analysis — most responses < 1500 tokens
 const TOKENS_STREAM = 2048;  // streaming chat
 
 // Temperature — 0.4 for balanced medical conversation, 0 for JSON/analysis
-const TEMP_CHAT = 0.4;       // balanced: warm enough to be helpful, focused enough to be safe
+const TEMP_CHAT = 0.6;       // warm, conversational tone for friend-like responses
 const TEMP_ANALYSIS = 0;     // deterministic for medical analysis/JSON
 
 // ──────────────────────────────────────────────
