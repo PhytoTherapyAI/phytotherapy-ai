@@ -19,34 +19,72 @@ export interface FilterResult {
 // LAYER 1: Diagnosis statements → informational
 // ═══════════════════════════════════════════════
 
+// Medical condition whitelist — "You have X" / "Sizde X var" ONLY triggers when X
+// contains one of these terms. Prevents false positives like "You have three options".
+const MEDICAL_CONDITIONS_EN = [
+  "diabetes", "hypertension", "asthma", "cancer", "carcinoma", "tumor", "tumour",
+  "infection", "disease", "disorder", "syndrome", "deficiency", "condition",
+  "anemia", "anaemia", "arthritis", "bronchitis", "cholesterol", "depression",
+  "anxiety", "allergy", "inflammation", "ulcer", "thyroid", "kidney", "liver",
+  "heart\\s+failure", "heart\\s+attack", "stroke", "copd", "pneumonia",
+  "hepatitis", "diabetic", "hypertensive", "asthmatic", "cardiovascular",
+  "autoimmune", "neuropathy", "osteoporosis", "migraine", "epilepsy", "psoriasis",
+  "eczema", "obesity", "dementia", "alzheimer", "parkinson", "fibromyalgia",
+];
+
+const MEDICAL_CONDITIONS_TR = [
+  "diyabet", "hipertansiyon", "astım", "astim", "kanser", "tümör", "tumor",
+  "enfeksiyon", "hastalık", "hastaligi", "bozukluk", "sendrom", "eksikliği", "eksikligi",
+  "alerji", "anemi", "artrit", "bronşit", "bronsit", "kolesterol", "depresyon",
+  "anksiyete", "iltihap", "ülser", "ulser", "tiroid", "böbrek", "bobrek", "karaciğer", "karaciger",
+  "kalp\\s+yetmezliği", "kalp\\s+yetmezligi", "kalp\\s+krizi", "inme", "felç", "felc",
+  "koah", "zatürre", "zaturre", "hepatit", "diyabetik", "kardiyovasküler", "kardiyovaskuler",
+  "nöropati", "noropati", "osteoporoz", "migren", "epilepsi", "sedef", "egzama",
+  "obezite", "demans", "alzheimer", "parkinson", "fibromyalji",
+];
+
+const MED_EN = MEDICAL_CONDITIONS_EN.join("|");
+const MED_TR = MEDICAL_CONDITIONS_TR.join("|");
+
 const DIAGNOSIS_PATTERNS: Array<{ pattern: RegExp; replacement: string }> = [
-  // TR: "Sizde X var" / "X var" (after "sizde/sende")
+  // TR: "Sizde/Sende [tıbbi terim içeren X] var/bulunmaktadır/mevcut/..."
+  // Only triggers when X contains a known medical condition
   {
-    pattern: /(?:sizde|sende)\s+(.+?)\s+(?:var|bulunmaktadır|mevcut|tespit\s+edildi|saptandı)/gi,
+    pattern: new RegExp(
+      `(?:sizde|sende)\\s+([\\wçğışöü]*(?:${MED_TR})[\\w\\s\\-çğışöü]*?)\\s+(?:var|bulunmaktadır|bulunmakta|mevcut|tespit\\s+edildi|saptandı)`,
+      "gi"
+    ),
     replacement: "belirttiğiniz semptomlar $1 ile uyumlu olabilir. Kesin tanı için bir uzmana başvurmanızı öneririz",
   },
-  // TR: "X hastalığınız var"
+  // TR: "[tıbbi terim] hastalığınız var"
   {
-    pattern: /(.+?)\s+hastalığınız\s+(?:var|bulunmaktadır|mevcut)/gi,
+    pattern: new RegExp(
+      `([\\wçğışöü\\s\\-]*(?:${MED_TR})[\\wçğışöü]*)\\s+hastalığınız\\s+(?:var|bulunmaktadır|mevcut)`,
+      "gi"
+    ),
     replacement: "belirtileriniz $1 ile uyumlu olabilir. Kesin tanı için doktorunuza danışın",
   },
-  // TR: "Tanınız X"
+  // TR: "Tanınız X" — always flags as diagnostic
   {
-    pattern: /tanınız\s+(.+?)(?:\.|,|;|\s+olarak)/gi,
+    pattern: /tanınız\s+([^.,;:\n]+?)(?:\.|,|;|\s+olarak)/gi,
     replacement: "belirtileriniz $1 ile uyumlu olabilir",
   },
   // TR: "kesin olarak X teşhis/tanı"
   {
-    pattern: /kesin\s+olarak\s+(.+?)\s+(?:teşhis|tanı)/gi,
+    pattern: /kesin\s+olarak\s+([^.,;:\n]+?)\s+(?:teşhis|tanı)/gi,
     replacement: "belirtileriniz $1 yönünde değerlendirilebilir",
   },
-  // EN: "You have been diagnosed with X" / "You are diagnosed with X" — STRICT to avoid false positives
-  // (Generic "You have X" is NOT matched — would trigger on "You have three options")
+
+  // EN: "You have [medical condition]" — whitelist-gated
+  // Triggers on "You have diabetes" but NOT "You have three options"
   {
-    pattern: /you\s+(?:have\s+been\s+|are\s+)diagnosed\s+with\s+([^.,;:\n]+?)(?=[.,;:\n])/gi,
+    pattern: new RegExp(
+      `you\\s+have\\s+(?:been\\s+diagnosed\\s+with\\s+|a\\s+|an\\s+)?([\\w\\s\\-]*(?:${MED_EN})[\\w\\s\\-]*?)(?=[.,;:\\n])`,
+      "gi"
+    ),
     replacement: "your symptoms may be consistent with $1. Please consult your doctor for a definitive diagnosis",
   },
-  // EN: "I diagnose you with X" / "The diagnosis is X"
+  // EN: "I diagnose you with X" / "The diagnosis is X" — always flags
   {
     pattern: /(?:i\s+diagnose\s+you\s+with|the\s+diagnosis\s+is)\s+([^.,;:\n]+?)(?=[.,;:\n])/gi,
     replacement: "your symptoms may be consistent with $1. A healthcare professional should confirm this",
@@ -56,7 +94,7 @@ const DIAGNOSIS_PATTERNS: Array<{ pattern: RegExp; replacement: string }> = [
     pattern: /your\s+diagnosis\s+is\s+([^.,;:\n]+?)(?=[.,;:\n])/gi,
     replacement: "your symptoms may suggest $1. A healthcare professional should confirm this",
   },
-  // EN: "You are suffering from X"
+  // EN: "You are suffering from X" — phrase implies diagnosis regardless of X
   {
     pattern: /you\s+(?:are\s+)?suffering\s+from\s+([^.,;:\n]+?)(?=[.,;:\n])/gi,
     replacement: "your symptoms may be related to $1. Please consult a specialist",

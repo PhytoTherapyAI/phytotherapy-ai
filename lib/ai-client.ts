@@ -133,14 +133,23 @@ function safeRefusalStream(err: PromptInjectionError, prompt: string): ReadableS
   });
 }
 
-/** Apply output guard: 4-layer safety filter (filterAIOutput). */
+/** Apply output guard: 4-layer safety filter (filterAIOutput). Fails closed: if filter errors, return generic safe message. */
 function guardOutputText(text: string, userQuery?: string): string {
   if (!text) return text;
-  const filtered = filterAIOutput(text, { userQuery });
-  return filtered.text;
+  try {
+    const filtered = filterAIOutput(text, { userQuery });
+    return filtered.text;
+  } catch (err) {
+    // Filter crashed — do NOT return raw AI output (could contain diagnosis/prescription)
+    console.error("[KVKK-FILTER-ERROR]", err);
+    const isTr = /[ıİğĞşŞçÇöÖüÜ]/.test(userQuery || text);
+    return isTr
+      ? "Yanıt işlenirken bir güvenlik hatası oluştu. Lütfen tekrar deneyin veya doktorunuza danışın."
+      : "A safety check error occurred while processing the response. Please try again or consult your doctor.";
+  }
 }
 
-/** Wrap a ReadableStream so the full response is buffered, filtered, then re-emitted. */
+/** Wrap a ReadableStream so the full response is buffered, filtered, then re-emitted. Fails closed on filter errors. */
 function guardOutputStream(stream: ReadableStream, userQuery?: string): ReadableStream {
   const decoder = new TextDecoder();
   const encoder = new TextEncoder();
@@ -154,14 +163,35 @@ function guardOutputStream(stream: ReadableStream, userQuery?: string): Readable
           if (done) break;
           raw += decoder.decode(value, { stream: true });
         }
-        const filtered = filterAIOutput(raw, { userQuery });
+        let finalText: string;
+        try {
+          const filtered = filterAIOutput(raw, { userQuery });
+          finalText = filtered.text;
+        } catch (filterErr) {
+          console.error("[KVKK-FILTER-ERROR]", filterErr);
+          const isTr = /[ıİğĞşŞçÇöÖüÜ]/.test(userQuery || raw);
+          finalText = isTr
+            ? "Yanıt işlenirken bir güvenlik hatası oluştu. Lütfen tekrar deneyin veya doktorunuza danışın."
+            : "A safety check error occurred while processing the response. Please try again or consult your doctor.";
+        }
         const chunkSize = 48;
-        for (let i = 0; i < filtered.text.length; i += chunkSize) {
-          controller.enqueue(encoder.encode(filtered.text.slice(i, i + chunkSize)));
+        for (let i = 0; i < finalText.length; i += chunkSize) {
+          controller.enqueue(encoder.encode(finalText.slice(i, i + chunkSize)));
         }
         controller.close();
       } catch (err) {
-        controller.error(err);
+        // Stream read itself crashed → emit safe error, don't leak partial content
+        console.error("[KVKK-STREAM-ERROR]", err);
+        const isTr = /[ıİğĞşŞçÇöÖüÜ]/.test(userQuery || "");
+        const msg = isTr
+          ? "Yanıt alınırken bir hata oluştu. Lütfen tekrar deneyin."
+          : "An error occurred while receiving the response. Please try again.";
+        try {
+          controller.enqueue(encoder.encode(msg));
+          controller.close();
+        } catch {
+          controller.error(err);
+        }
       }
     },
   });
