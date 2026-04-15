@@ -341,11 +341,11 @@ export default function Home() {
   const [timeEmoji, setTimeEmoji] = useState("👋");
 
   // Dashboard state
-  const [checkInData, setCheckInData]   = useState<any>(null);
+  const [checkInData, setCheckInData]   = useState<{ energy_level: number | null; sleep_quality: number | null; mood: number | null; bloating: number | null } | null>(null);
   const [addSupOpen, setAddSupOpen]     = useState(false);
   const [supRefreshKey, setSupRefreshKey] = useState(0);
   const [expandedCat, setExpandedCat]  = useState<string | null>(null);
-  const [medications, setMedications]  = useState<any[]>([]);
+  const [medications, setMedications]  = useState<{ medication_name: string }[]>([]);
   const [hour, setHour]                = useState<number | null>(null);
   const [query, setQuery]              = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -379,8 +379,8 @@ export default function Home() {
             .gte("log_date", ninetyAgoStr),
         ]);
         const activeDates = new Set<string>();
-        checkInsRes.data?.forEach((c: any) => activeDates.add(c.check_date));
-        logsRes.data?.forEach((l: any) => activeDates.add(l.log_date));
+        checkInsRes.data?.forEach((c: { check_date: string }) => activeDates.add(c.check_date));
+        logsRes.data?.forEach((l: { log_date: string }) => activeDates.add(l.log_date));
         let s = 0;
         for (let i = 0; i < 90; i++) {
           const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
@@ -409,7 +409,7 @@ export default function Home() {
 
       // Build dynamic task list
       const tasks: DashboardTask[] = [];
-      medsRes.data?.forEach((m: any) => {
+      medsRes.data?.forEach((m: { id: string; brand_name: string | null; generic_name: string | null; dosage: string | null; frequency: string | null }) => {
         const medName = m.brand_name || m.generic_name || "Med";
         const doses = parseMedDoses(m.frequency || "", lang as "en" | "tr");
         for (const dose of doses) {
@@ -418,17 +418,17 @@ export default function Home() {
           tasks.push({ id: itemId, emoji: "💊", labelEn: label, labelTr: label, duration: null, isMed: true });
         }
       });
-      supsRes.data?.forEach((s: any) => {
+      supsRes.data?.forEach((s: { id: string; title: string | null }) => {
         // Skip meta: entries that leaked into calendar_events
         if (s.title?.startsWith("meta:")) return;
-        const supName = getSupplementDisplayName(s.title, lang as "en" | "tr");
+        const supName = getSupplementDisplayName(s.title || "", lang as "en" | "tr");
         tasks.push({ id: s.id, emoji: "🌿", labelEn: supName, labelTr: supName, duration: null, isSup: true });
       });
       setDynamicTasks(tasks);
 
       // Completion from daily_logs (med/sup) + localStorage (static tasks)
       const doneIds = new Set<string>();
-      logsRes.data?.forEach((l: any) => { if (l.completed) doneIds.add(l.item_id); });
+      logsRes.data?.forEach((l: { item_id: string; item_type: string; completed: boolean }) => { if (l.completed) doneIds.add(l.item_id); });
       const staticDone = loadCompletedTasks(todayStr);
       STATIC_DASHBOARD_TASKS.forEach(t => { if (staticDone.has(t.id)) doneIds.add(t.id); });
       setCompletedTaskIds(doneIds);
@@ -550,7 +550,7 @@ export default function Home() {
         .from("user_medications")
         .select("brand_name, generic_name")
         .eq("user_id", activeUserId).eq("is_active", true);
-      if (data) setMedications(data.map((m: any) => ({ medication_name: m.generic_name || m.brand_name })));
+      if (data) setMedications(data.map((m: { brand_name: string | null; generic_name: string | null }) => ({ medication_name: m.generic_name || m.brand_name || "" })));
     } catch { /* silent */ }
   }, [activeUserId]);
 
@@ -698,7 +698,8 @@ export default function Home() {
                         const displayLabel = isWater
                           ? label
                           : dur ? `${label} (${dur})` : label;
-                        const onDismissFn = (t as any).isMed || (t as any).isSup ? undefined : () => dismissTask(t.id);
+                        const tWithFlags = t as DashboardTask;
+                        const onDismissFn = tWithFlags.isMed || tWithFlags.isSup ? undefined : () => dismissTask(t.id);
                         if (isWater) {
                           return (
                             <WaterTaskItem key={t.id} emoji={t.emoji} label={displayLabel}

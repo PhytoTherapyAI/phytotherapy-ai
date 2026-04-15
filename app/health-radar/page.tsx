@@ -7,15 +7,21 @@ import { useLang } from "@/components/layout/language-toggle"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Activity, Heart, Brain, Bone, Apple, Shield, Loader2, TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { Activity, Heart, Brain, Bone, Apple, Shield, Loader2, TrendingUp, TrendingDown, Minus, type LucideIcon } from "lucide-react"
 
 interface RadarAxis {
   key: string
   label: { en: string; tr: string }
   score: number
-  icon: any
+  icon: LucideIcon
   color: string
   factors: { en: string; tr: string; impact: "positive" | "negative" }[]
+}
+
+interface CheckIn {
+  mood?: number
+  energy_level?: number
+  sleep_quality?: number
 }
 
 export default function HealthRadarPage() {
@@ -37,13 +43,13 @@ export default function HealthRadarPage() {
         supabase.from("user_profiles").select("*").eq("user_id", user.id).single(),
         supabase.from("daily_check_ins").select("*").eq("user_id", user.id).order("check_date", { ascending: false }).limit(7),
       ])
-      const meds = medsRes.data?.map((d: any) => (d.generic_name || d.brand_name)) || []
+      const meds: string[] = medsRes.data?.map((d: { brand_name: string | null; generic_name: string | null }) => (d.generic_name || d.brand_name || "")) || []
       const profile = profileRes.data
-      const checkins = checkinsRes.data || []
+      const checkins: CheckIn[] = checkinsRes.data || []
 
-      const avgMood = checkins.length ? checkins.reduce((s: number, c: any) => s + (c.mood || 3), 0) / checkins.length : 3
-      const avgEnergy = checkins.length ? checkins.reduce((s: number, c: any) => s + (c.energy_level || 3), 0) / checkins.length : 3
-      const avgSleep = checkins.length ? checkins.reduce((s: number, c: any) => s + (c.sleep_quality || 3), 0) / checkins.length : 3
+      const avgMood = checkins.length ? checkins.reduce((s: number, c: CheckIn) => s + (c.mood || 3), 0) / checkins.length : 3
+      const avgEnergy = checkins.length ? checkins.reduce((s: number, c: CheckIn) => s + (c.energy_level || 3), 0) / checkins.length : 3
+      const avgSleep = checkins.length ? checkins.reduce((s: number, c: CheckIn) => s + (c.sleep_quality || 3), 0) / checkins.length : 3
 
       setAxes([
         {

@@ -78,7 +78,7 @@ export default function DrugRecallPage() {
         .from("user_medications")
         .select("brand_name, generic_name")
         .eq("user_id", user.id)
-      setUserMeds((data || []).map((d: any) => (d.generic_name || d.brand_name).toLowerCase()))
+      setUserMeds((data || []).map((d: { generic_name: string | null; brand_name: string | null }) => (d.generic_name || d.brand_name || "").toLowerCase()))
     } catch { /* ignore */ }
     setLoading(false)
   }

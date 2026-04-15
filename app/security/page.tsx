@@ -4,7 +4,7 @@
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
-import { Shield, Lock, Eye, Server, FileCheck, AlertTriangle, Key, Database, Siren, Globe, UserX } from "lucide-react"
+import { Shield, Lock, Eye, Server, FileCheck, AlertTriangle, Key, Database, Siren, Globe, UserX, Brain } from "lucide-react"
 import { DATA_BREACH_PLAN } from "@/lib/security-audit"
 
 export default function SecurityPage() {
@@ -13,6 +13,7 @@ export default function SecurityPage() {
   const sections = [
     { icon: Lock, titleKey: "security.dataEncryption", descKey: "security.dataEncryptionDesc", color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-950/20" },
     { icon: Shield, titleKey: "security.kvkkGdpr", descKey: "security.kvkkGdprDesc", color: "text-green-500", bg: "bg-green-50 dark:bg-green-950/20" },
+    { icon: Brain, titleKey: "security.aiSafety", descKey: "security.aiSafetyDesc", color: "text-pink-500", bg: "bg-pink-50 dark:bg-pink-950/20" },
     { icon: Key, titleKey: "security.authentication", descKey: "security.authenticationDesc", color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-950/20" },
     { icon: Server, titleKey: "security.infrastructure", descKey: "security.infrastructureDesc", color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-950/20" },
     { icon: Eye, titleKey: "security.accessControl", descKey: "security.accessControlDesc", color: "text-red-500", bg: "bg-red-50 dark:bg-red-950/20" },

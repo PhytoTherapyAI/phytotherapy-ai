@@ -10,6 +10,7 @@ import {
   Search, X, ArrowRight, Stethoscope, FileText, Leaf, Clock,
   User, Pill, Brain, Sparkles, Star, Hash, CornerDownLeft,
   Command,
+  type LucideIcon,
 } from "lucide-react"
 import { tx } from "@/lib/translations"
 
@@ -72,7 +73,7 @@ const ALL_TOOLS = getToolItems()
 interface SearchResult {
   category: string
   categoryLabel: { en: string; tr: string }
-  icon: any
+  icon: LucideIcon
   items: (SearchItem & { highlightedTitle: string })[]
   isAiMatch?: boolean
 }
@@ -192,12 +193,23 @@ export function CommandPalette() {
         if (data.results?.length > 0) {
           // Convert API results to SearchResult format
           const grouped: Record<string, (SearchItem & { highlightedTitle: string })[]> = {}
-          data.results.forEach((r: any) => {
+          interface SemanticResult {
+            contentId: string
+            contentType: string
+            title: string
+            titleTr?: string
+            description?: string
+            descriptionTr?: string
+            href: string
+            similarity: number
+            metadata?: { dosage?: string; evidence?: string }
+          }
+          data.results.forEach((r: SemanticResult) => {
             const type = r.contentType === "doctor" ? "doctors" : r.contentType === "article" ? "articles" : r.contentType === "supplement" || r.contentType === "herb" ? "supplements" : "tools"
             if (!grouped[type]) grouped[type] = []
             grouped[type].push({
               id: `ai-${r.contentId}`,
-              type: r.contentType,
+              type: r.contentType as SearchItem["type"],
               title: lang === "tr" && r.titleTr ? r.titleTr : r.title,
               subtitle: lang === "tr" && r.descriptionTr ? r.descriptionTr : r.description || "",
               href: r.href,
@@ -206,7 +218,7 @@ export function CommandPalette() {
               image: r.contentType === "doctor" ? r.title.split(" ").map((w: string) => w[0]).slice(0, 2).join("") : undefined,
             })
           })
-          const categoryIcons: Record<string, any> = { doctors: Stethoscope, articles: FileText, supplements: Leaf, tools: Sparkles, conditions: Brain }
+          const categoryIcons: Record<string, LucideIcon> = { doctors: Stethoscope, articles: FileText, supplements: Leaf, tools: Sparkles, conditions: Brain }
           const categoryLabels: Record<string, { en: string; tr: string }> = {
             doctors: { en: "Expert Doctors", tr: "Uzman Doktorlar" },
             articles: { en: "Articles & Content", tr: "Makaleler & İçerikler" },
@@ -348,7 +360,7 @@ export function CommandPalette() {
                           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                             {group.categoryLabel[lang as "en" | "tr"]}
                           </span>
-                          {(group as any).isAiMatch && (
+                          {group.isAiMatch && (
                             <Badge className="text-[9px] bg-violet-500/10 text-violet-600 border-violet-500/30 gap-0.5">
                               <Sparkles className="w-2.5 h-2.5" />AI
                             </Badge>

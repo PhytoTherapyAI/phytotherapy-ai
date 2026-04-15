@@ -77,7 +77,7 @@ export default function PharmacogeneticsPage() {
         if (res.ok) {
           const data = await res.json();
           if (data.medications && data.medications.length > 0) {
-            setMedications(data.medications.map((m: any) => (m.generic_name || m.brand_name)));
+            setMedications(data.medications.map((m: { generic_name: string | null; brand_name: string | null }) => (m.generic_name || m.brand_name || "")));
           }
         }
       } catch {

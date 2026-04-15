@@ -38,9 +38,9 @@ export async function POST(req: NextRequest) {
       // Stack trace — most important for auto-fix
       stacktrace: extractStackTrace(issue),
       // URL where error occurred
-      url: issue.metadata?.url || issue.tags?.find((t: any) => t.key === "url")?.value || null,
+      url: issue.metadata?.url || issue.tags?.find((t: { key: string; value: string }) => t.key === "url")?.value || null,
       // Browser info
-      browser: issue.tags?.find((t: any) => t.key === "browser")?.value || null,
+      browser: issue.tags?.find((t: { key: string; value: string }) => t.key === "browser")?.value || null,
       // Raw payload for debugging
       raw_payload: JSON.stringify(payload).slice(0, 5000),
       // Status
@@ -76,14 +76,21 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ ok: true, action, issue_id: errorData.sentry_issue_id })
-  } catch (err: any) {
-    console.error("[Sentry Webhook] Error:", err.message)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Unknown error"
+    console.error("[Sentry Webhook] Error:", msg)
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
 
 // Extract stack trace from Sentry payload
-function extractStackTrace(issue: any): string | null {
+interface SentryFrame { filename?: string; lineNo?: number; colNo?: number; function?: string }
+interface SentryIssue {
+  entries?: { type: string; data?: { values?: { stacktrace?: { frames?: SentryFrame[] } }[] } }[]
+  metadata?: { value?: string; url?: string }
+  culprit?: string
+}
+function extractStackTrace(issue: SentryIssue): string | null {
   try {
     // From event data
     const entries = issue.entries || []
@@ -92,8 +99,8 @@ function extractStackTrace(issue: any): string | null {
         const values = entry.data?.values || []
         const frames = values[0]?.stacktrace?.frames || []
         return frames
-          .filter((f: any) => f.filename && !f.filename.includes("node_modules"))
-          .map((f: any) => `${f.filename}:${f.lineNo}:${f.colNo} in ${f.function || "anonymous"}`)
+          .filter((f: SentryFrame) => f.filename && !f.filename.includes("node_modules"))
+          .map((f: SentryFrame) => `${f.filename}:${f.lineNo}:${f.colNo} in ${f.function || "anonymous"}`)
           .reverse()
           .join("\n")
       }

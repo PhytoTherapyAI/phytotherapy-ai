@@ -9,12 +9,12 @@ import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Pill, Sun, Sunset, Moon, Coffee, Utensils, Loader2, Sparkles, AlertTriangle, Check } from "lucide-react"
+import { Clock, Pill, Sun, Sunset, Moon, Coffee, Utensils, Loader2, Sparkles, AlertTriangle, Check, type LucideIcon } from "lucide-react"
 
 interface ScheduleSlot {
   time: string
   label: { en: string; tr: string }
-  icon: any
+  icon: LucideIcon
   meds: { name: string; instruction: string; instructionTr: string }[]
 }
 
@@ -64,7 +64,7 @@ export default function MedicationSchedulePage() {
     try {
       const supabase = createBrowserClient()
       const { data } = await supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id)
-      if (data) setUserMeds(data.map((d: any) => (d.generic_name || d.brand_name)))
+      if (data) setUserMeds(data.map((d: { generic_name: string | null; brand_name: string | null }) => (d.generic_name || d.brand_name || "")))
     } catch (e) { console.error(e) }
     setLoading(false)
   }

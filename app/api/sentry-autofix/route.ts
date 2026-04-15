@@ -36,8 +36,9 @@ export async function GET(req: NextRequest) {
         ? `${errors.length} errors need fixing`
         : "No pending errors — all clear!",
     })
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Unknown error"
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
 
@@ -73,7 +74,8 @@ export async function POST(req: NextRequest) {
     if (error) throw error
 
     return NextResponse.json({ ok: true, error_id, status })
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "Unknown error"
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

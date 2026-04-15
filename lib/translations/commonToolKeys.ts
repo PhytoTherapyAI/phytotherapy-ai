@@ -1476,24 +1476,63 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
 
   // ── Security ──
   "security.title": { en: "Security", tr: "Güvenlik" },
-  "security.subtitle": { en: "The security of your health data is our top priority. Here are the security layers that keep you safe.", tr: "Sağlık verilerinizin guvenligi en buyuk onceligi\u0300mizdir. Istte bizi guclu kilan guvenlik katmanlari." },
-  "security.dataEncryption": { en: "Data Encryption", tr: "Veri Sifreleme" },
-  "security.dataEncryptionDesc": { en: "All health data is encrypted in transit with TLS 1.3 and at rest with AES-256 encryption.", tr: "Tum saglik verileriniz aktarim sirasinda TLS 1.3 ve beklemede AES-256 ile sifrelenir." },
+  "security.subtitle": { en: "The security of your health data is our top priority. Here are the security layers that keep you safe.", tr: "Sağlık verilerinizin güvenliği en büyük önceliğimizdir. İşte sizi güvende tutan güvenlik katmanları." },
+
+  "security.dataEncryption": { en: "Data Encryption", tr: "Veri Şifreleme" },
+  "security.dataEncryptionDesc": {
+    en: "All your health data is encrypted in transit with TLS 1.3 and at rest with AES-256, the same standard used by banks. With Supabase Row Level Security (RLS) policies, every user can access only their own data — even our own engineers cannot read your records without your permission.",
+    tr: "Tüm sağlık verileriniz aktarım sırasında TLS 1.3 ile, sunucularda beklerken ise bankaların kullandığı AES-256 standardıyla şifrelenir. Supabase Row Level Security (RLS) politikaları sayesinde her kullanıcı yalnızca kendi verisine erişebilir; sizin izniniz olmadan kendi mühendislerimiz dahi kayıtlarınızı okuyamaz."
+  },
+
   "security.kvkkGdpr": { en: "KVKK & GDPR Compliance", tr: "KVKK & GDPR Uyumu" },
-  "security.kvkkGdprDesc": { en: "Full compliance with Turkish KVKK and EU GDPR regulations. You have the right to download and delete your data.", tr: "Turkiye KVKK ve AB GDPR duzenlemelerine tam uyum. Verilerinizi indirme ve silme hakkiniz vardir." },
-  "security.authentication": { en: "Authentication", tr: "Kimlik Dogrulama" },
-  "security.authenticationDesc": { en: "Secure session management with Supabase Auth. Google and Facebook OAuth, email verification supported.", tr: "Supabase Auth ile guvenli oturum yonetimi. Google ve Facebook OAuth, e-posta dogrulamasi desteklenir." },
-  "security.infrastructure": { en: "Infrastructure Security", tr: "Altyapi Güvenliği" },
-  "security.infrastructureDesc": { en: "Hosted on Vercel, Supabase PostgreSQL database. DDoS protection, automatic backups.", tr: "Vercel uzerinde barindirma, Supabase PostgreSQL veritabani. DDoS koruması, otomatik yedekleme." },
-  "security.accessControl": { en: "Access Control", tr: "Erisim Kontrolu" },
-  "security.accessControlDesc": { en: "Every API endpoint requires authentication. Rate limiting (10 requests/minute) enforced.", tr: "Her API endpoint kimlik dogrulama gerektirir. Hiz sinirlamasi (10 istek/dakika) uygulanir." },
+  "security.kvkkGdprDesc": {
+    en: "Full compliance with Turkey's Law No. 6698 (KVKK) and the EU's GDPR. You can export all of your data at any time, and deleting your account permanently erases every piece of personal information. Sensitive health data is processed only with your explicit consent and you can revoke it whenever you want.",
+    tr: "6698 sayılı KVKK kanunu ve AB GDPR düzenlemelerine tam uyumluyuz. Verilerinizi istediğiniz an dışa aktarabilir, hesabınızı sildiğinizde tüm kişisel bilgileriniz kalıcı olarak silinir. Hassas sağlık verileri yalnızca açık rızanızla işlenir; bu rızayı dilediğiniz zaman geri çekebilirsiniz."
+  },
+
+  "security.authentication": { en: "Authentication & Access", tr: "Kimlik Doğrulama ve Erişim" },
+  "security.authenticationDesc": {
+    en: "Secure session management is powered by Supabase Auth. You can sign in with Google or Facebook OAuth, or email and password — your password is never stored in plain text. Cloudflare Turnstile bot protection blocks automated attacks before they reach your account.",
+    tr: "Güvenli oturum yönetimi Supabase Auth tarafından sağlanır. Google veya Facebook OAuth ile ya da e-posta ve şifre ile giriş yapabilirsiniz; şifreniz hiçbir zaman düz metin olarak saklanmaz. Cloudflare Turnstile bot koruması, otomatik saldırıların hesabınıza ulaşmasını daha kapıdayken engeller."
+  },
+
+  "security.aiSafety": { en: "AI Safety", tr: "AI Güvenliği" },
+  "security.aiSafetyDesc": {
+    en: "Our 5-layer AI safety system protects every response: emergency keyword detection, drug–herb interaction checks, contraindication scanning, dosage limit enforcement, and a transparency score on every output. The AI never makes a medical diagnosis — it provides information, and each answer is delivered with a reliability score so you know how confident the system is.",
+    tr: "5 katmanlı AI güvenlik sistemimiz her yanıtı korur: acil durum anahtar kelime tespiti, ilaç–bitki etkileşim kontrolü, kontrendikasyon taraması, dozaj limit kontrolü ve her yanıt için şeffaflık skoru. Yapay zeka asla tıbbi teşhis koymaz; yalnızca bilgilendirme yapar ve her cevap güvenilirlik skoruyla birlikte sunulur, böylece sistemin ne kadar emin olduğunu görürsünüz."
+  },
+
+  "security.infrastructure": { en: "Infrastructure Security", tr: "Altyapı Güvenliği" },
+  "security.infrastructureDesc": {
+    en: "We run on Vercel's edge network with a Supabase PostgreSQL database hosted in the EU. Built-in DDoS protection, automatic daily backups, and isolated serverless functions keep the platform stable and resilient against attacks.",
+    tr: "Vercel uç ağı üzerinde, AB'de barındırılan Supabase PostgreSQL veritabanı ile çalışıyoruz. Yerleşik DDoS koruması, otomatik günlük yedekleme ve izole edilmiş serverless fonksiyonlar platformu kararlı ve saldırılara karşı dayanıklı tutar."
+  },
+
+  "security.accessControl": { en: "Access Control", tr: "Erişim Kontrolü" },
+  "security.accessControlDesc": {
+    en: "Every API endpoint requires authentication and is scoped to the logged-in user. Rate limiting (10 requests/minute on sensitive endpoints) blocks abuse, and all admin actions are logged in an audit trail you can request at any time.",
+    tr: "Her API endpoint kimlik doğrulama gerektirir ve yalnızca giriş yapmış kullanıcının verisine kapsamlanır. Hassas endpoint'lerde dakikada 10 istek hız sınırı kötüye kullanımı engeller; tüm yönetici işlemleri istediğiniz an talep edebileceğiniz bir denetim günlüğüne kaydedilir."
+  },
+
   "security.dataMinimization": { en: "Data Minimization", tr: "Veri Minimizasyonu" },
-  "security.dataMinimizationDesc": { en: "Only necessary data is collected. Health data stored in encrypted columns. Maximum 2-year retention.", tr: "Yalnizca gerekli veriler toplanir. Sağlık verileri sifreli kolonlarda saklanir. Maksimum 2 yil saklama." },
-  "security.inputValidation": { en: "Input Validation", tr: "Giris Dogrulamasi" },
-  "security.inputValidationDesc": { en: "All user inputs are sanitized. Protection against XSS, SQL injection, and other OWASP threats.", tr: "Tum kullanici girislerine sanitizasyon uygulanir. XSS, SQL injection ve diger OWASP tehditlerine karsi koruma." },
-  "security.errorMonitoring": { en: "Error Monitoring", tr: "Hata Izleme" },
-  "security.errorMonitoringDesc": { en: "Real-time error monitoring and performance tracking with Sentry. Security events reported instantly.", tr: "Sentry ile gercek zamanli hata izleme ve performans takibi. Güvenlik olaylari aninda bildirilir." },
-  "security.reportVulnerability": { en: "Found a security vulnerability? Please report it to us.", tr: "Bir guvenlik acigi buldunuz mu? Lutfen bize bildirin." },
+  "security.dataMinimizationDesc": {
+    en: "We collect only what is necessary for the service to work. Health data is stored in encrypted columns with a maximum 2-year retention period, and AI requests are anonymized — your name, email, ID, phone, and address are stripped before being sent to any external model.",
+    tr: "Yalnızca hizmetin çalışması için gerekli olanı toplarız. Sağlık verileri şifreli kolonlarda en fazla 2 yıl süreyle saklanır ve AI isteklerinde adınız, e-postanız, TC kimlik numaranız, telefonunuz ve adresiniz dışarıdaki herhangi bir modele gönderilmeden önce çıkarılır."
+  },
+
+  "security.inputValidation": { en: "Input Validation", tr: "Giriş Doğrulaması" },
+  "security.inputValidationDesc": {
+    en: "All user inputs are sanitized at the API boundary. We protect against XSS, SQL injection, prompt injection, and other OWASP Top 10 threats with both library-level guards and our own AI-specific filters.",
+    tr: "Tüm kullanıcı girişleri API sınırında temizlenir. XSS, SQL injection, prompt injection ve diğer OWASP Top 10 tehditlerine karşı hem kütüphane düzeyinde hem de kendi AI'a özel filtrelerimizle koruma sağlarız."
+  },
+
+  "security.errorMonitoring": { en: "Error Monitoring", tr: "Hata İzleme" },
+  "security.errorMonitoringDesc": {
+    en: "Real-time error monitoring and performance tracking with Sentry catches issues before they affect you. Security events are reported instantly to our team, and personal data is scrubbed from logs to keep your information private.",
+    tr: "Sentry ile gerçek zamanlı hata izleme ve performans takibi, sorunların size ulaşmadan yakalanmasını sağlar. Güvenlik olayları ekibimize anında bildirilir; kayıtlarda kişisel veriler temizlenerek bilgilerinizin gizliliği korunur."
+  },
+
+  "security.reportVulnerability": { en: "Found a security vulnerability? Please report it to us.", tr: "Bir güvenlik açığı buldunuz mu? Lütfen bize bildirin." },
 
   // ── Sexual Health ──
   "sexual.preferNotToSay": { en: "Prefer not to say", tr: "Belirtmiyorum" },

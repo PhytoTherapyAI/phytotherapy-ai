@@ -68,19 +68,21 @@ export default function BiomarkerTrendsPage() {
 
       if (data) {
         const allEntries: BiomarkerEntry[] = []
-        data.forEach((test: any) => {
-          let results: any = null
+        interface RawResult { name?: string; marker?: string; value: string | number; unit?: string; status?: string }
+        interface BloodTest { test_data: string | RawResult[]; created_at: string }
+        data.forEach((test: BloodTest) => {
+          let results: RawResult[] | null = null
           try {
             results = typeof test.test_data === "string" ? JSON.parse(test.test_data) : test.test_data
           } catch { /* malformed JSON — skip */ }
           if (results && Array.isArray(results)) {
-            results.forEach((r: any) => {
+            results.forEach((r: RawResult) => {
               allEntries.push({
-                marker: r.name || r.marker,
-                value: parseFloat(r.value),
+                marker: r.name || r.marker || "",
+                value: parseFloat(String(r.value)),
                 unit: r.unit || "",
                 date: test.created_at,
-                status: r.status || "normal",
+                status: (r.status as BiomarkerEntry["status"]) || "normal",
               })
             })
           }

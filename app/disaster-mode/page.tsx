@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge"
 import {
   AlertTriangle, Heart, Droplets, Phone, MapPin, Shield,
   Pill, QrCode, ArrowLeft, Brain, Activity, Bone,
-  ChevronDown, ChevronUp, Download, Siren
+  ChevronDown, ChevronUp, Download, Siren,
+  type LucideIcon
 } from "lucide-react"
 import Link from "next/link"
 
@@ -20,7 +21,7 @@ import { tx } from "@/lib/translations";
 interface Section {
   id: string
   titleKey: string
-  icon: any
+  icon: LucideIcon
   color: string
   content: { en: string[]; tr: string[] }
 }
@@ -189,7 +190,7 @@ export default function DisasterModePage() {
   const t = (key: string) => tx(`disaster.${key}`, lang)
 
   const [userMeds, setUserMeds] = useState<string[]>([])
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<{ blood_type?: string | null } | null>(null)
   const [allergies, setAllergies] = useState<string[]>([])
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
@@ -206,9 +207,9 @@ export default function DisasterModePage() {
         supabase.from("user_profiles").select("blood_type").eq("user_id", user.id).single(),
         supabase.from("user_allergies").select("allergen").eq("user_id", user.id),
       ])
-      setUserMeds((medsRes.data || []).map((d: any) => (d.generic_name || d.brand_name)))
+      setUserMeds((medsRes.data || []).map((d: { brand_name: string | null; generic_name: string | null }) => (d.generic_name || d.brand_name || "")))
       setProfile(profileRes.data)
-      setAllergies((allergyRes.data || []).map((d: any) => d.allergen))
+      setAllergies((allergyRes.data || []).map((d: { allergen: string }) => d.allergen))
     } catch { /* offline fallback */ }
   }
 

@@ -138,9 +138,12 @@ export async function POST(req: Request) {
 
       // Normalize Google Fit data to our schema
       if (hrData.bucket) {
-        hrData.bucket.forEach((bucket: any) => {
-          bucket.dataset?.forEach((ds: any) => {
-            ds.point?.forEach((point: any) => {
+        interface GFitPoint { value?: { fpVal?: number; intVal?: number }[]; startTimeNanos: string }
+        interface GFitDataset { point?: GFitPoint[] }
+        interface GFitBucket { dataset?: GFitDataset[] }
+        hrData.bucket.forEach((bucket: GFitBucket) => {
+          bucket.dataset?.forEach((ds: GFitDataset) => {
+            ds.point?.forEach((point: GFitPoint) => {
               datasets.push({
                 metricType: "heart_rate",
                 value: point.value?.[0]?.fpVal || 0,
@@ -173,9 +176,12 @@ export async function POST(req: Request) {
       const stepsData = await stepsRes.json()
 
       if (stepsData.bucket) {
-        stepsData.bucket.forEach((bucket: any) => {
-          bucket.dataset?.forEach((ds: any) => {
-            ds.point?.forEach((point: any) => {
+        interface GFitPoint { value?: { fpVal?: number; intVal?: number }[]; startTimeNanos: string }
+        interface GFitDataset { point?: GFitPoint[] }
+        interface GFitBucket { dataset?: GFitDataset[] }
+        stepsData.bucket.forEach((bucket: GFitBucket) => {
+          bucket.dataset?.forEach((ds: GFitDataset) => {
+            ds.point?.forEach((point: GFitPoint) => {
               datasets.push({
                 metricType: "steps",
                 value: point.value?.[0]?.intVal || 0,

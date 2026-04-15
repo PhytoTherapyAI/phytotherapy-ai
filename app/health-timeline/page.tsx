@@ -9,7 +9,7 @@ import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Pill, TestTube, Calendar, Activity, Plus, Loader2, ArrowDown } from "lucide-react"
+import { Clock, Pill, TestTube, Calendar, Activity, Plus, Loader2, ArrowDown, type LucideIcon } from "lucide-react"
 
 interface TimelineEvent {
   id: string
@@ -20,7 +20,7 @@ interface TimelineEvent {
   source: "auto" | "manual"
 }
 
-const TYPE_CONFIG: Record<string, { icon: any; color: string; label: { en: string; tr: string } }> = {
+const TYPE_CONFIG: Record<string, { icon: LucideIcon; color: string; label: { en: string; tr: string } }> = {
   medication_start: { icon: Pill, color: "text-green-500 bg-green-500/10", label: { en: "Started Medication", tr: "İlaç Başlandı" } },
   medication_stop: { icon: Pill, color: "text-red-500 bg-red-500/10", label: { en: "Stopped Medication", tr: "İlaç Bırakıldı" } },
   lab_test: { icon: TestTube, color: "text-blue-500 bg-blue-500/10", label: { en: "Lab Test", tr: "Tahlil" } },
@@ -49,12 +49,12 @@ export default function HealthTimelinePage() {
       const supabase = createBrowserClient()
       // Load medications
       const { data: meds } = await supabase.from("user_medications").select("brand_name, generic_name, created_at").eq("user_id", user.id)
-      meds?.forEach((m: any) => {
-        autoEvents.push({ id: `med-${m.generic_name || m.brand_name}`, date: m.created_at?.split("T")[0] || "", type: "medication_start", title: m.generic_name || m.brand_name, source: "auto" })
+      meds?.forEach((m: { brand_name: string | null; generic_name: string | null; created_at: string | null }) => {
+        autoEvents.push({ id: `med-${m.generic_name || m.brand_name}`, date: m.created_at?.split("T")[0] || "", type: "medication_start", title: m.generic_name || m.brand_name || "", source: "auto" })
       })
       // Load blood tests
       const { data: tests } = await supabase.from("blood_tests").select("created_at, id").eq("user_id", user.id)
-      tests?.forEach((t: any) => {
+      tests?.forEach((t: { id: string; created_at: string | null }) => {
         autoEvents.push({ id: `test-${t.id}`, date: t.created_at?.split("T")[0] || "", type: "lab_test", title: tx("timeline.bloodTest", lang), source: "auto" })
       })
     } catch (e) { console.error(e) }
@@ -76,7 +76,7 @@ export default function HealthTimelinePage() {
     const event: TimelineEvent = {
       id: Date.now().toString(),
       date: newEvent.date!,
-      type: newEvent.type as any || "note",
+      type: newEvent.type || "note",
       title: newEvent.title!,
       details: newEvent.details,
       source: "manual",
@@ -126,7 +126,7 @@ export default function HealthTimelinePage() {
             <div className="space-y-3">
               <div className="flex gap-2 flex-wrap">
                 {Object.entries(TYPE_CONFIG).map(([key, config]) => (
-                  <button key={key} onClick={() => setNewEvent({ ...newEvent, type: key as any })}
+                  <button key={key} onClick={() => setNewEvent({ ...newEvent, type: key as TimelineEvent["type"] })}
                     className={`px-3 py-1.5 rounded text-xs border transition-colors ${newEvent.type === key ? "bg-primary text-primary-foreground" : "border-border"}`}>
                     {config.label[lang]}
                   </button>

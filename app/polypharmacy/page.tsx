@@ -9,7 +9,7 @@ import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ShieldAlert, Pill, Brain, Bone, Heart, Droplets, AlertTriangle, TrendingUp, Loader2, ChevronDown, ChevronUp } from "lucide-react"
+import { ShieldAlert, Pill, Brain, Bone, Heart, Droplets, AlertTriangle, TrendingUp, Loader2, ChevronDown, ChevronUp, type LucideIcon } from "lucide-react"
 
 interface RiskFactor {
   category: string
@@ -18,7 +18,7 @@ interface RiskFactor {
   maxScore: number
   level: "low" | "medium" | "high"
   details: { en: string; tr: string }[]
-  icon: any
+  icon: LucideIcon
 }
 
 const ANTICHOLINERGIC_DRUGS: Record<string, number> = {
@@ -53,7 +53,7 @@ export default function PolypharmacyPage() {
     try {
       const supabase = createBrowserClient()
       const { data } = await supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id)
-      if (data) setMeds((data || []).map((d: any) => (d.generic_name || d.brand_name) || ""))
+      if (data) setMeds((data || []).map((d: { generic_name: string | null; brand_name: string | null }) => (d.generic_name || d.brand_name) || ""))
     } catch (e) { console.error(e) }
     setLoading(false)
   }

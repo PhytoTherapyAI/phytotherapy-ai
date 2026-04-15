@@ -15,6 +15,7 @@ import {
   Clock,
   CheckCircle2,
   Loader2,
+  type LucideIcon,
 } from "lucide-react"
 import { tx } from "@/lib/translations"
 
@@ -32,7 +33,7 @@ interface CriticalAlert {
 
 const COUNTDOWN_SECONDS = 10
 
-const ALERT_TYPE_INFO: Record<string, { icon: any; tr: string; en: string; color: string }> = {
+const ALERT_TYPE_INFO: Record<string, { icon: LucideIcon; tr: string; en: string; color: string }> = {
   vital_anomaly: { icon: Activity, tr: "Anormal Vital Bulgu Algılandı", en: "Abnormal Vital Sign Detected", color: "text-red-500" },
   drug_interaction: { icon: ShieldAlert, tr: "Kritik İlaç Etkileşimi", en: "Critical Drug Interaction", color: "text-orange-500" },
   fall_detected: { icon: AlertTriangle, tr: "Düşme Algılandı", en: "Fall Detected", color: "text-red-600" },
@@ -63,8 +64,8 @@ export function CriticalAlertModal() {
       setIsCancelled(false)
     }
 
-    window.addEventListener("critical-alert" as any, handleCriticalAlert)
-    return () => window.removeEventListener("critical-alert" as any, handleCriticalAlert)
+    window.addEventListener("critical-alert", handleCriticalAlert as EventListener)
+    return () => window.removeEventListener("critical-alert", handleCriticalAlert as EventListener)
   }, [])
 
   // Countdown timer

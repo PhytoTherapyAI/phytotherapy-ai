@@ -56,19 +56,21 @@ export async function GET(req: Request) {
     }))
 
     // Convert lab results to FHIR Observations
-    const fhirObs: any[] = []
-    ;(tests || []).forEach((test: any) => {
+    interface RawLabResult { name?: string; marker?: string; value: string | number; unit?: string; status?: string }
+    interface FhirLabTest { test_data: string | RawLabResult[]; created_at: string | null }
+    const fhirObs: ReturnType<typeof labResultToFHIR>[] = []
+    ;(tests || []).forEach((test: FhirLabTest) => {
       const results = typeof test.test_data === "string" ? JSON.parse(test.test_data) : test.test_data
       if (Array.isArray(results)) {
-        results.forEach((r: any) => {
-          if (r.value && !isNaN(parseFloat(r.value))) {
+        results.forEach((r: RawLabResult) => {
+          if (r.value && !isNaN(parseFloat(String(r.value)))) {
             fhirObs.push(labResultToFHIR({
               patientId: user.id,
               testCode: (r.name || r.marker || "unknown").toLowerCase().replace(/\s+/g, "_"),
-              value: parseFloat(r.value),
+              value: parseFloat(String(r.value)),
               unit: r.unit || "",
               date: test.created_at || new Date().toISOString(),
-              status: r.status || "normal",
+              status: (r.status as "normal" | "high" | "low" | "critical") || "normal",
             }))
           }
         })

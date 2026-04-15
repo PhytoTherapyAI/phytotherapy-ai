@@ -601,7 +601,7 @@ export default function CalendarPage() {
     try {
       const key = `cal-ritual-custom-${user?.id}`
       const custom = JSON.parse(localStorage.getItem(key) || "[]") as Array<DailyTask & { block: string }>
-      custom.push({ ...task, block } as any)
+      custom.push({ ...task, block })
       localStorage.setItem(key, JSON.stringify(custom))
     } catch {}
   }, [user?.id])
@@ -686,7 +686,7 @@ export default function CalendarPage() {
       const sups = supsRes.data
       // Build done set from daily_logs (single source of truth)
       const doneIds = new Set<string>()
-      logsRes.data?.forEach((l: any) => { if (l.completed) doneIds.add(l.item_id) })
+      logsRes.data?.forEach((l: { item_id: string; completed: boolean }) => { if (l.completed) doneIds.add(l.item_id) })
 
       const morning: DailyTask[] = []
       const noon: DailyTask[] = []
@@ -695,7 +695,7 @@ export default function CalendarPage() {
       // Add medications — split multi-dose using shared utility
       if (meds && meds.length > 0) {
         const langKey = (lang === "tr" ? "tr" : "en") as "en" | "tr"
-        meds.forEach((m: any) => {
+        meds.forEach((m: { id: string; brand_name: string | null; generic_name: string | null; dosage: string | null; frequency: string | null }) => {
           const medName = m.brand_name || m.generic_name || "Med"
           const doses = parseMedDoses(m.frequency || "", langKey)
           for (const dose of doses) {
@@ -712,11 +712,11 @@ export default function CalendarPage() {
       // Add supplements by scheduled time — use UUID
       if (sups && sups.length > 0) {
         const langKey = (lang === "tr" ? "tr" : "en") as "en" | "tr"
-        sups.forEach((s: any) => {
+        sups.forEach((s: { id: string; title: string | null; event_time: string | null; metadata: unknown }) => {
           const name = getSupplementDisplayName(s.title || "Supplement", langKey)
           const time = s.event_time || "08:00"
           const hour = parseInt(time.split(":")[0] || "8", 10)
-          const meta = typeof s.metadata === "string" ? JSON.parse(s.metadata || "{}") : (s.metadata || {})
+          const meta: { dose?: string } = typeof s.metadata === "string" ? JSON.parse(s.metadata || "{}") : ((s.metadata as { dose?: string }) || {})
           const doseInfo = meta.dose ? ` (${meta.dose})` : ""
           const itemId = s.id
           const task: DailyTask = { id: itemId, label: `${name}${doseInfo}`, done: doneIds.has(itemId), emoji: "🌿" }
