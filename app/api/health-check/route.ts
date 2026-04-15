@@ -41,7 +41,7 @@ export async function GET() {
   try {
     const start = Date.now();
     const { askGemini } = await import("@/lib/ai-client");
-    const res = await askGemini("Say 'ok'", "Respond with just 'ok'");
+    const res = await askGemini("Say 'ok'", "Respond with just 'ok'", { skipConsent: true });
     const elapsed = Date.now() - start;
     results.push({
       service: "Claude AI",

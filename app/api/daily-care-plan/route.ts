@@ -145,7 +145,7 @@ LANGUAGE: ${tx("api.respondLang", lang)}
 
 Generate today's personalized care plan with 8 cards. Make it different from what you'd generate for a different day of the week.`;
 
-    const result = await askGeminiJSON(contextPrompt, DAILY_CARE_PROMPT);
+    const result = await askGeminiJSON(contextPrompt, DAILY_CARE_PROMPT, { userId });
 
     let parsed;
     try {

@@ -247,7 +247,8 @@ RULES:
 
   const result = await askGeminiJSON(
     `Cross-check allergies vs medications for safety.`,
-    systemPrompt
+    systemPrompt,
+    { userId }
   );
 
   let parsed;
