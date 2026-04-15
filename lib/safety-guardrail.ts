@@ -666,3 +666,213 @@ export function runSafetyGuardrail(
     transparency: generateTransparencyData(lang, [], !!userProfile.age),
   };
 }
+
+// ═══════════════════════════════════════════════════════════════
+// LAYER 6: KVKK Prompt Anonymization Filter
+// Required by KVKK Üretken YZ Rehberi (November 2025)
+// Strips PII before any data is sent to AI APIs (Anthropic, Gemini, etc.)
+// ═══════════════════════════════════════════════════════════════
+
+export interface AnonymizationLog {
+  timestamp: string;
+  fieldsStripped: string[];
+  ageConverted: boolean;
+  originalAgeRange?: string;
+  hash: string; // audit hash for compliance logging
+}
+
+export interface UserDataForAI {
+  // Identity fields — WILL BE STRIPPED
+  name?: string;
+  full_name?: string;
+  firstName?: string;
+  lastName?: string;
+  surname?: string;
+  fullName?: string;
+  username?: string;
+  display_name?: string;
+  email?: string;
+  tc_no?: string;
+  phone?: string;
+  address?: string;
+  user_id?: string;
+  userId?: string;
+  id?: string;
+  city?: string;
+  ip_address?: string;
+  ipAddress?: string;
+  avatar_url?: string;
+  profile_image?: string;
+  birth_date?: string;
+  birthDate?: string;
+
+  // Medical fields — WILL BE KEPT (anonymized where needed)
+  age?: number;
+  gender?: string;
+  medications?: unknown;
+  allergies?: unknown;
+  chronic_conditions?: unknown;
+  chronicConditions?: unknown;
+  supplements?: unknown;
+  symptoms?: string;
+  blood_type?: string;
+  blood_group?: string;
+  bloodGroup?: string;
+  pregnancy_status?: string;
+  is_pregnant?: boolean;
+  is_breastfeeding?: boolean;
+  smoking_status?: string;
+  smoking_use?: string;
+  alcohol_status?: string;
+  alcohol_use?: string;
+  bmi?: number;
+  height_cm?: number;
+  weight_kg?: number;
+  family_history?: unknown;
+  familyHistory?: unknown;
+  surgical_history?: unknown;
+  surgicalHistory?: unknown;
+  vaccines?: unknown;
+  diet_type?: string;
+  exercise_frequency?: string;
+  sleep_quality?: string;
+
+  [key: string]: unknown;
+}
+
+const IDENTITY_FIELDS = new Set([
+  "name", "full_name", "firstName", "lastName", "surname", "fullName",
+  "username", "display_name", "email", "tc_no", "phone", "address",
+  "user_id", "userId", "id", "city", "ip_address", "ipAddress",
+  "avatar_url", "profile_image", "birth_date", "birthDate",
+]);
+
+/** Convert exact age to a privacy-preserving age range */
+export function ageToRange(age: number): string {
+  if (age < 18) return "0-17";
+  if (age <= 24) return "18-24";
+  if (age <= 34) return "25-34";
+  if (age <= 44) return "35-44";
+  if (age <= 54) return "45-54";
+  if (age <= 64) return "55-64";
+  return "65+";
+}
+
+/**
+ * Strip PII patterns (email, Turkish phone, TC no) from free-text strings.
+ * Used for symptom descriptions, notes, or other user-entered text.
+ */
+export function stripPIIFromText(text: string): string {
+  if (!text || typeof text !== "string") return text;
+  let cleaned = text;
+
+  // Email addresses
+  cleaned = cleaned.replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, "[email-removed]");
+
+  // Turkish mobile: +90 5XX XXX XX XX or 05XX XXX XX XX variants
+  cleaned = cleaned.replace(/(\+90|0)[\s-]?5\d{2}[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}/g, "[phone-removed]");
+
+  // TC Kimlik No: 11-digit number starting with non-zero
+  cleaned = cleaned.replace(/\b[1-9]\d{10}\b/g, "[tc-removed]");
+
+  // Generic URL containing potential PII
+  cleaned = cleaned.replace(/https?:\/\/\S+/g, "[url-removed]");
+
+  return cleaned;
+}
+
+/** Generate a short non-cryptographic hash for audit log correlation (no PII) */
+function generateAuditHash(fields: string[], timestamp: string): string {
+  const data = JSON.stringify({ fields, timestamp });
+  let hash = 0;
+  for (let i = 0; i < data.length; i++) {
+    const char = data.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(16).padStart(8, "0");
+}
+
+/**
+ * Anonymize user data before sending to AI APIs.
+ * - Strips identity fields (name, email, user_id, phone, address, etc.)
+ * - Converts exact age to age range (18-24, 25-34, etc.)
+ * - Scans string fields for embedded PII patterns
+ * - Returns audit log for KVKK compliance records
+ *
+ * USAGE:
+ *   const { anonymized, log } = anonymizePromptData(userProfile);
+ *   console.log('[KVKK-ANON]', JSON.stringify(log));
+ *   const promptContext = JSON.stringify(anonymized);
+ *   // Now safe to send to AI API
+ */
+export function anonymizePromptData(userData: UserDataForAI): {
+  anonymized: Record<string, unknown>;
+  log: AnonymizationLog;
+} {
+  const fieldsStripped: string[] = [];
+  const anonymized: Record<string, unknown> = {};
+  let ageConverted = false;
+  let ageRange: string | undefined;
+
+  for (const [key, value] of Object.entries(userData)) {
+    if (value === undefined || value === null) continue;
+
+    // Identity → strip
+    if (IDENTITY_FIELDS.has(key)) {
+      fieldsStripped.push(key);
+      continue;
+    }
+
+    // Exact age → age range
+    if (key === "age" && typeof value === "number") {
+      const range = ageToRange(value);
+      anonymized["age_range"] = range;
+      ageConverted = true;
+      ageRange = range;
+      continue;
+    }
+
+    // Birth date → strip (could be re-identifying)
+    if (key.toLowerCase().includes("birth") || key.toLowerCase().includes("dob")) {
+      fieldsStripped.push(key);
+      continue;
+    }
+
+    // String fields → scan for PII patterns
+    if (typeof value === "string") {
+      anonymized[key] = stripPIIFromText(value);
+      continue;
+    }
+
+    // Arrays of strings → scan each element
+    if (Array.isArray(value)) {
+      anonymized[key] = value.map(item =>
+        typeof item === "string" ? stripPIIFromText(item) : item
+      );
+      continue;
+    }
+
+    // Primitives / other objects → pass through
+    anonymized[key] = value;
+  }
+
+  const timestamp = new Date().toISOString();
+  const log: AnonymizationLog = {
+    timestamp,
+    fieldsStripped,
+    ageConverted,
+    originalAgeRange: ageRange,
+    hash: generateAuditHash(fieldsStripped, timestamp),
+  };
+
+  return { anonymized, log };
+}
+
+/** Convenience wrapper: anonymize + auto-log (fire-and-forget) */
+export function anonymizeForAI(userData: UserDataForAI): Record<string, unknown> {
+  const { anonymized, log } = anonymizePromptData(userData);
+  // eslint-disable-next-line no-console
+  console.log("[KVKK-ANON]", JSON.stringify(log));
+  return anonymized;
+}

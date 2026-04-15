@@ -5,6 +5,7 @@ import type { GeminiFilePart } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
 import { SYSTEM_PROMPT } from "@/lib/prompts";
 import { checkRedFlags, getEmergencyMessage, getYellowWarning, checkVaccineKeywords } from "@/lib/safety-filter";
+import { anonymizePromptData, stripPIIFromText } from "@/lib/safety-guardrail";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -31,7 +32,8 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const { history, files, lang } = body;
-    const message = sanitizeInput(body.message);
+    // KVKK Layer 6: strip PII (email, phone, TC) from user message before any processing
+    const message = stripPIIFromText(sanitizeInput(body.message));
 
     if (!message || message.length === 0) {
       return new Response(JSON.stringify({ error: "Message is required" }), {
@@ -106,16 +108,33 @@ export async function POST(request: NextRequest) {
           console.log("[Chat] Profile:", profile?.full_name, "| meds:", meds.length, "| allergies:", allergies.length);
 
           if (profile) {
-            // ── Build comprehensive PATIENT PROFILE block ──
-            const none = "None reported";
-            const name = (profile.full_name as string) || "Unknown";
-            const age = profile.age ? `${profile.age}` : "Unknown";
-            const gender = (profile.gender as string) || "Unknown";
-            const bloodType = (profile.blood_group as string) || "Unknown";
+            // ── KVKK Layer 6: Anonymize profile data BEFORE building prompt ──
+            const { anonymized, log } = anonymizePromptData({
+              // Identity (will be stripped)
+              full_name: profile.full_name as string | undefined,
+              user_id: user.id,
+              email: user.email,
+              // Medical (will be kept, age → range)
+              age: profile.age as number | undefined,
+              gender: profile.gender as string | undefined,
+              blood_group: profile.blood_group as string | undefined,
+              height_cm: profile.height_cm as number | undefined,
+              weight_kg: profile.weight_kg as number | undefined,
+              is_pregnant: profile.is_pregnant as boolean | undefined,
+              is_breastfeeding: profile.is_breastfeeding as boolean | undefined,
+            });
+            console.log("[KVKK-ANON]", JSON.stringify(log));
 
-            // BMI calculation
-            const h = profile.height_cm as number | null;
-            const w = profile.weight_kg as number | null;
+            // ── Build PATIENT PROFILE block using ANONYMIZED data only ──
+            const none = "None reported";
+            // NOTE: name deliberately NOT used — patient is addressed as "the patient" to comply with KVKK
+            const ageRange = (anonymized.age_range as string) || "Unknown";
+            const gender = (anonymized.gender as string) || "Unknown";
+            const bloodType = (anonymized.blood_group as string) || "Unknown";
+
+            // BMI calculation (from anonymized height/weight — not directly identifying)
+            const h = anonymized.height_cm as number | undefined;
+            const w = anonymized.weight_kg as number | undefined;
             const bmi = (h && w) ? (Number(w) / ((Number(h) / 100) ** 2)).toFixed(1) : "Unknown";
 
             // Split chronic_conditions into chronic / surgical / family
@@ -186,7 +205,7 @@ export async function POST(request: NextRequest) {
             profileContext = `
 === THIS PATIENT'S COMPLETE HEALTH PROFILE ===
 
-PERSONAL: ${name}, ${age} years old, ${gender}, Blood Type: ${bloodType}, BMI: ${bmi}
+PATIENT DEMOGRAPHICS (anonymized per KVKK): Age range: ${ageRange}, Gender: ${gender}, Blood Type: ${bloodType}, BMI: ${bmi}
 
 ACTIVE MEDICATIONS:
 ${medsLines}
@@ -288,7 +307,7 @@ RESPONSE LENGTH & STYLE:
 - Maximum 2 paragraphs. Total maximum 5-6 sentences. No exceptions.
 - First paragraph: safety verdict + why (2-3 sentences)
 - Second paragraph: what to do instead (1-2 sentences)
-- Use their NAME once at the start
+- Do NOT use the patient's name (not provided, KVKK privacy compliance) — address as "you"
 - Write like a smart friend who is also a doctor — warm, direct, zero fluff
 - No bullet points, no lists, no headers, no "firstly/secondly"
 - No repeating the same warning in different words — say it once, clearly
