@@ -8,7 +8,7 @@ import { Shield, Lock, Eye, Server, FileCheck, AlertTriangle, Key, Database, Sir
 import { DATA_BREACH_PLAN } from "@/lib/security-audit"
 
 export default function SecurityPage() {
-  const { lang } = useLang()
+  const { lang } = useLang() as { lang: "en" | "tr" }
 
   const sections = [
     { icon: Lock, titleKey: "security.dataEncryption", descKey: "security.dataEncryptionDesc", color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-950/20" },
@@ -62,18 +62,16 @@ export default function SecurityPage() {
             </div>
             <div>
               <h3 className="font-semibold text-sm">
-                {lang === "tr" ? "Veri Aktarımı ve Standart Sözleşmeler (SCC)" : "Data Transfers and Standard Contractual Clauses (SCC)"}
+                {tx("securityPage.sccTitle", lang)}
               </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                {lang === "tr" ? "KVKK Madde 9 uyarınca yurt dışı veri aktarımı" : "International data transfer per KVKK Article 9"}
+                {tx("securityPage.sccSubtitle", lang)}
               </p>
             </div>
           </div>
 
           <p className="text-sm text-muted-foreground mb-3">
-            {lang === "tr"
-              ? "DoctoPal, kullanıcı verilerini aşağıdaki hizmet sağlayıcılarla işlemektedir:"
-              : "DoctoPal processes user data with the following service providers:"}
+            {tx("securityPage.sccIntro", lang)}
           </p>
 
           <ul className="space-y-2 text-sm text-muted-foreground mb-4">
@@ -81,22 +79,20 @@ export default function SecurityPage() {
               <span className="text-primary mt-0.5">•</span>
               <span>
                 <strong className="text-foreground">Supabase (İrlanda/AB)</strong>
-                {lang === "tr" ? " — Veri depolama ve veritabanı yönetimi" : " — Data storage and database management"}
+                {tx("securityPage.supabaseDesc", lang)}
               </span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
               <span>
                 <strong className="text-foreground">Anthropic Claude API (ABD)</strong>
-                {lang === "tr" ? " — Yapay zeka analizi (yalnızca anonimleştirilmiş veri)" : " — AI analysis (anonymized data only)"}
+                {tx("securityPage.anthropicDesc", lang)}
               </span>
             </li>
           </ul>
 
           <div className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground leading-relaxed">
-            {lang === "tr"
-              ? "KVKK Md.9 kapsamında her iki sağlayıcı ile Standart Sözleşme (SCC) imzalanmıştır. Sözleşmeler 5 iş günü içinde KVKK Kurulu'na bildirilmiştir. AI API'ye gönderilen verilerde isim, e-posta, TC kimlik no, telefon, adres ve kullanıcı kimliği bulunmaz. Sadece anonimleştirilmiş tıbbi parametreler (yaş aralığı, cinsiyet, ilaç listesi, alerji bilgileri) iletilir."
-              : "Standard Contractual Clauses (SCC) have been signed with both providers in accordance with KVKK Art.9. The agreements were notified to the KVKK Board within 5 business days. Data sent to the AI API does not contain names, emails, national ID numbers, phone numbers, addresses, or user IDs. Only anonymized medical parameters (age range, gender, medication list, allergy information) are transmitted."}
+            {tx("securityPage.sccFooter", lang)}
           </div>
         </Card>
 
@@ -108,76 +104,58 @@ export default function SecurityPage() {
             </div>
             <div>
               <h3 className="font-semibold text-sm">
-                {lang === "tr" ? "Anonimleştirme ve Re-identifikasyon Risk Analizi" : "Anonymization and Re-identification Risk Analysis"}
+                {tx("securityPage.anonTitle", lang)}
               </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                {lang === "tr" ? "KVKK Üretken YZ Rehberi (Kasım 2025) uyumu" : "Compliant with KVKK Generative AI Guide (November 2025)"}
+                {tx("securityPage.anonSubtitle", lang)}
               </p>
             </div>
           </div>
 
           <p className="text-sm font-medium text-foreground mb-2">
-            {lang === "tr" ? "Anonimleştirme süreci:" : "Anonymization process:"}
+            {tx("securityPage.anonProcess", lang)}
           </p>
           <ul className="space-y-1.5 text-sm text-muted-foreground mb-4 ml-1">
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              <span>{lang === "tr"
-                ? "Kimlik bilgileri (isim, e-posta, TC no, telefon, adres, kullanıcı kimliği) tamamen çıkarılır"
-                : "Identity information (name, email, national ID, phone, address, user ID) is completely removed"}</span>
+              <span>{tx("securityPage.anonStep1", lang)}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              <span>{lang === "tr"
-                ? 'Yaş bilgisi yaş aralığına dönüştürülür (ör: 22 → "18-24")'
-                : 'Age is converted to age range (e.g., 22 → "18-24")'}</span>
+              <span>{tx("securityPage.anonStep2", lang)}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              <span>{lang === "tr"
-                ? "Şehir/konum bilgisi gönderilmez"
-                : "City/location information is not transmitted"}</span>
+              <span>{tx("securityPage.anonStep3", lang)}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              <span>{lang === "tr"
-                ? "Her anonimleştirme işlemi loglanır ve denetlenebilir"
-                : "Every anonymization operation is logged and auditable"}</span>
+              <span>{tx("securityPage.anonStep4", lang)}</span>
             </li>
           </ul>
 
           <p className="text-sm font-medium text-foreground mb-2">
-            {lang === "tr" ? "Re-identifikasyon risk değerlendirmesi:" : "Re-identification risk assessment:"}
+            {tx("securityPage.reidTitle", lang)}
           </p>
           <p className="text-sm text-muted-foreground mb-2 leading-relaxed">
-            {lang === "tr"
-              ? "AI'a gönderilen veri seti (yaş aralığı + cinsiyet + ilaç listesi + alerji) ile bir bireyin doğrudan tanımlanması mümkün değildir çünkü:"
-              : "The data set sent to AI (age range + gender + medication list + allergies) cannot be used to directly identify an individual because:"}
+            {tx("securityPage.reidIntro", lang)}
           </p>
           <ul className="space-y-1.5 text-sm text-muted-foreground ml-1">
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              <span>{lang === "tr"
-                ? "Doğrudan tanımlayıcı bilgi (isim, e-posta, TC no) gönderilmemektedir"
-                : "No direct identifiers (name, email, national ID) are transmitted"}</span>
+              <span>{tx("securityPage.reid1", lang)}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              <span>{lang === "tr"
-                ? "Yaş bilgisi aralık olarak gönderilmektedir (tam yaş değil)"
-                : "Age is transmitted as a range, not exact"}</span>
+              <span>{tx("securityPage.reid2", lang)}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              <span>{lang === "tr"
-                ? "Konum/adres bilgisi gönderilmemektedir"
-                : "No location/address information is transmitted"}</span>
+              <span>{tx("securityPage.reid3", lang)}</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              <span>{lang === "tr"
-                ? "Türkiye'de benzer ilaç kombinasyonlarını kullanan binlerce kişi bulunmaktadır"
-                : "Thousands of people in Turkey share similar medication combinations"}</span>
+              <span>{tx("securityPage.reid4", lang)}</span>
             </li>
           </ul>
         </Card>
@@ -190,12 +168,10 @@ export default function SecurityPage() {
             </div>
             <div>
               <h3 className="font-semibold text-sm">
-                {lang === "tr" ? "Veri İhlali Müdahale Planı" : "Data Breach Response Plan"}
+                {tx("securityPage.breachTitle", lang)}
               </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                {lang === "tr"
-                  ? "KVKK Madde 12 uyarınca olası bir veri ihlalinde izleyeceğimiz adımlar:"
-                  : "Steps we follow in case of a data breach, per KVKK Article 12:"}
+                {tx("securityPage.breachSubtitle", lang)}
               </p>
             </div>
           </div>
@@ -209,7 +185,7 @@ export default function SecurityPage() {
           <div className="mt-5 pt-4 border-t border-red-200 dark:border-red-900 grid sm:grid-cols-2 gap-4 text-xs">
             <div>
               <p className="font-semibold text-foreground mb-1">
-                {lang === "tr" ? "KVKK Kurulu İletişim" : "KVKK Board Contact"}
+                {tx("securityPage.kvkkContact", lang)}
               </p>
               <p className="text-muted-foreground">
                 <a href={DATA_BREACH_PLAN.kvkkContact.url} target="_blank" rel="noopener" className="text-primary underline">
@@ -219,13 +195,13 @@ export default function SecurityPage() {
               <p className="text-muted-foreground">{DATA_BREACH_PLAN.kvkkContact.phone}</p>
               <p className="text-muted-foreground">{DATA_BREACH_PLAN.kvkkContact.email}</p>
               <p className="text-red-600 dark:text-red-400 font-semibold mt-1">
-                {lang === "tr" ? "Bildirim süresi: " : "Notification deadline: "}
+                {tx("securityPage.notifDeadline", lang)}
                 {DATA_BREACH_PLAN.kvkkContact.deadline}
               </p>
             </div>
             <div>
               <p className="font-semibold text-foreground mb-1">
-                {lang === "tr" ? "DoctoPal Güvenlik" : "DoctoPal Security"}
+                {tx("securityPage.doctoSecurity", lang)}
               </p>
               <p className="text-muted-foreground">{DATA_BREACH_PLAN.internalContact.email}</p>
               <p className="text-muted-foreground">{DATA_BREACH_PLAN.internalContact.contactEmail}</p>

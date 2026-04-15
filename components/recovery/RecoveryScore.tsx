@@ -3,6 +3,7 @@
 
 import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
+import { tx } from "@/lib/translations"
 
 const SLEEP_OPTS = [
   { score: 1, emoji: "😫", en: "Terrible", tr: "Berbat" },
@@ -33,12 +34,12 @@ const BODY_OPTS = [
   { score: 5, emoji: "🏆", en: "Fresh", tr: "Dinç" },
 ]
 
-function getRecoveryLabel(score: number, isTr: boolean) {
-  if (score >= 85) return { emoji: "💚", color: "text-emerald-600", bg: "bg-emerald-500", label: isTr ? "Tam Toparlanmış — Harekete geç!" : "Fully Recovered — Go crush it!" }
-  if (score >= 70) return { emoji: "💙", color: "text-teal-600", bg: "bg-teal-500", label: isTr ? "İyi — Normal aktivite uygun" : "Good — Normal activity is fine" }
-  if (score >= 50) return { emoji: "💛", color: "text-amber-600", bg: "bg-amber-500", label: isTr ? "Orta — Bugün sakin olun" : "Moderate — Take it easy today" }
-  if (score >= 30) return { emoji: "🧡", color: "text-orange-600", bg: "bg-orange-500", label: isTr ? "Düşük — Dinlenmeyi öncelik yapın" : "Low — Prioritize rest and recovery" }
-  return { emoji: "❤️", color: "text-red-600", bg: "bg-red-500", label: isTr ? "Çok Düşük — Dinlenme günü önerilir" : "Very Low — Rest day recommended" }
+function getRecoveryLabel(score: number, lang: "en" | "tr") {
+  if (score >= 85) return { emoji: "💚", color: "text-emerald-600", bg: "bg-emerald-500", label: tx("recoveryScore.fullyRecovered", lang) }
+  if (score >= 70) return { emoji: "💙", color: "text-teal-600", bg: "bg-teal-500", label: tx("recoveryScore.good", lang) }
+  if (score >= 50) return { emoji: "💛", color: "text-amber-600", bg: "bg-amber-500", label: tx("recoveryScore.moderate", lang) }
+  if (score >= 30) return { emoji: "🧡", color: "text-orange-600", bg: "bg-orange-500", label: tx("recoveryScore.low", lang) }
+  return { emoji: "❤️", color: "text-red-600", bg: "bg-red-500", label: tx("recoveryScore.veryLow", lang) }
 }
 
 const MOCK_7DAY = [68, 72, 81, 75, 89, 72, 0]
@@ -46,7 +47,6 @@ const MOCK_7DAY = [68, 72, 81, 75, 89, 72, 0]
 interface Props { lang: "en" | "tr"; compact?: boolean }
 
 export function RecoveryScore({ lang, compact = false }: Props) {
-  const isTr = lang === "tr"
   const [sleep, setSleep] = useState(0)
   const [energy, setEnergy] = useState(0)
   const [mood, setMood] = useState(0)
@@ -58,7 +58,7 @@ export function RecoveryScore({ lang, compact = false }: Props) {
     return Math.round(((sleep + energy + mood + body) / 20) * 100)
   }, [sleep, energy, mood, body])
 
-  const info = getRecoveryLabel(score, isTr)
+  const info = getRecoveryLabel(score, lang)
   const allFilled = sleep > 0 && energy > 0 && mood > 0 && body > 0
 
   if (calculated && score > 0) {
@@ -78,7 +78,7 @@ export function RecoveryScore({ lang, compact = false }: Props) {
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className={`text-2xl font-bold ${info.color}`}>{score}%</motion.span>
-              <span className="text-[9px] text-muted-foreground">{isTr ? "Toparlanma" : "Recovery"}</span>
+              <span className="text-[9px] text-muted-foreground">{tx("recoveryScore.recovery", lang)}</span>
             </div>
           </div>
           <p className="text-xs font-medium mt-2">{info.emoji} {info.label}</p>
@@ -93,12 +93,12 @@ export function RecoveryScore({ lang, compact = false }: Props) {
           ))}
         </div>
         <p className="text-[10px] text-muted-foreground text-center mb-3">
-          {isTr ? "Son 7 gün" : "Last 7 days"} · {isTr ? "Ortalama" : "Avg"}: {Math.round([...MOCK_7DAY.slice(0, 6), score].reduce((a, b) => a + b, 0) / 7)}
+          {tx("recoveryScore.last7Days", lang)} · {tx("recoveryScore.avg", lang)}: {Math.round([...MOCK_7DAY.slice(0, 6), score].reduce((a, b) => a + b, 0) / 7)}
         </p>
 
         <button onClick={() => setCalculated(false)}
           className="w-full rounded-xl border p-2 text-xs text-muted-foreground hover:bg-muted transition-colors">
-          {isTr ? "Tekrar Hesapla" : "Recalculate"}
+          {tx("recoveryScore.recalculate", lang)}
         </button>
       </div>
     )
@@ -107,14 +107,14 @@ export function RecoveryScore({ lang, compact = false }: Props) {
   // Check-in form
   return (
     <div className="rounded-2xl border bg-white dark:bg-card p-5 shadow-sm">
-      <h3 className="text-sm font-bold mb-1">{isTr ? "Günaydın! 👋 Hızlı toparlanma kontrolü" : "Good morning! 👋 Quick recovery check"}</h3>
-      <p className="text-[10px] text-muted-foreground mb-4">{isTr ? "(30 saniye)" : "(30 seconds)"}</p>
+      <h3 className="text-sm font-bold mb-1">{tx("recoveryScore.greeting", lang)}</h3>
+      <p className="text-[10px] text-muted-foreground mb-4">{tx("recoveryScore.duration", lang)}</p>
 
       {[
-        { label: isTr ? "😴 Uyku Kalitesi" : "😴 Sleep Quality", opts: SLEEP_OPTS, val: sleep, set: setSleep },
-        { label: isTr ? "⚡ Enerji" : "⚡ Energy Level", opts: ENERGY_OPTS, val: energy, set: setEnergy },
-        { label: isTr ? "😊 Ruh Hali" : "😊 Mood", opts: MOOD_OPTS, val: mood, set: setMood },
-        { label: isTr ? "🦴 Beden Hissi" : "🦴 Body Feeling", opts: BODY_OPTS, val: body, set: setBody },
+        { label: tx("recoveryScore.sleepQuality", lang), opts: SLEEP_OPTS, val: sleep, set: setSleep },
+        { label: tx("recoveryScore.energyLevel", lang), opts: ENERGY_OPTS, val: energy, set: setEnergy },
+        { label: tx("recoveryScore.mood", lang), opts: MOOD_OPTS, val: mood, set: setMood },
+        { label: tx("recoveryScore.bodyFeeling", lang), opts: BODY_OPTS, val: body, set: setBody },
       ].map(({ label, opts, val, set }) => (
         <div key={label} className="mb-3">
           <p className="text-xs font-medium mb-1.5">{label}</p>
@@ -125,7 +125,7 @@ export function RecoveryScore({ lang, compact = false }: Props) {
                   val === o.score ? "border-primary bg-primary/10 shadow-sm" : "hover:border-primary/30"
                 }`}>
                 <span className="text-base block">{o.emoji}</span>
-                <span className="text-[9px] text-muted-foreground">{isTr ? o.tr : o.en}</span>
+                <span className="text-[9px] text-muted-foreground">{lang === "tr" ? o.tr : o.en}</span>
               </button>
             ))}
           </div>
@@ -134,7 +134,7 @@ export function RecoveryScore({ lang, compact = false }: Props) {
 
       <button onClick={() => setCalculated(true)} disabled={!allFilled}
         className="w-full rounded-xl bg-primary text-white py-3 text-sm font-semibold disabled:opacity-40 transition-opacity">
-        ✨ {isTr ? "Toparlanma Skorumu Hesapla" : "Calculate My Recovery Score"}
+        ✨ {tx("recoveryScore.calculateButton", lang)}
       </button>
     </div>
   )

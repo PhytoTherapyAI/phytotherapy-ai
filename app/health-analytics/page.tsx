@@ -638,9 +638,7 @@ function AnomalyTab({
                 : `${alertCount} serious anomal${alertCount === 1 ? "y" : "ies"} detected`}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              {isTr
-                ? "Asagidaki metrikler beklenen araliktan onemli olcude sapma gostermektedir."
-                : "The following metrics show significant deviation from expected ranges."}
+              {tx("healthAnalytics.metricsDeviation", lang)}
             </p>
           </div>
         </div>
@@ -773,7 +771,7 @@ function BenchmarkTab({
               {tx("analytics2.comparedWith", lang)} <span className="font-bold text-emerald-400">{benchmarks[0]?.peerCount.toLocaleString()}</span> {tx("analytics2.similarProfiles", lang)}
             </p>
             <p className="text-xs text-muted-foreground">
-              {profileSummary.age ? `${isTr ? "Yas" : "Age"}: ${profileSummary.age} (+-5)` : ""}{" "}
+              {profileSummary.age ? `${tx("healthAnalytics.ageLabel", lang)}: ${profileSummary.age} (+-5)` : ""}{" "}
               {profileSummary.gender ? `| ${profileSummary.gender}` : ""}
             </p>
           </div>
@@ -852,7 +850,7 @@ function BenchmarkTab({
                     </div>
                   </div>
                   <div className="flex justify-between text-[9px] text-muted-foreground mt-0.5 px-0.5">
-                    <span>{isTr ? "Alt %10" : "Bottom 10%"}: {b.peerBottom10}</span>
+                    <span>{tx("healthAnalytics.bottom10", lang)}: {b.peerBottom10}</span>
                     <span>{tx("analytics2.peerAverage", lang)}: {b.peerAverage}</span>
                     <span>{tx("analytics2.topPercent", lang)} 10%: {b.peerTop10}</span>
                   </div>

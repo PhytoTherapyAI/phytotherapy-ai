@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, Sparkles, Shield, Rocket } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 
 const PRICE_PER_PACK = 8
 const CIGS_PER_PACK = 20
@@ -97,11 +98,12 @@ function CountUpNumber({ value, prefix, suffix }: { value: number; prefix?: stri
   return <span>{prefix}{display.toLocaleString()}{suffix}</span>
 }
 
-function LaborIllusion({ onComplete, lang }: { onComplete: () => void; lang: string }) {
-  const isTr = lang === "tr"
-  const steps = isTr
-    ? ["Dopamin reseptörlerinin onarım süreci hesaplanıyor...", "Akciğer silyalarının temizlenme takvimi hazırlanıyor...", "Fitoterapi destek zırhınız donatılıyor..."]
-    : ["Calculating dopamine receptor repair timeline...", "Mapping lung cilia cleansing schedule...", "Equipping your phyto-support armor..."]
+function LaborIllusion({ onComplete, lang }: { onComplete: () => void; lang: "en" | "tr" }) {
+  const steps = [
+    tx("smokingCessation.laborStep1", lang),
+    tx("smokingCessation.laborStep2", lang),
+    tx("smokingCessation.laborStep3", lang),
+  ]
   const [step, setStep] = useState(0)
 
   useEffect(() => {
@@ -129,7 +131,7 @@ function LaborIllusion({ onComplete, lang }: { onComplete: () => void; lang: str
 
 export default function SmokingCessationPage() {
   const router = useRouter()
-  const { lang } = useLang()
+  const { lang } = useLang() as { lang: "en" | "tr" }
   const isTr = lang === "tr"
   const [dailyCigs, setDailyCigs] = useState(15)
   const [selectedArmor, setSelectedArmor] = useState<string[]>([])
@@ -160,8 +162,8 @@ export default function SmokingCessationPage() {
               <ChevronLeft className="w-5 h-5 text-slate-400" />
             </button>
             <div>
-              <h1 className="text-xl font-bold">{isTr ? "Biyolojik Yenilenme & Özgürlük Panosu" : "Biological Regeneration & Freedom Dashboard"}</h1>
-              <p className="text-xs text-slate-400">{isTr ? "Vücudunuzun iyileşme yolculuğu" : "Your body's healing journey"}</p>
+              <h1 className="text-xl font-bold">{tx("smokingCessation.title", lang)}</h1>
+              <p className="text-xs text-slate-400">{tx("smokingCessation.subtitle", lang)}</p>
             </div>
           </div>
         </motion.div>
@@ -180,7 +182,7 @@ export default function SmokingCessationPage() {
               {showResult && (
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                   className="space-y-2">
-                  <h3 className="text-sm font-semibold text-teal-300 px-1">{isTr ? "İyileşme Takvimi" : "Healing Timeline"}</h3>
+                  <h3 className="text-sm font-semibold text-teal-300 px-1">{tx("smokingCessation.healingTimeline", lang)}</h3>
                   {MILESTONES.map((m, i) => (
                     <motion.button
                       key={m.time}
@@ -213,7 +215,7 @@ export default function SmokingCessationPage() {
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
               className="bg-slate-800/80 backdrop-blur rounded-2xl p-5 border border-slate-700/50">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{isTr ? "Günlük Sigara" : "Daily Cigarettes"}</p>
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{tx("smokingCessation.dailyCigs", lang)}</p>
                 <span className="text-2xl font-bold text-white">{dailyCigs}</span>
               </div>
               <input type="range" min={1} max={40} value={dailyCigs}
@@ -224,15 +226,15 @@ export default function SmokingCessationPage() {
               <div className="grid grid-cols-3 gap-3 mt-5">
                 <div className="bg-slate-700/40 rounded-xl p-3 text-center">
                   <p className="text-lg font-bold text-teal-400"><CountUpNumber value={annualSavings} prefix="$" /></p>
-                  <p className="text-[9px] text-slate-400">{isTr ? "Yıllık Tasarruf" : "Annual Savings"}</p>
+                  <p className="text-[9px] text-slate-400">{tx("smokingCessation.annualSavings", lang)}</p>
                 </div>
                 <div className="bg-slate-700/40 rounded-xl p-3 text-center">
                   <p className="text-lg font-bold text-cyan-400"><CountUpNumber value={lifeDaysGained} /></p>
-                  <p className="text-[9px] text-slate-400">{isTr ? "Kazanılan Gün" : "Days Gained"}</p>
+                  <p className="text-[9px] text-slate-400">{tx("smokingCessation.daysGained", lang)}</p>
                 </div>
                 <div className="bg-slate-700/40 rounded-xl p-3 text-center">
                   <p className="text-lg font-bold text-amber-400"><CountUpNumber value={annualCigs} /></p>
-                  <p className="text-[9px] text-slate-400">{isTr ? "İçilmeyen/yıl" : "Not Smoked/yr"}</p>
+                  <p className="text-[9px] text-slate-400">{tx("smokingCessation.notSmokedYr", lang)}</p>
                 </div>
               </div>
             </motion.div>
@@ -241,9 +243,9 @@ export default function SmokingCessationPage() {
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}
               className="bg-gradient-to-br from-teal-950/40 to-slate-800/50 rounded-2xl p-5 border border-teal-800/20">
               <h3 className="text-sm font-bold text-teal-300 mb-3 flex items-center gap-2">
-                <Shield className="w-4 h-4" /> {isTr ? "Yenilenme Zırhınız" : "Your Regeneration Armor"}
+                <Shield className="w-4 h-4" /> {tx("smokingCessation.regenArmor", lang)}
               </h3>
-              <p className="text-[10px] text-slate-500 mb-3">{isTr ? "Tıbbi" : "Medical"}</p>
+              <p className="text-[10px] text-slate-500 mb-3">{tx("smokingCessation.medical", lang)}</p>
               <div className="flex flex-wrap gap-2 mb-3">
                 {MEDICAL_ARMOR.map(a => (
                   <motion.button key={a.en} whileTap={{ scale: 0.95 }}
@@ -255,7 +257,7 @@ export default function SmokingCessationPage() {
                   </motion.button>
                 ))}
               </div>
-              <p className="text-[10px] text-slate-500 mb-3">{isTr ? "Fitoterapi Desteği" : "Phyto-Support"}</p>
+              <p className="text-[10px] text-slate-500 mb-3">{tx("smokingCessation.phytoSupport", lang)}</p>
               <div className="flex flex-wrap gap-2">
                 {PHYTO_ARMOR.map(a => (
                   <motion.button key={a.en} whileTap={{ scale: 0.95 }}
@@ -277,7 +279,7 @@ export default function SmokingCessationPage() {
               className="w-full py-4 rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-medium shadow-lg shadow-teal-900/40 flex items-center justify-center gap-2"
             >
               <Rocket className="w-4 h-4" />
-              {isTr ? "Yenilenme Protokolümü Başlat" : "Launch My Regeneration Protocol"}
+              {tx("smokingCessation.launchProtocol", lang)}
             </motion.button>
           </div>
         </div>

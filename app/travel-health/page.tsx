@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 
 // ═══ ROUTE CHIPS ═══
 interface Route {
@@ -55,13 +56,13 @@ const ROUTES: Route[] = [
 ]
 
 // ═══ LABOR ILLUSION LOADING ═══
-function ScanningLoader({ lang }: { lang: string }) {
+function ScanningLoader({ lang }: { lang: "en" | "tr" }) {
   const [step, setStep] = useState(0)
   const steps = [
-    lang === "tr" ? "Aşı gereksinimleri taranıyor..." : "Scanning vaccine requirements...",
-    lang === "tr" ? "Yerel flora analiz ediliyor..." : "Analyzing local flora...",
-    lang === "tr" ? "Sağlık riskleri değerlendiriliyor..." : "Evaluating health risks...",
-    lang === "tr" ? "Sonuçlar hazırlanıyor..." : "Preparing results...",
+    tx("travelHealth.scanVaccines", lang),
+    tx("travelHealth.scanFlora", lang),
+    tx("travelHealth.scanRisks", lang),
+    tx("travelHealth.scanResults", lang),
   ]
 
   useEffect(() => {
@@ -95,7 +96,8 @@ function ScanningLoader({ lang }: { lang: string }) {
 }
 
 export default function TravelHealthPage() {
-  const { lang } = useLang()
+  const { lang: rawLang } = useLang()
+  const lang: "en" | "tr" = rawLang === "tr" ? "tr" : "en"
   const [travelType, setTravelType] = useState<"resort" | "backpack">("resort")
   const [selectedRoute, setSelectedRoute] = useState<string | null>(null)
   const [scanning, setScanning] = useState(false)
@@ -125,8 +127,8 @@ export default function TravelHealthPage() {
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
           className="text-center py-4 space-y-2">
           <Globe className="h-10 w-10 text-sky-500 mx-auto" />
-          <h1 className="text-2xl font-bold">{lang === "tr" ? "Global Sağlık Radarı" : "Global Health Radar"}</h1>
-          <p className="text-sm text-muted-foreground">{lang === "tr" ? "Güvenli seyahatin sağlık rehberi." : "Your health guide for safe travel."}</p>
+          <h1 className="text-2xl font-bold">{tx("travelHealth.title", lang)}</h1>
+          <p className="text-sm text-muted-foreground">{tx("travelHealth.subtitle", lang)}</p>
         </motion.div>
 
         {/* Context Switcher */}
@@ -143,7 +145,7 @@ export default function TravelHealthPage() {
               )}
               <span className="relative z-10 flex items-center justify-center gap-1.5">
                 {t === "resort" ? <Building className="h-3.5 w-3.5" /> : <Tent className="h-3.5 w-3.5" />}
-                {t === "resort" ? (lang === "tr" ? "Resort / Şehir" : "Resort / City") : (lang === "tr" ? "Doğa / Sırt Çantası" : "Nature / Backpack")}
+                {t === "resort" ? tx("travelHealth.resort", lang) : tx("travelHealth.backpack", lang)}
               </span>
             </motion.button>
           ))}
@@ -152,7 +154,7 @@ export default function TravelHealthPage() {
         {/* Route Chips */}
         <div className="space-y-3">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            {lang === "tr" ? "Rota Seçin" : "Select Route"}
+            {tx("travelHealth.selectRoute", lang)}
           </p>
           <div className="grid grid-cols-2 gap-2.5">
             {ROUTES.map((r, i) => (
@@ -193,7 +195,7 @@ export default function TravelHealthPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <Syringe className="h-4 w-4 text-sky-500" />
-                      <h3 className="text-sm font-bold">{lang === "tr" ? "Gerekli Aşılar" : "Required Vaccines"}</h3>
+                      <h3 className="text-sm font-bold">{tx("travelHealth.requiredVaccines", lang)}</h3>
                     </div>
                     {active.vaccines.map((v, i) => (
                       <div key={i} className="flex items-center gap-2 text-sm py-1">
@@ -209,7 +211,7 @@ export default function TravelHealthPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <Leaf className="h-4 w-4 text-primary" />
-                    <h3 className="text-sm font-bold">{lang === "tr" ? "Destekleyici Flora" : "Supportive Flora"}</h3>
+                    <h3 className="text-sm font-bold">{tx("travelHealth.supportiveFlora", lang)}</h3>
                   </div>
                   <div className="flex gap-1.5 flex-wrap">
                     {active.flora.map(f => (
@@ -224,7 +226,7 @@ export default function TravelHealthPage() {
                 <CardContent className="p-4">
                   <div className="flex items-center gap-2 mb-3">
                     <Shield className="h-4 w-4 text-sky-500" />
-                    <h3 className="text-sm font-bold">{lang === "tr" ? "Güvenlik İpuçları" : "Safety Tips"}</h3>
+                    <h3 className="text-sm font-bold">{tx("travelHealth.safetyTips", lang)}</h3>
                   </div>
                   {(lang === "tr" ? active.tipsTr : active.tips).map((t, i) => (
                     <div key={i} className="flex items-start gap-2 text-sm py-1">

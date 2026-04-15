@@ -3,10 +3,11 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, Sparkles, Shield, Droplets } from "lucide-react"
+import { ChevronLeft, Sparkles, Shield } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 
 const METABOLISM_RATE = 0.015 // BAC drop per hour
 
@@ -49,11 +50,12 @@ function getClearanceTime(entries: DrinkEntry[], weight: number): string {
   return `${String(clearTime.getHours()).padStart(2, "0")}:${String(clearTime.getMinutes()).padStart(2, "0")}`
 }
 
-function LaborIllusion({ onComplete, lang }: { onComplete: () => void; lang: string }) {
-  const isTr = lang === "tr"
-  const steps = isTr
-    ? ["Karaciğer enzim (CYP) yükü hesaplanıyor...", "Uyku mimarisi bozulması simüle ediliyor...", "Sabah anti-inflamatuar fitoterapi reçeteniz yazılıyor..."]
-    : ["Calculating liver enzyme (CYP) load...", "Simulating sleep architecture disruption...", "Writing your morning anti-inflammatory phytotherapy prescription..."]
+function LaborIllusion({ onComplete, lang }: { onComplete: () => void; lang: "en" | "tr" }) {
+  const steps = [
+    tx("alcoholTracker.laborStep1", lang),
+    tx("alcoholTracker.laborStep2", lang),
+    tx("alcoholTracker.laborStep3", lang),
+  ]
   const [step, setStep] = useState(0)
 
   useEffect(() => {
@@ -81,7 +83,7 @@ function LaborIllusion({ onComplete, lang }: { onComplete: () => void; lang: str
 
 export default function AlcoholTrackerPage() {
   const router = useRouter()
-  const { lang } = useLang()
+  const { lang } = useLang() as { lang: "en" | "tr" }
   const isTr = lang === "tr"
   const [entries, setEntries] = useState<DrinkEntry[]>([])
   const [showLabor, setShowLabor] = useState(false)
@@ -103,11 +105,11 @@ export default function AlcoholTrackerPage() {
     if (totalUnits === 0) return []
     const chips = []
     chips.push({ emoji: "💧", label: isTr ? `Hidrasyon İhtiyacı: +${Math.round(totalUnits * 250)}ml Su` : `Hydration Need: +${Math.round(totalUnits * 250)}ml Water` })
-    if (totalUnits >= 2) chips.push({ emoji: "🧠", label: isTr ? "REM Uykusu Riski: Yüksek" : "REM Sleep Risk: High" })
-    if (totalUnits >= 3) chips.push({ emoji: "💪", label: isTr ? "Kas Toparlanma Etkisi: -%40 MPS" : "Muscle Recovery Impact: -40% MPS" })
-    chips.push({ emoji: "🌿", label: isTr ? "Öneri: Deve Dikeni + C Vitamini" : "Phyto Suggestion: Milk Thistle + Vitamin C" })
+    if (totalUnits >= 2) chips.push({ emoji: "🧠", label: tx("alcoholTracker.remRisk", lang) })
+    if (totalUnits >= 3) chips.push({ emoji: "💪", label: tx("alcoholTracker.muscleRecovery", lang) })
+    chips.push({ emoji: "🌿", label: tx("alcoholTracker.phytoSuggestion", lang) })
     return chips
-  }, [totalUnits, isTr])
+  }, [totalUnits, isTr, lang])
 
   return (
     <div className="min-h-screen bg-slate-900 text-white">
@@ -123,8 +125,8 @@ export default function AlcoholTrackerPage() {
               <ChevronLeft className="w-5 h-5 text-slate-400" />
             </button>
             <div>
-              <h1 className="text-xl font-bold">{isTr ? "Metabolik Temizlenme & Karaciğer Kalkanı" : "Metabolic Clearance & Liver Shield"}</h1>
-              <p className="text-xs text-slate-400">{isTr ? "Alkol metabolizmanı takip et" : "Track your alcohol metabolism"}</p>
+              <h1 className="text-xl font-bold">{tx("alcoholTracker.title", lang)}</h1>
+              <p className="text-xs text-slate-400">{tx("alcoholTracker.subtitle", lang)}</p>
             </div>
           </div>
         </motion.div>
@@ -136,7 +138,7 @@ export default function AlcoholTrackerPage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
               className="bg-slate-800/80 backdrop-blur rounded-2xl p-5 border border-slate-700/50">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-slate-300">{isTr ? "Temizlenme Zaman Çizelgesi" : "Clearance Timeline"}</h3>
+                <h3 className="text-sm font-semibold text-slate-300">{tx("alcoholTracker.clearanceTimeline", lang)}</h3>
                 {entries.length > 0 && (
                   <span className="text-xs text-purple-300 bg-purple-900/30 px-2.5 py-1 rounded-full">
                     {isTr ? `Tam temizlenme: ${clearTime}` : `Full clearance: ${clearTime}`}
@@ -166,7 +168,7 @@ export default function AlcoholTrackerPage() {
 
             {/* Drink Cards */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-              <h3 className="text-sm font-semibold text-slate-300 mb-3 px-1">{isTr ? "İçecek Ekle" : "Add Drink"}</h3>
+              <h3 className="text-sm font-semibold text-slate-300 mb-3 px-1">{tx("alcoholTracker.addDrink", lang)}</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {drinkCounts.map((drink, i) => (
                   <motion.button key={drink.name}
@@ -176,7 +178,7 @@ export default function AlcoholTrackerPage() {
                     className="relative bg-slate-800/60 backdrop-blur border border-slate-700/50 rounded-2xl p-4 text-center hover:border-purple-700/50 transition-all">
                     <motion.span className="text-2xl block mb-1" whileTap={{ scale: 1.3 }}>{drink.emoji}</motion.span>
                     <p className="text-xs font-medium text-slate-200">{drink.name}</p>
-                    <p className="text-[10px] text-slate-500">{drink.units} {isTr ? "birim" : "unit"}</p>
+                    <p className="text-[10px] text-slate-500">{drink.units} {tx("alcoholTracker.unit", lang)}</p>
                     {drink.count > 0 && (
                       <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
                         className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-fuchsia-500 text-[10px] font-bold flex items-center justify-center">
@@ -195,10 +197,10 @@ export default function AlcoholTrackerPage() {
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
               className="bg-gradient-to-br from-purple-950/50 to-slate-800/50 rounded-2xl p-5 border border-purple-800/20">
               <h3 className="text-sm font-bold text-purple-300 mb-3 flex items-center gap-2">
-                <Shield className="w-4 h-4" /> {isTr ? "Hasar Kontrol & Koruma Paneli" : "Damage Control & Protection Panel"}
+                <Shield className="w-4 h-4" /> {tx("alcoholTracker.damagePanel", lang)}
               </h3>
               {damageChips.length === 0 ? (
-                <p className="text-xs text-slate-500">{isTr ? "İçecek ekleyin" : "Add a drink to see damage control tips"}</p>
+                <p className="text-xs text-slate-500">{tx("alcoholTracker.addDrinkHint", lang)}</p>
               ) : (
                 <div className="space-y-2">
                   {damageChips.map((chip, i) => (
@@ -220,7 +222,7 @@ export default function AlcoholTrackerPage() {
               className="w-full py-4 rounded-2xl bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white font-medium shadow-lg shadow-purple-900/40 flex items-center justify-center gap-2"
             >
               <Sparkles className="w-4 h-4" />
-              {isTr ? "Ertesi Gün Toparlanma Protokolümü Hazırla" : "Prepare My Next-Day Recovery Protocol"}
+              {tx("alcoholTracker.recoveryCta", lang)}
             </motion.button>
 
             {/* Result */}
@@ -229,14 +231,12 @@ export default function AlcoholTrackerPage() {
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                   className="bg-gradient-to-br from-purple-950/50 to-slate-800/50 rounded-2xl p-5 border border-fuchsia-800/20">
                   <h3 className="text-sm font-bold text-fuchsia-300 mb-2 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" /> {isTr ? "Toparlanma Protokolü" : "Recovery Protocol"}
+                    <Sparkles className="w-4 h-4" /> {tx("alcoholTracker.recoveryTitle", lang)}
                   </h3>
                   <p className="text-sm text-slate-300 leading-relaxed">
-                    {isTr
-                      ? "Yarın sabah: 500ml su + Deve Dikeni 250mg + Vitamin B kompleks ile başlayın. 24 saat ağır egzersizden kaçının — MPS'niz düşük."
-                      : "Tomorrow morning: Start with 500ml water + Milk Thistle 250mg + Vitamin B complex. Avoid heavy exercise for 24h — your MPS is compromised."}
+                    {tx("alcoholTracker.recoveryBody", lang)}
                   </p>
-                  <p className="text-[10px] text-slate-500 mt-2">{isTr ? "Her zaman doktorunuza danışın." : "Always consult your healthcare provider."}</p>
+                  <p className="text-[10px] text-slate-500 mt-2">{tx("alcoholTracker.consultDoctor", lang)}</p>
                 </motion.div>
               )}
             </AnimatePresence>

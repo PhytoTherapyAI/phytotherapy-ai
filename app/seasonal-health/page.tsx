@@ -12,9 +12,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 
 // ═══ BOSS FIGHT HERO ═══
-function BossFightHero({ shieldPct, lang }: { shieldPct: number; lang: string }) {
+function BossFightHero({ shieldPct, lang }: { shieldPct: number; lang: "en" | "tr" }) {
   const r = 54; const c = 2 * Math.PI * r
 
   return (
@@ -23,7 +24,7 @@ function BossFightHero({ shieldPct, lang }: { shieldPct: number; lang: string })
       <div className="flex items-center justify-center gap-2 mb-4">
         <Swords className="h-5 w-5 text-amber-600" />
         <h2 className="text-base font-bold text-amber-700 dark:text-amber-400">
-          {lang === "tr" ? "Bahar Sezonu Aktif: Alerji Boss'u Yaklaşıyor!" : "Spring Season Active: Allergy Boss Approaching!"}
+          {tx("seasonalHealth.bossTitle", lang)}
         </h2>
       </div>
 
@@ -47,7 +48,7 @@ function BossFightHero({ shieldPct, lang }: { shieldPct: number; lang: string })
       </div>
 
       <p className="text-sm text-amber-600/80 dark:text-amber-300/80">
-        {lang === "tr" ? "Kalkanınızı güçlendirin — takviyeler ekleyin!" : "Strengthen your shield — add supplements!"}
+        {tx("seasonalHealth.bossSubtitle", lang)}
       </p>
     </motion.div>
   )
@@ -67,7 +68,7 @@ const ARSENAL: ArsenalItem[] = [
   { id: "honey", name: "Local Honey", nameTr: "Yerel Bal", emoji: "🍯", benefit: "Pollen desensitization", benefitTr: "Polen duyarsızlaştırma" },
 ]
 
-function ArsenalGrid({ lang }: { lang: string }) {
+function ArsenalGrid({ lang }: { lang: "en" | "tr" }) {
   const [added, setAdded] = useState<string[]>(["quercetin", "vitc"])
 
   const toggle = (id: string) => {
@@ -110,14 +111,14 @@ function ArsenalGrid({ lang }: { lang: string }) {
 }
 
 // ═══ DOPAMINE CHECKLIST ═══
-function SeasonalChecklist({ lang }: { lang: string }) {
+function SeasonalChecklist({ lang }: { lang: "en" | "tr" }) {
   const [done, setDone] = useState<string[]>([])
   const items = [
-    { id: "c1", text: lang === "tr" ? "Hava filtresi temizlendi" : "Air filter cleaned", emoji: "🏠" },
-    { id: "c2", text: lang === "tr" ? "Antihistaminik stok" : "Antihistamine stock", emoji: "💊" },
-    { id: "c3", text: lang === "tr" ? "Pencere filtresi kontrol" : "Window filter check", emoji: "🪟" },
-    { id: "c4", text: lang === "tr" ? "Güneş gözlüğü hazır" : "Sunglasses ready", emoji: "🕶️" },
-    { id: "c5", text: lang === "tr" ? "Polen takvimi incelendi" : "Pollen calendar reviewed", emoji: "📅" },
+    { id: "c1", text: tx("seasonalHealth.check1", lang), emoji: "🏠" },
+    { id: "c2", text: tx("seasonalHealth.check2", lang), emoji: "💊" },
+    { id: "c3", text: tx("seasonalHealth.check3", lang), emoji: "🪟" },
+    { id: "c4", text: tx("seasonalHealth.check4", lang), emoji: "🕶️" },
+    { id: "c5", text: tx("seasonalHealth.check5", lang), emoji: "📅" },
   ]
 
   const toggle = (id: string) => {
@@ -167,9 +168,9 @@ export default function SeasonalHealthPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
           <div className="flex items-center gap-2 mb-3">
             <Shield className="h-4 w-4 text-primary" />
-            <h2 className="text-sm font-bold">{lang === "tr" ? "Cephanelik" : "Arsenal"}</h2>
+            <h2 className="text-sm font-bold">{tx("seasonalHealth.arsenal", lang)}</h2>
             <Badge variant="secondary" className="text-[9px]">
-              {lang === "tr" ? "Zırhıma Ekle" : "Add to Shield"}
+              {tx("seasonalHealth.addToShield", lang)}
             </Badge>
           </div>
           <ArsenalGrid lang={lang} />
@@ -181,7 +182,7 @@ export default function SeasonalHealthPage() {
             <CardContent className="p-4">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="h-4 w-4 text-amber-500" />
-                <h3 className="text-sm font-bold">{lang === "tr" ? "Hazırlık Listesi" : "Prep Checklist"}</h3>
+                <h3 className="text-sm font-bold">{tx("seasonalHealth.prepChecklist", lang)}</h3>
               </div>
               <SeasonalChecklist lang={lang} />
             </CardContent>
@@ -199,11 +200,11 @@ export default function SeasonalHealthPage() {
                 <div className="flex items-center gap-2">
                   <MapPin className="h-3 w-3 text-amber-500" />
                   <span className="text-xs text-muted-foreground">
-                    {lang === "tr" ? "İzmir" : "Izmir"}
+                    {tx("seasonalHealth.city", lang)}
                   </span>
                 </div>
                 <p className="text-sm font-bold text-amber-700 dark:text-amber-400">
-                  {lang === "tr" ? "Polen Seviyesi: Yüksek" : "Pollen Level: High"}
+                  {tx("seasonalHealth.pollenHigh", lang)}
                 </p>
                 <div className="flex gap-1 mt-1">
                   {[1, 2, 3, 4, 5].map(i => (

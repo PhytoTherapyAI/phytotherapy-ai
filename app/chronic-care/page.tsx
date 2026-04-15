@@ -89,7 +89,7 @@ const CONDITIONS: ChronicCondition[] = [
 ]
 
 // ── Dashboard view for selected condition ──
-function ConditionDashboard({ condition, lang }: { condition: ChronicCondition; lang: string }) {
+function ConditionDashboard({ condition, lang }: { condition: ChronicCondition; lang: "en" | "tr" }) {
   const metrics = lang === "tr" ? condition.metricsTr : condition.metrics
 
   return (
@@ -115,7 +115,7 @@ function ConditionDashboard({ condition, lang }: { condition: ChronicCondition; 
           </p>
         </div>
         <Badge className="shrink-0 text-[10px]" style={{ backgroundColor: `${condition.color}15`, color: condition.color }}>
-          {lang === "tr" ? "Aktif" : "Active"}
+          {tx("chronicCare.active", lang)}
         </Badge>
       </div>
 
@@ -131,7 +131,7 @@ function ConditionDashboard({ condition, lang }: { condition: ChronicCondition; 
                 <p className="text-xs text-muted-foreground mb-1">{metric}</p>
                 <p className="text-xl font-bold text-foreground">--</p>
                 <p className="text-[10px] text-muted-foreground mt-1">
-                  {lang === "tr" ? "Veri ekle" : "Add data"}
+                  {tx("chronicCare.addData", lang)}
                 </p>
               </CardContent>
             </Card>
@@ -145,17 +145,15 @@ function ConditionDashboard({ condition, lang }: { condition: ChronicCondition; 
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="h-4 w-4 text-primary" />
           <span className="text-xs font-bold text-primary">
-            {lang === "tr" ? "AI Önerileri" : "AI Suggestions"}
+            {tx("chronicCare.aiSuggestions", lang)}
           </span>
         </div>
         <p className="text-sm text-muted-foreground">
-          {lang === "tr"
-            ? "Düzenli veri girişi yaptığınızda, yapay zeka size kişiselleştirilmiş öneriler sunacak."
-            : "Once you start logging data regularly, AI will provide personalized insights."}
+          {tx("chronicCare.aiSuggestionBody", lang)}
         </p>
         <Button size="sm" className="mt-3 rounded-xl text-xs h-9">
           <TrendingUp className="h-3.5 w-3.5 mr-1" />
-          {lang === "tr" ? "Takibe Başla" : "Start Tracking"}
+          {tx("chronicCare.startTracking", lang)}
         </Button>
       </motion.div>
 
@@ -164,7 +162,7 @@ function ConditionDashboard({ condition, lang }: { condition: ChronicCondition; 
         <div className="flex items-center gap-2 mb-3">
           <Leaf className="h-4 w-4 text-primary" />
           <span className="text-sm font-bold">
-            {lang === "tr" ? "Destekleyici Fitoterapi" : "Supportive Phytotherapy"}
+            {tx("chronicCare.supportivePhyto", lang)}
           </span>
         </div>
         <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
@@ -193,8 +191,8 @@ export default function ChronicCarePage() {
       <div className="mx-auto max-w-2xl px-4 py-16 text-center">
         <Card><CardContent className="py-12 space-y-4">
           <Stethoscope className="h-12 w-12 text-muted-foreground/40 mx-auto" />
-          <h2 className="text-xl font-bold">{lang === "tr" ? "Kronik Hastalık Yönetimi" : "Chronic Disease Management"}</h2>
-          <p className="text-sm text-muted-foreground">{lang === "tr" ? "Giriş yaparak sağlık yolculuğunuza başlayın." : "Sign in to start your health journey."}</p>
+          <h2 className="text-xl font-bold">{tx("chronicCare.title", lang)}</h2>
+          <p className="text-sm text-muted-foreground">{tx("chronicCare.signInPrompt", lang)}</p>
           <Button onClick={() => router.push("/auth/login")}><LogIn className="h-4 w-4 mr-2" />{tx("cal.signIn", lang)}</Button>
         </CardContent></Card>
       </div>
@@ -222,12 +220,10 @@ export default function ChronicCarePage() {
                   <Stethoscope className="h-12 w-12 text-primary mx-auto" />
                 </motion.div>
                 <h1 className="text-2xl font-bold text-foreground">
-                  {lang === "tr" ? "Sağlık Yolculuğunuzu Özelleştirin" : "Customize Your Health Journey"}
+                  {tx("chronicCare.heroTitle", lang)}
                 </h1>
                 <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                  {lang === "tr"
-                    ? "Durumunuzu seçin, size özel takip panosu oluşturalım."
-                    : "Select your conditions and we'll create a personalized tracking dashboard."}
+                  {tx("chronicCare.heroSubtitle", lang)}
                 </p>
               </motion.div>
 
@@ -298,7 +294,7 @@ export default function ChronicCarePage() {
               <div className="flex items-center gap-2 mb-2">
                 <Button variant="ghost" size="sm" onClick={() => setShowDashboard(false)}
                   className="rounded-xl text-xs">
-                  {lang === "tr" ? "← Geri" : "← Back"}
+                  {tx("chronicCare.back", lang)}
                 </Button>
               </div>
 

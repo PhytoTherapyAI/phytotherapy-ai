@@ -67,22 +67,22 @@ function EvidenceBadge({ grade }: { grade: "A" | "B" | "C" }) {
 }
 
 // ── Status Badge ──────────────────────────────────
-function StatusBadge({ status, isTr }: { status: EscrowAccount["status"]; isTr: boolean }) {
+function StatusBadge({ status, lang }: { status: EscrowAccount["status"]; lang: "en" | "tr" }) {
   const map: Record<string, { label: string; cls: string }> = {
     active: {
-      label: isTr ? "Aktif" : "Active",
+      label: tx("valueMarketplace.statusActive", lang),
       cls: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300",
     },
     completed: {
-      label: isTr ? "Tamamlandi" : "Completed",
+      label: tx("valueMarketplace.statusCompleted", lang),
       cls: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300",
     },
     refunded: {
-      label: isTr ? "Iade Edildi" : "Refunded",
+      label: tx("valueMarketplace.statusRefunded", lang),
       cls: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
     },
     partial_refund: {
-      label: isTr ? "Kismi Iade" : "Partial Refund",
+      label: tx("valueMarketplace.statusPartialRefund", lang),
       cls: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
     },
   };
@@ -635,7 +635,7 @@ export default function ValueMarketplacePage() {
                             </h4>
                             <p className="text-xs text-gray-500 dark:text-gray-400 font-mono">{esc.id}</p>
                           </div>
-                          <StatusBadge status={esc.status} isTr={isTr} />
+                          <StatusBadge status={esc.status} lang={lang} />
                         </div>
 
                         {/* Amount breakdown */}
@@ -768,7 +768,7 @@ export default function ValueMarketplacePage() {
                         <p className="text-2xl font-bold font-mono mt-2" style={{ color: tier.color }}>
                           +{tier.bonusPercent}%
                         </p>
-                        <p className="text-xs text-gray-400">{isTr ? "bonus" : "bonus"}</p>
+                        <p className="text-xs text-gray-400">{tx("valueMarketplace.bonus", lang)}</p>
                       </div>
                     ))}
                   </div>

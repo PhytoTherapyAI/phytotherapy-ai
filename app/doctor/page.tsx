@@ -26,7 +26,8 @@ interface Patient {
 export default function DoctorPage() {
   const router = useRouter()
   const { user, isAuthenticated, isLoading, profile, session } = useAuth()
-  const { lang } = useLang()
+  const { lang: rawLang } = useLang()
+  const lang: "en" | "tr" = rawLang === "tr" ? "tr" : "en"
   const isTr = lang === "tr"
   const [patients, setPatients] = useState<Patient[]>([])
   const [loading, setLoading] = useState(true)
@@ -113,7 +114,7 @@ export default function DoctorPage() {
           </div>
           <div>
             <p className="text-sm leading-relaxed">
-              {getTimeGreeting(isTr)} <strong>Dr. {doctorName}</strong>.{" "}
+              {getTimeGreeting(lang)} <strong>Dr. {doctorName}</strong>.{" "}
               {activePatients.length > 0 ? (
                 <>
                   {isTr
@@ -128,7 +129,7 @@ export default function DoctorPage() {
                   )}
                 </>
               ) : (
-                <>{isTr ? "Henüz hastanız yok. Davet kodu oluşturarak başlayın." : "No patients yet. Create an invite code to get started."}</>
+                <>{tx("doctor.noPatientsGreeting", lang)}</>
               )}
             </p>
           </div>
@@ -163,7 +164,7 @@ export default function DoctorPage() {
         <div className="space-y-2">
           <h2 className="flex items-center gap-2 text-sm font-bold">
             <AlertCircle className="h-4 w-4 text-red-500" />
-            {isTr ? "Acil Eylem Sırası" : "Triage Queue"}
+            {tx("doctor.triageQueue", lang)}
             <span className="rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-700 dark:bg-red-900/40 dark:text-red-300">
               {visibleAlerts.length}
             </span>
@@ -186,25 +187,25 @@ export default function DoctorPage() {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-sm">{patient.patient_name}</span>
                     <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[9px] font-bold text-white">
-                      {isTr ? "Kritik" : "Critical"}
+                      {tx("doctor.critical", lang)}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    {isTr ? "Dikkat gerektiren durum tespit edildi" : "Attention required — review patient data"}
+                    {tx("doctor.attentionRequired", lang)}
                   </p>
                   {/* Action chips */}
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     <button onClick={() => fetchAISummary(patient.patient_id)}
                       className="flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-medium transition-colors hover:border-primary hover:text-primary">
                       {summaryLoading === patient.patient_id ? <Loader2 className="h-3 w-3 animate-spin" /> : <Brain className="h-3 w-3" />}
-                      {isTr ? "Protokolü İncele" : "Review Protocol"}
+                      {tx("doctor.reviewProtocol", lang)}
                     </button>
                     <button className="flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-medium hover:border-primary hover:text-primary">
-                      <MessageCircle className="h-3 w-3" /> {isTr ? "Hastaya Mesaj" : "Message Patient"}
+                      <MessageCircle className="h-3 w-3" /> {tx("doctor.messagePatient", lang)}
                     </button>
                     <button onClick={() => dismissAlert(patient.id)}
                       className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-medium text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400">
-                      <ClipboardCheck className="h-3 w-3" /> {isTr ? "Onayla ve Kapat" : "Approve & Close"}
+                      <ClipboardCheck className="h-3 w-3" /> {tx("doctor.approveClose", lang)}
                     </button>
                   </div>
                 </div>
@@ -223,7 +224,7 @@ export default function DoctorPage() {
           ))}
           </AnimatePresence>
           <p className="text-[9px] text-muted-foreground text-center mt-1">
-            {isTr ? "← Sağa kaydırarak onayla" : "← Swipe right to dismiss"}
+            {tx("doctor.swipeHint", lang)}
           </p>
         </div>
       )}
@@ -239,7 +240,7 @@ export default function DoctorPage() {
             <Check className="h-6 w-6 text-emerald-600" />
           </motion.div>
           <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">
-            {isTr ? "🎉 Tüm hastalarınız güvende, harika bir iş çıkardınız!" : "🎉 All patients are safe, great work!"}
+            {tx("doctor.allSafe", lang)}
           </p>
         </motion.div>
       )}
@@ -346,9 +347,9 @@ export default function DoctorPage() {
   )
 }
 
-function getTimeGreeting(isTr: boolean): string {
+function getTimeGreeting(lang: "en" | "tr"): string {
   const h = new Date().getHours()
-  if (h < 12) return isTr ? "Günaydın" : "Good morning"
-  if (h < 17) return isTr ? "İyi günler" : "Good afternoon"
-  return isTr ? "İyi akşamlar" : "Good evening"
+  if (h < 12) return tx("doctor.greetMorning", lang)
+  if (h < 17) return tx("doctor.greetAfternoon", lang)
+  return tx("doctor.greetEvening", lang)
 }

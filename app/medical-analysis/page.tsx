@@ -245,16 +245,16 @@ function BloodTestTab({
         }),
       });
       if (!res.ok) {
-        let errMsg = lang === "tr" ? "Analiz başarısız oldu. Tekrar deneyin." : "Analysis failed. Please try again.";
+        let errMsg = tx("medicalAnalysis.analysisFailed", lang);
         try { const err = await res.json(); errMsg = err.error || errMsg; } catch { /* non-JSON error */ }
         throw new Error(errMsg);
       }
       const text = await res.text();
       let result: AnalysisResponse;
-      try { result = JSON.parse(text); } catch { throw new Error(lang === "tr" ? "Sunucudan geçersiz yanıt alındı. Tekrar deneyin." : "Invalid response from server. Please try again."); }
+      try { result = JSON.parse(text); } catch { throw new Error(tx("medicalAnalysis.invalidResponse", lang)); }
       setData(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : (lang === "tr" ? "Bir hata oluştu" : "Something went wrong"));
+      setError(err instanceof Error ? err.message : tx("medicalAnalysis.somethingWrong", lang));
     } finally {
       setIsLoading(false);
     }
@@ -295,7 +295,7 @@ function BloodTestTab({
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
             >
-              📅 {isTr ? "Tarih biliyorum" : "I know the date"}
+              📅 {tx("medicalAnalysis.knowDate", lang)}
             </button>
             <button
               type="button"
@@ -306,7 +306,7 @@ function BloodTestTab({
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
               }`}
             >
-              🤔 {isTr ? "Yaklaşık" : "Approximate"}
+              🤔 {tx("medicalAnalysis.approximate", lang)}
             </button>
           </div>
 
@@ -396,20 +396,20 @@ function BloodTestTab({
                         body: formData,
                       });
                       if (!res.ok) {
-                        let errMsg = lang === "tr" ? "PDF analizi başarısız. Tekrar deneyin." : "PDF analysis failed. Try again.";
+                        let errMsg = tx("medicalAnalysis.pdfFailed", lang);
                         try { const err = await res.json(); errMsg = err.error || errMsg; } catch { /* non-JSON */ }
                         throw new Error(errMsg);
                       }
                       const text = await res.text();
                       let result;
-                      try { result = JSON.parse(text); } catch { throw new Error(lang === "tr" ? "Sunucudan geçersiz yanıt. Tekrar deneyin." : "Invalid server response. Try again."); }
+                      try { result = JSON.parse(text); } catch { throw new Error(tx("medicalAnalysis.invalidServerResponse", lang)); }
                       setData(result);
                       setPdfFile(null);
                     } catch (err) {
                       setError(
                         err instanceof Error
                           ? err.message
-                          : (lang === "tr" ? "PDF yükleme başarısız" : "PDF upload failed")
+                          : tx("medicalAnalysis.pdfUploadFailed", lang)
                       );
                     } finally {
                       setPdfUploading(false);
@@ -548,8 +548,8 @@ function AnalysisLoadingOverlay({ lang, isPdf }: { lang: Lang; isPdf?: boolean }
       {/* Sub text */}
       <p className="text-xs text-muted-foreground mb-6 text-center max-w-xs">
         {isPdf
-          ? (lang === "tr" ? "PDF'iniz AI tarafından analiz ediliyor, bu biraz zaman alabilir..." : "Your PDF is being analyzed by AI, this may take a moment...")
-          : (lang === "tr" ? "Yapay zeka değerlerinizi analiz ediyor..." : "AI is analyzing your values...")}
+          ? tx("medicalAnalysis.pdfAnalyzing", lang)
+          : tx("medicalAnalysis.aiAnalyzing", lang)}
       </p>
 
       {/* Progress bar */}

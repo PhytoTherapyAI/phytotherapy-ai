@@ -57,7 +57,8 @@ const PHARMA_FACTS = [
 
 export default function InteractionCheckerPage() {
   const { isAuthenticated, isLoading: authLoading, session, profile, user } = useAuth();
-  const { lang } = useLang();
+  const { lang: rawLang } = useLang();
+  const lang: "en" | "tr" = rawLang === "tr" ? "tr" : "en";
   const isTr = lang === "tr";
   const [medications, setMedications] = useState<string[]>([]);
   const [concern, setConcern] = useState("");
@@ -90,7 +91,7 @@ export default function InteractionCheckerPage() {
       const token = currentSession?.access_token;
 
       if (!token) {
-        setLoadMedError(isTr ? "Oturum bulunamadı, lütfen tekrar giriş yap" : "Session not found, please sign in again");
+        setLoadMedError(tx("interactionChecker.sessionNotFound", lang));
         return;
       }
 
@@ -100,13 +101,13 @@ export default function InteractionCheckerPage() {
       const json = await res.json();
 
       if (!res.ok) {
-        setLoadMedError(json.error || (isTr ? "Bir hata oluştu" : "An error occurred"));
+        setLoadMedError(json.error || tx("interactionChecker.errorOccurred", lang));
         return;
       }
 
       const meds: UserMedication[] = json.medications ?? [];
       if (meds.length === 0) {
-        setLoadMedError(isTr ? "Profilinde aktif ilaç bulunamadı" : "No active medications found in your profile");
+        setLoadMedError(tx("interactionChecker.noActiveMeds", lang));
         return;
       }
 
@@ -128,7 +129,7 @@ export default function InteractionCheckerPage() {
       setProfileMedsLoaded(true);
     } catch (err) {
       console.error("Failed to load profile medications:", err);
-      setLoadMedError(isTr ? "Beklenmeyen hata oluştu" : "Unexpected error occurred");
+      setLoadMedError(tx("interactionChecker.unexpectedError", lang));
     } finally {
       setLoadingProfile(false);
     }
@@ -217,7 +218,7 @@ export default function InteractionCheckerPage() {
               <InfoTooltip title="Safety Radar" description="Check drug-herb-supplement interactions. Add your medications to scan for risks instantly." />
               <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border">
                 <Zap className="h-3 w-3 text-primary" />
-                {isTr ? "PubMed & FDA destekli" : "Powered by PubMed & FDA"}
+                {tx("interactionChecker.poweredByPubmedFda", lang)}
               </span>
             </div>
             <p className="text-sm text-muted-foreground md:text-base">
@@ -238,7 +239,7 @@ export default function InteractionCheckerPage() {
             <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
               className="rounded-2xl border bg-card p-4 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2.5">
-                {isTr ? "Kaydedilmiş İlaçlarım" : "Your Medications"}
+                {tx("interactionChecker.savedMedsTitle", lang)}
               </p>
               <div className="flex flex-wrap gap-2">
                 {savedMeds.map((med, i) => (
@@ -322,9 +323,9 @@ export default function InteractionCheckerPage() {
                       className="gap-1.5 text-xs rounded-full text-muted-foreground hover:text-primary"
                     >
                       {savedSuccess ? (
-                        <><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> {isTr ? "Kaydedildi!" : "Saved!"}</>
+                        <><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /> {tx("interactionChecker.saved", lang)}</>
                       ) : (
-                        <><BookmarkPlus className="h-3.5 w-3.5" /> {isTr ? "Kaydet & Tekrar Kullan" : "Save & Reuse"}</>
+                        <><BookmarkPlus className="h-3.5 w-3.5" /> {tx("interactionChecker.saveAndReuse", lang)}</>
                       )}
                     </Button>
                   )}
@@ -363,9 +364,7 @@ export default function InteractionCheckerPage() {
                 value={concern}
                 onChange={(e) => setConcern(e.target.value)}
                 disabled={isLoading}
-                placeholder={isTr
-                  ? "örn. Uyku için Sarı Kantaron almak istiyorum"
-                  : "e.g., I want to take St. John's Wort for sleep"}
+                placeholder={tx("interactionChecker.concernPlaceholder", lang)}
                 rows={3}
                 maxLength={1000}
                 className={`w-full resize-none rounded-xl border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 ${
@@ -376,7 +375,7 @@ export default function InteractionCheckerPage() {
               />
               <div className="flex justify-between items-center mt-1.5">
                 <span className="text-[10px] text-muted-foreground">
-                  {isTr ? "Ne tür bitkisel destek veya takviye istediğinizi yazın" : "Describe the herbal support or supplement you're considering"}
+                  {tx("interactionChecker.concernHint", lang)}
                 </span>
                 <span className="text-[10px] text-muted-foreground">{concern.length}/1000</span>
               </div>
@@ -460,7 +459,7 @@ export default function InteractionCheckerPage() {
             <div>
               <h3 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <Sparkles className="h-4 w-4 text-primary" />
-                {isTr ? "Günün En Çok Merak Edilen Etkileşimleri" : "Today's Most Popular Interactions"}
+                {tx("interactionChecker.popularInteractions", lang)}
               </h3>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {EXAMPLE_QUERIES.map((example, i) => (
@@ -515,7 +514,7 @@ export default function InteractionCheckerPage() {
           {result && !isLoading && (
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold">{isTr ? "Analiz Sonuçları" : "Analysis Results"}</h3>
+                <h3 className="font-semibold">{tx("interactionChecker.analysisResults", lang)}</h3>
                 <Button
                   variant="outline"
                   size="sm"
@@ -529,7 +528,7 @@ export default function InteractionCheckerPage() {
                   className="gap-1.5 text-xs rounded-full"
                 >
                   <BookmarkPlus className="h-3.5 w-3.5" />
-                  {isTr ? "Bu Kontrolü Kaydet" : "Save This Check"}
+                  {tx("interactionChecker.saveThisCheck", lang)}
                 </Button>
               </div>
               <InteractionResult result={result} />
@@ -547,9 +546,7 @@ export default function InteractionCheckerPage() {
               <div className="flex flex-col items-center gap-3 text-center">
                 <Shield className="h-12 w-12 text-muted-foreground/20" />
                 <p className="text-sm text-muted-foreground max-w-[160px] leading-relaxed">
-                  {isTr
-                    ? "Güvenlik radarını aktif etmek için ilaç veya takviye ekle"
-                    : "Add medications and supplements to activate your safety radar"}
+                  {tx("interactionChecker.radarInactive", lang)}
                 </p>
               </div>
             ) : (
@@ -580,10 +577,10 @@ export default function InteractionCheckerPage() {
             {medications.length > 0 && (
               <div className="mt-6 text-center">
                 <p className="text-xs font-semibold text-primary">
-                  {medications.length} {isTr ? "öğe taranıyor" : "items scanning"}
+                  {medications.length} {tx("interactionChecker.itemsScanning", lang)}
                 </p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">
-                  {isTr ? "Aktif tarama" : "Active scan"}
+                  {tx("interactionChecker.activeScan", lang)}
                 </p>
               </div>
             )}
@@ -592,7 +589,7 @@ export default function InteractionCheckerPage() {
           {/* How it works */}
           <div className="rounded-2xl border bg-card p-4 shadow-sm">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-              {isTr ? "Nasıl çalışır?" : "How it works"}
+              {tx("interactionChecker.howItWorks", lang)}
             </p>
             <div className="space-y-2.5">
               {[
@@ -617,9 +614,7 @@ export default function InteractionCheckerPage() {
                 <Shield className="h-4 w-4 text-primary" />
               </div>
               <p className="text-xs leading-relaxed text-muted-foreground">
-                {isTr
-                  ? "PubMed, Cochrane Library ve dünyaca kabul görmüş hakemli tıp dergilerindeki güncel makaleler taranır."
-                  : "We scan current articles from PubMed, Cochrane Library, and the world's top peer-reviewed medical journals."}
+                {tx("interactionChecker.pubmedScanDesc", lang)}
               </p>
             </div>
           </div>
@@ -632,7 +627,7 @@ export default function InteractionCheckerPage() {
               </div>
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                  {isTr ? "Biliyor muydunuz?" : "Did You Know?"}
+                  {tx("interactionChecker.didYouKnow", lang)}
                 </p>
                 <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
                   {pharmaFact[lang]}

@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useLang } from "@/components/layout/language-toggle"
 import { PediatricAgePicker } from "@/components/child-health/PediatricAgePicker"
+import { tx } from "@/lib/translations"
 
 // ── Age group chips ──
 interface AgeGroup {
@@ -82,7 +83,8 @@ const ISSUES: ChildIssue[] = [
 ]
 
 export default function ChildHealthPage() {
-  const { lang } = useLang()
+  const { lang: rawLang } = useLang()
+  const lang = (rawLang === "tr" ? "tr" : "en") as "en" | "tr"
   const [selectedAge, setSelectedAge] = useState<string | null>(null)
   const [showAgePicker, setShowAgePicker] = useState(false)
   const [selectedIssue, setSelectedIssue] = useState<string | null>(null)
@@ -108,19 +110,17 @@ export default function ChildHealthPage() {
             <Baby className="h-12 w-12 text-primary mx-auto" />
           </motion.div>
           <h1 className="text-2xl font-bold text-foreground">
-            {lang === "tr" ? "Derin Bir Nefes Alın, Biz Buradayız" : "Take a Deep Breath, We're Here"}
+            {tx("childHealth.heroTitle", lang)}
           </h1>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            {lang === "tr"
-              ? "Çocuğunuzun sağlığı konusunda güvenilir, kanıta dayalı rehberlik."
-              : "Trusted, evidence-based guidance for your child's health."}
+            {tx("childHealth.heroSubtitle", lang)}
           </p>
         </motion.div>
 
         {/* ═══ AGE GROUP CHIPS ═══ */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
-            {lang === "tr" ? "Yaş Grubu Seçin" : "Select Age Group"}
+            {tx("childHealth.selectAgeGroup", lang)}
           </p>
           <div className="grid grid-cols-2 gap-2.5">
             {AGE_GROUPS.map((g, i) => {
@@ -150,7 +150,7 @@ export default function ChildHealthPage() {
 
           <motion.button whileTap={{ scale: 0.98 }} onClick={() => setShowAgePicker(!showAgePicker)}
             className="w-full mt-3 text-xs text-primary font-medium py-2 hover:underline">
-            {lang === "tr" ? "Tam yaş seçmek isterim →" : "I want to select exact age →"}
+            {tx("childHealth.exactAgeCta", lang)}
           </motion.button>
 
           <AnimatePresence>
@@ -171,7 +171,7 @@ export default function ChildHealthPage() {
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               className="space-y-4">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                {lang === "tr" ? "Sorun Nedir?" : "What's the Issue?"}
+                {tx("childHealth.whatsIssue", lang)}
               </p>
 
               <div className="grid grid-cols-2 gap-2.5">
@@ -204,7 +204,7 @@ export default function ChildHealthPage() {
                     exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                     <div className="rounded-2xl border bg-white dark:bg-card p-4 space-y-2">
                       <p className="text-xs font-medium text-muted-foreground mb-2">
-                        {lang === "tr" ? "Detay seçin:" : "Select details:"}
+                        {tx("childHealth.selectDetails", lang)}
                       </p>
                       {activeIssue.subOptions.map(sub => {
                         const isChecked = selectedSubs.includes(sub.id)
@@ -234,7 +234,7 @@ export default function ChildHealthPage() {
                   <Button onClick={() => setShowResults(true)}
                     className="w-full h-12 rounded-2xl text-sm font-semibold shadow-lg shadow-primary/20 animate-pulse">
                     <Shield className="h-4 w-4 mr-2" />
-                    {lang === "tr" ? "Güvenli Adımları Gör" : "View Safe Steps"}
+                    {tx("childHealth.viewSafeSteps", lang)}
                   </Button>
                 </motion.div>
               )}
@@ -249,14 +249,14 @@ export default function ChildHealthPage() {
                         <div className="flex items-center gap-2">
                           <Leaf className="h-5 w-5 text-primary" />
                           <h3 className="text-base font-bold text-primary">
-                            {lang === "tr" ? "Güvenli Adımlar" : "Safe Steps"}
+                            {tx("childHealth.safeSteps", lang)}
                           </h3>
                         </div>
                         <ul className="space-y-2">
                           {[
-                            lang === "tr" ? "Bol sıvı tüketimi sağlayın (su, komposto)" : "Ensure plenty of fluids (water, compote)",
-                            lang === "tr" ? "Odayı serin ve havadar tutun" : "Keep the room cool and ventilated",
-                            lang === "tr" ? "Semptomları not edin — doktora götürürken işe yarar" : "Note symptoms — useful when visiting the doctor",
+                            tx("childHealth.step1", lang),
+                            tx("childHealth.step2", lang),
+                            tx("childHealth.step3", lang),
                           ].map((step, i) => (
                             <motion.li key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: i * 0.1 }}
@@ -273,16 +273,14 @@ export default function ChildHealthPage() {
                       <Phone className="h-5 w-5 text-red-500" />
                       <div>
                         <p className="text-sm font-bold text-red-700 dark:text-red-400">
-                          {lang === "tr" ? "Durum kötüleşirse hemen arayın" : "Call immediately if condition worsens"}
+                          {tx("childHealth.callIfWorsens", lang)}
                         </p>
                         <p className="text-xs text-red-500/80">112</p>
                       </div>
                     </motion.a>
 
                     <p className="text-[10px] text-muted-foreground text-center px-4">
-                      {lang === "tr"
-                        ? "Bu bilgiler tıbbi tavsiye yerine geçmez. Her zaman çocuk doktorunuza danışın."
-                        : "This information does not replace medical advice. Always consult your pediatrician."}
+                      {tx("childHealth.disclaimer", lang)}
                     </p>
                   </motion.div>
                 )}

@@ -11,6 +11,7 @@ import {
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { InfoTooltip } from "@/components/ui/InfoTooltip"
+import { tx } from "@/lib/translations"
 
 const T: Record<string, { en: string; tr: string }> = {
   title: { en: "Prepare for Your Doctor Visit", tr: "Doktor Ziyaretinize Hazırlanın" },
@@ -116,18 +117,18 @@ export default function DoctorPrepPage() {
 
       const questions = [
         meds.length > 0 ? (isTr ? `${meds[0]} ilacım bu belirtilere katkıda bulunuyor olabilir mi?` : `Could my ${meds[0]} be contributing to these symptoms?`) : null,
-        isTr ? "Görüntüleme (BT/MR) yaptırmam gerekir mi?" : "Should I get imaging (CT/MRI) based on my symptoms?",
-        isTr ? "Mevcut ilaçlarımla güvenle kullanabileceğim fitoterapi seçenekleri var mı?" : "Are there phytotherapy options I can safely use alongside my medication?",
+        tx("doctorPrep.qImaging", lang),
+        tx("doctorPrep.qPhyto", lang),
         conditions.length > 0 ? (isTr ? `${conditions[0]} durumum bu belirtilerle ilişkili olabilir mi?` : `Could my ${conditions[0]} be related to these symptoms?`) : null,
-        isTr ? "Ne zaman tekrar kontrole gelmeliyim?" : "When should I schedule a follow-up?",
+        tx("doctorPrep.qFollowUp", lang),
       ].filter(Boolean) as string[]
 
       const reportData: Report = {
         chiefComplaint: chiefText,
-        medications: meds.length > 0 ? meds : [isTr ? "Profilde ilaç bilgisi yok" : "No medications on profile"],
-        allergies: allergies.length > 0 ? allergies.map((a: string | { allergen: string }) => typeof a === "string" ? a : a.allergen) : [isTr ? "Bilinen alerji yok" : "No known allergies"],
-        relevantHistory: conditions.length > 0 ? conditions : [isTr ? "Bilinen kronik hastalık yok" : "No known chronic conditions"],
-        assessmentSummary: isTr ? "Semptom değerlendirmesi tamamlanmadı — önce Semptom Kontrolü yapmanız önerilir." : "No symptom assessment completed yet — consider running a Symptom Check first.",
+        medications: meds.length > 0 ? meds : [tx("doctorPrep.noMedsOnProfile", lang)],
+        allergies: allergies.length > 0 ? allergies.map((a: string | { allergen: string }) => typeof a === "string" ? a : a.allergen) : [tx("doctorPrep.noKnownAllergies", lang)],
+        relevantHistory: conditions.length > 0 ? conditions : [tx("doctorPrep.noKnownConditions", lang)],
+        assessmentSummary: tx("doctorPrep.noAssessment", lang),
         questionsForDoctor: questions,
         visitType: VISIT_TYPES.find(v => v.id === visitType)?.key || visitType,
         date: new Date().toLocaleDateString(isTr ? "tr-TR" : "en-US", { year: "numeric", month: "long", day: "numeric" }),
@@ -263,7 +264,7 @@ export default function DoctorPrepPage() {
                     <label className="text-sm font-medium block mb-1.5">{t("describe", lang)}</label>
                     <textarea value={concern} onChange={e => setConcern(e.target.value)}
                       className="w-full rounded-xl border px-4 py-3 text-sm resize-none focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
-                      rows={3} placeholder={isTr ? "Ana şikayetinizi yazın..." : "Describe your main concern..."} />
+                      rows={3} placeholder={tx("doctorPrep.concernPlaceholder", lang)} />
                   </div>
                   <div>
                     <label className="text-sm font-medium block mb-1.5">{t("howLong", lang)}</label>
@@ -290,7 +291,7 @@ export default function DoctorPrepPage() {
                     <label className="text-sm font-medium block mb-1.5">{t("lastDiagnosis", lang)}</label>
                     <input value={lastDiagnosis} onChange={e => setLastDiagnosis(e.target.value)}
                       className="w-full rounded-xl border px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
-                      placeholder={isTr ? "Son tanınız..." : "Your last diagnosis..."} />
+                      placeholder={tx("doctorPrep.lastDiagnosisPlaceholder", lang)} />
                   </div>
                   <div>
                     <label className="text-sm font-medium block mb-1.5">{t("improved", lang)}</label>
@@ -311,7 +312,7 @@ export default function DoctorPrepPage() {
                   <label className="text-sm font-medium block mb-1.5">{t("sideEffects", lang)}</label>
                   <textarea value={sideEffects} onChange={e => setSideEffects(e.target.value)}
                     className="w-full rounded-xl border px-4 py-3 text-sm resize-none focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
-                    rows={3} placeholder={isTr ? "Yan etki varsa yazın..." : "Describe any side effects..."} />
+                    rows={3} placeholder={tx("doctorPrep.sideEffectsPlaceholder", lang)} />
                 </div>
               )}
 
@@ -386,7 +387,7 @@ export default function DoctorPrepPage() {
                 </div>
                 <div className="bg-stone-50 dark:bg-stone-900 border-t px-6 py-3">
                   <p className="text-[10px] text-muted-foreground text-center">
-                    {isTr ? "DoctoPal AI tarafından hazırlanmıştır · Tıbbi teşhis değildir" : "Prepared by DoctoPal AI · Not a medical diagnosis"}
+                    {tx("doctorPrep.footerDisclaimer", lang)}
                   </p>
                 </div>
               </div>

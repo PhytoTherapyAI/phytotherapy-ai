@@ -54,15 +54,11 @@ function getContextualMessage(lang: "en" | "tr", sleepHours?: number): string | 
   }
 
   if (hour >= 14 && hour <= 16) {
-    return lang === "tr"
-      ? "Öğleden sonra enerjin düşmüş olabilir. Doğal enerji takviye seçeneklerini sorabilirsiz."
-      : "Your afternoon energy might be dipping. Ask me about natural energy support options.";
+    return tx("smartWelcome.afternoonEnergy", lang);
   }
 
   if (hour >= 21) {
-    return lang === "tr"
-      ? "Uykuya hazırlık zamanı yaklaşıyor. Uyku kaliteni artıracak bitki çayları hakkında konuşalım mı?"
-      : "Bedtime is approaching. Want to discuss herbal teas that can improve your sleep quality?";
+    return tx("smartWelcome.bedtimeApproaching", lang);
   }
 
   return null;
@@ -87,9 +83,7 @@ function getSmartChips(lang: "en" | "tr", meds?: string[], sleepHours?: number):
   if (sleepHours && sleepHours < 6) {
     chips.push({
       emoji: "😴",
-      text: lang === "tr"
-        ? "Az uyudum, bugün enerjimi nasıl yüksek tutabilirim?"
-        : "I didn't sleep well, how can I keep my energy up today?",
+      text: tx("smartWelcome.chipLowSleep", lang),
     });
   }
 
@@ -97,29 +91,29 @@ function getSmartChips(lang: "en" | "tr", meds?: string[], sleepHours?: number):
   if (hour < 10) {
     chips.push({
       emoji: "☀️",
-      text: lang === "tr" ? "Sabah rutinime hangi takviyeyi eklemeliyim?" : "What supplement should I add to my morning routine?",
+      text: tx("smartWelcome.chipMorning", lang),
     });
   } else if (hour >= 14 && hour < 17) {
     chips.push({
       emoji: "⚡",
-      text: lang === "tr" ? "Öğleden sonra enerji düşüşüme ne iyi gelir?" : "What helps with my afternoon energy crash?",
+      text: tx("smartWelcome.chipAfternoon", lang),
     });
   } else if (hour >= 20) {
     chips.push({
       emoji: "🌙",
-      text: lang === "tr" ? "Uyku kalitemi artırmak için ne önerirsin?" : "What do you recommend to improve my sleep quality?",
+      text: tx("smartWelcome.chipEvening", lang),
     });
   }
 
   // Always include curiosity gap chips
   chips.push({
     emoji: "✨",
-    text: lang === "tr" ? "Günün içgörüsü: Benim için bugün en önemli sağlık ipucu ne?" : "Today's insight: What's the most important health tip for me today?",
+    text: tx("smartWelcome.chipInsight", lang),
   });
 
   chips.push({
     emoji: "🔬",
-    text: lang === "tr" ? "Son PubMed araştırmalarına göre en etkili adaptogen hangisi?" : "According to latest PubMed research, what's the most effective adaptogen?",
+    text: tx("smartWelcome.chipPubmed", lang),
   });
 
   return chips.slice(0, 4);

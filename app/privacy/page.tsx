@@ -5,7 +5,7 @@ import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 
 export default function PrivacyPolicyPage() {
-  const { lang } = useLang()
+  const { lang } = useLang() as { lang: "en" | "tr" }
 
   return (
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-16">
@@ -162,12 +162,10 @@ export default function PrivacyPolicyPage() {
         {/* KVKK Rights (MADDE 11) */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {lang === "tr" ? "KVKK Kapsamında Haklarınız (Md.11)" : "Your Rights Under KVKK (Art.11)"}
+            {tx("privacyPage.kvkkRightsTitle", lang)}
           </h2>
           <p className="mb-3">
-            {lang === "tr"
-              ? "6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında aşağıdaki haklara sahipsiniz:"
-              : "Under the Personal Data Protection Law No. 6698, you have the following rights:"}
+            {tx("privacyPage.kvkkRightsIntro", lang)}
           </p>
           <ul className="list-disc space-y-1.5 pl-5">
             {lang === "tr" ? (
@@ -197,11 +195,11 @@ export default function PrivacyPolicyPage() {
             )}
           </ul>
           <p className="mt-4 text-sm">
-            <strong className="text-foreground">{lang === "tr" ? "Başvuru: " : "Contact: "}</strong>
+            <strong className="text-foreground">{tx("privacyPage.contactLabel", lang)}</strong>
             contact@doctopal.com
           </p>
           <p className="text-sm">
-            <strong className="text-foreground">{lang === "tr" ? "KVKK Kurulu: " : "KVKK Board: "}</strong>
+            <strong className="text-foreground">{tx("privacyPage.kvkkBoardLabel", lang)}</strong>
             kvkk.gov.tr | ALO 198
           </p>
         </section>
@@ -209,12 +207,10 @@ export default function PrivacyPolicyPage() {
         {/* AI Data Processing */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {lang === "tr" ? "Yapay Zeka ile Veri İşleme" : "AI Data Processing"}
+            {tx("privacyPage.aiProcessingTitle", lang)}
           </h2>
           <p className="mb-3">
-            {lang === "tr"
-              ? "Sağlık verileriniz DoctoPal yapay zeka sistemi tarafından işlenmektedir. Bu işleme için açık rızanız alınmaktadır."
-              : "Your health data is processed by the DoctoPal AI system. Your explicit consent is obtained for this processing."}
+            {tx("privacyPage.aiProcessingIntro", lang)}
           </p>
           <p>
             {lang === "tr" ? (
@@ -234,20 +230,20 @@ export default function PrivacyPolicyPage() {
         {/* Data Retention Table */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {lang === "tr" ? "Veri Saklama Süreleri" : "Data Retention Periods"}
+            {tx("privacyPage.retentionTitle", lang)}
           </h2>
           <div className="overflow-x-auto rounded-lg border">
             <table className="w-full text-sm">
               <thead className="bg-muted/40">
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">
-                    {lang === "tr" ? "Veri Kategorisi" : "Data Category"}
+                    {tx("privacyPage.retentionCategory", lang)}
                   </th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">
-                    {lang === "tr" ? "Saklama Süresi" : "Retention Period"}
+                    {tx("privacyPage.retentionPeriod", lang)}
                   </th>
                   <th className="px-4 py-3 text-left font-semibold text-foreground">
-                    {lang === "tr" ? "Süre Sonunda" : "After Expiry"}
+                    {tx("privacyPage.retentionAfter", lang)}
                   </th>
                 </tr>
               </thead>
@@ -279,21 +275,17 @@ export default function PrivacyPolicyPage() {
             </table>
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
-            {lang === "tr"
-              ? "Verilerinizi istediğiniz zaman silebilirsiniz: Profil → Gizlilik Ayarları → Tüm Verilerimi Sil."
-              : "You can delete your data anytime: Profile → Privacy Settings → Delete All My Data."}
+            {tx("privacyPage.retentionNote", lang)}
           </p>
         </section>
 
         {/* Consent Withdrawal */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
-            {lang === "tr" ? "Rıza Geri Çekme" : "Consent Withdrawal"}
+            {tx("privacyPage.consentWithdrawalTitle", lang)}
           </h2>
           <p className="mb-3">
-            {lang === "tr"
-              ? "Verdiğiniz açık rızayı istediğiniz zaman geri çekebilirsiniz:"
-              : "You can withdraw your consent at any time:"}
+            {tx("privacyPage.consentWithdrawalIntro", lang)}
           </p>
           <ul className="list-disc space-y-1.5 pl-5">
             {lang === "tr" ? (
