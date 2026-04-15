@@ -18,7 +18,7 @@ import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
 import { useFamily } from "@/lib/family-context";
 import { useActiveProfile } from "@/lib/use-active-profile";
-import { useWater } from "@/lib/water-context";
+import { useWater, WaterIntakeProvider } from "@/lib/water-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
@@ -250,6 +250,17 @@ function TaskItem({ emoji, label, done, duration, onClick, onDismiss }: {
   );
 }
 
+// ── Water-aware TaskItem (uses WaterIntakeProvider context) ──
+function WaterTaskItem({ emoji, label, done, onClick, onDismiss }: {
+  emoji: string; label: string; done: boolean; onClick: () => void; onDismiss?: () => void
+}) {
+  const { glasses, target } = useWater();
+  return (
+    <TaskItem emoji={emoji} label={`${label} ${glasses}/${target}`} done={done}
+      onClick={onClick} onDismiss={onDismiss} />
+  );
+}
+
 // ── Static dashboard tasks (non-med/sup) ──
 const STATIC_DASHBOARD_TASKS = [
   { id: "water",      emoji: "💧", labelEn: "Water",            labelTr: "Su",                  duration: null },
@@ -369,7 +380,6 @@ export default function Home() {
   const [streak, setStreak] = useState(0);
   // Dynamic med/sup tasks from Supabase
   const [dynamicTasks, setDynamicTasks] = useState<DashboardTask[]>([]);
-  const { glasses: waterGlasses, target: waterTarget } = useWater();
   const todayStr = getLocalDate();
 
   // Build the full task list: dynamic med/sup tasks + static tasks
@@ -612,6 +622,7 @@ export default function Home() {
   // ─── AUTHENTICATED — Full Dashboard ───
   if (showDashboard) {
     return (
+      <WaterIntakeProvider>
       <div className="min-h-screen bg-stone-50 dark:bg-background">
         {/* Dashboard Tour (first visit only) */}
         <DashboardTour />
@@ -707,15 +718,24 @@ export default function Home() {
                       {visibleTasks.map((t) => {
                         const dur = taskPrefs.durationOverrides[t.id] || t.duration;
                         const label: string = isTr ? t.labelTr : t.labelEn;
-                        // Water: show glasses count
-                        const displayLabel = t.id === "water"
-                          ? `${label} ${waterGlasses}/${waterTarget}`
+                        const isWater = t.id === "water";
+                        const displayLabel = isWater
+                          ? label
                           : dur ? `${label} (${dur})` : label;
+                        const onDismissFn = (t as any).isMed || (t as any).isSup ? undefined : () => dismissTask(t.id);
+                        if (isWater) {
+                          return (
+                            <WaterTaskItem key={t.id} emoji={t.emoji} label={displayLabel}
+                              done={completedTaskIds.has(t.id)}
+                              onClick={() => toggleTask(t.id)}
+                              onDismiss={onDismissFn} />
+                          );
+                        }
                         return (
                           <TaskItem key={t.id} emoji={t.emoji} label={displayLabel}
                             done={completedTaskIds.has(t.id)}
                             onClick={() => toggleTask(t.id)}
-                            onDismiss={(t as any).isMed || (t as any).isSup ? undefined : () => dismissTask(t.id)} />
+                            onDismiss={onDismissFn} />
                         );
                       })}
                     </div>
@@ -897,6 +917,7 @@ export default function Home() {
             onOpenChange={setAddSupOpen} onSaved={() => setSupRefreshKey((k) => k + 1)} />
         </motion.div>
       </div>
+      </WaterIntakeProvider>
     );
   }
 

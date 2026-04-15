@@ -4,25 +4,22 @@ import { Suspense } from "react";
 import { Cormorant_Garamond, DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
-import { DisclaimerBanner } from "@/components/layout/disclaimer-banner";
 import { AuthProvider } from "@/lib/auth-context";
 import { FamilyProvider } from "@/lib/family-context";
-import { WaterIntakeProvider } from "@/lib/water-context";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/components/layout/language-toggle";
 import dynamic from "next/dynamic";
 import { SmartBackButton } from "@/components/layout/SmartBackButton";
 
 // Lazy load non-critical global components — reduces initial bundle
-const MedicationUpdateDialog = dynamic(() => import("@/components/layout/medication-update-dialog").then(m => m.MedicationUpdateDialog));
 const CookieConsent = dynamic(() => import("@/components/layout/cookie-consent").then(m => m.CookieConsent));
-const MicroCheckInWrapper = dynamic(() => import("@/components/dashboard/MicroCheckInWrapper").then(m => m.MicroCheckInWrapper));
-const TrialBannerWrapper = dynamic(() => import("@/components/premium/TrialBannerWrapper").then(m => m.TrialBannerWrapper));
 const PWAInstallPrompt = dynamic(() => import("@/components/pwa/PWAInstallPrompt").then(m => m.PWAInstallPrompt));
 const ServiceWorkerRegistration = dynamic(() => import("@/components/pwa/ServiceWorkerRegistration").then(m => m.ServiceWorkerRegistration));
-const CriticalAlertModal = dynamic(() => import("@/components/emergency/CriticalAlertModal").then(m => m.CriticalAlertModal));
 const FeedbackWidget = dynamic(() => import("@/components/feedback/FeedbackWidget").then(m => m.FeedbackWidget));
 const BottomNavbar = dynamic(() => import("@/components/layout/BottomNavbar").then(m => m.BottomNavbar));
+
+// Auth-gated overlays — only loads for authenticated users (internal conditional)
+const AuthGatedOverlays = dynamic(() => import("@/components/layout/AuthGatedOverlays").then(m => m.AuthGatedOverlays));
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -128,9 +125,8 @@ export default function RootLayout({
           <LanguageProvider>
             <AuthProvider>
             <FamilyProvider>
-            <WaterIntakeProvider>
               <Header />
-              <TrialBannerWrapper />
+              <AuthGatedOverlays />
               <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-hidden">
                 <div className="mx-auto w-full max-w-7xl px-4 md:px-8">
                   <SmartBackButton />
@@ -144,15 +140,11 @@ export default function RootLayout({
                 </Suspense>
               </main>
               <Footer />
-              <MedicationUpdateDialog />
-              <MicroCheckInWrapper />
               <CookieConsent />
               <PWAInstallPrompt />
               <ServiceWorkerRegistration />
-              <CriticalAlertModal />
               <FeedbackWidget />
               <BottomNavbar />
-            </WaterIntakeProvider>
             </FamilyProvider>
             </AuthProvider>
           </LanguageProvider>
