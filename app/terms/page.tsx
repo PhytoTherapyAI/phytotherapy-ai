@@ -169,6 +169,79 @@ export default function TermsPage() {
           </p>
           <p className="mt-2 font-heading text-lg font-medium text-foreground">legal@doctopal.com</p>
         </section>
+
+        {/* Service Definition (MADDE 13 — what DoctoPal is NOT) */}
+        <section>
+          <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
+            {lang === "tr" ? "Hizmet Tanımı" : "Service Definition"}
+          </h2>
+          <p className="mb-3">
+            <strong className="text-foreground">
+              {lang === "tr" ? "DoctoPal bir sağlık bilgilendirme aracıdır." : "DoctoPal is a health information tool."}
+            </strong>
+          </p>
+          <p className="mb-3">{lang === "tr" ? "DoctoPal:" : "DoctoPal:"}</p>
+          <ul className="list-disc space-y-1.5 pl-5 mb-4">
+            {lang === "tr" ? (
+              <>
+                <li><strong className="text-foreground">Tıbbi cihaz DEĞİLDİR</strong> (TİTCK/MDR kapsamı dışındadır)</li>
+                <li>Teşhis koymaz, tedavi önermez, klinik karar desteği sağlamaz</li>
+                <li>Uzaktan sağlık hizmeti sunmaz, tele-tıp hizmeti vermez</li>
+                <li>GETAT (Geleneksel ve Tamamlayıcı Tıp) uygulaması yapmaz</li>
+                <li>Reçete yazmaz, ilaç dozajı belirlemez</li>
+                <li>Profesyonel bir doktor tavsiyesinin yerini ALMAZ</li>
+              </>
+            ) : (
+              <>
+                <li><strong className="text-foreground">Is NOT a medical device</strong> (outside TİTCK/MDR scope)</li>
+                <li>Does not diagnose, treat, or provide clinical decision support</li>
+                <li>Does not provide remote healthcare or telemedicine services</li>
+                <li>Does not practice GETAT (Traditional and Complementary Medicine)</li>
+                <li>Does not write prescriptions or determine medication dosages</li>
+                <li>Does NOT replace professional medical advice</li>
+              </>
+            )}
+          </ul>
+          <p className="mb-3">
+            {lang === "tr"
+              ? "DoctoPal'ın sunduğu bilgiler yalnızca bilimsel literatüre (PubMed, NIH) dayalı genel bilgilendirme amaçlıdır. Bitkisel ürünlerle ilgili bilgiler, GETAT uygulaması değil, bilimsel araştırma referanslarına dayalı bilgilendirmedir."
+              : "Information provided by DoctoPal is for general informational purposes only, based on scientific literature (PubMed, NIH). Herbal information is based on scientific research references, not GETAT practice."}
+          </p>
+          <div className="rounded-lg border border-amber-500/20 bg-amber-950/10 p-4">
+            <p className="text-sm font-medium text-foreground">
+              {lang === "tr"
+                ? "Herhangi bir sağlık kararı almadan önce mutlaka doktorunuza danışın. Acil durumlarda 112'yi arayın."
+                : "Always consult your doctor before making any health decisions. For emergencies, call 112."}
+            </p>
+          </div>
+        </section>
+
+        {/* Limitation of Liability */}
+        <section>
+          <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
+            {lang === "tr" ? "Sorumluluk Sınırları" : "Limitation of Liability"}
+          </h2>
+          <p className="mb-3">
+            {lang === "tr" ? "DoctoPal ve geliştiricileri:" : "DoctoPal and its developers:"}
+          </p>
+          <ul className="list-disc space-y-1.5 pl-5">
+            {lang === "tr" ? (
+              <>
+                <li>AI tarafından üretilen bilgilerin kullanımından kaynaklanan sağlık sonuçlarından sorumlu değildir</li>
+                <li>Kullanıcının doktora danışmadan aldığı kararlardan sorumlu değildir</li>
+                <li>AI yanıtlarının doğruluğunu garanti etmez — tüm bilgiler &quot;olduğu gibi&quot; sunulur</li>
+                <li>Kullanıcının AI önerilerini tıbbi tavsiye olarak yorumlamasından sorumlu değildir</li>
+              </>
+            ) : (
+              <>
+                <li>Are not responsible for health outcomes resulting from use of AI-generated information</li>
+                <li>Are not responsible for decisions made without consulting a doctor</li>
+                <li>Do not guarantee accuracy of AI responses — all information is provided &quot;as is&quot;</li>
+                <li>Are not responsible for users interpreting AI suggestions as medical advice</li>
+              </>
+            )}
+          </ul>
+        </section>
       </div>
     </div>
   )

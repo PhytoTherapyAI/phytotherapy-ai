@@ -158,6 +158,105 @@ export default function PrivacyPolicyPage() {
           </p>
           <p className="mt-2 font-heading text-lg font-medium text-foreground">privacy@doctopal.com</p>
         </section>
+
+        {/* KVKK Rights (MADDE 11) */}
+        <section>
+          <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
+            {lang === "tr" ? "KVKK Kapsamında Haklarınız (Md.11)" : "Your Rights Under KVKK (Art.11)"}
+          </h2>
+          <p className="mb-3">
+            {lang === "tr"
+              ? "6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında aşağıdaki haklara sahipsiniz:"
+              : "Under the Personal Data Protection Law No. 6698, you have the following rights:"}
+          </p>
+          <ul className="list-disc space-y-1.5 pl-5">
+            {lang === "tr" ? (
+              <>
+                <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
+                <li>İşlenmişse buna ilişkin bilgi talep etme</li>
+                <li>İşlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme</li>
+                <li>Yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme</li>
+                <li>Eksik veya yanlış işlenmişse düzeltilmesini isteme</li>
+                <li>KVKK Md.7 kapsamında silinmesini veya yok edilmesini isteme</li>
+                <li>Düzeltme veya silme işlemlerinin aktarılan üçüncü kişilere bildirilmesini isteme</li>
+                <li>İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle aleyhinize bir sonucun ortaya çıkmasına itiraz etme</li>
+                <li>Kanuna aykırı olarak işlenmesi sebebiyle zarara uğramanız hâlinde zararın giderilmesini talep etme</li>
+              </>
+            ) : (
+              <>
+                <li>Learn whether your personal data is being processed</li>
+                <li>Request information about processing if it has been processed</li>
+                <li>Learn the purpose of processing and whether it is used accordingly</li>
+                <li>Know third parties to whom data is transferred domestically or abroad</li>
+                <li>Request correction if data is incomplete or inaccurately processed</li>
+                <li>Request deletion or destruction under KVKK Art.7</li>
+                <li>Request notification of corrections or deletions to third parties</li>
+                <li>Object to outcomes arising from exclusively automated analysis of your data</li>
+                <li>Claim compensation for damages caused by unlawful processing</li>
+              </>
+            )}
+          </ul>
+          <p className="mt-4 text-sm">
+            <strong className="text-foreground">{lang === "tr" ? "Başvuru: " : "Contact: "}</strong>
+            contact@doctopal.com
+          </p>
+          <p className="text-sm">
+            <strong className="text-foreground">{lang === "tr" ? "KVKK Kurulu: " : "KVKK Board: "}</strong>
+            kvkk.gov.tr | ALO 198
+          </p>
+        </section>
+
+        {/* AI Data Processing */}
+        <section>
+          <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
+            {lang === "tr" ? "Yapay Zeka ile Veri İşleme" : "AI Data Processing"}
+          </h2>
+          <p className="mb-3">
+            {lang === "tr"
+              ? "Sağlık verileriniz DoctoPal yapay zeka sistemi tarafından işlenmektedir. Bu işleme için açık rızanız alınmaktadır."
+              : "Your health data is processed by the DoctoPal AI system. Your explicit consent is obtained for this processing."}
+          </p>
+          <p>
+            {lang === "tr" ? (
+              <>
+                AI analizi için verileriniz anonimleştirilerek (kimlik bilgileri çıkarılarak) işlenmektedir. Anonimleştirme detayları için{" "}
+                <a href="/security" className="text-primary underline">Güvenlik sayfamızı</a> ziyaret edin.
+              </>
+            ) : (
+              <>
+                For AI analysis, your data is anonymized (identity information removed). See our{" "}
+                <a href="/security" className="text-primary underline">Security page</a> for anonymization details.
+              </>
+            )}
+          </p>
+        </section>
+
+        {/* Consent Withdrawal */}
+        <section>
+          <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
+            {lang === "tr" ? "Rıza Geri Çekme" : "Consent Withdrawal"}
+          </h2>
+          <p className="mb-3">
+            {lang === "tr"
+              ? "Verdiğiniz açık rızayı istediğiniz zaman geri çekebilirsiniz:"
+              : "You can withdraw your consent at any time:"}
+          </p>
+          <ul className="list-disc space-y-1.5 pl-5">
+            {lang === "tr" ? (
+              <>
+                <li>Profil &gt; Gizlilik Ayarları&apos;ndan rıza checkbox&apos;larını kaldırabilirsiniz</li>
+                <li>Rızanızı geri çektiğinizde ilgili veri işleme faaliyeti derhal durdurulur</li>
+                <li>Temel hizmetler (ilaç takibi, takvim) rızadan bağımsız çalışmaya devam eder</li>
+              </>
+            ) : (
+              <>
+                <li>Remove consent checkboxes from Profile &gt; Privacy Settings</li>
+                <li>Related data processing stops immediately upon withdrawal</li>
+                <li>Basic services (medication tracking, calendar) continue to work regardless of consent</li>
+              </>
+            )}
+          </ul>
+        </section>
       </div>
     </div>
   )
