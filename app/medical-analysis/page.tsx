@@ -19,6 +19,7 @@ import {
 import { BloodTestForm } from "@/components/blood-test/BloodTestForm";
 import { ResultDashboard } from "@/components/blood-test/ResultDashboard";
 import { RadiologyResultDashboard } from "@/components/radiology/RadiologyResultDashboard";
+import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
@@ -475,6 +476,9 @@ function BloodTestTab({
 
           {/* Lab Insights — Longevity Ranges, Organ Systems, Biological Age, Action Plan */}
           <LabInsightsPanel lang={lang} />
+
+          {/* KVKK MADDE 8/10/13 — Mandatory AI disclaimer + right to object */}
+          <AIDisclaimer />
         </div>
       ) : (
         <BloodTestForm onSubmit={handleSubmit} isLoading={isLoading} />
@@ -821,6 +825,8 @@ function RadiologyTab({
             imagePreview={imagePreview || undefined}
             lang={lang}
           />
+          {/* KVKK MADDE 8/10/13 — Mandatory AI disclaimer + right to object */}
+          <AIDisclaimer />
         </div>
       ) : (
         <>

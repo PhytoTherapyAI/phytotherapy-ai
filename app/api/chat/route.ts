@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
           });
           // Same queries as SBAR PDF route — explicit columns to avoid 400 errors
           const [profileRes, medsRes, allergiesRes] = await Promise.all([
-            supabase.from("user_profiles").select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines, onboarding_complete").eq("id", user.id).maybeSingle(),
+            supabase.from("user_profiles").select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines, onboarding_complete, consent_ai_processing, consent_data_transfer").eq("id", user.id).maybeSingle(),
             supabase.from("user_medications").select("brand_name, generic_name, dosage, frequency").eq("user_id", user.id).eq("is_active", true),
             supabase.from("user_allergies").select("allergen, severity").eq("user_id", user.id),
           ]);
@@ -136,6 +136,35 @@ export async function POST(request: NextRequest) {
           profile = profileRes.data;
 
           console.log("[Chat] Profile:", profile?.full_name, "| meds:", meds.length, "| allergies:", allergies.length);
+
+          // ── KVKK Consent Gate (MADDE 1-3): Chat requires explicit AI processing consent ──
+          if (profile && !profile.consent_ai_processing) {
+            const msgLang = lang === "tr" ? "tr" : "en";
+            const consentRequiredMsg = msgLang === "tr"
+              ? "Yapay zeka asistanını kullanabilmeniz için önce **Yapay Zeka İşleme Açık Rızası** vermeniz gerekmektedir.\n\nProfil → Gizlilik Ayarları sayfasından rıza verebilirsiniz. Temel hizmetler (ilaç takibi, takvim) rıza olmadan çalışmaya devam eder.\n\nKVKK Md.6 uyarınca sağlık verileriniz ancak açık rızanızla yapay zeka sistemi tarafından işlenebilir."
+              : "To use the AI assistant, you must first provide **AI Processing Explicit Consent**.\n\nYou can grant consent via Profile → Privacy Settings. Basic services (medication tracking, calendar) continue to work without consent.\n\nUnder KVKK Art.6, your health data can only be processed by the AI system with your explicit consent.";
+
+            logApiAccess({
+              endpoint: "/api/chat",
+              userId: user.id,
+              action: "ai_chat_blocked_no_consent",
+              ip: clientIP,
+              outcome: "denied",
+            });
+
+            const stream = new ReadableStream({
+              start(controller) {
+                controller.enqueue(new TextEncoder().encode(consentRequiredMsg));
+                controller.close();
+              },
+            });
+            return new Response(stream, {
+              headers: {
+                "Content-Type": "text/plain; charset=utf-8",
+                "Transfer-Encoding": "chunked",
+              },
+            });
+          }
 
           if (profile) {
             // ── KVKK Layer 6: Anonymize profile data BEFORE building prompt ──

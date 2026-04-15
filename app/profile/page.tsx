@@ -9,6 +9,7 @@ import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { translateCondition, isSurgery, stripPrefix } from "@/lib/condition-translations";
+import { PrivacySettings } from "@/components/profile/PrivacySettings";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageSkeleton } from "@/components/ui/page-skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -1911,6 +1912,19 @@ export default function ProfilePage() {
 
       {/* Linked Accounts */}
       <LinkedAccountsSection lang={lang} userId={activeUserId || profile.id} />
+
+      {/* Privacy Settings & Consent Management (KVKK Md.11 — MADDE 1-3, 10) */}
+      <Card className="mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow" id="privacy-settings">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <span>🔒</span>
+            {tr ? "Gizlilik Ayarları" : "Privacy Settings"}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <PrivacySettings />
+        </CardContent>
+      </Card>
 
       {/* Scanners removed — kept for mobile app later */}
 

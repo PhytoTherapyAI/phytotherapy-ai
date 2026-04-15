@@ -28,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DrugInput } from "@/components/interaction/DrugInput";
 import { InteractionResult } from "@/components/interaction/InteractionResult";
+import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
@@ -532,6 +533,7 @@ export default function InteractionCheckerPage() {
                 </Button>
               </div>
               <InteractionResult result={result} />
+              <AIDisclaimer />
             </div>
           )}
         </div>
