@@ -203,6 +203,23 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
     return true
   }
 
+  async function updateGroupName(name: string): Promise<boolean> {
+    if (!familyGroup || !user) return false
+    const trimmed = name.trim()
+    if (!trimmed || trimmed === familyGroup.name) return false
+    const { error } = await supabase
+      .from('family_groups')
+      .update({ name: trimmed, updated_at: new Date().toISOString() })
+      .eq('id', familyGroup.id)
+      .eq('owner_id', user.id)
+    if (error) {
+      console.error('[Family] updateGroupName error:', error.message)
+      return false
+    }
+    setFamilyGroup({ ...familyGroup, name: trimmed })
+    return true
+  }
+
   async function inviteMember(email: string, nickname: string): Promise<boolean> {
     if (!familyGroup) return false
     const { error } = await supabase.from('family_members').insert({
@@ -268,6 +285,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
       canManage,
       setActiveProfile,
       createGroup,
+      updateGroupName,
       inviteMember,
       updateNickname,
       promoteToAdmin,
