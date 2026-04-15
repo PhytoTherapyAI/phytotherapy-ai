@@ -38,6 +38,30 @@ export async function POST(request: NextRequest) {
     }
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
 
+    // KVKK Consent Gate: SBAR report requires explicit consent
+    const { data: consentRow } = await supabase
+      .from("user_profiles")
+      .select("consent_sbar_report")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!consentRow?.consent_sbar_report) {
+      logApiAccess({
+        endpoint: "/api/sbar-pdf",
+        userId: user.id,
+        action: "sbar_blocked_no_consent",
+        ip: clientIP,
+        outcome: "denied",
+      });
+      const msg = lang === "tr"
+        ? "SBAR raporu oluşturabilmek için Profil → Gizlilik Ayarları sayfasından 'SBAR Raporu Açık Rızası' vermeniz gerekmektedir."
+        : "To generate an SBAR report, please grant 'SBAR Report Explicit Consent' in Profile → Privacy Settings.";
+      return new Response(
+        JSON.stringify({ error: msg, code: "CONSENT_REQUIRED" }),
+        { status: 403, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
     logApiAccess({
       endpoint: "/api/sbar-pdf",
       userId: user.id,

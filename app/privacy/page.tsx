@@ -231,6 +231,60 @@ export default function PrivacyPolicyPage() {
           </p>
         </section>
 
+        {/* Data Retention Table */}
+        <section>
+          <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">
+            {lang === "tr" ? "Veri Saklama Süreleri" : "Data Retention Periods"}
+          </h2>
+          <div className="overflow-x-auto rounded-lg border">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold text-foreground">
+                    {lang === "tr" ? "Veri Kategorisi" : "Data Category"}
+                  </th>
+                  <th className="px-4 py-3 text-left font-semibold text-foreground">
+                    {lang === "tr" ? "Saklama Süresi" : "Retention Period"}
+                  </th>
+                  <th className="px-4 py-3 text-left font-semibold text-foreground">
+                    {lang === "tr" ? "Süre Sonunda" : "After Expiry"}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {(lang === "tr" ? [
+                  ["Hesap bilgileri (ad, e-posta)", "Hesap aktif olduğu sürece", "Hesap silinince kalıcı silme"],
+                  ["Sağlık verileri (ilaçlar, alerjiler, kronik hastalıklar)", "Hesap aktif olduğu sürece", "Hesap silinince kalıcı silme"],
+                  ["AI chat geçmişi", "12 ay", "Otomatik silme"],
+                  ["Rıza kayıtları", "5 yıl (yasal zorunluluk)", "Otomatik anonimleştirme"],
+                  ["Erişim logları", "2 yıl", "Otomatik silme"],
+                  ["Pasif hesaplar", "Son giriş + 2 yıl", "Otomatik anonimleştirme"],
+                  ["AI API'ye gönderilen anonimleştirilmiş veri", "Geri alınamaz", "Kimlik bilgisi içermez"],
+                ] : [
+                  ["Account info (name, email)", "While account is active", "Permanent deletion on account closure"],
+                  ["Health data (medications, allergies, chronic conditions)", "While account is active", "Permanent deletion on account closure"],
+                  ["AI chat history", "12 months", "Automatic deletion"],
+                  ["Consent records", "5 years (legal requirement)", "Automatic anonymization"],
+                  ["Access logs", "2 years", "Automatic deletion"],
+                  ["Inactive accounts", "Last login + 2 years", "Automatic anonymization"],
+                  ["Anonymized data sent to AI API", "Non-retrievable", "Contains no identity information"],
+                ]).map((row, i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-background" : "bg-muted/20"}>
+                    <td className="px-4 py-3 font-medium text-foreground">{row[0]}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{row[1]}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{row[2]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            {lang === "tr"
+              ? "Verilerinizi istediğiniz zaman silebilirsiniz: Profil → Gizlilik Ayarları → Tüm Verilerimi Sil."
+              : "You can delete your data anytime: Profile → Privacy Settings → Delete All My Data."}
+          </p>
+        </section>
+
         {/* Consent Withdrawal */}
         <section>
           <h2 className="mb-3 font-heading text-2xl font-semibold italic text-foreground">

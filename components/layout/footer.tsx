@@ -9,12 +9,28 @@ import { DoctoPalLogo } from "@/components/brand/DoctoPalLogo"
 export function Footer() {
   const { lang } = useLang()
 
+  const tr = lang === "tr";
+
   return (
     <footer className="border-t">
       <div className="mx-auto max-w-7xl px-4 md:px-8 py-8">
         {/* Disclaimer */}
         <div className="mb-6 rounded-lg border border-gold/20 bg-gold/5 p-4 text-sm text-muted-foreground">
           <strong className="text-foreground">{tx('footer.disclaimer.label', lang)}</strong> {tx('footer.disclaimer.text', lang)}
+        </div>
+
+        {/* Medical device disclaimer — Tıbbi Cihaz Yönetmeliği compliance */}
+        <div className="mb-6 text-center text-xs text-muted-foreground">
+          <p className="font-medium">
+            {tr
+              ? "DoctoPal — Sağlık Bilgilendirme Aracı"
+              : "DoctoPal — Health Information Tool"}
+          </p>
+          <p className="mt-0.5">
+            {tr
+              ? "Tıbbi cihaz değildir. Teşhis koymaz, tedavi önermez."
+              : "Not a medical device. Does not diagnose or treat."}
+          </p>
         </div>
 
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
@@ -28,7 +44,7 @@ export function Footer() {
             </p>
           </div>
 
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
             <Link href="/privacy" className="transition-colors hover:text-foreground">
               {tx('footer.privacy', lang)}
             </Link>
@@ -37,12 +53,20 @@ export function Footer() {
               {tx('footer.terms', lang)}
             </Link>
             <span className="text-border">|</span>
+            <Link href="/security" className="transition-colors hover:text-foreground">
+              {tr ? "Güvenlik" : "Security"}
+            </Link>
+            <span className="text-border">|</span>
+            <Link href="/intended-purpose" className="transition-colors hover:text-foreground">
+              {tr ? "Kullanım Amacı" : "Intended Purpose"}
+            </Link>
+            <span className="text-border">|</span>
             <Link href="/about" className="transition-colors hover:text-foreground">
               {tx("footer.about", lang)}
             </Link>
             <span className="text-border">|</span>
-            <a href="mailto:hello@doctopal.com" className="transition-colors hover:text-foreground">
-              hello@doctopal.com
+            <a href="mailto:contact@doctopal.com" className="transition-colors hover:text-foreground">
+              contact@doctopal.com
             </a>
           </div>
 

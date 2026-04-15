@@ -227,6 +227,24 @@ export default function AboutPage() {
         </div>
       </div>
 
+      {/* Intended Purpose link */}
+      <div className="mt-8 rounded-xl border bg-primary/5 border-primary/20 p-6 text-center">
+        <p className="text-sm font-medium text-foreground mb-2">
+          {lang === "tr" ? "Kullanım Amacı Beyanı" : "Intended Purpose Statement"}
+        </p>
+        <p className="text-xs text-muted-foreground mb-3">
+          {lang === "tr"
+            ? "TİTCK / Tıbbi Cihaz Yönetmeliği denetimine hazırlık dokümanı — DoctoPal'ın tıbbi cihaz olmadığının resmi beyanı."
+            : "TİTCK / Medical Device Regulation audit documentation — official statement that DoctoPal is not a medical device."}
+        </p>
+        <a
+          href="/intended-purpose"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          📄 {lang === "tr" ? "Kullanım Amacı Beyanını Görüntüle" : "View Intended Purpose Statement"}
+        </a>
+      </div>
+
       {/* Disclaimer */}
       <div className="mt-8 rounded-xl border bg-muted/10 p-6 text-center">
         <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30">

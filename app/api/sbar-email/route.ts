@@ -51,6 +51,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "PDF data required" }, { status: 400 });
     }
 
+    // KVKK Consent Gate: SBAR email requires explicit consent
+    const { data: consentRow } = await supabase
+      .from("user_profiles")
+      .select("consent_sbar_report")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!consentRow?.consent_sbar_report) {
+      const msg = lang === "tr"
+        ? "SBAR raporu göndermek için Profil → Gizlilik Ayarları sayfasından 'SBAR Raporu Açık Rızası' vermeniz gerekmektedir."
+        : "To send an SBAR report, please grant 'SBAR Report Explicit Consent' in Profile → Privacy Settings.";
+      return NextResponse.json({ error: msg, code: "CONSENT_REQUIRED" }, { status: 403 });
+    }
+
     const pdfBuffer = Buffer.from(pdfBase64, "base64");
     const dateStr = new Date().toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US", { year: "numeric", month: "long", day: "numeric" });
 

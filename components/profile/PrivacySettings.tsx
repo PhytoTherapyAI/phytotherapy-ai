@@ -245,6 +245,22 @@ export function PrivacySettings() {
           ? "Rıza değişiklikleri audit log'a kaydedilir (KVKK Md.12). Temel hizmetler (ilaç takibi, takvim, aile profili) rıza durumundan bağımsız çalışır."
           : "Consent changes are recorded in the audit log (KVKK Art.12). Basic services (medication tracking, calendar, family profiles) work regardless of consent status."}
       </p>
+
+      {/* Data rights shortcuts (KVKK Md.7 + Md.11 portability) */}
+      <div className="flex flex-wrap gap-2 pt-3 border-t">
+        <a
+          href="/data-export"
+          className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium hover:bg-muted/50 transition-colors"
+        >
+          📥 {tr ? "Verilerimi İndir (JSON)" : "Download My Data (JSON)"}
+        </a>
+        <a
+          href="/data-delete"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/20 px-3 py-1.5 text-xs font-medium text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/40 transition-colors"
+        >
+          🗑 {tr ? "Tüm Verilerimi Sil" : "Delete All My Data"}
+        </a>
+      </div>
     </div>
   );
 }
