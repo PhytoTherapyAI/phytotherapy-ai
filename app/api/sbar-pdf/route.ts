@@ -71,8 +71,6 @@ export async function POST(request: NextRequest) {
     });
 
     // Fetch all profile data — explicit columns to avoid 400 errors
-    console.log("[SBAR-PDF] Fetching data for user:", user.id);
-
     const profileRes = await supabase
       .from("user_profiles")
       .select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines")
@@ -97,8 +95,6 @@ export async function POST(request: NextRequest) {
     const profile = profileRes.data;
     const meds = medsRes.data || [];
     const allergies = allergiesRes.data || [];
-
-    console.log("[SBAR-PDF] Profile:", profile?.full_name, "| meds:", meds.length, "| allergies:", allergies.length);
 
     if (!profile) {
       return new Response(JSON.stringify({ error: "Profile not found" }), { status: 404, headers: { "Content-Type": "application/json" } });

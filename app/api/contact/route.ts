@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     `
 
     if (!resend) {
-      console.log("[CONTACT] No RESEND_API_KEY, logging message:", { name, email, subject })
+      console.warn("[CONTACT] No RESEND_API_KEY configured, email not sent")
       return NextResponse.json({ success: true })
     }
 

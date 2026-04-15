@@ -12,11 +12,6 @@ function escapeHtml(text: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  console.log("=== FAMILY INVITE API CALLED ===")
-  console.log("RESEND_API_KEY exists:", !!process.env.RESEND_API_KEY)
-  console.log("SERVICE_ROLE_KEY exists:", !!process.env.SUPABASE_SERVICE_ROLE_KEY)
-  console.log("APP_URL:", process.env.NEXT_PUBLIC_APP_URL)
-
   try {
     const auth = req.headers.get("authorization")
     if (!auth?.startsWith("Bearer ")) {
@@ -31,8 +26,6 @@ export async function POST(req: NextRequest) {
       console.error("[INVITE] Auth failed:", authError?.message)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-    console.log("[INVITE] User authenticated:", user.id, user.email)
-
     let body: { groupId?: string; email?: string; nickname?: string; inviterName?: string }
     try {
       body = await req.json()
@@ -41,7 +34,6 @@ export async function POST(req: NextRequest) {
     }
 
     const { groupId, email, nickname, inviterName } = body
-    console.log("[INVITE] Request body:", { groupId, email, nickname })
 
     if (!groupId || !email) {
       return NextResponse.json({ error: "groupId and email required" }, { status: 400 })
@@ -58,8 +50,6 @@ export async function POST(req: NextRequest) {
       console.error("[INVITE] Group not found:", groupErr?.message, groupErr?.details)
       return NextResponse.json({ error: "Group not found" }, { status: 404 })
     }
-    console.log("[INVITE] Group found:", group.name)
-
     // Owner kontrolü
     if (group.owner_id !== user.id) {
       const { data: adminCheck } = await supabase
@@ -90,10 +80,8 @@ export async function POST(req: NextRequest) {
     let inviteToken: string | null = null
 
     if (existing) {
-      console.log("[INVITE] Existing pending invite found, reusing token")
       inviteToken = existing.invite_token
     } else {
-      console.log("[INVITE] Creating new invite record...")
       const { data: newMember, error: insertErr } = await supabase
         .from("family_members")
         .insert({
@@ -115,7 +103,6 @@ export async function POST(req: NextRequest) {
         }, { status: 500 })
       }
       inviteToken = newMember.invite_token
-      console.log("[INVITE] Invite record created, token:", inviteToken?.substring(0, 8))
     }
 
     if (!inviteToken) {
@@ -130,7 +117,6 @@ export async function POST(req: NextRequest) {
     let emailSent = false
 
     if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== "re_placeholder") {
-      console.log("[INVITE] Sending email via Resend...")
       try {
         const { Resend } = await import("resend")
         const resend = new Resend(process.env.RESEND_API_KEY)
@@ -173,20 +159,18 @@ export async function POST(req: NextRequest) {
 
         if (emailErr) {
           console.error("[INVITE] Resend error:", emailErr)
-        } else {
-          console.log("[INVITE] Resend success! ID:", emailData?.id)
+        } else if (emailData?.id) {
           emailSent = true
         }
       } catch (resendErr) {
         console.error("[INVITE] Resend exception:", resendErr)
       }
     } else {
-      console.log("[INVITE] No RESEND_API_KEY — skipping email")
+      console.warn("[INVITE] No RESEND_API_KEY, skipping email")
     }
 
     // Fallback: Supabase admin invite
     if (!emailSent && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      console.log("[INVITE] Trying Supabase admin invite as fallback...")
       try {
         const { error: adminErr } = await supabase.auth.admin.inviteUserByEmail(email, {
           redirectTo: inviteUrl,
@@ -195,15 +179,12 @@ export async function POST(req: NextRequest) {
         if (adminErr) {
           console.error("[INVITE] Supabase admin invite failed:", adminErr.message)
         } else {
-          console.log("[INVITE] Supabase admin invite sent!")
           emailSent = true
         }
       } catch (adminEx) {
         console.error("[INVITE] Supabase admin exception:", adminEx)
       }
     }
-
-    console.log("[INVITE] === DONE ===", { emailSent, inviteUrl })
 
     return NextResponse.json({
       success: true,

@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
-import { sanitizeInput } from "@/lib/sanitize";
 import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;

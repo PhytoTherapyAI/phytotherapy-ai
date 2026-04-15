@@ -24,7 +24,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Rate limited", retryIn: rl.resetInSeconds }, { status: 429 })
     }
 
-    let userId: string | undefined;
     const authHeader = req.headers.get("authorization")
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

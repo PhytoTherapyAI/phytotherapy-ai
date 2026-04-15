@@ -2,11 +2,10 @@
 "use client"
 
 import { useState, useMemo, useEffect, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Flame, Camera, Sparkles, Loader2, Shield, Leaf, Check } from "lucide-react"
+import { motion } from "framer-motion"
+import { Flame, Camera, Loader2, Shield, Leaf } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
 
 const FIRE_STARTERS = [
@@ -44,7 +43,7 @@ function InflammationGauge({ score }: { score: number }) {
 }
 
 export default function AntiInflammatoryPage() {
-  const { lang } = useLang()
+  useLang()
   const [selectedFire, setSelectedFire] = useState<string[]>([])
   const [selectedGood, setSelectedGood] = useState<string[]>(["salmon", "turmeric"])
   const [crp, setCrp] = useState(3.5)

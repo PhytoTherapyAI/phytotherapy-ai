@@ -11,7 +11,6 @@ import { checkRateLimit } from "@/lib/rate-limit"
 import { sendVerificationEmail } from "@/lib/emails/send"
 import { renderApprovedEmail } from "@/lib/emails/verification-approved"
 import { renderRejectedEmail } from "@/lib/emails/verification-rejected"
-import { createAuditEntry } from "@/lib/secure-storage"
 import { tx } from "@/lib/translations"
 
 interface VerifyRequest {
@@ -152,19 +151,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // 9. Audit log
-    const audit = createAuditEntry(
-      action === "approve" ? "verify" : "reject",
-      targetUserId,
-      "profile",
-      {
-        adminId: adminUser.id,
-        ipAddress: ip,
-        details: action === "reject" ? `Reason: ${rejectionReason}` : "Approved",
-      }
-    )
-
-    // 10. Save audit to DB
+    // 9. Save audit to DB
     await supabase.from("verification_audit_log").insert({
       action: action === "approve" ? "verify" : "reject",
       user_id: targetUserId,

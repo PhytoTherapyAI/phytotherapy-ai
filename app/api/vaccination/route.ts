@@ -30,8 +30,6 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
-    const userId: string = user.id;
-
     const { data: vaccinations, error } = await supabase
       .from("vaccination_records")
       .select("*")

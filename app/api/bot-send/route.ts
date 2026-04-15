@@ -138,12 +138,10 @@ export async function POST(req: Request) {
   const supabase = createServerClient()
   const now = new Date()
   const currentHour = now.getUTCHours()
-  const currentMinute = now.getUTCMinutes()
 
   // Turkey is UTC+3, so 09:00 TR = 06:00 UTC
   // We match send_time against current time (±5 min window)
   const trHour = (currentHour + 3) % 24
-  const targetTime = `${String(trHour).padStart(2, "0")}:${String(currentMinute).padStart(2, "0")}`
   const targetHour = `${String(trHour).padStart(2, "0")}:`
 
 

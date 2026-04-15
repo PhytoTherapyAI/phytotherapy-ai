@@ -4,12 +4,10 @@
 import { useState } from "react";
 import {
   Wind,
-  Heart,
   Activity,
   Shield,
   AlertTriangle,
   LogIn,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";

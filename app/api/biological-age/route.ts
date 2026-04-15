@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Gather user data for calculation
-    const [profileResult, medsResult, checkInsResult, vitalsResult] = await Promise.all([
+    const [profileResult, , checkInsResult] = await Promise.all([
       supabase.from("user_profiles").select("*").eq("id", user.id).single(),
       supabase.from("user_medications").select("id").eq("user_id", user.id).eq("is_active", true),
       supabase.from("daily_check_ins")

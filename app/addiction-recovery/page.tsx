@@ -5,7 +5,6 @@ import { useState } from "react";
 import {
   Heart,
   Loader2,
-  AlertTriangle,
   Phone,
   Shield,
   LogIn,

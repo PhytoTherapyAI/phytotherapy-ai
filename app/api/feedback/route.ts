@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
         created_at: new Date().toISOString(),
       })
     } catch (dbErr) {
-      console.log("[FEEDBACK] DB save failed:", dbErr)
+      console.error("[FEEDBACK] DB save failed:", dbErr)
     }
 
     // Send Resend email
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
           tags: [{ name: "category", value: category }],
         })
       } catch (emailErr) {
-        console.log("[FEEDBACK] Email failed:", emailErr)
+        console.error("[FEEDBACK] Email failed:", emailErr)
       }
     }
 
@@ -115,7 +115,7 @@ export async function POST(req: NextRequest) {
           }),
         })
       } catch {
-        console.log("[FEEDBACK] Telegram notification failed")
+        console.error("[FEEDBACK] Telegram notification failed")
       }
     }
 
@@ -144,7 +144,7 @@ export async function POST(req: NextRequest) {
           }),
         })
       } catch {
-        console.log("[FEEDBACK] Discord webhook failed")
+        console.error("[FEEDBACK] Discord webhook failed")
       }
     }
 

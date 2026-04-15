@@ -135,8 +135,6 @@ export async function POST(request: NextRequest) {
           hasMedications = meds.length > 0;
           profile = profileRes.data;
 
-          console.log("[Chat] Profile:", profile?.full_name, "| meds:", meds.length, "| allergies:", allergies.length);
-
           // ── KVKK Consent Gate (MADDE 1-3): Chat requires explicit AI processing consent ──
           // Blocks both authenticated-but-no-consent AND no-profile (not fully onboarded) cases
           if (!profile?.consent_ai_processing) {

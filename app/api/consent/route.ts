@@ -117,8 +117,6 @@ export async function DELETE(req: Request) {
   const consentId = url.searchParams.get("id")
   if (!consentId) return NextResponse.json({ error: "Consent ID required" }, { status: 400 })
 
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown"
-
   await supabase
     .from("consent_records")
     .update({ status: "withdrawn", withdrawn_at: new Date().toISOString() })

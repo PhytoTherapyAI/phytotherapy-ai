@@ -9,7 +9,6 @@ import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit } from "@/lib/rate-limit"
 import {
   decryptReference,
-  createAuditEntry,
   SIGNED_URL_EXPIRY,
   STORAGE_BUCKET,
 } from "@/lib/secure-storage"
@@ -76,13 +75,6 @@ export async function POST(req: Request) {
       console.error("Signed URL error:", signedUrlError)
       return NextResponse.json({ error: "Failed to generate viewing link" }, { status: 500 })
     }
-
-    // 7. Audit log — track who viewed what
-    const audit = createAuditEntry("view", documentUserId || user.id, storagePath, {
-      adminId: isAdmin ? user.id : undefined,
-      ipAddress: ip,
-      details: `Signed URL generated (${SIGNED_URL_EXPIRY}s expiry)`,
-    })
 
     return NextResponse.json({
       signedUrl: signedUrlData.signedUrl,

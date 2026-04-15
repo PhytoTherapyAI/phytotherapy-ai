@@ -13,10 +13,6 @@ function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function randomPick<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
 export async function POST() {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;

@@ -428,7 +428,7 @@ export async function GET(req: Request) {
       const daysSinceStart = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 
       // Check which timepoint is due
-      for (const [key, config] of Object.entries(SURVEY_CONFIGS)) {
+      for (const config of Object.values(SURVEY_CONFIGS)) {
         if (config.triggerDays === -1) continue; // Skip end_of_cycle (manual trigger)
         if (daysSinceStart >= config.triggerDays && daysSinceStart < config.triggerDays + 3) {
           // Check if already completed

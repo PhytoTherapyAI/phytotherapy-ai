@@ -5,7 +5,6 @@ import { askGeminiJSON } from "@/lib/ai-client";
 import type {
   AssessmentRequest,
   AssessmentResponse,
-  ConversationStep,
 } from "@/lib/types/symptom-assessment";
 
 const SYSTEM_PROMPT = `You are DoctoPal's adaptive symptom assessment engine. You work like a skilled doctor taking a patient history — asking ONE focused question at a time, each question informed by previous answers.

@@ -103,7 +103,6 @@ OUTPUT FORMAT (JSON):
 
 export async function GET(request: NextRequest) {
   try {
-    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(

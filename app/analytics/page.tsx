@@ -14,8 +14,6 @@ import {
   Activity,
   Loader2,
   FlaskConical,
-  Shield,
-  Droplets,
   Moon,
   Zap,
 } from "lucide-react"

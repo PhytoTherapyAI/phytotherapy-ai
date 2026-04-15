@@ -7,7 +7,6 @@
 // ============================================
 
 import { NextResponse } from "next/server"
-import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit } from "@/lib/rate-limit"
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_FIT_CLIENT_ID || ""

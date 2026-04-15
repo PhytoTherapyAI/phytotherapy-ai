@@ -12,7 +12,6 @@ import {
   validateFileContent,
   generateSecurePath,
   encryptReference,
-  createAuditEntry,
   MAX_FILE_SIZE,
   STORAGE_BUCKET,
 } from "@/lib/secure-storage"
@@ -75,7 +74,7 @@ export async function POST(req: Request) {
     const storagePath = generateSecurePath(user.id, file.name)
 
     // 8. Upload to Supabase Storage (AES-256 encrypted at rest)
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from(STORAGE_BUCKET)
       .upload(storagePath, buffer, {
         contentType: file.type,
@@ -125,9 +124,6 @@ export async function POST(req: Request) {
       .from("user_profiles")
       .update({ verification_status: "pending" })
       .eq("user_id", user.id)
-
-    // 12. Audit log
-    const audit = createAuditEntry("upload", user.id, storagePath, { ipAddress: ip })
 
     return NextResponse.json({
       success: true,

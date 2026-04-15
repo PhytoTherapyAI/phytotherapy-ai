@@ -7,7 +7,6 @@ import {
   BLOOD_TEST_MARKERS,
   analyzeValue,
   type BloodTestResult,
-  type BloodTestCategory,
 } from "@/lib/blood-reference";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";

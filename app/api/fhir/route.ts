@@ -28,7 +28,6 @@ export async function GET(req: Request) {
   if (error || !user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const url = new URL(req.url)
-  const type = url.searchParams.get("type") || "bundle"
   const format = url.searchParams.get("format") || "fhir" // "fhir" or "enabiz"
 
   try {
