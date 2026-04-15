@@ -30,12 +30,13 @@ import { PregnancyStep } from "@/components/onboarding/steps/PregnancyStep";
 import { SubstanceStep } from "@/components/onboarding/steps/SubstanceStep";
 import { MedicalHistoryStep } from "@/components/onboarding/steps/MedicalHistoryStep";
 import { ConsentStep } from "@/components/onboarding/steps/ConsentStep";
+import { AydinlatmaStep } from "@/components/onboarding/steps/AydinlatmaStep";
 import { PermissionPreframeStep } from "@/components/onboarding/steps/PermissionPreframeStep";
 import { FamilyHistoryStep } from "@/components/onboarding/steps/FamilyHistoryStep";
 import { SupplementsStep } from "@/components/onboarding/steps/SupplementsStep";
 import { OptionalProfileStep } from "@/components/onboarding/steps/OptionalProfileStep";
 
-const STEP_ICONS = [User, Pill, Leaf, AlertTriangle, Baby, Wine, HeartPulse, Dna, Shield, FileCheck];
+const STEP_ICONS = [User, Pill, Leaf, AlertTriangle, Baby, Wine, HeartPulse, Dna, Shield, FileCheck, FileCheck];
 
 // "Why we ask" keys mapped to original step index
 const WHY_KEYS = [
@@ -48,7 +49,8 @@ const WHY_KEYS = [
   "onb.whyMedHistory",      // 6: medical history
   "onb.whyFamilyHistory",   // 7: family history
   "onb.whyPermissions",     // 8: permissions preframe
-  "onb.whyConsent",         // 9: consent
+  "onb.whyAydinlatma",      // 9: aydınlatma (info)
+  "onb.whyConsent",         // 10: consent
 ];
 
 const STEP_INFO_STYLE: Record<number, { icon: string; bg: string }> = {
@@ -61,14 +63,15 @@ const STEP_INFO_STYLE: Record<number, { icon: string; bg: string }> = {
   6: { icon: "🏥", bg: "bg-purple-50 dark:bg-purple-950/20 border-purple-200 dark:border-purple-800" },
   7: { icon: "🧬", bg: "bg-teal-50 dark:bg-teal-950/20 border-teal-200 dark:border-teal-800" },
   8: { icon: "🔐", bg: "bg-primary/10 border-primary/20" },
-  9: { icon: "🤝", bg: "bg-primary/10 border-primary/20" },
+  9: { icon: "📜", bg: "bg-primary/10 border-primary/20" },
+  10: { icon: "🤝", bg: "bg-primary/10 border-primary/20" },
 };
 
-const STEP_XP: Record<number, number> = { 0: 50, 1: 50, 2: 30, 3: 75, 4: 25, 5: 25, 6: 75, 7: 100, 8: 10, 9: 10 };
+const STEP_XP: Record<number, number> = { 0: 50, 1: 50, 2: 30, 3: 75, 4: 25, 5: 25, 6: 75, 7: 100, 8: 10, 9: 10, 10: 10 };
 
 // Phase definitions: each step belongs to a phase (0, 1, or 2)
-// Phase 0 = Basics (steps 0-1), Phase 1 = Health Profile (steps 2-7), Phase 2 = Permissions + Consent (steps 8-9)
-const STEP_PHASE = [0, 0, 1, 1, 1, 1, 1, 1, 2, 2]; // indexed by original step index (10 steps)
+// Phase 0 = Basics (steps 0-1), Phase 1 = Health Profile (steps 2-7), Phase 2 = Permissions + Aydınlatma + Consent (steps 8-10)
+const STEP_PHASE = [0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2]; // indexed by original step index (11 steps)
 
 // Step definitions using i18n keys
 const STEP_DEFS = [
@@ -81,6 +84,7 @@ const STEP_DEFS = [
   { id: "medical", titleKey: "onb.stepMedicalTitle", descKey: "onb.stepMedicalDesc" },
   { id: "family", titleKey: "onb.stepFamilyTitle", descKey: "onb.stepFamilyDesc" },
   { id: "permissions", titleKey: "onb.stepPermissionsTitle", descKey: "onb.stepPermissionsDesc" },
+  { id: "aydinlatma", titleKey: "onb.stepAydinlatmaTitle", descKey: "onb.stepAydinlatmaDesc" },
   { id: "consent", titleKey: "onb.stepConsentTitle", descKey: "onb.stepConsentDesc" },
 ] as const;
 
@@ -135,8 +139,13 @@ export interface OnboardingData {
   liver_disease: boolean;
   recent_surgery: boolean;
   chronic_conditions: string[];
-  // Step 9: Consent
-  consent_agreed: boolean;
+  // Step 9: Aydınlatma (information notice — KVKK Article 10)
+  aydinlatma_acknowledged: boolean;
+  // Step 10: Consent (explicit consents — KVKK Article 11)
+  consent_agreed: boolean;              // medical disclaimer (required)
+  consent_ai_processing: boolean;       // optional — enables AI features
+  consent_data_transfer: boolean;       // optional — enables international transfer
+  consent_sbar_report: boolean;         // optional — enables SBAR PDF
   // Layer 2 (optional)
   height_cm: number | null;
   weight_kg: number | null;
@@ -166,7 +175,11 @@ const defaultData: OnboardingData = {
   liver_disease: false,
   recent_surgery: false,
   chronic_conditions: [],
+  aydinlatma_acknowledged: false,
   consent_agreed: false,
+  consent_ai_processing: false,
+  consent_data_transfer: false,
+  consent_sbar_report: false,
   height_cm: null,
   weight_kg: null,
   blood_group: "",
@@ -252,8 +265,8 @@ export function OnboardingWizard({ profile }: Props) {
 
   // Icon indices adjusted for skipped pregnancy
   const stepIconIndices = skipPregnancy
-    ? [0, 1, 2, 3, 5, 6, 7, 8, 9]
-    : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    ? [0, 1, 2, 3, 5, 6, 7, 8, 9, 10]
+    : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   // Clamp restored step to valid bounds (gender change can shrink step count)
   const maxStep = showLayer2 ? LAYER1_STEPS.length : LAYER1_STEPS.length - 1;
@@ -287,8 +300,9 @@ export function OnboardingWizard({ profile }: Props) {
       case 6: return true; // medical history
       case 7: return true; // family history
       case 8: return true; // permissions preframe (info only)
-      case 9: return data.consent_agreed;
-      case 10: return true; // layer 2
+      case 9: return data.aydinlatma_acknowledged; // aydınlatma (must be acknowledged)
+      case 10: return data.consent_agreed; // consent (medical disclaimer required — others optional)
+      case 11: return true; // layer 2
       default: return false;
     }
   };
@@ -483,6 +497,13 @@ export function OnboardingWizard({ profile }: Props) {
         onboarding_layer2_complete: isLayer2,
         consent_timestamp: new Date().toISOString(),
         last_medication_update: new Date().toISOString(),
+        // KVKK 2026/347 — separated acknowledgment + explicit consents
+        aydinlatma_acknowledged: data.aydinlatma_acknowledged,
+        aydinlatma_version: "2026-04-v1",
+        aydinlatma_timestamp: data.aydinlatma_acknowledged ? new Date().toISOString() : null,
+        consent_ai_processing: data.consent_ai_processing,
+        consent_data_transfer: data.consent_data_transfer,
+        consent_sbar_report: data.consent_sbar_report,
       };
 
       // Add allergies JSONB if column exists (try/catch — non-blocking if column missing)
@@ -506,7 +527,11 @@ export function OnboardingWizard({ profile }: Props) {
         console.error("[Onboarding] Profile update error:", profileError.message, profileError.details, profileError.hint);
 
         const errText = `${profileError.message || ""} ${profileError.details || ""}`.toLowerCase();
-        const optionalColumns = ["allergies", "city", "marital_status", "insurance_type", "work_schedule", "wearable_device"];
+        const optionalColumns = [
+          "allergies", "city", "marital_status", "insurance_type", "work_schedule", "wearable_device",
+          "aydinlatma_acknowledged", "aydinlatma_version", "aydinlatma_timestamp",
+          "consent_ai_processing", "consent_data_transfer", "consent_sbar_report",
+        ];
         let stripped = false;
         for (const col of optionalColumns) {
           if (errText.includes(col)) {
@@ -735,7 +760,8 @@ export function OnboardingWizard({ profile }: Props) {
             {origStep === 6 && <MedicalHistoryStep data={data} updateData={updateData} />}
             {origStep === 7 && <FamilyHistoryStep data={data} updateData={updateData} />}
             {origStep === 8 && <PermissionPreframeStep />}
-            {origStep === 9 && <ConsentStep data={data} updateData={updateData} />}
+            {origStep === 9 && <AydinlatmaStep data={data} updateData={updateData} />}
+            {origStep === 10 && <ConsentStep data={data} updateData={updateData} />}
             {isLayer2 && <OptionalProfileStep data={data} updateData={updateData} />}
           </CardContent>
         </Card>
