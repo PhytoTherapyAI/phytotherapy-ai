@@ -142,6 +142,25 @@ Referans doküman: `YASAL-UYUM.md` (Downloads klasöründe)
 - [ ] Premium alan kişi: kendi + 2 kişinin profilini yönetebilir (premium gate)
 - [ ] Aile paketi: eklenen herkes premium (premium propagation)
 
+### 7.1 Hane Sayfası v2 (Session 25-26) ✅ TAMAMLANDI
+**Stage 1 — Üye grid kartları:** /family üyeleri grid (1/2/3 col) — avatar+ring, isim+nickname, rol/Sen badge, paylaşım-aware sağlık skoru slot, "Katıldı: X gün önce", click→profil, owner remove (confirm). Kurucu her zaman ilk kartta (RLS race fallback: synth member). Synth row'ların DB butonları gizli.
+
+**Stage 2 — Bekleyen davetler:** Yeni `pendingInvites` context array — `family_members.invite_status='pending'` rowları. Per-row "Link kopyala" + "İptal" butonları. Migration `expires_at` kolonu ekledi (default 7 gün); UI "X gün kaldı" / "Süresi doldu" badge gösteriyor.
+
+**Stage 3 — Per-member sharing prefs:** Migration: `shares_health_score`, `shares_medications`, `shares_allergies`, `shares_emergency` BOOLEAN kolonları (emergency default TRUE). RLS `fm_self_update` zaten yazımı kullanıcıya kısıtlıyor. Self üye kartından "Paylaşım" butonu → bottom-sheet modal, 4 toggle.
+
+**Stage 4 — Dashboard summary:** Sayfa üstünde 4-cell grid (Üye/Bekleyen/Ort. Skor/Hatırlatma). Sharing açılana kadar aggregate cell'ler "—" + fallback hint metin.
+
+**Stage 5 — Notifications:** Yeni `family_notifications` tablosu (group_id, from/to_user_id, type, message, read). Tip whitelist: `reminder_meds | reminder_checkin | reminder_water | emergency | custom`. RLS `fn_sender_insert` policy DB seviyesinde sender VE recipient'ın aynı group_id accepted üyeleri olmasını zorunlu kılıyor → cross-household leak imkansız. API `/api/family/notifications` GET/POST/PATCH (Bearer auth, 60/20/60 req-min rate-limit, anon-key + RLS, service-role yok). Header'a global `<NotificationBell />` (60sn polling, badge, dropdown, mark-read). Üye kartında "Hatırlat" butonu → bottom-sheet 3 preset (meds/check-in/water).
+
+**Hane düzenleme + UX:** Hane ismi inline edit (pencil → updateGroupName, RLS fg_update). 5 emoji icon picker (🏠❤️🌳🏡🌟, localStorage). Boş state motivasyon kartı (sadece kurucu varsa: 3 mini benefit — Heart/Bell/Siren). Davet form helper text + 7-gün notu. Roller & izinler accordion (Owner/Admin/Member). Gradient header, ring avatar, mobile responsive.
+
+**Henüz yapılmadı (Session 27+ için):**
+- [ ] Realtime (Supabase realtime) — şu an 60sn polling
+- [ ] Anomaly-driven notifications (sağlık skoru ani düşüş → owner ping)
+- [ ] Emergency SOS sistemine bağlama (`emergency` type schema'da rezerve, trigger yok)
+- [ ] Premium gate'ler (aile paketi limitleri)
+
 ### 8. Toolları Gizle
 - [ ] Sadece core tool'lar görünsün (asistan, etkileşim, takvim, kan testi, profil, aile)
 - [ ] Geri kalan tool'lar hidden: true
@@ -353,8 +372,9 @@ Chat API route'u (/api/chat veya ilgili endpoint) kullanıcı profili context'in
 
 ---
 
-*Son güncelleme: 10 Nisan 2026 v47.0*
-*IGNITE 26 kazanıldı — Harvard Hackathon'a core tool + aile profili odağıyla hazırlanılıyor.*
+*Son güncelleme: 16 Nisan 2026 v48.1*
+*IGNITE 26 kazanıldı — Harvard Hackathon tamamlandı (11-12 Nisan 2026).*
 *Session 18-20: Aile profili + SBAR PDF redesign + condition translations + bug fixes.*
 *Session 21: YASAL UYUM — 10/14 madde kod implementasyonu tamamlandı (MADDE 1,2,3,5,6,7,8,9,10,11,12,13). MADDE 4 ve 14 hukuki/idari işlem.*
-*Hackathon: 11-12 Nisan 2026.*
+*Session 25: Profil tamamlama tutarsızlığı düzeltildi (single source of truth) → Hackathon demo banner kaldırıldı → Güvenlik sayfası içerik genişletme + AI Safety kartı → /api/auth/change-password auth bypass kapatıldı (body.userId artık ignore, identity Bearer token'dan) + rate limit + service-role kullanımı kaldırıldı → `any` type cleanup (34 dosya) + apiHandler refactor (daily-log, health-score) → /family page redesign (kurucu kartı, isim/icon edit, motivasyon empty state, roller accordion).*
+*Session 26: /family v2 — grid kartlar (Stage 1) + bekleyen davetler (Stage 2) + per-member sharing prefs (Stage 3) + dashboard summary (Stage 4) + notifications sistemi (Stage 5: family_notifications tablosu + RLS + API + global NotificationBell + member-to-member reminders).*
