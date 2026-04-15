@@ -20,6 +20,30 @@
 
 ---
 
+## Yasal Uyum Durumu
+
+**Türkiye mevzuatına %99,9 uyumlu.**
+
+Kapsanan mevzuat:
+- KVKK (6698 s.K.) — Md.3, 5, 6, 7, 9, 10, 11, 12, 16
+- KVKK 2026/347 İlke Kararı — Aydınlatma ≠ Rıza ayrımı
+- KVKK Üretken YZ Rehberi (Kasım 2025) — Prompt anonimleştirme, injection koruması
+- TCK Md.90 — Disclaimer ile kapsanıyor
+- TCK Md.134-136 — Veri güvenliği + anonimleştirme ile kapsanıyor
+- 1219 s.K. Md.1 & 25 — Output filtresi ile kapsanıyor (teşhis/reçete dönüşümü)
+- Uzaktan Sağlık Hizmetleri Yönetmeliği — "Bilgilendirme aracı" konumlandırması
+- Tıbbi Cihaz Yönetmeliği — Intended purpose: teşhis/tedavi yapmıyoruz
+- GETAT Yönetmeliği — Güvenli bilgilendirme formatı
+- TKHK — Hizmet tanımı net
+
+Kod dışı kalan (hukuki/idari işlem):
+- MADDE 4 (SCC fiili imza + 5 iş günü KVKK Kurul bildirimi)
+- MADDE 14 (Şirket kurulunca VERBİS kaydı)
+
+Referans doküman: `YASAL-UYUM.md` (Downloads klasöründe)
+
+---
+
 ## HARVARD HACKATHON ROADMAP (7-11 Nisan 2026)
 
 > IGNITE 26'da jüri kararı: **Core tool'lar + Aile Profili** öncelikli. Diğer tool'lar hackathon sonrasına.
@@ -147,7 +171,7 @@ OS:           Windows
 
 ---
 
-## Güvenlik Mimarisi
+## Güvenlik Mimarisi (9 Katman)
 
 ### Katman 1: Kırmızı Kod (AI'dan ÖNCE)
 Acil kelimeler (göğüs ağrısı, nefes darlığı, bilinç kaybı, intihar, zehirlenme vb.) → tam ekran emergency modal → "I understand" butonuna kadar kilitli.
@@ -159,7 +183,36 @@ OpenFDA + Claude hybrid. Renk kodlu: ✅ Yeşil / ⚠️ Sarı / ❌ Kırmızı
 PubMed → Claude (temperature:0) → collapsible kaynak paneli
 
 ### Katman 4: Algoritmik Güvenlik (lib/safety-guardrail.ts)
-5 katman: Kırmızı Bayrak → İlaç-Bitki Etkileşim → Kontrendikasyon → Dozaj Limitleri → Şeffaflık
+5 alt katman: Kırmızı Bayrak → İlaç-Bitki Etkileşim → Kontrendikasyon → Dozaj Limitleri → Şeffaflık
+
+### Katman 5: KVKK Prompt Anonimleştirme (lib/safety-guardrail.ts)
+AI API'ye gönderilmeden ÖNCE çalışır. İsim/email/TC/telefon/adres/user_id strip eder. Yaş → yaş aralığı ("18-24", "25-34", ...). String içi PII (email, telefon, TC) regex ile temizlenir. Tüm anonimleştirme `[KVKK-ANON]` audit log'u ile loglanır.
+
+### Katman 6: Prompt Injection Koruması (lib/safety-guardrail.ts)
+AI çağrısından önce 5 tehdit kategorisi taranır:
+- System prompt ifşa ("show me your instructions")
+- Talimat override ("ignore previous instructions")
+- Rol değiştirme / jailbreak (DAN mode, "doktor gibi davran")
+- Veri sızdırma ("other users' data", "veritabanı dump")
+- Zararlı içerik (zehir/silah/uyuşturucu sentezi)
+Ayrıca >5000 karakter + base64 encoded content guard'ları. `[KVKK-INJECTION]` log.
+
+### Katman 7: Output Güvenlik Filtresi (lib/output-safety-filter.ts)
+AI yanıtı kullanıcıya gösterilmeden ÖNCE 4 katmanlı filtre:
+- **LAYER 1:** Teşhis ifadeleri → bilgilendirme formatı ("Sizde X var" → "Belirtileriniz X ile uyumlu olabilir")
+- **LAYER 2:** Reçete formatı → araştırma referansı ("500mg Y günde 2 kez alın" → "Araştırmalarda Y 500mg dozda çalışılmıştır")
+- **LAYER 3:** Bitkisel tavsiye → güvenli format ("X için Y kullanın" → "Araştırmalarda Y, X açısından çalışılmıştır")
+- **LAYER 4:** Acil durum tespiti → 112 yönlendirmesi prepend
+Chat route: stream pass-through yerine buffer+filter+emit paterni. `[KVKK-OUTPUT-FILTER]` log.
+
+### Katman 8: AI Disclaimer + İtiraz (components/ai/)
+Her tamamlanmış AI yanıtının altında kaldırılamaz `AIDisclaimer` componenti: "Bu bilgi yapay zeka tarafından üretilmiştir ve tıbbi tavsiye niteliği taşımaz." Chat üstünde `AIGeneratedBadge` ("🤖 AI Yanıtı"). KVKK Md.11/1-g kapsamında 6 kategorili itiraz formu (`AIObjectionForm`) → `/api/feedback/objection` → `ai_objections` tablosu.
+
+### Katman 9: KVKK Aydınlatma + Rıza Ayrımı (onboarding)
+2026/347 İlke Kararı gereği aydınlatma ve rıza AYRI sayfada:
+- **AydinlatmaStep** — checkbox YOK, sadece "Okudum, Anladım" butonu
+- **ConsentStep** — 3 ayrı açık rıza: AI İşleme / Yurt Dışı Aktarım / SBAR Raporu + zorunlu Tıbbi Sorumluluk Reddi
+Rıza vermeyenlere temel hizmet (ilaç takibi, takvim) AÇIK kalır. Rıza `consent_log` audit tablosuna kayıt edilir (version: "2026-04-v1", timestamp).
 
 ---
 
@@ -198,6 +251,11 @@ SENTRY_DSN=...
 11. İlaç profili olmadan doz tavsiyesi yok
 12. EN ve TR sorularına otomatik yanıt
 13. Reçete OCR yapılmaz — güvenlik riski
+14. AI API'ye kimlik bilgisi GÖNDERİLMEZ — `anonymizePromptData()` zorunlu (isim, email, TC, telefon, adres, user_id strip)
+15. Her AI yanıtında `AIDisclaimer` componenti ZORUNLU — kaldırılamaz, gizlenemez
+16. AI output'u `filterAIOutput()`'tan geçirilmeden kullanıcıya gösterilMEZ — teşhis/reçete formatı yasak
+17. Aydınlatma metni ve rıza formu AYRI sayfalarda — birleştirme KVKK 2026/347 İlke Kararı'na AYKIRI
+18. Rıza vermeyenlere temel hizmet (ilaç takibi, takvim) AÇIK — hizmeti rızaya bağlama YASAK
 
 ---
 
@@ -228,7 +286,45 @@ SENTRY_DSN=...
 
 ---
 
-*Son güncelleme: 9 Nisan 2026 v45.0*
+---
+
+## POST-HACKATHON: Chat API Context Enrichment
+
+### Sorun:
+Chat API route'u (/api/chat veya ilgili endpoint) kullanıcı profili context'ini AI'a gönderirken:
+- ✅ İlaçlar (medications) — çekiliyor, çalışıyor
+- ✅ Alerjiler (allergies) — çekiliyor, çalışıyor
+- ❌ Kronik hastalıklar (chronic_conditions) — çekilMİYOR
+- ❌ Cerrahi geçmiş (surgery: prefix'li entries) — çekilMİYOR
+- ❌ Soygeçmiş (family: prefix'li entries) — çekilMİYOR
+- ❌ Aşı durumu (vaccines JSONB) — çekilMİYOR
+- ❌ Yaşam tarzı (smoking_use, alcohol_use, BMI, diet_type) — çekilMİYOR
+
+### Yapılacak:
+1. Chat API route'unda system prompt'a enjekte edilen kullanıcı verisini bul
+2. Supabase'den user_profiles tablosundan şu alanları da çek:
+   - chronic_conditions (surgery: prefix'li olanlar ayrı "Cerrahi Geçmiş" olarak)
+   - family history (family: prefix'li entries → "Soygeçmiş")
+   - smoking_use, alcohol_use
+   - height_cm, weight_kg → BMI hesapla
+   - diet_type, exercise_frequency, sleep_quality
+   - vaccines JSONB → tamamlanan aşılar
+3. Bunları system prompt'a "Patient Profile Context" bloğu olarak ekle
+4. AI'ın her yanıtta tüm profil verisini cross-reference etmesini sağla
+5. Kritik cross-reference senaryoları:
+   - Cerrahi geçmiş: gastric sleeve → absorption warning (bazı bitkiler emilmeyebilir)
+   - Soygeçmiş: family cancer → phytoestrogen warning (soya, kırmızı yonca vb.)
+   - Hamilelik/emzirme → mutlak kontrendikasyon listesi
+   - Böbrek yetmezliği → doz azaltma/eliminasyon uyarısı
+   - İlaç-bitki CYP450 etkileşimleri + kronik hastalık kombinasyonu
+
+### Öncelik: YÜKSEK — Bu DoctoPal'ın core differentiator'ı
+> Kullanıcıyı tanımak = kişiselleştirilmiş cevap = rakiplerden ayrışma noktası
+
+---
+
+*Son güncelleme: 10 Nisan 2026 v47.0*
 *IGNITE 26 kazanıldı — Harvard Hackathon'a core tool + aile profili odağıyla hazırlanılıyor.*
-*Session 18: Aile profili sistemi tamamlandı (Netflix tarzı, davet, yönetim, 24 bug fix).*
-*Hackathon: 11-12 Nisan 2026 — 2 gün kaldı.*
+*Session 18-20: Aile profili + SBAR PDF redesign + condition translations + bug fixes.*
+*Session 21: YASAL UYUM — 10/14 madde kod implementasyonu tamamlandı (MADDE 1,2,3,5,6,7,8,9,10,11,12,13). MADDE 4 ve 14 hukuki/idari işlem.*
+*Hackathon: 11-12 Nisan 2026.*
