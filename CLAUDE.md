@@ -1,17 +1,17 @@
-# CLAUDE.md — DoctoPal Proje Anayasası v45.0
+# CLAUDE.md — DoctoPal Proje Anayasası v48.0 (Post-Hackathon)
 
 ## Hızlı Bağlam
 
 **DoctoPal** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" — 11-12 Nisan 2026 — **2 gün kaldı**
-- **IGNITE 26 kazanıldı** — jüri core tool'lara ve aile profiline odaklanılmasını istedi
+- **Hackathon:** Harvard "Building High-Value Health Systems" (11-12 Nisan 2026) — **TAMAMLANDI**
+- **IGNITE 26 kazanıldı** — core tool'lar + aile profili jüri önceliği
 - **Domain:** doctopal.com (Vercel) | **GitHub:** github.com/PhytoTherapyAI/phytotherapy-ai
 - **Sunum dili:** İngilizce | **Arayüz:** TR/EN toggle
 - **Deploy:** Vercel + Supabase (email auth + Google/Facebook OAuth)
 - **AI Motor:** Anthropic Claude API (claude-haiku-4-5) + Embedding: Gemini text-embedding-004
-- **Hackathon modu:** Premium gate'ler kaldırıldı, isPremium=true, tüm özellikler açık
-- **Proje boyutu:** 348 sayfa, 121 API route, 155 tool (94 hidden), ~1300 çeviri key
+- **Post-hackathon modu:** Premium gate'ler aktif. Ücretsiz plan core özellikleri, premium sınırlı özellikleri açar.
+- **Proje boyutu:** 348+ sayfa, 124 API route (77 AI-powered), 155 tool, ~1300 çeviri key
 
 ### Routing
 - `/` → Dashboard (auth) veya Landing (misafir)
