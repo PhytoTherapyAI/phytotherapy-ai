@@ -330,7 +330,7 @@ function getTimeEmoji(): string {
 export default function Home() {
   const router = useRouter();
   const { lang } = useLang();
-  const { user, isAuthenticated, isLoading, profile } = useAuth();
+  const { user, isAuthenticated, isLoading, profile, premiumStatus } = useAuth();
   const { familyGroup, activeProfileId, loading: familyLoading } = useFamily();
   const { activeUserId } = useActiveProfile();
 
@@ -588,7 +588,7 @@ export default function Home() {
   const showDashboard = isAuthenticated && user && profile?.onboarding_complete;
   const isTr = lang === "tr";
   const firstName = profile?.full_name?.split(" ")[0] || "";
-  const isPremium = true;
+  const isPremium = premiumStatus?.isPremium ?? false;
   const chronologicalAge = profile?.birth_date
     ? Math.floor((Date.now() - new Date(profile.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
     : profile?.age;

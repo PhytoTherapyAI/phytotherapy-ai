@@ -91,13 +91,13 @@ export function getPremiumStatus(profile: {
     };
   }
 
-  // Hackathon mode: all features unlocked for demo
+  // Post-hackathon: free plan has standard limits. Premium unlocks extra features.
   return {
     plan: "free",
-    isTrialActive: true,
+    isTrialActive: false,
     trialEndsAt: null,
-    trialDaysLeft: 999,
-    isPremium: true,
+    trialDaysLeft: 0,
+    isPremium: false,
   };
 }
 
