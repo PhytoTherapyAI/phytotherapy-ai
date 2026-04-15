@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { tx } from "@/lib/translations"
+import { HealthImportSection } from "@/components/health-import/HealthImportSection"
 
 const METRIC_ICONS: Record<string, any> = { Heart, Footprints, Moon, Droplets, Activity, Zap, Thermometer, Scale, Flame, BarChart3, Wind, Gauge }
 
@@ -123,6 +124,9 @@ export default function ConnectedDevicesPage() {
           <h1 className="text-2xl font-bold">{t("title")}</h1>
           <p className="text-muted-foreground mt-1">{t("subtitle")}</p>
         </div>
+
+        {/* ─── Health Data Import (Apple Health / Google Fit via export ZIP) ─── */}
+        <HealthImportSection />
 
         {/* No Wearable Banner */}
         <div className="rounded-2xl bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 border border-emerald-200 dark:border-emerald-800 p-5 mb-6">
