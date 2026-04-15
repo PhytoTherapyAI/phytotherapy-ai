@@ -401,7 +401,7 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     ],
   },
 
-  // ── 15. Harvard HVHS & Advanced ─────────
+  // ── 15. Advanced & Research ─────────
   {
     id: "advanced",
     slug: "advanced",

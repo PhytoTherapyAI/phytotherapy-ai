@@ -2006,7 +2006,7 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
   "about.heroDesc": { en: "Evidence-based integrative medicine assistant \u2014 safely bridging modern medicine and herbal therapy.", tr: "Kanita dayali butunlestirici tip asistani \u2014 modern tip ile bitkisel terapiyi guvenle birlestiren platform." },
   "about.coreValues": { en: "Core Values", tr: "Temel Degerlerimiz" },
   "about.ourTeam": { en: "Our Team", tr: "Ekibimiz" },
-  "about.teamDesc": { en: "Founded by 3 medical students at Harvard's 'Building High-Value Health Systems' hackathon, powered by AI.", tr: "Harvard 'Building High-Value Health Systems' hackathon'unda 3 tip ogrencisi tarafindan kurulan, yapay zeka ile guclendirilmis bir platform." },
+  "about.teamDesc": { en: "Founded by 3 medical students passionate about evidence-based integrative medicine, powered by AI.", tr: "Kanita dayali butunlestirici tibba tutkulu 3 tip ogrencisi tarafindan kurulan, yapay zeka ile guclendirilmis bir platform." },
   "about.ourVision": { en: "Our Vision", tr: "Vizyonumuz" },
   "about.visionDesc": { en: "To be the world's first Evidence-Based Integrative Medicine Assistant \u2014 bridging modern medicine, herbal therapy, and personal health profiles into a single trusted platform that serves both patients and doctors.", tr: "Dunyanin ilk Kanita Dayali Butunlestirici Tip Asistani olmak \u2014 modern tip, bitkisel terapi ve kisisel saglik profillerini hem hastalara hem doktorlara hizmet eden tek bir guvenilir platformda birlestirmek." },
   "about.ourMission": { en: "Our Mission", tr: "Misyonumuz" },

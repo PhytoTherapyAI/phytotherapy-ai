@@ -129,28 +129,6 @@ const FAQ_ITEMS = [
   },
 ];
 
-// ── Demo Banner ──
-function DemoBanner({ lang }: { lang: string }) {
-  const [dismissed, setDismissed] = useState(false);
-  if (dismissed) return null;
-  return (
-    <div className="bg-gradient-to-r from-primary/10 via-emerald-500/10 to-teal-500/10 border-b border-primary/10">
-      <div className="mx-auto max-w-7xl px-4 py-2.5 flex items-center justify-between gap-3">
-        <p className="text-xs font-medium text-primary flex items-center gap-2">
-          <span>🎓</span>
-          Harvard HVHS Hackathon Demo Mode — All premium features unlocked
-        </p>
-        <div className="flex items-center gap-2">
-          <Link href="/interaction-checker" className="text-[10px] bg-primary/10 text-primary px-2.5 py-1 rounded-full font-medium hover:bg-primary/20 transition-colors">
-            Quick Demo
-          </Link>
-          <button onClick={() => setDismissed(true)} className="text-muted-foreground hover:text-foreground text-xs px-1">✕</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Vaccine Recommendation Banner ──
 function VaccineBanner({ lang, chronicConditions, vaccines }: { lang: string; chronicConditions: string[]; vaccines: VaccineEntry[] }) {
   const [dismissed, setDismissed] = useState(false);
@@ -626,8 +604,6 @@ export default function Home() {
       <div className="min-h-screen bg-stone-50 dark:bg-background">
         {/* Dashboard Tour (first visit only) */}
         <DashboardTour />
-        {/* Hackathon Demo Banner */}
-        <DemoBanner lang={lang} />
         {/* Vaccine Recommendation Banner */}
         <VaccineBanner lang={lang} chronicConditions={profile?.chronic_conditions || []} vaccines={Array.isArray(profile?.vaccines) ? (profile.vaccines as VaccineEntry[]) : []} />
 

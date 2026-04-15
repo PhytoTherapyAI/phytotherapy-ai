@@ -91,7 +91,7 @@ export function getPremiumStatus(profile: {
     };
   }
 
-  // Post-hackathon: free plan has standard limits. Premium unlocks extra features.
+  // Free plan: standard limits. Premium unlocks extra features.
   return {
     plan: "free",
     isTrialActive: false,

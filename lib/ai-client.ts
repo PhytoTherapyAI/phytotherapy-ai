@@ -21,7 +21,6 @@ function getClient(): Anthropic {
 // Model strategy:
 // - Default (free): Haiku 4.5 — fast + cost-effective ($0.008/request)
 // - Premium: Sonnet 4.6 — highest medical quality ($0.03/request)
-// - Hackathon mode: isPremium=true → all users get Sonnet
 const MODEL_DEFAULT = "claude-haiku-4-5";
 const MODEL_PREMIUM = "claude-sonnet-4-6";
 
