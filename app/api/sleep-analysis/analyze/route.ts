@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization")
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -116,7 +117,7 @@ USER MEDICATIONS: ${medicationList}
 
 Provide a comprehensive sleep analysis as JSON.`
 
-    const result = await askGeminiJSON(prompt, systemPrompt)
+    const result = await askGeminiJSON(prompt, systemPrompt, { userId })
     let analysis; try { analysis = JSON.parse(result); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     return NextResponse.json({ analysis })

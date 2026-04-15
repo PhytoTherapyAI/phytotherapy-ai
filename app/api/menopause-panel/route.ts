@@ -113,7 +113,7 @@ Provide:
 5. Lifestyle recommendations for symptom management
 6. MRS interpretation`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt);
+    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     return NextResponse.json({

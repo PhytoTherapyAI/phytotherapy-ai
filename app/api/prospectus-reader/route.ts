@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
     // Get user medications for cross-check
     let userMedications: string[] = [];
     let userAllergies: string[] = [];
+    let userId: string | undefined;
     const authHeader = req.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -48,6 +49,7 @@ export async function POST(req: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const { data: meds } = await supabase
             .from("user_medications")
             .select("generic_name, brand_name")
@@ -128,7 +130,7 @@ RULES:
 
     const result = await askGeminiJSONMultimodal(prompt, systemPrompt, [
       { mimeType: file.type, base64 },
-    ]);
+    ], { userId });
 
     let parsed;
     try {

@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
 
     let medications: string[] = [];
     let profileContext = "";
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
 
     if (authHeader?.startsWith("Bearer ")) {
@@ -36,6 +37,7 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const { data: meds } = await supabase
             .from("user_medications")
             .select("brand_name, generic_name")
@@ -124,7 +126,8 @@ RULES:
 
     const result = await askGeminiJSON(
       `Intermittent fasting plan: Protocol ${protocol}, eating window ${eatingWindowStart}-${eatingWindowEnd}${ramadanMode ? ", Ramadan mode" : ""}`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     let parsed;

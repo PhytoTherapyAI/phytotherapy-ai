@@ -129,7 +129,7 @@ USER MEDICATIONS: ${medicationList}
 Provide trauma-informed support with grounding exercises, coping strategies, and professional referral resources.
 professionalReferral MUST always be true for PTSD.`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt);
+    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     // Enforce safety: PTSD always needs professional referral

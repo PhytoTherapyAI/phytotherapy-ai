@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
 
     let medications: string[] = [];
     let profileContext = "";
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
 
     if (authHeader?.startsWith("Bearer ")) {
@@ -57,6 +58,7 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const [{ data: meds }, { data: profile }] = await Promise.all([
             supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id).eq("is_active", true),
             supabase.from("user_profiles").select("age, gender, is_pregnant, kidney_disease, liver_disease").eq("id", user.id).single(),
@@ -123,7 +125,8 @@ RULES:
 
     const result = await askGeminiJSON(
       `Analyze weekly alcohol intake: ${totalUnits.toFixed(1)} units from: ${drinkBreakdown.map(d => `${d.quantity}x ${d.drink} (${d.units} units)`).join(", ")}`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     let parsed;

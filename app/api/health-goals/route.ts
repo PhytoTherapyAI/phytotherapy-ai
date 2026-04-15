@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Fetch user profile
     let profileContext = "";
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -40,6 +41,7 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const { data: profile } = await supabase
             .from("user_profiles")
             .select("age, gender, weight_kg, height_cm, is_pregnant, kidney_disease, liver_disease, chronic_conditions, health_goals, supplements")
@@ -109,7 +111,8 @@ RULES:
 
     const result = await askGeminiJSON(
       `Health goal: "${goal}"\nTimeframe: ${timeframe}\nCreate a personalized weekly plan.`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     let parsed;

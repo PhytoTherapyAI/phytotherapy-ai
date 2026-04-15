@@ -48,6 +48,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save to query history if authenticated
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           await supabase.from("query_history").insert({
             user_id: user.id,
             query_text: `Child Health: ${concern} (age ${childAge} ${ageUnit})`,
@@ -116,7 +118,8 @@ IMPORTANT:
 
     const result = await askGeminiJSON(
       `A parent is concerned about their ${ageDescription} child. The concern is: "${concern}".${notes ? ` Additional notes: "${notes}"` : ""} Provide age-appropriate pediatric guidance.`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     let parsed;

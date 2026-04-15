@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const userId: string = user.id;
 
   const lang = (request.nextUrl.searchParams.get("lang") === "tr" ? "tr" : "en") as "en" | "tr";
 
@@ -78,7 +79,8 @@ Return JSON:
 
         const result = await askGeminiJSON(
           `Analyze today's recovery data and give personalized guidance.`,
-          systemPrompt
+          systemPrompt,
+          { userId }
         );
         aiInsight = typeof result === "string" ? JSON.parse(result) : result;
       } catch { /* AI optional */ }

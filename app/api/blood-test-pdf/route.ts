@@ -82,6 +82,18 @@ export async function POST(req: NextRequest) {
     const buffer = await file.arrayBuffer();
     const base64 = Buffer.from(buffer).toString("base64");
 
+    // Extract userId upfront for consent gate
+    let upfrontUserId: string | undefined;
+    const upfrontAuth = req.headers.get("authorization");
+    if (upfrontAuth?.startsWith("Bearer ")) {
+      try {
+        const token = upfrontAuth.replace("Bearer ", "");
+        const supabase = createServerClient();
+        const { data: { user: authUser } } = await supabase.auth.getUser(token);
+        upfrontUserId = authUser?.id || undefined;
+      } catch { /* anonymous OK */ }
+    }
+
     // Step 1: Extract values from PDF/image using Claude Vision
     // For large PDFs (e-Nabız etc), limit to first pages to avoid timeout
     let extractionResult: string;
@@ -91,7 +103,7 @@ export async function POST(req: NextRequest) {
         EXTRACTION_PROMPT + "\n\nIMPORTANT: Focus on extracting numeric lab values. Ignore headers, footers, patient info. If the document has multiple pages, extract from ALL pages.",
         "You are a precise medical document parser. Extract lab values from Turkish/English lab reports accurately. Return valid JSON only.",
         [{ mimeType: file.type, base64 }],
-        { premium: true }
+        { premium: true, userId: upfrontUserId }
       );
     } catch (aiError) {
       console.error("PDF AI extraction failed:", aiError);
@@ -179,7 +191,7 @@ Gender: ${gender || "unknown"}
 Total markers: ${totalMarkers}, Abnormal: ${abnormalCount}, Optimal: ${optimalCount}`;
 
     // Use streaming JSON to avoid Vercel timeout
-    const aiResult = await askStreamJSON(analysisPrompt, BLOOD_TEST_PROMPT, { premium: true });
+    const aiResult = await askStreamJSON(analysisPrompt, BLOOD_TEST_PROMPT, { premium: true, userId: upfrontUserId });
 
     let analysis;
     try {

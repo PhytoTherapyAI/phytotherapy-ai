@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
     const pubmedPromise = searchPubMed(`${supplement1} vs ${supplement2} comparison efficacy`, 4).catch(() => []);
 
     let profileContext = "";
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -46,6 +47,7 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const [profileRes, medsRes] = await Promise.all([
             supabase.from("user_profiles").select("age, gender, is_pregnant, kidney_disease, liver_disease, health_goals").eq("id", user.id).single(),
             supabase.from("user_medications").select("generic_name, brand_name").eq("user_id", user.id).eq("is_active", true),
@@ -128,7 +130,8 @@ RULES:
 
     const result = await askGeminiJSON(
       `Compare these supplements: "${supplement1}" vs "${supplement2}"`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     let parsed;

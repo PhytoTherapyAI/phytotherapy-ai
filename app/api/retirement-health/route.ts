@@ -81,7 +81,7 @@ Include:
 5. Exercise recommendations safe for this age group
 6. Any medication-related notes for this age group`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt);
+    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     return NextResponse.json({ result: analysis });

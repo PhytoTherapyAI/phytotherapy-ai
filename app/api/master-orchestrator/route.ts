@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    const userId: string = user.id;
 
     const body = await request.json().catch(() => ({}));
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
@@ -87,7 +88,8 @@ Return JSON:
 
       const result = await askGeminiJSON(
         `Generate today's holistic health synergy plan for ${healthContext.user.name || "this user"}.`,
-        systemPrompt
+        systemPrompt,
+        { userId }
       );
 
       aiInsight = typeof result === "string" ? JSON.parse(result) : result;

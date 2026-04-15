@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
 
     let medications: string[] = [];
     let profileContext = "";
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
 
     if (authHeader?.startsWith("Bearer ")) {
@@ -36,6 +37,7 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const { data: meds } = await supabase
             .from("user_medications")
             .select("brand_name, generic_name")
@@ -132,7 +134,8 @@ RULES:
 
     const result = await askGeminiJSON(
       `Smoking cessation plan: ${dailyCigs} cigarettes/day, status: ${currentStatus}, quit date: ${quitDate || "not set"}, NRT: ${nicotineTherapy}, days smoke-free: ${daysSinceQuit}`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     let parsed;

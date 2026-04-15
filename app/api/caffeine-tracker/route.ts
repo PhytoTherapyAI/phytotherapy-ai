@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
     // Fetch user medications
     let medications: string[] = [];
     let profileContext = "";
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
 
     if (authHeader?.startsWith("Bearer ")) {
@@ -62,6 +63,7 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const { data: meds } = await supabase
             .from("user_medications")
             .select("brand_name, generic_name")
@@ -134,7 +136,8 @@ RULES:
 
     const result = await askGeminiJSON(
       `Analyze caffeine intake: Total ${totalCaffeine}mg from: ${drinkBreakdown.map(d => `${d.quantity}x ${d.drink} (${d.mg}mg)`).join(", ")}`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     let parsed;

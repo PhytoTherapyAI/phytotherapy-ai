@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -148,7 +149,7 @@ DECLINING MOOD: ${decliningMood ? "YES — mood <= 2 for last 3+ days" : "no"}
 
 Provide a supportive, actionable analysis. If alertLevel is yellow or red, professionalReferral MUST be true.`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt);
+    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     // Enforce safety: override if patterns are concerning

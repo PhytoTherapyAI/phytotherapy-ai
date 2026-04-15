@@ -242,7 +242,7 @@ USER MEDICATIONS: ${medicationList}
 
 Provide a comprehensive pain pattern analysis as JSON.`;
 
-      const result = await askGeminiJSON(prompt, systemPrompt);
+      const result = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
       let analysis; try { analysis = JSON.parse(result); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
       return NextResponse.json({ analysis });

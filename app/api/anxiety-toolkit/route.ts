@@ -144,7 +144,7 @@ Provide a supportive anxiety assessment with coping techniques, cognitive distor
 If GAD-7 >= 10 or anxiety_level >= 8, set professionalReferral to true and alertLevel to at least "yellow".
 If GAD-7 >= 15 or anxiety_level >= 9, set alertLevel to "red".`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt);
+    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     // Enforce safety overrides

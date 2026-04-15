@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
     // Fetch user medications
     let medications: string[] = [];
     let profileContext = "";
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
 
     if (authHeader?.startsWith("Bearer ")) {
@@ -42,6 +43,7 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const [{ data: meds }, { data: profile }] = await Promise.all([
             supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id).eq("is_active", true),
             supabase.from("user_profiles").select("age, gender, is_pregnant, kidney_disease, liver_disease").eq("id", user.id).single(),
@@ -134,7 +136,8 @@ RULES:
 
     const result = await askGeminiJSON(
       `Check food-drug interactions:\nFoods: ${foods.join(", ")}\nMedications: ${medications.join(", ")}`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     let parsed;

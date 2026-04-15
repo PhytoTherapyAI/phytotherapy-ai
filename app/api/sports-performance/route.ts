@@ -69,6 +69,7 @@ Input: "${rawInput}"`;
     // Start PubMed search immediately (don't wait for auth)
     const pubmedPromise = searchPubMed(pubmedQuery, 3).catch(() => []);
 
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -76,6 +77,7 @@ Input: "${rawInput}"`;
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const [{ data: profile }, { data: meds }, { data: allergies }] = await Promise.all([
             supabase.from("user_profiles").select("full_name, age, gender, kidney_disease, liver_disease, chronic_conditions").eq("id", user.id).single(),
             supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id).eq("is_active", true),
@@ -133,7 +135,8 @@ Return JSON: {"todayFocus":{"title":"","description":"","keyAction":"","evidence
       rawInput
         ? `Based on the user's input: "${rawInput}". Create a comprehensive, hyper-personalized sports performance plan.`
         : `Provide a sports performance plan for a ${sportType} athlete with ${goal} as goal, training ${freq} days/week.${currentSupplements ? ` Currently taking: ${currentSupplements}.` : ""}`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     let parsed;

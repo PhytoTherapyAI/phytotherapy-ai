@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Rate limited", retryIn: rl.resetInSeconds }, { status: 429 })
     }
 
+    let userId: string | undefined;
     const authHeader = req.headers.get("authorization")
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -140,7 +141,7 @@ Anomalies detected: ${anomalies.length} (${anomalies.filter(a => a.severity === 
 
 Provide 3-4 insights, 2-3 correlations, and 2-3 recommendations. Be specific and evidence-aware.`
 
-    const raw = await askGeminiJSON(prompt, systemPrompt)
+    const raw = await askGeminiJSON(prompt, systemPrompt, { userId: user.id })
     const parsed = JSON.parse(raw)
 
     return NextResponse.json(parsed)

@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
+    const userId: string = user.id;
 
     const { data: vaccinations, error } = await supabase
       .from("vaccination_records")
@@ -129,7 +130,8 @@ RULES:
 
       const result = await askGeminiJSON(
         "Analyze vaccination needs and provide recommendations.",
-        systemPrompt
+        systemPrompt,
+        { userId: user.id }
       );
 
       let parsed;

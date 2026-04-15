@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -67,7 +68,7 @@ Return JSON with this exact structure:
 
     const prompt = `Provide comprehensive information about the drug: "${drug_name.trim()}"`;
 
-    const rawResponse = await askGeminiJSON(prompt, systemPrompt);
+    const rawResponse = await askGeminiJSON(prompt, systemPrompt, { userId });
     const result = JSON.parse(rawResponse);
 
     return NextResponse.json({ result });

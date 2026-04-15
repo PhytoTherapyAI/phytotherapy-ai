@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
 
     // Fetch user profile if authenticated
     let profileContext = "";
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -48,6 +49,7 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const { data: profile } = await supabase
             .from("user_profiles")
             .select("age, gender, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions")
@@ -137,7 +139,8 @@ IMPORTANT:
 
     const result = await askGeminiJSON(
       `Provide comprehensive travel health advice for traveling to ${destination} from ${startDate} to ${endDate}.`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     let parsed;

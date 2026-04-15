@@ -108,7 +108,7 @@ HAS STIMULANT MEDICATION: ${hasStimulant ? "YES" : "NO"}
 Provide practical ADHD management feedback. If user has stimulant medication AND high caffeine, warn about interaction.
 Suggest evidence-based supplements only if safe with their medications (omega-3, magnesium, zinc, L-theanine).`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt);
+    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     return NextResponse.json({

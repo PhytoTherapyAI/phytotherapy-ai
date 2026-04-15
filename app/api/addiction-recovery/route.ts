@@ -149,7 +149,7 @@ HAS RECOVERY MEDICATION: ${hasRecoveryMed ? "YES" : "NO"}
 Provide compassionate recovery support. Celebrate progress, no matter how small.
 If craving >= 8 or relapse risk is true, set alertLevel to at least "yellow" and professionalReferral to true.`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt);
+    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     // Enforce safety overrides

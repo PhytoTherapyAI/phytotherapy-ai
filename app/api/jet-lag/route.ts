@@ -89,7 +89,7 @@ Generate:
 5. Hour-by-hour plan for first 2-3 days at destination
 6. General tips for faster adjustment`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt);
+    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     return NextResponse.json({ result: analysis });

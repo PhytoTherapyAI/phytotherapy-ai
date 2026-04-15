@@ -103,6 +103,7 @@ OUTPUT FORMAT (JSON):
 
 export async function GET(request: NextRequest) {
   try {
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
     if (!authHeader?.startsWith("Bearer ")) {
       return new Response(
@@ -247,7 +248,7 @@ ${medicationsContext}
 Return JSON with: calories, protein, carbs, fat, fiber, key_nutrients, food_drug_alerts, summary.`;
 
     // Call Gemini
-    const rawResult = await askGeminiJSON(userPrompt, NUTRITION_SYSTEM_PROMPT);
+    const rawResult = await askGeminiJSON(userPrompt, NUTRITION_SYSTEM_PROMPT, { userId: user.id });
     let analysis: GeminiNutritionResult;
 
     try {

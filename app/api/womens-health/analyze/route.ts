@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization")
     if (!authHeader?.startsWith("Bearer ")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -194,7 +195,7 @@ Return ONLY a raw JSON object matching this schema:
   "disclaimer": "standard medical disclaimer"
 }`
 
-    const geminiResponse = await askGeminiJSON(prompt, systemPrompt)
+    const geminiResponse = await askGeminiJSON(prompt, systemPrompt, { userId })
     const analysis = parseAnalysis(geminiResponse)
 
     // Save to query history
