@@ -1,0 +1,67 @@
+// © 2026 DoctoPal — All Rights Reserved
+// Auto-extracted namespace from lib/translations.ts
+
+import type { TranslationEntry } from "../translations"
+
+// ══════════════════════════════════════════
+export const referralKeys: Record<string, TranslationEntry> = {
+  "nav.referral": { en: "Referral Program", tr: "Referans Programı" },
+  "referral.title": { en: "Doctor Referral Program", tr: "Doktor Referans Programı" },
+  "referral.subtitle": { en: "Earn premium credits by referring patients", tr: "Hastaları yönlendirerek premium kredi kazanın" },
+  "referral.yourCode": { en: "Your Referral Code", tr: "Referans Kodunuz" },
+  "referral.copyCode": { en: "Copy Code", tr: "Kodu Kopyala" },
+  "referral.copyLink": { en: "Copy Link", tr: "Linki Kopyala" },
+  "referral.copied": { en: "Copied!", tr: "Kopyalandı!" },
+  "referral.totalReferred": { en: "Total Referred", tr: "Toplam Yönlendirilen" },
+  "referral.activePatients": { en: "Active Patients", tr: "Aktif Hastalar" },
+  "referral.creditsEarned": { en: "Credits Earned", tr: "Kazanılan Kredi" },
+  "referral.thisMonth": { en: "This Month", tr: "Bu Ay" },
+  "referral.howItWorks": { en: "How It Works", tr: "Nasıl Çalışır" },
+  "referral.step1": { en: "Share your unique code with patients", tr: "Benzersiz kodunuzu hastalarınızla paylaşın" },
+  "referral.step2": { en: "Patient signs up using your code", tr: "Hasta kodunuzla kayıt olur" },
+  "referral.step3": { en: "Both of you earn premium credits", tr: "İkiniz de premium kredi kazanırsınız" },
+  "referral.generateCode": { en: "Generate My Code", tr: "Kodumu Oluştur" },
+  "referral.notVerified": { en: "Get verified as a doctor to access the referral program", tr: "Referans programına erişmek için doktor olarak doğrulanın" },
+  "referral.rewards": { en: "Reward Tiers", tr: "Ödül Kademeleri" },
+  "referral.tier1": { en: "1 referral = 7 days premium", tr: "1 yönlendirme = 7 gün premium" },
+  "referral.tier2": { en: "5 referrals = 14 days premium each", tr: "5 yönlendirme = her biri 14 gün premium" },
+  "referral.tier3": { en: "10+ referrals = 30 days premium each", tr: "10+ yönlendirme = her biri 30 gün premium" },
+  "referral.shareCode": { en: "Share Code", tr: "Kodu Paylaş" },
+  "referral.monthlyBreakdown": { en: "Monthly Breakdown", tr: "Aylık Dağılım" },
+  "referral.noReferrals": { en: "No referrals yet. Share your code to get started!", tr: "Henüz yönlendirme yok. Başlamak için kodunuzu paylaşın!" },
+  "referral.days": { en: "days", tr: "gün" },
+
+  // Linked Accounts
+  "linked.title": { en: "Linked Accounts", tr: "Bağlı Hesaplar" },
+  "linked.subtitle": { en: "Manage family members and caregivers", tr: "Aile üyelerini ve bakıcıları yönetin" },
+  "linked.addAccount": { en: "Add Linked Account", tr: "Bağlı Hesap Ekle" },
+  "linked.email": { en: "Their email address", tr: "E-posta adresi" },
+  "linked.relationship": { en: "Relationship", tr: "İlişki" },
+  "linked.mother": { en: "Mother", tr: "Anne" },
+  "linked.father": { en: "Father", tr: "Baba" },
+  "linked.child": { en: "Child", tr: "Çocuk" },
+  "linked.spouse": { en: "Spouse", tr: "Eş" },
+  "linked.grandparent": { en: "Grandparent", tr: "Büyükebeveyn" },
+  "linked.sibling": { en: "Sibling", tr: "Kardeş" },
+  "linked.other": { en: "Other", tr: "Diğer" },
+  "linked.permissions": { en: "Permissions", tr: "İzinler" },
+  "linked.viewData": { en: "View their health data", tr: "Sağlık verilerini görüntüle" },
+  "linked.paySubscription": { en: "Pay for their subscription", tr: "Aboneliğini ben ödeyeceğim" },
+  "linked.manageMeds": { en: "Manage their medications", tr: "İlaçlarını yönet" },
+  "linked.sendInvite": { en: "Send Invite", tr: "Davet Gönder" },
+  "linked.pending": { en: "Pending", tr: "Bekliyor" },
+  "linked.accepted": { en: "Accepted", tr: "Kabul Edildi" },
+  "linked.remove": { en: "Remove", tr: "Kaldır" },
+  "linked.inviteSent": { en: "Invite sent!", tr: "Davet gönderildi!" },
+  "linked.noAccounts": { en: "No linked accounts yet", tr: "Henüz bağlı hesap yok" },
+  "linked.iManage": { en: "People I manage", tr: "Yönettiğim kişiler" },
+  "linked.managedBy": { en: "Managed by", tr: "Yöneten" },
+  "linked.removeConfirm": { en: "Remove this linked account?", tr: "Bu bağlı hesabı kaldırmak istediğinize emin misiniz?" },
+
+  // Redeem code
+  "redeem.title": { en: "Have a referral code?", tr: "Referans kodunuz var mı?" },
+  "redeem.placeholder": { en: "Enter code (e.g., DR-AHMET-26)", tr: "Kod girin (örn: DR-AHMET-26)" },
+  "redeem.apply": { en: "Apply Code", tr: "Kodu Uygula" },
+  "redeem.applied": { en: "Code applied! You'll get bonus credits after signing up.", tr: "Kod uygulandı! Kayıt sonrası bonus kredi alacaksınız." },
+  "redeem.invalid": { en: "Invalid referral code", tr: "Geçersiz referans kodu" },
+}
