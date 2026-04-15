@@ -285,6 +285,12 @@ SENTRY_DSN=...
 
 ## Tasarım Kuralları
 
+### Dark Mode Politikası (Session 24)
+- **Core sayfalar** (dashboard, chat, profil, ayarlar, yasal sayfalar): Tam dark mode desteği — `text-foreground`, `bg-card`, `border-border` CSS variable pattern
+- **Tool sayfaları** (60+ standalone tool: allergy-map, cancer-screening, checkup-planner, vb.): Bilinçli olarak **light-mode-only mobile pastel UI** — hardcoded slate-700/amber/teal renkler intentional (gradient backgrounds, soft shadows için tasarlandı)
+- **Component kütüphanesi** (shadcn/ui): Otomatik dark mode
+
+### Renk Paleti
 - Renk paleti: sage-green (sage-500/600/900), krem (stone-50), antrasit (slate-700/900)
 - MOR KULLANILMIYOR — tüm mor referanslar sage-green'e çevrildi
 - Framer Motion: fade, slide, scale, stagger, pulse, tap, layoutId
