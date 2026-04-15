@@ -20,6 +20,12 @@ export interface FamilyMember {
   invite_status: 'pending' | 'accepted' | 'declined'
   invited_at: string
   accepted_at: string | null
+  expires_at?: string | null
+  // Per-member sharing preferences (Stage 3)
+  shares_health_score?: boolean
+  shares_medications?: boolean
+  shares_allergies?: boolean
+  shares_emergency?: boolean
   // Join'den gelen profil verisi
   profile?: {
     id: string
@@ -27,6 +33,13 @@ export interface FamilyMember {
     avatar_style: string
     avatar_seed: string
   }
+}
+
+export interface SharingPrefs {
+  shares_health_score: boolean
+  shares_medications: boolean
+  shares_allergies: boolean
+  shares_emergency: boolean
 }
 
 export interface ActiveProfileSession {
@@ -50,6 +63,9 @@ export interface FamilyContextType {
   promoteToAdmin: (memberId: string) => Promise<void>
   removeMember: (memberId: string) => Promise<void>
   updateAllowsManagement: (allows: boolean) => Promise<void>
+  updateSharingPrefs: (prefs: Partial<SharingPrefs>) => Promise<boolean>
+  pendingInvites: FamilyMember[]
+  cancelInvite: (memberId: string) => Promise<boolean>
   loading: boolean
   refetch: () => Promise<void>
 }

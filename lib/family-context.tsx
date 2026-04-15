@@ -4,7 +4,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { createBrowserClient } from '@/lib/supabase'
-import type { FamilyContextType, FamilyGroup, FamilyMember } from '@/types/family'
+import type { FamilyContextType, FamilyGroup, FamilyMember, SharingPrefs } from '@/types/family'
 
 const FamilyContext = createContext<FamilyContextType | null>(null)
 
@@ -12,6 +12,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
   const [familyGroup, setFamilyGroup] = useState<FamilyGroup | null>(null)
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([])
+  const [pendingInvites, setPendingInvites] = useState<FamilyMember[]>([])
   const [activeProfileId, setActiveProfileIdState] = useState<string>('')
   const [loading, setLoading] = useState(true)
 
@@ -19,22 +20,36 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
   const supabase = useMemo(() => createBrowserClient(), [])
 
   const fetchMembers = useCallback(async (groupId: string) => {
-    const { data, error } = await supabase
-      .from('family_members')
-      .select(`
-        *,
-        profile:user_profiles(
-          id, display_name, avatar_style, avatar_seed
-        )
-      `)
-      .eq('group_id', groupId)
-      .eq('invite_status', 'accepted')
+    // Fetch accepted members + pending invites in parallel.
+    const [acceptedRes, pendingRes] = await Promise.all([
+      supabase
+        .from('family_members')
+        .select(`
+          *,
+          profile:user_profiles(
+            id, display_name, avatar_style, avatar_seed
+          )
+        `)
+        .eq('group_id', groupId)
+        .eq('invite_status', 'accepted'),
+      supabase
+        .from('family_members')
+        .select('*')
+        .eq('group_id', groupId)
+        .eq('invite_status', 'pending'),
+    ])
 
-    if (error) {
-      console.error('[Family] fetchMembers error:', error.message)
-      return
+    if (acceptedRes.error) {
+      console.error('[Family] fetchMembers (accepted) error:', acceptedRes.error.message)
+    } else if (acceptedRes.data) {
+      setFamilyMembers(acceptedRes.data as FamilyMember[])
     }
-    if (data) setFamilyMembers(data as FamilyMember[])
+
+    if (pendingRes.error) {
+      console.error('[Family] fetchMembers (pending) error:', pendingRes.error.message)
+    } else if (pendingRes.data) {
+      setPendingInvites(pendingRes.data as FamilyMember[])
+    }
   }, [supabase])
 
   const fetchFamilyData = useCallback(async () => {
@@ -114,6 +129,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
     } else {
       setFamilyGroup(null)
       setFamilyMembers([])
+      setPendingInvites([])
       setActiveProfileIdState('')
       setLoading(false)
     }
@@ -264,6 +280,38 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
     await fetchFamilyData()
   }
 
+  async function updateSharingPrefs(prefs: Partial<SharingPrefs>): Promise<boolean> {
+    if (!user || !familyGroup) return false
+    const { error } = await supabase
+      .from('family_members')
+      .update(prefs)
+      .eq('user_id', user.id)
+      .eq('group_id', familyGroup.id)
+    if (error) {
+      console.error('[Family] updateSharingPrefs error:', error.message)
+      return false
+    }
+    await fetchFamilyData()
+    return true
+  }
+
+  async function cancelInvite(memberId: string): Promise<boolean> {
+    // Cancel = delete the pending family_members row.
+    // RLS fm_owner / fm_admin policies enforce that only the household
+    // owner / admin can do this.
+    const { error } = await supabase
+      .from('family_members')
+      .delete()
+      .eq('id', memberId)
+      .eq('invite_status', 'pending')
+    if (error) {
+      console.error('[Family] cancelInvite error:', error.message)
+      return false
+    }
+    if (familyGroup) await fetchMembers(familyGroup.id)
+    return true
+  }
+
   async function updateAllowsManagement(allows: boolean) {
     if (!user || !familyGroup) return
     const { error } = await supabase
@@ -291,6 +339,9 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
       promoteToAdmin,
       removeMember,
       updateAllowsManagement,
+      updateSharingPrefs,
+      pendingInvites,
+      cancelInvite,
       loading,
       refetch: fetchFamilyData
     }}>

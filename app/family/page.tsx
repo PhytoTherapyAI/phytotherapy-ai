@@ -12,13 +12,43 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
   Users, UserPlus, Crown, Shield, Trash2, Pencil, Check, X, Loader2, Home,
-  Heart, Bell, Siren, Info, ChevronDown,
+  Heart, Bell, Siren, Info, ChevronDown, Settings2, Mail, Clock, AlertCircle,
+  Pill, ShieldAlert, Activity, ChevronRight,
 } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
 import type { FamilyMember } from "@/types/family"
 
 // 5 preset hane ikonu — basit, karmaşık olmasın
 const HOUSEHOLD_ICONS = ["🏠", "❤️", "🌳", "🏡", "🌟"] as const
+
+// Relative time — "2 saat önce", "3 gün önce", "1 ay önce"
+function relativeTime(iso: string | null | undefined, lang: "tr" | "en"): string {
+  if (!iso) return ""
+  const now = Date.now()
+  const t = new Date(iso).getTime()
+  const diff = now - t
+  if (Number.isNaN(diff) || diff < 0) return ""
+  const min = Math.floor(diff / 60_000)
+  const hr = Math.floor(diff / 3_600_000)
+  const day = Math.floor(diff / 86_400_000)
+  const tr = lang === "tr"
+  if (min < 1) return tr ? "az önce" : "just now"
+  if (min < 60) return tr ? `${min} dk önce` : `${min}m ago`
+  if (hr < 24) return tr ? `${hr} saat önce` : `${hr}h ago`
+  if (day < 30) return tr ? `${day} gün önce` : `${day}d ago`
+  const mo = Math.floor(day / 30)
+  if (mo < 12) return tr ? `${mo} ay önce` : `${mo}mo ago`
+  const yr = Math.floor(day / 365)
+  return tr ? `${yr} yıl önce` : `${yr}y ago`
+}
+
+// Days remaining helper for invite expiry
+function daysUntil(iso: string | null | undefined): number | null {
+  if (!iso) return null
+  const ms = new Date(iso).getTime() - Date.now()
+  if (Number.isNaN(ms)) return null
+  return Math.ceil(ms / 86_400_000)
+}
 
 function getStoredIcon(groupId: string): string {
   if (typeof window === "undefined") return HOUSEHOLD_ICONS[0]
@@ -44,6 +74,7 @@ export default function FamilyPage() {
   const {
     familyGroup,
     familyMembers,
+    pendingInvites,
     isOwner,
     isAdmin,
     createGroup,
@@ -51,6 +82,9 @@ export default function FamilyPage() {
     updateNickname,
     promoteToAdmin,
     removeMember,
+    cancelInvite,
+    updateSharingPrefs,
+    setActiveProfile,
     loading: familyLoading,
     refetch,
   } = useFamily()
@@ -77,6 +111,16 @@ export default function FamilyPage() {
   // Roles info accordion
   const [rolesOpen, setRolesOpen] = useState(false)
 
+  // Sharing prefs modal
+  const [sharingModalOpen, setSharingModalOpen] = useState(false)
+  const [sharingDraft, setSharingDraft] = useState({
+    shares_health_score: false,
+    shares_medications: false,
+    shares_allergies: false,
+    shares_emergency: true,
+  })
+  const [savingSharing, setSavingSharing] = useState(false)
+
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       router.push("/auth/login")
@@ -89,6 +133,20 @@ export default function FamilyPage() {
       setHouseholdIcon(getStoredIcon(familyGroup.id))
     }
   }, [familyGroup?.id])
+
+  // Self üyenin mevcut sharing prefs'ini modal'a yükle
+  useEffect(() => {
+    if (!user) return
+    const self = familyMembers.find(m => m.user_id === user.id)
+    if (self) {
+      setSharingDraft({
+        shares_health_score: self.shares_health_score ?? false,
+        shares_medications: self.shares_medications ?? false,
+        shares_allergies: self.shares_allergies ?? false,
+        shares_emergency: self.shares_emergency ?? true,
+      })
+    }
+  }, [familyMembers, user])
 
   // Auto-dismiss feedback (longer if link is shown)
   useEffect(() => {
@@ -253,6 +311,45 @@ export default function FamilyPage() {
   async function handleSaveNickname(memberId: string) {
     await updateNickname(memberId, newNickname)
     setEditingId(null)
+  }
+
+  async function handleViewMemberProfile(memberUserId: string | null) {
+    if (!memberUserId) return
+    await setActiveProfile(memberUserId)
+    router.push("/profile")
+  }
+
+  async function handleSaveSharing() {
+    setSavingSharing(true)
+    const ok = await updateSharingPrefs(sharingDraft)
+    setSavingSharing(false)
+    if (ok) {
+      setSharingModalOpen(false)
+      setFeedback({ type: "success", msg: tr ? "Paylaşım ayarları kaydedildi" : "Sharing preferences saved" })
+    } else {
+      setFeedback({ type: "error", msg: tr ? "Kaydedilemedi" : "Failed to save" })
+    }
+  }
+
+  async function handleCancelInvite(invite: FamilyMember) {
+    const target = invite.nickname || invite.invite_email
+    if (!confirm(tr ? `${target} davetini iptal et?` : `Cancel invite for ${target}?`)) return
+    const ok = await cancelInvite(invite.id)
+    if (ok) {
+      setFeedback({ type: "success", msg: tr ? "Davet iptal edildi" : "Invite cancelled" })
+    } else {
+      setFeedback({ type: "error", msg: tr ? "İptal edilemedi" : "Failed to cancel" })
+    }
+  }
+
+  async function handleCopyInviteLink(invite: FamilyMember) {
+    const url = `${window.location.origin}/family/accept?token=${invite.invite_token}`
+    try {
+      await navigator.clipboard.writeText(url)
+      setFeedback({ type: "success", msg: tr ? "Davet linki kopyalandı" : "Invite link copied" })
+    } catch {
+      setFeedback({ type: "error", msg: tr ? "Kopyalanamadı" : "Failed to copy" })
+    }
   }
 
   if (authLoading || familyLoading) return <PageSkeleton />
@@ -464,130 +561,202 @@ export default function FamilyPage() {
               )}
             </div>
 
-            {/* ─── Üye listesi ─── */}
-            <div className="bg-card rounded-2xl shadow-sm border mb-6 overflow-hidden">
-              <div className="p-4 border-b border-border flex items-center justify-between">
-                <h3 className="font-semibold text-foreground">
+            {/* ─── STAGE 4: Dashboard summary ─── */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+              <div className="rounded-xl border bg-card p-3 text-center">
+                <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 mx-auto mb-1.5">
+                  <Users className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <p className="text-lg font-bold text-foreground leading-none">{sortedMembers.length}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{tr ? "Üye" : "Members"}</p>
+              </div>
+              <div className="rounded-xl border bg-card p-3 text-center">
+                <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/30 mx-auto mb-1.5">
+                  <Mail className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                </div>
+                <p className="text-lg font-bold text-foreground leading-none">{pendingInvites.length}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{tr ? "Bekleyen" : "Pending"}</p>
+              </div>
+              <div className="rounded-xl border bg-card p-3 text-center">
+                <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-rose-100 dark:bg-rose-900/30 mx-auto mb-1.5">
+                  <Activity className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+                </div>
+                <p className="text-lg font-bold text-foreground leading-none">—</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{tr ? "Ort. Skor" : "Avg Score"}</p>
+              </div>
+              <div className="rounded-xl border bg-card p-3 text-center">
+                <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/30 mx-auto mb-1.5">
+                  <Bell className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                </div>
+                <p className="text-lg font-bold text-foreground leading-none">—</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{tr ? "Hatırlatma" : "Reminders"}</p>
+              </div>
+            </div>
+            {/* Sharing-aware fallback hint */}
+            <p className="text-[11px] text-muted-foreground text-center mb-6 -mt-3 px-4">
+              {tr
+                ? "Veri paylaşımı açıldığında ortalama skor ve aktif hatırlatmalar burada görünecek."
+                : "Average score and active reminders appear here once members enable data sharing."}
+            </p>
+
+            {/* ─── STAGE 1: Üye kartları (grid) ─── */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3 px-1">
+                <h3 className="font-semibold text-foreground text-sm">
                   {tr ? "Üyeler" : "Members"}
                 </h3>
                 <span className="text-xs text-muted-foreground">
                   {sortedMembers.length} {tr ? "kişi" : sortedMembers.length === 1 ? "person" : "people"}
                 </span>
               </div>
-              <div className="divide-y divide-border">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {sortedMembers.map(member => {
                   const isSelf = member.user_id === user.id
                   const avatarSeed = member.profile?.avatar_seed || member.user_id || member.invite_email
                   const avatarStyle = (member.profile?.avatar_style as AvatarStyle) || "adventurer"
-                  const displayName = member.nickname
-                    ?? member.profile?.display_name
+                  const baseName = member.profile?.display_name
                     ?? (isSelf ? (profile?.full_name || user.email?.split("@")[0]) : null)
                     ?? member.invite_email
+                  const displayName = member.nickname
+                    ? `${baseName} — ${member.nickname}`
+                    : baseName
+                  const isSynth = member.id?.startsWith("synth-")
 
                   return (
-                    <div key={member.id} className={`p-4 flex items-center gap-4 ${
-                      isSelf ? "bg-emerald-50/40 dark:bg-emerald-950/10" : ""
-                    }`}>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={getAvatarDataUri(avatarSeed, avatarStyle)}
-                        alt={displayName}
-                        className="w-12 h-12 rounded-full bg-muted flex-shrink-0 ring-2 ring-background"
-                      />
-
-                      <div className="flex-1 min-w-0">
-                        {editingId === member.id ? (
-                          <div className="flex gap-2 items-center">
-                            <input
-                              value={newNickname}
-                              onChange={e => setNewNickname(e.target.value)}
-                              className="border border-border rounded-lg px-2 py-1 text-sm flex-1 bg-background text-foreground"
-                              autoFocus
-                              onKeyDown={e => e.key === "Enter" && handleSaveNickname(member.id)}
-                            />
-                            <button
-                              onClick={() => handleSaveNickname(member.id)}
-                              className="text-emerald-500 hover:text-emerald-600"
-                            >
-                              <Check className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => setEditingId(null)}
-                              className="text-destructive hover:text-destructive/80"
-                            >
-                              <X className="h-4 w-4" />
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-foreground truncate">
+                    <div
+                      key={member.id}
+                      className={`group relative rounded-2xl border bg-card p-4 transition-all hover:shadow-md ${
+                        isSelf ? "ring-1 ring-emerald-200 dark:ring-emerald-800 bg-gradient-to-br from-emerald-50/40 to-transparent dark:from-emerald-950/10" : ""
+                      } ${member.user_id ? "cursor-pointer" : ""}`}
+                      onClick={() => member.user_id && !editingId && handleViewMemberProfile(member.user_id)}
+                      role={member.user_id ? "button" : undefined}
+                      tabIndex={member.user_id ? 0 : undefined}
+                      onKeyDown={e => {
+                        if (member.user_id && (e.key === "Enter" || e.key === " ")) {
+                          e.preventDefault()
+                          handleViewMemberProfile(member.user_id)
+                        }
+                      }}
+                    >
+                      <div className="flex items-start gap-3">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={getAvatarDataUri(avatarSeed, avatarStyle)}
+                          alt={displayName}
+                          className="w-14 h-14 rounded-full bg-muted flex-shrink-0 ring-2 ring-background"
+                        />
+                        <div className="flex-1 min-w-0">
+                          {editingId === member.id ? (
+                            <div className="flex gap-1 items-center" onClick={e => e.stopPropagation()}>
+                              <input
+                                value={newNickname}
+                                onChange={e => setNewNickname(e.target.value)}
+                                placeholder={tr ? "Takma ad" : "Nickname"}
+                                className="border border-border rounded-lg px-2 py-1 text-sm flex-1 min-w-0 bg-background text-foreground"
+                                autoFocus
+                                onKeyDown={e => e.key === "Enter" && handleSaveNickname(member.id)}
+                              />
+                              <button onClick={() => handleSaveNickname(member.id)} className="text-emerald-500 hover:text-emerald-600">
+                                <Check className="h-4 w-4" />
+                              </button>
+                              <button onClick={() => setEditingId(null)} className="text-destructive hover:text-destructive/80">
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          ) : (
+                            <p className="font-semibold text-sm text-foreground truncate" title={displayName}>
                               {displayName}
-                            </span>
+                            </p>
+                          )}
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                            <Badge
+                              variant="secondary"
+                              className={`text-[9px] border-0 px-1.5 py-0 ${
+                                member.role === "owner"
+                                  ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+                                  : member.role === "admin"
+                                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                                    : "bg-muted text-muted-foreground"
+                              }`}
+                            >
+                              {member.role === "owner" && <Crown className="h-2.5 w-2.5 mr-0.5" />}
+                              {member.role === "admin" && <Shield className="h-2.5 w-2.5 mr-0.5" />}
+                              {member.role === "owner"
+                                ? (tr ? "Kurucu" : "Owner")
+                                : member.role === "admin"
+                                  ? (tr ? "Yönetici" : "Admin")
+                                  : (tr ? "Üye" : "Member")}
+                            </Badge>
                             {isSelf && (
                               <Badge variant="secondary" className="text-[9px] bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0 px-1.5 py-0">
                                 {tr ? "Sen" : "You"}
                               </Badge>
                             )}
-                            {(isOwner || isAdmin) && !isSelf && (
-                              <button
-                                onClick={() => {
-                                  setEditingId(member.id)
-                                  setNewNickname(member.nickname ?? "")
-                                }}
-                                className="text-muted-foreground hover:text-foreground"
-                              >
-                                <Pencil className="h-3 w-3" />
-                              </button>
-                            )}
                           </div>
-                        )}
-                        <div className="flex items-center gap-2 mt-1 flex-wrap">
-                          <Badge
-                            variant="secondary"
-                            className={`text-[10px] border-0 ${
-                              member.role === "owner"
-                                ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
-                                : member.role === "admin"
-                                  ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                                  : "bg-muted text-muted-foreground"
-                            }`}
-                          >
-                            {member.role === "owner" && <Crown className="h-2.5 w-2.5 mr-0.5" />}
-                            {member.role === "admin" && <Shield className="h-2.5 w-2.5 mr-0.5" />}
-                            {member.role === "owner"
-                              ? (tr ? "Kurucu" : "Owner")
-                              : member.role === "admin"
-                                ? (tr ? "Yönetici" : "Admin")
-                                : (tr ? "Üye" : "Member")}
-                          </Badge>
-                          {member.allows_management && (
-                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400">
-                              {tr ? "Yönetim izni var" : "Can be managed"}
-                            </span>
-                          )}
                         </div>
                       </div>
 
-                      {/* Aksiyonlar */}
-                      {isOwner && !isSelf && member.id && !member.id.startsWith("synth-") && (
-                        <div className="flex gap-1.5 flex-shrink-0">
-                          {member.role === "member" && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 text-[10px] text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/30"
-                              onClick={() => promoteToAdmin(member.id)}
-                            >
-                              <Shield className="h-3 w-3 mr-0.5" />
-                              {tr ? "Yönetici Yap" : "Promote"}
-                            </Button>
-                          )}
+                      {/* Sağlık skoru / fallback */}
+                      <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <Activity className="h-3 w-3" />
+                          <span>
+                            {member.shares_health_score
+                              ? "—"
+                              : (tr ? "Henüz veri yok" : "No data yet")}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 text-muted-foreground/70 text-[10px]">
+                          <Clock className="h-2.5 w-2.5" />
+                          <span>{tr ? "Katıldı: " : "Joined: "}{relativeTime(member.accepted_at || member.invited_at, lang as "tr" | "en") || "—"}</span>
+                        </div>
+                      </div>
+
+                      {/* Aksiyonlar — kart altı */}
+                      <div className="mt-3 flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
+                        {isSelf && !isSynth && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 text-[10px] flex-1"
+                            onClick={() => setSharingModalOpen(true)}
+                          >
+                            <Settings2 className="h-3 w-3 mr-1" />
+                            {tr ? "Paylaşım" : "Sharing"}
+                          </Button>
+                        )}
+                        {(isOwner || isAdmin) && !isSelf && !isSynth && (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 text-[10px] text-destructive hover:text-destructive hover:bg-destructive/10"
+                            className="h-7 text-[10px] flex-1"
                             onClick={() => {
-                              const name = member.nickname || displayName
+                              setEditingId(member.id)
+                              setNewNickname(member.nickname ?? "")
+                            }}
+                          >
+                            <Pencil className="h-3 w-3 mr-1" />
+                            {tr ? "Takma ad" : "Nickname"}
+                          </Button>
+                        )}
+                        {isOwner && !isSelf && !isSynth && member.role === "member" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-[10px] text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
+                            onClick={() => promoteToAdmin(member.id)}
+                            title={tr ? "Yönetici Yap" : "Promote"}
+                          >
+                            <Shield className="h-3 w-3" />
+                          </Button>
+                        )}
+                        {isOwner && !isSelf && !isSynth && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-[10px] text-destructive hover:bg-destructive/10"
+                            onClick={() => {
+                              const name = member.nickname || baseName
                               if (confirm(tr
                                 ? `${name} haneden çıkarılsın mı?`
                                 : `Remove ${name} from household?`
@@ -595,16 +764,96 @@ export default function FamilyPage() {
                                 removeMember(member.id)
                               }
                             }}
+                            title={tr ? "Üyeyi çıkar" : "Remove member"}
                           >
                             <Trash2 className="h-3 w-3" />
                           </Button>
-                        </div>
-                      )}
+                        )}
+                        {member.user_id && !editingId && (
+                          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 ml-auto" />
+                        )}
+                      </div>
                     </div>
                   )
                 })}
               </div>
             </div>
+
+            {/* ─── STAGE 2: Bekleyen davetler ─── */}
+            {pendingInvites.length > 0 && (isOwner || isAdmin) && (
+              <div className="mb-6 rounded-2xl border bg-card overflow-hidden">
+                <div className="p-4 border-b border-border flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-amber-500" />
+                    <h3 className="font-semibold text-sm text-foreground">
+                      {tr ? "Bekleyen Davetler" : "Pending Invitations"}
+                    </h3>
+                  </div>
+                  <span className="text-xs text-muted-foreground">
+                    {pendingInvites.length}
+                  </span>
+                </div>
+                <div className="divide-y divide-border">
+                  {pendingInvites.map(invite => {
+                    const remaining = daysUntil(invite.expires_at)
+                    const expired = remaining !== null && remaining <= 0
+                    return (
+                      <div key={invite.id} className="p-3 sm:p-4 flex items-center gap-3">
+                        <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          expired ? "bg-destructive/10" : "bg-amber-100 dark:bg-amber-900/30"
+                        }`}>
+                          <Mail className={`h-4 w-4 ${expired ? "text-destructive" : "text-amber-600 dark:text-amber-400"}`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {invite.nickname || invite.invite_email}
+                          </p>
+                          {invite.nickname && (
+                            <p className="text-[11px] text-muted-foreground truncate">{invite.invite_email}</p>
+                          )}
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <Clock className="h-2.5 w-2.5" />
+                              {tr ? "Gönderildi: " : "Sent: "}{relativeTime(invite.invited_at, lang as "tr" | "en")}
+                            </span>
+                            {expired ? (
+                              <Badge variant="secondary" className="text-[9px] bg-destructive/10 text-destructive border-0 px-1.5 py-0">
+                                <AlertCircle className="h-2.5 w-2.5 mr-0.5" />
+                                {tr ? "Süresi doldu" : "Expired"}
+                              </Badge>
+                            ) : remaining !== null ? (
+                              <Badge variant="secondary" className="text-[9px] bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-0 px-1.5 py-0">
+                                {tr ? `${remaining} gün kaldı` : `${remaining}d left`}
+                              </Badge>
+                            ) : null}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 text-[10px]"
+                            onClick={() => handleCopyInviteLink(invite)}
+                            title={tr ? "Davet linkini kopyala" : "Copy invite link"}
+                          >
+                            {tr ? "Link" : "Link"}
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-[10px] text-destructive hover:bg-destructive/10"
+                            onClick={() => handleCancelInvite(invite)}
+                            title={tr ? "Daveti iptal et" : "Cancel invite"}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* ─── Boş state — sadece kurucu varsa motivasyon kartı ─── */}
             {otherMembersCount === 0 && (
@@ -779,6 +1028,93 @@ export default function FamilyPage() {
           </>
         )}
       </div>
+
+      {/* ─── STAGE 3: Sharing prefs modal ─── */}
+      {sharingModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4"
+          onClick={() => setSharingModalOpen(false)}
+        >
+          <div
+            className="bg-card w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl border max-h-[90vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="p-5 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Settings2 className="h-5 w-5 text-emerald-500" />
+                <h3 className="font-semibold text-foreground">
+                  {tr ? "Paylaşım Ayarları" : "Sharing Preferences"}
+                </h3>
+              </div>
+              <button onClick={() => setSharingModalOpen(false)} className="text-muted-foreground hover:text-foreground">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-5">
+              <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+                {tr
+                  ? "Hangi sağlık bilgilerinin hane üyeleriyle paylaşılacağını seç. Acil durum bilgileri varsayılan olarak açıktır."
+                  : "Choose what health information is shared with household members. Emergency info is on by default."}
+              </p>
+
+              {[
+                { key: "shares_health_score", icon: Activity, color: "text-rose-500", labelTr: "Sağlık skoru", labelEn: "Health score", descTr: "Günlük sağlık skorunu üyeler görebilsin", descEn: "Members can see your daily health score" },
+                { key: "shares_medications", icon: Pill, color: "text-blue-500", labelTr: "İlaç listesi", labelEn: "Medication list", descTr: "Aktif ilaçlarınızı üyeler görebilsin", descEn: "Members can see your active medications" },
+                { key: "shares_allergies", icon: AlertCircle, color: "text-amber-500", labelTr: "Alerji bilgileri", labelEn: "Allergy info", descTr: "Alerjilerinizi üyeler görebilsin", descEn: "Members can see your allergies" },
+                { key: "shares_emergency", icon: ShieldAlert, color: "text-red-500", labelTr: "Acil durum bilgileri", labelEn: "Emergency info", descTr: "Acil iletişim ve kritik tıbbi bilgileriniz (önerilen)", descEn: "Emergency contacts and critical medical info (recommended)" },
+              ].map(({ key, icon: Icon, color, labelTr, labelEn, descTr, descEn }) => {
+                const checked = sharingDraft[key as keyof typeof sharingDraft]
+                return (
+                  <label
+                    key={key}
+                    className="flex items-start gap-3 p-3 rounded-xl border bg-muted/30 hover:bg-muted/50 cursor-pointer mb-2 transition-colors"
+                  >
+                    <Icon className={`h-5 w-5 mt-0.5 flex-shrink-0 ${color}`} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground">{tr ? labelTr : labelEn}</p>
+                      <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">{tr ? descTr : descEn}</p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={checked}
+                      onClick={() => setSharingDraft(d => ({ ...d, [key]: !d[key as keyof typeof d] }))}
+                      className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 mt-0.5 ${
+                        checked ? "bg-emerald-500" : "bg-muted-foreground/30"
+                      }`}
+                    >
+                      <span
+                        className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${
+                          checked ? "translate-x-5" : "translate-x-0.5"
+                        }`}
+                      />
+                    </button>
+                  </label>
+                )
+              })}
+
+              <div className="flex gap-2 mt-5">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => setSharingModalOpen(false)}
+                  disabled={savingSharing}
+                >
+                  {tr ? "İptal" : "Cancel"}
+                </Button>
+                <Button
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                  onClick={handleSaveSharing}
+                  disabled={savingSharing}
+                >
+                  {savingSharing && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                  {tr ? "Kaydet" : "Save"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
