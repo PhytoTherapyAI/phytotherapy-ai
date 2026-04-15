@@ -71,7 +71,15 @@ export class PromptInjectionError extends Error {
   }
 }
 
-/** Apply input guards: PII scrub + injection detection + security preamble. */
+/** Detect if text looks Turkish (heuristic: Turkish-specific chars) */
+function looksTurkish(text: string): boolean {
+  return /[ıİğĞşŞçÇöÖüÜ]/.test(text);
+}
+
+/**
+ * Apply input guards: PII scrub + injection detection + security preamble.
+ * Throws PromptInjectionError if injection is detected — caller decides response.
+ */
 function guardInput(prompt: string, systemPrompt: string): { prompt: string; systemPrompt: string } {
   // Layer 6: injection detection — throw so caller can handle
   const injectionCheck = detectPromptInjection(prompt);
@@ -95,6 +103,34 @@ function guardInput(prompt: string, systemPrompt: string): { prompt: string; sys
     : SECURITY_PREAMBLE + systemPrompt;
 
   return { prompt: cleanedPrompt, systemPrompt: cleanedSystem };
+}
+
+/** Return a safe refusal message for callers when injection is detected (language-aware) */
+function safeRefusalText(err: PromptInjectionError, prompt: string): string {
+  return looksTurkish(prompt) ? err.userMessage.tr : err.userMessage.en;
+}
+
+/** Return a safe JSON refusal when injection is detected in a JSON-returning function */
+function safeRefusalJSON(err: PromptInjectionError, prompt: string): string {
+  const lang = looksTurkish(prompt) ? "tr" : "en";
+  return JSON.stringify({
+    error: "prompt_injection_blocked",
+    threat: err.threatType,
+    message: err.userMessage[lang],
+    blocked: true,
+  });
+}
+
+/** Return a ReadableStream that emits a safe refusal message */
+function safeRefusalStream(err: PromptInjectionError, prompt: string): ReadableStream {
+  const encoder = new TextEncoder();
+  const text = safeRefusalText(err, prompt);
+  return new ReadableStream({
+    start(controller) {
+      controller.enqueue(encoder.encode(text));
+      controller.close();
+    },
+  });
 }
 
 /** Apply output guard: 4-layer safety filter (filterAIOutput). */
@@ -215,7 +251,13 @@ export async function askStreamJSON(
   options?: { premium?: boolean }
 ): Promise<string> {
   // KVKK guards: input PII + injection + security preamble
-  ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  const originalPrompt = prompt;
+  try {
+    ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  } catch (err) {
+    if (err instanceof PromptInjectionError) return safeRefusalJSON(err, originalPrompt);
+    throw err;
+  }
 
   const jsonSystemPrompt =
     systemPrompt +
@@ -260,7 +302,13 @@ export async function askStreamJSONMultimodal(
   options?: { premium?: boolean }
 ): Promise<string> {
   // KVKK guards: input PII + injection + security preamble
-  ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  const originalPrompt = prompt;
+  try {
+    ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  } catch (err) {
+    if (err instanceof PromptInjectionError) return safeRefusalJSON(err, originalPrompt);
+    throw err;
+  }
 
   const jsonSystemPrompt =
     systemPrompt +
@@ -327,7 +375,13 @@ export async function askGemini(
   options?: { premium?: boolean; temperature?: number; userQuery?: string }
 ): Promise<string> {
   // KVKK guards: input PII + injection + security preamble
-  ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  const originalPrompt = prompt;
+  try {
+    ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  } catch (err) {
+    if (err instanceof PromptInjectionError) return safeRefusalText(err, originalPrompt);
+    throw err;
+  }
 
   const raw = await retryWithBackoff(async () => {
     const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
@@ -352,7 +406,13 @@ export async function askGeminiJSON(
 ): Promise<string> {
   // KVKK guards: input PII + injection + security preamble
   // (No output filter for JSON — structured responses are passed through)
-  ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  const originalPrompt = prompt;
+  try {
+    ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  } catch (err) {
+    if (err instanceof PromptInjectionError) return safeRefusalJSON(err, originalPrompt);
+    throw err;
+  }
 
   const jsonSystemPrompt =
     systemPrompt +
@@ -379,7 +439,13 @@ export async function askGeminiStream(
   options?: { premium?: boolean; userQuery?: string; skipOutputFilter?: boolean }
 ): Promise<ReadableStream> {
   // KVKK guards: input PII + injection + security preamble
-  ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  const originalPrompt = prompt;
+  try {
+    ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  } catch (err) {
+    if (err instanceof PromptInjectionError) return safeRefusalStream(err, originalPrompt);
+    throw err;
+  }
 
   const model = options?.premium ? MODEL_PREMIUM : MODEL_DEFAULT;
 
@@ -449,7 +515,13 @@ export async function askGeminiJSONMultimodal(
   files: GeminiFilePart[]
 ): Promise<string> {
   // KVKK guards: input PII + injection + security preamble
-  ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  const originalPrompt = prompt;
+  try {
+    ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  } catch (err) {
+    if (err instanceof PromptInjectionError) return safeRefusalJSON(err, originalPrompt);
+    throw err;
+  }
 
   const jsonSystemPrompt =
     systemPrompt +
@@ -507,7 +579,13 @@ export async function askGeminiStreamMultimodal(
   options?: { premium?: boolean; userQuery?: string; skipOutputFilter?: boolean }
 ): Promise<ReadableStream> {
   // KVKK guards: input PII + injection + security preamble
-  ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  const originalPrompt = prompt;
+  try {
+    ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
+  } catch (err) {
+    if (err instanceof PromptInjectionError) return safeRefusalStream(err, originalPrompt);
+    throw err;
+  }
 
   return retryWithBackoff(async () => {
     const contentParts: Anthropic.MessageCreateParams["messages"][0]["content"] =

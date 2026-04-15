@@ -138,7 +138,8 @@ export async function POST(request: NextRequest) {
           console.log("[Chat] Profile:", profile?.full_name, "| meds:", meds.length, "| allergies:", allergies.length);
 
           // ── KVKK Consent Gate (MADDE 1-3): Chat requires explicit AI processing consent ──
-          if (profile && !profile.consent_ai_processing) {
+          // Blocks both authenticated-but-no-consent AND no-profile (not fully onboarded) cases
+          if (!profile?.consent_ai_processing) {
             const msgLang = lang === "tr" ? "tr" : "en";
             const consentRequiredMsg = msgLang === "tr"
               ? "Yapay zeka asistanını kullanabilmeniz için önce **Yapay Zeka İşleme Açık Rızası** vermeniz gerekmektedir.\n\nProfil → Gizlilik Ayarları sayfasından rıza verebilirsiniz. Temel hizmetler (ilaç takibi, takvim) rıza olmadan çalışmaya devam eder.\n\nKVKK Md.6 uyarınca sağlık verileriniz ancak açık rızanızla yapay zeka sistemi tarafından işlenebilir."

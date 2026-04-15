@@ -40,10 +40,16 @@ const DIAGNOSIS_PATTERNS: Array<{ pattern: RegExp; replacement: string }> = [
     pattern: /kesin\s+olarak\s+(.+?)\s+(?:teşhis|tanı)/gi,
     replacement: "belirtileriniz $1 yönünde değerlendirilebilir",
   },
-  // EN: "You have (been diagnosed with) X"
+  // EN: "You have been diagnosed with X" / "You are diagnosed with X" — STRICT to avoid false positives
+  // (Generic "You have X" is NOT matched — would trigger on "You have three options")
   {
-    pattern: /you\s+have\s+(?:been\s+)?(?:diagnosed\s+with\s+)?([^.,;:\n]+?)(?=[.,;:\n])/gi,
+    pattern: /you\s+(?:have\s+been\s+|are\s+)diagnosed\s+with\s+([^.,;:\n]+?)(?=[.,;:\n])/gi,
     replacement: "your symptoms may be consistent with $1. Please consult your doctor for a definitive diagnosis",
+  },
+  // EN: "I diagnose you with X" / "The diagnosis is X"
+  {
+    pattern: /(?:i\s+diagnose\s+you\s+with|the\s+diagnosis\s+is)\s+([^.,;:\n]+?)(?=[.,;:\n])/gi,
+    replacement: "your symptoms may be consistent with $1. A healthcare professional should confirm this",
   },
   // EN: "Your diagnosis is X"
   {
