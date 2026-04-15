@@ -4,7 +4,8 @@
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
-import { Shield, Lock, Eye, Server, FileCheck, AlertTriangle, Key, Database } from "lucide-react"
+import { Shield, Lock, Eye, Server, FileCheck, AlertTriangle, Key, Database, Siren } from "lucide-react"
+import { DATA_BREACH_PLAN } from "@/lib/security-audit"
 
 export default function SecurityPage() {
   const { lang } = useLang()
@@ -52,7 +53,58 @@ export default function SecurityPage() {
           })}
         </div>
 
-        <Card className="mt-8 p-6 text-center bg-primary/5 border-primary/20">
+        {/* Data Breach Response Plan — KVKK 72-hour notification */}
+        <Card className="mt-8 p-6 border-red-200 dark:border-red-900 bg-red-50/30 dark:bg-red-950/10">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
+              <Siren className="w-5 h-5 text-red-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-sm">
+                {lang === "tr" ? "Veri İhlali Müdahale Planı" : "Data Breach Response Plan"}
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                {lang === "tr"
+                  ? "KVKK Madde 12 uyarınca olası bir veri ihlalinde izleyeceğimiz adımlar:"
+                  : "Steps we follow in case of a data breach, per KVKK Article 12:"}
+              </p>
+            </div>
+          </div>
+
+          <ol className="space-y-1.5 text-sm text-muted-foreground ml-1">
+            {(lang === "tr" ? DATA_BREACH_PLAN.stepsTr : DATA_BREACH_PLAN.stepsEn).map((step, i) => (
+              <li key={i} className="leading-relaxed">{step}</li>
+            ))}
+          </ol>
+
+          <div className="mt-5 pt-4 border-t border-red-200 dark:border-red-900 grid sm:grid-cols-2 gap-4 text-xs">
+            <div>
+              <p className="font-semibold text-foreground mb-1">
+                {lang === "tr" ? "KVKK Kurulu İletişim" : "KVKK Board Contact"}
+              </p>
+              <p className="text-muted-foreground">
+                <a href={DATA_BREACH_PLAN.kvkkContact.url} target="_blank" rel="noopener" className="text-primary underline">
+                  {DATA_BREACH_PLAN.kvkkContact.url.replace("https://", "")}
+                </a>
+              </p>
+              <p className="text-muted-foreground">{DATA_BREACH_PLAN.kvkkContact.phone}</p>
+              <p className="text-muted-foreground">{DATA_BREACH_PLAN.kvkkContact.email}</p>
+              <p className="text-red-600 dark:text-red-400 font-semibold mt-1">
+                {lang === "tr" ? "Bildirim süresi: " : "Notification deadline: "}
+                {DATA_BREACH_PLAN.kvkkContact.deadline}
+              </p>
+            </div>
+            <div>
+              <p className="font-semibold text-foreground mb-1">
+                {lang === "tr" ? "DoctoPal Güvenlik" : "DoctoPal Security"}
+              </p>
+              <p className="text-muted-foreground">{DATA_BREACH_PLAN.internalContact.email}</p>
+              <p className="text-muted-foreground">{DATA_BREACH_PLAN.internalContact.contactEmail}</p>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="mt-6 p-6 text-center bg-primary/5 border-primary/20">
           <p className="text-sm font-medium">
             {tx("security.reportVulnerability", lang)}
           </p>

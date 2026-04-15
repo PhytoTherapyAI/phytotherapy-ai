@@ -876,3 +876,186 @@ export function anonymizeForAI(userData: UserDataForAI): Record<string, unknown>
   console.log("[KVKK-ANON]", JSON.stringify(log));
   return anonymized;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// LAYER 7: KVKK Prompt Injection Protection
+// Required by KVKK Üretken YZ Rehberi (Kasım 2025):
+// "İstem enjeksiyonuna karşı teknik kontrollerin uygulanması tavsiye edilir."
+// ═══════════════════════════════════════════════════════════════
+
+export interface InjectionDetectionResult {
+  isSafe: boolean;
+  threatType: string | null;
+  threatLevel: "none" | "low" | "medium" | "high";
+  userMessage: { en: string; tr: string } | null;
+}
+
+interface InjectionPatternConfig {
+  patterns: RegExp[];
+  level: "low" | "medium" | "high";
+  message: { en: string; tr: string };
+}
+
+const INJECTION_PATTERNS: Record<string, InjectionPatternConfig> = {
+  // System prompt leak attempts
+  system_prompt_leak: {
+    patterns: [
+      /system\s*prompt/i,
+      /system\s*message/i,
+      /system\s*instruction/i,
+      /initial\s*prompt/i,
+      /original\s*instruction/i,
+      /what\s*are\s*your\s*(instructions|rules|guidelines)/i,
+      /show\s*(me\s*)?(your|the)\s*(prompt|instructions|rules)/i,
+      /repeat\s*(your|the)\s*(system|initial|original)/i,
+      /print\s*(your|the)\s*(system|initial|original)/i,
+      /sistem\s*promptu/i,
+      /talimatlar[ıi]n[ıi]\s*(göster|yaz|tekrarla|söyle)/i,
+      /kurallar[ıi]n[ıi]\s*(göster|yaz)/i,
+      /ilk\s*talimat/i,
+    ],
+    level: "high",
+    message: {
+      en: "I can't share my system instructions. How can I help you with health information?",
+      tr: "Sistem talimatlarımı paylaşamam. Sağlık bilgilendirmesi konusunda nasıl yardımcı olabilirim?",
+    },
+  },
+
+  // Instruction override attempts
+  instruction_override: {
+    patterns: [
+      /ignore\s*(all\s*)?(previous|prior|above|earlier)\s*(instructions|prompts|rules)/i,
+      /forget\s*(all\s*)?(previous|prior|your)\s*(instructions|rules)/i,
+      /disregard\s*(all\s*)?(previous|prior|your)/i,
+      /override\s*(your|the|all)\s*(rules|instructions|safety)/i,
+      /bypass\s*(your|the|all)\s*(rules|safety|filter)/i,
+      /önceki\s*talimatları\s*(unut|yoksay|geç)/i,
+      /kuralları\s*(unut|yoksay|geç|atla)/i,
+      /güvenlik\s*(filtre|kural|sistem)\w*\s*(kapat|devre\s*dışı|atla)/i,
+      /tüm\s*kısıtlamaları\s*(kaldır|kapat)/i,
+    ],
+    level: "high",
+    message: {
+      en: "I always follow my safety guidelines. How can I help you with health information?",
+      tr: "Güvenlik kurallarıma her zaman uyarım. Sağlık bilgilendirmesi konusunda nasıl yardımcı olabilirim?",
+    },
+  },
+
+  // Role change / jailbreak
+  role_change: {
+    patterns: [
+      /pretend\s*(you\s*are|to\s*be|you're)/i,
+      /act\s*as\s*(if|a|an|though)/i,
+      /you\s*are\s*now\s*(a|an|no\s*longer)/i,
+      /roleplay\s*as/i,
+      /\bDAN\s*mode\b/i,
+      /developer\s*mode/i,
+      /jailbreak/i,
+      /do\s*anything\s*now/i,
+      /rol\s*yap/i,
+      /şimdi\s*sen\s*(bir|artık)/i,
+      /gibi\s*davran/i,
+      /doktor\s*gibi\s*(cevap|yanıt)\s*ver/i,
+    ],
+    level: "medium",
+    message: {
+      en: "I'm DoctoPal, a health information assistant. I can't take on other roles. How can I help?",
+      tr: "Ben DoctoPal sağlık bilgilendirme asistanıyım. Başka roller üstlenemem. Nasıl yardımcı olabilirim?",
+    },
+  },
+
+  // Other user data requests
+  data_exfiltration: {
+    patterns: [
+      /other\s*user/i,
+      /another\s*patient/i,
+      /someone\s*else'?s\s*(data|profile|record)/i,
+      /all\s*users/i,
+      /database\s*(dump|export|query)/i,
+      /show\s*me\s*(all|every)\s*(patient|user|record)/i,
+      /başka\s*(kullanıcı|hasta)/i,
+      /diğer\s*(kullanıcı|hasta)/i,
+      /tüm\s*(kullanıcı|hasta|kayıt)/i,
+      /veritabanı\s*(dump|kopya|export)/i,
+    ],
+    level: "high",
+    message: {
+      en: "I can only access your own health data. I cannot show other users' information.",
+      tr: "Sadece kendi sağlık verilerinize erişebilirim. Başka kullanıcıların bilgilerini gösteremem.",
+    },
+  },
+
+  // Harmful content generation
+  harmful_content: {
+    patterns: [
+      /how\s*to\s*(make|create|synthesize)\s*(poison|drug|bomb|weapon)/i,
+      /zehir\s*(yap|hazırla|üret)/i,
+      /uyuşturucu\s*(yap|hazırla|üret)/i,
+      /kendine\s*zarar\s*(verme|verebilir)/i,
+      /nasıl\s*(intihar\s*ed|öl[üe])/i,
+    ],
+    level: "high",
+    message: {
+      en: "I can't help with that request. If you're in crisis, please call 112 or reach out to a mental health professional.",
+      tr: "Bu talepte yardımcı olamam. Zor bir dönemdeyseniz lütfen 112'yi arayın veya bir ruh sağlığı uzmanına başvurun.",
+    },
+  },
+};
+
+/**
+ * Detect prompt injection attempts in user input.
+ * Runs BEFORE the input is sent to any AI API.
+ * Returns threat classification + safe user-facing message if blocked.
+ */
+export function detectPromptInjection(userInput: string): InjectionDetectionResult {
+  if (!userInput || typeof userInput !== "string") {
+    return { isSafe: true, threatType: null, threatLevel: "none", userMessage: null };
+  }
+
+  const input = userInput.trim();
+
+  // Excessive length (potential token injection)
+  if (input.length > 5000) {
+    return {
+      isSafe: false,
+      threatType: "excessive_length",
+      threatLevel: "medium",
+      userMessage: {
+        en: "Your message is too long. Please keep it under 5000 characters.",
+        tr: "Mesajınız çok uzun. Lütfen 5000 karakterin altında tutun.",
+      },
+    };
+  }
+
+  // Base64-encoded content (potential hidden commands)
+  const base64Candidate = input.replace(/\s/g, "");
+  if (base64Candidate.length >= 50 && /^[A-Za-z0-9+/=]+$/.test(base64Candidate)) {
+    return {
+      isSafe: false,
+      threatType: "encoded_content",
+      threatLevel: "medium",
+      userMessage: {
+        en: "Please write your question in plain text.",
+        tr: "Lütfen sorunuzu düz metin olarak yazın.",
+      },
+    };
+  }
+
+  // Pattern-based detection
+  for (const [threatType, config] of Object.entries(INJECTION_PATTERNS)) {
+    for (const pattern of config.patterns) {
+      if (pattern.test(input)) {
+        // eslint-disable-next-line no-console
+        console.warn(`[KVKK-INJECTION] Detected: ${threatType} | Input: ${input.substring(0, 100)}`);
+        return {
+          isSafe: false,
+          threatType,
+          threatLevel: config.level,
+          userMessage: config.message,
+        };
+      }
+    }
+  }
+
+  return { isSafe: true, threatType: null, threatLevel: "none", userMessage: null };
+}

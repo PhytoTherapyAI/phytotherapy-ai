@@ -4,6 +4,7 @@ import { renderToBuffer } from "@react-pdf/renderer";
 import { SBARReport, type SBARData } from "@/components/pdf/SBARReport";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { logApiAccess } from "@/lib/security-audit";
 import type { VaccineEntry } from "@/lib/vaccine-data";
 
 export const runtime = 'nodejs';
@@ -36,6 +37,14 @@ export async function POST(request: NextRequest) {
       return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
+
+    logApiAccess({
+      endpoint: "/api/sbar-pdf",
+      userId: user.id,
+      action: "generate_health_summary_pdf",
+      ip: clientIP,
+      outcome: "success",
+    });
 
     // Fetch all profile data — explicit columns to avoid 400 errors
     console.log("[SBAR-PDF] Fetching data for user:", user.id);

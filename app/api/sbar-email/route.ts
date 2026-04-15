@@ -4,6 +4,7 @@ import { Resend } from "resend";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
+import { logApiAccess } from "@/lib/security-audit";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -111,6 +112,15 @@ export async function POST(request: NextRequest) {
         </div>
       </div>
     `;
+
+    logApiAccess({
+      endpoint: "/api/sbar-email",
+      userId: user.id,
+      action: "send_health_summary_email",
+      ip: clientIP,
+      outcome: "success",
+      metadata: { recipient_hash: recipientEmail.length > 0 ? "present" : "missing" },
+    });
 
     await resend.emails.send({
       from: "DoctoPal <onboarding@resend.dev>",
