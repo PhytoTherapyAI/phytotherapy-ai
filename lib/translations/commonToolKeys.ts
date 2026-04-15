@@ -1480,8 +1480,8 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
 
   "security.dataEncryption": { en: "Data Encryption", tr: "Veri Şifreleme" },
   "security.dataEncryptionDesc": {
-    en: "All your health data is encrypted in transit with TLS 1.3 and at rest with AES-256, the same standard used by banks. With Supabase Row Level Security (RLS) policies, every user can access only their own data — even our own engineers cannot read your records without your permission.",
-    tr: "Tüm sağlık verileriniz aktarım sırasında TLS 1.3 ile, sunucularda beklerken ise bankaların kullandığı AES-256 standardıyla şifrelenir. Supabase Row Level Security (RLS) politikaları sayesinde her kullanıcı yalnızca kendi verisine erişebilir; sizin izniniz olmadan kendi mühendislerimiz dahi kayıtlarınızı okuyamaz."
+    en: "All your health data is encrypted in transit with TLS 1.3 and at rest with industry-standard AES-256. With Supabase Row Level Security (RLS) policies, every user can access only their own data — even our own engineers cannot read your records without your permission.",
+    tr: "Tüm sağlık verileriniz aktarım sırasında TLS 1.3 ile, sunucularda beklerken ise endüstri standardı AES-256 ile şifrelenir. Supabase Row Level Security (RLS) politikaları sayesinde her kullanıcı yalnızca kendi verisine erişebilir; sizin izniniz olmadan kendi mühendislerimiz dahi kayıtlarınızı okuyamaz."
   },
 
   "security.kvkkGdpr": { en: "KVKK & GDPR Compliance", tr: "KVKK & GDPR Uyumu" },
@@ -1516,8 +1516,8 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
 
   "security.dataMinimization": { en: "Data Minimization", tr: "Veri Minimizasyonu" },
   "security.dataMinimizationDesc": {
-    en: "We collect only what is necessary for the service to work. Health data is stored in encrypted columns with a maximum 2-year retention period, and AI requests are anonymized — your name, email, ID, phone, and address are stripped before being sent to any external model.",
-    tr: "Yalnızca hizmetin çalışması için gerekli olanı toplarız. Sağlık verileri şifreli kolonlarda en fazla 2 yıl süreyle saklanır ve AI isteklerinde adınız, e-postanız, TC kimlik numaranız, telefonunuz ve adresiniz dışarıdaki herhangi bir modele gönderilmeden önce çıkarılır."
+    en: "We collect only what is necessary for the service to work. Your data is retained while your account is active and is permanently erased when you delete your account. AI requests are anonymized — your name, email, ID, phone, and address are stripped before being sent to any external model.",
+    tr: "Yalnızca hizmetin çalışması için gerekli olanı toplarız. Verileriniz hesabınız aktif olduğu sürece saklanır ve hesabınızı sildiğinizde kalıcı olarak kaldırılır. AI isteklerinde adınız, e-postanız, TC kimlik numaranız, telefonunuz ve adresiniz dışarıdaki herhangi bir modele gönderilmeden önce çıkarılır."
   },
 
   "security.inputValidation": { en: "Input Validation", tr: "Giriş Doğrulaması" },
