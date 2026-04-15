@@ -49,6 +49,18 @@ export async function POST(req: NextRequest) {
     const buffer = await file.arrayBuffer();
     const base64 = Buffer.from(buffer).toString("base64");
 
+    // KVKK consent gate: extract userId upfront to pass to ai-client
+    let aiUserId: string | undefined;
+    const upfrontAuth = req.headers.get("authorization");
+    if (upfrontAuth?.startsWith("Bearer ")) {
+      try {
+        const token = upfrontAuth.replace("Bearer ", "");
+        const supabase = createServerClient();
+        const { data: { user: authUser } } = await supabase.auth.getUser(token);
+        aiUserId = authUser?.id || undefined;
+      } catch { /* anonymous OK */ }
+    }
+
     // Build prompt with language and image type context
     const userLang = tx("api.respondLang", lang);
     const typeHint = IMAGE_TYPES.includes(imageType as typeof IMAGE_TYPES[number])
@@ -60,11 +72,12 @@ export async function POST(req: NextRequest) {
 If this is a text-based report (PDF), extract the key findings and translate them into plain language.
 If this is a medical image, describe what you observe and explain each finding simply.`;
 
-    // Call Gemini Vision
+    // Call Gemini Vision (with consent gate via userId)
     const result = await askGeminiJSONMultimodal(
       prompt,
       RADIOLOGY_ANALYSIS_PROMPT,
-      [{ mimeType: file.type, base64 }]
+      [{ mimeType: file.type, base64 }],
+      { userId: aiUserId }
     );
 
     let analysis;

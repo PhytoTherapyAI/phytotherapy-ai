@@ -185,7 +185,8 @@ RULES:
 
     const result = await askGeminiJSON(
       `Assess chronic disease management for: ${matched}`,
-      systemPrompt
+      systemPrompt,
+      { userId: user.id }
     );
 
     let parsed;

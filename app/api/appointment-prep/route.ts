@@ -204,7 +204,8 @@ RULES:
 
     const result = await askGeminiJSON(
       `Generate a clinical summary for this patient's upcoming doctor appointment.${concerns ? ` Patient's concerns: "${concerns}"` : ""}`,
-      systemPrompt
+      systemPrompt,
+      { userId: user.id }
     );
 
     let parsed;

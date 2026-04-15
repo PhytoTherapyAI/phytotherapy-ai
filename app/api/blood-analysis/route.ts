@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
     // Use streaming JSON to avoid Vercel timeout (stream keeps connection alive)
     let geminiResponse: string;
     try {
-      geminiResponse = await askStreamJSON(prompt, systemPrompt, { premium: true });
+      geminiResponse = await askStreamJSON(prompt, systemPrompt, { premium: true, userId: userId || undefined });
     } catch (aiErr) {
       console.error("Blood test AI error:", aiErr);
       return new Response(

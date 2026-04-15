@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
 
     // Get user profile if authenticated
     let profileContext = ""
+    let userId: string | undefined
     const authHeader = request.headers.get("authorization")
 
     if (authHeader?.startsWith("Bearer ")) {
@@ -44,6 +45,7 @@ export async function POST(request: NextRequest) {
         const { data: { user } } = await supabase.auth.getUser(token)
 
         if (user) {
+          userId = user.id
           const [profileRes, medsRes, allergiesRes] = await Promise.all([
             supabase.from("user_profiles").select("*").eq("id", user.id).single(),
             supabase.from("user_medications").select("brand_name, generic_name, dosage").eq("user_id", user.id).eq("is_active", true),
@@ -112,7 +114,7 @@ WRITING STYLE for personalizedNote and warningMessage:
 
 Be specific about dosing based on the user's profile. ${tx("api.supplementCheck.turkishStyle", lang)}`
 
-    const response = await askGeminiJSON(prompt, systemPrompt)
+    const response = await askGeminiJSON(prompt, systemPrompt, { userId: userId || undefined })
 
     try {
       const result = JSON.parse(response)

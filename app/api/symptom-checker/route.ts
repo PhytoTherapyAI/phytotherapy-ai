@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
 
     // Fetch user profile if authenticated
     let profileContext = "";
+    let userId: string | undefined;
     const authHeader = request.headers.get("authorization");
     // Start PubMed immediately (parallel with profile fetch)
     const pubmedPromise = searchPubMed(symptoms, 3).catch(() => []);
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          userId = user.id;
           const [{ data: profile }, { data: meds }, { data: allergies }] = await Promise.all([
             supabase.from("user_profiles").select("age, gender, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions").eq("id", user.id).single(),
             supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", user.id).eq("is_active", true),
@@ -141,7 +143,8 @@ IMPORTANT:
       `Patient describes these symptoms: "${symptoms}"
 
 Assess the symptoms, provide possible causes, and recommend next steps.`,
-      systemPrompt
+      systemPrompt,
+      { userId }
     );
 
     // Parse and validate

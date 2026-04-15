@@ -84,7 +84,8 @@ RULES:
 
     const result = await askGeminiJSON(
       `Analyze all pairwise drug interactions between: ${medications.join(", ")}`,
-      systemPrompt
+      systemPrompt,
+      { userId: user.id }
     );
 
     let parsed;

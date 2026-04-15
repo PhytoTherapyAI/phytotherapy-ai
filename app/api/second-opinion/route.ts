@@ -86,7 +86,8 @@ Create a structured second opinion preparation package. Return JSON:
 
     const result = await askGeminiJSON(
       `Prepare a second opinion package for this concern: "${concern}". Respond in ${tx("api.respondLang", lang)}.`,
-      prompt
+      prompt,
+      { userId: user.id }
     );
 
     return NextResponse.json(result);

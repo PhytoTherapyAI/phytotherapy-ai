@@ -80,7 +80,7 @@ Generate a concise clinical visit summary in English with:
 
 Keep it professional, concise, and clinically relevant.`
 
-    const summary = await askGemini(prompt, "You are a clinical AI assistant generating visit summaries for doctors.")
+    const summary = await askGemini(prompt, "You are a clinical AI assistant generating visit summaries for doctors.", { userId: user.id })
 
     return NextResponse.json({ summary })
   } catch (error) {
