@@ -7,6 +7,7 @@ import { SYSTEM_PROMPT } from "@/lib/prompts";
 import { checkRedFlags, getEmergencyMessage, getYellowWarning, checkVaccineKeywords } from "@/lib/safety-filter";
 import { anonymizePromptData, stripPIIFromText, detectPromptInjection } from "@/lib/safety-guardrail";
 import { logApiAccess } from "@/lib/security-audit";
+import { filterAIOutput } from "@/lib/output-safety-filter";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -435,43 +436,54 @@ This rule exists because giving dosage advice without knowing the user's medicat
       });
     }
 
-    // Pass through the ReadableStream from Claude, collecting text for history
+    // Collect full AI response, apply Layer 9 safety filter (1219 s.K. compliance),
+    // then emit filtered text as a progressive stream for UX.
     const decoder = new TextDecoder();
     const encoder = new TextEncoder();
     const reader = stream.getReader();
+    const chatLang = lang === "tr" ? "tr" as const : "en" as const;
     const readable = new ReadableStream({
       async start(controller) {
         try {
-          let fullResponse = "";
+          // ── PHASE 1: collect entire AI response (no pass-through) ──
+          let rawResponse = "";
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
             const text = decoder.decode(value, { stream: true });
-            if (text) {
-              fullResponse += text;
-              controller.enqueue(value);
-            }
+            if (text) rawResponse += text;
           }
+
+          // ── PHASE 2: apply output safety filter (Layers 1-4, MADDE 9) ──
+          const filtered = filterAIOutput(rawResponse, {
+            userQuery: message,
+            lang: chatLang,
+            skipEmergency: isYellowCode, // yellow-code already handled by triage
+          });
+          let finalResponse = filtered.text;
 
           // YELLOW CODE: Append safety warning after AI response
           if (isYellowCode) {
             const warningLang = triageResult.type === "yellow_code" ? triageResult.language : "en";
-            const warning = getYellowWarning(warningLang);
-            fullResponse += warning;
-            controller.enqueue(encoder.encode(warning));
+            finalResponse += getYellowWarning(warningLang);
           }
 
+          // ── PHASE 3: progressively emit filtered text in chunks for UX ──
+          const chunkSize = 48;
+          for (let i = 0; i < finalResponse.length; i += chunkSize) {
+            controller.enqueue(encoder.encode(finalResponse.slice(i, i + chunkSize)));
+          }
           controller.close();
 
-          // Save query + response to history (fire and forget)
-          if (userId && fullResponse.length > 0) {
+          // Save query + FILTERED response to history (fire and forget)
+          if (userId && finalResponse.length > 0) {
             try {
               const supabase = createServerClient();
               await supabase.from("query_history").insert({
                 user_id: userId,
                 query_text: message,
                 query_type: "general" as const,
-                response_text: fullResponse.substring(0, 10000),
+                response_text: finalResponse.substring(0, 10000),
               });
             } catch {
               // Non-critical — don't fail the response
