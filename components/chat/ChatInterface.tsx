@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Send, Loader2, Trash2, Paperclip, Camera, X, FileText, Image as ImageIcon, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageBubble, ChatMessage } from "./MessageBubble";
+import { AIGeneratedBadge } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
@@ -374,6 +375,13 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
 
   return (
     <div className={`flex flex-col ${className || ""}`}>
+      {/* AI Response badge — shown when conversation has started */}
+      {messages.length > 0 && (
+        <div className="flex justify-center pt-2 pb-1">
+          <AIGeneratedBadge />
+        </div>
+      )}
+
       {/* Messages area */}
       <div
         ref={scrollRef}

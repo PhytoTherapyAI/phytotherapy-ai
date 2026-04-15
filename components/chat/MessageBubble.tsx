@@ -6,6 +6,7 @@ import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { AILoadingState } from "@/components/chat/AILoadingState";
 import { SmartSuggestions } from "@/components/chat/SmartSuggestions";
+import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
 
 export interface ChatMessage {
   id: string;
@@ -151,6 +152,11 @@ export function MessageBubble({ message, isLast, onSendFollowUp }: MessageBubble
               <FormattedContent content={sourcesContent} />
             </div>
           </div>
+        )}
+
+        {/* AI disclaimer + right-to-object — MANDATORY on every completed assistant message (TCK Md.90, KVKK Md.11/1-g) */}
+        {!isUser && !message.isStreaming && message.content.trim().length > 0 && (
+          <AIDisclaimer responseId={message.id} compact />
         )}
       </div>
 
