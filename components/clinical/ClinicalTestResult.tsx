@@ -64,8 +64,9 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
   // Get past results for this test
   const pastResults = (() => {
     try {
-      const history = JSON.parse(localStorage.getItem("clinical_test_history") || "[]")
-      return history.filter((h: any) => h.testId === test.id).slice(1, 4) // skip current, show last 3
+      interface HistoryEntry { testId: string; score: number; date: string }
+      const history: HistoryEntry[] = JSON.parse(localStorage.getItem("clinical_test_history") || "[]")
+      return history.filter((h: HistoryEntry) => h.testId === test.id).slice(1, 4) // skip current, show last 3
     } catch { return [] }
   })()
 
@@ -173,7 +174,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
             {tx("clinicalResult.pastResults", lang as Lang)}
           </h4>
           <div className="space-y-1">
-            {pastResults.map((r: any, i: number) => (
+            {pastResults.map((r: { date: string; score: number }, i: number) => (
               <div key={i} className="flex items-center justify-between text-sm py-1">
                 <span className="text-muted-foreground text-xs">
                   {new Date(r.date).toLocaleDateString(lang === "tr" ? "tr-TR" : "en-US")}

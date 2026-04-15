@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
+// any: react-joyride dynamic import type clash with Next.js dynamic loader
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Joyride = dynamic(() => import("react-joyride").then(m => m.Joyride) as any, { ssr: false }) as any;
 
@@ -82,8 +83,7 @@ export function DashboardTour() {
     return () => clearTimeout(timer);
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleEvent = (data: any) => {
+  const handleEvent = (data: { status: string }) => {
     if (data.status === "finished" || data.status === "skipped") {
       localStorage.setItem(TOUR_KEY, "true");
       setRun(false);

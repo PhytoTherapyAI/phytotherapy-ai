@@ -156,7 +156,7 @@ Generate today's personalized care plan with 8 cards. Make it different from wha
 
     // Ensure deterministic IDs (stable for the day)
     if (parsed?.cards && Array.isArray(parsed.cards)) {
-      parsed.cards.forEach((card: any) => {
+      parsed.cards.forEach((card: { id: string; category: string }) => {
         card.id = `${dateStr}-${card.category}`;
       });
     }
@@ -174,7 +174,7 @@ Generate today's personalized care plan with 8 cards. Make it different from wha
 }
 
 // Fallback plan if AI fails
-function getFallbackPlan(profile: any, lang: string, timeOfDay: string) {
+function getFallbackPlan(profile: { full_name?: string | null } | null, lang: string, timeOfDay: string) {
   const name = profile?.full_name?.split(" ")[0] || "";
   const isTr = lang === "tr";
   const dateStr = new Date().toISOString().split("T")[0];

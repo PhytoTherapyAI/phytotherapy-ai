@@ -96,7 +96,7 @@ export default function DoctorPrepPage() {
   const [copied, setCopied] = useState(false)
   const [pdfLoading, setPdfLoading] = useState(false)
 
-  const p = profile as any
+  const p = profile as (typeof profile & { medications?: string[]; allergies?: (string | { allergen: string })[]; chronic_conditions?: string[] }) | null
 
   const generateReport = useCallback(async () => {
     setLoading(true)
@@ -125,7 +125,7 @@ export default function DoctorPrepPage() {
       const reportData: Report = {
         chiefComplaint: chiefText,
         medications: meds.length > 0 ? meds : [isTr ? "Profilde ilaç bilgisi yok" : "No medications on profile"],
-        allergies: allergies.length > 0 ? allergies.map((a: any) => typeof a === "string" ? a : a.allergen) : [isTr ? "Bilinen alerji yok" : "No known allergies"],
+        allergies: allergies.length > 0 ? allergies.map((a: string | { allergen: string }) => typeof a === "string" ? a : a.allergen) : [isTr ? "Bilinen alerji yok" : "No known allergies"],
         relevantHistory: conditions.length > 0 ? conditions : [isTr ? "Bilinen kronik hastalık yok" : "No known chronic conditions"],
         assessmentSummary: isTr ? "Semptom değerlendirmesi tamamlanmadı — önce Semptom Kontrolü yapmanız önerilir." : "No symptom assessment completed yet — consider running a Symptom Check first.",
         questionsForDoctor: questions,

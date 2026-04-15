@@ -145,6 +145,8 @@ export async function POST(request: NextRequest) {
     let pdfBuffer: Buffer;
     try {
       const element = SBARReport({ data: sbarData });
+      // any: @react-pdf/renderer renderToBuffer type mismatch with React component return
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       pdfBuffer = await renderToBuffer(element as any);
     } catch (renderErr) {
       console.error("PDF render error:", renderErr);

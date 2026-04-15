@@ -215,8 +215,6 @@ export default function CoursesPage() {
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filteredCourses.map((course) => {
           const Icon = course.icon
-          const titleKey = `courses.${course.id}.title` as any
-          const descKey = `courses.${course.id}.desc` as any
           // Fallback titles if translation keys don't exist yet
           const titles: Record<string, { tr: string; en: string }> = {
             "phytotherapy-fundamentals": { tr: "Fitoterapi Temelleri", en: "Phytotherapy Fundamentals" },

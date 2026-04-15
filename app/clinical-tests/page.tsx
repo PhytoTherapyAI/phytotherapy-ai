@@ -35,8 +35,9 @@ export default function ClinicalTestsPage() {
   // Get past results for each test
   const getLastScore = (testId: string) => {
     try {
-      const history = JSON.parse(localStorage.getItem("clinical_test_history") || "[]")
-      return history.find((h: any) => h.testId === testId)
+      interface HistoryEntry { testId: string; score: number; date: string }
+      const history: HistoryEntry[] = JSON.parse(localStorage.getItem("clinical_test_history") || "[]")
+      return history.find((h: HistoryEntry) => h.testId === testId)
     } catch { return null }
   }
 

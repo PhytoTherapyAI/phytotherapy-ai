@@ -1,6 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { tx } from "@/lib/translations";
 import type {
   ConversationStep,
   PossibleCondition,
@@ -93,7 +94,7 @@ interface Props {
   userName?: string;
   userAge?: number;
   userGender?: string;
-  lang?: string;
+  lang?: "en" | "tr";
 }
 
 export function SymptomAssessmentPDF({
@@ -115,7 +116,7 @@ export function SymptomAssessmentPDF({
         <View style={styles.header}>
           <Text style={styles.title}>DoctoPal</Text>
           <Text style={styles.subtitle}>
-            {isTr ? "Semptom Değerlendirme Raporu" : "Symptom Assessment Report"}
+            {tx("symptomPdf.subtitle", lang)}
           </Text>
           <Text style={styles.badge}>{date} | {reportId}</Text>
         </View>
@@ -123,30 +124,30 @@ export function SymptomAssessmentPDF({
         {/* Patient Info */}
         <View style={styles.patientBox}>
           <Text style={{ ...styles.sectionTitle, marginTop: 0 }}>
-            {isTr ? "Hasta Bilgileri" : "Patient Information"}
+            {tx("symptomPdf.patientInfo", lang)}
           </Text>
           {userName && (
             <View style={styles.row}>
-              <Text style={styles.label}>{isTr ? "Ad:" : "Name:"}</Text>
+              <Text style={styles.label}>{tx("symptomPdf.name", lang)}</Text>
               <Text style={styles.value}>{userName}</Text>
             </View>
           )}
           {userAge && (
             <View style={styles.row}>
-              <Text style={styles.label}>{isTr ? "Yaş:" : "Age:"}</Text>
+              <Text style={styles.label}>{tx("symptomPdf.age", lang)}</Text>
               <Text style={styles.value}>{userAge}</Text>
             </View>
           )}
           {userGender && (
             <View style={styles.row}>
-              <Text style={styles.label}>{isTr ? "Cinsiyet:" : "Gender:"}</Text>
+              <Text style={styles.label}>{tx("symptomPdf.gender", lang)}</Text>
               <Text style={styles.value}>{userGender}</Text>
             </View>
           )}
           {assessmentFor && assessmentFor !== "self" && (
             <View style={styles.row}>
-              <Text style={styles.label}>{isTr ? "Değerlendirme:" : "Assessment for:"}</Text>
-              <Text style={styles.value}>{subjectInfo || (assessmentFor === "child" ? (isTr ? "Çocuk" : "Child") : (isTr ? "Başkası" : "Someone else"))}</Text>
+              <Text style={styles.label}>{tx("symptomPdf.assessmentFor", lang)}</Text>
+              <Text style={styles.value}>{subjectInfo || (assessmentFor === "child" ? tx("symptomPdf.child", lang) : tx("symptomPdf.someoneElse", lang))}</Text>
             </View>
           )}
         </View>
@@ -154,21 +155,21 @@ export function SymptomAssessmentPDF({
         {/* Urgency */}
         <View style={{ ...styles.urgencyBox, backgroundColor: urgencyColor.bg }}>
           <Text style={{ ...styles.urgencyText, color: urgencyColor.text }}>
-            {isTr ? "Aciliyet Seviyesi" : "Urgency Level"}: {urgencyLabel}
+            {tx("symptomPdf.urgencyLevel", lang)}: {urgencyLabel}
           </Text>
         </View>
 
         {/* Summary */}
         {finalSummary && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{isTr ? "Değerlendirme Özeti" : "Assessment Summary"}</Text>
+            <Text style={styles.sectionTitle}>{tx("symptomPdf.assessmentSummary", lang)}</Text>
             <Text>{finalSummary}</Text>
           </View>
         )}
 
         {/* Conversation History */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{isTr ? "Soru-Cevap Geçmişi" : "Q&A History"}</Text>
+          <Text style={styles.sectionTitle}>{tx("symptomPdf.qaHistory", lang)}</Text>
           {history.map((h, i) => (
             <View key={i} style={styles.qaBlock}>
               <Text style={styles.question}>Q{i + 1}: {h.questionText}</Text>
@@ -180,7 +181,7 @@ export function SymptomAssessmentPDF({
         {/* Conditions */}
         {conditions.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{isTr ? "Olası Durumlar" : "Possible Conditions"}</Text>
+            <Text style={styles.sectionTitle}>{tx("symptomPdf.possibleConditions", lang)}</Text>
             {conditions.slice(0, 5).map((c, i) => (
               <View key={i} style={styles.conditionRow}>
                 <Text style={styles.conditionName}>{c.name}</Text>
@@ -193,7 +194,7 @@ export function SymptomAssessmentPDF({
         {/* Medication Alerts */}
         {medicationAlerts && medicationAlerts.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{isTr ? "İlaç Uyarıları" : "Medication Alerts"}</Text>
+            <Text style={styles.sectionTitle}>{tx("symptomPdf.medicationAlerts", lang)}</Text>
             {medicationAlerts.map((a, i) => (
               <View key={i} style={styles.alertBox}>
                 <Text style={styles.alertText}>{a}</Text>
@@ -205,12 +206,12 @@ export function SymptomAssessmentPDF({
         {/* Phytotherapy */}
         {phytoSuggestions && phytoSuggestions.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{isTr ? "Fitoterapi Önerileri" : "Phytotherapy Suggestions"}</Text>
+            <Text style={styles.sectionTitle}>{tx("symptomPdf.phytoSuggestions", lang)}</Text>
             {phytoSuggestions.map((s, i) => (
               <View key={i} style={styles.phytoRow}>
-                <Text style={styles.phytoName}>{s.name} ({isTr ? "Kanıt" : "Evidence"}: {s.evidence})</Text>
+                <Text style={styles.phytoName}>{s.name} ({tx("symptomPdf.evidence", lang)}: {s.evidence})</Text>
                 <Text style={styles.phytoDesc}>{s.description}</Text>
-                {s.caution && <Text style={styles.phytoCaution}>{isTr ? "Dikkat" : "Caution"}: {s.caution}</Text>}
+                {s.caution && <Text style={styles.phytoCaution}>{tx("symptomPdf.caution", lang)}: {s.caution}</Text>}
               </View>
             ))}
           </View>
@@ -219,9 +220,7 @@ export function SymptomAssessmentPDF({
         {/* Disclaimer */}
         <View style={styles.disclaimer}>
           <Text style={styles.disclaimerText}>
-            {isTr
-              ? "Bu rapor DoctoPal AI tarafından oluşturulmuştur ve tıbbi bir teşhis değildir. Lütfen profesyonel değerlendirme için sağlık kuruluşunuzla paylaşın."
-              : "This report was generated by DoctoPal AI and is not a medical diagnosis. Please share it with your healthcare provider for professional evaluation."}
+            {tx("symptomPdf.disclaimer", lang)}
           </Text>
         </View>
 

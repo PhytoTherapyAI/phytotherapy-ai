@@ -158,7 +158,12 @@ export function createPatientBundle(params: {
 // ══════════════════════════════════════════
 export function toENabizFormat(bundle: FHIRBundle): {
   header: { source: string; version: string; timestamp: string }
-  data: any
+  data: {
+    resourceType: string
+    type: string
+    total?: number
+    entry?: unknown[]
+  }
 } {
   return {
     header: {

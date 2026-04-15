@@ -58,7 +58,7 @@ export default function SeasonalFoodPage() {
   const [search, setSearch] = useState("")
 
   const filtered = SEASONAL_FOODS.filter(f => {
-    const matchesSeason = selectedSeason === "all" || f.season.includes(selectedSeason as any)
+    const matchesSeason = selectedSeason === "all" || f.season.includes(selectedSeason as "winter" | "spring" | "summer" | "autumn")
     const matchesSearch = !search || f.name.en.toLowerCase().includes(search.toLowerCase()) || f.name.tr.toLowerCase().includes(search.toLowerCase())
     return matchesSeason && matchesSearch
   })

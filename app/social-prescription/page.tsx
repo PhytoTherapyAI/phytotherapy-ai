@@ -6,12 +6,12 @@ import { useLang } from "@/components/layout/language-toggle"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Users, TreePine, Palette, Heart, Music, BookOpen, Dog, Bike, Coffee, ChevronDown, ChevronUp, Plus, Check } from "lucide-react"
+import { Users, TreePine, Palette, Heart, Music, BookOpen, Dog, Bike, Coffee, ChevronDown, ChevronUp, Plus, Check, type LucideIcon } from "lucide-react"
 import { tx } from "@/lib/translations"
 
 interface SocialRx {
   category: string
-  icon: any
+  icon: LucideIcon
   color: string
   title: { en: string; tr: string }
   description: { en: string; tr: string }

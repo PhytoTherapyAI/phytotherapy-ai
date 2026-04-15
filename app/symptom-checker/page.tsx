@@ -164,7 +164,7 @@ export default function SymptomCheckerPage() {
   const freeTextHandled = useRef(false)
 
   // Build user profile from auth
-  const p = profile as any
+  const p = profile as (typeof profile & { age?: number; gender?: string; chronic_conditions?: string; kidney_status?: string; liver_status?: string; pregnancy_status?: string }) | null
   const userProfile = p ? {
     age: p.age || undefined,
     gender: p.gender || undefined,
@@ -206,7 +206,7 @@ export default function SymptomCheckerPage() {
       const data: AssessmentResponse = await res.json()
       setCurrentResponse(data)
       retryCountRef.current = 0
-    } catch (err: any) {
+    } catch {
       if (retryCountRef.current < 2) {
         retryCountRef.current++
         return callAPI(stepNum, hist, category)

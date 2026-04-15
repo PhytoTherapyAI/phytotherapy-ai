@@ -179,7 +179,7 @@ export async function POST(req: Request) {
       action,
       userId: targetUserId,
       emailSent: emailResult.success,
-      emailId: emailResult.success ? (emailResult as any).messageId : undefined,
+      emailId: emailResult.success ? (emailResult as { success: boolean; messageId?: string }).messageId : undefined,
     })
 
   } catch (error) {

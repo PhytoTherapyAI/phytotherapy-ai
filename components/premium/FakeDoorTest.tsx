@@ -11,6 +11,7 @@ import {
   Package, Video, Star, Check, Crown, X, Sparkles, Heart,
   ArrowRight, Shield, Clock, Users, Loader2, Mail, Gift,
   ChevronRight, Zap,
+  type LucideIcon,
 } from "lucide-react"
 
 // ── Fake Door Products ──
@@ -20,7 +21,7 @@ interface FakeDoorProduct {
   tagline: { en: string; tr: string }
   price: { amount: number; currency: string; period: { en: string; tr: string } }
   originalPrice?: number
-  icon: any
+  icon: LucideIcon
   gradient: string
   features: { en: string; tr: string }[]
   badge?: { en: string; tr: string }

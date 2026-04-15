@@ -141,7 +141,7 @@ Bu mesaj DoctoPal tarafından otomatik gönderilmiştir.`;
         details,
         vital_data: vitalData || null,
         location: location || null,
-        contacts_notified: emergencyContacts?.map((c: any) => c.id) || [],
+        contacts_notified: emergencyContacts?.map((c: { id: string }) => c.id) || [],
         message_sent: sosMessage,
         created_at: new Date().toISOString(),
       });

@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { askGeminiJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { tx } from "@/lib/translations";
@@ -167,8 +168,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function handleCrossCheck(supabase: any, userId: string, lang: "en" | "tr") {
+async function handleCrossCheck(supabase: SupabaseClient, userId: string, lang: "en" | "tr") {
   // Fetch allergies, medications, and supplements
   const [allergiesResult, medsResult, basicAllergiesResult] = await Promise.all([
     supabase

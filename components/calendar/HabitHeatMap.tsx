@@ -61,8 +61,8 @@ export function HabitHeatMap({ lang, userId, streak: streakProp }: HabitHeatMapP
         const logs = logsRes.data
 
         const activeDates = new Set<string>()
-        checkIns?.forEach((c: any) => activeDates.add(c.check_date))
-        logs?.forEach((l: any) => activeDates.add(l.log_date))
+        checkIns?.forEach((c: { check_date: string }) => activeDates.add(c.check_date))
+        logs?.forEach((l: { log_date: string }) => activeDates.add(l.log_date))
 
         if (activeDates.size > 0) {
 

@@ -42,7 +42,7 @@ interface PendingSurvey {
 
 interface Props {
   survey: PendingSurvey
-  onComplete: (improvement: any) => void
+  onComplete: (improvement: { percentImproved?: number; direction?: string; [key: string]: unknown } | null) => void
   onDismiss: () => void
 }
 

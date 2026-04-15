@@ -224,10 +224,10 @@ export async function POST(request: NextRequest) {
         .eq("is_active", true);
 
       if (meds && meds.length > 0) {
-        medicationsList = meds.map((m: any) =>
+        medicationsList = meds.map((m: { brand_name: string | null; generic_name: string | null }) =>
           m.generic_name && m.brand_name
             ? `${m.brand_name} (${m.generic_name})`
-            : (m.generic_name || m.brand_name)
+            : (m.generic_name || m.brand_name || "")
         );
       }
     } catch {

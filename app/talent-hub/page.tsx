@@ -72,7 +72,7 @@ export default function TalentHubPage() {
     return map[key]?.[lang] || key
   }
 
-  const updateForm = (field: string, value: any) => setForm(prev => ({ ...prev, [field]: value }))
+  const updateForm = (field: string, value: string | number | boolean | string[] | { institution: string; degree: string; field: string; year: string }[] | { name: string; issuer: string; year: string }[]) => setForm(prev => ({ ...prev, [field]: value }))
   const toggleSkill = (skillId: string) => {
     setForm(prev => ({
       ...prev,

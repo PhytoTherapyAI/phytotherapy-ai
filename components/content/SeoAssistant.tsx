@@ -9,6 +9,7 @@ import {
   Sparkles, Search, Eye, AlertTriangle, Check, X, TrendingUp,
   Lightbulb, Type, FileText, Hash, Clock, Gauge, ChevronDown,
   ChevronUp, Loader2, Wand2, RefreshCw,
+  type LucideIcon,
 } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
 
@@ -234,7 +235,7 @@ export function SeoAssistant({ title, summary, body, tags, lang, onTitleSuggesti
   const l = lang as Lang
   const t = (key: string) => tx(`seo.${key}`, l)
 
-  const Section = ({ id, icon: Icon, label, children, badge }: { id: string; icon: any; label: string; children: React.ReactNode; badge?: React.ReactNode }) => {
+  const Section = ({ id, icon: Icon, label, children, badge }: { id: string; icon: LucideIcon; label: string; children: React.ReactNode; badge?: React.ReactNode }) => {
     const isOpen = expanded === id
     return (
       <div className="border-b border-border last:border-0">

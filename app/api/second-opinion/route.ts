@@ -66,7 +66,7 @@ PATIENT PROFILE:
 
 MEDICATIONS: ${medications.length > 0 ? medications.map(m => `${m.brand_name || m.generic_name} ${m.dosage || ""}`).join(", ") : "None"}
 ALLERGIES: ${allergies.length > 0 ? allergies.map(a => a.allergen).join(", ") : "None"}
-RECENT BLOOD TESTS: ${bloodTests.length > 0 ? bloodTests.map((b: any) => { const td = typeof b.test_data === "string" ? JSON.parse(b.test_data) : b.test_data; return Object.entries(td || {}).map(([k, v]: [string, any]) => `${k}: ${v?.value} ${v?.unit || ""}`).join(", "); }).join("; ") : "None"}
+RECENT BLOOD TESTS: ${bloodTests.length > 0 ? bloodTests.map((b: { test_data: string | Record<string, unknown> }) => { const td = typeof b.test_data === "string" ? JSON.parse(b.test_data) : b.test_data; return Object.entries(td || {}).map(([k, v]: [string, unknown]) => { const vv = v as { value?: unknown; unit?: string } | null; return `${k}: ${vv?.value} ${vv?.unit || ""}`; }).join(", "); }).join("; ") : "None"}
 
 CONCERN: ${concern}
 Language: ${tx("api.respondLang", lang)}

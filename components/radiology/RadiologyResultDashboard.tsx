@@ -31,7 +31,7 @@ interface GlossaryTerm {
   definition: string;
 }
 
-interface RadiologyAnalysis {
+export interface RadiologyAnalysis {
   imageType: string;
   overallUrgency: "normal" | "attention" | "urgent";
   summary: string;

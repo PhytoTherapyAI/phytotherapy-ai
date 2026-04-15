@@ -412,7 +412,15 @@ export async function GET(req: Request) {
       return NextResponse.json({ pendingSurveys: [] });
     }
 
-    const pendingSurveys: any[] = [];
+    interface PendingSurvey {
+      supplementId: string
+      supplementName: string
+      timepoint: string
+      timepointLabel: string
+      questions: unknown[]
+      daysSinceStart: number
+    }
+    const pendingSurveys: PendingSurvey[] = [];
     const today = new Date();
 
     for (const supp of supplements) {

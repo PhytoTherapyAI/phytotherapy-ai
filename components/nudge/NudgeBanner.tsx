@@ -5,7 +5,7 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { X, Users, Clock, Flame, TrendingUp, Sparkles } from "lucide-react"
+import { X, Users, Clock, Flame, TrendingUp, Sparkles, type LucideIcon } from "lucide-react"
 
 type NudgeType = "social_proof" | "fomo" | "timing" | "streak"
 
@@ -22,11 +22,12 @@ interface NudgeBannerProps {
   onDismiss?: () => void
 }
 
+type NudgeData = NonNullable<NudgeBannerProps["data"]>
 const nudgeConfig: Record<NudgeType, {
-  icon: any
+  icon: LucideIcon
   gradient: string
   borderColor: string
-  messages: { en: (d: any) => string; tr: (d: any) => string }[]
+  messages: { en: (d?: NudgeData) => string; tr: (d?: NudgeData) => string }[]
 }> = {
   social_proof: {
     icon: Users,

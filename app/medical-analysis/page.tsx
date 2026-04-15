@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { BloodTestForm } from "@/components/blood-test/BloodTestForm";
 import { ResultDashboard } from "@/components/blood-test/ResultDashboard";
-import { RadiologyResultDashboard } from "@/components/radiology/RadiologyResultDashboard";
+import { RadiologyResultDashboard, type RadiologyAnalysis } from "@/components/radiology/RadiologyResultDashboard";
 import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
@@ -733,8 +733,7 @@ function RadiologyTab({
   const [imageType, setImageType] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<RadiologyAnalysis | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showCameraPerm, setShowCameraPerm] = useState(false);
 

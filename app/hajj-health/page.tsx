@@ -7,10 +7,10 @@ import { tx } from "@/lib/translations"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Sun, Droplets, Pill, Shield, AlertTriangle, ThermometerSun, Users, MapPin, ChevronDown, ChevronUp } from "lucide-react"
+import { Sun, Droplets, Pill, Shield, AlertTriangle, ThermometerSun, Users, MapPin, ChevronDown, ChevronUp, type LucideIcon } from "lucide-react"
 
 interface HealthTopic {
-  icon: any
+  icon: LucideIcon
   title: { en: string; tr: string }
   color: string
   items: { en: string; tr: string }[]

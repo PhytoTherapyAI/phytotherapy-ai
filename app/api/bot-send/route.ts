@@ -63,7 +63,12 @@ async function sendTelegram(chatId: string, message: string, buttons?: string[][
   }
 
   try {
-    const body: any = {
+    const body: {
+      chat_id: string
+      text: string
+      parse_mode: string
+      reply_markup?: { inline_keyboard: { text: string; callback_data: string }[][] }
+    } = {
       chat_id: chatId,
       text: message,
       parse_mode: "Markdown",

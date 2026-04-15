@@ -101,7 +101,8 @@ export async function POST(req: Request) {
       })
 
       if (!error && data && data.length > 0) {
-        results = data.map((row: any) => ({
+        interface SearchRow { content_type: string; content_id: string; title: string; title_tr?: string; description?: string; description_tr?: string; href: string; category: string; metadata?: Record<string, unknown>; similarity: number }
+        results = data.map((row: SearchRow) => ({
           contentType: row.content_type,
           contentId: row.content_id,
           title: row.title,

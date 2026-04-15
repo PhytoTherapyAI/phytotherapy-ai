@@ -536,12 +536,19 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
               title={lang === "tr" ? "Sesli mesaj" : "Voice message"}
               onClick={() => {
                 // Web Speech API (progressive enhancement)
-                const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+                interface SRAlternative { transcript: string }
+                interface SRResultItem { [index: number]: SRAlternative }
+                interface SRResultList { [index: number]: SRResultItem }
+                interface SRResult { results: SRResultList }
+                interface SR { lang: string; interimResults: boolean; onresult: (event: SRResult) => void; start: () => void }
+                interface SRConstructor { new (): SR }
+                const w = window as unknown as { SpeechRecognition?: SRConstructor; webkitSpeechRecognition?: SRConstructor };
+                const SpeechRecognition = w.SpeechRecognition || w.webkitSpeechRecognition;
                 if (!SpeechRecognition) return;
                 const recognition = new SpeechRecognition();
                 recognition.lang = lang === "tr" ? "tr-TR" : "en-US";
                 recognition.interimResults = false;
-                recognition.onresult = (event: any) => {
+                recognition.onresult = (event: SRResult) => {
                   const transcript = event.results[0][0].transcript;
                   setInput((prev) => prev + (prev ? " " : "") + transcript);
                 };

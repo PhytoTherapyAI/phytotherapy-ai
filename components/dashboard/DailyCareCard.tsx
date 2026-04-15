@@ -494,7 +494,7 @@ export function DailyCareCard() {
                     role="button"
                     tabIndex={0}
                     onClick={(e) => handleDismiss(e, card.id)}
-                    onKeyDown={(e) => { if (e.key === "Enter") handleDismiss(e as any, card.id) }}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleDismiss(e as unknown as React.MouseEvent, card.id) }}
                     className="flex h-5 w-5 items-center justify-center rounded-full text-muted-foreground/40 hover:text-muted-foreground hover:bg-muted/80 transition-colors z-10"
                     title={tx("dailyCare.dismiss", lang)}
                   >
