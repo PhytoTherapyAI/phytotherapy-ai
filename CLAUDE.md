@@ -209,7 +209,16 @@ Chat route: stream pass-through yerine buffer+filter+emit paterni. `[KVKK-OUTPUT
 Her tamamlanmış AI yanıtının altında kaldırılamaz `AIDisclaimer` componenti: "Bu bilgi yapay zeka tarafından üretilmiştir ve tıbbi tavsiye niteliği taşımaz." Chat üstünde `AIGeneratedBadge` ("🤖 AI Yanıtı"). KVKK Md.11/1-g kapsamında 6 kategorili itiraz formu (`AIObjectionForm`) → `/api/feedback/objection` → `ai_objections` tablosu.
 
 ### ⚡ Merkezi Koruma — lib/ai-client.ts Middleware
-**Session 22:** Katman 5, 6, 7, 9 artık **tüm 76 AI endpoint'i için otomatik** olarak uygulanıyor:
+**Session 22-24:** Katman 5, 6, 7, 9 + Consent gate artık **tüm 76 AI endpoint'i için otomatik** olarak uygulanıyor:
+
+**Consent gate (Session 24):**
+- Tüm ai-client exports `{ userId?, skipConsent? }` option kabul eder
+- `userId` verildiğinde middleware `checkAIConsent()` çağırır, rıza yoksa `ConsentRequiredError` fırlatır
+- Error internal olarak yakalanıp language-aware safe refusal döner (`{ error: "consent_required", blocked: true }`)
+- `skipConsent: true` emergency / kendi gate'ini yapan endpoint'ler için (chat route)
+- Endpoint'ler auth'tan aldıkları `user.id`'yi `userId` olarak geçirmelidir
+
+**Diğer katmanlar:**
 - `lib/ai-client.ts` içindeki `guardInput()` her çağrıda:
   - `stripPIIFromText` (PII scrub — email/phone/TC/URL)
   - `detectPromptInjection` (→ `PromptInjectionError` fırlatır)

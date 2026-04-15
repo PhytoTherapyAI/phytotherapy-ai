@@ -2,6 +2,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { stripPIIFromText, detectPromptInjection } from "@/lib/safety-guardrail";
 import { filterAIOutput } from "@/lib/output-safety-filter";
+import { checkAIConsent } from "@/lib/ai-consent";
 
 // Lazy-init client to ensure env vars are loaded at runtime
 let _client: Anthropic | null = null;
@@ -69,6 +70,61 @@ export class PromptInjectionError extends Error {
     this.threatLevel = threatLevel;
     this.userMessage = userMessage;
   }
+}
+
+/** Thrown when AI processing consent is missing. */
+export class ConsentRequiredError extends Error {
+  public readonly missingConsent: string;
+  public readonly userMessage: { en: string; tr: string };
+  constructor(missingConsent: string) {
+    super(`AI consent missing: ${missingConsent}`);
+    this.name = "ConsentRequiredError";
+    this.missingConsent = missingConsent;
+    this.userMessage = {
+      tr: "Yapay zeka özelliklerini kullanabilmeniz için önce Profil → Gizlilik Ayarları sayfasından Yapay Zeka İşleme Açık Rızası vermeniz gerekmektedir. Temel hizmetler (ilaç takibi, takvim) rıza olmadan da çalışır.",
+      en: "To use AI features, please grant AI Processing Explicit Consent in Profile → Privacy Settings. Basic services (medication tracking, calendar) work without consent.",
+    };
+  }
+}
+
+/**
+ * Check AI processing consent for a user.
+ * - userId undefined → skip (anonymous/background call, consent not required)
+ * - userId provided but no consent → throw ConsentRequiredError
+ * - Emergency bypass: caller sets { skipConsent: true }
+ * - Fail-closed on DB errors: throws ConsentRequiredError to be safe
+ */
+async function enforceConsent(userId: string | undefined | null, skipConsent: boolean | undefined): Promise<void> {
+  if (skipConsent) return;
+  if (!userId) return; // no user context = skip (preserves backward compat)
+  const gate = await checkAIConsent(userId);
+  if (!gate.allowed) {
+    throw new ConsentRequiredError(gate.missingConsent || "consent_ai_processing");
+  }
+}
+
+/** Safe refusal helpers for ConsentRequiredError (matches PromptInjectionError pattern) */
+function consentRefusalText(err: ConsentRequiredError, prompt: string): string {
+  return looksTurkish(prompt) ? err.userMessage.tr : err.userMessage.en;
+}
+function consentRefusalJSON(err: ConsentRequiredError, prompt: string): string {
+  const lang = looksTurkish(prompt) ? "tr" : "en";
+  return JSON.stringify({
+    error: "consent_required",
+    missingConsent: err.missingConsent,
+    message: err.userMessage[lang],
+    blocked: true,
+  });
+}
+function consentRefusalStream(err: ConsentRequiredError, prompt: string): ReadableStream {
+  const encoder = new TextEncoder();
+  const text = consentRefusalText(err, prompt);
+  return new ReadableStream({
+    start(controller) {
+      controller.enqueue(encoder.encode(text));
+      controller.close();
+    },
+  });
 }
 
 /** Detect if text looks Turkish (heuristic: Turkish-specific chars) */
@@ -278,13 +334,15 @@ async function retryWithBackoff<T>(fn: () => Promise<T>): Promise<T> {
 export async function askStreamJSON(
   prompt: string,
   systemPrompt: string,
-  options?: { premium?: boolean }
+  options?: { premium?: boolean; userId?: string; skipConsent?: boolean }
 ): Promise<string> {
-  // KVKK guards: input PII + injection + security preamble
+  // KVKK guards: consent + input PII + injection + security preamble
   const originalPrompt = prompt;
   try {
+    await enforceConsent(options?.userId, options?.skipConsent);
     ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
   } catch (err) {
+    if (err instanceof ConsentRequiredError) return consentRefusalJSON(err, originalPrompt);
     if (err instanceof PromptInjectionError) return safeRefusalJSON(err, originalPrompt);
     throw err;
   }
@@ -329,13 +387,15 @@ export async function askStreamJSONMultimodal(
   prompt: string,
   systemPrompt: string,
   files: GeminiFilePart[],
-  options?: { premium?: boolean }
+  options?: { premium?: boolean; userId?: string; skipConsent?: boolean }
 ): Promise<string> {
-  // KVKK guards: input PII + injection + security preamble
+  // KVKK guards: consent + input PII + injection + security preamble
   const originalPrompt = prompt;
   try {
+    await enforceConsent(options?.userId, options?.skipConsent);
     ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
   } catch (err) {
+    if (err instanceof ConsentRequiredError) return consentRefusalJSON(err, originalPrompt);
     if (err instanceof PromptInjectionError) return safeRefusalJSON(err, originalPrompt);
     throw err;
   }
@@ -402,13 +462,15 @@ export async function askStreamJSONMultimodal(
 export async function askGemini(
   prompt: string,
   systemPrompt: string,
-  options?: { premium?: boolean; temperature?: number; userQuery?: string }
+  options?: { premium?: boolean; temperature?: number; userQuery?: string; userId?: string; skipConsent?: boolean }
 ): Promise<string> {
-  // KVKK guards: input PII + injection + security preamble
+  // KVKK guards: consent + input PII + injection + security preamble
   const originalPrompt = prompt;
   try {
+    await enforceConsent(options?.userId, options?.skipConsent);
     ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
   } catch (err) {
+    if (err instanceof ConsentRequiredError) return consentRefusalText(err, originalPrompt);
     if (err instanceof PromptInjectionError) return safeRefusalText(err, originalPrompt);
     throw err;
   }
@@ -432,14 +494,16 @@ export async function askGemini(
 
 export async function askGeminiJSON(
   prompt: string,
-  systemPrompt: string
+  systemPrompt: string,
+  options?: { userId?: string; skipConsent?: boolean }
 ): Promise<string> {
-  // KVKK guards: input PII + injection + security preamble
-  // (No output filter for JSON — structured responses are passed through)
+  // KVKK guards: consent + input PII + injection + security preamble
   const originalPrompt = prompt;
   try {
+    await enforceConsent(options?.userId, options?.skipConsent);
     ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
   } catch (err) {
+    if (err instanceof ConsentRequiredError) return consentRefusalJSON(err, originalPrompt);
     if (err instanceof PromptInjectionError) return safeRefusalJSON(err, originalPrompt);
     throw err;
   }
@@ -466,13 +530,15 @@ export async function askGeminiJSON(
 export async function askGeminiStream(
   prompt: string,
   systemPrompt: string,
-  options?: { premium?: boolean; userQuery?: string; skipOutputFilter?: boolean }
+  options?: { premium?: boolean; userQuery?: string; skipOutputFilter?: boolean; userId?: string; skipConsent?: boolean }
 ): Promise<ReadableStream> {
-  // KVKK guards: input PII + injection + security preamble
+  // KVKK guards: consent + input PII + injection + security preamble
   const originalPrompt = prompt;
   try {
+    await enforceConsent(options?.userId, options?.skipConsent);
     ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
   } catch (err) {
+    if (err instanceof ConsentRequiredError) return consentRefusalStream(err, originalPrompt);
     if (err instanceof PromptInjectionError) return safeRefusalStream(err, originalPrompt);
     throw err;
   }
@@ -542,13 +608,16 @@ export interface GeminiFilePart {
 export async function askGeminiJSONMultimodal(
   prompt: string,
   systemPrompt: string,
-  files: GeminiFilePart[]
+  files: GeminiFilePart[],
+  options?: { userId?: string; skipConsent?: boolean }
 ): Promise<string> {
-  // KVKK guards: input PII + injection + security preamble
+  // KVKK guards: consent + input PII + injection + security preamble
   const originalPrompt = prompt;
   try {
+    await enforceConsent(options?.userId, options?.skipConsent);
     ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
   } catch (err) {
+    if (err instanceof ConsentRequiredError) return consentRefusalJSON(err, originalPrompt);
     if (err instanceof PromptInjectionError) return safeRefusalJSON(err, originalPrompt);
     throw err;
   }
@@ -606,13 +675,15 @@ export async function askGeminiStreamMultimodal(
   prompt: string,
   systemPrompt: string,
   files: GeminiFilePart[],
-  options?: { premium?: boolean; userQuery?: string; skipOutputFilter?: boolean }
+  options?: { premium?: boolean; userQuery?: string; skipOutputFilter?: boolean; userId?: string; skipConsent?: boolean }
 ): Promise<ReadableStream> {
-  // KVKK guards: input PII + injection + security preamble
+  // KVKK guards: consent + input PII + injection + security preamble
   const originalPrompt = prompt;
   try {
+    await enforceConsent(options?.userId, options?.skipConsent);
     ({ prompt, systemPrompt } = guardInput(prompt, systemPrompt));
   } catch (err) {
+    if (err instanceof ConsentRequiredError) return consentRefusalStream(err, originalPrompt);
     if (err instanceof PromptInjectionError) return safeRefusalStream(err, originalPrompt);
     throw err;
   }

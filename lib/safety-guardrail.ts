@@ -339,8 +339,9 @@ export function checkDrugHerbInteractions(
       }
 
       // Check caution interactions
-      const caution = (drugData as any).caution?.find(
-        (c: any) => herbLower.includes(c.herb.toLowerCase()) || c.herb.toLowerCase().includes(herbLower)
+      const drugDataWithCaution = drugData as { caution?: Array<{ herb: string; risk: string; mechanism: string; evidence: string }> };
+      const caution = drugDataWithCaution.caution?.find(
+        (c) => herbLower.includes(c.herb.toLowerCase()) || c.herb.toLowerCase().includes(herbLower)
       );
 
       if (caution) {
