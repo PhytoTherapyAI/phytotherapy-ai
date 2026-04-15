@@ -427,11 +427,12 @@ This rule exists because giving dosage advice without knowing the user's medicat
     }
 
     // Single model: claude-haiku-4-5 — no premium toggle
+    // skipOutputFilter=true because chat route does its own buffer+filter+emit below
     let stream;
     try {
       stream = geminiFiles.length > 0
-        ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles, { premium: false })
-        : await askGeminiStream(fullPrompt, systemPromptFull, { premium: false });
+        ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles, { premium: false, skipOutputFilter: true })
+        : await askGeminiStream(fullPrompt, systemPromptFull, { premium: false, skipOutputFilter: true });
     } catch (claudeError) {
       // Claude API call failed (rate limit, API key, network, etc.)
       // Return a streaming response with the error message instead of a 500

@@ -208,6 +208,19 @@ Chat route: stream pass-through yerine buffer+filter+emit paterni. `[KVKK-OUTPUT
 ### Katman 8: AI Disclaimer + İtiraz (components/ai/)
 Her tamamlanmış AI yanıtının altında kaldırılamaz `AIDisclaimer` componenti: "Bu bilgi yapay zeka tarafından üretilmiştir ve tıbbi tavsiye niteliği taşımaz." Chat üstünde `AIGeneratedBadge` ("🤖 AI Yanıtı"). KVKK Md.11/1-g kapsamında 6 kategorili itiraz formu (`AIObjectionForm`) → `/api/feedback/objection` → `ai_objections` tablosu.
 
+### ⚡ Merkezi Koruma — lib/ai-client.ts Middleware
+**Session 22:** Katman 5, 6, 7, 9 artık **tüm 76 AI endpoint'i için otomatik** olarak uygulanıyor:
+- `lib/ai-client.ts` içindeki `guardInput()` her çağrıda:
+  - `stripPIIFromText` (PII scrub — email/phone/TC/URL)
+  - `detectPromptInjection` (→ `PromptInjectionError` fırlatır)
+  - `SECURITY_PREAMBLE` system prompt'a otomatik prepend (tekrar prepend etmez)
+- `lib/ai-client.ts` içindeki `guardOutputText` / `guardOutputStream`:
+  - Non-JSON text yanıtlarda `filterAIOutput` otomatik uygulanır
+  - Stream'ler buffer → filter → emit paternine sarılır
+  - JSON yanıtlarında atlanır (structured output, düşük risk)
+- Caller opt-out: `{ skipOutputFilter: true }` — chat route gibi zaten kendi filtresini yapan yerler için
+- `lib/ai-consent.ts` — `requireAIConsent(userId, endpoint, lang, ip)`: herhangi bir API endpoint'inde tek satırla consent gate kurulabilir
+
 ### Katman 9: KVKK Aydınlatma + Rıza Ayrımı (onboarding)
 2026/347 İlke Kararı gereği aydınlatma ve rıza AYRI sayfada:
 - **AydinlatmaStep** — checkbox YOK, sadece "Okudum, Anladım" butonu
@@ -256,6 +269,8 @@ SENTRY_DSN=...
 16. AI output'u `filterAIOutput()`'tan geçirilmeden kullanıcıya gösterilMEZ — teşhis/reçete formatı yasak
 17. Aydınlatma metni ve rıza formu AYRI sayfalarda — birleştirme KVKK 2026/347 İlke Kararı'na AYKIRI
 18. Rıza vermeyenlere temel hizmet (ilaç takibi, takvim) AÇIK — hizmeti rızaya bağlama YASAK
+19. Tüm AI çağrıları `lib/ai-client.ts` üzerinden yapılır — doğrudan `Anthropic SDK` çağrısı YASAK (middleware'i bypass eder)
+20. Sağlık verisi işleyen AI endpoint'leri `requireAIConsent()` helper'ı ile consent gate kurmalı
 
 ---
 
