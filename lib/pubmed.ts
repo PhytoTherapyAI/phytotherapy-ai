@@ -164,7 +164,13 @@ async function searchEuropePMC(
     const data = await res.json();
     const results = data.resultList?.result || [];
 
-    return results.map((r: any) => {
+    return results.map((r: {
+      pmid?: string; id?: string; doi?: string; source?: string;
+      title?: string; authorString?: string; pubYear?: string | number;
+      abstractText?: string; journalTitle?: string;
+      bookOrReportDetails?: { publisher?: string };
+      fullTextUrlList?: { fullTextUrl?: Array<{ url: string }> };
+    }) => {
       const pmid = r.pmid || r.id || "";
       const source = r.source?.toLowerCase() || "";
       let articleUrl = "";

@@ -70,7 +70,8 @@ export const PROVIDERS: ProviderConfig[] = [
     id: "whoop", name: "WHOOP", logo: "🟢", color: "#44D62C",
     bgLight: "bg-green-50", bgDark: "dark:bg-green-950/20",
     description: { en: "Sync WHOOP recovery, strain, and sleep performance data", tr: "WHOOP toparlanma, zorlanma ve uyku performansı verilerini senkronize edin" },
-    supportedMetrics: ["heart_rate", "sleep", "hrv", "calories_burned", "respiratory_rate", "strain" as any],
+    // "strain" is a WHOOP-specific metric not in the standard MetricType union
+    supportedMetrics: ["heart_rate", "sleep", "hrv", "calories_burned", "respiratory_rate", "strain" as MetricType],
     authType: "oauth2", available: false,
   },
   {

@@ -43,13 +43,13 @@ export function validateFile(
   }
 
   // 2. MIME type check
-  if (!ALLOWED_MIME_TYPES.includes(mimeType as any)) {
+  if (!(ALLOWED_MIME_TYPES as readonly string[]).includes(mimeType)) {
     return { valid: false, error: `Invalid file type: ${mimeType}. Only PDF, JPG, PNG allowed.` }
   }
 
   // 3. Extension check (defense in depth — don't trust MIME alone)
   const ext = "." + fileName.split(".").pop()?.toLowerCase()
-  if (!ALLOWED_EXTENSIONS.includes(ext as any)) {
+  if (!(ALLOWED_EXTENSIONS as readonly string[]).includes(ext)) {
     return { valid: false, error: `Invalid file extension: ${ext}. Only .pdf, .jpg, .png allowed.` }
   }
 

@@ -211,7 +211,6 @@ async function retryWithFallback<T>(fn: (model: string) => Promise<T>): Promise<
 /**
  * Same as retryWithFallback but for streaming calls.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function retryStreamWithFallback(fn: (model: string) => Promise<any>): Promise<any> {
+async function retryStreamWithFallback<T>(fn: (model: string) => Promise<T>): Promise<T> {
   return retryWithFallback(fn);
 }

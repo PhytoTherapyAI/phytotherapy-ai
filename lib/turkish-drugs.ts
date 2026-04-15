@@ -10,7 +10,15 @@ export interface DrugEntry {
   source: 'local' | 'fda'
 }
 
-const TURKISH_DRUGS: DrugEntry[] = (drugsData as any[]).map(d => ({
+interface RawDrugEntry {
+  brandName: string
+  genericName: string
+  fullName: string
+  company: string
+  atc: string
+}
+
+const TURKISH_DRUGS: DrugEntry[] = (drugsData as RawDrugEntry[]).map(d => ({
   ...d,
   source: 'local' as const
 }))

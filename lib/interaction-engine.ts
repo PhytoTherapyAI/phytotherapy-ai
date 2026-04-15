@@ -401,8 +401,7 @@ function parseGeminiResponse(response: string): {
     const recs = Array.isArray(data.recommendations) ? data.recommendations : [];
 
     const recommendations: HerbRecommendation[] = recs.map(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (rec: any) => ({
+      (rec: Record<string, unknown>) => ({
         herb: String(rec.herb || "Unknown"),
         safety: validateSafety(String(rec.safety || "caution")),
         reason: String(rec.reason || ""),
@@ -414,15 +413,17 @@ function parseGeminiResponse(response: string): {
           : [],
         sources: Array.isArray(rec.sources)
           ? rec.sources.map(
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (s: any) =>
+              (s: unknown) =>
                 typeof s === "string"
                   ? { title: "", url: s, year: "" }
-                  : {
-                      title: String(s.title || ""),
-                      url: String(s.url || s.link || ""),
-                      year: String(s.year || s.date || ""),
-                    }
+                  : (() => {
+                      const src = s as Record<string, unknown>;
+                      return {
+                        title: String(src.title || ""),
+                        url: String(src.url || src.link || ""),
+                        year: String(src.year || src.date || ""),
+                      };
+                    })()
             )
           : [],
       })
