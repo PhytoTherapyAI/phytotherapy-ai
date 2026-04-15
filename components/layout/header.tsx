@@ -19,6 +19,7 @@ import { tx } from "@/lib/translations";
 import { createBrowserClient } from "@/lib/supabase";
 import { MobileMegaMenu } from "@/components/layout/mega-menu/MobileMegaMenu";
 import { CommandPalette, CommandPaletteTrigger } from "@/components/layout/CommandPalette";
+import { NotificationBell } from "@/components/family/NotificationBell";
 
 // Core nav — only 3 most-used actions (Hick's Law)
 const CORE_NAV = [
@@ -165,6 +166,7 @@ export function Header() {
 
                 <span id="tour-language-toggle"><LanguageToggle /></span>
                 <span id="tour-theme-toggle"><ThemeToggle /></span>
+                <NotificationBell />
 
                 {isLoading ? (
                   <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />

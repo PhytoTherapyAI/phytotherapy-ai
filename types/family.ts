@@ -42,6 +42,24 @@ export interface SharingPrefs {
   shares_emergency: boolean
 }
 
+export type FamilyNotificationType =
+  | 'reminder_meds'
+  | 'reminder_checkin'
+  | 'reminder_water'
+  | 'emergency'
+  | 'custom'
+
+export interface FamilyNotification {
+  id: string
+  group_id: string
+  from_user_id: string
+  to_user_id: string
+  type: FamilyNotificationType
+  message: string
+  read: boolean
+  created_at: string
+}
+
 export interface ActiveProfileSession {
   user_id: string
   viewing_user_id: string

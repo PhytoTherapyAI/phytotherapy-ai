@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import {
   Users, UserPlus, Crown, Shield, Trash2, Pencil, Check, X, Loader2, Home,
   Heart, Bell, Siren, Info, ChevronDown, Settings2, Mail, Clock, AlertCircle,
-  Pill, ShieldAlert, Activity, ChevronRight,
+  Pill, ShieldAlert, Activity, ChevronRight, CheckCircle2, Droplet, Send,
 } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
 import type { FamilyMember } from "@/types/family"
@@ -110,6 +110,10 @@ export default function FamilyPage() {
 
   // Roles info accordion
   const [rolesOpen, setRolesOpen] = useState(false)
+
+  // Reminder send modal
+  const [reminderTarget, setReminderTarget] = useState<FamilyMember | null>(null)
+  const [sendingReminder, setSendingReminder] = useState(false)
 
   // Sharing prefs modal
   const [sharingModalOpen, setSharingModalOpen] = useState(false)
@@ -339,6 +343,55 @@ export default function FamilyPage() {
       setFeedback({ type: "success", msg: tr ? "Davet iptal edildi" : "Invite cancelled" })
     } else {
       setFeedback({ type: "error", msg: tr ? "İptal edilemedi" : "Failed to cancel" })
+    }
+  }
+
+  async function handleSendReminder(type: "reminder_meds" | "reminder_checkin" | "reminder_water" | "custom", customMessage?: string) {
+    if (!reminderTarget?.user_id || !familyGroup) return
+    setSendingReminder(true)
+    try {
+      const supabase = createBrowserClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        setFeedback({ type: "error", msg: tr ? "Oturum bulunamadı" : "Session not found" })
+        return
+      }
+
+      const messageMap: Record<string, { tr: string; en: string }> = {
+        reminder_meds: { tr: "İlacını aldın mı?", en: "Did you take your meds?" },
+        reminder_checkin: { tr: "Bugün nasılsın? Kontrol ediver.", en: "How are you today? Check in please." },
+        reminder_water: { tr: "Su içmeyi unutma!", en: "Don't forget to drink water!" },
+        custom: { tr: customMessage || "", en: customMessage || "" },
+      }
+      const msg = type === "custom" ? (customMessage || "") : (tr ? messageMap[type].tr : messageMap[type].en)
+      if (!msg.trim()) {
+        setFeedback({ type: "error", msg: tr ? "Mesaj boş olamaz" : "Message cannot be empty" })
+        return
+      }
+
+      const res = await fetch("/api/family/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({
+          groupId: familyGroup.id,
+          toUserId: reminderTarget.user_id,
+          type,
+          message: msg,
+        }),
+      })
+
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setFeedback({ type: "error", msg: tr ? `Gönderilemedi: ${data.error || ""}` : `Failed: ${data.error || ""}` })
+        return
+      }
+      const targetName = reminderTarget.nickname || reminderTarget.profile?.display_name || reminderTarget.invite_email
+      setFeedback({ type: "success", msg: tr ? `Hatırlatma ${targetName}'a gönderildi` : `Reminder sent to ${targetName}` })
+      setReminderTarget(null)
+    } catch {
+      setFeedback({ type: "error", msg: tr ? "Hatırlatma gönderilemedi" : "Failed to send reminder" })
+    } finally {
+      setSendingReminder(false)
     }
   }
 
@@ -725,18 +778,30 @@ export default function FamilyPage() {
                             {tr ? "Paylaşım" : "Sharing"}
                           </Button>
                         )}
+                        {!isSelf && !isSynth && member.user_id && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 text-[10px] flex-1"
+                            onClick={() => setReminderTarget(member)}
+                            title={tr ? "Hatırlatma gönder" : "Send reminder"}
+                          >
+                            <Bell className="h-3 w-3 mr-1" />
+                            {tr ? "Hatırlat" : "Remind"}
+                          </Button>
+                        )}
                         {(isOwner || isAdmin) && !isSelf && !isSynth && (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-7 text-[10px] flex-1"
+                            className="h-7 px-2 text-[10px]"
                             onClick={() => {
                               setEditingId(member.id)
                               setNewNickname(member.nickname ?? "")
                             }}
+                            title={tr ? "Takma ad düzenle" : "Edit nickname"}
                           >
-                            <Pencil className="h-3 w-3 mr-1" />
-                            {tr ? "Takma ad" : "Nickname"}
+                            <Pencil className="h-3 w-3" />
                           </Button>
                         )}
                         {isOwner && !isSelf && !isSynth && member.role === "member" && (
@@ -1028,6 +1093,67 @@ export default function FamilyPage() {
           </>
         )}
       </div>
+
+      {/* ─── STAGE 5: Send reminder modal ─── */}
+      {reminderTarget && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4"
+          onClick={() => !sendingReminder && setReminderTarget(null)}
+        >
+          <div
+            className="bg-card w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl border max-h-[90vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="p-5 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Send className="h-5 w-5 text-emerald-500" />
+                <h3 className="font-semibold text-foreground">
+                  {tr ? "Hatırlatma Gönder" : "Send Reminder"}
+                </h3>
+              </div>
+              <button onClick={() => !sendingReminder && setReminderTarget(null)} className="text-muted-foreground hover:text-foreground">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-5">
+              <p className="text-xs text-muted-foreground mb-4">
+                {tr ? "Alıcı:" : "To:"} <span className="font-semibold text-foreground">
+                  {reminderTarget.nickname || reminderTarget.profile?.display_name || reminderTarget.invite_email}
+                </span>
+              </p>
+
+              <div className="grid grid-cols-1 gap-2 mb-4">
+                {[
+                  { type: "reminder_meds" as const, icon: Pill, color: "text-blue-500", labelTr: "İlacını aldın mı?", labelEn: "Did you take your meds?" },
+                  { type: "reminder_checkin" as const, icon: CheckCircle2, color: "text-emerald-500", labelTr: "Bugün nasılsın?", labelEn: "How are you today?" },
+                  { type: "reminder_water" as const, icon: Droplet, color: "text-cyan-500", labelTr: "Su içmeyi unutma", labelEn: "Drink water reminder" },
+                ].map(({ type, icon: Icon, color, labelTr, labelEn }) => (
+                  <button
+                    key={type}
+                    type="button"
+                    disabled={sendingReminder}
+                    onClick={() => handleSendReminder(type)}
+                    className="flex items-center gap-3 p-3 rounded-xl border bg-muted/30 hover:bg-muted/60 transition-colors disabled:opacity-50 text-left"
+                  >
+                    <Icon className={`h-5 w-5 flex-shrink-0 ${color}`} />
+                    <span className="text-sm font-medium text-foreground flex-1">
+                      {tr ? labelTr : labelEn}
+                    </span>
+                    <Send className="h-3.5 w-3.5 text-muted-foreground" />
+                  </button>
+                ))}
+              </div>
+
+              {sendingReminder && (
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground py-2">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  {tr ? "Gönderiliyor…" : "Sending…"}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ─── STAGE 3: Sharing prefs modal ─── */}
       {sharingModalOpen && (
