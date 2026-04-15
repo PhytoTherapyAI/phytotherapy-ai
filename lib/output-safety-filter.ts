@@ -33,14 +33,34 @@ const MEDICAL_CONDITIONS_EN = [
 ];
 
 const MEDICAL_CONDITIONS_TR = [
-  "diyabet", "hipertansiyon", "astım", "astim", "kanser", "tümör", "tumor",
-  "enfeksiyon", "hastalık", "hastaligi", "bozukluk", "sendrom", "eksikliği", "eksikligi",
-  "alerji", "anemi", "artrit", "bronşit", "bronsit", "kolesterol", "depresyon",
-  "anksiyete", "iltihap", "ülser", "ulser", "tiroid", "böbrek", "bobrek", "karaciğer", "karaciger",
-  "kalp\\s+yetmezliği", "kalp\\s+yetmezligi", "kalp\\s+krizi", "inme", "felç", "felc",
-  "koah", "zatürre", "zaturre", "hepatit", "diyabetik", "kardiyovasküler", "kardiyovaskuler",
-  "nöropati", "noropati", "osteoporoz", "migren", "epilepsi", "sedef", "egzama",
-  "obezite", "demans", "alzheimer", "parkinson", "fibromyalji",
+  // Metabolik / endokrin
+  "diyabet", "şeker\\s+hastalığı", "seker\\s+hastaligi", "tiroid", "guatr", "hashimoto",
+  "eksikliği", "eksikligi",
+  // Kardiyovasküler
+  "hipertansiyon", "tansiyon", "yüksek\\s+tansiyon", "yuksek\\s+tansiyon",
+  "kalp\\s+yetmezliği", "kalp\\s+yetmezligi", "kalp\\s+krizi", "kardiyovasküler", "kardiyovaskuler",
+  "aritmi", "ritim\\s+bozukluğu",
+  // Solunum
+  "astım", "astim", "koah", "zatürre", "zaturre", "bronşit", "bronsit",
+  // GI
+  "reflü", "reflu", "gastrit", "kolit", "ülser", "ulser", "irritable\\s+bağırsak",
+  // Kas-iskelet
+  "artrit", "bel\\s+fıtığı", "bel\\s+fitigi", "boyun\\s+fıtığı", "boyun\\s+fitigi",
+  "osteoporoz", "fibromyalji",
+  // Nörolojik / psikiyatrik
+  "migren", "epilepsi", "sara", "alzheimer", "demans", "parkinson", "nöropati", "noropati",
+  "depresyon", "anksiyete", "panik\\s+bozukluğu", "şizofreni", "sizofreni", "bipolar",
+  // Organ / sistem
+  "böbrek", "bobrek", "karaciğer", "karaciger", "siroz", "hepatit",
+  // Kan
+  "anemi", "lösemi", "losemi", "kanser", "tümör", "tumor",
+  // Cilt / göz / kulak
+  "sedef", "egzama", "ekzama", "psöriyazis", "psoriyazis",
+  // Genel kategoriler
+  "enfeksiyon", "iltihap", "alerji", "hastalık", "hastaligi", "bozukluk", "sendrom",
+  "kolesterol", "diyabetik", "obezite", "autoimmün", "otoimmün", "otoimmun",
+  // İnme
+  "inme", "felç", "felc",
 ];
 
 const MED_EN = MEDICAL_CONDITIONS_EN.join("|");
@@ -226,16 +246,25 @@ function filterHerbalAdvice(text: string): { text: string; mods: string[] } {
 
 const EMERGENCY_KEYWORDS = {
   tr: [
-    "göğüs ağrısı", "kalp krizi", "nefes darlığı", "nefes alamıyorum",
-    "bilinç kaybı", "bayılma", "felç", "inme", "şiddetli kanama",
-    "zehirlenme", "doz aşımı", "intihar", "kendime zarar",
-    "anafilaksi", "boğaz şişmesi", "nöbet", "sara krizi",
+    "göğüs ağrısı", "kalp krizi", "kalp çarpıntısı", "kalp durması",
+    "nefes darlığı", "nefes alamıyorum", "nefes alamıyor", "solunum durması",
+    "bilinç kaybı", "bilinç bulanıklığı", "şuur kaybı", "bayılma", "bayıldı",
+    "felç", "inme", "felç belirtisi", "ağız kayması", "kol kayması",
+    "şiddetli kanama", "ciddi kanama", "durdurulamayan kanama", "morarma",
+    "zehirlenme", "doz aşımı", "intihar", "kendime zarar", "kendine zarar",
+    "anafilaksi", "alerjik şok", "boğaz şişmesi", "dil şişmesi",
+    "nöbet", "sara krizi", "havale", "ciddi yanık", "ciddi yaralanma",
+    "kalp masajı", "cpr gerekli",
   ],
   en: [
-    "chest pain", "heart attack", "can't breathe", "cant breathe",
-    "shortness of breath", "loss of consciousness", "stroke",
-    "severe bleeding", "poisoning", "overdose", "suicidal", "self harm",
-    "anaphylaxis", "throat swelling", "seizure",
+    "chest pain", "heart attack", "cardiac arrest", "palpitations",
+    "can't breathe", "cant breathe", "cannot breathe", "respiratory failure",
+    "shortness of breath", "loss of consciousness", "altered consciousness",
+    "unconscious", "fainted", "stroke", "stroke symptoms", "facial drooping",
+    "arm weakness", "severe bleeding", "uncontrolled bleeding", "cyanosis",
+    "poisoning", "overdose", "suicidal", "self harm", "self-harm",
+    "anaphylaxis", "anaphylactic shock", "throat swelling", "tongue swelling",
+    "seizure", "convulsion", "severe burn", "severe injury", "cpr needed",
   ],
 };
 

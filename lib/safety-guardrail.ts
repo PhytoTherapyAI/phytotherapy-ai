@@ -747,8 +747,10 @@ const IDENTITY_FIELDS = new Set([
   "avatar_url", "profile_image", "birth_date", "birthDate",
 ]);
 
-/** Convert exact age to a privacy-preserving age range */
+/** Convert exact age to a privacy-preserving age range. Handles NaN/Infinity/negative defensively. */
 export function ageToRange(age: number): string {
+  if (!Number.isFinite(age) || age < 0) return "unknown";
+  if (age > 120) return "65+"; // cap at reasonable upper bound
   if (age < 18) return "0-17";
   if (age <= 24) return "18-24";
   if (age <= 34) return "25-34";
@@ -815,6 +817,20 @@ export function anonymizePromptData(userData: UserDataForAI): {
   let ageConverted = false;
   let ageRange: string | undefined;
 
+  // Defensive: accept undefined/null/primitive and return empty anonymized object
+  if (!userData || typeof userData !== "object" || Array.isArray(userData)) {
+    const timestamp = new Date().toISOString();
+    return {
+      anonymized: {},
+      log: {
+        timestamp,
+        fieldsStripped: [],
+        ageConverted: false,
+        hash: generateAuditHash([], timestamp),
+      },
+    };
+  }
+
   for (const [key, value] of Object.entries(userData)) {
     if (value === undefined || value === null) continue;
 
@@ -824,7 +840,7 @@ export function anonymizePromptData(userData: UserDataForAI): {
       continue;
     }
 
-    // Exact age → age range
+    // Exact age → age range (handles NaN via ageToRange guard)
     if (key === "age" && typeof value === "number") {
       const range = ageToRange(value);
       anonymized["age_range"] = range;
@@ -834,7 +850,16 @@ export function anonymizePromptData(userData: UserDataForAI): {
     }
 
     // Birth date → strip (could be re-identifying)
-    if (key.toLowerCase().includes("birth") || key.toLowerCase().includes("dob")) {
+    // Match only exact "birth*" or "dob" keys to avoid false positives like "birthrate"
+    const lowerKey = key.toLowerCase();
+    if (
+      lowerKey === "dob" ||
+      lowerKey.startsWith("birth_") ||
+      lowerKey.startsWith("birthdate") ||
+      lowerKey.startsWith("birthday") ||
+      lowerKey === "dateofbirth" ||
+      lowerKey === "dateofbirthday"
+    ) {
       fieldsStripped.push(key);
       continue;
     }
