@@ -321,4 +321,7 @@ export const commonTranslations: Record<string, TranslationEntry> = {
   "shareData.ackTerms": { en: "I have read and understand the data sharing terms", tr: "Veri paylaşım koşullarını okudum ve anladım" },
   "shareData.creating": { en: "Creating...", tr: "Oluşturuluyor..." },
   "shareData.createLink": { en: "Create Secure Link", tr: "Güvenli Link Oluştur" },
+  "common.loginRequired": { en: "Sign in required", tr: "Giriş Yapmanız Gerekiyor" },
+  "common.loginToUse2": { en: "You need to sign in to access this page and its features.", tr: "Bu sayfaya ve özelliklerine erişmek için giriş yapmanız gerekir." },
+  "common.login": { en: "Sign In", tr: "Giriş Yap" },
 }
