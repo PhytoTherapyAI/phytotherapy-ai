@@ -6,6 +6,9 @@ import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown, Sparkles, MessageSquare } from "lucide-react"
 import { LONGEVITY_RANGES, ORGAN_SYSTEMS, type BiomarkerRange } from "@/lib/data/longevity-ranges"
+import { tx } from "@/lib/translations"
+
+type Lang = "en" | "tr"
 
 // ── Mock user values ──
 const MOCK_VALUES: Record<string, number> = {
@@ -16,7 +19,7 @@ const MOCK_VALUES: Record<string, number> = {
 }
 
 // ── Longevity Range Bar ──
-function LongevityRangeBar({ marker, value, lang }: { marker: BiomarkerRange; value: number; lang: string }) {
+function LongevityRangeBar({ marker, value, lang }: { marker: BiomarkerRange; value: number; lang: Lang }) {
   const isTr = lang === "tr"
   const [showTips, setShowTips] = useState(false)
 
@@ -54,13 +57,13 @@ function LongevityRangeBar({ marker, value, lang }: { marker: BiomarkerRange; va
           style={{ transform: "translateX(-50%)" }} />
       </div>
       <div className="flex justify-between mt-0.5 text-[8px] text-muted-foreground">
-        <span>{isTr ? "Standart" : "Standard"}</span>
-        <span className="text-emerald-600">{isTr ? "Optimal" : "Optimal"}</span>
-        <span className="text-amber-600">{isTr ? "Uzun Ömür" : "Longevity"}</span>
+        <span>{tx("labInsights.standard", lang)}</span>
+        <span className="text-emerald-600">{tx("labInsights.optimal", lang)}</span>
+        <span className="text-amber-600">{tx("labInsights.longevity", lang)}</span>
       </div>
       {marker.improvementTips.length > 0 && !isInLongevity && (
         <button onClick={() => setShowTips(!showTips)} className="text-[10px] text-primary mt-1 hover:underline">
-          💡 {isTr ? "Nasıl iyileştirebilirim?" : "How can I improve?"} {showTips ? "▲" : "▼"}
+          💡 {tx("labInsights.howImprove", lang)} {showTips ? "▲" : "▼"}
         </button>
       )}
       <AnimatePresence>
@@ -80,7 +83,7 @@ function LongevityRangeBar({ marker, value, lang }: { marker: BiomarkerRange; va
 }
 
 // ── Organ System Cards ──
-function OrganSystemCards({ lang }: { lang: string }) {
+function OrganSystemCards({ lang }: { lang: Lang }) {
   const isTr = lang === "tr"
   const [expanded, setExpanded] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<"list" | "system">("system")
@@ -88,12 +91,12 @@ function OrganSystemCards({ lang }: { lang: string }) {
   return (
     <div className="rounded-2xl border bg-white dark:bg-card p-5 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-bold">🫀 {isTr ? "Organ Sistem Görünümü" : "Organ System View"}</h3>
+        <h3 className="text-sm font-bold">🫀 {tx("labInsights.organSystemView", lang)}</h3>
         <div className="flex gap-1">
           {(["list", "system"] as const).map(m => (
             <button key={m} onClick={() => setViewMode(m)}
               className={`rounded-full px-2.5 py-1 text-[10px] font-medium ${viewMode === m ? "bg-primary text-white" : "bg-muted/50 text-muted-foreground"}`}>
-              {m === "list" ? "📋" : "🫀"} {m === "list" ? (isTr ? "Liste" : "List") : (isTr ? "Sistem" : "System")}
+              {m === "list" ? "📋" : "🫀"} {m === "list" ? tx("labInsights.list", lang) : tx("labInsights.system", lang)}
             </button>
           ))}
         </div>
@@ -141,7 +144,7 @@ function OrganSystemCards({ lang }: { lang: string }) {
 }
 
 // ── Biological Age ──
-function BiologicalAgeCard({ lang, chronologicalAge = 35 }: { lang: string; chronologicalAge?: number }) {
+function BiologicalAgeCard({ lang, chronologicalAge = 35 }: { lang: Lang; chronologicalAge?: number }) {
   const isTr = lang === "tr"
   const [showPlan, setShowPlan] = useState(false)
 
@@ -163,24 +166,24 @@ function BiologicalAgeCard({ lang, chronologicalAge = 35 }: { lang: string; chro
 
   return (
     <div className="rounded-2xl border bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 p-5 shadow-sm">
-      <h3 className="text-sm font-bold mb-4 text-center">🧬 {isTr ? "Biyolojik Yaşınız" : "Your Biological Age"}</h3>
+      <h3 className="text-sm font-bold mb-4 text-center">🧬 {tx("labInsights.yourBiologicalAge", lang)}</h3>
       <div className="flex items-center justify-center gap-8 mb-4">
         <div className="text-center">
-          <p className="text-[10px] text-muted-foreground uppercase">{isTr ? "Kronolojik" : "Chronological"}</p>
+          <p className="text-[10px] text-muted-foreground uppercase">{tx("labInsights.chronological", lang)}</p>
           <p className="text-3xl font-bold text-muted-foreground">{chronologicalAge}</p>
         </div>
         <span className="text-2xl">→</span>
         <div className="text-center">
-          <p className="text-[10px] text-muted-foreground uppercase">{isTr ? "Biyolojik" : "Biological"}</p>
+          <p className="text-[10px] text-muted-foreground uppercase">{tx("labInsights.biological", lang)}</p>
           <motion.p initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
             className={`text-5xl font-bold ${isYounger ? "text-emerald-600" : "text-red-600"}`}>{bioAge}</motion.p>
         </div>
       </div>
       <p className={`text-center text-sm font-bold ${isYounger ? "text-emerald-600" : "text-red-600"}`}>
-        {isYounger ? "🎉" : "⚠️"} {diff} {isTr ? (isYounger ? "yıl GENÇ!" : "yıl YAŞLI") : (isYounger ? "years YOUNGER!" : "years OLDER")}
+        {isYounger ? "🎉" : "⚠️"} {diff} {isYounger ? tx("labInsights.yearsYounger", lang) : tx("labInsights.yearsOlder", lang)}
       </p>
       <button onClick={() => setShowPlan(!showPlan)} className="w-full mt-3 text-xs text-primary font-medium hover:underline text-center">
-        {isTr ? "Biyolojik yaşımı nasıl düşürürüm?" : "How to reduce my biological age?"} {showPlan ? "▲" : "▼"}
+        {tx("labInsights.howReduceBioAge", lang)} {showPlan ? "▲" : "▼"}
       </button>
       <AnimatePresence>
         {showPlan && (
@@ -204,8 +207,7 @@ function BiologicalAgeCard({ lang, chronologicalAge = 35 }: { lang: string; chro
 }
 
 // ── Action Plan ──
-function ActionPlan({ lang }: { lang: string }) {
-  const isTr = lang === "tr"
+function ActionPlan({ lang }: { lang: Lang }) {
   const foods_add = ["🐟 Salmon (Omega-3)", "🥬 Leafy Greens (Folate)", "🫐 Blueberries", "🥚 Eggs (Vit D)", "🥑 Avocado"]
   const foods_reduce = ["🍟 Fried foods", "🍬 Sugar", "🍞 Refined carbs", "🍺 Alcohol", "🥤 Sugary drinks"]
   const supplements = [
@@ -216,18 +218,18 @@ function ActionPlan({ lang }: { lang: string }) {
 
   return (
     <div className="rounded-2xl border bg-white dark:bg-card p-5 shadow-sm">
-      <h3 className="text-sm font-bold mb-4">📋 {isTr ? "Kişisel Aksiyon Planınız" : "Your Personalized Action Plan"}</h3>
+      <h3 className="text-sm font-bold mb-4">📋 {tx("labInsights.actionPlanTitle", lang)}</h3>
       <div className="grid gap-4 md:grid-cols-3">
         <div>
-          <p className="text-[10px] font-bold text-emerald-600 uppercase mb-2">{isTr ? "Eklenmesi Gereken Besinler" : "Top 5 Foods to Add"}</p>
+          <p className="text-[10px] font-bold text-emerald-600 uppercase mb-2">{tx("labInsights.foodsToAdd", lang)}</p>
           {foods_add.map(f => <p key={f} className="text-xs mb-1">{f}</p>)}
         </div>
         <div>
-          <p className="text-[10px] font-bold text-red-600 uppercase mb-2">{isTr ? "Azaltılması Gereken" : "Top 5 Foods to Reduce"}</p>
+          <p className="text-[10px] font-bold text-red-600 uppercase mb-2">{tx("labInsights.foodsToReduce", lang)}</p>
           {foods_reduce.map(f => <p key={f} className="text-xs mb-1">{f}</p>)}
         </div>
         <div>
-          <p className="text-[10px] font-bold text-primary uppercase mb-2">{isTr ? "Takviyeler" : "Top 5 Supplements"}</p>
+          <p className="text-[10px] font-bold text-primary uppercase mb-2">{tx("labInsights.supplements", lang)}</p>
           {supplements.map(s => (
             <div key={s.name} className="flex items-center gap-1.5 text-xs mb-1">
               <span className={`rounded px-1 py-0.5 text-[8px] font-bold ${s.evidence === "A" ? "bg-emerald-200 text-emerald-800" : "bg-amber-200 text-amber-800"}`}>{s.evidence}</span>
@@ -244,17 +246,15 @@ function ActionPlan({ lang }: { lang: string }) {
 interface Props { lang: "en" | "tr"; chronologicalAge?: number }
 
 export function LabInsightsPanel({ lang, chronologicalAge }: Props) {
-  const isTr = lang === "tr"
-
   return (
     <div className="space-y-6 mt-8">
       {/* Longevity Ranges Header */}
       <div>
         <h2 className="text-base font-bold mb-1 flex items-center gap-2">
-          🧬 {isTr ? "Standart vs Optimal vs Uzun Ömür Aralıkları" : "Standard vs Optimal vs Longevity Ranges"}
+          🧬 {tx("labInsights.rangesHeader", lang)}
         </h2>
         <p className="text-xs text-muted-foreground mb-4">
-          {isTr ? "Doktorunuz 'normal' diyor. Biz 100 sağlıklı yıl için neyin optimal olduğunu gösteriyoruz." : "Your doctor says 'normal'. We show you what's optimal for 100 healthy years."}
+          {tx("labInsights.rangesSubtitle", lang)}
         </p>
       </div>
 
@@ -266,13 +266,11 @@ export function LabInsightsPanel({ lang, chronologicalAge }: Props) {
 
       {/* Upload from ANY Lab */}
       <div className="rounded-2xl border-2 border-dashed border-primary/30 bg-primary/5 p-5 text-center">
-        <h3 className="text-sm font-bold mb-1">📤 {isTr ? "HERHANGİ bir Laboratuvardan Yükleyin" : "Upload from ANY Lab"}</h3>
+        <h3 className="text-sm font-bold mb-1">📤 {tx("labInsights.uploadTitle", lang)}</h3>
         <p className="text-xs text-muted-foreground mb-3">
-          {isTr
-            ? "Kendi laboratuvarını gerektiren platformlardan ($499+/yıl) farklı olarak, DoctoPal dünya genelindeki tüm laboratuvar sonuçlarını analiz eder."
-            : "Unlike platforms requiring their own labs ($499+/year), DoctoPal analyzes results from any laboratory worldwide."}
+          {tx("labInsights.uploadBody", lang)}
         </p>
-        <p className="text-[10px] text-muted-foreground">{isTr ? "Özel Anlaşma Gerekmez" : "No Exclusive Partnership Needed"}</p>
+        <p className="text-[10px] text-muted-foreground">{tx("labInsights.noExclusive", lang)}</p>
       </div>
 
       {/* Action Plan */}
@@ -284,11 +282,11 @@ export function LabInsightsPanel({ lang, chronologicalAge }: Props) {
           <MessageSquare className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1">
-          <p className="text-xs font-semibold">{isTr ? "Sonuçlarınız Hakkında AI'a Sorun" : "Ask AI About Your Results"}</p>
-          <p className="text-[10px] text-white/60">{isTr ? '"D vitaminim neden düşük?", "CRP\'yi nasıl düşürürüm?"' : '"Why is my Vitamin D low?", "What should I eat to lower hs-CRP?"'}</p>
+          <p className="text-xs font-semibold">{tx("labInsights.askAITitle", lang)}</p>
+          <p className="text-[10px] text-white/60">{tx("labInsights.askAIExamples", lang)}</p>
         </div>
         <a href="/health-assistant" className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium">
-          {isTr ? "Sor" : "Ask"} →
+          {tx("labInsights.ask", lang)} →
         </a>
       </div>
     </div>

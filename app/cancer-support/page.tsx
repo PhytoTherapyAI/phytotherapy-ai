@@ -12,16 +12,17 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 
 // ═══ AFFIRMATION CARDS ═══
-function AffirmationSwiper({ lang }: { lang: string }) {
+function AffirmationSwiper({ lang }: { lang: "en" | "tr" }) {
   const [idx, setIdx] = useState(0)
   const cards = [
-    { text: lang === "tr" ? "Her gün bir adım daha ileri." : "One step forward every day.", emoji: "🌱" },
-    { text: lang === "tr" ? "Güçlüsünüz, bunu unutmayın." : "You are strong, never forget that.", emoji: "💪" },
-    { text: lang === "tr" ? "Bugün kendinize nazik olun." : "Be gentle with yourself today.", emoji: "🤗" },
-    { text: lang === "tr" ? "Nefes alın, bu anı yaşayın." : "Breathe, live this moment.", emoji: "🌸" },
-    { text: lang === "tr" ? "Yalnız değilsiniz, biz buradayız." : "You're not alone, we're here.", emoji: "🤝" },
+    { text: tx("cancerSupport.affirm1", lang), emoji: "🌱" },
+    { text: tx("cancerSupport.affirm2", lang), emoji: "💪" },
+    { text: tx("cancerSupport.affirm3", lang), emoji: "🤗" },
+    { text: tx("cancerSupport.affirm4", lang), emoji: "🌸" },
+    { text: tx("cancerSupport.affirm5", lang), emoji: "🤝" },
   ]
 
   return (
@@ -57,14 +58,14 @@ function AffirmationSwiper({ lang }: { lang: string }) {
 }
 
 // ═══ FATIGUE TRACKER ═══
-function FatigueTracker({ lang }: { lang: string }) {
+function FatigueTracker({ lang }: { lang: "en" | "tr" }) {
   const [level, setLevel] = useState<number | null>(null)
   const [saved, setSaved] = useState(false)
 
   const levels = [
-    { value: 1, icon: <BatteryLow className="h-8 w-8" />, emoji: "😔", label: lang === "tr" ? "Çok Düşük" : "Very Low", color: "#ef4444" },
-    { value: 2, icon: <BatteryMedium className="h-8 w-8" />, emoji: "😐", label: lang === "tr" ? "Orta" : "Medium", color: "#f59e0b" },
-    { value: 3, icon: <Battery className="h-8 w-8" />, emoji: "😊", label: lang === "tr" ? "İyi" : "Good", color: "#22c55e" },
+    { value: 1, icon: <BatteryLow className="h-8 w-8" />, emoji: "😔", label: tx("cancerSupport.energyVeryLow", lang), color: "#ef4444" },
+    { value: 2, icon: <BatteryMedium className="h-8 w-8" />, emoji: "😐", label: tx("cancerSupport.energyMedium", lang), color: "#f59e0b" },
+    { value: 3, icon: <Battery className="h-8 w-8" />, emoji: "😊", label: tx("cancerSupport.energyGood", lang), color: "#22c55e" },
   ]
 
   return (
@@ -72,7 +73,7 @@ function FatigueTracker({ lang }: { lang: string }) {
       <CardContent className="p-5">
         <div className="flex items-center gap-2 mb-4">
           <Battery className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-bold">{lang === "tr" ? "Bugünkü Enerjiniz" : "Today's Energy"}</h3>
+          <h3 className="text-sm font-bold">{tx("cancerSupport.todaysEnergy", lang)}</h3>
         </div>
 
         <AnimatePresence mode="wait">
@@ -95,10 +96,10 @@ function FatigueTracker({ lang }: { lang: string }) {
               className="text-center py-4">
               <span className="text-3xl">✨</span>
               <p className="text-sm font-medium mt-2">
-                {lang === "tr" ? "Kaydedildi! Kendinize iyi bakın." : "Saved! Take care of yourself."}
+                {tx("cancerSupport.saved", lang)}
               </p>
               <Button variant="ghost" size="sm" className="mt-2 text-xs" onClick={() => setSaved(false)}>
-                {lang === "tr" ? "Değiştir" : "Change"}
+                {tx("cancerSupport.change", lang)}
               </Button>
             </motion.div>
           )}
@@ -109,26 +110,26 @@ function FatigueTracker({ lang }: { lang: string }) {
 }
 
 // ═══ CHEMO-BRAIN FRIENDLY QUICK ACTIONS ═══
-function QuickSymptomChips({ lang }: { lang: string }) {
+function QuickSymptomChips({ lang }: { lang: "en" | "tr" }) {
   const [selected, setSelected] = useState<string | null>(null)
   const symptoms = [
-    { id: "nausea", emoji: "🤢", label: lang === "tr" ? "Bulantım Var" : "I Feel Nauseous",
+    { id: "nausea", emoji: "🤢", label: tx("cancerSupport.nauseaLabel", lang),
       tips: [
-        lang === "tr" ? "Zencefil çayı — 1 fincan, yavaş yudum" : "Ginger tea — 1 cup, sip slowly",
-        lang === "tr" ? "Küçük porsiyonlar halinde ye" : "Eat in small portions",
-        lang === "tr" ? "Soğuk yiyecekler tercih et" : "Prefer cold foods",
+        tx("cancerSupport.nauseaTip1", lang),
+        tx("cancerSupport.nauseaTip2", lang),
+        tx("cancerSupport.nauseaTip3", lang),
       ]},
-    { id: "fatigue", emoji: "😴", label: lang === "tr" ? "Çok Yorgunum" : "I'm Very Tired",
+    { id: "fatigue", emoji: "😴", label: tx("cancerSupport.fatigueLabel", lang),
       tips: [
-        lang === "tr" ? "20 dk güç uykusu" : "20 min power nap",
-        lang === "tr" ? "Hafif yürüyüş — enerji artırır" : "Light walk — boosts energy",
-        lang === "tr" ? "Yeterli su tüketimi" : "Adequate hydration",
+        tx("cancerSupport.fatigueTip1", lang),
+        tx("cancerSupport.fatigueTip2", lang),
+        tx("cancerSupport.fatigueTip3", lang),
       ]},
-    { id: "mouth", emoji: "👄", label: lang === "tr" ? "Ağız Yaraları" : "Mouth Sores",
+    { id: "mouth", emoji: "👄", label: tx("cancerSupport.mouthLabel", lang),
       tips: [
-        lang === "tr" ? "Tuzlu su gargarası" : "Salt water gargle",
-        lang === "tr" ? "Yumuşak, soğuk yiyecekler" : "Soft, cool foods",
-        lang === "tr" ? "Baharatlı yiyeceklerden kaçının" : "Avoid spicy foods",
+        tx("cancerSupport.mouthTip1", lang),
+        tx("cancerSupport.mouthTip2", lang),
+        tx("cancerSupport.mouthTip3", lang),
       ]},
   ]
 
@@ -186,12 +187,10 @@ export default function CancerSupportPage() {
             <Shield className="h-12 w-12 text-indigo-500 mx-auto" />
           </motion.div>
           <h1 className="text-2xl font-bold text-foreground">
-            {lang === "tr" ? "Onkoloji Sığınağı" : "Oncology Sanctuary"}
+            {tx("cancerSupport.title", lang)}
           </h1>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            {lang === "tr"
-              ? "Tedavi sürecinizde yanınızdayız. Güvenli, kanıta dayalı destek."
-              : "We're with you through treatment. Safe, evidence-based support."}
+            {tx("cancerSupport.subtitle", lang)}
           </p>
         </motion.div>
 
@@ -199,7 +198,7 @@ export default function CancerSupportPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <div className="flex items-center gap-2 mb-3">
             <Heart className="h-4 w-4 text-indigo-500" />
-            <h2 className="text-sm font-bold">{lang === "tr" ? "Günlük Güç Kartları" : "Daily Strength Cards"}</h2>
+            <h2 className="text-sm font-bold">{tx("cancerSupport.dailyCards", lang)}</h2>
           </div>
           <AffirmationSwiper lang={lang} />
         </motion.div>
@@ -208,7 +207,7 @@ export default function CancerSupportPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="h-4 w-4 text-indigo-500" />
-            <h2 className="text-sm font-bold">{lang === "tr" ? "Hızlı Yardım" : "Quick Help"}</h2>
+            <h2 className="text-sm font-bold">{tx("cancerSupport.quickHelp", lang)}</h2>
           </div>
           <QuickSymptomChips lang={lang} />
         </motion.div>
@@ -227,13 +226,13 @@ export default function CancerSupportPage() {
                 <Wind className="h-6 w-6 text-indigo-500" />
               </motion.div>
               <div className="flex-1">
-                <h3 className="text-sm font-bold">{lang === "tr" ? "Nefes Egzersizi" : "Breathing Exercise"}</h3>
+                <h3 className="text-sm font-bold">{tx("cancerSupport.breathingTitle", lang)}</h3>
                 <p className="text-xs text-muted-foreground">
-                  {lang === "tr" ? "2 dakika — anksiyete ve bulantı için" : "2 minutes — for anxiety and nausea"}
+                  {tx("cancerSupport.breathingDesc", lang)}
                 </p>
               </div>
               <Button size="sm" className="rounded-xl bg-indigo-500 hover:bg-indigo-600 shrink-0">
-                {lang === "tr" ? "Başla" : "Start"}
+                {tx("cancerSupport.start", lang)}
               </Button>
             </CardContent>
           </Card>
@@ -244,15 +243,13 @@ export default function CancerSupportPage() {
           className="flex gap-3">
           <Button className="flex-1 h-14 rounded-2xl bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg">
             <FileText className="h-5 w-5 mr-2" />
-            {lang === "tr" ? "Doktorumla Paylaş (FHIR)" : "Share with My Doctor (FHIR)"}
+            {tx("cancerSupport.shareFhir", lang)}
           </Button>
         </motion.div>
 
         {/* Disclaimer */}
         <p className="text-[10px] text-muted-foreground text-center px-4 pb-6">
-          {lang === "tr"
-            ? "Bu uygulama kanser tedavisi yerine geçmez. Tüm öneriler için onkoloji doktorunuza danışın."
-            : "This app does not replace cancer treatment. Consult your oncologist for all recommendations."}
+          {tx("cancerSupport.disclaimer", lang)}
         </p>
       </div>
     </div>

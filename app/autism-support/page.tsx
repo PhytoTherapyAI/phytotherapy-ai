@@ -12,21 +12,24 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
+
+type Lang = "en" | "tr"
 
 // ═══ VISUAL ROUTINE PATH (PECS-style) ═══
-function VisualRoutine({ lang }: { lang: string }) {
+function VisualRoutine({ lang }: { lang: Lang }) {
   const [completed, setCompleted] = useState<string[]>([])
 
   const routines = [
-    { id: "wake", emoji: "🌅", label: lang === "tr" ? "Uyanma" : "Wake Up", time: "07:00" },
-    { id: "brush", emoji: "🪥", label: lang === "tr" ? "Diş Fırçalama" : "Brush Teeth", time: "07:10" },
-    { id: "breakfast", emoji: "🥣", label: lang === "tr" ? "Kahvaltı" : "Breakfast", time: "07:30" },
-    { id: "dress", emoji: "👕", label: lang === "tr" ? "Giyinme" : "Get Dressed", time: "08:00" },
-    { id: "school", emoji: "🎒", label: lang === "tr" ? "Okul / Etkinlik" : "School / Activity", time: "08:30" },
-    { id: "lunch", emoji: "🍽️", label: lang === "tr" ? "Öğle Yemeği" : "Lunch", time: "12:00" },
-    { id: "play", emoji: "🧩", label: lang === "tr" ? "Oyun Zamanı" : "Play Time", time: "15:00" },
-    { id: "bath", emoji: "🛁", label: lang === "tr" ? "Banyo" : "Bath", time: "19:00" },
-    { id: "sleep", emoji: "😴", label: lang === "tr" ? "Uyku" : "Sleep", time: "20:30" },
+    { id: "wake", emoji: "🌅", label: tx("autismSupport.routine.wake", lang), time: "07:00" },
+    { id: "brush", emoji: "🪥", label: tx("autismSupport.routine.brush", lang), time: "07:10" },
+    { id: "breakfast", emoji: "🥣", label: tx("autismSupport.routine.breakfast", lang), time: "07:30" },
+    { id: "dress", emoji: "👕", label: tx("autismSupport.routine.dress", lang), time: "08:00" },
+    { id: "school", emoji: "🎒", label: tx("autismSupport.routine.school", lang), time: "08:30" },
+    { id: "lunch", emoji: "🍽️", label: tx("autismSupport.routine.lunch", lang), time: "12:00" },
+    { id: "play", emoji: "🧩", label: tx("autismSupport.routine.play", lang), time: "15:00" },
+    { id: "bath", emoji: "🛁", label: tx("autismSupport.routine.bath", lang), time: "19:00" },
+    { id: "sleep", emoji: "😴", label: tx("autismSupport.routine.sleep", lang), time: "20:30" },
   ]
 
   const toggle = (id: string) => {
@@ -58,7 +61,7 @@ function VisualRoutine({ lang }: { lang: string }) {
                 className="flex items-center gap-1">
                 <span className="text-lg">🎉</span>
                 <Badge className="bg-violet-100 text-violet-700 text-[10px]">
-                  {lang === "tr" ? "Tamamlandı!" : "Done!"}
+                  {tx("autismSupport.done", lang)}
                 </Badge>
               </motion.div>
             ) : (
@@ -72,28 +75,28 @@ function VisualRoutine({ lang }: { lang: string }) {
 }
 
 // ═══ SENSORY SHIELD ═══
-function SensoryShield({ lang }: { lang: string }) {
+function SensoryShield({ lang }: { lang: Lang }) {
   const [active, setActive] = useState<string | null>(null)
   const triggers = [
     {
-      id: "noise", emoji: "🔊", label: lang === "tr" ? "Yüksek Ses" : "Loud Noise",
+      id: "noise", emoji: "🔊", label: tx("autismSupport.trigger.noise", lang),
       tips: [
-        { emoji: "🎧", text: lang === "tr" ? "Beyaz Gürültü Aç" : "Play White Noise" },
-        { emoji: "🤫", text: lang === "tr" ? "Sessiz bir alana git" : "Go to a quiet area" },
+        { emoji: "🎧", text: tx("autismSupport.trigger.noise.tip1", lang) },
+        { emoji: "🤫", text: tx("autismSupport.trigger.noise.tip2", lang) },
       ],
     },
     {
-      id: "light", emoji: "💡", label: lang === "tr" ? "Parlak Işık" : "Bright Light",
+      id: "light", emoji: "💡", label: tx("autismSupport.trigger.light", lang),
       tips: [
-        { emoji: "🕶️", text: lang === "tr" ? "Güneş gözlüğü tak" : "Wear sunglasses" },
-        { emoji: "🌙", text: lang === "tr" ? "Loş ışık tercih et" : "Prefer dim lighting" },
+        { emoji: "🕶️", text: tx("autismSupport.trigger.light.tip1", lang) },
+        { emoji: "🌙", text: tx("autismSupport.trigger.light.tip2", lang) },
       ],
     },
     {
-      id: "touch", emoji: "✋", label: lang === "tr" ? "Dokunma Hassasiyeti" : "Touch Sensitivity",
+      id: "touch", emoji: "✋", label: tx("autismSupport.trigger.touch", lang),
       tips: [
-        { emoji: "🧸", text: lang === "tr" ? "Derin Basınç Masajı Adımları" : "Deep Pressure Massage Steps" },
-        { emoji: "🎽", text: lang === "tr" ? "Ağırlıklı battaniye kullan" : "Use weighted blanket" },
+        { emoji: "🧸", text: tx("autismSupport.trigger.touch.tip1", lang) },
+        { emoji: "🎽", text: tx("autismSupport.trigger.touch.tip2", lang) },
       ],
     },
   ]
@@ -139,7 +142,7 @@ function SensoryShield({ lang }: { lang: string }) {
 }
 
 // ═══ STICKER BOARD ═══
-function StickerBoard({ completed, lang }: { completed: number; lang: string }) {
+function StickerBoard({ completed, lang }: { completed: number; lang: Lang }) {
   const stickers = ["⭐", "🌟", "🏆", "🎯", "💎", "🦋", "🌈", "🎪"]
   const earned = Math.min(completed, stickers.length)
 
@@ -148,7 +151,7 @@ function StickerBoard({ completed, lang }: { completed: number; lang: string }) 
       <CardContent className="p-5">
         <div className="flex items-center gap-2 mb-3">
           <Star className="h-4 w-4 text-amber-500" />
-          <h3 className="text-sm font-bold">{lang === "tr" ? "Küçük Zaferler" : "Little Victories"}</h3>
+          <h3 className="text-sm font-bold">{tx("autismSupport.littleVictories", lang)}</h3>
           <Badge variant="secondary" className="text-[9px]">{earned}/{stickers.length}</Badge>
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -179,8 +182,8 @@ export default function AutismSupportPage() {
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
           className="text-center py-4 space-y-2">
           <Puzzle className="h-10 w-10 text-violet-500 mx-auto" />
-          <h1 className="text-2xl font-bold">{lang === "tr" ? "Görsel Yaşam Rehberi" : "Visual Life Guide"}</h1>
-          <p className="text-sm text-muted-foreground">{lang === "tr" ? "Her adım görsel, her başarı kutlanır." : "Every step visual, every achievement celebrated."}</p>
+          <h1 className="text-2xl font-bold">{tx("autismSupport.title", lang)}</h1>
+          <p className="text-sm text-muted-foreground">{tx("autismSupport.subtitle", lang)}</p>
         </motion.div>
 
         {/* Sticker Board */}
@@ -192,7 +195,7 @@ export default function AutismSupportPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
           <div className="flex items-center gap-2 mb-3">
             <BookOpen className="h-4 w-4 text-violet-500" />
-            <h2 className="text-sm font-bold">{lang === "tr" ? "Günlük Rutin Yolu" : "Daily Routine Path"}</h2>
+            <h2 className="text-sm font-bold">{tx("autismSupport.dailyRoutine", lang)}</h2>
           </div>
           <VisualRoutine lang={lang} />
         </motion.div>
@@ -201,15 +204,13 @@ export default function AutismSupportPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
           <div className="flex items-center gap-2 mb-3">
             <Shield className="h-4 w-4 text-violet-500" />
-            <h2 className="text-sm font-bold">{lang === "tr" ? "Duyusal Kalkan" : "Sensory Shield"}</h2>
+            <h2 className="text-sm font-bold">{tx("autismSupport.sensoryShield", lang)}</h2>
           </div>
           <SensoryShield lang={lang} />
         </motion.div>
 
         <p className="text-[10px] text-muted-foreground text-center px-4">
-          {lang === "tr"
-            ? "Bu uygulama profesyonel terapi yerine geçmez. Uzmanınıza danışın."
-            : "This app does not replace professional therapy. Consult your specialist."}
+          {tx("autismSupport.disclaimer", lang)}
         </p>
       </div>
     </div>

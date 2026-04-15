@@ -36,6 +36,7 @@ import { BADGES, evaluateBadges, type UserStats } from "@/lib/badges";
 import { txObj } from "@/lib/translations";
 import {
   calculateProfilePower,
+  getCompletionMessage,
   ProfilePowerHeader,
   MotivationCard,
   SectionXPBadge,
@@ -586,20 +587,36 @@ export default function ProfilePage() {
     return <PageSkeleton variant="form" />;
   }
 
-  // ── Profile Completion Score (Endowed Progress Effect — starts at 20%) ──
-  const completionChecks = [
-    { id: "account", done: true, label: tx("profile.accountCreated", lang) },
-    { id: "name", done: !!profile.full_name, label: tx("profile.nameEntered", lang) },
-    { id: "meds", done: medications.length > 0, label: tx("profile.medsAdded", lang) },
-    { id: "allergies", done: allergies.length > 0, label: tx("profile.allergiesEntered", lang) },
-    { id: "lifestyle", done: !!(profile.alcohol_use || profile.smoking_use), label: tx("profile.lifestyleInfo", lang) },
-    { id: "medical", done: profile.kidney_disease !== null && profile.kidney_disease !== undefined, label: tx("profile.medicalHistory", lang) },
-    { id: "body", done: !!(profile.height_cm && profile.weight_kg), label: tx("profile.heightWeight", lang) },
-    { id: "blood", done: !!(profile.blood_group), label: tx("profile.bloodGroup", lang) },
+  // ── Profile Completion (SINGLE SOURCE OF TRUTH) ──
+  // Tek `calculateProfilePower` çağrısı — hem Profil Gücü kartı hem de alt banner
+  // bu hesaplamadan beslenir. Eski 8-item `completionChecks` array'i kaldırıldı
+  // (banner ile kart arasındaki %56 vs %100 tutarsızlığının kaynağıydı).
+  const vaccinesArr = Array.isArray(profile.vaccines) ? profile.vaccines : [];
+  const powerInput: ProfilePowerInput = {
+    hasBasicInfo: !!(profile.full_name && profile.age && profile.gender),
+    medicationCount: medications.length,
+    supplementCount: (profile.supplements || []).filter((s: string) => !s.startsWith("meta:")).length,
+    hasAllergies: allergies.length > 0,
+    hasChronicConditions: (profile.chronic_conditions || []).filter((c: string) => !c.startsWith('family:')).length > 0,
+    hasFamilyHistory: (profile.chronic_conditions || []).some((c: string) => c.startsWith('family:')),
+    vaccineCount: vaccinesArr.filter((v: { status: string }) => v.status === 'done').length,
+    hasContactInfo: !!(profile.country || profile.city || profile.phone),
+    hasLifestyle: !!(profile.height_cm || profile.weight_kg || profile.exercise_frequency || profile.sleep_quality),
+  };
+  const power = calculateProfilePower(powerInput);
+  const completionPct = power.percentage;
+
+  // Motivation logic — hangi bölüme yönlendirelim? (banner mesajı için ayrı)
+  const motivationOrder: { id: string; done: boolean }[] = [
+    { id: "name", done: !!profile.full_name },
+    { id: "meds", done: medications.length > 0 },
+    { id: "allergies", done: allergies.length > 0 },
+    { id: "medical", done: profile.kidney_disease !== null && profile.kidney_disease !== undefined },
+    { id: "lifestyle", done: !!(profile.alcohol_use || profile.smoking_use) },
+    { id: "body", done: !!(profile.height_cm && profile.weight_kg) },
+    { id: "blood", done: !!(profile.blood_group) },
   ];
-  const completedCount = completionChecks.filter(c => c.done).length;
-  const completionPct = Math.round((completedCount / completionChecks.length) * 100);
-  const nextIncomplete = completionChecks.find(c => !c.done);
+  const nextIncomplete = motivationOrder.find(c => !c.done);
 
   // Clinical motivation message based on missing field
   const getMotivation = () => {
@@ -650,23 +667,8 @@ export default function ProfilePage() {
         {tx('profile.title', lang)}
       </h1>
 
-      {/* ── PROFILE POWER HEADER ── */}
-      {profile && (() => {
-        const vaccines = Array.isArray(profile.vaccines) ? profile.vaccines : [];
-        const powerInput: ProfilePowerInput = {
-          hasBasicInfo: !!(profile.full_name && profile.age && profile.gender),
-          medicationCount: medications.length,
-          supplementCount: (profile.supplements || []).filter((s: string) => !s.startsWith("meta:")).length,
-          hasAllergies: allergies.length > 0,
-          hasChronicConditions: (profile.chronic_conditions || []).filter((c: string) => !c.startsWith('family:')).length > 0,
-          hasFamilyHistory: (profile.chronic_conditions || []).some((c: string) => c.startsWith('family:')),
-          vaccineCount: vaccines.filter((v: { status: string }) => v.status === 'done').length,
-          hasContactInfo: !!(profile.country || profile.city || profile.phone),
-          hasLifestyle: !!(profile.height_cm || profile.weight_kg || profile.exercise_frequency || profile.sleep_quality),
-        };
-        const power = calculateProfilePower(powerInput);
-        return <ProfilePowerHeader power={power} input={powerInput} lang={lang as 'en' | 'tr'} />;
-      })()}
+      {/* ── PROFILE POWER HEADER (single source: `power` computed once above) ── */}
+      {profile && <ProfilePowerHeader power={power} input={powerInput} lang={lang as 'en' | 'tr'} />}
 
       {/* ── DIGITAL TWIN HERO ── */}
       {profile && (
@@ -851,22 +853,33 @@ export default function ProfilePage() {
 
       {/* Completion checks now shown inside ProfilePowerHeader */}
 
-      {/* ── Completed celebration ── */}
-      {completionPct === 100 && (
-        <div className="mb-6 rounded-xl border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/20 p-4 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
-            <CheckCircle2 className="h-5 w-5 text-green-600" />
+      {/* ── Dynamic completion banner (driven by same `power.percentage`) ── */}
+      {(() => {
+        const msg = getCompletionMessage(power.percentage, lang as 'en' | 'tr');
+        // Tone → color (only "done" gets the celebratory green; others use neutral primary tint)
+        const palette = msg.tone === 'done'
+          ? { border: 'border-green-200 dark:border-green-800', bg: 'bg-green-50 dark:bg-green-950/20', circleBg: 'bg-green-100 dark:bg-green-900/30', icon: 'text-green-600', title: 'text-green-800 dark:text-green-300', sub: 'text-green-600 dark:text-green-400' }
+          : msg.tone === 'almost'
+          ? { border: 'border-emerald-200 dark:border-emerald-800', bg: 'bg-emerald-50 dark:bg-emerald-950/20', circleBg: 'bg-emerald-100 dark:bg-emerald-900/30', icon: 'text-emerald-600', title: 'text-emerald-800 dark:text-emerald-300', sub: 'text-emerald-600 dark:text-emerald-400' }
+          : msg.tone === 'good'
+          ? { border: 'border-blue-200 dark:border-blue-800', bg: 'bg-blue-50 dark:bg-blue-950/20', circleBg: 'bg-blue-100 dark:bg-blue-900/30', icon: 'text-blue-600', title: 'text-blue-800 dark:text-blue-300', sub: 'text-blue-600 dark:text-blue-400' }
+          : msg.tone === 'progress'
+          ? { border: 'border-amber-200 dark:border-amber-800', bg: 'bg-amber-50 dark:bg-amber-950/20', circleBg: 'bg-amber-100 dark:bg-amber-900/30', icon: 'text-amber-600', title: 'text-amber-800 dark:text-amber-300', sub: 'text-amber-600 dark:text-amber-400' }
+          : { border: 'border-orange-200 dark:border-orange-800', bg: 'bg-orange-50 dark:bg-orange-950/20', circleBg: 'bg-orange-100 dark:bg-orange-900/30', icon: 'text-orange-600', title: 'text-orange-800 dark:text-orange-300', sub: 'text-orange-600 dark:text-orange-400' };
+        return (
+          <div className={`mb-6 rounded-xl border ${palette.border} ${palette.bg} p-4 flex items-center gap-3`}>
+            <div className={`h-10 w-10 rounded-full ${palette.circleBg} flex items-center justify-center flex-shrink-0`}>
+              {msg.tone === 'done'
+                ? <CheckCircle2 className={`h-5 w-5 ${palette.icon}`} />
+                : <Sparkles className={`h-5 w-5 ${palette.icon}`} />}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className={`text-sm font-semibold ${palette.title}`}>{msg.title}</p>
+              <p className={`text-xs ${palette.sub}`}>{msg.subtitle}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-semibold text-green-800 dark:text-green-300">
-              {tx("profile.complete100", lang)}
-            </p>
-            <p className="text-xs text-green-600 dark:text-green-400">
-              {tx("profile.completeMsg", lang)}
-            </p>
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* SBAR PDF Export — prominent placement */}
       <Card className="mb-6 border-primary/20 bg-gradient-to-r from-primary/5 to-emerald-500/5">

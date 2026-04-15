@@ -12,9 +12,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 
 // ═══ WATER RING ═══
-function WaterRing({ current, max, lang }: { current: number; max: number; lang: string }) {
+function WaterRing({ current, max, lang }: { current: number; max: number; lang: "en" | "tr" }) {
   const pct = Math.min((current / max) * 100, 100)
   const r = 54; const c = 2 * Math.PI * r
   const remaining = Math.max(max - current, 0)
@@ -49,19 +50,19 @@ function WaterRing({ current, max, lang }: { current: number; max: number; lang:
       <p className="text-sm font-medium text-foreground">
         {remaining > 0
           ? (lang === "tr" ? `Kalan izin verilen sıvı: ${remaining}ml` : `Remaining allowed fluid: ${remaining}ml`)
-          : (lang === "tr" ? "Günlük limit tamamlandı!" : "Daily limit reached!")}
+          : tx("dialysis.limitReached", lang)}
       </p>
     </motion.div>
   )
 }
 
 // ═══ FLUID QUICK LOG ═══
-function FluidQuickLog({ onAdd, lang }: { onAdd: (ml: number) => void; lang: string }) {
+function FluidQuickLog({ onAdd, lang }: { onAdd: (ml: number) => void; lang: "en" | "tr" }) {
   const items = [
-    { emoji: "🍵", label: lang === "tr" ? "Çay Bardağı" : "Tea Cup", ml: 100 },
-    { emoji: "☕", label: lang === "tr" ? "Kahve" : "Coffee", ml: 150 },
-    { emoji: "🥤", label: lang === "tr" ? "Kupa" : "Mug", ml: 200 },
-    { emoji: "🍶", label: lang === "tr" ? "Büyük Bardak" : "Large Glass", ml: 300 },
+    { emoji: "🍵", label: tx("dialysis.teaCup", lang), ml: 100 },
+    { emoji: "☕", label: tx("dialysis.coffee", lang), ml: 150 },
+    { emoji: "🥤", label: tx("dialysis.mug", lang), ml: 200 },
+    { emoji: "🍶", label: tx("dialysis.largeGlass", lang), ml: 300 },
   ]
 
   return (
@@ -85,19 +86,19 @@ function FluidQuickLog({ onAdd, lang }: { onAdd: (ml: number) => void; lang: str
 }
 
 // ═══ NUTRITION SMART SWAPS ═══
-function NutritionSwaps({ lang }: { lang: string }) {
+function NutritionSwaps({ lang }: { lang: "en" | "tr" }) {
   const swaps = [
     {
-      bad: { name: lang === "tr" ? "Muz" : "Banana", emoji: "🍌", reason: lang === "tr" ? "Yüksek Potasyum" : "High Potassium" },
-      good: { name: lang === "tr" ? "Elma" : "Apple", emoji: "🍎", reason: lang === "tr" ? "Güvenli" : "Safe" },
+      bad: { name: tx("dialysis.banana", lang), emoji: "🍌", reason: tx("dialysis.highPotassium", lang) },
+      good: { name: tx("dialysis.apple", lang), emoji: "🍎", reason: tx("dialysis.safe", lang) },
     },
     {
-      bad: { name: lang === "tr" ? "Portakal" : "Orange", emoji: "🍊", reason: lang === "tr" ? "Yüksek Potasyum" : "High Potassium" },
-      good: { name: lang === "tr" ? "Üzüm" : "Grapes", emoji: "🍇", reason: lang === "tr" ? "Güvenli" : "Safe" },
+      bad: { name: tx("dialysis.orange", lang), emoji: "🍊", reason: tx("dialysis.highPotassium", lang) },
+      good: { name: tx("dialysis.grapes", lang), emoji: "🍇", reason: tx("dialysis.safe", lang) },
     },
     {
-      bad: { name: lang === "tr" ? "Domates" : "Tomato", emoji: "🍅", reason: lang === "tr" ? "Yüksek Potasyum" : "High Potassium" },
-      good: { name: lang === "tr" ? "Salatalık" : "Cucumber", emoji: "🥒", reason: lang === "tr" ? "Düşük Potasyum" : "Low Potassium" },
+      bad: { name: tx("dialysis.tomato", lang), emoji: "🍅", reason: tx("dialysis.highPotassium", lang) },
+      good: { name: tx("dialysis.cucumber", lang), emoji: "🥒", reason: tx("dialysis.lowPotassium", lang) },
     },
   ]
 
@@ -125,13 +126,13 @@ function NutritionSwaps({ lang }: { lang: string }) {
 }
 
 // ═══ MEDICATION TIMELINE ═══
-function MedTimeline({ lang }: { lang: string }) {
+function MedTimeline({ lang }: { lang: "en" | "tr" }) {
   const [completed, setCompleted] = useState<string[]>([])
   const meds = [
-    { id: "m1", time: "07:00", label: lang === "tr" ? "Fosfor Bağlayıcı" : "Phosphate Binder", note: lang === "tr" ? "Kahvaltıda ilk lokmayla" : "With first bite of breakfast" },
-    { id: "m2", time: "12:00", label: lang === "tr" ? "Fosfor Bağlayıcı" : "Phosphate Binder", note: lang === "tr" ? "Öğle yemeğiyle" : "With lunch" },
-    { id: "m3", time: "19:00", label: lang === "tr" ? "Fosfor Bağlayıcı" : "Phosphate Binder", note: lang === "tr" ? "Akşam yemeğiyle" : "With dinner" },
-    { id: "m4", time: "21:00", label: lang === "tr" ? "EPO Enjeksiyonu" : "EPO Injection", note: lang === "tr" ? "Haftada 3x" : "3x/week" },
+    { id: "m1", time: "07:00", label: tx("dialysis.phosphateBinder", lang), note: tx("dialysis.withBreakfast", lang) },
+    { id: "m2", time: "12:00", label: tx("dialysis.phosphateBinder", lang), note: tx("dialysis.withLunch", lang) },
+    { id: "m3", time: "19:00", label: tx("dialysis.phosphateBinder", lang), note: tx("dialysis.withDinner", lang) },
+    { id: "m4", time: "21:00", label: tx("dialysis.epoInjection", lang), note: tx("dialysis.threeWeek", lang) },
   ]
 
   const toggle = (id: string) => {
@@ -178,9 +179,9 @@ export default function DialysisTrackerPage() {
   const fluidLimit = 1500
 
   const tabs = [
-    { id: "fluid" as const, label: lang === "tr" ? "Sıvı" : "Fluid", emoji: "💧" },
-    { id: "nutrition" as const, label: lang === "tr" ? "Besin" : "Nutrition", emoji: "🍏" },
-    { id: "medication" as const, label: lang === "tr" ? "İlaç" : "Medication", emoji: "💊" },
+    { id: "fluid" as const, label: tx("dialysis.fluid", lang), emoji: "💧" },
+    { id: "nutrition" as const, label: tx("dialysis.nutrition", lang), emoji: "🍏" },
+    { id: "medication" as const, label: tx("dialysis.medication", lang), emoji: "💊" },
   ]
 
   return (
@@ -191,8 +192,8 @@ export default function DialysisTrackerPage() {
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
           className="text-center py-4 space-y-2">
           <Droplets className="h-10 w-10 text-sky-500 mx-auto" />
-          <h1 className="text-2xl font-bold">{lang === "tr" ? "Yaşam Dengesi Merkezi" : "Life Balance Center"}</h1>
-          <p className="text-sm text-muted-foreground">{lang === "tr" ? "Diyaliz sürecinizi kolayca yönetin." : "Easily manage your dialysis journey."}</p>
+          <h1 className="text-2xl font-bold">{tx("dialysis.title", lang)}</h1>
+          <p className="text-sm text-muted-foreground">{tx("dialysis.subtitle", lang)}</p>
         </motion.div>
 
         {/* Achievement Card */}
@@ -200,11 +201,11 @@ export default function DialysisTrackerPage() {
           className="rounded-2xl bg-gradient-to-r from-sky-100 to-cyan-100 dark:from-sky-900/20 dark:to-cyan-900/20 border border-sky-200/50 p-4 flex items-center gap-4">
           <Award className="h-10 w-10 text-sky-600 shrink-0" />
           <div>
-            <p className="text-sm font-bold text-sky-700 dark:text-sky-400">-2.4L {lang === "tr" ? "Arınma" : "Clearance"}</p>
-            <p className="text-xs text-sky-600/70">{lang === "tr" ? "Son seans başarılı!" : "Last session successful!"}</p>
+            <p className="text-sm font-bold text-sky-700 dark:text-sky-400">-2.4L {tx("dialysis.clearance", lang)}</p>
+            <p className="text-xs text-sky-600/70">{tx("dialysis.lastSessionSuccess", lang)}</p>
           </div>
           <Badge className="bg-emerald-100 text-emerald-700 text-[10px] ml-auto shrink-0">
-            {lang === "tr" ? "Başarılı" : "Success"} ✓
+            {tx("dialysis.success", lang)} ✓
           </Badge>
         </motion.div>
 
@@ -240,7 +241,7 @@ export default function DialysisTrackerPage() {
               exit={{ opacity: 0, x: 20 }} className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <Shield className="h-4 w-4 text-sky-500" />
-                <h2 className="text-sm font-bold">{lang === "tr" ? "Akıllı Besin Takası" : "Smart Food Swaps"}</h2>
+                <h2 className="text-sm font-bold">{tx("dialysis.smartFoodSwaps", lang)}</h2>
               </div>
               <NutritionSwaps lang={lang} />
             </motion.div>
@@ -251,7 +252,7 @@ export default function DialysisTrackerPage() {
               exit={{ opacity: 0, x: 20 }} className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <Clock className="h-4 w-4 text-sky-500" />
-                <h2 className="text-sm font-bold">{lang === "tr" ? "İlaç Zamanlama" : "Medication Schedule"}</h2>
+                <h2 className="text-sm font-bold">{tx("dialysis.medSchedule", lang)}</h2>
               </div>
               <MedTimeline lang={lang} />
             </motion.div>

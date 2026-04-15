@@ -211,7 +211,7 @@ function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, onRemoveTask, 
   icon: React.ReactNode; title: string; tasks: DailyTask[]
   onToggle: (id: string) => void; onAdd: () => void
   onRemoveTask?: (id: string) => void; onAddCustomTask?: (task: DailyTask) => void
-  isCurrent: boolean; hours: string; lang: string; blockKey?: string
+  isCurrent: boolean; hours: string; lang: "en" | "tr"; blockKey?: string
 }) {
   const [confettiId, setConfettiId] = useState<string | null>(null)
   const [editMode, setEditMode] = useState(false)
@@ -251,7 +251,7 @@ function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, onRemoveTask, 
           <h3 className="text-sm font-semibold text-foreground">{title}</h3>
           {isCurrent && (
             <Badge variant="secondary" className="text-[9px] bg-primary/10 text-primary px-1.5 py-0 animate-pulse">
-              {lang === "tr" ? "Şimdi" : "Now"}
+              {tx("calendar.now", lang)}
             </Badge>
           )}
         </div>
@@ -331,7 +331,7 @@ function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, onRemoveTask, 
             </div>
             <input value={newTaskLabel} onChange={e => setNewTaskLabel(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleAddCustom()}
-              placeholder={lang === "tr" ? "Görev adı..." : "Task name..."}
+              placeholder={tx("calendar.taskNamePlaceholder", lang)}
               className="flex-1 text-xs bg-transparent border-b border-muted-foreground/20 focus:border-primary outline-none py-1 px-1" />
             <button onClick={handleAddCustom} disabled={!newTaskLabel.trim()}
               className="p-1 rounded-md bg-primary/10 text-primary disabled:opacity-30 hover:bg-primary/20 transition-colors">
@@ -347,12 +347,12 @@ function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, onRemoveTask, 
 // ══════════════════════════════════════════════════
 // QUICK LOG FAB — Sage-green floating action button
 // ══════════════════════════════════════════════════
-function QuickLogFABEnhanced({ onAction, lang }: { onAction: (type: string) => void; lang: string }) {
+function QuickLogFABEnhanced({ onAction, lang }: { onAction: (type: string) => void; lang: "en" | "tr" }) {
   const [open, setOpen] = useState(false)
   const items = [
-    { type: "water", emoji: "💧", label: lang === "tr" ? "Su İçtim" : "Drank Water", color: "bg-blue-500" },
-    { type: "pain", emoji: "🤕", label: lang === "tr" ? "Ağrı Kaydet" : "Log Pain", color: "bg-amber-500" },
-    { type: "med", emoji: "💊", label: lang === "tr" ? "İlacımı Aldım" : "Took Medication", color: "bg-primary" },
+    { type: "water", emoji: "💧", label: tx("calendar.drankWater", lang), color: "bg-blue-500" },
+    { type: "pain", emoji: "🤕", label: tx("calendar.logPain", lang), color: "bg-amber-500" },
+    { type: "med", emoji: "💊", label: tx("calendar.tookMedication", lang), color: "bg-primary" },
   ]
 
   return (
@@ -407,7 +407,7 @@ function formatVitalValue(vital: VitalRecord, lang: string): string {
 // ══════════════════════════════════════════════════
 // DAILY PROGRESS SUMMARY
 // ══════════════════════════════════════════════════
-function DailyProgressCard({ completed, total, lang }: { completed: number; total: number; lang: string }) {
+function DailyProgressCard({ completed, total, lang }: { completed: number; total: number; lang: "en" | "tr" }) {
   const pct = total > 0 ? Math.round((completed / total) * 100) : 0
   const r = 36; const c = 2 * Math.PI * r; const offset = c - (pct / 100) * c
   const allDone = pct === 100
@@ -442,20 +442,18 @@ function DailyProgressCard({ completed, total, lang }: { completed: number; tota
         <div className="flex-1 min-w-0">
           <h3 className="text-base font-bold text-foreground">
             {allDone
-              ? (lang === "tr" ? "Harika! Tüm görevler tamam!" : "Amazing! All tasks complete!")
-              : (lang === "tr" ? "Günlük İlerleme" : "Daily Progress")}
+              ? tx("calendar.allTasksComplete", lang)
+              : tx("calendar.dailyProgress", lang)}
           </h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {lang === "tr"
-              ? `${completed}/${total} görev tamamlandı`
-              : `${completed}/${total} tasks completed`}
+            {`${completed}/${total} ${tx("calendar.tasksCompleted", lang)}`}
           </p>
           {allDone && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
               className="flex items-center gap-1 mt-2">
               <Flame className="h-3.5 w-3.5 text-amber-500" />
               <span className="text-xs font-medium text-amber-600 dark:text-amber-400">
-                {lang === "tr" ? "Seri devam ediyor!" : "Streak going!"}
+                {tx("calendar.streakGoing", lang)}
               </span>
             </motion.div>
           )}
@@ -492,17 +490,17 @@ export default function CalendarPage() {
 
   // Daily tasks organized by circadian time blocks — profile-driven
   const [morningTasks, setMorningTasks] = useState<DailyTask[]>([
-    { id: "m1", label: lang === "tr" ? "D3 Vitamini" : "Vitamin D3", done: false, emoji: "☀️" },
-    { id: "m2", label: lang === "tr" ? "Probiyotik" : "Probiotic", done: false, emoji: "🌿" },
-    { id: "m3", label: lang === "tr" ? "1 bardak su" : "1 glass water", done: false, emoji: "💧" },
+    { id: "m1", label: tx("calendar.vitaminD3", lang), done: false, emoji: "☀️" },
+    { id: "m2", label: tx("calendar.probiotic", lang), done: false, emoji: "🌿" },
+    { id: "m3", label: tx("calendar.oneGlassWater", lang), done: false, emoji: "💧" },
   ])
   const [noonTasks, setNoonTasks] = useState<DailyTask[]>([
     { id: "n1", label: "Omega-3", done: false, emoji: "🐟" },
-    { id: "n2", label: lang === "tr" ? "2 bardak su" : "2 glasses water", done: false, emoji: "💧" },
+    { id: "n2", label: tx("calendar.twoGlassesWater", lang), done: false, emoji: "💧" },
   ])
   const [nightTasks, setNightTasks] = useState<DailyTask[]>([
-    { id: "e1", label: lang === "tr" ? "Magnezyum" : "Magnesium", done: false, emoji: "🌙" },
-    { id: "e2", label: lang === "tr" ? "Kediotu çayı" : "Valerian tea", done: false, emoji: "🍵" },
+    { id: "e1", label: tx("calendar.magnesium", lang), done: false, emoji: "🌙" },
+    { id: "e2", label: tx("calendar.valerianTea", lang), done: false, emoji: "🍵" },
   ])
 
   // Shared completed items set for ritual sync (key = task label)
@@ -730,8 +728,8 @@ export default function CalendarPage() {
       }
 
       // Water tasks
-      const waterMorning: DailyTask = { id: "w1", label: lang === "tr" ? "1 bardak su" : "1 glass water", done: doneIds.has("w1"), emoji: "💧" }
-      const waterNoon: DailyTask = { id: "w2", label: lang === "tr" ? "2 bardak su" : "2 glasses water", done: doneIds.has("w2"), emoji: "💧" }
+      const waterMorning: DailyTask = { id: "w1", label: tx("calendar.oneGlassWater", lang), done: doneIds.has("w1"), emoji: "💧" }
+      const waterNoon: DailyTask = { id: "w2", label: tx("calendar.twoGlassesWater", lang), done: doneIds.has("w2"), emoji: "💧" }
 
       // Set task blocks
       if (morning.length > 0 || sups) {
@@ -879,13 +877,13 @@ export default function CalendarPage() {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
               className="bg-white dark:bg-card rounded-2xl border border-stone-200/60 dark:border-stone-800 p-4 shadow-sm">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                {lang === "tr" ? "Günlük Halkalar" : "Daily Rings"}
+                {tx("calendar.dailyRings", lang)}
               </p>
               <div className="flex justify-around gap-1 px-1">
-                <CircularRing emoji="💧" label={lang === "tr" ? "Su" : "Water"} current={Math.min(totalWater, 8)} total={8} color="#3b82f6" />
-                <CircularRing emoji="💊" label={lang === "tr" ? "İlaçlar" : "Meds"} current={medsDone} total={Math.max(totalMedsOnly, 1)} color="#3c7a52" />
-                <CircularRing emoji="🌿" label={lang === "tr" ? "Takviye" : "Supps"} current={supsDone} total={Math.max(totalSups, 1)} color="#6B8F71" />
-                <CircularRing emoji="🚶" label={lang === "tr" ? "Hareket" : "Move"} current={1} total={3} color="#f59e0b" />
+                <CircularRing emoji="💧" label={tx("calendar.water", lang)} current={Math.min(totalWater, 8)} total={8} color="#3b82f6" />
+                <CircularRing emoji="💊" label={tx("calendar.meds", lang)} current={medsDone} total={Math.max(totalMedsOnly, 1)} color="#3c7a52" />
+                <CircularRing emoji="🌿" label={tx("calendar.supps", lang)} current={supsDone} total={Math.max(totalSups, 1)} color="#6B8F71" />
+                <CircularRing emoji="🚶" label={tx("calendar.move", lang)} current={1} total={3} color="#f59e0b" />
               </div>
             </motion.div>
 
@@ -912,9 +910,9 @@ export default function CalendarPage() {
                       transition={{ type: "spring", stiffness: 300, damping: 30 }} />
                   )}
                   <span className="relative z-10">
-                    {view === "today" ? (lang === "tr" ? "Bugün" : "Today") :
-                     view === "month" ? (lang === "tr" ? "Takvim" : "Calendar") :
-                     (lang === "tr" ? "Vitaller" : "Vitals")}
+                    {view === "today" ? tx("calendar.today", lang) :
+                     view === "month" ? tx("calendar.calendarView", lang) :
+                     tx("calendar.vitals", lang)}
                   </span>
                 </motion.button>
               ))}
@@ -928,21 +926,21 @@ export default function CalendarPage() {
 
                   <TimeBlockEnhanced
                     icon={<Sun className="h-4 w-4 text-amber-500" />}
-                    title={lang === "tr" ? "Sabah Rutini" : "Morning Routine"}
+                    title={tx("calendar.morningRoutine", lang)}
                     tasks={morningTasks} onToggle={toggleTask} onAdd={() => {}}
                     onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("morning", t)}
                     isCurrent={currentBlock === "morning"} hours="06:00–12:00" lang={lang} blockKey="morning" />
 
                   <TimeBlockEnhanced
                     icon={<Sunset className="h-4 w-4 text-orange-500" />}
-                    title={lang === "tr" ? "Öğle" : "Afternoon"}
+                    title={tx("calendar.afternoon", lang)}
                     tasks={noonTasks} onToggle={toggleTask} onAdd={() => {}}
                     onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("noon", t)}
                     isCurrent={currentBlock === "noon"} hours="12:00–18:00" lang={lang} blockKey="noon" />
 
                   <TimeBlockEnhanced
                     icon={<MoonIcon className="h-4 w-4 text-indigo-400" />}
-                    title={lang === "tr" ? "Akşam Ritüeli" : "Evening Wind-Down"}
+                    title={tx("calendar.eveningWindDown", lang)}
                     tasks={nightTasks} onToggle={toggleTask} onAdd={() => {}}
                     onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("night", t)}
                     isCurrent={currentBlock === "night"} hours="18:00–00:00" lang={lang} blockKey="night" />
@@ -1051,7 +1049,7 @@ export default function CalendarPage() {
             >
               💧
             </motion.span>
-            {lang === "tr" ? "1 bardak su eklendi!" : "1 glass of water added!"}
+            {tx("calendar.waterAddedToast", lang)}
           </motion.div>
         )}
       </AnimatePresence>

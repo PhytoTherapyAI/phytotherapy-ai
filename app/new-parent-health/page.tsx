@@ -12,9 +12,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
+
+type Lang = "en" | "tr"
 
 // ═══ CONTEXT SWITCHER ═══
-function ContextSwitcher({ mode, onChange, lang }: { mode: "child" | "self"; onChange: (m: "child" | "self") => void; lang: string }) {
+function ContextSwitcher({ mode, onChange, lang }: { mode: "child" | "self"; onChange: (m: "child" | "self") => void; lang: Lang }) {
   return (
     <div className="flex bg-white dark:bg-card rounded-xl border p-1 gap-1">
       {(["child", "self"] as const).map(m => (
@@ -29,7 +32,7 @@ function ContextSwitcher({ mode, onChange, lang }: { mode: "child" | "self"; onC
           )}
           <span className="relative z-10 flex items-center justify-center gap-1.5">
             {m === "child" ? <Baby className="h-3.5 w-3.5" /> : <Heart className="h-3.5 w-3.5" />}
-            {m === "child" ? (lang === "tr" ? "Çocuğum" : "My Child") : (lang === "tr" ? "Kendim" : "Myself")}
+            {m === "child" ? tx("newParent.myChild", lang) : tx("newParent.myself", lang)}
           </span>
         </motion.button>
       ))}
@@ -38,7 +41,7 @@ function ContextSwitcher({ mode, onChange, lang }: { mode: "child" | "self"; onC
 }
 
 // ═══ POWER NAP TIMER ═══
-function PowerNapTimer({ lang }: { lang: string }) {
+function PowerNapTimer({ lang }: { lang: Lang }) {
   const [seconds, setSeconds] = useState(20 * 60)
   const [running, setRunning] = useState(false)
   const ref = useRef<NodeJS.Timeout | null>(null)
@@ -63,7 +66,7 @@ function PowerNapTimer({ lang }: { lang: string }) {
       <CardContent className="p-5 text-center">
         <div className="flex items-center justify-center gap-2 mb-3">
           <Moon className="h-4 w-4 text-indigo-500" />
-          <h3 className="text-sm font-bold">{lang === "tr" ? "20 Dk Güç Uykusu" : "20 Min Power Nap"}</h3>
+          <h3 className="text-sm font-bold">{tx("newParent.powerNapTitle", lang)}</h3>
         </div>
 
         <div className="relative inline-block mb-4">
@@ -94,13 +97,13 @@ function PowerNapTimer({ lang }: { lang: string }) {
 }
 
 // ═══ STRETCH ANIMATION ═══
-function StretchCard({ lang }: { lang: string }) {
+function StretchCard({ lang }: { lang: Lang }) {
   const [step, setStep] = useState(0)
   const stretches = [
-    { emoji: "🙆", label: lang === "tr" ? "Omuz çevirme (10x)" : "Shoulder rolls (10x)" },
-    { emoji: "🧘", label: lang === "tr" ? "Kedi-İnek duruşu (5x)" : "Cat-Cow stretch (5x)" },
-    { emoji: "💆", label: lang === "tr" ? "Boyun esneme (her yöne 15sn)" : "Neck stretch (15s each side)" },
-    { emoji: "🤸", label: lang === "tr" ? "Bel esneme (30sn)" : "Lower back stretch (30s)" },
+    { emoji: "🙆", label: tx("newParent.shoulderRolls", lang) },
+    { emoji: "🧘", label: tx("newParent.catCow", lang) },
+    { emoji: "💆", label: tx("newParent.neckStretch", lang) },
+    { emoji: "🤸", label: tx("newParent.lowerBackStretch", lang) },
   ]
 
   return (
@@ -108,7 +111,7 @@ function StretchCard({ lang }: { lang: string }) {
       <CardContent className="p-5">
         <div className="flex items-center gap-2 mb-3">
           <Sparkles className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-bold">{lang === "tr" ? "Sırtı Esneme" : "Back Stretch"}</h3>
+          <h3 className="text-sm font-bold">{tx("newParent.backStretchTitle", lang)}</h3>
         </div>
         <div className="space-y-2">
           {stretches.map((s, i) => (
@@ -129,26 +132,26 @@ function StretchCard({ lang }: { lang: string }) {
 }
 
 // ═══ MOOD SURVEY (Typeform-style) ═══
-function MoodSurvey({ lang }: { lang: string }) {
+function MoodSurvey({ lang }: { lang: Lang }) {
   const [mood, setMood] = useState<number | null>(null)
   const [submitted, setSubmitted] = useState(false)
 
   const moods = [
-    { value: 1, emoji: "😢", label: lang === "tr" ? "Çok Kötü" : "Very Bad" },
-    { value: 2, emoji: "😟", label: lang === "tr" ? "Kötü" : "Bad" },
-    { value: 3, emoji: "😐", label: lang === "tr" ? "Normal" : "Okay" },
-    { value: 4, emoji: "😊", label: lang === "tr" ? "İyi" : "Good" },
-    { value: 5, emoji: "🤩", label: lang === "tr" ? "Harika" : "Great" },
+    { value: 1, emoji: "😢", label: tx("newParent.moodVeryBad", lang) },
+    { value: 2, emoji: "😟", label: tx("newParent.moodBad", lang) },
+    { value: 3, emoji: "😐", label: tx("newParent.moodOkay", lang) },
+    { value: 4, emoji: "😊", label: tx("newParent.moodGood", lang) },
+    { value: 5, emoji: "🤩", label: tx("newParent.moodGreat", lang) },
   ]
 
   return (
     <Card className="rounded-2xl bg-gradient-to-br from-amber-50/50 to-orange-50/50 dark:from-amber-900/10 dark:to-orange-900/10">
       <CardContent className="p-5 text-center">
         <h3 className="text-sm font-bold mb-1">
-          {lang === "tr" ? "Bugün nasıl hissediyorsunuz?" : "How are you feeling today?"}
+          {tx("newParent.moodQuestion", lang)}
         </h3>
         <p className="text-[10px] text-muted-foreground mb-4">
-          {lang === "tr" ? "Duygularınız önemli" : "Your feelings matter"}
+          {tx("newParent.feelingsMatter", lang)}
         </p>
 
         <AnimatePresence mode="wait">
@@ -169,7 +172,7 @@ function MoodSurvey({ lang }: { lang: string }) {
               {mood !== null && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
                   <Button size="sm" className="rounded-xl" onClick={() => setSubmitted(true)}>
-                    {lang === "tr" ? "Kaydet" : "Save"}
+                    {tx("newParent.save", lang)}
                   </Button>
                 </motion.div>
               )}
@@ -179,7 +182,7 @@ function MoodSurvey({ lang }: { lang: string }) {
               className="py-4">
               <span className="text-3xl">💛</span>
               <p className="text-sm font-medium text-foreground mt-2">
-                {lang === "tr" ? "Teşekkürler! Kendinize iyi bakın." : "Thank you! Take care of yourself."}
+                {tx("newParent.moodThanks", lang)}
               </p>
             </motion.div>
           )}
@@ -191,6 +194,7 @@ function MoodSurvey({ lang }: { lang: string }) {
 
 export default function NewParentHealthPage() {
   const { lang } = useLang()
+
   const [mode, setMode] = useState<"child" | "self">("self")
 
   return (
@@ -203,9 +207,9 @@ export default function NewParentHealthPage() {
           <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ repeat: Infinity, duration: 4 }}>
             <Heart className="h-10 w-10 text-rose-400 mx-auto" />
           </motion.div>
-          <h1 className="text-2xl font-bold">{lang === "tr" ? "Ebeveyn Sığınağı" : "Parent Sanctuary"}</h1>
+          <h1 className="text-2xl font-bold">{tx("newParent.heroTitle", lang)}</h1>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            {lang === "tr" ? "Hem bebeğiniz hem kendiniz için bakım rehberi." : "Care guide for both your baby and yourself."}
+            {tx("newParent.heroSubtitle", lang)}
           </p>
         </motion.div>
 
@@ -229,12 +233,12 @@ export default function NewParentHealthPage() {
                 <CardContent className="p-5 space-y-3">
                   <div className="flex items-center gap-2">
                     <Leaf className="h-4 w-4 text-primary" />
-                    <h3 className="text-sm font-bold">{lang === "tr" ? "Ebeveyn Bakım İpuçları" : "Parent Self-Care Tips"}</h3>
+                    <h3 className="text-sm font-bold">{tx("newParent.selfCareTips", lang)}</h3>
                   </div>
                   {[
-                    { e: "🍵", t: lang === "tr" ? "Papatya çayı — anksiyete ve uyku için güvenli" : "Chamomile tea — safe for anxiety and sleep" },
-                    { e: "🧘", t: lang === "tr" ? "Günde 10 dk meditasyon — cortisol düşürür" : "10 min daily meditation — lowers cortisol" },
-                    { e: "💧", t: lang === "tr" ? "Emziriyorsanız günde 10+ bardak su" : "10+ glasses water if breastfeeding" },
+                    { e: "🍵", t: tx("newParent.tipChamomile", lang) },
+                    { e: "🧘", t: tx("newParent.tipMeditation", lang) },
+                    { e: "💧", t: tx("newParent.tipWater", lang) },
                   ].map((tip, i) => (
                     <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
                       <span>{tip.e}</span> {tip.t}
@@ -249,16 +253,16 @@ export default function NewParentHealthPage() {
               {/* Baby milestones */}
               {[
                 { age: "0-3m", emoji: "👶", items: [
-                  lang === "tr" ? "Tummy time günde 3-5 dk" : "Tummy time 3-5 min daily",
-                  lang === "tr" ? "Göz teması ve konuşma" : "Eye contact and talking",
+                  tx("newParent.tummyTime", lang),
+                  tx("newParent.eyeContact", lang),
                 ]},
                 { age: "3-6m", emoji: "🍼", items: [
-                  lang === "tr" ? "İlk katı gıdaya hazırlık" : "Preparing for first solids",
-                  lang === "tr" ? "Uyku rutini oluşturma" : "Establishing sleep routine",
+                  tx("newParent.firstSolids", lang),
+                  tx("newParent.sleepRoutine", lang),
                 ]},
                 { age: "6-12m", emoji: "🧸", items: [
-                  lang === "tr" ? "Demir takviyesi kontrolü" : "Iron supplement check",
-                  lang === "tr" ? "Motor gelişim takibi" : "Motor development tracking",
+                  tx("newParent.ironCheck", lang),
+                  tx("newParent.motorTracking", lang),
                 ]},
               ].map((m, i) => (
                 <motion.div key={m.age} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}

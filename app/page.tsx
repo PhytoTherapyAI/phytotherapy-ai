@@ -655,7 +655,7 @@ export default function Home() {
                   <motion.div whileHover={{ scale: 1.05 }}
                     className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-amber-500/10 to-orange-500/10 px-3 py-1 border border-amber-200 dark:border-amber-800">
                     <Flame className="h-3.5 w-3.5 text-amber-500" />
-                    <span className="text-xs font-bold text-amber-700 dark:text-amber-400">{streak} {isTr ? "gün seri" : "day streak"}</span>
+                    <span className="text-xs font-bold text-amber-700 dark:text-amber-400">{streak} {tx("dashboard.dayStreak", lang)}</span>
                   </motion.div>
                 </div>
 
@@ -665,15 +665,15 @@ export default function Home() {
                     <h1 className="text-xl md:text-2xl font-semibold text-foreground">
                       {tx(greetingKey, lang).replace("{name}", firstName)} 👋
                     </h1>
-                    <InfoTooltip title={isTr ? "Sağlık Merkezin" : "Your Health Hub"} description={isTr ? "Arama çubuğundan her şeyi sorabilirsin. Günlük özetin temel sağlık metriklerini bir bakışta gösterir." : "Ask anything via the search bar. Your daily snapshot shows key health metrics at a glance."} />
+                    <InfoTooltip title={tx("dashboard.healthHub", lang)} description={tx("dashboard.healthHubDesc", lang)} />
                   </div>
                   <div className="flex items-center justify-between mb-4">
                     <p className="text-xs text-muted-foreground">
-                      {isTr ? "Günlük görevlerini tamamla, skorunu yükselt!" : "Complete your daily tasks, boost your score!"}
+                      {tx("dashboard.tasksSubtitle", lang)}
                     </p>
                     <button onClick={() => setTaskCustomizeMode(!taskCustomizeMode)}
                       className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted"
-                      title={isTr ? "Kişiselleştir" : "Customize"}>
+                      title={tx("dashboard.customize", lang)}>
                       {taskCustomizeMode
                         ? <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M5 13l4 4L19 7"/></svg>
                         : <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -685,7 +685,7 @@ export default function Home() {
                   {taskCustomizeMode ? (
                     <div className="space-y-1.5 mb-3">
                       <p className="text-[10px] text-muted-foreground mb-2">
-                        {isTr ? "Ek görevleri aç/kapat:" : "Toggle extra tasks:"}
+                        {tx("dashboard.toggleExtra", lang)}
                       </p>
                       {STATIC_DASHBOARD_TASKS.map((t) => {
                         const isOn = taskPrefs.enabledIds.includes(t.id);
@@ -747,7 +747,7 @@ export default function Home() {
                       transition={{ duration: 0.8, ease: "easeOut" as const }} />
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-1">
-                    {completedCount}/{visibleTasks.length} {isTr ? "tamamlandı" : "completed"}
+                    {completedCount}/{visibleTasks.length} {tx("dashboard.completed", lang)}
                   </p>
                 </div>
               </div>
@@ -768,7 +768,7 @@ export default function Home() {
                     <Sparkles className="h-4 w-4 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-sm font-semibold">{isTr ? "Sağlık Asistanı" : "Health Assistant"}</h2>
+                    <h2 className="text-sm font-semibold">{tx("dashboard.healthAssistant", lang)}</h2>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -776,16 +776,14 @@ export default function Home() {
                   </div>
                 </div>
                 <p className="text-xs text-stone-400 mb-4 leading-relaxed">
-                  {isTr
-                    ? "İlaç etkileşimleri, takviye önerileri, kan tahlili yorumlama... Her konuda yanınızdayım."
-                    : "Drug interactions, supplement advice, blood test analysis... I'm here for everything."}
+                  {tx("dashboard.assistantDesc", lang)}
                 </p>
                 <div className="mt-auto">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-500" />
                     <input ref={inputRef} value={query} onChange={(e) => setQuery(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleAskAI()}
-                      placeholder={isTr ? "Bugün sağlığınız için ne araştıralım?" : "What should we research for your health today?"}
+                      placeholder={tx("dashboard.assistantPlaceholder", lang)}
                       className="w-full rounded-xl bg-white/10 backdrop-blur border border-white/10 pl-10 pr-10 py-3 text-sm text-white placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" />
                     <button onClick={handleAskAI} aria-label="Send"
                       className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 flex items-center justify-center rounded-lg bg-primary hover:bg-primary/80 transition-colors">
@@ -794,8 +792,8 @@ export default function Home() {
                   </div>
                   <div className="flex flex-wrap gap-1.5 mt-3">
                     {[
-                      { emoji: "💊", text: isTr ? "İlaç etkileşimi" : "Drug interaction", query: isTr ? "İlaç etkileşimi hakkında bilgi" : "Drug interaction help" },
-                      { emoji: "🩸", text: isTr ? "Tahlil yorumla" : "Analyze blood test", query: isTr ? "Kan tahlilimi yorumla" : "Analyze my blood test" },
+                      { emoji: "💊", text: tx("dashboard.chipDrugInteraction", lang), query: tx("dashboard.chipDrugInteractionQuery", lang) },
+                      { emoji: "🩸", text: tx("dashboard.chipAnalyzeBlood", lang), query: tx("dashboard.chipAnalyzeBloodQuery", lang) },
                     ].map((chip, i) => (
                       <button key={i} onClick={() => router.push(`/health-assistant?q=${encodeURIComponent(chip.query)}`)}
                         className="flex items-center gap-1 rounded-lg bg-white/5 border border-white/10 px-2.5 py-1.5 text-[10px] text-stone-400 hover:bg-white/10 hover:text-white transition-colors">
@@ -943,9 +941,7 @@ export default function Home() {
                 )}
               </h1>
               <p className="mt-3 max-w-lg text-xs text-muted-foreground sm:text-sm md:text-base">
-                {isTr
-                  ? "DoctoPal semptomlarınızı dinler, ilaç etkileşimlerini analiz eder ve doktorunuz için profesyonel bir SBAR ön raporu hazırlar."
-                  : "DoctoPal listens to your symptoms, analyzes drug interactions, and prepares a professional SBAR preliminary report for your doctor."}
+                {tx("landing.heroDesc", lang)}
               </p>
 
               {/* Spotlight search */}
@@ -956,7 +952,7 @@ export default function Home() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={isTr ? "Bir bitki veya sağlık sorusu sor..." : "Ask about any herb or health question..."}
+                    placeholder={tx("landing.searchPlaceholder", lang)}
                     className="w-full rounded-2xl border bg-card py-3.5 pl-11 pr-14 text-sm shadow-soft-md outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20"
                   />
                   <button type="submit" aria-label="Search" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
@@ -971,7 +967,7 @@ export default function Home() {
                   <Link key={href} href={href}
                     className="flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground transition-all hover:border-primary/30 hover:text-primary active:scale-95">
                     <span>{emoji}</span>
-                    {tx(labelKey, lang) || (isTr ? "Araç" : "Tool")}
+                    {tx(labelKey, lang) || tx("landing.toolFallback", lang)}
                   </Link>
                 ))}
               </div>
@@ -1017,19 +1013,19 @@ export default function Home() {
       {/* Feature Showcase */}
       <section className="mx-auto max-w-5xl px-4 py-10 md:py-16">
         <h2 className="font-heading text-xl font-semibold text-center mb-2 sm:text-2xl">
-          {isTr ? "Neler Yapabilirsin?" : "What Can You Do?"}
+          {tx("landing.whatCanYouDo", lang)}
         </h2>
         <p className="text-center text-sm text-muted-foreground mb-8 max-w-lg mx-auto">
-          {isTr ? "Sağlığını bilimle yönet" : "Manage your health with science"}
+          {tx("landing.manageWithScience", lang)}
         </p>
 
         {/* Core Features — Highlighted */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
           {[
-            { icon: <Stethoscope className="h-7 w-7 text-primary" />, title: isTr ? "AI Semptom Triyajı" : "AI Symptom Triage", desc: isTr ? "Şikayetlerinizi yapılandırılmış bir klinik tabloya dönüştürür ve aciliyet seviyesini belirler." : "Converts your complaints into a structured clinical picture and determines urgency level.", href: "/health-assistant", gradient: "from-primary/5 to-emerald-50 dark:from-primary/10 dark:to-emerald-950/20", border: "border-primary/20 dark:border-primary/30" },
-            { icon: <Pill className="h-7 w-7 text-red-500" />, title: isTr ? "İlaç Etkileşim Kontrolü" : "Drug Interaction Check", desc: isTr ? "Reçeteli ilaçlar ve takviyeler arasındaki riskli kombinasyonları anında tespit eder." : "Instantly detects risky combinations between prescription drugs and supplements.", href: "/interaction-checker", gradient: "from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20", border: "border-red-100 dark:border-red-900/30" },
-            { icon: <Leaf className="h-7 w-7 text-emerald-500" />, title: isTr ? "Fitoterapi AI" : "Phytotherapy AI", desc: isTr ? "Bitkisel destekleri modern tıp veritabanlarıyla çapraz kontrol ederek güvenli öneriler sunar." : "Cross-checks herbal supplements with modern medical databases to provide safe recommendations.", href: "/health-assistant", gradient: "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20", border: "border-emerald-100 dark:border-emerald-900/30" },
-            { icon: <Microscope className="h-7 w-7 text-blue-500" />, title: isTr ? "Laboratuvar Analizi" : "Lab Analysis", desc: isTr ? "Kan tahlili sonuçlarınızı yapay zeka ile yorumlar ve anlaşılır içgörülere dönüştürür." : "Interprets your blood test results with AI and turns them into understandable insights.", href: "/blood-test", gradient: "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20", border: "border-blue-100 dark:border-blue-900/30" },
+            { icon: <Stethoscope className="h-7 w-7 text-primary" />, title: tx("landing.aiSymptomTriage", lang), desc: tx("landing.aiSymptomTriageDesc", lang), href: "/health-assistant", gradient: "from-primary/5 to-emerald-50 dark:from-primary/10 dark:to-emerald-950/20", border: "border-primary/20 dark:border-primary/30" },
+            { icon: <Pill className="h-7 w-7 text-red-500" />, title: tx("landing.drugInteractionCheck", lang), desc: tx("landing.drugInteractionCheckDesc", lang), href: "/interaction-checker", gradient: "from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20", border: "border-red-100 dark:border-red-900/30" },
+            { icon: <Leaf className="h-7 w-7 text-emerald-500" />, title: tx("landing.phytotherapyAi", lang), desc: tx("landing.phytotherapyAiDesc", lang), href: "/health-assistant", gradient: "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20", border: "border-emerald-100 dark:border-emerald-900/30" },
+            { icon: <Microscope className="h-7 w-7 text-blue-500" />, title: tx("landing.labAnalysis", lang), desc: tx("landing.labAnalysisDesc", lang), href: "/blood-test", gradient: "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20", border: "border-blue-100 dark:border-blue-900/30" },
           ].map((f) => (
             <Link key={f.href + f.title} href={f.href}
               className={`group rounded-2xl border-2 ${f.border} bg-gradient-to-br ${f.gradient} p-7 transition-all hover:shadow-soft-lg hover:-translate-y-0.5`}>
@@ -1042,14 +1038,14 @@ export default function Home() {
 
         {/* Other Features */}
         <h3 className="text-center text-sm font-semibold text-muted-foreground mb-4">
-          {isTr ? "Daha Fazlası" : "And More"}
+          {tx("landing.andMore", lang)}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
-            { emoji: "💊", title: isTr ? "İlaç Etkileşim Kalkanı" : "Drug Interaction Shield", desc: isTr ? "50.000+ ilaç-bitki etkileşimini saniyeler içinde kontrol et" : "Check 50,000+ drug-herb interactions in seconds", href: "/interaction-checker", gradient: "from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20", border: "border-red-100 dark:border-red-900/30" },
-            { emoji: "🩸", title: isTr ? "AI Laboratuvar Analizi" : "AI Lab Analysis", desc: isTr ? "Kan tahlili PDF'ini yükle, anında görsel sağlık haritası al" : "Upload your blood test PDF, get instant visual health map", href: "/blood-test", gradient: "from-rose-50 to-pink-50 dark:from-rose-950/20 dark:to-pink-950/20", border: "border-rose-100 dark:border-rose-900/30" },
-            { emoji: "🌿", title: isTr ? "Fitoterapi Protokolleri" : "Phytotherapy Protocols", desc: isTr ? "PubMed alıntılı kanıta dayalı bitkisel tıp" : "Evidence-based herbal medicine with PubMed citations", href: "/health-assistant", gradient: "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20", border: "border-emerald-100 dark:border-emerald-900/30" },
-            { emoji: "👨‍⚕️", title: isTr ? "Doktor Klinik Yardımcısı" : "Doctor's Clinical Copilot", desc: isTr ? "AI destekli triyaj, reçete asistanı ve hasta analitiği" : "AI-powered triage, prescribing assistant, and patient analytics", href: "/doctor-panel", gradient: "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20", border: "border-blue-100 dark:border-blue-900/30" },
+            { emoji: "💊", title: tx("landing.drugInteractionShield", lang), desc: tx("landing.drugInteractionShieldDesc", lang), href: "/interaction-checker", gradient: "from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20", border: "border-red-100 dark:border-red-900/30" },
+            { emoji: "🩸", title: tx("landing.aiLabAnalysis", lang), desc: tx("landing.aiLabAnalysisDesc", lang), href: "/blood-test", gradient: "from-rose-50 to-pink-50 dark:from-rose-950/20 dark:to-pink-950/20", border: "border-rose-100 dark:border-rose-900/30" },
+            { emoji: "🌿", title: tx("landing.phytoProtocols", lang), desc: tx("landing.phytoProtocolsDesc", lang), href: "/health-assistant", gradient: "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20", border: "border-emerald-100 dark:border-emerald-900/30" },
+            { emoji: "👨‍⚕️", title: tx("landing.doctorCopilot", lang), desc: tx("landing.doctorCopilotDesc", lang), href: "/doctor-panel", gradient: "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20", border: "border-blue-100 dark:border-blue-900/30" },
           ].map((f) => (
             <Link key={f.href} href={f.href}
               className={`group rounded-2xl border ${f.border} bg-gradient-to-br ${f.gradient} p-6 transition-all hover:shadow-soft-lg hover:-translate-y-0.5`}>
@@ -1063,35 +1059,33 @@ export default function Home() {
         {/* Competitive Advantage — "Why DoctoPal?" */}
         <div className="mt-12 rounded-2xl border bg-gradient-to-br from-stone-50 to-primary/5 dark:from-stone-900 dark:to-primary/10 p-6 md:p-8">
           <h3 className="text-lg font-bold text-center mb-1">
-            {isTr ? "Neden DoctoPal?" : "Why DoctoPal?"}
+            {tx("landing.whyDoctopal", lang)}
           </h3>
           <p className="text-sm font-medium text-primary text-center mb-2">
-            {isTr ? "5 katmanlı güvenlik altyapımız her AI yanıtını klinik kurallara göre denetler." : "Our 5-layer safety infrastructure audits every AI response against clinical rules."}
+            {tx("landing.whyDoctopalSubtitle", lang)}
           </p>
           <p className="text-xs text-muted-foreground text-center mb-6 max-w-lg mx-auto">
-            {isTr
-              ? "Türkiye'nin ilk ilaç-bitki etkileşim veritabanıyla desteklenmektedir. İlaç takibi, alerji yönetimi ve BMI analizi — hepsi yapay zeka ile güçlendirilmiş."
-              : "Powered by Turkey's first drug-herb interaction database. Medication tracking, allergy management, and BMI analysis — all enhanced with AI."}
+            {tx("landing.whyDoctopalDesc", lang)}
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {[
-              { feature: isTr ? "AI Semptom Triyajı" : "AI Symptom Triage", isNew: false },
-              { feature: isTr ? "İlaç Etkileşimi" : "Drug Interaction Shield", isNew: true },
-              { feature: isTr ? "Fitoterapi AI" : "Phytotherapy AI", isNew: true },
-              { feature: isTr ? "Tahmini Etkinlik" : "Predictive Effectiveness", isNew: true },
-              { feature: isTr ? "Laboratuvar Analizi" : "Lab Report Analysis", isNew: true },
-              { feature: isTr ? "Doktor Hazırlık Raporu" : "Doctor Pre-Visit Report", isNew: false },
-              { feature: isTr ? "Günlük Sağlık Takibi" : "Daily Health Tracking", isNew: true },
-              { feature: isTr ? "Alışkanlık Serisi" : "Habit Streaks & Heat Maps", isNew: true },
-              { feature: isTr ? "İlaç Takibi" : "Medication Tracker", isNew: false },
-              { feature: isTr ? "Alerji Takibi" : "Allergy Tracker", isNew: false },
-              { feature: isTr ? "Aile Profilleri" : "Family Profiles", isNew: true },
-              { feature: isTr ? "Toparlanma Skoru" : "Recovery Score (Free)", isNew: true },
-              { feature: isTr ? "Biyolojik Bütçe" : "Biological Budget", isNew: true },
-              { feature: isTr ? "AI Korelasyon" : "AI Health Correlations", isNew: true },
-              { feature: isTr ? "Kişisel Deneyler" : "Personal A/B Experiments", isNew: true },
-              { feature: isTr ? "BMI & Vücut Analizi" : "BMI & Body Analysis", isNew: false },
-              { feature: isTr ? "Donanım Gerekmez" : "No Hardware Required", isNew: false },
+              { feature: tx("landing.aiSymptomTriage", lang), isNew: false },
+              { feature: tx("landing.featDrugInteraction", lang), isNew: true },
+              { feature: tx("landing.phytotherapyAi", lang), isNew: true },
+              { feature: tx("landing.featPredictiveEff", lang), isNew: true },
+              { feature: tx("landing.featLabReport", lang), isNew: true },
+              { feature: tx("landing.featDoctorPrevisit", lang), isNew: false },
+              { feature: tx("landing.featDailyTracking", lang), isNew: true },
+              { feature: tx("landing.featHabitStreaks", lang), isNew: true },
+              { feature: tx("landing.featMedTracker", lang), isNew: false },
+              { feature: tx("landing.featAllergyTracker", lang), isNew: false },
+              { feature: tx("landing.featFamilyProfiles", lang), isNew: true },
+              { feature: tx("landing.featRecoveryScore", lang), isNew: true },
+              { feature: tx("landing.featBiologicalBudget", lang), isNew: true },
+              { feature: tx("landing.featAiCorrelations", lang), isNew: true },
+              { feature: tx("landing.featPersonalAb", lang), isNew: true },
+              { feature: tx("landing.featBmiAnalysis", lang), isNew: false },
+              { feature: tx("landing.featNoHardware", lang), isNew: false },
             ].map((item) => (
               <div key={item.feature} className={`flex items-center gap-1.5 rounded-lg bg-white/80 dark:bg-card/80 px-2.5 py-2 text-[11px] font-medium border shadow-sm ${item.isNew ? "ring-1 ring-emerald-200 dark:ring-emerald-800" : ""}`}>
                 <span className="text-emerald-500 shrink-0">✅</span>
@@ -1101,16 +1095,16 @@ export default function Home() {
             ))}
           </div>
           <p className="text-[9px] text-muted-foreground text-center mt-3">
-            {isTr ? "* Tüm AI yanıtları 5 katmanlı güvenlik altyapısından geçer" : "* All AI responses pass through a 5-layer clinical safety pipeline"}
+            {tx("landing.safetyDisclaimer", lang)}
           </p>
         </div>
 
         {/* Stats */}
         <div className="mt-10 flex justify-center gap-8 sm:gap-12 flex-wrap">
           {[
-            { num: "166+", label: isTr ? "Sağlık Aracı" : "Health Tools" },
-            { num: "348+", label: isTr ? "Sayfa" : "Pages" },
-            { num: "75+",  label: isTr ? "AI Destekli Rota" : "AI-Powered Routes" },
+            { num: "166+", label: tx("landing.statHealthTools", lang) },
+            { num: "348+", label: tx("landing.statPages", lang) },
+            { num: "75+",  label: tx("landing.statAiRoutes", lang) },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <p className="text-2xl font-bold text-primary sm:text-3xl">{s.num}</p>
@@ -1123,14 +1117,14 @@ export default function Home() {
       {/* CTA Section */}
       <section className="mx-4 mb-10 rounded-2xl bg-gradient-to-r from-primary/10 to-teal-500/10 p-8 text-center border border-primary/10 md:mx-auto md:max-w-4xl">
         <h2 className="font-heading text-xl font-semibold sm:text-2xl">
-          {isTr ? "Sağlık Yolculuğuna Bugün Başla" : "Start Your Health Journey Today"}
+          {tx("landing.ctaTitle", lang)}
         </h2>
         <p className="text-sm text-muted-foreground mt-2 mb-5 max-w-md mx-auto">
-          {isTr ? "Ücretsiz kaydol, kredi kartı gerekmez." : "Sign up free — no credit card required."}
+          {tx("landing.ctaSubtitle", lang)}
         </p>
         <Link href="/auth/login"
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20">
-          {isTr ? "Ücretsiz Başla" : "Get Started Free"} <ArrowRight className="h-4 w-4" />
+          {tx("landing.ctaButton", lang)} <ArrowRight className="h-4 w-4" />
         </Link>
       </section>
 

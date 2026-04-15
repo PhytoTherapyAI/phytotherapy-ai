@@ -12,9 +12,12 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
+
+type Lang = "en" | "tr"
 
 // ═══ POMODORO TIMER ═══
-function PomodoroTimer({ lang }: { lang: string }) {
+function PomodoroTimer({ lang }: { lang: Lang }) {
   const [seconds, setSeconds] = useState(25 * 60)
   const [running, setRunning] = useState(false)
   const [isBreak, setIsBreak] = useState(false)
@@ -50,7 +53,7 @@ function PomodoroTimer({ lang }: { lang: string }) {
           <Clock className="h-4 w-4 text-primary" />
           <h3 className="text-sm font-bold">Pomodoro</h3>
           <Badge variant="secondary" className="text-[9px]">
-            {isBreak ? (lang === "tr" ? "Mola" : "Break") : (lang === "tr" ? "Odaklan" : "Focus")}
+            {isBreak ? tx("studentHealth.break", lang) : tx("studentHealth.focus", lang)}
           </Badge>
         </div>
 
@@ -83,7 +86,7 @@ function PomodoroTimer({ lang }: { lang: string }) {
 }
 
 // ═══ BREATHING EXERCISE ═══
-function BreathingExercise({ lang }: { lang: string }) {
+function BreathingExercise({ lang }: { lang: Lang }) {
   const [active, setActive] = useState(false)
   const [phase, setPhase] = useState<"inhale" | "hold" | "exhale">("inhale")
   const [count, setCount] = useState(4)
@@ -115,7 +118,7 @@ function BreathingExercise({ lang }: { lang: string }) {
       <CardContent className="p-5 text-center">
         <div className="flex items-center justify-center gap-2 mb-4">
           <Wind className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-bold">4-7-8 {lang === "tr" ? "Nefes" : "Breathing"}</h3>
+          <h3 className="text-sm font-bold">4-7-8 {tx("studentHealth.breathing", lang)}</h3>
         </div>
 
         <div className="flex justify-center mb-4">
@@ -126,9 +129,9 @@ function BreathingExercise({ lang }: { lang: string }) {
             {active ? (
               <div className="text-center">
                 <p className="text-xs font-medium text-primary capitalize">
-                  {phase === "inhale" ? (lang === "tr" ? "Nefes Al" : "Inhale")
-                    : phase === "hold" ? (lang === "tr" ? "Tut" : "Hold")
-                    : (lang === "tr" ? "Nefes Ver" : "Exhale")}
+                  {phase === "inhale" ? tx("studentHealth.inhale", lang)
+                    : phase === "hold" ? tx("studentHealth.hold", lang)
+                    : tx("studentHealth.exhale", lang)}
                 </p>
                 <p className="text-lg font-bold text-primary">{count}</p>
               </div>
@@ -139,7 +142,7 @@ function BreathingExercise({ lang }: { lang: string }) {
         </div>
 
         <Button size="sm" className="rounded-xl" onClick={() => { setActive(!active); setPhase("inhale"); setCount(4) }}>
-          {active ? (lang === "tr" ? "Durdur" : "Stop") : (lang === "tr" ? "Başla" : "Start")}
+          {active ? tx("studentHealth.stop", lang) : tx("studentHealth.start", lang)}
         </Button>
       </CardContent>
     </Card>
@@ -147,10 +150,9 @@ function BreathingExercise({ lang }: { lang: string }) {
 }
 
 // ═══ SMART SWAP CARD ═══
-function SmartSwapCard({ from, to, lang }: {
+function SmartSwapCard({ from, to }: {
   from: { label: string; emoji: string; risk: string }
   to: { label: string; emoji: string; benefit: string }
-  lang: string
 }) {
   return (
     <div className="rounded-2xl border bg-white dark:bg-card p-4">
@@ -172,20 +174,21 @@ function SmartSwapCard({ from, to, lang }: {
 }
 
 export default function StudentHealthPage() {
-  const { lang } = useLang()
+  const { lang: rawLang } = useLang()
+  const lang: Lang = rawLang === "tr" ? "tr" : "en"
 
   const swaps = [
     {
-      from: { label: lang === "tr" ? "Aşırı Kafein" : "Excess Caffeine", emoji: "☕", risk: lang === "tr" ? "Anksiyete, uykusuzluk" : "Anxiety, insomnia" },
-      to: { label: "L-Theanine + Matcha", emoji: "🍵", benefit: lang === "tr" ? "Sakin odaklanma" : "Calm focus" },
+      from: { label: tx("studentHealth.swap.caffeine.label", lang), emoji: "☕", risk: tx("studentHealth.swap.caffeine.risk", lang) },
+      to: { label: "L-Theanine + Matcha", emoji: "🍵", benefit: tx("studentHealth.swap.caffeine.benefit", lang) },
     },
     {
-      from: { label: lang === "tr" ? "Enerji İçeceği" : "Energy Drink", emoji: "⚡", risk: lang === "tr" ? "Kalp çarpıntısı" : "Heart palpitations" },
-      to: { label: "Rhodiola + B12", emoji: "🏔️", benefit: lang === "tr" ? "Doğal enerji" : "Natural energy" },
+      from: { label: tx("studentHealth.swap.energy.label", lang), emoji: "⚡", risk: tx("studentHealth.swap.energy.risk", lang) },
+      to: { label: "Rhodiola + B12", emoji: "🏔️", benefit: tx("studentHealth.swap.energy.benefit", lang) },
     },
     {
-      from: { label: lang === "tr" ? "Adderall (Reçetesiz)" : "Adderall (Off-label)", emoji: "💊", risk: lang === "tr" ? "Bağımlılık riski" : "Addiction risk" },
-      to: { label: "Bacopa + Lion's Mane", emoji: "🧠", benefit: lang === "tr" ? "Bilişsel destek" : "Cognitive support" },
+      from: { label: tx("studentHealth.swap.adderall.label", lang), emoji: "💊", risk: tx("studentHealth.swap.adderall.risk", lang) },
+      to: { label: "Bacopa + Lion's Mane", emoji: "🧠", benefit: tx("studentHealth.swap.adderall.benefit", lang) },
     },
   ]
 
@@ -197,9 +200,9 @@ export default function StudentHealthPage() {
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
           className="text-center py-4 space-y-2">
           <BookOpen className="h-10 w-10 text-primary mx-auto" />
-          <h1 className="text-2xl font-bold">{lang === "tr" ? "Öğrenci Performans Merkezi" : "Student Performance Center"}</h1>
+          <h1 className="text-2xl font-bold">{tx("studentHealth.title", lang)}</h1>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            {lang === "tr" ? "Odaklanma, enerji ve uyku — güvenli yollarla." : "Focus, energy and sleep — the safe way."}
+            {tx("studentHealth.subtitle", lang)}
           </p>
         </motion.div>
 
@@ -218,14 +221,14 @@ export default function StudentHealthPage() {
           <div className="flex items-center gap-2 mb-3">
             <Shield className="h-4 w-4 text-primary" />
             <h2 className="text-sm font-bold">
-              {lang === "tr" ? "Güvenli Odaklanma: Akıllı Alternatifler" : "Safe Focus: Smart Alternatives"}
+              {tx("studentHealth.swapsHeading", lang)}
             </h2>
           </div>
           <div className="space-y-3">
             {swaps.map((s, i) => (
               <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 + i * 0.08 }}>
-                <SmartSwapCard from={s.from} to={s.to} lang={lang} />
+                <SmartSwapCard from={s.from} to={s.to} />
               </motion.div>
             ))}
           </div>
@@ -236,13 +239,13 @@ export default function StudentHealthPage() {
           className="rounded-2xl border bg-white dark:bg-card p-5 space-y-3">
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-amber-500" />
-            <h3 className="text-sm font-bold">{lang === "tr" ? "Hızlı İpuçları" : "Quick Tips"}</h3>
+            <h3 className="text-sm font-bold">{tx("studentHealth.quickTips", lang)}</h3>
           </div>
           {[
-            { emoji: "💧", text: lang === "tr" ? "Saatte 1 bardak su — beyin %75 su" : "1 glass water per hour — brain is 75% water" },
-            { emoji: "🚶", text: lang === "tr" ? "Her 50 dakikada 5 dakika yürüyüş" : "5-minute walk every 50 minutes" },
-            { emoji: "🌙", text: lang === "tr" ? "Sınav öncesi minimum 7 saat uyku" : "Minimum 7 hours sleep before exams" },
-            { emoji: "🍌", text: lang === "tr" ? "Omega-3 + Magnezyum hafıza için" : "Omega-3 + Magnesium for memory" },
+            { emoji: "💧", text: tx("studentHealth.tip.water", lang) },
+            { emoji: "🚶", text: tx("studentHealth.tip.walk", lang) },
+            { emoji: "🌙", text: tx("studentHealth.tip.sleep", lang) },
+            { emoji: "🍌", text: tx("studentHealth.tip.omega", lang) },
           ].map((tip, i) => (
             <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.45 + i * 0.06 }}

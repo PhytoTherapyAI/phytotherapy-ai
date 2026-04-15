@@ -25,24 +25,36 @@ export interface ProfilePower {
   completedSections: number
   totalSections: number
   missingSections: string[]
+  requiredCompleted: number
+  requiredTotal: number
+  optionalCompleted: number
+  optionalTotal: number
+  allRequiredDone: boolean
 }
 
-const SECTION_CHECKS: { key: string; labelTr: string; labelEn: string; scrollId: string; check: (i: ProfilePowerInput) => boolean }[] = [
-  { key: 'basic', labelTr: 'Temel Bilgiler', labelEn: 'Basic Info', scrollId: 'personal-info', check: i => i.hasBasicInfo },
-  { key: 'meds', labelTr: 'İlaçlar', labelEn: 'Medications', scrollId: 'medications', check: i => i.medicationCount > 0 },
-  { key: 'supplements', labelTr: 'Takviyeler', labelEn: 'Supplements', scrollId: 'edit-health', check: i => i.supplementCount > 0 },
-  { key: 'allergies', labelTr: 'Alerjiler', labelEn: 'Allergies', scrollId: 'allergy-card', check: i => i.hasAllergies },
-  { key: 'chronic', labelTr: 'Kronik Hastalıklar', labelEn: 'Chronic Conditions', scrollId: 'edit-health', check: i => i.hasChronicConditions },
-  { key: 'family', labelTr: 'Soygeçmiş', labelEn: 'Family History', scrollId: 'edit-health', check: i => i.hasFamilyHistory },
-  { key: 'vaccines', labelTr: 'Aşılar', labelEn: 'Vaccines', scrollId: 'vaccines', check: i => i.vaccineCount > 0 },
-  { key: 'contact', labelTr: 'İletişim', labelEn: 'Contact', scrollId: 'edit-health', check: i => i.hasContactInfo },
-  { key: 'lifestyle', labelTr: 'Yaşam Tarzı', labelEn: 'Lifestyle', scrollId: 'edit-health', check: i => i.hasLifestyle },
+// `required: true` = klinik güvenlik için kritik (etkileşim/kontrendikasyon kontrolü)
+// `required: false` = kişiselleştirme için faydalı, opsiyonel
+const SECTION_CHECKS: { key: string; labelTr: string; labelEn: string; scrollId: string; required: boolean; check: (i: ProfilePowerInput) => boolean }[] = [
+  { key: 'basic', labelTr: 'Temel Bilgiler', labelEn: 'Basic Info', scrollId: 'personal-info', required: true, check: i => i.hasBasicInfo },
+  { key: 'meds', labelTr: 'İlaçlar', labelEn: 'Medications', scrollId: 'medications', required: true, check: i => i.medicationCount > 0 },
+  { key: 'allergies', labelTr: 'Alerjiler', labelEn: 'Allergies', scrollId: 'allergy-card', required: true, check: i => i.hasAllergies },
+  { key: 'chronic', labelTr: 'Kronik Hastalıklar', labelEn: 'Chronic Conditions', scrollId: 'edit-health', required: true, check: i => i.hasChronicConditions },
+  { key: 'supplements', labelTr: 'Takviyeler', labelEn: 'Supplements', scrollId: 'edit-health', required: false, check: i => i.supplementCount > 0 },
+  { key: 'family', labelTr: 'Soygeçmiş', labelEn: 'Family History', scrollId: 'edit-health', required: false, check: i => i.hasFamilyHistory },
+  { key: 'vaccines', labelTr: 'Aşılar', labelEn: 'Vaccines', scrollId: 'vaccines', required: false, check: i => i.vaccineCount > 0 },
+  { key: 'contact', labelTr: 'İletişim', labelEn: 'Contact', scrollId: 'edit-health', required: false, check: i => i.hasContactInfo },
+  { key: 'lifestyle', labelTr: 'Yaşam Tarzı', labelEn: 'Lifestyle', scrollId: 'edit-health', required: false, check: i => i.hasLifestyle },
 ]
 
 export function calculateProfilePower(input: ProfilePowerInput): ProfilePower {
   const completed = SECTION_CHECKS.filter(s => s.check(input))
   const missing = SECTION_CHECKS.filter(s => !s.check(input))
   const percentage = Math.round((completed.length / SECTION_CHECKS.length) * 100)
+
+  const requiredAll = SECTION_CHECKS.filter(s => s.required)
+  const optionalAll = SECTION_CHECKS.filter(s => !s.required)
+  const requiredDone = requiredAll.filter(s => s.check(input)).length
+  const optionalDone = optionalAll.filter(s => s.check(input)).length
 
   let level: ProfileLevel = 'beginner'
   if (percentage >= 100) level = 'full'
@@ -56,6 +68,41 @@ export function calculateProfilePower(input: ProfilePowerInput): ProfilePower {
     completedSections: completed.length,
     totalSections: SECTION_CHECKS.length,
     missingSections: missing.map(s => s.key),
+    requiredCompleted: requiredDone,
+    requiredTotal: requiredAll.length,
+    optionalCompleted: optionalDone,
+    optionalTotal: optionalAll.length,
+    allRequiredDone: requiredDone === requiredAll.length,
+  }
+}
+
+// Tek kaynak: yüzdeye göre dinamik mesaj (banner + diğer yerlerde paylaşılır)
+export function getCompletionMessage(percentage: number, lang: 'en' | 'tr'): { title: string; subtitle: string; tone: 'start' | 'progress' | 'good' | 'almost' | 'done' } {
+  const tr = lang === 'tr'
+  if (percentage >= 100) return {
+    title: tr ? 'Profilin %100 tamamlandı!' : 'Your profile is 100% complete!',
+    subtitle: tr ? 'Artık en doğru ve kişisel sağlık önerilerini alabilirsin.' : 'You can now receive the most accurate, personalized health guidance.',
+    tone: 'done',
+  }
+  if (percentage >= 76) return {
+    title: tr ? 'Neredeyse tamam! Son birkaç bilgiyi ekle.' : 'Almost there! Just a few details left.',
+    subtitle: tr ? `%${percentage} tamamlandı — kişisel önerilerin doğruluğunu maksimuma çıkar.` : `${percentage}% complete — push personalization to the max.`,
+    tone: 'almost',
+  }
+  if (percentage >= 51) return {
+    title: tr ? 'Harika ilerleme! Profilini tamamlamaya yakınsın.' : 'Great progress! You are close to completing your profile.',
+    subtitle: tr ? `%${percentage} tamamlandı — devam et.` : `${percentage}% complete — keep going.`,
+    tone: 'good',
+  }
+  if (percentage >= 26) return {
+    title: tr ? 'İyi gidiyorsun! Birkaç adım daha kaldı.' : 'Nice start! A few more steps to go.',
+    subtitle: tr ? `%${percentage} tamamlandı — eksik bölümleri tamamla.` : `${percentage}% complete — fill in the missing sections.`,
+    tone: 'progress',
+  }
+  return {
+    title: tr ? 'Profilini oluşturmaya başla — daha kişisel öneriler al.' : 'Start building your profile — get more personalized recommendations.',
+    subtitle: tr ? `%${percentage} tamamlandı — ilk birkaç bilgiyle başlayabilirsin.` : `${percentage}% complete — begin with a few key details.`,
+    tone: 'start',
   }
 }
 
@@ -104,20 +151,59 @@ export function ProfilePowerHeader({ power, input, lang }: ProfilePowerHeaderPro
       <div className="space-y-1">
         {SECTION_CHECKS.map(s => {
           const done = s.check(input)
+          // Zorunlu = yeşil tik / boş yeşil daire | Opsiyonel = turuncu tik / boş gri daire
+          const icon = done
+            ? (s.required
+                ? <span className="text-green-600 dark:text-green-400">{"\u2705"}</span>
+                : <span className="text-amber-500 dark:text-amber-400">{"\u2705"}</span>)
+            : (s.required
+                ? <span className="text-green-600/40 dark:text-green-400/40">{"\u2B55"}</span>
+                : <span className="text-muted-foreground/40">{"\u26AA"}</span>)
           return (
             <div key={s.key}
               className={`flex items-center gap-2 text-xs ${!done ? 'cursor-pointer hover:text-primary transition-colors' : ''}`}
               title={!done ? (tr ? 'Ekle ve profil g\u00fcc\u00fcn\u00fc art\u0131r!' : 'Add to boost your profile power!') : undefined}
               onClick={!done ? () => document.getElementById(s.scrollId)?.scrollIntoView({ behavior: 'smooth', block: 'center' }) : undefined}>
-              {done
-                ? <span className="text-green-600 dark:text-green-400">{"\u2705"}</span>
-                : <span className="text-muted-foreground/50">{"\u2B55"}</span>}
+              {icon}
               <span className={done ? 'text-foreground font-medium' : 'text-muted-foreground'}>
                 {tr ? s.labelTr : s.labelEn}
               </span>
+              {!s.required && (
+                <span className="ml-auto text-[10px] uppercase tracking-wide text-muted-foreground/60 font-medium">
+                  {tr ? 'Ops.' : 'Opt.'}
+                </span>
+              )}
             </div>
           )
         })}
+      </div>
+
+      {/* Required vs Optional summary */}
+      <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          {power.allRequiredDone ? (
+            <>
+              <span className="text-green-600 dark:text-green-400">{"\u2705"}</span>
+              <span>{tr ? 'Zorunlu alanlar tamamlandı' : 'Required fields complete'}</span>
+            </>
+          ) : (
+            <>
+              <span className="text-green-600/60 dark:text-green-400/60">{"\u26A0\uFE0F"}</span>
+              <span>
+                {tr
+                  ? `${power.requiredCompleted}/${power.requiredTotal} zorunlu alan tamamlandı`
+                  : `${power.requiredCompleted}/${power.requiredTotal} required fields done`}
+              </span>
+            </>
+          )}
+        </span>
+        {power.optionalTotal - power.optionalCompleted > 0 && (
+          <span>
+            {tr
+              ? `${power.optionalTotal - power.optionalCompleted} opsiyonel alan kaldı`
+              : `${power.optionalTotal - power.optionalCompleted} optional left`}
+          </span>
+        )}
       </div>
 
       {/* Next level hint */}

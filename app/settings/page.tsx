@@ -13,6 +13,7 @@ import {
   Loader2, Eye, EyeOff, MessageSquare, KeyRound, AlertTriangle,
 } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
+import { tx } from "@/lib/translations"
 
 const PERSONALITY_KEY = "doctopal-ai-personality"
 
@@ -59,9 +60,9 @@ export default function SettingsPage() {
 
   const handlePasswordChange = async () => {
     setPwError("")
-    if (newPassword.length < 8) { setPwError(isTr ? "Şifre en az 8 karakter olmalı" : "Password must be at least 8 characters"); return }
-    if (!/[A-Z]/.test(newPassword)) { setPwError(isTr ? "En az 1 büyük harf gerekli" : "Need at least 1 uppercase letter"); return }
-    if (newPassword !== confirmPassword) { setPwError(isTr ? "Şifreler eşleşmiyor" : "Passwords don't match"); return }
+    if (newPassword.length < 8) { setPwError(tx("settings.pwMin8", lang)); return }
+    if (!/[A-Z]/.test(newPassword)) { setPwError(tx("settings.pwUpper", lang)); return }
+    if (newPassword !== confirmPassword) { setPwError(tx("settings.pwMismatch", lang)); return }
     setPwState("loading")
     try {
       const { createBrowserClient } = await import("@/lib/supabase")
@@ -74,20 +75,20 @@ export default function SettingsPage() {
       setTimeout(() => setPwState("idle"), 5000)
     } catch {
       setPwState("error")
-      setPwError(isTr ? "Beklenmeyen bir hata oluştu" : "An unexpected error occurred")
+      setPwError(tx("settings.pwUnexpected", lang))
     }
   }
 
   const SYSTEM_ITEMS = [
-    { icon: Bell,          label: isTr ? "Bildirimler" : "Notifications",                     desc: isTr ? "Genel bildirim ayarları" : "General notification settings",                  color: "bg-violet-50 dark:bg-violet-950/30 text-violet-600",  href: "/notifications" },
-    { icon: Bell,          label: isTr ? "Bildirim Tercihleri" : "Notification Preferences",  desc: isTr ? "Hangi bildirimleri alacağınızı seçin" : "Choose which notifications",         color: "bg-blue-50 dark:bg-blue-950/30 text-blue-600",        href: "/notification-preferences" },
-    { icon: Watch,         label: isTr ? "Bağlı Cihazlar" : "Connected Devices",              desc: isTr ? "Apple Health, Google Fit bağla" : "Connect Apple Health, Google Fit",        color: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600",        href: "/connected-devices" },
-    { icon: MessageSquare, label: isTr ? "Günlük Asistan Botu" : "Daily Assistant Bot",       desc: isTr ? "WhatsApp & Telegram bağla" : "Connect WhatsApp & Telegram",                  color: "bg-green-50 dark:bg-green-950/30 text-green-600",     href: "/connect-assistant" },
-    { icon: Shield,        label: isTr ? "Gizlilik Kontrolleri" : "Privacy Controls",         desc: isTr ? "Veri izinlerini yönet" : "Manage data permissions",                          color: "bg-slate-100 dark:bg-slate-800 text-slate-600",       href: "/privacy-controls" },
-    { icon: Download,      label: isTr ? "Veri İndir (KVKK)" : "Export Data (KVKK)",          desc: isTr ? "Tüm verilerini JSON olarak indir" : "Download all your data as JSON",         color: "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600",  href: "/data-export" },
-    { icon: Trash2,        label: isTr ? "Veri Sil (KVKK)" : "Delete Data (KVKK)",            desc: isTr ? "Kalıcı hesap ve veri silme" : "Permanently erase account & data",            color: "bg-red-50 dark:bg-red-950/30 text-red-500",           href: "/data-delete" },
-    { icon: Award,         label: isTr ? "Sertifikalar" : "Certificates",                     desc: isTr ? "Sağlık başarılarınız" : "Your health achievements",                          color: "bg-amber-50 dark:bg-amber-950/30 text-amber-600",     href: "/certificates" },
-    { icon: Bug,           label: isTr ? "Hata Bildir" : "Report Bug",                        desc: isTr ? "Bizi geliştirmemize yardım et" : "Help us improve DoctoPal",                 color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600",  href: "/bug-report" },
+    { icon: Bell,          label: tx("settings.notifications", lang),     desc: tx("settings.notificationsDesc", lang),     color: "bg-violet-50 dark:bg-violet-950/30 text-violet-600",  href: "/notifications" },
+    { icon: Bell,          label: tx("settings.notificationPrefs", lang), desc: tx("settings.notificationPrefsDesc", lang), color: "bg-blue-50 dark:bg-blue-950/30 text-blue-600",        href: "/notification-preferences" },
+    { icon: Watch,         label: tx("settings.connectedDevices", lang),  desc: tx("settings.connectedDevicesDesc", lang),  color: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600",        href: "/connected-devices" },
+    { icon: MessageSquare, label: tx("settings.dailyBot", lang),          desc: tx("settings.dailyBotDesc", lang),          color: "bg-green-50 dark:bg-green-950/30 text-green-600",     href: "/connect-assistant" },
+    { icon: Shield,        label: tx("settings.privacyControls", lang),   desc: tx("settings.privacyControlsDesc", lang),   color: "bg-slate-100 dark:bg-slate-800 text-slate-600",       href: "/privacy-controls" },
+    { icon: Download,      label: tx("settings.exportData", lang),        desc: tx("settings.exportDataDesc", lang),        color: "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600",  href: "/data-export" },
+    { icon: Trash2,        label: tx("settings.deleteData", lang),        desc: tx("settings.deleteDataDesc", lang),        color: "bg-red-50 dark:bg-red-950/30 text-red-500",           href: "/data-delete" },
+    { icon: Award,         label: tx("settings.certificates", lang),      desc: tx("settings.certificatesDesc", lang),      color: "bg-amber-50 dark:bg-amber-950/30 text-amber-600",     href: "/certificates" },
+    { icon: Bug,           label: tx("settings.reportBug", lang),         desc: tx("settings.reportBugDesc", lang),         color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600",  href: "/bug-report" },
   ]
 
   return (
@@ -97,7 +98,7 @@ export default function SettingsPage() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
           <h1 className="font-heading text-2xl font-bold italic">
-            ⚙️ {isTr ? "Kişisel Komuta Merkezi" : "Personal Command Center"}
+            ⚙️ {tx("settings.commandCenter", lang)}
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">{displayName}</p>
         </motion.div>
@@ -114,14 +115,14 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between mb-1">
               <h3 className="text-sm font-semibold flex items-center gap-2">
                 <Bot className="h-4 w-4 text-primary" />
-                🤖 {isTr ? "AI Kişiliği" : "AI Personality"}
+                🤖 {tx("settings.aiPersonality", lang)}
               </h3>
               <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
-                {isTr ? "Aktif" : "Active"}
+                {tx("settings.active", lang)}
               </span>
             </div>
             <p className="text-xs text-muted-foreground mb-3">
-              {isTr ? "Asistanın konuşma tarzını seç — seçim anında uygulanır" : "Choose how your assistant communicates — applied instantly"}
+              {tx("settings.personalityDesc", lang)}
             </p>
             <div className="grid grid-cols-3 gap-2">
               {personalityOptions.map((opt) => (
@@ -152,14 +153,14 @@ export default function SettingsPage() {
           <div className="rounded-2xl border bg-card p-5 shadow-sm">
             <h3 className="text-sm font-semibold flex items-center gap-2 mb-4">
               <Bell className="h-4 w-4 text-blue-500" />
-              🔔 {isTr ? "Bildirimler" : "Notifications"}
+              🔔 {tx("settings.notifications", lang)}
             </h3>
             <div className="space-y-3">
               {([
-                ["email",         isTr ? "E-posta Bildirimleri" : "Email Notifications"],
-                ["push",          isTr ? "Push Bildirimleri" : "Push Notifications"],
-                ["dailyPlan",     isTr ? "Günlük Sağlık Planı" : "Daily Health Plan"],
-                ["weeklySummary", isTr ? "Haftalık Özet" : "Weekly Summary"],
+                ["email",         tx("settings.emailNotif", lang)],
+                ["push",          tx("settings.pushNotif", lang)],
+                ["dailyPlan",     tx("settings.dailyPlan", lang)],
+                ["weeklySummary", tx("settings.weeklySummary", lang)],
               ] as [keyof typeof notifications, string][]).map(([key, label]) => (
                 <label key={key} className="flex items-center justify-between cursor-pointer">
                   <span className="text-sm">{label}</span>
@@ -183,7 +184,7 @@ export default function SettingsPage() {
           <div className="rounded-2xl border bg-card p-5 shadow-sm">
             <h3 className="text-sm font-semibold flex items-center gap-2 mb-4">
               <KeyRound className="h-4 w-4 text-emerald-600" />
-              🔐 {isTr ? "Güvenlik — Şifre Değiştir" : "Security — Change Password"}
+              🔐 {tx("settings.securityChangePw", lang)}
             </h3>
             <div className="space-y-3">
               <div className="relative">
@@ -191,7 +192,7 @@ export default function SettingsPage() {
                   type={showPw ? "text" : "password"}
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
-                  placeholder={isTr ? "Yeni şifre (min. 8 karakter, 1 büyük harf)" : "New password (min. 8 chars, 1 uppercase)"}
+                  placeholder={tx("settings.newPwPlaceholder", lang)}
                   className="w-full rounded-xl border bg-muted/40 px-4 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                 />
                 <button type="button" onClick={() => setShowPw(v => !v)}
@@ -203,7 +204,7 @@ export default function SettingsPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
-                placeholder={isTr ? "Yeni şifreyi tekrarla" : "Confirm new password"}
+                placeholder={tx("settings.confirmPwPlaceholder", lang)}
                 className="w-full rounded-xl border bg-muted/40 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
               />
               <AnimatePresence>
@@ -227,16 +228,14 @@ export default function SettingsPage() {
                 {pwState === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
                 {pwState === "success" && <Check className="h-4 w-4" />}
                 {pwState === "success"
-                  ? (isTr ? "Onay e-postası gönderildi!" : "Confirmation email sent!")
-                  : (isTr ? "Şifreyi Güncelle" : "Update Password")}
+                  ? tx("settings.pwEmailSent", lang)
+                  : tx("settings.updatePw", lang)}
               </motion.button>
               <AnimatePresence>
                 {pwState === "success" && (
                   <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
                     className="text-xs text-emerald-600 text-center">
-                    {isTr
-                      ? "📧 E-posta adresinize bir onay linki gönderdik. Şifreniz link tıklandıktan sonra değişecek."
-                      : "📧 We sent a confirmation link to your email. Your password will change after you click the link."}
+                    {tx("settings.pwEmailNotice", lang)}
                   </motion.p>
                 )}
               </AnimatePresence>
@@ -264,7 +263,7 @@ export default function SettingsPage() {
           <div className="rounded-2xl border bg-card p-5 shadow-sm">
             <h3 className="text-sm font-semibold flex items-center gap-2 mb-3">
               <Globe className="h-4 w-4 text-slate-500" />
-              🌐 {isTr ? "Dil" : "Language"}
+              🌐 {tx("settings.language", lang)}
             </h3>
             <div className="flex gap-2">
               {(["en", "tr"] as const).map((l) => (

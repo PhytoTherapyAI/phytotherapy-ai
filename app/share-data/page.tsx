@@ -107,9 +107,9 @@ export default function ShareDataPage() {
             style={{ animation: "scaleIn 0.5s ease-out" }}>
             <CheckCircle className="h-8 w-8 text-emerald-600" />
           </div>
-          <h2 className="text-xl font-bold mb-2">{isTr ? "Veri Paylaşımı Yetkilendirildi" : "Data Sharing Authorized"}</h2>
+          <h2 className="text-xl font-bold mb-2">{tx("shareData.authorized", lang)}</h2>
           <p className="text-sm text-muted-foreground mb-4">
-            {isTr ? "Dijital imzalı rıza kaydı oluşturuldu. Verileriniz FHIR protokolü ile güvenli şekilde paylaşılacak." : "Digitally signed consent record created. Your data will be shared securely via FHIR protocol."}
+            {tx("shareData.authorizedDesc", lang)}
           </p>
           <div className="flex items-center justify-center gap-2 mb-3 text-xs text-muted-foreground">
             <Clock className="h-3 w-3" />
@@ -117,12 +117,12 @@ export default function ShareDataPage() {
           </div>
           {signature && (
             <div className="p-3 rounded-xl bg-muted/50 mb-4">
-              <p className="text-[9px] text-muted-foreground mb-1">{isTr ? "Dijital İmza" : "Digital Signature"}</p>
+              <p className="text-[9px] text-muted-foreground mb-1">{tx("shareData.digitalSignature", lang)}</p>
               <code className="text-[8px] font-mono break-all">{signature}</code>
             </div>
           )}
           <Button onClick={() => { setSuccess(false); setToggles({}); setAcknowledged(false) }} className="w-full rounded-xl">
-            {isTr ? "Tamam" : "Done"}
+            {tx("shareData.done", lang)}
           </Button>
           <style jsx>{`@keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }`}</style>
         </div>
@@ -134,7 +134,7 @@ export default function ShareDataPage() {
     <InnovationShell>
     <div className="mx-auto max-w-lg px-4 py-8">
       <Link href="/profile" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-6">
-        <ArrowLeft className="w-3.5 h-3.5" />{isTr ? "Geri" : "Back"}
+        <ArrowLeft className="w-3.5 h-3.5" />{tx("shareData.back", lang)}
       </Link>
 
       {/* ── Hero: Data Vault ── */}
@@ -146,14 +146,14 @@ export default function ShareDataPage() {
             <Lock className="absolute -right-1.5 -bottom-1.5 h-6 w-6 text-emerald-500 bg-card rounded-full p-1 border" />
           </div>
         </div>
-        <h1 className="text-2xl font-bold">{isTr ? "Veri Kasası" : "Data Vault"}</h1>
+        <h1 className="text-2xl font-bold">{tx("shareData.dataVault", lang)}</h1>
         <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-          {isTr ? "Kontrol tamamen sizde. İstediğiniz veriyi, istediğiniz süre paylaşın." : "You're in full control. Share what you want, for as long as you want."}
+          {tx("shareData.vaultDesc", lang)}
         </p>
         {/* Trust badge */}
         <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-medium text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400">
           <Shield className="h-3 w-3" />
-          {isTr ? "Uçtan Uca Şifreli · FHIR R4 Standardında" : "End-to-End Encrypted · FHIR R4 Standard"}
+          {tx("shareData.trustBadge", lang)}
         </div>
       </motion.div>
 
@@ -194,7 +194,7 @@ export default function ShareDataPage() {
           transition={{ duration: 0.4, ease: "easeOut" }}>
           {/* Recipient */}
           <div className="rounded-2xl border bg-card p-4 shadow-soft">
-            <h3 className="text-xs font-bold mb-3">{isTr ? "Alıcı" : "Recipient"}</h3>
+            <h3 className="text-xs font-bold mb-3">{tx("shareData.recipient", lang)}</h3>
             <div className="flex gap-2 mb-3">
               {(["doctor", "hospital"] as const).map(type => (
                 <button key={type} onClick={() => setRecipientType(type)}
@@ -202,13 +202,13 @@ export default function ShareDataPage() {
                     recipientType === type ? "border-primary bg-primary/10 text-primary" : ""
                   }`}>
                   {type === "doctor" ? <Stethoscope className="h-3 w-3" /> : <Building2 className="h-3 w-3" />}
-                  {type === "doctor" ? (isTr ? "Doktor" : "Doctor") : (isTr ? "Hastane" : "Hospital")}
+                  {type === "doctor" ? tx("shareData.doctor", lang) : tx("shareData.hospital", lang)}
                 </button>
               ))}
             </div>
-            <Input placeholder={isTr ? "Doktor veya kurum adı" : "Doctor or institution name"}
+            <Input placeholder={tx("shareData.recipientNamePh", lang)}
               value={recipientName} onChange={e => setRecipientName(e.target.value)} className="mb-2 rounded-xl" />
-            <Input placeholder={isTr ? "ID veya kod (opsiyonel)" : "ID or code (optional)"}
+            <Input placeholder={tx("shareData.recipientIdPh", lang)}
               value={recipientId} onChange={e => setRecipientId(e.target.value)} className="rounded-xl" />
           </div>
 
@@ -216,7 +216,7 @@ export default function ShareDataPage() {
           <div className="rounded-2xl border bg-card p-4 shadow-soft">
             <h3 className="text-xs font-bold mb-2 flex items-center gap-1.5">
               <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-              {isTr ? "Bağlantı Süresi" : "Link Expiry"}
+              {tx("shareData.linkExpiry", lang)}
             </h3>
             <div className="grid grid-cols-2 gap-2">
               {EXPIRY_OPTIONS.map(opt => (
@@ -234,7 +234,7 @@ export default function ShareDataPage() {
           {/* Legal text */}
           <button onClick={() => setShowLegal(!showLegal)}
             className="flex w-full items-center justify-between rounded-2xl border bg-card p-3 text-xs shadow-soft">
-            <span className="flex items-center gap-1.5"><FileText className="h-3.5 w-3.5" />{isTr ? "Yasal metni oku" : "Read legal text"}</span>
+            <span className="flex items-center gap-1.5"><FileText className="h-3.5 w-3.5" />{tx("shareData.readLegal", lang)}</span>
             {showLegal ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </button>
           {showLegal && (
@@ -253,7 +253,7 @@ export default function ShareDataPage() {
             }`}>
               {acknowledged && <Check className="h-3 w-3" />}
             </div>
-            <span className="text-xs">{isTr ? "Veri paylaşım koşullarını okudum ve anladım" : "I have read and understand the data sharing terms"}</span>
+            <span className="text-xs">{tx("shareData.ackTerms", lang)}</span>
           </button>
 
           {/* CTA — slides up when ready */}
@@ -263,9 +263,9 @@ export default function ShareDataPage() {
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
             className="w-full flex items-center justify-center gap-2 rounded-2xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90 disabled:opacity-40">
             {submitting ? (
-              <><Loader2 className="h-4 w-4 animate-spin" />{isTr ? "Oluşturuluyor..." : "Creating..."}</>
+              <><Loader2 className="h-4 w-4 animate-spin" />{tx("shareData.creating", lang)}</>
             ) : (
-              <><Lock className="h-4 w-4" />{isTr ? "Güvenli Link Oluştur" : "Create Secure Link"}</>
+              <><Lock className="h-4 w-4" />{tx("shareData.createLink", lang)}</>
             )}
           </motion.button>
 
