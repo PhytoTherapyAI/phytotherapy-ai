@@ -1,12 +1,17 @@
 // © 2026 DoctoPal — All Rights Reserved
 // KVKK 2026/347 — Privacy settings UI for granting/withdrawing the 3 onboarding consents
+// Grant flow: toggle → ConsentPopup (scroll-gated) → API with source:"popup_accept"
+// Withdraw flow: toggle → window.confirm → API with source:"direct_withdraw"
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles, Globe, FileText, ShieldCheck, Loader2, Check, X, AlertCircle, ExternalLink } from "lucide-react";
-import Link from "next/link";
+import { Sparkles, Globe, FileText, ShieldCheck, Loader2, Check, X, AlertCircle } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
+import { ConsentPopup } from "@/components/legal/ConsentPopup";
+import { AydinlatmaPopup } from "@/components/legal/AydinlatmaPopup";
+
+type ConsentKey = "consent_ai_processing" | "consent_data_transfer" | "consent_sbar_report";
 
 interface ConsentState {
   aydinlatma_acknowledged: boolean;
@@ -18,9 +23,14 @@ interface ConsentState {
   consent_timestamp: string | null;
 }
 
-const CONSENT_DEFS = [
+const CONSENT_DEFS: Array<{
+  key: ConsentKey;
+  icon: typeof Sparkles;
+  tr: { title: string; desc: string; impact: string };
+  en: { title: string; desc: string; impact: string };
+}> = [
   {
-    key: "consent_ai_processing" as const,
+    key: "consent_ai_processing",
     icon: Sparkles,
     tr: {
       title: "AI İşleme Açık Rızası",
@@ -34,7 +44,7 @@ const CONSENT_DEFS = [
     },
   },
   {
-    key: "consent_data_transfer" as const,
+    key: "consent_data_transfer",
     icon: Globe,
     tr: {
       title: "Yurt Dışı Aktarım Açık Rızası",
@@ -48,7 +58,7 @@ const CONSENT_DEFS = [
     },
   },
   {
-    key: "consent_sbar_report" as const,
+    key: "consent_sbar_report",
     icon: FileText,
     tr: {
       title: "SBAR Raporu Açık Rızası",
@@ -71,6 +81,10 @@ export function PrivacySettings() {
   const [saving, setSaving] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
+  // Popup state
+  const [popupConsentType, setPopupConsentType] = useState<ConsentKey | null>(null);
+  const [aydinlatmaOpen, setAydinlatmaOpen] = useState(false);
 
   async function getToken() {
     const supabase = createBrowserClient();
@@ -101,13 +115,8 @@ export function PrivacySettings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function toggle(consentType: string, current: boolean) {
-    const newValue = !current;
-    const confirmWithdraw = tr
-      ? "Bu rızayı geri çekmek istediğinize emin misiniz? İlgili özellik devre dışı kalacaktır."
-      : "Are you sure you want to withdraw this consent? The related feature will be disabled.";
-    if (!newValue && !window.confirm(confirmWithdraw)) return;
-
+  /** Core save function — calls API with source for audit trail */
+  async function saveConsent(consentType: string, granted: boolean, source: string) {
     setSaving(consentType);
     setError(null);
     try {
@@ -118,23 +127,45 @@ export function PrivacySettings() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ consent_type: consentType, granted: newValue }),
+        body: JSON.stringify({ consent_type: consentType, granted, source }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `HTTP ${res.status}`);
       }
-      // Update local state from server confirmation
-      setState((prev) => prev ? { ...prev, [consentType]: newValue, consent_timestamp: new Date().toISOString() } : prev);
+      setState((prev) => prev ? { ...prev, [consentType]: granted, consent_timestamp: new Date().toISOString() } : prev);
       setToast(tr ? "Rıza güncellendi ✓" : "Consent updated ✓");
       setTimeout(() => setToast(null), 3000);
     } catch (err) {
-      console.error("[PrivacySettings] toggle error:", err);
+      console.error("[PrivacySettings] save error:", err);
       const msg = err instanceof Error ? err.message : "Unknown";
       setError(tr ? `Güncelleme başarısız: ${msg}` : `Update failed: ${msg}`);
     } finally {
       setSaving(null);
     }
+  }
+
+  /** Toggle handler: grant → popup, withdraw → confirm dialog */
+  function handleToggle(consentType: ConsentKey, currentValue: boolean) {
+    if (!currentValue) {
+      // Off → On: open consent-specific popup (KVKK battaniye rıza yasağı)
+      setPopupConsentType(consentType);
+    } else {
+      // On → Off: withdraw (KVKK Md.11 hakkı — engel konamaz, ama confirm dialog OK)
+      const confirmMsg = tr
+        ? "Bu rızayı geri çekmek istediğinize emin misiniz? İlgili özellik devre dışı kalacaktır."
+        : "Are you sure you want to withdraw this consent? The related feature will be disabled.";
+      if (window.confirm(confirmMsg)) {
+        saveConsent(consentType, false, "direct_withdraw");
+      }
+    }
+  }
+
+  /** Called from ConsentPopup on accept */
+  async function handlePopupAccept() {
+    if (!popupConsentType) return;
+    await saveConsent(popupConsentType, true, "popup_accept");
+    setPopupConsentType(null);
   }
 
   if (loading) {
@@ -182,21 +213,26 @@ export function PrivacySettings() {
       )}
 
       {/* KVKK 2026/347: Aydınlatma metni rıza formundan AYRI sunulmalıdır */}
-      <div className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/10 p-3 flex items-start gap-2">
-        <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
-        <div className="text-xs">
-          <p className="font-medium text-amber-800 dark:text-amber-300">
-            {tr
-              ? "Rıza vermeden önce Aydınlatma Metnini okumanız gerekmektedir."
-              : "You must read the Privacy Notice before granting consent."}
-          </p>
-          <Link
-            href="/aydinlatma"
-            className="inline-flex items-center gap-1 mt-1 text-amber-700 dark:text-amber-400 font-semibold hover:underline"
-          >
-            <ExternalLink className="h-3 w-3" />
-            {tr ? "Aydınlatma Metnini Oku →" : "Read Privacy Notice →"}
-          </Link>
+      <div className="rounded-xl border-2 border-amber-400 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/20 p-5 shadow-md">
+        <div className="flex items-start gap-3">
+          <AlertCircle className="h-6 w-6 text-amber-600 shrink-0" />
+          <div className="flex-1">
+            <h3 className="font-bold text-amber-900 dark:text-amber-100 text-base mb-1">
+              {tr ? "Aydınlatma Metni" : "Privacy Notice"}
+            </h3>
+            <p className="text-sm text-amber-900 dark:text-amber-200 mb-3">
+              {tr
+                ? "Açık rıza vermeden önce KVKK Md.10 uyarınca aydınlatma metnini okumalısınız."
+                : "Per KVKK Art.10, you must read the privacy notice before giving explicit consent."}
+            </p>
+            <button
+              onClick={() => setAydinlatmaOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-amber-600 text-white font-medium hover:bg-amber-700 transition-colors"
+            >
+              <FileText className="h-4 w-4" />
+              {tr ? "Aydınlatma Metnini Oku" : "Read Privacy Notice"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -224,7 +260,7 @@ export function PrivacySettings() {
                     <h4 className="text-sm font-semibold">{copy.title}</h4>
                     <button
                       type="button"
-                      onClick={() => toggle(def.key, value)}
+                      onClick={() => handleToggle(def.key, value)}
                       disabled={isSaving}
                       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
                         value
@@ -237,12 +273,12 @@ export function PrivacySettings() {
                       ) : value ? (
                         <>
                           <Check className="h-3 w-3" />
-                          {tr ? "Aktif" : "Active"}
+                          {tr ? "Açık" : "On"}
                         </>
                       ) : (
                         <>
                           <X className="h-3 w-3" />
-                          {tr ? "Pasif" : "Inactive"}
+                          {tr ? "Kapalı" : "Off"}
                         </>
                       )}
                     </button>
@@ -290,6 +326,22 @@ export function PrivacySettings() {
           🗑 {tr ? "Tüm Verilerimi Sil" : "Delete All My Data"}
         </a>
       </div>
+
+      {/* Consent popup — per-consent-type (KVKK battaniye rıza yasağı) */}
+      {popupConsentType && (
+        <ConsentPopup
+          open={!!popupConsentType}
+          consentType={popupConsentType}
+          onAccept={handlePopupAccept}
+          onCancel={() => setPopupConsentType(null)}
+        />
+      )}
+
+      {/* Aydınlatma popup — bilgilendirme, rıza DEĞİL */}
+      <AydinlatmaPopup
+        open={aydinlatmaOpen}
+        onClose={() => setAydinlatmaOpen(false)}
+      />
     </div>
   );
 }

@@ -80,6 +80,7 @@ export async function PATCH(req: NextRequest) {
 
     const consentType = typeof body.consent_type === "string" ? body.consent_type : "";
     const granted = body.granted === true;
+    const source = typeof body.source === "string" ? body.source.slice(0, 50) : "unknown";
 
     if (!VALID_CONSENT_TYPES.has(consentType)) {
       return NextResponse.json({ error: "Invalid consent type" }, { status: 400 });
@@ -97,6 +98,7 @@ export async function PATCH(req: NextRequest) {
       consent_type: consentType.replace("consent_", ""),
       granted,
       version: "2026-04-v1",
+      source,
       ip_address: clientIP,
       user_agent: req.headers.get("user-agent")?.slice(0, 500) || null,
     });
