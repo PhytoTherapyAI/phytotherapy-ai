@@ -12,6 +12,7 @@ interface AuthState {
   user: User | null;
   session: Session | null;
   profile: UserProfile | null;
+  profileFetchedAt: number;          // Date.now() of last successful profile fetch
   isLoading: boolean;
   isAuthenticated: boolean;
   needsOnboarding: boolean;
@@ -38,6 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user: null,
     session: null,
     profile: null,
+    profileFetchedAt: 0,
     isLoading: true,
     isAuthenticated: false,
     needsOnboarding: false,
@@ -97,6 +99,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return daysSinceUpdate >= 15;
   }, []);
 
+  const PROFILE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes — skip re-fetch if profile is fresh
+
   const updateState = useCallback(async (user: User | null, session: Session | null) => {
 
     if (!user) {
@@ -104,6 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user: null,
         session: null,
         profile: null,
+        profileFetchedAt: 0,
         isLoading: false,
         isAuthenticated: false,
         needsOnboarding: false,
@@ -113,19 +118,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    setState((prev) => ({
-      ...prev,
-      user,
-      session,
-      isAuthenticated: true,
-      isLoading: true,
-    }));
+    // If we already have a fresh profile for the SAME user, skip fetch entirely
+    // This prevents skeleton flash on tab switch / token refresh
+    setState((prev) => {
+      const profileIsFresh =
+        prev.profile &&
+        prev.profile.id === user.id &&
+        prev.profileFetchedAt > 0 &&
+        (Date.now() - prev.profileFetchedAt) < PROFILE_CACHE_TTL;
+
+      if (profileIsFresh) {
+        // Just update session — no loading, no fetch
+        return {
+          ...prev,
+          user,
+          session,
+          isAuthenticated: true,
+          // isLoading stays false, profile stays as-is
+        };
+      }
+
+      // Need to fetch profile — show loading
+      return {
+        ...prev,
+        user,
+        session,
+        isAuthenticated: true,
+        isLoading: true,
+      };
+    });
+
+    // Check again outside setState (can't await inside setState)
+    // Read current state via ref pattern — use the same condition
+    let needsFetch = true;
+    setState((prev) => {
+      const profileIsFresh =
+        prev.profile &&
+        prev.profile.id === user.id &&
+        prev.profileFetchedAt > 0 &&
+        (Date.now() - prev.profileFetchedAt) < PROFILE_CACHE_TTL;
+      if (profileIsFresh) needsFetch = false;
+      return prev; // no change, just reading
+    });
+
+    if (!needsFetch) return;
 
     const profile = await fetchProfile(user.id);
     setState({
       user,
       session,
       profile,
+      profileFetchedAt: profile ? Date.now() : 0,
       isLoading: false,
       isAuthenticated: true,
       needsOnboarding: !profile?.onboarding_complete,
@@ -177,23 +220,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     // Re-check session when tab becomes visible again (back from background)
-    // Debounced + guarded: prevents concurrent lock acquisition
+    // Optimized: only calls getSession() (acquires lock) if token is close to expiry
     let visibilityCheckInFlight = false;
     let visibilityDebounce: ReturnType<typeof setTimeout> | null = null;
+    const FIVE_MINUTES = 5 * 60 * 1000;
+    let lastVisibilityRefresh = 0;
+    const MIN_VISIBILITY_INTERVAL = 60_000; // don't check more than once per minute
 
     const handleVisibilityChange = () => {
       if (document.visibilityState !== "visible") return;
-      if (visibilityCheckInFlight) return; // Already checking — skip
+      if (visibilityCheckInFlight) return;
 
-      // Debounce: wait 1s after tab becomes visible to avoid rapid focus/blur cycles
+      // Rate limit: at most once per minute
+      const now = Date.now();
+      if (now - lastVisibilityRefresh < MIN_VISIBILITY_INTERVAL) return;
+
       if (visibilityDebounce) clearTimeout(visibilityDebounce);
       visibilityDebounce = setTimeout(async () => {
+        // First check: can we skip entirely using cached session?
+        // Read expires_at from state without acquiring any lock
+        let shouldCallGetSession = false;
+        setState((prev) => {
+          const cachedSession = prev.session;
+          if (!cachedSession?.expires_at) {
+            // No cached session — need to check
+            shouldCallGetSession = true;
+          } else {
+            const expiresIn = cachedSession.expires_at * 1000 - Date.now();
+            if (expiresIn < FIVE_MINUTES) {
+              // Token expires soon — need to refresh
+              shouldCallGetSession = true;
+            }
+            // else: token is fresh, skip entirely (zero lock, zero network)
+          }
+          return prev; // no state change, just reading
+        });
+
+        if (!shouldCallGetSession) return;
+
+        // Token is close to expiry or no cached session — call getSession (acquires lock)
         visibilityCheckInFlight = true;
+        lastVisibilityRefresh = Date.now();
         try {
           const { data: { session }, error } = await supabase.auth.getSession();
           if (error || !session) {
-            // Don't chain refreshSession immediately — getSession already tried
-            // User will be signed out naturally when token fully expires
             console.warn("[Auth] Session check on visibility: no session");
           } else {
             setState((prev) => ({ ...prev, session, user: session.user }));
@@ -270,6 +340,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user: null,
       session: null,
       profile: null,
+      profileFetchedAt: 0,
       isLoading: false,
       isAuthenticated: false,
       needsOnboarding: false,
@@ -305,6 +376,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setState((prev) => ({
         ...prev,
         profile,
+        profileFetchedAt: profile ? Date.now() : 0,
         needsOnboarding: !profile?.onboarding_complete,
         needsMedicationUpdate: checkMedicationUpdate(profile),
         premiumStatus: getPremiumStatus(profile),
