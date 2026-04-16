@@ -44,6 +44,96 @@ Referans doküman: `YASAL-UYUM.md` (Downloads klasöründe)
 
 ---
 
+## 🚨 GELİŞTİRME KURALLARI — MUTLAKA UYGULA
+
+Bu kurallar Session 25'te yaşanan bug'ları önlemek içindir.
+
+### YENİ TABLO EKLERKEN
+
+```sql
+CREATE TABLE public.yeni_tablo (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+ALTER TABLE public.yeni_tablo ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "own_select" ON public.yeni_tablo FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "own_insert" ON public.yeni_tablo FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "own_update" ON public.yeni_tablo FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "own_delete" ON public.yeni_tablo FOR DELETE USING (auth.uid() = user_id);
+CREATE INDEX idx_yeni_tablo_user_id ON public.yeni_tablo(user_id);
+NOTIFY pgrst, 'reload schema';
+```
+
+### YENİ SÜTUN EKLERKEN
+
+```sql
+ALTER TABLE public.tablo ADD COLUMN IF NOT EXISTS yeni_sutun TEXT;
+NOTIFY pgrst, 'reload schema';
+```
+Aynı commit'te hem migration hem kullanan kod olmalı.
+
+### YENİ AI ENDPOINT EKLERKEN
+
+```typescript
+const { user } = await getUserFromRequest(request);
+if (!user) return Response.json({ error: 'auth required' }, { status: 401 });
+const result = await askClaude({ userId: user.id, prompt: '...' });
+```
+userId geçmezsen consent gate çalışmaz.
+
+### YASAL METİN DEĞİŞTİRİRKEN
+
+lib/consent-versions.ts versiyonunu BUMP et (v2.0 → v2.1).
+Eski kullanıcılar yeniden onay için yönlendirilir.
+
+### RLS DUPLICATE POLICY YASAK
+
+```sql
+DROP POLICY IF EXISTS "eski" ON public.tablo;
+CREATE POLICY "yeni" ON public.tablo ...;
+```
+
+### AUTH CONTEXT KURALLARI
+
+- lib/auth-context.tsx cache guard mantığını BOZMA
+- fetchProfile in-flight Map guard'ı KALDIRMA
+- Visibility handler debounce'unu BOZMA
+- Değişiklik yaparsan tab switch testi yap
+
+### CONSOLE LOG POLİTİKASI
+
+Production'da console.log YOK. Sadece console.error ve console.warn.
+Debug için [Debug] prefix kullan, bitince temizle.
+
+### COMMIT ÖNCESİ
+
+```bash
+npx tsc --noEmit
+npm run build
+```
+
+### KVKK DOSYA REFERANSLARI
+
+| Değişiklik | İlgili Dosyalar |
+|---|---|
+| Yeni sağlık verisi | user_profiles + aydınlatma metni |
+| Yeni AI provider | aydinlatma + rıza + privacy |
+| Yeni rıza tipi | consent_log + user_profiles + PrivacySettings + ConsentPopup |
+
+### BU SESSION'DA ÇÖZÜLEN BUGLAR
+
+| Bug | Sebep | Çözüm |
+|---|---|---|
+| Sütun eksik 500 | Migration sonrası schema reload unutuldu | NOTIFY pgrst |
+| family/notifications 500 | Tablo yoktu | Tablo + RLS oluştur |
+| Tab switch skeleton | fetchProfile paralel çağrı | In-flight guard + cache TTL |
+| Duplicate policy timeout | Eski + yeni policy çakışması | DROP IF EXISTS |
+| Consent gate bypass | userId middleware'e geçmiyor | Her endpoint userId geçir |
+| SCC yalan beyan | Aydınlatma yanlıştı | Dürüst metin |
+
+---
+
 ## HARVARD HACKATHON ROADMAP (7-11 Nisan 2026)
 
 > IGNITE 26'da jüri kararı: **Core tool'lar + Aile Profili** öncelikli. Diğer tool'lar hackathon sonrasına.
