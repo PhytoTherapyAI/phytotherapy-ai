@@ -1,6 +1,48 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 16 Nisan 2026 (v49.0 — Session 28: Aile Profili + Core Fixes + Water Context)
+> Son güncelleme: 16 Nisan 2026 (v50.0 — Session 29: Marka Tutarlılığı + Landing Page Overhaul + Bug Fixes + Notification Redesign)
+
+---
+
+## Session 29 — Marka Tutarlılığı, Landing Page, Bug Fixes, Notification Redesign (16 Nisan 2026)
+
+### Marka Tutarlılığı (DoctoPal)
+- ✅ 650+ dosyada `Doctopal` → `DoctoPal` (copyright header, API system prompt, PDF filename, email sender, share card, consent text, FHIR, translations)
+- ✅ Kapsam: `.tsx`, `.ts`, `.js`, `.md`, `.json` dosyaları
+- ✅ Korunan: `doctopal.com` domain, `doctopal_`/`doctopal-` storage key, `@DoctopalBot` bot username, `package.json` name
+
+### Landing Page Yenileme
+- ✅ Hero başlık: "Kanıt Doğayla Buluşur" → "Tahmin Değil, Kanıta Dayalı Analiz."
+- ✅ Hero alt başlık: SBAR ön raporu açıklaması
+- ✅ 4 öne çıkan özellik kartı: AI Semptom Triyajı (Stethoscope), İlaç Etkileşim Kontrolü (Pill), Fitoterapi AI (Leaf), Laboratuvar Analizi (Microscope)
+- ✅ Mevcut kartlar "Daha Fazlası" bölümüne taşındı
+- ✅ Rekabet bölümü: "teşhis koyar VE iyileştirir" → "5 katmanlı güvenlik altyapısı" + "Neden DoctoPal?"
+- ✅ Rakip karşılaştırma footnote → güvenlik pipeline notu
+
+### FAQ Güncellemesi
+- ✅ Ücretsiz cevap güncellendi: "DoctoPal'ın temel özelliklerini kullanmak tamamen ücretsizdir..."
+- ✅ Yeni veri güvenliği sorusu eklendi (faq2): "Kişisel sağlık verilerim güvende mi?"
+- ✅ Eski faq4 (data security) kaldırıldı, yeni faq2 ile değiştirildi (duplikasyon önlendi)
+
+### Bug Fixes
+- ✅ **Sorgu Geçmişi arama**: response_text'te arama kaldırıldı → sadece query_text'te filtreleme (kısa aramalar artık doğru çalışıyor)
+- ✅ **Sorgu Geçmişi hata yönetimi**: Supabase sorgu error field kontrol + console.error logging eklendi
+- ✅ **İlaç senkronizasyonu**: TodayView uncomplete → DELETE pattern (ritual blocks/dashboard ile tutarlı)
+- ✅ **InfoTooltip taşma**: `absolute right-0` → `left-1/2 -translate-x-1/2 top-8` + `max-width: calc(100vw - 32px)`
+- ✅ **Regülatif dil**: "teşhis koyar", "iyileştirir" gibi tehlikeli ifadeler kaldırıldı
+
+### Notification Settings Redesign
+- ✅ Checkbox → iOS stili toggle switch (emerald green, spring animasyonu)
+- ✅ "Bildirimler" → "Sağlık Kalkanı" (ShieldCheck ikonu)
+- ✅ "İlaç hatırlatıcısı" → "İlaç Kalkanı" + alt metin
+- ✅ "check-in hatırlatıcısı" → "Günlük Sağlık Takibi" + alt metin
+- ✅ Kapatma onayı modal'ı (ESC + dış tıklama + dinamik içerik)
+- ✅ "Açık" → "Aktif" (yeşil Badge)
+- ✅ Çeviri key'leri güncellendi
+
+### Build Durumu
+- ✅ TypeScript: SIFIR hata (`npx tsc --noEmit`)
+- ✅ Tüm değişiklikler commit edildi ve master'a push edildi (Vercel auto-deploy)
 
 ---
 
