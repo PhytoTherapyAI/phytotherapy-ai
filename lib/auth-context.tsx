@@ -35,7 +35,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const supabase = createBrowserClient();
 
-const PROFILE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const PROFILE_CACHE_TTL = 30 * 60 * 1000; // 30 minutes — profile rarely changes mid-session
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const defaultPremium: PremiumStatus = { plan: "free", isTrialActive: false, trialEndsAt: null, trialDaysLeft: 0, isPremium: false };
@@ -82,23 +82,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     try {
-      // First try: 5s timeout
-      const profile = await doFetch(5000);
-      if (profile) {
-        return profile;
-      }
+      // Single attempt with generous timeout — retry removed (if 15s isn't enough, a second try won't help)
+      const profile = await doFetch(15000);
+      if (profile) return profile;
 
-      // Retry: 8s timeout
-      console.warn(`[Auth] Profile fetch timed out (source=${source}), retrying...`);
-      const retry = await doFetch(8000);
-      if (retry) {
-        return retry;
-      }
-
-      console.error(`[Auth] Profile fetch failed after retry (source=${source})`);
+      console.warn(`[Auth] Profile fetch timed out after 15s (source=${source})`);
       return null;
     } catch (err) {
-      console.error("[Auth] Profile fetch exception:", err);
+      console.warn("[Auth] Profile fetch exception:", err);
       return null;
     }
   }, []);
