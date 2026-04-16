@@ -180,7 +180,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 # AI
 ANTHROPIC_API_KEY=your_anthropic_api_key
-GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key
+GEMINI_API_KEY=your_gemini_api_key
 
 # Email (optional)
 RESEND_API_KEY=your_resend_api_key
