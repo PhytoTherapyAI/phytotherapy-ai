@@ -1,4 +1,4 @@
-# CLAUDE.md — DoctoPal Proje Anayasası v49.0 (Post-Hackathon)
+# CLAUDE.md — DoctoPal Proje Anayasası v52.0 (Post-Hackathon)
 
 ## Hızlı Bağlam
 
@@ -11,7 +11,7 @@
 - **Deploy:** Vercel + Supabase (email auth + Google/Facebook OAuth)
 - **AI Motor:** Anthropic Claude API (claude-haiku-4-5) + Embedding: Gemini text-embedding-004
 - **Post-hackathon modu:** Premium gate'ler aktif. Ücretsiz plan core özellikleri, premium sınırlı özellikleri açar.
-- **Proje boyutu:** 348+ sayfa, 124 API route (77 AI-powered), 155 tool, ~1300 çeviri key
+- **Proje boyutu:** 348+ sayfa, 126 API route (77 AI-powered), 155 tool, ~1500 çeviri key
 
 ### Routing
 - `/` → Dashboard (auth) veya Landing (misafir)
@@ -177,7 +177,7 @@ Referans doküman: `YASAL-UYUM.md` (Downloads klasöründe)
 ## Teknik Stack
 
 ```
-Frontend:     Next.js 14 (App Router) + Tailwind CSS + shadcn/ui + Recharts + Framer Motion
+Frontend:     Next.js 16.1.6 (App Router) + Tailwind CSS 4 + shadcn/ui + Recharts + Framer Motion
 Backend:      Next.js API Routes (serverless — Vercel)
 Database:     Supabase (PostgreSQL) — tüm tablolar kurulu
 AI Engine:    Anthropic Claude API (claude-haiku-4-5) + Embedding: Gemini text-embedding-004
@@ -339,40 +339,35 @@ SENTRY_DSN=...
 
 ## POST-HACKATHON: Chat API Context Enrichment
 
-### Sorun:
-Chat API route'u (/api/chat veya ilgili endpoint) kullanıcı profili context'ini AI'a gönderirken:
-- ✅ İlaçlar (medications) — çekiliyor, çalışıyor
-- ✅ Alerjiler (allergies) — çekiliyor, çalışıyor
-- ❌ Kronik hastalıklar (chronic_conditions) — çekilMİYOR
-- ❌ Cerrahi geçmiş (surgery: prefix'li entries) — çekilMİYOR
-- ❌ Soygeçmiş (family: prefix'li entries) — çekilMİYOR
-- ❌ Aşı durumu (vaccines JSONB) — çekilMİYOR
-- ❌ Yaşam tarzı (smoking_use, alcohol_use, BMI, diet_type) — çekilMİYOR
+### Durum (Session 32 audit):
+Chat API route'u (/api/chat) aşağıdaki profil verilerini AI system prompt'a enjekte ediyor:
+- ✅ İlaçlar (medications) — doz + sıklık ile
+- ✅ Alerjiler (allergies) — reaksiyon tipi ile
+- ✅ Kronik hastalıklar (chronic_conditions) — critical flags (hamilelik, böbrek, KC) ayrı
+- ✅ Cerrahi geçmiş (surgery: prefix → "Surgical History" bloğu)
+- ✅ Soygeçmiş (family: prefix → "Family Health History" bloğu)
+- ✅ Aşı durumu (vaccines JSONB → tamamlananlar)
+- ✅ Yaşam tarzı (smoking_use, alcohol_use)
+- ✅ BMI (height_cm + weight_kg → hesaplanıyor)
+- ✅ Takviyeler (supplements — meta: prefix filtreli, doz/sıklık parsed)
+- ❌ diet_type — DB'de var ama chat route'a çekilmiyor
+- ❌ exercise_frequency — DB'de var ama chat route'a çekilmiyor
+- ❌ sleep_quality — DB'de var ama chat route'a çekilmiyor
 
-### Yapılacak:
-1. Chat API route'unda system prompt'a enjekte edilen kullanıcı verisini bul
-2. Supabase'den user_profiles tablosundan şu alanları da çek:
-   - chronic_conditions (surgery: prefix'li olanlar ayrı "Cerrahi Geçmiş" olarak)
-   - family history (family: prefix'li entries → "Soygeçmiş")
-   - smoking_use, alcohol_use
-   - height_cm, weight_kg → BMI hesapla
-   - diet_type, exercise_frequency, sleep_quality
-   - vaccines JSONB → tamamlanan aşılar
-3. Bunları system prompt'a "Patient Profile Context" bloğu olarak ekle
-4. AI'ın her yanıtta tüm profil verisini cross-reference etmesini sağla
-5. Kritik cross-reference senaryoları:
-   - Cerrahi geçmiş: gastric sleeve → absorption warning (bazı bitkiler emilmeyebilir)
-   - Soygeçmiş: family cancer → phytoestrogen warning (soya, kırmızı yonca vb.)
+### Kalan TODO:
+1. `diet_type`, `exercise_frequency`, `sleep_quality` alanlarını chat route select'ine ekle
+2. System prompt'un "LIFESTYLE" bloğuna ekle
+3. AI cross-reference senaryoları (system prompt'ta zaten preamble var):
+   - Cerrahi geçmiş: gastric sleeve → absorption warning
+   - Soygeçmiş: family cancer → phytoestrogen warning
    - Hamilelik/emzirme → mutlak kontrendikasyon listesi
    - Böbrek yetmezliği → doz azaltma/eliminasyon uyarısı
-   - İlaç-bitki CYP450 etkileşimleri + kronik hastalık kombinasyonu
 
-### Öncelik: YÜKSEK — Bu DoctoPal'ın core differentiator'ı
-> Kullanıcıyı tanımak = kişiselleştirilmiş cevap = rakiplerden ayrışma noktası
+### Öncelik: ORTA — Çoğu tamamlandı, 3 alan + AI prompt tuning kaldı
 
 ---
 
-*Son güncelleme: 16 Nisan 2026 v51.1*
+*Son güncelleme: 17 Nisan 2026 v52.0*
 *IGNITE 26 kazanıldı — Harvard Hackathon tamamlandı (11-12 Nisan 2026).*
 *Session 18-20: Aile profili + SBAR PDF redesign + condition translations + bug fixes.*
 *Session 21: YASAL UYUM — 10/14 madde kod implementasyonu tamamlandı (MADDE 1,2,3,5,6,7,8,9,10,11,12,13). MADDE 4 ve 14 hukuki/idari işlem.*
@@ -397,6 +392,18 @@ Chat API route'u (/api/chat veya ilgili endpoint) kullanıcı profili context'in
 *Session 31: Codebase-wide bugfix sweep — 13 commit, 30+ bug düzeltildi:*
 *— Kritik: profile/page.tsx useState(fn)→useState(()=>fn()) (ilaç onay butonu hiç çalışmıyordu) + consent/route.ts DB hatada false success:true döndürme düzeltildi + WeeklySummaryCard boş array .reduce() crash + drug-info/talent-hub useState→useEffect memory leak*
 *— Stale closure: calendar handleQuickLog'da morningTasks/noonTasks/nightTasks dep eksikti + VaccineProfileSection vaccines dep kaldırılıp functional setState ile rollback*
+*Session 32 (Ana Refactor Session): 12 prompt, ~15 commit — büyük kod kalitesi + DX iyileştirmesi:*
+*— Layout perf: AuthGatedOverlays (4 heavy overlay auth-gated, guest bundle %30-40 küçülmesi) + WaterIntakeProvider dashboard scope'a taşındı (228 sayfa→1)*
+*— README: Boilerplate → full proje dokümantasyonu (architecture, safety, getting started)*
+*— E2E testler: 3 yeni dosya (api-safety 6 test, api-core 47 test, pages-extended 80 test → toplam ~195)*
+*— i18n sprint 1+2: 26 dosyada ~457 ternary → tx() dönüştürüldü (1032→574, %44 azalma) + ~300 yeni çeviri key*
+*— AuthGuard component: reusable auth/loading/guest gating (components/auth/AuthGuard.tsx)*
+*— SEO: app/sitemap.ts dinamik (32→123 URL, tools-hierarchy'den otomatik) + app/robots.ts + 10 core metadata layout*
+*— `any` cleanup: 99→2 (%98 azalma, 26+ dosya, kalan 2 external lib type clash)*
+*— API helpers: lib/api-helpers.ts (apiHandler + authenticateRequest + parseBody) + 3 route refactor (health-score, daily-log, check-in)*
+*— Profile split: profile/page.tsx 2598→1802 satır (InlineEdit, EmergencyContacts, LinkedAccounts, Allergies extracted)*
+*— console.log cleanup: 27→3 (sadece KVKK audit logs) + 26 dead import/local kaldırıldı*
+*— Error boundaries: components/error/PageError.tsx template + 3 core error.tsx (health-assistant, interaction-checker, calendar)*
 *— Null guard: Header.tsx .split(" ") boş string crash + profile chronic_conditions spread guard + bot-send null fallback*
 *— JSON.parse try-catch: 16 dosyada unguarded JSON.parse sarıldı (connected-devices, emergency-contacts, dream-diary, diabetic-foot, dental-health, bug-report, connect-assistant, donation, fasting-monitor, health-quiz, medication-log, friend-goals, operations, health-timeline, micro-habits, walking-tracker)*
 *— Diğer: OnboardingWizard render body'de setCurrentStep kaldırıldı (re-render loop) + TodayView supplement celebration >1→>0 + layout.tsx Header import case fix (Turbopack) + supplement-data operator precedence parantez + MonthlyROICard division by zero guard + parseInt radix eksik (calendar ICS, medication-hub) + QuickActions/SOSCard JSON.parse guard*

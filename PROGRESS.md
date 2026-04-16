@@ -1,6 +1,95 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 16 Nisan 2026 (v51.1 — Session 31: Codebase Bugfix Sweep)
+> Son güncelleme: 17 Nisan 2026 (v52.0 — Session 32: Mega Refactor + DX Sprint)
+
+---
+
+## Session 32 — Mega Refactor + DX Sprint (16-17 Nisan 2026)
+
+### Layout Performans Optimizasyonu
+- ✅ `AuthGatedOverlays` component — 4 auth-only overlay (MedicationUpdateDialog 689 LOC, MicroCheckIn, TrialBanner, CriticalAlertModal) artık sadece authenticated kullanıcılara yükleniyor
+- ✅ `WaterIntakeProvider` root layout'tan kaldırıldı → sadece dashboard scope'a taşındı (228 sayfa → 1)
+- ✅ `DisclaimerBanner` dead import temizlendi
+- ✅ Guest landing hydration: 18 component → 12 component
+- ✅ `WaterTaskItem` inline component — useWater() provider tree'de çalışsın diye
+
+### README
+- ✅ Boilerplate Next.js README → full proje dokümantasyonu
+- ✅ Features tablosu (17 kategori), architecture, tech stack, safety system, getting started, team
+
+### E2E Test Suite Genişletme (Prompt 3)
+- ✅ `e2e/api-safety.spec.ts` — 6 test (emergency detection TR/EN, interaction validation, prompt injection)
+- ✅ `e2e/api-core.spec.ts` — 47 test (3 public GET, 31 auth POST no-500, 10 auth GET, 2 contact form)
+- ✅ `e2e/pages-extended.spec.ts` — 80 sayfa smoke test (mevcut 56'ya ek)
+- Toplam test coverage: 6/120 → 42/120 API, 56 → ~140 sayfa
+
+### i18n Ternary → tx() Sprint 1 (Prompt 4)
+- ✅ 10 dosyada 241 ternary → tx() dönüştürüldü
+- ✅ Dosyalar: page.tsx, calendar, settings, cancer-support, new-parent-health, LabInsightsPanel, dialysis-tracker, autism-support, student-health, share-data
+- ✅ ~200 yeni çeviri key (dashboard.*, calendar.*, settings.*, cancerSupport.*, newParent.*, labInsights.*, dialysis.*, autismSupport.*, studentHealth.*, shareData.*)
+- ✅ Component lang prop'ları `string` → `"en" | "tr"` narrowing
+
+### AuthGuard Component (Prompt 5)
+- ✅ `components/auth/AuthGuard.tsx` — reusable auth/loading/guest gate
+- ✅ Default loading spinner + login prompt UI (overridable via props)
+- ✅ 3 yeni çeviri key (common.loginRequired, loginToUse2, login)
+
+### SEO Altyapısı (Prompt 6)
+- ✅ `app/sitemap.ts` — dinamik sitemap (32 statik URL → 123 dinamik URL)
+- ✅ `app/robots.ts` — Next.js managed robots (API/onboarding/auth disallow)
+- ✅ `public/sitemap.xml` + `public/robots.txt` silindi (çakışma önleme)
+- ✅ 10 core metadata layout: health-assistant, interaction-checker, symptom-checker, sleep-analysis, supplement-compare, food-interaction, medical-dictionary, first-aid, drug-info, anxiety-toolkit
+- ✅ TR+EN keywords + OpenGraph tags her layout'ta
+
+### Profile Page Split (Prompt 7)
+- ✅ `components/profile/InlineEdit.tsx` extracted
+- ✅ `components/profile/EmergencyContactsSection.tsx` extracted
+- ✅ `components/profile/LinkedAccountsSection.tsx` extracted
+- ✅ `components/profile/AllergiesSection.tsx` extracted
+- ✅ profile/page.tsx: 2598 → 1802 satır (%31 azalma)
+- ⏭️ MedicationsSection + PersonalInfoSection skipped (tight coupling)
+
+### TypeScript `any` Elimination (Prompt 8)
+- ✅ 99 → 2 `any` (%98 azalma, 26+ dosya)
+- ✅ Kalan 2: `@react-pdf/renderer` type clash + `react-joyride` dynamic import
+- ✅ Dominant patterns: Supabase row types inlined, `icon: any` → `LucideIcon`, `catch (err: any)` → `catch (err: unknown)`, proper React event types
+
+### API Route DRY Helper (Prompt 9)
+- ✅ `lib/api-helpers.ts` — `apiHandler()` + `authenticateRequest()` + `parseBody<T>()`
+- ✅ 3 route refactor: health-score, daily-log (GET/POST/PATCH), check-in (GET/POST)
+- ✅ Boilerplate: ~30 satır auth+rate-limit+try-catch → 1 satır wrapper
+
+### i18n Ternary → tx() Sprint 2 (Prompt 10)
+- ✅ 16 dosyada ~216 ternary → tx() dönüştürüldü
+- ✅ Dosyalar: SymptomAssessmentPDF, doctor-prep, RecoveryScore, value-marketplace, interaction-checker, doctor, alcohol-tracker, medical-analysis, chronic-care, child-health, smoking-cessation, seasonal-health, travel-health, security, privacy, health-analytics, SmartWelcome
+- ✅ ~180 yeni çeviri key (symptomPdf.*, doctorPrep.*, recoveryScore.*, valueMarketplace.*, interactionChecker.*, doctor.*, alcoholTracker.*, medicalAnalysis.*, chronicCare.*, childHealth.*, smokingCessation.*, seasonalHealth.*, travelHealth.*, securityPage.*, privacyPage.*, healthAnalytics.*, smartWelcome.*)
+- Proje toplam: 1032 → 574 inline ternary (%44 azalma)
+
+### Dead Code + console.log Cleanup (Prompt 11)
+- ✅ API console.log: 27 → 3 (sadece [KVKK-*] audit logs legal zorunluluk)
+- ✅ 26 dead import/local kaldırıldı (icons, audit helpers, unused destructures)
+- ✅ Debug logs silindi: user IDs, request bodies, env-var existence checks, step traces
+- ✅ Mislabeled console.log → console.error (feedback route error handlers)
+
+### Core Page Error Boundaries (Prompt 12)
+- ✅ `components/error/PageError.tsx` — reusable template (offline detection, Sentry reporting, error digest)
+- ✅ `app/health-assistant/error.tsx` — Sparkles icon, "Restart Chat"
+- ✅ `app/interaction-checker/error.tsx` — Shield icon, "Retry Analysis"
+- ✅ `app/calendar/error.tsx` — CalendarDays icon, "Reload Calendar"
+
+### Session Toplam İstatistikleri
+| Metrik | Önce | Sonra |
+|--------|------|-------|
+| Layout overlay count (guest) | 18 | 12 |
+| E2E test files / tests | 2 / 62 | 5 / ~195 |
+| Inline ternary | 1032 | 574 |
+| `any` types | 99 | 2 |
+| Sitemap URLs | 32 | 123 |
+| API console.log | 27 | 3 |
+| profile/page.tsx | 2598 LOC | 1802 LOC |
+| Dead imports removed | — | 26 |
+| New reusable components | — | AuthGatedOverlays, AuthGuard, PageError, WaterTaskItem |
+| New infra files | — | api-helpers.ts, sitemap.ts, robots.ts, 10 metadata layouts |
 
 ---
 
