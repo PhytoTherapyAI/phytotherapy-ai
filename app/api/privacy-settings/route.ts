@@ -85,39 +85,47 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Invalid consent type" }, { status: 400 });
     }
 
+    const now = new Date().toISOString();
     const update: Record<string, unknown> = {
       [consentType]: granted,
-      consent_timestamp: new Date().toISOString(),
+      consent_timestamp: now,
     };
 
-    const { error: updateError } = await supabase
+    // Step 1: Audit log FIRST (fail-closed: if audit log fails, don't update profile)
+    const { error: auditError } = await supabase.from("consent_log").insert({
+      user_id: user.id,
+      consent_type: consentType.replace("consent_", ""),
+      granted,
+      version: "2026-04-v1",
+      ip_address: clientIP,
+      user_agent: req.headers.get("user-agent")?.slice(0, 500) || null,
+    });
+
+    if (auditError) {
+      // Fail-closed: cannot update consent without audit trail (KVKK Md.12)
+      console.error("[KVKK-CONSENT-LOG] Audit insert failed, blocking consent change:", auditError.message);
+      return NextResponse.json(
+        { error: "Consent change could not be recorded. Please try again." },
+        { status: 500 },
+      );
+    }
+
+    // Step 2: Update user_profiles — use .select() to verify row was actually updated
+    const { data: updated, error: updateError } = await supabase
       .from("user_profiles")
       .update(update)
-      .eq("id", user.id);
+      .eq("id", user.id)
+      .select(consentType)
+      .maybeSingle();
 
     if (updateError) {
       console.error("[PrivacySettings] update error:", updateError.message);
       return NextResponse.json({ error: updateError.message }, { status: 500 });
     }
 
-    // Audit log
-    try {
-      await supabase.from("consent_log").insert({
-        user_id: user.id,
-        consent_type: consentType.replace("consent_", ""),
-        granted,
-        version: "2026-04-v1",
-        ip_address: clientIP,
-        user_agent: req.headers.get("user-agent")?.slice(0, 500) || null,
-      });
-    } catch {
-      console.log("[KVKK-CONSENT-LOG]", JSON.stringify({
-        user_id: user.id,
-        consent_type: consentType,
-        granted,
-        timestamp: new Date().toISOString(),
-        ip: clientIP,
-      }));
+    if (!updated) {
+      console.error("[PrivacySettings] no row updated for user:", user.id);
+      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
     }
 
     logApiAccess({

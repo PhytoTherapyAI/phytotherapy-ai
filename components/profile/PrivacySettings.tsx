@@ -3,7 +3,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles, Globe, FileText, ShieldCheck, Loader2, Check, X, AlertCircle } from "lucide-react";
+import { Sparkles, Globe, FileText, ShieldCheck, Loader2, Check, X, AlertCircle, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
 
@@ -69,6 +70,7 @@ export function PrivacySettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   async function getToken() {
     const supabase = createBrowserClient();
@@ -122,8 +124,10 @@ export function PrivacySettings() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `HTTP ${res.status}`);
       }
-      // Optimistic update
+      // Update local state from server confirmation
       setState((prev) => prev ? { ...prev, [consentType]: newValue, consent_timestamp: new Date().toISOString() } : prev);
+      setToast(tr ? "Rıza güncellendi ✓" : "Consent updated ✓");
+      setTimeout(() => setToast(null), 3000);
     } catch (err) {
       console.error("[PrivacySettings] toggle error:", err);
       const msg = err instanceof Error ? err.message : "Unknown";
@@ -176,6 +180,25 @@ export function PrivacySettings() {
           </div>
         </div>
       )}
+
+      {/* KVKK 2026/347: Aydınlatma metni rıza formundan AYRI sunulmalıdır */}
+      <div className="rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50/50 dark:bg-amber-950/10 p-3 flex items-start gap-2">
+        <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+        <div className="text-xs">
+          <p className="font-medium text-amber-800 dark:text-amber-300">
+            {tr
+              ? "Rıza vermeden önce Aydınlatma Metnini okumanız gerekmektedir."
+              : "You must read the Privacy Notice before granting consent."}
+          </p>
+          <Link
+            href="/aydinlatma"
+            className="inline-flex items-center gap-1 mt-1 text-amber-700 dark:text-amber-400 font-semibold hover:underline"
+          >
+            <ExternalLink className="h-3 w-3" />
+            {tr ? "Aydınlatma Metnini Oku →" : "Read Privacy Notice →"}
+          </Link>
+        </div>
+      </div>
 
       {/* Consent cards */}
       <div className="space-y-3">
@@ -238,6 +261,12 @@ export function PrivacySettings() {
 
       {error && (
         <p className="text-xs text-destructive">{error}</p>
+      )}
+
+      {toast && (
+        <div className="rounded-lg border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/20 p-2.5 text-xs font-medium text-green-700 dark:text-green-400 text-center">
+          {toast}
+        </div>
       )}
 
       <p className="text-[11px] text-muted-foreground leading-relaxed pt-2 border-t">

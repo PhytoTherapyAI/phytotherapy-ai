@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
@@ -36,6 +36,7 @@ interface DrugSuggestion {
 
 export function MedicationUpdateDialog() {
   const router = useRouter();
+  const pathname = usePathname();
   const { lang } = useLang();
   const {
     isAuthenticated, isLoading, profile,
@@ -78,7 +79,12 @@ export function MedicationUpdateDialog() {
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   // Determine which mode to show (priority: 30day > 15day > daily)
+  // NEVER show on profile selection or onboarding routes
+  const BLOCKED_ROUTES = ["/select-profile", "/onboarding", "/auth"];
+  const isBlockedRoute = BLOCKED_ROUTES.some(r => pathname?.startsWith(r));
+
   const mode: DialogMode = (() => {
+    if (isBlockedRoute) return null;
     if (!isAuthenticated || isLoading || !profile?.onboarding_complete) return null;
     if (needsOnboardingRefresh) return "30day";       // localStorage 30-day
     if (needsMedicationUpdate) return "15day";         // Supabase 15-day
