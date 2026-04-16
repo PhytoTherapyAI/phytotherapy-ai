@@ -55,7 +55,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfile = useCallback(async (userId: string, source: string): Promise<UserProfile | null> => {
     const startTime = Date.now();
-    console.log(`[Debug] fetchProfile START source=${source} userId=${userId} at=${new Date().toISOString()}`);
 
     const doFetch = async (timeoutMs: number) => {
       const profilePromise = supabase
@@ -83,7 +82,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // First try: 5s timeout
       const profile = await doFetch(5000);
       if (profile) {
-        console.log(`[Debug] fetchProfile END source=${source} success=true duration=${Date.now() - startTime}ms`);
         return profile;
       }
 
@@ -91,16 +89,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.warn(`[Auth] Profile fetch timed out (source=${source}), retrying...`);
       const retry = await doFetch(8000);
       if (retry) {
-        console.log(`[Debug] fetchProfile END source=${source} success=true(retry) duration=${Date.now() - startTime}ms`);
         return retry;
       }
 
       console.error(`[Auth] Profile fetch failed after retry (source=${source})`);
-      console.log(`[Debug] fetchProfile END source=${source} success=false duration=${Date.now() - startTime}ms`);
       return null;
     } catch (err) {
       console.error("[Auth] Profile fetch exception:", err);
-      console.log(`[Debug] fetchProfile END source=${source} success=exception duration=${Date.now() - startTime}ms`);
       return null;
     }
   }, []);
@@ -117,10 +112,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateState = useCallback(async (user: User | null, session: Session | null, source: string) => {
-    console.log(`[Debug] updateState called source=${source} userId=${user?.id} hasProfile=${!!stateRef.current.profile} profileId=${stateRef.current.profile?.id} profileAge=${stateRef.current.profileFetchedAt ? Date.now() - stateRef.current.profileFetchedAt : 'never'}ms`);
 
     if (!user) {
-      console.log(`[Debug] updateState source=${source} → clearing state (no user)`);
       setState({
         user: null,
         session: null,
@@ -143,11 +136,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       cur.profileFetchedAt > 0 &&
       (Date.now() - cur.profileFetchedAt) < PROFILE_CACHE_TTL;
 
-    console.log(`[Debug] updateState source=${source} cacheCheck: profileExists=${!!cur.profile} profileIdMatch=${cur.profile?.id === user.id} age=${cur.profileFetchedAt ? Date.now() - cur.profileFetchedAt : 'N/A'}ms ttl=${PROFILE_CACHE_TTL}ms → fresh=${!!profileIsFresh}`);
 
     if (profileIsFresh) {
       // Profile is cached and fresh — just update session, NO loading, NO fetch
-      console.log(`[Debug] updateState source=${source} → CACHE HIT, skipping fetchProfile`);
       setState((prev) => ({
         ...prev,
         user,
@@ -159,7 +150,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Cache miss — need to fetch profile
-    console.log(`[Debug] updateState source=${source} → CACHE MISS, setting isLoading=true, calling fetchProfile`);
     setState((prev) => ({
       ...prev,
       user,
@@ -186,10 +176,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let initialDone = false;
 
     async function initAuth() {
-      console.log("[Debug] initAuth START");
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
-        console.log(`[Debug] initAuth getSession done, hasSession=${!!session}, hasUser=${!!session?.user}, error=${error?.message || 'none'}`);
         if (error || !session?.user) {
           setState((prev) => ({ ...prev, isLoading: false }));
           return;
@@ -200,7 +188,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setState((prev) => ({ ...prev, isLoading: false }));
       } finally {
         initialDone = true;
-        console.log("[Debug] initAuth END, initialDone=true");
       }
     }
 
@@ -208,7 +195,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log(`[Debug] onAuthStateChange event=${event} userId=${session?.user?.id} initialDone=${initialDone}`);
 
         if (event === "INITIAL_SESSION") return;
         if (event === "SIGNED_OUT" || !session?.user) {
@@ -216,12 +202,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
         if (!initialDone) {
-          console.log(`[Debug] onAuthStateChange SKIPPED (initialDone=false) event=${event}`);
           return;
         }
         // Handle token refresh — update session in state
         if (event === "TOKEN_REFRESHED") {
-          console.log("[Debug] TOKEN_REFRESHED → updating session only (no profile fetch)");
           setState((prev) => ({ ...prev, session }));
           return;
         }
@@ -238,13 +222,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const MIN_VISIBILITY_INTERVAL = 60_000;
 
     const handleVisibilityChange = () => {
-      console.log(`[Debug] visibilityChange state=${document.visibilityState} inFlight=${visibilityCheckInFlight}`);
       if (document.visibilityState !== "visible") return;
       if (visibilityCheckInFlight) return;
 
       const now = Date.now();
       if (now - lastVisibilityRefresh < MIN_VISIBILITY_INTERVAL) {
-        console.log(`[Debug] visibilityChange SKIPPED (rate limit, last=${now - lastVisibilityRefresh}ms ago)`);
         return;
       }
 
@@ -254,25 +236,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const cachedSession = stateRef.current.session;
         if (cachedSession?.expires_at) {
           const expiresIn = cachedSession.expires_at * 1000 - Date.now();
-          console.log(`[Debug] visibilityChange expiresIn=${Math.round(expiresIn / 1000)}s`);
           if (expiresIn > FIVE_MINUTES) {
-            console.log("[Debug] visibilityChange → token fresh, SKIPPING getSession (zero lock)");
             return;
           }
-        } else {
-          console.log("[Debug] visibilityChange → no cached session, will call getSession");
         }
 
         // Token close to expiry or no cached session
         visibilityCheckInFlight = true;
         lastVisibilityRefresh = Date.now();
-        console.log("[Debug] visibilityChange → calling getSession (token expiring soon)");
         try {
           const { data: { session }, error } = await supabase.auth.getSession();
           if (error || !session) {
             console.warn("[Auth] Session check on visibility: no session");
           } else {
-            console.log("[Debug] visibilityChange → getSession success, updating session");
             setState((prev) => ({ ...prev, session, user: session.user }));
           }
         } catch (err) {
