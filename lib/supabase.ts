@@ -37,6 +37,21 @@ export function createBrowserClient(): SupabaseClient {
     throw new Error("Missing Supabase environment variables");
   }
 
+  // SSR guard: navigator.locks (Web Locks API) is not available in Node.js.
+  // "use client" module-level code still runs during SSR in Next.js App Router
+  // (Turbopack dev and production SSR pre-render). Return a non-persistent client
+  // for server-side evaluation — auth state is always initialized client-side via
+  // useEffect, so this stub is never used for real auth operations.
+  if (typeof window === "undefined") {
+    return createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+        detectSessionInUrl: false,
+      },
+    });
+  }
+
   // Clean corrupted entries before creating client
   cleanCorruptLocalStorage();
 
