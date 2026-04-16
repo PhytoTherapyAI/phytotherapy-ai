@@ -46,6 +46,10 @@ export function createBrowserClient(): SupabaseClient {
       flowType: "pkce",
       persistSession: true,
       autoRefreshToken: true,
+      // NOTE: lockAcquireTimeout is available in @supabase/auth-js but not yet
+      // exposed by @supabase/supabase-js 2.x. The lock timeout fix is instead
+      // handled by reducing concurrent auth calls (single getSession in initAuth,
+      // debounced visibility handler, removed redundant getUser calls).
     },
   });
 

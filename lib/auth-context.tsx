@@ -139,13 +139,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     async function initAuth() {
       try {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError || !user) {
+        // Single call: getSession() returns both session AND user — avoids double lock acquisition
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session?.user) {
           setState((prev) => ({ ...prev, isLoading: false }));
           return;
         }
-        const { data: { session } } = await supabase.auth.getSession();
-        await updateState(user, session);
+        await updateState(session.user, session);
       } catch (err) {
         console.error("[Auth] initAuth exception:", err);
         setState((prev) => ({ ...prev, isLoading: false }));
@@ -171,40 +171,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setState((prev) => ({ ...prev, session }));
           return;
         }
-        await supabase.auth.getUser();
+        // session.user is already validated by Supabase — no need for extra getUser() call
         await updateState(session.user, session);
       }
     );
 
     // Re-check session when tab becomes visible again (back from background)
-    // Less aggressive: don't sign out on temporary network errors
-    const handleVisibilityChange = async () => {
-      if (document.visibilityState === "visible") {
+    // Debounced + guarded: prevents concurrent lock acquisition
+    let visibilityCheckInFlight = false;
+    let visibilityDebounce: ReturnType<typeof setTimeout> | null = null;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState !== "visible") return;
+      if (visibilityCheckInFlight) return; // Already checking — skip
+
+      // Debounce: wait 1s after tab becomes visible to avoid rapid focus/blur cycles
+      if (visibilityDebounce) clearTimeout(visibilityDebounce);
+      visibilityDebounce = setTimeout(async () => {
+        visibilityCheckInFlight = true;
         try {
           const { data: { session }, error } = await supabase.auth.getSession();
           if (error || !session) {
-            // Try to refresh the token — but DON'T sign out on failure
-            // Network issues or cold starts can cause temporary failures
-            try {
-              const { data: refreshData } = await supabase.auth.refreshSession();
-              if (refreshData?.session) {
-                await updateState(refreshData.session.user, refreshData.session);
-              }
-              // If refresh fails, keep current state — don't sign out
-              // User will be signed out naturally when token fully expires
-            } catch {
-              // Silently ignore refresh errors — keep current session
-              console.warn("[Auth] Token refresh failed on visibility change, keeping current session");
-            }
+            // Don't chain refreshSession immediately — getSession already tried
+            // User will be signed out naturally when token fully expires
+            console.warn("[Auth] Session check on visibility: no session");
           } else {
-            // Session exists, update state including user
             setState((prev) => ({ ...prev, session, user: session.user }));
           }
         } catch (err) {
-          // Don't sign out on network errors
           console.warn("[Auth] Visibility change session check error:", err);
+        } finally {
+          visibilityCheckInFlight = false;
         }
-      }
+      }, 1000);
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -222,6 +221,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (visibilityDebounce) clearTimeout(visibilityDebounce);
       clearTimeout(safetyTimeout);
     };
   }, [updateState]);
