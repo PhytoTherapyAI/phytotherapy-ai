@@ -372,7 +372,7 @@ Chat API route'u (/api/chat veya ilgili endpoint) kullanıcı profili context'in
 
 ---
 
-*Son güncelleme: 16 Nisan 2026 v50.0*
+*Son güncelleme: 16 Nisan 2026 v51.0*
 *IGNITE 26 kazanıldı — Harvard Hackathon tamamlandı (11-12 Nisan 2026).*
 *Session 18-20: Aile profili + SBAR PDF redesign + condition translations + bug fixes.*
 *Session 21: YASAL UYUM — 10/14 madde kod implementasyonu tamamlandı (MADDE 1,2,3,5,6,7,8,9,10,11,12,13). MADDE 4 ve 14 hukuki/idari işlem.*
@@ -382,3 +382,15 @@ Chat API route'u (/api/chat veya ilgili endpoint) kullanıcı profili context'in
 *Session 27: Apple Health + Google Fit import — health_imports tablosu + health_metrics.import_id FK (cascade delete) + UPDATE/DELETE RLS policy eklendi → jszip + fast-xml-parser bağımlılıkları → browser-side parsers (apple-health-parser.ts: HK→metric_type whitelist + per-day agg, google-fit-parser.ts: Takeout JSON shape handling + ns→ISO + sleep stage filter) → /api/health-imports (CRUD lifecycle) + /api/health-metrics (batch upsert + daily/weekly/monthly rollup GET) → HealthImportSection component (/connected-devices entegre: 2 import kartı + rehber accordion + progress bar + 7-gün mini summary + geçmiş import'lar tablosu) → mock fixtures + Playwright spec (parser doğruluğu + auth-gate testleri).*
 *Session 28: Aile Profili sistemi (Netflix tarzı profil seçim, davet sistemi, yönetim izni, 24 bug fix) → Onboarding fixes (reaksiyon dropdown, Emekli SGK, allergy save, alcohol_use constraint, cerrahi yıl UX) → WaterIntakeContext (tek kaynak su takibi) → Dialog sıralaması (ilaç onayı→check-in) → meta: supplement filtresi → Profile fetch retry → SQL migrations (daily_check_ins, water_intake, daily_logs, CHECK constraints).*
 *Session 29: Marka tutarlılığı — 650+ dosyada Doctopal → DoctoPal (copyright header, API system prompt, PDF, email, share card, consent, FHIR, translations) → Landing page hero: "Tahmin Değil, Kanıta Dayalı Analiz" + SBAR alt başlık → 4 öne çıkan özellik kartı (Stethoscope/Pill/Leaf/Microscope ikonlu) + "Daha Fazlası" bölümü → Regülatif dil: "teşhis koyar VE iyileştirir" kaldırıldı, rakip karşılaştırması "Neden DoctoPal?" ile değiştirildi → FAQ: veri güvenliği sorusu eklendi, ücretsiz cevabı güncellendi → İlaç sync: TodayView uncomplete DELETE pattern'e geçirildi (ritual blocks/dashboard ile tutarlı) → Sorgu Geçmişi: arama filtresi sadece query_text'te (response_text kaldırıldı) + Supabase error handling → InfoTooltip: right-0 → left-1/2 -translate-x-1/2 (taşma düzeltmesi) → NotificationSettings redesign: checkbox → toggle, "Bildirimler" → "Sağlık Kalkanı", İlaç Kalkanı/Günlük Sağlık Takibi isimleri + alt metinler, kapatma onayı modal'ı.*
+*Session 30: Profil Sayfası Mega Overhaul — 30+ commit, ~2000 satır yeni kod:*
+*— Rozet SVG sistemi: 11 Duolingo-tarzı metalik pin SVG (BadgeIcon.tsx + svgs/) → profil, badges sayfası, celebration modal entegrasyonu + fallbackEmoji*
+*— Profil Gücü: XP sistemi kaldırıldı → 9 bölümlü Profil Gücü seviyeleri (Başlangıç→Tam Koruma) + ✅/⭕ inline checks + tıkla→scroll + level emoji*
+*— Onboarding Reuse: ProfileSupplementsStep, ProfileMedicalHistoryStep, ProfileFamilyHistoryStep, ProfileSubstanceStep adapter'ları (OnboardingAdapters.tsx) — sıfırdan yazmak yerine onboarding bileşenlerini import*
+*— ChronicConditionsEditor: 30+ hastalık autocomplete DB + ilaç→hastalık tahmini (20 mapping: metformin→Diyabet, zoretanin→Akne vb.) + "Kronik hastalığım yok ✅" toggle*
+*— LifestyleSection: BMI hesaplayıcı (4 seviye + tip) + kan grubu epidemiyolojik insight (PubMed kaynaklı: Edgren Blood 2010, Wolpin JNCI 2009, He ATVB 2012) + trafik lambası egzersiz chip + emoji uyku/diyet grid*
+*— DiceBear Avatar: lib/avatar.ts + AvatarPicker.tsx (4 stil: adventurer/bottts/avataaars/funEmoji) → profil header + navbar entegrasyonu*
+*— PDF Yeniden Yazım: SBARReport Roboto font (Türkçe karakter desteği: ş/ğ/ü/ö/ç/ı/İ) + düzgün tablo layout + cinsiyet/sıklık/reaksiyon/sigara çevirileri + PDFDownloadButton client-side generation*
+*— Merkezi Araçlar: lib/frequency.ts (toTurkishFrequency — 40+ varyant) + lib/avatar.ts*
+*— Bug Fix'ler: Aşı vaccines JSONB kolonu eksikti (migration çalıştırıldı) + optimistic update + vaccine checkbox motion.button→plain div + frequency çeviri 40+ varyant + save retry 1s delay + FAB bottom-36 çakışma fix + scroll pozisyonu passive listener + chip × stopPropagation + InlineEdit 44px touch target + alerji inline form (12 alerjen + 5 hassasiyet chip) + Sentry conditional config (SENTRY_AUTH_TOKEN yoksa skip)*
+*— Motivasyon Kartları: 7 bölüm şakacı samimi ton ("Bunu atlama ciddi söylüyorum 🤫", "Fıstık konusunda şaka yapmıyorum 🎯", "Kanepe mi maraton mu? 😄") + dismissable localStorage*
+*— Temizlik: 436 satır dead code silindi + 6 unused import kaldırıldı (ChronicConditionsEditor, RadioGroup, Wine, Cigarette, Heart, Settings)*

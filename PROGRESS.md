@@ -1,6 +1,111 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 16 Nisan 2026 (v50.0 — Session 29: Marka Tutarlılığı + Landing Page Overhaul + Bug Fixes + Notification Redesign)
+> Son güncelleme: 16 Nisan 2026 (v51.0 — Session 30: Profil Sayfası Mega Overhaul)
+
+---
+
+## Session 30 — Profil Sayfası Mega Overhaul (16 Nisan 2026)
+
+### Rozet SVG Sistemi
+- ✅ 11 Duolingo-tarzı metalik pin SVG bileşeni (components/badges/svgs/)
+- ✅ BadgeIcon.tsx wrapper — badge ID → SVG map + fallbackEmoji
+- ✅ Profil sayfası badge preview entegrasyonu
+- ✅ Badges sayfası (/badges) tam entegrasyon
+- ✅ BadgeCelebrationModal entegrasyonu
+
+### Profil Gücü Sistemi
+- ✅ XP sistemi kaldırıldı → 9 bölümlü Profil Gücü (ProfileGamification.tsx)
+- ✅ 5 seviye: 🌱 Başlangıç → 🌿 Gelişiyor → 💪 Güçlü → 🔥 Uzman → 🛡️ Tam Koruma
+- ✅ ✅/⭕ inline completion checks — eksik bölüme tıkla → smooth scroll
+- ✅ Level emoji + sonraki seviye motivasyonu
+
+### Onboarding Bileşen Reuse
+- ✅ OnboardingAdapters.tsx — 5 adapter wrapper:
+  - ProfileSupplementsStep → SupplementsStep (debounced Supabase save)
+  - ProfileMedicalHistoryStep → MedicalHistoryStep (autocomplete + cerrahi + chip'ler)
+  - ProfileFamilyHistoryStep → FamilyHistoryStep (inline soygeçmiş kartında)
+  - ProfileSubstanceStep → SubstanceStep (paket-yıl detayları)
+  - ProfileAllergiesStep (import edildi, alerji formu inline kaldı)
+
+### Kronik Hastalıklar Editörü
+- ✅ ChronicConditionsEditor.tsx — standalone bileşen
+- ✅ 30+ hastalık autocomplete DB (Türkçe-aware arama)
+- ✅ İlaç→hastalık tahmini (20 mapping: metformin→Diyabet, zoretanin→Akne vb.)
+- ✅ "Kronik hastalığım yok ✅" büyük yeşil toggle
+- ✅ Kategorili chip grid (Kardiyovasküler, Endokrin, Nörolojik, Solunum, Cerrahi)
+
+### Yaşam Tarzı Gamification
+- ✅ LifestyleSection.tsx — ayrı bileşen
+- ✅ BMI hesaplayıcı (Zayıf/Normal/Fazla Kilolu/Obez + tip mesajları + WHO kaynağı)
+- ✅ Kan grubu epidemiyolojik insight (PubMed kaynaklı: A→Mide, O→Ülser, B→Pankreas, AB→Kardio)
+- ✅ Trafik lambası egzersiz chip'leri (🔴🟡🟢⚡)
+- ✅ Emoji uyku kalitesi seçici (😴😐😓😵)
+- ✅ Diyet türü ikon grid (2×3)
+
+### DiceBear Avatar
+- ✅ lib/avatar.ts — getAvatarDataUri() + 4 stil
+- ✅ AvatarPicker.tsx — modal, stil grid, rastgele, kaydet (localStorage + Supabase)
+- ✅ Profil header entegrasyonu (hover "Değiştir")
+- ✅ Navbar avatar (desktop + mobil)
+
+### PDF Yeniden Yazım
+- ✅ SBARReport — Roboto font (Türkçe karakter: ş/ğ/ü/ö/ç/ı/İ)
+- ✅ Düzgün tablo layout (tableHeader + tableRow col1/col2/col3)
+- ✅ Cinsiyet/sıklık/reaksiyon/sigara/alkol çevirileri
+- ✅ SBAR daire ikonları kaldırıldı → renkli başlıklar
+- ✅ PDFDownloadButton — server-first + client-side fallback
+- ✅ runtime='nodejs' + dynamic='force-dynamic' + renderToBuffer
+
+### Merkezi Araçlar
+- ✅ lib/frequency.ts — toTurkishFrequency() 40+ varyant
+- ✅ lib/avatar.ts — DiceBear utility
+
+### Bug Fix'ler (30+ fix)
+- ✅ Aşı vaccines JSONB kolonu — migration çalıştırıldı (Supabase'de yoktu)
+- ✅ Aşı checkbox — motion.button kaldırıldı → plain div + role="button"
+- ✅ Aşı optimistic update — previous state parametre olarak geçiyor
+- ✅ Aşı save — detaylı error logging + "✓ Kaydedildi" success badge
+- ✅ Frequency çeviri — 40+ TR varyant (qd/bid/tid/qid, _daily, prn)
+- ✅ DEFAULT_DOSES Türkçe — form'a Günlük/Günde 2 kez yazılıyor
+- ✅ Zoretanin/isotretinoin/roaccutane DEFAULT_DOSES'a eklendi
+- ✅ Save retry — 1s delay sonrası tekrar dene, 2. hata → alert
+- ✅ FAB — bottom-36 mobil / bottom-20 desktop (FeedbackButton çakışma fix)
+- ✅ Scroll pozisyonu — passive scroll listener ile sessionStorage
+- ✅ Chip × — stopPropagation tüm chip'lerde (chronic, supplement, family)
+- ✅ InlineEdit ✓× — 44px touch target, yeşil/kırmızı renkler
+- ✅ Alerji inline form — 12 alerjen + 5 hassasiyet chip + reaksiyon select
+- ✅ Alerji scroll target — edit-health → allergy-card
+- ✅ İki bar birleştirildi — Profil Tamamlama kaldırıldı, sadece Profil Gücü
+- ✅ "Temiz Tıbbi Geçmiş" kartı kaldırıldı (isEmpty ise gösterme)
+- ✅ Sentry conditional config — SENTRY_AUTH_TOKEN yoksa withSentryConfig skip
+- ✅ Gebelik male hide — profile.gender !== 'male'
+- ✅ Kişisel bilgiler "Düzenle" → "Değere tıklayarak düzenle" hint
+- ✅ İlaç kaydet butonu — çift tik kaldırıldı, Save ikonu + "Kaydet"
+- ✅ Sağlık profili ikonu — Settings → Stethoscope, "Sağlık Profilim" başlığı
+- ✅ Alerji reaksiyon label'ları — gi_intolerance, mild_rash, intolerance eklendi
+- ✅ Hastalık/Soygeçmiş Ekle → edit-health scroll + startEditingHealth
+
+### Motivasyon Kartları (7 bölüm)
+- ✅ İlaçlar: "Bunu atlama, ciddi söylüyorum 🤫"
+- ✅ Takviyeler: "'Doğaldır, ne olabilir ki?'"
+- ✅ Kronik: "Sen herkese benzemiyorsun (iyi anlamda) 😎"
+- ✅ Alerjiler: "Fıstık konusunda şaka yapmıyorum 🎯"
+- ✅ Soygeçmiş: "Ailenden gizlice miras aldıkların 🛡️"
+- ✅ Aşılar: "'Paslı çivi battı' dersen ne yaparım? 💉"
+- ✅ Yaşam Tarzı: "Kanepe mi, maraton mu? 😄"
+- ✅ Tümü dismissable (× butonu + localStorage persist)
+
+### Temizlik
+- ✅ 436 satır dead code silindi (eski edit form duplicate)
+- ✅ 6 unused import kaldırıldı (ChronicConditionsEditor, RadioGroup, Wine, Cigarette, Heart, Settings)
+
+### Teknik
+- ✅ 30+ commit, tümü push edildi
+- ✅ 9 yeni dosya oluşturuldu
+- ✅ ~2000 satır ekleme, ~900 satır silme
+- ✅ Yeni paketler: @dicebear/core, @dicebear/collection
+- ✅ Build: sıfır hata (her commit sonrası doğrulandı)
+- ✅ Deploy: Vercel CLI ile --prod --force (Git trigger sorunlu)
 
 ---
 
