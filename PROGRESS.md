@@ -4,6 +4,15 @@
 
 ---
 
+### Aile Profili Yol Haritası (FAMILY-ROADMAP.md)
+- [ ] FAZ 1: Temizlik + temel akış
+- [ ] FAZ 2: Davet sistemi
+- [ ] FAZ 3: Görüntüleme (premium kontrollü)
+- [ ] FAZ 4: Aksiyonlar (premium only)
+- [ ] FAZ 5: Sağlık ağacı
+
+---
+
 ## Session 32 — Mega Refactor + DX Sprint (16-17 Nisan 2026)
 
 ### Layout Performans Optimizasyonu

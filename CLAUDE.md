@@ -44,6 +44,14 @@ Referans doküman: `YASAL-UYUM.md` (Downloads klasöründe)
 
 ---
 
+## Aile Profili Sistemi
+
+Detaylı yol haritası: `FAMILY-ROADMAP.md`
+Mevcut faz: **FAZ 1** (Temizlik + Temel Akış)
+Netflix tarzı profil seçimi, premium kontrollü aile yönetimi.
+
+---
+
 ## 🚨 GELİŞTİRME KURALLARI — MUTLAKA UYGULA
 
 Bu kurallar Session 25'te yaşanan bug'ları önlemek içindir.
