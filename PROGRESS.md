@@ -1,6 +1,52 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 16 Nisan 2026 (v48.1 — Session 25-27)
+> Son güncelleme: 16 Nisan 2026 (v49.0 — Session 28: Aile Profili + Core Fixes + Water Context)
+
+---
+
+## Oturum 16 Nisan 2026 (Session 28) — Aile Profili Sistemi + Core Fixes
+
+### Aile Profili Sistemi (Yeni)
+- ✅ Supabase migration: family_groups, family_members, active_profile_sessions tabloları
+- ✅ RLS: SECURITY DEFINER fonksiyonlarla infinite recursion fix (3 helper function)
+- ✅ FamilyContext (lib/family-context.tsx): createGroup, inviteMember, updateNickname, promoteToAdmin, removeMember
+- ✅ FamilyProvider: app layout'a eklendi (AuthProvider içinde)
+- ✅ Netflix tarzı profil seçim sayfası (/select-profile) — site temasına uyumlu
+- ✅ Aile yönetim sayfası (/family) — grup oluşturma, üye listesi, davet formu, invite link kopyalama
+- ✅ Davet kabul sayfası (/family/accept) — güvenlik uyarısı, email doğrulama, login redirect
+- ✅ Davet API (/api/family/invite) — Resend (onboarding@resend.dev) + Supabase admin fallback + XSS koruması
+- ✅ useActiveProfile hook — activeUserId, isOwnProfile, canEdit
+- ✅ Aktif profil banner (header'da yeşil, "profilini görüntülüyorsunuz")
+- ✅ Profil/Dashboard başkasının verisini gösterir (read-only mod)
+- ✅ FamilyManagementSettings (profil sayfasında yönetim izni toggle)
+- ✅ 24 bug fix: XSS, RLS recursion, hydration, unicode→Türkçe, tema tutarlılığı, type safety
+
+### Onboarding Fixes
+- ✅ Alerji reaksiyon tipi: Badge → inline editable dropdown (her alerji kartında)
+- ✅ updateAllergyReaction() fonksiyonu eklendi
+- ✅ Sigorta: "Emekli (SGK)" / "Retired (SGK)" seçeneği eklendi
+- ✅ Alerji kayıt hatası: "intolerance" → "gi_intolerance" (Supabase CHECK constraint uyumu)
+- ✅ severity mapSeverityForDb(): anaphylaxis→severe, urticaria→moderate, mild_skin/gi_intolerance→mild
+- ✅ alcohol_use: boş/null → "none" fallback (CHECK constraint fix)
+- ✅ Allergies dual write: user_profiles.allergies JSONB + user_allergies tablosu
+- ✅ allergies kolonu yoksa auto-retry (kolonsuz payload ile)
+- ✅ Cerrahi geçmiş yıl input UX: daha büyük input, Enter/Escape, 📅 ikon, dashed border
+- ✅ İlaç kayıt: detaylı debug log + non-critical hata (onboarding'i bloklamaz)
+
+### Dashboard & Core Fixes
+- ✅ Dialog sıralaması: İlaç onayı (MedicationUpdateDialog) önce, kapandıktan sonra MicroCheckIn açılır (event sistemi)
+- ✅ meta: supplement filtresi — dashboard görev listesinden "meta:city=İzmir" gibi ham veriler kaldırıldı
+- ✅ WaterIntakeContext (lib/water-context.tsx): tek kaynak, tüm su widget'ları sync
+- ✅ Dashboard + QuickActions + WaterTracker aynı context'ten okuyor
+- ✅ water_intake kolon adı: intake_date/date auto-detect (406 fallback)
+- ✅ Profile fetch: 5s timeout + 8s retry (eski: tek 8s timeout)
+- ✅ Family AbortError sessiz geçildi
+- ✅ SQL migrations: daily_check_ins, water_intake, daily_logs tabloları + CHECK constraint fix'leri
+
+### Teknik
+- ✅ 20+ commit, tümü push edildi
+- ✅ Yeni dosyalar: types/family.ts, lib/family-context.tsx, lib/use-active-profile.ts, lib/water-context.tsx, app/select-profile/page.tsx, app/family/accept/page.tsx, components/profile/FamilyManagementSettings.tsx, 4 SQL migration
+- ✅ Build: sıfır hata (her commit sonrası doğrulandı)
 
 ---
 
