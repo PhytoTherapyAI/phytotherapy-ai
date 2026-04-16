@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server"
-import { askGeminiJSONMultimodal } from "@/lib/ai-client"
+import { askClaudeJSONMultimodal } from "@/lib/ai-client"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
 import { tx } from "@/lib/translations"
 
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     const systemPrompt = "You are a medication identification assistant. Analyze the image and extract medication information. Respond in JSON format."
 
-    const result = await askGeminiJSONMultimodal(
+    const result = await askClaudeJSONMultimodal(
       prompt,
       systemPrompt,
       [{ mimeType: "image/jpeg", base64: base64Data }]

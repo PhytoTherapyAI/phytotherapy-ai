@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { tx } from "@/lib/translations";
@@ -57,7 +57,7 @@ Return JSON:
   "weeklyPlan": "brief 3-day sample anti-inflammatory meal suggestion"
 }`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Analyze this diet for inflammatory potential: "${diet}". CRP: ${crp || "not provided"}. Respond in ${tx("api.respondLang", lang)}.`,
       prompt
     );

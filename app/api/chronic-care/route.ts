@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -183,7 +183,7 @@ RULES:
 8. Always include PubMed sources for supplement recommendations
 9. Never recommend supplements that conflict with current medications`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Assess chronic disease management for: ${matched}`,
       systemPrompt,
       { userId: user.id }

@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
@@ -68,7 +68,7 @@ Return JSON with this exact structure:
 
     const prompt = `Provide comprehensive information about the drug: "${drug_name.trim()}"`;
 
-    const rawResponse = await askGeminiJSON(prompt, systemPrompt, { userId });
+    const rawResponse = await askClaudeJSON(prompt, systemPrompt, { userId });
     const result = JSON.parse(rawResponse);
 
     return NextResponse.json({ result });

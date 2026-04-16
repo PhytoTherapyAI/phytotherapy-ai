@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { tx } from "@/lib/translations";
 
 const DAILY_CARE_PROMPT = `You are generating a personalized daily care plan for a DoctoPal user.
@@ -145,7 +145,7 @@ LANGUAGE: ${tx("api.respondLang", lang)}
 
 Generate today's personalized care plan with 8 cards. Make it different from what you'd generate for a different day of the week.`;
 
-    const result = await askGeminiJSON(contextPrompt, DAILY_CARE_PROMPT, { userId });
+    const result = await askClaudeJSON(contextPrompt, DAILY_CARE_PROMPT, { userId });
 
     let parsed;
     try {

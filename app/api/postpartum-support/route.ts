@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
@@ -129,7 +129,7 @@ Provide postpartum support including:
 
 If EPDS >= 13 or mood_score <= 1, set alertLevel to "red" and professionalReferral to true.`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
+    const resultText = await askClaudeJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     // Enforce safety

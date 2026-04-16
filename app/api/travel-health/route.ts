@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -137,7 +137,7 @@ IMPORTANT:
 - Include at least 3 pharmacy checklist items
 - Emergency numbers must be real and accurate for the destination`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Provide comprehensive travel health advice for traveling to ${destination} from ${startDate} to ${endDate}.`,
       systemPrompt,
       { userId }

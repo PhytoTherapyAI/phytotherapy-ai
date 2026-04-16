@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -128,7 +128,7 @@ RULES:
 3. Consider user's medications for interaction risks
 4. Cost is relative (low/medium/high)`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Compare these supplements: "${supplement1}" vs "${supplement2}"`,
       systemPrompt,
       { userId }

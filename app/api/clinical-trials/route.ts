@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { tx } from "@/lib/translations";
@@ -57,7 +57,7 @@ Based on your knowledge of ClinicalTrials.gov and ongoing research, provide rele
 
 Provide 3-5 relevant trials. Be informative but note these are AI-generated summaries, not live data.`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Search for clinical trials for: ${condition}, location: ${location || "Any"}. Respond in ${tx("api.respondLang", lang)}.`,
       prompt
     );

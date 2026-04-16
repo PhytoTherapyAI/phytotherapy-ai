@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest } from "next/server"
-import { askGeminiJSON } from "@/lib/ai-client"
+import { askClaudeJSON } from "@/lib/ai-client"
 import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
 import { sanitizeInput } from "@/lib/sanitize"
@@ -114,7 +114,7 @@ WRITING STYLE for personalizedNote and warningMessage:
 
 Be specific about dosing based on the user's profile. ${tx("api.supplementCheck.turkishStyle", lang)}`
 
-    const response = await askGeminiJSON(prompt, systemPrompt, { userId: userId || undefined })
+    const response = await askClaudeJSON(prompt, systemPrompt, { userId: userId || undefined })
 
     try {
       const result = JSON.parse(response)

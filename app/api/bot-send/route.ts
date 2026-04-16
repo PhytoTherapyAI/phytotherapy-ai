@@ -224,9 +224,9 @@ export async function POST(req: Request) {
 
       let message: string
       try {
-        const { askGemini } = await import("@/lib/ai-client")
+        const { askClaude } = await import("@/lib/ai-client")
         const { systemPrompt, userPrompt } = buildNudgePrompt(nudge.trigger, nudge.context, nudge.lang)
-        message = await askGemini(userPrompt, systemPrompt)
+        message = await askClaude(userPrompt, systemPrompt)
         if (message.length > 1600) message = message.slice(0, 1597) + "..."
       } catch {
         const name = String(nudge.context.userName || "friend")

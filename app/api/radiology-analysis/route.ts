@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSONMultimodal } from "@/lib/ai-client";
+import { askClaudeJSONMultimodal } from "@/lib/ai-client";
 import { RADIOLOGY_ANALYSIS_PROMPT } from "@/lib/prompts";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -73,7 +73,7 @@ If this is a text-based report (PDF), extract the key findings and translate the
 If this is a medical image, describe what you observe and explain each finding simply.`;
 
     // Call Gemini Vision (with consent gate via userId)
-    const result = await askGeminiJSONMultimodal(
+    const result = await askClaudeJSONMultimodal(
       prompt,
       RADIOLOGY_ANALYSIS_PROMPT,
       [{ mimeType: file.type, base64 }],

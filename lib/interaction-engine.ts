@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { searchDrug } from "@/lib/openfda";
 import { searchPubMed } from "@/lib/pubmed";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { INTERACTION_PROMPT } from "@/lib/prompts";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
 import { tx } from "@/lib/translations";
@@ -156,7 +156,7 @@ export async function analyzeInteraction(
   );
 
   // Step 7: Get Gemini analysis (JSON mode — guaranteed valid JSON)
-  const geminiResponse = await askGeminiJSON(geminiPrompt, INTERACTION_PROMPT);
+  const geminiResponse = await askClaudeJSON(geminiPrompt, INTERACTION_PROMPT);
 
   // Step 8: Parse response
   const parsed = parseGeminiResponse(geminiResponse);

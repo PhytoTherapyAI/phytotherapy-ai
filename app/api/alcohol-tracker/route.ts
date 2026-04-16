@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";
@@ -123,7 +123,7 @@ RULES:
 4. Pregnancy: ZERO alcohol is safe
 5. Liver disease: strongly advise against ANY alcohol`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Analyze weekly alcohol intake: ${totalUnits.toFixed(1)} units from: ${drinkBreakdown.map(d => `${d.quantity}x ${d.drink} (${d.units} units)`).join(", ")}`,
       systemPrompt,
       { userId }

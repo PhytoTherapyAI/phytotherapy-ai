@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";
@@ -139,7 +139,7 @@ IMPORTANT:
 - Include at least 4 key nutrients for seniors
 - Be warm, respectful, and encouraging in tone`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Generate a comprehensive elder care health review.${userAge > 0 ? ` The user is ${userAge} years old.` : ""} They take ${medCount} medication(s). Provide personalized geriatric health guidance.`,
       systemPrompt,
       { userId }

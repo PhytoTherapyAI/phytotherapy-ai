@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -124,7 +124,7 @@ RULES:
 5. Diabetes: must consult endocrinologist before fasting
 6. Ramadan mode: dawn-to-sunset fasting, suhoor/iftar timing considerations`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Intermittent fasting plan: Protocol ${protocol}, eating window ${eatingWindowStart}-${eatingWindowEnd}${ramadanMode ? ", Ramadan mode" : ""}`,
       systemPrompt,
       { userId }

@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { tx } from "@/lib/translations";
@@ -60,7 +60,7 @@ Return JSON:
 
 Be factual and evidence-based. If information is limited, say so.`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Provide information about this rare disease: "${disease}". Respond in ${tx("api.respondLang", lang)}.`,
       prompt
     );

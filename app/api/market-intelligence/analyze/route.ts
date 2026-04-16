@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import {
   BOTANICAL_TRENDS,
   PHYTO_COMPANIES,
@@ -83,7 +83,7 @@ Return JSON with this exact structure:
 
 Provide 3-5 early signals, 3 bullish factors, 2 bearish factors, and 2-3 risk alerts.`;
 
-    const raw = await askGeminiJSON(prompt, SYSTEM_PROMPT);
+    const raw = await askClaudeJSON(prompt, SYSTEM_PROMPT);
     const parsed = JSON.parse(raw);
 
     return NextResponse.json(parsed);

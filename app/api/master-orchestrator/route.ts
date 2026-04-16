@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { aggregateHealthContext } from "@/lib/health-context";
 import { runCrossModuleRules } from "@/lib/cross-module-engine";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 
 export const maxDuration = 30;
@@ -86,7 +86,7 @@ Return JSON:
   "synergyScore": 0-100 (how well their modules are aligned today)
 }`;
 
-      const result = await askGeminiJSON(
+      const result = await askClaudeJSON(
         `Generate today's holistic health synergy plan for ${healthContext.user.name || "this user"}.`,
         systemPrompt,
         { userId }

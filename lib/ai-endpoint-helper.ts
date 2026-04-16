@@ -9,12 +9,12 @@ import { createServerClient } from "@/lib/supabase";
  *
  * USAGE (in an AI endpoint):
  *   const userId = await getAIUserId(request);
- *   const result = await askGeminiJSON(prompt, systemPrompt, { userId });
+ *   const result = await askClaudeJSON(prompt, systemPrompt, { userId });
  *   // If user lacks AI consent, result will be
  *   //   { error: "consent_required", blocked: true, message: "..." }
  *
  * USAGE (emergency bypass — always let the call through, e.g. red-code triage):
- *   const result = await askGemini(prompt, systemPrompt, { skipConsent: true });
+ *   const result = await askClaude(prompt, systemPrompt, { skipConsent: true });
  */
 export async function getAIUserId(request: Request | NextRequest): Promise<string | null> {
   const auth = request.headers.get("authorization");
@@ -34,7 +34,7 @@ export async function getAIUserId(request: Request | NextRequest): Promise<strin
  * Returns { blocked: true, message } if the response is a safety block, otherwise null.
  *
  * USAGE:
- *   const raw = await askGeminiJSON(prompt, systemPrompt, { userId });
+ *   const raw = await askClaudeJSON(prompt, systemPrompt, { userId });
  *   const block = parseAIBlock(raw);
  *   if (block) {
  *     return NextResponse.json({ error: block.message, code: block.code }, { status: 403 });

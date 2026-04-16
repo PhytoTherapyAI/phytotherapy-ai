@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -84,7 +84,7 @@ Create a structured second opinion preparation package. Return JSON:
   "tips": "General tips for getting the most from a second opinion"
 }`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Prepare a second opinion package for this concern: "${concern}". Respond in ${tx("api.respondLang", lang)}.`,
       prompt,
       { userId: user.id }

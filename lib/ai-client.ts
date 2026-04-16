@@ -385,7 +385,7 @@ export async function askStreamJSON(
 export async function askStreamJSONMultimodal(
   prompt: string,
   systemPrompt: string,
-  files: GeminiFilePart[],
+  files: AIFilePart[],
   options?: { premium?: boolean; userId?: string; skipConsent?: boolean }
 ): Promise<string> {
   // KVKK guards: consent + input PII + injection + security preamble
@@ -458,7 +458,7 @@ export async function askStreamJSONMultimodal(
 // Exported functions — same names as gemini.ts
 // ──────────────────────────────────────────────
 
-export async function askGemini(
+export async function askClaude(
   prompt: string,
   systemPrompt: string,
   options?: { premium?: boolean; temperature?: number; userQuery?: string; userId?: string; skipConsent?: boolean }
@@ -491,7 +491,7 @@ export async function askGemini(
   return guardOutputText(raw, options?.userQuery);
 }
 
-export async function askGeminiJSON(
+export async function askClaudeJSON(
   prompt: string,
   systemPrompt: string,
   options?: { userId?: string; skipConsent?: boolean }
@@ -526,7 +526,7 @@ export async function askGeminiJSON(
   });
 }
 
-export async function askGeminiStream(
+export async function askClaudeStream(
   prompt: string,
   systemPrompt: string,
   options?: { premium?: boolean; userQuery?: string; skipOutputFilter?: boolean; userId?: string; skipConsent?: boolean }
@@ -599,15 +599,15 @@ export async function askGeminiStream(
 }
 
 // Re-export the same interface for multimodal
-export interface GeminiFilePart {
+export interface AIFilePart {
   mimeType: string;
   base64: string;
 }
 
-export async function askGeminiJSONMultimodal(
+export async function askClaudeJSONMultimodal(
   prompt: string,
   systemPrompt: string,
-  files: GeminiFilePart[],
+  files: AIFilePart[],
   options?: { userId?: string; skipConsent?: boolean }
 ): Promise<string> {
   // KVKK guards: consent + input PII + injection + security preamble
@@ -670,10 +670,10 @@ export async function askGeminiJSONMultimodal(
   });
 }
 
-export async function askGeminiStreamMultimodal(
+export async function askClaudeStreamMultimodal(
   prompt: string,
   systemPrompt: string,
-  files: GeminiFilePart[],
+  files: AIFilePart[],
   options?: { premium?: boolean; userQuery?: string; skipOutputFilter?: boolean; userId?: string; skipConsent?: boolean }
 ): Promise<ReadableStream> {
   // KVKK guards: consent + input PII + injection + security preamble

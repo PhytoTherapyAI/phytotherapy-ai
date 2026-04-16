@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
-import { askGeminiJSON } from "@/lib/ai-client"
+import { askClaudeJSON } from "@/lib/ai-client"
 import { tx } from "@/lib/translations"
 
 export const maxDuration = 60
@@ -117,7 +117,7 @@ USER MEDICATIONS: ${medicationList}
 
 Provide a comprehensive sleep analysis as JSON.`
 
-    const result = await askGeminiJSON(prompt, systemPrompt, { userId })
+    const result = await askClaudeJSON(prompt, systemPrompt, { userId })
     let analysis; try { analysis = JSON.parse(result); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     return NextResponse.json({ analysis })

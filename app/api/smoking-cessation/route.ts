@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -132,7 +132,7 @@ RULES:
 6. If status is "planning", be encouraging and focus on preparation
 7. If "reducing", acknowledge progress and suggest gradual reduction plan`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Smoking cessation plan: ${dailyCigs} cigarettes/day, status: ${currentStatus}, quit date: ${quitDate || "not set"}, NRT: ${nicotineTherapy}, days smoke-free: ${daysSinceQuit}`,
       systemPrompt,
       { userId }

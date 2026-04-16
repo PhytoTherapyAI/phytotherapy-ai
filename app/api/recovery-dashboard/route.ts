@@ -9,7 +9,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { fetchDailyHealthLog, buildPromptContext } from "@/lib/daily-health-log";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 
 export const maxDuration = 30;
@@ -77,7 +77,7 @@ Return JSON:
   "herbPick": { "name": "Herb", "dose": "Dose", "reason": "Why now", "evidence": "A|B|C" }
 }`;
 
-        const result = await askGeminiJSON(
+        const result = await askClaudeJSON(
           `Analyze today's recovery data and give personalized guidance.`,
           systemPrompt,
           { userId }

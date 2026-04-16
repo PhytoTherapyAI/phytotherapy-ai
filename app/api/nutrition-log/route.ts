@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";
@@ -247,7 +247,7 @@ ${medicationsContext}
 Return JSON with: calories, protein, carbs, fat, fiber, key_nutrients, food_drug_alerts, summary.`;
 
     // Call Gemini
-    const rawResult = await askGeminiJSON(userPrompt, NUTRITION_SYSTEM_PROMPT, { userId: user.id });
+    const rawResult = await askClaudeJSON(userPrompt, NUTRITION_SYSTEM_PROMPT, { userId: user.id });
     let analysis: GeminiNutritionResult;
 
     try {

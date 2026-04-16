@@ -9,7 +9,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkNudgeTriggers } from "@/lib/nudge-engine";
 import { buildNudgePrompt, NUDGE_FALLBACKS } from "@/lib/nudge-prompts";
-import { askGemini } from "@/lib/ai-client";
+import { askClaude } from "@/lib/ai-client";
 
 export const maxDuration = 30;
 
@@ -98,7 +98,7 @@ export async function POST(req: Request) {
     let message: string;
     try {
       const { systemPrompt, userPrompt } = buildNudgePrompt(nudge.trigger, nudge.context, nudge.lang);
-      message = await askGemini(userPrompt, systemPrompt);
+      message = await askClaude(userPrompt, systemPrompt);
       // Truncate for WhatsApp
       if (message.length > 1600) message = message.slice(0, 1597) + "...";
     } catch {

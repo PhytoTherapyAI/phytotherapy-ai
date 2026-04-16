@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -139,7 +139,7 @@ IMPORTANT:
 - If medications could be causing these symptoms as side effects, mention that prominently
 - Always include at least 2 "whenToSeeDoctor" items`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Patient describes these symptoms: "${symptoms}"
 
 Assess the symptoms, provide possible causes, and recommend next steps.`,

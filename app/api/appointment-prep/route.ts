@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -202,7 +202,7 @@ RULES:
 6. suggestedQuestions should be specific to THIS patient's situation
 7. Format all values with proper medical units`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Generate a clinical summary for this patient's upcoming doctor appointment.${concerns ? ` Patient's concerns: "${concerns}"` : ""}`,
       systemPrompt,
       { userId: user.id }

@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 Input: "${rawInput}"`;
 
       try {
-        const intentResult = await askGeminiJSON(extractPrompt, "You extract structured data from fitness descriptions. Return only valid JSON.");
+        const intentResult = await askClaudeJSON(extractPrompt, "You extract structured data from fitness descriptions. Return only valid JSON.");
         extractedIntent = typeof intentResult === "string" ? JSON.parse(intentResult) : intentResult;
         // Use extracted values
         sportType = extractedIntent.sportType || sportType;
@@ -131,7 +131,7 @@ ${userName ? `Name: ${userName}` : ""}
 Return JSON: {"todayFocus":{"title":"","description":"","keyAction":"","evidenceGrade":"A|B|C"},"supplementPlan":[{"name":"","dose":"","timing":"","evidenceGrade":"","benefit":"","safety":"safe|caution|avoid","safetyNote":"","duration":""}],"safetyWarnings":[{"supplement":"","medication":"","severity":"avoid|caution|monitor","why":"","whatToDo":""}],"nutritionTiming":{"preWorkout":{"timing":"","foods":[],"macros":""},"postWorkout":{"timing":"","foods":[],"macros":""},"generalTips":[]},"recoveryProtocol":[{"method":"","frequency":"","duration":"","benefit":""}],"weeklyStructure":"","sources":[{"title":"","url":""}]}
 3 supplements, 3 recovery methods minimum. Be concise.`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       rawInput
         ? `Based on the user's input: "${rawInput}". Create a comprehensive, hyper-personalized sports performance plan.`
         : `Provide a sports performance plan for a ${sportType} athlete with ${goal} as goal, training ${freq} days/week.${currentSupplements ? ` Currently taking: ${currentSupplements}.` : ""}`,

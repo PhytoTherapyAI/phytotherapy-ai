@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSONMultimodal } from "@/lib/ai-client";
+import { askClaudeJSONMultimodal } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";
@@ -128,7 +128,7 @@ RULES:
 
     const prompt = `Read this medication prospectus/leaflet/packaging image and extract all key information. Explain everything in simple ${userLang} that anyone can understand.`;
 
-    const result = await askGeminiJSONMultimodal(prompt, systemPrompt, [
+    const result = await askClaudeJSONMultimodal(prompt, systemPrompt, [
       { mimeType: file.type, base64 },
     ], { userId });
 

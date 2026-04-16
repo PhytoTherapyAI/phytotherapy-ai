@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
-import { askGeminiJSON } from "@/lib/ai-client"
+import { askClaudeJSON } from "@/lib/ai-client"
 import { tx } from "@/lib/translations"
 
 export const maxDuration = 60
@@ -195,7 +195,7 @@ Return ONLY a raw JSON object matching this schema:
   "disclaimer": "standard medical disclaimer"
 }`
 
-    const geminiResponse = await askGeminiJSON(prompt, systemPrompt, { userId })
+    const geminiResponse = await askClaudeJSON(prompt, systemPrompt, { userId })
     const analysis = parseAnalysis(geminiResponse)
 
     // Save to query history

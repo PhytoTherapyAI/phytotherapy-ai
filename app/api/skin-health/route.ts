@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -156,7 +156,7 @@ USER ALLERGIES: ${allergyList}
 
 Provide a comprehensive skin health analysis as JSON.`;
 
-    const result = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
+    const result = await askClaudeJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(result); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     // Save to query history

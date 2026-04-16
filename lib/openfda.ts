@@ -1,5 +1,5 @@
 // © 2026 DoctoPal — All Rights Reserved
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 
 const OPENFDA_BASE = "https://api.fda.gov/drug";
 
@@ -99,7 +99,7 @@ If you don't know this medication, respond with: {"genericName": null, "activeIn
 
     const systemPrompt = `You are a pharmaceutical database. You know international drug brand names including Turkish brands (e.g., Glifor=Metformin, Coraspin=Aspirin, Euthyrox=Levothyroxine, Arveles=Dexketoprofen, Majezik=Flurbiprofen, Apranax=Naproxen, Lustral=Sertraline, Cipralex=Escitalopram, Concor=Bisoprolol, Beloc=Metoprolol, Glucobay=Acarbose, Lantus=Insulin Glargine, Augmentin=Amoxicillin/Clavulanate, Cipro=Ciprofloxacin, Lansoprol=Lansoprazole, Atoris=Atorvastatin, Glucophage=Metformin, Norvasc=Amlodipine, Xarelto=Rivaroxaban, Plavix=Clopidogrel, Nexium=Esomeprazole, Voltaren=Diclofenac, Dikloron=Diclofenac, Parol=Acetaminophen, Nurofen=Ibuprofen). Respond ONLY with raw JSON, no markdown fences.`;
 
-    const response = await askGeminiJSON(prompt, systemPrompt);
+    const response = await askClaudeJSON(prompt, systemPrompt);
 
     // With responseMimeType: "application/json", response is already clean JSON
     const parsed = JSON.parse(response);

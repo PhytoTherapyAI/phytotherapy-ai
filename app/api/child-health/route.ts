@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -116,7 +116,7 @@ IMPORTANT:
 - Always include at least 3 "whenToWorry" items
 - Be reassuring but never minimize legitimate concerns`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `A parent is concerned about their ${ageDescription} child. The concern is: "${concern}".${notes ? ` Additional notes: "${notes}"` : ""} Provide age-appropriate pediatric guidance.`,
       systemPrompt,
       { userId }

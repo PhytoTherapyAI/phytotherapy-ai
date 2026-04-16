@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { tx } from "@/lib/translations";
 
 export const maxDuration = 60;
@@ -81,7 +81,7 @@ Include:
 5. Exercise recommendations safe for this age group
 6. Any medication-related notes for this age group`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
+    const resultText = await askClaudeJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     return NextResponse.json({ result: analysis });

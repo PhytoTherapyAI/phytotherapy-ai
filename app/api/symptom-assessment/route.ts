@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import type {
   AssessmentRequest,
   AssessmentResponse,
@@ -184,7 +184,7 @@ export async function POST(req: Request) {
     contextParts.push(`Generate the next adaptive question. Remember: strict JSON response only.`);
 
     const prompt = contextParts.join("\n\n");
-    const resultStr = await askGeminiJSON(prompt, SYSTEM_PROMPT);
+    const resultStr = await askClaudeJSON(prompt, SYSTEM_PROMPT);
 
     let parsed: AssessmentResponse;
     try {

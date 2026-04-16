@@ -1,4 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
+// DEPRECATED 2026-04: All AI endpoints migrated to Anthropic Claude (lib/ai-client.ts).
+// This file is no longer imported by any route or component.
+// Scheduled for removal after verification. If nothing imports from here, safe to delete.
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);

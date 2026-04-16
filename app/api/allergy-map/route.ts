@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -245,7 +245,7 @@ RULES:
 4. Be thorough but avoid false alarms
 5. If no conflicts found, return empty conflicts array with reassuring summary`;
 
-  const result = await askGeminiJSON(
+  const result = await askClaudeJSON(
     `Cross-check allergies vs medications for safety.`,
     systemPrompt,
     { userId }

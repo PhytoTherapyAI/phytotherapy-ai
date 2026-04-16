@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
@@ -126,7 +126,7 @@ RULES:
 - Never diagnose — only recommend consulting with their doctor
 - Include standard adult vaccinations if missing (flu, tetanus boosters, etc.)`;
 
-      const result = await askGeminiJSON(
+      const result = await askClaudeJSON(
         "Analyze vaccination needs and provide recommendations.",
         systemPrompt,
         { userId: user.id }

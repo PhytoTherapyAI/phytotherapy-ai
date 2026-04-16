@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
-import { askGemini } from "@/lib/ai-client"
+import { askClaude } from "@/lib/ai-client"
 
 export async function POST(req: NextRequest) {
   try {
@@ -80,7 +80,7 @@ Generate a concise clinical visit summary in English with:
 
 Keep it professional, concise, and clinically relevant.`
 
-    const summary = await askGemini(prompt, "You are a clinical AI assistant generating visit summaries for doctors.", { userId: user.id })
+    const summary = await askClaude(prompt, "You are a clinical AI assistant generating visit summaries for doctors.", { userId: user.id })
 
     return NextResponse.json({ summary })
   } catch (error) {

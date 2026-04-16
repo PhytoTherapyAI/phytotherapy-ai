@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest } from "next/server";
-import { askGeminiStream, askGeminiStreamMultimodal } from "@/lib/ai-client";
-import type { GeminiFilePart } from "@/lib/ai-client";
+import { askClaudeStream, askClaudeStreamMultimodal } from "@/lib/ai-client";
+import type { AIFilePart } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
 import { SYSTEM_PROMPT } from "@/lib/prompts";
 import { checkRedFlags, getEmergencyMessage, getYellowWarning, checkVaccineKeywords } from "@/lib/safety-filter";
@@ -411,7 +411,7 @@ This rule exists because giving dosage advice without knowing the user's medicat
     }
 
     // Step 5b: Process uploaded files for multimodal Claude call
-    const geminiFiles: GeminiFilePart[] = [];
+    const geminiFiles: AIFilePart[] = [];
     if (Array.isArray(files) && files.length > 0) {
       for (const file of files) {
         if (file.base64 && file.mimeType) {
@@ -431,8 +431,8 @@ This rule exists because giving dosage advice without knowing the user's medicat
     let stream;
     try {
       stream = geminiFiles.length > 0
-        ? await askGeminiStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles, { premium: false, skipOutputFilter: true, skipConsent: true })
-        : await askGeminiStream(fullPrompt, systemPromptFull, { premium: false, skipOutputFilter: true, skipConsent: true });
+        ? await askClaudeStreamMultimodal(fullPrompt, systemPromptFull, geminiFiles, { premium: false, skipOutputFilter: true, skipConsent: true })
+        : await askClaudeStream(fullPrompt, systemPromptFull, { premium: false, skipOutputFilter: true, skipConsent: true });
     } catch (claudeError) {
       // Claude API call failed (rate limit, API key, network, etc.)
       // Return a streaming response with the error message instead of a 500

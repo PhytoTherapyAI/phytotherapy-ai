@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { tx } from "@/lib/translations";
@@ -59,7 +59,7 @@ Analyze and return JSON:
   "recommendations": "brief recommendation"
 }`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Analyze this food label. Product: ${productName || "Unknown"}. Ingredients: ${ingredients}. Respond in ${tx("api.respondLang", lang)}.`,
       prompt
     );

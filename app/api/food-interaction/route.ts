@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { searchPubMed } from "@/lib/pubmed";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -134,7 +134,7 @@ RULES:
 4. Be specific about mechanisms (CYP3A4 inhibition, chelation, etc.)
 5. Always include timing advice when relevant`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Check food-drug interactions:\nFoods: ${foods.join(", ")}\nMedications: ${medications.join(", ")}`,
       systemPrompt,
       { userId }

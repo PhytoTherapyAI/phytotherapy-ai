@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";
@@ -133,7 +133,7 @@ RULES:
 4. If pregnant, limit to <200mg/day
 5. Sleep impact: caffeine consumed after 2pm affects sleep quality`;
 
-    const result = await askGeminiJSON(
+    const result = await askClaudeJSON(
       `Analyze caffeine intake: Total ${totalCaffeine}mg from: ${drinkBreakdown.map(d => `${d.quantity}x ${d.drink} (${d.mg}mg)`).join(", ")}`,
       systemPrompt,
       { userId }

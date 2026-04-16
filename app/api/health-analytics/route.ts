@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
-import { askGeminiJSON } from "@/lib/ai-client"
+import { askClaudeJSON } from "@/lib/ai-client"
 import { tx } from "@/lib/translations"
 import {
   generateHealthTimeline,
@@ -140,7 +140,7 @@ Anomalies detected: ${anomalies.length} (${anomalies.filter(a => a.severity === 
 
 Provide 3-4 insights, 2-3 correlations, and 2-3 recommendations. Be specific and evidence-aware.`
 
-    const raw = await askGeminiJSON(prompt, systemPrompt, { userId: user.id })
+    const raw = await askClaudeJSON(prompt, systemPrompt, { userId: user.id })
     const parsed = JSON.parse(raw)
 
     return NextResponse.json(parsed)

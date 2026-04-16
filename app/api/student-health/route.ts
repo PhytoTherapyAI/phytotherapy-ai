@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
-import { askGeminiJSON } from "@/lib/ai-client";
+import { askClaudeJSON } from "@/lib/ai-client";
 import { sanitizeInput } from "@/lib/sanitize";
 import { tx } from "@/lib/translations";
 
@@ -68,7 +68,7 @@ Provide practical, budget-friendly health advice including:
 4. Warning signs to watch for
 5. When to seek professional help`;
 
-    const resultText = await askGeminiJSON(prompt, systemPrompt, { userId: user.id });
+    const resultText = await askClaudeJSON(prompt, systemPrompt, { userId: user.id });
     let analysis; try { analysis = JSON.parse(resultText); } catch { return NextResponse.json({ error: "Failed to parse AI response" }, { status: 500 }); }
 
     return NextResponse.json({ result: analysis });
