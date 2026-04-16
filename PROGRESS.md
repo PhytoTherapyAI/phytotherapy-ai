@@ -1,6 +1,177 @@
-# PROGRESS.md — DoctoPal Sprint İlerleme Takibi
+# PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 9 Nisan 2026 (v46.0 — Session 18-19: Aile Profili + Core Fixes)
+> Son güncelleme: 16 Nisan 2026 (v48.1 — Session 25-27)
+
+---
+
+## Oturum 16 Nisan 2026 (Session 27) — Apple Health & Google Fit Import
+
+### Sağlık Verisi İçe Aktarma (5 Stage)
+- ✅ Stage 1: Foundation — `health_imports` tablosu (source/file_name/status/records_imported/date_range) + `health_metrics.import_id` FK (ON DELETE CASCADE) + UPDATE/DELETE RLS policy. Migration: `20260416_health_imports.sql`
+- ✅ Stage 2: Parsers — `lib/health-import/apple-health-parser.ts` (JSZip → fast-xml-parser, 9 HK identifier whitelist, per-day sum/avg/max/last agg, sleep startDate→endDate duration) + `lib/health-import/google-fit-parser.ts` (Takeout ZIP, derived JSON file-name matching, ns→ISO, sleep stage filter, BP systolic+diastolic split). Deps: jszip ^3.10.1, fast-xml-parser ^5.6.0
+- ✅ Stage 3: API — `/api/health-imports` (GET/POST/PATCH/DELETE, Bearer auth, rate-limited) + `/api/health-metrics` (POST batch upsert 1000-row chunks + GET with ?granularity=daily/weekly/monthly rollup). Upsert onConflict prevents duplicate rows on re-import
+- ✅ Stage 4: UI — `<HealthImportSection />` component, `/connected-devices` sayfasına entegre: 2 import kartı (Apple Health kırmızı / Google Fit mavi) + expandable step-by-step rehber + dosya seç → client-side parse → progress bar → chunk upload → success toast. 7-gün mini summary (ort. adım, ort. nabız, toplam uyku). Geçmiş import'lar tablosu (kaynak, tarih, kayıt sayısı, durum badge, cascade delete)
+- ✅ Stage 5: Test — Mock fixtures (`apple-health-mock.ts`, `google-fit-mock.ts`) + Playwright spec (step sum doğruluğu, HR avg, sleep bucketing, reject bad zip, API auth-gate)
+- 500 MB file limit, cancel butonu, duplicate import önleme (UNIQUE constraint + ignoreDuplicates)
+
+---
+
+## Oturum 16 Nisan 2026 (Session 25-26) — Güvenlik + Hane v2 + Bildirimler
+
+### Profil Tamamlama Tutarsızlığı Düzeltmesi
+- ✅ Profil Gücü kartı (%56) ve banner (%100) iki farklı hesaplama kullanıyordu → tek kaynak (calculateProfilePower)
+- ✅ 9 bölüm: 4 zorunlu (basic/meds/allergies/chronic) + 5 opsiyonel → kart footer "Zorunlu/Opsiyonel" özeti
+- ✅ Banner artık dinamik: %0-25 turuncu / %26-50 amber / %51-75 mavi / %76-99 emerald / %100 yeşil
+
+### Hackathon Demo Banner Kaldırma
+- ✅ DemoBanner componenti + render call silindi
+- ✅ TrialBanner `return null` shortcircuiti kaldırıldı (normal trial flow aktif)
+- ✅ "Hackathon mode" yorumları temizlendi (ai-client, premium, courses, tools-hierarchy)
+- ✅ About sayfası "Harvard hackathon" → "passionate about evidence-based integrative medicine"
+- ✅ HACKATHON-PREP.md, DEMO-SCRIPT.md silindi
+
+### Güvenlik Sayfası İçerik Genişletme
+- ✅ 8 mevcut kartın TR/EN açıklaması 2-4 cümleye genişletildi
+- ✅ Yeni "AI Güvenliği" kartı eklendi (Brain ikonu, 5 katman açıklaması)
+- ✅ Tüm Türkçe karakter hataları düzeltildi (Şifreleme, güvenliği, Doğrulama, Erişim, İzleme)
+- ✅ "bankaların kullandığı" → "endüstri standardı" düzeltildi
+- ✅ "Maksimum 2 yıl saklama" → gerçekçi "hesap aktifken saklanır, silinince kalıcı kaldırılır"
+- ✅ Cloudflare Turnstile bot koruması mention eklendi
+
+### Auth Bypass Düzeltme (/api/auth/change-password)
+- ✅ body.userId → Bearer token'dan auth.getUser() → service-role kaldırıldı → anon-key + caller session
+- ✅ Rate limit eklendi (5 req/dk)
+
+### Type Cleanup + Refactor
+- ✅ 34 dosyada `any` → proper types (linter-style)
+- ✅ daily-log + health-score → apiHandler HOC refactor (-250 satır net)
+
+### Hane Sayfası v2 (/family redesign)
+- ✅ Stage 1: Üye grid kartları (avatar + ring, isim + nickname, rol/Sen badge, click→profil)
+- ✅ Stage 2: Bekleyen davetler (link kopyala + iptal, expires_at kolonu, süre badge)
+- ✅ Stage 3: Per-member sharing prefs (4 toggle: health_score, medications, allergies, emergency)
+- ✅ Stage 4: Dashboard summary (4-cell grid: Üye/Bekleyen/Ort. Skor/Hatırlatma)
+- ✅ Stage 5: Notifications sistemi (family_notifications tablosu + RLS + API + NotificationBell + member-to-member hatırlatmalar)
+- ✅ Hane ismi inline edit + emoji picker + motivasyon boş state + davet form helper text
+
+---
+
+## Oturum 14-16 Nisan 2026 (Session 24) — Post-Hackathon Cleanup
+
+### Translations Split
+- ✅ translations.ts 7060 → 272 satır (%96 azalma)
+- ✅ 11 namespace dosyası: auth, common, health, legal, onboarding, tools + 5 önceki xKeys
+- ✅ tx() API değişmedi — 347 import site'ı aynı çalışıyor
+- ✅ 5039 unique key korundu
+
+### Consent Gate — 62 Endpoint
+- ✅ 62/77 AI endpoint'te userId pass edilerek consent gate aktif
+- ✅ Python script ile 32 endpoint toplu edit + 30 endpoint manuel
+- ✅ 23 endpoint'te userId scope hoist edildi
+
+### Hackathon Mode Kapatıldı
+- ✅ lib/premium.ts: isPremium: true fallback kaldırıldı
+- ✅ app/page.tsx: hardcoded isPremium → premiumStatus?.isPremium
+
+### TypeScript Strict Cleanup
+- ✅ lib/ dosyalarındaki tüm `any` kullanımları typed (6 dosya)
+- ✅ pubmed.ts, gemini.ts, interaction-engine.ts, turkish-drugs.ts, secure-storage.ts, health-integrations.ts
+
+---
+
+## Oturum 12-14 Nisan 2026 (Session 22-23) — Yasal Uyum Bug Fixes
+
+### Güvenlik Açığı Düzeltmeleri
+- ✅ PromptInjectionError 7 export fonksiyonunda yakalanıyor (500 crash engellendi)
+- ✅ Layer 1 "you have X" regex → medical-term whitelist gating (44 EN + 57 TR terim)
+- ✅ Consent gate null profile bypass kapatıldı (!profile?.consent)
+- ✅ Output filter fail-closed yapıldı (crash → güvenli mesaj, ham AI leak yok)
+- ✅ Emergency keyword listesi genişletildi (+16 TR, +14 EN yeni terim)
+- ✅ ageToRange() NaN/Infinity guard eklendi
+- ✅ anonymizePromptData() undefined input guard eklendi
+- ✅ Birth field detection false positive azaltıldı
+
+---
+
+## Oturum 10-12 Nisan 2026 (Session 21) — YASAL UYUM (14 Madde)
+
+### MADDE 1, 2, 3 — Aydınlatma/Rıza Ayrımı (KVKK 2026/347)
+- ✅ AydinlatmaStep.tsx — sadece bilgilendirme, checkbox yok, "Okudum, Anladım" butonu
+- ✅ ConsentStep.tsx — 3 ayrı açık rıza checkbox (AI işleme, yurt dışı aktarım, SBAR)
+- ✅ OnboardingData: aydinlatma_acknowledged, consent_ai_processing, consent_data_transfer, consent_sbar_report
+- ✅ Supabase migration: consent_separation.sql + consent_log audit tablosu
+
+### MADDE 5 — Prompt Anonimleştirme (KVKK ÜYZ Rehberi)
+- ✅ anonymizePromptData() — 18 identity field strip, yaş → yaş aralığı
+- ✅ stripPIIFromText() — email, telefon, TC, URL regex temizleme
+- ✅ Chat route: user mesajı + profil verisi anonymize
+
+### MADDE 6 — Veri Güvenliği (TCK 134-136)
+- ✅ lib/security-audit.ts — auditEnvVariables(), logApiAccess(), DATA_BREACH_PLAN
+- ✅ 3 kritik endpoint'te logApiAccess çağrısı
+
+### MADDE 7 — Prompt Injection Koruması
+- ✅ detectPromptInjection() — 5 tehdit kategorisi (system prompt leak, override, jailbreak, exfiltration, harmful)
+- ✅ System prompt'a SECURITY_PREAMBLE prepend
+- ✅ Chat route: injection check AI çağrısından ÖNCE
+
+### MADDE 8, 10, 13 — AI Disclaimer + İtiraz + AI Etiketi
+- ✅ AIDisclaimer.tsx — kaldırılamaz disclaimer + genişleyen itiraz butonu
+- ✅ AIObjectionForm.tsx — 6 kategorili KVKK Md.11/1-g itiraz formu
+- ✅ /api/feedback/objection — rate-limited POST endpoint
+- ✅ ai_objections Supabase migration
+- ✅ AIGeneratedBadge — chat üstünde "🤖 AI Yanıtı" pill
+- ✅ MessageBubble + interaction-checker + medical-analysis'te disclaimer
+
+### MADDE 9 — 4 Katmanlı Output Filtresi (1219 s.K.)
+- ✅ lib/output-safety-filter.ts — filterAIOutput()
+- ✅ Layer 1: Teşhis → bilgilendirme (medical-term whitelist gated)
+- ✅ Layer 2: Reçete → araştırma referansı
+- ✅ Layer 3: Bitkisel tavsiye → güvenli format
+- ✅ Layer 4: Acil durum → 112 yönlendirmesi
+- ✅ Chat route: buffer → filter → emit pattern (streaming'de ham AI leak yok)
+
+### MADDE 11, 12 — Sayfa İçerikleri
+- ✅ /security: SCC kartı + anonimleştirme + re-identifikasyon + ihlal planı
+- ✅ /privacy: KVKK Md.11 hakları + AI data processing + rıza geri çekme + saklama tablosu
+- ✅ /terms: Hizmet tanımı (tıbbi cihaz değil, GETAT değil) + sorumluluk sınırları
+- ✅ /about: 7 katmanlı güvenlik mimarisi + intended purpose CTA
+
+### Merkezi AI Middleware (ai-client.ts)
+- ✅ guardInput() — tüm 7 export fonksiyonunda PII + injection + security preamble
+- ✅ guardOutputText() / guardOutputStream() — fail-closed output filter
+- ✅ PromptInjectionError + ConsentRequiredError — safe refusal (500 crash yok)
+- ✅ 62/77 AI endpoint otomatik korunuyor
+
+### Ek Sayfalar
+- ✅ /intended-purpose — TİTCK/MDCG 2019-11 audit dokümanı (7 bölüm, TR/EN)
+- ✅ /api/privacy-settings — GET/PATCH consent management endpoint
+- ✅ PrivacySettings component — profil sayfasında 3 toggle + data-delete/export linkleri
+- ✅ Footer: "Tıbbi cihaz değildir" ibaresi + /intended-purpose + /security linkleri
+
+---
+
+## Oturum 10 Nisan 2026 (Session 20) — SBAR PDF + Chat API + Profil
+
+### SBAR PDF
+- ✅ Server-side only generation (client-side @react-pdf/renderer kaldırıldı)
+- ✅ Profesyonel tasarım: sage-green branding, 2-col patient info, SBAR sections
+- ✅ Helvetica + fixTr() Türkçe transliterasyon (ı→i, ş→s, ğ→g, ü→u, ö→o, ç→c)
+- ✅ surgery: prefix ayrımı (Cerrahi Geçmiş), family: prefix (Aile Sağlık Geçmişi)
+- ✅ Condition translations: shared lib/condition-translations.ts (30+ hastalık EN↔TR)
+- ✅ Email gönderim: Resend API, profesyonel HTML template, onboarding@resend.dev
+
+### Chat API Context Enrichment
+- ✅ Tam hasta profili system prompt'a: yaş, cinsiyet, kan grubu, BMI, ilaçlar, alerjiler, kronik hastalıklar, cerrahi geçmiş, aile geçmişi, sigara, alkol, aşılar, takviyeler
+- ✅ RESPONSE RULES: 2 paragraf max, isim yok (KVKK), everyday language
+- ✅ Temperature 0.6, tek model (claude-haiku-4-5), model toggle UI kaldırıldı
+
+### Profil & UI
+- ✅ Profil Ayarları ikonu: Settings → UserCog (desktop + mobil)
+- ✅ Aşı dropdown: fixed positioning (overflow-hidden fix)
+- ✅ daily_check_ins: mood_level→mood, bloating_level→bloating, check_in_date→check_date kolon düzeltmeleri
+- ✅ Meta veri bug fix: supplements array'den meta: prefix'li item'lar ayrıldı → city, marital_status, insurance_type, work_schedule, wearable_device kolonlarına
+- ✅ FAB butonları kaldırıldı
 
 ---
 
