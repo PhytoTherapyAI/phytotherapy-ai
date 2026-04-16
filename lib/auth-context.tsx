@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import { createBrowserClient } from "@/lib/supabase";
 import { clearDailyMedCheck } from "@/lib/daily-med-check";
 import type { User, Session } from "@supabase/supabase-js";
@@ -33,6 +33,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const supabase = createBrowserClient();
 
+const PROFILE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const defaultPremium: PremiumStatus = { plan: "free", isTrialActive: false, trialEndsAt: null, trialDaysLeft: 0, isPremium: false };
   const [state, setState] = useState<AuthState>({
@@ -47,7 +49,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     premiumStatus: defaultPremium,
   });
 
-  const fetchProfile = useCallback(async (userId: string): Promise<UserProfile | null> => {
+  // Ref mirror of state for reading inside async callbacks without stale closure
+  const stateRef = useRef(state);
+  stateRef.current = state;
+
+  const fetchProfile = useCallback(async (userId: string, source: string): Promise<UserProfile | null> => {
+    const startTime = Date.now();
+    console.log(`[Debug] fetchProfile START source=${source} userId=${userId} at=${new Date().toISOString()}`);
+
     const doFetch = async (timeoutMs: number) => {
       const profilePromise = supabase
         .from("user_profiles")
@@ -73,17 +82,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // First try: 5s timeout
       const profile = await doFetch(5000);
-      if (profile) return profile;
+      if (profile) {
+        console.log(`[Debug] fetchProfile END source=${source} success=true duration=${Date.now() - startTime}ms`);
+        return profile;
+      }
 
       // Retry: 8s timeout
-      console.warn("[Auth] Profile fetch timed out, retrying...");
+      console.warn(`[Auth] Profile fetch timed out (source=${source}), retrying...`);
       const retry = await doFetch(8000);
-      if (retry) return retry;
+      if (retry) {
+        console.log(`[Debug] fetchProfile END source=${source} success=true(retry) duration=${Date.now() - startTime}ms`);
+        return retry;
+      }
 
-      console.error("[Auth] Profile fetch failed after retry");
+      console.error(`[Auth] Profile fetch failed after retry (source=${source})`);
+      console.log(`[Debug] fetchProfile END source=${source} success=false duration=${Date.now() - startTime}ms`);
       return null;
     } catch (err) {
       console.error("[Auth] Profile fetch exception:", err);
+      console.log(`[Debug] fetchProfile END source=${source} success=exception duration=${Date.now() - startTime}ms`);
       return null;
     }
   }, []);
@@ -99,11 +116,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return daysSinceUpdate >= 15;
   }, []);
 
-  const PROFILE_CACHE_TTL = 5 * 60 * 1000; // 5 minutes — skip re-fetch if profile is fresh
-
-  const updateState = useCallback(async (user: User | null, session: Session | null) => {
+  const updateState = useCallback(async (user: User | null, session: Session | null, source: string) => {
+    console.log(`[Debug] updateState called source=${source} userId=${user?.id} hasProfile=${!!stateRef.current.profile} profileId=${stateRef.current.profile?.id} profileAge=${stateRef.current.profileFetchedAt ? Date.now() - stateRef.current.profileFetchedAt : 'never'}ms`);
 
     if (!user) {
+      console.log(`[Debug] updateState source=${source} → clearing state (no user)`);
       setState({
         user: null,
         session: null,
@@ -118,52 +135,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // If we already have a fresh profile for the SAME user, skip fetch entirely
-    // This prevents skeleton flash on tab switch / token refresh
-    setState((prev) => {
-      const profileIsFresh =
-        prev.profile &&
-        prev.profile.id === user.id &&
-        prev.profileFetchedAt > 0 &&
-        (Date.now() - prev.profileFetchedAt) < PROFILE_CACHE_TTL;
+    // Check cache using ref (always current, no stale closure)
+    const cur = stateRef.current;
+    const profileIsFresh =
+      cur.profile &&
+      cur.profile.id === user.id &&
+      cur.profileFetchedAt > 0 &&
+      (Date.now() - cur.profileFetchedAt) < PROFILE_CACHE_TTL;
 
-      if (profileIsFresh) {
-        // Just update session — no loading, no fetch
-        return {
-          ...prev,
-          user,
-          session,
-          isAuthenticated: true,
-          // isLoading stays false, profile stays as-is
-        };
-      }
+    console.log(`[Debug] updateState source=${source} cacheCheck: profileExists=${!!cur.profile} profileIdMatch=${cur.profile?.id === user.id} age=${cur.profileFetchedAt ? Date.now() - cur.profileFetchedAt : 'N/A'}ms ttl=${PROFILE_CACHE_TTL}ms → fresh=${!!profileIsFresh}`);
 
-      // Need to fetch profile — show loading
-      return {
+    if (profileIsFresh) {
+      // Profile is cached and fresh — just update session, NO loading, NO fetch
+      console.log(`[Debug] updateState source=${source} → CACHE HIT, skipping fetchProfile`);
+      setState((prev) => ({
         ...prev,
         user,
         session,
         isAuthenticated: true,
-        isLoading: true,
-      };
-    });
+        // isLoading stays as-is (should be false), profile stays as-is
+      }));
+      return;
+    }
 
-    // Check again outside setState (can't await inside setState)
-    // Read current state via ref pattern — use the same condition
-    let needsFetch = true;
-    setState((prev) => {
-      const profileIsFresh =
-        prev.profile &&
-        prev.profile.id === user.id &&
-        prev.profileFetchedAt > 0 &&
-        (Date.now() - prev.profileFetchedAt) < PROFILE_CACHE_TTL;
-      if (profileIsFresh) needsFetch = false;
-      return prev; // no change, just reading
-    });
+    // Cache miss — need to fetch profile
+    console.log(`[Debug] updateState source=${source} → CACHE MISS, setting isLoading=true, calling fetchProfile`);
+    setState((prev) => ({
+      ...prev,
+      user,
+      session,
+      isAuthenticated: true,
+      isLoading: true,
+    }));
 
-    if (!needsFetch) return;
-
-    const profile = await fetchProfile(user.id);
+    const profile = await fetchProfile(user.id, source);
     setState({
       user,
       session,
@@ -181,19 +186,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let initialDone = false;
 
     async function initAuth() {
+      console.log("[Debug] initAuth START");
       try {
-        // Single call: getSession() returns both session AND user — avoids double lock acquisition
         const { data: { session }, error } = await supabase.auth.getSession();
+        console.log(`[Debug] initAuth getSession done, hasSession=${!!session}, hasUser=${!!session?.user}, error=${error?.message || 'none'}`);
         if (error || !session?.user) {
           setState((prev) => ({ ...prev, isLoading: false }));
           return;
         }
-        await updateState(session.user, session);
+        await updateState(session.user, session, "initAuth");
       } catch (err) {
         console.error("[Auth] initAuth exception:", err);
         setState((prev) => ({ ...prev, isLoading: false }));
       } finally {
         initialDone = true;
+        console.log("[Debug] initAuth END, initialDone=true");
       }
     }
 
@@ -201,71 +208,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log(`[Debug] onAuthStateChange event=${event} userId=${session?.user?.id} initialDone=${initialDone}`);
+
         if (event === "INITIAL_SESSION") return;
         if (event === "SIGNED_OUT" || !session?.user) {
-          await updateState(null, null);
+          await updateState(null, null, `authEvent:${event}`);
           return;
         }
         if (!initialDone) {
+          console.log(`[Debug] onAuthStateChange SKIPPED (initialDone=false) event=${event}`);
           return;
         }
         // Handle token refresh — update session in state
         if (event === "TOKEN_REFRESHED") {
+          console.log("[Debug] TOKEN_REFRESHED → updating session only (no profile fetch)");
           setState((prev) => ({ ...prev, session }));
           return;
         }
-        // session.user is already validated by Supabase — no need for extra getUser() call
-        await updateState(session.user, session);
+        // For SIGNED_IN and other events
+        await updateState(session.user, session, `authEvent:${event}`);
       }
     );
 
     // Re-check session when tab becomes visible again (back from background)
-    // Optimized: only calls getSession() (acquires lock) if token is close to expiry
     let visibilityCheckInFlight = false;
     let visibilityDebounce: ReturnType<typeof setTimeout> | null = null;
     const FIVE_MINUTES = 5 * 60 * 1000;
     let lastVisibilityRefresh = 0;
-    const MIN_VISIBILITY_INTERVAL = 60_000; // don't check more than once per minute
+    const MIN_VISIBILITY_INTERVAL = 60_000;
 
     const handleVisibilityChange = () => {
+      console.log(`[Debug] visibilityChange state=${document.visibilityState} inFlight=${visibilityCheckInFlight}`);
       if (document.visibilityState !== "visible") return;
       if (visibilityCheckInFlight) return;
 
-      // Rate limit: at most once per minute
       const now = Date.now();
-      if (now - lastVisibilityRefresh < MIN_VISIBILITY_INTERVAL) return;
+      if (now - lastVisibilityRefresh < MIN_VISIBILITY_INTERVAL) {
+        console.log(`[Debug] visibilityChange SKIPPED (rate limit, last=${now - lastVisibilityRefresh}ms ago)`);
+        return;
+      }
 
       if (visibilityDebounce) clearTimeout(visibilityDebounce);
       visibilityDebounce = setTimeout(async () => {
-        // First check: can we skip entirely using cached session?
-        // Read expires_at from state without acquiring any lock
-        let shouldCallGetSession = false;
-        setState((prev) => {
-          const cachedSession = prev.session;
-          if (!cachedSession?.expires_at) {
-            // No cached session — need to check
-            shouldCallGetSession = true;
-          } else {
-            const expiresIn = cachedSession.expires_at * 1000 - Date.now();
-            if (expiresIn < FIVE_MINUTES) {
-              // Token expires soon — need to refresh
-              shouldCallGetSession = true;
-            }
-            // else: token is fresh, skip entirely (zero lock, zero network)
+        // Check cached session expires_at without lock
+        const cachedSession = stateRef.current.session;
+        if (cachedSession?.expires_at) {
+          const expiresIn = cachedSession.expires_at * 1000 - Date.now();
+          console.log(`[Debug] visibilityChange expiresIn=${Math.round(expiresIn / 1000)}s`);
+          if (expiresIn > FIVE_MINUTES) {
+            console.log("[Debug] visibilityChange → token fresh, SKIPPING getSession (zero lock)");
+            return;
           }
-          return prev; // no state change, just reading
-        });
+        } else {
+          console.log("[Debug] visibilityChange → no cached session, will call getSession");
+        }
 
-        if (!shouldCallGetSession) return;
-
-        // Token is close to expiry or no cached session — call getSession (acquires lock)
+        // Token close to expiry or no cached session
         visibilityCheckInFlight = true;
         lastVisibilityRefresh = Date.now();
+        console.log("[Debug] visibilityChange → calling getSession (token expiring soon)");
         try {
           const { data: { session }, error } = await supabase.auth.getSession();
           if (error || !session) {
             console.warn("[Auth] Session check on visibility: no session");
           } else {
+            console.log("[Debug] visibilityChange → getSession success, updating session");
             setState((prev) => ({ ...prev, session, user: session.user }));
           }
         } catch (err) {
@@ -334,7 +341,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-
     // Clear state immediately for instant UI feedback
     setState({
       user: null,
@@ -354,7 +360,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await supabase.auth.signOut({ scope: "global" });
     } catch (err) {
       console.error("[Auth] Sign out API error — clearing localStorage manually:", err);
-      // If signOut API fails, manually clear all Supabase tokens from localStorage
       try {
         for (let i = localStorage.length - 1; i >= 0; i--) {
           const key = localStorage.key(i);
@@ -372,7 +377,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshProfile = async () => {
     if (state.user) {
-      const profile = await fetchProfile(state.user.id);
+      const profile = await fetchProfile(state.user.id, "refreshProfile");
       setState((prev) => ({
         ...prev,
         profile,
