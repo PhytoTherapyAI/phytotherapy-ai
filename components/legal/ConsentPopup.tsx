@@ -3,7 +3,7 @@
 // Battaniye rıza yasağı: her rıza için ayrı metin gösterilmeli
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { X, Check, AlertTriangle, Loader2 } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 
@@ -130,8 +130,28 @@ export function ConsentPopup({ open, consentType, onAccept, onCancel }: ConsentP
   const tr = lang === "tr";
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const text = CONSENT_TEXTS[consentType][tr ? "tr" : "en"];
+
+  // Reset + check if content fits without scrolling (short text = button enabled immediately)
+  useEffect(() => {
+    if (!open) return;
+
+    // Reset on each open/type change
+    setHasScrolledToBottom(false);
+
+    // After render, check if scroll is needed
+    const timer = setTimeout(() => {
+      const el = scrollRef.current;
+      if (!el) return;
+      if (el.scrollHeight <= el.clientHeight + 5) {
+        setHasScrolledToBottom(true);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [open, consentType]);
 
   if (!open) return null;
 
@@ -166,7 +186,7 @@ export function ConsentPopup({ open, consentType, onAccept, onCancel }: ConsentP
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4" onScroll={handleScroll}>
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-4" onScroll={handleScroll}>
           <p className="text-foreground leading-relaxed">{text.intro}</p>
 
           <div className="space-y-2">
