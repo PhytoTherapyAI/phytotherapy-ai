@@ -1,6 +1,6 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 17 Nisan 2026 (v52.0 — Session 32: Mega Refactor + DX Sprint)
+> Son güncelleme: 17 Nisan 2026 (v52.1 — Session 32: Mega Refactor + KVKK + Auth)
 
 ---
 
@@ -99,6 +99,60 @@
 | Dead imports removed | — | 26 |
 | New reusable components | — | AuthGatedOverlays, AuthGuard, PageError, WaterTaskItem |
 | New infra files | — | api-helpers.ts, sitemap.ts, robots.ts, 10 metadata layouts |
+
+### KVKK Consent System (Session 32 devam)
+- ✅ `/aydinlatma` sayfası: KVKK Md.10 tam aydınlatma metni (12 bölüm)
+- ✅ Consent toggle fail-closed: audit log önce yazılır, başarısızsa update engellenir (KVKK Md.12)
+- ✅ MedicationUpdateDialog: `/select-profile`, `/onboarding`, `/auth` route'larında engellendi
+- ✅ ConsentPopup: scroll-gated per-consent-type popup (battaniye rıza yasağı uyumu)
+- ✅ AydinlatmaPopup: dual callback (`onAcknowledge` audit + `onClose` sadece kapat) + `forceAcknowledge`
+- ✅ PrivacySettings: "Aktif/Pasif" → "Açık/Kapalı", grant→popup, withdraw→confirm
+- ✅ API source audit: consent_log'a `source` field ("popup_accept" / "direct_withdraw")
+- ✅ ConsentPopup scroll gate fix: kısa metinlerde useEffect scrollHeight check
+- ✅ KVKK v2.0 tam uyum: SCC yalanı kaldırıldı, 9 hak, saklama tablosu, 18+ yaş, Google Gemini rıza metnine eklendi
+- ✅ Versiyon bump mekanizması: `lib/consent-versions.ts` + `needsAydinlatmaUpdate` flag + dashboard amber banner + forceAcknowledge popup
+- ✅ API PATCH consent version: `consent_*_version` sütunları güncelleniyor
+- ✅ API PUT aydinlatma acknowledge: `aydinlatma_version` + `consent_log` audit
+
+### Supabase Auth Lock + Tab Switch Fix
+- ✅ initAuth: `getUser()+getSession()` → tek `getSession()` (double lock eliminated)
+- ✅ onAuthStateChange: gereksiz `getUser()` kaldırıldı
+- ✅ Visibility handler: 1s debounce + `visibilityCheckInFlight` guard + cached `expires_at` check (zero lock when token fresh)
+- ✅ Profile cache guard: `profile.id===user.id` + `profileFetchedAt` TTL (skeleton flash eliminated)
+- ✅ Stale closure fix: setState updater → `useRef` mirror pattern
+- ✅ Cache TTL: 5dk → 30dk (profile nadiren değişir)
+- ✅ Fetch timeout: 5s+8s retry → 15s tek deneme (retry kaldırıldı)
+- ✅ Logging: `console.error` → `console.warn` (kırmızı hata yok)
+
+### AI Provider Rename
+- ✅ `askGemini*` → `askClaude*` (80 dosya — isimler legacy, hepsi zaten Claude çağırıyordu)
+- ✅ `GeminiFilePart` → `AIFilePart`
+- ✅ `lib/gemini.ts` deprecated (0 import — dead code)
+- ✅ README env fix: `GOOGLE_GENERATIVE_AI_API_KEY` → `GEMINI_API_KEY`
+
+### Documentation & Infrastructure
+- ✅ CLAUDE.md geliştirme kuralları bölümü (SQL template, auth rules, KVKK referansları, bug tablosu)
+- ✅ FAMILY-ROADMAP.md (5 faz, 25 madde, teknik notlar, dosya referansları)
+- ✅ DB migration: `20260416_session25_kvkk_compliance.sql` (419 satır, idempotent)
+- ✅ `UserProfile` type: consent version + aydinlatma alanları eklendi
+
+### Güncel Session 32 Toplam İstatistikleri
+| Metrik | Önce | Sonra |
+|--------|------|-------|
+| Commit sayısı | — | ~30 |
+| Layout overlay (guest) | 18 | 12 |
+| E2E test dosya/test | 2/62 | 5/~195 |
+| Inline ternary | 1032 | 574 |
+| `any` types | 99 | 2 |
+| Sitemap URLs | 32 | 123 |
+| API console.log | 27 | 3 |
+| profile/page.tsx | 2598 LOC | 1802 LOC |
+| KVKK aydınlatma bölüm | 7 | 12 |
+| KVKK Md.11 hak | 5 | 9 |
+| Consent version tracking | yok | v2.0 |
+| Auth lock contention | sık | zero (cached) |
+| Profile cache TTL | 5dk | 30dk |
+| AI function naming | askGemini* | askClaude* (80 dosya) |
 
 ---
 

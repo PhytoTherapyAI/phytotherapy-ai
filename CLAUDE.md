@@ -1,4 +1,4 @@
-# CLAUDE.md — DoctoPal Proje Anayasası v52.0 (Post-Hackathon)
+# CLAUDE.md — DoctoPal Proje Anayasası v52.1 (Post-Hackathon)
 
 ## Hızlı Bağlam
 
@@ -465,7 +465,7 @@ Chat API route'u (/api/chat) aşağıdaki profil verilerini AI system prompt'a e
 
 ---
 
-*Son güncelleme: 17 Nisan 2026 v52.0*
+*Son güncelleme: 17 Nisan 2026 v52.1*
 *IGNITE 26 kazanıldı — Harvard Hackathon tamamlandı (11-12 Nisan 2026).*
 *Session 18-20: Aile profili + SBAR PDF redesign + condition translations + bug fixes.*
 *Session 21: YASAL UYUM — 10/14 madde kod implementasyonu tamamlandı (MADDE 1,2,3,5,6,7,8,9,10,11,12,13). MADDE 4 ve 14 hukuki/idari işlem.*
@@ -505,3 +505,15 @@ Chat API route'u (/api/chat) aşağıdaki profil verilerini AI system prompt'a e
 *— Null guard: Header.tsx .split(" ") boş string crash + profile chronic_conditions spread guard + bot-send null fallback*
 *— JSON.parse try-catch: 16 dosyada unguarded JSON.parse sarıldı (connected-devices, emergency-contacts, dream-diary, diabetic-foot, dental-health, bug-report, connect-assistant, donation, fasting-monitor, health-quiz, medication-log, friend-goals, operations, health-timeline, micro-habits, walking-tracker)*
 *— Diğer: OnboardingWizard render body'de setCurrentStep kaldırıldı (re-render loop) + TodayView supplement celebration >1→>0 + layout.tsx Header import case fix (Turbopack) + supplement-data operator precedence parantez + MonthlyROICard division by zero guard + parseInt radix eksik (calendar ICS, medication-hub) + QuickActions/SOSCard JSON.parse guard*
+*Session 32 (devam — KVKK + Auth + Rename):*
+*— KVKK consent bug fix: /aydinlatma sayfası (Md.10 tam içerik) + consent toggle fail-closed (audit log önce, başarısızsa update engelli) + MedicationUpdateDialog route guard (/select-profile, /onboarding, /auth'ta engellendi)*
+*— KVKK consent popup akışı: ConsentPopup (scroll-gated, per-consent-type detaylı metin) + AydinlatmaPopup (bilgilendirme, rıza DEĞİL) + PrivacySettings popup flow (grant→popup, withdraw→confirm) + API source audit field*
+*— ConsentPopup scroll gate fix: kısa metinlerde buton disabled kalıyordu → useEffect scrollHeight check*
+*— Supabase auth lock fix: initAuth getUser()+getSession()→tek getSession() + visibility debounce + gereksiz getUser() kaldırıldı*
+*— Auth tab-switch skeleton fix: profile cache guard (profile.id===user.id + profileFetchedAt TTL) + visibility handler cached expires_at check (zero lock when token fresh) + stale closure fix (useState updater→useRef mirror)*
+*— Profile fetch timeout fix: cache TTL 5dk→30dk + fetch timeout 5s→15s + retry kaldırıldı + console.error→console.warn*
+*— AI provider rename: askGemini*→askClaude* (80 dosya — isimler legacy'ydi, hepsi zaten Claude çağırıyordu) + lib/gemini.ts deprecated + README env fix (GOOGLE_GENERATIVE_AI_API_KEY→GEMINI_API_KEY)*
+*— KVKK v2.0 tam uyum: Aydınlatma 12 bölüm (SCC yalanı kaldırıldı, 9 hak, saklama tablosu, 18+ yaş, başvuru prosedürü) + ConsentPopup v2.0 (3 sağlayıcı: Supabase+Anthropic+Google) + consent-versions.ts + versiyon bump mekanizması (needsAydinlatmaUpdate + dashboard amber banner + forceAcknowledge popup) + UserProfile type genişletildi (consent version + aydinlatma alanları)*
+*— Geliştirme kuralları: CLAUDE.md'ye SQL template, auth context kuralları, console log politikası, KVKK dosya referansları, çözülen bug tablosu eklendi*
+*— Aile profili yol haritası: FAMILY-ROADMAP.md (5 faz, 25 madde) + CLAUDE.md/PROGRESS.md referansları*
+*— DB migration: supabase/migrations/20260416_session25_kvkk_compliance.sql (419 satır, idempotent)*
