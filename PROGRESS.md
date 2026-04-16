@@ -1,6 +1,42 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 16 Nisan 2026 (v51.0 — Session 30: Profil Sayfası Mega Overhaul)
+> Son güncelleme: 16 Nisan 2026 (v51.1 — Session 31: Codebase Bugfix Sweep)
+
+---
+
+## Session 31 — Codebase-Wide Bugfix Sweep (16 Nisan 2026)
+
+### Kritik Bug Düzeltmeleri (5)
+- ✅ `profile/page.tsx`: `useState(isMedRecentlyConfirmed)` → `useState(() => isMedRecentlyConfirmed())` — fonksiyon referansı yerine boolean döndürülüyor, ilaç onay butonu çalışmıyordu
+- ✅ `consent/route.ts`: DB insert başarısız olunca `success: true` yerine 500 hatası dönecek şekilde düzeltildi
+- ✅ `WeeklySummaryCard.tsx`: boş array'de `.reduce()` crash'i — `scores.length > 0` guard eklendi
+- ✅ `drug-info/page.tsx` + `talent-hub/verify/page.tsx`: `useState` ile `setInterval`/localStorage okuma → `useEffect`'e taşındı (memory leak)
+- ✅ `layout.tsx`: Header import case mismatch (`header` → `Header`) Turbopack build fix
+
+### Stale Closure Düzeltmeleri (2)
+- ✅ `calendar/page.tsx`: `handleQuickLog` useCallback'e `morningTasks/noonTasks/nightTasks/user?.id` dependency'leri eklendi
+- ✅ `VaccineProfileSection.tsx`: `saveVaccines` useCallback'ten `vaccines` dep kaldırılıp functional setState ile rollback yapıldı
+
+### Null/Crash Guard Düzeltmeleri (5)
+- ✅ `Header.tsx`: `.split(" ").filter(Boolean)` — boş string parçalarında `n[0]` undefined crash'i engellendi
+- ✅ `profile/page.tsx`: `chronic_conditions` spread → `|| []` guard eklendi
+- ✅ `profile/page.tsx`: useEffect'e eksik `lang` dependency eklendi
+- ✅ `OnboardingWizard.tsx`: render body'deki `setCurrentStep` kaldırıldı (re-render loop riski) → `safeStep = Math.min()` yeterli
+- ✅ `TodayView.tsx`: supplement celebration `> 1` → `> 0` (tek supplement kutlama göstermiyor)
+
+### Unguarded JSON.parse Düzeltmeleri (16 dosya)
+- ✅ `connected-devices`, `emergency-contacts`, `dream-diary`, `diabetic-foot`, `dental-health`
+- ✅ `bug-report`, `connect-assistant`, `donation`, `fasting-monitor`
+- ✅ `health-quiz`, `medication-log`, `friend-goals`, `operations`
+- ✅ `health-timeline`, `micro-habits`, `walking-tracker`
+
+### Diğer Düzeltmeler (4)
+- ✅ `supplement-data.ts`: operator precedence — `||` vs `&&` parantez düzeltmesi
+- ✅ `MonthlyROICard.tsx`: sparkline `Math.max(...values)` → `Math.max(...values) || 1` division by zero guard
+- ✅ `calendar/page.tsx` + `medication-hub/page.tsx`: `parseInt()` → `parseInt(x, 10)` radix eklendi
+- ✅ `QuickActions.tsx` + `SOSCard.tsx`: localStorage JSON.parse try-catch
+
+### Toplam: 13 commit, 30+ bug, 25+ dosya düzeltildi
 
 ---
 

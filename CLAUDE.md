@@ -372,7 +372,7 @@ Chat API route'u (/api/chat veya ilgili endpoint) kullanıcı profili context'in
 
 ---
 
-*Son güncelleme: 16 Nisan 2026 v51.0*
+*Son güncelleme: 16 Nisan 2026 v51.1*
 *IGNITE 26 kazanıldı — Harvard Hackathon tamamlandı (11-12 Nisan 2026).*
 *Session 18-20: Aile profili + SBAR PDF redesign + condition translations + bug fixes.*
 *Session 21: YASAL UYUM — 10/14 madde kod implementasyonu tamamlandı (MADDE 1,2,3,5,6,7,8,9,10,11,12,13). MADDE 4 ve 14 hukuki/idari işlem.*
@@ -394,3 +394,9 @@ Chat API route'u (/api/chat veya ilgili endpoint) kullanıcı profili context'in
 *— Bug Fix'ler: Aşı vaccines JSONB kolonu eksikti (migration çalıştırıldı) + optimistic update + vaccine checkbox motion.button→plain div + frequency çeviri 40+ varyant + save retry 1s delay + FAB bottom-36 çakışma fix + scroll pozisyonu passive listener + chip × stopPropagation + InlineEdit 44px touch target + alerji inline form (12 alerjen + 5 hassasiyet chip) + Sentry conditional config (SENTRY_AUTH_TOKEN yoksa skip)*
 *— Motivasyon Kartları: 7 bölüm şakacı samimi ton ("Bunu atlama ciddi söylüyorum 🤫", "Fıstık konusunda şaka yapmıyorum 🎯", "Kanepe mi maraton mu? 😄") + dismissable localStorage*
 *— Temizlik: 436 satır dead code silindi + 6 unused import kaldırıldı (ChronicConditionsEditor, RadioGroup, Wine, Cigarette, Heart, Settings)*
+*Session 31: Codebase-wide bugfix sweep — 13 commit, 30+ bug düzeltildi:*
+*— Kritik: profile/page.tsx useState(fn)→useState(()=>fn()) (ilaç onay butonu hiç çalışmıyordu) + consent/route.ts DB hatada false success:true döndürme düzeltildi + WeeklySummaryCard boş array .reduce() crash + drug-info/talent-hub useState→useEffect memory leak*
+*— Stale closure: calendar handleQuickLog'da morningTasks/noonTasks/nightTasks dep eksikti + VaccineProfileSection vaccines dep kaldırılıp functional setState ile rollback*
+*— Null guard: Header.tsx .split(" ") boş string crash + profile chronic_conditions spread guard + bot-send null fallback*
+*— JSON.parse try-catch: 16 dosyada unguarded JSON.parse sarıldı (connected-devices, emergency-contacts, dream-diary, diabetic-foot, dental-health, bug-report, connect-assistant, donation, fasting-monitor, health-quiz, medication-log, friend-goals, operations, health-timeline, micro-habits, walking-tracker)*
+*— Diğer: OnboardingWizard render body'de setCurrentStep kaldırıldı (re-render loop) + TodayView supplement celebration >1→>0 + layout.tsx Header import case fix (Turbopack) + supplement-data operator precedence parantez + MonthlyROICard division by zero guard + parseInt radix eksik (calendar ICS, medication-hub) + QuickActions/SOSCard JSON.parse guard*
