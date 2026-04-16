@@ -10,6 +10,7 @@ import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
 import { ConsentPopup } from "@/components/legal/ConsentPopup";
 import { AydinlatmaPopup } from "@/components/legal/AydinlatmaPopup";
+import { CONSENT_VERSIONS } from "@/lib/consent-versions";
 
 type ConsentKey = "consent_ai_processing" | "consent_data_transfer" | "consent_sbar_report";
 
@@ -127,7 +128,7 @@ export function PrivacySettings() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ consent_type: consentType, granted, source }),
+        body: JSON.stringify({ consent_type: consentType, granted, source, version: CONSENT_VERSIONS[consentType.replace("consent_", "") as keyof typeof CONSENT_VERSIONS] || "v2.0" }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -340,6 +341,20 @@ export function PrivacySettings() {
       {/* Aydınlatma popup — bilgilendirme, rıza DEĞİL */}
       <AydinlatmaPopup
         open={aydinlatmaOpen}
+        onAcknowledge={async () => {
+          // "Okudum, Kapat" → audit kaydı
+          try {
+            const token = await getToken();
+            await fetch("/api/privacy-settings", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+              body: JSON.stringify({ action: "acknowledge_aydinlatma", version: CONSENT_VERSIONS.aydinlatma }),
+            });
+          } catch {
+            // Best effort — don't block the UI
+          }
+          setAydinlatmaOpen(false);
+        }}
         onClose={() => setAydinlatmaOpen(false)}
       />
     </div>

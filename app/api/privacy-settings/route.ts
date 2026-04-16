@@ -81,15 +81,19 @@ export async function PATCH(req: NextRequest) {
     const consentType = typeof body.consent_type === "string" ? body.consent_type : "";
     const granted = body.granted === true;
     const source = typeof body.source === "string" ? body.source.slice(0, 50) : "unknown";
+    const version = typeof body.version === "string" ? body.version.slice(0, 10) : "v1.0";
 
     if (!VALID_CONSENT_TYPES.has(consentType)) {
       return NextResponse.json({ error: "Invalid consent type" }, { status: 400 });
     }
 
     const now = new Date().toISOString();
+    // Map consent_type to the version column name
+    const versionColumn = `${consentType}_version`;
     const update: Record<string, unknown> = {
       [consentType]: granted,
       consent_timestamp: now,
+      [versionColumn]: version,
     };
 
     // Step 1: Audit log FIRST (fail-closed: if audit log fails, don't update profile)
@@ -97,7 +101,7 @@ export async function PATCH(req: NextRequest) {
       user_id: user.id,
       consent_type: consentType.replace("consent_", ""),
       granted,
-      version: "2026-04-v1",
+      version,
       source,
       ip_address: clientIP,
       user_agent: req.headers.get("user-agent")?.slice(0, 500) || null,
@@ -143,5 +147,63 @@ export async function PATCH(req: NextRequest) {
   } catch (err) {
     console.error("[PrivacySettings] PATCH error:", err);
     return NextResponse.json({ error: "Failed to update consent" }, { status: 500 });
+  }
+}
+
+/** PUT — acknowledge aydınlatma metni (not consent, just disclosure acknowledgment) */
+export async function PUT(req: NextRequest) {
+  try {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+    const token = authHeader.replace("Bearer ", "");
+    const supabase = createServerClient();
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+
+    let body: Record<string, unknown>;
+    try { body = await req.json(); } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
+
+    if (body.action !== "acknowledge_aydinlatma") {
+      return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+    }
+
+    const aydinlatmaVersion = typeof body.version === "string" ? body.version.slice(0, 10) : "v2.0";
+    const clientIP = getClientIP(req);
+
+    // Update user_profiles
+    await supabase.from("user_profiles").update({
+      aydinlatma_acknowledged: true,
+      aydinlatma_timestamp: new Date().toISOString(),
+      aydinlatma_version: aydinlatmaVersion,
+    }).eq("id", user.id);
+
+    // Audit log
+    await supabase.from("consent_log").insert({
+      user_id: user.id,
+      consent_type: "aydinlatma_read",
+      granted: true,
+      version: aydinlatmaVersion,
+      source: "popup_acknowledge",
+      ip_address: clientIP,
+      user_agent: req.headers.get("user-agent")?.slice(0, 500) || null,
+    });
+
+    logApiAccess({
+      endpoint: "/api/privacy-settings",
+      userId: user.id,
+      action: "acknowledge_aydinlatma",
+      ip: clientIP,
+      outcome: "success",
+      metadata: { version: aydinlatmaVersion },
+    });
+
+    return NextResponse.json({ success: true, version: aydinlatmaVersion });
+  } catch (err) {
+    console.error("[PrivacySettings] PUT error:", err);
+    return NextResponse.json({ error: "Failed to acknowledge" }, { status: 500 });
   }
 }

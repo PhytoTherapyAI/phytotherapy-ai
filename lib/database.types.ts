@@ -35,6 +35,15 @@ export interface UserProfile {
   onboarding_complete: boolean;
   onboarding_layer2_complete: boolean;
   consent_timestamp: string | null;
+  consent_ai_processing: boolean;
+  consent_data_transfer: boolean;
+  consent_sbar_report: boolean;
+  consent_ai_processing_version: string | null;
+  consent_data_transfer_version: string | null;
+  consent_sbar_report_version: string | null;
+  aydinlatma_acknowledged: boolean;
+  aydinlatma_version: string | null;
+  aydinlatma_timestamp: string | null;
   last_medication_update: string | null;
   created_at: string;
   updated_at: string;

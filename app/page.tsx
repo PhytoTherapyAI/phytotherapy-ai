@@ -10,7 +10,7 @@ import {
   ArrowRight, Search, Activity, Sparkles, Moon, Pill, Flame, MessageCircle, Send,
   ShieldCheck, Microscope, Leaf, Brain, UtensilsCrossed, Dumbbell,
   HeartPulse, Users, BarChart3, Stethoscope, Globe, Clock, Trophy,
-  Scissors, ChevronDown,
+  Scissors, ChevronDown, AlertCircle,
 } from "lucide-react";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import { useLang } from "@/components/layout/language-toggle";
@@ -22,6 +22,7 @@ import { useWater, WaterIntakeProvider } from "@/lib/water-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
+import { AydinlatmaPopup } from "@/components/legal/AydinlatmaPopup";
 import { DashboardTour } from "@/components/layout/DashboardTour";
 import { TOOL_CATEGORIES } from "@/lib/tools-hierarchy";
 import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-utils";
@@ -319,7 +320,7 @@ function getTimeEmoji(): string {
 export default function Home() {
   const router = useRouter();
   const { lang } = useLang();
-  const { user, isAuthenticated, isLoading, profile, premiumStatus } = useAuth();
+  const { user, isAuthenticated, isLoading, profile, premiumStatus, needsAydinlatmaUpdate, refreshProfile } = useAuth();
   const { familyGroup, activeProfileId, loading: familyLoading } = useFamily();
   const { activeUserId } = useActiveProfile();
 
@@ -349,6 +350,7 @@ export default function Home() {
   const [hour, setHour]                = useState<number | null>(null);
   const [query, setQuery]              = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const [aydinlatmaOpen, setAydinlatmaOpen] = useState(false);
 
   // ── Task system with persistence ──
   const [taskPrefs, setTaskPrefs] = useState<TaskPrefs>({ enabledIds: [...DEFAULT_STATIC_IDS], durationOverrides: {} });
@@ -606,6 +608,28 @@ export default function Home() {
         <DashboardTour />
         {/* Vaccine Recommendation Banner */}
         <VaccineBanner lang={lang} chronicConditions={profile?.chronic_conditions || []} vaccines={Array.isArray(profile?.vaccines) ? (profile.vaccines as VaccineEntry[]) : []} />
+
+        {/* KVKK Aydınlatma Version Update Banner */}
+        {needsAydinlatmaUpdate && (
+          <div className="sticky top-0 z-40 bg-amber-50 dark:bg-amber-950/30 border-b-2 border-amber-400 px-4 py-3">
+            <div className="flex items-center justify-between gap-3 max-w-6xl mx-auto">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="h-5 w-5 text-amber-600 shrink-0" />
+                <span className="text-sm text-amber-900 dark:text-amber-100">
+                  {isTr
+                    ? "Aydınlatma metnimiz güncellendi (v2.0). Lütfen okuyunuz."
+                    : "Our privacy notice has been updated (v2.0). Please review."}
+                </span>
+              </div>
+              <button
+                onClick={() => setAydinlatmaOpen(true)}
+                className="text-sm font-medium text-amber-800 dark:text-amber-200 underline whitespace-nowrap"
+              >
+                {isTr ? "Güncellenen metni oku →" : "Read updated notice →"}
+              </button>
+            </div>
+          </div>
+        )}
 
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="mx-auto max-w-7xl px-4 py-6 md:px-8 lg:px-12 space-y-6">
@@ -890,6 +914,30 @@ export default function Home() {
 
           <AddSupplementDialog userId={user.id} lang={lang} open={addSupOpen}
             onOpenChange={setAddSupOpen} onSaved={() => setSupRefreshKey((k) => k + 1)} />
+
+          {/* KVKK Aydınlatma Update Popup */}
+          {needsAydinlatmaUpdate && (
+            <AydinlatmaPopup
+              open={aydinlatmaOpen}
+              forceAcknowledge={needsAydinlatmaUpdate}
+              onAcknowledge={async () => {
+                try {
+                  const supabase = createBrowserClient();
+                  const { data: { session: s } } = await supabase.auth.getSession();
+                  if (s?.access_token) {
+                    await fetch("/api/privacy-settings", {
+                      method: "PUT",
+                      headers: { "Content-Type": "application/json", Authorization: `Bearer ${s.access_token}` },
+                      body: JSON.stringify({ action: "acknowledge_aydinlatma", version: "v2.0" }),
+                    });
+                  }
+                } catch { /* best effort */ }
+                setAydinlatmaOpen(false);
+                refreshProfile();
+              }}
+              onClose={() => setAydinlatmaOpen(false)}
+            />
+          )}
         </motion.div>
       </div>
       </WaterIntakeProvider>

@@ -7,6 +7,7 @@ import { clearDailyMedCheck } from "@/lib/daily-med-check";
 import type { User, Session } from "@supabase/supabase-js";
 import type { UserProfile } from "@/lib/database.types";
 import { getPremiumStatus, type PremiumStatus } from "@/lib/premium";
+import { CURRENT_AYDINLATMA_VERSION } from "@/lib/consent-versions";
 
 interface AuthState {
   user: User | null;
@@ -17,6 +18,7 @@ interface AuthState {
   isAuthenticated: boolean;
   needsOnboarding: boolean;
   needsMedicationUpdate: boolean;    // 15-day medication refresh (Supabase)
+  needsAydinlatmaUpdate: boolean;   // aydınlatma version mismatch
   premiumStatus: PremiumStatus;
 }
 
@@ -46,6 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated: false,
     needsOnboarding: false,
     needsMedicationUpdate: false,
+    needsAydinlatmaUpdate: false,
     premiumStatus: defaultPremium,
   });
 
@@ -123,6 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: false,
         needsOnboarding: false,
         needsMedicationUpdate: false,
+        needsAydinlatmaUpdate: false,
         premiumStatus: defaultPremium,
       });
       return;
@@ -168,6 +172,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: true,
       needsOnboarding: !profile?.onboarding_complete,
       needsMedicationUpdate: checkMedicationUpdate(profile),
+      needsAydinlatmaUpdate: profile ? (profile.aydinlatma_version !== CURRENT_AYDINLATMA_VERSION) : false,
       premiumStatus: getPremiumStatus(profile),
     });
   }, [fetchProfile, checkMedicationUpdate]);
@@ -327,6 +332,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAuthenticated: false,
       needsOnboarding: false,
       needsMedicationUpdate: false,
+      needsAydinlatmaUpdate: false,
       premiumStatus: defaultPremium,
     });
     clearDailyMedCheck();
@@ -360,6 +366,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profileFetchedAt: profile ? Date.now() : 0,
         needsOnboarding: !profile?.onboarding_complete,
         needsMedicationUpdate: checkMedicationUpdate(profile),
+        needsAydinlatmaUpdate: profile ? (profile.aydinlatma_version !== CURRENT_AYDINLATMA_VERSION) : false,
         premiumStatus: getPremiumStatus(profile),
       }));
     }
