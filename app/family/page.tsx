@@ -1126,17 +1126,17 @@ export default function FamilyPage() {
                       <Info className="h-3 w-3" />
                       {tr ? "Davet bağlantısı 7 gün geçerlidir." : "The invite link is valid for 7 days."}
                     </p>
-                    <Button
+                    <button
                       type="button"
-                      onClick={() => handleInvite()}
+                      onClick={() => { console.log('DAVET BUTON TIKLANDI'); handleInvite(); }}
                       disabled={inviting || !inviteEmail.trim()}
-                      className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold"
+                      className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold inline-flex items-center justify-center gap-2 transition-colors"
                     >
-                      {inviting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                      {inviting && <Loader2 className="h-4 w-4 animate-spin" />}
                       {inviting
                         ? (tr ? "Gönderiliyor..." : "Sending...")
                         : (tr ? "Davet Gönder" : "Send Invite")}
-                    </Button>
+                    </button>
                   </>
                 ) : (
                   <>
@@ -1192,17 +1192,17 @@ export default function FamilyPage() {
                           <Info className="h-3 w-3" />
                           {tr ? "Kod 48 saat geçerlidir. Premium gerekir." : "Code valid for 48 hours. Premium required."}
                         </p>
-                        <Button
+                        <button
                           type="button"
-                          onClick={() => handleGenerateCode()}
+                          onClick={() => { console.log('KOD BUTON TIKLANDI'); handleGenerateCode(); }}
                           disabled={generatingCode}
-                          className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold"
+                          className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold inline-flex items-center justify-center gap-2 transition-colors"
                         >
-                          {generatingCode && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                          {generatingCode && <Loader2 className="h-4 w-4 animate-spin" />}
                           {generatingCode
                             ? (tr ? "Oluşturuluyor..." : "Generating...")
                             : (tr ? "Kod Oluştur" : "Generate Code")}
-                        </Button>
+                        </button>
                       </>
                     )}
                   </>
