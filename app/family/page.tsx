@@ -1118,7 +1118,8 @@ export default function FamilyPage() {
                       {tr ? "Davet bağlantısı 7 gün geçerlidir." : "The invite link is valid for 7 days."}
                     </p>
                     <Button
-                      onClick={handleInvite}
+                      type="button"
+                      onClick={() => handleInvite()}
                       disabled={inviting || !inviteEmail.trim()}
                       className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold"
                     >
@@ -1183,7 +1184,8 @@ export default function FamilyPage() {
                           {tr ? "Kod 48 saat geçerlidir. Premium gerekir." : "Code valid for 48 hours. Premium required."}
                         </p>
                         <Button
-                          onClick={handleGenerateCode}
+                          type="button"
+                          onClick={() => handleGenerateCode()}
                           disabled={generatingCode}
                           className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold"
                         >
