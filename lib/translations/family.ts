@@ -116,4 +116,44 @@ export const familyTranslations: Record<string, TranslationEntry> = {
     en: "Emergency alert sent",
     tr: "Acil bildirim gönderildi",
   },
+  "family.relationshipLabel": {
+    en: "Relationship",
+    tr: "İlişki",
+  },
+  "family.relationshipPrompt": {
+    en: "How are you related?",
+    tr: "İlişkiniz nedir?",
+  },
+  "family.rel.self": {
+    en: "Yourself",
+    tr: "Kendin",
+  },
+  "family.rel.spouse": {
+    en: "Spouse",
+    tr: "Eş",
+  },
+  "family.rel.parent": {
+    en: "Parent",
+    tr: "Anne/Baba",
+  },
+  "family.rel.child": {
+    en: "Child",
+    tr: "Çocuk",
+  },
+  "family.rel.sibling": {
+    en: "Sibling",
+    tr: "Kardeş",
+  },
+  "family.rel.grandparent": {
+    en: "Grandparent",
+    tr: "Büyükanne/Büyükbaba",
+  },
+  "family.rel.grandchild": {
+    en: "Grandchild",
+    tr: "Torun",
+  },
+  "family.rel.other": {
+    en: "Other",
+    tr: "Diğer",
+  },
 }

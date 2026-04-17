@@ -18,7 +18,19 @@ import {
   Pill, ShieldAlert, Activity, ChevronRight, CheckCircle2, Droplet, Send,
 } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
-import type { FamilyMember } from "@/types/family"
+import type { FamilyMember, FamilyRelationship } from "@/types/family"
+
+// Order matters: used as the select dropdown order.
+const RELATIONSHIP_OPTIONS: ReadonlyArray<{ value: FamilyRelationship; emoji: string }> = [
+  { value: "self",        emoji: "⭐" },
+  { value: "spouse",      emoji: "💍" },
+  { value: "parent",      emoji: "👨‍👩" },
+  { value: "child",       emoji: "🧒" },
+  { value: "sibling",     emoji: "🧑‍🤝‍🧑" },
+  { value: "grandparent", emoji: "👴" },
+  { value: "grandchild",  emoji: "👶" },
+  { value: "other",       emoji: "👤" },
+]
 
 // 5 preset hane ikonu — basit, karmaşık olmasın
 const HOUSEHOLD_ICONS = ["🏠", "❤️", "🌳", "🏡", "🌟"] as const
@@ -86,6 +98,7 @@ export default function FamilyPage() {
     removeMember,
     cancelInvite,
     updateSharingPrefs,
+    updateRelationship,
     setActiveProfile,
     loading: familyLoading,
     refetch,
@@ -845,6 +858,39 @@ export default function FamilyPage() {
                           </div>
                         </div>
                       </div>
+
+                      {/* Relationship picker (inline) */}
+                      {!isSynth && member.user_id && (
+                        <div className="mt-3 flex items-center justify-between gap-2 text-xs">
+                          <span className="text-muted-foreground text-[10px]">
+                            {tx("family.relationshipLabel", lang)}
+                          </span>
+                          {(isSelf || isOwner || isAdmin) ? (
+                            <select
+                              value={(member.relationship as string | null | undefined) || ""}
+                              onClick={e => e.stopPropagation()}
+                              onChange={e => {
+                                const next = (e.target.value || null) as FamilyRelationship | null
+                                if (next) void updateRelationship(member.id, next)
+                              }}
+                              className="flex-1 max-w-[180px] rounded-md border border-border bg-background px-2 py-1 text-[11px] focus:ring-1 focus:ring-emerald-400 outline-none"
+                            >
+                              <option value="">{tr ? "Seç…" : "Select…"}</option>
+                              {RELATIONSHIP_OPTIONS.map(opt => (
+                                <option key={opt.value} value={opt.value}>
+                                  {opt.emoji} {tx(`family.rel.${opt.value}`, lang)}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <span className="text-muted-foreground font-medium">
+                              {member.relationship
+                                ? `${RELATIONSHIP_OPTIONS.find(o => o.value === member.relationship)?.emoji || ""} ${tx(`family.rel.${member.relationship}`, lang)}`
+                                : "—"}
+                            </span>
+                          )}
+                        </div>
+                      )}
 
                       {/* Sağlık skoru / fallback */}
                       <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-between text-xs">

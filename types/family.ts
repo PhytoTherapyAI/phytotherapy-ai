@@ -8,6 +8,16 @@ export interface FamilyGroup {
   updated_at: string
 }
 
+export type FamilyRelationship =
+  | 'self'
+  | 'spouse'
+  | 'parent'
+  | 'child'
+  | 'sibling'
+  | 'grandparent'
+  | 'grandchild'
+  | 'other'
+
 export interface FamilyMember {
   id: string
   group_id: string
@@ -21,6 +31,8 @@ export interface FamilyMember {
   invited_at: string
   accepted_at: string | null
   expires_at?: string | null
+  /** FAZ 5 kinship — null for legacy rows; owner seeded as 'self' by migration */
+  relationship?: FamilyRelationship | null
   // Per-member sharing preferences (Stage 3)
   shares_health_score?: boolean
   shares_medications?: boolean
@@ -29,9 +41,11 @@ export interface FamilyMember {
   // Join'den gelen profil verisi
   profile?: {
     id: string
-    display_name: string
+    display_name: string | null
+    full_name?: string | null
     avatar_style: string
     avatar_seed: string
+    chronic_conditions?: string[] | null
   }
 }
 
@@ -82,6 +96,7 @@ export interface FamilyContextType {
   removeMember: (memberId: string) => Promise<void>
   updateAllowsManagement: (allows: boolean) => Promise<void>
   updateSharingPrefs: (prefs: Partial<SharingPrefs>) => Promise<boolean>
+  updateRelationship: (memberId: string, relationship: FamilyRelationship) => Promise<boolean>
   pendingInvites: FamilyMember[]
   cancelInvite: (memberId: string) => Promise<boolean>
   loading: boolean

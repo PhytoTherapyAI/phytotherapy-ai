@@ -4,7 +4,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react'
 import { useAuth } from '@/lib/auth-context'
 import { createBrowserClient } from '@/lib/supabase'
-import type { FamilyContextType, FamilyGroup, FamilyMember, SharingPrefs } from '@/types/family'
+import type { FamilyContextType, FamilyGroup, FamilyMember, FamilyRelationship, SharingPrefs } from '@/types/family'
 
 const FamilyContext = createContext<FamilyContextType | null>(null)
 
@@ -27,7 +27,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
         .select(`
           *,
           profile:user_profiles(
-            id, display_name, avatar_style, avatar_seed
+            id, display_name, full_name, avatar_style, avatar_seed, chronic_conditions
           )
         `)
         .eq('group_id', groupId)
@@ -280,6 +280,24 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
     await fetchFamilyData()
   }
 
+  async function updateRelationship(
+    memberId: string,
+    relationship: FamilyRelationship
+  ): Promise<boolean> {
+    // Owner/admin may retag any member; regular members may only retag
+    // themselves (RLS fm_self_update policy enforces user_id = auth.uid()).
+    const { error } = await supabase
+      .from('family_members')
+      .update({ relationship })
+      .eq('id', memberId)
+    if (error) {
+      console.error('[Family] updateRelationship error:', error.message)
+      return false
+    }
+    if (familyGroup) await fetchMembers(familyGroup.id)
+    return true
+  }
+
   async function updateSharingPrefs(prefs: Partial<SharingPrefs>): Promise<boolean> {
     if (!user || !familyGroup) return false
     const { error } = await supabase
@@ -340,6 +358,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
       removeMember,
       updateAllowsManagement,
       updateSharingPrefs,
+      updateRelationship,
       pendingInvites,
       cancelInvite,
       loading,
