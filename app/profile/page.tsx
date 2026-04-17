@@ -26,7 +26,7 @@ import {
   Stethoscope, Sparkles, Camera, MapPin, Users, Mail,
   UserPlus, ChevronDown, ChevronUp, Phone, Edit3, Star,
 } from "lucide-react";
-import type { UserMedication, UserAllergy, AllergySeverity } from "@/lib/database.types";
+import type { UserMedication, UserAllergy, AllergySeverity, UserProfile } from "@/lib/database.types";
 import { MedicationScanner } from "@/components/scanner/MedicationScanner";
 import { shouldAskPermission } from "@/lib/permission-state";
 import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
@@ -63,9 +63,9 @@ interface DrugSuggestion {
 export default function ProfilePage() {
   const router = useRouter();
   const { lang } = useLang();
-  const { isAuthenticated, isLoading, profile, user, refreshProfile } = useAuth();
+  const { isAuthenticated, isLoading, profile: authProfile, user, refreshProfile } = useAuth();
   const { activeUserId, isOwnProfile, canEdit, hasManageRole, needsPremiumToEdit } = useActiveProfile();
-  const [viewedProfile, setViewedProfile] = useState<typeof profile>(null);
+  const [viewedProfile, setViewedProfile] = useState<UserProfile | null>(null);
   const [medications, setMedications] = useState<UserMedication[]>([]);
   const [allergies, setAllergies] = useState<UserAllergy[]>([]);
 
@@ -207,7 +207,7 @@ export default function ProfilePage() {
       const { error } = await supabase
         .from("user_profiles")
         .update(updateData)
-        .eq("id", user!.id);
+        .eq("id", activeUserId);
 
       if (error) {
         console.error("Supabase update error:", error);
@@ -216,7 +216,7 @@ export default function ProfilePage() {
         const { error: retryError } = await supabase
           .from("user_profiles")
           .update(updateData)
-          .eq("id", user!.id);
+          .eq("id", activeUserId);
         if (retryError) {
           console.error("Retry also failed:", retryError);
           alert(tr ? "Kaydedilemedi. Lütfen tekrar dene." : "Save failed. Please try again.");
@@ -333,12 +333,15 @@ export default function ProfilePage() {
       .eq("id", activeUserId)
       .single()
       .then(({ data }) => {
-        if (data) setViewedProfile(data as typeof profile);
+        if (data) setViewedProfile(data as UserProfile);
       });
   }, [activeUserId, isOwnProfile]);
 
-  // The effective profile to display
-  const displayProfile = isOwnProfile ? profile : viewedProfile;
+  // The effective profile — falls back to authProfile when viewing own data,
+  // or to the fetched viewedProfile when looking at a family member.
+  // Exposed as `profile` so the large render tree (100+ `profile.x` reads)
+  // automatically pivots on the active profile.
+  const profile = isOwnProfile ? authProfile : viewedProfile;
 
   useEffect(() => {
     if (!activeUserId) return;
@@ -578,7 +581,7 @@ export default function ProfilePage() {
       await supabase
         .from("user_profiles")
         .update({ last_medication_update: new Date().toISOString() })
-        .eq("id", user!.id);
+        .eq("id", activeUserId);
       refreshProfile().catch(() => {});
       localStorage.setItem(MED_CONFIRM_KEY, new Date().toISOString());
       setMedConfirmed(true);
@@ -649,7 +652,7 @@ export default function ProfilePage() {
       {!isOwnProfile && !hasManageRole && (
         <div className="mb-4 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50/80 dark:bg-amber-950/20 px-4 py-3 text-center">
           <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">
-            {tx("family.viewOnlyBanner", lang).replace("{name}", displayProfile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
+            {tx("family.viewOnlyBanner", lang).replace("{name}", profile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
           </p>
         </div>
       )}
@@ -658,7 +661,7 @@ export default function ProfilePage() {
         <div className="mb-4 rounded-xl border border-amber-300 dark:border-amber-700 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-center sm:text-left">
             <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
-              {tx("family.viewOnlyBanner", lang).replace("{name}", displayProfile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
+              {tx("family.viewOnlyBanner", lang).replace("{name}", profile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
             </p>
             <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
               {tx("family.upgradeToEdit", lang)}
@@ -676,7 +679,7 @@ export default function ProfilePage() {
       {!isOwnProfile && canEdit && (
         <div className="mb-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/20 px-4 py-3 text-center">
           <p className="text-sm text-emerald-800 dark:text-emerald-300 font-medium">
-            {tx("family.managingBanner", lang).replace("{name}", displayProfile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
+            {tx("family.managingBanner", lang).replace("{name}", profile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
           </p>
         </div>
       )}
@@ -730,7 +733,7 @@ export default function ProfilePage() {
             {/* Avatar — DiceBear picker */}
             <div className="relative shrink-0">
               <AvatarPicker
-                userId={user!.id}
+                userId={activeUserId || user!.id}
                 userName={profile.full_name || user?.email?.split("@")[0] || ""}
                 lang={lang as "en" | "tr"}
                 onAvatarChange={refreshProfile}
@@ -1732,7 +1735,7 @@ export default function ProfilePage() {
                           chronicConditions={profile.chronic_conditions || []}
                           onUpdate={async (conditions) => {
                             const supabase = createBrowserClient();
-                            await supabase.from('user_profiles').update({ chronic_conditions: conditions }).eq('id', user!.id);
+                            await supabase.from('user_profiles').update({ chronic_conditions: conditions }).eq('id', activeUserId);
                             await refreshProfile();
                           }}
                         />
