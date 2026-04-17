@@ -2,10 +2,12 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { useFamily } from "@/lib/family-context"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { getAvatarDataUri, type AvatarStyle } from "@/lib/avatar"
 import { createBrowserClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -573,6 +575,25 @@ export default function FamilyPage() {
                 ? (tr ? "Oluşturuluyor..." : "Creating...")
                 : (tr ? "Hane Oluştur" : "Create Household")}
             </Button>
+
+            {/* Or — join with code */}
+            <div className="relative my-5 flex items-center">
+              <div className="flex-1 border-t border-border" />
+              <span className="px-3 text-[11px] uppercase tracking-wider text-muted-foreground">
+                {tr ? "veya" : "or"}
+              </span>
+              <div className="flex-1 border-t border-border" />
+            </div>
+            <Link
+              href="/family/join"
+              className="flex items-center justify-center gap-2 w-full py-3 border-2 border-dashed border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 rounded-xl font-semibold transition-colors"
+            >
+              <UserPlus className="h-4 w-4" />
+              {tx("family.joinWithCode", lang)}
+            </Link>
+            <p className="text-[11px] text-muted-foreground text-center mt-2">
+              {tx("family.joinCtaDesc", lang)}
+            </p>
           </div>
         ) : (
           <>
@@ -1203,6 +1224,23 @@ export default function FamilyPage() {
                 )}
               </div>
             )}
+
+            {/* ─── Davet kodu ile başka aileye katılma CTA ─── */}
+            <div className="bg-card rounded-2xl border shadow-sm p-5 mb-6 text-center">
+              <p className="text-sm font-medium text-foreground mb-1">
+                {tx("family.joinCtaTitle", lang)}
+              </p>
+              <p className="text-xs text-muted-foreground mb-3">
+                {tx("family.joinCtaDesc", lang)}
+              </p>
+              <Link
+                href="/family/join"
+                className="inline-flex items-center gap-2 rounded-xl border border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-2 text-sm font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 transition-colors"
+              >
+                <UserPlus className="h-4 w-4" />
+                {tx("family.joinWithCode", lang)}
+              </Link>
+            </div>
 
             {/* ─── Roller & izinler bilgi accordion'u ─── */}
             <div className="bg-card rounded-2xl border shadow-sm overflow-hidden">

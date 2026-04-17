@@ -208,7 +208,7 @@ export function Header() {
                           <Link href="/family" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
                             <Users className="h-4 w-4" /> {tx("family.title", lang)}
                           </Link>
-                          {familyGroup && (
+                          {familyGroup ? (
                             <button
                               type="button"
                               className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted"
@@ -222,6 +222,14 @@ export function Header() {
                             >
                               <UserCircle className="h-4 w-4" /> {tx("family.switchProfile", lang)}
                             </button>
+                          ) : (
+                            <Link
+                              href="/family/join"
+                              onClick={() => setUserMenuOpen(false)}
+                              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted"
+                            >
+                              <UserCircle className="h-4 w-4" /> {tx("family.joinWithCode", lang)}
+                            </Link>
                           )}
                           <Link href="/history" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
                             <RefreshCw className="h-4 w-4" /> {tx("nav.history", lang)}

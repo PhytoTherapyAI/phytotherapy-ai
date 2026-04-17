@@ -171,7 +171,7 @@ export default function SelectProfilePage() {
       canManageThis: true,
     },
     ...familyMembers
-      .filter((m) => m.user_id !== user.id && m.profile)
+      .filter((m) => !!m.user_id && m.user_id !== user.id)
       .map((m) => ({
         userId: m.user_id!,
         name: m.nickname ?? m.profile?.display_name ?? tx('family.memberFallback', lang),

@@ -68,4 +68,16 @@ export const familyTranslations: Record<string, TranslationEntry> = {
     en: "Join Group",
     tr: "Gruba Katıl",
   },
+  "family.joinWithCode": {
+    en: "Join with Code",
+    tr: "Davet Kodu Gir",
+  },
+  "family.joinCtaTitle": {
+    en: "Got an invite code?",
+    tr: "Davet kodunuz mu var?",
+  },
+  "family.joinCtaDesc": {
+    en: "Join another family group using a 6-character invite code.",
+    tr: "6 haneli davet kodu ile başka bir aile grubuna katılabilirsiniz.",
+  },
 }

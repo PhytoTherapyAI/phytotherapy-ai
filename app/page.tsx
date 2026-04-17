@@ -829,6 +829,31 @@ export default function Home() {
             ))}
           </motion.div>
 
+          {/* ═══ FAMILY JOIN CTA — only if user has no family group ═══ */}
+          {!familyGroup && (
+            <motion.div variants={fadeUp}>
+              <Link
+                href="/family/join"
+                className="flex items-center justify-between gap-3 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20 p-4 hover:shadow-md transition-all"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15">
+                    <Users className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-foreground truncate">
+                      {tx("family.joinCtaTitle", lang)}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {tx("family.joinWithCode", lang)}
+                    </p>
+                  </div>
+                </div>
+                <ArrowRight className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              </Link>
+            </motion.div>
+          )}
+
           {/* ═══ DAILY CARE + SYNERGY ═══ */}
           <motion.div variants={fadeUp} className="grid gap-6 md:grid-cols-2">
             <DailyCareCard />
