@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   Leaf, LogIn, LogOut, Settings, AlertTriangle, Check, RefreshCw,
   Menu, X, Sparkles, LayoutDashboard, Shield, Calendar,
-  Flame, Search, Users, FlaskConical, ChevronDown, UserCog,
+  Flame, Search, Users, FlaskConical, ChevronDown, UserCog, UserCircle,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
@@ -35,7 +35,7 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, isLoading, user, profile, signOut, needsMedicationUpdate, refreshProfile } = useAuth();
-  const { activeProfileId, familyMembers, setActiveProfile } = useFamily();
+  const { activeProfileId, familyMembers, setActiveProfile, familyGroup } = useFamily();
   const { lang } = useLang();
   const isViewingOther = isAuthenticated && user && activeProfileId && activeProfileId !== user.id;
   const activeMember = familyMembers.find(m => m.user_id === activeProfileId);
@@ -208,6 +208,21 @@ export function Header() {
                           <Link href="/family" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
                             <Users className="h-4 w-4" /> {tx("family.title", lang)}
                           </Link>
+                          {familyGroup && (
+                            <button
+                              type="button"
+                              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted"
+                              onClick={() => {
+                                if (user?.id && typeof window !== "undefined") {
+                                  localStorage.removeItem(`family_profile_selected_${user.id}`);
+                                }
+                                setUserMenuOpen(false);
+                                window.location.href = "/select-profile";
+                              }}
+                            >
+                              <UserCircle className="h-4 w-4" /> {tx("family.switchProfile", lang)}
+                            </button>
+                          )}
                           <Link href="/history" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
                             <RefreshCw className="h-4 w-4" /> {tx("nav.history", lang)}
                           </Link>

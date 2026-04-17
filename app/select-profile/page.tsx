@@ -6,25 +6,31 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/lib/auth-context'
 import { useFamily } from '@/lib/family-context'
+import { useLang } from '@/components/layout/language-toggle'
+import { tx } from '@/lib/translations'
 import { getAvatarDataUri, type AvatarStyle } from '@/lib/avatar'
-import { Settings } from 'lucide-react'
+import { Settings, Check, Eye, Users, Loader2, Sparkles } from 'lucide-react'
 
 export default function SelectProfilePage() {
-  const { user, profile, isLoading: authLoading } = useAuth()
+  const { user, profile, isLoading: authLoading, premiumStatus } = useAuth()
   const {
     familyGroup,
     familyMembers,
     setActiveProfile,
     canManage,
-    loading
+    createGroup,
+    loading,
   } = useFamily()
+  const { lang } = useLang()
   const router = useRouter()
 
   // Hydration-safe: read localStorage only after mount
   const [ownAvatar, setOwnAvatar] = useState<{ style: AvatarStyle; seed: string }>({
     style: 'adventurer',
-    seed: user?.id || 'default'
+    seed: user?.id || 'default',
   })
+  const [creating, setCreating] = useState(false)
+  const [showPremiumGate, setShowPremiumGate] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -33,46 +39,147 @@ export default function SelectProfilePage() {
     setOwnAvatar({ style, seed })
   }, [user])
 
-  // Aile grubu yoksa direkt dashboard'a git
-  useEffect(() => {
-    if (!authLoading && !loading && !familyGroup) {
-      router.replace('/')
-    }
-  }, [authLoading, loading, familyGroup, router])
-
   async function selectProfile(userId: string) {
     await setActiveProfile(userId)
+    if (user?.id && typeof window !== 'undefined') {
+      localStorage.setItem(`family_profile_selected_${user.id}`, 'true')
+    }
     router.push('/')
   }
 
-  if (authLoading || loading) return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <div className="animate-spin w-10 h-10 border-4 border-primary rounded-full border-t-transparent" />
-    </div>
-  )
+  async function handleCreateGroup() {
+    if (!premiumStatus.isPremium) {
+      setShowPremiumGate(true)
+      return
+    }
+    const name = prompt(tx('family.namePromptTitle', lang))
+    if (!name?.trim()) return
+    setCreating(true)
+    try {
+      const ok = await createGroup(name.trim())
+      if (!ok) alert(lang === 'tr' ? 'Grup oluşturulamadı.' : 'Failed to create group.')
+      // createGroup updates familyGroup state → re-renders to profile selection
+    } finally {
+      setCreating(false)
+    }
+  }
 
-  if (!user || !familyGroup) return null
+  // Loading state
+  if (authLoading || loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-10 h-10 border-4 border-primary rounded-full border-t-transparent" />
+      </div>
+    )
+  }
 
+  if (!user) return null
+
+  // ── No family group → CTA card ──
+  if (!familyGroup) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-emerald-50/50 to-background dark:from-gray-950 dark:to-gray-900 flex items-center justify-center p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-md w-full text-center"
+        >
+          <div className="mx-auto mb-6 w-20 h-20 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+            <Users className="h-10 w-10 text-emerald-600 dark:text-emerald-400" />
+          </div>
+          <h1 className="text-2xl font-bold mb-3 text-foreground">
+            {tx('family.noGroupTitle', lang)}
+          </h1>
+          <p className="text-muted-foreground mb-8 leading-relaxed">
+            {tx('family.noGroupDesc', lang)}
+          </p>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={handleCreateGroup}
+              disabled={creating}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {creating ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              {tx('family.createGroup', lang)}
+            </button>
+            <button
+              onClick={() => router.push('/')}
+              className="w-full border border-border text-foreground font-medium py-3 px-6 rounded-xl hover:bg-muted transition-colors"
+            >
+              {tx('family.skipForNow', lang)}
+            </button>
+          </div>
+
+          {/* Premium gate modal */}
+          {showPremiumGate && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+              onClick={() => setShowPremiumGate(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full text-center"
+              >
+                <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                  <Sparkles className="h-7 w-7 text-amber-600 dark:text-amber-400" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">
+                  {lang === 'tr' ? 'Premium Özellik' : 'Premium Feature'}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-5">
+                  {tx('family.premiumRequired', lang)}
+                </p>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => router.push('/pricing')}
+                    className="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors"
+                  >
+                    {lang === 'tr' ? "Premium'a Yükselt" : 'Upgrade to Premium'}
+                  </button>
+                  <button
+                    onClick={() => setShowPremiumGate(false)}
+                    className="text-muted-foreground hover:text-foreground text-sm py-2"
+                  >
+                    {lang === 'tr' ? 'Kapat' : 'Close'}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </motion.div>
+      </div>
+    )
+  }
+
+  // ── Has family group → Netflix profile selection ──
   // Kendi profilini her zaman ilk göster
   const profiles = [
     {
       userId: user.id,
-      name: profile?.full_name?.split(' ')[0] || 'Ben',
+      name: profile?.full_name?.split(' ')[0] || (lang === 'tr' ? 'Ben' : 'You'),
       avatarStyle: ownAvatar.style,
       avatarSeed: ownAvatar.seed,
       isOwn: true,
-      canManageThis: true
+      canManageThis: true,
     },
     ...familyMembers
-      .filter(m => m.user_id !== user.id && m.profile)
-      .map(m => ({
+      .filter((m) => m.user_id !== user.id && m.profile)
+      .map((m) => ({
         userId: m.user_id!,
-        name: m.nickname ?? m.profile?.display_name ?? 'Üye',
+        name: m.nickname ?? m.profile?.display_name ?? tx('family.memberFallback', lang),
         avatarStyle: (m.profile?.avatar_style as AvatarStyle) ?? 'adventurer',
         avatarSeed: m.profile?.avatar_seed ?? m.user_id!,
         isOwn: false,
-        canManageThis: canManage(m.user_id!)
-      }))
+        canManageThis: canManage(m.user_id!),
+      })),
   ]
 
   return (
@@ -103,7 +210,7 @@ export default function SelectProfilePage() {
         transition={{ delay: 0.2 }}
         className="text-foreground text-xl sm:text-2xl font-semibold mb-10 text-center"
       >
-        Kimin profilini görüntülemek istiyorsunuz?
+        {tx('family.selectWhoTitle', lang)}
       </motion.h2>
 
       {/* Profil Grid */}
@@ -129,14 +236,14 @@ export default function SelectProfilePage() {
               />
               {/* Yönetici rozeti */}
               {p.canManageThis && !p.isOwn && (
-                <div className="absolute -top-1.5 -right-1.5 bg-emerald-500 rounded-full w-5 h-5 flex items-center justify-center text-white text-[10px] font-bold shadow-md">
-                  &#10003;
+                <div className="absolute -top-1.5 -right-1.5 bg-emerald-500 rounded-full w-5 h-5 flex items-center justify-center text-white shadow-md">
+                  <Check className="h-3 w-3" strokeWidth={3} />
                 </div>
               )}
               {/* Sadece görüntüleme */}
               {!p.canManageThis && !p.isOwn && (
-                <div className="absolute -top-1.5 -right-1.5 bg-muted-foreground/50 rounded-full w-5 h-5 flex items-center justify-center text-white text-[10px] shadow-md">
-                  &#128065;
+                <div className="absolute -top-1.5 -right-1.5 bg-muted-foreground/50 rounded-full w-5 h-5 flex items-center justify-center text-white shadow-md">
+                  <Eye className="h-3 w-3" />
                 </div>
               )}
             </div>
@@ -149,10 +256,10 @@ export default function SelectProfilePage() {
             {/* Yönetim durumu */}
             <span className="text-[11px] text-muted-foreground/70">
               {p.isOwn
-                ? 'Kendi profilin'
+                ? tx('family.ownProfile', lang)
                 : p.canManageThis
-                  ? 'Düzenleyebilirsin'
-                  : 'Sadece görüntüle'}
+                  ? tx('family.canEdit', lang)
+                  : tx('family.viewOnly', lang)}
             </span>
           </motion.button>
         ))}
@@ -167,7 +274,7 @@ export default function SelectProfilePage() {
         className="mt-12 text-muted-foreground hover:text-foreground transition flex items-center gap-2 text-sm"
       >
         <Settings className="w-4 h-4" />
-        Aile Ayarları
+        {tx('family.settingsLink', lang)}
       </motion.button>
     </div>
   )

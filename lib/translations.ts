@@ -50,6 +50,7 @@ import { healthTranslations } from "./translations/health"
 import { legalTranslations } from "./translations/legal"
 import { onboardingTranslations } from "./translations/onboarding"
 import { toolsTranslations } from "./translations/tools"
+import { familyTranslations } from "./translations/family"
 
 const t: Record<string, TranslationEntry> = {}
 
@@ -60,6 +61,7 @@ Object.assign(t, healthTranslations)
 Object.assign(t, legalTranslations)
 Object.assign(t, onboardingTranslations)
 Object.assign(t, toolsTranslations)
+Object.assign(t, familyTranslations)
 
 
 // ══════════════════════════════════════════

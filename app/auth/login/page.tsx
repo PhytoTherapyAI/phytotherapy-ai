@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Leaf, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle2, Play, Gift, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
+import { getPostAuthRedirect } from "@/lib/auth-helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -78,12 +79,10 @@ function LoginContent() {
         await new Promise((r) => setTimeout(r, 500));
         const { data } = await sb.auth.getUser();
         if (!data?.user) { setError(tx("auth.errSessionFailed", lang)); setIsLoading(false); return; }
-        const { data: profile } = await sb.from("user_profiles").select("onboarding_complete").eq("id", data.user.id).single();
-        window.location.href = (!profile || !profile.onboarding_complete) ? "/onboarding" : redirect;
+        window.location.href = await getPostAuthRedirect(sb, data.user.id, redirect);
         return;
       }
-      const { data: profile } = await sb.from("user_profiles").select("onboarding_complete").eq("id", user.id).single();
-      window.location.href = (!profile || !profile.onboarding_complete) ? "/onboarding" : redirect;
+      window.location.href = await getPostAuthRedirect(sb, user.id, redirect);
     } catch (err) {
       console.error("Login error:", err);
       setError(tx("auth.errUnexpected", lang));
@@ -132,7 +131,14 @@ function LoginContent() {
       // Sign in with demo credentials
       const { error } = await signInWithEmail(data.email, data.password);
       if (error) { setError(error); setIsLoading(false); return; }
-      window.location.href = "/";
+      const sb = createBrowserClient();
+      await new Promise((r) => setTimeout(r, 500));
+      const { data: { user } } = await sb.auth.getUser();
+      if (user) {
+        window.location.href = await getPostAuthRedirect(sb, user.id, "/");
+      } else {
+        window.location.href = "/";
+      }
     } catch {
       setError(tx("auth.errDemoFailed", lang));
       setIsLoading(false);

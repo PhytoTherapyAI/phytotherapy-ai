@@ -324,14 +324,14 @@ export default function Home() {
   const { familyGroup, activeProfileId, loading: familyLoading } = useFamily();
   const { activeUserId } = useActiveProfile();
 
-  // Family profile selection — redirect if group exists but no profile selected yet
+  // Family profile selection — fallback redirect if user lands on / directly
+  // Login/callback should redirect to /select-profile via getPostAuthRedirect helper.
+  // localStorage flag persists across tabs so user only picks once per device.
   useEffect(() => {
     if (!isLoading && !familyLoading && isAuthenticated && familyGroup && user) {
-      // Per-user key prevents cross-account session leaks
       const key = `family_profile_selected_${user.id}`
-      const hasSelected = sessionStorage.getItem(key)
+      const hasSelected = typeof window !== "undefined" && localStorage.getItem(key)
       if (!hasSelected) {
-        sessionStorage.setItem(key, 'true')
         router.push('/select-profile')
       }
     }

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Leaf, Loader2, AlertCircle } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase";
+import { getPostAuthRedirect } from "@/lib/auth-helpers";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 
@@ -51,7 +52,7 @@ export default function AuthCallbackPage() {
               return;
             }
 
-            window.location.href = profile.onboarding_complete ? "/" : "/onboarding";
+            window.location.href = await getPostAuthRedirect(supabase, session.user.id, "/");
             return;
           }
 
