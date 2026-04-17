@@ -1,224 +1,496 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { ChevronLeft, Sparkles, X, Plus } from "lucide-react"
+import { useMemo, useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
+import {
+  ChevronLeft, Sparkles, Loader2, TreePine, Users, AlertCircle,
+  UserCircle, Star, Lock,
+} from "lucide-react"
+import { useAuth } from "@/lib/auth-context"
+import { useFamily } from "@/lib/family-context"
+import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
+import { getAvatarDataUri, type AvatarStyle } from "@/lib/avatar"
+import {
+  buildFamilyTree,
+  toApiPayload,
+  type TreeGeneration,
+  type FamilyTreeNode,
+  type Generation,
+} from "@/lib/family-tree"
+import type { FamilyRelationship } from "@/types/family"
 
-interface FamilyMember {
-  id: string
-  label: string
-  emoji: string
-  conditions: string[]
-  y: number
+interface HereditaryPattern {
+  condition: string
+  affectedRelatives: string[]
+  inheritancePattern: string
+  yourRiskMultiplier: string
+  geneticTestRecommended: boolean
+  specificTest: string
+}
+interface ScreeningRec {
+  condition: string
+  startAge: string
+  frequency: string
+  test: string
+  reason: string
+}
+interface ProtectiveFactor {
+  factor: string
+  benefit: string
+}
+interface AnalysisResult {
+  overallRiskAssessment: string
+  hereditaryPatterns: HereditaryPattern[]
+  screeningRecommendations: ScreeningRec[]
+  geneticCounselingAdvice: string
+  protectiveFactors: ProtectiveFactor[]
+  keyInsights: string[]
 }
 
-const conditionChips = [
-  { emoji: "🩸", label: "Type 2 Diabetes" },
-  { emoji: "🫀", label: "Heart Disease" },
-  { emoji: "🧠", label: "Alzheimer's" },
-  { emoji: "🦋", label: "Thyroid" },
-  { emoji: "🫁", label: "Lung Disease" },
-  { emoji: "🧬", label: "Cancer" },
-  { emoji: "⚖️", label: "Obesity" },
-  { emoji: "🩺", label: "Hypertension" },
-  { emoji: "🦴", label: "Osteoporosis" },
-  { emoji: "🧪", label: "Autoimmune" },
-]
+const GENERATION_STYLE: Record<Generation, { tintClass: string; labelKey: string }> = {
+  grandparent: {
+    tintClass: "bg-amber-50/70 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/60",
+    labelKey: "family.generationGrandparents",
+  },
+  parent: {
+    tintClass: "bg-blue-50/70 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/60",
+    labelKey: "family.generationParents",
+  },
+  self: {
+    tintClass: "bg-emerald-50/70 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/60",
+    labelKey: "family.generationSelf",
+  },
+  child: {
+    tintClass: "bg-rose-50/70 dark:bg-rose-950/20 border-rose-200 dark:border-rose-800/60",
+    labelKey: "family.generationChildren",
+  },
+}
 
-const familyTemplate: FamilyMember[] = [
-  { id: "grandmother_m", label: "Grandmother (M)", emoji: "👵", conditions: [], y: 0 },
-  { id: "grandfather_m", label: "Grandfather (M)", emoji: "👴", conditions: [], y: 0 },
-  { id: "grandmother_f", label: "Grandmother (F)", emoji: "👵", conditions: [], y: 0 },
-  { id: "grandfather_f", label: "Grandfather (F)", emoji: "👴", conditions: [], y: 0 },
-  { id: "mother", label: "Mother", emoji: "👩", conditions: [], y: 1 },
-  { id: "father", label: "Father", emoji: "👨", conditions: [], y: 1 },
-  { id: "you", label: "You", emoji: "🧬", conditions: [], y: 2 },
-]
+const REL_EMOJI: Record<FamilyRelationship, string> = {
+  self: "⭐", spouse: "💍", parent: "👨‍👩", child: "🧒",
+  sibling: "🧑‍🤝‍🧑", grandparent: "👴", grandchild: "👶", other: "👤",
+}
+
+function severityClasses(severity: "critical" | "moderate" | "mild"): string {
+  if (severity === "critical") return "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-300 border-red-200 dark:border-red-800"
+  if (severity === "moderate") return "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 border-amber-200 dark:border-amber-800"
+  return "bg-stone-100 text-stone-700 dark:bg-stone-900/40 dark:text-stone-300 border-stone-200 dark:border-stone-700"
+}
+
+function TreeNodeCard({
+  node,
+  lang,
+}: { node: FamilyTreeNode & { occurrenceCount?: number }; lang: "en" | "tr" }) {
+  const tr = lang === "tr"
+  const relKey = `family.rel.${node.relationship}`
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -2 }}
+      className={`relative rounded-2xl border-2 bg-white dark:bg-card p-3 sm:p-4 shadow-sm min-w-[150px] max-w-[220px] ${
+        node.isSelf ? "ring-2 ring-emerald-400 border-emerald-300" : "border-border"
+      }`}
+    >
+      {node.isSelf && (
+        <div className="absolute -top-2 -right-2 bg-emerald-500 rounded-full px-2 py-0.5 flex items-center gap-1 text-[9px] font-bold text-white shadow">
+          <Star className="h-2.5 w-2.5" /> {tr ? "Sen" : "You"}
+        </div>
+      )}
+
+      <div className="flex items-start gap-2 mb-2">
+        {node.avatar ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={getAvatarDataUri(node.avatar.seed, node.avatar.style as AvatarStyle)}
+            alt={node.name}
+            className="w-10 h-10 rounded-lg bg-muted shrink-0"
+          />
+        ) : (
+          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center text-lg shrink-0">
+            {REL_EMOJI[node.relationship] || "👤"}
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="text-xs font-semibold text-foreground truncate" title={node.name}>
+            {node.name}
+          </p>
+          <p className="text-[10px] text-muted-foreground truncate">
+            {REL_EMOJI[node.relationship]} {tx(relKey, lang)}
+            {node.isAggregate && typeof node.occurrenceCount === "number" && (
+              <span className="ml-1 text-amber-600 dark:text-amber-400 font-semibold">
+                · {node.occurrenceCount}×
+              </span>
+            )}
+          </p>
+        </div>
+      </div>
+
+      {node.conditions.length > 0 ? (
+        <div className="flex flex-wrap gap-1">
+          {node.conditions.slice(0, 4).map((c, i) => (
+            <span
+              key={i}
+              className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] font-medium ${severityClasses(c.severity)}`}
+              title={c.name}
+            >
+              {c.severity === "critical" && <AlertCircle className="h-2.5 w-2.5" />}
+              <span className="truncate max-w-[100px]">{c.name}</span>
+            </span>
+          ))}
+          {node.conditions.length > 4 && (
+            <span className="text-[9px] text-muted-foreground">+{node.conditions.length - 4}</span>
+          )}
+        </div>
+      ) : (
+        <p className="text-[10px] text-muted-foreground italic">{tr ? "Kayıt yok" : "No records"}</p>
+      )}
+
+      {node.userId && !node.isAggregate && (
+        <Link
+          href="/profile"
+          className="absolute inset-0 rounded-2xl"
+          aria-label={tr ? `${node.name} profilini aç` : `Open ${node.name}'s profile`}
+        />
+      )}
+    </motion.div>
+  )
+}
+
+function GenerationRow({
+  gen,
+  lang,
+}: { gen: TreeGeneration; lang: "en" | "tr" }) {
+  const tr = lang === "tr"
+  if (gen.members.length === 0) {
+    return (
+      <section
+        className={`rounded-2xl border-2 border-dashed ${GENERATION_STYLE[gen.generation].tintClass} p-4`}
+      >
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
+          {tx(GENERATION_STYLE[gen.generation].labelKey, lang)}
+        </p>
+        <p className="text-xs text-muted-foreground italic">
+          {tr ? "Henüz kimse yok" : "Empty"}
+        </p>
+      </section>
+    )
+  }
+  return (
+    <section
+      className={`rounded-2xl border-2 ${GENERATION_STYLE[gen.generation].tintClass} p-4`}
+    >
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+        {tx(GENERATION_STYLE[gen.generation].labelKey, lang)}
+      </p>
+      <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
+        {gen.members.map(node => (
+          <TreeNodeCard key={node.id} node={node as FamilyTreeNode & { occurrenceCount?: number }} lang={lang} />
+        ))}
+      </div>
+    </section>
+  )
+}
 
 export default function FamilyHealthTreePage() {
   const router = useRouter()
-  const [members, setMembers] = useState(familyTemplate)
-  const [activeMember, setActiveMember] = useState<string | null>(null)
-  const [feedback, setFeedback] = useState<string | null>(null)
+  const { user, isAuthenticated, isLoading: authLoading, premiumStatus } = useAuth()
+  const { familyGroup, familyMembers, loading: familyLoading } = useFamily()
+  const { lang } = useLang()
+  const tr = lang === "tr"
 
-  const activeData = members.find(m => m.id === activeMember)
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null)
+  const [analyzing, setAnalyzing] = useState(false)
+  const [analyzeError, setAnalyzeError] = useState<string | null>(null)
 
-  const addCondition = (memberId: string, condition: string) => {
-    setMembers(prev => prev.map(m =>
-      m.id === memberId
-        ? { ...m, conditions: m.conditions.includes(condition) ? m.conditions.filter(c => c !== condition) : [...m.conditions, condition] }
-        : m
-    ))
-    if (memberId !== "you") {
-      setFeedback(`Genetic heritage updated. Your ${members.find(m => m.id === memberId)?.label}'s health data strengthens your personalized shield.`)
-      setTimeout(() => setFeedback(null), 3000)
+  const generations = useMemo<TreeGeneration[]>(() => {
+    if (!familyMembers || familyMembers.length === 0) return []
+    return buildFamilyTree(familyMembers, user?.id ?? null)
+  }, [familyMembers, user?.id])
+
+  const totalMembers = familyMembers?.length ?? 0
+  const hasAnyConditions = generations.some(g => g.members.some(n => n.conditions.length > 0))
+
+  async function runAnalysis() {
+    if (!premiumStatus?.isPremium) {
+      setAnalyzeError(tr ? "Bu özellik Premium gerektirir" : "Premium required")
+      return
+    }
+    setAnalyzing(true)
+    setAnalyzeError(null)
+    try {
+      const { createBrowserClient } = await import("@/lib/supabase")
+      const supabase = createBrowserClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        setAnalyzeError(tr ? "Oturum bulunamadı" : "Session not found")
+        return
+      }
+
+      const payload = toApiPayload(generations)
+      if (payload.length === 0) {
+        setAnalyzeError(tr ? "Analiz için en az bir aile üyesinde hastalık kaydı gerekli" : "Need at least one member with a recorded condition")
+        return
+      }
+
+      const res = await fetch("/api/family-health-tree", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ lang, family_members: payload }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setAnalyzeError(
+          res.status === 402
+            ? (tr ? "Bu özellik Premium gerektirir" : "Premium required")
+            : (data.error || (tr ? "Analiz başarısız" : "Analysis failed"))
+        )
+        return
+      }
+      setAnalysis(data.result as AnalysisResult)
+    } catch {
+      setAnalyzeError(tr ? "Sunucu hatası" : "Server error")
+    } finally {
+      setAnalyzing(false)
     }
   }
 
-  const totalConditions = members.reduce((acc, m) => acc + m.conditions.length, 0)
+  // ───────────── Loading / unauth / empty-state ─────────────
+  if (authLoading || familyLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    )
+  }
 
-  const rows = [
-    { y: 0, members: members.filter(m => m.y === 0) },
-    { y: 1, members: members.filter(m => m.y === 1) },
-    { y: 2, members: members.filter(m => m.y === 2) },
-  ]
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="text-center max-w-sm">
+          <TreePine className="h-12 w-12 text-emerald-600 mx-auto mb-3" />
+          <h1 className="text-xl font-bold mb-2">{tx("family.treeTitle", lang)}</h1>
+          <p className="text-sm text-muted-foreground mb-4">
+            {tr ? "Aile ağacını görmek için giriş yapın." : "Sign in to see your family tree."}
+          </p>
+          <Link href="/auth/login" className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-5 py-2.5 text-sm font-semibold">
+            {tr ? "Giriş Yap" : "Sign In"}
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
+  if (!familyGroup) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="text-center max-w-md">
+          <Users className="h-12 w-12 text-emerald-600 mx-auto mb-3" />
+          <h1 className="text-xl font-bold mb-2">{tx("family.treeTitle", lang)}</h1>
+          <p className="text-sm text-muted-foreground mb-4">
+            {tr ? "Aile ağacını görmek için önce bir aile grubu oluşturman gerekiyor." : "You need to create a family group first."}
+          </p>
+          <Link href="/family" className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-5 py-2.5 text-sm font-semibold">
+            {tr ? "Aile Grubu Oluştur" : "Create Family Group"}
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // ───────────── Main render ─────────────
   return (
-    <div className="min-h-screen bg-gradient-to-b from-emerald-50/30 via-stone-50 to-sage-50/20">
-      <div className="max-w-lg mx-auto px-4 py-6 pb-32">
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50/40 via-background to-background dark:from-emerald-950/10 dark:via-background dark:to-background">
+      <div className="mx-auto max-w-5xl px-4 md:px-8 py-6 md:py-10">
+
         {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-6">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl hover:bg-white/60">
-            <ChevronLeft className="w-5 h-5 text-slate-600" />
+        <div className="flex items-center gap-3 mb-6">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="p-2 rounded-lg hover:bg-muted transition-colors"
+            aria-label={tr ? "Geri" : "Back"}
+          >
+            <ChevronLeft className="h-5 w-5" />
           </button>
-          <div className="text-center">
-            <h1 className="text-lg font-bold text-slate-800">Genetic Constellation</h1>
-            <p className="text-xs text-slate-400">Map your family health heritage</p>
+          <div className="flex-1">
+            <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+              <TreePine className="h-5 w-5 text-emerald-600" />
+              {tx("family.treeTitle", lang)}
+            </h1>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {tr
+                ? `${totalMembers} üye · kalıtsal riskleri görselleştirir`
+                : `${totalMembers} members · visualize inherited risks`}
+            </p>
           </div>
-          <div className="w-9" />
-        </motion.div>
+        </div>
 
-        {/* Feedback Toast */}
-        <AnimatePresence>
-          {feedback && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 mb-4 flex items-start gap-2"
+        {/* Empty state */}
+        {totalMembers <= 1 && generations[0]?.members.length === 0 && (
+          <div className="rounded-2xl border-2 border-dashed border-border p-8 text-center">
+            <Users className="h-10 w-10 text-muted-foreground/60 mx-auto mb-3" />
+            <p className="text-sm font-semibold mb-1">
+              {tr ? "Ağaç boş" : "Empty tree"}
+            </p>
+            <p className="text-xs text-muted-foreground mb-4 max-w-xs mx-auto">
+              {tx("family.treeEmpty", lang)}
+            </p>
+            <Link
+              href="/family"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-sm font-semibold"
             >
-              <Sparkles className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-emerald-700">{feedback}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <UserCircle className="h-4 w-4" /> {tr ? "Aile sayfasına git" : "Go to Family"}
+            </Link>
+          </div>
+        )}
 
-        {/* Family Tree */}
-        <div className="space-y-6 mb-8">
-          {rows.map((row, ri) => (
+        {/* Generations */}
+        {(totalMembers > 1 || (generations[0]?.members.length ?? 0) > 0) && (
+          <div className="space-y-4">
+            {generations.map(g => (
+              <GenerationRow key={g.generation} gen={g} lang={lang as "en" | "tr"} />
+            ))}
+          </div>
+        )}
+
+        {/* AI analysis CTA */}
+        {hasAnyConditions && (
+          <div className="mt-6 rounded-2xl border bg-card p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <div className="rounded-xl bg-amber-100 dark:bg-amber-950/40 p-2.5 shrink-0">
+                  <Sparkles className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm">{tx("family.aiAnalyzeButton", lang)}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 max-w-md">
+                    {tr
+                      ? "AI, kaydettiğin aile geçmişini analiz edip kalıtsal risk örüntülerini ve tarama önerilerini çıkarır."
+                      : "AI analyzes your recorded family history to surface inherited risk patterns and screening advice."}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={runAnalysis}
+                disabled={analyzing}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 px-5 py-2.5 text-sm font-bold text-white transition-colors"
+              >
+                {analyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : (premiumStatus?.isPremium ? <Sparkles className="h-4 w-4" /> : <Lock className="h-4 w-4" />)}
+                {analyzing
+                  ? tx("family.aiAnalyzing", lang)
+                  : (premiumStatus?.isPremium ? tx("family.aiAnalyzeButton", lang) : tx("family.upgradeCta", lang))}
+              </button>
+            </div>
+            {analyzeError && (
+              <p className="mt-3 text-xs text-red-600 dark:text-red-400">{analyzeError}</p>
+            )}
+          </div>
+        )}
+
+        {/* Analysis result panel */}
+        <AnimatePresence>
+          {analysis && (
             <motion.div
-              key={ri}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: ri * 0.15 }}
+              exit={{ opacity: 0 }}
+              className="mt-6 rounded-2xl border border-amber-200 dark:border-amber-800 bg-gradient-to-br from-amber-50 to-white dark:from-amber-950/20 dark:to-background p-5"
             >
-              <p className="text-[10px] text-slate-400 uppercase tracking-wider text-center mb-2">
-                {ri === 0 ? "Grandparents" : ri === 1 ? "Parents" : "You"}
-              </p>
-              <div className={`flex justify-center gap-3 ${row.members.length > 2 ? "flex-wrap" : ""}`}>
-                {row.members.map(member => {
-                  const hasConditions = member.conditions.length > 0
-                  const isYou = member.id === "you"
-                  return (
-                    <motion.button
-                      key={member.id}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setActiveMember(member.id)}
-                      className={`relative flex flex-col items-center gap-1 p-3 rounded-2xl border-2 transition-all min-w-[80px] ${
-                        isYou
-                          ? "border-emerald-400 bg-emerald-50 shadow-lg shadow-emerald-100"
-                          : hasConditions
-                            ? "border-amber-300 bg-amber-50"
-                            : "border-dashed border-slate-200 bg-white"
-                      }`}
-                    >
-                      {isYou && (
-                        <motion.div
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ repeat: Infinity, duration: 2 }}
-                          className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-emerald-400"
-                        />
-                      )}
-                      <span className="text-2xl">{member.emoji}</span>
-                      <span className="text-[10px] font-medium text-slate-600 whitespace-nowrap">{member.label}</span>
-                      {hasConditions ? (
-                        <span className="text-[9px] text-amber-600 font-medium">{member.conditions.length} condition{member.conditions.length > 1 ? "s" : ""}</span>
-                      ) : !isYou ? (
-                        <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 2 }}>
-                          <Plus className="w-3.5 h-3.5 text-slate-300" />
-                        </motion.div>
-                      ) : null}
-                    </motion.button>
-                  )
-                })}
-              </div>
-              {/* Connection lines */}
-              {ri < 2 && (
-                <div className="flex justify-center mt-2">
-                  <div className="w-px h-4 bg-slate-200" />
+              <h2 className="text-lg font-bold mb-3 flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-amber-600" />
+                {tr ? "Genetik Risk Analizi" : "Genetic Risk Analysis"}
+              </h2>
+
+              {analysis.overallRiskAssessment && (
+                <div className="mb-4 p-3 rounded-xl bg-white/70 dark:bg-black/20 border">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1 font-semibold">
+                    {tr ? "Genel Değerlendirme" : "Overall Assessment"}
+                  </p>
+                  <p className="text-sm">{analysis.overallRiskAssessment}</p>
+                </div>
+              )}
+
+              {analysis.hereditaryPatterns?.length > 0 && (
+                <div className="mb-4">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-semibold">
+                    {tr ? "Kalıtım Örüntüleri" : "Hereditary Patterns"}
+                  </p>
+                  <div className="space-y-2">
+                    {analysis.hereditaryPatterns.map((p, i) => (
+                      <div key={i} className="rounded-xl bg-white/70 dark:bg-black/20 border p-3">
+                        <p className="text-sm font-semibold">{p.condition}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {tr ? "Etkilenen" : "Affected"}: {p.affectedRelatives?.join(", ")} · {p.inheritancePattern} · {p.yourRiskMultiplier}
+                        </p>
+                        {p.geneticTestRecommended && p.specificTest && (
+                          <p className="text-xs mt-1 text-amber-700 dark:text-amber-300">
+                            🧬 {p.specificTest}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {analysis.screeningRecommendations?.length > 0 && (
+                <div className="mb-4">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-semibold">
+                    {tr ? "Tarama Önerileri" : "Screening Recommendations"}
+                  </p>
+                  <div className="space-y-2">
+                    {analysis.screeningRecommendations.map((s, i) => (
+                      <div key={i} className="rounded-xl bg-white/70 dark:bg-black/20 border p-3">
+                        <p className="text-sm font-semibold">{s.condition} — {s.test}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {tr ? "Başlangıç" : "Start"}: {s.startAge} · {s.frequency}
+                        </p>
+                        <p className="text-xs mt-1">{s.reason}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {analysis.keyInsights?.length > 0 && (
+                <div className="mb-4">
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-semibold">
+                    {tr ? "Önemli Bulgular" : "Key Insights"}
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {analysis.keyInsights.map((k, i) => (
+                      <li key={i} className="text-sm">{k}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {analysis.geneticCounselingAdvice && (
+                <div className="mt-4 p-3 rounded-xl bg-amber-100/60 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700">
+                  <p className="text-xs font-semibold mb-1">
+                    {tr ? "Genetik Danışmanlık" : "Genetic Counseling"}
+                  </p>
+                  <p className="text-xs text-amber-900 dark:text-amber-200">{analysis.geneticCounselingAdvice}</p>
                 </div>
               )}
             </motion.div>
-          ))}
-        </div>
-
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="bg-white rounded-2xl p-4 mb-6 shadow-sm border border-slate-100 text-center"
-        >
-          <p className="text-sm text-slate-500">
-            {totalConditions === 0
-              ? "Tap family members to add their health conditions"
-              : `${totalConditions} condition${totalConditions > 1 ? "s" : ""} mapped across your family tree`
-            }
-          </p>
-        </motion.div>
-
-        {/* Bottom Sheet */}
-        <AnimatePresence>
-          {activeMember && activeData && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm flex items-end justify-center"
-              onClick={() => setActiveMember(null)}
-            >
-              <motion.div
-                initial={{ y: 300 }}
-                animate={{ y: 0 }}
-                exit={{ y: 300 }}
-                transition={{ type: "spring", damping: 25 }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-t-3xl p-6 w-full max-w-lg shadow-2xl"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">{activeData.emoji}</span>
-                    <h3 className="text-lg font-semibold text-slate-800">{activeData.label}</h3>
-                  </div>
-                  <button onClick={() => setActiveMember(null)} className="p-2 rounded-full hover:bg-slate-100">
-                    <X className="w-5 h-5 text-slate-400" />
-                  </button>
-                </div>
-
-                <p className="text-sm text-slate-500 mb-4">Select known health conditions:</p>
-                <div className="flex flex-wrap gap-2">
-                  {conditionChips.map(chip => {
-                    const isActive = activeData.conditions.includes(chip.label)
-                    return (
-                      <motion.button
-                        key={chip.label}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => addCondition(activeData.id, chip.label)}
-                        className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-sm border-2 transition-all ${
-                          isActive ? "border-emerald-300 bg-emerald-50 text-emerald-700" : "border-slate-100 bg-slate-50 text-slate-600"
-                        }`}
-                      >
-                        <span>{chip.emoji}</span>
-                        <span>{chip.label}</span>
-                      </motion.button>
-                    )
-                  })}
-                </div>
-              </motion.div>
-            </motion.div>
           )}
         </AnimatePresence>
+
+        <p className="mt-6 text-[11px] text-muted-foreground text-center max-w-xl mx-auto">
+          {tr
+            ? "Bu analiz tıbbi teşhis değildir. Genetik test kararları için genetik danışman veya hekiminize başvurun."
+            : "This analysis is not a medical diagnosis. Consult a genetic counselor or physician before any genetic testing decision."}
+        </p>
       </div>
     </div>
   )

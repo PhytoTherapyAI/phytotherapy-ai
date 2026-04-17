@@ -156,4 +156,36 @@ export const familyTranslations: Record<string, TranslationEntry> = {
     en: "Other",
     tr: "Diğer",
   },
+  "family.treeTitle": {
+    en: "Family Health Tree",
+    tr: "Aile Sağlık Ağacı",
+  },
+  "family.treeEmpty": {
+    en: "Add family members and tag their relationship to build your health tree.",
+    tr: "Ağacı kurmak için aile üyelerini ekle ve ilişkilerini işaretle.",
+  },
+  "family.generationGrandparents": {
+    en: "Grandparents (inherited history)",
+    tr: "Büyükler (aile geçmişi)",
+  },
+  "family.generationParents": {
+    en: "Parents",
+    tr: "Anne-Baba",
+  },
+  "family.generationSelf": {
+    en: "You & partner & siblings",
+    tr: "Sen & Eşin & Kardeşler",
+  },
+  "family.generationChildren": {
+    en: "Children",
+    tr: "Çocuklar",
+  },
+  "family.aiAnalyzeButton": {
+    en: "AI Genetic Analysis",
+    tr: "AI Genetik Analiz",
+  },
+  "family.aiAnalyzing": {
+    en: "Analyzing patterns...",
+    tr: "Kalıtım örüntüleri inceleniyor...",
+  },
 }

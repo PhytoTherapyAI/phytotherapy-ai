@@ -5,6 +5,7 @@ import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askClaudeJSON } from "@/lib/ai-client";
 import { sanitizeInput } from "@/lib/sanitize";
 import { tx } from "@/lib/translations";
+import { getPremiumStatus } from "@/lib/premium";
 
 export const maxDuration = 60;
 
@@ -30,6 +31,20 @@ export async function POST(request: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     if (authError || !user) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    // Premium gate — hereditary risk analysis is a Premium feature.
+    const { data: profileForPlan } = await supabase
+      .from("user_profiles")
+      .select("plan, trial_started_at, created_at")
+      .eq("id", user.id)
+      .maybeSingle();
+    const premium = getPremiumStatus(profileForPlan || {});
+    if (!premium.isPremium) {
+      return NextResponse.json(
+        { error: "Premium subscription required for genetic risk analysis" },
+        { status: 402 }
+      );
     }
 
     const body = await request.json();
