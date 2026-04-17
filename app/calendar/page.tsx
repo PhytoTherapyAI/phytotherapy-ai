@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/lib/auth-context"
+import { useActiveProfile } from "@/lib/use-active-profile"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
@@ -469,6 +470,9 @@ function DailyProgressCard({ completed, total, lang }: { completed: number; tota
 export default function CalendarPage() {
   const router = useRouter()
   const { isAuthenticated, isLoading: authLoading, profile, user } = useAuth()
+  const { activeUserId } = useActiveProfile()
+  // All calendar queries pivot on active profile — falls back to auth user.
+  const targetId = activeUserId || user?.id || ""
   const { lang } = useLang()
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [activeView, setActiveView] = useState<"today" | "month" | "vitals">("today")
@@ -522,7 +526,7 @@ export default function CalendarPage() {
       .then(r => r.ok ? r.json() : null)
       .then(data => { if (data?.water?.glasses != null) setWaterCount(data.water.glasses) })
       .catch(() => {})
-  }, [user?.id, todayDateStr])
+  }, [targetId, todayDateStr])
 
   useEffect(() => { fetchWaterCount() }, [fetchWaterCount])
 
@@ -563,15 +567,15 @@ export default function CalendarPage() {
         const itemType = task.emoji === "💊" ? "medication" : "supplement"
         if (newDone) {
           const { error } = await supabase.from("daily_logs").insert({
-            user_id: user.id, log_date: todayDateStr, item_type: itemType, item_id: id, item_name: task.label, completed: true,
+            user_id: targetId, log_date: todayDateStr, item_type: itemType, item_id: id, item_name: task.label, completed: true,
           })
           if (error) {
             await supabase.from("daily_logs").update({ completed: true })
-              .eq("user_id", user.id).eq("log_date", todayDateStr).eq("item_type", itemType).eq("item_id", id)
+              .eq("user_id", targetId).eq("log_date", todayDateStr).eq("item_type", itemType).eq("item_id", id)
           }
         } else {
           await supabase.from("daily_logs").delete()
-            .eq("user_id", user.id).eq("log_date", todayDateStr).eq("item_type", itemType).eq("item_id", id)
+            .eq("user_id", targetId).eq("log_date", todayDateStr).eq("item_type", itemType).eq("item_id", id)
         }
         // Notify other views
         window.dispatchEvent(new Event("daily-log-changed"))
@@ -590,7 +594,7 @@ export default function CalendarPage() {
       const removed = JSON.parse(localStorage.getItem(key) || "[]") as string[]
       if (!removed.includes(id)) { removed.push(id); localStorage.setItem(key, JSON.stringify(removed)) }
     } catch {}
-  }, [user?.id])
+  }, [targetId])
 
   // Add a custom task to a specific block
   const addCustomTask = useCallback((block: "morning" | "noon" | "night", task: DailyTask) => {
@@ -604,7 +608,7 @@ export default function CalendarPage() {
       custom.push({ ...task, block })
       localStorage.setItem(key, JSON.stringify(custom))
     } catch {}
-  }, [user?.id])
+  }, [targetId])
 
   const allTasks = useMemo(() => [...morningTasks, ...noonTasks, ...nightTasks], [morningTasks, noonTasks, nightTasks])
   const completedTasks = allTasks.filter(t => t.done).length
@@ -657,7 +661,7 @@ export default function CalendarPage() {
       if (user?.id && pendingMeds.length > 0) {
         const supabase = createBrowserClient()
         const inserts = pendingMeds.map(t => ({
-          user_id: user.id, log_date: todayDateStr, item_type: "medication", item_id: t.id, item_name: t.label, completed: true,
+          user_id: targetId, log_date: todayDateStr, item_type: "medication", item_id: t.id, item_name: t.label, completed: true,
         }))
         supabase.from("daily_logs").upsert(inserts, { onConflict: "user_id,log_date,item_type,item_id" }).then(() => {
           window.dispatchEvent(new Event("daily-log-changed"))
@@ -675,11 +679,11 @@ export default function CalendarPage() {
       // Fetch medications, supplements, and daily_logs in parallel
       const [medsRes, supsRes, logsRes] = await Promise.all([
         supabase.from("user_medications").select("id, brand_name, generic_name, dosage, frequency")
-          .eq("user_id", user.id).eq("is_active", true),
+          .eq("user_id", targetId).eq("is_active", true),
         supabase.from("calendar_events").select("id, title, event_time, metadata")
-          .eq("user_id", user.id).eq("event_type", "supplement").eq("recurrence", "daily"),
+          .eq("user_id", targetId).eq("event_type", "supplement").eq("recurrence", "daily"),
         supabase.from("daily_logs").select("item_id, completed")
-          .eq("user_id", user.id).eq("log_date", todayDateStr).eq("completed", true),
+          .eq("user_id", targetId).eq("log_date", todayDateStr).eq("completed", true),
       ])
 
       const meds = medsRes.data
@@ -762,7 +766,7 @@ export default function CalendarPage() {
         setRitualDataLoaded(true)
       }, 100)
     } catch { /* ignore — keep defaults */ }
-  }, [user?.id, lang, todayDateStr])
+  }, [targetId, lang, todayDateStr])
 
   // Listen for cross-view sync events — re-fetch from daily_logs
   useEffect(() => {
@@ -781,7 +785,7 @@ export default function CalendarPage() {
       const { data: checkIns } = await supabase
         .from("daily_check_ins")
         .select("check_date")
-        .eq("user_id", user.id)
+        .eq("user_id", targetId)
         .gte("check_date", ninetyDaysAgo.toISOString().split("T")[0])
         .order("check_date", { ascending: false })
 
@@ -801,7 +805,7 @@ export default function CalendarPage() {
         setRealStreak(0)
       }
     } catch { /* ignore */ }
-  }, [user?.id])
+  }, [targetId])
 
   const fetchAllEvents = useCallback(async () => {
     if (!profile?.id) return
@@ -809,10 +813,10 @@ export default function CalendarPage() {
       const supabase = createBrowserClient()
       const { data } = await supabase.from("calendar_events")
         .select("title, event_date, event_time, description, event_type")
-        .eq("user_id", profile.id).order("event_date", { ascending: true }).limit(500)
+        .eq("user_id", targetId).order("event_date", { ascending: true }).limit(500)
       if (data) setAllEvents(data)
     } catch { /* ignore */ }
-  }, [profile?.id])
+  }, [targetId])
 
   const fetchVitals = useCallback(async () => {
     if (!profile?.id) return
@@ -820,16 +824,16 @@ export default function CalendarPage() {
     try {
       const supabase = createBrowserClient()
       const { data } = await supabase.from("vital_records")
-        .select("*").eq("user_id", profile.id).order("recorded_at", { ascending: false }).limit(20)
+        .select("*").eq("user_id", targetId).order("recorded_at", { ascending: false }).limit(20)
       if (data) setVitals(data as VitalRecord[])
     } catch { /* ignore */ } finally { setVitalsLoading(false) }
-  }, [profile?.id])
+  }, [targetId])
 
   useEffect(() => {
     if (profile?.id) {
       Promise.all([fetchAllEvents(), fetchVitals(), fetchProfileMeds(), fetchStreak()])
     }
-  }, [profile?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [targetId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (authLoading) return <PageSkeleton />
   if (!isAuthenticated || !profile) {
@@ -947,7 +951,7 @@ export default function CalendarPage() {
 
                   {/* Existing TodayView integration */}
                   <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
-                    <TodayView userId={profile.id} lang={lang} userName={profile.full_name}
+                    <TodayView userId={targetId} lang={lang} userName={profile.full_name}
                       userWeight={profile.weight_kg} userHeight={profile.height_cm} userSupplements={(profile.supplements || []).filter((s: string) => !s.startsWith("meta:"))} />
                   </Suspense>
                 </motion.div>
@@ -957,7 +961,7 @@ export default function CalendarPage() {
                 <motion.div key="month" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                   <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
-                    <MonthView userId={profile.id} lang={lang} />
+                    <MonthView userId={targetId} lang={lang} />
                   </Suspense>
                   {allEvents.length > 0 && (
                     <div className="mt-4">
@@ -1013,7 +1017,7 @@ export default function CalendarPage() {
                   )}
                   {addVitalOpen && (
                     <Suspense fallback={null}>
-                      <AddVitalDialog userId={profile.id} lang={lang} open={addVitalOpen}
+                      <AddVitalDialog userId={targetId} lang={lang} open={addVitalOpen}
                         onOpenChange={setAddVitalOpen} onSaved={() => fetchVitals()} />
                     </Suspense>
                   )}

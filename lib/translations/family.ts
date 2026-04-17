@@ -96,4 +96,12 @@ export const familyTranslations: Record<string, TranslationEntry> = {
     en: "Upgrade to Premium",
     tr: "Premium'a Yükselt",
   },
+  "family.askingFor": {
+    en: "You're asking on behalf of {name}",
+    tr: "{name} için soruyorsun",
+  },
+  "family.switchBack": {
+    en: "Back to my profile",
+    tr: "Kendi profilime dön",
+  },
 }

@@ -3,6 +3,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { useAuth } from "@/lib/auth-context"
+import { useActiveProfile } from "@/lib/use-active-profile"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import {
@@ -146,7 +147,10 @@ function savePrefs(userId: string, prefs: CardPrefs) {
 
 export function DailyCareCard() {
   const { user } = useAuth()
+  const { activeUserId } = useActiveProfile()
   const { lang } = useLang()
+  // Effective id for all reads/caches — pivots on active profile when set.
+  const effectiveId = activeUserId || user?.id || ""
   const [plan, setPlan] = useState<CarePlan | null>(null)
   const [loading, setLoading] = useState(true)
   const [completedCards, setCompletedCards] = useState<Set<string>>(new Set())
@@ -160,7 +164,7 @@ export function DailyCareCard() {
   // Load prefs + completions + dismissals from localStorage
   useEffect(() => {
     if (!user) return
-    setPrefs(loadPrefs(user.id))
+    setPrefs(loadPrefs(effectiveId))
 
     const savedCompleted = localStorage.getItem(`care-completed-${today}`)
     if (savedCompleted) {
@@ -171,7 +175,7 @@ export function DailyCareCard() {
     if (savedDismissed) {
       try { setDismissedToday(new Set(JSON.parse(savedDismissed))) } catch { /* ignore */ }
     }
-  }, [user, today])
+  }, [user, effectiveId, today])
 
   const fetchPlan = useCallback(async () => {
     if (!user) return
@@ -191,7 +195,7 @@ export function DailyCareCard() {
         } catch { /* continue to fetch */ }
       }
 
-      const res = await fetch(`/api/daily-care-plan?userId=${user.id}&lang=${lang}`)
+      const res = await fetch(`/api/daily-care-plan?userId=${effectiveId}&lang=${lang}`)
       if (!res.ok) throw new Error("Failed to fetch")
       const data = await res.json()
       setPlan(data)
@@ -201,7 +205,7 @@ export function DailyCareCard() {
     } finally {
       setLoading(false)
     }
-  }, [user, lang, today])
+  }, [user, effectiveId, lang, today])
 
   useEffect(() => {
     fetchPlan()
@@ -252,7 +256,7 @@ export function DailyCareCard() {
     }
     const newPrefs = { ...prefs, enabledCategories: [...enabled] }
     setPrefs(newPrefs)
-    if (user) savePrefs(user.id, newPrefs)
+    if (user) savePrefs(effectiveId, newPrefs)
   }
 
   const changeDuration = (category: string, duration: string) => {
@@ -261,7 +265,7 @@ export function DailyCareCard() {
       durationOverrides: { ...prefs.durationOverrides, [category]: duration },
     }
     setPrefs(newPrefs)
-    if (user) savePrefs(user.id, newPrefs)
+    if (user) savePrefs(effectiveId, newPrefs)
   }
 
   const handleRefresh = () => {

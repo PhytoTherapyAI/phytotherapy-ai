@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { MessageBubble, ChatMessage } from "./MessageBubble";
 import { AIGeneratedBadge } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
+import { useActiveProfile } from "@/lib/use-active-profile";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
@@ -53,6 +54,7 @@ interface ChatInterfaceProps {
 
 export function ChatInterface({ className, onMessagesChange, loadConversation, initialQuery }: ChatInterfaceProps) {
   const { isAuthenticated, session } = useAuth();
+  const { activeUserId, isOwnProfile } = useActiveProfile();
   const { lang } = useLang()
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -284,6 +286,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
           history: historyForApi,
           files: filesPayload,
           lang,
+          targetUserId: isOwnProfile ? undefined : activeUserId,
         }),
       });
 

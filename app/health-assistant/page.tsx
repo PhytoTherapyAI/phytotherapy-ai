@@ -3,7 +3,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Sparkles, Pill, CheckCircle2, RefreshCw, Loader2 } from "lucide-react";
+import { Sparkles, Pill, CheckCircle2, RefreshCw, Loader2, UserCircle } from "lucide-react";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { ConversationHistory } from "@/components/chat/ConversationHistory";
@@ -11,6 +11,8 @@ import { SmartWelcome } from "@/components/chat/SmartWelcome";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
+import { useFamily } from "@/lib/family-context";
+import { useActiveProfile } from "@/lib/use-active-profile";
 import { useDailyMedCheck } from "@/lib/daily-med-check";
 import { createBrowserClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
@@ -21,11 +23,20 @@ export default function HealthAssistantPage() {
   const searchParams = useSearchParams();
   const urlQuery = searchParams.get("q") ?? undefined;
   const {
-    isAuthenticated, isLoading, profile,
+    isAuthenticated, isLoading, profile, user,
     needsMedicationUpdate,
     refreshProfile,
   } = useAuth();
+  const { activeUserId, isOwnProfile } = useActiveProfile();
+  const { familyMembers, setActiveProfile } = useFamily();
   const { needsDailyCheck, confirmDaily, needsOnboardingRefresh } = useDailyMedCheck();
+
+  const activeMember = !isOwnProfile
+    ? familyMembers.find(m => m.user_id === activeUserId)
+    : null;
+  const activeMemberName = activeMember?.nickname
+    || (activeMember?.profile?.display_name as string | undefined)
+    || null;
 
   const [loadConversation, setLoadConversation] = useState<{
     query: string;
@@ -90,6 +101,27 @@ export default function HealthAssistantPage() {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
+          {/* Active family member context banner */}
+          {!isOwnProfile && activeUserId && (
+            <div className="mb-6 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/20 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 text-sm text-emerald-800 dark:text-emerald-200">
+                <UserCircle className="h-4 w-4 shrink-0" />
+                <span>
+                  {tx("family.askingFor", lang).replace("{name}", activeMemberName || (lang === "tr" ? "aile üyesi" : "family member"))}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (user?.id) await setActiveProfile(user.id)
+                }}
+                className="shrink-0 text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:underline"
+              >
+                {tx("family.switchBack", lang)}
+              </button>
+            </div>
+          )}
+
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
