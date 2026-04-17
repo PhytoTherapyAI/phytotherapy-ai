@@ -104,4 +104,16 @@ export const familyTranslations: Record<string, TranslationEntry> = {
     en: "Back to my profile",
     tr: "Kendi profilime dön",
   },
+  "family.sosButton": {
+    en: "Send SOS Alert",
+    tr: "SOS Gönder",
+  },
+  "family.sosConfirm": {
+    en: "This emergency alert will notify all household members. Only use in genuine emergencies.",
+    tr: "Bu acil durum bildirimi tüm hane üyelerine gidecek. Sadece gerçek acil durumlarda kullanın.",
+  },
+  "family.sosSent": {
+    en: "Emergency alert sent",
+    tr: "Acil bildirim gönderildi",
+  },
 }
