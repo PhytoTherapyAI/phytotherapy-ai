@@ -33,7 +33,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { history, files, lang } = body;
+    const { history, files, lang, targetUserId: requestedTargetUserId } = body as {
+      history?: unknown
+      files?: unknown
+      lang?: string
+      message?: string
+      targetUserId?: string
+    };
     // KVKK Layer 6: strip PII (email, phone, TC) from user message before any processing
     const message = stripPIIFromText(sanitizeInput(body.message));
 
@@ -104,27 +110,43 @@ export async function POST(request: NextRequest) {
     let userId: string | null = null;
     let profile: Record<string, unknown> | null = null;
 
+    let actingOnBehalfOfName: string | null = null;
+    let isActingOnBehalf = false;
+
     if (authHeader?.startsWith("Bearer ")) {
       try {
-        const token = authHeader.replace("Bearer ", "");
         const supabase = createServerClient();
-        const { data: { user } } = await supabase.auth.getUser(token);
+        const { resolveTargetUser } = await import("@/lib/family-permissions");
+        const resolution = await resolveTargetUser(supabase, authHeader, requestedTargetUserId);
 
-        if (user) {
-          userId = user.id;
-          logApiAccess({
-            endpoint: "/api/chat",
-            userId: user.id,
-            action: "read_health_profile",
-            ip: clientIP,
-            outcome: "success",
-          });
-          // Same queries as SBAR PDF route — explicit columns to avoid 400 errors
-          const [profileRes, medsRes, allergiesRes] = await Promise.all([
-            supabase.from("user_profiles").select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines, onboarding_complete, consent_ai_processing, consent_data_transfer").eq("id", user.id).maybeSingle(),
-            supabase.from("user_medications").select("brand_name, generic_name, dosage, frequency").eq("user_id", user.id).eq("is_active", true),
-            supabase.from("user_allergies").select("allergen, severity").eq("user_id", user.id),
-          ]);
+        if (!resolution.ok) {
+          return new Response(
+            JSON.stringify({ error: resolution.error }),
+            { status: resolution.status, headers: { "Content-Type": "application/json" } }
+          );
+        }
+
+        userId = resolution.callerId;
+        const targetUserId = resolution.targetUserId;
+        isActingOnBehalf = !resolution.isOwnProfile;
+
+        logApiAccess({
+          endpoint: "/api/chat",
+          userId: resolution.callerId,
+          action: isActingOnBehalf ? `read_family_member_health_profile:${targetUserId}` : "read_health_profile",
+          ip: clientIP,
+          outcome: "success",
+        });
+        // Queries pivot on targetUserId (family-aware) — RLS policy from FAZ 3 allows cross-user reads
+        const [profileRes, medsRes, allergiesRes] = await Promise.all([
+          supabase.from("user_profiles").select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines, onboarding_complete, consent_ai_processing, consent_data_transfer").eq("id", targetUserId).maybeSingle(),
+          supabase.from("user_medications").select("brand_name, generic_name, dosage, frequency").eq("user_id", targetUserId).eq("is_active", true),
+          supabase.from("user_allergies").select("allergen, severity").eq("user_id", targetUserId),
+        ]);
+        // Capture display name for system prompt
+        actingOnBehalfOfName = isActingOnBehalf
+          ? ((profileRes.data as { full_name?: string | null } | null)?.full_name || null)
+          : null;
 
           if (profileRes.error) console.error("[Chat] profile error:", profileRes.error.message, profileRes.error.details);
           if (medsRes.error) console.error("[Chat] meds error:", medsRes.error.message);
@@ -145,7 +167,7 @@ export async function POST(request: NextRequest) {
 
             logApiAccess({
               endpoint: "/api/chat",
-              userId: user.id,
+              userId: userId,
               action: "ai_chat_blocked_no_consent",
               ip: clientIP,
               outcome: "denied",
@@ -170,8 +192,8 @@ export async function POST(request: NextRequest) {
             const { anonymized, log } = anonymizePromptData({
               // Identity (will be stripped)
               full_name: profile.full_name as string | undefined,
-              user_id: user.id,
-              email: user.email,
+              user_id: targetUserId,
+              email: undefined,  // email not fetched for target; caller's email not relevant to target's PII scrub
               // Medical (will be kept, age → range)
               age: profile.age as number | undefined,
               gender: profile.gender as string | undefined,
@@ -296,7 +318,6 @@ ${supplementLines}
               profileContext += `\nNOTE: Profile is INCOMPLETE — add a warning that recommendations may be limited without a full profile.\n`;
             }
           }
-        }
       } catch (authError) {
         console.error("Auth error (continuing without profile):", authError);
       }
@@ -372,6 +393,12 @@ MANDATORY OUTPUT RULES (TCK Md.90 / 1219 s.K. compliance):
     // Language instruction — MUST come first so Claude responds in the correct language
     if (lang === "tr") {
       systemPromptFull += "\n\nKRİTİK DİL KURALI: Tüm yanıtlarını TÜRKÇE ver. Başlıklar, açıklamalar, öneriler, uyarılar dahil her şey Türkçe olmalı. Latince/İngilizce terimler parantez içinde kalabilir. Kullanıcı Türkçe yazdığında her zaman Türkçe yanıt ver.";
+    }
+
+    // Inject caregiver note when acting on behalf of a family member
+    if (isActingOnBehalf) {
+      const targetLabel = actingOnBehalfOfName ? `this family member (first name: ${actingOnBehalfOfName.split(" ")[0]})` : "this family member"
+      systemPromptFull += `\n\nCAREGIVER CONTEXT: The authenticated user is a family caregiver asking on behalf of ${targetLabel}. All medications, allergies, and conditions in the patient profile below belong to ${targetLabel}, NOT the caregiver. Tailor your response to the patient described below. Do not confuse caregiver data with patient data.`
     }
 
     // Inject full patient profile into system prompt for maximum personalization

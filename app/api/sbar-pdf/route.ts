@@ -5,6 +5,7 @@ import { SBARReport, type SBARData } from "@/components/pdf/SBARReport";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { logApiAccess } from "@/lib/security-audit";
+import { resolveTargetUser } from "@/lib/family-permissions";
 import type { VaccineEntry } from "@/lib/vaccine-data";
 
 export const runtime = 'nodejs';
@@ -19,36 +20,34 @@ export async function POST(request: NextRequest) {
       return new Response(JSON.stringify({ error: "Too many requests" }), { status: 429, headers: { "Content-Type": "application/json" } });
     }
 
-    // Auth required
     const authHeader = request.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Authentication required" }), { status: 401, headers: { "Content-Type": "application/json" } });
-    }
-
-    const token = authHeader.replace("Bearer ", "");
     const supabase = createServerClient();
-    const { data: { user } } = await supabase.auth.getUser(token);
-    if (!user) {
-      return new Response(JSON.stringify({ error: "Invalid token" }), { status: 401, headers: { "Content-Type": "application/json" } });
-    }
 
     let body: Record<string, unknown>;
     try { body = await request.json(); } catch {
       return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400, headers: { "Content-Type": "application/json" } });
     }
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
+    const requestedTargetUserId = typeof body.targetUserId === "string" ? body.targetUserId : null;
 
-    // KVKK Consent Gate: SBAR report requires explicit consent
+    const resolution = await resolveTargetUser(supabase, authHeader, requestedTargetUserId);
+    if (!resolution.ok) {
+      return new Response(JSON.stringify({ error: resolution.error }), { status: resolution.status, headers: { "Content-Type": "application/json" } });
+    }
+    const { callerId, targetUserId, isOwnProfile } = resolution;
+
+    // KVKK Consent Gate: SBAR report requires caller's explicit consent
+    // (caller is the one initiating the report, so their consent matters)
     const { data: consentRow } = await supabase
       .from("user_profiles")
       .select("consent_sbar_report")
-      .eq("id", user.id)
+      .eq("id", callerId)
       .maybeSingle();
 
     if (!consentRow?.consent_sbar_report) {
       logApiAccess({
         endpoint: "/api/sbar-pdf",
-        userId: user.id,
+        userId: callerId,
         action: "sbar_blocked_no_consent",
         ip: clientIP,
         outcome: "denied",
@@ -64,29 +63,29 @@ export async function POST(request: NextRequest) {
 
     logApiAccess({
       endpoint: "/api/sbar-pdf",
-      userId: user.id,
-      action: "generate_health_summary_pdf",
+      userId: callerId,
+      action: isOwnProfile ? "generate_health_summary_pdf" : `generate_family_member_sbar:${targetUserId}`,
       ip: clientIP,
       outcome: "success",
     });
 
-    // Fetch all profile data — explicit columns to avoid 400 errors
+    // Fetch profile/meds/allergies for the TARGET user (FAZ 3 RLS allows family members to read)
     const profileRes = await supabase
       .from("user_profiles")
       .select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines")
-      .eq("id", user.id)
+      .eq("id", targetUserId)
       .maybeSingle();
 
     const medsRes = await supabase
       .from("user_medications")
       .select("brand_name, generic_name, dosage, frequency")
-      .eq("user_id", user.id)
+      .eq("user_id", targetUserId)
       .eq("is_active", true);
 
     const allergiesRes = await supabase
       .from("user_allergies")
       .select("allergen, severity")
-      .eq("user_id", user.id);
+      .eq("user_id", targetUserId);
 
     if (profileRes.error) console.error("[SBAR-PDF] profile error:", profileRes.error.message, profileRes.error.details, profileRes.error.hint);
     if (medsRes.error) console.error("[SBAR-PDF] meds error:", medsRes.error.message, medsRes.error.details);
