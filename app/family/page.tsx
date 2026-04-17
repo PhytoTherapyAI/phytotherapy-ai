@@ -101,6 +101,13 @@ export default function FamilyPage() {
   const [inviteLink, setInviteLink] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null)
 
+  // Invite tab + code-invite state
+  const [inviteTab, setInviteTab] = useState<"email" | "code">("email")
+  const [generatingCode, setGeneratingCode] = useState(false)
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null)
+  const [generatedCodeExpiry, setGeneratedCodeExpiry] = useState<string | null>(null)
+  const [codeCopied, setCodeCopied] = useState(false)
+
   // Hane ismi ve ikon düzenleme
   const [editingGroupName, setEditingGroupName] = useState(false)
   const [draftGroupName, setDraftGroupName] = useState("")
@@ -272,6 +279,7 @@ export default function FamilyPage() {
           email: inviteEmail,
           nickname: inviteNickname,
           inviterName: profile?.full_name || user?.email,
+          lang,
         }),
       })
 
@@ -309,6 +317,71 @@ export default function FamilyPage() {
       setFeedback({ type: "error", msg: tr ? "Davet gönderilemedi." : "Failed to send invite." })
     } finally {
       setInviting(false)
+    }
+  }
+
+  async function handleGenerateCode() {
+    if (!familyGroup) return
+    setGeneratingCode(true)
+    setFeedback(null)
+    try {
+      const supabase = createBrowserClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) {
+        setFeedback({ type: "error", msg: tr ? "Oturum bulunamadı, tekrar giriş yapın." : "Session not found, please log in again." })
+        setGeneratingCode(false)
+        return
+      }
+
+      const res = await fetch("/api/family/invite-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          groupId: familyGroup.id,
+          nickname: inviteNickname.trim() || null,
+        }),
+      })
+
+      const resData = await res.json().catch(() => ({}))
+
+      if (!res.ok) {
+        if (res.status === 402) {
+          setFeedback({ type: "error", msg: tr ? "Kod oluşturmak için Premium üyelik gerekli." : "Premium required to generate codes." })
+        } else {
+          setFeedback({
+            type: "error",
+            msg: tr
+              ? `Kod oluşturulamadı: ${resData.error || "Bilinmeyen hata"}`
+              : `Could not generate code: ${resData.error || "Unknown error"}`,
+          })
+        }
+        setGeneratingCode(false)
+        return
+      }
+
+      setGeneratedCode(resData.code)
+      setGeneratedCodeExpiry(resData.expiresAt)
+      setInviteNickname("")
+      await refetch()
+    } catch (err) {
+      console.error("[Family] handleGenerateCode failed:", err)
+      setFeedback({ type: "error", msg: tr ? "Kod oluşturulamadı." : "Could not generate code." })
+    } finally {
+      setGeneratingCode(false)
+    }
+  }
+
+  async function handleCopyCode() {
+    if (!generatedCode) return
+    try {
+      await navigator.clipboard.writeText(generatedCode)
+      setCodeCopied(true)
+      setTimeout(() => setCodeCopied(false), 2000)
+    } catch {
+      setFeedback({ type: "error", msg: tr ? "Kopyalanamadı." : "Copy failed." })
     }
   }
 
@@ -983,48 +1056,146 @@ export default function FamilyPage() {
               </div>
             )}
 
-            {/* ─── Üye davet et ─── */}
+            {/* ─── Üye davet et (2-tab: email / code) ─── */}
             {(isOwner || isAdmin) && (
               <div className="bg-card rounded-2xl shadow-sm border p-6 mb-6">
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center gap-2 mb-4">
                   <UserPlus className="h-5 w-5 text-emerald-500" />
                   <h3 className="font-semibold text-foreground">
                     {tr ? "Üye Davet Et" : "Invite a Member"}
                   </h3>
                 </div>
-                <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
-                  {tr
-                    ? "Davet edilen kişi bir e-posta alacak ve DoctoPal hesabı oluşturarak hanenize katılabilecek."
-                    : "The invitee will receive an email and can join your household by creating a DoctoPal account."}
-                </p>
-                <input
-                  value={inviteNickname}
-                  onChange={e => setInviteNickname(e.target.value)}
-                  placeholder={tr ? "Takma ad (örn: Babam, Annem)" : "Nickname (e.g. Dad, Mom)"}
-                  className="w-full border border-border rounded-xl px-4 py-3 mb-3 bg-background text-foreground focus:ring-2 focus:ring-emerald-400 outline-none"
-                />
-                <input
-                  value={inviteEmail}
-                  onChange={e => setInviteEmail(e.target.value)}
-                  placeholder={tr ? "E-posta adresi" : "Email address"}
-                  type="email"
-                  className="w-full border border-border rounded-xl px-4 py-3 bg-background text-foreground focus:ring-2 focus:ring-emerald-400 outline-none"
-                  onKeyDown={e => e.key === "Enter" && handleInvite()}
-                />
-                <p className="text-[11px] text-muted-foreground mt-2 mb-3 flex items-center gap-1">
-                  <Info className="h-3 w-3" />
-                  {tr ? "Davet bağlantısı 7 gün geçerlidir." : "The invite link is valid for 7 days."}
-                </p>
-                <Button
-                  onClick={handleInvite}
-                  disabled={inviting || !inviteEmail.trim()}
-                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold"
-                >
-                  {inviting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                  {inviting
-                    ? (tr ? "Gönderiliyor..." : "Sending...")
-                    : (tr ? "Davet Gönder" : "Send Invite")}
-                </Button>
+
+                {/* Tab switcher */}
+                <div className="flex gap-1 p-1 bg-muted rounded-xl mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setInviteTab("email")}
+                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-lg transition-colors ${
+                      inviteTab === "email"
+                        ? "bg-card text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {tr ? "Email ile" : "By Email"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setInviteTab("code")}
+                    className={`flex-1 py-2 px-3 text-sm font-medium rounded-lg transition-colors ${
+                      inviteTab === "code"
+                        ? "bg-card text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {tr ? "Kod ile" : "By Code"}
+                  </button>
+                </div>
+
+                {inviteTab === "email" ? (
+                  <>
+                    <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+                      {tr
+                        ? "Davet edilen kişi bir e-posta alacak ve DoctoPal hesabı oluşturarak hanenize katılabilecek."
+                        : "The invitee will receive an email and can join your household by creating a DoctoPal account."}
+                    </p>
+                    <input
+                      value={inviteNickname}
+                      onChange={e => setInviteNickname(e.target.value)}
+                      placeholder={tr ? "Takma ad (örn: Babam, Annem)" : "Nickname (e.g. Dad, Mom)"}
+                      className="w-full border border-border rounded-xl px-4 py-3 mb-3 bg-background text-foreground focus:ring-2 focus:ring-emerald-400 outline-none"
+                    />
+                    <input
+                      value={inviteEmail}
+                      onChange={e => setInviteEmail(e.target.value)}
+                      placeholder={tr ? "E-posta adresi" : "Email address"}
+                      type="email"
+                      className="w-full border border-border rounded-xl px-4 py-3 bg-background text-foreground focus:ring-2 focus:ring-emerald-400 outline-none"
+                      onKeyDown={e => e.key === "Enter" && handleInvite()}
+                    />
+                    <p className="text-[11px] text-muted-foreground mt-2 mb-3 flex items-center gap-1">
+                      <Info className="h-3 w-3" />
+                      {tr ? "Davet bağlantısı 7 gün geçerlidir." : "The invite link is valid for 7 days."}
+                    </p>
+                    <Button
+                      onClick={handleInvite}
+                      disabled={inviting || !inviteEmail.trim()}
+                      className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold"
+                    >
+                      {inviting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                      {inviting
+                        ? (tr ? "Gönderiliyor..." : "Sending...")
+                        : (tr ? "Davet Gönder" : "Send Invite")}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
+                      {tr
+                        ? "6 haneli bir kod oluşturun. Davet edilecek kişi bu kodu /family/join sayfasında girerek hanenize katılır."
+                        : "Generate a 6-character code. The invitee enters it at /family/join to join your household."}
+                    </p>
+
+                    {generatedCode ? (
+                      <div className="space-y-3">
+                        <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl p-5 text-center">
+                          <p className="text-xs text-emerald-700 dark:text-emerald-300 uppercase tracking-wider mb-2 font-semibold">
+                            {tr ? "Davet Kodu" : "Invite Code"}
+                          </p>
+                          <p className="text-3xl font-mono font-bold tracking-[0.3em] text-emerald-900 dark:text-emerald-100 mb-3">
+                            {generatedCode}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={handleCopyCode}
+                            className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-300 hover:text-emerald-800"
+                          >
+                            {codeCopied ? (
+                              <><Check className="h-4 w-4" /> {tr ? "Kopyalandı!" : "Copied!"}</>
+                            ) : (
+                              <>{tr ? "Kopyala" : "Copy"}</>
+                            )}
+                          </button>
+                        </div>
+                        <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {tr ? "48 saat geçerlidir." : "Valid for 48 hours."}
+                        </p>
+                        <Button
+                          type="button"
+                          onClick={() => { setGeneratedCode(null); setGeneratedCodeExpiry(null) }}
+                          variant="outline"
+                          className="w-full py-2.5 rounded-xl font-medium"
+                        >
+                          {tr ? "Yeni Kod Oluştur" : "Generate New Code"}
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <input
+                          value={inviteNickname}
+                          onChange={e => setInviteNickname(e.target.value)}
+                          placeholder={tr ? "Takma ad (opsiyonel)" : "Nickname (optional)"}
+                          className="w-full border border-border rounded-xl px-4 py-3 mb-3 bg-background text-foreground focus:ring-2 focus:ring-emerald-400 outline-none"
+                        />
+                        <p className="text-[11px] text-muted-foreground mb-3 flex items-center gap-1">
+                          <Info className="h-3 w-3" />
+                          {tr ? "Kod 48 saat geçerlidir. Premium gerekir." : "Code valid for 48 hours. Premium required."}
+                        </p>
+                        <Button
+                          onClick={handleGenerateCode}
+                          disabled={generatingCode}
+                          className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold"
+                        >
+                          {generatingCode && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                          {generatingCode
+                            ? (tr ? "Oluşturuluyor..." : "Generating...")
+                            : (tr ? "Kod Oluştur" : "Generate Code")}
+                        </Button>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
             )}
 

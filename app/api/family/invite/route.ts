@@ -1,6 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@/lib/supabase"
+import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
 
 function escapeHtml(text: string): string {
   return text
@@ -11,8 +12,82 @@ function escapeHtml(text: string): string {
     .replace(/'/g, "&#x27;")
 }
 
+type Lang = "en" | "tr"
+
+function buildEmailSubject(inviterName: string, lang: Lang): string {
+  if (lang === "en") return `${inviterName} invited you to their DoctoPal family group`
+  return `${inviterName} sizi DoctoPal aile grubuna davet etti`
+}
+
+function buildEmailHtml(args: {
+  inviterName: string
+  groupName: string
+  inviteUrl: string
+  lang: Lang
+}): string {
+  const { inviterName, groupName, inviteUrl, lang } = args
+  const safeSender = escapeHtml(inviterName)
+  const safeGroup = escapeHtml(groupName)
+  const safeUrl = escapeHtml(inviteUrl)
+
+  const strings =
+    lang === "en"
+      ? {
+          heading: "Family Invite",
+          greeting: "Hello,",
+          body: `<strong>${safeSender}</strong> has invited you to the <strong>${safeGroup}</strong> family group on DoctoPal.`,
+          cta: "Accept Invite",
+          warn: "If this invite is not for you, please ignore this email.",
+          footer: "DoctoPal — Evidence-based health assistant",
+        }
+      : {
+          heading: "Aile Daveti",
+          greeting: "Merhaba,",
+          body: `<strong>${safeSender}</strong> sizi DoctoPal'daki <strong>${safeGroup}</strong> aile grubuna davet etti.`,
+          cta: "Daveti Kabul Et",
+          warn: "Bu davet size ait değilse bu e-postayı görmezden gelin.",
+          footer: "DoctoPal — Kanıta dayalı sağlık asistanı",
+        }
+
+  return `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 500px; margin: 0 auto; padding: 32px;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="color: #16a34a; font-size: 24px; margin: 0;">DoctoPal</h1>
+        <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0;">${strings.heading}</p>
+      </div>
+      <p style="color: #374151; font-size: 16px;">${strings.greeting}</p>
+      <p style="color: #374151; font-size: 16px;">${strings.body}</p>
+      <div style="text-align: center; margin: 32px 0;">
+        <a href="${safeUrl}"
+           style="background: #16a34a; color: white;
+                  padding: 14px 32px; border-radius: 12px;
+                  text-decoration: none; display: inline-block;
+                  font-weight: 600; font-size: 16px;">
+          ${strings.cta}
+        </a>
+      </div>
+      <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; margin: 24px 0;">
+        <p style="color: #92400e; font-size: 13px; margin: 0;">${strings.warn}</p>
+      </div>
+      <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 32px;">
+        ${strings.footer}
+      </p>
+    </div>
+  `
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 5 invites/min per IP
+    const clientIP = getClientIP(req)
+    const rate = checkRateLimit(`family-invite:${clientIP}`, 5, 60_000)
+    if (!rate.allowed) {
+      return NextResponse.json(
+        { error: `Too many invite attempts. Retry in ${rate.resetInSeconds}s.` },
+        { status: 429, headers: { "Retry-After": String(rate.resetInSeconds) } }
+      )
+    }
+
     const auth = req.headers.get("authorization")
     if (!auth?.startsWith("Bearer ")) {
       console.error("[INVITE] No auth header")
@@ -26,7 +101,8 @@ export async function POST(req: NextRequest) {
       console.error("[INVITE] Auth failed:", authError?.message)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-    let body: { groupId?: string; email?: string; nickname?: string; inviterName?: string }
+
+    let body: { groupId?: string; email?: string; nickname?: string; inviterName?: string; lang?: string }
     try {
       body = await req.json()
     } catch {
@@ -34,9 +110,15 @@ export async function POST(req: NextRequest) {
     }
 
     const { groupId, email, nickname, inviterName } = body
+    const lang: Lang = body.lang === "en" ? "en" : "tr"
 
     if (!groupId || !email) {
       return NextResponse.json({ error: "groupId and email required" }, { status: 400 })
+    }
+
+    // Basic email validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "Invalid email address" }, { status: 400 })
     }
 
     // Grubu doğrula
@@ -50,7 +132,8 @@ export async function POST(req: NextRequest) {
       console.error("[INVITE] Group not found:", groupErr?.message, groupErr?.details)
       return NextResponse.json({ error: "Group not found" }, { status: 404 })
     }
-    // Owner kontrolü
+
+    // Owner / admin kontrolü
     if (group.owner_id !== user.id) {
       const { data: adminCheck } = await supabase
         .from("family_members")
@@ -68,7 +151,7 @@ export async function POST(req: NextRequest) {
     // Zaten üye mi?
     const { data: existing } = await supabase
       .from("family_members")
-      .select("id, invite_status, invite_token")
+      .select("id, invite_status, invite_token, expires_at")
       .eq("group_id", groupId)
       .eq("invite_email", email)
       .maybeSingle()
@@ -80,7 +163,31 @@ export async function POST(req: NextRequest) {
     let inviteToken: string | null = null
 
     if (existing) {
-      inviteToken = existing.invite_token
+      const isExpired = existing.expires_at && new Date(existing.expires_at).getTime() < Date.now()
+      if (isExpired) {
+        // Expired → delete and create fresh invite
+        await supabase.from("family_members").delete().eq("id", existing.id)
+        const { data: newMember, error: insertErr } = await supabase
+          .from("family_members")
+          .insert({
+            group_id: groupId,
+            invite_email: email,
+            nickname: nickname || null,
+            role: "member",
+            invite_status: "pending",
+          })
+          .select("invite_token")
+          .single()
+
+        if (insertErr || !newMember) {
+          console.error("[INVITE] Insert-after-expire error:", insertErr?.message)
+          return NextResponse.json({ error: `Failed to refresh invite: ${insertErr?.message || "Unknown"}` }, { status: 500 })
+        }
+        inviteToken = newMember.invite_token
+      } else {
+        // Still valid → reuse existing token
+        inviteToken = existing.invite_token
+      }
     } else {
       const { data: newMember, error: insertErr } = await supabase
         .from("family_members")
@@ -89,18 +196,21 @@ export async function POST(req: NextRequest) {
           invite_email: email,
           nickname: nickname || null,
           role: "member",
-          invite_status: "pending"
+          invite_status: "pending",
         })
         .select("invite_token")
         .single()
 
       if (insertErr || !newMember) {
         console.error("[INVITE] Insert error:", insertErr?.message, insertErr?.details, insertErr?.hint)
-        return NextResponse.json({
-          error: `Failed to create invite: ${insertErr?.message || "Unknown"}`,
-          details: insertErr?.details,
-          hint: insertErr?.hint
-        }, { status: 500 })
+        return NextResponse.json(
+          {
+            error: `Failed to create invite: ${insertErr?.message || "Unknown"}`,
+            details: insertErr?.details,
+            hint: insertErr?.hint,
+          },
+          { status: 500 }
+        )
       }
       inviteToken = newMember.invite_token
     }
@@ -110,10 +220,9 @@ export async function POST(req: NextRequest) {
     }
 
     const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/family/accept?token=${inviteToken}`
-    const safeSender = escapeHtml(inviterName || "Birisi")
-    const safeGroup = escapeHtml(group.name)
+    const senderName = inviterName || (lang === "en" ? "Someone" : "Birisi")
 
-    // Email gönder — Resend ile (onboarding@resend.dev test domain'i)
+    // Email gönder — Resend (onboarding@resend.dev test domain)
     let emailSent = false
 
     if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== "re_placeholder") {
@@ -124,37 +233,8 @@ export async function POST(req: NextRequest) {
         const { data: emailData, error: emailErr } = await resend.emails.send({
           from: "DoctoPal <onboarding@resend.dev>",
           to: [email],
-          subject: `${inviterName || "Birisi"} sizi DoctoPal aile grubuna davet etti`,
-          html: `
-            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 500px; margin: 0 auto; padding: 32px;">
-              <div style="text-align: center; margin-bottom: 24px;">
-                <h1 style="color: #16a34a; font-size: 24px; margin: 0;">DoctoPal</h1>
-                <p style="color: #6b7280; font-size: 14px; margin: 4px 0 0;">Aile Daveti</p>
-              </div>
-              <p style="color: #374151; font-size: 16px;">Merhaba,</p>
-              <p style="color: #374151; font-size: 16px;">
-                <strong>${safeSender}</strong> sizi DoctoPal'daki
-                <strong>${safeGroup}</strong> aile grubuna davet etti.
-              </p>
-              <div style="text-align: center; margin: 32px 0;">
-                <a href="${inviteUrl}"
-                   style="background: #16a34a; color: white;
-                          padding: 14px 32px; border-radius: 12px;
-                          text-decoration: none; display: inline-block;
-                          font-weight: 600; font-size: 16px;">
-                  Daveti Kabul Et
-                </a>
-              </div>
-              <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 12px; margin: 24px 0;">
-                <p style="color: #92400e; font-size: 13px; margin: 0;">
-                  Bu davet size ait değilse bu emaili görmezden gelin.
-                </p>
-              </div>
-              <p style="color: #9ca3af; font-size: 12px; text-align: center; margin-top: 32px;">
-                DoctoPal — Kanıta dayalı sağlık asistanı
-              </p>
-            </div>
-          `
+          subject: buildEmailSubject(senderName, lang),
+          html: buildEmailHtml({ inviterName: senderName, groupName: group.name, inviteUrl, lang }),
         })
 
         if (emailErr) {
@@ -174,7 +254,7 @@ export async function POST(req: NextRequest) {
       try {
         const { error: adminErr } = await supabase.auth.admin.inviteUserByEmail(email, {
           redirectTo: inviteUrl,
-          data: { invite_token: inviteToken, group_id: groupId }
+          data: { invite_token: inviteToken, group_id: groupId },
         })
         if (adminErr) {
           console.error("[INVITE] Supabase admin invite failed:", adminErr.message)
@@ -191,8 +271,8 @@ export async function POST(req: NextRequest) {
       emailSent,
       inviteUrl,
       message: emailSent
-        ? "Davet e-postası gönderildi"
-        : "Davet oluşturuldu — linki manuel paylaşın"
+        ? lang === "en" ? "Invitation email sent" : "Davet e-postası gönderildi"
+        : lang === "en" ? "Invite created — share the link manually" : "Davet oluşturuldu — linki manuel paylaşın",
     })
   } catch (err) {
     console.error("[INVITE] Unhandled error:", err)

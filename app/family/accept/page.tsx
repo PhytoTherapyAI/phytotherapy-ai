@@ -7,7 +7,7 @@ import { createBrowserClient } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth-context'
 import { useLang } from '@/components/layout/language-toggle'
 
-type InviteStatus = 'loading' | 'found' | 'accepting' | 'accepted' | 'error'
+type InviteStatus = 'loading' | 'found' | 'accepting' | 'accepted' | 'error' | 'expired' | 'confirming_decline'
 
 function AcceptInviteContent() {
   const params = useSearchParams()
@@ -32,7 +32,7 @@ function AcceptInviteContent() {
     const { data, error } = await supabase
       .from('family_members')
       .select(`
-        id, invite_email, nickname,
+        id, invite_email, nickname, expires_at,
         group:family_groups(
           name,
           owner_id
@@ -49,6 +49,12 @@ function AcceptInviteContent() {
     }
 
     if (data) {
+      // Expiry check
+      const expiresAt = (data as { expires_at?: string | null }).expires_at
+      if (expiresAt && new Date(expiresAt).getTime() < Date.now()) {
+        setStatus('expired')
+        return
+      }
       // Supabase join — safe parse
       const groupArr = data.group
       const groupData = Array.isArray(groupArr) ? groupArr[0] : groupArr
@@ -76,12 +82,17 @@ function AcceptInviteContent() {
     if (!user || !token) return
     setStatus('accepting')
 
-    // Validate invite belongs to this user's email
+    // Validate invite belongs to this user's email + still valid
     const { data: inviteData } = await supabase
       .from('family_members')
-      .select('invite_email')
+      .select('invite_email, expires_at')
       .eq('invite_token', token)
       .maybeSingle()
+
+    if (inviteData?.expires_at && new Date(inviteData.expires_at).getTime() < Date.now()) {
+      setStatus('expired')
+      return
+    }
 
     if (inviteData && user.email && inviteData.invite_email.toLowerCase() !== user.email.toLowerCase()) {
       console.error('[Accept] Email mismatch:', inviteData.invite_email, 'vs', user.email)
@@ -115,6 +126,28 @@ function AcceptInviteContent() {
       .eq('invite_token', token)
     router.push('/')
   }
+
+  if (status === 'expired') return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="text-center">
+        <div className="text-6xl mb-4" aria-hidden="true">⏳</div>
+        <h2 className="text-xl font-bold text-foreground mb-2">
+          {tr ? 'Davet Süresi Doldu' : 'Invite Expired'}
+        </h2>
+        <p className="text-muted-foreground">
+          {tr
+            ? 'Bu davetin 7 günlük süresi doldu. Lütfen sizi davet eden kişiden yeni bir davet isteyin.'
+            : 'This 7-day invite has expired. Please ask the sender for a new invite.'}
+        </p>
+        <button
+          onClick={() => router.push('/')}
+          className="mt-6 px-6 py-2 bg-primary text-primary-foreground rounded-xl font-medium hover:bg-primary/90 transition"
+        >
+          {tr ? 'Ana Sayfaya Dön' : 'Back to Home'}
+        </button>
+      </div>
+    </div>
+  )
 
   if (status === 'loading') return (
     <div className="min-h-screen flex items-center justify-center">
@@ -213,11 +246,50 @@ function AcceptInviteContent() {
                 : (tr ? 'Daveti Kabul Et' : 'Accept Invite')}
             </button>
             <button
-              onClick={declineInvite}
+              onClick={() => setStatus('confirming_decline')}
               className="w-full py-3 border-2 border-border text-muted-foreground rounded-xl font-semibold hover:border-destructive hover:text-destructive transition"
             >
               {tr ? 'Reddet' : 'Decline'}
             </button>
+          </div>
+        )}
+
+        {/* Decline confirm modal */}
+        {status === 'confirming_decline' && (
+          <div
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setStatus('found')}
+          >
+            <div
+              className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full text-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="mx-auto mb-4 w-14 h-14 rounded-xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-2xl" aria-hidden="true">
+                ⚠️
+              </div>
+              <h3 className="text-lg font-bold mb-2 text-foreground">
+                {tr ? 'Daveti Reddet' : 'Decline Invite'}
+              </h3>
+              <p className="text-sm text-muted-foreground mb-5">
+                {tr
+                  ? 'Daveti reddetmek istediğinize emin misiniz? Bu işlem geri alınamaz.'
+                  : 'Are you sure you want to decline this invite? This cannot be undone.'}
+              </p>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={declineInvite}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors"
+                >
+                  {tr ? 'Evet, Reddet' : 'Yes, Decline'}
+                </button>
+                <button
+                  onClick={() => setStatus('found')}
+                  className="text-muted-foreground hover:text-foreground text-sm py-2"
+                >
+                  {tr ? 'Vazgeç' : 'Cancel'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

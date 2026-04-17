@@ -56,4 +56,16 @@ export const familyTranslations: Record<string, TranslationEntry> = {
     en: "Family management is a Premium feature. Upgrade to create a family group, invite members, and manage their health information.",
     tr: "Aile yönetimi Premium özelliktir. Aile grubu oluşturmak, üye davet etmek ve sağlık bilgilerini yönetmek için Premium'a yükseltin.",
   },
+  "family.joinTitle": {
+    en: "Join a Family Group",
+    tr: "Aile Grubuna Katıl",
+  },
+  "family.joinSubtitle": {
+    en: "Enter the 6-character code you received from the person who invited you.",
+    tr: "Sizi davet eden kişiden aldığınız 6 haneli kodu girin.",
+  },
+  "family.joinButton": {
+    en: "Join Group",
+    tr: "Gruba Katıl",
+  },
 }
