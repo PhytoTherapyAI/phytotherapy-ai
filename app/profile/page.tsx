@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
@@ -63,7 +64,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const { lang } = useLang();
   const { isAuthenticated, isLoading, profile, user, refreshProfile } = useAuth();
-  const { activeUserId, isOwnProfile, canEdit } = useActiveProfile();
+  const { activeUserId, isOwnProfile, canEdit, hasManageRole, needsPremiumToEdit } = useActiveProfile();
   const [viewedProfile, setViewedProfile] = useState<typeof profile>(null);
   const [medications, setMedications] = useState<UserMedication[]>([]);
   const [allergies, setAllergies] = useState<UserAllergy[]>([]);
@@ -644,18 +645,38 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
-      {/* Read-only banner when viewing someone else's profile */}
-      {!isOwnProfile && !canEdit && (
+      {/* View-only banner — other member, no manage role */}
+      {!isOwnProfile && !hasManageRole && (
         <div className="mb-4 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50/80 dark:bg-amber-950/20 px-4 py-3 text-center">
           <p className="text-sm text-amber-800 dark:text-amber-300 font-medium">
-            {tr ? "Sadece görüntüleme modu — bu profili düzenlemek için yönetim iznine ihtiyacınız var." : "View-only mode — you need management permission to edit this profile."}
+            {tx("family.viewOnlyBanner", lang).replace("{name}", displayProfile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
           </p>
         </div>
       )}
+      {/* Premium required — has manage role but not Premium */}
+      {!isOwnProfile && needsPremiumToEdit && (
+        <div className="mb-4 rounded-xl border border-amber-300 dark:border-amber-700 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="text-center sm:text-left">
+            <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+              {tx("family.viewOnlyBanner", lang).replace("{name}", displayProfile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">
+              {tx("family.upgradeToEdit", lang)}
+            </p>
+          </div>
+          <Link
+            href="/pricing"
+            className="shrink-0 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 px-4 py-2 text-sm font-semibold text-white transition-colors"
+          >
+            ✨ {tx("family.upgradeCta", lang)}
+          </Link>
+        </div>
+      )}
+      {/* Full manage — other member, has role AND Premium */}
       {!isOwnProfile && canEdit && (
         <div className="mb-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/20 px-4 py-3 text-center">
           <p className="text-sm text-emerald-800 dark:text-emerald-300 font-medium">
-            {tr ? "Aile üyesi profilini düzenliyorsunuz" : "You are editing a family member's profile"}
+            {tx("family.managingBanner", lang).replace("{name}", displayProfile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
           </p>
         </div>
       )}

@@ -80,4 +80,20 @@ export const familyTranslations: Record<string, TranslationEntry> = {
     en: "Join another family group using a 6-character invite code.",
     tr: "6 haneli davet kodu ile başka bir aile grubuna katılabilirsiniz.",
   },
+  "family.viewOnlyBanner": {
+    en: "Viewing {name}'s profile (read-only)",
+    tr: "{name} kullanıcısının profilini görüntülüyorsun (sadece okuma)",
+  },
+  "family.managingBanner": {
+    en: "You are managing {name}'s profile",
+    tr: "{name} kullanıcısının profilini yönetiyorsun",
+  },
+  "family.upgradeToEdit": {
+    en: "Upgrade to Premium to edit family members' profiles",
+    tr: "Aile üyelerinin profillerini düzenlemek için Premium'a yükselt",
+  },
+  "family.upgradeCta": {
+    en: "Upgrade to Premium",
+    tr: "Premium'a Yükselt",
+  },
 }
