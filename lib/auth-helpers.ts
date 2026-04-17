@@ -31,10 +31,51 @@ export async function checkHasFamily(
 }
 
 /**
+ * Kullanıcının ait olduğu aile grubundaki toplam kabul edilmiş üye sayısını döner.
+ * Aile grubu yoksa 0 döner.
+ */
+export async function getFamilyMemberCount(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<number> {
+  try {
+    // Önce kullanıcının group_id'sini bul (owner veya accepted member olarak)
+    const [{ data: ownerGroup }, { data: membership }] = await Promise.all([
+      supabase
+        .from("family_groups")
+        .select("id")
+        .eq("owner_id", userId)
+        .maybeSingle(),
+      supabase
+        .from("family_members")
+        .select("group_id")
+        .eq("user_id", userId)
+        .eq("invite_status", "accepted")
+        .maybeSingle(),
+    ])
+
+    const groupId = ownerGroup?.id ?? membership?.group_id
+    if (!groupId) return 0
+
+    const { count } = await supabase
+      .from("family_members")
+      .select("*", { count: "exact", head: true })
+      .eq("group_id", groupId)
+      .eq("invite_status", "accepted")
+
+    return count ?? 0
+  } catch (err) {
+    console.warn("[auth-helpers] getFamilyMemberCount error:", err)
+    return 0
+  }
+}
+
+/**
  * Login/callback sonrası nereye yönlendirileceğini döner.
  * - Onboarding tamamlanmamış → /onboarding
- * - Aile grubu var → /select-profile (Netflix ekranı)
- * - Aksi halde → fallback (genelde "/" veya redirect URL)
+ * - Aile grubu var VE 2+ kabul edilmiş üye → /select-profile (Netflix ekranı)
+ * - Aile grubu var ama tek kişi → fallback (profil seçimine gerek yok)
+ * - Aile grubu yok → fallback (genelde "/" veya redirect URL)
  */
 export async function getPostAuthRedirect(
   supabase: SupabaseClient,
@@ -49,8 +90,8 @@ export async function getPostAuthRedirect(
       .maybeSingle()
     if (!profile?.onboarding_complete) return "/onboarding"
 
-    const hasFamily = await checkHasFamily(supabase, userId)
-    return hasFamily ? "/select-profile" : fallback
+    const memberCount = await getFamilyMemberCount(supabase, userId)
+    return memberCount >= 2 ? "/select-profile" : fallback
   } catch (err) {
     console.warn("[auth-helpers] getPostAuthRedirect error:", err)
     return fallback
