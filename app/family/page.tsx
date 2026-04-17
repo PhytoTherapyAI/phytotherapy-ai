@@ -321,9 +321,7 @@ export default function FamilyPage() {
   }
 
   async function handleGenerateCode() {
-    console.log("[GenerateCode] ▶ clicked. familyGroup:", familyGroup)
     if (!familyGroup) {
-      console.warn("[GenerateCode] early return: no familyGroup")
       setFeedback({ type: "error", msg: tr ? "Aile grubu bulunamadı." : "No family group." })
       return
     }
@@ -332,14 +330,12 @@ export default function FamilyPage() {
     try {
       const supabase = createBrowserClient()
       const { data: { session } } = await supabase.auth.getSession()
-      console.log("[GenerateCode] session:", session?.access_token ? "✅ got token" : "❌ no token")
       if (!session?.access_token) {
         setFeedback({ type: "error", msg: tr ? "Oturum bulunamadı, tekrar giriş yapın." : "Session not found, please log in again." })
         setGeneratingCode(false)
         return
       }
 
-      console.log("[GenerateCode] calling POST /api/family/invite-code with groupId:", familyGroup.id)
       const res = await fetch("/api/family/invite-code", {
         method: "POST",
         headers: {
@@ -353,7 +349,6 @@ export default function FamilyPage() {
       })
 
       const resData = await res.json().catch(() => ({}))
-      console.log("[GenerateCode] response:", res.status, resData)
 
       if (!res.ok) {
         if (res.status === 402) {
@@ -370,7 +365,6 @@ export default function FamilyPage() {
         return
       }
 
-      console.log("[GenerateCode] ✅ success, code:", resData.code)
       setGeneratedCode(resData.code)
       setGeneratedCodeExpiry(resData.expiresAt)
       setInviteNickname("")
@@ -1128,7 +1122,7 @@ export default function FamilyPage() {
                     </p>
                     <button
                       type="button"
-                      onClick={() => { console.log('DAVET BUTON TIKLANDI'); handleInvite(); }}
+                      onClick={() => handleInvite()}
                       disabled={inviting || !inviteEmail.trim()}
                       className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold inline-flex items-center justify-center gap-2 transition-colors"
                     >
@@ -1194,7 +1188,7 @@ export default function FamilyPage() {
                         </p>
                         <button
                           type="button"
-                          onClick={() => { console.log('KOD BUTON TIKLANDI'); handleGenerateCode(); }}
+                          onClick={() => handleGenerateCode()}
                           disabled={generatingCode}
                           className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl font-semibold inline-flex items-center justify-center gap-2 transition-colors"
                         >
