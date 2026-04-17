@@ -6,10 +6,12 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { useFamily } from "@/lib/family-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { translateCondition, isSurgery, stripPrefix } from "@/lib/condition-translations";
+import { SOSButton } from "@/components/family/SOSButton";
 import { PrivacySettings } from "@/components/profile/PrivacySettings";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageSkeleton } from "@/components/ui/page-skeleton";
@@ -65,6 +67,7 @@ export default function ProfilePage() {
   const { lang } = useLang();
   const { isAuthenticated, isLoading, profile: authProfile, user, refreshProfile } = useAuth();
   const { activeUserId, isOwnProfile, canEdit, hasManageRole, needsPremiumToEdit } = useActiveProfile();
+  const { familyGroup } = useFamily();
   const [viewedProfile, setViewedProfile] = useState<UserProfile | null>(null);
   const [medications, setMedications] = useState<UserMedication[]>([]);
   const [allergies, setAllergies] = useState<UserAllergy[]>([]);
@@ -677,10 +680,17 @@ export default function ProfilePage() {
       )}
       {/* Full manage — other member, has role AND Premium */}
       {!isOwnProfile && canEdit && (
-        <div className="mb-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/20 px-4 py-3 text-center">
+        <div className="mb-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/20 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-sm text-emerald-800 dark:text-emerald-300 font-medium">
             {tx("family.managingBanner", lang).replace("{name}", profile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
           </p>
+          {familyGroup?.id && (
+            <SOSButton
+              groupId={familyGroup.id}
+              targetName={profile?.full_name?.split(" ")[0] || null}
+              lang={lang as "en" | "tr"}
+            />
+          )}
         </div>
       )}
       {/* Save success toast */}

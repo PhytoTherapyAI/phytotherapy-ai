@@ -41,6 +41,7 @@ export function NotificationBell() {
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   const unreadCount = items.filter(n => !n.read).length
+  const hasUnreadEmergency = items.some(n => !n.read && n.type === "emergency")
 
   const fetchItems = useCallback(async () => {
     if (!isAuthenticated || !user) return
@@ -125,13 +126,17 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className="relative inline-flex items-center justify-center h-9 w-9 rounded-lg hover:bg-muted/60 transition-colors"
+        className={`relative inline-flex items-center justify-center h-9 w-9 rounded-lg transition-colors ${
+          hasUnreadEmergency ? "bg-red-100 dark:bg-red-950/40 animate-pulse hover:bg-red-200 dark:hover:bg-red-900/60" : "hover:bg-muted/60"
+        }`}
         aria-label={tr ? "Bildirimler" : "Notifications"}
-        title={tr ? "Bildirimler" : "Notifications"}
+        title={hasUnreadEmergency ? (tr ? "Acil durum bildirimi!" : "Emergency alert!") : (tr ? "Bildirimler" : "Notifications")}
       >
-        <Bell className="h-4 w-4 text-foreground/80" />
+        <Bell className={`h-4 w-4 ${hasUnreadEmergency ? "text-red-600 dark:text-red-400" : "text-foreground/80"}`} />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
+          <span className={`absolute top-1 right-1 min-w-[16px] h-4 px-1 rounded-full text-white text-[9px] font-bold flex items-center justify-center shadow-sm ${
+            hasUnreadEmergency ? "bg-red-600" : "bg-red-500"
+          }`}>
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}

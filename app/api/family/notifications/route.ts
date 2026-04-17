@@ -60,16 +60,9 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ notifications: data || [] })
 }
 
-// POST — send a notification to another household member
+// POST — send a notification to another household member (or broadcast to all)
 export async function POST(req: NextRequest) {
   const ip = getClientIP(req)
-  const rl = checkRateLimit(`fnotif-send:${ip}`, 20, 60_000)
-  if (!rl.allowed) {
-    return NextResponse.json(
-      { error: "Too many requests" },
-      { status: 429, headers: { "Retry-After": String(rl.resetInSeconds) } }
-    )
-  }
   const auth = await authenticate(req)
   if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
@@ -78,9 +71,10 @@ export async function POST(req: NextRequest) {
     toUserId?: string
     type?: string
     message?: string
+    broadcast?: boolean
   } | null
 
-  if (!body?.groupId || !body?.toUserId || !body?.type || !body?.message) {
+  if (!body?.groupId || !body?.type || !body?.message) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 })
   }
   if (!VALID_TYPES.includes(body.type as NotifType)) {
@@ -88,6 +82,58 @@ export async function POST(req: NextRequest) {
   }
   if (typeof body.message !== "string" || body.message.length > 500) {
     return NextResponse.json({ error: "Invalid message" }, { status: 400 })
+  }
+
+  const isBroadcast = body.broadcast === true
+  const isEmergency = body.type === "emergency"
+
+  // Emergency SOS has a tighter per-user rate limit (2/min) to prevent spam.
+  const rlKey = isEmergency ? `fnotif-sos:${auth.user.id}` : `fnotif-send:${ip}`
+  const rlMax = isEmergency ? 2 : 20
+  const rl = checkRateLimit(rlKey, rlMax, 60_000)
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: isEmergency ? "SOS rate limit (2/min)" : "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(rl.resetInSeconds) } }
+    )
+  }
+
+  if (isBroadcast) {
+    // Broadcast: insert one row per accepted non-self member of the group
+    const { data: members, error: memberErr } = await auth.supabase
+      .from("family_members")
+      .select("user_id")
+      .eq("group_id", body.groupId)
+      .eq("invite_status", "accepted")
+      .neq("user_id", auth.user.id)
+
+    if (memberErr) return NextResponse.json({ error: memberErr.message }, { status: 400 })
+    if (!members || members.length === 0) {
+      return NextResponse.json({ error: "No other household members to notify" }, { status: 400 })
+    }
+
+    const rows = members
+      .filter((m: { user_id: string | null }) => !!m.user_id)
+      .map((m: { user_id: string | null }) => ({
+        group_id: body.groupId!,
+        from_user_id: auth.user.id,
+        to_user_id: m.user_id!,
+        type: body.type!,
+        message: body.message!.trim(),
+      }))
+
+    const { data, error } = await auth.supabase
+      .from("family_notifications")
+      .insert(rows)
+      .select()
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+    return NextResponse.json({ notifications: data, count: data?.length ?? 0 })
+  }
+
+  // Single-recipient path
+  if (!body.toUserId) {
+    return NextResponse.json({ error: "Missing toUserId" }, { status: 400 })
   }
   if (body.toUserId === auth.user.id) {
     return NextResponse.json({ error: "Cannot notify yourself" }, { status: 400 })
