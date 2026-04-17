@@ -507,30 +507,6 @@ export default function FamilyPage() {
               ? "Aile üyelerinin sağlık profillerini birlikte yönetin."
               : "Manage your family members' health profiles together."}
           </p>
-
-          {/* 🔴 DEBUG TEST BUTONU — görünürlük/click teşhis için */}
-          {familyGroup && (
-            <div className="mt-4 p-4 rounded-xl border-4 border-red-500 bg-red-50 dark:bg-red-950/30">
-              <p className="text-xs font-bold text-red-700 dark:text-red-300 mb-2">
-                🔴 DEBUG: Bu buton test için — görünür ve tıklanabilirse üstte yeşil mesaj çıkar
-              </p>
-              <button
-                type="button"
-                id="debug-kod-btn"
-                onClick={() => {
-                  console.log('🔴 DEBUG BUTON TIKLANDI', { familyGroup, isOwner, isAdmin })
-                  alert('Debug buton çalıştı! familyGroup: ' + JSON.stringify(familyGroup?.id))
-                  void handleGenerateCode()
-                }}
-                className="w-full py-4 bg-red-600 text-white font-bold text-lg rounded-xl hover:bg-red-700"
-              >
-                🔴 DEBUG: KOD OLUŞTUR TEST
-              </button>
-              <p className="mt-2 text-[10px] text-red-600 dark:text-red-400">
-                isOwner: {String(isOwner)} · isAdmin: {String(isAdmin)} · generatingCode: {String(generatingCode)} · tab: {inviteTab}
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Feedback toast */}
