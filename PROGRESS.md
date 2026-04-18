@@ -9,18 +9,13 @@
 - [x] FAZ 2: Davet sistemi (email + kod ile davet + kabul/red)
 - [x] FAZ 3: Üye görüntüleme (premium kontrollü, RLS cross-user read)
 - [x] FAZ 4: Aksiyonlar (AI chat context switch, SBAR, SOS, hatırlatma)
-- [x] FAZ 5: Sağlık ağacı (ilişki dropdown, 4 kuşak görsel, AI genetik analiz)
-- [x] Güvenlik: başkası adına rıza verme engellendi
-- [x] Güvenlik: profil düzenleme canEdit guard (10/10 handler)
-- [x] UI: üye kartları eşit boyut, isim fallback zinciri
-- [x] UI: SOS butonu, Sağlık Ağacı linki, dark mode logo fix
-- [x] UI: AI chat consent popup direkt açılma
-- [x] Bug: Kod Oluştur buton fix (Base UI async onClick)
-- [x] Bug: invite_email NOT NULL constraint fix
-- [x] Bug: relationship dropdown RLS admin update policy
+- [x] FAZ 5: Sağlık ağacı (ilişki dropdown, 4 kuşak görsel, AI analiz)
+- [x] Güvenlik fix'leri (rıza koruma, canEdit guard, RLS policy'ler)
+- [x] UI fix'leri (kart layout, isim fallback, SOS, dark mode logo)
+- [x] Bug fix'leri (Kod Oluştur buton, invite_email constraint, dropdown RLS)
 
-### Sıradaki
-- [ ] Asistan iyileştirmeleri (AI chat kalitesi, yanıt formatı)
+### Sıradaki (Session 32)
+- [ ] Asistan iyileştirmeleri (AI chat kalitesi, yanıt formatı, kişiselleştirme)
 - [ ] PDF analizi (kan tahlili, radyoloji, prospektüs okuma)
 
 ---

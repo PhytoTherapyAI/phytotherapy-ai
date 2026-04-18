@@ -50,6 +50,14 @@ Detaylı yol haritası: `FAMILY-ROADMAP.md`
 Mevcut faz: **TAMAMLANDI (FAZ 1-5)** — Session 31
 Netflix tarzı profil seçimi, premium kontrollü aile yönetimi, davet sistemi (email + kod), cross-user read (RLS), AI chat context switch, SBAR, SOS, Sağlık Ağacı.
 
+### Supabase Migration'lar (Session 31)
+Sırayla çalıştırılmalı:
+1. `20260417_family_member_visibility.sql` (üye görünürlük)
+2. `20260417_family_invite_code.sql` (davet kodu sütunu)
+3. `20260417_family_cross_user_read.sql` (cross-user SELECT)
+4. `20260417_family_relationship.sql` (ilişki sütunu)
+5. `20260418_family_admin_update.sql` (admin update policy)
+
 ---
 
 ## 🚨 GELİŞTİRME KURALLARI — MUTLAKA UYGULA
