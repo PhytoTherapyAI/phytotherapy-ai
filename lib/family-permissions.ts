@@ -60,6 +60,9 @@ export async function resolveTargetUser(
   )
 
   if (!allowedIds.has(targetUserId)) {
+    console.warn(
+      `[family-permissions] 403 Not a family member — caller=${callerId} target=${targetUserId} allowedCount=${allowedIds.size}`
+    )
     return { ok: false, status: 403, error: "Not a family member" }
   }
 

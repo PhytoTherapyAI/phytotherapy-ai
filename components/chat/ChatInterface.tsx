@@ -53,8 +53,16 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ className, onMessagesChange, loadConversation, initialQuery }: ChatInterfaceProps) {
-  const { isAuthenticated, session } = useAuth();
+  const { isAuthenticated, session, user } = useAuth();
   const { activeUserId, isOwnProfile } = useActiveProfile();
+  // Defensive: only send targetUserId when genuinely acting on someone else.
+  // Three conditions must hold:
+  //   - hook says it's not own profile
+  //   - activeUserId is non-empty
+  //   - activeUserId differs from the session user.id (belt-and-suspenders)
+  const effectiveTargetUserId = (!isOwnProfile && activeUserId && activeUserId !== user?.id)
+    ? activeUserId
+    : undefined;
   const { lang } = useLang()
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -286,7 +294,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
           history: historyForApi,
           files: filesPayload,
           lang,
-          targetUserId: isOwnProfile ? undefined : activeUserId,
+          targetUserId: effectiveTargetUserId,
         }),
       });
 
