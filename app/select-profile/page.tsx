@@ -172,14 +172,23 @@ export default function SelectProfilePage() {
     },
     ...familyMembers
       .filter((m) => !!m.user_id && m.user_id !== user.id)
-      .map((m) => ({
-        userId: m.user_id!,
-        name: m.nickname ?? m.profile?.display_name ?? tx('family.memberFallback', lang),
-        avatarStyle: (m.profile?.avatar_style as AvatarStyle) ?? 'adventurer',
-        avatarSeed: m.profile?.avatar_seed ?? m.user_id!,
-        isOwn: false,
-        canManageThis: canManage(m.user_id!),
-      })),
+      .map((m) => {
+        const emailPrefix = m.invite_email?.split('@')[0]
+        const displayName =
+          m.profile?.full_name ??
+          m.nickname ??
+          m.profile?.display_name ??
+          emailPrefix ??
+          tx('family.memberFallback', lang)
+        return {
+          userId: m.user_id!,
+          name: displayName,
+          avatarStyle: (m.profile?.avatar_style as AvatarStyle) ?? 'adventurer',
+          avatarSeed: m.profile?.avatar_seed ?? m.user_id!,
+          isOwn: false,
+          canManageThis: canManage(m.user_id!),
+        }
+      }),
   ]
 
   return (

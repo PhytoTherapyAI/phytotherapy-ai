@@ -2,7 +2,7 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Cormorant_Garamond, DM_Sans, DM_Mono, DM_Serif_Display } from "next/font/google";
-import { Header } from "@/components/layout/header";
+import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/footer";
 import { AuthProvider } from "@/lib/auth-context";
 import { FamilyProvider } from "@/lib/family-context";
