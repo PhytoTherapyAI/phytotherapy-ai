@@ -1842,17 +1842,22 @@ export default function ProfilePage() {
       </div>
 
       {/* Privacy Settings & Consent Management (KVKK Md.11 — MADDE 1-3, 10) */}
-      <Card className="mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow" id="privacy-settings">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <span>🔒</span>
-            {tr ? "Gizlilik Ayarları" : "Privacy Settings"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <PrivacySettings />
-        </CardContent>
-      </Card>
+      {/* Privacy Settings — ONLY for own profile (KVKK: consent must be unambiguous).
+          Hidden entirely when viewing a family member to prevent the user from
+          accidentally changing their *own* consent while looking at someone else. */}
+      {isOwnProfile && (
+        <Card className="mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow" id="privacy-settings">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <span>🔒</span>
+              {tr ? "Gizlilik Ayarları" : "Privacy Settings"}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PrivacySettings />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Scanners removed — kept for mobile app later */}
 

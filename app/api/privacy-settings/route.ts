@@ -83,6 +83,21 @@ export async function PATCH(req: NextRequest) {
     const source = typeof body.source === "string" ? body.source.slice(0, 50) : "unknown";
     const version = typeof body.version === "string" ? body.version.slice(0, 10) : "v1.0";
 
+    // KVKK defense-in-depth: reject any attempt to change someone else's consent.
+    // The token's user.id is the only source of truth for who this applies to.
+    for (const field of ["userId", "targetUserId", "user_id", "target_user_id"] as const) {
+      const v = body[field];
+      if (typeof v === "string" && v.length > 0 && v !== user.id) {
+        console.error(
+          `[KVKK-CONSENT-REJECTED] ${field} mismatch — caller=${user.id} body.${field}=${v}`
+        );
+        return NextResponse.json(
+          { error: "Cannot change consent on behalf of another user" },
+          { status: 403 },
+        );
+      }
+    }
+
     if (!VALID_CONSENT_TYPES.has(consentType)) {
       return NextResponse.json({ error: "Invalid consent type" }, { status: 400 });
     }
@@ -169,6 +184,20 @@ export async function PUT(req: NextRequest) {
 
     if (body.action !== "acknowledge_aydinlatma") {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+    }
+
+    // KVKK defense-in-depth: same as PATCH — reject userId override.
+    for (const field of ["userId", "targetUserId", "user_id", "target_user_id"] as const) {
+      const v = body[field];
+      if (typeof v === "string" && v.length > 0 && v !== user.id) {
+        console.error(
+          `[KVKK-AYDINLATMA-REJECTED] ${field} mismatch — caller=${user.id} body.${field}=${v}`
+        );
+        return NextResponse.json(
+          { error: "Cannot acknowledge aydınlatma on behalf of another user" },
+          { status: 403 },
+        );
+      }
     }
 
     const aydinlatmaVersion = typeof body.version === "string" ? body.version.slice(0, 10) : "v2.0";
