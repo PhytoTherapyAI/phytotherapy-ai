@@ -6,8 +6,13 @@
 //   - If no targetUserId given → caller acts on own profile
 //   - If targetUserId == caller → OK
 //   - If targetUserId != caller → must share an accepted family_group
-//     (checked via get_family_member_user_ids() RPC from the FAZ 3 migration)
 //   - Premium required when target != caller (family member context costs)
+//
+// IMPORTANT: routes call this with a service-role Supabase client
+// (createServerClient). Service role has no auth.uid() context, so we CANNOT
+// rely on RPCs that use auth.uid() internally (e.g. get_family_member_user_ids).
+// Instead we do direct SELECTs against family_members and filter by callerId
+// / targetUserId in Node.
 //
 // Returns a discriminated union so routes can branch on { ok, reason }.
 
@@ -43,25 +48,47 @@ export async function resolveTargetUser(
     return { ok: true, callerId, targetUserId, isOwnProfile: true }
   }
 
-  // Cross-user: require caller+target to share an accepted family group
-  const { data: familyUserIds, error: rpcErr } = await supabase.rpc(
-    "get_family_member_user_ids"
-  )
+  // Cross-user: caller and target must share an accepted family_group.
+  // Direct-query approach (doesn't rely on auth.uid() inside an RPC, which
+  // returns NULL when the client is service-role).
+  const { data: callerGroups, error: callerErr } = await supabase
+    .from("family_members")
+    .select("group_id")
+    .eq("user_id", callerId)
+    .eq("invite_status", "accepted")
 
-  if (rpcErr) {
-    console.error("[family-permissions] RPC error:", rpcErr.message)
+  if (callerErr) {
+    console.error("[family-permissions] caller groups query error:", callerErr.message)
     return { ok: false, status: 403, error: "Permission check failed" }
   }
 
-  const allowedIds = new Set(
-    (Array.isArray(familyUserIds) ? familyUserIds : []).map((r: unknown) =>
-      typeof r === "string" ? r : (r as { get_family_member_user_ids?: string })?.get_family_member_user_ids
-    ).filter((v): v is string => typeof v === "string")
-  )
+  const callerGroupIds = (callerGroups ?? [])
+    .map(g => (g as { group_id: string }).group_id)
+    .filter((v): v is string => typeof v === "string")
 
-  if (!allowedIds.has(targetUserId)) {
+  if (callerGroupIds.length === 0) {
     console.warn(
-      `[family-permissions] 403 Not a family member — caller=${callerId} target=${targetUserId} allowedCount=${allowedIds.size}`
+      `[family-permissions] 403 caller has no accepted family groups — caller=${callerId} target=${targetUserId}`
+    )
+    return { ok: false, status: 403, error: "Not a family member" }
+  }
+
+  const { data: targetMembership, error: targetErr } = await supabase
+    .from("family_members")
+    .select("id")
+    .eq("user_id", targetUserId)
+    .eq("invite_status", "accepted")
+    .in("group_id", callerGroupIds)
+    .maybeSingle()
+
+  if (targetErr) {
+    console.error("[family-permissions] target membership query error:", targetErr.message)
+    return { ok: false, status: 403, error: "Permission check failed" }
+  }
+
+  if (!targetMembership) {
+    console.warn(
+      `[family-permissions] 403 Not a family member — caller=${callerId} target=${targetUserId} callerGroups=${callerGroupIds.length}`
     )
     return { ok: false, status: 403, error: "Not a family member" }
   }
