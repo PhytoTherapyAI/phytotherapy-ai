@@ -116,7 +116,7 @@ export function Header() {
                   alt="DoctoPal"
                   width={32}
                   height={32}
-                  className="h-8 w-8 rounded-lg transition-transform duration-300 group-hover:scale-105"
+                  className="h-8 w-8 rounded-lg transition-transform duration-300 group-hover:scale-105 dark:brightness-0 dark:invert"
                 />
                 <span className="hidden sm:inline" style={{
                   fontFamily: 'system-ui, -apple-system, sans-serif',
