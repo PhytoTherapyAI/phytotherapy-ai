@@ -162,8 +162,8 @@ export async function POST(request: NextRequest) {
           if (!profile?.consent_ai_processing) {
             const msgLang = lang === "tr" ? "tr" : "en";
             const consentRequiredMsg = msgLang === "tr"
-              ? "Yapay zeka asistanını kullanabilmeniz için önce **Yapay Zeka İşleme Açık Rızası** vermeniz gerekmektedir.\n\nProfil → Gizlilik Ayarları sayfasından rıza verebilirsiniz. Temel hizmetler (ilaç takibi, takvim) rıza olmadan çalışmaya devam eder.\n\nKVKK Md.6 uyarınca sağlık verileriniz ancak açık rızanızla yapay zeka sistemi tarafından işlenebilir."
-              : "To use the AI assistant, you must first provide **AI Processing Explicit Consent**.\n\nYou can grant consent via Profile → Privacy Settings. Basic services (medication tracking, calendar) continue to work without consent.\n\nUnder KVKK Art.6, your health data can only be processed by the AI system with your explicit consent.";
+              ? "Yapay zeka asistanını kullanabilmeniz için önce **Yapay Zeka İşleme Açık Rızası** vermeniz gerekmektedir.\n\n[Gizlilik Ayarları](/profile#privacy-settings) sayfasından rıza verebilirsiniz. Temel hizmetler (ilaç takibi, takvim) rıza olmadan çalışmaya devam eder.\n\nKVKK Md.6 uyarınca sağlık verileriniz ancak açık rızanızla yapay zeka sistemi tarafından işlenebilir."
+              : "To use the AI assistant, you must first provide **AI Processing Explicit Consent**.\n\nYou can grant consent via [Privacy Settings](/profile#privacy-settings). Basic services (medication tracking, calendar) continue to work without consent.\n\nUnder KVKK Art.6, your health data can only be processed by the AI system with your explicit consent.";
 
             logApiAccess({
               endpoint: "/api/chat",

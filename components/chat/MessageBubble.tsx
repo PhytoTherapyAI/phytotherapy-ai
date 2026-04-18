@@ -292,8 +292,8 @@ function formatInline(text: string): React.ReactNode {
   while (remaining.length > 0) {
     // Bold
     const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
-    // Link
-    const linkMatch = remaining.match(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/);
+    // Link — accepts absolute (https://...) OR relative (/path, /path#anchor)
+    const linkMatch = remaining.match(/\[([^\]]+)\]\((https?:\/\/[^)]+|\/[^)]+)\)/);
 
     // Find which comes first
     const boldIdx = boldMatch?.index ?? Infinity;
@@ -309,14 +309,15 @@ function formatInline(text: string): React.ReactNode {
       parts.push(<strong key={key++} className="font-semibold">{boldMatch[1]}</strong>);
       remaining = remaining.substring(boldIdx + boldMatch[0].length);
     } else if (linkMatch) {
+      const isRelative = linkMatch[2].startsWith("/");
       parts.push(remaining.substring(0, linkIdx));
       parts.push(
         <a
           key={key++}
           href={linkMatch[2]}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-primary underline hover:text-primary/80"
+          target={isRelative ? "_self" : "_blank"}
+          rel={isRelative ? undefined : "noopener noreferrer"}
+          className="text-primary underline hover:text-primary/80 font-medium"
         >
           {linkMatch[1]}
         </a>
