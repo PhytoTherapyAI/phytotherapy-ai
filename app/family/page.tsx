@@ -772,7 +772,7 @@ export default function FamilyPage() {
                   {sortedMembers.length} {tr ? "kişi" : sortedMembers.length === 1 ? "person" : "people"}
                 </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
                 {sortedMembers.map(member => {
                   const isSelf = member.user_id === user.id
                   const avatarSeed = member.profile?.avatar_seed || member.user_id || member.invite_email
@@ -797,7 +797,7 @@ export default function FamilyPage() {
                   return (
                     <div
                       key={member.id}
-                      className={`group relative rounded-2xl border bg-card p-4 transition-all hover:shadow-md flex flex-col min-h-[240px] ${
+                      className={`group relative w-full rounded-2xl border bg-card p-5 transition-all hover:shadow-md flex flex-col min-h-[260px] ${
                         isSelf ? "ring-1 ring-emerald-200 dark:ring-emerald-800 bg-gradient-to-br from-emerald-50/40 to-transparent dark:from-emerald-950/10" : ""
                       } ${member.user_id ? "cursor-pointer" : ""}`}
                       onClick={() => member.user_id && !editingId && handleViewMemberProfile(member.user_id)}
@@ -836,7 +836,7 @@ export default function FamilyPage() {
                               </button>
                             </div>
                           ) : (
-                            <p className="font-semibold text-sm text-foreground truncate" title={displayName}>
+                            <p className="font-semibold text-sm text-foreground break-words line-clamp-2 leading-snug" title={displayName}>
                               {displayName}
                             </p>
                           )}
