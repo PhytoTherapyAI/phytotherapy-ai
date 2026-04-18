@@ -772,15 +772,24 @@ export default function FamilyPage() {
                   {sortedMembers.length} {tr ? "kişi" : sortedMembers.length === 1 ? "person" : "people"}
                 </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
                 {sortedMembers.map(member => {
                   const isSelf = member.user_id === user.id
                   const avatarSeed = member.profile?.avatar_seed || member.user_id || member.invite_email
                   const avatarStyle = (member.profile?.avatar_style as AvatarStyle) || "adventurer"
-                  const baseName = member.profile?.display_name
-                    ?? (isSelf ? (profile?.full_name || user.email?.split("@")[0]) : null)
-                    ?? member.invite_email
-                  const displayName = member.nickname
+                  // Name fallback chain: full_name → nickname → display_name → email@prefix → "Üye"
+                  const emailPrefix = member.invite_email?.split("@")[0] ?? null
+                  const baseName = isSelf
+                    ? (profile?.full_name ?? user.email?.split("@")[0] ?? (tr ? "Ben" : "You"))
+                    : (
+                        member.profile?.full_name
+                        ?? member.nickname
+                        ?? member.profile?.display_name
+                        ?? emailPrefix
+                        ?? (tr ? "Üye" : "Member")
+                      )
+                  // If nickname exists AND differs from baseName, append as suffix
+                  const displayName = member.nickname && member.nickname !== baseName
                     ? `${baseName} — ${member.nickname}`
                     : baseName
                   const isSynth = member.id?.startsWith("synth-")
@@ -788,7 +797,7 @@ export default function FamilyPage() {
                   return (
                     <div
                       key={member.id}
-                      className={`group relative rounded-2xl border bg-card p-4 transition-all hover:shadow-md ${
+                      className={`group relative rounded-2xl border bg-card p-4 transition-all hover:shadow-md flex flex-col min-h-[240px] ${
                         isSelf ? "ring-1 ring-emerald-200 dark:ring-emerald-800 bg-gradient-to-br from-emerald-50/40 to-transparent dark:from-emerald-950/10" : ""
                       } ${member.user_id ? "cursor-pointer" : ""}`}
                       onClick={() => member.user_id && !editingId && handleViewMemberProfile(member.user_id)}
@@ -859,10 +868,10 @@ export default function FamilyPage() {
                         </div>
                       </div>
 
-                      {/* Relationship picker (inline) */}
+                      {/* Relationship picker */}
                       {!isSynth && member.user_id && (
-                        <div className="mt-3 flex items-center justify-between gap-2 text-xs">
-                          <span className="text-muted-foreground text-[10px]">
+                        <div className="mt-3 space-y-1">
+                          <span className="text-muted-foreground text-[10px] block">
                             {tx("family.relationshipLabel", lang)}
                           </span>
                           {(isSelf || isOwner || isAdmin) ? (
@@ -873,7 +882,7 @@ export default function FamilyPage() {
                                 const next = (e.target.value || null) as FamilyRelationship | null
                                 if (next) void updateRelationship(member.id, next)
                               }}
-                              className="flex-1 max-w-[180px] rounded-md border border-border bg-background px-2 py-1 text-[11px] focus:ring-1 focus:ring-emerald-400 outline-none"
+                              className="w-full rounded-md border border-border bg-background px-2 py-1 text-[11px] focus:ring-1 focus:ring-emerald-400 outline-none"
                             >
                               <option value="">{tr ? "Seç…" : "Select…"}</option>
                               {RELATIONSHIP_OPTIONS.map(opt => (
@@ -883,7 +892,7 @@ export default function FamilyPage() {
                               ))}
                             </select>
                           ) : (
-                            <span className="text-muted-foreground font-medium">
+                            <span className="text-muted-foreground font-medium text-xs block">
                               {member.relationship
                                 ? `${RELATIONSHIP_OPTIONS.find(o => o.value === member.relationship)?.emoji || ""} ${tx(`family.rel.${member.relationship}`, lang)}`
                                 : "—"}
@@ -892,8 +901,8 @@ export default function FamilyPage() {
                         </div>
                       )}
 
-                      {/* Sağlık skoru / fallback */}
-                      <div className="mt-3 pt-3 border-t border-border/60 flex items-center justify-between text-xs">
+                      {/* Sağlık skoru / fallback — push to bottom with mt-auto */}
+                      <div className="mt-auto pt-3 border-t border-border/60 flex items-center justify-between text-xs">
                         <div className="flex items-center gap-1.5 text-muted-foreground">
                           <Activity className="h-3 w-3" />
                           <span>
