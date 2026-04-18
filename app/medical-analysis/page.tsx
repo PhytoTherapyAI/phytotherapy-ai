@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   FlaskConical,
   Scan,
+  TrendingUp,
   Upload,
   FileText,
   Loader2,
@@ -18,6 +19,7 @@ import {
 } from "lucide-react";
 import { BloodTestForm } from "@/components/blood-test/BloodTestForm";
 import { ResultDashboard } from "@/components/blood-test/ResultDashboard";
+import { BloodTestTrendChart } from "@/components/blood-test/BloodTestTrendChart";
 import { RadiologyResultDashboard, type RadiologyAnalysis } from "@/components/radiology/RadiologyResultDashboard";
 import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
@@ -91,7 +93,7 @@ const IMAGE_TYPES = [
   { value: "report", key: "rad.report" },
 ] as const;
 
-type TabType = "blood-test" | "radiology";
+type TabType = "blood-test" | "radiology" | "trends";
 
 export default function MedicalAnalysisPage() {
   const { isAuthenticated, session } = useAuth();
@@ -142,10 +144,21 @@ export default function MedicalAnalysisPage() {
           <Scan className="h-4 w-4" />
           {tx("rad.title", lang)}
         </button>
+        <button
+          onClick={() => setActiveTab("trends")}
+          className={`flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium transition-all ${
+            activeTab === "trends"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          <TrendingUp className="h-4 w-4" />
+          {tx("trends.tab", lang)}
+        </button>
       </div>
 
-      {/* Guest Notice */}
-      {!isAuthenticated && (
+      {/* Guest Notice — hidden on trends tab (trend component handles auth prompt itself) */}
+      {!isAuthenticated && activeTab !== "trends" && (
         <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-200">
           <p>
             <strong>
@@ -165,18 +178,28 @@ export default function MedicalAnalysisPage() {
       )}
 
       {/* Tab Content */}
-      {activeTab === "blood-test" ? (
+      {activeTab === "blood-test" && (
         <BloodTestTab
           isAuthenticated={isAuthenticated}
           accessToken={session?.access_token}
           lang={lang}
         />
-      ) : (
+      )}
+      {activeTab === "radiology" && (
         <RadiologyTab
           isAuthenticated={isAuthenticated}
           accessToken={session?.access_token}
           lang={lang}
         />
+      )}
+      {activeTab === "trends" && (
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">{tx("trends.title", lang)}</h2>
+            <p className="text-sm text-muted-foreground">{tx("trends.subtitle", lang)}</p>
+          </div>
+          <BloodTestTrendChart />
+        </div>
       )}
     </div>
   );

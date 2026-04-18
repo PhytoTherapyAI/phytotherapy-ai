@@ -111,23 +111,21 @@ If this is a medical image, describe what you observe and explain each finding s
       disclaimer: analysis.disclaimer || tx("api.radiology.disclaimer", lang),
     };
 
-    // Save to Supabase if authenticated
-    const authHeader = req.headers.get("authorization");
-    if (authHeader?.startsWith("Bearer ")) {
+    // Save structured analysis to radiology_reports (FAZ 2: dedicated table, replaces generic query_history insert)
+    if (aiUserId) {
       try {
-        const token = authHeader.replace("Bearer ", "");
         const supabase = createServerClient();
-        const { data: { user } } = await supabase.auth.getUser(token);
-        if (user) {
-          await supabase.from("query_history").insert({
-            user_id: user.id,
-            query_text: `Radiology analysis: ${response.imageType} — ${response.findings.length} findings`,
-            response_text: response.summary,
-            query_type: "general",
-          });
-        }
-      } catch {
-        // Non-critical — saving is optional
+        await supabase.from("radiology_reports").insert({
+          user_id: aiUserId,
+          file_name: file.name || null,
+          image_type: response.imageType,
+          overall_urgency: response.overallUrgency,
+          analysis_json: response,
+          summary: response.summary,
+        });
+      } catch (dbError) {
+        // Non-critical — analysis still returned to user
+        console.warn("[radiology] Failed to persist report:", dbError);
       }
     }
 

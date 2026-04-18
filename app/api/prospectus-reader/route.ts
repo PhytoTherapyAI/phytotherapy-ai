@@ -1,6 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server";
 import { askClaudeJSONMultimodal } from "@/lib/ai-client";
+import { buildProspectusSystemPrompt } from "@/lib/prompts";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";
@@ -70,12 +71,6 @@ export async function POST(req: NextRequest) {
           if (allergies?.length) {
             userAllergies = allergies.map((a: { allergen: string }) => a.allergen);
           }
-
-          await supabase.from("query_history").insert({
-            user_id: user.id,
-            query_text: `Prospectus Reader: ${file.name}`,
-            query_type: "prospectus" as const,
-          });
         }
       } catch {
         // Continue without profile
@@ -87,44 +82,13 @@ export async function POST(req: NextRequest) {
 
     const userLang = tx("api.respondLang", lang);
 
-    const systemPrompt = `You are a medication prospectus/leaflet reader at DoctoPal.
-Your job is to extract key information from medication packaging, leaflets, or prospectuses and explain them in simple, understandable language.
-
-${userMedications.length > 0 ? `USER'S CURRENT MEDICATIONS: ${userMedications.join(", ")}` : ""}
-${userAllergies.length > 0 ? `USER'S ALLERGIES: ${userAllergies.join(", ")}` : ""}
-
-Respond entirely in ${userLang} with this exact JSON:
-{
-  "medicationName": "Name of the medication",
-  "activeIngredient": "Active ingredient(s)",
-  "category": "Drug category/class",
-  "whatItDoes": "Simple explanation of what this medication does",
-  "dosage": {
-    "standard": "Standard dosage",
-    "instructions": "How to take it (with food, timing, etc.)"
-  },
-  "sideEffects": {
-    "common": ["Common side effect 1", "side effect 2"],
-    "serious": ["Serious side effect requiring medical attention"],
-    "rare": ["Rare side effect"]
-  },
-  "interactions": [
-    { "with": "Drug/food/substance name", "effect": "What happens", "severity": "safe" | "caution" | "dangerous" }
-  ],
-  "warnings": ["Important warning 1", "warning 2"],
-  "contraindications": ["When NOT to use this medication"],
-  "storage": "How to store this medication",
-  "profileAlerts": ["Any alerts based on user's current medications or allergies"],
-  "simpleSummary": "2-3 sentence plain-language summary of the most important things to know about this medication"
-}
-
-RULES:
-1. Extract ALL readable text from the image/PDF
-2. Translate medical jargon into simple language
-3. If user takes other medications, check for interactions and add to profileAlerts
-4. If user has allergies matching any ingredient, flag it in profileAlerts
-5. If text is partially unreadable, note what you could and couldn't read
-6. Be thorough with side effects — categorize by frequency`;
+    // Single source of truth — lib/prompts.ts builds the system prompt with
+    // per-user medication and allergy context injected for interaction checks.
+    const systemPrompt = buildProspectusSystemPrompt({
+      userMedications,
+      userAllergies,
+      replyLanguage: userLang,
+    });
 
     const prompt = `Read this medication prospectus/leaflet/packaging image and extract all key information. Explain everything in simple ${userLang} that anyone can understand.`;
 
@@ -140,6 +104,23 @@ RULES:
         { error: tx("api.prospectus.readFailed", lang) },
         { status: 500 }
       );
+    }
+
+    // Save structured scan to prospectus_scans (FAZ 2: dedicated table, replaces generic query_history insert)
+    if (userId) {
+      try {
+        const supabase = createServerClient();
+        await supabase.from("prospectus_scans").insert({
+          user_id: userId,
+          medication_name: parsed?.medicationName || null,
+          file_name: file.name || null,
+          scan_data: parsed,
+          profile_alerts: Array.isArray(parsed?.profileAlerts) ? parsed.profileAlerts : null,
+        });
+      } catch (dbError) {
+        // Non-critical — scan still returned to user
+        console.warn("[prospectus] Failed to persist scan:", dbError);
+      }
     }
 
     return NextResponse.json(parsed);

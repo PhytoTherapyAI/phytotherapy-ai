@@ -31,9 +31,9 @@ const RED_CODE_EN = [
   // Exposure (E) — Travma / Çevresel
   "gunshot", "stabbing", "stab wound", "severe burn", "electrocution",
   "skull fracture", "head injury", "spinal injury",
-  // Anaphylaxis
+  // Anaphylaxis (simple triggers)
   "anaphylaxis", "severe allergic reaction",
-  // Self-harm
+  // Self-harm (simple triggers)
   "suicidal", "suicide", "self harm", "want to die", "kill myself",
   // Toxicology
   "poisoning", "overdose", "took too many pills",
@@ -43,6 +43,22 @@ const RED_CODE_EN = [
   "testicular torsion", "sudden severe testicle pain",
   // Meningitis
   "stiff neck fever rash", "meningitis",
+  // ── Pediatric acil (FAZ 3.1) ──
+  "baby not breathing", "infant blue", "newborn seizure",
+  "baby high fever under 3 months", "infant unresponsive",
+  "child severe lethargy", "baby limp", "infant not waking",
+  // ── Mental health eşik yükseltme (FAZ 3.2) ──
+  "plan to kill myself", "wrote goodbye note", "have the pills",
+  "tonight is the night", "saying goodbye", "final message",
+  "ready to end it",
+  // ── Anaphylaxis pattern — bileşik (FAZ 3.3) ──
+  "bee sting shortness of breath", "peanut throat closing",
+  "face swelling after eating", "hives throat closing",
+  "lip swelling allergic", "swollen tongue allergic",
+  // ── Stroke FAST + cardiac atypical (FAZ 3.4) ──
+  "face drooping", "arm numb sudden", "slurred speech sudden",
+  "jaw pain with chest", "left arm numbness",
+  "chest pain radiating to jaw", "cold sweat chest pressure",
 ];
 
 const RED_CODE_TR = [
@@ -64,9 +80,9 @@ const RED_CODE_TR = [
   // Travma (E)
   "bıçaklandım", "ateşli silah", "şiddetli yanık", "elektrik çarpması",
   "kafa travması", "omurilik yaralanması",
-  // Anafilaksi
+  // Anafilaksi (basit tetikleyiciler)
   "anafilaksi", "şiddetli alerji", "alerji şoku",
-  // İntihar
+  // İntihar (basit tetikleyiciler)
   "intihar", "kendime zarar", "ölmek istiyorum", "kendimi öldürmek",
   // Toksikoloji
   "zehirlenme", "zehirlendim", "doz aşımı", "ilaç fazla aldım",
@@ -76,6 +92,23 @@ const RED_CODE_TR = [
   "testis dönmesi", "ani şiddetli testis ağrısı",
   // Menenjit
   "ense sertliği ateş", "menenjit",
+  // ── Pediatric acil (FAZ 3.1) ──
+  "bebek nefes almıyor", "bebek morarıyor", "bebek moraniyor",
+  "yenidoğan nöbet", "3 aylıktan küçük ateş", "bebek ateşi yüksek",
+  "çocuk tepki vermiyor", "bebek uyanmıyor", "bebek sarkık",
+  "çocuk halsiz uyanmıyor",
+  // ── Mental health eşik yükseltme (FAZ 3.2) ──
+  "intihar planım var", "veda notu yazdım", "ilaçları topladım",
+  "bu gece yapacağım", "vedalaşıyorum", "son mesajım",
+  "bitirmeye hazırım", "plan yaptım kendime zarar",
+  // ── Anaphylaxis pattern — bileşik (FAZ 3.3) ──
+  "arı soktu nefes daralıyor", "fıstık yedim boğazım kapanıyor",
+  "yemek sonrası yüz şişiyor", "kurdeşen boğaz kapanıyor",
+  "dudak şişmesi alerji", "dil şişmesi alerji",
+  // ── Stroke FAST + cardiac atypical (FAZ 3.4) ──
+  "yüzde sarkma", "ani kol uyuşması", "birden peltek konuşma",
+  "çene ağrısı göğüs", "sol kol uyuşması",
+  "göğüs ağrısı çeneye vuruyor", "soğuk ter göğüs sıkışması",
 ];
 
 // ═══════════════════════════════════════════════
@@ -283,6 +316,31 @@ export function checkVaccineKeywords(input: string, chronicConditions?: string[]
 }
 
 // ═══════════════════════════════════════════════
+// SEVERITY ESCALATION KEYWORDS (FAZ 3.5)
+// Safe context bypass'ı iptal etmek için. Örn: "diş eti kanaması" safe ama
+// "şiddetli diş eti kanaması" → safe bypass iptal, red/yellow check devam.
+// ═══════════════════════════════════════════════
+
+const SEVERITY_ESCALATORS_EN = [
+  "severe", "very severe", "won't stop", "wont stop", "can't stop", "cant stop",
+  "uncontrollable", "uncontrolled", "getting worse", "much worse",
+  "massive", "heavy bleeding", "gushing", "pouring",
+  "for hours", "all day", "non stop", "non-stop",
+];
+
+const SEVERITY_ESCALATORS_TR = [
+  "şiddetli", "çok şiddetli", "durmuyor", "durduramıyorum",
+  "kontrolsüz", "kontrol edemiyorum", "kötüleşiyor", "çok kötü",
+  "fena", "korkunç", "büyüdü", "artıyor",
+  "saatlerdir", "gün boyu", "durmadan", "bir türlü durmuyor",
+];
+
+function hasSeverityEscalator(lower: string): boolean {
+  return SEVERITY_ESCALATORS_EN.some(s => lower.includes(s))
+    || SEVERITY_ESCALATORS_TR.some(s => lower.includes(s));
+}
+
+// ═══════════════════════════════════════════════
 // MAIN CHECK FUNCTION
 // ═══════════════════════════════════════════════
 
@@ -297,10 +355,12 @@ export type { TriageResult as RedFlagResult };
 export function checkRedFlags(input: string): TriageResult {
   const lower = input.toLowerCase().replace(/[.,!?;:]/g, " ");
 
-  // Step 0: Check safe contexts FIRST — if present, skip all triage
+  // Step 0: Check safe contexts FIRST — if present AND no severity escalator, skip all triage.
+  // FAZ 3.5: "şiddetli diş eti kanaması" gibi ifadelerde safe bypass iptal edilir.
   const enSafe = SAFE_CONTEXTS_EN.some((ctx) => lower.includes(ctx));
   const trSafe = SAFE_CONTEXTS_TR.some((ctx) => lower.includes(ctx));
-  if (enSafe || trSafe) {
+  const escalated = hasSeverityEscalator(lower);
+  if ((enSafe || trSafe) && !escalated) {
     return { type: "safe" };
   }
 
@@ -326,7 +386,17 @@ export function checkRedFlags(input: string): TriageResult {
     };
   }
 
-  // Step 3: SAFE — no flags detected
+  // Step 3: SAFE — no flags detected (or only safe context with severity but no match)
+  // FAZ 3.5 edge case: if escalated + safe context but no red/yellow match, treat as yellow
+  // (severe symptom on safe topic still warrants caution)
+  if ((enSafe || trSafe) && escalated) {
+    return {
+      type: "yellow_code",
+      language: trSafe ? "tr" : "en",
+      matchedFlags: ["severity_escalated_safe_context"],
+    };
+  }
+
   return { type: "safe" };
 }
 

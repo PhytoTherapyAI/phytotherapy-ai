@@ -138,10 +138,16 @@ export async function POST(request: NextRequest) {
           outcome: "success",
         });
         // Queries pivot on targetUserId (family-aware) — RLS policy from FAZ 3 allows cross-user reads
-        const [profileRes, medsRes, allergiesRes] = await Promise.all([
-          supabase.from("user_profiles").select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines, onboarding_complete, consent_ai_processing, consent_data_transfer").eq("id", targetUserId).maybeSingle(),
+        // 7-day window for daily_check_ins sleep_quality average (optional enrichment)
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const sevenDaysAgoIso = sevenDaysAgo.toISOString().slice(0, 10);
+
+        const [profileRes, medsRes, allergiesRes, checkInsRes] = await Promise.all([
+          supabase.from("user_profiles").select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, diet_type, exercise_frequency, sleep_quality, supplements, vaccines, onboarding_complete, consent_ai_processing, consent_data_transfer").eq("id", targetUserId).maybeSingle(),
           supabase.from("user_medications").select("brand_name, generic_name, dosage, frequency").eq("user_id", targetUserId).eq("is_active", true),
           supabase.from("user_allergies").select("allergen, severity").eq("user_id", targetUserId),
+          supabase.from("daily_check_ins").select("sleep_quality").eq("user_id", targetUserId).gte("check_date", sevenDaysAgoIso).not("sleep_quality", "is", null),
         ]);
         // Capture display name for system prompt
         actingOnBehalfOfName = isActingOnBehalf
@@ -151,9 +157,11 @@ export async function POST(request: NextRequest) {
           if (profileRes.error) console.error("[Chat] profile error:", profileRes.error.message, profileRes.error.details);
           if (medsRes.error) console.error("[Chat] meds error:", medsRes.error.message);
           if (allergiesRes.error) console.error("[Chat] allergies error:", allergiesRes.error.message);
+          // daily_check_ins error is non-fatal — sleep data is optional enrichment
 
           const meds = medsRes.data || [];
           const allergies = allergiesRes.data || [];
+          const checkIns = (checkInsRes.data || []) as Array<{ sleep_quality: number | null }>;
           hasMedications = meds.length > 0;
           profile = profileRes.data;
 
@@ -257,6 +265,22 @@ export async function POST(request: NextRequest) {
             // Lifestyle
             const smoking = ((profile.smoking_use as string) || "").split("|")[0] || none;
             const alcohol = ((profile.alcohol_use as string) || "").split("|")[0] || none;
+            const dietType = (profile.diet_type as string) || none;
+            const exerciseFreq = (profile.exercise_frequency as string) || none;
+
+            // Sleep quality: prefer 7-day daily check-in avg (1-5 scale) if available,
+            // else fall back to profile.sleep_quality text, else "None reported"
+            let sleepSummary: string = none;
+            if (checkIns.length > 0) {
+              const scores = checkIns.map(c => c.sleep_quality).filter((n): n is number => typeof n === "number");
+              if (scores.length > 0) {
+                const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+                sleepSummary = `${avg.toFixed(1)}/5 avg over last ${scores.length} day(s)`;
+              }
+            }
+            if (sleepSummary === none && profile.sleep_quality) {
+              sleepSummary = profile.sleep_quality as string;
+            }
 
             // Vaccines (JSONB) — only completed ones
             const vaccinesRaw = Array.isArray(profile.vaccines) ? profile.vaccines as Array<{ name: string; status: string; last_date?: string }> : [];
@@ -305,6 +329,9 @@ ${familyLines}
 LIFESTYLE:
   - Smoking: ${smoking}
   - Alcohol: ${alcohol}
+  - Diet type: ${dietType}
+  - Exercise frequency: ${exerciseFreq}
+  - Sleep quality: ${sleepSummary}
 
 VACCINATIONS:
 ${vaccineLines}
@@ -401,23 +428,11 @@ MANDATORY OUTPUT RULES (TCK Md.90 / 1219 s.K. compliance):
       systemPromptFull += `\n\nCAREGIVER CONTEXT: The authenticated user is a family caregiver asking on behalf of ${targetLabel}. All medications, allergies, and conditions in the patient profile below belong to ${targetLabel}, NOT the caregiver. Tailor your response to the patient described below. Do not confuse caregiver data with patient data.`
     }
 
-    // Inject full patient profile into system prompt for maximum personalization
+    // Inject full patient profile into system prompt for maximum personalization.
+    // Format/length/style rules live in SYSTEM_PROMPT — single source of truth, no duplicates.
     if (profileContext) {
       systemPromptFull += `\n${profileContext}\n
-You are DoctoPal, a personalized clinical health assistant. You have access to this patient's COMPLETE health profile above.
-
-RESPONSE LENGTH & STYLE:
-- Maximum 2 paragraphs. Total maximum 5-6 sentences. No exceptions.
-- First paragraph: safety verdict + why (2-3 sentences)
-- Second paragraph: what to do instead (1-2 sentences)
-- Do NOT use the patient's name (not provided, KVKK privacy compliance) — address as "you"
-- Write like a smart friend who is also a doctor — warm, direct, zero fluff
-- No bullet points, no lists, no headers, no "firstly/secondly"
-- No repeating the same warning in different words — say it once, clearly
-- Evidence level in natural language: "strong evidence" / "some research suggests" / "limited data"
-- ONE actionable recommendation at the end, not three
-
-LANGUAGE MATCHING: Write in the same language the patient uses (Turkish or English). In Turkish use proper grammar and keep medical terms accurate. In English use simple B2-level sentences. Never use emoji.`;
+You have this patient's COMPLETE health profile above. Use it to personalize every answer — cross-reference medications, allergies, conditions, surgical history, family history, and lifestyle against every recommendation. The profile is the single source of truth; trust it. If a recommendation would conflict with any profile item (drug interaction, allergy, pregnancy, kidney/liver), flag the conflict explicitly in the first sentence.`;
     }
 
     if (profileContext && hasMedications) {
@@ -519,10 +534,10 @@ This rule exists because giving dosage advice without knowing the user's medicat
           });
           let finalResponse = filtered.text;
 
-          // YELLOW CODE: Append safety warning after AI response
+          // YELLOW CODE: Prepend UI marker for YellowCodeCard + keep text warning at end (fallback)
           if (isYellowCode) {
             const warningLang = triageResult.type === "yellow_code" ? triageResult.language : "en";
-            finalResponse += getYellowWarning(warningLang);
+            finalResponse = `<!--YELLOW_CODE-->\n${finalResponse}${getYellowWarning(warningLang)}`;
           }
 
           // ── PHASE 3: progressively emit filtered text in chunks for UX ──

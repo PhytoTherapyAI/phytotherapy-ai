@@ -8,6 +8,7 @@ import { tx } from "@/lib/translations";
 import { AILoadingState } from "@/components/chat/AILoadingState";
 import { SmartSuggestions } from "@/components/chat/SmartSuggestions";
 import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
+import { YellowCodeCard } from "@/components/ai/YellowCodeCard";
 
 export interface ChatMessage {
   id: string;
@@ -192,38 +193,42 @@ export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsen
 
 /**
  * Simple markdown-like renderer for assistant messages.
- * Handles: **bold**, headers, bullet lists, links, line breaks, <details> blocks
+ * Handles: **bold**, headers, bullet lists, links, line breaks, <details> blocks,
+ * and the <!--YELLOW_CODE--> marker (FAZ 5) that renders a YellowCodeCard above the text.
  */
 function FormattedContent({ content }: { content: string }) {
-  // Extract <details> blocks first and render them separately
+  // FAZ 5: Extract yellow-code marker (rendered as a card above text, then stripped from content)
+  const isYellowCode = /<!--YELLOW_CODE-->/i.test(content);
+  const workingContent = content.replace(/<!--YELLOW_CODE-->\n?/gi, "");
+
+  // Extract <details> blocks and render them separately
   const detailsRegex = /<details>([\s\S]*?)<\/details>/gi;
   const parts: Array<{ type: "text" | "details"; content: string }> = [];
   let lastIndex = 0;
   let match;
 
-  const cleanContent = content.replace(/<\/?details>/gi, "").replace(/<\/?summary>/gi, "");
   // Check if content has details tags
-  const hasDetails = /<details>/i.test(content);
+  const hasDetails = /<details>/i.test(workingContent);
 
   if (hasDetails) {
-    let remaining = content;
     // Split into text parts and details parts
-    while ((match = detailsRegex.exec(content)) !== null) {
+    while ((match = detailsRegex.exec(workingContent)) !== null) {
       if (match.index > lastIndex) {
-        parts.push({ type: "text", content: content.slice(lastIndex, match.index) });
+        parts.push({ type: "text", content: workingContent.slice(lastIndex, match.index) });
       }
       parts.push({ type: "details", content: match[1] });
       lastIndex = match.index + match[0].length;
     }
-    if (lastIndex < content.length) {
-      parts.push({ type: "text", content: content.slice(lastIndex) });
+    if (lastIndex < workingContent.length) {
+      parts.push({ type: "text", content: workingContent.slice(lastIndex) });
     }
   } else {
-    parts.push({ type: "text", content });
+    parts.push({ type: "text", content: workingContent });
   }
 
   return (
     <div className="space-y-1">
+      {isYellowCode && <YellowCodeCard />}
       {parts.map((part, pi) => {
         if (part.type === "details") {
           return <DetailsBlock key={`d-${pi}`} content={part.content} />;
