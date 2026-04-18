@@ -1,7 +1,8 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { User, Leaf, Loader2, FileText, Image as ImageIcon, BookOpen } from "lucide-react";
+import { User, Leaf, Loader2, FileText, Image as ImageIcon, BookOpen, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { AILoadingState } from "@/components/chat/AILoadingState";
@@ -13,6 +14,10 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   isStreaming?: boolean;
+  /** Special rendering hint — used for system messages that need JSX (e.g. consent-required CTA). */
+  kind?: "consent_required";
+  /** Display language for kind-based system messages */
+  lang?: "en" | "tr";
   attachments?: Array<{
     name: string;
     type: "pdf" | "image";
@@ -124,6 +129,8 @@ export function MessageBubble({ message, isLast, onSendFollowUp }: MessageBubble
 
           {message.isStreaming && message.content === "" ? (
             <AILoadingState hasFile={!!message.attachments?.length} />
+          ) : message.kind === "consent_required" ? (
+            <ConsentRequiredMessage lang={message.lang ?? (isTr ? "tr" : "en")} />
           ) : (
             <div
               className={`prose prose-sm max-w-none ${
@@ -327,4 +334,59 @@ function formatInline(text: string): React.ReactNode {
   }
 
   return <>{parts}</>;
+}
+
+/** Renders a KVKK consent-required block with a clickable link to privacy settings. */
+function ConsentRequiredMessage({ lang }: { lang: "en" | "tr" }) {
+  const tr = lang === "tr";
+  return (
+    <div className="space-y-3 text-sm text-foreground">
+      <div className="flex items-center gap-2 text-primary font-semibold">
+        <ShieldCheck className="h-4 w-4" />
+        <span>{tr ? "Açık Rıza Gerekli" : "Explicit Consent Required"}</span>
+      </div>
+      <p>
+        {tr ? (
+          <>
+            Yapay zeka asistanını kullanabilmeniz için önce{" "}
+            <strong>Yapay Zeka İşleme Açık Rızası</strong> vermeniz gerekmektedir.
+          </>
+        ) : (
+          <>
+            To use the AI assistant, you must first provide{" "}
+            <strong>AI Processing Explicit Consent</strong>.
+          </>
+        )}
+      </p>
+      <p>
+        {tr ? (
+          <>
+            <Link
+              href="/profile#privacy-settings"
+              className="text-primary underline font-medium hover:text-primary/80"
+            >
+              Gizlilik Ayarları
+            </Link>{" "}
+            sayfasından rıza verebilirsiniz. Temel hizmetler (ilaç takibi, takvim) rıza olmadan çalışmaya devam eder.
+          </>
+        ) : (
+          <>
+            You can grant consent via{" "}
+            <Link
+              href="/profile#privacy-settings"
+              className="text-primary underline font-medium hover:text-primary/80"
+            >
+              Privacy Settings
+            </Link>
+            . Basic services (medication tracking, calendar) continue to work without consent.
+          </>
+        )}
+      </p>
+      <p className="text-xs text-muted-foreground">
+        {tr
+          ? "KVKK Md.6 uyarınca sağlık verileriniz ancak açık rızanızla yapay zeka sistemi tarafından işlenebilir."
+          : "Under KVKK Art.6, your health data can only be processed by the AI system with your explicit consent."}
+      </p>
+    </div>
+  );
 }
