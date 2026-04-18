@@ -1,4 +1,4 @@
-# CLAUDE.md — DoctoPal Proje Anayasası v52.1 (Post-Hackathon)
+# CLAUDE.md — DoctoPal Proje Anayasası v52.2 (Post-Hackathon)
 
 ## Hızlı Bağlam
 
@@ -47,8 +47,8 @@ Referans doküman: `YASAL-UYUM.md` (Downloads klasöründe)
 ## Aile Profili Sistemi
 
 Detaylı yol haritası: `FAMILY-ROADMAP.md`
-Mevcut faz: **FAZ 1** (Temizlik + Temel Akış)
-Netflix tarzı profil seçimi, premium kontrollü aile yönetimi.
+Mevcut faz: **TAMAMLANDI (FAZ 1-5)** — Session 31
+Netflix tarzı profil seçimi, premium kontrollü aile yönetimi, davet sistemi (email + kod), cross-user read (RLS), AI chat context switch, SBAR, SOS, Sağlık Ağacı.
 
 ---
 
@@ -465,7 +465,7 @@ Chat API route'u (/api/chat) aşağıdaki profil verilerini AI system prompt'a e
 
 ---
 
-*Son güncelleme: 17 Nisan 2026 v52.1*
+*Son güncelleme: 17 Nisan 2026 v52.2*
 *IGNITE 26 kazanıldı — Harvard Hackathon tamamlandı (11-12 Nisan 2026).*
 *Session 18-20: Aile profili + SBAR PDF redesign + condition translations + bug fixes.*
 *Session 21: YASAL UYUM — 10/14 madde kod implementasyonu tamamlandı (MADDE 1,2,3,5,6,7,8,9,10,11,12,13). MADDE 4 ve 14 hukuki/idari işlem.*

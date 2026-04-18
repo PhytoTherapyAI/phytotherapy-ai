@@ -1,15 +1,36 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 17 Nisan 2026 (v52.1 — Session 32: Mega Refactor + KVKK + Auth)
+> Son güncelleme: 17 Nisan 2026 (v52.2 — Session 31: Aile Profili Tamamlandı)
+
+---
+
+### Session 31 — Aile Profili (FAZ 1-5 Tamamlandı)
+- [x] FAZ 1: Dead code temizliği + Netflix profil seçim + login redirect
+- [x] FAZ 2: Davet sistemi (email + kod ile davet + kabul/red)
+- [x] FAZ 3: Üye görüntüleme (premium kontrollü, RLS cross-user read)
+- [x] FAZ 4: Aksiyonlar (AI chat context switch, SBAR, SOS, hatırlatma)
+- [x] FAZ 5: Sağlık ağacı (ilişki dropdown, 4 kuşak görsel, AI genetik analiz)
+- [x] Güvenlik: başkası adına rıza verme engellendi
+- [x] Güvenlik: profil düzenleme canEdit guard (10/10 handler)
+- [x] UI: üye kartları eşit boyut, isim fallback zinciri
+- [x] UI: SOS butonu, Sağlık Ağacı linki, dark mode logo fix
+- [x] UI: AI chat consent popup direkt açılma
+- [x] Bug: Kod Oluştur buton fix (Base UI async onClick)
+- [x] Bug: invite_email NOT NULL constraint fix
+- [x] Bug: relationship dropdown RLS admin update policy
+
+### Sıradaki
+- [ ] Asistan iyileştirmeleri (AI chat kalitesi, yanıt formatı)
+- [ ] PDF analizi (kan tahlili, radyoloji, prospektüs okuma)
 
 ---
 
 ### Aile Profili Yol Haritası (FAMILY-ROADMAP.md)
-- [ ] FAZ 1: Temizlik + temel akış
-- [ ] FAZ 2: Davet sistemi
-- [ ] FAZ 3: Görüntüleme (premium kontrollü)
-- [ ] FAZ 4: Aksiyonlar (premium only)
-- [ ] FAZ 5: Sağlık ağacı
+- [x] FAZ 1: Temizlik + temel akış
+- [x] FAZ 2: Davet sistemi
+- [x] FAZ 3: Görüntüleme (premium kontrollü)
+- [x] FAZ 4: Aksiyonlar (premium only)
+- [x] FAZ 5: Sağlık ağacı
 
 ---
 
