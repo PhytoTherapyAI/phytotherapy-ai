@@ -1,6 +1,6 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 17 Nisan 2026 (v52.2 — Session 31: Aile Profili Tamamlandı)
+> Son güncelleme: 19 Nisan 2026 (v52.3 — Session 32: Asistan + PDF Analizi Tamamlandı)
 
 ---
 
@@ -14,9 +14,24 @@
 - [x] UI fix'leri (kart layout, isim fallback, SOS, dark mode logo)
 - [x] Bug fix'leri (Kod Oluştur buton, invite_email constraint, dropdown RLS)
 
-### Sıradaki (Session 32)
-- [ ] Asistan iyileştirmeleri (AI chat kalitesi, yanıt formatı, kişiselleştirme)
-- [ ] PDF analizi (kan tahlili, radyoloji, prospektüs okuma)
+### Session 32 — Asistan İyileştirmeleri + PDF Analizi
+- [x] Task 1: Asistan İyileştirmeleri (5 faz)
+  - Prompt çelişkisi çözüldü (tek kaynak, KVKK uyumlu hitap)
+  - Profil eksik alanlar eklendi (diet, exercise, sleep 7-gün avg)
+  - Acil durum DB v2 (40+ yeni red keyword: pediatrik, mental health, anaphylaxis, stroke)
+  - Few-shot örnekler (4 örnek TR+EN, profile-aware tone)
+  - Yellow code UI card (amber uyarı banner, tel:112)
+- [x] Task 2: PDF Analizi (4 faz)
+  - RadiologyReport Türkçe karakter fix (NotoSans font register)
+  - radiology_reports + prospectus_scans DB tabloları
+  - Kan tahlili trend analizi (API + Recharts LineChart)
+  - BLOOD_TEST_PROMPT upgrade (yaş/cinsiyet bazlı, JSON schema)
+  - PROSPECTUS_PROMPT lib/prompts.ts'e taşındı
+
+### Sıradaki
+- [ ] Asistan fine-tuning (kullanıcı feedback'e göre)
+- [ ] QR kod okuma (prospektüs)
+- [ ] Radyoloji görüntü Supabase Storage
 
 ---
 

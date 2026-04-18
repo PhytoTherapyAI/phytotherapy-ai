@@ -154,10 +154,10 @@ npm run build
 
 > IGNITE 26'da jüri kararı: **Core tool'lar + Aile Profili** öncelikli. Diğer tool'lar hackathon sonrasına.
 
-### 1. Sağlık Asistanı (Core)
-- [ ] Acil durum database verisi iyileştir
-- [ ] Daha gerçekçi ve kişiselleştirilmiş cevaplar
-- [ ] Daha net, anlaşılır cevaplar
+### 1. Sağlık Asistanı (Core) ✅ TAMAMLANDI (Session 32)
+- [x] Acil durum database verisi iyileştir (40+ yeni red keyword: pediatrik, mental-health eşik, anaphylaxis pattern, stroke FAST/cardiac atypical + safe-context severity escalation)
+- [x] Daha gerçekçi ve kişiselleştirilmiş cevaplar (SYSTEM_PROMPT overhaul + 4 few-shot örnek + profil context enrichment: diet_type, exercise_frequency, sleep_quality 7-gün avg)
+- [x] Daha net, anlaşılır cevaplar (prompt çelişkisi çözüldü, adaptif format/uzunluk, KVKK uyumlu "sen" hitabı, yellow code UI card)
 
 ### 2. Etkileşim Deneyleyici (Core)
 - [ ] İlaç girmeden de kullanılabilsin (uyarı mesajı ile: "İlaçlarınızı girmeden önerileri kullanmayın")
@@ -166,9 +166,9 @@ npm run build
 ### 3. Takvim & Panel
 - [ ] Genel kontrol ve düzeltme
 
-### 4. Kan Testi & Radyoloji
-- [ ] Kan testi PDF çalıştır
-- [ ] Radyoloji cevaplarını iyileştir
+### 4. Kan Testi & Radyoloji ✅ TAMAMLANDI (Session 32)
+- [x] Kan testi PDF çalıştır (Claude Vision multimodal extraction zaten çalışıyordu; Session 32'de trend analizi + BLOOD_TEST_PROMPT yaş/cinsiyet bazlı ref + strict JSON schema + interaction check eklendi)
+- [x] Radyoloji cevaplarını iyileştir (RadiologyReport PDF Türkçe karakter fix NotoSans + radiology_reports DB tablosu structured storage + PROSPECTUS_PROMPT lib/prompts.ts'e taşındı + interaction rules zenginleştirildi)
 
 ### 5. Onboarding Revizyon (BÜYÜK)
 
@@ -443,9 +443,9 @@ SENTRY_DSN=...
 
 ---
 
-## POST-HACKATHON: Chat API Context Enrichment
+## POST-HACKATHON: Chat API Context Enrichment ✅ TAMAMLANDI (Session 32)
 
-### Durum (Session 32 audit):
+### Durum:
 Chat API route'u (/api/chat) aşağıdaki profil verilerini AI system prompt'a enjekte ediyor:
 - ✅ İlaçlar (medications) — doz + sıklık ile
 - ✅ Alerjiler (allergies) — reaksiyon tipi ile
@@ -456,24 +456,22 @@ Chat API route'u (/api/chat) aşağıdaki profil verilerini AI system prompt'a e
 - ✅ Yaşam tarzı (smoking_use, alcohol_use)
 - ✅ BMI (height_cm + weight_kg → hesaplanıyor)
 - ✅ Takviyeler (supplements — meta: prefix filtreli, doz/sıklık parsed)
-- ❌ diet_type — DB'de var ama chat route'a çekilmiyor
-- ❌ exercise_frequency — DB'de var ama chat route'a çekilmiyor
-- ❌ sleep_quality — DB'de var ama chat route'a çekilmiyor
+- ✅ diet_type — Session 32'de user_profiles select'e + LIFESTYLE bloğuna eklendi
+- ✅ exercise_frequency — Session 32'de select'e + LIFESTYLE bloğuna eklendi
+- ✅ sleep_quality — Session 32'de select'e + daily_check_ins son 7 gün ortalaması (paralel query) LIFESTYLE bloğuna eklendi
 
-### Kalan TODO:
-1. `diet_type`, `exercise_frequency`, `sleep_quality` alanlarını chat route select'ine ekle
-2. System prompt'un "LIFESTYLE" bloğuna ekle
-3. AI cross-reference senaryoları (system prompt'ta zaten preamble var):
-   - Cerrahi geçmiş: gastric sleeve → absorption warning
-   - Soygeçmiş: family cancer → phytoestrogen warning
-   - Hamilelik/emzirme → mutlak kontrendikasyon listesi
-   - Böbrek yetmezliği → doz azaltma/eliminasyon uyarısı
+### Gelecek iyileştirmeler (non-blocking):
+AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler eklenebilir:
+- Cerrahi geçmiş: gastric sleeve → absorption warning
+- Soygeçmiş: family cancer → phytoestrogen warning
+- Hamilelik/emzirme → mutlak kontrendikasyon listesi (SYSTEM_PROMPT'ta "kritik çizgi" notu var, sağlam)
+- Böbrek yetmezliği → doz azaltma/eliminasyon uyarısı
 
-### Öncelik: ORTA — Çoğu tamamlandı, 3 alan + AI prompt tuning kaldı
+### Öncelik: YOK — Profil context enrichment %100 kapandı. Fine-tuning kullanıcı feedback'ine göre yapılacak.
 
 ---
 
-*Son güncelleme: 17 Nisan 2026 v52.2*
+*Son güncelleme: 19 Nisan 2026 v52.3*
 *IGNITE 26 kazanıldı — Harvard Hackathon tamamlandı (11-12 Nisan 2026).*
 *Session 18-20: Aile profili + SBAR PDF redesign + condition translations + bug fixes.*
 *Session 21: YASAL UYUM — 10/14 madde kod implementasyonu tamamlandı (MADDE 1,2,3,5,6,7,8,9,10,11,12,13). MADDE 4 ve 14 hukuki/idari işlem.*
@@ -525,3 +523,7 @@ Chat API route'u (/api/chat) aşağıdaki profil verilerini AI system prompt'a e
 *— Geliştirme kuralları: CLAUDE.md'ye SQL template, auth context kuralları, console log politikası, KVKK dosya referansları, çözülen bug tablosu eklendi*
 *— Aile profili yol haritası: FAMILY-ROADMAP.md (5 faz, 25 madde) + CLAUDE.md/PROGRESS.md referansları*
 *— DB migration: supabase/migrations/20260416_session25_kvkk_compliance.sql (419 satır, idempotent)*
+*Session 32 (devam — Asistan + PDF Analizi): 1 büyük commit, ~900 satır:*
+*— Task 1 Asistan (5 faz): SYSTEM_PROMPT tam yeniden yazıldı — tek kaynak, KVKK uyumlu "sen" hitabı (isim kullanma), adaptif format (3+ madde → bullet izni), adaptif uzunluk (1-3/4-6/6-8 cümle), 4 few-shot örnek (TR+EN, profile-aware tone) → Chat profile enrichment: diet_type, exercise_frequency, sleep_quality (daily_check_ins 7-gün avg) LIFESTYLE bloğuna eklendi → Acil durum DB v2: lib/safety-filter.ts'e 40+ yeni red keyword (pediatrik: "bebek nefes almıyor" vb., mental health eşik: "intihar planım var" vb., anaphylaxis pattern: "arı soktu nefes daralıyor" vb., stroke FAST + cardiac atypical: "yüzde sarkma", "sol kol uyuşması" vb.) + SEVERITY_ESCALATORS (TR+EN "şiddetli/durmuyor/severe/won't stop") → safe context + severity → yellow escalation (FAZ 3.5) → YellowCodeCard UI component (amber banner + tel:112) + MessageBubble.tsx'te <!--YELLOW_CODE--> marker parse.*
+*— Task 2 PDF Analizi (4 faz): RadiologyReport PDF Türkçe karakter fix — public/fonts/NotoSans-Regular.ttf + NotoSans-Bold.ttf için Font.register (path.join(process.cwd(), "public", "fonts") server-side filesystem path), tüm "Helvetica" → "NotoSans" + fontWeight switch. ş/ğ/ü/ö/ç/ı/İ native render, transliteration yok. (Not: SBAR hâlâ fixTr transliteration kullanıyor — RadiologyReport gerçek font register'ı aldı.) → DB tabloları: supabase/migrations/20260418_pdf_analysis_tables.sql — radiology_reports (id, user_id, file_name, image_type, overall_urgency, analysis_json JSONB, summary, created_at) + prospectus_scans (id, user_id, medication_name, file_name, scan_data JSONB, profile_alerts JSONB, created_at) — RLS own_* policies + user_id + created_at DESC indexler + NOTIFY pgrst. → Endpoint persistence: /api/radiology-analysis query_history yerine radiology_reports'a structured insert (analysis_json full response) + /api/prospectus-reader pre-AI query_history kaldırıldı, post-parse prospectus_scans'e structured insert (scan_data + profile_alerts). → Kan tahlili trend analizi: /api/blood-test-trends YENİ endpoint (son 10 test, range filter 3m/1y/all, test_data JSONB şekil varyasyonu tolere — array, {results}, category-grouped) + components/blood-test/BloodTestTrendChart.tsx (Recharts LineChart per-parameter, status-renk dots yeşil/sarı/kırmızı, trend ikonu up/down/stable, 3m/1y/all filter) + /medical-analysis sayfasına "Trends" tab olarak eklendi (TabType "blood-test" | "radiology" | "trends"). → BLOOD_TEST_PROMPT tam yeniden yazıldı: yaş/cinsiyet-specific reference ranges (ferritin premeno/postmeno ayrı, ESR yaş formülü, thyroid trimester-specific, Cr sex-specific vb.), profil farkındalığı (hamilelik/böbrek/KC → supplement downgrade, meds cross-check interactionCheck zorunlu alan), strict JSON schema (abnormalFindings + referenceRange + supplementRecommendations.interactionCheck + trendComparison + overallUrgency), kritik değerlerde "SEEK MEDICAL CARE" prepend rule. → PROSPECTUS_PROMPT inline kaldırıldı, lib/prompts.ts'e taşındı + buildProspectusSystemPrompt({userMedications, userAllergies, replyLanguage}) helper — pharmakokinetik (CYP450/P-gp/protein binding) + pharmakodinamik (additif CNS/QT/kanama) + duplicate therapy check rules eklendi, profileAlerts severity ⚠️/🚫 prefix. → /blood-test zaten /medical-analysis'e redirect ediyordu (doğrulandı, değişiklik yok). → trends.* çeviri key'leri (11 key TR+EN). → tsc --noEmit temiz, UI manuel doğrulandı (Trends tab auth-prompt render, /blood-test redirect, YellowCodeCard amber render "hafif göğüs ağrısı" testinde).*
+*— Not: Session 32 bu session tek commit'te (300463b) Task 1'in uncommitted değişiklikleri ile birlikte commit'lendi.*
