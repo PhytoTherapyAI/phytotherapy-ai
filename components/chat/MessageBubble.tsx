@@ -18,6 +18,10 @@ export interface ChatMessage {
   kind?: "consent_required";
   /** Display language for kind-based system messages */
   lang?: "en" | "tr";
+  /** If set on a consent_required message, indicates we're asking about a
+   *  family member's consent (not the caller's) — changes message wording
+   *  and hides the in-chat consent button (you cannot grant on their behalf). */
+  targetName?: string;
   attachments?: Array<{
     name: string;
     type: "pdf" | "image";
@@ -135,6 +139,7 @@ export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsen
             <ConsentRequiredMessage
               lang={message.lang ?? (isTr ? "tr" : "en")}
               onRequestConsent={onRequestConsent}
+              targetName={message.targetName}
             />
           ) : (
             <div
@@ -341,56 +346,97 @@ function formatInline(text: string): React.ReactNode {
   return <>{parts}</>;
 }
 
-/** Renders a KVKK consent-required block with a button that opens ConsentPopup. */
-function ConsentRequiredMessage({ lang, onRequestConsent }: { lang: "en" | "tr"; onRequestConsent?: () => void }) {
+/** Renders a KVKK consent-required block. Two modes:
+ *  1) targetName set → someone else's consent is missing (no button, just info)
+ *  2) targetName unset → caller's own consent is missing (button opens popup)
+ */
+function ConsentRequiredMessage({
+  lang,
+  onRequestConsent,
+  targetName,
+}: {
+  lang: "en" | "tr";
+  onRequestConsent?: () => void;
+  targetName?: string;
+}) {
   const tr = lang === "tr";
+  const isForTarget = !!targetName;
+
   return (
     <div className="space-y-3 text-sm text-foreground">
       <div className="flex items-center gap-2 text-primary font-semibold">
         <ShieldCheck className="h-4 w-4" />
         <span>{tr ? "Açık Rıza Gerekli" : "Explicit Consent Required"}</span>
       </div>
-      <p>
-        {tr ? (
-          <>
-            Yapay zeka asistanını kullanabilmeniz için önce{" "}
-            <strong>Yapay Zeka İşleme Açık Rızası</strong> vermeniz gerekmektedir.
-          </>
-        ) : (
-          <>
-            To use the AI assistant, you must first provide{" "}
-            <strong>AI Processing Explicit Consent</strong>.
-          </>
-        )}
-      </p>
-      <p>
-        {tr
-          ? "Aşağıdaki butona tıklayarak rızanızı hemen verebilirsiniz. Temel hizmetler (ilaç takibi, takvim) rıza olmadan çalışmaya devam eder."
-          : "You can grant consent right now by clicking the button below. Basic services (medication tracking, calendar) continue to work without consent."}
-      </p>
-      {onRequestConsent ? (
-        <button
-          type="button"
-          onClick={onRequestConsent}
-          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          <ShieldCheck className="h-4 w-4" />
-          {tr ? "Rıza Ver" : "Grant Consent"}
-        </button>
+
+      {isForTarget ? (
+        <>
+          <p>
+            {tr ? (
+              <>
+                Bu aile üyesinin (<strong>{targetName}</strong>) henüz{" "}
+                <strong>Yapay Zeka İşleme Açık Rızası</strong> bulunmuyor. AI asistanını
+                bu kişi adına kullanabilmeniz için, ilgili kişinin kendi hesabından giriş
+                yaparak rıza vermesi gerekmektedir.
+              </>
+            ) : (
+              <>
+                This family member (<strong>{targetName}</strong>) has not yet granted{" "}
+                <strong>AI Processing Consent</strong>. To use the AI assistant on their
+                behalf, they must log in to their own account and grant consent.
+              </>
+            )}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {tr
+              ? "KVKK Md.6 uyarınca başkası adına açık rıza verilemez — rıza bizzat ilgili kişi tarafından verilmelidir."
+              : "Under KVKK Art.6, consent cannot be granted on behalf of another person — it must come directly from the individual."}
+          </p>
+        </>
       ) : (
-        // Fallback when no handler (e.g., used outside ChatInterface): link to settings
-        <Link
-          href="/profile#privacy-settings"
-          className="inline-block text-primary underline font-medium hover:text-primary/80"
-        >
-          {tr ? "Gizlilik Ayarları" : "Privacy Settings"}
-        </Link>
+        <>
+          <p>
+            {tr ? (
+              <>
+                Yapay zeka asistanını kullanabilmeniz için önce{" "}
+                <strong>Yapay Zeka İşleme Açık Rızası</strong> vermeniz gerekmektedir.
+              </>
+            ) : (
+              <>
+                To use the AI assistant, you must first provide{" "}
+                <strong>AI Processing Explicit Consent</strong>.
+              </>
+            )}
+          </p>
+          <p>
+            {tr
+              ? "Aşağıdaki butona tıklayarak rızanızı hemen verebilirsiniz. Temel hizmetler (ilaç takibi, takvim) rıza olmadan çalışmaya devam eder."
+              : "You can grant consent right now by clicking the button below. Basic services (medication tracking, calendar) continue to work without consent."}
+          </p>
+          {onRequestConsent ? (
+            <button
+              type="button"
+              onClick={onRequestConsent}
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              {tr ? "Rıza Ver" : "Grant Consent"}
+            </button>
+          ) : (
+            <Link
+              href="/profile#privacy-settings"
+              className="inline-block text-primary underline font-medium hover:text-primary/80"
+            >
+              {tr ? "Gizlilik Ayarları" : "Privacy Settings"}
+            </Link>
+          )}
+          <p className="text-xs text-muted-foreground">
+            {tr
+              ? "KVKK Md.6 uyarınca sağlık verileriniz ancak açık rızanızla yapay zeka sistemi tarafından işlenebilir."
+              : "Under KVKK Art.6, your health data can only be processed by the AI system with your explicit consent."}
+          </p>
+        </>
       )}
-      <p className="text-xs text-muted-foreground">
-        {tr
-          ? "KVKK Md.6 uyarınca sağlık verileriniz ancak açık rızanızla yapay zeka sistemi tarafından işlenebilir."
-          : "Under KVKK Art.6, your health data can only be processed by the AI system with your explicit consent."}
-      </p>
     </div>
   );
 }

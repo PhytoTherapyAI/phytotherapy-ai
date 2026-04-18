@@ -27,7 +27,8 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
         .select(`
           *,
           profile:user_profiles(
-            id, display_name, full_name, avatar_style, avatar_seed, chronic_conditions
+            id, display_name, full_name, avatar_style, avatar_seed, chronic_conditions,
+            consent_ai_processing
           )
         `)
         .eq('group_id', groupId)

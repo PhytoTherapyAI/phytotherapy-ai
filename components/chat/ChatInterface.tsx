@@ -12,6 +12,7 @@ import { createBrowserClient } from "@/lib/supabase";
 import { AIGeneratedBadge } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
 import { useActiveProfile } from "@/lib/use-active-profile";
+import { useFamily } from "@/lib/family-context";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
@@ -58,6 +59,7 @@ interface ChatInterfaceProps {
 export function ChatInterface({ className, onMessagesChange, loadConversation, initialQuery }: ChatInterfaceProps) {
   const { isAuthenticated, session, user, profile } = useAuth();
   const { activeUserId, isOwnProfile } = useActiveProfile();
+  const { familyMembers } = useFamily();
   // Defensive: only send targetUserId when genuinely acting on someone else.
   // Three conditions must hold:
   //   - hook says it's not own profile
@@ -190,23 +192,59 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
     // SARI KOD + YEŞİL KOD — AI cevap verir (sarı kodda server-side disclaimer eklenir)
 
     // KVKK consent gate — render a JSX consent-required bubble instead of hitting
-    // the API (which would stream plain text with broken markdown).
-    if (isAuthenticated && profile && !profile.consent_ai_processing) {
-      const userMsg: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: "user",
-        content: trimmed,
-      };
-      const consentMsg: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: "",
-        kind: "consent_required",
-        lang: lang === "tr" ? "tr" : "en",
-      };
-      setMessages((prev) => [...prev, userMsg, consentMsg]);
-      setInput("");
-      return;
+    // the API. Two scenarios:
+    //  (a) caller acting on their own profile → check caller's consent, show CTA button
+    //  (b) caller acting on a family member → check target's consent, show info-only
+    //      message (you can never grant consent on someone else's behalf)
+    if (isAuthenticated && profile) {
+      if (effectiveTargetUserId) {
+        // Acting on behalf of a family member — check TARGET's consent
+        const targetMember = familyMembers.find(
+          (m) => m.user_id === effectiveTargetUserId
+        );
+        const targetHasConsent = targetMember?.profile?.consent_ai_processing === true;
+        if (!targetHasConsent) {
+          const targetDisplayName =
+            targetMember?.profile?.full_name
+            ?? targetMember?.nickname
+            ?? targetMember?.profile?.display_name
+            ?? targetMember?.invite_email?.split("@")[0]
+            ?? (lang === "tr" ? "aile üyesi" : "family member");
+          const userMsg: ChatMessage = {
+            id: crypto.randomUUID(),
+            role: "user",
+            content: trimmed,
+          };
+          const consentMsg: ChatMessage = {
+            id: crypto.randomUUID(),
+            role: "assistant",
+            content: "",
+            kind: "consent_required",
+            lang: lang === "tr" ? "tr" : "en",
+            targetName: targetDisplayName,
+          };
+          setMessages((prev) => [...prev, userMsg, consentMsg]);
+          setInput("");
+          return;
+        }
+      } else if (!profile.consent_ai_processing) {
+        // Own profile, own consent missing — show CTA to grant
+        const userMsg: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: "user",
+          content: trimmed,
+        };
+        const consentMsg: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: "assistant",
+          content: "",
+          kind: "consent_required",
+          lang: lang === "tr" ? "tr" : "en",
+        };
+        setMessages((prev) => [...prev, userMsg, consentMsg]);
+        setInput("");
+        return;
+      }
     }
 
     // Guest mode checks

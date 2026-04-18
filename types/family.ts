@@ -46,6 +46,7 @@ export interface FamilyMember {
     avatar_style: string
     avatar_seed: string
     chronic_conditions?: string[] | null
+    consent_ai_processing?: boolean
   }
 }
 
