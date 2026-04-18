@@ -6,6 +6,9 @@ import Link from "next/link";
 import { Send, Loader2, Trash2, Paperclip, Camera, X, FileText, Image as ImageIcon, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageBubble, ChatMessage } from "./MessageBubble";
+import { ConsentPopup } from "@/components/legal/ConsentPopup";
+import { CONSENT_VERSIONS } from "@/lib/consent-versions";
+import { createBrowserClient } from "@/lib/supabase";
 import { AIGeneratedBadge } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
 import { useActiveProfile } from "@/lib/use-active-profile";
@@ -68,6 +71,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
+  const [showConsentPopup, setShowConsentPopup] = useState(false);
   // Model selection removed — single model (claude-haiku-4-5)
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -442,6 +446,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
             key={msg.id}
             message={msg}
             isLast={idx === messages.length - 1}
+            onRequestConsent={() => setShowConsentPopup(true)}
             onSendFollowUp={(text) => {
               // Set input via DOM (same pattern as example questions) then trigger send
               const textarea = document.querySelector("textarea");
@@ -631,6 +636,42 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
           </div>
         </div>
       </div>
+
+      {/* Consent popup — opened from consent_required message bubble */}
+      <ConsentPopup
+        open={showConsentPopup}
+        consentType="consent_ai_processing"
+        onAccept={async () => {
+          try {
+            const supabase = createBrowserClient();
+            const { data: { session: s } } = await supabase.auth.getSession();
+            if (!s?.access_token) {
+              setShowConsentPopup(false);
+              return;
+            }
+            await fetch("/api/privacy-settings", {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${s.access_token}`,
+              },
+              body: JSON.stringify({
+                consent_type: "consent_ai_processing",
+                granted: true,
+                source: "chat_consent_prompt",
+                version: CONSENT_VERSIONS.ai_processing,
+              }),
+            });
+          } catch (err) {
+            console.error("[Chat] consent save error:", err);
+          } finally {
+            setShowConsentPopup(false);
+            // Reload so auth-context refetches profile with new consent flag
+            window.location.reload();
+          }
+        }}
+        onCancel={() => setShowConsentPopup(false)}
+      />
     </div>
   );
 }

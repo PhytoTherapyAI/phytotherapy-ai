@@ -29,6 +29,8 @@ interface MessageBubbleProps {
   message: ChatMessage;
   isLast?: boolean;
   onSendFollowUp?: (text: string) => void;
+  /** Called when user clicks "Grant consent" inside a consent_required bubble */
+  onRequestConsent?: () => void;
 }
 
 // Generate follow-up suggestions from AI response content
@@ -69,7 +71,7 @@ function getFollowUps(content: string, lang: string): string[] {
   return suggestions.slice(0, 3);
 }
 
-export function MessageBubble({ message, isLast, onSendFollowUp }: MessageBubbleProps) {
+export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsent }: MessageBubbleProps) {
   const { lang } = useLang();
   const isUser = message.role === "user";
   const showSuggestions = isLast && !isUser && !message.isStreaming && message.content.length > 50 && onSendFollowUp;
@@ -130,7 +132,10 @@ export function MessageBubble({ message, isLast, onSendFollowUp }: MessageBubble
           {message.isStreaming && message.content === "" ? (
             <AILoadingState hasFile={!!message.attachments?.length} />
           ) : message.kind === "consent_required" ? (
-            <ConsentRequiredMessage lang={message.lang ?? (isTr ? "tr" : "en")} />
+            <ConsentRequiredMessage
+              lang={message.lang ?? (isTr ? "tr" : "en")}
+              onRequestConsent={onRequestConsent}
+            />
           ) : (
             <div
               className={`prose prose-sm max-w-none ${
@@ -336,8 +341,8 @@ function formatInline(text: string): React.ReactNode {
   return <>{parts}</>;
 }
 
-/** Renders a KVKK consent-required block with a clickable link to privacy settings. */
-function ConsentRequiredMessage({ lang }: { lang: "en" | "tr" }) {
+/** Renders a KVKK consent-required block with a button that opens ConsentPopup. */
+function ConsentRequiredMessage({ lang, onRequestConsent }: { lang: "en" | "tr"; onRequestConsent?: () => void }) {
   const tr = lang === "tr";
   return (
     <div className="space-y-3 text-sm text-foreground">
@@ -359,29 +364,28 @@ function ConsentRequiredMessage({ lang }: { lang: "en" | "tr" }) {
         )}
       </p>
       <p>
-        {tr ? (
-          <>
-            <Link
-              href="/profile#privacy-settings"
-              className="text-primary underline font-medium hover:text-primary/80"
-            >
-              Gizlilik Ayarları
-            </Link>{" "}
-            sayfasından rıza verebilirsiniz. Temel hizmetler (ilaç takibi, takvim) rıza olmadan çalışmaya devam eder.
-          </>
-        ) : (
-          <>
-            You can grant consent via{" "}
-            <Link
-              href="/profile#privacy-settings"
-              className="text-primary underline font-medium hover:text-primary/80"
-            >
-              Privacy Settings
-            </Link>
-            . Basic services (medication tracking, calendar) continue to work without consent.
-          </>
-        )}
+        {tr
+          ? "Aşağıdaki butona tıklayarak rızanızı hemen verebilirsiniz. Temel hizmetler (ilaç takibi, takvim) rıza olmadan çalışmaya devam eder."
+          : "You can grant consent right now by clicking the button below. Basic services (medication tracking, calendar) continue to work without consent."}
       </p>
+      {onRequestConsent ? (
+        <button
+          type="button"
+          onClick={onRequestConsent}
+          className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          <ShieldCheck className="h-4 w-4" />
+          {tr ? "Rıza Ver" : "Grant Consent"}
+        </button>
+      ) : (
+        // Fallback when no handler (e.g., used outside ChatInterface): link to settings
+        <Link
+          href="/profile#privacy-settings"
+          className="inline-block text-primary underline font-medium hover:text-primary/80"
+        >
+          {tr ? "Gizlilik Ayarları" : "Privacy Settings"}
+        </Link>
+      )}
       <p className="text-xs text-muted-foreground">
         {tr
           ? "KVKK Md.6 uyarınca sağlık verileriniz ancak açık rızanızla yapay zeka sistemi tarafından işlenebilir."
