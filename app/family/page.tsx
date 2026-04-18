@@ -878,9 +878,16 @@ export default function FamilyPage() {
                             <select
                               value={(member.relationship as string | null | undefined) || ""}
                               onClick={e => e.stopPropagation()}
-                              onChange={e => {
+                              onChange={async e => {
+                                e.stopPropagation()
                                 const next = (e.target.value || null) as FamilyRelationship | null
-                                if (next) void updateRelationship(member.id, next)
+                                if (!next) return
+                                const ok = await updateRelationship(member.id, next)
+                                if (!ok) {
+                                  alert(tr
+                                    ? "İlişki güncellenemedi. Tekrar dener misin?"
+                                    : "Could not update relationship. Please try again.")
+                                }
                               }}
                               className="w-full rounded-md border border-border bg-background px-2 py-1 text-[11px] focus:ring-1 focus:ring-emerald-400 outline-none"
                             >
