@@ -3,18 +3,24 @@
 
 import { useState } from "react";
 
-export function InlineEdit({ value, onSave, type = "text", placeholder, lang, options }: {
+export function InlineEdit({ value, onSave, type = "text", placeholder, lang, options, disabled = false }: {
   value?: string | number | null;
   onSave: (val: string) => Promise<void>;
   type?: "text" | "number" | "chips";
   placeholder?: string;
   lang: "en" | "tr";
   options?: { value: string; label: string }[];
+  disabled?: boolean;
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(String(value ?? ""));
   const [saving, setSaving] = useState(false);
   const addLabel = lang === "tr" ? "+ Ekle" : "+ Add";
+
+  // Read-only mode: no edit interactions, just display
+  if (disabled) {
+    return <span className="font-medium text-muted-foreground">{value ? String(value) : "—"}</span>;
+  }
 
   if (!editing && !value) {
     return <button onClick={() => setEditing(true)} className="text-sm font-medium text-primary hover:underline cursor-pointer">{addLabel}</button>;

@@ -154,7 +154,7 @@ export default function ProfilePage() {
   const tr = lang === "tr";
 
   const startEditingHealth = () => {
-    if (!profile) return;
+    if (!profile || !canEdit) return;
     setHealthForm({
       is_pregnant: profile.is_pregnant,
       is_breastfeeding: profile.is_breastfeeding,
@@ -180,7 +180,7 @@ export default function ProfilePage() {
   };
 
   const saveHealthProfile = async () => {
-    if (!profile) return;
+    if (!profile || !canEdit) return;
     setSavingHealth(true);
     try {
       const supabase = createBrowserClient();
@@ -267,6 +267,7 @@ export default function ProfilePage() {
   };
 
   const removeAllergy = async (id: string) => {
+    if (!canEdit) return;
     try {
       const supabase = createBrowserClient();
       const { error } = await supabase.from("user_allergies").delete().eq("id", id);
@@ -280,6 +281,7 @@ export default function ProfilePage() {
   };
 
   const toggleCondition = (condition: string) => {
+    if (!canEdit) return;
     setHealthForm((prev) => ({
       ...prev,
       chronic_conditions: prev.chronic_conditions.includes(condition)
@@ -289,6 +291,7 @@ export default function ProfilePage() {
   };
 
   const addCustomCondition = () => {
+    if (!canEdit) return;
     if (!newCondition.trim()) return;
     if (!healthForm.chronic_conditions.includes(newCondition.trim())) {
       setHealthForm((prev) => ({
@@ -300,6 +303,7 @@ export default function ProfilePage() {
   };
 
   const toggleSupplement = (supplement: string) => {
+    if (!canEdit) return;
     setHealthForm((prev) => ({
       ...prev,
       supplements: prev.supplements.includes(supplement)
@@ -552,6 +556,7 @@ export default function ProfilePage() {
   };
 
   const removeMedication = async (id: string) => {
+    if (!canEdit) return;
     try {
       const supabase = createBrowserClient();
       const { error } = await supabase.from("user_medications").update({ is_active: false }).eq("id", id);
@@ -577,7 +582,7 @@ export default function ProfilePage() {
   const [medConfirmed, setMedConfirmed] = useState(() => isMedRecentlyConfirmed());
 
   const confirmMedicationsCurrent = async () => {
-    if (!profile) return;
+    if (!profile || !canEdit) return;
     setConfirming(true);
     try {
       const supabase = createBrowserClient();
@@ -756,9 +761,11 @@ export default function ProfilePage() {
             <div className="flex-1 text-center sm:text-left">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 {profile.full_name || user?.email?.split("@")[0] || "Member"}
-                <button onClick={startEditingHealth} className="text-gray-400 hover:text-primary transition-colors" aria-label={tr ? "Düzenle" : "Edit"}>
-                  <Edit3 className="h-4 w-4" />
-                </button>
+                {canEdit && (
+                  <button onClick={startEditingHealth} className="text-gray-400 hover:text-primary transition-colors" aria-label={tr ? "Düzenle" : "Edit"}>
+                    <Edit3 className="h-4 w-4" />
+                  </button>
+                )}
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {tr ? "Üye:" : "Member since:"}{" "}
@@ -991,8 +998,8 @@ export default function ProfilePage() {
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div>
             <p className="text-sm text-muted-foreground">{tr ? "Sana nasıl hitap edelim" : "Display Name"}</p>
-            <InlineEdit value={profile.full_name} lang={lang} placeholder={tr ? "Adın" : "Your name"}
-              onSave={async (v) => { const sb = createBrowserClient(); await sb.from("user_profiles").update({ full_name: v }).eq("id", profile.id); await refreshProfile(); }} />
+            <InlineEdit value={profile.full_name} lang={lang} placeholder={tr ? "Adın" : "Your name"} disabled={!canEdit}
+              onSave={async (v) => { if (!canEdit) return; const sb = createBrowserClient(); await sb.from("user_profiles").update({ full_name: v }).eq("id", profile.id); await refreshProfile(); }} />
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{tx('profile.email', lang)}</p>
@@ -1000,8 +1007,8 @@ export default function ProfilePage() {
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{tx('profile.age', lang)}</p>
-            <InlineEdit value={profile.age} lang={lang} type="number" placeholder={tr ? "Yaş" : "Age"}
-              onSave={async (v) => { const sb = createBrowserClient(); await sb.from("user_profiles").update({ age: parseInt(v) || null }).eq("id", profile.id); await refreshProfile(); }} />
+            <InlineEdit value={profile.age} lang={lang} type="number" placeholder={tr ? "Yaş" : "Age"} disabled={!canEdit}
+              onSave={async (v) => { if (!canEdit) return; const sb = createBrowserClient(); await sb.from("user_profiles").update({ age: parseInt(v) || null }).eq("id", profile.id); await refreshProfile(); }} />
           </div>
           <div>
             <p className="text-sm text-muted-foreground">{tx('profile.gender', lang)}</p>
@@ -1014,13 +1021,13 @@ export default function ProfilePage() {
               const g = profile.gender || "";
               const displayValue = genderLabels[g]?.[lang] || null;
               return (
-                <InlineEdit value={displayValue} lang={lang} type="chips"
+                <InlineEdit value={displayValue} lang={lang} type="chips" disabled={!canEdit}
                   options={[
                     { value: "male", label: tr ? "Erkek" : "Male" },
                     { value: "female", label: tr ? "Kadın" : "Female" },
                     { value: "other", label: tr ? "Diğer" : "Other" },
                   ]}
-                  onSave={async (v) => { const sb = createBrowserClient(); await sb.from("user_profiles").update({ gender: v }).eq("id", profile.id); await refreshProfile(); }} />
+                  onSave={async (v) => { if (!canEdit) return; const sb = createBrowserClient(); await sb.from("user_profiles").update({ gender: v }).eq("id", profile.id); await refreshProfile(); }} />
               );
             })()}
           </div>
@@ -1162,7 +1169,8 @@ export default function ProfilePage() {
                   variant="outline"
                   size="sm"
                   className="gap-1"
-                  onClick={() => setIsAddingMed(true)}
+                  disabled={!canEdit}
+                  onClick={() => canEdit && setIsAddingMed(true)}
                 >
                   <Plus className="h-4 w-4" />
                   {tx('profile.addMed', lang)}
@@ -1202,7 +1210,7 @@ export default function ProfilePage() {
               description={tr ? "İlaçlarını ekleyerek AI asistanının gücünü artır!" : "Power up your AI assistant by adding your medications!"}
               buttonText={tr ? "İlk İlacını Ekle" : "Add First Medication"}
               xpReward="+50 XP"
-              onClick={() => setIsAddingMed(true)}
+              onClick={() => canEdit && setIsAddingMed(true)}
             />
           ) : (
             <div className="space-y-2">
@@ -1227,14 +1235,16 @@ export default function ProfilePage() {
                       )}
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground hover:text-destructive"
-                    onClick={() => removeMedication(med.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {canEdit && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground hover:text-destructive"
+                      onClick={() => removeMedication(med.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               ))}
             </div>
@@ -1388,15 +1398,17 @@ export default function ProfilePage() {
               {tr ? "Sağlık Profilim" : "My Health Profile"}
             </CardTitle>
             {!editingHealth ? (
-              <Button variant="outline" size="sm" onClick={startEditingHealth}>
-                {tx("profile.edit", lang)}
-              </Button>
+              canEdit && (
+                <Button variant="outline" size="sm" onClick={startEditingHealth}>
+                  {tx("profile.edit", lang)}
+                </Button>
+              )
             ) : (
               <div className="flex gap-2">
                 <Button
                   size="sm"
                   onClick={saveHealthProfile}
-                  disabled={savingHealth}
+                  disabled={savingHealth || !canEdit}
                   className="gap-1 bg-primary hover:bg-primary/90"
                 >
                   {savingHealth ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
@@ -1615,7 +1627,7 @@ export default function ProfilePage() {
             <div className="sticky bottom-0 mt-6 flex gap-2 border-t pt-4 bg-background pb-2 -mx-6 px-6 shadow-[0_-4px_12px_rgba(0,0,0,0.1)]">
               <Button
                 onClick={saveHealthProfile}
-                disabled={savingHealth}
+                disabled={savingHealth || !canEdit}
                 className="flex-1 gap-2 bg-primary hover:bg-primary/90"
               >
                 {savingHealth ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
@@ -1628,7 +1640,7 @@ export default function ProfilePage() {
           </CardContent>
         )}
 
-        {!editingHealth && (
+        {!editingHealth && canEdit && (
           <CardContent className="py-3">
             <button onClick={startEditingHealth} className="text-sm text-primary font-medium hover:underline flex items-center gap-1.5">
               <Edit3 className="h-3.5 w-3.5" />
@@ -1778,17 +1790,29 @@ export default function ProfilePage() {
         );
       })()}
 
-      {/* Allergies — SBAR enriched */}
-      <AllergiesSection
-        lang={lang}
-        allergies={allergies}
-        newAllergen={newAllergen}
-        setNewAllergen={setNewAllergen}
-        newAllergenSeverity={newAllergenSeverity}
-        setNewAllergenSeverity={setNewAllergenSeverity}
-        addAllergy={addAllergy}
-        removeAllergy={removeAllergy}
-      />
+      {/* Sections that do their own mutations — lock down when !canEdit.
+          RLS also protects at DB layer (user_id = auth.uid() on inserts/updates)
+          but this prevents the UI from pretending mutations worked. */}
+      <div className={!canEdit ? "pointer-events-none opacity-70 select-none" : undefined}>
+        {!canEdit && (
+          <div className="mb-3 rounded-lg border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/20 p-3 text-xs text-amber-800 dark:text-amber-200 pointer-events-auto">
+            {tr
+              ? "⚠️ Bu profili yalnızca görüntüleyebilirsin. Düzenleme için aile kurucusunun yönetim izni vermesi ve Premium üyelik gerekir."
+              : "⚠️ You can only view this profile. Editing requires management permission from the family owner and an active Premium subscription."}
+          </div>
+        )}
+        {/* Allergies — SBAR enriched */}
+        <AllergiesSection
+          lang={lang}
+          allergies={allergies}
+          newAllergen={newAllergen}
+          setNewAllergen={setNewAllergen}
+          newAllergenSeverity={newAllergenSeverity}
+          setNewAllergenSeverity={setNewAllergenSeverity}
+          addAllergy={addAllergy}
+          removeAllergy={removeAllergy}
+        />
+      </div>
 
       {/* Health Flags card moved up — see above */}
 
@@ -1803,17 +1827,19 @@ export default function ProfilePage() {
         onDismissed={() => setShowNotifPermission(false)}
       />
 
-      {/* Vaccine Profile */}
-      <VaccineProfileSection lang={lang} userId={activeUserId || profile.id} initialVaccines={Array.isArray(profile.vaccines) ? profile.vaccines : undefined} />
+      <div className={!canEdit ? "pointer-events-none opacity-70 select-none" : undefined}>
+        {/* Vaccine Profile */}
+        <VaccineProfileSection lang={lang} userId={activeUserId || profile.id} initialVaccines={Array.isArray(profile.vaccines) ? profile.vaccines : undefined} />
 
-      {/* Family Management Permission */}
-      <FamilyManagementSettings lang={lang} />
+        {/* Family Management Permission — always own settings, not the viewed profile's */}
+        {canEdit && <FamilyManagementSettings lang={lang} />}
 
-      {/* Emergency Contacts */}
-      <EmergencyContactsSection lang={lang} userId={activeUserId || profile.id} />
+        {/* Emergency Contacts */}
+        <EmergencyContactsSection lang={lang} userId={activeUserId || profile.id} />
 
-      {/* Linked Accounts */}
-      <LinkedAccountsSection lang={lang} userId={activeUserId || profile.id} />
+        {/* Linked Accounts — only show for own profile */}
+        {isOwnProfile && <LinkedAccountsSection lang={lang} userId={activeUserId || profile.id} />}
+      </div>
 
       {/* Privacy Settings & Consent Management (KVKK Md.11 — MADDE 1-3, 10) */}
       <Card className="mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow" id="privacy-settings">
