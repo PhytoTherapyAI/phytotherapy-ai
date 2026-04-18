@@ -16,6 +16,7 @@ import {
   Users, UserPlus, Crown, Shield, Trash2, Pencil, Check, X, Loader2, Home,
   Heart, Bell, Siren, Info, ChevronDown, Settings2, Mail, Clock, AlertCircle,
   Pill, ShieldAlert, Activity, ChevronRight, CheckCircle2, Droplet, Send,
+  GitBranch,
 } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
 import type { FamilyMember, FamilyRelationship } from "@/types/family"
@@ -761,6 +762,27 @@ export default function FamilyPage() {
                 ? "Veri paylaşımı açıldığında ortalama skor ve aktif hatırlatmalar burada görünecek."
                 : "Average score and active reminders appear here once members enable data sharing."}
             </p>
+
+            {/* Aile Sağlık Ağacı CTA */}
+            <Link
+              href="/family-health-tree"
+              className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-emerald-200 dark:border-emerald-900 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/20 p-4 hover:shadow-md transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-emerald-500/15 p-2 text-emerald-600 dark:text-emerald-400">
+                  <GitBranch className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {tr ? "Aile Sağlık Ağacı" : "Family Health Tree"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {tr ? "Genetik riskleri ve aile sağlık örüntülerini gör" : "View genetic risks and family health patterns"}
+                  </p>
+                </div>
+              </div>
+              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-emerald-600 transition-colors" />
+            </Link>
 
             {/* ─── STAGE 1: Üye kartları (grid) ─── */}
             <div className="mb-6">

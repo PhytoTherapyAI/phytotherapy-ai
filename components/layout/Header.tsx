@@ -7,6 +7,7 @@ import {
   Leaf, LogIn, LogOut, Settings, AlertTriangle, Check, RefreshCw,
   Menu, X, Sparkles, LayoutDashboard, Shield, Calendar,
   Flame, Search, Users, FlaskConical, ChevronDown, UserCog, UserCircle,
+  GitBranch,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useAuth } from "@/lib/auth-context";
@@ -208,6 +209,15 @@ export function Header() {
                           <Link href="/family" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted" onClick={() => setUserMenuOpen(false)}>
                             <Users className="h-4 w-4" /> {tx("family.title", lang)}
                           </Link>
+                          {familyGroup && (
+                            <Link
+                              href="/family-health-tree"
+                              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted"
+                              onClick={() => setUserMenuOpen(false)}
+                            >
+                              <GitBranch className="h-4 w-4" /> {lang === "tr" ? "Sağlık Ağacı" : "Health Tree"}
+                            </Link>
+                          )}
                           {familyGroup ? (
                             <button
                               type="button"
