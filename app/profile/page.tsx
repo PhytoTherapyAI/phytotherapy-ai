@@ -27,6 +27,7 @@ import {
   Plus, X, Loader2, CheckCircle2, Check, Save, Baby,
   Stethoscope, Sparkles, Camera, MapPin, Users, Mail,
   UserPlus, ChevronDown, ChevronUp, Phone, Edit3, Star,
+  AlertCircle,
 } from "lucide-react";
 import type { UserMedication, UserAllergy, AllergySeverity, UserProfile } from "@/lib/database.types";
 import { MedicationScanner } from "@/components/scanner/MedicationScanner";
@@ -689,13 +690,31 @@ export default function ProfilePage() {
           <p className="text-sm text-emerald-800 dark:text-emerald-300 font-medium">
             {tx("family.managingBanner", lang).replace("{name}", profile?.full_name?.split(" ")[0] || (tr ? "Aile üyesi" : "Family member"))}
           </p>
-          {familyGroup?.id && (
-            <SOSButton
-              groupId={familyGroup.id}
-              targetName={profile?.full_name?.split(" ")[0] || null}
-              lang={lang as "en" | "tr"}
-            />
-          )}
+        </div>
+      )}
+
+      {/* SOS — always visible when viewing a family member (emergency features
+          are never gated behind Premium or management role; KVKK/safety) */}
+      {!isOwnProfile && familyGroup?.id && (
+        <div className="mb-4 rounded-xl border-2 border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-950/20 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-start gap-2 flex-1">
+            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-red-900 dark:text-red-200">
+                {tr ? "Acil Durum" : "Emergency"}
+              </p>
+              <p className="text-xs text-red-700 dark:text-red-300">
+                {tr
+                  ? `${profile?.full_name?.split(" ")[0] || "Bu kişi"} için aile üyelerine acil bildirim gönder`
+                  : `Send an emergency alert to family members about ${profile?.full_name?.split(" ")[0] || "this person"}`}
+              </p>
+            </div>
+          </div>
+          <SOSButton
+            groupId={familyGroup.id}
+            targetName={profile?.full_name?.split(" ")[0] || null}
+            lang={lang as "en" | "tr"}
+          />
         </div>
       )}
       {/* Save success toast */}
