@@ -43,23 +43,18 @@ interface FounderItem {
   initials: string
   nameKey: string
   roleKey: string
-  schoolKey: string
-  bodyKey: string
 }
+// founder1 = Taha (listed first), founder2 = İpek.
 const FOUNDERS: readonly FounderItem[] = [
   {
-    initials: "İÖ",
+    initials: "TS",
     nameKey: "about.team.founder1Name",
     roleKey: "about.team.founder1Role",
-    schoolKey: "about.team.founder1School",
-    bodyKey: "about.team.founder1Body",
   },
   {
-    initials: "TS",
+    initials: "İÖ",
     nameKey: "about.team.founder2Name",
     roleKey: "about.team.founder2Role",
-    schoolKey: "about.team.founder2School",
-    bodyKey: "about.team.founder2Body",
   },
 ]
 
@@ -150,11 +145,7 @@ export function AboutSection() {
               variants={fadeUp}
               className="text-lg leading-relaxed text-slate-700 dark:text-slate-300"
             >
-              {tx("about.story.p4Prefix", lang)}
-              <strong className="font-bold text-slate-900 dark:text-white">
-                {tx("about.story.p4Highlight", lang)}
-              </strong>
-              {tx("about.story.p4Suffix", lang)}
+              {tx("about.story.p4", lang)}
             </motion.p>
           </motion.div>
         </div>
@@ -259,7 +250,7 @@ export function AboutSection() {
               <motion.article
                 key={f.nameKey}
                 variants={fadeUp}
-                className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8"
+                className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 text-center"
               >
                 {/* TODO(assets): replace initials placeholder with <Image src="/team/..." /> */}
                 <div
@@ -268,17 +259,11 @@ export function AboutSection() {
                 >
                   {f.initials}
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white text-center">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                   {tx(f.nameKey, lang)}
                 </h3>
-                <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 text-center">
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                   {tx(f.roleKey, lang)}
-                </p>
-                <p className="mt-1 text-base text-slate-600 dark:text-slate-400 text-center">
-                  {tx(f.schoolKey, lang)}
-                </p>
-                <p className="mt-4 text-base text-slate-700 dark:text-slate-300 leading-relaxed">
-                  {tx(f.bodyKey, lang)}
                 </p>
               </motion.article>
             ))}

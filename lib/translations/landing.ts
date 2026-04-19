@@ -38,14 +38,14 @@ export const landingTranslations: Record<string, TranslationEntry> = {
   },
   "landing.hero.ctaPrimary": { en: "Try Free for 7 Days →", tr: "7 Gün Ücretsiz Dene →" },
   "landing.hero.ctaSecondary": { en: "How It Works? ↓", tr: "Nasıl Çalışıyor? ↓" },
-  "landing.hero.badge1": { en: "🏆 IGNITE'26 Winner", tr: "🏆 IGNITE'26 Birincisi" },
+  "landing.hero.badge1": { en: "Evidence-based medicine", tr: "Kanıta dayalı tıp" },
   "landing.hero.badge2": {
-    en: "🛡️ KVKK compliant, data stays in Türkiye",
-    tr: "🛡️ KVKK uyumlu, veriler Türkiye'de",
+    en: "End-to-end encrypted & GDPR ready",
+    tr: "KVKK uyumlu & uçtan uca şifreli",
   },
   "landing.hero.badge3": {
-    en: "👨‍⚕️ Designed by medical students to solve clinical chaos",
-    tr: "👨‍⚕️ Tıp fakültesi öğrencileri tarafından, klinik kaosu çözmek için tasarlandı",
+    en: "Designed by medical students",
+    tr: "Tıp fakültesi öğrencileri tarafından tasarlandı",
   },
   "landing.hero.screenshotCaption": { en: "DoctoPal panel preview", tr: "DoctoPal panel önizlemesi" },
 
@@ -204,20 +204,23 @@ export const landingTranslations: Record<string, TranslationEntry> = {
     en: "Why can you trust DoctoPal?",
     tr: "Neden DoctoPal'a güvenebilirsin?",
   },
-  "landing.trust.col1Title": { en: "Designed in Türkiye", tr: "Türkiye'de Tasarlandı" },
+  "landing.trust.col1Title": { en: "Privacy First", tr: "Mahremiyet Önceliği" },
   "landing.trust.col1Body": {
-    en: "Your data within Türkiye, fully KVKK compliant. No international data transfers.",
-    tr: "Verilerin Türkiye sınırlarında, KVKK'ya tam uyumlu. Yurt dışı veri aktarımı yok.",
+    en: "Your data is end-to-end encrypted, stored on KVKK and GDPR compliant infrastructure. No cross-border transfers, no third-party sharing.",
+    tr: "Verileriniz uçtan uca şifreli, KVKK ve GDPR uyumlu altyapıda saklanır. Yurt dışı aktarım yok, üçüncü taraf paylaşım yok.",
   },
   "landing.trust.col2Title": { en: "Medical Guidance", tr: "Tıbbi Danışmanlık" },
   "landing.trust.col2Body": {
     en: "Built by two founders who combined medical education with full-stack development to translate clinical knowledge into software. Every clinical flow is literature-supported.",
     tr: "Klinikten gelen bilgiyi yazılıma dökmek için tıp eğitimini ve full-stack geliştirmeyi birleştiren iki kurucunun ürünü. Her klinik akış literatürle desteklenir.",
   },
-  "landing.trust.col3Title": { en: "Competition Validation", tr: "Rekabet Doğrulaması" },
+  "landing.trust.col3Title": {
+    en: "Thoughtful Product Development",
+    tr: "Titiz Ürün Geliştirme",
+  },
   "landing.trust.col3Body": {
-    en: "IGNITE'26 winner · A health technology venture supported by Koç University Entrepreneurship.",
-    tr: "IGNITE'26 birincisi · Koç Üniversitesi Girişimciliği destekli sağlık teknolojisi girişimi.",
+    en: "Every feature is backed by clinical literature. A solution born from real need, crafted with care.",
+    tr: "Her özellik klinik literatürle desteklenir. Gerçek bir ihtiyaçtan doğan, özenle geliştirilen bir çözüm.",
   },
   "landing.trust.col4Title": { en: "Secure Infrastructure", tr: "Güvenli Altyapı" },
   "landing.trust.col4Body": {
@@ -258,7 +261,7 @@ export const landingTranslations: Record<string, TranslationEntry> = {
   "landing.footer.legalLink5": { en: "KVKK Rights", tr: "KVKK Hakları" },
   "landing.footer.legalLink6": { en: "Contact: info@doctopal.com", tr: "İletişim: info@doctopal.com" },
   "landing.footer.copyright": {
-    en: "© 2026 DoctoPal · All rights reserved · Made in Türkiye 🇹🇷",
-    tr: "© 2026 DoctoPal · Tüm hakları saklıdır · Türkiye'de geliştirildi 🇹🇷",
+    en: "© 2026 DoctoPal · All rights reserved",
+    tr: "© 2026 DoctoPal · Tüm hakları saklıdır",
   },
 }

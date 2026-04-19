@@ -16,7 +16,8 @@ import {
   Sparkles,
   MapPin,
   GraduationCap,
-  Trophy,
+  Microscope,
+  Stethoscope,
   Lock,
   Zap,
   MousePointer,
@@ -88,11 +89,11 @@ export interface PricingPlan {
 }
 
 // ── Hero badges ──────────────────────────────────────
-// Translation strings already include an emoji prefix; Hero section strips
-// the leading emoji so we can render the Lucide icon cleanly (Ad\u0131m D).
+// Translations no longer carry emoji prefixes (Session 34 clean-up); the
+// Lucide icon is the sole visual marker alongside the text.
 export const HERO_BADGES: readonly HeroBadge[] = [
-  { id: "badge1", icon: Trophy, textKey: "landing.hero.badge1" },
-  { id: "badge2", icon: Shield, textKey: "landing.hero.badge2" },
+  { id: "badge1", icon: Stethoscope, textKey: "landing.hero.badge1" },
+  { id: "badge2", icon: Lock, textKey: "landing.hero.badge2" },
   { id: "badge3", icon: GraduationCap, textKey: "landing.hero.badge3" },
 ]
 
@@ -210,7 +211,7 @@ export const TRUST_PILLARS: readonly TrustPillar[] = [
   },
   {
     id: "col3",
-    icon: Trophy,
+    icon: Microscope,
     titleKey: "landing.trust.col3Title",
     bodyKey: "landing.trust.col3Body",
   },

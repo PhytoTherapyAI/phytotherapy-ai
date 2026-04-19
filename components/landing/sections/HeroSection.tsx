@@ -17,8 +17,7 @@ import {
 
 // Strip a leading emoji (incl. ZWJ sequences) + trailing whitespace so the
 // Lucide icon isn't redundant with the emoji in the translation string.
-// "🏆 IGNITE'26 Birincisi" → "IGNITE'26 Birincisi"
-// "👨‍⚕️ Tıp fakültesi..." → "Tıp fakültesi..."
+// Kept for backward safety — current hero badge translations are plain text.
 function stripLeadingEmoji(s: string): string {
   return s
     .replace(/^\p{Extended_Pictographic}[\p{Extended_Pictographic}\u200D\uFE0F]*\s+/u, "")

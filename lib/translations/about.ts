@@ -47,17 +47,9 @@ export const aboutTranslations: Record<string, TranslationEntry> = {
     en: "DoctoPal was born to put an end to exactly that helplessness and medical knowledge asymmetry. As two young people studying medicine and also believing in the transformative power of AI and technology, we rolled up our sleeves to solve that chaos in the clinic.",
     tr: "DoctoPal, işte tam olarak bu çaresizliğe ve tıbbi bilgi asimetrisine bir son vermek için doğdu. Tıp fakültesinde eğitim gören, aynı zamanda teknolojinin ve yapay zekanın dönüştürücü gücüne inanan iki genç olarak, klinikteki o karmaşayı çözmek için kolları sıvadık.",
   },
-  "about.story.p4Prefix": {
-    en: "We aren't just students memorising diseases or developers writing code. We are kids who carry the same worries as you. The DoctoPal vision, which we ",
-    tr: "Bizler sadece hastalıkları ezberleyen öğrenciler veya kod yazan geliştiriciler değiliz. Bizler, sizinle aynı kaygıları taşıyan evlatlarız. ",
-  },
-  "about.story.p4Highlight": {
-    en: "crowned with first place at the IGNITE'26 Entrepreneurship Competition",
-    tr: "IGNITE'26 Girişimcilik Yarışması'nda birincilikle taçlandırdığımız",
-  },
-  "about.story.p4Suffix": {
-    en: ", has today become your family's most trustworthy health assistant.",
-    tr: " DoctoPal vizyonu, bugün ailenizin en güvenilir sağlık asistanına dönüştü.",
+  "about.story.p4": {
+    en: "We are not just students memorizing diseases or developers writing code. We are children who carry the same concerns as you. DoctoPal was born from the desire to turn that concern into a solution.",
+    tr: "Bizler sadece hastalıkları ezberleyen öğrenciler veya kod yazan geliştiriciler değiliz. Bizler, sizinle aynı kaygıları taşıyan evlatlarız. DoctoPal, bu kaygıyı bir çözüme dönüştürme isteğinden doğdu.",
   },
 
   // ─── vision ──────────────────────────────────────────
@@ -87,20 +79,10 @@ export const aboutTranslations: Record<string, TranslationEntry> = {
 
   // ─── team ────────────────────────────────────────────
   "about.team.sectionTitle": { en: "Meet Our Team", tr: "Ekibimizle Tanışın" },
-  "about.team.founder1Name": { en: "İpek Özen", tr: "İpek Özen" },
+  "about.team.founder1Name": { en: "Taha Ahmet Sıbıç", tr: "Taha Ahmet Sıbıç" },
   "about.team.founder1Role": { en: "Co-founder", tr: "Co-founder" },
-  "about.team.founder1School": { en: "Medical Student", tr: "Tıp Fakültesi Öğrencisi" },
-  "about.team.founder1Body": {
-    en: "Believes that the voices of patients and anxious families must be heard inside the complexity of the health system. From clinical flow design to product vision, from user research to pitch decks — runs every corner of DoctoPal side by side with Taha.",
-    tr: "Sağlık sisteminin karmaşasında hastaların ve endişeli ailelerin sesinin duyulması gerektiğine inanıyor. Klinik akış tasarımından ürün vizyonuna, kullanıcı araştırmasından pitch deck'lerine kadar DoctoPal'ın her köşesinde Taha ile birlikte koşturuyor.",
-  },
-  "about.team.founder2Name": { en: "Taha Ahmet Sıbıç", tr: "Taha Ahmet Sıbıç" },
+  "about.team.founder2Name": { en: "İpek Özen", tr: "İpek Özen" },
   "about.team.founder2Role": { en: "Co-founder", tr: "Co-founder" },
-  "about.team.founder2School": { en: "Medical Student", tr: "Tıp Fakültesi Öğrencisi" },
-  "about.team.founder2Body": {
-    en: "Combines clinical observation with self-taught full-stack development. From coding DoctoPal's infrastructure to shaping product strategy — on the ground alongside İpek.",
-    tr: "Klinik gözlem ile kendi kendine öğrendiği full-stack yazılım geliştirmeyi birleştiriyor. DoctoPal'ın altyapısını kodlamaktan ürün stratejisi belirlemeye kadar İpek ile birlikte sahada.",
-  },
 
   // ─── contact CTA ─────────────────────────────────────
   "about.contact.heading": { en: "Contact", tr: "İletişim" },
