@@ -99,6 +99,39 @@ export async function POST(req: NextRequest) {
   }
 
   if (isBroadcast) {
+    // DIAGNOSTIC: log the broadcast setup so SOS RLS failures can be traced.
+    console.log("[notif:broadcast] request:", {
+      callerUserId: auth.user.id,
+      groupId: body.groupId,
+      type: body.type,
+      isEmergency,
+    })
+
+    // SANITY CHECK: is the caller actually an accepted member of this group?
+    // RLS's fn_sender_insert requires this; checking up-front gives a clearer error.
+    const { data: callerMembership, error: callerErr } = await auth.supabase
+      .from("family_members")
+      .select("id, role, invite_status")
+      .eq("group_id", body.groupId)
+      .eq("user_id", auth.user.id)
+      .maybeSingle()
+
+    if (callerErr) {
+      console.error("[notif:broadcast] caller-membership lookup failed:", callerErr.message)
+      return NextResponse.json({ error: callerErr.message }, { status: 400 })
+    }
+    if (!callerMembership || callerMembership.invite_status !== "accepted") {
+      console.warn("[notif:broadcast] caller not an accepted member:", {
+        callerUserId: auth.user.id,
+        groupId: body.groupId,
+        membership: callerMembership,
+      })
+      return NextResponse.json({
+        error: "Caller is not an accepted member of this group",
+        detail: { hasMembership: !!callerMembership, status: callerMembership?.invite_status || null },
+      }, { status: 403 })
+    }
+
     // Broadcast: insert one row per accepted non-self member of the group
     const { data: members, error: memberErr } = await auth.supabase
       .from("family_members")
@@ -107,7 +140,10 @@ export async function POST(req: NextRequest) {
       .eq("invite_status", "accepted")
       .neq("user_id", auth.user.id)
 
-    if (memberErr) return NextResponse.json({ error: memberErr.message }, { status: 400 })
+    if (memberErr) {
+      console.error("[notif:broadcast] members query failed:", memberErr.message)
+      return NextResponse.json({ error: memberErr.message }, { status: 400 })
+    }
     if (!members || members.length === 0) {
       return NextResponse.json({ error: "No other household members to notify" }, { status: 400 })
     }
@@ -122,12 +158,30 @@ export async function POST(req: NextRequest) {
         message: body.message!.trim(),
       }))
 
+    console.log("[notif:broadcast] inserting rows:", rows.map(r => ({
+      group_id: r.group_id,
+      from_user_id: r.from_user_id,
+      to_user_id: r.to_user_id,
+      type: r.type,
+    })))
+
     const { data, error } = await auth.supabase
       .from("family_notifications")
       .insert(rows)
       .select()
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+    if (error) {
+      console.error("[notif:broadcast] insert failed:", {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+      })
+      return NextResponse.json({
+        error: error.message,
+        detail: { code: error.code, hint: error.hint, rowsAttempted: rows.length },
+      }, { status: 400 })
+    }
     return NextResponse.json({ notifications: data, count: data?.length ?? 0 })
   }
 

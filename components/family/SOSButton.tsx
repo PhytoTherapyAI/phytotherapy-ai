@@ -45,6 +45,20 @@ export function SOSButton({ groupId, targetName, lang, disabled }: Props) {
           : `🚨 Emergency alert for ${targetName}`)
         : (tr ? "🚨 Acil durum bildirimi" : "🚨 Emergency alert")
 
+      // DIAGNOSTIC: log what we're sending — helps isolate RLS failures.
+      // If groupId is null/undefined or doesn't match the caller's session user's
+      // family group, the API will fail the policy check.
+      const callerUserId = session.user?.id
+      console.log("[SOS] sending broadcast:", {
+        groupId,
+        groupIdType: typeof groupId,
+        groupIdValid: !!groupId && typeof groupId === "string" && groupId.length > 0,
+        callerUserId,
+        targetName,
+        broadcast: true,
+        type: "emergency",
+      })
+
       const res = await fetch("/api/family/notifications", {
         method: "POST",
         headers: {
@@ -61,6 +75,7 @@ export function SOSButton({ groupId, targetName, lang, disabled }: Props) {
 
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
+        console.error("[SOS] server rejected broadcast:", { status: res.status, data })
         setErrorMsg(data.error || (tr ? "Gönderilemedi" : "Failed to send"))
         setSending(false)
         return
