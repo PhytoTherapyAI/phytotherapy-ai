@@ -16,9 +16,16 @@ import {
   Users, UserPlus, Crown, Shield, Trash2, Pencil, Check, X, Loader2, Home,
   Heart, Bell, Siren, Info, ChevronDown, Settings2, Mail, Clock, AlertCircle,
   Pill, ShieldAlert, Activity, ChevronRight, CheckCircle2, Droplet, Send,
-  GitBranch,
+  GitBranch, Sparkles, Lock,
 } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import type { FamilyMember, FamilyRelationship } from "@/types/family"
 
 // Order matters: used as the select dropdown order.
@@ -85,7 +92,8 @@ function setStoredIcon(groupId: string, icon: string) {
 
 export default function FamilyPage() {
   const router = useRouter()
-  const { user, isAuthenticated, isLoading: authLoading, profile } = useAuth()
+  const { user, isAuthenticated, isLoading: authLoading, profile, premiumStatus } = useAuth()
+  const isPremium = premiumStatus?.isPremium ?? false
   const {
     familyGroup,
     familyMembers,
@@ -99,6 +107,7 @@ export default function FamilyPage() {
     removeMember,
     cancelInvite,
     updateSharingPrefs,
+    updateAllowsManagement,
     updateRelationship,
     setActiveProfile,
     loading: familyLoading,
@@ -138,13 +147,15 @@ export default function FamilyPage() {
   const [reminderTarget, setReminderTarget] = useState<FamilyMember | null>(null)
   const [sendingReminder, setSendingReminder] = useState(false)
 
-  // Sharing prefs modal
+  // Sharing prefs modal — also controls allows_management (the per-user gate that lets
+  // admins edit this member's profile). Enabling allows_management requires Premium.
   const [sharingModalOpen, setSharingModalOpen] = useState(false)
   const [sharingDraft, setSharingDraft] = useState({
     shares_health_score: false,
     shares_medications: false,
     shares_allergies: false,
     shares_emergency: true,
+    allows_management: false,
   })
   const [savingSharing, setSavingSharing] = useState(false)
 
@@ -171,6 +182,7 @@ export default function FamilyPage() {
         shares_medications: self.shares_medications ?? false,
         shares_allergies: self.shares_allergies ?? false,
         shares_emergency: self.shares_emergency ?? true,
+        allows_management: self.allows_management ?? false,
       })
     }
   }, [familyMembers, user])
@@ -417,7 +429,15 @@ export default function FamilyPage() {
 
   async function handleSaveSharing() {
     setSavingSharing(true)
-    const ok = await updateSharingPrefs(sharingDraft)
+    // Split the draft — updateSharingPrefs writes the shares_* columns,
+    // updateAllowsManagement writes the allows_management column separately.
+    // Free users cannot enable allows_management; force it off regardless of draft.
+    const { allows_management, ...sharingOnly } = sharingDraft
+    const effectiveAllows = isPremium ? allows_management : false
+    const ok = await updateSharingPrefs(sharingOnly)
+    if (ok) {
+      await updateAllowsManagement(effectiveAllows)
+    }
     setSavingSharing(false)
     if (ok) {
       setSharingModalOpen(false)
@@ -892,39 +912,57 @@ export default function FamilyPage() {
 
                       {/* Relationship picker */}
                       {!isSynth && member.user_id && (
-                        <div className="mt-3 space-y-1">
-                          <span className="text-muted-foreground text-[10px] block">
+                        <div className="mt-3 space-y-1.5">
+                          <span className="text-muted-foreground text-[10px] block font-medium tracking-wide uppercase">
                             {tx("family.relationshipLabel", lang)}
                           </span>
                           {(isSelf || isOwner || isAdmin) ? (
-                            <select
-                              value={(member.relationship as string | null | undefined) || ""}
-                              onClick={e => e.stopPropagation()}
-                              onChange={async e => {
-                                e.stopPropagation()
-                                const next = (e.target.value || null) as FamilyRelationship | null
-                                if (!next) return
-                                const ok = await updateRelationship(member.id, next)
-                                if (!ok) {
-                                  alert(tr
-                                    ? "İlişki güncellenemedi. Tekrar dener misin?"
-                                    : "Could not update relationship. Please try again.")
-                                }
-                              }}
-                              className="w-full rounded-md border border-border bg-background px-2 py-1 text-[11px] focus:ring-1 focus:ring-emerald-400 outline-none"
-                            >
-                              <option value="">{tr ? "Seç…" : "Select…"}</option>
-                              {RELATIONSHIP_OPTIONS.map(opt => (
-                                <option key={opt.value} value={opt.value}>
-                                  {opt.emoji} {tx(`family.rel.${opt.value}`, lang)}
-                                </option>
-                              ))}
-                            </select>
+                            <div onClick={e => e.stopPropagation()}>
+                              <Select
+                                value={(member.relationship as string | undefined) || undefined}
+                                onValueChange={async (value) => {
+                                  const next = (value || null) as FamilyRelationship | null
+                                  if (!next) return
+                                  const ok = await updateRelationship(member.id, next)
+                                  if (!ok) {
+                                    alert(tr
+                                      ? "İlişki güncellenemedi. Tekrar dener misin?"
+                                      : "Could not update relationship. Please try again.")
+                                  }
+                                }}
+                              >
+                                <SelectTrigger className="w-full h-9 text-xs rounded-lg border-border bg-background hover:bg-muted/50 transition-colors">
+                                  <SelectValue placeholder={tr ? "Seç…" : "Select…"}>
+                                    {member.relationship ? (
+                                      <span className="flex items-center gap-1.5">
+                                        <span className="text-sm">{RELATIONSHIP_OPTIONS.find(o => o.value === member.relationship)?.emoji}</span>
+                                        <span className="font-medium">{tx(`family.rel.${member.relationship}`, lang)}</span>
+                                      </span>
+                                    ) : null}
+                                  </SelectValue>
+                                </SelectTrigger>
+                                <SelectContent className="min-w-[var(--anchor-width)]">
+                                  {RELATIONSHIP_OPTIONS.map(opt => (
+                                    <SelectItem key={opt.value} value={opt.value} className="py-2 px-2.5 cursor-pointer">
+                                      <span className="flex items-center gap-2">
+                                        <span className="text-base leading-none">{opt.emoji}</span>
+                                        <span className="font-medium text-foreground">{tx(`family.rel.${opt.value}`, lang)}</span>
+                                      </span>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
                           ) : (
-                            <span className="text-muted-foreground font-medium text-xs block">
-                              {member.relationship
-                                ? `${RELATIONSHIP_OPTIONS.find(o => o.value === member.relationship)?.emoji || ""} ${tx(`family.rel.${member.relationship}`, lang)}`
-                                : "—"}
+                            <span className="inline-flex items-center gap-1.5 text-foreground font-medium text-xs">
+                              {member.relationship ? (
+                                <>
+                                  <span className="text-sm leading-none">{RELATIONSHIP_OPTIONS.find(o => o.value === member.relationship)?.emoji || ""}</span>
+                                  <span>{tx(`family.rel.${member.relationship}`, lang)}</span>
+                                </>
+                              ) : (
+                                <span className="text-muted-foreground">—</span>
+                              )}
                             </span>
                           )}
                         </div>
@@ -1453,88 +1491,180 @@ export default function FamilyPage() {
         </div>
       )}
 
-      {/* ─── STAGE 3: Sharing prefs modal ─── */}
+      {/* ─── STAGE 3: Sharing prefs modal (with allows_management premium gate) ─── */}
       {sharingModalOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4"
           onClick={() => setSharingModalOpen(false)}
         >
           <div
-            className="bg-card w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-2xl border max-h-[90vh] overflow-y-auto"
+            className="bg-card w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl shadow-2xl border border-border max-h-[92vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
-            <div className="p-5 border-b border-border flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Settings2 className="h-5 w-5 text-emerald-500" />
-                <h3 className="font-semibold text-foreground">
-                  {tr ? "Paylaşım Ayarları" : "Sharing Preferences"}
-                </h3>
+            {/* Header */}
+            <div className="px-6 py-5 border-b border-border flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/30">
+                  <Settings2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground text-base leading-tight">
+                    {tr ? "Paylaşım Ayarları" : "Sharing Preferences"}
+                  </h3>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    {tr ? "Hane üyelerine görünürlüğü yönet" : "Control what household members can see"}
+                  </p>
+                </div>
               </div>
-              <button onClick={() => setSharingModalOpen(false)} className="text-muted-foreground hover:text-foreground">
+              <button
+                onClick={() => setSharingModalOpen(false)}
+                className="h-9 w-9 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                aria-label={tr ? "Kapat" : "Close"}
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="p-5">
-              <p className="text-xs text-muted-foreground mb-4 leading-relaxed">
-                {tr
-                  ? "Hangi sağlık bilgilerinin hane üyeleriyle paylaşılacağını seç. Acil durum bilgileri varsayılan olarak açıktır."
-                  : "Choose what health information is shared with household members. Emergency info is on by default."}
-              </p>
 
-              {[
-                { key: "shares_health_score", icon: Activity, color: "text-rose-500", labelTr: "Sağlık skoru", labelEn: "Health score", descTr: "Günlük sağlık skorunu üyeler görebilsin", descEn: "Members can see your daily health score" },
-                { key: "shares_medications", icon: Pill, color: "text-blue-500", labelTr: "İlaç listesi", labelEn: "Medication list", descTr: "Aktif ilaçlarınızı üyeler görebilsin", descEn: "Members can see your active medications" },
-                { key: "shares_allergies", icon: AlertCircle, color: "text-amber-500", labelTr: "Alerji bilgileri", labelEn: "Allergy info", descTr: "Alerjilerinizi üyeler görebilsin", descEn: "Members can see your allergies" },
-                { key: "shares_emergency", icon: ShieldAlert, color: "text-red-500", labelTr: "Acil durum bilgileri", labelEn: "Emergency info", descTr: "Acil iletişim ve kritik tıbbi bilgileriniz (önerilen)", descEn: "Emergency contacts and critical medical info (recommended)" },
-              ].map(({ key, icon: Icon, color, labelTr, labelEn, descTr, descEn }) => {
-                const checked = sharingDraft[key as keyof typeof sharingDraft]
-                return (
-                  <label
-                    key={key}
-                    className="flex items-start gap-3 p-3 rounded-xl border bg-muted/30 hover:bg-muted/50 cursor-pointer mb-2 transition-colors"
-                  >
-                    <Icon className={`h-5 w-5 mt-0.5 flex-shrink-0 ${color}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground">{tr ? labelTr : labelEn}</p>
-                      <p className="text-[11px] text-muted-foreground leading-tight mt-0.5">{tr ? descTr : descEn}</p>
-                    </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={checked}
-                      onClick={() => setSharingDraft(d => ({ ...d, [key]: !d[key as keyof typeof d] }))}
-                      className={`relative w-10 h-5 rounded-full transition-colors flex-shrink-0 mt-0.5 ${
-                        checked ? "bg-emerald-500" : "bg-muted-foreground/30"
-                      }`}
+            {/* Body */}
+            <div className="px-6 py-5 space-y-4">
+              {/* Section 1: health data visibility */}
+              <div className="space-y-2">
+                <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                  {tr ? "Sağlık Verileri Görünürlüğü" : "Health Data Visibility"}
+                </p>
+                {[
+                  { key: "shares_health_score", icon: Activity, color: "text-rose-500", bg: "bg-rose-100 dark:bg-rose-900/20", labelTr: "Sağlık skoru", labelEn: "Health score", descTr: "Günlük sağlık skorunuzu üyeler görebilsin", descEn: "Members can see your daily health score" },
+                  { key: "shares_medications", icon: Pill, color: "text-blue-500", bg: "bg-blue-100 dark:bg-blue-900/20", labelTr: "İlaç listesi", labelEn: "Medication list", descTr: "Aktif ilaçlarınızı üyeler görebilsin", descEn: "Members can see your active medications" },
+                  { key: "shares_allergies", icon: AlertCircle, color: "text-amber-500", bg: "bg-amber-100 dark:bg-amber-900/20", labelTr: "Alerji bilgileri", labelEn: "Allergy info", descTr: "Alerjilerinizi üyeler görebilsin", descEn: "Members can see your allergies" },
+                  { key: "shares_emergency", icon: ShieldAlert, color: "text-red-500", bg: "bg-red-100 dark:bg-red-900/20", labelTr: "Acil durum bilgileri", labelEn: "Emergency info", descTr: "Acil iletişim ve kritik tıbbi bilgiler (önerilen)", descEn: "Emergency contacts + critical medical info (recommended)" },
+                ].map(({ key, icon: Icon, color, bg, labelTr, labelEn, descTr, descEn }) => {
+                  const checked = sharingDraft[key as keyof typeof sharingDraft]
+                  return (
+                    <label
+                      key={key}
+                      className="flex items-center gap-3 p-4 rounded-xl border border-border bg-muted/30 hover:bg-muted/50 cursor-pointer transition-colors"
                     >
-                      <span
-                        className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${
-                          checked ? "translate-x-5" : "translate-x-0.5"
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-lg flex-shrink-0 ${bg}`}>
+                        <Icon className={`h-5 w-5 ${color}`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground">{tr ? labelTr : labelEn}</p>
+                        <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{tr ? descTr : descEn}</p>
+                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={checked}
+                        onClick={() => setSharingDraft(d => ({ ...d, [key]: !d[key as keyof typeof d] }))}
+                        className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${
+                          checked ? "bg-emerald-500" : "bg-muted-foreground/30"
                         }`}
-                      />
-                    </button>
-                  </label>
-                )
-              })}
-
-              <div className="flex gap-2 mt-5">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setSharingModalOpen(false)}
-                  disabled={savingSharing}
-                >
-                  {tr ? "İptal" : "Cancel"}
-                </Button>
-                <Button
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
-                  onClick={handleSaveSharing}
-                  disabled={savingSharing}
-                >
-                  {savingSharing && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                  {tr ? "Kaydet" : "Save"}
-                </Button>
+                      >
+                        <span
+                          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                            checked ? "translate-x-[22px]" : "translate-x-0.5"
+                          }`}
+                        />
+                      </button>
+                    </label>
+                  )
+                })}
               </div>
+
+              {/* Section 2: management permission — premium-gated */}
+              <div className="space-y-2 pt-2">
+                <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                  {tr ? "Yöneticilik İzni" : "Management Permission"}
+                </p>
+                <div
+                  className={`flex items-center gap-3 p-4 rounded-xl border ${
+                    sharingDraft.allows_management && isPremium
+                      ? "border-indigo-300 bg-indigo-50/50 dark:border-indigo-800 dark:bg-indigo-950/20"
+                      : "border-border bg-muted/30"
+                  } transition-colors`}
+                >
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-lg flex-shrink-0 ${
+                    isPremium ? "bg-indigo-100 dark:bg-indigo-900/20" : "bg-muted"
+                  }`}>
+                    {isPremium ? (
+                      <Shield className="h-5 w-5 text-indigo-500" />
+                    ) : (
+                      <Lock className="h-5 w-5 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold text-foreground">
+                        {tr ? "Aile yöneticilerine düzenleme izni" : "Allow admins to edit my profile"}
+                      </p>
+                      {!isPremium && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-300">
+                          <Sparkles className="h-2.5 w-2.5" />
+                          Premium
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
+                      {isPremium
+                        ? (tr
+                            ? "Owner/admin rolündeki üyeler ilaç, alerji ve sağlık bilgilerini düzenleyebilir."
+                            : "Owner/admin members can edit your medications, allergies and health info.")
+                        : (tr
+                            ? "Bu özellik için Premium üyelik gerekli."
+                            : "Premium subscription required for this feature.")}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={sharingDraft.allows_management}
+                    disabled={!isPremium}
+                    onClick={() => {
+                      if (!isPremium) {
+                        setFeedback({
+                          type: "error",
+                          msg: tr
+                            ? "Yöneticilik izni için Premium üyelik gerekli."
+                            : "Premium subscription required to grant management access.",
+                        })
+                        return
+                      }
+                      setSharingDraft(d => ({ ...d, allows_management: !d.allows_management }))
+                    }}
+                    className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${
+                      sharingDraft.allows_management && isPremium
+                        ? "bg-indigo-500"
+                        : "bg-muted-foreground/30"
+                    } ${!isPremium ? "opacity-60 cursor-not-allowed" : ""}`}
+                  >
+                    <span
+                      className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                        sharingDraft.allows_management && isPremium ? "translate-x-[22px]" : "translate-x-0.5"
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-border bg-muted/20 flex gap-2">
+              <Button
+                variant="outline"
+                className="flex-1 h-10"
+                onClick={() => setSharingModalOpen(false)}
+                disabled={savingSharing}
+              >
+                {tr ? "İptal" : "Cancel"}
+              </Button>
+              <Button
+                className="flex-1 h-10 bg-emerald-600 hover:bg-emerald-700 text-white"
+                onClick={handleSaveSharing}
+                disabled={savingSharing}
+              >
+                {savingSharing && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                {tr ? "Kaydet" : "Save"}
+              </Button>
             </div>
           </div>
         </div>
