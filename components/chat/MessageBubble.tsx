@@ -1,7 +1,8 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { User, Leaf, Loader2, FileText, Image as ImageIcon, BookOpen, ShieldCheck } from "lucide-react";
+import { useState, useEffect } from "react";
+import { User, Leaf, Loader2, FileText, Image as ImageIcon, BookOpen, ShieldCheck, Send, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
@@ -9,6 +10,7 @@ import { AILoadingState } from "@/components/chat/AILoadingState";
 import { SmartSuggestions } from "@/components/chat/SmartSuggestions";
 import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
 import { YellowCodeCard } from "@/components/ai/YellowCodeCard";
+import { useAuth } from "@/lib/auth-context";
 
 export interface ChatMessage {
   id: string;
@@ -22,6 +24,10 @@ export interface ChatMessage {
   /** If set on a consent_required / management_required message, indicates we're acting on
    *  a family member's profile — changes wording. For management_required, always set. */
   targetName?: string;
+  /** Present on management_required — used by the "Request permission" button to POST
+   *  a custom notification to the family member. */
+  targetUserId?: string;
+  groupId?: string;
   attachments?: Array<{
     name: string;
     type: "pdf" | "image";
@@ -139,6 +145,8 @@ export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsen
             <ManagementRequiredMessage
               lang={message.lang ?? (isTr ? "tr" : "en")}
               targetName={message.targetName}
+              targetUserId={message.targetUserId}
+              groupId={message.groupId}
             />
           ) : message.kind === "consent_required" ? (
             <ConsentRequiredMessage
@@ -452,18 +460,92 @@ function ConsentRequiredMessage({
 
 /** Renders a "management permission not granted" block — shown when the caller
  *  is acting on a family member who hasn't toggled `allows_management` on.
- *  Mirrors ConsentRequiredMessage styling but explains the management gate,
- *  which is separate from AI consent. There is no button here: only the
- *  target can grant this permission, from their own account. */
+ *  Explains the gate (consent-style copy) and offers a "Request permission"
+ *  button that POSTs a custom family_notifications row to the target. The
+ *  target sees it in their notification bell and can grant access from their
+ *  own Sharing Preferences. */
 function ManagementRequiredMessage({
   lang,
   targetName,
+  targetUserId,
+  groupId,
 }: {
   lang: "en" | "tr";
   targetName?: string;
+  targetUserId?: string;
+  groupId?: string;
 }) {
   const tr = lang === "tr";
   const name = targetName || (tr ? "Bu aile üyesi" : "This family member");
+  const { user, profile, session } = useAuth();
+
+  // Per-(caller, target) dedupe across reloads. Cleared when target grants
+  // access (we leave that to a server-driven refresh) or manually from devtools.
+  const storageKey =
+    user?.id && targetUserId ? `mgmt_request_${user.id}_${targetUserId}` : null;
+
+  const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!storageKey || typeof window === "undefined") return;
+    try {
+      if (localStorage.getItem(storageKey) === "1") setSent(true);
+    } catch {
+      /* localStorage unavailable — ok */
+    }
+  }, [storageKey]);
+
+  const canSend = !!(targetUserId && groupId && session?.access_token && !sent && !sending);
+
+  async function handleSend() {
+    if (!canSend || !session?.access_token) return;
+    setSending(true);
+    setErr(null);
+    try {
+      const callerDisplay =
+        profile?.full_name?.trim() ||
+        user?.email?.split("@")[0] ||
+        (tr ? "Aile üyeniz" : "A family member");
+      const message = tr
+        ? `${callerDisplay} sizden yöneticilik izni talep ediyor. Paylaşım Ayarları'ndan izin verebilirsiniz.`
+        : `${callerDisplay} is requesting management permission. You can grant it from Sharing Preferences.`;
+
+      const res = await fetch("/api/family/notifications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          groupId,
+          toUserId: targetUserId,
+          type: "custom",
+          message,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setErr(data.error || (tr ? "Talep gönderilemedi" : "Failed to send request"));
+        return;
+      }
+
+      if (storageKey && typeof window !== "undefined") {
+        try {
+          localStorage.setItem(storageKey, "1");
+        } catch {
+          /* noop */
+        }
+      }
+      setSent(true);
+    } catch {
+      setErr(tr ? "Sunucu hatası" : "Server error");
+    } finally {
+      setSending(false);
+    }
+  }
 
   return (
     <div className="space-y-3 text-sm text-foreground">
@@ -491,6 +573,35 @@ function ManagementRequiredMessage({
           </>
         )}
       </p>
+
+      {/* Request-permission CTA — only shown when we have both IDs. */}
+      {targetUserId && groupId && (
+        <div className="pt-1">
+          {sent ? (
+            <div className="inline-flex items-center gap-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 px-3 py-2 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+              <CheckCircle2 className="h-4 w-4" />
+              {tr ? "Talep gönderildi" : "Request sent"}
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSend}
+              disabled={!canSend}
+              className="inline-flex items-center gap-2 rounded-lg bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-2 text-sm font-semibold text-white transition-colors"
+            >
+              {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              {sending
+                ? (tr ? "Gönderiliyor…" : "Sending…")
+                : tr
+                  ? `${name}'a İzin Talebi Gönder`
+                  : `Request permission from ${name}`}
+            </button>
+          )}
+          {err && (
+            <p className="mt-2 text-xs text-red-600 dark:text-red-400">{err}</p>
+          )}
+        </div>
+      )}
 
       <p className="text-xs text-muted-foreground">
         {tr

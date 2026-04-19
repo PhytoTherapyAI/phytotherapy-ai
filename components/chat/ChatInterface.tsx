@@ -59,7 +59,7 @@ interface ChatInterfaceProps {
 export function ChatInterface({ className, onMessagesChange, loadConversation, initialQuery }: ChatInterfaceProps) {
   const { isAuthenticated, session, user, profile } = useAuth();
   const { activeUserId, isOwnProfile } = useActiveProfile();
-  const { familyMembers } = useFamily();
+  const { familyMembers, familyGroup } = useFamily();
   // Defensive: only send targetUserId when genuinely acting on someone else.
   // Three conditions must hold:
   //   - hook says it's not own profile
@@ -232,7 +232,9 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
           return;
         }
 
-        // Management permission gate — blocks even when consent is present
+        // Management permission gate — blocks even when consent is present.
+        // Passes targetUserId + groupId to the bubble so its "Request permission"
+        // button can POST a notification to the target.
         const targetAllowsManagement = targetMember?.allows_management === true;
         if (!targetAllowsManagement) {
           const userMsg: ChatMessage = {
@@ -247,6 +249,8 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
             kind: "management_required",
             lang: lang === "tr" ? "tr" : "en",
             targetName: targetDisplayName,
+            targetUserId: effectiveTargetUserId,
+            groupId: familyGroup?.id,
           };
           setMessages((prev) => [...prev, userMsg, mgmtMsg]);
           setInput("");
