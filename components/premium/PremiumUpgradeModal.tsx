@@ -5,7 +5,7 @@
 "use client"
 
 import Link from "next/link"
-import { Crown, Users, Sparkles, X } from "lucide-react"
+import { Crown, Users, Sparkles, X, Gift } from "lucide-react"
 import { useLang } from "@/components/layout/language-toggle"
 
 interface Props {
@@ -58,11 +58,21 @@ export function PremiumUpgradeModal({ open, onClose, featureName }: Props) {
           </p>
         </div>
 
-        {/* CTA cards */}
+        {/* 7-day free trial emphasis — sits above the CTAs so it reads first. */}
+        <div className="mx-6 mb-3 flex items-center justify-center gap-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 px-3 py-2">
+          <Gift className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          <p className="text-xs font-medium text-emerald-800 dark:text-emerald-300">
+            {tr
+              ? "İlk 7 gün ücretsiz — istediğin zaman iptal et."
+              : "Free for 7 days — cancel anytime."}
+          </p>
+        </div>
+
+        {/* CTA cards — yearly pricing by default (decoy: annual is what converts) */}
         <div className="px-6 pb-4 space-y-3">
           {/* Family Premium — emphasised */}
           <Link
-            href="/pricing"
+            href="/checkout?plan=family-yearly"
             className="relative block rounded-xl border-2 border-emerald-300 dark:border-emerald-700 bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950/30 dark:to-emerald-900/20 p-4 hover:shadow-lg transition-all"
           >
             <div className="absolute -top-2.5 left-4 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 px-2.5 py-0.5 text-[10px] font-bold text-white shadow-sm">
@@ -79,12 +89,15 @@ export function PremiumUpgradeModal({ open, onClose, featureName }: Props) {
                 </p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   {tr
-                    ? "6 kişiye kadar tüm aile Premium. 3 kişi olsanız bile tasarruf."
-                    : "All premium features for up to 6 family members. Even at 3 people you save."}
+                    ? "6 kişiye kadar tüm aile Premium. 2 ay bedava."
+                    : "All premium for up to 6 family members. 2 months free."}
                 </p>
                 <p className="mt-1.5 text-sm">
-                  <span className="font-bold text-emerald-700 dark:text-emerald-400">₺349</span>
-                  <span className="text-xs text-muted-foreground"> / {tr ? "ay" : "mo"}</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400">₺3.490</span>
+                  <span className="text-xs text-muted-foreground"> / {tr ? "yıl" : "yr"}</span>
+                  <span className="text-xs text-muted-foreground ml-1.5">
+                    {tr ? "(≈ ₺291 / ay)" : "(≈ ₺291 / mo)"}
+                  </span>
                 </p>
               </div>
             </div>
@@ -92,7 +105,7 @@ export function PremiumUpgradeModal({ open, onClose, featureName }: Props) {
 
           {/* Individual Premium */}
           <Link
-            href="/pricing"
+            href="/checkout?plan=individual-yearly"
             className="block rounded-xl border border-border bg-card p-4 hover:bg-muted/40 transition-colors"
           >
             <div className="flex items-start gap-3">
@@ -105,12 +118,15 @@ export function PremiumUpgradeModal({ open, onClose, featureName }: Props) {
                 </p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   {tr
-                    ? "Senin için tüm Premium özellikleri."
-                    : "All premium features — just for you."}
+                    ? "Senin için tüm Premium özellikleri. 2 ay bedava."
+                    : "All premium features — just for you. 2 months free."}
                 </p>
                 <p className="mt-1.5 text-sm">
-                  <span className="font-bold text-amber-700 dark:text-amber-400">₺149</span>
-                  <span className="text-xs text-muted-foreground"> / {tr ? "ay" : "mo"}</span>
+                  <span className="font-bold text-amber-700 dark:text-amber-400">₺1.490</span>
+                  <span className="text-xs text-muted-foreground"> / {tr ? "yıl" : "yr"}</span>
+                  <span className="text-xs text-muted-foreground ml-1.5">
+                    {tr ? "(≈ ₺124 / ay)" : "(≈ ₺124 / mo)"}
+                  </span>
                 </p>
               </div>
             </div>

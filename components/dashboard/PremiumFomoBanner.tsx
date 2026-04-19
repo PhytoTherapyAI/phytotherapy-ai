@@ -31,16 +31,17 @@ export function PremiumFomoBanner() {
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
               {tr
-                ? "Aile üyelerinin sağlık verilerini görüntüle, AI analizi yap, SBAR doktor raporları oluştur."
-                : "View family members' health data, run AI analysis, generate SBAR doctor reports."}
+                ? "Aile üyelerinin sağlık verilerini görüntüle, AI analizi yap, SBAR doktor raporları oluştur. İlk 7 gün ücretsiz, istediğin zaman iptal et."
+                : "View family members' health data, run AI analysis, generate SBAR reports. Free for 7 days, cancel anytime."}
             </p>
           </div>
         </div>
+        {/* Default-yearly CTA — that's the decoy that converts best. */}
         <Link
-          href="/pricing"
+          href="/checkout?plan=family-yearly"
           className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 px-4 py-2 text-sm font-bold text-white transition-all shadow-sm hover:shadow-md flex-shrink-0"
         >
-          {tr ? "Premium Al" : "Go Premium"}
+          {tr ? "7 Gün Ücretsiz Dene" : "Try Free for 7 Days"}
           <ArrowRight className="h-4 w-4" />
         </Link>
       </div>

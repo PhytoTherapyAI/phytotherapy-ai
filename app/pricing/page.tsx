@@ -7,93 +7,94 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { useFamily } from "@/lib/family-context"
 import { useLang } from "@/components/layout/language-toggle"
-import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
-import { Check, Crown, Users, Heart, Sparkles, Loader2, ArrowRight, Shield } from "lucide-react"
+import { Check, Crown, Users, Heart, Sparkles, Loader2, ArrowRight, Shield, Gift } from "lucide-react"
 import { LocalizedTitle } from "@/components/layout/LocalizedTitle"
 
-// Three-tier pricing with decoy effect: Family Premium is visually largest
-// and flagged "Most Popular" to pull buyers there even when Individual is
-// enough — the per-person cost on Family is what sells it.
+// ─────────────────────────────────────────────
+// Pricing config — single source of truth
+// ─────────────────────────────────────────────
+// Monthly × 12 vs yearly:
+//   Individual: 149×12=1.788 → yearly 1.490  (≈₺124/mo, 2 months free)
+//   Family:     349×12=4.188 → yearly 3.490  (≈₺291/mo, 2 months free)
 //
-// Owner-only flow for "Activate Family Premium": POSTs to
-// /api/family/upgrade-plan which flips family_groups.plan_type, sets a
-// 1-month expiry, and fans out a notification to all accepted members.
-// Members who aren't owners see "Ailenin Premium'u" note on the family
-// card since only an owner can activate it.
+// Prices include VAT per İpek's spec — surfaced in the footer note so
+// there's no "surprise surcharge at checkout" friction.
 
-type PlanId = "free" | "premium" | "family_premium"
+type Billing = "monthly" | "yearly"
 
-const TR_FEATURES: Record<PlanId, { positive: string[]; limit?: string }> = {
-  free: {
-    positive: [
-      "Sağlık asistanı (günde 20 soru)",
-      "Kendi profili yönetimi",
-      "Aile ağacında görünür",
-      "SOS acil durum bildirimi",
-      "Su, ilaç, check-in takibi",
-      "Temel kan tahlili giriş",
-    ],
-    limit: "Premium özellikleri için yükseltmeniz gerekir.",
+interface PlanRates {
+  monthly: { amountLabel: string; periodTr: string; periodEn: string }
+  yearly: {
+    amountLabel: string
+    periodTr: string
+    periodEn: string
+    perMonthApprox: number
+    savingsMonths: number
+  }
+}
+
+const PRICING: Record<"individual" | "family", PlanRates> = {
+  individual: {
+    monthly: { amountLabel: "₺149", periodTr: "/ ay", periodEn: "/ mo" },
+    yearly:  { amountLabel: "₺1.490", periodTr: "/ yıl", periodEn: "/ yr", perMonthApprox: 124, savingsMonths: 2 },
   },
-  premium: {
-    positive: [
-      "Sınırsız AI sağlık asistanı",
-      "SBAR PDF doktor raporu",
-      "Kan tahlili & radyoloji analizi",
-      "Prospektüs okuma (foto)",
-      "İlaç etkileşim kontrolü",
-      "Aile yöneticisi olabilme",
-      "Trend grafikleri & biyolojik yaş",
-      "Haftalık sağlık özeti",
-    ],
-  },
-  family_premium: {
-    positive: [
-      "6 kişiye kadar tüm aile Premium",
-      "Tüm Premium özellikler herkese",
-      "Aile sağlık ağacı + AI genetik analiz",
-      "Üyeler arası paylaşım kontrolü",
-      "Owner üye yönetimi + admin atama",
-      "Bir paket, tüm aile korunmuş",
-    ],
+  family: {
+    monthly: { amountLabel: "₺349", periodTr: "/ ay", periodEn: "/ mo" },
+    yearly:  { amountLabel: "₺3.490", periodTr: "/ yıl", periodEn: "/ yr", perMonthApprox: 291, savingsMonths: 2 },
   },
 }
 
-const EN_FEATURES: Record<PlanId, { positive: string[]; limit?: string }> = {
-  free: {
-    positive: [
-      "Health assistant (20 queries/day)",
-      "Own profile management",
-      "Visible in family tree",
-      "SOS emergency broadcast",
-      "Water, meds, check-in tracking",
-      "Basic blood test entry",
-    ],
-    limit: "Upgrade to unlock premium features.",
-  },
-  premium: {
-    positive: [
-      "Unlimited AI health assistant",
-      "SBAR doctor PDF reports",
-      "Blood test & radiology analysis",
-      "Prospectus scanning (photo)",
-      "Drug interaction checker",
-      "Family admin eligibility",
-      "Trend charts & biological age",
-      "Weekly health summary",
-    ],
-  },
-  family_premium: {
-    positive: [
-      "Up to 6 family members, all Premium",
-      "Every premium feature for everyone",
-      "Family health tree + AI genetic insight",
-      "Per-member sharing controls",
-      "Owner-managed members + admin roles",
-      "One plan, the whole household covered",
-    ],
-  },
+type PlanId = "free" | "premium" | "family_premium"
+
+const TR_FEATURES: Record<PlanId, string[]> = {
+  free: [
+    "Sağlık asistanı (günde 20 soru)",
+    "Kendi profili yönetimi",
+    "Aile ağacında görünür",
+    "SOS acil durum bildirimi",
+    "Su, ilaç, check-in takibi",
+  ],
+  premium: [
+    "Sınırsız AI sağlık asistanı",
+    "SBAR PDF doktor raporu",
+    "Kan tahlili & radyoloji analizi",
+    "Prospektüs okuma (foto)",
+    "İlaç etkileşim kontrolü",
+    "Aile yöneticisi olabilme",
+  ],
+  family_premium: [
+    "6 kişiye kadar tüm aile Premium",
+    "Tüm Premium özellikler herkese",
+    "Aile sağlık ağacı + AI genetik analiz",
+    "Üyeler arası paylaşım kontrolü",
+    "Owner üye yönetimi + admin atama",
+  ],
+}
+
+const EN_FEATURES: Record<PlanId, string[]> = {
+  free: [
+    "Health assistant (20 queries/day)",
+    "Own profile management",
+    "Visible in family tree",
+    "SOS emergency broadcast",
+    "Water, meds, check-in tracking",
+  ],
+  premium: [
+    "Unlimited AI health assistant",
+    "SBAR doctor PDF reports",
+    "Blood test & radiology analysis",
+    "Prospectus scanning (photo)",
+    "Drug interaction checker",
+    "Family admin eligibility",
+  ],
+  family_premium: [
+    "Up to 6 family members, all Premium",
+    "Every premium feature for everyone",
+    "Family health tree + AI genetic insight",
+    "Per-member sharing controls",
+    "Owner-managed members + admin roles",
+  ],
 }
 
 export default function PricingPage() {
@@ -103,6 +104,7 @@ export default function PricingPage() {
   const router = useRouter()
   const tr = lang === "tr"
   const features = tr ? TR_FEATURES : EN_FEATURES
+  const [billing, setBilling] = useState<Billing>("yearly") // default yearly — decoy
   const [activatingFamily, setActivatingFamily] = useState(false)
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null)
 
@@ -113,10 +115,7 @@ export default function PricingPage() {
     && new Date(familyGroup.plan_expires_at) > new Date()
 
   async function handleFamilyActivate() {
-    if (!isAuthenticated) {
-      router.push("/auth/login")
-      return
-    }
+    if (!isAuthenticated) { router.push("/auth/login"); return }
     if (!isOwner) {
       setFeedback({
         type: "error",
@@ -138,14 +137,11 @@ export default function PricingPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ durationMonths: 1 }),
+        body: JSON.stringify({ durationMonths: billing === "yearly" ? 12 : 1 }),
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        setFeedback({
-          type: "error",
-          msg: data.error || (tr ? "Aktivasyon başarısız." : "Activation failed."),
-        })
+        setFeedback({ type: "error", msg: data.error || (tr ? "Aktivasyon başarısız." : "Activation failed.") })
       } else {
         setFeedback({
           type: "success",
@@ -155,21 +151,21 @@ export default function PricingPage() {
         })
       }
     } catch {
-      setFeedback({
-        type: "error",
-        msg: tr ? "Bağlantı hatası." : "Connection error.",
-      })
+      setFeedback({ type: "error", msg: tr ? "Bağlantı hatası." : "Connection error." })
     } finally {
       setActivatingFamily(false)
     }
   }
+
+  const individualRate = billing === "yearly" ? PRICING.individual.yearly : PRICING.individual.monthly
+  const familyRate = billing === "yearly" ? PRICING.family.yearly : PRICING.family.monthly
 
   return (
     <div className="mx-auto max-w-6xl px-4 md:px-8 py-12">
       <LocalizedTitle tr="Fiyatlandırma" en="Pricing" />
 
       {/* Header */}
-      <div className="mb-10 text-center">
+      <div className="mb-8 text-center">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg">
           <Sparkles className="h-7 w-7" />
         </div>
@@ -181,6 +177,41 @@ export default function PricingPage() {
             ? "Ücretsiz başla. Aileni kapsamaya geçmek istediğinde tek paket al — 6 kişiye kadar herkesi Premium yap."
             : "Start free. When you want to cover your whole family, one plan upgrades everyone — up to 6 people."}
         </p>
+      </div>
+
+      {/* Billing toggle */}
+      <div className="mb-10 flex justify-center">
+        <div className="inline-flex items-center rounded-full border border-border bg-card p-1 shadow-sm">
+          <button
+            type="button"
+            onClick={() => setBilling("monthly")}
+            className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors ${
+              billing === "monthly"
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {tr ? "Aylık" : "Monthly"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setBilling("yearly")}
+            className={`px-5 py-2 rounded-full text-sm font-semibold transition-colors inline-flex items-center gap-2 ${
+              billing === "yearly"
+                ? "bg-foreground text-background"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {tr ? "Yıllık" : "Yearly"}
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+              billing === "yearly"
+                ? "bg-emerald-500 text-white"
+                : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+            }`}>
+              {tr ? "2 ay bedava" : "2 months free"}
+            </span>
+          </button>
+        </div>
       </div>
 
       {feedback && (
@@ -195,7 +226,7 @@ export default function PricingPage() {
         </div>
       )}
 
-      {/* Three-tier grid — middle card scaled up for decoy */}
+      {/* Three-tier grid */}
       <div className="grid gap-6 lg:grid-cols-3 lg:gap-8 items-start">
         {/* FREE */}
         <PricingCard
@@ -206,7 +237,7 @@ export default function PricingPage() {
           price="₺0"
           priceSub={tr ? "/ sonsuza kadar" : "/ forever"}
           description={tr ? "Temel sağlık takibi" : "Basic health tracking"}
-          features={features.free.positive}
+          features={features.free}
           ctaLabel={
             isAuthenticated
               ? tr ? "Ana Sayfa" : "Go to Home"
@@ -222,25 +253,29 @@ export default function PricingPage() {
           iconBg="from-amber-400 to-orange-500"
           borderClass="border-amber-200 dark:border-amber-800"
           title={tr ? "Premium Bireysel" : "Premium Individual"}
-          price="₺149"
-          priceSub={tr ? "/ ay, KDV dahil" : "/ mo, VAT incl."}
+          badge={billing === "yearly" ? (tr ? "2 AY BEDAVA" : "2 MONTHS FREE") : undefined}
+          badgeColor="amber"
+          price={individualRate.amountLabel}
+          priceSub={tr ? individualRate.periodTr : individualRate.periodEn}
+          perMonthApprox={
+            billing === "yearly"
+              ? (tr ? `≈ ₺${PRICING.individual.yearly.perMonthApprox} / ay` : `≈ ₺${PRICING.individual.yearly.perMonthApprox} / mo`)
+              : undefined
+          }
           description={tr ? "Senin için tam erişim" : "Full access — just for you"}
-          features={features.premium.positive}
+          features={features.premium}
           ctaLabel={
             premiumStatus?.isPremium
               ? tr ? "Zaten Premium'sun" : "Already Premium"
-              : tr ? "Premium'a Geç" : "Go Premium"
+              : tr ? "7 Gün Ücretsiz Dene" : "Try Free for 7 Days"
           }
           ctaDisabled={premiumStatus?.isPremium}
-          onCta={() => {
-            // TODO: Stripe checkout route
-            setFeedback({
-              type: "success",
-              msg: tr
-                ? "Bireysel Premium ödeme akışı yakında. İletişim: contact@doctopal.com"
-                : "Individual checkout coming soon. Contact: contact@doctopal.com",
-            })
-          }}
+          trialNote={
+            !premiumStatus?.isPremium
+              ? tr ? "İlk 7 gün ücretsiz — istediğin zaman iptal et." : "Free for 7 days — cancel anytime."
+              : undefined
+          }
+          onCta={() => router.push(`/checkout?plan=individual-${billing}`)}
           ctaVariant="amber"
         />
 
@@ -251,48 +286,70 @@ export default function PricingPage() {
           borderClass="border-emerald-300 dark:border-emerald-700 ring-2 ring-emerald-500/20"
           title={tr ? "Premium Aile" : "Family Premium"}
           badge={tr ? "EN POPÜLER" : "MOST POPULAR"}
-          price="₺349"
-          priceSub={tr ? "/ ay, 6 kişiye kadar" : "/ mo, up to 6 people"}
+          badgeColor="emerald"
+          price={familyRate.amountLabel}
+          priceSub={tr ? familyRate.periodTr : familyRate.periodEn}
+          perMonthApprox={
+            billing === "yearly"
+              ? (tr
+                  ? `≈ ₺${PRICING.family.yearly.perMonthApprox} / ay · 6 kişiye kadar`
+                  : `≈ ₺${PRICING.family.yearly.perMonthApprox} / mo · up to 6 people`)
+              : (tr ? "6 kişiye kadar" : "up to 6 people")
+          }
           description={
             tr
               ? "3 kişi olsanız bile ₺447 yerine ₺349 — ailene özel fiyat"
-              : "3 people = ₺447 on individual; Family ₺349. Savings scale with members."
+              : "3 people on Individual = ₺447; Family Premium ₺349. Savings scale with members."
           }
-          features={features.family_premium.positive}
+          features={features.family_premium}
           ctaLabel={
             familyPlanActive
               ? tr ? "Aile Premium Aktif" : "Family Premium Active"
               : activatingFamily
                 ? tr ? "Aktif ediliyor…" : "Activating…"
-                : tr ? "Aileni Premium Yap" : "Upgrade My Family"
+                : tr ? "7 Gün Ücretsiz Dene" : "Try Free for 7 Days"
           }
-          ctaDisabled={familyPlanActive || activatingFamily || (isAuthenticated && !isOwner)}
+          ctaDisabled={familyPlanActive || activatingFamily}
           ctaLoading={activatingFamily}
-          ctaSubNote={
-            isAuthenticated && !isOwner && !familyPlanActive
-              ? tr
-                ? "Yalnızca aile kurucusu aktif edebilir"
-                : "Only the family owner can activate"
+          trialNote={
+            !familyPlanActive
+              ? tr ? "İlk 7 gün ücretsiz — istediğin zaman iptal et." : "Free for 7 days — cancel anytime."
               : undefined
           }
-          onCta={handleFamilyActivate}
+          ctaSubNote={
+            isAuthenticated && !isOwner && !familyPlanActive
+              ? tr ? "Sadece aile kurucusu aktive edebilir." : "Only the family owner can activate."
+              : undefined
+          }
+          secondaryCtaLabel={
+            isOwner && !familyPlanActive
+              ? (tr ? "Sahibim: Manuel aktive et →" : "Owner: activate now →")
+              : undefined
+          }
+          onSecondaryCta={isOwner && !familyPlanActive ? handleFamilyActivate : undefined}
+          onCta={() => router.push(`/checkout?plan=family-${billing}`)}
           ctaVariant="emerald"
           emphasised
         />
       </div>
 
-      {/* Footer note */}
-      <div className="mt-10 text-center text-xs text-muted-foreground">
-        {tr
-          ? "Tüm fiyatlara KDV dahildir. İstediğin zaman iptal edebilirsin. Ödeme güvenliği için iyzico altyapısı kullanılacaktır."
-          : "All prices include VAT. Cancel anytime. Payments are secured by iyzico (integration in progress)."}
+      {/* Footer notes */}
+      <div className="mt-10 text-center space-y-1">
+        <p className="text-xs text-muted-foreground">
+          {tr ? "Tüm fiyatlara KDV dahildir." : "All prices include VAT."}
+        </p>
+        <p className="text-xs text-muted-foreground">
+          {tr
+            ? "Ödeme güvenliği için Iyzico altyapısı kullanılacaktır. Lansman yakında."
+            : "Payments secured by Iyzico. Launch coming soon."}
+        </p>
       </div>
     </div>
   )
 }
 
 // ─────────────────────────────────────────────
-// Card sub-component (kept local — not reused elsewhere)
+// Card sub-component
 // ─────────────────────────────────────────────
 
 interface CardProps {
@@ -301,14 +358,19 @@ interface CardProps {
   borderClass: string
   title: string
   badge?: string
+  badgeColor?: "emerald" | "amber"
   price: string
   priceSub: string
+  perMonthApprox?: string
   description: string
   features: string[]
   ctaLabel: string
   ctaDisabled?: boolean
   ctaLoading?: boolean
   ctaSubNote?: string
+  trialNote?: string
+  secondaryCtaLabel?: string
+  onSecondaryCta?: () => void
   ctaVariant: "outline" | "amber" | "emerald"
   emphasised?: boolean
   onCta: () => void
@@ -323,6 +385,11 @@ function PricingCard(p: CardProps) {
         ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
         : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white"
 
+  const badgeClass =
+    p.badgeColor === "amber"
+      ? "bg-gradient-to-r from-amber-500 to-orange-500"
+      : "bg-gradient-to-r from-emerald-500 to-emerald-600"
+
   return (
     <div
       className={`relative flex flex-col rounded-2xl border ${p.borderClass} bg-card p-6 ${
@@ -330,7 +397,7 @@ function PricingCard(p: CardProps) {
       }`}
     >
       {p.badge && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 px-3 py-1 text-[10px] font-bold text-white shadow-md">
+        <div className={`absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 rounded-full px-3 py-1 text-[10px] font-bold text-white shadow-md ${badgeClass}`}>
           <Sparkles className="h-2.5 w-2.5" />
           {p.badge}
         </div>
@@ -347,6 +414,10 @@ function PricingCard(p: CardProps) {
         <span className="text-4xl font-bold text-foreground">{p.price}</span>
         <span className="text-sm text-muted-foreground">{p.priceSub}</span>
       </div>
+
+      {p.perMonthApprox && (
+        <p className="mt-1 text-xs text-muted-foreground">{p.perMonthApprox}</p>
+      )}
 
       <ul className="mt-6 space-y-2.5 flex-1">
         {p.features.map((f, i) => (
@@ -367,6 +438,23 @@ function PricingCard(p: CardProps) {
         {p.ctaLabel}
         {!p.ctaLoading && !p.ctaDisabled && <ArrowRight className="h-4 w-4" />}
       </button>
+
+      {p.trialNote && !p.ctaDisabled && (
+        <p className="mt-2 inline-flex items-center justify-center gap-1 text-center text-[11px] text-muted-foreground">
+          <Gift className="h-3 w-3 text-emerald-500" />
+          {p.trialNote}
+        </p>
+      )}
+
+      {p.secondaryCtaLabel && p.onSecondaryCta && (
+        <button
+          type="button"
+          onClick={p.onSecondaryCta}
+          className="mt-2 text-center text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+        >
+          {p.secondaryCtaLabel}
+        </button>
+      )}
 
       {p.ctaSubNote && (
         <p className="mt-2 text-center text-[11px] text-muted-foreground">
