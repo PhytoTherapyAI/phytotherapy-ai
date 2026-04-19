@@ -31,20 +31,90 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { data: members, error } = await supabase
+    // Membership-first resolver — same idea as lib/family-context.tsx's
+    // fetchFamilyData. Legacy flow (.eq("owner_id", user.id)) only worked
+    // for owners; members got an empty list + needsMigration=true.
+    const { data: memberships, error: mErr } = await supabase
       .from("family_members")
-      .select("*")
-      .eq("owner_id", user.id)
-      .order("created_at", { ascending: true })
+      .select("group_id")
+      .eq("user_id", user.id)
+      .eq("invite_status", "accepted")
 
-    if (error) {
-      if (error.message?.includes("does not exist") || error.code === "42P01") {
+    if (mErr) {
+      if (mErr.message?.includes("does not exist") || mErr.code === "42P01") {
         return NextResponse.json({ members: [], needsMigration: true })
       }
-      return NextResponse.json({ error: error.message }, { status: 500 })
+      return NextResponse.json({ error: mErr.message }, { status: 500 })
     }
 
-    return NextResponse.json({ members: members || [] })
+    const groupIds = Array.from(
+      new Set(
+        (memberships || [])
+          .map((m: { group_id: string | null }) => m.group_id)
+          .filter((id): id is string => typeof id === "string" && id.length > 0)
+      )
+    )
+
+    // No membership row → legacy fallback: older installs stored family
+    // members on a flat table keyed by family_members.owner_id (no groups).
+    if (groupIds.length === 0) {
+      const { data: legacyMembers, error: legacyErr } = await supabase
+        .from("family_members")
+        .select("*")
+        .eq("owner_id", user.id)
+        .order("created_at", { ascending: true })
+
+      if (legacyErr) {
+        if (legacyErr.message?.includes("does not exist") || legacyErr.code === "42P01") {
+          return NextResponse.json({ members: [], needsMigration: true })
+        }
+        return NextResponse.json({ error: legacyErr.message }, { status: 500 })
+      }
+
+      // Genuinely no family state at all — surface needsMigration so the UI
+      // can nudge the user to create a group. Having legacy rows is fine;
+      // just return them.
+      return NextResponse.json({
+        members: legacyMembers || [],
+        needsMigration: (legacyMembers?.length || 0) === 0,
+      })
+    }
+
+    // Pick most-populated group when the caller is in several (e.g. stale
+    // solo group + real household).
+    let selectedGroupId = groupIds[0]
+    if (groupIds.length > 1) {
+      const { data: allAcceptedRows } = await supabase
+        .from("family_members")
+        .select("group_id")
+        .in("group_id", groupIds)
+        .eq("invite_status", "accepted")
+
+      const countByGroup = new Map<string, number>()
+      for (const m of allAcceptedRows || []) {
+        const gid = (m as { group_id: string | null }).group_id
+        if (gid) countByGroup.set(gid, (countByGroup.get(gid) || 0) + 1)
+      }
+      selectedGroupId = groupIds.reduce((best, g) =>
+        (countByGroup.get(g) || 0) > (countByGroup.get(best) || 0) ? g : best
+      )
+    }
+
+    const { data: groupMembers, error: gmErr } = await supabase
+      .from("family_members")
+      .select("*")
+      .eq("group_id", selectedGroupId)
+      .order("created_at", { ascending: true })
+
+    if (gmErr) {
+      return NextResponse.json({ error: gmErr.message }, { status: 500 })
+    }
+
+    return NextResponse.json({
+      members: groupMembers || [],
+      groupId: selectedGroupId,
+      needsMigration: false,
+    })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
   }
