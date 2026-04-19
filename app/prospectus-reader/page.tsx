@@ -26,6 +26,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { useEffectivePremium } from "@/lib/use-effective-premium";
+import { PremiumLockedCard } from "@/components/premium/PremiumLockedCard";
 
 interface ProspectusResult {
   medicationName: string;
@@ -62,6 +64,7 @@ const SEVERITY_BADGE = {
 export default function ProspectusReaderPage() {
   const { isAuthenticated, session } = useAuth();
   const { lang } = useLang();
+  const effectivePremium = useEffectivePremium();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -69,6 +72,26 @@ export default function ProspectusReaderPage() {
   const [result, setResult] = useState<ProspectusResult | null>(null);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Premium gate — prospectus analysis is a Premium feature (Commit A).
+  if (effectivePremium.loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-stone-50 dark:bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+  if (!effectivePremium.isPremium) {
+    return (
+      <div className="min-h-screen bg-stone-50 dark:bg-background py-16 px-4 sm:px-6">
+        <PremiumLockedCard
+          featureName="Prospektüs Okuyucu"
+          featureNameEn="Prospectus Reader"
+          icon={<Scan className="h-8 w-8" />}
+        />
+      </div>
+    );
+  }
 
   const toggleSection = (key: string) => {
     setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));

@@ -5,6 +5,8 @@ import { Loader2, Download, Mail, ChevronDown, X, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { createBrowserClient } from '@/lib/supabase'
+import { useEffectivePremium } from '@/lib/use-effective-premium'
+import { PremiumUpgradeModal } from '@/components/premium/PremiumUpgradeModal'
 
 interface Props {
   lang: 'en' | 'tr'
@@ -39,7 +41,20 @@ export function PDFDownloadButton({ lang, className, variant = 'default' }: Prop
   const [emailSending, setEmailSending] = useState(false)
   const [emailSuccess, setEmailSuccess] = useState(false)
   const [emailError, setEmailError] = useState('')
+  const [showPremiumModal, setShowPremiumModal] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const effectivePremium = useEffectivePremium()
+
+  // Premium gate — SBAR report generation + email are Premium-only (Commit A).
+  // Returns true when the action should proceed.
+  const ensurePremium = (): boolean => {
+    if (effectivePremium.loading) return false
+    if (!effectivePremium.isPremium) {
+      setShowPremiumModal(true)
+      return false
+    }
+    return true
+  }
 
   // Close menu on outside click
   useEffect(() => {
@@ -54,6 +69,7 @@ export function PDFDownloadButton({ lang, className, variant = 'default' }: Prop
 
   // ── SERVER-SIDE PDF Download ──
   const handleDownload = async () => {
+    if (!ensurePremium()) return
     setLoading(true)
     setAction('download')
     try {
@@ -96,6 +112,7 @@ export function PDFDownloadButton({ lang, className, variant = 'default' }: Prop
 
   // ── SERVER-SIDE Email Send ──
   const handleEmailSend = async () => {
+    if (!ensurePremium()) return
     if (!emailAddress.trim() || !emailAddress.includes('@')) {
       setEmailError(tr ? 'Gecerli bir email adresi girin' : 'Enter a valid email address')
       return
@@ -189,7 +206,7 @@ export function PDFDownloadButton({ lang, className, variant = 'default' }: Prop
             </button>
             <div className="border-t" />
             <button
-              onClick={() => { setShowMenu(false); setShowEmailModal(true) }}
+              onClick={() => { setShowMenu(false); if (ensurePremium()) setShowEmailModal(true) }}
               className="flex items-center gap-2 w-full px-4 py-3 text-sm hover:bg-muted transition-colors"
             >
               <Mail className="h-4 w-4" />
@@ -208,6 +225,12 @@ export function PDFDownloadButton({ lang, className, variant = 'default' }: Prop
           onSend={handleEmailSend}
           onClose={() => { setShowEmailModal(false); setEmailAddress(''); setEmailError(''); setEmailSuccess(false) }}
         />}
+
+        <PremiumUpgradeModal
+          open={showPremiumModal}
+          onClose={() => setShowPremiumModal(false)}
+          featureName={tr ? 'SBAR Sağlık Raporu' : 'SBAR Health Report'}
+        />
       </div>
     )
   }
@@ -234,7 +257,7 @@ export function PDFDownloadButton({ lang, className, variant = 'default' }: Prop
       {showMenu && (
         <div className="absolute top-full left-0 mt-1 w-52 rounded-xl border bg-white dark:bg-slate-900 shadow-xl z-50 overflow-hidden">
           <button
-            onClick={() => { setShowMenu(false); setShowEmailModal(true) }}
+            onClick={() => { setShowMenu(false); if (ensurePremium()) setShowEmailModal(true) }}
             className="flex items-center gap-2 w-full px-4 py-3 text-sm hover:bg-muted transition-colors"
           >
             <Mail className="h-4 w-4" />
@@ -253,6 +276,12 @@ export function PDFDownloadButton({ lang, className, variant = 'default' }: Prop
         onSend={handleEmailSend}
         onClose={() => { setShowEmailModal(false); setEmailAddress(''); setEmailError(''); setEmailSuccess(false) }}
       />}
+
+      <PremiumUpgradeModal
+        open={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+        featureName={tr ? 'SBAR Sağlık Raporu' : 'SBAR Health Report'}
+      />
     </div>
   )
 }

@@ -5,7 +5,7 @@ import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { askClaudeJSON } from "@/lib/ai-client";
 import { sanitizeInput } from "@/lib/sanitize";
 import { tx } from "@/lib/translations";
-import { getPremiumStatus } from "@/lib/premium";
+import { getUserEffectivePremium } from "@/lib/premium";
 
 export const maxDuration = 60;
 
@@ -34,15 +34,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Premium gate — hereditary risk analysis is a Premium feature.
-    const { data: profileForPlan } = await supabase
-      .from("user_profiles")
-      .select("plan, trial_started_at, created_at")
-      .eq("id", user.id)
-      .maybeSingle();
-    const premium = getPremiumStatus(profileForPlan || {});
+    // getUserEffectivePremium honors family_groups.plan_type='family_premium',
+    // so an accepted member of a paid family group unlocks the analysis even
+    // when their individual user_profiles.plan is still 'free'.
+    const premium = await getUserEffectivePremium(user.id, supabase);
     if (!premium.isPremium) {
       return NextResponse.json(
-        { error: "Premium subscription required for genetic risk analysis" },
+        { error: "Premium subscription required for genetic risk analysis", code: "PREMIUM_REQUIRED" },
         { status: 402 }
       );
     }

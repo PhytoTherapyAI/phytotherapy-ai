@@ -13,6 +13,8 @@ import { useAuth } from "@/lib/auth-context"
 import { useFamily } from "@/lib/family-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
+import { useEffectivePremium } from "@/lib/use-effective-premium"
+import { PremiumUpgradeModal } from "@/components/premium/PremiumUpgradeModal"
 import { getAvatarDataUri, type AvatarStyle } from "@/lib/avatar"
 import {
   buildFamilyTree,
@@ -198,14 +200,16 @@ function GenerationRow({
 
 export default function FamilyHealthTreePage() {
   const router = useRouter()
-  const { user, isAuthenticated, isLoading: authLoading, premiumStatus } = useAuth()
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth()
   const { familyGroup, familyMembers, loading: familyLoading } = useFamily()
   const { lang } = useLang()
   const tr = lang === "tr"
+  const effectivePremium = useEffectivePremium()
 
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null)
   const [analyzing, setAnalyzing] = useState(false)
   const [analyzeError, setAnalyzeError] = useState<string | null>(null)
+  const [showPremiumModal, setShowPremiumModal] = useState(false)
 
   const generations = useMemo<TreeGeneration[]>(() => {
     if (!familyMembers || familyMembers.length === 0) return []
@@ -216,8 +220,12 @@ export default function FamilyHealthTreePage() {
   const hasAnyConditions = generations.some(g => g.members.some(n => n.conditions.length > 0))
 
   async function runAnalysis() {
-    if (!premiumStatus?.isPremium) {
-      setAnalyzeError(tr ? "Bu özellik Premium gerektirir" : "Premium required")
+    // Premium gate — hereditary AI analysis is paid. Upgrades individual OR
+    // family source via useEffectivePremium (a family member who is NOT
+    // individually premium still unlocks via the group's family_premium plan).
+    if (effectivePremium.loading) return
+    if (!effectivePremium.isPremium) {
+      setShowPremiumModal(true)
       return
     }
     setAnalyzing(true)
@@ -384,10 +392,10 @@ export default function FamilyHealthTreePage() {
                 disabled={analyzing}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-600 disabled:opacity-50 px-5 py-2.5 text-sm font-bold text-white transition-colors"
               >
-                {analyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : (premiumStatus?.isPremium ? <Sparkles className="h-4 w-4" /> : <Lock className="h-4 w-4" />)}
+                {analyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : (effectivePremium.isPremium ? <Sparkles className="h-4 w-4" /> : <Lock className="h-4 w-4" />)}
                 {analyzing
                   ? tx("family.aiAnalyzing", lang)
-                  : (premiumStatus?.isPremium ? tx("family.aiAnalyzeButton", lang) : tx("family.upgradeCta", lang))}
+                  : (effectivePremium.isPremium ? tx("family.aiAnalyzeButton", lang) : tx("family.upgradeCta", lang))}
               </button>
             </div>
             {analyzeError && (
@@ -492,6 +500,12 @@ export default function FamilyHealthTreePage() {
             : "This analysis is not a medical diagnosis. Consult a genetic counselor or physician before any genetic testing decision."}
         </p>
       </div>
+
+      <PremiumUpgradeModal
+        open={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+        featureName={tr ? "Aile Sağlık Ağacı AI Analizi" : "Family Health Tree AI Analysis"}
+      />
     </div>
   )
 }

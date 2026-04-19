@@ -6,6 +6,7 @@ import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { logApiAccess } from "@/lib/security-audit";
 import { resolveTargetUser } from "@/lib/family-permissions";
+import { getUserEffectivePremium } from "@/lib/premium";
 import type { VaccineEntry } from "@/lib/vaccine-data";
 
 export const runtime = 'nodejs';
@@ -35,6 +36,26 @@ export async function POST(request: NextRequest) {
       return new Response(JSON.stringify({ error: resolution.error }), { status: resolution.status, headers: { "Content-Type": "application/json" } });
     }
     const { callerId, targetUserId, isOwnProfile } = resolution;
+
+    // Premium gate — SBAR report is a Premium feature (Session 34 Commit A).
+    // Checks caller's effective premium (individual OR via family group).
+    const premium = await getUserEffectivePremium(callerId, supabase);
+    if (!premium.isPremium) {
+      logApiAccess({
+        endpoint: "/api/sbar-pdf",
+        userId: callerId,
+        action: "sbar_blocked_free_plan",
+        ip: clientIP,
+        outcome: "denied",
+      });
+      const msg = lang === "tr"
+        ? "SBAR raporu Premium bir özelliktir. Lütfen planınızı yükseltin."
+        : "SBAR report is a Premium feature. Please upgrade your plan.";
+      return new Response(
+        JSON.stringify({ error: msg, code: "PREMIUM_REQUIRED" }),
+        { status: 402, headers: { "Content-Type": "application/json" } }
+      );
+    }
 
     // KVKK Consent Gate: SBAR report requires caller's explicit consent
     // (caller is the one initiating the report, so their consent matters)

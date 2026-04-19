@@ -5,6 +5,7 @@ import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { logApiAccess } from "@/lib/security-audit";
+import { getUserEffectivePremium } from "@/lib/premium";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -49,6 +50,15 @@ export async function POST(request: NextRequest) {
     }
     if (!pdfBase64) {
       return NextResponse.json({ error: "PDF data required" }, { status: 400 });
+    }
+
+    // Premium gate — SBAR email delivery is a Premium feature (Session 34 Commit A).
+    const premium = await getUserEffectivePremium(user.id, supabase);
+    if (!premium.isPremium) {
+      const msg = lang === "tr"
+        ? "SBAR raporu e-posta gönderimi Premium bir özelliktir. Lütfen planınızı yükseltin."
+        : "SBAR email delivery is a Premium feature. Please upgrade your plan.";
+      return NextResponse.json({ error: msg, code: "PREMIUM_REQUIRED" }, { status: 402 });
     }
 
     // KVKK Consent Gate: SBAR email requires explicit consent

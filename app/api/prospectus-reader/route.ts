@@ -5,6 +5,7 @@ import { buildProspectusSystemPrompt } from "@/lib/prompts";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";
+import { getUserEffectivePremium } from "@/lib/premium";
 
 export const maxDuration = 60;
 
@@ -39,42 +40,55 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
     }
 
+    // Auth required — prospectus analysis is Premium (Session 34 Commit A).
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+    const token = authHeader.replace("Bearer ", "");
+    const supabase = createServerClient();
+    const { data: { user } } = await supabase.auth.getUser(token);
+    if (!user) {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    // Premium gate
+    const premium = await getUserEffectivePremium(user.id, supabase);
+    if (!premium.isPremium) {
+      const msg = lang === "tr"
+        ? "Prospektüs analizi Premium bir özelliktir. Lütfen planınızı yükseltin."
+        : "Prospectus analysis is a Premium feature. Please upgrade your plan.";
+      return NextResponse.json({ error: msg, code: "PREMIUM_REQUIRED" }, { status: 402 });
+    }
+
     // Get user medications for cross-check
+    const userId: string = user.id;
     let userMedications: string[] = [];
     let userAllergies: string[] = [];
-    let userId: string | undefined;
-    const authHeader = req.headers.get("authorization");
-    if (authHeader?.startsWith("Bearer ")) {
-      try {
-        const token = authHeader.replace("Bearer ", "");
-        const supabase = createServerClient();
-        const { data: { user } } = await supabase.auth.getUser(token);
-        if (user) {
-          userId = user.id;
-          const { data: meds } = await supabase
-            .from("user_medications")
-            .select("generic_name, brand_name")
-            .eq("user_id", user.id)
-            .eq("is_active", true);
 
-          const { data: allergies } = await supabase
-            .from("user_allergies")
-            .select("allergen")
-            .eq("user_id", user.id);
+    try {
+      const { data: meds } = await supabase
+        .from("user_medications")
+        .select("generic_name, brand_name")
+        .eq("user_id", user.id)
+        .eq("is_active", true);
 
-          if (meds?.length) {
-            userMedications = meds.map((m: { generic_name: string | null; brand_name: string | null }) =>
-              m.generic_name || m.brand_name || ""
-            ).filter(Boolean);
-          }
+      const { data: allergies } = await supabase
+        .from("user_allergies")
+        .select("allergen")
+        .eq("user_id", user.id);
 
-          if (allergies?.length) {
-            userAllergies = allergies.map((a: { allergen: string }) => a.allergen);
-          }
-        }
-      } catch {
-        // Continue without profile
+      if (meds?.length) {
+        userMedications = meds.map((m: { generic_name: string | null; brand_name: string | null }) =>
+          m.generic_name || m.brand_name || ""
+        ).filter(Boolean);
       }
+
+      if (allergies?.length) {
+        userAllergies = allergies.map((a: { allergen: string }) => a.allergen);
+      }
+    } catch {
+      // Profile fetch failed — continue without cross-check data
     }
 
     const buffer = await file.arrayBuffer();
