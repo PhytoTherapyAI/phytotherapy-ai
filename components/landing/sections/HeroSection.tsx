@@ -99,7 +99,7 @@ export function HeroSection() {
           {/* Right: screenshot */}
           <motion.div variants={fadeUp} className="mx-auto w-full md:pl-4 lg:pl-8">
             <div className="transform rotate-1 drop-shadow-2xl">
-              <ScreenshotPlaceholder aspectRatio="16:10" size="lg" />
+              <ScreenshotPlaceholder aspectRatio="16:10" size="lg" mode="hero" />
             </div>
           </motion.div>
         </motion.div>

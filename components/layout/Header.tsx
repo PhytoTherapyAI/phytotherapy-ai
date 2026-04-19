@@ -101,6 +101,11 @@ export function Header() {
 
   const isActive = (href: string) => pathname === href;
 
+  // Guest landing at "/" renders its own <LandingNav />. Hide the app header
+  // there to avoid a duplicate navbar. Authenticated "/" = dashboard, which
+  // still needs the app header.
+  if (pathname === "/" && !isAuthenticated) return null;
+
   return (
     <>
       {/* ── Floating Glassmorphism Navbar ── */}
