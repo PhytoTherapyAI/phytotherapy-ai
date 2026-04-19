@@ -24,6 +24,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
 import { AydinlatmaPopup } from "@/components/legal/AydinlatmaPopup";
 import { DashboardTour } from "@/components/layout/DashboardTour";
+import { LocalizedTitle } from "@/components/layout/LocalizedTitle";
 import { TOOL_CATEGORIES } from "@/lib/tools-hierarchy";
 import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-utils";
 import { getSupplementDisplayName } from "@/lib/supplement-data";
@@ -660,6 +661,7 @@ export default function Home() {
     return (
       <WaterIntakeProvider>
       <div className="min-h-screen bg-stone-50 dark:bg-background">
+        <LocalizedTitle tr="Panel" en="Dashboard" />
         {/* Dashboard Tour (first visit only) */}
         <DashboardTour />
         {/* Vaccine Recommendation Banner */}
