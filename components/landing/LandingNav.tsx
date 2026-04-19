@@ -9,7 +9,8 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
 import { DoctoPalLogo } from "@/components/brand/DoctoPalLogo"
-import { useLang } from "@/components/layout/language-toggle"
+import { LanguageToggle, useLang } from "@/components/layout/language-toggle"
+import { ThemeToggle } from "@/components/layout/theme-toggle"
 import { tx } from "@/lib/translations"
 
 interface NavLinkSpec {
@@ -78,7 +79,13 @@ export function LandingNav() {
         </nav>
 
         {/* Desktop CTAs */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-3">
+          <LanguageToggle />
+          <ThemeToggle />
+          <div
+            aria-hidden="true"
+            className="h-5 w-px bg-slate-200 dark:bg-slate-800 mx-1"
+          />
           <Link
             href="/auth/login"
             className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
@@ -109,6 +116,12 @@ export function LandingNav() {
       {open && (
         <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
           <div className="mx-auto max-w-7xl px-4 py-3 space-y-1">
+            {/* Language + theme toggles — expose these to guest users who
+                otherwise have no way to switch (Header is hidden on landing). */}
+            <div className="flex items-center gap-2 pb-3 mb-2 border-b border-slate-200 dark:border-slate-800">
+              <LanguageToggle />
+              <ThemeToggle />
+            </div>
             {NAV_LINKS.map((l) =>
               l.disabled ? (
                 <span
