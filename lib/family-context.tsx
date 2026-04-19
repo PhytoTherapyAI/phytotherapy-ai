@@ -207,6 +207,17 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
 
   async function inviteMember(email: string, nickname: string): Promise<boolean> {
     if (!familyGroup) return false
+
+    // Enforce the group's max_members cap (plan-driven: 2 on free, 6 on
+    // family_premium). Counting accepted + pending: a pending invite still
+    // costs a "slot" so the owner can't over-commit before payments.
+    const cap = (familyGroup as { max_members?: number | null }).max_members ?? 6
+    const used = familyMembers.length + pendingInvites.length
+    if (used >= cap) {
+      console.warn(`[Family] inviteMember blocked — cap reached (${used}/${cap})`)
+      return false
+    }
+
     const { error } = await supabase.from('family_members').insert({
       group_id: familyGroup.id,
       invite_email: email,
@@ -231,13 +242,37 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
     await fetchFamilyData()
   }
 
-  async function promoteToAdmin(memberId: string) {
-    const { error } = await supabase
-      .from('family_members')
-      .update({ role: 'admin' })
-      .eq('id', memberId)
-    if (error) console.error('[Family] promoteToAdmin error:', error.message)
-    await fetchFamilyData()
+  async function promoteToAdmin(memberId: string): Promise<{ ok: boolean; error?: string; code?: string }> {
+    // Admin promotion is gated on the target's *effective* Premium (individual
+    // OR inherited from family_premium group). The /api/family/promote-admin
+    // endpoint enforces this server-side — the UI should NOT also flip the
+    // row directly, because that would bypass the gate on Free members.
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) return { ok: false, error: 'no_session' }
+
+      const res = await fetch('/api/family/promote-admin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ memberId, role: 'admin' }),
+      })
+
+      const data = (await res.json().catch(() => ({}))) as { error?: string; detail?: string }
+
+      if (!res.ok) {
+        console.error('[Family] promoteToAdmin error:', data.error, data.detail)
+        return { ok: false, error: data.detail || data.error || 'promote_failed', code: data.error }
+      }
+
+      await fetchFamilyData()
+      return { ok: true }
+    } catch (err) {
+      console.error('[Family] promoteToAdmin exception:', err)
+      return { ok: false, error: String(err) }
+    }
   }
 
   async function removeMember(memberId: string) {

@@ -1030,7 +1030,29 @@ export default function FamilyPage() {
                             variant="ghost"
                             size="sm"
                             className="h-7 px-2 text-[10px] text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30"
-                            onClick={() => promoteToAdmin(member.id)}
+                            onClick={async () => {
+                              const result = await promoteToAdmin(member.id)
+                              if (!result.ok) {
+                                if (result.code === "premium_required") {
+                                  setFeedback({
+                                    type: "error",
+                                    msg: tr
+                                      ? "Bu üye Premium değil. Yönetici olabilmesi için Aile Premium paketi alın veya üye bireysel Premium satın alsın."
+                                      : "This member isn't Premium. Either buy the Family Premium plan or ask them to upgrade individually before promoting.",
+                                  })
+                                } else {
+                                  setFeedback({
+                                    type: "error",
+                                    msg: tr ? "Yönetici yapılamadı." : "Could not promote to admin.",
+                                  })
+                                }
+                              } else {
+                                setFeedback({
+                                  type: "success",
+                                  msg: tr ? "Yönetici olarak atandı." : "Promoted to admin.",
+                                })
+                              }
+                            }}
                             title={tr ? "Yönetici Yap" : "Promote"}
                           >
                             <Shield className="h-3 w-3" />

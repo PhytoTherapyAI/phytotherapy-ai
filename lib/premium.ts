@@ -3,6 +3,8 @@
 // Premium / Freemium System — Sprint 14
 // ============================================
 
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 export type PlanType = "free" | "premium" | "family" | "doctor";
 
 export interface PremiumStatus {
@@ -159,3 +161,109 @@ export const PRICING = {
 
 // ── Trial Notification Days ──────────────────
 export const TRIAL_NOTIFICATION_DAYS = [5, 7]; // Day 5 warning, Day 7 expired
+
+// ─────────────────────────────────────────────
+// Effective Premium (individual OR via family group)
+// ─────────────────────────────────────────────
+//
+// getUserEffectivePremium decides whether a user should see premium
+// features regardless of HOW they qualify:
+//   - individual: their own user_profiles.plan is paid AND not expired
+//   - family:     they are an accepted member of a family_group with
+//                 plan_type='family_premium' whose plan_expires_at is still
+//                 in the future
+//   - none:       no valid premium source
+//
+// This is the single authoritative check server-side. Clients can mirror it
+// via useEffectivePremium() (to be added in the UI commit) but the API
+// gates use THIS function — never trust a client flag.
+
+export type PremiumSource = "individual" | "family" | "none";
+
+export interface EffectivePremium {
+  isPremium: boolean;
+  source: PremiumSource;
+  expiresAt: string | null;
+  // When source === 'family', this is the group that granted it. Useful for
+  // the upgrade UI ("Premium comes from Grubun adı — no personal upgrade
+  // needed").
+  familyGroupId?: string | null;
+}
+
+export async function getUserEffectivePremium(
+  userId: string,
+  supabase: SupabaseClient
+): Promise<EffectivePremium> {
+  if (!userId) return { isPremium: false, source: "none", expiresAt: null };
+
+  // 1. Individual premium — paid plan with a future expiry (null expiry is
+  //    treated as "not configured, assume expired" to avoid free lifetime
+  //    leakage on legacy rows).
+  try {
+    const { data: profile } = await supabase
+      .from("user_profiles")
+      .select("plan, premium_expires_at")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const plan = (profile as { plan?: string | null } | null)?.plan || "free";
+    const individualExpiry = (profile as { premium_expires_at?: string | null } | null)?.premium_expires_at;
+    const isPaidPlan = plan === "premium" || plan === "family" || plan === "doctor";
+    const individualActive =
+      isPaidPlan && !!individualExpiry && new Date(individualExpiry) > new Date();
+
+    if (individualActive) {
+      return {
+        isPremium: true,
+        source: "individual",
+        expiresAt: individualExpiry || null,
+      };
+    }
+  } catch {
+    // Fall through to family check — never throw from a gate function.
+  }
+
+  // 2. Family premium — any accepted family group this user belongs to whose
+  //    plan is still active wins.
+  try {
+    const { data: memberships } = await supabase
+      .from("family_members")
+      .select("group_id")
+      .eq("user_id", userId)
+      .eq("invite_status", "accepted");
+
+    const groupIds = Array.from(
+      new Set(
+        (memberships || [])
+          .map((m: { group_id: string | null }) => m.group_id)
+          .filter((id): id is string => typeof id === "string" && id.length > 0)
+      )
+    );
+
+    if (groupIds.length > 0) {
+      const nowIso = new Date().toISOString();
+      const { data: groups } = await supabase
+        .from("family_groups")
+        .select("id, plan_type, plan_expires_at")
+        .in("id", groupIds)
+        .eq("plan_type", "family_premium")
+        .gt("plan_expires_at", nowIso)
+        .order("plan_expires_at", { ascending: false })
+        .limit(1);
+
+      const g = groups?.[0] as { id: string; plan_expires_at: string } | undefined;
+      if (g) {
+        return {
+          isPremium: true,
+          source: "family",
+          expiresAt: g.plan_expires_at,
+          familyGroupId: g.id,
+        };
+      }
+    }
+  } catch {
+    // Same: graceful fallback.
+  }
+
+  return { isPremium: false, source: "none", expiresAt: null };
+}

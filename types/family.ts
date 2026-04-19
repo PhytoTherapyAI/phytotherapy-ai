@@ -6,6 +6,14 @@ export interface FamilyGroup {
   name: string
   created_at: string
   updated_at: string
+  // Plan columns added by migration 20260419_family_premium.sql.
+  // Existing groups default to plan_type='free' + max_members=6; a migration
+  // to lower the cap to 2 for free groups is intentionally deferred so we
+  // don't blow up anyone's current household overnight.
+  plan_type?: 'free' | 'family_premium' | null
+  plan_started_at?: string | null
+  plan_expires_at?: string | null
+  max_members?: number | null
 }
 
 export type FamilyRelationship =
@@ -93,7 +101,7 @@ export interface FamilyContextType {
   updateGroupName: (name: string) => Promise<boolean>
   inviteMember: (email: string, nickname: string) => Promise<boolean>
   updateNickname: (memberId: string, nickname: string) => Promise<void>
-  promoteToAdmin: (memberId: string) => Promise<void>
+  promoteToAdmin: (memberId: string) => Promise<{ ok: boolean; error?: string; code?: string }>
   removeMember: (memberId: string) => Promise<void>
   updateAllowsManagement: (allows: boolean) => Promise<void>
   updateSharingPrefs: (prefs: Partial<SharingPrefs>) => Promise<boolean>
