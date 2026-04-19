@@ -48,8 +48,8 @@ export const aboutTranslations: Record<string, TranslationEntry> = {
     tr: "DoctoPal, işte tam olarak bu çaresizliğe ve tıbbi bilgi asimetrisine bir son vermek için doğdu. Tıp fakültesinde eğitim gören, aynı zamanda teknolojinin ve yapay zekanın dönüştürücü gücüne inanan iki genç olarak, klinikteki o karmaşayı çözmek için kolları sıvadık.",
   },
   "about.story.p4Prefix": {
-    en: "We aren't just students memorising diseases or developers writing code. We are kids who carry the same worries as you. The DoctoPal vision, whose foundations we laid during the Harvard HSIL Hackathon process and which we ",
-    tr: "Bizler sadece hastalıkları ezberleyen öğrenciler veya kod yazan geliştiriciler değiliz. Bizler, sizinle aynı kaygıları taşıyan evlatlarız. Harvard HSIL Hackathon sürecinde temellerini attığımız ve ",
+    en: "We aren't just students memorising diseases or developers writing code. We are kids who carry the same worries as you. The DoctoPal vision, which we ",
+    tr: "Bizler sadece hastalıkları ezberleyen öğrenciler veya kod yazan geliştiriciler değiliz. Bizler, sizinle aynı kaygıları taşıyan evlatlarız. ",
   },
   "about.story.p4Highlight": {
     en: "crowned with first place at the IGNITE'26 Entrepreneurship Competition",

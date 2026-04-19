@@ -7,7 +7,7 @@ import { tx } from "@/lib/translations";
  * Algoritmik Güvenlik ve Etik Çerçevesi
  * "Primum non nocere — First, do no harm"
  *
- * Harvard HVHS Model alignment:
+ * HVHS Model alignment:
  * - C2 (Analitik): Evidence-based risk scoring
  * - C10 (Stratejik Değişim): Continuous learning from doctor feedback
  *

@@ -216,8 +216,8 @@ export const landingTranslations: Record<string, TranslationEntry> = {
   },
   "landing.trust.col3Title": { en: "Competition Validation", tr: "Rekabet Doğrulaması" },
   "landing.trust.col3Body": {
-    en: "IGNITE'26 winner · Presented at Harvard HSIL Hackathon at Koç University Hub.",
-    tr: "IGNITE'26 birincisi · Harvard HSIL Hackathon'da Koç Üniversitesi Hub'ında sunuldu.",
+    en: "IGNITE'26 winner · A health technology venture supported by Koç University Entrepreneurship.",
+    tr: "IGNITE'26 birincisi · Koç Üniversitesi Girişimciliği destekli sağlık teknolojisi girişimi.",
   },
   "landing.trust.col4Title": { en: "Secure Infrastructure", tr: "Güvenli Altyapı" },
   "landing.trust.col4Body": {

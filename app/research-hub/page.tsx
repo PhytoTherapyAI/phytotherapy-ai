@@ -152,7 +152,6 @@ export default function ResearchHubPage() {
             : "Evidence-based data infrastructure for researchers, universities, and health institutions"}
         </p>
         <div className="mt-3 flex justify-center gap-2 flex-wrap">
-          <span className="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold text-primary">Harvard HVHS C10</span>
           <span className="rounded-full bg-amber-100 dark:bg-amber-900/30 px-3 py-1 text-[10px] font-bold text-amber-700 dark:text-amber-300">KVKK/GDPR</span>
           <span className="rounded-full bg-lavender/10 px-3 py-1 text-[10px] font-bold text-lavender">Open API</span>
         </div>

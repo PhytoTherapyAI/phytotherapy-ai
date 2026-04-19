@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 // ============================================
-// Integrated Care Pathways — Harvard HVHS C6
+// Integrated Care Pathways — HVHS C6
 // Risk Stratification + Bundled Services + Variance Analysis
 // ============================================
 

@@ -235,7 +235,6 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
   "lp.trust2": { en: "No diagnosis — decision support", tr: "Teşhis değil — karar desteği" },
   "lp.trust3": { en: "Instant safety PDF export", tr: "Doktora hazır PDF çıktısı" },
   "lp.trust4": { en: "KVKK & GDPR compliant", tr: "KVKK & GDPR uyumlu" },
-  "lp.trust5": { en: "Harvard health system (CSI)", tr: "Harvard Sağlık Sistemi (CSI)" },
   "lp.feat1.title": { en: "Drug-Herb Interaction Engine", tr: "İlaç–Bitki Etkileşim Motoru" },
   "lp.feat1.desc": {
     en: "Resolves your meds via OpenFDA and lets you know which herbs are safe, risky, or dangerous — all citing PubMed.",

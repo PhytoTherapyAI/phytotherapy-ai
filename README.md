@@ -25,7 +25,7 @@ DoctoPal is an AI health assistant that helps users understand drug–herb inter
 
 Built by three medical students with no prior software development experience, using Claude as the sole developer.
 
-**Awards:** IGNITE'26 Winner · Harvard "Building High-Value Health Systems" Hackathon Participant (April 2026)
+**Awards:** IGNITE'26 Winner (April 2026)
 
 ---
 
