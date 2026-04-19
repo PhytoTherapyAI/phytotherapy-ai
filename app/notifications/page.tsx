@@ -4,9 +4,11 @@
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
+import { useActiveProfile } from "@/lib/use-active-profile"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx, txp, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
+import { FamilyProfileGuard } from "@/components/family/FamilyProfileGuard"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -92,6 +94,7 @@ function saveReadIds(ids: Set<string>) {
 export default function NotificationsPage() {
   const router = useRouter()
   const { user, isAuthenticated, isLoading } = useAuth()
+  const { isOwnProfile } = useActiveProfile()
   const { lang } = useLang()
 
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -331,6 +334,11 @@ export default function NotificationsPage() {
   }
 
   if (!isAuthenticated) return null
+
+  // KVKK: login user'ın ilaç/etkinlik/bildirim listesi başka profilde leak olmasın.
+  if (!isOwnProfile) {
+    return <FamilyProfileGuard pageTitleTr="Bildirimler" pageTitleEn="Notifications" />
+  }
 
   // ---- Render ----
 

@@ -6,11 +6,12 @@
 import { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Dot } from "recharts";
 import { useAuth } from "@/lib/auth-context";
+import { useActiveProfile } from "@/lib/use-active-profile";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, Minus, Loader2, Activity } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Loader2, Activity, ShieldAlert } from "lucide-react";
 
 type Range = "3m" | "1y" | "all";
 
@@ -54,6 +55,7 @@ function StatusDot({ cx, cy, payload }: StatusDotProps) {
 
 export function BloodTestTrendChart() {
   const { isAuthenticated, session } = useAuth();
+  const { isOwnProfile } = useActiveProfile();
   const { lang } = useLang();
   const [range, setRange] = useState<Range>("1y");
   const [loading, setLoading] = useState(false);
@@ -81,6 +83,30 @@ export function BloodTestTrendChart() {
       <Card className="p-8 text-center">
         <Activity className="mx-auto mb-3 h-12 w-12 text-muted-foreground" />
         <p className="text-muted-foreground">{tx("trends.authRequired", lang)}</p>
+      </Card>
+    );
+  }
+
+  // KVKK: trend geçmişi login user'ın kan tahlili arşivini çeker; aile üyesi
+  // profilindeyken aile üyesi adına trend göstermiyoruz (ve İpek'in kendi
+  // trendlerini Taha'nın ekranında da göstermemeliyiz).
+  if (!isOwnProfile) {
+    const tr = lang === "tr";
+    return (
+      <Card className="p-6 border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
+        <div className="flex items-start gap-3">
+          <ShieldAlert className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-foreground">
+              {tr ? "Trend geçmişi görüntülenemez" : "Trend history unavailable"}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+              {tr
+                ? "Kan tahlili trend geçmişi kişisel veri içerir. Kendi profilinizi aktif ettiğinizde geçmiş testleriniz burada listelenir."
+                : "Blood test trends contain personal history. Switch back to your own profile to see your tests."}
+            </p>
+          </div>
+        </div>
       </Card>
     );
   }

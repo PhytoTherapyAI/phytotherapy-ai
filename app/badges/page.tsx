@@ -4,6 +4,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
+import { useActiveProfile } from "@/lib/use-active-profile"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx, txObj } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
@@ -11,6 +12,7 @@ import { BADGES, evaluateBadges, calculateAnonymousScore, type UserStats } from 
 import { Trophy, Lock, Users, Crown, TrendingUp } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
 import BadgeIcon from "@/components/badges/BadgeIcon"
+import { FamilyProfileGuard } from "@/components/family/FamilyProfileGuard"
 
 interface LeaderboardData {
   rank: number
@@ -23,6 +25,7 @@ interface LeaderboardData {
 export default function BadgesPage() {
   const router = useRouter()
   const { user, isAuthenticated, isLoading } = useAuth()
+  const { isOwnProfile } = useActiveProfile()
   const { lang } = useLang()
   const [stats, setStats] = useState<UserStats | null>(null)
   const [leaderboard, setLeaderboard] = useState<LeaderboardData | null>(null)
@@ -97,6 +100,11 @@ export default function BadgesPage() {
 
   const { earned, locked } = evaluateBadges(stats)
   const score = calculateAnonymousScore(stats)
+
+  // KVKK: rozetler login user'ın kişisel başarı istatistiğine bağlı — başka profilde leak olmasın.
+  if (!isOwnProfile) {
+    return <FamilyProfileGuard pageTitleTr="Rozetler" pageTitleEn="Badges" />
+  }
 
   return (
     <div className="mx-auto max-w-5xl px-4 md:px-8 py-8">

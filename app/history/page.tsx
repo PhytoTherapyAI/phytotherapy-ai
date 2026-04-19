@@ -4,9 +4,11 @@
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
+import { useActiveProfile } from "@/lib/use-active-profile"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
+import { FamilyProfileGuard } from "@/components/family/FamilyProfileGuard"
 import {
   Search,
   Star,
@@ -40,6 +42,7 @@ const typeIcons: Record<string, typeof Shield> = {
 export default function HistoryPage() {
   const router = useRouter()
   const { user, isAuthenticated, isLoading } = useAuth()
+  const { isOwnProfile } = useActiveProfile()
   const { lang } = useLang()
   const [items, setItems] = useState<HistoryItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -147,6 +150,11 @@ export default function HistoryPage() {
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
+  }
+
+  // KVKK: aile üyesi profilindeyken login user'ın query_history'si leak olmamalı.
+  if (!isOwnProfile) {
+    return <FamilyProfileGuard pageTitleTr="Arama Geçmişi" pageTitleEn="Search History" />
   }
 
   return (

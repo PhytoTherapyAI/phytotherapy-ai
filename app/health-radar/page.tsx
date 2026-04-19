@@ -3,10 +3,12 @@
 
 import { useState, useEffect } from "react"
 import { useAuth } from "@/lib/auth-context"
+import { useActiveProfile } from "@/lib/use-active-profile"
 import { useLang } from "@/components/layout/language-toggle"
 import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { FamilyProfileGuard } from "@/components/family/FamilyProfileGuard"
 import { Activity, Heart, Brain, Bone, Apple, Shield, Loader2, TrendingUp, TrendingDown, Minus, type LucideIcon } from "lucide-react"
 
 interface RadarAxis {
@@ -26,6 +28,7 @@ interface CheckIn {
 
 export default function HealthRadarPage() {
   const { user } = useAuth()
+  const { isOwnProfile } = useActiveProfile()
   const { lang } = useLang()
   const [loading, setLoading] = useState(true)
   const [axes, setAxes] = useState<RadarAxis[]>([])
@@ -120,6 +123,11 @@ export default function HealthRadarPage() {
       <p className="text-muted-foreground text-sm">{t("loading")}</p>
     </div>
   )
+
+  // KVKK: mood/energy/sleep/meds leak'ini engelle.
+  if (!isOwnProfile) {
+    return <FamilyProfileGuard pageTitleTr="Sağlık Radarı" pageTitleEn="Health Radar" />
+  }
 
   return (
     <div className="min-h-screen bg-background">

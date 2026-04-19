@@ -4,9 +4,11 @@
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
+import { useActiveProfile } from "@/lib/use-active-profile"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
+import { FamilyProfileGuard } from "@/components/family/FamilyProfileGuard"
 import {
   BarChart3,
   TrendingUp,
@@ -32,6 +34,7 @@ interface AnalyticsData {
 export default function AnalyticsPage() {
   const router = useRouter()
   const { user, isAuthenticated, isLoading } = useAuth()
+  const { isOwnProfile } = useActiveProfile()
   const { lang } = useLang()
   const [data, setData] = useState<AnalyticsData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -116,6 +119,11 @@ export default function AnalyticsPage() {
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
+  }
+
+  // KVKK: login user'ın sorgu/check-in trendleri başka profilde leak olmasın.
+  if (!isOwnProfile) {
+    return <FamilyProfileGuard pageTitleTr="Analitik" pageTitleEn="Analytics" />
   }
 
   return (
