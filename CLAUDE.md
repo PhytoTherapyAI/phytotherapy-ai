@@ -47,16 +47,30 @@ Referans doküman: `YASAL-UYUM.md` (Downloads klasöründe)
 ## Aile Profili Sistemi
 
 Detaylı yol haritası: `FAMILY-ROADMAP.md`
-Mevcut faz: **TAMAMLANDI (FAZ 1-5)** — Session 31
-Netflix tarzı profil seçimi, premium kontrollü aile yönetimi, davet sistemi (email + kod), cross-user read (RLS), AI chat context switch, SBAR, SOS, Sağlık Ağacı.
 
-### Supabase Migration'lar (Session 31)
-Sırayla çalıştırılmalı:
+Mevcut durum:
+- **FAZ 1-5 ✅ TAMAMLANDI** (Session 31-32): Netflix profil seçim, davet, cross-user read, aktiv profil, sağlık ağacı
+- **Premium Altyapı ✅ TAMAMLANDI** (Session 33, Commit 1-3):
+  - `family_groups.plan_type` (free | family_premium) + `max_members` + `plan_expires_at`
+  - `getUserEffectivePremium()` helper (individual OR family kaynaklı Premium)
+  - `/api/family/promote-admin` (target Premium zorunlu)
+  - `/api/family/upgrade-plan` (owner manuel aktivasyon + bildirim fan-out)
+  - Pricing UI (3 kart decoy + aylık/yıllık toggle + 2 ay bedava)
+  - PremiumUpgradeModal + FOMO banner + select-profile lock
+  - Feature gates: ChatInterface + medical-analysis + interaction-checker
+  - /checkout placeholder (mailto + plan analytics)
+- **Premium Gerçek Ödeme (Iyzico) ⏳ Commit 4 bekliyor** (Session 34)
+
+### Supabase Migration'lar (sırayla çalıştırılmalı)
 1. `20260417_family_member_visibility.sql` (üye görünürlük)
 2. `20260417_family_invite_code.sql` (davet kodu sütunu)
 3. `20260417_family_cross_user_read.sql` (cross-user SELECT)
 4. `20260417_family_relationship.sql` (ilişki sütunu)
 5. `20260418_family_admin_update.sql` (admin update policy)
+6. `20260418_pdf_analysis_tables.sql` (Session 32 — radiology_reports + prospectus_scans)
+7. `20260419_fix_fn_sender_insert_sos.sql` (Session 33 — SOS RLS helper function)
+8. `20260419_family_premium.sql` (Session 33 — plan_type + max_members + expires)
+9. `family_members.created_at` column ALTER (manual, Session 33)
 
 ---
 
@@ -471,7 +485,7 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 
 ---
 
-*Son güncelleme: 19 Nisan 2026 v52.3*
+*Son güncelleme: 19 Nisan 2026 v52.4*
 *IGNITE 26 kazanıldı — Harvard Hackathon tamamlandı (11-12 Nisan 2026).*
 *Session 18-20: Aile profili + SBAR PDF redesign + condition translations + bug fixes.*
 *Session 21: YASAL UYUM — 10/14 madde kod implementasyonu tamamlandı (MADDE 1,2,3,5,6,7,8,9,10,11,12,13). MADDE 4 ve 14 hukuki/idari işlem.*
@@ -527,3 +541,15 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 *— Task 1 Asistan (5 faz): SYSTEM_PROMPT tam yeniden yazıldı — tek kaynak, KVKK uyumlu "sen" hitabı (isim kullanma), adaptif format (3+ madde → bullet izni), adaptif uzunluk (1-3/4-6/6-8 cümle), 4 few-shot örnek (TR+EN, profile-aware tone) → Chat profile enrichment: diet_type, exercise_frequency, sleep_quality (daily_check_ins 7-gün avg) LIFESTYLE bloğuna eklendi → Acil durum DB v2: lib/safety-filter.ts'e 40+ yeni red keyword (pediatrik: "bebek nefes almıyor" vb., mental health eşik: "intihar planım var" vb., anaphylaxis pattern: "arı soktu nefes daralıyor" vb., stroke FAST + cardiac atypical: "yüzde sarkma", "sol kol uyuşması" vb.) + SEVERITY_ESCALATORS (TR+EN "şiddetli/durmuyor/severe/won't stop") → safe context + severity → yellow escalation (FAZ 3.5) → YellowCodeCard UI component (amber banner + tel:112) + MessageBubble.tsx'te <!--YELLOW_CODE--> marker parse.*
 *— Task 2 PDF Analizi (4 faz): RadiologyReport PDF Türkçe karakter fix — public/fonts/NotoSans-Regular.ttf + NotoSans-Bold.ttf için Font.register (path.join(process.cwd(), "public", "fonts") server-side filesystem path), tüm "Helvetica" → "NotoSans" + fontWeight switch. ş/ğ/ü/ö/ç/ı/İ native render, transliteration yok. (Not: SBAR hâlâ fixTr transliteration kullanıyor — RadiologyReport gerçek font register'ı aldı.) → DB tabloları: supabase/migrations/20260418_pdf_analysis_tables.sql — radiology_reports (id, user_id, file_name, image_type, overall_urgency, analysis_json JSONB, summary, created_at) + prospectus_scans (id, user_id, medication_name, file_name, scan_data JSONB, profile_alerts JSONB, created_at) — RLS own_* policies + user_id + created_at DESC indexler + NOTIFY pgrst. → Endpoint persistence: /api/radiology-analysis query_history yerine radiology_reports'a structured insert (analysis_json full response) + /api/prospectus-reader pre-AI query_history kaldırıldı, post-parse prospectus_scans'e structured insert (scan_data + profile_alerts). → Kan tahlili trend analizi: /api/blood-test-trends YENİ endpoint (son 10 test, range filter 3m/1y/all, test_data JSONB şekil varyasyonu tolere — array, {results}, category-grouped) + components/blood-test/BloodTestTrendChart.tsx (Recharts LineChart per-parameter, status-renk dots yeşil/sarı/kırmızı, trend ikonu up/down/stable, 3m/1y/all filter) + /medical-analysis sayfasına "Trends" tab olarak eklendi (TabType "blood-test" | "radiology" | "trends"). → BLOOD_TEST_PROMPT tam yeniden yazıldı: yaş/cinsiyet-specific reference ranges (ferritin premeno/postmeno ayrı, ESR yaş formülü, thyroid trimester-specific, Cr sex-specific vb.), profil farkındalığı (hamilelik/böbrek/KC → supplement downgrade, meds cross-check interactionCheck zorunlu alan), strict JSON schema (abnormalFindings + referenceRange + supplementRecommendations.interactionCheck + trendComparison + overallUrgency), kritik değerlerde "SEEK MEDICAL CARE" prepend rule. → PROSPECTUS_PROMPT inline kaldırıldı, lib/prompts.ts'e taşındı + buildProspectusSystemPrompt({userMedications, userAllergies, replyLanguage}) helper — pharmakokinetik (CYP450/P-gp/protein binding) + pharmakodinamik (additif CNS/QT/kanama) + duplicate therapy check rules eklendi, profileAlerts severity ⚠️/🚫 prefix. → /blood-test zaten /medical-analysis'e redirect ediyordu (doğrulandı, değişiklik yok). → trends.* çeviri key'leri (11 key TR+EN). → tsc --noEmit temiz, UI manuel doğrulandı (Trends tab auth-prompt render, /blood-test redirect, YellowCodeCard amber render "hafif göğüs ağrısı" testinde).*
 *— Not: Session 32 bu session tek commit'te (300463b) Task 1'in uncommitted değişiklikleri ile birlikte commit'lendi.*
+*Session 33: Premium Altyapı + Aile UX Fix —*
+*— Member user /select-profile bug fix: fetchFamilyData membership-first via /api/family (browser RLS edge case bypass; lib/family-context.tsx tek kaynak olarak API çağırıyor, fetchMembers kaldırıldı)*
+*— SOS RLS fix: service-role INSERT (caller identity yine JWT'den decode ediliyor, from_user_id spoof'lanamaz) + sanity check (caller + target accepted membership) + /api/family/upgrade-plan yearly 12-ay desteği*
+*— Bildirim sistemi: Resend email fan-out (SOS kırmızı, yönetici talebi amber, hatırlatma yeşil template'ler) + NotificationBell tıklanabilir (type'a göre yönlendirme: emergency→setActiveProfile+/profile, custom→/family, reminder→/)*
+*— Premium altyapı (Commit 1): family_groups.plan_type/plan_expires_at/max_members migration + getUserEffectivePremium helper (individual OR family kaynaklı) + /api/family/promote-admin (target Premium zorunlu, 402 premium_required) + /api/family/upgrade-plan (owner-only + bildirim fan-out) + max_members gate inviteMember'da*
+*— Premium UI (Commit 2): useEffectivePremium hook + PremiumUpgradeModal + Pricing 3-kart decoy + PremiumFomoBanner + /select-profile locked cards (grayscale + lock badge) + feature gates ChatInterface/medical-analysis/interaction-checker*
+*— Premium rötuş (Commit 3): aylık/yıllık toggle (default yearly decoy) + 2-ay-bedava badge + "7 Gün Ücretsiz Dene" CTA + /checkout placeholder (güven verici "early access" metni + mailto info@doctopal.com + plan analytics via console + window.Sentry.addBreadcrumb)*
+*— Privacy: FamilyProfileGuard component + 5 leak'li sayfaya guard (history/analytics/health-radar/notifications/badges) + BloodTestTrendChart inline guard*
+*— Allows_management gate: resolveTargetUser'a 402 management_not_granted + ChatInterface client-side çift gate (consent sonra management) + ManagementRequiredMessage + "İzin Talebi Gönder" butonu (/api/family/notifications custom type, localStorage dedupe)*
+*— Migration'lar: 20260419_fix_fn_sender_insert_sos.sql (are_family_members SECURITY DEFINER helper), 20260419_family_premium.sql (plan kolonları), family_members.created_at column ALTER (manual)*
+*— Bilinen TODO: 12 family-context write mutation hâlâ direct Supabase (RLS güvenli, gelecekte API'ye taşınabilir) + SBAR/Prospectus/FamilyHealthTree premium gate eksik + Bireysel Premium satın alma UI eksik (sadece Aile aktivasyonu var) → tümü Commit 4 (Iyzico) iterasyonuna*
+*— Commit 4 bekliyor (Session 34): Iyzico SDK + hosted checkout + subscription webhook + trial clock (trial_started_at + 7d < NOW()) + Mesafeli Satış Sözleşmesi + Aydınlatma v2.1 + Bireysel Premium satın alma UI*

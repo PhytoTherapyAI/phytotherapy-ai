@@ -1,6 +1,6 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 19 Nisan 2026 (v52.3 — Session 32: Asistan + PDF Analizi Tamamlandı)
+> Son güncelleme: 19 Nisan 2026 (v52.4 — Session 33: Premium Altyapı + Aile UX Fix Tamamlandı)
 
 ---
 
@@ -28,10 +28,46 @@
   - BLOOD_TEST_PROMPT upgrade (yaş/cinsiyet bazlı, JSON schema)
   - PROSPECTUS_PROMPT lib/prompts.ts'e taşındı
 
-### Sıradaki
-- [ ] Asistan fine-tuning (kullanıcı feedback'e göre)
-- [ ] QR kod okuma (prospektüs)
-- [ ] Radyoloji görüntü Supabase Storage
+### Session 33 — Premium Altyapı + Aile UX Fix
+- [x] Member kullanıcı kendi grubunu görme bug fix
+- [x] family-context.tsx → /api/family migration
+- [x] family_members.created_at sütunu eklendi
+- [x] SOS RLS fix (service-role bypass)
+- [x] SOS recipient filter (Seçenek B: caller + target hariç)
+- [x] SOS mesaj template güncelleme
+- [x] Bildirim navigasyonu (NotificationBell tıklanabilir)
+- [x] Bildirim email gönderimi (Resend)
+- [x] Premium foundation (helper + API + max_members)
+- [x] Pricing UI (3 kart, decoy effect)
+- [x] Premium gate'leri (chat, medical, interaction)
+- [x] Free user UX (FOMO banner + select-profile lock)
+- [x] Yıllık fiyat + aylık/yıllık toggle
+- [x] 7 gün trial CTA'ları
+- [x] /checkout placeholder
+
+**Aktif Supabase migration'ları (sırayla):**
+1. `20260417_family_member_visibility.sql`
+2. `20260417_family_invite_code.sql`
+3. `20260417_family_cross_user_read.sql`
+4. `20260417_family_relationship.sql`
+5. `20260418_family_admin_update.sql`
+6. `20260418_pdf_analysis_tables.sql` (Session 32)
+7. `20260419_fix_fn_sender_insert_sos.sql` (Session 33)
+8. `20260419_family_premium.sql` (Session 33)
+9. `family_members.created_at` column ALTER (manual, Session 33)
+
+**Bilinen sorunlar / Follow-up:**
+- 12 family-context write mutation hâlâ direkt Supabase kullanıyor (RLS güvenli ama gelecekte API'ye taşınabilir)
+- SBAR / Prospectus / FamilyHealthTree premium gate eksik (Commit 3 sonrası iterasyon)
+- Bireysel Premium satın alma UI eksik (şu an sadece Aile aktivasyonu var; Iyzico ile gelecek)
+
+### Sıradaki (Session 34)
+- [ ] Iyzico entegrasyonu (gerçek ödeme + webhook + trial clock)
+- [ ] Mesafeli Satış Sözleşmesi sayfası
+- [ ] Aydınlatma Metni v2.1 (Iyzico + ödeme verisi)
+- [ ] Premium hata fix'leri (test sonuçlarına göre)
+- [ ] Ana sayfa landing içeriği
+- [ ] Iyzico hesabı / şahıs şirketi kurulum (operasyonel)
 
 ---
 
