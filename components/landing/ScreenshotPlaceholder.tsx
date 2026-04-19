@@ -1,10 +1,11 @@
 // © 2026 DoctoPal — All Rights Reserved
 // Placeholder for an eventual <Image /> preview.
-// mode="hero" renders a richer mock UI (browser chrome + mock assistant chat)
-// for the Hero section. mode="simple" keeps a Monitor icon for feature cards.
+// mode="hero" renders a realistic Interaction Checker result preview
+// (question + emerald-bordered AI answer + evidence tags + med chips).
+// mode="simple" keeps a Monitor icon for feature cards.
 "use client"
 
-import { Monitor, Sparkles, Activity } from "lucide-react"
+import { Monitor, Sparkles, User } from "lucide-react"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 
@@ -15,7 +16,7 @@ interface Props {
   aspectRatio?: "16:10" | "4:3" | "1:1"
   /** Width ceiling of the placeholder. */
   size?: "lg" | "md" | "sm"
-  /** Visual richness. `hero` shows a mock panel; `simple` shows an icon. */
+  /** Visual richness. `hero` shows a mock interaction result; `simple` shows an icon. */
   mode?: "hero" | "simple"
   /** Extra classes on the outer wrapper. */
   className?: string
@@ -61,9 +62,9 @@ export function ScreenshotPlaceholder({
             </div>
           </div>
 
-          {/* Mock panel body */}
-          <div className="p-5 space-y-4">
-            {/* Section header */}
+          {/* Panel body — realistic Interaction Checker preview */}
+          <div className="p-4 sm:p-5 space-y-3">
+            {/* Panel header */}
             <div className="flex items-center gap-2">
               <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500 text-white">
                 <Sparkles className="h-4 w-4" aria-hidden="true" />
@@ -72,47 +73,60 @@ export function ScreenshotPlaceholder({
                 {tr ? "Sağlık Asistanı" : "Health Assistant"}
               </div>
               <div className="ml-auto inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-900/60">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
                 {tr ? "Aktif" : "Active"}
               </div>
             </div>
 
-            {/* Mock chat rows */}
-            <div className="space-y-2">
-              <div className="ml-auto w-4/5 h-3 rounded-md bg-slate-200 dark:bg-slate-700" />
-              <div className="ml-auto w-3/5 h-3 rounded-md bg-slate-200 dark:bg-slate-700" />
-              <div className="mt-3 w-5/6 h-3 rounded-md bg-emerald-100 dark:bg-emerald-950/50" />
-              <div className="w-4/6 h-3 rounded-md bg-emerald-100 dark:bg-emerald-950/50" />
-              <div className="w-3/6 h-3 rounded-md bg-emerald-100 dark:bg-emerald-950/50" />
+            {/* Question card */}
+            <div className="flex items-start gap-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/40 backdrop-blur border border-slate-200 dark:border-slate-700/50 p-3">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                <User className="h-3.5 w-3.5" aria-hidden="true" />
+              </div>
+              <p className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                {tr
+                  ? "Aspirin 100mg ile Concor 5mg birlikte alınabilir mi?"
+                  : "Can Aspirin 100mg be taken together with Concor 5mg?"}
+              </p>
             </div>
 
-            {/* Mock medication chips */}
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {["Aspirin 100mg", "Concor 5mg", "Omega-3"].map((m) => (
-                <span
-                  key={m}
-                  className="inline-flex items-center gap-1 rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
-                >
-                  {m}
+            {/* Answer card — emerald left border */}
+            <div className="flex items-start gap-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 backdrop-blur border-l-4 border-emerald-500 border-y border-r border-y-emerald-100 border-r-emerald-100 dark:border-y-emerald-900/40 dark:border-r-emerald-900/40 p-3">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+              </div>
+              <div className="flex-1 min-w-0 space-y-1.5">
+                <span className="inline-flex items-center gap-1 rounded bg-emerald-100 dark:bg-emerald-600/20 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-emerald-700 dark:text-emerald-400">
+                  ✓ {tr ? "DÜŞÜK RİSK" : "LOW RISK"}
                 </span>
-              ))}
+                <p className="text-sm leading-relaxed text-slate-900 dark:text-slate-200">
+                  {tr
+                    ? "Bu kombinasyon literatürde güvenli kabul edilir."
+                    : "This combination is considered safe in the literature."}
+                </p>
+                <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-500 dark:text-slate-400 pt-0.5">
+                  <span>📊 {tr ? "GRADE: Yüksek kanıt" : "GRADE: High evidence"}</span>
+                  <span>🔬 {tr ? "12 çalışma" : "12 studies"}</span>
+                  <span>🇹🇷 {tr ? "İlaç Bilgi Bankası" : "Drug Info Bank"}</span>
+                </div>
+              </div>
             </div>
 
-            {/* Mini metric line */}
-            <div className="mt-2 flex items-center gap-2 rounded-lg bg-slate-50 dark:bg-slate-800/60 px-3 py-2">
-              <Activity className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" aria-hidden="true" />
-              <svg viewBox="0 0 200 24" className="flex-1 h-5" preserveAspectRatio="none" aria-hidden="true">
-                <polyline
-                  points="0,18 20,14 40,16 60,8 80,12 100,4 120,10 140,6 160,12 180,8 200,10"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  className="text-emerald-500 dark:text-emerald-400"
-                />
-              </svg>
-              <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 shrink-0">
-                7d
-              </span>
+            {/* Current medications footer */}
+            <div>
+              <p className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-500 mb-1.5">
+                {tr ? "Mevcut ilaçların:" : "Your medications:"}
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {["Aspirin 100mg", "Concor 5mg", "Omega-3"].map((m) => (
+                  <span
+                    key={m}
+                    className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 px-2 py-0.5 text-[10px] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
+                  >
+                    {m}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
