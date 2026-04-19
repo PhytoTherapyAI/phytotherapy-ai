@@ -552,4 +552,44 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 *— Allows_management gate: resolveTargetUser'a 402 management_not_granted + ChatInterface client-side çift gate (consent sonra management) + ManagementRequiredMessage + "İzin Talebi Gönder" butonu (/api/family/notifications custom type, localStorage dedupe)*
 *— Migration'lar: 20260419_fix_fn_sender_insert_sos.sql (are_family_members SECURITY DEFINER helper), 20260419_family_premium.sql (plan kolonları), family_members.created_at column ALTER (manual)*
 *— Bilinen TODO: 12 family-context write mutation hâlâ direct Supabase (RLS güvenli, gelecekte API'ye taşınabilir) + SBAR/Prospectus/FamilyHealthTree premium gate eksik + Bireysel Premium satın alma UI eksik (sadece Aile aktivasyonu var) → tümü Commit 4 (Iyzico) iterasyonuna*
+
+---
+
+### Session 34 — Tamamlandı (Nisan 2026)
+
+**Ana iş:** Premium altyapısı tamamlama + marketing-ready landing + hukuki zemin + brand minimization + legal consolidation.
+
+**Atılan commitler (14):**
+- `7ae0962` — feat(premium): SBAR / Prospectus / FamilyHealthTree premium gate'leri (PremiumLockedCard + useEffectivePremium server-side gates — 4 API 402)
+- `dee1c45` — feat(landing): marketing-ready landing page rewrite — Ayşe persona (7 section + LandingNav + LandingFooter + decoy pricing)
+- `d6117e9` — fix(landing): çift navbar giderildi (Header guest `/` için null)
+- `2c216a2` — fix(landing): hero mockup → gerçekçi Interaction Checker result preview
+- `2945c37` — fix(landing): LandingNav'a ThemeToggle + LanguageToggle eklendi
+- `feba532` — feat(about): Hakkımızda sayfası — kurucu hikayesi + ekip + başarılar + iletişim
+- `d0d7693` — chore(about): Recognition & Awards bölümü kaldırıldı
+- `589bc5d` — chore: Harvard HSIL hackathon referansları kaldırıldı (IGNITE'26 tek yer olarak kaldı)
+- `e48ce09` — chore: brand minimization — IGNITE'26 + Koç Üniversitesi + Türkiye-spesifik iddialar kaldırıldı (global-ready)
+- `086e5ff` — feat(legal): Aydınlatma Metni v2.0 → v2.1 (Iyzico aktarıcı + Finansal Veri + VUK Md.253 10-yıl + §11 Değişiklik Tarihçesi)
+- `e5bc574` — fix(legal): AydinlatmaPopup versiyon dinamik bind + consent_log audit v2.1 (KVKK audit trail düzeltildi) + popup body §2/§3/§5/§6 v2.1 ile hizalandı
+- `58c902f` — fix(legal): AydinlatmaPopup'a §11 Değişiklik Tarihçesi eklendi (/aydinlatma sayfası ile senkron)
+- `31bac51` — feat(legal): Mesafeli Satış (13 madde) + Abonelik Sözleşmesi (17 bölüm) taslakları — hibrit strateji (URL'den erişilir, landing footer disabled)
+- `1b792b2` — chore(legal): /privacy silindi + 301 redirect → /aydinlatma + 3 inbound link güncellendi + /terms legal@ → info@ + Premium cross-reference + dashboard footer overhaul
+
+**Session 34 sonu durum:**
+- Marketing-ready landing canlı (Ayşe persona, decoy pricing, interaction checker mockup)
+- Hakkımızda sayfası minimal/global (kurucu ad + "Co-founder" — okul/detay kaldırıldı)
+- KVKK Aydınlatma Metni **v2.1** (Iyzico + Finansal Veri + VUK Md.253 + §11 Değişiklik Tarihçesi + dashboard popup dinamik binding)
+- Mesafeli Satış + Abonelik Sözleşmesi taslakları yayında (şirket tescili + hukuk danışmanı incelemesi bekliyor — footer link'leri disabled)
+- Legal tutarlılık: **tek kaynak /aydinlatma**, tüm iletişim `info@doctopal.com` (eski `legal@` / `contact@` / `privacy@` kaldırıldı)
+- Iyzico entegrasyonu **ERTELENDİ** (şirket kurulumu bekleniyor; Commit B atlandı — Bireysel Premium manuel aktivasyon UI'ına gerek görülmedi)
+- 4 AI+sağlık güvenlik zırhı Abonelik Sözleşmesi'nde: §2a MDR Beyanı (tıbbi cihaz değil), §2b AI Halüsinasyon + Limitation of Liability, §5a Özel Nitelikli Veri Açık Rıza, §8a Aile Üyesi Bağımsız Rıza Zinciri
+- /privacy konsolide edildi (/aydinlatma tek KVKK Md.10 kaynağı)
+- Dashboard footer Premium aboneleri için tam donatıldı (Aydınlatma + Mesafeli + Abonelik link'leri aktif)
+
+**Session 35'e devir:**
+- Taha'nın AI cevap kalitesi iyileştirmeleri (öncelikli iş)
+- Iyzico entegrasyonu (şirket kurulumu + Iyzico merchant onayı + Abonelik aktivasyonu sonrası)
+- Hukuk danışmanı review (şirket tescili tamamlandıktan sonra taslaklar gözden geçirilip v1.1'e bump edilecek; footer disabled state kaldırılacak)
+- Bireysel Premium backend + checkout UI (Iyzico ile birlikte)
+- Gerçek ekran görüntüleri (AboutSection team avatars + ScreenshotPlaceholder yerleri için `/team/` ve `/screenshots/` asset'leri)
 *— Commit 4 bekliyor (Session 34): Iyzico SDK + hosted checkout + subscription webhook + trial clock (trial_started_at + 7d < NOW()) + Mesafeli Satış Sözleşmesi + Aydınlatma v2.1 + Bireysel Premium satın alma UI*
