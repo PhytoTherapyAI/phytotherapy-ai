@@ -7,6 +7,7 @@ import {
   AlertTriangle, ChevronDown, ChevronUp, Loader2, ArrowRight, Zap, Info,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { useActiveProfile } from "@/lib/use-active-profile";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 
@@ -86,6 +87,7 @@ function ScoreRing({ score }: { score: number }) {
 
 export function DailySynergyCard() {
   const { session } = useAuth();
+  const { activeUserId, isOwnProfile } = useActiveProfile();
   const { lang } = useLang();
   const [data, setData] = useState<SynergyData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -94,8 +96,9 @@ export function DailySynergyCard() {
   const fetchSynergy = useCallback(async () => {
     if (!session?.access_token) return;
 
-    // Check cache
-    const cacheKey = `synergy-${new Date().toISOString().split("T")[0]}`;
+    // Cache key includes activeUserId so switching profiles doesn't reuse the previous
+    // profile's synergy report.
+    const cacheKey = `synergy-${activeUserId || "self"}-${new Date().toISOString().split("T")[0]}`;
     try {
       const cached = sessionStorage.getItem(cacheKey);
       if (cached) {
@@ -113,7 +116,9 @@ export function DailySynergyCard() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ lang }),
+        // Send targetUserId so the endpoint aggregates the active profile's data
+        // (own profile when isOwnProfile; family member otherwise).
+        body: JSON.stringify({ lang, targetUserId: isOwnProfile ? undefined : activeUserId }),
       });
 
       if (res.ok) {
@@ -122,7 +127,7 @@ export function DailySynergyCard() {
         try { sessionStorage.setItem(cacheKey, JSON.stringify(result)); } catch { /* ignore */ }
       }
     } catch { /* silent */ } finally { setIsLoading(false); }
-  }, [session?.access_token, lang]);
+  }, [session?.access_token, lang, activeUserId, isOwnProfile]);
 
   useEffect(() => { fetchSynergy(); }, [fetchSynergy]);
 

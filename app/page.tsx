@@ -320,9 +320,49 @@ function getTimeEmoji(): string {
 export default function Home() {
   const router = useRouter();
   const { lang } = useLang();
-  const { user, isAuthenticated, isLoading, profile, premiumStatus, needsAydinlatmaUpdate, refreshProfile } = useAuth();
+  const { user, isAuthenticated, isLoading, profile: authProfile, premiumStatus, needsAydinlatmaUpdate, refreshProfile } = useAuth();
   const { familyGroup, familyMembers, activeProfileId, loading: familyLoading } = useFamily();
-  const { activeUserId } = useActiveProfile();
+  const { activeUserId, isOwnProfile, canEdit } = useActiveProfile();
+
+  // When viewing a family member's profile, fetch *their* display data from user_profiles.
+  // RLS cross-user SELECT policy (Session 31 FAZ 3) permits this.
+  // authProfile stays the login user — used for gates (onboarding_complete, consent, premium).
+  interface ViewedProfile {
+    full_name: string | null;
+    birth_date: string | null;
+    age: number | null;
+    chronic_conditions: string[] | null;
+    vaccines: unknown;
+    supplements: string[] | null;
+  }
+  const [viewedProfile, setViewedProfile] = useState<ViewedProfile | null>(null);
+
+  useEffect(() => {
+    if (isOwnProfile || !activeUserId) {
+      setViewedProfile(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = createBrowserClient();
+        const { data } = await supabase
+          .from("user_profiles")
+          .select("full_name, birth_date, age, chronic_conditions, vaccines, supplements")
+          .eq("id", activeUserId)
+          .maybeSingle();
+        if (!cancelled) setViewedProfile(data as ViewedProfile | null);
+      } catch {
+        if (!cancelled) setViewedProfile(null);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [isOwnProfile, activeUserId]);
+
+  // Display profile: source of truth for dashboard content shown to the user.
+  // Gate-style fields (onboarding_complete, consent) still read from authProfile.
+  // Typed as `any`-compatible via the common fields the UI actually reads.
+  const displayProfile = (isOwnProfile ? authProfile : viewedProfile) as (ViewedProfile & Record<string, unknown>) | null;
 
   // Family profile selection — fallback redirect if user lands on / directly.
   // Login/callback should redirect to /select-profile via getPostAuthRedirect helper.
@@ -477,8 +517,17 @@ export default function Home() {
     const task = allDashboardTasks.find(t => t.id === id);
     const isMedOrSup = task?.isMed || task?.isSup;
 
-    if (isMedOrSup && user?.id) {
-      // Write to daily_logs Supabase (single source of truth)
+    if (isMedOrSup && activeUserId) {
+      // Guard: writing to a family member's daily_logs requires canEdit (hasManageRole + Premium).
+      // RLS would block server-side too, but we short-circuit so the optimistic UI can revert cleanly.
+      if (!isOwnProfile && !canEdit) {
+        // Revert the optimistic toggle we applied above
+        setCompletedTaskIds(new Set(completedTaskIds));
+        console.warn("[dashboard] toggle blocked — no edit permission for active profile");
+        return;
+      }
+      // Write to daily_logs Supabase (single source of truth) — targets the active profile's user_id,
+      // not the authenticated caller, so family members' completions show up on their own dashboard.
       try {
         const supabase = createBrowserClient();
         const itemType = task?.isMed ? "medication" : "supplement";
@@ -486,15 +535,15 @@ export default function Home() {
         if (wasCompleted) {
           // Un-complete: delete the daily_log entry
           await supabase.from("daily_logs").delete()
-            .eq("user_id", user.id).eq("log_date", todayStr).eq("item_type", itemType).eq("item_id", id);
+            .eq("user_id", activeUserId).eq("log_date", todayStr).eq("item_type", itemType).eq("item_id", id);
         } else {
           // Complete: insert daily_log entry
           const { error } = await supabase.from("daily_logs").insert({
-            user_id: user.id, log_date: todayStr, item_type: itemType, item_id: id, item_name: itemName, completed: true,
+            user_id: activeUserId, log_date: todayStr, item_type: itemType, item_id: id, item_name: itemName, completed: true,
           });
           if (error) {
             await supabase.from("daily_logs").update({ completed: true })
-              .eq("user_id", user.id).eq("log_date", todayStr).eq("item_type", itemType).eq("item_id", id);
+              .eq("user_id", activeUserId).eq("log_date", todayStr).eq("item_type", itemType).eq("item_id", id);
           }
         }
         // Notify other views
@@ -561,7 +610,7 @@ export default function Home() {
 
   useEffect(() => { setTimeEmoji(getTimeEmoji()); }, []);
   useEffect(() => { setHour(new Date().getHours()); }, []);
-  useEffect(() => { if (user) { fetchCheckIn(); fetchMeds(); } }, [user, fetchCheckIn, fetchMeds]);
+  useEffect(() => { if (activeUserId) { fetchCheckIn(); fetchMeds(); } }, [activeUserId, fetchCheckIn, fetchMeds]);
   useEffect(() => {
     const handler = () => fetchCheckIn();
     window.addEventListener("checkin-complete", handler);
@@ -578,13 +627,16 @@ export default function Home() {
     if (query.trim()) router.push(`/health-assistant?q=${encodeURIComponent(query.trim())}`);
   };
 
-  const showDashboard = isAuthenticated && user && profile?.onboarding_complete;
+  // Gate on login user's onboarding (viewing a family member doesn't change whether the
+  // caller has finished their own onboarding).
+  const showDashboard = isAuthenticated && user && authProfile?.onboarding_complete;
   const isTr = lang === "tr";
-  const firstName = profile?.full_name?.split(" ")[0] || "";
+  // Display fields read from active profile (self or family member being viewed).
+  const firstName = displayProfile?.full_name?.split(" ")[0] || "";
   const isPremium = premiumStatus?.isPremium ?? false;
-  const chronologicalAge = profile?.birth_date
-    ? Math.floor((Date.now() - new Date(profile.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
-    : profile?.age;
+  const chronologicalAge = displayProfile?.birth_date
+    ? Math.floor((Date.now() - new Date(displayProfile.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+    : displayProfile?.age;
   const greetingKey = hour === null ? "dashboard.morning" : hour < 12 ? "dashboard.morning" : hour < 18 ? "dashboard.afternoon" : "dashboard.evening";
 
   // ── Loading ──
@@ -610,7 +662,7 @@ export default function Home() {
         {/* Dashboard Tour (first visit only) */}
         <DashboardTour />
         {/* Vaccine Recommendation Banner */}
-        <VaccineBanner lang={lang} chronicConditions={profile?.chronic_conditions || []} vaccines={Array.isArray(profile?.vaccines) ? (profile.vaccines as VaccineEntry[]) : []} />
+        <VaccineBanner lang={lang} chronicConditions={displayProfile?.chronic_conditions || []} vaccines={Array.isArray(displayProfile?.vaccines) ? (displayProfile.vaccines as VaccineEntry[]) : []} />
 
         {/* KVKK Aydınlatma Version Update Banner */}
         {needsAydinlatmaUpdate && (
@@ -863,16 +915,16 @@ export default function Home() {
           {/* ═══ HEALTH INSIGHTS GRID ═══ */}
           <motion.div variants={fadeUp} className="grid gap-6 md:grid-cols-2">
             <div className="space-y-6">
-              <SeasonalCard lang={lang} userConditions={profile.chronic_conditions || []} />
-              <WeeklySummaryCard userId={user.id} lang={lang} isPremium={isPremium} />
-              <WashoutCountdown key={supRefreshKey} userId={user.id} lang={lang} isPremium={isPremium}
-                profileSupplements={(profile.supplements || []).filter((s: string) => !s.startsWith("meta:"))} onAddSupplement={() => setAddSupOpen(true)} />
+              <SeasonalCard lang={lang} userConditions={displayProfile?.chronic_conditions || []} />
+              <WeeklySummaryCard userId={activeUserId} lang={lang} isPremium={isPremium} />
+              <WashoutCountdown key={supRefreshKey} userId={activeUserId} lang={lang} isPremium={isPremium}
+                profileSupplements={(displayProfile?.supplements || []).filter((s: string) => !s.startsWith("meta:"))} onAddSupplement={() => setAddSupOpen(true)} />
             </div>
             <div className="space-y-6">
-              <BiologicalAgeCard userId={user.id} lang={lang} isPremium={isPremium}
-                chronologicalAge={chronologicalAge} userName={profile.full_name ?? undefined} />
+              <BiologicalAgeCard userId={activeUserId} lang={lang} isPremium={isPremium}
+                chronologicalAge={chronologicalAge} userName={displayProfile?.full_name ?? undefined} />
               <MetabolicPortfolio lang={lang} isPremium={isPremium} checkInData={checkInData} />
-              <BossFightCard userId={user.id} lang={lang} isPremium={isPremium} />
+              <BossFightCard userId={activeUserId} lang={lang} isPremium={isPremium} />
             </div>
           </motion.div>
 
@@ -940,7 +992,7 @@ export default function Home() {
             </div>
           </motion.div>
 
-          <AddSupplementDialog userId={user.id} lang={lang} open={addSupOpen}
+          <AddSupplementDialog userId={activeUserId} lang={lang} open={addSupOpen}
             onOpenChange={setAddSupOpen} onSaved={() => setSupRefreshKey((k) => k + 1)} />
 
           {/* KVKK Aydınlatma Update Popup */}

@@ -11,6 +11,7 @@ import { aggregateHealthContext } from "@/lib/health-context";
 import { runCrossModuleRules } from "@/lib/cross-module-engine";
 import { askClaudeJSON } from "@/lib/ai-client";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
+import { resolveTargetUser } from "@/lib/family-permissions";
 
 export const maxDuration = 30;
 
@@ -26,25 +27,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Auth required
+    // Family-aware auth — resolves caller's identity AND validates that they may view
+    // the requested target profile (must share an accepted family_group, Premium required
+    // for cross-user). Falls back to the caller's own profile when no targetUserId given.
     const authHeader = request.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const token = authHeader.replace("Bearer ", "");
     const supabase = createServerClient();
-    const { data: { user } } = await supabase.auth.getUser(token);
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const userId: string = user.id;
-
     const body = await request.json().catch(() => ({}));
     const lang = (body.lang === "tr" ? "tr" : "en") as "en" | "tr";
+    const requestedTargetUserId = (body.targetUserId as string | undefined) || null;
 
-    // Step 1: Aggregate all module data
-    const healthContext = await aggregateHealthContext(supabase, user.id);
+    const resolution = await resolveTargetUser(supabase, authHeader, requestedTargetUserId);
+    if (!resolution.ok) {
+      return NextResponse.json({ error: resolution.error }, { status: resolution.status });
+    }
+
+    // targetUserId drives data aggregation (whose dashboard we're building the synergy for);
+    // callerId identifies the authenticated user for AI consent gate + audit.
+    const targetUserId = resolution.targetUserId;
+    const userId: string = resolution.callerId;
+
+    // Step 1: Aggregate all module data for the target profile
+    const healthContext = await aggregateHealthContext(supabase, targetUserId);
 
     // Step 2: Run deterministic rule engine
     const ruleAlerts = runCrossModuleRules(healthContext);
