@@ -31,6 +31,7 @@ import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-uti
 import { getSupplementDisplayName } from "@/lib/supplement-data";
 import { getVaccineRecommendations, isFluSeason, type VaccineEntry } from "@/lib/vaccine-data";
 import { LandingPage } from "@/components/landing/LandingPage";
+import { CONSENT_VERSIONS } from "@/lib/consent-versions";
 
 // ── Dynamic Imports (Dashboard) ──
 const DailyCareCard = dynamic(
@@ -638,8 +639,8 @@ export default function Home() {
                 <AlertCircle className="h-5 w-5 text-amber-600 shrink-0" />
                 <span className="text-sm text-amber-900 dark:text-amber-100">
                   {isTr
-                    ? "Aydınlatma metnimiz güncellendi (v2.0). Lütfen okuyunuz."
-                    : "Our privacy notice has been updated (v2.0). Please review."}
+                    ? `Aydınlatma metnimiz güncellendi (${CONSENT_VERSIONS.aydinlatma}). Lütfen okuyunuz.`
+                    : `Our privacy notice has been updated (${CONSENT_VERSIONS.aydinlatma}). Please review.`}
                 </span>
               </div>
               <button
@@ -977,7 +978,7 @@ export default function Home() {
                     await fetch("/api/privacy-settings", {
                       method: "PUT",
                       headers: { "Content-Type": "application/json", Authorization: `Bearer ${s.access_token}` },
-                      body: JSON.stringify({ action: "acknowledge_aydinlatma", version: "v2.0" }),
+                      body: JSON.stringify({ action: "acknowledge_aydinlatma", version: CONSENT_VERSIONS.aydinlatma }),
                     });
                   }
                 } catch { /* best effort */ }

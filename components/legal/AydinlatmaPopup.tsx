@@ -1,10 +1,13 @@
 // © 2026 DoctoPal — All Rights Reserved
-// KVKK Md.10 Aydınlatma Metni v2.0 — pop-up formatında
+// KVKK Md.10 Aydınlatma Metni — pop-up formatında.
 // Bu bilgilendirmedir, rıza DEĞİLDİR. Checkbox YOK.
+// Versiyon CONSENT_VERSIONS.aydinlatma'dan okunur; sürüm bump'ı tek yerden
+// yapılır ve tüm popup metnine (header + footer + consent audit) yansır.
 "use client";
 
 import { X, ShieldCheck, AlertTriangle } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
+import { CONSENT_VERSIONS } from "@/lib/consent-versions";
 
 interface AydinlatmaPopupProps {
   open: boolean;
@@ -33,7 +36,7 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
               <h2 className="text-lg font-semibold text-foreground">
                 {tr ? "Aydınlatma Metni (KVKK Md.10)" : "Privacy Notice (KVKK Art.10)"}
               </h2>
-              <p className="text-xs text-muted-foreground">v2.0 — {tr ? "Nisan 2026" : "April 2026"}</p>
+              <p className="text-xs text-muted-foreground">{CONSENT_VERSIONS.aydinlatma} — {tr ? "Nisan 2026" : "April 2026"}</p>
             </div>
           </div>
           {!forceAcknowledge && (
@@ -64,18 +67,20 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
               <li>{tr ? "İletişim: telefon (opsiyonel)" : "Contact: phone (optional)"}</li>
               <li>{tr ? "İşlem: AI sohbet, etkileşim sonuçları, SBAR, rıza kayıtları" : "Transaction: AI chat, interaction results, SBAR, consent records"}</li>
               <li>{tr ? "Teknik: IP, tarayıcı (güvenlik)" : "Technical: IP, browser (security)"}</li>
+              <li>{tr ? "Finansal (yalnızca Premium abonelik): ödeme tutarı, abonelik dönemi, fatura, kart maskesi (son 4 hane). Tam kart / CVV DoctoPal'da tutulmaz, PCI-DSS sertifikalı Iyzico'da saklanır. Aile üyeleri için finansal veri işlenmez." : "Financial (Premium subscription only): payment amount, subscription period, invoice, card mask (last 4). Full card / CVV never stored on DoctoPal; kept by PCI-DSS certified Iyzico. No financial data processed for family members."}</li>
             </ul>
           </section>
 
           <section>
             <h3 className="font-bold mb-1">{tr ? "3. İşleme Amaçları" : "3. Purposes"}</h3>
-            <p className="text-muted-foreground text-xs font-medium mb-1">{tr ? "Hukuki dayanak: KVKK Md.6 açık rıza" : "Legal basis: KVKK Art.6 explicit consent"}</p>
+            <p className="text-muted-foreground text-xs font-medium mb-1">{tr ? "Hukuki dayanak: sağlık verisi için KVKK Md.6 açık rıza; Premium abonelik için KVKK Md.5/2-c sözleşme ve Md.5/2-ç yasal yükümlülük (VUK)." : "Legal basis: explicit consent (KVKK Art.6) for health data; contract (Art.5/2-c) and legal obligation (Art.5/2-ç, Tax Procedure Law) for Premium subscription."}</p>
             <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
               <li>{tr ? "AI sağlık bilgilendirme + etkileşim kontrolü" : "AI health info + interaction checking"}</li>
               <li>{tr ? "Tıbbi görüntü/belge analizi" : "Medical image/document analysis"}</li>
               <li>{tr ? "SBAR doktor raporu" : "SBAR doctor report"}</li>
               <li>{tr ? "İlaç takibi, takvim, sağlık kaydı" : "Medication tracking, calendar, health logs"}</li>
               <li>{tr ? "Semantic arama" : "Semantic search"}</li>
+              <li>{tr ? "Premium abonelik: ücret tahsilatı ve fatura düzenlenmesi" : "Premium subscription: payment collection and invoicing"}</li>
             </ul>
           </section>
 
@@ -94,6 +99,7 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
               <li><strong>Supabase Inc.</strong> ({tr ? "İrlanda/AB" : "Ireland/EU"}) — {tr ? "Veri depolama. Dayanak: açık rıza (Md.9/1)" : "Data storage. Basis: explicit consent (Art.9/1)"}</li>
               <li><strong>Anthropic PBC</strong> ({tr ? "ABD" : "USA"}) — {tr ? "AI analiz (text + görsel). Anonimleştirilmiş. Dayanak: açık rıza" : "AI analysis (text + visual). Anonymized. Basis: explicit consent"}</li>
               <li><strong>Google LLC</strong> ({tr ? "ABD" : "USA"}) — {tr ? "Gemini embedding (semantic arama). Kimlik içermeyen metin. Dayanak: açık rıza" : "Gemini embedding (semantic search). No identity data. Basis: explicit consent"}</li>
+              <li><strong>Iyzico Ödeme Hizmetleri A.Ş.</strong> ({tr ? "Türkiye yerleşik, PCI-DSS" : "Türkiye-based, PCI-DSS"}) — {tr ? "Premium abonelik ödemeleri. Aktarım: ad-soyad, e-posta, kart bilgileri (DoctoPal'a dönmez), ödeme geçmişi. Dayanak: sözleşme ifası (Md.5/2-c). Yurt dışı aktarım YOK." : "Premium subscription payments. Transferred: name, email, card data (not returned to DoctoPal), payment history. Basis: contract performance (Art.5/2-c). No cross-border transfer."}</li>
             </ul>
             <div className="mt-2 rounded-md border border-amber-300 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/10 p-2.5 text-xs text-amber-900 dark:text-amber-200 flex gap-2">
               <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
@@ -106,6 +112,7 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
             <div className="text-xs text-muted-foreground space-y-0.5">
               <p>{tr ? "Kimlik/Sağlık/İletişim: Hesap aktif olduğu sürece" : "Identity/Health/Contact: While account active"}</p>
               <p>{tr ? "AI sohbet: 12 ay · Görüntü/belge: 90 gün · Audit log: 5 yıl · IP/erişim: 2 yıl" : "AI chat: 12 months · Images/docs: 90 days · Audit log: 5 years · IP/access: 2 years"}</p>
+              <p>{tr ? "Ödeme verisi ve faturalar: 10 yıl (VUK Md.253 yasal zorunluluk)" : "Payment data and invoices: 10 years (Tax Procedure Law Art.253, legal obligation)"}</p>
               <p>{tr ? "Hesap silme: 30 gün içinde kalıcı silme (audit log'lar anonimleştirilerek saklanır)" : "Account deletion: permanent within 30 days (audit logs retained anonymized)"}</p>
             </div>
           </section>
@@ -158,8 +165,8 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
         <div className="border-t p-4 bg-muted/30">
           <p className="text-[11px] text-muted-foreground text-center mb-3">
             {tr
-              ? "Bu metin KVKK Md.10 kapsamında aydınlatma yükümlülüğüdür. Açık rıza ayrı olarak alınır. v2.0"
-              : "This notice fulfills the KVKK Art.10 disclosure obligation. Explicit consent is collected separately. v2.0"}
+              ? `Bu metin KVKK Md.10 kapsamında aydınlatma yükümlülüğüdür. Açık rıza ayrı olarak alınır. ${CONSENT_VERSIONS.aydinlatma}`
+              : `This notice fulfills the KVKK Art.10 disclosure obligation. Explicit consent is collected separately. ${CONSENT_VERSIONS.aydinlatma}`}
           </p>
           <button
             onClick={onAcknowledge}
