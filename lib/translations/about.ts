@@ -1,5 +1,5 @@
 // © 2026 DoctoPal — All Rights Reserved
-// /about page namespace — founder story + mission + team + recognition.
+// /about page namespace — founder story + mission + team + values + contact.
 // Legal note (1219 sK): do NOT use "hekim" / "doktor" to describe the
 // founders. "Tıp Fakültesi Öğrencisi" / "medical student" only.
 
@@ -100,28 +100,6 @@ export const aboutTranslations: Record<string, TranslationEntry> = {
   "about.team.founder2Body": {
     en: "Combines clinical observation with self-taught full-stack development. From coding DoctoPal's infrastructure to shaping product strategy — on the ground alongside İpek.",
     tr: "Klinik gözlem ile kendi kendine öğrendiği full-stack yazılım geliştirmeyi birleştiriyor. DoctoPal'ın altyapısını kodlamaktan ürün stratejisi belirlemeye kadar İpek ile birlikte sahada.",
-  },
-
-  // ─── recognition ─────────────────────────────────────
-  "about.recognition.sectionTitle": {
-    en: "Recognition & Achievements",
-    tr: "Tanınma & Başarılarımız",
-  },
-  "about.recognition.award1Title": {
-    en: "IGNITE'26 Entrepreneurship Competition — First Place",
-    tr: "IGNITE'26 Girişimcilik Yarışması — Birincilik",
-  },
-  "about.recognition.award1Body": {
-    en: "Selected as Türkiye's most promising health technology venture at the competition held under Koç University Entrepreneurship with Paribu sponsorship.",
-    tr: "Koç Üniversitesi Girişimciliği bünyesinde Paribu sponsorluğunda gerçekleştirilen yarışmada, Türkiye'nin en umut vadeden sağlık teknolojisi girişimi seçildi.",
-  },
-  "about.recognition.award2Title": {
-    en: "Harvard HSIL Hackathon — Koç University Hub",
-    tr: "Harvard HSIL Hackathon — Koç Üniversitesi Hub",
-  },
-  "about.recognition.award2Body": {
-    en: "Presented at Harvard Health Systems Innovation Lab's Türkiye event, combining clinical accuracy with AI innovation.",
-    tr: "Harvard Health Systems Innovation Lab'in Türkiye etkinliğinde, klinik doğruluk + AI inovasyon kombinasyonuyla sunuldu.",
   },
 
   // ─── contact CTA ─────────────────────────────────────

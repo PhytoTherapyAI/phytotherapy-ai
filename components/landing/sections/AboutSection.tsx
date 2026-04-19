@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 // /about page content — hero, mission, founder story, vision, values (3),
-// team (2 founders), recognition (2 awards), contact CTA.
+// team (2 founders), contact CTA.
 // Avatars: TODO(assets) replace initials placeholders with real photos in
 // /team/ once the images are ready.
 "use client"
@@ -10,8 +10,6 @@ import {
   ShieldCheck,
   Heart,
   Lock,
-  Trophy,
-  GraduationCap,
   ArrowRight,
   Mail,
   type LucideIcon,
@@ -62,24 +60,6 @@ const FOUNDERS: readonly FounderItem[] = [
     roleKey: "about.team.founder2Role",
     schoolKey: "about.team.founder2School",
     bodyKey: "about.team.founder2Body",
-  },
-]
-
-interface AwardItem {
-  icon: LucideIcon
-  titleKey: string
-  bodyKey: string
-}
-const AWARDS: readonly AwardItem[] = [
-  {
-    icon: Trophy,
-    titleKey: "about.recognition.award1Title",
-    bodyKey: "about.recognition.award1Body",
-  },
-  {
-    icon: GraduationCap,
-    titleKey: "about.recognition.award2Title",
-    bodyKey: "about.recognition.award2Body",
   },
 ]
 
@@ -302,54 +282,6 @@ export function AboutSection() {
                 </p>
               </motion.article>
             ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ═══ Recognition ═══ */}
-      <section className="py-20 md:py-24 lg:py-28 bg-slate-50/70 dark:bg-slate-900/40">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={fadeUp}
-            className="text-center mb-14"
-          >
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 dark:text-white">
-              {tx("about.recognition.sectionTitle", lang)}
-            </h2>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.2 }}
-            variants={stagger}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {AWARDS.map((a) => {
-              const Icon = a.icon
-              return (
-                <motion.article
-                  key={a.titleKey}
-                  variants={fadeUp}
-                  className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-950/20 p-6"
-                >
-                  <Icon
-                    className="h-10 w-10 text-emerald-600 dark:text-emerald-400 mb-4"
-                    strokeWidth={1.75}
-                    aria-hidden="true"
-                  />
-                  <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 leading-snug">
-                    {tx(a.titleKey, lang)}
-                  </h3>
-                  <p className="text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-                    {tx(a.bodyKey, lang)}
-                  </p>
-                </motion.article>
-              )
-            })}
           </motion.div>
         </div>
       </section>
