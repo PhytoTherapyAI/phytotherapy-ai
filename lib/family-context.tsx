@@ -19,126 +19,59 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
   // Singleton — createBrowserClient already returns singleton, but memoize for stable ref
   const supabase = useMemo(() => createBrowserClient(), [])
 
-  const fetchMembers = useCallback(async (groupId: string) => {
-    // Fetch accepted members + pending invites in parallel.
-    const [acceptedRes, pendingRes] = await Promise.all([
-      supabase
-        .from('family_members')
-        .select(`
-          *,
-          profile:user_profiles(
-            id, display_name, full_name, avatar_style, avatar_seed, chronic_conditions,
-            consent_ai_processing
-          )
-        `)
-        .eq('group_id', groupId)
-        .eq('invite_status', 'accepted'),
-      supabase
-        .from('family_members')
-        .select('*')
-        .eq('group_id', groupId)
-        .eq('invite_status', 'pending'),
-    ])
-
-    if (acceptedRes.error) {
-      console.error('[Family] fetchMembers (accepted) error:', acceptedRes.error.message)
-    } else if (acceptedRes.data) {
-      setFamilyMembers(acceptedRes.data as FamilyMember[])
-    }
-
-    if (pendingRes.error) {
-      console.error('[Family] fetchMembers (pending) error:', pendingRes.error.message)
-    } else if (pendingRes.data) {
-      setPendingInvites(pendingRes.data as FamilyMember[])
-    }
-  }, [supabase])
-
+  // Tek kaynak: /api/family. Sunucu tarafı membership-first resolver'ı
+  // service-role ile çalışıyor, yani browser RLS edge case'lerinden bağımsız.
+  // Eski direct-supabase versiyonu Taha gibi member kullanıcılar için kendi
+  // family_members row'unu döndüremiyordu (policy boşluğu veya anon-key
+  // tabanlı RLS bağlamı). API tek dönüş: { group, members, pendingInvites,
+  // needsMigration }.
   const fetchFamilyData = useCallback(async () => {
     if (!user) return
     try {
-      // Tek sorgulu membership-merkezli akış. createGroup zaten owner'ı
-      // family_members'a accepted row olarak ekliyor, yani owner + member
-      // ayrımı yapmadan burada ikisini de yakalarız.
-      //
-      // Eski mantık iki aşamalıydı (owned → member fallback) ve
-      // `.maybeSingle()` birden fazla accepted satır dönünce sessizce hata
-      // veriyordu (yeni davet + eski accepted kayıt → PGRST116 → null),
-      // Taha gibi legit üyeler kendi gruplarını göremiyordu.
-      const { data: memberships, error: memberErr } = await supabase
-        .from('family_members')
-        .select('group_id')
-        .eq('user_id', user.id)
-        .eq('invite_status', 'accepted')
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) return
 
-      if (memberErr) {
-        console.error('[Family] fetchMemberships error:', memberErr.message)
+      const res = await fetch('/api/family', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+
+      // Auth problemi: token henüz refresh edilmemiş olabilir; eski state'i
+      // koru, sessizce dön — sonraki poll / visibility change retry eder.
+      if (res.status === 401 || res.status === 403) return
+
+      // Sunucu hatası: eski state UI için kullanılabilir olabilir; bozma,
+      // sadece logla. Refresh tekrar denenecek.
+      if (!res.ok) {
+        const text = await res.text().catch(() => '')
+        console.error('[Family] /api/family failed:', res.status, text)
         return
       }
 
-      const groupIds = Array.from(
-        new Set(
-          (memberships || [])
-            .map((m: { group_id: string | null }) => m.group_id)
-            .filter((id): id is string => typeof id === 'string' && id.length > 0)
-        )
-      )
+      const json = (await res.json()) as {
+        group: FamilyGroup | null
+        members?: FamilyMember[]
+        pendingInvites?: FamilyMember[]
+        needsMigration?: boolean
+      }
 
-      // Legacy fallback: eski davetsiz kurulu owner grupları (member row
-      // insert'i yapılmadan önce oluşturulmuş) için owner_id ile ek tarama.
-      if (groupIds.length === 0) {
-        const { data: ownedLegacy } = await supabase
-          .from('family_groups')
-          .select('*')
-          .eq('owner_id', user.id)
-          .limit(1)
-
-        const legacy = ownedLegacy?.[0]
-        if (legacy) {
-          setFamilyGroup(legacy)
-          await fetchMembers(legacy.id)
-        }
+      if (json.needsMigration || !json.group) {
+        // Gerçekten aile yok — /select-profile create CTA'yı göstersin.
+        setFamilyGroup(null)
+        setFamilyMembers([])
+        setPendingInvites([])
         return
       }
 
-      // Çoklu üyelik durumunda: en kalabalık grubu seç (gerçek aile).
-      const { data: groups, error: groupsErr } = await supabase
-        .from('family_groups')
-        .select('*')
-        .in('id', groupIds)
-
-      if (groupsErr || !groups?.length) {
-        if (groupsErr) console.error('[Family] fetchGroups error:', groupsErr.message)
-        return
-      }
-
-      let selected = groups[0]
-      if (groups.length > 1) {
-        // Her grubun accepted üye sayısını topla, maks olanı seç.
-        const { data: allMembers } = await supabase
-          .from('family_members')
-          .select('group_id')
-          .in('group_id', groupIds)
-          .eq('invite_status', 'accepted')
-
-        const countByGroup = new Map<string, number>()
-        for (const m of allMembers || []) {
-          const gid = (m as { group_id: string | null }).group_id
-          if (gid) countByGroup.set(gid, (countByGroup.get(gid) || 0) + 1)
-        }
-        selected = groups.reduce((best, g) =>
-          (countByGroup.get(g.id) || 0) > (countByGroup.get(best.id) || 0) ? g : best
-        )
-      }
-
-      setFamilyGroup(selected)
-      await fetchMembers(selected.id)
+      setFamilyGroup(json.group)
+      setFamilyMembers((json.members || []) as FamilyMember[])
+      setPendingInvites((json.pendingInvites || []) as FamilyMember[])
     } catch (err: unknown) {
       if (err instanceof Error && (err.name === 'AbortError' || err.message?.includes('AbortError') || err.message?.includes('Lock'))) {
         return // silently ignore abort/lock errors
       }
       console.error('[Family] fetchFamilyData error:', err)
     }
-  }, [user, supabase, fetchMembers])
+  }, [user, supabase])
 
   const fetchActiveSession = useCallback(async () => {
     if (!user) return
@@ -251,7 +184,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
     }
 
     setFamilyGroup(data)
-    await fetchMembers(data.id)
+    await fetchFamilyData()
     return true
   }
 
@@ -362,7 +295,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
     }
 
     // Final refresh to get any server-side transformations.
-    if (familyGroup) await fetchMembers(familyGroup.id)
+    await fetchFamilyData()
     return true
   }
 
@@ -394,7 +327,7 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
       console.error('[Family] cancelInvite error:', error.message)
       return false
     }
-    if (familyGroup) await fetchMembers(familyGroup.id)
+    await fetchFamilyData()
     return true
   }
 

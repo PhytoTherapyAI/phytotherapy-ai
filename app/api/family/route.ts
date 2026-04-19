@@ -75,7 +75,9 @@ export async function GET(req: NextRequest) {
       // can nudge the user to create a group. Having legacy rows is fine;
       // just return them.
       return NextResponse.json({
+        group: null,
         members: legacyMembers || [],
+        pendingInvites: [],
         needsMigration: (legacyMembers?.length || 0) === 0,
       })
     }
@@ -100,9 +102,16 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    const { data: groupMembers, error: gmErr } = await supabase
+    // Tüm group rows (accepted + pending) tek sorguda çek, client tarafında ayır.
+    // profile join — client üye kartlarında full_name / display_name / avatar_* okuyor.
+    const { data: groupRows, error: gmErr } = await supabase
       .from("family_members")
-      .select("*")
+      .select(`
+        *,
+        profile:user_profiles!family_members_user_id_fkey(
+          id, full_name, display_name, avatar_style, avatar_seed, consent_ai_processing
+        )
+      `)
       .eq("group_id", selectedGroupId)
       .order("created_at", { ascending: true })
 
@@ -110,8 +119,25 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: gmErr.message }, { status: 500 })
     }
 
+    // Group row'u da dön — context setFamilyGroup için.
+    const { data: group, error: groupErr } = await supabase
+      .from("family_groups")
+      .select("*")
+      .eq("id", selectedGroupId)
+      .maybeSingle()
+
+    if (groupErr) {
+      return NextResponse.json({ error: groupErr.message }, { status: 500 })
+    }
+
+    const rows = groupRows || []
+    const accepted = rows.filter((r: { invite_status: string }) => r.invite_status === "accepted")
+    const pending = rows.filter((r: { invite_status: string }) => r.invite_status === "pending")
+
     return NextResponse.json({
-      members: groupMembers || [],
+      group,
+      members: accepted,
+      pendingInvites: pending,
       groupId: selectedGroupId,
       needsMigration: false,
     })
