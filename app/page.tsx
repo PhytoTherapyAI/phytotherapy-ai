@@ -30,12 +30,9 @@ import { TOOL_CATEGORIES } from "@/lib/tools-hierarchy";
 import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-utils";
 import { getSupplementDisplayName } from "@/lib/supplement-data";
 import { getVaccineRecommendations, isFluSeason, type VaccineEntry } from "@/lib/vaccine-data";
+import { LandingPage } from "@/components/landing/LandingPage";
 
 // ── Dynamic Imports (Dashboard) ──
-const BotanicalHero = dynamic(
-  () => import("@/components/illustrations/botanical-hero").then((m) => m.BotanicalHero),
-  { ssr: false, loading: () => <div className="h-64 w-full rounded-lg bg-stone-100 dark:bg-stone-800 animate-pulse" /> }
-);
 const DailyCareCard = dynamic(
   () => import("@/components/dashboard/DailyCareCard").then((m) => ({ default: m.DailyCareCard })),
   { loading: () => <Skeleton className="h-64 w-full rounded-xl" /> }
@@ -103,34 +100,6 @@ const fadeUp = {
   hidden: { opacity: 0 },
   show:   { opacity: 1, transition: { duration: 0.4, ease: "easeOut" as const } },
 };
-
-// ── Guest Landing FAQ ──
-const FAQ_ITEMS = [
-  {
-    questionTr: "Fitoterapi nedir?",
-    questionEn: "What is phytotherapy?",
-    answerTr: "Fitoterapi, bilimsel olarak kanıtlanmış bitkisel tedavilerin kullanılmasıdır. DoctoPal, modern tıp ile kanıta dayalı bitkisel tıbbı birleştirerek güvenli ve kişiselleştirilmiş öneriler sunar.",
-    answerEn: "Phytotherapy is the use of scientifically proven herbal treatments. DoctoPal bridges modern medicine and evidence-based herbal medicine to provide safe, personalized recommendations.",
-  },
-  {
-    questionTr: "İlaçlarla bitkisel takviye kullanmak güvenli mi?",
-    questionEn: "Is it safe to use herbal supplements with medications?",
-    answerTr: "Bazı bitkisel takviyeler ilaçlarla etkileşime girebilir. DoctoPal'ın ilaç etkileşim kontrolü, güvenli ve riskli kombinasyonları bilimsel kaynaklarla gösterir.",
-    answerEn: "Some herbal supplements can interact with medications. DoctoPal's drug interaction checker shows safe and risky combinations with scientific sources.",
-  },
-  {
-    questionTr: "Kan tahlilimi nasıl yorumlarım?",
-    questionEn: "How can I interpret my blood test results?",
-    answerTr: "Kan tahlili değerlerinizi girerek yapay zeka destekli detaylı analiz alabilirsiniz. 30'dan fazla biyomarkör değerlendirilir.",
-    answerEn: "Enter your blood test values for AI-powered detailed analysis. 30+ biomarkers are evaluated.",
-  },
-  {
-    questionTr: "DoctoPal ücretsiz mi?",
-    questionEn: "Is DoctoPal free?",
-    answerTr: "Evet, temel özellikleri ücretsizdir. Sağlık asistanı, ilaç etkileşim kontrolü ve kan tahlili analizi ücretsiz kullanılabilir.",
-    answerEn: "Yes, core features are free. The health assistant, drug interaction checker, and blood test analysis are available at no cost.",
-  },
-];
 
 // ── Vaccine Recommendation Banner ──
 function VaccineBanner({ lang, chronicConditions, vaccines }: { lang: string; chronicConditions: string[]; vaccines: VaccineEntry[] }) {
@@ -384,7 +353,6 @@ export default function Home() {
   }, [isLoading, familyLoading, isAuthenticated, familyGroup, familyMembers, user, router]);
 
   // Guest state
-  const [searchQuery, setSearchQuery] = useState("");
   const [timeEmoji, setTimeEmoji] = useState("👋");
 
   // Dashboard state
@@ -619,12 +587,6 @@ export default function Home() {
     window.addEventListener("checkin-complete", handler);
     return () => window.removeEventListener("checkin-complete", handler);
   }, [fetchCheckIn]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-    router.push(`/health-assistant?q=${encodeURIComponent(searchQuery.trim())}`);
-  };
 
   const handleAskAI = () => {
     if (query.trim()) router.push(`/health-assistant?q=${encodeURIComponent(query.trim())}`);
@@ -1032,250 +994,5 @@ export default function Home() {
   }
 
   // ─── GUEST LANDING PAGE ───
-  return (
-    <div className="flex flex-col">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-6xl px-4 pt-8 pb-4 md:pt-16 md:pb-8">
-          <div className="flex flex-col items-center gap-6 md:flex-row md:gap-12">
-            <div className="flex-1 text-center md:text-left stagger-children">
-              {/* Badge */}
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary">
-                <Activity className="h-3.5 w-3.5" />
-                {tx("lp.heroBadge", lang)}
-              </div>
-
-              <h1 className="font-heading text-2xl font-semibold leading-tight tracking-tight sm:text-3xl md:text-5xl">
-                {isTr ? (
-                  <>Tahmin Değil,<br /><span style={{ color: "var(--brand)" }}>Kanıta Dayalı Analiz.</span></>
-                ) : (
-                  <>Not Guesswork,<br /><span style={{ color: "var(--brand)" }}>Evidence-Based Analysis.</span></>
-                )}
-              </h1>
-              <p className="mt-3 max-w-lg text-xs text-muted-foreground sm:text-sm md:text-base">
-                {tx("landing.heroDesc", lang)}
-              </p>
-
-              {/* Spotlight search */}
-              <form onSubmit={handleSearch} className="mt-5 md:mt-6">
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={tx("landing.searchPlaceholder", lang)}
-                    className="w-full rounded-2xl border bg-card py-3.5 pl-11 pr-14 text-sm shadow-soft-md outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  />
-                  <button type="submit" aria-label="Search" className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground hover:bg-primary/90">
-                    <Sparkles className="h-4 w-4" />
-                  </button>
-                </div>
-              </form>
-
-              {/* Quick action chips */}
-              <div className="mt-3 flex gap-2 overflow-x-auto scrollbar-hide justify-center md:justify-start">
-                {QUICK_CHIPS.map(({ emoji, labelKey, href }) => (
-                  <Link key={href} href={href}
-                    className="flex shrink-0 items-center gap-1.5 rounded-full border bg-card px-3 py-1.5 text-xs text-muted-foreground transition-all hover:border-primary/30 hover:text-primary active:scale-95">
-                    <span>{emoji}</span>
-                    {tx(labelKey, lang) || tx("landing.toolFallback", lang)}
-                  </Link>
-                ))}
-              </div>
-
-              {/* CTA */}
-              <div className="mt-5 flex flex-col gap-2 sm:flex-row md:mt-6">
-                <Link href="/auth/login"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors">
-                  {tx("nav.getStarted", lang)} <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link href="/health-assistant"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border px-6 py-3 text-sm font-medium hover:bg-muted">
-                  <MessageCircle className="h-4 w-4" /> {tx("lp.tryAssistant", lang)}
-                </Link>
-              </div>
-            </div>
-
-            {/* Illustration */}
-            <div className="hidden w-56 shrink-0 sm:block sm:w-72 md:w-80 animate-gentle-sway">
-              <BotanicalHero className="h-auto w-full" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Indicators */}
-      <section className="border-y bg-primary/5">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-4 gap-y-3 px-4 py-5 sm:gap-x-8">
-          {[
-            { icon: "🔬", label: "PubMed Verified" },
-            { icon: "🏥", label: "FHIR Compatible" },
-            { icon: "🔒", label: "HIPAA & KVKK Compliant" },
-            { icon: "🤖", label: "Powered by Claude AI" },
-            { icon: "📱", label: "166+ Health Tools" },
-          ].map((t) => (
-            <div key={t.label} className="flex items-center gap-1.5 text-[11px] text-muted-foreground font-medium">
-              <span>{t.icon}</span> {t.label}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Feature Showcase */}
-      <section className="mx-auto max-w-5xl px-4 py-10 md:py-16">
-        <h2 className="font-heading text-xl font-semibold text-center mb-2 sm:text-2xl">
-          {tx("landing.whatCanYouDo", lang)}
-        </h2>
-        <p className="text-center text-sm text-muted-foreground mb-8 max-w-lg mx-auto">
-          {tx("landing.manageWithScience", lang)}
-        </p>
-
-        {/* Core Features — Highlighted */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
-          {[
-            { icon: <Stethoscope className="h-7 w-7 text-primary" />, title: tx("landing.aiSymptomTriage", lang), desc: tx("landing.aiSymptomTriageDesc", lang), href: "/health-assistant", gradient: "from-primary/5 to-emerald-50 dark:from-primary/10 dark:to-emerald-950/20", border: "border-primary/20 dark:border-primary/30" },
-            { icon: <Pill className="h-7 w-7 text-red-500" />, title: tx("landing.drugInteractionCheck", lang), desc: tx("landing.drugInteractionCheckDesc", lang), href: "/interaction-checker", gradient: "from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20", border: "border-red-100 dark:border-red-900/30" },
-            { icon: <Leaf className="h-7 w-7 text-emerald-500" />, title: tx("landing.phytotherapyAi", lang), desc: tx("landing.phytotherapyAiDesc", lang), href: "/health-assistant", gradient: "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20", border: "border-emerald-100 dark:border-emerald-900/30" },
-            { icon: <Microscope className="h-7 w-7 text-blue-500" />, title: tx("landing.labAnalysis", lang), desc: tx("landing.labAnalysisDesc", lang), href: "/blood-test", gradient: "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20", border: "border-blue-100 dark:border-blue-900/30" },
-          ].map((f) => (
-            <Link key={f.href + f.title} href={f.href}
-              className={`group rounded-2xl border-2 ${f.border} bg-gradient-to-br ${f.gradient} p-7 transition-all hover:shadow-soft-lg hover:-translate-y-0.5`}>
-              <span className="block mb-3">{f.icon}</span>
-              <h3 className="font-bold text-base mb-1.5">{f.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-            </Link>
-          ))}
-        </div>
-
-        {/* Other Features */}
-        <h3 className="text-center text-sm font-semibold text-muted-foreground mb-4">
-          {tx("landing.andMore", lang)}
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
-            { emoji: "💊", title: tx("landing.drugInteractionShield", lang), desc: tx("landing.drugInteractionShieldDesc", lang), href: "/interaction-checker", gradient: "from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20", border: "border-red-100 dark:border-red-900/30" },
-            { emoji: "🩸", title: tx("landing.aiLabAnalysis", lang), desc: tx("landing.aiLabAnalysisDesc", lang), href: "/blood-test", gradient: "from-rose-50 to-pink-50 dark:from-rose-950/20 dark:to-pink-950/20", border: "border-rose-100 dark:border-rose-900/30" },
-            { emoji: "🌿", title: tx("landing.phytoProtocols", lang), desc: tx("landing.phytoProtocolsDesc", lang), href: "/health-assistant", gradient: "from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20", border: "border-emerald-100 dark:border-emerald-900/30" },
-            { emoji: "👨‍⚕️", title: tx("landing.doctorCopilot", lang), desc: tx("landing.doctorCopilotDesc", lang), href: "/doctor-panel", gradient: "from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20", border: "border-blue-100 dark:border-blue-900/30" },
-          ].map((f) => (
-            <Link key={f.href} href={f.href}
-              className={`group rounded-2xl border ${f.border} bg-gradient-to-br ${f.gradient} p-6 transition-all hover:shadow-soft-lg hover:-translate-y-0.5`}>
-              <span className="text-3xl block mb-3">{f.emoji}</span>
-              <h3 className="font-bold text-sm mb-1">{f.title}</h3>
-              <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
-            </Link>
-          ))}
-        </div>
-
-        {/* Competitive Advantage — "Why DoctoPal?" */}
-        <div className="mt-12 rounded-2xl border bg-gradient-to-br from-stone-50 to-primary/5 dark:from-stone-900 dark:to-primary/10 p-6 md:p-8">
-          <h3 className="text-lg font-bold text-center mb-1">
-            {tx("landing.whyDoctopal", lang)}
-          </h3>
-          <p className="text-sm font-medium text-primary text-center mb-2">
-            {tx("landing.whyDoctopalSubtitle", lang)}
-          </p>
-          <p className="text-xs text-muted-foreground text-center mb-6 max-w-lg mx-auto">
-            {tx("landing.whyDoctopalDesc", lang)}
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {[
-              { feature: tx("landing.aiSymptomTriage", lang), isNew: false },
-              { feature: tx("landing.featDrugInteraction", lang), isNew: true },
-              { feature: tx("landing.phytotherapyAi", lang), isNew: true },
-              { feature: tx("landing.featPredictiveEff", lang), isNew: true },
-              { feature: tx("landing.featLabReport", lang), isNew: true },
-              { feature: tx("landing.featDoctorPrevisit", lang), isNew: false },
-              { feature: tx("landing.featDailyTracking", lang), isNew: true },
-              { feature: tx("landing.featHabitStreaks", lang), isNew: true },
-              { feature: tx("landing.featMedTracker", lang), isNew: false },
-              { feature: tx("landing.featAllergyTracker", lang), isNew: false },
-              { feature: tx("landing.featFamilyProfiles", lang), isNew: true },
-              { feature: tx("landing.featRecoveryScore", lang), isNew: true },
-              { feature: tx("landing.featBiologicalBudget", lang), isNew: true },
-              { feature: tx("landing.featAiCorrelations", lang), isNew: true },
-              { feature: tx("landing.featPersonalAb", lang), isNew: true },
-              { feature: tx("landing.featBmiAnalysis", lang), isNew: false },
-              { feature: tx("landing.featNoHardware", lang), isNew: false },
-            ].map((item) => (
-              <div key={item.feature} className={`flex items-center gap-1.5 rounded-lg bg-white/80 dark:bg-card/80 px-2.5 py-2 text-[11px] font-medium border shadow-sm ${item.isNew ? "ring-1 ring-emerald-200 dark:ring-emerald-800" : ""}`}>
-                <span className="text-emerald-500 shrink-0">✅</span>
-                <span className="truncate">{item.feature}</span>
-                {item.isNew && <span className="text-[8px] bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300 rounded px-1 font-bold shrink-0">NEW</span>}
-              </div>
-            ))}
-          </div>
-          <p className="text-[9px] text-muted-foreground text-center mt-3">
-            {tx("landing.safetyDisclaimer", lang)}
-          </p>
-        </div>
-
-        {/* Stats */}
-        <div className="mt-10 flex justify-center gap-8 sm:gap-12 flex-wrap">
-          {[
-            { num: "166+", label: tx("landing.statHealthTools", lang) },
-            { num: "348+", label: tx("landing.statPages", lang) },
-            { num: "75+",  label: tx("landing.statAiRoutes", lang) },
-          ].map((s) => (
-            <div key={s.label} className="text-center">
-              <p className="text-2xl font-bold text-primary sm:text-3xl">{s.num}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="mx-4 mb-10 rounded-2xl bg-gradient-to-r from-primary/10 to-teal-500/10 p-8 text-center border border-primary/10 md:mx-auto md:max-w-4xl">
-        <h2 className="font-heading text-xl font-semibold sm:text-2xl">
-          {tx("landing.ctaTitle", lang)}
-        </h2>
-        <p className="text-sm text-muted-foreground mt-2 mb-5 max-w-md mx-auto">
-          {tx("landing.ctaSubtitle", lang)}
-        </p>
-        <Link href="/auth/login"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20">
-          {tx("landing.ctaButton", lang)} <ArrowRight className="h-4 w-4" />
-        </Link>
-      </section>
-
-      {/* FAQ */}
-      <section className="mx-auto max-w-4xl px-4 py-10">
-        <h2 className="font-heading text-2xl font-semibold text-center mb-6">{tx("common.faqTitle", lang)}</h2>
-        <div className="space-y-3">
-          {FAQ_ITEMS.map((item, i) => (
-            <details key={i} className="group rounded-xl border bg-card p-4">
-              <summary className="cursor-pointer font-medium text-sm list-none flex items-center justify-between">
-                {isTr ? item.questionTr : item.questionEn}
-                <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-90" />
-              </summary>
-              <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-                {isTr ? item.answerTr : item.answerEn}
-              </p>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      <p className="text-center text-[10px] text-muted-foreground/70 px-4 pb-4">
-        {tx("disclaimer.banner", lang)}
-      </p>
-
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org", "@type": "WebApplication",
-        name: "DoctoPal", url: "https://doctopal.com",
-        description: "AI-powered evidence-based integrative medicine assistant.",
-        applicationCategory: "HealthApplication", operatingSystem: "Web",
-        offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-      }) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org", "@type": "FAQPage",
-        mainEntity: FAQ_ITEMS.map((item) => ({
-          "@type": "Question", name: item.questionEn,
-          acceptedAnswer: { "@type": "Answer", text: item.answerEn },
-        })),
-      }) }} />
-    </div>
-  );
+  return <LandingPage />;
 }

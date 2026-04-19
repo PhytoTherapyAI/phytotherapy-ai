@@ -55,9 +55,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "DoctoPal — Evidence Meets Nature. AI Meets You.",
+  title: "DoctoPal — Aileniz için yapay zeka destekli sağlık asistanı",
   description:
-    "DoctoPal bridges modern medicine and natural healing — drug interactions, phytotherapy protocols, lab analysis, and 166+ AI-powered health tools, all verified by science.",
+    "İlaç etkileşim kontrolü, SBAR klinik rapor, aile sağlık yönetimi. 7 gün ücretsiz deneyin.",
   keywords: [
     "AI health assistant",
     "drug interactions",
