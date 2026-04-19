@@ -159,6 +159,51 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
                 : "RLS data isolation · TLS/HTTPS · Encryption at rest · AI anonymization · Prompt injection protection · Rate limiting · Audit logging · 72-hour breach notification · 9-layer security"}
             </p>
           </section>
+
+          <section>
+            <h3 className="font-bold mb-1">{tr ? "11. Değişiklik Tarihçesi" : "11. Change History"}</h3>
+            {tr ? (
+              <div className="space-y-2 text-muted-foreground text-xs">
+                <div>
+                  <p className="font-semibold text-foreground">v2.1 — Nisan 2026</p>
+                  <ul className="list-disc pl-5 space-y-0.5 mt-0.5">
+                    <li>Finansal Veri kategorisi eklendi (Premium abonelik için)</li>
+                    <li>Iyzico Ödeme Hizmetleri A.Ş. aktarıcı olarak eklendi</li>
+                    <li>Ödeme verisi saklama süresi (10 yıl, VUK Md.253) eklendi</li>
+                    <li>Premium abonelik işleme amacı eklendi</li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">v2.0 — Nisan 2026</p>
+                  <ul className="list-disc pl-5 space-y-0.5 mt-0.5">
+                    <li>İlk yayın</li>
+                    <li>10 bölüm, KVKK Md.10 uyumlu</li>
+                    <li>4 ana veri kategorisi, 3 aktarıcı (Supabase, Anthropic, Google)</li>
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2 text-muted-foreground text-xs">
+                <div>
+                  <p className="font-semibold text-foreground">v2.1 — April 2026</p>
+                  <ul className="list-disc pl-5 space-y-0.5 mt-0.5">
+                    <li>Financial Data category added (for Premium subscription)</li>
+                    <li>Iyzico Ödeme Hizmetleri A.Ş. added as a transferee</li>
+                    <li>Payment data retention period (10 years, Tax Procedure Law Art.253) added</li>
+                    <li>Premium subscription processing purpose added</li>
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">v2.0 — April 2026</p>
+                  <ul className="list-disc pl-5 space-y-0.5 mt-0.5">
+                    <li>Initial publication</li>
+                    <li>10 sections, compliant with KVKK Art.10</li>
+                    <li>4 main data categories, 3 transferees</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+          </section>
         </div>
 
         {/* Footer */}
