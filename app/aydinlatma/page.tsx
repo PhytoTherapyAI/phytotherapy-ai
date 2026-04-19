@@ -1,5 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
-// KVKK Md.10 Aydınlatma Metni v2.0 — Açık rıza formundan AYRI sunulmalıdır (KVKK 2026/347 İlke Kararı)
+// KVKK Md.10 Aydınlatma Metni v2.1 — Açık rıza formundan AYRI sunulmalıdır (KVKK 2026/347 İlke Kararı)
+// v2.1 (Nisan 2026): Finansal Veri kategorisi + Iyzico aktarıcı + VUK 10-yıl saklama + Premium abonelik amacı + Değişiklik Tarihçesi eklendi.
 "use client";
 
 import { useLang } from "@/components/layout/language-toggle";
@@ -27,7 +28,7 @@ export default function AydinlatmaPage() {
             {tr ? "Kişisel Verilerin İşlenmesine İlişkin Aydınlatma Metni" : "Privacy Notice on Personal Data Processing"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {tr ? "KVKK Md.10 kapsamında aydınlatma yükümlülüğü · v2.0 — Nisan 2026" : "Disclosure obligation under KVKK Art.10 · v2.0 — April 2026"}
+            {tr ? "KVKK Md.10 kapsamında aydınlatma yükümlülüğü · v2.1 — Nisan 2026" : "Disclosure obligation under KVKK Art.10 · v2.1 — April 2026"}
           </p>
         </div>
       </div>
@@ -63,6 +64,12 @@ export default function AydinlatmaPage() {
               <li><strong>d) İletişim Verisi:</strong> Telefon numarası (opsiyonel)</li>
               <li><strong>e) İşlem Verisi:</strong> AI sohbet geçmişi, etkileşim kontrol sonuçları, SBAR raporları, rıza kayıtları</li>
               <li><strong>f) Teknik Veri:</strong> IP adresi, tarayıcı bilgisi (güvenlik amaçlı)</li>
+              <li>
+                <strong>g) Finansal Veri (yalnızca Premium abonelik kullanıcılarımız için):</strong><br />
+                <em>Hangi veriler:</em> Ödeme tutarı, ödeme durumu, abonelik başlangıç/bitiş tarihleri, fatura/makbuz bilgileri, kart maskesi (yalnızca son 4 hane).<br />
+                <em>Hangi veriler işlenmez:</em> Kartınızın tam numarası, CVV, şifreler. Bu bilgiler hiçbir zaman DoctoPal sunucularında tutulmaz; PCI-DSS sertifikalı ödeme altyapısı sağlayıcımız Iyzico tarafından güvenli şekilde saklanır.<br />
+                <em>Veri öznesi kapsamı:</em> Finansal veri yalnızca abonelik ödemesini gerçekleştiren kullanıcı (Bireysel Premium abone veya Aile Premium sahibi/owner) için işlenir. Aile üyeleri (davetli kişiler) ödemeye taraf değildir; bu kişiler için finansal veri işlenmez.
+              </li>
             </ul>
           ) : (
             <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
@@ -72,6 +79,12 @@ export default function AydinlatmaPage() {
               <li><strong>d) Contact Data:</strong> Phone number (optional)</li>
               <li><strong>e) Transaction Data:</strong> AI chat history, interaction check results, SBAR reports, consent records</li>
               <li><strong>f) Technical Data:</strong> IP address, browser info (security purposes)</li>
+              <li>
+                <strong>g) Financial Data (only for Premium subscription users):</strong><br />
+                <em>What data:</em> Payment amount, payment status, subscription start/end dates, invoice/receipt information, card mask (last 4 digits only).<br />
+                <em>What is not processed:</em> Your full card number, CVV, passwords. This information is never stored on DoctoPal servers; it is securely held by our PCI-DSS certified payment infrastructure provider, Iyzico.<br />
+                <em>Data subject scope:</em> Financial data is processed only for the user who performs the subscription payment (Individual Premium subscriber or Family Premium owner). Family members (invited users) are not parties to the payment; no financial data is processed for them.
+              </li>
             </ul>
           )}
         </section>
@@ -94,6 +107,7 @@ export default function AydinlatmaPage() {
               <li>İlaç takibi, aşı takvimi, günlük sağlık kaydı</li>
               <li>Hizmet iyileştirme ve güvenlik</li>
               <li>Semantic arama (ilgili içerik önerisi)</li>
+              <li>Premium abonelik hizmetlerinin sunulması, ücret tahsilatı ve fatura düzenlenmesi <em>(Hukuki dayanak: Sözleşmenin kurulması ve ifası — KVKK Md.5/2-c; Vergi Usul Kanunu kapsamında yasal yükümlülük — KVKK Md.5/2-ç)</em></li>
             </ol>
           ) : (
             <ol className="list-[lower-alpha] pl-5 space-y-1 mt-3 text-muted-foreground">
@@ -105,6 +119,7 @@ export default function AydinlatmaPage() {
               <li>Medication tracking, vaccine calendar, daily health logging</li>
               <li>Service improvement and security</li>
               <li>Semantic search (related content suggestions)</li>
+              <li>Provision of Premium subscription services, payment collection, and invoice issuance <em>(Legal basis: Establishment and performance of contract — KVKK Art.5/2-c; Legal obligation under the Tax Procedure Law — KVKK Art.5/2-ç)</em></li>
             </ol>
           )}
         </section>
@@ -140,6 +155,13 @@ export default function AydinlatmaPage() {
               {tr ? "Amaç: Gemini text-embedding-004 ile semantic arama altyapısı" : "Purpose: Gemini text-embedding-004 semantic search infrastructure"}<br />
               {tr ? "Aktarılan veri: Anonimleştirilmiş metin sorguları (kimlik bilgisi içermez, yalnızca kelime/terim bazlı arama metni)" : "Data transferred: Anonymized text queries (no identity data, only keyword/term-based search text)"}<br />
               {tr ? "Hukuki dayanak: Açık rızanız (KVKK Md.9/1)" : "Legal basis: Your explicit consent (KVKK Art.9/1)"}
+            </li>
+            <li>
+              <strong>Iyzico Ödeme Hizmetleri A.Ş.</strong> ({tr ? "Türkiye yerleşik, PCI-DSS sertifikalı" : "Türkiye-based, PCI-DSS certified"})<br />
+              {tr ? "Aktarım amacı: Premium abonelik ödemelerinin tahsili, abonelik yönetimi, iade işlemleri" : "Purpose of transfer: Collection of Premium subscription payments, subscription management, refund processing"}<br />
+              {tr ? "Aktarılan veri: Ad-soyad, e-posta, kart bilgileri (DoctoPal'a dönmez), abonelik durumu, ödeme geçmişi" : "Data transferred: Full name, email, card information (not returned to DoctoPal), subscription status, payment history"}<br />
+              {tr ? "Hukuki dayanak: Sözleşme ifası (KVKK Md.5/2-c)" : "Legal basis: Performance of contract (KVKK Art.5/2-c)"}<br />
+              {tr ? "Yurt dışı aktarım: YOK. Iyzico Türkiye'de yerleşik bir kuruluştur; tüm ödeme verileri Türkiye sınırları içinde işlenir." : "Cross-border transfer: NONE. Iyzico is established in Türkiye; all payment data is processed within Türkiye."}
             </li>
           </ul>
 
@@ -186,6 +208,7 @@ export default function AydinlatmaPage() {
                 <tr><td className="py-2 pr-4">{tr ? "Tıbbi görüntü/belge" : "Medical images/documents"}</td><td className="py-2">{tr ? "90 gün (ham görüntü silinir, sonuç metni saklanır)" : "90 days (raw image deleted, result text retained)"}</td></tr>
                 <tr><td className="py-2 pr-4">{tr ? "Rıza ve onay audit logu" : "Consent audit log"}</td><td className="py-2">{tr ? "5 yıl (KVKK Md.12 — yasal zorunluluk)" : "5 years (KVKK Art.12 — legal obligation)"}</td></tr>
                 <tr><td className="py-2 pr-4">{tr ? "IP adresi ve erişim logları" : "IP address and access logs"}</td><td className="py-2">{tr ? "2 yıl" : "2 years"}</td></tr>
+                <tr><td className="py-2 pr-4">{tr ? "Ödeme verisi ve faturalar" : "Payment data and invoices"}</td><td className="py-2">{tr ? "10 yıl (Vergi Usul Kanunu Md.253 — yasal zorunluluk). Abonelik sona erdikten sonra bile bu süre boyunca muhafaza edilir." : "10 years (Tax Procedure Law Art.253 — legal obligation). Retained for this period even after subscription ends."}</td></tr>
               </tbody>
             </table>
           </div>
@@ -302,6 +325,52 @@ export default function AydinlatmaPage() {
             </ul>
           )}
         </section>
+
+        {/* §11 Değişiklik Tarihçesi — v2.1 yeni */}
+        <section>
+          <h2 className="text-base font-bold">{tr ? "11. Değişiklik Tarihçesi" : "11. Change History"}</h2>
+          {tr ? (
+            <div className="space-y-3 text-muted-foreground">
+              <div>
+                <p className="font-semibold text-foreground">v2.1 — Nisan 2026</p>
+                <ul className="list-disc pl-5 space-y-0.5 mt-1">
+                  <li>Finansal Veri kategorisi eklendi (Premium abonelik için)</li>
+                  <li>Iyzico Ödeme Hizmetleri A.Ş. aktarıcı olarak eklendi</li>
+                  <li>Ödeme verisi saklama süresi (10 yıl, VUK Md.253) eklendi</li>
+                  <li>Premium abonelik işleme amacı eklendi</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-foreground">v2.0 — Nisan 2026</p>
+                <ul className="list-disc pl-5 space-y-0.5 mt-1">
+                  <li>İlk yayın</li>
+                  <li>10 bölüm, KVKK Md.10 uyumlu</li>
+                  <li>4 ana veri kategorisi, 3 aktarıcı (Supabase, Anthropic, Google)</li>
+                </ul>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3 text-muted-foreground">
+              <div>
+                <p className="font-semibold text-foreground">v2.1 — April 2026</p>
+                <ul className="list-disc pl-5 space-y-0.5 mt-1">
+                  <li>Financial Data category added (for Premium subscription)</li>
+                  <li>Iyzico Ödeme Hizmetleri A.Ş. added as a transferee</li>
+                  <li>Payment data retention period (10 years, Tax Procedure Law Art.253) added</li>
+                  <li>Premium subscription processing purpose added</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold text-foreground">v2.0 — April 2026</p>
+                <ul className="list-disc pl-5 space-y-0.5 mt-1">
+                  <li>Initial publication</li>
+                  <li>10 sections, compliant with KVKK Art.10</li>
+                  <li>4 main data categories, 3 transferees (Supabase, Anthropic, Google)</li>
+                </ul>
+              </div>
+            </div>
+          )}
+        </section>
       </div>
 
       {/* Footer */}
@@ -312,7 +381,7 @@ export default function AydinlatmaPage() {
             : "This notice is prepared in accordance with KVKK Art.10 and KVKK Board Decision No.2026/347. Your explicit consent is collected SEPARATELY from this notice, for each processing purpose INDIVIDUALLY."}
         </p>
         <p className="text-xs text-muted-foreground">
-          {tr ? "Aydınlatma metni versiyon: v2.0 · Son güncelleme: Nisan 2026" : "Privacy notice version: v2.0 · Last updated: April 2026"}
+          {tr ? "Aydınlatma metni versiyon: v2.1 · Son güncelleme: Nisan 2026" : "Privacy notice version: v2.1 · Last updated: April 2026"}
         </p>
         <Link href="/privacy-controls" className="inline-flex items-center gap-1.5 mt-2 text-sm font-medium text-primary hover:underline">
           {tr ? "Rıza ayarlarına git →" : "Go to consent settings →"}

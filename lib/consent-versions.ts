@@ -3,10 +3,11 @@
 // Kullanıcılar eski versiyona sahipse yeniden onay istenecek
 
 export const CONSENT_VERSIONS = {
-  aydinlatma: "v2.0",
+  aydinlatma: "v2.1",
   ai_processing: "v2.0",
   data_transfer: "v2.0",
   sbar_report: "v2.0",
+  payment_processing: "v2.1",
 } as const;
 
 export const CURRENT_AYDINLATMA_VERSION = CONSENT_VERSIONS.aydinlatma;
