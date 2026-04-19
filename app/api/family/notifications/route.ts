@@ -99,16 +99,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (isBroadcast) {
-    // DIAGNOSTIC: log the broadcast setup so SOS RLS failures can be traced.
-    console.log("[notif:broadcast] request:", {
-      callerUserId: auth.user.id,
-      groupId: body.groupId,
-      type: body.type,
-      isEmergency,
-    })
-
-    // SANITY CHECK: is the caller actually an accepted member of this group?
-    // RLS's fn_sender_insert requires this; checking up-front gives a clearer error.
+    // Sanity check: is the caller actually an accepted member of this group?
+    // RLS's fn_sender_insert requires this. Also serves as a probe for auth.uid()
+    // decode issues — if auth.uid() is NULL, family_members' own SELECT policy
+    // (auth.uid() = user_id) returns zero rows and we get !callerMembership.
     const { data: callerMembership, error: callerErr } = await auth.supabase
       .from("family_members")
       .select("id, role, invite_status")
@@ -120,6 +114,17 @@ export async function POST(req: NextRequest) {
       console.error("[notif:broadcast] caller-membership lookup failed:", callerErr.message)
       return NextResponse.json({ error: callerErr.message }, { status: 400 })
     }
+
+    // ONE-SHOT DIAG LINE — distinguishes JWT/RLS failure (callerSelfVisible=false)
+    // from stale-policy failure (callerSelfVisible=true but insert fails).
+    console.log("[notif:broadcast] DIAG", {
+      callerUserId: auth.user.id,
+      groupId: body.groupId,
+      callerSelfVisible: !!callerMembership,
+      callerRole: callerMembership?.role,
+      callerStatus: callerMembership?.invite_status,
+    })
+
     if (!callerMembership || callerMembership.invite_status !== "accepted") {
       console.warn("[notif:broadcast] caller not an accepted member:", {
         callerUserId: auth.user.id,
@@ -157,13 +162,6 @@ export async function POST(req: NextRequest) {
         type: body.type!,
         message: body.message!.trim(),
       }))
-
-    console.log("[notif:broadcast] inserting rows:", rows.map(r => ({
-      group_id: r.group_id,
-      from_user_id: r.from_user_id,
-      to_user_id: r.to_user_id,
-      type: r.type,
-    })))
 
     const { data, error } = await auth.supabase
       .from("family_notifications")
