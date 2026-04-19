@@ -89,8 +89,11 @@ export default function HealthAssistantPage() {
   return (
     <div className="flex h-[calc(100vh-7rem)] overflow-hidden">
       <LocalizedTitle tr="Sağlık Asistanı" en="AI Health Assistant" />
-      {/* Left Sidebar — conversation history (desktop only) */}
-      {isAuthenticated && (
+      {/* Left Sidebar — conversation history (desktop only).
+          Hidden when viewing a family member's profile: query_history is keyed
+          by the authenticated user, so showing the caller's own history on
+          someone else's profile screen would leak their searches (KVKK). */}
+      {isAuthenticated && isOwnProfile && (
         <div className="hidden w-64 shrink-0 lg:block">
           <ConversationHistory
             onSelectConversation={handleSelectConversation}
@@ -142,19 +145,27 @@ export default function HealthAssistantPage() {
                 </p>
               </div>
             </div>
-            {/* Mobile: drawer toggle */}
-            <div className="lg:hidden">
-              <ConversationHistory
-                onSelectConversation={handleSelectConversation}
-                onNewConversation={handleNewConversation}
-              />
-            </div>
+            {/* Mobile: drawer toggle — same privacy rule as the desktop sidebar. */}
+            {isOwnProfile && (
+              <div className="lg:hidden">
+                <ConversationHistory
+                  onSelectConversation={handleSelectConversation}
+                  onNewConversation={handleNewConversation}
+                />
+              </div>
+            )}
           </div>
 
-          {/* Smart Welcome — contextual greeting + personalized chips + did you know */}
+          {/* Smart Welcome — contextual greeting + personalized chips + did you know.
+              userName follows the active profile so "Günaydın İpek" doesn't show up
+              on Taha's screen. */}
           <SmartWelcome
             lang={lang}
-            userName={profile?.full_name?.split(" ")[0]}
+            userName={
+              isOwnProfile
+                ? profile?.full_name?.split(" ")[0]
+                : activeMember?.profile?.full_name?.split(" ")[0] || activeMemberName || undefined
+            }
             medications={undefined}
             onSelectPrompt={(prompt) => {
               const textarea = document.querySelector("textarea");
