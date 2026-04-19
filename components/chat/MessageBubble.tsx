@@ -16,12 +16,11 @@ export interface ChatMessage {
   content: string;
   isStreaming?: boolean;
   /** Special rendering hint — used for system messages that need JSX (e.g. consent-required CTA). */
-  kind?: "consent_required";
+  kind?: "consent_required" | "management_required";
   /** Display language for kind-based system messages */
   lang?: "en" | "tr";
-  /** If set on a consent_required message, indicates we're asking about a
-   *  family member's consent (not the caller's) — changes message wording
-   *  and hides the in-chat consent button (you cannot grant on their behalf). */
+  /** If set on a consent_required / management_required message, indicates we're acting on
+   *  a family member's profile — changes wording. For management_required, always set. */
   targetName?: string;
   attachments?: Array<{
     name: string;
@@ -136,6 +135,11 @@ export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsen
 
           {message.isStreaming && message.content === "" ? (
             <AILoadingState hasFile={!!message.attachments?.length} />
+          ) : message.kind === "management_required" ? (
+            <ManagementRequiredMessage
+              lang={message.lang ?? (isTr ? "tr" : "en")}
+              targetName={message.targetName}
+            />
           ) : message.kind === "consent_required" ? (
             <ConsentRequiredMessage
               lang={message.lang ?? (isTr ? "tr" : "en")}
@@ -442,6 +446,57 @@ function ConsentRequiredMessage({
           </p>
         </>
       )}
+    </div>
+  );
+}
+
+/** Renders a "management permission not granted" block — shown when the caller
+ *  is acting on a family member who hasn't toggled `allows_management` on.
+ *  Mirrors ConsentRequiredMessage styling but explains the management gate,
+ *  which is separate from AI consent. There is no button here: only the
+ *  target can grant this permission, from their own account. */
+function ManagementRequiredMessage({
+  lang,
+  targetName,
+}: {
+  lang: "en" | "tr";
+  targetName?: string;
+}) {
+  const tr = lang === "tr";
+  const name = targetName || (tr ? "Bu aile üyesi" : "This family member");
+
+  return (
+    <div className="space-y-3 text-sm text-foreground">
+      <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-semibold">
+        <ShieldCheck className="h-4 w-4" />
+        <span>{tr ? "Yöneticilik İzni Gerekli" : "Management Permission Required"}</span>
+      </div>
+
+      <p>
+        {tr ? (
+          <>
+            <strong>{name}</strong> size <strong>yöneticilik izni</strong> vermemiş.
+            Bu kişinin profili üzerinden AI asistanını, SBAR raporunu veya diğer aksiyonları
+            kullanabilmeniz için, ilgili kişinin kendi hesabından{" "}
+            <strong>Paylaşım Ayarları</strong> üzerinden
+            &ldquo;Aile yöneticilerine düzenleme izni&rdquo; seçeneğini açması gerekmektedir.
+          </>
+        ) : (
+          <>
+            <strong>{name}</strong> has not granted you{" "}
+            <strong>management permission</strong>. To use the AI assistant, SBAR report or other
+            actions on their profile, they need to log in to their own account and enable{" "}
+            &ldquo;Allow admins to edit my profile&rdquo; in{" "}
+            <strong>Sharing Preferences</strong>.
+          </>
+        )}
+      </p>
+
+      <p className="text-xs text-muted-foreground">
+        {tr
+          ? "Güvenlik ve gizlilik gereği bu izin yalnızca profil sahibi tarafından verilebilir — başkası adına açılamaz."
+          : "For security and privacy, only the profile owner can grant this permission — it cannot be toggled on someone else's behalf."}
+      </p>
     </div>
   );
 }

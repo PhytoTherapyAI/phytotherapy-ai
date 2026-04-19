@@ -198,18 +198,22 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
     //      message (you can never grant consent on someone else's behalf)
     if (isAuthenticated && profile) {
       if (effectiveTargetUserId) {
-        // Acting on behalf of a family member — check TARGET's consent
+        // Acting on behalf of a family member — run two gates in order:
+        //   1) TARGET's AI consent (KVKK Art.6 — consent cannot be delegated)
+        //   2) TARGET's management permission (allows_management — the target
+        //      must have explicitly enabled caregiver access in Sharing Prefs)
         const targetMember = familyMembers.find(
           (m) => m.user_id === effectiveTargetUserId
         );
+        const targetDisplayName =
+          targetMember?.profile?.full_name
+          ?? targetMember?.nickname
+          ?? targetMember?.profile?.display_name
+          ?? targetMember?.invite_email?.split("@")[0]
+          ?? (lang === "tr" ? "aile üyesi" : "family member");
+
         const targetHasConsent = targetMember?.profile?.consent_ai_processing === true;
         if (!targetHasConsent) {
-          const targetDisplayName =
-            targetMember?.profile?.full_name
-            ?? targetMember?.nickname
-            ?? targetMember?.profile?.display_name
-            ?? targetMember?.invite_email?.split("@")[0]
-            ?? (lang === "tr" ? "aile üyesi" : "family member");
           const userMsg: ChatMessage = {
             id: crypto.randomUUID(),
             role: "user",
@@ -224,6 +228,27 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
             targetName: targetDisplayName,
           };
           setMessages((prev) => [...prev, userMsg, consentMsg]);
+          setInput("");
+          return;
+        }
+
+        // Management permission gate — blocks even when consent is present
+        const targetAllowsManagement = targetMember?.allows_management === true;
+        if (!targetAllowsManagement) {
+          const userMsg: ChatMessage = {
+            id: crypto.randomUUID(),
+            role: "user",
+            content: trimmed,
+          };
+          const mgmtMsg: ChatMessage = {
+            id: crypto.randomUUID(),
+            role: "assistant",
+            content: "",
+            kind: "management_required",
+            lang: lang === "tr" ? "tr" : "en",
+            targetName: targetDisplayName,
+          };
+          setMessages((prev) => [...prev, userMsg, mgmtMsg]);
           setInput("");
           return;
         }

@@ -75,7 +75,7 @@ export async function resolveTargetUser(
 
   const { data: targetMembership, error: targetErr } = await supabase
     .from("family_members")
-    .select("id")
+    .select("id, allows_management")
     .eq("user_id", targetUserId)
     .eq("invite_status", "accepted")
     .in("group_id", callerGroupIds)
@@ -91,6 +91,22 @@ export async function resolveTargetUser(
       `[family-permissions] 403 Not a family member — caller=${callerId} target=${targetUserId} callerGroups=${callerGroupIds.length}`
     )
     return { ok: false, status: 403, error: "Not a family member" }
+  }
+
+  // ── Consent gate: target user must have explicitly granted management
+  // permission (allows_management=true on THEIR family_members row) before
+  // any caller — even an owner/admin with Premium — can act on their behalf.
+  // This is orthogonal to AI consent (which the target must also grant on
+  // their own profile); this check is specifically about caregiver access.
+  if (!targetMembership.allows_management) {
+    console.warn(
+      `[family-permissions] 403 management not granted — caller=${callerId} target=${targetUserId}`
+    )
+    return {
+      ok: false,
+      status: 403,
+      error: "management_not_granted",
+    }
   }
 
   // Cross-user actions are Premium-only
