@@ -16,6 +16,7 @@ import { useActiveProfile } from "@/lib/use-active-profile";
 import { useDailyMedCheck } from "@/lib/daily-med-check";
 import { createBrowserClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
+import { LocalizedTitle } from "@/components/layout/LocalizedTitle";
 
 export default function HealthAssistantPage() {
   const { lang } = useLang();
@@ -87,6 +88,7 @@ export default function HealthAssistantPage() {
 
   return (
     <div className="flex h-[calc(100vh-7rem)] overflow-hidden">
+      <LocalizedTitle tr="Sağlık Asistanı" en="AI Health Assistant" />
       {/* Left Sidebar — conversation history (desktop only) */}
       {isAuthenticated && (
         <div className="hidden w-64 shrink-0 lg:block">

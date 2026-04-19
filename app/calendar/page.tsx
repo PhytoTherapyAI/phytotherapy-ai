@@ -23,6 +23,7 @@ import { InfoTooltip } from "@/components/ui/InfoTooltip"
 import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-utils"
 import { getSupplementDisplayName } from "@/lib/supplement-data"
 import { HabitHeatMap } from "@/components/calendar/HabitHeatMap"
+import { LocalizedTitle } from "@/components/layout/LocalizedTitle"
 
 const TodayView = lazy(() => import("@/components/calendar/TodayView").then(m => ({ default: m.TodayView })))
 const MonthView = lazy(() => import("@/components/calendar/MonthView").then(m => ({ default: m.MonthView })))
@@ -851,6 +852,7 @@ export default function CalendarPage() {
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-background">
+      <LocalizedTitle tr="Takvim" en="Calendar" />
       <div className="mx-auto max-w-7xl px-4 md:px-8 py-6">
 
         {/* ═══ PAGE HEADER ═══ */}

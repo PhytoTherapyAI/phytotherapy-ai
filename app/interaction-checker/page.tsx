@@ -36,6 +36,7 @@ import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
 import type { InteractionResult as InteractionResultType } from "@/lib/interaction-engine";
 import type { UserMedication } from "@/lib/database.types";
 import { createBrowserClient } from "@/lib/supabase";
+import { LocalizedTitle } from "@/components/layout/LocalizedTitle";
 
 const SAVED_MEDS_KEY = "doctopal-saved-medications";
 const SAVED_CHECKS_KEY = "doctopal-saved-checks";
@@ -203,6 +204,7 @@ export default function InteractionCheckerPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 md:px-8 py-8 md:py-12">
+      <LocalizedTitle tr="İlaç-Bitki Etkileşim Kontrolü" en="Drug–Herb Interaction Checker" />
 
       {/* ── HEADER ── */}
       <div className="mb-8">

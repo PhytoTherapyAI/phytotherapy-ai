@@ -181,8 +181,10 @@ export function DailyCareCard() {
     if (!user) return
     setLoading(true)
     try {
-      // Versioned cache key — old caches automatically ignored
-      const cacheKey = `care-plan-${CACHE_VERSION}-${today}-${lang}`
+      // Versioned cache key — scoped by active profile so switching to a
+      // family member doesn't serve the caller's cached plan (previously
+      // showed "Good morning İpek" on Taha's dashboard).
+      const cacheKey = `care-plan-${CACHE_VERSION}-${effectiveId}-${today}-${lang}`
       const cached = localStorage.getItem(cacheKey)
       if (cached) {
         try {

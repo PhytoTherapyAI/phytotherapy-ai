@@ -13,6 +13,17 @@
 
 import { Resend } from "resend"
 
+// Warn once per process when the key is missing in a non-dev deploy.
+// In true local dev, RESEND_API_KEY being absent is normal — we no-op on send.
+// In prod without the key, family notification emails fall back to in-app bell
+// only, and the warn below makes that visible in server logs.
+if (
+  !process.env.RESEND_API_KEY &&
+  process.env.NODE_ENV === "production"
+) {
+  console.warn("[Email] RESEND_API_KEY not set — family notification emails will be no-op")
+}
+
 const resend = new Resend(process.env.RESEND_API_KEY || "re_placeholder")
 
 const FROM_EMAIL = "DoctoPal <noreply@doctopal.com>"
@@ -50,6 +61,11 @@ export async function sendFamilyNotificationEmail(
   params: SendParams
 ): Promise<SendResult> {
   if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === "re_placeholder") {
+    // Dev / unconfigured — surface this every send so it's obvious why no
+    // email arrived. Caller still sees success so in-app flow continues.
+    console.warn(
+      `[Email] skipped ${params.type} email to ${params.toEmail} — RESEND_API_KEY not configured`
+    )
     return { success: true, messageId: `dev-${Date.now()}` }
   }
 

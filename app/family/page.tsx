@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { LocalizedTitle } from "@/components/layout/LocalizedTitle"
 import type { FamilyMember, FamilyRelationship } from "@/types/family"
 
 // Order matters: used as the select dropdown order.
@@ -522,6 +523,7 @@ export default function FamilyPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-emerald-50/60 via-background to-background dark:from-emerald-950/20 dark:via-background dark:to-background">
+      <LocalizedTitle tr="Aile" en="Family" />
       <div className="mx-auto max-w-2xl px-4 md:px-8 py-8 sm:py-12 min-h-[80vh]">
 
         {/* Header */}

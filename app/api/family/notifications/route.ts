@@ -194,16 +194,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: callerErr.message }, { status: 400 })
     }
 
-    // ONE-SHOT DIAG LINE — distinguishes JWT/RLS failure (callerSelfVisible=false)
-    // from stale-policy failure (callerSelfVisible=true but insert fails).
-    console.log("[notif:broadcast] DIAG", {
-      callerUserId: auth.user.id,
-      groupId: body.groupId,
-      callerSelfVisible: !!callerMembership,
-      callerRole: callerMembership?.role,
-      callerStatus: callerMembership?.invite_status,
-    })
-
     if (!callerMembership || callerMembership.invite_status !== "accepted") {
       console.warn("[notif:broadcast] caller not an accepted member:", {
         callerUserId: auth.user.id,

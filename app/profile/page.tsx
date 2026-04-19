@@ -13,6 +13,7 @@ import { tx } from "@/lib/translations";
 import { translateCondition, isSurgery, stripPrefix } from "@/lib/condition-translations";
 import { SOSButton } from "@/components/family/SOSButton";
 import { PrivacySettings } from "@/components/profile/PrivacySettings";
+import { LocalizedTitle } from "@/components/layout/LocalizedTitle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageSkeleton } from "@/components/ui/page-skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -657,6 +658,7 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
+      <LocalizedTitle tr="Profil" en="Profile" />
       {/* View-only banner — other member, no manage role */}
       {!isOwnProfile && !hasManageRole && (
         <div className="mb-4 rounded-xl border border-amber-200 dark:border-amber-800 bg-amber-50/80 dark:bg-amber-950/20 px-4 py-3 text-center">

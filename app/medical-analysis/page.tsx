@@ -30,6 +30,7 @@ import type { BloodTestResult, BloodTestCategory } from "@/lib/blood-reference";
 import type { Lang } from "@/lib/translations";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import { LabInsightsPanel } from "@/components/lab/LabInsightsPanel";
+import { LocalizedTitle } from "@/components/layout/LocalizedTitle";
 import { shouldAskPermission, getPermissionState } from "@/lib/permission-state";
 import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
 
@@ -102,6 +103,7 @@ export default function MedicalAnalysisPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 md:px-8 py-8">
+      <LocalizedTitle tr="Tıbbi Analiz" en="Medical Analysis" />
       {/* Header */}
       <div className="mb-6 flex items-center gap-3">
         <div className="rounded-lg bg-purple-50 p-3 dark:bg-purple-950">
