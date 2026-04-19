@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Siren, Loader2 } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase"
 import { tx } from "@/lib/translations"
@@ -26,6 +26,17 @@ export function SOSButton({ groupId, targetName, lang, disabled }: Props) {
   const [sent, setSent] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const tr = lang === "tr"
+
+  // Reset transient state every time the modal reopens — prevents a stale
+  // "RLS policy violation" message from a previous attempt lingering on the
+  // new confirm dialog.
+  useEffect(() => {
+    if (open) {
+      setErrorMsg(null)
+      setSent(false)
+      setSending(false)
+    }
+  }, [open])
 
   async function handleSend() {
     setSending(true)

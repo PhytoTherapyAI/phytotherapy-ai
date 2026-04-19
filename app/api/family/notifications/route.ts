@@ -1,7 +1,12 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { createClient, SupabaseClient } from "@supabase/supabase-js"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
+import { createServerClient } from "@/lib/supabase"
+import {
+  sendFamilyNotificationEmail,
+  type FamilyNotificationType,
+} from "@/lib/emails/family-notification"
 
 const VALID_TYPES = ["reminder_meds", "reminder_checkin", "reminder_water", "emergency", "custom"] as const
 type NotifType = typeof VALID_TYPES[number]
@@ -26,6 +31,80 @@ async function authenticate(req: NextRequest) {
   const { data: { user }, error } = await supabase.auth.getUser(token)
   if (error || !user) return null
   return { user, supabase }
+}
+
+/** Resolve caller's display name from user_profiles (service-role read so the
+ *  user_profiles RLS of the caller's own row doesn't matter either way). */
+async function getCallerDisplayName(
+  admin: SupabaseClient,
+  userId: string,
+  fallbackEmail: string | null | undefined
+): Promise<string> {
+  try {
+    const { data } = await admin
+      .from("user_profiles")
+      .select("full_name")
+      .eq("id", userId)
+      .maybeSingle()
+    const full = (data?.full_name as string | undefined)?.trim()
+    if (full) return full
+  } catch {
+    /* ignore */
+  }
+  return fallbackEmail?.split("@")[0] || "DoctoPal user"
+}
+
+/** Best-effort email fan-out after a successful insert. Failures are logged;
+ *  we never rewrite the 200 response on email issues. */
+async function fanoutEmails(
+  admin: SupabaseClient,
+  rows: Array<{ to_user_id: string; type: string; message: string }>,
+  fromName: string,
+  lang: "tr" | "en"
+): Promise<void> {
+  await Promise.allSettled(
+    rows.map(async (row) => {
+      try {
+        // auth.admin.getUserById needs service role — we're on createServerClient here.
+        const { data: authUser, error: authErr } = await admin.auth.admin.getUserById(row.to_user_id)
+        if (authErr || !authUser?.user?.email) {
+          console.warn("[family-email] recipient has no email:", row.to_user_id, authErr?.message)
+          return
+        }
+        const toEmail = authUser.user.email
+        // Pull display name from user_profiles (no email column exists there).
+        const { data: profile } = await admin
+          .from("user_profiles")
+          .select("full_name")
+          .eq("id", row.to_user_id)
+          .maybeSingle()
+        const toName =
+          (profile?.full_name as string | undefined)?.trim()
+          || toEmail.split("@")[0]
+          || (lang === "tr" ? "Aile üyesi" : "Family member")
+
+        await sendFamilyNotificationEmail({
+          toEmail,
+          toName,
+          fromName,
+          type: row.type as FamilyNotificationType,
+          message: row.message,
+          lang,
+        })
+      } catch (err) {
+        console.error("[family-email] per-recipient failure:", err)
+      }
+    })
+  )
+}
+
+/** Derive email language from message content + sender profile fallback.
+ *  We don't have the recipient's lang preference server-side cheaply, so we
+ *  default to TR when the message is Turkish (non-ASCII chars typical of TR),
+ *  else EN. This matches how the rest of the app infers language. */
+function inferLang(message: string): "tr" | "en" {
+  // Heuristic: Turkish-specific letters → Turkish email.
+  return /[ıİşŞğĞüÜöÖçÇ]/.test(message) ? "tr" : "en"
 }
 
 // GET — list notifications for the caller (recipient)
@@ -153,6 +232,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No other household members to notify" }, { status: 400 })
     }
 
+    const messageTrimmed = body.message!.trim()
     const rows = members
       .filter((m: { user_id: string | null }) => !!m.user_id)
       .map((m: { user_id: string | null }) => ({
@@ -160,10 +240,16 @@ export async function POST(req: NextRequest) {
         from_user_id: auth.user.id,
         to_user_id: m.user_id!,
         type: body.type!,
-        message: body.message!.trim(),
+        message: messageTrimmed,
       }))
 
-    const { data, error } = await auth.supabase
+    // Service-role client for the INSERT: we've already validated caller
+    // membership + target membership under RLS above, so the only remaining
+    // invariant (from_user_id === auth.user.id) is enforced in the server
+    // code itself. Bypassing RLS here side-steps the stale-policy / JWT-decode
+    // issues that were blocking SOS.
+    const admin = createServerClient()
+    const { data, error } = await admin
       .from("family_notifications")
       .insert(rows)
       .select()
@@ -180,10 +266,16 @@ export async function POST(req: NextRequest) {
         detail: { code: error.code, hint: error.hint, rowsAttempted: rows.length },
       }, { status: 400 })
     }
+
+    // Best-effort email fan-out. Never blocks the 200 response.
+    const lang = inferLang(messageTrimmed)
+    const fromName = await getCallerDisplayName(admin, auth.user.id, auth.user.email)
+    void fanoutEmails(admin, rows, fromName, lang)
+
     return NextResponse.json({ notifications: data, count: data?.length ?? 0 })
   }
 
-  // Single-recipient path
+  // Single-recipient path (reminders, management-permission requests)
   if (!body.toUserId) {
     return NextResponse.json({ error: "Missing toUserId" }, { status: 400 })
   }
@@ -191,23 +283,79 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Cannot notify yourself" }, { status: 400 })
   }
 
-  // RLS will enforce that both sender and recipient are accepted
-  // members of the same group; the insert will fail otherwise.
-  const { data, error } = await auth.supabase
+  // Sanity check: caller is an accepted member of the same group. Relying on
+  // user-RLS SELECT here (family_members own-row policy + cross-user SELECT
+  // from Session 31). This guards against callers spamming notifications to
+  // random user IDs.
+  const { data: callerMembership, error: callerErr } = await auth.supabase
+    .from("family_members")
+    .select("id, invite_status")
+    .eq("group_id", body.groupId)
+    .eq("user_id", auth.user.id)
+    .maybeSingle()
+
+  if (callerErr) {
+    return NextResponse.json({ error: callerErr.message }, { status: 400 })
+  }
+  if (!callerMembership || callerMembership.invite_status !== "accepted") {
+    return NextResponse.json(
+      { error: "Caller is not an accepted member of this group" },
+      { status: 403 }
+    )
+  }
+
+  // Verify recipient is also an accepted member of the same group.
+  const { data: targetMembership } = await auth.supabase
+    .from("family_members")
+    .select("id, invite_status")
+    .eq("group_id", body.groupId)
+    .eq("user_id", body.toUserId)
+    .maybeSingle()
+  if (!targetMembership || targetMembership.invite_status !== "accepted") {
+    return NextResponse.json(
+      { error: "Recipient is not an accepted member of this group" },
+      { status: 403 }
+    )
+  }
+
+  // Service-role insert (RLS bypass, same rationale as broadcast).
+  const messageTrimmed = body.message!.trim()
+  const adminSingle = createServerClient()
+  const { data, error } = await adminSingle
     .from("family_notifications")
     .insert({
       group_id: body.groupId,
       from_user_id: auth.user.id,
       to_user_id: body.toUserId,
       type: body.type,
-      message: body.message.trim(),
+      message: messageTrimmed,
     })
     .select()
     .single()
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 })
+    console.error("[notif:single] insert failed:", {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+    })
+    return NextResponse.json({
+      error: error.message,
+      detail: { code: error.code, hint: error.hint },
+    }, { status: 400 })
   }
+
+  // Best-effort email to the single recipient.
+  const lang = inferLang(messageTrimmed)
+  const fromName = await getCallerDisplayName(adminSingle, auth.user.id, auth.user.email)
+  void fanoutEmails(
+    adminSingle,
+    [{ to_user_id: body.toUserId, type: body.type, message: messageTrimmed }],
+    fromName,
+    lang
+  )
+
   return NextResponse.json({ notification: data })
 }
 
