@@ -2,8 +2,10 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Bell, Pill, CheckCircle2, Droplet, Siren, MessageSquare, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
+import { useFamily } from "@/lib/family-context"
 import { createBrowserClient } from "@/lib/supabase"
 import { useLang } from "@/components/layout/language-toggle"
 import type { FamilyNotification, FamilyNotificationType } from "@/types/family"
@@ -32,7 +34,9 @@ function relTime(iso: string, tr: boolean) {
 
 export function NotificationBell() {
   const { isAuthenticated, user } = useAuth()
+  const { setActiveProfile } = useFamily()
   const { lang } = useLang()
+  const router = useRouter()
   const tr = lang === "tr"
   const [open, setOpen] = useState(false)
   const [items, setItems] = useState<FamilyNotification[]>([])
@@ -119,6 +123,38 @@ export function NotificationBell() {
     } catch { /* silent */ }
   }
 
+  // Route a notification to the page that lets the user act on it.
+  // - emergency: switch active profile to the sender + open their profile so
+  //   the caller can review meds/allergies and call back.
+  // - custom (currently always a management-permission request): send the
+  //   user to /family where the Sharing Preferences toggle lives.
+  // - reminder_*: dashboard has the med / check-in / water widgets.
+  async function handleNotificationClick(n: FamilyNotification) {
+    if (!n.read) {
+      // Don't await — UI should feel instant; PATCH is fire-and-forget.
+      void markOneRead(n.id)
+    }
+    setOpen(false)
+    switch (n.type) {
+      case "emergency":
+        if (n.from_user_id) {
+          try { await setActiveProfile(n.from_user_id) } catch { /* non-fatal */ }
+        }
+        router.push("/profile")
+        break
+      case "custom":
+        router.push("/family")
+        break
+      case "reminder_meds":
+      case "reminder_checkin":
+      case "reminder_water":
+        router.push("/")
+        break
+      default:
+        router.push("/")
+    }
+  }
+
   if (!isAuthenticated) return null
 
   return (
@@ -181,8 +217,8 @@ export function NotificationBell() {
                   <button
                     key={n.id}
                     type="button"
-                    onClick={() => !n.read && markOneRead(n.id)}
-                    className={`w-full text-left p-3 flex gap-3 hover:bg-muted/40 transition-colors ${
+                    onClick={() => handleNotificationClick(n)}
+                    className={`w-full text-left p-3 flex gap-3 cursor-pointer hover:bg-muted/60 active:bg-muted transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${
                       n.read ? "" : "bg-emerald-50/40 dark:bg-emerald-950/10"
                     }`}
                   >
