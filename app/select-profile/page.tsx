@@ -6,10 +6,12 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/lib/auth-context'
 import { useFamily } from '@/lib/family-context'
+import { useEffectivePremium } from '@/lib/use-effective-premium'
 import { useLang } from '@/components/layout/language-toggle'
 import { tx } from '@/lib/translations'
 import { getAvatarDataUri, type AvatarStyle } from '@/lib/avatar'
-import { Settings, Check, Eye, Users, Loader2, Sparkles } from 'lucide-react'
+import { Settings, Check, Eye, Users, Loader2, Sparkles, Lock } from 'lucide-react'
+import { PremiumUpgradeModal } from '@/components/premium/PremiumUpgradeModal'
 
 export default function SelectProfilePage() {
   const { user, profile, isLoading: authLoading, premiumStatus } = useAuth()
@@ -23,6 +25,7 @@ export default function SelectProfilePage() {
   } = useFamily()
   const { lang } = useLang()
   const router = useRouter()
+  const effective = useEffectivePremium()
 
   // Hydration-safe: read localStorage only after mount
   const [ownAvatar, setOwnAvatar] = useState<{ style: AvatarStyle; seed: string }>({
@@ -31,6 +34,8 @@ export default function SelectProfilePage() {
   })
   const [creating, setCreating] = useState(false)
   const [showPremiumGate, setShowPremiumGate] = useState(false)
+  // Shown when a Free user taps another member's locked card.
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -39,7 +44,13 @@ export default function SelectProfilePage() {
     setOwnAvatar({ style, seed })
   }, [user])
 
-  async function selectProfile(userId: string) {
+  async function selectProfile(userId: string, isOwnCard: boolean) {
+    // Free users can only enter their own profile — other members' cards
+    // are locked until the caller upgrades (individual or family plan).
+    if (!isOwnCard && !effective.loading && !effective.isPremium) {
+      setShowUpgradeModal(true)
+      return
+    }
     await setActiveProfile(userId)
     // sessionStorage (not localStorage) — flag lives only for the current tab;
     // a new tab or browser session forces the picker again (intended flow).
@@ -226,55 +237,82 @@ export default function SelectProfilePage() {
 
       {/* Profil Grid */}
       <div className="flex flex-wrap gap-6 sm:gap-8 justify-center max-w-3xl">
-        {profiles.map((p, i) => (
-          <motion.button
-            key={p.userId}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 * i, type: 'spring' }}
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => selectProfile(p.userId)}
-            className="flex flex-col items-center gap-3 group cursor-pointer"
-          >
-            {/* Avatar */}
-            <div className="relative">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={getAvatarDataUri(p.avatarSeed, p.avatarStyle)}
-                alt={p.name}
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl ring-4 ring-transparent group-hover:ring-emerald-500 transition-all duration-200 bg-muted"
-              />
-              {/* Yönetici rozeti */}
-              {p.canManageThis && !p.isOwn && (
-                <div className="absolute -top-1.5 -right-1.5 bg-emerald-500 rounded-full w-5 h-5 flex items-center justify-center text-white shadow-md">
-                  <Check className="h-3 w-3" strokeWidth={3} />
-                </div>
-              )}
-              {/* Sadece görüntüleme */}
-              {!p.canManageThis && !p.isOwn && (
-                <div className="absolute -top-1.5 -right-1.5 bg-muted-foreground/50 rounded-full w-5 h-5 flex items-center justify-center text-white shadow-md">
-                  <Eye className="h-3 w-3" />
-                </div>
-              )}
-            </div>
+        {profiles.map((p, i) => {
+          // Free users can only open their own card. Others' cards render as
+          // locked (dim + lock badge) and open the upgrade modal on tap.
+          const locked = !p.isOwn && !effective.loading && !effective.isPremium
+          return (
+            <motion.button
+              key={p.userId}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.1 * i, type: 'spring' }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => selectProfile(p.userId, p.isOwn)}
+              className="flex flex-col items-center gap-3 group cursor-pointer"
+            >
+              {/* Avatar */}
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={getAvatarDataUri(p.avatarSeed, p.avatarStyle)}
+                  alt={p.name}
+                  className={`w-20 h-20 sm:w-24 sm:h-24 rounded-xl ring-4 ring-transparent transition-all duration-200 bg-muted ${
+                    locked
+                      ? 'opacity-50 grayscale group-hover:ring-amber-400 group-hover:opacity-60'
+                      : 'group-hover:ring-emerald-500'
+                  }`}
+                />
+                {/* Locked overlay for Free users */}
+                {locked && (
+                  <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/20 backdrop-blur-[1px]">
+                    <div className="bg-gradient-to-br from-amber-400 to-orange-500 rounded-full w-9 h-9 flex items-center justify-center text-white shadow-lg">
+                      <Lock className="h-4 w-4" />
+                    </div>
+                  </div>
+                )}
+                {/* Yönetici rozeti — Premium users see role badges */}
+                {!locked && p.canManageThis && !p.isOwn && (
+                  <div className="absolute -top-1.5 -right-1.5 bg-emerald-500 rounded-full w-5 h-5 flex items-center justify-center text-white shadow-md">
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </div>
+                )}
+                {!locked && !p.canManageThis && !p.isOwn && (
+                  <div className="absolute -top-1.5 -right-1.5 bg-muted-foreground/50 rounded-full w-5 h-5 flex items-center justify-center text-white shadow-md">
+                    <Eye className="h-3 w-3" />
+                  </div>
+                )}
+              </div>
 
-            {/* İsim */}
-            <span className="text-muted-foreground group-hover:text-foreground transition-colors font-medium text-sm sm:text-base">
-              {p.name}
-            </span>
+              {/* İsim */}
+              <span className={`font-medium text-sm sm:text-base transition-colors ${
+                locked ? 'text-muted-foreground/60' : 'text-muted-foreground group-hover:text-foreground'
+              }`}>
+                {p.name}
+              </span>
 
-            {/* Yönetim durumu */}
-            <span className="text-[11px] text-muted-foreground/70">
-              {p.isOwn
-                ? tx('family.ownProfile', lang)
-                : p.canManageThis
-                  ? tx('family.canEdit', lang)
-                  : tx('family.viewOnly', lang)}
-            </span>
-          </motion.button>
-        ))}
+              {/* Yönetim durumu */}
+              <span className="text-[11px] text-muted-foreground/70">
+                {p.isOwn
+                  ? tx('family.ownProfile', lang)
+                  : locked
+                    ? (lang === 'tr' ? 'Premium gerekli' : 'Premium required')
+                    : p.canManageThis
+                      ? tx('family.canEdit', lang)
+                      : tx('family.viewOnly', lang)}
+              </span>
+            </motion.button>
+          )
+        })}
       </div>
+
+      {/* Premium upgrade modal triggered when a Free user taps a locked card. */}
+      <PremiumUpgradeModal
+        open={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        featureName={lang === 'tr' ? 'Aile üyesi profilini görüntüleme' : 'Viewing family member profiles'}
+      />
 
       {/* Aile yönetimi linki */}
       <motion.button

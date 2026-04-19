@@ -13,6 +13,8 @@ import { AIGeneratedBadge } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
 import { useActiveProfile } from "@/lib/use-active-profile";
 import { useFamily } from "@/lib/family-context";
+import { useEffectivePremium } from "@/lib/use-effective-premium";
+import { PremiumUpgradeModal } from "@/components/premium/PremiumUpgradeModal";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { checkRedFlags, getEmergencyMessage } from "@/lib/safety-filter";
@@ -69,11 +71,13 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
     ? activeUserId
     : undefined;
   const { lang } = useLang()
+  const effectivePremium = useEffectivePremium();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
   const [showConsentPopup, setShowConsentPopup] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
   // Model selection removed — single model (claude-haiku-4-5)
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -169,8 +173,23 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
     const hasFiles = attachedFiles.length > 0;
     if ((!trimmed && !hasFiles) || isStreaming) return;
 
-    // Turkey 112 Triage Protocol — client-side safety check
+    // Turkey 112 Triage Protocol — client-side safety check.
+    // Red-code emergencies ALWAYS pass the premium gate — this is a safety
+    // feature, never gate it (Gemini rule: SOS + emergency always free).
     const triageResult = checkRedFlags(trimmed);
+
+    // Premium gate — AI chat is Premium for authenticated non-emergency
+    // traffic. Emergency path above bypasses this. Guests can still try
+    // the existing "guest mode" limits lower down.
+    if (
+      isAuthenticated
+      && !effectivePremium.loading
+      && !effectivePremium.isPremium
+      && triageResult.type !== "red_code"
+    ) {
+      setShowPremiumModal(true);
+      return;
+    }
 
     // KIRMIZI KOD — Hayati tehlike, popup + block, AI cevap vermez
     if (triageResult.type === "red_code") {
@@ -738,6 +757,11 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
           }
         }}
         onCancel={() => setShowConsentPopup(false)}
+      />
+      <PremiumUpgradeModal
+        open={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+        featureName={lang === "tr" ? "AI Sağlık Asistanı" : "AI Health Assistant"}
       />
     </div>
   );

@@ -25,6 +25,7 @@ import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
 import { AydinlatmaPopup } from "@/components/legal/AydinlatmaPopup";
 import { DashboardTour } from "@/components/layout/DashboardTour";
 import { LocalizedTitle } from "@/components/layout/LocalizedTitle";
+import { PremiumFomoBanner } from "@/components/dashboard/PremiumFomoBanner";
 import { TOOL_CATEGORIES } from "@/lib/tools-hierarchy";
 import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-utils";
 import { getSupplementDisplayName } from "@/lib/supplement-data";
@@ -691,6 +692,9 @@ export default function Home() {
 
         <motion.div variants={stagger} initial="hidden" animate="show"
           className="mx-auto max-w-7xl px-4 py-6 md:px-8 lg:px-12 space-y-6">
+
+          {/* Free-tier nudge — hides itself on Premium / Family Premium. */}
+          <PremiumFomoBanner />
 
           {/* ═══ BENTO HERO: Command Card + AI Copilot ═══ */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

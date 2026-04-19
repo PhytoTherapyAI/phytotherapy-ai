@@ -37,6 +37,8 @@ import type { InteractionResult as InteractionResultType } from "@/lib/interacti
 import type { UserMedication } from "@/lib/database.types";
 import { createBrowserClient } from "@/lib/supabase";
 import { LocalizedTitle } from "@/components/layout/LocalizedTitle";
+import { useEffectivePremium } from "@/lib/use-effective-premium";
+import { PremiumUpgradeModal } from "@/components/premium/PremiumUpgradeModal";
 
 const SAVED_MEDS_KEY = "doctopal-saved-medications";
 const SAVED_CHECKS_KEY = "doctopal-saved-checks";
@@ -155,8 +157,17 @@ export default function InteractionCheckerPage() {
   const redFlagCheck = useMemo(() => checkRedFlags(concern), [concern]);
   const isRedFlagEmergency = redFlagCheck.type === "red_code";
 
+  const effectivePremium = useEffectivePremium();
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+
   const handleAnalyze = async () => {
     if (medications.length === 0 || !concern.trim() || isRedFlagEmergency) return;
+
+    // Premium gate — interaction engine is a Premium feature.
+    if (isAuthenticated && !effectivePremium.loading && !effectivePremium.isPremium) {
+      setShowPremiumModal(true);
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -640,6 +651,12 @@ export default function InteractionCheckerPage() {
 
         </div>
       </div>
+
+      <PremiumUpgradeModal
+        open={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+        featureName={lang === "tr" ? "İlaç-Bitki Etkileşim Kontrolü" : "Drug–Herb Interaction Checker"}
+      />
     </div>
   );
 }

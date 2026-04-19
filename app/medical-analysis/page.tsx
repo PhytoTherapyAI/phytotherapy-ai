@@ -31,6 +31,8 @@ import type { Lang } from "@/lib/translations";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import { LabInsightsPanel } from "@/components/lab/LabInsightsPanel";
 import { LocalizedTitle } from "@/components/layout/LocalizedTitle";
+import { useEffectivePremium } from "@/lib/use-effective-premium";
+import { PremiumUpgradeModal } from "@/components/premium/PremiumUpgradeModal";
 import { shouldAskPermission, getPermissionState } from "@/lib/permission-state";
 import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
 
@@ -244,11 +246,18 @@ function BloodTestTab({
   const [dontRememberDate, setDontRememberDate] = useState(false);
   const [testDateApprox, setTestDateApprox] = useState<string>("");
   const isTr = lang === "tr";
+  const effectivePremium = useEffectivePremium();
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   const handleSubmit = async (
     values: Record<string, number>,
     gender: "male" | "female" | null
   ) => {
+    // Premium gate — blood test AI analysis is a paid feature.
+    if (isAuthenticated && !effectivePremium.loading && !effectivePremium.isPremium) {
+      setShowPremiumModal(true);
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -512,6 +521,12 @@ function BloodTestTab({
       <p className="mt-6 text-center text-xs text-muted-foreground">
         ⚠️ {tx("disclaimer.tool", lang)}
       </p>
+
+      <PremiumUpgradeModal
+        open={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+        featureName={lang === "tr" ? "Kan Tahlili Analizi" : "Blood Test Analysis"}
+      />
     </>
   );
 }
@@ -761,6 +776,8 @@ function RadiologyTab({
   const [data, setData] = useState<RadiologyAnalysis | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showCameraPerm, setShowCameraPerm] = useState(false);
+  const effectivePremium = useEffectivePremium();
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   const handleUploadClick = useCallback(() => {
     if (shouldAskPermission("camera")) {
@@ -783,6 +800,11 @@ function RadiologyTab({
 
   const handleAnalyze = async () => {
     if (!file) return;
+    // Premium gate — radiology AI analysis is paid.
+    if (isAuthenticated && !effectivePremium.loading && !effectivePremium.isPremium) {
+      setShowPremiumModal(true);
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -981,6 +1003,12 @@ function RadiologyTab({
           setShowCameraPerm(false);
           fileInputRef.current?.click();
         }}
+      />
+
+      <PremiumUpgradeModal
+        open={showPremiumModal}
+        onClose={() => setShowPremiumModal(false)}
+        featureName={lang === "tr" ? "Radyoloji Analizi" : "Radiology Analysis"}
       />
     </>
   );
