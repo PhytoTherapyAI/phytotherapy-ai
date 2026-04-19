@@ -137,15 +137,15 @@ export function ConsentStep({ data, updateData }: Props) {
                 <>
                   <Link href="/terms" target="_blank" className="text-primary underline underline-offset-2">Kullanım Koşulları</Link>
                   {" "}ve{" "}
-                  <Link href="/privacy" target="_blank" className="text-primary underline underline-offset-2">Gizlilik Politikası</Link>
-                  &apos;nı okudum. DoctoPal&apos;ın <strong>profesyonel bir doktor tavsiyesi yerine geçmediğini</strong> anlıyorum. Acil durumlarda <strong>112</strong>&apos;yi arayacağımı kabul ediyorum.
+                  <Link href="/aydinlatma" target="_blank" className="text-primary underline underline-offset-2">Aydınlatma Metni</Link>
+                  &apos;ni okudum. DoctoPal&apos;ın <strong>profesyonel bir doktor tavsiyesi yerine geçmediğini</strong> anlıyorum. Acil durumlarda <strong>112</strong>&apos;yi arayacağımı kabul ediyorum.
                 </>
               ) : (
                 <>
                   I have read the{" "}
                   <Link href="/terms" target="_blank" className="text-primary underline underline-offset-2">Terms of Service</Link>
                   {" "}and{" "}
-                  <Link href="/privacy" target="_blank" className="text-primary underline underline-offset-2">Privacy Policy</Link>
+                  <Link href="/aydinlatma" target="_blank" className="text-primary underline underline-offset-2">Privacy Notice</Link>
                   . I understand DoctoPal <strong>does not replace professional medical advice</strong>. I agree to call <strong>112</strong> in emergencies.
                 </>
               )}

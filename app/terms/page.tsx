@@ -1,11 +1,13 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
+import Link from "next/link"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 
 export default function TermsPage() {
   const { lang } = useLang()
+  const tr = lang === "tr"
 
   return (
     <div className="mx-auto max-w-4xl px-4 md:px-8 py-16">
@@ -27,6 +29,25 @@ export default function TermsPage() {
           </h2>
           <p>
             {tx("terms.acceptanceText", lang)}
+          </p>
+          <p className="mt-3 text-foreground/90">
+            {tr ? (
+              <>
+                Premium aboneliğiniz varsa, işbu Kullanım Koşulları&apos;na ek olarak{" "}
+                <Link href="/abonelik-sozlesmesi" className="text-primary underline hover:no-underline">Abonelik Sözleşmesi</Link>
+                {" "}ve{" "}
+                <Link href="/mesafeli-satis" className="text-primary underline hover:no-underline">Mesafeli Satış Sözleşmesi</Link>
+                {" "}da tarafınız için bağlayıcıdır.
+              </>
+            ) : (
+              <>
+                If you have a Premium subscription, in addition to these Terms of Use, the{" "}
+                <Link href="/abonelik-sozlesmesi" className="text-primary underline hover:no-underline">Subscription Agreement</Link>
+                {" "}and{" "}
+                <Link href="/mesafeli-satis" className="text-primary underline hover:no-underline">Distance Sales Agreement</Link>
+                {" "}are also binding.
+              </>
+            )}
           </p>
         </section>
 
@@ -167,7 +188,7 @@ export default function TermsPage() {
           <p>
             {tx("terms.contactText", lang)}
           </p>
-          <p className="mt-2 font-heading text-lg font-medium text-foreground">legal@doctopal.com</p>
+          <p className="mt-2 font-heading text-lg font-medium text-foreground">info@doctopal.com</p>
         </section>
 
         {/* Service Definition (MADDE 13 — what DoctoPal is NOT) */}

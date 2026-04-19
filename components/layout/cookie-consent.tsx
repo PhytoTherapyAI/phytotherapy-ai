@@ -36,7 +36,7 @@ export function CookieConsent() {
         <Cookie className="hidden h-5 w-5 shrink-0 text-primary sm:block" />
         <p className="text-center text-xs text-muted-foreground sm:text-left">
           {tx("cookie.text", lang)}{" "}
-          <Link href="/privacy" className="underline transition-colors hover:text-foreground">
+          <Link href="/aydinlatma" className="underline transition-colors hover:text-foreground">
             {tx("footer.privacy", lang)}
           </Link>
         </p>

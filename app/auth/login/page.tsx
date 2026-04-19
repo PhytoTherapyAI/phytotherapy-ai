@@ -320,7 +320,7 @@ function LoginContent() {
                   {tx("auth.termsText", lang)}{" "}
                   <Link href="/terms" className="underline hover:text-foreground">{tx("auth.termsLink", lang)}</Link>
                   {" "}{tx("auth.and", lang)}{" "}
-                  <Link href="/privacy" className="underline hover:text-foreground">{tx("auth.privacyLink", lang)}</Link>
+                  <Link href="/aydinlatma" className="underline hover:text-foreground">{tx("auth.privacyLink", lang)}</Link>
                   {tx("auth.termsAccept", lang)}
                 </p>
               </form>

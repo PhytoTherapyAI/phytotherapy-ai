@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
       { source: "/smart-reminders", destination: "/medication-hub", permanent: true },
       { source: "/health-goal-coach", destination: "/health-goals", permanent: true },
       { source: "/medication-reader", destination: "/prospectus-reader", permanent: true },
+      // Legal consolidation: /privacy retired in favour of /aydinlatma v2.1
+      // (KVKK Md.10 disclosure — single source of truth). Preserves old
+      // bookmarks + SEO inbound.
+      { source: "/privacy", destination: "/aydinlatma", permanent: true },
     ];
   },
   async headers() {

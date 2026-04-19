@@ -59,8 +59,8 @@ export function Footer() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
-            <Link href="/privacy" className="transition-colors hover:text-foreground">
-              {tx('footer.privacy', lang)}
+            <Link href="/aydinlatma" className="transition-colors hover:text-foreground">
+              {tr ? "Aydınlatma Metni" : "Privacy Notice"}
             </Link>
             <span className="text-border">|</span>
             <Link href="/terms" className="transition-colors hover:text-foreground">
@@ -75,12 +75,20 @@ export function Footer() {
               {tr ? "Kullanım Amacı" : "Intended Purpose"}
             </Link>
             <span className="text-border">|</span>
+            <Link href="/mesafeli-satis" className="transition-colors hover:text-foreground">
+              {tr ? "Mesafeli Satış Sözleşmesi" : "Distance Sales Agreement"}
+            </Link>
+            <span className="text-border">|</span>
+            <Link href="/abonelik-sozlesmesi" className="transition-colors hover:text-foreground">
+              {tr ? "Abonelik Sözleşmesi" : "Subscription Agreement"}
+            </Link>
+            <span className="text-border">|</span>
             <Link href="/about" className="transition-colors hover:text-foreground">
               {tx("footer.about", lang)}
             </Link>
             <span className="text-border">|</span>
-            <a href="mailto:contact@doctopal.com" className="transition-colors hover:text-foreground">
-              contact@doctopal.com
+            <a href="mailto:info@doctopal.com" className="transition-colors hover:text-foreground">
+              info@doctopal.com
             </a>
           </div>
 
