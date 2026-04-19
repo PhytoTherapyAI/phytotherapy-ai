@@ -367,13 +367,14 @@ export default function Home() {
   // Family profile selection — fallback redirect if user lands on / directly.
   // Login/callback should redirect to /select-profile via getPostAuthRedirect helper.
   // Only redirect if the family has 2+ accepted members; single-member groups skip profile picker.
-  // localStorage flag persists across tabs so user only picks once per device.
+  // sessionStorage flag persists across page reloads WITHIN the tab; a fresh tab / new
+  // browser session forces the profile picker again (by design).
   useEffect(() => {
     if (!isLoading && !familyLoading && isAuthenticated && familyGroup && user) {
       const acceptedCount = familyMembers.length // familyMembers is already filtered to accepted-only
       if (acceptedCount < 2) return // solo family → no profile picker needed
       const key = `family_profile_selected_${user.id}`
-      const hasSelected = typeof window !== "undefined" && localStorage.getItem(key)
+      const hasSelected = typeof window !== "undefined" && sessionStorage.getItem(key)
       if (!hasSelected) {
         router.push('/select-profile')
       }

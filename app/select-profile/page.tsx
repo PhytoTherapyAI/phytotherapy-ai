@@ -41,8 +41,10 @@ export default function SelectProfilePage() {
 
   async function selectProfile(userId: string) {
     await setActiveProfile(userId)
+    // sessionStorage (not localStorage) — flag lives only for the current tab;
+    // a new tab or browser session forces the picker again (intended flow).
     if (user?.id && typeof window !== 'undefined') {
-      localStorage.setItem(`family_profile_selected_${user.id}`, 'true')
+      sessionStorage.setItem(`family_profile_selected_${user.id}`, 'true')
     }
     router.push('/')
   }

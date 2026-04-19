@@ -223,8 +223,9 @@ export function Header() {
                               type="button"
                               className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-muted"
                               onClick={() => {
+                                // Clear the per-tab flag so the picker shows again.
                                 if (user?.id && typeof window !== "undefined") {
-                                  localStorage.removeItem(`family_profile_selected_${user.id}`);
+                                  sessionStorage.removeItem(`family_profile_selected_${user.id}`);
                                 }
                                 setUserMenuOpen(false);
                                 window.location.href = "/select-profile";
