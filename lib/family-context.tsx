@@ -56,47 +56,82 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
   const fetchFamilyData = useCallback(async () => {
     if (!user) return
     try {
-      // Önce sahibi olduğu grubu bul
-      const { data: ownedGroup, error: ownedErr } = await supabase
-        .from('family_groups')
-        .select('*')
-        .eq('owner_id', user.id)
-        .maybeSingle()
-
-      if (ownedErr) {
-        console.error('[Family] fetchOwnedGroup error:', ownedErr.message)
-      }
-
-      if (ownedGroup) {
-        setFamilyGroup(ownedGroup)
-        await fetchMembers(ownedGroup.id)
-        return
-      }
-
-      // Üye olduğu grubu bul
-      const { data: membership, error: memberErr } = await supabase
+      // Tek sorgulu membership-merkezli akış. createGroup zaten owner'ı
+      // family_members'a accepted row olarak ekliyor, yani owner + member
+      // ayrımı yapmadan burada ikisini de yakalarız.
+      //
+      // Eski mantık iki aşamalıydı (owned → member fallback) ve
+      // `.maybeSingle()` birden fazla accepted satır dönünce sessizce hata
+      // veriyordu (yeni davet + eski accepted kayıt → PGRST116 → null),
+      // Taha gibi legit üyeler kendi gruplarını göremiyordu.
+      const { data: memberships, error: memberErr } = await supabase
         .from('family_members')
         .select('group_id')
         .eq('user_id', user.id)
         .eq('invite_status', 'accepted')
-        .maybeSingle()
 
       if (memberErr) {
-        console.error('[Family] fetchMembership error:', memberErr.message)
+        console.error('[Family] fetchMemberships error:', memberErr.message)
+        return
       }
 
-      if (membership) {
-        const { data: group } = await supabase
+      const groupIds = Array.from(
+        new Set(
+          (memberships || [])
+            .map((m: { group_id: string | null }) => m.group_id)
+            .filter((id): id is string => typeof id === 'string' && id.length > 0)
+        )
+      )
+
+      // Legacy fallback: eski davetsiz kurulu owner grupları (member row
+      // insert'i yapılmadan önce oluşturulmuş) için owner_id ile ek tarama.
+      if (groupIds.length === 0) {
+        const { data: ownedLegacy } = await supabase
           .from('family_groups')
           .select('*')
-          .eq('id', membership.group_id)
-          .maybeSingle()
+          .eq('owner_id', user.id)
+          .limit(1)
 
-        if (group) {
-          setFamilyGroup(group)
-          await fetchMembers(group.id)
+        const legacy = ownedLegacy?.[0]
+        if (legacy) {
+          setFamilyGroup(legacy)
+          await fetchMembers(legacy.id)
         }
+        return
       }
+
+      // Çoklu üyelik durumunda: en kalabalık grubu seç (gerçek aile).
+      const { data: groups, error: groupsErr } = await supabase
+        .from('family_groups')
+        .select('*')
+        .in('id', groupIds)
+
+      if (groupsErr || !groups?.length) {
+        if (groupsErr) console.error('[Family] fetchGroups error:', groupsErr.message)
+        return
+      }
+
+      let selected = groups[0]
+      if (groups.length > 1) {
+        // Her grubun accepted üye sayısını topla, maks olanı seç.
+        const { data: allMembers } = await supabase
+          .from('family_members')
+          .select('group_id')
+          .in('group_id', groupIds)
+          .eq('invite_status', 'accepted')
+
+        const countByGroup = new Map<string, number>()
+        for (const m of allMembers || []) {
+          const gid = (m as { group_id: string | null }).group_id
+          if (gid) countByGroup.set(gid, (countByGroup.get(gid) || 0) + 1)
+        }
+        selected = groups.reduce((best, g) =>
+          (countByGroup.get(g.id) || 0) > (countByGroup.get(best.id) || 0) ? g : best
+        )
+      }
+
+      setFamilyGroup(selected)
+      await fetchMembers(selected.id)
     } catch (err: unknown) {
       if (err instanceof Error && (err.name === 'AbortError' || err.message?.includes('AbortError') || err.message?.includes('Lock'))) {
         return // silently ignore abort/lock errors
