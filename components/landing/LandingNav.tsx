@@ -23,7 +23,7 @@ interface NavLinkSpec {
 const NAV_LINKS: NavLinkSpec[] = [
   { href: "#features", labelKey: "landing.nav.features" },
   { href: "/pricing", labelKey: "landing.nav.pricing" },
-  { href: "#", labelKey: "landing.nav.about", disabled: true },
+  { href: "/about", labelKey: "landing.nav.about" },
 ]
 
 export function LandingNav() {

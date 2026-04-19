@@ -101,9 +101,11 @@ export function Header() {
 
   const isActive = (href: string) => pathname === href;
 
-  // Guest landing at "/" renders its own <LandingNav />. Hide the app header
-  // there to avoid a duplicate navbar. Authenticated "/" = dashboard, which
-  // still needs the app header.
+  // Guest landing at "/" and every marketing shell page (e.g. /about) render
+  // their own <LandingNav />. Hide the app header there to avoid a duplicate
+  // navbar. Authenticated "/" = dashboard, which still needs the app header.
+  const MARKETING_SHELL_PATHS = new Set(["/about"]);
+  if (MARKETING_SHELL_PATHS.has(pathname)) return null;
   if (pathname === "/" && !isAuthenticated) return null;
 
   return (

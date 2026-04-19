@@ -2,14 +2,28 @@
 'use client'
 
 import Link from "next/link";
+import { usePathname } from "next/navigation"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { DoctoPalLogo } from "@/components/brand/DoctoPalLogo"
+import { useAuth } from "@/lib/auth-context"
+
+// Marketing shell pages own their own <LandingFooter />. Suppress the app
+// footer there so we don't render two footers stacked.
+const MARKETING_SHELL_PATHS = new Set(["/about"])
 
 export function Footer() {
   const { lang } = useLang()
+  const pathname = usePathname()
+  const { isAuthenticated } = useAuth()
 
   const tr = lang === "tr";
+
+  // Guest `/` renders LandingFooter inside <LandingPage />. Authenticated
+  // `/` = dashboard which uses this app footer. All other marketing shell
+  // pages (listed above) suppress unconditionally.
+  if (MARKETING_SHELL_PATHS.has(pathname)) return null
+  if (pathname === "/" && !isAuthenticated) return null
 
   return (
     <footer className="border-t">

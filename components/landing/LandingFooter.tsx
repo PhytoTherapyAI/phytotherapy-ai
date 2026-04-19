@@ -27,7 +27,7 @@ const PRODUCT_LINKS: FooterLink[] = [
 ]
 
 const LEGAL_LINKS: FooterLink[] = [
-  { href: "#", labelKey: "landing.footer.legalLink1", disabled: true }, // /about placeholder
+  { href: "/about", labelKey: "landing.footer.legalLink1" },
   { href: "/aydinlatma", labelKey: "landing.footer.legalLink2" },
   { href: "#", labelKey: "landing.footer.legalLink3", disabled: true }, // Mesafeli Satış — Iyzico ile
   { href: "#", labelKey: "landing.footer.legalLink4", disabled: true }, // Abonelik Sözleşmesi — Iyzico ile
