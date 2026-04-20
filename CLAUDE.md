@@ -656,3 +656,29 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 - Visible tool konsolidasyon başlangıcı (Master Plan Adım 3 — İlaç Merkezi + Sağlık Günlüğü + Ayarlar)
 - Chat UX rewrite (ChatGPT tarzı sidebar + threads + `chats` tablosu migration)
 - Iyzico entegrasyonu (şirket kurulumu + merchant onayı sonrası)
+
+---
+
+### Session 37 — Tamamlandı (21 Nisan 2026, gece devam) — Local (push İpek Session 36 testi sonrası)
+
+**Ana iş:** AI Kalite G3 + G1 (Master Plan v1.1 Bölüm 10). Session 35 (G4 + G2) ve Session 36 (C8-C11 SELAMLAMA + MEDICATION RULES + FORMAT + TR akıcılık) devamı. AI kalite iyileştirme dizisinin kapanışı.
+
+**3 commit (local master, push yok — Session 36 testi sonrası push):**
+
+- `c8f4aea` feat(ai-quality): C1 (G3) — `buildProspectusSystemPrompt` → `buildMedicationHubSystemPrompt` rename + signature 3→8 field (userSupplements, userChronicConditions, isPregnant, isBreastfeeding, kidneyDisease, liverDisease eklendi) + PROSPECTUS_PROMPT INTERACTION CONTROL 6 yeni kural grubu (supplement-drug cross-check, pregnancy Category D/X flag, breastfeeding excretion, renally-cleared dose adjustment, hepatotoxic flag, condition-drug). Guardrail: klinik anlamlı + kanıta dayalı. Eski ad deprecated alias olarak korundu (backwards compat).
+- `bbe51db` feat(ai-quality): C2 (G3) — `app/api/prospectus-reader/route.ts` user data fetch genişletildi. 2 sequential query → 3 Promise.all. user_profiles select: supplements, chronic_conditions, is_pregnant, is_breastfeeding, kidney_disease, liver_disease. Supplement parse (meta: prefix filter + `|` split), chronic parse (surgery:/family: prefix filter). Helper çağrısı 8 field ile.
+- `631bb2d` feat(ai-quality): C3 (G1) — SYSTEM_PROMPT'a 4 yeni few-shot örnek: Örnek 7 (bariatrik+D vit emilim, TR), Örnek 8 (aile meme kanseri+fitoöstrojen, TR), Örnek 9 (polypharmacy + CYP450, EN), Örnek 10 (eGFR+nefrotoksik bitki, TR). Toplam few-shot 6 → 10. Her örnek profil flag'i ilk cümlede zikreder, güvenli alternatif sunar, PubMed kaynak linki ile kapanır.
+
+**Sonuç:**
+- Prospektüs tarayıcısı (Tool: Prospectus Reader) artık supplement-drug, pregnancy-drug, breastfeeding, renal, hepatic, condition-drug etkileşimlerini flag'leyebiliyor
+- AI chat asistanı 10 few-shot pattern ile profil-aware (cerrahi/aile/polypharmacy/böbrek) yanıtları daha tutarlı üretiyor
+- AI Kalite dizisi (G1+G2+G3+G4 + C8-C11) tamamen bitti → Master Plan v1.1 Bölüm 10 tamam
+
+**Detaylı SUMMARY + İpek test matrisi:** [docs/SESSION_37_SUMMARY.md](docs/SESSION_37_SUMMARY.md)
+
+**Push Sırası:**
+1. İpek sabah Session 36 testi yapar (canlıda, `aafc81e`)
+2. OK → Session 37 push (3 commit) → Vercel auto-deploy
+3. Session 37 testleri canlıda (S37-G3-* + S37-G1-*)
+
+**Session 38'e devir:** Hub konsolidasyonu (A), Chat UX rewrite (B), Premium gate matrisi, Wow özellikler, Iyzico, family_history_entries UI.
