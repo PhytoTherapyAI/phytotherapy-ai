@@ -3,9 +3,14 @@
 
 const { createClient } = require("@supabase/supabase-js")
 
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+if (!serviceKey) {
+  throw new Error("SUPABASE_SERVICE_ROLE_KEY environment variable is required")
+}
+
 const supabase = createClient(
   "https://huiiqbslahqkadchzyig.supabase.co",
-  process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1aWlxYnNsYWhxa2FkY2h6eWlnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzU5MTY5MywiZXhwIjoyMDg5MTY3NjkzfQ.h0A4UlHxxqSKFccv8c63bi3tsrEUBnCeYSJv8sdLNDw"
+  serviceKey
 )
 
 async function run() {
