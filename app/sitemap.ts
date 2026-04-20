@@ -49,19 +49,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // ── 5. Medical content pages (SEO-valuable) ──
   const medicalPages: MetadataRoute.Sitemap = [
-    "/anxiety-toolkit", "/depression-screening", "/breathing-exercises",
-    "/first-aid", "/cancer-support", "/grief-support", "/ptsd-support",
-    "/addiction-recovery", "/adhd-management", "/autism-support",
+    "/first-aid", "/cancer-support",
+    "/autism-support",
     "/allergy-map", "/child-health", "/elder-care",
     "/mens-health", "/sexual-health", "/eye-health", "/ear-health",
     "/dental-health", "/hair-nail-health", "/gut-health",
     "/migraine-dashboard", "/diabetic-foot", "/dialysis-tracker",
-    "/smoking-cessation", "/alcohol-tracker", "/snoring-apnea",
+    "/smoking-cessation", "/alcohol-tracker",
     "/new-parent-health", "/postpartum-support", "/menopause-panel",
-    "/student-health", "/shift-worker", "/retirement-health",
+    "/student-health", "/retirement-health",
     "/disaster-mode", "/military-health", "/hajj-health",
-    "/healthy-recipes", "/seasonal-food", "/detox-facts",
-    "/yoga-meditation", "/stretching",
+    "/seasonal-food", "/detox-facts",
     "/drug-recall", "/clinical-trials", "/rare-diseases",
     "/second-opinion", "/emergency-mode",
   ].map(path => ({

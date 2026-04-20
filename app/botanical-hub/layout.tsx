@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation"
 
 const TABS = [
   { id: "compare", href: "/supplement-compare", label: "Compare", emoji: "⚖️" },
-  { id: "market", href: "/supplement-marketplace", label: "Market", emoji: "🛒" },
   { id: "favorites", href: "/favorite-supplements", label: "Favorites", emoji: "💚" },
   { id: "antiinflam", href: "/anti-inflammatory", label: "Anti-Inflammatory", emoji: "🔥" },
   { id: "allergy", href: "/cross-allergy", label: "Cross-Allergy", emoji: "🕸️" },

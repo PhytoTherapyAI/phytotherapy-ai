@@ -8,9 +8,9 @@ import { useLang } from "@/components/layout/language-toggle"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import {
-  Bot, Bell, Shield, Download, Trash2, Watch, Award,
-  Bug, ChevronRight, Check, Globe,
-  Loader2, Eye, EyeOff, MessageSquare, KeyRound, AlertTriangle,
+  Bot, Bell, Shield, Download, Trash2, Watch,
+  ChevronRight, Check, Globe,
+  Loader2, Eye, EyeOff, KeyRound, AlertTriangle,
 } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
 import { tx } from "@/lib/translations"
@@ -81,14 +81,10 @@ export default function SettingsPage() {
 
   const SYSTEM_ITEMS = [
     { icon: Bell,          label: tx("settings.notifications", lang),     desc: tx("settings.notificationsDesc", lang),     color: "bg-violet-50 dark:bg-violet-950/30 text-violet-600",  href: "/notifications" },
-    { icon: Bell,          label: tx("settings.notificationPrefs", lang), desc: tx("settings.notificationPrefsDesc", lang), color: "bg-blue-50 dark:bg-blue-950/30 text-blue-600",        href: "/notification-preferences" },
     { icon: Watch,         label: tx("settings.connectedDevices", lang),  desc: tx("settings.connectedDevicesDesc", lang),  color: "bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600",        href: "/connected-devices" },
-    { icon: MessageSquare, label: tx("settings.dailyBot", lang),          desc: tx("settings.dailyBotDesc", lang),          color: "bg-green-50 dark:bg-green-950/30 text-green-600",     href: "/connect-assistant" },
     { icon: Shield,        label: tx("settings.privacyControls", lang),   desc: tx("settings.privacyControlsDesc", lang),   color: "bg-slate-100 dark:bg-slate-800 text-slate-600",       href: "/privacy-controls" },
     { icon: Download,      label: tx("settings.exportData", lang),        desc: tx("settings.exportDataDesc", lang),        color: "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600",  href: "/data-export" },
     { icon: Trash2,        label: tx("settings.deleteData", lang),        desc: tx("settings.deleteDataDesc", lang),        color: "bg-red-50 dark:bg-red-950/30 text-red-500",           href: "/data-delete" },
-    { icon: Award,         label: tx("settings.certificates", lang),      desc: tx("settings.certificatesDesc", lang),      color: "bg-amber-50 dark:bg-amber-950/30 text-amber-600",     href: "/certificates" },
-    { icon: Bug,           label: tx("settings.reportBug", lang),         desc: tx("settings.reportBugDesc", lang),         color: "bg-orange-50 dark:bg-orange-950/30 text-orange-600",  href: "/bug-report" },
   ]
 
   return (

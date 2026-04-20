@@ -5,7 +5,6 @@
 import { useState, useMemo, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/lib/auth-context"
-import { InnovationShell } from "@/components/innovation/InnovationShell"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
@@ -103,7 +102,6 @@ export default function HealthRoadmapPage() {
   )
 
   return (
-    <InnovationShell>
     <div className="mx-auto max-w-3xl px-4 md:px-8 py-8">
       {/* Header */}
       <motion.div className="text-center mb-6" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -248,6 +246,5 @@ export default function HealthRoadmapPage() {
 
       <p className="text-center text-[10px] text-muted-foreground/40">{tx("disclaimer.tool", lang)}</p>
     </div>
-    </InnovationShell>
   )
 }

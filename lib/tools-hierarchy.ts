@@ -71,13 +71,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "polypharmacy", title: { en: "Polypharmacy Risk", tr: "Polifarmasi Riski" }, icon: "ShieldAlert", href: "/polypharmacy" },
       { id: "prospectus-reader", title: { en: "Prospectus Reader", tr: "Prospektüs Okuyucu" }, icon: "BookOpen", href: "/prospectus-reader" },
       { id: "side-effects", title: { en: "Side Effects", tr: "Yan Etkiler" }, icon: "AlertTriangle", href: "/side-effects" },
-      // ── hidden ──
-      { id: "drug-equivalent", title: { en: "Generic Finder", tr: "Muadil Bulucu" }, icon: "ArrowRightLeft", href: "/drug-equivalent", hidden: true },
-      { id: "medication-log", title: { en: "Change Log", tr: "Değişiklik Günlüğü" }, icon: "History", href: "/medication-log", hidden: true },
-      { id: "medication-buddy", title: { en: "Med Buddy", tr: "İlaç Arkadaşı" }, icon: "Users", href: "/medication-buddy", hidden: true },
-      { id: "label-reader", title: { en: "Label Reader", tr: "Etiket Okuyucu" }, icon: "ScanBarcode", href: "/label-reader", hidden: true },
-      { id: "pharmacogenetics", title: { en: "Pharmacogenetics", tr: "Farmakogenetik" }, icon: "Dna", href: "/pharmacogenetics", hidden: true },
-      { id: "pharmacy-finder", title: { en: "Pharmacy Finder", tr: "Eczane Bulucu" }, icon: "MapPin", href: "/pharmacy-finder", hidden: true },
     ],
   },
 
@@ -99,9 +92,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "anti-inflammatory", title: { en: "Anti-Inflammatory", tr: "Anti-İnflamatuar" }, icon: "Flame", href: "/anti-inflammatory" },
       { id: "cross-allergy", title: { en: "Cross Allergy", tr: "Çapraz Alerji" }, icon: "AlertCircle", href: "/cross-allergy" },
       { id: "supplement-guide", title: { en: "Supplement Guide", tr: "Takviye Rehberi" }, icon: "BookOpen", href: "/supplement-guide" },
-      // ── hidden ──
-      { id: "marketplace", title: { en: "Marketplace", tr: "Market" }, icon: "Store", href: "/supplement-marketplace", hidden: true },
-      { id: "supplement-hub", title: { en: "Healing Center", tr: "Şifa Merkezi" }, icon: "Leaf", href: "/supplement-hub", hidden: true },
     ],
   },
 
@@ -120,13 +110,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     modules: [
       { id: "mood-tracker", title: { en: "Mood Tracker", tr: "Ruh Hali Takibi" }, icon: "SmilePlus", href: "/mental-wellness" },
       { id: "clinical-tests", title: { en: "Clinical Tests", tr: "Klinik Testler" }, icon: "ClipboardList", href: "/clinical-tests" },
-      // ── hidden ──
-      { id: "anxiety-toolkit", title: { en: "Anxiety Toolkit", tr: "Anksiyete Araç Seti" }, icon: "ShieldCheck", href: "/anxiety-toolkit", hidden: true },
-      { id: "depression-screening", title: { en: "Depression Screening", tr: "Depresyon Tarama" }, icon: "HeartCrack", href: "/depression-screening", hidden: true },
-      { id: "adhd", title: { en: "ADHD Management", tr: "DEHB Yönetimi" }, icon: "Zap", href: "/adhd-management", hidden: true },
-      { id: "ptsd", title: { en: "PTSD Support", tr: "TSSB Destek" }, icon: "Shield", href: "/ptsd-support", hidden: true },
-      { id: "addiction", title: { en: "Addiction Recovery", tr: "Bağımlılık İyileşme" }, icon: "HeartHandshake", href: "/addiction-recovery", hidden: true },
-      { id: "grief", title: { en: "Grief Support", tr: "Yas Desteği" }, icon: "CloudRain", href: "/grief-support", hidden: true },
     ],
   },
 
@@ -147,10 +130,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "fasting", title: { en: "Intermittent Fasting", tr: "Aralıklı Oruç" }, icon: "Timer", href: "/intermittent-fasting" },
       { id: "hydration", title: { en: "Hydration Tracker", tr: "Su Takibi" }, icon: "Droplets", href: "/hydration" },
       { id: "calorie", title: { en: "Calorie Calculator", tr: "Kalori Hesaplama" }, icon: "Calculator", href: "/calorie" },
-      // ── hidden ──
-      { id: "recipes", title: { en: "Healthy Recipes", tr: "Sağlıklı Tarifler" }, icon: "ChefHat", href: "/healthy-recipes", hidden: true },
-      { id: "circadian-eating", title: { en: "Circadian Eating", tr: "Sirkadyen Beslenme" }, icon: "Clock", href: "/circadian-eating", hidden: true },
-      { id: "fasting-monitor", title: { en: "Fasting Monitor", tr: "Oruç Monitörü" }, icon: "Moon", href: "/fasting-monitor", hidden: true },
     ],
   },
 
@@ -169,11 +148,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     modules: [
       { id: "sleep-log", title: { en: "Sleep Log", tr: "Uyku Kaydı" }, icon: "BedDouble", href: "/sleep-analysis" },
       { id: "circadian", title: { en: "Circadian Rhythm", tr: "Sirkadyen Ritim" }, icon: "Sun", href: "/circadian-rhythm" },
-      // ── hidden ──
-      { id: "dream-diary", title: { en: "Dream Diary", tr: "Rüya Günlüğü" }, icon: "Cloud", href: "/dream-diary", hidden: true },
-      { id: "snoring-apnea", title: { en: "Snoring & Apnea", tr: "Horlama & Apne" }, icon: "Wind", href: "/snoring-apnea", hidden: true },
-      { id: "jet-lag", title: { en: "Jet Lag", tr: "Jet Lag" }, icon: "Plane", href: "/jet-lag", hidden: true },
-      { id: "shift-worker", title: { en: "Shift Work", tr: "Vardiyalı Çalışma" }, icon: "Clock4", href: "/shift-worker", hidden: true },
     ],
   },
 
@@ -192,11 +166,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     modules: [
       { id: "sports", title: { en: "Sports Performance", tr: "Spor Performansı" }, icon: "Trophy", href: "/sports-performance" },
       { id: "posture", title: { en: "Posture & Ergonomics", tr: "Duruş & Ergonomi" }, icon: "PersonStanding", href: "/posture-ergonomics" },
-      // ── hidden ──
-      { id: "stretching", title: { en: "Stretching", tr: "Esneme" }, icon: "StretchHorizontal", href: "/stretching", hidden: true },
-      { id: "walking", title: { en: "Walking Tracker", tr: "Yürüyüş Takibi" }, icon: "Footprints", href: "/walking-tracker", hidden: true },
-      { id: "yoga", title: { en: "Yoga & Meditation", tr: "Yoga & Meditasyon" }, icon: "Flower2", href: "/yoga-meditation", hidden: true },
-      { id: "breathing", title: { en: "Breathing Exercises", tr: "Nefes Egzersizleri" }, icon: "Wind", href: "/breathing-exercises", hidden: true },
     ],
   },
 
@@ -415,11 +384,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     layout: "tabs",
     modules: [
       { id: "health-roadmap", title: { en: "Health Roadmap", tr: "Sağlık Yol Haritası" }, icon: "Map", href: "/health-roadmap" },
-      // ── hidden ──
-      { id: "global-benchmark", title: { en: "Global Benchmark", tr: "Küresel Kıyaslama" }, icon: "Globe", href: "/global-benchmark", hidden: true },
-      { id: "research-hub", title: { en: "Research Hub", tr: "Araştırma Hub'ı" }, icon: "FlaskConical", href: "/research-hub", hidden: true },
-      { id: "share-data", title: { en: "Share Data (FHIR)", tr: "Veri Paylaş (FHIR)" }, icon: "Share2", href: "/share-data", hidden: true },
-      { id: "creator-studio", title: { en: "Creator Studio", tr: "İçerik Stüdyosu" }, icon: "PenTool", href: "/creator-studio", hidden: true },
     ],
   },
 
@@ -441,11 +405,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "privacy-controls", title: { en: "Privacy Controls", tr: "Gizlilik Kontrolleri" }, icon: "Lock", href: "/privacy-controls" },
       { id: "data-export", title: { en: "Export Data (KVKK)", tr: "Veri İndir (KVKK)" }, icon: "Download", href: "/data-export" },
       { id: "data-delete", title: { en: "Delete Data (KVKK)", tr: "Veri Sil (KVKK)" }, icon: "Trash2", href: "/data-delete" },
-      // ── hidden ──
-      { id: "notification-preferences", title: { en: "Notification Preferences", tr: "Bildirim Tercihleri" }, icon: "BellRing", href: "/notification-preferences", hidden: true },
-      { id: "connect-assistant", title: { en: "Daily Assistant Bot", tr: "Günlük Asistan Botu" }, icon: "MessageCircle", href: "/connect-assistant", hidden: true },
-      { id: "bug-report", title: { en: "Report Bug", tr: "Hata Bildir" }, icon: "Bug", href: "/bug-report", hidden: true },
-      { id: "certificates", title: { en: "Certificates", tr: "Sertifikalar" }, icon: "Award", href: "/certificates", hidden: true },
     ],
   },
 

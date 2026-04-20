@@ -130,14 +130,6 @@ const KNOWLEDGE_FACTS: KnowledgeFact[] = [
     type: "general",
   },
   {
-    id: "walking-10min",
-    triggers: [],
-    en: "Just 10 minutes of brisk walking after meals can lower blood sugar spikes by 22%. No gym needed.",
-    tr: "Yemeklerden sonra sadece 10 dakika tempolu yuruyus kan sekeri sivriliklerini %22 azaltabilir.",
-    link: "/walking-tracker",
-    type: "general",
-  },
-  {
     id: "gut-fiber",
     triggers: [],
     en: "Your gut microbiome needs 30+ different plant foods per week for optimal diversity. Variety matters more than quantity.",
@@ -167,14 +159,6 @@ const KNOWLEDGE_FACTS: KnowledgeFact[] = [
     en: "Caffeine has a half-life of 5-6 hours. A 3 PM coffee means half the caffeine is still active at 9 PM.",
     tr: "Kafeinin yarilama omru 5-6 saattir. 15:00'te icilen kahvenin yarisi 21:00'de hala aktiftir.",
     link: "/caffeine-tracker",
-    type: "general",
-  },
-  {
-    id: "stress-cortisol",
-    triggers: [],
-    en: "Chronic stress keeps cortisol elevated, weakening immunity and increasing belly fat. Even 5 minutes of deep breathing helps.",
-    tr: "Kronik stres kortizolu yuksek tutar, bagisikligi zayiflatir ve karin yagini artırır. 5 dakika derin nefes bile yardimci olur.",
-    link: "/breathing-exercises",
     type: "general",
   },
   {
