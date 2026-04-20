@@ -231,12 +231,18 @@ export async function POST(request: NextRequest) {
             const surgicalList = allConditions.filter(c => c.startsWith("surgery:")).map(c => c.replace("surgery:", ""));
             const familyList = allConditions.filter(c => c.startsWith("family:")).map(c => c.replace("family:", ""));
 
-            // Critical flags
-            const criticalFlags: string[] = [];
-            if (profile.is_pregnant) criticalFlags.push("PREGNANT");
-            if (profile.is_breastfeeding) criticalFlags.push("BREASTFEEDING");
-            if (profile.kidney_disease) criticalFlags.push("Kidney disease");
-            if (profile.liver_disease) criticalFlags.push("Liver disease");
+            // Critical flags — each flag is a full guidance line with emoji + bold
+            // Promoted to dedicated CRITICAL PATIENT FACTORS block at top of profile
+            // (Session 35 G2) so AI's attention lands on these first, not buried in
+            // CHRONIC CONDITIONS bullet list.
+            const criticalLines: string[] = [];
+            if (profile.is_pregnant) criticalLines.push("⚠️ **PREGNANT** — adjust all supplement/herb recommendations; avoid category D/X substances");
+            if (profile.is_breastfeeding) criticalLines.push("⚠️ **BREASTFEEDING** — screen all recommendations for excretion into breast milk");
+            if (profile.kidney_disease) criticalLines.push("⚠️ **Kidney disease** — avoid nephrotoxic botanicals (aloe, licorice, yohimbe); dose-adjust renally-cleared supplements");
+            if (profile.liver_disease) criticalLines.push("⚠️ **Liver disease** — avoid hepatotoxic botanicals (kava, comfrey, high-dose green tea extract); watch CYP450 interactions");
+            const criticalBlock = criticalLines.length > 0
+              ? criticalLines.map(l => `  - ${l}`).join("\n")
+              : `  - None`;
 
             // Build bullet lists for each section
             const bulletList = (items: string[]) => items.length > 0 ? items.map(i => `  - ${i}`).join("\n") : `  - ${none}`;
@@ -256,9 +262,9 @@ export async function POST(request: NextRequest) {
               ? allergies.map((a: { allergen: string; severity: string }) => `  - ${a.allergen} (${a.severity})`).join("\n")
               : `  - ${none}`;
 
-            // Chronic conditions (critical flags + regular)
-            const allChronic = [...criticalFlags, ...chronicList];
-            const chronicLines = bulletList(allChronic);
+            // Chronic conditions — critical flags (pregnant/breastfeeding/kidney/liver)
+            // moved to their own CRITICAL PATIENT FACTORS block above.
+            const chronicLines = bulletList(chronicList);
             const surgicalLines = bulletList(surgicalList);
             const familyLines = bulletList(familyList);
 
@@ -308,6 +314,9 @@ export async function POST(request: NextRequest) {
 
             profileContext = `
 === THIS PATIENT'S COMPLETE HEALTH PROFILE ===
+
+⚠️ CRITICAL PATIENT FACTORS:
+${criticalBlock}
 
 PATIENT DEMOGRAPHICS (anonymized per KVKK): Age range: ${ageRange}, Gender: ${gender}, Blood Type: ${bloodType}, BMI: ${bmi}
 
@@ -433,6 +442,14 @@ MANDATORY OUTPUT RULES (TCK Md.90 / 1219 s.K. compliance):
     if (profileContext) {
       systemPromptFull += `\n${profileContext}\n
 You have this patient's COMPLETE health profile above. Use it to personalize every answer — cross-reference medications, allergies, conditions, surgical history, family history, and lifestyle against every recommendation. The profile is the single source of truth; trust it. If a recommendation would conflict with any profile item (drug interaction, allergy, pregnancy, kidney/liver), flag the conflict explicitly in the first sentence.`;
+    }
+
+    // Session 35 G2: reinforce CRITICAL flags at the top of the profile.
+    // Haiku sometimes buries critical factors (pregnancy, kidney/liver disease) in the middle
+    // of a long reply; this extra directive forces acknowledgement in the opening sentence.
+    const hasCriticalFlags = !!(profile?.is_pregnant || profile?.is_breastfeeding || profile?.kidney_disease || profile?.liver_disease);
+    if (hasCriticalFlags) {
+      systemPromptFull += "\n\nCRITICAL REINFORCEMENT: Your FIRST SENTENCE must explicitly acknowledge ⚠️ CRITICAL flags when relevant (\"Since you're pregnant...\", \"Given your reduced kidney function...\"). Acknowledge naturally — do not echo the emoji/bold format from the profile block.";
     }
 
     if (profileContext && hasMedications) {
