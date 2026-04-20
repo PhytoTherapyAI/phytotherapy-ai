@@ -971,19 +971,30 @@ export default function Home() {
               open={aydinlatmaOpen}
               forceAcknowledge={needsAydinlatmaUpdate}
               onAcknowledge={async () => {
+                // Session 36 C7: Close popup first (UX — prevent "not closing" bug),
+                // then persist acknowledge to backend + refresh profile so
+                // `needsAydinlatmaUpdate` flag resolves to false on next render.
+                setAydinlatmaOpen(false);
                 try {
                   const supabase = createBrowserClient();
                   const { data: { session: s } } = await supabase.auth.getSession();
-                  if (s?.access_token) {
-                    await fetch("/api/privacy-settings", {
-                      method: "PUT",
-                      headers: { "Content-Type": "application/json", Authorization: `Bearer ${s.access_token}` },
-                      body: JSON.stringify({ action: "acknowledge_aydinlatma", version: CONSENT_VERSIONS.aydinlatma }),
-                    });
+                  if (!s?.access_token) {
+                    console.warn("[aydinlatma] no session, skip persist");
+                    return;
                   }
-                } catch { /* best effort */ }
-                setAydinlatmaOpen(false);
-                refreshProfile();
+                  const res = await fetch("/api/privacy-settings", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json", Authorization: `Bearer ${s.access_token}` },
+                    body: JSON.stringify({ action: "acknowledge_aydinlatma", version: CONSENT_VERSIONS.aydinlatma }),
+                  });
+                  if (!res.ok) {
+                    console.error("[aydinlatma] persist failed", res.status, await res.text().catch(() => ""));
+                  }
+                } catch (err) {
+                  console.error("[aydinlatma] acknowledge error", err);
+                }
+                // Await refresh so needsAydinlatmaUpdate resolves before next render
+                await refreshProfile();
               }}
               onClose={() => setAydinlatmaOpen(false)}
             />
