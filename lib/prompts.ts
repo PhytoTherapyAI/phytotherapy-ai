@@ -313,14 +313,57 @@ ROLE: Extract key information from medication packaging, leaflets, or prospectus
 ═══════════════════════════════════════════════
 INTERACTION CONTROL (CRITICAL)
 ═══════════════════════════════════════════════
-The caller provides the patient's active medications and allergies. For each scanned medication:
-- Cross-check active ingredient + brand name against every active medication for:
+The caller provides the patient's active medications, allergies, supplements, chronic conditions, and critical flags (pregnancy, breastfeeding, kidney disease, liver disease). For each scanned medication:
+
+DRUG-DRUG cross-check:
+- Active ingredient + brand name against every active medication for:
   * Pharmacokinetic interactions (CYP450 induction/inhibition, P-gp, protein binding)
-  * Pharmacodynamic interactions (additive effects — e.g. two CNS depressants, two QT-prolongers, two anticoagulants)
+  * Pharmacodynamic interactions (additive effects — two CNS depressants, two QT-prolongers, two anticoagulants)
   * Duplicate therapy (same class already taken)
-- Flag every interaction found in the "profileAlerts" array with severity tag ("safe" | "caution" | "dangerous") and specific effect.
-- Check the active ingredient list against the patient's allergy list. Any match → "profileAlerts" with severity "dangerous".
-- If the medication contains a substance the patient should avoid due to a chronic condition (e.g. NSAID + kidney disease, decongestant + hypertension), flag that too.
+
+ALLERGY cross-check:
+- Active ingredient list against the patient's allergy list. Any match → "profileAlerts" with severity "dangerous".
+
+SUPPLEMENT-DRUG cross-check (NEW):
+- USER'S SUPPLEMENTS'i scan ederek herb/supplement-drug interactions flag'le:
+  * St. John's Wort + SSRI → serotonin syndrome risk
+  * Zinc + fluoroquinolone/tetracycline → absorption inhibition
+  * Magnesium + statin → muscle pain risk artışı
+  * Curcumin (turmeric) + warfarin → INR artışı, kanama riski
+  * Ginkgo + antiplatelet/anticoagulant → kanama
+  * Grapefruit + CYP3A4 substrate → toxicity
+
+PREGNANCY category flag:
+- Hasta PREGNANT ise FDA Category D/X meds → "dangerous" severity:
+  * İsotretinoin (teratojenik), Warfarin (fetal warfarin syndrome), ACE inhibitors (2nd-3rd tri), NSAID (3rd tri — premature ductus closure), Methotrexate (teratojenik)
+- profileAlerts'ta "⚠️ Gebelik Category D/X — alternatif hekim ile değerlendirilmeli"
+
+BREASTFEEDING excretion flag:
+- Hasta BREASTFEEDING ise meme sütüne geçen meds için infant-risk level belirt:
+  * Aspirin (Reye's syndrome riski), Chloramphenicol, Lithium, Amiodarone, Methotrexate
+- profileAlerts'ta "⚠️ Emzirme — meme sütüne geçer, bebek için risk"
+
+KIDNEY disease (renally cleared) flag:
+- Hasta KIDNEY DISEASE ise böbrekten atılan meds dose-adjust uyarısı:
+  * Metformin, most ACE inhibitors, Lithium, NSAID, bazı antibiyotikler (aminoglikozit, vankomisin)
+- profileAlerts'ta "⚠️ Böbrek fonksiyonu — hekim dozu ayarlamalı (eGFR'ye göre)"
+
+LIVER disease (hepatotoxic / hepatic metabolism) flag:
+- Hasta LIVER DISEASE ise karaciğerde metabolize olan / hepatotoksik meds:
+  * Statinler, Amiodarone, Parasetamol (>2g/gün), Methotrexate, Valproat, Isoniazid
+- profileAlerts'ta "⚠️ Karaciğer fonksiyonu — hepatotoksik, hekim izlemi gerekli"
+
+CONDITION-DRUG interactions (beyond the examples above):
+- Beta-blocker + astım → bronkospazm riski ⚠️
+- Decongestant (psödoefedrin) + hipertansiyon → tansiyon yükselmesi ⚠️
+- Steroid + diyabet → glukoz takibi gerekli
+- NSAID + peptik ülser → GI kanama riski ⚠️
+- SSRI + MAO-inhibitör → serotonin syndrome 🚫
+
+GUARDRAIL:
+- SADECE klinik olarak anlamlı, kanıta dayalı etkileşimleri flag'le.
+- Hipotetik/teorik etkileşim fabricate ETME — false positive = alarm fatigue.
+- Her flag için "reason" + "severity" alanını MUTLAKA doldur.
 
 ═══════════════════════════════════════════════
 OUTPUT FORMAT — STRICT JSON ONLY
@@ -361,13 +404,22 @@ RULES
 6. Never recommend dose changes — if the leaflet dose conflicts with the patient's profile, note it in profileAlerts and route to their doctor.`;
 
 /**
- * Build the full prospectus system prompt with per-user context injected
- * ahead of the base rules. Keeps the core prompt static and testable while
- * still giving Claude the medications/allergies needed for interaction checks.
+ * Build the full medication-hub system prompt with per-user context
+ * injected ahead of the base rules. Session 37 G3: extended from 3 fields
+ * (meds/allergies/lang) to 8 fields (added supplements, chronic conditions,
+ * pregnancy/breastfeeding/kidney/liver flags) so INTERACTION CONTROL can
+ * produce supplement-drug, condition-drug, pregnancy/breastfeeding/renal/
+ * hepatic safety flags.
  */
-export function buildProspectusSystemPrompt(opts: {
+export function buildMedicationHubSystemPrompt(opts: {
   userMedications?: string[];
   userAllergies?: string[];
+  userSupplements?: string[];
+  userChronicConditions?: string[];
+  isPregnant?: boolean;
+  isBreastfeeding?: boolean;
+  kidneyDisease?: boolean;
+  liverDisease?: boolean;
   replyLanguage: string; // human-readable language name, e.g. "Turkish"
 }): string {
   const meds = opts.userMedications && opts.userMedications.length > 0
@@ -376,9 +428,31 @@ export function buildProspectusSystemPrompt(opts: {
   const allergies = opts.userAllergies && opts.userAllergies.length > 0
     ? `USER'S ALLERGIES: ${opts.userAllergies.join(", ")}`
     : "USER'S ALLERGIES: (none recorded)";
+  const supps = opts.userSupplements && opts.userSupplements.length > 0
+    ? `USER'S SUPPLEMENTS: ${opts.userSupplements.join(", ")}`
+    : "USER'S SUPPLEMENTS: (none recorded)";
+  const chronic = opts.userChronicConditions && opts.userChronicConditions.length > 0
+    ? `USER'S CHRONIC CONDITIONS: ${opts.userChronicConditions.join(", ")}`
+    : "USER'S CHRONIC CONDITIONS: (none recorded)";
+  const flagParts: string[] = [];
+  if (opts.isPregnant) flagParts.push("⚠️ PREGNANT");
+  if (opts.isBreastfeeding) flagParts.push("⚠️ BREASTFEEDING");
+  if (opts.kidneyDisease) flagParts.push("⚠️ Kidney disease");
+  if (opts.liverDisease) flagParts.push("⚠️ Liver disease");
+  const criticalFlags = flagParts.length > 0
+    ? `CRITICAL FLAGS: ${flagParts.join(", ")}`
+    : "CRITICAL FLAGS: (none)";
   const lang = `REPLY LANGUAGE: ${opts.replyLanguage}`;
-  return `${meds}\n${allergies}\n${lang}\n\n${PROSPECTUS_PROMPT}`;
+  return `${meds}\n${allergies}\n${supps}\n${chronic}\n${criticalFlags}\n${lang}\n\n${PROSPECTUS_PROMPT}`;
 }
+
+/**
+ * @deprecated Use `buildMedicationHubSystemPrompt` instead.
+ * Backwards-compat alias — Session 37 G3 rename. Call-sites should pass
+ * the richer opts (supplements, chronic conditions, critical flags) so
+ * Claude can produce the expanded interaction safety flags.
+ */
+export const buildProspectusSystemPrompt = buildMedicationHubSystemPrompt;
 
 export const RADIOLOGY_ANALYSIS_PROMPT = `You are DoctoPal's Radiology Education Assistant.
 
