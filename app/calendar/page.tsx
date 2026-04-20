@@ -521,13 +521,20 @@ export default function CalendarPage() {
   const [ritualDataLoaded, setRitualDataLoaded] = useState(false)
 
   // Load water count from Supabase on mount
-  const fetchWaterCount = useCallback(() => {
+  const fetchWaterCount = useCallback(async () => {
     if (!user?.id) return
-    fetch(`/api/daily-log?date=${todayDateStr}`)
-      .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data?.water?.glasses != null) setWaterCount(data.water.glasses) })
-      .catch(() => {})
-  }, [targetId, todayDateStr])
+    try {
+      const supabase = createBrowserClient()
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.access_token) return
+      const r = await fetch(`/api/daily-log?date=${todayDateStr}`, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      if (!r.ok) return
+      const data = await r.json()
+      if (data?.water?.glasses != null) setWaterCount(data.water.glasses)
+    } catch { /* ignore */ }
+  }, [user?.id, todayDateStr])
 
   useEffect(() => { fetchWaterCount() }, [fetchWaterCount])
 
@@ -640,13 +647,22 @@ export default function CalendarPage() {
     if (type === "water") {
       setWaterCount(prev => {
         const next = prev + 1
-        fetch("/api/daily-log", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ date: todayDateStr, glasses: next }),
-        }).then(() => {
-          window.dispatchEvent(new Event("water-intake-changed"))
-        }).catch(() => {})
+        ;(async () => {
+          try {
+            const supabase = createBrowserClient()
+            const { data: { session } } = await supabase.auth.getSession()
+            if (!session?.access_token) return
+            await fetch("/api/daily-log", {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${session.access_token}`,
+              },
+              body: JSON.stringify({ date: todayDateStr, glasses: next }),
+            })
+            window.dispatchEvent(new Event("water-intake-changed"))
+          } catch { /* ignore */ }
+        })()
         return next
       })
       setWaterToast(true)
