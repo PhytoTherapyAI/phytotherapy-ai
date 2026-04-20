@@ -110,7 +110,7 @@ const KNOWLEDGE_FACTS: KnowledgeFact[] = [
     triggers: [],
     en: "15-20 minutes of midday sun exposure can produce 10,000-20,000 IU of vitamin D. But sunscreen above SPF 15 blocks 99% of production.",
     tr: "15-20 dakika ogle gunes maruziyeti 10.000-20.000 IU D vitamini uretebilir. Ancak SPF 15 ustu gunes kremi uretimin %99'unu engeller.",
-    link: "/sun-exposure",
+    link: "/health-assistant",
     type: "general",
   },
   {

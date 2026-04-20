@@ -109,7 +109,7 @@ export function renderApprovedEmail({ recipientName, profession, lang = "en" }: 
               <!-- CTA Button -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr><td align="center">
-                  <a href="https://doctopal.com/talent-hub" target="_blank"
+                  <a href="https://doctopal.com/doctor-dashboard" target="_blank"
                     style="display:inline-block;background-color:#059669;color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:10px;letter-spacing:0.3px;">
                     ${cta} →
                   </a>

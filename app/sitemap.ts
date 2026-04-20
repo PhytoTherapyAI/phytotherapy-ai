@@ -49,12 +49,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // ── 5. Medical content pages (SEO-valuable) ──
   const medicalPages: MetadataRoute.Sitemap = [
-    "/first-aid", "/cancer-support",
-    "/autism-support",
-    "/smoking-cessation", "/alcohol-tracker",
+    "/first-aid",
     "/military-health", "/hajj-health",
     "/seasonal-food", "/detox-facts",
-    "/rare-diseases",
   ].map(path => ({
     url: `${baseUrl}${path}`,
     changeFrequency: "weekly" as const,

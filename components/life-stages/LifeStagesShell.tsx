@@ -21,13 +21,8 @@ interface TabItem {
 
 const TABS: TabItem[] = [
   { id: "chronic", href: "/chronic-care", label: "Chronic Care", labelTr: "Kronik Bakım", icon: <Activity className="h-4 w-4" />, emoji: "🩺" },
-  { id: "cancer", href: "/cancer-support", label: "Cancer Support", labelTr: "Kanser Destek", icon: <Shield className="h-4 w-4" />, emoji: "🎗️" },
-  { id: "dialysis", href: "/dialysis-tracker", label: "Dialysis", labelTr: "Diyaliz", icon: <Droplets className="h-4 w-4" />, emoji: "💧" },
-  { id: "autism", href: "/autism-support", label: "Autism", labelTr: "Otizm", icon: <Puzzle className="h-4 w-4" />, emoji: "🧩" },
-  { id: "rare", href: "/rare-diseases", label: "Rare Diseases", labelTr: "Nadir Hastalık", icon: <Dna className="h-4 w-4" />, emoji: "🧬" },
   { id: "travel", href: "/travel-health", label: "Travel", labelTr: "Seyahat", icon: <Plane className="h-4 w-4" />, emoji: "✈️" },
   { id: "seasonal", href: "/seasonal-health", label: "Seasonal", labelTr: "Mevsimsel", icon: <Sun className="h-4 w-4" />, emoji: "🌸" },
-  { id: "interests", href: "/interests", label: "Interests", labelTr: "İlgi Alanları", icon: <Sparkles className="h-4 w-4" />, emoji: "✨" },
 ]
 
 interface LifeStagesShellProps {

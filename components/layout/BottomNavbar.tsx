@@ -3,12 +3,12 @@
 
 import { usePathname, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Home, Wrench, Globe, User } from "lucide-react"
+import { Home, Wrench, Users, User } from "lucide-react"
 
 const tabs = [
   { href: "/", label: "Home", icon: Home },
   { href: "/tools", label: "Medical Tools", icon: Wrench },
-  { href: "/discover", label: "Community", icon: Globe },
+  { href: "/family", label: "Family", icon: Users },
   { href: "/profile", label: "Profile", icon: User },
 ]
 
