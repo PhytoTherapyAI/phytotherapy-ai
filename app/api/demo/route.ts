@@ -2,8 +2,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const DEMO_EMAIL = process.env.DEMO_EMAIL || "demo@doctopal.com";
-const DEMO_PASSWORD = process.env.DEMO_PASSWORD || "demo123456";
+const DEMO_EMAIL = process.env.DEMO_EMAIL;
+const DEMO_PASSWORD = process.env.DEMO_PASSWORD;
 
 function dateStr(daysAgo: number): string {
   return new Date(Date.now() - daysAgo * 86400000).toISOString().split("T")[0];
@@ -15,6 +15,15 @@ function randomInt(min: number, max: number): number {
 
 export async function POST() {
   try {
+    // Demo endpoint is disabled by default — requires DEMO_EMAIL + DEMO_PASSWORD env
+    // to be explicitly set (Session 36: demo account not active in Vercel).
+    if (!DEMO_EMAIL || !DEMO_PASSWORD) {
+      return NextResponse.json(
+        { error: "Demo endpoint not configured" },
+        { status: 503 }
+      );
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
