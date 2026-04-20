@@ -480,7 +480,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
         supabase.from("calendar_events").select("*").eq("user_id", userId).eq("event_date", today),
         // Also fetch ALL recurring supplement events (they may have been added on a different date)
         supabase.from("calendar_events").select("*").eq("user_id", userId).eq("event_type", "supplement").eq("recurrence", "daily"),
-        supabase.from("water_intake").select("glasses, target_glasses").eq("user_id", userId).eq("intake_date", today).single(),
+        supabase.from("water_intake").select("glasses, target_glasses").eq("user_id", userId).eq("intake_date", today).maybeSingle(),
       ])
       if (medsRes.data) setMedications(medsRes.data as UserMedication[])
       if (logsRes.data) setDailyLogs(logsRes.data as DailyLog[])
@@ -867,7 +867,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
     }
     try {
       const supabase = createBrowserClient()
-      const { data: existing } = await supabase.from("water_intake").select("id").eq("user_id", userId).eq("intake_date", today).single()
+      const { data: existing } = await supabase.from("water_intake").select("id").eq("user_id", userId).eq("intake_date", today).maybeSingle()
       if (existing) {
         await supabase.from("water_intake").update({ glasses: clamped }).eq("id", existing.id)
       } else {
@@ -883,7 +883,7 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
     setTargetDialogOpen(false)
     try {
       const supabase = createBrowserClient()
-      const { data: existing } = await supabase.from("water_intake").select("id").eq("user_id", userId).eq("intake_date", today).single()
+      const { data: existing } = await supabase.from("water_intake").select("id").eq("user_id", userId).eq("intake_date", today).maybeSingle()
       if (existing) {
         await supabase.from("water_intake").update({ target_glasses: newTarget }).eq("id", existing.id)
       }

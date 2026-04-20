@@ -26,7 +26,7 @@ export function WaterTracker({ userId, date, lang }: WaterTrackerProps) {
         .select("glasses")
         .eq("user_id", userId)
         .eq("intake_date", date)
-        .single()
+        .maybeSingle()
 
       if (data) {
         setGlasses(data.glasses)
@@ -56,7 +56,7 @@ export function WaterTracker({ userId, date, lang }: WaterTrackerProps) {
           .select("id")
           .eq("user_id", userId)
           .eq("intake_date", date)
-          .single()
+          .maybeSingle()
 
         if (existing) {
           await supabase

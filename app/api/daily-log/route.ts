@@ -38,7 +38,7 @@ export const GET = apiHandler(async (request, auth) => {
     .select("*")
     .eq("user_id", user.id)
     .eq("intake_date", date)
-    .single()
+    .maybeSingle()
 
   return NextResponse.json({ logs: data, water: waterData || { glasses: 0 } })
 }, { rateLimit: { max: 30, windowMs: 60_000 }, rateLimitKey: "daily-log-get" })
@@ -116,7 +116,7 @@ export const PATCH = apiHandler(async (request, auth) => {
     .select("id")
     .eq("user_id", user.id)
     .eq("intake_date", date)
-    .single()
+    .maybeSingle()
 
   if (existing) {
     const { data, error } = await supabase
