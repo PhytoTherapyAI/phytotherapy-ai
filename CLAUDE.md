@@ -593,3 +593,66 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 - Bireysel Premium backend + checkout UI (Iyzico ile birlikte)
 - Gerçek ekran görüntüleri (AboutSection team avatars + ScreenshotPlaceholder yerleri için `/team/` ve `/screenshots/` asset'leri)
 *— Commit 4 bekliyor (Session 34): Iyzico SDK + hosted checkout + subscription webhook + trial clock (trial_started_at + 7d < NOW()) + Mesafeli Satış Sözleşmesi + Aydınlatma v2.1 + Bireysel Premium satın alma UI*
+
+---
+
+### Session 35 — Tamamlandı (19 Nisan 2026) — Pushed ef5f1a0..b1eb8a2
+
+**Ana iş:** 92 hidden tool silme + AI kalite G4/G2.
+
+**5 commit:**
+- `1124f5a` chore(cleanup): A1 — 33 hidden tool silme (Medications 6 + Supplements 2 + Mental Health hidden 6 + Nutrition 3 + Sleep 4 + Fitness 4 + Settings 4 + Advanced 4)
+- `ce2d0cd` chore(cleanup): A2 — 30 hidden tool silme (Organ Health 9 + Gender Health 4 + Prevention 3 + Medical Tools 9 + Life Stages first half 5)
+- `978f138` chore(cleanup): A3 — 29 hidden tool silme + final verify (Life Stages second half 5 + Community 10 + Tracking 14)
+- `d4397d0` feat(ai-safety): B1 (G4) — yellow code keyword genişletme (sepsis + DKA + DVT + overdose + postpartum + appendicitis + UTI + pediatric febrile, ~38 keyword)
+- `b1eb8a2` feat(ai-safety): B2 (G2) — critical patient factors reorganize (criticalLines emoji+bold+guidance + "⚠️ CRITICAL PATIENT FACTORS" blok profile'ın en başında + CRITICAL REINFORCEMENT directive AI'ya ilk cümlede zikretme zorunluluğu)
+
+**Sonuç:**
+- Registry 153 → 61 tool (hidden 93 → 1, sadece `family-health-tree` Tool 3 konsolidasyonu için rezerve)
+- 92 page.tsx silindi, 21+ API route silindi, 2 hub simplified (hormonal-hub, prevention-hub), InnovationShell silindi, BottomNavbar Community → Family tab
+- Build temiz (0 error, 0 warning). 30K+ satır temizlendi.
+
+---
+
+### Session 36 — Tamamlandı (21 Nisan 2026) — Local (push bekleniyor)
+
+**Ana iş:** Vercel breach sonrası güvenlik sertleştirme + dashboard bug fix'ler + AI kalite iyileştirme (İpek test feedback'i) + Master Plan v1.2 yapı hazırlığı.
+
+**13 commit (local master, push yok — İpek sabah inceleyip push yapacak):**
+
+**Güvenlik (3 commit):**
+- `3e1d510` chore(security): C1 — `scripts/run-family-migration.js` hardcoded JWT fallback kaldırıldı (breach sonrası stale token silindi, fail-fast throw)
+- `3a0a1ec` chore(security): C2 — `app/api/demo/route.ts` DEMO_EMAIL/DEMO_PASSWORD fallback kaldırıldı, env yoksa 503 (demo hesabı aktif değil — İpek kararı)
+- `428c0ca` chore(security): C3 — `lib/secure-storage.ts` + `lib/consent-management.ts` fallback key'ler kaldırıldı (`"default-key-change-in-production!"` ve `"consent-salt"` → function-body `getKey()` pattern + fail-fast throw)
+
+**Bug fix'ler (3 commit):**
+- `d93a673` fix(dashboard): C5 — `water_intake` 406 Not Acceptable fix. `.single()` → `.maybeSingle()` 7 çağrı noktasında (API route 2 + WaterTracker 2 + TodayView 3)
+- `6d50691` fix(dashboard): C6 — `/api/daily-log` 401 Unauthorized fix. Client-side fetch'lere `Authorization: Bearer ${session.access_token}` header eklendi (app/calendar/page.tsx fetchWaterCount + handleQuickLog PATCH)
+- `a92ffa4` fix(kvkk): C7 — AydinlatmaPopup "Okudum, Kapat" kapanma bug fix. Root cause: `refreshProfile()` await'siz + API response sessizce yutuluyordu. Fix: popup önce kapat (UX) + API response.ok kontrol + error log + `await refreshProfile()`
+
+**AI Kalite (4 commit, tümü lib/prompts.ts):**
+- `547e455` feat(ai-quality): C8 — SYSTEM_PROMPT SELAMLAMA bölümü + Örnek 5 (selamlama few-shot). Kural: "iyiyim" gibi duygu atfetme yasak, kısa profesyonel karşılık + hızlı sağlık konusuna geçiş
+- `9bab233` feat(ai-quality): C9 — SYSTEM_PROMPT İLAÇ ÖNERİSİ KURALLARI (TCK 1219 sK Md.12) + Örnek 6. Jenerik + Türk marka parantezi (Parol/Minoset/Panadol, Brufen/Advil/Nurofen, Aspirin/Coraspin, Naprosyn/Apranax, Claritine/Zyrtec), spesifik dozaj YASAK, "prospektüsüne bak" yönlendirmesi
+- `c8830f7` feat(ai-quality): C10 — SYSTEM_PROMPT FORMAT bölümü zenginleştirme (emoji paleti ⚠️💊🏥✅🔴, uzun/kısa cevap kuralları, bold kritik kelimeler)
+- `1558284` feat(ai-quality): C11 — SYSTEM_PROMPT TR akıcılık rafinesi. NASIL KONUŞURSUN'a "çeviri kokan yapı yasağı" (edilgen → etken, "bulunmuştur" → "bulunuyor"). Örnek 1 ve 2 robotik ifadeler düzeltildi.
+
+**v1.2 Yapı (2 commit):**
+- `7c8f6f7` feat(family): C12 — `supabase/migrations/20260421_family_history_entries.sql` YENİ migration dosyası (repo'ya eklendi, Supabase'de çalıştırılmadı — Session 37+ UI entegrasyonu sırasında apply). Schema: user_id + person_relation + condition_name + age_at_diagnosis + age_at_death + is_deceased + notes. RLS: 4 own_* policy.
+- `2270950` feat(clinical-tests): C13 — SmartWelcome component'e "🧠 Klinik Tarama Yap (PHQ-9, GAD-7, EPDS)" chip CTA eklendi, `/clinical-tests` route'una Next.js Link ile navigate. Greeting'in hemen altında.
+
+**Atlananlar/Ertelenenler:**
+- **C4:** `session25_migration.sql` duplicate silindi ama untracked'ti — git'e iz düşmedi, commit olmadı
+- **C14:** Sentry DSN verification — kod değişikliği yok, İpek Vercel + Sentry dashboard manuel kontrol edecek
+- **Commit 3 decrypt test:** Production data'ya local'den erişim yok → test yapılamadı. Analiz: fallback kaldırma algoritmayı değiştirmiyor (hâlâ `SERVICE_ROLE_KEY.substring(0,32)`), prod'da env her zaman set → zero-impact. Eski encrypted data rotation sorunu ayrı bir konu (Session 37+ re-encrypt migration).
+
+**Detaylı SUMMARY + push öncesi checklist:** [docs/SESSION_36_SUMMARY.md](docs/SESSION_36_SUMMARY.md)
+
+**Session 37'ye devir:**
+- Commit 3 encrypted data migration (prod decrypt test + gerekirse re-encrypt script)
+- `family_history_entries` tablosu Supabase'de apply + UI entegrasyonu (Master Plan v1.2 Tool 3 Aile Sağlık Yönetimi)
+- Sentry DSN verification (İpek Vercel kontrolü)
+- AI kalite test + feedback iterasyonu
+- Master Plan v1.2 doküman güncellemesi (İpek Claude web ile)
+- Visible tool konsolidasyon başlangıcı (Master Plan Adım 3 — İlaç Merkezi + Sağlık Günlüğü + Ayarlar)
+- Chat UX rewrite (ChatGPT tarzı sidebar + threads + `chats` tablosu migration)
+- Iyzico entegrasyonu (şirket kurulumu + merchant onayı sonrası)
