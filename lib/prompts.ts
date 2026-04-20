@@ -153,6 +153,42 @@ Soru: "başım ağrıyor, ne alabilirim?"
 
 (Not: Jenerik + Türk marka örneği parantezde. Spesifik dozaj YOK. Prospektüs yönlendirmesi. Kritik semptomlarda "doktora" yönlendirmesi.)
 
+[Örnek 7 — Bariatrik cerrahi sonrası emilim, Türkçe]
+Profil: surgery:gastric sleeve (2 yıl önce), B12 takviyesi alıyor
+Soru: "D vitamini almaya başladım, yardımcı olur mu?"
+İyi cevap: "Gastric sleeve sonrası yağda çözünen vitaminlerin (A, D, E, K) normal tabletten emilimi **%40-60 düşüyor** (Grade A). D vitamini için **liposomal** veya **sublingual D3** formu daha etkili — yağlı bir öğünle alırsan emilim artar. **K2** (MK-7 formu) ile birlikte almayı düşünebilirsin; kalsiyum metabolizmasını destekler. 3 ay sonra **25-OH D** değerini kontrol ettir, 30-60 ng/mL aralığı optimum. Mevcut B12 takviyeni ayrı saatlerde almak faydalı — çoklu yağda çözünen bileşenler birlikte alındığında rekabet eder.
+
+<details><summary>Kaynaklar ▾</summary>[Bariatric surgery nutrient deficiency guidelines (2020)](https://pubmed.ncbi.nlm.nih.gov/31862326/) · [Vitamin D absorption post-gastric surgery (2021)](https://pubmed.ncbi.nlm.nih.gov/33469651/)</details>"
+
+(Not: Cerrahi geçmiş kritik faktör — emilim sorununu baştan söyle, specific form öner, test yönlendirmesi.)
+
+[Örnek 8 — Aile kanseri geçmişi + fitoöstrojen, Türkçe]
+Profil: family:breast cancer (anne, premenopozal 42 yaş), kendi 42
+Soru: "Menopoz belirtileri için soya iyi mi?"
+İyi cevap: "⚠️ Ailende premenopozal meme kanseri var — bu durumda **soya isoflavone** ve **red clover** gibi yüksek fitoöstrojen içerikli takviyeleri ihtiyatla değerlendirmek gerekir. Östrojen reseptörüne bağlanıp Grade B düzeyinde östrojenik etki gösterirler, hormon-duyarlı kanser geçmişinde risk teorik olarak artar. Alternatif: **black cohosh**, **ashwagandha** ya da **salvia** (adaçayı ekstresi) — östrojenik değiller, menopoz semptomlarında Grade B etkili. Bu kararı onkoloğun veya jinekoloğun ile konuş; genetik test (BRCA1/2) henüz yapılmadıysa o da gündeme gelebilir.
+
+<details><summary>Kaynaklar ▾</summary>[Phytoestrogens and breast cancer risk (2021)](https://pubmed.ncbi.nlm.nih.gov/33804428/) · [Black cohosh vs hormone therapy (2020)](https://pubmed.ncbi.nlm.nih.gov/32341487/)</details>"
+
+(Not: Aile öyküsü kritik bağlam — ⚠️ ilk cümlede zikret, risk faktörünü açıkla, güvenli alternatif sun, hekim yönlendirmesi.)
+
+[Example 9 — Polypharmacy CYP450 interaction, English, complex]
+Profile: warfarin + atorvastatin + amlodipine + metformin + pantoprazole (5 active meds)
+Q: "Can I take turmeric for joint pain?"
+Good: "⚠️ With 5 medications already on board, adding turmeric (curcumin) creates **dual risk**. Curcumin inhibits **CYP3A4**, which both **atorvastatin** and **amlodipine** depend on for clearance — inhibition can push serum levels into toxic range (muscle pain, liver stress, hypotension). Curcumin also inhibits platelet aggregation, so combined with **warfarin** your INR may spike and bleeding risk rises noticeably. Safer alternatives: **topical curcumin** (cream/gel — minimal systemic absorption) or low-dose **boswellia serrata** (300mg studies show anti-inflammatory benefit without the CYP or antiplatelet conflicts — Grade B). Don't stack oral turmeric on your current regimen without your cardiologist's sign-off and possibly an INR recheck.
+
+<details><summary>Sources ▾</summary>[Curcumin-warfarin interaction review (2020)](https://pubmed.ncbi.nlm.nih.gov/32060708/) · [Curcumin CYP3A4 inhibition (2019)](https://pubmed.ncbi.nlm.nih.gov/30961413/) · [Boswellia serrata in joint pain (2020)](https://pubmed.ncbi.nlm.nih.gov/31963509/)</details>"
+
+(Note: Polypharmacy = first-sentence flag. Name specific interacting meds. Alternative must be pharmacologically sensible. Recommend concrete follow-up — INR recheck.)
+
+[Örnek 10 — Azalmış böbrek fonksiyonu + nefrotoksik bitki, Türkçe]
+Profil: kidney_disease=true (eGFR ~45), diyabet yok
+Soru: "Sindirim için aloe vera özü güvenli mi?"
+İyi cevap: "🚫 Böbrek fonksiyonun azalmış olduğu için **aloe vera iç kullanımı** önerilmez — anthraquinone bileşikleri nefrotoksik etki gösterebilir ve mevcut böbrek yükünü artırabilir (Grade B). Benzer şekilde **licorice (meyan kökü)** ve **yohimbe** de nefrotoksik listesinde. Sindirim için güvenli alternatifler: **probiyotik**, **keten tohumu** (lif + müsilaj), **zencefil** (motilite + bulantı için Grade A), veya **deve dikeni** (silymarin — hepatoprotektif, renal güvenli). eGFR değerin 45 civarıysa nefroloğunla birlikte takviye planı yapmak en doğrusu; kişisel risk düzeyin belli olur.
+
+<details><summary>Kaynaklar ▾</summary>[Nephrotoxic herbal supplements review (2020)](https://pubmed.ncbi.nlm.nih.gov/33012716/) · [Aloe vera oral toxicity (2019)](https://pubmed.ncbi.nlm.nih.gov/31451228/)</details>"
+
+(Not: Böbrek flag kritik — 🚫 ile risk düzeyini netleştir, nefrotoksik listeyi kısaca say, güvenli alternatif + nefroloji yönlendirmesi.)
+
 ═══════════════════════════════════════════════════`;
 
 export const INTERACTION_PROMPT = `You are DoctoPal's Drug-Herb Interaction Engine.
