@@ -7,7 +7,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Sparkles, Moon, Dumbbell, Pill, Brain, Leaf, Lightbulb, Mic } from "lucide-react";
+import Link from "next/link";
+import { Sparkles, Moon, Dumbbell, Pill, Brain, Leaf, Lightbulb, Mic, ClipboardList, ArrowRight } from "lucide-react";
 import { tx } from "@/lib/translations";
 
 interface SmartWelcomeProps {
@@ -165,6 +166,25 @@ export function SmartWelcome({ lang, userName, onSelectPrompt, medications, slee
             <span className="line-clamp-1">{chip.text}</span>
           </button>
         ))}
+      </div>
+
+      {/* ── Clinical Tests CTA (Session 36 C13) ──
+          Chip-styled link to /clinical-tests — validated screening tools
+          (PHQ-9, GAD-7, EPDS). Separate from chat-prompt chips because
+          this navigates to a dedicated flow, not a chat question. */}
+      <div className="flex flex-wrap gap-2">
+        <Link
+          href="/clinical-tests"
+          className="group flex items-center gap-2 rounded-full border border-sage-300/40 bg-sage-50/60 px-3.5 py-2 text-xs font-medium text-sage-900 transition-all hover:border-sage-400/60 hover:bg-sage-100/60 hover:shadow-soft active:scale-95 dark:border-sage-700/40 dark:bg-sage-950/20 dark:text-sage-100"
+        >
+          <Brain className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400" />
+          <span className="line-clamp-1">
+            {lang === "tr"
+              ? "🧠 Klinik Tarama Yap (PHQ-9, GAD-7, EPDS)"
+              : "🧠 Clinical Screening (PHQ-9, GAD-7, EPDS)"}
+          </span>
+          <ArrowRight className="h-3 w-3 opacity-60 transition-transform group-hover:translate-x-0.5" />
+        </Link>
       </div>
 
       {/* ── Did You Know Card (glassmorphism) ── */}
