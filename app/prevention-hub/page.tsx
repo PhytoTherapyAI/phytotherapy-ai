@@ -7,10 +7,7 @@ import { Shield } from "lucide-react"
 
 const tools = [
   { emoji: "🩺", label: "Check-up Planner", desc: "Longevity shield & annual planning", href: "/checkup-planner", color: "from-blue-50 to-sky-50 border-blue-100" },
-  { emoji: "🔬", label: "Cancer Screening", desc: "Early detection & cell protection", href: "/cancer-screening", color: "from-teal-50 to-emerald-50 border-teal-100" },
   { emoji: "🌳", label: "Family Health Tree", desc: "Genetic constellation mapping", href: "/family-health-tree", color: "from-emerald-50 to-green-50 border-emerald-100" },
-  { emoji: "🧬", label: "Genetic Risk Profile", desc: "Epigenetic control center", href: "/genetic-risk", color: "from-slate-100 to-purple-50 border-slate-200" },
-  { emoji: "🛑", label: "Allergy & Intolerance Map", desc: "Immunological shield", href: "/allergy-map", color: "from-amber-50 to-orange-50 border-amber-100" },
   { emoji: "🛡️", label: "Vaccine Tracker", desc: "Biological armor upgrades", href: "/vaccine-tracker", color: "from-cyan-50 to-blue-50 border-cyan-100" },
 ]
 

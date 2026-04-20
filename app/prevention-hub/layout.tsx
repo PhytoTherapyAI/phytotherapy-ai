@@ -6,10 +6,7 @@ import { motion, AnimatePresence } from "framer-motion"
 
 const tabs = [
   { emoji: "🩺", label: "Check-up", href: "/checkup-planner" },
-  { emoji: "🔬", label: "Cancer Screening", href: "/cancer-screening" },
   { emoji: "🌳", label: "Family Tree", href: "/family-health-tree" },
-  { emoji: "🧬", label: "Genetic Risk", href: "/genetic-risk" },
-  { emoji: "🛑", label: "Allergy Map", href: "/allergy-map" },
   { emoji: "🛡️", label: "Vaccines", href: "/vaccine-tracker" },
 ]
 

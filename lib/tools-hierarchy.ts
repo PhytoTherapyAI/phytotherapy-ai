@@ -186,16 +186,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "kidney", title: { en: "Kidney", tr: "Böbrek" }, icon: "Droplets", href: "/kidney-dashboard" },
       { id: "liver", title: { en: "Liver", tr: "Karaciğer" }, icon: "Activity", href: "/liver-monitor" },
       { id: "thyroid", title: { en: "Thyroid", tr: "Tiroid" }, icon: "Gauge", href: "/thyroid-dashboard" },
-      // ── hidden ──
-      { id: "lungs", title: { en: "Lungs", tr: "Akciğer" }, icon: "Wind", href: "/lung-monitor", hidden: true },
-      { id: "gut", title: { en: "Gut Health", tr: "Bağırsak Sağlığı" }, icon: "Apple", href: "/gut-health", hidden: true },
-      { id: "eyes", title: { en: "Eye Health", tr: "Göz Sağlığı" }, icon: "Eye", href: "/eye-health", hidden: true },
-      { id: "ears", title: { en: "Ear & Hearing", tr: "Kulak & İşitme" }, icon: "Ear", href: "/ear-health", hidden: true },
-      { id: "dental", title: { en: "Dental Health", tr: "Diş Sağlığı" }, icon: "Smile", href: "/dental-health", hidden: true },
-      { id: "skin", title: { en: "Skin Health", tr: "Cilt Sağlığı" }, icon: "Sparkles", href: "/skin-health", hidden: true },
-      { id: "hair-nail", title: { en: "Hair & Nails", tr: "Saç & Tırnak" }, icon: "Scissors", href: "/hair-nail-health", hidden: true },
-      { id: "migraine", title: { en: "Migraine", tr: "Migren" }, icon: "Zap", href: "/migraine-dashboard", hidden: true },
-      { id: "diabetic-foot", title: { en: "Diabetic Foot", tr: "Diyabetik Ayak" }, icon: "Footprints", href: "/diabetic-foot", hidden: true },
     ],
   },
 
@@ -214,11 +204,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     modules: [
       { id: "womens-health", title: { en: "Women's Health", tr: "Kadın Sağlığı" }, icon: "Heart", href: "/womens-health" },
       { id: "pregnancy", title: { en: "Pregnancy Tracker", tr: "Gebelik Takibi" }, icon: "Baby", href: "/pregnancy-tracker" },
-      // ── hidden ──
-      { id: "postpartum", title: { en: "Postpartum", tr: "Doğum Sonrası" }, icon: "HeartHandshake", href: "/postpartum-support", hidden: true },
-      { id: "menopause", title: { en: "Menopause", tr: "Menopoz" }, icon: "Thermometer", href: "/menopause-panel", hidden: true },
-      { id: "mens-health", title: { en: "Men's Health", tr: "Erkek Sağlığı" }, icon: "Shield", href: "/mens-health", hidden: true },
-      { id: "sexual-health", title: { en: "Sexual Health", tr: "Cinsel Sağlık" }, icon: "Heart", href: "/sexual-health", hidden: true },
     ],
   },
 
@@ -272,11 +257,8 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
     modules: [
       { id: "checkup-planner", title: { en: "Check-up Planner", tr: "Check-up Planlayıcı" }, icon: "CalendarCheck", href: "/checkup-planner" },
       { id: "vaccination", title: { en: "Vaccinations", tr: "Aşılar" }, icon: "Syringe", href: "/vaccine-tracker" },
-      // ── hidden ──
-      { id: "cancer-screening", title: { en: "Cancer Screening", tr: "Kanser Taraması" }, icon: "Search", href: "/cancer-screening", hidden: true },
+      // ── hidden (kept: Aile Sağlık Yönetimi consolidation pending) ──
       { id: "family-tree", title: { en: "Family Health Tree", tr: "Aile Sağlık Ağacı" }, icon: "GitBranch", href: "/family-health-tree", hidden: true },
-      { id: "genetic-risk", title: { en: "Genetic Risk", tr: "Genetik Risk" }, icon: "Dna", href: "/genetic-risk", hidden: true },
-      { id: "allergy-map", title: { en: "Allergy Map", tr: "Alerji Haritası" }, icon: "MapPin", href: "/allergy-map", hidden: true },
     ],
   },
 
@@ -297,16 +279,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "qr-profile", title: { en: "QR Health Card", tr: "QR Sağlık Kartı" }, icon: "QrCode", href: "/qr-profile" },
       { id: "health-guides", title: { en: "Health Guides", tr: "Sağlık Rehberleri" }, icon: "BookOpen", href: "/health-guides" },
       { id: "doctor-comm", title: { en: "Doctor Communication", tr: "Doktor İletişimi" }, icon: "MessageSquare", href: "/doctor-communication" },
-      // ── hidden ──
-      { id: "appointment-prep", title: { en: "Appointment Prep", tr: "Randevu Hazırlık" }, icon: "ClipboardList", href: "/appointment-prep", hidden: true },
-      { id: "medical-records", title: { en: "Medical Records", tr: "Tıbbi Kayıtlar" }, icon: "FolderOpen", href: "/medical-records", hidden: true },
-      { id: "emergency-mode", title: { en: "Emergency Mode", tr: "Acil Durum Modu" }, icon: "Siren", href: "/emergency-mode", hidden: true },
-      { id: "disaster-mode", title: { en: "Disaster Mode", tr: "Afet Modu" }, icon: "AlertOctagon", href: "/disaster-mode", hidden: true },
-      { id: "second-opinion", title: { en: "Second Opinion", tr: "İkinci Görüş" }, icon: "Users", href: "/second-opinion", hidden: true },
-      { id: "clinical-trials", title: { en: "Clinical Trials", tr: "Klinik Araştırmalar" }, icon: "FlaskConical", href: "/clinical-trials", hidden: true },
-      { id: "rehabilitation", title: { en: "Rehabilitation", tr: "Rehabilitasyon" }, icon: "HeartHandshake", href: "/rehabilitation", hidden: true },
-      { id: "enabiz", title: { en: "e-Nabız", tr: "e-Nabız" }, icon: "Link", href: "/enabiz", hidden: true },
-      { id: "drug-recall", title: { en: "Drug Recalls", tr: "İlaç Geri Çağırma" }, icon: "AlertOctagon", href: "/drug-recall", hidden: true },
     ],
   },
 
@@ -327,11 +299,6 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "travel", title: { en: "Travel Health", tr: "Seyahat Sağlığı" }, icon: "Plane", href: "/travel-health" },
       { id: "seasonal", title: { en: "Seasonal Health", tr: "Mevsimsel Sağlık" }, icon: "Snowflake", href: "/seasonal-health" },
       // ── hidden ──
-      { id: "child-health", title: { en: "Child Health", tr: "Çocuk Sağlığı" }, icon: "Baby", href: "/child-health", hidden: true },
-      { id: "student", title: { en: "Student Health", tr: "Öğrenci Sağlığı" }, icon: "GraduationCap", href: "/student-health", hidden: true },
-      { id: "new-parent", title: { en: "New Parent", tr: "Yeni Ebeveyn" }, icon: "Baby", href: "/new-parent-health", hidden: true },
-      { id: "elder-care", title: { en: "Elder Care", tr: "Yaşlı Bakımı" }, icon: "Heart", href: "/elder-care", hidden: true },
-      { id: "retirement", title: { en: "Retirement", tr: "Emeklilik" }, icon: "Sunset", href: "/retirement-health", hidden: true },
       { id: "cancer-support", title: { en: "Cancer Support", tr: "Kanser Destek" }, icon: "Ribbon", href: "/cancer-support", hidden: true },
       { id: "dialysis", title: { en: "Dialysis", tr: "Diyaliz" }, icon: "Droplets", href: "/dialysis-tracker", hidden: true },
       { id: "autism", title: { en: "Autism Support", tr: "Otizm Desteği" }, icon: "Puzzle", href: "/autism-support", hidden: true },

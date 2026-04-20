@@ -7,10 +7,6 @@ import { motion, AnimatePresence } from "framer-motion"
 const tabs = [
   { emoji: "🌸", label: "Women's Health", href: "/womens-health" },
   { emoji: "🤰", label: "Pregnancy", href: "/pregnancy-tracker" },
-  { emoji: "👶", label: "Postpartum", href: "/postpartum-support" },
-  { emoji: "🍂", label: "Menopause", href: "/menopause-panel" },
-  { emoji: "⚡", label: "Men's Health", href: "/mens-health" },
-  { emoji: "🔒", label: "Sexual Health", href: "/sexual-health" },
 ]
 
 export default function HormonalHealthHubLayout({ children }: { children: React.ReactNode }) {

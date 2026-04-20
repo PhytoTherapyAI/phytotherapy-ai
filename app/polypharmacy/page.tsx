@@ -225,7 +225,7 @@ export default function PolypharmacyPage() {
               </div>
             </Card>
 
-            <Button className="w-full mt-4" onClick={() => window.location.href = "/appointment-prep"}>
+            <Button className="w-full mt-4" onClick={() => window.location.href = "/health-assistant"}>
               <TrendingUp className="w-4 h-4 mr-2" />{tx("polypharmacy.shareDoctor", lang)}
             </Button>
           </>

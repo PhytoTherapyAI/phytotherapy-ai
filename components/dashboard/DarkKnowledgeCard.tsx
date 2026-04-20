@@ -93,7 +93,7 @@ const KNOWLEDGE_FACTS: KnowledgeFact[] = [
     triggers: ["metformin", "insulin", "glipizide", "gliclazide"],
     en: "If you take diabetes medication, check your feet daily for cuts or sores. Early detection prevents complications.",
     tr: "Diyabet ilaci kullaniyorsanız ayaklarinizi gunluk kesik veya yara için kontrol edin.",
-    link: "/diabetic-foot",
+    link: "/health-assistant",
     type: "medication",
   },
   {
@@ -134,7 +134,7 @@ const KNOWLEDGE_FACTS: KnowledgeFact[] = [
     triggers: [],
     en: "Your gut microbiome needs 30+ different plant foods per week for optimal diversity. Variety matters more than quantity.",
     tr: "Bagirsak mikrobiyomunuz için haftada 30+ farkli bitkisel gida tuketin. Cesitlilik miktardan onemlidir.",
-    link: "/gut-health",
+    link: "/health-assistant",
     type: "general",
   },
   {

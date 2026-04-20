@@ -7,10 +7,6 @@ import { motion } from "framer-motion"
 const tools = [
   { emoji: "🌸", label: "Women's Health", desc: "Cycle tracking & hormonal compass", href: "/womens-health", color: "from-rose-50 to-pink-50 border-rose-100" },
   { emoji: "🤰", label: "Pregnancy Tracker", desc: "Week-by-week bloom dashboard", href: "/pregnancy-tracker", color: "from-orange-50 to-amber-50 border-orange-100" },
-  { emoji: "👶", label: "Postpartum Support", desc: "Your safe harbor sanctuary", href: "/postpartum-support", color: "from-rose-50 to-orange-50 border-rose-100" },
-  { emoji: "🍂", label: "Menopause Panel", desc: "Biological balance center", href: "/menopause-panel", color: "from-purple-50 to-indigo-50 border-purple-100" },
-  { emoji: "⚡", label: "Men's Health", desc: "Performance HQ & biohacking", href: "/mens-health", color: "from-slate-100 to-cyan-50 border-slate-200" },
-  { emoji: "🔒", label: "Sexual Health", desc: "Intimacy & vitality room", href: "/sexual-health", color: "from-indigo-50 to-slate-100 border-indigo-100" },
 ]
 
 export default function HormonalHubPage() {
