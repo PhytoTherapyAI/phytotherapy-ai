@@ -88,22 +88,32 @@ export function generateSecurePath(userId: string, fileName: string): string {
 // ── Encrypt Reference for Database Storage ──
 // We don't store raw storage paths in the DB
 // Instead, we store an encrypted version that only the server can decrypt
-const ENCRYPTION_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY?.substring(0, 32) || "default-key-change-in-production!"
+// Session 36: fallback key kaldırıldı — env yoksa fail-fast (güvenlik sertleştirme)
 const ENCRYPTION_IV_LENGTH = 16
 
+function getEncryptionKey(): Buffer {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!key) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY required for secure-storage encryption")
+  }
+  return Buffer.from(key.substring(0, 32), "utf-8")
+}
+
 export function encryptReference(plainText: string): string {
+  const key = getEncryptionKey()
   const iv = crypto.randomBytes(ENCRYPTION_IV_LENGTH)
-  const cipher = crypto.createCipheriv("aes-256-cbc", Buffer.from(ENCRYPTION_KEY, "utf-8"), iv)
+  const cipher = crypto.createCipheriv("aes-256-cbc", key, iv)
   let encrypted = cipher.update(plainText, "utf-8", "hex")
   encrypted += cipher.final("hex")
   return iv.toString("hex") + ":" + encrypted
 }
 
 export function decryptReference(encryptedText: string): string {
+  const key = getEncryptionKey()
   const [ivHex, encrypted] = encryptedText.split(":")
   if (!ivHex || !encrypted) throw new Error("Invalid encrypted reference")
   const iv = Buffer.from(ivHex, "hex")
-  const decipher = crypto.createDecipheriv("aes-256-cbc", Buffer.from(ENCRYPTION_KEY, "utf-8"), iv)
+  const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv)
   let decrypted = decipher.update(encrypted, "hex", "utf-8")
   decrypted += decipher.final("utf-8")
   return decrypted

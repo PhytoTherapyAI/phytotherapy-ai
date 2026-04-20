@@ -174,6 +174,14 @@ export const CONSENT_DISCLOSURES: Record<ConsentPurpose, {
  * Generate a digital signature for consent record
  * SHA-256 hash of all consent details — tamper-evident
  */
+function getConsentSalt(): string {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!key) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY required for consent signature salt")
+  }
+  return key.substring(0, 16)
+}
+
 export function generateConsentSignature(params: {
   userId: string
   purpose: ConsentPurpose
@@ -189,7 +197,7 @@ export function generateConsentSignature(params: {
     recipientId: params.recipientId,
     retentionPeriod: params.retentionPeriod,
     grantedAt: params.grantedAt,
-    salt: process.env.SUPABASE_SERVICE_ROLE_KEY?.substring(0, 16) || "consent-salt",
+    salt: getConsentSalt(),
   })
   return crypto.createHash("sha256").update(payload).digest("hex")
 }
