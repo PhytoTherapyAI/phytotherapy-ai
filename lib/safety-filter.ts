@@ -145,6 +145,30 @@ const YELLOW_CODE_EN = [
   "severe dehydration", "persistent vomiting",
   "sudden swelling",
   "fainting", "feeling faint", "almost passed out",
+  // ── Sepsis early signs (FAZ 3.6 — Session 35 G4) ──
+  "fever confusion together", "fever shivering cold",
+  "fever and chills severe", "lethargic with fever",
+  // ── DKA / hyperosmolar ──
+  "fruity breath diabetic", "excessive urination thirst",
+  "diabetic vomiting", "diabetic breath smells",
+  // ── DVT ──
+  "one leg swelling warm", "calf pain one side",
+  "leg swelling warm red",
+  // ── Accidental overdose ──
+  "took double dose by mistake", "accidentally took extra",
+  "double dose medication", "took two doses by accident",
+  // ── Postpartum hemorrhage ──
+  "heavy bleeding after birth", "bleeding after delivery heavy",
+  "postpartum bleeding severe",
+  // ── Appendicitis ──
+  "right lower abdomen pain", "right lower belly pain severe",
+  "pain moving to right side belly",
+  // ── Kidney stone / severe UTI ──
+  "flank pain severe", "kidney pain severe",
+  "burning urination severe", "painful urination blood",
+  // ── Pediatric febrile (borderline yellow) ──
+  "baby fever 38", "child fever 3 days",
+  "toddler high fever", "child fever not breaking",
 ];
 
 const YELLOW_CODE_TR = [
@@ -176,6 +200,30 @@ const YELLOW_CODE_TR = [
   "şiddetli susuzluk", "sürekli kusma",
   "ani şişlik",
   "bayılma hissi", "bayılacak gibi", "gözüm kararıyor",
+  // ── Sepsis erken belirtileri (FAZ 3.6 — Session 35 G4) ──
+  "ateş karışıklık", "ateş titreme üşüme",
+  "ateşli bilinç bulanık", "yüksek ateş üşüme",
+  // ── DKA / hiperosmolar ──
+  "meyvemsi nefes", "aşırı susama sık idrar",
+  "diyabetik kusma", "asetonlu nefes",
+  // ── DVT (derin ven trombozu) ──
+  "tek bacak şişme", "tek tarafta baldır ağrısı",
+  "bir bacak sıcak kızarık", "bacağım şişti tek taraf",
+  // ── Kazara fazla doz ──
+  "yanlışlıkla fazla aldım", "iki kez aldım ilacı",
+  "yanlışlıkla çift doz", "yanlış dozda ilaç aldım",
+  // ── Postpartum kanama ──
+  "doğum sonrası fazla kanama", "doğumdan sonra kanama",
+  "loğusa kanaması şiddetli",
+  // ── Apandisit ──
+  "sağ alt karın ağrısı", "sağ alt karın şiddetli",
+  "karnımın sağ altı ağrıyor", "sağ alt karnım acıyor",
+  // ── Böbrek taşı / şiddetli İYE ──
+  "böbrek ağrısı şiddetli", "idrar yaparken şiddetli ağrı",
+  "yan ağrısı böbrek", "idrar yanma şiddetli",
+  // ── Pediatrik ateş (sınırda sarı) ──
+  "bebek ateşi 38", "çocuk 3 gündür ateş",
+  "çocukta yüksek ateş", "çocuğumun ateşi düşmüyor",
 ];
 
 // ═══════════════════════════════════════════════
