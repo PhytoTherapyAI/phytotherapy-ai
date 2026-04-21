@@ -1,6 +1,23 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 22 Nisan 2026 (Session 40 — Dashboard audit + fix başlangıcı)
+> Son güncelleme: 22 Nisan 2026 (Session 41 — Interaction Audit Faz 1 tamamlandı; Faz 2 İpek scope onayı bekliyor)
+
+---
+
+### Session 41 — Interaction Audit Faz 1 (22 Nisan 2026) — Faz 1 TAMAMLANDI
+**Başlangıç commit:** `01af2d1` (Session 40 sonu)
+
+- [x] Dashboard kapsamındaki daily + secondary flow'larda interaction/friction audit (kod yazılmadan, statik + UX judgment)
+- [x] 2 paralel Explore agent ile finding derleme + manuel sentez (Session 40 false positive dersi uygulandı)
+- [x] Önceliklendirme matrisi (P0 broken/dead > P1 friction > P2 kozmetik) + kullanım sıklığı + mobile ekseni
+- [x] Faz 2 scope önerisi (İpek review için 3 varyant: küçük/orta/geniş)
+- [x] Tek commit: `docs(session-41): interaction audit phase 1` + push
+
+**Detay:** [docs/sessions/SESSION_41_INTERACTION_AUDIT.md](docs/sessions/SESSION_41_INTERACTION_AUDIT.md)
+
+- [ ] **Faz 2** (ayrı prompt gelecek): İpek scope onaylar → fix commit'leri
+
+**YAPMA'lar (İpek talimatı):** kod değişikliği yok, yeni feature önerme yok, refactor yok, Session 40 scope'a (runtime bug) girme yok.
 
 ---
 
