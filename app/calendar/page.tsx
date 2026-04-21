@@ -280,7 +280,13 @@ function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, onRemoveTask, 
 
       <div className="space-y-1.5">
         {tasks.length === 0 && !editMode ? (
-          <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }} onClick={onAdd}
+          // Session 41 F-D-005: empty-state CTA previously bound to `onAdd`,
+          // which every call-site passes as `() => {}` — the button looked
+          // interactive but did nothing. It now opens edit mode so the
+          // existing custom-task form (emoji picker + label input, line 332)
+          // is what the user lands on.
+          <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
+            onClick={() => { setEditMode(true); onAdd?.() }}
             className="w-full flex items-center gap-2 py-3 px-3 rounded-xl border border-dashed border-primary/20 text-xs text-muted-foreground/60 hover:border-primary/40 hover:text-muted-foreground transition-colors">
             <Plus className="h-3 w-3" />
             {lang === "tr" ? `${title.split(" ")[0]} görevi ekle` : `Add to ${title.split(" ")[0]}`}
