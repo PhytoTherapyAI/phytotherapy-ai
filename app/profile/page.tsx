@@ -269,6 +269,9 @@ export default function ProfilePage() {
   };
 
   const [saveSuccess, setSaveSuccess] = useState(false);
+  // Session 43 F-OB-006: post-save "next action" prompt shown only after
+  // the user's FIRST medication is saved. Auto-hide after 12s or click.
+  const [firstMedPrompt, setFirstMedPrompt] = useState(false);
   const [sbarLoading, setSbarLoading] = useState<"pdf" | "email" | null>(null);
   const [sbarEmailOpen, setSbarEmailOpen] = useState(false);
   const [sbarEmail, setSbarEmail] = useState("");
@@ -556,6 +559,10 @@ export default function ProfilePage() {
 
   const addMedication = async () => {
     if (!newBrandName.trim() || !user || !canEdit) return;
+    // Session 43 F-OB-006: first-med flag captured BEFORE we push the new
+    // row into state — this is what decides whether to show the post-save
+    // "next action" prompt (interaction check + add another).
+    const wasFirstMed = medications.length === 0;
     setSavingMed(true);
     try {
       const supabase = createBrowserClient();
@@ -576,6 +583,10 @@ export default function ProfilePage() {
       clearDraft(DRAFT_KEYS.profileMedicationAdd); // Session 42 F-D-006
       setIsAddingMed(false);
       showSaveToast();
+      if (wasFirstMed) {
+        setFirstMedPrompt(true);
+        setTimeout(() => setFirstMedPrompt(false), 12_000);
+      }
       // Session 43 F-OB-007: notification permission prompt was firing the
       // moment the user's first medication was saved, which is the wrong
       // context — they haven't asked for a reminder yet and are mid-aha-
@@ -759,6 +770,44 @@ export default function ProfilePage() {
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-green-500 text-white px-5 py-2.5 rounded-xl shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
           <CheckCircle2 className="h-4 w-4" />
           <span className="text-sm font-medium">{tx("common.saved", lang)}</span>
+        </div>
+      )}
+      {/* Session 43 F-OB-006: first-medication next-action prompt. Appears
+          after the user's first med is saved, stays for 12s or until
+          either CTA is clicked. Only surfaces once per session (gated on
+          medications.length === 0 at save time — see addMedication). */}
+      {firstMedPrompt && (
+        <div className="fixed top-32 left-1/2 -translate-x-1/2 z-50 max-w-md w-[calc(100%-2rem)] bg-card border border-emerald-200 dark:border-emerald-800 shadow-lg rounded-xl p-4 animate-in fade-in slide-in-from-top-2">
+          <p className="text-sm font-medium mb-2">
+            {tr ? "İlk ilacın kaydedildi 🎉" : "First medication saved 🎉"}
+          </p>
+          <p className="text-xs text-muted-foreground mb-3">
+            {tr ? "Şimdi ne yapmak istersin?" : "What next?"}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/interaction-checker"
+              onClick={() => setFirstMedPrompt(false)}
+              className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 text-xs font-medium transition-colors"
+            >
+              {tr ? "Etkileşim kontrolü yap" : "Check interactions"}
+            </Link>
+            <button
+              type="button"
+              onClick={() => { setFirstMedPrompt(false); setIsAddingMed(true); }}
+              className="inline-flex items-center gap-1 rounded-lg border border-border bg-background hover:bg-muted px-3 py-1.5 text-xs font-medium transition-colors"
+            >
+              {tr ? "Başka ilaç ekle" : "Add another"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setFirstMedPrompt(false)}
+              className="ml-auto text-xs text-muted-foreground hover:text-foreground"
+              aria-label={tr ? "Kapat" : "Dismiss"}
+            >
+              ✕
+            </button>
+          </div>
         </div>
       )}
 
