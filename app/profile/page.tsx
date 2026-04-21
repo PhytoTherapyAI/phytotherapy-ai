@@ -576,10 +576,15 @@ export default function ProfilePage() {
       clearDraft(DRAFT_KEYS.profileMedicationAdd); // Session 42 F-D-006
       setIsAddingMed(false);
       showSaveToast();
-      // Ask for notification permission on first med save
-      if (shouldAskPermission("notification")) {
-        setTimeout(() => setShowNotifPermission(true), 500);
-      }
+      // Session 43 F-OB-007: notification permission prompt was firing the
+      // moment the user's first medication was saved, which is the wrong
+      // context — they haven't asked for a reminder yet and are mid-aha-
+      // moment flow. Modal interruption right after the first save
+      // frequently produced a "Decline" that permanently locks reminders
+      // later. Permission is now requested just-in-time by the first
+      // reminder/calendar-task create flow instead; the
+      // PermissionBottomSheet is kept mounted below so whichever flow
+      // needs it can surface it.
     } catch (err) {
       console.error("Failed to add medication:", err);
     } finally {

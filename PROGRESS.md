@@ -4,18 +4,29 @@
 
 ---
 
-### Session 43 — Onboarding Flow Audit Faz 1 (22 Nisan 2026) — DEVAM EDİYOR
-**Başlangıç commit:** `823feae` (Session 42 sonu)
+### Session 43 — Onboarding Flow Audit (22 Nisan 2026)
+**Faz 1 commit:** `d3a7e9f` — audit + 16 finding + 3 variant öneri
+**Faz 2 başlangıç:** M variant onaylandı — 10 fix (P0 + 7 P1 + 2 P2), ~8-10h
 
-Yeni kullanıcı funnel'i: landing → signup → email confirmation → first-login → first-value time. Sadece audit, kod yok. 2 paralel Explore agent + manuel verify.
+**Faz 1 TAMAMLANDI:** funnel haritası + findings + önceliklendirme matrisi + scope variant'ları SESSION_43_ONBOARDING_AUDIT.md'de.
 
-- [ ] Funnel haritası (her aşama dosya+satır)
-- [ ] Findings (abandonment risk + friction + broken states + aha moment analizi)
-- [ ] Önceliklendirme matrisi (P0 broken/abandonment > P1 friction > P2 kozmetik)
-- [ ] Faz 2 scope önerisi (S/M/L variant)
-- [ ] TEK commit: `docs(session-43): onboarding audit phase 1` + push
+**Faz 2 — DEVAM EDİYOR:** M variant (10 fix). Canonical ID'ler F-OB-001 (P0 finale CTA) + F-OB-002..008 (7 P1) + F-OB-010 + F-OB-016 (2 P2).
 
-**Kapsam dışı:** ESLint 127 library error (Session 44+ ayrı sprint), drug-pair expansion (interaction engine refactor), landing redesign (marketing iş).
+- [ ] F-OB-001 Finale conditional next-step CTA (aha moment path'in baş kapısı)
+- [ ] F-OB-002 Signup password strength meter
+- [ ] F-OB-003 Onboarding draft atomicity (`lib/ui/draft-persist.ts` Session 42 F-D-006 reuse)
+- [ ] F-OB-004 Email confirmation expired-link CTA
+- [ ] F-OB-005 Empty dashboard med-CTA banner
+- [ ] F-OB-006 Med save inline next-action chips
+- [ ] F-OB-007 Notif permission timing move (just-in-time pattern)
+- [ ] F-OB-008 18+ age gate inline note
+- [ ] F-OB-010 Google auto-fill "Google'dan" chip (P2)
+- [ ] F-OB-016 Landing hero subtitle (P2)
+
+**Aha moment pre-fix tahmini:** ~25-35 dk (audit'te hesaplandı — signup + 11-step wizard + finale + manuel med add + manuel interaction-checker nav).
+**Aha moment post-fix projected:** ~18-25 dk (F-OB-001+005+006 zinciri 6-8 tık tasarrufu). **10 dk hedefine ulaşılmıyor** — wizard 11-step yapısal, 5-step refactor Session 44+ strategic decision.
+
+**Kapsam dışı:** ESLint 127 library error (Session 44+ sprint), wizard 5-step refactor (architectural, post-launch), landing redesign (marketing paralel), parental consent (hukuki), OAuth extended pull, bulk med import, mid-onboarding aha feature, kalan 6 P2 + 4 a11y/mobile (Session 45 polish).
 
 ---
 
