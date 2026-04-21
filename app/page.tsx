@@ -822,14 +822,19 @@ export default function Home() {
                       <Send className="h-3.5 w-3.5 text-white" />
                     </button>
                   </div>
-                  <div className="flex flex-wrap gap-1.5 mt-3">
+                  {/* Session 42 F-D-010: 2-column grid on mobile so chip
+                      text never overflows its parent and both chips stay
+                      tappable side-by-side. sm: restores flex-wrap for
+                      future chip expansion (3+ chips layout naturally). */}
+                  <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-1.5 mt-3">
                     {[
                       { emoji: "💊", text: tx("dashboard.chipDrugInteraction", lang), query: tx("dashboard.chipDrugInteractionQuery", lang) },
                       { emoji: "🩸", text: tx("dashboard.chipAnalyzeBlood", lang), query: tx("dashboard.chipAnalyzeBloodQuery", lang) },
                     ].map((chip, i) => (
                       <button key={i} onClick={() => router.push(`/health-assistant?q=${encodeURIComponent(chip.query)}`)}
-                        className="flex items-center gap-1 rounded-lg bg-white/5 border border-white/10 px-2.5 py-1.5 text-[10px] text-stone-400 hover:bg-white/10 hover:text-white transition-colors">
-                        <span>{chip.emoji}</span> {chip.text}
+                        className="flex items-center gap-1 rounded-lg bg-white/5 border border-white/10 px-2.5 py-1.5 text-[10px] text-stone-400 hover:bg-white/10 hover:text-white transition-colors min-w-0">
+                        <span className="shrink-0">{chip.emoji}</span>
+                        <span className="truncate">{chip.text}</span>
                       </button>
                     ))}
                   </div>
