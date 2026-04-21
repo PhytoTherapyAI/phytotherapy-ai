@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
+import { useActiveProfile } from "@/lib/use-active-profile"
 import { useLang } from "@/components/layout/language-toggle"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
@@ -26,6 +27,7 @@ const personalityOptions = [
 export default function SettingsPage() {
   const router = useRouter()
   const { user, profile, isAuthenticated, isLoading } = useAuth()
+  const { isOwnProfile } = useActiveProfile()
   const { lang, setLang } = useLang()
   const isTr = lang === "tr"
 
@@ -191,67 +193,88 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* ── Security: Password Change ── */}
-          <div className="rounded-2xl border bg-card p-5 shadow-sm">
-            <h3 className="text-sm font-semibold flex items-center gap-2 mb-4">
-              <KeyRound className="h-4 w-4 text-emerald-600" />
-              🔐 {tx("settings.securityChangePw", lang)}
-            </h3>
-            <div className="space-y-3">
-              <div className="relative">
+          {/* ── Security: Password Change ──
+              Session 42 FP-D: when the user is viewing another family
+              member's profile (isOwnProfile === false), the Supabase
+              updateUser call would still change the CALLER'S password,
+              not the viewed member's — causing confusing UX and potential
+              self-lockout if the caregiver thought they were resetting
+              the family member. In that context we render an info card
+              explaining the boundary instead of the form. */}
+          {isOwnProfile ? (
+            <div className="rounded-2xl border bg-card p-5 shadow-sm">
+              <h3 className="text-sm font-semibold flex items-center gap-2 mb-4">
+                <KeyRound className="h-4 w-4 text-emerald-600" />
+                🔐 {tx("settings.securityChangePw", lang)}
+              </h3>
+              <div className="space-y-3">
+                <div className="relative">
+                  <input
+                    type={showPw ? "text" : "password"}
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    placeholder={tx("settings.newPwPlaceholder", lang)}
+                    className="w-full rounded-xl border bg-muted/40 px-4 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                  />
+                  <button type="button" onClick={() => setShowPw(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 <input
-                  type={showPw ? "text" : "password"}
-                  value={newPassword}
-                  onChange={e => setNewPassword(e.target.value)}
-                  placeholder={tx("settings.newPwPlaceholder", lang)}
-                  className="w-full rounded-xl border bg-muted/40 px-4 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  placeholder={tx("settings.confirmPwPlaceholder", lang)}
+                  className="w-full rounded-xl border bg-muted/40 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                 />
-                <button type="button" onClick={() => setShowPw(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                  {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
+                <AnimatePresence>
+                  {pwError && (
+                    <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                      className="text-xs text-red-500 flex items-center gap-1">
+                      <AlertTriangle className="h-3 w-3" /> {pwError}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handlePasswordChange}
+                  disabled={pwState === "loading" || !newPassword || !confirmPassword}
+                  className={`w-full rounded-xl py-2.5 text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
+                    pwState === "success"
+                      ? "bg-emerald-500 text-white"
+                      : "bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
+                  }`}
+                >
+                  {pwState === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {pwState === "success" && <Check className="h-4 w-4" />}
+                  {pwState === "success"
+                    ? tx("settings.pwEmailSent", lang)
+                    : tx("settings.updatePw", lang)}
+                </motion.button>
+                <AnimatePresence>
+                  {pwState === "success" && (
+                    <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                      className="text-xs text-emerald-600 text-center">
+                      {tx("settings.pwEmailNotice", lang)}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                placeholder={tx("settings.confirmPwPlaceholder", lang)}
-                className="w-full rounded-xl border bg-muted/40 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
-              />
-              <AnimatePresence>
-                {pwError && (
-                  <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                    className="text-xs text-red-500 flex items-center gap-1">
-                    <AlertTriangle className="h-3 w-3" /> {pwError}
-                  </motion.p>
-                )}
-              </AnimatePresence>
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                onClick={handlePasswordChange}
-                disabled={pwState === "loading" || !newPassword || !confirmPassword}
-                className={`w-full rounded-xl py-2.5 text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
-                  pwState === "success"
-                    ? "bg-emerald-500 text-white"
-                    : "bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40"
-                }`}
-              >
-                {pwState === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
-                {pwState === "success" && <Check className="h-4 w-4" />}
-                {pwState === "success"
-                  ? tx("settings.pwEmailSent", lang)
-                  : tx("settings.updatePw", lang)}
-              </motion.button>
-              <AnimatePresence>
-                {pwState === "success" && (
-                  <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                    className="text-xs text-emerald-600 text-center">
-                    {tx("settings.pwEmailNotice", lang)}
-                  </motion.p>
-                )}
-              </AnimatePresence>
             </div>
-          </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed bg-muted/20 p-5">
+              <h3 className="text-sm font-semibold flex items-center gap-2 mb-2">
+                <KeyRound className="h-4 w-4 text-muted-foreground" />
+                🔐 {tx("settings.securityChangePw", lang)}
+              </h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {isTr
+                  ? "Aile üyesinin parolasını buradan değiştiremezsin. Her kullanıcı kendi parolasını kendi hesabında yönetir. Kendi parolanı değiştirmek için kendi profiline dön."
+                  : "You can't change a family member's password from here. Each user manages their own password in their own account. Switch back to your own profile to change your password."}
+              </p>
+            </div>
+          )}
 
           {/* ── System Tools ── */}
           <div className="rounded-2xl border bg-card overflow-hidden shadow-sm divide-y divide-border">
