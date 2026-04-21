@@ -80,7 +80,17 @@ export default function AuthCallbackPage() {
       <div className="flex min-h-[calc(100vh-12rem)] flex-col items-center justify-center gap-4 px-4">
         <AlertCircle className="h-12 w-12 text-red-500" />
         <h2 className="text-lg font-semibold">{tx("auth.callbackFailed", lang)}</h2>
-        <p className="text-sm text-muted-foreground">{tx("auth.callbackError", lang)}</p>
+        <p className="text-sm text-muted-foreground max-w-sm text-center">{tx("auth.callbackError", lang)}</p>
+        {/* Session 43 F-OB-004: expired-link recovery path. Supabase
+            confirmation links have a TTL (default 24h) and users who click
+            them after that just see the generic error above. Spell out the
+            likely cause and point at the one action that recovers: go to
+            signup, enter the email again, get a fresh email. */}
+        <p className="text-xs text-muted-foreground/80 max-w-sm text-center">
+          {lang === "tr"
+            ? "Bağlantının süresi dolmuş ya da daha önce kullanılmış olabilir. Aşağıdan giriş sayfasına dönüp aynı e-posta ile tekrar kaydolmayı denersen sana yeni bir doğrulama e-postası gönderilir."
+            : "The link may have expired or already been used. Go back to sign-in below and try signing up with the same email — a fresh verification email will be sent."}
+        </p>
         <button
           onClick={() => router.push("/auth/login")}
           className="mt-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90"
