@@ -1,8 +1,30 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 21 Nisan 2026 gece (Session 38 — AI Kalite rafine + canlı test feedback iterasyonu)
+> Son güncelleme: 21 Nisan 2026 gece (Session 39 — Safety fix + family_history full stack + KVKK v2.2 + Iyzico plan)
 
 ---
+
+### Session 39 — Safety + Family History + KVKK v2.2 + Iyzico Plan (21 Nisan 2026 gece)
+**Push:** bekleniyor — 5 commit local master'da, İpek manuel 2 adım (migration + env key) + canlı test sonrası push
+
+Session 38 canlı test 5/7 başarılı, 2 bulgu + DB finalize + legal hazırlık:
+
+- [x] **C1 (`0e491c7`) S39-H1:** Safety template — `getEmergencyMessage` TR+EN 3 aksiyon (otur/uzan, yalnız kalma, ilaç alma) + kapanış; `getYellowWarning` 3 madde kısa paket; `YellowCodeCard` 3 chip (Armchair/Users/Pill)
+- [x] **C2 (`b8ee8b9`) S39-C2:** family_history_entries full stack — YENİ API route (CRUD + apiHandler + RLS + rate limit), YENİ Section component (liste + modal + delete confirm + 14 yakınlık dropdown TR/EN), family-health-tree mount, chat route 5. fetch + FAMILY HEALTH HISTORY block coexist (legacy `family:` prefix + yeni tablo)
+- [x] **C3 (`c2c2c17`) S39-C4:** KVKK Aydınlatma v2.1→v2.2 — consent-versions bump, §2-b iki alt-kategoriye (b1 kendi, b2 aile öyküsü explicit v2.2 kategori + metadata saklama + KVKK Md.6 dayanağı), §11 v2.2 entry, header/footer version, popup mirror
+- [x] **C4 (`9db93f7`) S39-C5:** Iyzico plan dokümanı v1.0 — 12 bölüm (ön koşul, merchant başvuru, sandbox, tarifeler, lifecycle, checkout UI, API endpoint, DB şema, KVKK uyum, fatura, go-live check-list, risk/rollback) — tescil sonrası avukat review ile v1.1
+- [x] **Docs:** SESSION_39_SUMMARY.md + CLAUDE.md + PROGRESS.md
+
+**Manuel adımlar (İpek):**
+- S39-C1: Supabase SQL Editor → `20260421_family_history_entries.sql` apply + RLS doğrulama
+- S39-C3: `.env.local` `SUPABASE_SERVICE_ROLE_KEY` legacy JWT → `sb_secret_*` (Supabase Dashboard → API)
+
+**Sonuç:**
+- Test 38.7 bulgu kapandı (safety kart + template concrete actions)
+- Aile öyküsü artık full stack canlı: UI → API → Chat AI profil bloğu
+- KVKK v2.2 aktif — aile öyküsü explicit kategori
+- Iyzico tescil sonrası implementation rehberi hazır
+- Build: 240 → 241 sayfa, 0 error, 0 warning
 
 ### Session 38 — AI Kalite Rafine (C1-C7, 21 Nisan 2026 gece)
 **Push:** 7 feature + 1 docs commit (push edildi — detaylar terminal log)

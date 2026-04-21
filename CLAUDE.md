@@ -707,3 +707,32 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 **Detaylı SUMMARY + İpek test matrisi (7 commit için):** [docs/SESSION_38_SUMMARY.md](docs/SESSION_38_SUMMARY.md)
 
 **Session 39'a devir:** Database finalize + Legal hazırlık (KVKK v2.2, Iyzico entegrasyon planı). Session 40 beta lansman hazırlık. Session 41+ Mobile React Native mimari kurulumu. Web'de ertelenenler (Hub konsolidasyon + Chat UX rewrite) mobile'da yeniden yapılacak.
+
+---
+
+### Session 39 — Tamamlandı (21 Nisan 2026, gece devam) — Push bekleniyor
+
+**Ana iş:** Session 38 canlı test feedback hotfix + family_history_entries full stack + KVKK v2.2 + Iyzico plan dokümanı. Push YOK — İpek manuel 2 adım (migration apply + env key update) + canlı test matrisi sonrası kendi push edecek.
+
+**4 feature commit + 1 docs commit (local master'da):**
+
+- `0e491c7` **C1 (S39-H1) Safety template** — Session 38 Test 38.7 "göğüs ağrım var nefes alamıyorum" tetiklediğinde RED CODE template çok kısaydı. `lib/safety-filter.ts getEmergencyMessage()` TR+EN: ⚡ "Şimdi yapman gerekenler" bloğu + 3 numaralı aksiyon (otur/uzan, yalnız kalma, ilaç alma) + "Güvende olduğunda detay sorabilirsin" kapanış. `getYellowWarning()` one-liner → 3 madde kısa paket. `components/ai/YellowCodeCard.tsx` 3 aksiyon chip (Armchair/Users/Pill icon). Session 38 C7 (SYSTEM_PROMPT ACİL DURUM YANIT FORMATI) + Session 39 C1 (triyaj kart + warning) birbirini tamamlar.
+- `b8ee8b9` **C2 (S39-C2) family_history_entries full stack** — Session 36 C12'de migration yazılmıştı ama apply yok. Bu commit UI+API+chat entegrasyonunu getirdi. YENİ `app/api/family-history/route.ts` (GET/POST/PATCH/DELETE, apiHandler + RLS + rate limit). YENİ `components/family/FamilyHistorySection.tsx` (liste + modal form + delete confirm + 14 yakınlık dropdown TR+EN + migration-öncesi graceful degrade). `app/family-health-tree/page.tsx` mount. `app/api/chat/route.ts` 5. Promise.all fetch + `familyHistoryFormatted` (zengin satır) + **coexist** (legacy `family:` prefix chronic_conditions + yeni tablo, backward compat). Migration apply İpek manuel.
+- `c2c2c17` **C3 (S39-C4) KVKK Aydınlatma v2.1 → v2.2** — C2 ile family_history_entries ayrı sağlık verisi tablosu oldu; KVKK Md.10 gereği aydınlatma metninde explicit kategori. `lib/consent-versions.ts` v2.1→v2.2. `app/aydinlatma/page.tsx` §2-b iki alt-kategori (b1 kendi veri, **b2 Aile Sağlık Öyküsü** explicit + metadata seviyesi saklama + KVKK Md.6 açık rıza dayanağı) + §11 v2.2 entry + header/footer version. `components/legal/AydinlatmaPopup.tsx` §2 + §11 mirror. Schema migration YOK (`aydinlatma_version` TEXT kolonu mevcut). Mevcut kullanıcılar dashboard amber banner → popup → onay akışıyla v2.2 kabul eder.
+- `9db93f7` **C4 (S39-C5) Iyzico plan dokümanı** — `docs/IYZICO_INTEGRATION_PLAN.md` v1.0 taslak, 12 bölüm: ön koşullar (tescil, banka, VERBİS), merchant başvurusu, sandbox entegrasyon + test kartları, Premium tarifeleri (Bireysel ₺149/₺1490 + Aile ₺349/₺3490), abonelik lifecycle (trial→active→cancel state machine), checkout UI, API endpoint tasarımı (create/webhook/cancel/status), DB şema taslakları (`subscriptions`, `transactions`, `invoices`), KVKK uyumlu ödeme, fatura otomasyonu (MVP PDF+mail, sonra GİB e-fatura), go-live 3 hafta check-list, risk/rollback. Tescil sonrası avukat/muhasebeci review ile v1.1'e bump.
+- Docs commit — SESSION_39_SUMMARY.md + CLAUDE.md + PROGRESS.md
+
+**Manuel adımlar (İpek kod değil):**
+- **S39-C1:** Supabase SQL Editor → `supabase/migrations/20260421_family_history_entries.sql` apply + RLS doğrulama
+- **S39-C3:** `.env.local` `SUPABASE_SERVICE_ROLE_KEY` legacy JWT → yeni `sb_secret_*` format (Supabase Dashboard → Settings → API → service_role secret)
+
+**Sonuç:**
+- Session 38 Test 38.7 bulgu kapandı (RED + YELLOW + Card).
+- family_history_entries artık canlı: UI'dan ekleme/düzenleme/silme → AI chat profil bloğunda kullanılır (kalıtsal risk değerlendirmesi için).
+- KVKK Aydınlatma v2.2 — aile öyküsü explicit kategori; mevcut kullanıcılar banner → popup akışıyla onaylar.
+- Iyzico tescil sonrası implementation için tam rehber hazır.
+- Build: 240 → 241 sayfa (yeni `/api/family-history`), 0 error, 0 warning.
+
+**Detaylı SUMMARY + İpek test matrisi + manuel adım instruction:** [docs/SESSION_39_SUMMARY.md](docs/SESSION_39_SUMMARY.md)
+
+**Session 40'a devir:** Beta lansman hazırlık (landing revizyonu, onboarding smoke test, Session 39 test bulgu fix'leri, Sentry monitoring). Tescil olursa Iyzico v1.1 + Mesafeli Satış aktivasyonu. Session 41+ Mobile React Native mimari başlangıç.
