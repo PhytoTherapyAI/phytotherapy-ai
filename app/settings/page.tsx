@@ -49,6 +49,21 @@ export default function SettingsPage() {
     if (saved) setPersonality(saved)
   }, [])
 
+  // Session 42 F-S-005: auto-reset the password success banner after 5s
+  // via an effect with cleanup. Before, handlePasswordChange fired a bare
+  // setTimeout that kept running if the user navigated away — leaking
+  // timers and leaving pwError hanging if another interaction flipped
+  // state in the meantime. Effect restarts on every pwState transition,
+  // and cleanup runs on unmount so no setState-after-unmount warnings.
+  useEffect(() => {
+    if (pwState !== "success") return
+    const t = setTimeout(() => {
+      setPwState("idle")
+      setPwError("")
+    }, 5000)
+    return () => clearTimeout(t)
+  }, [pwState])
+
   if (isLoading) return <PageSkeleton />
 
   const displayName = profile?.full_name || user?.email?.split("@")[0] || "User"
@@ -72,7 +87,7 @@ export default function SettingsPage() {
       if (error) { setPwState("error"); setPwError(error.message); return }
       setPwState("success")
       setNewPassword(""); setConfirmPassword("")
-      setTimeout(() => setPwState("idle"), 5000)
+      // Auto-reset to "idle" is handled by the effect above (F-S-005).
     } catch {
       setPwState("error")
       setPwError(tx("settings.pwUnexpected", lang))
