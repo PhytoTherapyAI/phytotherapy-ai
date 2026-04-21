@@ -659,7 +659,7 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 
 ---
 
-### Session 37 — Tamamlandı (21 Nisan 2026, gece devam) — Local (push İpek Session 36 testi sonrası)
+### Session 37 — Tamamlandı (21 Nisan 2026, gece devam) — Pushed aafc81e..2b34b78
 
 **Ana iş:** AI Kalite G3 + G1 (Master Plan v1.1 Bölüm 10). Session 35 (G4 + G2) ve Session 36 (C8-C11 SELAMLAMA + MEDICATION RULES + FORMAT + TR akıcılık) devamı. AI kalite iyileştirme dizisinin kapanışı.
 
@@ -676,9 +676,6 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 
 **Detaylı SUMMARY + İpek test matrisi:** [docs/SESSION_37_SUMMARY.md](docs/SESSION_37_SUMMARY.md)
 
-**Push Sırası:**
-1. İpek sabah Session 36 testi yapar (canlıda, `aafc81e`)
-2. OK → Session 37 push (3 commit) → Vercel auto-deploy
-3. Session 37 testleri canlıda (S37-G3-* + S37-G1-*)
+**Push yapıldı** (`aafc81e..2b34b78`). Session 36 + 37 testleri yarın sabah toplu yapılacak. Test matrisleri [docs/SESSION_36_SUMMARY.md](docs/SESSION_36_SUMMARY.md) ve [docs/SESSION_37_SUMMARY.md](docs/SESSION_37_SUMMARY.md)'de.
 
 **Session 38'e devir:** Hub konsolidasyonu (A), Chat UX rewrite (B), Premium gate matrisi, Wow özellikler, Iyzico, family_history_entries UI.

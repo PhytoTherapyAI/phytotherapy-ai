@@ -1,6 +1,62 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 19 Nisan 2026 (v52.4 — Session 33: Premium Altyapı + Aile UX Fix Tamamlandı)
+> Son güncelleme: 21 Nisan 2026 (Session 37 — AI Kalite dizisi tamamlandı)
+
+---
+
+### Session 37 — AI Kalite G3 + G1 (21 Nisan 2026, gece)
+**Push:** `aafc81e..2b34b78` (4 commit)
+
+- [x] **G3 (C1):** `buildProspectusSystemPrompt` → `buildMedicationHubSystemPrompt` rename
+- [x] **G3 (C1):** Signature 3→8 field (userSupplements, userChronicConditions, isPregnant, isBreastfeeding, kidneyDisease, liverDisease eklendi)
+- [x] **G3 (C1):** PROSPECTUS_PROMPT INTERACTION CONTROL — 6 yeni kural grubu:
+  - Supplement-drug cross-check (St. John's Wort + SSRI, curcumin + warfarin, vb.)
+  - Pregnancy Category D/X flag
+  - Breastfeeding excretion flag (LactMed-style)
+  - Renally-cleared dose adjustment (kidney disease)
+  - Hepatotoxic flag (liver disease)
+  - Condition-drug (beta-blocker + astım, NSAID + ülser, SSRI + MAOi, vb.)
+- [x] **G3 (C2):** `app/api/prospectus-reader/route.ts` 3 Promise.all fetch + 8 field enjekte
+- [x] **G1 (C3):** SYSTEM_PROMPT 4 yeni few-shot (Örnek 7-10):
+  - Bariatrik cerrahi + D vit emilim (TR)
+  - Aile meme kanseri + fitoöstrojen (TR)
+  - Polypharmacy + CYP450 (EN)
+  - Azalmış eGFR + nefrotoksik bitki (TR)
+- [x] **C4:** docs/SESSION_37_SUMMARY.md + CLAUDE.md
+
+**Sonuç:** AI Kalite dizisi tamamen bitti (G1+G2+G3+G4 + C8-C11). Prospektüs tarayıcı + chat asistanı profil-aware (cerrahi/aile/polypharmacy/böbrek/KC) yanıtlar üretebiliyor.
+
+### Session 36 — Güvenlik + Bug Fix + AI Kalite (21 Nisan 2026)
+**Push:** `b1eb8a2..8b0f254` (13 commit) + SUMMARY update `aafc81e`
+
+- [x] **Güvenlik (3):** C1 migration script JWT fallback kaldırıldı / C2 demo endpoint fallback → 503 / C3 encryption + consent fallback key'ler kaldırıldı
+- [x] **Bug fix (3):** C5 water_intake 406 (.maybeSingle() 7 nokta) / C6 /api/daily-log 401 (Authorization header) / C7 AydinlatmaPopup "Okudum, Kapat" kapanma
+- [x] **AI Kalite (4):** C8 GREETING HANDLER + Örnek 5 / C9 MEDICATION RULES (TCK 1219) + Örnek 6 / C10 FORMAT enrich (emoji/başlık/bold) / C11 TR akıcılık
+- [x] **v1.2 Yapı (2):** C12 family_history_entries migration dosyası (repo'ya, Supabase apply yok) / C13 Klinik Tarama chip CTA SmartWelcome'a
+- [x] **Docs (1):** C15 SUMMARY + CLAUDE.md
+
+**Atlananlar:** C4 (session25_migration.sql untracked silme — git-invisible) / C14 (Sentry DSN verification — İpek Vercel manuel)
+
+### Session 35 — 92 Hidden Tool Silme + AI Safety (19 Nisan 2026)
+**Push:** `ef5f1a0..b1eb8a2` (5 commit)
+
+- [x] **Temizlik (3):** A1 33 hidden / A2 30 hidden / A3 29 hidden → toplam 92 tool silindi
+- [x] Registry 153 → 61 tool, BottomNavbar Community → Family tab, InnovationShell silindi, hormonal-hub + prevention-hub sadeleştirildi
+- [x] 30K+ satır temizlendi, build 0 error/0 warning
+- [x] **AI Safety (2):** B1 (G4) yellow code keyword genişletme (sepsis, DKA, DVT, overdose, postpartum, appendicitis, UTI, pediatric febrile, ~38 keyword) / B2 (G2) critical patient factors reorganize (⚠️ CRITICAL PATIENT FACTORS blok profile'ın başında + CRITICAL REINFORCEMENT directive)
+
+### Session 34 — Premium Gate + Marketing Landing + Legal (20 Nisan 2026)
+**Push:** 14 commit
+
+- [x] SBAR / Prospectus / FamilyHealthTree premium gate'leri (PremiumLockedCard + 402 API response)
+- [x] Marketing-ready landing page (Ayşe persona, decoy pricing, interaction checker mockup)
+- [x] Hakkımızda sayfası (kurucu minimal/global)
+- [x] KVKK Aydınlatma v2.0 → v2.1 (Iyzico aktarıcı + Finansal Veri + VUK Md.253 10-yıl + §11 Değişiklik Tarihçesi)
+- [x] AydinlatmaPopup versiyon dinamik bind + §11 eklendi
+- [x] Mesafeli Satış + Abonelik Sözleşmesi taslakları (şirket tescil öncesi draft, 4 AI+sağlık güvenlik zırhı)
+- [x] /privacy silindi + 301 redirect → /aydinlatma
+- [x] Brand minimization (Harvard HSIL kaldırıldı, IGNITE'26 tek referans)
+- [x] Dashboard footer Premium aboneleri için tam donatıldı
 
 ---
 
