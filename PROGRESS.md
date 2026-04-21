@@ -1,6 +1,21 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 22 Nisan 2026 (Session 42 — P2 kozmetik sprint + FP-D başlangıcı; ESLint Session 43'e ayrıldı)
+> Son güncelleme: 22 Nisan 2026 (Session 43 — Onboarding audit Faz 1 başladı; ESLint + Onboarding paralel iki ayrı faz)
+
+---
+
+### Session 43 — Onboarding Flow Audit Faz 1 (22 Nisan 2026) — DEVAM EDİYOR
+**Başlangıç commit:** `823feae` (Session 42 sonu)
+
+Yeni kullanıcı funnel'i: landing → signup → email confirmation → first-login → first-value time. Sadece audit, kod yok. 2 paralel Explore agent + manuel verify.
+
+- [ ] Funnel haritası (her aşama dosya+satır)
+- [ ] Findings (abandonment risk + friction + broken states + aha moment analizi)
+- [ ] Önceliklendirme matrisi (P0 broken/abandonment > P1 friction > P2 kozmetik)
+- [ ] Faz 2 scope önerisi (S/M/L variant)
+- [ ] TEK commit: `docs(session-43): onboarding audit phase 1` + push
+
+**Kapsam dışı:** ESLint 127 library error (Session 44+ ayrı sprint), drug-pair expansion (interaction engine refactor), landing redesign (marketing iş).
 
 ---
 
