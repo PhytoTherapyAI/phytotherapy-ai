@@ -4,27 +4,40 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { useLang } from "@/components/layout/language-toggle"
+import { useAuth } from "@/lib/auth-context"
+import { useTheme } from "@/components/layout/theme-provider"
+import { useEffectivePremium } from "@/lib/use-effective-premium"
 import { TOOL_CATEGORIES, searchModules } from "@/lib/tools-hierarchy"
+import {
+  PALETTE_REGISTRY,
+  PALETTE_CATEGORY_LABELS,
+  visibleEntries,
+  matchPaletteEntry,
+  type PaletteEntry,
+  type PaletteCategory,
+} from "@/lib/command-palette-registry"
 import { Badge } from "@/components/ui/badge"
 import {
   Search, X, ArrowRight, Stethoscope, FileText, Leaf, Clock,
   User, Pill, Brain, Sparkles, Star, Hash, CornerDownLeft,
-  Command,
+  Command, LayoutDashboard, Shield, Zap, Settings as SettingsIcon,
   type LucideIcon,
 } from "lucide-react"
 import { tx } from "@/lib/translations"
 
-// ── Search Data (mock content + supplements + doctors) ──
+// ── Search Data (mock content + supplements + doctors + palette registry) ──
 
 interface SearchItem {
   id: string
-  type: "doctor" | "article" | "supplement" | "tool" | "page"
+  type: "doctor" | "article" | "supplement" | "tool" | "page" | "legal" | "action" | "setting"
   title: string
   subtitle?: string
   href: string
   icon?: string
   image?: string
   meta?: string
+  /** For registry entries with action dispatch instead of navigation */
+  action?: "signout" | "toggle-language" | "toggle-theme"
 }
 
 // Doctor search is placeholder — will be populated from Supabase in production
@@ -78,9 +91,15 @@ interface SearchResult {
   isAiMatch?: boolean
 }
 
-function performSearch(query: string, lang: string): SearchResult[] {
+interface PaletteFilterContext {
+  isAuthenticated: boolean
+  isPremium: boolean
+}
+
+function performSearch(query: string, lang: string, ctx: PaletteFilterContext): SearchResult[] {
   if (!query || query.length < 2) return []
   const q = query.toLowerCase()
+  const langKey = (lang === "tr" ? "tr" : "en") as "tr" | "en"
 
   const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
   const highlight = (text: string): string => {
@@ -98,6 +117,61 @@ function performSearch(query: string, lang: string): SearchResult[] {
   }
 
   const results: SearchResult[] = []
+
+  // ── Session 39/40: PAGES / LEGAL / ACTIONS / SETTINGS (registry-backed) ──
+  const registryCtx = { lang: langKey, isAuthenticated: ctx.isAuthenticated, isPremium: ctx.isPremium }
+  const visible = visibleEntries(registryCtx)
+  const registryMatch = visible.filter((e) => matchPaletteEntry(e, query, langKey))
+
+  const toSearchItem = (entry: PaletteEntry): SearchItem => {
+    const typeMap: Record<PaletteCategory, SearchItem["type"]> = {
+      pages: "page",
+      legal: "legal",
+      actions: "action",
+      settings: "setting",
+    }
+    return {
+      id: entry.id,
+      type: typeMap[entry.category],
+      title: entry.title[langKey],
+      subtitle: entry.description?.[langKey],
+      href: entry.href ?? "",
+      action: entry.action,
+    }
+  }
+
+  const buildRegistryGroup = (
+    category: PaletteCategory,
+    icon: LucideIcon,
+    limit: number,
+  ): SearchResult | null => {
+    const subset = registryMatch.filter((e) => e.category === category)
+    if (subset.length === 0) return null
+    return {
+      category,
+      categoryLabel: PALETTE_CATEGORY_LABELS[category],
+      icon,
+      items: subset.slice(0, limit).map((e) => {
+        const item = toSearchItem(e)
+        return { ...item, highlightedTitle: highlight(item.title) }
+      }),
+    }
+  }
+
+  // Order matters — Pages first (most common), then Legal, Actions, Settings
+  const pagesGroup = buildRegistryGroup("pages", LayoutDashboard, 5)
+  if (pagesGroup) results.push(pagesGroup)
+
+  const legalGroup = buildRegistryGroup("legal", Shield, 5)
+  if (legalGroup) results.push(legalGroup)
+
+  const actionsGroup = buildRegistryGroup("actions", Zap, 5)
+  if (actionsGroup) results.push(actionsGroup)
+
+  const settingsGroup = buildRegistryGroup("settings", SettingsIcon, 5)
+  if (settingsGroup) results.push(settingsGroup)
+
+  // ── Existing categories (unchanged) ──
 
   // Doctors
   const doctors = DOCTORS_DB.filter(matchItem)
@@ -149,8 +223,11 @@ function performSearch(query: string, lang: string): SearchResult[] {
 // ── Component ──
 
 export function CommandPalette() {
-  const { lang } = useLang()
+  const { lang, setLang } = useLang()
   const router = useRouter()
+  const { isAuthenticated, signOut } = useAuth()
+  const { toggleTheme } = useTheme()
+  const effectivePremium = useEffectivePremium()
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState("")
   const [selectedIndex, setSelectedIndex] = useState(0)
@@ -168,8 +245,15 @@ export function CommandPalette() {
     return () => clearTimeout(timer)
   }, [query])
 
-  // Local search (instant)
-  const localResults = useMemo(() => performSearch(debouncedQuery, lang), [debouncedQuery, lang])
+  // Local search (instant) — registry visibility (auth/premium) filtered in
+  const paletteCtx = useMemo(
+    () => ({ isAuthenticated, isPremium: effectivePremium.isPremium }),
+    [isAuthenticated, effectivePremium.isPremium],
+  )
+  const localResults = useMemo(
+    () => performSearch(debouncedQuery, lang, paletteCtx),
+    [debouncedQuery, lang, paletteCtx],
+  )
 
   // Semantic search (API, debounced)
   useEffect(() => {
@@ -284,14 +368,33 @@ export function CommandPalette() {
       setSelectedIndex(i => Math.max(i - 1, 0))
     } else if (e.key === "Enter" && flatItems[selectedIndex]) {
       e.preventDefault()
-      navigate(flatItems[selectedIndex].href)
+      selectItem(flatItems[selectedIndex])
     }
   }, [flatItems, selectedIndex])
 
-  const navigate = (href: string) => {
+  // Session 39/40: dispatch either action OR navigation based on entry shape.
+  const selectItem = useCallback((item: SearchItem) => {
+    setOpen(false)
+    if (item.action === "signout") {
+      void signOut()
+      return
+    }
+    if (item.action === "toggle-language") {
+      setLang(lang === "tr" ? "en" : "tr")
+      return
+    }
+    if (item.action === "toggle-theme") {
+      toggleTheme()
+      return
+    }
+    if (item.href) router.push(item.href)
+  }, [router, signOut, setLang, lang, toggleTheme])
+
+  // Backward-compat: legacy quick-access buttons still call navigate(href).
+  const navigate = useCallback((href: string) => {
     setOpen(false)
     router.push(href)
-  }
+  }, [router])
 
   // Reset selection when results change
   useEffect(() => { setSelectedIndex(0) }, [results])
@@ -373,7 +476,7 @@ export function CommandPalette() {
                           const globalIdx = flatItems.indexOf(item)
                           const isSelected = globalIdx === selectedIndex
                           return (
-                            <button key={item.id} onClick={() => navigate(item.href)}
+                            <button key={item.id} onClick={() => selectItem(item)}
                               onMouseEnter={() => setSelectedIndex(globalIdx)}
                               className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${isSelected ? "bg-primary/5" : "hover:bg-muted/50"}`}>
 
@@ -389,6 +492,22 @@ export function CommandPalette() {
                               ) : item.type === "article" ? (
                                 <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center shrink-0">
                                   <FileText className="w-4 h-4 text-blue-600" />
+                                </div>
+                              ) : item.type === "page" ? (
+                                <div className="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center shrink-0">
+                                  <LayoutDashboard className="w-4 h-4 text-indigo-600" />
+                                </div>
+                              ) : item.type === "legal" ? (
+                                <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
+                                  <Shield className="w-4 h-4 text-amber-600" />
+                                </div>
+                              ) : item.type === "action" ? (
+                                <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
+                                  <Zap className="w-4 h-4 text-emerald-600" />
+                                </div>
+                              ) : item.type === "setting" ? (
+                                <div className="w-9 h-9 rounded-lg bg-slate-500/10 flex items-center justify-center shrink-0">
+                                  <SettingsIcon className="w-4 h-4 text-slate-600" />
                                 </div>
                               ) : (
                                 <div className="w-9 h-9 rounded-lg bg-violet-500/10 flex items-center justify-center shrink-0">
