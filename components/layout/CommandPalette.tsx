@@ -499,7 +499,11 @@ export function CommandPalette() {
 
                               {/* Avatar/Icon */}
                               {item.type === "doctor" ? (
-                                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                                // Session 42 F-S-009: 9×9 avatar with text-xs
+                                // clipped 2-letter initials on small screens.
+                                // Drop one step (text-[10px]) on mobile so the
+                                // initials fit; sm: returns to text-xs.
+                                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-[10px] sm:text-xs font-bold text-primary shrink-0 tracking-tight">
                                   {item.image}
                                 </div>
                               ) : item.type === "supplement" ? (
