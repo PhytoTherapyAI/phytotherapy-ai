@@ -475,7 +475,16 @@ export default function CalendarPage() {
   // All calendar queries pivot on active profile — falls back to auth user.
   const targetId = activeUserId || user?.id || ""
   const { lang } = useLang()
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  // Session 40 BUG-001: lazy-init to a stable UTC midnight so SSR and the
+  // first client render match; real "now" hydrates in the effect below.
+  const [selectedDate, setSelectedDate] = useState<Date>(() => {
+    const d = new Date()
+    d.setHours(0, 0, 0, 0)
+    return d
+  })
+  useEffect(() => {
+    setSelectedDate(new Date())
+  }, [])
   const [activeView, setActiveView] = useState<"today" | "month" | "vitals">("today")
   const [vitals, setVitals] = useState<VitalRecord[]>([])
   const [vitalsLoading, setVitalsLoading] = useState(false)
