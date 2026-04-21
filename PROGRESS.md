@@ -1,8 +1,28 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 21 Nisan 2026 (Session 37 — AI Kalite dizisi tamamlandı)
+> Son güncelleme: 21 Nisan 2026 gece (Session 38 — AI Kalite rafine + canlı test feedback iterasyonu)
 
 ---
+
+### Session 38 — AI Kalite Rafine (C1-C7, 21 Nisan 2026 gece)
+**Push:** 7 feature + 1 docs commit (push edildi — detaylar terminal log)
+
+İpek canlı test (Session 37 sonrası) 6 bulgusu → 7 commit:
+
+- [x] **C1 (`bf389d6`):** DOZAJ YASAĞI geniş uygulama — İLAÇ ÖNERİSİ KURALLARI madde 7-10 (tüm birimler dozaj: mg/g/mcg/IU/ng/mL/mg/kg/%/sıklık/süre/aralık/pratik ölçü; onay kelimeleri yasağı; referans dozajı yasağı; lab hedef değerleri yasağı). Örnek 1/7/9 refactor + YENİ Örnek 11 (parol 500mg).
+- [x] **C2 (`340c448`):** PROFİL VERİSİ BÜTÜNLÜĞÜ — halüsinasyon guard, koşullu dil, profile ekleme önerisi.
+- [x] **C3 (`b27744b`):** DUYGUSAL VARSAYIM YASAĞI — "kanser olmuştu" ≠ "öldü", üzüntü ifadesi sadece açık ölüm bildirisinde.
+- [x] **C4 (`a9f69fa`):** Polypharmacy few-shot (Örnek 12) — profil sorgusu pattern ("profilinde X,Y görüyorum, diğer 3 ne?").
+- [x] **C5 (`7f3177b`):** Türkçe rafine / Anglicism — 10+ TR/EN paralel mapping + Örnek 8/10 refactor.
+- [x] **C6 (`f49a0ee`):** FORMAT rafine — emoji adaptif (uzun 3-5, kısa 1-2), bold 5 kategori, 🚨/🚫 paleti, max-bold sınırı kalktı.
+- [x] **C7 (`9f9ee1b`):** ACİL DURUM YANIT FORMATI — yellow code path: 🚨 ilk cümle, 2-3 aksiyon, 2-3 ihtimal, toplam 5-7 cümle, 5+ madde liste yasak.
+- [x] **Docs:** SESSION_38_SUMMARY.md + CLAUDE.md + PROGRESS.md güncelleme.
+
+**Sonuç:** AI Kalite refaktör dizisi (Session 35-38) tamamen bitti. Prompt artık TCK 1219 uyumlu + halüsinasyon dirençli + duygu-doğru + Türkçe akıcı + format adaptif + acil durum kısa. Few-shot 10 → 12.
+
+**Roadmap değişikliği:** Visible tool konsolidasyonu + Chat UX rewrite **ertelendi** (mobile'da yeniden yapılacak). Session 39-40 DB + Legal, Session 41+ Mobile React Native.
+
+**Operasyonel TODO (Session 38 kapsamı dışı):** `.env.local` `SUPABASE_SERVICE_ROLE_KEY` legacy JWT — Supabase rotation yapmış, İpek dashboard'dan yeni format key üretmeli. S39+ DB işleri için gerekli.
 
 ### Session 37 — AI Kalite G3 + G1 (21 Nisan 2026, gece)
 **Push:** `aafc81e..2b34b78` (4 commit)

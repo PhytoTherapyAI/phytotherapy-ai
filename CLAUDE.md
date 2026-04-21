@@ -678,4 +678,32 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 
 **Push yapıldı** (`aafc81e..2b34b78`). Session 36 + 37 testleri yarın sabah toplu yapılacak. Test matrisleri [docs/SESSION_36_SUMMARY.md](docs/SESSION_36_SUMMARY.md) ve [docs/SESSION_37_SUMMARY.md](docs/SESSION_37_SUMMARY.md)'de.
 
-**Session 38'e devir:** Hub konsolidasyonu (A), Chat UX rewrite (B), Premium gate matrisi, Wow özellikler, Iyzico, family_history_entries UI.
+**Session 38'e devir (gerçekleşti):** Session 37 canlı test feedback'i → AI Kalite rafine dizisi (C1-C7).
+
+---
+
+### Session 38 — Tamamlandı (21 Nisan 2026, gece devam) — Push edildi
+
+**Ana iş:** Session 37 canlı test (İpek) feedback'i sonrası AI Kalite rafine — 6 bulgu 7 commit ile kapatıldı. Roadmap değişikliği: Visible tool konsolidasyonu ve Chat UX rewrite **ertelendi** (mobile'da yeniden yapılacak). Session 39-40 DB + Legal, Session 41+ Mobile React Native.
+
+**7 feature commit + 1 docs commit (tümü local master'da, push ediliyor):**
+
+- `bf389d6` **C1 — DOZAJ YASAĞI geniş uygulama (TCK 1219 sıkılaştırma):** İLAÇ ÖNERİSİ KURALLARI'na madde 7-10 eklendi. Madde 7 tüm birimleri dozaj sayıyor (mg/g/mcg/IU/ng/mL/mg/kg/%/sıklık/süre/aralık/pratik ölçü). Madde 8 onay kelimeleri yasağı ("evet güvenli", "standart", "uygun/makul"). Madde 9 referans dozajı yasağı ("meta-analizde X IU" bile yasak). Madde 10 lab hedef değerleri yasağı ("25-OH D 30-60 ng/mL" yasak). Few-shot refactor: Örnek 1 (Omega-3) dozaj kaldırıldı, Örnek 7 (Bariatrik) lab hedef + emilim % kaldırıldı, Örnek 9 (Polypharmacy EN) "boswellia 300mg" → "boswellia". YENİ Örnek 11 (parol 500mg sorusu) eklendi.
+- `340c448` **C2 — PROFİL VERİSİ BÜTÜNLÜĞÜ (halüsinasyon guard):** PROFİL FARKINDALIĞI bloğuna alt bölüm — profilde yazılı olmayan ilaç/durum varsayma yasağı, koşullu dil pattern'i ("eğer X kullanıyorsan ayrıca söyle"), kullanıcı ek ilaç bildirirse profile ekleme önerisi. Sessiz çıkarım ASLA.
+- `b27744b` **C3 — DUYGUSAL VARSAYIM YASAĞI:** SELAMLAMA sonrası yeni blok. "Annem kanser olmuştu" ≠ "öldü" — hayatta varsay. "Üzgün oldum", "başın sağ olsun" SADECE açık ölüm ifadesinde (vefat etti, kaybettim). Nötr kabul + direkt değerlendirme pattern'i.
+- `a9f69fa` **C4 — Polypharmacy few-shot (Örnek 12):** Profilde 2 ilaç + kullanıcı "5 ilaç" derse → "Profilinde X ve Y görüyorum, diğer 3 ne?" sorusuyla cevap + CYP450 + eczacı medication review + profile ekleme önerisi.
+- `7f3177b` **C5 — Türkçe rafine 2. tur (Anglicism temizliği):** NASIL KONUŞURSUN bloğuna "ANGLICISM TEMİZLİĞİ" alt maddesi. 10+ somut TR/EN paralel mapping: cruciferous→turpgiller, punicalagin→nar fenolü, EGCG→yeşil çay polifenolü, red clover→kızıl yonca, isoflavone→izoflavon, phytoestrogen→fitoöstrojen, anthraquinone→antrakinon, black cohosh→karayılanotu. Yerleşik TR terimler paralel gerekmez (antioksidan/probiyotik/omega-3). Örnek 8 + Örnek 10 refactor.
+- `f49a0ee` **C6 — FORMAT rafine (emoji + inline bold):** Emoji adaptif (uzun cevap 3-5, kısa 1-2). 🚨 + 🚫 emoji paleti eklendi. Bold 5 kategori (ilaç/takviye/uyarı/yönlendirme/Grade/sayısal DOZAJ HARİÇ). "Max 2-3 bold" sınırı kaldırıldı. Başlık sadeleştirildi.
+- `9f9ee1b` **C7 — ACİL DURUM YANIT FORMATI:** "⚠️" → "🚨 **Bu acil — hemen 112'yi ara**" İLK SATIR. Yeni "ACİL DURUM YANIT FORMATI" bloğu (yellow code): 🚨 ilk cümle zorunlu, 2-3 aksiyon max, 2-3 ayırıcı tanı, profil kritik faktör ilk cümlede, kapanış "Detay istersen sonra konuşuruz", toplam 5-7 cümle. 5+ madde liste + sayfa boyu döküm + 10 ihtimal + bitki önerisi + uzun mekanizma YASAK.
+
+**Sonuç:**
+- AI Kalite refaktör dizisi (Session 35-38) **tamamen bitti** — prompt artık TCK 1219 uyumlu, halüsinasyon dirençli, duygu-doğru, Türkçe akıcı, format adaptif, acil durum kısa.
+- Few-shot: 10 → 12 (Örnek 11 parol, Örnek 12 polypharmacy).
+- `lib/prompts.ts` net ~150 satır eklendi.
+- Build temiz (0 error, 0 warning, 240 sayfa prerendered).
+
+**Bulgu:** `.env.local` içindeki `SUPABASE_SERVICE_ROLE_KEY` **legacy JWT formatında** (eyJhbGci...) ve Supabase "Legacy API keys are disabled" döndürdü. İpek'in Supabase dashboard'dan yeni format API key üretip `.env.local`'i güncellemesi gerekli (operasyonel TODO — Session 38 implementasyonunu etkilemiyor, S39+ DB işleri için gerekli).
+
+**Detaylı SUMMARY + İpek test matrisi (7 commit için):** [docs/SESSION_38_SUMMARY.md](docs/SESSION_38_SUMMARY.md)
+
+**Session 39'a devir:** Database finalize + Legal hazırlık (KVKK v2.2, Iyzico entegrasyon planı). Session 40 beta lansman hazırlık. Session 41+ Mobile React Native mimari kurulumu. Web'de ertelenenler (Hub konsolidasyon + Chat UX rewrite) mobile'da yeniden yapılacak.
