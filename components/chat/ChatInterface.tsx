@@ -642,6 +642,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
               disabled={isStreaming}
               className="h-11 w-11 text-muted-foreground hover:text-primary"
               title={tx("chat.attachFile", lang)}
+              aria-label={tx("chat.attachFile", lang)}
             >
               <Paperclip className="h-4 w-4" />
             </Button>
@@ -653,6 +654,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
               disabled={isStreaming}
               className="h-11 w-11 text-muted-foreground hover:text-primary"
               title={tx("chat.takePhoto", lang)}
+              aria-label={tx("chat.takePhoto", lang)}
             >
               <Camera className="h-4 w-4" />
             </Button>
@@ -663,6 +665,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
               disabled={isStreaming}
               className="h-11 w-11 text-muted-foreground hover:text-lavender"
               title={lang === "tr" ? "Sesli mesaj" : "Voice message"}
+              aria-label={lang === "tr" ? "Sesli mesaj" : "Voice message"}
               onClick={() => {
                 // Web Speech API (progressive enhancement)
                 interface SRAlternative { transcript: string }
@@ -709,6 +712,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
                 onClick={clearChat}
                 className="h-11 w-11 text-muted-foreground hover:text-destructive"
                 title={tx("chat.clearChat", lang)}
+                aria-label={tx("chat.clearChat", lang)}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -719,6 +723,9 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
               disabled={isStreaming || (!input.trim() && attachedFiles.length === 0)}
               className="h-11 w-11 bg-primary hover:bg-primary/90"
               size="icon"
+              aria-label={isStreaming
+                ? (lang === "tr" ? "Yanıt hazırlanıyor" : "Generating response")
+                : (lang === "tr" ? "Mesajı gönder" : "Send message")}
             >
               {isStreaming ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
