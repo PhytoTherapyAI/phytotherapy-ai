@@ -358,12 +358,16 @@ export function CommandPalette() {
     }
   }, [open])
 
-  // Keyboard navigation
+  // Keyboard navigation — Session 41 F-S-001 + F-S-003:
+  // Tab / Shift+Tab mirror ArrowDown / ArrowUp (Spotlight / Raycast / VSCode
+  // muscle memory). Selection auto-scrolls into view via the effect below.
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "ArrowDown") {
+    const forward = e.key === "ArrowDown" || (e.key === "Tab" && !e.shiftKey)
+    const backward = e.key === "ArrowUp" || (e.key === "Tab" && e.shiftKey)
+    if (forward) {
       e.preventDefault()
       setSelectedIndex(i => Math.min(i + 1, flatItems.length - 1))
-    } else if (e.key === "ArrowUp") {
+    } else if (backward) {
       e.preventDefault()
       setSelectedIndex(i => Math.max(i - 1, 0))
     } else if (e.key === "Enter" && flatItems[selectedIndex]) {
@@ -371,6 +375,17 @@ export function CommandPalette() {
       selectItem(flatItems[selectedIndex])
     }
   }, [flatItems, selectedIndex])
+
+  // Session 41 F-S-001: scroll the selected item into view on Arrow/Tab nav
+  // so keyboard users can see where the focus ring is sitting even when the
+  // 60vh results pane overflows.
+  useEffect(() => {
+    if (!open) return
+    const selected = document.querySelector<HTMLElement>(
+      "[data-palette-item][data-palette-selected='true']",
+    )
+    selected?.scrollIntoView({ block: "nearest" })
+  }, [selectedIndex, open])
 
   // Session 39/40: dispatch either action OR navigation based on entry shape.
   const selectItem = useCallback((item: SearchItem) => {
@@ -478,6 +493,8 @@ export function CommandPalette() {
                           return (
                             <button key={item.id} onClick={() => selectItem(item)}
                               onMouseEnter={() => setSelectedIndex(globalIdx)}
+                              data-palette-item=""
+                              data-palette-selected={isSelected ? "true" : "false"}
                               className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${isSelected ? "bg-primary/5" : "hover:bg-muted/50"}`}>
 
                               {/* Avatar/Icon */}
