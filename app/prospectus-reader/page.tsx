@@ -170,10 +170,26 @@ export default function ProspectusReaderPage() {
         </div>
       </motion.div>
 
-      {/* Error */}
+      {/* Error — Session 42 F-S-008: inline retry so user doesn't have to
+          reset the whole flow (drop file, pick it again) when the analysis
+          call fails (network blip, 5xx, temporary overload). Retry reuses
+          the same `file` state; "Yeni dosya" falls back to full reset. */}
       {error && (
-        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400">
-          {error}
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-400 flex flex-col sm:flex-row sm:items-center gap-3">
+          <span className="flex-1">{error}</span>
+          <div className="flex items-center gap-2 shrink-0">
+            {file && (
+              <Button variant="outline" size="sm" onClick={handleAnalyze} disabled={isLoading}
+                className="border-red-300 text-red-700 hover:bg-red-100 dark:border-red-700 dark:text-red-300">
+                <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
+                {lang === "tr" ? "Tekrar Dene" : "Retry"}
+              </Button>
+            )}
+            <Button variant="ghost" size="sm" onClick={resetAll}
+              className="text-red-700 hover:bg-red-100 dark:text-red-300">
+              {lang === "tr" ? "Yeni dosya" : "New file"}
+            </Button>
+          </div>
         </div>
       )}
 
