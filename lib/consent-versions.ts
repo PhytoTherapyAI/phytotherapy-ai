@@ -3,7 +3,7 @@
 // Kullanıcılar eski versiyona sahipse yeniden onay istenecek
 
 export const CONSENT_VERSIONS = {
-  aydinlatma: "v2.1",
+  aydinlatma: "v2.2",
   ai_processing: "v2.0",
   data_transfer: "v2.0",
   sbar_report: "v2.0",

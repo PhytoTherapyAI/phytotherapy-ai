@@ -28,7 +28,7 @@ export default function AydinlatmaPage() {
             {tr ? "Kişisel Verilerin İşlenmesine İlişkin Aydınlatma Metni" : "Privacy Notice on Personal Data Processing"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {tr ? "KVKK Md.10 kapsamında aydınlatma yükümlülüğü · v2.1 — Nisan 2026" : "Disclosure obligation under KVKK Art.10 · v2.1 — April 2026"}
+            {tr ? "KVKK Md.10 kapsamında aydınlatma yükümlülüğü · v2.2 — Nisan 2026" : "Disclosure obligation under KVKK Art.10 · v2.2 — April 2026"}
           </p>
         </div>
       </div>
@@ -59,7 +59,17 @@ export default function AydinlatmaPage() {
           {tr ? (
             <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
               <li><strong>a) Kimlik Verisi:</strong> Ad, e-posta</li>
-              <li><strong>b) Sağlık Verisi (Özel Nitelikli):</strong> İlaçlar, alerjiler, kronik hastalıklar, semptomlar, yaş, cinsiyet, kan grubu, aşı kayıtları, sigara/alkol kullanımı, aile sağlık geçmişi, cerrahi geçmiş, gebelik/emzirme durumu</li>
+              <li>
+                <strong>b) Sağlık Verisi (Özel Nitelikli):</strong>
+                <ul className="list-[lower-roman] pl-5 mt-1 space-y-1">
+                  <li><strong>b1) Kullanıcının kendi sağlık verisi:</strong> İlaçlar, alerjiler, kronik hastalıklar, semptomlar, yaş, cinsiyet, kan grubu, aşı kayıtları, sigara/alkol kullanımı, cerrahi geçmiş, gebelik/emzirme durumu, laboratuvar değerleri, takviyeler</li>
+                  <li>
+                    <strong>b2) Aile Sağlık Öyküsü</strong> <em>(v2.2 — yeni explicit kategori)</em>: Birinci ve ikinci derece akrabalarınızın (anne, baba, kardeş, dede, nine, hala, teyze, amca, dayı, kuzen) sağlık öyküsü — hastalık adı, tanı yaşı, vefat yaşı (varsa), serbest metin notlar. <br />
+                    <em>Amaç:</em> Kalıtsal risk değerlendirmesi (meme/kolon/prostat kanseri, erken kardiyovasküler olay, diyabet, Alzheimer vb.), erken tarama önerileri, AI asistanın kişiselleştirilmiş bağlam kullanımı. <br />
+                    <em>Hukuki dayanak:</em> KVKK Md.6 AÇIK RIZA (AI İşleme rızası kapsamında). Bu veri, üçüncü şahıs sağlık verisi niteliğinde olduğu için yalnızca sizin bildirdiğiniz kadarıyla ve metadata seviyesinde saklanır; detaylı ilaç/profil üçüncü şahıslar için tutulmaz.
+                  </li>
+                </ul>
+              </li>
               <li><strong>c) Tıbbi Görüntü/Belge Verisi:</strong> Kan tahlili raporları (PDF), radyoloji görüntüleri, ilaç fotoğrafları, prospektüs görüntüleri</li>
               <li><strong>d) İletişim Verisi:</strong> Telefon numarası (opsiyonel)</li>
               <li><strong>e) İşlem Verisi:</strong> AI sohbet geçmişi, etkileşim kontrol sonuçları, SBAR raporları, rıza kayıtları</li>
@@ -74,7 +84,17 @@ export default function AydinlatmaPage() {
           ) : (
             <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
               <li><strong>a) Identity Data:</strong> Name, email</li>
-              <li><strong>b) Health Data (Special Category):</strong> Medications, allergies, chronic conditions, symptoms, age, gender, blood type, vaccine records, smoking/alcohol use, family health history, surgical history, pregnancy/breastfeeding status</li>
+              <li>
+                <strong>b) Health Data (Special Category):</strong>
+                <ul className="list-[lower-roman] pl-5 mt-1 space-y-1">
+                  <li><strong>b1) User's own health data:</strong> Medications, allergies, chronic conditions, symptoms, age, gender, blood type, vaccine records, smoking/alcohol use, surgical history, pregnancy/breastfeeding status, lab values, supplements</li>
+                  <li>
+                    <strong>b2) Family Health History</strong> <em>(v2.2 — new explicit category)</em>: Health history of your first- and second-degree relatives (mother, father, sibling, grandparent, aunt, uncle, cousin) — condition name, age at diagnosis, age at death (if applicable), free-text notes. <br />
+                    <em>Purpose:</em> Hereditary risk assessment (breast/colon/prostate cancer, early cardiovascular events, diabetes, Alzheimer's, etc.), early screening recommendations, personalized AI context. <br />
+                    <em>Legal basis:</em> KVKK Art.6 EXPLICIT CONSENT (within the scope of AI Processing consent). Since this constitutes third-party health data, only what you disclose is stored, at the metadata level; detailed medications/profiles are not kept for third parties.
+                  </li>
+                </ul>
+              </li>
               <li><strong>c) Medical Image/Document Data:</strong> Blood test reports (PDF), radiology images, medication photos, prescribing information images</li>
               <li><strong>d) Contact Data:</strong> Phone number (optional)</li>
               <li><strong>e) Transaction Data:</strong> AI chat history, interaction check results, SBAR reports, consent records</li>
@@ -332,6 +352,14 @@ export default function AydinlatmaPage() {
           {tr ? (
             <div className="space-y-3 text-muted-foreground">
               <div>
+                <p className="font-semibold text-foreground">v2.2 — Nisan 2026</p>
+                <ul className="list-disc pl-5 space-y-0.5 mt-1">
+                  <li>Aile Sağlık Öyküsü (§2-b2) ayrı alt-kategori olarak explicit eklendi (<code>family_history_entries</code> tablosu)</li>
+                  <li>Birinci/ikinci derece akraba sağlık öyküsü için metadata seviyesi saklama ilkesi netleştirildi (detaylı ilaç/profil tutulmaz)</li>
+                  <li>Kalıtsal risk değerlendirmesi ve genetik tarama önerisi işleme amacı kapsamında açıklandı</li>
+                </ul>
+              </div>
+              <div>
                 <p className="font-semibold text-foreground">v2.1 — Nisan 2026</p>
                 <ul className="list-disc pl-5 space-y-0.5 mt-1">
                   <li>Finansal Veri kategorisi eklendi (Premium abonelik için)</li>
@@ -351,6 +379,14 @@ export default function AydinlatmaPage() {
             </div>
           ) : (
             <div className="space-y-3 text-muted-foreground">
+              <div>
+                <p className="font-semibold text-foreground">v2.2 — April 2026</p>
+                <ul className="list-disc pl-5 space-y-0.5 mt-1">
+                  <li>Family Health History (§2-b2) explicitly added as a separate sub-category (<code>family_history_entries</code> table)</li>
+                  <li>Metadata-level retention principle clarified for first/second-degree relative health history (no detailed medications/profile kept for third parties)</li>
+                  <li>Hereditary risk assessment and genetic screening recommendations explicitly covered under processing purposes</li>
+                </ul>
+              </div>
               <div>
                 <p className="font-semibold text-foreground">v2.1 — April 2026</p>
                 <ul className="list-disc pl-5 space-y-0.5 mt-1">
@@ -381,7 +417,7 @@ export default function AydinlatmaPage() {
             : "This notice is prepared in accordance with KVKK Art.10 and KVKK Board Decision No.2026/347. Your explicit consent is collected SEPARATELY from this notice, for each processing purpose INDIVIDUALLY."}
         </p>
         <p className="text-xs text-muted-foreground">
-          {tr ? "Aydınlatma metni versiyon: v2.1 · Son güncelleme: Nisan 2026" : "Privacy notice version: v2.1 · Last updated: April 2026"}
+          {tr ? "Aydınlatma metni versiyon: v2.2 · Son güncelleme: Nisan 2026" : "Privacy notice version: v2.2 · Last updated: April 2026"}
         </p>
         <Link href="/privacy-controls" className="inline-flex items-center gap-1.5 mt-2 text-sm font-medium text-primary hover:underline">
           {tr ? "Rıza ayarlarına git →" : "Go to consent settings →"}

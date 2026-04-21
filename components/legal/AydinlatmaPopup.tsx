@@ -62,7 +62,8 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
             <h3 className="font-bold mb-1">{tr ? "2. İşlenen Veri Kategorileri" : "2. Data Categories"}</h3>
             <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
               <li>{tr ? "Kimlik: ad, e-posta" : "Identity: name, email"}</li>
-              <li>{tr ? "Sağlık (özel nitelikli): ilaçlar, alerjiler, kronik hastalıklar, semptomlar, yaş, cinsiyet, kan grubu, aşılar, sigara/alkol, aile sağlık geçmişi, cerrahi, gebelik/emzirme" : "Health (special): medications, allergies, chronic conditions, symptoms, age, gender, blood type, vaccines, smoking/alcohol, family history, surgical history, pregnancy/breastfeeding"}</li>
+              <li>{tr ? "Sağlık — kendi verin (özel nitelikli): ilaçlar, alerjiler, kronik hastalıklar, semptomlar, yaş, cinsiyet, kan grubu, aşılar, sigara/alkol, cerrahi, gebelik/emzirme, lab değerleri, takviyeler" : "Health — your own data (special): medications, allergies, chronic conditions, symptoms, age, gender, blood type, vaccines, smoking/alcohol, surgical history, pregnancy/breastfeeding, lab values, supplements"}</li>
+              <li>{tr ? "Aile Sağlık Öyküsü (v2.2 yeni explicit kategori): birinci/ikinci derece akraba hastalık geçmişi — yakınlık, hastalık adı, tanı yaşı, vefat bilgisi, serbest not. Kalıtsal risk değerlendirmesi amacıyla. Üçüncü şahıs için detaylı ilaç/profil saklanmaz, yalnızca metadata." : "Family Health History (v2.2 new explicit category): first/second-degree relative condition history — relation, condition name, age at diagnosis, deceased info, free-text notes. For hereditary risk assessment. No detailed medications/profile stored for third parties — metadata only."}</li>
               <li>{tr ? "Tıbbi görüntü/belge: kan tahlili PDF, radyoloji, ilaç fotoğrafı, prospektüs" : "Medical images/docs: blood test PDF, radiology, medication photos, prescribing info"}</li>
               <li>{tr ? "İletişim: telefon (opsiyonel)" : "Contact: phone (optional)"}</li>
               <li>{tr ? "İşlem: AI sohbet, etkileşim sonuçları, SBAR, rıza kayıtları" : "Transaction: AI chat, interaction results, SBAR, consent records"}</li>
@@ -165,6 +166,14 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
             {tr ? (
               <div className="space-y-2 text-muted-foreground text-xs">
                 <div>
+                  <p className="font-semibold text-foreground">v2.2 — Nisan 2026</p>
+                  <ul className="list-disc pl-5 space-y-0.5 mt-0.5">
+                    <li>Aile Sağlık Öyküsü ayrı explicit kategori olarak eklendi (§2-b2)</li>
+                    <li>Üçüncü şahıs akraba verisi için metadata seviyesi saklama ilkesi netleştirildi</li>
+                    <li>Kalıtsal risk değerlendirmesi işleme amacı kapsamında açıklandı</li>
+                  </ul>
+                </div>
+                <div>
                   <p className="font-semibold text-foreground">v2.1 — Nisan 2026</p>
                   <ul className="list-disc pl-5 space-y-0.5 mt-0.5">
                     <li>Finansal Veri kategorisi eklendi (Premium abonelik için)</li>
@@ -184,6 +193,14 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
               </div>
             ) : (
               <div className="space-y-2 text-muted-foreground text-xs">
+                <div>
+                  <p className="font-semibold text-foreground">v2.2 — April 2026</p>
+                  <ul className="list-disc pl-5 space-y-0.5 mt-0.5">
+                    <li>Family Health History added as a separate explicit category (§2-b2)</li>
+                    <li>Metadata-level retention principle clarified for third-party relative data</li>
+                    <li>Hereditary risk assessment explicitly covered under processing purposes</li>
+                  </ul>
+                </div>
                 <div>
                   <p className="font-semibold text-foreground">v2.1 — April 2026</p>
                   <ul className="list-disc pl-5 space-y-0.5 mt-0.5">
