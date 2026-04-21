@@ -4,29 +4,34 @@
 
 ---
 
-### Session 43 — Onboarding Flow Audit (22 Nisan 2026)
+### Session 43 — Onboarding Flow Audit + Fix (22 Nisan 2026) — TAMAMLANDI
 **Faz 1 commit:** `d3a7e9f` — audit + 16 finding + 3 variant öneri
-**Faz 2 başlangıç:** M variant onaylandı — 10 fix (P0 + 7 P1 + 2 P2), ~8-10h
+**Faz 2 commit zinciri:** `5fccaf5..65edc06` (9 fix) — M variant onaylandı
 
-**Faz 1 TAMAMLANDI:** funnel haritası + findings + önceliklendirme matrisi + scope variant'ları SESSION_43_ONBOARDING_AUDIT.md'de.
+- [x] F-OB-001 `65edc06` — Finale conditional primary CTA (medicationsCount === 0 ise "İlk ilacını ekle →")
+- [x] F-OB-002 `de33829` — Signup password proactive hint chip'leri (length / uppercase / number real-time)
+- [x] F-OB-003 `182b43b` — Onboarding draft atomic via `lib/ui/draft-persist.ts` (Session 42 F-D-006 reuse + `DRAFT_KEYS.onboardingWizard`)
+- [x] F-OB-004 `f0cdc82` — Email callback expired-link açıklaması + recovery path
+- [x] F-OB-005 `d5de2da` — Dashboard empty-medications hint banner (dynamicTasks.length === 0)
+- [x] F-OB-006 `b4a336d` — First-medication post-save next-action prompt (Etkileşim kontrolü yap / Başka ilaç ekle)
+- [x] F-OB-007 `5fccaf5` — Notification permission just-in-time (med save trigger kaldırıldı)
+- [x] F-OB-008 ⏸️ DEFERRED — **ZATEN MEVCUT** `ageWarning` Alert + `onb.ageWarning` i18n (agent false positive)
+- [x] F-OB-010 `9881456` — Google auto-fill "Google hesabından dolduruldu" chip
+- [x] F-OB-016 `0432cf7` — Landing hero H2 altına concrete feature triad
 
-**Faz 2 — DEVAM EDİYOR:** M variant (10 fix). Canonical ID'ler F-OB-001 (P0 finale CTA) + F-OB-002..008 (7 P1) + F-OB-010 + F-OB-016 (2 P2).
+**Sonuç:**
+- 9/10 FIXED + 1 CLEAN (F-OB-008 zaten mevcut)
+- Build 241 sayfa, 0 error, 0 warning
+- `lib/ui/draft-persist.ts` üçüncü consumer (OnboardingWizard) aldı — F-D-006 utility'si olgunlaşıyor
+- Aha moment post-fix estimate **18-25 dk** (pre-fix 25-35 dk → net ~2-4 dk ortalama, edge case'lerde 10+ dk)
+- **10 dk hedefi ulaşılmadı** — wizard 11-step yapısal, 5-step consolidation matematiksel olarak gerekli
 
-- [ ] F-OB-001 Finale conditional next-step CTA (aha moment path'in baş kapısı)
-- [ ] F-OB-002 Signup password strength meter
-- [ ] F-OB-003 Onboarding draft atomicity (`lib/ui/draft-persist.ts` Session 42 F-D-006 reuse)
-- [ ] F-OB-004 Email confirmation expired-link CTA
-- [ ] F-OB-005 Empty dashboard med-CTA banner
-- [ ] F-OB-006 Med save inline next-action chips
-- [ ] F-OB-007 Notif permission timing move (just-in-time pattern)
-- [ ] F-OB-008 18+ age gate inline note
-- [ ] F-OB-010 Google auto-fill "Google'dan" chip (P2)
-- [ ] F-OB-016 Landing hero subtitle (P2)
-
-**Aha moment pre-fix tahmini:** ~25-35 dk (audit'te hesaplandı — signup + 11-step wizard + finale + manuel med add + manuel interaction-checker nav).
-**Aha moment post-fix projected:** ~18-25 dk (F-OB-001+005+006 zinciri 6-8 tık tasarrufu). **10 dk hedefine ulaşılmıyor** — wizard 11-step yapısal, 5-step refactor Session 44+ strategic decision.
-
-**Kapsam dışı:** ESLint 127 library error (Session 44+ sprint), wizard 5-step refactor (architectural, post-launch), landing redesign (marketing paralel), parental consent (hukuki), OAuth extended pull, bulk med import, mid-onboarding aha feature, kalan 6 P2 + 4 a11y/mobile (Session 45 polish).
+**Session 44'e devir:**
+- **Wizard 5-step refactor** — architectural decision. Aha moment 10 dk hedefine ulaşmak için zorunlu. Post-launch öncelik.
+- ESLint 127 library error sprint (Session 43+ ertelendi)
+- Kalan 6 P2 + 4 a11y/mobile edge (Session 45 polish)
+- Drug-pair expansion (interaction engine refactor)
+- Landing full redesign, parental consent, OAuth extended pull, bulk med import, mid-onboarding aha feature
 
 ---
 

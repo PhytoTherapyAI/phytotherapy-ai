@@ -842,3 +842,49 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 - Onboarding flow audit (yeni user journey)
 - Beta lansman hazırlık (landing revizyon, Sentry monitoring)
 - Iyzico şirket tescili bekleyişi devam
+
+---
+
+### Session 43 — Onboarding Flow Audit + Fix (22 Nisan 2026) — Tamamlandı
+
+**Ana iş:** Yeni kullanıcı funnel'i (landing → signup → email confirm → 11-step wizard → finale → first-login → first medication → aha moment) statik audit + M variant fix sprint.
+
+**Faz 1 (commit `d3a7e9f`):** 2 paralel Explore agent + manuel verify (~%30 false positive filtrelendi). 16 gerçek finding (1 P0 + 7 P1 + 8 P2) + 4 a11y/mobile edge. Funnel haritası + abandonment risk + aha moment analizi.
+
+**Faz 2 (commit zinciri `5fccaf5..65edc06`):** M variant (P0 + 7 P1 + 2 P2 = 10 fix). 9 fix FIXED + 1 CLEAN (F-OB-008 agent false positive — `ageWarning` zaten mevcut).
+
+**9 fix commit:**
+
+- `65edc06` **F-OB-001 (P0)** — OnboardingFinale `medicationsCount` prop eklendi; wizard'dan `data.medications.length` geçirildi. Count 0 ise primary CTA "İlk ilacını ekle →" → `/profile?tab=medications` + secondary "Panele git"; count >0 ise mevcut "Explore" davranışı korundu. Aha moment path'in baş kapısı.
+- `de33829` **F-OB-002 (P1)** — Signup password proactive requirement hints. Length ≥8 / uppercase / number dot-indicator chip'leri `signupPassword.length > 0` iken real-time render (emerald ok, muted yet). Try-fail-retry cycle eliminated.
+- `182b43b` **F-OB-003 (P1)** — Onboarding draft atomic. `DRAFT_KEYS.onboardingWizard` eklendi `lib/ui/draft-persist.ts`'e (Session 42 F-D-006 lib 3. consumer). `OnboardingDraftShape = { data, step }` tek atomik value → race condition eliminated. İki ayrı `doctopal_onboarding_draft` + `doctopal_onboarding_step` write'ları birleştirildi.
+- `f0cdc82` **F-OB-004 (P1)** — Email callback error state expired-link açıklaması. Generic "sign-in'e dön" butonunun üstüne recovery explanation text (TR/EN inline). Kullanıcı expired link gördüğünde ne yapması gerektiğini bilir.
+- `5fccaf5` **F-OB-007 (P1)** — Notification permission timing. `addMedication` success path'indeki `setTimeout(() => setShowNotifPermission(true), 500)` kaldırıldı + açıklayıcı yorum. PermissionBottomSheet mount kaldı (calendar reminder / scheduled-task flow'ları trigger edebilir). Just-in-time permission pattern.
+- `d5de2da` **F-OB-005 (P1)** — Dashboard empty-medications emerald banner. `dynamicTasks.length === 0` iken task listenin üzerinde Link → `/profile?tab=medications`. İlk ilaç eklendiğinde banner otomatik kaybolur (dynamicTasks > 0). Dismiss gerek yok.
+- `b4a336d` **F-OB-006 (P1)** — First-medication post-save prompt. `wasFirstMed = medications.length === 0` (insert öncesi) flag → post-save 12s auto-hide card (fixed top-32, emerald border). İki CTA chip: "Etkileşim kontrolü yap" (Link → `/interaction-checker`) + "Başka ilaç ekle" (setIsAddingMed(true)) + dismiss ×.
+- `9881456` **F-OB-010 (P2)** — BasicInfoStep name field'ının altında Google auto-fill indicator. `isGoogleUser && user?.user_metadata?.full_name && data.full_name === user.user_metadata.full_name` koşulunda blue dot + "Google hesabından dolduruldu — düzenleyebilirsin".
+- `0432cf7` **F-OB-016 (P2)** — Landing HeroSection H2 altına concrete feature triad satırı: "İlaç-bitki etkileşimi · Kan tahlili yorumu · Aile profili yönetimi" (TR/EN inline, text-sm text-slate-500). Emotional H2 framing korundu, "bu uygulama ne yapar?" sorusu bir bakışta cevaplanıyor.
+
+**Aha Moment Ölçümü (yapısal analiz):**
+- **Pre-fix:** ~25-35 dk (signup ~2 + email ~2 + 11-step wizard ~20 + finale + menü keşif + med add + manuel interaction-checker nav)
+- **Post-fix:** ~18-25 dk (net ~2-4 dk ortalama user tasarruf, edge case'lerde 10+ dk draft recovery)
+- **Hedef:** 10 dk altı — **ULAŞILMADI.** Kök neden: 11-step wizard yapısal. 11 × 1.5 dk optimistic = 16.5 dk zaten matematiksel taban.
+
+**Yeni Backlog — Strategic Decision:**
+- **Wizard 5-step refactor** post-launch architectural iş. Session 44+ aha moment ölçümü Faz 2 sonrası 10 dk üstündeyse öncelikli olur, altındaysa Session 50+'a kadar bekleyebilir. Basic info + medications + allergies + KVKK (aydinlatma + consent combined) + critical chronic conditions hedefi. Supplements/vaccines/family history/lifestyle şimdi profile'a taşınıyor (post-onboarding).
+
+**Sonuç:**
+- 9/10 FIXED, 1 CLEAN (F-OB-008 `ageWarning` mevcut)
+- Build 241 sayfa, 0 error, 0 warning (Session 42 ile bit-perfect)
+- `lib/ui/draft-persist.ts` üçüncü consumer aldı, DRAFT_KEYS namespace olgunlaşıyor (familyHistory + profileMedicationAdd + onboardingWizard)
+- Regression yok: Session 41 F-S-002 scroll gate + Session 39 FamilyHistorySection draft + Session 32 AuthContext cache + Session 36-38 AI prompts + tüm önceki fix'ler korundu
+
+**Detay:** [docs/sessions/SESSION_43_ONBOARDING_AUDIT.md](docs/sessions/SESSION_43_ONBOARDING_AUDIT.md) — Faz 1 funnel + 16 finding + Faz 2 FIXED işaretleri + aha moment pre/post karşılaştırması + commit mapping.
+
+**Session 44'e devir:**
+- **Wizard 5-step refactor** (architectural, post-launch decision — aha moment 10 dk hedefine ulaşmak için zorunlu)
+- ESLint 127 library error sprint (semantic care, dedicated)
+- Kalan 6 P2 + 4 a11y/mobile edge (Session 45 polish)
+- Drug-pair expansion (interaction engine refactor)
+- Landing full redesign (marketing paralel), parental consent (hukuki), OAuth extended pull, bulk med import, mid-onboarding aha feature
+- Iyzico şirket tescili bekleyişi devam

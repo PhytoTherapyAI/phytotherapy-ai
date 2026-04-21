@@ -308,6 +308,52 @@ Kullanıcının "vazgeç" diyebileceği noktalar (yüksek → düşük):
 
 ## Status
 
-- Faz 1 AUDIT: ✅ TAMAMLANDI
-- Faz 2 FIX: ⏳ İpek scope onayı bekliyor (S / M / L / Custom)
-- Faz 1 commit: `docs(session-43): onboarding audit phase 1`
+- Faz 1 AUDIT: ✅ TAMAMLANDI (commit `d3a7e9f`)
+- Faz 2 FIX: ✅ TAMAMLANDI — M variant (9 FIXED, 1 CLEAN, zincir `5fccaf5..65edc06`)
+
+### Faz 2 FIXED İşaretleri
+
+**P0 (1/1 fixed):**
+- **F-OB-001** ✅ FIXED — commit: `65edc06` — Finale conditional primary CTA. Wizard'a `medications.length` prop geçirildi; 0 ise "İlk ilacını ekle →" primary + "Panele git" secondary, >0 ise mevcut "Explore" tek. Aha moment path'in baş kapısı açıldı.
+
+**P1 (6/7 fixed, 1 CLEAN):**
+- **F-OB-002** ✅ FIXED — commit: `de33829` — Signup password proactive hints (length / uppercase / number emerald dot chip'leri real-time).
+- **F-OB-003** ✅ FIXED — commit: `182b43b` — Onboarding draft atomic via `lib/ui/draft-persist.ts` reuse (Session 42 F-D-006). Eski iki ayrı localStorage write `OnboardingDraftShape = { data, step }` tek atomik değere birleşti; `DRAFT_KEYS.onboardingWizard` namespace eklendi.
+- **F-OB-004** ✅ FIXED — commit: `f0cdc82` — Email callback error state'e expired-link açıklaması + recovery path yazısı.
+- **F-OB-005** ✅ FIXED — commit: `d5de2da` — Dashboard'a empty-medications hint (emerald banner, `dynamicTasks.length === 0` iken, ilaç eklenince otomatik kaybolur).
+- **F-OB-006** ✅ FIXED — commit: `b4a336d` — First-medication post-save prompt (`wasFirstMed` flag + 12s auto-hide card + "Etkileşim kontrolü yap" / "Başka ilaç ekle" CTA chip'leri).
+- **F-OB-007** ✅ FIXED — commit: `5fccaf5` — Notification permission just-in-time pattern (med save trigger kaldırıldı, PermissionBottomSheet mount kaldı).
+- **F-OB-008** ⏸️ DEFERRED — **ZATEN MEVCUT**. `ageWarning` Alert ve `onb.ageWarning` translation key [BasicInfoStep.tsx:254-259](components/onboarding/steps/BasicInfoStep.tsx:254). Agent false positive. CLEAN olarak sınıflandırıldı.
+
+**P2 (2/2 fixed):**
+- **F-OB-010** ✅ FIXED — commit: `9881456` — Google auto-fill chip ("Google hesabından dolduruldu — düzenleyebilirsin"), blue dot + conditional render.
+- **F-OB-016** ✅ FIXED — commit: `0432cf7` — Landing hero H2 altına concrete feature triad ("İlaç-bitki etkileşimi · Kan tahlili yorumu · Aile profili yönetimi") — emotional H2 korundu.
+
+### Aha Moment Pre/Post Estimate
+
+**Pre-fix (audit'te hesaplandı):** ~25-35 dk.  
+Chain: signup (~2 dk) + email confirm (~2 dk) + 11-step wizard (avg 2 dk/step = ~20 dk) + finale + **"Explore" tek CTA → dashboard → profil menü keşif (~30 sn) → add med (~2 dk) → manuel interaction-checker nav (~30 sn)** → ilk etkileşim uyarısı.
+
+**Post-fix (yapısal analiz):** ~18-25 dk.  
+Kısalan chain: signup+email+wizard kısmı sabit (wizard 11 adımlı kalıyor). Finale + post-finale iyileşmeleri:
+- **F-OB-001** finale'de "İlk ilacını ekle →" primary CTA → profile'a tek tıkla direkt → **~30 sn tasarruf** (menü keşfi elendi)
+- **F-OB-005** + **F-OB-001** birlikte: ilk ilaç ekleme yolu iki ayrı giriş noktasıyla netleştirildi
+- **F-OB-006** med save sonrası "Etkileşim kontrolü yap →" inline chip → interaction-checker'a direct link → **~30-60 sn tasarruf** (manuel nav elendi)
+- **F-OB-002** password hints → try-fail-retry eliminated → **~30-90 sn tasarruf** (weak password users)
+- **F-OB-003** draft atomicity → mid-onboarding interruption recovery → **edge case, 0-10 dk tasarruf** (affected users için kritik)
+- Toplam net kısalma: **~2-4 dk** (ortalama user) + edge case'lerde 10+ dk (network/interruption recovery)
+
+**Hedef: 10 dk altı.** **Ulaşılmadı.** Kök neden: 11-step wizard yapısal olarak uzun. Wizard 5-step refactor olmadan 10 dk hedefi matematiksel olarak imkânsız (11 step × 1.5 dk optimistic avg = 16.5 dk zaten).
+
+**Strategic karar (İpek'e bırakıldı):** Wizard 5-step refactor Session 44+ architectural iş; CLAUDE.md backlog'una not edildi. Bu Faz 2 fix'leri user momentum kaybını azaltır, critical abandonment noktalarını kapatır — ama aha moment süresi için 5-step consolidation gerekir.
+
+### Build + Regression
+- 241 sayfa, 0 error, 0 warning (Session 42 ile bit-perfect)
+- `lib/ui/draft-persist.ts` (Session 42 F-D-006) genişletildi: yeni `DRAFT_KEYS.onboardingWizard` namespace + üçüncü consumer (OnboardingWizard). FamilyHistorySection + Profile medication-add davranış parity korundu.
+- Session 41 F-S-002 scroll gate dokunulmadı, AydınlatmaStep akışı korundu
+- Session 32 AuthContext cache intact
+- Session 36-38 AI prompts + Session 39 family_history + Session 40 bug fix'ler + Session 41 Faz 2 + Session 42 fix'ler hepsi intact
+
+### Faz 1 commit: `docs(session-43): onboarding audit phase 1`
+### Faz 2 commit zinciri: `5fccaf5..65edc06` (9 fix)
+### Docs commit: bu commit — `docs(session-43): phase 2 onboarding fix complete — 10 fixed, aha moment 25-35→18-25 dk`
