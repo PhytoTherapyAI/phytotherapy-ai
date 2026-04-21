@@ -1,6 +1,29 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 21 Nisan 2026 gece (Session 39 — Safety fix + family_history full stack + KVKK v2.2 + Iyzico plan)
+> Son güncelleme: 22 Nisan 2026 (Session 40 — Dashboard audit + fix başlangıcı)
+
+---
+
+### Session 40 — Dashboard Audit & Fix (22 Nisan 2026)
+**Başlangıç:** `cb5a914` → **Bitiş:** 5 fix commit + 1 docs commit
+
+- [x] **FAZ 1 — AUDIT:** 9 route statik audit + tsc + lint baseline + 2 paralel Explore agent + manuel verify
+- [x] Bug listesi → [docs/sessions/SESSION_40_AUDIT.md](docs/sessions/SESSION_40_AUDIT.md) — 15 ham bulgu → 7 gerçek bug (8 false positive elendi)
+- [x] **FAZ 2 — FIX:** 7/7 bug FIXED (5 commit; BUG-004+007 aynı dosya, BUG-005+006 console+guard aynı konu)
+  - `a198d3f` BUG-001 calendar selectedDate SSR-safe
+  - `84bc5af` BUG-002 calendar ICS UID deterministic hash
+  - `01d15e0` BUG-003 dashboard timeEmoji (effect kaldırıldı, hour state'ten türet)
+  - `ac64867` BUG-004 + BUG-007 medication-hub currentHour state + parseInt radix
+  - `44aefdc` BUG-005 + BUG-006 dashboard/chat console hygiene (dev-only) + fileToBase64 guard
+
+**Sonuç:**
+- tsc 0 error, build 241 sayfa 0 error/0 warning (Session 39 ile aynı)
+- P0: 0 (kritik crash/veri kaybı yok), P1: 4 tümü fixed, P2: 3 tümü fixed
+- Regression yok — Session 32 AuthContext cache + Session 36-39 tüm fix'ler temiz
+
+**Ertelenenler (Session 41+):**
+- ESLint 127 error (library dosyaları) → ayrı temizlik sprint'i
+- FP-D Settings password UX (family member view'de hide/disable)
 
 ---
 

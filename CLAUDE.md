@@ -736,3 +736,37 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 **Detaylı SUMMARY + İpek test matrisi + manuel adım instruction:** [docs/SESSION_39_SUMMARY.md](docs/SESSION_39_SUMMARY.md)
 
 **Session 40'a devir:** Beta lansman hazırlık (landing revizyonu, onboarding smoke test, Session 39 test bulgu fix'leri, Sentry monitoring). Tescil olursa Iyzico v1.1 + Mesafeli Satış aktivasyonu. Session 41+ Mobile React Native mimari başlangıç.
+
+---
+
+### Session 40 — Dashboard Audit & Fix (22 Nisan 2026) — Tamamlandı
+
+**Ana iş:** Dashboard kapsamındaki 9 route + 3 destek component için statik audit + bug fix. İpek Session 39 sonrası "dashboard bug'ları var ama envanter yok" dedi; bu session önce audit + bug list çıkarıldı, sonra P0+P1 fix.
+
+**Metodoloji:** 2 paralel Explore agent → 15 ham bulgu → manuel verify (false positive filtresi) → 7 gerçek bug. Regression kontrol (Session 32-39 fix'leri) temiz.
+
+**5 fix commit + 1 docs commit (Session 40 sonunda):**
+
+- `a198d3f` **BUG-001** calendar `useState(new Date())` SSR hydration → lazy-init UTC midnight + `useEffect` client-only hydrate
+- `84bc5af` **BUG-002** ICS UID `Math.random()` → deterministic hash (`event_date|type|time|title`) — Google/Apple Calendar duplicate import önlendi
+- `01d15e0` **BUG-003** dashboard greeting emoji flash → `timeEmoji` state+effect kaldırıldı, `hour` state'ten derive (dead `getTimeEmoji` fn silindi)
+- `ac64867` **BUG-004 + BUG-007** medication-hub `const now = new Date()` at render body (SSR mismatch) → `currentHour` state + `setInterval` 60s refresh; line 470 `parseInt` radix 10 + null-safe isPast
+- `44aefdc` **BUG-005 + BUG-006** dashboard/chat 7 console.log (KVKK non-audit) → `process.env.NODE_ENV === "development"` wrap; `fileToBase64` split[1] undefined → Promise reject
+- docs commit — SESSION_40_AUDIT.md FIXED işaretleri + PROGRESS.md + CLAUDE.md
+
+**Sonuç:**
+- P0: 0 (kritik crash/veri kaybı yok)
+- P1: 4 tümü FIXED
+- P2: 3 tümü FIXED
+- Build: 241 sayfa, 0 error, 0 warning (regression yok)
+- Session 32 AuthContext cache + Session 36-39 tüm fix'ler korundu (audit'te ayrıca doğrulandı)
+
+**False positive'ler (kayıt için):** 8 bulgu elendi — optional chain short-circuits, useEffect scope, typed const registry, Supabase caller-session semantics, useCallback dep chain, mevcut try/catch wrap'leri vb.
+
+**Ertelenenler (Session 41+):**
+- ESLint 127 error (library dosyaları: `lib/embeddings.ts`, `lib/translations.ts`, `lib/health-integrations.ts`, `lib/use-effective-premium.ts`, `scripts/*.js`) — ayrı temizlik sprint'i, dashboard bağlantısı yok.
+- FP-D Settings password UX (aile üyesi görüntülemesinde "password değiştir" bölümünü hide/disable) — teknik bug değil, UX iyileştirmesi.
+
+**Detay:** [docs/sessions/SESSION_40_AUDIT.md](docs/sessions/SESSION_40_AUDIT.md)
+
+**Session 41'e devir:** ESLint library temizlik sprint'i + Settings UX fix (FP-D) + beta lansman hazırlık (Session 39 devrinden taşınan landing revizyon/onboarding smoke test/Sentry monitoring). Şirket tescili tamamlanırsa Iyzico entegrasyonuna geçiş ([docs/IYZICO_INTEGRATION_PLAN.md](docs/IYZICO_INTEGRATION_PLAN.md)).
