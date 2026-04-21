@@ -229,6 +229,16 @@ export function BasicInfoStep({ data, updateData }: Props) {
           onChange={(e) => updateData({ full_name: e.target.value })}
           className="text-base transition-all duration-200 focus:ring-2 focus:ring-green-400/40 focus:border-green-400"
         />
+        {/* Session 43 F-OB-010: flag when the name was pre-populated from a
+            Google/OAuth session so the user knows it's not something they
+            typed. Only shown while the auto-filled value is unchanged. */}
+        {isGoogleUser && user?.user_metadata?.full_name
+          && data.full_name === user.user_metadata.full_name && (
+          <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+            <span aria-hidden className="inline-block h-1.5 w-1.5 rounded-full bg-blue-500" />
+            {lang === "tr" ? "Google hesabından dolduruldu — düzenleyebilirsin" : "Filled from your Google account — feel free to edit"}
+          </p>
+        )}
       </div>
 
       {/* Date of Birth */}
