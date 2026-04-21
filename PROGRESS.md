@@ -15,7 +15,7 @@
 
 **Detay:** [docs/sessions/SESSION_41_INTERACTION_AUDIT.md](docs/sessions/SESSION_41_INTERACTION_AUDIT.md)
 
-- [ ] **Faz 2** (ayrı prompt gelecek): İpek scope onaylar → fix commit'leri
+- [ ] **Faz 2** — M varyant onaylandı (7 fix: P0 + 6 P1, ~6h): F-S-002 (KVKK scroll gate) + F-S-001 (palette scrollIntoView) + F-S-003 (palette Tab) + F-D-007 (chat a11y) + F-D-005 (calendar empty) + F-D-004 (medication conflicts) + F-D-003 (dashboard customize drawer). **DEVAM EDİYOR.**
 
 **YAPMA'lar (İpek talimatı):** kod değişikliği yok, yeni feature önerme yok, refactor yok, Session 40 scope'a (runtime bug) girme yok.
 

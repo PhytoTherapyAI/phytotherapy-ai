@@ -5,6 +5,7 @@
 // yapılır ve tüm popup metnine (header + footer + consent audit) yansır.
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import { X, ShieldCheck, AlertTriangle } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 import { CONSENT_VERSIONS } from "@/lib/consent-versions";
@@ -22,6 +23,37 @@ interface AydinlatmaPopupProps {
 export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge }: AydinlatmaPopupProps) {
   const { lang } = useLang();
   const tr = lang === "tr";
+
+  // Session 41 F-S-002: scroll gate — button only enabled after user scrolls to
+  // the end of the content. Mirrors the pattern already in ConsentPopup
+  // (commit 7167423, 0d9c7a4 short-text fix). Before this, the "Okudum, Kapat"
+  // button was always enabled, which let users acknowledge the KVKK Md.10
+  // notice without reading it → false compliance in consent_log audit trail.
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Reset on open + short-text auto-enable (ConsentPopup parity): if the entire
+  // notice fits without scrolling, mark "scrolled to bottom" immediately so we
+  // don't trap the user on content that has no overflow to consume.
+  useEffect(() => {
+    if (!open) return;
+    setHasScrolledToBottom(false);
+    const timer = setTimeout(() => {
+      const el = scrollRef.current;
+      if (!el) return;
+      if (el.scrollHeight <= el.clientHeight + 5) {
+        setHasScrolledToBottom(true);
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [open]);
+
+  function handleScroll(e: React.UIEvent<HTMLDivElement>) {
+    const el = e.currentTarget;
+    if (el.scrollHeight - el.scrollTop - el.clientHeight < 20) {
+      setHasScrolledToBottom(true);
+    }
+  }
 
   if (!open) return null;
 
@@ -46,8 +78,14 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
           )}
         </div>
 
-        {/* Scrollable content — compact version of /aydinlatma */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-5 text-sm text-foreground">
+        {/* Scrollable content — compact version of /aydinlatma.
+            Session 41 F-S-002: ref + onScroll feed the hasScrolledToBottom
+            gate on the acknowledge button below. */}
+        <div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex-1 overflow-y-auto p-6 space-y-5 text-sm text-foreground"
+        >
 
           <section>
             <h3 className="font-bold mb-1">{tr ? "1. Veri Sorumlusu" : "1. Data Controller"}</h3>
@@ -230,9 +268,17 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
               ? `Bu metin KVKK Md.10 kapsamında aydınlatma yükümlülüğüdür. Açık rıza ayrı olarak alınır. ${CONSENT_VERSIONS.aydinlatma}`
               : `This notice fulfills the KVKK Art.10 disclosure obligation. Explicit consent is collected separately. ${CONSENT_VERSIONS.aydinlatma}`}
           </p>
+          {!hasScrolledToBottom && (
+            <p className="text-[11px] text-amber-700 dark:text-amber-400 text-center mb-2">
+              {tr
+                ? "Metnin sonuna kadar kaydırın, ardından onaylayabilirsiniz."
+                : "Scroll to the end of the notice, then you can acknowledge."}
+            </p>
+          )}
           <button
             onClick={onAcknowledge}
-            className="w-full px-4 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+            disabled={!hasScrolledToBottom}
+            className="w-full px-4 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary"
           >
             {tr ? "Okudum, Kapat" : "I've Read This, Close"}
           </button>
