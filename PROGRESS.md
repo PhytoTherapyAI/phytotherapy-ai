@@ -15,7 +15,17 @@
 
 **Detay:** [docs/sessions/SESSION_41_INTERACTION_AUDIT.md](docs/sessions/SESSION_41_INTERACTION_AUDIT.md)
 
-- [ ] **Faz 2** — M varyant onaylandı (7 fix: P0 + 6 P1, ~6h): F-S-002 (KVKK scroll gate) + F-S-001 (palette scrollIntoView) + F-S-003 (palette Tab) + F-D-007 (chat a11y) + F-D-005 (calendar empty) + F-D-004 (medication conflicts) + F-D-003 (dashboard customize drawer). **DEVAM EDİYOR.**
+- [x] **Faz 2** — M varyant tamam (7 fix, 6 commit):
+  - F-S-002 `6924634` — KVKK AydınlatmaPopup scroll gate (ConsentPopup pattern'ini yansıt, root: D — pattern hiç uygulanmamış)
+  - F-S-001 + F-S-003 `31ffa97` — CommandPalette keyboard nav: selectedIndex scrollIntoView + Tab/Shift+Tab ArrowDown/Up mirror
+  - F-D-007 `e273535` — ChatInterface 5 icon button aria-label (a11y WCAG)
+  - F-D-005 `24914c1` — Calendar TimeBlock empty CTA: no-op `onAdd` yerine editMode açılsın
+  - F-D-004 `792d477` — Medication Hub conflict banner'a /interaction-checker CTA (pair expansion ertelendi)
+  - F-D-003 `beb90b7` — Dashboard customize paneli task list altında expansion, swap kaldırıldı
+
+Build: 241 sayfa, 0 error, 0 warning (Session 41 Faz 1 ile aynı). SESSION_41_INTERACTION_AUDIT.md FIXED işaretleriyle güncel.
+
+**Ertelenenler (Session 42+):** 8 P2 finding (kozmetik sprint), F-D-004'ün drug-pair expansion'ı (interaction engine refactor).
 
 **YAPMA'lar (İpek talimatı):** kod değişikliği yok, yeni feature önerme yok, refactor yok, Session 40 scope'a (runtime bug) girme yok.
 

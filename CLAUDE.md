@@ -770,3 +770,42 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 **Detay:** [docs/sessions/SESSION_40_AUDIT.md](docs/sessions/SESSION_40_AUDIT.md)
 
 **Session 41'e devir:** ESLint library temizlik sprint'i + Settings UX fix (FP-D) + beta lansman hazırlık (Session 39 devrinden taşınan landing revizyon/onboarding smoke test/Sentry monitoring). Şirket tescili tamamlanırsa Iyzico entegrasyonuna geçiş ([docs/IYZICO_INTEGRATION_PLAN.md](docs/IYZICO_INTEGRATION_PLAN.md)).
+
+---
+
+### Session 41 — Interaction / UX Friction Audit + Fix (22 Nisan 2026) — Tamamlandı
+
+**Ana iş:** Session 40 dashboard bug audit'inin interaction/UX ekseninde devamı. İki fazlı:
+- **Faz 1 (commit `989ba0b`):** 2 paralel Explore agent + manuel verify → 17 ham bulgu → 15 gerçek finding (2 false positive elendi — chat history mobile drawer gerçekte var; task state dual-source bilinçli tasarım).
+- **Faz 2 (commit zinciri `6924634..beb90b7`):** M varyant (P0 + 6 P1, ~6h). 7 fix, 6 commit.
+
+**Faz 1 → 15 finding:**
+- P0: 1 (F-S-002 AydınlatmaPopup scroll gate yok — KVKK compliance false audit riski)
+- P1: 6 (palette scrollIntoView + Tab, chat a11y, dashboard customize, medication conflicts CTA, calendar empty state)
+- P2: 8 (kozmetik — Session 42'ye ertelendi)
+- CLEAN: 3 (FamilyHistorySection S39 hotfix, Settings nav, Prospectus upload)
+
+**Faz 2 fix commit'leri:**
+
+- `6924634` **F-S-002** AydınlatmaPopup scroll gate — Root: D (hiç uygulanmamış). Session 36 C7 aslında popup kapanma fix'iydi, scroll gate değil. ConsentPopup pattern'i (`7167423`, `0d9c7a4`) AydınlatmaPopup'a taşındı: `hasScrolledToBottom` state, `useEffect` short-text auto-enable (scrollHeight ≤ clientHeight + 5), `onScroll` eşik kontrolü (< 20), button `disabled` + amber hint + opacity-50.
+- `31ffa97` **F-S-001 + F-S-003** CommandPalette keyboard nav — handleKeyDown'a Tab/Shift+Tab forward/backward (ArrowDown/Up mirror), `useEffect([selectedIndex, open])` data-attr query + scrollIntoView block:nearest. Registry/bilingual matching dokunulmadı.
+- `e273535` **F-D-007** ChatInterface 5 icon button aria-label — paperclip/camera/mic/trash/send. Send butonu stream state'ine göre iki ayrı label ("Mesajı gönder" / "Yanıt hazırlanıyor"). `chat.send` translation key mevcut değil, inline TR/EN stringler (voice message pattern ile tutarlı).
+- `24914c1` **F-D-005** Calendar TimeBlock empty CTA — `onAdd={() => {}}` call-site'larında no-op idi; butonun onClick'ine `setEditMode(true)` eklendi → mevcut custom-task form (line 332) açılır. onAdd prop'u korundu (future-compat).
+- `792d477` **F-D-004** Medication Hub conflict banner — audit "silent" dedi ama amber banner zaten var (line 455-464); gerçek friction sadece hardcoded 2 pair. Banner'a `/interaction-checker` CTA eklendi ("Tüm ilaç-bitki etkileşimlerini kontrol et"). Pair expansion Session 42+'a ertelendi (feature addition).
+- `beb90b7` **F-D-003** Dashboard customize panel — `taskCustomizeMode ? ... : ...` swap yerine `list + {mode && panel}`. Task list her zaman görünür, customize panel altına expansion (dashed top border). Mobile'da scroll akışı doğal.
+
+**Sonuç:**
+- **P0: 1/1 FIXED.** KVKK compliance audit trail riski kapatıldı — artık kullanıcı v2.x metnini sonuna kadar kaydırmadan "Okudum, Kapat" edemez.
+- **P1: 6/6 FIXED.** En yüksek günlük friction noktaları (palette keyboard nav, chat a11y, calendar empty dead CTA, dashboard customize context loss, medication interaction discovery).
+- **Build:** 241 sayfa, 0 error, 0 warning (Faz 1 ile bit-perfect).
+- **Regression yok:** Session 32 AuthContext cache + Session 36-39 tüm fix'ler + Session 40 bug fix'ler korundu. ConsentPopup scroll gate pattern'ine dokunulmadı (F-S-002 yeni/ayrı).
+
+**Ertelenenler (Session 42+):**
+- 8 P2 finding (kozmetik sprint — profile draft utility, water optimistic, copilot chips, prospectus retry, palette avatar, header banner, settings password, etc.)
+- F-D-004'ün drug-pair expansion'ı (interaction engine refactor)
+- FP-D Settings password UX (Session 40 deferred)
+- ESLint 127 error (library dosyaları)
+
+**Detay:** [docs/sessions/SESSION_41_INTERACTION_AUDIT.md](docs/sessions/SESSION_41_INTERACTION_AUDIT.md) — FIXED işaretleri + root cause notları + Faz 2 commit haritası.
+
+**Session 42'ye devir:** P2 kozmetik sprint + profile draft utility (sessionStorage pattern'ini reusable lib'e çıkarma) + onboarding flow audit (yeni user journey) + beta lansman hazırlık. Iyzico şirket tescili bekleyişi devam.

@@ -265,6 +265,29 @@
 
 ## Status
 
-- Faz 1 AUDIT: ✅ TAMAMLANDI
-- Faz 2 FIX: ⏳ İpek scope onayı bekliyor (S / M / L / Custom)
-- Faz 1 commit: `docs(session-41): interaction audit phase 1`
+- Faz 1 AUDIT: ✅ TAMAMLANDI (commit `989ba0b`)
+- Faz 2 FIX: ✅ TAMAMLANDI (M varyant, 7 fix — aşağıda FIXED işaretleri)
+
+### Faz 2 FIXED İşaretleri
+
+**P0 (1/1 fixed):**
+- **F-S-002** ✅ FIXED — commit: `6924634` — AydınlatmaPopup scroll gate. Root: D (pattern ConsentPopup'ta var, AydınlatmaPopup'a taşınmamış). Session 36 C7 aslında popup kapanma handler fix'iydi, scroll gate eklemedi.
+
+**P1 (6/6 fixed):**
+- **F-S-001** ✅ FIXED — commit: `31ffa97` — CommandPalette selected item scrollIntoView (aynı commit F-S-003 ile — keyboard nav cohesion)
+- **F-S-003** ✅ FIXED — commit: `31ffa97` — CommandPalette Tab / Shift+Tab support
+- **F-D-007** ✅ FIXED — commit: `e273535` — ChatInterface 5 icon button aria-label
+- **F-D-005** ✅ FIXED — commit: `24914c1` — Calendar TimeBlock empty-state CTA editMode tetikliyor (önce `onAdd = () => {}` no-op)
+- **F-D-004** ✅ FIXED — commit: `792d477` — Medication Hub conflict banner'a /interaction-checker CTA (Session 42: hardcoded 2 pair expansion)
+- **F-D-003** ✅ FIXED — commit: `beb90b7` — Dashboard customize panel task list ile yan yana, swap kaldırıldı
+
+**Build durumu:** Faz 2 sonrası 241 sayfa, 0 error, 0 warning (baseline ile bit-perfect).
+
+**Ertelenenler (Session 42+):**
+- 8 P2 finding (F-D-006 profile draft utility, F-D-008 water optimistic, F-D-010 copilot chips mobile, F-S-008 prospectus retry, F-S-009 palette avatar, F-S-010 header banner overflow, F-S-005 settings password state) — kozmetik sprint
+- F-D-009 (MonthView Suspense) → **DOĞRULAMA: ZATEN CLEAN** — [app/calendar/page.tsx:997](app/calendar/page.tsx:997) `Suspense fallback={<Loader2 />}` mevcut. Audit raporundaki "Suspense fallback belirsiz" iddiası false positive (statik okumada lazy() çağrısında fallback görülmemişti ama mount noktasında var).
+- 3 CLEAN finding (FamilyHistorySection, Settings nav, Prospectus upload) — regression check, dokunulmadı.
+- F-D-004'ün yeni drug-pair rules eklemesi — interaction engine refactor'ına taşındı (Session 42+).
+
+**Faz 1 commit:** `docs(session-41): interaction audit phase 1` (`989ba0b`)
+**Faz 2 commit zinciri:** `6924634..beb90b7` (6 fix commit, F-S-001 + F-S-003 birleşik).
