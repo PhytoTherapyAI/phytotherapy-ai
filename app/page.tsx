@@ -202,13 +202,30 @@ function TaskItem({ emoji, label, done, duration, onClick, onDismiss }: {
 }
 
 // ── Water-aware TaskItem (uses WaterIntakeProvider context) ──
+// Session 42 F-D-008: clicking the water row now advances the glass
+// count via WaterIntakeProvider (optimistic — addGlass/removeGlass
+// update local state before DB acks) in addition to the parent's task
+// toggle. Before, the checkmark animated but the "X/8" counter didn't
+// move until the user opened /calendar and tapped "Drank water" — two
+// sources of truth, confusing feedback.
 function WaterTaskItem({ emoji, label, done, onClick, onDismiss }: {
   emoji: string; label: string; done: boolean; onClick: () => void; onDismiss?: () => void
 }) {
-  const { glasses, target } = useWater();
+  const { glasses, target, addGlass, removeGlass } = useWater();
+  const handleClick = () => {
+    // Mirror the parent-owned task toggle with an optimistic water log.
+    // done=true → user is un-checking, decrement (if any glasses logged).
+    // done=false → user is checking, increment.
+    if (done) {
+      if (glasses > 0) void removeGlass();
+    } else {
+      void addGlass();
+    }
+    onClick();
+  };
   return (
     <TaskItem emoji={emoji} label={`${label} ${glasses}/${target}`} done={done}
-      onClick={onClick} onDismiss={onDismiss} />
+      onClick={handleClick} onDismiss={onDismiss} />
   );
 }
 
