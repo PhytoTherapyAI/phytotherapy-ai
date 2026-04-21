@@ -303,6 +303,25 @@ function LoginContent() {
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
+                  {/* Session 43 F-OB-002: proactive password requirement hints.
+                      Mirrors the same three rules handleSignup() enforces on
+                      submit (length ≥ 8, ≥1 uppercase, ≥1 number) so users
+                      don't discover them via error + retry. Gray chevron
+                      while unmet, emerald check once satisfied. */}
+                  {signupPassword.length > 0 && (
+                    <div className="flex flex-wrap gap-2 text-[11px] text-muted-foreground pt-1">
+                      {[
+                        { ok: signupPassword.length >= 8, tr: "8+ karakter", en: "8+ characters" },
+                        { ok: /[A-Z]/.test(signupPassword), tr: "Büyük harf", en: "Uppercase" },
+                        { ok: /[0-9]/.test(signupPassword), tr: "Rakam", en: "Number" },
+                      ].map((rule, i) => (
+                        <span key={i} className={`inline-flex items-center gap-1 ${rule.ok ? "text-emerald-600 dark:text-emerald-400" : ""}`}>
+                          <span aria-hidden className={`inline-block h-1.5 w-1.5 rounded-full ${rule.ok ? "bg-emerald-500" : "bg-muted-foreground/40"}`} />
+                          {lang === "tr" ? rule.tr : rule.en}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-confirm">{tx("auth.confirmPassword", lang)}</Label>
