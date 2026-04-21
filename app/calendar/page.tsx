@@ -43,7 +43,14 @@ function generateICS(events: Array<{ title: string; event_date: string; event_ti
     const dtEnd = evt.event_time ? `${dateClean}T${String(parseInt(evt.event_time.split(":")[0], 10) + 1).padStart(2, "0")}${evt.event_time.split(":")[1]}00` : dateClean
     lines.push("BEGIN:VEVENT", `DTSTART:${dtStart}`, `DTEND:${dtEnd}`, `SUMMARY:${evt.title}`)
     if (evt.description) lines.push(`DESCRIPTION:${evt.description.replace(/\n/g, "\\n")}`)
-    lines.push(`CATEGORIES:${evt.event_type}`, `UID:${evt.event_date}-${Math.random().toString(36).slice(2)}@doctopal.com`, "END:VEVENT")
+    // Session 40 BUG-002: deterministic UID so repeat imports dedupe in
+    // Google/Apple Calendar. Math.random() was generating a new UID per
+    // export, producing duplicate events.
+    const slugSource = `${evt.event_date}|${evt.event_type}|${evt.event_time ?? ""}|${evt.title}`
+    let hash = 0
+    for (let i = 0; i < slugSource.length; i++) hash = ((hash << 5) - hash + slugSource.charCodeAt(i)) | 0
+    const uid = `${evt.event_date.replace(/-/g, "")}-${(hash >>> 0).toString(36)}@doctopal.com`
+    lines.push(`CATEGORIES:${evt.event_type}`, `UID:${uid}`, "END:VEVENT")
   }
   lines.push("END:VCALENDAR")
   return lines.join("\r\n")
