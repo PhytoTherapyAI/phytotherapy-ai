@@ -51,6 +51,32 @@ const EMPTY_FORM: FormState = {
   notes: "",
 };
 
+// Session 39 hotfix: modal form state persists across tab switches via
+// sessionStorage (parent page's authLoading/familyLoading flips can
+// unmount this section while the user is away). Draft is cleared on
+// save/cancel/close; restored only when the user re-opens the modal.
+const DRAFT_STORAGE_KEY = "doctopal:familyHistory:draft";
+
+function readDraft(): FormState | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as FormState;
+  } catch {
+    return null;
+  }
+}
+
+function clearDraft(): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+  } catch {
+    // sessionStorage unavailable (private mode quota, etc.) — swallow
+  }
+}
+
 const RELATION_OPTIONS_TR = [
   "Anne",
   "Baba",
@@ -141,27 +167,55 @@ export function FamilyHistorySection() {
     fetchEntries();
   }, [fetchEntries]);
 
+  // Session 39 hotfix: persist form draft while modal is open so tab
+  // switches (which can unmount this section via parent loading flip)
+  // don't discard the user's input. Cleared on close/save — see clearDraft.
+  useEffect(() => {
+    if (!formOpen) return;
+    if (typeof window === "undefined") return;
+    try {
+      window.sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(formState));
+    } catch {
+      // quota exceeded / private mode — non-fatal, form still works
+    }
+  }, [formState, formOpen]);
+
   const openAddForm = () => {
-    setFormState(EMPTY_FORM);
+    const draft = readDraft();
+    // Only restore an add-mode draft (no id); an edit-mode draft belongs
+    // to a specific entry and shouldn't leak into a fresh Add form.
+    if (draft && !draft.id) {
+      setFormState(draft);
+    } else {
+      setFormState(EMPTY_FORM);
+    }
     setFormOpen(true);
   };
 
   const openEditForm = (entry: FamilyHistoryEntry) => {
-    setFormState({
-      id: entry.id,
-      person_relation: entry.person_relation,
-      condition_name: entry.condition_name,
-      age_at_diagnosis: entry.age_at_diagnosis != null ? String(entry.age_at_diagnosis) : "",
-      age_at_death: entry.age_at_death != null ? String(entry.age_at_death) : "",
-      is_deceased: entry.is_deceased,
-      notes: entry.notes ?? "",
-    });
+    const draft = readDraft();
+    // Restore only if the draft belongs to THIS entry — otherwise show the
+    // current server values so the user isn't confused by stale data.
+    if (draft && draft.id === entry.id) {
+      setFormState(draft);
+    } else {
+      setFormState({
+        id: entry.id,
+        person_relation: entry.person_relation,
+        condition_name: entry.condition_name,
+        age_at_diagnosis: entry.age_at_diagnosis != null ? String(entry.age_at_diagnosis) : "",
+        age_at_death: entry.age_at_death != null ? String(entry.age_at_death) : "",
+        is_deceased: entry.is_deceased,
+        notes: entry.notes ?? "",
+      });
+    }
     setFormOpen(true);
   };
 
   const closeForm = () => {
     setFormOpen(false);
     setFormState(EMPTY_FORM);
+    clearDraft();
   };
 
   const handleSave = async () => {
