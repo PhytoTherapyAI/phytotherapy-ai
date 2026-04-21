@@ -454,16 +454,16 @@ export function checkRedFlags(input: string): TriageResult {
 
 export function getEmergencyMessage(language: "en" | "tr"): string {
   if (language === "tr") {
-    return "🚨 **ACİL DURUM TESPİT EDİLDİ**\n\nBelirttiğiniz durum hayati tehlike içerebilir. **Lütfen derhal 112'yi arayın** veya en yakın acil servise başvurun.\n\n⛔ Bu durumda hiçbir bitkisel takviye veya ev tedavisi uygulanmamalıdır.\n\n📞 **112 Acil Yardım** — 7/24 ücretsiz";
+    return "🚨 **ACİL DURUM TESPİT EDİLDİ**\n\nBelirttiğin durum hayati tehlike içerebilir. **Hemen 112'yi ara.**\n\n⚡ **Şimdi yapman gerekenler:**\n1. **Otur veya uzan** — hareket etme, enerji kaybı kritik\n2. **Yalnız kalma** — yakınındaki birine haber ver\n3. **Hiçbir ilaç veya takviye alma** — ambulans gelene kadar bekle (hekiminin daha önce talimat verdiği kardiyak reçete ilaçlar istisna)\n\n📞 **112 Acil Yardım** — 7/24 ücretsiz\n\nGüvende olduğunda bu durum hakkında daha fazla bilgi sorabilirsin.";
   }
-  return "🚨 **EMERGENCY DETECTED**\n\nYour symptoms may indicate a life-threatening condition. **Please call 911/112 immediately** or go to the nearest emergency room.\n\n⛔ Do not attempt any herbal supplements or home remedies in this situation.\n\n📞 **Call 112/911** — 24/7 free";
+  return "🚨 **EMERGENCY DETECTED**\n\nYour symptoms may indicate a life-threatening condition. **Call 911/112 now.**\n\n⚡ **What to do right now:**\n1. **Sit or lie down** — don't move around, conserve energy\n2. **Don't be alone** — alert someone nearby\n3. **Do not take any medication or supplement** — wait for the ambulance (exception: prescribed cardiac meds if your doctor has told you to take them in this situation)\n\n📞 **Call 911/112** — 24/7 free\n\nOnce you're safe, you can ask me for more information about this condition.";
 }
 
 export function getYellowWarning(language: "en" | "tr"): string {
   if (language === "tr") {
-    return "\n\n⚠️ Bu bir acil durum olabilir. Lütfen **112'yi arayın** veya **doktorunuza danışın**.";
+    return "\n\n---\n⚠️ **Dikkat:** Belirttiğin durum acil olabilir.\n- **112'yi arayabilir** ya da acil servise yakın konumdaysan doğrudan gidebilirsin\n- Kendi kendine ilaç alma; durum kötüleşirse bekleme\n- Yalnız kalma — yakınına haber ver";
   }
-  return "\n\n⚠️ This could be an emergency. Please **call 112/911** or **consult your doctor**.";
+  return "\n\n---\n⚠️ **Heads up:** Your symptoms could be an emergency.\n- **Call 911/112** or go to the nearest ER if you're close to one\n- Don't self-medicate; if it worsens, don't wait\n- Don't be alone — let someone nearby know";
 }
 
 // ═══════════════════════════════════════════════
