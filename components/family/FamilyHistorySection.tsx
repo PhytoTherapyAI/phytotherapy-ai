@@ -20,6 +20,7 @@ import {
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
 import { createBrowserClient } from "@/lib/supabase";
+import { readDraft as readDraftKey, persistDraft, clearDraft as clearDraftKey, DRAFT_KEYS } from "@/lib/ui/draft-persist";
 
 interface FamilyHistoryEntry {
   id: string;
@@ -55,26 +56,18 @@ const EMPTY_FORM: FormState = {
 // sessionStorage (parent page's authLoading/familyLoading flips can
 // unmount this section while the user is away). Draft is cleared on
 // save/cancel/close; restored only when the user re-opens the modal.
-const DRAFT_STORAGE_KEY = "doctopal:familyHistory:draft";
+// Session 42 F-D-006: generic readDraft / persistDraft / clearDraft
+// helpers live in lib/ui/draft-persist.ts so other forms can share them.
+// Local thin wrappers keep the typed FormState shape inline at the
+// call-sites without leaking the storage key to every callsite.
+const DRAFT_STORAGE_KEY = DRAFT_KEYS.familyHistory;
 
 function readDraft(): FormState | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.sessionStorage.getItem(DRAFT_STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as FormState;
-  } catch {
-    return null;
-  }
+  return readDraftKey<FormState>(DRAFT_STORAGE_KEY);
 }
 
 function clearDraft(): void {
-  if (typeof window === "undefined") return;
-  try {
-    window.sessionStorage.removeItem(DRAFT_STORAGE_KEY);
-  } catch {
-    // sessionStorage unavailable (private mode quota, etc.) — swallow
-  }
+  clearDraftKey(DRAFT_STORAGE_KEY);
 }
 
 const RELATION_OPTIONS_TR = [
@@ -172,12 +165,7 @@ export function FamilyHistorySection() {
   // don't discard the user's input. Cleared on close/save — see clearDraft.
   useEffect(() => {
     if (!formOpen) return;
-    if (typeof window === "undefined") return;
-    try {
-      window.sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(formState));
-    } catch {
-      // quota exceeded / private mode — non-fatal, form still works
-    }
+    persistDraft(DRAFT_STORAGE_KEY, formState);
   }, [formState, formOpen]);
 
   const openAddForm = () => {

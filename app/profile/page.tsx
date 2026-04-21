@@ -11,6 +11,7 @@ import { createBrowserClient } from "@/lib/supabase";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { translateCondition, isSurgery, stripPrefix } from "@/lib/condition-translations";
+import { readDraft, persistDraft, clearDraft, DRAFT_KEYS } from "@/lib/ui/draft-persist";
 import { SOSButton } from "@/components/family/SOSButton";
 import { PrivacySettings } from "@/components/profile/PrivacySettings";
 import { LocalizedTitle } from "@/components/layout/LocalizedTitle";
@@ -87,6 +88,34 @@ export default function ProfilePage() {
   const [newDosage, setNewDosage] = useState("");
   const [newFrequency, setNewFrequency] = useState("");
   const [savingMed, setSavingMed] = useState(false);
+
+  // Session 42 F-D-006: medication-add form draft persistence. Same pattern
+  // as FamilyHistorySection (Session 39) now that the shared helpers live in
+  // lib/ui/draft-persist. Persist while the add panel is open, restore when
+  // reopened, clear on successful save. Cancel just closes — leaves the
+  // draft around so an accidental close doesn't throw away the user's
+  // typing (mirrors the Session 39 behavior the user already knows).
+  useEffect(() => {
+    if (!isAddingMed) return;
+    const draft = readDraft<{ brand: string; generic: string; dosage: string; frequency: string }>(
+      DRAFT_KEYS.profileMedicationAdd,
+    );
+    if (draft) {
+      setNewBrandName(draft.brand || "");
+      setNewGenericName(draft.generic || "");
+      setNewDosage(draft.dosage || "");
+      setNewFrequency(draft.frequency || "");
+    }
+  }, [isAddingMed]);
+  useEffect(() => {
+    if (!isAddingMed) return;
+    persistDraft(DRAFT_KEYS.profileMedicationAdd, {
+      brand: newBrandName,
+      generic: newGenericName,
+      dosage: newDosage,
+      frequency: newFrequency,
+    });
+  }, [isAddingMed, newBrandName, newGenericName, newDosage, newFrequency]);
 
   // Autocomplete state
   const [suggestions, setSuggestions] = useState<DrugSuggestion[]>([]);
@@ -544,6 +573,7 @@ export default function ProfilePage() {
       setNewGenericName("");
       setNewDosage("");
       setNewFrequency("");
+      clearDraft(DRAFT_KEYS.profileMedicationAdd); // Session 42 F-D-006
       setIsAddingMed(false);
       showSaveToast();
       // Ask for notification permission on first med save
