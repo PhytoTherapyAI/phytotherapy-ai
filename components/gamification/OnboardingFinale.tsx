@@ -12,9 +12,14 @@ import type { Badge } from "@/lib/badges";
 interface Props {
   badges: Badge[];
   totalPoints: number;
+  /** Session 43 F-OB-001: when 0, the finale surfaces a "Add your first
+   * medication" primary CTA so users finishing onboarding without meds get
+   * a clear path to the aha moment (add med → see interactions). When >0
+   * the classic "Explore" CTA stays primary. */
+  medicationsCount?: number;
 }
 
-export function OnboardingFinale({ badges, totalPoints }: Props) {
+export function OnboardingFinale({ badges, totalPoints, medicationsCount = 0 }: Props) {
   const router = useRouter();
   const { lang } = useLang();
   const prefersReducedMotion = useRef(false);
@@ -114,20 +119,44 @@ export function OnboardingFinale({ badges, totalPoints }: Props) {
         </motion.div>
       )}
 
-      {/* CTA */}
+      {/* CTA — Session 43 F-OB-001: when the user finished onboarding
+          without adding any medications, promote "Add your first
+          medication" as the primary CTA (aha moment path) and keep
+          "Explore" as a secondary option. When meds are already present,
+          revert to the single "Explore" CTA as before. */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2 }}
-        className="mt-8"
+        className="mt-8 flex flex-col sm:flex-row items-center gap-3"
       >
-        <Button
-          size="lg"
-          onClick={() => router.push("/")}
-          className="bg-primary hover:bg-primary/90 px-8"
-        >
-          {tx("badge.exploreCta", lang)}
-        </Button>
+        {medicationsCount === 0 ? (
+          <>
+            <Button
+              size="lg"
+              onClick={() => router.push("/profile?tab=medications")}
+              className="bg-primary hover:bg-primary/90 px-8"
+            >
+              {lang === "tr" ? "İlk ilacını ekle →" : "Add your first medication →"}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => router.push("/")}
+              className="px-8"
+            >
+              {tx("badge.exploreCta", lang)}
+            </Button>
+          </>
+        ) : (
+          <Button
+            size="lg"
+            onClick={() => router.push("/")}
+            className="bg-primary hover:bg-primary/90 px-8"
+          >
+            {tx("badge.exploreCta", lang)}
+          </Button>
+        )}
       </motion.div>
     </motion.div>
   );

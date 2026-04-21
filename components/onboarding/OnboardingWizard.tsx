@@ -642,7 +642,10 @@ export function OnboardingWizard({ profile }: Props) {
 
   // Show finale screen after celebrations
   if (showFinale) {
-    return <OnboardingFinale badges={earnedBadges} totalPoints={totalPoints} />;
+    // Session 43 F-OB-001: pass the count of meds entered during onboarding
+    // so the finale can promote "Add your first medication" as primary
+    // when the wizard's Medications step was skipped / left empty.
+    return <OnboardingFinale badges={earnedBadges} totalPoints={totalPoints} medicationsCount={data.medications.length} />;
   }
 
   return (
