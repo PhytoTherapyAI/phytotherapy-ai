@@ -279,15 +279,6 @@ function loadDismissedTasks(date: string): Set<string> {
 }
 
 // ── Time-based greeting emoji ──
-function getTimeEmoji(): string {
-  const h = new Date().getHours();
-  if (h < 6)  return "🌙";
-  if (h < 12) return "☀️";
-  if (h < 17) return "🌤️";
-  if (h < 21) return "🌅";
-  return "🌙";
-}
-
 // ── Main Page ──
 export default function Home() {
   const router = useRouter();
@@ -354,7 +345,10 @@ export default function Home() {
   }, [isLoading, familyLoading, isAuthenticated, familyGroup, familyMembers, user, router]);
 
   // Guest state
-  const [timeEmoji, setTimeEmoji] = useState("👋");
+  // Session 40 BUG-003: timeEmoji derived from hour state instead of a
+  // separate useState + effect. This removes one render pass; `hour === null`
+  // during SSR / first render yields the stable "👋" default (same emoji on
+  // server and client), then the existing hour effect below promotes it.
 
   // Dashboard state
   const [checkInData, setCheckInData]   = useState<{ energy_level: number | null; sleep_quality: number | null; mood: number | null; bloating: number | null } | null>(null);
@@ -580,7 +574,6 @@ export default function Home() {
     } catch { /* silent */ }
   }, [activeUserId]);
 
-  useEffect(() => { setTimeEmoji(getTimeEmoji()); }, []);
   useEffect(() => { setHour(new Date().getHours()); }, []);
   useEffect(() => { if (activeUserId) { fetchCheckIn(); fetchMeds(); } }, [activeUserId, fetchCheckIn, fetchMeds]);
   useEffect(() => {
@@ -604,6 +597,13 @@ export default function Home() {
     ? Math.floor((Date.now() - new Date(displayProfile.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
     : displayProfile?.age;
   const greetingKey = hour === null ? "dashboard.morning" : hour < 12 ? "dashboard.morning" : hour < 18 ? "dashboard.afternoon" : "dashboard.evening";
+  const timeEmoji: string = hour === null
+    ? "👋"
+    : hour < 6 ? "🌙"
+    : hour < 12 ? "☀️"
+    : hour < 17 ? "🌤️"
+    : hour < 21 ? "🌅"
+    : "🌙";
 
   // ── Loading ──
   if (isLoading) {
