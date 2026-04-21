@@ -68,7 +68,7 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     category: "pages",
     title: { tr: "Takvim", en: "Calendar" },
     description: { tr: "İlaç zamanı, su takibi, günlük kayıtlar", en: "Medication times, hydration, daily logs" },
-    keywords: { tr: ["takvim", "ilaç", "hatırlatıcı", "su", "günlük", "plan"], en: ["calendar", "reminder", "hydration", "schedule"] },
+    keywords: { tr: ["takvim", "calendar", "ilaç hatırlatıcı", "su", "randevu"], en: ["calendar", "schedule", "reminder"] },
     href: "/calendar",
     authOnly: true,
   },
@@ -331,7 +331,16 @@ export function visibleEntries(ctx: PaletteSearchContext): PaletteEntry[] {
   });
 }
 
-/** Lowercase substring match on title + description + keywords (active lang). */
+/**
+ * Lowercase substring match on title + description + keywords.
+ *
+ * Session 39/40 hotfix: keywords are now searched in BOTH languages so users
+ * can type in either TR or EN regardless of active UI locale
+ * (e.g. UI in TR + query "privacy" → matches legal:aydinlatma via EN
+ * keywords; UI in EN + query "takvim" → matches page:calendar via TR
+ * keywords). Title and description remain active-language only since
+ * those are what the UI renders.
+ */
 export function matchPaletteEntry(entry: PaletteEntry, query: string, lang: "tr" | "en"): boolean {
   const q = query.toLowerCase().trim();
   if (!q) return false;
@@ -339,8 +348,8 @@ export function matchPaletteEntry(entry: PaletteEntry, query: string, lang: "tr"
   if (title.includes(q)) return true;
   const desc = entry.description?.[lang]?.toLowerCase();
   if (desc && desc.includes(q)) return true;
-  const keywords = entry.keywords[lang];
-  return keywords.some((kw) => kw.toLowerCase().includes(q));
+  const allKeywords = [...entry.keywords.tr, ...entry.keywords.en];
+  return allKeywords.some((kw) => kw.toLowerCase().includes(q));
 }
 
 export const PALETTE_CATEGORY_LABELS: Record<PaletteCategory, { tr: string; en: string }> = {
