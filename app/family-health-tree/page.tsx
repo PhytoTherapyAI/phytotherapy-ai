@@ -15,6 +15,7 @@ import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { useEffectivePremium } from "@/lib/use-effective-premium"
 import { PremiumUpgradeModal } from "@/components/premium/PremiumUpgradeModal"
+import { FamilyHistorySection } from "@/components/family/FamilyHistorySection"
 import { getAvatarDataUri, type AvatarStyle } from "@/lib/avatar"
 import {
   buildFamilyTree,
@@ -493,6 +494,9 @@ export default function FamilyHealthTreePage() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Session 39 C2: Family History Entries CRUD section */}
+        <FamilyHistorySection />
 
         <p className="mt-6 text-[11px] text-muted-foreground text-center max-w-xl mx-auto">
           {tr

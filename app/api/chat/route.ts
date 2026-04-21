@@ -143,11 +143,13 @@ export async function POST(request: NextRequest) {
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
         const sevenDaysAgoIso = sevenDaysAgo.toISOString().slice(0, 10);
 
-        const [profileRes, medsRes, allergiesRes, checkInsRes] = await Promise.all([
+        const [profileRes, medsRes, allergiesRes, checkInsRes, familyHistoryRes] = await Promise.all([
           supabase.from("user_profiles").select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, diet_type, exercise_frequency, sleep_quality, supplements, vaccines, onboarding_complete, consent_ai_processing, consent_data_transfer").eq("id", targetUserId).maybeSingle(),
           supabase.from("user_medications").select("brand_name, generic_name, dosage, frequency").eq("user_id", targetUserId).eq("is_active", true),
           supabase.from("user_allergies").select("allergen, severity").eq("user_id", targetUserId),
           supabase.from("daily_check_ins").select("sleep_quality").eq("user_id", targetUserId).gte("check_date", sevenDaysAgoIso).not("sleep_quality", "is", null),
+          // Session 39 C2: family history entries (may fail gracefully if migration not yet applied)
+          supabase.from("family_history_entries").select("person_relation, condition_name, age_at_diagnosis, age_at_death, is_deceased, notes").eq("user_id", targetUserId),
         ]);
         // Capture display name for system prompt
         actingOnBehalfOfName = isActingOnBehalf
@@ -158,10 +160,19 @@ export async function POST(request: NextRequest) {
           if (medsRes.error) console.error("[Chat] meds error:", medsRes.error.message);
           if (allergiesRes.error) console.error("[Chat] allergies error:", allergiesRes.error.message);
           // daily_check_ins error is non-fatal — sleep data is optional enrichment
+          // family_history_entries error is non-fatal — table may not exist if migration not yet applied
 
           const meds = medsRes.data || [];
           const allergies = allergiesRes.data || [];
           const checkIns = (checkInsRes.data || []) as Array<{ sleep_quality: number | null }>;
+          const familyHistory = (familyHistoryRes.data || []) as Array<{
+            person_relation: string;
+            condition_name: string;
+            age_at_diagnosis: number | null;
+            age_at_death: number | null;
+            is_deceased: boolean;
+            notes: string | null;
+          }>;
           hasMedications = meds.length > 0;
           profile = profileRes.data;
 
@@ -266,7 +277,31 @@ export async function POST(request: NextRequest) {
             // moved to their own CRITICAL PATIENT FACTORS block above.
             const chronicLines = bulletList(chronicList);
             const surgicalLines = bulletList(surgicalList);
-            const familyLines = bulletList(familyList);
+
+            // Session 39 C2: Merge structured family_history_entries with legacy
+            // chronic_conditions[family:] prefix entries. Coexistence preserves
+            // backwards compatibility; structured rows produce richer lines.
+            const familyHistoryFormatted = familyHistory.map((fh) => {
+              const parts: string[] = [];
+              const ageNote: string[] = [];
+              if (typeof fh.age_at_diagnosis === "number") {
+                ageNote.push(`diagnosed at ${fh.age_at_diagnosis}`);
+              }
+              if (fh.is_deceased) {
+                ageNote.push(
+                  typeof fh.age_at_death === "number"
+                    ? `deceased at ${fh.age_at_death}`
+                    : "deceased",
+                );
+              }
+              const rel = fh.person_relation
+                + (ageNote.length > 0 ? ` (${ageNote.join(", ")})` : "");
+              parts.push(`${rel}: ${fh.condition_name}`);
+              if (fh.notes) parts.push(`— ${fh.notes}`);
+              return parts.join(" ");
+            });
+            const mergedFamily = [...familyList, ...familyHistoryFormatted];
+            const familyLines = bulletList(mergedFamily);
 
             // Lifestyle
             const smoking = ((profile.smoking_use as string) || "").split("|")[0] || none;
