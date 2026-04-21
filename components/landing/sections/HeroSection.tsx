@@ -77,6 +77,20 @@ export function HeroSection() {
               {tx("landing.hero.h2", lang)}
             </motion.p>
 
+            {/* Session 43 F-OB-016: concrete feature line. The emotional H2
+                wins on narrative; new visitors still asked "what does this
+                app DO?". The feature triad answers in a glance without
+                competing with the H2's framing. Bullet separators keep
+                scannability across both languages. */}
+            <motion.p
+              variants={fadeUp}
+              className="mt-4 max-w-xl text-sm text-slate-500 dark:text-slate-500"
+            >
+              {lang === "tr"
+                ? "İlaç-bitki etkileşimi · Kan tahlili yorumu · Aile profili yönetimi"
+                : "Drug-herb interactions · Blood test insights · Family profile management"}
+            </motion.p>
+
             <motion.div variants={fadeUp} className="mt-8 flex flex-col sm:flex-row gap-3">
               <Link
                 href="/pricing"
