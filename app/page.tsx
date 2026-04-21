@@ -400,7 +400,7 @@ export default function Home() {
         }
         setStreak(s);
       } catch (err) {
-        console.error("[Dashboard] Streak fetch error:", err);
+        if (process.env.NODE_ENV === "development") console.error("[Dashboard] Streak fetch error:", err);
       }
     };
     fetchStreak();
@@ -489,7 +489,7 @@ export default function Home() {
       if (!isOwnProfile && !canEdit) {
         // Revert the optimistic toggle we applied above
         setCompletedTaskIds(new Set(completedTaskIds));
-        console.warn("[dashboard] toggle blocked — no edit permission for active profile");
+        if (process.env.NODE_ENV === "development") console.warn("[dashboard] toggle blocked — no edit permission for active profile");
         return;
       }
       // Write to daily_logs Supabase (single source of truth) — targets the active profile's user_id,
@@ -979,7 +979,7 @@ export default function Home() {
                   const supabase = createBrowserClient();
                   const { data: { session: s } } = await supabase.auth.getSession();
                   if (!s?.access_token) {
-                    console.warn("[aydinlatma] no session, skip persist");
+                    if (process.env.NODE_ENV === "development") console.warn("[aydinlatma] no session, skip persist");
                     return;
                   }
                   const res = await fetch("/api/privacy-settings", {
@@ -988,10 +988,10 @@ export default function Home() {
                     body: JSON.stringify({ action: "acknowledge_aydinlatma", version: CONSENT_VERSIONS.aydinlatma }),
                   });
                   if (!res.ok) {
-                    console.error("[aydinlatma] persist failed", res.status, await res.text().catch(() => ""));
+                    if (process.env.NODE_ENV === "development") console.error("[aydinlatma] persist failed", res.status, await res.text().catch(() => ""));
                   }
                 } catch (err) {
-                  console.error("[aydinlatma] acknowledge error", err);
+                  if (process.env.NODE_ENV === "development") console.error("[aydinlatma] acknowledge error", err);
                 }
                 // Await refresh so needsAydinlatmaUpdate resolves before next render
                 await refreshProfile();

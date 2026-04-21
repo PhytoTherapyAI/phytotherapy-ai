@@ -42,8 +42,15 @@ function fileToBase64(file: File): Promise<string> {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
-      // Strip data URL prefix to get raw base64
+      // Session 40 BUG-006: guard against malformed data URLs (non-image
+      // FileReader results, truncated reads, empty files). Without this
+      // guard we resolved with undefined and the API call downstream got
+      // base64: undefined → silent 400.
       const base64 = result.split(",")[1];
+      if (!base64) {
+        reject(new Error("Invalid data URL — could not extract base64 payload"));
+        return;
+      }
       resolve(base64);
     };
     reader.onerror = reject;
@@ -439,7 +446,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
         )
       );
     } catch (error) {
-      console.error("Chat error:", error);
+      if (process.env.NODE_ENV === "development") console.error("Chat error:", error);
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantId
@@ -749,7 +756,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
               }),
             });
           } catch (err) {
-            console.error("[Chat] consent save error:", err);
+            if (process.env.NODE_ENV === "development") console.error("[Chat] consent save error:", err);
           } finally {
             setShowConsentPopup(false);
             // Reload so auth-context refetches profile with new consent flag
