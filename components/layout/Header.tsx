@@ -386,22 +386,29 @@ export function Header() {
         </div>
       )}
 
-      {/* Medication reminder — below navbar */}
+      {/* Medication reminder — below navbar.
+          Session 42 F-S-010: on narrow phones (<375px) the action buttons
+          used to wrap into the message row and tap targets overlapped.
+          Container now stacks on mobile (flex-col) and only lays out side-
+          by-side from sm: upward; buttons take full width in stacked mode
+          so neither can hide behind the other. */}
       {showMedReminder && (
         <div className="mx-auto max-w-6xl px-3 md:px-4 mt-1">
           <div className="rounded-xl border border-amber-200 bg-amber-50/80 px-4 py-2 dark:border-amber-800/40 dark:bg-amber-950/20">
-            <div className="flex items-center gap-3">
-              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
-              <p className="flex-1 text-xs text-amber-800 dark:text-amber-300">{tx("medReminder.text", lang)}</p>
-              <div className="flex items-center gap-1.5">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+              <div className="flex items-start gap-3 flex-1">
+                <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-0" />
+                <p className="flex-1 text-xs text-amber-800 dark:text-amber-300">{tx("medReminder.text", lang)}</p>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0 w-full sm:w-auto">
                 <Button variant="ghost" size="sm"
-                  className="h-7 gap-1 text-[10px] text-amber-700 hover:bg-amber-100 dark:text-amber-300"
+                  className="h-7 gap-1 text-[10px] text-amber-700 hover:bg-amber-100 dark:text-amber-300 flex-1 sm:flex-none"
                   onClick={dismissReminder} disabled={dismissingReminder}>
                   <Check className="h-3 w-3" /> {tx("medReminder.yesCurrent", lang)}
                 </Button>
-                <Link href="/profile?tab=medications">
+                <Link href="/profile?tab=medications" className="flex-1 sm:flex-none">
                   <Button variant="outline" size="sm"
-                    className="h-7 gap-1 border-amber-300 text-[10px] text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300">
+                    className="h-7 gap-1 border-amber-300 text-[10px] text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 w-full sm:w-auto">
                     <RefreshCw className="h-3 w-3" /> {tx("medReminder.update", lang)}
                   </Button>
                 </Link>

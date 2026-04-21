@@ -1,6 +1,23 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 22 Nisan 2026 (Session 41 — Interaction Audit Faz 1 tamamlandı; Faz 2 İpek scope onayı bekliyor)
+> Son güncelleme: 22 Nisan 2026 (Session 42 — P2 kozmetik sprint + FP-D başlangıcı; ESLint Session 43'e ayrıldı)
+
+---
+
+### Session 42 — P2 Kozmetik + FP-D (22 Nisan 2026) — DEVAM EDİYOR
+**Başlangıç commit:** `3ae0dff` (Session 41 Faz 2 sonu)
+
+8 fix (7 P2 + FP-D Settings UX), ESLint 127 library error Session 43'e ayrıldı.
+
+Sıra (kolaydan zora):
+- [ ] F-S-010 header medication reminder banner mobil overflow
+- [ ] F-S-009 CommandPalette doktor avatar initials mobil
+- [ ] F-D-010 Dashboard AI Copilot chips mobile grid
+- [ ] F-S-005 Settings password form state cleanup
+- [ ] F-S-008 Prospectus reader inline retry
+- [ ] F-D-008 Dashboard water optimistic feedback
+- [ ] FP-D Settings password UX family member view gating
+- [ ] F-D-006 Profile form draft utility (lib extract + Profile integrate)
 
 ---
 
