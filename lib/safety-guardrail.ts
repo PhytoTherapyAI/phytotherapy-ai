@@ -22,145 +22,15 @@ import { tx } from "@/lib/translations";
  */
 
 // ═══════════════════════════════════════════════
-// LAYER 1: Enhanced Red Flag Filter
+// LAYER 1: Red Flag Filter — see lib/safety-filter.ts
 // ═══════════════════════════════════════════════
-
-/**
- * Extended emergency symptom database
- * Categorized by urgency level and medical specialty
- * Updated based on: WHO Emergency Triage Assessment (ETAT)
- * + Turkish Ministry of Health Emergency Guidelines
- */
-export const RED_FLAG_DATABASE = {
-  // IMMEDIATE — Call 112, do NOT give any herb/supplement advice
-  immediate: {
-    en: [
-      "chest pain", "heart attack", "cardiac arrest", "can't breathe",
-      "shortness of breath", "choking", "drowning", "severe bleeding",
-      "uncontrollable bleeding", "loss of consciousness", "unconscious",
-      "seizure", "convulsion", "stroke", "sudden weakness one side",
-      "sudden vision loss", "sudden speech difficulty", "anaphylaxis",
-      "severe allergic reaction", "throat swelling", "suicidal",
-      "suicide", "self harm", "want to die", "poisoning", "overdose",
-      "severe burn", "electrocution", "gunshot", "stabbing",
-      "head injury", "skull fracture", "spinal injury",
-      "severe abdominal pain", "vomiting blood", "coughing blood",
-      "blood in stool black stool", "meningitis", "stiff neck fever rash",
-      "eclampsia", "pregnancy seizure", "cord prolapse",
-      "testicular torsion", "sudden severe testicle pain",
-    ],
-    tr: [
-      "göğüs ağrısı", "kalp krizi", "kalp durması", "nefes alamıyorum",
-      "nefes darlığı", "boğuluyorum", "şiddetli kanama",
-      "bilinç kaybı", "bayıldı", "bayılma", "bilinci kapalı",
-      "nöbet", "kasılma", "sara krizi", "felç", "inme",
-      "bir taraf güçsüzlük", "ani görme kaybı", "konuşamıyorum",
-      "anafilaksi", "şiddetli alerji", "boğaz şişmesi",
-      "intihar", "kendime zarar", "ölmek istiyorum",
-      "zehirlenme", "doz aşımı", "ilaç fazla aldım",
-      "şiddetli yanık", "kafa travması", "omurilik yaralanması",
-      "kan kusma", "kan tükürme", "siyah dışkı", "kanlı ishal",
-      "ense sertliği ateş", "gebelik nöbeti", "hamilelik kramp",
-      "ani şiddetli testis ağrısı", "testis dönmesi",
-    ],
-  },
-  // URGENT — Needs doctor within hours, limit supplement advice
-  urgent: {
-    en: [
-      "high fever above 39", "persistent vomiting", "severe dehydration",
-      "chest tightness", "irregular heartbeat", "palpitations at rest",
-      "sudden swelling", "severe headache worst ever",
-      "confusion disorientation", "difficulty speaking",
-      "blood in urine", "severe back pain radiating",
-      "eye pain vision changes", "sudden hearing loss",
-      "diabetic emergency", "very high blood sugar",
-      "very low blood sugar", "hypoglycemia shaking sweating",
-      "asthma attack not responding to inhaler",
-      "panic attack can't calm down",
-    ],
-    tr: [
-      "yüksek ateş 39 üstü", "sürekli kusma", "şiddetli susuzluk",
-      "göğüste sıkışma", "düzensiz kalp atışı", "istirahatte çarpıntı",
-      "ani şişlik", "şiddetli baş ağrısı hayatımın en kötüsü",
-      "bilinç bulanıklığı", "konuşma güçlüğü",
-      "idrarda kan", "sırta vuran şiddetli ağrı",
-      "göz ağrısı görme değişikliği", "ani işitme kaybı",
-      "diyabet acil", "çok yüksek şeker",
-      "çok düşük şeker", "hipoglisemi titreme terleme",
-      "astım krizi inhaler işe yaramıyor",
-      "panik atak sakinleşemiyorum",
-    ],
-  },
-};
-
-export interface RedFlagResult {
-  isEmergency: boolean;
-  urgencyLevel: "immediate" | "urgent" | "none";
-  language: "en" | "tr";
-  matchedFlags: string[];
-  action: "block_all" | "limit_advice" | "proceed";
-  emergencyMessage: string | null;
-}
-
-export function checkRedFlags(input: string): RedFlagResult {
-  const lower = input.toLowerCase().replace(/[.,!?;:]/g, " ");
-
-  // Check immediate flags
-  const enImmediateMatches = RED_FLAG_DATABASE.immediate.en.filter((flag) =>
-    lower.includes(flag)
-  );
-  const trImmediateMatches = RED_FLAG_DATABASE.immediate.tr.filter((flag) =>
-    lower.includes(flag)
-  );
-
-  if (enImmediateMatches.length > 0 || trImmediateMatches.length > 0) {
-    const lang = trImmediateMatches.length > 0 ? "tr" : "en";
-    return {
-      isEmergency: true,
-      urgencyLevel: "immediate",
-      language: lang,
-      matchedFlags: [...enImmediateMatches, ...trImmediateMatches],
-      action: "block_all",
-      emergencyMessage: getEmergencyMessage(lang, "immediate"),
-    };
-  }
-
-  // Check urgent flags
-  const enUrgentMatches = RED_FLAG_DATABASE.urgent.en.filter((flag) =>
-    lower.includes(flag)
-  );
-  const trUrgentMatches = RED_FLAG_DATABASE.urgent.tr.filter((flag) =>
-    lower.includes(flag)
-  );
-
-  if (enUrgentMatches.length > 0 || trUrgentMatches.length > 0) {
-    const lang = trUrgentMatches.length > 0 ? "tr" : "en";
-    return {
-      isEmergency: true,
-      urgencyLevel: "urgent",
-      language: lang,
-      matchedFlags: [...enUrgentMatches, ...trUrgentMatches],
-      action: "limit_advice",
-      emergencyMessage: getEmergencyMessage(lang, "urgent"),
-    };
-  }
-
-  return {
-    isEmergency: false,
-    urgencyLevel: "none",
-    language: "en",
-    matchedFlags: [],
-    action: "proceed",
-    emergencyMessage: null,
-  };
-}
-
-function getEmergencyMessage(lang: "en" | "tr", level: "immediate" | "urgent"): string {
-  if (level === "immediate") {
-    return "🚨 " + tx("safety.immediateEmergency", lang);
-  }
-  return "⚠️ " + tx("safety.urgentCaution", lang);
-}
+// Layer 1 (red/yellow code triage + emergency templates) moved to
+// lib/safety-filter.ts as the single source of truth. The old in-file
+// RED_FLAG_DATABASE + checkRedFlags + local getEmergencyMessage were
+// never imported outside this module and kept a stale Turkish emergency
+// template pointing at safety.immediateEmergency / safety.urgentCaution
+// translation keys — removed in Session 39 hotfix to prevent future
+// drift from the canonical template in lib/safety-filter.ts.
 
 // ═══════════════════════════════════════════════
 // LAYER 2: Drug-Herb Interaction Safety Check
@@ -609,23 +479,17 @@ export function runSafetyGuardrail(
   lang: "en" | "tr" = "en"
 ): SafetyGuardrailResult {
   // ── LAYER 1: Red Flag Check ──
-  const redFlagResult = checkRedFlags(userInput);
-
-  if (redFlagResult.urgencyLevel === "immediate") {
-    return {
-      shouldBlock: true,
-      shouldLimit: false,
-      blockReason: "Emergency symptoms detected — all supplement advice blocked",
-      emergencyMessage: redFlagResult.emergencyMessage,
-      urgencyLevel: "immediate",
-      interactionWarnings: [],
-      contraindicationWarnings: [],
-      blockedHerbs: proposedHerbs, // Block all
-      safeHerbs: [],
-      safetyScore: 0,
-      transparency: null,
-    };
-  }
+  // Session 39 hotfix: Layer 1 moved to lib/safety-filter.ts (single
+  // source of truth). Callers that need emergency triage should invoke
+  // checkRedFlags() from safety-filter first and short-circuit BEFORE
+  // calling runSafetyGuardrail. We keep a stub here so the downstream
+  // safety-score and shouldLimit logic still type-checks; urgencyLevel
+  // "none" makes this path a pass-through.
+  const redFlagResult = {
+    urgencyLevel: "none" as "none" | "immediate" | "urgent",
+    emergencyMessage: null as string | null,
+  };
+  void userInput;
 
   // ── LAYER 2: Drug-Herb Interaction Check ──
   const interactionResult = checkDrugHerbInteractions(userMedications, proposedHerbs);

@@ -82,12 +82,15 @@ export async function POST(request: NextRequest) {
     const triageResult = checkRedFlags(message);
     const isYellowCode = triageResult.type === "yellow_code";
     if (triageResult.type === "red_code") {
+      // Session 39 hotfix: getEmergencyMessage already begins with
+      // "🚨 **ACİL DURUM TESPİT EDİLDİ**" (see lib/safety-filter.ts). The
+      // previous "🚨 **ACİL UYARI**\n\n" prefix produced a duplicate emoji
+      // + double title stacked on top of the canonical template. Emit the
+      // template verbatim so the concrete actions block isn't buried.
       const emergencyMsg = getEmergencyMessage(triageResult.language);
       const stream = new ReadableStream({
         start(controller) {
-          controller.enqueue(new TextEncoder().encode(
-            `🚨 **${tx("api.chat.emergencyLabel", triageResult.language === "tr" ? "tr" : "en")}**\n\n${emergencyMsg}`
-          ));
+          controller.enqueue(new TextEncoder().encode(emergencyMsg));
           controller.close();
         },
       });

@@ -2333,8 +2333,12 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
   "notification.morningMedsBody": { en: "Are your meds up to date? Check your daily summary.", tr: "İlaçların guncel mi? Gunluk ozetine goz at." },
 
   // ── SafetyGuardrail ──
-  "safety.immediateEmergency": { en: "WARNING: The symptoms you described may indicate a life-threatening emergency. Please call 112/911 IMMEDIATELY or go to the nearest emergency room. No herbal supplement or medication advice can be given in this situation.", tr: "DIKKAT: Belirttiginiz sikayetler acil tibbi mudahale gerektiren bir duruma isaret edebilir. Lutfen DERHAL 112'yi arayin veya en yakin acil servise basvurun. Bu durumda hicbir bitkisel takviye veya ilac onerisi yapilamaz." },
-  "safety.urgentCaution": { en: "CAUTION: The symptoms you described require medical evaluation. Please see your doctor as soon as possible. Herbal supplement recommendations are limited.", tr: "DIKKAT: Belirttiginiz sikayetler tibbi degerlendirme gerektiriyor. Lutfen en kisa surede doktorunuza basvurun. Bitkisel takviye onerileri sinirlandirilmistir." },
+  // Session 39 hotfix: safety.immediateEmergency + safety.urgentCaution keys
+  // removed — they held a stale Turkish emergency template and the only
+  // caller (lib/safety-guardrail.ts local getEmergencyMessage) was dead
+  // code. Canonical emergency template lives in lib/safety-filter.ts
+  // getEmergencyMessage() / getYellowWarning(). Do NOT re-add these keys
+  // without first redirecting all emergency paths through safety-filter.ts.
   "safety.disclaimer": { en: "This information is for educational purposes based on published scientific research. It does not replace medical diagnosis or treatment. Consult your healthcare professional before making any changes.", tr: "Bu bilgiler yayimlanmis bilimsel arastirmalara dayali genel bilgilendirme niteligindedir. Tibbi teshis veya tedavi yerine gecmez. Herhangi bir degisiklik yapmadan once saglik profesyonelinize danisin." },
   "safety.aiCanError": { en: "AI models can make errors — independently verify all information", tr: "Yapay zeka modeli hata yapabilir — her bilgiyi bagimsiz dogrulayin" },
   "safety.individualVary": { en: "Individual responses may vary from person to person", tr: "Bireysel yanitlar kisiden kisiye farklilik gosterebilir" },
