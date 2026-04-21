@@ -809,3 +809,36 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 **Detay:** [docs/sessions/SESSION_41_INTERACTION_AUDIT.md](docs/sessions/SESSION_41_INTERACTION_AUDIT.md) — FIXED işaretleri + root cause notları + Faz 2 commit haritası.
 
 **Session 42'ye devir:** P2 kozmetik sprint + profile draft utility (sessionStorage pattern'ini reusable lib'e çıkarma) + onboarding flow audit (yeni user journey) + beta lansman hazırlık. Iyzico şirket tescili bekleyişi devam.
+
+---
+
+### Session 42 — P2 Kozmetik Sprint + FP-D Settings UX (22 Nisan 2026) — Tamamlandı
+
+**Ana iş:** Session 41 audit'inde P2 olarak ertelenmiş 7 bulgu + Session 40'tan taşınmış FP-D Settings password UX. Kullanıcı "hepsi" + "sessionlara devam edelim" dedi → ESLint 127 library error Session 43'e ayrıldı (her biri semantic change, yanlış fix runtime bug). Bu session 8 kozmetik/edge-case fix.
+
+**8 fix commit + 1 docs commit (`fea05d7..ddc4b26`):**
+
+- `fea05d7` **F-S-010** Header medication reminder banner — `flex-col sm:flex-row` stack on narrow phones, action buttons full-width alt mobile, sm'den itibaren row
+- `873ffe0` **F-S-009** CommandPalette doktor avatar initials — `text-[10px] sm:text-xs` + `tracking-tight` 9×9px circle'da iki harf clip olmasın
+- `21397a4` **F-D-010** Dashboard copilot chips — `grid grid-cols-2 sm:flex sm:flex-wrap`, chip text `truncate` + emoji `shrink-0`
+- `a309618` **F-S-005** Settings password success auto-reset — bare `setTimeout` kaldırıldı, useEffect + cleanup pattern ile idempotent (+ error clear)
+- `9e98e68` **F-S-008** Prospectus reader error state — inline "Tekrar Dene" (file preserve) + "Yeni dosya" escape (`resetAll`)
+- `9340c19` **F-D-008** Water task optimistic glass counter — WaterTaskItem onClick now calls `addGlass`/`removeGlass` + parent toggle; glass count updates instantly, DB reconciles via WaterIntakeProvider
+- `cde0f95` **FP-D** Settings password family member view — `useActiveProfile` isOwnProfile gating; aile üyesi görüntülemesinde form yerine info card ("Aile üyesinin parolasını buradan değiştiremezsin, kendi profiline dön") — Supabase auth caller-session semantiğinin UX netleşmesi
+- `ddc4b26` **F-D-006** Draft persist utility — YENİ `lib/ui/draft-persist.ts` (`readDraft<T>`, `persistDraft`, `clearDraft`, `DRAFT_KEYS` namespace). FamilyHistorySection Session 39 hotfix inline sessionStorage logic'ini yeni lib'i consume edecek şekilde refactor (davranış aynen korunur). Profile medication-add form (newBrandName/generic/dosage/frequency) isAddingMed true iken persist + open'da restore + success'te clear. Cancel'da draft kalır (Session 39 FamilyHistorySection davranış parity).
+
+**Sonuç:**
+- **7/7 P2 + FP-D FIXED** (Session 41 audit kapanışı)
+- **F-D-009 CLEAN** doğrulandı ([app/calendar/page.tsx:997](app/calendar/page.tsx:997) Suspense fallback mevcut — statik audit'te false pozitifti)
+- Build 241 sayfa, 0 error, 0 warning (Session 41 Faz 2 ile bit-perfect)
+- Regression yok: Session 39 FamilyHistorySection draft davranışı korundu (lib extract davranış parity), Session 41 tüm fix'leri dokunulmadı, Session 32 AuthContext cache intact
+
+**Eklenen reusable utility:** [lib/ui/draft-persist.ts](lib/ui/draft-persist.ts) — SSR-safe, quota-safe sessionStorage helpers + `DRAFT_KEYS` namespace. Gelecek form'lar (allergy-add, chronic-add, supplement-add, SBAR metadata vb.) bu lib'i consume edebilir.
+
+**Detay:** [docs/sessions/SESSION_41_INTERACTION_AUDIT.md](docs/sessions/SESSION_41_INTERACTION_AUDIT.md) — Session 42 FIXED işaretleri + her fix için commit mapping.
+
+**Session 43'e devir:**
+- **ESLint 127 library error sprint** — `lib/embeddings.ts` (2 `any`), `lib/health-integrations.ts` (1 `any`), `lib/translations.ts` (1 `any`), `lib/use-effective-premium.ts` (1 setState-in-effect), `scripts/*.js` (5 require-import) + kalan ~117 warning/error. Her biri semantic care — dedicated sprint gerektiriyor, yanlış fix runtime bug.
+- Onboarding flow audit (yeni user journey)
+- Beta lansman hazırlık (landing revizyon, Sentry monitoring)
+- Iyzico şirket tescili bekleyişi devam

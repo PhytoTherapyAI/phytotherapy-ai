@@ -284,10 +284,20 @@
 **Build durumu:** Faz 2 sonrası 241 sayfa, 0 error, 0 warning (baseline ile bit-perfect).
 
 **Ertelenenler (Session 42+):**
-- 8 P2 finding (F-D-006 profile draft utility, F-D-008 water optimistic, F-D-010 copilot chips mobile, F-S-008 prospectus retry, F-S-009 palette avatar, F-S-010 header banner overflow, F-S-005 settings password state) — kozmetik sprint
-- F-D-009 (MonthView Suspense) → **DOĞRULAMA: ZATEN CLEAN** — [app/calendar/page.tsx:997](app/calendar/page.tsx:997) `Suspense fallback={<Loader2 />}` mevcut. Audit raporundaki "Suspense fallback belirsiz" iddiası false positive (statik okumada lazy() çağrısında fallback görülmemişti ama mount noktasında var).
+- ~~8 P2 finding~~ → **Session 42 tamamında 7/7 FIXED** (F-D-006 lib extract dahil). F-D-009 CLEAN.
 - 3 CLEAN finding (FamilyHistorySection, Settings nav, Prospectus upload) — regression check, dokunulmadı.
-- F-D-004'ün yeni drug-pair rules eklemesi — interaction engine refactor'ına taşındı (Session 42+).
+- F-D-004'ün yeni drug-pair rules eklemesi — interaction engine refactor'ına taşındı (Session 43+).
+
+### Session 42 FIXED İşaretleri (P2 + FP-D, `fea05d7..ddc4b26`)
+- **F-S-010** ✅ FIXED — commit: `fea05d7` — Header medication reminder banner mobile stack (flex-col sm:flex-row + full-width buttons)
+- **F-S-009** ✅ FIXED — commit: `873ffe0` — CommandPalette doktor avatar initials `text-[10px] sm:text-xs` + tracking-tight
+- **F-D-010** ✅ FIXED — commit: `21397a4` — Dashboard copilot chips `grid grid-cols-2 sm:flex sm:flex-wrap` + truncate
+- **F-S-005** ✅ FIXED — commit: `a309618` — Settings password success auto-reset via useEffect + cleanup (bare setTimeout kaldırıldı)
+- **F-S-008** ✅ FIXED — commit: `9e98e68` — Prospectus inline retry + "Yeni dosya" escape
+- **F-D-008** ✅ FIXED — commit: `9340c19` — Water task click → addGlass/removeGlass optimistic glass counter
+- **FP-D** ✅ FIXED — commit: `cde0f95` — Settings password section family member view'de info card (caller-session semantiği açıklama)
+- **F-D-006** ✅ FIXED — commit: `ddc4b26` — `lib/ui/draft-persist.ts` lib extract + FamilyHistorySection refactor (behavior parity) + Profile medication-add integrate
+- **F-D-009** ✅ CLEAN (doğrulandı) — [app/calendar/page.tsx:997](app/calendar/page.tsx:997) Suspense fallback mevcut
 
 **Faz 1 commit:** `docs(session-41): interaction audit phase 1` (`989ba0b`)
 **Faz 2 commit zinciri:** `6924634..beb90b7` (6 fix commit, F-S-001 + F-S-003 birleşik).

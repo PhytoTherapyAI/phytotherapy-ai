@@ -4,20 +4,21 @@
 
 ---
 
-### Session 42 — P2 Kozmetik + FP-D (22 Nisan 2026) — DEVAM EDİYOR
-**Başlangıç commit:** `3ae0dff` (Session 41 Faz 2 sonu)
+### Session 42 — P2 Kozmetik + FP-D (22 Nisan 2026) — TAMAMLANDI
+**Commit zinciri:** `fea05d7..ddc4b26` (8 fix + 1 docs), ESLint 127 library error Session 43'e ayrıldı.
 
-8 fix (7 P2 + FP-D Settings UX), ESLint 127 library error Session 43'e ayrıldı.
+- [x] F-S-010 `fea05d7` — header banner mobile stack
+- [x] F-S-009 `873ffe0` — palette avatar initials mobile
+- [x] F-D-010 `21397a4` — copilot chips grid-cols-2 mobile
+- [x] F-S-005 `a309618` — settings password effect cleanup
+- [x] F-S-008 `9e98e68` — prospectus inline retry + new-file escape
+- [x] F-D-008 `9340c19` — water task optimistic glass counter (addGlass/removeGlass)
+- [x] FP-D `cde0f95` — settings password family view info card (caller-session semantiği)
+- [x] F-D-006 `ddc4b26` — `lib/ui/draft-persist.ts` extract + FamilyHistorySection refactor + Profile medication-add integrate
 
-Sıra (kolaydan zora):
-- [ ] F-S-010 header medication reminder banner mobil overflow
-- [ ] F-S-009 CommandPalette doktor avatar initials mobil
-- [ ] F-D-010 Dashboard AI Copilot chips mobile grid
-- [ ] F-S-005 Settings password form state cleanup
-- [ ] F-S-008 Prospectus reader inline retry
-- [ ] F-D-008 Dashboard water optimistic feedback
-- [ ] FP-D Settings password UX family member view gating
-- [ ] F-D-006 Profile form draft utility (lib extract + Profile integrate)
+**Sonuç:** Session 41 audit kapanışı. 7/7 P2 + FP-D FIXED. F-D-009 CLEAN doğrulandı. Build 241 sayfa, 0 error, 0 warning.
+
+**Session 43'e devir:** ESLint 127 library error sprint (`lib/embeddings.ts` 2, `lib/health-integrations.ts` 1, `lib/translations.ts` 1, `lib/use-effective-premium.ts` 1, `scripts/*.js` 5 + kalan ~117). `any` → proper type + setState-in-effect + require-import. Her biri semantic care gerektirdiğinden dedicated sprint.
 
 ---
 
