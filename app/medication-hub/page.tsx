@@ -451,7 +451,16 @@ export default function MedicationHubPage() {
                   </div>
                 )}
 
-                {/* Conflict Warnings */}
+                {/* Conflict Warnings — Session 41 F-D-004: the amber banner
+                    was already listing timing conflicts, but the audit flagged
+                    two gaps: (1) hardcoded to 2 drug pairs (iron+levothyroxine,
+                    iron+calcium) — the richer drug-herb/drug-drug analysis
+                    lives at /interaction-checker; (2) no visible route for the
+                    user to get a full review. We keep the existing list and
+                    add a prominent "detailed interaction check" CTA so users
+                    with 5+ medications discover the full engine without
+                    leaving the timing view. Expanding the hardcoded pair list
+                    is a feature addition and is deferred (Session 42+). */}
                 {conflicts.length > 0 && (
                   <div className="mb-6 space-y-2">
                     {conflicts.map((c, i) => (
@@ -460,6 +469,17 @@ export default function MedicationHubPage() {
                         <span className="text-sm text-amber-800 dark:text-amber-300">{c}</span>
                       </div>
                     ))}
+                    <Link
+                      href="/interaction-checker"
+                      className="flex items-center justify-between gap-3 p-3 rounded-xl border border-amber-300 bg-amber-100/60 text-amber-900 hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-200 dark:hover:bg-amber-900/50 transition-colors"
+                    >
+                      <span className="text-sm font-medium">
+                        {lang === "tr"
+                          ? "Tüm ilaç-bitki etkileşimlerini kontrol et"
+                          : "Check all drug-herb interactions"}
+                      </span>
+                      <ArrowRight className="w-4 h-4 flex-shrink-0" />
+                    </Link>
                   </div>
                 )}
 
