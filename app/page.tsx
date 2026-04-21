@@ -723,6 +723,27 @@ export default function Home() {
                     </button>
                   </div>
 
+                  {/* Session 43 F-OB-005: first-time medication hint.
+                      Renders only while the user has no active medications
+                      (dynamicTasks comes from user_medications +
+                      user_supplements). The hint auto-disappears the moment
+                      the first medication is saved — no dismiss logic
+                      required. Routes the user straight to the medication
+                      form inside Profile. */}
+                  {dynamicTasks.length === 0 && (
+                    <Link
+                      href="/profile?tab=medications"
+                      className="mb-2 flex items-center gap-3 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/20 px-3 py-2.5 text-xs text-emerald-800 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 transition-colors"
+                    >
+                      <span className="text-base">💊</span>
+                      <span className="flex-1">
+                        {isTr
+                          ? "İlk ilacını ekle — etkileşim uyarılarını anında gör"
+                          : "Add your first medication — see interaction alerts instantly"}
+                      </span>
+                      <span aria-hidden className="text-emerald-600 dark:text-emerald-400">→</span>
+                    </Link>
+                  )}
                   {/* ── Normal Task List — always visible (Session 41 F-D-003) ──
                       Previously the customize panel swapped with the task
                       list, so clicking the gear hid the user's day to let
