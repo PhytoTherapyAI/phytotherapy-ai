@@ -706,9 +706,43 @@ export default function Home() {
                     </button>
                   </div>
 
-                  {/* ── Customize Mode (static tasks only) ── */}
-                  {taskCustomizeMode ? (
-                    <div className="space-y-1.5 mb-3">
+                  {/* ── Normal Task List — always visible (Session 41 F-D-003) ──
+                      Previously the customize panel swapped with the task
+                      list, so clicking the gear hid the user's day to let
+                      them pick which static tasks to show. That created a
+                      context-switch friction: "I just want to toggle one
+                      thing — why is my list gone?". The list now stays
+                      visible, and the customize panel expands beneath it. */}
+                  <div className="space-y-0.5">
+                    {visibleTasks.map((t) => {
+                      const dur = taskPrefs.durationOverrides[t.id] || t.duration;
+                      const label: string = isTr ? t.labelTr : t.labelEn;
+                      const isWater = t.id === "water";
+                      const displayLabel = isWater
+                        ? label
+                        : dur ? `${label} (${dur})` : label;
+                      const tWithFlags = t as DashboardTask;
+                      const onDismissFn = tWithFlags.isMed || tWithFlags.isSup ? undefined : () => dismissTask(t.id);
+                      if (isWater) {
+                        return (
+                          <WaterTaskItem key={t.id} emoji={t.emoji} label={displayLabel}
+                            done={completedTaskIds.has(t.id)}
+                            onClick={() => toggleTask(t.id)}
+                            onDismiss={onDismissFn} />
+                        );
+                      }
+                      return (
+                        <TaskItem key={t.id} emoji={t.emoji} label={displayLabel}
+                          done={completedTaskIds.has(t.id)}
+                          onClick={() => toggleTask(t.id)}
+                          onDismiss={onDismissFn} />
+                      );
+                    })}
+                  </div>
+
+                  {/* ── Customize panel (expands under the list, static tasks only) ── */}
+                  {taskCustomizeMode && (
+                    <div className="mt-3 pt-3 border-t border-dashed border-border space-y-1.5">
                       <p className="text-[10px] text-muted-foreground mb-2">
                         {tx("dashboard.toggleExtra", lang)}
                       </p>
@@ -734,34 +768,6 @@ export default function Home() {
                               </div>
                             )}
                           </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    /* ── Normal Task List ── */
-                    <div className="space-y-0.5">
-                      {visibleTasks.map((t) => {
-                        const dur = taskPrefs.durationOverrides[t.id] || t.duration;
-                        const label: string = isTr ? t.labelTr : t.labelEn;
-                        const isWater = t.id === "water";
-                        const displayLabel = isWater
-                          ? label
-                          : dur ? `${label} (${dur})` : label;
-                        const tWithFlags = t as DashboardTask;
-                        const onDismissFn = tWithFlags.isMed || tWithFlags.isSup ? undefined : () => dismissTask(t.id);
-                        if (isWater) {
-                          return (
-                            <WaterTaskItem key={t.id} emoji={t.emoji} label={displayLabel}
-                              done={completedTaskIds.has(t.id)}
-                              onClick={() => toggleTask(t.id)}
-                              onDismiss={onDismissFn} />
-                          );
-                        }
-                        return (
-                          <TaskItem key={t.id} emoji={t.emoji} label={displayLabel}
-                            done={completedTaskIds.has(t.id)}
-                            onClick={() => toggleTask(t.id)}
-                            onDismiss={onDismissFn} />
                         );
                       })}
                     </div>
