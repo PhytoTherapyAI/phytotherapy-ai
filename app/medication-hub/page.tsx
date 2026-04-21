@@ -324,9 +324,17 @@ export default function MedicationHubPage() {
 
   const { slots, conflicts } = generateSchedule(medications, lang);
 
-  const now = new Date();
-  const currentHour = now.getHours();
-  const nextSlot = slots.find(s => {
+  // Session 40 BUG-004: `new Date()` in the render body caused SSR/client
+  // hydration mismatch (server and client see different hours). Initialize
+  // null, populate in effect, and treat `null` as "no slot highlighted yet"
+  // so the first paint matches between server and client.
+  const [currentHour, setCurrentHour] = useState<number | null>(null);
+  useEffect(() => {
+    setCurrentHour(new Date().getHours());
+    const interval = setInterval(() => setCurrentHour(new Date().getHours()), 60_000);
+    return () => clearInterval(interval);
+  }, []);
+  const nextSlot = currentHour === null ? undefined : slots.find(s => {
     const slotHour = parseInt(s.time.split(":")[0] || "0", 10);
     return slotHour >= currentHour;
   });
@@ -467,7 +475,12 @@ export default function MedicationHubPage() {
 
                     {slots.map((slot, idx) => {
                       const isExpanded = expandedSlot === idx;
-                      const isPast = parseInt(slot.time.split(":")[0]) < currentHour;
+                      // Session 40 BUG-007: added explicit radix 10 so a
+                      // zero-padded hour like "08" can never be misread.
+                      // currentHour is null on first paint (see BUG-004) —
+                      // nothing is "past" until the client clock is known.
+                      const isPast = currentHour !== null
+                        && parseInt(slot.time.split(":")[0] || "0", 10) < currentHour;
 
                       return (
                         <div key={idx} className="relative">
