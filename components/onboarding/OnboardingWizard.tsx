@@ -16,6 +16,7 @@ import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { markFirstLoginDone } from "@/lib/daily-med-check";
 import { updatePermissionState } from "@/lib/permission-state";
+import { readDraft, persistDraft, clearDraft as clearDraftKey, DRAFT_KEYS } from "@/lib/ui/draft-persist";
 import { getBadgeById, BADGE_POINTS } from "@/lib/badges";
 import type { Badge } from "@/lib/badges";
 import { BadgeCelebrationModal, triggerCelebration } from "@/components/gamification/BadgeCelebrationModal";
@@ -156,6 +157,12 @@ export interface OnboardingData {
   supplements: string[];
 }
 
+// Session 43 F-OB-003: single atomic draft shape for lib/ui/draft-persist
+interface OnboardingDraftShape {
+  data: Partial<OnboardingData>;
+  step: number;
+}
+
 const defaultData: OnboardingData = {
   full_name: "",
   birth_date: "",
@@ -197,13 +204,19 @@ export function OnboardingWizard({ profile }: Props) {
   const router = useRouter();
   const { refreshProfile } = useAuth();
   const { lang } = useLang();
-  const [currentStep, setCurrentStep] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("doctopal_onboarding_step");
-      return saved ? parseInt(saved, 10) || 0 : 0;
-    }
-    return 0;
-  });
+  // Session 43 F-OB-003: replaced the two-write draft+step split with a
+  // single atomic record. Before this, one useEffect wrote
+  // "doctopal_onboarding_draft" (debounced 500ms) and a separate one wrote
+  // "doctopal_onboarding_step" — a crash/tab close/network blip between
+  // the two left the pair out of sync (e.g. draft had step-8 fields,
+  // step pointer still said 7). Now it's a single object persisted
+  // together via lib/ui/draft-persist.ts (shared with Session 42 F-D-006).
+  const initialDraft: OnboardingDraftShape | null = typeof window !== "undefined"
+    ? readDraft<OnboardingDraftShape>(DRAFT_KEYS.onboardingWizard)
+    : null;
+  const [currentStep, setCurrentStep] = useState(() =>
+    initialDraft && typeof initialDraft.step === "number" ? initialDraft.step : 0,
+  );
   const [showLayer2, setShowLayer2] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const savingRef = useRef(false);
@@ -215,40 +228,33 @@ export function OnboardingWizard({ profile }: Props) {
   const [earnedBadges, setEarnedBadges] = useState<Badge[]>([]);
   const [totalPoints, setTotalPoints] = useState(0);
   const [data, setData] = useState<OnboardingData>(() => {
-    // Restore from localStorage if user left mid-onboarding
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("doctopal_onboarding_draft");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          return { ...defaultData, ...parsed, full_name: parsed.full_name || profile.full_name || "" };
-        }
-      } catch { /* ignore */ }
+    if (initialDraft?.data) {
+      return { ...defaultData, ...initialDraft.data, full_name: initialDraft.data.full_name || profile.full_name || "" };
     }
     return { ...defaultData, full_name: profile.full_name ?? "" };
   });
 
-  // Auto-save draft + step to localStorage on change
+  // Session 43 F-OB-003: single atomic write — data + currentStep are always
+  // persisted together, keyed off the last state snapshot to avoid torn
+  // reads. Debounced 500ms identical to the legacy behaviour so typing
+  // stays cheap.
   const dataRef = useRef(data);
   dataRef.current = data;
+  const stepRef = useRef(currentStep);
+  stepRef.current = currentStep;
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      try { localStorage.setItem("doctopal_onboarding_draft", JSON.stringify(dataRef.current)); } catch { /* ignore */ }
+      persistDraft(DRAFT_KEYS.onboardingWizard, {
+        data: dataRef.current,
+        step: stepRef.current,
+      });
     }, 500);
     return () => clearTimeout(timer);
-  }, [data]);
+  }, [data, currentStep]);
 
-  useEffect(() => {
-    try { localStorage.setItem("doctopal_onboarding_step", String(currentStep)); } catch { /* ignore */ }
-  }, [currentStep]);
-
-  // Clear draft on successful save
   const clearDraft = useCallback(() => {
-    try {
-      localStorage.removeItem("doctopal_onboarding_draft");
-      localStorage.removeItem("doctopal_onboarding_step");
-    } catch { /* ignore */ }
+    clearDraftKey(DRAFT_KEYS.onboardingWizard);
   }, []);
 
   const ALL_LAYER1_STEPS = getSteps(lang);

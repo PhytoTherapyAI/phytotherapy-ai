@@ -69,4 +69,5 @@ export function clearDraft(key: string): void {
 export const DRAFT_KEYS = {
   familyHistory: "doctopal:familyHistory:draft",
   profileMedicationAdd: "doctopal:profile:medicationAdd:draft",
+  onboardingWizard: "doctopal:onboarding:wizard:draft",
 } as const;
