@@ -675,9 +675,14 @@ export default function CalendarPage() {
     localStorage.setItem(`cal-ritual-tasks-${todayDateStr}`, JSON.stringify(taskMap))
   }, [morningTasks, noonTasks, nightTasks, todayDateStr, ritualDataLoaded])
 
-  // waterCount from FAB + water tasks in rituals (no hardcoded +3)
-  const waterDoneFromTasks = allTasks.filter(t => t.done && t.emoji === "💧").length
-  const totalWater = waterCount + waterDoneFromTasks
+  // Session 44 C2.5: `waterCount` (from water_intake table, populated by
+  // FAB PATCH + WaterIntakeContext) is the single source of truth for
+  // the glass count ring. Previously this was `waterCount +
+  // waterDoneFromTasks`, which double-counted: a user who tapped FAB
+  // once (+1 glass logged) and ALSO ticked the "drink a glass of water"
+  // morning ritual checkbox got totalWater = 2 for what was really one
+  // glass of water. The ritual checkbox is a habit-completion flag
+  // (did I drink my morning water?), not an independent glass counter.
   const medsDone = allTasks.filter(t => t.done && t.emoji === "💊").length
   const totalMedsOnly = allTasks.filter(t => t.emoji === "💊").length
   // Supplements: count only real DB supplements (sup-*) + default supplement emojis that are from profile
@@ -939,7 +944,7 @@ export default function CalendarPage() {
                 {tx("calendar.dailyRings", lang)}
               </p>
               <div className="flex justify-around gap-1 px-1">
-                <CircularRing emoji="💧" label={tx("calendar.water", lang)} current={Math.min(totalWater, 8)} total={8} color="#3b82f6" />
+                <CircularRing emoji="💧" label={tx("calendar.water", lang)} current={Math.min(waterCount, 8)} total={8} color="#3b82f6" />
                 <CircularRing emoji="💊" label={tx("calendar.meds", lang)} current={medsDone} total={Math.max(totalMedsOnly, 1)} color="#3c7a52" />
                 <CircularRing emoji="🌿" label={tx("calendar.supps", lang)} current={supsDone} total={Math.max(totalSups, 1)} color="#6B8F71" />
                 <CircularRing emoji="🚶" label={tx("calendar.move", lang)} current={1} total={3} color="#f59e0b" />
