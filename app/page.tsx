@@ -19,7 +19,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useFamily } from "@/lib/family-context";
 import { useActiveProfile } from "@/lib/use-active-profile";
 import { useWater, WaterIntakeProvider } from "@/lib/water-context";
-import { DailyLogsProvider } from "@/lib/daily-logs-context";
+import { useDailyLogs, type ItemType } from "@/lib/daily-logs-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
@@ -380,8 +380,13 @@ export default function Home() {
   const [aydinlatmaOpen, setAydinlatmaOpen] = useState(false);
 
   // ── Task system with persistence ──
+  // Session 44 C2.3: med/sup completion lives in DailyLogsContext (single
+  // source of truth, optimistic + rollback + toast/Sentry on error). Static
+  // tasks (water, walk, meditate, vitals, sleep, meal) keep their
+  // localStorage-backed completion since they don't have DB rows.
+  const { isCompleted: isLogCompleted, setCompleted: setLogCompleted } = useDailyLogs();
   const [taskPrefs, setTaskPrefs] = useState<TaskPrefs>({ enabledIds: [...DEFAULT_STATIC_IDS], durationOverrides: {} });
-  const [completedTaskIds, setCompletedTaskIds] = useState<Set<string>>(new Set());
+  const [completedStaticIds, setCompletedStaticIds] = useState<Set<string>>(new Set());
   const [dismissedTaskIds, setDismissedTaskIds] = useState<Set<string>>(new Set());
   const [taskCustomizeMode, setTaskCustomizeMode] = useState(false);
   const [streak, setStreak] = useState(0);
@@ -424,16 +429,16 @@ export default function Home() {
     fetchStreak();
   }, [activeUserId]);
 
-  // Fetch individual med/sup tasks + completion state from Supabase (single source of truth)
+  // Fetch individual med/sup tasks from Supabase. Completion state is
+  // owned by DailyLogsContext now — we only need the catalog of what
+  // CAN be completed (the user's medications and recurring supplements).
   const fetchDashboardTasks = useCallback(async () => {
     if (!activeUserId) return;
     try {
       const supabase = createBrowserClient();
-      const [medsRes, supsRes, logsRes] = await Promise.all([
+      const [medsRes, supsRes] = await Promise.all([
         supabase.from("user_medications").select("id, brand_name, generic_name, dosage, frequency").eq("user_id", activeUserId).eq("is_active", true),
         supabase.from("calendar_events").select("id, title").eq("user_id", activeUserId).eq("event_type", "supplement").eq("recurrence", "daily"),
-        supabase.from("daily_logs").select("item_id, item_type, completed").eq("user_id", activeUserId).eq("log_date", todayStr).eq("completed", true),
-        // water_intake artık WaterIntakeContext'ten geliyor
       ]);
 
       // Build dynamic task list
@@ -454,28 +459,18 @@ export default function Home() {
         tasks.push({ id: s.id, emoji: "🌿", labelEn: supName, labelTr: supName, duration: null, isSup: true });
       });
       setDynamicTasks(tasks);
-
-      // Completion from daily_logs (med/sup) + localStorage (static tasks)
-      const doneIds = new Set<string>();
-      logsRes.data?.forEach((l: { item_id: string; item_type: string; completed: boolean }) => { if (l.completed) doneIds.add(l.item_id); });
-      const staticDone = loadCompletedTasks(todayStr);
-      STATIC_DASHBOARD_TASKS.forEach(t => { if (staticDone.has(t.id)) doneIds.add(t.id); });
-      setCompletedTaskIds(doneIds);
     } catch {}
-  }, [activeUserId, todayStr, lang]);
+  }, [activeUserId, lang]);
 
   useEffect(() => { fetchDashboardTasks(); }, [fetchDashboardTasks]);
 
-  // Listen for cross-view sync events
+  // Static-task completion is localStorage backed (no DB row), so a
+  // separate effect mirrors the persisted Set into state on mount /
+  // date roll. Cross-view sync for med/sup completion lives in
+  // DailyLogsContext (it listens to `daily-log-changed` itself).
   useEffect(() => {
-    const handler = () => { fetchDashboardTasks(); };
-    window.addEventListener("daily-log-changed", handler);
-    window.addEventListener("water-intake-changed", handler);
-    return () => {
-      window.removeEventListener("daily-log-changed", handler);
-      window.removeEventListener("water-intake-changed", handler);
-    };
-  }, [fetchDashboardTasks]);
+    setCompletedStaticIds(loadCompletedTasks(todayStr));
+  }, [todayStr]);
 
   // Load task prefs + dismissals on mount (static tasks only)
   useEffect(() => {
@@ -492,52 +487,44 @@ export default function Home() {
     ).map(t => ({ ...t, duration: t.duration as string | null })),
   ];
 
-  const toggleTask = async (id: string) => {
-    const next = new Set(completedTaskIds);
-    const wasCompleted = next.has(id);
-    if (wasCompleted) next.delete(id); else next.add(id);
-    setCompletedTaskIds(next);
+  // Session 44 C2.3: med/sup writes flow through DailyLogsContext —
+  // optimistic + rollback + toast/Sentry are owned there. canEdit gate
+  // also lives in the context so the previous "silently revert local
+  // state for family-member views" path is gone in favour of an honest
+  // permission toast. Static tasks (water/walk/meditate/...) still use
+  // localStorage since they have no DB row.
+  const isTaskDone = useCallback((task: DashboardTask): boolean => {
+    if (task.isMed) return isLogCompleted("medication", task.id);
+    if (task.isSup) return isLogCompleted("supplement", task.id);
+    return completedStaticIds.has(task.id);
+  }, [isLogCompleted, completedStaticIds]);
 
+  const toggleTask = useCallback(async (id: string) => {
     const task = allDashboardTasks.find(t => t.id === id);
-    const isMedOrSup = task?.isMed || task?.isSup;
+    if (!task) return;
 
-    if (isMedOrSup && activeUserId) {
-      // Guard: writing to a family member's daily_logs requires canEdit (hasManageRole + Premium).
-      // RLS would block server-side too, but we short-circuit so the optimistic UI can revert cleanly.
-      if (!isOwnProfile && !canEdit) {
-        // Revert the optimistic toggle we applied above
-        setCompletedTaskIds(new Set(completedTaskIds));
-        if (process.env.NODE_ENV === "development") console.warn("[dashboard] toggle blocked — no edit permission for active profile");
-        return;
-      }
-      // Write to daily_logs Supabase (single source of truth) — targets the active profile's user_id,
-      // not the authenticated caller, so family members' completions show up on their own dashboard.
+    if (task.isMed || task.isSup) {
+      const itemType: ItemType = task.isMed ? "medication" : "supplement";
+      const itemName = task.labelEn || id;
+      const wasDone = isLogCompleted(itemType, id);
       try {
-        const supabase = createBrowserClient();
-        const itemType = task?.isMed ? "medication" : "supplement";
-        const itemName = task?.labelEn || id;
-        if (wasCompleted) {
-          // Un-complete: delete the daily_log entry
-          await supabase.from("daily_logs").delete()
-            .eq("user_id", activeUserId).eq("log_date", todayStr).eq("item_type", itemType).eq("item_id", id);
-        } else {
-          // Complete: insert daily_log entry
-          const { error } = await supabase.from("daily_logs").insert({
-            user_id: activeUserId, log_date: todayStr, item_type: itemType, item_id: id, item_name: itemName, completed: true,
-          });
-          if (error) {
-            await supabase.from("daily_logs").update({ completed: true })
-              .eq("user_id", activeUserId).eq("log_date", todayStr).eq("item_type", itemType).eq("item_id", id);
-          }
-        }
-        // Notify other views
-        window.dispatchEvent(new Event("daily-log-changed"));
-      } catch {}
-    } else {
-      // Static tasks — save to localStorage
-      saveCompletedTasks(todayStr, next);
+        await setLogCompleted(itemType, id, itemName, !wasDone);
+      } catch {
+        // DailyLogsContext already toasted + rolled back the optimistic
+        // Set; nothing else to do here. Awaiting just lets us short-
+        // circuit any future chained side effects.
+      }
+      return;
     }
-  };
+
+    // Static task → localStorage toggle (no DB write, no permission check).
+    setCompletedStaticIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      saveCompletedTasks(todayStr, next);
+      return next;
+    });
+  }, [allDashboardTasks, isLogCompleted, setLogCompleted, todayStr]);
 
   const dismissTask = (id: string) => {
     // Only allow dismissing static tasks, not med/sup
@@ -564,7 +551,7 @@ export default function Home() {
     if (user) saveTaskPrefs(user.id, next);
   };
 
-  const completedCount = visibleTasks.filter((t) => completedTaskIds.has(t.id)).length;
+  const completedCount = visibleTasks.filter(isTaskDone).length;
   const scorePercent   = visibleTasks.length > 0 ? Math.round((completedCount / visibleTasks.length) * 100) : 0;
 
   const fetchCheckIn = useCallback(async () => {
@@ -642,7 +629,6 @@ export default function Home() {
   if (showDashboard) {
     return (
       <WaterIntakeProvider>
-      <DailyLogsProvider>
       <div className="min-h-screen bg-stone-50 dark:bg-background">
         <LocalizedTitle tr="Panel" en="Dashboard" />
         {/* Dashboard Tour (first visit only) */}
@@ -745,14 +731,14 @@ export default function Home() {
                       if (isWater) {
                         return (
                           <WaterTaskItem key={t.id} emoji={t.emoji} label={displayLabel}
-                            done={completedTaskIds.has(t.id)}
+                            done={isTaskDone(t)}
                             onClick={() => toggleTask(t.id)}
                             onDismiss={onDismissFn} />
                         );
                       }
                       return (
                         <TaskItem key={t.id} emoji={t.emoji} label={displayLabel}
-                          done={completedTaskIds.has(t.id)}
+                          done={isTaskDone(t)}
                           onClick={() => toggleTask(t.id)}
                           onDismiss={onDismissFn} />
                       );
@@ -1031,7 +1017,6 @@ export default function Home() {
           )}
         </motion.div>
       </div>
-      </DailyLogsProvider>
       </WaterIntakeProvider>
     );
   }

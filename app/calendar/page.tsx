@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/lib/auth-context"
 import { useActiveProfile } from "@/lib/use-active-profile"
-import { DailyLogsProvider } from "@/lib/daily-logs-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
@@ -890,7 +889,6 @@ export default function CalendarPage() {
   }
 
   return (
-    <DailyLogsProvider>
     <div className="min-h-screen bg-stone-50 dark:bg-background">
       <LocalizedTitle tr="Takvim" en="Calendar" />
       <div className="mx-auto max-w-7xl px-4 md:px-8 py-6">
@@ -1100,6 +1098,5 @@ export default function CalendarPage() {
         )}
       </AnimatePresence>
     </div>
-    </DailyLogsProvider>
   )
 }

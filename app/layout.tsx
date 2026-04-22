@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/footer";
 import { AuthProvider } from "@/lib/auth-context";
 import { FamilyProvider } from "@/lib/family-context";
+import { DailyLogsProvider } from "@/lib/daily-logs-context";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/components/layout/language-toggle";
 import { AppToaster } from "@/components/layout/AppToaster";
@@ -126,6 +127,7 @@ export default function RootLayout({
           <LanguageProvider>
             <AuthProvider>
             <FamilyProvider>
+            <DailyLogsProvider>
               <Header />
               <AuthGatedOverlays />
               <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-hidden">
@@ -147,6 +149,7 @@ export default function RootLayout({
               <ServiceWorkerRegistration />
               <FeedbackWidget />
               <BottomNavbar />
+            </DailyLogsProvider>
             </FamilyProvider>
             </AuthProvider>
           </LanguageProvider>
