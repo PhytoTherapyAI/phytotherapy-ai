@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dialog"
 import { tx, txRandom, txMessages, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
+import { useDailyLogs } from "@/lib/daily-logs-context"
+import { reportMutationError } from "@/lib/mutation-errors"
 import { AddEventDialog, eventTypeColor } from "./AddEventDialog"
 import { AddVitalDialog } from "./AddVitalDialog"
 import { AddSupplementDialog } from "./AddSupplementDialog"
@@ -302,6 +304,13 @@ function ConfettiOverlay({ show, onDone }: { show: boolean; onDone: () => void }
 export function TodayView({ userId, lang, userName, userWeight, userHeight, userSupplements }: TodayViewProps) {
   const today = getTodayString()
   const tr = lang === "tr"
+
+  // Session 44 Faz 5: med/sup completion writes flow through DailyLogsContext
+  // (single source of truth; toast + Sentry on failure; no silent catch).
+  // Local dailyLogs state is preserved for read-only UI bits because
+  // TodayView still re-fetches on `daily-log-changed` (line ~770) so the
+  // local state stays aligned with whatever the context wrote.
+  const { setCompleted: setLogCompleted } = useDailyLogs()
 
   const [medications, setMedications] = useState<UserMedication[]>([])
   const [dailyLogs, setDailyLogs] = useState<DailyLog[]>([])
@@ -664,27 +673,19 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       }
     }
 
+    // Session 44 Faz 5: write through DailyLogsContext (toast + Sentry on
+    // failure live there). Context dispatches `daily-log-changed` on
+    // success which triggers our own listener (line ~772) to refetch
+    // dailyLogs from DB and reconcile the local state with truth.
     try {
-      const supabase = createBrowserClient()
-      if (wasCompleted) {
-        // Uncomplete: DELETE the row (consistent with ritual blocks & dashboard)
-        await supabase.from("daily_logs").delete()
-          .eq("user_id", userId).eq("log_date", today).eq("item_type", "medication").eq("item_id", row.itemId)
-      } else {
-        // Complete: INSERT (with UPDATE fallback for existing completed=false rows)
-        const { error: insertError } = await supabase.from("daily_logs").insert({
-          user_id: userId, log_date: today, item_type: "medication", item_id: row.itemId, item_name: row.label, completed: true,
-        })
-        if (insertError) {
-          await supabase.from("daily_logs").update({ completed: true })
-            .eq("user_id", userId).eq("log_date", today).eq("item_type", "medication").eq("item_id", row.itemId)
-        }
-      }
-      const { data: freshLogs } = await supabase.from("daily_logs").select("*").eq("user_id", userId).eq("log_date", today)
-      if (freshLogs) setDailyLogs(freshLogs as DailyLog[])
-      // Notify other views
-      window.dispatchEvent(new Event("daily-log-changed"))
-    } catch { fetchData() } finally { setTogglingId(null) }
+      await setLogCompleted("medication", row.itemId, row.label, !wasCompleted)
+    } catch {
+      // Context already toasted + rolled back its own Set; reconcile
+      // our optimistic dailyLogs by re-reading from DB.
+      void fetchData()
+    } finally {
+      setTogglingId(null)
+    }
   }
 
   const isDoseCompleted = (itemId: string) => dailyLogs.some((l) => l.item_type === "medication" && l.item_id === itemId && l.completed)
@@ -738,27 +739,15 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       }
     }
 
+    // Session 44 Faz 5: same migration as toggleMedDose — context owns
+    // the write + cross-view dispatch + error reporting.
     try {
-      const supabase = createBrowserClient()
-      if (wasCompleted) {
-        // Uncomplete: DELETE the row (consistent with ritual blocks & dashboard)
-        await supabase.from("daily_logs").delete()
-          .eq("user_id", userId).eq("log_date", today).eq("item_type", "supplement").eq("item_id", sup.id)
-      } else {
-        // Complete: INSERT (with UPDATE fallback for existing completed=false rows)
-        const { error: insertError } = await supabase.from("daily_logs").insert({
-          user_id: userId, log_date: today, item_type: "supplement", item_id: sup.id, item_name: supName, completed: true,
-        })
-        if (insertError) {
-          await supabase.from("daily_logs").update({ completed: true })
-            .eq("user_id", userId).eq("log_date", today).eq("item_type", "supplement").eq("item_id", sup.id)
-        }
-      }
-      const { data: freshLogs } = await supabase.from("daily_logs").select("*").eq("user_id", userId).eq("log_date", today)
-      if (freshLogs) setDailyLogs(freshLogs as DailyLog[])
-      // Notify other views
-      window.dispatchEvent(new Event("daily-log-changed"))
-    } catch { fetchData() } finally { setTogglingSupId(null) }
+      await setLogCompleted("supplement", sup.id, supName, !wasCompleted)
+    } catch {
+      void fetchData()
+    } finally {
+      setTogglingSupId(null)
+    }
   }
 
   // Listen for cross-view sync events
@@ -865,29 +854,55 @@ export function TodayView({ userId, lang, userName, userWeight, userHeight, user
       setSplashMsg(getRandom(tr ? SPLASH_TR : SPLASH_EN))
       setTimeout(() => setSplashMsg(null), 900)
     }
+    // Session 44 Faz 5: water write was using check-then-write with a
+    // silent catch — race-prone AND failures hidden. Switched to atomic
+    // upsert against UNIQUE(user_id, intake_date) (Faz 0 SQL S2a) and
+    // routed errors through reportMutationError. Long-term, this whole
+    // method should delegate to WaterIntakeContext via a setGlasses(n)
+    // API, but that's an additive change reserved for a follow-up.
     try {
       const supabase = createBrowserClient()
-      const { data: existing } = await supabase.from("water_intake").select("id").eq("user_id", userId).eq("intake_date", today).maybeSingle()
-      if (existing) {
-        await supabase.from("water_intake").update({ glasses: clamped }).eq("id", existing.id)
-      } else {
-        await supabase.from("water_intake").insert({ user_id: userId, intake_date: today, glasses: clamped, target_glasses: waterTarget })
-      }
-      // Notify other views
+      const { error } = await supabase
+        .from("water_intake")
+        .upsert(
+          { user_id: userId, intake_date: today, glasses: clamped, target_glasses: waterTarget },
+          { onConflict: "user_id,intake_date" },
+        )
+      if (error) throw error
       window.dispatchEvent(new Event("water-intake-changed"))
-    } catch { /* ignore */ }
-  }, [userId, today, waterTarget, glasses, waterLimits.max, tr])
+    } catch (err) {
+      reportMutationError(err, {
+        op: "todayView.updateWater",
+        userId,
+        lang,
+        extra: { glasses: clamped, date: today },
+      })
+      // Reconcile optimistic glass count with DB truth on failure.
+      void fetchData()
+    }
+  }, [userId, today, waterTarget, glasses, waterLimits.max, tr, lang, fetchData])
 
   const updateWaterTarget = async (newTarget: number) => {
     setWaterTarget(newTarget)
     setTargetDialogOpen(false)
+    // Session 44 Faz 5: upsert (atomic) + reportMutationError on failure.
     try {
       const supabase = createBrowserClient()
-      const { data: existing } = await supabase.from("water_intake").select("id").eq("user_id", userId).eq("intake_date", today).maybeSingle()
-      if (existing) {
-        await supabase.from("water_intake").update({ target_glasses: newTarget }).eq("id", existing.id)
-      }
-    } catch { /* ignore */ }
+      const { error } = await supabase
+        .from("water_intake")
+        .upsert(
+          { user_id: userId, intake_date: today, target_glasses: newTarget },
+          { onConflict: "user_id,intake_date" },
+        )
+      if (error) throw error
+    } catch (err) {
+      reportMutationError(err, {
+        op: "todayView.updateWaterTarget",
+        userId,
+        lang,
+        extra: { target: newTarget, date: today },
+      })
+    }
   }
 
   const waterPercent = Math.min(Math.round((glasses / waterTarget) * 100), 100)
