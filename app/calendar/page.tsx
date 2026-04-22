@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/lib/auth-context"
 import { useActiveProfile } from "@/lib/use-active-profile"
+import { useDailyLogs, type ItemType } from "@/lib/daily-logs-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
@@ -530,8 +531,12 @@ export default function CalendarPage() {
     { id: "e2", label: tx("calendar.valerianTea", lang), done: false, emoji: "🍵" },
   ])
 
-  // Shared completed items set for ritual sync (key = task label)
-  const [completedItems, setCompletedItems] = useState<Set<string>>(new Set())
+  // Session 44 C2.4: med/sup completion comes from DailyLogsContext
+  // (single source of truth across dashboard + calendar + TodayView).
+  // The local `done` field on morningTasks/noonTasks/nightTasks is still
+  // authoritative for water (💧) + custom tasks since they have no DB
+  // row; for meds/sups we override it at render time via deriveDone.
+  const { isCompleted: isLogCompleted, setCompleted: setLogCompleted } = useDailyLogs()
 
   // Helper: local date string (must be before useEffects that use it)
   const getDateStr = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
@@ -567,51 +572,37 @@ export default function CalendarPage() {
     return () => window.removeEventListener("water-intake-changed", handler)
   }, [fetchWaterCount])
 
-  // Toggle a task — for med/sup writes to daily_logs, for others uses localStorage
+  // Session 44 C2.4: toggle delegates med/sup writes to DailyLogsContext
+  // (optimistic + rollback + toast/Sentry live there). Water + custom
+  // tasks still own their local `done` state since there's no DB row.
   const toggleTask = useCallback(async (id: string) => {
-    // Find the task across all blocks
     const allCurrent = [...morningTasks, ...noonTasks, ...nightTasks]
     const task = allCurrent.find(t => t.id === id)
     if (!task) return
-    const newDone = !task.done
 
-    // Optimistic UI update
+    const isMed = task.emoji === "💊"
+    const isSup = task.emoji === "🌿" || task.emoji === "🐟"
+
+    if (isMed || isSup) {
+      const itemType: ItemType = isMed ? "medication" : "supplement"
+      const wasDone = isLogCompleted(itemType, id)
+      try {
+        await setLogCompleted(itemType, id, task.label, !wasDone)
+      } catch {
+        // Context already toasted + rolled back. Nothing to do locally —
+        // the local `done` field is overridden by deriveDone at render,
+        // so the UI matches reality on next render.
+      }
+      return
+    }
+
+    // Water (💧) + custom tasks — local state + localStorage only.
+    const newDone = !task.done
     const update = (tasks: DailyTask[]) => tasks.map(t => t.id === id ? { ...t, done: newDone } : t)
     setMorningTasks(update)
     setNoonTasks(update)
     setNightTasks(update)
-
-    // Update completedItems set
-    setCompletedItems(ci => {
-      const next = new Set(ci)
-      if (newDone) { next.add(task.id); next.add(task.label) }
-      else { next.delete(task.id); next.delete(task.label) }
-      return next
-    })
-
-    // For med/sup tasks → write to daily_logs Supabase
-    const isMedOrSup = task.emoji === "💊" || task.emoji === "🌿" || task.emoji === "🐟"
-    if (isMedOrSup && user?.id) {
-      try {
-        const supabase = createBrowserClient()
-        const itemType = task.emoji === "💊" ? "medication" : "supplement"
-        if (newDone) {
-          const { error } = await supabase.from("daily_logs").insert({
-            user_id: targetId, log_date: todayDateStr, item_type: itemType, item_id: id, item_name: task.label, completed: true,
-          })
-          if (error) {
-            await supabase.from("daily_logs").update({ completed: true })
-              .eq("user_id", targetId).eq("log_date", todayDateStr).eq("item_type", itemType).eq("item_id", id)
-          }
-        } else {
-          await supabase.from("daily_logs").delete()
-            .eq("user_id", targetId).eq("log_date", todayDateStr).eq("item_type", itemType).eq("item_id", id)
-        }
-        // Notify other views
-        window.dispatchEvent(new Event("daily-log-changed"))
-      } catch {}
-    }
-  }, [morningTasks, noonTasks, nightTasks, user?.id, todayDateStr])
+  }, [morningTasks, noonTasks, nightTasks, isLogCompleted, setLogCompleted])
 
   // Remove a task from a specific block
   const removeTask = useCallback((id: string) => {
@@ -640,20 +631,49 @@ export default function CalendarPage() {
     } catch {}
   }, [targetId])
 
-  const allTasks = useMemo(() => [...morningTasks, ...noonTasks, ...nightTasks], [morningTasks, noonTasks, nightTasks])
+  // Derive each task's `done` flag: meds/sups come from DailyLogsContext,
+  // water + custom keep their local state. Done at render time so any
+  // other consumer (dashboard, TodayView, future widgets) that flips a
+  // med/sup in context is reflected in our ring widget immediately.
+  const deriveDone = useCallback((task: DailyTask): boolean => {
+    if (task.emoji === "💊") return isLogCompleted("medication", task.id)
+    if (task.emoji === "🌿" || task.emoji === "🐟") return isLogCompleted("supplement", task.id)
+    return task.done
+  }, [isLogCompleted])
+
+  const morningTasksDerived = useMemo(
+    () => morningTasks.map(t => ({ ...t, done: deriveDone(t) })),
+    [morningTasks, deriveDone],
+  )
+  const noonTasksDerived = useMemo(
+    () => noonTasks.map(t => ({ ...t, done: deriveDone(t) })),
+    [noonTasks, deriveDone],
+  )
+  const nightTasksDerived = useMemo(
+    () => nightTasks.map(t => ({ ...t, done: deriveDone(t) })),
+    [nightTasks, deriveDone],
+  )
+
+  // Derived `allTasks` drives the 4-ring widget + score count. Context-
+  // driven med/sup state is applied uniformly here.
+  const allTasks = useMemo(
+    () => [...morningTasksDerived, ...noonTasksDerived, ...nightTasksDerived],
+    [morningTasksDerived, noonTasksDerived, nightTasksDerived],
+  )
   const completedTasks = allTasks.filter(t => t.done).length
 
-  // Auto-persist custom (non-med/sup) task completions to localStorage
+  // Auto-persist custom (non-med/sup) task completions to localStorage.
+  // Read from RAW arrays — context-driven re-renders should not trigger
+  // a wasted localStorage write.
   useEffect(() => {
     if (!ritualDataLoaded) return
-    // Only persist custom task completions (water, custom tasks) — med/sup use daily_logs
-    const customDoneIds = allTasks.filter(t => t.done && t.emoji !== "💊" && t.emoji !== "🌿" && t.emoji !== "🐟").map(t => t.id)
+    const raw = [...morningTasks, ...noonTasks, ...nightTasks]
+    const customDoneIds = raw.filter(t => t.done && t.emoji !== "💊" && t.emoji !== "🌿" && t.emoji !== "🐟").map(t => t.id)
     localStorage.setItem(`cal-rituals-${todayDateStr}`, JSON.stringify(customDoneIds))
 
-    // Save task id↔emoji mapping for reference
-    const taskMap = allTasks.map(t => ({ id: t.id, emoji: t.emoji }))
+    const taskMap = raw.map(t => ({ id: t.id, emoji: t.emoji }))
     localStorage.setItem(`cal-ritual-tasks-${todayDateStr}`, JSON.stringify(taskMap))
-  }, [allTasks, todayDateStr, ritualDataLoaded])
+  }, [morningTasks, noonTasks, nightTasks, todayDateStr, ritualDataLoaded])
 
   // waterCount from FAB + water tasks in rituals (no hardcoded +3)
   const waterDoneFromTasks = allTasks.filter(t => t.done && t.emoji === "💧").length
@@ -690,46 +710,41 @@ export default function CalendarPage() {
       setWaterToast(true)
       setTimeout(() => setWaterToast(false), 1500)
     } else if (type === "med") {
-      // Toggle all medication tasks as done — write each to daily_logs
+      // Session 44 C2.4: bulk-complete all pending meds via DailyLogsContext.
+      // Each call is a separate INSERT + a separate `daily-log-changed`
+      // dispatch; for a typical patient (2-5 active meds) this is fine.
+      // If someone ever needs to batch 20+, consider a dedicated bulk
+      // API on the context.
       const allCurrent = [...morningTasks, ...noonTasks, ...nightTasks]
-      const pendingMeds = allCurrent.filter(t => t.emoji === "💊" && !t.done)
-      setMorningTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
-      setNoonTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
-      setNightTasks(prev => prev.map(t => t.emoji === "💊" ? { ...t, done: true } : t))
-      // Write each to Supabase
-      if (user?.id && pendingMeds.length > 0) {
-        const supabase = createBrowserClient()
-        const inserts = pendingMeds.map(t => ({
-          user_id: targetId, log_date: todayDateStr, item_type: "medication", item_id: t.id, item_name: t.label, completed: true,
-        }))
-        supabase.from("daily_logs").upsert(inserts, { onConflict: "user_id,log_date,item_type,item_id" }).then(() => {
-          window.dispatchEvent(new Event("daily-log-changed"))
-        })
-      }
+      const pendingMeds = allCurrent.filter(t => t.emoji === "💊" && !isLogCompleted("medication", t.id))
+      // Fire all in parallel; individual failures toast via context,
+      // successes still land.
+      void Promise.all(
+        pendingMeds.map(t =>
+          setLogCompleted("medication", t.id, t.label, true).catch(() => {}),
+        ),
+      )
     }
-  }, [todayDateStr, morningTasks, noonTasks, nightTasks, user?.id])
+  }, [todayDateStr, morningTasks, noonTasks, nightTasks, isLogCompleted, setLogCompleted])
 
-  // Fetch real profile medications + supplements to populate time blocks
+  // Fetch real profile medications + supplements to populate time blocks.
+  // Session 44 C2.4: daily_logs read removed — DailyLogsContext owns it,
+  // and deriveDone overrides the local `done` field at render. Tasks are
+  // inserted with done=false; the context layer supplies the truth.
   const fetchProfileMeds = useCallback(async () => {
     if (!user?.id) return
     try {
       const supabase = createBrowserClient()
 
-      // Fetch medications, supplements, and daily_logs in parallel
-      const [medsRes, supsRes, logsRes] = await Promise.all([
+      const [medsRes, supsRes] = await Promise.all([
         supabase.from("user_medications").select("id, brand_name, generic_name, dosage, frequency")
           .eq("user_id", targetId).eq("is_active", true),
         supabase.from("calendar_events").select("id, title, event_time, metadata")
           .eq("user_id", targetId).eq("event_type", "supplement").eq("recurrence", "daily"),
-        supabase.from("daily_logs").select("item_id, completed")
-          .eq("user_id", targetId).eq("log_date", todayDateStr).eq("completed", true),
       ])
 
       const meds = medsRes.data
       const sups = supsRes.data
-      // Build done set from daily_logs (single source of truth)
-      const doneIds = new Set<string>()
-      logsRes.data?.forEach((l: { item_id: string; completed: boolean }) => { if (l.completed) doneIds.add(l.item_id) })
 
       const morning: DailyTask[] = []
       const noon: DailyTask[] = []
@@ -744,7 +759,7 @@ export default function CalendarPage() {
           for (const dose of doses) {
             const itemId = buildMedItemId(m.id, dose)
             const label = buildMedLabel(medName, dose)
-            const task: DailyTask = { id: itemId, label, done: doneIds.has(itemId), emoji: "💊" }
+            const task: DailyTask = { id: itemId, label, done: false, emoji: "💊" }
             if (dose.timeBlock === "evening") night.push(task)
             else if (dose.timeBlock === "noon") noon.push(task)
             else morning.push(task)
@@ -762,7 +777,7 @@ export default function CalendarPage() {
           const meta: { dose?: string } = typeof s.metadata === "string" ? JSON.parse(s.metadata || "{}") : ((s.metadata as { dose?: string }) || {})
           const doseInfo = meta.dose ? ` (${meta.dose})` : ""
           const itemId = s.id
-          const task: DailyTask = { id: itemId, label: `${name}${doseInfo}`, done: doneIds.has(itemId), emoji: "🌿" }
+          const task: DailyTask = { id: itemId, label: `${name}${doseInfo}`, done: false, emoji: "🌿" }
 
           if (hour >= 18) night.push(task)
           else if (hour >= 12) noon.push(task)
@@ -770,9 +785,9 @@ export default function CalendarPage() {
         })
       }
 
-      // Water tasks
-      const waterMorning: DailyTask = { id: "w1", label: tx("calendar.oneGlassWater", lang), done: doneIds.has("w1"), emoji: "💧" }
-      const waterNoon: DailyTask = { id: "w2", label: tx("calendar.twoGlassesWater", lang), done: doneIds.has("w2"), emoji: "💧" }
+      // Water tasks — `done` restored from localStorage below (no DB row).
+      const waterMorning: DailyTask = { id: "w1", label: tx("calendar.oneGlassWater", lang), done: false, emoji: "💧" }
+      const waterNoon: DailyTask = { id: "w2", label: tx("calendar.twoGlassesWater", lang), done: false, emoji: "💧" }
 
       // Set task blocks
       if (morning.length > 0 || sups) {
@@ -971,21 +986,21 @@ export default function CalendarPage() {
                   <TimeBlockEnhanced
                     icon={<Sun className="h-4 w-4 text-amber-500" />}
                     title={tx("calendar.morningRoutine", lang)}
-                    tasks={morningTasks} onToggle={toggleTask} onAdd={() => {}}
+                    tasks={morningTasksDerived} onToggle={toggleTask} onAdd={() => {}}
                     onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("morning", t)}
                     isCurrent={currentBlock === "morning"} hours="06:00–12:00" lang={lang} blockKey="morning" />
 
                   <TimeBlockEnhanced
                     icon={<Sunset className="h-4 w-4 text-orange-500" />}
                     title={tx("calendar.afternoon", lang)}
-                    tasks={noonTasks} onToggle={toggleTask} onAdd={() => {}}
+                    tasks={noonTasksDerived} onToggle={toggleTask} onAdd={() => {}}
                     onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("noon", t)}
                     isCurrent={currentBlock === "noon"} hours="12:00–18:00" lang={lang} blockKey="noon" />
 
                   <TimeBlockEnhanced
                     icon={<MoonIcon className="h-4 w-4 text-indigo-400" />}
                     title={tx("calendar.eveningWindDown", lang)}
-                    tasks={nightTasks} onToggle={toggleTask} onAdd={() => {}}
+                    tasks={nightTasksDerived} onToggle={toggleTask} onAdd={() => {}}
                     onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("night", t)}
                     isCurrent={currentBlock === "night"} hours="18:00–00:00" lang={lang} blockKey="night" />
 
