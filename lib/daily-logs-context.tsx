@@ -281,9 +281,13 @@ export function DailyLogsProvider({ children }: { children: React.ReactNode }) {
     [targetUserId, canEdit, today, supabase, lang, user?.id, activeUserId],
   );
 
+  // Note: `completed` is in the deps so that consumers re-render whenever
+  // the Set identity changes. Without it, isCompleted would silently read
+  // a fresh ref while React skipped the re-render entirely (the value
+  // object would stay reference-equal across state updates).
   const value = useMemo<DailyLogsContextValue>(
     () => ({ isCompleted, setCompleted, loading, refetch }),
-    [isCompleted, setCompleted, loading, refetch],
+    [isCompleted, setCompleted, loading, refetch, completed],
   );
 
   return <DailyLogsContext.Provider value={value}>{children}</DailyLogsContext.Provider>;
