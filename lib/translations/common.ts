@@ -59,6 +59,8 @@ export const commonTranslations: Record<string, TranslationEntry> = {
   "mutation.permissionDenied": { en: "You don't have permission to edit this profile.", tr: "Bu profili düzenleme iznin yok." },
   "mutation.networkError": { en: "Network error — check your connection.", tr: "Bağlantı hatası, internet kontrol et." },
   "mutation.retry": { en: "Retry", tr: "Tekrar dene" },
+  "dailyCare.subtitleReal": { en: "Today's supplements — tap to mark taken", tr: "Bugünkü takviyelerin — alındıkça işaretle" },
+  "dailyCare.noSupplements": { en: "No daily supplements yet. Add them from Calendar to track here.", tr: "Henüz günlük takviye yok. Takvimden ekleyince burada görünür." },
   "common.view": { en: "View", tr: "Veri" },
   "common.pay": { en: "Pay", tr: "Ödeme" },
   "common.meds": { en: "Meds", tr: "İlaç" },
