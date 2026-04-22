@@ -888,3 +888,36 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 - Drug-pair expansion (interaction engine refactor)
 - Landing full redesign (marketing paralel), parental consent (hukuki), OAuth extended pull, bulk med import, mid-onboarding aha feature
 - Iyzico şirket tescili bekleyişi devam
+
+---
+
+### 🚨 Post-Session-43 Production Incident (22 Nisan 2026, gece)
+
+**Semptom:** Production'da kullanıcı giriş yaptıktan sonra dashboard skeleton'da takılı kalıyor, sayfa yüklenmiyor.
+
+**Console kanıtları:**
+- `[Auth] Profile fetch timed out after 15s (source=authEvent:SIGNED_IN)` × 2 tekrar
+- `@supabase/gotrue-js: Lock "lock:sb-...-auth-token" was not released within 5000ms` × 2 tekrar
+
+**Timeline:**
+- Session 43 Faz 2 commit zinciri `5fccaf5..9861fa2` push edildi (`d3a7e9f..9861fa2`)
+- İpek canlı deploy sonrası skeleton bug'u yakaladı
+- Bug öncesi son stabil commit: `823feae` (Session 42 sonu, P2 kozmetik + FP-D)
+
+**Olası kök neden hipotezleri (Session 44 investigation'ı için):**
+
+1. **F-OB-003 atomic draft refactor** (`182b43b`, OnboardingWizard.tsx): `useState` initializer içinde `readDraft` çağrısı sync blocking olabilir; Supabase client init ile yarış durumu (auth lock acquisition sırasında localStorage JSON.parse tetiklenmesi).
+2. **F-OB-001 Finale prop** (`65edc06`): ilgisiz görünüyor — Finale yalnızca wizard finalize edildiğinde mount oluyor, SIGNED_IN event path'inde değil.
+3. **AuthContext timeout** — 15s yetersiz olabilir yeni kullanıcılar için (RLS profile select uzuyorsa).
+4. **RLS policy** — `profiles` tablosu INSERT own_insert + SELECT own_select new user için çalışmıyor olabilir; lock release fail Supabase gotrue-js tarafından tetikleniyor.
+5. **Supabase gotrue-js lock** — 5s auth token lock timeout yetersiz; F-OB-003 localStorage yazma + okuma pattern auth event path'inden ayrı thread'de blocking olabilir.
+
+**Rollback opsiyonu (Session 44 başında değerlendirilecek):**
+```bash
+git revert --no-commit 9861fa2..HEAD
+git commit -m "revert: Session 43 Faz 2 (production incident — investigating)"
+git push origin master
+```
+→ Session 42 stabiline (`823feae`) döner, 10 commit geri alınır, skeleton bug çözülür. Session 43 fix'leri local branch'te debug edilir.
+
+**Status:** **Session 44 ilk işi** — incident response + root cause + fix-forward veya rollback kararı.

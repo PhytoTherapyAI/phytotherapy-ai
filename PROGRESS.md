@@ -1,6 +1,30 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 22 Nisan 2026 (Session 43 — Onboarding audit Faz 1 başladı; ESLint + Onboarding paralel iki ayrı faz)
+> Son güncelleme: 22 Nisan 2026 gece (🚨 Production incident — Session 43 Faz 2 regression)
+
+---
+
+### 🚨 Session 44 — Production Incident Response (22 Nisan 2026 gece) — BEKLEMEDE
+
+**Semptom:** Canlıda signin sonrası dashboard skeleton'da takılı kalıyor.
+**Console kanıtı:**
+- `[Auth] Profile fetch timed out after 15s (source=authEvent:SIGNED_IN)` × 2
+- `@supabase/gotrue-js: Lock "lock:sb-...-auth-token" was not released within 5000ms` × 2
+
+**Tetikleyen:** Session 43 Faz 2 push (`d3a7e9f..9861fa2`, 10 commit).
+**Son stabil:** `823feae` (Session 42 sonu).
+
+**Hipotezler (öncelik sırası):**
+- **H1** F-OB-003 atomic draft refactor (`182b43b`) — `useState` initializer'da `readDraft` sync localStorage call, Supabase gotrue-js auth token lock ile yarış.
+- **H2** AuthContext 15s timeout yeni kullanıcılar için yetersiz.
+- **H3** `profiles` RLS policy new user INSERT/SELECT zinciri blokajı.
+- **H4 (düşük olasılık)** F-OB-001 Finale prop — SIGNED_IN path'inde değil.
+
+**Seçenekler:**
+- **Fix-forward** (H1 veya H2 doğrulanırsa, ~30 dk budget)
+- **Rollback** (`git revert 9861fa2..HEAD` → Session 42 stabil `823feae`)
+
+**Devir:** Session 44 ilk iş — root cause + fix-forward veya rollback.
 
 ---
 
