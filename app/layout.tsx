@@ -8,6 +8,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import { FamilyProvider } from "@/lib/family-context";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { LanguageProvider } from "@/components/layout/language-toggle";
+import { AppToaster } from "@/components/layout/AppToaster";
 import dynamic from "next/dynamic";
 import { SmartBackButton } from "@/components/layout/SmartBackButton";
 
@@ -140,6 +141,7 @@ export default function RootLayout({
                 </Suspense>
               </main>
               <Footer />
+              <AppToaster />
               <CookieConsent />
               <PWAInstallPrompt />
               <ServiceWorkerRegistration />
