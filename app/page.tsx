@@ -19,6 +19,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useFamily } from "@/lib/family-context";
 import { useActiveProfile } from "@/lib/use-active-profile";
 import { useWater, WaterIntakeProvider } from "@/lib/water-context";
+import { DailyLogsProvider } from "@/lib/daily-logs-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddSupplementDialog } from "@/components/calendar/AddSupplementDialog";
@@ -641,6 +642,7 @@ export default function Home() {
   if (showDashboard) {
     return (
       <WaterIntakeProvider>
+      <DailyLogsProvider>
       <div className="min-h-screen bg-stone-50 dark:bg-background">
         <LocalizedTitle tr="Panel" en="Dashboard" />
         {/* Dashboard Tour (first visit only) */}
@@ -1029,6 +1031,7 @@ export default function Home() {
           )}
         </motion.div>
       </div>
+      </DailyLogsProvider>
       </WaterIntakeProvider>
     );
   }
