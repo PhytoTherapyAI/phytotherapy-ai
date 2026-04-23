@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -382,21 +382,54 @@ export default function ProfilePage() {
   const profile = isOwnProfile ? authProfile : viewedProfile;
 
   // Command-palette deep links land here with #vucut-olculeri / #medications /
-  // #allergy-card etc. We can't run scrollIntoView at mount because the big
-  // conditional Cards (medical-history, allergy) only render once `profile`
-  // is in. Wait for the first profile fill, give one frame for layout, then
-  // smooth-scroll + flash a 2 s emerald ring on the target. Ref-guard so
-  // re-renders / family-profile switches don't re-fire the scroll.
+  // #allergy-card etc. Two phases:
+  //   (1) If the hash maps to a section that lives INSIDE the collapsed
+  //       "Sağlık Profilim" card (BMI / kan grubu / yaşam tarzı / takviye /
+  //       üreme), flip editingHealth=true so the target actually mounts.
+  //       The standalone cards (#medications, #medical-history,
+  //       #allergy-card, #vaccines) render unconditionally and don't need
+  //       this — but we still need to wait for `profile` to fill since the
+  //       conditional Cards (medical-history, allergy) only mount after.
+  //   (2) After a short delay (give the new section + Cards a frame to
+  //       paint) smooth-scroll the target into view + flash a 2 s emerald
+  //       ring. Ref-guard so re-renders / family-profile switches don't
+  //       re-fire the scroll.
   const hashScrollDoneRef = useRef(false);
+
+  // Hashes that live inside the collapsed Health Profile card. Anchors
+  // OUTSIDE this set (#medications, #allergy-card, #vaccines,
+  // #medical-history) are top-level Cards and don't require unfolding.
+  const HEALTH_PROFILE_HASHES = useMemo(
+    () => new Set([
+      "vucut-olculeri",
+      "kan-grubu",
+      "yasam-tarzi",
+      "takviyelerim",
+      "ureme-sagligi",
+    ]),
+    [],
+  );
+
   useEffect(() => {
     if (!profile || hashScrollDoneRef.current) return;
     if (typeof window === "undefined") return;
-    const hash = window.location.hash;
-    if (!hash || hash.length < 2) return;
+    const rawHash = window.location.hash;
+    if (!rawHash || rawHash.length < 2) return;
+    const hashId = rawHash.slice(1); // strip leading #
 
+    // Phase 1: open the Health Profile card if the target is inside it.
+    if (HEALTH_PROFILE_HASHES.has(hashId)) {
+      setEditingHealth(true);
+    }
+
+    // Phase 2: wait for the section to mount (longer when we just toggled
+    // editingHealth — the inner LifestyleSection / supplements / repro
+    // blocks need at least one frame to render before scrollIntoView can
+    // find them).
+    const delay = HEALTH_PROFILE_HASHES.has(hashId) ? 400 : 200;
     const t = setTimeout(() => {
       let el: Element | null = null;
-      try { el = document.querySelector(hash); } catch { /* invalid selector */ }
+      try { el = document.querySelector(rawHash); } catch { /* invalid selector */ }
       if (!el) return;
       el.scrollIntoView({ behavior: "smooth", block: "start" });
       el.classList.add("ring-2", "ring-emerald-500", "ring-offset-2", "rounded-xl", "transition-all");
@@ -404,9 +437,9 @@ export default function ProfilePage() {
         el?.classList.remove("ring-2", "ring-emerald-500", "ring-offset-2");
       }, 2000);
       hashScrollDoneRef.current = true;
-    }, 200);
+    }, delay);
     return () => clearTimeout(t);
-  }, [profile]);
+  }, [profile, HEALTH_PROFILE_HASHES]);
 
   useEffect(() => {
     if (!activeUserId) return;
