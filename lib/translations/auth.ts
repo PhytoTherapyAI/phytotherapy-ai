@@ -161,6 +161,17 @@ export const authTranslations: Record<string, TranslationEntry> = {
   "profile.exportFailed": { en: "Data export failed", tr: "Veri indirme başarısız" },
   "profile.deleteFailed": { en: "Account deletion failed", tr: "Hesap silme başarısız" },
 
+  // ─── F-AUTH-003: Email verification resend ───
+  "auth.resend.button": { en: "Resend verification email", tr: "Email tekrar gönder" },
+  "auth.resend.sending": { en: "Sending...", tr: "Gönderiliyor..." },
+  "auth.resend.sent": { en: "Sent ✓", tr: "Gönderildi ✓" },
+  "auth.resend.cooldown": { en: "Try again in {n}s", tr: "{n}s sonra tekrar" },
+  "auth.resend.rateLimited": { en: "Too many attempts — {n}s wait", tr: "Çok fazla deneme — {n}s sonra" },
+  "auth.resend.error": { en: "Could not send — try again", tr: "Gönderilemedi — tekrar dene" },
+  "auth.resend.alreadyConfirmed": { en: "Email already verified — sign in", tr: "Email zaten onaylı — giriş yap" },
+  "auth.resend.hint": { en: "If the email didn't arrive, check your spam folder — or resend.", tr: "Email gelmezse spam klasörünü kontrol et, ya da tekrar gönder." },
+  "auth.errEmailNotConfirmed": { en: "Email not verified yet. Check your inbox for the verification link.", tr: "Email henüz doğrulanmamış. Gelen kutunu kontrol et — doğrulama linki yolladık." },
+
   // ─── HealthReportTab (F-PROFILE-001 Commit 5) ───
   "profile.healthReport.title": { en: "Health Report", tr: "Sağlık Raporu" },
   "profile.healthReport.subtitle": { en: "A summary view of your health data — vitality, stats, badges and SBAR export.", tr: "Sağlık verilerinin özet görünümü — canlılık skoru, sayı kartları, rozetler ve SBAR dışa aktarım." },

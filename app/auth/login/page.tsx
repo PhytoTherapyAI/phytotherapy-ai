@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Leaf, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle2, Play, Gift, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
@@ -17,6 +17,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { TurnstileWidget } from "@/components/auth/TurnstileWidget";
+import { EmailResendButton } from "@/components/auth/EmailResendButton";
 
 export default function LoginPage() {
   return (
@@ -49,6 +50,13 @@ function LoginContent() {
   const [signupPassword, setSignupPassword] = useState("");
   const [signupConfirm, setSignupConfirm] = useState("");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // F-AUTH-003: when non-null, the EmailResendButton renders for this
+  // address. Set on (a) sign-up success and (b) login attempts that
+  // fail with "Email not confirmed".
+  const [emailNeedsVerification, setEmailNeedsVerification] = useState<string | null>(null);
+  // F-AUTH-003: controlled Tabs so the "already confirmed" callback can
+  // flip the user from sign-up → sign-in without a manual click.
+  const [activeTab, setActiveTab] = useState<string>("login");
 
   // Referral code state
   const [showReferral, setShowReferral] = useState(false);
@@ -70,11 +78,25 @@ function LoginContent() {
     e.preventDefault();
     setError(null);
     setSuccessMessage(null);
+    setEmailNeedsVerification(null);
     setIsLoading(true);
     try {
       const sb = createBrowserClient();
       const { error, user } = await signInWithEmail(loginEmail, loginPassword);
-      if (error) { setError(error); setIsLoading(false); return; }
+      if (error) {
+        // F-AUTH-003: Supabase returns "Email not confirmed" when the
+        // user signed up but never clicked the verification link. Swap
+        // the generic message for a localized one + surface the resend
+        // button so they can recover without re-creating the account.
+        if (/email.{0,5}not.{0,5}confirmed/i.test(error) || /email.{0,5}not.{0,5}verified/i.test(error)) {
+          setError(tx("auth.errEmailNotConfirmed", lang));
+          setEmailNeedsVerification(loginEmail);
+        } else {
+          setError(error);
+        }
+        setIsLoading(false);
+        return;
+      }
       if (!user) {
         await new Promise((r) => setTimeout(r, 500));
         const { data } = await sb.auth.getUser();
@@ -111,6 +133,9 @@ function LoginContent() {
       const { data: { session } } = await sb.auth.getSession();
       if (session) { window.location.href = "/onboarding"; return; }
       setSuccessMessage(tx("auth.successCreated", lang));
+      // F-AUTH-003: capture email BEFORE clearing the form so the
+      // resend button has a target.
+      setEmailNeedsVerification(signupEmail);
       setIsLoading(false);
       setSignupName(""); setSignupEmail(""); setSignupPassword(""); setSignupConfirm("");
     } catch (err) {
@@ -119,6 +144,17 @@ function LoginContent() {
       setIsLoading(false);
     }
   };
+
+  // F-AUTH-003: callback from EmailResendButton when the server says the
+  // email is already verified. Flip to the sign-in tab, pre-fill the
+  // login email, and drop both the success/error banners + resend state.
+  const handleAlreadyConfirmed = useCallback((email: string) => {
+    setLoginEmail(email);
+    setActiveTab("login");
+    setEmailNeedsVerification(null);
+    setSuccessMessage(null);
+    setError(null);
+  }, []);
 
   const handleDemoLogin = async () => {
     setError(null);
@@ -213,6 +249,17 @@ function LoginContent() {
         <CardContent>
           {error && <Alert variant="destructive" className="mb-4"><AlertCircle className="h-4 w-4" /><AlertDescription>{error}</AlertDescription></Alert>}
           {successMessage && <Alert className="mb-4 border-primary/20 bg-primary/10 text-primary"><CheckCircle2 className="h-4 w-4" /><AlertDescription>{successMessage}</AlertDescription></Alert>}
+          {/* F-AUTH-003: resend button appears when a sign-up just
+              succeeded OR a sign-in hit "email not confirmed". */}
+          {emailNeedsVerification && (
+            <div className="mb-4 rounded-lg border border-border bg-muted/30 p-3">
+              <EmailResendButton
+                email={emailNeedsVerification}
+                lang={lang as "tr" | "en"}
+                onAlreadyConfirmed={handleAlreadyConfirmed}
+              />
+            </div>
+          )}
 
           <div className="mb-4 flex flex-col gap-2">
             <Button variant="outline" className="w-full gap-2" onClick={handleGoogleLogin} disabled={isLoading}>
@@ -239,7 +286,7 @@ function LoginContent() {
             </div>
           </div>
 
-          <Tabs defaultValue="login">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">{tx("auth.signIn", lang)}</TabsTrigger>
               <TabsTrigger value="signup">{tx("auth.signUp", lang)}</TabsTrigger>

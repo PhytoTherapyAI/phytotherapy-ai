@@ -29,6 +29,20 @@ interface AuthContextType extends AuthState {
   signInWithFacebook: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  /**
+   * F-AUTH-003: Resend verification email for sign-up flow.
+   * Returns `{ error }` with a normalised code where the UI state machine
+   * can branch on: 'rate-limited' (429 / cooldown), 'already-confirmed'
+   * (email already verified), null (success), or a raw message string
+   * for unknown errors.
+   */
+  resendVerificationEmail: (email: string) => Promise<{
+    error: null | {
+      code: "rate-limited" | "already-confirmed" | "unknown";
+      message: string;
+      retryAfterSeconds?: number;
+    };
+  }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -285,10 +299,79 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
       options: {
+        // F-AUTH-003: explicit emailRedirectTo so the confirmation link
+        // lands on our /auth/callback handler (previously relied on
+        // Supabase "Site URL" fallback — fine in most envs but fragile
+        // under preview deployments).
+        emailRedirectTo: typeof window !== "undefined"
+          ? `${window.location.origin}/auth/callback`
+          : undefined,
         data: { full_name: fullName },
       },
     });
     return { error: error?.message ?? null };
+  };
+
+  const resendVerificationEmail: AuthContextType["resendVerificationEmail"] = async (email) => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: {
+          emailRedirectTo: typeof window !== "undefined"
+            ? `${window.location.origin}/auth/callback`
+            : undefined,
+        },
+      });
+
+      if (!error) return { error: null };
+
+      // Supabase error shape — discriminate the cases the UI cares about.
+      const raw = error as { status?: number; code?: string; message?: string };
+      const msg = raw.message ?? "";
+
+      // 429 with Supabase's native code OR "rate limit" in the message.
+      if (raw.status === 429 || raw.code === "over_email_send_rate_limit" || /rate.?limit/i.test(msg)) {
+        // Supabase doesn't return a Retry-After header via the SDK — default
+        // to 60s (their documented per-user cooldown). Client caller can
+        // override with its own countdown when it already has one.
+        return {
+          error: {
+            code: "rate-limited",
+            message: msg || "Rate limited",
+            retryAfterSeconds: 60,
+          },
+        };
+      }
+
+      // Already-confirmed users hit a 422 / 400 "User already confirmed" /
+      // "Email link is invalid or has expired" pattern depending on flow.
+      if (/already.{0,20}(confirmed|verified|registered)/i.test(msg)) {
+        return {
+          error: {
+            code: "already-confirmed",
+            message: msg,
+          },
+        };
+      }
+
+      return {
+        error: {
+          code: "unknown",
+          message: msg || "Unknown error",
+        },
+      };
+    } catch (err) {
+      // Network / SDK failure — treat as unknown so the UI shows the
+      // "could not send" state and the caller can log to Sentry.
+      const msg = err instanceof Error ? err.message : String(err);
+      return {
+        error: {
+          code: "unknown",
+          message: msg,
+        },
+      };
+    }
   };
 
   const signInWithGoogle = async () => {
@@ -373,6 +456,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signInWithFacebook,
         signOut,
         refreshProfile,
+        resendVerificationEmail,
       }}
     >
       {children}
