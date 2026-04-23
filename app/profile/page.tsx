@@ -7,7 +7,14 @@ import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ProfileShellV2 } from "@/components/profile-v2/ProfileShellV2";
 import { MedicationInteractionBanner } from "@/components/safety/MedicationInteractionBanner";
-import { checkInteractionsAfterChange, type InteractionCheckResult } from "@/lib/safety/check-med-interactions";
+import {
+  checkInteractionsAfterChange,
+  fetchActiveInteractionAlert,
+  dismissInteractionAlert,
+  resolveInteractionAlert,
+  autoResolveAlertsForMedication,
+  type InteractionCheckResult,
+} from "@/lib/safety/check-med-interactions";
 
 // F-SAFETY-001 post-launch feature flag. The helper (including telemetry
 // breadcrumbs) always runs so we keep capturing interaction-check signal
@@ -347,6 +354,21 @@ function LegacyProfilePage() {
     window.addEventListener("safety:med-added", handler);
     return () => window.removeEventListener("safety:med-added", handler);
   }, [triggerSafetyCheck]);
+
+  // F-SAFETY-002.2: restore an unresolved, undismissed interaction
+  // alert across refresh / tab reopen. Runs once per activeUserId
+  // change. Session banner state still wins while triggerSafetyCheck
+  // is in flight — this only populates when the user lands on the
+  // page without a live check.
+  const alertRestoredRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!activeUserId) return;
+    if (alertRestoredRef.current === activeUserId) return;
+    alertRestoredRef.current = activeUserId;
+    void fetchActiveInteractionAlert(activeUserId).then((alert) => {
+      if (alert) setMedInteractionAlert(alert);
+    });
+  }, [activeUserId]);
 
   const showSaveToast = () => {
     setSaveSuccess(true);
@@ -738,10 +760,32 @@ function LegacyProfilePage() {
     if (!canEdit) return;
     try {
       const supabase = createBrowserClient();
+      // F-SAFETY-002.2: grab the display name BEFORE updating state
+      // so the auto-resolve pass can match edges that referenced it.
+      const removed = medications.find((m) => m.id === id);
+      const medName = (removed?.generic_name || removed?.brand_name || "").trim();
+
       const { error } = await supabase.from("user_medications").update({ is_active: false }).eq("id", id);
       if (!error) {
         setMedications((prev) => prev.filter((m) => m.id !== id));
         showSaveToast();
+
+        // F-SAFETY-002.2: sweep any active alert whose edges reference
+        // the just-removed med. Matching row(s) get resolved_at = now()
+        // with an auto-resolved note. If the currently-displayed alert
+        // is among them, clear local state too so the banner disappears
+        // without waiting for the next check.
+        if (activeUserId && medName) {
+          void autoResolveAlertsForMedication(activeUserId, medName);
+          if (medInteractionAlert) {
+            const needle = medName.toLowerCase();
+            const touched = [...medInteractionAlert.dangerous, ...medInteractionAlert.caution].some((e) =>
+              (e.source?.toLowerCase() ?? "").includes(needle)
+              || (e.target?.toLowerCase() ?? "").includes(needle),
+            );
+            if (touched) setMedInteractionAlert(null);
+          }
+        }
       }
     } catch (err) {
       console.error("Failed to remove medication:", err);
@@ -1364,7 +1408,29 @@ function LegacyProfilePage() {
           caution={medInteractionAlert.caution}
           summary={medInteractionAlert.summary}
           lang={(lang === "tr" ? "tr" : "en") as "tr" | "en"}
-          onDismiss={() => setMedInteractionAlert(null)}
+          alertId={medInteractionAlert.alertId}
+          onDismiss={() => {
+            // F-SAFETY-002.2: persist session-level dismiss. Hides
+            // locally AND writes dismissed_at so F5 doesn't re-show.
+            // A subsequent insert that produces fresh dangerous /
+            // caution edges creates a new row and re-triggers the
+            // banner — the dismiss is scoped to THIS alert.
+            if (medInteractionAlert.alertId) {
+              void dismissInteractionAlert(medInteractionAlert.alertId);
+            }
+            setMedInteractionAlert(null);
+          }}
+          onResolve={medInteractionAlert.alertId ? async () => {
+            // F-SAFETY-002.2: permanent resolution ("Doktor onayladı").
+            // Writes resolved_at; banner never returns for this alert
+            // row (F5 + new tab + reload all see it as closed).
+            await resolveInteractionAlert(medInteractionAlert.alertId!);
+            setMedInteractionAlert(null);
+            // Reset the 24-h confirm badge so the user can re-affirm
+            // "ilaçlarım güncel" independently now that the blocker
+            // cleared.
+            setMedConfirmed(false);
+          } : undefined}
           // F-SAFETY-002 Commit 3: onAskDoctor omitted intentionally —
           // banner now defaults to the mailto: template (pre-filled
           // subject + body, recipient left blank for the user). The
@@ -1601,25 +1667,44 @@ function LegacyProfilePage() {
             </div>
           )}
 
-          {/* Confirm medications are current */}
+          {/* Confirm medications are current.
+              F-SAFETY-002.2: an active (unresolved) interaction alert
+              locks this button into an amber "İncelemeyi bekliyor"
+              state so the user can't confirm-current while a safety
+              flag is open — that was the exact false-confidence loop
+              İpek flagged. Resolving the alert (Doktor Onayladı) or
+              deleting the triggering med (auto-resolve) frees the
+              button back to its normal confirm-then-green behaviour. */}
           <Separator />
           <Button
-            variant={medConfirmed ? "default" : "outline"}
+            variant={medInteractionAlert
+              ? "outline"
+              : medConfirmed ? "default" : "outline"}
             size="sm"
-            className={`gap-2 ${medConfirmed ? "bg-green-500 hover:bg-green-600 text-white" : "border-primary/30 text-primary hover:bg-primary/10"}`}
-            onClick={confirmMedicationsCurrent}
-            disabled={confirming || medConfirmed}
+            className={`gap-2 ${
+              medInteractionAlert
+                ? "border-amber-400 text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 cursor-not-allowed"
+                : medConfirmed
+                  ? "bg-green-500 hover:bg-green-600 text-white"
+                  : "border-primary/30 text-primary hover:bg-primary/10"
+            }`}
+            onClick={medInteractionAlert ? undefined : confirmMedicationsCurrent}
+            disabled={confirming || medConfirmed || !!medInteractionAlert}
           >
-            {confirming ? (
+            {medInteractionAlert ? (
+              <AlertTriangle className="h-4 w-4" />
+            ) : confirming ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : medConfirmed ? (
               <Check className="h-4 w-4" />
             ) : (
               <CheckCircle2 className="h-4 w-4" />
             )}
-            {medConfirmed
-              ? tx("profile.confirmed", lang)
-              : tx('profile.confirmCurrent', lang)
+            {medInteractionAlert
+              ? (tr ? "İncelemeyi bekliyor" : "Review pending")
+              : medConfirmed
+                ? tx("profile.confirmed", lang)
+                : tx('profile.confirmCurrent', lang)
             }
           </Button>
         </CardContent>

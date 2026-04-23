@@ -58,6 +58,16 @@ export interface InteractionCheckResult {
   caution: EdgeItem[]
   summary: string
   checkedAt: string
+  /**
+   * F-SAFETY-002.2: Supabase row id from medication_interaction_alerts
+   * for the persistent banner. Present whenever the helper successfully
+   * insert'ed the alert. Absent (undefined) when:
+   *   - user not authenticated (no session)
+   *   - DB insert failed (graceful degrade: banner still shows for the
+   *     session, but dismiss / resolve buttons won't work)
+   *   - result had zero dangerous + caution edges (nothing to persist)
+   */
+  alertId?: string
 }
 
 interface CheckParams {
@@ -185,11 +195,55 @@ export async function checkInteractionsAfterChange(params: CheckParams): Promise
     )
     track("safety.interaction_check.result.by_category", byCategory)
 
+    const summaryText = typeof data.summary === "string" ? data.summary : ""
+
+    // F-SAFETY-002.2: persist the alert so it survives refresh / tab
+    // close. Only dangerous + caution rows are stored — safe alerts
+    // never render UI. Failure here is graceful: the banner still
+    // renders for this session (dismissed on F5) with alertId=undefined;
+    // dismiss / resolve buttons degrade to visual-only.
+    let alertId: string | undefined
+    if (dangerous.length > 0 || caution.length > 0) {
+      const severity: "dangerous" | "caution" = dangerous.length > 0 ? "dangerous" : "caution"
+      const persistedEdges = [...dangerous, ...caution]
+      try {
+        const { data: inserted, error: insertErr } = await supabase
+          .from("medication_interaction_alerts")
+          .insert({
+            user_id: userId,
+            edges: persistedEdges,
+            summary: summaryText || null,
+            severity,
+            // trigger_medication optional — caller doesn't know which
+            // med was the trigger unless we thread it through. Left
+            // null for now; future: pass params.triggerMedication.
+            trigger_medication: null,
+          })
+          .select("id")
+          .single()
+        if (insertErr) {
+          track("safety.alert.persist_failed", { code: insertErr.code, message: insertErr.message })
+        } else if (inserted) {
+          alertId = (inserted as { id: string }).id
+          track("safety.alert.persisted", {
+            severity,
+            edgeCount: persistedEdges.length,
+            categories: Array.from(new Set(persistedEdges.map((e) => e.category ?? "drug-drug"))),
+          })
+        }
+      } catch (err) {
+        track("safety.alert.persist_failed", {
+          message: err instanceof Error ? err.message : "unknown",
+        })
+      }
+    }
+
     onResult({
       dangerous,
       caution,
-      summary: typeof data.summary === "string" ? data.summary : "",
+      summary: summaryText,
       checkedAt: new Date().toISOString(),
+      alertId,
     })
   } catch (err) {
     track("safety.interaction_check.error", {
@@ -197,6 +251,132 @@ export async function checkInteractionsAfterChange(params: CheckParams): Promise
     })
     onError?.(err instanceof Error ? err : new Error(String(err)))
   }
+}
+
+/**
+ * F-SAFETY-002.2: load the user's most recent still-visible interaction
+ * alert (unresolved AND undismissed). Used by the profile page mount-
+ * effect so a refresh doesn't wipe the banner. Returns null when no
+ * active alert exists OR when the table isn't migrated yet — the
+ * caller should fall back to the default "Doğrulandı!" badge.
+ */
+export async function fetchActiveInteractionAlert(
+  userId: string,
+): Promise<(InteractionCheckResult & { alertId: string }) | null> {
+  if (!userId) return null
+  try {
+    const supabase = createBrowserClient()
+    const { data, error } = await supabase
+      .from("medication_interaction_alerts")
+      .select("id, edges, summary, severity, created_at")
+      .eq("user_id", userId)
+      .is("resolved_at", null)
+      .is("dismissed_at", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    if (error || !data) return null
+    const row = data as {
+      id: string
+      edges: EdgeItem[]
+      summary: string | null
+      severity: "dangerous" | "caution"
+      created_at: string
+    }
+    const edges = Array.isArray(row.edges) ? row.edges : []
+    return {
+      alertId: row.id,
+      dangerous: edges.filter((e) => e.severity === "dangerous"),
+      caution: edges.filter((e) => e.severity === "caution"),
+      summary: row.summary ?? "",
+      checkedAt: row.created_at,
+    }
+  } catch {
+    return null
+  }
+}
+
+/**
+ * F-SAFETY-002.2: session-level dismiss. Hides the banner until the
+ * next trigger (new med insert that produces dangerous / caution edges).
+ */
+export async function dismissInteractionAlert(alertId: string): Promise<void> {
+  if (!alertId) return
+  track("safety.alert.dismissed_session", { alertId })
+  try {
+    const supabase = createBrowserClient()
+    await supabase
+      .from("medication_interaction_alerts")
+      .update({ dismissed_at: new Date().toISOString() })
+      .eq("id", alertId)
+  } catch { /* soft fail — UI already hid */ }
+}
+
+/**
+ * F-SAFETY-002.2: permanent resolution. "Doktor onayladı" / clinician-
+ * acknowledged. Banner never returns for this alert row.
+ */
+export async function resolveInteractionAlert(alertId: string, note?: string): Promise<void> {
+  if (!alertId) return
+  track("safety.alert.resolved_permanent", { alertId })
+  try {
+    const supabase = createBrowserClient()
+    await supabase
+      .from("medication_interaction_alerts")
+      .update({
+        resolved_at: new Date().toISOString(),
+        resolution_note: note ?? null,
+      })
+      .eq("id", alertId)
+  } catch { /* soft fail */ }
+}
+
+/**
+ * F-SAFETY-002.2: auto-resolve any active alert whose edges reference
+ * the medication the user just deleted. Called from the deletion flow
+ * so removing Amoxicillin automatically clears the penicillin+amoxicillin
+ * alert (no stale banner requiring manual dismissal).
+ *
+ * Matching is case-insensitive on source OR target. Per row, we update
+ * resolved_at = now() once any edge matches.
+ */
+export async function autoResolveAlertsForMedication(
+  userId: string,
+  medName: string,
+): Promise<void> {
+  if (!userId || !medName) return
+  const needle = medName.trim().toLowerCase()
+  if (!needle) return
+  try {
+    const supabase = createBrowserClient()
+    const { data: rows } = await supabase
+      .from("medication_interaction_alerts")
+      .select("id, edges")
+      .eq("user_id", userId)
+      .is("resolved_at", null)
+    if (!rows || rows.length === 0) return
+    const matchIds: string[] = []
+    for (const row of rows as Array<{ id: string; edges: EdgeItem[] }>) {
+      const edges = Array.isArray(row.edges) ? row.edges : []
+      const hit = edges.some((e) =>
+        (e.source?.toLowerCase() ?? "").includes(needle)
+        || (e.target?.toLowerCase() ?? "").includes(needle),
+      )
+      if (hit) matchIds.push(row.id)
+    }
+    if (matchIds.length === 0) return
+    await supabase
+      .from("medication_interaction_alerts")
+      .update({
+        resolved_at: new Date().toISOString(),
+        resolution_note: `auto-resolved: ${medName} removed`,
+      })
+      .in("id", matchIds)
+    track("safety.alert.auto_resolved_on_med_delete", {
+      medName,
+      resolvedCount: matchIds.length,
+    })
+  } catch { /* soft fail */ }
 }
 
 /**

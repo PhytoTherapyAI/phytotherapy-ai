@@ -15,8 +15,8 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useRef } from "react"
-import { AlertTriangle, Info, X, ArrowRight, Stethoscope } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import { AlertTriangle, Info, X, ArrowRight, Stethoscope, CheckCircle2, Loader2 } from "lucide-react"
 import type { EdgeItem, EdgeCategory } from "@/lib/safety/check-med-interactions"
 import { buildDoctorMailtoUrl } from "@/lib/safety/sbar-interaction-template"
 
@@ -70,7 +70,19 @@ interface Props {
   caution: EdgeItem[]
   summary: string
   lang: "tr" | "en"
+  /**
+   * F-SAFETY-002.2: session-dismiss handler. Caller writes
+   * dismissed_at to the DB row AND hides the banner locally.
+   */
   onDismiss: () => void
+  /**
+   * F-SAFETY-002.2: permanent resolution ("Doktor onayladı"). Caller
+   * writes resolved_at + resolution_note to the DB row. Omitted when
+   * alertId is absent — the button stays hidden rather than degrading
+   * to a local-only hide (which would confuse the "persistent"
+   * contract the user is relying on).
+   */
+  onResolve?: () => void
   /**
    * Optional override. Default (F-SAFETY-002 Commit 3): the banner
    * opens the user's mail client with a pre-filled subject + body
@@ -82,6 +94,12 @@ interface Props {
   /** Patient name used in the mailto closing line. Falls back to a
    *  neutral "Hasta" / "Patient" when absent. */
   patientName?: string | null
+  /**
+   * F-SAFETY-002.2: Supabase alert row id. Present whenever the alert
+   * is persistent (helper successfully inserted). Absent for legacy
+   * session-only banners — resolve button hides in that case.
+   */
+  alertId?: string
 }
 
 function track(event: string, data?: Record<string, unknown>): void {
@@ -98,9 +116,12 @@ export function MedicationInteractionBanner({
   summary,
   lang,
   onDismiss,
+  onResolve,
   onAskDoctor,
   patientName,
+  alertId,
 }: Props) {
+  const [resolving, setResolving] = useState(false)
   const tr = lang === "tr"
   const isDanger = dangerous.length > 0
   const edges = isDanger ? dangerous : caution
@@ -308,6 +329,33 @@ export function MedicationInteractionBanner({
               <Stethoscope className="h-3.5 w-3.5" />
               {tr ? "Doktoruma Sor" : "Ask My Doctor"}
             </button>
+
+            {/* F-SAFETY-002.2: permanent resolve. Hidden when the
+                alert isn't persisted (alertId absent) — dismiss-only
+                behaviour in that edge case, since resolving a row we
+                can't address would be a lie. Disabled during the DB
+                round-trip; parent hides the banner on success. */}
+            {alertId && onResolve && (
+              <button
+                type="button"
+                disabled={resolving}
+                onClick={async () => {
+                  if (resolving) return
+                  setResolving(true)
+                  try {
+                    await onResolve()
+                  } finally {
+                    setResolving(false)
+                  }
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 px-4 py-2 text-sm font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors disabled:opacity-60"
+              >
+                {resolving
+                  ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  : <CheckCircle2 className="h-3.5 w-3.5" />}
+                {tr ? "Doktor Onayladı / Çözüldü" : "Doctor Approved / Resolved"}
+              </button>
+            )}
           </div>
         </div>
       </div>
