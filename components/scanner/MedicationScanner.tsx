@@ -91,6 +91,14 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
 
   const analyzeImage = async (imageData: string) => {
     setMode("scanning")
+
+    // F-SCANNER-001: AbortController matches endpoint maxDuration=50s
+    // with a 5s safety margin. Before this change the fetch had no
+    // timeout — a slow Claude response could spin the loader for the
+    // browser's default (~5 min) with no user signal.
+    const controller = new AbortController()
+    const timeoutHandle = window.setTimeout(() => controller.abort(), 55_000)
+
     try {
       const supabase = createBrowserClient()
       const { data: { session } } = await supabase.auth.getSession()
@@ -102,18 +110,78 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
           ...(session?.access_token && { Authorization: `Bearer ${session.access_token}` }),
         },
         body: JSON.stringify({ image: imageData, lang }),
+        signal: controller.signal,
       })
+
+      window.clearTimeout(timeoutHandle)
 
       if (res.ok) {
         const data = await res.json()
         setResult(data)
         setMode("result")
-      } else {
-        setResult({ error: tx("scan.analysisFailed", lang) })
-        setMode("result")
+        return
       }
-    } catch {
-      setResult({ error: tx("scan.connectionError", lang) })
+
+      // F-SCANNER-001: the endpoint returns `{ error, code, stage, detail }`
+      // on failure — map the code to a specific i18n key so the user
+      // sees an actionable message instead of the old generic
+      // "Analiz başarısız" that swallowed every failure mode.
+      let payload: { error?: string; code?: string; stage?: string; detail?: string } = {}
+      try {
+        payload = await res.json()
+      } catch {
+        // Non-JSON response (e.g. Vercel edge timeout HTML) — fall through
+        // to the status-code branch below.
+      }
+
+      if (process.env.NODE_ENV !== "production") {
+        // Dev-only diagnostic so the developer can see `stage` + `detail`
+        // without opening Sentry. Prod stays quiet per KVKK — no PII
+        // surfaces even though this path never touches base64 anyway.
+        // eslint-disable-next-line no-console
+        console.error("[scanner] analysis failed", {
+          status: res.status,
+          ...payload,
+        })
+      }
+
+      let errorKey = "scan.error.ocrFailed"
+      let replaceN: string | null = null
+      const code = payload.code ?? ""
+
+      if (res.status === 401 || code === "auth_required") {
+        errorKey = "scan.error.authExpired"
+      } else if (res.status === 429 || code === "rate_limited") {
+        errorKey = "scan.error.rateLimited"
+        // Endpoint writes the wait in `detail` as `resetInSeconds=NN`.
+        const match = /resetInSeconds=(\d+)/.exec(payload.detail ?? "")
+        replaceN = match ? match[1] : "60"
+      } else if (code === "consent_blocked") {
+        errorKey = "scan.error.consentBlocked"
+      }
+
+      let message = tx(errorKey, lang)
+      if (replaceN !== null) {
+        message = message.replace("{n}", replaceN)
+      }
+      setResult({ error: message })
+      setMode("result")
+    } catch (err) {
+      window.clearTimeout(timeoutHandle)
+      // F-SCANNER-001: distinguish AbortController timeout from generic
+      // fetch failure so the user knows whether to check their network
+      // or wait for the server to catch up.
+      const isAbort =
+        err instanceof Error &&
+        (err.name === "AbortError" || err.message.includes("aborted"))
+      const errorKey = isAbort ? "scan.error.timeout" : "scan.connectionError"
+
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.error("[scanner] fetch threw", { isAbort, err })
+      }
+
+      setResult({ error: tx(errorKey, lang) })
       setMode("result")
     }
   }

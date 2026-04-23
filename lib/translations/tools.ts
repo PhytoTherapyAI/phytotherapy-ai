@@ -977,6 +977,29 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
   "scan.capture": { en: "Capture", tr: "Çek" },
   "scan.analysisFailed": { en: "Analysis failed", tr: "Analiz başarısız" },
   "scan.connectionError": { en: "Connection error", tr: "Bağlantı hatası" },
+  // F-SCANNER-001: status-code-aware error messages replace the generic
+  // "scan.analysisFailed" fallback. Frontend maps `code` field in the
+  // endpoint's error response to one of these keys.
+  "scan.error.rateLimited": {
+    en: "Too many attempts — try again in {n}s",
+    tr: "Çok fazla deneme — {n} saniye sonra tekrar",
+  },
+  "scan.error.authExpired": {
+    en: "Session expired — please sign in again",
+    tr: "Oturum süresi doldu — tekrar giriş yap",
+  },
+  "scan.error.ocrFailed": {
+    en: "Couldn't read the image — try a clearer photo",
+    tr: "Görüntü okunamadı — daha net bir fotoğraf dene",
+  },
+  "scan.error.timeout": {
+    en: "Request timed out — check your connection",
+    tr: "İstek zaman aşımına uğradı — internet bağlantını kontrol et",
+  },
+  "scan.error.consentBlocked": {
+    en: "AI analysis requires consent — Profile → Privacy",
+    tr: "AI analizi için onay vermen gerekiyor — Profil → Gizlilik",
+  },
   "scan.brand": { en: "Brand", tr: "Marka" },
   "scan.active": { en: "Active", tr: "Etken Madde" },
   "scan.dosage": { en: "Dosage", tr: "Doz" },
