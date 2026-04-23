@@ -96,8 +96,8 @@ export const landingTranslations: Record<string, TranslationEntry> = {
     tr: "Hangi ilaç neyle çakışır, 2 saniyede öğren.",
   },
   "landing.solution.feature1Body": {
-    en: "PubMed, OpenFDA and clinical literature scanned, results classified with GRADE evidence system. 'High risk', 'caution required', or 'safe' — every interaction comes with its evidence level.",
-    tr: "PubMed, OpenFDA ve klinik literatür taranır, GRADE evidence sistemi ile sınıflandırılmış sonuçlar gösterilir. 'Yüksek riskli' mi, 'dikkat edilmeli' mi, yoksa 'güvenli' mi — her etkileşim kanıt seviyesiyle birlikte gelir.",
+    en: "PubMed, OpenFDA and clinical literature are scanned to give you trustworthy answers backed by evidence. 'High risk', 'caution required', or 'safe' — every interaction comes with its evidence level.",
+    tr: "PubMed, OpenFDA ve klinik literatür taranır, kanıt seviyesiyle birlikte güvenilir cevaplar gösterilir. 'Yüksek riskli' mi, 'dikkat edilmeli' mi, yoksa 'güvenli' mi — her etkileşim kanıt seviyesiyle birlikte gelir.",
   },
   "landing.solution.feature1Chip1": { en: "Drug + drug", tr: "İlaç + ilaç" },
   "landing.solution.feature1Chip2": { en: "Drug + herb/supplement", tr: "İlaç + bitki/takviye" },
@@ -111,8 +111,8 @@ export const landingTranslations: Record<string, TranslationEntry> = {
     tr: "Doktoruna gitmeden önce, profesyonel klinik özetin hazır.",
   },
   "landing.solution.feature2Body": {
-    en: "PDF report prepared in SBAR format (Situation–Background–Assessment–Recommendation) conveys your loved one's status to the doctor in 30 seconds. In hospital language, in hospital standards.",
-    tr: "SBAR formatında (Situation–Background–Assessment–Recommendation) hazırlanan PDF raporu, sevdiklerinin son durumunu doktoruna 30 saniyede aktarır. Hastane jargonunda, hastane standardında.",
+    en: "A doctor-standard PDF report conveys your loved one's status to the physician in 30 seconds. Same structure hospitals use — clear, complete, no guesswork.",
+    tr: "Doktor standardında hazırlanan PDF raporu, sevdiklerinin son durumunu hekimine 30 saniyede aktarır. Hastanelerin kullandığı netlikte — eksik bilgi yok, tahmin yok.",
   },
   "landing.solution.feature2Chip1": { en: "Download or share as PDF", tr: "PDF olarak indir veya paylaş" },
   "landing.solution.feature2Chip2": { en: "Current medications + doses", tr: "Mevcut ilaçlar + dozlar" },
@@ -154,8 +154,8 @@ export const landingTranslations: Record<string, TranslationEntry> = {
   "landing.howItWorks.step3Title": { en: "Your AI Assistant is Ready", tr: "AI Asistanın Hazır" },
   "landing.howItWorks.step3Duration": { en: "24/7 for you", tr: "7/24 senin için" },
   "landing.howItWorks.step3Body": {
-    en: "Ask: 'Is mom's new prescription compatible with her existing meds?' Instant GRADE-classified answer, SBAR report if needed, urgent guidance if necessary.",
-    tr: "Sor: 'Annemin yeni reçetesi mevcut ilaçlarıyla uyumlu mu?' Anında GRADE-sınıflandırılmış cevap, gerekirse SBAR raporu, gerekirse acil yönlendirme.",
+    en: "Ask: 'Is mom's new prescription compatible with her existing meds?' An instant trustworthy answer, a doctor-standard report if needed, urgent guidance if it can't wait.",
+    tr: "Sor: 'Annemin yeni reçetesi mevcut ilaçlarıyla uyumlu mu?' Anında güvenilir cevap, gerekirse Doktor standardında rapor, gerekirse acil yönlendirme.",
   },
 
   // ─── pricing ─────────────────────────────────────────

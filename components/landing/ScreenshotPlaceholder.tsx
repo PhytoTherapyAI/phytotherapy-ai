@@ -105,7 +105,7 @@ export function ScreenshotPlaceholder({
                     : "This combination is considered safe in the literature."}
                 </p>
                 <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-500 dark:text-slate-400 pt-0.5">
-                  <span>📊 {tr ? "GRADE: Yüksek kanıt" : "GRADE: High evidence"}</span>
+                  <span>📊 {tr ? "Yüksek kanıt seviyesi" : "High evidence level"}</span>
                   <span>🔬 {tr ? "12 çalışma" : "12 studies"}</span>
                   <span>🇹🇷 {tr ? "İlaç Bilgi Bankası" : "Drug Info Bank"}</span>
                 </div>
