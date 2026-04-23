@@ -12,6 +12,8 @@ import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { sanitizeInput } from "@/lib/sanitize";
 import { tx } from "@/lib/translations";
+import { getUserEffectivePremium } from "@/lib/premium";
+import { enforceFreeChatQuota } from "@/lib/chat-quota";
 
 export const maxDuration = 60;
 
@@ -207,6 +209,57 @@ export async function POST(request: NextRequest) {
                 "Transfer-Encoding": "chunked",
               },
             });
+          }
+
+          // ── Free-tier daily chat quota (Premium İş 2) ──
+          // The pricing page promises Free users 20 questions/day. Enforce
+          // it here, after consent (so consent errors take priority — never
+          // tell a quota story to a user who hasn't even consented yet) and
+          // after red-code (handled at the top of POST — emergency traffic
+          // is never gated). Premium users skip this entirely.
+          //
+          // Quota tracks the CALLER's authored messages, not the target —
+          // a Free user reading a family member's profile still draws on
+          // their own daily allotment. Family Premium grants premium to all
+          // members so this branch is only ever hit by Free callers.
+          try {
+            const eff = await getUserEffectivePremium(userId, supabase);
+            if (!eff.isPremium) {
+              const quota = await enforceFreeChatQuota(userId, supabase);
+              if (quota.exceeded) {
+                logApiAccess({
+                  endpoint: "/api/chat",
+                  userId: userId,
+                  action: "ai_chat_blocked_quota_exhausted",
+                  ip: clientIP,
+                  outcome: "denied",
+                });
+                return new Response(
+                  JSON.stringify({
+                    error: "quota_exhausted",
+                    limit: quota.limit,
+                    used: quota.used,
+                    resetsAt: quota.resetsAt,
+                  }),
+                  {
+                    status: 402, // Payment Required — premium upgrade resolves it
+                    headers: {
+                      "Content-Type": "application/json",
+                      "X-Chat-Quota-Limit": String(quota.limit),
+                      "X-Chat-Quota-Used": String(quota.used),
+                      "X-Chat-Quota-Remaining": "0",
+                      "X-Chat-Quota-Resets-At": quota.resetsAt,
+                    },
+                  }
+                );
+              }
+            }
+          } catch (quotaErr) {
+            // Fail-open on quota check infrastructure failure — never let a
+            // quota lookup glitch take down a paying flow. The premium
+            // status helper has its own try/catch so this only fires on
+            // truly unexpected errors.
+            console.warn("[chat-quota] check failed, allowing request:", quotaErr);
           }
 
           if (profile) {

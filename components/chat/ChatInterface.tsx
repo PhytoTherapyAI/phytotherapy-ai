@@ -185,18 +185,14 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
     // feature, never gate it (Gemini rule: SOS + emergency always free).
     const triageResult = checkRedFlags(trimmed);
 
-    // Premium gate — AI chat is Premium for authenticated non-emergency
-    // traffic. Emergency path above bypasses this. Guests can still try
-    // the existing "guest mode" limits lower down.
-    if (
-      isAuthenticated
-      && !effectivePremium.loading
-      && !effectivePremium.isPremium
-      && triageResult.type !== "red_code"
-    ) {
-      setShowPremiumModal(true);
-      return;
-    }
+    // Premium gate (Session 44 İş 2) — Free users get 20 chat messages
+    // per day per the pricing page. Server enforces the quota and
+    // returns HTTP 402 once exhausted; we catch that below and surface
+    // the upgrade modal. We no longer pre-emptively block non-premium
+    // traffic here — that turned the "20/day Free" promise into "0/day
+    // Free" and forced everyone into the paywall before sending a
+    // single message. Red-code emergency traffic is handled below this
+    // and never hits the network.
 
     // KIRMIZI KOD — Hayati tehlike, popup + block, AI cevap vermez
     if (triageResult.type === "red_code") {
@@ -416,6 +412,18 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
       });
 
       if (!res.ok) {
+        // 402 Payment Required → Free user hit their daily quota. Show
+        // the premium upgrade modal and rewind the optimistic assistant
+        // bubble (no streamed answer is coming). Other non-OK statuses
+        // fall through to the generic connection-error handler below.
+        if (res.status === 402) {
+          // Best-effort body parse for telemetry; we don't currently surface
+          // "X used / Y remaining" copy in the modal but the data is here.
+          try { await res.json() } catch { /* non-fatal */ }
+          setMessages((prev) => prev.filter((m) => m.id !== assistantId));
+          setShowPremiumModal(true);
+          return;
+        }
         throw new Error("Failed to get response");
       }
 
