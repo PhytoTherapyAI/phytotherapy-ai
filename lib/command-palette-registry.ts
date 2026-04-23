@@ -215,7 +215,10 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "+ Aile Öyküsü Ekle", en: "+ Add Family History" },
     description: { tr: "Akraba hastalık geçmişi ekle (anne, baba, kardeş…)", en: "Add a relative's condition history" },
     keywords: { tr: ["ekle", "aile", "öykü", "geçmiş", "anne", "baba", "kanser", "yeni"], en: ["add", "family", "history", "relative", "new"] },
-    href: "/family-health-tree",
+    // F-PALETTE-001 (Session 45): deep-link with section anchor + auto-open
+    // flag. The page consumes both via useSearchParams and strips ?new=true
+    // after firing so refresh doesn't re-open the modal.
+    href: "/family-health-tree?section=history&new=true",
     authOnly: true,
   },
   {

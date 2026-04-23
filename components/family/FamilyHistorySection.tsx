@@ -104,7 +104,24 @@ const RELATION_OPTIONS_EN = [
   "Other",
 ];
 
-export function FamilyHistorySection() {
+interface FamilyHistorySectionProps {
+  /**
+   * F-PALETTE-001 (Session 45): when true, the Add modal opens
+   * automatically on mount. Used by the command-palette deep link
+   * (`/family-health-tree?section=history&new=true`) so the user
+   * lands directly on the form. Caller is responsible for clearing
+   * its own URL flag — fire `onModalClose` (below) to coordinate.
+   */
+  autoOpen?: boolean;
+  /**
+   * Fires whenever the Add/Edit modal closes (cancel, save, or
+   * background click). Lets the parent strip the `?new=true` query
+   * param so a refresh doesn't re-open the modal.
+   */
+  onModalClose?: () => void;
+}
+
+export function FamilyHistorySection({ autoOpen, onModalClose }: FamilyHistorySectionProps = {}) {
   const { user, isAuthenticated } = useAuth();
   const { lang } = useLang();
   const tr = lang === "tr";
@@ -160,6 +177,21 @@ export function FamilyHistorySection() {
     fetchEntries();
   }, [fetchEntries]);
 
+  // F-PALETTE-001: mount-time auto-open from deep link. Runs once when
+  // autoOpen flips true (parent gates this on the URL `?new=true` flag,
+  // strips the flag via onModalClose so refresh doesn't re-fire).
+  // Intentionally NOT depending on openAddForm — that closure changes
+  // every render and would re-trigger the modal on each re-render.
+  // Plain ref-style guard via the autoOpen→formOpen one-way flow.
+  useEffect(() => {
+    if (autoOpen && !formOpen) {
+      const draft = readDraft();
+      if (draft && !draft.id) setFormState(draft); else setFormState(EMPTY_FORM);
+      setFormOpen(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoOpen]);
+
   // Session 39 hotfix: persist form draft while modal is open so tab
   // switches (which can unmount this section via parent loading flip)
   // don't discard the user's input. Cleared on close/save — see clearDraft.
@@ -200,11 +232,12 @@ export function FamilyHistorySection() {
     setFormOpen(true);
   };
 
-  const closeForm = () => {
+  const closeForm = useCallback(() => {
     setFormOpen(false);
     setFormState(EMPTY_FORM);
     clearDraft();
-  };
+    onModalClose?.();
+  }, [onModalClose]);
 
   const handleSave = async () => {
     if (!formState.person_relation.trim() || !formState.condition_name.trim()) {

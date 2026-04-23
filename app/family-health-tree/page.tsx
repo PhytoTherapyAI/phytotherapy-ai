@@ -1,9 +1,9 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   ChevronLeft, Sparkles, Loader2, TreePine, Users, AlertCircle,
@@ -201,6 +201,8 @@ function GenerationRow({
 
 export default function FamilyHealthTreePage() {
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { user, isAuthenticated, isLoading: authLoading } = useAuth()
   const { familyGroup, familyMembers, loading: familyLoading } = useFamily()
   const { lang } = useLang()
@@ -211,6 +213,36 @@ export default function FamilyHealthTreePage() {
   const [analyzing, setAnalyzing] = useState(false)
   const [analyzeError, setAnalyzeError] = useState<string | null>(null)
   const [showPremiumModal, setShowPremiumModal] = useState(false)
+
+  // F-PALETTE-001: deep-link handling. Command palette routes here with
+  // ?section=history (scroll target) and ?new=true (auto-open Add modal).
+  // We snapshot the new=true flag at mount-time, then strip it from the
+  // URL so a refresh doesn't re-open the modal. The scroll fires once
+  // the section is mounted (familyHistoryRef has a current node).
+  const familyHistoryRef = useRef<HTMLDivElement | null>(null)
+  const [autoOpenHistory, setAutoOpenHistory] = useState(false)
+  useEffect(() => {
+    const section = searchParams.get("section")
+    const isNew = searchParams.get("new") === "true"
+
+    if (isNew && !autoOpenHistory) {
+      setAutoOpenHistory(true)
+      // Strip ?new=true from the URL immediately so refresh / back-nav
+      // doesn't re-fire. Keep ?section=history if it was set.
+      const next = new URLSearchParams(searchParams.toString())
+      next.delete("new")
+      const qs = next.toString()
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+    }
+    if (section === "history" && familyHistoryRef.current) {
+      familyHistoryRef.current.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
+  const clearHistoryAutoOpen = () => {
+    setAutoOpenHistory(false)
+  }
 
   const generations = useMemo<TreeGeneration[]>(() => {
     if (!familyMembers || familyMembers.length === 0) return []
@@ -297,22 +329,13 @@ export default function FamilyHealthTreePage() {
     )
   }
 
-  if (!familyGroup) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-6">
-        <div className="text-center max-w-md">
-          <Users className="h-12 w-12 text-emerald-600 mx-auto mb-3" />
-          <h1 className="text-xl font-bold mb-2">{tx("family.treeTitle", lang)}</h1>
-          <p className="text-sm text-muted-foreground mb-4">
-            {tr ? "Aile ağacını görmek için önce bir aile grubu oluşturman gerekiyor." : "You need to create a family group first."}
-          </p>
-          <Link href="/family" className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-5 py-2.5 text-sm font-semibold">
-            {tr ? "Aile Grubu Oluştur" : "Create Family Group"}
-          </Link>
-        </div>
-      </div>
-    )
-  }
+  // F-PALETTE-001 (Session 45): the "no family group" early return used
+  // to short-circuit the whole page, which meant FamilyHistorySection
+  // (an INDIVIDUAL-data CRUD, no group required — RLS gates by user_id
+  // alone in app/api/family-history/route.ts) was unreachable from the
+  // command-palette deep link. Removed the early return; instead, the
+  // main render shows FamilyHistorySection at the top unconditionally
+  // and the tree visualization OR the "create group" CTA below it.
 
   // ───────────── Main render ─────────────
   return (
@@ -335,15 +358,48 @@ export default function FamilyHealthTreePage() {
               {tx("family.treeTitle", lang)}
             </h1>
             <p className="text-xs text-muted-foreground mt-0.5">
-              {tr
-                ? `${totalMembers} üye · kalıtsal riskleri görselleştirir`
-                : `${totalMembers} members · visualize inherited risks`}
+              {familyGroup
+                ? (tr
+                    ? `${totalMembers} üye · kalıtsal riskleri görselleştirir`
+                    : `${totalMembers} members · visualize inherited risks`)
+                : (tr
+                    ? "Aile öyküsü ve kalıtsal risk yönetimi"
+                    : "Family history and inherited-risk management")}
             </p>
           </div>
         </div>
 
+        {/* F-PALETTE-001: Family History at the top — INDIVIDUAL data
+            (RLS by user_id only), works whether or not the user has a
+            family group. The command-palette deep link
+            (/family-health-tree?section=history&new=true) lands here. */}
+        <div ref={familyHistoryRef}>
+          <FamilyHistorySection autoOpen={autoOpenHistory} onModalClose={clearHistoryAutoOpen} />
+        </div>
+
+        {/* Tree visualization is GROUP-SCOPED — only render when the
+            user has joined / created a family group. Without a group
+            we surface a CTA instead so the page isn't half-empty. */}
+        {!familyGroup && (
+          <div className="mt-8 rounded-2xl border-2 border-dashed border-border p-8 text-center">
+            <Users className="h-10 w-10 text-emerald-600/70 mx-auto mb-3" />
+            <p className="text-base font-semibold mb-1">
+              {tr ? "Aile ağacını görmek ister misin?" : "Want to see your family tree?"}
+            </p>
+            <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+              {tr
+                ? "Bir aile grubu oluşturduğunda kuşaklar arası kalıtsal risk haritası burada görünür."
+                : "Once you create a family group, an inheritance risk map across generations will appear here."}
+            </p>
+            <Link href="/family" className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-sm font-semibold">
+              <UserCircle className="h-4 w-4" />
+              {tr ? "Aile Grubu Oluştur" : "Create Family Group"}
+            </Link>
+          </div>
+        )}
+
         {/* Empty state */}
-        {totalMembers <= 1 && generations[0]?.members.length === 0 && (
+        {familyGroup && totalMembers <= 1 && generations[0]?.members.length === 0 && (
           <div className="rounded-2xl border-2 border-dashed border-border p-8 text-center">
             <Users className="h-10 w-10 text-muted-foreground/60 mx-auto mb-3" />
             <p className="text-sm font-semibold mb-1">
@@ -362,7 +418,7 @@ export default function FamilyHealthTreePage() {
         )}
 
         {/* Generations */}
-        {(totalMembers > 1 || (generations[0]?.members.length ?? 0) > 0) && (
+        {familyGroup && (totalMembers > 1 || (generations[0]?.members.length ?? 0) > 0) && (
           <div className="space-y-4">
             {generations.map(g => (
               <GenerationRow key={g.generation} gen={g} lang={lang as "en" | "tr"} />
@@ -371,7 +427,7 @@ export default function FamilyHealthTreePage() {
         )}
 
         {/* AI analysis CTA */}
-        {hasAnyConditions && (
+        {familyGroup && hasAnyConditions && (
           <div className="mt-6 rounded-2xl border bg-card p-5">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="flex items-start gap-3">
@@ -405,9 +461,9 @@ export default function FamilyHealthTreePage() {
           </div>
         )}
 
-        {/* Analysis result panel */}
+        {/* Analysis result panel — only relevant when a tree exists */}
         <AnimatePresence>
-          {analysis && (
+          {familyGroup && analysis && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -495,8 +551,10 @@ export default function FamilyHealthTreePage() {
           )}
         </AnimatePresence>
 
-        {/* Session 39 C2: Family History Entries CRUD section */}
-        <FamilyHistorySection />
+        {/* Session 39 C2: FamilyHistorySection used to live HERE. Moved
+            to top of the page in F-PALETTE-001 (Session 45) so the
+            command-palette deep link can reach it without the
+            familyGroup gate. Disclaimer below is unchanged. */}
 
         <p className="mt-6 text-[11px] text-muted-foreground text-center max-w-xl mx-auto">
           {tr
