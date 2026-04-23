@@ -35,6 +35,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MedicationScanner } from "@/components/scanner/MedicationScanner"
 import { MedicationInteractionBanner } from "@/components/safety/MedicationInteractionBanner"
+import { AskDoctorModal } from "@/components/safety/AskDoctorModal"
 import {
   checkInteractionsAfterChange,
   fetchActiveInteractionAlert,
@@ -225,6 +226,11 @@ export function MedicationsTab({
   const [medInteractionAlert, setMedInteractionAlert] = useState<InteractionCheckResult | null>(null)
   const [medInteractionLoading, setMedInteractionLoading] = useState(false)
   const [medInteractionRateLimited, setMedInteractionRateLimited] = useState(false)
+  // F-SAFETY-002.3: mailto fallback modal state. Opens when the banner's
+  // "Doktoruma Sor" CTA fires — deterministic replacement for the old
+  // silent `window.location.href = mailto:` path that failed on Opera GX
+  // and on any browser without a default mail handler.
+  const [askDoctorOpen, setAskDoctorOpen] = useState(false)
 
   const triggerSafetyCheck = useCallback(() => {
     setMedInteractionAlert(null)
@@ -388,6 +394,24 @@ export function MedicationsTab({
             setMedInteractionAlert(null)
             setMedConfirmed(false)
           } : undefined}
+          // F-SAFETY-002.3: replace the banner's native mailto fallback
+          // with a deterministic modal. Banner default still ships for
+          // other mounts that don't pass this prop (none today, but the
+          // prop contract stays open for future callers).
+          onAskDoctor={() => setAskDoctorOpen(true)}
+        />
+      )}
+
+      {/* F-SAFETY-002.3: ask-doctor fallback modal. Mounts near the
+          banner so the edges array reuses the same alert state. */}
+      {medInteractionAlert && (
+        <AskDoctorModal
+          open={askDoctorOpen}
+          onOpenChange={setAskDoctorOpen}
+          edges={[...medInteractionAlert.dangerous, ...medInteractionAlert.caution]}
+          summary={medInteractionAlert.summary}
+          patientName={patientName ?? null}
+          lang={lang}
         />
       )}
 

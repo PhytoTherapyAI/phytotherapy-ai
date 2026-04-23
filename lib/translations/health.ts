@@ -25,6 +25,25 @@ export const healthTranslations: Record<string, TranslationEntry> = {
   "safety.gradeB": { en: "Grade B", tr: "Kanıt B" },
   "safety.gradeC": { en: "Grade C", tr: "Kanıt C" },
   "safety.emergencyWarning": { en: "🚨 Emergency Warning", tr: "🚨 Acil Durum Uyarısı" },
+
+  // ─── F-SAFETY-002.3: Ask-doctor mailto fallback modal ───
+  "safety.askDoctor.title": { en: "Contact your doctor", tr: "Doktora İletişim" },
+  "safety.askDoctor.intro": {
+    en: "Copy the pre-filled message below or open it directly in your mail app.",
+    tr: "Aşağıdaki hazır mesajı doktoruna göndermek için kopyala veya mail uygulamanda aç.",
+  },
+  "safety.askDoctor.emailLabel": { en: "Doctor email address (optional)", tr: "Doktor email adresi (opsiyonel)" },
+  "safety.askDoctor.emailPlaceholder": { en: "doctor@example.com", tr: "doctor@example.com" },
+  "safety.askDoctor.bodyLabel": { en: "Message preview", tr: "Mesaj önizleme" },
+  "safety.askDoctor.copyButton": { en: "Copy message", tr: "Metni Kopyala" },
+  "safety.askDoctor.copied": { en: "Copied ✓", tr: "Kopyalandı ✓" },
+  "safety.askDoctor.copyError": { en: "Couldn't copy — select the text and press Ctrl+C", tr: "Kopyalanamadı — metni seçip Ctrl+C yapabilirsin" },
+  "safety.askDoctor.openMailButton": { en: "Open in mail app", tr: "Mail Uygulamasında Aç" },
+  "safety.askDoctor.close": { en: "Close", tr: "Kapat" },
+  "safety.askDoctor.hint": {
+    en: "If your mail app doesn't open, copy the message and send it from your own email.",
+    tr: "Mail uygulaması açılmazsa metni kopyalayıp kendi mail'inden gönderebilirsin.",
+  },
   "med.pregnantFlag": { en: "Pregnant", tr: "Hamile" },
   "med.breastfeedingFlag": { en: "Breastfeeding", tr: "Emziriyor" },
   "med.kidneyFlag": { en: "Kidney Disease", tr: "Böbrek Hastalığı" },
