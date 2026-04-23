@@ -29,10 +29,26 @@
 
 import { createBrowserClient } from "@/lib/supabase"
 
+/**
+ * F-SAFETY-002 Commit 2: `category` marks which matrix an edge came
+ * from — drug-drug (original), drug-chronic, drug-supplement,
+ * drug-allergy, drug-condition (pregnancy / breastfeeding / kidney /
+ * liver). Backwards-compat optional: edges from the old schema (and
+ * any caller that doesn't pass category) fall back to "drug-drug" at
+ * the display site.
+ */
+export type EdgeCategory =
+  | "drug-drug"
+  | "drug-chronic"
+  | "drug-supplement"
+  | "drug-allergy"
+  | "drug-condition"
+
 export interface EdgeItem {
   source: string
   target: string
   severity: "safe" | "caution" | "dangerous"
+  category?: EdgeCategory
   description: string
   mechanism: string
 }
@@ -139,11 +155,35 @@ export async function checkInteractionsAfterChange(params: CheckParams): Promise
     const dangerous = edges.filter((e) => e.severity === "dangerous")
     const caution = edges.filter((e) => e.severity === "caution")
 
+    // Kept for backwards compat — old dashboards / breadcrumb parsers
+    // read this event; legacy fields (dangerous, caution counts).
     track("safety.interaction_check.result", {
       kind: dangerous.length > 0 ? "dangerous" : caution.length > 0 ? "caution" : "safe",
       dangerous: dangerous.length,
       caution: caution.length,
     })
+
+    // F-SAFETY-002 category breakdown. Edges without an explicit
+    // category coerce to "drug-drug" (the original single-matrix
+    // output). Shape mirrors the one discussed in the Session 45 plan:
+    // safety.result.drug_{drug,chronic,supplement,allergy,condition}.{dangerous,caution,safe}
+    const CATEGORIES: EdgeCategory[] = [
+      "drug-drug", "drug-chronic", "drug-supplement", "drug-allergy", "drug-condition",
+    ]
+    const byCategory = Object.fromEntries(
+      CATEGORIES.map((cat) => {
+        const slice = edges.filter((e) => (e.category ?? "drug-drug") === cat)
+        return [
+          cat.replace("-", "_"),
+          {
+            dangerous: slice.filter((e) => e.severity === "dangerous").length,
+            caution: slice.filter((e) => e.severity === "caution").length,
+            safe: slice.filter((e) => e.severity === "safe").length,
+          },
+        ]
+      }),
+    )
+    track("safety.interaction_check.result.by_category", byCategory)
 
     onResult({
       dangerous,

@@ -17,7 +17,29 @@
 import Link from "next/link"
 import { useEffect, useRef } from "react"
 import { AlertTriangle, Info, X, ArrowRight, Stethoscope } from "lucide-react"
-import type { EdgeItem } from "@/lib/safety/check-med-interactions"
+import type { EdgeItem, EdgeCategory } from "@/lib/safety/check-med-interactions"
+
+// F-SAFETY-002 Commit 2 — category labels shown above each grouped
+// edge block. Legacy edges (no category field) coerce to "drug-drug"
+// at render time so older cached API responses still display correctly.
+const CATEGORY_LABELS: Record<EdgeCategory, { tr: string; en: string; emoji: string }> = {
+  "drug-drug":       { tr: "İlaç + İlaç",         en: "Drug + Drug",           emoji: "💊" },
+  "drug-chronic":    { tr: "İlaç + Hastalık",     en: "Drug + Condition",      emoji: "🩺" },
+  "drug-supplement": { tr: "İlaç + Takviye",      en: "Drug + Supplement",     emoji: "🌿" },
+  "drug-allergy":    { tr: "İlaç + Alerji",       en: "Drug + Allergy",        emoji: "⚠️" },
+  "drug-condition":  { tr: "İlaç + Kritik Durum", en: "Drug + Critical Flag",  emoji: "🚨" },
+}
+
+// Stable category order — drug-condition first (pregnancy / kidney /
+// liver carry the highest clinical weight), then drug-allergy, then
+// drug-drug, chronic, supplement.
+const CATEGORY_ORDER: EdgeCategory[] = [
+  "drug-condition",
+  "drug-allergy",
+  "drug-drug",
+  "drug-chronic",
+  "drug-supplement",
+]
 
 /**
  * Title-case a medication name for display.
@@ -172,32 +194,52 @@ export function MedicationInteractionBanner({
             </button>
           </div>
 
-          {/* Top-3 edge breakdown */}
-          <ul className="mt-3 space-y-2">
-            {edges.slice(0, 3).map((e, i) => (
-              <li key={i} className="rounded-lg border border-border/60 bg-background/70 p-3">
-                <p className="text-sm font-semibold">
-                  {titleCaseMed(e.source)} + {titleCaseMed(e.target)}
-                </p>
-                {e.description && (
-                  <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
-                    {e.description}
+          {/* Edge breakdown — grouped by category (F-SAFETY-002 Commit 2).
+              Each category renders its own mini header + up to 2 edges
+              + "+N more" overflow. Old single-matrix banners read the
+              same UI with one auto-coerced "drug-drug" group. */}
+          <div className="mt-3 space-y-3">
+            {CATEGORY_ORDER.map((cat) => {
+              const items = edges.filter((e) => (e.category ?? "drug-drug") === cat)
+              if (items.length === 0) return null
+              const catMeta = CATEGORY_LABELS[cat]
+              return (
+                <div key={cat} className="space-y-1.5">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/90">
+                    <span className="mr-1">{catMeta.emoji}</span>
+                    {catMeta[lang]}
                   </p>
-                )}
-                {e.mechanism && (
-                  <p className="mt-0.5 text-[11px] text-muted-foreground/80 italic leading-relaxed">
-                    {tr ? "Mekanizma: " : "Mechanism: "}
-                    {e.mechanism}
-                  </p>
-                )}
-              </li>
-            ))}
-            {edges.length > 3 && (
-              <li className="text-xs text-muted-foreground pl-1">
-                {tr ? `+ ${edges.length - 3} etkileşim daha` : `+ ${edges.length - 3} more interactions`}
-              </li>
-            )}
-          </ul>
+                  <ul className="space-y-2">
+                    {items.slice(0, 2).map((e, i) => (
+                      <li key={i} className="rounded-lg border border-border/60 bg-background/70 p-3">
+                        <p className="text-sm font-semibold">
+                          {titleCaseMed(e.source)} + {titleCaseMed(e.target)}
+                        </p>
+                        {e.description && (
+                          <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
+                            {e.description}
+                          </p>
+                        )}
+                        {e.mechanism && (
+                          <p className="mt-0.5 text-[11px] text-muted-foreground/80 italic leading-relaxed">
+                            {tr ? "Mekanizma: " : "Mechanism: "}
+                            {e.mechanism}
+                          </p>
+                        )}
+                      </li>
+                    ))}
+                    {items.length > 2 && (
+                      <li className="text-xs text-muted-foreground pl-1">
+                        {tr
+                          ? `+ ${items.length - 2} ${catMeta.tr.toLowerCase()} daha`
+                          : `+ ${items.length - 2} more ${catMeta.en.toLowerCase()}`}
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )
+            })}
+          </div>
 
           {/* Summary (optional) */}
           {summary && (
