@@ -883,14 +883,25 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 
 ---
 
-### Session 45 — Premium Redesign + Safety Engine + Profile Sidebar Refactor (23 Nisan 2026, devam) — Tamamlandı
+### Session 45 — Premium + Safety Engine + Profile Sidebar Refactor (Full Closure) (23 Nisan 2026) — Tamamlandı
 
-**Ana iş:** 23 commit, 3 büyük tema:
+**Ana iş:** 26 commit canlıda, 3 büyük tema — F-PROFILE-001 tam kapanışla:
 1. Premium pricing redesign + landing dil yumuşatma + UI cleanup
 2. F-SAFETY-001/002 — interaction check + 5-kategori cross-check + persistent banner
-3. F-PROFILE-001 — 1981-satır monolitik profil sayfasının sidebar tarzı tab yapısına refactor (10/11 tab gerçek)
+3. **F-PROFILE-001 ✅ CLOSED** — 2193-satır legacy monolith → 11-tab ShellV2 sidebar refactor (11/11 tab gerçek). Commit 6.1 vitality helper extract + SBAR caller-identity defense-in-depth. Commit 6.2 legacy demolished (−2450 net LOC) + `?legacy=true` silent redirect. **Profile sidebar ShellV2 tek canonical source.**
 
-**23 commit (`15a7ac7..cf7d977`):**
+**Grup dağılımı (27 total = 26 kod + 1 docs meta):**
+
+| Grup | Commit sayısı |
+|---|---|
+| Premium + UI cleanup | 5 |
+| Bug fixes (Faz 2 + F-PALETTE) | 5 |
+| F-SAFETY-001/002 paketi | 7 |
+| F-PROFILE-001 tam paket (Commit 1-6.2) | 9 |
+| docs meta (611ed2f Session 45 entry yazımı) | 1 |
+| **Toplam** | **27** |
+
+**26 commit (`15a7ac7..2fe550e`):**
 
 #### Premium + UI cleanup (5 commit)
 - `15a7ac7` **Premium İş 1** — Pricing sayfası: yıllık tasarruf rozeti (Bireysel ₺298, Aile ₺698), auth-aware checkout (guest → login → bounce-back), aile aktivasyonu sonrası `refetchFamily()`, KVKK/Iyzico/iptal trust strip, 4 soruluk FAQ
@@ -915,22 +926,25 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 - `a5f5883` **F-SAFETY-002 Commit 3** — `lib/safety/sbar-interaction-template.ts` (`buildDoctorEmailBody/Subject/MailtoUrl`); banner "Doktoruma Sor" CTA mailto fallback (default), `onAskDoctor` opsiyonel; `patientName` prop; mail body kategori-gruplu + 3 doktor sorusu + DoctoPal disclaimer; TR+EN template
 - `2a601b1` **F-SAFETY-002.2 persistence** — Migration `20260423_medication_interaction_alerts.sql` (id/user_id/edges JSONB/summary/severity/dismissed_at/resolved_at/resolution_note + RLS own_* + partial index `WHERE resolved_at IS NULL`); helper'a 4 yeni fn (`fetchActiveInteractionAlert`/`dismissInteractionAlert`/`resolveInteractionAlert`/`autoResolveAlertsForMedication`); banner `alertId` + `onResolve` props + "✓ Doktor Onayladı / Çözüldü" buton + `Loader2`; profile mount-effect alert restore (`alertRestoredRef` guard); removeMedication auto-resolve sweep; **24-h confirm button 3-state** (amber "İncelemeyi bekliyor" lock / yeşil "Doğrulandı" / primary-outline)
 
-#### F-PROFILE-001 — 5 commit (sidebar refactor)
-- `28572b1` **Commit 1/N** — `components/profile-v2/` shell + sidebar + URL hook + Genel tab + 9 placeholder; `app/profile/page.tsx` legacy fork (`?legacy=true` ile 1981-satır monolith erişilebilir); useProfileTab hook; ProfileSidebar (lucide icon + active emerald vurgu + mobile custom button accordion); GeneralTab (AvatarPicker + EmergencyContactsSection + LinkedAccountsSection reuse + read-only identity + "Düzenle: legacy" link)
+#### F-PROFILE-001 — 9 commit (sidebar refactor + tam kapanış)
+- `28572b1` **Commit 1/N** — `components/profile-v2/` shell + sidebar + URL hook + Genel tab + 9 placeholder; `app/profile/page.tsx` legacy fork (`?legacy=true` ile monolith korundu — Commit 6.2'de silindi); useProfileTab hook; ProfileSidebar (lucide icon + active emerald vurgu + mobile custom button accordion); GeneralTab (AvatarPicker + EmergencyContactsSection + LinkedAccountsSection reuse + read-only identity + "Düzenle: legacy" link)
 - `bba3a2c` **Commit 2.1/N** — useProfileData hook (medications/allergies/labTestCount tek fetch); BodyLifestyleTab (LifestyleSection reuse + sigara/alkol radio ONLY here in ShellV2 + 800ms debounced auto-save + status chip); MedicalHistoryTab (Kritik Durumlar Shield + transparent copy + gender-gated pregnancy/breastfeeding + kidney/liver always; ChronicConditionsEditor reuse; Cerrahi chip yeni UI surgery: prefix filter family: gizli)
 - `0b76f20` **Commit 2.2/N** — MedicationsTab (~480 satır): list + inline add form + autocomplete + DEFAULT_DOSES + drug-search debounce + scanner toggle (`onMedicationFound={refetch}` no pre-fill, no duplicate-insert risk); F-SAFETY-002.2 full integration (mount fetchActive + checkInteractionsAfterChange + autoResolve + banner + 3-state confirm); `safety:med-added` listener
 - `238902f` **Commit 3/N** — 5 tab tek commit: SupplementsTab (ProfileSupplementsStep adapter wrap), AllergiesTab (AllergiesSection state container + parent CRUD callbacks), VaccinesTab (VaccineProfileSection direct mount), FamilyTab (mini preview last 3 + 2 CTA `/family-health-tree`), ReproductiveTab (pregnancy/breastfeeding minimal + male URL gate redirect to ?tab=genel + "Yakında genişletilecek" info card); `handleTabSaved` (refetch + refreshProfile parallel — cross-tab consistency)
 - `e48e9c9` **Commit 4/N** — PrivacyTab (PrivacySettings reuse + Veri İndirme Merkezi Card + Danger Zone delete modal: TR-locale initials pattern "Taha Ahmet Sıbıç"→"TAS" + checkbox + 5s countdown + secondary CTA `/data-export` target=_blank); palette 9 URL migrate `#anchor` → `?tab=…` + yeni `profile:privacy` entry; ShellV2 hash backward-compat mount effect (HASH_TO_TAB + history.replaceState)
 - `cf7d977` **PrivacyTab fix** — Veri İndirme Merkezi Card kopya: "Verilerimi İndir" → "Veri İndirme Merkezi"; inline blob download → `/data-export` redirect (richer page: kategori filtre + dosya boyutu); ExternalLink icon + italic subtext "Ayrı sayfada kategori seçimi gösterilir"; modal secondary CTA `target="_blank"` modal kapanmasın
+- `5146b0a` **Commit 5/N — HealthReportTab** — Sağlık Raporu placeholder → gerçek tab (4 bölüm MVP): vitality ring (legacy parity formula inline) + 4 stat cards (💊 ilaç / 🌿 takviye / ⚠️ alerji / 🩸 tahlil) + 6-badge preview (`evaluateBadges` + `BadgeIcon`) + SBAR PDF card. Reuse: `PDFDownloadButton` (Premium gate içinde) + `calculateProfilePower` + `FamilyProfileGuard` full-block (engagement privacy + SBAR leak sidestep). `useProfileData` additive extension: `streakDays` (daily_check_ins consecutive count) + `familyMemberCount` (family_members.owner_id). `profile.healthReport.*` namespace 15 key TR/EN. Smoke #4 KRİTİK doğrulama (İlaç ekle → Sağlık Raporu'na dön → sayı +1 hard refresh yok) geçti — `refetch()` wiring sağlam. Digital Twin hero polish + Recent Activity multi-source feed + Missing Nudges Session 46 enrichment'a ertelendi (scope disiplini). PlaceholderTab retired.
+- `d0b68d9` **Commit 6.1/N — Vitality extract + SBAR targetUserId** — `lib/vitality.ts` YENİ helper: `computeVitalityScore({ profileCompletionPct, streakDays, hasMedications, hasAllergiesOrChronic }) → { score, color, hexColor, labelKey }`. HealthReportTab + legacy aynı helper'dan besleniyor (Commit 6.2'de legacy silinirken duplicate otomatik gitti). `PDFDownloadButton` `targetUserId?:` OPTIONAL prop + iki `/api/sbar-pdf` fetch body'si (handleDownload + handleEmailSend) `targetUserId` forward ediyor. HealthReportTab + Legacy `activeUserId` geçiyor. Endpoint tarafı VERIFY-only: `/api/sbar-pdf` body.targetUserId satır 32-34'te `resolveTargetUser` helper'ına düşüyor — `lib/family-permissions.ts` accepted membership + `allows_management` + Premium kontrol ediyor. Defense-in-depth: caller eski pattern (prop/body omit) geçerli → backward-compat. Vitality parity Taha profilinde 68/100 doğrulandı.
+- `2fe550e` **Commit 6.2/N — Legacy demolition + redirect** — `app/profile/page.tsx` 2193 LOC → **39 LOC wrapper**: ShellV2 render + `?legacy=true` useEffect içinde silent strip (`router.replace(pathname + cleaned search + hash, { scroll: false })`, query/hash diğer param'lar preserve). `ProfileGamification.tsx` 312 → 144 satır (3 orphan export silme: `ProfilePowerHeader` + `ProfilePowerHeaderProps` + `LEVEL_CONFIG`, `EmptyStateCTA` + `EmptyCTAProps`, `getCompletionMessage`; framer-motion + useReducedMotion importu da kaldırıldı). KORUNDU: `calculateProfilePower` + types (HealthReportTab), `SectionXPBadge` (AllergiesSection), `MotivationCard` (AllergiesSection + LifestyleSection). Plan'da "5 orphan" tahmini grep ile 3'e revize edildi — MotivationCard + SectionXPBadge canlıydı, sahte pozitif idi. `InlineEdit.tsx` silme (zero external usage). `PlaceholderTab.tsx` silme (Commit 5'te retired). **Net −2450 LOC.** 6 smoke regression test'i (`/profile`, `?legacy=true`, `?legacy=true&tab=ilaclar`, `#allergy-card`, 11/11 tab, SBAR Premium modal) hepsi geçti.
 
 **DELETE endpoint audit (Commit 4 öncesi):** `/api/user-data` DELETE sağlam — Bearer auth isolated + service role admin privilege + 3-faz 18 tablo manuel + schema CASCADE hibrit cleanup + auth.admin.deleteUser. F-PRIVACY-001 (P2) endpoint table list güncel değil (cascade kapatıyor ama belt-and-suspenders eksik), F-PRIVACY-002 (P2) consent audit trail retention policy not edildi.
 
-**F-PROFILE-001 ilerleme:**
+**F-PROFILE-001 ✅ CLOSED:**
 
 | Tab | Durum |
 |---|---|
-| Genel / Vücut & Yaşam / Tıbbi Geçmiş / İlaçlar / Takviyeler / Alerjiler / Aşılar / Aile Öyküsü / Üreme / Gizlilik & Rıza | ✅ 10/11 |
-| Sağlık Raporu | ⏳ Commit 5 (Digital Twin Hero + Gamification + SBAR PDF) |
+| Genel / Vücut & Yaşam / Tıbbi Geçmiş / İlaçlar / Takviyeler / Alerjiler / Aşılar / Aile Öyküsü / Üreme / Gizlilik & Rıza / Sağlık Raporu | ✅ **11/11** |
+| Legacy 2193-LOC monolith | ✅ **Silindi (Commit 6.2, −2450 net LOC). ShellV2 tek canonical source.** |
 
 **F-SAFETY full coverage:**
 - 4 insert path bağlandı (profile + scanner + 15-day dialog + onboarding)
@@ -941,21 +955,46 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 
 **Build:** Her commit sonrası `tsc --noEmit && npm run build` temiz (241 sayfa, 0 error/warning).
 
-**Manuel adım (kullanıcı Supabase Studio):**
-- `supabase/migrations/20260423_medication_interaction_alerts.sql` apply (F-SAFETY-002.2 persistence)
+**Manuel adım (kullanıcı Supabase Studio — ✅ DONE):**
+- `supabase/migrations/20260423_medication_interaction_alerts.sql` apply (F-SAFETY-002.2 persistence). Amoksilin + Penisilin F5 restore ile canlıda doğrulandı.
 
-**Bilinen TODO (Session 46+):**
-- F-PROFILE-001 Commit 5 — Health Report tab (Digital Twin + Gamification + SBAR PDF)
-- F-PROFILE-001 Commit 6 — Legacy 1981-satır monolith silme + `?legacy=true` silent redirect
-- F-SAFETY-002.1 — Onboarding inline override modal (wizard finale flow integration)
-- F-SAFETY-002.3 — Mailto fallback modal (no default mail handler edge case)
-- F-SAFETY-004 (P2) — Banner lokalizasyon EN/TR karışımı bazı edge'lerde
-- F-SCANNER-001 — OCR "Analiz başarısız" hatası
+**Session 46 backlog (15 ticket):**
+
+P0 — Kritik:
+- F-AUTH-003 (P0) — Email doğrulama resend butonu
+
+P1 — Yüksek:
+- F-SAFETY-002.3 (P1) — Mailto fallback modal (no default mail handler edge case)
+- F-SCANNER-001 (P1) — OCR "Analiz başarısız" diagnostics
+- F-DRAFT-001 (P1) — Profile inline edit draft persistence
+- **F-PAYMENT-001 (P1, dependency-gated — şirket kuruluşu bloklu)** — Iyzico ödeme entegrasyonu
+  - **DEPENDENCY:** Şirket kuruluşu (company registration) tamamlanana kadar BLOKLU
+  - **Kapsam:** Iyzico sandbox API keys + Premium subscription checkout + 3D Secure flow + webhook success/fail handling + receipt PDF + Mesafeli Satış Sözleşmesi v2 referansı
+  - **Efor:** ~6-8 saat (Iyzico docs + sandbox test + canlı switch)
+  - **Legal prep:** Mesafeli Satış Sözleşmesi v2.1 + Abonelik Sözleşmesi v1 hazır (Session 34 draft); legal advisor review (~₺3-5K) ödeme entegrasyonu öncesi ŞART
+  - **Activation trigger:** Company registration ilerleyince Session 47+'da P0'a yükselir
+
+P2 — Orta:
+- F-SAFETY-002.1 (P2) — Onboarding dangerous override modal (wizard finale flow)
+- F-SAFETY-004 (P2) — Banner lokalizasyon EN/TR mix fix
 - F-PRIVACY-001 (P2) — DELETE endpoint table list güncellemesi (family_history_entries, medication_interaction_alerts, pain_records, health_imports, health_metrics, radiology_reports, prospectus_scans, verification_documents explicit ekle)
 - F-PRIVACY-002 (P2) — Consent audit trail retention policy (regulatory research)
-- F-PRIVACY-003 (P3) — PrivacyTab inline quick export (ZIP+JSON Advanced mode)
-- ESLint 127 library error sweep (Session 43'ten devam)
-- `health_metrics.steps` integration → movement ring user step target
-- TodayView water update'i de WaterIntakeContext'e taşı
+- F-SETTINGS-001 (P2) — Şifre validation buton disabled
+- F-MED-DB-001 — Warfarin fuzzy match bug
 
-**Session 46'ya devir:** F-PROFILE-001 Commit 5 (Health Report) + Commit 6 (legacy temizlik) → tam sidebar refactor kapanışı. Sonra F-SAFETY-002.1 onboarding override + F-SCANNER-001 OCR fix.
+P3 — Düşük:
+- F-PRIVACY-003 (P3) — PrivacyTab inline quick export (ZIP+JSON Advanced mode)
+
+Ürün enrichment:
+- HealthReportTab Session 46 enrichment — Digital Twin hero polish (body silhouette / organ map) + Recent Activity multi-source feed (son 5 ilaç + 3 uyarı + 1 tahlil) + Missing Nudges (cross-tab navigation via setTab prop drilling)
+- AI chat günlük 3 soru quota (freemium — şu an Free 20/gün)
+- Water context 3.1 (snapshot-rollback, setTarget persist)
+- Achievement card i18n (brand-style isimler)
+
+Technical debt carry-over:
+- ESLint 127 library error sweep (Session 43'ten devam)
+- `health_metrics.steps` integration → movement ring user step target (Apple Health / Google Fit)
+- TodayView water update WaterIntakeContext'e migrate
+- `lib/vitality.ts` unit test scaffold (Jest/Vitest)
+
+**Session 46'ya devir:** F-PROFILE-001 KAPANDI. Öncelik sırası: F-AUTH-003 (P0 resend) → F-SAFETY-002.3 (P1 mailto fallback) → F-SCANNER-001 (P1 OCR) → F-DRAFT-001 (P1 draft). Ürün tarafında HealthReportTab enrichment Taha+İpek birlikte karar verecek. Iyzico şirket tescili bekleyişi devam.
