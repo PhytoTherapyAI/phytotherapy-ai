@@ -27,6 +27,7 @@ import { useProfileTab } from "./useProfileTab"
 import { GeneralTab } from "./tabs/GeneralTab"
 import { BodyLifestyleTab } from "./tabs/BodyLifestyleTab"
 import { MedicalHistoryTab } from "./tabs/MedicalHistoryTab"
+import { MedicationsTab } from "./tabs/MedicationsTab"
 import { PlaceholderTab, PLACEHOLDER_CONTENT } from "./tabs/PlaceholderTab"
 import { useProfileData } from "./hooks/useProfileData"
 
@@ -137,6 +138,18 @@ export function ProfileShellV2() {
         )
 
       case "ilaclar":
+        return (
+          <MedicationsTab
+            lang={lang as "tr" | "en"}
+            userId={effectiveUserId}
+            canEdit={isOwnProfile}
+            patientName={effectiveProfile?.full_name ?? null}
+            medications={profileData.medications}
+            setMedications={profileData.setMedications}
+            refetch={profileData.refetch}
+          />
+        )
+
       case "takviyeler":
       case "alerjiler":
       case "asilar":

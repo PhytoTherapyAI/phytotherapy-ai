@@ -68,16 +68,7 @@ export function PlaceholderTab({ lang, title, upcomingItems }: PlaceholderTabPro
 export const PLACEHOLDER_CONTENT: Record<string, { tr: { title: string; items: string[] }; en: { title: string; items: string[] } }> = {
   // vucut-yasam + tibbi-gecmis migrated to real tabs in F-PROFILE-001
   // Commit 2.1 — entries removed from the placeholder map.
-  "ilaclar": {
-    tr: {
-      title: "İlaçlar",
-      items: ["Aktif ilaçlarım", "İlaç ekle / düzenle / sil", "İlaç tarama (foto)"],
-    },
-    en: {
-      title: "Medications",
-      items: ["Active medications", "Add / edit / remove", "Prescription photo scan"],
-    },
-  },
+  // ilaclar migrated in Commit 2.2 (MedicationsTab + full F-SAFETY-002.2).
   "takviyeler": {
     tr: {
       title: "Takviyeler",
