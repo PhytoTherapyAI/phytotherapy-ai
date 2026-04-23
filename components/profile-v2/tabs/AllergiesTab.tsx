@@ -15,9 +15,10 @@
 // next interaction-map check.
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { createBrowserClient } from "@/lib/supabase"
 import { AllergiesSection } from "@/components/profile/AllergiesSection"
+import { readDraft, persistDraft, clearDraft, DRAFT_KEYS } from "@/lib/ui/draft-persist"
 import type { UserAllergyRow } from "@/components/profile-v2/hooks/useProfileData"
 import type { UserAllergy, AllergySeverity } from "@/lib/database.types"
 
@@ -31,11 +32,36 @@ interface AllergiesTabProps {
   onSaved?: () => void
 }
 
+type AllergyDraft = {
+  allergen: string
+  severity: AllergySeverity
+}
+
 export function AllergiesTab({
   lang, userId, canEdit, allergies, setAllergies, refetch, onSaved,
 }: AllergiesTabProps) {
-  const [newAllergen, setNewAllergen] = useState("")
-  const [newAllergenSeverity, setNewAllergenSeverity] = useState<AllergySeverity>("unknown")
+  // F-DRAFT-001: draft is scoped per authenticated user. The two
+  // useState initializers each read the same JSON blob — cheap, and it
+  // lets both fields hydrate in the first render frame so the user
+  // never sees a "blank → filled" flash after a tab switch.
+  const draftKey = userId ? `${DRAFT_KEYS.profileAllergyAdd}:${userId}` : null
+  const readAllergyDraft = (): AllergyDraft | null =>
+    draftKey ? readDraft<AllergyDraft>(draftKey) : null
+  const [newAllergen, setNewAllergen] = useState<string>(() => readAllergyDraft()?.allergen ?? "")
+  const [newAllergenSeverity, setNewAllergenSeverity] = useState<AllergySeverity>(
+    () => readAllergyDraft()?.severity ?? "unknown",
+  )
+
+  // F-DRAFT-001: the allergy add form is always mounted (no "open"
+  // gate like MedicationsTab) so persist runs on every keystroke.
+  // sessionStorage is tab-scoped → tab close wipes the draft naturally.
+  useEffect(() => {
+    if (!draftKey) return
+    persistDraft<AllergyDraft>(draftKey, {
+      allergen: newAllergen,
+      severity: newAllergenSeverity,
+    })
+  }, [draftKey, newAllergen, newAllergenSeverity])
 
   const addAllergy = async () => {
     const allergen = newAllergen.trim()
@@ -51,6 +77,11 @@ export function AllergiesTab({
       if (data) {
         setAllergies((prev) => [...prev, data as UserAllergyRow])
       }
+      // F-DRAFT-001: row landed in the DB → wipe the draft before the
+      // persist-effect writes the now-emptied form state (which would
+      // otherwise leave a blank `{ allergen: "", severity: "unknown" }`
+      // sitting in sessionStorage).
+      if (draftKey) clearDraft(draftKey)
       setNewAllergen("")
       setNewAllergenSeverity("unknown")
       onSaved?.()

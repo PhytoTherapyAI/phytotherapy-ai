@@ -46,6 +46,7 @@ import {
 } from "@/lib/safety/check-med-interactions"
 import { normalizeMedFields } from "@/lib/safety/normalize-med-name"
 import { tx } from "@/lib/translations"
+import { readDraft, persistDraft, clearDraft, DRAFT_KEYS } from "@/lib/ui/draft-persist"
 import type { UserMedication } from "@/lib/database.types"
 
 // F-SAFETY-001 post-launch feature flag mirrored here — the legacy
@@ -104,13 +105,43 @@ export function MedicationsTab({
   const tr = lang === "tr"
 
   // ── Add-form state ─────────────────────────────────────────────
+  // F-DRAFT-001: medication-add draft restored from sessionStorage on
+  // mount via lazy useState initializers. Four `useState` calls read
+  // the same JSON blob once each — negligible (< 1 KB) and guarantees
+  // the inputs render full on the first frame (no empty → filled
+  // flash). Key is user-scoped so multi-user browsers can't leak
+  // drafts across logout/login.
+  const medDraftKey = userId ? `${DRAFT_KEYS.profileMedicationAdd}:${userId}` : null
+  type MedDraft = {
+    brand: string
+    generic: string
+    dosage: string
+    frequency: string
+  }
+  const readMedDraft = (): MedDraft | null =>
+    medDraftKey ? readDraft<MedDraft>(medDraftKey) : null
   const [isAddingMed, setIsAddingMed] = useState(false)
   const [savingMed, setSavingMed] = useState(false)
-  const [newBrandName, setNewBrandName] = useState("")
-  const [newGenericName, setNewGenericName] = useState("")
-  const [newDosage, setNewDosage] = useState("")
-  const [newFrequency, setNewFrequency] = useState("")
+  const [newBrandName, setNewBrandName] = useState<string>(() => readMedDraft()?.brand ?? "")
+  const [newGenericName, setNewGenericName] = useState<string>(() => readMedDraft()?.generic ?? "")
+  const [newDosage, setNewDosage] = useState<string>(() => readMedDraft()?.dosage ?? "")
+  const [newFrequency, setNewFrequency] = useState<string>(() => readMedDraft()?.frequency ?? "")
   const [autoDoseBadge, setAutoDoseBadge] = useState(false)
+
+  // F-DRAFT-001: persist every keystroke while the form is open.
+  // Gating by `isAddingMed` avoids writing an empty baseline on mount
+  // if the user never opens the form — keeps sessionStorage tidy.
+  // Gating by draftKey guards the auth-loading edge case (userId "")
+  // where the suffix would collapse to a shared key.
+  useEffect(() => {
+    if (!isAddingMed || !medDraftKey) return
+    persistDraft<MedDraft>(medDraftKey, {
+      brand: newBrandName,
+      generic: newGenericName,
+      dosage: newDosage,
+      frequency: newFrequency,
+    })
+  }, [isAddingMed, medDraftKey, newBrandName, newGenericName, newDosage, newFrequency])
 
   // ── Autocomplete (brand search) ─────────────────────────────────
   const [suggestions, setSuggestions] = useState<DrugSuggestion[]>([])
@@ -297,6 +328,11 @@ export function MedicationsTab({
         return
       }
       if (data) setMedications((prev) => [...prev, data as UserMedication])
+      // F-DRAFT-001: wipe the draft now that the row landed in the DB.
+      // Cancel (X button) intentionally leaves the draft intact —
+      // matches the Session 39 FamilyHistorySection "restore on reopen"
+      // behaviour and keeps a mis-clicked close recoverable.
+      if (medDraftKey) clearDraft(medDraftKey)
       setNewBrandName("")
       setNewGenericName("")
       setNewDosage("")

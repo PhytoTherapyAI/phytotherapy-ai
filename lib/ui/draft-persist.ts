@@ -66,7 +66,13 @@ export function clearDraft(key: string): void {
 
 // Well-known keys — keep them here so they're discoverable in one place
 // and consumers don't drift typos.
+//
+// F-DRAFT-001: consumers append `:${userId}` to scope the draft per
+// authenticated user. A single browser can host multiple accounts back-
+// to-back; the suffix keeps User A's in-flight medication-add form from
+// surfacing in User B's ShellV2 after logout/login.
 export const DRAFT_KEYS = {
   familyHistory: "doctopal:familyHistory:draft",
   profileMedicationAdd: "doctopal:profile:medicationAdd:draft",
+  profileAllergyAdd: "doctopal:profile:allergyAdd:draft",
 } as const;
