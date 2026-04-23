@@ -25,7 +25,10 @@ import { useLang } from "@/components/layout/language-toggle"
 import { ProfileSidebar } from "./ProfileSidebar"
 import { useProfileTab } from "./useProfileTab"
 import { GeneralTab } from "./tabs/GeneralTab"
+import { BodyLifestyleTab } from "./tabs/BodyLifestyleTab"
+import { MedicalHistoryTab } from "./tabs/MedicalHistoryTab"
 import { PlaceholderTab, PLACEHOLDER_CONTENT } from "./tabs/PlaceholderTab"
+import { useProfileData } from "./hooks/useProfileData"
 
 export function ProfileShellV2() {
   const { user, profile: authProfile, isAuthenticated, isLoading: authLoading } = useAuth()
@@ -41,6 +44,12 @@ export function ProfileShellV2() {
   // where the ChronicConditionsEditor / meds list actually need it.
   const effectiveProfile = isOwnProfile ? authProfile : null
   const effectiveUserId = activeUserId || user?.id || ""
+
+  // F-PROFILE-001 Commit 2.1: shared read layer. medications drives
+  // ChronicConditionsEditor's "medication → condition" hint inside
+  // MedicalHistoryTab; allergies + labTestCount will be consumed by
+  // future tabs (Commit 2.2 / 3). One fetch, many tabs.
+  const profileData = useProfileData(effectiveUserId || null)
 
   // Sidebar header — avatar + display name. Kept in the shell (rather
   // than a tab) because it survives tab changes.
@@ -106,7 +115,27 @@ export function ProfileShellV2() {
         )
 
       case "vucut-yasam":
+        return (
+          <BodyLifestyleTab
+            lang={lang as "tr" | "en"}
+            userId={effectiveUserId}
+            profile={effectiveProfile ?? null}
+            onSaved={profileData.refetch}
+          />
+        )
+
       case "tibbi-gecmis":
+        return (
+          <MedicalHistoryTab
+            lang={lang as "tr" | "en"}
+            userId={effectiveUserId}
+            gender={(effectiveProfile?.gender as string | undefined) ?? null}
+            profile={effectiveProfile ?? null}
+            medications={profileData.medications}
+            onSaved={profileData.refetch}
+          />
+        )
+
       case "ilaclar":
       case "takviyeler":
       case "alerjiler":

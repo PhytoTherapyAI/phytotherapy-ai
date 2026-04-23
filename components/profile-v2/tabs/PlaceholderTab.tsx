@@ -66,26 +66,8 @@ export function PlaceholderTab({ lang, title, upcomingItems }: PlaceholderTabPro
 // Updated incrementally as each tab migrates — once a tab lands its
 // real content in later commits, remove the entry from this map.
 export const PLACEHOLDER_CONTENT: Record<string, { tr: { title: string; items: string[] }; en: { title: string; items: string[] } }> = {
-  "vucut-yasam": {
-    tr: {
-      title: "Vücut & Yaşam",
-      items: ["Boy, kilo, BMI", "Kan grubu", "Sigara & alkol", "Egzersiz sıklığı", "Uyku kalitesi", "Beslenme türü"],
-    },
-    en: {
-      title: "Body & Lifestyle",
-      items: ["Height, weight, BMI", "Blood type", "Smoking & alcohol", "Exercise frequency", "Sleep quality", "Diet type"],
-    },
-  },
-  "tibbi-gecmis": {
-    tr: {
-      title: "Tıbbi Geçmiş",
-      items: ["Kritik durumlar (böbrek, karaciğer, kanama)", "Kronik hastalıklar", "Cerrahi geçmiş"],
-    },
-    en: {
-      title: "Medical History",
-      items: ["Critical conditions (kidney, liver, bleeding)", "Chronic diseases", "Surgical history"],
-    },
-  },
+  // vucut-yasam + tibbi-gecmis migrated to real tabs in F-PROFILE-001
+  // Commit 2.1 — entries removed from the placeholder map.
   "ilaclar": {
     tr: {
       title: "İlaçlar",
