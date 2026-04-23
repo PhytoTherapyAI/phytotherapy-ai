@@ -20,14 +20,26 @@ import { AlertTriangle, Info, X, ArrowRight, Stethoscope } from "lucide-react"
 import type { EdgeItem } from "@/lib/safety/check-med-interactions"
 
 /**
- * Title-case a medication name using the Turkish locale so "isotretinoin"
- * becomes "İzotretinoin" (dotted İ, not ASCII I). Locale-aware uppercase
- * is the only correct option here — otherwise Turkish readers see a
- * visibly wrong first letter.
+ * Title-case a medication name for display.
+ *
+ *  - Normalises underscores and hyphens to spaces so "warfarin_sodium"
+ *    or "acetyl-salicylic-acid" don't render with the slug separator
+ *    visible. Multiple consecutive separators collapse to one space.
+ *  - Locale-aware uppercase via toLocaleUpperCase("tr-TR") so
+ *    "isotretinoin" becomes "İzotretinoin" (dotted İ, not ASCII I).
+ *    Turkish readers would notice the wrong glyph on the first letter
+ *    immediately.
+ *
+ * Examples:
+ *   "isotretinoin"             → "İzotretinoin"
+ *   "warfarin_sodium"          → "Warfarin Sodium"
+ *   "acetyl-salicylic-acid"    → "Acetyl Salicylic Acid"
+ *   "  __metformin  "          → "Metformin"
  */
 function titleCaseMed(name: string): string {
   if (!name) return name
-  return name.replace(/\b([\p{L}])/gu, (_, ch: string) => ch.toLocaleUpperCase("tr-TR"))
+  const normalised = name.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim()
+  return normalised.replace(/\b([\p{L}])/gu, (_, ch: string) => ch.toLocaleUpperCase("tr-TR"))
 }
 
 interface Props {

@@ -655,11 +655,19 @@ function LegacyProfilePage() {
     if (!newBrandName.trim() || !user || !canEdit) return;
     setSavingMed(true);
     try {
+      // F-SAFETY-001 cosmetic: OpenFDA's generic_name often arrives with
+      // underscores ("warfarin_sodium") or hyphens. Normalise once at
+      // write-time so every downstream consumer (interaction-map prompt,
+      // SBAR PDF, chat profile context) gets a clean human-readable name.
+      // Title-casing is left to display layers — the user might want
+      // "PARACETAMOL" all-caps or a specific brand styling.
+      const normaliseMedName = (s: string) =>
+        s.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
       const supabase = createBrowserClient();
       const { data, error } = await supabase.from("user_medications").insert({
         user_id: activeUserId,
-        brand_name: newBrandName.trim(),
-        generic_name: newGenericName.trim() || null,
+        brand_name: normaliseMedName(newBrandName),
+        generic_name: newGenericName.trim() ? normaliseMedName(newGenericName) : null,
         dosage: newDosage.trim() || null,
         frequency: newFrequency.trim() || null,
         is_active: true,
