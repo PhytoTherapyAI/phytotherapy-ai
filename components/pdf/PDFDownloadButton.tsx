@@ -12,6 +12,13 @@ interface Props {
   lang: 'en' | 'tr'
   className?: string
   variant?: 'default' | 'fab'
+  /** F-PROFILE-001 Commit 6.1: caller passes the *viewed* profile id
+   *  (activeUserId from useActiveProfile). When omitted the endpoint
+   *  falls back to the caller's own id via resolveTargetUser — i.e.
+   *  identical to pre-6.1 behaviour. Passing this value is a defense-
+   *  in-depth hook so family-profile views generate the correct
+   *  person's SBAR PDF instead of leaking the caller's data. */
+  targetUserId?: string | null
 }
 
 /** Get auth token for API calls */
@@ -31,7 +38,7 @@ async function getPatientName(): Promise<string> {
   return data?.full_name || ''
 }
 
-export function PDFDownloadButton({ lang, className, variant = 'default' }: Props) {
+export function PDFDownloadButton({ lang, className, variant = 'default', targetUserId }: Props) {
   const tr = lang === 'tr'
   const [loading, setLoading] = useState(false)
   const [action, setAction] = useState<'download' | 'email' | null>(null)
@@ -81,7 +88,7 @@ export function PDFDownloadButton({ lang, className, variant = 'default' }: Prop
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ lang }),
+        body: JSON.stringify({ lang, targetUserId: targetUserId ?? null }),
       })
 
       if (!res.ok) {
@@ -130,7 +137,7 @@ export function PDFDownloadButton({ lang, className, variant = 'default' }: Prop
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ lang }),
+        body: JSON.stringify({ lang, targetUserId: targetUserId ?? null }),
       })
 
       if (!pdfRes.ok) {

@@ -26,6 +26,7 @@ const SAFETY_BANNER_ENABLED = process.env.NEXT_PUBLIC_SAFETY_BANNER !== "false";
 import { useAuth } from "@/lib/auth-context";
 import { useFamily } from "@/lib/family-context";
 import { createBrowserClient } from "@/lib/supabase";
+import { computeVitalityScore } from "@/lib/vitality";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { translateCondition, isSurgery, stripPrefix } from "@/lib/condition-translations";
@@ -1036,19 +1037,18 @@ function LegacyProfilePage() {
             </div>
             {/* Vitality Score — ring + bar + heartbeat */}
             {(() => {
-              // Dynamic vitality score: profile completion (40%) + streak (30%) + meds+allergies (30%)
-              const profileWeight = completionPct * 0.4;
-              const streakWeight = Math.min(streakDays, 30) / 30 * 100 * 0.3;
-              const dataWeight = (medications.length > 0 ? 50 : 0) + (allergies.length > 0 || (profile.chronic_conditions || []).length > 0 ? 50 : 0);
-              const score = Math.round(Math.min(profileWeight + streakWeight + dataWeight * 0.3, 100));
-              const scoreColor = score >= 71 ? "#3c7a52" : score >= 41 ? "#f59e0b" : "#ef4444";
-              const scoreEmoji = score >= 71 ? "⚡" : score >= 41 ? "😐" : "🔴";
-              const scoreLabel = score >= 71
-                ? (tr ? "Harika form" : "Great shape")
-                : score >= 41
-                  ? (tr ? "Gelişme var" : "Improving")
-                  : (tr ? "Dikkat gerekiyor" : "Needs attention");
-              const ringClass = score >= 71 ? "text-emerald-500" : score >= 41 ? "text-amber-500" : "text-red-500";
+              // F-PROFILE-001 Commit 6.1: sourced from lib/vitality.ts
+              // (same helper feeds HealthReportTab in ShellV2).
+              const vitality = computeVitalityScore({
+                profileCompletionPct: completionPct,
+                streakDays,
+                hasMedications: medications.length > 0,
+                hasAllergiesOrChronic:
+                  allergies.length > 0 ||
+                  (profile.chronic_conditions || []).length > 0,
+              });
+              const score = vitality.score;
+              const scoreColor = vitality.hexColor;
 
               return (
                 <div className="flex flex-col items-center gap-2 shrink-0">
@@ -1198,7 +1198,7 @@ function LegacyProfilePage() {
               </p>
             </div>
             <div className="flex gap-2 w-full sm:w-auto">
-              <PDFDownloadButton lang={lang as "en" | "tr"} className="flex-1 sm:flex-initial" />
+              <PDFDownloadButton lang={lang as "en" | "tr"} className="flex-1 sm:flex-initial" targetUserId={activeUserId} />
               <Button size="sm" variant="outline"
                 onClick={() => setSbarEmailOpen(!sbarEmailOpen)}
                 className="flex-1 sm:flex-initial"
@@ -1217,7 +1217,7 @@ function LegacyProfilePage() {
                     try {
                       const supabase = createBrowserClient();
                       const { data: { session } } = await supabase.auth.getSession();
-                      const pdfRes = await fetch("/api/sbar-pdf", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` }, body: JSON.stringify({ lang }) });
+                      const pdfRes = await fetch("/api/sbar-pdf", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` }, body: JSON.stringify({ lang, targetUserId: activeUserId ?? null }) });
                       if (!pdfRes.ok) throw new Error("PDF failed");
                       const blob = await pdfRes.blob();
                       const reader = new FileReader();

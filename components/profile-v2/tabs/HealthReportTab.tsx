@@ -33,6 +33,7 @@ import {
 } from "@/components/profile/ProfileGamification"
 import { FamilyProfileGuard } from "@/components/family/FamilyProfileGuard"
 import { Card } from "@/components/ui/card"
+import { computeVitalityScore } from "@/lib/vitality"
 import type { UserMedication } from "@/lib/database.types"
 import type { UserAllergyRow } from "@/components/profile-v2/hooks/useProfileData"
 
@@ -65,6 +66,7 @@ interface HealthReportTabProps {
 
 export function HealthReportTab({
   lang,
+  userId,
   isOwnProfile,
   profile,
   medications,
@@ -116,24 +118,20 @@ export function HealthReportTab({
   }
   const power = calculateProfilePower(powerInput)
 
-  // ── Vitality score — inline formula, legacy 1039-1051 verbatim ──
-  const profileWeight = power.percentage * 0.4
-  const streakWeight = (Math.min(streakDays, 30) / 30) * 100 * 0.3
-  const dataWeight =
-    (medications.length > 0 ? 50 : 0) +
-    (allergies.length > 0 || chronicArr.filter((c) => !c.startsWith("family:")).length > 0
-      ? 50
-      : 0)
-  const vitalityScore = Math.round(Math.min(profileWeight + streakWeight + dataWeight * 0.3, 100))
-
-  const scoreColor =
-    vitalityScore >= 71 ? "#3c7a52" : vitalityScore >= 41 ? "#f59e0b" : "#ef4444"
-  const scoreLabelKey =
-    vitalityScore >= 71
-      ? "profile.healthReport.greatShape"
-      : vitalityScore >= 41
-      ? "profile.healthReport.improving"
-      : "profile.healthReport.needsAttention"
+  // ── Vitality score — centralised helper (lib/vitality.ts) ──
+  // F-PROFILE-001 Commit 6.1: extracted from the inline formula and
+  // legacy duplicate so both tab + legacy feed from one source.
+  const vitality = computeVitalityScore({
+    profileCompletionPct: power.percentage,
+    streakDays,
+    hasMedications: medications.length > 0,
+    hasAllergiesOrChronic:
+      allergies.length > 0 ||
+      chronicArr.filter((c) => !c.startsWith("family:")).length > 0,
+  })
+  const vitalityScore = vitality.score
+  const scoreColor = vitality.hexColor
+  const scoreLabelKey = `profile.healthReport.${vitality.labelKey}`
 
   // ── Badges — UserStats mapped from what we have in hand ──
   const badgeStats: UserStats = {
@@ -335,7 +333,7 @@ export function HealthReportTab({
             </p>
           </div>
           <div className="shrink-0">
-            <PDFDownloadButton lang={lang} />
+            <PDFDownloadButton lang={lang} targetUserId={userId} />
           </div>
         </div>
       </Card>
