@@ -998,3 +998,71 @@ Technical debt carry-over:
 - `lib/vitality.ts` unit test scaffold (Jest/Vitest)
 
 **Session 46'ya devir:** F-PROFILE-001 KAPANDI. Öncelik sırası: F-AUTH-003 (P0 resend) → F-SAFETY-002.3 (P1 mailto fallback) → F-SCANNER-001 (P1 OCR) → F-DRAFT-001 (P1 draft). Ürün tarafında HealthReportTab enrichment Taha+İpek birlikte karar verecek. Iyzico şirket tescili bekleyişi devam.
+
+---
+
+### Session 46 — AÇIK — Gece Molası (24 Nisan 2026)
+
+> **Durum: AÇIK.** Session 45 closure sonrası sabah başladı, gece molası için duruldu. 4 commit deployed, 2 tanesi canlı test edildi, 2 tanesi yarın smoke test'e kaldı.
+
+**Ana iş:** Session 45'ten devralınan öncelik sırası (P0 → P1) takip edildi. 4 ticket implement + push edildi. 2 onaylandı, 2 pending.
+
+**4 commit (`ab52cf0..0461913`):**
+
+| SHA | Ticket | Priority | Test |
+|---|---|---|---|
+| `ab52cf0` | F-AUTH-003 — email verification resend button + rate-limited cooldown | P0 | ✅ TESTED |
+| `d17e644` | F-SAFETY-002.3 — ask-doctor mailto fallback modal | P1 | ✅ TESTED |
+| `cc47420` | F-SCANNER-001 — OCR error categorization + observability + timeout | P1 | ⏳ PENDING |
+| `0461913` | F-DRAFT-001 — medication + allergy add form draft persistence | P1 | ⏳ PENDING |
+
+#### F-AUTH-003 (P0) `ab52cf0` — TESTED ✅
+Sign-up success sonrası "Email tekrar gönder" butonu + login'de "Email not confirmed" error detection → aynı button + email pre-fill. Already-confirmed → sign-in tab'a auto-flip + email auto-fill. 60s localStorage cooldown (tab close survive) + Supabase native 60s server cooldown = çift guardrail. `NEXT_PUBLIC_AUTH_RESEND=false` kill switch Vercel'de 2dk'lık emergency disable. Dosyalar: `lib/translations/auth.ts` (9 key), `lib/auth-context.tsx` (resendVerificationEmail method + emailRedirectTo sign-up), `components/auth/EmailResendButton.tsx` (5-state machine), `app/auth/login/page.tsx` (2 trigger noktası + controlled Tabs).
+
+#### F-SAFETY-002.3 (P1) `d17e644` — TESTED ✅
+Session 45 smoke'da Opera GX + Windows'ta default mail handler yoktu, "Doktoruma Sor" butonu sessiz fail oluyordu. Deterministik çözüm: her tıklamada `AskDoctorModal` açılır, 3 yol sunar — metni kopyala (navigator.clipboard + Ctrl+C selectable textarea fallback), mail uygulamasında aç (opsiyonel doktor email prepend), kapat. Detection strategy (setTimeout+visibilityChange vs UA) atlandı — PWA/mobile Safari'de güvensiz. Always-visible amber hint idle state'te bile görünür, user kopyala seçeneğini retry'dan önce keşfeder. Banner onAskDoctor prop signature'ı dokunulmadı (backward-compat). 11 yeni safety.askDoctor.* key.
+
+#### F-SCANNER-001 (P1) `cc47420` — ⏳ PENDING
+Canlı "Analiz başarısız" kör path — her fail modu (auth/rate/Claude/parse/consent) tek jenerik mesaja düşüyordu, server-side diagnose imkansızdı. Defense-in-depth (plan C, `lib/ai-client.ts` dokunulmadı): 6 stage ayrımı (auth / rate-check / body-parse / image-validate / claude-call / response-parse / success-envelope), her stage Sentry captureException + breadcrumb (category "scanner", data stage/code/status — image base64 LOG'LANMAZ / KVKK), error response shape `{ error, code, stage, detail }`, parsed.error blocked-envelope detection (422 consent_blocked / ocr_failed — önceki 200-as-success leak kapandı), `maxDuration = 50`, client AbortController 55s, dev-gated console.error. 5 yeni scan.error.* key (rateLimited / authExpired / ocrFailed / timeout / consentBlocked). Hipotez #3 (Haiku JSON consistency) ve #4/#6 (injection FP / API key) canlı Sentry'de tetiklenirse ayrı sprint.
+
+#### F-DRAFT-001 (P1) `0461913` — ⏳ PENDING
+Session 45 backlog: `lib/ui/draft-persist.ts` Session 42'de yazılmıştı ama ShellV2 refactor'unda Medications/Allergies'a wire edilmemişti. DRAFT_KEYS.profileMedicationAdd rezerveydi, `profileAllergyAdd` yeni eklendi. Lazy `useState(() => readDraft(...))` initializer (flash guard — ilk frame'de field'lar dolu), her keystroke `persistDraft`, success path `clearDraft` (cancel'da draft KALIR — FamilyHistorySection Session 39/42 parity). userId suffix key'e eklendi (`${key}:${userId}`) — multi-user browser KVKK guard. userId boş ise draft operation no-op (auth-loading edge case). sessionStorage tab-scoped (cross-tab leak yok, tab close'da wipe).
+
+**Yarın ilk iş:**
+1. **F-SCANNER-001 happy path smoke** — net ilaç kutusu fotoğrafı → OCR başarılı extraction (brand + dosage + form). Fail → Sentry dashboard `scanner` breadcrumb zincirinden stage tespiti → revert `git revert cc47420`.
+2. **F-DRAFT-001 quick smoke** — Medications "+ Ekle" → "Aspirin" → tab değiştir → dön → "+ Ekle" → restore. Fail → DevTools Storage inspect → revert `git revert 0461913`.
+
+**Revert prosedürü (ikisi de fail ederse):**
+```bash
+git revert 0461913 cc47420 && npx tsc --noEmit && npm run build && git push origin master
+```
+
+**Session 46 kalan backlog (11 ticket + 3 ürün + 4 tech debt + 1 dependency-gated):**
+
+**P1 — Yüksek (öncelik sırası):**
+- F-SAFETY-004 — Banner lokalizasyon EN/TR mix fix (~30dk)
+- HealthReportTab enrichment — Digital Twin hero polish + Recent Activity multi-source feed + Missing Nudges (3-4 saat)
+
+**P2 — Orta:**
+- F-SAFETY-002.1 — Onboarding dangerous override modal
+- F-PRIVACY-001 — DELETE endpoint table list (family_history_entries, medication_interaction_alerts, pain_records, health_imports, health_metrics, radiology_reports, prospectus_scans, verification_documents)
+- F-PRIVACY-002 — Consent audit retention policy research
+- F-SETTINGS-001 — Şifre validation buton disabled
+- F-MED-DB-001 — Warfarin fuzzy match bug
+
+**P3 — Düşük:**
+- F-PRIVACY-003 — PrivacyTab inline quick export (ZIP+JSON Advanced)
+
+**Ürün enrichment:**
+- AI chat günlük 3 soru quota (şu an Free 20/gün)
+- Water context 3.1 (snapshot-rollback, setTarget persist)
+- Achievement card i18n (brand-style isimler)
+
+**Tech debt carry-over:**
+- ESLint 127 library error (Session 43+)
+- `health_metrics.steps` integration → movement ring
+- TodayView water → WaterIntakeContext
+- `lib/vitality.ts` unit test scaffold
+
+**Dependency-gated:**
+- F-PAYMENT-001 — Iyzico (şirket kuruluşu bekleniyor)

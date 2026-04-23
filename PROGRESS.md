@@ -1,6 +1,70 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 23 Nisan 2026 (Session 45 — Premium redesign + F-SAFETY-001/002 full coverage + **F-PROFILE-001 ✅ CLOSED** — ShellV2 tek canonical source, legacy monolith silindi)
+> Son güncelleme: 24 Nisan 2026 (Session 46 AÇIK — gece molası; 4 commit deployed, 2 pending smoke test)
+
+---
+
+### Session 46 — AÇIK — Gece Molası (24 Nisan 2026)
+
+> **Durum: AÇIK.** Session 45 closure sonrası sabah başladı, gece molası için duruldu. Yarın sabah ilk iş smoke testler. 4 commit deployed (1 P0 + 3 P1), 2 tanesi canlı test edildi, 2 tanesi yarın smoke test'e kaldı.
+
+**Ana iş:** Session 46 Session 45 closure docs commit'i (924df8b) sonrası açıldı. Öncelik sırası plan'a göre: F-AUTH-003 (P0) → F-SAFETY-002.3 (P1) → F-SCANNER-001 (P1) → F-DRAFT-001 (P1). Hepsi push edildi, 2 tanesi canlıda test edildi.
+
+**4 commit (`ab52cf0..0461913`):**
+
+- [x] `ab52cf0` **F-AUTH-003 (P0)** — Email verification resend button. Sign-up success path + login "Email not confirmed" detection + already-confirmed → login tab auto-fill. 60s localStorage cooldown (tab close survive) + Supabase native 60s server cooldown. `NEXT_PUBLIC_AUTH_RESEND` kill switch. 9 yeni i18n key + auth.resend.* namespace. **TESTED ✅**
+- [x] `d17e644` **F-SAFETY-002.3 (P1)** — Ask-doctor mailto fallback modal. Opera GX / PWA silent mailto fail → deterministik modal (her tıklamada açılır). Dialog reuse + navigator.clipboard.writeText + optional doktor email input + native mailto retry + always-visible amber hint. 11 yeni safety.askDoctor.* key. MedicationsTab onAskDoctor wiring. **TESTED ✅**
+- [x] `cc47420` **F-SCANNER-001 (P1)** — OCR "Analiz başarısız" kör path → 6 stage (auth / rate-check / body-parse / image-validate / claude-call / response-parse / success-envelope) + error shape `{ error, code, stage, detail }` + her stage Sentry breadcrumb + captureException (dynamic import, Sentry-less deploy safe) + parsed.error blocked-envelope detection (422) + AbortController 55s client + maxDuration 50 server + dev-gated console.error (KVKK: prod sessiz). 5 yeni scan.error.* key. **⏳ PENDING SMOKE TEST**
+- [x] `0461913` **F-DRAFT-001 (P1)** — MedicationsTab + AllergiesTab add form draft persistence. Session 42'de `lib/ui/draft-persist.ts` yazılmıştı ama ShellV2 refactor'unda wire edilmemişti. Lazy `useState` initializer (flash guard) + per-keystroke `persistDraft` + success-path `clearDraft` + cancel'da draft korunur (FamilyHistorySection parity). `userId` suffix key'e eklendi (multi-user browser KVKK guard). DRAFT_KEYS.profileAllergyAdd yeni eklendi. **⏳ PENDING SMOKE TEST**
+
+**Session 46 şu ana kadar:**
+- 4/15 ticket implemented + deployed
+- 2 TESTED ✅ (F-AUTH-003, F-SAFETY-002.3)
+- 2 PENDING smoke test (F-SCANNER-001, F-DRAFT-001)
+- Build her commit sonrası temiz (tsc 0 error, Next.js 0 warning, 241 sayfa prerendered)
+
+**Yarın ilk iş (priority sırası):**
+
+1. **F-SCANNER-001 happy path smoke** — net ilaç kutusu fotoğrafı çek/yükle → OCR başarılı extraction (brand_name + dosage + form). Error paths opsiyonel (rate limit, bulanık görüntü). Fail → Sentry dashboard'da `scanner` category breadcrumb + captured exception zincirini kontrol et (stage bazlı diagnose — auth / rate-check / parse / claude-call). Critical regression → revert.
+2. **F-DRAFT-001 quick smoke** — Medications tab → "+ Ekle" → brand "Aspirin" → Takviyeler tab'a geç → Medications'a dön → "+ Ekle" → "Aspirin" restore. Allergies aynı pattern (allergen + severity). Fail → DevTools Application → Storage → Session Storage'da `doctopal:profile:medicationAdd:draft:{userId}` key varlığı kontrol. Critical fail → revert.
+
+**Eğer ikisi de fail ederse revert prosedürü:**
+```bash
+git revert 0461913 cc47420
+npx tsc --noEmit && npm run build
+git push origin master
+```
+Revert anında canlı regression kapanır. Root cause Session 47'de ayrı sprint.
+
+**Session 46 kalan backlog (11 ticket + 3 ürün enrichment + 4 tech debt):**
+
+**P1 — Yüksek (öncelik sırası):**
+- F-SAFETY-004 — Banner lokalizasyon EN/TR mix fix (~30dk hızlı fix)
+- HealthReportTab enrichment — Digital Twin hero polish + Recent Activity multi-source feed + Missing Nudges (cross-tab setTab prop drilling) (3-4 saat)
+
+**P2 — Orta:**
+- F-SAFETY-002.1 — Onboarding dangerous override modal (wizard finale flow)
+- F-PRIVACY-001 — DELETE endpoint table list güncellemesi (family_history_entries, medication_interaction_alerts, pain_records, health_imports, health_metrics, radiology_reports, prospectus_scans, verification_documents)
+- F-PRIVACY-002 — Consent audit trail retention policy (regulatory research)
+- F-SETTINGS-001 — Şifre validation buton disabled
+- F-MED-DB-001 — Warfarin fuzzy match bug
+
+**P3 — Düşük:**
+- F-PRIVACY-003 — PrivacyTab inline quick export (ZIP+JSON Advanced mode)
+
+**Ürün enrichment:**
+- AI chat günlük 3 soru quota (freemium ayarı — şu an Free 20/gün)
+- Water context 3.1 (Session 44 backlog B1/B2/B3: snapshot-rollback, setTarget persist)
+- Achievement card i18n (brand-style isimler)
+
+**Technical debt carry-over:**
+- ESLint 127 library error sweep (Session 43'ten)
+- `health_metrics.steps` integration → movement ring user step target (Apple Health / Google Fit)
+- TodayView water update WaterIntakeContext'e migrate
+- `lib/vitality.ts` unit test scaffold (Jest/Vitest)
+
+**Dependency-gated:**
+- F-PAYMENT-001 (P1) — Iyzico ödeme entegrasyonu — şirket kuruluşu bekleniyor
 
 ---
 
