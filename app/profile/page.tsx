@@ -8,6 +8,14 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ProfileShellV2 } from "@/components/profile-v2/ProfileShellV2";
 import { MedicationInteractionBanner } from "@/components/safety/MedicationInteractionBanner";
 import { checkInteractionsAfterAdd, type InteractionCheckResult } from "@/lib/safety/check-med-interactions";
+
+// F-SAFETY-001 post-launch feature flag. The helper (including telemetry
+// breadcrumbs) always runs so we keep capturing interaction-check signal
+// even when the UI is kill-switched; the banner UI hides when this is
+// "false". Default is enabled — set NEXT_PUBLIC_SAFETY_BANNER=false in
+// Vercel env to disable the banner without a code deploy if something
+// goes wrong in production.
+const SAFETY_BANNER_ENABLED = process.env.NEXT_PUBLIC_SAFETY_BANNER !== "false";
 import { useAuth } from "@/lib/auth-context";
 import { useFamily } from "@/lib/family-context";
 import { createBrowserClient } from "@/lib/supabase";
@@ -891,21 +899,6 @@ function LegacyProfilePage() {
         {tx('profile.title', lang)}
       </h1>
 
-      {/* F-SAFETY-001: interaction warning banner — sits above the hero
-          so the user sees the alert before scrolling to the medication
-          list. Clears on manual dismiss or on a subsequent safe insert
-          (addMedication() resets medInteractionAlert to null first). */}
-      {medInteractionAlert && (
-        <MedicationInteractionBanner
-          dangerous={medInteractionAlert.dangerous}
-          caution={medInteractionAlert.caution}
-          summary={medInteractionAlert.summary}
-          lang={(lang === "tr" ? "tr" : "en") as "tr" | "en"}
-          onDismiss={() => setMedInteractionAlert(null)}
-          onAskDoctor={() => setSbarEmailOpen(true)}
-        />
-      )}
-
       {/* ── PROFILE POWER HEADER (single source: `power` computed once above) ── */}
       {profile && <ProfilePowerHeader power={power} input={powerInput} lang={lang as 'en' | 'tr'} />}
 
@@ -1332,6 +1325,24 @@ function LegacyProfilePage() {
           })()}
         </CardContent>
       </Card>
+
+      {/* F-SAFETY-001 (post-launch UX): banner lives HERE — right above
+          the Medications card where the user was focused when they hit
+          Save. Banner's own post-mount effect scrollIntoView({ center })
+          and flashes a 3 s ring so even a user already mid-page sees the
+          alert. Feature flag NEXT_PUBLIC_SAFETY_BANNER guards the UI;
+          helper still fires + collects telemetry when the flag is off
+          so we can iterate safely. */}
+      {SAFETY_BANNER_ENABLED && medInteractionAlert && (
+        <MedicationInteractionBanner
+          dangerous={medInteractionAlert.dangerous}
+          caution={medInteractionAlert.caution}
+          summary={medInteractionAlert.summary}
+          lang={(lang === "tr" ? "tr" : "en") as "tr" | "en"}
+          onDismiss={() => setMedInteractionAlert(null)}
+          onAskDoctor={() => setSbarEmailOpen(true)}
+        />
+      )}
 
       {/* Medications — Editable */}
       <Card id="medications" className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow scroll-mt-20 ${medications.length > 0 ? 'border-l-4 border-l-green-500' : ''}`}>

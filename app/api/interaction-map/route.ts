@@ -80,7 +80,31 @@ RULES:
 2. Check EVERY pair for interactions
 3. Include edges even for "safe" pairs (severity: "safe")
 4. Be specific about mechanisms
-5. If no interaction exists, severity is "safe" with appropriate description`;
+5. If no interaction exists, severity is "safe" with appropriate description
+
+SEVERITY CLASSIFICATION (STRICT — use FDA drug-interaction severity levels):
+
+  "dangerous" = FDA contraindicated OR major interaction OR any life-
+    threatening risk. Examples that MUST be flagged dangerous:
+      - Warfarin + NSAIDs / SSRIs / aspirin → bleeding
+      - Warfarin + isotretinoin / tetracyclines → intracranial hypertension + bleeding
+      - MAOIs + SSRIs / SNRIs / tramadol → serotonin syndrome
+      - Nitrates + sildenafil / tadalafil → severe hypotension
+      - QT-prolonging combos (e.g. amiodarone + fluoroquinolones) → torsades
+      - Isotretinoin + tetracyclines → pseudotumor cerebri
+      - Statins + strong CYP3A4 inhibitors → rhabdomyolysis
+      - Any clinically major bleeding / cardiac / CNS / organ-failure risk
+
+  "caution" = moderate interaction, requires monitoring or dose
+    adjustment. Mild CYP450 competition, modest PK shifts, additive
+    sedation without life-threatening risk.
+
+  "safe" = minor OR no known clinically significant interaction.
+
+TIE-BREAK RULE: when a pair could plausibly be "caution" OR "dangerous",
+ALWAYS choose "dangerous". Over-warning is clinically safer than
+under-warning — the patient's physician can downgrade, the app cannot
+upgrade after the fact. This is the F-SAFETY-001 default.`;
 
     const result = await askClaudeJSON(
       `Analyze all pairwise drug interactions between: ${medications.join(", ")}`,

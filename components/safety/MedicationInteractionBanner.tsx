@@ -15,9 +15,20 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { AlertTriangle, Info, X, ArrowRight, Stethoscope } from "lucide-react"
 import type { EdgeItem } from "@/lib/safety/check-med-interactions"
+
+/**
+ * Title-case a medication name using the Turkish locale so "isotretinoin"
+ * becomes "İzotretinoin" (dotted İ, not ASCII I). Locale-aware uppercase
+ * is the only correct option here — otherwise Turkish readers see a
+ * visibly wrong first letter.
+ */
+function titleCaseMed(name: string): string {
+  if (!name) return name
+  return name.replace(/\b([\p{L}])/gu, (_, ch: string) => ch.toLocaleUpperCase("tr-TR"))
+}
 
 interface Props {
   dangerous: EdgeItem[]
@@ -75,22 +86,48 @@ export function MedicationInteractionBanner({
         accent: "text-red-700 dark:text-red-300",
         pill: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
         Icon: AlertTriangle,
-        label: tr ? "Ciddi etkileşim" : "Serious interaction",
+        label: tr ? "⚠️ ÖNEMLİ UYARI — Ciddi Etkileşim" : "⚠️ IMPORTANT WARNING — Serious Interaction",
+        glowRing: "ring-4 ring-red-500/40",
       }
     : {
         wrap: "border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30",
         accent: "text-amber-800 dark:text-amber-300",
         pill: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
         Icon: Info,
-        label: tr ? "Dikkat gerektiren etkileşim" : "Caution",
+        label: tr ? "Dikkat — İzlem Gerektiren Etkileşim" : "Caution — Monitor This Interaction",
+        glowRing: "ring-4 ring-amber-500/40",
       }
   const { Icon } = chrome
 
+  // Post-mount: smooth-scroll to the banner (user is usually scrolled
+  // down at the medications card when they hit Save) + short glow pulse
+  // to draw the eye. Retriggers whenever the first edge changes, i.e.
+  // a follow-up insert produced a new interaction alert.
+  const rootRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const el = rootRef.current
+    if (!el) return
+    // Give the caller one frame to commit any sibling re-renders
+    // (medications list update, etc.) before we start scrolling.
+    const scrollT = window.setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "center" })
+      el.classList.add(...chrome.glowRing.split(" "), "animate-pulse")
+    }, 50)
+    const removeT = window.setTimeout(() => {
+      el.classList.remove(...chrome.glowRing.split(" "), "animate-pulse")
+    }, 3050)
+    return () => {
+      window.clearTimeout(scrollT)
+      window.clearTimeout(removeT)
+    }
+  }, [firstEdgeKey, chrome.glowRing])
+
   return (
     <section
+      ref={rootRef}
       role="alert"
       aria-live="polite"
-      className={`mb-6 rounded-2xl border ${chrome.wrap} p-4 sm:p-5`}
+      className={`mb-6 rounded-2xl border ${chrome.wrap} p-4 sm:p-5 transition-shadow scroll-mt-24`}
     >
       <div className="flex items-start gap-3">
         <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${chrome.pill}`}>
@@ -104,7 +141,7 @@ export function MedicationInteractionBanner({
               </p>
               <h3 className="mt-0.5 text-base sm:text-lg font-bold text-foreground">
                 {edges.length === 1
-                  ? `${edges[0].source} + ${edges[0].target}`
+                  ? `${titleCaseMed(edges[0].source)} + ${titleCaseMed(edges[0].target)}`
                   : tr
                     ? `${edges.length} etkileşim tespit edildi`
                     : `${edges.length} interactions detected`}
@@ -128,7 +165,7 @@ export function MedicationInteractionBanner({
             {edges.slice(0, 3).map((e, i) => (
               <li key={i} className="rounded-lg border border-border/60 bg-background/70 p-3">
                 <p className="text-sm font-semibold">
-                  {e.source} + {e.target}
+                  {titleCaseMed(e.source)} + {titleCaseMed(e.target)}
                 </p>
                 {e.description && (
                   <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
