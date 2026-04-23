@@ -57,41 +57,12 @@ export function PrivacyTab({ lang, patientName }: PrivacyTabProps) {
   const router = useRouter()
   const initials = useMemo(() => computeInitials(patientName), [patientName])
 
-  // ── Export flow ────────────────────────────────────────────────
-  const [exporting, setExporting] = useState(false)
-  const [exportError, setExportError] = useState<string | null>(null)
-
-  const triggerExport = async (): Promise<boolean> => {
-    setExporting(true)
-    setExportError(null)
-    try {
-      const supabase = createBrowserClient()
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session?.access_token) throw new Error("no_session")
-      const res = await fetch("/api/user-data", {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      })
-      if (!res.ok) throw new Error(`http_${res.status}`)
-      const data = await res.json()
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = `doctopal-export-${new Date().toISOString().split("T")[0]}.json`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-      return true
-    } catch (err) {
-      setExportError(err instanceof Error ? err.message : "unknown")
-      return false
-    } finally {
-      setExporting(false)
-    }
-  }
-
   // ── Delete flow ────────────────────────────────────────────────
+  // Export flow lives at /data-export (separate page, richer UX with
+  // category picker + estimated file size). The PrivacyTab Download
+  // card and the delete-modal "indir önce" CTA both link there.
+  // Inline JSON download was the original plan; F-PRIVACY-003 (P3)
+  // tracks an optional one-click ZIP+JSON inline alternative.
   const [modalOpen, setModalOpen] = useState(false)
   const [typedInitials, setTypedInitials] = useState("")
   const [acknowledged, setAcknowledged] = useState(false)
@@ -170,37 +141,38 @@ export function PrivacyTab({ lang, patientName }: PrivacyTabProps) {
       {/* Consent management — existing component */}
       <PrivacySettings />
 
-      {/* Data export */}
+      {/* Data export — redirects to the richer /data-export page
+          (category filters + estimated file size) instead of an
+          inline blob download. The blob fallback was the original
+          plan but the standalone page already does more, so we
+          point the user there and let the dedicated UI lead.
+          Inline quick-export is tracked as F-PRIVACY-003 (P3). */}
       <div className="rounded-2xl border border-border bg-card p-5">
         <div className="flex items-start gap-3 mb-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400">
             <Download className="h-4 w-4" />
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-semibold">{tr ? "Verilerimi İndir" : "Download My Data"}</h3>
+            <h3 className="text-sm font-semibold">{tr ? "Veri İndirme Merkezi" : "Data Download Center"}</h3>
             <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
               {tr
-                ? "Tüm sağlık verilerini (profil, ilaçlar, alerjiler, aile öyküsü, tahlil geçmişi, rıza kayıtları) JSON dosyası olarak indir. KVKK Md.11 erişim hakkı kapsamında ücretsiz."
-                : "Download all your health data (profile, medications, allergies, family history, lab tests, consent records) as a JSON file. Free under KVKK Art.11 right of access."}
+                ? "Veri kategorilerini seç ve indir. KVKK Md.11 erişim hakkı kapsamında ücretsiz. İlaçlar, alerjiler, aile öyküsü, tahlil geçmişi gibi veri kategorilerini ayrı ayrı filtreleyip JSON dosyası olarak indirebilirsin."
+                : "Pick the data categories and download them. Free under KVKK Art.11 right of access. Medications, allergies, family history, lab tests — filter each category individually and export as JSON."}
             </p>
           </div>
         </div>
-        <Button
-          onClick={triggerExport}
-          disabled={exporting}
-          className="gap-1.5"
-          size="sm"
+        <Link
+          href="/data-export"
+          className="inline-flex items-center gap-1.5 rounded-md bg-foreground text-background px-3 py-1.5 text-sm font-semibold hover:opacity-90 transition-opacity"
         >
-          {exporting
-            ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            : <Download className="h-3.5 w-3.5" />}
-          {tr ? "JSON İndir" : "Download JSON"}
-        </Button>
-        {exportError && (
-          <p className="mt-2 text-xs text-red-600 dark:text-red-400">
-            {tr ? "İndirme başarısız. Tekrar dene." : "Export failed. Please try again."}
-          </p>
-        )}
+          {tr ? "Veri İndirme Merkezine Git" : "Open Data Download Center"}
+          <ExternalLink className="h-3.5 w-3.5" />
+        </Link>
+        <p className="mt-2 text-[11px] italic text-muted-foreground">
+          {tr
+            ? "Ayrı sayfada kategori seçimi ve dosya boyutu bilgisi gösterilir."
+            : "The dedicated page shows category picker + estimated file size."}
+        </p>
       </div>
 
       {/* Danger zone — account deletion */}
@@ -268,25 +240,25 @@ export function PrivacyTab({ lang, patientName }: PrivacyTabProps) {
               </p>
             </div>
 
-            {/* Export prompt — opens in new tab, modal stays open */}
+            {/* Export prompt — opens /data-export in a new tab so the
+                modal stays open underneath. The user can grab their
+                JSON in the new tab, return here, and the countdown
+                state + initials input + checkbox are all preserved
+                exactly where they left off. No accidental close,
+                no countdown reset. */}
             <div className="mx-5 mb-4 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-2.5">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault()
-                  void triggerExport()
-                }}
-                disabled={exporting}
+              <Link
+                href="/data-export"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full inline-flex items-center justify-between gap-2 text-xs font-medium text-emerald-800 dark:text-emerald-300 hover:text-emerald-900 dark:hover:text-emerald-200"
               >
                 <span className="flex items-center gap-1.5">
-                  {exporting
-                    ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    : <Download className="h-3.5 w-3.5" />}
+                  <Download className="h-3.5 w-3.5" />
                   {tr ? "Silmeden önce verilerini JSON olarak indir" : "Download your data first"}
                 </span>
                 <ExternalLink className="h-3 w-3" />
-              </button>
+              </Link>
             </div>
 
             <div className="px-5 space-y-3 pb-3">
