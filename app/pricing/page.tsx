@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useFamily } from "@/lib/family-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { createBrowserClient } from "@/lib/supabase"
-import { Check, Crown, Users, Heart, Sparkles, Loader2, ArrowRight, Shield, Gift } from "lucide-react"
+import { Check, Crown, Users, Heart, Sparkles, Loader2, ArrowRight, Shield, Gift, ChevronDown, RotateCcw, CreditCard } from "lucide-react"
 import { LocalizedTitle } from "@/components/layout/LocalizedTitle"
 
 // ─────────────────────────────────────────────
@@ -24,25 +24,33 @@ import { LocalizedTitle } from "@/components/layout/LocalizedTitle"
 type Billing = "monthly" | "yearly"
 
 interface PlanRates {
-  monthly: { amountLabel: string; periodTr: string; periodEn: string }
+  monthly: { amountLabel: string; periodTr: string; periodEn: string; raw: number }
   yearly: {
     amountLabel: string
     periodTr: string
     periodEn: string
     perMonthApprox: number
     savingsMonths: number
+    raw: number
   }
 }
 
+// Raw values used to compute "yılda X kazanırsın" — kept as integers so the
+// display stays consistent with whatever amountLabel string we choose.
 const PRICING: Record<"individual" | "family", PlanRates> = {
   individual: {
-    monthly: { amountLabel: "₺149", periodTr: "/ ay", periodEn: "/ mo" },
-    yearly:  { amountLabel: "₺1.490", periodTr: "/ yıl", periodEn: "/ yr", perMonthApprox: 124, savingsMonths: 2 },
+    monthly: { amountLabel: "₺149", periodTr: "/ ay", periodEn: "/ mo", raw: 149 },
+    yearly:  { amountLabel: "₺1.490", periodTr: "/ yıl", periodEn: "/ yr", perMonthApprox: 124, savingsMonths: 2, raw: 1490 },
   },
   family: {
-    monthly: { amountLabel: "₺349", periodTr: "/ ay", periodEn: "/ mo" },
-    yearly:  { amountLabel: "₺3.490", periodTr: "/ yıl", periodEn: "/ yr", perMonthApprox: 291, savingsMonths: 2 },
+    monthly: { amountLabel: "₺349", periodTr: "/ ay", periodEn: "/ mo", raw: 349 },
+    yearly:  { amountLabel: "₺3.490", periodTr: "/ yıl", periodEn: "/ yr", perMonthApprox: 291, savingsMonths: 2, raw: 3490 },
   },
+}
+
+// Helper: yearly savings vs paying monthly for 12 months.
+function yearlySavings(plan: "individual" | "family"): number {
+  return PRICING[plan].monthly.raw * 12 - PRICING[plan].yearly.raw
 }
 
 type PlanId = "free" | "premium" | "family_premium"
@@ -100,7 +108,7 @@ const EN_FEATURES: Record<PlanId, string[]> = {
 export default function PricingPage() {
   const { lang } = useLang()
   const { user, isAuthenticated, premiumStatus } = useAuth()
-  const { familyGroup } = useFamily()
+  const { familyGroup, refetch: refetchFamily } = useFamily()
   const router = useRouter()
   const tr = lang === "tr"
   const features = tr ? TR_FEATURES : EN_FEATURES
@@ -149,6 +157,12 @@ export default function PricingPage() {
             ? "Aile Premium aktif edildi. Tüm üyelere bildirim gönderildi."
             : "Family Premium activated. All members notified.",
         })
+        // Refetch family context so the Family Premium card flips to
+        // "Active" state without requiring a page reload — without this
+        // the user sees their own success banner but the CTA stays in
+        // "Activating…" / "7 Gün Ücretsiz Dene" state, which reads as
+        // a broken flow.
+        try { await refetchFamily() } catch { /* non-fatal */ }
       }
     } catch {
       setFeedback({ type: "error", msg: tr ? "Bağlantı hatası." : "Connection error." })
@@ -159,6 +173,22 @@ export default function PricingPage() {
 
   const individualRate = billing === "yearly" ? PRICING.individual.yearly : PRICING.individual.monthly
   const familyRate = billing === "yearly" ? PRICING.family.yearly : PRICING.family.monthly
+
+  // Auth-aware checkout navigator. If a guest taps "7 Gün Ücretsiz Dene"
+  // we route them through login and bring them back to checkout with
+  // their plan choice intact — losing the plan choice on auth bounce
+  // is the kind of friction that costs sign-ups.
+  function goToCheckout(planParam: string) {
+    const next = `/checkout?plan=${planParam}`
+    if (!isAuthenticated) {
+      router.push(`/auth/login?redirect=${encodeURIComponent(next)}`)
+      return
+    }
+    router.push(next)
+  }
+
+  const indSavings = yearlySavings("individual")
+  const famSavings = yearlySavings("family")
 
   return (
     <div className="mx-auto max-w-6xl px-4 md:px-8 py-12">
@@ -262,6 +292,11 @@ export default function PricingPage() {
               ? (tr ? `≈ ₺${PRICING.individual.yearly.perMonthApprox} / ay` : `≈ ₺${PRICING.individual.yearly.perMonthApprox} / mo`)
               : undefined
           }
+          savingsNote={
+            billing === "yearly"
+              ? (tr ? `Yılda ₺${indSavings} kazanırsın` : `You save ₺${indSavings} per year`)
+              : undefined
+          }
           description={tr ? "Senin için tam erişim" : "Full access — just for you"}
           features={features.premium}
           ctaLabel={
@@ -275,7 +310,7 @@ export default function PricingPage() {
               ? tr ? "İlk 7 gün ücretsiz — istediğin zaman iptal et." : "Free for 7 days — cancel anytime."
               : undefined
           }
-          onCta={() => router.push(`/checkout?plan=individual-${billing}`)}
+          onCta={() => goToCheckout(`individual-${billing}`)}
           ctaVariant="amber"
         />
 
@@ -295,6 +330,11 @@ export default function PricingPage() {
                   ? `≈ ₺${PRICING.family.yearly.perMonthApprox} / ay · 6 kişiye kadar`
                   : `≈ ₺${PRICING.family.yearly.perMonthApprox} / mo · up to 6 people`)
               : (tr ? "6 kişiye kadar" : "up to 6 people")
+          }
+          savingsNote={
+            billing === "yearly"
+              ? (tr ? `Yılda ₺${famSavings} kazanırsın` : `You save ₺${famSavings} per year`)
+              : undefined
           }
           description={
             tr
@@ -327,14 +367,70 @@ export default function PricingPage() {
               : undefined
           }
           onSecondaryCta={isOwner && !familyPlanActive ? handleFamilyActivate : undefined}
-          onCta={() => router.push(`/checkout?plan=family-${billing}`)}
+          onCta={() => goToCheckout(`family-${billing}`)}
           ctaVariant="emerald"
           emphasised
         />
       </div>
 
+      {/* Trust strip — three pillars users actually email about: KVKK,
+          payment security, and refund posture. Surfacing them inline
+          on the pricing page reduces "is this safe?" mailto traffic. */}
+      <div className="mt-12 grid gap-4 sm:grid-cols-3 max-w-4xl mx-auto">
+        <TrustPillar
+          icon={Shield}
+          title={tr ? "KVKK uyumlu" : "KVKK compliant"}
+          body={tr ? "Verin Türkiye'de saklanır. Aydınlatma metni v2.2." : "Data stored in Türkiye. Consent v2.2."}
+        />
+        <TrustPillar
+          icon={CreditCard}
+          title={tr ? "Iyzico altyapısı" : "Iyzico-backed payments"}
+          body={tr ? "PCI-DSS sertifikalı 3D Secure ödeme." : "PCI-DSS certified 3D Secure checkout."}
+        />
+        <TrustPillar
+          icon={RotateCcw}
+          title={tr ? "İptal et, yenilenmesin" : "Cancel anytime"}
+          body={tr ? "Deneme süresinde ücret yok. İstediğin an iptal." : "No charge during trial. Cancel anytime."}
+        />
+      </div>
+
+      {/* FAQ — covers the four questions that come in over email after
+          we surface the pricing page. Static content (no toggling lib),
+          a small details/summary accordion keeps the page light. */}
+      <div className="mt-12 max-w-2xl mx-auto">
+        <h2 className="font-heading text-xl font-bold text-center mb-6">
+          {tr ? "Sıkça Sorulanlar" : "Frequently Asked Questions"}
+        </h2>
+        <div className="space-y-3">
+          <FaqItem
+            q={tr ? "Deneme süresinde iptal edersem ücret kesilir mi?" : "If I cancel during the trial, am I charged?"}
+            a={tr
+              ? "Hayır. İlk 7 gün boyunca herhangi bir zaman iptal edersen, hiçbir ücret kesilmez. Premium özellikler iptal anına kadar açık kalır."
+              : "No. If you cancel any time within the first 7 days, you're not charged. Premium features stay on until you cancel."}
+          />
+          <FaqItem
+            q={tr ? "Bireysel'den Aile Premium'a geçebilir miyim?" : "Can I switch from Individual to Family Premium?"}
+            a={tr
+              ? "Evet. Yükseltme anında geçiş yapabilirsin; yıllık aboneysen kalan günler Aile planına orantılı kredi olarak yansır."
+              : "Yes. You can upgrade at any time; if you're on the yearly plan, remaining days are credited toward the Family plan pro-rata."}
+          />
+          <FaqItem
+            q={tr ? "6 kişiden fazla aile üyem var, ne yaparım?" : "I have more than 6 family members — what now?"}
+            a={tr
+              ? "Aile Premium 6 kişiyle sınırlı. Ek üye için Bireysel Premium veya Aile + Bireysel kombinasyonu kullanabilirsin. Daha geniş paket için info@doctopal.com ile iletişime geç."
+              : "Family Premium covers up to 6 people. Beyond that, mix Individual Premium or contact info@doctopal.com for a custom plan."}
+          />
+          <FaqItem
+            q={tr ? "Verilerim nereye gidiyor? AI'ya kim erişiyor?" : "Where does my data go? Who can access it?"}
+            a={tr
+              ? "Veriler Supabase'de (AB sunucu) saklanır; AI istekleri öncesi isim, e-posta, TC ve adres bilgisi kaldırılır. Detay: /aydinlatma."
+              : "Data is stored in Supabase (EU servers); identifying fields are stripped before any AI request. Full detail: /aydinlatma."}
+          />
+        </div>
+      </div>
+
       {/* Footer notes */}
-      <div className="mt-10 text-center space-y-1">
+      <div className="mt-12 text-center space-y-1">
         <p className="text-xs text-muted-foreground">
           {tr ? "Tüm fiyatlara KDV dahildir." : "All prices include VAT."}
         </p>
@@ -345,6 +441,34 @@ export default function PricingPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+// ─────────────────────────────────────────────
+// Trust strip + FAQ helpers
+// ─────────────────────────────────────────────
+
+function TrustPillar({ icon: Icon, title, body }: { icon: React.ElementType; title: string; body: string }) {
+  return (
+    <div className="rounded-xl border border-border bg-card p-4 text-center">
+      <div className="mx-auto mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">
+        <Icon className="h-4 w-4" />
+      </div>
+      <p className="text-sm font-semibold text-foreground">{title}</p>
+      <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">{body}</p>
+    </div>
+  )
+}
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  return (
+    <details className="group rounded-xl border border-border bg-card px-4 py-3 transition-colors open:bg-muted/40">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-foreground">
+        <span>{q}</span>
+        <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+      </summary>
+      <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">{a}</p>
+    </details>
   )
 }
 
@@ -362,6 +486,7 @@ interface CardProps {
   price: string
   priceSub: string
   perMonthApprox?: string
+  savingsNote?: string
   description: string
   features: string[]
   ctaLabel: string
@@ -417,6 +542,13 @@ function PricingCard(p: CardProps) {
 
       {p.perMonthApprox && (
         <p className="mt-1 text-xs text-muted-foreground">{p.perMonthApprox}</p>
+      )}
+
+      {p.savingsNote && (
+        <p className="mt-2 inline-flex w-fit items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 px-2.5 py-1 text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+          <Sparkles className="h-3 w-3" />
+          {p.savingsNote}
+        </p>
       )}
 
       <ul className="mt-6 space-y-2.5 flex-1">
