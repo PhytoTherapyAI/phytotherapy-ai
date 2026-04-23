@@ -20,6 +20,8 @@ import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { NotificationSettings } from "@/components/pwa/NotificationSettings"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
+import { Skeleton } from "@/components/ui/skeleton"
+import Link from "next/link"
 import { InfoTooltip } from "@/components/ui/InfoTooltip"
 import { parseMedDoses, buildMedItemId, buildMedLabel } from "@/lib/med-dose-utils"
 import { getSupplementDisplayName } from "@/lib/supplement-data"
@@ -529,23 +531,28 @@ export default function CalendarPage() {
   }, [])
 
   // Daily tasks organized by circadian time blocks — profile-driven
-  // Session 44 Faz 2 hotfix: every default ritual seed that represents a
-  // pill/capsule/tea you can tick off gets dbType:"supplement". The two
-  // 💧 water rows stay untagged — they are habit checkboxes (the FAB
-  // owns the actual glass count via WaterIntakeContext, see Faz 3).
+  // Session 44 Faz 2.1: default medication/supplement seeds REMOVED.
+  // Smoke test proved that the prior seeds (D3 ☀️, Probiotic 🌿, Omega-3
+  // 🐟, Magnesium 🌙, Valerian 🍵) leaked into daily_logs as
+  // item_id=m1..e2 because of a state-vs-render desync — the user saw
+  // "Zoretanin" in the morning ritual (overridden by fetchProfileMeds)
+  // but the underlying React state was still the seed object, so the
+  // tick wrote the SEED's id to the DB, not the medication's.
+  //
+  // Fix: medications + supplements come exclusively from user_medications
+  // (RLS table) and calendar_events (event_type='supplement'), fetched
+  // by fetchProfileMeds (single source of truth). The only remaining
+  // defaults are the two water rows (m3 morning, n2 noon) — those are
+  // habit checkboxes, not medical recommendations, and the actual glass
+  // count lives in water_intake via WaterIntakeContext + the FAB.
+  // Night starts empty because there is no default night water ritual.
   const [morningTasks, setMorningTasks] = useState<DailyTask[]>([
-    { id: "m1", label: tx("calendar.vitaminD3", lang), done: false, emoji: "☀️", dbType: "supplement" },
-    { id: "m2", label: tx("calendar.probiotic", lang), done: false, emoji: "🌿", dbType: "supplement" },
     { id: "m3", label: tx("calendar.oneGlassWater", lang), done: false, emoji: "💧" },
   ])
   const [noonTasks, setNoonTasks] = useState<DailyTask[]>([
-    { id: "n1", label: "Omega-3", done: false, emoji: "🐟", dbType: "supplement" },
     { id: "n2", label: tx("calendar.twoGlassesWater", lang), done: false, emoji: "💧" },
   ])
-  const [nightTasks, setNightTasks] = useState<DailyTask[]>([
-    { id: "e1", label: tx("calendar.magnesium", lang), done: false, emoji: "🌙", dbType: "supplement" },
-    { id: "e2", label: tx("calendar.valerianTea", lang), done: false, emoji: "🍵", dbType: "supplement" },
-  ])
+  const [nightTasks, setNightTasks] = useState<DailyTask[]>([])
 
   // Session 44 C2.4: med/sup completion comes from DailyLogsContext
   // (single source of truth across dashboard + calendar + TodayView).
@@ -855,18 +862,28 @@ export default function CalendarPage() {
       const waterMorning: DailyTask = { id: "w1", label: tx("calendar.oneGlassWater", lang), done: false, emoji: "💧" }
       const waterNoon: DailyTask = { id: "w2", label: tx("calendar.twoGlassesWater", lang), done: false, emoji: "💧" }
 
-      // Set task blocks
-      if (morning.length > 0 || sups) {
-        setMorningTasks([...morning.filter(t => t.emoji === "💊"), ...morning.filter(t => t.emoji === "🌿"), waterMorning])
-      }
-      if (noon.length > 0) {
-        setNoonTasks([...noon, waterNoon])
-      } else {
-        setNoonTasks([waterNoon])
-      }
-      if (night.length > 0) {
-        setNightTasks(night)
-      }
+      // Faz 2.1: deterministic set — every block is rewritten on every
+      // fetch, so an empty profile reliably collapses to the water-only
+      // (or empty for night) baseline instead of leaving stale state
+      // from a previous render. Routing inside the block prefers
+      // dbType (set on profile-derived rows by lib above) over emoji
+      // for symmetry with toggleTask.
+      const isMed = (t: DailyTask) => t.dbType === "medication" || t.emoji === "💊"
+      const isSup = (t: DailyTask) => t.dbType === "supplement" || t.emoji === "🌿" || t.emoji === "🐟"
+      setMorningTasks([
+        ...morning.filter(isMed),
+        ...morning.filter(isSup),
+        waterMorning,
+      ])
+      setNoonTasks([
+        ...noon.filter(isMed),
+        ...noon.filter(isSup),
+        waterNoon,
+      ])
+      setNightTasks([
+        ...night.filter(isMed),
+        ...night.filter(isSup),
+      ])
 
       // Restore custom (non-med/sup) task completions from localStorage
       setTimeout(() => {
@@ -949,11 +966,17 @@ export default function CalendarPage() {
     } catch { /* ignore */ } finally { setVitalsLoading(false) }
   }, [targetId])
 
+  // Faz 2.1: profile?.id added to deps. F5-from-cache races where
+  // targetId hydrates before profile.id used to silently skip
+  // fetchProfileMeds (because the `if (profile?.id)` guard saw null at
+  // the moment targetId fired the effect, and there was no second
+  // trigger when profile.id later resolved). With profile?.id in deps
+  // the effect re-runs the moment profile becomes available.
   useEffect(() => {
-    if (profile?.id) {
+    if (profile?.id && targetId) {
       Promise.all([fetchAllEvents(), fetchVitals(), fetchProfileMeds(), fetchStreak()])
     }
-  }, [targetId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [targetId, profile?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (authLoading) return <PageSkeleton />
   if (!isAuthenticated || !profile) {
@@ -1049,26 +1072,59 @@ export default function CalendarPage() {
                 <motion.div key="today" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="space-y-4">
 
-                  <TimeBlockEnhanced
-                    icon={<Sun className="h-4 w-4 text-amber-500" />}
-                    title={tx("calendar.morningRoutine", lang)}
-                    tasks={morningTasksDerived} onToggle={toggleTask} onAdd={() => {}}
-                    onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("morning", t)}
-                    isCurrent={currentBlock === "morning"} hours="06:00–12:00" lang={lang} blockKey="morning" />
+                  {/* Faz 2.1: skeleton until profile fetch completes — without
+                      this, deleting the seed leaves an empty water-only block
+                      visible for 100-300ms which reads as "data missing". */}
+                  {!ritualDataLoaded ? (
+                    <div className="space-y-4" aria-label={tx("calendar.loadingTasks", lang)}>
+                      <Skeleton className="h-32 w-full" />
+                      <Skeleton className="h-32 w-full" />
+                      <Skeleton className="h-32 w-full" />
+                    </div>
+                  ) : (
+                    <>
+                      <TimeBlockEnhanced
+                        icon={<Sun className="h-4 w-4 text-amber-500" />}
+                        title={tx("calendar.morningRoutine", lang)}
+                        tasks={morningTasksDerived} onToggle={toggleTask} onAdd={() => {}}
+                        onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("morning", t)}
+                        isCurrent={currentBlock === "morning"} hours="06:00–12:00" lang={lang} blockKey="morning" />
 
-                  <TimeBlockEnhanced
-                    icon={<Sunset className="h-4 w-4 text-orange-500" />}
-                    title={tx("calendar.afternoon", lang)}
-                    tasks={noonTasksDerived} onToggle={toggleTask} onAdd={() => {}}
-                    onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("noon", t)}
-                    isCurrent={currentBlock === "noon"} hours="12:00–18:00" lang={lang} blockKey="noon" />
+                      <TimeBlockEnhanced
+                        icon={<Sunset className="h-4 w-4 text-orange-500" />}
+                        title={tx("calendar.afternoon", lang)}
+                        tasks={noonTasksDerived} onToggle={toggleTask} onAdd={() => {}}
+                        onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("noon", t)}
+                        isCurrent={currentBlock === "noon"} hours="12:00–18:00" lang={lang} blockKey="noon" />
 
-                  <TimeBlockEnhanced
-                    icon={<MoonIcon className="h-4 w-4 text-indigo-400" />}
-                    title={tx("calendar.eveningWindDown", lang)}
-                    tasks={nightTasksDerived} onToggle={toggleTask} onAdd={() => {}}
-                    onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("night", t)}
-                    isCurrent={currentBlock === "night"} hours="18:00–00:00" lang={lang} blockKey="night" />
+                      <TimeBlockEnhanced
+                        icon={<MoonIcon className="h-4 w-4 text-indigo-400" />}
+                        title={tx("calendar.eveningWindDown", lang)}
+                        tasks={nightTasksDerived} onToggle={toggleTask} onAdd={() => {}}
+                        onRemoveTask={removeTask} onAddCustomTask={(t) => addCustomTask("night", t)}
+                        isCurrent={currentBlock === "night"} hours="18:00–00:00" lang={lang} blockKey="night" />
+
+                      {/* Faz 2.1: Empty-state CTA — surfaces when the user has
+                          no medications + no supplements in user_medications +
+                          calendar_events. The only remaining tasks are the two
+                          water rows, which means the calendar looks barely
+                          populated; without this hint a new user thinks
+                          something is broken. */}
+                      {(() => {
+                        const onlyWater = morningTasksDerived.every(t => t.emoji === "💧")
+                          && noonTasksDerived.every(t => t.emoji === "💧")
+                          && nightTasksDerived.length === 0
+                        return onlyWater ? (
+                          <div className="rounded-xl border border-dashed border-border bg-muted/40 px-4 py-3 text-center text-sm text-muted-foreground">
+                            {tx("calendar.noMedsEmptyState", lang)}{" "}
+                            <Link href="/profile" className="font-medium text-primary underline underline-offset-2 hover:text-primary/80">
+                              {tx("calendar.noMedsEmptyStateCTA", lang)}
+                            </Link>
+                          </div>
+                        ) : null
+                      })()}
+                    </>
+                  )}
 
                   {/* Existing TodayView integration */}
                   <Suspense fallback={<div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}>
