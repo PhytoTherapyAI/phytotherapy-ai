@@ -1,6 +1,69 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 23 Nisan 2026 (Session 44 — Daily Care unification + 4-ring widget + DailyLogsContext + dead code purge)
+> Son güncelleme: 23 Nisan 2026 (Session 45 — Premium redesign + F-SAFETY-001/002 full coverage + F-PROFILE-001 sidebar refactor 10/11 tab gerçek)
+
+---
+
+### Session 45 — Premium Redesign + Safety Engine + Profile Sidebar Refactor (23 Nisan 2026, devam) — TAMAMLANDI
+
+**Ana iş:** 23 commit (`15a7ac7..cf7d977`), 3 büyük tema:
+1. **Premium** — Pricing + chat quota + redesign + landing dil yumuşatma + i18n sweep
+2. **F-SAFETY-001/002** — interaction check on med add → 5-kategori cross-check → persistent DB-backed banner → doctor mailto template
+3. **F-PROFILE-001** — 1981-satır monolitik profil sayfası → 11-tab sidebar refactor (10/11 tab gerçek; Sağlık Raporu Commit 5'e kaldı)
+
+#### Premium + UI cleanup (5 commit)
+- [x] `15a7ac7` Premium İş 1 — Pricing yıllık tasarruf rozeti + auth-aware checkout + family activate refetch + trust strip + 4-soru FAQ
+- [x] `cfadce4` Premium İş 2 — `lib/chat-quota.ts` Free 20/gün UTC midnight reset + `/api/chat` 402 + ChatInterface preemptive gate kaldırıldı
+- [x] `fe0e259` Premium redesign — `lib/pricing.ts` merkezi + PricingToggle + PricingCard reusable + default monthly + Bireysel emphasised + yeni fiyatlar 149/1399 + 349/3299
+- [x] `eb041b4` i18n sweep — 28 yeni key + 16 tüketici (4 InfoTooltip + 4 error page + placeholder/minor + a11y)
+- [x] `463c161` Landing plain-language — GRADE/SBAR jargonu yumuşatma
+
+#### Bug fixes — Faz 2 hotfix + Faz 2.1 + F-PALETTE (4 commit)
+- [x] `688babe` Faz 2 hotfix — TimeBlock seed `dbType` field; emoji-only routing ☀️/🌙/🍵 silent local-state path bug
+- [x] `535e32c` Faz 2.1 — default ritual seed silindi + useEffect race fix + fetchProfileMeds deterministik + loading skeleton + empty CTA
+- [x] `611f690` F-PALETTE-001 — Family History gating dışı (sayfa üstü) + palette URL `?section=history&new=true` + autoOpen + URL clean
+- [x] `7eb706c` Palette profile field deep-links — 10 yeni "profile-fields" entry + section anchor id'leri + smooth scroll + 2s emerald ring
+- [x] `c3d4025` Palette auto-open collapsed sections — 5 hash editingHealth auto-true + 400ms delay + `HEALTH_PROFILE_HASHES` Set
+
+#### F-SAFETY-001 + F-SAFETY-002 paket (8 commit)
+- [x] `fca3f6f` **F-SAFETY-001** — `/api/interaction-map` callback helper + MedicationInteractionBanner + addMedication post-insert hook + 60s rate-limit silent retry + banner mount Aktif İlaçlar üstünde
+- [x] `560410b` **F-SAFETY-001 post-launch UX** — banner pozisyon fix + scrollIntoView + 3s ring pulse + STRICT FDA severity prompt + tie-break "always dangerous" + TR/EN ton ayrımı + `titleCaseMed` TR locale + `NEXT_PUBLIC_SAFETY_BANNER` flag
+- [x] `bf7f36b` **F-SAFETY-001 underscore fix** — `[_-]+` → space normalize + storage normalize
+- [x] `7a39c4b` **F-SAFETY-002 Commit 1/3** — generic helper rename + `lib/safety/normalize-med-name.ts` + 3 ek insert path bağlama (scanner + 15-day dialog + onboarding wizard) + `safety:med-added` global event 300ms delay
+- [x] `e40cc03` **F-SAFETY-002 Commit 2/3** — `/api/interaction-map` 5-kategori matrix (drug-drug + drug-chronic + drug-supplement + drug-allergy + drug-condition) + `edges[].category` opsiyonel + banner kategori-gruplu render + telemetri by_category
+- [x] `a5f5883` **F-SAFETY-002 Commit 3/3** — `lib/safety/sbar-interaction-template.ts` + banner "Doktoruma Sor" mailto fallback + `patientName` prop + TR/EN body template
+- [x] `2a601b1` **F-SAFETY-002.2 persistence** — Migration `medication_interaction_alerts` (id/edges JSONB/severity/dismissed/resolved/note + RLS + partial index) + 4 yeni helper fn (fetchActive/dismiss/resolve/autoResolve) + banner alertId + onResolve "✓ Doktor Onayladı" + mount-restore alertRestoredRef + removeMedication auto-resolve sweep + **24-h confirm 3-state lock** (amber "İncelemeyi bekliyor" / yeşil "Doğrulandı" / outline)
+
+#### F-PROFILE-001 sidebar refactor (5 commit)
+- [x] `28572b1` **Commit 1/N** — `components/profile-v2/` shell + sidebar + URL hook + Genel tab + 9 placeholder + `?legacy=true` fork (1981-satır monolith preserve)
+- [x] `bba3a2c` **Commit 2.1/N** — `useProfileData` hook + BodyLifestyleTab (LifestyleSection + sigara/alkol ONLY here) + MedicalHistoryTab (Kritik Durumlar Shield + ChronicConditionsEditor + Cerrahi chip surgery: prefix filter)
+- [x] `0b76f20` **Commit 2.2/N** — MedicationsTab ~480 satır (list + add form + autocomplete + DEFAULT_DOSES + scanner toggle no pre-fill) + F-SAFETY-002.2 full integration + safety:med-added listener
+- [x] `238902f` **Commit 3/N** — 5 tab tek commit: SupplementsTab + AllergiesTab + VaccinesTab + FamilyTab (preview + 2 CTA) + ReproductiveTab (minimal + male URL gate) + `handleTabSaved` (refetch + refreshProfile parallel)
+- [x] `e48e9c9` **Commit 4/N** — PrivacyTab (PrivacySettings reuse + Veri İndirme Merkezi Card + Danger Zone delete modal: TR-locale initials "TAS" + checkbox + 5s countdown + secondary CTA target=_blank) + palette 9 URL migrate + ShellV2 hash backward-compat HASH_TO_TAB
+- [x] `cf7d977` **PrivacyTab fix** — Veri İndirme Merkezi `/data-export` redirect (richer page kategori filtre) + ExternalLink icon + italic subtext + modal target=_blank
+
+**Sonuç:**
+- F-PROFILE-001 **10/11 tab gerçek** (Sağlık Raporu Commit 5'te)
+- F-SAFETY full coverage: 4 insert path + 5 kategori matrix + persistent DB banner + doctor mailto template
+- Premium redesign canlı (default monthly + Bireysel emphasised + yeni fiyatlar)
+- Build: 241 sayfa, 0 error/warning her commit sonrası
+
+**Manuel adım (kullanıcı Supabase Studio):**
+- `supabase/migrations/20260423_medication_interaction_alerts.sql` apply (F-SAFETY-002.2 persistence — banner restore + dismiss/resolve/auto-resolve için DB row gerekli)
+
+**Session 46'ya devir:**
+- F-PROFILE-001 Commit 5 (Health Report tab — Digital Twin + Gamification + SBAR PDF)
+- F-PROFILE-001 Commit 6 (legacy 1981-satır monolith silme + `?legacy=true` silent redirect)
+- F-SAFETY-002.1 (onboarding inline override modal — wizard finale flow)
+- F-SAFETY-002.3 (mailto fallback modal — no default mail handler edge)
+- F-SAFETY-004 P2 (banner lokalizasyon EN/TR karışımı)
+- F-SCANNER-001 (OCR "Analiz başarısız" fix)
+- F-PRIVACY-001 P2 (DELETE endpoint table list güncellemesi)
+- F-PRIVACY-002 P2 (consent audit trail retention policy research)
+- F-PRIVACY-003 P3 (PrivacyTab inline quick export ZIP+JSON Advanced)
+- ESLint 127 library error sweep (Session 43'ten devam)
+- `health_metrics.steps` integration → movement ring user step target
+- TodayView water update'i WaterIntakeContext'e taşı
 
 ---
 
