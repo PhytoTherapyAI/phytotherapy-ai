@@ -16,7 +16,7 @@
 // a two-column sticky sidebar + content flex layout.
 "use client"
 
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import Link from "next/link"
 import { LogIn } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
@@ -33,7 +33,9 @@ import { AllergiesTab } from "./tabs/AllergiesTab"
 import { VaccinesTab } from "./tabs/VaccinesTab"
 import { FamilyTab } from "./tabs/FamilyTab"
 import { ReproductiveTab } from "./tabs/ReproductiveTab"
-import { PlaceholderTab, PLACEHOLDER_CONTENT } from "./tabs/PlaceholderTab"
+import { PrivacyTab } from "./tabs/PrivacyTab"
+import type { ProfileTabId } from "./useProfileTab"
+import { PlaceholderTab } from "./tabs/PlaceholderTab"
 import { useProfileData } from "./hooks/useProfileData"
 
 export function ProfileShellV2() {
@@ -50,6 +52,38 @@ export function ProfileShellV2() {
   // where the ChronicConditionsEditor / meds list actually need it.
   const effectiveProfile = isOwnProfile ? authProfile : null
   const effectiveUserId = activeUserId || user?.id || ""
+
+  // F-PROFILE-001 Commit 4: hash backward-compat. Old palette bookmarks
+  // (/profile#allergy-card, #vucut-olculeri etc.) are retired in favour
+  // of ?tab=<slug>, but users / external links may still arrive on the
+  // legacy hash. Translate it to the right tab and strip the hash via
+  // history.replaceState so a refresh doesn't re-fire the effect.
+  // Unknown hashes silently strip — no error surface.
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const raw = window.location.hash.slice(1)
+    if (!raw) return
+    const HASH_TO_TAB: Record<string, ProfileTabId> = {
+      "vucut-olculeri": "vucut-yasam",
+      "kan-grubu":      "vucut-yasam",
+      "yasam-tarzi":    "vucut-yasam",
+      "takviyelerim":   "takviyeler",
+      "ureme-sagligi":  "ureme",
+      "allergy-card":   "alerjiler",
+      "medications":    "ilaclar",
+      "vaccines":       "asilar",
+      "medical-history": "tibbi-gecmis",
+    }
+    const target = HASH_TO_TAB[raw]
+    if (target) setTab(target)
+    // Strip hash either way — unknown hashes shouldn't sit around.
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search,
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // F-PROFILE-001 Commit 2.1: shared read layer. medications drives
   // ChronicConditionsEditor's "medication → condition" hint inside
@@ -215,17 +249,13 @@ export function ProfileShellV2() {
           />
         )
 
-      case "gizlilik": {
-        const content = PLACEHOLDER_CONTENT[activeTab]
-        const copy = content ? content[lang as "tr" | "en"] : null
+      case "gizlilik":
         return (
-          <PlaceholderTab
+          <PrivacyTab
             lang={lang as "tr" | "en"}
-            title={copy?.title ?? activeTab}
-            upcomingItems={copy?.items ?? []}
+            patientName={effectiveProfile?.full_name ?? null}
           />
         )
-      }
 
       case "saglik-raporu":
         // Health Report tab — canlılık skoru + rozetler + SBAR PDF arrive

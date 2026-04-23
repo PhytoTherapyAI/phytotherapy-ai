@@ -324,7 +324,11 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "Vücut Ölçüleri", en: "Body Measurements" },
     description: { tr: "Boy, kilo, BMI bilgilerini düzenle", en: "Edit height, weight, BMI" },
     keywords: { tr: ["boy", "kilo", "yaş", "bmi", "ölçü", "vücut", "kg", "cm"], en: ["height", "weight", "bmi", "age", "body", "measurements"] },
-    href: "/profile#vucut-olculeri",
+    // F-PROFILE-001 Commit 4: all profile deep-links now target the
+    // ShellV2 ?tab= routing. Old `#vucut-olculeri` hash bookmarks
+    // still resolve because ShellV2 mounts a hash→tab translation
+    // effect that swaps the URL on arrival (history.replaceState).
+    href: "/profile?tab=vucut-yasam",
     authOnly: true,
   },
   {
@@ -333,7 +337,7 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "Alerjilerim", en: "My Allergies" },
     description: { tr: "Alerji listesini düzenle, reaksiyon tipini güncelle", en: "Edit allergy list, update reaction types" },
     keywords: { tr: ["alerji", "alerjilerim", "reaksiyon", "anafilaksi"], en: ["allergy", "allergies", "reaction", "anaphylaxis"] },
-    href: "/profile#allergy-card",
+    href: "/profile?tab=alerjiler",
     authOnly: true,
   },
   {
@@ -342,7 +346,7 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "İlaçlarım", en: "My Medications" },
     description: { tr: "Aktif ilaçları, dozları, sıklıkları yönet", en: "Manage active medications, doses, frequencies" },
     keywords: { tr: ["ilaç", "ilaçlarım", "ilaclarim", "doz", "reçete", "medication"], en: ["medication", "medications", "drugs", "dose", "prescription"] },
-    href: "/profile#medications",
+    href: "/profile?tab=ilaclar",
     authOnly: true,
   },
   {
@@ -351,7 +355,7 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "Aşı Kayıtlarım", en: "Vaccination Records" },
     description: { tr: "Aşı geçmişi ve takvim", en: "Vaccination history and schedule" },
     keywords: { tr: ["aşı", "aşılar", "asilarim", "asi", "asilar"], en: ["vaccine", "vaccines", "vaccination", "shots", "immunization"] },
-    href: "/profile#vaccines",
+    href: "/profile?tab=asilar",
     authOnly: true,
   },
   {
@@ -360,7 +364,7 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "Kan Grubu", en: "Blood Type" },
     description: { tr: "Kan grubunu seç ve epidemiyolojik içgörüyü gör", en: "Select blood type and view epidemiological insight" },
     keywords: { tr: ["kan grubu", "kan", "rh"], en: ["blood", "blood type", "blood group", "rh"] },
-    href: "/profile#kan-grubu",
+    href: "/profile?tab=vucut-yasam",
     authOnly: true,
   },
   {
@@ -369,7 +373,7 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "Kronik Hastalıklar", en: "Chronic Conditions" },
     description: { tr: "Kalp, diyabet, tiroid, astım gibi kronik tanılar", en: "Cardiac, diabetes, thyroid, asthma and other chronic diagnoses" },
     keywords: { tr: ["kronik", "hastalık", "tanı", "diyabet", "hipertansiyon", "astım", "tiroid"], en: ["chronic", "condition", "diagnosis", "diabetes", "hypertension", "asthma", "thyroid"] },
-    href: "/profile#medical-history",
+    href: "/profile?tab=tibbi-gecmis",
     authOnly: true,
   },
   {
@@ -378,7 +382,7 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "Cerrahi Geçmiş", en: "Surgical History" },
     description: { tr: "Geçirilmiş ameliyatları kaydet (bariatrik, vb.)", en: "Record past surgeries (bariatric, etc.)" },
     keywords: { tr: ["cerrahi", "ameliyat", "operasyon", "bariatrik"], en: ["surgery", "surgical", "operation", "bariatric"] },
-    href: "/profile#medical-history",
+    href: "/profile?tab=tibbi-gecmis",
     authOnly: true,
   },
   {
@@ -387,7 +391,7 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "Takviyelerim", en: "My Supplements" },
     description: { tr: "Vitamin, mineral, bitkisel takviyeler", en: "Vitamins, minerals, herbal supplements" },
     keywords: { tr: ["takviye", "takviyelerim", "vitamin", "mineral", "bitkisel"], en: ["supplement", "supplements", "vitamin", "mineral", "herbal"] },
-    href: "/profile#takviyelerim",
+    href: "/profile?tab=takviyeler",
     authOnly: true,
   },
   {
@@ -396,7 +400,7 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "Yaşam Tarzı", en: "Lifestyle" },
     description: { tr: "Sigara, alkol, diyet, egzersiz, uyku", en: "Smoking, alcohol, diet, exercise, sleep" },
     keywords: { tr: ["yaşam", "tarz", "sigara", "alkol", "diyet", "egzersiz", "uyku"], en: ["lifestyle", "smoking", "alcohol", "diet", "exercise", "sleep"] },
-    href: "/profile#yasam-tarzi",
+    href: "/profile?tab=vucut-yasam",
     authOnly: true,
   },
   {
@@ -405,7 +409,16 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     title: { tr: "Üreme Sağlığı", en: "Reproductive Health" },
     description: { tr: "Hamilelik, emzirme durumu (kadın profil)", en: "Pregnancy, breastfeeding status (female profile)" },
     keywords: { tr: ["hamilelik", "emzirme", "üreme", "gebelik"], en: ["pregnancy", "breastfeeding", "reproductive", "gestation"] },
-    href: "/profile#ureme-sagligi",
+    href: "/profile?tab=ureme",
+    authOnly: true,
+  },
+  {
+    id: "profile:privacy",
+    category: "profile-fields",
+    title: { tr: "Gizlilik & Rıza", en: "Privacy & Consent" },
+    description: { tr: "KVKK rızaları, veri indirme, hesap silme", en: "KVKK consents, data download, account deletion" },
+    keywords: { tr: ["gizlilik", "rıza", "kvkk", "veri", "sil", "indir", "export"], en: ["privacy", "consent", "kvkk", "data", "delete", "download", "export"] },
+    href: "/profile?tab=gizlilik",
     authOnly: true,
   },
 ];

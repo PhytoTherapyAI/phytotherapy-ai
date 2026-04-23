@@ -70,16 +70,8 @@ export const PLACEHOLDER_CONTENT: Record<string, { tr: { title: string; items: s
   // Commit 2.1 — entries removed from the placeholder map.
   // ilaclar migrated in Commit 2.2 (MedicationsTab + full F-SAFETY-002.2).
   // takviyeler migrated in Commit 3.
-  // alerjiler / asilar / aile-oykusu / ureme migrated to real tabs in
-  // F-PROFILE-001 Commit 3. Only gizlilik remains (Commit 4).
-  "gizlilik": {
-    tr: {
-      title: "Gizlilik & Rıza",
-      items: ["KVKK aydınlatma durumu", "3 açık rıza toggle'ı", "Veri silme isteği", "Verilerimi indir (JSON export)"],
-    },
-    en: {
-      title: "Privacy & Consent",
-      items: ["KVKK disclosure status", "3 explicit consent toggles", "Data deletion request", "Download my data (JSON export)"],
-    },
-  },
+  // gizlilik migrated to real tab in Commit 4.
+  // All 9 real tabs live; saglik-raporu stays as an inline placeholder
+  // block in ShellV2 until Commit 5 lands Digital Twin + Gamification
+  // + SBAR PDF. That inline block doesn't read from this map.
 }
