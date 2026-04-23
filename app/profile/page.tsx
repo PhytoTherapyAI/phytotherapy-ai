@@ -4,7 +4,8 @@
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ProfileShellV2 } from "@/components/profile-v2/ProfileShellV2";
 import { useAuth } from "@/lib/auth-context";
 import { useFamily } from "@/lib/family-context";
 import { createBrowserClient } from "@/lib/supabase";
@@ -65,7 +66,25 @@ interface DrugSuggestion {
   genericName: string;
 }
 
+// ═══════════════════════════════════════════════════════════════════════
+// F-PROFILE-001 legacy fork (Commit 1)
+//
+// Default route renders the new sidebar shell (ProfileShellV2) which
+// lives in components/profile-v2/. The 1981-line monolith below is
+// preserved as LegacyProfilePage and reachable via `?legacy=true` —
+// that URL is the fallback surfaced by every placeholder tab. Once
+// Commits 2-5 migrate each tab's real content, Commit 6 deletes the
+// legacy body + the `?legacy=true` branch (with a silent redirect for
+// any bookmarked URL).
+// ═══════════════════════════════════════════════════════════════════════
 export default function ProfilePage() {
+  const searchParams = useSearchParams();
+  const isLegacy = searchParams.get("legacy") === "true";
+  if (!isLegacy) return <ProfileShellV2 />;
+  return <LegacyProfilePage />;
+}
+
+function LegacyProfilePage() {
   const router = useRouter();
   const { lang } = useLang();
   const { isAuthenticated, isLoading, profile: authProfile, user, refreshProfile } = useAuth();
