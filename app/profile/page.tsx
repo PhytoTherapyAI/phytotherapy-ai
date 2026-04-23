@@ -6,6 +6,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ProfileShellV2 } from "@/components/profile-v2/ProfileShellV2";
+import { MedicationInteractionBanner } from "@/components/safety/MedicationInteractionBanner";
+import { checkInteractionsAfterAdd, type InteractionCheckResult } from "@/lib/safety/check-med-interactions";
 import { useAuth } from "@/lib/auth-context";
 import { useFamily } from "@/lib/family-context";
 import { createBrowserClient } from "@/lib/supabase";
@@ -291,6 +293,14 @@ function LegacyProfilePage() {
   const [sbarLoading, setSbarLoading] = useState<"pdf" | "email" | null>(null);
   const [sbarEmailOpen, setSbarEmailOpen] = useState(false);
   const [sbarEmail, setSbarEmail] = useState("");
+
+  // F-SAFETY-001: interaction check state — populated after a successful
+  // medication insert via checkInteractionsAfterAdd(). Alert survives
+  // until the user dismisses it (no autoclose — clinical UX rule).
+  // Loading flag drives the "Etkileşimler kontrol ediliyor..." toast.
+  const [medInteractionAlert, setMedInteractionAlert] = useState<InteractionCheckResult | null>(null);
+  const [medInteractionLoading, setMedInteractionLoading] = useState(false);
+  const [medInteractionRateLimited, setMedInteractionRateLimited] = useState(false);
 
   const showSaveToast = () => {
     setSaveSuccess(true);
@@ -655,6 +665,31 @@ function LegacyProfilePage() {
       clearDraft(DRAFT_KEYS.profileMedicationAdd); // Session 42 F-D-006
       setIsAddingMed(false);
       showSaveToast();
+
+      // ── F-SAFETY-001: fire interaction check against the new regimen.
+      // Async/best-effort — a slow /api/interaction-map call should never
+      // block the UI from clearing the form. Result lands in
+      // medInteractionAlert, which renders the top-of-page banner. Previous
+      // alert is cleared first so a stale one doesn't survive past a new
+      // insert that happens to be safe.
+      setMedInteractionAlert(null);
+      setMedInteractionRateLimited(false);
+      if (activeUserId) {
+        void checkInteractionsAfterAdd({
+          userId: activeUserId,
+          lang: (lang === "tr" ? "tr" : "en") as "tr" | "en",
+          onLoadingStart: () => setMedInteractionLoading(true),
+          onResult: (result) => {
+            setMedInteractionLoading(false);
+            if (result.dangerous.length > 0 || result.caution.length > 0) {
+              setMedInteractionAlert(result);
+            }
+          },
+          onRateLimited: () => setMedInteractionRateLimited(true),
+          onError: () => setMedInteractionLoading(false),
+        });
+      }
+
       // Ask for notification permission on first med save
       if (shouldAskPermission("notification")) {
         setTimeout(() => setShowNotifPermission(true), 500);
@@ -836,9 +871,40 @@ function LegacyProfilePage() {
         </div>
       )}
 
+      {/* F-SAFETY-001 toasts — rate-limit info + loading indicator.
+          Banner itself is mounted above the page title below. */}
+      {medInteractionRateLimited && (
+        <div className="fixed bottom-24 right-4 z-40 bg-blue-100 dark:bg-blue-950/40 text-blue-900 dark:text-blue-200 px-4 py-2 rounded-lg shadow-lg text-xs max-w-sm border border-blue-200 dark:border-blue-800">
+          {tr
+            ? "Etkileşim kontrolü şu an yoğun, birkaç dakika sonra otomatik tekrar denenecek."
+            : "Interaction check is busy right now — we'll retry automatically in a few minutes."}
+        </div>
+      )}
+      {medInteractionLoading && (
+        <div className="fixed bottom-20 right-4 z-40 bg-card border border-border text-foreground px-4 py-2 rounded-lg shadow-lg text-xs flex items-center gap-2">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          {tr ? "Etkileşimler kontrol ediliyor…" : "Checking interactions…"}
+        </div>
+      )}
+
       <h1 className="font-heading mb-4 text-3xl font-semibold">
         {tx('profile.title', lang)}
       </h1>
+
+      {/* F-SAFETY-001: interaction warning banner — sits above the hero
+          so the user sees the alert before scrolling to the medication
+          list. Clears on manual dismiss or on a subsequent safe insert
+          (addMedication() resets medInteractionAlert to null first). */}
+      {medInteractionAlert && (
+        <MedicationInteractionBanner
+          dangerous={medInteractionAlert.dangerous}
+          caution={medInteractionAlert.caution}
+          summary={medInteractionAlert.summary}
+          lang={(lang === "tr" ? "tr" : "en") as "tr" | "en"}
+          onDismiss={() => setMedInteractionAlert(null)}
+          onAskDoctor={() => setSbarEmailOpen(true)}
+        />
+      )}
 
       {/* ── PROFILE POWER HEADER (single source: `power` computed once above) ── */}
       {profile && <ProfilePowerHeader power={power} input={powerInput} lang={lang as 'en' | 'tr'} />}
