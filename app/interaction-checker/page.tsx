@@ -228,7 +228,7 @@ export default function InteractionCheckerPage() {
               <h1 className="font-heading text-xl font-bold italic tracking-tight sm:text-3xl md:text-4xl">
                 {tx('ic.title', lang)}
               </h1>
-              <InfoTooltip title="Safety Radar" description="Check drug-herb-supplement interactions. Add your medications to scan for risks instantly." />
+              <InfoTooltip title={tx("tooltip.interactionChecker.title", lang)} description={tx("tooltip.interactionChecker.desc", lang)} />
               <span className="inline-flex items-center gap-1 rounded-full bg-stone-100 dark:bg-stone-800 px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border">
                 <Zap className="h-3 w-3 text-primary" />
                 {tx("interactionChecker.poweredByPubmedFda", lang)}

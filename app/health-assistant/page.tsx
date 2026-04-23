@@ -138,7 +138,7 @@ export default function HealthAssistantPage() {
                   <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
                     {tx('ha.title', lang)}
                   </h1>
-                  <InfoTooltip title="Health Assistant" description="Ask any health question. AI searches PubMed and gives evidence-based, personalized answers." />
+                  <InfoTooltip title={tx("tooltip.healthAssistant.title", lang)} description={tx("tooltip.healthAssistant.desc", lang)} />
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {tx('ha.subtitle', lang)}

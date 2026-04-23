@@ -129,7 +129,7 @@ export function VideoUrlInput({ value, onChange, lang = "en" }: VideoUrlInputPro
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               loading="lazy"
-              title="Video preview"
+              title={tx("a11y.videoPreview", l)}
             />
           </div>
         </div>

@@ -171,6 +171,7 @@ function CircularProgress({ value, size = 100, strokeWidth = 8 }: { value: numbe
 function TaskItem({ emoji, label, done, duration, onClick, onDismiss }: {
   emoji: string; label: string; done: boolean; duration?: string | null; onClick: () => void; onDismiss?: () => void
 }) {
+  const { lang } = useLang()
   return (
     <motion.div className="flex items-center gap-2 py-1.5 group w-full" whileTap={{ scale: 0.97 }}>
       <button onClick={onClick} className="flex items-center gap-2 flex-1 text-left">
@@ -194,7 +195,7 @@ function TaskItem({ emoji, label, done, duration, onClick, onDismiss }: {
           className="text-xs flex-shrink-0">✨</motion.span>
       )}
       {!done && onDismiss && (
-        <button onClick={onDismiss} aria-label="Dismiss task" className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground/70 hover:text-muted-foreground flex-shrink-0 p-0.5">
+        <button onClick={onDismiss} aria-label={tx("a11y.dismissTask", lang)} className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground/70 hover:text-muted-foreground flex-shrink-0 p-0.5">
           <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
       )}
@@ -809,7 +810,7 @@ export default function Home() {
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[10px] text-emerald-300">Online</span>
+                    <span className="text-[10px] text-emerald-300">{tx("status.online", lang)}</span>
                   </div>
                 </div>
                 <p className="text-xs text-stone-400 mb-4 leading-relaxed">

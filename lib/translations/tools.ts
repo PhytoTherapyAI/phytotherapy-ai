@@ -2153,6 +2153,55 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
   "calendar.eveningWindDown": { en: "Evening Wind-Down", tr: "Akşam Ritüeli" },
   "calendar.waterAddedToast": { en: "1 glass of water added!", tr: "1 bardak su eklendi!" },
   "calendar.tasksCompleted": { en: "tasks completed", tr: "görev tamamlandı" },
+
+  // ── Session 45 i18n sweep — InfoTooltip texts ──────────────────────
+  // Were hardcoded EN in 4 page tooltips; the TR-default user saw English
+  // strings on /health-assistant, /calendar, /interaction-checker, and
+  // /medical-analysis. Centralised here so future tooltip copy edits are
+  // a one-file change.
+  "tooltip.healthAssistant.title":      { en: "Health Assistant", tr: "Sağlık Asistanı" },
+  "tooltip.healthAssistant.desc":       { en: "Ask any health question. AI searches PubMed and gives evidence-based, personalized answers.", tr: "Herhangi bir sağlık sorusu sor. AI, PubMed'de arama yapar ve kanıta dayalı, sana özel yanıtlar sunar." },
+  "tooltip.calendar.title":             { en: "Habit & Healing Map", tr: "Alışkanlık ve İyileşme Haritası" },
+  "tooltip.calendar.desc":              { en: "Track daily supplements, water intake, and health habits. Build streaks to stay motivated.", tr: "Günlük takviyelerini, su tüketimini ve sağlık alışkanlıklarını takip et. Çizgileri kırmadan motive kal." },
+  "tooltip.interactionChecker.title":   { en: "Safety Radar", tr: "Güvenlik Radarı" },
+  "tooltip.interactionChecker.desc":    { en: "Check drug-herb-supplement interactions. Add your medications to scan for risks instantly.", tr: "İlaç-bitki-takviye etkileşimlerini kontrol et. İlaçlarını ekle, riskleri anında tara." },
+  "tooltip.medicalAnalysis.title":      { en: "AI Lab Interpreter", tr: "AI Laboratuvar Yorumlayıcı" },
+  "tooltip.medicalAnalysis.desc":       { en: "Upload your blood test PDF or enter values manually. AI generates a visual health map.", tr: "Kan testi PDF'ini yükle veya değerleri elle gir. AI görsel sağlık haritası oluşturur." },
+
+  // ── Session 45 i18n sweep — Error pages ─────────────────────────────
+  // app/error.tsx + per-route error.tsx files were hardcoded EN. These
+  // render whenever a server component throws, so a TR user with a
+  // transient failure used to be greeted by English copy.
+  "error.somethingWentWrong":           { en: "Something went wrong", tr: "Bir şeyler ters gitti" },
+  "error.tryAgain":                     { en: "Try Again", tr: "Tekrar Dene" },
+  "error.refreshPage":                  { en: "Refresh Page", tr: "Sayfayı Yenile" },
+  "error.goHome":                       { en: "Go Home", tr: "Ana Sayfaya Git" },
+  "error.genericDesc":                  { en: "An unexpected error occurred. Please try again.", tr: "Beklenmedik bir hata oluştu. Lütfen tekrar dene." },
+  "error.calendarUnavailable":          { en: "Calendar unavailable", tr: "Takvim kullanılamıyor" },
+  "error.calendarUnavailableDesc":      { en: "We couldn't load your health calendar. Try again in a few seconds.", tr: "Sağlık takvimini yükleyemedik. Birkaç saniye sonra tekrar dene." },
+  "error.healthAssistantUnavailable":   { en: "Health Assistant unavailable", tr: "Sağlık Asistanı kullanılamıyor" },
+  "error.healthAssistantUnavailableDesc": { en: "The AI assistant encountered an issue. Try again in a few seconds.", tr: "AI yardımcısında bir sorun oluştu. Birkaç saniye sonra tekrar dene." },
+  "error.interactionCheckerUnavailable": { en: "Interaction Checker unavailable", tr: "Etkileşim Kontrolcüsü kullanılamıyor" },
+  "error.interactionCheckerUnavailableDesc": { en: "We couldn't load the interaction analysis tool. Try again in a few seconds.", tr: "Etkileşim analiz aracını yükleyemedik. Birkaç saniye sonra tekrar dene." },
+  "error.youreOffline":                 { en: "You're offline", tr: "Çevrimdışısın" },
+  "error.checkConnection":              { en: "Please check your internet connection and try again.", tr: "Lütfen internet bağlantını kontrol edip tekrar dene." },
+  "error.home":                         { en: "Home", tr: "Ana Sayfa" },
+  "error.errorId":                      { en: "Error ID", tr: "Hata Kimliği" },
+
+  // ── Session 45 i18n sweep — Placeholders + minor UI ─────────────────
+  "healthDiary.placeholder":            { en: "How was your day? Any symptoms, wins, or thoughts...", tr: "Günün nasıl geçti? Semptomlar, kazanımlar, düşünceler..." },
+  "supplementGuide.searchPlaceholder":  { en: "Search herbs... (e.g. Ashwagandha, sleep)", tr: "Bitkilerde ara... (ör. Ashwagandha, uyku)" },
+  "status.online":                      { en: "Online", tr: "Çevrimiçi" },
+  "action.copy":                        { en: "Copy", tr: "Kopyala" },
+  "action.copied":                      { en: "Copied", tr: "Kopyalandı" },
+  "action.close":                       { en: "Close", tr: "Kapat" },
+  "qrProfile.printTitle":               { en: "Health Profile QR Code", tr: "Sağlık Profili QR Kodu" },
+
+  // ── Session 45 i18n sweep — A11y (screen reader labels) ─────────────
+  // Visually invisible but read aloud by assistive tech; still need TR
+  // for TR-locale users running Turkish screen readers.
+  "a11y.dismissTask":                   { en: "Dismiss task", tr: "Görevi kapat" },
+  "a11y.videoPreview":                  { en: "Video preview", tr: "Video önizleme" },
   "doctorPrep.concernPlaceholder": { en: "Describe your main concern...", tr: "Ana şikayetinizi yazın..." },
   "doctorPrep.lastDiagnosisPlaceholder": { en: "Your last diagnosis...", tr: "Son tanınız..." },
   "doctorPrep.sideEffectsPlaceholder": { en: "Describe any side effects...", tr: "Yan etki varsa yazın..." },

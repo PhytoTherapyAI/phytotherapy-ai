@@ -9,6 +9,7 @@ import {
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 import { CorrelationInsights } from "@/components/insights/CorrelationInsights"
 import { YearInPixels } from "@/components/insights/YearInPixels"
 import { RecoveryScore } from "@/components/recovery/RecoveryScore"
@@ -346,7 +347,7 @@ export default function HealthDiaryPage() {
                     <textarea
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
-                      placeholder="How was your day? Any symptoms, wins, or thoughts..."
+                      placeholder={tx("healthDiary.placeholder", lang)}
                       className="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm resize-none h-20 focus:outline-none focus:border-emerald-300"
                     />
                   </motion.div>

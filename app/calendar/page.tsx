@@ -1000,7 +1000,7 @@ export default function CalendarPage() {
         {/* ═══ PAGE HEADER ═══ */}
         <div className="flex items-center gap-2 px-1 mb-6">
           <h1 className="font-heading text-2xl font-bold italic">{tx("cal.title", lang)}</h1>
-          <InfoTooltip title="Habit & Healing Map" description="Track daily supplements, water intake, and health habits. Build streaks to stay motivated." />
+          <InfoTooltip title={tx("tooltip.calendar.title", lang)} description={tx("tooltip.calendar.desc", lang)} />
         </div>
 
         {/* ═══ DESKTOP 2-COLUMN LAYOUT ═══ */}

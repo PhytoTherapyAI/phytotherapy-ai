@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
+import { tx } from "@/lib/translations"
 
 // ── Category pills ──
 const CATEGORIES = [
@@ -132,7 +133,7 @@ export default function SupplementGuidePage() {
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search herbs... (e.g. Ashwagandha, sleep)"
+            placeholder={tx("supplementGuide.searchPlaceholder", lang)}
             className="w-full rounded-2xl border bg-white dark:bg-card pl-11 pr-4 py-3.5 text-sm placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/20 shadow-sm" />
         </div>
 

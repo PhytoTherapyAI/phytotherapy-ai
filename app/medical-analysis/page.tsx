@@ -116,7 +116,7 @@ export default function MedicalAnalysisPage() {
             <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
               {tx("medAnalysis.title", lang)}
             </h1>
-            <InfoTooltip title="AI Lab Interpreter" description="Upload your blood test PDF or enter values manually. AI generates a visual health map." />
+            <InfoTooltip title={tx("tooltip.medicalAnalysis.title", lang)} description={tx("tooltip.medicalAnalysis.desc", lang)} />
           </div>
           <p className="text-sm text-muted-foreground">
             {tx("medAnalysis.subtitle", lang)}

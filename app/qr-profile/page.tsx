@@ -170,7 +170,7 @@ export default function QRProfilePage() {
         .info{max-width:400px;margin:16px auto;padding:16px;border:1px solid #ddd;border-radius:12px;text-align:left;font-size:13px;white-space:pre-wrap;color:#333}
         </style></head><body>
         <div class="wrap">
-          <h2>Health Profile QR Code</h2>
+          <h2>${tx("qrProfile.printTitle", lang)}</h2>
           <p>DoctoPal</p>
           <img src="${qrUrl}" width="250" height="250" />
           <div class="info">${qrContent.replace(/\n/g, "<br>")}</div>

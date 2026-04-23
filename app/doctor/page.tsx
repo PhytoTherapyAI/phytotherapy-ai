@@ -283,7 +283,7 @@ export default function DoctorPage() {
                       <div className="flex items-center gap-1.5">
                         <button onClick={() => copyInviteLink(patient.invite_code!)} className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground">
                           {copiedCode === patient.invite_code ? <Check className="h-3 w-3 text-emerald-500" /> : <Copy className="h-3 w-3" />}
-                          {copiedCode === patient.invite_code ? "Copied" : "Copy"}
+                          {copiedCode === patient.invite_code ? tx("action.copied", lang) : tx("action.copy", lang)}
                         </button>
                         <button onClick={() => setShowQR(showQR === patient.invite_code ? null : patient.invite_code)} className="text-[10px] text-muted-foreground hover:text-foreground">
                           <QrCode className="h-3 w-3" />
@@ -307,7 +307,7 @@ export default function DoctorPage() {
                     alt="QR" className="h-36 w-36 rounded-lg bg-white p-2" />
                   <p className="font-mono text-[10px] text-muted-foreground">{patient.invite_code}</p>
                   <button onClick={() => setShowQR(null)} className="text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1">
-                    <X className="h-3 w-3" /> Close
+                    <X className="h-3 w-3" /> {tx("action.close", lang)}
                   </button>
                 </div>
               )}
