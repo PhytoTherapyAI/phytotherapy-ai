@@ -18,6 +18,7 @@ import Link from "next/link"
 import { useEffect, useRef } from "react"
 import { AlertTriangle, Info, X, ArrowRight, Stethoscope } from "lucide-react"
 import type { EdgeItem, EdgeCategory } from "@/lib/safety/check-med-interactions"
+import { buildDoctorMailtoUrl } from "@/lib/safety/sbar-interaction-template"
 
 // F-SAFETY-002 Commit 2 — category labels shown above each grouped
 // edge block. Legacy edges (no category field) coerce to "drug-drug"
@@ -70,7 +71,17 @@ interface Props {
   summary: string
   lang: "tr" | "en"
   onDismiss: () => void
-  onAskDoctor: () => void
+  /**
+   * Optional override. Default (F-SAFETY-002 Commit 3): the banner
+   * opens the user's mail client with a pre-filled subject + body
+   * built by lib/safety/sbar-interaction-template. Pass a callback
+   * only if a specific surface needs alternative routing (e.g. a
+   * custom SBAR dialog) — the profile page no longer does.
+   */
+  onAskDoctor?: () => void
+  /** Patient name used in the mailto closing line. Falls back to a
+   *  neutral "Hasta" / "Patient" when absent. */
+  patientName?: string | null
 }
 
 function track(event: string, data?: Record<string, unknown>): void {
@@ -88,6 +99,7 @@ export function MedicationInteractionBanner({
   lang,
   onDismiss,
   onAskDoctor,
+  patientName,
 }: Props) {
   const tr = lang === "tr"
   const isDanger = dangerous.length > 0
@@ -265,8 +277,31 @@ export function MedicationInteractionBanner({
             <button
               type="button"
               onClick={() => {
+                // Allow callers to override with a custom dialog
+                // (legacy SBAR flow, etc). Default path: build a
+                // mailto: URL so the user's mail client opens with
+                // the interaction brief pre-filled. Recipient is
+                // blank — the user pastes in their physician's
+                // address. Works on every platform without a round
+                // trip to the server.
                 track("safety.banner.cta.doctor_ask", { severity })
-                onAskDoctor()
+                if (onAskDoctor) {
+                  onAskDoctor()
+                  return
+                }
+                const url = buildDoctorMailtoUrl({
+                  edges,
+                  summary,
+                  patientName: patientName ?? null,
+                  lang,
+                })
+                track("safety.banner.cta.doctor_mailto_opened", {
+                  severity,
+                  edgeCount: edges.length,
+                })
+                if (typeof window !== "undefined") {
+                  window.location.href = url
+                }
               }}
               className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold hover:bg-muted/60 transition-colors"
             >

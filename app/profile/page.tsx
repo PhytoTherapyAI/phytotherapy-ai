@@ -1365,7 +1365,13 @@ function LegacyProfilePage() {
           summary={medInteractionAlert.summary}
           lang={(lang === "tr" ? "tr" : "en") as "tr" | "en"}
           onDismiss={() => setMedInteractionAlert(null)}
-          onAskDoctor={() => setSbarEmailOpen(true)}
+          // F-SAFETY-002 Commit 3: onAskDoctor omitted intentionally —
+          // banner now defaults to the mailto: template (pre-filled
+          // subject + body, recipient left blank for the user). The
+          // legacy SBAR email dialog stays available below for the
+          // full-profile report; the two flows serve different
+          // audiences (quick interaction brief vs full handoff PDF).
+          patientName={profile?.full_name ?? null}
         />
       )}
 
