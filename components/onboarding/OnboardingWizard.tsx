@@ -21,6 +21,7 @@ import type { Badge } from "@/lib/badges";
 import { BadgeCelebrationModal, triggerCelebration } from "@/components/gamification/BadgeCelebrationModal";
 import { OnboardingFinale } from "@/components/gamification/OnboardingFinale";
 import type { UserProfile } from "@/lib/database.types";
+import { normalizeMedFields } from "@/lib/safety/normalize-med-name";
 
 // Step components
 import { BasicInfoStep } from "@/components/onboarding/steps/BasicInfoStep";
@@ -378,14 +379,24 @@ export function OnboardingWizard({ profile }: Props) {
         const { error: delErr } = await supabase.from("user_medications").delete().eq("user_id", userId);
         if (delErr) console.error("[Onboarding] Med delete error:", delErr.message);
 
-        const medsToInsert = data.medications.map((med) => ({
-          user_id: userId,
-          brand_name: med.brand_name,
-          generic_name: med.generic_name,
-          dosage: med.dosage,
-          frequency: med.frequency,
-          is_active: true,
-        }));
+        // F-SAFETY-002: shared name normaliser so onboarding-batch
+        // inserts arrive in the same shape as the profile / scanner /
+        // 15-day dialog ingest paths. Underscore + multi-space slop
+        // gets cleaned at write time.
+        const medsToInsert = data.medications.map((med) => {
+          const cleaned = normalizeMedFields({
+            brand_name: med.brand_name,
+            generic_name: med.generic_name,
+          });
+          return {
+            user_id: userId,
+            brand_name: cleaned.brand_name,
+            generic_name: cleaned.generic_name,
+            dosage: med.dosage,
+            frequency: med.frequency,
+            is_active: true,
+          };
+        });
 
         console.log("[Onboarding] Inserting meds:", medsToInsert);
         const { data: insertedMeds, error: medError } = await supabase

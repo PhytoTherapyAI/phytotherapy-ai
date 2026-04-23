@@ -9,6 +9,7 @@ import { useLang } from "@/components/layout/language-toggle";
 import { useDailyMedCheck } from "@/lib/daily-med-check";
 import { tx } from "@/lib/translations";
 import type { UserMedication } from "@/lib/database.types";
+import { normalizeMedFields } from "@/lib/safety/normalize-med-name";
 import {
   Dialog,
   DialogContent,
@@ -195,12 +196,15 @@ export function MedicationUpdateDialog() {
     if (!brandName.trim() && !genericName.trim()) return;
     if (!profile?.id) return;
     try {
+      // F-SAFETY-002: shared normaliser so the 15-day confirm dialog
+      // matches the profile / scanner / onboarding ingest format.
+      const cleaned = normalizeMedFields({ brand_name: brandName, generic_name: genericName });
       const { data, error } = await supabase
         .from("user_medications")
         .insert({
           user_id: profile.id,
-          brand_name: brandName.trim() || null,
-          generic_name: genericName.trim() || null,
+          brand_name: cleaned.brand_name || null,
+          generic_name: cleaned.generic_name,
           dosage: dosage.trim() || null,
           frequency: frequency.trim() || null,
           is_active: true,
@@ -209,6 +213,13 @@ export function MedicationUpdateDialog() {
         .single();
       if (!error && data) {
         setMedications((prev) => [...prev, data as UserMedication]);
+        // F-SAFETY-002: notify the profile page (or any listener) so
+        // its interaction-map check fires once the dialog closes.
+        // 300 ms gives the dialog close animation time to settle so
+        // the safety banner doesn't render under a fading overlay.
+        window.setTimeout(() => {
+          window.dispatchEvent(new Event("safety:med-added"));
+        }, 300);
       }
     } catch (err) {
       console.error("Failed to add medication:", err);

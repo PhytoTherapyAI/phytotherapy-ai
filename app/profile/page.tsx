@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ProfileShellV2 } from "@/components/profile-v2/ProfileShellV2";
 import { MedicationInteractionBanner } from "@/components/safety/MedicationInteractionBanner";
-import { checkInteractionsAfterAdd, type InteractionCheckResult } from "@/lib/safety/check-med-interactions";
+import { checkInteractionsAfterChange, type InteractionCheckResult } from "@/lib/safety/check-med-interactions";
 
 // F-SAFETY-001 post-launch feature flag. The helper (including telemetry
 // breadcrumbs) always runs so we keep capturing interaction-check signal
@@ -303,12 +303,50 @@ function LegacyProfilePage() {
   const [sbarEmail, setSbarEmail] = useState("");
 
   // F-SAFETY-001: interaction check state — populated after a successful
-  // medication insert via checkInteractionsAfterAdd(). Alert survives
+  // medication insert via checkInteractionsAfterChange(). Alert survives
   // until the user dismisses it (no autoclose — clinical UX rule).
   // Loading flag drives the "Etkileşimler kontrol ediliyor..." toast.
   const [medInteractionAlert, setMedInteractionAlert] = useState<InteractionCheckResult | null>(null);
   const [medInteractionLoading, setMedInteractionLoading] = useState(false);
   const [medInteractionRateLimited, setMedInteractionRateLimited] = useState(false);
+
+  // F-SAFETY-002: shared launcher used by both addMedication() (direct
+  // form save) and the global "safety:med-added" event (scanner /
+  // 15-day dialog / future onboarding hand-off into the profile page).
+  // Centralised here so every entry point clears the previous alert,
+  // resets rate-limit state, and routes results through the same
+  // banner state — banner UX is identical regardless of where the
+  // insert came from.
+  const triggerSafetyCheck = useCallback(() => {
+    setMedInteractionAlert(null);
+    setMedInteractionRateLimited(false);
+    if (!activeUserId) return;
+    void checkInteractionsAfterChange({
+      userId: activeUserId,
+      lang: (lang === "tr" ? "tr" : "en") as "tr" | "en",
+      onLoadingStart: () => setMedInteractionLoading(true),
+      onResult: (result) => {
+        setMedInteractionLoading(false);
+        if (result.dangerous.length > 0 || result.caution.length > 0) {
+          setMedInteractionAlert(result);
+        }
+      },
+      onRateLimited: () => setMedInteractionRateLimited(true),
+      onError: () => setMedInteractionLoading(false),
+    });
+  }, [activeUserId, lang]);
+
+  // F-SAFETY-002: subscribe to the global `safety:med-added` event so
+  // inserts from the MedicationScanner modal and the 15-day update
+  // dialog still trigger the interaction-map check + banner. Both
+  // dispatchers wait ~300 ms after their own close animation so the
+  // banner doesn't render under a fading overlay.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handler = () => triggerSafetyCheck();
+    window.addEventListener("safety:med-added", handler);
+    return () => window.removeEventListener("safety:med-added", handler);
+  }, [triggerSafetyCheck]);
 
   const showSaveToast = () => {
     setSaveSuccess(true);
@@ -683,28 +721,7 @@ function LegacyProfilePage() {
       showSaveToast();
 
       // ── F-SAFETY-001: fire interaction check against the new regimen.
-      // Async/best-effort — a slow /api/interaction-map call should never
-      // block the UI from clearing the form. Result lands in
-      // medInteractionAlert, which renders the top-of-page banner. Previous
-      // alert is cleared first so a stale one doesn't survive past a new
-      // insert that happens to be safe.
-      setMedInteractionAlert(null);
-      setMedInteractionRateLimited(false);
-      if (activeUserId) {
-        void checkInteractionsAfterAdd({
-          userId: activeUserId,
-          lang: (lang === "tr" ? "tr" : "en") as "tr" | "en",
-          onLoadingStart: () => setMedInteractionLoading(true),
-          onResult: (result) => {
-            setMedInteractionLoading(false);
-            if (result.dangerous.length > 0 || result.caution.length > 0) {
-              setMedInteractionAlert(result);
-            }
-          },
-          onRateLimited: () => setMedInteractionRateLimited(true),
-          onError: () => setMedInteractionLoading(false),
-        });
-      }
+      triggerSafetyCheck();
 
       // Ask for notification permission on first med save
       if (shouldAskPermission("notification")) {

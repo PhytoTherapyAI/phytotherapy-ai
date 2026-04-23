@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
+import { normalizeMedFields } from "@/lib/safety/normalize-med-name"
 
 interface MedicationScannerProps {
   userId: string
@@ -122,15 +123,29 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
     setAdding(true)
     try {
       const supabase = createBrowserClient()
-      await supabase.from("user_medications").insert({
-        user_id: userId,
+      // F-SAFETY-002: every ingest path runs the same normaliser so
+      // OpenFDA-style underscores and OCR slop don't reach the DB.
+      const cleaned = normalizeMedFields({
         brand_name: result.brand_name,
         generic_name: result.generic_name || null,
+      })
+      await supabase.from("user_medications").insert({
+        user_id: userId,
+        brand_name: cleaned.brand_name,
+        generic_name: cleaned.generic_name,
         dosage: result.dosage || null,
         is_active: true,
       })
       setAdded(true)
-      onMedicationFound?.(result.brand_name, result.generic_name || "", result.dosage || "")
+      onMedicationFound?.(cleaned.brand_name, cleaned.generic_name ?? "", result.dosage || "")
+      // F-SAFETY-002: notify any mounted profile page (or future
+      // dashboard surface) that a new med just landed so the
+      // interaction-map check + banner can fire. Modal close animation
+      // settles in ~300 ms — wait so the banner doesn't render
+      // beneath a fading overlay.
+      window.setTimeout(() => {
+        window.dispatchEvent(new Event("safety:med-added"))
+      }, 300)
     } catch {
       // silently fail
     } finally {

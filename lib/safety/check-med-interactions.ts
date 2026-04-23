@@ -79,7 +79,14 @@ function track(event: string, data?: Record<string, unknown>): void {
   } catch { /* no-op */ }
 }
 
-export async function checkInteractionsAfterAdd(params: CheckParams): Promise<void> {
+/**
+ * F-SAFETY-002 rename — the helper now handles supplement updates and
+ * batch onboarding inserts as well as single-medication adds, so the
+ * "AfterAdd" name was misleading. Backwards-compat alias is exported
+ * below so the F-SAFETY-001 profile/page.tsx call-site keeps working
+ * until Session 46's deprecation pass.
+ */
+export async function checkInteractionsAfterChange(params: CheckParams): Promise<void> {
   const { userId, lang, onLoadingStart, onResult, onError, onRateLimited } = params
   const retryCount = params._retryCount ?? 0
 
@@ -108,7 +115,7 @@ export async function checkInteractionsAfterAdd(params: CheckParams): Promise<vo
       if (retryCount === 0) onRateLimited?.()
       if (retryCount < MAX_RETRY) {
         setTimeout(() => {
-          void checkInteractionsAfterAdd({ ...params, _retryCount: retryCount + 1 })
+          void checkInteractionsAfterChange({ ...params, _retryCount: retryCount + 1 })
         }, RETRY_DELAY_MS)
       } else {
         // Persistent 429 — not normal; elevate to breadcrumb at warn level.
@@ -151,3 +158,13 @@ export async function checkInteractionsAfterAdd(params: CheckParams): Promise<vo
     onError?.(err instanceof Error ? err : new Error(String(err)))
   }
 }
+
+/**
+ * Backwards-compat alias from F-SAFETY-001. Existing call-sites
+ * (app/profile/page.tsx LegacyProfilePage.addMedication) continue to
+ * work without an edit. To be removed in Session 46 cleanup once
+ * every consumer has migrated to the new name.
+ *
+ * @deprecated use checkInteractionsAfterChange instead
+ */
+export const checkInteractionsAfterAdd = checkInteractionsAfterChange
