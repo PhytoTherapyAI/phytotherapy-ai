@@ -160,4 +160,21 @@ export const authTranslations: Record<string, TranslationEntry> = {
   "profile.healthDesc": { en: "Update your allergies, pregnancy status, substance use, chronic conditions, and lifestyle info here.", tr: "Alerjiler, gebelik, madde kullanımı, kronik hastalıklar ve yaşam tarzı bilgilerinizi buradan güncelleyin." },
   "profile.exportFailed": { en: "Data export failed", tr: "Veri indirme başarısız" },
   "profile.deleteFailed": { en: "Account deletion failed", tr: "Hesap silme başarısız" },
+
+  // ─── HealthReportTab (F-PROFILE-001 Commit 5) ───
+  "profile.healthReport.title": { en: "Health Report", tr: "Sağlık Raporu" },
+  "profile.healthReport.subtitle": { en: "A summary view of your health data — vitality, stats, badges and SBAR export.", tr: "Sağlık verilerinin özet görünümü — canlılık skoru, sayı kartları, rozetler ve SBAR dışa aktarım." },
+  "profile.healthReport.vitalityScore": { en: "Vitality Score", tr: "Canlılık Skoru" },
+  "profile.healthReport.greatShape": { en: "Great shape", tr: "Harika form" },
+  "profile.healthReport.improving": { en: "Improving", tr: "Gelişme var" },
+  "profile.healthReport.needsAttention": { en: "Needs attention", tr: "Dikkat gerekiyor" },
+  "profile.healthReport.streakDaysLabel": { en: "{n}-day streak", tr: "{n} günlük seri" },
+  "profile.healthReport.statMeds": { en: "Active Medications", tr: "Aktif İlaç" },
+  "profile.healthReport.statSupplements": { en: "Daily Supplements", tr: "Günlük Takviye" },
+  "profile.healthReport.statAllergies": { en: "Known Allergies", tr: "Kayıtlı Alerji" },
+  "profile.healthReport.statLabs": { en: "Lab Tests", tr: "Yüklenen Tahlil" },
+  "profile.healthReport.achievementBadges": { en: "Achievement Badges", tr: "Başarı Rozetleri" },
+  "profile.healthReport.viewAllBadges": { en: "View all", tr: "Tümünü gör" },
+  "profile.healthReport.sbarCardTitle": { en: "Get a summary for your doctor visit", tr: "Doktor görüşmesi için özet al" },
+  "profile.healthReport.sbarCardHint": { en: "Download all your health data as a professional SBAR report.", tr: "Tüm sağlık verilerini SBAR formatında profesyonel rapor olarak indir." },
 }

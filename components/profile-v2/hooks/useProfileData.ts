@@ -35,6 +35,8 @@ export interface ProfileDataState {
   medications: UserMedication[]
   allergies: UserAllergyRow[]
   labTestCount: number
+  streakDays: number
+  familyMemberCount: number
   loading: boolean
 }
 
@@ -48,13 +50,35 @@ const EMPTY: ProfileDataState = {
   medications: [],
   allergies: [],
   labTestCount: 0,
+  streakDays: 0,
+  familyMemberCount: 0,
   loading: false,
+}
+
+// Legacy profile page streak algorithm ([app/profile/page.tsx] 556-567):
+// count consecutive days from today backward in the check-in series.
+function computeStreak(rows: { check_date: string }[]): number {
+  if (!rows || rows.length === 0) return 0
+  let streak = 0
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  for (let i = 0; i < rows.length; i++) {
+    const d = new Date(rows[i].check_date)
+    d.setHours(0, 0, 0, 0)
+    const expected = new Date(today)
+    expected.setDate(expected.getDate() - i)
+    if (d.getTime() === expected.getTime()) streak++
+    else break
+  }
+  return streak
 }
 
 export function useProfileData(userId: string | null | undefined): UseProfileDataResult {
   const [medications, setMedications] = useState<UserMedication[]>([])
   const [allergies, setAllergies] = useState<UserAllergyRow[]>([])
   const [labTestCount, setLabTestCount] = useState(0)
+  const [streakDays, setStreakDays] = useState(0)
+  const [familyMemberCount, setFamilyMemberCount] = useState(0)
   const [loading, setLoading] = useState(false)
 
   const refetch = useCallback(async () => {
@@ -62,12 +86,19 @@ export function useProfileData(userId: string | null | undefined): UseProfileDat
       setMedications([])
       setAllergies([])
       setLabTestCount(0)
+      setStreakDays(0)
+      setFamilyMemberCount(0)
       return
     }
     setLoading(true)
     try {
       const supabase = createBrowserClient()
-      const [medsRes, allergiesRes, labsRes] = await Promise.all([
+      // F-PROFILE-001 Commit 5: 2 new queries added for HealthReportTab:
+      //   - daily_check_ins (streak calculation)
+      //   - family_members (family count stat card). Column is `owner_id`
+      //     (confirmed in app/badges/page.tsx:43), NOT `owner_user_id`.
+      // Both run inside the existing Promise.all — no extra round trip.
+      const [medsRes, allergiesRes, labsRes, checkInsRes, familyRes] = await Promise.all([
         supabase
           .from("user_medications")
           .select("*")
@@ -81,10 +112,24 @@ export function useProfileData(userId: string | null | undefined): UseProfileDat
           .from("blood_tests")
           .select("id", { count: "exact", head: true })
           .eq("user_id", userId),
+        supabase
+          .from("daily_check_ins")
+          .select("check_date")
+          .eq("user_id", userId)
+          .order("check_date", { ascending: false })
+          .limit(30),
+        supabase
+          .from("family_members")
+          .select("id", { count: "exact", head: true })
+          .eq("owner_id", userId),
       ])
       if (medsRes.data) setMedications(medsRes.data as UserMedication[])
       if (allergiesRes.data) setAllergies(allergiesRes.data as UserAllergyRow[])
       setLabTestCount(typeof labsRes.count === "number" ? labsRes.count : 0)
+      setStreakDays(
+        checkInsRes.data ? computeStreak(checkInsRes.data as { check_date: string }[]) : 0,
+      )
+      setFamilyMemberCount(typeof familyRes.count === "number" ? familyRes.count : 0)
     } catch {
       // soft fail — UI reads whatever state is already populated;
       // next mount / refetch() retries
@@ -101,6 +146,8 @@ export function useProfileData(userId: string | null | undefined): UseProfileDat
     medications,
     allergies,
     labTestCount,
+    streakDays,
+    familyMemberCount,
     loading: loading && medications.length === 0,
     refetch,
     setMedications,

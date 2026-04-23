@@ -34,8 +34,8 @@ import { VaccinesTab } from "./tabs/VaccinesTab"
 import { FamilyTab } from "./tabs/FamilyTab"
 import { ReproductiveTab } from "./tabs/ReproductiveTab"
 import { PrivacyTab } from "./tabs/PrivacyTab"
+import { HealthReportTab } from "./tabs/HealthReportTab"
 import type { ProfileTabId } from "./useProfileTab"
-import { PlaceholderTab } from "./tabs/PlaceholderTab"
 import { useProfileData } from "./hooks/useProfileData"
 
 export function ProfileShellV2() {
@@ -156,8 +156,7 @@ export function ProfileShellV2() {
   // ── Tab content ────────────────────────────────────────────────────
   // Each case pulls its own props. Adding a new tab is a two-step edit:
   // (1) extend PROFILE_TABS in useProfileTab, (2) add a case here.
-  // Until a tab lands its real content, PlaceholderTab + PLACEHOLDER_CONTENT
-  // tell the user what's coming.
+  // F-PROFILE-001 Commit 5: all 11 tabs live — PlaceholderTab retired.
   function renderTab(): React.ReactNode {
     switch (activeTab) {
       case "genel":
@@ -258,16 +257,20 @@ export function ProfileShellV2() {
         )
 
       case "saglik-raporu":
-        // Health Report tab — canlılık skoru + rozetler + SBAR PDF arrive
-        // in Commit 5 of the rollout. Until then the legacy editor has
-        // the full widget; we tell the user that plainly.
+        // F-PROFILE-001 Commit 5: vitality ring + 4 stat cards + badges
+        // preview + SBAR PDF. Recent activity + hero polish + nudges
+        // deferred to Session 46 (see HealthReportTab TODO header).
         return (
-          <PlaceholderTab
+          <HealthReportTab
             lang={lang as "tr" | "en"}
-            title={tr ? "Sağlık Raporu" : "Health Report"}
-            upcomingItems={tr
-              ? ["Canlılık skoru halkası", "Başarı rozetleri", "Sayı kartları (aktif ilaç, takviye, tahlil)", "SBAR PDF indir + e-posta gönder", "Son aktiviteler akışı"]
-              : ["Vitality score ring", "Achievement badges", "Stat cards (active meds, supplements, labs)", "SBAR PDF download + email", "Recent activity feed"]}
+            userId={effectiveUserId}
+            isOwnProfile={isOwnProfile}
+            profile={effectiveProfile ?? null}
+            medications={profileData.medications}
+            allergies={profileData.allergies}
+            labTestCount={profileData.labTestCount}
+            streakDays={profileData.streakDays}
+            familyMemberCount={profileData.familyMemberCount}
           />
         )
 
