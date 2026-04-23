@@ -689,6 +689,21 @@ export default function CalendarPage() {
   const supsDone = allTasks.filter(t => t.done && (t.emoji === "🌿" || t.emoji === "🐟")).length
   const totalSups = allTasks.filter(t => t.emoji === "🌿" || t.emoji === "🐟").length
 
+  // Session 44 Faz 7: Movement ring data source — count user-defined
+  // movement-style tasks across all time blocks. Previously the ring
+  // was hardcoded `current={1} total={3}`, which was meaningless to
+  // every user. The honest interpretation is "how many of your
+  // movement-style daily habits did you tick today?"; if the user
+  // has none of these tasks, the ring shows 0/1 with a sensible
+  // emoji and the user can add custom tasks via TimeBlock.
+  // Future: wire to health_metrics.steps if Apple Health / Google Fit
+  // is connected (lib/health-integrations.ts already supports the
+  // metric type) — that would let the ring track actual step counts.
+  const MOVEMENT_EMOJIS = new Set(["🚶", "🏃", "🧘", "💪", "🤸", "🚴", "🏋️", "🥋"])
+  const moveDone = allTasks.filter(t => t.done && MOVEMENT_EMOJIS.has(t.emoji)).length
+  const moveTotalRaw = allTasks.filter(t => MOVEMENT_EMOJIS.has(t.emoji)).length
+  const totalMove = Math.max(moveTotalRaw, 1)
+
   // FAB quick log handler — saves to Supabase
   const handleQuickLog = useCallback((type: string) => {
     if (type === "water") {
@@ -947,7 +962,7 @@ export default function CalendarPage() {
                 <CircularRing emoji="💧" label={tx("calendar.water", lang)} current={Math.min(waterCount, 8)} total={8} color="#3b82f6" />
                 <CircularRing emoji="💊" label={tx("calendar.meds", lang)} current={medsDone} total={Math.max(totalMedsOnly, 1)} color="#3c7a52" />
                 <CircularRing emoji="🌿" label={tx("calendar.supps", lang)} current={supsDone} total={Math.max(totalSups, 1)} color="#6B8F71" />
-                <CircularRing emoji="🚶" label={tx("calendar.move", lang)} current={1} total={3} color="#f59e0b" />
+                <CircularRing emoji="🚶" label={tx("calendar.move", lang)} current={moveDone} total={totalMove} color="#f59e0b" />
               </div>
             </motion.div>
 
