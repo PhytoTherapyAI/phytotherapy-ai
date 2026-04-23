@@ -842,3 +842,41 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 - Onboarding flow audit (yeni user journey)
 - Beta lansman hazırlık (landing revizyon, Sentry monitoring)
 - Iyzico şirket tescili bekleyişi devam
+
+---
+
+### Session 44 — Daily Care Unification + DailyLogsContext (23 Nisan 2026) — Tamamlandı
+
+**Ana iş:** Dashboard ↔ Calendar ↔ TodayView üçlüsünde tıkla-yenile-kayıp döngüsü, hardcoded supplement/movement ring'leri ve silent catch'leri tek bir context + atomic upsert + sonner toast + Sentry breadcrumb pattern'ine taşıma.
+
+**11 commit (`3a61de0..ac4e895`):**
+
+- `3a61de0` **C2.1 (Faz 1)** sonner install + `<AppToaster />` mount + `lib/toast/mutation-errors.ts` (`reportMutationError(err, ctx)` → toast + Sentry breadcrumb)
+- `ef34ebf` **C2.2 (Faz 2)** `lib/contexts/DailyLogsContext.tsx` skeleton — `setLogCompleted(taskType, externalId, label, completed)` async API + optimistic `Set<string>` + cross-tab `daily-log-changed` event bus + provider mount layout root
+- `e3a9b69` **C2.2.1** `useMemo` `completed` Set'i deps'e dahil edildi (re-render sızıntısı fix)
+- `431f3d7` **C2.3** Dashboard `app/page.tsx` `toggleTask` → `setLogCompleted` (provider TaskDeckCard sarmasından root'a hoist edildi, üç tüketici de aynı state)
+- `7dc60bf` **C2.4** Calendar `app/calendar/page.tsx` `toggleTask` + `handleQuickLog` + 4-ring widget (💊/🌿/💧/🚶) DailyLogsContext'e bağlandı
+- `9df9f1c` **C2.5** Calendar 4-ring `totalWater` çift sayım fix — `waterCount + waterDoneFromTasks` → sadece `waterCount` (FAB + ritual checkbox aynı bardak için iki kez sayılıyordu)
+- `3453d74` **Faz 3** `lib/contexts/WaterIntakeContext.tsx` sertleştirme — stale-closure double-tap (functional setState), atomic upsert against UNIQUE(user_id, intake_date), silent catch yerine `reportMutationError` toast + Sentry, optimistic rollback on error
+- `dd132c3` **Faz 4** `components/dashboard/DailyCareCard.tsx` agresif refactor — `mockData = {meds: [...], supps: [...]}` 30+ satır silindi → user_profiles supplements + meds bağlandı, "2/3 ring" hardcoded değer DailyLogsContext'ten gerçek completion sayısı, "Henüz takviye eklenmemiş" boş state
+- `7ddb19d` **Faz 5** `components/calendar/TodayView.tsx` — `toggleMedDose` + `toggleSupplement` `setLogCompleted`'e migrate (~25 satır kısaldı, silent catch yok), `updateWater` + `updateWaterTarget` SELECT-then-INSERT/UPDATE → atomic upsert + `reportMutationError`
+- `1992962` **Faz 6** Ölü kod: `components/calendar/HabitRings.tsx` (Apple-style ring prototype, zero import) + `components/calendar/WaterTracker.tsx` (8-button glass row prototype, zero import) → 214 satır silindi
+- `ac4e895` **Faz 7** Calendar 🚶 Hareket ring `current={1} total={3}` hardcoded → `MOVEMENT_EMOJIS = {🚶, 🏃, 🧘, 💪, 🤸, 🚴, 🏋️, 🥋}` Set + `moveDone` count + `totalMove = max(raw, 1)`. Future: `health_metrics.steps` (Apple Health / Google Fit) wiring.
+
+**Sonuç:**
+- 4-ring widget (💊 ilaç, 🌿 takviye, 💧 su, 🚶 hareket) tüm değerleri **canlı**. Hardcoded değer sıfır.
+- Dashboard / Calendar / TodayView arasında tıklama tek event bus üzerinden senkron — 60sn polling + cross-tab `daily-log-changed` BroadcastChannel.
+- Mutation hatalar Sonner toast + Sentry breadcrumb (`reportMutationError`) — sessiz yutulma kaldırıldı.
+- Su sayacı stale-closure double-tap bug fix (functional setState), atomic upsert UNIQUE constraint guarantee.
+- DailyCareCard'da mock supplement listesi gerçek user_profiles.supplements'a bağlandı.
+- 214 satır ölü kod silindi.
+- Build: 241 sayfa, 0 error, 0 warning. Regression yok (Session 32 AuthContext cache + Session 36-39 fix'ler + Session 40-42 audit fix'leri korundu).
+
+**Bilinen TODO (Session 45+):**
+- ESLint 127 library error (Session 43'ten devam)
+- Premium Sprint İş 1 (Pricing rewrite + decoy)
+- Premium Sprint İş 2 (Chat quota + free tier rate limit + paywall modal)
+- `health_metrics.steps` integration → movement ring `totalMove=1` floor → user step target
+- TodayView water update'i de WaterIntakeContext'e taşı (şimdi atomic upsert ama context bypass — uzun vade tek API)
+
+**Session 45'e devir:** Premium Sprint (Pricing + Chat quota) + ESLint sweep + onboarding flow audit + Iyzico şirket tescili bekleyişi devam.

@@ -1,6 +1,41 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 22 Nisan 2026 (Session 42 — P2 kozmetik sprint + FP-D başlangıcı; ESLint Session 43'e ayrıldı)
+> Son güncelleme: 23 Nisan 2026 (Session 44 — Daily Care unification + 4-ring widget + DailyLogsContext + dead code purge)
+
+---
+
+### Session 44 — Daily Care Unification (23 Nisan 2026) — TAMAMLANDI
+
+**Ana iş:** Dashboard ↔ Calendar ↔ TodayView arasındaki tıkla-yenile-kayıp döngüsünü kapatma. Her widget kendi INSERT-then-fallback-UPDATE write path'ini ve silent catch'lerini taşıyordu — hatalar yutuluyor, eşzamanlı tıklamalar atlanıyor, supplement/movement panellerinde mock veri gösteriliyordu. Bu session tek bir DailyLogsContext'i tüm yüzeylere getirir, su sayacını sertleştirir, mock supplement/movement verisini gerçek kaynaklara bağlar.
+
+**Commit zinciri:** `3a61de0..ac4e895` (11 commit, ~5.5 saat).
+
+- [x] **Faz 0** SQL S2a teyit — `water_intake.UNIQUE(user_id, intake_date)` doğrulandı (atomic upsert için ön koşul)
+- [x] **Faz 1 / C2.1** `3a61de0` — sonner toast + `AppToaster` mount + `lib/toast/mutation-errors.ts` helper (`reportMutationError(err, ctx)` → toast + Sentry breadcrumb)
+- [x] **Faz 2 / C2.2** `ef34ebf` — `DailyLogsContext` skeleton + provider mount; tek `daily-log-changed` event bus
+- [x] **C2.2.1** `e3a9b69` — `completed` Set'i `useMemo` deps'e dahil edildi (re-render bug fix)
+- [x] **C2.3** `431f3d7` — Dashboard `toggleTask` → context (provider root'a hoist edildi)
+- [x] **C2.4** `7dc60bf` — Calendar `toggleTask` + `handleQuickLog` + 4-ring widget context'e bağlandı
+- [x] **C2.5** `9df9f1c` — `totalWater` ring `waterCount`-only (önce `waterCount + waterDoneFromTasks` çift sayıyordu)
+- [x] **Faz 3** `3453d74` — `WaterIntakeContext` sertleştirme: stale-closure double-tap fix (functional setState), atomic upsert, `reportMutationError` toast/Sentry
+- [x] **Faz 4** `dd132c3` — `DailyCareCard` agresif refactor: `mockData = {...}` silindi → gerçek user supplements + meds bağlandı, hardcoded "2/3 ring" gerçek context completion'a
+- [x] **Faz 5** `7ddb19d` — `TodayView` `toggleMedDose` + `toggleSupplement` context'e migrate; water atomic-upsert + silent catch removed
+- [x] **Faz 6** `1992962` — Ölü kod: `components/calendar/HabitRings.tsx` + `components/calendar/WaterTracker.tsx` (zero import)
+- [x] **Faz 7** `ac4e895` — Calendar 🚶 Hareket ring `current={1} total={3}` hardcoded → emoji-based real task counting (`MOVEMENT_EMOJIS` Set)
+
+**Sonuç:**
+- 4-ring widget (💊 ilaç, 🌿 takviye, 💧 su, 🚶 hareket) tüm değerleri **canlı veri**.
+- Dashboard ⇄ Calendar ⇄ TodayView arasında tıklama tek event bus üzerinden senkron (60sn polling pattern + cross-tab `daily-log-changed`).
+- Mutation hatalar artık sessizce yutulmuyor — Sonner toast + Sentry breadcrumb (`reportMutationError`).
+- Su sayacı stale-closure double-tap bug fix + atomic upsert + UNIQUE constraint guarantee.
+- 214 satır ölü kod silindi.
+- Build: 241 sayfa, 0 error, 0 warning. Regression yok (Session 32 AuthContext + Session 36-39 tüm fix'ler korundu).
+
+**Kalan devirler (Session 45+):**
+- ESLint 127 library error (Session 43'ten devam — `lib/embeddings.ts`, `lib/translations.ts`, `lib/use-effective-premium.ts`, `scripts/*.js`)
+- Premium Sprint İş 1 — Pricing rewrite + decoy ayarı
+- Premium Sprint İş 2 — Chat quota + free tier rate limit + paywall modal
+- `health_metrics.steps` integration (Apple Health / Google Fit) — movement ring'in `totalMove=1` floor'unu user step target'a çevirir
 
 ---
 
