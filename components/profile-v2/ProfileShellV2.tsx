@@ -28,11 +28,16 @@ import { GeneralTab } from "./tabs/GeneralTab"
 import { BodyLifestyleTab } from "./tabs/BodyLifestyleTab"
 import { MedicalHistoryTab } from "./tabs/MedicalHistoryTab"
 import { MedicationsTab } from "./tabs/MedicationsTab"
+import { SupplementsTab } from "./tabs/SupplementsTab"
+import { AllergiesTab } from "./tabs/AllergiesTab"
+import { VaccinesTab } from "./tabs/VaccinesTab"
+import { FamilyTab } from "./tabs/FamilyTab"
+import { ReproductiveTab } from "./tabs/ReproductiveTab"
 import { PlaceholderTab, PLACEHOLDER_CONTENT } from "./tabs/PlaceholderTab"
 import { useProfileData } from "./hooks/useProfileData"
 
 export function ProfileShellV2() {
-  const { user, profile: authProfile, isAuthenticated, isLoading: authLoading } = useAuth()
+  const { user, profile: authProfile, isAuthenticated, isLoading: authLoading, refreshProfile } = useAuth()
   const { activeUserId, isOwnProfile } = useActiveProfile()
   const { lang } = useLang()
   const tr = lang === "tr"
@@ -51,6 +56,22 @@ export function ProfileShellV2() {
   // MedicalHistoryTab; allergies + labTestCount will be consumed by
   // future tabs (Commit 2.2 / 3). One fetch, many tabs.
   const profileData = useProfileData(effectiveUserId || null)
+
+  // F-PROFILE-001 Commit 3: cross-tab sync. When any tab saves a
+  // user_profiles column, both the local read cache (profileData)
+  // AND the auth context (authProfile) need to refresh — otherwise
+  // a tab switch shows stale data because the new mount hydrates
+  // from authProfile. Wrapping the two calls behind one onSaved
+  // closure means every tab can opt in with a single prop.
+  const handleTabSaved = useMemo(
+    () => async () => {
+      await Promise.all([
+        profileData.refetch(),
+        refreshProfile().catch(() => { /* non-fatal */ }),
+      ])
+    },
+    [profileData, refreshProfile],
+  )
 
   // Sidebar header — avatar + display name. Kept in the shell (rather
   // than a tab) because it survives tab changes.
@@ -121,7 +142,7 @@ export function ProfileShellV2() {
             lang={lang as "tr" | "en"}
             userId={effectiveUserId}
             profile={effectiveProfile ?? null}
-            onSaved={profileData.refetch}
+            onSaved={handleTabSaved}
           />
         )
 
@@ -133,7 +154,7 @@ export function ProfileShellV2() {
             gender={(effectiveProfile?.gender as string | undefined) ?? null}
             profile={effectiveProfile ?? null}
             medications={profileData.medications}
-            onSaved={profileData.refetch}
+            onSaved={handleTabSaved}
           />
         )
 
@@ -151,10 +172,49 @@ export function ProfileShellV2() {
         )
 
       case "takviyeler":
+        return (
+          <SupplementsTab
+            lang={lang as "tr" | "en"}
+            userId={effectiveUserId}
+            initialSupplements={
+              Array.isArray((effectiveProfile as { supplements?: unknown } | null)?.supplements)
+                ? ((effectiveProfile as { supplements: string[] }).supplements)
+                : []
+            }
+            onSaved={handleTabSaved}
+          />
+        )
+
       case "alerjiler":
+        return (
+          <AllergiesTab
+            lang={lang as "tr" | "en"}
+            userId={effectiveUserId}
+            canEdit={isOwnProfile}
+            allergies={profileData.allergies}
+            setAllergies={profileData.setAllergies}
+            refetch={profileData.refetch}
+            onSaved={handleTabSaved}
+          />
+        )
+
       case "asilar":
+        return <VaccinesTab lang={lang as "tr" | "en"} userId={effectiveUserId} />
+
       case "aile-oykusu":
+        return <FamilyTab lang={lang as "tr" | "en"} userId={effectiveUserId} />
+
       case "ureme":
+        return (
+          <ReproductiveTab
+            lang={lang as "tr" | "en"}
+            userId={effectiveUserId}
+            gender={(effectiveProfile?.gender as string | undefined) ?? null}
+            profile={effectiveProfile ?? null}
+            onSaved={handleTabSaved}
+          />
+        )
+
       case "gizlilik": {
         const content = PLACEHOLDER_CONTENT[activeTab]
         const copy = content ? content[lang as "tr" | "en"] : null

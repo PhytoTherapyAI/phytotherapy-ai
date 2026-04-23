@@ -69,56 +69,9 @@ export const PLACEHOLDER_CONTENT: Record<string, { tr: { title: string; items: s
   // vucut-yasam + tibbi-gecmis migrated to real tabs in F-PROFILE-001
   // Commit 2.1 — entries removed from the placeholder map.
   // ilaclar migrated in Commit 2.2 (MedicationsTab + full F-SAFETY-002.2).
-  "takviyeler": {
-    tr: {
-      title: "Takviyeler",
-      items: ["Vitamin & mineraller", "Bitkisel takviyeler", "Doz & sıklık girişi"],
-    },
-    en: {
-      title: "Supplements",
-      items: ["Vitamins & minerals", "Herbal supplements", "Dose & frequency entry"],
-    },
-  },
-  "alerjiler": {
-    tr: {
-      title: "Alerjiler",
-      items: ["Yaygın alerjen chip'leri", "Reaksiyon tipi", "Özel alerji ekle", "'Alerji yok' toggle"],
-    },
-    en: {
-      title: "Allergies",
-      items: ["Common allergen chips", "Reaction type", "Add custom allergy", "'No allergies' toggle"],
-    },
-  },
-  "asilar": {
-    tr: {
-      title: "Aşılar",
-      items: ["Temel aşılar (Tetanoz, Hepatit B…)", "Ek aşılar", "Kronolojik aşı geçmişi"],
-    },
-    en: {
-      title: "Vaccines",
-      items: ["Core vaccines (Tetanus, Hepatitis B…)", "Additional vaccines", "Chronological history"],
-    },
-  },
-  "aile-oykusu": {
-    tr: {
-      title: "Aile Öyküsü",
-      items: ["Akraba hastalık geçmişi özeti", "Detaylı düzenleme için Aile Sağlık Ağacı'na yönlendirme"],
-    },
-    en: {
-      title: "Family History",
-      items: ["Summary of relatives' conditions", "Deep-edit link to Family Health Tree"],
-    },
-  },
-  "ureme": {
-    tr: {
-      title: "Üreme Sağlığı",
-      items: ["Hamilelik & emzirme", "Adet döngüsü"],
-    },
-    en: {
-      title: "Reproductive Health",
-      items: ["Pregnancy & breastfeeding", "Menstrual cycle"],
-    },
-  },
+  // takviyeler migrated in Commit 3.
+  // alerjiler / asilar / aile-oykusu / ureme migrated to real tabs in
+  // F-PROFILE-001 Commit 3. Only gizlilik remains (Commit 4).
   "gizlilik": {
     tr: {
       title: "Gizlilik & Rıza",
