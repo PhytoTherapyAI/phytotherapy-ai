@@ -215,6 +215,18 @@ function CircularRing({ emoji, label, current, total, color }: {
 // ══════════════════════════════════════════════════
 interface DailyTask {
   id: string; label: string; done: boolean; emoji: string
+  /**
+   * Session 44 Faz 2 hotfix: explicit "this row writes to daily_logs"
+   * tag. Required because the original toggleTask used emoji as the
+   * sole DB-routing signal — that worked for 🌿/🐟 supplements and
+   * 💊 meds but missed default ritual seeds with cosmetic emojis like
+   * ☀️ (Vitamin D3), 🌙 (Magnesium), 🍵 (Valerian tea), which then
+   * silently wrote to localStorage only. Default seeds set this
+   * explicitly; user-added custom tasks leave it undefined and stay
+   * local-only (intentional — we don't want to spam daily_logs with
+   * arbitrary "go for a walk" rows).
+   */
+  dbType?: ItemType
 }
 
 function TimeBlockEnhanced({ icon, title, tasks, onToggle, onAdd, onRemoveTask, onAddCustomTask, isCurrent, hours, lang, blockKey }: {
@@ -517,18 +529,22 @@ export default function CalendarPage() {
   }, [])
 
   // Daily tasks organized by circadian time blocks — profile-driven
+  // Session 44 Faz 2 hotfix: every default ritual seed that represents a
+  // pill/capsule/tea you can tick off gets dbType:"supplement". The two
+  // 💧 water rows stay untagged — they are habit checkboxes (the FAB
+  // owns the actual glass count via WaterIntakeContext, see Faz 3).
   const [morningTasks, setMorningTasks] = useState<DailyTask[]>([
-    { id: "m1", label: tx("calendar.vitaminD3", lang), done: false, emoji: "☀️" },
-    { id: "m2", label: tx("calendar.probiotic", lang), done: false, emoji: "🌿" },
+    { id: "m1", label: tx("calendar.vitaminD3", lang), done: false, emoji: "☀️", dbType: "supplement" },
+    { id: "m2", label: tx("calendar.probiotic", lang), done: false, emoji: "🌿", dbType: "supplement" },
     { id: "m3", label: tx("calendar.oneGlassWater", lang), done: false, emoji: "💧" },
   ])
   const [noonTasks, setNoonTasks] = useState<DailyTask[]>([
-    { id: "n1", label: "Omega-3", done: false, emoji: "🐟" },
+    { id: "n1", label: "Omega-3", done: false, emoji: "🐟", dbType: "supplement" },
     { id: "n2", label: tx("calendar.twoGlassesWater", lang), done: false, emoji: "💧" },
   ])
   const [nightTasks, setNightTasks] = useState<DailyTask[]>([
-    { id: "e1", label: tx("calendar.magnesium", lang), done: false, emoji: "🌙" },
-    { id: "e2", label: tx("calendar.valerianTea", lang), done: false, emoji: "🍵" },
+    { id: "e1", label: tx("calendar.magnesium", lang), done: false, emoji: "🌙", dbType: "supplement" },
+    { id: "e2", label: tx("calendar.valerianTea", lang), done: false, emoji: "🍵", dbType: "supplement" },
   ])
 
   // Session 44 C2.4: med/sup completion comes from DailyLogsContext
@@ -572,19 +588,30 @@ export default function CalendarPage() {
     return () => window.removeEventListener("water-intake-changed", handler)
   }, [fetchWaterCount])
 
-  // Session 44 C2.4: toggle delegates med/sup writes to DailyLogsContext
-  // (optimistic + rollback + toast/Sentry live there). Water + custom
-  // tasks still own their local `done` state since there's no DB row.
+  // Session 44 C2.4 + Faz 2 hotfix: toggle delegates med/sup writes to
+  // DailyLogsContext (optimistic + rollback + toast/Sentry live there).
+  // Routing precedence:
+  //   1. task.dbType — the explicit tag set on default seeds AND on
+  //      profile-derived rows (💊 meds, dynamically-injected supplements)
+  //   2. emoji fallback — kept for any user-added custom task that
+  //      historically picked a 💊/🌿/🐟 emoji manually
+  //   3. otherwise — local state + localStorage (water 💧 + cosmetic
+  //      custom tasks like 🚶/🧘/✨)
+  // Before the dbType field landed, only the emoji fallback existed,
+  // which silently dropped ☀️ Vitamin D3, 🌙 Magnesium and 🍵 Valerian
+  // into the local-only path — every tick on those three rows was a
+  // no-op for daily_logs.
   const toggleTask = useCallback(async (id: string) => {
     const allCurrent = [...morningTasks, ...noonTasks, ...nightTasks]
     const task = allCurrent.find(t => t.id === id)
     if (!task) return
 
-    const isMed = task.emoji === "💊"
-    const isSup = task.emoji === "🌿" || task.emoji === "🐟"
+    const itemType: ItemType | null = task.dbType
+      ?? (task.emoji === "💊" ? "medication"
+          : task.emoji === "🌿" || task.emoji === "🐟" ? "supplement"
+          : null)
 
-    if (isMed || isSup) {
-      const itemType: ItemType = isMed ? "medication" : "supplement"
+    if (itemType) {
       const wasDone = isLogCompleted(itemType, id)
       try {
         await setLogCompleted(itemType, id, task.label, !wasDone)
@@ -596,7 +623,7 @@ export default function CalendarPage() {
       return
     }
 
-    // Water (💧) + custom tasks — local state + localStorage only.
+    // Water (💧) + cosmetic custom tasks — local state + localStorage only.
     const newDone = !task.done
     const update = (tasks: DailyTask[]) => tasks.map(t => t.id === id ? { ...t, done: newDone } : t)
     setMorningTasks(update)
@@ -635,9 +662,14 @@ export default function CalendarPage() {
   // water + custom keep their local state. Done at render time so any
   // other consumer (dashboard, TodayView, future widgets) that flips a
   // med/sup in context is reflected in our ring widget immediately.
+  // Faz 2 hotfix: route by dbType first (matches toggleTask precedence)
+  // so ☀️/🌙/🍵 default seeds reflect their context state.
   const deriveDone = useCallback((task: DailyTask): boolean => {
-    if (task.emoji === "💊") return isLogCompleted("medication", task.id)
-    if (task.emoji === "🌿" || task.emoji === "🐟") return isLogCompleted("supplement", task.id)
+    const itemType: ItemType | null = task.dbType
+      ?? (task.emoji === "💊" ? "medication"
+          : task.emoji === "🌿" || task.emoji === "🐟" ? "supplement"
+          : null)
+    if (itemType) return isLogCompleted(itemType, task.id)
     return task.done
   }, [isLogCompleted])
 
@@ -662,13 +694,20 @@ export default function CalendarPage() {
   )
   const completedTasks = allTasks.filter(t => t.done).length
 
-  // Auto-persist custom (non-med/sup) task completions to localStorage.
+  // Auto-persist custom (non-DB) task completions to localStorage.
   // Read from RAW arrays — context-driven re-renders should not trigger
   // a wasted localStorage write.
+  // Faz 2 hotfix: filter by dbType first. Anything that writes to
+  // daily_logs (dbType set, or 💊/🌿/🐟 emoji fallback) is owned by
+  // the context and must not be mirrored to localStorage — otherwise
+  // a Free user reading on a second tab would see stale "done" flags
+  // resurrected from localStorage on next reload.
   useEffect(() => {
     if (!ritualDataLoaded) return
     const raw = [...morningTasks, ...noonTasks, ...nightTasks]
-    const customDoneIds = raw.filter(t => t.done && t.emoji !== "💊" && t.emoji !== "🌿" && t.emoji !== "🐟").map(t => t.id)
+    const isDbBacked = (t: DailyTask) =>
+      !!t.dbType || t.emoji === "💊" || t.emoji === "🌿" || t.emoji === "🐟"
+    const customDoneIds = raw.filter(t => t.done && !isDbBacked(t)).map(t => t.id)
     localStorage.setItem(`cal-rituals-${todayDateStr}`, JSON.stringify(customDoneIds))
 
     const taskMap = raw.map(t => ({ id: t.id, emoji: t.emoji }))
@@ -683,11 +722,18 @@ export default function CalendarPage() {
   // morning ritual checkbox got totalWater = 2 for what was really one
   // glass of water. The ritual checkbox is a habit-completion flag
   // (did I drink my morning water?), not an independent glass counter.
-  const medsDone = allTasks.filter(t => t.done && t.emoji === "💊").length
-  const totalMedsOnly = allTasks.filter(t => t.emoji === "💊").length
-  // Supplements: count only real DB supplements (sup-*) + default supplement emojis that are from profile
-  const supsDone = allTasks.filter(t => t.done && (t.emoji === "🌿" || t.emoji === "🐟")).length
-  const totalSups = allTasks.filter(t => t.emoji === "🌿" || t.emoji === "🐟").length
+  // Faz 2 hotfix: ring counters route by dbType first (mirroring
+  // toggleTask + deriveDone precedence). Without this, ☀️/🌙/🍵 default
+  // supplement seeds were absent from the ring even when their context
+  // state was completed — so the supplement ring read 0/2 even with
+  // five active supplement habits ticked.
+  const isMedTask = (t: DailyTask) => t.dbType === "medication" || t.emoji === "💊"
+  const isSupTask = (t: DailyTask) =>
+    t.dbType === "supplement" || (!t.dbType && (t.emoji === "🌿" || t.emoji === "🐟"))
+  const medsDone = allTasks.filter(t => t.done && isMedTask(t)).length
+  const totalMedsOnly = allTasks.filter(isMedTask).length
+  const supsDone = allTasks.filter(t => t.done && isSupTask(t)).length
+  const totalSups = allTasks.filter(isSupTask).length
 
   // Session 44 Faz 7: Movement ring data source — count user-defined
   // movement-style tasks across all time blocks. Previously the ring
@@ -779,7 +825,7 @@ export default function CalendarPage() {
           for (const dose of doses) {
             const itemId = buildMedItemId(m.id, dose)
             const label = buildMedLabel(medName, dose)
-            const task: DailyTask = { id: itemId, label, done: false, emoji: "💊" }
+            const task: DailyTask = { id: itemId, label, done: false, emoji: "💊", dbType: "medication" }
             if (dose.timeBlock === "evening") night.push(task)
             else if (dose.timeBlock === "noon") noon.push(task)
             else morning.push(task)
@@ -797,7 +843,7 @@ export default function CalendarPage() {
           const meta: { dose?: string } = typeof s.metadata === "string" ? JSON.parse(s.metadata || "{}") : ((s.metadata as { dose?: string }) || {})
           const doseInfo = meta.dose ? ` (${meta.dose})` : ""
           const itemId = s.id
-          const task: DailyTask = { id: itemId, label: `${name}${doseInfo}`, done: false, emoji: "🌿" }
+          const task: DailyTask = { id: itemId, label: `${name}${doseInfo}`, done: false, emoji: "🌿", dbType: "supplement" }
 
           if (hour >= 18) night.push(task)
           else if (hour >= 12) noon.push(task)
