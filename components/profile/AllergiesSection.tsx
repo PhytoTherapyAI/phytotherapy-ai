@@ -41,7 +41,7 @@ export function AllergiesSection({
   };
 
   return (
-    <Card id="allergy-card" className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow ${hasAnaphylaxis ? "border-red-300 dark:border-red-700 border-l-4 border-l-red-500" : allergies.length > 0 ? "border-l-4 border-l-amber-500" : "border-green-200 dark:border-green-800"}`}
+    <Card id="allergy-card" className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow scroll-mt-20 ${hasAnaphylaxis ? "border-red-300 dark:border-red-700 border-l-4 border-l-red-500" : allergies.length > 0 ? "border-l-4 border-l-amber-500" : "border-green-200 dark:border-green-800"}`}
       style={hasAnaphylaxis ? { backgroundColor: "var(--red-50, rgba(254,242,242,0.5))" } : allergies.length === 0 ? { backgroundColor: "var(--green-50, rgba(240,253,244,0.5))" } : {}}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 flex-wrap">

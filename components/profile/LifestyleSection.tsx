@@ -82,8 +82,8 @@ export function LifestyleSection({ data, onChange, lang }: Props) {
         color="orange"
       />
 
-      {/* BMI Card */}
-      <div className="rounded-xl border p-4 space-y-3">
+      {/* BMI Card — anchor target for command-palette "boy / kilo / bmi" */}
+      <div id="vucut-olculeri" className="rounded-xl border p-4 space-y-3 scroll-mt-20">
         <p className="text-sm font-semibold flex items-center gap-2">{"\u{1F4CF}"} {tr ? 'Boy & Kilo' : 'Height & Weight'}</p>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
@@ -108,8 +108,8 @@ export function LifestyleSection({ data, onChange, lang }: Props) {
         )}
       </div>
 
-      {/* Blood Group Card */}
-      <div className="rounded-xl border p-4 space-y-3">
+      {/* Blood Group Card — anchor target for command-palette "kan grubu" */}
+      <div id="kan-grubu" className="rounded-xl border p-4 space-y-3 scroll-mt-20">
         <p className="text-sm font-semibold flex items-center gap-2">{"\u{1FA78}"} {tr ? 'Kan Grubun' : 'Blood Type'}</p>
         <div className="flex flex-wrap gap-2">
           {BLOOD_GROUPS.map(g => (

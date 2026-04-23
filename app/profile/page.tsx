@@ -381,6 +381,33 @@ export default function ProfilePage() {
   // automatically pivots on the active profile.
   const profile = isOwnProfile ? authProfile : viewedProfile;
 
+  // Command-palette deep links land here with #vucut-olculeri / #medications /
+  // #allergy-card etc. We can't run scrollIntoView at mount because the big
+  // conditional Cards (medical-history, allergy) only render once `profile`
+  // is in. Wait for the first profile fill, give one frame for layout, then
+  // smooth-scroll + flash a 2 s emerald ring on the target. Ref-guard so
+  // re-renders / family-profile switches don't re-fire the scroll.
+  const hashScrollDoneRef = useRef(false);
+  useEffect(() => {
+    if (!profile || hashScrollDoneRef.current) return;
+    if (typeof window === "undefined") return;
+    const hash = window.location.hash;
+    if (!hash || hash.length < 2) return;
+
+    const t = setTimeout(() => {
+      let el: Element | null = null;
+      try { el = document.querySelector(hash); } catch { /* invalid selector */ }
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      el.classList.add("ring-2", "ring-emerald-500", "ring-offset-2", "rounded-xl", "transition-all");
+      window.setTimeout(() => {
+        el?.classList.remove("ring-2", "ring-emerald-500", "ring-offset-2");
+      }, 2000);
+      hashScrollDoneRef.current = true;
+    }, 200);
+    return () => clearTimeout(t);
+  }, [profile]);
+
   useEffect(() => {
     if (!activeUserId) return;
     const supabase = createBrowserClient();
@@ -1189,7 +1216,7 @@ export default function ProfilePage() {
       </Card>
 
       {/* Medications — Editable */}
-      <Card id="medications" className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow ${medications.length > 0 ? 'border-l-4 border-l-green-500' : ''}`}>
+      <Card id="medications" className={`mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow scroll-mt-20 ${medications.length > 0 ? 'border-l-4 border-l-green-500' : ''}`}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -1481,7 +1508,8 @@ export default function ProfilePage() {
             {/* Pregnancy / Breastfeeding — hidden for male */}
             {profile.gender !== 'male' && (
               <>
-                <div className="space-y-3">
+                {/* anchor target for command-palette "hamilelik / emzirme" */}
+                <div id="ureme-sagligi" className="space-y-3 scroll-mt-20">
                   <Label className="flex items-center gap-2 text-base font-semibold">
                     <Baby className="h-4 w-4" />
                     {tx("profile.pregnancyBreastfeeding", lang)}
@@ -1583,8 +1611,9 @@ export default function ProfilePage() {
 
             <Separator />
 
-            {/* Supplements — Onboarding SupplementsStep reuse */}
-            <div className="space-y-3">
+            {/* Supplements — Onboarding SupplementsStep reuse
+                anchor target for command-palette "takviye / supplement" */}
+            <div id="takviyelerim" className="space-y-3 scroll-mt-20">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 {"\u{1F33F}"} {tx("profile.supplements", lang)}
                 <SectionXPBadge completed={healthForm.supplements.length > 0} />
@@ -1605,8 +1634,9 @@ export default function ProfilePage() {
 
             <Separator />
 
-            {/* Gamified Lifestyle Section */}
-            <div className="space-y-3">
+            {/* Gamified Lifestyle Section
+                anchor target for command-palette "yaşam tarzı / alkol / sigara" */}
+            <div id="yasam-tarzi" className="space-y-3 scroll-mt-20">
               <Label className="flex items-center gap-2 text-base font-semibold">
                 <Sparkles className="h-4 w-4" />
                 {tr ? "Yaşam Tarzı" : "Lifestyle"}
@@ -1728,7 +1758,7 @@ export default function ProfilePage() {
 
         return (
           <>
-            {!isEmpty && <Card className="mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-purple-500" id="medical-history">
+            {!isEmpty && <Card className="mb-6 rounded-xl shadow-sm hover:shadow-md transition-shadow border-l-4 border-l-purple-500 scroll-mt-20" id="medical-history">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Stethoscope className="h-5 w-5" />

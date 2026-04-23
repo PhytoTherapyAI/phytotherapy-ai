@@ -29,7 +29,7 @@ import { tx } from "@/lib/translations"
 
 interface SearchItem {
   id: string
-  type: "doctor" | "article" | "supplement" | "tool" | "page" | "legal" | "action" | "setting"
+  type: "doctor" | "article" | "supplement" | "tool" | "page" | "legal" | "action" | "setting" | "profile-field"
   title: string
   subtitle?: string
   href: string
@@ -129,6 +129,7 @@ function performSearch(query: string, lang: string, ctx: PaletteFilterContext): 
       legal: "legal",
       actions: "action",
       settings: "setting",
+      "profile-fields": "profile-field",
     }
     return {
       id: entry.id,
@@ -158,9 +159,15 @@ function performSearch(query: string, lang: string, ctx: PaletteFilterContext): 
     }
   }
 
-  // Order matters — Pages first (most common), then Legal, Actions, Settings
+  // Order matters — Pages first (most common), then Profile Fields
+  // (Session 45: deep-links to profile sections; high relevance for the
+  // user typing "boy", "alerji", "ilaç", "aşı" etc.), then Legal, Actions,
+  // Settings.
   const pagesGroup = buildRegistryGroup("pages", LayoutDashboard, 5)
   if (pagesGroup) results.push(pagesGroup)
+
+  const profileFieldsGroup = buildRegistryGroup("profile-fields", User, 6)
+  if (profileFieldsGroup) results.push(profileFieldsGroup)
 
   const legalGroup = buildRegistryGroup("legal", Shield, 5)
   if (legalGroup) results.push(legalGroup)

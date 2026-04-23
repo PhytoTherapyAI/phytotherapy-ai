@@ -15,7 +15,8 @@ export type PaletteCategory =
   | "pages"
   | "legal"
   | "actions"
-  | "settings";
+  | "settings"
+  | "profile-fields";
 
 export type PaletteAction =
   | "signout"
@@ -309,6 +310,104 @@ export const PALETTE_REGISTRY: PaletteEntry[] = [
     action: "signout",
     authOnly: true,
   },
+
+  // ───────────── PROFILE FIELDS (10) — Session 45 ─────────────
+  // Deep links into specific profile sections. Each href uses a hash
+  // anchor consumed by app/profile/page.tsx's mount-effect, which
+  // smooth-scrolls to the target and flashes a 2 s emerald ring on
+  // arrival. Anchor IDs live on the section wrappers (medications,
+  // medical-history, allergy-card, vaccines, vucut-olculeri, kan-grubu,
+  // takviyelerim, yasam-tarzi, ureme-sagligi). All entries are authOnly.
+  {
+    id: "profile:body-measurements",
+    category: "profile-fields",
+    title: { tr: "Vücut Ölçüleri", en: "Body Measurements" },
+    description: { tr: "Boy, kilo, BMI bilgilerini düzenle", en: "Edit height, weight, BMI" },
+    keywords: { tr: ["boy", "kilo", "yaş", "bmi", "ölçü", "vücut", "kg", "cm"], en: ["height", "weight", "bmi", "age", "body", "measurements"] },
+    href: "/profile#vucut-olculeri",
+    authOnly: true,
+  },
+  {
+    id: "profile:allergies",
+    category: "profile-fields",
+    title: { tr: "Alerjilerim", en: "My Allergies" },
+    description: { tr: "Alerji listesini düzenle, reaksiyon tipini güncelle", en: "Edit allergy list, update reaction types" },
+    keywords: { tr: ["alerji", "alerjilerim", "reaksiyon", "anafilaksi"], en: ["allergy", "allergies", "reaction", "anaphylaxis"] },
+    href: "/profile#allergy-card",
+    authOnly: true,
+  },
+  {
+    id: "profile:medications",
+    category: "profile-fields",
+    title: { tr: "İlaçlarım", en: "My Medications" },
+    description: { tr: "Aktif ilaçları, dozları, sıklıkları yönet", en: "Manage active medications, doses, frequencies" },
+    keywords: { tr: ["ilaç", "ilaçlarım", "ilaclarim", "doz", "reçete", "medication"], en: ["medication", "medications", "drugs", "dose", "prescription"] },
+    href: "/profile#medications",
+    authOnly: true,
+  },
+  {
+    id: "profile:vaccines",
+    category: "profile-fields",
+    title: { tr: "Aşı Kayıtlarım", en: "Vaccination Records" },
+    description: { tr: "Aşı geçmişi ve takvim", en: "Vaccination history and schedule" },
+    keywords: { tr: ["aşı", "aşılar", "asilarim", "asi", "asilar"], en: ["vaccine", "vaccines", "vaccination", "shots", "immunization"] },
+    href: "/profile#vaccines",
+    authOnly: true,
+  },
+  {
+    id: "profile:blood-group",
+    category: "profile-fields",
+    title: { tr: "Kan Grubu", en: "Blood Type" },
+    description: { tr: "Kan grubunu seç ve epidemiyolojik içgörüyü gör", en: "Select blood type and view epidemiological insight" },
+    keywords: { tr: ["kan grubu", "kan", "rh"], en: ["blood", "blood type", "blood group", "rh"] },
+    href: "/profile#kan-grubu",
+    authOnly: true,
+  },
+  {
+    id: "profile:chronic-conditions",
+    category: "profile-fields",
+    title: { tr: "Kronik Hastalıklar", en: "Chronic Conditions" },
+    description: { tr: "Kalp, diyabet, tiroid, astım gibi kronik tanılar", en: "Cardiac, diabetes, thyroid, asthma and other chronic diagnoses" },
+    keywords: { tr: ["kronik", "hastalık", "tanı", "diyabet", "hipertansiyon", "astım", "tiroid"], en: ["chronic", "condition", "diagnosis", "diabetes", "hypertension", "asthma", "thyroid"] },
+    href: "/profile#medical-history",
+    authOnly: true,
+  },
+  {
+    id: "profile:surgery",
+    category: "profile-fields",
+    title: { tr: "Cerrahi Geçmiş", en: "Surgical History" },
+    description: { tr: "Geçirilmiş ameliyatları kaydet (bariatrik, vb.)", en: "Record past surgeries (bariatric, etc.)" },
+    keywords: { tr: ["cerrahi", "ameliyat", "operasyon", "bariatrik"], en: ["surgery", "surgical", "operation", "bariatric"] },
+    href: "/profile#medical-history",
+    authOnly: true,
+  },
+  {
+    id: "profile:supplements",
+    category: "profile-fields",
+    title: { tr: "Takviyelerim", en: "My Supplements" },
+    description: { tr: "Vitamin, mineral, bitkisel takviyeler", en: "Vitamins, minerals, herbal supplements" },
+    keywords: { tr: ["takviye", "takviyelerim", "vitamin", "mineral", "bitkisel"], en: ["supplement", "supplements", "vitamin", "mineral", "herbal"] },
+    href: "/profile#takviyelerim",
+    authOnly: true,
+  },
+  {
+    id: "profile:lifestyle",
+    category: "profile-fields",
+    title: { tr: "Yaşam Tarzı", en: "Lifestyle" },
+    description: { tr: "Sigara, alkol, diyet, egzersiz, uyku", en: "Smoking, alcohol, diet, exercise, sleep" },
+    keywords: { tr: ["yaşam", "tarz", "sigara", "alkol", "diyet", "egzersiz", "uyku"], en: ["lifestyle", "smoking", "alcohol", "diet", "exercise", "sleep"] },
+    href: "/profile#yasam-tarzi",
+    authOnly: true,
+  },
+  {
+    id: "profile:reproductive-health",
+    category: "profile-fields",
+    title: { tr: "Üreme Sağlığı", en: "Reproductive Health" },
+    description: { tr: "Hamilelik, emzirme durumu (kadın profil)", en: "Pregnancy, breastfeeding status (female profile)" },
+    keywords: { tr: ["hamilelik", "emzirme", "üreme", "gebelik"], en: ["pregnancy", "breastfeeding", "reproductive", "gestation"] },
+    href: "/profile#ureme-sagligi",
+    authOnly: true,
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -360,4 +459,5 @@ export const PALETTE_CATEGORY_LABELS: Record<PaletteCategory, { tr: string; en: 
   legal: { tr: "Yasal", en: "Legal" },
   actions: { tr: "Hızlı Aksiyonlar", en: "Quick Actions" },
   settings: { tr: "Ayarlar", en: "Settings" },
+  "profile-fields": { tr: "Profil Alanları", en: "Profile Fields" },
 };

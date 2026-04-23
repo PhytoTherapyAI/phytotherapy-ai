@@ -128,7 +128,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
 
   const essentialTotal = ESSENTIAL_VACCINE_IDS.length
   return (
-    <Card id="vaccines" className={`rounded-xl shadow-sm hover:shadow-md transition-shadow ${doneCount > 0 ? 'border-l-4 border-l-blue-500' : ''}`}>
+    <Card id="vaccines" className={`rounded-xl shadow-sm hover:shadow-md transition-shadow scroll-mt-20 ${doneCount > 0 ? 'border-l-4 border-l-blue-500' : ''}`}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
