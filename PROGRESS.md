@@ -1,70 +1,105 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 24 Nisan 2026 (Session 46 AÇIK — gece molası; 4 commit deployed, 2 pending smoke test)
+> Son güncelleme: 26 Nisan 2026 (Session 46 ✅ KAPALI — 11 commit, 5 sprint teması, F-HEALTH-CLAIMS-001 6.2 + 6.2.1 closed)
 
 ---
 
-### Session 46 — AÇIK — Gece Molası (24 Nisan 2026)
+### Session 46 — Bug Fixes + UX Redesigns + Health Claims 6.2 (Full Closure) (24-26 Nisan 2026) — TAMAMLANDI
 
-> **Durum: AÇIK.** Session 45 closure sonrası sabah başladı, gece molası için duruldu. Yarın sabah ilk iş smoke testler. 4 commit deployed (1 P0 + 3 P1), 2 tanesi canlı test edildi, 2 tanesi yarın smoke test'e kaldı.
+**Ana iş:** 11 commit (`ab52cf0..1533553`), 5 sprint teması:
+1. **Bug fixes / observability** — F-AUTH-003 (email resend), F-SAFETY-002.3 (mailto fallback modal), F-SCANNER-001 (OCR observability + timeout)
+2. **UX redesigns** — F-CHECKIN-UI-001 (daily check-in modal Apple Health-tarzı), F-MEDDAILY-UI-001 + 002 (medication confirmation modal yenilenme + ilaç listesi + empty state)
+3. **Feature additions** — F-DRAFT-001 (medication + allergy add form draft persistence), F-CHAT-SIDEBAR-001 (conversation sidebar redesign — temporal groups + hover delete + active state)
+4. **Health claims compliance** — F-HEALTH-CLAIMS-001 audit (Türkiye TİTCK + EFSA risk haritası), master plan + 6.2 (3 AI-driven sayfaya AIDisclaimer mount), 6.2.1 (sleep-analysis state field fix + sleep.continue i18n)
+5. **Docs meta** — mid-session checkpoint + closure (bu commit)
 
-**Ana iş:** Session 46 Session 45 closure docs commit'i (924df8b) sonrası açıldı. Öncelik sırası plan'a göre: F-AUTH-003 (P0) → F-SAFETY-002.3 (P1) → F-SCANNER-001 (P1) → F-DRAFT-001 (P1). Hepsi push edildi, 2 tanesi canlıda test edildi.
+**Grup dağılımı (12 total = 11 kod + 1 closure docs):**
 
-**4 commit (`ab52cf0..0461913`):**
+| Grup | Commit sayısı |
+|---|---|
+| Bug fixes / observability | 3 |
+| UX redesigns | 3 |
+| Feature additions | 2 |
+| Health claims compliance | 2 |
+| Docs meta (mid-session faff122) | 1 |
+| **Closure docs (bu commit)** | **1** |
+| **Toplam** | **12** |
 
-- [x] `ab52cf0` **F-AUTH-003 (P0)** — Email verification resend button. Sign-up success path + login "Email not confirmed" detection + already-confirmed → login tab auto-fill. 60s localStorage cooldown (tab close survive) + Supabase native 60s server cooldown. `NEXT_PUBLIC_AUTH_RESEND` kill switch. 9 yeni i18n key + auth.resend.* namespace. **TESTED ✅**
-- [x] `d17e644` **F-SAFETY-002.3 (P1)** — Ask-doctor mailto fallback modal. Opera GX / PWA silent mailto fail → deterministik modal (her tıklamada açılır). Dialog reuse + navigator.clipboard.writeText + optional doktor email input + native mailto retry + always-visible amber hint. 11 yeni safety.askDoctor.* key. MedicationsTab onAskDoctor wiring. **TESTED ✅**
-- [x] `cc47420` **F-SCANNER-001 (P1)** — OCR "Analiz başarısız" kör path → 6 stage (auth / rate-check / body-parse / image-validate / claude-call / response-parse / success-envelope) + error shape `{ error, code, stage, detail }` + her stage Sentry breadcrumb + captureException (dynamic import, Sentry-less deploy safe) + parsed.error blocked-envelope detection (422) + AbortController 55s client + maxDuration 50 server + dev-gated console.error (KVKK: prod sessiz). 5 yeni scan.error.* key. **⏳ PENDING SMOKE TEST**
-- [x] `0461913` **F-DRAFT-001 (P1)** — MedicationsTab + AllergiesTab add form draft persistence. Session 42'de `lib/ui/draft-persist.ts` yazılmıştı ama ShellV2 refactor'unda wire edilmemişti. Lazy `useState` initializer (flash guard) + per-keystroke `persistDraft` + success-path `clearDraft` + cancel'da draft korunur (FamilyHistorySection parity). `userId` suffix key'e eklendi (multi-user browser KVKK guard). DRAFT_KEYS.profileAllergyAdd yeni eklendi. **⏳ PENDING SMOKE TEST**
+#### Bug fixes / observability (3 commit)
 
-**Session 46 şu ana kadar:**
-- 4/15 ticket implemented + deployed
-- 2 TESTED ✅ (F-AUTH-003, F-SAFETY-002.3)
-- 2 PENDING smoke test (F-SCANNER-001, F-DRAFT-001)
+- [x] `ab52cf0` **F-AUTH-003 (P0)** — Email verification resend button. Sign-up success + login "Email not confirmed" detection + already-confirmed → login tab auto-flip + email auto-fill. 60s localStorage cooldown (tab close survive) + Supabase native 60s server cooldown. `NEXT_PUBLIC_AUTH_RESEND` kill switch. 9 yeni `auth.resend.*` i18n key. **TESTED ✅**
+- [x] `d17e644` **F-SAFETY-002.3 (P1)** — Ask-doctor mailto fallback modal. Opera GX / PWA silent mailto fail → deterministik modal (her click açılır). Dialog reuse + `navigator.clipboard.writeText` + optional doktor email input + native mailto retry + always-visible amber hint. 11 yeni `safety.askDoctor.*` key. **TESTED ✅**
+- [x] `cc47420` **F-SCANNER-001 (P1)** — OCR "Analiz başarısız" kör path → 6 stage (auth / rate-check / body-parse / image-validate / claude-call / response-parse / success-envelope) + error shape `{ error, code, stage, detail }` + her stage Sentry breadcrumb + captureException (dynamic import, Sentry-less deploy safe) + parsed.error blocked-envelope detection (422) + AbortController 55s client + maxDuration 50 server + dev-gated `console.error` (KVKK). 5 yeni `scan.error.*` key. **⏳ PENDING SMOKE TEST** (Session 47 ilk iş)
+
+#### UX redesigns (3 commit)
+
+- [x] `82953b5` **F-CHECKIN-UI-001** — Daily check-in modal Apple Health'tan ilham alan premium feel: Dialog primitive bırakıldı (custom div backdrop + bottom sheet pattern), 3-satır header (Geri / progress bar / büyük başlık), badge yerine progress bar, hybrid auto-advance (400ms delay + İleri immediate path), framer-motion emoji pop, animate-gentle-pulse step icon, son adım `Tamamla` (auto-save engellenir). Yeni `gentlePulse` keyframe globals.css. **TESTED ✅**
+- [x] `d6aa0db` **F-MEDDAILY-UI-001** — Daily medication confirmation modal yenilenme: Pill icon emerald-50 daire container, buton renk swap (Evet primary, Güncelle outline), `rounded-3xl` (sadece daily mode override), samimi soru metni i18n update. 30day/15day mandatory mode'lara dokunulmadı. **TESTED ✅**
+- [x] `ee5716e` **F-MEDDAILY-UI-002** — Daily mode'a inline ilaç listesi (emerald-50 container, "Concor 5mg" tarzı satırlar, max 200px scroll) + ilaçsız kullanıcı empty state ("Evet, kullanmıyorum" + "Bir ilaç ekle") + loading-flash mitigation (default with-meds variant). Bonus fix: `handleGoToProfile` URL `?tab=medications` → `?tab=ilaclar` (Session 45 Commit 4 sonrası TR-canonical tab id). 4 yeni `dailyMed.*` key. **TESTED ✅**
+
+#### Feature additions (2 commit)
+
+- [x] `0461913` **F-DRAFT-001 (P1)** — MedicationsTab + AllergiesTab add form draft persistence. `lib/ui/draft-persist.ts` Session 42'de yazılmıştı ama wire edilmemişti. Lazy `useState` initializer (flash guard) + per-keystroke `persistDraft` + success-path `clearDraft` + cancel'da draft korunur (FamilyHistorySection parity). `userId` suffix multi-user browser KVKK guard. `DRAFT_KEYS.profileAllergyAdd` eklendi. **⏳ PENDING SMOKE TEST** (Session 47 ilk iş)
+- [x] `74cdb9f` **F-CHAT-SIDEBAR-001** — Conversation sidebar redesign (Sağlık Asistanı): temporal groups (Bugün / Dün / Son 7 Gün / Son 30 Gün), active conversation marker (bg-emerald-100 + emerald-700 icon/text + font-semibold), hover Trash2 button (group-hover:opacity-100, e.stopPropagation), MessageSquare icon her satırda, destructive Dialog confirm + optimistic delete + rollback on 4xx/5xx + sonner toast. **Backend:** `query_history` DELETE RLS policy (migration 20260424), `/api/query-history/[id]` DELETE endpoint (Bearer auth + UUID smell test + user-scoped supabase client + 404-as-RLS-block). 8 yeni `ch.*` key. Aktif sohbet silindiyse `?q=` URL temizlenir + ChatInterface reset. **TESTED ✅**
+
+#### Health claims compliance (2 commit)
+
+- [x] `cda78a9` **F-HEALTH-CLAIMS-001 6.2 + master plan** — Türkiye TİTCK + EFSA health claims risk audit + master plan + 6.2 implement. **Audit bulguları:** 0 direkt "tedavi/şifa/kür" ✅, 2 direkt functional claim vulnerable audience'lara (cortisol/energy), 11 i18n example soru, 4 endpoint EFSA gating eksik (supplement-check 🔴 CRITICAL, anti-inflammatory 🔴 HIGH, daily-care-plan ⚠️, blood-analysis ⚠️), output filter Layer 3 "destekler+mekanizma" pattern eksik. **Master plan:** 4 alt-sprint (6.2 hemen / 6.1 prompt+EFSA whitelist avukat sonrası / 6.3 hardcoded string fix avukat sonrası / 6.4 query_history retention opsiyonel) + 7 hukuki soru + risk register. **6.2 implement:** 3 AI-driven sayfaya AIDisclaimer mount (mental-wellness `analysis && showAnalysis`, sleep-analysis `analysis || microInsight`, sports-performance `state.result`). Anti-inflammatory + supplement-compare AI çağrısı yapmadığı için scope dışı. `responseId = useMemo(crypto.randomUUID, [aiState])` per-analiz KVKK objection group. **TESTED ✅** (sports + sleep)
+- [x] `1533553` **F-HEALTH-CLAIMS-001 6.2.1** — Sleep Analysis disclaimer state field fix + i18n. 6.2 conditional sadece `(analysis || microInsight)`'i kapsadı ama sayfanın en çok görülen yüzeyi MorningCard `!loggedToday` koşulunda mount ediliyor → AI guess + chip prompts disclaimer'sız kalıyordu. Conditional `(analysis || microInsight || !loggedToday)` ve useMemo deps `[analysis, microInsight, loggedToday]` güncellendi. useMemo declaration sırası fix (TDZ guard — `loggedToday` state useMemo'dan SONRA declare ediliyordu). `sleep.continue` i18n key eklendi (commonToolKeys.ts) — MorningCard "adjust" + "factors" step CTA buton'unda raw "sleep.continue" görünüyordu. **TESTED ✅**
+
+#### Docs meta (1 commit)
+
+- [x] `faff122` mid-session checkpoint — gece molası öncesi 4 commit deployed snapshot (F-AUTH-003 + F-SAFETY-002.3 + F-SCANNER-001 + F-DRAFT-001). Session 46 AÇIK statüsü ve "Yarın ilk iş" matrisi.
+
+**Sonuç:**
+- F-HEALTH-CLAIMS-001 6.2 ✅ CLOSED — 3 AI-driven sayfada AIDisclaimer canlıda; 6.1 / 6.3 / 6.4 avukat görüşmesi sonrası
+- F-CHAT-SIDEBAR-001 ✅ CLOSED — temporal groups + hover delete + active state + RLS DELETE policy + endpoint canlıda
+- 3 UX redesign canlıda (check-in modal + 2 med confirm + chat sidebar)
+- Audit-driven hukuki uyumluluk başlatıldı (master plan: docs/plans/F-HEALTH-CLAIMS-001-master-plan.md)
+- 0 revert — disiplinli plan + onay + smoke test pattern korundu
 - Build her commit sonrası temiz (tsc 0 error, Next.js 0 warning, 241 sayfa prerendered)
 
-**Yarın ilk iş (priority sırası):**
+**Manuel adım (kullanıcı Supabase Studio — ✅ DONE):**
+- `supabase/migrations/20260424_query_history_delete_policy.sql` apply (F-CHAT-SIDEBAR-001 RLS DELETE policy). Verify `pg_policies WHERE tablename = 'query_history'` → 4 satır (SELECT/INSERT/UPDATE/DELETE).
 
-1. **F-SCANNER-001 happy path smoke** — net ilaç kutusu fotoğrafı çek/yükle → OCR başarılı extraction (brand_name + dosage + form). Error paths opsiyonel (rate limit, bulanık görüntü). Fail → Sentry dashboard'da `scanner` category breadcrumb + captured exception zincirini kontrol et (stage bazlı diagnose — auth / rate-check / parse / claude-call). Critical regression → revert.
-2. **F-DRAFT-001 quick smoke** — Medications tab → "+ Ekle" → brand "Aspirin" → Takviyeler tab'a geç → Medications'a dön → "+ Ekle" → "Aspirin" restore. Allergies aynı pattern (allergen + severity). Fail → DevTools Application → Storage → Session Storage'da `doctopal:profile:medicationAdd:draft:{userId}` key varlığı kontrol. Critical fail → revert.
+**Session 47'ye devir:**
 
-**Eğer ikisi de fail ederse revert prosedürü:**
-```bash
-git revert 0461913 cc47420
-npx tsc --noEmit && npm run build
-git push origin master
-```
-Revert anında canlı regression kapanır. Root cause Session 47'de ayrı sprint.
+**Yarın ilk iş (smoke test pending — kritik):**
+1. F-SCANNER-001 happy path test — net ilaç kutusu OCR → başarılı extraction. Fail → Sentry dashboard `scanner` breadcrumb stage tespiti → revert `git revert cc47420`.
+2. F-DRAFT-001 quick test — Medications "+ Ekle" → "Aspirin" → tab değiştir → dön → restore. Fail → DevTools Storage inspect → revert `git revert 0461913`.
+3. İkisi de fail ederse: `git revert 0461913 cc47420 && npm run build && git push origin master` (revert anında canlı regression kapanır).
 
-**Session 46 kalan backlog (11 ticket + 3 ürün enrichment + 4 tech debt):**
+**P1 backlog:**
+- F-CHAT-SIDEBAR-002 — Pin/Rename feature (3 nokta dropdown menu, inline edit, pinned grup üstte)
+- F-HEALTH-CLAIMS-001 6.1 — Prompt centralize + EFSA whitelist + output filter Layer 3 extend (avukat sonrası, ~3-4h)
+- F-HEALTH-CLAIMS-001 6.3 — Hardcoded string fix (avukat sonrası, ~1h)
+- F-HEALTH-CLAIMS-001 6.4 — query_history retention strategy (avukat sonrası, opsiyonel)
 
-**P1 — Yüksek (öncelik sırası):**
-- F-SAFETY-004 — Banner lokalizasyon EN/TR mix fix (~30dk hızlı fix)
-- HealthReportTab enrichment — Digital Twin hero polish + Recent Activity multi-source feed + Missing Nudges (cross-tab setTab prop drilling) (3-4 saat)
+**Avukat görüşmesi (kritik blocker):**
+- 7 hukuki soru hazır (audit raporu G bölümü + master plan referansı)
+- Mesafeli Satış + Abonelik Sözleşmesi v2 ile birlikte tek seansta
+- Tahmini: bu hafta veya gelecek hafta
 
-**P2 — Orta:**
-- F-SAFETY-002.1 — Onboarding dangerous override modal (wizard finale flow)
+**P2:**
 - F-PRIVACY-001 — DELETE endpoint table list güncellemesi (family_history_entries, medication_interaction_alerts, pain_records, health_imports, health_metrics, radiology_reports, prospectus_scans, verification_documents)
 - F-PRIVACY-002 — Consent audit trail retention policy (regulatory research)
 - F-SETTINGS-001 — Şifre validation buton disabled
 - F-MED-DB-001 — Warfarin fuzzy match bug
 
-**P3 — Düşük:**
-- F-PRIVACY-003 — PrivacyTab inline quick export (ZIP+JSON Advanced mode)
-
 **Ürün enrichment:**
-- AI chat günlük 3 soru quota (freemium ayarı — şu an Free 20/gün)
+- HealthReportTab enrichment — Digital Twin hero polish + Recent Activity multi-source feed + Missing Nudges (3-4h)
+- AI chat günlük 3 soru quota (freemium teaser — şu an Free 20/gün)
 - Water context 3.1 (Session 44 backlog B1/B2/B3: snapshot-rollback, setTarget persist)
 - Achievement card i18n (brand-style isimler)
 
-**Technical debt carry-over:**
-- ESLint 127 library error sweep (Session 43'ten)
-- `health_metrics.steps` integration → movement ring user step target (Apple Health / Google Fit)
-- TodayView water update WaterIntakeContext'e migrate
+**Tech debt carry-over:**
+- ESLint 127 library error sweep (Session 43+'tan)
+- `health_metrics.steps` integration → movement ring (Apple Health / Google Fit)
+- TodayView water → WaterIntakeContext migrate
 - `lib/vitality.ts` unit test scaffold (Jest/Vitest)
 
 **Dependency-gated:**
-- F-PAYMENT-001 (P1) — Iyzico ödeme entegrasyonu — şirket kuruluşu bekleniyor
+- F-PAYMENT-001 — Iyzico ödeme entegrasyonu (şirket kuruluşu bekleniyor)
 
 ---
 
