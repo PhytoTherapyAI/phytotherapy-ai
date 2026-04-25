@@ -169,9 +169,22 @@ export async function POST(req: NextRequest) {
     return errorResponse("image-validate", "image_invalid", 400, "No image provided")
   }
 
+  // Detect mime type from data URL prefix. Camera capture sends jpeg,
+  // file upload preserves the source mime — hardcoding jpeg made
+  // Anthropic reject PNG/WebP screenshots with a 400 (Sentry 7441877015).
+  const SUPPORTED_MIMES = ["image/jpeg", "image/png", "image/gif", "image/webp"] as const
+  type SupportedMime = (typeof SUPPORTED_MIMES)[number]
+  const mimeMatch = image.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,/)
+  const detectedMime = mimeMatch?.[1]?.toLowerCase()
+  const mimeType: SupportedMime = (SUPPORTED_MIMES as readonly string[]).includes(
+    detectedMime ?? "",
+  )
+    ? (detectedMime as SupportedMime)
+    : "image/jpeg"
+
   // Strip data URL prefix. Base64 payload itself is NEVER logged from
   // this point on.
-  const base64Data = image.replace(/^data:image\/\w+;base64,/, "")
+  const base64Data = image.replace(/^data:image\/[a-zA-Z0-9.+-]+;base64,/, "")
   const base64Size = base64Data.length
 
   // STAGE 4: Claude vision call (wrapped in its own catch so Claude 529s
@@ -185,7 +198,7 @@ export async function POST(req: NextRequest) {
     rawResult = await askClaudeJSONMultimodal(
       prompt,
       systemPrompt,
-      [{ mimeType: "image/jpeg", base64: base64Data }],
+      [{ mimeType, base64: base64Data }],
     )
   } catch (err) {
     const status = 502
