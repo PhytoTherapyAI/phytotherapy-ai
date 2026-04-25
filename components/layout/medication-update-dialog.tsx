@@ -95,9 +95,13 @@ export function MedicationUpdateDialog() {
 
   const supabase = createBrowserClient();
 
-  // Load medications when 15-day mode opens
+  // Load medications when 15-day OR daily mode opens.
+  // F-MEDDAILY-UI-002: daily mode now renders an inline list of the
+  // user's active medications + an empty-state variant when there are
+  // none. Same fetch shape as 15-day; medications + loadingMeds state
+  // is shared at component scope.
   useEffect(() => {
-    if (mode === "15day" && open && profile?.id) {
+    if ((mode === "15day" || mode === "daily") && open && profile?.id) {
       setLoadingMeds(true);
       supabase
         .from("user_medications")
@@ -329,7 +333,10 @@ export function MedicationUpdateDialog() {
 
   const handleGoToProfile = () => {
     setOpen(false);
-    router.push("/profile?tab=medications");
+    // F-MEDDAILY-UI-002: ShellV2 tab id is `ilaclar` (TR-canonical) since
+    // Session 45 Commit 4. The old `medications` slug silently fell back
+    // to the General tab — broken deep link from this dialog.
+    router.push("/profile?tab=ilaclar");
   };
 
   const handleGoToOnboarding = () => {
@@ -673,52 +680,107 @@ export function MedicationUpdateDialog() {
 
         {/* ============= DAILY MODE: Quick Confirm ============= */}
         {/* F-MEDDAILY-UI-001: warmer tone + primary "Evet, aynı" CTA
-            (the path 99% of users take every day) + Pill icon in a
-            soft emerald roundel for visual weight. 30-day and 15-day
-            blocks above intentionally untouched — those are mandatory
-            flows with their own UX contracts. */}
-        {mode === "daily" && (
-          <>
-            <DialogHeader>
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/30 shrink-0">
-                  <Pill className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                </span>
-                <DialogTitle className="text-lg">
-                  {tx("dailyMed.title", lang)}
-                </DialogTitle>
-              </div>
-              <DialogDescription className="pt-1 leading-relaxed">
-                {tx("dailyMed.description", lang)}
-              </DialogDescription>
-            </DialogHeader>
+            + Pill icon in a soft emerald roundel.
+            F-MEDDAILY-UI-002: inline list of active medications +
+            empty-state variant for users with zero meds. The list
+            renders on the "with meds" variant; the empty variant
+            swaps the description and the secondary button to "Add a
+            medication". 30-day and 15-day blocks above intentionally
+            untouched — those are mandatory flows with their own UX
+            contracts. */}
+        {mode === "daily" && (() => {
+          // Default to the "with meds" variant during the brief load
+          // window so users with medications don't see the empty
+          // variant flash before the fetch resolves. Only flip to the
+          // empty variant after we've actually confirmed the list is
+          // empty (loadingMeds === false && medications.length === 0).
+          const isEmptyMedList = !loadingMeds && medications.length === 0
+          return (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/30 shrink-0">
+                    <Pill className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  </span>
+                  <DialogTitle className="text-lg">
+                    {tx("dailyMed.title", lang)}
+                  </DialogTitle>
+                </div>
+                <DialogDescription className="pt-1 leading-relaxed">
+                  {tx(
+                    isEmptyMedList ? "dailyMed.descriptionEmpty" : "dailyMed.description",
+                    lang,
+                  )}
+                </DialogDescription>
+              </DialogHeader>
 
-            <DialogFooter className="flex-col gap-2 sm:flex-row">
-              {/* "Yes, same medications" — primary CTA. Daily users
-                  hit this path almost every day; making it the visual
-                  default cuts a beat off the routine. */}
-              <Button
-                onClick={handleDailyConfirm}
-                disabled={isConfirming}
-                className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
-              >
-                <CheckCircle2 className="h-4 w-4" />
-                {isConfirming
-                  ? tx("med.confirming", lang)
-                  : tx("dailyMed.confirmSame", lang)}
-              </Button>
-              {/* "Update medications" — secondary outline; rarer path. */}
-              <Button
-                variant="outline"
-                onClick={handleGoToProfile}
-                className="gap-2"
-              >
-                <RefreshCw className="h-4 w-4" />
-                {tx("dailyMed.update", lang)}
-              </Button>
-            </DialogFooter>
-          </>
-        )}
+              {/* Active-medications list — only when there's at least
+                  one med to show. While loading, the container area
+                  stays empty (no spinner) so the modal doesn't flash
+                  layout while the very fast fetch (~150 ms typical)
+                  resolves. */}
+              {medications.length > 0 && (
+                <div className="mt-4 mb-2 p-3 bg-emerald-50 dark:bg-emerald-950/30 rounded-xl">
+                  <p className="text-xs uppercase tracking-wider text-emerald-700/80 dark:text-emerald-400/80 mb-2">
+                    {tx("dailyMed.medsLabel", lang)}
+                  </p>
+                  <div className="space-y-1 max-h-[200px] overflow-y-auto">
+                    {medications.map((m) => {
+                      const name = m.brand_name || m.generic_name || ""
+                      const label = m.dosage ? `${name} ${m.dosage}` : name
+                      return (
+                        <div key={m.id} className="flex items-center gap-2 py-1">
+                          <Pill className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          <span className="text-sm text-slate-700 dark:text-slate-200">
+                            {label}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <DialogFooter className="flex-col gap-2 sm:flex-row">
+                {/* Primary CTA — confirm path. Label depends on whether
+                    the user has any active medications: "Yes, same
+                    medications" vs "Yes, I'm not taking any". */}
+                <Button
+                  onClick={handleDailyConfirm}
+                  disabled={isConfirming}
+                  className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                >
+                  <CheckCircle2 className="h-4 w-4" />
+                  {isConfirming
+                    ? tx("med.confirming", lang)
+                    : tx(
+                        isEmptyMedList ? "dailyMed.confirmEmpty" : "dailyMed.confirmSame",
+                        lang,
+                      )}
+                </Button>
+                {/* Secondary outline — escape path. With meds: "Update
+                    medications" (RefreshCw). Without meds: "Add a
+                    medication" (Plus). Both route to the Medications
+                    profile tab. */}
+                <Button
+                  variant="outline"
+                  onClick={handleGoToProfile}
+                  className="gap-2"
+                >
+                  {isEmptyMedList ? (
+                    <Plus className="h-4 w-4" />
+                  ) : (
+                    <RefreshCw className="h-4 w-4" />
+                  )}
+                  {tx(
+                    isEmptyMedList ? "dailyMed.addMedication" : "dailyMed.update",
+                    lang,
+                  )}
+                </Button>
+              </DialogFooter>
+            </>
+          )
+        })()}
       </DialogContent>
     </Dialog>
   );

@@ -281,11 +281,23 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
   "medReminder.update": { en: "Update medications", tr: "İlaçları güncelle" },
   "dailyMed.title": { en: "Is your medication list current?", tr: "İlaç Listen Güncel mi?" },
   "dailyMed.description": {
-    en: "So I can give you the right recommendations — has anything changed in your medications since yesterday?",
-    tr: "Sana doğru öneriler verebilmem için ilaçlarında dünden bu yana bir değişiklik oldu mu?",
+    en: "Has anything changed with your medications since your last visit?",
+    tr: "Uygulamaya son girişinizden beri ilaçlarınızda bir değişiklik oldu mu?",
+  },
+  // F-MEDDAILY-UI-002: shown when the user has no active medications.
+  // Different question shape — confirm absence rather than asking
+  // about a non-existent list.
+  "dailyMed.descriptionEmpty": {
+    en: "Do you confirm that you're currently not taking any medication or supplement?",
+    tr: "Şu an kullandığın bir ilaç veya takviye olmadığını onaylıyor musun?",
   },
   "dailyMed.confirmSame": { en: "Yes, same medications", tr: "Evet, ilaçlarım aynı" },
+  "dailyMed.confirmEmpty": { en: "Yes, I'm not taking any", tr: "Evet, kullanmıyorum" },
   "dailyMed.update": { en: "Update My Medications", tr: "İlaçlarımı Güncelle" },
+  "dailyMed.addMedication": { en: "Add a medication", tr: "Bir ilaç ekle" },
+  // Section label above the list of currently-active medications in the
+  // daily-confirm modal (only rendered when medications.length > 0).
+  "dailyMed.medsLabel": { en: "Your medications", tr: "Kayıtlı ilaçların" },
   "dailyMed.blockerTitle": { en: "Confirm Your Medications", tr: "İlaçlarınızı Onaylayın" },
   "dailyMed.blockerDesc": {
     en: "For your safety, please confirm your medication list is still current before using the Health Assistant.",
