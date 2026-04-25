@@ -1,6 +1,42 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 26 Nisan 2026 (Session 46 ✅ KAPALI — 11 commit, 5 sprint teması, F-HEALTH-CLAIMS-001 6.2 + 6.2.1 closed)
+> Son güncelleme: 27 Nisan 2026 (Session 47 AÇIK — F-CHAT-SIDEBAR-002 ✅ kapatıldı 8/8 PASS, fbd3d82 + Session 46 PENDING testleri TESTED)
+
+---
+
+### Session 47 — Mini-Opening — F-CHAT-SIDEBAR-002 + Session 46 carry-over (26-27 Nisan 2026) — AÇIK
+
+**Ana iş:** Tek feature commit — Sağlık Asistanı conversation sidebar pin + rename (5-pin limit + LIFO + inline rename). Bonus: Session 46 PENDING smoke testleri PASS — F-SCANNER-001 + F-DRAFT-001 her ikisi de TESTED, Session 46 commit zinciri 11/11 onaylı.
+
+**Durum:** Session 47 hâlâ AÇIK. Sıradaki büyük iş **avukat görüşmesi sonrası F-HEALTH-CLAIMS-001 6.1/6.3/6.4 unlock**. Avukat görüşmesi bu hafta veya gelecek hafta (Mesafeli Satış + Abonelik Sözleşmesi v2 ile birlikte tek seansta).
+
+**1 feature commit + 1 docs commit:**
+
+- [x] `fbd3d82` **F-CHAT-SIDEBAR-002 (P1)** — Conversation sidebar pin + rename feature with 5-pin limit. Migration `supabase/migrations/20260426_query_history_pin_rename.sql` apply edildi (3 kolon: `is_pinned BOOLEAN DEFAULT false NOT NULL`, `custom_title TEXT NULL`, `pinned_at TIMESTAMPTZ NULL`). RLS UPDATE policy mevcut zaten yeterli (field-level gating endpoint katmanında). PATCH endpoint `app/api/query-history/[id]/route.ts` DELETE pattern parite — manual auth + UUID smell test + user-scoped client (no service role). Pin limit 5 server-side: HEAD-mode count query `.eq("is_pinned", true).neq("id", id)` ile patch edilen satır exclude (re-pin no-op). 409 response `{ error: "PIN_LIMIT_REACHED", limit: 5 }`. pinned_at follows is_pinned: NOW() on pin, NULL on unpin. ConversationHistory.tsx refactor: 3-nokta MoreHorizontal trigger replaces Trash2 button, DropdownMenu içinde Pin/PinOff + Pencil + Trash2 (variant="destructive"). Inline rename: title cell `<input maxLength={100}/>` (Enter save / Esc cancel / blur save — ChatGPT/Claude UX). Pinned grup en üstte ("Sabitlenenler"), LIFO sıralama (pinned_at DESC + created_at fallback). Pinned rows MessageSquare → Pin icon swap. Optimistic + rollback + sonner toast for pin and rename (delete flow F-CHAT-SIDEBAR-001'den intact). 409 → distinct toast `ch.pinLimitReached` ("En fazla 5 sohbet sabitleyebilirsin. Önce birini kaldır.") vs generic `ch.pinError`. 12 yeni `ch.*` key (pinned, pin, unpin, rename, menuAria, renamePlaceholder, renamed, renameError, pinSuccess, unpinSuccess, pinError, pinLimitReached). Build: 241 sayfa, 0 error, 0 warning, 11.9s compile. **TESTED ✅ 8/8:** dropdown menu + 3 seçenek / Pin akışı + Sabitlenenler grubu + toast / LIFO sıralama (en son pinlenen üstte, kanıtlandı) / 5-pin limit (6. pinde toast.error "En fazla 5 sohbet sabitleyebilirsin. Önce birini kaldır." + rollback) / Rename inline edit + blur save (Enter şart değil) / ESC cancel (eski başlık geri geliyor) / maxLength 100 (154 karakter yapıştırıldı, input sadece 100 aldı) / Sil regression yok (AlertDialog "Sohbeti sil? Bu işlem geri alınamaz." → Sil → toast "Sohbet silindi" → sidebar update).
+- [x] `[bu commit]` **docs: Session 47 mini-opening** — F-CHAT-SIDEBAR-002 closure entry + Session 46 PENDING smoke tests confirmed (cc47420 + 0461913 → TESTED).
+
+**Bonus — Session 46 carry-over PENDING testleri TESTED:**
+
+- [x] `cc47420` **F-SCANNER-001 (P1)** — TESTED ✅ — Augmentin kutusu OCR happy path PASS, "Görüntü okunamadı — daha net bir fotoğraf dene" localized error confirmed. 6 stage error categorization + Sentry breadcrumb canlıda çalışıyor. PROGRESS.md ve CLAUDE.md PENDING işaretleri TESTED'a güncellendi.
+- [x] `0461913` **F-DRAFT-001 (P1)** — TESTED ✅ — Aspirin draft Medications ↔ Takviyeler tab değişiminde restore oldu. SessionStorage `doctopal:profile:medicationAdd:draft:{userId}` userId-suffix pattern KVKK çoklu-kullanıcı guard'ı çalışıyor.
+
+**Sonuç:**
+- F-CHAT-SIDEBAR-002 ✅ CLOSED — 8/8 smoke test PASS, 0 bug, 0 revert.
+- Session 46 commit zinciri **11/11 TESTED** (önceden 9/11 TESTED + 2 PENDING idi).
+- Build temiz (tsc 0 error, Next.js 0 warning, 241 sayfa prerendered).
+- Plan-first discipline korundu: keşif (2 paralel Explore agent) → plan dosyası → kullanıcı onay + 3 revize → SQL apply → kod → smoke test → commit + push.
+
+**Manuel adım (kullanıcı Supabase Studio — ✅ DONE):**
+- `supabase/migrations/20260426_query_history_pin_rename.sql` apply (F-CHAT-SIDEBAR-002 schema). Verify query 3 satır döndü (is_pinned/custom_title/pinned_at).
+
+**Session 47 devamı (avukat-gated kalan büyük iş):**
+
+P1 (lawyer-gated):
+- F-HEALTH-CLAIMS-001 6.1 — Prompt centralize (supplement-check / anti-inflammatory / daily-care-plan inline → lib/prompts.ts) + EFSA whitelist (lib/efsa-approved-claims.ts) + output filter Layer 3 extend (~3-4h)
+- F-HEALTH-CLAIMS-001 6.3 — Hardcoded string fix (cortisol/energy + i18n example sorular, ~1h)
+- F-HEALTH-CLAIMS-001 6.4 — query_history retention strategy (opsiyonel, "no-op" cevabı gelirse SKIP)
+
+P2 + P3 + ürün enrichment + tech debt + Iyzico carry-over → CLAUDE.md Session 47 entry'sine bakınız (yeniden listelemiyorum).
 
 ---
 

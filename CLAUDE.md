@@ -1029,8 +1029,8 @@ Technical debt carry-over:
 |---|---|---|---|
 | `ab52cf0` | F-AUTH-003 — email verification resend button + rate-limited cooldown | P0 | ✅ TESTED |
 | `d17e644` | F-SAFETY-002.3 — ask-doctor mailto fallback modal | P1 | ✅ TESTED |
-| `cc47420` | F-SCANNER-001 — OCR error categorization + observability + timeout | P1 | ⏳ PENDING |
-| `0461913` | F-DRAFT-001 — medication + allergy add form draft persistence | P1 | ⏳ PENDING |
+| `cc47420` | F-SCANNER-001 — OCR error categorization + observability + timeout | P1 | ✅ TESTED |
+| `0461913` | F-DRAFT-001 — medication + allergy add form draft persistence | P1 | ✅ TESTED |
 | `faff122` | docs: mid-session checkpoint | meta | — |
 | `82953b5` | F-CHECKIN-UI-001 — daily check-in modal redesign (bottom sheet, hybrid auto-advance, pulse icon) | UX | ✅ TESTED |
 | `d6aa0db` | F-MEDDAILY-UI-001 — daily medication confirmation modal redesign (primary CTA, warmer tone, pill icon) | UX | ✅ TESTED |
@@ -1045,11 +1045,11 @@ Sign-up success sonrası "Email tekrar gönder" butonu + login'de "Email not con
 #### F-SAFETY-002.3 (P1) `d17e644` — TESTED ✅
 Opera GX / PWA silent mailto fail → deterministik AskDoctorModal (her click açılır). Dialog reuse + `navigator.clipboard.writeText` + optional doktor email prepend + native mailto retry + always-visible amber hint. Banner `onAskDoctor` prop signature dokunulmadı (backward-compat). 11 yeni `safety.askDoctor.*` key.
 
-#### F-SCANNER-001 (P1) `cc47420` — ⏳ PENDING
-6 stage error categorization (auth / rate-check / body-parse / image-validate / claude-call / response-parse / success-envelope) + error shape `{ error, code, stage, detail }` + Sentry captureException + breadcrumb (image base64 LOG'LANMAZ / KVKK) + parsed.error blocked-envelope detection (422 consent_blocked / ocr_failed) + `maxDuration = 50` + AbortController 55s + dev-gated console.error. 5 yeni `scan.error.*` key.
+#### F-SCANNER-001 (P1) `cc47420` — TESTED ✅ (Session 47'de smoke testi geçti)
+6 stage error categorization (auth / rate-check / body-parse / image-validate / claude-call / response-parse / success-envelope) + error shape `{ error, code, stage, detail }` + Sentry captureException + breadcrumb (image base64 LOG'LANMAZ / KVKK) + parsed.error blocked-envelope detection (422 consent_blocked / ocr_failed) + `maxDuration = 50` + AbortController 55s + dev-gated console.error. 5 yeni `scan.error.*` key. **Smoke test:** Augmentin kutusu OCR happy path PASS, "Görüntü okunamadı — daha net bir fotoğraf dene" localized error confirmed.
 
-#### F-DRAFT-001 (P1) `0461913` — ⏳ PENDING
-`lib/ui/draft-persist.ts` Session 42'de yazılmıştı ama ShellV2'de wire edilmemişti. Lazy `useState(() => readDraft(...))` (flash guard) + per-keystroke persist + success-path clearDraft + cancel'da draft korunur (FamilyHistorySection parity). `userId` suffix multi-user browser KVKK guard. `DRAFT_KEYS.profileAllergyAdd` eklendi.
+#### F-DRAFT-001 (P1) `0461913` — TESTED ✅ (Session 47'de smoke testi geçti)
+`lib/ui/draft-persist.ts` Session 42'de yazılmıştı ama ShellV2'de wire edilmemişti. Lazy `useState(() => readDraft(...))` (flash guard) + per-keystroke persist + success-path clearDraft + cancel'da draft korunur (FamilyHistorySection parity). `userId` suffix multi-user browser KVKK guard. `DRAFT_KEYS.profileAllergyAdd` eklendi. **Smoke test:** Aspirin draft Medications ↔ Takviyeler tab değişiminde restore oldu.
 
 #### F-CHECKIN-UI-001 `82953b5` — TESTED ✅
 Daily check-in modal Apple Health-tarzı redesign. Dialog primitive bırakıldı (custom div backdrop + bottom sheet pattern), 3-satır header (Geri / progress bar / büyük başlık), badge yerine progress bar, hybrid auto-advance (400ms delay + İleri immediate path), framer-motion emoji pop, animate-gentle-pulse step icon, son adım `Tamamla` (auto-save engellenir). Yeni `gentlePulse` keyframe globals.css.
@@ -1077,21 +1077,28 @@ Türkiye TİTCK + EFSA health claims risk audit (3 paralel Explore agent). **Aud
 **Manuel adım (kullanıcı Supabase Studio — ✅ DONE):**
 - `supabase/migrations/20260424_query_history_delete_policy.sql` apply (F-CHAT-SIDEBAR-001 RLS DELETE). Verify `pg_policies WHERE tablename = 'query_history'` → 4 satır.
 
-**Session 47'ye devir:** Yarın ilk iş smoke test pending (F-SCANNER-001 + F-DRAFT-001). Sonra P1 backlog: F-CHAT-SIDEBAR-002 (Pin/Rename) + avukat sonrası F-HEALTH-CLAIMS-001 6.1/6.3/6.4. Iyzico şirket kuruluşu bekleyişi devam.
+**Session 47'ye devir:** Smoke testler PASS (F-SCANNER-001 + F-DRAFT-001 her ikisi TESTED — Session 47'de Augmentin OCR + Aspirin draft restore doğrulandı). F-CHAT-SIDEBAR-002 Session 47'de tek commit'te kapatıldı (8/8 PASS, fbd3d82). Avukat sonrası F-HEALTH-CLAIMS-001 6.1/6.3/6.4 sıraya alındı. Iyzico şirket kuruluşu bekleyişi devam.
 
 ---
 
-### Session 47 — AÇIK — Öncelik Listesi (26 Nisan 2026+)
+### Session 47 — Mini-Opening (26-27 Nisan 2026) — AÇIK
 
-> **Durum: AÇIK.** Henüz başlamadı, Session 47 girişinde aşağıdaki sırayla.
+**Durum:** F-CHAT-SIDEBAR-002 ✅ kapatıldı (gece açılışı). Sıradaki büyük iş **avukat görüşmesi sonrası F-HEALTH-CLAIMS-001 6.1/6.3/6.4**. Session 46'nın 11/11 commit'i artık TESTED (önceden 9/11 + 2 PENDING idi).
 
-**Yarın ilk iş (smoke test pending — kritik):**
-1. **F-SCANNER-001 happy path test** — net ilaç kutusu fotoğrafı → OCR başarılı extraction (brand + dosage + form). Error paths opsiyonel. Fail → Sentry dashboard `scanner` category breadcrumb stage tespiti (auth / rate-check / parse / claude-call) → critical regression ise `git revert cc47420`.
-2. **F-DRAFT-001 quick test** — Medications "+ Ekle" → "Aspirin" → Takviyeler tab → Medications'a dön → "+ Ekle" → "Aspirin" restore. Allergies aynı pattern. Fail → DevTools Application → Storage → Session Storage'da `doctopal:profile:medicationAdd:draft:{userId}` key varlığı kontrol → critical fail ise `git revert 0461913`.
-3. **İkisi de fail ederse**: `git revert 0461913 cc47420 && npx tsc --noEmit && npm run build && git push origin master` (revert anında canlı regression kapanır, root cause Session 48+ ayrı sprint).
+**1 feature commit + 1 docs commit:**
 
-**P1 backlog:**
-- **F-CHAT-SIDEBAR-002** — Pin/Rename feature (3 nokta dropdown menu sağ üst, inline edit modal, pinned grup en üstte ChatGPT-tarzı). Schema: `query_history` yeni alanlar `is_pinned BOOLEAN`, `custom_title TEXT NULL`. Yeni RLS UPDATE policy gerekli (mevcut UPDATE policy zaten var, alan-level kontrol gerekirse).
+- `fbd3d82` **F-CHAT-SIDEBAR-002 (P1) — Conversation sidebar pin + rename with 5-pin limit ✅ TESTED 8/8**
+  - Migration `supabase/migrations/20260426_query_history_pin_rename.sql` apply edildi (3 kolon: `is_pinned BOOLEAN DEFAULT false NOT NULL`, `custom_title TEXT NULL`, `pinned_at TIMESTAMPTZ NULL`). Mevcut UPDATE RLS policy (`auth.uid() = user_id`) yeterli — yeni policy eklenmedi, field-level gating endpoint katmanında.
+  - `app/api/query-history/[id]/route.ts` — DELETE'in altına PATCH eklendi (DELETE pattern parite: manual auth + UUID smell test + user-scoped client, no service role). Body whitelist `{ is_pinned?, custom_title? }`. pinned_at follows is_pinned: NOW() on pin, NULL on unpin. Pin limit 5 server-side: HEAD-mode count `.eq("is_pinned", true).neq("id", id)` ile patch edilen satır exclude (re-pin no-op). 409 `{ error: "PIN_LIMIT_REACHED", limit: 5 }`. 100-char custom_title cap (whitespace-trim, empty → null fallback to query_text).
+  - `components/chat/ConversationHistory.tsx` — 3-nokta `MoreHorizontal` trigger replaces Trash2 button → `DropdownMenu` (Pin/PinOff + Pencil + Trash2 destructive). Inline rename: title cell `<input maxLength={100}/>` (Enter save / Esc cancel / blur save — ChatGPT/Claude UX). Pinned grup en üstte ("Sabitlenenler"), LIFO sıralama (pinned_at DESC + created_at fallback). Pinned satırlarda MessageSquare → Pin icon swap. Optimistic + rollback + sonner toast for pin and rename (delete F-CHAT-SIDEBAR-001 intact). 409 → distinct toast `ch.pinLimitReached` vs generic `ch.pinError`.
+  - 12 yeni `ch.*` i18n key (pinned, pin, unpin, rename, menuAria, renamePlaceholder, renamed, renameError, pinSuccess, unpinSuccess, pinError, pinLimitReached).
+  - **Smoke test 8/8 PASS:** dropdown menu + 3 seçenek / Pin akışı + Sabitlenenler grubu + toast / LIFO sıralama (en son pinlenen üstte, kanıtlandı) / 5-pin limit (6. pinde toast.error "En fazla 5 sohbet sabitleyebilirsin. Önce birini kaldır." + rollback) / Rename + blur save (Enter şart değil) / ESC cancel (eski başlık geri) / maxLength 100 (154 karakter yapıştırıldı, sadece 100 aldı) / Delete regression intact (AlertDialog "Sohbeti sil? Bu işlem geri alınamaz." → toast → sidebar update).
+  - Build: tsc 0 error, Next.js 0 warning, 241 sayfa, 11.9s compile.
+
+- `[bu commit]` **docs: Session 47 mini-opening** — F-CHAT-SIDEBAR-002 closure + Session 46 PENDING tests confirmed (cc47420 + 0461913 → TESTED).
+
+**Sıradaki (kalan P1 — avukat-gated):**
+
 - **F-HEALTH-CLAIMS-001 6.1** — Prompt centralize (supplement-check / anti-inflammatory / daily-care-plan inline → lib/prompts.ts) + EFSA whitelist (lib/efsa-approved-claims.ts) + output filter Layer 3 extend ("destekler+mekanizma" pattern + EFSA cross-check). Avukat soru 1 + 6 cevabı pre-condition. ~3-4h.
 - **F-HEALTH-CLAIMS-001 6.3** — Hardcoded string fix (2 direct claim cortisol/energy + 8 question-format examples). Avukat soru 2 + 3 cevabı pre-condition. ~1h.
 - **F-HEALTH-CLAIMS-001 6.4 (opsiyonel)** — query_history retention strategy. Avukat soru 4 + 5 cevabı pre-condition; "no-op" cevabı gelirse SKIP. ~30dk-2h.
