@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useReducer } from "react";
+import { useReducer, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
   Dumbbell, Loader2, Pill, Utensils, Heart, ShieldAlert,
@@ -17,6 +17,7 @@ import { TodayFocusCard } from "@/components/sports/TodayFocusCard";
 import { SupplementTimer } from "@/components/sports/SupplementTimer";
 import { DrugSafetyCard } from "@/components/sports/DrugSafetyCard";
 import { WeeklyProgressBar } from "@/components/sports/WeeklyProgressBar";
+import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
 
 // ── Types ──
 interface SportsResult {
@@ -148,6 +149,11 @@ export default function SportsPerformancePage() {
   };
 
   const r = state.result;
+
+  // F-HEALTH-CLAIMS-001 6.2: stable responseId tied to the current AI
+  // result so the KVKK objection form on AIDisclaimer can group
+  // feedback per generated plan.
+  const aiResponseId = useMemo(() => crypto.randomUUID(), [r]);
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-background">
@@ -424,6 +430,16 @@ export default function SportsPerformancePage() {
             <RotateCcw className="h-4 w-4" />
             {tx("sports.newPlan", lang)}
           </Button>
+        </div>
+      )}
+
+      {/* F-HEALTH-CLAIMS-001 6.2: AI-generated content disclaimer +
+          KVKK objection form. Renders only when an AI result is on
+          screen (state.result truthy); the generic disclaimer.tool
+          text below stays as the always-visible tool-level fallback. */}
+      {r && (
+        <div className="mt-6">
+          <AIDisclaimer compact={false} responseId={aiResponseId} />
         </div>
       )}
 

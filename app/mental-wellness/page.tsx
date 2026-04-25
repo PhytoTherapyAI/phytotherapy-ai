@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Brain,
   Smile,
@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
+import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
 
 interface MoodRecord {
   id: string;
@@ -80,6 +81,11 @@ export default function MentalWellnessPage() {
   const [saved, setSaved] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+
+  // F-HEALTH-CLAIMS-001 6.2: stable responseId for the AIDisclaimer's
+  // KVKK objection form. Regenerates on every new analysis so that an
+  // objection lodged against analysis #1 isn't confused with #2.
+  const responseId = useMemo(() => crypto.randomUUID(), [analysis]);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -616,6 +622,16 @@ export default function MentalWellnessPage() {
                 </ul>
               </div>
             )}
+          </div>
+        )}
+
+        {/* F-HEALTH-CLAIMS-001 6.2: AI-generated content disclaimer.
+            Always visible when an analysis exists (independent of the
+            showAnalysis collapse), so a folded panel can't hide the
+            "this is AI output, not medical advice" notice. */}
+        {analysis && (
+          <div className="mt-4">
+            <AIDisclaimer compact={false} responseId={responseId} />
           </div>
         )}
       </div>
