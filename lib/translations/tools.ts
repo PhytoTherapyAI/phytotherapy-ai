@@ -279,10 +279,10 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
   },
   "medReminder.yesCurrent": { en: "Yes, still current", tr: "Evet, aynı" },
   "medReminder.update": { en: "Update medications", tr: "İlaçları güncelle" },
-  "dailyMed.title": { en: "Daily Medication Confirmation", tr: "Günlük İlaç Onayı" },
+  "dailyMed.title": { en: "Is your medication list current?", tr: "İlaç Listen Güncel mi?" },
   "dailyMed.description": {
-    en: "Before continuing, please confirm your medications haven't changed since yesterday.",
-    tr: "Devam etmeden önce, ilaçlarınızın dünden bu yana değişmediğini onaylayın.",
+    en: "So I can give you the right recommendations — has anything changed in your medications since yesterday?",
+    tr: "Sana doğru öneriler verebilmem için ilaçlarında dünden bu yana bir değişiklik oldu mu?",
   },
   "dailyMed.confirmSame": { en: "Yes, same medications", tr: "Evet, ilaçlarım aynı" },
   "dailyMed.update": { en: "Update My Medications", tr: "İlaçlarımı Güncelle" },

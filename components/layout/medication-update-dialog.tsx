@@ -342,7 +342,13 @@ export function MedicationUpdateDialog() {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className={mode === "15day" ? "sm:max-w-lg max-h-[85vh] overflow-y-auto" : "sm:max-w-md"}
+        className={
+          mode === "15day"
+            ? "sm:max-w-lg max-h-[85vh] overflow-y-auto"
+            : mode === "daily"
+              ? "sm:max-w-md rounded-3xl"
+              : "sm:max-w-md"
+        }
         showCloseButton={mode === "daily"}
       >
         {/* ============= 30-DAY MODE: Mini Onboarding ============= */}
@@ -666,33 +672,46 @@ export function MedicationUpdateDialog() {
         )}
 
         {/* ============= DAILY MODE: Quick Confirm ============= */}
+        {/* F-MEDDAILY-UI-001: warmer tone + primary "Evet, aynı" CTA
+            (the path 99% of users take every day) + Pill icon in a
+            soft emerald roundel for visual weight. 30-day and 15-day
+            blocks above intentionally untouched — those are mandatory
+            flows with their own UX contracts. */}
         {mode === "daily" && (
           <>
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Pill className="h-5 w-5 text-primary" />
-                {tx("dailyMed.title", lang)}
-              </DialogTitle>
-              <DialogDescription>
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 dark:bg-emerald-950/30 shrink-0">
+                  <Pill className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                </span>
+                <DialogTitle className="text-lg">
+                  {tx("dailyMed.title", lang)}
+                </DialogTitle>
+              </div>
+              <DialogDescription className="pt-1 leading-relaxed">
                 {tx("dailyMed.description", lang)}
               </DialogDescription>
             </DialogHeader>
 
             <DialogFooter className="flex-col gap-2 sm:flex-row">
+              {/* "Yes, same medications" — primary CTA. Daily users
+                  hit this path almost every day; making it the visual
+                  default cuts a beat off the routine. */}
               <Button
-                variant="outline"
                 onClick={handleDailyConfirm}
                 disabled={isConfirming}
-                className="gap-2"
+                className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 {isConfirming
                   ? tx("med.confirming", lang)
                   : tx("dailyMed.confirmSame", lang)}
               </Button>
+              {/* "Update medications" — secondary outline; rarer path. */}
               <Button
+                variant="outline"
                 onClick={handleGoToProfile}
-                className="gap-2 bg-primary hover:bg-primary/90"
+                className="gap-2"
               >
                 <RefreshCw className="h-4 w-4" />
                 {tx("dailyMed.update", lang)}
