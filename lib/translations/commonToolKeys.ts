@@ -1677,6 +1677,11 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
   "sleep.adjust": { en: "Let me adjust", tr: "Düzelteyim" },
   "sleep.whatAffected": { en: "What affected your sleep?", tr: "Uykunu ne etkiledi?" },
   "sleep.howFeel": { en: "How do you feel this morning?", tr: "Bu sabah nasıl hissediyorsun?" },
+  // F-HEALTH-CLAIMS-001 6.2.1: missing key — MorningCard.tsx renders
+  // this label on the "adjust" and "factors" step buttons. Without it
+  // tx() returned the raw key as fallback, so users saw the literal
+  // string "sleep.continue" on the indigo CTA.
+  "sleep.continue": { en: "Continue", tr: "Devam Et" },
   "sleep.microInsight": { en: "Today's Insight", tr: "Bugünün İçgörüsü" },
   "sleep.sleepDebt": { en: "Sleep Debt", tr: "Uyku Borcu" },
   "sleep.sleepDebtHours": { en: "hours behind", tr: "saat geride" },

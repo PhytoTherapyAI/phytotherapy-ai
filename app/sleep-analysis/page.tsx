@@ -79,15 +79,6 @@ export default function SleepAnalysisPage() {
   const [records, setRecords] = useState<SleepRecord[]>([]);
   const [analysis, setAnalysis] = useState<SleepAnalysis | null>(null);
   const [microInsight, setMicroInsight] = useState<string | null>(null);
-
-  // F-HEALTH-CLAIMS-001 6.2: stable responseId tied to whichever AI
-  // surface is showing. Regenerated when either insight changes so a
-  // KVKK objection lodged against today's microInsight isn't conflated
-  // with last week's full analysis.
-  const aiResponseId = useMemo(
-    () => crypto.randomUUID(),
-    [analysis, microInsight],
-  );
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isInsightLoading, setIsInsightLoading] = useState(false);
@@ -95,6 +86,17 @@ export default function SleepAnalysisPage() {
   const [loggedToday, setLoggedToday] = useState(false);
   const [todayFactors, setTodayFactors] = useState<string[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+
+  // F-HEALTH-CLAIMS-001 6.2 (+ 6.2.1 fix): stable responseId tied to
+  // whichever AI surface is showing — full analysis, micro-insight, OR
+  // the morning card's AI sleep-time guess (rendered when the user
+  // hasn't logged today yet). Regenerated when any of those flip so a
+  // KVKK objection isn't conflated across surfaces. Declared after the
+  // `loggedToday` state so the dep array doesn't hit the TDZ.
+  const aiResponseId = useMemo(
+    () => crypto.randomUUID(),
+    [analysis, microInsight, loggedToday],
+  );
 
   const authHeaders = useCallback((): Record<string, string> => {
     const h: Record<string, string> = { "Content-Type": "application/json" };
@@ -341,11 +343,15 @@ export default function SleepAnalysisPage() {
         </>
       )}
 
-      {/* F-HEALTH-CLAIMS-001 6.2: AI-content disclaimer renders only
-          when an actual AI surface is on screen (full analysis or
-          micro-insight). The legacy generic `disclaimer.tool` text
-          below stays as a tool-level fallback. */}
-      {(analysis || microInsight) && (
+      {/* F-HEALTH-CLAIMS-001 6.2 (+ 6.2.1 fix): AI-content disclaimer
+          renders whenever ANY AI surface is on screen — the morning
+          card's sleep-time guess + chip prompts (rendered only when
+          `!loggedToday`), the full analysis, OR the micro-insight.
+          Earlier 6.2 cut omitted the morning-card path which is the
+          first thing visitors see, so the disclaimer was missing on
+          the most-viewed surface of the page. The legacy generic
+          `disclaimer.tool` text below stays as a tool-level fallback. */}
+      {(analysis || microInsight || !loggedToday) && (
         <AIDisclaimer compact={false} responseId={aiResponseId} />
       )}
 
