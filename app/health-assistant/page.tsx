@@ -45,15 +45,34 @@ export default function HealthAssistantPage() {
   } | null>(null);
   const [confirmingDaily, setConfirmingDaily] = useState(false);
   const [chatKey, setChatKey] = useState(0);
+  // F-CHAT-SIDEBAR-001: track which conversation is currently mounted
+  // in ChatInterface so the sidebar can paint the active row marker
+  // and so we can detect deletion of the active row.
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
 
-  const handleSelectConversation = (query: string, response: string | null) => {
+  const handleSelectConversation = (id: string, query: string, response: string | null) => {
+    setActiveConversationId(id);
     setLoadConversation({ query, response });
   };
 
-  const handleNewConversation = () => {
+  const handleNewConversation = useCallback(() => {
+    setActiveConversationId(null);
     setLoadConversation(null);
     setChatKey((prev) => prev + 1);
-  };
+    // Strip the ?q= deep-link param if it's still in the URL — leaving
+    // it would re-seed ChatInterface with the old query on refresh.
+    if (urlQuery) {
+      router.replace("/health-assistant", { scroll: false });
+    }
+  }, [router, urlQuery]);
+
+  // F-CHAT-SIDEBAR-001: when the user deletes the active conversation
+  // from the sidebar, we need to clear the chat surface. Sidebar tells
+  // us via wasActive=true; we just funnel into the existing "new chat"
+  // reset flow.
+  const handleConversationDeleted = useCallback((_id: string, wasActive: boolean) => {
+    if (wasActive) handleNewConversation();
+  }, [handleNewConversation]);
 
   // Show daily blocker
   const showDailyBlocker =
@@ -99,6 +118,8 @@ export default function HealthAssistantPage() {
             onSelectConversation={handleSelectConversation}
             onNewConversation={handleNewConversation}
             sidebar
+            currentQueryId={activeConversationId}
+            onDelete={handleConversationDeleted}
           />
         </div>
       )}
@@ -151,6 +172,8 @@ export default function HealthAssistantPage() {
                 <ConversationHistory
                   onSelectConversation={handleSelectConversation}
                   onNewConversation={handleNewConversation}
+                  currentQueryId={activeConversationId}
+                  onDelete={handleConversationDeleted}
                 />
               </div>
             )}

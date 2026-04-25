@@ -944,6 +944,29 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
   "ch.thisWeek": { en: "This Week", tr: "Bu Hafta" },
   "ch.older": { en: "Older", tr: "Daha Eski" },
   "ch.newChat": { en: "New chat", tr: "Yeni sohbet" },
+  // F-CHAT-SIDEBAR-001 — temporal grouping replaces "Bu Hafta" / "Daha
+  // Eski" with the more familiar 7d / 30d windows used by ChatGPT,
+  // Gemini, etc. Older buckets fold into "Last 30 Days" — the sidebar
+  // limits to 30 conversations anyway, so anything beyond falls off
+  // naturally and we don't need an "older than 30" group.
+  "ch.last7Days": { en: "Last 7 Days", tr: "Son 7 Gün" },
+  "ch.last30Days": { en: "Last 30 Days", tr: "Son 30 Gün" },
+  // Destructive confirm shown when the Trash2 button is pressed.
+  "ch.deleteConfirmTitle": { en: "Delete conversation?", tr: "Sohbeti sil?" },
+  "ch.deleteConfirmDesc": {
+    en: "This action cannot be undone.",
+    tr: "Bu işlem geri alınamaz.",
+  },
+  "ch.deleteCancel": { en: "Cancel", tr: "İptal" },
+  "ch.deleteConfirmAction": { en: "Delete", tr: "Sil" },
+  // Toast feedback after a successful / failed delete round-trip.
+  "ch.deleted": { en: "Conversation deleted", tr: "Sohbet silindi" },
+  "ch.deleteError": {
+    en: "Couldn't delete — try again",
+    tr: "Silinemedi, tekrar dene",
+  },
+  // Aria label for the Trash2 hover button.
+  "ch.deleteAria": { en: "Delete this conversation", tr: "Bu sohbeti sil" },
   "history.noFavorites": { en: "No favorites yet", tr: "Henüz favori eklemediniz" },
   "history.noQueries": { en: "Your queries will appear here", tr: "Sorularınız burada görünecek" },
   "vital.notesPlaceholder": { en: "e.g., After meal", tr: "ör. Yemekten sonra" },
