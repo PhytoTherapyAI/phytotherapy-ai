@@ -1,10 +1,39 @@
 // © 2026 DoctoPal — All Rights Reserved
+//
+// F-CHECKIN-UI-001: redesign — Apple Health-leaning premium feel.
+//
+// Changes vs the original Dialog-primitive version:
+//   - Dropped shadcn `Dialog` in favour of the AddVitalDialog custom
+//     div pattern (backdrop + bottom-sheet on mobile, centered on
+//     desktop). The Radix Dialog override path required `!important`
+//     class chains and was brittle on iOS Safari + PWA.
+//   - Header simplified: { back / step icon, X } row, then a
+//     full-width thin progress bar, then the question title in a
+//     larger weight. Step badge removed (the bar already conveys
+//     "1/4" implicitly).
+//   - Emoji buttons gain a framer-motion `whileTap` pop (spring back
+//     to 1) and a stronger selected state (ring + bg + scale).
+//   - Auto-advance is hybrid: clicking an emoji parks the user on
+//     the selected state for 400 ms (so the pop + ring animation can
+//     play visibly), then advances. Impatient users can hit "İleri"
+//     immediately to skip the wait — both paths produce the same
+//     setStep(s+1). Step 4 (last) does NOT auto-advance — saving
+//     someone's check-in without an explicit confirmation tap is the
+//     wrong default.
+//   - "İleri" is a filled emerald primary CTA; disabled until the
+//     current step has an answer. Last step swaps the label to
+//     "Tamamla" (checkin.complete) and triggers handleSave.
+//   - "Geri" is a small ghost link in the header (only visible when
+//     step > 0). "Sonra" stays in the footer left as the dismiss
+//     escape hatch.
+//   - The current step's icon emoji gets the pre-existing
+//     `.animate-pulse-glow` class (defined in app/globals.css) so
+//     each step feels alive without adding a new keyframe.
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle,
-} from "@/components/ui/dialog"
+import { motion } from "framer-motion"
+import { ChevronLeft, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
@@ -31,6 +60,10 @@ const QUESTIONS = [
 ]
 
 type CheckInField = "energy_level" | "sleep_quality" | "mood" | "bloating"
+
+// Hybrid auto-advance delay. Long enough to see the selected ring +
+// pop play; short enough that confident users don't feel held up.
+const AUTO_ADVANCE_MS = 400
 
 export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
   const [open, setOpen] = useState(false)
@@ -79,18 +112,15 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
   useEffect(() => {
     if (!shouldOpen) return
 
-    // Check if med dialog is currently active
     let medDialogActive = false
     const markActive = () => { medDialogActive = true }
     window.addEventListener("med-dialog-will-open", markActive)
 
-    // If med dialog closes, open check-in after short delay
     const onMedClosed = () => {
       setTimeout(() => setOpen(true), 500)
     }
     window.addEventListener("med-dialog-closed", onMedClosed)
 
-    // If no med dialog fires within 1.5s, open check-in
     const fallback = setTimeout(() => {
       if (!medDialogActive) {
         setOpen(true)
@@ -104,7 +134,7 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
     }
   }, [shouldOpen])
 
-  // Listen for external "open-checkin" event (from Dashboard button, Calendar, etc.)
+  // Listen for external "open-checkin" event (Dashboard button, Calendar, etc.)
   useEffect(() => {
     const handler = () => {
       if (!alreadyDone) {
@@ -117,12 +147,40 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
     return () => window.removeEventListener("open-checkin", handler)
   }, [alreadyDone])
 
+  const handleDismiss = useCallback(() => {
+    const today = new Date().toISOString().split("T")[0]
+    sessionStorage.setItem("checkin-dismissed-" + today, "true")
+    setOpen(false)
+  }, [])
+
+  // Escape key handler — Dialog primitive used to give us this for
+  // free; the custom div pattern owns it now.
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleDismiss()
+    }
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
+  }, [open, handleDismiss])
+
   const handleSelect = (value: number) => {
     const field = QUESTIONS[step].key
-    setValues(prev => ({ ...prev, [field]: value }))
+    setValues((prev) => ({ ...prev, [field]: value }))
 
+    // Hybrid auto-advance: don't auto-advance from the last step —
+    // saving someone's full check-in needs an explicit "Tamamla" tap.
     if (step < QUESTIONS.length - 1) {
-      setTimeout(() => setStep(s => Math.min(s + 1, QUESTIONS.length - 1)), 300)
+      window.setTimeout(() => {
+        setStep((s) => Math.min(s + 1, QUESTIONS.length - 1))
+      }, AUTO_ADVANCE_MS)
+    }
+  }
+
+  const handleAdvance = () => {
+    // Manual "İleri" path — same effect as auto-advance but immediate.
+    if (step < QUESTIONS.length - 1) {
+      setStep((s) => s + 1)
     }
   }
 
@@ -154,101 +212,154 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
     }
   }
 
-  const handleDismiss = () => {
-    const today = new Date().toISOString().split("T")[0]
-    sessionStorage.setItem("checkin-dismissed-" + today, "true")
-    setOpen(false)
-  }
-
   if (alreadyDone) return null
+  if (!open) return null
 
   const currentQ = QUESTIONS[Math.min(step, QUESTIONS.length - 1)]
-  const allAnswered = Object.values(values).every(v => v !== null)
+  const allAnswered = Object.values(values).every((v) => v !== null)
   const isLastStep = step === QUESTIONS.length - 1
+  const currentValue = values[currentQ.key]
+  const hasSelection = currentValue !== null
+  const progressPct = ((step + 1) / QUESTIONS.length) * 100
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { if (!v) handleDismiss() }}>
-      <DialogContent className="max-w-sm">
-        <DialogHeader>
-          <DialogTitle className="text-center text-lg">
-            {tx("checkin.title", lang)}
-          </DialogTitle>
-          <p className="text-center text-sm text-muted-foreground">
-            {tx("checkin.subtitle", lang)}
-          </p>
-        </DialogHeader>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        onClick={handleDismiss}
+        aria-hidden
+      />
 
-        {/* Progress dots */}
-        <div className="flex justify-center gap-2 py-2">
-          {QUESTIONS.map((_, i) => (
-            <div
-              key={i}
-              className={`h-2 w-2 rounded-full transition-colors ${
-                i === step ? "bg-primary" : i < step && values[QUESTIONS[i].key] !== null ? "bg-primary/50" : "bg-muted"
-              }`}
-            />
-          ))}
+      {/* Modal — bottom sheet on mobile, centered card on sm+ */}
+      <div
+        className="relative w-full max-w-md bg-card shadow-2xl border mx-0 sm:mx-4 max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-0 sm:zoom-in-95 fade-in-0 duration-200"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="checkin-title"
+      >
+        {/* Mobile drag-handle */}
+        <div className="flex justify-center pt-3 sm:hidden">
+          <div className="h-1 w-10 rounded-full bg-muted-foreground/20" />
         </div>
 
-        {/* Current question */}
-        <div className="py-4 text-center">
-          <span className="text-3xl">{currentQ.icon}</span>
-          <h3 className="mt-2 text-base font-medium">
-            {tx(currentQ.titleKey, lang)}
-          </h3>
-        </div>
-
-        {/* Emoji options */}
-        <div className="flex justify-center gap-3 pb-2">
-          {EMOJI_OPTIONS.map((opt) => (
+        <div className="p-6 sm:p-8">
+          {/* ── Header row 1: Geri (left) + X (right) ── */}
+          <div className="flex items-center justify-between min-h-[24px]">
+            {step > 0 ? (
+              <button
+                type="button"
+                onClick={() => setStep((s) => s - 1)}
+                className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+                aria-label={tx("checkin.back", lang)}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                {tx("checkin.back", lang)}
+              </button>
+            ) : (
+              <span aria-hidden />
+            )}
             <button
-              key={opt.value}
-              onClick={() => handleSelect(opt.value)}
-              className={`flex flex-col items-center gap-1 rounded-xl p-3 transition-all hover:bg-primary/10 ${
-                values[currentQ.key] === opt.value
-                  ? "bg-primary/15 ring-2 ring-primary scale-110"
-                  : ""
-              }`}
+              type="button"
+              onClick={handleDismiss}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              aria-label={tx("checkin.later", lang)}
             >
-              <span className="text-2xl">{opt.emoji}</span>
-              <span className="text-[10px] text-muted-foreground">
-                {tx(opt.labelKey, lang)}
-              </span>
+              <X className="h-5 w-5" />
             </button>
-          ))}
-        </div>
+          </div>
 
-        {/* Navigation */}
-        <div className="flex items-center justify-between pt-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => step > 0 ? setStep(s => s - 1) : handleDismiss()}
-          >
-            {step > 0 ? tx("checkin.back", lang) : tx("checkin.later", lang)}
-          </Button>
+          {/* ── Header row 2: progress bar ── */}
+          <div className="mt-4 h-1 w-full rounded-full bg-emerald-100 dark:bg-emerald-950/40 overflow-hidden">
+            <div
+              className="h-full bg-emerald-500 transition-[width] duration-300 ease-out"
+              style={{ width: `${progressPct}%` }}
+              role="progressbar"
+              aria-valuenow={step + 1}
+              aria-valuemin={1}
+              aria-valuemax={QUESTIONS.length}
+            />
+          </div>
 
-          {isLastStep && allAnswered ? (
-            <Button
-              size="sm"
-              onClick={handleSave}
-              disabled={saving}
-              className="min-w-[100px]"
+          {/* ── Header row 3: pulse icon + big title ── */}
+          <div className="mt-8 text-center">
+            <span
+              className="inline-block text-4xl animate-gentle-pulse motion-reduce:animate-none"
+              aria-hidden
             >
-              {saving ? tx("checkin.saving", lang) : tx("checkin.save", lang)}
-            </Button>
-          ) : (
+              {currentQ.icon}
+            </span>
+            <h2
+              id="checkin-title"
+              className="mt-3 text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100"
+            >
+              {tx(currentQ.titleKey, lang)}
+            </h2>
+          </div>
+
+          {/* ── Emoji row ── */}
+          <div className="mt-8 flex justify-center gap-3 sm:gap-4">
+            {EMOJI_OPTIONS.map((opt) => {
+              const selected = currentValue === opt.value
+              return (
+                <motion.button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => handleSelect(opt.value)}
+                  whileTap={{ scale: 1.2 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  className={`flex flex-col items-center gap-1 rounded-2xl p-3 transition-all duration-150 hover:scale-110 motion-reduce:hover:scale-100 ${
+                    selected
+                      ? "bg-emerald-50 dark:bg-emerald-950/30 ring-2 ring-emerald-500"
+                      : "hover:bg-emerald-50/60 dark:hover:bg-emerald-950/20"
+                  }`}
+                  aria-pressed={selected}
+                  aria-label={tx(opt.labelKey, lang)}
+                >
+                  <span className="text-3xl leading-none">{opt.emoji}</span>
+                  <span className="text-[10px] text-muted-foreground">
+                    {tx(opt.labelKey, lang)}
+                  </span>
+                </motion.button>
+              )
+            })}
+          </div>
+
+          {/* ── Footer: Sonra (left) + İleri/Tamamla (right) ── */}
+          <div className="mt-10 flex items-center justify-between">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => step < QUESTIONS.length - 1 && setStep(s => s + 1)}
-              disabled={values[currentQ.key] === null}
+              onClick={handleDismiss}
+              className="text-muted-foreground"
             >
-              {tx("checkin.next", lang)}
+              {tx("checkin.later", lang)}
             </Button>
-          )}
+
+            {isLastStep ? (
+              <Button
+                size="sm"
+                onClick={handleSave}
+                disabled={saving || !allAnswered}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+              >
+                {saving
+                  ? tx("checkin.saving", lang)
+                  : tx("checkin.complete", lang)}
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                onClick={handleAdvance}
+                disabled={!hasSelection}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+              >
+                {tx("checkin.next", lang)}
+              </Button>
+            )}
+          </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   )
 }

@@ -497,6 +497,10 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
   "checkin.next": { en: "Next", tr: "İleri" },
   "checkin.later": { en: "Later", tr: "Sonra" },
   "checkin.save": { en: "Save", tr: "Kaydet" },
+  // F-CHECKIN-UI-001: last-step CTA — "Tamamla" frames the action as
+  // wrapping up the 4-question flow, not just persisting a single
+  // value. Replaces the generic "Save" label on step 4.
+  "checkin.complete": { en: "Complete", tr: "Tamamla" },
   "checkin.saving": { en: "Saving...", tr: "Kaydediliyor..." },
   "summary.hi": { en: "Hi", tr: "Merhaba" },
   "summary.todayOverview": { en: "Your daily health overview", tr: "Günlük sağlık özeti" },

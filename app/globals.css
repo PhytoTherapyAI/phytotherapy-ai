@@ -242,6 +242,15 @@ html.transitioning *::after {
   50% { box-shadow: 0 0 0 8px rgba(60, 122, 82, 0); }
 }
 
+/* F-CHECKIN-UI-001: subtle opacity+scale pulse for the active step icon
+ * in MicroCheckIn. Distinct from `pulseGlow` (box-shadow ring) — this
+ * animates the element itself. Slow + low-amplitude so it reads as
+ * "alive" rather than attention-grabbing. */
+@keyframes gentlePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.05); }
+}
+
 @keyframes gentleSway {
   0%, 100% { transform: rotate(-1deg); }
   50% { transform: rotate(1deg); }
@@ -295,6 +304,10 @@ html.transitioning *::after {
 
 .animate-pulse-glow {
   animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-gentle-pulse {
+  animation: gentlePulse 2.5s ease-in-out infinite;
 }
 
 /* Staggered children animation */
