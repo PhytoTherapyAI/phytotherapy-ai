@@ -453,6 +453,31 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
           m.id === assistantId ? { ...m, isStreaming: false } : m
         )
       );
+
+      // F-CHAT-SIDEBAR-003: fire-and-forget auto-title generation.
+      // /api/chat returns the conversation row id via X-Conversation-Id;
+      // the auto-title endpoint reads the row, asks haiku for a 3-4
+      // word title, and writes it to custom_title. Failures are silent
+      // — no UI signal — because the worst case is the row keeps its
+      // raw query_text fallback (which is already what users see today).
+      // After a successful (or skipped) call we dispatch
+      // "conversation-updated" so any mounted ConversationHistory
+      // sidebar refreshes its list to pick up the new title.
+      const conversationId = res.headers.get("X-Conversation-Id");
+      if (conversationId && session?.access_token) {
+        fetch(`/api/query-history/${conversationId}/auto-title`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+          .then(() => {
+            window.dispatchEvent(new CustomEvent("conversation-updated"));
+          })
+          .catch((err) => {
+            if (process.env.NODE_ENV === "development") {
+              console.warn("[auto-title] trigger failed:", err);
+            }
+          });
+      }
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error("Chat error:", error);
       setMessages((prev) =>

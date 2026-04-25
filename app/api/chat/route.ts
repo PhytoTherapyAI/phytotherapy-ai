@@ -622,6 +622,42 @@ This rule exists because giving dosage advice without knowing the user's medicat
     const encoder = new TextEncoder();
     const reader = stream.getReader();
     const chatLang = lang === "tr" ? "tr" as const : "en" as const;
+
+    // F-CHAT-SIDEBAR-003: pre-stream INSERT so we can hand the
+    // conversation_id back to the client via X-Conversation-Id header
+    // BEFORE the response body starts streaming. ChatInterface uses
+    // that id to fire the auto-title endpoint after the stream ends.
+    //
+    // We insert with empty response_text and UPDATE it after the AI
+    // response is filtered (PHASE 4 below). Two DB calls instead of
+    // one, but that's the price of exposing the id pre-stream.
+    //
+    // INSERT failures are swallowed — chat still succeeds, we just
+    // skip the auto-title trigger (header omitted).
+    let conversationId: string | null = null;
+    if (userId) {
+      try {
+        const supabase = createServerClient();
+        const { data: inserted, error: insertErr } = await supabase
+          .from("query_history")
+          .insert({
+            user_id: userId,
+            query_text: message,
+            query_type: "general" as const,
+            response_text: "", // filled in post-stream UPDATE below
+          })
+          .select("id")
+          .single();
+        if (insertErr) {
+          console.warn("[chat] pre-stream INSERT failed:", insertErr.message);
+        } else if (inserted?.id) {
+          conversationId = inserted.id as string;
+        }
+      } catch (err) {
+        console.warn("[chat] pre-stream INSERT threw:", err);
+      }
+    }
+
     const readable = new ReadableStream({
       async start(controller) {
         try {
@@ -655,16 +691,29 @@ This rule exists because giving dosage advice without knowing the user's medicat
           }
           controller.close();
 
-          // Save query + FILTERED response to history (fire and forget)
+          // F-CHAT-SIDEBAR-003: post-stream UPDATE of the row we
+          // pre-inserted above. Fall back to INSERT if the pre-stream
+          // INSERT failed (conversationId === null) so we never lose
+          // history visibility.
           if (userId && finalResponse.length > 0) {
             try {
               const supabase = createServerClient();
-              await supabase.from("query_history").insert({
-                user_id: userId,
-                query_text: message,
-                query_type: "general" as const,
-                response_text: finalResponse.substring(0, 10000),
-              });
+              if (conversationId) {
+                await supabase
+                  .from("query_history")
+                  .update({
+                    response_text: finalResponse.substring(0, 10000),
+                  })
+                  .eq("id", conversationId)
+                  .eq("user_id", userId); // belt-and-suspenders alongside RLS
+              } else {
+                await supabase.from("query_history").insert({
+                  user_id: userId,
+                  query_text: message,
+                  query_type: "general" as const,
+                  response_text: finalResponse.substring(0, 10000),
+                });
+              }
             } catch {
               // Non-critical — don't fail the response
             }
@@ -685,13 +734,24 @@ This rule exists because giving dosage advice without knowing the user's medicat
       },
     });
 
-    return new Response(readable, {
-      headers: {
-        "Content-Type": "text/plain; charset=utf-8",
-        "Transfer-Encoding": "chunked",
-        "Cache-Control": "no-cache",
-      },
-    });
+    // F-CHAT-SIDEBAR-003: expose conversation_id to ChatInterface so
+    // it can fire the auto-title endpoint after the stream completes.
+    // Header is omitted when the pre-stream INSERT failed — clients
+    // already handle a missing header by skipping the auto-title call.
+    const responseHeaders: Record<string, string> = {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Transfer-Encoding": "chunked",
+      "Cache-Control": "no-cache",
+    };
+    if (conversationId) {
+      responseHeaders["X-Conversation-Id"] = conversationId;
+      // Browsers don't expose custom response headers to fetch()
+      // unless they're explicitly listed in Access-Control-Expose-Headers.
+      // Same-origin requests don't need this, but listing it keeps the
+      // contract honest for any future cross-origin embed.
+      responseHeaders["Access-Control-Expose-Headers"] = "X-Conversation-Id";
+    }
+    return new Response(readable, { headers: responseHeaders });
   } catch (error) {
     // This should rarely be reached now — only for truly unexpected errors
     console.error("Chat API unexpected error:", error);

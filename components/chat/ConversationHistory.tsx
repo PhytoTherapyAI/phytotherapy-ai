@@ -149,6 +149,27 @@ export function ConversationHistory({
     }
   }, [sidebar, isOpen, fetchHistory])
 
+  // F-CHAT-SIDEBAR-003 — refresh when ChatInterface signals a new
+  // conversation (or an existing row's title was updated by the
+  // auto-title endpoint). The custom event fires after the chat
+  // stream completes and the auto-title POST resolves; we just
+  // re-pull the list so the new row + its title appear without F5.
+  //
+  // The handler closure is created inside the effect, so each
+  // mount/unmount pair adds and removes the same reference — strict
+  // mode's double-mount cleans up correctly. fetchHistory is itself
+  // a useCallback, so this effect re-binds only when auth changes
+  // (the dep that drives fetchHistory's identity).
+  useEffect(() => {
+    const handler = () => {
+      fetchHistory()
+    }
+    window.addEventListener("conversation-updated", handler)
+    return () => {
+      window.removeEventListener("conversation-updated", handler)
+    }
+  }, [fetchHistory])
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
     const now = new Date()
