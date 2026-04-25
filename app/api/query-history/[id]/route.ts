@@ -29,6 +29,11 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 // regex; we don't need a full parser, just a smell test.
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
+// F-CHAT-SIDEBAR-002: max number of conversations a user can pin at
+// once. ChatGPT goes with 3; we land at 5 since the sidebar already
+// caps at 30 rows so a slightly bigger active set is comfortable.
+const PIN_LIMIT = 5
+
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -83,4 +88,131 @@ export async function DELETE(
   }
 
   return NextResponse.json({ ok: true, deletedId: id })
+}
+
+// F-CHAT-SIDEBAR-002: per-conversation PATCH for pin + rename.
+//
+// Field whitelist: { is_pinned?: boolean, custom_title?: string | null }.
+// Anything else in the body is silently ignored — we never trust the
+// client to choose which columns to update. RLS still gates ownership
+// (existing UPDATE policy: auth.uid() = user_id) and we add a runtime
+// .eq(user_id) for defense-in-depth.
+//
+// Pin semantics:
+//   - is_pinned: true  → pinned_at = NOW()  (LIFO ordering at the top)
+//   - is_pinned: false → pinned_at = NULL   (drop back to temporal group)
+//
+// Pin limit: counted server-side BEFORE the update. We exclude the row
+// being patched so re-pinning an already-pinned row is a no-op (just
+// refreshes pinned_at to "now") and never trips the limit. Unpin is
+// always allowed.
+//
+// As with DELETE, we deliberately use the user-scoped client (anon key
+// + caller's bearer token) — service role would bypass RLS and turn a
+// future policy regression into a silent open door.
+interface PatchBody {
+  is_pinned?: boolean
+  custom_title?: string | null
+}
+
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> },
+) {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    return NextResponse.json(
+      { error: "Server misconfiguration" },
+      { status: 500 },
+    )
+  }
+
+  const authHeader = request.headers.get("authorization")
+  if (!authHeader?.startsWith("Bearer ")) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+
+  const { id } = await context.params
+  if (!id || !UUID_RE.test(id)) {
+    return NextResponse.json({ error: "Invalid id" }, { status: 400 })
+  }
+
+  let body: PatchBody
+  try {
+    body = (await request.json()) as PatchBody
+  } catch {
+    return NextResponse.json({ error: "Invalid body" }, { status: 400 })
+  }
+
+  // Build the patch payload from whitelisted fields only.
+  const patch: Record<string, unknown> = {}
+  if (typeof body.is_pinned === "boolean") {
+    patch.is_pinned = body.is_pinned
+    // pinned_at follows is_pinned — NOW() on pin, NULL on unpin.
+    patch.pinned_at = body.is_pinned ? new Date().toISOString() : null
+  }
+  if ("custom_title" in body) {
+    const raw = typeof body.custom_title === "string" ? body.custom_title.trim() : null
+    if (raw && raw.length > 100) {
+      return NextResponse.json({ error: "Title too long (max 100)" }, { status: 400 })
+    }
+    // Empty string collapses to null — null is the "use query_text"
+    // signal in the UI.
+    patch.custom_title = raw && raw.length > 0 ? raw : null
+  }
+
+  if (Object.keys(patch).length === 0) {
+    return NextResponse.json({ error: "No fields to update" }, { status: 400 })
+  }
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: authHeader } },
+  })
+
+  // Pin-limit pre-check. Only when transitioning to is_pinned=true do
+  // we care; unpin is unconstrained. Excluding the current id means a
+  // re-pin (already pinned) doesn't double-count itself.
+  if (body.is_pinned === true) {
+    const { count, error: countErr } = await supabase
+      .from("query_history")
+      .select("id", { count: "exact", head: true })
+      .eq("is_pinned", true)
+      .neq("id", id)
+    if (countErr) {
+      console.error("[query-history PATCH count]", countErr.code, countErr.message)
+      return NextResponse.json(
+        { error: "Pin check failed", code: countErr.code ?? null },
+        { status: 502 },
+      )
+    }
+    if ((count ?? 0) >= PIN_LIMIT) {
+      return NextResponse.json(
+        {
+          error: "PIN_LIMIT_REACHED",
+          message: `Max ${PIN_LIMIT} conversations can be pinned`,
+          limit: PIN_LIMIT,
+        },
+        { status: 409 },
+      )
+    }
+  }
+
+  const { data, error } = await supabase
+    .from("query_history")
+    .update(patch)
+    .eq("id", id)
+    .select("id, is_pinned, custom_title, pinned_at")
+
+  if (error) {
+    console.error("[query-history PATCH]", error.code, error.message)
+    return NextResponse.json(
+      { error: "Update failed", code: error.code ?? null },
+      { status: 502 },
+    )
+  }
+
+  if (!data || data.length === 0) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 })
+  }
+
+  return NextResponse.json({ ok: true, ...data[0] })
 }

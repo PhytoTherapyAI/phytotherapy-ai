@@ -4,16 +4,30 @@
 //   - Temporal groups: Bugün / Dün / Son 7 Gün / Son 30 Gün
 //   - Active conversation marker (bg-emerald-100, font-semibold)
 //   - Hover state (bg-emerald-50)
-//   - Trash2 button on the right, only visible on hover (group-hover)
 //   - Destructive confirm via Dialog (no AlertDialog primitive in this
 //     project — we recreate the pattern with the standard Dialog +
 //     manual action layout)
 //   - Optimistic delete with rollback on error + sonner toast
 //   - When the active conversation is deleted, the parent is told via
 //     onDelete(id, wasActive=true) so it can clear the chat surface
+//
+// F-CHAT-SIDEBAR-002 — pin + rename overlay on the same surface:
+//   - The single Trash2 hover button is replaced with MoreHorizontal
+//     (3-dot) → DropdownMenu with Pin/Unpin · Rename · Delete.
+//   - Pinned conversations live in a dedicated group at the top of the
+//     list, ordered LIFO by pinned_at (most recently pinned first).
+//   - Pin limit is enforced server-side (5/user) — the UI surfaces 409
+//     responses with a distinct toast (ch.pinLimitReached) so the
+//     rollback isn't silent.
+//   - Rename is inline (the title cell becomes an <input/> when the
+//     row is in edit mode). Enter saves, Escape cancels, blur saves —
+//     mirroring ChatGPT/Claude UX. Empty title clears custom_title back
+//     to null so the query_text fallback shows again.
+//   - Pinned rows swap the MessageSquare icon for a Pin glyph so users
+//     can scan the group at a glance.
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import {
   History,
   MessageSquare,
@@ -22,6 +36,10 @@ import {
   Loader2,
   Plus,
   Trash2,
+  MoreHorizontal,
+  Pin,
+  PinOff,
+  Pencil,
 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -33,6 +51,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
@@ -44,6 +69,9 @@ interface ConversationEntry {
   query_type: string
   response_text: string | null
   created_at: string
+  is_pinned: boolean
+  custom_title: string | null
+  pinned_at: string | null
 }
 
 interface ConversationHistoryProps {
@@ -78,6 +106,14 @@ export function ConversationHistory({
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
 
+  // Rename-flow state (F-CHAT-SIDEBAR-002). `editingId` is also the
+  // open flag for the inline input — when null, the row renders the
+  // normal title text.
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editingTitle, setEditingTitle] = useState("")
+  const [savingRename, setSavingRename] = useState(false)
+  const editInputRef = useRef<HTMLInputElement>(null)
+
   const fetchHistory = useCallback(async () => {
     if (!isAuthenticated || !session?.user?.id) return
 
@@ -86,7 +122,9 @@ export function ConversationHistory({
       const supabase = createBrowserClient()
       const { data, error } = await supabase
         .from("query_history")
-        .select("id, query_text, query_type, response_text, created_at")
+        .select(
+          "id, query_text, query_type, response_text, created_at, is_pinned, custom_title, pinned_at",
+        )
         .eq("user_id", session.user.id)
         .order("created_at", { ascending: false })
         .limit(30)
@@ -134,10 +172,20 @@ export function ConversationHistory({
     return text.substring(0, maxLen).trim() + "..."
   }
 
-  // F-CHAT-SIDEBAR-001 grouping:
-  //   Bugün / Dün / Son 7 Gün (2-7 days back) / Son 30 Gün (8-30 days back).
-  //   Anything older than 30 days falls off naturally — the fetch is
-  //   capped at 30 rows, so we don't render an "older" bucket.
+  // F-CHAT-SIDEBAR-002 — title fallback: custom_title wins, otherwise
+  // we truncate query_text. Trim before checking so an accidental
+  // whitespace-only rename doesn't render as an empty row.
+  const displayTitle = (conv: ConversationEntry) => {
+    const custom = conv.custom_title?.trim()
+    if (custom) return custom
+    return truncate(conv.query_text, 60)
+  }
+
+  // F-CHAT-SIDEBAR-001 grouping: Bugün / Dün / Son 7 Gün / Son 30 Gün.
+  // F-CHAT-SIDEBAR-002 prepends a "Sabitlenenler" group when any rows
+  // are pinned. Within that group we sort by pinned_at DESC (LIFO —
+  // most recently pinned at top), falling back to created_at if the
+  // server didn't populate pinned_at for some reason.
   const groupByDate = (entries: ConversationEntry[]) => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
@@ -148,13 +196,26 @@ export function ConversationHistory({
     const thirtyDaysAgo = new Date(today)
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
+    const pinned = entries
+      .filter((e) => e.is_pinned)
+      .sort((a, b) => {
+        const aT = a.pinned_at ?? a.created_at
+        const bT = b.pinned_at ?? b.created_at
+        return new Date(bT).getTime() - new Date(aT).getTime()
+      })
+    const unpinned = entries.filter((e) => !e.is_pinned)
+
     const groups: { label: string; items: ConversationEntry[] }[] = []
+    if (pinned.length) {
+      groups.push({ label: tx("ch.pinned", lang), items: pinned })
+    }
+
     const todayItems: ConversationEntry[] = []
     const yesterdayItems: ConversationEntry[] = []
     const last7Items: ConversationEntry[] = []
     const last30Items: ConversationEntry[] = []
 
-    for (const entry of entries) {
+    for (const entry of unpinned) {
       const date = new Date(entry.created_at)
       if (date.toDateString() === today.toDateString()) {
         todayItems.push(entry)
@@ -176,14 +237,116 @@ export function ConversationHistory({
     return groups
   }
 
+  // ── Pin flow ───────────────────────────────────────────────────
+  // Optimistic toggle + rollback on error. We snapshot the list first
+  // so a 4xx/5xx response can restore exact ordering. The 409 response
+  // is the pin-limit-reached signal — surface a distinct toast so the
+  // user knows why nothing happened.
+  const handlePin = useCallback(
+    async (id: string, currentlyPinned: boolean) => {
+      if (!session?.access_token) return
+      const willPin = !currentlyPinned
+      const snapshot = conversations
+      const optimisticPinnedAt = willPin ? new Date().toISOString() : null
+
+      setConversations((prev) =>
+        prev.map((c) =>
+          c.id === id ? { ...c, is_pinned: willPin, pinned_at: optimisticPinnedAt } : c,
+        ),
+      )
+
+      try {
+        const res = await fetch(`/api/query-history/${id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ is_pinned: willPin }),
+        })
+
+        if (!res.ok) {
+          setConversations(snapshot)
+          if (res.status === 409) {
+            toast.error(tx("ch.pinLimitReached", lang))
+          } else {
+            toast.error(tx("ch.pinError", lang))
+          }
+          return
+        }
+
+        toast.success(
+          tx(currentlyPinned ? "ch.unpinSuccess" : "ch.pinSuccess", lang),
+        )
+      } catch (err) {
+        console.error("Failed to toggle pin:", err)
+        setConversations(snapshot)
+        toast.error(tx("ch.pinError", lang))
+      }
+    },
+    [conversations, session?.access_token, lang],
+  )
+
+  // ── Rename flow ────────────────────────────────────────────────
+  // The seed value for the input is the current display title. We
+  // truncate query_text to 100 (the API cap) so the user can edit
+  // freely without the server bouncing the request.
+  const startRename = (conv: ConversationEntry) => {
+    setEditingId(conv.id)
+    setEditingTitle(conv.custom_title ?? conv.query_text.slice(0, 100))
+    // Wait one tick so the input mounts before we focus + select.
+    setTimeout(() => editInputRef.current?.select(), 0)
+  }
+
+  const cancelRename = () => {
+    setEditingId(null)
+    setEditingTitle("")
+  }
+
+  const saveRename = useCallback(async () => {
+    if (!editingId || !session?.access_token) return
+    const id = editingId
+    const newTitle = editingTitle.trim().slice(0, 100)
+    const snapshot = conversations
+
+    // Optimistic — empty input clears the rename so the row reverts to
+    // its query_text fallback on the next render.
+    setConversations((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, custom_title: newTitle || null } : c)),
+    )
+    setEditingId(null)
+    setEditingTitle("")
+    setSavingRename(true)
+
+    try {
+      const res = await fetch(`/api/query-history/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ custom_title: newTitle || null }),
+      })
+
+      if (!res.ok) {
+        setConversations(snapshot)
+        toast.error(tx("ch.renameError", lang))
+        return
+      }
+
+      toast.success(tx("ch.renamed", lang))
+    } catch (err) {
+      console.error("Failed to rename conversation:", err)
+      setConversations(snapshot)
+      toast.error(tx("ch.renameError", lang))
+    } finally {
+      setSavingRename(false)
+    }
+  }, [editingId, editingTitle, conversations, session?.access_token, lang])
+
   // ── Delete flow ────────────────────────────────────────────────
   // Optimistic remove + rollback on error. We snapshot the list before
   // mutating so a 4xx/5xx response can restore exact ordering.
-  const requestDelete = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation() // don't trigger the row's select handler
-    setPendingDeleteId(id)
-  }
-
   const confirmDelete = useCallback(async () => {
     if (!pendingDeleteId || !session?.access_token) return
     const idToDelete = pendingDeleteId
@@ -230,6 +393,20 @@ export function ConversationHistory({
     onClickAfter?: () => void,
   ) => {
     const isActive = currentQueryId === conv.id
+    const isEditing = editingId === conv.id
+
+    // The leading icon swaps to a Pin glyph for pinned rows so users
+    // can scan the pinned group at a glance even when the row isn't
+    // grouped (e.g. mid-render before fetchHistory re-orders).
+    const LeadingIcon = conv.is_pinned ? Pin : MessageSquare
+    const leadingIconClass = `mt-0.5 h-3.5 w-3.5 shrink-0 ${
+      isActive
+        ? "text-emerald-700 dark:text-emerald-300"
+        : conv.is_pinned
+          ? "text-emerald-600 dark:text-emerald-400"
+          : "text-muted-foreground"
+    }`
+
     return (
       <div
         key={conv.id}
@@ -239,42 +416,98 @@ export function ConversationHistory({
             : "hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
         }`}
       >
-        <button
-          type="button"
-          onClick={() => {
-            onSelectConversation(conv.id, conv.query_text, conv.response_text)
-            onClickAfter?.()
-          }}
-          className="flex min-w-0 flex-1 items-start gap-2 px-3 py-2 text-left"
-        >
-          <MessageSquare
-            className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${
-              isActive ? "text-emerald-700 dark:text-emerald-300" : "text-muted-foreground"
-            }`}
-          />
-          <div className="min-w-0 flex-1">
-            <p
-              className={`text-xs leading-snug line-clamp-2 ${
-                isActive
-                  ? "font-semibold text-emerald-900 dark:text-emerald-100"
-                  : "font-medium text-foreground/90"
-              }`}
-            >
-              {truncate(conv.query_text, 60)}
-            </p>
-            <p className="mt-0.5 text-[10px] text-muted-foreground">
-              {formatDate(conv.created_at)}
-            </p>
+        {isEditing ? (
+          // Editing mode — no clickable wrapper; the input owns focus.
+          <div className="flex min-w-0 flex-1 items-start gap-2 px-3 py-2">
+            <LeadingIcon className={leadingIconClass} />
+            <div className="min-w-0 flex-1">
+              <input
+                ref={editInputRef}
+                type="text"
+                value={editingTitle}
+                onChange={(e) => setEditingTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault()
+                    saveRename()
+                  } else if (e.key === "Escape") {
+                    e.preventDefault()
+                    cancelRename()
+                  }
+                }}
+                onBlur={saveRename}
+                onClick={(e) => e.stopPropagation()}
+                maxLength={100}
+                placeholder={tx("ch.renamePlaceholder", lang)}
+                disabled={savingRename}
+                className="w-full rounded border border-emerald-300 bg-background px-1.5 py-0.5 text-xs leading-snug focus:outline-none focus:ring-2 focus:ring-emerald-400 disabled:opacity-60 dark:border-emerald-700"
+              />
+              <p className="mt-0.5 text-[10px] text-muted-foreground">
+                {formatDate(conv.created_at)}
+              </p>
+            </div>
           </div>
-        </button>
-        <button
-          type="button"
-          onClick={(e) => requestDelete(conv.id, e)}
-          className="absolute right-1 top-1.5 inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/70 opacity-0 transition-opacity hover:bg-red-100 hover:text-red-600 focus:opacity-100 group-hover:opacity-100 dark:hover:bg-red-950/40 dark:hover:text-red-400"
-          aria-label={tx("ch.deleteAria", lang)}
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              onSelectConversation(conv.id, conv.query_text, conv.response_text)
+              onClickAfter?.()
+            }}
+            className="flex min-w-0 flex-1 items-start gap-2 px-3 py-2 text-left"
+          >
+            <LeadingIcon className={leadingIconClass} />
+            <div className="min-w-0 flex-1">
+              <p
+                className={`text-xs leading-snug line-clamp-2 ${
+                  isActive
+                    ? "font-semibold text-emerald-900 dark:text-emerald-100"
+                    : "font-medium text-foreground/90"
+                }`}
+              >
+                {displayTitle(conv)}
+              </p>
+              <p className="mt-0.5 text-[10px] text-muted-foreground">
+                {formatDate(conv.created_at)}
+              </p>
+            </div>
+          </button>
+        )}
+
+        {!isEditing && (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              aria-label={tx("ch.menuAria", lang)}
+              className="absolute right-1 top-1.5 inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/70 opacity-0 transition-opacity hover:bg-emerald-100 hover:text-emerald-700 focus:opacity-100 group-hover:opacity-100 data-[popup-open]:opacity-100 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300"
+            >
+              <MoreHorizontal className="h-3.5 w-3.5" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" sideOffset={4} className="w-48">
+              <DropdownMenuItem
+                onClick={() => handlePin(conv.id, conv.is_pinned)}
+              >
+                {conv.is_pinned ? (
+                  <PinOff className="mr-1.5" />
+                ) : (
+                  <Pin className="mr-1.5" />
+                )}
+                <span>{tx(conv.is_pinned ? "ch.unpin" : "ch.pin", lang)}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => startRename(conv)}>
+                <Pencil className="mr-1.5" />
+                <span>{tx("ch.rename", lang)}</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => setPendingDeleteId(conv.id)}
+              >
+                <Trash2 className="mr-1.5" />
+                <span>{tx("ch.deleteConfirmAction", lang)}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     )
   }

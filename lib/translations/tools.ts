@@ -967,6 +967,24 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
   },
   // Aria label for the Trash2 hover button.
   "ch.deleteAria": { en: "Delete this conversation", tr: "Bu sohbeti sil" },
+  // F-CHAT-SIDEBAR-002 — pin + rename. The 3-dot menu replaces the
+  // standalone trash button; pinned conversations land in their own
+  // group at the top of the list (LIFO by pinned_at).
+  "ch.pinned": { en: "Pinned", tr: "Sabitlenenler" },
+  "ch.pin": { en: "Pin", tr: "Sabitle" },
+  "ch.unpin": { en: "Unpin", tr: "Sabitlemeyi kaldır" },
+  "ch.rename": { en: "Rename", tr: "Yeniden adlandır" },
+  "ch.menuAria": { en: "Conversation options", tr: "Sohbet seçenekleri" },
+  "ch.renamePlaceholder": { en: "Conversation name", tr: "Sohbet adı" },
+  "ch.renamed": { en: "Renamed", tr: "Adı güncellendi" },
+  "ch.renameError": { en: "Rename failed", tr: "Yeniden adlandırılamadı" },
+  "ch.pinSuccess": { en: "Pinned", tr: "Sabitlendi" },
+  "ch.unpinSuccess": { en: "Unpinned", tr: "Sabitleme kaldırıldı" },
+  "ch.pinError": { en: "Pin failed", tr: "Sabitleme başarısız" },
+  "ch.pinLimitReached": {
+    en: "You can pin up to 5 conversations. Unpin one first.",
+    tr: "En fazla 5 sohbet sabitleyebilirsin. Önce birini kaldır.",
+  },
   "history.noFavorites": { en: "No favorites yet", tr: "Henüz favori eklemediniz" },
   "history.noQueries": { en: "Your queries will appear here", tr: "Sorularınız burada görünecek" },
   "vital.notesPlaceholder": { en: "e.g., After meal", tr: "ör. Yemekten sonra" },
