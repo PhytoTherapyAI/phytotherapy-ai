@@ -1081,11 +1081,11 @@ Türkiye TİTCK + EFSA health claims risk audit (3 paralel Explore agent). **Aud
 
 ---
 
-### Session 47 — Mini-Opening (26-27 Nisan 2026) — AÇIK
+### Session 47 — Mini-Opening — F-CHAT-SIDEBAR-002 + 003 + Scanner Mime Fix (26-27 Nisan 2026) — AÇIK
 
-**Durum:** F-CHAT-SIDEBAR-002 ✅ kapatıldı (gece açılışı). Sıradaki büyük iş **avukat görüşmesi sonrası F-HEALTH-CLAIMS-001 6.1/6.3/6.4**. Session 46'nın 11/11 commit'i artık TESTED (önceden 9/11 + 2 PENDING idi).
+**Durum:** Sağlık Asistanı sidebar UX'i tamamlanma sprintinin gece açılışı kapandı — pin/rename + auto-title canlıda çalışıyor, scanner OCR mime bug fix'i landed. Session 47 hâlâ AÇIK; sıradaki büyük iş **avukat görüşmesi sonrası F-HEALTH-CLAIMS-001 6.1/6.3/6.4**. Session 46'nın 11/11 commit'i artık TESTED (önceden 9/11 + 2 PENDING idi).
 
-**1 feature commit + 1 docs commit:**
+**3 feature commit + 1 docs commit:**
 
 - `fbd3d82` **F-CHAT-SIDEBAR-002 (P1) — Conversation sidebar pin + rename with 5-pin limit ✅ TESTED 8/8**
   - Migration `supabase/migrations/20260426_query_history_pin_rename.sql` apply edildi (3 kolon: `is_pinned BOOLEAN DEFAULT false NOT NULL`, `custom_title TEXT NULL`, `pinned_at TIMESTAMPTZ NULL`). Mevcut UPDATE RLS policy (`auth.uid() = user_id`) yeterli — yeni policy eklenmedi, field-level gating endpoint katmanında.
@@ -1095,7 +1095,27 @@ Türkiye TİTCK + EFSA health claims risk audit (3 paralel Explore agent). **Aud
   - **Smoke test 8/8 PASS:** dropdown menu + 3 seçenek / Pin akışı + Sabitlenenler grubu + toast / LIFO sıralama (en son pinlenen üstte, kanıtlandı) / 5-pin limit (6. pinde toast.error "En fazla 5 sohbet sabitleyebilirsin. Önce birini kaldır." + rollback) / Rename + blur save (Enter şart değil) / ESC cancel (eski başlık geri) / maxLength 100 (154 karakter yapıştırıldı, sadece 100 aldı) / Delete regression intact (AlertDialog "Sohbeti sil? Bu işlem geri alınamaz." → toast → sidebar update).
   - Build: tsc 0 error, Next.js 0 warning, 241 sayfa, 11.9s compile.
 
-- `[bu commit]` **docs: Session 47 mini-opening** — F-CHAT-SIDEBAR-002 closure + Session 46 PENDING tests confirmed (cc47420 + 0461913 → TESTED).
+- `63e1987` **docs: Session 47 mini-opening (önceki docs)** — F-CHAT-SIDEBAR-002 closure + Session 46 PENDING tests confirmed (cc47420 + 0461913 → TESTED).
+
+- `406fdeb` **fix(scanner): detect actual image mime type for Claude Vision** — Kullanıcı tarafından gece eklendi (smoke test sırasında fark edilen küçük bağımsız fix). F-SCANNER-001 OCR akışında Claude Vision çağrısına gönderilen image MIME type artık magic-byte detection ile tespit ediliyor — önceden hardcoded mime gönderiliyordu, bazı PNG'ler JPEG diye etiketlenebiliyordu. Bu commit'in bizim implementasyonumuza dokunduğu yer yok, F-SCANNER-001 davranışı sertleşti.
+
+- `5514a9b` **F-CHAT-SIDEBAR-003 (P1) — Otomatik Sohbet Başlığı ✅ TESTED**
+  - Sidebar'da yeni sohbetler "selam" / "hi" / ham query_text yerine 3-4 kelimelik AI-üretimli başlıkla görünüyor. Kullanıcının manuel rename'i (F-CHAT-SIDEBAR-002) auto-title'ı her zaman trump eder.
+  - Yeni endpoint `app/api/query-history/[id]/auto-title/route.ts` (POST) — alt-dizin patterning ile DELETE/PATCH endpoint'inden ayrıldı (concept separation, CRUD değil generation operation).
+  - **4 defansif kural (mandatory):**
+    1. **Idempotency guard:** Endpoint başında SELECT row → custom_title set ise 200 + `{ ok: true, skipped: true, reason: "already_titled" }`. Race-safe `.is("custom_title", null)` filter UPDATE'te de var (manuel rename LLM call sırasında landed olursa "race_lost" reason döner). Double-trigger no-op.
+    2. **Rate limit:** User-scoped 30/min (gerçek kullanıcı kullanım profilini aşar) + global per-instance circuit breaker 100/min (aşılırsa 5dk 503 penalty box, runaway loop fatura yakmaz).
+    3. **Sentry observability:** 12 stage breadcrumb (triggered / circuit-open / rate-limited / auth-failed / uuid-invalid / row-not-found / skipped-already-titled / llm-call-start / success / failed / db-update-success / failed) — F-SCANNER-001 `captureScannerFailure` pattern parite (dynamic Sentry import, Sentry-less deploy safe). LLM çıktısı asla raw log'lanmaz — sadece `titleLength` field'ı.
+    4. **Cleanup discipline:** ConversationHistory ayrı useEffect window event listener — handler closure-scoped (each mount/unmount adds and removes the same reference, strict-mode safe), `fetchHistory` zaten useCallback (stable identity).
+  - LLM: `askClaudeJSON` MODEL_DEFAULT (haiku) + `skipConsent: true` (same conversation context already consented via `/api/chat`). Maliyet ~$0.00003/title. SYSTEM_PROMPT: "match the user's language exactly... no punctuation other than commas, no emojis, no quotes... output JSON only".
+  - `/api/chat` route refactor: pre-stream INSERT (empty response_text → conversationId capture) + post-stream UPDATE (response_text fill) + `X-Conversation-Id` response header (`Access-Control-Expose-Headers` set, cross-origin embed safe). Pre-INSERT fail olursa fallback eski single-INSERT path'ine geri döner (history visibility hiç bozulmaz).
+  - ChatInterface stream-end: header oku → fire-and-forget POST → success/skipped sonrası `window.dispatchEvent("conversation-updated")`. Failures silent (toast yok) — worst case row query_text fallback'iyle görünür, kullanıcının zaten bugün gördüğü davranış.
+  - ConversationHistory: ayrı useEffect listener `fetchHistory` tetikler → long-standing F5-required gap (yeni mesaj sonrası sidebar refresh olmuyordu) kapatıldı.
+  - Migration GEREKMEDİ — `custom_title` kolonu zaten F-CHAT-SIDEBAR-002 migration'ından mevcut.
+  - Build: 241 → 242 route (yeni dynamic `[id]/auto-title`), tsc 0 error, Next.js 0 warning, 11.4s compile.
+  - **Smoke test PASS:** "uyku problemim var" yazıldı → AI cevap → ~3-5sn sonra sidebar otomatik refresh, başlık "Uyku problemi ve çözümleri" üretildi. Eski sohbetler dokunulmadı (idempotency guard çalıştı).
+
+- `[bu commit]` **docs: Session 47 checkpoint** — 4 commit yansıtacak şekilde Session 47 entry'sine F-CHAT-SIDEBAR-003 + scanner mime fix eklendi. Session 47 hâlâ AÇIK (kapanış avukat sonrası F-HEALTH-CLAIMS-001 ile gelir).
 
 **Sıradaki (kalan P1 — avukat-gated):**
 
