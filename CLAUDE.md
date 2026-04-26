@@ -950,9 +950,9 @@ Türkiye TİTCK + EFSA health claims risk audit (3 paralel Explore agent). **Aud
 
 ---
 
-### Session 47 — Mini-Opening — F-CHAT-SIDEBAR-002 + 003 + Scanner Mime Fix (26-27 Nisan 2026) — AÇIK
+### Session 47 — Mini-Opening + Daytime Sprint — F-CHAT-SIDEBAR / F-SETTINGS / F-PWA / F-MOBILE / Cleanup (26-27 Nisan 2026) — AÇIK
 
-**Durum:** Sağlık Asistanı sidebar UX'i tamamlanma sprintinin gece açılışı kapandı — pin/rename + auto-title canlıda çalışıyor, scanner OCR mime bug fix'i landed. Session 47 hâlâ AÇIK; sıradaki büyük iş **avukat görüşmesi sonrası F-HEALTH-CLAIMS-001 6.1/6.3/6.4**. Session 46'nın 11/11 commit'i artık TESTED (önceden 9/11 + 2 PENDING idi).
+**Durum:** İki fazlı sprint. **Mini-opening (gece, 4 commit)** — Sağlık Asistanı sidebar UX kapanışı (pin/rename + auto-title), scanner OCR mime fix. **Daytime sprint (27 Nisan, 12 commit)** — F-SETTINGS-001/002 + F-PWA-001 + F-MOBILE-001 (4 iterasyon) + 3 cleanup (Harvard, Yavuz, dead code Category A). Tüm 4 F-ticket ✅ TESTED. Session 47 hâlâ AÇIK; sıradaki büyük iş avukat görüşmesi sonrası F-HEALTH-CLAIMS-001 6.1/6.3/6.4 + şirket kuruluşu sonrası Iyzico. Session 46'nın 11/11 commit'i artık TESTED (önceden 9/11 + 2 PENDING idi).
 
 **3 feature commit + 1 docs commit:**
 
@@ -984,24 +984,154 @@ Türkiye TİTCK + EFSA health claims risk audit (3 paralel Explore agent). **Aud
   - Build: 241 → 242 route (yeni dynamic `[id]/auto-title`), tsc 0 error, Next.js 0 warning, 11.4s compile.
   - **Smoke test PASS:** "uyku problemim var" yazıldı → AI cevap → ~3-5sn sonra sidebar otomatik refresh, başlık "Uyku problemi ve çözümleri" üretildi. Eski sohbetler dokunulmadı (idempotency guard çalıştı).
 
-- `[bu commit]` **docs: Session 47 checkpoint** — 4 commit yansıtacak şekilde Session 47 entry'sine F-CHAT-SIDEBAR-003 + scanner mime fix eklendi. Session 47 hâlâ AÇIK (kapanış avukat sonrası F-HEALTH-CLAIMS-001 ile gelir).
+- `54e489e` **docs: Session 47 checkpoint (mini-opening close)** — 4 commit yansıtacak şekilde Session 47 entry'sine F-CHAT-SIDEBAR-003 + scanner mime fix eklendi.
 
-**Sıradaki (kalan P1 — avukat-gated):**
+---
 
-- **F-HEALTH-CLAIMS-001 6.1** — Prompt centralize (supplement-check / anti-inflammatory / daily-care-plan inline → lib/prompts.ts) + EFSA whitelist (lib/efsa-approved-claims.ts) + output filter Layer 3 extend ("destekler+mekanizma" pattern + EFSA cross-check). Avukat soru 1 + 6 cevabı pre-condition. ~3-4h.
-- **F-HEALTH-CLAIMS-001 6.3** — Hardcoded string fix (2 direct claim cortisol/energy + 8 question-format examples). Avukat soru 2 + 3 cevabı pre-condition. ~1h.
-- **F-HEALTH-CLAIMS-001 6.4 (opsiyonel)** — query_history retention strategy. Avukat soru 4 + 5 cevabı pre-condition; "no-op" cevabı gelirse SKIP. ~30dk-2h.
+#### Daytime Sprint (27 Nisan 2026) — 12 commit
 
-**Avukat görüşmesi (kritik blocker):**
-- 7 hukuki soru hazır (audit raporu G bölümü + master plan referansı)
-- Mesafeli Satış + Abonelik Sözleşmesi v2 ile birlikte tek seansta görüşülür
-- Tahmini: bu hafta veya gelecek hafta
-- Avukat onayı F-HEALTH-CLAIMS-001 6.1/6.3/6.4'ü unlock eder
+Mini-opening üzerine eklenen full-day sprint. Toplam Session 47 commit sayısı 16 oldu.
+
+##### F-SETTINGS-001 + 002 ✅ TESTED 6/6
+
+- `ce9b2bd` **F-SETTINGS-001 — Password change security gaps + NIST validation**
+  - Frontend Supabase doğrudan çağrısı kapatıldı → `/api/auth/change-password` endpoint'i kullanılıyor (5/min IP rate limit + defense-in-depth aktive)
+  - Re-auth: `currentPassword` field + fresh client `signInWithPassword` (session-scoped client'ı kirletmeden)
+  - 9 NIST-aligned validation: 8 ≤ length ≤ 72 (bcrypt cap) + uppercase + lowercase + number + new ≠ current (case-sensitive) + new ≠ email (case-insensitive)
+  - 11 structured error code (PASSWORD_PWNED F-SETTINGS-002'de eklendi)
+  - 9 yeni i18n key (currentPwRequired/Wrong/Placeholder, pwLower/Number/TooLong/SameAsCurrent/SameAsEmail/pwUpdated)
+  - Yanıltıcı "📧 confirmation email sent" copy kaldırıldı (sync update, email yok)
+
+- `2e6fd29` **F-SETTINGS-002 — Pwned Passwords blocklist (HIBP k-anonymity)**
+  - Yeni `lib/security/check-pwned-password.ts` helper — node:crypto SHA-1 + AbortSignal.timeout(3000) + Add-Padding header + mandatory `User-Agent: DoctoPal-PasswordCheck`
+  - Privacy: SHA-1 + ilk 5 hex char prefix HIBP'a → ~300+ candidate suffix returns; tam parola asla 3rd party'ye gitmez
+  - **Fail-OPEN:** HIBP unreachable / timeout / parse fail → user blocked değil, Sentry warning + continue
+  - 3-stage breadcrumb (start/success/error) — LLM çıktısı asla raw log'lanmaz, sadece `passwordLength` + `pwned` + `count`
+  - Pipeline: 9 validation sonrası, signInWithPassword öncesi (saçma parolaları HIBP'tan önce ele)
+  - 409 PASSWORD_PWNED → frontend locale-aware count format ("Password123" → "(13.245.812)" TR / "(13,245,812)" EN)
+
+##### F-PWA-001 ✅ TESTED — Lighthouse 92 Best Practices
+
+- `b06b67f` **F-PWA-001 — Brand-aligned PWA manifest + Apple meta + placeholder D-letter icon set**
+  - Sürpriz: Sprint 20'den manifest.json + sw.js + ServiceWorkerRegistration zaten vardı, ama eski `themeColor: #3c7a52` (PhytoTherapy dark green) ile drift
+  - `public/icon.svg` — emerald-600 #059669 + beyaz "D" placeholder source
+  - `scripts/generate-pwa-icons.mjs` — sharp ile 5 PNG generate (192/512/maskable/apple-touch-icon/favicon.png)
+  - Maskable icon: 408×408 inner + 52px padding on emerald 512×512 canvas (80% safe zone, Android adaptive)
+  - Apple touch icon: `flatten()` ile emerald background (iOS double-rounding önleme)
+  - `public/manifest.json` revize: name "DoctoPal - Akıllı Sağlık Asistanın", scope "/", lang "tr", 3 icon entry
+  - `app/layout.tsx`: themeColor #3c7a52 → #059669, viewportFit: "cover", icons.icon SVG + favicon.png, icons.apple PNG
+  - `app/globals.css`: `.safe-area-pt` + `.safe-area-px` helper (mevcut `.safe-area-pb` yanına)
+  - Sharp devDep, build size impact 0 (production'da import edilmez)
+  - Real logo geldiğinde `public/icon.svg` değiştir + `npm run pwa:icons` → 5 PNG regenerate
+
+##### F-MOBILE-001 ✅ TESTED — 1 feat + 3 fix iterasyon
+
+Profile + Health Assistant mobile responsive sprint. **3 iterasyon gerekti** çünkü her fix yeni bir CSS spec sürprizi açtı.
+
+- `adc1f9a` **F-MOBILE-001 — Hamburger drawer (initial implement)**
+  - Yeni shared `components/ui/MobileDrawer.tsx` — Framer Motion left-drawer + Esc handler + `md:hidden` gate
+  - ProfileShellV2: accordion mobile fallback silindi → MobileDrawer + sticky hamburger top-20
+  - Health Assistant: eski sağdan-açılan drawer mode kaldırıldı, MobileDrawer ile sol-açılan + sticky top-0 banner
+  - ProfileSidebar refactor: container-agnostic content + `resolveActiveTab(id, gender)` helper export
+  - Breakpoint shift: lg (1024) → md (768) — tablet portrait artık desktop layout görüyor
+
+- `d12de5c` **F-MOBILE-001 fix-1 — Sticky scroll context + banner styling**
+  - Smoke test bulgu: hamburger card-style görünüyor + scroll'da kayboluyor
+  - layout.tsx `<main>` `overflow-x-hidden` → `overflow-x-clip` (scroll container sandığım fix)
+  - Profile hamburger card → banner pattern (`-mx-4 mb-4 border-b backdrop-blur`)
+
+- `3975506` **F-MOBILE-001 fix-2 — Full-bleed width + desktop sidebar sticky**
+  - Smoke test bulgu: banner hâlâ kayık + desktop sidebar sticky kırık
+  - **CSS spec sürprizi:** `overflow-x: clip; overflow-y: visible` — Y axis `auto`'ya coerce ediliyor (CSS Overflow Module Level 3/4 spec). Yani `clip` da `hidden` gibi scroll container yaratıyor
+  - layout.tsx `<main>` `overflow-x-clip` **tamamen kaldırıldı** (default visible)
+  - Profile hamburger `w-[calc(100%+2rem)]` eklendi (-mx-4 ile birlikte full-bleed denemesi)
+
+- `b0aef81` **F-MOBILE-001 fix-3 — Banner viewport-bound via fixed positioning (final)**
+  - Smoke test bulgu: banner hâlâ dar + parent constraint zinciri (max-w-6xl px-4)
+  - 2 root cause: (1) `<button>` UA shrink-to-fit + flex-nested layout `width: auto` content-box'ta tutuyor; (2) `w-[calc(100%+2rem)]` Tailwind invalid CSS (CSS calc spec'i `+`/`-` için boşluk istiyor, Tailwind boşluksuz pass eder, browser reddet)
+  - Profile hamburger `sticky top-20` → `fixed top-14 inset-x-0 z-30` (parent-independent viewport-bound)
+  - Inner main `pt-14 md:pt-0` (banner overlap önleme)
+  - Bonus: layout.tsx fix-2'de dropped overflow-x-clip — desktop sidebar sticky de **silent regression'dan iyileşti**
+
+##### Cleanup (3 commit codebase hijyen)
+
+- `520db14` **chore: Remove all Harvard hackathon references**
+  - 12 dosya cleanup: CLAUDE.md (HARVARD HACKATHON ROADMAP section ~130 satır + changelog footer + 2 header rename), PROGRESS.md (32 inline + 8 section header rename), 4 ek .md (BETA-READINESS / FEATURE-AUDIT / QA-REPORT / SPRINT-14-20-FIXES), 3 code comment (lib/care-pathways / safety-guardrail / api/proms — HVHS C4/C6/C10 stripped)
+  - **CLAUDE-ARCHIVE-v42.md silindi** (5 versiyon eski snapshot, 12 Harvard mention, recoverable from git history)
+  - **lib/global-benchmark.ts silindi** (dead code — HVHS_COMPONENTS export'u sıfır consumer, deleted /research-hub kalıntısı)
+  - i18n softening: `nhtsAlignment` "National HVHS..." → "National Health Transition Strategy..."
+  - Korunan: 1 historical commit log line (gerçek `589bc5d` referansı)
+  - Diff: +62 / -1532
+
+- `9f2331e` **chore: Remove Yavuz references + equalize co-founder titles + team count to 2**
+  - 5 edit: 4 sayı güncelleme (3→2) + 1 bullet sil + İpek tam ad ekle + Sibiç → Sıbıç + CEO drop
+  - 3 dosya: README.md + CLAUDE.md + lib/translations/commonToolKeys.ts (about.teamDesc EN+TR)
+  - Codebase tutarlılık: AydinlatmaPopup, /aydinlatma, about.ts i18n hepsi zaten "Co-founder" + "Sıbıç" + "İpek Özen" — README outlier'dı, artık alignment
+
+- `8b03a99` **chore(cleanup): Remove 41 dead files (Category A) — 5887 deletions**
+  - `npx knip` audit raporu: 50 unused file → 4 false positive (sw.js + 3 scripts) → 46 candidate → 41 silindi (lib/affiliate.ts defer, AffiliateLinks (C) ile birlikte silinecek)
+  - Components (35): dashboard cards 7 + calendar/sleep 5 + UI primitives 6 + diğer 17
+  - Lib (6): ai-endpoint-helper, analytics, frequency, gemini (DEPRECATED), health-connect, talent-hub-data
+  - tsc + build temiz, 241 sayfa parite, 11.5s compile
+  - Bundle output değişmedi (Next.js zaten tree-shake ediyordu) — kazanç repo cleanliness + cognitive load
+  - **Audit kayıt:** `docs/audits/dead-code-audit-2026-04-27.md` — full knip + manuel cross-check (50 unused file + 57 unused export + 53 unused type + 2 unused dep + 1 unlisted dep)
+
+##### Ekip Yapısı (güncel state)
+
+- **Co-founder'lar:** Taha Ahmet Sıbıç (tıp öğrencisi, Türkiye) + İpek Özen (tıp öğrencisi, Türkiye)
+- **Mali müşavir:** İpek'in babası — yarın detaylı görüşme, şirket kuruluş süreci hızlanacak (aylık 3-8K maliyet sıfırlanır)
+- **Avukat:** Henüz yok — yarın LinkedIn'den sağlık hukuku + KVKK + TİTCK uzmanı aranacak
+
+##### Tüm 12 Daytime Commit (en yeni → en eski)
+
+```
+8b03a99 chore(cleanup): remove 41 dead files (Category A) — 5887 deletions, zero consumer
+9f2331e chore: remove Yavuz references + equalize co-founder titles + update team count to 2
+520db14 chore: remove all Harvard hackathon references from codebase
+b0aef81 fix(mobile): banner viewport-bound full-bleed via fixed positioning (F-MOBILE-001)
+3975506 fix(mobile): banner full-bleed width + desktop sidebar sticky context (F-MOBILE-001)
+d12de5c fix(mobile): correct sticky scroll context and profile hamburger banner pattern (F-MOBILE-001)
+adc1f9a feat(mobile): hamburger drawer for Profile + Health Assistant on mobile (F-MOBILE-001)
+b06b67f feat(pwa): brand-aligned PWA manifest, Apple meta tags + placeholder D-letter icon set
+2e6fd29 fix(settings): block pwned passwords via HIBP k-anonymity check (F-SETTINGS-002)
+ce9b2bd fix(settings): close password change security gaps + NIST-aligned validation (F-SETTINGS-001)
+54e489e docs: Session 47 checkpoint
+20ee6d9 docs(legal): expand lawyer consultation package — 9 questions in 5 sections (F-HEALTH-CLAIMS-001)
+```
+
+---
+
+**P0 — kritik (yarın gündem):**
+
+- **Babanla DoctoPal görüşmesi** — Ürün özeti + kuruluş niyeti + zaman planı + mali müşavir rolü konfirmasyonu + sağlık şirketi muhasebesi tecrübesi sorgu + Bağ-Kur planlaması
+- **Avukat aramaya başla** — LinkedIn üzerinden sağlık hukuku + KVKK + dijital sağlık + TİTCK uzmanı (İstanbul). Hazır paket: `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md` (9 soru, 5 bölüm + Şirket Profili). Avukata özel sorular:
+  - Tıp öğrencisi olarak sağlık şirketi sahipliği (meslek hukuku riski)
+  - Mezuniyet sonrası mecburi hizmet süresince şirket sahipliği nasıl yönetilir (657 kanun memur ticari yasağı + A.Ş. dönüşüm zamanı)
+  - Sağlık şirketi sınıflandırması (DoctoPal "bilgi platformu" / "tıbbi cihaz" / "CDSS")
+  - Türk Tabipler Birliği ticari faaliyet kuralları DoctoPal için ne anlama geliyor
+
+**P1 — şirket kuruluşu (avukat + baba görüşü sonrası):**
+- Limited mi A.Ş. mi karar
+- Hisse paylaşımı Taha ile (50-50 mi başka mı + vesting var mı + yazılı Hissedarlar Sözleşmesi)
+- Sermaye kararı (50K / 100K / 250K — 2026 minimum kontrol gereksin)
+- Şirket adı (3-5 alternatif, MERSIS kontrol)
+- NACE kodu seçimi (62.01.01 / 62.02.01 / 63.11.01 — sağlık kodları kaçın)
+
+**P1 — ürün:**
+- **Telefonda gerçek PWA install testi** — iPhone Safari "Ana Ekrana Ekle" → standalone mode + ikon doğrulama (5 dk, F-PWA-001 kapanış smoke)
+- **Paribu Hub hackathon sunum hazırlığı** — DoctoPal positioning, Lean Canvas son rötuş, demo flow planı
 
 **P2:**
+- **Dead code Category C** — `components/premium/AffiliateLinks.tsx`, `components/premium/FakeDoorTest.tsx`, `components/premium/PremiumGate.tsx`, `components/proms/PromsSurvey.tsx` + `lib/affiliate.ts` (chain dependency) — Taha onayı sonrası iş kararı
+- **Dead code Category D** — Unused exports cleanup (`lib/safety-guardrail.ts` legacy 18 export+type, `lib/database.types.ts` 41 unused type, `lib/consent-management.ts` v1 KVKK kalıntı)
+- **NPM deps cleanup** — `npm uninstall pg @nicolo-ribaudo/chokidar-2` + `npm install -D postcss` (~948 KB node_modules; runtime impact 0)
+- **F-PWA-002** — Manifest screenshots (desktop + mobile), App Store başvurusu öncesi mutlaka, mobile responsive bittikten sonra
+- **Aydınlatma metni güncelleme** — F-SETTINGS-002 sonrası HIBP 3rd party processor ek cümlesi (KVKK Md.10)
+- **Diğer sayfaların mobile responsive polish'i** — Sleep, Sports, Mental Wellness vb. (F-MOBILE-001 sadece Profile + Health Assistant kapsadı)
+
+**Carry-over backlog (Session 46'dan):**
 - F-PRIVACY-001 — DELETE endpoint table list (family_history_entries, medication_interaction_alerts, pain_records, health_imports, health_metrics, radiology_reports, prospectus_scans, verification_documents)
 - F-PRIVACY-002 — Consent audit trail retention policy (regulatory research)
-- F-SETTINGS-001 — Şifre validation buton disabled
 - F-MED-DB-001 — Warfarin fuzzy match bug
 
 **P3:**
@@ -1020,4 +1150,5 @@ Türkiye TİTCK + EFSA health claims risk audit (3 paralel Explore agent). **Aud
 - `lib/vitality.ts` unit test scaffold (Jest/Vitest)
 
 **Dependency-gated:**
-- F-PAYMENT-001 — Iyzico ödeme entegrasyonu (şirket kuruluşu bekleniyor)
+- **F-HEALTH-CLAIMS-001 6.1 / 6.3 / 6.4** — avukat görüşü sonrası unlock olur (9 soru paketi `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md`'de hazır; Mesafeli Satış + Abonelik Sözleşmesi v2 ile birlikte tek seansta görüşülür)
+- **F-PAYMENT-001 (Iyzico)** — şirket kuruluşu blocker (`docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır)
