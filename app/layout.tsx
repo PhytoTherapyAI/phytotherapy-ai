@@ -144,7 +144,16 @@ export default function RootLayout({
             <DailyLogsProvider>
               <Header />
               <AuthGatedOverlays />
-              <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-hidden">
+              {/* F-MOBILE-001 fix-1: `overflow-x: hidden` would silently
+                  promote the Y axis to `auto` per CSS Overflow Module
+                  Level 3, which made <main> a scroll container and broke
+                  every `position: sticky` element nested inside (mobile
+                  hamburger + desktop ProfileSidebar both pinned to <main>
+                  instead of viewport, then drifted off-screen during
+                  document scroll). `overflow-x: clip` blocks horizontal
+                  overflow without creating a scroll container, so sticky
+                  pins to the document like the rest of the page. */}
+              <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-clip">
                 <div className="mx-auto w-full max-w-7xl px-4 md:px-8">
                   <SmartBackButton />
                 </div>

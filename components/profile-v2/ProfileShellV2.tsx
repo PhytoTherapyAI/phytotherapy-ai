@@ -343,13 +343,23 @@ export function ProfileShellV2() {
               ≈ 5rem) so it stays reachable while the user scrolls long
               tabs (Medications, Family History etc.). Shows the active
               tab's icon + label so the user always knows where they
-              are without opening the drawer. */}
+              are without opening the drawer.
+
+              F-MOBILE-001 fix-1: switched from a card-style chrome
+              (rounded-xl + shadow + bg-card) to a full-bleed banner
+              that mirrors the Health Assistant hamburger — `-mx-4`
+              cancels the parent's px-4 padding so the banner extends
+              edge-to-edge, `bg-background/95 backdrop-blur-sm` keeps
+              the chat content underneath legible during scroll, and
+              `border-b` is the only divider needed once the bottom of
+              the banner stops competing visually with the rounded tab
+              cards rendered inside renderTab(). */}
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
             aria-label={tr ? "Profil bölümlerini aç" : "Open profile sections"}
             aria-expanded={sidebarOpen}
-            className="md:hidden sticky top-20 z-10 mb-4 inline-flex w-full items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold shadow-sm"
+            className="md:hidden sticky top-20 z-10 -mx-4 mb-4 flex items-center justify-between border-b border-border bg-background/95 px-4 py-3 text-sm font-semibold backdrop-blur-sm"
           >
             <span className="inline-flex items-center gap-2">
               <ActiveTabIcon className="h-4 w-4 text-emerald-600" />
