@@ -359,7 +359,7 @@ export function ProfileShellV2() {
             onClick={() => setSidebarOpen(true)}
             aria-label={tr ? "Profil bölümlerini aç" : "Open profile sections"}
             aria-expanded={sidebarOpen}
-            className="md:hidden sticky top-20 z-10 -mx-4 mb-4 flex items-center justify-between border-b border-border bg-background/95 px-4 py-3 text-sm font-semibold backdrop-blur-sm"
+            className="md:hidden sticky top-20 z-10 -mx-4 mb-4 flex w-[calc(100%+2rem)] items-center justify-between border-b border-border bg-background/95 px-4 py-3 text-sm font-semibold backdrop-blur-sm"
           >
             <span className="inline-flex items-center gap-2">
               <ActiveTabIcon className="h-4 w-4 text-emerald-600" />

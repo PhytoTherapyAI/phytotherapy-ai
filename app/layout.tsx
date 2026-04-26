@@ -144,16 +144,30 @@ export default function RootLayout({
             <DailyLogsProvider>
               <Header />
               <AuthGatedOverlays />
-              {/* F-MOBILE-001 fix-1: `overflow-x: hidden` would silently
-                  promote the Y axis to `auto` per CSS Overflow Module
-                  Level 3, which made <main> a scroll container and broke
-                  every `position: sticky` element nested inside (mobile
-                  hamburger + desktop ProfileSidebar both pinned to <main>
-                  instead of viewport, then drifted off-screen during
-                  document scroll). `overflow-x: clip` blocks horizontal
-                  overflow without creating a scroll container, so sticky
-                  pins to the document like the rest of the page. */}
-              <main className="flex min-h-[calc(100vh-12rem)] flex-col overflow-x-clip">
+              {/* F-MOBILE-001 fix-2: NO horizontal overflow clipping
+                  here. fix-1 had `overflow-x-clip` on the assumption
+                  that `clip` (unlike `hidden`) wouldn't create a
+                  scroll container, but the CSS Overflow spec is
+                  stricter than that:
+
+                    "A value of visible (or clip) used as one axis of
+                     overflow when the other axis is set to a non-
+                     visible value is treated as auto."
+
+                  So `overflow-x: clip; overflow-y: visible` quietly
+                  promoted overflow-y to auto, which made <main> a
+                  Y-axis scroll container and broke every
+                  position: sticky element nested inside (mobile
+                  hamburger + desktop ProfileSidebar both pinned to
+                  <main> instead of the document, then scrolled away).
+                  The only spec-clean way to keep `clip` from coercing
+                  the other axis is to set both to clip — which would
+                  also disable vertical document scroll, obviously
+                  unacceptable. So we drop horizontal clipping here
+                  entirely; if a rogue child element ever causes a
+                  horizontal scrollbar, fix that element rather than
+                  re-introducing the sticky-killer. */}
+              <main className="flex min-h-[calc(100vh-12rem)] flex-col">
                 <div className="mx-auto w-full max-w-7xl px-4 md:px-8">
                   <SmartBackButton />
                 </div>
