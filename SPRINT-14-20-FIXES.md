@@ -185,7 +185,7 @@ Kontrol edilecek sayfalar:
 
 ---
 
-## Hackathon Polish — Kalan İşler (Phase 2-6)
+## Launch Polish — Kalan İşler (Phase 2-6)
 
 ### Phase 2: CSS Animasyon Altyapısı ✅ (27 Mart)
 - [x] `globals.css`'e fadeInUp, scaleIn, typingBounce, pulseGlow, gentleSway, slideInRight
@@ -222,7 +222,7 @@ Kontrol edilecek sayfalar:
 
 ---
 
-## Son Sprint — Hackathon Finalizasyon (Phase 7-13)
+## Son Sprint — Launch Finalizasyon (Phase 7-13)
 
 ### Phase 7: Kalan Hardcoded Çeviriler
 - [ ] `OnboardingWizard.tsx` — 4 alert mesajı tx() yap

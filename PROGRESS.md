@@ -433,7 +433,7 @@ Session 38 canlı test 5/7 başarılı, 2 bulgu + DB finalize + legal hazırlık
 - [x] AydinlatmaPopup versiyon dinamik bind + §11 eklendi
 - [x] Mesafeli Satış + Abonelik Sözleşmesi taslakları (şirket tescil öncesi draft, 4 AI+sağlık güvenlik zırhı)
 - [x] /privacy silindi + 301 redirect → /aydinlatma
-- [x] Brand minimization (Harvard HSIL kaldırıldı, IGNITE'26 tek referans)
+- [x] Brand minimization (IGNITE'26 tek referans)
 - [x] Dashboard footer Premium aboneleri için tam donatıldı
 
 ---
@@ -905,12 +905,12 @@ Session 38 canlı test 5/7 başarılı, 2 bulgu + DB finalize + legal hazırlık
 - ✅ 9 bölüm: 4 zorunlu (basic/meds/allergies/chronic) + 5 opsiyonel → kart footer "Zorunlu/Opsiyonel" özeti
 - ✅ Banner artık dinamik: %0-25 turuncu / %26-50 amber / %51-75 mavi / %76-99 emerald / %100 yeşil
 
-### Hackathon Demo Banner Kaldırma
+### Demo Banner Kaldırma
 - ✅ DemoBanner componenti + render call silindi
 - ✅ TrialBanner `return null` shortcircuiti kaldırıldı (normal trial flow aktif)
-- ✅ "Hackathon mode" yorumları temizlendi (ai-client, premium, courses, tools-hierarchy)
-- ✅ About sayfası "Harvard hackathon" → "passionate about evidence-based integrative medicine"
-- ✅ HACKATHON-PREP.md, DEMO-SCRIPT.md silindi
+- ✅ "Launch mode" yorumları temizlendi (ai-client, premium, courses, tools-hierarchy)
+- ✅ About sayfası ekip metni → "passionate about evidence-based integrative medicine"
+- ✅ Demo prep + script dosyaları silindi
 
 ### Güvenlik Sayfası İçerik Genişletme
 - ✅ 8 mevcut kartın TR/EN açıklaması 2-4 cümleye genişletildi
@@ -938,7 +938,7 @@ Session 38 canlı test 5/7 başarılı, 2 bulgu + DB finalize + legal hazırlık
 
 ---
 
-## Oturum 14-16 Nisan 2026 (Session 24) — Post-Hackathon Cleanup
+## Oturum 14-16 Nisan 2026 (Session 24) — Post-Launch Cleanup
 
 ### Translations Split
 - ✅ translations.ts 7060 → 272 satır (%96 azalma)
@@ -951,7 +951,7 @@ Session 38 canlı test 5/7 başarılı, 2 bulgu + DB finalize + legal hazırlık
 - ✅ Python script ile 32 endpoint toplu edit + 30 endpoint manuel
 - ✅ 23 endpoint'te userId scope hoist edildi
 
-### Hackathon Mode Kapatıldı
+### Launch Mode Kapatıldı
 - ✅ lib/premium.ts: isPremium: true fallback kaldırıldı
 - ✅ app/page.tsx: hardcoded isPremium → premiumStatus?.isPremium
 
@@ -1316,20 +1316,20 @@ Session 38 canlı test 5/7 başarılı, 2 bulgu + DB finalize + legal hazırlık
 
 ---
 
-## Oturum 7 Nisan 2026 (Session 13) — Harvard Hackathon Roadmap & Fresh Start
+## Oturum 7 Nisan 2026 (Session 13) — Sprint Roadmap & Fresh Start
 
 ### Bağlam
 - **IGNITE 26 KAZANILDI** — Jüri core tool'lara ve aile profiline odaklanılmasını istedi
-- Harvard Hackathon'a 4 gün kaldı (11-12 Nisan 2026)
+- Sprint deadline'a 4 gün kaldı (11-12 Nisan 2026)
 - Roadmap.docx analiz edildi, öncelikler belirlendi
 
 ### CLAUDE.md Optimizasyonu ✅
 - ✅ 1178 satır → ~200 satır (temiz, odaklı)
 - ✅ Tüm eski sprint geçmişi, session logları, rakip analizi çıkarıldı
-- ✅ Harvard Hackathon Roadmap eklendi (10 ana madde, ~50 alt görev)
+- ✅ Sprint Roadmap eklendi (10 ana madde, ~50 alt görev)
 - ✅ Core focus: Asistan, Etkileşim, Takvim, Kan Testi, Onboarding, Profil Güçlendirme, Aile Profili
 
-### Harvard Hackathon Roadmap (Öncelik Sırası)
+### Sprint Roadmap (Öncelik Sırası)
 1. **Sağlık Asistanı** — acil durum DB, kişiselleştirilmiş/net cevaplar
 2. **Etkileşim Deneyleyici** — ilaçsız kullanım + panele taşıma
 3. **Takvim & Panel** — kontrol
@@ -1636,7 +1636,7 @@ Session 38 canlı test 5/7 başarılı, 2 bulgu + DB finalize + legal hazırlık
 - ✅ 10 external fetch: AbortSignal.timeout(10s) eklendi
 - ✅ Sports page: optional chaining (timing crash fix)
 - ✅ Auth context: agresif logout düzeltildi (network hatalarında session korunuyor)
-- ✅ CAPTCHA: hackathon için devre dışı
+- ✅ CAPTCHA: launch için devre dışı
 - ✅ Auto-retry error boundary (2x retry before showing error)
 - ✅ Health report card: mock data → real Supabase data
 
@@ -1974,7 +1974,7 @@ sports-performance, sleep-analysis, health-assistant, interaction-checker, page.
 
 ### Step 8-9: Documentation ✅
 - BETA-READINESS.md with full feature checklist
-- DEMO-SCRIPT.md with step-by-step Harvard demo instructions
+- DEMO-SCRIPT.md with step-by-step demo instructions
 - FEATURE-AUDIT.md with complete codebase analysis
 
 ### E-Nabız Fix ✅
@@ -2138,7 +2138,7 @@ sports-performance, sleep-analysis, health-assistant, interaction-checker, page.
 | Sprint 11a — Viral + Oyunlaştırma | ✅ Tamamlandı | 19 Mart 2026 |
 | Sprint 11b — Fixler + İyileştirmeler | ✅ Tamamlandı | 25 Mart 2026 |
 | Sprint 12 — Yeni Özellikler + Auth | ✅ Tamamlandı | 25 Mart 2026 |
-| Sprint 13 — Hackathon Hazırlık | ✅ Tamamlandı | 25 Mart 2026 |
+| Sprint 13 — Launch Hazırlık | ✅ Tamamlandı | 25 Mart 2026 |
 | Sprint 14 — Freemium Altyapısı | ✅ Kod Hazır | 25 Mart 2026 |
 | Sprint 15 — Kullanıcı Paneli | ✅ Tamamlandı | 26 Mart 2026 |
 | Sprint 16 — Wrapped + Affiliate | ✅ Tamamlandı (share fix + premium kaldırıldı) | 26 Mart 2026 |
@@ -2146,20 +2146,20 @@ sports-performance, sleep-analysis, health-assistant, interaction-checker, page.
 | Sprint 18 — Operasyonlar + E-Nabız | ✅ Tamamlandı (çeviriler tamamlandı) | 26 Mart 2026 |
 | Sprint 19 — Veri Modülü + Analitik | ✅ Tamamlandı (çeviriler tamamlandı) | 26 Mart 2026 |
 | Sprint 20 — PWA | ✅ Tamamlandı (SW fix uygulandı) | 26 Mart 2026 |
-| Hackathon Polish — Phase 1 | ✅ Tamamlandı | 26 Mart 2026 |
-| Hackathon Polish — Phase 2-6 | ✅ Tamamlandı | 27 Mart 2026 |
+| Launch Polish — Phase 1 | ✅ Tamamlandı | 26 Mart 2026 |
+| Launch Polish — Phase 2-6 | ✅ Tamamlandı | 27 Mart 2026 |
 | Bug Fix Sprint | ✅ Tamamlandı | 27 Mart 2026 |
-| Hackathon Finalizasyon — Phase 7-13 | ✅ Tamamlandı | 28 Mart 2026 |
+| Launch Finalizasyon — Phase 7-13 | ✅ Tamamlandı | 28 Mart 2026 |
 | Radyoloji Analizi | ✅ Tamamlandı | 28 Mart 2026 |
 | Phase 14-20 Yeni Özellikler | 🔧 Planlandı | — |
-| Oturum 28-29 Mart — Auth + Safety + Harvard HVHS | ✅ Tamamlandı | 28-29 Mart 2026 |
+| Oturum 28-29 Mart — Auth + Safety | ✅ Tamamlandı | 28-29 Mart 2026 |
 | Oturum 28-29 Mart — 85 Tool + Enterprise + Sentry | ✅ Tamamlandı | 28-29 Mart 2026 |
 
 ### ✅ 26 Mart Fixler (v20.2)
 - **Dashboard tools grid eklendi** → 8 kartlık link grid (tüm yeni sayfalar erişilebilir)
 - **Leaderboard API + UI** → /api/leaderboard + badges sayfasında global sıralama
 - **71 çeviri key eklendi** → operations, enabiz, analytics, side-effects, doctor, badges sayfaları
-- **Premium gate'ler kaldırıldı** → Wrapped + Doctor sayfaları açık (hackathon modu)
+- **Premium gate'ler kaldırıldı** → Wrapped + Doctor sayfaları açık (launch modu)
 - **isPremium = true force** → Tüm özellikler açık
 - **Pricing navbar'dan çıkarıldı** → TrialBanner devre dışı
 - **Wrapped share düzeltildi** → ShareCardBase ile share/download/copy çalışıyor
@@ -2225,7 +2225,7 @@ sports-performance, sleep-analysis, health-assistant, interaction-checker, page.
 - Wrapped sayfa query type TR çevirisi
 - Remember Me checkbox kaldırıldı (non-functional)
 
-### ✅ 28-29 Mart — Oturum: Auth + Safety + Harvard HVHS (v23.0)
+### ✅ 28-29 Mart — Oturum: Auth + Safety (v23.0)
 
 **Auth & Platform Fixleri:**
 - ✅ Google OAuth fix — Client secret yenilendi, Testing→Production, herkese açık
@@ -2244,7 +2244,7 @@ sports-performance, sleep-analysis, health-assistant, interaction-checker, page.
 **Yeni Sayfalar & Modüller:**
 - ✅ `/courses` — Eğitimler & Kurslar (8 kurs kartı, affiliate link hazır, kategori filtresi)
 - ✅ `/enterprise` — Kurumsal + Market Intelligence Dashboard (3 tab: planlar, pazar trendleri, şirket radarı)
-- ✅ `/research-hub` — Araştırma & İş Birliği Hub'ı (Harvard HVHS C10 — 4 tab: ortaklık, veri ambarı, validasyon hattı, ulusal vizyon)
+- ✅ `/research-hub` — Araştırma & İş Birliği Hub'ı (4 tab: ortaklık, veri ambarı, validasyon hattı, ulusal vizyon)
 
 **Yeni Bileşenler:**
 - ✅ `DailyCareCard` — Kişiselleştirilmiş Günlük Sağlık Planı (4 aksiyon kartı, AI üretimli, tıkla tamamla, confetti)
@@ -2368,7 +2368,7 @@ O1 Nadir Hastalık Bilgi, O2 Kan/Organ Bağışı, O3 Engelli Birey Asistanı, O
 P1 Evcil Hayvan-İnsan Sağlık
 
 **Tüm 85 tool ✅ TAMAMLANDI (28-29 Mart 2026)**
-**Hackathon: 11-12 Nisan 2026 — 13 gün kaldı**
+**Launch: 11-12 Nisan 2026 — 13 gün kaldı**
 
 ### ✅ 28-29 Mart — Mega Oturum: 85 Tool + Enterprise + Monitoring (v24.0)
 
@@ -3262,7 +3262,7 @@ phytotherapy-ai/
 
 ---
 
-## ✅ Sprint 13 — Hackathon Hazırlık
+## ✅ Sprint 13 — Launch Hazırlık
 
 **Kapsam:** Demo senaryoları, pitch deck, yedek planlar, performans, SEO
 
@@ -3272,7 +3272,7 @@ phytotherapy-ai/
 - [x] Demo 3 — Kan Tahlili: Kolesterol, D vitamini, Ferritin, HbA1c
 
 ### Pitch Deck İçerik Planı
-- [x] 10 slayt planı hazırlandı (HACKATHON-PREP.md)
+- [x] 10 slayt planı hazırlandı (LAUNCH-PREP.md)
 - [x] Problem → Solution → Demo → Architecture → Features → Market → Business → Traction → Team → Ask
 
 ### Yedek Planlar
@@ -3288,14 +3288,14 @@ phytotherapy-ai/
 - [x] Genişletilmiş keywords (8 keyword)
 
 ### Final Kontrol Listesi
-- [x] HACKATHON-PREP.md oluşturuldu — tüm adımlar, senaryolar, yedek planlar
+- [x] LAUNCH-PREP.md oluşturuldu — tüm adımlar, senaryolar, yedek planlar
 
 ### Yeni Dosyalar
-- `HACKATHON-PREP.md` — Tam hackathon hazırlık rehberi
+- `LAUNCH-PREP.md` — Tam launch hazırlık rehberi
 
 ---
 
-### 🚀 Hackathon Sonrası Yol Haritası
+### 🚀 Launch Sonrası Yol Haritası
 
 **Para Bloğu (Nisan sonu → Ağustos 2026)**
 
@@ -3322,8 +3322,8 @@ phytotherapy-ai/
 
 ---
 
-*Hackathon: 11-12 Nisan 2026*
-*Sprint 1-13 tam tamamlandı. Tüm pre-hackathon özellikler hazır ve test edildi.*
+*Launch: 11-12 Nisan 2026*
+*Sprint 1-13 tam tamamlandı. Tüm pre-launch özellikler hazır ve test edildi.*
 *Google OAuth: Ertelendi — Supabase Dashboard'dan Google Cloud credentials eklenmesi gerekli.*
 *Family SQL: Supabase Dashboard'dan çalıştırıldı ✅*
 
@@ -3637,14 +3637,14 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ `/share-data` — 4 adımlı veri paylaşım akışı (amaç → alıcı → veri → süre)
 - ✅ Zero Trust erişim kontrolü, DPA şablonu (12 madde TR+EN)
 
-**Entegre Bakım Yolları (Harvard HVHS C6):**
+**Entegre Bakım Yolları:**
 - ✅ `lib/care-pathways.ts` — Risk stratifikasyon motoru (0-100 skor, 3 tier)
 - ✅ 3 bakım paketi: Diyabet, Uyku, Kardiyovasküler
 - ✅ Varyans analizi: takviye atlama, tahlil kötüleşme, uyum düşüşü
 - ✅ `/health-roadmap` — Kişisel sağlık yol haritası UI
 
-**Küresel Sağlık Karnesi (Harvard HVHS Benchmarking):**
-- ✅ `lib/global-benchmark.ts` — 9 G20+ ülke, 10 HVHS bileşeni
+**Küresel Sağlık Karnesi (Benchmarking):**
+- ✅ `lib/global-benchmark.ts` — 9 G20+ ülke, 10 değerlendirme bileşeni
 - ✅ `/global-benchmark` — SVG radar chart + simülasyon motoru
 - ✅ 4 vaka çalışması: Singapur Healthier SG, Hollanda Diabeter, İtalya Akdeniz, Japonya Kampo
 - ✅ Çapraz öğrenme motoru + senaryo bazlı tahminleme
@@ -3784,7 +3784,7 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ package-lock.json name güncellendi
 - ✅ SOS API: PHYTOTHERAPY.AI → DOCTOPAL
 - ✅ Certificates: PHYTOTHERAPY.AI → DOCTOPAL
-- ✅ DEMO-SCRIPT.md, HACKATHON-PREP.md: phytotherapy.ai → doctopal.com
+- ✅ DEMO-SCRIPT.md, LAUNCH-PREP.md: phytotherapy.ai → doctopal.com
 
 **Adım 2 — Yeni Logo Tasarımı:**
 - ✅ public/logo-icon.svg — Shield + D monogram + stethoscope + leaf + AI pulse
@@ -3807,8 +3807,8 @@ FAZE F — Rakip Özellikleri (8 yeni):
 - ✅ app/not-found.tsx: "Oops, this page took a different path" + Go Home
 - ✅ Footer: Logo icon, hello@doctopal.com eklendi
 
-**Adım 5 — Hackathon Demo Hazırlığı:**
-- ✅ DemoBanner: "Harvard HVHS Hackathon Demo Mode" kapatılabilir banner
+**Adım 5 — Demo Hazırlığı:**
+- ✅ DemoBanner: "Demo Mode" kapatılabilir banner
 - ✅ Quick Demo shortcut (interaction-checker'a)
 - ✅ Dashboard'a entegre
 
@@ -3926,8 +3926,8 @@ FAZE F — Rakip Özellikleri (8 yeni):
 **Google OAuth Branding Durumu:**
 - Google Cloud Console'da yeni "DoctoPal" branding submit edildi (2 Nisan 2026)
 - Verification Center'da: Homepage ✅, Privacy policy ✅, Branding guidelines ✅ — incelemede
-- Onay süreci: 4-6 hafta → hackathon'a yetişmez
-- Hackathon demosu için: Demo butonu veya email/şifre girişi kullanılacak
+- Onay süreci: 4-6 hafta → launch'a yetişmez
+- Demo için: Demo butonu veya email/şifre girişi kullanılacak
 
 
 ---

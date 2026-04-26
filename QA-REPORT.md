@@ -233,7 +233,7 @@ Missing routes /contact and /security are not linked anywhere — future work.
 
 **Commits:** `ef10ff6`, `817f867`, `cdfb379`
 
-**Impact:** These bugs caused Supabase 400 errors on virtually every page that queries medications or blood tests. This would have been a critical failure during the hackathon demo.
+**Impact:** These bugs caused Supabase 400 errors on virtually every page that queries medications or blood tests. This would have been a critical failure during the launch demo.
 
 ### Cycle 8-9 Summary
 

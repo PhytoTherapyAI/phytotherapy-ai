@@ -1,11 +1,11 @@
 // © 2026 DoctoPal — All Rights Reserved
 // ============================================
-// Integrated Care Pathways — HVHS C6
+// Integrated Care Pathways
 // Risk Stratification + Bundled Services + Variance Analysis
 // ============================================
 
 // ══════════════════════════════════════════
-// 1. Risk Stratification Engine (C6.4)
+// 1. Risk Stratification Engine
 // ══════════════════════════════════════════
 
 export type RiskTier = "wellness" | "management" | "complex"

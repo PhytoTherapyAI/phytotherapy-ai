@@ -3,10 +3,10 @@
 
 ## Known Limitations
 
-- **Facebook OAuth**: Works only for registered test users until Business Verification is complete. Expected, will be resolved post-hackathon.
+- **Facebook OAuth**: Works only for registered test users until Business Verification is complete. Expected, will be resolved post-launch.
 - **SOS Notifications**: SMS/WhatsApp notifications are coded but disabled in production. Emergency UI (112 call, countdown modal) works fully.
-- **E-Nabiz Integration**: Currently shows instructional UI only. Real integration requires Ministry of Health approval (post-hackathon).
-- **Operations Page**: Uses localStorage for surgical tracking data. Supabase migration planned post-hackathon.
+- **E-Nabiz Integration**: Currently shows instructional UI only. Real integration requires Ministry of Health approval (post-launch).
+- **Operations Page**: Uses localStorage for surgical tracking data. Supabase migration planned post-launch.
 - **Courses**: Affiliate links not yet active. Instructor names use generic "Expert Instructor" labels.
 
 ## Feature Status

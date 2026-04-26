@@ -1425,7 +1425,7 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
   "research.clinicalTrials": { en: "Active Clinical Trials", tr: "Aktif Klinik Çalışma" },
   "research.competitors": { en: "Competitors (This Segment)", tr: "Rakip (Bu Segmentte)" },
   "research.competitorsSub": { en: "Drug+herb+AI+outcome measurement", tr: "İlaç+bitki+AI+sonuç ölçümü" },
-  "research.nhtsAlignment": { en: "National HVHS Transition Strategy Alignment", tr: "Ulusal HVHS Geçiş Stratejisi Uyumu" },
+  "research.nhtsAlignment": { en: "National Health Transition Strategy Alignment", tr: "Ulusal Sağlık Geçiş Stratejisi Uyumu" },
   "research.nhts1Strategy": { en: "Turkey 2023-2028 Health Transformation Program", tr: "Türkiye 2023-2028 Sağlık Dönüşüm Programı" },
   "research.nhts1Align": { en: "Digital health infrastructure, citizen-centered care, preventive health emphasis", tr: "Dijital sağlık altyapısı, vatandaş odaklı sağlık hizmeti, koruyucu sağlık vurgusu" },
   "research.nhts2Strategy": { en: "G20 Digital Health Framework", tr: "G20 Dijital Sağlık Çerçevesi" },

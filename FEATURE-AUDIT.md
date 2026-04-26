@@ -5,7 +5,7 @@
 - ✅ PASS — Works end-to-end
 - ⚠️ PARTIAL — Works but has known limitation
 - 🔧 FIXED — Fixed this session
-- ❌ BROKEN — Needs post-hackathon work
+- ❌ BROKEN — Needs post-launch work
 
 ---
 
@@ -22,7 +22,7 @@ Known: /api/interaction and /api/blood-analysis return 500 when Gemini quota exh
 | Email login | ✅ PASS | Supabase Auth |
 | Email register | ✅ PASS | Auto-creates profile |
 | Google OAuth | ✅ PASS | Production |
-| Facebook OAuth | ⚠️ PARTIAL | Dev mode, Business Verification post-hackathon |
+| Facebook OAuth | ⚠️ PARTIAL | Dev mode, Business Verification post-launch |
 | Onboarding 7 steps | ✅ PASS | All save to Supabase |
 | Session persistence | ✅ PASS | Supabase tokens |
 | CAPTCHA (Turnstile) | ✅ PASS | Login + register |
@@ -82,8 +82,8 @@ Known: /api/interaction and /api/blood-analysis return 500 when Gemini quota exh
 | Download data | 🔧 FIXED | Now exports 14 tables (was 11) |
 | Delete data | 🔧 FIXED | Now deletes 18 tables (was 11) including family_medications, nudge_log, sleep_records, supplements |
 | Family members | ✅ PASS | Type badges (Child/Elderly/Adult) |
-| Family medications | ❌ BROKEN | Table exists but not used in UI (post-hackathon) |
-| Family allergies | ❌ BROKEN | Table exists but not used in UI (post-hackathon) |
+| Family medications | ❌ BROKEN | Table exists but not used in UI (post-launch) |
+| Family allergies | ❌ BROKEN | Table exists but not used in UI (post-launch) |
 
 ## NAVIGATION & SHELLS
 | Feature | Status | Notes |
@@ -136,7 +136,7 @@ Known: /api/interaction and /api/blood-analysis return 500 when Gemini quota exh
 | SEO | ✅ PASS | 32-page sitemap, JSON-LD, FAQ |
 | Copyright | ✅ PASS | 494 files + LICENSE |
 
-## KNOWN LIMITATIONS (Post-hackathon)
+## KNOWN LIMITATIONS (Post-launch)
 1. Facebook OAuth — Dev mode only until Business Verification
 2. Boss Fights — localStorage only (not Supabase)
 3. Family medications/allergies — Tables exist but UI not built

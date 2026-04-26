@@ -4,7 +4,7 @@ import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 /**
- * PROMs & PREMs API — HVHS C4 (Outcome Measurement)
+ * PROMs & PREMs API — Outcome Measurement
  *
  * PROMs (Patient-Reported Outcome Measures):
  *   Measures health status before/during/after herbal treatment

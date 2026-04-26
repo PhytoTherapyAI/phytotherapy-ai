@@ -7,9 +7,9 @@ import { tx } from "@/lib/translations";
  * Algoritmik Güvenlik ve Etik Çerçevesi
  * "Primum non nocere — First, do no harm"
  *
- * HVHS Model alignment:
- * - C2 (Analitik): Evidence-based risk scoring
- * - C10 (Stratejik Değişim): Continuous learning from doctor feedback
+ * Design principles:
+ * - Evidence-based risk scoring
+ * - Continuous learning from doctor feedback
  *
  * This module runs BEFORE any AI recommendation is generated.
  * It acts as a multi-layer safety net:

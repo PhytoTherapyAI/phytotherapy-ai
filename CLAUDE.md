@@ -1,16 +1,15 @@
-# CLAUDE.md — DoctoPal Proje Anayasası v52.2 (Post-Hackathon)
+# CLAUDE.md — DoctoPal Proje Anayasası v52.2
 
 ## Hızlı Bağlam
 
 **DoctoPal** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
 - **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
-- **Hackathon:** Harvard "Building High-Value Health Systems" (11-12 Nisan 2026) — **TAMAMLANDI**
 - **IGNITE 26 kazanıldı** — core tool'lar + aile profili jüri önceliği
 - **Domain:** doctopal.com (Vercel) | **GitHub:** github.com/PhytoTherapyAI/phytotherapy-ai
 - **Sunum dili:** İngilizce | **Arayüz:** TR/EN toggle
 - **Deploy:** Vercel + Supabase (email auth + Google/Facebook OAuth)
 - **AI Motor:** Anthropic Claude API (claude-haiku-4-5) + Embedding: Gemini text-embedding-004
-- **Post-hackathon modu:** Premium gate'ler aktif. Ücretsiz plan core özellikleri, premium sınırlı özellikleri açar.
+- **Mod:** Premium gate'ler aktif. Ücretsiz plan core özellikleri, premium sınırlı özellikleri açar.
 - **Proje boyutu:** 348+ sayfa, 126 API route (77 AI-powered), 155 tool, ~1500 çeviri key
 
 ### Routing
@@ -164,136 +163,6 @@ npm run build
 
 ---
 
-## HARVARD HACKATHON ROADMAP (7-11 Nisan 2026)
-
-> IGNITE 26'da jüri kararı: **Core tool'lar + Aile Profili** öncelikli. Diğer tool'lar hackathon sonrasına.
-
-### 1. Sağlık Asistanı (Core) ✅ TAMAMLANDI (Session 32)
-- [x] Acil durum database verisi iyileştir (40+ yeni red keyword: pediatrik, mental-health eşik, anaphylaxis pattern, stroke FAST/cardiac atypical + safe-context severity escalation)
-- [x] Daha gerçekçi ve kişiselleştirilmiş cevaplar (SYSTEM_PROMPT overhaul + 4 few-shot örnek + profil context enrichment: diet_type, exercise_frequency, sleep_quality 7-gün avg)
-- [x] Daha net, anlaşılır cevaplar (prompt çelişkisi çözüldü, adaptif format/uzunluk, KVKK uyumlu "sen" hitabı, yellow code UI card)
-
-### 2. Etkileşim Deneyleyici (Core)
-- [ ] İlaç girmeden de kullanılabilsin (uyarı mesajı ile: "İlaçlarınızı girmeden önerileri kullanmayın")
-- [ ] Asistan gibi panel'e al (etkileşimi panelde göster)
-
-### 3. Takvim & Panel
-- [ ] Genel kontrol ve düzeltme
-
-### 4. Kan Testi & Radyoloji ✅ TAMAMLANDI (Session 32)
-- [x] Kan testi PDF çalıştır (Claude Vision multimodal extraction zaten çalışıyordu; Session 32'de trend analizi + BLOOD_TEST_PROMPT yaş/cinsiyet bazlı ref + strict JSON schema + interaction check eklendi)
-- [x] Radyoloji cevaplarını iyileştir (RadiologyReport PDF Türkçe karakter fix NotoSans + radiology_reports DB tablosu structured storage + PROSPECTUS_PROMPT lib/prompts.ts'e taşındı + interaction rules zenginleştirildi)
-
-### 5. Onboarding Revizyon (BÜYÜK)
-
-**Genel:**
-- [ ] İlk sayfaya rahatlatıcı cümle: "Her şeyi sonradan düzenleyebilirsiniz"
-- [ ] Her sayfaya başlık uyumlu disclaimer: neden sorulduğu + işine yarayacağı
-- [ ] Logo/isim DoctoPal olacak, "Ne kadar çok bilgi = o kadar iyi cevap" mesajı
-- [ ] Çıkış yapılırsa girilmiş verileri kaydetsin
-
-**Adım 1 — Kişisel Bilgiler:**
-- [ ] Ad Soyad / Rumuz / "Sana nasıl hitap edelim"
-- [ ] Doğum tarihi UX iyileştirme (daha güzel, kolay)
-- [ ] Cinsiyet seçtikten sonra İngilizce çeviri fix
-
-**Adım 2 — İlaçlar:**
-- [ ] İlaç seçilince doz + kullanım sıklığı prospektüse göre otomatik atasın
-- [ ] Özel doz varsa hasta girsin + "Dozunuzu doğru girdiğinizden emin olun" disclaimer
-
-**Adım 3 — Alerjiler:**
-- [ ] Autocomplete + dropdown menü
-- [ ] Zorunluluk kalkacak (opsiyonel)
-- [ ] "Şiddet" → "Reaksiyon Tipi" olacak:
-  - Anafilaksi (Nefes Darlığı/Şok) — mutlak kontrendikasyon
-  - Kurdeşen / Yaygın Döküntü — yüksek riskli blokaj
-  - Hafif Kaşıntı / Lokal Kızarıklık — "doktoruna danış" seviyesi
-  - Mide Bulantısı / İshal (İntolerans) — yan etki, alerji değil
-  - Bilmiyorum / Hatırlamıyorum — kaçış seçeneği
-
-**Adım 5 — Bağımlılık (Sigara/Alkol):**
-- [ ] 3 ana buton: Hiç İçmedim (geç) / Eski İçici / Aktif İçici
-- [ ] Dinamik sorular (chip/dropdown, klavye yok):
-  - Günde ne kadar? (10 dal / 1 paket / 1.5+)
-  - Kaç yıl? (1-5 / 5-15 / 15+)
-  - (Eski içici) Ne zaman bıraktı? (Son 1 yıl / 1-5 yıl / 5+ yıl)
-- [ ] Alkol için de aynı mantık
-
-**Adım 6 — Özgeçmiş (Kronik Hastalıklar):**
-- [ ] Temiz kağıdı butonu: "Bilinen kronik hastalığım yok" (seçerse geç)
-- [ ] Kritik durumlar: Kanama Bozukluğu, Hamilelik/Emzirme, Bağışıklık Baskılanması, İleri Böbrek/KC Yetmezliği
-- [ ] Sistemlere göre çipler:
-  - Kardiyovasküler: Hipertansiyon, Aritmi, Kalp Yetmezliği
-  - Endokrin: Diyabet (Tip 1/2), Tiroid
-  - Nörolojik: Depresyon/Anksiyete, Epilepsi
-  - Solunum: Astım, KOAH
-- [ ] Cerrahi: Mide/Bağırsak ameliyatı (bariatrik vb.)
-
-**Yeni — Soygeçmiş Adımı:**
-- [ ] Temiz kağıdı: "Akrabalarımda genetik/kronik hastalık yok"
-- [ ] Majör genetik çipler: Erken kalp krizi (<55), Diyabet, Tiroid, Ailevi Kanser (Meme/Kolon/Prostat), Alzheimer, Bipolar/Şizofreni
-- [ ] "Neden Soruyoruz?" bilgilendirme metni
-
-**Adım 7 — Onay Sayfası:**
-- [ ] Tıbbi Sorumluluk Reddi: "Acil durumlarda kullanılamaz — 112" cümlesi eklenmeli
-- [ ] KVKK Açık Rıza: "Özel Nitelikli Kişisel Veri" + "açık rıza" ifadesi zorunlu
-- [ ] Bold ile kritik kelimeler vurgulu
-- [ ] Onay kutusu: "...DoctoPal'ın profesyonel doktor yerine geçmediğini anlıyor; KVKK kapsamında açık rıza gösteriyorum"
-
-### 6. Profil Güçlendirme Sayfası (Yeni)
-- [ ] Progressive Disclosure: zorunlu değil, "Profilini Güçlendir" başlığı
-- [ ] Sosyodemografik: Yaşadığı şehir/bölge, Medeni hal (Yalnız/Evli/Ailesiyle), Sigorta (SGK/Özel/Tamamlayıcı/Yok)
-- [ ] Beslenme: Standart / Vegan / Aralıklı Oruç / Karnivor
-- [ ] Fiziksel Aktivite: Hareketsiz / Düzenli Spor / Ağır Antrenman
-- [ ] Çalışma Düzeni: Gündüz-Masa Başı / Vardiyalı-Gece
-- [ ] Boy/Kilo (BMI hesaplama)
-- [ ] Akıllı cihaz kullanımı (switch)
-
-### 7. Aile Profili (Netflix Tarzı) ✅ TAMAMLANDI
-- [x] Netflix profil sekmesi şeklinde profil ekleme (/select-profile)
-- [x] Üye ekleme = davet ile (/api/family/invite + Resend email)
-- [x] Eklenen kişiye güvenlik bildirimi (/family/accept güvenlik uyarısı)
-- [x] Eklenen kişi düzenlenebilirlik tercihi seçebilsin (FamilyManagementSettings toggle)
-- [x] "Hangi profili görüntülemek istiyorsunuz?" sorulsun (select-profile redirect)
-- [x] Not ekleme: "babam", "eşim" gibi nickname'ler (davet formunda)
-- [x] Aktif profil banner (header'da yeşil banner)
-- [x] Profil/Dashboard başkasının verisini gösterir (useActiveProfile hook)
-- [x] 24 bug fix (XSS, RLS recursion, hydration, unicode, tema)
-- [ ] Premium alan kişi: kendi + 2 kişinin profilini yönetebilir (premium gate)
-- [ ] Aile paketi: eklenen herkes premium (premium propagation)
-
-### 7.1 Hane Sayfası v2 (Session 25-26) ✅ TAMAMLANDI
-**Stage 1 — Üye grid kartları:** /family üyeleri grid (1/2/3 col) — avatar+ring, isim+nickname, rol/Sen badge, paylaşım-aware sağlık skoru slot, "Katıldı: X gün önce", click→profil, owner remove (confirm). Kurucu her zaman ilk kartta (RLS race fallback: synth member). Synth row'ların DB butonları gizli.
-
-**Stage 2 — Bekleyen davetler:** Yeni `pendingInvites` context array — `family_members.invite_status='pending'` rowları. Per-row "Link kopyala" + "İptal" butonları. Migration `expires_at` kolonu ekledi (default 7 gün); UI "X gün kaldı" / "Süresi doldu" badge gösteriyor.
-
-**Stage 3 — Per-member sharing prefs:** Migration: `shares_health_score`, `shares_medications`, `shares_allergies`, `shares_emergency` BOOLEAN kolonları (emergency default TRUE). RLS `fm_self_update` zaten yazımı kullanıcıya kısıtlıyor. Self üye kartından "Paylaşım" butonu → bottom-sheet modal, 4 toggle.
-
-**Stage 4 — Dashboard summary:** Sayfa üstünde 4-cell grid (Üye/Bekleyen/Ort. Skor/Hatırlatma). Sharing açılana kadar aggregate cell'ler "—" + fallback hint metin.
-
-**Stage 5 — Notifications:** Yeni `family_notifications` tablosu (group_id, from/to_user_id, type, message, read). Tip whitelist: `reminder_meds | reminder_checkin | reminder_water | emergency | custom`. RLS `fn_sender_insert` policy DB seviyesinde sender VE recipient'ın aynı group_id accepted üyeleri olmasını zorunlu kılıyor → cross-household leak imkansız. API `/api/family/notifications` GET/POST/PATCH (Bearer auth, 60/20/60 req-min rate-limit, anon-key + RLS, service-role yok). Header'a global `<NotificationBell />` (60sn polling, badge, dropdown, mark-read). Üye kartında "Hatırlat" butonu → bottom-sheet 3 preset (meds/check-in/water).
-
-**Hane düzenleme + UX:** Hane ismi inline edit (pencil → updateGroupName, RLS fg_update). 5 emoji icon picker (🏠❤️🌳🏡🌟, localStorage). Boş state motivasyon kartı (sadece kurucu varsa: 3 mini benefit — Heart/Bell/Siren). Davet form helper text + 7-gün notu. Roller & izinler accordion (Owner/Admin/Member). Gradient header, ring avatar, mobile responsive.
-
-**Henüz yapılmadı (Session 27+ için):**
-- [ ] Realtime (Supabase realtime) — şu an 60sn polling
-- [ ] Anomaly-driven notifications (sağlık skoru ani düşüş → owner ping)
-- [ ] Emergency SOS sistemine bağlama (`emergency` type schema'da rezerve, trigger yok)
-- [ ] Premium gate'ler (aile paketi limitleri)
-
-### 8. Toolları Gizle
-- [ ] Sadece core tool'lar görünsün (asistan, etkileşim, takvim, kan testi, profil, aile)
-- [ ] Geri kalan tool'lar hidden: true
-- [ ] Ayarlar ve Hesap da gizlenecekler listesinde
-
-### 9. Veri Gizliliği
-- [ ] Genel optimizasyon
-
-### 10. Mobil Port
-- [ ] Genel kontrol ve düzeltme
-
----
-
 ## Teknik Stack
 
 ```
@@ -439,7 +308,7 @@ SENTRY_DSN=...
 
 ---
 
-## Demo Senaryoları (Harvard Hackathon)
+## Demo Senaryoları
 
 ### Demo 1 — İlaç Etkileşimi
 - Input: "I take Metformin and Lisinopril. I have trouble sleeping."
@@ -457,7 +326,7 @@ SENTRY_DSN=...
 
 ---
 
-## POST-HACKATHON: Chat API Context Enrichment ✅ TAMAMLANDI (Session 32)
+## Chat API Context Enrichment ✅ TAMAMLANDI (Session 32)
 
 ### Durum:
 Chat API route'u (/api/chat) aşağıdaki profil verilerini AI system prompt'a enjekte ediyor:
@@ -486,11 +355,11 @@ AI cross-reference senaryoları için prompt'a daha spesifik few-shot örnekler 
 ---
 
 *Son güncelleme: 19 Nisan 2026 v52.4*
-*IGNITE 26 kazanıldı — Harvard Hackathon tamamlandı (11-12 Nisan 2026).*
+*IGNITE 26 kazanıldı (11-12 Nisan 2026).*
 *Session 18-20: Aile profili + SBAR PDF redesign + condition translations + bug fixes.*
 *Session 21: YASAL UYUM — 10/14 madde kod implementasyonu tamamlandı (MADDE 1,2,3,5,6,7,8,9,10,11,12,13). MADDE 4 ve 14 hukuki/idari işlem.*
-*Session 22-24: Post-hackathon cleanup — 62/77 AI endpoint'te consent gate aktif → translations.ts split (7060→272 satır, 11 namespace) → lib/ `any` cleanup (6 dosya strict typed) → hackathon modu kapatıldı (premium gates aktif) → yasal uyum bug fixes (PromptInjectionError 500 fix, regex medical-term whitelist, null consent bypass, fail-closed filter) → edge-case audit (ageToRange NaN, anonymize null input, 16 yeni emergency keyword, 57 TR medical term).*
-*Session 25: Profil tamamlama tutarsızlığı düzeltildi (single source of truth) → Hackathon demo banner kaldırıldı → Güvenlik sayfası içerik genişletme + AI Safety kartı → /api/auth/change-password auth bypass kapatıldı (body.userId artık ignore, identity Bearer token'dan) + rate limit + service-role kullanımı kaldırıldı → `any` type cleanup (34 dosya) + apiHandler refactor (daily-log, health-score) → /family page redesign (kurucu kartı, isim/icon edit, motivasyon empty state, roller accordion).*
+*Session 22-24: Post-launch cleanup — 62/77 AI endpoint'te consent gate aktif → translations.ts split (7060→272 satır, 11 namespace) → lib/ `any` cleanup (6 dosya strict typed) → launch modu kapatıldı (premium gates aktif) → yasal uyum bug fixes (PromptInjectionError 500 fix, regex medical-term whitelist, null consent bypass, fail-closed filter) → edge-case audit (ageToRange NaN, anonymize null input, 16 yeni emergency keyword, 57 TR medical term).*
+*Session 25: Profil tamamlama tutarsızlığı düzeltildi (single source of truth) → Demo banner kaldırıldı → Güvenlik sayfası içerik genişletme + AI Safety kartı → /api/auth/change-password auth bypass kapatıldı (body.userId artık ignore, identity Bearer token'dan) + rate limit + service-role kullanımı kaldırıldı → `any` type cleanup (34 dosya) + apiHandler refactor (daily-log, health-score) → /family page redesign (kurucu kartı, isim/icon edit, motivasyon empty state, roller accordion).*
 *Session 26: /family v2 — grid kartlar (Stage 1) + bekleyen davetler (Stage 2) + per-member sharing prefs (Stage 3) + dashboard summary (Stage 4) + notifications sistemi (Stage 5: family_notifications tablosu + RLS + API + global NotificationBell + member-to-member reminders).*
 *Session 27: Apple Health + Google Fit import — health_imports tablosu + health_metrics.import_id FK (cascade delete) + UPDATE/DELETE RLS policy eklendi → jszip + fast-xml-parser bağımlılıkları → browser-side parsers (apple-health-parser.ts: HK→metric_type whitelist + per-day agg, google-fit-parser.ts: Takeout JSON shape handling + ns→ISO + sleep stage filter) → /api/health-imports (CRUD lifecycle) + /api/health-metrics (batch upsert + daily/weekly/monthly rollup GET) → HealthImportSection component (/connected-devices entegre: 2 import kartı + rehber accordion + progress bar + 7-gün mini summary + geçmiş import'lar tablosu) → mock fixtures + Playwright spec (parser doğruluğu + auth-gate testleri).*
 *Session 28: Aile Profili sistemi (Netflix tarzı profil seçim, davet sistemi, yönetim izni, 24 bug fix) → Onboarding fixes (reaksiyon dropdown, Emekli SGK, allergy save, alcohol_use constraint, cerrahi yıl UX) → WaterIntakeContext (tek kaynak su takibi) → Dialog sıralaması (ilaç onayı→check-in) → meta: supplement filtresi → Profile fetch retry → SQL migrations (daily_check_ins, water_intake, daily_logs, CHECK constraints).*
