@@ -338,28 +338,48 @@ export function ProfileShellV2() {
           </div>
         </MobileDrawer>
 
-        <main className="flex-1 min-w-0">
-          {/* Mobile hamburger — sticky beneath the global Header (top-20
-              ≈ 5rem) so it stays reachable while the user scrolls long
-              tabs (Medications, Family History etc.). Shows the active
-              tab's icon + label so the user always knows where they
-              are without opening the drawer.
+        <main className="flex-1 min-w-0 pt-14 md:pt-0">
+          {/* Mobile hamburger — viewport-pinned banner just under the
+              global Header. Shows the active tab's icon + label so the
+              user always has a "you are here" cue without opening the
+              drawer.
 
-              F-MOBILE-001 fix-1: switched from a card-style chrome
-              (rounded-xl + shadow + bg-card) to a full-bleed banner
-              that mirrors the Health Assistant hamburger — `-mx-4`
-              cancels the parent's px-4 padding so the banner extends
-              edge-to-edge, `bg-background/95 backdrop-blur-sm` keeps
-              the chat content underneath legible during scroll, and
-              `border-b` is the only divider needed once the bottom of
-              the banner stops competing visually with the rounded tab
-              cards rendered inside renderTab(). */}
+              F-MOBILE-001 fix-3: switched from `position: sticky` to
+              `position: fixed`. Two things made sticky unworkable here
+              after fix-1 / fix-2:
+
+                (1) Even after dropping `overflow-x: clip` from layout
+                    main, the banner has TWO different parent-padding
+                    layers above it (the ProfileShellV2 outer wrapper's
+                    px-4) that `-mx-4` alone could not pierce, because
+                    `<button>`'s UA shrink-to-fit width interacted with
+                    the nested-flex layout in a way that left
+                    `width: auto` resolving to content size, not full
+                    bleed.
+
+                (2) The `w-[calc(100%+2rem)]` workaround attempted in
+                    fix-2 was technically invalid CSS — the spec
+                    requires whitespace around `+`/`-` inside calc(),
+                    and Tailwind passes the bracketed value as-is
+                    without re-inserting spaces, so the declaration
+                    was being silently dropped by some engines.
+
+              `position: fixed; inset-x-0; top-14` solves both at once:
+              the banner is pinned to the viewport, fully decoupled
+              from any ancestor's max-width / padding, and there is no
+              calc() syntax to misparse. The Header (sticky `top-0`,
+              ~53px tall) sits at z-50; the banner at z-30 lives just
+              beneath it; the MobileDrawer at z-40 (backdrop) / z-50
+              (panel) cleanly covers the banner when open. The
+              `pt-14 md:pt-0` on the main column compensates for the
+              banner being out of normal flow so the first tab card
+              isn't hidden underneath. */}
           <button
             type="button"
             onClick={() => setSidebarOpen(true)}
             aria-label={tr ? "Profil bölümlerini aç" : "Open profile sections"}
             aria-expanded={sidebarOpen}
-            className="md:hidden sticky top-20 z-10 -mx-4 mb-4 flex w-[calc(100%+2rem)] items-center justify-between border-b border-border bg-background/95 px-4 py-3 text-sm font-semibold backdrop-blur-sm"
+            className="md:hidden fixed top-14 inset-x-0 z-30 flex items-center justify-between border-b border-border bg-background/95 px-4 py-3 text-sm font-semibold backdrop-blur-sm"
           >
             <span className="inline-flex items-center gap-2">
               <ActiveTabIcon className="h-4 w-4 text-emerald-600" />
