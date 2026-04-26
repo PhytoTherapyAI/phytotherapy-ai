@@ -1,17 +1,22 @@
 // © 2026 DoctoPal — All Rights Reserved
 //
-// Left-sticky sidebar (≥lg) + mobile collapsible button list (<lg). Each
-// entry is a lucide-icon + label + active-tab emerald vurgu pair.
+// Sidebar content: profile header (avatar/name) + nav list. Container
+// agnostic — the parent (ProfileShellV2) wraps it in a desktop sticky
+// <aside> for ≥md viewports OR in a MobileDrawer for <md viewports.
+// Either way the JSX rendered here is identical.
 //
-// Reproductive tab is gender-gated — rendered only when profile.gender is
-// NOT 'male'. Everything else is always visible (auth gate lives on the
-// page level, not per-tab here).
+// Reproductive tab is gender-gated — rendered only when profile.gender
+// is NOT 'male'. Everything else is always visible (auth gate lives at
+// the page level, not per-tab here).
+//
+// F-MOBILE-001: removed the legacy "<lg accordion mobile fallback".
+// The mobile pattern is now the slide-in drawer — see ProfileShellV2
+// for the wiring.
 "use client"
 
-import { useState } from "react"
 import {
   User, Heart, Stethoscope, Pill, Leaf, AlertTriangle,
-  Syringe, Users, Baby, FileText, Shield, ChevronDown,
+  Syringe, Users, Baby, FileText, Shield,
   type LucideIcon,
 } from "lucide-react"
 import { type ProfileTabId } from "./useProfileTab"
@@ -39,6 +44,21 @@ const TABS: TabDef[] = [
   { id: "gizlilik",       icon: Shield,          label: { tr: "Gizlilik & Rıza", en: "Privacy & Consent" } },
 ]
 
+/**
+ * Look up the visible tab definition for a given id, applying the
+ * same gating rules as the sidebar. Used by the parent shell to
+ * render the active tab's icon + label inside the mobile hamburger
+ * trigger without duplicating the tab metadata.
+ */
+export function resolveActiveTab(
+  id: ProfileTabId,
+  gender: string | null,
+): { icon: LucideIcon; label: { tr: string; en: string } } {
+  const visible = TABS.filter((t) => !t.gate || t.gate({ gender }))
+  const found = visible.find((t) => t.id === id) ?? visible[0]
+  return { icon: found.icon, label: found.label }
+}
+
 interface ProfileSidebarProps {
   activeTab: ProfileTabId
   onSelect: (next: ProfileTabId) => void
@@ -50,71 +70,26 @@ interface ProfileSidebarProps {
 }
 
 export function ProfileSidebar({ activeTab, onSelect, lang, header, gender }: ProfileSidebarProps) {
-  const [mobileOpen, setMobileOpen] = useState(false)
   const tabs = TABS.filter((t) => !t.gate || t.gate({ gender }))
-  const activeTabDef = tabs.find((t) => t.id === activeTab) ?? tabs[0]
-
-  const handleSelect = (id: ProfileTabId) => {
-    onSelect(id)
-    // Mobile: collapse the list after the user picks a tab.
-    setMobileOpen(false)
-  }
 
   return (
-    <>
-      {/* Desktop / tablet: sticky sidebar. */}
-      <aside className="hidden lg:block w-64 xl:w-72 shrink-0 sticky top-20 self-start">
-        {header}
-        <nav className="mt-4 space-y-1" aria-label={lang === "tr" ? "Profil bölümleri" : "Profile sections"}>
-          {tabs.map((t) => (
-            <SidebarItem
-              key={t.id}
-              icon={t.icon}
-              label={t.label[lang]}
-              active={t.id === activeTab}
-              onClick={() => handleSelect(t.id)}
-            />
-          ))}
-        </nav>
-      </aside>
-
-      {/* Mobile: collapsible button at the top — shows current tab +
-          chevron; click expands the list; selecting a tab collapses again.
-          Custom (not <details>) because the chevron rotation + list
-          height transition is smoother this way. */}
-      <div className="lg:hidden mb-4">
-        {header}
-        <button
-          type="button"
-          onClick={() => setMobileOpen((v) => !v)}
-          className="mt-3 w-full inline-flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold shadow-sm"
-          aria-expanded={mobileOpen}
-        >
-          <span className="inline-flex items-center gap-2">
-            <activeTabDef.icon className="h-4 w-4 text-emerald-600" />
-            {activeTabDef.label[lang]}
-          </span>
-          <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${mobileOpen ? "rotate-180" : ""}`} />
-        </button>
-        <div
-          className={`overflow-hidden transition-[max-height,opacity] duration-200 ease-out ${
-            mobileOpen ? "max-h-[700px] opacity-100 mt-2" : "max-h-0 opacity-0"
-          }`}
-        >
-          <nav className="space-y-1 rounded-xl border border-border bg-card p-2" aria-label={lang === "tr" ? "Profil bölümleri" : "Profile sections"}>
-            {tabs.map((t) => (
-              <SidebarItem
-                key={t.id}
-                icon={t.icon}
-                label={t.label[lang]}
-                active={t.id === activeTab}
-                onClick={() => handleSelect(t.id)}
-              />
-            ))}
-          </nav>
-        </div>
-      </div>
-    </>
+    <div>
+      {header}
+      <nav
+        className="mt-4 space-y-1"
+        aria-label={lang === "tr" ? "Profil bölümleri" : "Profile sections"}
+      >
+        {tabs.map((t) => (
+          <SidebarItem
+            key={t.id}
+            icon={t.icon}
+            label={t.label[lang]}
+            active={t.id === activeTab}
+            onClick={() => onSelect(t.id)}
+          />
+        ))}
+      </nav>
+    </div>
   )
 }
 

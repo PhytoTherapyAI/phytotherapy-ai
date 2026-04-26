@@ -11,18 +11,22 @@
 //     if tabs end up needing the same fetches; for Commit 1 the only
 //     live tab (General) reads straight from auth context.
 //
-// Mobile layout: Sidebar collapses into a button-triggered list at
-// the top (<ProfileSidebar> handles the internal state). Desktop is
-// a two-column sticky sidebar + content flex layout.
+// F-MOBILE-001: mobile pattern is now a hamburger-triggered slide-in
+// drawer (components/ui/MobileDrawer) instead of the legacy <lg
+// accordion fallback that lived inside ProfileSidebar. Desktop stays
+// a two-column sticky sidebar + content flex layout, but the
+// breakpoint shifted from `lg` (1024) to `md` (768) so tablet
+// portrait gets the desktop layout.
 "use client"
 
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { LogIn } from "lucide-react"
+import { LogIn, Menu } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { useActiveProfile } from "@/lib/use-active-profile"
 import { useLang } from "@/components/layout/language-toggle"
-import { ProfileSidebar } from "./ProfileSidebar"
+import { MobileDrawer } from "@/components/ui/MobileDrawer"
+import { ProfileSidebar, resolveActiveTab } from "./ProfileSidebar"
 import { useProfileTab } from "./useProfileTab"
 import { GeneralTab } from "./tabs/GeneralTab"
 import { BodyLifestyleTab } from "./tabs/BodyLifestyleTab"
@@ -44,6 +48,15 @@ export function ProfileShellV2() {
   const { lang } = useLang()
   const tr = lang === "tr"
   const { activeTab, setTab } = useProfileTab()
+
+  // F-MOBILE-001: mobile-only drawer state. Selecting a tab from the
+  // drawer also closes it (`handleTabSelect`); desktop selection goes
+  // through `setTab` directly so the sticky sidebar stays put.
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const handleTabSelect = (id: typeof activeTab) => {
+    setTab(id)
+    setSidebarOpen(false)
+  }
 
   // When viewing a family member, the auth profile isn't the right source;
   // legacy page fetches a separate `viewedProfile`. Commit 1 only ships the
@@ -279,17 +292,76 @@ export function ProfileShellV2() {
     }
   }
 
+  // Active tab metadata for the mobile hamburger button — keeps the
+  // tab list as the single source of truth (resolveActiveTab applies
+  // the same gender gate the sidebar uses).
+  const ActiveTabIcon = useMemo(
+    () => resolveActiveTab(activeTab, (effectiveProfile?.gender as string | undefined) ?? null).icon,
+    [activeTab, effectiveProfile?.gender],
+  )
+  const activeTabLabel = useMemo(
+    () => resolveActiveTab(activeTab, (effectiveProfile?.gender as string | undefined) ?? null).label[lang as "tr" | "en"],
+    [activeTab, effectiveProfile?.gender, lang],
+  )
+
   return (
     <div className="mx-auto max-w-6xl px-4 md:px-8 py-6 md:py-10">
-      <div className="flex flex-col lg:flex-row lg:gap-8">
-        <ProfileSidebar
-          activeTab={activeTab}
-          onSelect={setTab}
-          lang={lang as "tr" | "en"}
-          header={sidebarHeader}
-          gender={(effectiveProfile?.gender as string | undefined) ?? null}
-        />
-        <main className="flex-1 min-w-0">{renderTab()}</main>
+      <div className="flex flex-col md:flex-row md:gap-8">
+        {/* Desktop sticky sidebar (≥md). Hidden on mobile — the same
+            content is rendered inside the MobileDrawer below. */}
+        <aside className="hidden md:block w-64 xl:w-72 shrink-0 sticky top-20 self-start">
+          <ProfileSidebar
+            activeTab={activeTab}
+            onSelect={setTab}
+            lang={lang as "tr" | "en"}
+            header={sidebarHeader}
+            gender={(effectiveProfile?.gender as string | undefined) ?? null}
+          />
+        </aside>
+
+        {/* Mobile drawer (<md). Same ProfileSidebar content, wrapped in
+            the slide-in overlay. handleTabSelect closes the drawer
+            immediately after a pick. */}
+        <MobileDrawer
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          label={tr ? "Profil bölümleri" : "Profile sections"}
+        >
+          <div className="p-4">
+            <ProfileSidebar
+              activeTab={activeTab}
+              onSelect={handleTabSelect}
+              lang={lang as "tr" | "en"}
+              header={sidebarHeader}
+              gender={(effectiveProfile?.gender as string | undefined) ?? null}
+            />
+          </div>
+        </MobileDrawer>
+
+        <main className="flex-1 min-w-0">
+          {/* Mobile hamburger — sticky beneath the global Header (top-20
+              ≈ 5rem) so it stays reachable while the user scrolls long
+              tabs (Medications, Family History etc.). Shows the active
+              tab's icon + label so the user always knows where they
+              are without opening the drawer. */}
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            aria-label={tr ? "Profil bölümlerini aç" : "Open profile sections"}
+            aria-expanded={sidebarOpen}
+            className="md:hidden sticky top-20 z-10 mb-4 inline-flex w-full items-center justify-between rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold shadow-sm"
+          >
+            <span className="inline-flex items-center gap-2">
+              <ActiveTabIcon className="h-4 w-4 text-emerald-600" />
+              <span className="truncate">{activeTabLabel}</span>
+            </span>
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground">
+              <Menu className="h-3.5 w-3.5" />
+              {tr ? "Menü" : "Menu"}
+            </span>
+          </button>
+          {renderTab()}
+        </main>
       </div>
     </div>
   )

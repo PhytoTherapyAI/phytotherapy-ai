@@ -3,11 +3,12 @@
 
 import { useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Sparkles, Pill, CheckCircle2, RefreshCw, Loader2, UserCircle } from "lucide-react";
+import { Sparkles, Pill, CheckCircle2, RefreshCw, Loader2, UserCircle, Menu } from "lucide-react";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import { ChatInterface } from "@/components/chat/ChatInterface";
 import { ConversationHistory } from "@/components/chat/ConversationHistory";
 import { SmartWelcome } from "@/components/chat/SmartWelcome";
+import { MobileDrawer } from "@/components/ui/MobileDrawer";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
@@ -50,9 +51,18 @@ export default function HealthAssistantPage() {
   // and so we can detect deletion of the active row.
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
 
+  // F-MOBILE-001: mobile drawer open/closed state. Selecting a row or
+  // hitting "new chat" from the drawer auto-closes via the wrapped
+  // handlers below.
+  const [historyOpen, setHistoryOpen] = useState(false);
+
   const handleSelectConversation = (id: string, query: string, response: string | null) => {
     setActiveConversationId(id);
     setLoadConversation({ query, response });
+  };
+  const handleSelectFromDrawer = (id: string, query: string, response: string | null) => {
+    handleSelectConversation(id, query, response);
+    setHistoryOpen(false);
   };
 
   const handleNewConversation = useCallback(() => {
@@ -65,6 +75,14 @@ export default function HealthAssistantPage() {
       router.replace("/health-assistant", { scroll: false });
     }
   }, [router, urlQuery]);
+
+  // F-MOBILE-001: drawer-aware variant — closes the drawer after
+  // resetting the chat surface so the user lands directly on a fresh
+  // ChatInterface without having to dismiss anything.
+  const handleNewFromDrawer = useCallback(() => {
+    handleNewConversation();
+    setHistoryOpen(false);
+  }, [handleNewConversation]);
 
   // F-CHAT-SIDEBAR-001: when the user deletes the active conversation
   // from the sidebar, we need to clear the chat surface. Sidebar tells
@@ -108,12 +126,14 @@ export default function HealthAssistantPage() {
   return (
     <div className="flex h-[calc(100vh-7rem)] overflow-hidden">
       <LocalizedTitle tr="Sağlık Asistanı" en="AI Health Assistant" />
-      {/* Left Sidebar — conversation history (desktop only).
-          Hidden when viewing a family member's profile: query_history is keyed
-          by the authenticated user, so showing the caller's own history on
-          someone else's profile screen would leak their searches (KVKK). */}
+      {/* Desktop sidebar (≥md). Hidden when viewing a family member's
+          profile: query_history is keyed by the authenticated user, so
+          showing the caller's own history on someone else's profile
+          screen would leak their searches (KVKK). F-MOBILE-001 dropped
+          the breakpoint from `lg` to `md` so tablet portrait gets the
+          desktop layout. */}
       {isAuthenticated && isOwnProfile && (
-        <div className="hidden w-64 shrink-0 lg:block">
+        <div className="hidden w-64 shrink-0 md:block">
           <ConversationHistory
             onSelectConversation={handleSelectConversation}
             onNewConversation={handleNewConversation}
@@ -124,9 +144,45 @@ export default function HealthAssistantPage() {
         </div>
       )}
 
+      {/* Mobile drawer (<md). Same ConversationHistory in sidebar mode,
+          wrapped in the slide-in overlay. The wrapped select / new-chat
+          handlers close the drawer after the action so the user lands
+          straight on the ChatInterface without dismissing anything. */}
+      {isAuthenticated && isOwnProfile && (
+        <MobileDrawer
+          open={historyOpen}
+          onClose={() => setHistoryOpen(false)}
+          label={lang === "tr" ? "Sohbet geçmişi" : "Chat history"}
+        >
+          <ConversationHistory
+            onSelectConversation={handleSelectFromDrawer}
+            onNewConversation={handleNewFromDrawer}
+            sidebar
+            currentQueryId={activeConversationId}
+            onDelete={handleConversationDeleted}
+          />
+        </MobileDrawer>
+      )}
+
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-4xl px-4 md:px-8 py-8">
+          {/* Mobile hamburger — sticky to the top of the scroll
+              container so it stays reachable while the user scrolls a
+              long chat. Same KVKK gate as the desktop sidebar (only
+              shown when isOwnProfile). */}
+          {isAuthenticated && isOwnProfile && (
+            <button
+              type="button"
+              onClick={() => setHistoryOpen(true)}
+              aria-label={lang === "tr" ? "Sohbet geçmişini aç" : "Open chat history"}
+              aria-expanded={historyOpen}
+              className="md:hidden sticky top-0 z-10 -mx-4 mb-4 flex items-center gap-2 border-b border-border bg-background/95 px-4 py-3 text-sm font-semibold backdrop-blur-sm"
+            >
+              <Menu className="h-4 w-4 text-emerald-600" />
+              <span>{lang === "tr" ? "Sohbet Geçmişi" : "Chat History"}</span>
+            </button>
+          )}
           {/* Active family member context banner */}
           {!isOwnProfile && activeUserId && (
             <div className="mb-6 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/20 px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -148,35 +204,25 @@ export default function HealthAssistantPage() {
             </div>
           )}
 
-          {/* Header */}
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-primary/10 p-3">
-                <Sparkles className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
-                    {tx('ha.title', lang)}
-                  </h1>
-                  <InfoTooltip title={tx("tooltip.healthAssistant.title", lang)} description={tx("tooltip.healthAssistant.desc", lang)} />
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {tx('ha.subtitle', lang)}
-                </p>
-              </div>
+          {/* Header — F-MOBILE-001 dropped the right-side
+              ConversationHistory drawer toggle that used to sit here;
+              the mobile entry point is now the sticky hamburger above
+              this header. */}
+          <div className="mb-6 flex items-center gap-3">
+            <div className="rounded-lg bg-primary/10 p-3">
+              <Sparkles className="h-6 w-6 text-primary" />
             </div>
-            {/* Mobile: drawer toggle — same privacy rule as the desktop sidebar. */}
-            {isOwnProfile && (
-              <div className="lg:hidden">
-                <ConversationHistory
-                  onSelectConversation={handleSelectConversation}
-                  onNewConversation={handleNewConversation}
-                  currentQueryId={activeConversationId}
-                  onDelete={handleConversationDeleted}
-                />
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="font-heading text-3xl font-bold italic tracking-tight sm:text-4xl">
+                  {tx('ha.title', lang)}
+                </h1>
+                <InfoTooltip title={tx("tooltip.healthAssistant.title", lang)} description={tx("tooltip.healthAssistant.desc", lang)} />
               </div>
-            )}
+              <p className="text-sm text-muted-foreground">
+                {tx('ha.subtitle', lang)}
+              </p>
+            </div>
           </div>
 
           {/* Smart Welcome — contextual greeting + personalized chips + did you know.
