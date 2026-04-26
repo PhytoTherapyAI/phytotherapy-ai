@@ -23,7 +23,7 @@
 
 DoctoPal is an AI health assistant that helps users understand drug–herb interactions, analyze lab results, track medications, and access 155+ evidence-based health tools — all with multi-layer safety guardrails and full Turkish regulatory compliance (KVKK, TCK, 1219 s.K., GETAT).
 
-Built by three medical students with no prior software development experience, using Claude as the sole developer.
+Built by two medical students with no prior software development experience, using Claude as the sole developer.
 
 **Awards:** IGNITE'26 Winner (April 2026)
 
@@ -247,11 +247,10 @@ For bug reports, use the in-app feedback widget or email info@doctopal.com.
 
 ## Team
 
-Built by three medical students from Turkey:
+Built by two medical students from Turkey:
 
-- **Taha Ahmet Sibiç** — Co-founder & CEO
-- **İpek** — Co-founder
-- **Yavuz Selim Erbay** — Co-founder
+- **Taha Ahmet Sıbıç** — Co-founder
+- **İpek Özen** — Co-founder
 
 All code authored by Claude (Anthropic) under the team's direction via Claude Code.
 

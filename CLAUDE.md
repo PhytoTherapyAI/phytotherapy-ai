@@ -3,7 +3,7 @@
 ## Hızlı Bağlam
 
 **DoctoPal** — kanıta dayalı fitoterapi + modern tıp köprüsü kuran AI sağlık asistanı.
-- **Ekip:** 3 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
+- **Ekip:** 2 tıp öğrencisi, teknik bilgi yok — Claude tüm kodu yazıyor
 - **IGNITE 26 kazanıldı** — core tool'lar + aile profili jüri önceliği
 - **Domain:** doctopal.com (Vercel) | **GitHub:** github.com/PhytoTherapyAI/phytotherapy-ai
 - **Sunum dili:** İngilizce | **Arayüz:** TR/EN toggle
