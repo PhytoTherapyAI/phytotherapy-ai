@@ -53,7 +53,13 @@ const dmSerif = DM_Serif_Display({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#3c7a52",
+  // viewport-fit=cover lets the page extend under iOS notches / home
+  // indicators. Components that need to dodge the cutouts use the
+  // .safe-area-pt / .safe-area-pb / .safe-area-px helpers from globals.css.
+  viewportFit: "cover",
+  // Brand emerald-600. Mirrors manifest.json theme_color and the
+  // placeholder icon background.
+  themeColor: "#059669",
 };
 
 export const metadata: Metadata = {
@@ -97,12 +103,20 @@ export const metadata: Metadata = {
     follow: true,
   },
   manifest: "/manifest.json",
+  // Browser tab + PWA install icons. The placeholder D-letter set
+  // (icon.svg + generated PNGs) replaces the legacy phytotherapy
+  // favicon.svg HERE for brand consistency, but the legacy file
+  // stays in /public because Header / login / error / loading /
+  // not-found / select-profile still consume it directly. iOS
+  // requires a PNG for apple-touch-icon — SVGs are silently
+  // ignored on home-screen install.
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.png", type: "image/png", sizes: "32x32" },
     ],
     apple: [
-      { url: "/logo-icon.svg", type: "image/svg+xml" },
+      { url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" },
     ],
   },
   appleWebApp: {
