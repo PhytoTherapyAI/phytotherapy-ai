@@ -26,7 +26,7 @@ const personalityOptions = [
 
 export default function SettingsPage() {
   const router = useRouter()
-  const { user, profile, isAuthenticated, isLoading } = useAuth()
+  const { user, profile, session, isAuthenticated, isLoading } = useAuth()
   const { isOwnProfile } = useActiveProfile()
   const { lang, setLang } = useLang()
   const isTr = lang === "tr"
@@ -34,7 +34,11 @@ export default function SettingsPage() {
   const [personality, setPersonality]       = useState("compassionate")
   const [notifications, setNotifications]   = useState({ email: true, push: true, dailyPlan: true, weeklySummary: false })
 
-  // Password change state
+  // Password change state — F-SETTINGS-001 added currentPassword
+  // and a separate Eye/EyeOff toggle for it (so the user can re-read
+  // their current password without exposing the new one).
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [showCurrentPw, setShowCurrentPw]   = useState(false)
   const [newPassword, setNewPassword]       = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showPw, setShowPw]                 = useState(false)
@@ -75,20 +79,88 @@ export default function SettingsPage() {
     localStorage.setItem(PERSONALITY_KEY, id)
   }
 
+  // F-SETTINGS-001: full pipeline rewrite.
+  //  - Client-side validation mirrors the backend (same 9 rules) so we
+  //    can surface i18n feedback without a round-trip on obvious cases.
+  //    `pwMismatch` is client-only — backend doesn't take confirmPassword.
+  //  - Submit goes through /api/auth/change-password (with the user's
+  //    bearer) so the server-side rate limit (5/min/IP), re-auth via
+  //    signInWithPassword, and the 9-rule backend validator all fire as
+  //    a defense-in-depth layer.
+  //  - Backend returns a structured `error: <CODE>` body which we map
+  //    to a localized message via switch/case. INTERNAL / unmapped codes
+  //    fall back to `pwUnexpected`.
   const handlePasswordChange = async () => {
     setPwError("")
+
+    if (!currentPassword) { setPwError(tx("settings.currentPwRequired", lang)); return }
     if (newPassword.length < 8) { setPwError(tx("settings.pwMin8", lang)); return }
+    if (newPassword.length > 72) { setPwError(tx("settings.pwTooLong", lang)); return }
     if (!/[A-Z]/.test(newPassword)) { setPwError(tx("settings.pwUpper", lang)); return }
+    if (!/[a-z]/.test(newPassword)) { setPwError(tx("settings.pwLower", lang)); return }
+    if (!/[0-9]/.test(newPassword)) { setPwError(tx("settings.pwNumber", lang)); return }
+    if (newPassword === currentPassword) { setPwError(tx("settings.pwSameAsCurrent", lang)); return }
+    if (
+      user?.email &&
+      newPassword.toLowerCase() === user.email.toLowerCase()
+    ) {
+      setPwError(tx("settings.pwSameAsEmail", lang))
+      return
+    }
     if (newPassword !== confirmPassword) { setPwError(tx("settings.pwMismatch", lang)); return }
+
+    if (!session?.access_token) {
+      setPwState("error")
+      setPwError(tx("settings.pwUnexpected", lang))
+      return
+    }
+
     setPwState("loading")
     try {
-      const { createBrowserClient } = await import("@/lib/supabase")
-      const supabase = createBrowserClient()
-      // Supabase sends a confirmation email — user must click link to finalize change
-      const { error } = await supabase.auth.updateUser({ password: newPassword })
-      if (error) { setPwState("error"); setPwError(error.message); return }
+      const res = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      })
+
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string }
+        const code = data.error ?? ""
+        let msg = tx("settings.pwUnexpected", lang)
+        switch (code) {
+          case "CURRENT_PASSWORD_WRONG":
+            msg = tx("settings.currentPwWrong", lang); break
+          case "MISSING_CURRENT_PASSWORD":
+            msg = tx("settings.currentPwRequired", lang); break
+          case "MISSING_NEW_PASSWORD":
+          case "TOO_SHORT":
+            msg = tx("settings.pwMin8", lang); break
+          case "TOO_LONG":
+            msg = tx("settings.pwTooLong", lang); break
+          case "MISSING_UPPER":
+            msg = tx("settings.pwUpper", lang); break
+          case "MISSING_LOWER":
+            msg = tx("settings.pwLower", lang); break
+          case "MISSING_NUMBER":
+            msg = tx("settings.pwNumber", lang); break
+          case "SAME_AS_CURRENT":
+            msg = tx("settings.pwSameAsCurrent", lang); break
+          case "SAME_AS_EMAIL":
+            msg = tx("settings.pwSameAsEmail", lang); break
+          // INTERNAL / RATE_LIMITED / UNAUTHORIZED → fall through to generic
+        }
+        setPwState("error")
+        setPwError(msg)
+        return
+      }
+
       setPwState("success")
-      setNewPassword(""); setConfirmPassword("")
+      setCurrentPassword("")
+      setNewPassword("")
+      setConfirmPassword("")
       // Auto-reset to "idle" is handled by the effect above (F-S-005).
     } catch {
       setPwState("error")
@@ -208,16 +280,37 @@ export default function SettingsPage() {
                 🔐 {tx("settings.securityChangePw", lang)}
               </h3>
               <div className="space-y-3">
+                {/* F-SETTINGS-001: current password field, first in the
+                    visual order so the user re-authenticates before
+                    composing a new password. Eye toggle is independent
+                    of the new-password toggle below. */}
+                <div className="relative">
+                  <input
+                    type={showCurrentPw ? "text" : "password"}
+                    value={currentPassword}
+                    onChange={e => setCurrentPassword(e.target.value)}
+                    placeholder={tx("settings.currentPwPlaceholder", lang)}
+                    autoComplete="current-password"
+                    className="w-full rounded-xl border bg-muted/40 px-4 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
+                  />
+                  <button type="button" onClick={() => setShowCurrentPw(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label={showCurrentPw ? "Hide password" : "Show password"}>
+                    {showCurrentPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 <div className="relative">
                   <input
                     type={showPw ? "text" : "password"}
                     value={newPassword}
                     onChange={e => setNewPassword(e.target.value)}
                     placeholder={tx("settings.newPwPlaceholder", lang)}
+                    autoComplete="new-password"
                     className="w-full rounded-xl border bg-muted/40 px-4 py-2.5 pr-10 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                   />
                   <button type="button" onClick={() => setShowPw(v => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label={showPw ? "Hide password" : "Show password"}>
                     {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
@@ -226,6 +319,7 @@ export default function SettingsPage() {
                   value={confirmPassword}
                   onChange={e => setConfirmPassword(e.target.value)}
                   placeholder={tx("settings.confirmPwPlaceholder", lang)}
+                  autoComplete="new-password"
                   className="w-full rounded-xl border bg-muted/40 px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all"
                 />
                 <AnimatePresence>
@@ -239,7 +333,12 @@ export default function SettingsPage() {
                 <motion.button
                   whileTap={{ scale: 0.97 }}
                   onClick={handlePasswordChange}
-                  disabled={pwState === "loading" || !newPassword || !confirmPassword}
+                  disabled={
+                    pwState === "loading" ||
+                    !currentPassword ||
+                    !newPassword ||
+                    !confirmPassword
+                  }
                   className={`w-full rounded-xl py-2.5 text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
                     pwState === "success"
                       ? "bg-emerald-500 text-white"
@@ -249,17 +348,15 @@ export default function SettingsPage() {
                   {pwState === "loading" && <Loader2 className="h-4 w-4 animate-spin" />}
                   {pwState === "success" && <Check className="h-4 w-4" />}
                   {pwState === "success"
-                    ? tx("settings.pwEmailSent", lang)
+                    ? tx("settings.pwUpdated", lang)
                     : tx("settings.updatePw", lang)}
                 </motion.button>
-                <AnimatePresence>
-                  {pwState === "success" && (
-                    <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                      className="text-xs text-emerald-600 text-center">
-                      {tx("settings.pwEmailNotice", lang)}
-                    </motion.p>
-                  )}
-                </AnimatePresence>
+                {/* F-SETTINGS-001: removed the "📧 confirmation email
+                    sent" paragraph — Supabase password-only updates are
+                    synchronous and don't trigger a confirmation email,
+                    so the previous copy was misleading. The button's
+                    success state ("Şifren güncellendi") now carries the
+                    full feedback. */}
               </div>
             </div>
           ) : (
