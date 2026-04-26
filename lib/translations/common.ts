@@ -283,6 +283,7 @@ export const commonTranslations: Record<string, TranslationEntry> = {
   "settings.currentPwWrong": { en: "Current password is incorrect", tr: "Mevcut şifre yanlış" },
   "settings.currentPwPlaceholder": { en: "Current password", tr: "Mevcut şifre" },
   "settings.pwUpdated": { en: "Password updated", tr: "Şifren güncellendi" },
+  "settings.pwPwned": { en: "This password has been found in data breaches. Please choose a different one.", tr: "Bu şifre veri sızıntılarında görüldü. Lütfen farklı bir şifre seç." },
   "settings.pwMismatch": { en: "Passwords don't match", tr: "Şifreler eşleşmiyor" },
   "settings.pwUnexpected": { en: "An unexpected error occurred", tr: "Beklenmeyen bir hata oluştu" },
   "settings.notifications": { en: "Notifications", tr: "Bildirimler" },

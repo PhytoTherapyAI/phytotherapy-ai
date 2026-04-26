@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
+import { isPwnedPassword } from "@/lib/security/check-pwned-password"
 
 /**
  * Change the authenticated user's password (F-SETTINGS-001).
@@ -47,8 +48,37 @@ type ErrorCode =
   | "MISSING_NUMBER"
   | "SAME_AS_CURRENT"
   | "SAME_AS_EMAIL"
+  | "PASSWORD_PWNED" // F-SETTINGS-002 — HIBP breach blocklist hit
   | "CURRENT_PASSWORD_WRONG"
   | "INTERNAL"
+
+/**
+ * Stage-level breadcrumb for the HIBP path. Mirrors the dynamic-import
+ * pattern used by F-SCANNER-001 / F-CHAT-SIDEBAR-003 so a Sentry-less
+ * deploy still gets a useful console line.
+ *
+ * The password and its hash are NEVER written here. Only meta data
+ * (passwordLength, pwned bool, count, error detail) is breadcrumbed.
+ */
+function hibpBreadcrumb(
+  stage: "start" | "success" | "error",
+  level: "info" | "warning" | "error",
+  data?: Record<string, unknown>,
+): void {
+  console.log(`[hibp-check] ${stage}`, data ?? {})
+  void import("@sentry/nextjs")
+    .then((Sentry) => {
+      Sentry.addBreadcrumb({
+        category: "hibp-check",
+        message: `hibp:${stage}`,
+        level,
+        data,
+      })
+    })
+    .catch(() => {
+      // Sentry unavailable — server log already captured.
+    })
+}
 
 const MIN_PW_LEN = 8
 const MAX_PW_LEN = 72 // bcrypt input limit; Supabase silently truncates beyond.
@@ -137,6 +167,42 @@ export async function POST(req: NextRequest) {
     if (newPassword === currentPassword) return err("SAME_AS_CURRENT", 400)
     if (newPassword.toLowerCase() === user.email.toLowerCase()) {
       return err("SAME_AS_EMAIL", 400)
+    }
+
+    // F-SETTINGS-002 — Pwned Passwords blocklist. Runs AFTER all
+    // semantic validation (so we don't burn HIBP requests on obviously
+    // bad passwords) and BEFORE re-authentication (so we don't burn
+    // Supabase auth calls on passwords we'll reject anyway). The check
+    // is fail-OPEN: if HIBP is unreachable / times out / parse fails,
+    // we log the error but still let the user through. Defense-in-
+    // depth, not the primary security boundary.
+    hibpBreadcrumb("start", "info", { passwordLength: newPassword.length })
+    const hibp = await isPwnedPassword(newPassword)
+    if (hibp.error) {
+      hibpBreadcrumb("error", "warning", { detail: hibp.error })
+      // Capture as Sentry exception so we see persistent HIBP outages
+      // in the dashboard without spamming on transient blips.
+      void import("@sentry/nextjs")
+        .then((Sentry) => {
+          Sentry.captureMessage("hibp-check failed (fail-open)", {
+            level: "warning",
+            tags: { endpoint: "change-password", stage: "hibp-error" },
+            extra: { detail: hibp.error },
+          })
+        })
+        .catch(() => {})
+      // Fall through — fail-open.
+    } else if (hibp.pwned && typeof hibp.count === "number" && hibp.count > 0) {
+      hibpBreadcrumb("success", "warning", {
+        pwned: true,
+        count: hibp.count,
+      })
+      return NextResponse.json(
+        { error: "PASSWORD_PWNED", count: hibp.count },
+        { status: 400 },
+      )
+    } else {
+      hibpBreadcrumb("success", "info", { pwned: false })
     }
 
     // Re-authentication via a FRESH client. Reasoning: signInWithPassword

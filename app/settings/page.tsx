@@ -127,7 +127,10 @@ export default function SettingsPage() {
       })
 
       if (!res.ok) {
-        const data = (await res.json().catch(() => ({}))) as { error?: string }
+        const data = (await res.json().catch(() => ({}))) as {
+          error?: string
+          count?: number
+        }
         const code = data.error ?? ""
         let msg = tx("settings.pwUnexpected", lang)
         switch (code) {
@@ -150,6 +153,18 @@ export default function SettingsPage() {
             msg = tx("settings.pwSameAsCurrent", lang); break
           case "SAME_AS_EMAIL":
             msg = tx("settings.pwSameAsEmail", lang); break
+          case "PASSWORD_PWNED": {
+            // F-SETTINGS-002 — append the breach count in locale-aware
+            // thousands format. The static i18n string carries the
+            // explanation; the parenthetical number is the dynamic part
+            // (which is why we don't have a separate "with count" key).
+            msg = tx("settings.pwPwned", lang)
+            if (typeof data.count === "number" && data.count > 0) {
+              const locale = lang === "tr" ? "tr-TR" : "en-US"
+              msg = `${msg} (${data.count.toLocaleString(locale)})`
+            }
+            break
+          }
           // INTERNAL / RATE_LIMITED / UNAUTHORIZED → fall through to generic
         }
         setPwState("error")
