@@ -36,21 +36,23 @@ Bu master plan, audit F bölümündeki 6 fix kategorisini **3 alt-sprint** + 1 o
 
 ---
 
-### ⚖️ Avukat görüşmesi — 7 soruya cevap
+### ⚖️ Avukat görüşmesi — 9 soruya cevap
 
-**Pre-condition:** Audit raporu + 7 soru paketi avukata gönderilmiş.
+**Pre-condition:** Audit raporu + 9 soru paketi (5 bölümlü) + Şirket Profili özeti avukata gönderilmiş.
 
 **Cevap matrisi (her soru hangi alt-sprint'i unlock eder):**
 
 | # | Soru | Açar | Implementation impact |
 |---|---|---|---|
-| 1 | Türkiye TİTCK zorunlu disclaimer tam metni? | 6.2 + 6.3 | AIDisclaimer text revize gerekirse 6.2.5 follow-up; i18n key'leri 6.3'te güncellenir |
+| 0 | DoctoPal sınıflandırma (tıbbi cihaz / bilgilendirme aracı / CDSS)? | TÜM sub-sprint'ler (gate) | Tıbbi cihaz → 6-12 ay erteler (CE + DİT). Bilgilendirme aracı → mevcut roadmap. CDSS → 6.1/6.2 prop revize + 6.3 vulnerable claim full removal |
+| 1 | Türkiye TİTCK + Reklam Kurulu zorunlu disclaimer tam metni? | 6.2 + 6.3 | AIDisclaimer text revize gerekirse 6.2.5 follow-up; i18n key'leri 6.3'te güncellenir |
 | 2 | Question-format example'lar safer mı? | 6.3 | "Omega-3 iltihabı azaltır mı?" gibi 8 soru kalsın mı yoksa rephrase mı |
 | 3 | Vulnerable audience qualifier? | 6.3 | "Cortisol düşürür" + "Enerji artırır" → ekstra qualifier mı, full removal mı |
 | 4 | Eski query_history rows ne yapılmalı? | 6.4 (yeni) | Backfill / retention / selective cleanup — yeni alt-sprint'in scope'u |
 | 5 | Cache risk (localStorage yok, DB rows var)? | 6.4 | UI mount güncel disclaimer gösteriyor — bu yeterli mi yoksa ek backfill gerek mi |
-| 6 | EFSA scope coverage (Türkiye binding)? | 6.1 | EFSA whitelist içeriği: pure EFSA mı, Tarım Bakanlığı approved combo mu |
+| 6 | EFSA vs TGK Beslenme ve Sağlık Beyanları Yönetmeliği (Türkiye binding)? | 6.1 | EFSA whitelist içeriği: pure EFSA mı, TGK approved combo mu, hibrit mı |
 | 7 | Disclaimer pozisyonu (üst+alt repeat?) | 6.2 (revize) | Mevcut bottom-only pattern OK mi yoksa top+bottom mu |
+| 8 | KVKK Veri Sorumlusu (şirket kuruluşu öncesi MVP)? | Operasyonel (sub-sprint kodu yok) | Veri Sorumlusu transfer planı (kurucular → şirket) production transition gerektirir; sub-sprint code path etkilenmez |
 
 ---
 
@@ -126,8 +128,9 @@ Bu master plan, audit F bölümündeki 6 fix kategorisini **3 alt-sprint** + 1 o
                     │
                     ▼
 ┌──────────────────────────────────────────────────────────┐
-│ AVUKAT GÖRÜŞMESİ — 7 soru                                 │
-│ Pre: audit raporu + soru paketi                           │
+│ AVUKAT GÖRÜŞMESİ — 9 soru / 5 bölüm                       │
+│ Pre: audit raporu + soru paketi + Şirket Profili özeti    │
+│ Soru 0 (sınıflandırma) tüm sprint'lerin gate'i            │
 │ Süre: 1-3 iş günü (avukat tarafı)                        │
 └──────────────────────────────────────────────────────────┘
                     │
@@ -238,27 +241,73 @@ Anti-inflammatory ve supplement-compare scope dışı çıktığı için commit 
 
 **Dosya:** `docs/legal-advisor-questions.md` (henüz repo'da yok; implement aşamasında oluşturulacak veya user tarafından eklenecek)
 
-**7 soru özeti** (audit raporundan):
+### Şirket Profili — Avukat sunum dokümanı
 
-| # | Soru | Bağlı sub-sprint | Block status |
-|---|---|---|---|
-| 1 | TİTCK zorunlu disclaimer tam metni? | 6.2 (revize) + 6.3 | 6.2 generic ile geçici start, soru 1 sonrası refine |
-| 2 | Question-format example'lar safer mı? | 6.3 | 6.3 BLOCKER |
-| 3 | Vulnerable audience ekstra qualifier? | 6.3 | 6.3 BLOCKER (cortisol/energy claims) |
-| 4 | Eski query_history rows ne yapılmalı? | 6.4 (yeni) | 6.4 BLOCKER |
-| 5 | Cache risk (localStorage yok, DB rows var)? | 6.4 | 6.4 BLOCKER (scope kararı) |
-| 6 | EFSA scope coverage (Türkiye binding)? | 6.1 | 6.1 BLOCKER (whitelist içeriği) |
-| 7 | Disclaimer pozisyonu (üst+alt repeat)? | 6.2 (revize) | 6.2 generic mount sonrası refine |
+> Avukatın görüşme öncesi okuyacağı 1 sayfalık özet.
 
-**Implementation için her sorudan ne öğrenmem lazım:**
+- **Ürün:** DoctoPal — AI sağlık asistanı, Next.js web, [doctopal.com](https://doctopal.com)
+- **Aşama:** MVP canlıda, ücretsiz, B2C, ~? aktif kullanıcı
+- **Şirket durumu:** Henüz kurulmadı, kuruluş süreci devam ediyor
+- **Veri:** Supabase üzerinde tutulan kullanıcı sağlık profili + sohbet geçmişi
+- **AI sağlayıcı:** Anthropic Claude API
+- **Mevcut yasal dokümantasyon:** Aydınlatma Metni, Kullanım Koşulları, Gizlilik Politikası canlıda
+- **Eksik:** Mesafeli Satış Sözleşmesi (henüz ödeme yok), Abonelik Sözleşmesi
+- **Dependency:** Iyzico ödeme entegrasyonu şirket kuruluşuna bağlı
 
-- **Soru 1:** Mevcut "Bu bilgi yapay zeka tarafından üretilmiştir ve tıbbi tavsiye niteliği taşımaz. Sağlık kararı almadan önce doktorunuza danışın." metni TİTCK için yeterli mi? Spesifik bir Yönetmelik §3 cümlesi gerekli mi?
-- **Soru 2:** "Omega-3 iltihabı azaltır mı?" tarzı 8 soru-format string'i kalmalı mı, rephrase ("Omega-3 ile iltihap üzerine araştırmalar") yeterli mi, yoksa tamamen farklı bir example seti mi?
-- **Soru 3:** "Cortisol düşürür" / "Enerji artırır" gibi vulnerable audience'a (kanser, yeni ebeveyn) gösterilen direct functional claim'ler için ekstra "araştırmalar gösteriyor ki..." qualifier yeterli mi? Yoksa tamamen kaldırılmalı mı?
+### 9 soru — 5 bölüm
+
+#### Bölüm A — Sınıflandırma (KRİTİK, ilk sorulacak)
+
+**Soru 0 (YENİ, en kritik):** DoctoPal kullanıcı sağlık verilerini analiz edip kişiye özel öneri üreten bir AI uygulaması. Tıbbi cihaz mı, sağlık bilgilendirme aracı mı, klinik karar destek sistemi (CDSS) mi? TİTCK Tıbbi Cihaz Yönetmeliği kapsamına giriyor mu, yoksa Sağlık Bakanlığı'nın "kişisel sağlık verisi" düzenlemesi yeterli mi?
+
+**Neden kritik:** Sınıflandırma sonucu diğer 8 sorunun cevabını belirler.
+- Tıbbi cihaz → CE belgesi + klinik validasyon + DİT onayı → 6-12 ay launch erteler
+- Sağlık bilgilendirme aracı → daha hafif yükümlülük, disclaimer + KVKK + reklam mevzuatı
+- CDSS → ara kategori, son zamanlarda Türkiye'de tartışılıyor
+
+#### Bölüm B — Disclaimer ve içerik standartları
+
+**Soru 1:** Mevcut disclaimer metni ("Bu bilgi yapay zeka tarafından üretilmiştir ve tıbbi tavsiye niteliği taşımaz. Sağlık kararı almadan önce doktorunuza danışın.") TİTCK + Reklam Kurulu için yeterli mi? Spesifik kanun maddesi atfı (örn. SBYS Yönetmeliği §3 veya Reklam Yönetmeliği §X) gerekli mi?
+
+**Soru 2:** Soru-formatı example'lar ("Omega-3 iltihabı azaltır mı?") — bu beyan mı, kullanıcı sorusu mu? Reklam Kurulu'nun haksız ticari uygulama kapsamına girer mi? "Omega-3 ile iltihap üzerine araştırmalar" gibi rephrase yeterli mi?
+
+**Soru 3:** Vulnerable audience (kanser hastası, hamile, yeni ebeveyn) için functional claim'ler ("Cortisol düşürür", "Enerji artırır") — Türk Gıda Kodeksi'nin Beslenme ve Sağlık Beyanları Yönetmeliği bu populasyonlar için ekstra koruma istiyor mu? Vurgulamak için ekstra qualifier ("araştırmalar gösteriyor ki...") yeterli mi, yoksa bu claim'ler tamamen kaldırılmalı mı?
+
+**Soru 7:** AI çıktısı disclaimer pozisyonu — sadece alt yeterli mi, üst+alt zorunlu mu, her bölüm için ayrı zorunlu mu? UX trade-off'u (üst+alt visual noise) ile legal sertlik dengesi nedir?
+
+#### Bölüm C — Veri ve retention
+
+**Soru 4:** Geçmiş ~50K-100K AI yanıt kaydı (`query_history` rows). Üretildiği anda geçerli olan disclaimer ile üretildi ama bugünkü standartlarımız daha katı.
+- (a) Hiçbir şey yapma — UI güncel disclaimer'ı mount ediyor
+- (b) Selective cleanup (treatment language tarayıp sil/redaktle)
+- (c) Retention policy (N gün TTL)
+
+KVKK + TİTCK risk açısından hangisi en uygun?
+
+**Soru 5:** localStorage cache YOK, sadece DB rows var. UI güncel disclaimer'ı mount ederken eski response render edilince — bu kombinasyon (eski içerik + yeni disclaimer) legal risk taşır mı? Eski rows için ayrı muamele gerekli mi?
+
+#### Bölüm D — Türkiye-spesifik mevzuat haritası
+
+**Soru 6 (DÜZELTİLMİŞ):** Takviye/supplement önerilerinde EFSA approved health claims listesi referans alınabilir mi? Türkiye'de uyulması gereken otorite Tarım ve Orman Bakanlığı'nın "Türk Gıda Kodeksi Beslenme ve Sağlık Beyanları Yönetmeliği" mi? İki listede çakışma varsa hangisi öncelikli? Hibrit yaklaşım (EFSA referans + TGK uyum) güvenli mi?
+
+#### Bölüm E — Şirket ve operasyonel
+
+**Soru 8 (YENİ):** Şirket henüz kurulmadı (kuruluş süreci devam ediyor). Şu an MVP canlıda, ücretsiz kullanım, B2C. Ödeme henüz yok. Bu durumda KVKK Veri Sorumlusu kim sayılır (kurucular bireysel mi)? Şirket kuruluşu sonrası transfer süreci nasıl olur? Geçiş döneminde risk taşıyor muyuz?
+
+### Implementation için her sorudan ne öğrenmem lazım
+
+- **Soru 0 (sınıflandırma — meta-gate):** Sınıflandırma sonucu sub-sprint planlamasını belirler.
+  - **Tıbbi cihaz** çıkarsa: tüm 6.1/6.2/6.3/6.4 sprint'leri donar; CE süreci + DİT onayı + klinik validasyon planına geçilir (6-12 ay launch erteler).
+  - **Sağlık bilgilendirme aracı** çıkarsa: mevcut roadmap geçerli (6.1/6.2/6.3/6.4 sırasıyla yürür).
+  - **CDSS** çıkarsa: 6.1/6.2 stricter qualifier prop'larıyla revize edilir, 6.3 vulnerable audience claim'leri tamamen kaldırılır, ek "klinik karar destek aracı" specific disclaimer text gerekir (AIDisclaimer'a `cdss` variant eklenir).
+- **Soru 1:** Mevcut "Bu bilgi yapay zeka tarafından üretilmiştir ve tıbbi tavsiye niteliği taşımaz. Sağlık kararı almadan önce doktorunuza danışın." metni TİTCK + Reklam Kurulu için yeterli mi? Spesifik bir Yönetmelik §3 cümlesi (SBYS Yönetmeliği veya Reklam Yönetmeliği) gerekli mi?
+- **Soru 2:** "Omega-3 iltihabı azaltır mı?" tarzı 8 soru-format string'i kalmalı mı, rephrase ("Omega-3 ile iltihap üzerine araştırmalar") yeterli mi, yoksa tamamen farklı bir example seti mi? Reklam Kurulu haksız ticari uygulama kapsamı belirleyici.
+- **Soru 3:** "Cortisol düşürür" / "Enerji artırır" gibi vulnerable audience'a (kanser hastası, hamile, yeni ebeveyn) gösterilen direct functional claim'ler için TGK Beslenme ve Sağlık Beyanları Yönetmeliği ekstra koruma istiyor mu? Ekstra "araştırmalar gösteriyor ki..." qualifier yeterli mi, yoksa tamamen kaldırılmalı mı?
 - **Soru 4:** ~50K-100K query_history.response_text rows için (a) hiçbir şey yapma — UI güncel disclaimer'ı mount ediyor, (b) selective cleanup (treatment language tarayıp sil), (c) retention policy (N gün TTL) seçeneklerinden hangisi TİTCK + KVKK uyumlu?
-- **Soru 5:** localStorage AI cache YOK ama DB rows mevcut. UI'da modern disclaimer mount altında eski response render edilince — bu kombinasyon legal risk taşır mı?
-- **Soru 6:** EFSA approved health claims listesi Türkiye'de binding mi yoksa Tarım Bakanlığı'nın kendi listesi mi öncelikli? Hibrit standart kullanmak güvenli mi?
-- **Soru 7:** AI çıktısı disclaimer'ı sadece bottom'da yeterli mi yoksa UX trade-off'a değse de top+bottom repeat mi (legal sertlik için)?
+- **Soru 5:** localStorage AI cache YOK ama DB rows mevcut. UI'da modern disclaimer mount altında eski response render edilince — bu kombinasyon (eski içerik + yeni disclaimer) legal risk taşır mı? Eski rows için ayrı muamele gerekli mi?
+- **Soru 6:** EFSA approved health claims listesi Türkiye'de binding mi yoksa Tarım ve Orman Bakanlığı'nın TGK Beslenme ve Sağlık Beyanları Yönetmeliği mi öncelikli? İki listede çakışma varsa hangisi önde? Hibrit standart (EFSA referans + TGK uyum) kullanmak güvenli mi?
+- **Soru 7:** AI çıktısı disclaimer'ı sadece bottom'da yeterli mi yoksa UX trade-off'a değse de top+bottom repeat mi (legal sertlik için)? Her bölüm için ayrı disclaimer mı?
+- **Soru 8 (operasyonel — sub-sprint code etkilemez):** KVKK Veri Sorumlusu kim sayılır (şirket kuruluşu öncesi MVP canlıda — kurucular bireysel mi)? Şirket kuruluşu sonrası Veri Sorumlusu transfer süreci nasıl yapılır (Supabase'deki mevcut data + KVKK envanteri + VERBİS kaydı)? Geçiş döneminde data işleme sözleşmeleri ve aydınlatma metni nasıl güncellenmeli?
 
 ---
 
