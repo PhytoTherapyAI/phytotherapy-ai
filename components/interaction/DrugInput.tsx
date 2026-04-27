@@ -180,6 +180,14 @@ export function DrugInput({ medications, onMedicationsChange, disabled }: DrugIn
       {/* Input area with autocomplete */}
       <div className="flex gap-2">
         <div className="relative flex-1">
+          {/* F-MOBILE-002b: text-base (16px) on mobile is the iOS
+              Safari zoom-prevention threshold — anything < 16px on
+              an input/textarea makes mobile Safari zoom in when the
+              keyboard opens, which forces the user to pinch-zoom out
+              to keep typing. sm+ reverts to text-sm so the desktop
+              form stays compact. text-base on mobile also bumps the
+              effective input height past 44px (line-height ~24 +
+              py-2.5×2) so the Apple HIG touch target lands for free. */}
           <input
             ref={inputRef}
             type="text"
@@ -195,7 +203,7 @@ export function DrugInput({ medications, onMedicationsChange, disabled }: DrugIn
                 ? tx('di.placeholderEmpty', lang)
                 : tx('di.placeholderMore', lang)
             }
-            className="w-full rounded-lg border bg-background px-4 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-lg border bg-background px-4 py-2.5 text-base sm:text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
             autoComplete="off"
           />
 
@@ -235,11 +243,18 @@ export function DrugInput({ medications, onMedicationsChange, disabled }: DrugIn
             </div>
           )}
         </div>
+        {/* F-MOBILE-002b: shadcn Button size="default" is h-9 (36px),
+            below the 44px Apple HIG / 48px Material touch minimum. We
+            only need the lift on mobile; md+ honours the default
+            compact height. Inline min-h beats swapping size="lg"
+            because lg also widens horizontal padding, which would
+            push the Plus icon past the input's right edge in narrow
+            mobile flex containers. */}
         <Button
           type="button"
           onClick={addMedication}
           disabled={disabled || !inputValue.trim()}
-          className="gap-1 bg-primary hover:bg-primary/90"
+          className="gap-1 bg-primary hover:bg-primary/90 min-h-11 md:min-h-9"
           size="default"
         >
           <Plus className="h-4 w-4" />

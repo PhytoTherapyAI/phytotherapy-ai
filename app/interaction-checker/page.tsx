@@ -373,6 +373,11 @@ export default function InteractionCheckerPage() {
                 <label className="text-sm font-semibold">{tx('ic.concernLabel', lang)}</label>
               </div>
 
+              {/* F-MOBILE-002b: text-base (16px) on mobile prevents
+                  iOS Safari's auto-zoom-on-focus behaviour for
+                  inputs/textareas under the 16px threshold. sm+
+                  reverts to text-sm so the desktop form stays
+                  compact. Same fix as the DrugInput input above. */}
               <textarea
                 value={concern}
                 onChange={(e) => setConcern(e.target.value)}
@@ -380,7 +385,7 @@ export default function InteractionCheckerPage() {
                 placeholder={tx("interactionChecker.concernPlaceholder", lang)}
                 rows={3}
                 maxLength={1000}
-                className={`w-full resize-none rounded-xl border bg-background px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 ${
+                className={`w-full resize-none rounded-xl border bg-background px-4 py-3 text-base sm:text-sm outline-none transition-colors placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 ${
                   isRedFlagEmergency
                     ? "border-red-500 ring-2 ring-red-500/30 focus:border-red-500"
                     : "focus:border-primary focus:ring-2 focus:ring-primary/20"
@@ -550,7 +555,19 @@ export default function InteractionCheckerPage() {
           )}
         </div>
 
-        {/* RIGHT: Safety Radar + Did You Know (2/5) */}
+        {/* RIGHT: Safety Radar + Did You Know (2/5).
+            F-MOBILE-002b: `hidden lg:flex` is INTENTIONAL — at md
+            breakpoint (tablet portrait, 768-1023px) the parent grid
+            collapses to a single column, so showing the sidebar
+            there would push the Safety Radar + PubMed/Did-You-Know
+            cards under the form, where they read as filler rather
+            than supporting content. The form-first layout on
+            tablet/mobile keeps the user focused on the medication
+            input flow; once the viewport reaches lg (≥1024px) the
+            two-column grid lights up and these cards earn their
+            keep as a peripheral safety / education panel. Decision
+            recorded so the next maintainer doesn't "fix" hidden md
+            visibility without context. */}
         <div className="hidden lg:flex flex-col gap-4 lg:col-span-2">
 
           {/* Safety Radar Animation */}
