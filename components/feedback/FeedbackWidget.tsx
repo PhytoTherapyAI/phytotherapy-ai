@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation"
 import { useLang } from "@/components/layout/language-toggle"
 import { MessageSquarePlus, X, Send, Check, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
+import { useOverlayActive } from "@/lib/ui/overlay-state"
 
 const HIDDEN_PATHS = ["/blood-test"]
 
@@ -33,6 +34,13 @@ export function FeedbackWidget() {
   const [category, setCategory] = useState<FeedbackCategory | null>(null)
   const [message, setMessage] = useState("")
   const [showConfetti, setShowConfetti] = useState(false)
+  // F-CHECKIN-MOBILE-001 — hide the FAB while any blocking overlay
+  // (modal / bottom-sheet / sonner toast) is on screen. The popover
+  // itself is allowed to stay open: if the user opened feedback first
+  // and then a toast fires (e.g. delete-success), only the FAB-launch
+  // surface should melt away — the in-progress popover keeps its own
+  // dismiss flow.
+  const overlayActive = useOverlayActive()
 
   if (HIDDEN_PATHS.includes(pathname)) return null
 
@@ -90,16 +98,25 @@ export function FeedbackWidget() {
 
   return (
     <>
-      {/* FAB */}
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 text-white shadow-lg shadow-primary/20 transition-all hover:scale-105 hover:shadow-xl active:scale-95"
-          aria-label="Feedback"
-        >
-          <MessageSquarePlus className="h-5 w-5" />
-        </button>
-      )}
+      {/* FAB — hidden while another overlay (modal / sheet / toast)
+          is on screen. z-30 (down from z-50) is defensive: if the
+          overlay-state hook ever races behind a toast mount, the FAB
+          still loses the stacking contest with z-40 backdrops and z-50
+          modals on its own. Animated translate so the disappear isn't
+          a hard pop. */}
+      <button
+        onClick={() => setOpen(true)}
+        className={`fixed bottom-6 right-6 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 ${
+          open || overlayActive
+            ? "pointer-events-none translate-y-4 opacity-0"
+            : "translate-y-0 opacity-100"
+        }`}
+        aria-label="Feedback"
+        aria-hidden={open || overlayActive}
+        tabIndex={open || overlayActive ? -1 : 0}
+      >
+        <MessageSquarePlus className="h-5 w-5" />
+      </button>
 
       {/* Popover */}
       {open && (

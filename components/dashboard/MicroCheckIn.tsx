@@ -37,6 +37,7 @@ import { ChevronLeft, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
+import { pushOverlay, popOverlay } from "@/lib/ui/overlay-state"
 
 interface MicroCheckInProps {
   userId: string
@@ -163,6 +164,18 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
   }, [open, handleDismiss])
+
+  // F-CHECKIN-MOBILE-001 — refcount the FAB-suppressing overlay flag.
+  // While this check-in is open the FeedbackWidget FAB hides, because
+  // sharing the bottom-right corner with a full-width bottom-sheet
+  // produces a stacked-element mess on mobile. Cleanup pops the count
+  // when the modal unmounts OR when the user dismisses (open flips
+  // false → effect re-runs → previous cleanup fires).
+  useEffect(() => {
+    if (!open) return
+    pushOverlay()
+    return () => popOverlay()
+  }, [open])
 
   const handleSelect = (value: number) => {
     const field = QUESTIONS[step].key
