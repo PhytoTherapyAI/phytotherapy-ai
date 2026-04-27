@@ -72,12 +72,26 @@ export default function ScanMedicationPage() {
           {!showResults ? (
             <motion.div key="viewfinder" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }} className="relative">
-              <div className="rounded-3xl bg-slate-800/80 backdrop-blur-md border border-slate-700/50 overflow-hidden aspect-[3/4] max-h-[400px] relative">
-                {/* Corner brackets */}
-                <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-emerald-400/60 rounded-tl-lg" />
-                <div className="absolute top-4 right-4 w-8 h-8 border-r-2 border-t-2 border-emerald-400/60 rounded-tr-lg" />
-                <div className="absolute bottom-4 left-4 w-8 h-8 border-l-2 border-b-2 border-emerald-400/60 rounded-bl-lg" />
-                <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-emerald-400/60 rounded-br-lg" />
+              {/* F-MOBILE-002a: viewfinder height was `aspect-[3/4]
+                  max-h-[400px]`. On iPhone SE (375px viewport, 343px
+                  inner after px-4) the 3:4 aspect demands a 457px
+                  height, but max-h:400 caps it — the browser keeps
+                  the parent-given width and clips the height, which
+                  silently violates the aspect ratio AND makes the
+                  whole page scroll once header + chips + BottomNavbar
+                  pile up. Cap is now viewport-aware on small screens
+                  (`max-h-[60vh]`) and lifts to the original 400px
+                  cap on sm+ (`sm:max-h-[400px]`). Aspect-ratio
+                  remains intact when the cap doesn't bind. */}
+              <div className="rounded-3xl bg-slate-800/80 backdrop-blur-md border border-slate-700/50 overflow-hidden aspect-[3/4] max-h-[60vh] sm:max-h-[400px] relative">
+                {/* Corner brackets — F-MOBILE-002a: insets pulled in
+                    on small phones so the brackets visually hug the
+                    viewfinder edge instead of floating inside. sm+
+                    keeps the original 16px breathing room. */}
+                <div className="absolute top-3 left-3 sm:top-4 sm:left-4 w-8 h-8 border-l-2 border-t-2 border-emerald-400/60 rounded-tl-lg" />
+                <div className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 border-r-2 border-t-2 border-emerald-400/60 rounded-tr-lg" />
+                <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 w-8 h-8 border-l-2 border-b-2 border-emerald-400/60 rounded-bl-lg" />
+                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 w-8 h-8 border-r-2 border-b-2 border-emerald-400/60 rounded-br-lg" />
 
                 {/* Center content */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-8">
@@ -150,7 +164,20 @@ export default function ScanMedicationPage() {
         {/* Try This chips */}
         <div className="space-y-2">
           <p className="text-[10px] text-slate-500 uppercase tracking-wider">Try This</p>
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+          {/* F-MOBILE-002a: WebkitOverflowScrolling="touch" forces
+              iOS Safari's momentum-scroll model on this horizontal
+              row. The property is deprecated on modern Safari (auto
+              defaults to momentum) but still required on older iOS
+              builds + some PWA contexts where the row otherwise
+              behaves as a hard non-momentum scroll. Tailwind has no
+              first-class utility for it, so inline style stays.
+              `touch-pan-x` is the modern hint to the browser that
+              this is a horizontal-only pan target — improves
+              gesture recognition on touch devices. */}
+          <div
+            className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 touch-pan-x"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
             {[
               { emoji: "💊", label: "Scan Your Vitamin Box" },
               { emoji: "📄", label: "Upload Blood Test PDF" },
