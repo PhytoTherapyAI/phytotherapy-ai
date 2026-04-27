@@ -67,7 +67,8 @@ const MISSING_PAGES = [
   "/prospectus-reader",
   "/rare-diseases",
   "/rehabilitation",
-  "/scan-medication",
+  // F-SCAN-CLEANUP-001: /scan-medication removed (duplicate of the
+  // Health Assistant + Profile MedicationScanner canonical surfaces).
   "/seasonal-health",
   "/security",
   "/side-effects",

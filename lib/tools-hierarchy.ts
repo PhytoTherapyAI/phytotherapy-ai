@@ -46,7 +46,13 @@ export const TOOL_CATEGORIES: ToolCategory[] = [
       { id: "radiology", title: { en: "Radiology", tr: "Radyoloji" }, icon: "Scan", href: "/radiology" },
       { id: "body-analysis", title: { en: "Body Analysis", tr: "Vücut Analizi" }, icon: "Activity", href: "/body-analysis" },
       { id: "symptom-checker", title: { en: "Smart Symptom Assessment", tr: "Akıllı Semptom Değerlendirmesi" }, icon: "HeartPulse", href: "/symptom-checker" },
-      { id: "scanner", title: { en: "Smart Lens Scanner", tr: "Akıllı Lens Tarayıcı" }, icon: "ScanLine", href: "/scan-medication" },
+      // F-SCAN-CLEANUP-001: "Smart Lens Scanner" entry removed.
+      // /scan-medication was a duplicate of the canonical scan
+      // surfaces — Health Assistant has full vision capability
+      // (camera + file upload + profile cross-check + safety
+      // engine), and Profile > İlaçlar > MedicationScanner owns
+      // the medication-specific OCR path. The /scan-medication
+      // page itself is being deleted in the same commit.
       { id: "health-report", title: { en: "Health Report Card", tr: "Sağlık Karnesi" }, icon: "FileText", href: "/health-report-card" },
     ],
   },

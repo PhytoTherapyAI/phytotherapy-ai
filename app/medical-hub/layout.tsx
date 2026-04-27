@@ -5,12 +5,17 @@ import { useRef, useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { usePathname, useRouter } from "next/navigation"
 
+// F-SCAN-CLEANUP-001: "Doc Scanner" tab removed. /scan-medication
+// was a demo placeholder duplicate — Health Assistant owns the
+// canonical photo upload + vision flow now, and Profile > İlaçlar
+// > MedicationScanner owns the medication-specific OCR path. The
+// page itself is being deleted in the same commit, so leaving the
+// tab here would point at a 404.
 const TABS = [
   { id: "blood", href: "/blood-test", label: "Blood Test", emoji: "🩸" },
   { id: "radiology", href: "/radiology", label: "Radiology", emoji: "🩻" },
   { id: "body", href: "/body-analysis", label: "Body Analysis", emoji: "⚖️" },
   { id: "symptom", href: "/symptom-checker", label: "Symptom Check", emoji: "🩺" },
-  { id: "scan", href: "/scan-medication", label: "Doc Scanner", emoji: "📸" },
   { id: "report", href: "/health-report-card", label: "Health Report", emoji: "📊" },
 ]
 
