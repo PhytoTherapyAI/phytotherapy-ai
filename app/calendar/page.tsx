@@ -385,8 +385,29 @@ function QuickLogFABEnhanced({ onAction, lang }: { onAction: (type: string) => v
     { type: "med", emoji: "💊", label: tx("calendar.tookMedication", lang), color: "bg-primary" },
   ]
 
+  // F-MOBILE-002c: was `z-40` (same plane as BottomNavbar's
+  // `fixed bottom-0 z-40 md:hidden`). Layout renders children
+  // before BottomNavbar, so when both share z-40 the navbar wins
+  // the CSS painting tie-break and this Quick Log FAB ended up
+  // visually clipped behind the right-most "Profile" tab on
+  // mobile — same failure mode F-CHECKIN-MOBILE-001 round 3 hit
+  // for FeedbackWidget. Fix: lift to z-50 so the FAB sits above
+  // the navbar.
+  //
+  // Parent chain audit (F-MOBILE-001 fix-3 lesson): the wrapping
+  // `<div className="min-h-screen ...">` and the inner `mx-auto
+  // max-w-7xl px-4 ...` carry no transform / filter / will-change
+  // / perspective, so this `fixed` stays anchored to the viewport
+  // (not to a transformed parent). Verified by grep before this
+  // commit; no compensating change needed.
+  //
+  // bottom-24 (96px) keeps the FAB clear of BottomNavbar (~64-72px
+  // nav row + iOS safe-area-inset-bottom ~34px ≈ 98-106px). md+
+  // has no BottomNavbar (it's `md:hidden`), so we drop to bottom-6
+  // for desktop — same convention F-CHECKIN-MOBILE-001 round 4
+  // settled on for FeedbackWidget.
   return (
-    <div className="fixed bottom-24 right-5 z-40 flex flex-col items-end gap-2">
+    <div className="fixed bottom-24 right-5 z-50 md:bottom-6 flex flex-col items-end gap-2">
       <AnimatePresence>
         {open && items.map((item, i) => (
           <motion.button key={item.type}
