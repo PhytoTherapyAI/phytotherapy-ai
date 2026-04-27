@@ -99,14 +99,23 @@ export function FeedbackWidget() {
   return (
     <>
       {/* FAB — hidden while another overlay (modal / sheet / toast)
-          is on screen. z-30 (down from z-50) is defensive: if the
-          overlay-state hook ever races behind a toast mount, the FAB
-          still loses the stacking contest with z-40 backdrops and z-50
-          modals on its own. Animated translate so the disappear isn't
-          a hard pop. */}
+          is on screen via the useOverlayActive() conditional CSS
+          below.
+          F-CHECKIN-MOBILE-001 round 3: z-50 restored (was z-30).
+          The round-2 defensive "lose the stacking contest with z-40
+          backdrops" rationale was wrong — useOverlayActive already
+          renders the FAB invisible + non-interactive while overlays
+          are on screen, so the z-index race never materialises.
+          Meanwhile BottomNavbar is `fixed bottom-0 z-40 md:hidden`,
+          which means at z-30 the FAB lived UNDER the mobile nav and
+          got half-clipped + un-tappable. z-50 puts it above
+          BottomNavbar (z-40) cleanly; collisions with MicroCheckIn
+          modal (z-50) and sonner toasts are resolved by the visibility
+          gate, not z-index. Animated translate keeps the appear/
+          disappear smooth. */}
       <button
         onClick={() => setOpen(true)}
-        className={`fixed bottom-6 right-6 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 ${
+        className={`fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 ${
           open || overlayActive
             ? "pointer-events-none translate-y-4 opacity-0"
             : "translate-y-0 opacity-100"
