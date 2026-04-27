@@ -168,13 +168,28 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
   // F-CHECKIN-MOBILE-001 — refcount the FAB-suppressing overlay flag.
   // While this check-in is open the FeedbackWidget FAB hides, because
   // sharing the bottom-right corner with a full-width bottom-sheet
-  // produces a stacked-element mess on mobile. Cleanup pops the count
-  // when the modal unmounts OR when the user dismisses (open flips
-  // false → effect re-runs → previous cleanup fires).
+  // produces a stacked-element mess on mobile.
+  //
+  // Round-2 (Bug B): real-device testing showed the FAB sometimes
+  // stayed hidden after dismiss. The fix is two-pronged:
+  //   1. useSyncExternalStore in overlay-state.ts (eliminates the
+  //      missed-transition class of bug at the consumer side).
+  //   2. Dev-gated logs here so the push/pop sequence is auditable
+  //      when smoke testing locally — production builds DCE the logs.
   useEffect(() => {
     if (!open) return
+    if (process.env.NODE_ENV !== "production") {
+      // eslint-disable-next-line no-console
+      console.log("[MicroCheckIn] open -> push")
+    }
     pushOverlay()
-    return () => popOverlay()
+    return () => {
+      if (process.env.NODE_ENV !== "production") {
+        // eslint-disable-next-line no-console
+        console.log("[MicroCheckIn] cleanup -> pop")
+      }
+      popOverlay()
+    }
   }, [open])
 
   const handleSelect = (value: number) => {
@@ -338,7 +353,20 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
             })}
           </div>
 
-          {/* ── Footer: Sonra (left) + İleri/Tamamla (right) ── */}
+          {/* ── Footer: Sonra (left) + İleri/Tamamla (right) ──
+              F-CHECKIN-MOBILE-001 (round 2 — Bug A): the right CTA
+              used to be `{isLastStep ? <BtnSave/> : <BtnAdvance/>}`,
+              two sibling Buttons in the same JSX position. Without a
+              `key` prop React's reconciler treats them as the same
+              element across renders, so when isLastStep flipped on
+              the last step the label morphed by way of a CSS-level
+              transition rather than a clean unmount/mount — and on
+              mobile the in-flight transition produced a visible pixel
+              overlay ("İleri" + "Tamamla" stacked on the same node)
+              that broke the click handler too. Collapsing to a SINGLE
+              <Button/> with conditional onClick / disabled / label
+              eliminates the race entirely: same DOM node, atomic
+              prop swap on the next render. */}
           <div className="mt-10 flex items-center justify-between">
             <Button
               variant="ghost"
@@ -349,27 +377,20 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
               {tx("checkin.later", lang)}
             </Button>
 
-            {isLastStep ? (
-              <Button
-                size="sm"
-                onClick={handleSave}
-                disabled={saving || !allAnswered}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
-              >
-                {saving
+            <Button
+              size="sm"
+              onClick={isLastStep ? handleSave : handleAdvance}
+              disabled={
+                isLastStep ? saving || !allAnswered : !hasSelection
+              }
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
+            >
+              {isLastStep
+                ? saving
                   ? tx("checkin.saving", lang)
-                  : tx("checkin.complete", lang)}
-              </Button>
-            ) : (
-              <Button
-                size="sm"
-                onClick={handleAdvance}
-                disabled={!hasSelection}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-6 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
-              >
-                {tx("checkin.next", lang)}
-              </Button>
-            )}
+                  : tx("checkin.complete", lang)
+                : tx("checkin.next", lang)}
+            </Button>
           </div>
         </div>
       </div>
