@@ -251,7 +251,18 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
   const progressPct = ((step + 1) / QUESTIONS.length) * 100
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
+    // F-CHECKIN-MOBILE-001 round 4: was a bottom-sheet on mobile +
+    // centered card on sm+ (items-end sm:items-center). After round 3
+    // smoke testing the team prefers a uniform centered dialog feel
+    // across all breakpoints, so this is now items-center everywhere.
+    // The outer px-4 replaces the old `mx-0 sm:mx-4` on the modal
+    // itself — gives every viewport a 16px side gutter without any
+    // box-sizing math. The mobile-only drag handle (a swipe-down hint
+    // for bottom sheets) is gone since it's meaningless on a centered
+    // dialog. The slide-in-from-bottom-full animation is replaced by
+    // a uniform zoom-in-95 + fade-in-0 so the entrance reads as a
+    // dialog opening rather than a sheet rising.
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
@@ -259,18 +270,13 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
         aria-hidden
       />
 
-      {/* Modal — bottom sheet on mobile, centered card on sm+ */}
+      {/* Modal — centered dialog on every breakpoint */}
       <div
-        className="relative w-full max-w-md bg-card shadow-2xl border mx-0 sm:mx-4 max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-0 sm:zoom-in-95 fade-in-0 duration-200"
+        className="relative w-full max-w-md bg-card shadow-2xl border max-h-[90vh] overflow-y-auto rounded-3xl animate-in zoom-in-95 fade-in-0 duration-200"
         role="dialog"
         aria-modal="true"
         aria-labelledby="checkin-title"
       >
-        {/* Mobile drag-handle */}
-        <div className="flex justify-center pt-3 sm:hidden">
-          <div className="h-1 w-10 rounded-full bg-muted-foreground/20" />
-        </div>
-
         <div className="p-6 sm:p-8">
           {/* ── Header row 1: Geri (left) + X (right) ── */}
           <div className="flex items-center justify-between min-h-[24px]">

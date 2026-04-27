@@ -101,21 +101,23 @@ export function FeedbackWidget() {
       {/* FAB — hidden while another overlay (modal / sheet / toast)
           is on screen via the useOverlayActive() conditional CSS
           below.
-          F-CHECKIN-MOBILE-001 round 3: z-50 restored (was z-30).
-          The round-2 defensive "lose the stacking contest with z-40
-          backdrops" rationale was wrong — useOverlayActive already
-          renders the FAB invisible + non-interactive while overlays
-          are on screen, so the z-index race never materialises.
-          Meanwhile BottomNavbar is `fixed bottom-0 z-40 md:hidden`,
-          which means at z-30 the FAB lived UNDER the mobile nav and
-          got half-clipped + un-tappable. z-50 puts it above
-          BottomNavbar (z-40) cleanly; collisions with MicroCheckIn
-          modal (z-50) and sonner toasts are resolved by the visibility
-          gate, not z-index. Animated translate keeps the appear/
-          disappear smooth. */}
+          F-CHECKIN-MOBILE-001 round 3: z-50 restored (was z-30 in
+          round 2). useOverlayActive already renders the FAB
+          invisible + non-interactive while overlays are on screen,
+          so the z-index race never materialises; meanwhile
+          BottomNavbar is `fixed bottom-0 z-40 md:hidden` and the FAB
+          must sit ABOVE it.
+          F-CHECKIN-MOBILE-001 round 4: vertical position lifted on
+          mobile so the FAB no longer sits ON TOP of BottomNavbar's
+          right-most "Profile" tab. BottomNavbar is ~64-72px nav row
+          + iOS safe-area-inset-bottom (~34px on home-indicator
+          devices), so `bottom-6` (24px) put the FAB squarely on the
+          tab. `bottom-24` (96px) clears it with a comfortable gap.
+          md+ has no BottomNavbar (`md:hidden`), so desktop returns
+          to the original `bottom-6`. */}
       <button
         onClick={() => setOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 ${
+        className={`fixed bottom-24 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-emerald-700 text-white shadow-lg shadow-primary/20 transition-all duration-200 hover:scale-105 hover:shadow-xl active:scale-95 md:bottom-6 ${
           open || overlayActive
             ? "pointer-events-none translate-y-4 opacity-0"
             : "translate-y-0 opacity-100"
@@ -127,9 +129,11 @@ export function FeedbackWidget() {
         <MessageSquarePlus className="h-5 w-5" />
       </button>
 
-      {/* Popover */}
+      {/* Popover — F-CHECKIN-MOBILE-001 round 4: same vertical lift
+          as the FAB so the popover doesn't open ON TOP of
+          BottomNavbar's Profile tab on mobile. */}
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-80 rounded-2xl border bg-card shadow-2xl shadow-black/10 overflow-hidden">
+        <div className="fixed bottom-24 right-6 z-50 w-80 rounded-2xl border bg-card shadow-2xl shadow-black/10 overflow-hidden md:bottom-6">
           {/* Confetti overlay */}
           {showConfetti && (
             <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
