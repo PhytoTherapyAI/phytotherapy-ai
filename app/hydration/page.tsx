@@ -51,17 +51,27 @@ export default function HydrationPage() {
       </div>
 
       {/* Calculator */}
+      {/* F-MOBILE-002d: the three form controls below carried no
+          font-size class, which made them inherit Tailwind preflight
+          and behave inconsistently across iOS / Android browsers.
+          Anything that resolves under 16px on a focusable input or
+          select makes iOS Safari auto-zoom in when the keyboard /
+          picker opens — same trap fixed in F-MOBILE-002b (078316d)
+          for components/interaction/DrugInput.tsx. Pattern is the
+          same: `text-base sm:text-sm` (16px mobile, 14px desktop)
+          and `min-h-11 md:min-h-0` (Apple HIG 44px tap target on
+          mobile, default compact height on md+). */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{tx("hydration.weight", lang)} *</label>
-            <input type="number" value={weight} onChange={(e) => { setWeight(e.target.value); setCalculated(false); }} placeholder="70" className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none" />
+            <input type="number" value={weight} onChange={(e) => { setWeight(e.target.value); setCalculated(false); }} placeholder="70" className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-base sm:text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none min-h-11 md:min-h-0" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               <Activity className="w-4 h-4 inline mr-1" /> {tx("hydration.activityLevel", lang)}
             </label>
-            <select value={activity} onChange={(e) => { setActivity(e.target.value); setCalculated(false); }} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
+            <select value={activity} onChange={(e) => { setActivity(e.target.value); setCalculated(false); }} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-base sm:text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none min-h-11 md:min-h-0">
               <option value="sedentary">{tx("hydration.sedentary", lang)}</option>
               <option value="moderate">{tx("hydration.moderatelyActive", lang)}</option>
               <option value="active">{tx("hydration.veryActive", lang)}</option>
@@ -71,7 +81,7 @@ export default function HydrationPage() {
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               <Coffee className="w-4 h-4 inline mr-1" /> {tx("hydration.dailyCaffeine", lang)}
             </label>
-            <select value={caffeine} onChange={(e) => { setCaffeine(e.target.value); setCalculated(false); }} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none">
+            <select value={caffeine} onChange={(e) => { setCaffeine(e.target.value); setCalculated(false); }} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-base sm:text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none min-h-11 md:min-h-0">
               <option value="0">0</option>
               <option value="1-2">1-2</option>
               <option value="3-4">3-4</option>
