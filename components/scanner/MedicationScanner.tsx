@@ -64,12 +64,33 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
 
   const capturePhoto = () => {
     if (!videoRef.current) return
+    const video = videoRef.current
+
+    // F-SCAN-SAFETY-002: video stream must have at least one decoded
+    // frame before we can extract pixels. readyState < 2
+    // (HAVE_CURRENT_DATA) means the canvas would be empty;
+    // videoWidth/Height === 0 means the metadata hasn't landed yet.
+    // Without this guard a "Çek" tap landing before the camera is
+    // warm produced a 0×0 canvas → empty data URL → wasted Claude
+    // Vision call → "okunamadı" error 3-5 s later. Now we fail
+    // immediately with a localised message.
+    if (
+      video.readyState < 2 ||
+      video.videoWidth === 0 ||
+      video.videoHeight === 0
+    ) {
+      setResult({ error: tx("scan.error.noFrame", lang) })
+      setMode("result")
+      stopCamera()
+      return
+    }
+
     const canvas = document.createElement("canvas")
-    canvas.width = videoRef.current.videoWidth
-    canvas.height = videoRef.current.videoHeight
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
     const ctx = canvas.getContext("2d")
     if (!ctx) return
-    ctx.drawImage(videoRef.current, 0, 0)
+    ctx.drawImage(video, 0, 0)
     const dataUrl = canvas.toDataURL("image/jpeg", 0.8)
     setCapturedImage(dataUrl)
     stopCamera()
@@ -79,6 +100,20 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    // F-SCAN-SAFETY-002: some Android WebViews surface a 0-byte File
+    // when the native camera/picker is cancelled — the File exists
+    // (so the `!file` guard above doesn't fire) but it has no bytes,
+    // and a non-image MIME type is even more obviously bad input.
+    // Hard-block both before we burn an OCR call. Reset the input
+    // value so the user can re-pick the same filename if they need
+    // to retry.
+    if (file.size === 0 || !file.type.startsWith("image/")) {
+      setResult({ error: tx("scan.error.noFrame", lang) })
+      setMode("result")
+      e.target.value = ""
+      return
+    }
 
     const reader = new FileReader()
     reader.onload = () => {
@@ -90,6 +125,19 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
   }
 
   const analyzeImage = async (imageData: string) => {
+    // F-SCAN-SAFETY-002: belt-and-suspenders sanity check.
+    // capturePhoto and handleFileInput already gate, but analyzeImage
+    // is the choke point right before the API call — guarding here
+    // means any future caller (tests, alt UIs) can't slip empty
+    // input past us. A valid JPEG-as-data-URL is comfortably > 4 KB;
+    // anything smaller is essentially an empty / 1×1 / placeholder
+    // capture and shouldn't burn a Claude Vision token.
+    if (!imageData.startsWith("data:image/") || imageData.length < 4000) {
+      setResult({ error: tx("scan.error.noFrame", lang) })
+      setMode("result")
+      return
+    }
+
     setMode("scanning")
 
     // F-SCANNER-001: AbortController matches endpoint maxDuration=50s

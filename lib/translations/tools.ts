@@ -1049,6 +1049,15 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
     en: "Couldn't read the image — try a clearer photo",
     tr: "Görüntü okunamadı — daha net bir fotoğraf dene",
   },
+  // F-SCAN-SAFETY-002: shown when capturePhoto / handleFileInput /
+  // analyzeImage detect a 0-byte File, an unwarmed video stream,
+  // or a sub-4 KB data URL — i.e. anything that would make a
+  // wasted Claude Vision call. Distinct from `ocrFailed` because
+  // the model never even ran; the input itself was invalid.
+  "scan.error.noFrame": {
+    en: "No image captured — please try again",
+    tr: "Görüntü alınamadı — lütfen tekrar deneyin",
+  },
   "scan.error.timeout": {
     en: "Request timed out — check your connection",
     tr: "İstek zaman aşımına uğradı — internet bağlantını kontrol et",
