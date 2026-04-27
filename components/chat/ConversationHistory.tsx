@@ -497,15 +497,29 @@ export function ConversationHistory({
 
         {!isEditing && (
           <DropdownMenu>
+            {/* F-CHAT-MOBILE-001: F-CHAT-SIDEBAR-002 made the trigger
+                hover-only, so on touch devices (no :hover state) pin /
+                rename / delete were unreachable. Mobile renders the
+                trigger inline with a 44×44 touch target (Apple HIG
+                min); md+ restores the original absolute hover-overlay
+                so the desktop "clean row, reveal on hover" UX is
+                preserved verbatim. Single-className change — logic
+                intact. shrink-0 + self-center keep the trigger from
+                squeezing the title column on narrow screens. */}
             <DropdownMenuTrigger
               aria-label={tx("ch.menuAria", lang)}
-              className="absolute right-1 top-1.5 inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/70 opacity-0 transition-opacity hover:bg-emerald-100 hover:text-emerald-700 focus:opacity-100 group-hover:opacity-100 data-[popup-open]:opacity-100 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300"
+              className="inline-flex h-11 w-11 shrink-0 self-center items-center justify-center rounded-md text-muted-foreground/70 transition-opacity hover:bg-emerald-100 hover:text-emerald-700 data-[popup-open]:opacity-100 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300 md:absolute md:right-1 md:top-1.5 md:h-7 md:w-7 md:self-auto md:opacity-0 md:focus:opacity-100 md:group-hover:opacity-100"
             >
-              <MoreHorizontal className="h-3.5 w-3.5" />
+              <MoreHorizontal className="h-4 w-4 md:h-3.5 md:w-3.5" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" sideOffset={4} className="w-48">
+              {/* F-CHAT-MOBILE-001: dropdown items get a 44px min-height
+                  on mobile too — base-ui's default item is ~32-36px
+                  which is below the Apple HIG touch target. Desktop
+                  reverts to the compact default. */}
               <DropdownMenuItem
                 onClick={() => handlePin(conv.id, conv.is_pinned)}
+                className="min-h-11 md:min-h-0"
               >
                 {conv.is_pinned ? (
                   <PinOff className="mr-1.5" />
@@ -514,7 +528,10 @@ export function ConversationHistory({
                 )}
                 <span>{tx(conv.is_pinned ? "ch.unpin" : "ch.pin", lang)}</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => startRename(conv)}>
+              <DropdownMenuItem
+                onClick={() => startRename(conv)}
+                className="min-h-11 md:min-h-0"
+              >
                 <Pencil className="mr-1.5" />
                 <span>{tx("ch.rename", lang)}</span>
               </DropdownMenuItem>
@@ -522,6 +539,7 @@ export function ConversationHistory({
               <DropdownMenuItem
                 variant="destructive"
                 onClick={() => setPendingDeleteId(conv.id)}
+                className="min-h-11 md:min-h-0"
               >
                 <Trash2 className="mr-1.5" />
                 <span>{tx("ch.deleteConfirmAction", lang)}</span>
