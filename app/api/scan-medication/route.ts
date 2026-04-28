@@ -187,6 +187,30 @@ export async function POST(req: NextRequest) {
   const base64Data = image.replace(/^data:image\/[a-zA-Z0-9.+-]+;base64,/, "")
   const base64Size = base64Data.length
 
+  // Defense-in-depth: validate base64 charset before sending to Claude.
+  // Tail events on Sentry 7441877015 showed truncated/corrupt uploads
+  // surfacing as 502 ocr_failed (Anthropic 400 "invalid base64 data")
+  // — burns an API call and misclassifies a client-side bug as a
+  // service outage. Standard base64 alphabet only (no URL-safe variant);
+  // FileReader.readAsDataURL never inserts whitespace so this is safe.
+  const BASE64_PATTERN = /^[A-Za-z0-9+/]+={0,2}$/
+  if (base64Size < 100 || !BASE64_PATTERN.test(base64Data)) {
+    captureScannerFailure(
+      "image-validate",
+      "image_invalid",
+      400,
+      "base64-malformed",
+      { base64Size },
+    )
+    return errorResponse(
+      "image-validate",
+      "image_invalid",
+      400,
+      "Image data is malformed",
+      `base64Size=${base64Size}`,
+    )
+  }
+
   // STAGE 4: Claude vision call (wrapped in its own catch so Claude 529s
   // and network errors surface with the right stage).
   let rawResult: string
