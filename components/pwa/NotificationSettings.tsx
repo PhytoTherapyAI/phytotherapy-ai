@@ -322,7 +322,7 @@ export function NotificationSettings({ medications = [] }: Props) {
               <BellOff className="h-4 w-4 text-muted-foreground" />
             )}
             <h3 className="text-sm font-semibold">
-              {isTr ? "Sağlık Kalkanı" : "Health Shield"}
+              {tx("notif.title", lang)}
             </h3>
           </div>
           <Button
