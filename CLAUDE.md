@@ -560,6 +560,85 @@ const handleAuthGatedAction = async () => {
 
 Pattern referansı: `components/interaction/InteractionPhotoCapture.tsx` `analyzeImage` auth guard (Commit `41b5eed`).
 
+### Existing Infrastructure Reuse — Yeni Hook Açmadan Önce Mevcut Provider'ları Kontrol Et (F-FAMILY-BADGE-001 öğretisi, Commit `da86490`)
+
+Yeni bir UI ihtiyacı geldiğinde, **doğrudan implementation prompt'u yazmadan** önce mevcut codebase'i tara — özellikle Provider/Context katmanlarını. Mevcut state yönetimi büyük olasılıkla istenen veriyi **zaten expose ediyor**. Plan mode tarafından yakalanmazsa, "yeni hook + duplicate fetch + duplicate cache invalidation" pattern'i 15-20 dakikalık çift-iş + uzun-vadeli maintenance yükü doğurur.
+
+Tehlikeli pattern (plan mode'sız):
+
+```
+"BottomNavbar'a invite count badge ekle"
+→ Yeni hook: useFamilyPendingInviteCount()
+→ Yeni Supabase query
+→ Yeni context veya prop drilling
+→ Duplicate fetch logic (mevcut family-context'tekiyle paralel)
+→ İki kaynak arasında stale-state riski
+```
+
+Doğru pattern — **keşif önce**:
+
+```bash
+# 1. Mevcut Provider/Context taraması
+grep -r "pendingInvites|familyInvitations|invite_status" lib/ types/
+
+# 2. Hedef veri zaten expose ediliyor mu?
+cat types/family.ts | grep -A 3 FamilyContextType
+
+# 3. useFamily() hook çağrısı yeterli mi?
+```
+
+F-FAMILY-BADGE-001 keşif raporu yeni hook gereksiz olduğunu kanıtladı:
+
+- `lib/family-context.tsx:15` zaten `pendingInvites: FamilyMember[]` state'i tutuyordu
+- `types/family.ts:109` `FamilyContextType` zaten `pendingInvites` expose ediyordu
+- `useFamily()` hook çağrısı + `pendingInvites.length` BottomNavbar için yeterli — **hiç yeni hook açılmadı**
+
+**Plan mode kontrol listesi (yeni UI feature için):**
+
+- Mevcut Provider/Context katmanları taranır mı? (`grep "use[A-Z]*\(\)"` ile mevcut hook envanteri çek)
+- Hedef veri zaten Provider state'inde mi? `types/*` veya context type tanımına bak
+- Yeni hook **gerçekten** gerekli mi yoksa mevcut hook'un yeni tüketicisi mi?
+- Provider scope'u target component'i kapsıyor mu? (`app/layout.tsx` provider chain kontrol)
+
+Pattern referansı: `components/layout/BottomNavbar.tsx` (Commit `da86490`) — yeni hook YOK, `useFamily()` reuse, +25 LOC tüm iş (badge UI + visibility refetch dahil).
+
+### Translation Key Lifecycle — Tanımladığın Key'in Consumer'ını da Güncelle (F-NOTIF-I18N-CLEANUP-001 öğretisi, Commit `edb552c`)
+
+Yeni translation key tanımlamak yetmez, **consumer'ları da update etmek zorunlu**. Yoksa tarihsel debt birikir: key dosyada ölü kalır, component inline string kullanmaya devam eder, gelecek refactor'lerde "zaten varmış" karışıklığı doğar — ya key silinir component crash eder, ya component'te inline ternary kalır key dead code birikir.
+
+Tehlikeli pattern:
+
+```
+1. lib/translations/common.ts'e "notif.title" ekle ✓
+2. components/pwa/NotificationSettings.tsx inline ternary olduğunu unut
+3. 2 sprint sonra refactor:
+   "notif.title var ama hiç kullanılmıyor? Sileyim..."
+   → key silindi → component crash riski
+   (veya tersine: component inline ternary kalır, key dead code birikir)
+```
+
+Doğru pattern:
+
+```
+1. Yeni key ekle
+2. Aynı commit'te tüm consumer'ları update et (grep ile bul)
+3. Eğer migration çok büyükse: ayrı migration commit + plan'a yaz
+```
+
+F-NOTIF-I18N-CLEANUP-001 tarihsel debt'i temizledi:
+
+- `notif.title` `common.ts:67`'de tanımlıydı (eski commit, Sprint 1 öncesi)
+- `NotificationSettings.tsx:325` hâlâ inline ternary kullanıyordu (`{isTr ? "Sağlık Kalkanı" : "Health Shield"}`)
+- Aradaki 2+ sprint boyunca key ölü kaldı → cleanup gerekti
+
+**Plan mode kontrol listesi (yeni i18n key için):**
+
+- Key eklenmeden önce: bu key'i kullanacak component nedir? (var mı planda)
+- Eklendikten sonra: `grep "isTr ?"` + `grep "lang === \"tr\""` ile kalan inline ternary tarama
+- Migration scope büyükse: aynı commit'te yapma, plan'a "F-X-I18N-MIGRATION" ticket ekle
+
+Pattern referansı: `components/pwa/NotificationSettings.tsx:325` (Commit `edb552c`) — `{isTr ? "Sağlık Kalkanı" : "Health Shield"}` → `{tx("notif.title", lang)}`. 9 diğer `isTr` kullanımı Sprint 3+ batch migration konusu (FEATURES array label/desc/confirmTitle/confirmDesc + Active/Off badge + ConfirmModal).
+
 ---
 
 ## Sprint Disiplini (her commit'te zorunlu)

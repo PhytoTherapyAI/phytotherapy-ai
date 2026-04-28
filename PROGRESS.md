@@ -37,11 +37,80 @@
 
 ---
 
-## Sprint 2 — Polish & Bug Fix (28 Nisan 2026 başlangıç)
+## Sprint 2 — Polish, Bug Fix & Universal Scan ✅ KAPANDI (28 Nisan 2026)
+
+**Süre:** 28 Nisan 2026 (tek gün)
+**Toplam:** 10 ana commit + 1 hotfix + 3 docs = 14 commit, 0 revert
+**Disiplin:** Her commit öncesi `npx tsc --noEmit && npm run build` (0 error/warning, 240 sayfa)
+
+### Ana Commit'ler
 
 | # | Ticket | Commit | Açıklama |
 |---|---|---|---|
-| 1 | F-CHECKIN-MOBILE-002 | `38ba553` | MicroCheckIn emoji satırı mobile overflow fix (gap-3 → gap-1.5) |
+| 1 | F-CHECKIN-MOBILE-002 | `38ba553` | MicroCheckIn emoji satırı mobile overflow (gap-3 → gap-1.5) |
+| 2 | F-PWA-NOTIF-FALLBACK-001 | `174bd66` | NotificationSettings 3-state fallback (promptable / ios-manual / unsupported) |
+| 3 | F-FAMILY-NAV-UX-001 | `ffe6d8e` | BottomNavbar i18n + aria-label (4 tab TR/EN) |
+| 4 | F-INTERACTION-VISION-001 | `0c78c3b` | Universal Scan v1 — Etkileşim Denetleyicisi foto upload + Vision API |
+| 4.5 | (auth hotfix) | `41b5eed` | InteractionPhotoCapture auth header eksikti — MedicationScanner pattern reuse |
+| 5 | F-INTERACTION-VISION-002 | `f73c6e0` | Universal Scan v2 — confidence handling fallback (3 dead-end branch) |
+| 6 | F-NOTIF-I18N-CLEANUP-001 | `edb552c` | NotificationSettings inline ternary → tx() (tarihsel debt) |
+| 7 | F-BRAND-CONSISTENCY-001 | `361937c` | /hydration Hesapla butonu emerald migration (bg-blue → bg-primary) |
+| 8 | F-FAMILY-BADGE-001 | `da86490` | BottomNavbar Family tab pending invite count badge + visibility refetch |
+
+### Docs Commit'leri
+
+| # | Commit | İçerik |
+|---|---|---|
+| D1 | `0e70795` | Refactoring Patterns: Render-time Dynamic ID Trap + tx() Lang Constraint |
+| D2 | `c9086ba` | Refactoring Patterns: Auth Pattern Reuse + Mirror Guards + Graceful Exit (3 öğreti) |
+| D3 | (this) | Sprint 2 final tablosu + 2 yeni öğreti (Existing Infra Reuse + Translation Key Lifecycle) |
+
+### Sprint 2 Major Outcomes
+
+- **Universal Scan production'da** — IGNITE'26 sonrası en güçlü demo özelliği. Foto çek → AI ilaç tanıma → manuel doğrulama/düzeltme → DrugInput state. Hiçbir senaryoda dead-end yok (v2 confidence handling).
+- **Plan mode disiplini 4 sessiz bug yakaladı** — render-time ID trap (`ffe6d8e`), mirror guards bypass (`0c78c3b`), tx() Lang typing (`174bd66`), auth pattern eksikliği (`41b5eed` hotfix tetikleyicisi).
+- **F-SCAN-SAFETY-002 4-Layer Defense yeni endpoint'e taşındı** — InteractionPhotoCapture client guards + server base64 validation reuse, sıfır yeni güvenlik kodu.
+- **i18n discipline arttı** — BottomNavbar i18n migration (Family discoverability), NotificationSettings inline ternary cleanup.
+- **Brand consistency başlangıcı** — /hydration emerald migration, kalan 8 sayfa Sprint 3+ Brand Drift Audit.
+
+### Sprint 3+ Backlog (Sprint 2 sırasında biriken)
+
+**Brand Drift Audit (8 sayfa):**
+- Açık drift (4): /medical-analysis, /medical-dictionary, /data-export, /value-marketplace (hepsi `bg-blue-500/600`)
+- Tartışmalı tema (4): /enterprise/white-label (indigo), /thyroid-dashboard (indigo), /health-analytics (purple), /interaction-map (violet) — her biri "bilinçli tema mı drift mi" user kararı gerek
+
+**i18n Full Migration:**
+- NotificationSettings 9 ek `isTr` ternary (FEATURES array label/desc/confirmTitle/confirmDesc + Active/Off badge)
+- ConfirmModal sub-component `lang === "tr"` ternary (line 68/71)
+
+**Realtime Subscription Pattern:**
+- Family invite badge şu an mount fetch + visibility refetch (Strateji A+B)
+- Gerçek-zamanlı UX gerekirse Supabase realtime subscription kurulumu (DoctoPal'da hiç realtime kullanılmamış, ilk pattern kurulumu ayrı keşif)
+
+**Family System Data Integrity Audit:**
+- Owner row mevcut ama /family UI "Hane Oluştur" CTA gösteriyor — veri yarım veya UI render edge case
+- `family_groups` vs `family_members` consistency check
+- Smoke test sırasında tespit edildi (Commit 8 F-FAMILY-BADGE-001)
+
+**PWA + Telemetry:**
+- F-PWA-NOTIF-FALLBACK-001 UnsupportedFallback DevTools'ta tetiklenemedi
+- Production iOS Safari + eski Android'de gerçek davranış için Sentry breadcrumb / analytics event önerilir
+- F-PWA-002: manifest screenshots (App Store başvurusu öncesi)
+
+**Universal Scan v3 (opsiyonel):**
+- Türk ilaç database augmentation — system prompt'a Türk ilaç corpus'u
+- Düşük tanıma oranı varsa AI accuracy artırma (şu an Zoretanin/global brand'lar OK)
+
+### Sprint 2 Re-Scope Kararları (referans)
+
+**F-FAMILY-NAV-UX-001 (Çözüm A):**
+- Sadece i18n + aria-label, icon swap (UsersRound vs Users) Sprint 3+ A/B test konusu
+- Çözüm B (badge) Sprint 2'de F-FAMILY-BADGE-001 olarak yapıldı
+- Çözüm C (NEW pulse + onboarding tour) Sprint 3+ konusu
+
+**F-BRAND-CONSISTENCY-001 (Strateji A):**
+- Sadece /hydration, kalan 8 sayfa scope dışı
+- Brand Drift Audit Sprint 3+ ayrı ayrı user onayı ile
 
 ---
 
