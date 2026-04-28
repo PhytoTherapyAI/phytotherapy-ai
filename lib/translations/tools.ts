@@ -1098,6 +1098,13 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
   "interaction.photoScan.recognizedAs": { en: "Recognized as", tr: "Tanınan ilaç" },
   "interaction.photoScan.namePlaceholder": { en: "Medication name", tr: "İlaç adı" },
   "interaction.photoScan.lowConfidence": { en: "Low confidence — please verify the name.", tr: "Düşük güven — lütfen adı doğrulayın." },
+  // F-INTERACTION-VISION-002: amber banner for the AI-fail
+  // fallback. Replaces the previous dead-end "scanFailed" toast +
+  // stuck-on-preview behaviour by inviting the user to type the
+  // name manually instead. Reuses namePlaceholder for the input
+  // header in the notRecognized branch — no extra "manual entry
+  // title" key needed.
+  "interaction.photoScan.notRecognizedManual": { en: "Couldn't identify the medication — type the name to add it.", tr: "İlacı tanıyamadık — adını yazarak ekleyebilirsiniz." },
   "interaction.photoScan.dosageHint": { en: "Dosage", tr: "Doz" },
   "interaction.photoScan.addToList": { en: "Add to list", tr: "Listeye ekle" },
   "interaction.photoScan.added": { en: "Medication added", tr: "İlaç eklendi" },

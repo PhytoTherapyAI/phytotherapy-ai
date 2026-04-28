@@ -53,6 +53,16 @@ interface ScanResult {
   form?: string
   confidence?: "high" | "medium" | "low"
   error?: string
+  /** F-INTERACTION-VISION-002: AI-fail fallback marker. Set by
+   *  `handleNotRecognized` when the vision API couldn't identify
+   *  the medication (HTTP error, 200 + empty brand_name, network
+   *  catch). The result mode UI branches on this to show a
+   *  "type the name manually" amber banner instead of the
+   *  optimistic "Recognized as" header — the user lands on the
+   *  same manual edit input they would have used to correct a
+   *  low-confidence reading, so the dead-end (modal stuck on
+   *  preview with only X / retake) goes away. */
+  notRecognized?: boolean
 }
 
 type Mode = "choose" | "camera" | "preview" | "result"
@@ -172,6 +182,19 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
     e.target.value = ""
   }
 
+  // F-INTERACTION-VISION-002: shared fallback for every code path
+  // that ends in "AI couldn't tell us what's in the photo". Lands
+  // the user on the result mode with an empty input + a banner
+  // that asks them to type the name themselves; the existing
+  // handleConfirm emptyName guard (line ~252) keeps the addToList
+  // button honest for blank submissions.
+  const handleNotRecognized = () => {
+    setScanResult({ notRecognized: true })
+    setEditedName("")
+    setMode("result")
+    setIsScanning(false)
+  }
+
   const analyzeImage = async () => {
     if (!imageDataUrl) return
 
@@ -218,30 +241,49 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
         body: JSON.stringify({ image: imageDataUrl, lang }),
       })
 
+      // F-INTERACTION-VISION-002: every "AI couldn't tell us what's
+      // in this photo" branch — HTTP non-2xx, 200 with an empty /
+      // error envelope, network catch — flows into
+      // handleNotRecognized() instead of the previous toast +
+      // dead-end on the preview screen. The auth_required (401)
+      // case is intercepted earlier by the session guard above
+      // (hotfix 41b5eed), so the !res.ok arm here is the leftover
+      // rate_limited / image_invalid / parse_failed / ocr_failed /
+      // consent_blocked surface — all of which are genuine "AI
+      // didn't help" rather than user / app errors, so the
+      // manual-entry fallback is the right escape.
       if (!res.ok) {
-        toast.error(tx("interaction.photoScan.scanFailed", lang))
-        setIsScanning(false)
+        handleNotRecognized()
         return
       }
 
       const data = (await res.json()) as ScanResult
 
-      // Endpoint returns a structured error envelope on parse fail
-      // (F-SCANNER-001). Surface the user-facing toast and keep
-      // the user on the preview screen so they can retake.
+      // 200 with no recognised name — Stage 6 success path that
+      // returns Claude's raw JSON when it shaped a "blocked" or
+      // "couldn't read" envelope. Same fallback.
       if (data.error || (!data.brand_name && !data.generic_name)) {
-        toast.error(tx("interaction.photoScan.scanFailed", lang))
-        setIsScanning(false)
+        handleNotRecognized()
         return
       }
 
       setScanResult(data)
       setEditedName((data.brand_name || data.generic_name || "").trim())
       setMode("result")
-    } catch {
-      toast.error(tx("interaction.photoScan.networkError", lang))
-    } finally {
+      // Success path explicit cleanup. The previous version relied
+      // on a `finally { setIsScanning(false) }` block; that's gone
+      // now because every failure branch terminates inside
+      // handleNotRecognized() (which already sets isScanning to
+      // false). The success arm has to mirror that.
       setIsScanning(false)
+    } catch {
+      // Network / abort / JSON throw. The toast still fires here
+      // because the user genuinely needs to know they're offline
+      // (vs the AI just not recognising their photo) — but we
+      // ALSO drop them into the manual-entry fallback so they
+      // can keep working offline-ish if they know the med name.
+      toast.error(tx("interaction.photoScan.networkError", lang))
+      handleNotRecognized()
     }
   }
 
@@ -385,12 +427,26 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
             </div>
           )}
 
-          {/* MODE: result ── confirm + manual edit + add to list */}
+          {/* MODE: result ── confirm + manual edit + add to list.
+              F-INTERACTION-VISION-002 — header + banner branching:
+                - notRecognized=true (AI fail fallback)  → header
+                  reuses namePlaceholder copy ("İlaç adı"), banner
+                  shows the manual-entry prompt.
+                - confidence="low" (AI guessed but unsure) → header
+                  stays optimistic ("Tanınan ilaç"), banner shows
+                  the verify-the-name hint.
+                - default (high/medium confidence)        → no
+                  banner, header optimistic.
+              The two amber banners are mutually exclusive — when
+              the AI fully failed there's nothing to verify, just
+              an empty input to fill. */}
           {mode === "result" && scanResult && (
             <div className="space-y-4">
               <div className="rounded-lg border bg-muted/20 p-4 space-y-2">
                 <p className="text-xs text-muted-foreground">
-                  {tx("interaction.photoScan.recognizedAs", lang)}
+                  {scanResult.notRecognized
+                    ? tx("interaction.photoScan.namePlaceholder", lang)
+                    : tx("interaction.photoScan.recognizedAs", lang)}
                 </p>
                 {/* F-MOBILE-002b: text-base sm:text-sm prevents iOS
                     Safari auto-zoom; min-h-11 md:min-h-9 for touch
@@ -402,12 +458,17 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
                   placeholder={tx("interaction.photoScan.namePlaceholder", lang)}
                   autoFocus
                 />
-                {scanResult.confidence === "low" && (
+                {scanResult.notRecognized ? (
+                  <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                    <Pencil className="h-3 w-3" />
+                    {tx("interaction.photoScan.notRecognizedManual", lang)}
+                  </p>
+                ) : scanResult.confidence === "low" ? (
                   <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
                     <Pencil className="h-3 w-3" />
                     {tx("interaction.photoScan.lowConfidence", lang)}
                   </p>
-                )}
+                ) : null}
                 {scanResult.dosage && (
                   <p className="text-xs text-muted-foreground">
                     {tx("interaction.photoScan.dosageHint", lang)}: {scanResult.dosage}
