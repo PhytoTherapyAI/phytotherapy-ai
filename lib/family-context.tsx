@@ -54,8 +54,31 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
         needsMigration?: boolean
       }
 
-      if (json.needsMigration || !json.group) {
+      if (json.needsMigration) {
         // Gerçekten aile yok — /select-profile create CTA'yı göstersin.
+        setFamilyGroup(null)
+        setFamilyMembers([])
+        setPendingInvites([])
+        return
+      }
+
+      // F-FAMILY-DATA-INTEGRITY-001: orphan state — API group fetch
+      // null döndü (family_groups satırı eksik) AMA accepted members
+      // var. Eski kod members'ı yutuyordu (`setFamilyMembers([])`),
+      // şimdi members + pendingInvites korunuyor. UI hâlâ "Hane
+      // Oluştur" gösterebilir (familyGroup null) ama context'te
+      // gerçek üye datası bekliyor — gelecek UI fix (orphan banner +
+      // auto-recover) için temel.
+      if (!json.group && (json.members?.length ?? 0) > 0) {
+        setFamilyGroup(null)
+        setFamilyMembers((json.members || []) as FamilyMember[])
+        setPendingInvites((json.pendingInvites || []) as FamilyMember[])
+        return
+      }
+
+      // Edge case: group null, members boş, needsMigration false
+      // (örn yeni hesap mid-fetch) — eski davranışı koru
+      if (!json.group) {
         setFamilyGroup(null)
         setFamilyMembers([])
         setPendingInvites([])

@@ -127,12 +127,19 @@ export async function GET(req: NextRequest) {
     const accepted = rows.filter((r: { invite_status: string }) => r.invite_status === "accepted")
     const pending = rows.filter((r: { invite_status: string }) => r.invite_status === "pending")
 
+    // F-FAMILY-DATA-INTEGRITY-001: orphan flag — group fetch null
+    // döndü (family_groups'ta selectedGroupId ile satır yok) AMA
+    // membership-first query başarılı + accepted members var.
+    // Frontend bu flag'le UI'da inconsistent state'i graceful
+    // handle edebilir; lib/family-context.tsx pendingInvites/
+    // members datasını yutmuyor.
     return NextResponse.json({
       group,
       members: accepted,
       pendingInvites: pending,
       groupId: selectedGroupId,
       needsMigration: false,
+      isOrphan: !group && accepted.length > 0,
     })
   } catch (err) {
     return NextResponse.json({ error: String(err) }, { status: 500 })
