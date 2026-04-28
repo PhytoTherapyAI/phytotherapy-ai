@@ -40,6 +40,20 @@ export async function GET(req: NextRequest) {
       .eq("user_id", user.id)
       .eq("invite_status", "accepted")
 
+    // F-FAMILY-DATA-INTEGRITY-001 debug: surface the raw membership
+    // query result + any DB error in Vercel logs so we can tell why
+    // groupIds is coming back empty even when the user's own report
+    // shows a member row exists. TODO: drop once root cause is fixed.
+    // KVKK note: only group_id (UUID) + error message logged — no PII.
+    console.log(
+      "[family-api] memberships:",
+      JSON.stringify(memberships),
+      "mErr:",
+      JSON.stringify(mErr),
+      "userId:",
+      user.id,
+    )
+
     if (mErr) {
       if (mErr.message?.includes("does not exist") || mErr.code === "42P01") {
         return NextResponse.json({ members: [], needsMigration: true })
@@ -55,30 +69,23 @@ export async function GET(req: NextRequest) {
       )
     )
 
-    // No membership row → legacy fallback: older installs stored family
-    // members on a flat table keyed by family_members.owner_id (no groups).
+    // F-FAMILY-DATA-INTEGRITY-001: legacy `.eq("owner_id", user.id)`
+    // fallback removed. The current schema only has `owner_id` on
+    // family_groups (group ownership) — `family_members.owner_id`
+    // never existed in this codebase, so the old fallback was
+    // throwing a Postgres "column does not exist" error and
+    // routing through the schema-cache-miss path that returns
+    // `needsMigration:true`. Empty groupIds means there genuinely
+    // is no accepted membership for this user, which is exactly
+    // what `needsMigration:true` is for — UI nudges them to create
+    // a group.
     if (groupIds.length === 0) {
-      const { data: legacyMembers, error: legacyErr } = await supabase
-        .from("family_members")
-        .select("*")
-        .eq("owner_id", user.id)
-        .order("created_at", { ascending: true })
-
-      if (legacyErr) {
-        if (legacyErr.message?.includes("does not exist") || legacyErr.code === "42P01") {
-          return NextResponse.json({ members: [], needsMigration: true })
-        }
-        return NextResponse.json({ error: legacyErr.message }, { status: 500 })
-      }
-
-      // Genuinely no family state at all — surface needsMigration so the UI
-      // can nudge the user to create a group. Having legacy rows is fine;
-      // just return them.
       return NextResponse.json({
         group: null,
-        members: legacyMembers || [],
+        members: [],
         pendingInvites: [],
-        needsMigration: (legacyMembers?.length || 0) === 0,
+        needsMigration: true,
+        groupId: null,
       })
     }
 
