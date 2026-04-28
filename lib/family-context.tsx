@@ -105,6 +105,28 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user])
 
+  // F-FAMILY-BADGE-001: refetch family data when the tab returns
+  // from the background. The BottomNavbar pending-invite badge has
+  // to be reasonably fresh, but DoctoPal doesn't ship a Supabase
+  // realtime channel anywhere yet, so we fall back on the cheapest
+  // pull-on-focus pattern. The fetchFamilyData call already auth-
+  // gates internally (line ~29) and tolerates errors silently, so
+  // the worst case is a duplicate /api/family POST when the user
+  // alt-tabs around quickly. Listener cleanup on unmount stops a
+  // listener leak across React strict-mode double-mounts and on
+  // sign-out (the !user early return below skips the addEventListener
+  // entirely so anonymous tabs don't subscribe).
+  useEffect(() => {
+    if (!user) return
+    const handler = () => {
+      if (document.visibilityState === "visible") {
+        void fetchFamilyData()
+      }
+    }
+    document.addEventListener("visibilitychange", handler)
+    return () => document.removeEventListener("visibilitychange", handler)
+  }, [user, fetchFamilyData])
+
   const isOwner = familyGroup?.owner_id === user?.id
 
   const isAdmin = familyMembers.some(

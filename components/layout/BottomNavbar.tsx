@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { Home, Wrench, Users, User } from "lucide-react"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
+import { useFamily } from "@/lib/family-context"
 
 // F-FAMILY-NAV-UX-001: every tab used to hardcode an English label,
 // which made the bottom nav (especially the "Family" tab) read as
@@ -28,6 +29,12 @@ export function BottomNavbar() {
   const pathname = usePathname()
   const router = useRouter()
   const { lang } = useLang()
+  // F-FAMILY-BADGE-001: pendingInvites is already managed by the
+  // FamilyProvider that wraps the layout root (app/layout.tsx:143-
+  // 190). Anonymous tabs see an empty array (the provider's
+  // user-not-signed-in branch resets state to []), so the badge
+  // below disappears for free without an explicit auth check here.
+  const { pendingInvites } = useFamily()
 
   // Hide on certain paths
   const hiddenPaths = ["/login", "/register", "/onboarding"]
@@ -41,12 +48,24 @@ export function BottomNavbar() {
           const Icon = tab.icon
           const label = tx(tab.labelKey, lang)
 
+          // F-FAMILY-BADGE-001: badge only fires on the Family tab
+          // and only when at least one invite is pending. Cap shown
+          // at "9+" defensively — the family group max is 6 members
+          // (premium plan), so practical pending count caps around 5;
+          // the cap is just future-proofing if the cap ever grows.
+          const showBadge = tab.href === "/family" && pendingInvites.length > 0
+          const badgeCount = pendingInvites.length
+          const displayCount = badgeCount > 9 ? "9+" : String(badgeCount)
+          const ariaLabel = showBadge
+            ? `${label}, ${badgeCount} ${tx("nav.familyPendingInvites", lang)}`
+            : label
+
           return (
             <button
               key={tab.href}
               id={tab.id}
               onClick={() => router.push(tab.href)}
-              aria-label={label}
+              aria-label={ariaLabel}
               aria-current={isActive ? "page" : undefined}
               className="relative flex flex-col items-center gap-0.5 px-3 py-1.5 min-w-[64px]"
             >
@@ -61,6 +80,22 @@ export function BottomNavbar() {
               <span className={`text-[10px] font-medium transition-colors ${isActive ? "text-primary" : "text-muted-foreground"}`}>
                 {label}
               </span>
+              {showBadge && (
+                // aria-hidden because the count is already woven
+                // into the parent button's aria-label via the
+                // tx("nav.familyPendingInvites") suffix above —
+                // exposing both would double-announce on screen
+                // readers. -top-0.5 right-2 sits the badge in the
+                // tab button's top-right corner; the active-state
+                // pill is at -top-1 horizontally centred so the
+                // two never visually collide.
+                <span
+                  aria-hidden="true"
+                  className="absolute -top-0.5 right-2 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white"
+                >
+                  {displayCount}
+                </span>
+              )}
             </button>
           )
         })}

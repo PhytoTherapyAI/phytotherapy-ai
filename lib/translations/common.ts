@@ -42,6 +42,13 @@ export const commonTranslations: Record<string, TranslationEntry> = {
   "nav.home": { en: "Home", tr: "Ana Sayfa" },
   "nav.family": { en: "Family", tr: "Aile" },
   "nav.profile": { en: "Profile", tr: "Profil" },
+  // F-FAMILY-BADGE-001: aria-label suffix for the BottomNavbar
+  // pending-invite count badge — read out as e.g. "Aile, 3
+  // bekleyen davet" by screen readers. The badge itself is
+  // aria-hidden, so this string carries the entire pending-count
+  // semantics. Singular/plural collapse to one TR form because
+  // Turkish doesn't bend the noun for numeric quantities here.
+  "nav.familyPendingInvites": { en: "pending invitation(s)", tr: "bekleyen davet" },
   "nav.calorie": { en: "Calorie Calculator", tr: "Kalori Hesaplayıcı" },
   "common.faqTitle": { en: "Frequently Asked Questions", tr: "Sık Sorulan Sorular" },
   "footer.allRightsReserved": { en: "All rights reserved", tr: "Tüm hakları saklıdır" },
