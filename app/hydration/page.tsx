@@ -88,7 +88,17 @@ export default function HydrationPage() {
               <option value="5+">5+</option>
             </select>
           </div>
-          <Button onClick={() => setCalculated(true)} disabled={!weight} className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+          {/* F-BRAND-CONSISTENCY-001: bg-blue-600 → bg-primary
+              brand drift fix. The result card below (line 97 onward)
+              keeps its blue water-theme on purpose — that's the
+              "this much water for you" copy, not a brand surface.
+              Only the primary CTA migrates to the emerald
+              (--primary) variable so it lines up with FAB / modal
+              "Ileri" / "Listeye ekle" / shadcn Button default
+              across the rest of the app. text-primary-foreground
+              instead of text-white so dark mode swaps the white
+              correctly when the primary shade changes. */}
+          <Button onClick={() => setCalculated(true)} disabled={!weight} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
             <Calculator className="w-4 h-4 mr-2" /> {tx("hydration.calculate", lang)}
           </Button>
         </div>
