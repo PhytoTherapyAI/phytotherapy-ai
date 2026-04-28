@@ -35,6 +35,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { tx, type Lang } from "@/lib/translations"
 import { toast } from "sonner"
+import { createBrowserClient } from "@/lib/supabase"
 
 interface Props {
   open: boolean
@@ -187,9 +188,33 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
 
     setIsScanning(true)
     try {
+      // F-INTERACTION-VISION-001 hotfix: /api/scan-medication
+      // Stage 1 rejects requests without a Bearer token (401
+      // auth_required). Initial implementation assumed the auth
+      // header was optional — reading MedicationScanner.tsx:154-159
+      // shows the canonical pattern is `createBrowserClient` →
+      // `getSession` → conditional Bearer. Mirroring that here.
+      // If the session can't be loaded (guest, expired token,
+      // signed-out tab), surface the same "sign in to use this
+      // tool" copy used by the Etkileşim Denetleyicisi DrugInput
+      // "Profilden yükle" auth gate, then close the modal so the
+      // user lands back on the page where they can sign in.
+      const supabase = createBrowserClient()
+      const { data: { session } } = await supabase.auth.getSession()
+
+      if (!session?.access_token) {
+        toast.error(tx("nav.loginRequired", lang))
+        setIsScanning(false)
+        onClose()
+        return
+      }
+
       const res = await fetch("/api/scan-medication", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify({ image: imageDataUrl, lang }),
       })
 
