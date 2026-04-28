@@ -31,6 +31,17 @@ export const commonTranslations: Record<string, TranslationEntry> = {
   "nav.calendar": { en: "Calendar", tr: "Takvim" },
   "nav.dashboard": { en: "Dashboard", tr: "Panel" },
   "nav.tools": { en: "Tools", tr: "Araçlar" },
+  // F-FAMILY-NAV-UX-001: BottomNavbar (mobile only, md:hidden) used
+  // to hardcode all four labels in English even when the user had
+  // selected Turkish — the "Family" tab in particular kept reading
+  // as a foreign keyword to TR users and went undiscovered. These
+  // three keys + the existing nav.tools above feed the four bottom
+  // tabs. Kept short on purpose: label slot is text-[10px] inside a
+  // 64px min-width column, so "Ana Sayfa" (longest TR string here)
+  // is the practical ceiling.
+  "nav.home": { en: "Home", tr: "Ana Sayfa" },
+  "nav.family": { en: "Family", tr: "Aile" },
+  "nav.profile": { en: "Profile", tr: "Profil" },
   "nav.calorie": { en: "Calorie Calculator", tr: "Kalori Hesaplayıcı" },
   "common.faqTitle": { en: "Frequently Asked Questions", tr: "Sık Sorulan Sorular" },
   "footer.allRightsReserved": { en: "All rights reserved", tr: "Tüm hakları saklıdır" },
