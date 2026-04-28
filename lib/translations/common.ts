@@ -90,6 +90,39 @@ export const commonTranslations: Record<string, TranslationEntry> = {
   "notif.dailyCheckIn": { en: "Daily Health Tracking", tr: "Günlük Sağlık Takibi" },
   "notif.morningTime": { en: "Morning time", tr: "Sabah saati" },
   "notif.eveningTime": { en: "Evening time", tr: "Akşam saati" },
+  // F-NOTIF-I18N-FULL-001: NotificationSettings'ten kalan inline
+  // ternary'lerin tüm consumer'ları artık bu key'leri kullanıyor.
+  // notif.medReminders + notif.dailyCheckIn (label) zaten yukarıda
+  // tanımlıydı; bu blok desc / confirmTitle / confirmDesc + ConfirmModal
+  // butonlarını kapsıyor. Naming convention codebase'de hâkim olan
+  // flat-namespace pattern'i takip ediyor (örn `notif.morningTime`,
+  // `notif.eventFallback`) — alt cluster'a indirme yapmadık.
+  "notif.medRemindersDesc": {
+    en: "When active, notifies you about medication times and potential interactions.",
+    tr: "Açık olduğunda ilaç saatlerinizi ve olası etkileşimleri size bildirir.",
+  },
+  "notif.medRemindersConfirmTitle": {
+    en: "Are you sure you want to turn off Medication Shield?",
+    tr: "İlaç Kalkanı'nı kapatmak istediğinize emin misiniz?",
+  },
+  "notif.medRemindersConfirmDesc": {
+    en: "When turned off, medication time reminders and interaction alerts will be paused.",
+    tr: "Bu özellik kapatıldığında ilaç saati hatırlatmaları ve etkileşim uyarıları duraklatılır.",
+  },
+  "notif.dailyCheckInDesc": {
+    en: "Keep your biological age up to date by entering your daily data.",
+    tr: "Günlük verilerinizi girerek biyolojik yaşınızı güncel tutun.",
+  },
+  "notif.dailyCheckInConfirmTitle": {
+    en: "Are you sure you want to turn off Daily Health Tracking?",
+    tr: "Günlük Sağlık Takibi'ni kapatmak istediğinize emin misiniz?",
+  },
+  "notif.dailyCheckInConfirmDesc": {
+    en: "When turned off, daily check-in reminders will be paused.",
+    tr: "Bu özellik kapatıldığında günlük check-in hatırlatmaları duraklatılır.",
+  },
+  "notif.confirmCancel": { en: "Cancel", tr: "Vazgeç" },
+  "notif.confirmTurnOff": { en: "Turn Off", tr: "Kapat" },
   "share.bioAgeTitle": { en: "My Biological Age", tr: "Biyolojik Yaşım" },
   "share.weeklyTitle": { en: "Weekly Health Summary", tr: "Haftalık Sağlık Özeti" },
   "share.protocolTitle": { en: "Protocol Completed!", tr: "Protokol Tamamlandı!" },

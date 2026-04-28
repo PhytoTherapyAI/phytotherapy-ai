@@ -47,7 +47,12 @@ interface ConfirmModalProps {
   description: string
   onConfirm: () => void
   onCancel: () => void
-  lang: string
+  // F-NOTIF-I18N-FULL-001: Lang literal union (was `string`).
+  // The buttons inside this modal now run through tx(), which
+  // requires the literal "en" | "tr" union — passing a generic
+  // string would re-trigger the F-PWA-NOTIF-FALLBACK-001 round-1
+  // type error (7 mismatches at the call-site).
+  lang: Lang
 }
 
 function ConfirmModal({ open, title, description, onConfirm, onCancel, lang }: ConfirmModalProps) {
@@ -81,10 +86,10 @@ function ConfirmModal({ open, title, description, onConfirm, onCancel, lang }: C
           <p className="text-xs text-muted-foreground leading-relaxed mb-5">{description}</p>
           <div className="flex gap-2 justify-end">
             <Button variant="outline" size="sm" onClick={onCancel} className="rounded-lg">
-              {lang === "tr" ? "Vazgeç" : "Cancel"}
+              {tx("notif.confirmCancel", lang)}
             </Button>
             <Button size="sm" onClick={onConfirm} className="rounded-lg bg-red-500 hover:bg-red-600 text-white">
-              {lang === "tr" ? "Kapat" : "Turn Off"}
+              {tx("notif.confirmTurnOff", lang)}
             </Button>
           </div>
         </motion.div>
@@ -214,7 +219,10 @@ function UnsupportedFallback({ lang }: { lang: Lang }) {
 
 export function NotificationSettings({ medications = [] }: Props) {
   const { lang } = useLang()
-  const isTr = lang === "tr"
+  // F-NOTIF-I18N-FULL-001: `const isTr = lang === "tr"` declaration
+  // silindi — Sprint 2 sonrası kalan 11 kullanım (FEATURES array +
+  // Active/Off badge + ConfirmModal sub-component) tx() çağrılarına
+  // taşındı. Dead code cleanup tetiklendi.
   const [supported, setSupported] = useState(false)
   const [permission, setPermission] = useState<string>("default")
   const [settings, setSettings] = useState<Settings>(getNotificationSettings())
@@ -284,30 +292,18 @@ export function NotificationSettings({ medications = [] }: Props) {
     {
       key: "medicationReminders" as const,
       icon: <Pill className="h-4 w-4" />,
-      label: isTr ? "İlaç Kalkanı" : "Medication Shield",
-      desc: isTr
-        ? "Açık olduğunda ilaç saatlerinizi ve olası etkileşimleri size bildirir."
-        : "When active, notifies you about medication times and potential interactions.",
-      confirmTitle: isTr
-        ? "İlaç Kalkanı'nı kapatmak istediğinize emin misiniz?"
-        : "Are you sure you want to turn off Medication Shield?",
-      confirmDesc: isTr
-        ? "Bu özellik kapatıldığında ilaç saati hatırlatmaları ve etkileşim uyarıları duraklatılır."
-        : "When turned off, medication time reminders and interaction alerts will be paused.",
+      label: tx("notif.medReminders", lang),
+      desc: tx("notif.medRemindersDesc", lang),
+      confirmTitle: tx("notif.medRemindersConfirmTitle", lang),
+      confirmDesc: tx("notif.medRemindersConfirmDesc", lang),
     },
     {
       key: "dailyCheckIn" as const,
       icon: <Calendar className="h-4 w-4" />,
-      label: isTr ? "Günlük Sağlık Takibi" : "Daily Health Tracking",
-      desc: isTr
-        ? "Günlük verilerinizi girerek biyolojik yaşınızı güncel tutun."
-        : "Keep your biological age up to date by entering your daily data.",
-      confirmTitle: isTr
-        ? "Günlük Sağlık Takibi'ni kapatmak istediğinize emin misiniz?"
-        : "Are you sure you want to turn off Daily Health Tracking?",
-      confirmDesc: isTr
-        ? "Bu özellik kapatıldığında günlük check-in hatırlatmaları duraklatılır."
-        : "When turned off, daily check-in reminders will be paused.",
+      label: tx("notif.dailyCheckIn", lang),
+      desc: tx("notif.dailyCheckInDesc", lang),
+      confirmTitle: tx("notif.dailyCheckInConfirmTitle", lang),
+      confirmDesc: tx("notif.dailyCheckInConfirmDesc", lang),
     },
   ]
 
@@ -334,11 +330,11 @@ export function NotificationSettings({ medications = [] }: Props) {
             {settings.enabled ? (
               <>
                 <Badge className="bg-emerald-500 text-white text-[10px] px-1.5 py-0 border-0">
-                  {isTr ? "Aktif" : "Active"}
+                  {tx("notif.on", lang)}
                 </Badge>
               </>
             ) : (
-              isTr ? "Kapalı" : "Off"
+              tx("notif.off", lang)
             )}
           </Button>
         </div>
