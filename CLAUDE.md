@@ -308,6 +308,77 @@ SENTRY_DSN=...
 
 ---
 
+## Mobile Responsive Patterns (Sprint 1'de doğrulandı, zorunlu)
+
+### Input/Form Elements
+- Mobile: `text-base sm:text-sm` (iOS keyboard zoom önler — 16px+ kritik eşik)
+- Touch target: `min-h-11 md:min-h-0` (Apple HIG 44px)
+- Pattern referansı: `components/interaction/DrugInput.tsx` (Commit `078316d`)
+
+### FAB / Floating Buttons
+- Position: `bottom-24 right-6 md:bottom-6 md:right-6`
+- Z-index: `z-50` (BottomNavbar `z-40` üstünde)
+- Visibility: `lib/ui/overlay-state.ts` `useOverlayActive` hook
+
+### Modal / Dialog
+- Center variant: `items-center px-4` + `rounded-3xl` + `zoom-in-95 fade-in-0`
+- Slide-up varyantı kullanma (F-CHECKIN-MOBILE-001 round 4 dersi)
+
+### Multi-Item Row Sizing (5+ items in modal) — Sprint 2 F-CHECKIN-MOBILE-002
+- 375px viewport content alanı = 343px modal − 48px iç padding (`p-6`) = 295px
+- Button size × N + gap × (N−1) ≤ 295px olmalı
+- Mobile `gap-1.5` (6px) + `sm:gap-4` (16px) güvenli pattern
+- Touch target 44px+ mutlak korunur (button padding'i değil gap'i küçült)
+
+### YASAK Pattern'ler
+- Layout root `overflow-x-clip` → viewport context kırılır (F-MOBILE-001 fix-2)
+- Fixed → sticky swap → fixed banner kaybolur (F-MOBILE-001 fix-3)
+- Tailwind invalid `w-[calc(100%+2rem)]` literal (CSS calc spec boşluk gerektirir)
+
+---
+
+## Scanner Safety — 4-Layer Defense (Sprint 1 + 1.5'da kuruldu)
+
+Tüm scanner endpoint'lerinde uyulacak katman sıralaması:
+
+1. **Client capture** (`capturePhoto`): `video.readyState < 2` / `videoWidth === 0`
+2. **Client file input** (`handleFileInput`): `file.size === 0` / `!type.startsWith("image/")`
+3. **Client analyze** (`analyzeImage`): data URL `< 4KB` sanity check
+4. **Server validate** (örn. `app/api/scan-medication/route.ts`):
+   - Base64 charset (`A-Za-z0-9+/=`) regex match
+   - Min boyut threshold (≥ 100 chars)
+   - Hata → `400 image_invalid` + Sentry breadcrumb, external API'ye HİÇ gönderme
+
+**Felsefe:** Bozuk client payload'u external API quota'sını (Claude Vision, OCR vs) yakmamalı.
+
+**Pattern referansları:**
+- Client (1-3): `components/scanner/MedicationScanner.tsx` (Commit `abaef2e`)
+- Server (4): `app/api/scan-medication/route.ts` (Commit `3fe50b3`)
+
+---
+
+## Disclaimer Mimarisi (legal-review-pending)
+
+**İki katman var, karıştırma:**
+
+- **A bloğu (sayfa içi):** Tool-specific kısa disclaimer, `disclaimer.tool` translation key. Örn `app/hydration/page.tsx:153`.
+- **B bloğu (global Footer):** Uzun "Tıbbi Sorumluluk Reddi:" — `footer.disclaimer.label` + `footer.disclaimer.text`. Tüm sayfalarda render olur.
+
+Footer B bloğunu silme/değiştirme — KVKK / TCK Md.90 / 1219 s.K. / GETAT yasal koruma katmanı olabilir, 27 Mayıs 2026 avukat görüşmesi konusu.
+
+---
+
+## Sprint Disiplini (her commit'te zorunlu)
+
+1. Plan + onay + smoke test sıralaması
+2. **0 revert kuralı**
+3. Her commit öncesi: `npx tsc --noEmit && npm run build` (0 error/warning)
+4. Commit convention: `feat/fix/chore(scope): açıklama (TICKET-ID)`
+5. Her Claude Code prompt'unda: "DURMA. Soru sorma."
+6. Commit sonrası: `PROGRESS.md` + `CLAUDE.md` güncelle
+
+---
+
 ## Demo Senaryoları
 
 ### Demo 1 — İlaç Etkileşimi

@@ -1,10 +1,51 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 27 Nisan 2026 (Session 47 AÇIK — Mini-opening 4 commit + Daytime 12 commit = 16 commit canlı. F-CHAT-SIDEBAR-002/003 ✅ + F-SETTINGS-001/002 ✅ + F-PWA-001 ✅ + F-MOBILE-001 ✅ + 3 cleanup. Sıradaki: avukat görüşmesi + şirket kuruluşu)
+> Son güncelleme: 28 Nisan 2026 (Sprint 1 ✅ KAPANDI — Mobile Responsive 13 commit, 0 revert. Sprint 1.5 base64 server validation inter-sprint hotfix. Sprint 2 başlangıç: F-CHECKIN-MOBILE-002 emoji overflow fix.)
 
 ---
 
-### Session 47 — Mini-Opening + Daytime Sprint (26-27 Nisan 2026) — AÇIK
+## Sprint 1 — Mobile Responsive ✅ KAPANDI (28 Nisan 2026)
+
+**Süre:** 27 Nisan 2026 → 28 Nisan 2026
+**Toplam:** 13 commit, 0 revert
+**Disiplin:** Her commit öncesi `npx tsc --noEmit && npm run build` (0 error/warning, 240 sayfa)
+
+| # | Ticket | Commit(s) | Açıklama |
+|---|---|---|---|
+| 1 | F-CHAT-MOBILE-001 | `29379a0` | Sohbet kebab dropdown md altı always-visible |
+| 2 | F-CHECKIN-MOBILE-001 | `42fdc13` → `391f352` → `4ac5935` → `faa47a0` | FAB hide on overlay (4 round) |
+| 3 | F-MOBILE-002a + 3 hotfix | `e45ebce` → `cb4a4e9` → `abaef2e` → `c67fd07` | /scan-medication viewfinder + P0 mock data güvenlik bug + 3-layer empty input guard + route silme |
+| 4 | F-MOBILE-002c | `256661f` | /calendar fixed banner z-50 + parent-constraint audit |
+| 5 | F-MOBILE-002b | `078316d` | /interaction-checker DrugInput keyboard zoom prevention |
+| 6 | F-MOBILE-002d | `e5e5e39` | /hydration form responsive (3 input mobile-friendly) |
+
+### Sprint 1 Re-Scope Kararı
+
+**F-MOBILE-002d B bloğu (footer disclaimer):**
+- /hydration sayfa içi tek disclaimer (A bloğu, `disclaimer.tool`) korundu
+- "Tıbbi Sorumluluk Reddi:" B bloğu global Footer'da yaşıyor
+- Scope dışı + olası KVKK / TCK Md.90 / 1219 s.K. / GETAT yasal koruma katmanı
+- Sprint 5+ legal-review konusu (avukat görüşmesi: 27 Mayıs 2026)
+
+---
+
+## Sprint 1.5 — Inter-Sprint Hotfix (28 Nisan 2026)
+
+| # | Ticket | Commit | Açıklama |
+|---|---|---|---|
+| H1 | (scanner safety) | `3fe50b3` | Server-side base64 charset validation — 4-Layer Defense'in 4. katmanı. Sentry 7441877015 alarm'ı kapatıldı, bozuk base64 payload'lar Claude Vision API'sine gitmeden 400 image_invalid ile reddediliyor. |
+
+---
+
+## Sprint 2 — Polish & Bug Fix (28 Nisan 2026 başlangıç)
+
+| # | Ticket | Commit | Açıklama |
+|---|---|---|---|
+| 1 | F-CHECKIN-MOBILE-002 | `38ba553` | MicroCheckIn emoji satırı mobile overflow fix (gap-3 → gap-1.5) |
+
+---
+
+### Session 47 — Mini-Opening + Daytime Sprint (26-27 Nisan 2026) — Sprint 1 öncesi başlangıç
 
 **Faz 2 — Daytime Sprint (27 Nisan 2026)**
 
