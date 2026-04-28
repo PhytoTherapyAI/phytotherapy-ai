@@ -24,9 +24,11 @@ import {
   ChevronDown,
   ChevronUp,
   Zap,
+  Camera,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DrugInput } from "@/components/interaction/DrugInput";
+import { InteractionPhotoCapture } from "@/components/interaction/InteractionPhotoCapture";
 import { InteractionResult } from "@/components/interaction/InteractionResult";
 import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
@@ -64,6 +66,11 @@ export default function InteractionCheckerPage() {
   const lang: "en" | "tr" = rawLang === "tr" ? "tr" : "en";
   const isTr = lang === "tr";
   const [medications, setMedications] = useState<string[]>([]);
+  // F-INTERACTION-VISION-001: photo-scan modal toggle. Recognised
+  // medication name flows back via onAdd → setMedications spread,
+  // then runs through the existing /api/interaction-map flow
+  // unchanged.
+  const [photoCaptureOpen, setPhotoCaptureOpen] = useState(false);
   const [concern, setConcern] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<InteractionResultType | null>(null);
@@ -286,6 +293,39 @@ export default function InteractionCheckerPage() {
                 medications={medications}
                 onMedicationsChange={setMedications}
                 disabled={isLoading}
+              />
+
+              {/* F-INTERACTION-VISION-001 — universal scan entry
+                  point. Sits between the manual DrugInput above
+                  and the "load from profile / saved" cluster
+                  below; the three together form the "ways to add
+                  medications" group on this step. min-h-11
+                  md:min-h-9 mirrors the DrugInput Add button so
+                  vertical rhythm stays consistent on mobile. */}
+              <Button
+                onClick={() => setPhotoCaptureOpen(true)}
+                variant="outline"
+                disabled={isLoading}
+                className="w-full mt-2 min-h-11 md:min-h-9"
+              >
+                <Camera className="h-4 w-4 mr-2" />
+                {tx("interaction.photoScan.openButton", lang)}
+              </Button>
+
+              <InteractionPhotoCapture
+                open={photoCaptureOpen}
+                onClose={() => setPhotoCaptureOpen(false)}
+                onAdd={(name) => {
+                  // De-dupe + 20-med cap: mirror DrugInput's own
+                  // selectSuggestion / addMedication guards so
+                  // the photo path can't sneak past them.
+                  const trimmed = name.trim();
+                  if (!trimmed) return;
+                  if (medications.some((m) => m.toLowerCase() === trimmed.toLowerCase())) return;
+                  if (medications.length >= 20) return;
+                  setMedications([...medications, trimmed]);
+                }}
+                lang={lang}
               />
 
               {/* Load from Profile / Saved */}
