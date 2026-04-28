@@ -699,6 +699,45 @@ Pattern referansları:
 
 Audit kararı: Brand Drift Audit Round 1 — 0 sayfa refactor, 8 sayfa "kalsın" (Commit referansı: this docs commit).
 
+### Production Debug — Auth Context Önce Kontrol Et (F-FAMILY-DATA-INTEGRITY-001 öğretisi, Sprint 3)
+
+UI beklenmedik davranış gösterdiğinde ve Supabase verisi doğru görünüyorsa, **ilk adım auth context'i doğrulamak.** Veri tarafında saatler süren araştırma yapmadan önce "endpoint hangi user.id ile istek alıyor?" sorusu 30 saniyede cevaplanır.
+
+Tehlikeli pattern (auth context atlanır):
+
+```
+1. UI "veri yok" gösteriyor
+2. Supabase'de veri var mı? → Studio query → "evet, satır var"
+3. RLS policy mi engelliyor? → policy listesi incelenir → "policy doğru"
+4. Orphan state mi? → join query'leri yapılır → "parent row da var"
+5. Saatler harcanır, root cause: yanlış hesapla giriş veya token expire
+```
+
+Doğru pattern — **30 saniye:**
+
+```ts
+// Endpoint başına ekle (geçici debug, fix sonrası kaldır):
+console.log(`[${endpoint}]`, "userId:", user.id, "...")
+
+// Vercel logs (Dashboard → Deployments → Function logs) → request gelince yakala
+// Supabase'deki user_id ile karşılaştır:
+//   Eşleşmiyor → auth sorunu (yanlış hesap / token expire / refresh sorunu)
+//   Eşleşiyor → veri sorunu (RLS, orphan, schema mismatch, vs)
+```
+
+F-FAMILY-DATA-INTEGRITY-001'de bu öğreti net ortaya çıktı: 4 Supabase query + 2 Network debug + RLS audit + orphan hipotez ardından **Vercel logs userId check** ile çözüldü — yanlış hesap girişi. Eğer ilk adım userId log olsaydı **5 dakikada** çözülürdü, ~2 saat boş yere harcandı.
+
+**Plan mode kontrol listesi (UI "veri yok" / "yanlış davranış" bug için):**
+
+- Endpoint `console.log(user.id)` → Vercel logs → userId beklenen mi?
+- Auth context'te doğru hesap mı? (browser'da birden fazla hesap varsa, secret/incognito tab denemesi)
+- Token expire mi? (response status 401 mi)
+- Veri sorunu **ancak** userId doğruysa araştırılır (RLS / orphan / schema / vs)
+
+**Cleanup zorunlu:** Debug log `console.log` production'da bırakılmaz. Bug fix sonrası ayrı commit ile kaldır (örn `74a54e2` → `0c20628` cleanup).
+
+Pattern referansı: `app/api/family/route.ts` debug log (Commit `74a54e2` ekle → `0c20628` kaldır), Vercel logs filter: `"[family-api] memberships:"`.
+
 ---
 
 ## Sprint Disiplini (her commit'te zorunlu)

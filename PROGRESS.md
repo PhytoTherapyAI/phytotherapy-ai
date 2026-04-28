@@ -44,7 +44,12 @@
 | # | Ticket | Commit | Açıklama |
 |---|---|---|---|
 | 1 | F-NOTIF-I18N-FULL-001 | `4918d96` | NotificationSettings tüm `isTr` ternary migration (11 ternary → tx(), `isTr` declaration silindi, `ConfirmModal` prop tipi `Lang` literal'e geçti) |
-| 2 | F-BRAND-DRIFT-AUDIT-001 | (this) | Brand Drift Audit — 8 sayfa context analizi, hepsi "kalsın" kararı + Multi-CTA Semantic Color System öğretisi |
+| 2 | F-BRAND-DRIFT-AUDIT-001 | `0530c03` | Brand Drift Audit — 8 sayfa context analizi, hepsi "kalsın" kararı + Multi-CTA Semantic Color System öğretisi |
+| 3 | F-FAMILY-DATA-INTEGRITY-001 | `74a54e2` | Family system debug log + legacy `owner_id` fallback cleanup (-16 LOC) |
+| 4 | F-FAMILY-DATA-INTEGRITY-001 | `0c20628` | Debug log cleanup (production `console.log` kaldırıldı) |
+| 5 | F-PWA-TELEMETRY-001 | `392d216` | UnsupportedFallback Sentry breadcrumb (KVKK minimal data — browser family/version) |
+| 6 | F-FAMILY-DATA-INTEGRITY-001 | `76e7c11` | Orphan state graceful handle — `isOrphan` flag + context members koru |
+| D1 | Sprint 3 kapanış docs | (this) | Sprint 3 final tablo + öğretiler + backlog |
 
 ### Brand Drift Audit Final (F-BRAND-DRIFT-AUDIT-001)
 
@@ -66,6 +71,36 @@
 **Net bulgu:** Sprint 2 #7 plan mode raporundaki "açık drift 4" tahmini yanlıştı. Gerçek context analizi: **açık drift sıfır.** Tüm 8 sayfa bilinçli tema veya semantic system kararı.
 
 **Audit metodolojisi öğretisi:** CTA className tek başına bakmak yetmez, sayfa tonunu (tüm brand colors) analiz etmek zorunlu. Bu yöntem CLAUDE.md "Multi-CTA Semantic Color System" h3'ünde dosyalandı (Refactoring Patterns cluster, 8. öğreti).
+
+### Sprint 3 Major Outcomes
+
+- **Family system tam çalışıyor** — "zeytinle bebiş" hanesi production'da görünüyor, badge smoke test onaylandı. Bug yanlış hesap girişiydi (userId mismatch Vercel logs ile tespit edildi). Sistemik orphan state graceful handle de eklendi (`isOrphan` flag + context members koruma) — gelecekte herhangi bir kullanıcı orphan state'e düşerse veri kaybolmaz, UI banner + auto-recover ayrı sprint için temel atıldı.
+- **PWA Telemetry kuruldu** — production iOS Safari + eski Android UnsupportedFallback tracking. KVKK minimal data kararı (browser family/version regex extraction, tam UA log'lanmaz). Sentry breadcrumb cumulative pattern (F-SCANNER-001 dynamic import parite) — Sentry-less deploy safe.
+- **Brand Drift Audit kapatıldı** — 8 sayfa context analizi, hepsi "kalsın" kararı (0 implementation). Sprint 2 "açık drift 4 sayfa" varsayımı yanlışlandı — gerçek context analizi tüm sayfaların bilinçli tema veya semantic system kararı olduğunu kanıtladı.
+- **i18n Full Migration** — NotificationSettings tüm `isTr` ternary → `tx()` (11 ternary, `isTr` declaration silindi). CLAUDE.md "Translation Key Lifecycle" öğretisinin uygulamalı kanıtı: yeni key + tüm consumer'lar tek commit'te update.
+
+### Sprint 3 Debug Metodolojisi — Vercel Logs
+
+F-FAMILY-DATA-INTEGRITY-001 debug sürecinde kritik öğreti:
+
+**Semptom → Hipotez → Yanlışlama → Gerçek root cause** zinciri:
+
+1. UI "Hane Oluştur" gösteriyor
+2. **H1 (Orphan Group):** Supabase `family_groups WHERE id = '...'` query → 0 row → yanlış (UUID syntax hatası, query başarısız)
+3. **H3 (RLS):** Owner-only policy auth.uid() boş engelliyor → yanlış (endpoint zaten service role kullanıyor, RLS bypass)
+4. **Debug log (userId):** Vercel logs `[family-api] memberships:` + `userId:` → userId mismatch → **yanlış hesap girişi**
+
+**Öğreti:** Production bug debug'ında ilk adım "hangi userId ile istek geliyor?" — Vercel logs + `console.log(user.id)` 30 saniyede root cause netleştirir. Supabase veri doğruluğundan önce auth context kontrol et.
+
+CLAUDE.md "Production Debug — Auth Context Önce Kontrol Et" h3'ünde dosyalandı (Refactoring Patterns cluster, 9. öğreti).
+
+### Sprint 3+ Devam Eden Backlog
+
+- **Family UI orphan banner + auto-recover** — `familyGroup === null && familyMembers.length > 0` state'inde UI banner + `/api/family/recover` endpoint (`family_groups` INSERT idempotent). Sprint 3 Commit 6 (`76e7c11`) backend hazırladı, UI tarafı ayrı sprint.
+- **NotificationSettings FEATURES array i18n** — Sprint 3 Commit 1 (`4918d96`) ana isTr migration'ı yaptı, `FEATURES` array kalan 8 ternary scope dışıydı. Batch migration ayrı commit.
+- **PWA manifest screenshots** — App Store / Play Store başvurusu öncesi mutlaka. F-PWA-002 ticket olarak açık.
+- **Universal Scan v3** — Türk ilaç database augmentation (Türk brand'ları için sistem prompt enrichment). Düşük tanıma oranı varsa AI accuracy artırma. Opsiyonel — Zoretanin/Augmentin gibi global brand'lar zaten OK.
+- **27 Mayıs avukat görüşmesi** — Limited vs A.Ş. vs Estonia OÜ kararı + KVKK / TİTCK uyum review. **27 gün kaldı** — outreach (LinkedIn sağlık hukuku + KVKK + TİTCK uzmanı) başlatılmalı. `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md` 9-soru paketi hazır.
 
 ---
 
