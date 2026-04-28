@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { useLang } from "@/components/layout/language-toggle"
-import { tx } from "@/lib/translations"
+import { tx, type Lang } from "@/lib/translations"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   isPushSupported,
@@ -20,6 +20,22 @@ import {
   clearAllScheduled,
   type NotificationSettings as Settings,
 } from "@/lib/push-notifications"
+import {
+  isStandalone,
+  isIOSSafari,
+  type PWAInstallState,
+} from "@/lib/pwa/detect"
+
+// `beforeinstallprompt` is non-standard so TypeScript ships no
+// built-in type. Defining the shape locally is a tiny price for
+// keeping `any` out of the codebase (CLAUDE.md rule).
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>
+  userChoice: Promise<{
+    outcome: "accepted" | "dismissed"
+    platform: string
+  }>
+}
 
 interface Props {
   medications?: { name: string; times?: string[] }[]
@@ -74,6 +90,125 @@ function ConfirmModal({ open, title, description, onConfirm, onCancel, lang }: C
         </motion.div>
       </div>
     </AnimatePresence>
+  )
+}
+
+// F-PWA-NOTIF-FALLBACK-001: rendered when push isn't supported on
+// the current browser — the previous behaviour was an early
+// `return null` which left mobile users (especially iOS Safari
+// before "Add to Home Screen") staring at an empty card slot.
+// Three branches:
+//
+//   1. promptable  — beforeinstallprompt was captured (Android
+//                    Chrome / desktop Chrome / Edge). Native
+//                    install prompt fires from the button.
+//   2. ios-manual  — iOS Safari, not yet standalone. The browser
+//                    refuses beforeinstallprompt forever, so we
+//                    show the manual "Share → Add to Home Screen"
+//                    visual hint.
+//   3. unsupported — generic fallback for everything else (PWA-
+//                    incapable browsers, in-app webviews, etc).
+//
+// All three reuse pre-existing translation keys (pwa.installPrompt,
+// pwa.installDesc, pwa.install, perm.iosPwaTitle, perm.iosPwaDesc)
+// so this commit is purely an implementation patch — no new strings.
+function UnsupportedFallback({ lang }: { lang: Lang }) {
+  const [state, setState] = useState<PWAInstallState>("unsupported")
+  const [deferredPrompt, setDeferredPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null)
+
+  useEffect(() => {
+    // Already installed as PWA — push API still missing means we
+    // genuinely can't notify here, so fall through to the generic
+    // "unsupported" copy. This is a rare edge case (some Linux
+    // Chrome flatpaks lose web-push between updates) but worth
+    // handling rather than rendering nothing.
+    if (isStandalone()) {
+      setState("unsupported")
+      return
+    }
+
+    // iOS Safari has no beforeinstallprompt event — we know up
+    // front the only path is manual.
+    if (isIOSSafari()) {
+      setState("ios-manual")
+      return
+    }
+
+    // Everyone else: wait for beforeinstallprompt. If it never
+    // fires (e.g. user already dismissed install, or the browser
+    // doesn't ship the API at all), state stays "unsupported".
+    const handler = (e: Event) => {
+      e.preventDefault()
+      setDeferredPrompt(e as BeforeInstallPromptEvent)
+      setState("promptable")
+    }
+    window.addEventListener("beforeinstallprompt", handler)
+    return () => window.removeEventListener("beforeinstallprompt", handler)
+  }, [])
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return
+    await deferredPrompt.prompt()
+    await deferredPrompt.userChoice
+    // Per spec the prompt event is single-use, regardless of outcome.
+    setDeferredPrompt(null)
+  }
+
+  // STATE 1 — Promptable
+  if (state === "promptable") {
+    return (
+      <div className="rounded-2xl border bg-muted/30 p-4 space-y-3">
+        <div className="flex items-start gap-3">
+          <BellOff className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-medium text-sm">{tx("pwa.installPrompt", lang)}</p>
+            <p className="text-xs text-muted-foreground mt-1">{tx("pwa.installDesc", lang)}</p>
+          </div>
+        </div>
+        <Button onClick={handleInstall} className="w-full" size="sm">
+          {tx("pwa.install", lang)}
+        </Button>
+      </div>
+    )
+  }
+
+  // STATE 2 — iOS Safari manual
+  if (state === "ios-manual") {
+    return (
+      <div className="rounded-2xl border bg-muted/30 p-4 space-y-3">
+        <div className="flex items-start gap-3">
+          <BellOff className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-medium text-sm">{tx("perm.iosPwaTitle", lang)}</p>
+            <p className="text-xs text-muted-foreground mt-1">{tx("perm.iosPwaDesc", lang)}</p>
+          </div>
+        </div>
+        {/* Visual breadcrumb of the iOS gesture. lucide's Share2
+            doesn't match the actual iOS share glyph, so we use a
+            neutral unicode arrow + the share-symbol-shaped ⎙ char
+            as a hint rather than pretending to be pixel-perfect. */}
+        <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground bg-background/60 rounded-lg p-2">
+          <span>Safari</span>
+          <span aria-hidden>→</span>
+          <span aria-label="Share">⎙</span>
+          <span aria-hidden>→</span>
+          <span>{tx("perm.iosPwaTitle", lang)}</span>
+        </div>
+      </div>
+    )
+  }
+
+  // STATE 3 — Generic unsupported fallback
+  return (
+    <div className="rounded-2xl border bg-muted/30 p-4">
+      <div className="flex items-start gap-3">
+        <BellOff className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+        <p className="text-sm text-muted-foreground">
+          {tx("pwa.installDesc", lang)}
+        </p>
+      </div>
+    </div>
   )
 }
 
@@ -135,7 +270,15 @@ export function NotificationSettings({ medications = [] }: Props) {
     }
   }
 
-  if (!supported) return null
+  // F-PWA-NOTIF-FALLBACK-001: was `return null`, which left every
+  // mobile install-flow surface (including the /calendar mobile
+  // bottom slot at calendar/page.tsx:1230) rendering nothing.
+  // The fallback below answers "why don't I see the notification
+  // settings here?" with one of three actionable copies depending
+  // on the browser.
+  if (!supported) {
+    return <UnsupportedFallback lang={lang} />
+  }
 
   const FEATURES = [
     {
