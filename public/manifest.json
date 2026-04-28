@@ -31,5 +31,28 @@
   "categories": ["health", "medical", "lifestyle"],
   "lang": "tr",
   "dir": "ltr",
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "screenshots": [
+    {
+      "src": "/screenshots/home-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DoctoPal Ana Sayfa"
+    },
+    {
+      "src": "/screenshots/tools-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DoctoPal Sağlık Araçları"
+    },
+    {
+      "src": "/screenshots/interaction-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DoctoPal İlaç-Bitki Etkileşim Denetleyicisi"
+    }
+  ]
 }

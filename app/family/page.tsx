@@ -526,6 +526,26 @@ export default function FamilyPage() {
       <LocalizedTitle tr="Aile" en="Family" />
       <div className="mx-auto max-w-2xl px-4 md:px-8 py-8 sm:py-12 min-h-[80vh]">
 
+        {/* F-FAMILY-DATA-INTEGRITY-001 (Sprint 4 Commit 1) — orphan
+            state banner. Sprint 3 Commit 6 (76e7c11) lib/family-
+            context.tsx tarafında `!group && members.length > 0`
+            durumunda members'ı koruyor; bu banner o veri korunmuş
+            durumda kullanıcıya "tutarsızlık tespit edildi, geri
+            yükleniyor" mesajı verir. Sprint 3+ backlog'daki
+            auto-recover endpoint (POST /api/family/recover)
+            geldiğinde mesaj "destek ile iletişime geç" yerine
+            recover butonu olabilir; o zamana kadar amber uyarı
+            yeterli sinyal. Banner Header'dan ÖNCE konumlandı —
+            kullanıcı sayfayı görür görmez tutarsızlığın
+            farkında olsun. */}
+        {!familyGroup && familyMembers.length > 0 && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 p-4 mb-6">
+            <p className="text-sm text-amber-800 dark:text-amber-200">
+              {tx("family.orphanBanner", lang)}
+            </p>
+          </div>
+        )}
+
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 mb-4 shadow-sm">

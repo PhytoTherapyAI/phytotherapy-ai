@@ -742,6 +742,17 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
 
   // Family Page
   "family.subtitle": { en: "Manage your family's health profiles and get personalized recommendations for everyone", tr: "Ailenizin sağlık profillerini yönetin, herkes için kişiselleştirilmiş öneriler alın" },
+  // F-FAMILY-DATA-INTEGRITY-001 (Sprint 4 Commit 1): orphan state
+  // banner copy. Sprint 3 Commit 6 (76e7c11) backend tarafını
+  // hazırladı — lib/family-context.tsx artık `!group && members.length > 0`
+  // durumunda members'ı yutmuyor, koruyor. Bu key o korunmuş veri
+  // varken UI'da amber uyarı banner'ı sürer. familyGroup null
+  // göründüğü sürece "Hane Oluştur" CTA'sı da yan yana durabilir
+  // (kullanıcı yeni hane kurmayı seçerse otomatik temizlenir).
+  "family.orphanBanner": {
+    en: "Your family data is being restored. If this persists, please contact support.",
+    tr: "Aile verileriniz geri yükleniyor. Sorun devam ederse destek ekibiyle iletişime geçin.",
+  },
 
   // Fasting Monitor
   "fasting.title": { en: "Fasting Health Monitor", tr: "Oruç Sağlık Monitörü" },
