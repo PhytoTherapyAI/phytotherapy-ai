@@ -331,8 +331,19 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
             </h2>
           </div>
 
-          {/* ── Emoji row ── */}
-          <div className="mt-8 flex justify-center gap-3 sm:gap-4">
+          {/* ── Emoji row ──
+              F-CHECKIN-MOBILE-002: gap-3 (12px × 4 = 48px) plus the
+              5 × ~54px emoji buttons added up to 318px of row width,
+              but the modal's content area on iPhone SE is only 295px
+              (375 viewport − px-4 outer − p-6 modal). The row
+              overflowed by ~23px so "Harika!" looked welded to the
+              right edge despite justify-center. gap-1.5 (6px × 4 =
+              24px) brings the total to 294px — fits with 1px to
+              spare and keeps justify-center honest. sm:gap-4 still
+              kicks in at 640px+, so desktop spacing is identical
+              to before. p-3 on the buttons stays untouched, so the
+              54px touch target (Apple HIG 44px+) is preserved. */}
+          <div className="mt-8 flex justify-center gap-1.5 sm:gap-4">
             {EMOJI_OPTIONS.map((opt) => {
               const selected = currentValue === opt.value
               return (
