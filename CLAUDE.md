@@ -368,6 +368,64 @@ Footer B bloğunu silme/değiştirme — KVKK / TCK Md.90 / 1219 s.K. / GETAT ya
 
 ---
 
+## Refactoring Patterns (Sprint 2 öğretileri — sessiz bug tuzakları)
+
+İki tane "tsc + build temiz geçer ama runtime'da sessiz bug" pattern'i Sprint 2'de plan mode tarafından yakalandı. Aynı tuzaklara tekrar düşmemek için aşağıdaki kuralları her component refactor'unde uygula.
+
+### Render-time Dynamic ID Generation Trap (F-FAMILY-NAV-UX-001, Commit `ffe6d8e`)
+
+Component refactoring sırasında `tabs` / `items` / `routes` array'lerinde label veya text field'ı değiştirirken, **id'lerin render-time dinamik üretilip üretilmediğini** kontrol et. Tipik tehlikeli pattern:
+
+```tsx
+// TEHLİKELİ — id label'a bağımlı
+{tabs.map(tab => (
+  <Item id={`prefix-${tab.label.toLowerCase().replace(/\s+/g, "-")}`} />
+))}
+```
+
+`label` translation key'e dönerse (ör. `tab.label = "Family"` → `tab.labelKey = "nav.family"`) id `prefix-nav.family` gibi bozuk üretir. Sonuç:
+
+- Onboarding tour `tour-nav-family` hook'u **sessizce** kırılır (tour adımı çalışmaz, hata atmaz)
+- E2E selector'lar (`getByTestId`, `data-testid`) bozulur
+- Analytics event mapping kırılır
+- **`tsc` + `build` temiz geçer**, runtime'da da hata atmaz — sadece feature sessiz çalışmaz
+
+**Pattern (zorunlu):** id'leri **explicit static string** olarak array field'ında tut, render-time generate ETME.
+
+```tsx
+// GÜVENLİ
+const tabs = [
+  { id: "tour-nav-home", labelKey: "nav.home", ... },
+  { id: "tour-nav-family", labelKey: "nav.family", ... },
+]
+```
+
+Pattern referansı: `components/layout/BottomNavbar.tsx` (Commit `ffe6d8e`).
+
+### TypeScript — tx() Translation Helper Lang Constraint (F-PWA-NOTIF-FALLBACK-001, Commit `174bd66`)
+
+`tx(key, lang)` ikinci parametresi `Lang` literal union ister, `string` değil. Component prop olarak `lang` aldığında:
+
+```tsx
+// ❌ 7+ tsc error — `string` `Lang`'e atanamaz
+function Foo({ lang }: { lang: string }) {
+  return <p>{tx("some.key", lang)}</p>
+}
+
+// ✅ Doğru
+import { tx, type Lang } from "@/lib/translations"
+
+function Foo({ lang }: { lang: Lang }) {
+  return <p>{tx("some.key", lang)}</p>
+}
+```
+
+`useLang()` hook'u zaten `Lang` döndürür, yani parent'tan inheritance yapılırken doğal akış korunur. Sadece **explicit prop tanımlarken** `string` yerine `Lang` kullan.
+
+Pattern referansı: `components/pwa/NotificationSettings.tsx` `UnsupportedFallback` sub-component (Commit `174bd66`).
+
+---
+
 ## Sprint Disiplini (her commit'te zorunlu)
 
 1. Plan + onay + smoke test sıralaması
