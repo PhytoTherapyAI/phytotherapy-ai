@@ -424,6 +424,142 @@ function Foo({ lang }: { lang: Lang }) {
 
 Pattern referansı: `components/pwa/NotificationSettings.tsx` `UnsupportedFallback` sub-component (Commit `174bd66`).
 
+### Endpoint Reuse — Auth Pattern Da Kopyala (F-INTERACTION-VISION-001 hotfix, Commit `41b5eed`)
+
+Mevcut bir endpoint'i yeni bir component'ten çağırırken, **endpoint'in auth contract'ını kontrol et ve kanonik caller'dan auth pattern'ini birebir kopyala**. "Auth Bearer optional" varsayımı production'da 401 reject ile patlayabilir.
+
+Tehlikeli pattern (plan mode'da yakalanmazsa):
+
+```ts
+// /api/some-endpoint mevcut bir caller'dan auth header alıyordu.
+// Yeni component'te bu kopyalanmadı:
+const res = await fetch("/api/some-endpoint", {
+  method: "POST",
+  body: JSON.stringify({ image: dataUrl }),
+})
+// → 401 Unauthorized, endpoint anonymous reject
+```
+
+Doğru pattern — kanonik caller'ı kopyala (örn. MedicationScanner):
+
+```ts
+import { createBrowserClient } from "@/lib/supabase"
+
+const supabase = createBrowserClient()
+const { data: { session } } = await supabase.auth.getSession()
+
+if (!session?.access_token) {
+  toast.error(tx("nav.loginRequired", lang))
+  // graceful exit — alttaki "Graceful Exit" bölümüne bak
+  return
+}
+
+const res = await fetch("/api/some-endpoint", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${session.access_token}`,
+  },
+  body: JSON.stringify({ image: dataUrl }),
+})
+```
+
+**Plan mode kontrol listesi (yeni endpoint çağrısı için):**
+
+- Endpoint'in `route.ts`'inde Stage 1 Auth check var mı? (örn. `!authHeader?.startsWith("Bearer ")` → 401)
+- Mevcut caller component (varsa) auth pattern'i nasıl kuruyor?
+- Anonymous request senaryosu için graceful exit + i18n toast hazır mı?
+
+Pattern referansları:
+
+- Endpoint: `app/api/scan-medication/route.ts:126-132` (Stage 1 Auth)
+- Kanonik caller: `components/scanner/MedicationScanner.tsx:151-159`
+- Hotfix uygulaması: `components/interaction/InteractionPhotoCapture.tsx` (Commit `41b5eed`)
+
+### Yeni Input Pathway → Mevcut Guard'ları Mirror Et (F-INTERACTION-VISION-001, Commit `0c78c3b`)
+
+Bir parent state'e yeni bir input pathway eklerken, **mevcut input pathway'lerin validation guard'larını mirror et**. Bypass riski silent bug üretir — `tsc` / `build` geçer, runtime hata atmaz, ama production'da kötü UX veya data integrity sorunu doğurur.
+
+Tehlikeli pattern:
+
+```tsx
+// Mevcut input (DrugInput) zaten de-dupe + 20-cap kontrol ediyordu
+function DrugInput({ medications, onChange }) {
+  const handleAdd = (name) => {
+    if (medications.includes(name)) return // de-dupe
+    if (medications.length >= 20) return    // cap
+    onChange([...medications, name])
+  }
+}
+
+// Yeni input pathway (PhotoCapture) — guard'lar bypass:
+<PhotoCapture
+  onAdd={(name) => setMedications([...medications, name])}
+  // ↑ photo path 30 fotodan 30 ilaç ekleyebilir, aynı ilaç tekrar girebilir
+/>
+```
+
+Doğru pattern — parent'ta guard mirror:
+
+```tsx
+<PhotoCapture
+  onAdd={(name) => {
+    if (medications.includes(name)) return  // de-dupe (DrugInput parite)
+    if (medications.length >= 20) return     // cap (DrugInput parite)
+    setMedications([...medications, name])
+  }}
+/>
+```
+
+Veya guard'ları parent state setter'a refactor et (DRY — ileride yeni input pathway eklenirse otomatik korunur).
+
+**Plan mode kontrol listesi (yeni input pathway için):**
+
+- Mevcut input component'lerinde validation guard'ları neler?
+- Yeni pathway parent state'e direkt mi yazıyor, yoksa mevcut guard'lardan geçiyor mu?
+- Guard'lar parent state setter'a refactor edilebilir mi (DRY)?
+
+Pattern referansı: `app/interaction-checker/page.tsx` `InteractionPhotoCapture` `onAdd` guard'ları (Commit `0c78c3b`).
+
+### Public Sayfa + Auth-Gated Feature → Graceful Exit Pattern (F-INTERACTION-VISION-001 hotfix, Commit `41b5eed`)
+
+DoctoPal'da bazı sayfalar public (anonymous user erişebilir) ama içlerindeki feature'lar auth gerektiriyor (örn. `/interaction-checker` public, ama Universal Scan auth gerekli). Anonymous user böyle bir feature'ı tetiklediğinde:
+
+- ❌ **Yapma:** Raw 401 error, console hata, kullanıcı ne olduğunu anlamaz
+- ✅ **Yap:** i18n toast + graceful UI exit + sıfır POST (frontend guard)
+
+Pattern:
+
+```tsx
+const handleAuthGatedAction = async () => {
+  const supabase = createBrowserClient()
+  const { data: { session } } = await supabase.auth.getSession()
+
+  if (!session?.access_token) {
+    // 1. i18n toast (mevcut nav.loginRequired key'i reuse)
+    toast.error(tx("nav.loginRequired", lang))
+    // 2. UI'ı temiz kapat (modal/sheet ise close)
+    setIsScanning(false)
+    onClose()
+    // 3. Erken return — fetch'e ulaşma, POST yapma
+    return
+  }
+
+  // Authenticated path...
+}
+```
+
+**Faydalar:**
+
+- Anonymous user UX bozulmaz (raw error yerine açıklayıcı mesaj)
+- Endpoint quota'sı boşa harcanmaz (frontend guard, POST yok)
+- Sentry'de 401 noise azalır (frontend yakalanır, backend'e gitmez)
+- i18n consistency (mevcut `nav.loginRequired` translation key'i reuse)
+
+**Translation key reuse:** `nav.loginRequired` (`lib/translations/common.ts:25`) zaten TR/EN'de mevcut. Yeni feature için yeni key eklemek YOK — DRY i18n.
+
+Pattern referansı: `components/interaction/InteractionPhotoCapture.tsx` `analyzeImage` auth guard (Commit `41b5eed`).
+
 ---
 
 ## Sprint Disiplini (her commit'te zorunlu)
