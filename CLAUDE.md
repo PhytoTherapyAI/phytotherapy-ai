@@ -637,7 +637,67 @@ F-NOTIF-I18N-CLEANUP-001 tarihsel debt'i temizledi:
 - Eklendikten sonra: `grep "isTr ?"` + `grep "lang === \"tr\""` ile kalan inline ternary tarama
 - Migration scope büyükse: aynı commit'te yapma, plan'a "F-X-I18N-MIGRATION" ticket ekle
 
-Pattern referansı: `components/pwa/NotificationSettings.tsx:325` (Commit `edb552c`) — `{isTr ? "Sağlık Kalkanı" : "Health Shield"}` → `{tx("notif.title", lang)}`. 9 diğer `isTr` kullanımı Sprint 3+ batch migration konusu (FEATURES array label/desc/confirmTitle/confirmDesc + Active/Off badge + ConfirmModal).
+Pattern referansı: `components/pwa/NotificationSettings.tsx:325` (Commit `edb552c`) — `{isTr ? "Sağlık Kalkanı" : "Health Shield"}` → `{tx("notif.title", lang)}`. 9 diğer `isTr` kullanımı Sprint 3+ batch migration konusu (FEATURES array label/desc/confirmTitle/confirmDesc + Active/Off badge + ConfirmModal). **Update (Sprint 3 Commit 1, `4918d96`):** F-NOTIF-I18N-FULL-001 tüm 11 kullanımı tek commit'te migrate etti, `isTr` declaration silindi — bu öğretinin uygulamalı kanıtı.
+
+### Multi-CTA Semantic Color System — Sayfa İçinde Renk Refactor Öncesi Tüm Tonları Analiz Et (F-BRAND-DRIFT-AUDIT-001 öğretisi, Commit (this))
+
+Bir sayfada birden fazla primary CTA varsa, renk farkı **semantic differentiation** amaçlı bilinçli karar olabilir. Tek bir buton rengini değiştirmek = semantic system'i kırmak. CTA className'i izole olarak incelemek de yetmez — sayfa tonu (header / kartlar / badge'ler / iconlar) ile uyum yoksa CTA refactor sayfayı tutarsız hâle getirir.
+
+Tehlikeli pattern (CTA-only refactor):
+
+```
+"Bu sayfanın CTA butonu mavi, brand emerald olmalı, değiştir"
+→ button className edit
+→ Semantic system kırılır:
+  - Premium tier (emerald) vs Value tier (blue) ayrımı kaybolur
+  - Grade A badge (emerald) vs Grade B badge (blue) paralel sistemi tutarsız
+  - Kullanıcı "hangi buton ne için?" karışır
+```
+
+Doğru pattern — **sayfa context analizi** (5 adımlı):
+
+```bash
+# 1. CTA className not et (mevcut renk)
+# 2. Tüm brand colors envanteri
+grep -E "bg-(blue|indigo|purple|violet|emerald|teal|cyan|sky|amber|rose)-(\d{2,3})|text-(blue|indigo|...)-(\d{2,3})|from-(blue|...)-(\d{2,3})" file
+# 3. Header / hero / cards / badges / icons tonları analiz et
+# 4. Sayfanın "tematik kimliği" var mı?
+# 5. Karar: "drift mi semantic mi" → sadece drift olanları değiştir
+```
+
+**4 tematik kimlik kategorisi** (F-BRAND-DRIFT-AUDIT-001'de gözlenen):
+
+1. **Tek-renk tema** — örn `/medical-dictionary` tamamen mavi (hero + cards + chips + icons). CTA aynı renkte zorunlu, tek buton refactor sayfayı bozar.
+2. **Multi-renk semantic system** — örn `/value-marketplace` Grade A emerald + Grade B blue paralel tier; CTA renk farkı semantic ayrım, kasıtlı korunmalı.
+3. **Section-aware tema** — örn `/health-analytics` AI Insights gradient `from-purple-500/5 to-indigo-500/5` özel section, ana CTA emerald + section-internal CTA mor; ikisi de doğru.
+4. **Domain konvansiyonu** — örn `/interaction-map` violet (network graph konvansiyonu — Drugbank/Lexicomp soğuk renkler kullanır, yeşil "safe" semantic conflict yaratır).
+
+F-BRAND-DRIFT-AUDIT-001 8 sayfa context analizi ile Sprint 2 #7 raporunun "açık drift 4 sayfa" varsayımını yanlışladı:
+
+- `/medical-dictionary`, `/data-export` → tamamen mavi tema (drift değil)
+- `/enterprise/white-label`, `/thyroid-dashboard` → bilinçli indigo (B2B + organ medical, drift değil)
+- `/value-marketplace` → Multi-CTA semantic (Grade A vs B paralel, drift değil)
+- `/health-analytics` → section-aware gradient (AI Insights bilinçli, drift değil)
+- `/medical-analysis` → radiology medical imaging semantic (X-ray/MRI mavi, drift değil)
+- `/interaction-map` → network graph konvansiyonu (yeşil semantic conflict riski, drift değil)
+
+**Sonuç: 8/8 "kalsın" → 0 implementation, audit closed.**
+
+**Plan mode kontrol listesi (CTA renk refactor için):**
+
+- Sayfa içinde başka kaç CTA var? (multi-CTA = semantic differentiation riski)
+- Sayfa tonu tek-renk mi multi-renk mi? (tek-renk tema değiştirilirse CTA izole kalır)
+- Domain konvansiyonu var mı? (network graph soğuk renk, lab purple, radiology blue, vs)
+- Section-aware tema var mı? (AI Insights gradient gibi local context)
+
+Pattern referansları:
+
+- `app/value-marketplace/page.tsx` Grade A emerald + Grade B blue (Multi-CTA semantic)
+- `app/medical-analysis/page.tsx` Blood Test purple + Radiology blue (multi-section tema)
+- `app/interaction-map/page.tsx` violet (network graph soğuk renk konvansiyonu)
+- `app/health-analytics/page.tsx` AI Insights purple gradient (section-aware)
+
+Audit kararı: Brand Drift Audit Round 1 — 0 sayfa refactor, 8 sayfa "kalsın" (Commit referansı: this docs commit).
 
 ---
 

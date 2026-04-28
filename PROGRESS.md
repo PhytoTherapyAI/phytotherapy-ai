@@ -37,6 +37,38 @@
 
 ---
 
+## Sprint 3 — Polish + Strateji (29 Nisan 2026 başlangıç)
+
+### Teknik Commit'ler
+
+| # | Ticket | Commit | Açıklama |
+|---|---|---|---|
+| 1 | F-NOTIF-I18N-FULL-001 | `4918d96` | NotificationSettings tüm `isTr` ternary migration (11 ternary → tx(), `isTr` declaration silindi, `ConfirmModal` prop tipi `Lang` literal'e geçti) |
+| 2 | F-BRAND-DRIFT-AUDIT-001 | (this) | Brand Drift Audit — 8 sayfa context analizi, hepsi "kalsın" kararı + Multi-CTA Semantic Color System öğretisi |
+
+### Brand Drift Audit Final (F-BRAND-DRIFT-AUDIT-001)
+
+**Audit metodolojisi:** Sprint 2 #7 raporunun "açık drift 4 sayfa" varsayımını gerçek sayfa context analizi ile test et. Her sayfanın CTA dışındaki tüm brand colors (header, kartlar, badge'ler, iconlar) incelendi.
+
+**Sonuç: 8/8 sayfa "kalsın"** (0 implementation, audit closed).
+
+| # | Sayfa | Mevcut CTA | Karar | Gerekçe |
+|---|---|---|---|---|
+| 1 | /medical-analysis | `bg-blue-600` | KALSIN | Radiology = X-ray/MRI medical imaging mavi semantic; Blood Test section'da `bg-purple-50` lab tonu (multi-section tema) |
+| 2 | /medical-dictionary | `bg-blue-600` | KALSIN | Tamamen mavi tema (academic/dictionary blue) — hero gradient + cards + chips + icons hepsi mavi |
+| 3 | /data-export | `bg-blue-500` | KALSIN | Tamamen mavi tema (data/database blue) — hero gradient + info card + selected state hepsi mavi |
+| 4 | /value-marketplace | `bg-blue-500` (Value Price) | KALSIN | Multi-CTA semantic — Grade A emerald + Grade B blue paralel tier system; ana CTA emerald gradient (line 343) korunuyor |
+| 5 | /enterprise/white-label | `bg-indigo-500` | KALSIN | Tamamen indigo (B2B enterprise tonu) — hero + feature cards + popular badge |
+| 6 | /thyroid-dashboard | `bg-indigo-600` | KALSIN | Tamamen indigo (organ medical dashboard tonu) — timeline + badge + icons |
+| 7 | /health-analytics | `bg-purple-600` (AI Insights) | KALSIN | Section-aware: AI Insights gradient `from-purple-500/5 to-indigo-500/5`; ana sayfa CTA emerald (line 215) |
+| 8 | /interaction-map | `bg-violet-600` | KALSIN | Network graph konvansiyonu (Drugbank/Lexicomp soğuk renkler), yeşil semantic conflict riski |
+
+**Net bulgu:** Sprint 2 #7 plan mode raporundaki "açık drift 4" tahmini yanlıştı. Gerçek context analizi: **açık drift sıfır.** Tüm 8 sayfa bilinçli tema veya semantic system kararı.
+
+**Audit metodolojisi öğretisi:** CTA className tek başına bakmak yetmez, sayfa tonunu (tüm brand colors) analiz etmek zorunlu. Bu yöntem CLAUDE.md "Multi-CTA Semantic Color System" h3'ünde dosyalandı (Refactoring Patterns cluster, 8. öğreti).
+
+---
+
 ## Sprint 2 — Polish, Bug Fix & Universal Scan ✅ KAPANDI (28 Nisan 2026)
 
 **Süre:** 28 Nisan 2026 (tek gün)
