@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { ShieldCheck, BellOff, Pill, Calendar, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -22,6 +22,7 @@ import {
 } from "@/lib/push-notifications"
 import {
   isStandalone,
+  isIOS,
   isIOSSafari,
   type PWAInstallState,
 } from "@/lib/pwa/detect"
@@ -151,6 +152,64 @@ function UnsupportedFallback({ lang }: { lang: Lang }) {
     window.addEventListener("beforeinstallprompt", handler)
     return () => window.removeEventListener("beforeinstallprompt", handler)
   }, [])
+
+  // F-PWA-TELEMETRY-001: production'da hangi UnsupportedFallback
+  // branch'i (unsupported / ios-manual / promptable) gerçekten
+  // tetikleniyor görmek için Sentry breadcrumb. UnsupportedFallback
+  // DevTools'ta tetiklenemez (window.Notification silinemez), bu
+  // yüzden gerçek iOS Safari + eski Android cihaz davranışını
+  // ölçmenin tek yolu prod telemetry.
+  //
+  // Pattern parite — F-SCANNER-001 captureScannerFailure
+  // (app/api/scan-medication/route.ts): dynamic import + .catch
+  // ile Sentry-less deploy safe (DSN yoksa silent skip, build
+  // patlamaz). captureMessage YOK — quota waste; breadcrumb
+  // cumulative pattern sufficient (error olursa context'e dahil).
+  //
+  // 1-shot guard (useRef) + 200ms settle window: detection useEffect
+  // başlangıçta state'i "unsupported"tan "ios-manual"a veya
+  // "promptable"a değiştirebilir. Settle window interim state'i
+  // atlar ve sadece final değeri log'lar — tek breadcrumb / mount.
+  //
+  // KVKK note: tam UA log'lanmaz (orta-derece fingerprintable).
+  // Sadece browser family + major version (Chrome/124, Safari/17,
+  // Firefox/126) — F-SETTINGS-002 HIBP `passwordLength` minimal
+  // metadata pattern parite.
+  const breadcrumbFiredRef = useRef(false)
+  useEffect(() => {
+    if (breadcrumbFiredRef.current) return
+    const timer = setTimeout(() => {
+      if (breadcrumbFiredRef.current) return
+      breadcrumbFiredRef.current = true
+
+      const ua = typeof navigator !== "undefined" ? navigator.userAgent : ""
+      const browserInfo =
+        /Chrome\/(\d+)/.exec(ua)?.[0] ??
+        /Safari\/(\d+)/.exec(ua)?.[0] ??
+        /Firefox\/(\d+)/.exec(ua)?.[0] ??
+        "unknown"
+
+      import("@sentry/nextjs")
+        .then((Sentry) => {
+          Sentry.addBreadcrumb({
+            category: "pwa.fallback",
+            message: `UnsupportedFallback final state: ${state}`,
+            level: "info",
+            data: {
+              state,
+              standalone: isStandalone(),
+              ios: isIOS(),
+              iosSafari: isIOSSafari(),
+              browser: browserInfo,
+            },
+          })
+        })
+        .catch(() => {
+          /* Sentry-less deploy safe — silent skip */
+        })
+    }, 200)
+    return () => clearTimeout(timer)
+  }, [state])
 
   const handleInstall = async () => {
     if (!deferredPrompt) return
