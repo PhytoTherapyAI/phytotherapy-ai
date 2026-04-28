@@ -40,20 +40,6 @@ export async function GET(req: NextRequest) {
       .eq("user_id", user.id)
       .eq("invite_status", "accepted")
 
-    // F-FAMILY-DATA-INTEGRITY-001 debug: surface the raw membership
-    // query result + any DB error in Vercel logs so we can tell why
-    // groupIds is coming back empty even when the user's own report
-    // shows a member row exists. TODO: drop once root cause is fixed.
-    // KVKK note: only group_id (UUID) + error message logged — no PII.
-    console.log(
-      "[family-api] memberships:",
-      JSON.stringify(memberships),
-      "mErr:",
-      JSON.stringify(mErr),
-      "userId:",
-      user.id,
-    )
-
     if (mErr) {
       if (mErr.message?.includes("does not exist") || mErr.code === "42P01") {
         return NextResponse.json({ members: [], needsMigration: true })
