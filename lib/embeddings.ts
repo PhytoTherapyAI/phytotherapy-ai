@@ -56,7 +56,7 @@ export interface SearchableContent {
   descriptionTr?: string
   href: string
   category?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   // Text to embed (concatenation of all searchable fields)
   embeddingText: string
 }
@@ -96,7 +96,7 @@ export interface SemanticSearchResult {
   descriptionTr: string | null
   href: string
   category: string | null
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
   similarity: number
   isAiMatch: boolean // true for semantic matches (vs keyword)
 }

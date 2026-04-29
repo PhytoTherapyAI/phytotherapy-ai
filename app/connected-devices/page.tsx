@@ -13,12 +13,13 @@ import {
   ArrowLeft, ChevronRight, AlertTriangle, Clock, Trash2, Loader2,
   Heart, Footprints, Moon, Droplets, Activity, Zap, Thermometer,
   Scale, Flame, BarChart3, Wind, Gauge, ExternalLink,
+  type LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
 import { tx } from "@/lib/translations"
 import { HealthImportSection } from "@/components/health-import/HealthImportSection"
 
-const METRIC_ICONS: Record<string, any> = { Heart, Footprints, Moon, Droplets, Activity, Zap, Thermometer, Scale, Flame, BarChart3, Wind, Gauge }
+const METRIC_ICONS: Record<string, LucideIcon> = { Heart, Footprints, Moon, Droplets, Activity, Zap, Thermometer, Scale, Flame, BarChart3, Wind, Gauge }
 
 interface DeviceConnection {
   provider: IntegrationProvider

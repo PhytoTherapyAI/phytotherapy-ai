@@ -9,7 +9,7 @@ import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Clock, AlertTriangle, ArrowRight, Pill, Coffee, Sun, Moon, Utensils, Loader2 } from "lucide-react"
+import { Clock, AlertTriangle, ArrowRight, Pill, Coffee, Sun, Moon, Utensils, Loader2, type LucideIcon } from "lucide-react"
 
 interface DrugTiming {
   name: string
@@ -91,7 +91,7 @@ export default function DrugTimingPage() {
   }
 
   const TimeBadge = ({ time }: { time: string }) => {
-    const icons: Record<string, any> = { morning: Sun, evening: Moon, with_meals: Utensils, bedtime: Moon, any: Clock }
+    const icons: Record<string, LucideIcon> = { morning: Sun, evening: Moon, with_meals: Utensils, bedtime: Moon, any: Clock }
     const labels: Record<string, Record<string, string>> = {
       morning: { en: "Morning", tr: "Sabah" },
       evening: { en: "Evening", tr: "Akşam" },

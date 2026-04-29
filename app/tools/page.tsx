@@ -14,10 +14,11 @@ import {
   Search, Microscope, Pill, Leaf, Brain, UtensilsCrossed, Moon, Dumbbell,
   HeartPulse, Users, BarChart3, ShieldCheck, Stethoscope, MessageCircle,
   ChevronRight, Sparkles, ArrowRight,
+  type LucideIcon,
 } from "lucide-react"
 
 // Icon mapping from string to component
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   Microscope, Pill, Leaf, Brain, UtensilsCrossed, Moon, Dumbbell,
   HeartPulse, Users, BarChart3, ShieldCheck, Stethoscope, MessageCircle,
 }

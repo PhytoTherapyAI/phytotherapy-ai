@@ -13,9 +13,10 @@ import Link from "next/link"
 import {
   Search, CloudRain, Wind, Zap, Gauge, Moon, Smile, Wine,
   ClipboardList, Clock, ArrowRight, ShieldCheck,
+  type LucideIcon,
 } from "lucide-react"
 
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   CloudRain, Wind, Zap, Gauge, Moon, Smile, Wine,
 }
 

@@ -12,9 +12,10 @@ import {
   Search, ChevronDown, ChevronUp, Microscope, Pill, Leaf, Brain,
   UtensilsCrossed, Moon, Dumbbell, HeartPulse, Users, BarChart3,
   ShieldCheck, Stethoscope, MessageCircle, Sparkles, ChevronRight, X,
+  type LucideIcon,
 } from "lucide-react"
 
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   Microscope, Pill, Leaf, Brain, UtensilsCrossed, Moon, Dumbbell,
   HeartPulse, Users, BarChart3, ShieldCheck, Stethoscope, MessageCircle,
 }

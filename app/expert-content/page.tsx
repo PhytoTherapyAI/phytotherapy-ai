@@ -14,9 +14,10 @@ import {
   Search, Eye, Heart, Bookmark, Clock, BadgeCheck, Video, FileText,
   MessageCircle, Share2, ChevronRight, Filter, Leaf, Apple, Brain,
   Activity, Pill, Baby, Dumbbell, Sparkles, BookOpen,
+  type LucideIcon,
 } from "lucide-react"
 
-const CATEGORY_ICONS: Record<string, any> = { Leaf, Apple, Brain, Activity, Pill, Heart: Heart, Baby, Dumbbell, Sparkles, BookOpen }
+const CATEGORY_ICONS: Record<string, LucideIcon> = { Leaf, Apple, Brain, Activity, Pill, Heart: Heart, Baby, Dumbbell, Sparkles, BookOpen }
 
 // Authors will be loaded from Supabase in production
 const AUTHORS: Record<string, { name: string; title: string; specialty: { en: string; tr: string }; verified: boolean; avatar: string }> = {

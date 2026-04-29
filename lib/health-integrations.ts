@@ -108,7 +108,7 @@ export interface HealthMetricRecord {
   value: number
   unit: string
   timestamp: string         // ISO 8601
-  metadata?: Record<string, any>  // provider-specific extra data
+  metadata?: Record<string, unknown>  // provider-specific extra data
 }
 
 export interface HealthDataSync {

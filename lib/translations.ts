@@ -87,6 +87,7 @@ export function tx(key: string, lang: Lang): string {
  * Works with any object that has lang-keyed properties.
  * Also handles variants like { nameEn, nameTr } or { titleEN, titleTR }.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- TODO: callers pass strict-typed objects (Badge, FirstAidSection vb.); Record<string,unknown>'a daraltırsak index signature eksikliği cascade tsc hatasına yol açıyor. Polymorfik bilingual util — generic constraint refactor ayrı sprint
 export function txObj(obj: Record<string, any>, lang: Lang, fallback = ""): string {
   if (!obj) return fallback
   // Direct: { en: "...", tr: "..." }
