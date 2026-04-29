@@ -738,6 +738,78 @@ F-FAMILY-DATA-INTEGRITY-001'de bu öğreti net ortaya çıktı: 4 Supabase query
 
 Pattern referansı: `app/api/family/route.ts` debug log (Commit `74a54e2` ekle → `0c20628` kaldır), Vercel logs filter: `"[family-api] memberships:"`.
 
+### Idempotent Recovery Endpoints — 23505 Race Fallback Pattern (F-FAMILY-AUTO-RECOVER-001 öğretisi, Sprint 4)
+
+Self-healing endpoint'lerde (orphan recovery, missing-row backfill, eksik consent row repair vb.) **existence check + INSERT + 23505 race fallback** üçlü katmanı zorunlu. Tek katman yetmez:
+
+- **Sadece INSERT:** Eş zamanlı iki request (örn. UI mount + cross-tab refetch) ikisi birden INSERT'e gider → ikincisi 23505 unique violation 500 döner → kullanıcı yanlış bir hata mesajı görür.
+- **Sadece existence check + INSERT:** Yarış payı kapanmaz — Stage 1 SELECT empty döner ama Stage 2 INSERT'e ulaşana kadar başka bir request araya girer.
+
+Doğru pattern — **3 stage:**
+
+```ts
+// Stage 1: existence check
+const { data: existing } = await supabase
+  .from("family_groups")
+  .select("id")
+  .eq("id", groupId)
+  .maybeSingle()
+
+if (existing) {
+  // Idempotent başarı — race veya retry, frontend için sorun yok
+  return NextResponse.json({ recovered: false, alreadyExists: true, groupId })
+}
+
+// Stage 2: INSERT (existence check empty döndü)
+const { error: insertErr } = await supabase
+  .from("family_groups")
+  .insert({ id: groupId, owner_id: user.id, /* ... */ })
+
+if (insertErr) {
+  // Stage 3: race fallback — Stage 1 ile Stage 2 arasında başka request araya girdiyse
+  if (insertErr.code === "23505") {
+    return NextResponse.json({ recovered: false, alreadyExists: true, groupId })
+  }
+  return NextResponse.json({ error: insertErr.message }, { status: 500 })
+}
+
+return NextResponse.json({ recovered: true, groupId })
+```
+
+**Bonus pattern — UI auto-trigger silent-fail:**
+
+UI tarafında recovery endpoint'ini orphan branch'te otomatik tetiklerken `try/catch` veya `.catch(() => {})` ile silent fail. Backend recovery başarısız olursa banner intact kalır, kullanıcı destek metnini görür — UI hiçbir koşulda kötü UX'e düşmez.
+
+```ts
+// lib/family-context.tsx orphan branch
+if (!json.group && (json.members?.length ?? 0) > 0) {
+  setFamilyGroup(null)
+  setFamilyMembers((json.members || []) as FamilyMember[])
+  setPendingInvites((json.pendingInvites || []) as FamilyMember[])
+
+  fetch('/api/family/recover', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${session.access_token}` },
+  })
+    .then((r) => r.ok ? r.json() : null)
+    .then((result) => {
+      if (result?.recovered) void fetchFamilyData() // refetch — banner kaybolur
+    })
+    .catch(() => { /* silent — banner intact, user destek metni görür */ })
+
+  return
+}
+```
+
+**Plan mode kontrol listesi (yeni recovery endpoint için):**
+
+- Stage 1 existence check var mı (sadece INSERT race kondisyonuna açık)?
+- Stage 3 23505 fallback var mı (Stage 1 ile Stage 2 arası race)?
+- UI auto-trigger silent-fail mi (backend down olursa UI bozulmasın)?
+- `recovered: true` durumunda UI refetch tetikliyor mu (state stale kalmasın)?
+
+Pattern referansı: `app/api/family/recover/route.ts` (Commit `59176b3`, Sprint 4 Commit 2) + `lib/family-context.tsx` orphan branch auto-trigger.
+
 ---
 
 ## Sprint Disiplini (her commit'te zorunlu)

@@ -104,6 +104,40 @@ CLAUDE.md "Production Debug — Auth Context Önce Kontrol Et" h3'ünde dosyalan
 
 ---
 
+## Sprint 4 — Family Self-Healing + PWA Manifest (29 Nisan 2026) ✅ KAPANDI
+
+**Süre:** 29 Nisan 2026 (tek gün)
+**Toplam:** 2 teknik commit + 1 docs = 3 commit, 0 revert
+**Disiplin:** Her commit öncesi `npx tsc --noEmit && npm run build` (0 error/warning, 240 sayfa)
+
+Sprint 3 Commit 6 (`76e7c11`) orphan state graceful handle backend hazırlığı yapmıştı. Sprint 4 bu zinciri kapattı: UI banner + auto-recover endpoint + idempotent INSERT + 23505 race fallback.
+
+| # | Ticket | Commit | Açıklama |
+|---|---|---|---|
+| 1 | F-FAMILY-AUTO-RECOVER-001 | `932b641` | UI orphan banner (amber) + i18n key `family.orphanBanner` + manifest screenshots placeholder (1080x1920, 3 narrow form factor entry) |
+| 2 | F-FAMILY-AUTO-RECOVER-001 | `59176b3` | Backend recovery endpoint `POST /api/family/recover` (service role + Bearer auth + idempotent INSERT + 23505 race fallback) + UI auto-trigger (orphan branch silent-fail + `result.recovered: true` ise refetch) |
+| D1 | Sprint 4 kapanış docs | (this) | Sprint 4 final tablo + Idempotent Recovery öğretisi |
+
+### Sprint 4 Major Outcomes
+
+- **Orphan state self-healing** — UI auto-trigger backend recovery zincirinin tüm halkaları kapandı. `family_members` row'unda accepted membership ama `family_groups` parent yok ise: GET `/api/family` `isOrphan: true` döner → UI amber banner gösterir + paralelde `POST /api/family/recover` çağrısı → backend `family_groups` INSERT → UI refetch → banner kaybolur. Hiçbir manuel müdahale gerekmez. Backend recovery başarısız olursa banner intact kalır (silent fail), kullanıcı destek metnini görür.
+- **Idempotent endpoint pattern (3 katman)** — Stage 1: `SELECT ... maybeSingle()` ile existence check. Stage 2: yoksa INSERT, varsa `{ recovered: false, alreadyExists: true }` early return. Stage 3: INSERT `error.code === "23505"` (unique violation) → race kondisyonu fallback "treat as success". Bu pattern future "self-healing" endpoint'lerine (örn. eksik `user_profiles` row recovery) reusable.
+- **PWA manifest screenshots field** — `public/manifest.json`'a 3 narrow form factor (mobile, 1080x1920) screenshot entry eklendi: home-mobile.png, tools-mobile.png, interaction-mobile.png. Şu an placeholder; gerçek screenshot dosyaları üretildiğinde Lighthouse PWA score yükselir + Play Store / App Store başvurusu için manifest hazır.
+
+### Sprint 4+ Backlog
+
+- Manifest screenshots gerçek içerik (3 dosya: 1080x1920 mobile screenshots — home/tools/interaction)
+- F-PAYMENT-001 (Iyzico) — şirket kuruluşu + merchant onayı sonrası unblock; `docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır
+- F-HEALTH-CLAIMS-001 6.1/6.3/6.4 — avukat görüşmesi sonrası unblock (27 Mayıs); 9-soru paketi `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md`
+- HealthReportTab enrichment — Digital Twin hero polish + Recent Activity multi-source feed + Missing Nudges (cross-tab setTab prop drilling)
+- ESLint 127 library error sweep (Session 43+ carry-over)
+- TodayView water update'i WaterIntakeContext'e migrate (Session 44 backlog)
+- F-PRIVACY-001 (DELETE endpoint table list güncelleme), F-PRIVACY-002 (consent audit retention), F-PRIVACY-003 (PrivacyTab inline quick export)
+- NotificationSettings FEATURES array i18n batch migration (8 ternary kalan)
+- Universal Scan v3 — Türk ilaç database augmentation (sistem prompt enrichment), opsiyonel
+
+---
+
 ## Sprint 2 — Polish, Bug Fix & Universal Scan ✅ KAPANDI (28 Nisan 2026)
 
 **Süre:** 28 Nisan 2026 (tek gün)
