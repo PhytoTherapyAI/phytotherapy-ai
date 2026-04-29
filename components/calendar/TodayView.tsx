@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import {
   Pill, Plus, CalendarDays, Loader2, Bell, Minus,
   Droplets, Activity, Sparkles, Leaf, Check, Flame,
-  Clock, X, AlertTriangle, Target, Trash2,
+  Clock, AlertTriangle, Target, Trash2,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog"
-import { tx, txRandom, txMessages, type Lang } from "@/lib/translations"
+import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import { useDailyLogs } from "@/lib/daily-logs-context"
 import { reportMutationError } from "@/lib/mutation-errors"
@@ -304,7 +304,7 @@ function ConfettiOverlay({ show, onDone }: { show: boolean; onDone: () => void }
   )
 }
 
-export function TodayView({ userId, lang, userName, userWeight, userHeight, userSupplements }: TodayViewProps) {
+export function TodayView({ userId, lang, userName, userWeight, userSupplements }: TodayViewProps) {
   const today = getTodayString()
   const tr = lang === "tr"
 
