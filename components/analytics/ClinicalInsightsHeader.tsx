@@ -36,24 +36,37 @@ function DonutChart({ segments, size = 100 }: {
   if (total === 0) return null;
   const r = (size - 8) / 2;
   const circ = 2 * Math.PI * r;
-  let offset = 0;
+
+  // Pre-compute dashArray + dashOffset per segment OUTSIDE the JSX
+  // path (was inline `let offset` mutation inside .map — flagged by
+  // react-hooks/immutability). Function-body-local accumulator is
+  // reset every render, so the mutation is safe.
+  const renderData = segments.reduce<{
+    items: Array<{ dashArray: string; dashOffset: number; color: string }>;
+    offset: number;
+  }>(
+    (acc, seg) => {
+      const pct = seg.value / total;
+      acc.items.push({
+        dashArray: `${circ * pct} ${circ * (1 - pct)}`,
+        dashOffset: -acc.offset * circ,
+        color: seg.color,
+      });
+      return { items: acc.items, offset: acc.offset + pct };
+    },
+    { items: [], offset: 0 },
+  ).items;
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--color-muted, #e5e7eb)" strokeWidth={8} />
-      {segments.map((seg, i) => {
-        const pct = seg.value / total;
-        const dashArray = `${circ * pct} ${circ * (1 - pct)}`;
-        const dashOffset = -offset * circ;
-        offset += pct;
-        return (
-          <circle key={i} cx={size/2} cy={size/2} r={r} fill="none"
-            stroke={seg.color} strokeWidth={8} strokeLinecap="round"
-            strokeDasharray={dashArray} strokeDashoffset={dashOffset}
-            transform={`rotate(-90 ${size/2} ${size/2})`}
-            className="transition-all duration-700" />
-        );
-      })}
+      {renderData.map((d, i) => (
+        <circle key={i} cx={size/2} cy={size/2} r={r} fill="none"
+          stroke={d.color} strokeWidth={8} strokeLinecap="round"
+          strokeDasharray={d.dashArray} strokeDashoffset={d.dashOffset}
+          transform={`rotate(-90 ${size/2} ${size/2})`}
+          className="transition-all duration-700" />
+      ))}
     </svg>
   );
 }

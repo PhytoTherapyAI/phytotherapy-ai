@@ -26,25 +26,29 @@ export function ClinicalTestRunner({ test, lang, onComplete }: ClinicalTestRunne
   const progress = ((currentStep + (answers[currentStep] !== null ? 1 : 0)) / test.questions.length) * 100
   const allAnswered = answers.every(a => a !== null)
 
-  // Keyboard support: 1-5 keys to select option
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (showCrisisOverlay || isAnimating) return
-      const num = parseInt(e.key)
-      if (num >= 1 && num <= question.options.length) {
-        selectOption(question.options[num - 1].value)
-      }
-      if (e.key === "ArrowLeft" && currentStep > 0) goBack()
-      if (e.key === "Enter" && answers[currentStep] !== null && currentStep < test.questions.length - 1) goForward()
-    }
-    window.addEventListener("keydown", handler)
-    return () => window.removeEventListener("keydown", handler)
-  }, [currentStep, question, isAnimating, showCrisisOverlay])
+  // useCallback chain ordered so the keyboard useEffect (below) can
+  // reference each one without TDZ access (react-hooks/immutability).
+  // Dependency order: goForward + goBack are leaves; selectOption
+  // refers to goForward.
+  const goForward = useCallback(() => {
+    if (currentStep >= test.questions.length - 1 || isAnimating) return
+    setDirection("forward")
+    setIsAnimating(true)
+    setTimeout(() => {
+      setCurrentStep(s => s + 1)
+      setIsAnimating(false)
+    }, 250)
+  }, [currentStep, test.questions.length, isAnimating])
 
-  // Cleanup auto-advance timeout
-  useEffect(() => {
-    return () => { if (autoAdvanceRef.current) clearTimeout(autoAdvanceRef.current) }
-  }, [])
+  const goBack = useCallback(() => {
+    if (currentStep <= 0 || isAnimating) return
+    setDirection("backward")
+    setIsAnimating(true)
+    setTimeout(() => {
+      setCurrentStep(s => s - 1)
+      setIsAnimating(false)
+    }, 250)
+  }, [currentStep, isAnimating])
 
   const selectOption = useCallback((value: number) => {
     if (isAnimating) return
@@ -71,27 +75,27 @@ export function ClinicalTestRunner({ test, lang, onComplete }: ClinicalTestRunne
         onComplete(totalScore, threshold, newAnswers as number[])
       }
     }, 500)
-  }, [answers, currentStep, isAnimating, question, test, onComplete])
+  }, [answers, currentStep, isAnimating, question, test, onComplete, goForward])
 
-  const goForward = useCallback(() => {
-    if (currentStep >= test.questions.length - 1 || isAnimating) return
-    setDirection("forward")
-    setIsAnimating(true)
-    setTimeout(() => {
-      setCurrentStep(s => s + 1)
-      setIsAnimating(false)
-    }, 250)
-  }, [currentStep, test.questions.length, isAnimating])
+  // Keyboard support: 1-5 keys to select option
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (showCrisisOverlay || isAnimating) return
+      const num = parseInt(e.key)
+      if (num >= 1 && num <= question.options.length) {
+        selectOption(question.options[num - 1].value)
+      }
+      if (e.key === "ArrowLeft" && currentStep > 0) goBack()
+      if (e.key === "Enter" && answers[currentStep] !== null && currentStep < test.questions.length - 1) goForward()
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [currentStep, question, isAnimating, showCrisisOverlay, answers, test.questions.length, selectOption, goBack, goForward])
 
-  const goBack = useCallback(() => {
-    if (currentStep <= 0 || isAnimating) return
-    setDirection("backward")
-    setIsAnimating(true)
-    setTimeout(() => {
-      setCurrentStep(s => s - 1)
-      setIsAnimating(false)
-    }, 250)
-  }, [currentStep, isAnimating])
+  // Cleanup auto-advance timeout
+  useEffect(() => {
+    return () => { if (autoAdvanceRef.current) clearTimeout(autoAdvanceRef.current) }
+  }, [])
 
   const handleSubmit = () => {
     if (!allAnswered) return
