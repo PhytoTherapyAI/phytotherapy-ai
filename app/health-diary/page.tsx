@@ -124,23 +124,29 @@ function StatusChip({ emoji, label, isActive, onClick }: {
 }
 
 // ── Confetti Burst ──
+const CONFETTI_BURST_COLORS = ["bg-emerald-400", "bg-amber-400", "bg-rose-400", "bg-blue-400", "bg-purple-400"]
+
 function ConfettiBurst({ show }: { show: boolean }) {
+  // Mount-once particle randomness via useState lazy init — useMemo
+  // body would be flagged by react-hooks/purity.
+  const [particles] = useState(() => Array.from({ length: 24 }, (_, i) => ({
+    angle: (i / 24) * 360,
+    r: Math.random(),
+  })))
   if (!show) return null
   return (
     <div className="fixed inset-0 pointer-events-none z-50">
-      {Array.from({ length: 24 }).map((_, i) => {
-        const angle = (i / 24) * 360
-        const distance = 80 + Math.random() * 120
-        const x = Math.cos((angle * Math.PI) / 180) * distance
-        const y = Math.sin((angle * Math.PI) / 180) * distance
-        const colors = ["bg-emerald-400", "bg-amber-400", "bg-rose-400", "bg-blue-400", "bg-purple-400"]
+      {particles.map((p, i) => {
+        const distance = 80 + p.r * 120
+        const x = Math.cos((p.angle * Math.PI) / 180) * distance
+        const y = Math.sin((p.angle * Math.PI) / 180) * distance
         return (
           <motion.div
             key={i}
             initial={{ x: "50vw", y: "50vh", opacity: 1, scale: 1 }}
             animate={{ x: `calc(50vw + ${x}px)`, y: `calc(50vh + ${y}px)`, opacity: 0, scale: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className={`absolute w-2 h-2 rounded-full ${colors[i % colors.length]}`}
+            className={`absolute w-2 h-2 rounded-full ${CONFETTI_BURST_COLORS[i % CONFETTI_BURST_COLORS.length]}`}
           />
         )
       })}

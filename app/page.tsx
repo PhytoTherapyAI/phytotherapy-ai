@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -591,9 +591,16 @@ export default function Home() {
   // Display fields read from active profile (self or family member being viewed).
   const firstName = displayProfile?.full_name?.split(" ")[0] || "";
   const isPremium = premiumStatus?.isPremium ?? false;
-  const chronologicalAge = displayProfile?.birth_date
-    ? Math.floor((Date.now() - new Date(displayProfile.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
-    : displayProfile?.age;
+  // mountNow captures Date.now() once via useState lazy init so the
+  // render path stays pure (react-hooks/purity); year-rounding makes
+  // the inter-render diff invisible anyway.
+  const [mountNow] = useState(() => Date.now());
+  const chronologicalAge = useMemo(() => {
+    if (displayProfile?.birth_date) {
+      return Math.floor((mountNow - new Date(displayProfile.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+    }
+    return displayProfile?.age
+  }, [mountNow, displayProfile?.birth_date, displayProfile?.age]);
   const greetingKey = hour === null ? "dashboard.morning" : hour < 12 ? "dashboard.morning" : hour < 18 ? "dashboard.afternoon" : "dashboard.evening";
 
   // ── Loading ──

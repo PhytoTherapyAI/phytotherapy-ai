@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { Card } from "@/components/ui/card"
@@ -67,7 +67,9 @@ export default function ConnectedDevicesPage() {
     saveConnections(updated)
   }
 
-  const handleSync = async (providerId: string) => {
+  // useCallback so the Math.random() reference inside isn't treated as
+  // an impure render expression (react-hooks/purity).
+  const handleSync = useCallback(async (providerId: string) => {
     setSyncing(providerId)
     await new Promise(r => setTimeout(r, 2000))
     const updated = { ...connections }
@@ -77,7 +79,7 @@ export default function ConnectedDevicesPage() {
     }
     saveConnections(updated)
     setSyncing(null)
-  }
+  }, [connections, user])
 
   const connectedCount = Object.keys(connections).length
   const totalRecords = Object.values(connections).reduce((sum, c) => sum + c.records, 0)

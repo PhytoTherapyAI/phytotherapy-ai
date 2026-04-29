@@ -68,16 +68,24 @@ function downloadICS(events: Array<{ title: string; event_date: string; event_ti
 }
 
 // ── Confetti Burst ──
+const CONFETTI_BURST_COLORS = ["#3c7a52", "#6B8F71", "#facc15", "#60a5fa", "#f472b6", "#a78bfa", "#fb923c", "#34d399"]
+
 function ConfettiBurst({ show }: { show: boolean }) {
+  // Mount-once particle randomness via useState lazy init — useMemo
+  // body would be flagged by react-hooks/purity (memo expects a pure
+  // function). Lazy init is treated as initialization, not render.
+  const [particles] = useState(() => Array.from({ length: 12 }, (_, i) => ({
+    angle: (i / 12) * 360,
+    r1: Math.random(),
+    r2: Math.random(),
+  })))
   if (!show) return null
-  const colors = ["#3c7a52", "#6B8F71", "#facc15", "#60a5fa", "#f472b6", "#a78bfa", "#fb923c", "#34d399"]
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl z-10">
-      {Array.from({ length: 12 }, (_, i) => {
-        const angle = (i / 12) * 360
-        const rad = (angle * Math.PI) / 180
-        const tx = Math.cos(rad) * (30 + Math.random() * 20)
-        const ty = Math.sin(rad) * (30 + Math.random() * 20)
+      {particles.map((p, i) => {
+        const rad = (p.angle * Math.PI) / 180
+        const tx = Math.cos(rad) * (30 + p.r1 * 20)
+        const ty = Math.sin(rad) * (30 + p.r2 * 20)
         return (
           <motion.div
             key={i}
@@ -85,7 +93,7 @@ function ConfettiBurst({ show }: { show: boolean }) {
             animate={{ x: `calc(50% + ${tx}px)`, y: `calc(50% + ${ty}px)`, scale: 0, opacity: 0 }}
             transition={{ duration: 0.6, ease: "easeOut", delay: i * 0.02 }}
             className="absolute w-1.5 h-1.5 rounded-full"
-            style={{ backgroundColor: colors[i % colors.length], left: 0, top: 0 }}
+            style={{ backgroundColor: CONFETTI_BURST_COLORS[i % CONFETTI_BURST_COLORS.length], left: 0, top: 0 }}
           />
         )
       })}

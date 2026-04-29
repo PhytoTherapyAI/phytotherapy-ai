@@ -25,10 +25,18 @@ function MiniSparkline({ data, color }: { data: number[]; color: string }) {
 }
 
 // ── Achievement Card ──
+const ACHIEVEMENT_CONFETTI_COLORS = ["#22c55e", "#facc15", "#60a5fa", "#f472b6", "#a78bfa", "#fb923c", "#34d399", "#3c7a52"]
+
 function AchievementCard({ emoji, title, unlocked, description }: {
   emoji: string; title: string; unlocked: boolean; description: string
 }) {
   const [showConfetti, setShowConfetti] = useState(false)
+  // Mount-once particle randomness via useState lazy init — useMemo
+  // body would be flagged by react-hooks/purity.
+  const [confettiParticles] = useState(() => Array.from({ length: 8 }, () => ({
+    x: `${20 + Math.random() * 60}%`,
+    y: `${Math.random() * 80}%`,
+  })))
 
   return (
     <motion.button
@@ -53,13 +61,13 @@ function AchievementCard({ emoji, title, unlocked, description }: {
       </div>
       {showConfetti && (
         <div className="absolute inset-0 pointer-events-none">
-          {Array.from({ length: 8 }).map((_, i) => (
+          {confettiParticles.map((p, i) => (
             <motion.div key={i}
               initial={{ x: "50%", y: "50%", scale: 1, opacity: 1 }}
-              animate={{ x: `${20 + Math.random() * 60}%`, y: `${Math.random() * 80}%`, scale: 0, opacity: 0 }}
+              animate={{ x: p.x, y: p.y, scale: 0, opacity: 0 }}
               transition={{ duration: 0.7, delay: i * 0.03 }}
               className="absolute w-2 h-2 rounded-full"
-              style={{ backgroundColor: ["#22c55e", "#facc15", "#60a5fa", "#f472b6", "#a78bfa", "#fb923c", "#34d399", "#3c7a52"][i] }} />
+              style={{ backgroundColor: ACHIEVEMENT_CONFETTI_COLORS[i] }} />
           ))}
         </div>
       )}

@@ -1,6 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
+import { useState } from "react"
 import { ShareCardBase } from "./ShareCardBase"
 import { tx, type Lang } from "@/lib/translations"
 
@@ -28,11 +29,15 @@ export function InteractionShareCard({
     en: `DoctoPal detected ${totalInteractions} drug-herb interactions! 🛡️`,
     tr: `DoctoPal ${totalInteractions} ilaç-bitki etkileşimi tespit etti! 🛡️`,
   }
+  // Mount-once filename so Date.now() doesn't run as an impure render
+  // expression (react-hooks/purity); each card mount gets a unique
+  // identifier without re-stamping per render.
+  const [fileName] = useState(() => `interaction-alert-${Date.now()}.png`)
 
   return (
     <ShareCardBase
       lang={lang}
-      fileName={`interaction-alert-${Date.now()}.png`}
+      fileName={fileName}
       shareTitle={tx("share.interaction.title", lang)}
       shareText={shareTextMap[lang]}
     >

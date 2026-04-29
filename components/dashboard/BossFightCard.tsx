@@ -104,7 +104,10 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
     setViewMode("idle")
   }
 
-  const getProgress = (boss: BossFight) => {
+  // useCallback so the Date.now() reference inside isn't treated as
+  // an impure render expression (react-hooks/purity); deps capture
+  // the activeBoss state so progress recalcs when tasks toggle.
+  const getProgress = useCallback((boss: BossFight) => {
     if (!activeBoss) return { daysPassed: 0, todayCompleted: 0, totalTasks: boss.tasks.length, overallPercent: 0 }
     const start = new Date(activeBoss.startDate)
     const daysPassed = Math.max(1, Math.floor((Date.now() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1)
@@ -114,7 +117,7 @@ export function BossFightCard({ userId, lang, isPremium = false }: BossFightCard
     const totalCompleted = Object.keys(activeBoss.completedTasks).length
     const overallPercent = Math.min(Math.round((totalCompleted / totalPossible) * 100), 100)
     return { daysPassed, todayCompleted, totalTasks: boss.tasks.length, overallPercent }
-  }
+  }, [activeBoss])
 
   const currentBoss = activeBoss ? BOSS_FIGHTS.find(b => b.id === activeBoss.bossId) : null
 

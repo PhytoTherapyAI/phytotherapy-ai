@@ -1,6 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
+import { useState } from "react"
 import { ShareCardBase } from "./ShareCardBase"
 import { tx, type Lang } from "@/lib/translations"
 
@@ -26,11 +27,14 @@ export function WeeklyShareCard({
     en: `My average health score this week is ${avgScore}/100! 🌿`,
     tr: `Bu hafta ortalama sağlık skorum ${avgScore}/100! 🌿`,
   }
+  // Mount-once filename so Date.now() doesn't run as an impure render
+  // expression (react-hooks/purity).
+  const [fileName] = useState(() => `weekly-summary-${Date.now()}.png`)
 
   return (
     <ShareCardBase
       lang={lang}
-      fileName={`weekly-summary-${Date.now()}.png`}
+      fileName={fileName}
       shareTitle={tx("weekly.title", lang)}
       shareText={shareTextMap[lang]}
     >
