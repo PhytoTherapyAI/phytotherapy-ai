@@ -458,13 +458,12 @@ function clampPercentile(p: number): number {
 
 function linearRegression(data: Array<{ x: number; y: number }>): { slope: number; intercept: number; r2: number } {
   const n = data.length;
-  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0, sumY2 = 0;
+  let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
   for (const { x, y } of data) {
     sumX += x;
     sumY += y;
     sumXY += x * y;
     sumX2 += x * x;
-    sumY2 += y * y;
   }
   const denom = n * sumX2 - sumX * sumX;
   if (denom === 0) return { slope: 0, intercept: sumY / n, r2: 0 };

@@ -9,7 +9,6 @@ import { useAuth } from "@/lib/auth-context"
 import { useFamily } from "@/lib/family-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
-import { createBrowserClient } from "@/lib/supabase"
 
 const CODE_LENGTH = 6
 

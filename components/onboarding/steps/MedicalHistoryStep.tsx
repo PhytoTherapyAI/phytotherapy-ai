@@ -606,7 +606,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
             {/* Selected surgeries with year + remove */}
             {surgeryEntries.length > 0 && (
               <AnimatePresence mode="popLayout">
-                {surgeryEntries.map(({ raw, parsed }) => (
+                {surgeryEntries.map(({ parsed }) => (
                   <motion.div key={parsed.id}
                     layout={!reducedMotion}
                     initial={reducedMotion ? undefined : { opacity: 0, height: 0 }}

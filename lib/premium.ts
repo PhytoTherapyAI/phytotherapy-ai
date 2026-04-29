@@ -16,6 +16,7 @@ export interface PremiumStatus {
 }
 
 // Trial duration in days
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: trial gate implementasyonunda referans olarak kullanılacak (Iyzico entegrasyonu sonrası)
 const TRIAL_DAYS = 7;
 
 // ── Feature Gating ───────────────────────────
@@ -43,6 +44,7 @@ export type PremiumFeature =
   | "priority_support";
 
 // Features available in FREE plan (never taken away)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: free vs premium feature gate consumer (isFeatureAvailable helper) henüz yok
 const FREE_FEATURES: Set<string> = new Set([
   "health_queries_20_day",
   "personal_recommendations",

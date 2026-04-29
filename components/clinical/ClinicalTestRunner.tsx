@@ -4,7 +4,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { type ClinicalTest, type ClinicalTestThreshold } from "@/lib/clinical-tests-data"
-import { ChevronLeft, ChevronRight, Phone, AlertTriangle, ShieldAlert } from "lucide-react"
+import { ChevronLeft, ChevronRight, Phone, ShieldAlert } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
 
 interface ClinicalTestRunnerProps {

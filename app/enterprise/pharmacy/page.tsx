@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Building, Package, Search, TrendingUp, AlertTriangle, CheckCircle2, BarChart3, Pill, Users, Clock, ShoppingCart, Stethoscope, RefreshCw } from "lucide-react";
+import { Building, Package, Search, AlertTriangle, CheckCircle2, BarChart3, Pill, Users, Clock, ShoppingCart, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

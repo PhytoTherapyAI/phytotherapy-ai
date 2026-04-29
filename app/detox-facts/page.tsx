@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Leaf, CheckCircle2, XCircle, AlertTriangle, ChevronDown, ChevronUp, Beaker } from "lucide-react";
+import { CheckCircle2, XCircle, AlertTriangle, ChevronDown, ChevronUp, Beaker } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 

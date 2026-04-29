@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, ChevronDown, ChevronUp, CreditCard, Stethoscope, Pill, TestTube, Heart } from "lucide-react";
+import { Shield, ChevronDown, ChevronUp, CreditCard, Pill, TestTube, Heart } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 

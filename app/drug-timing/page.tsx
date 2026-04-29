@@ -9,7 +9,7 @@ import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Clock, AlertTriangle, ArrowRight, Pill, Coffee, Sun, Moon, Utensils, Loader2, type LucideIcon } from "lucide-react"
+import { Clock, AlertTriangle, ArrowRight, Pill, Sun, Moon, Utensils, Loader2, type LucideIcon } from "lucide-react"
 
 interface DrugTiming {
   name: string

@@ -22,7 +22,6 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { Download, Trash2, AlertTriangle, Loader2, Shield, X, ExternalLink } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -54,7 +53,6 @@ function computeInitials(name: string | null | undefined): string {
 
 export function PrivacyTab({ lang, patientName }: PrivacyTabProps) {
   const tr = lang === "tr"
-  const router = useRouter()
   const initials = useMemo(() => computeInitials(patientName), [patientName])
 
   // ── Delete flow ────────────────────────────────────────────────

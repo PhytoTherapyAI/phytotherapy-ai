@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   CalendarDays, Activity, Heart, Loader2, LogIn, Plus, Download,
-  Droplets, Pill, Sun, Moon as MoonIcon, Sunset, Check, X,
-  Flame, Dumbbell, ChevronLeft, ChevronRight,
+  Sun, Moon as MoonIcon, Sunset, Check, X,
+  Flame, ChevronLeft, ChevronRight,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -445,7 +445,7 @@ function VitalIcon({ type }: { type: string }) {
   }
 }
 
-function formatVitalValue(vital: VitalRecord, lang: string): string {
+function formatVitalValue(vital: VitalRecord): string {
   switch (vital.vital_type) {
     case "blood_pressure": return `${vital.systolic ?? vital.value}/${vital.diastolic ?? "?"} mmHg`
     case "blood_sugar": return `${vital.value} mg/dL`
@@ -584,7 +584,6 @@ export default function CalendarPage() {
 
   // Helper: local date string (must be before useEffects that use it)
   const getDateStr = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`
-  const selectedDateStr = getDateStr(selectedDate)
   const todayDateStr = getDateStr(new Date())
 
   // Ritual restore is handled inside fetchProfileMeds (after tasks are set)
@@ -1201,7 +1200,7 @@ export default function CalendarPage() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
                                   <span className="text-sm font-medium">{tx(`cal.vitalType.${vital.vital_type}`, lang)}</span>
-                                  <Badge variant="secondary" className="text-xs font-mono">{formatVitalValue(vital, lang)}</Badge>
+                                  <Badge variant="secondary" className="text-xs font-mono">{formatVitalValue(vital)}</Badge>
                                 </div>
                                 <p className="text-xs text-muted-foreground">
                                   {d.toLocaleDateString(tx("common.locale", lang), { day: "numeric", month: "short" })} {d.toLocaleTimeString(tx("common.locale", lang), { hour: "2-digit", minute: "2-digit" })}

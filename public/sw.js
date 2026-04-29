@@ -77,7 +77,7 @@ self.addEventListener('push', (event) => {
         data: { url: data.url || '/' },
       })
     );
-  } catch (e) {
+  } catch {
     // Silently fail
   }
 });

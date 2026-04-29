@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-  Clock, Pill, Sun, Moon, Sunrise, Sunset, Coffee, UtensilsCrossed,
+  Clock, Pill, Sun, Moon, UtensilsCrossed,
   AlertTriangle, CheckCircle2, Bell, BellRing, ChevronDown, ChevronUp,
   ArrowRight, Info, Loader2, ShieldCheck, CalendarClock, Timer,
 } from "lucide-react";

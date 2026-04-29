@@ -18,7 +18,6 @@ import {
   Brain,
   Dumbbell,
 } from "lucide-react"
-import Link from "next/link"
 
 // Course data — affiliate links to be added
 const COURSES = [

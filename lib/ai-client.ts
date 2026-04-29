@@ -25,7 +25,6 @@ const MODEL_DEFAULT = "claude-haiku-4-5";
 const MODEL_PREMIUM = "claude-sonnet-4-6";
 
 // Backward compat aliases
-const MODEL_FAST = MODEL_DEFAULT;
 const MODEL_SMART = MODEL_DEFAULT;
 
 // Token limits — lower = faster response time

@@ -5,7 +5,7 @@ import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Search, Sparkles, Leaf, ShieldCheck, ArrowRightLeft,
-  Plus, Star, ExternalLink, AlertTriangle, Check,
+  Plus, Star, ExternalLink, AlertTriangle,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

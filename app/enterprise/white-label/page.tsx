@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Palette, Building2, Shield, Zap, Globe, CheckCircle2, ArrowRight, Star, Settings, Code, Smartphone, Users } from "lucide-react";
+import { Palette, Building2, Shield, Globe, CheckCircle2, ArrowRight, Star, Code, Smartphone, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

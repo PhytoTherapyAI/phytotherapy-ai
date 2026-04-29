@@ -52,7 +52,6 @@ export async function aggregateHealthContext(
   supabase: SupabaseClient,
   userId: string
 ): Promise<HealthContext> {
-  const today = new Date().toISOString().split("T")[0];
   const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString().split("T")[0];
 
   // Parallel fetch all data sources

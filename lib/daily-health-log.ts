@@ -49,14 +49,13 @@ export async function fetchDailyHealthLog(
 
   // Parallel queries
   const [
-    sleepRes, medsRes, suppsRes, vitalsRes, checkInRes, profileRes,
+    sleepRes, medsRes, suppsRes, vitalsRes, checkInRes,
   ] = await Promise.all([
     supabase.from("sleep_records").select("*").eq("user_id", userId).eq("date", targetDate).limit(10),
     supabase.from("user_medications").select("brand_name, generic_name").eq("user_id", userId).eq("is_active", true),
     supabase.from("supplements").select("name, taken_today").eq("user_id", userId),
     supabase.from("vital_records").select("weight, heart_rate, systolic, diastolic").eq("user_id", userId).order("recorded_at", { ascending: false }).limit(1),
     supabase.from("daily_check_ins").select("energy_level, mood, bloating").eq("user_id", userId).eq("check_date", targetDate).maybeSingle(),
-    supabase.from("user_profiles").select("full_name").eq("id", userId).single(),
   ]);
 
   const sleepRecords = sleepRes.data || [];

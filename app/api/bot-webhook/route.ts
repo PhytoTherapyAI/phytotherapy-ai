@@ -168,6 +168,6 @@ export async function POST(req: Request) {
 }
 
 // Telegram webhook verification
-export async function GET(req: Request) {
+export async function GET() {
   return NextResponse.json({ status: "ok", service: "doctopal-bot-webhook" })
 }

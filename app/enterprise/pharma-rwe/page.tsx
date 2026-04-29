@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { FlaskConical, BarChart3, TrendingUp, Users, Shield, Database, FileText, AlertTriangle, CheckCircle2, PieChart, Activity } from "lucide-react";
+import { FlaskConical, TrendingUp, Users, Shield, Database, AlertTriangle, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

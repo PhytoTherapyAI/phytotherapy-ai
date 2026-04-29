@@ -9,7 +9,7 @@ import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 
 export default function EmergencyIdPage() {
-  const { isAuthenticated, session, profile } = useAuth();
+  const { isAuthenticated, profile } = useAuth();
   const { lang } = useLang();
   const cardRef = useRef<HTMLDivElement>(null);
   const [emergencyContact, setEmergencyContact] = useState({ name: "", phone: "" });

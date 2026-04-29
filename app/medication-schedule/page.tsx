@@ -9,7 +9,7 @@ import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Pill, Sun, Sunset, Moon, Coffee, Utensils, Loader2, Sparkles, AlertTriangle, Check, type LucideIcon } from "lucide-react"
+import { Pill, Sun, Sunset, Moon, Coffee, Utensils, Loader2, Sparkles, AlertTriangle, Check, type LucideIcon } from "lucide-react"
 
 interface ScheduleSlot {
   time: string

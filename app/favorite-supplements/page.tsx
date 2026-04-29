@@ -2,11 +2,10 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Shield, Plus, Sparkles, Bookmark, Check, ChevronRight, Folder } from "lucide-react"
+import { motion } from "framer-motion"
+import { Shield, Plus, Sparkles, Check } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
 
 const FOLDERS = [
@@ -24,7 +23,7 @@ const STACKS = [
 const TRENDING = ["Magnesium Bisglycinate", "Ashwagandha", "D3+K2 Vitamin", "Omega-3 EPA/DHA", "Curcumin", "Probiotics"]
 
 export default function FavoriteSupplementsPage() {
-  const { lang } = useLang()
+  useLang() // i18n re-render trigger
   const [addedStacks, setAddedStacks] = useState<string[]>([])
   const [showConfetti, setShowConfetti] = useState<string | null>(null)
 

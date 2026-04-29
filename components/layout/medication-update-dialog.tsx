@@ -24,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
-  Pill, CheckCircle2, RefreshCw, Shield, AlertTriangle,
+  Pill, CheckCircle2, RefreshCw, Shield,
   Heart, ArrowRight, Loader2, Plus, X,
 } from "lucide-react";
 

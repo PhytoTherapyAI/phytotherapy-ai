@@ -33,7 +33,7 @@ import { LabInsightsPanel } from "@/components/lab/LabInsightsPanel";
 import { LocalizedTitle } from "@/components/layout/LocalizedTitle";
 import { useEffectivePremium } from "@/lib/use-effective-premium";
 import { PremiumUpgradeModal } from "@/components/premium/PremiumUpgradeModal";
-import { shouldAskPermission, getPermissionState } from "@/lib/permission-state";
+import { shouldAskPermission } from "@/lib/permission-state";
 import { PermissionBottomSheet } from "@/components/permissions/PermissionBottomSheet";
 
 // ── Blood Test Types ──

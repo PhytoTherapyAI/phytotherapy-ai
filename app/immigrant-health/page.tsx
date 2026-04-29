@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Globe, Phone, MapPin, Syringe, Pill, FileText, ChevronDown, ChevronUp, AlertTriangle, ExternalLink } from "lucide-react";
+import { Globe, Phone, MapPin, Syringe, Pill, FileText, ChevronDown, ChevronUp, AlertTriangle } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 

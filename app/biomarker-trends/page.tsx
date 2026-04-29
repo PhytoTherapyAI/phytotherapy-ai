@@ -9,7 +9,7 @@ import { createBrowserClient } from "@/lib/supabase"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { TrendingUp, TrendingDown, Minus, Activity, Calendar, Filter, ArrowRight } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, Activity, ArrowRight } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
 
 interface BiomarkerEntry {

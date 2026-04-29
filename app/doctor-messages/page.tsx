@@ -4,12 +4,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  MessageSquarePlus, Send, Search, Shield, Stethoscope,
+  MessageSquarePlus, Search, Shield, Stethoscope,
   MessageCircle, Droplets, Pill, Leaf, ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
 import { DoctorShell } from "@/components/doctor/DoctorShell";
 
 export default function DoctorMessagesPage() {

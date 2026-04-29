@@ -3,7 +3,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Shield, AlertTriangle, Check, ChevronRight, Search, Sparkles } from "lucide-react"
+import { Shield, Check, Search, Sparkles } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -39,7 +39,7 @@ const ALLERGY_MAP: AllergyNode[] = [
     ]},
 ]
 
-function ConnectionWeb({ node, lang }: { node: AllergyNode; lang: string }) {
+function ConnectionWeb({ node }: { node: AllergyNode }) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
       {/* Center node */}
@@ -90,8 +90,9 @@ function ConnectionWeb({ node, lang }: { node: AllergyNode; lang: string }) {
 }
 
 export default function CrossAllergyPage() {
-  const { lang } = useLang()
+  useLang() // i18n re-render trigger
   const [selectedAllergy, setSelectedAllergy] = useState<string | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: setMyShield çağrısı henüz yok, "Shield al" CTA eklendiğinde reuse
   const [myShield, setMyShield] = useState<string | null>(null)
   const active = ALLERGY_MAP.find(a => a.id === selectedAllergy)
 
@@ -130,7 +131,7 @@ export default function CrossAllergyPage() {
         <AnimatePresence mode="wait">
           {active && (
             <motion.div key={active.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <ConnectionWeb node={active} lang={lang} />
+              <ConnectionWeb node={active} />
             </motion.div>
           )}
         </AnimatePresence>

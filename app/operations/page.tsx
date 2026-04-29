@@ -1,12 +1,11 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
-import { createBrowserClient } from "@/lib/supabase"
 import {
   Scissors,
   Calendar,
@@ -43,7 +42,7 @@ const STOP_BEFORE_SURGERY = [
 
 export default function OperationsPage() {
   const router = useRouter()
-  const { user, isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const { lang } = useLang()
   const [operations, setOperations] = useState<Operation[]>([])
   const [showAdd, setShowAdd] = useState(false)

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
-import { getSupplementDisplayName, findSupplementInfo, parseDoseToMg, formatDoseWithUnit, SUPPLEMENT_NAME_MAP, SUPPLEMENT_NAME_TR, type SupplementInfo } from "@/lib/supplement-data"
+import { getSupplementDisplayName, findSupplementInfo, parseDoseToMg, formatDoseWithUnit, SUPPLEMENT_NAME_MAP, type SupplementInfo } from "@/lib/supplement-data"
 
 interface AddSupplementDialogProps {
   userId: string

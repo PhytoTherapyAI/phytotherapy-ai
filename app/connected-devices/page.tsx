@@ -9,17 +9,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { PROVIDERS, METRIC_CONFIG, CONSENT_TEXT, type IntegrationProvider, type ConnectionStatus, type ProviderConfig } from "@/lib/health-integrations"
 import {
-  Smartphone, Wifi, WifiOff, RefreshCw, Check, X, Shield, Lock,
-  ArrowLeft, ChevronRight, AlertTriangle, Clock, Trash2, Loader2,
-  Heart, Footprints, Moon, Droplets, Activity, Zap, Thermometer,
-  Scale, Flame, BarChart3, Wind, Gauge, ExternalLink,
-  type LucideIcon,
+  Smartphone, Wifi, WifiOff, RefreshCw, Check, Shield, Lock,
+  ArrowLeft, ChevronRight, Clock, Loader2,
 } from "lucide-react"
 import Link from "next/link"
 import { tx } from "@/lib/translations"
 import { HealthImportSection } from "@/components/health-import/HealthImportSection"
-
-const METRIC_ICONS: Record<string, LucideIcon> = { Heart, Footprints, Moon, Droplets, Activity, Zap, Thermometer, Scale, Flame, BarChart3, Wind, Gauge }
 
 interface DeviceConnection {
   provider: IntegrationProvider

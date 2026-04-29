@@ -6,9 +6,9 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Sparkles, Moon, Dumbbell, Pill, Brain, Leaf, Lightbulb, Mic, ClipboardList, ArrowRight } from "lucide-react";
+import { Sparkles, Moon, Dumbbell, Pill, Brain, Leaf, Lightbulb, ArrowRight } from "lucide-react";
 import { tx } from "@/lib/translations";
 
 interface SmartWelcomeProps {

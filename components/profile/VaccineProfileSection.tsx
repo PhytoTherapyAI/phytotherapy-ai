@@ -51,7 +51,7 @@ export function VaccineProfileSection({ lang, userId, initialVaccines }: Props) 
     setSaveSuccess(false)
     try {
       const supabase = createBrowserClient()
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from("user_profiles")
         .update({ vaccines: updated })
         .eq("id", userId)

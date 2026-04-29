@@ -2,9 +2,9 @@
 "use client";
 
 import { Suspense, useState, useEffect, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Leaf, Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle2, Play, Gift, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, AlertCircle, CheckCircle2, Play, Gift, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { createBrowserClient } from "@/lib/supabase";
 import { getPostAuthRedirect } from "@/lib/auth-helpers";
@@ -32,7 +32,6 @@ export default function LoginPage() {
 }
 
 function LoginContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { signInWithEmail, signUpWithEmail, signInWithGoogle, signInWithFacebook } = useAuth();
   const { lang } = useLang();

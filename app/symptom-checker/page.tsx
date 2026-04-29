@@ -11,7 +11,7 @@ import {
 import { useLang } from "@/components/layout/language-toggle"
 import { useAuth } from "@/lib/auth-context"
 import type {
-  ConversationStep, AssessmentResponse, PossibleCondition, PhytotherapySuggestion,
+  ConversationStep, AssessmentResponse,
 } from "@/lib/types/symptom-assessment"
 
 // ── Translation helper ──
@@ -142,7 +142,7 @@ const fadeUp = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }
 
 export default function SymptomCheckerPage() {
   const { lang } = useLang()
-  const { user, profile } = useAuth()
+  const { profile } = useAuth()
   const searchParams = useSearchParams()
 
   const [step, setStep] = useState(0) // 0 = intro

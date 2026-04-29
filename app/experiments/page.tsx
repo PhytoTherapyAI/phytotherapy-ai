@@ -3,9 +3,8 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { FlaskConical, Plus, ArrowRight, Check, BarChart3, RefreshCw, FileText } from "lucide-react"
+import { FlaskConical, Plus, ArrowRight, Check, RefreshCw, FileText } from "lucide-react"
 import { useLang } from "@/components/layout/language-toggle"
-import { InfoTooltip } from "@/components/ui/InfoTooltip"
 
 const T: Record<string, { en: string; tr: string }> = {
   title: { en: "Personal Health Experiments", tr: "Kişisel Sağlık Deneyleri" },

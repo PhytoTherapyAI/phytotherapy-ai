@@ -5,8 +5,8 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Pill, Search, Loader2, LogIn, AlertTriangle, Shield, ChevronDown, ChevronUp,
-  ShieldCheck, Sparkles, ArrowRight, Eye,
+  Pill, Search, Loader2, LogIn, AlertTriangle, Shield, ChevronDown,
+  ShieldCheck, Sparkles, ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";

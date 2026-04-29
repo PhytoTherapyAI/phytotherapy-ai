@@ -7,11 +7,9 @@ import { useLang } from "@/components/layout/language-toggle"
 import {
   AlertTriangle,
   Phone,
-  X,
   Heart,
   Activity,
   ShieldAlert,
-  MapPin,
   Clock,
   CheckCircle2,
   Loader2,
@@ -52,7 +50,6 @@ export function CriticalAlertModal() {
   const [isSent, setIsSent] = useState(false)
   const [isCancelled, setIsCancelled] = useState(false)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // Listen for critical alert events (dispatched from other components)
   useEffect(() => {

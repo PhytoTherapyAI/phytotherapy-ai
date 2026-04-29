@@ -131,7 +131,7 @@ function hasInteraction(supplementName: string, medications: string[]): boolean 
   })
 }
 
-export function SeasonalCard({ lang, userMedications = [], userConditions = [] }: SeasonalCardProps) {
+export function SeasonalCard({ lang, userMedications = [] }: SeasonalCardProps) {
   const [showShareCard, setShowShareCard] = useState(false)
   const seasonId = getCurrentSeason()
   const season = SEASONS[seasonId]

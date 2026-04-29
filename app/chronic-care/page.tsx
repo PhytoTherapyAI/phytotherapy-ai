@@ -5,7 +5,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Heart, Brain, Droplets, Bone, Shield, Activity,
-  Pill, Leaf, TrendingUp, Check, ChevronRight,
+  Leaf, TrendingUp, Check,
   Sparkles, Stethoscope, LogIn, ArrowRight,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -179,7 +179,7 @@ function ConditionDashboard({ condition, lang }: { condition: ChronicCondition; 
 
 export default function ChronicCarePage() {
   const router = useRouter()
-  const { isAuthenticated, isLoading, profile } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth()
   const { lang } = useLang()
   const [selected, setSelected] = useState<string[]>([])
   const [showDashboard, setShowDashboard] = useState(false)

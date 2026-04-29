@@ -130,8 +130,7 @@ function Chip({ emoji, label, isActive, onClick }: { emoji: string; label: strin
 }
 
 // ── Mock relief result ──
-function getReliefResult(regions: string[], intensity: number, painType: string | null) {
-  const regionNames = regions.map(r => BODY_REGIONS.find(b => b.id === r)?.label).filter(Boolean).join(", ")
+function getReliefResult(_regions: string[], intensity: number, painType: string | null) {
   if (intensity >= 7) {
     return { supplement: "Curcumin 500mg + Piperine 5mg", topical: "Topical Arnica Gel", exercise: "Gentle mobilization + deep breathing", note: "High intensity pain — consult your doctor if persistent beyond 3 days." }
   }

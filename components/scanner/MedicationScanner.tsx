@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
   Camera, ScanBarcode, Loader2, CheckCircle2, AlertTriangle,
-  X, RotateCcw, Pill, Plus,
+  X, RotateCcw, Plus,
 } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
@@ -37,7 +37,6 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const tr = lang === "tr"
 
   const startCamera = async () => {
     try {

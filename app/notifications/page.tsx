@@ -18,12 +18,10 @@ import {
   Heart,
   Settings,
   Calendar,
-  AlertTriangle,
   CheckCircle2,
   Sun,
   Droplets,
   Leaf,
-  Activity,
   BellOff,
 } from "lucide-react"
 import { EmptyState } from "@/components/ui/empty-state"
@@ -73,7 +71,6 @@ function relativeTime(date: Date, lang: Lang): string {
   return `${days}${tx("time.daysAgo", lang)}`
 }
 
-const PREFS_KEY = "phyto_notification_prefs"
 const READ_KEY = "phyto_notification_read"
 
 function getReadIds(): Set<string> {

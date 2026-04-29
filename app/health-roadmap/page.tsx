@@ -3,14 +3,14 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import { createBrowserClient } from "@/lib/supabase"
 import {
   calculateRiskScore, CARE_PACKAGES,
-  type PatientData, type CarePackage,
+  type PatientData,
 } from "@/lib/care-pathways"
 import {
   Shield, Target, Loader2, Lock, Check, ChevronRight,

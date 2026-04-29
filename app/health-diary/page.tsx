@@ -48,7 +48,6 @@ const MOCK_ENTRIES: DiaryEntry[] = [
 // ── Heat map helpers ──
 function generateHeatMapData() {
   const days: { date: string; intensity: number }[] = []
-  const entryDates = new Set(MOCK_ENTRIES.map(e => e.date))
   const today = new Date()
   for (let i = 83; i >= 0; i--) {
     const d = new Date(today)

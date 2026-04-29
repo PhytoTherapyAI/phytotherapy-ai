@@ -2,10 +2,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Shield, Eye, EyeOff, Database, Users, FlaskConical, Clock, Lock, CheckCircle2, AlertTriangle, ToggleLeft, ToggleRight, Trash2, Download } from "lucide-react";
+import { Shield, Eye, EyeOff, Database, Users, Clock, Lock, CheckCircle2, ToggleLeft, ToggleRight, Trash2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 

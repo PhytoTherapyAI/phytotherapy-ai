@@ -3,7 +3,7 @@
 
 import { useRef, useState } from "react"
 import { Share2, Download, Copy, Check, Loader2 } from "lucide-react"
-import { shareCard, downloadCard, copyCardToClipboard, canNativeShare } from "@/lib/share-card"
+import { shareCard, downloadCard, copyCardToClipboard } from "@/lib/share-card"
 import { tx, type Lang } from "@/lib/translations"
 
 interface ShareCardBaseProps {

@@ -9,7 +9,6 @@ import {
 import { useAuth } from "@/lib/auth-context";
 import { useActiveProfile } from "@/lib/use-active-profile";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
 
 interface SynergyAlert {
   id: string;

@@ -4,7 +4,7 @@
 
 import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ChevronDown, Sparkles, MessageSquare } from "lucide-react"
+import { ChevronDown, MessageSquare } from "lucide-react"
 import { LONGEVITY_RANGES, ORGAN_SYSTEMS, type BiomarkerRange } from "@/lib/data/longevity-ranges"
 import { tx } from "@/lib/translations"
 

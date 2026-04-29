@@ -4,7 +4,7 @@
 import { useReducer, useMemo } from "react";
 import { motion } from "framer-motion";
 import {
-  Dumbbell, Loader2, Pill, Utensils, Heart, ShieldAlert,
+  Dumbbell, Loader2, Utensils, Heart, ShieldAlert,
   AlertTriangle, ChevronDown, ChevronUp, LogIn, Info, RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -93,8 +93,8 @@ const initialState: State = {
 };
 
 // ── Section Header ──
-function SectionHeader({ title, icon: Icon, sectionKey, count, expanded, onToggle }: {
-  title: string; icon: React.ElementType; sectionKey: string; count?: number;
+function SectionHeader({ title, icon: Icon, count, expanded, onToggle }: {
+  title: string; icon: React.ElementType; count?: number;
   expanded: boolean; onToggle: () => void;
 }) {
   return (
@@ -266,7 +266,7 @@ export default function SportsPerformancePage() {
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
                 title={tx("sports.nutritionTiming", lang)} icon={Utensils}
-                sectionKey="nutrition" expanded={state.sections.nutrition}
+                expanded={state.sections.nutrition}
                 onToggle={() => dispatch({ type: "TOGGLE_SECTION", key: "nutrition" })}
               />
               {state.sections.nutrition && (
@@ -334,7 +334,7 @@ export default function SportsPerformancePage() {
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
                 title={tx("sports.recoveryTips", lang)} icon={Heart}
-                sectionKey="recovery" count={r.recoveryProtocol.length}
+                count={r.recoveryProtocol.length}
                 expanded={state.sections.recovery}
                 onToggle={() => dispatch({ type: "TOGGLE_SECTION", key: "recovery" })}
               />
@@ -360,7 +360,7 @@ export default function SportsPerformancePage() {
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
                 title={tx("sports.injuryPrevention", lang)} icon={ShieldAlert}
-                sectionKey="injury" count={r.injuryPrevention.length}
+                count={r.injuryPrevention.length}
                 expanded={state.sections.injury}
                 onToggle={() => dispatch({ type: "TOGGLE_SECTION", key: "injury" })}
               />
@@ -383,7 +383,7 @@ export default function SportsPerformancePage() {
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
                 title={tx("sports.warnings", lang)} icon={AlertTriangle}
-                sectionKey="warnings" count={r.overtrainingWarnings.length}
+                count={r.overtrainingWarnings.length}
                 expanded={state.sections.warnings}
                 onToggle={() => dispatch({ type: "TOGGLE_SECTION", key: "warnings" })}
               />
@@ -405,7 +405,7 @@ export default function SportsPerformancePage() {
             <div className="overflow-hidden rounded-lg border">
               <SectionHeader
                 title={tx("common.sources", lang)} icon={Info}
-                sectionKey="sources" count={r.sources.length}
+                count={r.sources.length}
                 expanded={state.sections.sources}
                 onToggle={() => dispatch({ type: "TOGGLE_SECTION", key: "sources" })}
               />

@@ -2,11 +2,11 @@
 // Posture & Ergonomics — Interactive Stretch Player + Gamified Checklist
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Monitor, Armchair, Keyboard, Sun, Timer, Hand,
-  Check, Play, Pause, SkipForward, X, Activity,
+  Check, Play, Pause, SkipForward, X,
   ChevronDown, ChevronUp,
 } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";

@@ -60,12 +60,11 @@ function fileToBase64(file: File): Promise<string> {
 
 interface ChatInterfaceProps {
   className?: string;
-  onMessagesChange?: (messages: ChatMessage[]) => void;
   loadConversation?: { query: string; response: string | null } | null;
   initialQuery?: string;
 }
 
-export function ChatInterface({ className, onMessagesChange, loadConversation, initialQuery }: ChatInterfaceProps) {
+export function ChatInterface({ className, loadConversation, initialQuery }: ChatInterfaceProps) {
   const { isAuthenticated, session, user, profile } = useAuth();
   const { activeUserId, isOwnProfile } = useActiveProfile();
   const { familyMembers, familyGroup } = useFamily();
@@ -78,6 +77,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
     ? activeUserId
     : undefined;
   const { lang } = useLang()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: useEffectivePremium hook çağrısı premium state subscribe için (re-render trigger), value tüketici henüz yok; gelecekte chat quota gate UI'ı için reuse
   const effectivePremium = useEffectivePremium();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");

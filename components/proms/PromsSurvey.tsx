@@ -6,7 +6,6 @@ import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
 import {
-  ChevronRight,
   ChevronLeft,
   Check,
   Sparkles,
@@ -49,7 +48,6 @@ interface Props {
 export function PromsSurvey({ survey, onComplete, onDismiss }: Props) {
   const { user } = useAuth()
   const { lang } = useLang()
-  const isTr = lang === "tr"
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, number>>({})
@@ -338,7 +336,6 @@ export function OutcomeComparisonCard({ data }: { data: ComparisonData }) {
         {Object.entries(data.changes).map(([domain, change]) => {
           const label = domainLabels[domain];
           if (!label) return null;
-          const isInverted = domain === "pain_vas" || domain === "anxiety_level";
 
           return (
             <div key={domain} className="flex items-center gap-2">

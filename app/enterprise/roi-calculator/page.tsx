@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calculator, TrendingUp, DollarSign, Users, Heart, BarChart3, ArrowRight, CheckCircle2, Building2 } from "lucide-react";
+import { Calculator, TrendingUp, DollarSign, BarChart3, ArrowRight, CheckCircle2, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +21,6 @@ export default function ROICalculatorPage() {
   const savings25 = Math.round(annualCost * 0.25);
   const platformCost = employees * 8 * 12;
   const netROI15 = savings15 - platformCost;
-  const netROI25 = savings25 - platformCost;
   const roiPct = Math.round((netROI15 / platformCost) * 100);
 
   const benefits = [

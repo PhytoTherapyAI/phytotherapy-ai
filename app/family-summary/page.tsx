@@ -12,7 +12,6 @@ import {
   Users,
   Loader2,
   AlertTriangle,
-  Heart,
   Pill,
   Bell,
   Calendar,
@@ -34,6 +33,7 @@ export default function FamilySummaryPage() {
   const { lang } = useLang()
   const [members, setMembers] = useState<MemberSummary[]>([])
   const [loading, setLoading] = useState(true)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: error state set ediliyor (catch block) ama error banner UI consumer henüz yok; gelecekte hata banner için reuse
   const [error, setError] = useState<string | null>(null)
 
 

@@ -3,7 +3,6 @@
 
 import { useState } from "react";
 import { Cross, Phone, ChevronDown, ChevronUp, Heart, Flame, Bug, Skull, Bone, Wind, Baby, Droplets, AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx, txObj } from "@/lib/translations";
 

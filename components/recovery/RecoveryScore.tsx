@@ -46,7 +46,7 @@ const MOCK_7DAY = [68, 72, 81, 75, 89, 72, 0]
 
 interface Props { lang: "en" | "tr"; compact?: boolean }
 
-export function RecoveryScore({ lang, compact = false }: Props) {
+export function RecoveryScore({ lang }: Props) {
   const [sleep, setSleep] = useState(0)
   const [energy, setEnergy] = useState(0)
   const [mood, setMood] = useState(0)

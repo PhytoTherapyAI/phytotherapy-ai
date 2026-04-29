@@ -13,16 +13,6 @@ interface HabitHeatMapProps {
 
 const DAY_LABELS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
 
-function generateMockData(): number[] {
-  return Array.from({ length: 84 }, (_, i) => {
-    const dayOfWeek = i % 7
-    const isWeekend = dayOfWeek >= 5
-    const rand = ((i * 2654435761) >>> 0) / 4294967296
-    if (isWeekend) return rand < 0.3 ? Math.floor(rand * 3) : 0
-    return rand < 0.6 ? Math.floor(rand * 5) : 0
-  })
-}
-
 function getColor(count: number): string {
   if (count === 0) return "bg-slate-100 dark:bg-slate-800"
   if (count === 1) return "bg-emerald-200 dark:bg-emerald-900"

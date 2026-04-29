@@ -52,13 +52,10 @@ export function translateCondition(name: string, lang: string): string {
 
   // Strip prefix for lookup
   let cleanName = name;
-  let prefix = "";
   if (name.startsWith("surgery:")) {
     cleanName = name.replace("surgery:", "");
-    prefix = "";
   } else if (name.startsWith("family:")) {
     cleanName = name.replace("family:", "");
-    prefix = "";
   }
 
   return CONDITION_TRANSLATIONS[cleanName] || cleanName;

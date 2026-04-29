@@ -276,7 +276,6 @@ export function OnboardingWizard({ profile }: Props) {
   const totalSteps = showLayer2 ? LAYER1_STEPS.length + 1 : LAYER1_STEPS.length;
   const isLayer2 = safeStep === LAYER1_STEPS.length && showLayer2;
   const currentStepInfo = isLayer2 ? LAYER2_STEP : LAYER1_STEPS[safeStep];
-  const progress = ((safeStep + 1) / totalSteps) * 100;
 
   // Map visible step index to original step index for rendering
   // Pregnancy is at original index 4 — when skipped, visible indices 4+ shift by 1

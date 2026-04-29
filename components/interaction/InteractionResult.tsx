@@ -261,7 +261,6 @@ function HerbCard({ herb, showAdd, onAdd }: HerbCardProps) {
   const { lang } = useLang()
   const [adding, setAdding] = useState(false)
   const [added, setAdded] = useState(false)
-  const tr = lang === "tr"
 
   const borderColor =
     herb.safety === "dangerous"

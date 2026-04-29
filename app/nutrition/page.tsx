@@ -15,7 +15,6 @@ import {
   Beef,
   Wheat,
   Droplets,
-  Leaf,
   Plus,
   CheckCircle2,
   TrendingUp,

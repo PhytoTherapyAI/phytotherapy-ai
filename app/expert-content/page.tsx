@@ -12,12 +12,8 @@ import { MOCK_CONTENT, CONTENT_CATEGORIES } from "@/lib/publisher-data"
 import { VideoPlayerCard } from "@/components/content/VideoUrlInput"
 import {
   Search, Eye, Heart, Bookmark, Clock, BadgeCheck, Video, FileText,
-  MessageCircle, Share2, ChevronRight, Filter, Leaf, Apple, Brain,
-  Activity, Pill, Baby, Dumbbell, Sparkles, BookOpen,
-  type LucideIcon,
+  MessageCircle, BookOpen, Sparkles,
 } from "lucide-react"
-
-const CATEGORY_ICONS: Record<string, LucideIcon> = { Leaf, Apple, Brain, Activity, Pill, Heart: Heart, Baby, Dumbbell, Sparkles, BookOpen }
 
 // Authors will be loaded from Supabase in production
 const AUTHORS: Record<string, { name: string; title: string; specialty: { en: string; tr: string }; verified: boolean; avatar: string }> = {

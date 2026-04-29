@@ -23,7 +23,6 @@ export function BloodTestShareCard({
   userName,
 }: BloodTestShareCardProps) {
   const tr = lang === "tr"
-  const normalCount = totalMarkers - abnormalCount
   const healthPercent = totalMarkers > 0 ? Math.round((optimalCount / totalMarkers) * 100) : 0
 
   return (

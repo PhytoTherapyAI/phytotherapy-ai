@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { PawPrint, AlertTriangle, ChevronDown, ChevronUp, Shield, Bug, Baby, Cat, Dog } from "lucide-react";
+import { PawPrint, ChevronDown, ChevronUp, Shield, Bug, Baby } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";

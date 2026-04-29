@@ -16,7 +16,6 @@ interface Props {
 
 export function PregnancyStep({ data, updateData }: Props) {
   const { lang } = useLang();
-  const tr = lang === "tr";
   const showWarning = data.is_pregnant || data.is_breastfeeding;
 
   return (

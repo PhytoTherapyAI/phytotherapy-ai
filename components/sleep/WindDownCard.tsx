@@ -17,7 +17,7 @@ interface RitualStep {
   time: string;
 }
 
-function getPersonalizedRituals(factors: string[], lang: "en" | "tr"): RitualStep[] {
+function getPersonalizedRituals(factors: string[]): RitualStep[] {
   const rituals: RitualStep[] = [];
 
   if (factors.includes("stress")) {
@@ -65,7 +65,7 @@ function getPersonalizedRituals(factors: string[], lang: "en" | "tr"): RitualSte
 
 export function WindDownCard({ lang, factors }: WindDownCardProps) {
   const [completed, setCompleted] = useState<Record<number, boolean>>({});
-  const rituals = getPersonalizedRituals(factors, lang);
+  const rituals = getPersonalizedRituals(factors);
 
   const hour = new Date().getHours();
   // Only show after 19:00 (7 PM)

@@ -1,7 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState } from "react"
 import { motion } from "framer-motion"
 
 interface Correlation {

@@ -3,7 +3,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Stethoscope, Loader2, LogIn, Printer, ClipboardList, MessageCircle, HelpCircle, Shield, Search, Sparkles } from "lucide-react";
+import { Stethoscope, Loader2, LogIn, Printer, ClipboardList, MessageCircle, HelpCircle, Shield, Sparkles } from "lucide-react";
 import { DoctorShell } from "@/components/doctor/DoctorShell";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";

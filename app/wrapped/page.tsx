@@ -12,12 +12,9 @@ import {
   Calendar,
   FlaskConical,
   Shield,
-  Droplets,
   Trophy,
   TrendingUp,
-  Heart,
   Sparkles,
-  Share2,
 } from "lucide-react"
 import { PageSkeleton } from "@/components/ui/page-skeleton"
 

@@ -100,6 +100,7 @@ export default function ValueMarketplacePage() {
 
   const [tab, setTab] = useState<Tab>("marketplace");
   const [products, setProducts] = useState<SupplementProduct[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: rankings state set ediliyor (fetchSection("rankings")) ama UI tab consumer henüz yok; gelecekte "Rankings" tab içerik için reuse
   const [rankings, setRankings] = useState<ValueScoreBreakdown[]>([]);
   const [escrowAccounts, setEscrowAccounts] = useState<EscrowAccount[]>([]);
   const [tiers, setTiers] = useState<RiskRewardTier[]>([]);

@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import {
   Heart, Activity, Upload, Check, X, Loader2, Trash2, Clock,
-  ChevronDown, FileWarning, FileCheck2, Footprints, Moon, Flame,
+  ChevronDown, FileWarning, FileCheck2, Footprints, Moon,
 } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

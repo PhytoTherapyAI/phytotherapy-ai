@@ -5,7 +5,6 @@ import { useState } from "react";
 import {
   Loader2,
   AlertTriangle,
-  CheckCircle2,
   LogIn,
   ShieldAlert,
   Pill,

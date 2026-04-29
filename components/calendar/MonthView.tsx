@@ -76,7 +76,6 @@ export function MonthView({ userId, lang }: MonthViewProps) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [addEventOpen, setAddEventOpen] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null)
 
   // Day status tracking (meds + water completion)
   const [dayStatuses, setDayStatuses] = useState<Record<string, DayStatus>>({})

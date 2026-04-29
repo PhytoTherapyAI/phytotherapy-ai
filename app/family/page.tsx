@@ -131,6 +131,7 @@ export default function FamilyPage() {
   const [inviteTab, setInviteTab] = useState<"email" | "code">("email")
   const [generatingCode, setGeneratingCode] = useState(false)
   const [generatedCode, setGeneratedCode] = useState<string | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: invite code expiry timestamp set ediliyor (resData.expiresAt) ama UI countdown henüz yok; gelecekte "kalan süre" badge için reuse
   const [generatedCodeExpiry, setGeneratedCodeExpiry] = useState<string | null>(null)
   const [codeCopied, setCodeCopied] = useState(false)
 

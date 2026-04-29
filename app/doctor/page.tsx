@@ -14,7 +14,7 @@ import { createBrowserClient } from "@/lib/supabase"
 import {
   Stethoscope, Users, UserPlus, Shield, Copy, Check, Loader2,
   AlertCircle, Upload, QrCode, Brain, X, Sparkles,
-  ChevronRight, MessageCircle, ClipboardCheck, Heart, Droplets, Activity,
+  MessageCircle, ClipboardCheck, Heart, Droplets,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 

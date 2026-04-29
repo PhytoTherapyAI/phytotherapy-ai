@@ -1,9 +1,9 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Send, Loader2, Dumbbell, Zap, Shield } from "lucide-react";
+import { Sparkles, Send, Loader2 } from "lucide-react";
 import { tx } from "@/lib/translations";
 
 interface IntentBarProps {

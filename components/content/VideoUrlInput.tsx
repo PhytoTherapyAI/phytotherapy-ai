@@ -16,6 +16,7 @@ interface VideoUrlInputProps {
 
 export function VideoUrlInput({ value, onChange, lang = "en" }: VideoUrlInputProps) {
   const [parsed, setParsed] = useState<ParsedVideo | null>(null)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: focus state set ediliyor (onFocus/onBlur) ama UI consumer henüz yok; gelecekte focused-state styling için reuse
   const [isFocused, setIsFocused] = useState(false)
 
   const handleChange = useCallback((url: string) => {

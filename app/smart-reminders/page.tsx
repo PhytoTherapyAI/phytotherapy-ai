@@ -7,9 +7,6 @@ import {
   Pill,
   Sun,
   Moon,
-  Sunrise,
-  Sunset,
-  Coffee,
   UtensilsCrossed,
   AlertTriangle,
   CheckCircle2,
@@ -206,7 +203,6 @@ function generateSchedule(
   medications: UserMedication[],
   lang: string
 ): { slots: ScheduleSlot[]; conflicts: string[] } {
-  const slots: ScheduleSlot[] = [];
   const conflicts: string[] = [];
 
   const morningEmpty: ScheduleSlot = { time: "06:30", period: tx("medtime.morningEmpty", lang as Lang), medications: [] };
@@ -275,14 +271,6 @@ function generateSchedule(
   return { slots: allSlots.filter(s => s.medications.length > 0), conflicts };
 }
 
-// ── Notification Time Picker ─────────────────
-interface ReminderTime {
-  medName: string;
-  hour: number;
-  minute: number;
-  enabled: boolean;
-}
-
 // ── Main Component ───────────────────────────
 export default function SmartRemindersPage() {
   const { isAuthenticated, session } = useAuth();
@@ -290,7 +278,6 @@ export default function SmartRemindersPage() {
   const [medications, setMedications] = useState<UserMedication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedSlot, setExpandedSlot] = useState<number | null>(null);
-  const [reminders, setReminders] = useState<ReminderTime[]>([]);
   const [showNotifSetup, setShowNotifSetup] = useState(false);
 
   const loadMedications = useCallback(async () => {

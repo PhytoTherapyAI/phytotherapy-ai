@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   TrendingUp,
   TrendingDown,
-  Minus,
   Stethoscope,
   Pill,
   Heart,
@@ -115,21 +114,18 @@ export function ResultDashboard({
           label={tx('rd.optimal', lang)}
           value={optimalCount}
           total={totalMarkers}
-          color="emerald"
         />
         <ScoreCard
           icon={<AlertTriangle className="h-5 w-5 text-amber-600" />}
           label={tx('rd.needsAttention', lang)}
           value={abnormalCount}
           total={totalMarkers}
-          color="amber"
         />
         <ScoreCard
           icon={<Stethoscope className="h-5 w-5 text-blue-600" />}
           label={tx('rd.recommendations', lang)}
           value={analysis.supplementRecommendations?.length ?? 0}
           total={null}
-          color="blue"
         />
       </div>
 
@@ -338,13 +334,11 @@ function ScoreCard({
   label,
   value,
   total,
-  color,
 }: {
   icon: React.ReactNode;
   label: string;
   value: number;
   total: number | null;
-  color: string;
 }) {
   return (
     <div className="rounded-lg border bg-card p-4">

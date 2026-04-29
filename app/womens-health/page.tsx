@@ -2,7 +2,7 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { ChevronLeft, Calendar, Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
 

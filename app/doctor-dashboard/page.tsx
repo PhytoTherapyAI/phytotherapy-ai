@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Stethoscope, Users, TrendingUp, AlertTriangle, CheckCircle2, Clock, Activity, Pill, FileText, Brain, BarChart3, ArrowRight } from "lucide-react";
+import { Stethoscope, Users, AlertTriangle, CheckCircle2, Clock, Brain } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

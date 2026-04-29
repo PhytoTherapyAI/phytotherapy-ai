@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart3, TrendingUp, TrendingDown, Users, Activity, Pill, Heart, AlertTriangle, CheckCircle2, PieChart, ArrowUpRight } from "lucide-react";
+import { BarChart3, TrendingUp, TrendingDown, Pill, AlertTriangle, CheckCircle2, PieChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

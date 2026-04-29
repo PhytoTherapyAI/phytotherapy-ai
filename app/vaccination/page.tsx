@@ -7,12 +7,10 @@ import {
   Loader2,
   Plus,
   Trash2,
-  AlertTriangle,
   CheckCircle2,
   Clock,
   Sparkles,
   LogIn,
-  ChevronDown,
   ChevronUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";

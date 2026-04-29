@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
   Phone, Plus, Trash2, Edit3, Save, X, Shield, Star, User,
-  Heart, Stethoscope, Users, GripVertical, AlertTriangle, Check,
+  Heart, Stethoscope, Users, AlertTriangle, Check,
   ArrowLeft,
 } from "lucide-react"
 import Link from "next/link"

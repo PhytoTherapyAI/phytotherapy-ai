@@ -4,9 +4,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Leaf, LogIn, LogOut, Settings, AlertTriangle, Check, RefreshCw,
+  LogIn, LogOut, Settings, AlertTriangle, Check, RefreshCw,
   Menu, X, Sparkles, LayoutDashboard, Shield, Calendar,
-  Flame, Search, Users, FlaskConical, ChevronDown, UserCog, UserCircle,
+  Flame, Users, FlaskConical, ChevronDown, UserCog, UserCircle,
   GitBranch,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
@@ -33,6 +33,7 @@ export function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: scrolled state set ediliyor (scroll > 20px) ama UI consumer henüz yok; gelecekte sticky header style trigger için reuse
   const [scrolled, setScrolled] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, isLoading, user, profile, signOut, needsMedicationUpdate, refreshProfile } = useAuth();

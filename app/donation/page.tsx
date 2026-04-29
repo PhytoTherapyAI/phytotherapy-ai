@@ -42,7 +42,7 @@ const CENTERS = [
 ];
 
 export default function DonationPage() {
-  const { profile } = useAuth();
+  useAuth(); // auth subscription
   const { lang } = useLang();
   const [selectedType, setSelectedType] = useState<string>("");
   const [entries, setEntries] = useState<DonationEntry[]>([]);

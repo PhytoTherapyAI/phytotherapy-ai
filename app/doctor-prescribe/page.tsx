@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pill, Calculator, AlertTriangle, CheckCircle2, Search, Scale, ArrowRightLeft, Shield, FileText, RefreshCw } from "lucide-react";
+import { Pill, Calculator, AlertTriangle, Search, ArrowRightLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

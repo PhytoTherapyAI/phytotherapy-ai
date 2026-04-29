@@ -186,11 +186,6 @@ export function AllergiesStep({ data, updateData }: Props) {
     updateData({ allergies: updated });
   };
 
-  const getReactionLabel = (val: string) => {
-    const opt = REACTION_OPTIONS.find(o => o.value === val);
-    return opt ? `${opt.emoji} ${tx(opt.key, lang)}` : val;
-  };
-
   const quickAddChip = (def: AllergenDef, isSensitivity: boolean) => {
     const name = getName(def);
     const addedSet = new Set(allergies.map(a => a.allergen.toLowerCase()));

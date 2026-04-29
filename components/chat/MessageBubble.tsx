@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 import { User, Leaf, Loader2, FileText, Image as ImageIcon, BookOpen, ShieldCheck, Send, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import { useLang } from "@/components/layout/language-toggle";
-import { tx } from "@/lib/translations";
 import { AILoadingState } from "@/components/chat/AILoadingState";
 import { SmartSuggestions } from "@/components/chat/SmartSuggestions";
 import { AIDisclaimer } from "@/components/ai/AIDisclaimer";

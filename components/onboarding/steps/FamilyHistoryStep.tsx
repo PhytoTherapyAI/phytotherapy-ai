@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Heart, Dna } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import type { OnboardingData } from "../OnboardingWizard";
@@ -26,9 +25,6 @@ const FAMILY_CONDITIONS = [
 
 export function FamilyHistoryStep({ data, updateData }: Props) {
   const { lang } = useLang();
-  // Store family history in supplements array as a temporary field (or we can add to chronic_conditions with a prefix)
-  // Using a simple approach: store in chronic_conditions with "family:" prefix
-  const familyConditions = data.chronic_conditions.filter(c => c.startsWith("family:"));
   const [noFamily, setNoFamily] = useState(false);
 
   const toggleFamily = (condId: string) => {

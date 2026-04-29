@@ -7,10 +7,10 @@
 
 import {
   type FHIRMedicationStatement, type FHIRObservation, type FHIRBundle,
-  type FHIRAllergyIntolerance, type FHIRCodeableConcept, type FHIRCoding,
+  type FHIRAllergyIntolerance, type FHIRCoding,
   CODING_SYSTEMS,
 } from "./types"
-import { findHerbalByName, getHerbalFHIRCodings, LOINC_CODES, SNOMED_CONDITIONS } from "./terminology-map"
+import { findHerbalByName, getHerbalFHIRCodings, LOINC_CODES } from "./terminology-map"
 
 // ══════════════════════════════════════════
 // Convert Supplement Use → FHIR MedicationStatement

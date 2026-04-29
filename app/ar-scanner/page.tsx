@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { Camera, Scan, Pill, Info, Sparkles, Smartphone, Layers, AlertCircle } from "lucide-react";
+import { Camera, Scan, Pill, Sparkles, Smartphone, Layers, AlertCircle } from "lucide-react";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 

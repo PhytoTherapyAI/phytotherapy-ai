@@ -10,7 +10,7 @@ import { tx } from "@/lib/translations"
 import {
   Package, Video, Star, Check, Crown, X, Sparkles, Heart,
   ArrowRight, Shield, Clock, Users, Loader2, Mail, Gift,
-  ChevronRight, Zap,
+  Zap,
   type LucideIcon,
 } from "lucide-react"
 
@@ -73,7 +73,7 @@ interface FakeDoorTestProps {
   variant?: "card" | "banner" | "full"
 }
 
-export function FakeDoorTest({ productId, lang = "en", variant = "card" }: FakeDoorTestProps) {
+export function FakeDoorTest({ productId, lang = "en" }: FakeDoorTestProps) {
   const [showModal, setShowModal] = useState(false)
   const [activeProduct, setActiveProduct] = useState<FakeDoorProduct | null>(null)
   const [email, setEmail] = useState("")

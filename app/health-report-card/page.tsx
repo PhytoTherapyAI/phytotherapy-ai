@@ -2,11 +2,10 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import {
   Trophy, TrendingDown, TrendingUp, Share2,
-  Lock, Sparkles, Award, Heart, Flame,
-  Star, ChevronRight, Shield,
+  Lock, Sparkles, Award, Flame,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -84,7 +83,7 @@ function AIBubble({ text }: { text: string }) {
 }
 
 export default function HealthReportCardPage() {
-  const { lang } = useLang()
+  useLang() // i18n re-render trigger
 
   const milestones = [
     { label: "HbA1c", from: 7.2, to: 6.3, data: [7.2, 7.0, 6.8, 6.5, 6.3], unit: "%", improved: true },

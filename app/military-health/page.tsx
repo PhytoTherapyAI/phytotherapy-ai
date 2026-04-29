@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   Circle,
   LogIn,
-  Sparkles,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";

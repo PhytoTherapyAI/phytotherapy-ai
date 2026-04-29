@@ -4,7 +4,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, TrendingUp, TrendingDown, Minus, ArrowRight, X, Sparkles } from "lucide-react";
+import { AlertTriangle, TrendingUp, TrendingDown, Minus, ArrowRight, X } from "lucide-react";
 
 // ── Sparkline (SVG micro-chart) ──
 function Sparkline({ data, color = "#3c7a52", width = 60, height = 20 }: {

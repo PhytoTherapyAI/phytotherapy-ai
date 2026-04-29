@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { type ClinicalTest, type ClinicalTestThreshold } from "@/lib/clinical-tests-data"
-import { RotateCcw, ChevronDown, ChevronUp, FileText, AlertTriangle, Heart, ExternalLink, Share2 } from "lucide-react"
+import { RotateCcw, ChevronDown, ChevronUp, AlertTriangle, Heart, ExternalLink } from "lucide-react"
 import { tx, type Lang } from "@/lib/translations"
 
 interface ClinicalTestResultProps {
@@ -58,7 +58,7 @@ export function ClinicalTestResult({ test, score, threshold, answers, lang, onRe
         date: new Date().toISOString(),
       })
       localStorage.setItem(key, JSON.stringify(history.slice(0, 50)))
-    } catch (e) { /* ignore */ }
+    } catch { /* ignore */ }
   }, [test.id, score, threshold])
 
   // Get past results for this test

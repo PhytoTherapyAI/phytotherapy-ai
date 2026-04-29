@@ -6,7 +6,7 @@ import { useLang } from "@/components/layout/language-toggle"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { ChefHat, Search, Flame, Droplets, Snowflake, Zap, AlertTriangle } from "lucide-react"
+import { ChefHat, Search, Flame, Snowflake, Zap, AlertTriangle } from "lucide-react"
 import { tx } from "@/lib/translations"
 
 interface FoodPrepTip {
