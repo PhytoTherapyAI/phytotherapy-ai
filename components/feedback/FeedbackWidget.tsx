@@ -42,6 +42,24 @@ export function FeedbackWidget() {
   // dismiss flow.
   const overlayActive = useOverlayActive()
 
+  // Confetti pieces — hooks must run before any early return
+  // (react-hooks/rules-of-hooks); HIDDEN_PATHS gate moved below.
+  const confettiPieces = useMemo(() => Array.from({ length: 30 }, (_, i) => ({
+    left: ((i * 7919) % 1000) / 10,
+    size: 4 + ((i * 6271) % 1000) / 100 * 6,
+    dur: 1.2 + ((i * 4817) % 1000) / 1000 * 1,
+    delay: ((i * 1327) % 1000) / 1000 * 0.4,
+    color: ["#5aac74", "#b8965a", "#60a5fa", "#f472b6", "#facc15", "#a78bfa"][i % 6],
+    isCircle: ((i * 3541) % 1000) > 500,
+  })), [])
+
+  useEffect(() => {
+    if (showConfetti) {
+      const t = setTimeout(() => setShowConfetti(false), 2500)
+      return () => clearTimeout(t)
+    }
+  }, [showConfetti])
+
   if (HIDDEN_PATHS.includes(pathname)) return null
 
   const handleSelectCategory = (cat: FeedbackCategory) => {
@@ -78,23 +96,6 @@ export function FeedbackWidget() {
     setMessage("")
     setShowConfetti(false)
   }
-
-  // Confetti pieces
-  const confettiPieces = useMemo(() => Array.from({ length: 30 }, (_, i) => ({
-    left: ((i * 7919) % 1000) / 10,
-    size: 4 + ((i * 6271) % 1000) / 100 * 6,
-    dur: 1.2 + ((i * 4817) % 1000) / 1000 * 1,
-    delay: ((i * 1327) % 1000) / 1000 * 0.4,
-    color: ["#5aac74", "#b8965a", "#60a5fa", "#f472b6", "#facc15", "#a78bfa"][i % 6],
-    isCircle: ((i * 3541) % 1000) > 500,
-  })), [])
-
-  useEffect(() => {
-    if (showConfetti) {
-      const t = setTimeout(() => setShowConfetti(false), 2500)
-      return () => clearTimeout(t)
-    }
-  }, [showConfetti])
 
   return (
     <>

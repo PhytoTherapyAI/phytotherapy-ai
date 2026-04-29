@@ -253,13 +253,14 @@ function calcWaterLimits(w: number | null | undefined): { min: number; max: numb
 }
 
 // ── Full-page confetti ──
+const CONFETTI_COLORS = ["#5aac74", "#b8965a", "#60a5fa", "#f472b6", "#facc15", "#34d399", "#a78bfa", "#fb923c"]
+
 function ConfettiOverlay({ show, onDone }: { show: boolean; onDone: () => void }) {
   useEffect(() => {
     if (show) { const t = setTimeout(onDone, 3000); return () => clearTimeout(t) }
   }, [show, onDone])
-  if (!show) return null
-  const colors = ["#5aac74", "#b8965a", "#60a5fa", "#f472b6", "#facc15", "#34d399", "#a78bfa", "#fb923c"]
   // Use deterministic pseudo-random values based on index to avoid hydration mismatch
+  // (hooks must run before any early return — react-hooks/rules-of-hooks)
   const confettiPieces = useMemo(() => Array.from({ length: 50 }, (_, i) => {
     const seed1 = ((i * 7919) % 1000) / 1000
     const seed2 = ((i * 6271) % 1000) / 1000
@@ -276,6 +277,8 @@ function ConfettiOverlay({ show, onDone }: { show: boolean; onDone: () => void }
       endRotate: 360 + ((i * 5939) % 1000) / 1000 * 360,
     }
   }), [])
+  if (!show) return null
+  const colors = CONFETTI_COLORS
   return (
     <div className="fixed inset-0 z-[100] pointer-events-none overflow-hidden">
       {confettiPieces.map((p, i) => (

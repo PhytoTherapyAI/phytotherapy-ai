@@ -134,6 +134,19 @@ export function ProfileShellV2() {
     )
   }, [effectiveProfile?.full_name, tr])
 
+  // Active tab metadata for the mobile hamburger button — keeps the
+  // tab list as the single source of truth (resolveActiveTab applies
+  // the same gender gate the sidebar uses). Hooks must run before any
+  // early return (react-hooks/rules-of-hooks).
+  const ActiveTabIcon = useMemo(
+    () => resolveActiveTab(activeTab, (effectiveProfile?.gender as string | undefined) ?? null).icon,
+    [activeTab, effectiveProfile?.gender],
+  )
+  const activeTabLabel = useMemo(
+    () => resolveActiveTab(activeTab, (effectiveProfile?.gender as string | undefined) ?? null).label[lang as "tr" | "en"],
+    [activeTab, effectiveProfile?.gender, lang],
+  )
+
   // ── Auth gating ────────────────────────────────────────────────────
   if (authLoading) {
     return (
@@ -291,18 +304,6 @@ export function ProfileShellV2() {
         return null
     }
   }
-
-  // Active tab metadata for the mobile hamburger button — keeps the
-  // tab list as the single source of truth (resolveActiveTab applies
-  // the same gender gate the sidebar uses).
-  const ActiveTabIcon = useMemo(
-    () => resolveActiveTab(activeTab, (effectiveProfile?.gender as string | undefined) ?? null).icon,
-    [activeTab, effectiveProfile?.gender],
-  )
-  const activeTabLabel = useMemo(
-    () => resolveActiveTab(activeTab, (effectiveProfile?.gender as string | undefined) ?? null).label[lang as "tr" | "en"],
-    [activeTab, effectiveProfile?.gender, lang],
-  )
 
   return (
     <div className="mx-auto max-w-6xl px-4 md:px-8 py-6 md:py-10">

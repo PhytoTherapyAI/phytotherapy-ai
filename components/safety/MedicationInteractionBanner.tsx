@@ -145,6 +145,37 @@ export function MedicationInteractionBanner({
     })
   }, [severity, dangerous.length, caution.length, firstEdgeKey])
 
+  // glowRing extracted from chrome computation so the post-mount
+  // scroll+pulse useEffect (below) can run BEFORE the early return
+  // (react-hooks/rules-of-hooks). Same string literals as in the
+  // chrome object — referenced from there too.
+  const glowRing = isDanger ? "ring-4 ring-red-500/40" : "ring-4 ring-amber-500/40"
+
+  // Post-mount: smooth-scroll to the banner (user is usually scrolled
+  // down at the medications card when they hit Save) + short glow pulse
+  // to draw the eye. Retriggers whenever the first edge changes, i.e.
+  // a follow-up insert produced a new interaction alert.
+  // Hooks must run before any early return (react-hooks/rules-of-hooks).
+  const rootRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    if (!severity) return
+    const el = rootRef.current
+    if (!el) return
+    // Give the caller one frame to commit any sibling re-renders
+    // (medications list update, etc.) before we start scrolling.
+    const scrollT = window.setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "center" })
+      el.classList.add(...glowRing.split(" "), "animate-pulse")
+    }, 50)
+    const removeT = window.setTimeout(() => {
+      el.classList.remove(...glowRing.split(" "), "animate-pulse")
+    }, 3050)
+    return () => {
+      window.clearTimeout(scrollT)
+      window.clearTimeout(removeT)
+    }
+  }, [firstEdgeKey, glowRing, severity])
+
   if (!severity) return null
 
   const chrome = isDanger
@@ -154,7 +185,7 @@ export function MedicationInteractionBanner({
         pill: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
         Icon: AlertTriangle,
         label: tr ? "⚠️ ÖNEMLİ UYARI — Ciddi Etkileşim" : "⚠️ IMPORTANT WARNING — Serious Interaction",
-        glowRing: "ring-4 ring-red-500/40",
+        glowRing,
       }
     : {
         wrap: "border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/30",
@@ -162,32 +193,9 @@ export function MedicationInteractionBanner({
         pill: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300",
         Icon: Info,
         label: tr ? "Dikkat — İzlem Gerektiren Etkileşim" : "Caution — Monitor This Interaction",
-        glowRing: "ring-4 ring-amber-500/40",
+        glowRing,
       }
   const { Icon } = chrome
-
-  // Post-mount: smooth-scroll to the banner (user is usually scrolled
-  // down at the medications card when they hit Save) + short glow pulse
-  // to draw the eye. Retriggers whenever the first edge changes, i.e.
-  // a follow-up insert produced a new interaction alert.
-  const rootRef = useRef<HTMLElement>(null)
-  useEffect(() => {
-    const el = rootRef.current
-    if (!el) return
-    // Give the caller one frame to commit any sibling re-renders
-    // (medications list update, etc.) before we start scrolling.
-    const scrollT = window.setTimeout(() => {
-      el.scrollIntoView({ behavior: "smooth", block: "center" })
-      el.classList.add(...chrome.glowRing.split(" "), "animate-pulse")
-    }, 50)
-    const removeT = window.setTimeout(() => {
-      el.classList.remove(...chrome.glowRing.split(" "), "animate-pulse")
-    }, 3050)
-    return () => {
-      window.clearTimeout(scrollT)
-      window.clearTimeout(removeT)
-    }
-  }, [firstEdgeKey, chrome.glowRing])
 
   return (
     <section
