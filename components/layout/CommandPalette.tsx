@@ -365,36 +365,9 @@ export function CommandPalette() {
     }
   }, [open])
 
-  // Keyboard navigation — Session 41 F-S-001 + F-S-003:
-  // Tab / Shift+Tab mirror ArrowDown / ArrowUp (Spotlight / Raycast / VSCode
-  // muscle memory). Selection auto-scrolls into view via the effect below.
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    const forward = e.key === "ArrowDown" || (e.key === "Tab" && !e.shiftKey)
-    const backward = e.key === "ArrowUp" || (e.key === "Tab" && e.shiftKey)
-    if (forward) {
-      e.preventDefault()
-      setSelectedIndex(i => Math.min(i + 1, flatItems.length - 1))
-    } else if (backward) {
-      e.preventDefault()
-      setSelectedIndex(i => Math.max(i - 1, 0))
-    } else if (e.key === "Enter" && flatItems[selectedIndex]) {
-      e.preventDefault()
-      selectItem(flatItems[selectedIndex])
-    }
-  }, [flatItems, selectedIndex])
-
-  // Session 41 F-S-001: scroll the selected item into view on Arrow/Tab nav
-  // so keyboard users can see where the focus ring is sitting even when the
-  // 60vh results pane overflows.
-  useEffect(() => {
-    if (!open) return
-    const selected = document.querySelector<HTMLElement>(
-      "[data-palette-item][data-palette-selected='true']",
-    )
-    selected?.scrollIntoView({ block: "nearest" })
-  }, [selectedIndex, open])
-
   // Session 39/40: dispatch either action OR navigation based on entry shape.
+  // Declared before handleKeyDown so the Enter handler can refer to it
+  // without a TDZ access (react-hooks/immutability).
   const selectItem = useCallback((item: SearchItem) => {
     setOpen(false)
     if (item.action === "signout") {
@@ -411,6 +384,35 @@ export function CommandPalette() {
     }
     if (item.href) router.push(item.href)
   }, [router, signOut, setLang, lang, toggleTheme])
+
+  // Keyboard navigation — Session 41 F-S-001 + F-S-003:
+  // Tab / Shift+Tab mirror ArrowDown / ArrowUp (Spotlight / Raycast / VSCode
+  // muscle memory). Selection auto-scrolls into view via the effect below.
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    const forward = e.key === "ArrowDown" || (e.key === "Tab" && !e.shiftKey)
+    const backward = e.key === "ArrowUp" || (e.key === "Tab" && e.shiftKey)
+    if (forward) {
+      e.preventDefault()
+      setSelectedIndex(i => Math.min(i + 1, flatItems.length - 1))
+    } else if (backward) {
+      e.preventDefault()
+      setSelectedIndex(i => Math.max(i - 1, 0))
+    } else if (e.key === "Enter" && flatItems[selectedIndex]) {
+      e.preventDefault()
+      selectItem(flatItems[selectedIndex])
+    }
+  }, [flatItems, selectedIndex, selectItem])
+
+  // Session 41 F-S-001: scroll the selected item into view on Arrow/Tab nav
+  // so keyboard users can see where the focus ring is sitting even when the
+  // 60vh results pane overflows.
+  useEffect(() => {
+    if (!open) return
+    const selected = document.querySelector<HTMLElement>(
+      "[data-palette-item][data-palette-selected='true']",
+    )
+    selected?.scrollIntoView({ block: "nearest" })
+  }, [selectedIndex, open])
 
   // Backward-compat: legacy quick-access buttons still call navigate(href).
   const navigate = useCallback((href: string) => {

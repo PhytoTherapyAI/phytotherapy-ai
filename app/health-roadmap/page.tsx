@@ -2,7 +2,7 @@
 // Health Roadmap — Gamified Quest Journey with Shield Gauge
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
@@ -69,9 +69,7 @@ export default function HealthRoadmapPage() {
   const [loading, setLoading] = useState(true)
   const [patientData, setPatientData] = useState<PatientData | null>(null)
 
-  useEffect(() => { loadData() }, [user])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!user) { setLoading(false); return }
     try {
       const supabase = createBrowserClient()
@@ -89,7 +87,9 @@ export default function HealthRoadmapPage() {
       })
     } catch { /* silent */ }
     setLoading(false)
-  }
+  }, [user])
+
+  useEffect(() => { loadData() }, [loadData])
 
   const risk = useMemo(() => patientData ? calculateRiskScore(patientData) : null, [patientData])
   const shieldScore = risk ? Math.max(0, 100 - risk.score) : 85

@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
@@ -44,11 +44,7 @@ export default function PolypharmacyPage() {
   const [loading, setLoading] = useState(true)
   const [expandedSection, setExpandedSection] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadMeds()
-  }, [user])
-
-  const loadMeds = async () => {
+  const loadMeds = useCallback(async () => {
     if (!user) { setLoading(false); return }
     try {
       const supabase = createBrowserClient()
@@ -56,7 +52,11 @@ export default function PolypharmacyPage() {
       if (data) setMeds((data || []).map((d: { generic_name: string | null; brand_name: string | null }) => (d.generic_name || d.brand_name) || ""))
     } catch (e) { console.error(e) }
     setLoading(false)
-  }
+  }, [user])
+
+  useEffect(() => {
+    loadMeds()
+  }, [loadMeds])
 
   const checkDrug = (med: string, list: string[]) => list.some(d => med.toLowerCase().includes(d))
 

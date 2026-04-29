@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx, txObj } from "@/lib/translations"
@@ -52,11 +52,7 @@ export default function BiomarkerTrendsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [timeRange, setTimeRange] = useState<"6m" | "1y" | "3y" | "all">("1y")
 
-  useEffect(() => {
-    loadBiomarkers()
-  }, [user])
-
-  const loadBiomarkers = async () => {
+  const loadBiomarkers = useCallback(async () => {
     if (!user) { setLoading(false); return }
     try {
       const supabase = createBrowserClient()
@@ -91,7 +87,11 @@ export default function BiomarkerTrendsPage() {
       }
     } catch (e) { console.error(e) }
     setLoading(false)
-  }
+  }, [user])
+
+  useEffect(() => {
+    loadBiomarkers()
+  }, [loadBiomarkers])
 
   const getMarkerHistory = (markerName: string) => {
     return entries

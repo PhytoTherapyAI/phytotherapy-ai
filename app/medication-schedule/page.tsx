@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
@@ -55,11 +55,7 @@ export default function MedicationSchedulePage() {
   const [loading, setLoading] = useState(true)
   const [generated, setGenerated] = useState(false)
 
-  useEffect(() => {
-    loadMeds()
-  }, [user])
-
-  const loadMeds = async () => {
+  const loadMeds = useCallback(async () => {
     if (!user) { setLoading(false); return }
     try {
       const supabase = createBrowserClient()
@@ -67,7 +63,11 @@ export default function MedicationSchedulePage() {
       if (data) setUserMeds(data.map((d: { generic_name: string | null; brand_name: string | null }) => (d.generic_name || d.brand_name || "")))
     } catch (e) { console.error(e) }
     setLoading(false)
-  }
+  }, [user])
+
+  useEffect(() => {
+    loadMeds()
+  }, [loadMeds])
 
   const matchRule = (medName: string) => {
     const lower = medName.toLowerCase()

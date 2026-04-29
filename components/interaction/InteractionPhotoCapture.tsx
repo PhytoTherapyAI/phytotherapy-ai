@@ -78,6 +78,17 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
 
+  // stopCamera moved above the cleanup useEffect (was below) so the
+  // React Compiler immutability rule has a clear declaration order
+  // (functions are hoisted at runtime, but static analysis treats the
+  // forward reference as TDZ).
+  function stopCamera() {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop())
+      streamRef.current = null
+    }
+  }
+
   // Cleanup camera stream + reset state on close. The effect re-
   // runs on `open` flip so the next time the modal opens the user
   // lands back on the choose screen instead of stale result data.
@@ -91,7 +102,7 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
       setIsScanning(false)
     }
     return () => stopCamera()
-     
+
   }, [open])
 
   // Hooking the camera stream to the <video> element has to wait
@@ -102,13 +113,6 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
       videoRef.current.srcObject = streamRef.current
     }
   }, [mode])
-
-  function stopCamera() {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((t) => t.stop())
-      streamRef.current = null
-    }
-  }
 
   const startCamera = async () => {
     try {
