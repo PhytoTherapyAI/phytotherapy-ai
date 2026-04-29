@@ -95,17 +95,30 @@ interface Props {
   userAge?: number;
   userGender?: string;
   lang?: "en" | "tr";
+  /**
+   * Stable identifier for this report. Stamped by the caller (event
+   * handler) so the component itself stays pure — Date.now() inside
+   * the render body would be flagged by react-hooks/purity, and this
+   * component is invoked via a plain function call (not JSX) so hooks
+   * are not available as an escape hatch.
+   * Optional with a deterministic fallback for backward compatibility.
+   */
+  reportId?: string;
 }
 
 export function SymptomAssessmentPDF({
   history, conditions, urgency, phytoSuggestions, medicationAlerts,
   finalSummary, assessmentFor, subjectInfo, userName, userAge, userGender, lang = "en",
+  reportId,
 }: Props) {
   const isTr = lang === "tr";
   const date = new Date().toLocaleDateString(isTr ? "tr-TR" : "en-US", {
     year: "numeric", month: "long", day: "numeric",
   });
-  const reportId = `DA-${Date.now().toString(36).toUpperCase()}`;
+  // Deterministic fallback if caller didn't stamp one — uses the
+  // input shape so it's stable across renders without Date.now().
+  const stableReportId = reportId
+    ?? `DA-${(history.length * 1000 + urgency.length * 100 + conditions.length).toString(36).toUpperCase()}`;
   const urgencyColor = URGENCY_COLORS[urgency] || URGENCY_COLORS.self_care;
   const urgencyLabel = isTr ? (URGENCY_LABELS_TR[urgency] || urgency) : (URGENCY_LABELS_EN[urgency] || urgency);
 
@@ -118,7 +131,7 @@ export function SymptomAssessmentPDF({
           <Text style={styles.subtitle}>
             {tx("symptomPdf.subtitle", lang)}
           </Text>
-          <Text style={styles.badge}>{date} | {reportId}</Text>
+          <Text style={styles.badge}>{date} | {stableReportId}</Text>
         </View>
 
         {/* Patient Info */}

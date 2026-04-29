@@ -291,6 +291,9 @@ export default function SymptomCheckerPage() {
           userAge: profile?.age || undefined,
           userGender: profile?.gender || undefined,
           lang,
+          // Stamp reportId here (event handler — Date.now() safe);
+          // PDF component itself is pure (react-hooks/purity).
+          reportId: `DA-${Date.now().toString(36).toUpperCase()}`,
         })
       ).toBlob()
       const url = URL.createObjectURL(blob)
