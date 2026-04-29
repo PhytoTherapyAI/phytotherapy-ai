@@ -65,14 +65,46 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
       // F-FAMILY-DATA-INTEGRITY-001: orphan state — API group fetch
       // null döndü (family_groups satırı eksik) AMA accepted members
       // var. Eski kod members'ı yutuyordu (`setFamilyMembers([])`),
-      // şimdi members + pendingInvites korunuyor. UI hâlâ "Hane
-      // Oluştur" gösterebilir (familyGroup null) ama context'te
-      // gerçek üye datası bekliyor — gelecek UI fix (orphan banner +
-      // auto-recover) için temel.
+      // şimdi members + pendingInvites korunuyor.
+      //
+      // F-FAMILY-AUTO-RECOVER-001 (Sprint 4 Commit 2): orphan'ı heal
+      // etmek için /api/family/recover çağrılır. Endpoint idempotent
+      // family_groups INSERT yapar; başarılıysa fetchFamilyData()
+      // refetch — bir sonraki tour normal path'e gider ve
+      // amber banner (Sprint 4 Commit 1, 932b641) kaybolur.
+      //
+      // Sonsuz döngü güvenliği: recover sonrası `result.recovered:
+      // true` ise refetch yaparız → bu sırada family_groups satırı
+      // artık var → response.group dolu döner → orphan koşulu bir
+      // daha tetiklenmez. `result.recovered: false` (zaten var,
+      // race kondisyonu) durumda da refetch tetiklemiyoruz —
+      // group var demek, refetch normal path'e gider zaten;
+      // ekstra round-trip lüzumu yok.
+      //
+      // Silent fail (.catch + result null): recover endpoint
+      // 401/404/500 dönerse banner intact, kullanıcı destek ekibine
+      // yönlendirme metni okur (UI tarafından zaten yönlendiriliyor).
       if (!json.group && (json.members?.length ?? 0) > 0) {
         setFamilyGroup(null)
         setFamilyMembers((json.members || []) as FamilyMember[])
         setPendingInvites((json.pendingInvites || []) as FamilyMember[])
+
+        const recoverToken = session.access_token
+        if (recoverToken) {
+          fetch('/api/family/recover', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${recoverToken}` },
+          })
+            .then((r) => r.ok ? r.json() : null)
+            .then((result) => {
+              if (result?.recovered) {
+                void fetchFamilyData()
+              }
+            })
+            .catch(() => {
+              /* silent fail — banner intact, user destek metni görür */
+            })
+        }
         return
       }
 
