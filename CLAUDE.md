@@ -810,6 +810,109 @@ if (!json.group && (json.members?.length ?? 0) > 0) {
 
 Pattern referansı: `app/api/family/recover/route.ts` (Commit `59176b3`, Sprint 4 Commit 2) + `lib/family-context.tsx` orphan branch auto-trigger.
 
+### useMemo Body de Pure Beklenir — Date.now/Math.random → useState Lazy Init (Sprint 5 Faz 5d öğretisi)
+
+React Compiler `useMemo(() => Math.random(), [])` pattern'ini **saf değil** olarak flag'liyor — useMemo callback'i de "expected pure" kapsamında. Aynı şey `Date.now()` için de geçerli. Compiler memoization'ı statik analiz ile preserve etmeye çalıştığı için callback body'sinde non-deterministic çağrı görünce uyarı veriyor.
+
+Tehlikeli pattern:
+
+```tsx
+// ❌ react-hooks/purity flag — useMemo body de pure beklenir
+const particles = useMemo(() =>
+  Array.from({ length: 12 }, () => ({ r: Math.random() }))
+, [])
+
+const reportTimestamp = useMemo(() => Date.now(), [])
+```
+
+Doğru pattern:
+
+```tsx
+// ✅ useState lazy init — compiler initialization sayıyor, render değil
+const [particles] = useState(() =>
+  Array.from({ length: 12 }, () => ({ r: Math.random() }))
+)
+
+const [reportTimestamp] = useState(() => Date.now())
+```
+
+**Kural:** `Date.now()` veya `Math.random()` ile mount-once stable değer üretirken **`useState(() => ...)` lazy init kullan.** `useMemo` veya `useCallback` değil — compiler purity rule'u her ikisinde de flag eder.
+
+Rule of thumb: hook seçimi
+- **useState lazy init** — mount-once stable, asla update yok (`Date.now()`, `Math.random()`, `crypto.randomUUID()`)
+- **useMemo** — pure computation, deps değiştikçe recompute
+- **useCallback** — stable callback identity, deps değiştikçe re-create
+- **useRef** — mutable container, render-trigger yok
+
+Pattern referansları:
+
+- `app/calendar/page.tsx` ConfettiBurst (12 particles useState lazy init)
+- `app/health-diary/page.tsx` ConfettiBurst (24 particles)
+- `app/health-report-card/page.tsx` AchievementCard (8 particles)
+- `app/page.tsx` `mountNow` chronologicalAge için
+- `components/share/InteractionShareCard.tsx` + `WeeklyShareCard.tsx` fileName
+
+(Sprint 5 Faz 5d Commit 1, `56859b9`)
+
+### PDF Plain Function Call — Hooks Çalışmaz (Sprint 5 Faz 5d Commit 2 öğretisi)
+
+`@react-pdf/renderer` bileşenleri `pdf(Component({...}))` şeklinde **plain function call** olarak çağrılır — JSX `<Component />` değil. Bu pipeline'da React rendering context **yoktur** → `useState`, `useRef`, `useMemo`, `useCallback` çalışmaz (hooks dispatcher boş, runtime hatası).
+
+Tanıma işareti:
+
+```tsx
+// PDF generation pipeline — JSX değil, function call
+const blob = await pdf(MyPDF({ data, lang })).toBlob()
+//                ^^^^ ← plain function invocation
+```
+
+Tehlikeli pattern:
+
+```tsx
+// ❌ Runtime error — hooks PDF context'inde çalışmaz
+function MyPDF({ data }: Props) {
+  const [id] = useState(() => `DA-${Date.now()}`)  // 💥 invalid hook call
+  return <Document>...</Document>
+}
+```
+
+Doğru pattern — caller-provided prop:
+
+```tsx
+// ✅ Component pure render, identifier caller'dan geliyor
+interface Props {
+  data: AssessmentData
+  reportId?: string  // opsiyonel, fallback deterministic hash
+}
+
+function MyPDF({ data, reportId }: Props) {
+  const stableId = reportId ?? `DA-${data.length * 1000}`  // deterministic fallback
+  return <Document>...</Document>
+}
+
+// Caller tarafında (normal React component):
+const handleDownloadPDF = useCallback(async () => {
+  const { pdf } = await import("@react-pdf/renderer")
+  const { MyPDF } = await import("@/components/pdf/MyPDF")
+  const blob = await pdf(
+    MyPDF({
+      data,
+      reportId: `DA-${Date.now().toString(36).toUpperCase()}`,  // ← caller stamps
+    })
+  ).toBlob()
+  // ... download blob ...
+}, [data])
+```
+
+**Plan mode kontrol listesi (yeni PDF component için):**
+
+- Caller `pdf(Component({...}))` plain function call mı yoksa JSX mi?
+- Plain function call ise → component'te `useState/useRef/useMemo/useCallback` **kullanma**
+- Mount-once identifier gerekiyorsa → opsiyonel prop + caller-provided pattern
+- Fallback değer deterministic olmalı (`Date.now()` fallback'te de purity flag eder)
+
+Pattern referansı: `components/pdf/SymptomAssessmentPDF.tsx` `reportId` prop + `app/symptom-checker/page.tsx` `handleDownloadPDF` caller stamp (Sprint 5 Faz 5d Commit 2, `360fad7`).
+
 ---
 
 ## Sprint Disiplini (her commit'te zorunlu)

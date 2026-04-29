@@ -104,6 +104,55 @@ CLAUDE.md "Production Debug — Auth Context Önce Kontrol Et" h3'ünde dosyalan
 
 ---
 
+## Sprint 5 — ESLint Cleanup (29 Nisan 2026) ✅ KAPANDI
+
+**Süre:** 29 Nisan 2026 (tek gün)
+**Toplam:** 12 commit, 0 revert
+**Sonuç:** 489 → 86 problem (**%82 azalma**)
+**Disiplin:** Her commit öncesi `npx tsc --noEmit && npm run build` (0 error/warning, 241 sayfa)
+
+### Sprint 5 Commit Tablosu
+
+| # | Commit | Açıklama | Delta |
+|---|---|---|---|
+| 1 | `6a5d339` | Faz 1+2 — auto-fix + manuel kolay batch | −121 |
+| 2 | `38f5c15` | Faz 3 — no-explicit-any lib cleanup | −11 |
+| 3 | `f605f3f` | Faz 4 — no-unused-vars uzun kuyruk | −218 |
+| 4 | `f08fe54` | Faz 5a — rules-of-hooks (7 ihlal, Pattern A: hook → early return öncesi) | −7 |
+| 5 | `ec63e17` | Faz 5e Commit 1 — immutability TDZ düşük risk (5 page loadFn + 2 reorder) | −4 |
+| 6 | `2d73e26` | Faz 5e Commit 2 — ClinicalTestRunner reorder + DonutChart reduce | −6 |
+| 7 | `56859b9` | Faz 5d Commit 1 — purity (9 dosya — useState lazy init pattern) | −6 |
+| 8 | `360fad7` | Faz 5d Commit 2 — SymptomAssessmentPDF caller-stamped reportId | −1 |
+| 9 | `d8ec211` | Faz 5f — preserve-manual-memoization (saveConnections + BirthDatePicker) | −9 |
+| 10 | `25db109` | TodayView micro-cleanup (no-unused-vars top kuyruğu) | −4 |
+| 11 | `c461a73` | no-img-element — html2canvas/data URL/external API intentional disable | −16 |
+| D1 | (this) | Sprint 5 kapanış docs + 2 CLAUDE.md öğretisi | — |
+
+### Sprint 5 Kapatılan Kategoriler (11/12)
+
+✓ `prefer-const`, ✓ `unused eslint-disable directives`, ✓ `no-unescaped-entities`, ✓ `no-require-imports`, ✓ `no-explicit-any`, ✓ `no-unused-vars`, ✓ `rules-of-hooks`, ✓ `immutability`, ✓ `purity`, ✓ `preserve-manual-memoization`, ✓ `no-img-element`
+
+### Sprint 5 Kalan Backlog (86 problem)
+
+- **`set-state-in-effect` (62)** — Faz 5b/c, büyük sprint, ayrı session. Her ihlal pattern-specific (lazy state derivation, useEffect → setState, doğru çözüm useMemo / useReducer / event handler).
+- **`exhaustive-deps` (24)** — Faz 6, case-by-case, infinite loop riski. Yanlış eklenen dep tetikler.
+
+### Sprint 5 Kritik Öğretiler (CLAUDE.md +2 h3)
+
+**1. useMemo body de pure beklenir (Faz 5d):**
+React Compiler `Math.random()` / `Date.now()` çağrılarını `useMemo` callback'inde de flag'liyor — useMemo "expected pure" kapsamında. Doğru fix: `useState(() => initialValue)` lazy init (compiler initialization olarak görüyor, render değil).
+
+**2. PDF plain function call — hooks çalışmaz (Faz 5d Commit 2):**
+`@react-pdf/renderer` `pdf(Component({...}))` plain function call pipeline'ında React rendering context yok → `useState/useRef/useMemo` çalışmaz. Fix: caller-provided prop pattern (`handleDownloadPDF` event handler'ında stamp).
+
+### Sprint 6+ Devam Eden Backlog (ESLint için)
+
+- **`set-state-in-effect` 62 ihlal** — büyük sprint. Patterns: lazy state derivation, useEffect → setState chain, useReducer migration, event handler'a taşıma.
+- **`exhaustive-deps` 24 ihlal** — case-by-case. Infinite loop riski yüksek; her bir uyarı için manuel inceleme + gerekiyorsa eslint-disable + gerekçe yorum.
+- **TodayView hook refactor** — `set-state-in-effect` ana hub, ayrı session.
+
+---
+
 ## Sprint 4 — Family Self-Healing + PWA Manifest (29 Nisan 2026) ✅ KAPANDI
 
 **Süre:** 29 Nisan 2026 (tek gün)
