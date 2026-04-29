@@ -136,7 +136,7 @@ export async function POST(req: Request) {
     const { step, history, userProfile, assessmentFor, childAge, otherAge, otherGender, lang, initialCategory, freeText } = body;
 
     // Build context prompt
-    let contextParts: string[] = [];
+    const contextParts: string[] = [];
 
     // Assessment target
     if (assessmentFor === "child" && childAge) {

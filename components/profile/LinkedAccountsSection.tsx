@@ -46,7 +46,7 @@ export function LinkedAccountsSection({ lang, userId }: { lang: "en" | "tr"; use
 
   useEffect(() => {
     fetchLinked();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [userId]);
 
   const fetchLinked = async () => {

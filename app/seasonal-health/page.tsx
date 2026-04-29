@@ -2,14 +2,12 @@
 "use client"
 
 import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import {
-  Shield, Swords, Leaf, Check, Plus,
-  Sun, CloudRain, Snowflake, Flower2,
+  Shield, Swords, Check, Plus,
   MapPin, Wind, AlertTriangle, Sparkles,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"

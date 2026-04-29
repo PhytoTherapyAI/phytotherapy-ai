@@ -230,7 +230,7 @@ export function PrivacyTab({ lang, patientName }: PrivacyTabProps) {
                 {patientName ? (
                   tr
                     ? <><strong>{patientName}</strong> hesabını silmek üzeresin</>
-                    : <>You're about to delete <strong>{patientName}</strong>'s account</>
+                    : <>You&apos;re about to delete <strong>{patientName}</strong>&apos;s account</>
                 ) : (tr ? "Hesabını silmek üzeresin" : "You're about to delete your account")}
               </h2>
               <p className="mt-2 text-center text-sm text-muted-foreground leading-relaxed">

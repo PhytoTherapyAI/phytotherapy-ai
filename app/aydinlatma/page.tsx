@@ -87,10 +87,10 @@ export default function AydinlatmaPage() {
               <li>
                 <strong>b) Health Data (Special Category):</strong>
                 <ul className="list-[lower-roman] pl-5 mt-1 space-y-1">
-                  <li><strong>b1) User's own health data:</strong> Medications, allergies, chronic conditions, symptoms, age, gender, blood type, vaccine records, smoking/alcohol use, surgical history, pregnancy/breastfeeding status, lab values, supplements</li>
+                  <li><strong>b1) User&apos;s own health data:</strong> Medications, allergies, chronic conditions, symptoms, age, gender, blood type, vaccine records, smoking/alcohol use, surgical history, pregnancy/breastfeeding status, lab values, supplements</li>
                   <li>
                     <strong>b2) Family Health History</strong> <em>(v2.2 — new explicit category)</em>: Health history of your first- and second-degree relatives (mother, father, sibling, grandparent, aunt, uncle, cousin) — condition name, age at diagnosis, age at death (if applicable), free-text notes. <br />
-                    <em>Purpose:</em> Hereditary risk assessment (breast/colon/prostate cancer, early cardiovascular events, diabetes, Alzheimer's, etc.), early screening recommendations, personalized AI context. <br />
+                    <em>Purpose:</em> Hereditary risk assessment (breast/colon/prostate cancer, early cardiovascular events, diabetes, Alzheimer&apos;s, etc.), early screening recommendations, personalized AI context. <br />
                     <em>Legal basis:</em> KVKK Art.6 EXPLICIT CONSENT (within the scope of AI Processing consent). Since this constitutes third-party health data, only what you disclose is stored, at the metadata level; detailed medications/profiles are not kept for third parties.
                   </li>
                 </ul>
@@ -282,7 +282,7 @@ export default function AydinlatmaPage() {
                 <li><strong>Süre:</strong> Başvurunuz 30 gün içinde ÜCRETSİZ sonuçlandırılır</li>
                 <li><strong>VERBİS:</strong> Şirket tescili sonrası Veri Sorumluları Sicili kaydı yapılacaktır</li>
               </ul>
-              <p className="mt-2"><strong>KVKK Kurulu'na Şikayet:</strong> Başvurunuza verdiğimiz yanıt yeterli değilse veya 30 gün içinde yanıt verilmezse KVKK Kurulu'na şikayette bulunabilirsiniz:</p>
+              <p className="mt-2"><strong>KVKK Kurulu&apos;na Şikayet:</strong> Başvurunuza verdiğimiz yanıt yeterli değilse veya 30 gün içinde yanıt verilmezse KVKK Kurulu&apos;na şikayette bulunabilirsiniz:</p>
               <ul className="list-disc pl-5 space-y-1">
                 <li>Web: kvkk.gov.tr</li>
                 <li>Telefon: ALO 198</li>
@@ -324,7 +324,7 @@ export default function AydinlatmaPage() {
               <li>Supabase Row-Level Security (RLS) ile veri izolasyonu</li>
               <li>TLS/HTTPS şifrelemeli iletişim</li>
               <li>Encryption at rest (Supabase altyapısı)</li>
-              <li>AI API'ye gönderilmeden önce otomatik kimlik anonimleştirme</li>
+              <li>AI API&apos;ye gönderilmeden önce otomatik kimlik anonimleştirme</li>
               <li>Prompt injection koruması</li>
               <li>Rate limiting</li>
               <li>Audit log (KVKK Md.12)</li>

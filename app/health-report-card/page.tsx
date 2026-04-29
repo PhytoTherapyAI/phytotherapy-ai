@@ -108,7 +108,7 @@ export default function HealthReportCardPage() {
           <p className="text-xs text-white/80">Health Score</p>
           <h2 className="text-xl font-bold mt-2">You Had an Amazing Year!</h2>
           <p className="text-xs text-white/70 mt-1 max-w-sm mx-auto">
-            You reversed your metabolic age by 3 years. Here's what you achieved:
+            You reversed your metabolic age by 3 years. Here&apos;s what you achieved:
           </p>
 
           <Button size="sm" className="mt-4 rounded-xl bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm">
@@ -172,7 +172,7 @@ export default function HealthReportCardPage() {
             <Flame className="h-10 w-10 text-amber-500 shrink-0" />
             <div>
               <p className="text-lg font-bold text-amber-700 dark:text-amber-400">127 Day Streak</p>
-              <p className="text-xs text-amber-600/70">Keep going! You're building an incredible health habit.</p>
+              <p className="text-xs text-amber-600/70">Keep going! You&apos;re building an incredible health habit.</p>
             </div>
           </CardContent>
         </Card>

@@ -51,7 +51,7 @@ export function logApiAccess(params: ApiAccessLogEntry): void {
     ...params,
     timestamp: params.timestamp || new Date().toISOString(),
   };
-  // eslint-disable-next-line no-console
+   
   console.log("[KVKK-ACCESS]", JSON.stringify(entry));
 }
 

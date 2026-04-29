@@ -4,12 +4,10 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  Swords, Sparkles, Loader2, Shield, Star,
-  ChevronRight, TrendingUp, Check, Zap,
+  Swords, Sparkles, Loader2,
+  ChevronRight,
 } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
 
 interface Supplement { id: string; name: string; emoji: string; color: string; category: string }
@@ -68,7 +66,7 @@ function VSOrb({ analyzing }: { analyzing: boolean }) {
 }
 
 export default function SupplementComparePage() {
-  const { lang } = useLang()
+  useLang() // i18n re-render trigger; lang strings inline (TR/EN aware components değil)
   const [leftId, setLeftId] = useState<string | null>(null)
   const [rightId, setRightId] = useState<string | null>(null)
   const [analyzing, setAnalyzing] = useState(false)

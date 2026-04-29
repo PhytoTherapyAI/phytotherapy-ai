@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     if (bedtime && wake_time) {
       const [bH, bM] = bedtime.split(":").map(Number)
       const [wH, wM] = wake_time.split(":").map(Number)
-      let bedMinutes = bH * 60 + bM
+      const bedMinutes = bH * 60 + bM
       let wakeMinutes = wH * 60 + wM
       // If wake is "before" bed, it means next day
       if (wakeMinutes <= bedMinutes) {

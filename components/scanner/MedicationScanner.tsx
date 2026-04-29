@@ -186,7 +186,7 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
         // Dev-only diagnostic so the developer can see `stage` + `detail`
         // without opening Sentry. Prod stays quiet per KVKK — no PII
         // surfaces even though this path never touches base64 anyway.
-        // eslint-disable-next-line no-console
+         
         console.error("[scanner] analysis failed", {
           status: res.status,
           ...payload,
@@ -225,7 +225,7 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
       const errorKey = isAbort ? "scan.error.timeout" : "scan.connectionError"
 
       if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
+         
         console.error("[scanner] fetch threw", { isAbort, err })
       }
 

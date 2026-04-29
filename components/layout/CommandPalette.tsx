@@ -7,9 +7,8 @@ import { useLang } from "@/components/layout/language-toggle"
 import { useAuth } from "@/lib/auth-context"
 import { useTheme } from "@/components/layout/theme-provider"
 import { useEffectivePremium } from "@/lib/use-effective-premium"
-import { TOOL_CATEGORIES, searchModules } from "@/lib/tools-hierarchy"
+import { TOOL_CATEGORIES } from "@/lib/tools-hierarchy"
 import {
-  PALETTE_REGISTRY,
   PALETTE_CATEGORY_LABELS,
   visibleEntries,
   matchPaletteEntry,
@@ -18,8 +17,8 @@ import {
 } from "@/lib/command-palette-registry"
 import { Badge } from "@/components/ui/badge"
 import {
-  Search, X, ArrowRight, Stethoscope, FileText, Leaf, Clock,
-  User, Pill, Brain, Sparkles, Star, Hash, CornerDownLeft,
+  Search, X, ArrowRight, Stethoscope, FileText, Leaf,
+  User, Brain, Sparkles, Star, CornerDownLeft,
   Command, LayoutDashboard, Shield, Zap, Settings as SettingsIcon,
   type LucideIcon,
 } from "lucide-react"
@@ -245,6 +244,7 @@ export function CommandPalette() {
   const [debouncedQuery, setDebouncedQuery] = useState("")
   const [semanticResults, setSemanticResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: searchMethod state set ediliyor (vector/local) ama UI badge consumer'ı henüz yok; gelecekte "AI Powered" rozet için reuse
   const [searchMethod, setSearchMethod] = useState<"local" | "ai">("local")
 
   useEffect(() => {
@@ -494,7 +494,7 @@ export function CommandPalette() {
                         </div>
 
                         {/* Items */}
-                        {group.items.map((item, idx) => {
+                        {group.items.map((item) => {
                           const globalIdx = flatItems.indexOf(item)
                           const isSelected = globalIdx === selectedIndex
                           return (

@@ -1,8 +1,8 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useState, useMemo, useCallback, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useMemo, useEffect } from "react";
+import { motion } from "framer-motion";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import Link from "next/link";
 import {
@@ -21,8 +21,6 @@ import {
   BookmarkPlus,
   CheckCircle2,
   X,
-  ChevronDown,
-  ChevronUp,
   Zap,
   Camera,
 } from "lucide-react";
@@ -61,7 +59,7 @@ const PHARMA_FACTS = [
 ];
 
 export default function InteractionCheckerPage() {
-  const { isAuthenticated, isLoading: authLoading, session, profile, user } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, session } = useAuth();
   const { lang: rawLang } = useLang();
   const lang: "en" | "tr" = rawLang === "tr" ? "tr" : "en";
   const isTr = lang === "tr";
@@ -79,7 +77,6 @@ export default function InteractionCheckerPage() {
   const [profileMedsLoaded, setProfileMedsLoaded] = useState(false);
   const [savedMeds, setSavedMeds] = useState<string[]>([]);
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [expandedResult, setExpandedResult] = useState<number | null>(null);
   const [loadMedError, setLoadMedError] = useState<string | null>(null);
 
   // Load saved medications from localStorage
@@ -666,7 +663,7 @@ export default function InteractionCheckerPage() {
                 { num: 1, icon: Pill, key: "ic.step1" },
                 { num: 2, icon: Heart, key: "ic.step2" },
                 { num: 3, icon: Leaf, key: "ic.step3" },
-              ].map(({ num, icon: Icon, key }) => (
+              ].map(({ num, key }) => (
                 <div key={num} className="flex items-start gap-2.5">
                   <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[9px] font-bold text-primary mt-0.5">
                     {num}

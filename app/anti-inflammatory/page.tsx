@@ -140,7 +140,7 @@ export default function AntiInflammatoryPage() {
         <motion.button whileTap={{ scale: 0.95 }}
           className="w-full rounded-2xl bg-white dark:bg-card border p-5 flex items-center gap-4 hover:shadow-md transition-shadow">
           <div className="h-12 w-12 rounded-2xl bg-primary/5 flex items-center justify-center"><Camera className="h-6 w-6 text-primary" /></div>
-          <div className="text-left"><p className="text-sm font-bold">Snap Your Plate</p><p className="text-[10px] text-muted-foreground">AI analysis of your meal's inflammation score</p></div>
+          <div className="text-left"><p className="text-sm font-bold">Snap Your Plate</p><p className="text-[10px] text-muted-foreground">AI analysis of your meal&apos;s inflammation score</p></div>
         </motion.button>
       </div>
     </div>

@@ -179,13 +179,13 @@ export function MicroCheckIn({ userId, lang, onComplete }: MicroCheckInProps) {
   useEffect(() => {
     if (!open) return
     if (process.env.NODE_ENV !== "production") {
-      // eslint-disable-next-line no-console
+       
       console.log("[MicroCheckIn] open -> push")
     }
     pushOverlay()
     return () => {
       if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
+         
         console.log("[MicroCheckIn] cleanup -> pop")
       }
       popOverlay()

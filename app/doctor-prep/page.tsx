@@ -4,13 +4,11 @@
 import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  Stethoscope, FileText, Loader2, ArrowRight, ArrowLeft,
-  Copy, Printer, Check, ClipboardList, Pill, AlertTriangle,
-  Calendar, MessageSquare, Upload,
+  Stethoscope, FileText, Loader2, ArrowLeft,
+  Copy, Printer, Check, ClipboardList,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
-import { InfoTooltip } from "@/components/ui/InfoTooltip"
 import { tx } from "@/lib/translations"
 
 const T: Record<string, { en: string; tr: string }> = {

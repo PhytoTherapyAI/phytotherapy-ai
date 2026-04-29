@@ -68,9 +68,9 @@ export function FamilyProfileGuard({ pageTitleTr, pageTitleEn }: Props) {
                 </>
               ) : (
                 <>
-                  You're currently viewing <strong>{memberName}</strong>'s profile.
+                  You&apos;re currently viewing <strong>{memberName}</strong>&apos;s profile.
                   <strong> {pageTitle}</strong> contains personal data and is only
-                  accessible to the profile owner. Under KVKK, another user's personal
+                  accessible to the profile owner. Under KVKK, another user&apos;s personal
                   history, stats and activity cannot be shared with you.
                 </>
               )}

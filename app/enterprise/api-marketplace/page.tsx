@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Code, Zap, Shield, Server, Key, Copy, Check, ExternalLink, Lock, Database, Activity, Pill } from "lucide-react";
+import { Code, Key, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

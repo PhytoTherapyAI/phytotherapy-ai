@@ -823,7 +823,7 @@ function buildPubMedSearchQuery(message: string): string {
     "istiyorum", "yapıyorum", "alıyorum", "kullanıyorum", "var", "yok",
   ]);
 
-  let lowerMsg = message.toLowerCase();
+  const lowerMsg = message.toLowerCase();
 
   // Translate Turkish health terms to English for PubMed
   const translatedTerms: string[] = [];

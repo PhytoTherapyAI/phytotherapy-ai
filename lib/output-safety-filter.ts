@@ -333,7 +333,7 @@ export function filterAIOutput(
 
   // Audit log
   if (modifications.length > 0) {
-    // eslint-disable-next-line no-console
+     
     console.log("[KVKK-OUTPUT-FILTER]", JSON.stringify({
       timestamp: new Date().toISOString(),
       modifications,

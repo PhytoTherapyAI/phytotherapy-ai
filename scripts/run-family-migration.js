@@ -1,5 +1,6 @@
 // Run this script once to create family_members tables in Supabase
 // Usage: node scripts/run-family-migration.js
+/* eslint-disable @typescript-eslint/no-require-imports -- Node.js CommonJS script, production dışı */
 
 const { createClient } = require("@supabase/supabase-js")
 

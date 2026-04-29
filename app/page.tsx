@@ -7,9 +7,9 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowRight, Search, Activity, Sparkles, Moon, Pill, Flame, MessageCircle, Send,
-  ShieldCheck, Microscope, Leaf, Brain, UtensilsCrossed, Dumbbell,
-  HeartPulse, Users, BarChart3, Stethoscope, Globe, Clock, Trophy,
+  ArrowRight, Search, Sparkles, Moon, Pill, Flame, Send,
+  ShieldCheck, Microscope,
+  Users, BarChart3, Stethoscope, Clock, Trophy,
   Scissors, ChevronDown, AlertCircle,
 } from "lucide-react";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
@@ -67,15 +67,6 @@ const DailySynergyCard = dynamic(
   () => import("@/components/dashboard/DailySynergyCard").then((m) => ({ default: m.DailySynergyCard })),
   { loading: () => <Skeleton className="h-56 w-full rounded-xl" /> }
 );
-
-// ── Quick Action Chips (defined early to avoid TDZ) ──
-const QUICK_CHIPS = [
-  { emoji: "💊", labelKey: "lp.chipInteraction", href: "/interaction-checker" },
-  { emoji: "🩸", labelKey: "lp.chipBloodTest",   href: "/blood-test" },
-  { emoji: "🌿", labelKey: "lp.chipHerbOfDay",   href: "/health-assistant" },
-  { emoji: "😴", labelKey: "lp.chipSleep",       href: "/sleep-analysis" },
-  { emoji: "💪", labelKey: "lp.chipSports",      href: "/sports-performance" },
-];
 
 // ── Dashboard Constants ──
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -303,8 +294,8 @@ export default function Home() {
   const router = useRouter();
   const { lang } = useLang();
   const { user, isAuthenticated, isLoading, profile: authProfile, premiumStatus, needsAydinlatmaUpdate, refreshProfile } = useAuth();
-  const { familyGroup, familyMembers, activeProfileId, loading: familyLoading } = useFamily();
-  const { activeUserId, isOwnProfile, canEdit } = useActiveProfile();
+  const { familyGroup, familyMembers, loading: familyLoading } = useFamily();
+  const { activeUserId, isOwnProfile } = useActiveProfile();
 
   // When viewing a family member's profile, fetch *their* display data from user_profiles.
   // RLS cross-user SELECT policy (Session 31 FAZ 3) permits this.
@@ -374,6 +365,7 @@ export default function Home() {
   const [addSupOpen, setAddSupOpen]     = useState(false);
   const [supRefreshKey, setSupRefreshKey] = useState(0);
   const [expandedCat, setExpandedCat]  = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- TODO: medications state'i fetchMeds ile dolduruluyor ama henüz consumer yok; gelecekte ilaç sayım veya filtreleme için reuse edilecek
   const [medications, setMedications]  = useState<{ medication_name: string }[]>([]);
   const [hour, setHour]                = useState<number | null>(null);
   const [query, setQuery]              = useState("");
@@ -603,13 +595,6 @@ export default function Home() {
     ? Math.floor((Date.now() - new Date(displayProfile.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
     : displayProfile?.age;
   const greetingKey = hour === null ? "dashboard.morning" : hour < 12 ? "dashboard.morning" : hour < 18 ? "dashboard.afternoon" : "dashboard.evening";
-  const timeEmoji: string = hour === null
-    ? "👋"
-    : hour < 6 ? "🌙"
-    : hour < 12 ? "☀️"
-    : hour < 17 ? "🌤️"
-    : hour < 21 ? "🌅"
-    : "🌙";
 
   // ── Loading ──
   if (isLoading) {

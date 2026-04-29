@@ -53,7 +53,7 @@ function emit() {
   if (typeof window === "undefined") return
   const active = isActive()
   if (DEBUG) {
-    // eslint-disable-next-line no-console
+     
     console.log("[overlay] emit", { active, modalRefCount, toastCount })
   }
   window.dispatchEvent(
@@ -70,7 +70,7 @@ function emit() {
 export function pushOverlay() {
   modalRefCount += 1
   if (DEBUG) {
-    // eslint-disable-next-line no-console
+     
     console.log("[overlay] push", { modalRefCount, toastCount })
   }
   emit()
@@ -83,7 +83,7 @@ export function pushOverlay() {
 export function popOverlay() {
   modalRefCount = Math.max(0, modalRefCount - 1)
   if (DEBUG) {
-    // eslint-disable-next-line no-console
+     
     console.log("[overlay] pop", { modalRefCount, toastCount })
   }
   emit()
@@ -98,7 +98,7 @@ export function popOverlay() {
 export function resetModalOverlay() {
   if (modalRefCount === 0) return
   if (DEBUG) {
-    // eslint-disable-next-line no-console
+     
     console.log("[overlay] reset modal", {
       from: modalRefCount,
       toastCount,
@@ -122,7 +122,7 @@ if (typeof window !== "undefined") {
     const next = root.querySelectorAll("[data-sonner-toast]").length
     if (next === toastCount) return
     if (DEBUG) {
-      // eslint-disable-next-line no-console
+       
       console.log("[overlay] toast recount", { from: toastCount, to: next })
     }
     toastCount = next

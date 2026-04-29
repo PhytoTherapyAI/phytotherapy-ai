@@ -4,9 +4,8 @@
 import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  Upload, Sparkles, Flame, Activity, Heart,
-  Dumbbell, Laptop, PersonStanding, Loader2,
-  ChevronRight, Shield, TrendingUp,
+  Upload, Sparkles, Flame, Activity,
+  PersonStanding, Loader2,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -14,7 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { useLang } from "@/components/layout/language-toggle"
 
 // ═══ MAGIC DROPZONE ═══
-function MagicDropzone({ lang }: { lang: string }) {
+function MagicDropzone() {
   const [scanning, setScanning] = useState(false)
   const [done, setDone] = useState(false)
 
@@ -166,7 +165,7 @@ const ACTIVITIES = [
 ]
 
 export default function BodyAnalysisPage() {
-  const { lang } = useLang()
+  useLang() // i18n context subscription, lang strings inline
   const [weight, setWeight] = useState(72)
   const [height, setHeight] = useState(175)
   const [age, setAge] = useState(30)
@@ -191,7 +190,7 @@ export default function BodyAnalysisPage() {
         </motion.div>
 
         {/* Magic Dropzone */}
-        <MagicDropzone lang={lang} />
+        <MagicDropzone />
 
         {/* Vitality Dials */}
         <div className="grid grid-cols-3 gap-3">

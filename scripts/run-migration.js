@@ -1,5 +1,6 @@
 // Quick migration runner for Supabase
 // Usage: node scripts/run-migration.js supabase/migrations/sprint10_health_scores.sql
+/* eslint-disable @typescript-eslint/no-require-imports -- Node.js CommonJS script, production dışı */
 
 const { createClient } = require("@supabase/supabase-js");
 const fs = require("fs");

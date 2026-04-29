@@ -6,10 +6,7 @@ import { motion } from "framer-motion";
 import {
   Activity,
   AlertTriangle,
-  BarChart3,
   Brain,
-  ChevronDown,
-  ChevronUp,
   FlaskConical,
   Loader2,
   LogIn,
@@ -28,12 +25,9 @@ import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx, type Lang } from "@/lib/translations";
 import {
-  LineChart,
   Line,
   AreaChart,
   Area,
-  BarChart,
-  Bar,
   ComposedChart,
   RadarChart,
   Radar,
@@ -47,7 +41,6 @@ import {
   Tooltip,
   Legend,
   ReferenceLine,
-  ReferenceArea,
 } from "recharts";
 import type { HealthTimeline, PeerBenchmark, Anomaly, Prediction, SupplementPeriod } from "@/lib/analytics-engine";
 import Link from "next/link";
@@ -302,7 +295,7 @@ export default function HealthAnalyticsPage() {
 
         {!loading && !error && (
           <>
-            {activeTab === "impact" && <ImpactResponseTab data={timelineData} isTr={isTr} lang={lang} omega3Enabled={omega3Enabled} setOmega3Enabled={setOmega3Enabled} />}
+            {activeTab === "impact" && <ImpactResponseTab data={timelineData} isTr={isTr} lang={lang} />}
             {activeTab === "anomalies" && <AnomalyTab anomalies={anomalyData} isTr={isTr} lang={lang} timelineData={timelineData} />}
             {activeTab === "benchmarking" && <BenchmarkTab data={benchmarkData} isTr={isTr} lang={lang} />}
             {activeTab === "predictions" && <PredictionTab predictions={predictionData} isTr={isTr} lang={lang} timelineData={timelineData} omega3Enabled={omega3Enabled} setOmega3Enabled={setOmega3Enabled} />}
@@ -391,14 +384,10 @@ function ImpactResponseTab({
   data,
   isTr,
   lang,
-  omega3Enabled,
-  setOmega3Enabled,
 }: {
   data: TimelineResponse | null;
   isTr: boolean;
   lang: Lang;
-  omega3Enabled: boolean;
-  setOmega3Enabled: (v: boolean) => void;
 }) {
   if (!data) return null;
 
@@ -901,7 +890,6 @@ function PredictionTab({
   // Build projection chart data for CRP
   const crpPrediction = predictions.find((p) => p.metric === "CRP");
   const last90 = timelineData?.timeline.slice(-90) || [];
-  const omega3Data = timelineData?.omega3Simulation || [];
 
   const projectionChartData: Array<{
     dateLabel: string;

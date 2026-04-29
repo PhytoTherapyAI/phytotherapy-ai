@@ -762,7 +762,7 @@ export function anonymizePromptData(userData: UserDataForAI): {
 /** Convenience wrapper: anonymize + auto-log (fire-and-forget) */
 export function anonymizeForAI(userData: UserDataForAI): Record<string, unknown> {
   const { anonymized, log } = anonymizePromptData(userData);
-  // eslint-disable-next-line no-console
+   
   console.log("[KVKK-ANON]", JSON.stringify(log));
   return anonymized;
 }
@@ -935,7 +935,7 @@ export function detectPromptInjection(userInput: string): InjectionDetectionResu
   for (const [threatType, config] of Object.entries(INJECTION_PATTERNS)) {
     for (const pattern of config.patterns) {
       if (pattern.test(input)) {
-        // eslint-disable-next-line no-console
+         
         console.warn(`[KVKK-INJECTION] Detected: ${threatType} | Input: ${input.substring(0, 100)}`);
         return {
           isSafe: false,

@@ -120,7 +120,7 @@ export default function FavoriteSupplementsPage() {
 
         {/* Trending Marquee */}
         <div className="rounded-2xl bg-white dark:bg-card border p-4">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Community's Top Favorites Today</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Community&apos;s Top Favorites Today</p>
           <div className="flex gap-2 overflow-x-auto scrollbar-hide">
             {TRENDING.map(t => (
               <span key={t} className="shrink-0 px-3 py-1.5 rounded-full bg-primary/5 text-xs font-medium text-primary border border-primary/10">{t}</span>

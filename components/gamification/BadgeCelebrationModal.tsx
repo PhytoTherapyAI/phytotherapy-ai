@@ -17,7 +17,7 @@ interface CelebrationItem {
 }
 
 // Global celebration queue
-let celebrationQueue: CelebrationItem[] = [];
+const celebrationQueue: CelebrationItem[] = [];
 let notifyListener: (() => void) | null = null;
 
 export function triggerCelebration(badge: Badge, totalPoints: number) {

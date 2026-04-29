@@ -502,7 +502,7 @@ export function ChatInterface({ className, onMessagesChange, loadConversation, i
       initialQueryFiredRef.current = true;
       setInput(initialQuery);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [initialQuery]);
 
   // When input is set from initialQuery, trigger send

@@ -91,7 +91,7 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
       setIsScanning(false)
     }
     return () => stopCamera()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [open])
 
   // Hooking the camera stream to the <video> element has to wait
