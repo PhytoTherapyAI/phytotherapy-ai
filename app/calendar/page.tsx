@@ -677,7 +677,7 @@ export default function CalendarPage() {
       const removed = JSON.parse(localStorage.getItem(key) || "[]") as string[]
       if (!removed.includes(id)) { removed.push(id); localStorage.setItem(key, JSON.stringify(removed)) }
     } catch {}
-  }, [targetId])
+  }, [user?.id])
 
   // Add a custom task to a specific block
   const addCustomTask = useCallback((block: "morning" | "noon" | "night", task: DailyTask) => {
@@ -691,7 +691,7 @@ export default function CalendarPage() {
       custom.push({ ...task, block })
       localStorage.setItem(key, JSON.stringify(custom))
     } catch {}
-  }, [targetId])
+  }, [user?.id])
 
   // Derive each task's `done` flag: meds/sups come from DailyLogsContext,
   // water + custom keep their local state. Done at render time so any
@@ -931,7 +931,7 @@ export default function CalendarPage() {
         setRitualDataLoaded(true)
       }, 100)
     } catch { /* ignore — keep defaults */ }
-  }, [targetId, lang, todayDateStr])
+  }, [targetId, lang, todayDateStr, user?.id])
 
   // Listen for cross-view sync events — re-fetch from daily_logs
   useEffect(() => {
@@ -970,7 +970,7 @@ export default function CalendarPage() {
         setRealStreak(0)
       }
     } catch { /* ignore */ }
-  }, [targetId])
+  }, [targetId, user?.id])
 
   const fetchAllEvents = useCallback(async () => {
     if (!profile?.id) return
@@ -981,7 +981,7 @@ export default function CalendarPage() {
         .eq("user_id", targetId).order("event_date", { ascending: true }).limit(500)
       if (data) setAllEvents(data)
     } catch { /* ignore */ }
-  }, [targetId])
+  }, [targetId, profile?.id])
 
   const fetchVitals = useCallback(async () => {
     if (!profile?.id) return
@@ -992,7 +992,7 @@ export default function CalendarPage() {
         .select("*").eq("user_id", targetId).order("recorded_at", { ascending: false }).limit(20)
       if (data) setVitals(data as VitalRecord[])
     } catch { /* ignore */ } finally { setVitalsLoading(false) }
-  }, [targetId])
+  }, [targetId, profile?.id])
 
   // Faz 2.1: profile?.id added to deps. F5-from-cache races where
   // targetId hydrates before profile.id used to silently skip

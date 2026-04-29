@@ -65,34 +65,9 @@ export function CriticalAlertModal() {
     return () => window.removeEventListener("critical-alert", handleCriticalAlert as EventListener)
   }, [])
 
-  // Countdown timer
-  useEffect(() => {
-    if (!alert || isCancelled || isSent || isSending) return
-
-    if (countdown <= 0) {
-      triggerSOS()
-      return
-    }
-
-    intervalRef.current = setInterval(() => {
-      setCountdown((prev) => prev - 1)
-    }, 1000)
-
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
-    }
-  }, [alert, countdown, isCancelled, isSent, isSending])
-
-  // Vibration + sound on alert
-  useEffect(() => {
-    if (alert && !isCancelled && !isSent) {
-      // Vibrate pattern: 500ms on, 200ms off, 500ms on
-      if (navigator.vibrate) {
-        navigator.vibrate([500, 200, 500, 200, 500])
-      }
-    }
-  }, [alert, isCancelled, isSent])
-
+  // triggerSOS declared BEFORE the countdown useEffect that calls it
+  // (was below the effect — TDZ when added to deps array). Pattern from
+  // Faz 5a rules-of-hooks reorder.
   const triggerSOS = useCallback(async () => {
     if (!user || !alert || isSending) return
     setIsSending(true)
@@ -137,6 +112,35 @@ export function CriticalAlertModal() {
       setIsSending(false)
     }
   }, [user, alert, isSending])
+
+  // Countdown timer (moved AFTER triggerSOS so the dep array can
+  // reference it without TDZ).
+  useEffect(() => {
+    if (!alert || isCancelled || isSent || isSending) return
+
+    if (countdown <= 0) {
+      triggerSOS()
+      return
+    }
+
+    intervalRef.current = setInterval(() => {
+      setCountdown((prev) => prev - 1)
+    }, 1000)
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [alert, countdown, isCancelled, isSent, isSending, triggerSOS])
+
+  // Vibration + sound on alert
+  useEffect(() => {
+    if (alert && !isCancelled && !isSent) {
+      // Vibrate pattern: 500ms on, 200ms off, 500ms on
+      if (navigator.vibrate) {
+        navigator.vibrate([500, 200, 500, 200, 500])
+      }
+    }
+  }, [alert, isCancelled, isSent])
 
   const handleCancel = () => {
     setIsCancelled(true)

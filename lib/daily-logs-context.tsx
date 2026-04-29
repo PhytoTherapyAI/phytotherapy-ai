@@ -287,6 +287,7 @@ export function DailyLogsProvider({ children }: { children: React.ReactNode }) {
   // object would stay reference-equal across state updates).
   const value = useMemo<DailyLogsContextValue>(
     () => ({ isCompleted, setCompleted, loading, refetch }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `completed` body'de yok ama dep olarak gerekli: Set identity değişimi context value'sunu yeniden kuruyor, consumer re-render tetikleniyor
     [isCompleted, setCompleted, loading, refetch, completed],
   );
 

@@ -67,7 +67,10 @@ function formatDate(year: number, month: number, day: number): string {
 }
 
 export function MonthView({ userId, lang }: MonthViewProps) {
-  const now = new Date()
+  // useState lazy init so `now` identity is stable — was `new Date()`
+  // at render making fetchEvents useCallback (L167) re-create every
+  // render (react-hooks/exhaustive-deps).
+  const [now] = useState(() => new Date())
   const tr = lang === "tr"
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth())
@@ -164,7 +167,7 @@ export function MonthView({ userId, lang }: MonthViewProps) {
     } finally {
       setLoading(false)
     }
-  }, [userId, year, month])
+  }, [userId, year, month, now])
 
   useEffect(() => { fetchEvents() }, [fetchEvents])
 

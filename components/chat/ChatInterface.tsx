@@ -494,7 +494,7 @@ export function ChatInterface({ className, loadConversation, initialQuery }: Cha
     } finally {
       setIsStreaming(false);
     }
-  }, [input, isStreaming, isAuthenticated, session, messages, attachedFiles, lang]);
+  }, [input, isStreaming, isAuthenticated, session, messages, attachedFiles, lang, effectiveTargetUserId, familyGroup?.id, familyMembers, profile]);
 
   // Auto-fire from URL ?q= parameter
   useEffect(() => {

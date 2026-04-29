@@ -141,7 +141,7 @@ export default function DoctorPrepPage() {
     } finally {
       setLoading(false)
     }
-  }, [visitType, concern, duration, severity, lastDiagnosis, improved, sideEffects, p, isTr])
+  }, [visitType, concern, duration, severity, lastDiagnosis, improved, sideEffects, p, isTr, lang])
 
   const handleCopyReport = () => {
     if (!report) return

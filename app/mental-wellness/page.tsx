@@ -85,6 +85,7 @@ export default function MentalWellnessPage() {
   // F-HEALTH-CLAIMS-001 6.2: stable responseId for the AIDisclaimer's
   // KVKK objection form. Regenerates on every new analysis so that an
   // objection lodged against analysis #1 isn't confused with #2.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `analysis` deps'te kasıtlı: body'de kullanılmıyor ama her analysis change'te yeni UUID üretmek istiyoruz (KVKK objection isolation)
   const responseId = useMemo(() => crypto.randomUUID(), [analysis]);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [error, setError] = useState<string | null>(null);

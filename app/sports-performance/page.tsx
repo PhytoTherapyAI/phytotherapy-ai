@@ -153,6 +153,7 @@ export default function SportsPerformancePage() {
   // F-HEALTH-CLAIMS-001 6.2: stable responseId tied to the current AI
   // result so the KVKK objection form on AIDisclaimer can group
   // feedback per generated plan.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- `r` (result) deps'te kasıtlı: body'de kullanılmıyor ama her yeni AI result'ta yeni UUID üretmek istiyoruz (KVKK objection isolation)
   const aiResponseId = useMemo(() => crypto.randomUUID(), [r]);
 
   return (

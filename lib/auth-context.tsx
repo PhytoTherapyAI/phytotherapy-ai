@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { createBrowserClient } from "@/lib/supabase";
 import { clearDailyMedCheck } from "@/lib/daily-med-check";
 import type { User, Session } from "@supabase/supabase-js";
@@ -52,7 +52,13 @@ const supabase = createBrowserClient();
 const PROFILE_CACHE_TTL = 30 * 60 * 1000; // 30 minutes — profile rarely changes mid-session
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const defaultPremium: PremiumStatus = { plan: "free", isTrialActive: false, trialEndsAt: null, trialDaysLeft: 0, isPremium: false };
+  // useMemo so the object identity is stable across renders — was
+  // re-constructed inline making downstream useCallbacks (at L181)
+  // re-create every render (react-hooks/exhaustive-deps).
+  const defaultPremium = useMemo<PremiumStatus>(
+    () => ({ plan: "free", isTrialActive: false, trialEndsAt: null, trialDaysLeft: 0, isPremium: false }),
+    [],
+  );
   const [state, setState] = useState<AuthState>({
     user: null,
     session: null,
@@ -178,7 +184,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       needsAydinlatmaUpdate: profile ? (profile.aydinlatma_version !== CURRENT_AYDINLATMA_VERSION) : false,
       premiumStatus: getPremiumStatus(profile),
     });
-  }, [fetchProfile, checkMedicationUpdate]);
+  }, [fetchProfile, checkMedicationUpdate, defaultPremium]);
 
   useEffect(() => {
     let initialDone = false;

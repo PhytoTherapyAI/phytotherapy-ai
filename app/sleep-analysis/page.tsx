@@ -95,6 +95,7 @@ export default function SleepAnalysisPage() {
   // `loggedToday` state so the dep array doesn't hit the TDZ.
   const aiResponseId = useMemo(
     () => crypto.randomUUID(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- 3 dep kasıtlı trigger: body'de kullanılmıyor ama her surface flip'te yeni UUID üretmek istiyoruz (KVKK objection isolation)
     [analysis, microInsight, loggedToday],
   );
 

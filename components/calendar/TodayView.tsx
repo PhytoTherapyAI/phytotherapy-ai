@@ -576,7 +576,7 @@ export function TodayView({ userId, lang, userName, userWeight, userSupplements 
       setLoading(false)
       setWaterLoading(false)
     }
-  }, [userId, today])
+  }, [userId, today, userWeight])
 
   useEffect(() => { fetchData() }, [fetchData])
 
@@ -839,7 +839,7 @@ export function TodayView({ userId, lang, userName, userWeight, userSupplements 
       "How many glasses today? Let's go! 🏁",
       "Your body is thirsty! It deserves a glass! 🥛",
     ])
-  }, [glasses, waterTarget, waterLimits.max, tr, n])
+  }, [glasses, waterTarget, waterLimits.max, tr, n, lang])
 
   // Only recalculate message when glasses changes
   useEffect(() => {
