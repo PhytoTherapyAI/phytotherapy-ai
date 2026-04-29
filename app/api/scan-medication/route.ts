@@ -84,6 +84,14 @@ function captureScannerFailure(
     extras ?? {},
   )
 
+  // Client-error codes (auth_required, rate_limited) are expected user
+  // behavior — expired sessions, anonymous calls, quota hits. Log them
+  // server-side (above) but skip Sentry to avoid alert noise. Diagnostic
+  // stages (claude-call, response-parse, image-validate body parse) still
+  // capture so we can spot real frontend or upstream bugs.
+  const isClientError = code === "auth_required" || code === "rate_limited"
+  if (isClientError) return
+
   void import("@sentry/nextjs")
     .then((Sentry) => {
       Sentry.addBreadcrumb({
