@@ -39,10 +39,13 @@ export default function ConnectedDevicesPage() {
     } catch { /* corrupted localStorage */ }
   }, [user])
 
-  const saveConnections = (updated: Record<string, DeviceConnection>) => {
+  // useCallback so handleSync's memoization can be preserved by the
+  // React Compiler (preserve-manual-memoization) — saveConnections
+  // is referenced from handleSync without being in its deps array.
+  const saveConnections = useCallback((updated: Record<string, DeviceConnection>) => {
     setConnections(updated)
     localStorage.setItem(`health_connections_${user?.id || "guest"}`, JSON.stringify(updated))
-  }
+  }, [user])
 
   const handleConnect = async (provider: ProviderConfig) => {
     setConnecting(true)
@@ -79,7 +82,7 @@ export default function ConnectedDevicesPage() {
     }
     saveConnections(updated)
     setSyncing(null)
-  }, [connections, user])
+  }, [connections, saveConnections])
 
   const connectedCount = Object.keys(connections).length
   const totalRecords = Object.values(connections).reduce((sum, c) => sum + c.records, 0)

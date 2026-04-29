@@ -88,7 +88,11 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
 
   // Calendar nav state
   const parsed = parseISO(value);
-  const today = new Date();
+  // useState lazy init so `today` is mount-once stable (was `new Date()`
+  // at render which made downstream useCallback deps unstable —
+  // react-hooks/preserve-manual-memoization). User won't notice unless
+  // app stays open across midnight, which is a rare edge case.
+  const [today] = useState(() => new Date());
   const [navYear, setNavYear] = useState(parsed?.year ?? today.getFullYear() - 25);
   const [navMonth, setNavMonth] = useState(parsed?.month ?? today.getMonth());
 
@@ -191,16 +195,16 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
   }, [view, navYear]);
 
   // ── Navigation ──
+  // Pure const-only callback — was `setNavYear` inside `setNavMonth`
+  // updater (anti-pattern). React 18+ batches the two setState calls.
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- TODO: compiler conditional ternary + multi-setter pattern'i memoize-safe sayamıyor; sub-helper extract refactor ayrı sprint (BirthDatePicker rebuild)
   const goMonth = useCallback((delta: number) => {
-    setNavMonth(prev => {
-      let m = prev + delta;
-      let y = navYear;
-      if (m < 0) { m = 11; y--; }
-      if (m > 11) { m = 0; y++; }
-      setNavYear(y);
-      return m;
-    });
-  }, [navYear]);
+    const targetMonth = navMonth + delta;
+    const m = targetMonth < 0 ? 11 : targetMonth > 11 ? 0 : targetMonth;
+    const y = targetMonth < 0 ? navYear - 1 : targetMonth > 11 ? navYear + 1 : navYear;
+    setNavMonth(m);
+    setNavYear(y);
+  }, [navMonth, navYear]);
 
   const selectDay = useCallback((day: number) => {
     const iso = toISO(navYear, navMonth, day);
@@ -210,6 +214,7 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
     setView("calendar");
   }, [navYear, navMonth, min, max, onChange]);
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- TODO: `today` useState lazy init mount-stable ama compiler `today.getFullYear/Month/Date` method call chain'ini varying olarak görüyor; sub-helper extract ayrı sprint
   const selectToday = useCallback(() => {
     const iso = toISO(today.getFullYear(), today.getMonth(), today.getDate());
     if (!clampDate(iso, min, max)) return;
@@ -223,6 +228,7 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
   }, [onChange]);
 
   // ── Keyboard ──
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- TODO: complex switch + inline `let newDate` mutation + conditional setters → React Compiler memoization preserve edemiyor. Sub-helper extract refactor ayrı sprint (BirthDatePicker rebuild)
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (!open) {
       if (e.key === "Enter" || e.key === " ") {
