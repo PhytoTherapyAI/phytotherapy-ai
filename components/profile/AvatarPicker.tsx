@@ -72,6 +72,7 @@ export function AvatarPicker({ userId, userName, lang, onAvatarChange }: Props) 
         aria-label={tr ? 'Avatarını değiştir' : 'Change avatar'}
       >
         {currentAvatar ? (
+          // eslint-disable-next-line @next/next/no-img-element -- DiceBear data URI avatar (runtime-generated), next/image gain marjinal
           <img
             src={currentAvatar}
             alt="Avatar"
@@ -117,6 +118,7 @@ export function AvatarPicker({ userId, userName, lang, onAvatarChange }: Props) 
               {/* Large Preview */}
               <div className="flex justify-center mb-5">
                 {currentAvatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- DiceBear data URI avatar preview (runtime-generated), next/image gain marjinal
                   <img src={currentAvatar} alt="Preview" className="w-24 h-24 rounded-full ring-4 ring-primary/30" />
                 ) : (
                   <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-2xl ring-4 ring-primary/30">
@@ -141,6 +143,7 @@ export function AvatarPicker({ userId, userName, lang, onAvatarChange }: Props) 
                       }`}
                     >
                       {preview ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- DiceBear data URI avatar option (runtime-generated), next/image gain marjinal
                         <img src={preview} alt={s.id} className="w-12 h-12 rounded-full" />
                       ) : (
                         <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-lg">{s.emoji}</div>

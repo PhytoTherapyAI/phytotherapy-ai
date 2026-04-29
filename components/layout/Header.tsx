@@ -189,6 +189,7 @@ export function Header() {
                       className="flex items-center gap-1.5 rounded-full bg-primary/10 px-2 py-1 transition-colors hover:bg-primary/20"
                     >
                       {avatarUri ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- DiceBear data URI avatar (runtime-generated), next/image gain marjinal
                         <img src={avatarUri} alt="" className="h-7 w-7 rounded-full" />
                       ) : (
                         <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/20 text-xs font-bold text-primary">
@@ -306,6 +307,7 @@ export function Header() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {avatarUri ? (
+                      // eslint-disable-next-line @next/next/no-img-element -- DiceBear data URI avatar (runtime-generated), next/image gain marjinal
                       <img src={avatarUri} alt="" className="h-8 w-8 rounded-full" />
                     ) : <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                       {initials}

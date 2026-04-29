@@ -303,6 +303,7 @@ export default function DoctorPage() {
 
               {showQR === patient.invite_code && patient.invite_code && (
                 <div className="mt-3 flex flex-col items-center gap-2 rounded-xl border bg-muted/30 p-4">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- External QR API (qrserver.com), next/image domain whitelist gerek */}
                   <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`${typeof window !== "undefined" ? window.location.origin : ""}/doctor/join?code=${patient.invite_code}`)}`}
                     alt="QR" className="h-36 w-36 rounded-lg bg-white p-2" />
                   <p className="font-mono text-[10px] text-muted-foreground">{patient.invite_code}</p>

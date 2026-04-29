@@ -152,6 +152,7 @@ export function RadiologyResultDashboard({ analysis, imagePreview, lang }: Props
       {imagePreview && (
         <Card>
           <CardContent className="p-3">
+            {/* eslint-disable-next-line @next/next/no-img-element -- User-uploaded radiology image preview (data URL), next/image client-side preview için tasarlanmadı */}
             <img
               src={imagePreview}
               alt="Radiology image"

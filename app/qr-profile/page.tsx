@@ -275,6 +275,7 @@ export default function QRProfilePage() {
               {/* QR Code Display */}
               <div className="rounded-2xl border bg-card p-6 text-center">
                 <div className="inline-block bg-white rounded-2xl p-4 shadow-sm">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- External QR API (qrserver.com), next/image domain whitelist gerek */}
                   <img src={qrUrl} alt="Health Profile QR" className="w-56 h-56 mx-auto" />
                 </div>
                 <p className="text-xs text-muted-foreground mt-3">

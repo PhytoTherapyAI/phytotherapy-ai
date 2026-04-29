@@ -128,6 +128,7 @@ export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsen
                   {att.type === "pdf" ? (
                     <FileText className="h-3.5 w-3.5" />
                   ) : att.preview ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- Chat message attachment thumb (data URL), next/image client-side preview için tasarlanmadı
                     <img src={att.preview} alt={att.name} className="h-6 w-6 rounded object-cover" />
                   ) : (
                     <ImageIcon className="h-3.5 w-3.5" />

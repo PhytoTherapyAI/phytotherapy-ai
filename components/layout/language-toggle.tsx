@@ -61,6 +61,7 @@ function LangFlag({ flag, label }: { flag: string | null; label: string }) {
       <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
     </svg>
   )
+  // eslint-disable-next-line @next/next/no-img-element -- External flag CDN (flagcdn.com), next/image domain whitelist gerek; tiny 16x12 flag, gain marjinal
   return <img src={`https://flagcdn.com/w20/${flag}.png`} width={16} height={12} alt={label} />
 }
 

@@ -43,6 +43,7 @@ export function PageError({
       {isOffline ? (
         <WifiOff className="h-12 w-12 text-muted-foreground" />
       ) : (
+        // eslint-disable-next-line @next/next/no-img-element -- Static SVG logo (kucuk boyut), next/image gain marjinal
         icon ?? <img src="/logo-icon.svg" alt="DoctoPal" className="h-14 w-14 opacity-60" />
       )}
       <h2 className="text-xl font-semibold">

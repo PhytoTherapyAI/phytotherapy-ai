@@ -346,6 +346,7 @@ export function MedicationScanner({ userId, lang, onMedicationFound }: Medicatio
               {tx("scanner.analyzing", lang)}
             </p>
             {capturedImage && (
+              // eslint-disable-next-line @next/next/no-img-element -- Captured medication photo (data URL), next/image client-side preview için tasarlanmadı
               <img src={capturedImage} alt="Captured" className="max-h-32 rounded-lg opacity-50" />
             )}
           </div>

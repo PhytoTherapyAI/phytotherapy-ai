@@ -903,6 +903,7 @@ function RadiologyTab({
               {file ? (
                 <div className="flex flex-col items-center gap-3">
                   {imagePreview && (
+                    // eslint-disable-next-line @next/next/no-img-element -- User-uploaded radiology image preview (data URL), next/image client-side preview için tasarlanmadı
                     <img
                       src={imagePreview}
                       alt="Selected radiology image"

@@ -464,6 +464,7 @@ export default function ProspectusReaderPage() {
             <div className="mb-6 flex flex-col items-center gap-4">
               {preview && (
                 <div className="relative rounded-2xl border overflow-hidden shadow-soft-md">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- User-uploaded prospectus preview (data URL), next/image client-side preview için tasarlanmadı */}
                   <img src={preview} alt="Prospectus" className="max-h-56 object-contain" />
                   <button onClick={() => { setFile(null); setPreview(null); }}
                     className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70">
@@ -494,6 +495,7 @@ export default function ProspectusReaderPage() {
               {/* Scanner animation over preview */}
               {preview && (
                 <div className="relative rounded-2xl border overflow-hidden shadow-soft-md">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- User-uploaded prospectus preview (data URL), scanner overlay state */}
                   <img src={preview} alt="Scanning" className="max-h-48 object-contain opacity-60" />
                   {/* Laser scan line */}
                   <div className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent"
