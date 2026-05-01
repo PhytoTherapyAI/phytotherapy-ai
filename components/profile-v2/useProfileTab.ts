@@ -60,6 +60,7 @@ export function useProfileTab(): UseProfileTabResult {
   // that does a `push` or `replace` without re-mounting the page).
   useEffect(() => {
     const fromUrl = coerce(searchParams.get("tab"))
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL searchParams-driven derive (Pattern 4, Next.js useSearchParams change → activeTab sync)
     setActiveTab((prev) => (prev === fromUrl ? prev : fromUrl))
   }, [searchParams])
 

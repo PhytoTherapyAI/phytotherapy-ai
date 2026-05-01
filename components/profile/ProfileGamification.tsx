@@ -123,6 +123,7 @@ export function MotivationCard({ id, icon, title, message, color }: MotivationCa
 
   useEffect(() => {
     try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Dep-based localStorage hydration (Pattern 6, id scoped key change reload)
       if (localStorage.getItem(`motiv_dismiss_${id}`) === '1') setDismissed(true)
     } catch { /* noop */ }
   }, [id])

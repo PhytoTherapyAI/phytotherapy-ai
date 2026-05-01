@@ -109,7 +109,10 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
   const [mounted, setMounted] = useState(false);
 
   // SSR guard
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR mounted guard, Next.js standard pattern
+    setMounted(true);
+  }, []);
 
   // ── Dynamic positioning: calculate popover position relative to trigger ──
   useEffect(() => {
@@ -160,8 +163,10 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
   useEffect(() => {
     const p = parseISO(value);
     if (p) {
+      /* eslint-disable react-hooks/set-state-in-effect -- Prop-driven multi-state sync (navYear + navMonth from parseISO(value)) */
       setNavYear(p.year);
       setNavMonth(p.month);
+      /* eslint-enable react-hooks/set-state-in-effect */
     }
   }, [value]);
 
@@ -186,6 +191,7 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
   useEffect(() => {
     if (view === "years" && yearsScrollRef.current) {
       const activeDecade = Math.floor(navYear / 10) * 10;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- View-driven derive + scrollIntoView side effect (DOM measurement)
       setExpandedDecade(activeDecade);
       setTimeout(() => {
         const el = yearsScrollRef.current?.querySelector(`[data-decade="${activeDecade}"]`);

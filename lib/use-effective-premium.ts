@@ -38,6 +38,7 @@ export function useEffectivePremium(): UseEffectivePremiumResult {
   const [nonce, setNonce] = useState(0)
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- Async premium fetch + auth-driven setState (Pattern 1, data-driven not render-time) */
     if (!isAuthenticated || !user?.id) {
       setState({ isPremium: false, source: "none", expiresAt: null, familyGroupId: null, loading: false })
       return
@@ -66,6 +67,7 @@ export function useEffectivePremium(): UseEffectivePremiumResult {
       })
 
     return () => { cancelled = true }
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [isAuthenticated, user?.id, nonce])
 
   return {

@@ -123,6 +123,7 @@ export function ChronicConditionsEditor({ conditions, medications, onToggle, onA
 
   // Update clean slate when conditions change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Conditions-driven derive (Pattern 3, parent prop change → cleanSlate sync)
     setCleanSlate(conditions.filter(c => !c.startsWith('family:')).length === 0)
   }, [conditions])
 

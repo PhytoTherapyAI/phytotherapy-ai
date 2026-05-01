@@ -40,6 +40,7 @@ function DoctorJoinContent() {
       return
     }
     if (!isLoading && isAuthenticated) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Auth-gated status sync (Pattern 6, isLoading/isAuthenticated state machine)
       setStatus(code ? "ready" : "ready")
     }
   }, [isLoading, isAuthenticated, router, code])

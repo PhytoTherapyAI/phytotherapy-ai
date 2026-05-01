@@ -110,6 +110,7 @@ export default function AnalyticsPage() {
   }, [isLoading, isAuthenticated, router])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch callback setState (Pattern 1, data-driven, not render-time)
     if (user) fetchAnalytics()
   }, [user, fetchAnalytics])
 

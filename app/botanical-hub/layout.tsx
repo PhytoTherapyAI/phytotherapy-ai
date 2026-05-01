@@ -20,6 +20,7 @@ export default function BotanicalHubLayout({ children }: { children: React.React
 
   useEffect(() => {
     const idx = TABS.findIndex(t => pathname.startsWith(t.href))
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Pathname-driven derive (next.js usePathname change → activeIdx)
     if (idx >= 0) setActiveIdx(idx)
   }, [pathname])
 

@@ -63,6 +63,7 @@ export function BloodTestTrendChart() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- async fetch callback setState (Pattern 1, data-driven trend fetch) */
     if (!isAuthenticated || !session?.access_token) return;
     setLoading(true);
     setError(null);
@@ -76,6 +77,7 @@ export function BloodTestTrendChart() {
       .then((json: TrendResponse) => setData(json))
       .catch((e) => setError(e instanceof Error ? e.message : "fetch failed"))
       .finally(() => setLoading(false));
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [isAuthenticated, session?.access_token, range]);
 
   if (!isAuthenticated) {

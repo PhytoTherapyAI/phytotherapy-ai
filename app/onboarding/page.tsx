@@ -16,6 +16,7 @@ function OnboardingContent() {
   const isRefreshMode = searchParams.get("refresh") === "true";
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR mounted guard, Next.js standard pattern
     setMounted(true);
   }, []);
 

@@ -77,6 +77,7 @@ export function DashboardTour() {
     if (seen) return;
 
     const mobile = window.innerWidth < 1024;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Mount-once SSR guard + delayed timer setState (Pattern 2.5+5, window/localStorage + setTimeout callback)
     setIsMobile(mobile);
 
     const timer = setTimeout(() => setRun(true), 1000);

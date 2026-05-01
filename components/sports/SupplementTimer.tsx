@@ -54,6 +54,7 @@ export function SupplementTimer({ supplements, lang }: SupplementTimerProps) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(storageKey);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Dep-based localStorage hydration (Pattern 6, storageKey scoped key change reload)
       if (saved) setTaken(JSON.parse(saved));
     } catch { /* ignore */ }
   }, [storageKey]);

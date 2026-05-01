@@ -101,6 +101,7 @@ export default function PostureErgonomicsPage() {
 
   // Auto-advance when time runs out
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- Timer-driven auto-advance (Pattern 5, timeLeft===0 transition not render-time) */
     if (timeLeft === 0 && isPlaying) {
       if (currentStretch < STRETCHES.length - 1) {
         setTimeout(() => {
@@ -112,6 +113,7 @@ export default function PostureErgonomicsPage() {
         setRoutineComplete(true);
       }
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [timeLeft, isPlaying, currentStretch]);
 
   const startRoutine = () => {

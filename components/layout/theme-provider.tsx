@@ -29,6 +29,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // DOM class apply + SSR mounted guard.
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM class side effect + SSR mounted guard (Pattern 2.5, theme-driven document.documentElement mutation)
     setMounted(true);
   }, [theme]);
 

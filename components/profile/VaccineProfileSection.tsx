@@ -12,6 +12,7 @@ import { VACCINE_LIST, ESSENTIAL_VACCINE_IDS, type VaccineEntry, type VaccineGro
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false)
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR guard for window.matchMedia API
   useEffect(() => { setReduced(!!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) }, [])
   return reduced
 }
@@ -320,6 +321,7 @@ function YearPickerDropdown({ tr, entry, triggerId, onSelect, onClose }: {
     const row = document.querySelector(`[data-vaccine-id="${triggerId}"]`)
     if (row) {
       const rect = row.getBoundingClientRect()
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM measurement (getBoundingClientRect) + setState (Pattern 2.5, layout-driven popover positioning)
       setPos({ top: rect.bottom + 4, left: Math.min(rect.right - 160, window.innerWidth - 170) })
     }
   }, [triggerId])

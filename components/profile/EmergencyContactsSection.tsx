@@ -36,6 +36,7 @@ export function EmergencyContactsSection({ lang, userId }: { lang: "en" | "tr"; 
   useEffect(() => {
     try {
       const data = localStorage.getItem(`emergency_contacts_${userId}`);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Dep-based localStorage hydration (Pattern 6, userId scoped key change reload)
       if (data) setContacts(JSON.parse(data));
     } catch { /* corrupted */ }
   }, [userId]);

@@ -37,6 +37,7 @@ export function AydinlatmaPopup({ open, onAcknowledge, onClose, forceAcknowledge
   // don't trap the user on content that has no overflow to consume.
   useEffect(() => {
     if (!open) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Open-prop reset + DOM measurement (scrollHeight check) timer-deferred
     setHasScrolledToBottom(false);
     const timer = setTimeout(() => {
       const el = scrollRef.current;

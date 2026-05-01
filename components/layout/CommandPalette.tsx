@@ -264,6 +264,7 @@ export function CommandPalette() {
 
   // Semantic search (API, debounced)
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- Async fetch callback setState + debounced query reset (Pattern 1, data-driven not render-time) */
     if (!debouncedQuery || debouncedQuery.length < 3) {
       setSemanticResults([])
       setSearchMethod("local")
@@ -332,6 +333,7 @@ export function CommandPalette() {
     }
     fetchSemantic()
     return () => { cancelled = true }
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [debouncedQuery, lang])
 
   // Merge results: semantic first (if available), then local
@@ -360,8 +362,10 @@ export function CommandPalette() {
   useEffect(() => {
     if (open) {
       setTimeout(() => inputRef.current?.focus(), 50)
+      /* eslint-disable react-hooks/set-state-in-effect -- Open-prop reset + DOM focus side effect (Pattern 6, dialog open transition not render-time) */
       setQuery("")
       setSelectedIndex(0)
+      /* eslint-enable react-hooks/set-state-in-effect */
     }
   }, [open])
 
@@ -421,7 +425,10 @@ export function CommandPalette() {
   }, [router])
 
   // Reset selection when results change
-  useEffect(() => { setSelectedIndex(0) }, [results])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Results-driven selection reset (Pattern 6, derived state with side-effect coupling to selection model)
+    setSelectedIndex(0)
+  }, [results])
 
   const t = {
     placeholder: tx("cmdPalette.placeholder", lang),

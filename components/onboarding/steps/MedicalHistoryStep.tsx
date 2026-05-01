@@ -184,6 +184,7 @@ const CONDITION_GROUPS = [
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR guard for window.matchMedia API
   useEffect(() => { setReduced(!!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches); }, []);
   return reduced;
 }
@@ -243,6 +244,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
 
   // ── Disease autocomplete ──
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- Multi-state autocomplete derive (suggestions + showSuggestions + highlightIdx) */
     if (customCondition.length < 2) {
       setSuggestions([]); setShowSuggestions(false); setHighlightIdx(-1); return;
     }
@@ -254,10 +256,12 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
     setSuggestions(matches.slice(0, 6));
     setShowSuggestions(true);
     setHighlightIdx(-1);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [customCondition, conditionsStr]);
 
   // ── Surgery autocomplete ──
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- Multi-state autocomplete derive (surgerySuggestions + showSurgerySugg + surgeryHighlight) */
     if (surgerySearch.length < 2) {
       setSurgerySuggestions([]); setShowSurgerySugg(false); setSurgeryHighlight(-1); return;
     }
@@ -269,6 +273,7 @@ export function MedicalHistoryStep({ data, updateData }: Props) {
     setSurgerySuggestions(matches.slice(0, 6));
     setShowSurgerySugg(true);
     setSurgeryHighlight(-1);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [surgerySearch, surgeryIdsStr]);
 
   // Position dropdowns (portal) — recalculate on scroll

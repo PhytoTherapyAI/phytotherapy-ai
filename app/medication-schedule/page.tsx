@@ -66,6 +66,7 @@ export default function MedicationSchedulePage() {
   }, [user])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch callback setState (Pattern 1)
     loadMeds()
   }, [loadMeds])
 

@@ -90,6 +90,7 @@ export default function HistoryPage() {
   }, [isLoading, isAuthenticated, router])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch callback setState (Pattern 1)
     if (user) fetchHistory()
   }, [user, fetchHistory])
 

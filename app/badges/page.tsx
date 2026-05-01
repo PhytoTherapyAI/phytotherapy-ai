@@ -89,6 +89,7 @@ export default function BadgesPage() {
   }, [isLoading, isAuthenticated, router])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch callback setState (Pattern 1)
     if (user) fetchStats()
   }, [user, fetchStats])
 

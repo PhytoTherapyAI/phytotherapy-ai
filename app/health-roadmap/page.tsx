@@ -89,7 +89,10 @@ export default function HealthRoadmapPage() {
     setLoading(false)
   }, [user])
 
-  useEffect(() => { loadData() }, [loadData])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch callback setState (Pattern 1)
+    loadData()
+  }, [loadData])
 
   const risk = useMemo(() => patientData ? calculateRiskScore(patientData) : null, [patientData])
   const shieldScore = risk ? Math.max(0, 100 - risk.score) : 85

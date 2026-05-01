@@ -173,6 +173,7 @@ const FREQUENCIES = [
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR guard for window.matchMedia API
   useEffect(() => { setReduced(!!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches); }, []);
   return reduced;
 }
@@ -201,6 +202,7 @@ export function SupplementsStep({ data, updateData }: Props) {
 
   // ── Autocomplete — search local DB + supplement-data.ts maps ──
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- Multi-state autocomplete derive (suggestions + showSuggestions + highlightIdx) */
     if (search.length < 2) {
       setSuggestions([]); setShowSuggestions(false); setHighlightIdx(-1); return;
     }
@@ -265,6 +267,7 @@ export function SupplementsStep({ data, updateData }: Props) {
     setSuggestions(combined.slice(0, 6));
     setShowSuggestions(true);
     setHighlightIdx(-1);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [search, selectedIdStr]);
 
   // Position dropdown relative to input (portal) — recalculate on scroll

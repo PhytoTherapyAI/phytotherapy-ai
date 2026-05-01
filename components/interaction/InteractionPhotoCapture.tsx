@@ -93,6 +93,7 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
   // runs on `open` flip so the next time the modal opens the user
   // lands back on the choose screen instead of stale result data.
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- Prop-driven multi-state reset (Pattern 6, modal close → state cleanup) */
     if (!open) {
       stopCamera()
       setMode("choose")
@@ -102,7 +103,7 @@ export function InteractionPhotoCapture({ open, onClose, onAdd, lang }: Props) {
       setIsScanning(false)
     }
     return () => stopCamera()
-
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [open])
 
   // Hooking the camera stream to the <video> element has to wait

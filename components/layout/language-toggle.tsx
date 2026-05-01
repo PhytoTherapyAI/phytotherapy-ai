@@ -32,6 +32,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   // SSR mounted guard — hydration mismatch suppression.
   const [mounted, setMounted] = useState(false)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR mounted guard, Next.js standard pattern
     setMounted(true)
   }, [])
 

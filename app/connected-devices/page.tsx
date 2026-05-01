@@ -35,6 +35,7 @@ export default function ConnectedDevicesPage() {
   useEffect(() => {
     try {
       const data = localStorage.getItem(`health_connections_${user?.id || "guest"}`)
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- Dep-based localStorage hydration (Pattern 6, user-scoped key change reload)
       if (data) setConnections(JSON.parse(data))
     } catch { /* corrupted localStorage */ }
   }, [user])

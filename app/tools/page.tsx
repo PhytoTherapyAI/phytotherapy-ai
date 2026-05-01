@@ -35,6 +35,7 @@ export default function ToolsHubPage() {
   useEffect(() => {
     if (highlightCategory && categoryRefs.current[highlightCategory]) {
       categoryRefs.current[highlightCategory]?.scrollIntoView({ behavior: "smooth", block: "center" })
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- DOM scrollIntoView side effect + dep-driven setState (Pattern 6, prop reset on URL change)
       setExpandedCategory(highlightCategory)
     }
   }, [highlightCategory])

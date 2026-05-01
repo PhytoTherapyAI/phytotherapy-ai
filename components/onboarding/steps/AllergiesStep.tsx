@@ -82,6 +82,7 @@ const REACTION_OPTIONS = [
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR guard for window.matchMedia API
   useEffect(() => { setReduced(!!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches); }, []);
   return reduced;
 }
@@ -114,6 +115,7 @@ export function AllergiesStep({ data, updateData }: Props) {
 
   // Autocomplete filter
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- Multi-state autocomplete derive (suggestions + showSuggestions); useMemo split invasive (Faz 5b/c Commit B'ye ertelendi) */
     if (allergen.length < 1) {
       setSuggestions([]); setShowSuggestions(false); return;
     }
@@ -125,6 +127,7 @@ export function AllergiesStep({ data, updateData }: Props) {
     );
     setSuggestions(matches.slice(0, 8));
     setShowSuggestions(matches.length > 0);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [allergen, addedNamesStr]);
 
   // Position dropdown (portal) — recalculate on scroll

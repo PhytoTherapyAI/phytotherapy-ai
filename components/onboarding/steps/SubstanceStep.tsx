@@ -11,6 +11,7 @@ import type { OnboardingData } from "../OnboardingWizard";
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- SSR guard for window.matchMedia API
   useEffect(() => { setReduced(!!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches); }, []);
   return reduced;
 }

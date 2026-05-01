@@ -288,8 +288,10 @@ export function NotificationSettings({ medications = [] }: Props) {
   const [confirmModal, setConfirmModal] = useState<{ key: "medicationReminders" | "dailyCheckIn" } | null>(null)
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- SSR guard for window.Notification API check */
     setSupported(isPushSupported())
     setPermission(getNotificationPermission())
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [])
 
   const handleToggle = async () => {

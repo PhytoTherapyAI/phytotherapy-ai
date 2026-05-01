@@ -150,6 +150,7 @@ export default function EnterprisePage() {
   // Lazy load on tab switch
   useEffect(() => {
     if (activeTab === "companies" && companies.length === 0 && !loadingCompanies) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- async fetch callback setState (Pattern 1, tab-driven lazy load)
       setLoadingCompanies(true)
       fetchSection("companies").then((data) => {
         if (data) {
