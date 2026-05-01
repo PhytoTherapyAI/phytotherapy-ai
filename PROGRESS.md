@@ -1,6 +1,66 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 2 Mayıs 2026 (Sprint 17 hotfix zinciri — SBAR PDF Vercel'de "Font family not registered" patladı. 5 hotfix denemesi sonrası NotoSans → Helvetica + fixTr revert (HF5, `1628730`) ile çalışıyor. NotoSans kalıcı fix ayrı sprint'te (next/font veya bundle asset includes).)
+> Son güncelleme: 2 Mayıs 2026 (Sprint 18 — 1 commit: blood_tests tablosu radiology_reports paternine yükseltildi. analysis_json JSONB + summary + overall_urgency migration (Supabase'de apply edildi) + composite index + backfill. Manuel form data fragmentation çözüldü (blood_tests dual-write). SBAR PDF lastLab summary öncelikli render + urgent flag.)
+
+---
+
+## Sprint 18 — blood_tests Enrichment (2 Mayıs 2026)
+
+**Toplam:** 1 commit + 1 docs commit, 0 revert
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `f98e6f9` | blood_tests radiology_reports paternine yükseltme — analysis_json + summary + overall_urgency |
+| D1 | (this) | Sprint 18 kapanış docs |
+
+### Major Outcomes
+
+- **`analysis_json` JSONB + `summary` TEXT + `overall_urgency` TEXT** — `blood_tests` tablosu artık `radiology_reports` paterniyle parite. AI çıktısının full structured response'u JSONB kolonunda, özet ve urgency seviyesi ayrı kolonlarda direkt sorgulanabilir.
+- **Migration (`20260502_blood_tests_enrichment.sql`)** — Supabase Studio'da manuel apply edildi, repo'ya reproducibility için kayıt eklendi. İdempotent (IF NOT EXISTS + WHERE IS NULL guard'lar). Backfill: eski `analysis_result` TEXT (JSON-like) → `analysis_json` JSONB cast + `summary`/`overall_urgency` extract. Composite index `(user_id, created_at DESC)` — history/trend query optimize.
+- **Data fragmentation çözümü** — `/api/blood-analysis` (manuel form) Sprint 18 öncesi sadece `query_history`'ye yazıyordu, `blood_tests`'e yazmıyordu (lab geçmişi/trend chart manuel kayıtları görmüyor problemi). Sprint 18'de dual-write: `query_history` insert KORUNDU + yeni `blood_tests` structured insert eklendi. Manuel form artık trend chart + SBAR PDF lab snippet'inde görünür.
+- **SBAR PDF `lastLab` zenginleştirme** — Sprint 17 B'de `lastLab` sadece `analysis_result` TEXT okuyordu (200 char snippet, ham JSON stringified). Sprint 18'de `summary` öncelikli, `analysis_result` legacy fallback. `overall_urgency === "urgent"` durumunda kırmızı bold "ACİL — doktor değerlendirmesi gerekli" alert eklendi.
+- **Type tanımları** — `lib/database.types.ts` `BloodTest` interface 3 yeni opsiyonel alan + `RadiologyReport` interface eklendi (Session 32'den beri eksikti).
+- **Backward compatibility intact** — `analysis_result` + `pdf_url` DROP edilmedi (Sprint 19+ planlı). Eski reader path'ler etkilenmedi (BloodTestTrendChart sadece `test_data` okuyor). RLS + Premium gate + KVKK consent gate dokunulmadı.
+
+### Sprint 18 Implementation Detayı
+
+**Commit 1 (`f98e6f9`) — 6 dosya, +139 / −9:**
+
+- `supabase/migrations/20260502_blood_tests_enrichment.sql` (YENİ) — `ALTER TABLE` 3 kolon + 2 backfill UPDATE + composite index + `COMMENT ON COLUMN ... DEPRECATED` + `NOTIFY pgrst`. Backfill regex `analysis_result::text LIKE '{%'` ile JSON detect, malformed rows NULL kalır.
+- `lib/database.types.ts` — `BloodTest` extend (`analysis_json: Record<string, unknown> | null` + `summary: string | null` + `overall_urgency: "routine" | "soon" | "urgent" | null`) + `RadiologyReport` interface eklendi (Sprint 17 B `lastRadiology` query type safety için).
+- `app/api/blood-test-pdf/route.ts:217` — INSERT genişletildi: `analysis_json: analysis` + `summary: analysis?.summary ?? ""` + `overall_urgency: analysis?.overallUrgency ?? "routine"`. `analysis_result: analysis` backward compat korundu. `source: "pdf_upload"` kaldırıldı (schema'da yok, silent drop noise temizliği).
+- `app/api/blood-analysis/route.ts:188` — `query_history` insert sonrası YENİ `blood_tests` structured insert. Manuel form artık authenticated user için trend chart + SBAR PDF lab snippet'inde görünür. Try/catch ile non-critical failure handling.
+- `app/api/sbar-pdf/route.ts` — `lastLab` SELECT `select("created_at, summary, overall_urgency, analysis_result")` genişletildi + `sbarData.lastLab` shape extend (3 yeni alan).
+- `components/pdf/SBARReport.tsx` — `SBARData.lastLab` interface `summary?` + `overall_urgency?` opsiyonel alanlar. Render: `summary` öncelikli, `analysis_result` legacy fallback. Urgent durumunda `Helvetica-Bold` kırmızı alert satırı.
+
+### Sprint 18 Backward Compatibility
+
+- `analysis_result` + `pdf_url` DROP edilmedi → Sprint 19+'da cleanup (1 sprint izleme süresi sonrası).
+- Eski rows backfill ile zenginleşti (TR-cast JSON detection ile malformed rows skip).
+- BloodTestTrendChart `test_data` only — etkilenmedi.
+- RLS policies dokunulmadı (yeni kolonlar otomatik kapsanıyor, user_id-based).
+- Premium gate + KVKK consent gate dokunulmadı.
+- HF5 SBAR Helvetica + fixTr render path intact (yeni kod fixTr wrap ile uyumlu).
+
+### Sprint 19+ Backlog
+
+- **NotoSans kalıcı fix (3 PDF component için)** — Sprint 17 HF5 geçici Helvetica + fixTr revert. RadiologyReport + DoctorReport canlıda smoke test ile doğrulanmalı (Sprint 16'da deploy edildi ama prod test yok). Migration: (1) `next/font` build asset bundle dahil, veya (2) Vercel `includeFiles` config ile `public/fonts/*` her serverless function'a explicit dahil + filesystem path resolve. Üç PDF birlikte migrate (Helvetica + fixTr → NotoSans native).
+- **`analysis_result` + `pdf_url` DROP** — `ALTER TABLE blood_tests DROP COLUMN analysis_result + pdf_url`. Sprint 18'den sonra 1 sprint izle, hiçbir read path fail etmediğinden emin olduktan sonra cleanup. `lib/database.types.ts` `BloodTest` interface'inde de DROP.
+- **History/Trend list UI** — `/medical-analysis` Trends tab'a kan tahlili history listesi (radiology_reports + blood_tests dual-source). Composite index `(user_id, created_at DESC)` Sprint 18'de eklendi → query optimize.
+- **SBAR C** — AI-driven Assessment + Recommendation (opsiyonel transformative). Yeni `SBAR_PROMPT` `lib/prompts.ts`'e ekle. Polypharmacy flag (3+ ilaç) + anafilaksi vurgu + patient-specific doktor soruları. Risk: hallüsinasyon + AI gecikme.
+- **`family_history_entries` Supabase apply doğrulama** — Session 36 migration apply durumu kontrol edilmeli.
+- **Aile non-member contacts** — roadmap #4.
+- **Hot-spot overlay** — radyoloji bounding box AI inference (avukat sonrası).
+- **chat_conversations auto-title endpoint** — Sprint 14+ deferred.
+- **27 Mayıs avukat görüşmesi** — **24 gün kaldı**, kritik path.
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency.
+
+### Verification
+
+- Manuel adım: Supabase SQL Editor'da `20260502_blood_tests_enrichment.sql` apply edildi (kullanıcı doğruladı).
+- `npx tsc --noEmit` → 0 error
+- `npm run build` → 0 error / 0 warning, 11.6s compile
+- Smoke test (manuel): PDF kan tahlili yükle → DB row `analysis_json` + `summary` + `overall_urgency` dolu; SBAR PDF indir → A section "Son Tıbbi Sonuçlar" bloğunda `summary` görünür (eski rows için `analysis_result` fallback).
 
 ---
 
