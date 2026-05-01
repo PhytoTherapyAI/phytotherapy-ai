@@ -1006,6 +1006,57 @@ outer block'un üstüne koyma.
 Pattern referansı: Sprint 7 Commit 2 (`2131972`) —
 41 dosya, block-style + inline mixed disable pattern.
 
+### Supabase Realtime — Filter Zorunlu, RLS Tek Başına Yetmez (F-REALTIME-001 öğretisi)
+
+Supabase `postgres_changes` realtime subscription kurulumunda
+**client-side filter** eklemek zorunludur — RLS policy'nin coverage
+gap'lerini kapatır.
+
+Tehlikeli pattern (filter yok):
+
+```ts
+.on('postgres_changes', {
+  event: 'INSERT',
+  schema: 'public',
+  table: 'family_members',
+  // filter yok → RLS "View pending invites" policy
+  // email match yapmıyor → başka grupların invite'ları da gelir
+})
+```
+
+Doğru pattern:
+
+```ts
+.on('postgres_changes', {
+  event: 'INSERT',
+  schema: 'public',
+  table: 'family_members',
+  filter: `invite_email=eq.${user.email.toLowerCase()}`, // server-side eleme
+})
+```
+
+**3 zorunlu unsur:**
+
+1. **Filter** — hangi satırlar client'a ulaşsın (RLS gap'i kapatır). Postgres realtime tarafında uygulanır, client'a hiç ulaşmadan elenir.
+2. **User-scoped channel name** — `channel-${user.id}` multi-tab safe, strict-mode double-mount safe (her tab kendi channel UUID'siyle açılır, `removeChannel` her tab için bağımsız söker).
+3. **Cleanup** — `return () => supabase.removeChannel(channel)`, deps'te `user?.id` → sign-out'ta otomatik kapanır.
+
+**Prereq:** Tablo `supabase_realtime` publication'ında olmalı:
+
+```sql
+ALTER PUBLICATION supabase_realtime ADD TABLE public.family_members;
+```
+
+Migration idempotent yapılabilir: `IF NOT EXISTS` guard (`pg_publication_tables` lookup).
+
+**Belt-and-suspenders pattern:** Realtime + visibility refetch birlikte
+kullan. Websocket disconnect (mobil background, network glitch) sırasında
+miss edilen event'leri visibility refetch telafi eder. Realtime başarısız
+olsa bile (publication enable değilse, RLS race vs) eski davranış intact —
+sadece anlık güncelleme kaybına dönüşür.
+
+Pattern referansı: `lib/family-context.tsx` L185-225 + `supabase/migrations/20260501_family_members_realtime.sql` (Sprint 8 Commit 3, `7e48a82`).
+
 ---
 
 ## Sprint Disiplini (her commit'te zorunlu)

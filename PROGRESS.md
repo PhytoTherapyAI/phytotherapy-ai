@@ -1,16 +1,27 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Mayıs 2026 (Sprint 8 başlangıç: F-BRAND-DRIFT-ROUND2-001 audit closure — 4/4 KALSIN, h3 #8 disipline korundu, 0 migration.)
+> Son güncelleme: 1 Mayıs 2026 (Sprint 8 — 3 commit: Brand Drift Round 2 audit closure + PWA screenshots + DoctoPal'da ilk Supabase realtime channel.)
 
 ---
 
-## Sprint 8 — Strateji Dönemi (1 Mayıs 2026 başlangıç)
+## Sprint 8 — Polish + Realtime (29 Nisan - 1 Mayıs 2026)
 
-| # | Ticket | Commit | Açıklama |
-|---|---|---|---|
-| 1 | F-BRAND-DRIFT-ROUND2-001 | (this) | Round 2 audit — 4 sayfa analizi → 4/4 KALSIN, 0 implementation, h3 #8 + tamamen-mavi-tema disipline korundu |
+**Toplam:** 3 commit, 0 revert
 
-### F-BRAND-DRIFT-ROUND2-001 Audit Sonucu
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `add610f` | F-BRAND-DRIFT-ROUND2-001 — 4 sayfa audit closure (0 migration, disiplin korundu) |
+| 2 | `adccd74` | PWA manifest screenshots — 3 gerçek PNG (426×757, home/family/interaction) |
+| 3 | `7e48a82` | F-REALTIME-001 — DoctoPal'da ilk Supabase realtime channel (family invite badge anlık) |
+| D1 | (this) | Sprint 8 kapanış docs + realtime öğretisi |
+
+### Sprint 8 Major Outcomes
+
+- **DoctoPal'ın ilk realtime channel'ı** production'da. Family invite INSERT event'lerinde badge anlık güncellenir. Belt-and-suspenders: visibility refetch fallback (F-FAMILY-BADGE-001) websocket disconnect için intact.
+- **Brand Drift disiplini kanıtlandı** — founder onayına rağmen CLAUDE.md h3 #8 Multi-CTA Semantic + tamamen-mavi-tema constraint'leri 4 sayfayı korudu. Round 1 + Round 2 = 12 sayfa, 0 migration.
+- **PWA installability** — manifest screenshots gerçek PNG ile güncellendi. Lighthouse PWA score artık screenshots requirement'ını karşılıyor.
+
+### F-BRAND-DRIFT-ROUND2-001 Audit Detayı
 
 Round 1 (Sprint 3 Commit 2 `0530c03`) "Sprint 3+ açık drift" olarak işaretlediği 4 sayfa, founder (İpek) onayıyla Round 2 audit'e alındı. Plan mode constraint kontrolü:
 
@@ -21,18 +32,16 @@ Round 1 (Sprint 3 Commit 2 `0530c03`) "Sprint 3+ açık drift" olarak işaretled
 | /data-export L96 | `bg-blue-500` | KALSIN | Tamamen mavi tema (data/database) — info card L50 + selected state L68 + icon L70 mavi, izole görünür |
 | /value-marketplace L523 | `bg-blue-500` | KALSIN | Multi-CTA semantic — Grade B (Value Price blue L523) + Grade A (Outcome-Based emerald L532-561) paralel tier system, h3 #8 |
 
-**Sonuç: 4/4 KALSIN, 0 implementation.** Round 2 audit founder onayına rağmen disipline kuralları (h3 #8 Multi-CTA Semantic + tamamen-mavi-tema izolasyon) tüm sayfaları korudu — Round 1 kararıyla bit-perfect.
+**Audit metodolojisi öğretisi (Sprint 3 #2 ile tutarlı):** Founder onayı tek başına migration trigger değildir. CTA className izole olarak değil, sayfa tonu (header/cards/icons/badges) + sayfa içindeki diğer CTA'lar + domain konvansiyonu birlikte analiz edilir. Brand Drift Audit kapatma kararı: **Round 1 + Round 2 = 12 sayfa total context analizi, 0 migration.** Future audit ihtiyacı varsa F-BRAND-DRIFT-ROUND3 ticket açılır.
 
-**Audit metodolojisi öğretisi (Sprint 3 #2 ile tutarlı):** Founder onayı tek başına migration trigger değildir. CTA className izole olarak değil, sayfa tonu (header/cards/icons/badges) + sayfa içindeki diğer CTA'lar + domain konvansiyonu birlikte analiz edilir. Round 2'de bu metodoloji uygulamalı kanıtlandı.
+### Sprint 8+ Backlog
 
-Brand Drift Audit kapatma kararı: **Round 1 + Round 2 = 12 sayfa total context analizi, 0 migration.** Future audit ihtiyacı varsa F-BRAND-DRIFT-ROUND3 ticket açılır.
-
-### Sprint 8 Strateji Backlog
-
-- **27 Mayıs avukat görüşmesi** — `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md` 9-soru paketi + KVKK + TİTCK + Mesafeli Satış Sözleşmesi v2 review
+- **HealthReportTab enrichment** — Digital Twin hero polish (body silhouette / organ map) + Recent Activity multi-source feed (son 5 ilaç + 3 uyarı + 1 tahlil) + Missing Nudges (cross-tab navigation via setTab prop drilling)
+- **reactStrictMode fix** — Supabase auth lock contention (yüksek risk, ayrı sprint)
+- **F-PAYMENT-001 Iyzico** — şirket tescili sonrası unblock (`docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır)
+- **27 Mayıs avukat görüşmesi** — Limited vs A.Ş. vs Estonia OÜ + KVKK + TİTCK + `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md` 9-soru paketi
 - **IGNITE LinkedIn outreach** — sağlık hukuku + KVKK + dijital sağlık uzmanı (İstanbul)
 - **Yatırımcı pipeline** — pitch deck rev + cohort metrics
-- **Iyzico** — şirket tescili sonrası entegrasyon (`docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır)
 
 ---
 
