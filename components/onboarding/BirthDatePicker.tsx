@@ -81,6 +81,52 @@ function clampDate(iso: string, min?: string, max?: string): boolean {
   return true;
 }
 
+// Sprint 11 Commit 1 (ESLint Faz 5f TODO closure): handleKeyDown switch
+// case'lerinden extract edilen pure date-math helper'ları. File scope —
+// component dışı, mount-stable, useCallback body'sinin React Compiler
+// `preserve-manual-memoization` rule'unu memnun etmesi için inline
+// `let newDate` mutation kaldırıldı.
+
+function addMonth(d: Date): Date {
+  const r = new Date(d);
+  r.setMonth(r.getMonth() + 1);
+  return r;
+}
+
+function subMonth(d: Date): Date {
+  const r = new Date(d);
+  r.setMonth(r.getMonth() - 1);
+  return r;
+}
+
+/**
+ * Keyboard navigation helper: bilinen tuş için yeni Date döndürür, bilinmeyen
+ * için null. Enter/Escape gibi popover-kontrol tuşları caller scope'ta kalır
+ * (setOpen/setView setState çağrıları için).
+ */
+function getNewDateFromKey(key: string, current: Date): Date | null {
+  switch (key) {
+    case "ArrowLeft":
+      return new Date(current.getTime() - 86400000);
+    case "ArrowRight":
+      return new Date(current.getTime() + 86400000);
+    case "ArrowUp":
+      return new Date(current.getTime() - 7 * 86400000);
+    case "ArrowDown":
+      return new Date(current.getTime() + 7 * 86400000);
+    case "PageUp":
+      return subMonth(current);
+    case "PageDown":
+      return addMonth(current);
+    case "Home":
+      return new Date(current.getFullYear(), current.getMonth(), 1);
+    case "End":
+      return new Date(current.getFullYear(), current.getMonth() + 1, 0);
+    default:
+      return null;
+  }
+}
+
 // ── Component ──
 export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePickerProps) {
   const [open, setOpen] = useState(false);
@@ -234,7 +280,33 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
   }, [onChange]);
 
   // ── Keyboard ──
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- TODO: complex switch + inline `let newDate` mutation + conditional setters → React Compiler memoization preserve edemiyor. Sub-helper extract refactor ayrı sprint (BirthDatePicker rebuild)
+  // Sprint 11 Commit 1 (ESLint Faz 5f TODO closure): handleKeyDown switch
+  // case'leri file-scope `getNewDateFromKey` helper'ına taşındı (inline
+  // `let newDate` mutation kalktı). setNavYear/setNavMonth setter call'ları
+  // `applyNewDate` callback'inde isolate edildi — handleKeyDown body'si
+  // artık sadece event routing + helper invocation, switch + mutation
+  // pattern'i tamamen kalktı.
+  //
+  // eslint-disable not: applyNewDate'te setNavYear/setNavMonth call'ları
+  // React Compiler tarafından "inferred dep" olarak işaretleniyor (useState
+  // dispatcher stable contract'ı compiler tarafından otomatik tanınmıyor).
+  // Bu sorun BirthDatePicker'a özgü değil — goMonth (L207) ve selectToday
+  // (L224) de aynı pattern'i taşıyor; hepsi disable yorum + gerekçe ile
+  // geçiş yapıyor. React Compiler stable release sonrası muhtemelen düzelir.
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization -- setNavYear/setNavMonth setter call'ları compiler "inferred dep" olarak görüyor (stable setter contract bug). Sub-helper extract refactor switch+mutation problemini çözdü; setter sorunu compiler upstream fix bekliyor (goMonth L207 + selectToday L224 ile aynı pattern).
+  const applyNewDate = useCallback((newDate: Date) => {
+    const iso = toISO(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+    if (clampDate(iso, min, max)) {
+      onChange(iso);
+      setNavYear(newDate.getFullYear());
+      setNavMonth(newDate.getMonth());
+    }
+  }, [min, max, onChange]);
+
+  // handleKeyDown artık eslint-disable gerektirmiyor — body switch+mutation
+  // ten arındı, setNavYear/setNavMonth setter call'ları applyNewDate'e
+  // taşındı. useCallback deps'i [open, view, value, applyNewDate] saf bir
+  // callback chain (compiler memoization preserve edebiliyor).
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (!open) {
       if (e.key === "Enter" || e.key === " ") {
@@ -252,61 +324,23 @@ export function BirthDatePicker({ value, onChange, min, max, lang }: BirthDatePi
       return;
     }
 
+    // Calendar view içindeyken Enter/Escape popover'ı kapatır
+    if (e.key === "Enter" || e.key === "Escape") {
+      setOpen(false);
+      setView("calendar");
+      e.preventDefault();
+      return;
+    }
+
     const p = parseISO(value);
     if (!p) return;
-
-    let newDate: Date | null = null;
     const current = new Date(p.year, p.month, p.day);
-
-    switch (e.key) {
-      case "ArrowLeft":
-        newDate = new Date(current.getTime() - 86400000);
-        break;
-      case "ArrowRight":
-        newDate = new Date(current.getTime() + 86400000);
-        break;
-      case "ArrowUp":
-        newDate = new Date(current.getTime() - 7 * 86400000);
-        break;
-      case "ArrowDown":
-        newDate = new Date(current.getTime() + 7 * 86400000);
-        break;
-      case "PageUp":
-        newDate = new Date(p.year, p.month - 1, p.day);
-        break;
-      case "PageDown":
-        newDate = new Date(p.year, p.month + 1, p.day);
-        break;
-      case "Home":
-        newDate = new Date(p.year, p.month, 1);
-        break;
-      case "End":
-        newDate = new Date(p.year, p.month + 1, 0);
-        break;
-      case "Enter":
-        setOpen(false);
-        setView("calendar");
-        e.preventDefault();
-        return;
-      case "Escape":
-        setOpen(false);
-        setView("calendar");
-        e.preventDefault();
-        return;
-      default:
-        return;
-    }
+    const newDate = getNewDateFromKey(e.key, current);
+    if (!newDate) return; // bilinmeyen tuş — preventDefault YAPMA (Tab/A-Z gibi)
 
     e.preventDefault();
-    if (newDate) {
-      const iso = toISO(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
-      if (clampDate(iso, min, max)) {
-        onChange(iso);
-        setNavYear(newDate.getFullYear());
-        setNavMonth(newDate.getMonth());
-      }
-    }
-  }, [open, view, value, min, max, onChange]);
+    applyNewDate(newDate);
+  }, [open, view, value, applyNewDate]);
 
   // ── Touch swipe ──
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
