@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
 import Link from "next/link";
@@ -78,6 +78,10 @@ export default function InteractionCheckerPage() {
   const [savedMeds, setSavedMeds] = useState<string[]>([]);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [loadMedError, setLoadMedError] = useState<string | null>(null);
+  // Sprint 15 Commit 1: mount-once guard for the auto-prefill effect
+  // (state'lerin yanına). Strict-mode double-mount + auth state flicker
+  // korunması; ref ChatInterface mount restore (Sprint 14) ile aynı pattern.
+  const autoLoadedRef = useRef(false);
 
   // Load saved medications from localStorage
   useEffect(() => {
@@ -87,10 +91,18 @@ export default function InteractionCheckerPage() {
     } catch { /* ignore */ }
   }, []);
 
-  const loadMedicationsFromProfile = async () => {
+  // Sprint 15 Commit 1: optional `silent` param for the mount-time auto
+  // pre-fill path. Silent=true sırasında setLoadMedError ve setProfileMedsLoaded
+  // çağrıları skip — kullanıcı manuel buton tıklamadığı için error toast
+  // / "Yüklendi" feedback'i kafa karıştırır. setMedications merge ve
+  // setLoadingProfile aynen — auto-load network in-flight göstergesi
+  // (rare, mount-once, ufak Loader2 görünmez aslında çünkü buton'a bağlı).
+  const loadMedicationsFromProfile = async (silent = false) => {
     setLoadingProfile(true);
-    setLoadMedError(null);
-    setProfileMedsLoaded(false);
+    if (!silent) {
+      setLoadMedError(null);
+      setProfileMedsLoaded(false);
+    }
     try {
       // Get the current session token to authenticate the API call
       const supabase = createBrowserClient();
@@ -98,7 +110,7 @@ export default function InteractionCheckerPage() {
       const token = currentSession?.access_token;
 
       if (!token) {
-        setLoadMedError(tx("interactionChecker.sessionNotFound", lang));
+        if (!silent) setLoadMedError(tx("interactionChecker.sessionNotFound", lang));
         return;
       }
 
@@ -108,13 +120,13 @@ export default function InteractionCheckerPage() {
       const json = await res.json();
 
       if (!res.ok) {
-        setLoadMedError(json.error || tx("interactionChecker.errorOccurred", lang));
+        if (!silent) setLoadMedError(json.error || tx("interactionChecker.errorOccurred", lang));
         return;
       }
 
       const meds: UserMedication[] = json.medications ?? [];
       if (meds.length === 0) {
-        setLoadMedError(tx("interactionChecker.noActiveMeds", lang));
+        if (!silent) setLoadMedError(tx("interactionChecker.noActiveMeds", lang));
         return;
       }
 
@@ -133,14 +145,38 @@ export default function InteractionCheckerPage() {
         }
         return merged;
       });
-      setProfileMedsLoaded(true);
+      if (!silent) setProfileMedsLoaded(true);
     } catch (err) {
       console.error("Failed to load profile medications:", err);
-      setLoadMedError(tx("interactionChecker.unexpectedError", lang));
+      if (!silent) setLoadMedError(tx("interactionChecker.unexpectedError", lang));
     } finally {
       setLoadingProfile(false);
     }
   };
+
+  // Sprint 15 Commit 1: mount-time auto pre-fill. Kayıtlı aktif ilacı olan
+  // user /interaction-checker'a girince ilaçlar otomatik yüklenir
+  // (zero-click UX). Guards:
+  // - autoLoadedRef.current → strict-mode + auth flicker mount-once
+  // - authLoading || !isAuthenticated → guest skip (zaten login link
+  //   gösteriliyor, manuel "Yükle" zaten anonymous user için disabled)
+  // - medications.length > 0 → kullanıcı zaten ilaç eklediyse override
+  //   etmez (örn. localStorage savedMeds + manual "Reuse" akışı)
+  // Silent fail: noActiveMeds / 4xx durumunda error gösterilmez, manuel
+  // "İlaçlarımı Yükle" buton intact — kullanıcı sonradan profile'a ilaç
+  // eklerse manuel tıklayabilir (autoLoadedRef true olduğu için yeniden
+  // tetiklenmez ama manuel buton handler'ı `silent=false` çağırır).
+  useEffect(() => {
+    if (autoLoadedRef.current) return;
+    if (authLoading || !isAuthenticated) return;
+    if (medications.length > 0) return;
+    autoLoadedRef.current = true;
+    void loadMedicationsFromProfile(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-once via
+    // autoLoadedRef + medications.length guard. Deps yalnızca auth state
+    // settle eder etmez tetiklemek için; medications array eklendi diye
+    // re-fetch olmamalı (autoLoadedRef zaten true).
+  }, [authLoading, isAuthenticated]);
 
   const handleSaveMeds = () => {
     if (medications.length === 0) return;
@@ -332,7 +368,7 @@ export default function InteractionCheckerPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={loadMedicationsFromProfile}
+                      onClick={() => loadMedicationsFromProfile()}
                       disabled={loadingProfile}
                       className="gap-2 text-xs rounded-full"
                     >
