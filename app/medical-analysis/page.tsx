@@ -20,7 +20,10 @@ import {
 import { BloodTestForm } from "@/components/blood-test/BloodTestForm";
 import { ResultDashboard } from "@/components/blood-test/ResultDashboard";
 import { BloodTestTrendChart } from "@/components/blood-test/BloodTestTrendChart";
+import { BloodTestHistoryList } from "@/components/blood-test/BloodTestHistoryList";
 import { RadiologyResultDashboard, type RadiologyAnalysis } from "@/components/radiology/RadiologyResultDashboard";
+import { RadiologyHistoryList } from "@/components/radiology/RadiologyHistoryList";
+import { cn } from "@/lib/utils";
 import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
 import { useAuth } from "@/lib/auth-context";
 import { useLang } from "@/components/layout/language-toggle";
@@ -102,6 +105,8 @@ export default function MedicalAnalysisPage() {
   const { isAuthenticated, session } = useAuth();
   const { lang } = useLang();
   const [activeTab, setActiveTab] = useState<TabType>("blood-test");
+  // Sprint 19 Commit 1 — Trends tab segment switcher (default "trends" — mevcut davranış preserve)
+  const [trendsView, setTrendsView] = useState<"trends" | "blood-history" | "radiology-history">("trends");
 
   return (
     <div className="mx-auto max-w-5xl px-4 md:px-8 py-8">
@@ -202,7 +207,30 @@ export default function MedicalAnalysisPage() {
             <h2 className="text-lg font-semibold text-foreground">{tx("trends.title", lang)}</h2>
             <p className="text-sm text-muted-foreground">{tx("trends.subtitle", lang)}</p>
           </div>
-          <BloodTestTrendChart />
+          {/* Sprint 19 Commit 1 — Trends segment switcher (default 'trends': BloodTestTrendChart intact) */}
+          <div className="flex gap-1 rounded-lg border bg-muted/30 p-1">
+            {(["trends", "blood-history", "radiology-history"] as const).map((v) => (
+              <button
+                key={v}
+                onClick={() => setTrendsView(v)}
+                className={cn(
+                  "flex-1 text-xs sm:text-sm py-1.5 sm:py-2 px-2 rounded-md transition-colors",
+                  trendsView === v
+                    ? "bg-background shadow-sm text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {v === "trends"
+                  ? tx("mhx.tabTrends", lang)
+                  : v === "blood-history"
+                    ? tx("mhx.tabBloodHistory", lang)
+                    : tx("mhx.tabRadHistory", lang)}
+              </button>
+            ))}
+          </div>
+          {trendsView === "trends" && <BloodTestTrendChart />}
+          {trendsView === "blood-history" && <BloodTestHistoryList lang={lang} />}
+          {trendsView === "radiology-history" && <RadiologyHistoryList lang={lang} />}
         </div>
       )}
     </div>

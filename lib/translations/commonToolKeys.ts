@@ -2336,6 +2336,22 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
   "rad.quality.limited": { en: "Limited image quality — findings are approximate", tr: "Sınırlı görüntü kalitesi — bulgular yaklaşık değerlendirme içerir" },
   "rad.quality.retry": { en: "Upload again", tr: "Tekrar yükle" },
 
+  // Sprint 19 Commit 1 — Medical history list (mhx.*)
+  "mhx.tabTrends": { en: "Trends", tr: "Trendler" },
+  "mhx.tabBloodHistory": { en: "Blood Test History", tr: "Kan Tahlili Geçmişi" },
+  "mhx.tabRadHistory": { en: "Radiology History", tr: "Radyoloji Geçmişi" },
+  "mhx.empty": { en: "No records yet. Upload a PDF or image to start.", tr: "Henüz kayıt yok. PDF veya görüntü yükleyerek başlayabilirsin." },
+  "mhx.loadMore": { en: "Load more", tr: "Daha fazla yükle" },
+  "mhx.loading": { en: "Loading...", tr: "Yükleniyor..." },
+  "mhx.abnormalCount": { en: "{n} abnormal finding(s)", tr: "{n} anormal bulgu" },
+  "mhx.supplementCount": { en: "{n} recommendation(s)", tr: "{n} öneri" },
+  "mhx.findingCount": { en: "{n} finding(s)", tr: "{n} bulgu" },
+  "mhx.urgencyRoutine": { en: "Routine", tr: "Rutin" },
+  "mhx.urgencySoon": { en: "Soon", tr: "Yakında" },
+  "mhx.urgencyUrgent": { en: "Urgent", tr: "Acil" },
+  "mhx.urgencyNormal": { en: "Normal", tr: "Normal" },
+  "mhx.urgencyAttention": { en: "Attention", tr: "Dikkat" },
+
   // ── ConsentStep ──
   "consent.agreementText": { en: "I have read and understood the Medical Disclaimer and Data Privacy notice above. I accept the Terms of Service and Privacy Policy. I understand that DoctoPal is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations.", tr: "Yukaridaki Tibbi Sorumluluk Reddi ve Veri Gizliligi bildirimini okudum, Kullanim Kosullari ile Gizlilik Politikasini kabul ediyorum. DoctoPal'nin profesyonel tibbi tavsiyenin yerini almadigini anliyorum ve herhangi bir oneriyi uygulamadan once saglik uzmanima danisacagim." },
 
