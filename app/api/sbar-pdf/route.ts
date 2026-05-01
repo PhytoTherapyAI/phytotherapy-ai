@@ -129,10 +129,10 @@ export async function POST(request: NextRequest) {
         .eq("user_id", targetUserId)
         .order("check_date", { ascending: false })
         .limit(7),
-      // V3a — Son lab testi (analysis_result TEXT)
+      // V3a — Son lab testi (Sprint 18: summary + overall_urgency öncelikli, analysis_result fallback)
       supabase
         .from("blood_tests")
-        .select("created_at, analysis_result")
+        .select("created_at, summary, overall_urgency, analysis_result")
         .eq("user_id", targetUserId)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -217,7 +217,12 @@ export async function POST(request: NextRequest) {
         energy_level: c.energy_level ?? undefined,
       })),
       lastLab: lastLab
-        ? { created_at: lastLab.created_at, analysis_result: lastLab.analysis_result }
+        ? {
+            created_at: lastLab.created_at,
+            summary: lastLab.summary ?? null,
+            overall_urgency: lastLab.overall_urgency ?? null,
+            analysis_result: lastLab.analysis_result,
+          }
         : undefined,
       lastRadiology: lastRadiology
         ? {

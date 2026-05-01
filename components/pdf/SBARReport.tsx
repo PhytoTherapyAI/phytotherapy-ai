@@ -89,6 +89,9 @@ export interface SBARData {
   }>;
   lastLab?: {
     created_at: string;
+    // Sprint 18 — radiology_reports paterni: summary + overall_urgency öncelikli, analysis_result fallback.
+    summary?: string | null;
+    overall_urgency?: string | null;
     analysis_result: string | null;
   };
   lastRadiology?: {
@@ -583,8 +586,18 @@ export function SBARReport({ data }: { data: SBARData }) {
                 <View style={s.resultBlock}>
                   <Text style={s.resultLabel}>{t.lastLabLabel}</Text>
                   <Text style={s.resultMeta}>{fixTr(fmtShortDate(data.lastLab.created_at))}</Text>
-                  {data.lastLab.analysis_result && (
-                    <Text style={s.resultSnippet}>{fixTr(snippet(data.lastLab.analysis_result, 200))}</Text>
+                  {/* Sprint 18 — summary öncelikli, analysis_result legacy fallback */}
+                  {(data.lastLab.summary || data.lastLab.analysis_result) && (
+                    <Text style={s.resultSnippet}>
+                      {data.lastLab.summary
+                        ? fixTr(snippet(data.lastLab.summary, 200))
+                        : fixTr(snippet(data.lastLab.analysis_result ?? "", 200))}
+                    </Text>
+                  )}
+                  {data.lastLab.overall_urgency === "urgent" && (
+                    <Text style={[s.resultMeta, { color: redText, fontFamily: "Helvetica-Bold" }]}>
+                      {fixTr("ACİL — doktor değerlendirmesi gerekli")}
+                    </Text>
                   )}
                 </View>
               )}

@@ -214,11 +214,15 @@ Total markers: ${totalMarkers}, Abnormal: ${abnormalCount}, Optimal: ${optimalCo
         const supabase = createServerClient();
         const { data: { user } } = await supabase.auth.getUser(token);
         if (user) {
+          // Sprint 18 — radiology_reports paterni: analysis_json + summary + overall_urgency.
+          // analysis_result + pdf_url DEPRECATED (Sprint 19+'da DROP). source kolonu yok (silent drop noise temizliği).
           await supabase.from("blood_tests").insert({
             user_id: user.id,
             test_data: values,
-            analysis_result: analysis,
-            source: "pdf_upload",
+            analysis_json: analysis,
+            summary: (analysis as { summary?: string })?.summary ?? "",
+            overall_urgency: (analysis as { overallUrgency?: string })?.overallUrgency ?? "routine",
+            analysis_result: analysis, // backward compat — eski reader path'ler için
           });
         }
       } catch {

@@ -184,6 +184,22 @@ export async function POST(request: NextRequest) {
       } catch {
         // Non-critical
       }
+
+      // Sprint 18 — manuel form blood_tests'e structured insert (data fragmentation çözümü).
+      // /api/blood-test-pdf paterni ile parite. query_history insert KORUNUR (legacy generic log).
+      try {
+        const supabase = createServerClient();
+        await supabase.from("blood_tests").insert({
+          user_id: userId,
+          test_data: values as Record<string, unknown>,
+          analysis_json: analysis as unknown as Record<string, unknown>,
+          summary: (analysis as { summary?: string })?.summary ?? "",
+          overall_urgency: (analysis as { overallUrgency?: string })?.overallUrgency ?? "routine",
+        });
+      } catch (dbError) {
+        console.warn("[blood-analysis] blood_tests insert failed:", dbError);
+        // Non-critical — analysis returned to user regardless
+      }
     }
 
     // Step 6: Return combined result

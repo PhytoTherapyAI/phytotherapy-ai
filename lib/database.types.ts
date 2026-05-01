@@ -106,8 +106,25 @@ export interface BloodTest {
   id: string;
   user_id: string;
   test_data: Record<string, unknown>;
-  analysis_result: string | null;
-  pdf_url: string | null;
+  analysis_result: string | null; // DEPRECATED Sprint 18 — use analysis_json. Remove Sprint 19+.
+  pdf_url: string | null; // DEPRECATED Sprint 18 — never populated. Remove Sprint 19+.
+  created_at: string;
+  // Sprint 18 — radiology_reports paterni
+  analysis_json: Record<string, unknown> | null;
+  summary: string | null;
+  overall_urgency: "routine" | "soon" | "urgent" | null;
+}
+
+// Sprint 18 — radiology_reports schema (Session 32 migration 20260418_pdf_analysis_tables.sql).
+// Type tanımı eksikti, blood_tests enrichment ile birlikte ekleniyor.
+export interface RadiologyReport {
+  id: string;
+  user_id: string;
+  file_name: string | null;
+  image_type: string | null;
+  overall_urgency: "normal" | "attention" | "urgent" | null;
+  analysis_json: Record<string, unknown> | null;
+  summary: string | null;
   created_at: string;
 }
 
