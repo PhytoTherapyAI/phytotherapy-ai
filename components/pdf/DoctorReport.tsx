@@ -2,9 +2,19 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
 
-// Sprint 20 HF revert — Helvetica built-in.
-// NotoSans Vercel serverless'da fail oldu. Sprint 21+'da CDN font veya
-// @react-pdf/renderer upgrade stratejisi.
+// Sprint 20 Commit 2 — Helvetica + fixTr() (SBARReport paterni mirror).
+// NotoSans Vercel serverless'da fail oldu. Helvetica built-in + Turkish ASCII
+// transliteration: ş→s/ğ→g/ü→u/ö→o/ç→c/ı→i/İ→I (büyük harfler de).
+const fixTr = (s: string): string => {
+  if (!s) return "";
+  return s
+    .replace(/ı/g, "i").replace(/İ/g, "I")
+    .replace(/ş/g, "s").replace(/Ş/g, "S")
+    .replace(/ğ/g, "g").replace(/Ğ/g, "G")
+    .replace(/ü/g, "u").replace(/Ü/g, "U")
+    .replace(/ö/g, "o").replace(/Ö/g, "O")
+    .replace(/ç/g, "c").replace(/Ç/g, "C");
+};
 Font.registerHyphenationCallback((word) => [word]);
 
 // ============================================
@@ -226,44 +236,44 @@ interface DoctorReportProps {
 // ============================================
 
 export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: DoctorReportProps) {
-  // Sprint 16 Commit 2 — locale-aware string bundle. Sprint 20 HF — Helvetica fallback.
+  // Sprint 16 Commit 2 — locale-aware string bundle. Sprint 20 Commit 2 — TR branch fixTr wrap.
   const t = {
-    title: lang === "tr" ? "DoctoPal — Kan Tahlili Raporu" : "DoctoPal — Blood Test Report",
+    title: lang === "tr" ? fixTr("DoctoPal — Kan Tahlili Raporu") : "DoctoPal — Blood Test Report",
     subtitle: lang === "tr"
-      ? "Eğitim Amaçlı Laboratuvar Sonuç Yorumu | Sağlık Profesyoneli İncelemesi İçin"
+      ? fixTr("Eğitim Amaçlı Laboratuvar Sonuç Yorumu | Sağlık Profesyoneli İncelemesi İçin")
       : "Evidence-Based Integrative Medicine Analysis | For Healthcare Provider Review",
-    summary: lang === "tr" ? "Özet" : "Summary",
-    results: lang === "tr" ? "Test Sonuçları" : "Test Results",
-    abnormalFindings: lang === "tr" ? "Anormal Bulgular" : "Abnormal Findings",
-    supplementRecs: lang === "tr" ? "Takviye Önerileri (Kanıt Temelli)" : "Supplement Recommendations (Evidence-Based)",
-    lifestyleAdvice: lang === "tr" ? "Yaşam Tarzı Önerileri" : "Lifestyle Recommendations",
-    doctor: lang === "tr" ? "Doktorunuzla Konuşma Noktaları" : "Recommended Discussion Points for Healthcare Provider",
-    disclaimer: lang === "tr" ? "ÖNEMLİ UYARI" : "IMPORTANT DISCLAIMER",
-    urgency: lang === "tr" ? "Aciliyet" : "Urgency",
-    parameter: lang === "tr" ? "Parametre" : "Marker",
-    value: lang === "tr" ? "Değer" : "Result",
-    referenceRange: lang === "tr" ? "Referans Aralık" : "Reference Range",
-    status: lang === "tr" ? "Durum" : "Status",
-    dosage: lang === "tr" ? "Dozaj" : "Dosage",
-    duration: lang === "tr" ? "Süre" : "Duration",
-    reason: lang === "tr" ? "Sebep" : "Reason",
-    interactionCheck: lang === "tr" ? "İlaç Etkileşim Kontrolü" : "Drug Interaction Check",
-    evidenceGrade: lang === "tr" ? "Kanıt Seviyesi" : "Evidence Grade",
-    sources: lang === "tr" ? "Kaynaklar" : "Sources",
-    patient: lang === "tr" ? "Hasta" : "Patient",
-    notProvided: lang === "tr" ? "Belirtilmedi" : "Not provided",
-    ageGender: lang === "tr" ? "Yaş / Cinsiyet" : "Age / Gender",
-    years: lang === "tr" ? "yaş" : "years",
-    reportDate: lang === "tr" ? "Rapor Tarihi" : "Report Date",
-    naAbbr: lang === "tr" ? "Bilinmiyor" : "N/A",
-    trendComparison: lang === "tr" ? "Trend Karşılaştırması" : "Trend Comparison",
-    urgencyRoutine: lang === "tr" ? "Rutin takip" : "Routine follow-up",
-    urgencySoon: lang === "tr" ? "Yakın zamanda doktor değerlendirmesi" : "Soon — clinical review advised",
-    urgencyUrgent: lang === "tr" ? "Acil — bugün doktor değerlendirmesi" : "Urgent — same-day clinical evaluation",
+    summary: lang === "tr" ? fixTr("Özet") : "Summary",
+    results: lang === "tr" ? fixTr("Test Sonuçları") : "Test Results",
+    abnormalFindings: lang === "tr" ? fixTr("Anormal Bulgular") : "Abnormal Findings",
+    supplementRecs: lang === "tr" ? fixTr("Takviye Önerileri (Kanıt Temelli)") : "Supplement Recommendations (Evidence-Based)",
+    lifestyleAdvice: lang === "tr" ? fixTr("Yaşam Tarzı Önerileri") : "Lifestyle Recommendations",
+    doctor: lang === "tr" ? fixTr("Doktorunuzla Konuşma Noktaları") : "Recommended Discussion Points for Healthcare Provider",
+    disclaimer: lang === "tr" ? fixTr("ÖNEMLİ UYARI") : "IMPORTANT DISCLAIMER",
+    urgency: lang === "tr" ? fixTr("Aciliyet") : "Urgency",
+    parameter: lang === "tr" ? fixTr("Parametre") : "Marker",
+    value: lang === "tr" ? fixTr("Değer") : "Result",
+    referenceRange: lang === "tr" ? fixTr("Referans Aralık") : "Reference Range",
+    status: lang === "tr" ? fixTr("Durum") : "Status",
+    dosage: lang === "tr" ? fixTr("Dozaj") : "Dosage",
+    duration: lang === "tr" ? fixTr("Süre") : "Duration",
+    reason: lang === "tr" ? fixTr("Sebep") : "Reason",
+    interactionCheck: lang === "tr" ? fixTr("İlaç Etkileşim Kontrolü") : "Drug Interaction Check",
+    evidenceGrade: lang === "tr" ? fixTr("Kanıt Seviyesi") : "Evidence Grade",
+    sources: lang === "tr" ? fixTr("Kaynaklar") : "Sources",
+    patient: lang === "tr" ? fixTr("Hasta") : "Patient",
+    notProvided: lang === "tr" ? fixTr("Belirtilmedi") : "Not provided",
+    ageGender: lang === "tr" ? fixTr("Yaş / Cinsiyet") : "Age / Gender",
+    years: lang === "tr" ? fixTr("yaş") : "years",
+    reportDate: lang === "tr" ? fixTr("Rapor Tarihi") : "Report Date",
+    naAbbr: lang === "tr" ? fixTr("Bilinmiyor") : "N/A",
+    trendComparison: lang === "tr" ? fixTr("Trend Karşılaştırması") : "Trend Comparison",
+    urgencyRoutine: lang === "tr" ? fixTr("Rutin takip") : "Routine follow-up",
+    urgencySoon: lang === "tr" ? fixTr("Yakın zamanda doktor değerlendirmesi") : "Soon — clinical review advised",
+    urgencyUrgent: lang === "tr" ? fixTr("Acil — bugün doktor değerlendirmesi") : "Urgent — same-day clinical evaluation",
     defaultDisclaimer: lang === "tr"
-      ? "Bu rapor DoctoPal tarafından eğitim ve bilgilendirme amaçlı oluşturulmuştur. Tıbbi tavsiye, tanı veya tedavi yerine geçmez. Tüm takviye önerileri uygulamadan önce nitelikli bir sağlık profesyoneli tarafından gözden geçirilip onaylanmalıdır. AI analizi yayımlanmış araştırmalara dayanır ancak tüm bireysel faktörleri kapsamayabilir."
+      ? fixTr("Bu rapor DoctoPal tarafından eğitim ve bilgilendirme amaçlı oluşturulmuştur. Tıbbi tavsiye, tanı veya tedavi yerine geçmez. Tüm takviye önerileri uygulamadan önce nitelikli bir sağlık profesyoneli tarafından gözden geçirilip onaylanmalıdır. AI analizi yayımlanmış araştırmalara dayanır ancak tüm bireysel faktörleri kapsamayabilir.")
       : "This report is generated by DoctoPal for educational and informational purposes only. It does not constitute medical advice, diagnosis, or treatment. All supplement recommendations should be reviewed and approved by a qualified healthcare provider before implementation. The AI analysis is based on published research but may not account for all individual factors.",
-    footer: lang === "tr" ? "DoctoPal tarafından oluşturuldu | doctopal.com" : "Generated by DoctoPal | doctopal.com",
+    footer: lang === "tr" ? fixTr("DoctoPal tarafından oluşturuldu | doctopal.com") : "Generated by DoctoPal | doctopal.com",
   };
 
   const allResults = Object.values(results).flat();
@@ -315,30 +325,30 @@ export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: Do
         <View style={styles.patientInfo}>
           <View style={styles.patientRow}>
             <Text style={styles.patientLabel}>{t.patient}:</Text>
-            <Text>{patientInfo?.name || t.notProvided}</Text>
+            <Text>{fixTr(patientInfo?.name ?? "") || t.notProvided}</Text>
           </View>
           <View style={styles.patientRow}>
             <Text style={styles.patientLabel}>{t.ageGender}:</Text>
             <Text>
               {patientInfo?.age ? `${patientInfo.age} ${t.years}` : t.naAbbr} /{" "}
-              {patientInfo?.gender || t.naAbbr}
+              {fixTr(patientInfo?.gender ?? "") || t.naAbbr}
             </Text>
           </View>
           <View style={styles.patientRow}>
             <Text style={styles.patientLabel}>{t.reportDate}:</Text>
-            <Text>{date}</Text>
+            <Text>{fixTr(date)}</Text>
           </View>
         </View>
 
         {/* Summary */}
         <Text style={styles.sectionTitle}>{t.summary}</Text>
-        <Text style={{ marginBottom: 12, lineHeight: 1.4 }}>{analysis.summary}</Text>
+        <Text style={{ marginBottom: 12, lineHeight: 1.4 }}>{fixTr(analysis.summary)}</Text>
 
         {/* Trend Comparison (optional) */}
         {analysis.trendComparison && analysis.trendComparison.length > 0 && (
           <>
             <Text style={styles.sectionTitle}>{t.trendComparison}</Text>
-            <Text style={{ marginBottom: 12, lineHeight: 1.4 }}>{analysis.trendComparison}</Text>
+            <Text style={{ marginBottom: 12, lineHeight: 1.4 }}>{fixTr(analysis.trendComparison)}</Text>
           </>
         )}
 
@@ -353,11 +363,11 @@ export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: Do
           </View>
           {allResults.map((r, i) => (
             <View key={i} style={styles.tableRow}>
-              <Text style={styles.col1}>{r.marker.name}</Text>
+              <Text style={styles.col1}>{fixTr(r.marker.name)}</Text>
               <Text style={styles.col2}>
-                {r.value} {r.marker.unit}
+                {r.value} {fixTr(r.marker.unit)}
               </Text>
-              <Text style={styles.col3}>{referenceRangeByMarker[r.marker.name] || "—"}</Text>
+              <Text style={styles.col3}>{fixTr(referenceRangeByMarker[r.marker.name] ?? "") || "—"}</Text>
               <Text
                 style={[
                   styles.col4,
@@ -368,7 +378,7 @@ export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: Do
                       : styles.statusBorderline,
                 ]}
               >
-                {r.statusLabel}
+                {fixTr(r.statusLabel)}
               </Text>
             </View>
           ))}
@@ -381,15 +391,15 @@ export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: Do
             {analysis.abnormalFindings.map((f, i) => (
               <View key={i} style={styles.abnormalItem}>
                 <Text style={styles.abnormalMarker}>
-                  {f.marker} — {f.value} ({f.status.toUpperCase()})
+                  {fixTr(f.marker)} — {fixTr(f.value)} ({f.status.toUpperCase()})
                 </Text>
                 {f.referenceRange && (
                   <Text style={styles.abnormalText}>
-                    {t.referenceRange}: {f.referenceRange}
+                    {t.referenceRange}: {fixTr(f.referenceRange)}
                   </Text>
                 )}
-                <Text style={styles.abnormalText}>{f.explanation}</Text>
-                {f.concern && <Text style={styles.abnormalText}>{f.concern}</Text>}
+                <Text style={styles.abnormalText}>{fixTr(f.explanation)}</Text>
+                {f.concern && <Text style={styles.abnormalText}>{fixTr(f.concern)}</Text>}
               </View>
             ))}
           </>
@@ -402,25 +412,25 @@ export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: Do
             {analysis.supplementRecommendations.map((rec, i) => (
               <View key={i} style={styles.recommendation}>
                 <Text style={styles.recName}>
-                  {rec.supplement} — {t.evidenceGrade}: {rec.evidenceGrade}
+                  {fixTr(rec.supplement)} — {t.evidenceGrade}: {rec.evidenceGrade}
                 </Text>
                 <Text style={styles.recDetail}>
-                  {t.reason}: {rec.reason}
+                  {t.reason}: {fixTr(rec.reason)}
                 </Text>
                 <Text style={styles.recDetail}>
-                  {t.dosage}: {rec.dosage}
+                  {t.dosage}: {fixTr(rec.dosage)}
                 </Text>
                 <Text style={styles.recDetail}>
-                  {t.duration}: {rec.duration}
+                  {t.duration}: {fixTr(rec.duration)}
                 </Text>
                 {rec.interactionCheck && (
                   <Text style={styles.interactionCheck}>
-                    {t.interactionCheck}: {rec.interactionCheck}
+                    {t.interactionCheck}: {fixTr(rec.interactionCheck)}
                   </Text>
                 )}
                 {rec.sources.length > 0 && (
                   <Text style={styles.evidenceBadge}>
-                    {t.sources}: {rec.sources.map((s) => `${s.title} (${s.year})`).join("; ")}
+                    {t.sources}: {fixTr(rec.sources.map((s) => `${s.title} (${s.year})`).join("; "))}
                   </Text>
                 )}
               </View>
@@ -435,10 +445,10 @@ export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: Do
             {analysis.lifestyleAdvice.map((item, i) => (
               <View key={i} style={styles.lifestyleItem}>
                 <Text>
-                  <Text style={styles.bulletPoint}>{item.category}: </Text>
-                  {item.advice}
+                  <Text style={styles.bulletPoint}>{fixTr(item.category)}: </Text>
+                  {fixTr(item.advice)}
                 </Text>
-                <Text style={styles.source}>({item.reason})</Text>
+                <Text style={styles.source}>({fixTr(item.reason)})</Text>
               </View>
             ))}
           </>
@@ -452,7 +462,7 @@ export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: Do
               <View key={i} style={styles.lifestyleItem}>
                 <Text>
                   <Text style={styles.bulletPoint}>{i + 1}. </Text>
-                  {point}
+                  {fixTr(point)}
                 </Text>
               </View>
             ))}
@@ -464,13 +474,13 @@ export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: Do
           <Text style={{ fontFamily: "Helvetica-Bold", marginBottom: 4 }}>
             {t.disclaimer}
           </Text>
-          <Text>{analysis.disclaimer || t.defaultDisclaimer}</Text>
+          <Text>{fixTr(analysis.disclaimer) || t.defaultDisclaimer}</Text>
         </View>
 
         {/* Footer */}
         <View style={styles.footer}>
           <Text>{t.footer}</Text>
-          <Text>{date}</Text>
+          <Text>{fixTr(date)}</Text>
         </View>
       </Page>
     </Document>
