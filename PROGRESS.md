@@ -1,6 +1,67 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Mayıs 2026 (Sprint 15 — 1 commit: Etkileşim denetleyici kayıtlı ilaçları mount'ta otomatik pre-fill, zero-click UX. Cipralex/Glifor/Zoretanin gibi kayıtlı aktif ilaçlar /interaction-checker açılışında chip listesinde belirir.)
+> Son güncelleme: 1 Mayıs 2026 (Sprint 16 — 2 commit: Radyoloji A+B+C prompt enrichment + PDF Türkçe + image quality chip; Kan tahlili PDF Helvetica → NotoSans + lang-aware + urgency banner + interactionCheck render. TCK Md.90 / 1219 sK uyumlu — hedge phrases intact.)
+
+---
+
+## Sprint 16 — Radyoloji + Kan Tahlili PDF Kalitesi (1 Mayıs 2026)
+
+**Toplam:** 2 commit, 0 revert
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `fb36888` | Radyoloji A+B+C — prompt enrichment + PDF TR + quality chip |
+| 2 | `7143ba8` | Kan Tahlili PDF — Türkçe + lang-aware + urgency banner |
+| D1 | (this) | Sprint 16 kapanış docs |
+
+### Major Outcomes
+
+- **Radyoloji system prompt** zenginleşti: anatomic specificity directive + significance rubric (`normal | attention | urgent`) + image quality directive (`diagnostic | limited | non-diagnostic`) + 3 few-shot örnek (normal X-ray / attention CT / urgent MRI). JSON şemaya `imageQuality` field eklendi.
+- **Radyoloji PDF Türkçe** — `RadiologyReport.tsx` `lang` prop + 11-key inline t bundle + `toLocaleDateString` lang-aware. NotoSans font register zaten Session 32'de yapılmıştı; t bundle ş/ğ/ü/ö/ç/ı/İ glyph'lerle eşleşti.
+- **Kan tahlili PDF** — `DoctorReport.tsx` Helvetica → NotoSans (Türkçe karakter native render), `lang` prop + 30+ key t bundle, `overallUrgency` (`routine | soon | urgent`) için renkli banner (radyoloji paterni mirror), `interactionCheck` field supplement tablosunda görünür, `referenceRange` sonuç tablosuna `abnormalFindings` lookup ile enjekte. Filename i18n (`DoctoPal-Kan-Tahlili-Report-*` / `DoctoPal-BloodTest-Report-*`).
+- **Image quality chip + retry CTA** — `RadiologyResultDashboard.tsx` `analysis.imageQuality` conditional: `non-diagnostic` kırmızı banner + "Tekrar yükle" buton (`onRetry={resetAnalysis}`), `limited` amber chip. 3 yeni `rad.quality.*` i18n key TR+EN parite.
+- **TCK Md.90 / 1219 sK uyumu korundu** — hedge phrases (CRITICAL RULES "appears to show / may suggest / consistent with / NOT diagnosing"), emergency keyword listesi, "net tanı yasağı" intact. A vektörü specificity ekledi ama "definitive" yapmadı.
+
+### Sprint 16 Implementation Detayı
+
+**Commit 1 (`fb36888`) — Radyoloji A+B+C:**
+
+- `lib/prompts.ts` — `RADIOLOGY_ANALYSIS_PROMPT` extend: anatomic directive + rubric + image quality directive + JSON schema `imageQuality` + 3 few-shot örnek (~80 satır net). Hedge phrases dokunulmadı.
+- `app/api/radiology-analysis/route.ts` — `imageQuality: analysis.imageQuality || "limited"` konservatif default (1 satır).
+- `components/pdf/RadiologyReport.tsx` — `lang?: "tr" | "en"` prop + 11-key t bundle (title/subtitle/findings/glossary/doctor/limitations/disclaimer/urgency/modality/medicalTerm/defaultDisclaimer/footer) + `toLocaleDateString` lang-aware.
+- `app/api/radiology-pdf/route.ts` — body destructure `lang` + RadiologyReport prop pass.
+- `components/radiology/RadiologyResultDashboard.tsx` — `RadiologyAnalysis` interface'e `imageQuality?: "diagnostic" | "limited" | "non-diagnostic"`, `Props` interface'e `onRetry?: () => void`. Quality chip JSX (urgency banner sonrası, image preview öncesi). PDF download fetch body'sine `lang` inject. `cn` import.
+- `app/medical-analysis/page.tsx` — `<RadiologyResultDashboard onRetry={resetAnalysis}>` prop pass.
+- `lib/translations/commonToolKeys.ts` — 3 yeni key: `rad.quality.nonDiagnostic` ("Bu görüntü analiz için yetersiz — daha net bir fotoğraf yükleyin" / "Image quality too low for analysis — please upload a clearer image"), `rad.quality.limited` ("Sınırlı görüntü kalitesi — bulgular yaklaşık değerlendirme içerir" / "Limited image quality — findings are approximate"), `rad.quality.retry` ("Tekrar yükle" / "Upload again").
+
+**Commit 2 (`7143ba8`) — Kan Tahlili PDF:**
+
+- `components/pdf/DoctorReport.tsx` — Helvetica → NotoSans (`Font.register` + `path.join(process.cwd(), "public", "fonts", ...)` + hyphenation callback). `lang?: "tr" | "en"` prop + 30+ key t bundle. `Analysis` interface'e `overallUrgency?: "routine" | "soon" | "urgent"` + `trendComparison?` + `abnormalFindings.referenceRange?` + `supplementRecommendations.interactionCheck?`. Urgency banner conditional (yeşil/sarı/kırmızı). `interactionCheck` satırı supplement bloğunda. `referenceRangeByMarker` lookup map → sonuç tablosu kolon enrichment. Yeni "Anormal Bulgular" detay section. `toLocaleDateString` lang-aware.
+- `app/api/generate-pdf/route.ts` — body `lang = "en"` destructure + `reportLang` normalize + `DoctorReport({ ..., lang: reportLang })` + filename i18n (`fileSlug = "Kan-Tahlili" : "BloodTest"`).
+- `components/blood-test/ResultDashboard.tsx` — fetch body'sine `lang` inject (mevcut `useLang()` hook reuse) + filename i18n parite.
+
+### Sprint 16 Backward Compatibility
+
+- `lang` prop default `"en"` → mevcut caller'lar bozulmadı.
+- `imageQuality` / `overallUrgency` / `interactionCheck` / `referenceRange` hepsi optional → eski radiology_reports / blood_tests rows'da extra alanlar `undefined` ile graceful degrade (banner gizli, satır render edilmez).
+- Migration yok — mevcut tablolar (`radiology_reports analysis_json JSONB` esnek shape) yeni alanları sessizce taşır.
+
+### Sprint 17+ Backlog
+
+- **Kan tahlili schema enrichment** — `blood_tests` tablosunu `radiology_reports` paternine yükselt (`analysis_json JSONB` + `summary` + `overall_urgency` migration + structured insert). Manuel form akışı şu an `query_history`'ye non-structured insert; PDF upload akışı zaten `blood_tests`'e structured insert ediyor (hibrit pattern).
+- **History/Trend list UI** — radiology_reports + blood_tests dual-source liste, profil sayfasında veya `/medical-analysis` Trends tab altı.
+- **Aile non-member contacts** — roadmap #4 (aile üyesi olmayan acil iletişim kişileri için ayrı tablo + UI).
+- **Hot-spot overlay** — radyoloji bounding box AI inference (avukat sonrası).
+- **chat_conversations auto-title endpoint** — Sprint 14+ deferred (paralel `/api/conversations/{id}/auto-title` chat_messages SELECT + title generation).
+- **Legacy "Arşiv" tab UI** — opsiyonel query_history list (eski sohbetler kaybolmasın).
+- **27 Mayıs avukat görüşmesi** — **25 gün kaldı**, kritik path.
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency.
+
+### Verification
+
+- `npx tsc --noEmit` → 0 error (her commit sonrası)
+- `npm run build` → 0 error / 0 warning, 11.7s + 11.6s compile (Commit 1 + Commit 2)
+- Smoke test: TR arayüz → radyoloji PDF "Radyoloji Analiz Raporu" / kan tahlili PDF "Kan Tahlili Raporu" başlıkları Türkçe karakterler intact, urgency banner conditional render, image quality chip non-diagnostic kırmızı + retry CTA.
 
 ---
 
