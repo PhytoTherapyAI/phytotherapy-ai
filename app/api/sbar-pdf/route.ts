@@ -169,10 +169,11 @@ export async function POST(request: NextRequest) {
       return new Response(JSON.stringify({ error: "PDF render failed", detail: String(renderErr) }), { status: 500, headers: { "Content-Type": "application/json" } });
     }
 
+    const fileSlug = lang === "tr" ? "SBAR-Raporu" : "SBAR-Report";
     return new Response(new Uint8Array(pdfBuffer), {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="DoctoPal-SBAR-${new Date().toISOString().split("T")[0]}.pdf"`,
+        "Content-Disposition": `attachment; filename="DoctoPal-${fileSlug}-${new Date().toISOString().split("T")[0]}.pdf"`,
       },
     });
   } catch (error) {
