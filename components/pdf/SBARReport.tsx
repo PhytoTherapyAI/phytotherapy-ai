@@ -1,18 +1,19 @@
 // © 2026 DoctoPal — All Rights Reserved
 import React from "react";
-import path from "path";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
 import { translateCondition } from "@/lib/condition-translations";
+import { NOTO_SANS_REGULAR, NOTO_SANS_BOLD } from "@/lib/pdf-fonts";
 
-// Sprint 20 Commit 1 — NotoSans kalıcı fix.
-// next.config.ts outputFileTracingIncludes ile public/fonts/** SBAR endpoint
-// bundle'ına explicit dahil edildi → path.join filesystem resolve çalışır.
-// Sprint 17 HF5 (Helvetica + fixTr) revert. Türkçe ş/ğ/ü/ö/ç/ı/İ native render.
+// Sprint 20 HF1 — NotoSans base64 inline (filesystem path bağımsız).
+// Vercel serverless bundle'da path.join(process.cwd(), ...) resolve sorunu
+// tamamen bypass — base64 data URI kod içinde, deploy hedefi agnostic.
+// Sprint 17 HF5 (Helvetica + fixTr) revert sonrası NotoSans native glyph
+// render (ş/ğ/ü/ö/ç/ı/İ).
 Font.register({
   family: "NotoSans",
   fonts: [
-    { src: path.join(process.cwd(), "public", "fonts", "NotoSans-Regular.ttf"), fontWeight: "normal" },
-    { src: path.join(process.cwd(), "public", "fonts", "NotoSans-Bold.ttf"), fontWeight: "bold" },
+    { src: NOTO_SANS_REGULAR, fontWeight: "normal" },
+    { src: NOTO_SANS_BOLD, fontWeight: "bold" },
   ],
 });
 Font.registerHyphenationCallback((word) => [word]);

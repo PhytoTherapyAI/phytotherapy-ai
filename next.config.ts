@@ -8,18 +8,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
-  // Sprint 20 — NotoSans kalıcı fix: 3 PDF endpoint serverless function
-  // bundle'ına public/fonts/* dosyaları explicit dahil. Vercel next-trace
-  // statik analizi heavy-import bundle'larda path.join statik string'i
-  // yakalayamadığı için (özellikle SBAR'da 6 ek import → noisy graph),
-  // Font.register filesystem path resolve fail oluyordu → "Font family
-  // not registered" runtime error. outputFileTracingIncludes config bu
-  // tracing-miss'i bypass eder.
-  outputFileTracingIncludes: {
-    "/api/sbar-pdf": ["./public/fonts/**"],
-    "/api/radiology-pdf": ["./public/fonts/**"],
-    "/api/generate-pdf": ["./public/fonts/**"],
-  },
+  // Sprint 20 HF1 — outputFileTracingIncludes kaldırıldı.
+  // PDF font'lar artık base64 inline (lib/pdf-fonts.ts) — filesystem path
+  // resolve gereksiz, public/fonts bundle'a dahil etmek de gereksiz.
   images: {
     remotePatterns: [
       { hostname: "flagcdn.com" },

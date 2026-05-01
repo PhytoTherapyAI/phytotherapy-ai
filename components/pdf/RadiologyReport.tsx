@@ -1,16 +1,16 @@
 // © 2026 DoctoPal — All Rights Reserved
 import React from "react";
-import path from "path";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
+import { NOTO_SANS_REGULAR, NOTO_SANS_BOLD } from "@/lib/pdf-fonts";
 
-// Register Noto Sans so Turkish glyphs (ş/ğ/ü/ö/ç/ı/İ) render natively instead of
-// falling back to transliteration. Fonts live in public/fonts; resolved via filesystem
-// because this component renders server-side in /api/radiology-pdf.
+// Sprint 20 HF1 — NotoSans base64 inline (filesystem path bağımsız).
+// Vercel serverless bundle'da path.join(process.cwd(), ...) resolve sorunu
+// bypass. ş/ğ/ü/ö/ç/ı/İ native render.
 Font.register({
   family: "NotoSans",
   fonts: [
-    { src: path.join(process.cwd(), "public", "fonts", "NotoSans-Regular.ttf"), fontWeight: "normal" },
-    { src: path.join(process.cwd(), "public", "fonts", "NotoSans-Bold.ttf"), fontWeight: "bold" },
+    { src: NOTO_SANS_REGULAR, fontWeight: "normal" },
+    { src: NOTO_SANS_BOLD, fontWeight: "bold" },
   ],
 });
 Font.registerHyphenationCallback((word) => [word]);
