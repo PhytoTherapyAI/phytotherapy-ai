@@ -188,4 +188,12 @@ export const authTranslations: Record<string, TranslationEntry> = {
   "profile.healthReport.viewAllBadges": { en: "View all", tr: "Tümünü gör" },
   "profile.healthReport.sbarCardTitle": { en: "Get a summary for your doctor visit", tr: "Doktor görüşmesi için özet al" },
   "profile.healthReport.sbarCardHint": { en: "Download all your health data as a professional SBAR report.", tr: "Tüm sağlık verilerini SBAR formatında profesyonel rapor olarak indir." },
+  // Sprint 9 Commit 1 — Missing section nudges (cross-tab navigation)
+  "profile.healthReport.nudges.title": { en: "Complete your profile", tr: "Profilini tamamla" },
+  "profile.healthReport.nudges.basicInfo": { en: "Add basic info — name, age, gender", tr: "Temel bilgileri ekle — ad, yaş, cinsiyet" },
+  "profile.healthReport.nudges.medications": { en: "No medications added — add for interaction checks", tr: "İlaç eklenmemiş — etkileşim taraması için ekle" },
+  "profile.healthReport.nudges.allergies": { en: "No allergies added — add for safe recommendations", tr: "Alerji bilgisi yok — güvenli öneri için ekle" },
+  "profile.healthReport.nudges.vaccines": { en: "Vaccine records empty", tr: "Aşı kayıtları boş" },
+  "profile.healthReport.nudges.lifestyle": { en: "Body & lifestyle info missing", tr: "Vücut & yaşam tarzı bilgisi eksik" },
+  "profile.healthReport.nudges.familyHistory": { en: "Family health history not added", tr: "Aile sağlık öyküsü eklenmemiş" },
 }

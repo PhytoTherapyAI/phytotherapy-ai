@@ -297,6 +297,7 @@ export function ProfileShellV2() {
             labTestCount={profileData.labTestCount}
             streakDays={profileData.streakDays}
             familyMemberCount={profileData.familyMemberCount}
+            setTab={setTab}
           />
         )
 

@@ -22,7 +22,7 @@
 
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { Flame, Trophy, FileText } from "lucide-react"
+import { Flame, Trophy, FileText, ChevronRight } from "lucide-react"
 import { tx, txObj } from "@/lib/translations"
 import { evaluateBadges, type UserStats } from "@/lib/badges"
 import BadgeIcon from "@/components/badges/BadgeIcon"
@@ -36,6 +36,7 @@ import { Card } from "@/components/ui/card"
 import { computeVitalityScore } from "@/lib/vitality"
 import type { UserMedication } from "@/lib/database.types"
 import type { UserAllergyRow } from "@/components/profile-v2/hooks/useProfileData"
+import type { ProfileTabId } from "@/components/profile-v2/useProfileTab"
 
 interface HealthReportTabProps {
   lang: "tr" | "en"
@@ -62,6 +63,8 @@ interface HealthReportTabProps {
   labTestCount: number
   streakDays: number
   familyMemberCount: number
+  /** Sprint 9 Commit 1: cross-tab navigation for missing-section nudges. */
+  setTab: (id: ProfileTabId) => void
 }
 
 export function HealthReportTab({
@@ -74,6 +77,7 @@ export function HealthReportTab({
   labTestCount,
   streakDays,
   familyMemberCount,
+  setTab,
 }: HealthReportTabProps) {
   const tr = lang === "tr"
 
@@ -152,6 +156,48 @@ export function HealthReportTab({
     ...earned.slice(0, 6).map((b) => ({ badge: b, earned: true })),
     ...locked.slice(0, Math.max(0, 6 - earned.length)).map((b) => ({ badge: b, earned: false })),
   ]
+
+  // ── Missing section nudges (Sprint 9 Commit 1) ──
+  // Priority order (basicInfo → meds → allergies → vaccines → lifestyle →
+  // familyHistory) keeps the most consequential gaps at the top. Capped at
+  // 3 with .slice() further down to avoid nudge fatigue when the profile is
+  // mostly empty. powerInput is already computed above; reuse — do NOT
+  // duplicate the flag logic.
+  const nudgeCandidates: Array<{ tabId: ProfileTabId; emoji: string; label: string } | false> = [
+    !powerInput.hasBasicInfo && {
+      tabId: "genel" as ProfileTabId,
+      emoji: "👤",
+      label: tx("profile.healthReport.nudges.basicInfo", lang),
+    },
+    powerInput.medicationCount === 0 && {
+      tabId: "ilaclar" as ProfileTabId,
+      emoji: "💊",
+      label: tx("profile.healthReport.nudges.medications", lang),
+    },
+    !powerInput.hasAllergies && {
+      tabId: "alerjiler" as ProfileTabId,
+      emoji: "⚠️",
+      label: tx("profile.healthReport.nudges.allergies", lang),
+    },
+    powerInput.vaccineCount === 0 && {
+      tabId: "asilar" as ProfileTabId,
+      emoji: "💉",
+      label: tx("profile.healthReport.nudges.vaccines", lang),
+    },
+    !powerInput.hasLifestyle && {
+      tabId: "vucut-yasam" as ProfileTabId,
+      emoji: "🏃",
+      label: tx("profile.healthReport.nudges.lifestyle", lang),
+    },
+    !powerInput.hasFamilyHistory && {
+      tabId: "aile-oykusu" as ProfileTabId,
+      emoji: "👨‍👩‍👧",
+      label: tx("profile.healthReport.nudges.familyHistory", lang),
+    },
+  ]
+  const nudges = nudgeCandidates.filter(
+    (n): n is { tabId: ProfileTabId; emoji: string; label: string } => n !== false,
+  )
 
   return (
     <section className="space-y-6">
@@ -337,6 +383,30 @@ export function HealthReportTab({
           </div>
         </div>
       </Card>
+
+      {/* ── Section 5: Missing Section Nudges (Sprint 9 Commit 1) ── */}
+      {/* Sadece eksik bölümler için cross-tab navigation. Tüm profil dolu */}
+      {/* iken render olmaz (nudges.length === 0). Max 3 nudge gösterir. */}
+      {nudges.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-muted-foreground">
+            {tx("profile.healthReport.nudges.title", lang)}
+          </p>
+          {nudges.slice(0, 3).map((nudge) => (
+            <button
+              key={nudge.tabId}
+              onClick={() => setTab(nudge.tabId)}
+              className="w-full flex items-center gap-3 p-3 rounded-lg border border-border bg-card hover:bg-accent transition-colors text-left"
+            >
+              <span className="text-lg" aria-hidden>
+                {nudge.emoji}
+              </span>
+              <span className="text-sm text-foreground flex-1 min-w-0">{nudge.label}</span>
+              <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground shrink-0" aria-hidden />
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Small footer — makes it clear this is a subset. Keeps the
           Session 46 roadmap visible to the user without committing copy. */}
