@@ -11,29 +11,29 @@ export const LanguageContext = createContext<LangContextType>({
 })
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(DEFAULT_LANG)
-  const [mounted, setMounted] = useState(false)
-
   const validCodes = SUPPORTED_LANGUAGES.map((l) => l.code) as readonly string[]
-
+  // useState lazy init — localStorage hydration + browser-language detect
+  // at mount without useEffect (react-hooks/set-state-in-effect). Write
+  // to localStorage in init body is acceptable (runs once).
+  const [lang, setLangState] = useState<Lang>(() => {
+    if (typeof window === "undefined") return DEFAULT_LANG
+    try {
+      const manuallySet = localStorage.getItem('lang_manually_set') === 'true'
+      const saved = localStorage.getItem('lang')
+      if (manuallySet && saved && validCodes.includes(saved)) {
+        return saved as Lang
+      }
+      const browserLang = navigator.language?.toLowerCase() || ''
+      const detected = (browserLang.startsWith('tr') ? 'tr' : 'en') as Lang
+      try { localStorage.setItem('lang', detected) } catch { /* noop */ }
+      return detected
+    } catch { return DEFAULT_LANG }
+  })
+  // SSR mounted guard — hydration mismatch suppression.
+  const [mounted, setMounted] = useState(false)
   useEffect(() => {
     setMounted(true)
-    const manuallySet = localStorage.getItem('lang_manually_set') === 'true'
-    const saved = localStorage.getItem('lang')
-
-    if (manuallySet && saved && validCodes.includes(saved)) {
-      // User has explicitly chosen a language — respect their choice
-      setLangState(saved as Lang)
-    } else {
-      // No manual selection — always detect from browser language
-      try {
-        const browserLang = navigator.language?.toLowerCase() || ''
-        const detected = browserLang.startsWith('tr') ? 'tr' : 'en'
-        setLangState(detected as Lang)
-        localStorage.setItem('lang', detected)
-      } catch { /* fallback to default */ }
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   const setLang = (l: Lang) => {
     setLangState(l)

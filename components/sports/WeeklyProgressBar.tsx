@@ -44,16 +44,19 @@ function calculateStreak(completedDates: Set<string>): number {
 }
 
 export function WeeklyProgressBar({ lang }: WeeklyProgressBarProps) {
-  const [completedDays, setCompletedDays] = useState<Set<string>>(new Set());
+  // useState lazy init — localStorage hydration moved out of useEffect
+  // (react-hooks/set-state-in-effect). Listener stays in useEffect below.
+  const [completedDays, setCompletedDays] = useState<Set<string>>(() => {
+    if (typeof window === "undefined") return new Set();
+    try {
+      const saved = localStorage.getItem("sports-weekly-completed");
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch { return new Set(); }
+  });
   const weekDates = getWeekDates();
   const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("sports-weekly-completed");
-      if (saved) setCompletedDays(new Set(JSON.parse(saved)));
-    } catch { /* ignore */ }
-
     // Listen for confetti-burst (all supplements taken = day complete)
     const handler = () => {
       setCompletedDays((prev) => {

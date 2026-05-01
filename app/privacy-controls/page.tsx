@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Shield, Eye, EyeOff, Database, Users, Clock, Lock, CheckCircle2, ToggleLeft, ToggleRight, Trash2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,26 +10,32 @@ import { tx } from "@/lib/translations";
 
 interface PrivacySetting { id: string; en: string; tr: string; descEn: string; descTr: string; enabled: boolean; category: string; }
 
+const DEFAULT_PRIVACY_SETTINGS: PrivacySetting[] = [
+  { id: "research_optin", en: "Research Contribution", tr: "Araştırma Katilimi", descEn: "Allow anonymized data for medical research", descTr: "Anonimlestirilmis verilerinizin tibbi araştırmalarda kullanilmasina izin verin", enabled: false, category: "data" },
+  { id: "doctor_sharing", en: "Doctor Data Sharing", tr: "Doktor Veri Paylaşımi", descEn: "Allow your doctor to view your health data", descTr: "Doktorunuzun sağlık verilerinizi görüntülemesine izin verin", enabled: true, category: "sharing" },
+  { id: "family_view", en: "Family Member Visibility", tr: "Aile Uyesi Gorunurlugu", descEn: "Allow family members to see your health summary", descTr: "Aile uyelerinin sağlık ozetinizi gormesine izin verin", enabled: true, category: "sharing" },
+  { id: "analytics", en: "Usage Analytics", tr: "Kullanim Analitigi", descEn: "Help improve the app with anonymous usage data", descTr: "Anonim kullanim verileriyle uygulamayi iyilestirmeye yardim edin", enabled: true, category: "data" },
+  { id: "ai_training", en: "AI Model Training", tr: "AI Model Egitimi", descEn: "Allow data for AI improvement (always anonymized)", descTr: "AI iyilestirmesi için veri kullanilmasina izin verin (her zaman anonim)", enabled: false, category: "data" },
+  { id: "location", en: "Location Services", tr: "Konum Hizmetleri", descEn: "Enable location for pharmacy finder feature", descTr: "Eczane bulucu ozelligi için konumu etkinlestirin", enabled: false, category: "device" },
+];
+
 export default function PrivacyControlsPage() {
   const { lang } = useLang();
   const isTr = lang === "tr";
-  const [settings, setSettings] = useState<PrivacySetting[]>([
-    { id: "research_optin", en: "Research Contribution", tr: "Araştırma Katilimi", descEn: "Allow anonymized data for medical research", descTr: "Anonimlestirilmis verilerinizin tibbi araştırmalarda kullanilmasina izin verin", enabled: false, category: "data" },
-    { id: "doctor_sharing", en: "Doctor Data Sharing", tr: "Doktor Veri Paylaşımi", descEn: "Allow your doctor to view your health data", descTr: "Doktorunuzun sağlık verilerinizi görüntülemesine izin verin", enabled: true, category: "sharing" },
-    { id: "family_view", en: "Family Member Visibility", tr: "Aile Uyesi Gorunurlugu", descEn: "Allow family members to see your health summary", descTr: "Aile uyelerinin sağlık ozetinizi gormesine izin verin", enabled: true, category: "sharing" },
-    { id: "analytics", en: "Usage Analytics", tr: "Kullanim Analitigi", descEn: "Help improve the app with anonymous usage data", descTr: "Anonim kullanim verileriyle uygulamayi iyilestirmeye yardim edin", enabled: true, category: "data" },
-    { id: "ai_training", en: "AI Model Training", tr: "AI Model Egitimi", descEn: "Allow data for AI improvement (always anonymized)", descTr: "AI iyilestirmesi için veri kullanilmasina izin verin (her zaman anonim)", enabled: false, category: "data" },
-    { id: "location", en: "Location Services", tr: "Konum Hizmetleri", descEn: "Enable location for pharmacy finder feature", descTr: "Eczane bulucu ozelligi için konumu etkinlestirin", enabled: false, category: "device" },
-  ]);
+  // useState lazy init — localStorage hydration without useEffect
+  // (react-hooks/set-state-in-effect). SSR guard for Next.js.
+  const [settings, setSettings] = useState<PrivacySetting[]>(() => {
+    if (typeof window === "undefined") return DEFAULT_PRIVACY_SETTINGS;
+    try {
+      const saved = localStorage.getItem("privacy_settings");
+      return saved ? JSON.parse(saved) : DEFAULT_PRIVACY_SETTINGS;
+    } catch { return DEFAULT_PRIVACY_SETTINGS; }
+  });
 
-  const [retentionPeriod, setRetentionPeriod] = useState("24");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("privacy_settings");
-    if (saved) { try { setSettings(JSON.parse(saved)); } catch {} }
-    const ret = localStorage.getItem("data_retention");
-    if (ret) setRetentionPeriod(ret);
-  }, []);
+  const [retentionPeriod, setRetentionPeriod] = useState<string>(() => {
+    if (typeof window === "undefined") return "24";
+    try { return localStorage.getItem("data_retention") ?? "24"; } catch { return "24"; }
+  });
 
   const toggle = (id: string) => {
     setSettings(prev => {

@@ -31,7 +31,11 @@ export default function SettingsPage() {
   const { lang, setLang } = useLang()
   const isTr = lang === "tr"
 
-  const [personality, setPersonality]       = useState("compassionate")
+  // useState lazy init — localStorage hydration without useEffect.
+  const [personality, setPersonality]       = useState<string>(() => {
+    if (typeof window === "undefined") return "compassionate"
+    try { return localStorage.getItem(PERSONALITY_KEY) ?? "compassionate" } catch { return "compassionate" }
+  })
   const [notifications, setNotifications]   = useState({ email: true, push: true, dailyPlan: true, weeklySummary: false })
 
   // Password change state — F-SETTINGS-001 added currentPassword
@@ -48,12 +52,6 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push("/auth/login")
   }, [isLoading, isAuthenticated, router])
-
-  // Load saved personality
-  useEffect(() => {
-    const saved = localStorage.getItem(PERSONALITY_KEY)
-    if (saved) setPersonality(saved)
-  }, [])
 
   // Session 42 F-S-005: auto-reset the password success banner after 5s
   // via an effect with cleanup. Before, handlePasswordChange fired a bare

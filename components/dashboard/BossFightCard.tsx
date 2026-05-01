@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useCallback } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -39,31 +39,32 @@ const taskTypeIcon = (type: string) => {
 type ViewMode = "idle" | "select" | "detail" | "active" | "complete"
 
 export function BossFightCard({ userId, lang, isPremium = false }: BossFightCardProps) {
-  const [activeBoss, setActiveBoss] = useState<ActiveBoss | null>(null)
-  const [selectedBoss, setSelectedBoss] = useState<BossFight | null>(null)
-  const [viewMode, setViewMode] = useState<ViewMode>("idle")
-  const [showShareCard, setShowShareCard] = useState(false)
-
-  // Load active boss from localStorage
-  useEffect(() => {
+  // useState lazy init — localStorage hydration + viewMode compound at mount.
+  // userId comes from auth context and is stable per mount (logout unmounts);
+  // userId change mid-mount edge case is acceptable (state stays old until
+  // remount). react-hooks/set-state-in-effect.
+  const [activeBoss, setActiveBoss] = useState<ActiveBoss | null>(() => {
+    if (typeof window === "undefined") return null
     try {
       const stored = localStorage.getItem(`${BOSS_STORAGE_KEY}-${userId}`)
-      if (stored) {
-        const parsed = JSON.parse(stored) as ActiveBoss
-        setActiveBoss(parsed)
-        const boss = BOSS_FIGHTS.find(b => b.id === parsed.bossId)
-        if (boss) {
-          const start = new Date(parsed.startDate)
-          const daysPassed = Math.max(1, Math.floor((Date.now() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1)
-          if (daysPassed > boss.duration) {
-            setViewMode("complete")
-          } else {
-            setViewMode("active")
-          }
-        }
-      }
-    } catch { /* ignore */ }
-  }, [userId])
+      return stored ? (JSON.parse(stored) as ActiveBoss) : null
+    } catch { return null }
+  })
+  const [selectedBoss, setSelectedBoss] = useState<BossFight | null>(null)
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    if (typeof window === "undefined") return "idle"
+    try {
+      const stored = localStorage.getItem(`${BOSS_STORAGE_KEY}-${userId}`)
+      if (!stored) return "idle"
+      const parsed = JSON.parse(stored) as ActiveBoss
+      const boss = BOSS_FIGHTS.find(b => b.id === parsed.bossId)
+      if (!boss) return "idle"
+      const start = new Date(parsed.startDate)
+      const daysPassed = Math.max(1, Math.floor((Date.now() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1)
+      return daysPassed > boss.duration ? "complete" : "active"
+    } catch { return "idle" }
+  })
+  const [showShareCard, setShowShareCard] = useState(false)
 
   const saveBoss = useCallback((boss: ActiveBoss | null) => {
     setActiveBoss(boss)

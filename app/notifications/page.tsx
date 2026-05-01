@@ -97,17 +97,16 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<FilterTab>("all")
-  const [readIds, setReadIds] = useState<Set<string>>(new Set())
+  // useState lazy init — localStorage hydration via getReadIds() helper.
+  const [readIds, setReadIds] = useState<Set<string>>(() => {
+    if (typeof window === "undefined") return new Set<string>()
+    try { return getReadIds() } catch { return new Set<string>() }
+  })
 
   // Auth guard
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push("/auth/login")
   }, [isLoading, isAuthenticated, router])
-
-  // Load read state from localStorage
-  useEffect(() => {
-    setReadIds(getReadIds())
-  }, [])
 
   // Build notifications from Supabase data
   const buildNotifications = useCallback(async () => {

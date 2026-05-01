@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Heart, Droplets, Plus, Trash2, AlertTriangle, ExternalLink, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
@@ -45,17 +45,18 @@ export default function DonationPage() {
   useAuth(); // auth subscription
   const { lang } = useLang();
   const [selectedType, setSelectedType] = useState<string>("");
-  const [entries, setEntries] = useState<DonationEntry[]>([]);
+  // useState lazy init so localStorage hydration runs at mount without
+  // a useEffect (react-hooks/set-state-in-effect). SSR guard for Next.js.
+  const [entries, setEntries] = useState<DonationEntry[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const saved = localStorage.getItem("donation-history");
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
   const [newDate, setNewDate] = useState("");
   const [newLocation, setNewLocation] = useState("");
   const [newType, setNewType] = useState<"blood" | "platelet" | "plasma">("blood");
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("donation-history");
-      if (saved) setEntries(JSON.parse(saved));
-    } catch { /* corrupted localStorage */ }
-  }, []);
 
   const saveEntries = (updated: DonationEntry[]) => {
     setEntries(updated);

@@ -366,10 +366,11 @@ function YearPickerDropdown({ tr, entry, triggerId, onSelect, onClose }: {
 
 // Dismissable motivation card for vaccines
 function VaccineMotivationCard({ tr }: { tr: boolean }) {
-  const [dismissed, setDismissed] = useState(false)
-  useEffect(() => {
-    try { if (localStorage.getItem('motiv_dismiss_vaccines') === '1') setDismissed(true) } catch { /* noop */ }
-  }, [])
+  // useState lazy init — localStorage hydration without useEffect.
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false
+    try { return localStorage.getItem('motiv_dismiss_vaccines') === '1' } catch { return false }
+  })
   if (dismissed) return null
   const dismiss = () => {
     setDismissed(true)

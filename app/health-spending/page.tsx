@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Wallet, Plus, Trash2, Pill, Stethoscope, TestTube, Leaf, TrendingUp, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/components/layout/language-toggle";
@@ -37,16 +37,16 @@ function saveExpenses(expenses: Expense[]) {
 
 export default function HealthSpendingPage() {
   const { lang } = useLang();
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  // useState lazy init — loadExpenses reads localStorage; SSR guard for safety.
+  const [expenses, setExpenses] = useState<Expense[]>(() => {
+    if (typeof window === "undefined") return [];
+    try { return loadExpenses(); } catch { return []; }
+  });
   const [showForm, setShowForm] = useState(false);
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("medications");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-
-  useEffect(() => {
-    setExpenses(loadExpenses());
-  }, []);
 
   const addExpense = () => {
     const numAmount = parseFloat(amount);

@@ -15,15 +15,16 @@ export function PWAInstallPrompt() {
   const { lang } = useLang()
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [showPrompt, setShowPrompt] = useState(false)
-  const [dismissed, setDismissed] = useState(false)
+  // useState lazy init — localStorage hydration moved out of useEffect
+  // (react-hooks/set-state-in-effect). Listener stays in useEffect below.
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false
+    try { return !!localStorage.getItem("phyto_pwa_dismissed") } catch { return false }
+  })
 
   useEffect(() => {
-    // Check if already dismissed
-    const wasDismissed = localStorage.getItem("phyto_pwa_dismissed")
-    if (wasDismissed) {
-      setDismissed(true)
-      return
-    }
+    // If already dismissed, skip listener registration entirely.
+    if (dismissed) return
 
     const handler = (e: Event) => {
       e.preventDefault()
@@ -33,7 +34,7 @@ export function PWAInstallPrompt() {
 
     window.addEventListener("beforeinstallprompt", handler)
     return () => window.removeEventListener("beforeinstallprompt", handler)
-  }, [])
+  }, [dismissed])
 
   const handleInstall = async () => {
     if (!deferredPrompt) return

@@ -96,11 +96,14 @@ const fadeUp = {
 
 // ── Vaccine Recommendation Banner ──
 function VaccineBanner({ lang, chronicConditions, vaccines }: { lang: string; chronicConditions: string[]; vaccines: VaccineEntry[] }) {
-  const [dismissed, setDismissed] = useState(false);
-  useEffect(() => {
-    const dismissedAt = localStorage.getItem("vaccine_banner_dismissed");
-    if (dismissedAt && Date.now() - Number(dismissedAt) < 7 * 24 * 60 * 60 * 1000) setDismissed(true);
-  }, []);
+  // useState lazy init — 7-day TTL check at mount without useEffect.
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const dismissedAt = localStorage.getItem("vaccine_banner_dismissed");
+      return !!(dismissedAt && Date.now() - Number(dismissedAt) < 7 * 24 * 60 * 60 * 1000);
+    } catch { return false; }
+  });
 
   if (dismissed) return null;
   const recs = getVaccineRecommendations(chronicConditions, vaccines);

@@ -13,17 +13,24 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  // useState lazy init — localStorage hydration + media query at mount
+  // without useEffect (react-hooks/set-state-in-effect). DOM class side
+  // effect kept in useEffect (effects DO belong in effects).
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "light";
+    try {
+      const stored = localStorage.getItem("phyto-theme") as Theme | null;
+      const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      return stored ?? preferred;
+    } catch { return "light"; }
+  });
   const [mounted, setMounted] = useState(false);
 
+  // DOM class apply + SSR mounted guard.
   useEffect(() => {
-    const stored = localStorage.getItem("phyto-theme") as Theme | null;
-    const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    const initial = stored ?? preferred;
-    setTheme(initial);
-    document.documentElement.classList.toggle("dark", initial === "dark");
+    document.documentElement.classList.toggle("dark", theme === "dark");
     setMounted(true);
-  }, []);
+  }, [theme]);
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {

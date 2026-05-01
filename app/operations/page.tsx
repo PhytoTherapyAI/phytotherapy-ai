@@ -44,21 +44,21 @@ export default function OperationsPage() {
   const router = useRouter()
   const { isAuthenticated, isLoading } = useAuth()
   const { lang } = useLang()
-  const [operations, setOperations] = useState<Operation[]>([])
+  // useState lazy init — localStorage hydration without useEffect
+  // (react-hooks/set-state-in-effect). SSR guard for Next.js safety.
+  const [operations, setOperations] = useState<Operation[]>(() => {
+    if (typeof window === "undefined") return []
+    try {
+      const saved = localStorage.getItem("phyto_operations")
+      return saved ? JSON.parse(saved) : []
+    } catch { return [] }
+  })
   const [showAdd, setShowAdd] = useState(false)
   const [newOp, setNewOp] = useState({ name: "", date: "", notes: "" })
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push("/auth/login")
   }, [isLoading, isAuthenticated, router])
-
-  // Load operations from localStorage (simple approach)
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("phyto_operations")
-      if (saved) setOperations(JSON.parse(saved))
-    } catch { /* corrupted localStorage */ }
-  }, [])
 
   const saveOperations = (ops: Operation[]) => {
     setOperations(ops)
