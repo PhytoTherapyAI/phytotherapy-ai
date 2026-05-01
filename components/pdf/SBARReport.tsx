@@ -1,13 +1,22 @@
 // © 2026 DoctoPal — All Rights Reserved
 import React from "react";
-import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
 import { translateCondition } from "@/lib/condition-translations";
 
-// Sprint 17 hotfix #3 — SBAR Font.register kaldırıldı.
-// RadiologyReport.tsx + DoctorReport.tsx zaten module-level NotoSans register
-// ediyor. Tekrarlanan Font.register / hyphenation callback override conflict
-// üretebilir; tek noktada (Radiology/Doctor import edildiğinde) singleton register
-// yeterli.
+// Sprint 17 hotfix #4 — Font.register URL-based src.
+// Vercel serverless function bundle'ında public/fonts/ filesystem path resolve
+// edilemediği için (process.cwd() = /var/task, public/ klasörü erişilemiyor),
+// URL-based src kullanılıyor. NEXT_PUBLIC_APP_URL = https://doctopal.com
+// public asset CDN'den fetch ediyor (Vercel Edge Cache).
+const FONT_BASE = process.env.NEXT_PUBLIC_APP_URL || "https://doctopal.com";
+Font.register({
+  family: "NotoSans",
+  fonts: [
+    { src: `${FONT_BASE}/fonts/NotoSans-Regular.ttf`, fontWeight: "normal" },
+    { src: `${FONT_BASE}/fonts/NotoSans-Bold.ttf`, fontWeight: "bold" },
+  ],
+});
+Font.registerHyphenationCallback((word) => [word]);
 
 // ── EN translation maps for TR-stored data (TR↔EN canonical mapping, KORUNUR) ──
 const ALLERGEN_EN: Record<string, string> = {
