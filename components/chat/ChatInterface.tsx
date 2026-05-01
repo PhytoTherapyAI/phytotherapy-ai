@@ -62,9 +62,23 @@ interface ChatInterfaceProps {
   className?: string;
   loadConversation?: { query: string; response: string | null } | null;
   initialQuery?: string;
+  /** Sprint 13 Commit 3: chat_conversations row id (URL ?cid=). Mevcut
+   *  conversation'a append etmek için. Null/undefined ise yeni conversation
+   *  ilk sendMessage'da X-Chat-Conversation-Id header'ından öğrenilir. */
+  initialConversationId?: string | null;
+  /** Server'da yeni chat_conversations INSERT olduğunda parent'a bildirir
+   *  (URL ?cid= update + sidebar refresh). Mevcut conversation'a append
+   *  oluyorsa çağrılmaz (id zaten parent'ta). */
+  onConversationCreated?: (id: string) => void;
 }
 
-export function ChatInterface({ className, loadConversation, initialQuery }: ChatInterfaceProps) {
+export function ChatInterface({
+  className,
+  loadConversation,
+  initialQuery,
+  initialConversationId,
+  onConversationCreated,
+}: ChatInterfaceProps) {
   const { isAuthenticated, session, user, profile } = useAuth();
   const { activeUserId, isOwnProfile } = useActiveProfile();
   const { familyMembers, familyGroup } = useFamily();
@@ -85,6 +99,12 @@ export function ChatInterface({ className, loadConversation, initialQuery }: Cha
   const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
   const [showConsentPopup, setShowConsentPopup] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  // Sprint 13 Commit 3: chat_conversations row id state. URL ?cid= ile sync,
+  // yeni conversation INSERT olduğunda X-Chat-Conversation-Id header'ından
+  // güncellenir + parent'a callback ile bildirilir.
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(
+    initialConversationId ?? null,
+  );
   // Model selection removed — single model (claude-haiku-4-5)
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -99,6 +119,14 @@ export function ChatInterface({ className, loadConversation, initialQuery }: Cha
       abortControllerRef.current?.abort();
     };
   }, []);
+
+  // Sprint 13 Commit 3: parent (health-assistant page) ?cid= URL param ile
+  // initialConversationId'yi geçiriyor. Param değişiminde state'i sync et
+  // (örn. sidebar'dan farklı conversation seçimi parent state'i değiştirir,
+  // ChatInterface remount'suz state senkronize olmalı).
+  useEffect(() => {
+    setActiveConversationId(initialConversationId ?? null);
+  }, [initialConversationId]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -408,6 +436,10 @@ export function ChatInterface({ className, loadConversation, initialQuery }: Cha
           files: filesPayload,
           lang,
           targetUserId: effectiveTargetUserId,
+          // Sprint 13 Commit 3: continuity model. Mevcut id varsa server append
+          // eder, yoksa yeni chat_conversations INSERT yapar + X-Chat-
+          // Conversation-Id header'ında döner.
+          conversation_id: activeConversationId,
         }),
       });
 
@@ -477,6 +509,17 @@ export function ChatInterface({ className, loadConversation, initialQuery }: Cha
               console.warn("[auto-title] trigger failed:", err);
             }
           });
+      }
+
+      // Sprint 13 Commit 3: chat_conversations row id (yeni continuity model).
+      // Server pre-stream INSERT'inde yeni conversation oluşturduysa header'da
+      // döndürür. Yeni id ise state'i ve parent'ı bilgilendir (URL ?cid=
+      // update). Mevcut conversation'a append ediliyorsa header zaten aynı id
+      // döner; setState no-op (referans aynı), callback skip.
+      const chatConvId = res.headers.get("X-Chat-Conversation-Id");
+      if (chatConvId && chatConvId !== activeConversationId) {
+        setActiveConversationId(chatConvId);
+        onConversationCreated?.(chatConvId);
       }
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error("Chat error:", error);

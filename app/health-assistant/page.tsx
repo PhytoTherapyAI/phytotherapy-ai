@@ -24,6 +24,11 @@ export default function HealthAssistantPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const urlQuery = searchParams.get("q") ?? undefined;
+  // Sprint 13 Commit 3: chat_conversations row id deep-link (?cid=<uuid>).
+  // ChatInterface initialConversationId prop'u ile sync; sendMessage
+  // X-Chat-Conversation-Id döndürünce handleConversationCreated callback'i
+  // URL'i günceller.
+  const cidParam = searchParams.get("cid") ?? null;
   const {
     isAuthenticated, isLoading, profile, user,
     needsMedicationUpdate,
@@ -69,12 +74,25 @@ export default function HealthAssistantPage() {
     setActiveConversationId(null);
     setLoadConversation(null);
     setChatKey((prev) => prev + 1);
-    // Strip the ?q= deep-link param if it's still in the URL — leaving
-    // it would re-seed ChatInterface with the old query on refresh.
-    if (urlQuery) {
+    // Strip both ?q= ve ?cid= deep-link param'larını — ?cid= bırakılırsa
+    // sayfa refresh'inde ChatInterface eski conversation'a append eder
+    // (yanlış davranış: "yeni sohbet" semantik'i).
+    if (urlQuery || cidParam) {
       router.replace("/health-assistant", { scroll: false });
     }
-  }, [router, urlQuery]);
+  }, [router, urlQuery, cidParam]);
+
+  // Sprint 13 Commit 3: ChatInterface yeni conversation INSERT olduğunda
+  // X-Chat-Conversation-Id header'ından öğrendiği id'yi callback'le
+  // bildirir. URL'i ?cid=<uuid> ile sync et — refresh'te aynı conversation
+  // devam edebilsin.
+  const handleConversationCreated = useCallback(
+    (id: string) => {
+      setActiveConversationId(id);
+      router.replace(`/health-assistant?cid=${id}`, { scroll: false });
+    },
+    [router],
+  );
 
   // F-MOBILE-001: drawer-aware variant — closes the drawer after
   // resetting the chat surface so the user lands directly on a fresh
@@ -257,6 +275,8 @@ export default function HealthAssistantPage() {
               className="h-[calc(100vh-280px)] min-h-[500px]"
               loadConversation={loadConversation}
               initialQuery={urlQuery}
+              initialConversationId={cidParam}
+              onConversationCreated={handleConversationCreated}
             />
 
             {/* Daily medication check blocker overlay */}
