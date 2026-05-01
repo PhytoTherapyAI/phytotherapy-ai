@@ -1,19 +1,13 @@
 // © 2026 DoctoPal — All Rights Reserved
 import React from "react";
-import path from "path";
-import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { translateCondition } from "@/lib/condition-translations";
 
-// Sprint 17 Commit 1 — Helvetica + fixTr() transliteration kaldırıldı.
-// NotoSans native glyph render (ş/ğ/ü/ö/ç/ı/İ).
-Font.register({
-  family: "NotoSans",
-  fonts: [
-    { src: path.join(process.cwd(), "public", "fonts", "NotoSans-Regular.ttf"), fontWeight: "normal" },
-    { src: path.join(process.cwd(), "public", "fonts", "NotoSans-Bold.ttf"), fontWeight: "bold" },
-  ],
-});
-Font.registerHyphenationCallback((word) => [word]);
+// Sprint 17 hotfix #3 — SBAR Font.register kaldırıldı.
+// RadiologyReport.tsx + DoctorReport.tsx zaten module-level NotoSans register
+// ediyor. Tekrarlanan Font.register / hyphenation callback override conflict
+// üretebilir; tek noktada (Radiology/Doctor import edildiğinde) singleton register
+// yeterli.
 
 // ── EN translation maps for TR-stored data (TR↔EN canonical mapping, KORUNUR) ──
 const ALLERGEN_EN: Record<string, string> = {
