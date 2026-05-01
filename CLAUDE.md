@@ -913,6 +913,61 @@ const handleDownloadPDF = useCallback(async () => {
 
 Pattern referansı: `components/pdf/SymptomAssessmentPDF.tsx` `reportId` prop + `app/symptom-checker/page.tsx` `handleDownloadPDF` caller stamp (Sprint 5 Faz 5d Commit 2, `360fad7`).
 
+### Kasıtlı Trigger Dep — ESLint "Unnecessary" Öncesi Semantic Kontrol (Sprint 6 Faz 6 öğretisi)
+
+ESLint `exhaustive-deps` "unnecessary dependency" dediğinde **otomatik silme tehlikeli** — dep kasıtlı trigger amaçlı olabilir. ESLint statik analizi runtime semantic'i bilmiyor.
+
+Tehlikeli pattern:
+
+```tsx
+// ❌ ESLint: "analysis is unnecessary"
+const insight = useMemo(() => generateInsight(logs), [logs, analysis])
+// Direkt sil → KVKK objection isolation bozulur
+```
+
+Doğru pattern — önce semantic kontrol:
+
+```tsx
+// 1. Body'de analysis kullanılıyor mu? (kullanılmıyorsa GERÇEK unnecessary mi?)
+// 2. Dep'in trigger amaçlı olduğuna dair yorum var mı?
+// 3. Yoksa: neden eklendi? (git blame / commit message)
+// Kasıtlıysa eslint-disable + gerekçe:
+const insight = useMemo(
+  () => generateInsight(logs),
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional trigger: analysis change → KVKK isolation reset
+  [logs, analysis],
+)
+```
+
+**Plan mode kontrol listesi (yeni "unnecessary dep" warning için):**
+
+- Body'de o dep kullanılıyor mu? Hayır ise: kasıtlı trigger mi yoksa gerçek unnecessary mi?
+- Yorum açıklaması var mı? (örn. "Note: `completed` is in the deps so consumers re-render whenever the Set identity changes")
+- git blame ile dep'in eklendiği commit + mesaj kontrol
+- Çıkarma kararı verirken **runtime davranışını** test et: dep silindiğinde useMemo/useCallback ne sıklıkla recompute olur?
+
+**Kasıtlı trigger dep kategorileri (sık görülen pattern'ler):**
+
+- **KVKK / compliance isolation** — `crypto.randomUUID()` useMemo'sunun deps'inde state value'lar; her state change'te yeni UUID üretmek istiyoruz (objection form group separation)
+- **Set / Map identity → consumer re-render** — useContext value useMemo'sunda primitive olmayan ref dep; Set identity değişimi context value'sunu yeniden kuruyor, useContext consumer'ları re-render ediyor
+- **Cross-component sync signal** — dep change = sibling re-render trigger
+- **Frame-rate gating** — animation deps değiştiğinde reset
+
+**Çözüm seçenekleri (kasıtlıysa):**
+
+1. **eslint-disable-next-line + gerekçe yorum** (en yaygın) — multi-line useMemo'da disable comment deps array satırının ÜSTÜNE konmalı (useMemo callback'i değil)
+2. **useEffect ile setState** — kasıtlı trigger semantic'ini effect'e taşı (set-state-in-effect uyarı oluşturabilir)
+3. **useReducer** — dispatch action ile state ve trigger birlikte yönetilir
+
+Pattern referansları:
+
+- `app/mental-wellness/page.tsx` — `responseId` `[analysis]` KVKK trigger
+- `app/sleep-analysis/page.tsx` — `aiResponseId` `[analysis, microInsight, loggedToday]` KVKK trigger
+- `app/sports-performance/page.tsx` — `aiResponseId` `[r]` KVKK trigger
+- `lib/daily-logs-context.tsx` — `value` `[completed]` Set identity consumer re-render
+
+(Sprint 6 Faz 6 Commit 1, `558a802`)
+
 ---
 
 ## Sprint Disiplini (her commit'te zorunlu)

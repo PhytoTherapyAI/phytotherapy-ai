@@ -104,6 +104,47 @@ CLAUDE.md "Production Debug — Auth Context Önce Kontrol Et" h3'ünde dosyalan
 
 ---
 
+## Sprint 6 — exhaustive-deps Cleanup (29 Nisan 2026) ✅ KAPANDI
+
+**Süre:** 29 Nisan 2026 (Sprint 5'in devamı, tek gün)
+**Toplam:** 3 commit, 0 revert
+**Sonuç:** 86 → 61 problem (-25, exhaustive-deps 24 → 0 + yan kazanımlar)
+
+### Sprint 6 Commit Tablosu
+
+| # | Commit | Açıklama | Delta |
+|---|---|---|---|
+| 1 | `558a802` | Faz 6 Commit 1 — dep add/remove toplu (16 ihlal) + 2 yan etki refactor | −17 |
+| 2 | `5849ea4` | Faz 6 Commit 2+3 — useMemo wrap (page.tsx + symptom-checker) + 5× eslint-disable kasıtlı omit | −8 |
+| D1 | (this) | Sprint 6 kapanış docs + 1 CLAUDE.md öğretisi | — |
+
+### Sprint 6 Kapatılan Kategoriler (12/13 toplam)
+
+✓ `prefer-const`, ✓ `unused eslint-disable directives`, ✓ `no-unescaped-entities`, ✓ `no-require-imports`, ✓ `no-explicit-any`, ✓ `no-unused-vars`, ✓ `rules-of-hooks`, ✓ `immutability`, ✓ `purity`, ✓ `preserve-manual-memoization`, ✓ `no-img-element`, ✓ **`exhaustive-deps`**
+
+### Sprint 6 Kritik Öğreti — Kasıtlı Trigger Dep Pattern
+
+ESLint `exhaustive-deps` "unnecessary dependency" flag'lediğinde **otomatik silme tehlikeli**. Faz 6 Commit 1'de plan mode 4 case'de kasıtlı trigger semantic keşfetti:
+
+- `app/mental-wellness/page.tsx` `[analysis]` → KVKK objection isolation trigger
+- `app/sleep-analysis/page.tsx` `[analysis, microInsight, loggedToday]` → KVKK isolation
+- `app/sports-performance/page.tsx` `[r]` → KVKK isolation
+- `lib/daily-logs-context.tsx` `[completed]` → Set identity → consumer re-render trigger (yorum açıkça kanıtlıyor)
+
+ESLint statik analizi runtime semantic'i bilmiyor. Her "unnecessary" silme öncesi: "**bu dep neden eklendi?**" sorusu zorunlu. Yorum yoksa git blame / commit message bak. Kasıtlıysa `// eslint-disable-next-line react-hooks/exhaustive-deps -- gerekçe` yorum.
+
+CLAUDE.md "Kasıtlı Trigger Dep" h3'üne dosyalandı (Refactoring Patterns 13. öğreti).
+
+### Sprint 6+ Devam Eden Backlog
+
+**Tek kalan ESLint kategorisi:** `set-state-in-effect` (61 ihlal)
+
+- Faz 5b/c için ayrı session — 60+ dosya, pattern-by-pattern refactor
+- Patterns: lazy state derivation → useMemo, useEffect → setState chain → useReducer veya event handler, localStorage hydration → custom hook, cross-tab sync setState → useSyncExternalStore
+- Tüm ESLint warnings sıfır; sadece bu kategori errors var
+
+---
+
 ## Sprint 5 — ESLint Cleanup (29 Nisan 2026) ✅ KAPANDI
 
 **Süre:** 29 Nisan 2026 (tek gün)
