@@ -1,6 +1,59 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Mayıs 2026 (Sprint 11 — 2 commit: BirthDatePicker handleKeyDown sub-helper extract + Türk ilaç DB v2 expansion 149 yeni marka.)
+> Son güncelleme: 1 Mayıs 2026 (Sprint 13 — 4 commit: ChatGPT/Claude.ai tarzı chat conversation continuity model production'da. Backend schema + endpoints, /api/chat v2, ChatInterface URL ?cid=, Sidebar v2.)
+
+---
+
+## Sprint 13 — Chat Session Continuity Model (1 Mayıs 2026)
+
+**Toplam:** 4 commit, 0 revert
+**Sonuç:** ChatGPT/Claude.ai tarzı conversation continuity model production'da
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `f8f21ec` | DB schema: chat_conversations + chat_messages + /api/conversations endpoint (CRUD) |
+| 2 | `677a52a` | /api/chat v2 — conversation_id continuity + parallel write (chat_messages user/assistant) |
+| 3 | `9c281f5` | ChatInterface state + URL ?cid= routing + onConversationCreated callback |
+| 4 | `33fcea0` | Sidebar v2 — /api/conversations consume + full message seed (loadMessages prop) |
+| D1 | (this) | Sprint 13 kapanış docs (+ Sprint 12 missing entry) |
+
+### Sprint 13 Major Outcome
+
+- **Parallel track migration** — query_history (legacy pair-row archive) INTACT, yeni chat_conversations + chat_messages bağımsız evrim. Eski sidebar verisi hâlâ DB'de, sadece v2 sidebar'ında listelenmiyor (gelecek opsiyonel "Arşiv" tab için rezerv).
+- **Schema** — chat_conversations (target_user_id caregiver mode + is_pinned + title + archived_at + updated_at trigger) + chat_messages (role + content + attachments JSONB + user_id denormalize RLS guard), 7 RLS policy own_*, partial index `WHERE archived_at IS NULL` hot path için.
+- **Endpoint** — `/api/conversations` CRUD (GET list + last_message preview, POST create, GET messages, PATCH whitelist, DELETE cascade). Auth pattern proje convention (Bearer + getServiceClient + getUser(token)). Async params Next.js 15+.
+- **Continuity flow** — user mesaj → server pre-stream chat_conversations INSERT (yoksa) + chat_messages user INSERT + X-Chat-Conversation-Id header → ChatInterface state + URL ?cid=<uuid> + parent callback → refresh'te aynı id ile append path.
+- **Sidebar v2** — yeni endpoint consume, item click → `GET /api/conversations/{id}` messages array → ChatInterface loadMessages prop → state replace. Pin/rename/delete `/api/conversations/{id}` PATCH/DELETE. Group/sort by updated_at (was created_at).
+
+### Sprint 14 Backlog
+
+- **Refresh restore** — `?cid=` URL ile gelince ChatInterface mount'ta auto-fetch `GET /api/conversations/{id}` → setMessages seed. Şu an refresh boş başlar (loadMessages prop sadece sidebar tıklamasında dolar). High priority — UX continuity bozulmasın.
+- **Sidebar auto-refresh** — yeni conversation INSERT olunca `conversation-updated` event'i Sprint 47 F-CHAT-SIDEBAR-003 ile zaten dispatch ediliyor; ConversationHistory v2 listener intact (Commit 4'te dokunulmadı). Validate edip gerekirse fix.
+- **Auto-title** — şu an query_history.custom_title için legacy `/api/query-history/{id}/auto-title` endpoint çalışıyor (X-Conversation-Id header). Yeni chat_conversations.title için paralel endpoint Sprint 14+ scope. Şimdilik kullanıcı manuel rename yapabilir.
+- **Legacy query_history archive UI** — opsiyonel "Arşiv" tab (Round 1 keşifte 3. seçenek). Düşük öncelik — eski veri kayıp değil, DB'de duruyor.
+- **27 Mayıs avukat görüşmesi** — **26 gün kaldı**, kritik path
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency
+
+---
+
+## Sprint 12 — Chat UI Improvements (1 Mayıs 2026)
+
+**Toplam:** 1 commit, 0 revert
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `d9e2a4e` | Copy button + tablo desteği + Regenerate + Stop generation |
+
+### Sprint 12 Major Outcome
+
+ChatGPT-grade UX iyileştirmeleri (Sprint 47 F-CHAT-SIDEBAR-001/002/003 + Sprint 12 ile sidebar + bubble UX zengin):
+
+- **Copy button** — her completed assistant mesajda; `navigator.clipboard.writeText` + 2sn "Kopyalandı" feedback. Doktor sohbeti / WhatsApp aktarımı için kritik mobile UX
+- **Tablo desteği** — `FormattedContent` parser'a GFM markdown tablo (`| header | ... |` + opsiyonel separator). Hücre içi `formatInline` (bold + link). Lab değer karşılaştırma, ilaç-doz tablosu için yüksek değer
+- **Regenerate** — son assistant mesaj altında `RotateCcw` butonu. Son user message'ı tekrar gönderir, eski assistant'ı silip yeni stream başlatır
+- **Stop generation** — streaming sırasında Send button → Stop button (destructive bg, Square fill icon) swap. `abortControllerRef.current.abort()` çağrısı; mevcut stream content silinmez (kullanıcı yarıda kalan yanıtı görür, isterse Regenerate eder)
+
+4 yeni i18n key (chat.copy/copied/regenerate/stop, TR+EN parite). Mevcut Sources panel + AIDisclaimer + SmartSuggestions + YellowCodeCard intact.
 
 ---
 
