@@ -99,8 +99,13 @@ If this is a medical image, describe what you observe and explain each finding s
     }
 
     // Ensure required fields exist with defaults
+    // Sprint 16: imageQuality conservative default "limited" — kullanıcı her
+    // zaman caveat görür; AI explicit "diagnostic" döndürmediği sürece chip
+    // gösterilmez ama UI tarafı "limited" amber chip render eder
+    // (RadiologyResultDashboard "diagnostic" ise hiç render etmez).
     const response = {
       success: true,
+      imageQuality: analysis.imageQuality || "limited",
       imageType: analysis.imageType || "unknown",
       overallUrgency: analysis.overallUrgency || "normal",
       summary: analysis.summary || "",

@@ -870,6 +870,7 @@ function RadiologyTab({
             analysis={data}
             imagePreview={imagePreview || undefined}
             lang={lang}
+            onRetry={resetAnalysis}
           />
           {/* KVKK MADDE 8/10/13 — Mandatory AI disclaimer + right to object */}
           <AIDisclaimer />

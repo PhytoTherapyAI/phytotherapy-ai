@@ -18,7 +18,8 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { analysis } = body;
+    const { analysis, lang = "en" } = body;
+    const reportLang: "tr" | "en" = lang === "tr" ? "tr" : "en";
 
     if (!analysis) {
       return new Response(
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     const pdfStream = await ReactPDF.renderToStream(
-      RadiologyReport({ analysis })
+      RadiologyReport({ analysis, lang: reportLang })
     );
 
     const chunks: Uint8Array[] = [];

@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { tx, type Lang } from "@/lib/translations";
+import { cn } from "@/lib/utils";
 
 interface RadiologyFinding {
   region: string;
@@ -40,12 +41,14 @@ export interface RadiologyAnalysis {
   doctorDiscussion: string[];
   limitations: string[];
   disclaimer: string;
+  imageQuality?: "diagnostic" | "limited" | "non-diagnostic";
 }
 
 interface Props {
   analysis: RadiologyAnalysis;
   imagePreview?: string;
   lang: Lang;
+  onRetry?: () => void;
 }
 
 const URGENCY_CONFIG = {
@@ -89,7 +92,7 @@ const IMAGE_TYPE_LABELS: Record<string, { en: string; tr: string }> = {
 
 type TabId = "findings" | "glossary" | "doctor";
 
-export function RadiologyResultDashboard({ analysis, imagePreview, lang }: Props) {
+export function RadiologyResultDashboard({ analysis, imagePreview, lang, onRetry }: Props) {
   const [activeTab, setActiveTab] = useState<TabId>("findings");
   const [pdfLoading, setPdfLoading] = useState(false);
 
@@ -109,7 +112,7 @@ export function RadiologyResultDashboard({ analysis, imagePreview, lang }: Props
       const res = await fetch("/api/radiology-pdf", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ analysis }),
+        body: JSON.stringify({ analysis, lang }),
       });
       if (!res.ok) throw new Error("PDF generation failed");
       const blob = await res.blob();
@@ -147,6 +150,33 @@ export function RadiologyResultDashboard({ analysis, imagePreview, lang }: Props
           <div className="text-[10px] text-muted-foreground">{tx("rad.findings", lang)}</div>
         </div>
       </div>
+
+      {/* Image Quality Chip — Sprint 16 */}
+      {analysis.imageQuality && analysis.imageQuality !== "diagnostic" && (
+        <div
+          className={cn(
+            "flex items-center gap-2 px-3 py-2 rounded-lg text-sm",
+            analysis.imageQuality === "non-diagnostic"
+              ? "bg-destructive/10 text-destructive border border-destructive/30"
+              : "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-800",
+          )}
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span className="flex-1">
+            {analysis.imageQuality === "non-diagnostic"
+              ? tx("rad.quality.nonDiagnostic", lang)
+              : tx("rad.quality.limited", lang)}
+          </span>
+          {analysis.imageQuality === "non-diagnostic" && onRetry && (
+            <button
+              onClick={onRetry}
+              className="ml-auto text-xs underline underline-offset-2 hover:no-underline shrink-0"
+            >
+              {tx("rad.quality.retry", lang)}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Image Preview (if available) */}
       {imagePreview && (
