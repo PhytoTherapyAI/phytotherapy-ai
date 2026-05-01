@@ -1,6 +1,77 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Mayıs 2026 (Sprint 16 — 2 commit: Radyoloji A+B+C prompt enrichment + PDF Türkçe + image quality chip; Kan tahlili PDF Helvetica → NotoSans + lang-aware + urgency banner + interactionCheck render. TCK Md.90 / 1219 sK uyumlu — hedge phrases intact.)
+> Son güncelleme: 1 Mayıs 2026 (Sprint 17 — 2 commit: SBAR PDF Helvetica → NotoSans + fixTr kaldır + single t bundle + filename i18n; profil veri inject genişletme — aile öyküsü detaylı + son 7 gün vital trend + son lab/radyoloji snippet. SBAR template-driven hâlâ — Commit C AI-driven opsiyonel.)
+
+---
+
+## Sprint 17 — SBAR Detay (1 Mayıs 2026)
+
+**Toplam:** 2 commit, 0 revert
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `0c824f9` | SBAR A — NotoSans + fixTr kaldır + t bundle + filename i18n |
+| 2 | `d3c3395` | SBAR B — aile öyküsü + vital trend + lab/radyoloji inject |
+| D1 | (this) | Sprint 17 kapanış docs |
+
+### Major Outcomes
+
+- **SBAR PDF Türkçe native render** — Helvetica + `fixTr()` transliteration (14 çağrı) → NotoSans `Font.register` (RadiologyReport + DoctorReport ile parite). ş/ğ/ü/ö/ç/ı/İ artık doğal render, ASCII fallback yok.
+- **Single `const t` bundle** — Inline `t(en, tr, lang)` fonksiyon + 41 çağrı → tek 50+ key bundle (Sprint 16 paterni mirror). Locale maps (ALLERGEN_EN/VACCINE_EN/MED_NAME_EN/GENDER/SMOKING/ALCOHOL/REACTION/FREQ) korundu (TR↔EN canonical data mapping ayrı concern).
+- **Filename i18n** — `DoctoPal-SBAR-Raporu-{date}.pdf` (TR) / `DoctoPal-SBAR-Report-{date}.pdf` (EN).
+- **Aile öyküsü B section detaylı** — `family_history_entries` (Session 36 yeni tablo) fetch: relation + condition + age_at_diagnosis + age_at_death + is_deceased + † simge. Yeni tablo entries varsa eski "family:" prefix gizli; yoksa legacy bullet render fallback.
+- **Vital trend S section** — `daily_check_ins` son 7 gün: avg `sleep_quality (1-5)` + `mood (1-5)` + `energy_level (1-5)`. ≥3 check-in eşiği (data sparse ise gizli).
+- **Lab + radyoloji A section** — `blood_tests` son 1 entry `analysis_result` snippet (200 char cap) + `radiology_reports` son 1 entry `summary` (overall_urgency=urgent kırmızı border).
+- **Graceful fallback** — `family_history_entries` apply edilmemişse `.error` → `console.warn` + boş array, legacy "family:" prefix bullet'a düşer. Diğer tablolar boşsa section gizli.
+
+### Sprint 17 Implementation Detayı
+
+**Commit 1 (`0c824f9`) — SBAR A:**
+
+- `components/pdf/SBARReport.tsx` — `Font.register({ family: "NotoSans", ... })` + `path.join(process.cwd(), "public", "fonts", ...)`. Tüm `fontFamily: "Helvetica"` / `Helvetica-Bold` → `"NotoSans"` + `fontWeight: "bold"` switch. `fixTr()` helper SİL + 14 call site temizle. `loc(value, lang, enMap)` helper — `fixTr` dependency kaldırıldı, sadece TR→EN map lookup. `translateFreq()` aynen — sadece FREQ map lookup.
+- Inline `const t = { ... }` bundle 50+ key (subtitle, confidential, fullNameLabel, age, gender, bloodGroup, smoking, criticalAlert, pregnant, breastfeeding, kidneyDisease, liverDisease, anaphylaxisRisk, situation, patient, yearsOld, bloodGroupLower, criticalShort, background, chronicConditions, noChronic, surgicalHistory, familyHistory, assessment, allergies, allergen, reactionType, noAllergies, activeMedications, medication, dose, frequency, noMedications, supplements, vaccinationStatus, vaccine, date, status, notSpecified, recommendation, recommendationText, disclaimerText, compliant).
+- `app/api/sbar-pdf/route.ts` — `const fileSlug = lang === "tr" ? "SBAR-Raporu" : "SBAR-Report"` + filename template'a inject.
+
+**Commit 2 (`d3c3395`) — SBAR B:**
+
+- `app/api/sbar-pdf/route.ts` — 3 sequential query → 7-tablo `Promise.all`:
+  - Mevcut: `user_profiles` + `user_medications` + `user_allergies`
+  - V1 yeni: `family_history_entries.select("person_relation, condition_name, age_at_diagnosis, age_at_death, is_deceased").order("created_at", { ascending: false }).limit(10)`
+  - V2 yeni: `daily_check_ins.select("check_date, sleep_quality, mood, energy_level").order("check_date", { ascending: false }).limit(7)`
+  - V3a yeni: `blood_tests.select("created_at, analysis_result").order("created_at", { ascending: false }).limit(1).maybeSingle()`
+  - V3b yeni: `radiology_reports.select("created_at, image_type, overall_urgency, summary").order("created_at", { ascending: false }).limit(1).maybeSingle()`
+- Hata handling: `console.warn` + `.error ? [] : (data || [])` graceful fallback (tablo apply edilmemiş / RLS engelli / boş).
+- `SBARData` interface 4 yeni opsiyonel field — `familyHistoryDetailed?` + `checkIns?` + `lastLab?` + `lastRadiology?`. Eski caller'lar bozulmaz.
+- `components/pdf/SBARReport.tsx` — t bundle 14 yeni key (vitalTrend, daysOfData, avgSleep, avgMood, avgEnergy, diagnosedAtAge, deceasedAtAge, deceased, lastLabLabel, lastRadiologyLabel, urgent, attention, recentResults). Yeni styles (vitalTrendBox, familyEntry, resultBlock, resultBlockUrgent). `avgOf()` helper (NaN-safe) + `fmtShortDate()` + `snippet(..., 200)` cap.
+- S section: `{checkIns.length >= 3 && <View style={s.vitalTrendBox}>...</View>}` (Sleep + Mood + Energy avg).
+- B section: `familyHistoryDetailed.length > 0 ? <detailed render> : data.familyHistory.length > 0 ? <legacy bullet> : null` ternary fallback.
+- A section: `(data.lastLab || data.lastRadiology) && <recentResults block>` — lab snippet + radyoloji urgent kırmızı border.
+
+### Sprint 17 Backward Compatibility
+
+- Tüm yeni `SBARData` field'lar `?` opsiyonel — eski caller'lar bozulmaz.
+- `family_history_entries` apply edilmemişse: legacy "family:" prefix bullet render fallback aktif.
+- Yeni tablo entries boşsa: section conditional render → gizli.
+- Premium gate + KVKK consent gate dokunulmadı.
+- 4 SBAR bölüm yapısı + critical alert banner dokunulmadı.
+
+### Sprint 18+ Backlog
+
+- **SBAR C** — AI-driven Assessment + Recommendation (opsiyonel transformative). Yeni `SBAR_PROMPT` `lib/prompts.ts`'e ekle (TCK Md.90 / 1219 sK uyumu — hedge phrases zorunlu). `askClaudeJSON` çağrısı → `{ assessmentNotes, recommendations, overallContext }`. Polypharmacy flag (3+ ilaç) + anafilaksi vurgu + patient-specific doktor soruları + adaptif uzunluk. Token: TOKENS_JSON=3000 yeterli. Risk: hallüsinasyon + AI gecikme (5-10s).
+- **Kan tahlili schema enrichment** — `blood_tests` tablosunu `radiology_reports` paternine yükselt (`analysis_json JSONB` + `summary` + `overall_urgency` migration + structured insert).
+- **History/Trend list UI** — radiology_reports + blood_tests dual-source liste, profil veya `/medical-analysis` Trends tab altı.
+- **`family_history_entries` Supabase apply doğrulama** — Session 36'da migration yazıldı, "UI entegrasyonu sırasında apply" notu. Production'da apply durumu kontrol edilmeli; yoksa SBAR B vital değer katmıyor (legacy fallback'a düşüyor).
+- **Aile non-member contacts** — roadmap #4.
+- **Hot-spot overlay** — radyoloji bounding box AI inference (avukat sonrası).
+- **chat_conversations auto-title endpoint** — Sprint 14+ deferred.
+- **27 Mayıs avukat görüşmesi** — **25 gün kaldı**, kritik path.
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency.
+
+### Verification
+
+- `npx tsc --noEmit` → 0 error (her commit sonrası)
+- `npm run build` → 0 error / 0 warning, 11.6s + 11.3s compile (Commit A + Commit B)
+- Smoke test: TR arayüz → SBAR PDF "DoctoPal — SBAR Sağlık Özeti" başlık Türkçe karakterler intact, filename `DoctoPal-SBAR-Raporu-2026-05-01.pdf`. Kayıtlı aile öyküsü user → B section "anne: meme kanseri (tanı yaşı: 45)" formatı. ≥3 check-in user → S section vital trend mini blok. blood_tests + radiology_reports row varsa A section "Son Tıbbi Sonuçlar" snippet.
 
 ---
 
