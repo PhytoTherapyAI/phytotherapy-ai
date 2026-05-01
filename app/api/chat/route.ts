@@ -35,12 +35,22 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { history, files, lang, targetUserId: requestedTargetUserId } = body as {
+    const {
+      history,
+      files,
+      lang,
+      targetUserId: requestedTargetUserId,
+      // Sprint 13 Commit 2: chat_conversations continuity model — caller can
+      // pass an existing conversation id to append, or omit/empty to create a
+      // fresh conversation. Server validates ownership before append.
+      conversation_id: requestedConversationId,
+    } = body as {
       history?: unknown
       files?: unknown
       lang?: string
       message?: string
       targetUserId?: string
+      conversation_id?: string
     };
     // KVKK Layer 6: strip PII (email, phone, TC) from user message before any processing
     const message = stripPIIFromText(sanitizeInput(body.message));
@@ -118,6 +128,14 @@ export async function POST(request: NextRequest) {
     let actingOnBehalfOfName: string | null = null;
     let isActingOnBehalf = false;
 
+    // Sprint 13 Commit 2: chat_conversations continuity model state.
+    // resolvedTargetUserId — auth resolution sonrası set; pre-stream chat
+    // INSERT'inde target_user_id alanı için. chatConversationId — pre-stream
+    // chat_conversations INSERT/lookup sonrası set; post-stream assistant
+    // chat_messages INSERT + X-Chat-Conversation-Id response header için.
+    let resolvedTargetUserId: string | null = null;
+    let chatConversationId: string | null = null;
+
     if (authHeader?.startsWith("Bearer ")) {
       try {
         const supabase = createServerClient();
@@ -133,6 +151,9 @@ export async function POST(request: NextRequest) {
 
         userId = resolution.callerId;
         const targetUserId = resolution.targetUserId;
+        // Sprint 13 Commit 2: capture resolved target id to outer scope so
+        // pre-stream chat_conversations INSERT (L660+) can use it.
+        resolvedTargetUserId = targetUserId;
         isActingOnBehalf = !resolution.isOwnProfile;
 
         logApiAccess({
@@ -658,6 +679,69 @@ This rule exists because giving dosage advice without knowing the user's medicat
       }
     }
 
+    // Sprint 13 Commit 2: chat_conversations + chat_messages parallel write
+    // (query_history yukarıda intact — legacy archive). Caller mevcut
+    // conversation_id geçtiyse ownership doğrula + append; yoksa yeni
+    // conversation INSERT et. chat_messages.user_id = caller (her ikisinde
+    // de) — RLS guard own_select için.
+    //
+    // ChatInterface (Commit 3) X-Chat-Conversation-Id header'ından bu id'yi
+    // okuyacak. Mevcut X-Conversation-Id header'ı (query_history row id)
+    // KORUNUR — auto-title endpoint /api/query-history/{id}/auto-title
+    // hâlâ legacy id kullanır.
+    //
+    // INSERT failures swallowed: chat akışı kesilmesin diye warn + null
+    // bırak. ChatInterface header eksikliği skip ile kabul eder.
+    if (userId) {
+      try {
+        const supabase = createServerClient();
+        if (requestedConversationId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestedConversationId)) {
+          // Append path: ownership check
+          const { data: existing } = await supabase
+            .from("chat_conversations")
+            .select("id")
+            .eq("id", requestedConversationId)
+            .eq("user_id", userId)
+            .maybeSingle();
+          if (existing?.id) {
+            chatConversationId = existing.id as string;
+          } else {
+            console.warn("[chat] requested conversation_id not owned or missing — falling back to new");
+          }
+        }
+        if (!chatConversationId) {
+          // Create path: yeni chat_conversations row
+          const { data: newConv, error: convErr } = await supabase
+            .from("chat_conversations")
+            .insert({
+              user_id: userId,
+              target_user_id: resolvedTargetUserId ?? userId,
+            })
+            .select("id")
+            .single();
+          if (convErr) {
+            console.warn("[chat] chat_conversations INSERT failed:", convErr.message);
+          } else if (newConv?.id) {
+            chatConversationId = newConv.id as string;
+          }
+        }
+        // User message INSERT (yeni veya append edilen conversation'a)
+        if (chatConversationId) {
+          const { error: msgErr } = await supabase.from("chat_messages").insert({
+            conversation_id: chatConversationId,
+            user_id: userId,
+            role: "user" as const,
+            content: message,
+          });
+          if (msgErr) {
+            console.warn("[chat] chat_messages user INSERT failed:", msgErr.message);
+          }
+        }
+      } catch (err) {
+        console.warn("[chat] chat_conversations parallel write threw:", err);
+      }
+    }
+
     const readable = new ReadableStream({
       async start(controller) {
         try {
@@ -717,6 +801,25 @@ This rule exists because giving dosage advice without knowing the user's medicat
             } catch {
               // Non-critical — don't fail the response
             }
+
+            // Sprint 13 Commit 2: chat_messages assistant INSERT (parallel
+            // write). chat_conversations.updated_at trigger otomatik.
+            if (chatConversationId) {
+              try {
+                const supabase2 = createServerClient();
+                const { error: assistantMsgErr } = await supabase2.from("chat_messages").insert({
+                  conversation_id: chatConversationId,
+                  user_id: userId,
+                  role: "assistant" as const,
+                  content: finalResponse.substring(0, 10000),
+                });
+                if (assistantMsgErr) {
+                  console.warn("[chat] chat_messages assistant INSERT failed:", assistantMsgErr.message);
+                }
+              } catch {
+                // Non-critical — query_history fallback zaten yazıldı
+              }
+            }
           }
         } catch (error) {
           console.error("Stream error:", error);
@@ -745,11 +848,23 @@ This rule exists because giving dosage advice without knowing the user's medicat
     };
     if (conversationId) {
       responseHeaders["X-Conversation-Id"] = conversationId;
-      // Browsers don't expose custom response headers to fetch()
-      // unless they're explicitly listed in Access-Control-Expose-Headers.
-      // Same-origin requests don't need this, but listing it keeps the
-      // contract honest for any future cross-origin embed.
-      responseHeaders["Access-Control-Expose-Headers"] = "X-Conversation-Id";
+    }
+    // Sprint 13 Commit 2: chat_conversations row id (yeni continuity model).
+    // ChatInterface (Commit 3) bu header'ı tüketip URL ?cid= update edecek.
+    // X-Conversation-Id (query_history row id) auto-title legacy flow için
+    // korunuyor — iki ayrı header parallel.
+    if (chatConversationId) {
+      responseHeaders["X-Chat-Conversation-Id"] = chatConversationId;
+    }
+    // Browsers don't expose custom response headers to fetch()
+    // unless they're explicitly listed in Access-Control-Expose-Headers.
+    // Same-origin requests don't need this, but listing it keeps the
+    // contract honest for any future cross-origin embed.
+    if (conversationId || chatConversationId) {
+      const exposed: string[] = [];
+      if (conversationId) exposed.push("X-Conversation-Id");
+      if (chatConversationId) exposed.push("X-Chat-Conversation-Id");
+      responseHeaders["Access-Control-Expose-Headers"] = exposed.join(", ");
     }
     return new Response(readable, { headers: responseHeaders });
   } catch (error) {
