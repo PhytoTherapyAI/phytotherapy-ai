@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
+  // Strict Mode aktif — auth-context Session 32 resilience korumalı
+  // (in-flight guard + cache TTL + debounce). Default Next.js 13.4+
+  // değeri zaten true; explicit yazılması intent görünürlüğü için.
+  reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
   images: {

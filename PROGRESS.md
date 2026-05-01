@@ -30,7 +30,7 @@
 
 ### Sprint 9+ Backlog
 
-- **reactStrictMode fix** — Supabase auth lock contention (yüksek risk, ayrı sprint)
+- ~~reactStrictMode fix~~ — **stale debt closed** (Session 32 in-flight guard + cache TTL + debounce fix'leri Strict Mode double-invoke'una karşı zaten resilient; `next.config.ts`'te artık explicit `reactStrictMode: true`)
 - **F-PAYMENT-001 Iyzico** — şirket tescili sonrası unblock (`docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır)
 - **27 Mayıs avukat görüşmesi** — **26 gün kaldı.** Limited vs A.Ş. vs Estonia OÜ + KVKK + TİTCK + `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md` 9-soru paketi
 - **IGNITE LinkedIn outreach** — sağlık hukuku + KVKK + dijital sağlık uzmanı (İstanbul)
@@ -71,7 +71,7 @@ Round 1 (Sprint 3 Commit 2 `0530c03`) "Sprint 3+ açık drift" olarak işaretled
 ### Sprint 8+ Backlog
 
 - **HealthReportTab enrichment** — Digital Twin hero polish (body silhouette / organ map) + Recent Activity multi-source feed (son 5 ilaç + 3 uyarı + 1 tahlil) + Missing Nudges (cross-tab navigation via setTab prop drilling)
-- **reactStrictMode fix** — Supabase auth lock contention (yüksek risk, ayrı sprint)
+- ~~reactStrictMode fix~~ — **stale debt closed** (Session 32 in-flight guard + cache TTL + debounce fix'leri Strict Mode double-invoke'una karşı zaten resilient; `next.config.ts`'te artık explicit `reactStrictMode: true`)
 - **F-PAYMENT-001 Iyzico** — şirket tescili sonrası unblock (`docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır)
 - **27 Mayıs avukat görüşmesi** — Limited vs A.Ş. vs Estonia OÜ + KVKK + TİTCK + `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md` 9-soru paketi
 - **IGNITE LinkedIn outreach** — sağlık hukuku + KVKK + dijital sağlık uzmanı (İstanbul)

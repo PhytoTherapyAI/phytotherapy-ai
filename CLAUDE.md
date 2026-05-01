@@ -129,6 +129,7 @@ CREATE POLICY "yeni" ON public.tablo ...;
 - fetchProfile in-flight Map guard'ı KALDIRMA
 - Visibility handler debounce'unu BOZMA
 - Değişiklik yaparsan tab switch testi yap
+- Strict Mode aktif (next.config.ts) — auth-context paralel çağrı koruması (in-flight guard + debounce + cache TTL) tüm Strict Mode double-invoke senaryolarını karşılar; bu pattern'ler bozulmamalı
 
 ### CONSOLE LOG POLİTİKASI
 
