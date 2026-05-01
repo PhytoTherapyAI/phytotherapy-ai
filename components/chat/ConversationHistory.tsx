@@ -61,31 +61,61 @@ import {
 import { useAuth } from "@/lib/auth-context"
 import { useLang } from "@/components/layout/language-toggle"
 import { tx } from "@/lib/translations"
-import { createBrowserClient } from "@/lib/supabase"
+
+/**
+ * Sprint 13 Commit 4: ConversationHistory v2 — chat_conversations source.
+ *
+ * Önceki sürüm `query_history` (pair-row legacy, F-CHAT-SIDEBAR-001/002/003)
+ * tablosundan çekiyordu. Bu refactor /api/conversations endpoint'ine geçer:
+ * yeni continuity model'i (chat_conversations + chat_messages) listeler.
+ *
+ * Item shape değişti: `query_text`/`response_text` → `last_message`
+ * (preview), `custom_title` → `title`, `created_at` → `updated_at`
+ * (pin/rename/sort logic için). Parent callback signature genişledi:
+ * `onSelectConversation(id, messages: ChatMessage[])` — full message
+ * history seed (query_history single Q+R yerine). Legacy `loadConversation`
+ * prop ChatInterface'te hâlâ destekli ama bu sidebar artık kullanmaz.
+ *
+ * Pin/rename/delete: /api/conversations/{id} PATCH/DELETE. Server-side
+ * ownership + whitelist + 100-char title cap. UX (optimistic + rollback +
+ * sonner toast) F-CHAT-SIDEBAR-001/002 ile bit-perfect.
+ */
+interface MessagePreview {
+  id: string
+  role: "user" | "assistant"
+  content: string
+  attachments?: unknown
+  created_at: string
+}
 
 interface ConversationEntry {
   id: string
-  query_text: string
-  query_type: string
-  response_text: string | null
-  created_at: string
+  title: string | null
   is_pinned: boolean
-  custom_title: string | null
   pinned_at: string | null
+  created_at: string
+  updated_at: string
+  target_user_id: string
+  last_message: string | null
+  last_message_role: "user" | "assistant" | null
 }
 
 interface ConversationHistoryProps {
-  /** Called when a row is selected. Receives the conversation id so the
-   *  parent can mark it active in subsequent mounts. */
-  onSelectConversation: (id: string, query: string, response: string | null) => void
+  /** Sprint 13 Commit 4: full message history seed (chat_conversations).
+   *  ChatInterface useEffect [loadMessages] ile state'i replace eder. */
+  onSelectConversation: (id: string, messages: MessagePreview[]) => void
   onNewConversation?: () => void
   /** Render as a persistent sidebar instead of toggle+drawer */
   sidebar?: boolean
-  /** Currently-loaded conversation id — drives the active row marker. */
+  /** Currently-loaded conversation id — drives the active row marker.
+   *  Sprint 13 Commit 4: chat_conversations.id (prev: query_history.id). */
   currentQueryId?: string | null
   /** Fired after a successful DELETE so the parent can decide whether
    *  to clear the chat (when the deleted row was the active one). */
   onDelete?: (id: string, wasActive: boolean) => void
+  /** Optional target user id (caregiver mode — Anne profili açıkken Baba
+   *  konuşmaları). Default: caller. */
+  targetUserId?: string | null
 }
 
 export function ConversationHistory({
@@ -94,6 +124,7 @@ export function ConversationHistory({
   sidebar,
   currentQueryId,
   onDelete,
+  targetUserId,
 }: ConversationHistoryProps) {
   const { isAuthenticated, session } = useAuth()
   const { lang } = useLang()
@@ -115,32 +146,31 @@ export function ConversationHistory({
   const editInputRef = useRef<HTMLInputElement>(null)
 
   const fetchHistory = useCallback(async () => {
-    if (!isAuthenticated || !session?.user?.id) return
+    if (!isAuthenticated || !session?.access_token) return
 
     setIsLoading(true)
     try {
-      const supabase = createBrowserClient()
-      const { data, error } = await supabase
-        .from("query_history")
-        .select(
-          "id, query_text, query_type, response_text, created_at, is_pinned, custom_title, pinned_at",
-        )
-        .eq("user_id", session.user.id)
-        .order("created_at", { ascending: false })
-        .limit(30)
-
-      if (error) {
-        console.error("Error fetching history:", error)
+      // Sprint 13 Commit 4: /api/conversations GET (chat_conversations + last
+      // message preview). targetUserId query param caregiver mode için —
+      // default caller (server-side fallback).
+      const url = targetUserId
+        ? `/api/conversations?targetUserId=${encodeURIComponent(targetUserId)}`
+        : `/api/conversations`
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+      if (!res.ok) {
+        console.error("[ConversationHistory] fetch failed:", res.status)
         return
       }
-
-      setConversations(data || [])
+      const data = (await res.json()) as { conversations?: ConversationEntry[] }
+      setConversations(data.conversations ?? [])
     } catch (err) {
       console.error("Failed to fetch conversation history:", err)
     } finally {
       setIsLoading(false)
     }
-  }, [isAuthenticated, session?.user?.id])
+  }, [isAuthenticated, session?.access_token, targetUserId])
 
   // Fetch on mount for sidebar mode, or when panel opens for drawer mode
   useEffect(() => {
@@ -193,13 +223,15 @@ export function ConversationHistory({
     return text.substring(0, maxLen).trim() + "..."
   }
 
-  // F-CHAT-SIDEBAR-002 — title fallback: custom_title wins, otherwise
-  // we truncate query_text. Trim before checking so an accidental
-  // whitespace-only rename doesn't render as an empty row.
+  // F-CHAT-SIDEBAR-002 → Sprint 13 Commit 4 — title fallback:
+  // custom title wins, otherwise last user message preview, otherwise
+  // generic "Yeni sohbet" (no message yet, server just created the row).
   const displayTitle = (conv: ConversationEntry) => {
-    const custom = conv.custom_title?.trim()
+    const custom = conv.title?.trim()
     if (custom) return custom
-    return truncate(conv.query_text, 60)
+    const preview = conv.last_message?.trim()
+    if (preview) return truncate(preview, 60)
+    return tx("ch.untitled", lang)
   }
 
   // F-CHAT-SIDEBAR-001 grouping: Bugün / Dün / Son 7 Gün / Son 30 Gün.
@@ -217,11 +249,14 @@ export function ConversationHistory({
     const thirtyDaysAgo = new Date(today)
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
 
+    // Sprint 13 Commit 4: sort/group by updated_at (last activity time)
+    // — pair-row legacy created_at semantic'ten farklı, mesaj eklendikçe
+    // bumped, sidebar "son etkileşim" sırası verir.
     const pinned = entries
       .filter((e) => e.is_pinned)
       .sort((a, b) => {
-        const aT = a.pinned_at ?? a.created_at
-        const bT = b.pinned_at ?? b.created_at
+        const aT = a.pinned_at ?? a.updated_at
+        const bT = b.pinned_at ?? b.updated_at
         return new Date(bT).getTime() - new Date(aT).getTime()
       })
     const unpinned = entries.filter((e) => !e.is_pinned)
@@ -237,7 +272,7 @@ export function ConversationHistory({
     const last30Items: ConversationEntry[] = []
 
     for (const entry of unpinned) {
-      const date = new Date(entry.created_at)
+      const date = new Date(entry.updated_at)
       if (date.toDateString() === today.toDateString()) {
         todayItems.push(entry)
       } else if (date.toDateString() === yesterday.toDateString()) {
@@ -277,7 +312,8 @@ export function ConversationHistory({
       )
 
       try {
-        const res = await fetch(`/api/query-history/${id}`, {
+        // Sprint 13 Commit 4: /api/conversations/{id} PATCH (chat_conversations).
+        const res = await fetch(`/api/conversations/${id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -288,6 +324,10 @@ export function ConversationHistory({
 
         if (!res.ok) {
           setConversations(snapshot)
+          // 409 limit signal eski query_history endpoint'in spec'iydi; yeni
+          // /api/conversations şu an pin limit YOK (sınırsız) — server bu
+          // status'u dönmez. Yine de defensive — gelecekte sınır eklenirse
+          // davranış aynı kalır.
           if (res.status === 409) {
             toast.error(tx("ch.pinLimitReached", lang))
           } else {
@@ -314,7 +354,13 @@ export function ConversationHistory({
   // freely without the server bouncing the request.
   const startRename = (conv: ConversationEntry) => {
     setEditingId(conv.id)
-    setEditingTitle(conv.custom_title ?? conv.query_text.slice(0, 100))
+    // Sprint 13 Commit 4: title (custom) preferred, fallback last_message
+    // preview, sonra empty. 100-char API cap'e kadar.
+    const seed =
+      conv.title?.slice(0, 100) ??
+      conv.last_message?.slice(0, 100) ??
+      ""
+    setEditingTitle(seed)
     // Wait one tick so the input mounts before we focus + select.
     setTimeout(() => editInputRef.current?.select(), 0)
   }
@@ -331,22 +377,25 @@ export function ConversationHistory({
     const snapshot = conversations
 
     // Optimistic — empty input clears the rename so the row reverts to
-    // its query_text fallback on the next render.
+    // its last_message fallback on the next render.
     setConversations((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, custom_title: newTitle || null } : c)),
+      prev.map((c) => (c.id === id ? { ...c, title: newTitle || null } : c)),
     )
     setEditingId(null)
     setEditingTitle("")
     setSavingRename(true)
 
     try {
-      const res = await fetch(`/api/query-history/${id}`, {
+      // Sprint 13 Commit 4: /api/conversations/{id} PATCH, body field
+      // `title` (chat_conversations schema; query_history `custom_title`
+      // legacy isminden farklı).
+      const res = await fetch(`/api/conversations/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ custom_title: newTitle || null }),
+        body: JSON.stringify({ title: newTitle || null }),
       })
 
       if (!res.ok) {
@@ -365,6 +414,34 @@ export function ConversationHistory({
     }
   }, [editingId, editingTitle, conversations, session?.access_token, lang])
 
+  // ── Select flow (Sprint 13 Commit 4) ────────────────────────────
+  // Tıklamada chat_messages'ı /api/conversations/{id} GET ile fetch et,
+  // parent'a (id, messages[]) ile bildir. Parent ChatInterface'i
+  // loadMessages prop'u ile state'i seed eder + URL'i ?cid= update.
+  // Fetch failure'da silent (toast yok) — boş array döner, ChatInterface
+  // boş başlar; kullanıcı sayfa refresh ile retry edebilir.
+  const handleSelect = useCallback(
+    async (id: string) => {
+      if (!session?.access_token) return
+      try {
+        const res = await fetch(`/api/conversations/${id}`, {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+        if (!res.ok) {
+          console.warn("[ConversationHistory] select fetch failed:", res.status)
+          onSelectConversation(id, [])
+          return
+        }
+        const data = (await res.json()) as { messages?: MessagePreview[] }
+        onSelectConversation(id, data.messages ?? [])
+      } catch (err) {
+        console.warn("[ConversationHistory] select fetch threw:", err)
+        onSelectConversation(id, [])
+      }
+    },
+    [session?.access_token, onSelectConversation],
+  )
+
   // ── Delete flow ────────────────────────────────────────────────
   // Optimistic remove + rollback on error. We snapshot the list before
   // mutating so a 4xx/5xx response can restore exact ordering.
@@ -379,7 +456,9 @@ export function ConversationHistory({
     setConversations((prev) => prev.filter((c) => c.id !== idToDelete))
 
     try {
-      const res = await fetch(`/api/query-history/${idToDelete}`, {
+      // Sprint 13 Commit 4: /api/conversations/{id} DELETE (CASCADE
+      // chat_messages siler).
+      const res = await fetch(`/api/conversations/${idToDelete}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${session.access_token}` },
       })
@@ -464,7 +543,7 @@ export function ConversationHistory({
                 className="w-full rounded border border-emerald-300 bg-background px-1.5 py-0.5 text-xs leading-snug focus:outline-none focus:ring-2 focus:ring-emerald-400 disabled:opacity-60 dark:border-emerald-700"
               />
               <p className="mt-0.5 text-[10px] text-muted-foreground">
-                {formatDate(conv.created_at)}
+                {formatDate(conv.updated_at)}
               </p>
             </div>
           </div>
@@ -472,7 +551,7 @@ export function ConversationHistory({
           <button
             type="button"
             onClick={() => {
-              onSelectConversation(conv.id, conv.query_text, conv.response_text)
+              void handleSelect(conv.id)
               onClickAfter?.()
             }}
             className="flex min-w-0 flex-1 items-start gap-2 px-3 py-2 text-left"
@@ -489,7 +568,7 @@ export function ConversationHistory({
                 {displayTitle(conv)}
               </p>
               <p className="mt-0.5 text-[10px] text-muted-foreground">
-                {formatDate(conv.created_at)}
+                {formatDate(conv.updated_at)}
               </p>
             </div>
           </button>

@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Sparkles, Pill, CheckCircle2, RefreshCw, Loader2, UserCircle, Menu } from "lucide-react";
 import { InfoTooltip } from "@/components/ui/InfoTooltip";
@@ -49,30 +49,55 @@ export default function HealthAssistantPage() {
     query: string;
     response: string | null;
   } | null>(null);
+  // Sprint 13 Commit 4: full message history seed (ConversationHistory v2 →
+  // ChatInterface loadMessages). Sidebar tıklanınca /api/conversations/[id]
+  // fetch sonucu burada saklanır.
+  const [loadMessages, setLoadMessages] = useState<Array<{
+    id?: string;
+    role: "user" | "assistant";
+    content: string;
+    created_at?: string;
+  }> | null>(null);
   const [confirmingDaily, setConfirmingDaily] = useState(false);
   const [chatKey, setChatKey] = useState(0);
   // F-CHAT-SIDEBAR-001: track which conversation is currently mounted
   // in ChatInterface so the sidebar can paint the active row marker
   // and so we can detect deletion of the active row.
-  const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
+  // Sprint 13 Commit 3: ?cid= URL param ile seed; cidParam değişiminde
+  // setActiveConversationId tek source of truth (ChatInterface'in sync
+  // useEffect'i bu state'i okur).
+  const [activeConversationId, setActiveConversationId] = useState<string | null>(cidParam);
 
   // F-MOBILE-001: mobile drawer open/closed state. Selecting a row or
   // hitting "new chat" from the drawer auto-closes via the wrapped
   // handlers below.
   const [historyOpen, setHistoryOpen] = useState(false);
 
-  const handleSelectConversation = (id: string, query: string, response: string | null) => {
-    setActiveConversationId(id);
-    setLoadConversation({ query, response });
-  };
-  const handleSelectFromDrawer = (id: string, query: string, response: string | null) => {
-    handleSelectConversation(id, query, response);
-    setHistoryOpen(false);
-  };
+  // Sprint 13 Commit 4: ConversationHistory v2 sidebar tıklamasında full
+  // messages array geçirir (chat_conversations + chat_messages). Legacy
+  // single-Q+R seed (loadConversation) kullanılmıyor — null bırakılır.
+  const handleSelectConversation = useCallback(
+    (id: string, messages: Array<{ id?: string; role: "user" | "assistant"; content: string; created_at?: string }>) => {
+      setActiveConversationId(id);
+      setLoadMessages(messages);
+      setLoadConversation(null);
+      // URL ?cid= sync (refresh'te aynı conversation devam edebilsin)
+      router.replace(`/health-assistant?cid=${id}`, { scroll: false });
+    },
+    [router],
+  );
+  const handleSelectFromDrawer = useCallback(
+    (id: string, messages: Array<{ id?: string; role: "user" | "assistant"; content: string; created_at?: string }>) => {
+      handleSelectConversation(id, messages);
+      setHistoryOpen(false);
+    },
+    [handleSelectConversation],
+  );
 
   const handleNewConversation = useCallback(() => {
     setActiveConversationId(null);
     setLoadConversation(null);
+    setLoadMessages(null);
     setChatKey((prev) => prev + 1);
     // Strip both ?q= ve ?cid= deep-link param'larını — ?cid= bırakılırsa
     // sayfa refresh'inde ChatInterface eski conversation'a append eder
@@ -93,6 +118,22 @@ export default function HealthAssistantPage() {
     },
     [router],
   );
+
+  // Sprint 13 Commit 4: browser back/forward (history nav) cidParam'i
+  // değiştirirse activeConversationId state'ini sync et. Aksi halde
+  // ChatInterface'in internal sync useEffect'i state günceller ama parent
+  // activeConversationId stale kalır → sidebar active row marker yanlış
+  // pozisyonda. Bu effect tek yönlü URL → state mirroring.
+  useEffect(() => {
+    if (cidParam !== activeConversationId) {
+      setActiveConversationId(cidParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- activeConversationId
+    // intentionally omitted: bu effect URL → state mirroring; state → URL
+    // yönü zaten setActiveConversationId + router.replace ile yapılıyor
+    // (handleSelectConversation, handleConversationCreated, handleNewConversation).
+    // Two-way sync infinite loop'a yol açar.
+  }, [cidParam]);
 
   // F-MOBILE-001: drawer-aware variant — closes the drawer after
   // resetting the chat surface so the user lands directly on a fresh
@@ -274,8 +315,9 @@ export default function HealthAssistantPage() {
               key={chatKey}
               className="h-[calc(100vh-280px)] min-h-[500px]"
               loadConversation={loadConversation}
+              loadMessages={loadMessages}
               initialQuery={urlQuery}
-              initialConversationId={cidParam}
+              initialConversationId={activeConversationId}
               onConversationCreated={handleConversationCreated}
             />
 

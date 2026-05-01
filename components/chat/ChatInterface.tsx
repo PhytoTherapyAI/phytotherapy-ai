@@ -70,6 +70,17 @@ interface ChatInterfaceProps {
    *  (URL ?cid= update + sidebar refresh). Mevcut conversation'a append
    *  oluyorsa çağrılmaz (id zaten parent'ta). */
   onConversationCreated?: (id: string) => void;
+  /** Sprint 13 Commit 4: full message history seed (chat_conversations).
+   *  Sidebar'dan conversation seçildiğinde parent /api/conversations/[id]
+   *  fetch'inden gelen tüm messages array'ini geçirir; ChatInterface state'i
+   *  replace eder. Legacy `loadConversation` (single Q+R) prop'u dokunulmaz
+   *  ama bu mode aktif olduğunda kullanılmaz. */
+  loadMessages?: Array<{
+    id?: string;
+    role: "user" | "assistant";
+    content: string;
+    created_at?: string;
+  }> | null;
 }
 
 export function ChatInterface({
@@ -78,6 +89,7 @@ export function ChatInterface({
   initialQuery,
   initialConversationId,
   onConversationCreated,
+  loadMessages,
 }: ChatInterfaceProps) {
   const { isAuthenticated, session, user, profile } = useAuth();
   const { activeUserId, isOwnProfile } = useActiveProfile();
@@ -135,7 +147,10 @@ export function ChatInterface({
     }
   }, [messages]);
 
-  // Load conversation from history
+  // Load conversation from history (legacy: single Q+R seed from query_history).
+  // Sprint 13 Commit 4 sonrası ConversationHistory v2 bu prop'u tetiklemez —
+  // yeni `loadMessages` prop'unu kullanır. Backward compat için mevcut
+  // davranış intact (eski sidebar ya da diğer caller'lar bozulmasın).
   useEffect(() => {
     if (loadConversation) {
       const loaded: ChatMessage[] = [
@@ -155,6 +170,25 @@ export function ChatInterface({
       setMessages(loaded);
     }
   }, [loadConversation]);
+
+  // Sprint 13 Commit 4: load full conversation messages (chat_conversations).
+  // ConversationHistory v2 sidebar'dan tıklamada parent /api/conversations/[id]
+  // fetch'inden gelen messages array'ini geçirir. Empty array geçilirse
+  // (fetch fail veya yeni boş conversation) state temizlenir — kullanıcı
+  // mesaj yazmaya başlar. Streaming sırasında geçirilirse o stream'i
+  // override etmemek için isStreaming guard.
+  useEffect(() => {
+    if (!loadMessages || isStreaming) return;
+    const seeded: ChatMessage[] = loadMessages.map((m) => ({
+      id: m.id ?? crypto.randomUUID(),
+      role: m.role,
+      content: m.content,
+    }));
+    setMessages(seeded);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- isStreaming
+    // intentionally excluded: bu effect sadece loadMessages değişiminde
+    // tetiklenmeli; isStreaming switch'i array'i tekrar set etmemeli (race).
+  }, [loadMessages]);
 
   // Auto-resize textarea
   useEffect(() => {

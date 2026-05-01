@@ -188,6 +188,8 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
   "ch.emptyDesc": { en: "Your health questions will appear here", tr: "Sağlık sorularınız burada görünecek" },
   "ch.showingLast": { en: "Showing last", tr: "Son" },
   "ch.conversations": { en: "conversations", tr: "konuşma gösteriliyor" },
+  // Sprint 13 Commit 4 — ConversationHistory v2 fallback
+  "ch.untitled": { en: "New conversation", tr: "Yeni sohbet" },
   "ir.medsAnalyzed": { en: "Medications Analyzed", tr: "Analiz Edilen İlaçlar" },
   "ir.medsNotFound": {
     en: "Some medications were not found in FDA database. Analysis based on AI knowledge — verify with your pharmacist.",
