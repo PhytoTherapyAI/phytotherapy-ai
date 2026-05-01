@@ -749,9 +749,24 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
   // varken UI'da amber uyarı banner'ı sürer. familyGroup null
   // göründüğü sürece "Hane Oluştur" CTA'sı da yan yana durabilir
   // (kullanıcı yeni hane kurmayı seçerse otomatik temizlenir).
-  "family.orphanBanner": {
-    en: "Your family data is being restored. If this persists, please contact support.",
-    tr: "Aile verileriniz geri yükleniyor. Sorun devam ederse destek ekibiyle iletişime geçin.",
+  // F-FAMILY-BANNER-POLISH-001 (Sprint 10 Commit 2): banner artık spinner +
+  // retry buton + destek link içeriyor (eski tek-string `family.orphanBanner`
+  // key'i .title alt-key'ine bölündü).
+  "family.orphanBanner.title": {
+    en: "Restoring your family data...",
+    tr: "Aile verileriniz geri yükleniyor...",
+  },
+  "family.orphanBanner.retryButton": {
+    en: "Try again",
+    tr: "Yeniden dene",
+  },
+  "family.orphanBanner.contactSupport": {
+    en: "Contact support",
+    tr: "Destek",
+  },
+  "family.orphanBanner.failed": {
+    en: "Recovery failed. Please contact support.",
+    tr: "Kurtarma başarısız. Destek ekibiyle iletişime geçin.",
   },
 
   // Fasting Monitor

@@ -28,6 +28,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { askClaudeJSONMultimodal } from "@/lib/ai-client"
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit"
 import { tx } from "@/lib/translations"
+import { buildTurkishBrandContext } from "@/lib/turkish-brands"
 
 export const maxDuration = 50
 
@@ -224,8 +225,13 @@ export async function POST(req: NextRequest) {
   let rawResult: string
   try {
     const prompt = tx("api.scanMedication.promptTr", lang)
-    const systemPrompt =
-      "You are a medication identification assistant. Analyze the image and extract medication information. Respond in JSON format."
+    // F-SCAN-TR-001 (Sprint 10 Commit 2): Türk marka context inject — Parol,
+    // Glifor, Zoretanin gibi Türk markalarda generic_name alanını INN ile
+    // doldurması için top-40 sample. ~500 token ek input maliyeti.
+    const systemPrompt = [
+      "You are a medication identification assistant. Analyze the image and extract medication information. Respond in JSON format.",
+      buildTurkishBrandContext(),
+    ].join(" ")
 
     rawResult = await askClaudeJSONMultimodal(
       prompt,

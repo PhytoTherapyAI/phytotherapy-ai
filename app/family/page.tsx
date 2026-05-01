@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { useFamily } from "@/lib/family-context"
 import { useLang } from "@/components/layout/language-toggle"
-import { tx } from "@/lib/translations"
+import { tx, type Lang } from "@/lib/translations"
+import { cn } from "@/lib/utils"
 import { getAvatarDataUri, type AvatarStyle } from "@/lib/avatar"
 import { createBrowserClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -527,24 +528,13 @@ export default function FamilyPage() {
       <LocalizedTitle tr="Aile" en="Family" />
       <div className="mx-auto max-w-2xl px-4 md:px-8 py-8 sm:py-12 min-h-[80vh]">
 
-        {/* F-FAMILY-DATA-INTEGRITY-001 (Sprint 4 Commit 1) — orphan
-            state banner. Sprint 3 Commit 6 (76e7c11) lib/family-
-            context.tsx tarafında `!group && members.length > 0`
-            durumunda members'ı koruyor; bu banner o veri korunmuş
-            durumda kullanıcıya "tutarsızlık tespit edildi, geri
-            yükleniyor" mesajı verir. Sprint 3+ backlog'daki
-            auto-recover endpoint (POST /api/family/recover)
-            geldiğinde mesaj "destek ile iletişime geç" yerine
-            recover butonu olabilir; o zamana kadar amber uyarı
-            yeterli sinyal. Banner Header'dan ÖNCE konumlandı —
-            kullanıcı sayfayı görür görmez tutarsızlığın
-            farkında olsun. */}
+        {/* F-FAMILY-DATA-INTEGRITY-001 (Sprint 4 Commit 1) — orphan state banner. */}
+        {/* Sprint 4 Commit 2 (F-FAMILY-AUTO-RECOVER-001): family-context.tsx */}
+        {/* arka planda /api/family/recover'ı silent çağırır. Sprint 10 Commit 2 */}
+        {/* (this): banner artık Loader2 spinner + "Yeniden Dene" buton + Destek */}
+        {/* link içerir — silent fail durumunda kullanıcıya manuel kontrol verir. */}
         {!familyGroup && familyMembers.length > 0 && (
-          <div className="rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 p-4 mb-6">
-            <p className="text-sm text-amber-800 dark:text-amber-200">
-              {tx("family.orphanBanner", lang)}
-            </p>
-          </div>
+          <OrphanBanner lang={lang} />
         )}
 
         {/* Header */}
@@ -1714,6 +1704,84 @@ export default function FamilyPage() {
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// ─── OrphanBanner ───
+// Sprint 10 Commit 2 (F-FAMILY-BANNER-POLISH-001): orphan state'inde
+// kullanıcıya spinner + "Yeniden Dene" buton + Destek link sunan banner.
+// family-context.tsx auto-recover'ı arka planda silent çalıştırıyor; bu
+// component manuel retry path'i + visual feedback için. recovering flag
+// btn'u disabled yapar, failed flag amber alt-mesaj çıkarır.
+function OrphanBanner({ lang }: { lang: Lang }) {
+  const [recovering, setRecovering] = useState(false)
+  const [failed, setFailed] = useState(false)
+  const { refetch } = useFamily()
+
+  const handleRetry = async () => {
+    setRecovering(true)
+    setFailed(false)
+    try {
+      const supabase = createBrowserClient()
+      const session = await supabase.auth.getSession()
+      const token = session.data.session?.access_token
+      if (!token) throw new Error("no token")
+      const res = await fetch("/api/family/recover", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const result = await res.json().catch(() => ({}))
+      if (result?.recovered || result?.alreadyExists) {
+        await refetch()
+      } else {
+        setFailed(true)
+      }
+    } catch {
+      setFailed(true)
+    } finally {
+      setRecovering(false)
+    }
+  }
+
+  return (
+    <div className="rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30 p-4 mb-6">
+      <div className="flex items-start gap-3">
+        <Loader2
+          className={cn(
+            "h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5",
+            recovering && "animate-spin",
+          )}
+        />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+            {tx("family.orphanBanner.title", lang)}
+          </p>
+          {failed && (
+            <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
+              {tx("family.orphanBanner.failed", lang)}
+            </p>
+          )}
+          <div className="flex gap-2 mt-2">
+            <button
+              onClick={handleRetry}
+              disabled={recovering}
+              className="text-xs font-medium text-amber-700 dark:text-amber-300 underline underline-offset-2 disabled:opacity-50"
+            >
+              {tx("family.orphanBanner.retryButton", lang)}
+            </button>
+            <span className="text-amber-400" aria-hidden>
+              ·
+            </span>
+            <a
+              href="mailto:info@doctopal.com"
+              className="text-xs text-amber-700 dark:text-amber-300 underline underline-offset-2"
+            >
+              {tx("family.orphanBanner.contactSupport", lang)}
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
