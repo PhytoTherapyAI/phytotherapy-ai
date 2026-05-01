@@ -1,6 +1,36 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Mayıs 2026 (Sprint 9 — HealthReportTab enrichment serisi tamamlandı: Missing Nudges + Recent Activity feed + Digital Twin organ map. Session 46 TODO header karşılandı.)
+> Son güncelleme: 1 Mayıs 2026 (Sprint 10 — 2 commit: reactStrictMode stale debt closure + Universal Scan v3 Türk ilaç DB + Family orphan banner polish.)
+
+---
+
+## Sprint 10 — Polish + Debt Closure (1 Mayıs 2026)
+
+**Toplam:** 2 commit, 0 revert
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `1e491d4` | reactStrictMode explicit true + stale debt closure |
+| 2 | `548d544` | Universal Scan v3 Türk ilaç DB + Family orphan banner polish |
+| D1 | (this) | Sprint 10 kapanış docs |
+
+### Sprint 10 Major Outcomes
+
+- **reactStrictMode stale debt kapatıldı** — `next.config.ts` explicit `reactStrictMode: true` (Next.js default'una hizalanma, niyet beyanı). Backlog "yüksek risk fix" item Session 32 auth-context resilience pattern'leri (in-flight guard + cache TTL + debounce) ile zaten çözülmüştü
+- **60 Türk marka → INN mapping** (`lib/turkish-brands.ts`) — Parol/Glifor/Zoretanin/Augmentin/Concor gibi sık kullanılan Türk markalar artık `/api/scan-medication`'da generic_name alanında uluslararası INN ile döner. SystemPrompt'a top-40 sample inject (~500 token, $0.000125/scan)
+- **Family orphan banner interactive** — Loader2 spinner + "Yeniden Dene" buton + Destek mailto link. Auto-recover silent fail durumunda manuel retry path'i. `OrphanBanner` file-scope component (recovering/failed state'leri)
+
+### Sprint 10 Yeni Reusable Asset'ler
+
+- `lib/turkish-brands.ts` — `TR_BRAND_TO_GENERIC` 60-entry table + `getTurkishGeneric` (case-insensitive fuzzy match) + `buildTurkishBrandContext` (top-40 systemPrompt sample). Sprint 11+ için TİTCK 3000+ brand full augment edilebilir; mevcut pass pragmatik OTC + sık reçete
+
+### Sprint 10+ Backlog
+
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency (`docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır)
+- **27 Mayıs avukat görüşmesi** — **26 gün kaldı.** Limited vs A.Ş. vs Estonia OÜ + KVKK + TİTCK + `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md` 9-soru paketi
+- **IGNITE LinkedIn outreach** — sağlık hukuku + KVKK + dijital sağlık uzmanı (İstanbul)
+- **Yatırımcı pipeline** — pitch deck rev + cohort metrics
+- **Türk ilaç DB v2** — TİTCK 3000+ brand augment (opsiyonel, Sprint 11+)
 
 ---
 
