@@ -1,16 +1,10 @@
 // © 2026 DoctoPal — All Rights Reserved
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
-import { NOTO_SANS_REGULAR_BUFFER, NOTO_SANS_BOLD_BUFFER } from "@/lib/pdf-fonts";
 
-// Sprint 20 HF3 — NotoSans Buffer src (HF1+HF2 data URI string yaklaşımı çalışmadı).
-Font.register({
-  family: "NotoSans",
-  fonts: [
-    { src: NOTO_SANS_REGULAR_BUFFER as unknown as string, fontWeight: "normal" },
-    { src: NOTO_SANS_BOLD_BUFFER as unknown as string, fontWeight: "bold" },
-  ],
-});
+// Sprint 20 HF revert — Helvetica built-in.
+// NotoSans Vercel serverless'da fail oldu. Sprint 21+'da CDN font veya
+// @react-pdf/renderer upgrade stratejisi.
 Font.registerHyphenationCallback((word) => [word]);
 
 // ============================================
@@ -20,7 +14,7 @@ Font.registerHyphenationCallback((word) => [word]);
 const styles = StyleSheet.create({
   page: {
     padding: 40,
-    fontFamily: "NotoSans",
+    fontFamily: "Helvetica",
     fontSize: 10,
     color: "#1a1a1a",
   },
@@ -31,8 +25,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontFamily: "NotoSans",
-    fontWeight: "bold",
+    fontFamily: "Helvetica-Bold",
     color: "#059669",
   },
   subtitle: {
@@ -55,14 +48,12 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   patientLabel: {
-    fontFamily: "NotoSans",
-    fontWeight: "bold",
+    fontFamily: "Helvetica-Bold",
     width: 100,
   },
   sectionTitle: {
     fontSize: 13,
-    fontFamily: "NotoSans",
-    fontWeight: "bold",
+    fontFamily: "Helvetica-Bold",
     color: "#059669",
     marginTop: 16,
     marginBottom: 8,
@@ -76,8 +67,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#f3f4f6",
     padding: 6,
-    fontFamily: "NotoSans",
-    fontWeight: "bold",
+    fontFamily: "Helvetica-Bold",
     fontSize: 9,
   },
   tableRow: {
@@ -90,7 +80,7 @@ const styles = StyleSheet.create({
   col3: { width: "25%" },
   col4: { width: "25%" },
   statusNormal: { color: "#059669" },
-  statusAbnormal: { color: "#dc2626", fontFamily: "NotoSans", fontWeight: "bold" },
+  statusAbnormal: { color: "#dc2626", fontFamily: "Helvetica-Bold" },
   statusBorderline: { color: "#d97706" },
   recommendation: {
     marginBottom: 10,
@@ -99,8 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   recName: {
-    fontFamily: "NotoSans",
-    fontWeight: "bold",
+    fontFamily: "Helvetica-Bold",
     fontSize: 11,
     marginBottom: 3,
   },
@@ -112,7 +101,7 @@ const styles = StyleSheet.create({
   interactionCheck: {
     fontSize: 9,
     color: "#6b7280",
-    fontFamily: "NotoSans",
+    fontFamily: "Helvetica",
     marginTop: 3,
     marginBottom: 2,
   },
@@ -128,8 +117,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   abnormalMarker: {
-    fontFamily: "NotoSans",
-    fontWeight: "bold",
+    fontFamily: "Helvetica-Bold",
     fontSize: 10,
     marginBottom: 2,
   },
@@ -143,8 +131,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   bulletPoint: {
-    fontFamily: "NotoSans",
-    fontWeight: "bold",
+    fontFamily: "Helvetica-Bold",
     color: "#059669",
   },
   disclaimer: {
@@ -239,7 +226,7 @@ interface DoctorReportProps {
 // ============================================
 
 export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: DoctorReportProps) {
-  // Sprint 16 Commit 2 — locale-aware string bundle. NotoSans font register intact.
+  // Sprint 16 Commit 2 — locale-aware string bundle. Sprint 20 HF — Helvetica fallback.
   const t = {
     title: lang === "tr" ? "DoctoPal — Kan Tahlili Raporu" : "DoctoPal — Blood Test Report",
     subtitle: lang === "tr"
@@ -317,7 +304,7 @@ export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: Do
         {/* Urgency Banner — conditional on overallUrgency */}
         {analysis.overallUrgency && (
           <View style={[styles.urgencyBanner, urgencyStyle]}>
-            <Text style={{ fontFamily: "NotoSans", fontWeight: "bold", marginBottom: 2 }}>
+            <Text style={{ fontFamily: "Helvetica-Bold", marginBottom: 2 }}>
               {t.urgency}: {analysis.overallUrgency.toUpperCase()}
             </Text>
             <Text>{urgencyLabel}</Text>
@@ -474,7 +461,7 @@ export function DoctorReport({ results, analysis, patientInfo, lang = "en" }: Do
 
         {/* Disclaimer */}
         <View style={styles.disclaimer}>
-          <Text style={{ fontFamily: "NotoSans", fontWeight: "bold", marginBottom: 4 }}>
+          <Text style={{ fontFamily: "Helvetica-Bold", marginBottom: 4 }}>
             {t.disclaimer}
           </Text>
           <Text>{analysis.disclaimer || t.defaultDisclaimer}</Text>

@@ -1,38 +1,34 @@
 // © 2026 DoctoPal — All Rights Reserved
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
-import { NOTO_SANS_REGULAR_BUFFER, NOTO_SANS_BOLD_BUFFER } from "@/lib/pdf-fonts";
 
-// Sprint 20 HF3 — NotoSans Buffer src (HF1+HF2 data URI string yaklaşımı çalışmadı).
-Font.register({
-  family: "NotoSans",
-  fonts: [
-    { src: NOTO_SANS_REGULAR_BUFFER as unknown as string, fontWeight: "normal" },
-    { src: NOTO_SANS_BOLD_BUFFER as unknown as string, fontWeight: "bold" },
-  ],
-});
+// Sprint 20 HF revert — Helvetica built-in.
+// NotoSans 4+ yaklaşım Vercel serverless'da fail oldu (path.join + base64 inline +
+// MIME swap + Buffer src + outputFileTracingIncludes). Helvetica fallback Türkçe
+// karakterler için bozuk render yapar; lang="en" akışı tam, lang="tr" akışı
+// glyph kayıplı (Sprint 21+'da CDN font veya @react-pdf/renderer upgrade).
 Font.registerHyphenationCallback((word) => [word]);
 
 const styles = StyleSheet.create({
-  page: { padding: 40, fontFamily: "NotoSans", fontSize: 10, color: "#1a1a1a" },
+  page: { padding: 40, fontFamily: "Helvetica", fontSize: 10, color: "#1a1a1a" },
   header: { borderBottom: "2px solid #2563eb", paddingBottom: 12, marginBottom: 20 },
-  title: { fontSize: 18, fontFamily: "NotoSans", fontWeight: "bold", color: "#2563eb" },
+  title: { fontSize: 18, fontFamily: "Helvetica-Bold", color: "#2563eb" },
   subtitle: { fontSize: 10, color: "#6b7280", marginTop: 4 },
   urgencyBanner: { padding: 12, borderRadius: 4, marginBottom: 16 },
   urgencyNormal: { backgroundColor: "#f0fdf4", color: "#166534" },
   urgencyAttention: { backgroundColor: "#fefce8", color: "#854d0e" },
   urgencyUrgent: { backgroundColor: "#fef2f2", color: "#991b1b" },
-  sectionTitle: { fontSize: 13, fontFamily: "NotoSans", fontWeight: "bold", color: "#2563eb", marginTop: 16, marginBottom: 8, borderBottom: "1px solid #d1d5db", paddingBottom: 4 },
+  sectionTitle: { fontSize: 13, fontFamily: "Helvetica-Bold", color: "#2563eb", marginTop: 16, marginBottom: 8, borderBottom: "1px solid #d1d5db", paddingBottom: 4 },
   finding: { marginBottom: 10, padding: 8, backgroundColor: "#f8fafc", borderRadius: 4 },
-  findingRegion: { fontFamily: "NotoSans", fontWeight: "bold", fontSize: 11, marginBottom: 3 },
+  findingRegion: { fontFamily: "Helvetica-Bold", fontSize: 11, marginBottom: 3 },
   findingText: { fontSize: 9, color: "#374151", marginBottom: 2 },
   glossaryItem: { marginBottom: 6 },
-  glossaryTerm: { fontFamily: "NotoSans", fontWeight: "bold", fontSize: 10 },
+  glossaryTerm: { fontFamily: "Helvetica-Bold", fontSize: 10 },
   glossaryDef: { fontSize: 9, color: "#374151" },
   disclaimer: { marginTop: 20, padding: 12, backgroundColor: "#fef2f2", borderRadius: 4, fontSize: 8, color: "#991b1b", lineHeight: 1.4 },
   footer: { position: "absolute", bottom: 30, left: 40, right: 40, flexDirection: "row", justifyContent: "space-between", fontSize: 8, color: "#9ca3af", borderTop: "0.5px solid #e5e7eb", paddingTop: 8 },
   listItem: { marginBottom: 4, paddingLeft: 10, fontSize: 9, color: "#374151" },
-  bullet: { fontFamily: "NotoSans", fontWeight: "bold", color: "#2563eb" },
+  bullet: { fontFamily: "Helvetica-Bold", color: "#2563eb" },
 });
 
 interface Finding {
@@ -65,7 +61,7 @@ interface RadiologyReportProps {
 }
 
 export function RadiologyReport({ analysis, lang = "en" }: RadiologyReportProps) {
-  // Sprint 16 — locale-aware string bundle. NotoSans font register intact.
+  // Sprint 16 — locale-aware string bundle. Sprint 20 HF — Helvetica fallback.
   const t = {
     title: lang === "tr" ? "DoctoPal — Radyoloji Analiz Raporu" : "DoctoPal — Radiology Analysis Report",
     subtitle: lang === "tr"
@@ -101,7 +97,7 @@ export function RadiologyReport({ analysis, lang = "en" }: RadiologyReportProps)
         </View>
 
         <View style={[styles.urgencyBanner, urgencyStyle]}>
-          <Text style={{ fontFamily: "NotoSans", fontWeight: "bold", marginBottom: 4 }}>
+          <Text style={{ fontFamily: "Helvetica-Bold", marginBottom: 4 }}>
             {t.urgency}: {analysis.overallUrgency.toUpperCase()} | {t.modality}: {analysis.imageType.toUpperCase()}
           </Text>
           <Text>{analysis.summary}</Text>
@@ -152,7 +148,7 @@ export function RadiologyReport({ analysis, lang = "en" }: RadiologyReportProps)
         )}
 
         <View style={styles.disclaimer}>
-          <Text style={{ fontFamily: "NotoSans", fontWeight: "bold", marginBottom: 4 }}>{t.disclaimer}</Text>
+          <Text style={{ fontFamily: "Helvetica-Bold", marginBottom: 4 }}>{t.disclaimer}</Text>
           <Text>{analysis.disclaimer || t.defaultDisclaimer}</Text>
         </View>
 

@@ -2,20 +2,21 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
 import { translateCondition } from "@/lib/condition-translations";
-import { NOTO_SANS_REGULAR_BUFFER, NOTO_SANS_BOLD_BUFFER } from "@/lib/pdf-fonts";
 
-// Sprint 20 HF3 — NotoSans Buffer src.
-// @react-pdf/renderer Font.register Buffer instance kabul eder (raw byte stream).
-// HF1 base64 data URI + HF2 application/octet-stream MIME swap çalışmadı —
-// muhtemelen parser data URI string parse aşamasında hata veriyordu.
-// Buffer doğrudan TTF byte içeriği → font detect + register native.
-Font.register({
-  family: "NotoSans",
-  fonts: [
-    { src: NOTO_SANS_REGULAR_BUFFER as unknown as string, fontWeight: "normal" },
-    { src: NOTO_SANS_BOLD_BUFFER as unknown as string, fontWeight: "bold" },
-  ],
-});
+// Sprint 17 hotfix #5 — Helvetica + fixTr() revert.
+// NotoSans 4 hotfix sonrası Vercel'de hâlâ "Font family not registered" hatası.
+// Geçici fix: Helvetica built-in + Turkish ASCII transliteration (Sprint 17 A öncesi pattern).
+// NotoSans migration ayrı sprint'te (font dosyasını bundle'a dahil ederek).
+const fixTr = (s: string): string => {
+  if (!s) return "";
+  return s
+    .replace(/ı/g, "i").replace(/İ/g, "I")
+    .replace(/ş/g, "s").replace(/Ş/g, "S")
+    .replace(/ğ/g, "g").replace(/Ğ/g, "G")
+    .replace(/ü/g, "u").replace(/Ü/g, "U")
+    .replace(/ö/g, "o").replace(/Ö/g, "O")
+    .replace(/ç/g, "c").replace(/Ç/g, "C");
+};
 Font.registerHyphenationCallback((word) => [word]);
 
 // ── EN translation maps for TR-stored data (TR↔EN canonical mapping, KORUNUR) ──
@@ -45,10 +46,10 @@ const MED_NAME_EN: Record<string, string> = {
   "Lisinopril": "Lisinopril", "Metoprolol": "Metoprolol",
 };
 
-/** Translate data value: if lang=en, look up TR→EN map; otherwise pass through (NotoSans renders TR glyphs natively) */
+/** Translate data value: if lang=en, look up TR→EN map; always fixTr for PDF safety (Helvetica) */
 function loc(value: string, lang: string, enMap?: Record<string, string>): string {
-  if (lang === "en" && enMap) return enMap[value] || value;
-  return value;
+  if (lang === "en" && enMap) return fixTr(enMap[value] || value);
+  return fixTr(value);
 }
 
 // ── Types ──
@@ -116,33 +117,33 @@ const redText = "#991B1B";
 
 // ── Styles ──
 const s = StyleSheet.create({
-  page: { padding: 40, paddingBottom: 60, fontFamily: "NotoSans", fontSize: 9.5, color: textPrimary, backgroundColor: "#FFFFFF" },
+  page: { padding: 40, paddingBottom: 60, fontFamily: "Helvetica", fontSize: 9.5, color: textPrimary, backgroundColor: "#FFFFFF" },
   // Header
   headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 },
-  logo: { fontSize: 20, fontFamily: "NotoSans", fontWeight: "bold", color: sage },
+  logo: { fontSize: 20, fontFamily: "Helvetica-Bold", color: sage },
   logoSub: { fontSize: 8, color: textSecondary, marginTop: 1 },
   headerRight: { alignItems: "flex-end" },
   headerDate: { fontSize: 8, color: textSecondary },
-  headerConfidential: { fontSize: 7, color: sage, fontFamily: "NotoSans", fontWeight: "bold", marginTop: 2, textTransform: "uppercase" as const, letterSpacing: 0.5 },
+  headerConfidential: { fontSize: 7, color: sage, fontFamily: "Helvetica-Bold", marginTop: 2, textTransform: "uppercase" as const, letterSpacing: 0.5 },
   headerLine: { height: 2, backgroundColor: sage, marginBottom: 14, borderRadius: 1 },
   // Patient Info Box
   infoBox: { backgroundColor: bgCard, borderRadius: 6, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: borderLight },
   infoGrid: { flexDirection: "row", flexWrap: "wrap" },
   infoItem: { width: "33%", marginBottom: 6 },
   infoLabel: { fontSize: 7.5, color: textMuted, textTransform: "uppercase" as const, letterSpacing: 0.3, marginBottom: 1 },
-  infoValue: { fontSize: 9.5, fontFamily: "NotoSans", fontWeight: "bold", color: textPrimary },
+  infoValue: { fontSize: 9.5, fontFamily: "Helvetica-Bold", color: textPrimary },
   // Critical Alert
   criticalBox: { backgroundColor: redBg, padding: 10, borderRadius: 4, borderLeftWidth: 3, borderLeftColor: redBorder, marginBottom: 14 },
-  criticalLabel: { fontSize: 7, fontFamily: "NotoSans", fontWeight: "bold", color: redText, textTransform: "uppercase" as const, letterSpacing: 0.5, marginBottom: 2 },
-  criticalText: { fontSize: 9, fontFamily: "NotoSans", fontWeight: "bold", color: redText },
+  criticalLabel: { fontSize: 7, fontFamily: "Helvetica-Bold", color: redText, textTransform: "uppercase" as const, letterSpacing: 0.5, marginBottom: 2 },
+  criticalText: { fontSize: 9, fontFamily: "Helvetica-Bold", color: redText },
   // SBAR Sections
   section: { marginBottom: 12, borderLeftWidth: 3, borderLeftColor: sage, paddingLeft: 10, paddingTop: 2, paddingBottom: 2 },
   sectionHeader: { flexDirection: "row", alignItems: "center", marginBottom: 6 },
-  sectionLetter: { fontSize: 14, fontFamily: "NotoSans", fontWeight: "bold", color: sage, marginRight: 6 },
-  sectionTitle: { fontSize: 11, fontFamily: "NotoSans", fontWeight: "bold", color: sageDark },
+  sectionLetter: { fontSize: 14, fontFamily: "Helvetica-Bold", color: sage, marginRight: 6 },
+  sectionTitle: { fontSize: 11, fontFamily: "Helvetica-Bold", color: sageDark },
   sectionDivider: { height: 1, backgroundColor: sageLight, marginBottom: 8 },
   // Sub-sections
-  subTitle: { fontSize: 9, fontFamily: "NotoSans", fontWeight: "bold", color: textPrimary, marginBottom: 4, marginTop: 6 },
+  subTitle: { fontSize: 9, fontFamily: "Helvetica-Bold", color: textPrimary, marginBottom: 4, marginTop: 6 },
   bodyText: { fontSize: 9, color: textPrimary, lineHeight: 1.5, marginBottom: 4 },
   bulletRow: { flexDirection: "row", marginBottom: 3, paddingLeft: 4 },
   bulletDot: { fontSize: 9, color: sage, marginRight: 6, width: 8 },
@@ -150,7 +151,7 @@ const s = StyleSheet.create({
   emptyText: { fontSize: 8.5, color: textMuted, fontStyle: "normal", marginBottom: 4 },
   // Tables
   tableHeader: { flexDirection: "row", backgroundColor: sageLight, padding: 6, borderRadius: 3, marginBottom: 1 },
-  tableHeaderText: { fontSize: 8, fontFamily: "NotoSans", fontWeight: "bold", color: sageDark, textTransform: "uppercase" as const, letterSpacing: 0.3 },
+  tableHeaderText: { fontSize: 8, fontFamily: "Helvetica-Bold", color: sageDark, textTransform: "uppercase" as const, letterSpacing: 0.3 },
   tableRow: { flexDirection: "row", padding: 6, borderBottomWidth: 0.5, borderBottomColor: borderLight },
   tableRowAlt: { flexDirection: "row", padding: 6, borderBottomWidth: 0.5, borderBottomColor: borderLight, backgroundColor: "#FAFBFA" },
   tableCell: { fontSize: 9 },
@@ -172,14 +173,14 @@ const s = StyleSheet.create({
   footerCenter: { fontSize: 7, color: textMuted, textAlign: "center" },
   // Sprint 17 Commit 2 — yeni veri inject styles
   vitalTrendBox: { backgroundColor: sageLight, padding: 8, borderRadius: 4, marginTop: 6, marginBottom: 4 },
-  vitalTrendTitle: { fontSize: 8, fontFamily: "NotoSans", fontWeight: "bold", color: sageDark, textTransform: "uppercase" as const, letterSpacing: 0.3, marginBottom: 3 },
+  vitalTrendTitle: { fontSize: 8, fontFamily: "Helvetica-Bold", color: sageDark, textTransform: "uppercase" as const, letterSpacing: 0.3, marginBottom: 3 },
   vitalTrendText: { fontSize: 9, color: textPrimary },
   familyEntry: { marginBottom: 4, paddingLeft: 4 },
-  familyEntryHeader: { fontSize: 9, fontFamily: "NotoSans", fontWeight: "bold", color: textPrimary },
+  familyEntryHeader: { fontSize: 9, fontFamily: "Helvetica-Bold", color: textPrimary },
   familyEntryDetail: { fontSize: 8.5, color: textSecondary, marginTop: 1 },
   resultBlock: { marginBottom: 6, padding: 8, backgroundColor: bgCard, borderRadius: 4, borderLeftWidth: 2, borderLeftColor: sage },
   resultBlockUrgent: { borderLeftColor: redBorder, backgroundColor: redBg },
-  resultLabel: { fontSize: 8, fontFamily: "NotoSans", fontWeight: "bold", color: sageDark, textTransform: "uppercase" as const, letterSpacing: 0.3, marginBottom: 2 },
+  resultLabel: { fontSize: 8, fontFamily: "Helvetica-Bold", color: sageDark, textTransform: "uppercase" as const, letterSpacing: 0.3, marginBottom: 2 },
   resultMeta: { fontSize: 8.5, color: textSecondary, marginBottom: 2 },
   resultSnippet: { fontSize: 8.5, color: textPrimary, lineHeight: 1.4 },
 });
@@ -227,7 +228,7 @@ const FREQ: Record<string, Record<string, string>> = {
 
 function translateFreq(val: string, lang: string): string {
   const lower = val.toLowerCase().trim();
-  return FREQ[lower]?.[lang] || FREQ[val]?.[lang] || val;
+  return fixTr(FREQ[lower]?.[lang] || FREQ[val]?.[lang] || val);
 }
 
 /** Separate chronic conditions from surgery entries */
@@ -250,77 +251,75 @@ function splitConditions(conditions: string[]) {
 export function SBARReport({ data }: { data: SBARData }) {
   const { lang } = data;
 
-  // Sprint 17 Commit 1 — single inline t bundle (50+ key TR/EN).
-  // Sprint 20 — HF5 fixTr() wrap kaldırıldı, NotoSans native glyph render.
+  // Sprint 17 Commit 1 — single inline t bundle (50+ key TR/EN korundu).
+  // HF5: TR branch'lerini fixTr() ile sar (Helvetica ASCII fallback için).
   const t = {
-    subtitle: lang === "tr" ? "Kanıta Dayalı Sağlık Asistanı" : "Evidence-Based Health Assistant",
-    confidential: lang === "tr" ? "Gizli Hasta Bilgisi" : "Confidential Patient Information",
-    fullNameLabel: lang === "tr" ? "Ad Soyad" : "Full Name",
-    age: lang === "tr" ? "Yaş" : "Age",
-    gender: lang === "tr" ? "Cinsiyet" : "Gender",
-    bloodGroup: lang === "tr" ? "Kan Grubu" : "Blood Group",
-    smoking: lang === "tr" ? "Sigara" : "Smoking",
-    criticalAlert: lang === "tr" ? "Kritik Uyarı" : "Critical Alert",
-    pregnant: lang === "tr" ? "Hamile" : "Pregnant",
-    breastfeeding: lang === "tr" ? "Emziriyor" : "Breastfeeding",
-    kidneyDisease: lang === "tr" ? "Böbrek Yetmezliği" : "Kidney Disease",
-    liverDisease: lang === "tr" ? "Karaciğer Hastalığı" : "Liver Disease",
-    anaphylaxisRisk: lang === "tr" ? "Anafilaksi Riski" : "Anaphylaxis Risk",
-    situation: lang === "tr" ? "Durum" : "Situation",
-    patient: lang === "tr" ? "Hasta" : "Patient",
-    yearsOld: lang === "tr" ? "yaşında" : "years old",
-    bloodGroupLower: lang === "tr" ? "Kan grubu" : "Blood group",
-    criticalShort: lang === "tr" ? "Kritik" : "Critical",
-    background: lang === "tr" ? "Geçmiş" : "Background",
-    chronicConditions: lang === "tr" ? "Kronik Hastalıklar" : "Chronic Conditions",
-    noChronic: lang === "tr" ? "Kronik hastalık bildirilmemiş" : "No chronic conditions reported",
-    surgicalHistory: lang === "tr" ? "Cerrahi Geçmiş" : "Surgical History",
-    familyHistory: lang === "tr" ? "Aile Sağlık Geçmişi" : "Family Health History",
-    assessment: lang === "tr" ? "Değerlendirme" : "Assessment",
-    allergies: lang === "tr" ? "Alerjiler" : "Allergies",
-    allergen: lang === "tr" ? "Alerjen" : "Allergen",
-    reactionType: lang === "tr" ? "Reaksiyon Tipi" : "Reaction Type",
-    noAllergies: lang === "tr" ? "Kayıtlı alerji yok" : "No allergies recorded",
-    activeMedications: lang === "tr" ? "Aktif İlaçlar" : "Active Medications",
-    medication: lang === "tr" ? "İlaç" : "Medication",
-    dose: lang === "tr" ? "Doz" : "Dose",
-    frequency: lang === "tr" ? "Sıklık" : "Frequency",
-    noMedications: lang === "tr" ? "Kayıtlı ilaç yok" : "No active medications",
-    supplements: lang === "tr" ? "Takviyeler" : "Supplements",
-    vaccinationStatus: lang === "tr" ? "Aşı Durumu" : "Vaccination Status",
-    vaccine: lang === "tr" ? "Aşı" : "Vaccine",
-    date: lang === "tr" ? "Tarih" : "Date",
-    status: lang === "tr" ? "Durum" : "Status",
-    notSpecified: lang === "tr" ? "Belirtilmemiş" : "Not specified",
-    recommendation: lang === "tr" ? "Öneri" : "Recommendation",
+    subtitle: lang === "tr" ? fixTr("Kanıta Dayalı Sağlık Asistanı") : "Evidence-Based Health Assistant",
+    confidential: lang === "tr" ? fixTr("Gizli Hasta Bilgisi") : "Confidential Patient Information",
+    fullNameLabel: lang === "tr" ? fixTr("Ad Soyad") : "Full Name",
+    age: lang === "tr" ? fixTr("Yaş") : "Age",
+    gender: lang === "tr" ? fixTr("Cinsiyet") : "Gender",
+    bloodGroup: lang === "tr" ? fixTr("Kan Grubu") : "Blood Group",
+    smoking: lang === "tr" ? fixTr("Sigara") : "Smoking",
+    criticalAlert: lang === "tr" ? fixTr("Kritik Uyarı") : "Critical Alert",
+    pregnant: lang === "tr" ? fixTr("Hamile") : "Pregnant",
+    breastfeeding: lang === "tr" ? fixTr("Emziriyor") : "Breastfeeding",
+    kidneyDisease: lang === "tr" ? fixTr("Böbrek Yetmezliği") : "Kidney Disease",
+    liverDisease: lang === "tr" ? fixTr("Karaciğer Hastalığı") : "Liver Disease",
+    anaphylaxisRisk: lang === "tr" ? fixTr("Anafilaksi Riski") : "Anaphylaxis Risk",
+    situation: lang === "tr" ? fixTr("Durum") : "Situation",
+    patient: lang === "tr" ? fixTr("Hasta") : "Patient",
+    yearsOld: lang === "tr" ? fixTr("yaşında") : "years old",
+    bloodGroupLower: lang === "tr" ? fixTr("Kan grubu") : "Blood group",
+    criticalShort: lang === "tr" ? fixTr("Kritik") : "Critical",
+    background: lang === "tr" ? fixTr("Geçmiş") : "Background",
+    chronicConditions: lang === "tr" ? fixTr("Kronik Hastalıklar") : "Chronic Conditions",
+    noChronic: lang === "tr" ? fixTr("Kronik hastalık bildirilmemiş") : "No chronic conditions reported",
+    surgicalHistory: lang === "tr" ? fixTr("Cerrahi Geçmiş") : "Surgical History",
+    familyHistory: lang === "tr" ? fixTr("Aile Sağlık Geçmişi") : "Family Health History",
+    assessment: lang === "tr" ? fixTr("Değerlendirme") : "Assessment",
+    allergies: lang === "tr" ? fixTr("Alerjiler") : "Allergies",
+    allergen: lang === "tr" ? fixTr("Alerjen") : "Allergen",
+    reactionType: lang === "tr" ? fixTr("Reaksiyon Tipi") : "Reaction Type",
+    noAllergies: lang === "tr" ? fixTr("Kayıtlı alerji yok") : "No allergies recorded",
+    activeMedications: lang === "tr" ? fixTr("Aktif İlaçlar") : "Active Medications",
+    medication: lang === "tr" ? fixTr("İlaç") : "Medication",
+    dose: lang === "tr" ? fixTr("Doz") : "Dose",
+    frequency: lang === "tr" ? fixTr("Sıklık") : "Frequency",
+    noMedications: lang === "tr" ? fixTr("Kayıtlı ilaç yok") : "No active medications",
+    supplements: lang === "tr" ? fixTr("Takviyeler") : "Supplements",
+    vaccinationStatus: lang === "tr" ? fixTr("Aşı Durumu") : "Vaccination Status",
+    vaccine: lang === "tr" ? fixTr("Aşı") : "Vaccine",
+    date: lang === "tr" ? fixTr("Tarih") : "Date",
+    status: lang === "tr" ? fixTr("Durum") : "Status",
+    notSpecified: lang === "tr" ? fixTr("Belirtilmemiş") : "Not specified",
+    recommendation: lang === "tr" ? fixTr("Öneri") : "Recommendation",
     recommendationText: lang === "tr"
-      ? "Bu yapılandırılmış SBAR raporu hastanın güncel sağlık profilini özetlemektedir. Klinik kararlar öncesinde ilaçları, alerjileri ve kronik hastalıkları gözden geçiriniz. Etkileşim riskleri için DoctoPal etkileşim kontrolünü kullanınız."
+      ? fixTr("Bu yapılandırılmış SBAR raporu hastanın güncel sağlık profilini özetlemektedir. Klinik kararlar öncesinde ilaçları, alerjileri ve kronik hastalıkları gözden geçiriniz. Etkileşim riskleri için DoctoPal etkileşim kontrolünü kullanınız.")
       : "This structured SBAR report summarizes the patient's current health profile. Please review medications, allergies, and chronic conditions before clinical decisions. For interaction risks, refer to the DoctoPal interaction checker.",
     disclaimerText: lang === "tr"
-      ? "Bu rapor DoctoPal AI tarafından oluşturulmuştur ve tıbbi teşhis veya reçete niteliği taşımaz. Sağlık profesyonelleri için destekleyici bilgi amacıyla hazırlanmıştır. Profesyonel tıbbi değerlendirmenin yerini tutmaz. Acil durumlarda 112'yi arayınız."
+      ? fixTr("Bu rapor DoctoPal AI tarafından oluşturulmuştur ve tıbbi teşhis veya reçete niteliği taşımaz. Sağlık profesyonelleri için destekleyici bilgi amacıyla hazırlanmıştır. Profesyonel tıbbi değerlendirmenin yerini tutmaz. Acil durumlarda 112'yi arayınız.")
       : "This report was generated by DoctoPal AI and does not constitute a medical diagnosis or prescription. It is intended as supplementary information for healthcare professionals. Not a substitute for professional medical evaluation. In emergencies, call 112.",
-    compliant: lang === "tr" ? "Uyumlu" : "Compliant",
-    // Sprint 17 Commit 2 — yeni veri inject etiketleri
-    vitalTrend: lang === "tr" ? "Son 7 Gün Vital Trend" : "Last 7-Day Vital Trend",
-    daysOfData: lang === "tr" ? "günlük veri" : "days of data",
-    avgSleep: lang === "tr" ? "Uyku kalitesi (1-5)" : "Sleep quality (1-5)",
-    avgMood: lang === "tr" ? "Ruh hali (1-5)" : "Mood (1-5)",
-    avgEnergy: lang === "tr" ? "Enerji (1-5)" : "Energy (1-5)",
-    diagnosedAtAge: lang === "tr" ? "tanı yaşı" : "diagnosed at age",
-    deceasedAtAge: lang === "tr" ? "ölüm yaşı" : "deceased at age",
-    deceased: lang === "tr" ? "vefat etti" : "deceased",
-    lastLabLabel: lang === "tr" ? "Son Lab Testi" : "Last Lab Test",
-    lastRadiologyLabel: lang === "tr" ? "Son Görüntüleme" : "Last Imaging",
-    urgent: lang === "tr" ? "ACİL" : "URGENT",
-    attention: lang === "tr" ? "Dikkat" : "Attention",
-    recentResults: lang === "tr" ? "Son Tıbbi Sonuçlar" : "Recent Medical Results",
-    // Sprint 18 — lab urgent flag (NotoSans native, fixTr wrap kaldırıldı)
-    labUrgentAlert: lang === "tr" ? "ACİL — doktor değerlendirmesi gerekli" : "URGENT — clinical evaluation required",
+    compliant: lang === "tr" ? fixTr("Uyumlu") : "Compliant",
+    // Sprint 17 Commit 2 — yeni veri inject etiketleri (HF5: TR branch fixTr wrap)
+    vitalTrend: lang === "tr" ? fixTr("Son 7 Gün Vital Trend") : "Last 7-Day Vital Trend",
+    daysOfData: lang === "tr" ? fixTr("günlük veri") : "days of data",
+    avgSleep: lang === "tr" ? fixTr("Uyku kalitesi (1-5)") : "Sleep quality (1-5)",
+    avgMood: lang === "tr" ? fixTr("Ruh hali (1-5)") : "Mood (1-5)",
+    avgEnergy: lang === "tr" ? fixTr("Enerji (1-5)") : "Energy (1-5)",
+    diagnosedAtAge: lang === "tr" ? fixTr("tanı yaşı") : "diagnosed at age",
+    deceasedAtAge: lang === "tr" ? fixTr("ölüm yaşı") : "deceased at age",
+    deceased: lang === "tr" ? fixTr("vefat etti") : "deceased",
+    lastLabLabel: lang === "tr" ? fixTr("Son Lab Testi") : "Last Lab Test",
+    lastRadiologyLabel: lang === "tr" ? fixTr("Son Görüntüleme") : "Last Imaging",
+    urgent: lang === "tr" ? fixTr("ACİL") : "URGENT",
+    attention: lang === "tr" ? fixTr("Dikkat") : "Attention",
+    recentResults: lang === "tr" ? fixTr("Son Tıbbi Sonuçlar") : "Recent Medical Results",
   };
 
-  const genderLabel = GENDER[data.gender || ""]?.[lang] || data.gender || "—";
-  const smokingLabel = SMOKING[data.smokingUse]?.[lang] || data.smokingUse;
-  const alcoholLabel = ALCOHOL[data.alcoholUse]?.[lang] || data.alcoholUse;
+  const genderLabel = fixTr(GENDER[data.gender || ""]?.[lang] || data.gender || "—");
+  const smokingLabel = fixTr(SMOKING[data.smokingUse]?.[lang] || data.smokingUse);
+  const alcoholLabel = fixTr(ALCOHOL[data.alcoholUse]?.[lang] || data.alcoholUse);
 
   const { chronic, surgery } = splitConditions(data.chronicConditions);
 
@@ -368,7 +367,7 @@ export function SBARReport({ data }: { data: SBARData }) {
             <Text style={s.logoSub}>{t.subtitle}</Text>
           </View>
           <View style={s.headerRight}>
-            <Text style={s.headerDate}>{data.generatedAt}</Text>
+            <Text style={s.headerDate}>{fixTr(data.generatedAt)}</Text>
             <Text style={s.headerConfidential}>{t.confidential}</Text>
           </View>
         </View>
@@ -379,7 +378,7 @@ export function SBARReport({ data }: { data: SBARData }) {
           <View style={s.infoGrid}>
             <View style={s.infoItem}>
               <Text style={s.infoLabel}>{t.fullNameLabel}</Text>
-              <Text style={s.infoValue}>{data.fullName || "—"}</Text>
+              <Text style={s.infoValue}>{fixTr(data.fullName) || "—"}</Text>
             </View>
             <View style={s.infoItem}>
               <Text style={s.infoLabel}>{t.age}</Text>
@@ -420,7 +419,7 @@ export function SBARReport({ data }: { data: SBARData }) {
           </View>
           <View style={s.sectionDivider} />
           <Text style={s.bodyText}>
-            {data.fullName || t.patient}, {data.age ?? "?"} {t.yearsOld}, {genderLabel.toLowerCase()}.
+            {fixTr(data.fullName) || t.patient}, {data.age ?? "?"} {t.yearsOld}, {genderLabel.toLowerCase()}.
             {data.bloodGroup ? ` ${t.bloodGroupLower}: ${data.bloodGroup}.` : ""}
             {data.bmi != null ? ` BMI: ${data.bmi.toFixed(1)}.` : ""}
             {` ${smokingLabel}. ${alcoholLabel}.`}
@@ -453,7 +452,7 @@ export function SBARReport({ data }: { data: SBARData }) {
           {chronic.length > 0 ? chronic.map((c, i) => (
             <View key={i} style={s.bulletRow}>
               <Text style={s.bulletDot}>•</Text>
-              <Text style={s.bulletText}>{translateCondition(c, lang)}</Text>
+              <Text style={s.bulletText}>{fixTr(translateCondition(c, lang))}</Text>
             </View>
           )) : <Text style={s.emptyText}>{t.noChronic}</Text>}
 
@@ -464,7 +463,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               {surgery.map((c, i) => (
                 <View key={i} style={s.bulletRow}>
                   <Text style={s.bulletDot}>•</Text>
-                  <Text style={s.bulletText}>{translateCondition(c, lang)}</Text>
+                  <Text style={s.bulletText}>{fixTr(translateCondition(c, lang))}</Text>
                 </View>
               ))}
             </>
@@ -482,7 +481,7 @@ export function SBARReport({ data }: { data: SBARData }) {
                 return (
                   <View key={i} style={s.familyEntry}>
                     <Text style={s.familyEntryHeader}>
-                      {f.person_relation}: {translateCondition(f.condition_name, lang)}
+                      {fixTr(f.person_relation)}: {fixTr(translateCondition(f.condition_name, lang))}
                       {f.is_deceased ? " †" : ""}
                     </Text>
                     {detailParts.length > 0 && (
@@ -498,7 +497,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               {data.familyHistory.map((f, i) => (
                 <View key={i} style={s.bulletRow}>
                   <Text style={s.bulletDot}>•</Text>
-                  <Text style={s.bulletText}>{translateCondition(f, lang)}</Text>
+                  <Text style={s.bulletText}>{fixTr(translateCondition(f, lang))}</Text>
                 </View>
               ))}
             </>
@@ -524,7 +523,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               {data.allergies.map((a, i) => (
                 <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
                   <Text style={[s.tableCell, s.col1]}>{loc(a.allergen, lang, ALLERGEN_EN)}</Text>
-                  <Text style={[s.tableCell, s.col2]}>{REACTION[a.severity]?.[lang] || a.severity}</Text>
+                  <Text style={[s.tableCell, s.col2]}>{fixTr(REACTION[a.severity]?.[lang] || a.severity)}</Text>
                 </View>
               ))}
             </>
@@ -542,7 +541,7 @@ export function SBARReport({ data }: { data: SBARData }) {
               {data.medications.map((m, i) => (
                 <View key={i} style={i % 2 === 0 ? s.tableRow : s.tableRowAlt}>
                   <Text style={[s.tableCell, s.col1]}>{loc(m.name, lang, MED_NAME_EN)}</Text>
-                  <Text style={[s.tableCell, s.col2]}>{m.dosage}</Text>
+                  <Text style={[s.tableCell, s.col2]}>{fixTr(m.dosage)}</Text>
                   <Text style={[s.tableCell, s.col3]}>{translateFreq(m.frequency, lang)}</Text>
                 </View>
               ))}
@@ -554,7 +553,7 @@ export function SBARReport({ data }: { data: SBARData }) {
             <>
               <Text style={s.subTitle}>{t.supplements}</Text>
               <View style={s.badgeRow}>
-                {data.supplements.map((sup, i) => <Text key={i} style={s.badge}>{sup}</Text>)}
+                {data.supplements.map((sup, i) => <Text key={i} style={s.badge}>{fixTr(sup)}</Text>)}
               </View>
             </>
           )}
@@ -586,18 +585,18 @@ export function SBARReport({ data }: { data: SBARData }) {
               {data.lastLab && (
                 <View style={s.resultBlock}>
                   <Text style={s.resultLabel}>{t.lastLabLabel}</Text>
-                  <Text style={s.resultMeta}>{fmtShortDate(data.lastLab.created_at)}</Text>
+                  <Text style={s.resultMeta}>{fixTr(fmtShortDate(data.lastLab.created_at))}</Text>
                   {/* Sprint 18 — summary öncelikli, analysis_result legacy fallback */}
                   {(data.lastLab.summary || data.lastLab.analysis_result) && (
                     <Text style={s.resultSnippet}>
                       {data.lastLab.summary
-                        ? snippet(data.lastLab.summary, 200)
-                        : snippet(data.lastLab.analysis_result ?? "", 200)}
+                        ? fixTr(snippet(data.lastLab.summary, 200))
+                        : fixTr(snippet(data.lastLab.analysis_result ?? "", 200))}
                     </Text>
                   )}
                   {data.lastLab.overall_urgency === "urgent" && (
-                    <Text style={[s.resultMeta, { color: redText, fontFamily: "NotoSans", fontWeight: "bold" }]}>
-                      {t.labUrgentAlert}
+                    <Text style={[s.resultMeta, { color: redText, fontFamily: "Helvetica-Bold" }]}>
+                      {fixTr("ACİL — doktor değerlendirmesi gerekli")}
                     </Text>
                   )}
                 </View>
@@ -616,9 +615,9 @@ export function SBARReport({ data }: { data: SBARData }) {
                     {data.lastRadiology.overall_urgency === "urgent" ? ` • ${t.urgent}` : ""}
                     {data.lastRadiology.overall_urgency === "attention" ? ` • ${t.attention}` : ""}
                   </Text>
-                  <Text style={s.resultMeta}>{fmtShortDate(data.lastRadiology.created_at)}</Text>
+                  <Text style={s.resultMeta}>{fixTr(fmtShortDate(data.lastRadiology.created_at))}</Text>
                   {data.lastRadiology.summary && (
-                    <Text style={s.resultSnippet}>{snippet(data.lastRadiology.summary, 200)}</Text>
+                    <Text style={s.resultSnippet}>{fixTr(snippet(data.lastRadiology.summary, 200))}</Text>
                   )}
                 </View>
               )}
@@ -647,7 +646,7 @@ export function SBARReport({ data }: { data: SBARData }) {
         <View style={s.footer} fixed>
           <Text style={s.footerText}>doctopal.com | KVKK {t.compliant}</Text>
           <Text style={s.footerCenter} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} />
-          <Text style={s.footerText}>{data.generatedAt}</Text>
+          <Text style={s.footerText}>{fixTr(data.generatedAt)}</Text>
         </View>
       </Page>
     </Document>
