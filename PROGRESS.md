@@ -1,6 +1,68 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 2 Mayıs 2026 (Sprint 18 — 1 commit: blood_tests tablosu radiology_reports paternine yükseltildi. analysis_json JSONB + summary + overall_urgency migration (Supabase'de apply edildi) + composite index + backfill. Manuel form data fragmentation çözüldü (blood_tests dual-write). SBAR PDF lastLab summary öncelikli render + urgent flag.)
+> Son güncelleme: 2 Mayıs 2026 (Sprint 19 — 1 commit: kan tahlili + radyoloji geçmiş listesi UI. /medical-analysis Trends tab'a 3-segment switcher (Trendler / Kan Tahlili Geçmişi / Radyoloji Geçmişi) + 2 yeni list endpoint (Bearer auth + resolveTargetUser + pagination + take+1 hasMore) + 2 reusable card list component (accordion expand + load more + skeleton + empty state). Smoke test ✅ segment switcher + empty state.)
+
+---
+
+## Sprint 19 — History/Trend List UI (2 Mayıs 2026)
+
+**Toplam:** 1 commit + 1 docs commit, 0 revert
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `79dced8` | kan tahlili + radyoloji geçmiş listesi UI |
+| D1 | (this) | Sprint 19 kapanış docs |
+
+### Major Outcomes
+
+- **2 yeni list endpoint** — `GET /api/blood-tests/list` + `GET /api/radiology-reports/list`. Bearer auth + `resolveTargetUser` (Sprint 17 SBAR pattern parite, family member gating + Premium check) + pagination `skip/take` (default 10, max 50) + take+1 hasMore trick + rate limit 30/min IP. JSONB summary derive (full body göndermez): `analysis_json->'abnormalFindings'.length` + `supplementRecommendations.length`. Sprint 18'de eklenen composite index `(user_id, created_at DESC)` query optimize.
+- **`/medical-analysis` Trends tab segment switcher** — `trendsView` state (`"trends" | "blood-history" | "radiology-history"`), default `"trends"` (mevcut `BloodTestTrendChart` davranışı intact). 3-segment switcher: **Trendler / Kan Tahlili Geçmişi / Radyoloji Geçmişi**.
+- **2 reusable card list component** — `BloodTestHistoryList.tsx` + `RadiologyHistoryList.tsx`. Card list + accordion expand (`line-clamp-2` collapsed / full expanded) + "Daha fazla yükle" pagination + 3-card skeleton + empty state ("Henüz kayıt yok"). URGENCY_CONFIG renkli badge (kan: routine emerald / soon amber / urgent red; radyoloji: normal/attention/urgent). `relativeDate()` helper (Bugün / Dün / N gün önce / N hafta önce / mutlak tarih).
+- **14 yeni i18n key** (`mhx.*` namespace TR+EN parite) — tab labels, empty/loading/loadMore, abnormal/supplement/finding count placeholder ({n}), 5 urgency label.
+- **Defense-in-depth** — kullanıcı template'i basit `getServiceClient` + manual `getUser` öneriyordu (family member gating eksik, KVKK riski). Sprint 17 SBAR `resolveTargetUser` paterni kullanıldı + rate limit + skip/take clamp + JSONB defansif `Array.isArray` cast.
+- **Smoke test ✅** — Trends tab segment switcher görünür, default Trendler `BloodTestTrendChart` intact, history segment'lerine geçince empty state veya kayıtlı row'lar render.
+
+### Sprint 19 Implementation Detayı
+
+**Commit 1 (`79dced8`) — 6 dosya, +575 / −1:**
+
+- `app/api/blood-tests/list/route.ts` (YENİ) — `GET ?skip=0&take=10&targetUserId=<optional>`. `resolveTargetUser` ile family member auth + targetUserId resolve. `analysis_json` field çekiliyor ama response body'sine `abnormal_count` + `supplement_count` derive edilip pass ediliyor (PII bandwidth optimize).
+- `app/api/radiology-reports/list/route.ts` (YENİ) — aynı pattern, farkı: `image_type` field + radyoloji urgency enum + `findings.length` count.
+- `components/blood-test/BloodTestHistoryList.tsx` (YENİ, 187 satır) — kullanıcı template baseline, `useAuth().session?.access_token` Bearer header, `useEffect` reset on `fetchItems` change, infinite-style "Daha fazla yükle" buton.
+- `components/radiology/RadiologyHistoryList.tsx` (YENİ, 197 satır) — aynı pattern, ek `image_type` chip render ("X-RAY" / "CT" / "MRI" uppercase).
+- `app/medical-analysis/page.tsx` — `trendsView` state + 3-segment switcher (segments: trends/blood-history/radiology-history). `cn` import eklendi. Default `"trends"` segment `BloodTestTrendChart` intact.
+- `lib/translations/commonToolKeys.ts` — `mhx.*` namespace 14 yeni key TR+EN parite.
+
+### Sprint 19 Backward Compatibility
+
+- Mevcut `BloodTestTrendChart` davranışı dokunulmadı (default segment).
+- Mevcut tab navigation (blood-test / radiology / trends) intact.
+- RLS policies dokunulmadı (yeni endpoint'ler `resolveTargetUser` ile RLS-safe).
+- Premium gate + KVKK consent gate dokunulmadı (own profile only MVP — family member context için resolveTargetUser zaten Premium check yapıyor).
+- `analysis_result` + `pdf_url` legacy kolonlar Sprint 18'de DEPRECATED işaretlendi, list endpoint sadece `analysis_json` okuyor (eski rows için backfill UPDATE Sprint 18'de yapıldı).
+
+### Sprint 20+ Backlog
+
+- **NotoSans kalıcı fix (3 PDF component için)** — Sprint 17 HF5 geçici Helvetica + fixTr revert. RadiologyReport + DoctorReport canlıda smoke test ile doğrulanmalı. Migration: (1) `next/font` build asset bundle dahil, veya (2) Vercel `includeFiles` config ile `public/fonts/*` her serverless function'a explicit dahil + filesystem path resolve. **Üst öncelik.**
+- **Delete operation** — irreversible, KVKK + AlertDialog confirm modal + RLS DELETE policy doğrulaması (zaten own_delete var). Liste satırında "Sil" buton + 24-saat undo opsiyonel.
+- **PDF download per row** — SBAR-mini export veya orijinal upload PDF (storage'a yüklenmediyse current `analysis_json`'dan generate).
+- **Search/filter** — date range picker, urgency multi-select, marker name fuzzy search (Postgres full-text veya client-side).
+- **Cross-source unified list** — `/api/medical-history?type=blood|radiology|all` union query, kronolojik birleşik view.
+- **Standalone `/health-history` route** — full-page dedicated, advanced analytics, export.
+- **`analysis_result` + `pdf_url` DROP** — Sprint 18'den 1 sprint sonra cleanup. `lib/database.types.ts` `BloodTest` interface'inde de DROP.
+- **`family_history_entries` Supabase apply doğrulama** — Session 36 migration apply durumu kontrol edilmeli.
+- **SBAR C** — AI-driven Assessment + Recommendation (opsiyonel transformative).
+- **Aile non-member contacts** — roadmap #4.
+- **Hot-spot overlay** — radyoloji bounding box AI inference (avukat sonrası).
+- **chat_conversations auto-title endpoint** — Sprint 14+ deferred.
+- **27 Mayıs avukat görüşmesi** — **24 gün kaldı**, kritik path.
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency.
+
+### Verification
+
+- `npx tsc --noEmit` → 0 error
+- `npm run build` → 242 sayfa, 0 error / 0 warning, 11.6s compile
+- Smoke test (manuel): `/medical-analysis` → Trends tab → 3-segment switcher görünür, default "Trendler" `BloodTestTrendChart` intact, "Kan Tahlili Geçmişi" + "Radyoloji Geçmişi" segment'leri kayıtsız user'da empty state, kayıtlı user'da Card list (urgency badge + summary + accordion expand + load more).
 
 ---
 
