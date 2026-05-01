@@ -94,6 +94,7 @@ function LaborIllusion({ onComplete }: { onComplete: () => void }) {
       })
     }, 1200)
     return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Mount-once loading wizard: onComplete + steps.length kasıtlı omit (lang toggle / parent re-render animation'ı restart eder)
   }, [])
 
   return (

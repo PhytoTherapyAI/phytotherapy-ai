@@ -92,6 +92,7 @@ function LaborIllusion({ onComplete, lang }: { onComplete: () => void; lang: str
       setStep(s => { if (s >= steps.length - 1) { clearInterval(interval); setTimeout(onComplete, 800); return s } return s + 1 })
     }, 1200)
     return () => clearInterval(interval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Mount-once loading wizard: onComplete + steps.length kasıtlı omit (lang toggle / parent re-render animation'ı restart eder)
   }, [])
 
   return (

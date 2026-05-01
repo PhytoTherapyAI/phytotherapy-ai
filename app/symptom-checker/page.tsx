@@ -1,7 +1,7 @@
 // © 2026 DoctoPal — All Rights Reserved
 "use client"
 
-import { useState, useCallback, useRef, useEffect } from "react"
+import { useState, useCallback, useMemo, useRef, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -163,18 +163,24 @@ export default function SymptomCheckerPage() {
   const retryCountRef = useRef(0)
   const freeTextHandled = useRef(false)
 
-  // Build user profile from auth
+  // Build user profile from auth.
+  // useMemo so object identity is stable across renders — was inline
+  // ternary that re-created every render, making callAPI useCallback
+  // re-create (react-hooks/exhaustive-deps).
   const p = profile as (typeof profile & { age?: number; gender?: string; chronic_conditions?: string; kidney_status?: string; liver_status?: string; pregnancy_status?: string }) | null
-  const userProfile = p ? {
-    age: p.age || undefined,
-    gender: p.gender || undefined,
-    medications: [],
-    allergies: [],
-    conditions: p.chronic_conditions ? [p.chronic_conditions] : [],
-    kidneyStatus: p.kidney_status || undefined,
-    liverStatus: p.liver_status || undefined,
-    pregnancyStatus: p.pregnancy_status || undefined,
-  } : undefined
+  const userProfile = useMemo(
+    () => p ? {
+      age: p.age || undefined,
+      gender: p.gender || undefined,
+      medications: [],
+      allergies: [],
+      conditions: p.chronic_conditions ? [p.chronic_conditions] : [],
+      kidneyStatus: p.kidney_status || undefined,
+      liverStatus: p.liver_status || undefined,
+      pregnancyStatus: p.pregnancy_status || undefined,
+    } : undefined,
+    [p]
+  )
 
   const callAPI = useCallback(async (stepNum: number, hist: ConversationStep[], category?: string, freeTextInput?: string) => {
     setLoading(true)

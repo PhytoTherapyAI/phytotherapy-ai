@@ -28,6 +28,7 @@ export function VideoUrlInput({ value, onChange, lang = "en" }: VideoUrlInputPro
   // Parse on mount if value exists
   useEffect(() => {
     if (value) handleChange(value)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Mount-only parse: value/handleChange kasıtlı omit (eklendiğinde her keystroke parse + setState chain tetiklenir)
   }, [])
 
   const l = lang as Lang

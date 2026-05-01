@@ -387,8 +387,14 @@ export default function Home() {
   const [dynamicTasks, setDynamicTasks] = useState<DashboardTask[]>([]);
   const todayStr = getLocalDate();
 
-  // Build the full task list: dynamic med/sup tasks + static tasks
-  const allDashboardTasks: DashboardTask[] = [...dynamicTasks, ...STATIC_DASHBOARD_TASKS.map(t => ({ ...t, duration: t.duration as string | null }))];
+  // Build the full task list: dynamic med/sup tasks + static tasks.
+  // useMemo so the array identity is stable across renders — was inline
+  // spread that re-created every render, making toggleTask useCallback
+  // re-create + consumer re-renders cascade (react-hooks/exhaustive-deps).
+  const allDashboardTasks = useMemo<DashboardTask[]>(
+    () => [...dynamicTasks, ...STATIC_DASHBOARD_TASKS.map(t => ({ ...t, duration: t.duration as string | null }))],
+    [dynamicTasks]
+  );
 
   // Fetch real streak from Supabase
   useEffect(() => {
