@@ -143,7 +143,7 @@ const s = StyleSheet.create({
   bulletRow: { flexDirection: "row", marginBottom: 3, paddingLeft: 4 },
   bulletDot: { fontSize: 9, color: sage, marginRight: 6, width: 8 },
   bulletText: { fontSize: 9, color: textPrimary, flex: 1 },
-  emptyText: { fontSize: 8.5, color: textMuted, fontStyle: "italic", marginBottom: 4 },
+  emptyText: { fontSize: 8.5, color: textMuted, fontStyle: "normal", marginBottom: 4 },
   // Tables
   tableHeader: { flexDirection: "row", backgroundColor: sageLight, padding: 6, borderRadius: 3, marginBottom: 1 },
   tableHeaderText: { fontSize: 8, fontFamily: "NotoSans", fontWeight: "bold", color: sageDark, textTransform: "uppercase" as const, letterSpacing: 0.3 },
