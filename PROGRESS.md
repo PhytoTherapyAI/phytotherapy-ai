@@ -1,6 +1,38 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 28 Nisan 2026 (Sprint 1 ✅ KAPANDI — Mobile Responsive 13 commit, 0 revert. Sprint 1.5 base64 server validation inter-sprint hotfix. Sprint 2 başlangıç: F-CHECKIN-MOBILE-002 emoji overflow fix.)
+> Son güncelleme: 1 Mayıs 2026 (Sprint 8 başlangıç: F-BRAND-DRIFT-ROUND2-001 audit closure — 4/4 KALSIN, h3 #8 disipline korundu, 0 migration.)
+
+---
+
+## Sprint 8 — Strateji Dönemi (1 Mayıs 2026 başlangıç)
+
+| # | Ticket | Commit | Açıklama |
+|---|---|---|---|
+| 1 | F-BRAND-DRIFT-ROUND2-001 | (this) | Round 2 audit — 4 sayfa analizi → 4/4 KALSIN, 0 implementation, h3 #8 + tamamen-mavi-tema disipline korundu |
+
+### F-BRAND-DRIFT-ROUND2-001 Audit Sonucu
+
+Round 1 (Sprint 3 Commit 2 `0530c03`) "Sprint 3+ açık drift" olarak işaretlediği 4 sayfa, founder (İpek) onayıyla Round 2 audit'e alındı. Plan mode constraint kontrolü:
+
+| Sayfa | CTA | Karar | Sebep |
+|---|---|---|---|
+| /medical-analysis L970 | `bg-blue-600` | KALSIN | Multi-section tema (Blood Test purple + Radiology blue), CLAUDE.md h3 #8 semantic differentiation |
+| /medical-dictionary L112 | `bg-blue-600` | KALSIN | Tamamen mavi tema (academic dictionary) — hero L69 + chips L125 + related terms L168 + citation links L208 hepsi mavi, izole görünür |
+| /data-export L96 | `bg-blue-500` | KALSIN | Tamamen mavi tema (data/database) — info card L50 + selected state L68 + icon L70 mavi, izole görünür |
+| /value-marketplace L523 | `bg-blue-500` | KALSIN | Multi-CTA semantic — Grade B (Value Price blue L523) + Grade A (Outcome-Based emerald L532-561) paralel tier system, h3 #8 |
+
+**Sonuç: 4/4 KALSIN, 0 implementation.** Round 2 audit founder onayına rağmen disipline kuralları (h3 #8 Multi-CTA Semantic + tamamen-mavi-tema izolasyon) tüm sayfaları korudu — Round 1 kararıyla bit-perfect.
+
+**Audit metodolojisi öğretisi (Sprint 3 #2 ile tutarlı):** Founder onayı tek başına migration trigger değildir. CTA className izole olarak değil, sayfa tonu (header/cards/icons/badges) + sayfa içindeki diğer CTA'lar + domain konvansiyonu birlikte analiz edilir. Round 2'de bu metodoloji uygulamalı kanıtlandı.
+
+Brand Drift Audit kapatma kararı: **Round 1 + Round 2 = 12 sayfa total context analizi, 0 migration.** Future audit ihtiyacı varsa F-BRAND-DRIFT-ROUND3 ticket açılır.
+
+### Sprint 8 Strateji Backlog
+
+- **27 Mayıs avukat görüşmesi** — `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md` 9-soru paketi + KVKK + TİTCK + Mesafeli Satış Sözleşmesi v2 review
+- **IGNITE LinkedIn outreach** — sağlık hukuku + KVKK + dijital sağlık uzmanı (İstanbul)
+- **Yatırımcı pipeline** — pitch deck rev + cohort metrics
+- **Iyzico** — şirket tescili sonrası entegrasyon (`docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır)
 
 ---
 
