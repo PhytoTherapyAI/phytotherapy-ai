@@ -190,6 +190,67 @@ export function ChatInterface({
     // tetiklenmeli; isStreaming switch'i array'i tekrar set etmemeli (race).
   }, [loadMessages]);
 
+  // Sprint 14 Commit 1: refresh restore — ?cid=<uuid> URL ile gelirken
+  // ChatInterface mount'ta GET /api/conversations/{id} ile mesajları fetch
+  // edip state'i seed eder. Aksi halde refresh sonrası kullanıcı boş chat
+  // görür + yeni mesaj eski conversation'a append olur ama historyForApi
+  // slice boş → context window'da eski mesaj YOK (context kaybı, AI önceki
+  // sohbeti hatırlamaz).
+  //
+  // Guards:
+  // - initialConversationId yoksa skip (yeni conversation flow)
+  // - session token yoksa skip (anonymous, /api/conversations zaten 401)
+  // - messages.length > 0 ise skip (sidebar tıklamasında loadMessages
+  //   useEffect zaten state'i doldurdu; aynı session içinde re-fetch
+  //   gereksiz round-trip + race)
+  //
+  // Cancelled flag: strict-mode double-mount second mount'un setMessages'i
+  // unmount edilen ilk mount'a ulaşmasın diye.
+  useEffect(() => {
+    if (!initialConversationId) return;
+    if (!session?.access_token) return;
+    if (messages.length > 0) return;
+
+    let cancelled = false;
+    fetch(`/api/conversations/${initialConversationId}`, {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then(
+        (
+          data: {
+            messages?: Array<{
+              id: string;
+              role: "user" | "assistant";
+              content: string;
+              created_at: string;
+            }>;
+          } | null,
+        ) => {
+          if (cancelled || !data?.messages?.length) return;
+          const seeded: ChatMessage[] = data.messages.map((m) => ({
+            id: m.id,
+            role: m.role,
+            content: m.content,
+          }));
+          setMessages(seeded);
+        },
+      )
+      .catch(() => {
+        // Silent — boş chat ile devam, kullanıcı manuel ?cid= URL'iyle
+        // sidebar'dan seçer veya yeni mesaj yazar (server append path
+        // mevcut conversation'a yine yazar, sadece UI'da eski geçmiş
+        // görünmez).
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- messages.length
+    // mount-once guard; setState bu effect'in içinden çağırıldığı için deps'te
+    // tutmak infinite loop yaratır. initialConversationId değişimi (sidebar
+    // tıklamasıyla parent state update) zaten fresh fetch tetikler.
+  }, [initialConversationId, session?.access_token]);
+
   // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
