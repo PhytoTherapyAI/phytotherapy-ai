@@ -1,16 +1,14 @@
 // © 2026 DoctoPal — All Rights Reserved
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
-import { NOTO_SANS_REGULAR, NOTO_SANS_BOLD } from "@/lib/pdf-fonts";
+import { NOTO_SANS_REGULAR_BUFFER, NOTO_SANS_BOLD_BUFFER } from "@/lib/pdf-fonts";
 
-// Sprint 20 HF1 — NotoSans base64 inline (filesystem path bağımsız).
-// Vercel serverless bundle'da path.join(process.cwd(), ...) resolve sorunu
-// bypass. ş/ğ/ü/ö/ç/ı/İ native render.
+// Sprint 20 HF3 — NotoSans Buffer src (HF1+HF2 data URI string yaklaşımı çalışmadı).
 Font.register({
   family: "NotoSans",
   fonts: [
-    { src: NOTO_SANS_REGULAR, fontWeight: "normal" },
-    { src: NOTO_SANS_BOLD, fontWeight: "bold" },
+    { src: NOTO_SANS_REGULAR_BUFFER as unknown as string, fontWeight: "normal" },
+    { src: NOTO_SANS_BOLD_BUFFER as unknown as string, fontWeight: "bold" },
   ],
 });
 Font.registerHyphenationCallback((word) => [word]);

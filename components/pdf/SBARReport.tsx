@@ -2,18 +2,18 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet, Font } from "@react-pdf/renderer";
 import { translateCondition } from "@/lib/condition-translations";
-import { NOTO_SANS_REGULAR, NOTO_SANS_BOLD } from "@/lib/pdf-fonts";
+import { NOTO_SANS_REGULAR_BUFFER, NOTO_SANS_BOLD_BUFFER } from "@/lib/pdf-fonts";
 
-// Sprint 20 HF1 — NotoSans base64 inline (filesystem path bağımsız).
-// Vercel serverless bundle'da path.join(process.cwd(), ...) resolve sorunu
-// tamamen bypass — base64 data URI kod içinde, deploy hedefi agnostic.
-// Sprint 17 HF5 (Helvetica + fixTr) revert sonrası NotoSans native glyph
-// render (ş/ğ/ü/ö/ç/ı/İ).
+// Sprint 20 HF3 — NotoSans Buffer src.
+// @react-pdf/renderer Font.register Buffer instance kabul eder (raw byte stream).
+// HF1 base64 data URI + HF2 application/octet-stream MIME swap çalışmadı —
+// muhtemelen parser data URI string parse aşamasında hata veriyordu.
+// Buffer doğrudan TTF byte içeriği → font detect + register native.
 Font.register({
   family: "NotoSans",
   fonts: [
-    { src: NOTO_SANS_REGULAR, fontWeight: "normal" },
-    { src: NOTO_SANS_BOLD, fontWeight: "bold" },
+    { src: NOTO_SANS_REGULAR_BUFFER as unknown as string, fontWeight: "normal" },
+    { src: NOTO_SANS_BOLD_BUFFER as unknown as string, fontWeight: "bold" },
   ],
 });
 Font.registerHyphenationCallback((word) => [word]);
