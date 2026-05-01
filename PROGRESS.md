@@ -1,6 +1,44 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Mayıs 2026 (Sprint 14 — 1 commit: ChatInterface mount refresh restore. ?cid= URL refresh sonrası mesajlar otomatik geri yüklenir; conversation continuity model artık tam.)
+> Son güncelleme: 1 Mayıs 2026 (Sprint 15 — 1 commit: Etkileşim denetleyici kayıtlı ilaçları mount'ta otomatik pre-fill, zero-click UX. Cipralex/Glifor/Zoretanin gibi kayıtlı aktif ilaçlar /interaction-checker açılışında chip listesinde belirir.)
+
+---
+
+## Sprint 15 — Interaction Checker Pre-fill (1 Mayıs 2026)
+
+**Toplam:** 1 commit, 0 revert
+**Sonuç:** Kayıtlı aktif ilaçlar `/interaction-checker` mount'ta otomatik yüklenir (zero-click UX)
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `b0d340d` | Etkileşim denetleyici auto pre-fill — mount-time silent load |
+| D1 | (this) | Sprint 15 kapanış docs |
+
+### Sprint 15 Major Outcome
+
+- **Zero-click UX** — Sayfa açılışında kayıtlı aktif ilaçlar (Cipralex, Glifor, Zoretanin, vb.) otomatik chip listesinde belirir. Workflow 1 click kısaldı.
+- **`autoLoadedRef` mount-once guard** — Sprint 14 ChatInterface refresh restore ile aynı pattern (strict-mode double-mount + auth state flicker korunması)
+- **`loadMedicationsFromProfile(silent=false)` imza extend** — silent=true sırasında `setLoadMedError` (5 yerde) + `setProfileMedsLoaded` (2 yerde) skip. Kullanıcı manuel buton tıklamadığı için error toast / "Yüklendi" feedback kafa karıştırmaz. `setMedications` merge ve `setLoadingProfile` aynen
+- **3 guard'lı useEffect** — `autoLoadedRef.current` + `authLoading||!isAuthenticated` + `medications.length > 0`. Anonymous user, kayıtlı ilacı olmayan user, localStorage savedMeds + manual "Reuse" akışı çakışmaz
+- **Smoke test ✅** — Kayıtlı ilacı olan user `/interaction-checker` → Cipralex/Glifor/Zoretanin otomatik chip listesinde
+
+### Sprint 15 Implementation Detayı
+
+`app/interaction-checker/page.tsx`:
+- `useRef` import + `autoLoadedRef = useRef(false)` (state'lerin yanına)
+- `loadMedicationsFromProfile` body'sinde 7 nokta `if (!silent)` guard (5 setLoadMedError + 2 setProfileMedsLoaded — initial reset L93 + success L136)
+- Mount useEffect: 3 guard → `autoLoadedRef.current = true` → `void loadMedicationsFromProfile(true)`. Deps `[authLoading, isAuthenticated]`, eslint-disable exhaustive-deps + gerekçe (mount-once via autoLoadedRef + medications.length guard)
+- Bonus fix: manuel buton `onClick={loadMedicationsFromProfile}` → `onClick={() => loadMedicationsFromProfile()}` (silent boolean param TS BaseUIEvent ile çakışıyordu)
+
+### Sprint 16+ Backlog
+
+- **Aile non-member contacts** — roadmap #4 (aile üyesi olmayan acil iletişim kişileri için ayrı tablo + UI)
+- **Radyoloji çıktı kalitesi** — roadmap #5 (radyoloji raporu PDF + AI Vision OCR analiz polish)
+- **Kan tahlili PDF** — roadmap #6 (lab test sonuçları PDF export trend dashboard)
+- **chat_conversations auto-title endpoint** — Sprint 14+ deferred (paralel `/api/conversations/{id}/auto-title` chat_messages SELECT + title generation)
+- **Legacy "Arşiv" tab UI** — opsiyonel query_history list (eski sohbetler kaybolmasın)
+- **27 Mayıs avukat görüşmesi** — **25 gün kaldı**, kritik path
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency
 
 ---
 
