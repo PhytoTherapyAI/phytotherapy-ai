@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Send, Loader2, Trash2, Paperclip, Camera, X, FileText, Image as ImageIcon, Mic } from "lucide-react";
+import { Send, Loader2, Trash2, Paperclip, Camera, X, FileText, Image as ImageIcon, Mic, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MessageBubble, ChatMessage } from "./MessageBubble";
 import { ConsentPopup } from "@/components/legal/ConsentPopup";
@@ -532,6 +532,38 @@ export function ChatInterface({ className, loadConversation, initialQuery }: Cha
     setMessages([]);
   };
 
+  // Sprint 12 — Regenerate son AI yanıtı: son user message'ı bul, son assistant
+  // mesajını sil, mevcut input boşsa user mesajını input'a koymadan tekrar
+  // sendMessage ile aynı endpoint'e yolla. Streaming sürerken çağrılmaz
+  // (MessageBubble onRegenerate'i isLast + !isStreaming koşulunda render eder).
+  const handleRegenerate = useCallback(() => {
+    if (isStreaming) return;
+    // En son user mesajını bul (history reverse traverse)
+    const lastUserIdx = [...messages].reverse().findIndex((m) => m.role === "user");
+    if (lastUserIdx === -1) return;
+    const lastUserMsg = messages[messages.length - 1 - lastUserIdx];
+    // Son assistant mesajını sil (var ise — ki olmalı, çünkü onRegenerate sadece
+    // assistant'ın altında render ediliyor)
+    setMessages((prev) => {
+      const lastIdx = prev.length - 1;
+      if (lastIdx >= 0 && prev[lastIdx].role === "assistant") {
+        return prev.slice(0, lastIdx);
+      }
+      return prev;
+    });
+    // Input'a yaz, sonraki tick'te sendMessage tetikle (initialQuery pattern parite)
+    setInput(lastUserMsg.content);
+    setTimeout(() => sendMessage(), 50);
+  }, [isStreaming, messages, sendMessage]);
+
+  // Sprint 12 — Stop generation: aktif AbortController'ı abort et. fetch
+  // catch bloğundaki "AbortError" branch'i isStreaming'i false yapacak
+  // (sendMessage finally blok'u). Mevcut streamed content silinmez —
+  // kullanıcı yarıda kalan yanıtı görür ve isterse Regenerate edebilir.
+  const handleStopGeneration = useCallback(() => {
+    abortControllerRef.current?.abort();
+  }, []);
+
   const remaining = getRemainingGuestQueries();
 
   return (
@@ -573,6 +605,7 @@ export function ChatInterface({ className, loadConversation, initialQuery }: Cha
             message={msg}
             isLast={idx === messages.length - 1}
             onRequestConsent={() => setShowConsentPopup(true)}
+            onRegenerate={handleRegenerate}
             onSendFollowUp={(text) => {
               // Set input via DOM (same pattern as example questions) then trigger send
               const textarea = document.querySelector("textarea");
@@ -751,22 +784,28 @@ export function ChatInterface({ className, loadConversation, initialQuery }: Cha
                 <Trash2 className="h-4 w-4" />
               </Button>
             )}
-            <Button
-              data-send-btn
-              onClick={sendMessage}
-              disabled={isStreaming || (!input.trim() && attachedFiles.length === 0)}
-              className="h-11 w-11 bg-primary hover:bg-primary/90"
-              size="icon"
-              aria-label={isStreaming
-                ? (lang === "tr" ? "Yanıt hazırlanıyor" : "Generating response")
-                : (lang === "tr" ? "Mesajı gönder" : "Send message")}
-            >
-              {isStreaming ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
+            {isStreaming ? (
+              <Button
+                onClick={handleStopGeneration}
+                className="h-11 w-11 bg-destructive hover:bg-destructive/90"
+                size="icon"
+                aria-label={tx("chat.stop", lang)}
+                title={tx("chat.stop", lang)}
+              >
+                <Square className="h-4 w-4 fill-current" />
+              </Button>
+            ) : (
+              <Button
+                data-send-btn
+                onClick={sendMessage}
+                disabled={!input.trim() && attachedFiles.length === 0}
+                className="h-11 w-11 bg-primary hover:bg-primary/90"
+                size="icon"
+                aria-label={lang === "tr" ? "Mesajı gönder" : "Send message"}
+              >
                 <Send className="h-4 w-4" />
-              )}
-            </Button>
+              </Button>
+            )}
           </div>
         </div>
       </div>

@@ -2087,6 +2087,11 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
   "chat.personalProfileRequired": { en: "\uD83D\uDD12 **Personalized recommendations require a health profile.**\n\nTo ensure your safety, I need to know your medications, allergies, and health conditions before giving personal advice.\n\n\uD83D\uDC49 **[Sign up](/auth/login)** \u2014 it takes less than 2 minutes!\n\nIn the meantime, I can answer general health questions like:\n- \"Does omega-3 reduce inflammation?\"\n- \"What is the evidence for turmeric?\"\n- \"How does valerian root work for sleep?\"", tr: "\uD83D\uDD12 **Kisisellestirilmis oneriler icin saglik profili gereklidir.**\n\nGüvenliğiniz icin kisisel tavsiye vermeden once ilaclarinizi, alerjilerinizi ve saglik durumunuzu bilmem gerekiyor.\n\n\uD83D\uDC49 **[Kayit olun](/auth/login)** \u2014 2 dakikadan kisa surer!\n\nBu surede genel saglik sorularini yanitlayabilirim:\n- \"Omega-3 iltihabi azaltir mi?\"\n- \"Zerdecal icin kanitlar nelerdir?\"\n- \"Kediotu koku uyku icin nasil calisir?\"" },
   "chat.queryLimitReached": { en: "\uD83D\uDD12 **You've reached your free query limit.**\n\nGuest users can ask up to 5 questions. To continue with unlimited access and personalized recommendations:\n\n\uD83D\uDC49 **[Create a free account](/auth/login)**\n\nYour data is encrypted and you can delete it anytime.", tr: "\uD83D\uDD12 **Ucretsiz sorgu limitinize ulastiniz.**\n\nMisafir kullanicilar en fazla 5 soru sorabilir. Sinirsiz erisim ve kisisellestirilmis oneriler icin:\n\n\uD83D\uDC49 **[Ucretsiz hesap olusturun](/auth/login)**\n\nVerileriniz sifrelenir ve istediginiz zaman silebilirsiniz." },
   "chat.connectionError": { en: "\u26A0\uFE0F Could not connect to the server. Please check your internet connection and try again.", tr: "\u26A0\uFE0F Sunucuya baglanilamadi. Internet baglantinizi kontrol edip tekrar deneyin." },
+  // Sprint 12 \u2014 Chat UI iyile\u015Ftirme (Copy + Regenerate + Stop)
+  "chat.copy": { en: "Copy", tr: "Kopyala" },
+  "chat.copied": { en: "Copied", tr: "Kopyaland\u0131" },
+  "chat.regenerate": { en: "Regenerate", tr: "Yeniden olu\u015Ftur" },
+  "chat.stop": { en: "Stop", tr: "Durdur" },
 
   // ── Calendar Vital Dialog ──
   "cal.bpRequired": { en: "Systolic and diastolic values are required.", tr: "Sistolik ve diastolik degerler gereklidir." },

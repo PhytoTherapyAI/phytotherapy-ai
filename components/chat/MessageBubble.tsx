@@ -2,9 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Leaf, Loader2, FileText, Image as ImageIcon, BookOpen, ShieldCheck, Send, CheckCircle2 } from "lucide-react";
+import { User, Leaf, Loader2, FileText, Image as ImageIcon, BookOpen, ShieldCheck, Send, CheckCircle2, Copy, Check, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { useLang } from "@/components/layout/language-toggle";
+import { tx } from "@/lib/translations";
 import { AILoadingState } from "@/components/chat/AILoadingState";
 import { SmartSuggestions } from "@/components/chat/SmartSuggestions";
 import { AIDisclaimer } from "@/components/ai/AIDisclaimer";
@@ -40,6 +41,8 @@ interface MessageBubbleProps {
   onSendFollowUp?: (text: string) => void;
   /** Called when user clicks "Grant consent" inside a consent_required bubble */
   onRequestConsent?: () => void;
+  /** Sprint 12 — Regenerate: only on the last completed assistant message */
+  onRegenerate?: () => void;
 }
 
 // Generate follow-up suggestions from AI response content
@@ -80,7 +83,7 @@ function getFollowUps(content: string, lang: string): string[] {
   return suggestions.slice(0, 3);
 }
 
-export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsent }: MessageBubbleProps) {
+export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsent, onRegenerate }: MessageBubbleProps) {
   const { lang } = useLang();
   const isUser = message.role === "user";
   const showSuggestions = isLast && !isUser && !message.isStreaming && message.content.length > 50 && onSendFollowUp;
@@ -188,6 +191,23 @@ export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsen
         {!isUser && !message.isStreaming && message.content.trim().length > 0 && (
           <AIDisclaimer responseId={message.id} compact />
         )}
+
+        {/* Sprint 12 — Action footer: Copy (her assistant) + Regenerate (sadece son assistant) */}
+        {!isUser && !message.isStreaming && message.content.trim().length > 0 && message.kind !== "consent_required" && message.kind !== "management_required" && (
+          <div className="flex items-center gap-3 mt-1">
+            <CopyButton text={mainContent} lang={lang} />
+            {isLast && onRegenerate && (
+              <button
+                onClick={onRegenerate}
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                aria-label={tx("chat.regenerate", lang)}
+              >
+                <RotateCcw className="h-3 w-3" />
+                {tx("chat.regenerate", lang)}
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Smart follow-up suggestions — only on last assistant message */}
@@ -204,9 +224,46 @@ export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsen
 }
 
 /**
+ * Sprint 12 — Copy to clipboard for assistant messages. ChatGPT-grade UX
+ * eksikliği kapatma — kullanıcı yanıtı kopyalayıp WhatsApp'tan doktora veya
+ * notlarına aktarabilsin diye. 2 saniye "Kopyalandı" feedback'i sonra Copy
+ * icon'una geri döner.
+ */
+function CopyButton({ text, lang }: { text: string; lang: "en" | "tr" }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard API başarısız (HTTP context, izin yok) — silent fail; modern
+      // browser'larda HTTPS'te garanti var, dev localhost'ta zaten çalışır.
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+      aria-label={copied ? tx("chat.copied", lang) : tx("chat.copy", lang)}
+    >
+      {copied ? (
+        <Check className="h-3 w-3 text-emerald-500" />
+      ) : (
+        <Copy className="h-3 w-3" />
+      )}
+      {copied ? tx("chat.copied", lang) : tx("chat.copy", lang)}
+    </button>
+  );
+}
+
+/**
  * Simple markdown-like renderer for assistant messages.
  * Handles: **bold**, headers, bullet lists, links, line breaks, <details> blocks,
- * and the <!--YELLOW_CODE--> marker (FAZ 5) that renders a YellowCodeCard above the text.
+ * markdown tables (Sprint 12), and the <!--YELLOW_CODE--> marker (FAZ 5) that
+ * renders a YellowCodeCard above the text.
  */
 function FormattedContent({ content }: { content: string }) {
   // FAZ 5: Extract yellow-code marker (rendered as a card above text, then stripped from content)
@@ -271,50 +328,163 @@ function DetailsBlock({ content }: { content: string }) {
   );
 }
 
+/**
+ * Sprint 12 — Markdown tablo render helper.
+ *
+ * Tablo formatı (GitHub Flavored Markdown):
+ *   | Kolon 1 | Kolon 2 |
+ *   |---------|---------|
+ *   | Veri 1  | Veri 2  |
+ *
+ * Separator satırı (`|---|---|`) opsiyonel ama varsa atlanır. Hücre içi
+ * `formatInline` ile bold + link parse edilir. Boş tablo (1 satır veya
+ * sıfır kolon) null döner — caller paragraph fallback'ine düşer.
+ */
+function renderTable(lines: string[], keyPrefix: string): React.ReactNode | null {
+  // Separator satırlarını filter et (sadece -, |, : ve whitespace içerenler)
+  const dataLines = lines.filter((l) => !/^\s*\|?[-:\s|]+\|?\s*$/.test(l));
+  if (dataLines.length < 2) return null;
+
+  const rows = dataLines.map((l) => {
+    const cells = l.split("|");
+    // Başında ve sonunda boş cell'leri kırp (`| a | b |` → ["", " a ", " b ", ""])
+    if (cells[0].trim() === "") cells.shift();
+    if (cells.length > 0 && cells[cells.length - 1].trim() === "") cells.pop();
+    return cells.map((c) => c.trim());
+  });
+
+  if (rows.length < 2 || rows[0].length === 0) return null;
+
+  const [headers, ...body] = rows;
+
+  return (
+    <div key={keyPrefix} className="overflow-x-auto my-3 rounded-lg border border-border">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr className="bg-muted/50">
+            {headers.map((h, i) => (
+              <th
+                key={i}
+                className="text-left p-2 border-b border-border font-medium text-foreground"
+              >
+                {formatInline(h)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {body.map((row, i) => (
+            <tr
+              key={i}
+              className="border-b border-border/50 last:border-b-0 hover:bg-muted/30 transition-colors"
+            >
+              {row.map((cell, j) => (
+                <td key={j} className="p-2 text-muted-foreground align-top">
+                  {formatInline(cell)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 /** Renders plain text/markdown lines */
 function TextBlock({ content }: { content: string }) {
   const lines = content.split("\n");
+  const rendered: React.ReactNode[] = [];
 
-  return (
-    <>
-      {lines.map((line, i) => {
-        const trimmed = line.trim();
-        // Empty line
-        if (trimmed === "") return <div key={i} className="h-2" />;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
 
-        // Skip raw HTML tag lines
-        if (/^<\/?(details|summary)>/i.test(trimmed)) return null;
+    // Sprint 12 — Markdown tablo: ardışık `|` ile başlayan satırları topla
+    if (trimmed.startsWith("|") && trimmed.endsWith("|") && trimmed.length > 2) {
+      const tableLines: string[] = [trimmed];
+      let j = i + 1;
+      while (j < lines.length) {
+        const next = lines[j].trim();
+        if (next.startsWith("|") && next.endsWith("|") && next.length > 2) {
+          tableLines.push(next);
+          j++;
+        } else {
+          break;
+        }
+      }
+      const tableNode = renderTable(tableLines, `table-${i}`);
+      if (tableNode) {
+        rendered.push(tableNode);
+        i = j - 1; // dış for loop tarafından i++ yapılacak, j'ye al
+        continue;
+      }
+      // renderTable null döndüyse fallback olarak normal paragraph render et
+    }
 
-        // Headers
-        if (trimmed.startsWith("### "))
-          return <h4 key={i} className="mt-2 text-sm font-semibold">{formatInline(trimmed.slice(4))}</h4>;
-        if (trimmed.startsWith("## "))
-          return <h3 key={i} className="mt-3 text-base font-semibold">{formatInline(trimmed.slice(3))}</h3>;
+    // Empty line
+    if (trimmed === "") {
+      rendered.push(<div key={i} className="h-2" />);
+      continue;
+    }
 
-        // Bullet points
-        if (trimmed.match(/^[-•*]\s/))
-          return (
-            <div key={i} className="flex gap-2 pl-1">
-              <span className="mt-1 text-primary">•</span>
-              <span className="text-sm">{formatInline(trimmed.replace(/^[-•*]\s/, ""))}</span>
-            </div>
-          );
+    // Skip raw HTML tag lines
+    if (/^<\/?(details|summary)>/i.test(trimmed)) {
+      continue;
+    }
 
-        // Numbered lists
-        const numMatch = trimmed.match(/^(\d+)[.)]\s/);
-        if (numMatch)
-          return (
-            <div key={i} className="flex gap-2 pl-1">
-              <span className="mt-0 min-w-[1.25rem] text-sm font-medium text-primary">{numMatch[1]}.</span>
-              <span className="text-sm">{formatInline(trimmed.replace(/^\d+[.)]\s/, ""))}</span>
-            </div>
-          );
+    // Headers
+    if (trimmed.startsWith("### ")) {
+      rendered.push(
+        <h4 key={i} className="mt-2 text-sm font-semibold">
+          {formatInline(trimmed.slice(4))}
+        </h4>,
+      );
+      continue;
+    }
+    if (trimmed.startsWith("## ")) {
+      rendered.push(
+        <h3 key={i} className="mt-3 text-base font-semibold">
+          {formatInline(trimmed.slice(3))}
+        </h3>,
+      );
+      continue;
+    }
 
-        // Regular paragraph
-        return <p key={i} className="text-sm">{formatInline(trimmed)}</p>;
-      })}
-    </>
-  );
+    // Bullet points
+    if (trimmed.match(/^[-•*]\s/)) {
+      rendered.push(
+        <div key={i} className="flex gap-2 pl-1">
+          <span className="mt-1 text-primary">•</span>
+          <span className="text-sm">{formatInline(trimmed.replace(/^[-•*]\s/, ""))}</span>
+        </div>,
+      );
+      continue;
+    }
+
+    // Numbered lists
+    const numMatch = trimmed.match(/^(\d+)[.)]\s/);
+    if (numMatch) {
+      rendered.push(
+        <div key={i} className="flex gap-2 pl-1">
+          <span className="mt-0 min-w-[1.25rem] text-sm font-medium text-primary">
+            {numMatch[1]}.
+          </span>
+          <span className="text-sm">{formatInline(trimmed.replace(/^\d+[.)]\s/, ""))}</span>
+        </div>,
+      );
+      continue;
+    }
+
+    // Regular paragraph
+    rendered.push(
+      <p key={i} className="text-sm">
+        {formatInline(trimmed)}
+      </p>,
+    );
+  }
+
+  return <>{rendered}</>;
 }
 
 function formatInline(text: string): React.ReactNode {
