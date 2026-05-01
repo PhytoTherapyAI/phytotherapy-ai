@@ -91,30 +91,78 @@ export async function POST(request: NextRequest) {
     });
 
     // Fetch profile/meds/allergies for the TARGET user (FAZ 3 RLS allows family members to read)
-    const profileRes = await supabase
-      .from("user_profiles")
-      .select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines")
-      .eq("id", targetUserId)
-      .maybeSingle();
-
-    const medsRes = await supabase
-      .from("user_medications")
-      .select("brand_name, generic_name, dosage, frequency")
-      .eq("user_id", targetUserId)
-      .eq("is_active", true);
-
-    const allergiesRes = await supabase
-      .from("user_allergies")
-      .select("allergen, severity")
-      .eq("user_id", targetUserId);
+    // Sprint 17 Commit 2 — 4 yeni tablo eklendi (family_history + check-ins + last lab + last radiology)
+    const [
+      profileRes,
+      medsRes,
+      allergiesRes,
+      familyHistoryRes,
+      checkInsRes,
+      lastLabRes,
+      lastRadRes,
+    ] = await Promise.all([
+      supabase
+        .from("user_profiles")
+        .select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, supplements, vaccines")
+        .eq("id", targetUserId)
+        .maybeSingle(),
+      supabase
+        .from("user_medications")
+        .select("brand_name, generic_name, dosage, frequency")
+        .eq("user_id", targetUserId)
+        .eq("is_active", true),
+      supabase
+        .from("user_allergies")
+        .select("allergen, severity")
+        .eq("user_id", targetUserId),
+      // V1 — Aile öyküsü detay (Session 36 family_history_entries; tablo apply edilmemişse graceful fallback)
+      supabase
+        .from("family_history_entries")
+        .select("person_relation, condition_name, age_at_diagnosis, age_at_death, is_deceased")
+        .eq("user_id", targetUserId)
+        .order("created_at", { ascending: false })
+        .limit(10),
+      // V2 — Son 7 gün vital trend (daily_check_ins: sleep_quality 1-5, mood 1-5, energy_level 1-5)
+      supabase
+        .from("daily_check_ins")
+        .select("check_date, sleep_quality, mood, energy_level")
+        .eq("user_id", targetUserId)
+        .order("check_date", { ascending: false })
+        .limit(7),
+      // V3a — Son lab testi (analysis_result TEXT)
+      supabase
+        .from("blood_tests")
+        .select("created_at, analysis_result")
+        .eq("user_id", targetUserId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      // V3b — Son radyoloji raporu (summary TEXT + image_type + overall_urgency)
+      supabase
+        .from("radiology_reports")
+        .select("created_at, image_type, overall_urgency, summary")
+        .eq("user_id", targetUserId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+    ]);
 
     if (profileRes.error) console.error("[SBAR-PDF] profile error:", profileRes.error.message, profileRes.error.details, profileRes.error.hint);
     if (medsRes.error) console.error("[SBAR-PDF] meds error:", medsRes.error.message, medsRes.error.details);
     if (allergiesRes.error) console.error("[SBAR-PDF] allergies error:", allergiesRes.error.message, allergiesRes.error.details);
+    // Yeni 4 tablo: hata varsa log et + graceful fallback (boş array / null)
+    if (familyHistoryRes.error) console.warn("[SBAR-PDF] family_history fetch failed (table may not be applied):", familyHistoryRes.error.message);
+    if (checkInsRes.error) console.warn("[SBAR-PDF] daily_check_ins fetch failed:", checkInsRes.error.message);
+    if (lastLabRes.error) console.warn("[SBAR-PDF] blood_tests fetch failed:", lastLabRes.error.message);
+    if (lastRadRes.error) console.warn("[SBAR-PDF] radiology_reports fetch failed:", lastRadRes.error.message);
 
     const profile = profileRes.data;
     const meds = medsRes.data || [];
     const allergies = allergiesRes.data || [];
+    const familyHistoryDetailed = familyHistoryRes.error ? [] : (familyHistoryRes.data || []);
+    const checkIns = checkInsRes.error ? [] : (checkInsRes.data || []);
+    const lastLab = lastLabRes.error ? null : lastLabRes.data;
+    const lastRadiology = lastRadRes.error ? null : lastRadRes.data;
 
     if (!profile) {
       return new Response(JSON.stringify({ error: "Profile not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
@@ -154,6 +202,31 @@ export async function POST(request: NextRequest) {
         status: v.status,
         lastDate: v.last_date,
       })),
+      // Sprint 17 Commit 2 — yeni veri inject (V1+V2+V3)
+      familyHistoryDetailed: familyHistoryDetailed.map((f) => ({
+        person_relation: f.person_relation,
+        condition_name: f.condition_name,
+        age_at_diagnosis: f.age_at_diagnosis ?? undefined,
+        age_at_death: f.age_at_death ?? undefined,
+        is_deceased: f.is_deceased ?? false,
+      })),
+      checkIns: checkIns.map((c) => ({
+        check_date: c.check_date,
+        sleep_quality: c.sleep_quality ?? undefined,
+        mood: c.mood ?? undefined,
+        energy_level: c.energy_level ?? undefined,
+      })),
+      lastLab: lastLab
+        ? { created_at: lastLab.created_at, analysis_result: lastLab.analysis_result }
+        : undefined,
+      lastRadiology: lastRadiology
+        ? {
+            created_at: lastRadiology.created_at,
+            image_type: lastRadiology.image_type,
+            overall_urgency: lastRadiology.overall_urgency,
+            summary: lastRadiology.summary,
+          }
+        : undefined,
       generatedAt: new Date().toLocaleString(lang === "tr" ? "tr-TR" : "en-US", { dateStyle: "medium", timeStyle: "short" }),
     };
 
