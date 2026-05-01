@@ -104,6 +104,58 @@ CLAUDE.md "Production Debug — Auth Context Önce Kontrol Et" h3'ünde dosyalan
 
 ---
 
+## Sprint 7 — set-state-in-effect Cleanup (29 Nisan 2026)
+
+**Toplam:** 2 commit, 0 revert
+**Sonuç:** 61 → 0 set-state-in-effect, ESLint %100 temiz (489 → 0)
+
+| # | Commit | Açıklama | Delta |
+|---|---|---|---|
+| 1 | `73e6aa8` | Faz 5b/c Commit 1 — localStorage useState lazy init (11 ihlal) | −11 |
+| 2 | `2131972` | Faz 5b/c Commit 2-5 — eslint-disable toplu P1+P2.5+P4+P5+P6 (50 ihlal) | −50 |
+| D1 | (this) | Sprint 7 kapanış docs + h3 #14 öğreti | — |
+
+### ESLint Master Sprint Özeti (Sprint 5+6+7)
+
+| Başlangıç | Bitiş | Azalma |
+|---|---|---|
+| 489 problem | **0 problem** | **%100** |
+
+13/13 kategori tamamen temiz. 0 error, 0 warning.
+`npx eslint . --ext .ts,.tsx` → exit 0, 0 output.
+
+### Sprint 7 Kritik Öğreti
+
+`react-hooks/set-state-in-effect` rule useEffect declaration'da değil,
+**body içindeki setState satırında** fire eder.
+
+Disable useEffect öncesine konulamaz:
+```tsx
+// YANLIŞ — rule buradan fire etmiyor
+// eslint-disable-next-line react-hooks/set-state-in-effect
+useEffect(() => {
+  setState(value)  // ← gerçek fire noktası
+}, [])
+```
+
+Doğru — block-style veya inline:
+```tsx
+useEffect(() => {
+  /* eslint-disable react-hooks/set-state-in-effect */
+  setState(value1)
+  setState(value2)
+  /* eslint-enable react-hooks/set-state-in-effect */
+}, [])
+
+// veya single setState için:
+useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  setState(value)
+}, [])
+```
+
+---
+
 ## Sprint 6 — exhaustive-deps Cleanup (29 Nisan 2026) ✅ KAPANDI
 
 **Süre:** 29 Nisan 2026 (Sprint 5'in devamı, tek gün)

@@ -968,6 +968,44 @@ Pattern referansları:
 
 (Sprint 6 Faz 6 Commit 1, `558a802`)
 
+### ESLint Disable Placement — Rule Fire Noktasına Koy, Declaration'a Değil (Sprint 7 öğretisi)
+
+ESLint disable comment'i **kuralın fire ettiği satırın üstüne** koyulmalı,
+wrapper construct'ın (useEffect, useMemo, function) üstüne değil.
+
+Örnek: `react-hooks/set-state-in-effect`
+
+```tsx
+// YANLIŞ — useEffect declaration'a koyulunca "Unused directive" hatası
+// eslint-disable-next-line react-hooks/set-state-in-effect
+useEffect(() => {
+  setState(value)  // ← rule burada fire ediyor
+}, [])
+
+// DOĞRU — block style (birden fazla setState)
+useEffect(() => {
+  /* eslint-disable react-hooks/set-state-in-effect */
+  /* Async fetch callback — data-driven setState, not render-time */
+  setState(data)
+  setLoading(false)
+  /* eslint-enable react-hooks/set-state-in-effect */
+}, [deps])
+
+// DOĞRU — inline (tek setState)
+useEffect(() => {
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  // SSR mounted guard — window-only API
+  setState(window.matchMedia(...).matches)
+}, [])
+```
+
+Genel kural: ESLint hata mesajındaki **line:col** değerini al,
+disable comment'i o satırın üstüne koy. Hiçbir zaman
+outer block'un üstüne koyma.
+
+Pattern referansı: Sprint 7 Commit 2 (`2131972`) —
+41 dosya, block-style + inline mixed disable pattern.
+
 ---
 
 ## Sprint Disiplini (her commit'te zorunlu)
