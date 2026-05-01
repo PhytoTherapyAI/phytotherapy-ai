@@ -196,4 +196,10 @@ export const authTranslations: Record<string, TranslationEntry> = {
   "profile.healthReport.nudges.vaccines": { en: "Vaccine records empty", tr: "Aşı kayıtları boş" },
   "profile.healthReport.nudges.lifestyle": { en: "Body & lifestyle info missing", tr: "Vücut & yaşam tarzı bilgisi eksik" },
   "profile.healthReport.nudges.familyHistory": { en: "Family health history not added", tr: "Aile sağlık öyküsü eklenmemiş" },
+  // Sprint 9 Commit 2 — Recent Activity feed
+  "profile.healthReport.recentActivity.title": { en: "Recent activity", tr: "Son aktivite" },
+  "profile.healthReport.recentActivity.medAdded": { en: "Medication added", tr: "İlaç eklendi" },
+  "profile.healthReport.recentActivity.labResult": { en: "Lab test uploaded", tr: "Lab testi yüklendi" },
+  "profile.healthReport.recentActivity.unknownMed": { en: "Medication", tr: "İlaç" },
+  "profile.healthReport.recentActivity.alertGeneric": { en: "Interaction alert", tr: "Etkileşim uyarısı" },
 }

@@ -31,12 +31,42 @@ export interface UserAllergyRow {
   severity: string | null
 }
 
+// Sprint 9 Commit 2 — Recent Activity feed
+// Subset shapes used only by HealthReportTab; full UserMedication is still
+// the canonical Medications-tab type. We keep these minimal so the SELECT
+// projection on the wire matches what the UI actually reads.
+export interface RecentMedRow {
+  id: string
+  brand_name: string | null
+  generic_name: string | null
+  added_at: string
+}
+
+export interface ActiveAlertRow {
+  id: string
+  summary: string | null
+  severity: "dangerous" | "caution"
+  created_at: string
+}
+
+export interface LastLabTestRow {
+  id: string
+  created_at: string
+  analysis_result: string | null
+}
+
 export interface ProfileDataState {
   medications: UserMedication[]
   allergies: UserAllergyRow[]
   labTestCount: number
   streakDays: number
   familyMemberCount: number
+  // Sprint 9 Commit 2 — Recent Activity (additive — Commit 1 left these
+  // as defaults; no caller needs to thread them yet on tabs that ignore
+  // the feed).
+  recentMeds: RecentMedRow[]
+  activeAlerts: ActiveAlertRow[]
+  lastLabTest: LastLabTestRow | null
   loading: boolean
 }
 
@@ -52,6 +82,9 @@ const EMPTY: ProfileDataState = {
   labTestCount: 0,
   streakDays: 0,
   familyMemberCount: 0,
+  recentMeds: [],
+  activeAlerts: [],
+  lastLabTest: null,
   loading: false,
 }
 
@@ -79,6 +112,10 @@ export function useProfileData(userId: string | null | undefined): UseProfileDat
   const [labTestCount, setLabTestCount] = useState(0)
   const [streakDays, setStreakDays] = useState(0)
   const [familyMemberCount, setFamilyMemberCount] = useState(0)
+  // Sprint 9 Commit 2 — Recent Activity feed
+  const [recentMeds, setRecentMeds] = useState<RecentMedRow[]>([])
+  const [activeAlerts, setActiveAlerts] = useState<ActiveAlertRow[]>([])
+  const [lastLabTest, setLastLabTest] = useState<LastLabTestRow | null>(null)
   const [loading, setLoading] = useState(false)
 
   const refetch = useCallback(async () => {
@@ -88,17 +125,38 @@ export function useProfileData(userId: string | null | undefined): UseProfileDat
       setLabTestCount(0)
       setStreakDays(0)
       setFamilyMemberCount(0)
+      setRecentMeds([])
+      setActiveAlerts([])
+      setLastLabTest(null)
       return
     }
     setLoading(true)
     try {
       const supabase = createBrowserClient()
-      // F-PROFILE-001 Commit 5: 2 new queries added for HealthReportTab:
+      // F-PROFILE-001 Commit 5: 2 queries added for HealthReportTab:
       //   - daily_check_ins (streak calculation)
       //   - family_members (family count stat card). Column is `owner_id`
       //     (confirmed in app/badges/page.tsx:43), NOT `owner_user_id`.
-      // Both run inside the existing Promise.all — no extra round trip.
-      const [medsRes, allergiesRes, labsRes, checkInsRes, familyRes] = await Promise.all([
+      // Sprint 9 Commit 2: 3 more queries for the Recent Activity feed:
+      //   - user_medications projection limit 5 ordered by added_at
+      //     (separate from the canonical full-list query above so the
+      //     wire payload stays small + the order is decoupled)
+      //   - medication_interaction_alerts where resolved_at IS NULL,
+      //     reuses the partial index `idx_mia_user_active`
+      //   - blood_tests last 1 row (full record, not count) — the
+      //     existing `labsRes` head:true count query is left in place
+      //     because Section 2 stat card still needs the cardinality.
+      // All 8 run inside the same Promise.all — no extra round trip.
+      const [
+        medsRes,
+        allergiesRes,
+        labsRes,
+        checkInsRes,
+        familyRes,
+        recentMedsRes,
+        activeAlertsRes,
+        lastLabRes,
+      ] = await Promise.all([
         supabase
           .from("user_medications")
           .select("*")
@@ -122,6 +180,26 @@ export function useProfileData(userId: string | null | undefined): UseProfileDat
           .from("family_members")
           .select("id", { count: "exact", head: true })
           .eq("owner_id", userId),
+        supabase
+          .from("user_medications")
+          .select("id, brand_name, generic_name, added_at")
+          .eq("user_id", userId)
+          .eq("is_active", true)
+          .order("added_at", { ascending: false })
+          .limit(5),
+        supabase
+          .from("medication_interaction_alerts")
+          .select("id, summary, severity, created_at")
+          .eq("user_id", userId)
+          .is("resolved_at", null)
+          .order("created_at", { ascending: false })
+          .limit(3),
+        supabase
+          .from("blood_tests")
+          .select("id, created_at, analysis_result")
+          .eq("user_id", userId)
+          .order("created_at", { ascending: false })
+          .limit(1),
       ])
       if (medsRes.data) setMedications(medsRes.data as UserMedication[])
       if (allergiesRes.data) setAllergies(allergiesRes.data as UserAllergyRow[])
@@ -130,6 +208,9 @@ export function useProfileData(userId: string | null | undefined): UseProfileDat
         checkInsRes.data ? computeStreak(checkInsRes.data as { check_date: string }[]) : 0,
       )
       setFamilyMemberCount(typeof familyRes.count === "number" ? familyRes.count : 0)
+      setRecentMeds((recentMedsRes.data as RecentMedRow[] | null) ?? [])
+      setActiveAlerts((activeAlertsRes.data as ActiveAlertRow[] | null) ?? [])
+      setLastLabTest((lastLabRes.data?.[0] as LastLabTestRow | undefined) ?? null)
     } catch {
       // soft fail — UI reads whatever state is already populated;
       // next mount / refetch() retries
@@ -148,6 +229,9 @@ export function useProfileData(userId: string | null | undefined): UseProfileDat
     labTestCount,
     streakDays,
     familyMemberCount,
+    recentMeds,
+    activeAlerts,
+    lastLabTest,
     loading: loading && medications.length === 0,
     refetch,
     setMedications,

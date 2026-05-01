@@ -298,6 +298,9 @@ export function ProfileShellV2() {
             streakDays={profileData.streakDays}
             familyMemberCount={profileData.familyMemberCount}
             setTab={setTab}
+            recentMeds={profileData.recentMeds}
+            activeAlerts={profileData.activeAlerts}
+            lastLabTest={profileData.lastLabTest}
           />
         )
 

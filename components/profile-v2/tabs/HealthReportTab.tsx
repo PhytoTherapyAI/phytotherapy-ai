@@ -35,8 +35,24 @@ import { FamilyProfileGuard } from "@/components/family/FamilyProfileGuard"
 import { Card } from "@/components/ui/card"
 import { computeVitalityScore } from "@/lib/vitality"
 import type { UserMedication } from "@/lib/database.types"
-import type { UserAllergyRow } from "@/components/profile-v2/hooks/useProfileData"
+import type {
+  UserAllergyRow,
+  RecentMedRow,
+  ActiveAlertRow,
+  LastLabTestRow,
+} from "@/components/profile-v2/hooks/useProfileData"
 import type { ProfileTabId } from "@/components/profile-v2/useProfileTab"
+
+// Sprint 9 Commit 2: inline relative-time helper (Bugün / Dün / N gün önce).
+// We avoid date-fns to keep the bundle slim — this hook is the only consumer
+// for now. Negative diffs (server clock drift) collapse to "Bugün/Today".
+function relativeTime(iso: string, lang: "tr" | "en"): string {
+  const diff = Date.now() - new Date(iso).getTime()
+  const days = Math.floor(diff / 86400000)
+  if (days <= 0) return lang === "tr" ? "Bugün" : "Today"
+  if (days === 1) return lang === "tr" ? "Dün" : "Yesterday"
+  return lang === "tr" ? `${days} gün önce` : `${days} days ago`
+}
 
 interface HealthReportTabProps {
   lang: "tr" | "en"
@@ -65,6 +81,10 @@ interface HealthReportTabProps {
   familyMemberCount: number
   /** Sprint 9 Commit 1: cross-tab navigation for missing-section nudges. */
   setTab: (id: ProfileTabId) => void
+  /** Sprint 9 Commit 2: Recent Activity feed (3 sources, conditional). */
+  recentMeds: RecentMedRow[]
+  activeAlerts: ActiveAlertRow[]
+  lastLabTest: LastLabTestRow | null
 }
 
 export function HealthReportTab({
@@ -78,6 +98,9 @@ export function HealthReportTab({
   streakDays,
   familyMemberCount,
   setTab,
+  recentMeds,
+  activeAlerts,
+  lastLabTest,
 }: HealthReportTabProps) {
   const tr = lang === "tr"
 
@@ -384,7 +407,82 @@ export function HealthReportTab({
         </div>
       </Card>
 
-      {/* ── Section 5: Missing Section Nudges (Sprint 9 Commit 1) ── */}
+      {/* ── Section 5: Recent Activity (Sprint 9 Commit 2) ── */}
+      {/* 3 kaynak: aktif etkileşim uyarıları (kırmızı border, üstte) */}
+      {/* + son lab testi + son eklenen 3 ilaç. Üç array de boşsa render */}
+      {/* hiç yapılmaz. relativeTime helper inline (date-fns bağımsız). */}
+      {(activeAlerts.length > 0 || lastLabTest || recentMeds.length > 0) && (
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-muted-foreground">
+            {tx("profile.healthReport.recentActivity.title", lang)}
+          </p>
+
+          {/* Aktif uyarılar üstte (kritik) — kırmızı border */}
+          {activeAlerts.map((alert) => (
+            <div
+              key={alert.id}
+              className="flex items-start gap-3 p-3 rounded-lg border border-destructive/30 bg-destructive/5"
+            >
+              <span className="text-base shrink-0" aria-hidden>
+                ⚠️
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-foreground line-clamp-2">
+                  {alert.summary ||
+                    tx("profile.healthReport.recentActivity.alertGeneric", lang)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {relativeTime(alert.created_at, lang)}
+                </p>
+              </div>
+            </div>
+          ))}
+
+          {/* Son lab testi */}
+          {lastLabTest && (
+            <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card">
+              <span className="text-base shrink-0" aria-hidden>
+                🩸
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-foreground">
+                  {tx("profile.healthReport.recentActivity.labResult", lang)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {relativeTime(lastLabTest.created_at, lang)}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Son eklenen ilaçlar (max 3 göster — useProfileData zaten 5 limit) */}
+          {recentMeds.slice(0, 3).map((med) => {
+            const display =
+              med.brand_name ||
+              med.generic_name ||
+              tx("profile.healthReport.recentActivity.unknownMed", lang)
+            return (
+              <div
+                key={med.id}
+                className="flex items-start gap-3 p-3 rounded-lg border border-border bg-card"
+              >
+                <span className="text-base shrink-0" aria-hidden>
+                  💊
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-foreground truncate">{display}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {tx("profile.healthReport.recentActivity.medAdded", lang)} ·{" "}
+                    {relativeTime(med.added_at, lang)}
+                  </p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* ── Section 6: Missing Section Nudges (Sprint 9 Commit 1) ── */}
       {/* Sadece eksik bölümler için cross-tab navigation. Tüm profil dolu */}
       {/* iken render olmaz (nudges.length === 0). Max 3 nudge gösterir. */}
       {nudges.length > 0 && (
