@@ -1,6 +1,106 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 2 Mayıs 2026 (Sprint 19 — 1 commit: kan tahlili + radyoloji geçmiş listesi UI. /medical-analysis Trends tab'a 3-segment switcher (Trendler / Kan Tahlili Geçmişi / Radyoloji Geçmişi) + 2 yeni list endpoint (Bearer auth + resolveTargetUser + pagination + take+1 hasMore) + 2 reusable card list component (accordion expand + load more + skeleton + empty state). Smoke test ✅ segment switcher + empty state.)
+> Son güncelleme: 2 Mayıs 2026 (Sprint 20 — NotoSans kalıcı fix girişimi BAŞARISIZ. 5 hotfix (outputFileTracingIncludes + base64 inline + MIME swap + webpack TTF import + Buffer src) hepsi fail. Helvetica revert + Sprint 20 Commit 2 ile 3 PDF de fixTr() ASCII fallback (tutarlı, stabil). Sprint 21+: font CDN, @react-pdf/renderer upgrade.)
+
+---
+
+## Sprint 20 — NotoSans Kalıcı Fix Girişimi (2 Mayıs 2026)
+
+**Sonuç:** Başarısız — tüm yaklaşımlar Vercel'de fail etti.
+**Final state:** 3 PDF Helvetica + fixTr (stabil, çalışıyor)
+
+**Toplam:** 6 commit (1 ana + 3 hotfix + 1 revert + 1 fixTr extension) + 1 docs commit, 0 ürün regresyonu
+
+| # | Commit | Yaklaşım | Sonuç |
+|---|---|---|---|
+| 1 | `869143b` | `outputFileTracingIncludes` config + SBAR HF5 revert (path.join filesystem) | ❌ Vercel next-trace heavy-import bundle path.join statik analizi miss |
+| HF1 | `1960fea` | base64 inline `data:font/ttf` (lib/pdf-fonts.ts 786KB) | ❌ MIME parser fail |
+| HF2 | `d025233` | MIME swap → `data:application/octet-stream` | ❌ parser hâlâ fail |
+| HF3 (TTF import) | revert | webpack `asset/resource` rule + types/fonts.d.ts | ❌ Turbopack TTF loader yok, build fail |
+| HF3 (Buffer src) | `299d33e` | `Buffer.from(base64)` instance src | ❌ runtime fail |
+| revert | `8d67531` | 3 PDF Helvetica revert (SBAR fixTr restore + Radyoloji/Doctor fontFamily swap) | ✅ render çalışıyor (Radyoloji+Doctor TR akışında glyph kayıplı) |
+| **Commit 2** | **`802ed2b`** | **Radyoloji + Kan Tahlili PDF fixTr ekle (3 PDF tutarlı ASCII fallback)** | **✅ stabil — 3 PDF de TR ASCII'leşir** |
+| D1 | (this) | Sprint 20 kapanış docs | — |
+
+### Major Outcomes (Negatif Findings)
+
+- **Vercel + Next.js 16 (Turbopack default) + @react-pdf/renderer custom font register pratik olarak güvenilir DEĞİL.** 5 farklı yaklaşım denendi, hiçbiri canlıda Türkçe karakterleri NotoSans ile render edemedi.
+- **Helvetica + fixTr() transliteration kalıcı geçici çözüm:** SBARReport.tsx Sprint 18 Commit 1 (`f98e6f9`) hâline reset (Helvetica built-in + fixTr ASCII fallback ş→s/ğ→g/ü→u/ö→o/ç→c/ı→i/İ→I/Ş→S/Ğ→G/Ü→U/Ö→O/Ç→C). Sprint 17 B sections + Sprint 18 lastLab summary öncelikli render intact.
+- **RadiologyReport + DoctorReport sadece fontFamily swap** — Sprint 16 Commit 1+2 enrichment'ı (lang t bundle + image quality chip + urgency banner + interactionCheck + abnormalFindings detay + trendComparison) **intact**. Türkçe karakterler glyph kayıplı render olur (lang="tr" akışında "□" placeholder), lang="en" akışında tam çalışır.
+- **`lib/pdf-fonts.ts` (786KB base64) silindi** — git'ten temizlendi.
+- **`outputFileTracingIncludes` config silindi** — artık gereksiz (filesystem path yok).
+- **0 ürün regresyonu:** SBAR + Radyoloji + Kan Tahlili PDF Sprint 19 öncesi Helvetica davranışına döndü, çalışıyor.
+
+### Implementation Detayı
+
+**Commit 1 (`869143b`) — Sprint 20 ana commit:**
+- `next.config.ts` `outputFileTracingIncludes` config eklendi (5 satır)
+- `components/pdf/SBARReport.tsx` HF5 (Helvetica + fixTr) → NotoSans + path.join revert
+- Hipotez: Vercel next-trace SBAR heavy-import bundle'da `path.join(process.cwd(), ...)` statik string'i yakalayamıyor, `outputFileTracingIncludes` explicit dahil ettiğinde çözülmeli
+- Smoke test: SBAR PDF Vercel'de hâlâ "Font family not registered" → hipotez yanlış
+
+**Commit HF1 (`1960fea`) — base64 inline:**
+- `lib/pdf-fonts.ts` (YENİ, 786KB) — base64 data URI export
+- 3 PDF component Font.register `path.join` → `import { NOTO_SANS_REGULAR } from "@/lib/pdf-fonts"` (data URI string)
+- `next.config.ts` `outputFileTracingIncludes` SİL
+- Hipotez: filesystem path tamamen bypass, base64 string code içinde
+- Smoke test: hâlâ "Font family not registered" → MIME type parser fail
+
+**Commit HF2 (`d025233`) — MIME swap:**
+- `lib/pdf-fonts.ts` MIME prefix `data:font/ttf` → `data:application/octet-stream`
+- Hipotez: `font/ttf` MIME standart değil, parser tanımıyor olabilir
+- Smoke test: hâlâ fail
+
+**HF3 girişimi (TTF direct import) — abandoned:**
+- `types/fonts.d.ts` + `next.config.ts` webpack rule + `import notoSansRegular from "../../public/fonts/..."` 3 component
+- Hipotez: webpack `asset/resource` build-time'da TTF static asset URL'e map'ler
+- **Build fail:** Next.js 16 Turbopack default + webpack rule Turbopack'te tanınmıyor → "Unknown module type" 2 TTF dosyası için
+- Tam revert (commit yok)
+
+**Commit HF3 (Buffer src) (`299d33e`):**
+- `lib/pdf-fonts.ts` Buffer exports append (`Buffer.from(base64, 'base64')`)
+- 3 PDF component `src: NOTO_SANS_REGULAR_BUFFER as unknown as string`
+- Hipotez: @react-pdf/renderer Buffer instance kabul eder (resmi docs), data URI parser bypass
+- Smoke test: hâlâ fail
+
+**Commit revert (`8d67531`) — 3 PDF Helvetica:**
+- `lib/pdf-fonts.ts` SİL (786KB git cleanup)
+- `components/pdf/SBARReport.tsx` `git checkout f98e6f9 --` ile Sprint 18 Commit 1 hâline reset
+- `components/pdf/RadiologyReport.tsx` fontFamily NotoSans → Helvetica/Helvetica-Bold swap (5+5+2=12 yer), Font.register block SİL, NotoSans imports SİL
+- `components/pdf/DoctorReport.tsx` aynı pattern (Sprint 16 Commit 2 enrichment intact)
+
+### Sprint 20 Backward Compatibility
+
+- 0 ürün regresyonu (SBAR + Radyoloji + Kan Tahlili PDF Sprint 19 hâline geri).
+- Sprint 17 B SBAR yeni sections intact (vital trend, family detailed, lab/radyoloji snippet).
+- Sprint 18 Commit 1 SBAR lastLab summary öncelikli render + urgent flag intact.
+- Sprint 16 Commit 1+2 RadiologyReport + DoctorReport enrichment intact.
+- Sprint 19 Commit 1 history list UI dokunulmadı (PDF generation dışı).
+- RLS + Premium gate + KVKK consent gate dokunulmadı.
+
+### Bilinen Trade-off (Commit 2 sonrası)
+
+- **3 PDF de tutarlı ASCII fallback:** Sprint 20 Commit 2 (`802ed2b`) ile Radyoloji + DoctorReport'a fixTr() helper + tüm TR strings'lere fixTr wrap eklendi (SBAR paterni mirror). Türkçe karakterler "Sağlık" → "Saglik", "Aile Geçmişi" → "Aile Gecmisi" gibi ASCII'leşir.
+- **lang="en" akışı TAM çalışıyor** — 3 PDF de Helvetica ASCII karakterlerle sorunsuz.
+- **3 PDF de her iki dilde çalışır** — TR ASCII fallback NotoSans yerine geçici çözüm. Türk hekim için okunabilir, KVKK/TCK uyumu etkilenmez (içerik aynı).
+
+### Sprint 21+ Backlog (NotoSans Stratejileri)
+
+- **Font CDN URL** — Google Fonts veya kendi CDN: `Font.register({ src: "https://fonts.cdn.../NotoSans-Regular.ttf" })` — fetch async timing tartışmalı, Sprint 17 HF4 ile benzer
+- **`@react-pdf/renderer` major upgrade** — yeni sürüm filesystem/base64/Buffer parser'larını iyileştirmiş olabilir, changelog incelemesi gerek
+- **Client-side PDF generation** — server-side @react-pdf/renderer yerine browser @react-pdf/renderer (frontend bundle, Türkçe glyph desteği farklı olabilir)
+- **Native PDF library swap** — pdfkit (lower-level) veya puppeteer (HTML→PDF, browser font intact)
+- **fixTr Radyoloji + DoctorReport için ZATEN EKLENDİ** (Sprint 20 Commit 2 `802ed2b`) — bu madde tamamlandı, NotoSans dönüşü için diğer 4 madde geçerli
+- **27 Mayıs avukat görüşmesi** — **24 gün kaldı**, kritik path
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency
+- **Diğer Sprint 19+ backlog devam:** delete operation, search/filter, cross-source unified, standalone /health-history, analysis_result + pdf_url DROP, family_history_entries Supabase apply doğrulama
+
+### Verification
+
+- Her commit sonrası `npx tsc --noEmit` → 0 error
+- Final commit `npm run build` → 0 error / 0 warning, 11.5s compile
+- Smoke test (kullanıcı): canlıda 4 hotfix denemesinde "Font family not registered" → final Helvetica + fixTr revert ile çalışıyor
+- 0 ürün regresyonu kontrolü: Sprint 17 B + Sprint 18 + Sprint 19 değişiklikleri intact
 
 ---
 
