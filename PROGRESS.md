@@ -1,6 +1,33 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Mayıs 2026 (Sprint 10 — 2 commit: reactStrictMode stale debt closure + Universal Scan v3 Türk ilaç DB + Family orphan banner polish.)
+> Son güncelleme: 1 Mayıs 2026 (Sprint 11 — 2 commit: BirthDatePicker handleKeyDown sub-helper extract + Türk ilaç DB v2 expansion 149 yeni marka.)
+
+---
+
+## Sprint 11 — Refactor + DB Expansion (1 Mayıs 2026)
+
+**Toplam:** 2 commit, 0 revert
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `a1aea64` | BirthDatePicker handleKeyDown sub-helper extract (ESLint Faz 5f TODO closure) |
+| 2 | `5929f32` | Türk ilaç DB v2 — 149 yeni marka (209 toplam) |
+| D1 | (this) | Sprint 11 kapanış docs |
+
+### Sprint 11 Major Outcomes
+
+- **BirthDatePicker handleKeyDown refactor** — switch case → file-scope `getNewDateFromKey` saf helper; inline `let newDate` mutation kalktı; `setNavYear`/`setNavMonth` setter'ları yeni `applyNewDate` useCallback'e isolate. handleKeyDown body artık event routing + helper invocation only. handleKeyDown eslint-disable KALDIRILDI; applyNewDate disable korundu (setter inferred-dep React Compiler bug — `goMonth`/`selectToday` ile aynı pattern, compiler upstream fix bekliyor)
+- **Türk ilaç DB v2** — 60 → 209 entry (149 yeni). 14 yeni kategori: kas-iskelet/romatoloji, ağrı/opioid, kardiyoloji genişletilmiş, diyabet (GLP-1/SGLT2 + insülinler), psikiyatri/nöroloji, antibiyotik, OB-GYN (21), onkoloji (11), solunum, GI, üroloji, hematoloji, vitamin, göz/KBB, anestezi/YBÜ. Helper'lar (`getTurkishGeneric`, `buildTurkishBrandContext`) intact — `slice(0, 40)` sabit, token bütçesi etkilenmedi
+- **0 revert** disiplini sürüyor (Sprint 7-11, 18 kod commit + 5 docs commit)
+
+### Sprint 11+ Backlog
+
+- **TİTCK 3000+ brand full augment** — manuel curate, opsiyonel ileri sprint (mevcut 209 entry klinik pratik için yeterli; full augment için `buildTurkishBrandContext` slice'ı genişletilmeli)
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency (`docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır)
+- **27 Mayıs avukat görüşmesi** — **26 gün kaldı.** Limited vs A.Ş. vs Estonia OÜ + KVKK + TİTCK + `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md` 9-soru paketi
+- **IGNITE LinkedIn outreach** — sağlık hukuku + KVKK + dijital sağlık uzmanı (İstanbul)
+- **Yatırımcı pipeline** — pitch deck rev + cohort metrics
+- **`goMonth`/`selectToday` setter inferred-dep** — React Compiler upstream fix sonrası eslint-disable comment'ları temizlenecek (stale-debt closure pattern, Sprint 10 reactStrictMode gibi)
 
 ---
 
