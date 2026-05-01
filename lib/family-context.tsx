@@ -182,6 +182,48 @@ export function FamilyProvider({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener("visibilitychange", handler)
   }, [user, fetchFamilyData])
 
+  // F-REALTIME-001: Family invite badge realtime subscription.
+  // DoctoPal'ın ilk Supabase realtime channel'ı. Owner davet INSERT'lediğinde
+  // davetli kullanıcının BottomNavbar pending-invite badge'i anlık update olur
+  // (visibility refetch beklenmez).
+  //
+  // RLS gap notu: "View pending invites" policy USING (invite_status = 'pending')
+  // email match yapmıyor — filter ile defense-in-depth: invite_email=eq.{email}.
+  // Aksi halde teorik olarak başka grupların pending invite'ları da event olarak
+  // gelir. Filter Postgres realtime tarafında uygulanır (server-side), client'a
+  // hiç ulaşmadan elenir.
+  //
+  // Channel name `family-invites-${user.id}` user-scoped: aynı kullanıcı iki tab
+  // açtığında her tab'in kendi channel UUID'si olur (Supabase removeChannel her
+  // tab için bağımsız söker, strict-mode double-mount safe).
+  //
+  // Visibility refetch (F-FAMILY-BADGE-001) korunur — websocket disconnect veya
+  // mobil background reconnect race'inde miss edilen INSERT'leri tab focus'ta
+  // tam senkronla telafi eder (belt-and-suspenders).
+  useEffect(() => {
+    if (!user?.id || !user?.email) return
+
+    const channel = supabase
+      .channel(`family-invites-${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'family_members',
+          filter: `invite_email=eq.${user.email.toLowerCase()}`,
+        },
+        () => {
+          void fetchFamilyData()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      void supabase.removeChannel(channel)
+    }
+  }, [user?.id, user?.email, supabase, fetchFamilyData])
+
   const isOwner = familyGroup?.owner_id === user?.id
 
   const isAdmin = familyMembers.some(
