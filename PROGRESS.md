@@ -1,6 +1,41 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Mayıs 2026 (Sprint 13 — 4 commit: ChatGPT/Claude.ai tarzı chat conversation continuity model production'da. Backend schema + endpoints, /api/chat v2, ChatInterface URL ?cid=, Sidebar v2.)
+> Son güncelleme: 1 Mayıs 2026 (Sprint 14 — 1 commit: ChatInterface mount refresh restore. ?cid= URL refresh sonrası mesajlar otomatik geri yüklenir; conversation continuity model artık tam.)
+
+---
+
+## Sprint 14 — Refresh Restore (1 Mayıs 2026)
+
+**Toplam:** 1 commit, 0 revert
+**Sonuç:** Conversation continuity model end-to-end tam (Sprint 13 + Sprint 14)
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `c8d8f9f` | ChatInterface mount refresh restore (?cid= URL → auto-fetch GET /api/conversations/{id} → setMessages seed) |
+| D1 | (this) | Sprint 14 kapanış docs |
+
+### Sprint 14 Major Outcome
+
+- **Refresh restore** — Sprint 13 D1 backlog'undaki en kritik edge case kapatıldı. `?cid=<uuid>` URL ile gelirken ChatInterface mount'ta `GET /api/conversations/{id}` fetch + setMessages seed. F5 sonrası eski mesajlar UI'da görünür + `historyForApi` slice doğru context'i AI'ya gönderir (önceden context window'da boş geliyordu, AI önceki sohbeti hatırlamıyordu)
+- **Sidebar auto-refresh** — Sprint 13 Commit 4'te `conversation-updated` event listener intact bırakılmıştı; bu sprint'te canlı doğrulandı: yeni conversation oluşunca otomatik listede ✅
+- **Smoke test full path** — F5 refresh → mesajlar restore ✅ + sidebar tıkla → state seed ✅ + browser back/forward URL sync ✅ + yeni mesaj append context'te ✅
+
+### Sprint 14 Implementation Detayı
+
+ChatInterface.tsx mount useEffect:
+- 3 guard: `initialConversationId` yoksa skip / `session?.access_token` yoksa skip / `messages.length > 0` ise skip (sidebar tıklamasında loadMessages prop zaten state'i doldurmuş — race koruması)
+- `cancelled` flag cleanup — strict-mode double-mount second mount'un setMessages'i unmount edilen ilk'e ulaşmaz
+- Deps `[initialConversationId, session?.access_token]` — eslint-disable exhaustive-deps gerekçeli (`messages.length` mount-once guard, infinite loop riski)
+- Silent fail: 401/404 sessizce yutulur (kullanıcı boş chat ile devam, yeni mesaj yazarsa server append path'i çalışır)
+
+### Sprint 15+ Backlog
+
+- **chat_conversations auto-title endpoint** — şu an query_history.custom_title için legacy `/api/query-history/{id}/auto-title` çalışıyor. Yeni chat_conversations.title için paralel endpoint (chat_messages SELECT + title generation). Düşük öncelik — kullanıcı manuel rename yapabilir
+- **Etkileşim denetleyici pre-fill** — roadmap #3 (kullanıcı ilaçları otomatik önerilsin)
+- **Aile non-member contacts** — roadmap #4 (aile üyesi olmayan acil iletişim kişileri)
+- **Legacy "Arşiv" tab UI** — opsiyonel query_history list (eski sohbetler kaybolmasın)
+- **27 Mayıs avukat görüşmesi** — **25 gün kaldı**, kritik path
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency
 
 ---
 
