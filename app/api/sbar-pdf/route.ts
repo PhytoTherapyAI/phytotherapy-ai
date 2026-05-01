@@ -1,6 +1,6 @@
 // © 2026 DoctoPal — All Rights Reserved
 import { NextRequest } from "next/server";
-import { renderToBuffer } from "@react-pdf/renderer";
+import ReactPDF from "@react-pdf/renderer";
 import { SBARReport, type SBARData } from "@/components/pdf/SBARReport";
 import { createServerClient } from "@/lib/supabase";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
@@ -230,13 +230,19 @@ export async function POST(request: NextRequest) {
       generatedAt: new Date().toLocaleString(lang === "tr" ? "tr-TR" : "en-US", { dateStyle: "medium", timeStyle: "short" }),
     };
 
-    // Render PDF using renderToBuffer (simpler, no stream handling)
+    // Sprint 17 hotfix — renderToBuffer (named) → ReactPDF.renderToStream (default).
+    // RadiologyReport / DoctorReport ile parite. Chunked stream Vercel function memory
+    // ceiling'i tetiklemiyor; renderToBuffer full-buffer-in-RAM bellek baskısı yapıyordu.
     let pdfBuffer: Buffer;
     try {
-      const element = SBARReport({ data: sbarData });
-      // any: @react-pdf/renderer renderToBuffer type mismatch with React component return
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      pdfBuffer = await renderToBuffer(element as any);
+      const pdfStream = await ReactPDF.renderToStream(
+        SBARReport({ data: sbarData })
+      );
+      const chunks: Uint8Array[] = [];
+      for await (const chunk of pdfStream) {
+        chunks.push(typeof chunk === "string" ? new TextEncoder().encode(chunk) : chunk);
+      }
+      pdfBuffer = Buffer.concat(chunks);
     } catch (renderErr) {
       console.error("PDF render error:", renderErr);
       return new Response(JSON.stringify({ error: "PDF render failed", detail: String(renderErr) }), { status: 500, headers: { "Content-Type": "application/json" } });

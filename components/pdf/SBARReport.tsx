@@ -587,7 +587,13 @@ export function SBARReport({ data }: { data: SBARData }) {
               )}
 
               {data.lastRadiology && (
-                <View style={[s.resultBlock, data.lastRadiology.overall_urgency === "urgent" ? s.resultBlockUrgent : {}]}>
+                <View
+                  style={
+                    data.lastRadiology.overall_urgency === "urgent"
+                      ? [s.resultBlock, s.resultBlockUrgent]
+                      : s.resultBlock
+                  }
+                >
                   <Text style={s.resultLabel}>
                     {t.lastRadiologyLabel} — {data.lastRadiology.image_type.toUpperCase()}
                     {data.lastRadiology.overall_urgency === "urgent" ? ` • ${t.urgent}` : ""}
