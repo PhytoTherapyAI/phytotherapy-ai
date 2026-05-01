@@ -1,6 +1,40 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Mayıs 2026 (Sprint 8 — 3 commit: Brand Drift Round 2 audit closure + PWA screenshots + DoctoPal'da ilk Supabase realtime channel.)
+> Son güncelleme: 1 Mayıs 2026 (Sprint 9 — HealthReportTab enrichment serisi tamamlandı: Missing Nudges + Recent Activity feed + Digital Twin organ map. Session 46 TODO header karşılandı.)
+
+---
+
+## Sprint 9 — HealthReportTab Enrichment (1 Mayıs 2026)
+
+**Toplam:** 3 commit, 0 revert
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `2a7150a` | Missing Nudges — cross-tab navigation (setTab prop drilling) |
+| 2 | `f57847f` | Recent Activity feed — 3-source (alerts + lab + meds) |
+| 3 | `0edb608` | Digital Twin hero polish — body silhouette + organ map SVG |
+| D1 | (this) | Sprint 9 kapanış docs |
+
+### Sprint 9 Major Outcomes
+
+- **HealthReportTab Session 46 TODO tamamen karşılandı** (3 enrichment commit'i ile Vitality Hero polish + Recent Activity + Missing Nudges)
+- **Digital Twin** (`0edb608`): gender-aware SVG silhouette (60×120 viewBox) + 11 organ dot (heart/brain/liver/pancreas/kidneys/lungs/thyroid/stomach/reproductive). 24 condition → organ → severity mapping (concern > watch precedence). `lib/health-conditions-map.ts` yeni reusable helper. Label dedupe: lungLeft+lungRight tek "Akciğer" chip, kidneyLeft+kidneyRight tek "Böbrek" chip
+- **Recent Activity** (`f57847f`): 3-source feed (medication_interaction_alerts kırmızı border üstte > blood_tests son 1 > user_medications son 5). Schema correction: user task'ında `medication_name` + `test_date` + `overall_status` önerilmişti — gerçek schema'da yok. `brand_name||generic_name` fallback + `added_at` + `created_at` + `analysis_result` ile düzeltildi. Inline `relativeTime` helper (date-fns bağımsız)
+- **Missing Nudges** (`2a7150a`): 6 eksik section flag (basicInfo > meds > allergies > vaccines > lifestyle > familyHistory) → max 3 priority nudge card → tıkla `setTab(targetId)` cross-tab navigation. `powerInput` reuse, duplicate logic yok
+- **Disipline:** Sprint 9'un 3 commit'i de mevcut Vitality Hero / Stat Cards / Badges / SBAR PDF / Nudges section'larını dokunmadan additive — pure scope-by-scope enrichment
+
+### Sprint 9 Yeni Reusable Asset'ler
+
+- `lib/health-conditions-map.ts` — `OrganId` + `Severity` types + `ORGAN_POSITIONS` + `CONDITION_MAP` (24 entry) + `computeOrganStates` helper. SBAR endpoint, Symptom Checker, /health-roadmap gibi gelecek consumer'lar reuse edebilir
+- `relativeTime(iso, lang)` inline helper (HealthReportTab) — date-fns bağımsız Bugün/Dün/N gün önce. Aynı pattern başka tab'larda da inline kopyalanabilir veya `lib/date-relative.ts`'e extract edilebilir (gelecek refactor)
+
+### Sprint 9+ Backlog
+
+- **reactStrictMode fix** — Supabase auth lock contention (yüksek risk, ayrı sprint)
+- **F-PAYMENT-001 Iyzico** — şirket tescili sonrası unblock (`docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır)
+- **27 Mayıs avukat görüşmesi** — **26 gün kaldı.** Limited vs A.Ş. vs Estonia OÜ + KVKK + TİTCK + `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md` 9-soru paketi
+- **IGNITE LinkedIn outreach** — sağlık hukuku + KVKK + dijital sağlık uzmanı (İstanbul)
+- **Yatırımcı pipeline** — pitch deck rev + cohort metrics
 
 ---
 
