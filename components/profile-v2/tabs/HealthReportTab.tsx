@@ -20,10 +20,11 @@
 // sidesteps the legacy SBAR caller-identity leak until Commit 6).
 "use client"
 
+import { useMemo } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Flame, Trophy, FileText, ChevronRight } from "lucide-react"
-import { tx, txObj } from "@/lib/translations"
+import { tx, txObj, type Lang } from "@/lib/translations"
 import { evaluateBadges, type UserStats } from "@/lib/badges"
 import BadgeIcon from "@/components/badges/BadgeIcon"
 import { PDFDownloadButton } from "@/components/pdf/PDFDownloadButton"
@@ -34,6 +35,13 @@ import {
 import { FamilyProfileGuard } from "@/components/family/FamilyProfileGuard"
 import { Card } from "@/components/ui/card"
 import { computeVitalityScore } from "@/lib/vitality"
+import {
+  computeOrganStates,
+  ORGAN_POSITIONS,
+  SEVERITY_COLOR,
+  type OrganId,
+  type Severity,
+} from "@/lib/health-conditions-map"
 import type { UserMedication } from "@/lib/database.types"
 import type {
   UserAllergyRow,
@@ -159,6 +167,14 @@ export function HealthReportTab({
   const vitalityScore = vitality.score
   const scoreColor = vitality.hexColor
   const scoreLabelKey = `profile.healthReport.${vitality.labelKey}`
+
+  // ── Digital Twin organ states (Sprint 9 Commit 3) ──
+  // chronicArr zaten family:/surgery: prefix include eder; computeOrganStates
+  // kendi içinde bu prefix'leri filter ediyor — caller'da extra filter gereksiz.
+  // useMemo ile hem BodySilhouette dot rendering, hem allHealthy guard, hem de
+  // legend chip filter aynı stable referansı kullansın diye cache'liyoruz.
+  const organStates = useMemo(() => computeOrganStates(chronicArr), [chronicArr])
+  const hasOrganHighlights = Object.keys(organStates).length > 0
 
   // ── Badges — UserStats mapped from what we have in hand ──
   const badgeStats: UserStats = {
@@ -303,6 +319,30 @@ export function HealthReportTab({
               {tx("profile.healthReport.streakDaysLabel", lang).replace(
                 "{n}",
                 String(streakDays),
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Digital Twin organ map (Sprint 9 Commit 3) ── */}
+        {/* Hero Card içinde alt-section. Gender-aware silhouette + organ */}
+        {/* dots (severity-colored) + legend chips (deduped label).      */}
+        <div className="pt-4 mt-4 border-t border-border/50">
+          <p className="text-xs font-medium text-muted-foreground mb-3">
+            {tx("profile.healthReport.digitalTwin.title", lang)}
+          </p>
+          <div className="flex items-start gap-4">
+            <BodySilhouette
+              gender={profile?.gender ?? null}
+              organStates={organStates}
+            />
+            <div className="flex-1 min-w-0">
+              {!hasOrganHighlights ? (
+                <p className="text-xs text-muted-foreground">
+                  {tx("profile.healthReport.digitalTwin.allHealthy", lang)}
+                </p>
+              ) : (
+                <DigitalTwinLegend organStates={organStates} lang={lang} />
               )}
             </div>
           </div>
@@ -538,6 +578,125 @@ function StatCard({
       </p>
       <p className={`mt-2 text-xl font-bold ${accent}`}>{value}</p>
       <p className="mt-1 text-[10px] text-muted-foreground leading-tight">{label}</p>
+    </div>
+  )
+}
+
+// Sprint 9 Commit 3 — Digital Twin body silhouette.
+// Pure presentational SVG. viewBox 60×120; ORGAN_POSITIONS aynı koordinat
+// sisteminde tanımlı, dot'lar overlay olarak çizilir. Gender-aware:
+// female → daha dar omuz + daha geniş kalça, male → ters; null → neutral.
+// Outline currentColor ile çizilir, parent muted-foreground/40 verir;
+// organ dot rengi severity'den gelir.
+function BodySilhouette({
+  gender,
+  organStates,
+}: {
+  gender: string | null
+  organStates: Partial<Record<OrganId, Severity>>
+}) {
+  const isFemale = gender === "female"
+  const isMale = gender === "male"
+  const shoulderW = isFemale ? 20 : isMale ? 22 : 21
+  const hipW = isFemale ? 20 : isMale ? 18 : 19
+
+  return (
+    <svg
+      viewBox="0 0 60 120"
+      width="60"
+      height="120"
+      aria-hidden
+      className="shrink-0 text-muted-foreground/40"
+    >
+      {/* Head */}
+      <circle
+        cx="30"
+        cy="14"
+        r="9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      {/* Torso outline (symmetric path, gender-aware shoulder/hip width) */}
+      <path
+        d={[
+          `M${30 - shoulderW / 2} 26`,
+          `L${30 - shoulderW / 2 - 1} 50`,
+          `L${30 - hipW / 2} 78`,
+          `L${30 - hipW / 2 + 1} 108`,
+          `L${30 + hipW / 2 - 1} 108`,
+          `L${30 + hipW / 2} 78`,
+          `L${30 + shoulderW / 2 + 1} 50`,
+          `L${30 + shoulderW / 2} 26`,
+          "Z",
+        ].join(" ")}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+      {/* Organ dots — severity-driven fill */}
+      {ORGAN_POSITIONS.map(({ id, x, y }) => {
+        const severity = organStates[id] ?? "healthy"
+        return (
+          <circle
+            key={id}
+            cx={x}
+            cy={y}
+            r="2.5"
+            fill={SEVERITY_COLOR[severity]}
+            style={{ transition: "fill 500ms" }}
+          />
+        )
+      })}
+    </svg>
+  )
+}
+
+// Sprint 9 Commit 3 — Legend chips for the Digital Twin map.
+// Dedupe-by-label: lungLeft + lungRight aynı "Lungs" label'ına döner; sadece
+// ilki chip olarak render edilir (severity en yüksek olanı korunur). Aynı
+// pattern kidneyLeft + kidneyRight için de geçerli. Mevcut tüm 11 organ id'si
+// için i18n key var; bilinmeyen organ skip edilir (defensive).
+function DigitalTwinLegend({
+  organStates,
+  lang,
+}: {
+  organStates: Partial<Record<OrganId, Severity>>
+  lang: Lang
+}) {
+  // Dedupe pass: aynı label varsa en yüksek severity'yi tut (concern > watch).
+  const labelToSeverity = new Map<string, Severity>()
+  for (const { id } of ORGAN_POSITIONS) {
+    const s = organStates[id]
+    if (!s) continue
+    const label = tx(`profile.healthReport.digitalTwin.organ.${id}`, lang)
+    const existing = labelToSeverity.get(label)
+    if (existing === "concern") continue // concern locked
+    if (s === "concern" || !existing) labelToSeverity.set(label, s)
+  }
+
+  const chips = Array.from(labelToSeverity.entries())
+
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {chips.map(([label, severity]) => (
+        <span
+          key={label}
+          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs"
+          style={{
+            background: SEVERITY_COLOR[severity] + "20",
+            color: SEVERITY_COLOR[severity],
+          }}
+        >
+          <span
+            className="w-1.5 h-1.5 rounded-full shrink-0"
+            style={{ background: SEVERITY_COLOR[severity] }}
+            aria-hidden
+          />
+          {label}
+        </span>
+      ))}
     </div>
   )
 }

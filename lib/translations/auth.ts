@@ -202,4 +202,18 @@ export const authTranslations: Record<string, TranslationEntry> = {
   "profile.healthReport.recentActivity.labResult": { en: "Lab test uploaded", tr: "Lab testi yüklendi" },
   "profile.healthReport.recentActivity.unknownMed": { en: "Medication", tr: "İlaç" },
   "profile.healthReport.recentActivity.alertGeneric": { en: "Interaction alert", tr: "Etkileşim uyarısı" },
+  // Sprint 9 Commit 3 — Digital Twin organ map
+  "profile.healthReport.digitalTwin.title": { en: "Body health map", tr: "Vücut sağlık haritası" },
+  "profile.healthReport.digitalTwin.allHealthy": { en: "No conditions tracked — all systems green", tr: "Takip edilen durum yok — tüm sistemler normal" },
+  "profile.healthReport.digitalTwin.organ.brain": { en: "Brain", tr: "Beyin" },
+  "profile.healthReport.digitalTwin.organ.thyroid": { en: "Thyroid", tr: "Tiroid" },
+  "profile.healthReport.digitalTwin.organ.heart": { en: "Heart", tr: "Kalp" },
+  "profile.healthReport.digitalTwin.organ.lungLeft": { en: "Lungs", tr: "Akciğer" },
+  "profile.healthReport.digitalTwin.organ.lungRight": { en: "Lungs", tr: "Akciğer" },
+  "profile.healthReport.digitalTwin.organ.liver": { en: "Liver", tr: "Karaciğer" },
+  "profile.healthReport.digitalTwin.organ.pancreas": { en: "Pancreas", tr: "Pankreas" },
+  "profile.healthReport.digitalTwin.organ.kidneyLeft": { en: "Kidneys", tr: "Böbrek" },
+  "profile.healthReport.digitalTwin.organ.kidneyRight": { en: "Kidneys", tr: "Böbrek" },
+  "profile.healthReport.digitalTwin.organ.stomach": { en: "GI Tract", tr: "Sindirim" },
+  "profile.healthReport.digitalTwin.organ.reproductive": { en: "Reproductive", tr: "Üreme" },
 }
