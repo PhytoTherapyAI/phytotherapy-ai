@@ -35,21 +35,21 @@
   "screenshots": [
     {
       "src": "/screenshots/home-mobile.png",
-      "sizes": "1080x1920",
+      "sizes": "426x757",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "DoctoPal Ana Sayfa"
+      "label": "DoctoPal Ana Sayfa — Günlük görev takibi"
     },
     {
-      "src": "/screenshots/tools-mobile.png",
-      "sizes": "1080x1920",
+      "src": "/screenshots/family-mobile.png",
+      "sizes": "426x757",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "DoctoPal Sağlık Araçları"
+      "label": "DoctoPal Hane & Aile — Aile sağlık yönetimi"
     },
     {
       "src": "/screenshots/interaction-mobile.png",
-      "sizes": "1080x1920",
+      "sizes": "426x757",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "DoctoPal İlaç-Bitki Etkileşim Denetleyicisi"
