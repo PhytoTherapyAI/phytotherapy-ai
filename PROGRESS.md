@@ -1,18 +1,24 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 1 Mayıs 2026 (Sprint 17 — 2 commit: SBAR PDF Helvetica → NotoSans + fixTr kaldır + single t bundle + filename i18n; profil veri inject genişletme — aile öyküsü detaylı + son 7 gün vital trend + son lab/radyoloji snippet. SBAR template-driven hâlâ — Commit C AI-driven opsiyonel.)
+> Son güncelleme: 2 Mayıs 2026 (Sprint 17 hotfix zinciri — SBAR PDF Vercel'de "Font family not registered" patladı. 5 hotfix denemesi sonrası NotoSans → Helvetica + fixTr revert (HF5, `1628730`) ile çalışıyor. NotoSans kalıcı fix ayrı sprint'te (next/font veya bundle asset includes).)
 
 ---
 
 ## Sprint 17 — SBAR Detay (1 Mayıs 2026)
 
-**Toplam:** 2 commit, 0 revert
+**Toplam:** 2 commit + 5 hotfix + 2 docs commit, 0 revert (HF3 + HF4 başarısız ama düzeltildi).
 
 | # | Commit | Açıklama |
 |---|---|---|
 | 1 | `0c824f9` | SBAR A — NotoSans + fixTr kaldır + t bundle + filename i18n |
 | 2 | `d3c3395` | SBAR B — aile öyküsü + vital trend + lab/radyoloji inject |
-| D1 | (this) | Sprint 17 kapanış docs |
+| D1 | `d554a75` | Sprint 16+17 kapanış docs (ilk versiyon) |
+| HF1 | `5217189` | style spread {} fix + renderToStream migration |
+| HF2 | `32213c9` | italic font kaldır (NotoSans-Italic.ttf eksik) |
+| HF3 | `8ffae37` | Font.register kaldır (yanlış hipotez — cross-bundle state yok) |
+| HF4 | `8b0f0b4` | URL-based src (başarısız — "Font family not registered" devam etti) |
+| HF5 | `1628730` | Helvetica + fixTr revert — **çalışıyor ✅** |
+| D2 | (this) | Sprint 17 hotfix zinciri docs |
 
 ### Major Outcomes
 
@@ -55,8 +61,29 @@
 - Premium gate + KVKK consent gate dokunulmadı.
 - 4 SBAR bölüm yapısı + critical alert banner dokunulmadı.
 
+### Sprint 17 Hotfix Zinciri — SBAR PDF Vercel'de "Font family not registered" (2 Mayıs 2026)
+
+Sprint 17 Commit A + B canlıya çıktıktan sonra Vercel logs `/api/sbar-pdf` POST 500 dönmeye başladı (8 ardışık 500 fail). Diagnoz + 5 hotfix denemesi:
+
+| # | SHA | Hipotez | Sonuç |
+|---|---|---|---|
+| HF1 | `5217189` | Boş `{}` style spread + `renderToBuffer` Vercel memory ceiling — `style={[s.resultBlock, ... ? s.resultBlockUrgent : {}]}` ternary array level'a taşındı; `renderToBuffer` (named import) → `ReactPDF.renderToStream` (default, RadiologyReport/DoctorReport parite). | 500 devam etti — bu fix'ler doğru ama root cause değildi. |
+| HF2 | `32213c9` | `fontStyle: "italic"` register edilmemiş font style trigger crash — `emptyText` style'ında `italic` → `normal`. NotoSans-Italic.ttf yok, sadece Regular + Bold register. | 500 devam etti — italic ayrı bir potansiyel sorun ama 500'ün asıl sebebi değildi. |
+| HF3 | `8ffae37` | "RadiologyReport / DoctorReport zaten register ediyor → SBAR'da Font.register conflict üretiyor olabilir" hipotezi → SBAR Font.register tamamen kaldırıldı. | **Yanlış hipotez** — Vercel her API route ayrı serverless function bundle'a paketler, function'lar arası memory paylaşmaz. Cross-bundle Font.register state yok. 500 devam etti + NotoSans hiç register edilmedi. |
+| HF4 | `8b0f0b4` | "Vercel public/fonts filesystem path resolve etmiyor" hipotezi → Font.register URL-based src (`https://doctopal.com/fonts/NotoSans-*.ttf`). | **Başarısız** — "Font family not registered" hatası devam etti. URL fetch başarılı olmuyor olabilir veya `Font.register` async fetch sırasında render başlıyor (race condition). Vercel serverless'da @react-pdf/renderer custom font register pratik olarak güvenilir değil. |
+| HF5 | `1628730` | Pragmatik karar: Helvetica + fixTr() transliteration revert (Sprint 17 A öncesi pattern). Türkçe karakterler ASCII'ye dönüşür (ş→s, ğ→g, ü→u, ö→o, ç→c, ı→i). | **Çalışıyor ✅** — Helvetica built-in font, register gerekmiyor. SBAR PDF Vercel'de render oluyor. |
+
+**Sprint 17 Hotfix Zinciri Notları:**
+
+- **Asıl root cause:** Vercel serverless function bundle'da `@react-pdf/renderer` custom font register güvenilir değil. Ne `path.join(process.cwd(), ...)` filesystem (HF1 öncesi orijinal pattern) ne URL-based src (HF4) çalıştı. RadiologyReport + DoctorReport canlıda çalışıyor görünüyor ama smoke test ile doğrulanmadı — onlar da serverless cold start'ta fail ediyor olabilir, sadece SBAR önce trigger oldu.
+- **HF5 ne içerir:** `fixTr()` helper geri eklendi (12 transliteration mapping). Tüm 17 yer `fontFamily: "NotoSans"` → `Helvetica` / `Helvetica-Bold` (`fontWeight: "bold"` çiftleri family'ye taşındı). t bundle TR branch'leri `fixTr()` ile pre-fix sarıldı (50+ key tek seferde). Component body dynamic data (`data.fullName`, `m.dosage`, `sup`, `translateCondition`, locale labels) `fixTr()` wrap restore. Sprint 17 B yeni sections (vital trend mini blok + aile öyküsü detaylı + lab/radyoloji snippet) **KORUNDU**, sadece text content fixTr wrap eklendi.
+- **HF5 ne değişmedi:** Sprint 17 B'nin tüm yeni veri inject'leri (`/api/sbar-pdf` Promise.all 7-tablo + SBARData interface 4 yeni field). Premium gate + KVKK consent gate. 4 SBAR bölüm yapısı + critical alert banner.
+- **NotoSans kalıcı fix (Sprint 18+):** İki seçenek — (1) `next/font` ile font'u build asset olarak bundle'a dahil etmek (Next.js 13+ feature), (2) Vercel `includeFiles` config ile `public/fonts/*` dosyalarını her serverless function bundle'a explicit dahil etmek + `path.join(process.cwd(), ...)` resolve. Smoke test ile RadiologyReport + DoctorReport'un canlıda gerçekten çalıştığını doğrulamak şart (eğer onlar da fail ediyorsa, üçü birden migration gerekir).
+- **Geçici trade-off:** Türkçe glyph'ler ASCII fallback. Kullanıcı PDF'inde "Sağlık Özeti" → "Saglik Ozeti", "Aile Sağlık Geçmişi" → "Aile Saglik Gecmisi" görür. Doktor için okunabilir, KVKK / TCK uyumu etkilenmez (içerik aynı, sadece glyph farkı).
+
 ### Sprint 18+ Backlog
 
+- **NotoSans kalıcı fix (3 PDF component için)** — SBAR HF5 geçici Helvetica + fixTr revert. RadiologyReport + DoctorReport canlıda çalışıp çalışmadığı smoke test ile doğrulanmalı (Sprint 16'da deploy edildi ama prod test yok). Migration seçenekleri: (1) `next/font` build asset bundle dahil etme (Next.js 13+); (2) Vercel `includeFiles` config ile `public/fonts/*` her serverless function'a explicit dahil + filesystem path resolve. Üç PDF component birlikte migrate edilmeli (Helvetica + fixTr → NotoSans native). Türkçe glyph kalitesi geri kazanılır.
 - **SBAR C** — AI-driven Assessment + Recommendation (opsiyonel transformative). Yeni `SBAR_PROMPT` `lib/prompts.ts`'e ekle (TCK Md.90 / 1219 sK uyumu — hedge phrases zorunlu). `askClaudeJSON` çağrısı → `{ assessmentNotes, recommendations, overallContext }`. Polypharmacy flag (3+ ilaç) + anafilaksi vurgu + patient-specific doktor soruları + adaptif uzunluk. Token: TOKENS_JSON=3000 yeterli. Risk: hallüsinasyon + AI gecikme (5-10s).
 - **Kan tahlili schema enrichment** — `blood_tests` tablosunu `radiology_reports` paternine yükselt (`analysis_json JSONB` + `summary` + `overall_urgency` migration + structured insert).
 - **History/Trend list UI** — radiology_reports + blood_tests dual-source liste, profil veya `/medical-analysis` Trends tab altı.
