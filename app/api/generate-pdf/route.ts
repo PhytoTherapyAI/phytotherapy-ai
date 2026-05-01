@@ -19,7 +19,8 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { results, analysis, patientInfo } = body;
+    const { results, analysis, patientInfo, lang = "en" } = body;
+    const reportLang: "tr" | "en" = lang === "tr" ? "tr" : "en";
 
     if (!results || !analysis) {
       return new Response(
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     // Generate PDF buffer
     const pdfStream = await ReactPDF.renderToStream(
-      DoctorReport({ results, analysis, patientInfo })
+      DoctorReport({ results, analysis, patientInfo, lang: reportLang })
     );
 
     // Convert Node stream to Web ReadableStream
@@ -40,10 +41,11 @@ export async function POST(request: NextRequest) {
     }
     const pdfBuffer = Buffer.concat(chunks);
 
+    const fileSlug = reportLang === "tr" ? "Kan-Tahlili" : "BloodTest";
     return new Response(pdfBuffer, {
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `attachment; filename="DoctoPal-BloodTest-Report-${new Date().toISOString().split("T")[0]}.pdf"`,
+        "Content-Disposition": `attachment; filename="DoctoPal-${fileSlug}-Report-${new Date().toISOString().split("T")[0]}.pdf"`,
       },
     });
   } catch (error) {

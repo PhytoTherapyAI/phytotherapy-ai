@@ -86,7 +86,7 @@ export function ResultDashboard({
       const res = await fetch("/api/generate-pdf", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ results, analysis }),
+        body: JSON.stringify({ results, analysis, lang }),
       });
 
       if (!res.ok) throw new Error("PDF generation failed");
@@ -95,7 +95,8 @@ export function ResultDashboard({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `DoctoPal-Report-${new Date().toISOString().split("T")[0]}.pdf`;
+      const fileSlug = lang === "tr" ? "Kan-Tahlili" : "BloodTest";
+      a.download = `DoctoPal-${fileSlug}-Report-${new Date().toISOString().split("T")[0]}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
