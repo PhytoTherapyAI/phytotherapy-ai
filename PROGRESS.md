@@ -1,6 +1,80 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 2 Mayıs 2026 (Sprint 21 — 1 commit: Chat UI markdown iyileştirme. V1 code blocks (```lang```) → pre/code render + V2 TEMP_CHAT 0.6→0.5 (tıbbi context tutarlılık) + V3 italic *text* + inline code `text` parser eklendi. ChatGPT görsel parite ~%85. Mevcut bold/headers/list/table/details/yellow code intact.)
+> Son güncelleme: 2 Mayıs 2026 (Sprint 22 — 1 commit: BLOOD_TEST_PROMPT kişiselleştirme. V1 few-shot 3 örnek (routine/soon/urgent — RADIOLOGY paterni mirror) + V2 hamile ferritin trimester (T1 ≥30, T2/T3 ≥15, ACOG) + diyabet HbA1c targets (T2DM <7%, T1DM <6.5%, elderly <8%) + V3 PDF flow profil inject — manuel form ile parite. Hedge phrases TCK Md.90 / 1219 sK intact.)
+
+---
+
+## Sprint 22 — Kan Tahlili Kişiselleştirme (2 Mayıs 2026)
+
+**Toplam:** 1 commit + 1 docs commit, 0 revert
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `e30aac4` | BLOOD_TEST_PROMPT V1+V2+V3 — few-shot + hamile/diyabet ranges + PDF profil inject |
+| D1 | (this) | Sprint 22 kapanış docs |
+
+### Major Outcomes
+
+- **V1 — Few-shot 3 örnek** (RADIOLOGY paterni mirror, Sprint 16'daki 3 örnek pattern). RULES bölümünden sonra YENİ "FEW-SHOT EXAMPLES" bloğu eklendi:
+  - **Example 1 (routine):** Tüm markers normal, `abnormalFindings: []`, sadece lifestyle advice (Mediterranean diet 12 ay tekrar test)
+  - **Example 2 (soon):** Borderline LDL 135 + Vit D 24, supplement (Vitamin D3 8-12 hafta) + lifestyle (soluble fiber), `interactionCheck: "Checked: no current medications on file"` explicit
+  - **Example 3 (urgent):** SEEK MEDICAL CARE prepend, Hb 6.2 g/dL critical, supplement[], doctor discussion'da urgent workup planı (transfusion/IV iron consideration)
+  - Hedge phrases ("consistent with", "may suggest", "associated with") tüm örneklerde — TCK Md.90 / 1219 sK uyumu intact
+- **V2 — Hamile ferritin trimester + diyabet HbA1c profil-aware** — REFERENCE RANGES bölümüne 2 ek (~3 satır):
+  - Metabolic: Fasting Glucose pregnancy thresholds (<95 fasting / <140 1h / <120 2h post-meal — gestational diabetes), HbA1c diabetes management targets (T2DM <7%, T1DM <6.5%, elderly <8%)
+  - Vitamins & Minerals: Ferritin pregnancy trimester (T1 ≥30 desirable, T2/T3 ≥15 acceptable, <12 depleted — ACOG)
+- **V3 — PDF flow profil inject** (`/api/blood-test-pdf/route.ts`). Sprint 22 öncesi PDF OCR akışı **profile context'siz** çalışıyordu (manuel form profile-aware ama PDF değil — tutarsız UX). Şimdi Step 3 öncesi `Promise.all` ile `user_profiles` + `user_medications` fetch + `profileContext` string build (manuel form `/api/blood-analysis:114-145` pattern mirror) + `analysisPrompt` template literal'a `${profileContext}` append.
+- **0 ürün regresyonu** — BLOOD_TEST_PROMPT 7 JSON alan + RULES + `overallUrgency` enum (`routine|soon|urgent`) + `interactionCheck` zorunlu kuralı + manuel form route.ts dokunulmadı.
+
+### Sprint 22 Implementation Detayı
+
+**Commit 1 (`e30aac4`) — 2 dosya, +89 / −2:**
+
+- `lib/prompts.ts` BLOOD_TEST_PROMPT enrichment:
+  - Metabolic block (`Fasting Glucose` + `HbA1c`): pregnancy + diabetes targets satırları (~5 satır eklenir, ~30 token)
+  - Vitamins & Minerals block (`Ferritin`): pregnancy trimester satırı (~2 satır, ~15 token)
+  - RULES bölümü sonrası YENİ "FEW-SHOT EXAMPLES" bloğu (3 örnek, ~60 satır, ~150 token)
+  - Net ~70 satır eklendi, ~195 token
+- `app/api/blood-test-pdf/route.ts` Step 3 öncesi:
+  - `Promise.all` ile profile + medications fetch (~10 satır)
+  - `profileContext` build conditional (age, gender, pregnancy, breastfeeding, kidney/liver, medications) (~15 satır)
+  - `analysisPrompt` template literal sonuna `${profileContext}` append (1 satır)
+  - `try/catch` silent fail (anonymous user'da boş profileContext, eski davranış intact)
+
+### Sprint 22 Backward Compatibility
+
+- BLOOD_TEST_PROMPT 7 JSON alan + RULES + `overallUrgency` enum + `interactionCheck` zorunlu kuralı intact.
+- Manuel form `/api/blood-analysis/route.ts` dokunulmadı (pattern source, değiştirilmedi).
+- PDF OCR Step 1 (`askStreamJSONMultimodal` extraction) dokunulmadı — sadece Step 3 (analiz çağrısı) profil-aware oldu.
+- Anonymous user → `if (upfrontUserId)` guard → profileContext "" → analysisPrompt eski davranış.
+- Token bütçe (TOKENS_JSON=3000 cap) içinde (~+200 token, %6.7 artış).
+- Sprint 17 B SBAR sections + Sprint 18 lab summary öncelikli render + Sprint 19 history list UI + Sprint 21 chat markdown intact.
+
+### Sprint 23+ Backlog
+
+- **V4 — eGFR yaş kalibrasyonu** (CKD-EPI 2021, 65+ tolerans).
+- **V5 — Allergies + chronic_conditions fetch** (manuel form route.ts) — interaction kontrolü için zorunlu.
+- **V6 — Postmenopausal fitoöstrojen warning** (soya, red clover, breast cancer hx).
+- **V7 — Polypharmacy risk score** (5+ ilaç) + CYP450 flagging.
+- **V8 — Auto-title endpoint** (Sprint 14+ deferred). Sidebar'da "Sohbet 1, Sohbet 2" yerine ilk user mesajdan AI-generated başlık (`/api/conversations/{id}/auto-title` chat_messages SELECT + Haiku title generation).
+- **V9 — Vital trend genişletme** — `daily_check_ins`'ten BP/glucose/weight son 7 gün ortalaması chat context'inde (şu an sadece sleep_quality). `blood_tests` son 1-3 entry chat'e inject (lab geçmişi farkındalık).
+- **Grade A/B/C tanımı SYSTEM_PROMPT'a açıklayıcı satır** (V5 chat-tarafı).
+- **Multimodal few-shot** — kan tahlili image OCR pattern (V6 chat-tarafı).
+- **Drug-drug few-shot INTERACTION_PROMPT'a taşı** — Haiku 4.5 zayıflığı (V7 chat-tarafı).
+- **Blockquote + strikethrough** — markdown parity completionı (V9 chat-tarafı).
+- **NotoSans alternatif** — Font CDN URL, @react-pdf/renderer major upgrade (Sprint 20'den devam).
+- **Sprint 19+ deferred:** delete operation, search/filter, cross-source unified, standalone /health-history, analysis_result + pdf_url DROP, family_history_entries Supabase apply doğrulama.
+- **27 Mayıs avukat görüşmesi** — **24 gün kaldı**, kritik path.
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency.
+
+### Verification
+
+- `npx tsc --noEmit` → 0 error
+- `npm run build` → 0 error / 0 warning, 11.2s compile (1. denemede Google Fonts CDN network glitch — Sprint 22 değişiklikleriyle alakasız, 2. retry temiz)
+- Smoke test (Vercel deploy sonrası):
+  - Manuel form `/medical-analysis` → blood test → D vit 14 + LDL 145 → analiz → Example 2 paterninde supplement (Vitamin D3) + lifestyle advice (soluble fiber) + "soon" urgency
+  - PDF/JPG yükle (e.g. e-Nabız) → analiz → profile-aware (yaş + cinsiyet + ilaçlar prompt'a geçti, medications interactionCheck'te explicit görünür)
+  - Hamile user (`is_pregnant=true`) → ferritin 14 → "depleted (<12 ACOG threshold)" yorumu
 
 ---
 
