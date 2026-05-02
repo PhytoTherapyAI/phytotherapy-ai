@@ -374,7 +374,9 @@ Cardiovascular:
 
 Metabolic:
 - Fasting Glucose: 70-99 normal, 100-125 prediabetes, ≥126 diabetes
+  Pregnancy: <95 fasting; <140 1h post-meal; <120 2h post-meal (gestational diabetes thresholds)
 - HbA1c: <5.7% normal, 5.7-6.4% prediabetes, ≥6.5% diabetes
+  Diabetes management targets: T2DM <7%, T1DM <6.5% (younger adults), elderly/comorbid <8%
 - Fasting Insulin: 2-25 μIU/mL (high → insulin resistance)
 - HOMA-IR: <2.0 normal, ≥2.5 insulin resistance
 
@@ -383,6 +385,7 @@ Vitamins & Minerals (age/sex-specific where applicable):
 - Vitamin B12: 200-900 pg/mL (elderly often need >400 to avoid neuro symptoms)
 - Folate (serum): >3 ng/mL adequate
 - Ferritin: men 30-300, women (premenopausal) 15-150, women (postmenopausal) 15-200 (ng/mL)
+  Pregnancy: T1 ≥30 desirable (iron stores), T2/T3 ≥15 acceptable; <12 = depleted (ACOG)
 - Iron saturation: 20-50% (below 20 = iron deficiency)
 - Magnesium: 1.7-2.2 mg/dL
 - Zinc: 70-120 μg/dL
@@ -456,7 +459,59 @@ RULES
 - Every claim in evidenceGrade A/B MUST have at least one PubMed/peer-reviewed source with URL.
 - If the marker isn't in the reference table above, explain using published normal ranges and cite source.
 - If value is critical (e.g. hemoglobin <7, glucose >400, eGFR <30) → overallUrgency: "urgent" and prepend "SEEK MEDICAL CARE" to doctorDiscussion[0].
-- Language: respond in the language requested by the caller (TR or EN). Keep medical terms in Latin parenthetically.`;
+- Language: respond in the language requested by the caller (TR or EN). Keep medical terms in Latin parenthetically.
+
+═══════════════════════════════════════════════
+FEW-SHOT EXAMPLES (Sprint 22)
+═══════════════════════════════════════════════
+Use these as anchor patterns for output structure and tone. Adapt to actual values.
+
+EXAMPLE 1 — Routine (all markers within range):
+{
+  "summary": "Lab work shows all key markers within healthy ranges. Continue current routine and recheck in 12 months.",
+  "abnormalFindings": [],
+  "supplementRecommendations": [],
+  "lifestyleAdvice": [
+    { "category": "diet", "advice": "Maintain Mediterranean-style eating with omega-3 sources 2-3x/week", "reason": "preserves cardiovascular markers at current optimal range" }
+  ],
+  "trendComparison": "",
+  "doctorDiscussion": ["Confirm timing of next routine bloodwork"],
+  "overallUrgency": "routine",
+  "disclaimer": "Educational analysis only. Not a diagnosis. Consult your doctor."
+}
+
+EXAMPLE 2 — Soon (borderline + actionable):
+{
+  "summary": "Mild LDL elevation (135 mg/dL) and borderline-low vitamin D (24 ng/mL) — consistent with early-stage cardiovascular and bone health risk. Otherwise normal panel.",
+  "abnormalFindings": [
+    { "marker": "LDL Cholesterol", "value": "135 mg/dL", "status": "borderline", "referenceRange": "<100 optimal", "explanation": "Slightly above optimal range but not high-risk in isolation.", "concern": "Long-term arterial buildup risk if persistent — may suggest dietary review." },
+    { "marker": "Vitamin D (25-OH)", "value": "24 ng/mL", "status": "low", "referenceRange": "30-100 ng/mL optimal", "explanation": "Insufficient — not severely deficient.", "concern": "Associated with suboptimal bone + immune function." }
+  ],
+  "supplementRecommendations": [
+    { "supplement": "Vitamin D3", "reason": "raise 25-OH D into 30-50 ng/mL target", "dosage": "Add to your profile for personalized dose; literature maintenance ranges 1000-2000 IU/day", "duration": "8-12 weeks then re-test", "evidenceGrade": "A", "interactionCheck": "Checked: no current medications on file", "sources": [{ "title": "Vitamin D supplementation in adults", "url": "https://pubmed.ncbi.nlm.nih.gov/...", "year": "2023" }] }
+  ],
+  "lifestyleAdvice": [
+    { "category": "diet", "advice": "Increase soluble fiber (oats, beans) 3-5g/day; reduce saturated fat", "reason": "modest LDL reduction in 8-12 weeks" }
+  ],
+  "trendComparison": "",
+  "doctorDiscussion": ["Re-test lipid + 25-OH D in 3 months", "Discuss family history of cardiovascular disease"],
+  "overallUrgency": "soon",
+  "disclaimer": "Educational analysis only. Not a diagnosis. Consult your doctor."
+}
+
+EXAMPLE 3 — Urgent (critical value):
+{
+  "summary": "SEEK MEDICAL CARE — Severe anemia detected (Hb 6.2 g/dL). Requires same-day clinical evaluation.",
+  "abnormalFindings": [
+    { "marker": "Hemoglobin", "value": "6.2 g/dL", "status": "critical", "referenceRange": "men 13.5-17.5, women 12.0-15.5 g/dL", "explanation": "Dangerously low oxygen-carrying capacity.", "concern": "Risk of cardiac strain, syncope; underlying cause (bleeding, deficiency, hemolysis) needs urgent workup." }
+  ],
+  "supplementRecommendations": [],
+  "lifestyleAdvice": [],
+  "trendComparison": "",
+  "doctorDiscussion": ["SEEK MEDICAL CARE — Hemoglobin <7 g/dL warrants urgent evaluation, possible transfusion or IV iron consideration", "Workup for source of bleeding, iron studies, B12/folate, reticulocyte count"],
+  "overallUrgency": "urgent",
+  "disclaimer": "Educational analysis only. Not a diagnosis. Consult your doctor."
+}`;
 
 // ═══════════════════════════════════════════════
 // PROSPECTUS / MEDICATION LEAFLET READER

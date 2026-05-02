@@ -182,12 +182,44 @@ export async function POST(req: NextRequest) {
 
     // Step 3: Get AI analysis
     const userLang = tx("api.respondLang", lang === "tr" ? "tr" : "en");
+
+    // Sprint 22 Commit 1 — Profil inject (manuel form ile parite, /api/blood-analysis L114-145 mirror).
+    // PDF OCR akışı önceden profile context'siz çalışıyordu → kişiselleştirilmiş analiz tutarsızdı.
+    let profileContext = "";
+    let hasMedications = false;
+    if (upfrontUserId) {
+      try {
+        const supabase = createServerClient();
+        const [profileRes, medsRes] = await Promise.all([
+          supabase.from("user_profiles").select("*").eq("id", upfrontUserId).single(),
+          supabase.from("user_medications").select("brand_name, generic_name, dosage").eq("user_id", upfrontUserId).eq("is_active", true),
+        ]);
+        const profile = profileRes.data;
+        const meds = medsRes.data;
+        hasMedications = !!(meds && meds.length > 0);
+        if (profile) {
+          profileContext = "\n\nUSER PROFILE:";
+          if (profile.age) profileContext += `\n- Age: ${profile.age}`;
+          if (profile.gender) profileContext += `\n- Gender: ${profile.gender}`;
+          if (profile.is_pregnant) profileContext += "\n- ⚠️ PREGNANT";
+          if (profile.is_breastfeeding) profileContext += "\n- ⚠️ BREASTFEEDING";
+          if (profile.kidney_disease) profileContext += "\n- ⚠️ KIDNEY DISEASE";
+          if (profile.liver_disease) profileContext += "\n- ⚠️ LIVER DISEASE";
+          if (hasMedications && meds) {
+            profileContext += `\n- Medications: ${meds.map((m: { generic_name: string | null; brand_name: string | null }) => m.generic_name || m.brand_name).filter(Boolean).join(", ")}`;
+          }
+        }
+      } catch {
+        // Anonymous OK — analiz profil context'siz devam eder
+      }
+    }
+
     const analysisPrompt = `Analyze these blood test results. Respond in ${userLang}.
 
 Values: ${JSON.stringify(values)}
 Gender: ${gender || "unknown"}
 
-Total markers: ${totalMarkers}, Abnormal: ${abnormalCount}, Optimal: ${optimalCount}`;
+Total markers: ${totalMarkers}, Abnormal: ${abnormalCount}, Optimal: ${optimalCount}${profileContext}`;
 
     // Use streaming JSON to avoid Vercel timeout
     const aiResult = await askStreamJSON(analysisPrompt, BLOOD_TEST_PROMPT, { premium: true, userId: upfrontUserId });
