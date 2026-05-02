@@ -1,6 +1,83 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 2 Mayıs 2026 (Sprint 22 — 1 commit: BLOOD_TEST_PROMPT kişiselleştirme. V1 few-shot 3 örnek (routine/soon/urgent — RADIOLOGY paterni mirror) + V2 hamile ferritin trimester (T1 ≥30, T2/T3 ≥15, ACOG) + diyabet HbA1c targets (T2DM <7%, T1DM <6.5%, elderly <8%) + V3 PDF flow profil inject — manuel form ile parite. Hedge phrases TCK Md.90 / 1219 sK intact.)
+> Son güncelleme: Sprint 23 canlı — auto-title sidebar PASS ✅ (2 Mayıs 2026)
+
+---
+
+## Sprint 23 — Klinik Veri Katmanı + Auto-Title (2 Mayıs 2026)
+
+**Toplam:** 2 commit + 1 docs commit, 0 revert
+**Smoke test:** ✅ PASS — auto-title sidebar onaylandı
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `2764666` | vital trend + eGFR CKD-EPI 2021 + allergies/chronic inject |
+| 2 | `84245e6` | chat_conversations auto-title endpoint + ChatInterface trigger |
+| D1 | (this) | Sprint 23 kapanış docs |
+
+### Major Outcomes
+
+- **Commit 1 — Klinik Veri Katmanı:** `vital_records` BP/glucose/weight 30 gün trend chat profileContext'e inject (`/api/chat`); BLOOD_TEST_PROMPT eGFR CKD-EPI 2021 race-free formula + 65+/75+ yaş tolerans notları; `user_allergies` + `chronic_conditions` inject 2 endpoint'te (manuel form + PDF flow parite).
+- **Commit 2 — Auto-Title Engine:** YENİ endpoint `POST /api/conversations/[id]/auto-title` (Session 47 query_history paterni mirror — 12 stage breadcrumb + circuit breaker + rate limit + race-safe UPDATE). ChatInterface stream completion sonrası `X-Chat-Conversation-Id` header'dan id alıp fire-and-forget POST. Haiku ile 3-4 word title generation. Sidebar refresh `conversation-updated` event ile.
+- **Smoke test PASS:** "uyku problemim var" → sidebar AI-generated title (~3-5sn sonra refresh).
+- **0 ürün regresyonu:** mevcut query_history auto-title (Session 47), ConversationHistory title fallback chain, streaming logic, profileContext yapısı intact.
+
+### Sprint 23 Implementation Detayı
+
+**Commit 1 (`2764666`) — 4 dosya, +85 / −4:**
+
+- `app/api/chat/route.ts` — Promise.all'a 6. query: `vital_records` (vital_type IN [BP/sugar/weight], 30-gün window, order DESC). vitals processing: `bpSummary` (avg sys/dia mmHg), `glucoseSummary` (avg mg/dL), `weightSummary` (latest kg + Δ kg over readings). profileContext template'e `VITAL TRENDS (last 30 days)` bloğu (FAMILY ile LIFESTYLE arasına).
+- `lib/prompts.ts` BLOOD_TEST_PROMPT eGFR satırına 3 satır CKD-EPI 2021 ek: "age-adjusted, race-free formula" + "65+ eGFR 50-59 normal aging-related decline" + "75+ eGFR ≥45 clinically acceptable, interpret with frailty/comorbidities, not isolation".
+- `app/api/blood-analysis/route.ts` Promise.all'a 3. query (`user_allergies`) + profileContext'e `Allergies: ...` + `Chronic conditions: ...` (surgery: + family: prefix exclude).
+- `app/api/blood-test-pdf/route.ts` aynı pattern (manuel form parite).
+
+**Commit 2 (`84245e6`) — 2 dosya, +264 / 0:**
+
+- `app/api/conversations/[id]/auto-title/route.ts` (YENİ, ~245 satır) — `/api/query-history/[id]/auto-title` (Session 47 F-CHAT-SIDEBAR-003) paterni 1:1 mirror, sadece tablo/field farklı (chat_conversations + chat_messages.role/content). 12 stage breadcrumb + 3-katman defansif (circuit breaker + user 30/min + global 100/min) + idempotent (title set ise skip) + race-safe UPDATE (`.is("title", null)`). Haiku MODEL_DEFAULT, `skipConsent: true`. 100-char title cap (chat_conversations PATCH cap parite). Sentry dynamic import.
+- `components/chat/ChatInterface.tsx` (~20 LOC) — mevcut query_history trigger (Session 47) korundu, paralel `chat_conversations` trigger eklendi. Fire-and-forget POST + silent fail + `conversation-updated` event dispatch.
+
+### Sprint 23 Backward Compatibility
+
+- Query_history auto-title trigger (Session 47) **dokunulmadı** — paralel çalışıyor.
+- ConversationHistory title fallback chain intact (custom title → last user message preview → "Untitled").
+- Mevcut profileContext (Session 39 family_history + sleep avg + Sprint 22 V3 PDF inject) **intact**.
+- `vital_records` tablo apply edilmemişse → graceful fallback (`vitalsRes.error ? [] : data`), VITAL TRENDS bloğu "None reported" şekilde devam.
+- BLOOD_TEST_PROMPT 7 JSON alan + RULES + `overallUrgency` enum + `interactionCheck` zorunlu kuralı + few-shot (Sprint 22) intact.
+- Streaming logic + KVKK consent gate + Premium quota intact.
+- Manual rename (F-CHAT-SIDEBAR-002) auto-title'ı override eder.
+
+### Sprint 24 Backlog
+
+| Madde | Öncelik | Notlar |
+|---|---|---|
+| **Postmenopausal fitoöstrojen** | Yüksek | Klinik vaka senaryoları + güvenlik flagleri (soya, red clover, breast cancer hx) |
+| **Polypharmacy engine** | Yüksek | 5+ ilaç çoklu etkileşim analizi + CYP450 flagging genişleme |
+| **Multimodal few-shot** | Orta | Kan tahlili image OCR + extraction iyileştirme |
+| **Blockquote / strikethrough UI** | Düşük | Chat markdown parser tamamlama (Sprint 21 V9) |
+
+**Diğer carry-over backlog:**
+- NotoSans alternatif (Sprint 20'den devam) — Font CDN URL, @react-pdf/renderer major upgrade
+- Sprint 19+ deferred — delete operation, search/filter, cross-source unified, standalone /health-history
+- `analysis_result` + `pdf_url` DROP (Sprint 19+ planlandı)
+- `family_history_entries` Supabase apply doğrulama
+
+### Önemli Tarihler
+
+- **27 Mayıs 2026** — ⚖️ Avukat görüşmesi (**24 gün kaldı**, kritik path). Şirket kuruluş kararı: Limited / A.Ş. / Estonya OÜ.
+- **Iyzico** — şirket tescili dependency, görüşme sonrası unblock olacak.
+
+### Teknik Notlar (Strateji)
+
+- Tüm değişiklikler **production branch direkt** (staging bypass disiplini Sprint 13'ten beri).
+- PROGRESS.md + CLAUDE.md güncel tutuluyor (her sprint kapanış D1 commit'i ile).
+- Iyzico **stratejik olarak ertelendi** — şirket tescili sonrasına bırakıldı (KVKK + iyzico merchant onayı tescil sonrası daha hızlı).
+- KVKK Aydınlatma Metni **v2.1** aktif (Session 39 C3'te bumplandı), legal sayfalar `/aydinlatma`, `/terms`, `/family-consent` direct-URL erişilebilir.
+
+### Verification
+
+- `npx tsc --noEmit` → 0 error (her commit sonrası)
+- `npm run build` → 0 error / 0 warning (Commit 1: 11.2s, Commit 2: 11.8s)
+- Smoke test: ✅ "uyku problemim var" yeni conversation → ~3-5sn sonra ConversationHistory sidebar refresh → AI-generated title görünür. Manuel rename → bir sonraki user message'da auto-title TRIGGER'lanır ama `title` already set → skip.
 
 ---
 
