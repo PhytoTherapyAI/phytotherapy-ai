@@ -207,16 +207,20 @@ export async function POST(req: NextRequest) {
           if (profile.is_breastfeeding) profileContext += "\n- ⚠️ BREASTFEEDING";
           if (profile.kidney_disease) profileContext += "\n- ⚠️ KIDNEY DISEASE";
           if (profile.liver_disease) profileContext += "\n- ⚠️ LIVER DISEASE";
+          // Sprint 24 Commit 2 — Postmenopausal flag (schema-light: chronic_conditions "menopause" prefix)
+          const pdfConditions = Array.isArray(profile.chronic_conditions) ? (profile.chronic_conditions as string[]) : [];
+          const isPdfPostmenopausal = pdfConditions.some((c) => c.toLowerCase() === "menopause");
+          if (isPdfPostmenopausal) profileContext += "\n- ⚠️ POSTMENOPAUSAL — avoid phytoestrogen supplements (soy/red clover/dong quai) without cancer-history clearance";
           if (hasMedications && meds) {
             profileContext += `\n- Medications: ${meds.map((m: { generic_name: string | null; brand_name: string | null }) => m.generic_name || m.brand_name).filter(Boolean).join(", ")}`;
           }
-          // Sprint 23 — Allergies + chronic conditions (manuel form parite)
+          // Sprint 23 — Allergies + chronic conditions (manuel form parite, "menopause" critical flag'e taşındı)
           if (allergies && allergies.length > 0) {
             profileContext += `\n- Allergies: ${(allergies as { allergen: string; severity: string }[]).map((a) => `${a.allergen} (${a.severity})`).join(", ")}`;
           }
-          if (Array.isArray(profile.chronic_conditions) && profile.chronic_conditions.length > 0) {
-            const chronicOnly = (profile.chronic_conditions as string[]).filter(
-              (c) => !c.startsWith("surgery:") && !c.startsWith("family:"),
+          if (pdfConditions.length > 0) {
+            const chronicOnly = pdfConditions.filter(
+              (c) => !c.startsWith("surgery:") && !c.startsWith("family:") && c.toLowerCase() !== "menopause",
             );
             if (chronicOnly.length > 0) {
               profileContext += `\n- Chronic conditions: ${chronicOnly.join(", ")}`;

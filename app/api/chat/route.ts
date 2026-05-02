@@ -327,11 +327,13 @@ export async function POST(request: NextRequest) {
             const w = anonymized.weight_kg as number | undefined;
             const bmi = (h && w) ? (Number(w) / ((Number(h) / 100) ** 2)).toFixed(1) : "Unknown";
 
-            // Split chronic_conditions into chronic / surgical / family
+            // Split chronic_conditions into chronic / surgical / family / menopause (Sprint 24 — phytoestrogen flag)
             const allConditions: string[] = Array.isArray(profile.chronic_conditions) ? profile.chronic_conditions : [];
-            const chronicList = allConditions.filter(c => !c.startsWith("surgery:") && !c.startsWith("family:"));
+            const chronicList = allConditions.filter(c => !c.startsWith("surgery:") && !c.startsWith("family:") && c.toLowerCase() !== "menopause");
             const surgicalList = allConditions.filter(c => c.startsWith("surgery:")).map(c => c.replace("surgery:", ""));
             const familyList = allConditions.filter(c => c.startsWith("family:")).map(c => c.replace("family:", ""));
+            // Sprint 24 Commit 2 — postmenopausal flag (schema-light: chronic_conditions "menopause" prefix)
+            const isPostmenopausal = allConditions.some(c => c.toLowerCase() === "menopause");
 
             // Critical flags — each flag is a full guidance line with emoji + bold
             // Promoted to dedicated CRITICAL PATIENT FACTORS block at top of profile
@@ -342,6 +344,8 @@ export async function POST(request: NextRequest) {
             if (profile.is_breastfeeding) criticalLines.push("⚠️ **BREASTFEEDING** — screen all recommendations for excretion into breast milk");
             if (profile.kidney_disease) criticalLines.push("⚠️ **Kidney disease** — avoid nephrotoxic botanicals (aloe, licorice, yohimbe); dose-adjust renally-cleared supplements");
             if (profile.liver_disease) criticalLines.push("⚠️ **Liver disease** — avoid hepatotoxic botanicals (kava, comfrey, high-dose green tea extract); watch CYP450 interactions");
+            // Sprint 24 — Postmenopausal: phytoestrogen warning (Anglicism paralel + breast/ovarian/endometrial cancer history check)
+            if (isPostmenopausal) criticalLines.push("⚠️ **POSTMENOPAUSAL** — flag phytoestrogen-containing supplements (soy isoflavones, red clover, dong quai); confirm absence of breast/ovarian/endometrial cancer history before recommending; safer alternatives: black cohosh, ashwagandha, magnesium for symptom relief");
             const criticalBlock = criticalLines.length > 0
               ? criticalLines.map(l => `  - ${l}`).join("\n")
               : `  - None`;

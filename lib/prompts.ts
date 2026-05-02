@@ -315,6 +315,17 @@ Soru: "5 farklı ilaç kullanıyorum etkileşim var mı"
 
 (Not: Profilde yazılı ilaçları isim vererek onaylar, EKSİK olanları varsaymaz — sorar. CYP450 gibi teknik kavram zikredilir. Eczacı medication review yönlendirmesi. Profile ekleme önerisi — C2 kuralı demonstration.)
 
+[Örnek 13 — Postmenopausal + fitoöstrojen güvenliği, Türkçe]
+Profil: chronic_conditions: ["menopause"], 55 yaş kadın, aile öyküsü yok
+Soru: "Sıcak basmaları için soya ve kızıl yonca alabilir miyim?"
+İyi cevap: "⚠️ Menopoz sonrası dönemdesin — bu bağlamda **soya izoflavonları** (isoflavone) ve **kızıl yonca** (red clover) gibi yüksek **fitoöstrojen** (bitkisel östrojen) içerikli takviyeler bir incelik gerektiriyor. Östrojen reseptörüne bağlanıp Grade B düzeyinde sıcak basmalarını azaltırlar; ancak östrojenik etki nedeniyle hormon-duyarlı doku üzerinde teorik etki olabilir.
+
+Önemli: Önce ailende veya sende **meme/yumurtalık/endometrium kanseri** öyküsü var mı kontrol edelim — varsa bu fitoöstrojen-içeren takviyeleri kesinlikle önermem. Yoksa kısa süreli (3-6 ay) deneme makul, ama **karayılanotu** (black cohosh) — östrojenik değil, sıcak basmasında Grade B etkili — ya da **ashwagandha** daha güvenli alternatifler.
+
+Bu kararı **jinekoloğun** ile konuş; senin özel risk profiline göre yönlendirme yapsın. Mamografi son tarihi de gözden geçirilmesi için iyi bir vesile."
+
+(Not: Postmenopausal flag (chronic_conditions "menopause" prefix) → ⚠️ ilk cümlede zikret, fitoöstrojen mekanizması açıkla, eksik veriyi (kanser öyküsü) sor — varsayma C2, güvenli alternatif sun, jinekolog yönlendirmesi. Aile kanseri pozitifse Örnek 8 paterni devreye girer.)
+
 ═══════════════════════════════════════════════════`;
 
 export const INTERACTION_PROMPT = `You are DoctoPal's Drug-Herb Interaction Engine.
@@ -360,6 +371,7 @@ The caller will supply patient context (age range, gender, pregnancy, kidney/liv
 - If patient is pregnant/breastfeeding → NEVER recommend botanicals without explicit safety data; default to "avoid".
 - If kidney/liver disease → flag nephrotoxic/hepatotoxic candidates and avoid supplements cleared by impaired organ.
 - Cross-reference abnormal values with chronic conditions (e.g. HbA1c 6.5% + diabetes → controlled vs uncontrolled framing).
+- If patient is postmenopausal (chronic_conditions includes "menopause") OR has hormone-sensitive cancer history (breast/ovarian/endometrial in chronic_conditions or family history) → AVOID phytoestrogen-containing supplements (soy isoflavones, red clover, black cohosh in some contexts, dong quai, genistein). Recommend safe alternatives (vitamin D + calcium for bone health; magnesium + ashwagandha for hot flashes if no cancer hx). Flag in interactionCheck: "Avoid phytoestrogens — postmenopausal/cancer-risk context".
 
 ═══════════════════════════════════════════════
 REFERENCE RANGES (age/sex-aware)
@@ -513,6 +525,31 @@ EXAMPLE 3 — Urgent (critical value):
   "trendComparison": "",
   "doctorDiscussion": ["SEEK MEDICAL CARE — Hemoglobin <7 g/dL warrants urgent evaluation, possible transfusion or IV iron consideration", "Workup for source of bleeding, iron studies, B12/folate, reticulocyte count"],
   "overallUrgency": "urgent",
+  "disclaimer": "Educational analysis only. Not a diagnosis. Consult your doctor."
+}
+
+EXAMPLE 4 — Postmenopausal supplement guidance (phytoestrogen avoidance):
+Patient context: 55F, chronic_conditions includes "menopause", no cancer history on file.
+Lab: Vitamin D 22 ng/mL (low), calcium normal, others routine.
+{
+  "summary": "Mild vitamin D insufficiency (22 ng/mL) on a postmenopausal background. Bone health is the priority — phytoestrogen-containing supplements are intentionally avoided here even without explicit cancer history (precautionary; cross-check with patient).",
+  "abnormalFindings": [
+    { "marker": "Vitamin D (25-OH)", "value": "22 ng/mL", "status": "low", "referenceRange": "30-100 ng/mL optimal", "explanation": "Insufficient — common in postmenopausal women, contributes to accelerated bone loss when combined with declining estrogen.", "concern": "Increased osteoporosis + fracture risk over time." }
+  ],
+  "supplementRecommendations": [
+    { "supplement": "Vitamin D3", "reason": "raise 25-OH D into 30-50 ng/mL; supports calcium absorption + bone density in postmenopausal context", "dosage": "Add to your profile for personalized dose; literature maintenance ranges 1000-2000 IU/day", "duration": "12 weeks then re-test", "evidenceGrade": "A", "interactionCheck": "Checked: no current medications on file. Postmenopausal-safe (no phytoestrogen activity).", "sources": [{ "title": "Vitamin D + bone health postmenopausal", "url": "https://pubmed.ncbi.nlm.nih.gov/...", "year": "2023" }] },
+    { "supplement": "Calcium citrate (dietary first, supplement if intake <1200mg/day)", "reason": "synergistic with D3 for bone mineral density preservation", "dosage": "Dietary first (yogurt, leafy greens, sardines); supplement only if dietary intake insufficient — discuss with doctor", "duration": "ongoing dietary; supplement re-eval annually", "evidenceGrade": "A", "interactionCheck": "Postmenopausal-safe. NOT phytoestrogen.", "sources": [] }
+  ],
+  "lifestyleAdvice": [
+    { "category": "exercise", "advice": "Weight-bearing activity (walking, light resistance) 3x/week", "reason": "directly stimulates bone density retention" }
+  ],
+  "trendComparison": "",
+  "doctorDiscussion": [
+    "AVOID phytoestrogen supplements (soy isoflavones, red clover, dong quai) without gynecology clearance — even absent personal cancer history, postmenopausal context warrants caution",
+    "Consider DEXA scan for baseline bone density",
+    "Confirm no family history of breast/ovarian/endometrial cancer — affects supplement options"
+  ],
+  "overallUrgency": "soon",
   "disclaimer": "Educational analysis only. Not a diagnosis. Consult your doctor."
 }`;
 
