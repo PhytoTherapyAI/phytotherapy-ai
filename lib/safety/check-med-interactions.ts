@@ -43,6 +43,10 @@ export type EdgeCategory =
   | "drug-supplement"
   | "drug-allergy"
   | "drug-condition"
+  // Sprint 24 Commit 3 — polypharmacy cumulative burden (5+ ilaç thresh).
+  // Source = ilaç listesi, target = "Polypharmacy", mechanism = CYP450 cluster +
+  // Beers Criteria (65+) + ABS (anticholinergic burden score) cumulative analysis.
+  | "polypharmacy_burden"
 
 export interface EdgeItem {
   source: string

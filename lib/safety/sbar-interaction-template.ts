@@ -23,10 +23,13 @@ const CATEGORY_HEADINGS: Record<EdgeCategory, { tr: string; en: string }> = {
   "drug-supplement": { tr: "🌿 İlaç + Takviye",      en: "🌿 Drug + Supplement" },
   "drug-allergy":    { tr: "⚠️ İlaç + Alerji",       en: "⚠️ Drug + Allergy" },
   "drug-condition":  { tr: "🚨 İlaç + Kritik Durum", en: "🚨 Drug + Critical Flag" },
+  // Sprint 24 Commit 3 — Polypharmacy 5+ ilaç cumulative burden
+  "polypharmacy_burden": { tr: "📊 Çoklu İlaç Yükü", en: "📊 Polypharmacy Burden" },
 }
 
 const CATEGORY_ORDER: EdgeCategory[] = [
   "drug-condition",
+  "polypharmacy_burden",
   "drug-allergy",
   "drug-drug",
   "drug-chronic",

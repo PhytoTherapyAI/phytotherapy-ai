@@ -29,13 +29,17 @@ const CATEGORY_LABELS: Record<EdgeCategory, { tr: string; en: string; emoji: str
   "drug-supplement": { tr: "İlaç + Takviye",      en: "Drug + Supplement",     emoji: "🌿" },
   "drug-allergy":    { tr: "İlaç + Alerji",       en: "Drug + Allergy",        emoji: "⚠️" },
   "drug-condition":  { tr: "İlaç + Kritik Durum", en: "Drug + Critical Flag",  emoji: "🚨" },
+  // Sprint 24 Commit 3 — Polypharmacy 5+ ilaç cumulative burden
+  "polypharmacy_burden": { tr: "Çoklu İlaç Yükü", en: "Polypharmacy Burden",   emoji: "📊" },
 }
 
 // Stable category order — drug-condition first (pregnancy / kidney /
-// liver carry the highest clinical weight), then drug-allergy, then
-// drug-drug, chronic, supplement.
+// liver carry the highest clinical weight), then polypharmacy_burden
+// (5+ ilaç cumulative — clinically critical signal even if individual
+// pairs are caution), then drug-allergy, drug-drug, chronic, supplement.
 const CATEGORY_ORDER: EdgeCategory[] = [
   "drug-condition",
+  "polypharmacy_burden",
   "drug-allergy",
   "drug-drug",
   "drug-chronic",

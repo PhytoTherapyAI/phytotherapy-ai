@@ -35,6 +35,7 @@ import { tx } from "@/lib/translations";
 export const maxDuration = 60;
 
 interface ProfileForSafety {
+  age?: number | null;
   chronic_conditions?: string[] | null;
   supplements?: string[] | null;
   is_pregnant?: boolean | null;
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
         .eq("is_active", true),
       supabase
         .from("user_profiles")
-        .select("chronic_conditions, supplements, is_pregnant, is_breastfeeding, kidney_disease, liver_disease")
+        .select("age, chronic_conditions, supplements, is_pregnant, is_breastfeeding, kidney_disease, liver_disease")
         .eq("id", user.id)
         .maybeSingle(),
       supabase
@@ -129,7 +130,12 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Build Claude prompt ─────────────────────────────────────────
-    const systemPrompt = `You are a drug-safety specialist. Analyse FIVE categories of interactions across the patient's regimen and flag every risk.
+    // Sprint 24 Commit 3 — patient age (Beers Criteria 65+ check için) + medication count threshold (polypharmacy 5+).
+    const medicationCount = medications.length;
+    const isPolypharmacy = medicationCount >= 5;
+    const isElderly = typeof profile.age === "number" && profile.age >= 65;
+
+    const systemPrompt = `You are a drug-safety specialist. Analyse SIX categories of interactions across the patient's regimen and flag every risk.
 
 Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 {
@@ -141,7 +147,7 @@ Respond in ${tx("api.respondLang", lang)} with this exact JSON:
       "source": "source_item",
       "target": "target_item",
       "severity": "safe" | "caution" | "dangerous",
-      "category": "drug-drug" | "drug-chronic" | "drug-supplement" | "drug-allergy" | "drug-condition",
+      "category": "drug-drug" | "drug-chronic" | "drug-supplement" | "drug-allergy" | "drug-condition" | "polypharmacy_burden",
       "description": "Brief clinical description",
       "mechanism": "Biochemical / pharmacological mechanism"
     }
@@ -150,18 +156,21 @@ Respond in ${tx("api.respondLang", lang)} with this exact JSON:
 }
 
 INPUT CATEGORIES
-  MEDICATIONS: ${medications.join(", ")}
+  MEDICATIONS (count: ${medicationCount}): ${medications.join(", ")}
+  PATIENT AGE: ${typeof profile.age === "number" ? `${profile.age} (${isElderly ? "elderly — Beers Criteria applicable" : "non-elderly"})` : "unknown"}
   CHRONIC CONDITIONS: ${chronicConditions.length ? chronicConditions.join(", ") : "none"}
   CRITICAL FLAGS: ${criticalFlags.length ? criticalFlags.join(", ") : "none"}
   SUPPLEMENTS: ${supplements.length ? supplements.join(", ") : "none"}
   ALLERGIES: ${allergenList.length ? allergenList.join(", ") : "none"}
+  POLYPHARMACY THRESHOLD: ${isPolypharmacy ? "⚠️ TRIGGERED (≥5 active medications) — issue polypharmacy_burden edge(s)" : "not triggered (<5 medications, skip polypharmacy_burden category)"}
 
 EDGE CATEGORIES (use exactly these strings in the "category" field)
-  "drug-drug"        — medication × medication (pairwise)
-  "drug-chronic"     — medication × chronic condition (e.g. NSAID + kidney disease)
-  "drug-supplement"  — medication × supplement (e.g. St John's Wort + SSRI)
-  "drug-allergy"     — medication × allergen / cross-reactive drug class
-  "drug-condition"   — medication × critical flag (pregnancy, breastfeeding, kidney, liver)
+  "drug-drug"             — medication × medication (pairwise)
+  "drug-chronic"          — medication × chronic condition (e.g. NSAID + kidney disease)
+  "drug-supplement"       — medication × supplement (e.g. St John's Wort + SSRI)
+  "drug-allergy"          — medication × allergen / cross-reactive drug class
+  "drug-condition"        — medication × critical flag (pregnancy, breastfeeding, kidney, liver)
+  "polypharmacy_burden"   — cumulative regimen risk (ONLY when ≥5 active medications). Source = "Polypharmacy", target = a specific cluster name (see POLYPHARMACY ANALYSIS below). Multiple polypharmacy edges may co-exist (CYP cluster, anticholinergic burden, Beers, etc.).
 
 NODE ENCODING
   - Every medication, chronic condition, supplement, allergen, and
@@ -212,10 +221,52 @@ CANONICAL DANGEROUS EXAMPLES
     - Sedatives + liver disease → prolonged effect
     - Renally-cleared drugs + kidney disease → accumulation / toxicity
 
+POLYPHARMACY ANALYSIS (Sprint 24 — ONLY when ≥5 active medications)
+  When the polypharmacy threshold is triggered, evaluate FOUR cumulative-burden
+  clusters and emit one edge per applicable cluster (category: "polypharmacy_burden",
+  source: "Polypharmacy", target: cluster name).
+
+  1. CYP450 ENZYME CLUSTER ANALYSIS
+     - Count CYP3A4 / CYP2D6 / CYP2C9 / CYP2C19 substrates + inhibitors + inducers
+       across the regimen. ≥3 substrates of the same isoform OR mixing inhibitor +
+       substrate → "dangerous" or "caution" depending on overlap severity.
+     - target: "CYP3A4 cluster" / "CYP2D6 cluster" / etc.
+     - mechanism: list the substrate/inhibitor drugs by name.
+
+  2. BEERS CRITERIA (only if patient age ≥65)
+     - American Geriatrics Society Beers 2023 list of "potentially inappropriate
+       medications" for elderly: long-acting benzodiazepines, first-gen antihistamines,
+       skeletal muscle relaxants, anticholinergics with dementia risk, sliding-scale
+       insulin, etc.
+     - target: "Beers PIM (elderly)"
+     - mechanism: name specific Beers-listed drug + reason (cognitive / fall / fracture
+       risk).
+     - severity: "dangerous" if multiple PIMs, "caution" if single.
+
+  3. ANTICHOLINERGIC BURDEN (Drug Burden Index / ACB Score)
+     - Aggregate anticholinergic load across the regimen: TCAs, first-gen antihistamines,
+       oxybutynin, paroxetine, tolterodine, etc. ACB ≥3 = high risk (cognitive
+       impairment, falls, dry mouth, urinary retention).
+     - target: "Anticholinergic burden"
+     - mechanism: list contributing drugs + estimated ACB total.
+     - severity: "dangerous" if ACB ≥3, "caution" if 1-2.
+
+  4. RENAL / HEPATIC CLEARANCE LOAD
+     - Count drugs predominantly cleared by kidney vs liver. ≥3 renally-cleared drugs +
+       kidney disease, or ≥3 hepatically-cleared + liver disease, or ≥3 of the same
+       phase II conjugation pathway → cumulative toxicity risk.
+     - target: "Renal clearance load" / "Hepatic clearance load"
+     - mechanism: list contributing drugs + clearance pathway.
+
+  GENERAL POLYPHARMACY RULE: When polypharmacy_burden edges are emitted, the "summary"
+  field MUST include a recommendation to schedule a pharmacist medication review
+  (eczacı medication review, in TR: "eczacında medication review randevusu"). This is
+  non-negotiable clinical guidance for ≥5 medications.
+
 OUTPUT RULES
   1. Include an edge for every relevant pair; skip obviously-safe pairs
      unless they share a category worth acknowledging.
-  2. category MUST be one of the five exact strings above.
+  2. category MUST be one of the six exact strings above.
   3. For drug-condition edges, use the critical-flag phrase as the
      target (e.g. "Pregnancy", "Kidney disease").
   4. For drug-chronic edges, use the condition label as the target.
@@ -223,7 +274,12 @@ OUTPUT RULES
   6. Be specific about mechanism — CYP isoform, pharmacodynamic class,
      receptor, etc.
   7. TIE-BREAK: when a pair could plausibly be "caution" OR "dangerous",
-     ALWAYS choose "dangerous". Over-warning is clinically safer.`;
+     ALWAYS choose "dangerous". Over-warning is clinically safer.
+  8. POLYPHARMACY: emit polypharmacy_burden edges ONLY when triggered (≥5 meds).
+     Source must be "Polypharmacy", target must be one of the four cluster names
+     (CYP3A4/2D6/2C9/2C19 cluster, Beers PIM, Anticholinergic burden, Renal/Hepatic
+     clearance load). When emitted, summary MUST recommend pharmacist medication
+     review.`;
 
     const result = await askClaudeJSON(
       `Run the safety matrix across the inputs above.`,
