@@ -1,6 +1,71 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: 2 Mayıs 2026 (Sprint 20 — NotoSans kalıcı fix girişimi BAŞARISIZ. 5 hotfix (outputFileTracingIncludes + base64 inline + MIME swap + webpack TTF import + Buffer src) hepsi fail. Helvetica revert + Sprint 20 Commit 2 ile 3 PDF de fixTr() ASCII fallback (tutarlı, stabil). Sprint 21+: font CDN, @react-pdf/renderer upgrade.)
+> Son güncelleme: 2 Mayıs 2026 (Sprint 21 — 1 commit: Chat UI markdown iyileştirme. V1 code blocks (```lang```) → pre/code render + V2 TEMP_CHAT 0.6→0.5 (tıbbi context tutarlılık) + V3 italic *text* + inline code `text` parser eklendi. ChatGPT görsel parite ~%85. Mevcut bold/headers/list/table/details/yellow code intact.)
+
+---
+
+## Sprint 21 — Chat UI Markdown + Temp Fix (2 Mayıs 2026)
+
+**Toplam:** 1 commit + 1 docs commit, 0 revert
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `b8367c0` | code blocks + italic + inline code + TEMP_CHAT 0.5 |
+| D1 | (this) | Sprint 21 kapanış docs |
+
+### Major Outcomes
+
+- **V1 — Markdown code blocks** — `MessageBubble.tsx` `TextBlock()` line-by-line parser'a ` ```lang ` detection eklendi (table pattern mirror). Closing ` ``` ` bulununca `<pre><code>` render: monospace + scroll + opsiyonel lang mini-header (uppercase tracking-wide). Bulunamazsa paragraph fallback. Sağlık asistanı artık günlük tablo formatı / JSON çıktı / SQL örneği gibi yapıları doğru render edebilir.
+- **V2 — TEMP_CHAT 0.6 → 0.5** — `lib/ai-client.ts:36`. Warm conversational tone korunur ama tıbbi context'te stil variation azalır (Madde 1 "Ciddi konularda ciddi" uyumu güçlenir). 3 ardışık aynı soruda yanıt detay seviyesi daha tutarlı.
+- **V3 — İtalic + inline code parser** — `formatInline()` 2-way (bold + link) → 4-way earliest-match comparison (bold + link + code + italic). Inline code `` `text` `` → `<code class="px-1.5 py-0.5 rounded text-[0.85em] bg-muted font-mono border">`. Italic `*text*` → `<em class="italic">` (negative lookbehind `(?<!\*)` + lookahead `(?!\*)` ile bold `**` çakışması engellendi).
+- **ChatGPT görsel parite ~%85** — Sprint 21 öncesi %60'tan %85'e (kalan eksik: blockquote `>`, strikethrough `~~`, syntax highlighting — V9 backlog).
+- **0 ürün regresyonu** — Mevcut bold/headers/list/table/details/yellow code/AIDisclaimer/AIObjection/Copy/Regenerate/Stop/SmartSuggestions chips/streaming logic intact.
+
+### Sprint 21 Implementation Detayı
+
+**Commit 1 (`b8367c0`) — 2 dosya, +64 / −7:**
+
+- `lib/ai-client.ts:36` — `TEMP_CHAT = 0.6` → `0.5`. 7 call site etkilenir (`askClaudeStream` + `askClaudeStreamMultimodal` + `askClaude` + diğer chat path'ler). `TEMP_ANALYSIS = 0` JSON/blood test/radiology için intact (deterministic).
+- `components/chat/MessageBubble.tsx:399` — `TextBlock` içine code block detection (table pattern mirror). `if (trimmed.startsWith("```"))` → lang extract + `codeLines.push` + `foundClosing` flag + `i = j` skip-closing. Mevcut markdown tablo parser (L404+) hâlâ ardı sıra çalışır.
+- `components/chat/MessageBubble.tsx:490` — `formatInline` 2→4 way comparison. 4 regex match (`boldMatch` + `linkMatch` + `codeMatch` + `italicMatch`) → `Math.min(...indices)` earliest-wins → ilgili branch. Bold önce işlendiği için italic regex'in kalan ** sequence'larını yakalamasını lookbehind/lookahead engeller.
+
+### Sprint 21 Backward Compatibility
+
+- Mevcut **Bold** (`**text**`) — formatInline aynen.
+- Headers (`## `, `### `) — TextBlock aynen.
+- Bullet/numbered list — TextBlock aynen.
+- GFM tablolar — renderTable aynen.
+- `<details>` collapsible (Sources panel) — DetailsBlock aynen.
+- Yellow code marker (`<!--YELLOW_CODE-->`) — FormattedContent aynen.
+- AIDisclaimer + AIObjectionForm — ChatInterface aynen (KVKK Md.11/1-g).
+- Streaming logic — askClaudeStream + 4-token chunk emission aynen (Session 22 Layer 7 buffer+filter+emit pattern).
+- Copy/Regenerate/Stop butonları (Sprint 12) — MessageBubble aynen.
+- SmartSuggestions chips (3 dinamik AI-contextual) — aynen.
+
+### Sprint 22+ Backlog
+
+- **Kan tahlili `BLOOD_TEST_PROMPT` kişiselleştirme** — yaş/cinsiyet-specific reference ranges already var (Session 32), ama profil-aware few-shot örnekleri ek olarak gelebilir (örn. hamile + ferritin alt/üst sınır + supplement interactionCheck pregnancy category).
+- **Auto-title endpoint** — Sprint 14+ deferred. Sidebar'da "Sohbet 1, Sohbet 2" yerine ilk user mesajdan AI-generated başlık (`/api/conversations/{id}/auto-title` chat_messages SELECT + Haiku title generation).
+- **Vital trend genişletme** — `daily_check_ins`'ten BP/glucose/weight son 7 gün ortalaması chat context'inde (şu an sadece sleep_quality, V4). `blood_tests` son 1-3 entry chat'e inject (lab geçmişi farkındalık).
+- **Grade A/B/C tanımı SYSTEM_PROMPT'a açıklayıcı satır** (V5).
+- **Multimodal few-shot** — kan tahlili image OCR pattern (V6).
+- **Drug-drug few-shot INTERACTION_PROMPT'a taşı** — Haiku 4.5'in chat'teki Ex 9 (CYP450 3-way) detay zayıflığı (V7).
+- **Blockquote + strikethrough** — markdown parity completionı (V9).
+- **Syntax highlighting** — `react-syntax-highlighter` lib install + code block lang tag detection (eğer V1 yeterli görsel net değilse).
+- **NotoSans alternatif (Sprint 20+'tan devam)** — Font CDN URL, @react-pdf/renderer major upgrade, client-side PDF gen, native PDF lib swap.
+- **Sprint 19+ deferred:** delete operation (history list KVKK + AlertDialog), search/filter, cross-source unified `/api/medical-history`, standalone `/health-history` route, `analysis_result` + `pdf_url` DROP, `family_history_entries` Supabase apply doğrulama.
+- **27 Mayıs avukat görüşmesi** — **24 gün kaldı**, kritik path.
+- **F-PAYMENT-001 Iyzico** — şirket tescili dependency.
+
+### Verification
+
+- `npx tsc --noEmit` → 0 error
+- `npm run build` → 242 sayfa, 0 error / 0 warning, 11.5s compile
+- Smoke test (Vercel deploy sonrası):
+  - Chat AI yanıtında ` ```ts\nconst x = 1\n``` ` → kod bloğu monospace + scroll + "TS" mini-header
+  - `*italic text*` → italik render
+  - `` `aspirin` `` → inline code chip (border + bg-muted)
+  - Mevcut **bold** / tablo / GFM list / details panel / YellowCodeCard → regression yok
 
 ---
 
