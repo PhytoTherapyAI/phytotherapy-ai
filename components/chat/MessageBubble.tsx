@@ -400,6 +400,40 @@ function TextBlock({ content }: { content: string }) {
     const line = lines[i];
     const trimmed = line.trim();
 
+    // Sprint 21 — Code block: ```lang\n...\n``` (multi-line, table pattern mirror)
+    if (trimmed.startsWith("```")) {
+      const lang = trimmed.replace(/^```\s*/, "").trim();
+      const codeLines: string[] = [];
+      let j = i + 1;
+      let foundClosing = false;
+      while (j < lines.length) {
+        if (lines[j].trim().startsWith("```")) {
+          foundClosing = true;
+          break;
+        }
+        codeLines.push(lines[j]);
+        j++;
+      }
+      if (foundClosing) {
+        rendered.push(
+          <pre
+            key={i}
+            className="my-2 p-3 rounded-lg bg-muted overflow-x-auto text-xs font-mono border border-border whitespace-pre"
+          >
+            {lang && (
+              <div className="text-[10px] uppercase tracking-wide text-muted-foreground mb-1">
+                {lang}
+              </div>
+            )}
+            <code>{codeLines.join("\n")}</code>
+          </pre>,
+        );
+        i = j; // closing ``` line'ı atla (dış for++ ile sonraki satıra geçer)
+        continue;
+      }
+      // foundClosing yoksa fallback: normal paragraph render et
+    }
+
     // Sprint 12 — Markdown tablo: ardışık `|` ile başlayan satırları topla
     if (trimmed.startsWith("|") && trimmed.endsWith("|") && trimmed.length > 2) {
       const tableLines: string[] = [trimmed];
@@ -488,31 +522,39 @@ function TextBlock({ content }: { content: string }) {
 }
 
 function formatInline(text: string): React.ReactNode {
-  // Process **bold**, [links](url), and ✅❌⚠️ emoji
+  // Process **bold**, *italic*, `inline code`, [links](url), and ✅❌⚠️ emoji.
+  // Sprint 21 — italic + inline code eklendi (4-way earliest-match comparison).
   const parts: React.ReactNode[] = [];
   let remaining = text;
   let key = 0;
 
   while (remaining.length > 0) {
-    // Bold
+    // Bold (öncelikli — italic'ten önce, ** çift yıldız)
     const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
     // Link — accepts absolute (https://...) OR relative (/path, /path#anchor)
     const linkMatch = remaining.match(/\[([^\]]+)\]\((https?:\/\/[^)]+|\/[^)]+)\)/);
+    // Inline code — backtick (örn: `aspirin`)
+    const codeMatch = remaining.match(/`([^`\n]+)`/);
+    // Italic — tek yıldız, ama bold (** çift) ile çakışmasın (negative lookbehind/lookahead)
+    const italicMatch = remaining.match(/(?<!\*)\*([^*\n]+)\*(?!\*)/);
 
-    // Find which comes first
+    // En küçük index olan match'i seç
     const boldIdx = boldMatch?.index ?? Infinity;
     const linkIdx = linkMatch?.index ?? Infinity;
+    const codeIdx = codeMatch?.index ?? Infinity;
+    const italicIdx = italicMatch?.index ?? Infinity;
+    const minIdx = Math.min(boldIdx, linkIdx, codeIdx, italicIdx);
 
-    if (boldIdx === Infinity && linkIdx === Infinity) {
+    if (minIdx === Infinity) {
       parts.push(remaining);
       break;
     }
 
-    if (boldIdx <= linkIdx && boldMatch) {
+    if (minIdx === boldIdx && boldMatch) {
       parts.push(remaining.substring(0, boldIdx));
       parts.push(<strong key={key++} className="font-semibold">{boldMatch[1]}</strong>);
       remaining = remaining.substring(boldIdx + boldMatch[0].length);
-    } else if (linkMatch) {
+    } else if (minIdx === linkIdx && linkMatch) {
       const isRelative = linkMatch[2].startsWith("/");
       parts.push(remaining.substring(0, linkIdx));
       parts.push(
@@ -527,6 +569,21 @@ function formatInline(text: string): React.ReactNode {
         </a>
       );
       remaining = remaining.substring(linkIdx + linkMatch[0].length);
+    } else if (minIdx === codeIdx && codeMatch) {
+      parts.push(remaining.substring(0, codeIdx));
+      parts.push(
+        <code
+          key={key++}
+          className="px-1.5 py-0.5 rounded text-[0.85em] bg-muted font-mono border border-border/50"
+        >
+          {codeMatch[1]}
+        </code>,
+      );
+      remaining = remaining.substring(codeIdx + codeMatch[0].length);
+    } else if (italicMatch) {
+      parts.push(remaining.substring(0, italicIdx));
+      parts.push(<em key={key++} className="italic">{italicMatch[1]}</em>);
+      remaining = remaining.substring(italicIdx + italicMatch[0].length);
     }
   }
 

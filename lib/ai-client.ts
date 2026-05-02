@@ -33,7 +33,7 @@ const TOKENS_JSON = 3000;    // JSON analysis — most responses < 1500 tokens
 const TOKENS_STREAM = 2048;  // streaming chat
 
 // Temperature — 0.4 for balanced medical conversation, 0 for JSON/analysis
-const TEMP_CHAT = 0.6;       // warm, conversational tone for friend-like responses
+const TEMP_CHAT = 0.5;       // Sprint 21 — 0.6→0.5: warm tone korunur, tıbbi context'te stil variation azalır (yanıt tutarlılığı + Madde 1 "ciddi konularda ciddi" uyumu)
 const TEMP_ANALYSIS = 0;     // deterministic for medical analysis/JSON
 
 // ──────────────────────────────────────────────
