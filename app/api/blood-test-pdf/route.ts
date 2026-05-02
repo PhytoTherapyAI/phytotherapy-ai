@@ -184,18 +184,20 @@ export async function POST(req: NextRequest) {
     const userLang = tx("api.respondLang", lang === "tr" ? "tr" : "en");
 
     // Sprint 22 Commit 1 — Profil inject (manuel form ile parite, /api/blood-analysis L114-145 mirror).
-    // PDF OCR akışı önceden profile context'siz çalışıyordu → kişiselleştirilmiş analiz tutarsızdı.
+    // Sprint 23 Commit 1 — D vector: allergies + chronic_conditions ek inject (manuel form parite).
     let profileContext = "";
     let hasMedications = false;
     if (upfrontUserId) {
       try {
         const supabase = createServerClient();
-        const [profileRes, medsRes] = await Promise.all([
+        const [profileRes, medsRes, allergiesRes] = await Promise.all([
           supabase.from("user_profiles").select("*").eq("id", upfrontUserId).single(),
           supabase.from("user_medications").select("brand_name, generic_name, dosage").eq("user_id", upfrontUserId).eq("is_active", true),
+          supabase.from("user_allergies").select("allergen, severity").eq("user_id", upfrontUserId),
         ]);
         const profile = profileRes.data;
         const meds = medsRes.data;
+        const allergies = allergiesRes.data;
         hasMedications = !!(meds && meds.length > 0);
         if (profile) {
           profileContext = "\n\nUSER PROFILE:";
@@ -207,6 +209,18 @@ export async function POST(req: NextRequest) {
           if (profile.liver_disease) profileContext += "\n- ⚠️ LIVER DISEASE";
           if (hasMedications && meds) {
             profileContext += `\n- Medications: ${meds.map((m: { generic_name: string | null; brand_name: string | null }) => m.generic_name || m.brand_name).filter(Boolean).join(", ")}`;
+          }
+          // Sprint 23 — Allergies + chronic conditions (manuel form parite)
+          if (allergies && allergies.length > 0) {
+            profileContext += `\n- Allergies: ${(allergies as { allergen: string; severity: string }[]).map((a) => `${a.allergen} (${a.severity})`).join(", ")}`;
+          }
+          if (Array.isArray(profile.chronic_conditions) && profile.chronic_conditions.length > 0) {
+            const chronicOnly = (profile.chronic_conditions as string[]).filter(
+              (c) => !c.startsWith("surgery:") && !c.startsWith("family:"),
+            );
+            if (chronicOnly.length > 0) {
+              profileContext += `\n- Chronic conditions: ${chronicOnly.join(", ")}`;
+            }
           }
         }
       } catch {

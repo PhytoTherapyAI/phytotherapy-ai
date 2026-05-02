@@ -403,6 +403,9 @@ Liver:
 Kidney:
 - Creatinine: men 0.74-1.35, women 0.59-1.04 mg/dL
 - eGFR: ≥60 normal, 45-59 mild↓, <45 moderate-severe CKD
+  CKD-EPI 2021: age-adjusted, race-free formula. Elderly considerations:
+  age 65+ eGFR 50-59 may reflect normal aging-related decline; age 75+ eGFR ≥45
+  is often clinically acceptable (interpret with frailty + comorbidities, not isolation).
 - BUN: 7-20 mg/dL
 
 Inflammation:

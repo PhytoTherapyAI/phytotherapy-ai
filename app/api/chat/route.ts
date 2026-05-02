@@ -168,14 +168,20 @@ export async function POST(request: NextRequest) {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
         const sevenDaysAgoIso = sevenDaysAgo.toISOString().slice(0, 10);
+        // Sprint 23 Commit 1 — B vector: 30-day window for vital_records BP/glucose/weight trend
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const thirtyDaysAgoIso = thirtyDaysAgo.toISOString();
 
-        const [profileRes, medsRes, allergiesRes, checkInsRes, familyHistoryRes] = await Promise.all([
+        const [profileRes, medsRes, allergiesRes, checkInsRes, familyHistoryRes, vitalsRes] = await Promise.all([
           supabase.from("user_profiles").select("full_name, age, gender, blood_group, height_cm, weight_kg, is_pregnant, is_breastfeeding, kidney_disease, liver_disease, chronic_conditions, smoking_use, alcohol_use, diet_type, exercise_frequency, sleep_quality, supplements, vaccines, onboarding_complete, consent_ai_processing, consent_data_transfer").eq("id", targetUserId).maybeSingle(),
           supabase.from("user_medications").select("brand_name, generic_name, dosage, frequency").eq("user_id", targetUserId).eq("is_active", true),
           supabase.from("user_allergies").select("allergen, severity").eq("user_id", targetUserId),
           supabase.from("daily_check_ins").select("sleep_quality").eq("user_id", targetUserId).gte("check_date", sevenDaysAgoIso).not("sleep_quality", "is", null),
           // Session 39 C2: family history entries (may fail gracefully if migration not yet applied)
           supabase.from("family_history_entries").select("person_relation, condition_name, age_at_diagnosis, age_at_death, is_deceased, notes").eq("user_id", targetUserId),
+          // Sprint 23 — vital_records BP/glucose/weight son 30 gün (graceful fallback eğer tablo yoksa)
+          supabase.from("vital_records").select("vital_type, value, systolic, diastolic, recorded_at").eq("user_id", targetUserId).in("vital_type", ["blood_pressure", "blood_sugar", "weight"]).gte("recorded_at", thirtyDaysAgoIso).order("recorded_at", { ascending: false }),
         ]);
         // Capture display name for system prompt
         actingOnBehalfOfName = isActingOnBehalf
@@ -187,10 +193,18 @@ export async function POST(request: NextRequest) {
           if (allergiesRes.error) console.error("[Chat] allergies error:", allergiesRes.error.message);
           // daily_check_ins error is non-fatal — sleep data is optional enrichment
           // family_history_entries error is non-fatal — table may not exist if migration not yet applied
+          // Sprint 23 — vital_records error is non-fatal — table may not exist if migration not yet applied
 
           const meds = medsRes.data || [];
           const allergies = allergiesRes.data || [];
           const checkIns = (checkInsRes.data || []) as Array<{ sleep_quality: number | null }>;
+          const vitals = (vitalsRes.error ? [] : (vitalsRes.data || [])) as Array<{
+            vital_type: string;
+            value: number | null;
+            systolic: number | null;
+            diastolic: number | null;
+            recorded_at: string;
+          }>;
           const familyHistory = (familyHistoryRes.data || []) as Array<{
             person_relation: string;
             condition_name: string;
@@ -400,6 +414,36 @@ export async function POST(request: NextRequest) {
               sleepSummary = profile.sleep_quality as string;
             }
 
+            // Sprint 23 Commit 1 — B vector: vital trend (BP / glucose / weight, son 30 gün)
+            // vital_records ordered DESC; ortalama hesabı + weight delta için sondan başa farkı
+            const bpRecords = vitals.filter((v) => v.vital_type === "blood_pressure" && v.systolic != null && v.diastolic != null).slice(0, 7);
+            const sugarRecords = vitals.filter((v) => v.vital_type === "blood_sugar" && v.value != null).slice(0, 7);
+            const weightRecords = vitals.filter((v) => v.vital_type === "weight" && v.value != null);
+
+            let bpSummary: string = none;
+            if (bpRecords.length > 0) {
+              const avgSys = bpRecords.reduce((a, v) => a + (v.systolic ?? 0), 0) / bpRecords.length;
+              const avgDia = bpRecords.reduce((a, v) => a + (v.diastolic ?? 0), 0) / bpRecords.length;
+              bpSummary = `${Math.round(avgSys)}/${Math.round(avgDia)} mmHg avg over last ${bpRecords.length} reading(s)`;
+            }
+
+            let glucoseSummary: string = none;
+            if (sugarRecords.length > 0) {
+              const avgGlu = sugarRecords.reduce((a, v) => a + (v.value ?? 0), 0) / sugarRecords.length;
+              glucoseSummary = `${avgGlu.toFixed(0)} mg/dL avg over last ${sugarRecords.length} reading(s)`;
+            }
+
+            let weightSummary: string = none;
+            if (weightRecords.length === 1 && weightRecords[0].value != null) {
+              weightSummary = `${weightRecords[0].value} kg`;
+            } else if (weightRecords.length >= 2) {
+              const latest = weightRecords[0].value ?? 0;
+              const oldest = weightRecords[weightRecords.length - 1].value ?? 0;
+              const delta = latest - oldest;
+              const sign = delta >= 0 ? "+" : "";
+              weightSummary = `${latest} kg (Δ ${sign}${delta.toFixed(1)} kg over last ${weightRecords.length} reading(s))`;
+            }
+
             // Vaccines (JSONB) — only completed ones
             const vaccinesRaw = Array.isArray(profile.vaccines) ? profile.vaccines as Array<{ name: string; status: string; last_date?: string }> : [];
             const doneVaccines = vaccinesRaw.filter(v => v.status === "done");
@@ -446,6 +490,11 @@ ${surgicalLines}
 
 FAMILY HEALTH HISTORY:
 ${familyLines}
+
+VITAL TRENDS (last 30 days):
+  - Blood pressure: ${bpSummary}
+  - Blood glucose: ${glucoseSummary}
+  - Weight: ${weightSummary}
 
 LIFESTYLE:
   - Smoking: ${smoking}

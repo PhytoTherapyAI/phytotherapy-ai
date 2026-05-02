@@ -124,9 +124,11 @@ export async function POST(request: NextRequest) {
 
         if (user) {
           userId = user.id;
-          const [{ data: profile }, { data: meds }] = await Promise.all([
+          // Sprint 23 Commit 1 — D vector: allergies + chronic_conditions ek inject
+          const [{ data: profile }, { data: meds }, { data: allergies }] = await Promise.all([
             supabase.from("user_profiles").select("*").eq("id", user.id).single(),
             supabase.from("user_medications").select("brand_name, generic_name, dosage").eq("user_id", user.id).eq("is_active", true),
+            supabase.from("user_allergies").select("allergen, severity").eq("user_id", user.id),
           ]);
 
           hasMedications = !!(meds && meds.length > 0);
@@ -141,6 +143,19 @@ export async function POST(request: NextRequest) {
             if (profile.liver_disease) profileContext += "\n- ⚠️ LIVER DISEASE";
             if (hasMedications) {
               profileContext += `\n- Medications: ${meds!.map((m: { generic_name: string | null; brand_name: string | null }) => m.generic_name || m.brand_name).join(", ")}`;
+            }
+            // Sprint 23 — Allergies (kontrendikasyon kontrol için kritik)
+            if (allergies && allergies.length > 0) {
+              profileContext += `\n- Allergies: ${(allergies as { allergen: string; severity: string }[]).map((a) => `${a.allergen} (${a.severity})`).join(", ")}`;
+            }
+            // Sprint 23 — Chronic conditions (surgery: + family: prefix filtre, sadece gerçek kronik)
+            if (Array.isArray(profile.chronic_conditions) && profile.chronic_conditions.length > 0) {
+              const chronicOnly = (profile.chronic_conditions as string[]).filter(
+                (c) => !c.startsWith("surgery:") && !c.startsWith("family:"),
+              );
+              if (chronicOnly.length > 0) {
+                profileContext += `\n- Chronic conditions: ${chronicOnly.join(", ")}`;
+              }
             }
           }
         }
