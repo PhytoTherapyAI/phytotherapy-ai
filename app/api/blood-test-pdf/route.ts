@@ -44,7 +44,95 @@ RULES:
 3. Only include markers that are actually present in the document
 4. Return numeric values only (no strings, no units in the value)
 5. If gender is detectable from the report, include it
-6. Parse both Turkish and English lab reports`;
+6. Parse both Turkish and English lab reports
+
+EXAMPLES:
+
+Example 1 — e-Nabız hormonal panel (multi-line referans notu, boş Referans Değeri sütunu):
+Input table rows:
+  14.11.2025 09:23  [timestamp group header — skip]
+  ✅  Beta HCG  0  IU/L  0 – 5
+  ✅  LH  3.3  IU/L  [empty]
+  2.1 – 10.9 IU/L Foliküler faz 19.2 – 103 IU/L Midsiklus pik...  [multi-line ref note — skip]
+  ✅  TSH  1.58  mU/L  0.35 – 5.30
+  14.11.2025 09:24  [timestamp group header — skip]
+  ✅  Estradiol (E2)  22  ng/L  [empty]
+  23 – 115 ng/L Foliküler faz...  [multi-line ref note — skip]
+  ✅  FSH  4.1  IU/L  [empty]
+  3.9 – 8.8 mIU/mL Foliküler faz...  [multi-line ref note — skip]
+  ✅  Prolaktin  15.5  ug/L  [empty]
+  ✅  Serbest Testosteron  1.25  ng/mL  0 – 2.85
+  ✅  Total Testosteron  64.06  ng/dL  10 – 75
+
+Correct output:
+{
+  "values": {
+    "beta_hcg": 0,
+    "lh": 3.3,
+    "tsh": 1.58,
+    "estradiol": 22,
+    "fsh": 4.1,
+    "prolactin": 15.5,
+    "free_testosterone": 1.25,
+    "total_testosterone": 64.06
+  },
+  "gender": "female",
+  "unit_warnings": []
+}
+RULES applied: timestamp rows skipped; ✅ icon ignored; multi-line ref notes (faz açıklamaları) skipped; empty Referans Değeri → extract value only, no warning.
+
+Example 2 — Klasik biyokimya paneli (TR virgül ondalık, panel başlığı, mg/dL):
+Input table rows:
+  Tam Kan Sayımı  [panel header — skip]
+  Glukoz  95,4  mg/dL  70 – 100
+  Kolesterol Total  187  mg/dL  < 200
+  LDL Kolesterol  118  mg/dL  < 130
+  HDL Kolesterol  52  mg/dL  > 40
+  Trigliserid  143  mg/dL  < 150
+  Kreatinin  0,82  mg/dL  0.6 – 1.1
+  ALT (SGPT)  23  U/L  < 40
+  AST (SGOT)  19  U/L  < 40
+
+Correct output:
+{
+  "values": {
+    "glucose": 95.4,
+    "total_cholesterol": 187,
+    "ldl": 118,
+    "hdl": 52,
+    "triglycerides": 143,
+    "creatinine": 0.82,
+    "alt": 23,
+    "ast": 19
+  },
+  "gender": null,
+  "unit_warnings": []
+}
+RULES applied: "Tam Kan Sayımı" panel header skipped; TR comma decimal (95,4 → 95.4, 0,82 → 0.82); "< 200" referans değeri → not a result value, ignored.
+
+Example 3 — Unit conversion (mmol/L glucose, µmol/L creatinine):
+Input table rows:
+  Glukoz  5,3  mmol/L  3.9 – 6.1
+  Kreatinin  72  µmol/L  53 – 97
+  Üre  6.2  mmol/L  2.5 – 7.5
+  Hemoglobin  13,8  g/dL  12 – 16
+
+Correct output:
+{
+  "values": {
+    "glucose": 95.5,
+    "creatinine": 0.81,
+    "urea_bun": 17.4,
+    "hemoglobin": 13.8
+  },
+  "gender": null,
+  "unit_warnings": [
+    "glucose: converted from mmol/L (5.3) to mg/dL (95.5)",
+    "creatinine: converted from µmol/L (72) to mg/dL (0.81)",
+    "urea_bun: converted from mmol/L (6.2) to mg/dL (17.4)"
+  ]
+}
+RULES applied: mmol/L glucose × 18.016; µmol/L creatinine ÷ 88.4; mmol/L urea × 2.8; unit_warnings produced for each conversion; g/dL hemoglobin no conversion needed.`;
 
 export async function POST(req: NextRequest) {
   // Rate limit
