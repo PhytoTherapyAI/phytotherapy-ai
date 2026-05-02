@@ -616,6 +616,25 @@ export function ChatInterface({
         setActiveConversationId(chatConvId);
         onConversationCreated?.(chatConvId);
       }
+
+      // Sprint 23 Commit 2 — chat_conversations auto-title (parallel to F-CHAT-SIDEBAR-003 query_history trigger above).
+      // Yeni `chat_conversations` modeli için ayrı endpoint (/api/conversations/[id]/auto-title) — chat_messages'dan
+      // ilk user + assistant mesajını okur, Haiku ile 3-4 kelimelik başlık üretir, race-safe UPDATE. Idempotent.
+      // Failures silent (worst case: title null kalır, ConversationHistory fallback zaten var).
+      if (chatConvId && session?.access_token) {
+        fetch(`/api/conversations/${chatConvId}/auto-title`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        })
+          .then(() => {
+            window.dispatchEvent(new CustomEvent("conversation-updated"));
+          })
+          .catch((err) => {
+            if (process.env.NODE_ENV === "development") {
+              console.warn("[conv-auto-title] trigger failed:", err);
+            }
+          });
+      }
     } catch (error) {
       if (process.env.NODE_ENV === "development") console.error("Chat error:", error);
       setMessages((prev) =>
