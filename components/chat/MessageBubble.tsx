@@ -467,6 +467,20 @@ function TextBlock({ content }: { content: string }) {
       continue;
     }
 
+    // Sprint 24 Commit 1 — Blockquote
+    if (trimmed.startsWith("> ")) {
+      const quoteText = trimmed.slice(2);
+      rendered.push(
+        <blockquote
+          key={i}
+          className="my-1 pl-3 border-l-2 border-muted-foreground/40 text-muted-foreground italic text-sm"
+        >
+          {formatInline(quoteText)}
+        </blockquote>,
+      );
+      continue;
+    }
+
     // Headers
     if (trimmed.startsWith("### ")) {
       rendered.push(
@@ -522,8 +536,9 @@ function TextBlock({ content }: { content: string }) {
 }
 
 function formatInline(text: string): React.ReactNode {
-  // Process **bold**, *italic*, `inline code`, [links](url), and ✅❌⚠️ emoji.
+  // Process **bold**, *italic*, `inline code`, ~~strike~~, [links](url), and ✅❌⚠️ emoji.
   // Sprint 21 — italic + inline code eklendi (4-way earliest-match comparison).
+  // Sprint 24 — strikethrough eklendi (5-way).
   const parts: React.ReactNode[] = [];
   let remaining = text;
   let key = 0;
@@ -537,13 +552,16 @@ function formatInline(text: string): React.ReactNode {
     const codeMatch = remaining.match(/`([^`\n]+)`/);
     // Italic — tek yıldız, ama bold (** çift) ile çakışmasın (negative lookbehind/lookahead)
     const italicMatch = remaining.match(/(?<!\*)\*([^*\n]+)\*(?!\*)/);
+    // Sprint 24 — Strikethrough (çift tilde)
+    const strikeMatch = remaining.match(/~~(.+?)~~/);
 
     // En küçük index olan match'i seç
     const boldIdx = boldMatch?.index ?? Infinity;
     const linkIdx = linkMatch?.index ?? Infinity;
     const codeIdx = codeMatch?.index ?? Infinity;
     const italicIdx = italicMatch?.index ?? Infinity;
-    const minIdx = Math.min(boldIdx, linkIdx, codeIdx, italicIdx);
+    const strikeIdx = strikeMatch?.index ?? Infinity;
+    const minIdx = Math.min(boldIdx, linkIdx, codeIdx, italicIdx, strikeIdx);
 
     if (minIdx === Infinity) {
       parts.push(remaining);
@@ -580,6 +598,10 @@ function formatInline(text: string): React.ReactNode {
         </code>,
       );
       remaining = remaining.substring(codeIdx + codeMatch[0].length);
+    } else if (minIdx === strikeIdx && strikeMatch) {
+      parts.push(remaining.substring(0, strikeIdx));
+      parts.push(<del key={key++} className="text-muted-foreground">{strikeMatch[1]}</del>);
+      remaining = remaining.substring(strikeIdx + strikeMatch[0].length);
     } else if (italicMatch) {
       parts.push(remaining.substring(0, italicIdx));
       parts.push(<em key={key++} className="italic">{italicMatch[1]}</em>);
