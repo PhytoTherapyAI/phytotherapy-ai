@@ -1,6 +1,99 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: Sprint 23 canlı — auto-title sidebar PASS ✅ (2 Mayıs 2026)
+> Son güncelleme: Sprint 24 canlı — UX polish + postmenopozal + polypharmacy ✅ (2 Mayıs 2026)
+
+---
+
+## Sprint 24 — UX Polish + Klinik Güvenlik (2 Mayıs 2026)
+
+**Toplam:** 3 commit + 1 docs commit, 0 revert
+**Smoke test:** ✅ her commit `tsc --noEmit && npm run build` 0 error/warning
+
+| # | Commit | Açıklama |
+|---|---|---|
+| 1 | `51e0252` | chat UI markdown — blockquote + strikethrough |
+| 2 | `eab23d1` | postmenopausal phytoestrogen warning (chat + blood test) |
+| 3 | `969bae0` | polypharmacy engine — interaction-map 6. kategori |
+| D1 | (this) | Sprint 24 kapanış docs |
+
+### Major Outcomes
+
+- **Commit 1 — Markdown UX:** `components/chat/MessageBubble.tsx` custom parser 4-way → 5-way inline match (bold/link/code/italic/strikethrough). TextBlock blockquote (`> `) sol kenar slate-300 border + italic muted text. Earliest-match algoritma korundu, react-markdown ithal edilmedi (bundle impact 0). Sprint 21 V9 backlog'u kapandı.
+- **Commit 2 — Postmenopozal güvenlik:** Schema-light flag pattern (chronic_conditions "menopause" prefix — surgery:/family: paterni mirror, migration sıfır cost). 3 endpoint inject: `/api/chat`, `/api/blood-analysis`, `/api/blood-test-pdf`. criticalLines POSTMENOPAUSAL bloğu chronic_conditions parse'ında flag açıyor. SYSTEM_PROMPT few-shot 12 → 13 (Örnek 13: postmenopozal + soya isoflavone + breast cancer hx, TR — phytoestrogen avoid + safe alternatif öner). BLOOD_TEST_PROMPT few-shot 3 → 4 (Örnek 4: postmenopozal lab senaryo) + PATIENT PROFILE AWARENESS rule (avoid soy isoflavones, red clover, black cohosh, dong quai, genistein → safe alternatives: vit D + Ca for bone health, magnesium + ashwagandha for hot flashes if no cancer hx).
+- **Commit 3 — Polypharmacy engine:** `app/api/interaction-map/route.ts` 5 → 6 kategori (`polypharmacy_burden`). 5+ aktif ilaç threshold (literatür standart). 4 cluster analizi sadece tetiklendiğinde inject:
+  1. **CYP450 Enzyme Cluster** — CYP3A4/2D6/2C9/2C19 substrat+inhibitor 3+ overlap flag
+  2. **Beers Criteria 2023** — yaş ≥65 (`age` user_profiles SELECT'e eklendi)
+  3. **Anticholinergic Burden (ACB Score)** — TCA + 1st-gen antihistamines + bladder antimuscarinics + tricyclic antidepressants
+  4. **Renal/Hepatic Clearance Load** — eGFR <60 dose adjustment + AST/ALT elevated load
+  Summary mandatory pharmacist medication review öneri. EdgeCategory type 6 kategori. Banner CATEGORY_LABELS (📊 Çoklu İlaç Yükü) + CATEGORY_ORDER (drug-condition→polypharmacy_burden→drug-allergy→drug-drug→drug-chronic→drug-supplement). sbar-interaction-template CATEGORY_HEADINGS + CATEGORY_ORDER mirror.
+- **0 ürün regresyonu:** mevcut markdown 4-way davranış (bold/link/code/italic), 5 mevcut interaction kategorisi, chat/blood-test profileContext yapısı, banner UI, custom-title manuel rename, F-SAFETY-002.2 persistence, KVKK consent gate intact.
+
+### Sprint 24 Implementation Detayı
+
+**Commit 1 (`51e0252`) — 1 dosya, ~30 satır:**
+
+- `components/chat/MessageBubble.tsx` formatInline 4-way → 5-way (strikethrough `~~text~~` regex eklendi). TextBlock blockquote (`> ` start) sol border + italic + muted-foreground class. Earliest-match algoritma (mevcut paterni boz)mıyor.
+
+**Commit 2 (`eab23d1`) — 4 dosya, ~80 satır:**
+
+- `lib/prompts.ts` SYSTEM_PROMPT few-shot 12 → 13 (postmenopozal + soya + breast hx + reddetme + alternatif öner). BLOOD_TEST_PROMPT few-shot 3 → 4 (postmenopozal lab senaryo) + PATIENT PROFILE AWARENESS rule.
+- `app/api/chat/route.ts` chronic_conditions parse'a `isPostmenopausal` detection. criticalLines'a POSTMENOPAUSAL bloğu (red clover/black cohosh/dong quai/genistein avoid). chronicList filter "menopause" exclude (zaten flag olarak gösteriliyor).
+- `app/api/blood-analysis/route.ts` + `app/api/blood-test-pdf/route.ts` profileContext'e POSTMENOPAUSAL critical flag (manuel form + PDF flow parite).
+
+**Commit 3 (`969bae0`) — 4 dosya, +80 / −13:**
+
+- `lib/safety/check-med-interactions.ts` `EdgeCategory` type 6 kategori (`polypharmacy_burden` eklendi).
+- `lib/safety/sbar-interaction-template.ts` CATEGORY_HEADINGS + CATEGORY_ORDER 6-kategori parite (📊 İlaç Yükü emoji + tr/en label).
+- `components/safety/MedicationInteractionBanner.tsx` CATEGORY_LABELS + CATEGORY_ORDER (polypharmacy_burden 2. sırada — drug-condition'dan sonra, kullanıcının 5+ ilaç olan profilinde en üstte ikinci konum).
+- `app/api/interaction-map/route.ts` system prompt enrichment (~50 satır):
+  - `medicationCount + isPolypharmacy + isElderly` derive
+  - `ProfileForSafety` interface `age?: number | null` + user_profiles SELECT'e "age" eklendi
+  - POLYPHARMACY ANALYSIS bloğu — 4 cluster directives + summary mandatory pharmacist review CTA
+  - Rule 8: polypharmacy_burden ONLY when triggered (5- ilaç senaryosunda hiç render etme)
+
+### Sprint 24 Backward Compatibility
+
+- 5 mevcut kategori (drug-drug/drug-chronic/drug-supplement/drug-allergy/drug-condition) intact, davranış aynen.
+- Polypharmacy 5- ilaç senaryosunda hiç tetiklenmez (mevcut profil davranışı korundu).
+- Banner UI 5-kategori paterni intact (yeni kategori sadece eklendi, mevcut sıralama kullanıcının erişebileceği path'i bozmuyor).
+- chronic_conditions menopause prefix — 4. üye (surgery:/family:/menopause + regular). Mevcut filter pattern (Session 32+) korundu.
+- Chat markdown parser 4-way → 5-way earliest-match. Mevcut bold/link/code/italic davranışı aynen.
+- BLOOD_TEST_PROMPT 7 JSON alan + few-shot Sprint 22 (V3) intact.
+- SYSTEM_PROMPT 12 few-shot intact + Örnek 13 yeni eklendi.
+- F-SAFETY-002.2 persistence (medication_interaction_alerts) — 6. kategori auto-resolve sweep + 24-h confirm 3-state intact.
+
+### Sprint 25+ Backlog
+
+| Madde | Öncelik | Notlar |
+|---|---|---|
+| **Multimodal few-shot** | Orta | Kan tahlili image OCR + extraction iyileştirme |
+| **F-PAYMENT-001 Iyzico** | Yüksek | Şirket tescili dependency, 27 Mayıs avukat görüşmesi sonrası unblock |
+| **NotoSans alternatif** | Düşük | Sprint 20'den devam — Font CDN URL veya @react-pdf/renderer major upgrade |
+
+**Diğer carry-over backlog:**
+
+- Sprint 19+ deferred — delete operation, search/filter, cross-source unified, standalone /health-history
+- `analysis_result` + `pdf_url` DROP (Sprint 19+ planlandı)
+- `family_history_entries` Supabase apply doğrulama (Sprint 23)
+
+### Önemli Tarihler
+
+- **27 Mayıs 2026** — ⚖️ Avukat görüşmesi (**25 gün kaldı**, kritik path). Şirket kuruluş kararı: Limited / A.Ş. / Estonya OÜ.
+- **Iyzico** — şirket tescili dependency, görüşme sonrası unblock olacak.
+
+### Teknik Notlar (Strateji)
+
+- Tüm değişiklikler **production branch direkt** (staging bypass disiplini Sprint 13'ten beri).
+- PROGRESS.md + CLAUDE.md güncel tutuluyor (her sprint kapanış D1 commit'i ile).
+- **Schema-light flag pattern** Commit 2'de kanıtlandı — chronic_conditions string prefix migration sıfır cost ile yeni klinik flag (postmenopozal). Gelecek flagger için tekrar kullanılabilir (örn. "smoking:active", "alcohol:heavy").
+- **Polypharmacy engine** Commit 3'te Claude'un medikal eğitimini leveraged (manuel CYP450/Beers/ABS lookup table tutmak yerine prompt enrichment). Maintenance cost düşük, model güncellemeleriyle birlikte iyileşir. Dezavantaj: cluster analizi için ilave AI tokenı; avantaj: 5- ilaç senaryosunda hiç çalışmaz (cost neutral).
+- KVKK Aydınlatma Metni **v2.1** aktif, KVKK consent gate Sprint 24 değişikliklerinden etkilenmedi.
+
+### Verification
+
+- `npx tsc --noEmit` → 0 error (her commit sonrası)
+- `npm run build` → 0 error / 0 warning (Commit 1: 11.4s, Commit 2: 11.6s, Commit 3: 15.8s)
+- Smoke test: ✅ Commit 1 markdown — `> blockquote text` ve `~~strikethrough~~` chat'te düzgün render. Commit 2 postmenopozal — chronic_conditions'a "menopause" eklenince chat + blood test cevapları fitoöstrojen avoid + safe alternatif öner. Commit 3 polypharmacy — 5+ ilaç olan profilde interaction-map endpoint'inde polypharmacy_burden edge'i appear, banner 📊 emoji + CYP450/Beers/ABS özet + pharmacist review CTA.
 
 ---
 
