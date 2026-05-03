@@ -609,7 +609,7 @@ export function ConversationHistory({
             >
               <MoreHorizontal className="h-4 w-4 md:h-3.5 md:w-3.5" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" sideOffset={4} className="w-48">
+            <DropdownMenuContent align="end" sideOffset={4} className="w-48 max-w-[90vw]">
               {/* F-CHAT-MOBILE-001: dropdown items get a 44px min-height
                   on mobile too — base-ui's default item is ~32-36px
                   which is below the Apple HIG touch target. Desktop

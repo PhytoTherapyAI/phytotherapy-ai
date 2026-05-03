@@ -152,7 +152,7 @@ export function BloodTestTrendChart() {
       )}
 
       {!loading && !error && data && data.series.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.series.map((s) => {
             const chartData = s.values.map((v) => ({
               ...v,
