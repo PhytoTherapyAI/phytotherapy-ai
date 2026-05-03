@@ -27,6 +27,7 @@ export type BloodTestCategory =
   | "mineral"
   | "metabolic"
   | "thyroid"
+  | "hormones"
   | "inflammation"
   | "liver"
   | "kidney"
@@ -222,6 +223,90 @@ export const BLOOD_TEST_MARKERS: BloodTestMarker[] = [
     description: "Free triiodothyronine hormone",
   },
 
+  // === HORMONES (Sprint 25 Commit 2) ===
+  // Female ranges use follicular phase as default. Phase-specific support
+  // (midcycle / luteal / postmenopausal) deferred to Sprint 25 Commit 3:
+  // analyzeValue refactor + lifeStage param + Sprint 24 menopause flag binding.
+  {
+    id: "beta_hcg",
+    name: "Beta HCG",
+    unit: "IU/L",
+    category: "hormones",
+    ranges: { optimal_low: 0, optimal_high: 5 },
+    description: "Pregnancy / tumor marker (non-pregnant baseline)",
+  },
+  {
+    id: "lh",
+    name: "LH (Luteinizing Hormone)",
+    unit: "IU/L",
+    category: "hormones",
+    // Phase-specific (Commit 3): midcycle 19.2-103, luteal 1.2-12.9, postmenopausal 10.9-58.6
+    ranges: { optimal_low: 1.7, optimal_high: 10.9 },
+    genderSpecific: {
+      male: { optimal_low: 1.7, optimal_high: 8.6 },
+      female: { optimal_low: 2.1, optimal_high: 10.9 },
+    },
+    description: "Pituitary hormone — ovulation trigger (female) / Leydig cell stimulation (male)",
+  },
+  {
+    id: "fsh",
+    name: "FSH (Follicle-Stimulating Hormone)",
+    unit: "IU/L",
+    category: "hormones",
+    // Phase-specific (Commit 3): midcycle 4.5-22.5, luteal 1.8-5.1, postmenopausal 16.7-113.6
+    ranges: { optimal_low: 1.5, optimal_high: 12.4 },
+    genderSpecific: {
+      male: { optimal_low: 1.5, optimal_high: 12.4 },
+      female: { optimal_low: 3.9, optimal_high: 8.8 },
+    },
+    description: "Pituitary hormone — follicle maturation (female) / spermatogenesis (male)",
+  },
+  {
+    id: "estradiol",
+    name: "Estradiol (E2)",
+    unit: "ng/L",
+    category: "hormones",
+    // Phase-specific (Commit 3): midcycle 32-517, luteal 36-246, postmenopausal 0-25.1
+    ranges: { optimal_low: 0, optimal_high: 115 },
+    genderSpecific: {
+      male: { optimal_low: 0, optimal_high: 39.8 },
+      female: { optimal_low: 23, optimal_high: 115 },
+    },
+    description: "Primary estrogen — follicle production (female) / testicular conversion (male)",
+  },
+  {
+    id: "prolactin",
+    name: "Prolaktin",
+    unit: "ug/L",
+    category: "hormones",
+    ranges: { optimal_low: 3.3, optimal_high: 26.7 },
+    description: "Pituitary hormone — lactation, gonadal axis regulation (gender-uniform reference)",
+  },
+  {
+    id: "free_testosterone",
+    name: "Serbest Testosteron",
+    unit: "ng/mL",
+    category: "hormones",
+    ranges: { optimal_low: 0, optimal_high: 25.1 },
+    genderSpecific: {
+      male: { optimal_low: 8.7, optimal_high: 25.1 },
+      female: { optimal_low: 0, optimal_high: 2.85 },
+    },
+    description: "Bioavailable testosterone (not bound to SHBG)",
+  },
+  {
+    id: "total_testosterone",
+    name: "Total Testosteron",
+    unit: "ng/dL",
+    category: "hormones",
+    ranges: { optimal_low: 10, optimal_high: 1070 },
+    genderSpecific: {
+      male: { optimal_low: 270, optimal_high: 1070 },
+      female: { optimal_low: 10, optimal_high: 75 },
+    },
+    description: "Total serum testosterone (bound + free)",
+  },
+
   // === INFLAMMATION ===
   {
     id: "crp",
@@ -291,6 +376,14 @@ export const BLOOD_TEST_MARKERS: BloodTestMarker[] = [
     ranges: { optimal_low: 7, optimal_high: 20 },
     description: "Kidney function and protein metabolism marker",
   },
+  {
+    id: "urea_bun",
+    name: "BUN / Üre",
+    unit: "mg/dL",
+    category: "kidney",
+    ranges: { optimal_low: 7, optimal_high: 20 },
+    description: "Blood urea nitrogen / Üre (alias for bun, clinically equivalent — TR labs often label as 'Üre')",
+  },
 
   // === BLOOD COUNT ===
   {
@@ -333,6 +426,7 @@ export const CATEGORY_INFO: Record<BloodTestCategory, { label: string; color: st
   mineral: { label: "Minerals", color: "cyan", icon: "Gem" },
   metabolic: { label: "Metabolic", color: "blue", icon: "Activity" },
   thyroid: { label: "Thyroid", color: "purple", icon: "Zap" },
+  hormones: { label: "Hormones", color: "pink", icon: "Sparkles" },
   inflammation: { label: "Inflammation", color: "red", icon: "Flame" },
   liver: { label: "Liver", color: "green", icon: "Bean" },
   kidney: { label: "Kidney", color: "teal", icon: "Droplet" },

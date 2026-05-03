@@ -33,10 +33,11 @@ IMPORTANT MARKER IDs (use these exact keys):
 - iron, ferritin, tibc, transferrin_sat
 - vitamin_d, vitamin_b12, folate
 - tsh, free_t3, free_t4
+- beta_hcg, lh, fsh, estradiol, prolactin, free_testosterone, total_testosterone
 - alt, ast, alp, ggt, bilirubin_total, bilirubin_direct, albumin
-- creatinine, bun, uric_acid, egfr, sodium, potassium, calcium, magnesium, phosphorus
+- creatinine, bun, urea_bun, uric_acid, egfr, sodium, potassium, calcium, magnesium, phosphorus
 - crp, esr, fibrinogen
-- psa, testosterone, estradiol, cortisol
+- psa, testosterone, cortisol
 
 RULES:
 1. Convert ALL values to standard units used in medical labs
