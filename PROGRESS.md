@@ -1,6 +1,41 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: Sprint 26 canlı — phase-aware analyzeValue, postmenopozal LH/FSH/Estradiol threshold fix ✅ (3 Mayıs 2026)
+> Son güncelleme: Sprint 27 canlı — i18n migration + cycle_day input + lifeStage derivation ✅ (3 Mayıs 2026)
+
+---
+
+## Sprint 27 — i18n + Cycle Day UX (3 Mayıs 2026)
+
+**Toplam:** 2 commit + 1 skip + 1 docs commit, 0 revert
+**Smoke test:** ✅ tsc + build her commit sonrası 0 error/warning
+
+| # | SHA | Açıklama |
+|---|---|---|
+| 1 | `6bd83a7` | i18n migration — 10 key + 14 string replacement |
+| 2 | — | NotoSans font swap — SKIP (Helvetica + fixTr production-tested) |
+| 3 | `536feb0` | cycle_day input + lifeStage derivation |
+| D1 | (this) | Sprint 27 kapanış docs |
+
+### Major Outcomes
+
+- **Commit 1 — i18n:** ch.search* (3 key) + mhx.delete* (7 key) tx() namespace. ConversationHistory + BloodTestHistoryList hardcoded TR → tx() calls. 4 dosya, +30 / −14.
+- **Commit 2 — NotoSans SKIP:** 2 önceki deneme (Sprint 17 HF1-4 + Session 32) Vercel serverless'da fail. Helvetica + fixTr() production-tested, korundu. Base64 inline strategy Sprint 28+ backlog.
+- **Commit 3 — cycle_day:** user_profiles'a cycle_day INTEGER (1-28) kolonu. ReproductiveTab'a cycle day input + cyclePhaseLabel helper. 2 endpoint (blood-test-pdf + blood-analysis) cycle_day SELECT + lifeStage priority chain (menopause > cycle_day > follicular default). Manuel: Supabase Studio apply ✅.
+- **0 ürün regresyonu:** Tüm mevcut flow intact.
+
+### Sprint 28 Backlog
+
+| Madde | Öncelik | Notlar |
+|---|---|---|
+| **F-PAYMENT-001 Iyzico** | Kritik | 27 Mayıs avukat görüşmesi sonrası unblock |
+| **NotoSans base64 inline** | Orta | Build-time TTF→base64, Vercel deploy testi gerekli |
+| **Apple Health / Google Fit steps** | Düşük | health_metrics.steps integration |
+| **HealthReportTab enrichment** | Düşük | Session 47 backlog |
+| **ESLint sweep** | Düşük | — |
+
+### Önemli Tarihler
+
+- **27 Mayıs 2026** — ⚖️ Avukat görüşmesi. Limited / A.Ş. / Estonya OÜ kararı.
 
 ---
 

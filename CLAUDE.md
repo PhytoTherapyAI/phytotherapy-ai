@@ -1941,4 +1941,16 @@ ce9b2bd fix(settings): close password change security gaps + NIST-aligned valida
 
 **Sprint 27 backlog:** Iyzico (kritik, 27 Mayıs sonrası) / i18n migration (düşük) / NotoSans (düşük) / cycle_day input UX (düşük).
 
+### Sprint 27 — i18n + Cycle Day UX (3 Mayıs 2026) — Tamamlandı
+
+**Toplam:** 2 commit + 1 skip + 1 docs commit, 0 revert.
+
+- `6bd83a7` i18n migration — ch.search* (3) + mhx.delete* (7) tx() namespace, ConversationHistory + BloodTestHistoryList
+- NotoSans SKIP — Helvetica + fixTr() korundu (Sprint 17 HF + Session 32 fail history)
+- `536feb0` cycle_day input — user_profiles kolon + ReproductiveTab UI + 2 endpoint lifeStage priority chain
+
+**Önemli:** cycle_day lifeStage priority: menopause flag > cycle_day (1-10 follicular, 11-17 midcycle, 18-28 luteal) > follicular default. Manuel adım: Supabase Studio apply ✅. NotoSans base64 inline strategy Sprint 28 backlog.
+
+**Sprint 28 backlog:** Iyzico (kritik, 27 Mayıs sonrası) / NotoSans base64 (orta) / Apple Health steps (düşük) / HealthReportTab (düşük) / ESLint (düşük).
+
 ---
