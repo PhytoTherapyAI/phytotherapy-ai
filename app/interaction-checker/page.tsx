@@ -172,7 +172,7 @@ export default function InteractionCheckerPage() {
     if (medications.length > 0) return;
     autoLoadedRef.current = true;
     void loadMedicationsFromProfile(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-once via
+     
     // autoLoadedRef + medications.length guard. Deps yalnızca auth state
     // settle eder etmez tetiklemek için; medications array eklendi diye
     // re-fetch olmamalı (autoLoadedRef zaten true).

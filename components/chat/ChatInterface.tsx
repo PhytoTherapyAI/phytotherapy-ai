@@ -185,7 +185,7 @@ export function ChatInterface({
       content: m.content,
     }));
     setMessages(seeded);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- isStreaming
+     
     // intentionally excluded: bu effect sadece loadMessages değişiminde
     // tetiklenmeli; isStreaming switch'i array'i tekrar set etmemeli (race).
   }, [loadMessages]);
@@ -245,7 +245,7 @@ export function ChatInterface({
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- messages.length
+     
     // mount-once guard; setState bu effect'in içinden çağırıldığı için deps'te
     // tutmak infinite loop yaratır. initialConversationId değişimi (sidebar
     // tıklamasıyla parent state update) zaten fresh fetch tetikler.

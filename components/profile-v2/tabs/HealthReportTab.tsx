@@ -112,9 +112,22 @@ export function HealthReportTab({
 }: HealthReportTabProps) {
   const tr = lang === "tr"
 
-  // Family-view early return — hooks above this point are safe because
-  // there are none yet. If we add hooks later, they MUST run before
-  // this gate (React rules of hooks). See FamilyProfileGuard docs.
+  // Sprint 28 Commit 1 — chronicArr + organStates hoisted ABOVE the early
+  // return so React rules-of-hooks are satisfied (useMemo must run on every
+  // render, never conditionally after an early return). chronicArr wrapped
+  // in useMemo so its identity is stable across renders — was inline ternary
+  // creating a fresh [] every render, breaking organStates' useMemo cache.
+  const chronicArr = useMemo<string[]>(
+    () => (Array.isArray(profile?.chronic_conditions) ? profile!.chronic_conditions! : []),
+    [profile],
+  )
+  // ── Digital Twin organ states (Sprint 9 Commit 3) ──
+  // computeOrganStates filters family:/surgery: prefix internally — no extra
+  // filter needed at call site.
+  const organStates = useMemo(() => computeOrganStates(chronicArr), [chronicArr])
+
+  // Family-view early return — ALL hooks above this point. New hooks must
+  // also be declared above this gate (React rules of hooks).
   if (!isOwnProfile) {
     return (
       <FamilyProfileGuard
@@ -128,7 +141,7 @@ export function HealthReportTab({
   // Same signature as legacy 830-844; kept inline for Commit 5 — extract
   // to a helper in Commit 6 when legacy goes away.
   const supplementsArr = Array.isArray(profile?.supplements) ? profile!.supplements! : []
-  const chronicArr = Array.isArray(profile?.chronic_conditions) ? profile!.chronic_conditions! : []
+  // chronicArr hoisted above (line ~120) for rules-of-hooks compliance.
   const vaccinesArr = Array.isArray(profile?.vaccines)
     ? (profile!.vaccines as { status?: string }[])
     : []
@@ -168,12 +181,7 @@ export function HealthReportTab({
   const scoreColor = vitality.hexColor
   const scoreLabelKey = `profile.healthReport.${vitality.labelKey}`
 
-  // ── Digital Twin organ states (Sprint 9 Commit 3) ──
-  // chronicArr zaten family:/surgery: prefix include eder; computeOrganStates
-  // kendi içinde bu prefix'leri filter ediyor — caller'da extra filter gereksiz.
-  // useMemo ile hem BodySilhouette dot rendering, hem allHealthy guard, hem de
-  // legend chip filter aynı stable referansı kullansın diye cache'liyoruz.
-  const organStates = useMemo(() => computeOrganStates(chronicArr), [chronicArr])
+  // organStates hoisted above early return (Sprint 28 Commit 1, rules-of-hooks).
   const hasOrganHighlights = Object.keys(organStates).length > 0
 
   // ── Badges — UserStats mapped from what we have in hand ──

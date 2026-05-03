@@ -128,7 +128,7 @@ export default function HealthAssistantPage() {
     if (cidParam !== activeConversationId) {
       setActiveConversationId(cidParam);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- activeConversationId
+     
     // intentionally omitted: bu effect URL → state mirroring; state → URL
     // yönü zaten setActiveConversationId + router.replace ile yapılıyor
     // (handleSelectConversation, handleConversationCreated, handleNewConversation).
