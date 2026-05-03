@@ -2,10 +2,20 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { ChevronDown, ChevronUp, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { ChevronDown, ChevronUp, AlertTriangle, CheckCircle, Clock, Trash2, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { tx, type Lang } from "@/lib/translations";
 import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface BloodTestSummaryItem {
   id: string;
@@ -72,6 +82,10 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
   const [skip, setSkip] = useState(0);
   const [expanded, setExpanded] = useState<string | null>(null);
 
+  // Sprint 25 Commit 5 — delete flow state (ConversationHistory pattern mirror).
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const fetchItems = useCallback(
     async (currentSkip: number, reset = false) => {
       if (!session?.access_token) return;
@@ -112,6 +126,49 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
     void fetchItems(nextSkip);
   };
 
+  // Sprint 25 Commit 5 — optimistic delete with rollback (ConversationHistory mirror).
+  // Snapshot current list first so a 4xx/5xx response can restore exact ordering.
+  // Cleanup expanded state if the deleted row was the active accordion.
+  const confirmDelete = useCallback(async () => {
+    if (!pendingDeleteId || !session?.access_token) return;
+    const idToDelete = pendingDeleteId;
+    const snapshot = items;
+    setIsDeleting(true);
+
+    // Optimistic remove + collapse if expanded
+    setItems((prev) => prev.filter((it) => it.id !== idToDelete));
+    if (expanded === idToDelete) setExpanded(null);
+
+    try {
+      const params = new URLSearchParams(
+        targetUserId ? { targetUserId } : {},
+      );
+      const queryStr = params.toString();
+      const res = await fetch(
+        `/api/blood-tests/${idToDelete}${queryStr ? `?${queryStr}` : ""}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        },
+      );
+
+      if (!res.ok) {
+        setItems(snapshot);
+        toast.error("Silme başarısız");
+        return;
+      }
+
+      toast.success("Tahlil silindi");
+    } catch (err) {
+      console.error("Failed to delete blood test:", err);
+      setItems(snapshot);
+      toast.error("Silme başarısız");
+    } finally {
+      setIsDeleting(false);
+      setPendingDeleteId(null);
+    }
+  }, [pendingDeleteId, session?.access_token, items, expanded, targetUserId]);
+
   if (loading && items.length === 0) {
     return (
       <div className="space-y-3">
@@ -127,7 +184,8 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
   }
 
   return (
-    <div className="space-y-3">
+    <>
+      <div className="space-y-3">
       {items.map((item) => {
         const urgency = item.overall_urgency ?? "routine";
         const cfg = URGENCY_CONFIG[urgency] ?? URGENCY_CONFIG.routine;
@@ -136,47 +194,61 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
 
         return (
           <div key={item.id} className="rounded-lg border border-border bg-card overflow-hidden">
-            <button
-              onClick={() => setExpanded(isExpanded ? null : item.id)}
-              className="w-full flex items-start gap-3 p-3 text-left hover:bg-accent/50 transition-colors"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2 mb-1">
-                  <span className="text-xs text-muted-foreground">{relativeDate(item.created_at, lang)}</span>
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border shrink-0",
-                      cfg.className,
-                    )}
-                  >
-                    <Icon className="h-3 w-3" />
-                    {tx(cfg.labelKey, lang)}
-                  </span>
-                </div>
-                {item.summary && (
-                  <p className={cn("text-sm text-foreground", !isExpanded && "line-clamp-2")}>{item.summary}</p>
-                )}
-                {(item.abnormal_count > 0 || item.supplement_count > 0) && (
-                  <div className="flex flex-wrap gap-3 mt-1.5">
-                    {item.abnormal_count > 0 && (
-                      <span className="text-xs text-muted-foreground">
-                        {tx("mhx.abnormalCount", lang).replace("{n}", String(item.abnormal_count))}
-                      </span>
-                    )}
-                    {item.supplement_count > 0 && (
-                      <span className="text-xs text-muted-foreground">
-                        {tx("mhx.supplementCount", lang).replace("{n}", String(item.supplement_count))}
-                      </span>
-                    )}
+            <div className="flex items-stretch">
+              <button
+                onClick={() => setExpanded(isExpanded ? null : item.id)}
+                className="flex-1 min-w-0 flex items-start gap-3 p-3 text-left hover:bg-accent/50 transition-colors"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-xs text-muted-foreground">{relativeDate(item.created_at, lang)}</span>
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border shrink-0",
+                        cfg.className,
+                      )}
+                    >
+                      <Icon className="h-3 w-3" />
+                      {tx(cfg.labelKey, lang)}
+                    </span>
                   </div>
+                  {item.summary && (
+                    <p className={cn("text-sm text-foreground", !isExpanded && "line-clamp-2")}>{item.summary}</p>
+                  )}
+                  {(item.abnormal_count > 0 || item.supplement_count > 0) && (
+                    <div className="flex flex-wrap gap-3 mt-1.5">
+                      {item.abnormal_count > 0 && (
+                        <span className="text-xs text-muted-foreground">
+                          {tx("mhx.abnormalCount", lang).replace("{n}", String(item.abnormal_count))}
+                        </span>
+                      )}
+                      {item.supplement_count > 0 && (
+                        <span className="text-xs text-muted-foreground">
+                          {tx("mhx.supplementCount", lang).replace("{n}", String(item.supplement_count))}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {isExpanded ? (
+                  <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
                 )}
-              </div>
-              {isExpanded ? (
-                <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
-              ) : (
-                <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
-              )}
-            </button>
+              </button>
+              {/* Sprint 25 Commit 5 — delete trigger. e.stopPropagation prevents accordion expand. */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPendingDeleteId(item.id);
+                }}
+                aria-label="Tahlili sil"
+                className="shrink-0 flex items-center justify-center px-3 text-muted-foreground/50 hover:bg-red-50 hover:text-red-600 transition-colors dark:hover:bg-red-950/30 dark:hover:text-red-400"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         );
       })}
@@ -190,6 +262,50 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
           {loading ? tx("mhx.loading", lang) : tx("mhx.loadMore", lang)}
         </button>
       )}
-    </div>
+      </div>
+
+      {/* Sprint 25 Commit 5 — delete confirm Dialog (ConversationHistory pattern mirror). */}
+      <Dialog
+        open={pendingDeleteId !== null}
+        onOpenChange={(v) => {
+          if (!v && !isDeleting) setPendingDeleteId(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trash2 className="h-4 w-4 text-red-600" />
+              Tahlili sil?
+            </DialogTitle>
+            <DialogDescription>
+              Bu tahlili silmek istediğinizden emin misiniz?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPendingDeleteId(null)}
+              disabled={isDeleting}
+            >
+              İptal
+            </Button>
+            <Button
+              size="sm"
+              onClick={confirmDelete}
+              disabled={isDeleting}
+              className="bg-red-600 text-white hover:bg-red-700"
+            >
+              {isDeleting ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Trash2 className="h-3.5 w-3.5" />
+              )}
+              <span className="ml-1.5">Sil</span>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
