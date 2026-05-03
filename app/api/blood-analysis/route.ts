@@ -95,12 +95,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Sprint 26 Commit 1 — derive lifeStage for phase-aware analyzeValue.
-    // Postmenopozal LH/FSH/Estradiol threshold fix; foliküler default otherwise.
-    // Schema-light: chronic_conditions "menopause" prefix (Sprint 24 pattern).
-    // Note: this is an early profile fetch (chronic_conditions only); the full
-    // profile fetch later (line ~120) reuses the same row but pulls all fields
-    // for AI prompt context. ~10ms overhead acceptable for surgical scope.
+    // Sprint 26 Commit 1 + Sprint 27 Commit 3 — derive lifeStage for phase-aware analyzeValue.
+    // Priority:
+    //   1. chronic_conditions "menopause" → "postmenopausal" (overrides cycle_day)
+    //   2. cycle_day 1-10 → "follicular", 11-17 → "midcycle", 18-28 → "luteal"
+    //   3. Default → "follicular" (Sprint 26 davranışı aynen)
+    // Note: this is an early profile fetch (chronic_conditions + cycle_day);
+    // the full profile fetch later (line ~120) reuses the same row but pulls
+    // all fields for AI prompt context. ~10ms overhead acceptable.
     let lifeStage: LifeStage = "follicular";
     const earlyAuth = request.headers.get("authorization");
     if (earlyAuth?.startsWith("Bearer ")) {
@@ -111,7 +113,7 @@ export async function POST(request: NextRequest) {
         if (user) {
           const { data: profForStage } = await supabase
             .from("user_profiles")
-            .select("chronic_conditions")
+            .select("chronic_conditions, cycle_day")
             .eq("id", user.id)
             .single();
           const conds = Array.isArray(profForStage?.chronic_conditions)
@@ -119,6 +121,11 @@ export async function POST(request: NextRequest) {
             : [];
           if (conds.some((c) => c.toLowerCase() === "menopause")) {
             lifeStage = "postmenopausal";
+          } else if (typeof profForStage?.cycle_day === "number") {
+            const d = profForStage.cycle_day;
+            if (d >= 1 && d <= 10) lifeStage = "follicular";
+            else if (d >= 11 && d <= 17) lifeStage = "midcycle";
+            else if (d >= 18 && d <= 28) lifeStage = "luteal";
           }
         }
       } catch {

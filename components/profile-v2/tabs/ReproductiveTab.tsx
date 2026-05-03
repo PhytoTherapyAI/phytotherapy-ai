@@ -28,6 +28,9 @@ interface ReproductiveTabProps {
   profile: {
     is_pregnant?: boolean | null
     is_breastfeeding?: boolean | null
+    // Sprint 27 Commit 3 — cycle_day for phase-aware blood test analysis.
+    // 1-10 → follicular, 11-17 → midcycle, 18-28 → luteal. NULL → follicular default.
+    cycle_day?: number | null
   } | null
   onSaved?: () => void
 }
@@ -58,6 +61,9 @@ export function ReproductiveTab({ lang, userId, gender, profile, onSaved }: Repr
     is_pregnant: !!profile?.is_pregnant,
     is_breastfeeding: !!profile?.is_breastfeeding,
   })
+  // Sprint 27 Commit 3 — cycle_day state. Null = no input → follicular default.
+  // Valid range 1-28 (CHECK constraint on DB level).
+  const [cycleDay, setCycleDay] = useState<number | null>(profile?.cycle_day ?? null)
   const lastIdRef = useRef<string | null>(null)
   useEffect(() => {
     if (!profile) return
@@ -67,13 +73,14 @@ export function ReproductiveTab({ lang, userId, gender, profile, onSaved }: Repr
       is_pregnant: !!profile.is_pregnant,
       is_breastfeeding: !!profile.is_breastfeeding,
     })
+    setCycleDay(profile.cycle_day ?? null)
   }, [userId, profile])
 
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle")
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const scheduleSave = useCallback(
-    (next: { is_pregnant: boolean; is_breastfeeding: boolean }) => {
+    (next: { is_pregnant: boolean; is_breastfeeding: boolean; cycle_day: number | null }) => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
       saveTimerRef.current = setTimeout(async () => {
         setSaveStatus("saving")
@@ -84,6 +91,7 @@ export function ReproductiveTab({ lang, userId, gender, profile, onSaved }: Repr
             .update({
               is_pregnant: next.is_pregnant,
               is_breastfeeding: next.is_breastfeeding,
+              cycle_day: next.cycle_day,
             })
             .eq("id", userId)
           if (error) throw error
@@ -106,9 +114,24 @@ export function ReproductiveTab({ lang, userId, gender, profile, onSaved }: Repr
   const toggleFlag = (key: "is_pregnant" | "is_breastfeeding", value: boolean) => {
     setFlags((prev) => {
       const next = { ...prev, [key]: value }
-      scheduleSave(next)
+      scheduleSave({ ...next, cycle_day: cycleDay })
       return next
     })
+  }
+
+  // Sprint 27 Commit 3 — cycle_day handler. Empty string clears (NULL); 1-28 ranges valid.
+  // Out-of-range values silently clamp via DB CHECK on save (idempotent fallback).
+  const handleCycleDayChange = (value: string) => {
+    const trimmed = value.trim()
+    if (trimmed === "") {
+      setCycleDay(null)
+      scheduleSave({ ...flags, cycle_day: null })
+      return
+    }
+    const n = Number.parseInt(trimmed, 10)
+    if (Number.isNaN(n) || n < 1 || n > 28) return // ignore invalid input
+    setCycleDay(n)
+    scheduleSave({ ...flags, cycle_day: n })
   }
 
   // ── Male profile soft redirect (URL trick fallback) ────────────
@@ -162,9 +185,38 @@ export function ReproductiveTab({ lang, userId, gender, profile, onSaved }: Repr
         </div>
       </div>
 
-      {/* "Yakında burada" info card. Same surface, different content
-          than PlaceholderTab — placeholder is "this tab is being
-          built", this is "more is coming on top of what's here". */}
+      {/* Sprint 27 Commit 3 — cycle_day input for phase-aware blood test analysis. */}
+      <div className="rounded-2xl border border-border bg-card p-5 space-y-3">
+        <div>
+          <label htmlFor="rep-cycle-day" className="block text-sm font-medium">
+            {tr ? "Adet döngüsü günü (1-28)" : "Menstrual cycle day (1-28)"}
+          </label>
+          <p className="text-xs text-muted-foreground mt-1">
+            {tr
+              ? "İsteğe bağlı. Hangi günde olduğunu girersen kan tahlilinde LH/FSH/Estradiol için doğru faz aralığı kullanılır. Boş bırakırsan foliküler faz varsayılır."
+              : "Optional. If you enter your cycle day, blood test analysis uses the correct phase range for LH/FSH/Estradiol. Defaults to follicular if blank."}
+          </p>
+        </div>
+        <input
+          id="rep-cycle-day"
+          type="number"
+          min={1}
+          max={28}
+          value={cycleDay ?? ""}
+          onChange={(e) => handleCycleDayChange(e.target.value)}
+          placeholder={tr ? "ör. 14" : "e.g. 14"}
+          className="w-32 rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        />
+        {cycleDay !== null && (
+          <p className="text-xs text-emerald-700 dark:text-emerald-400">
+            {tr
+              ? `Bu gün ${cyclePhaseLabel(cycleDay, "tr")} fazda — LH/FSH/Estradiol referans aralıkları buna göre değerlendirilir.`
+              : `This day is in the ${cyclePhaseLabel(cycleDay, "en")} phase — LH/FSH/Estradiol thresholds adjust accordingly.`}
+          </p>
+        )}
+      </div>
+
+      {/* "Yakında burada" info card. Cycle tracking artık aktif, kart kontraseptif + hormon profile'a daraltıldı. */}
       <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-5">
         <div className="flex items-start gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400">
@@ -176,14 +228,22 @@ export function ReproductiveTab({ lang, userId, gender, profile, onSaved }: Repr
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed mt-1">
               {tr
-                ? "Yakında burada adet döngüsü takibi, kontraseptif kayıtları ve hormon profili yönetimi yer alacak. Şu an temel üreme sağlığı bilgilerini Tıbbi Geçmiş altında da bulabilirsin."
-                : "Menstrual cycle tracking, contraception records, and hormonal profile management arrive here soon. For now, the same flags also live under Medical History."}
+                ? "Yakında burada kontraseptif kayıtları ve hormon profili yönetimi yer alacak. Şu an temel üreme sağlığı bilgilerini Tıbbi Geçmiş altında da bulabilirsin."
+                : "Contraception records and hormonal profile management arrive here soon. For now, the same flags also live under Medical History."}
             </p>
           </div>
         </div>
       </div>
     </section>
   )
+}
+
+// Sprint 27 Commit 3 — cycle phase label for the input helper text.
+// 1-10 → follicular, 11-17 → midcycle, 18-28 → luteal (matches endpoint logic).
+function cyclePhaseLabel(day: number, lang: "tr" | "en"): string {
+  if (day <= 10) return lang === "tr" ? "foliküler" : "follicular"
+  if (day <= 17) return lang === "tr" ? "midsiklus (yumurtlama)" : "midcycle (ovulation)"
+  return lang === "tr" ? "luteal" : "luteal"
 }
 
 function FlagRow({
