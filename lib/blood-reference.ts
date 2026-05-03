@@ -18,6 +18,13 @@ export interface BloodTestMarker {
     male: { optimal_low: number; optimal_high: number };
     female: { optimal_low: number; optimal_high: number };
   };
+  // Sprint 26 Commit 1 — phase-aware ranges (LH/FSH/Estradiol).
+  // analyzeValue priority: phaseRanges[lifeStage][gender] > genderSpecific[gender] > ranges.
+  // Non-hormonal markers omit this field — backward compat (Sprint 25 behavior aynen).
+  phaseRanges?: Partial<Record<LifeStage, {
+    male?: { optimal_low: number; optimal_high: number };
+    female?: { optimal_low: number; optimal_high: number };
+  }>>;
   description: string;
 }
 
@@ -32,6 +39,18 @@ export type BloodTestCategory =
   | "liver"
   | "kidney"
   | "blood_count";
+
+// Sprint 26 Commit 1 — life stage for phase-aware analyzeValue.
+// "follicular" is the safe default for premenopausal women (most common clinical
+// reference). "postmenopausal" auto-derived from chronic_conditions: "menopause"
+// flag (Sprint 24 schema-light pattern). cycle_day input UX deferred to Sprint
+// 27+ (would need user_profiles.last_menstrual_period or explicit input).
+export type LifeStage =
+  | "follicular"
+  | "midcycle"
+  | "luteal"
+  | "postmenopausal"
+  | "premenopausal";
 
 export interface BloodTestValue {
   markerId: string;
@@ -240,11 +259,19 @@ export const BLOOD_TEST_MARKERS: BloodTestMarker[] = [
     name: "LH (Luteinizing Hormone)",
     unit: "IU/L",
     category: "hormones",
-    // Phase-specific (Commit 3): midcycle 19.2-103, luteal 1.2-12.9, postmenopausal 10.9-58.6
+    // Sprint 25 envelope (gender unknown fallback): 1.7-10.9 IU/L
     ranges: { optimal_low: 1.7, optimal_high: 10.9 },
     genderSpecific: {
       male: { optimal_low: 1.7, optimal_high: 8.6 },
       female: { optimal_low: 2.1, optimal_high: 10.9 },
+    },
+    // Sprint 26 Commit 1 — phase-aware female ranges. Activates when caller
+    // passes lifeStage. Postmenopausal flag (Sprint 24) → "postmenopausal".
+    phaseRanges: {
+      follicular: { female: { optimal_low: 2.1, optimal_high: 10.9 } },
+      midcycle: { female: { optimal_low: 19.2, optimal_high: 103 } },
+      luteal: { female: { optimal_low: 1.2, optimal_high: 12.9 } },
+      postmenopausal: { female: { optimal_low: 10.9, optimal_high: 58.6 } },
     },
     description: "Pituitary hormone — ovulation trigger (female) / Leydig cell stimulation (male)",
   },
@@ -253,11 +280,18 @@ export const BLOOD_TEST_MARKERS: BloodTestMarker[] = [
     name: "FSH (Follicle-Stimulating Hormone)",
     unit: "IU/L",
     category: "hormones",
-    // Phase-specific (Commit 3): midcycle 4.5-22.5, luteal 1.8-5.1, postmenopausal 16.7-113.6
+    // Sprint 25 envelope (gender unknown fallback): 1.5-12.4 IU/L
     ranges: { optimal_low: 1.5, optimal_high: 12.4 },
     genderSpecific: {
       male: { optimal_low: 1.5, optimal_high: 12.4 },
       female: { optimal_low: 3.9, optimal_high: 8.8 },
+    },
+    // Sprint 26 Commit 1 — phase-aware female ranges.
+    phaseRanges: {
+      follicular: { female: { optimal_low: 3.9, optimal_high: 8.8 } },
+      midcycle: { female: { optimal_low: 4.5, optimal_high: 22.5 } },
+      luteal: { female: { optimal_low: 1.8, optimal_high: 5.1 } },
+      postmenopausal: { female: { optimal_low: 16.7, optimal_high: 113.6 } },
     },
     description: "Pituitary hormone — follicle maturation (female) / spermatogenesis (male)",
   },
@@ -266,11 +300,18 @@ export const BLOOD_TEST_MARKERS: BloodTestMarker[] = [
     name: "Estradiol (E2)",
     unit: "ng/L",
     category: "hormones",
-    // Phase-specific (Commit 3): midcycle 32-517, luteal 36-246, postmenopausal 0-25.1
+    // Sprint 25 envelope (gender unknown fallback): 0-115 ng/L
     ranges: { optimal_low: 0, optimal_high: 115 },
     genderSpecific: {
       male: { optimal_low: 0, optimal_high: 39.8 },
       female: { optimal_low: 23, optimal_high: 115 },
+    },
+    // Sprint 26 Commit 1 — phase-aware female ranges.
+    phaseRanges: {
+      follicular: { female: { optimal_low: 23, optimal_high: 115 } },
+      midcycle: { female: { optimal_low: 32, optimal_high: 517 } },
+      luteal: { female: { optimal_low: 36, optimal_high: 246 } },
+      postmenopausal: { female: { optimal_low: 0, optimal_high: 25.1 } },
     },
     description: "Primary estrogen — follicle production (female) / testicular conversion (male)",
   },
@@ -440,12 +481,21 @@ export const CATEGORY_INFO: Record<BloodTestCategory, { label: string; color: st
 export function analyzeValue(
   marker: BloodTestMarker,
   value: number,
-  gender?: "male" | "female" | null
+  gender?: "male" | "female" | null,
+  lifeStage?: LifeStage,
 ): BloodTestResult {
-  const ranges = (gender && marker.genderSpecific?.[gender]) || {
-    optimal_low: marker.ranges.optimal_low,
-    optimal_high: marker.ranges.optimal_high,
-  };
+  // Sprint 26 Commit 1 — priority chain:
+  //   phaseRanges[lifeStage][gender] > genderSpecific[gender] > ranges (envelope)
+  // Postmenopozal LH/FSH/Estradiol threshold fix; non-hormonal markers ignore
+  // lifeStage (phaseRanges undefined → falls through). Caller omits lifeStage
+  // → Sprint 25 davranışı aynen (backward compat).
+  const ranges =
+    (lifeStage && gender && marker.phaseRanges?.[lifeStage]?.[gender]) ||
+    (gender && marker.genderSpecific?.[gender]) ||
+    {
+      optimal_low: marker.ranges.optimal_low,
+      optimal_high: marker.ranges.optimal_high,
+    };
   const low = marker.ranges.low;
   const high = marker.ranges.high;
 

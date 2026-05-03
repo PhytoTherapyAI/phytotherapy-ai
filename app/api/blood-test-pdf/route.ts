@@ -7,6 +7,7 @@ import {
   BLOOD_TEST_MARKERS,
   analyzeValue,
   type BloodTestResult,
+  type LifeStage,
 } from "@/lib/blood-reference";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";
@@ -241,6 +242,29 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Sprint 26 Commit 1 — derive lifeStage for phase-aware analyzeValue.
+    // Postmenopozal LH/FSH/Estradiol threshold fix; foliküler default for everyone else.
+    // Schema-light: chronic_conditions "menopause" prefix (Sprint 24 pattern).
+    let lifeStage: LifeStage = "follicular";
+    if (upfrontUserId) {
+      try {
+        const supabase = createServerClient();
+        const { data: profForStage } = await supabase
+          .from("user_profiles")
+          .select("chronic_conditions")
+          .eq("id", upfrontUserId)
+          .single();
+        const conds = Array.isArray(profForStage?.chronic_conditions)
+          ? (profForStage.chronic_conditions as string[])
+          : [];
+        if (conds.some((c) => c.toLowerCase() === "menopause")) {
+          lifeStage = "postmenopausal";
+        }
+      } catch {
+        // graceful fallback to follicular
+      }
+    }
+
     // Analyze values
     const results: Record<string, BloodTestResult[]> = {};
     let totalMarkers = 0;
@@ -251,7 +275,7 @@ export async function POST(req: NextRequest) {
       const marker = BLOOD_TEST_MARKERS.find((m) => m.id === markerId);
       if (!marker) continue;
 
-      const analysisResult = analyzeValue(marker, value, gender);
+      const analysisResult = analyzeValue(marker, value, gender, lifeStage);
       const category = marker.category;
 
       if (!results[category]) results[category] = [];

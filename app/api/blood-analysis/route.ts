@@ -8,6 +8,7 @@ import {
   analyzeValue,
   type BloodTestResult,
   type BloodTestCategory,
+  type LifeStage,
 } from "@/lib/blood-reference";
 import { checkRateLimit, getClientIP } from "@/lib/rate-limit";
 import { tx } from "@/lib/translations";
@@ -94,13 +95,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Sprint 26 Commit 1 — derive lifeStage for phase-aware analyzeValue.
+    // Postmenopozal LH/FSH/Estradiol threshold fix; foliküler default otherwise.
+    // Schema-light: chronic_conditions "menopause" prefix (Sprint 24 pattern).
+    // Note: this is an early profile fetch (chronic_conditions only); the full
+    // profile fetch later (line ~120) reuses the same row but pulls all fields
+    // for AI prompt context. ~10ms overhead acceptable for surgical scope.
+    let lifeStage: LifeStage = "follicular";
+    const earlyAuth = request.headers.get("authorization");
+    if (earlyAuth?.startsWith("Bearer ")) {
+      try {
+        const token = earlyAuth.replace("Bearer ", "");
+        const supabase = createServerClient();
+        const { data: { user } } = await supabase.auth.getUser(token);
+        if (user) {
+          const { data: profForStage } = await supabase
+            .from("user_profiles")
+            .select("chronic_conditions")
+            .eq("id", user.id)
+            .single();
+          const conds = Array.isArray(profForStage?.chronic_conditions)
+            ? (profForStage.chronic_conditions as string[])
+            : [];
+          if (conds.some((c) => c.toLowerCase() === "menopause")) {
+            lifeStage = "postmenopausal";
+          }
+        }
+      } catch {
+        // graceful fallback to follicular
+      }
+    }
+
     // Step 1: Analyze values against reference ranges
     const results: BloodTestResult[] = [];
     for (const [markerId, value] of Object.entries(values)) {
       const marker = BLOOD_TEST_MARKERS.find((m) => m.id === markerId);
       if (!marker) continue;
       if (typeof value !== "number" || isNaN(value)) continue;
-      results.push(analyzeValue(marker, value, gender));
+      results.push(analyzeValue(marker, value, gender, lifeStage));
     }
 
     if (results.length === 0) {
