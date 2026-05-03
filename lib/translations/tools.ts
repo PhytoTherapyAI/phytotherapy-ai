@@ -987,6 +987,10 @@ export const toolsTranslations: Record<string, TranslationEntry> = {
     en: "You can pin up to 5 conversations. Unpin one first.",
     tr: "En fazla 5 sohbet sabitleyebilirsin. Önce birini kaldır.",
   },
+  // F-CHAT-SIDEBAR-004 (Sprint 25 Commit 3) — title-only search; Sprint 27 Commit 1 i18n migration.
+  "ch.searchPlaceholder": { en: "Search conversations...", tr: "Sohbet ara..." },
+  "ch.searchNoResults": { en: "No results found", tr: "Sonuç bulunamadı" },
+  "ch.searchClearAria": { en: "Clear search", tr: "Aramayı temizle" },
   "history.noFavorites": { en: "No favorites yet", tr: "Henüz favori eklemediniz" },
   "history.noQueries": { en: "Your queries will appear here", tr: "Sorularınız burada görünecek" },
   "vital.notesPlaceholder": { en: "e.g., After meal", tr: "ör. Yemekten sonra" },

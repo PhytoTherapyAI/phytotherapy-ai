@@ -2352,6 +2352,18 @@ export const commonToolKeys: Record<string, TranslationEntry> = {
   "mhx.urgencyNormal": { en: "Normal", tr: "Normal" },
   "mhx.urgencyAttention": { en: "Attention", tr: "Dikkat" },
 
+  // Sprint 25 Commit 5 — blood test delete; Sprint 27 Commit 1 i18n migration.
+  "mhx.deleteAria": { en: "Delete this blood test", tr: "Tahlili sil" },
+  "mhx.deleteConfirmTitle": { en: "Delete blood test?", tr: "Tahlili sil?" },
+  "mhx.deleteConfirmDesc": {
+    en: "Are you sure you want to delete this blood test?",
+    tr: "Bu tahlili silmek istediğinizden emin misiniz?",
+  },
+  "mhx.deleteConfirmAction": { en: "Delete", tr: "Sil" },
+  "mhx.deleteCancel": { en: "Cancel", tr: "İptal" },
+  "mhx.deleteSuccess": { en: "Blood test deleted", tr: "Tahlil silindi" },
+  "mhx.deleteError": { en: "Delete failed", tr: "Silme başarısız" },
+
   // ── ConsentStep ──
   "consent.agreementText": { en: "I have read and understood the Medical Disclaimer and Data Privacy notice above. I accept the Terms of Service and Privacy Policy. I understand that DoctoPal is not a substitute for professional medical advice, and I will consult my healthcare provider before acting on any recommendations.", tr: "Yukaridaki Tibbi Sorumluluk Reddi ve Veri Gizliligi bildirimini okudum, Kullanim Kosullari ile Gizlilik Politikasini kabul ediyorum. DoctoPal'nin profesyonel tibbi tavsiyenin yerini almadigini anliyorum ve herhangi bir oneriyi uygulamadan once saglik uzmanima danisacagim." },
 

@@ -154,15 +154,15 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
 
       if (!res.ok) {
         setItems(snapshot);
-        toast.error("Silme başarısız");
+        toast.error(tx("mhx.deleteError", lang));
         return;
       }
 
-      toast.success("Tahlil silindi");
+      toast.success(tx("mhx.deleteSuccess", lang));
     } catch (err) {
       console.error("Failed to delete blood test:", err);
       setItems(snapshot);
-      toast.error("Silme başarısız");
+      toast.error(tx("mhx.deleteError", lang));
     } finally {
       setIsDeleting(false);
       setPendingDeleteId(null);
@@ -243,7 +243,7 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
                   e.stopPropagation();
                   setPendingDeleteId(item.id);
                 }}
-                aria-label="Tahlili sil"
+                aria-label={tx("mhx.deleteAria", lang)}
                 className="shrink-0 flex items-center justify-center px-3 text-muted-foreground/50 hover:bg-red-50 hover:text-red-600 transition-colors dark:hover:bg-red-950/30 dark:hover:text-red-400"
               >
                 <Trash2 className="h-4 w-4" />
@@ -275,10 +275,10 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Trash2 className="h-4 w-4 text-red-600" />
-              Tahlili sil?
+              {tx("mhx.deleteConfirmTitle", lang)}
             </DialogTitle>
             <DialogDescription>
-              Bu tahlili silmek istediğinizden emin misiniz?
+              {tx("mhx.deleteConfirmDesc", lang)}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-end">
@@ -288,7 +288,7 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
               onClick={() => setPendingDeleteId(null)}
               disabled={isDeleting}
             >
-              İptal
+              {tx("mhx.deleteCancel", lang)}
             </Button>
             <Button
               size="sm"
@@ -301,7 +301,7 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
               ) : (
                 <Trash2 className="h-3.5 w-3.5" />
               )}
-              <span className="ml-1.5">Sil</span>
+              <span className="ml-1.5">{tx("mhx.deleteConfirmAction", lang)}</span>
             </Button>
           </DialogFooter>
         </DialogContent>

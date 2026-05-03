@@ -724,7 +724,7 @@ export function ConversationHistory({
             <Search className="pointer-events-none absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Sohbet ara..."
+              placeholder={tx("ch.searchPlaceholder", lang)}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full rounded-md border-0 bg-muted py-1.5 pl-8 pr-7 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
@@ -733,7 +733,7 @@ export function ConversationHistory({
               <button
                 type="button"
                 onClick={() => setSearchQuery("")}
-                aria-label="Aramayı temizle"
+                aria-label={tx("ch.searchClearAria", lang)}
                 className="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
               >
                 <X className="h-3.5 w-3.5" />
@@ -760,7 +760,7 @@ export function ConversationHistory({
             </div>
           ) : searchQuery && filteredConversations.length === 0 ? (
             <p className="py-4 text-center text-xs text-muted-foreground">
-              Sonuç bulunamadı
+              {tx("ch.searchNoResults", lang)}
             </p>
           ) : (
             <div className="py-1 space-y-0.5">
@@ -860,7 +860,7 @@ export function ConversationHistory({
                 <Search className="pointer-events-none absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Sohbet ara..."
+                  placeholder={tx("ch.searchPlaceholder", lang)}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full rounded-md border-0 bg-muted py-1.5 pl-8 pr-7 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
@@ -869,7 +869,7 @@ export function ConversationHistory({
                   <button
                     type="button"
                     onClick={() => setSearchQuery("")}
-                    aria-label="Aramayı temizle"
+                    aria-label={tx("ch.searchClearAria", lang)}
                     className="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -896,7 +896,7 @@ export function ConversationHistory({
                 </div>
               ) : searchQuery && filteredConversations.length === 0 ? (
                 <p className="py-4 text-center text-xs text-muted-foreground">
-                  Sonuç bulunamadı
+                  {tx("ch.searchNoResults", lang)}
                 </p>
               ) : (
                 <div className="py-1 space-y-0.5">
