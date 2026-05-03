@@ -1,6 +1,44 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: Sprint 24 canlı — UX polish + postmenopozal + polypharmacy ✅ (2 Mayıs 2026)
+> Son güncelleme: Sprint 25 canlı — multimodal few-shot + hormonal panel + search + schema cleanup + blood test delete ✅ (3 Mayıs 2026)
+
+---
+
+## Sprint 25 — Multimodal + Schema Cleanup (3 Mayıs 2026)
+
+**Toplam:** 6 commit (5 feat/refactor + 1 docs), 0 revert
+**Smoke test:** ✅ tsc + build her commit sonrası 0 error/warning
+
+| # | SHA | Açıklama |
+|---|---|---|
+| 1 | `c504fd5` | EXTRACTION_PROMPT 3 few-shot (e-Nabız + biyokimya + unit conversion) |
+| 2 | `4307513` | Hormonal panel markers (BLOOD_TEST_MARKERS + whitelist 8 marker) |
+| 3 | `4745a7d` | ConversationHistory title-only search |
+| 4a | `0f80154` | analysis_result + pdf_url code cleanup |
+| 4b | `26e98ba` | DROP migration SQL |
+| 5 | `878a252` | Blood test delete endpoint + UI |
+| D1 | (this) | Sprint 25 kapanış docs |
+
+### Major Outcomes
+
+- **Commit 1-2 — Multimodal few-shot:** EXTRACTION_PROMPT Stage 1'e 3 few-shot (e-Nabız hormonal panel / klasik biyokimya / unit conversion). BLOOD_TEST_MARKERS'a 8 hormonal marker (LH/FSH/estradiol/prolactin/testosterone/beta_hcg/urea_bun) + whitelist genişletme. BloodTestTrendChart hormonal grafik + abnormalCount + "hormones" kategorisi aktif. Light path (foliküler default) — phase-aware analyzeValue Sprint 26 backlog.
+- **Commit 3 — Search:** ConversationHistory sidebar + drawer her ikisine title-only client-side search (filteredConversations, case-insensitive). Search icon + X clear + "Sonuç bulunamadı" branch. 0 server-side hit.
+- **Commit 4 — Schema cleanup:** analysis_result + pdf_url 7 dosyadan temizlendi (2 write + 5 read). Demo seed analysis_result → summary migrate. Supabase DROP migration çalıştırıldı, kolonlar kaldırıldı. family_history_entries 4 policy aktif doğrulandı.
+- **Commit 5 — Blood test delete:** YENİ DELETE endpoint (5 katman: rate limit + UUID + auth + resolveTargetUser + 404-as-RLS-block). BloodTestHistoryList Trash2 button + Dialog confirm + optimistic remove + rollback + sonner toast.
+- **0 ürün regresyonu:** Tüm mevcut flow (conversation delete, blood test list, SBAR, profileContext, streaming) intact.
+
+### Sprint 26 Backlog
+
+| Madde | Öncelik | Notlar |
+|---|---|---|
+| **F-PAYMENT-001 Iyzico** | Kritik | 27 Mayıs avukat görüşmesi sonrası unblock |
+| **Phase-aware analyzeValue** | Yüksek | lifeStage param + postmenopozal LH/FSH threshold fix |
+| **Hardcoded TR → tx() i18n** | Düşük | search + blood delete 9 string, mhx/ch namespace |
+| **NotoSans font swap** | Düşük | Sprint 20'den devir |
+
+### Önemli Tarihler
+
+- **27 Mayıs 2026** — ⚖️ Avukat görüşmesi (24 gün kaldı). Limited / A.Ş. / Estonya OÜ kararı.
 
 ---
 
