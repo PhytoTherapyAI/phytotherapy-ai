@@ -1,6 +1,36 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: Sprint 25 canlı — multimodal few-shot + hormonal panel + search + schema cleanup + blood test delete ✅ (3 Mayıs 2026)
+> Son güncelleme: Sprint 26 canlı — phase-aware analyzeValue, postmenopozal LH/FSH/Estradiol threshold fix ✅ (3 Mayıs 2026)
+
+---
+
+## Sprint 26 — Phase-Aware Hormonal Analysis (3 Mayıs 2026)
+
+**Toplam:** 1 commit + 1 docs commit, 0 revert
+**Smoke test:** ✅ tsc + build 0 error/warning
+
+| # | SHA | Açıklama |
+|---|---|---|
+| 1 | `b00de39` | phase-aware analyzeValue — postmenopozal LH/FSH/Estradiol threshold fix |
+| D1 | (this) | Sprint 26 kapanış docs |
+
+### Major Outcomes
+
+- **Commit 1 — Phase-aware analyzeValue:** Sprint 25 trade-off kapatıldı. LifeStage type (follicular/midcycle/luteal/postmenopausal/premenopausal) + BloodTestMarker.phaseRanges field. analyzeValue priority chain: phaseRanges[lifeStage][gender] > genderSpecific[gender] > marker.ranges. LH/FSH/Estradiol'a phase-specific female aralıklar eklendi. 2 call site (blood-test-pdf + blood-analysis) postmenopausal detection wire. chronic_conditions "menopause" → lifeStage="postmenopausal" otomatik. Klinik fix: Postmenopozal LH 30 → "Optimal" (önceki: "Borderline High").
+- **0 ürün regresyonu:** Non-hormonal marker'lar + lifeStage omit + erkek profili backward compat.
+
+### Sprint 27 Backlog
+
+| Madde | Öncelik | Notlar |
+|---|---|---|
+| **F-PAYMENT-001 Iyzico** | Kritik | 27 Mayıs avukat görüşmesi sonrası unblock |
+| **Hardcoded TR → tx() i18n** | Düşük | search + blood delete 9 string |
+| **NotoSans font swap** | Düşük | Sprint 20'den devir |
+| **cycle_day input UX** | Düşük | LMP'den faz hesaplama, midcycle/luteal explicit kullanım |
+
+### Önemli Tarihler
+
+- **27 Mayıs 2026** — ⚖️ Avukat görüşmesi (24 gün kaldı). Limited / A.Ş. / Estonya OÜ kararı.
 
 ---
 
