@@ -1953,4 +1953,15 @@ ce9b2bd fix(settings): close password change security gaps + NIST-aligned valida
 
 **Sprint 28 backlog:** Iyzico (kritik, 27 Mayıs sonrası) / NotoSans base64 (orta) / Apple Health steps (düşük) / HealthReportTab (düşük) / ESLint (düşük).
 
+### Sprint 28 — Code Quality + Profile Polish (3 Mayıs 2026) — Tamamlandı
+
+**Toplam:** 2 commit + 1 docs commit, 0 revert.
+
+- `380b474` ESLint sweep — 14 problem → 0 error / 7 warning (rules-of-hooks manuel fix)
+- `62cd18d` HealthReportTab light polish — alert cap(3) + meds slice(5) + chronic nudge + stale comment cleanup
+
+**Önemli:** HealthReportTab 3 sub-feature Sprint 9'da zaten implementti — Sprint 28 sadece 3 minor gap kapattı. 7 kalan ESLint warning intentional trigger dep pattern (semantic care, ayrı sprint).
+
+**Sprint 29 backlog:** Iyzico (kritik, 27 Mayıs sonrası) / NotoSans base64 (orta, 2x fail history) / Apple Health steps (düşük) / ESLint warning (düşük).
+
 ---

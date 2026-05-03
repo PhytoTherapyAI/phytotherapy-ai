@@ -1,6 +1,38 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: Sprint 27 canlı — i18n migration + cycle_day input + lifeStage derivation ✅ (3 Mayıs 2026)
+> Son güncelleme: Sprint 28 canlı — ESLint sweep + HealthReportTab polish ✅ (3 Mayıs 2026)
+
+---
+
+## Sprint 28 — Code Quality + Profile Polish (3 Mayıs 2026)
+
+**Toplam:** 2 commit + 1 docs commit, 0 revert
+**Smoke test:** ✅ tsc + build her commit sonrası 0 error/warning
+
+| # | SHA | Açıklama |
+|---|---|---|
+| 1 | `380b474` | ESLint sweep — 14 problem → 7 warning, 0 error |
+| 2 | `62cd18d` | HealthReportTab enrichment — alert cap + meds slice + chronic nudge |
+| D1 | (this) | Sprint 28 kapanış docs |
+
+### Major Outcomes
+
+- **Commit 1 — ESLint:** Auto-fix 4 unused eslint-disable directive. Manuel fix: HealthReportTab rules-of-hooks ihlali (chronicArr + organStates useMemo Sprint 28 Commit 1'de hoist). 0 error / 7 warning (intentional trigger dep pattern, semantic care gerekir).
+- **Commit 2 — HealthReportTab:** 3 sub-feature Sprint 9'da zaten implement edilmişti. Sprint 28 light polish: activeAlerts.slice(0,3) cap + recentMeds.slice(0,5) spec parite + chronic conditions nudge candidate (🩺 tibbi-gecmis tab) + stale TODO comment cleanup. Yeni i18n key: profile.healthReport.nudges.chronicConditions.
+- **0 ürün regresyonu:** Tüm mevcut flow intact.
+
+### Sprint 29 Backlog
+
+| Madde | Öncelik | Notlar |
+|---|---|---|
+| **F-PAYMENT-001 Iyzico** | Kritik | 27 Mayıs avukat görüşmesi sonrası unblock |
+| **NotoSans base64 inline** | Orta | Build-time TTF→base64, Vercel deploy testi gerekli (2x fail history) |
+| **Apple Health / Google Fit steps** | Düşük | health_metrics.steps, niche kullanıcı segmenti |
+| **7 ESLint warning** | Düşük | Intentional trigger dep — semantic care gerekir |
+
+### Önemli Tarihler
+
+- **27 Mayıs 2026** — ⚖️ Avukat görüşmesi. Limited / A.Ş. / Estonya OÜ kararı. Iyzico unblock.
 
 ---
 
