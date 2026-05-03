@@ -1915,3 +1915,30 @@ ce9b2bd fix(settings): close password change security gaps + NIST-aligned valida
 **Dependency-gated:**
 - **F-HEALTH-CLAIMS-001 6.1 / 6.3 / 6.4** — avukat görüşü sonrası unlock olur (9 soru paketi `docs/plans/F-HEALTH-CLAIMS-001-master-plan.md`'de hazır; Mesafeli Satış + Abonelik Sözleşmesi v2 ile birlikte tek seansta görüşülür)
 - **F-PAYMENT-001 (Iyzico)** — şirket kuruluşu blocker (`docs/IYZICO_INTEGRATION_PLAN.md` v1.0 hazır)
+
+### Sprint 25 — Multimodal + Schema Cleanup (3 Mayıs 2026) — Tamamlandı
+
+**Toplam:** 6 commit + 1 docs commit, 0 revert. Build her commit sonrası tsc + npm temiz.
+
+- `c504fd5` EXTRACTION_PROMPT 3 few-shot (e-Nabız + biyokimya + unit conversion) — Stage 1 vision OCR robustluk
+- `4307513` Hormonal panel markers — `BloodTestCategory` "hormones" + 8 marker (LH/FSH/estradiol/prolactin/free_testosterone/total_testosterone/beta_hcg/urea_bun) + Stage 1 whitelist
+- `4745a7d` ConversationHistory title-only search (sidebar + drawer, client-side filter)
+- `0f80154` analysis_result + pdf_url code cleanup — 7 dosya
+- `26e98ba` DROP migration SQL — `supabase/migrations/20260503_drop_analysis_result_pdf_url.sql`
+- `878a252` Blood test delete endpoint + UI — 5-katman güvenlik
+- `75198cf` docs Sprint 25 kapanış
+
+**Önemli:** Demo route `analysis_result → summary` migrate. Hormonal Light path foliküler default — phase-aware Sprint 26'da kapatıldı. Hardcoded TR string'ler i18n backlog'da. Manuel adım: Supabase Studio'da DROP SQL apply edildi.
+
+### Sprint 26 — Phase-Aware Hormonal Analysis (3 Mayıs 2026) — Tamamlandı
+
+**Toplam:** 1 commit + 1 docs commit, 0 revert.
+
+- `b00de39` phase-aware analyzeValue — postmenopozal LH/FSH/Estradiol threshold fix
+- `7c7a1a4` docs Sprint 26 kapanış
+
+**Önemli:** Sprint 25 trade-off kapatıldı. YENİ `LifeStage` type + `BloodTestMarker.phaseRanges` field. Priority chain: `phaseRanges[lifeStage][gender] > genderSpecific[gender] > marker.ranges`. `chronic_conditions: "menopause"` → `lifeStage="postmenopausal"` otomatik. Klinik fix: Postmenopozal LH 30 → "Optimal" (önceki: "Borderline High").
+
+**Sprint 27 backlog:** Iyzico (kritik, 27 Mayıs sonrası) / i18n migration (düşük) / NotoSans (düşük) / cycle_day input UX (düşük).
+
+---
