@@ -195,6 +195,8 @@ export const authTranslations: Record<string, TranslationEntry> = {
   "profile.healthReport.nudges.allergies": { en: "No allergies added — add for safe recommendations", tr: "Alerji bilgisi yok — güvenli öneri için ekle" },
   "profile.healthReport.nudges.vaccines": { en: "Vaccine records empty", tr: "Aşı kayıtları boş" },
   "profile.healthReport.nudges.lifestyle": { en: "Body & lifestyle info missing", tr: "Vücut & yaşam tarzı bilgisi eksik" },
+  // Sprint 28 Commit 2 — chronic conditions nudge (spec parite).
+  "profile.healthReport.nudges.chronicConditions": { en: "No chronic conditions logged", tr: "Kronik hastalık eklenmedi" },
   "profile.healthReport.nudges.familyHistory": { en: "Family health history not added", tr: "Aile sağlık öyküsü eklenmemiş" },
   // Sprint 9 Commit 2 — Recent Activity feed
   "profile.healthReport.recentActivity.title": { en: "Recent activity", tr: "Son aktivite" },

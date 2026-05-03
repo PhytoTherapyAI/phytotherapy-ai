@@ -10,10 +10,11 @@
 //   4. SBAR PDF card (reuses PDFDownloadButton with its baked-in
 //      Premium gate + email modal)
 //
-// TODO: Session 46 enrichment — scope-creep guard (see plan file):
-//   - Digital Twin hero polish (body silhouette / organ map)
-//   - Recent Activity multi-source feed (last 5 meds + 3 alerts + 1 lab)
-//   - Missing section nudges (cross-tab navigation via setTab prop drilling)
+// Sprint 9 Commit 1/2/3 enrichment — DONE:
+//   - Digital Twin (BodySilhouette + DigitalTwinLegend, line ~335 + 599-710)
+//   - Recent Activity feed (active alerts + last lab + recent meds, line ~458)
+//   - Missing Nudges (nudgeCandidates + setTab navigation, line ~207 + 533)
+// Sprint 28 Commit 2 — minor polish: alert cap (3) + meds slice (5) + chronic nudge.
 //
 // Family-view gating: early return with FamilyProfileGuard when viewing
 // another profile. Matches /badges route precedent (KVKK safety +
@@ -235,6 +236,12 @@ export function HealthReportTab({
       tabId: "vucut-yasam" as ProfileTabId,
       emoji: "🏃",
       label: tx("profile.healthReport.nudges.lifestyle", lang),
+    },
+    // Sprint 28 Commit 2 — chronic conditions nudge (spec parite).
+    !powerInput.hasChronicConditions && {
+      tabId: "tibbi-gecmis" as ProfileTabId,
+      emoji: "🩺",
+      label: tx("profile.healthReport.nudges.chronicConditions", lang),
     },
     !powerInput.hasFamilyHistory && {
       tabId: "aile-oykusu" as ProfileTabId,
@@ -465,8 +472,8 @@ export function HealthReportTab({
             {tx("profile.healthReport.recentActivity.title", lang)}
           </p>
 
-          {/* Aktif uyarılar üstte (kritik) — kırmızı border */}
-          {activeAlerts.map((alert) => (
+          {/* Aktif uyarılar üstte (kritik) — kırmızı border. Sprint 28 Commit 2: max 3 (spec parite). */}
+          {activeAlerts.slice(0, 3).map((alert) => (
             <div
               key={alert.id}
               className="flex items-start gap-3 p-3 rounded-lg border border-destructive/30 bg-destructive/5"
@@ -503,8 +510,8 @@ export function HealthReportTab({
             </div>
           )}
 
-          {/* Son eklenen ilaçlar (max 3 göster — useProfileData zaten 5 limit) */}
-          {recentMeds.slice(0, 3).map((med) => {
+          {/* Son eklenen ilaçlar. Sprint 28 Commit 2: 3 → 5 (spec parite, useProfileData zaten 5 fetch ediyor). */}
+          {recentMeds.slice(0, 5).map((med) => {
             const display =
               med.brand_name ||
               med.generic_name ||
