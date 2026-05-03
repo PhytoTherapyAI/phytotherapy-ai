@@ -89,10 +89,10 @@ export interface SBARData {
   }>;
   lastLab?: {
     created_at: string;
-    // Sprint 18 — radiology_reports paterni: summary + overall_urgency öncelikli, analysis_result fallback.
+    // Sprint 18 — radiology_reports paterni: summary + overall_urgency.
+    // Sprint 25 Commit 4 — analysis_result DROPPED (deprecated kolon).
     summary?: string | null;
     overall_urgency?: string | null;
-    analysis_result: string | null;
   };
   lastRadiology?: {
     created_at: string;
@@ -586,12 +586,10 @@ export function SBARReport({ data }: { data: SBARData }) {
                 <View style={s.resultBlock}>
                   <Text style={s.resultLabel}>{t.lastLabLabel}</Text>
                   <Text style={s.resultMeta}>{fixTr(fmtShortDate(data.lastLab.created_at))}</Text>
-                  {/* Sprint 18 — summary öncelikli, analysis_result legacy fallback */}
-                  {(data.lastLab.summary || data.lastLab.analysis_result) && (
+                  {/* Sprint 25 Commit 4 — analysis_result DROPPED, summary tek kaynak */}
+                  {data.lastLab.summary && (
                     <Text style={s.resultSnippet}>
-                      {data.lastLab.summary
-                        ? fixTr(snippet(data.lastLab.summary, 200))
-                        : fixTr(snippet(data.lastLab.analysis_result ?? "", 200))}
+                      {fixTr(snippet(data.lastLab.summary, 200))}
                     </Text>
                   )}
                   {data.lastLab.overall_urgency === "urgent" && (

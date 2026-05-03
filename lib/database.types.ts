@@ -106,8 +106,6 @@ export interface BloodTest {
   id: string;
   user_id: string;
   test_data: Record<string, unknown>;
-  analysis_result: string | null; // DEPRECATED Sprint 18 — use analysis_json. Remove Sprint 19+.
-  pdf_url: string | null; // DEPRECATED Sprint 18 — never populated. Remove Sprint 19+.
   created_at: string;
   // Sprint 18 — radiology_reports paterni
   analysis_json: Record<string, unknown> | null;

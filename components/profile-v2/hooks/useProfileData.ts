@@ -52,7 +52,6 @@ export interface ActiveAlertRow {
 export interface LastLabTestRow {
   id: string
   created_at: string
-  analysis_result: string | null
 }
 
 export interface ProfileDataState {
@@ -196,7 +195,7 @@ export function useProfileData(userId: string | null | undefined): UseProfileDat
           .limit(3),
         supabase
           .from("blood_tests")
-          .select("id, created_at, analysis_result")
+          .select("id, created_at")
           .eq("user_id", userId)
           .order("created_at", { ascending: false })
           .limit(1),

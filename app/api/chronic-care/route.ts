@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         .eq("user_id", user.id),
       supabase
         .from("blood_tests")
-        .select("test_data, analysis_result, created_at")
+        .select("test_data, created_at")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(3),

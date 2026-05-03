@@ -277,7 +277,7 @@ export async function POST() {
           alt: { value: 28, unit: "U/L" },
           ast: { value: 24, unit: "U/L" },
         },
-        analysis_result:
+        summary:
           "Key findings: 1) Vitamin D severely deficient (14 ng/mL) — supplement D3 4000 IU/day. 2) Ferritin very low (8 ng/mL) — iron supplementation needed. 3) Total cholesterol elevated (240 mg/dL) with low HDL (42) — lifestyle changes + omega-3. 4) HbA1c 6.8% indicates pre-diabetic range — continue Metformin, add berberine consideration. 5) CRP mildly elevated (3.2) — anti-inflammatory support recommended.",
         created_at: new Date(Date.now() - 14 * 86400000).toISOString(),
       },
@@ -292,7 +292,7 @@ export async function POST() {
           tsh: { value: 2.3, unit: "mIU/L" },
           vitamin_b12: { value: 350, unit: "pg/mL" },
         },
-        analysis_result: "Previous test showing higher values before treatment adjustments.",
+        summary: "Previous test showing higher values before treatment adjustments.",
         created_at: new Date(Date.now() - 90 * 86400000).toISOString(),
       },
     ]);
