@@ -40,6 +40,8 @@ import {
   Pin,
   PinOff,
   Pencil,
+  Search,
+  X,
 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -144,6 +146,11 @@ export function ConversationHistory({
   const [editingTitle, setEditingTitle] = useState("")
   const [savingRename, setSavingRename] = useState(false)
   const editInputRef = useRef<HTMLInputElement>(null)
+
+  // F-CHAT-SIDEBAR-004 — title-only search filter (Sprint 25 Commit 3).
+  // Client-side filter on title (custom) → last_message fallback. No server
+  // round-trip — capped fetch list, frontend pass.
+  const [searchQuery, setSearchQuery] = useState("")
 
   const fetchHistory = useCallback(async () => {
     if (!isAuthenticated || !session?.access_token) return
@@ -485,6 +492,17 @@ export function ConversationHistory({
     }
   }, [pendingDeleteId, session?.access_token, conversations, currentQueryId, lang, onDelete])
 
+  // F-CHAT-SIDEBAR-004 — case-insensitive contains on title → last_message
+  // fallback. Pinned + grouped sort logic remains in groupByDate (called
+  // with the filtered list).
+  const filteredConversations = searchQuery.trim()
+    ? conversations.filter((c) =>
+        (c.title ?? c.last_message ?? "")
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()),
+      )
+    : conversations
+
   if (!isAuthenticated) return null
 
   // ── Row renderer (shared between sidebar + drawer modes) ───────
@@ -678,7 +696,7 @@ export function ConversationHistory({
 
   // ─── SIDEBAR MODE ───
   if (sidebar) {
-    const groups = groupByDate(conversations)
+    const groups = groupByDate(filteredConversations)
     return (
       <div className="flex h-full flex-col border-r bg-muted/30">
         {/* Header */}
@@ -700,6 +718,30 @@ export function ConversationHistory({
           )}
         </div>
 
+        {/* Search input (F-CHAT-SIDEBAR-004) */}
+        <div className="border-b px-3 py-2">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Sohbet ara..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-md border-0 bg-muted py-1.5 pl-8 pr-7 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                aria-label="Aramayı temizle"
+                className="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
           {isLoading ? (
@@ -716,6 +758,10 @@ export function ConversationHistory({
                 {tx("ch.emptyDesc", lang)}
               </p>
             </div>
+          ) : searchQuery && filteredConversations.length === 0 ? (
+            <p className="py-4 text-center text-xs text-muted-foreground">
+              Sonuç bulunamadı
+            </p>
           ) : (
             <div className="py-1 space-y-0.5">
               {groups.map((group) => (
@@ -745,7 +791,7 @@ export function ConversationHistory({
   }
 
   // ─── DRAWER MODE (mobile / toggle button) ───
-  const drawerGroups = groupByDate(conversations)
+  const drawerGroups = groupByDate(filteredConversations)
   return (
     <>
       {/* Toggle button */}
@@ -808,6 +854,30 @@ export function ConversationHistory({
               </div>
             </div>
 
+            {/* Search input (F-CHAT-SIDEBAR-004) */}
+            <div className="border-b px-4 py-2">
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Sohbet ara..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full rounded-md border-0 bg-muted py-1.5 pl-8 pr-7 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    aria-label="Aramayı temizle"
+                    className="absolute right-2 top-2 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
+
             {/* Content */}
             <div className="flex-1 overflow-y-auto">
               {isLoading ? (
@@ -824,6 +894,10 @@ export function ConversationHistory({
                     {tx("ch.emptyDesc", lang)}
                   </p>
                 </div>
+              ) : searchQuery && filteredConversations.length === 0 ? (
+                <p className="py-4 text-center text-xs text-muted-foreground">
+                  Sonuç bulunamadı
+                </p>
               ) : (
                 <div className="py-1 space-y-0.5">
                   {drawerGroups.map((group) => (
