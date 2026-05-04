@@ -14,6 +14,14 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useLang } from "@/components/layout/language-toggle";
 import { tx } from "@/lib/translations";
 import { TurnstileWidget } from "@/components/auth/TurnstileWidget";
@@ -40,7 +48,12 @@ function LoginContent() {
   const [error, setError] = useState<string | null>(
     searchParams.get("error") === "auth_callback_error" ? tx("auth.errAuthFailed", lang) : null
   );
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  // Sprint 30 Commit 2 — when arriving via /auth/reset-password redirect with
+  // ?reset=success, show the "password updated" banner so the user knows the
+  // flow completed before they sign in with the new credentials.
+  const [successMessage, setSuccessMessage] = useState<string | null>(
+    searchParams.get("reset") === "success" ? tx("auth.passwordUpdated", lang) : null
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -56,6 +69,15 @@ function LoginContent() {
   // F-AUTH-003: controlled Tabs so the "already confirmed" callback can
   // flip the user from sign-up → sign-in without a manual click.
   const [activeTab, setActiveTab] = useState<string>("login");
+
+  // Sprint 30 Commit 2 — Forgot password modal state.
+  // resetSent flips the modal CTA to a success confirmation so the user
+  // sees "link sent" without us having to dispatch a sonner toast.
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetSubmitting, setResetSubmitting] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const [resetError, setResetError] = useState<string | null>(null);
 
   // Referral code state
   const [showReferral, setShowReferral] = useState(false);
@@ -204,6 +226,57 @@ function LoginContent() {
     }
   };
 
+  // Sprint 30 Commit 2 — Forgot password handler.
+  // resetPasswordForEmail sends a magic link email; redirectTo points the
+  // user back to /auth/reset-password where they pick a new password.
+  // We don't surface "user not found" errors — Supabase responds 200 either
+  // way (privacy by design — prevents email enumeration). User sees success
+  // banner regardless.
+  const openResetModal = () => {
+    setResetEmail(loginEmail); // pre-fill from login form
+    setResetError(null);
+    setResetSent(false);
+    setShowResetModal(true);
+  };
+
+  const closeResetModal = () => {
+    if (resetSubmitting) return; // can't dismiss mid-request
+    setShowResetModal(false);
+    // Leave resetSent intact briefly — re-open shows fresh state because
+    // openResetModal resets it. Gives user time to see the success banner
+    // even if they accidentally close.
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setResetError(null);
+    if (!resetEmail.trim()) {
+      setResetError(tx("auth.email", lang));
+      return;
+    }
+    setResetSubmitting(true);
+    try {
+      const sb = createBrowserClient();
+      const { error: resetErr } = await sb.auth.resetPasswordForEmail(
+        resetEmail.trim(),
+        {
+          redirectTo: `${window.location.origin}/auth/reset-password`,
+        },
+      );
+      if (resetErr) {
+        setResetError(tx("auth.errResetFailed", lang));
+        setResetSubmitting(false);
+        return;
+      }
+      setResetSent(true);
+    } catch (err) {
+      console.error("Password reset error:", err);
+      setResetError(tx("auth.errResetFailed", lang));
+    } finally {
+      setResetSubmitting(false);
+    }
+  };
+
   const handleApplyReferral = async () => {
     if (!referralCode.trim()) return;
     setApplyingCode(true);
@@ -310,6 +383,16 @@ function LoginContent() {
                     <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       onClick={() => setShowPassword(!showPassword)}>
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  {/* Sprint 30 Commit 2 — Forgot password trigger. */}
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={openResetModal}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      {tx("auth.forgotPassword", lang)}
                     </button>
                   </div>
                 </div>
@@ -446,6 +529,86 @@ function LoginContent() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Sprint 30 Commit 2 — Forgot password modal.
+          Pre-fills email from login form. resetSent flips body to success
+          confirmation. Closing while submitting is blocked. */}
+      <Dialog
+        open={showResetModal}
+        onOpenChange={(v) => {
+          if (!v) closeResetModal();
+        }}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{tx("auth.resetTitle", lang)}</DialogTitle>
+            <DialogDescription>
+              {resetSent ? tx("auth.resetSent", lang) : tx("auth.resetDesc", lang)}
+            </DialogDescription>
+          </DialogHeader>
+          {!resetSent && (
+            <form onSubmit={handleResetPassword} className="space-y-3">
+              <div className="space-y-2">
+                <Label htmlFor="reset-email">{tx("auth.email", lang)}</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="reset-email"
+                    type="email"
+                    placeholder={tx("auth.emailPlaceholder", lang)}
+                    className="pl-10"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    autoFocus
+                    required
+                  />
+                </div>
+              </div>
+              {resetError && (
+                <p className="text-xs text-destructive">{resetError}</p>
+              )}
+              <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={closeResetModal}
+                  disabled={resetSubmitting}
+                >
+                  {tx("auth.resetCancel", lang)}
+                </Button>
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90"
+                  disabled={resetSubmitting || !resetEmail.trim()}
+                >
+                  {resetSubmitting ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : null}
+                  <span className={resetSubmitting ? "ml-1.5" : ""}>
+                    {resetSubmitting
+                      ? tx("auth.resetSubmitting", lang)
+                      : tx("auth.resetSubmit", lang)}
+                  </span>
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+          {resetSent && (
+            <DialogFooter>
+              <Button
+                type="button"
+                size="sm"
+                onClick={closeResetModal}
+                className="w-full sm:w-auto"
+              >
+                {tx("auth.resetCancel", lang)}
+              </Button>
+            </DialogFooter>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
