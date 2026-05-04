@@ -437,7 +437,7 @@ export function FamilyHistorySection({ autoOpen, onModalClose }: FamilyHistorySe
                   <select
                     value={formState.person_relation}
                     onChange={(ev) => setFormState({ ...formState, person_relation: ev.target.value })}
-                    className="w-full rounded-lg border border-border bg-background px-2.5 py-2 text-sm"
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm"
                   >
                     <option value="">{tr ? "Seç..." : "Select..."}</option>
                     {relationOptions.map((r) => (
@@ -455,7 +455,7 @@ export function FamilyHistorySection({ autoOpen, onModalClose }: FamilyHistorySe
                     value={formState.condition_name}
                     onChange={(ev) => setFormState({ ...formState, condition_name: ev.target.value })}
                     placeholder={tr ? "Meme kanseri, tip 2 diyabet..." : "Breast cancer, type 2 diabetes..."}
-                    className="w-full rounded-lg border border-border bg-background px-2.5 py-2 text-sm"
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm"
                     maxLength={200}
                   />
                 </div>
@@ -471,7 +471,7 @@ export function FamilyHistorySection({ autoOpen, onModalClose }: FamilyHistorySe
                     value={formState.age_at_diagnosis}
                     onChange={(ev) => setFormState({ ...formState, age_at_diagnosis: ev.target.value })}
                     placeholder={tr ? "örn. 48" : "e.g. 48"}
-                    className="w-full rounded-lg border border-border bg-background px-2.5 py-2 text-sm"
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm"
                   />
                 </div>
 
@@ -499,7 +499,7 @@ export function FamilyHistorySection({ autoOpen, onModalClose }: FamilyHistorySe
                       max={120}
                       value={formState.age_at_death}
                       onChange={(ev) => setFormState({ ...formState, age_at_death: ev.target.value })}
-                      className="w-full rounded-lg border border-border bg-background px-2.5 py-2 text-sm"
+                      className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm"
                     />
                   </div>
                 )}
@@ -514,7 +514,7 @@ export function FamilyHistorySection({ autoOpen, onModalClose }: FamilyHistorySe
                     placeholder={tr
                       ? "İki taraflı tanı, kullandığı ilaçlar (ör. metformin), takip durumu vb."
                       : "Bilateral diagnosis, current medications (e.g. metformin), follow-up status, etc."}
-                    className="w-full rounded-lg border border-border bg-background px-2.5 py-2 text-sm min-h-[60px]"
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm min-h-[60px]"
                     maxLength={500}
                   />
                 </div>

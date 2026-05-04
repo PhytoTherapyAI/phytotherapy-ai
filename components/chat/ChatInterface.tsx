@@ -736,7 +736,7 @@ export function ChatInterface({
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto rounded-t-xl border border-b-0 bg-background p-4 space-y-4"
-        style={{ minHeight: "400px", maxHeight: "60vh" }}
+        style={{ maxHeight: "60vh" }}
       >
         {messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center text-center px-4">

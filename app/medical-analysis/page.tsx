@@ -214,7 +214,7 @@ export default function MedicalAnalysisPage() {
                 key={v}
                 onClick={() => setTrendsView(v)}
                 className={cn(
-                  "flex-1 text-xs sm:text-sm py-1.5 sm:py-2 px-2 rounded-md transition-colors",
+                  "flex-1 text-[10px] sm:text-sm py-1.5 sm:py-2 px-2 rounded-md transition-colors",
                   trendsView === v
                     ? "bg-background shadow-sm text-foreground font-medium"
                     : "text-muted-foreground hover:text-foreground",

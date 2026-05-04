@@ -616,7 +616,7 @@ export function ConversationHistory({
                   reverts to the compact default. */}
               <DropdownMenuItem
                 onClick={() => handlePin(conv.id, conv.is_pinned)}
-                className="min-h-11 md:min-h-0"
+                className="min-h-11 md:min-h-9"
               >
                 {conv.is_pinned ? (
                   <PinOff className="mr-1.5" />
@@ -627,7 +627,7 @@ export function ConversationHistory({
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => startRename(conv)}
-                className="min-h-11 md:min-h-0"
+                className="min-h-11 md:min-h-9"
               >
                 <Pencil className="mr-1.5" />
                 <span>{tx("ch.rename", lang)}</span>
@@ -636,7 +636,7 @@ export function ConversationHistory({
               <DropdownMenuItem
                 variant="destructive"
                 onClick={() => setPendingDeleteId(conv.id)}
-                className="min-h-11 md:min-h-0"
+                className="min-h-11 md:min-h-9"
               >
                 <Trash2 className="mr-1.5" />
                 <span>{tx("ch.deleteConfirmAction", lang)}</span>

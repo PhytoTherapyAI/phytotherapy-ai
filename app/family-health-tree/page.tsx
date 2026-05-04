@@ -190,7 +190,7 @@ function GenerationRow({
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
         {tx(GENERATION_STYLE[gen.generation].labelKey, lang)}
       </p>
-      <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
+      <div className="flex flex-wrap gap-3 justify-start sm:justify-center">
         {gen.members.map(node => (
           <TreeNodeCard key={node.id} node={node as FamilyTreeNode & { occurrenceCount?: number }} lang={lang} />
         ))}

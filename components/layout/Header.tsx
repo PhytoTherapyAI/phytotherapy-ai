@@ -401,7 +401,7 @@ export function Header() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
               <div className="flex items-start gap-3 flex-1">
                 <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-0" />
-                <p className="flex-1 text-xs text-amber-800 dark:text-amber-300">{tx("medReminder.text", lang)}</p>
+                <p className="flex-1 min-w-0 text-xs text-amber-800 dark:text-amber-300">{tx("medReminder.text", lang)}</p>
               </div>
               <div className="flex items-center gap-1.5 shrink-0 w-full sm:w-auto">
                 <Button variant="ghost" size="sm"

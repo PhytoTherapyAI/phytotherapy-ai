@@ -67,7 +67,7 @@ export function BottomNavbar() {
               onClick={() => router.push(tab.href)}
               aria-label={ariaLabel}
               aria-current={isActive ? "page" : undefined}
-              className="relative flex flex-col items-center gap-0.5 px-3 py-1.5 min-w-[64px]"
+              className="relative flex flex-col items-center gap-0.5 px-3 py-1.5 min-w-[64px] min-h-11"
             >
               {isActive && (
                 <motion.div
