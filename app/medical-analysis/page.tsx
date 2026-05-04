@@ -378,7 +378,7 @@ function BloodTestTab({
               value={testDate}
               onChange={(e) => setTestDate(e.target.value)}
               max={new Date().toISOString().split("T")[0]}
-              className="w-full rounded-lg border bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-auto"
+              className="w-full max-w-[200px] sm:max-w-none rounded-lg border bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-auto"
             />
           ) : (
             <div className="flex flex-wrap gap-2">

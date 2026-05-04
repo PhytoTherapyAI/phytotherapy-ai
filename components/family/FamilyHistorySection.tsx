@@ -413,7 +413,7 @@ export function FamilyHistorySection({ autoOpen, onModalClose }: FamilyHistorySe
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 10 }}
               onClick={(ev) => ev.stopPropagation()}
-              className="relative w-full max-w-md rounded-2xl bg-card border border-border shadow-2xl p-5"
+              className="relative w-[calc(100%-2rem)] max-w-md rounded-2xl bg-card border border-border shadow-2xl p-5"
             >
               <button
                 type="button"

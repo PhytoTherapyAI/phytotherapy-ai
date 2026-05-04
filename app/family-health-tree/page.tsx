@@ -95,7 +95,7 @@ function TreeNodeCard({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
-      className={`relative rounded-2xl border-2 bg-white dark:bg-card p-3 sm:p-4 shadow-sm min-w-[150px] max-w-[220px] ${
+      className={`relative rounded-2xl border-2 bg-white dark:bg-card p-3 sm:p-4 shadow-sm min-w-[130px] max-w-[220px] ${
         node.isSelf ? "ring-2 ring-emerald-400 border-emerald-300" : "border-border"
       }`}
     >

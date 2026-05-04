@@ -112,7 +112,7 @@ export function MessageBubble({ message, isLast, onSendFollowUp, onRequestConsen
       </div>
 
       {/* Message content + sources wrapper */}
-      <div className="max-w-[85%] flex flex-col gap-2">
+      <div className="max-w-[90%] sm:max-w-[85%] flex flex-col gap-2">
         {/* Main bubble */}
         <div
           className={`rounded-2xl px-4 py-3 animate-scale-in ${

@@ -244,7 +244,7 @@ export function BloodTestHistoryList({ lang, targetUserId }: Props) {
                   setPendingDeleteId(item.id);
                 }}
                 aria-label={tx("mhx.deleteAria", lang)}
-                className="shrink-0 flex items-center justify-center px-3 text-muted-foreground/50 hover:bg-red-50 hover:text-red-600 transition-colors dark:hover:bg-red-950/30 dark:hover:text-red-400"
+                className="shrink-0 flex items-center justify-center min-h-11 min-w-11 px-3 text-muted-foreground/50 hover:bg-red-50 hover:text-red-600 transition-colors dark:hover:bg-red-950/30 dark:hover:text-red-400"
               >
                 <Trash2 className="h-4 w-4" />
               </button>

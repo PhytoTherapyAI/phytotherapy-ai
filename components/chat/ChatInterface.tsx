@@ -818,7 +818,7 @@ export function ChatInterface({
                 ) : (
                   <ImageIcon className="h-4 w-4 text-blue-500" />
                 )}
-                <span className="max-w-[120px] truncate text-xs">{f.name}</span>
+                <span className="max-w-[100px] sm:max-w-[120px] truncate text-xs">{f.name}</span>
                 <button
                   type="button"
                   onClick={() => removeFile(f.id)}
