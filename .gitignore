@@ -45,3 +45,13 @@ next-env.d.ts
 
 # Sentry
 .env.sentry-build-plugin
+
+# Sprint 30 — Expo / React Native mobile (mobile/ at repo root)
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+mobile/ios/
+mobile/android/
+mobile/*.tsbuildinfo
+mobile/expo-env.d.ts
