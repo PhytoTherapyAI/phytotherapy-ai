@@ -1964,4 +1964,17 @@ ce9b2bd fix(settings): close password change security gaps + NIST-aligned valida
 
 **Sprint 29 backlog:** Iyzico (kritik, 27 Mayıs sonrası) / NotoSans base64 (orta, 2x fail history) / Apple Health steps (düşük) / ESLint warning (düşük).
 
+### Sprint 29 — Family History UX + Mobile Audit (3 Mayıs 2026) — Tamamlandı
+
+**Toplam:** 4 commit + 1 docs commit, 0 revert.
+
+- `fdb4ca3` FamilyHistorySection notes placeholder hint (KVKK-safe medication visibility)
+- `6b84edb` Mobile P0 fixes — textarea zoom + dropdown overflow + grid mobile-first
+- `31e991f` Mobile P1 fixes — touch targets + modal width + grid sizing
+- `88c1fb0` Mobile P2 polish — dropdown transitions + form heights + Apple HIG
+
+**Önemli:** 17 mobile issue (P0+P1+P2) tek sprintte kapandı. Mevcut "Mobile Responsive Patterns" (F-MOBILE-001) genişletildi. Sprint 30+ stratejik karar: Mobile RN app (iOS önce, Expo + RN, web paralel devam).
+
+**Sprint 30 backlog:** Mobile RN app (stratejik, 4-6 ay) / Iyzico (kritik, 27 Mayıs sonrası) / NotoSans base64 (orta) / Apple Health (düşük) / ESLint warning (düşük).
+
 ---

@@ -1,6 +1,43 @@
 # PROGRESS.MD — DoctoPal Sprint İlerleme Takibi
 
-> Son güncelleme: Sprint 28 canlı — ESLint sweep + HealthReportTab polish ✅ (3 Mayıs 2026)
+> Son güncelleme: Sprint 29 canlı — placeholder hint + mobile audit P0/P1/P2 ✅ (3 Mayıs 2026)
+
+---
+
+## Sprint 29 — Family History UX + Mobile Audit (3 Mayıs 2026)
+
+**Toplam:** 4 commit + 1 docs commit, 0 revert
+**Smoke test:** ✅ tsc + build her commit sonrası 0 error/warning
+
+| # | SHA | Açıklama |
+|---|---|---|
+| 1 | `fdb4ca3` | FamilyHistorySection notes placeholder hint |
+| 2 | `6b84edb` | Mobile P0 fixes (4 issue) |
+| 3 | `31e991f` | Mobile P1 fixes (6 issue) |
+| 4 | `88c1fb0` | Mobile P2 polish (7 issue) |
+| D1 | (this) | Sprint 29 kapanış docs |
+
+### Major Outcomes
+
+- **Commit 1 — Family history placeholder:** Notes textarea placeholder TR/EN — "ilaçlar (ör. metformin), takip durumu" hint. KVKK Md.6 risk yükseltmeden free-form notes alanına ilaç görünürlüğü.
+- **Commit 2 — Mobile P0:** ChatInterface textarea iOS keyboard zoom guard, ConversationHistory dropdown overflow, 2 grid mobile-first fallback.
+- **Commit 3 — Mobile P1:** Trash2 touch target 44px, FamilyHistorySection modal mobile breathing, date input cap, TreeNodeCard min-w azaltma, message bubble + file chip mobile compact.
+- **Commit 4 — Mobile P2:** DropdownMenu smooth transition, inline minHeight kaldırma, trends pill okunurluk, form field height polish, GenerationRow justify, BottomNavbar Apple HIG, Header overflow guard.
+- **17 mobile issue kapandı**, YASAK pattern violation 0, regression 0.
+
+### Sprint 30 Backlog
+
+| Madde | Öncelik | Notlar |
+|---|---|---|
+| **Mobile RN app (iOS önce)** | Stratejik | Expo + RN, web paralel devam, Taha sıfırdan öğrenecek, 4-6 ay |
+| **F-PAYMENT-001 Iyzico** | Kritik | 27 Mayıs avukat görüşmesi sonrası unblock |
+| **NotoSans base64 inline** | Orta | 2x fail history, riskli |
+| **Apple Health steps** | Düşük | Mobile RN sonrası native HealthKit |
+| **7 ESLint warning** | Düşük | Intentional trigger dep, semantic care |
+
+### Önemli Tarihler
+
+- **27 Mayıs 2026** — ⚖️ Avukat görüşmesi. Limited / A.Ş. / Estonya OÜ kararı. Iyzico unblock.
 
 ---
 
